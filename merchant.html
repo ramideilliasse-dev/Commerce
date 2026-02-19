@@ -32,7 +32,7 @@ const firebaseConfig = {
   messagingSenderId: "238735890157",
   appId: "1:238735890157:web:db3f87960db7916d7fdee4"
 };
-
+console.log("PROJECT ID:", firebaseConfig.projectId);
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
