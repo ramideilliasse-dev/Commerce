@@ -51,66 +51,21 @@ window.publishProduct = async function() {
 
   try {
 
-    if (!currentUser) {
-      document.getElementById("message").innerText = "Utilisateur non connecté";
-      return;
-    }
+    document.getElementById("message").innerText = "Début...";
 
-    const name = document.getElementById("name").value;
-    const price = document.getElementById("price").value;
-    const description = document.getElementById("description").value;
-    const files = document.getElementById("images").files;
-
-    if (!name || !price || files.length === 0) {
-      document.getElementById("message").innerText = "Champs manquants";
-      return;
-    }
-
-    document.getElementById("message").innerText = "Upload en cours...";
-
-    let imageUrls = [];
-
-    for (let file of files) {
-
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", "angcomerce-upload");
-
-      const response = await fetch(
-        "https://api.cloudinary.com/v1_1/df2oxw2qp/image/upload",
-        {
-          method: "POST",
-          body: formData
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Erreur upload Cloudinary");
-      }
-
-      const data = await response.json();
-
-      if (!data.secure_url) {
-        throw new Error("Image non reçue");
-      }
-
-      imageUrls.push(data.secure_url);
-    }
-
-    await addDoc(collection(db, "products"), {
-      name,
-      price,
-      description,
-      images: imageUrls,
-      merchantId: currentUser.uid,
+    const docRef = await addDoc(collection(db, "products"), {
+      name: "TEST PRODUIT",
+      price: 100,
       createdAt: new Date()
     });
 
-    document.getElementById("message").innerText = "Produit publié avec succès";
+    document.getElementById("message").innerText =
+      "Écrit dans products avec ID: " + docRef.id;
 
   } catch (error) {
 
-    document.getElementById("message").innerText = "Erreur: " + error.message;
+    document.getElementById("message").innerText =
+      "Erreur Firestore: " + error.message;
 
   }
 
