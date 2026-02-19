@@ -1,36 +1,28 @@
-<!DOCTYPE html>
-<html lang="fr">
+ <!DOCTYPE html>
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Merchant Dashboard</title>
+  <meta charset="UTF-8">
+  <title>Espace Commerçant</title>
 </head>
 <body>
 
 <h2>Publier un produit</h2>
 
-<input type="text" id="productName" placeholder="Nom du produit"><br><br>
-<input type="text" id="productPrice" placeholder="Prix"><br><br>
-<textarea id="productDescription" placeholder="Description"></textarea><br><br>
+<input type="text" id="name" placeholder="Nom du produit"><br><br>
+<input type="number" id="price" placeholder="Prix"><br><br>
+<textarea id="description" placeholder="Description"></textarea><br><br>
 
-<label>Choisir plusieurs images :</label><br>
 <input type="file" id="images" multiple><br><br>
 
-<button id="publishBtn">Publier</button>
+<button onclick="publishProduct()">Publier</button>
 
-<h3>Mes Produits</h3>
-<div id="myProducts"></div>
+<p id="message"></p>
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
-import { 
-  getAuth, 
-  onAuthStateChanged, 
-  setPersistence, 
-  browserLocalPersistence 
-} from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
@@ -42,125 +34,75 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 const auth = getAuth(app);
-const storage = getStorage(app);
+const db = getFirestore(app);
 
 let currentUser = null;
 
-// 🔥 PERSISTANCE CORRIGÉE
-setPersistence(auth, browserLocalPersistence)
-.then(() => {
-
-  onAuthStateChanged(auth, (user) => {
-    if(user){
-      currentUser = user;
-      loadMyProducts();
-    } else {
-alert("Vous devez vous connecter.");
-window.location.href = "merchant-register.html";
-    }
-  });
-
-})
-.catch((error) => {
-  console.log("Erreur persistence:", error);
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    currentUser = user;
+  } else {
+    alert("Vous devez vous connecter.");
+    window.location.href = "merchant-register.html";
+  }
 });
 
+window.publishProduct = async function() {
 
-document.getElementById("publishBtn").addEventListener("click", async function(){
-
-  if(!currentUser){
-    alert("Utilisateur non connecté");
+  if (!currentUser) {
+    alert("Utilisateur non connecté.");
     return;
   }
 
-  const name = document.getElementById("productName").value;
-  const price = document.getElementById("productPrice").value;
-  const description = document.getElementById("productDescription").value;
+  const name = document.getElementById("name").value;
+  const price = document.getElementById("price").value;
+  const description = document.getElementById("description").value;
   const files = document.getElementById("images").files;
 
-  if(!name || !price || files.length === 0){
-    alert("Remplissez tous les champs et choisissez au moins une image");
+  if (!name || !price || files.length === 0) {
+    alert("Veuillez remplir tous les champs.");
     return;
   }
 
-  try{
+  document.getElementById("message").innerText = "Upload en cours...";
 
-    let imageUrls = [];
+let imageUrls = [];
 
-    for(let i = 0; i < files.length; i++){
-
-      const file = files[i];
-      const storageRef = ref(storage, "angcomerce-upload/" + Date.now() + "_" + file.name);
-
-      await uploadBytes(storageRef, file);
-      const downloadURL = await getDownloadURL(storageRef);
-
-      imageUrls.push(downloadURL);
-    }
-
-    await addDoc(collection(db, "products"), {
-      name: name,
-      price: price,
-      description: description,
-      images: imageUrls,
-      merchantId: currentUser.uid,
-      createdAt: new Date()
-    });
-
-    alert("Produit publié avec succès");
-
-    document.getElementById("productName").value = "";
-    document.getElementById("productPrice").value = "";
-    document.getElementById("productDescription").value = "";
-    document.getElementById("images").value = "";
-
-    loadMyProducts();
-
-  }catch(error){
-    alert("Erreur: " + error.message);
-    console.log(error);
-  }
-
-});
-
-
-async function loadMyProducts(){
-
-  const container = document.getElementById("myProducts");
-  container.innerHTML = "";
-
-  const q = query(
-    collection(db, "products"),
-    where("merchantId", "==", currentUser.uid)
-  );
-
-  const snapshot = await getDocs(q);
-
-  snapshot.forEach(doc => {
-
-    const product = doc.data();
-
-    let html = `
-      <div style="border:1px solid #ccc;padding:10px;margin:10px;">
-        <h4>${product.name}</h4>
-        <p>${product.price}</p>
-        <p>${product.description}</p>
-    `;
-
-    product.images.forEach(img => {
-      html += `<img src="${img}" width="120" style="margin:5px;">`;
-    });
-
-    html += "</div>";
-
-    container.innerHTML += html;
-
+for (let i = 0; i < files.length; i++) {
+  
+  const formData = new FormData();
+  formData.append("file", files[i]);
+  formData.append("upload_preset", "angcomerce-upload");
+  
+  const response = await fetch("https://api.cloudinary.com/v1_1/df2oxw2qp/image/upload", {
+    method: "POST",
+    body: formData
   });
+  
+  const data = await response.json();
+  
+  imageUrls.push(data.secure_url);
 }
+
+  await addDoc(collection(db, "products"), {
+    name: name,
+    price: price,
+    description: description,
+    images: imageUrls,
+    merchantId: currentUser.uid,
+    createdAt: new Date()
+  });
+
+  document.getElementById("message").innerText = "Produit publié avec succès !";
+
+  document.getElementById("name").value = "";
+  document.getElementById("price").value = "";
+  document.getElementById("description").value = "";
+  document.getElementById("images").value = "";
+};
 
 </script>
 
 </body>
-</html>
+</html>   
