@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Merchant Dashboard</title>
+</head>
+<body>
+
+<h2>Publier un produit</h2>
+
+<input type="text" id="productName" placeholder="Nom du produit"><br><br>
+<input type="text" id="productPrice" placeholder="Prix"><br><br>
+<textarea id="productDescription" placeholder="Description"></textarea><br><br>
+
+<label>Choisir plusieurs images :</label><br>
+<input type="file" id="images" multiple><br><br>
+
+<button id="publishBtn">Publier</button>
+
+<h3>Mes Produits</h3>
+<div id="myProducts"></div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+import { 
+  getAuth, 
+  onAuthStateChanged, 
+  setPersistence, 
+  browserLocalPersistence 
+} from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
+  authDomain: "angcomerce-v1.firebaseapp.com",
+  projectId: "angcomerce-v1",
+  storageBucket: "angcomerce-v1.firebasestorage.app",
+  messagingSenderId: "238735890157",
+  appId: "1:238735890157:web:db3f87960db7916d7fdee4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const storage = getStorage(app);
+
+let currentUser = null;
+
+// 🔥 PERSISTANCE CORRIGÉE
+setPersistence(auth, browserLocalPersistence)
+.then(() => {
+
+  onAuthStateChanged(auth, (user) => {
+    if(user){
+      currentUser = user;
+      loadMyProducts();
+    } else {
+alert("Vous devez vous connecter.");
+window.location.href = "merchant-register.html";
+    }
+  });
+
+})
+.catch((error) => {
+  console.log("Erreur persistence:", error);
+});
+
+
+document.getElementById("publishBtn").addEventListener("click", async function(){
+
+  if(!currentUser){
+    alert("Utilisateur non connecté");
+    return;
+  }
+
+  const name = document.getElementById("productName").value;
+  const price = document.getElementById("productPrice").value;
+  const description = document.getElementById("productDescription").value;
+  const files = document.getElementById("images").files;
+
+  if(!name || !price || files.length === 0){
+    alert("Remplissez tous les champs et choisissez au moins une image");
+    return;
+  }
+
+  try{
+
+    let imageUrls = [];
+
+    for(let i = 0; i < files.length; i++){
+
+      const file = files[i];
+      const storageRef = ref(storage, "angcomerce-upload/" + Date.now() + "_" + file.name);
+
+      await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(storageRef);
+
+      imageUrls.push(downloadURL);
+    }
+
+    await addDoc(collection(db, "products"), {
+      name: name,
+      price: price,
+      description: description,
+      images: imageUrls,
+      merchantId: currentUser.uid,
+      createdAt: new Date()
+    });
+
+    alert("Produit publié avec succès");
+
+    document.getElementById("productName").value = "";
+    document.getElementById("productPrice").value = "";
+    document.getElementById("productDescription").value = "";
+    document.getElementById("images").value = "";
+
+    loadMyProducts();
+
+  }catch(error){
+    alert("Erreur: " + error.message);
+    console.log(error);
+  }
+
+});
+
+
+async function loadMyProducts(){
+
+  const container = document.getElementById("myProducts");
+  container.innerHTML = "";
+
+  const q = query(
+    collection(db, "products"),
+    where("merchantId", "==", currentUser.uid)
+  );
+
+  const snapshot = await getDocs(q);
+
+  snapshot.forEach(doc => {
+
+    const product = doc.data();
+
+    let html = `
+      <div style="border:1px solid #ccc;padding:10px;margin:10px;">
+        <h4>${product.name}</h4>
+        <p>${product.price}</p>
+        <p>${product.description}</p>
+    `;
+
+    product.images.forEach(img => {
+      html += `<img src="${img}" width="120" style="margin:5px;">`;
+    });
+
+    html += "</div>";
+
+    container.innerHTML += html;
+
+  });
+}
+
+</script>
+
+</body>
+</html>

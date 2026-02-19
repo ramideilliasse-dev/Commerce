@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Connexion Commerçant</title>
+</head>
+<body>
+
+<h2>Connexion / Inscription Commerçant</h2>
+
+<input type="email" id="email" placeholder="Email"><br><br>
+<input type="password" id="password" placeholder="Mot de passe"><br><br>
+
+<button id="registerBtn">S'inscrire</button>
+<button id="loginBtn">Se connecter</button>
+
+<p id="message"></p>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } 
+from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
+  authDomain: "angcomerce-v1.firebaseapp.com",
+  projectId: "angcomerce-v1",
+  storageBucket: "angcomerce-v1.firebasestorage.app",
+  messagingSenderId: "238735890157",
+  appId: "1:238735890157:web:db3f87960db7916d7fdee4"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+const message = document.getElementById("message");
+
+document.getElementById("registerBtn").addEventListener("click", async () => {
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+    message.innerText = "Inscription réussie";
+    window.location.href = "merchant.html";
+  } catch(error) {
+    message.innerText = error.message;
+  }
+
+});
+
+document.getElementById("loginBtn").addEventListener("click", async () => {
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    message.innerText = "Connexion réussie";
+    window.location.href = "merchant.html";
+  } catch(error) {
+    message.innerText = error.message;
+  }
+
+});
+
+</script>
+
+</body>
+</html>

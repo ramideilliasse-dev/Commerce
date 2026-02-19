@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ANGCOMERCE</title>
+</head>
+<body>
+
+<h2>Catálogo de Produtos</h2>
+
+<div id="productsContainer"></div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+
+import { 
+  getFirestore, 
+  collection, 
+  getDocs,
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
+  authDomain: "angcomerce-v1.firebaseapp.com",
+  projectId: "angcomerce-v1",
+  storageBucket: "angcomerce-v1.firebasestorage.app",
+  messagingSenderId: "238735890157",
+  appId: "1:238735890157:web:db3f87960db7916d7fdee4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+async function loadProducts() {
+
+  const container = document.getElementById("productsContainer");
+  container.innerHTML = "";
+
+  const querySnapshot = await getDocs(collection(db, "products"));
+
+  if (querySnapshot.empty) {
+    container.innerHTML = "<p>Nenhum produto disponível.</p>";
+    return;
+  }
+
+  for (const docSnap of querySnapshot.docs) {
+
+    const product = docSnap.data();
+
+    // 🔹 Récupérer commerçant
+    const merchantRef = doc(db, "merchants", product.merchantId);
+    const merchantSnap = await getDoc(merchantRef);
+
+    let merchantName = "Comerciante";
+    let merchantWhatsapp = "";
+
+    if (merchantSnap.exists()) {
+      merchantName = merchantSnap.data().name;
+      merchantWhatsapp = merchantSnap.data().whatsapp;
+    }
+
+    const div = document.createElement("div");
+    div.style.border = "1px solid #ccc";
+    div.style.padding = "10px";
+    div.style.marginBottom = "15px";
+
+    let mediaElement;
+
+    if (product.mediaType === "video") {
+      mediaElement = document.createElement("video");
+      mediaElement.src = product.mediaUrl;
+      mediaElement.controls = true;
+      mediaElement.width = 250;
+    } else {
+      mediaElement = document.createElement("img");
+      mediaElement.src = product.mediaUrl;
+      mediaElement.width = 250;
+    }
+
+    // 🔹 WhatsApp personnalisé
+    const whatsappLink = `https://wa.me/${merchantWhatsapp}?text=Olá tenho interesse no produto ${product.name}`;
+
+    div.innerHTML = `
+      <h3>${product.name}</h3>
+      <p><strong>Preço:</strong> ${product.price} Kz</p>
+      <p><strong>Vendedor:</strong> ${merchantName}</p>
+      <a href="${whatsappLink}" target="_blank">
+        <button>Contactar via WhatsApp</button>
+      </a>
+    `;
+
+    div.appendChild(mediaElement);
+    container.appendChild(div);
+
+  }
+
+}
+
+loadProducts();
+
+</script>
+
+</body>
+</html>
