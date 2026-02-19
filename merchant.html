@@ -47,59 +47,64 @@ onAuthStateChanged(auth, (user) => {
     window.location.href = "merchant-register.html";
   }
 });
-
 window.publishProduct = async function() {
 
-  if (!currentUser) {
-    alert("Utilisateur non connecté.");
-    return;
+  try {
+
+    if (!currentUser) {
+      alert("Utilisateur non connecté.");
+      return;
+    }
+
+    const name = document.getElementById("name").value;
+    const price = document.getElementById("price").value;
+    const description = document.getElementById("description").value;
+    const files = document.getElementById("images").files;
+
+    if (!name || !price || files.length === 0) {
+      alert("Veuillez remplir tous les champs.");
+      return;
+    }
+
+    document.getElementById("message").innerText = "Upload en cours...";
+
+    let imageUrls = [];
+
+    for (let i = 0; i < files.length; i++) {
+
+      const formData = new FormData();
+      formData.append("file", files[i]);
+      formData.append("upload_preset", "angcomerce-upload");
+
+      const response = await fetch("https://api.cloudinary.com/v1_1/df2oxw2qp/image/upload", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+      imageUrls.push(data.secure_url);
+    }
+
+    const docRef = await addDoc(collection(db, "products"), {
+      name: name,
+      price: price,
+      description: description,
+      images: imageUrls,
+      merchantId: currentUser.uid,
+      createdAt: new Date()
+    });
+
+    console.log("Document écrit avec ID:", docRef.id);
+
+    document.getElementById("message").innerText = "Produit publié avec succès !";
+
+  } catch (error) {
+
+    console.error("Erreur Firestore :", error);
+    document.getElementById("message").innerText = "Erreur : " + error.message;
+
   }
 
-  const name = document.getElementById("name").value;
-  const price = document.getElementById("price").value;
-  const description = document.getElementById("description").value;
-  const files = document.getElementById("images").files;
-
-  if (!name || !price || files.length === 0) {
-    alert("Veuillez remplir tous les champs.");
-    return;
-  }
-
-  document.getElementById("message").innerText = "Upload en cours...";
-
-let imageUrls = [];
-
-for (let i = 0; i < files.length; i++) {
-  
-  const formData = new FormData();
-  formData.append("file", files[i]);
-  formData.append("upload_preset", "angcomerce-upload");
-  
-  const response = await fetch("https://api.cloudinary.com/v1_1/df2oxw2qp/image/upload", {
-    method: "POST",
-    body: formData
-  });
-  
-  const data = await response.json();
-  
-  imageUrls.push(data.secure_url);
-}
-
-  await addDoc(collection(db, "products"), {
-    name: name,
-    price: price,
-    description: description,
-    images: imageUrls,
-    merchantId: currentUser.uid,
-    createdAt: new Date()
-  });
-
-  document.getElementById("message").innerText = "Produit publié avec succès !";
-
-  document.getElementById("name").value = "";
-  document.getElementById("price").value = "";
-  document.getElementById("description").value = "";
-  document.getElementById("images").value = "";
 };
 
 </script>
