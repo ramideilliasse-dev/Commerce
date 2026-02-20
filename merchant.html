@@ -31,7 +31,7 @@ const firebaseConfig = {
   storageBucket: "angcomerce-v1.firebasestorage.app",
   messagingSenderId: "238735890157",
   appId: "1:238735890157:web:db3f87960db7916d7fdee4"
-};
+};  alert("PROJECT ID: " + firebaseConfig.projectId);
 console.log("PROJECT ID:", firebaseConfig.projectId);
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
