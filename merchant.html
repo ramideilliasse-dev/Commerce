@@ -52,24 +52,25 @@ window.publishProduct = async function() {
 
   try {
 
-    document.getElementById("message").innerText = "Début...";
+    const name = document.getElementById("name").value;
+    const price = document.getElementById("price").value;
 
-    console.log("Avant addDoc");
+    if (!name || !price) {
+      alert("Remplis tous les champs");
+      return;
+    }
 
     const docRef = await addDoc(collection(db, "products"), {
-      name: "TEST",
-      price: 123
+      name: name,
+      price: Number(price),
+      merchantId: "ramide123",
+      createdAt: new Date()
     });
 
-    console.log("Après addDoc");
-
-    document.getElementById("message").innerText = "Succès";
+    alert("Produit ajouté avec succès !");
 
   } catch (error) {
-
-    document.getElementById("message").innerText =
-      "Erreur: " + error.message;
-
+    alert("Erreur : " + error.message);
   }
 
 };
