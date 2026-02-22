@@ -54,19 +54,21 @@ window.publishProduct = async function() {
 
     document.getElementById("message").innerText = "Début...";
 
+    console.log("Avant addDoc");
+
     const docRef = await addDoc(collection(db, "products"), {
-      name: "TEST PRODUIT",
-      price: 100,
-      createdAt: new Date()
+      name: "TEST",
+      price: 123
     });
 
-    document.getElementById("message").innerText =
-      "Écrit dans products avec ID: " + docRef.id;
+    console.log("Après addDoc");
+
+    document.getElementById("message").innerText = "Succès";
 
   } catch (error) {
 
     document.getElementById("message").innerText =
-      "Erreur Firestore: " + error.message;
+      "Erreur: " + error.message;
 
   }
 
