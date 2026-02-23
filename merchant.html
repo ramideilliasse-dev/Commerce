@@ -9,7 +9,7 @@
 <h2>Dashboard Commerçant</h2>
 <p id="status"></p>
 <button onclick="logout()">Se déconnecter</button>
-<button onclick="logout()">Déconnexion</button>
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -27,16 +27,16 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-import { signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-window.logout = async function() {
-  await signOut(auth);
-  alert("Déconnecté !");
-  location.reload();
-};
 const db = getFirestore(app);
 
 const statusText = document.getElementById("status");
+
+// ✅ UNE SEULE fonction logout
+window.logout = async function() {
+  await signOut(auth);
+  alert("Déconnecté !");
+  window.location.href = "merchant-register.html";
+};
 
 onAuthStateChanged(auth, async (user) => {
 
@@ -74,12 +74,6 @@ onAuthStateChanged(auth, async (user) => {
   statusText.innerText = "Bienvenue " + data.shopName;
 
 });
-
-window.logout = function() {
-  signOut(auth).then(() => {
-    window.location.href = "merchant-register.html";
-  });
-};
 
 </script>
 
