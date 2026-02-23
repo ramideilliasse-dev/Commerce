@@ -1,0 +1,153 @@
+ <!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Détail Produit</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#f4f4f4;
+  margin:0;
+  padding:20px;
+}
+
+.container{
+  max-width:600px;
+  margin:auto;
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+.slider{
+  position:relative;
+}
+
+.slider img{
+  width:100%;
+  height:300px;
+  object-fit:cover;
+  border-radius:10px;
+}
+
+.nav{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  background:black;
+  color:white;
+  border:none;
+  padding:10px;
+  cursor:pointer;
+}
+
+.prev{ left:10px; }
+.next{ right:10px; }
+
+.price{
+  color:green;
+  font-size:20px;
+  font-weight:bold;
+}
+
+button{
+  background:#25D366;
+  border:none;
+  padding:12px;
+  width:100%;
+  color:white;
+  font-size:16px;
+  border-radius:6px;
+  margin-top:15px;
+  cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="slider">
+    <img id="sliderImage">
+    <button class="nav prev" onclick="prevImage()">‹</button>
+    <button class="nav next" onclick="nextImage()">›</button>
+  </div>
+
+  <h2 id="productName"></h2>
+  <p id="productDescription"></p>
+  <div class="price" id="productPrice"></div>
+
+  <button onclick="order()">Commander sur WhatsApp</button>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
+  authDomain: "angcomerce-v1.firebaseapp.com",
+  projectId: "angcomerce-v1",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const params = new URLSearchParams(window.location.search);
+const productId = params.get("id");
+
+let images = [];
+let currentIndex = 0;
+let productData;
+
+async function loadProduct(){
+
+  const docRef = doc(db, "products", productId);
+  const docSnap = await getDoc(docRef);
+
+  if(docSnap.exists()){
+
+    productData = docSnap.data();
+    images = productData.images || [];
+
+    document.getElementById("productName").innerText = productData.name;
+    document.getElementById("productDescription").innerText = productData.description;
+    document.getElementById("productPrice").innerText = productData.price;
+
+    if(images.length > 0){
+      document.getElementById("sliderImage").src = images[0];
+    }
+
+  }
+
+}
+
+window.nextImage = function(){
+  if(images.length === 0) return;
+  currentIndex = (currentIndex + 1) % images.length;
+  document.getElementById("sliderImage").src = images[currentIndex];
+}
+
+window.prevImage = function(){
+  if(images.length === 0) return;
+  currentIndex = (currentIndex - 1 + images.length) % images.length;
+  document.getElementById("sliderImage").src = images[currentIndex];
+}
+
+window.order = function(){
+  const message = `Bonjour je veux commander : ${productData.name} - ${productData.price}`;
+  const url = `https://wa.me/TON_NUMERO_WHATSAPP?text=${encodeURIComponent(message)}`;
+  window.open(url, "_blank");
+}
+
+loadProduct();
+
+</script>
+
+</body>
+</html>
