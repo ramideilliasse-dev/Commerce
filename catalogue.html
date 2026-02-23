@@ -18,6 +18,22 @@ header {
   text-align:center;
 }
 
+.filters {
+  background:white;
+  padding:15px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:center;
+}
+
+.filters input,
+.filters select {
+  padding:8px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
 .products {
   display:grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -71,6 +87,24 @@ header {
   <h2>Nos Produits</h2>
 </header>
 
+<!-- 🔎 FILTRES -->
+<div class="filters">
+  <input type="text" id="searchInput" placeholder="Rechercher un produit...">
+  <input type="number" id="minPrice" placeholder="Prix min">
+  <input type="number" id="maxPrice" placeholder="Prix max">
+
+  <select id="categoryFilter">
+    <option value="">Toutes catégories</option>
+    <option value="Electronique">Electronique</option>
+    <option value="Vêtements">Vêtements</option>
+    <option value="Chaussures">Chaussures</option>
+    <option value="Maison">Maison</option>
+    <option value="Beauté">Beauté</option>
+    <option value="Autre">Autre</option>
+  </select>
+</div>
+
+<!-- 🛍 PRODUITS -->
 <div class="products" id="productList"></div>
 
 <script type="module">
@@ -88,17 +122,40 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+let allProducts = [];
+
 const container = document.getElementById("productList");
+const searchInput = document.getElementById("searchInput");
+const minPrice = document.getElementById("minPrice");
+const maxPrice = document.getElementById("maxPrice");
+const categoryFilter = document.getElementById("categoryFilter");
 
 async function loadProducts() {
 
   const snapshot = await getDocs(collection(db, "products"));
 
-  container.innerHTML = "";
+  allProducts = [];
 
   snapshot.forEach(doc => {
+    allProducts.push({
+      id: doc.id,
+      ...doc.data()
+    });
+  });
 
-    const data = doc.data();
+  displayProducts(allProducts);
+}
+
+function displayProducts(products){
+
+  container.innerHTML = "";
+
+  if(products.length === 0){
+    container.innerHTML = "<p>Aucun produit trouvé</p>";
+    return;
+  }
+
+  products.forEach(data => {
 
     let firstImage = "";
     if (data.images && data.images.length > 0) {
@@ -106,7 +163,7 @@ async function loadProducts() {
     }
 
     container.innerHTML += `
-      <div class="card" onclick="openProduct('${doc.id}')">
+      <div class="card" onclick="openProduct('${data.id}')">
         <img src="${firstImage}">
         <div class="card-content">
           <h3>${data.name}</h3>
@@ -118,6 +175,34 @@ async function loadProducts() {
   });
 
 }
+
+function filterProducts(){
+
+  const searchValue = searchInput.value.toLowerCase();
+  const min = parseFloat(minPrice.value) || 0;
+  const max = parseFloat(maxPrice.value) || Infinity;
+  const selectedCategory = categoryFilter.value;
+
+  const filtered = allProducts.filter(product => {
+
+    const nameMatch = product.name.toLowerCase().includes(searchValue);
+    const priceNumber = parseFloat(product.price) || 0;
+    const priceMatch = priceNumber >= min && priceNumber <= max;
+
+    const categoryMatch = selectedCategory === "" || 
+                          product.category === selectedCategory;
+
+    return nameMatch && priceMatch && categoryMatch;
+
+  });
+
+  displayProducts(filtered);
+}
+
+searchInput.addEventListener("input", filterProducts);
+minPrice.addEventListener("input", filterProducts);
+maxPrice.addEventListener("input", filterProducts);
+categoryFilter.addEventListener("change", filterProducts);
 
 window.openProduct = function(id){
   window.location.href = "product.html?id=" + id;
