@@ -15,7 +15,9 @@
 
   <input id="productName" placeholder="Nom du produit"><br><br>
   <input id="productPrice" placeholder="Prix"><br><br>
-  <input id="productImage" placeholder="URL image"><br><br>
+  <textarea id="productDescription" placeholder="Description"></textarea><br><br>
+
+  <input type="file" id="productImageFile"><br><br>
 
   <button onclick="addProduct()">Ajouter</button>
 
@@ -29,41 +31,33 @@
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-
-import { 
-  getAuth, 
-  onAuthStateChanged 
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { 
   getFirestore, 
-  doc,
-  getDoc,
-  collection,
-  addDoc,
-  query,
-  where,
-  getDocs
+  doc, 
+  getDoc, 
+  collection, 
+  addDoc, 
+  query, 
+  where, 
+  getDocs 
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
   authDomain: "angcomerce-v1.firebaseapp.com",
   projectId: "angcomerce-v1",
-  storageBucket: "angcomerce-v1.firebasestorage.app",
-  messagingSenderId: "238735890157",
-  appId: "1:238735890157:web:db3f87960db7916d7fdee4"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+let currentUser;
+
 const welcome = document.getElementById("welcome");
 const statusDiv = document.getElementById("status");
 const dashboard = document.getElementById("dashboard");
-
-let currentUser;
 
 onAuthStateChanged(auth, async (user) => {
 
@@ -73,36 +67,22 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   currentUser = user;
-
   welcome.innerText = "Bienvenue " + user.email;
 
   const merchantDoc = await getDoc(doc(db, "merchants", user.uid));
 
-  if (!merchantDoc.exists()) {
-    statusDiv.innerHTML = "<p>Compte introuvable.</p>";
-    return;
-  }
-
-  const data = merchantDoc.data();
-
-  if (data.verified !== true) {
+  if (!merchantDoc.exists() || merchantDoc.data().verified !== true) {
 
     statusDiv.innerHTML = `
       <h3 style="color:red;">
         Votre compte est en attente de validation.
       </h3>
-      <p>Contactez l’administrateur.</p>
     `;
-
-    dashboard.style.display = "none";
 
   } else {
 
     statusDiv.innerHTML = `
-      <h3 style="color:green;">
-        Compte validé ✅
-      </h3>
-      <p>Badge : ${data.badge}</p>
+      <h3 style="color:green;">Compte validé ✅</h3>
     `;
 
     dashboard.style.display = "block";
@@ -115,27 +95,41 @@ window.addProduct = async function() {
 
   const name = document.getElementById("productName").value;
   const price = document.getElementById("productPrice").value;
-  const image = document.getElementById("productImage").value;
+  const description = document.getElementById("productDescription").value;
+  const file = document.getElementById("productImageFile").files[0];
 
-  if (!name || !price) {
+  if (!name || !price || !description || !file) {
     alert("Remplis tous les champs");
     return;
   }
 
+  // 🔥 Upload vers Cloudinary
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", "angcomerce-upload");
+
+  const response = await fetch(
+    "https://api.cloudinary.com/v1_1/df2oxw2qp/image/upload",
+    {
+      method: "POST",
+      body: formData
+    }
+  );
+
+  const data = await response.json();
+  const imageUrl = data.secure_url;
+
+  // 🔥 Sauvegarde Firestore
   await addDoc(collection(db, "products"), {
-    name: name,
-    price: price,
-    image: image,
+    name,
+    price,
+    description,
+    image: imageUrl,
     merchantId: currentUser.uid,
     createdAt: new Date()
   });
 
   alert("Produit ajouté !");
-
-  document.getElementById("productName").value = "";
-  document.getElementById("productPrice").value = "";
-  document.getElementById("productImage").value = "";
-
   loadMyProducts();
 };
 
@@ -146,18 +140,19 @@ async function loadMyProducts() {
     where("merchantId", "==", currentUser.uid)
   );
 
-  const querySnapshot = await getDocs(q);
+  const snapshot = await getDocs(q);
 
   const container = document.getElementById("myProducts");
   container.innerHTML = "";
 
-  querySnapshot.forEach((docSnap) => {
+  snapshot.forEach(docSnap => {
 
     const data = docSnap.data();
 
     container.innerHTML += `
       <div style="border:1px solid black; padding:10px; margin:10px;">
         <p><strong>${data.name}</strong></p>
+        <p>${data.description}</p>
         <p>Prix : ${data.price}</p>
         <img src="${data.image}" width="100">
       </div>
