@@ -1,20 +1,32 @@
  <!DOCTYPE html>
 <html>
 <head>
-  <title>Dashboard Commerçant</title>
   <meta charset="UTF-8">
+  <title>Dashboard Marchand</title>
 </head>
 <body>
 
-<h2>Dashboard Commerçant</h2>
-<p id="status"></p>
-<button onclick="logout()">Se déconnecter</button>
+<h2 id="welcome"></h2>
+<div id="status"></div>
+<div id="dashboard" style="display:none;">
+  <h3>Dashboard Marchand</h3>
+  <p>Vous pouvez maintenant ajouter des produits.</p>
+</div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+import { 
+  getAuth, 
+  onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+import { 
+  getFirestore, 
+  doc,
+  getDoc 
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
@@ -29,49 +41,51 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const statusText = document.getElementById("status");
-
-// ✅ UNE SEULE fonction logout
-window.logout = async function() {
-  await signOut(auth);
-  alert("Déconnecté !");
-  window.location.href = "merchant-register.html";
-};
+const welcome = document.getElementById("welcome");
+const statusDiv = document.getElementById("status");
+const dashboard = document.getElementById("dashboard");
 
 onAuthStateChanged(auth, async (user) => {
 
   if (!user) {
-    statusText.innerText = "Accès refusé. Non connecté.";
-    window.location.href = "merchant-register.html";
+    window.location.href = "index.html";
     return;
   }
 
-  if (!user.emailVerified) {
-    statusText.innerText = "Vérifie ton email avant d'accéder.";
+  welcome.innerText = "Bienvenue " + user.email;
+
+  const merchantDoc = await getDoc(doc(db, "merchants", user.uid));
+
+  if (!merchantDoc.exists()) {
+    statusDiv.innerHTML = "<p>Erreur compte introuvable.</p>";
     return;
   }
 
-  const docRef = doc(db, "merchants", user.uid);
-  const docSnap = await getDoc(docRef);
+  const data = merchantDoc.data();
 
-  if (!docSnap.exists()) {
-    statusText.innerText = "Profil introuvable.";
-    return;
+  // 🔒 Vérification validation
+  if (data.verified !== true) {
+
+    statusDiv.innerHTML = `
+      <h3 style="color:red;">
+        Votre compte est en attente de validation.
+      </h3>
+      <p>Contactez l’administrateur.</p>
+    `;
+
+    dashboard.style.display = "none";
+
+  } else {
+
+    statusDiv.innerHTML = `
+      <h3 style="color:green;">
+        Compte validé ✅
+      </h3>
+      <p>Badge : ${data.badge}</p>
+    `;
+
+    dashboard.style.display = "block";
   }
-
-  const data = docSnap.data();
-
-  if (data.role !== "merchant" && data.role !== "admin") {
-    statusText.innerText = "Accès non autorisé.";
-    return;
-  }
-
-  if (data.role === "merchant" && data.verified === false) {
-    statusText.innerText = "Compte en attente de validation admin.";
-    return;
-  }
-
-  statusText.innerText = "Bienvenue " + data.shopName;
 
 });
 
