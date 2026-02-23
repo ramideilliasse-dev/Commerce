@@ -8,9 +8,22 @@
 
 <h2 id="welcome"></h2>
 <div id="status"></div>
+
 <div id="dashboard" style="display:none;">
-  <h3>Dashboard Marchand</h3>
-  <p>Vous pouvez maintenant ajouter des produits.</p>
+
+  <h3>Ajouter un produit</h3>
+
+  <input id="productName" placeholder="Nom du produit"><br><br>
+  <input id="productPrice" placeholder="Prix"><br><br>
+  <input id="productImage" placeholder="URL image"><br><br>
+
+  <button onclick="addProduct()">Ajouter</button>
+
+  <hr>
+
+  <h3>Mes produits</h3>
+  <div id="myProducts"></div>
+
 </div>
 
 <script type="module">
@@ -25,7 +38,12 @@ import {
 import { 
   getFirestore, 
   doc,
-  getDoc 
+  getDoc,
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -45,6 +63,8 @@ const welcome = document.getElementById("welcome");
 const statusDiv = document.getElementById("status");
 const dashboard = document.getElementById("dashboard");
 
+let currentUser;
+
 onAuthStateChanged(auth, async (user) => {
 
   if (!user) {
@@ -52,18 +72,19 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
+  currentUser = user;
+
   welcome.innerText = "Bienvenue " + user.email;
 
   const merchantDoc = await getDoc(doc(db, "merchants", user.uid));
 
   if (!merchantDoc.exists()) {
-    statusDiv.innerHTML = "<p>Erreur compte introuvable.</p>";
+    statusDiv.innerHTML = "<p>Compte introuvable.</p>";
     return;
   }
 
   const data = merchantDoc.data();
 
-  // 🔒 Vérification validation
   if (data.verified !== true) {
 
     statusDiv.innerHTML = `
@@ -85,9 +106,64 @@ onAuthStateChanged(auth, async (user) => {
     `;
 
     dashboard.style.display = "block";
+    loadMyProducts();
   }
 
 });
+
+window.addProduct = async function() {
+
+  const name = document.getElementById("productName").value;
+  const price = document.getElementById("productPrice").value;
+  const image = document.getElementById("productImage").value;
+
+  if (!name || !price) {
+    alert("Remplis tous les champs");
+    return;
+  }
+
+  await addDoc(collection(db, "products"), {
+    name: name,
+    price: price,
+    image: image,
+    merchantId: currentUser.uid,
+    createdAt: new Date()
+  });
+
+  alert("Produit ajouté !");
+
+  document.getElementById("productName").value = "";
+  document.getElementById("productPrice").value = "";
+  document.getElementById("productImage").value = "";
+
+  loadMyProducts();
+};
+
+async function loadMyProducts() {
+
+  const q = query(
+    collection(db, "products"),
+    where("merchantId", "==", currentUser.uid)
+  );
+
+  const querySnapshot = await getDocs(q);
+
+  const container = document.getElementById("myProducts");
+  container.innerHTML = "";
+
+  querySnapshot.forEach((docSnap) => {
+
+    const data = docSnap.data();
+
+    container.innerHTML += `
+      <div style="border:1px solid black; padding:10px; margin:10px;">
+        <p><strong>${data.name}</strong></p>
+        <p>Prix : ${data.price}</p>
+        <img src="${data.image}" width="100">
+      </div>
+    `;
+  });
+}
 
 </script>
 
