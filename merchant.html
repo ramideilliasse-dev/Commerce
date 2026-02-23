@@ -17,7 +17,8 @@
   <input id="productPrice" placeholder="Prix"><br><br>
   <textarea id="productDescription" placeholder="Description"></textarea><br><br>
 
-  <input type="file" id="productImageFile"><br><br>
+  <!-- 🔥 MULTI IMAGES -->
+  <input type="file" id="productImages" multiple><br><br>
 
   <button onclick="addProduct()">Ajouter</button>
 
@@ -96,35 +97,40 @@ window.addProduct = async function() {
   const name = document.getElementById("productName").value;
   const price = document.getElementById("productPrice").value;
   const description = document.getElementById("productDescription").value;
-  const file = document.getElementById("productImageFile").files[0];
+  const files = document.getElementById("productImages").files;
 
-  if (!name || !price || !description || !file) {
+  if (!name || !price || !description || files.length === 0) {
     alert("Remplis tous les champs");
     return;
   }
 
-  // 🔥 Upload vers Cloudinary
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("upload_preset", "angcomerce-upload");
+  let imageUrls = [];
 
-  const response = await fetch(
-    "https://api.cloudinary.com/v1_1/df2oxw2qp/image/upload",
-    {
-      method: "POST",
-      body: formData
-    }
-  );
+  // 🔥 Upload chaque image
+  for (let i = 0; i < files.length; i++) {
 
-  const data = await response.json();
-  const imageUrl = data.secure_url;
+    const formData = new FormData();
+    formData.append("file", files[i]);
+    formData.append("upload_preset", "angcomerce-upload");
+
+    const response = await fetch(
+      "https://api.cloudinary.com/v1_1/df2oxw2qp/image/upload",
+      {
+        method: "POST",
+        body: formData
+      }
+    );
+
+    const data = await response.json();
+    imageUrls.push(data.secure_url);
+  }
 
   // 🔥 Sauvegarde Firestore
   await addDoc(collection(db, "products"), {
     name,
     price,
     description,
-    image: imageUrl,
+    images: imageUrls,
     merchantId: currentUser.uid,
     createdAt: new Date()
   });
@@ -149,12 +155,20 @@ async function loadMyProducts() {
 
     const data = docSnap.data();
 
+    let imagesHTML = "";
+
+    if (data.images) {
+      data.images.forEach(img => {
+        imagesHTML += `<img src="${img}" width="80" style="margin:5px;">`;
+      });
+    }
+
     container.innerHTML += `
       <div style="border:1px solid black; padding:10px; margin:10px;">
         <p><strong>${data.name}</strong></p>
         <p>${data.description}</p>
         <p>Prix : ${data.price}</p>
-        <img src="${data.image}" width="100">
+        <div>${imagesHTML}</div>
       </div>
     `;
   });
