@@ -19,7 +19,19 @@
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+import { 
+  getAuth, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword,
+  sendEmailVerification
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+import { 
+  getFirestore, 
+  doc, 
+  setDoc 
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
@@ -31,14 +43,61 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getFirestore(app);
 
-// 🔥 TEST DIRECT FIRESTORE
-await setDoc(doc(db, "testCollection", "testDoc"), {
-  message: "Firestore fonctionne"
+const message = document.getElementById("message");
+
+// =======================
+// 🔥 INSCRIPTION
+// =======================
+document.getElementById("registerBtn").addEventListener("click", async () => {
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  try {
+
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    // 📩 Envoi email verification
+    await sendEmailVerification(user);
+
+    // 🗂 Création document Firestore
+    await setDoc(doc(db, "merchants", user.uid), {
+      email: user.email,
+      role: "merchant",
+      verified: false,
+      badge: "non-verifie",
+      createdAt: new Date()
+    });
+
+    message.innerText = "Compte créé ! Vérifie ton email avant de te connecter.";
+
+  } catch(error) {
+    console.error(error);
+    message.innerText = error.message;
+  }
+
 });
 
-alert("Test envoyé");
+// =======================
+// 🔐 CONNEXION
+// =======================
+document.getElementById("loginBtn").addEventListener("click", async () => {
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    window.location.href = "merchant.html";
+  } catch(error) {
+    message.innerText = error.message;
+  }
+
+});
 
 </script>
 
