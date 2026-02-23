@@ -19,7 +19,16 @@
 
   <!-- 🔥 MULTI IMAGES -->
   <input type="file" id="productImages" multiple><br><br>
-
+  <select id="productCategory">
+  <option value="">Choisir une catégorie</option>
+  <option value="Electronique">Electronique</option>
+  <option value="Vêtements">Vêtements</option>
+  <option value="Chaussures">Chaussures</option>
+  <option value="Maison">Maison</option>
+  <option value="Beauté">Beauté</option>
+  <option value="Autre">Autre</option>
+</select>
+<br><br>
   <button onclick="addProduct()">Ajouter</button>
 
   <hr>
@@ -97,7 +106,13 @@ window.addProduct = async function() {
   const name = document.getElementById("productName").value;
   const price = document.getElementById("productPrice").value;
   const description = document.getElementById("productDescription").value;
-  const files = document.getElementById("productImages").files;
+   const category = document.getElementById("productCategory").value;
+
+if (!category) {
+  alert("Choisir une catégorie");
+  return;
+}
+ const files = document.getElementById("productImages").files;
 
   if (!name || !price || !description || files.length === 0) {
     alert("Remplis tous les champs");
@@ -131,7 +146,8 @@ window.addProduct = async function() {
     price,
     description,
     images: imageUrls,
-    merchantId: currentUser.uid,
+    category,
+   merchantId: currentUser.uid,
     createdAt: new Date()
   });
 
