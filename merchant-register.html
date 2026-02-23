@@ -1,27 +1,36 @@
- <!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-  <title>Inscription Commerçant</title>
-  <meta charset="UTF-8">
+<meta charset="UTF-8">
+<title>Connexion Commerçant</title>
 </head>
 <body>
 
-<h2>Inscription Commerçant</h2>
+<h2>Connexion / Inscription Commerçant</h2>
 
-<input id="shopName" placeholder="Nom de la boutique"><br><br>
-<input id="email" type="email" placeholder="Email"><br><br>
-<input id="password" type="password" placeholder="Mot de passe"><br><br>
-<input id="phone" placeholder="Numéro WhatsApp"><br><br>
+<input type="email" id="email" placeholder="Email"><br><br>
+<input type="password" id="password" placeholder="Mot de passe"><br><br>
 
-<button onclick="register()">S'inscrire</button>
+<button id="registerBtn">S'inscrire</button>
+<button id="loginBtn">Se connecter</button>
 
 <p id="message"></p>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { 
+  getAuth, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword,
+  sendEmailVerification
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+import { 
+  getFirestore, 
+  doc, 
+  setDoc 
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
@@ -30,62 +39,61 @@ const firebaseConfig = {
   storageBucket: "angcomerce-v1.firebasestorage.app",
   messagingSenderId: "238735890157",
   appId: "1:238735890157:web:db3f87960db7916d7fdee4"
-};    
+};
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const ADMIN_EMAIL = "ADMIN_EMAIL_HERE";
+const message = document.getElementById("message");
 
-window.register = async function() {
+// ✅ INSCRIPTION
+document.getElementById("registerBtn").addEventListener("click", async () => {
 
-  const shopName = document.getElementById("shopName").value;
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
-  const phone = document.getElementById("phone").value;
-  const message = document.getElementById("message");
-
-  if (!shopName || !email || !password || !phone) {
-    message.innerText = "Remplis tous les champs.";
-    return;
-  }
 
   try {
 
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
+    // 📩 Envoi email verification
     await sendEmailVerification(user);
 
-    let role = "merchant";
-    let verified = false;
-    let badge = "none";
-
-    if (email === ADMIN_EMAIL) {
-      role = "admin";
-      verified = true;
-      badge = "admin";
-    }
-
+    // 🗂 Création document Firestore
     await setDoc(doc(db, "merchants", user.uid), {
-      shopName: shopName,
       email: email,
-      phone: phone,
-      role: role,
-      verified: verified,
-      badge: badge,
+      role: "merchant",
+      verified: false,
+      badge: "non-verifie",
       createdAt: new Date()
     });
 
-    message.innerText = "Compte créé ! Vérifie ton email.";
+    message.innerText = "Compte créé. Vérifie ton email.";
 
-  } catch (error) {
+  } catch(error) {
     message.innerText = error.message;
   }
 
-}
+});
+
+// ✅ CONNEXION
+document.getElementById("loginBtn").addEventListener("click", async () => {
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    window.location.href = "merchant.html";
+  } catch(error) {
+    message.innerText = error.message;
+  }
+
+});
 
 </script>
 
 </body>
-</html>
+</html> 
