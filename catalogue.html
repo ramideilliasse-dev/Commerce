@@ -83,8 +83,11 @@ header {
 </head>
 <body>
 
-<header>
+<header style="display:flex; justify-content:space-between; align-items:center;">
   <h2>Nos Produits</h2>
+  <div onclick="goToCart()" style="cursor:pointer; font-size:18px;">
+    🛒 <span id="cartCount">0</span>
+  </div>
 </header>
 
 <!-- 🔎 FILTRES -->
@@ -207,7 +210,16 @@ categoryFilter.addEventListener("change", filterProducts);
 window.openProduct = function(id){
   window.location.href = "product.html?id=" + id;
 }
+function updateCartCount(){
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  document.getElementById("cartCount").innerText = cart.length;
+}
 
+window.goToCart = function(){
+  window.location.href = "cart.html";
+}
+
+updateCartCount();
 loadProducts();
 
 </script>
