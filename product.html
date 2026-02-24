@@ -79,7 +79,7 @@ button{
   <p id="productDescription"></p>
   <div class="price" id="productPrice"></div>
 
-  <button onclick="order()">Commander sur WhatsApp</button>
+  <button onclick="addToCart()">Ajouter au panier</button>
 
 </div>
 
@@ -144,7 +144,28 @@ window.order = function(){
   const url = `https://wa.me/TON_NUMERO_WHATSAPP?text=${encodeURIComponent(message)}`;
   window.open(url, "_blank");
 }
+window.addToCart = function(){
 
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  const existingProduct = cart.find(item => item.id === productId);
+
+  if(existingProduct){
+    existingProduct.quantity += 1;
+  } else {
+    cart.push({
+      id: productId,
+      name: productData.name,
+      price: productData.price,
+      image: images[0],
+      quantity: 1
+    });
+  }
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+
+  alert("Produit ajouté au panier 🛒");
+}
 loadProduct();
 
 </script>
