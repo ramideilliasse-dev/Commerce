@@ -17,24 +17,31 @@
   <input id="productPrice" placeholder="Prix"><br><br>
   <textarea id="productDescription" placeholder="Description"></textarea><br><br>
 
-  <!-- 🔥 MULTI IMAGES -->
   <input type="file" id="productImages" multiple><br><br>
+
   <select id="productCategory">
-  <option value="">Choisir une catégorie</option>
-  <option value="Electronique">Electronique</option>
-  <option value="Vêtements">Vêtements</option>
-  <option value="Chaussures">Chaussures</option>
-  <option value="Maison">Maison</option>
-  <option value="Beauté">Beauté</option>
-  <option value="Autre">Autre</option>
-</select>
-<br><br>
+    <option value="">Choisir une catégorie</option>
+    <option value="Electronique">Electronique</option>
+    <option value="Vêtements">Vêtements</option>
+    <option value="Chaussures">Chaussures</option>
+    <option value="Maison">Maison</option>
+    <option value="Beauté">Beauté</option>
+    <option value="Autre">Autre</option>
+  </select>
+  <br><br>
+
   <button onclick="addProduct()">Ajouter</button>
 
   <hr>
 
   <h3>Mes produits</h3>
   <div id="myProducts"></div>
+
+  <hr>
+
+  <!-- 🔥 DASHBOARD COMMANDES -->
+  <h3>Mes Commandes</h3>
+  <div id="merchantOrders"></div>
 
 </div>
 
@@ -50,7 +57,8 @@ import {
   addDoc, 
   query, 
   where, 
-  getDocs 
+  getDocs,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -97,6 +105,7 @@ onAuthStateChanged(auth, async (user) => {
 
     dashboard.style.display = "block";
     loadMyProducts();
+    loadMerchantOrders(); // 🔥 charger commandes
   }
 
 });
@@ -106,22 +115,16 @@ window.addProduct = async function() {
   const name = document.getElementById("productName").value;
   const price = document.getElementById("productPrice").value;
   const description = document.getElementById("productDescription").value;
-   const category = document.getElementById("productCategory").value;
+  const category = document.getElementById("productCategory").value;
+  const files = document.getElementById("productImages").files;
 
-if (!category) {
-  alert("Choisir une catégorie");
-  return;
-}
- const files = document.getElementById("productImages").files;
-
-  if (!name || !price || !description || files.length === 0) {
+  if (!name || !price || !description || !category || files.length === 0) {
     alert("Remplis tous les champs");
     return;
   }
 
   let imageUrls = [];
 
-  // 🔥 Upload chaque image
   for (let i = 0; i < files.length; i++) {
 
     const formData = new FormData();
@@ -140,14 +143,13 @@ if (!category) {
     imageUrls.push(data.secure_url);
   }
 
-  // 🔥 Sauvegarde Firestore
   await addDoc(collection(db, "products"), {
     name,
     price,
     description,
     images: imageUrls,
     category,
-   merchantId: currentUser.uid,
+    merchantId: currentUser.uid,
     createdAt: new Date()
   });
 
@@ -172,7 +174,6 @@ async function loadMyProducts() {
     const data = docSnap.data();
 
     let imagesHTML = "";
-
     if (data.images) {
       data.images.forEach(img => {
         imagesHTML += `<img src="${img}" width="80" style="margin:5px;">`;
@@ -189,6 +190,68 @@ async function loadMyProducts() {
     `;
   });
 }
+
+
+
+
+
+
+// 🔥 DASHBOARD COMMANDES MARCHAND
+
+async function loadMerchantOrders() {
+
+  const q = query(
+    collection(db, "orders"),
+    where("merchantId", "==", currentUser.uid)
+  );
+
+  const snapshot = await getDocs(q);
+
+  const container = document.getElementById("merchantOrders");
+  container.innerHTML = "";
+
+  if (snapshot.empty) {
+    container.innerHTML = "<p>Aucune commande pour le moment.</p>";
+    return;
+  }
+
+  snapshot.forEach(docSnap => {
+
+    const data = docSnap.data();
+
+    container.innerHTML += `
+      <div style="border:1px solid green; padding:10px; margin:10px;">
+        <p><strong>Client :</strong> ${data.customerName}</p>
+        <p><strong>Téléphone :</strong> ${data.customerPhone}</p>
+        <p><strong>Produit :</strong> ${data.productName}</p>
+        <p><strong>Quantité :</strong> ${data.quantity}</p>
+        <p><strong>Total :</strong> ${data.totalPrice}</p>
+        <p><strong>Status :</strong> ${data.status}</p>
+
+        <button onclick="updateOrderStatus('${docSnap.id}', 'Validée')">
+          Valider
+        </button>
+
+        <button onclick="updateOrderStatus('${docSnap.id}', 'Expédiée')">
+          Expédier
+        </button>
+
+      </div>
+    `;
+  });
+}
+
+
+
+window.updateOrderStatus = async function(orderId, newStatus) {
+
+  await updateDoc(doc(db, "orders", orderId), {
+    status: newStatus
+  });
+
+  alert("Statut mis à jour !");
+  loadMerchantOrders();
+};
 
 </script>
 
