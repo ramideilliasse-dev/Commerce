@@ -1,0 +1,88 @@
+ <!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Dashboard Admin</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#f4f4f4;
+  padding:20px;
+}
+
+.container{
+  max-width:900px;
+  margin:auto;
+  background:white;
+  padding:20px;
+  border-radius:10px;
+}
+
+.order{
+  border:1px solid #ddd;
+  padding:15px;
+  margin-bottom:15px;
+  border-radius:8px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Dashboard Commandes</h2>
+  <div id="ordersList"></div>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
+  authDomain: "angcomerce-v1.firebaseapp.com",
+  projectId: "angcomerce-v1",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const container = document.getElementById("ordersList");
+
+async function loadOrders(){
+
+  const snapshot = await getDocs(collection(db, "orders"));
+
+  container.innerHTML = "";
+
+  snapshot.forEach(doc => {
+
+    const data = doc.data();
+
+    let itemsHTML = "";
+
+    data.items.forEach(item => {
+      itemsHTML += `
+        <p>${item.name} x${item.quantity}</p>
+      `;
+    });
+
+    container.innerHTML += `
+      <div class="order">
+        <strong>Status:</strong> ${data.status}<br>
+        <strong>Date:</strong> ${data.createdAt.toDate()}<br>
+        ${itemsHTML}
+      </div>
+    `;
+  });
+
+}
+
+loadOrders();
+
+</script>
+
+</body>
+</html>
