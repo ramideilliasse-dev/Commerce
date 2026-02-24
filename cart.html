@@ -47,7 +47,7 @@ button{
 }
 
 .checkout{
-  background:#25D366;
+  background:#111;
   color:white;
   border:none;
   padding:12px;
@@ -63,11 +63,26 @@ button{
   <h2>Mon Panier 🛒</h2>
   <div id="cartItems"></div>
   <div class="total" id="totalPrice"></div>
-  <button class="checkout" onclick="checkout()">Commander via WhatsApp</button>
+  <button class="checkout" onclick="checkout()">Valider la commande</button>
 </div>
 
-<script>
+<script type="module">
 
+/* 🔥 FIREBASE */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
+  authDomain: "angcomerce-v1.firebaseapp.com",
+  projectId: "angcomerce-v1",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+/* 🛒 LOAD CART */
 function loadCart(){
 
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -96,10 +111,11 @@ function loadCart(){
     `;
   });
 
-  document.getElementById("totalPrice").innerText = "Total: " + total;
+  document.getElementById("totalPrice").innerText = "Total: " + total + " Kz";
 }
 
-function changeQty(index, change){
+/* ➕➖ QUANTITÉ */
+window.changeQty = function(index, change){
 
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -113,14 +129,16 @@ function changeQty(index, change){
   loadCart();
 }
 
-function removeItem(index){
+/* ❌ SUPPRIMER */
+window.removeItem = function(index){
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
   cart.splice(index,1);
   localStorage.setItem("cart", JSON.stringify(cart));
   loadCart();
 }
 
-function checkout(){
+/* ✅ ENVOYER COMMANDE VERS FIREBASE */
+window.checkout = async function(){
 
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -129,14 +147,17 @@ function checkout(){
     return;
   }
 
-  let message = "Bonjour je veux commander :%0A";
-
-  cart.forEach(item => {
-    message += `${item.name} x${item.quantity} - ${item.price}%0A`;
+  await addDoc(collection(db, "orders"), {
+    items: cart,
+    createdAt: new Date(),
+    status: "Nouvelle"
   });
 
-  const url = `https://wa.me/TON_NUMERO_WHATSAPP?text=${message}`;
-  window.open(url, "_blank");
+  localStorage.removeItem("cart");
+
+  alert("Commande envoyée avec succès ✅");
+
+  window.location.reload();
 }
 
 loadCart();
