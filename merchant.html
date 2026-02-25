@@ -1,8 +1,8 @@
  <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard Marchand</title>
+<meta charset="UTF-8">
+<title>Dashboard Marchand</title>
 </head>
 <body>
 
@@ -14,7 +14,7 @@
   <h3>Ajouter un produit</h3>
 
   <input id="productName" placeholder="Nom du produit"><br><br>
-  <input id="productPrice" placeholder="Prix"><br><br>
+  <input id="productPrice" type="number" placeholder="Prix"><br><br>
   <textarea id="productDescription" placeholder="Description"></textarea><br><br>
 
   <input type="file" id="productImages" multiple><br><br>
@@ -39,7 +39,6 @@
 
   <hr>
 
-  <!-- 🔥 DASHBOARD COMMANDES -->
   <h3>Mes Commandes</h3>
   <div id="merchantOrders"></div>
 
@@ -58,7 +57,8 @@ import {
   query, 
   where, 
   getDocs,
-  updateDoc
+  updateDoc,
+  deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -105,16 +105,21 @@ onAuthStateChanged(auth, async (user) => {
 
     dashboard.style.display = "block";
     loadMyProducts();
-    loadMerchantOrders(); // 🔥 charger commandes
+    loadMerchantOrders();
   }
 
 });
 
+
+// =========================
+// AJOUT PRODUIT
+// =========================
+
 window.addProduct = async function() {
 
-  const name = document.getElementById("productName").value;
+  const name = document.getElementById("productName").value.trim();
   const price = document.getElementById("productPrice").value;
-  const description = document.getElementById("productDescription").value;
+  const description = document.getElementById("productDescription").value.trim();
   const category = document.getElementById("productCategory").value;
   const files = document.getElementById("productImages").files;
 
@@ -145,7 +150,7 @@ window.addProduct = async function() {
 
   await addDoc(collection(db, "products"), {
     name,
-    price,
+    price: Number(price),
     description,
     images: imageUrls,
     category,
@@ -156,6 +161,11 @@ window.addProduct = async function() {
   alert("Produit ajouté !");
   loadMyProducts();
 };
+
+
+// =========================
+// MES PRODUITS
+// =========================
 
 async function loadMyProducts() {
 
@@ -184,19 +194,39 @@ async function loadMyProducts() {
       <div style="border:1px solid black; padding:10px; margin:10px;">
         <p><strong>${data.name}</strong></p>
         <p>${data.description}</p>
-        <p>Prix : ${data.price}</p>
+        <p>Prix : ${data.price} Kz</p>
         <div>${imagesHTML}</div>
+
+        <button onclick="deleteProduct('${docSnap.id}')">
+          Supprimer
+        </button>
+
       </div>
     `;
   });
 }
 
 
+// =========================
+// SUPPRESSION PRODUIT
+// =========================
+
+window.deleteProduct = async function(productId){
+
+  if(confirm("Supprimer ce produit ?")){
+
+    await deleteDoc(doc(db, "products", productId));
+
+    alert("Produit supprimé");
+
+    loadMyProducts();
+  }
+}
 
 
-
-
-// 🔥 DASHBOARD COMMANDES MARCHAND
+// =========================
+// COMMANDES MARCHAND
+// =========================
 
 async function loadMerchantOrders() {
 
@@ -221,11 +251,8 @@ async function loadMerchantOrders() {
 
     container.innerHTML += `
       <div style="border:1px solid green; padding:10px; margin:10px;">
-        <p><strong>Client :</strong> ${data.customerName}</p>
-        <p><strong>Téléphone :</strong> ${data.customerPhone}</p>
-        <p><strong>Produit :</strong> ${data.productName}</p>
+        <p><strong>Produit :</strong> ${data.productId}</p>
         <p><strong>Quantité :</strong> ${data.quantity}</p>
-        <p><strong>Total :</strong> ${data.totalPrice}</p>
         <p><strong>Status :</strong> ${data.status}</p>
 
         <button onclick="updateOrderStatus('${docSnap.id}', 'Validée')">
@@ -242,6 +269,9 @@ async function loadMerchantOrders() {
 }
 
 
+// =========================
+// UPDATE STATUS
+// =========================
 
 window.updateOrderStatus = async function(orderId, newStatus) {
 
