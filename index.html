@@ -1,98 +1,185 @@
  <!DOCTYPE html>
 <html lang="pt">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AngoCommerce - Marketplace Angola</title>
-
-<style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#f4f4f4;
-  text-align:center;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AngoCommerce - Marketplace Angola</title>
+  
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f4f4;
+    }
+    
+    header {
+      background: linear-gradient(135deg, #000, #333);
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+    }
+    
+    header h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    
+    header p {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+    
+    .container {
+      padding: 30px 20px;
+      text-align: center;
+    }
+    
+    .welcome-box {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+      margin-bottom: 30px;
+    }
+    
+    .welcome-box h2 {
+      margin-top: 0;
+    }
+    
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    button {
+      width: 100%;
+      max-width: 350px;
+      padding: 15px;
+      margin: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    
+    .primary {
+      background: #000;
+      color: white;
+    }
+    
+    .primary:hover {
+      background: #222;
+    }
+    
+    .secondary {
+      background: white;
+      border: 2px solid #000;
+    }
+    
+    .secondary:hover {
+      background: #000;
+      color: white;
+    }
+    
+    .footer {
+      margin-top: 40px;
+      padding: 20px;
+      font-size: 14px;
+      text-align: center;
+      color: #777;
+    }
+.promo-banner {
+  background: linear-gradient(135deg, #ff6600, #ff9900);
+  color: white;
+  padding: 30px 20px;
+  text-align: center;
 }
 
-header{
-  background:#111;
-  color:white;
-  padding:20px;
+.promo-banner h2 {
+  margin: 0 0 10px 0;
 }
 
-h1{
-  margin:0;
+.promo-banner button {
+  background: white;
+  color: #ff6600;
+  font-weight: bold;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
 }
 
-.container{
-  padding:30px;
+.promo-banner button:hover {
+  opacity: 0.9;
 }
-
-button{
-  width:90%;
-  max-width:350px;
-  padding:15px;
-  margin:10px;
-  font-size:16px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-}
-
-.primary{
-  background:#000;
-  color:white;
-}
-
-.secondary{
-  background:white;
-  border:2px solid #000;
-}
-
-.footer{
-  margin-top:40px;
-  padding:20px;
-  font-size:14px;
-  color:#666;
-}
-</style>
+  </style>
 </head>
 
 <body>
-
-<header>
-  <h1>🛍 AngoCommerce</h1>
-  <p>Marketplace Digital de Angola 🇦🇴</p>
-</header>
-
-<div class="container">
-
-  <button class="primary" onclick="goTo('catalogue.html')">
-    🛒 Ver Produtos
+  
+  <header>
+    <h1>🛍 AngoCommerce</h1>
+    <p>A sua Marketplace Digital de Confiança em Angola 🇦🇴</p>
+<div class="promo-banner">
+  <h2>💰 Ganhe até 500.000 Kz vendendo online!</h2>
+  <p>
+    Transforme o seu negócio em digital.
+    Venda em toda Angola 🇦🇴 e aumente os seus lucros com AngoCommerce.
+  </p>
+  
+  <button onclick="goTo('merchant-register.html')">
+    Começar a Vender Agora
   </button>
-
-  <button class="secondary" onclick="goTo('merchant-register.html')">
-    👤 Sou Comerciante
-  </button>
-
-  <button class="secondary" onclick="goTo('merchant-login.html')">
-    🔑 Login Comerciante
-  </button>
-
-  <button class="secondary" onclick="goTo('cart.html')">
-    🛍 Ver Carrinho
-  </button>
-
 </div>
-
-<div class="footer">
-  © 2026 AngoCommerce - Todos os direitos reservados
-</div>
-
-<script>
-function goTo(page){
-  window.location.href = page;
-}
-</script>
-
+  </header>
+  
+  <div class="container">
+    
+    <div class="welcome-box">
+      <h2>Bem-vindo ao AngoCommerce</h2>
+      <p>
+        Conectamos comerciantes e clientes em toda Angola.
+        Venda os seus produtos online, alcance mais clientes
+        e desenvolva o seu negócio com tecnologia moderna.
+      </p>
+    </div>
+    
+    <div class="buttons">
+      
+      <button class="primary" onclick="goTo('catalogue.html')">
+        🛒 Explorar Produtos
+      </button>
+      
+      <button class="secondary" onclick="goTo('merchant-register.html')">
+        👤 Tornar-se Comerciante
+      </button>
+      
+      <button class="secondary" onclick="goTo('merchant-login.html')">
+        🔑 Login Comerciante
+      </button>
+      
+      <button class="secondary" onclick="goTo('cart.html')">
+        🛍 Ver Carrinho
+      </button>
+      
+    </div>
+    
+  </div>
+  
+  <div class="footer">
+    © 2026 AngoCommerce • Marketplace Oficial de Angola 🇦🇴
+  </div>
+  
+  <script>
+    function goTo(page) {
+      window.location.href = page;
+    }
+  </script>
+  
 </body>
+
 </html>
