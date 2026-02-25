@@ -1,66 +1,137 @@
  <!DOCTYPE html>
-<html>
+<html lang="pt">
 <head>
-<meta charset="UTF-8">
-<title>Panier</title>
+  <meta charset="UTF-8">
+  <title>Carrinho - AngoCommerce</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .cart-item {
+      background: white;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cart-info {
+      text-align: left;
+    }
+
+    .remove-btn {
+      background: red;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .remove-btn:hover {
+      opacity: 0.8;
+    }
+
+    .total-box {
+      background: black;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+      text-align: center;
+      font-size: 18px;
+    }
+
+    .empty {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 18px;
+      color: gray;
+    }
+
+    .back-btn {
+      margin-top: 20px;
+      display: block;
+      text-align: center;
+      padding: 12px;
+      background: black;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+    }
+  </style>
 </head>
+
 <body>
 
-<h2>Votre Panier</h2>
+<h1>🛍 Seu Carrinho</h1>
 
-<div id="cartItems"></div>
+<div id="cartContainer"></div>
 
-<h3 id="total"></h3>
+<div id="totalContainer"></div>
 
-<button onclick="checkout()">Commander par WhatsApp</button>
+<a href="catalogue.html" class="back-btn">⬅ Continuar Comprando</a>
 
 <script>
+  function loadCart() {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    let container = document.getElementById("cartContainer");
+    let totalContainer = document.getElementById("totalContainer");
 
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    container.innerHTML = "";
+    totalContainer.innerHTML = "";
 
-let container = document.getElementById("cartItems");
+    if (cart.length === 0) {
+      container.innerHTML = "<p class='empty'>Seu carrinho está vazio 😢</p>";
+      return;
+    }
 
-let total = 0;
+    let total = 0;
 
-cart.forEach(p => {
+    cart.forEach((product, index) => {
+      total += product.price;
 
-  total += Number(p.price);
+      container.innerHTML += `
+        <div class="cart-item">
+          <div class="cart-info">
+            <strong>${product.name}</strong><br>
+            ${product.price.toLocaleString()} Kz
+          </div>
+          <button class="remove-btn" onclick="removeItem(${index})">
+            ❌ Remover
+          </button>
+        </div>
+      `;
+    });
 
-  container.innerHTML += `
-    <div style="border:1px solid black; margin:10px; padding:10px;">
-      <p>${p.name}</p>
-      <p>${p.price} Kz</p>
-    </div>
-  `;
-});
-
-document.getElementById("total").innerText = "Total: " + total + " Kz";
-
-
-function checkout(){
-
-  if(cart.length === 0){
-    alert("Panier vide");
-    return;
+    totalContainer.innerHTML = `
+      <div class="total-box">
+        Total: ${total.toLocaleString()} Kz
+      </div>
+    `;
   }
 
-  let message = "Nouvelle commande:%0A";
+  function removeItem(index) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart.splice(index, 1);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    loadCart();
+  }
 
-  cart.forEach(p=>{
-    message += `${p.name} - ${p.price} Kz%0A`;
-  });
-
-  message += `%0ATotal: ${total} Kz`;
-
-  // ⚠️ MET TON NUMERO WHATSAPP ADMIN ICI
-  let phone = "244XXXXXXXXX";
-
-  window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
-
-  localStorage.removeItem("cart");
-
-}
-
+  loadCart();
 </script>
 
 </body>
