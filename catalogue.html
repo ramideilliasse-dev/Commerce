@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Catálogo de Produtos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
@@ -81,6 +82,7 @@ button {
   border-radius:6px;
   margin-top:8px;
   width:100%;
+  cursor:pointer;
 }
 
 .add-btn {
@@ -149,7 +151,6 @@ const container = document.getElementById("productList");
 async function loadProducts() {
 
   const snapshot = await getDocs(collection(db, "products"));
-
   container.innerHTML = "";
 
   snapshot.forEach(doc => {
@@ -168,13 +169,13 @@ async function loadProducts() {
 
         <div class="card-content">
           <h4>${data.name}</h4>
-          <div class="price">${data.price} Kz</div>
+          <div class="price">${Number(data.price).toLocaleString()} Kz</div>
           <div class="city">Cidade: ${data.merchantCity || "Não informada"}</div>
 
           <button class="add-btn" onclick='addToCart({
             id:"${id}",
             name:"${data.name}",
-            price:${data.price},
+            price:${Number(data.price)},
             merchantId:"${data.merchantId}"
           })'>
             Adicionar ao carrinho
@@ -200,14 +201,22 @@ window.contactWhatsApp = function(phone,name,price){
 
   const message = `Olá, tenho interesse no produto: ${name} - ${price} Kz`;
   const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-
   window.open(url, "_blank");
 }
 
 window.addToCart = function(product){
+
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
-  cart.push(product);
+
+  cart.push({
+    id: product.id,
+    name: product.name,
+    price: Number(product.price),
+    merchantId: product.merchantId
+  });
+
   localStorage.setItem("cart", JSON.stringify(cart));
+
   updateCartCount();
   alert("Produto adicionado ao carrinho");
 }
