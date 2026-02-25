@@ -1,103 +1,76 @@
  <!DOCTYPE html>
-<html lang="fr">
+<html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Connexion Commerçant</title>
+<title>Registo Comerciante</title>
+
+<style>
+body{font-family:Arial;background:#f4f4f4;padding:20px}
+input,button{width:100%;padding:12px;margin-bottom:10px}
+button{background:#111;color:white;border:none;border-radius:6px}
+.box{background:white;padding:20px;border-radius:10px}
+</style>
 </head>
+
 <body>
 
-<h2>Connexion / Inscription Commerçant</h2>
+<div class="box">
+<h2>Criar Conta Comerciante</h2>
 
-<input type="email" id="email" placeholder="Email"><br><br>
-<input type="password" id="password" placeholder="Mot de passe"><br><br>
+<input id="merchantName" placeholder="Nome da Loja">
+<input id="merchantPhone" placeholder="Telefone WhatsApp (244...)">
+<input id="merchantCity" placeholder="Cidade">
 
-<button id="registerBtn">S'inscrire</button>
-<button id="loginBtn">Se connecter</button>
+<button onclick="createMerchant()">Criar Conta</button>
 
-<p id="message"></p>
+</div>
+
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-
-import { 
-  getAuth, 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword,
-  sendEmailVerification
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-import { 
-  getFirestore, 
-  doc, 
-  setDoc 
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
   authDomain: "angcomerce-v1.firebaseapp.com",
   projectId: "angcomerce-v1",
-  storageBucket: "angcomerce-v1.firebasestorage.app",
-  messagingSenderId: "238735890157",
-  appId: "1:238735890157:web:db3f87960db7916d7fdee4"
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getFirestore(app);
 
-const message = document.getElementById("message");
+window.createMerchant = async function(){
 
-// =======================
-// 🔥 INSCRIPTION
-// =======================
-document.getElementById("registerBtn").addEventListener("click", async () => {
+  const name = document.getElementById("merchantName").value.trim();
+  const phone = document.getElementById("merchantPhone").value.trim();
+  const city = document.getElementById("merchantCity").value.trim();
 
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+  if(!name || !phone || !city){
+    alert("Preencha todos os campos!");
+    return;
+  }
 
-  try {
+  try{
 
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-
-    // 📩 Envoi email verification
-    await sendEmailVerification(user);
-
-    // 🗂 Création document Firestore
-    await setDoc(doc(db, "merchants", user.uid), {
-      email: user.email,
-      role: "merchant",
-      verified: false,
-      badge: "non-verifie",
+    const docRef = await addDoc(collection(db,"merchants"),{
+      name:name,
+      phone:phone,
+      city:city,
       createdAt: new Date()
     });
 
-    message.innerText = "Compte créé ! Vérifie ton email avant de te connecter.";
+    localStorage.setItem("merchantId", docRef.id);
 
-  } catch(error) {
-    console.error(error);
-    message.innerText = error.message;
-  }
+    alert("Conta criada com sucesso!");
 
-});
-
-// =======================
-// 🔐 CONNEXION
-// =======================
-document.getElementById("loginBtn").addEventListener("click", async () => {
-
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
     window.location.href = "merchant.html";
-  } catch(error) {
-    message.innerText = error.message;
-  }
 
-});
+  }catch(error){
+    alert("Erro: " + error.message);
+  }
+}
 
 </script>
 
