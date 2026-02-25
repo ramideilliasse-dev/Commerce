@@ -15,7 +15,9 @@ header {
   background:#111;
   color:white;
   padding:15px;
-  text-align:center;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
 .filters {
@@ -46,7 +48,6 @@ header {
   border-radius:12px;
   overflow:hidden;
   box-shadow:0 5px 15px rgba(0,0,0,0.1);
-  cursor:pointer;
   transition:0.3s;
 }
 
@@ -58,19 +59,11 @@ header {
   width:100%;
   height:220px;
   object-fit:cover;
+  cursor:pointer;
 }
 
 .card-content {
   padding:15px;
-}
-
-.card h3 {
-  margin:0;
-}
-
-.card p {
-  color:#555;
-  font-size:14px;
 }
 
 .price {
@@ -78,19 +71,28 @@ header {
   color:green;
   margin-top:10px;
 }
+
+button {
+  padding:8px 12px;
+  border:none;
+  background:#111;
+  color:white;
+  border-radius:6px;
+  cursor:pointer;
+  margin-top:10px;
+}
 </style>
 
 </head>
 <body>
 
-<header style="display:flex; justify-content:space-between; align-items:center;">
+<header>
   <h2>Nos Produits</h2>
   <div onclick="goToCart()" style="cursor:pointer; font-size:18px;">
     🛒 <span id="cartCount">0</span>
   </div>
 </header>
 
-<!-- 🔎 FILTRES -->
 <div class="filters">
   <input type="text" id="searchInput" placeholder="Rechercher un produit...">
   <input type="number" id="minPrice" placeholder="Prix min">
@@ -107,7 +109,6 @@ header {
   </select>
 </div>
 
-<!-- 🛍 PRODUITS -->
 <div class="products" id="productList"></div>
 
 <script type="module">
@@ -166,12 +167,22 @@ function displayProducts(products){
     }
 
     container.innerHTML += `
-      <div class="card" onclick="openProduct('${data.id}')">
-        <img src="${firstImage}">
+      <div class="card">
+        <img src="${firstImage}" onclick="openProduct('${data.id}')">
         <div class="card-content">
           <h3>${data.name}</h3>
           <p>${data.description}</p>
-          <div class="price">${data.price}</div>
+          <div class="price">${data.price} Kz</div>
+
+          <button onclick='addToCart({
+            id:"${data.id}",
+            name:"${data.name}",
+            price:${data.price},
+            merchantId:"${data.merchantId}"
+          })'>
+            Ajouter au panier
+          </button>
+
         </div>
       </div>
     `;
@@ -191,12 +202,10 @@ function filterProducts(){
     const nameMatch = product.name.toLowerCase().includes(searchValue);
     const priceNumber = parseFloat(product.price) || 0;
     const priceMatch = priceNumber >= min && priceNumber <= max;
-
     const categoryMatch = selectedCategory === "" || 
                           product.category === selectedCategory;
 
     return nameMatch && priceMatch && categoryMatch;
-
   });
 
   displayProducts(filtered);
@@ -210,6 +219,21 @@ categoryFilter.addEventListener("change", filterProducts);
 window.openProduct = function(id){
   window.location.href = "product.html?id=" + id;
 }
+
+// PANIER
+window.addToCart = function(product){
+
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  cart.push(product);
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+
+  updateCartCount();
+
+  alert("Produit ajouté au panier");
+}
+
 function updateCartCount(){
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
   document.getElementById("cartCount").innerText = cart.length;
