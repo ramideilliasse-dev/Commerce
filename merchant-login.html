@@ -1,0 +1,101 @@
+ <!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Comerciante</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#f4f4f4;
+  padding:20px;
+}
+.box{
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  max-width:400px;
+  margin:auto;
+}
+input,button{
+  width:100%;
+  padding:12px;
+  margin-bottom:10px;
+}
+button{
+  background:#111;
+  color:white;
+  border:none;
+  border-radius:6px;
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h2>Login Comerciante</h2>
+
+<input id="email" type="email" placeholder="Email">
+<input id="password" type="password" placeholder="Senha">
+
+<button onclick="login()">Entrar</button>
+
+<p style="text-align:center;">
+Não tem conta?  
+<a href="merchant-register.html">Criar Conta</a>
+</p>
+
+</div>
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { 
+  getAuth, 
+  signInWithEmailAndPassword,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
+  authDomain: "angcomerce-v1.firebaseapp.com",
+  projectId: "angcomerce-v1",
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+
+window.login = async function(){
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if(!email || !password){
+    alert("Preencha todos os campos!");
+    return;
+  }
+
+  try{
+    await signInWithEmailAndPassword(auth, email, password);
+    alert("Login com sucesso!");
+    window.location.href = "merchant.html";
+  }catch(error){
+    alert("Erro: Email ou senha incorretos.");
+  }
+}
+
+
+// 🔐 Si déjà connecté → redirection auto
+onAuthStateChanged(auth, (user)=>{
+  if(user){
+    window.location.href = "merchant.html";
+  }
+});
+
+</script>
+
+</body>
+</html>
