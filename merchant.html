@@ -1,65 +1,47 @@
  <!DOCTYPE html>
-<html>
+<html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Dashboard Marchand</title>
+<title>Painel do Comerciante</title>
+
+<style>
+body{font-family:Arial;background:#f4f4f4;margin:0;padding:20px}
+input,button{width:100%;padding:10px;margin-bottom:10px}
+button{background:#111;color:white;border:none;border-radius:6px}
+.section{background:white;padding:15px;border-radius:10px;margin-bottom:20px}
+h3{margin-top:0}
+</style>
 </head>
+
 <body>
 
-<h2 id="welcome"></h2>
-<div id="status"></div>
+<div class="section">
+<h3>Criar Conta Comerciante</h3>
 
-<div id="dashboard" style="display:none;">
+<input id="merchantName" placeholder="Nome da Loja">
+<input id="merchantPhone" placeholder="Telefone WhatsApp (244...)">
+<input id="merchantCity" placeholder="Cidade">
 
-  <h3>Ajouter un produit</h3>
-
-  <input id="productName" placeholder="Nom du produit"><br><br>
-  <input id="productPrice" type="number" placeholder="Prix"><br><br>
-  <textarea id="productDescription" placeholder="Description"></textarea><br><br>
-
-  <input type="file" id="productImages" multiple><br><br>
-
-  <select id="productCategory">
-    <option value="">Choisir une catégorie</option>
-    <option value="Electronique">Electronique</option>
-    <option value="Vêtements">Vêtements</option>
-    <option value="Chaussures">Chaussures</option>
-    <option value="Maison">Maison</option>
-    <option value="Beauté">Beauté</option>
-    <option value="Autre">Autre</option>
-  </select>
-  <br><br>
-
-  <button onclick="addProduct()">Ajouter</button>
-
-  <hr>
-
-  <h3>Mes produits</h3>
-  <div id="myProducts"></div>
-
-  <hr>
-
-  <h3>Mes Commandes</h3>
-  <div id="merchantOrders"></div>
-
+<button onclick="createMerchant()">Criar Conta</button>
 </div>
+
+
+<div class="section">
+<h3>Adicionar Produto</h3>
+
+<input id="productName" placeholder="Nome do Produto">
+<input id="productPrice" placeholder="Preço (Kz)" type="number">
+<input id="productImage" placeholder="URL da Imagem">
+
+<button onclick="addProduct()">Publicar Produto</button>
+</div>
+
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { 
-  getFirestore, 
-  doc, 
-  getDoc, 
-  collection, 
-  addDoc, 
-  query, 
-  where, 
-  getDocs,
-  updateDoc,
-  deleteDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, doc, getDoc } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
@@ -68,220 +50,63 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getFirestore(app);
 
-let currentUser;
+let currentMerchantId = localStorage.getItem("merchantId");
 
-const welcome = document.getElementById("welcome");
-const statusDiv = document.getElementById("status");
-const dashboard = document.getElementById("dashboard");
 
-onAuthStateChanged(auth, async (user) => {
+// 🔵 CRÉATION COMPTE
+window.createMerchant = async function(){
 
-  if (!user) {
-    window.location.href = "index.html";
+  const name = document.getElementById("merchantName").value;
+  const phone = document.getElementById("merchantPhone").value;
+  const city = document.getElementById("merchantCity").value;
+
+  if(!name || !phone || !city){
+    alert("Preencha todos os campos");
     return;
   }
 
-  currentUser = user;
-  welcome.innerText = "Bienvenue " + user.email;
+  const docRef = await addDoc(collection(db,"merchants"),{
+    name:name,
+    phone:phone,
+    city:city
+  });
 
-  const merchantDoc = await getDoc(doc(db, "merchants", user.uid));
+  localStorage.setItem("merchantId", docRef.id);
+  currentMerchantId = docRef.id;
 
-  if (!merchantDoc.exists() || merchantDoc.data().verified !== true) {
+  alert("Conta criada com sucesso!");
+}
 
-    statusDiv.innerHTML = `
-      <h3 style="color:red;">
-        Votre compte est en attente de validation.
-      </h3>
-    `;
 
-  } else {
+// 🔵 AJOUT PRODUIT
+window.addProduct = async function(){
 
-    statusDiv.innerHTML = `
-      <h3 style="color:green;">Compte validé ✅</h3>
-    `;
-
-    dashboard.style.display = "block";
-    loadMyProducts();
-    loadMerchantOrders();
+  if(!currentMerchantId){
+    alert("Crie sua conta primeiro");
+    return;
   }
 
-});
-
-
-// =========================
-// AJOUT PRODUIT
-// =========================
-
-window.addProduct = async function() {
-
-  const name = document.getElementById("productName").value.trim();
+  const name = document.getElementById("productName").value;
   const price = document.getElementById("productPrice").value;
-  const description = document.getElementById("productDescription").value.trim();
-  const category = document.getElementById("productCategory").value;
-  const files = document.getElementById("productImages").files;
+  const image = document.getElementById("productImage").value;
 
-  if (!name || !price || !description || !category || files.length === 0) {
-    alert("Remplis tous les champs");
-    return;
-  }
+  const merchantDoc = await getDoc(doc(db,"merchants",currentMerchantId));
+  const merchantData = merchantDoc.data();
 
-  let imageUrls = [];
-
-  for (let i = 0; i < files.length; i++) {
-
-    const formData = new FormData();
-    formData.append("file", files[i]);
-    formData.append("upload_preset", "angcomerce-upload");
-
-    const response = await fetch(
-      "https://api.cloudinary.com/v1_1/df2oxw2qp/image/upload",
-      {
-        method: "POST",
-        body: formData
-      }
-    );
-
-    const data = await response.json();
-    imageUrls.push(data.secure_url);
-  }
-
-  await addDoc(collection(db, "products"), {
-    name,
-    price: Number(price),
-    description,
-    images: imageUrls,
-    category,
-    merchantId: currentUser.uid,
-    createdAt: new Date()
+  await addDoc(collection(db,"products"),{
+    name:name,
+    price:Number(price),
+    images:[image],
+    merchantId:currentMerchantId,
+    merchantPhone:merchantData.phone,
+    merchantCity:merchantData.city,
+    merchantName:merchantData.name
   });
 
-  alert("Produit ajouté !");
-  loadMyProducts();
-};
-
-
-// =========================
-// MES PRODUITS
-// =========================
-
-async function loadMyProducts() {
-
-  const q = query(
-    collection(db, "products"),
-    where("merchantId", "==", currentUser.uid)
-  );
-
-  const snapshot = await getDocs(q);
-
-  const container = document.getElementById("myProducts");
-  container.innerHTML = "";
-
-  snapshot.forEach(docSnap => {
-
-    const data = docSnap.data();
-
-    let imagesHTML = "";
-    if (data.images) {
-      data.images.forEach(img => {
-        imagesHTML += `<img src="${img}" width="80" style="margin:5px;">`;
-      });
-    }
-
-    container.innerHTML += `
-      <div style="border:1px solid black; padding:10px; margin:10px;">
-        <p><strong>${data.name}</strong></p>
-        <p>${data.description}</p>
-        <p>Prix : ${data.price} Kz</p>
-        <div>${imagesHTML}</div>
-
-        <button onclick="deleteProduct('${docSnap.id}')">
-          Supprimer
-        </button>
-
-      </div>
-    `;
-  });
+  alert("Produto publicado com sucesso!");
 }
-
-
-// =========================
-// SUPPRESSION PRODUIT
-// =========================
-
-window.deleteProduct = async function(productId){
-
-  if(confirm("Supprimer ce produit ?")){
-
-    await deleteDoc(doc(db, "products", productId));
-
-    alert("Produit supprimé");
-
-    loadMyProducts();
-  }
-}
-
-
-// =========================
-// COMMANDES MARCHAND
-// =========================
-
-async function loadMerchantOrders() {
-
-  const q = query(
-    collection(db, "orders"),
-    where("merchantId", "==", currentUser.uid)
-  );
-
-  const snapshot = await getDocs(q);
-
-  const container = document.getElementById("merchantOrders");
-  container.innerHTML = "";
-
-  if (snapshot.empty) {
-    container.innerHTML = "<p>Aucune commande pour le moment.</p>";
-    return;
-  }
-
-  snapshot.forEach(docSnap => {
-
-    const data = docSnap.data();
-
-    container.innerHTML += `
-      <div style="border:1px solid green; padding:10px; margin:10px;">
-        <p><strong>Produit :</strong> ${data.productId}</p>
-        <p><strong>Quantité :</strong> ${data.quantity}</p>
-        <p><strong>Status :</strong> ${data.status}</p>
-
-        <button onclick="updateOrderStatus('${docSnap.id}', 'Validée')">
-          Valider
-        </button>
-
-        <button onclick="updateOrderStatus('${docSnap.id}', 'Expédiée')">
-          Expédier
-        </button>
-
-      </div>
-    `;
-  });
-}
-
-
-// =========================
-// UPDATE STATUS
-// =========================
-
-window.updateOrderStatus = async function(orderId, newStatus) {
-
-  await updateDoc(doc(db, "orders", orderId), {
-    status: newStatus
-  });
-
-  alert("Statut mis à jour !");
-  loadMerchantOrders();
-};
 
 </script>
 
