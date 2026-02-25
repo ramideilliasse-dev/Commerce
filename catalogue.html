@@ -1,8 +1,8 @@
  <!DOCTYPE html>
-<html>
+<html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Catalogue Produits</title>
+<title>Catálogo de Produtos</title>
 
 <style>
 body {
@@ -20,27 +20,29 @@ header {
   align-items:center;
 }
 
-.filters {
-  background:white;
-  padding:15px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  justify-content:center;
+.cart-box {
+  position:relative;
+  font-size:26px;
+  cursor:pointer;
 }
 
-.filters input,
-.filters select {
-  padding:8px;
-  border-radius:6px;
-  border:1px solid #ccc;
+.cart-count {
+  position:absolute;
+  top:-8px;
+  right:-10px;
+  background:red;
+  color:white;
+  border-radius:50%;
+  padding:5px 9px;
+  font-size:14px;
+  font-weight:bold;
 }
 
 .products {
   display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap:20px;
-  padding:20px;
+  grid-template-columns: repeat(2, 1fr);
+  gap:15px;
+  padding:15px;
 }
 
 .card {
@@ -48,68 +50,84 @@ header {
   border-radius:12px;
   overflow:hidden;
   box-shadow:0 5px 15px rgba(0,0,0,0.1);
-  transition:0.3s;
-}
-
-.card:hover {
-  transform:translateY(-5px);
 }
 
 .card img {
   width:100%;
-  height:220px;
+  height:180px;
   object-fit:cover;
   cursor:pointer;
 }
 
 .card-content {
-  padding:15px;
+  padding:10px;
 }
 
 .price {
   font-weight:bold;
   color:green;
-  margin-top:10px;
+  margin-top:5px;
+}
+
+.city {
+  font-size:13px;
+  color:#666;
+  margin-top:5px;
 }
 
 button {
-  padding:8px 12px;
+  padding:8px;
   border:none;
+  border-radius:6px;
+  margin-top:8px;
+  width:100%;
+}
+
+.add-btn {
   background:#111;
   color:white;
-  border-radius:6px;
-  cursor:pointer;
-  margin-top:10px;
+}
+
+.whatsapp-btn {
+  background:#25D366;
+  color:white;
+}
+
+#imageModal {
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.9);
+  justify-content:center;
+  align-items:center;
+}
+
+#imageModal img {
+  max-width:95%;
+  max-height:95%;
 }
 </style>
-
 </head>
+
 <body>
 
 <header>
-  <h2>Nos Produits</h2>
-  <div onclick="goToCart()" style="cursor:pointer; font-size:18px;">
-    🛒 <span id="cartCount">0</span>
+  <h2>Produtos</h2>
+
+  <div class="cart-box" onclick="goToCart()">
+    🛒
+    <span id="cartCount" class="cart-count">0</span>
   </div>
 </header>
 
-<div class="filters">
-  <input type="text" id="searchInput" placeholder="Rechercher un produit...">
-  <input type="number" id="minPrice" placeholder="Prix min">
-  <input type="number" id="maxPrice" placeholder="Prix max">
-
-  <select id="categoryFilter">
-    <option value="">Toutes catégories</option>
-    <option value="Electronique">Electronique</option>
-    <option value="Vêtements">Vêtements</option>
-    <option value="Chaussures">Chaussures</option>
-    <option value="Maison">Maison</option>
-    <option value="Beauté">Beauté</option>
-    <option value="Autre">Autre</option>
-  </select>
-</div>
-
 <div class="products" id="productList"></div>
+
+<div id="imageModal" onclick="closeImage()">
+  <img id="modalImg">
+</div>
 
 <script type="module">
 
@@ -126,40 +144,18 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-let allProducts = [];
-
 const container = document.getElementById("productList");
-const searchInput = document.getElementById("searchInput");
-const minPrice = document.getElementById("minPrice");
-const maxPrice = document.getElementById("maxPrice");
-const categoryFilter = document.getElementById("categoryFilter");
 
 async function loadProducts() {
 
   const snapshot = await getDocs(collection(db, "products"));
 
-  allProducts = [];
-
-  snapshot.forEach(doc => {
-    allProducts.push({
-      id: doc.id,
-      ...doc.data()
-    });
-  });
-
-  displayProducts(allProducts);
-}
-
-function displayProducts(products){
-
   container.innerHTML = "";
 
-  if(products.length === 0){
-    container.innerHTML = "<p>Aucun produit trouvé</p>";
-    return;
-  }
+  snapshot.forEach(doc => {
 
-  products.forEach(data => {
+    const data = doc.data();
+    const id = doc.id;
 
     let firstImage = "";
     if (data.images && data.images.length > 0) {
@@ -168,70 +164,52 @@ function displayProducts(products){
 
     container.innerHTML += `
       <div class="card">
-        <img src="${firstImage}" onclick="openProduct('${data.id}')">
-        <div class="card-content">
-          <h3>${data.name}</h3>
-          <p>${data.description}</p>
-          <div class="price">${data.price} Kz</div>
+        <img src="${firstImage}" onclick="showImage('${firstImage}')">
 
-          <button onclick='addToCart({
-            id:"${data.id}",
+        <div class="card-content">
+          <h4>${data.name}</h4>
+          <div class="price">${data.price} Kz</div>
+          <div class="city">Cidade: ${data.merchantCity || "Não informada"}</div>
+
+          <button class="add-btn" onclick='addToCart({
+            id:"${id}",
             name:"${data.name}",
             price:${data.price},
             merchantId:"${data.merchantId}"
           })'>
-            Ajouter au panier
+            Adicionar ao carrinho
+          </button>
+
+          <button class="whatsapp-btn"
+            onclick="contactWhatsApp('${data.merchantPhone}','${data.name}','${data.price}')">
+            Falar no WhatsApp
           </button>
 
         </div>
       </div>
     `;
   });
-
 }
 
-function filterProducts(){
+window.contactWhatsApp = function(phone,name,price){
 
-  const searchValue = searchInput.value.toLowerCase();
-  const min = parseFloat(minPrice.value) || 0;
-  const max = parseFloat(maxPrice.value) || Infinity;
-  const selectedCategory = categoryFilter.value;
+  if(!phone){
+    alert("Número do vendedor não disponível");
+    return;
+  }
 
-  const filtered = allProducts.filter(product => {
+  const message = `Olá, tenho interesse no produto: ${name} - ${price} Kz`;
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 
-    const nameMatch = product.name.toLowerCase().includes(searchValue);
-    const priceNumber = parseFloat(product.price) || 0;
-    const priceMatch = priceNumber >= min && priceNumber <= max;
-    const categoryMatch = selectedCategory === "" || 
-                          product.category === selectedCategory;
-
-    return nameMatch && priceMatch && categoryMatch;
-  });
-
-  displayProducts(filtered);
+  window.open(url, "_blank");
 }
 
-searchInput.addEventListener("input", filterProducts);
-minPrice.addEventListener("input", filterProducts);
-maxPrice.addEventListener("input", filterProducts);
-categoryFilter.addEventListener("change", filterProducts);
-
-window.openProduct = function(id){
-  window.location.href = "product.html?id=" + id;
-}
-
-// PANIER
 window.addToCart = function(product){
-
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
   cart.push(product);
-
   localStorage.setItem("cart", JSON.stringify(cart));
-
   updateCartCount();
-
-  alert("Produit ajouté au panier");
+  alert("Produto adicionado ao carrinho");
 }
 
 function updateCartCount(){
@@ -241,6 +219,15 @@ function updateCartCount(){
 
 window.goToCart = function(){
   window.location.href = "cart.html";
+}
+
+window.showImage = function(src){
+  document.getElementById("modalImg").src = src;
+  document.getElementById("imageModal").style.display = "flex";
+}
+
+window.closeImage = function(){
+  document.getElementById("imageModal").style.display = "none";
 }
 
 updateCartCount();
