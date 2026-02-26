@@ -1,137 +1,219 @@
  <!DOCTYPE html>
-<html lang="pt">
+<html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Carrinho - AngoCommerce</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon Panier</title>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 20px;
-    }
+<style>
+body{
+  font-family:Arial;
+  margin:0;
+  background:#f2f2f2;
+}
 
-    h1 {
-      text-align: center;
-    }
+header{
+  background:#111;
+  color:white;
+  padding:15px;
+  text-align:center;
+}
 
-    .cart-item {
-      background: white;
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 10px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+.container{
+  padding:15px;
+}
 
-    .cart-info {
-      text-align: left;
-    }
+.cart-item{
+  background:white;
+  border-radius:15px;
+  padding:15px;
+  margin-bottom:15px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.08);
+}
 
-    .remove-btn {
-      background: red;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
+.cart-item h4{
+  margin:0;
+}
 
-    .remove-btn:hover {
-      opacity: 0.8;
-    }
+.price{
+  color:green;
+  font-weight:bold;
+  margin-top:5px;
+}
 
-    .total-box {
-      background: black;
-      color: white;
-      padding: 15px;
-      border-radius: 10px;
-      margin-top: 20px;
-      text-align: center;
-      font-size: 18px;
-    }
+.qty-box{
+  display:flex;
+  align-items:center;
+  margin-top:10px;
+}
 
-    .empty {
-      text-align: center;
-      margin-top: 40px;
-      font-size: 18px;
-      color: gray;
-    }
+.qty-box button{
+  width:30px;
+  height:30px;
+  border:none;
+  background:#111;
+  color:white;
+  border-radius:5px;
+  cursor:pointer;
+}
 
-    .back-btn {
-      margin-top: 20px;
-      display: block;
-      text-align: center;
-      padding: 12px;
-      background: black;
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-    }
-  </style>
+.qty-box span{
+  margin:0 10px;
+  font-weight:bold;
+}
+
+.remove-btn{
+  margin-top:10px;
+  background:red;
+  color:white;
+  border:none;
+  padding:8px;
+  width:100%;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.total-box{
+  background:white;
+  padding:15px;
+  border-radius:15px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.08);
+  margin-top:20px;
+}
+
+.total{
+  font-size:18px;
+  font-weight:bold;
+}
+
+.checkout-btn{
+  background:#25D366;
+  color:white;
+  border:none;
+  padding:12px;
+  width:100%;
+  border-radius:10px;
+  margin-top:10px;
+  cursor:pointer;
+  font-size:16px;
+}
+</style>
 </head>
 
 <body>
 
-<h1>🛍 Seu Carrinho</h1>
+<header>
+  <h2>🛒 Mon Panier</h2>
+</header>
 
-<div id="cartContainer"></div>
+<div class="container">
 
-<div id="totalContainer"></div>
+  <div id="cartItems"></div>
 
-<a href="catalogue.html" class="back-btn">⬅ Continuar Comprando</a>
+  <div class="total-box">
+    <div class="total">
+      Total: <span id="totalPrice">0</span> Kz
+    </div>
+    <button class="checkout-btn" onclick="checkoutWhatsApp()">
+      Commander sur WhatsApp
+    </button>
+  </div>
+
+</div>
 
 <script>
-  function loadCart() {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    let container = document.getElementById("cartContainer");
-    let totalContainer = document.getElementById("totalContainer");
 
-    container.innerHTML = "";
-    totalContainer.innerHTML = "";
+function loadCart(){
 
-    if (cart.length === 0) {
-      container.innerHTML = "<p class='empty'>Seu carrinho está vazio 😢</p>";
-      return;
-    }
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const container = document.getElementById("cartItems");
+  container.innerHTML = "";
 
-    let total = 0;
+  let total = 0;
 
-    cart.forEach((product, index) => {
-      total += product.price;
+  cart.forEach((item,index)=>{
 
-      container.innerHTML += `
-        <div class="cart-item">
-          <div class="cart-info">
-            <strong>${product.name}</strong><br>
-            ${product.price.toLocaleString()} Kz
-          </div>
-          <button class="remove-btn" onclick="removeItem(${index})">
-            ❌ Remover
-          </button>
+    let quantity = item.quantity || 1;
+    let subtotal = item.price * quantity;
+    total += subtotal;
+
+    container.innerHTML += `
+      <div class="cart-item">
+        <h4>${item.name}</h4>
+        <div class="price">${item.price} Kz</div>
+
+        <div class="qty-box">
+          <button onclick="changeQty(${index}, -1)">-</button>
+          <span>${quantity}</span>
+          <button onclick="changeQty(${index}, 1)">+</button>
         </div>
-      `;
-    });
 
-    totalContainer.innerHTML = `
-      <div class="total-box">
-        Total: ${total.toLocaleString()} Kz
+        <div>Subtotal: ${subtotal} Kz</div>
+
+        <button class="remove-btn" onclick="removeItem(${index})">
+          Supprimer
+        </button>
       </div>
     `;
+  });
+
+  document.getElementById("totalPrice").innerText = total;
+}
+
+function changeQty(index,change){
+
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  if(!cart[index].quantity){
+    cart[index].quantity = 1;
   }
 
-  function removeItem(index) {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    cart.splice(index, 1);
-    localStorage.setItem("cart", JSON.stringify(cart));
-    loadCart();
+  cart[index].quantity += change;
+
+  if(cart[index].quantity <= 0){
+    cart.splice(index,1);
   }
 
+  localStorage.setItem("cart",JSON.stringify(cart));
   loadCart();
+}
+
+function removeItem(index){
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  cart.splice(index,1);
+  localStorage.setItem("cart",JSON.stringify(cart));
+  loadCart();
+}
+
+function checkoutWhatsApp(){
+
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  if(cart.length === 0){
+    alert("Panier vide");
+    return;
+  }
+
+  let message = "Bonjour, je veux commander :\n\n";
+  let total = 0;
+
+  cart.forEach(item=>{
+    let quantity = item.quantity || 1;
+    let subtotal = item.price * quantity;
+    total += subtotal;
+    message += `- ${item.name} x${quantity} = ${subtotal} Kz\n`;
+  });
+
+  message += `\nTotal: ${total} Kz`;
+
+  const phone = "244XXXXXXXXX"; // 🔥 METS TON NUMERO ICI
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+
+  window.open(url,"_blank");
+}
+
+loadCart();
+
 </script>
 
 </body>
