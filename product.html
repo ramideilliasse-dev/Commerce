@@ -1,28 +1,46 @@
  <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
 <title>Détail Produit</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+:root{
+  --bg:#f4f4f4;
+  --card:#ffffff;
+  --text:#222;
+  --primary:#25D366;
+}
+
+body.dark{
+  --bg:#111;
+  --card:#1c1c1c;
+  --text:#fff;
+}
+
 body{
   font-family:Arial;
-  background:#f4f4f4;
+  background:var(--bg);
   margin:0;
   padding:20px;
+  color:var(--text);
+  transition:0.3s;
 }
 
 .container{
-  max-width:600px;
+  max-width:700px;
   margin:auto;
-  background:white;
+  background:var(--card);
   padding:20px;
-  border-radius:10px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+  border-radius:12px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.1);
+  animation:fadeIn 0.6s ease-in-out;
 }
 
 .slider{
   position:relative;
+  text-align:center;
 }
 
 .slider img,
@@ -42,6 +60,7 @@ body{
   border:none;
   padding:10px;
   cursor:pointer;
+  opacity:0.7;
 }
 
 .prev{ left:10px; }
@@ -49,20 +68,43 @@ body{
 
 .price{
   color:green;
-  font-size:20px;
+  font-size:22px;
   font-weight:bold;
+  margin-top:10px;
 }
 
 button{
-  background:#25D366;
   border:none;
   padding:12px;
   width:100%;
-  color:white;
   font-size:16px;
-  border-radius:6px;
+  border-radius:8px;
   margin-top:15px;
   cursor:pointer;
+  transition:0.3s;
+}
+
+.cart-btn{
+  background:#111;
+  color:white;
+}
+
+.cart-btn:hover{
+  transform:scale(1.03);
+}
+
+.whatsapp-btn{
+  background:var(--primary);
+  color:white;
+}
+
+.whatsapp-btn:hover{
+  transform:scale(1.03);
+}
+
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(20px);}
+  to{opacity:1; transform:translateY(0);}
 }
 </style>
 </head>
@@ -70,18 +112,14 @@ button{
 
 <div class="container">
 
-  <div class="slider" id="mediaContainer">
-    <img id="sliderImage">
-    <button class="nav prev" onclick="prevMedia()">‹</button>
-    <button class="nav next" onclick="nextMedia()">›</button>
-  </div>
+  <div class="slider" id="mediaContainer"></div>
 
   <h2 id="productName"></h2>
   <p id="productDescription"></p>
   <div class="price" id="productPrice"></div>
 
-  <button onclick="addToCart()">Ajouter au panier 🛒</button>
-  <button onclick="order()">Commander via WhatsApp</button>
+  <button class="cart-btn" onclick="addToCart()">Ajouter au panier 🛒</button>
+  <button class="whatsapp-btn" onclick="order()">Commander via WhatsApp</button>
 
 </div>
 
@@ -105,47 +143,54 @@ const productId = params.get("id");
 
 let mediaList = [];
 let currentIndex = 0;
-let productData;
+let productData = null;
 let merchantPhone = "";
 
 async function loadProduct(){
 
+  if(!productId){
+    alert("Produit introuvable");
+    return;
+  }
+
   const docRef = doc(db, "products", productId);
   const docSnap = await getDoc(docRef);
 
-  if(docSnap.exists()){
+  if(!docSnap.exists()){
+    alert("Produit supprimé ou introuvable");
+    return;
+  }
 
-    productData = docSnap.data();
+  productData = docSnap.data();
 
-    document.getElementById("productName").innerText = productData.name;
-    document.getElementById("productDescription").innerText = productData.description;
-    document.getElementById("productPrice").innerText = productData.price + " Kz";
+  document.getElementById("productName").innerText = productData.name || "";
+  document.getElementById("productDescription").innerText = productData.description || "";
+  document.getElementById("productPrice").innerText =
+    Number(productData.price).toLocaleString() + " Kz";
 
-    // Images
-    if(productData.images){
-      productData.images.forEach(img=>{
-        mediaList.push({type:"image", url:img});
-      });
+  // Charger médias
+  if(productData.images){
+    productData.images.forEach(img=>{
+      mediaList.push({type:"image", url:img});
+    });
+  }
+
+  if(productData.video){
+    mediaList.push({type:"video", url:productData.video});
+  }
+
+  if(mediaList.length > 0){
+    displayMedia(0);
+  }
+
+  // Charger téléphone marchand
+  if(productData.merchantId){
+    const merchantRef = doc(db,"merchants",productData.merchantId);
+    const merchantSnap = await getDoc(merchantRef);
+
+    if(merchantSnap.exists()){
+      merchantPhone = merchantSnap.data().phone || "";
     }
-
-    // Video
-    if(productData.video){
-      mediaList.push({type:"video", url:productData.video});
-    }
-
-    if(mediaList.length > 0){
-      displayMedia(0);
-    }
-
-    // Charger téléphone commerçant
-    if(productData.merchantId){
-      const merchantRef = doc(db,"merchants",productData.merchantId);
-      const merchantSnap = await getDoc(merchantRef);
-      if(merchantSnap.exists()){
-        merchantPhone = merchantSnap.data().phone;
-      }
-    }
-
   }
 
 }
@@ -154,23 +199,31 @@ function displayMedia(index){
 
   const container = document.getElementById("mediaContainer");
 
+  if(mediaList.length === 0){
+    container.innerHTML = "<p>Aucun média disponible</p>";
+    return;
+  }
+
+  let html = "";
+
   if(mediaList[index].type === "image"){
-    container.innerHTML = `
-      <img src="${mediaList[index].url}">
-      <button class="nav prev" onclick="prevMedia()">‹</button>
-      <button class="nav next" onclick="nextMedia()">›</button>
-    `;
+    html += `<img src="${mediaList[index].url}">`;
   }
 
   if(mediaList[index].type === "video"){
-    container.innerHTML = `
+    html += `
       <video controls>
         <source src="${mediaList[index].url}">
       </video>
-      <button class="nav prev" onclick="prevMedia()">‹</button>
-      <button class="nav next" onclick="nextMedia()">›</button>
     `;
   }
+
+  html += `
+    <button class="nav prev" onclick="prevMedia()">‹</button>
+    <button class="nav next" onclick="nextMedia()">›</button>
+  `;
+
+  container.innerHTML = html;
 }
 
 window.nextMedia = function(){
@@ -192,19 +245,23 @@ window.order = function(){
     return;
   }
 
-  const message = `Bonjour, je veux commander : ${productData.name} - ${productData.price} Kz`;
+  const message =
+    `Bonjour, je veux commander : ${productData.name} - ${productData.price} Kz`;
+
   const url = `https://wa.me/${merchantPhone}?text=${encodeURIComponent(message)}`;
   window.open(url, "_blank");
 }
 
 window.addToCart = function(){
 
+  if(!productData) return;
+
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  const existingProduct = cart.find(item => item.id === productId);
+  const existing = cart.find(item => item.id === productId);
 
-  if(existingProduct){
-    existingProduct.quantity += 1;
+  if(existing){
+    existing.quantity += 1;
   } else {
     cart.push({
       id: productId,
@@ -216,11 +273,15 @@ window.addToCart = function(){
   }
 
   localStorage.setItem("cart", JSON.stringify(cart));
-
   alert("Produit ajouté au panier 🛒");
 }
 
 loadProduct();
+
+/* Mode sombre automatique selon système */
+if(window.matchMedia("(prefers-color-scheme: dark)").matches){
+  document.body.classList.add("dark");
+}
 
 </script>
 
