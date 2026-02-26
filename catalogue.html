@@ -200,26 +200,18 @@ async function loadProducts(){
   const snapshot = await getDocs(collection(db,"products"));
   allProducts = [];
 
-  for(const document of snapshot.docs){
+  snapshot.forEach(document=>{
 
     const data = document.data();
-    const merchantSnap = await getDoc(doc(db,"merchants",data.merchantId));
-
-    let merchantPhone = "";
-    let merchantCity = "";
-
-    if(merchantSnap.exists()){
-      merchantPhone = merchantSnap.data().phone;
-      merchantCity = merchantSnap.data().city;
-    }
 
     allProducts.push({
       id: document.id,
       ...data,
-      merchantPhone,
-      merchantCity
+      merchantPhone: data.merchantPhone || "",
+      merchantCity: data.merchantCity || "Luanda"
     });
-  }
+
+  });
 
   displayProducts(allProducts);
 }
