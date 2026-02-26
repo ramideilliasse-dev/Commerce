@@ -37,9 +37,10 @@ import {
   addDoc, 
   query, 
   where, 
-  getDocs 
+  getDocs,
+  deleteDoc,
+  doc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
 const firebaseConfig = {
   apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
   authDomain: "angcomerce-v1.firebaseapp.com",
@@ -133,26 +134,57 @@ async function loadMyProducts() {
   snapshot.forEach(docSnap => {
 
     const data = docSnap.data();
+    const productId = docSnap.id;
 
     let imagesHTML = "";
 
     if (data.images) {
       data.images.forEach(img => {
-        imagesHTML += `<img src="${img}" width="80" style="margin:5px;">`;
+        imagesHTML += `<img src="${img}" width="60" style="margin:5px;border-radius:6px;">`;
       });
     }
 
     container.innerHTML += `
-      <div style="border:1px solid black; padding:10px; margin:10px;">
+      <div style="
+        background:white;
+        padding:15px;
+        margin:15px 0;
+        border-radius:12px;
+        box-shadow:0 5px 15px rgba(0,0,0,0.1);
+      ">
         <p><strong>${data.name}</strong></p>
         <p>${data.description}</p>
-        <p>Prix : ${data.price}</p>
+        <p><strong>${data.price} Kz</strong></p>
         <div>${imagesHTML}</div>
+
+        <button onclick="deleteProduct('${productId}')" 
+          style="
+            margin-top:10px;
+            background:red;
+            color:white;
+            border:none;
+            padding:8px 12px;
+            border-radius:8px;
+            cursor:pointer;
+          ">
+          Supprimer
+        </button>
       </div>
     `;
   });
 }
+window.deleteProduct = async function(productId){
 
+  const confirmDelete = confirm("Voulez-vous supprimer ce produit ?");
+
+  if(!confirmDelete) return;
+
+  await deleteDoc(doc(db,"products",productId));
+
+  alert("Produit supprimé avec succès");
+
+  loadMyProducts();
+}
 </script>
 
 </body>
