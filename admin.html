@@ -21,10 +21,6 @@ header{
   align-items:center;
 }
 
-h2{
-  margin:0;
-}
-
 .section{
   padding:20px;
 }
@@ -102,7 +98,8 @@ import {
   getDocs,
   doc,
   updateDoc,
-  deleteDoc
+  deleteDoc,
+  getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -125,6 +122,17 @@ onAuthStateChanged(auth, async(user)=>{
     return;
   }
 
+  // 🔐 Vérification rôle admin
+  const adminRef = doc(db,"users",user.uid);
+  const adminSnap = await getDoc(adminRef);
+
+  if(!adminSnap.exists() || adminSnap.data().role !== "admin"){
+    alert("Accès refusé. Vous n'êtes pas admin.");
+    window.location.href="index.html";
+    return;
+  }
+
+  // Si admin confirmé
   loadStats();
   loadMerchants();
   loadProducts();
@@ -132,7 +140,6 @@ onAuthStateChanged(auth, async(user)=>{
 });
 
 async function loadStats(){
-
   const merchants = await getDocs(collection(db,"merchants"));
   const products = await getDocs(collection(db,"products"));
 
@@ -149,7 +156,6 @@ async function loadMerchants(){
     const data = docSnap.data();
 
     if(data.approved === false){
-
       merchantList.innerHTML += `
         <div class="card">
           ${data.email}<br><br>
@@ -165,12 +171,17 @@ window.approve = async(id)=>{
   await updateDoc(doc(db,"merchants",id),{
     approved:true
   });
+  alert("Commerçant validé !");
   loadMerchants();
+  loadStats();
 };
 
 window.ban = async(id)=>{
-  await deleteDoc(doc(db,"merchants",id));
-  loadMerchants();
+  if(confirm("Supprimer ce commerçant ?")){
+    await deleteDoc(doc(db,"merchants",id));
+    loadMerchants();
+    loadStats();
+  }
 };
 
 async function loadProducts(){
@@ -193,12 +204,17 @@ async function loadProducts(){
 }
 
 window.deleteProduct = async(id)=>{
-  await deleteDoc(doc(db,"products",id));
-  loadProducts();
+  if(confirm("Supprimer ce produit ?")){
+    await deleteDoc(doc(db,"products",id));
+    loadProducts();
+    loadStats();
+  }
 };
 
 window.logout = ()=>{
-  signOut(auth);
+  signOut(auth).then(()=>{
+    window.location.href="index.html";
+  });
 };
 
 </script>
