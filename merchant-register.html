@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Connexion Commerçant</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
@@ -27,7 +28,8 @@ import {
 import { 
   getFirestore, 
   doc, 
-  setDoc 
+  setDoc,
+  getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -62,16 +64,15 @@ document.getElementById("registerBtn").addEventListener("click", async () => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // 🔥 Compte activé automatiquement
+    // 🔒 Compte créé MAIS en attente validation admin
     await setDoc(doc(db, "merchants", user.uid), {
       email: user.email,
       role: "merchant",
-      verified: true,
-      badge: "actif",
+      approved: false,   // ⚠️ IMPORTANT
       createdAt: new Date()
     });
 
-    message.innerText = "Compte créé avec succès !";
+    message.innerText = "Compte créé ! En attente validation de l'admin.";
 
   } catch(error) {
     message.innerText = error.message;
@@ -87,8 +88,29 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
   const password = document.getElementById("password").value;
 
   try {
-    await signInWithEmailAndPassword(auth, email, password);
+
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    // 🔎 Vérifier si approuvé
+    const merchantRef = doc(db, "merchants", user.uid);
+    const merchantSnap = await getDoc(merchantRef);
+
+    if(!merchantSnap.exists()){
+      message.innerText = "Compte marchand introuvable.";
+      return;
+    }
+
+    const merchantData = merchantSnap.data();
+
+    if(!merchantData.approved){
+      message.innerText = "Compte en attente de validation admin.";
+      return;
+    }
+
+    // ✅ Si approuvé → accès dashboard
     window.location.href = "merchant.html";
+
   } catch(error) {
     message.innerText = error.message;
   }
