@@ -1,127 +1,137 @@
  <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<title>Carrinho</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Carrinho - AngoCommerce</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-body{
-  font-family:Arial;
-  background:#f4f4f4;
-  padding:20px;
-}
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
 
-.cart-item{
-  background:white;
-  padding:15px;
-  margin-bottom:10px;
-  border-radius:10px;
-}
+    h1 {
+      text-align: center;
+    }
 
-button{
-  padding:10px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  margin-top:10px;
-  width:100%;
-}
+    .cart-item {
+      background: white;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-.remove-btn{
-  background:red;
-  color:white;
-}
+    .cart-info {
+      text-align: left;
+    }
 
-.whatsapp-btn{
-  background:#25D366;
-  color:white;
-}
-</style>
+    .remove-btn {
+      background: red;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .remove-btn:hover {
+      opacity: 0.8;
+    }
+
+    .total-box {
+      background: black;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+      text-align: center;
+      font-size: 18px;
+    }
+
+    .empty {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 18px;
+      color: gray;
+    }
+
+    .back-btn {
+      margin-top: 20px;
+      display: block;
+      text-align: center;
+      padding: 12px;
+      background: black;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+    }
+  </style>
 </head>
+
 <body>
 
-<h2>Seu Carrinho</h2>
+<h1>🛍 Seu Carrinho</h1>
 
 <div id="cartContainer"></div>
 
+<div id="totalContainer"></div>
+
+<a href="catalogue.html" class="back-btn">⬅ Continuar Comprando</a>
+
 <script>
+  function loadCart() {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    let container = document.getElementById("cartContainer");
+    let totalContainer = document.getElementById("totalContainer");
 
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    container.innerHTML = "";
+    totalContainer.innerHTML = "";
 
-function renderCart(){
-
-  const container = document.getElementById("cartContainer");
-  container.innerHTML = "";
-
-  if(cart.length === 0){
-    container.innerHTML = "<p>Carrinho vazio</p>";
-    return;
-  }
-
-  cart.forEach((item,index)=>{
-    container.innerHTML += `
-      <div class="cart-item">
-        <strong>${item.name}</strong><br>
-        ${item.price.toLocaleString()} Kz
-        <button class="remove-btn" onclick="removeItem(${index})">
-          Remover
-        </button>
-      </div>
-    `;
-  });
-
-  container.innerHTML += `
-    <button class="whatsapp-btn" onclick="orderByWhatsApp()">
-      Finalizar pelo WhatsApp
-    </button>
-  `;
-}
-
-function removeItem(index){
-  cart.splice(index,1);
-  localStorage.setItem("cart", JSON.stringify(cart));
-  renderCart();
-}
-
-function orderByWhatsApp(){
-
-  if(cart.length === 0){
-    alert("Carrinho vazio");
-    return;
-  }
-
-  // Agrupar por vendedor
-  let sellers = {};
-
-  cart.forEach(item=>{
-    if(!sellers[item.merchantPhone]){
-      sellers[item.merchantPhone] = [];
+    if (cart.length === 0) {
+      container.innerHTML = "<p class='empty'>Seu carrinho está vazio 😢</p>";
+      return;
     }
-    sellers[item.merchantPhone].push(item);
-  });
 
-  // Enviar mensagem para cada vendedor
-  for(let phone in sellers){
-
-    let message = "Olá, quero fazer pedido:\n\n";
     let total = 0;
 
-    sellers[phone].forEach(item=>{
-      message += `• ${item.name} - ${item.price} Kz\n`;
-      total += item.price;
+    cart.forEach((product, index) => {
+      total += product.price;
+
+      container.innerHTML += `
+        <div class="cart-item">
+          <div class="cart-info">
+            <strong>${product.name}</strong><br>
+            ${product.price.toLocaleString()} Kz
+          </div>
+          <button class="remove-btn" onclick="removeItem(${index})">
+            ❌ Remover
+          </button>
+        </div>
+      `;
     });
 
-    message += `\nTotal: ${total} Kz`;
-
-    let url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-
-    window.open(url,"_blank");
+    totalContainer.innerHTML = `
+      <div class="total-box">
+        Total: ${total.toLocaleString()} Kz
+      </div>
+    `;
   }
-}
 
-renderCart();
+  function removeItem(index) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart.splice(index, 1);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    loadCart();
+  }
 
+  loadCart();
 </script>
 
 </body>
