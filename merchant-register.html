@@ -29,7 +29,8 @@ button{background:#111;color:white;border:none;border-radius:6px}
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc } 
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, setDoc } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -39,6 +40,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getFirestore(app);
 
 window.createMerchant = async function(){
@@ -47,6 +49,13 @@ window.createMerchant = async function(){
   const phone = document.getElementById("merchantPhone").value.trim();
   const city = document.getElementById("merchantCity").value.trim();
 
+  const user = auth.currentUser;
+
+  if(!user){
+    alert("Precisa fazer login primeiro!");
+    return;
+  }
+
   if(!name || !phone || !city){
     alert("Preencha todos os campos!");
     return;
@@ -54,14 +63,15 @@ window.createMerchant = async function(){
 
   try{
 
-    const docRef = await addDoc(collection(db,"merchants"),{
+    await setDoc(doc(db,"merchants", user.uid),{
       name:name,
       phone:phone,
       city:city,
+      email:user.email,
       createdAt: new Date()
     });
 
-    localStorage.setItem("merchantId", docRef.id);
+    localStorage.setItem("merchantId", user.uid);
 
     alert("Conta criada com sucesso!");
 
