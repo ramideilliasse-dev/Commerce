@@ -102,13 +102,15 @@ window.addProduct = async function() {
   }
 
   await addDoc(collection(db, "products"), {
-    name,
-    price,
-    description,
-    images: imageUrls,
-    merchantId: currentUser.uid,
-    createdAt: new Date()
-  });
+  name,
+  price,
+  description,
+  images: imageUrls,
+  merchantId: currentUser.uid,
+  merchantPhone: currentUser.email, // temporaire
+  merchantCity: "Luanda",
+  createdAt: new Date()
+});
 
   alert("Produit ajouté !");
   loadMyProducts();
