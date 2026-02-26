@@ -1,185 +1,272 @@
  <!DOCTYPE html>
 <html lang="pt">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AngoCommerce - Marketplace Angola</title>
-  
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f4f4f4;
-    }
-    
-    header {
-      background: linear-gradient(135deg, #000, #333);
-      color: white;
-      padding: 40px 20px;
-      text-align: center;
-    }
-    
-    header h1 {
-      font-size: 28px;
-      margin-bottom: 10px;
-    }
-    
-    header p {
-      font-size: 16px;
-      opacity: 0.9;
-    }
-    
-    .container {
-      padding: 30px 20px;
-      text-align: center;
-    }
-    
-    .welcome-box {
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-      margin-bottom: 30px;
-    }
-    
-    .welcome-box h2 {
-      margin-top: 0;
-    }
-    
-    .buttons {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    
-    button {
-      width: 100%;
-      max-width: 350px;
-      padding: 15px;
-      margin: 10px;
-      font-size: 16px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    
-    .primary {
-      background: #000;
-      color: white;
-    }
-    
-    .primary:hover {
-      background: #222;
-    }
-    
-    .secondary {
-      background: white;
-      border: 2px solid #000;
-    }
-    
-    .secondary:hover {
-      background: #000;
-      color: white;
-    }
-    
-    .footer {
-      margin-top: 40px;
-      padding: 20px;
-      font-size: 14px;
-      text-align: center;
-      color: #777;
-    }
-.promo-banner {
-  background: linear-gradient(135deg, #ff6600, #ff9900);
-  color: white;
-  padding: 30px 20px;
-  text-align: center;
+<meta charset="UTF-8">
+<title>ANGCOMERCE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --primary:#ff6a00;
+  --bg:#f5f7fa;
+  --text:#222;
+  --card:#ffffff;
 }
 
-.promo-banner h2 {
-  margin: 0 0 10px 0;
+body.dark{
+  --bg:#111;
+  --text:#fff;
+  --card:#1c1c1c;
 }
 
-.promo-banner button {
-  background: white;
-  color: #ff6600;
-  font-weight: bold;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-top: 10px;
+body{
+  margin:0;
+  font-family:'Segoe UI',Arial;
+  background:var(--bg);
+  color:var(--text);
+  transition:0.4s;
 }
 
-.promo-banner button:hover {
-  opacity: 0.9;
+/* HEADER */
+header{
+  background:var(--card);
+  padding:15px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 2px 10px rgba(0,0,0,0.05);
+  position:sticky;
+  top:0;
+  z-index:100;
 }
-  </style>
+
+.logo{
+  font-size:20px;
+  font-weight:bold;
+  color:var(--primary);
+}
+
+nav a{
+  text-decoration:none;
+  margin-left:15px;
+  color:var(--text);
+  font-size:14px;
+}
+
+.toggle{
+  cursor:pointer;
+  margin-left:15px;
+}
+
+/* HERO */
+.hero{
+  background:linear-gradient(to right,#ff6a00,#ff8c00);
+  color:white;
+  padding:70px 20px;
+  text-align:center;
+  animation:fadeIn 1s ease-in-out;
+}
+
+.hero h1{
+  margin:0;
+  font-size:30px;
+  animation:slideUp 1s ease-in-out;
+}
+
+.hero p{
+  margin-top:10px;
+}
+
+.hero button{
+  margin-top:20px;
+  padding:12px 25px;
+  border:none;
+  border-radius:25px;
+  background:white;
+  color:var(--primary);
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.hero button:hover{
+  transform:scale(1.05);
+}
+
+/* CATEGORIES */
+.categories{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:15px;
+  padding:20px;
+}
+
+.cat-card{
+  background:var(--card);
+  padding:20px;
+  text-align:center;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.05);
+  cursor:pointer;
+  transition:0.3s;
+  animation:fadeIn 1s ease;
+}
+
+.cat-card:hover{
+  transform:translateY(-5px);
+  background:var(--primary);
+  color:white;
+}
+
+/* PRODUCTS */
+.section-title{
+  padding:0 20px;
+  font-size:18px;
+  font-weight:bold;
+}
+
+.products{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:15px;
+  padding:20px;
+}
+
+.card{
+  background:var(--card);
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 4px 12px rgba(0,0,0,0.06);
+  transition:0.3s;
+  animation:fadeIn 1s ease;
+}
+
+.card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 10px 20px rgba(0,0,0,0.12);
+}
+
+.card img{
+  width:100%;
+  height:150px;
+  object-fit:cover;
+}
+
+.card-content{
+  padding:10px;
+}
+
+.price{
+  color:var(--primary);
+  font-weight:bold;
+  margin-top:5px;
+}
+
+/* FOOTER */
+footer{
+  background:#111;
+  color:white;
+  text-align:center;
+  padding:20px;
+  margin-top:30px;
+  font-size:13px;
+}
+
+/* ANIMATIONS */
+@keyframes fadeIn{
+  from{opacity:0;}
+  to{opacity:1;}
+}
+
+@keyframes slideUp{
+  from{transform:translateY(40px); opacity:0;}
+  to{transform:translateY(0); opacity:1;}
+}
+</style>
 </head>
 
 <body>
-  
-  <header>
-    <h1>🛍 AngoCommerce</h1>
-    <p>A sua Marketplace Digital de Confiança em Angola 🇦🇴</p>
-<div class="promo-banner">
-  <h2>💰 Ganhe até 500.000 Kz vendendo online!</h2>
-  <p>
-    Transforme o seu negócio em digital.
-    Venda em toda Angola 🇦🇴 e aumente os seus lucros com AngoCommerce.
-  </p>
-  
-  <button onclick="goTo('merchant-register.html')">
-    Começar a Vender Agora
+
+<header>
+  <div class="logo">ANGCOMERCE</div>
+  <nav>
+    <a href="catalogue.html">Catálogo</a>
+    <a href="merchant-login.html">Vender</a>
+    <span class="toggle" onclick="toggleDark()">🌙</span>
+  </nav>
+</header>
+
+<div class="hero">
+  <h1>Compre e Venda em Angola</h1>
+  <p>Marketplace moderno e rápido</p>
+  <button onclick="window.location.href='catalogue.html'">
+    Ver Produtos
   </button>
 </div>
-  </header>
-  
-  <div class="container">
-    
-    <div class="welcome-box">
-      <h2>Bem-vindo ao AngoCommerce</h2>
-      <p>
-        Conectamos comerciantes e clientes em toda Angola.
-        Venda os seus produtos online, alcance mais clientes
-        e desenvolva o seu negócio com tecnologia moderna.
-      </p>
-    </div>
-    
-    <div class="buttons">
-      
-      <button class="primary" onclick="goTo('catalogue.html')">
-        🛒 Explorar Produtos
-      </button>
-      
-      <button class="secondary" onclick="goTo('merchant-register.html')">
-        👤 Tornar-se Comerciante
-      </button>
-      
-      <button class="secondary" onclick="goTo('merchant-login.html')">
-        🔑 Login Comerciante
-      </button>
-      
-      <button class="secondary" onclick="goTo('cart.html')">
-        🛍 Ver Carrinho
-      </button>
-      
-    </div>
-    
-  </div>
-  
-  <div class="footer">
-    © 2026 AngoCommerce • Marketplace Oficial de Angola 🇦🇴
-  </div>
-  
-  <script>
-    function goTo(page) {
-      window.location.href = page;
-    }
-  </script>
-  
-</body>
 
+<div class="section-title">Categorias</div>
+
+<div class="categories">
+  <div class="cat-card">📱 Eletrônicos</div>
+  <div class="cat-card">👕 Moda</div>
+  <div class="cat-card">🏠 Casa</div>
+  <div class="cat-card">🚗 Automóvel</div>
+</div>
+
+<div class="section-title">Produtos Populares</div>
+
+<div class="products" id="popularProducts"></div>
+
+<footer>
+  © 2026 ANGCOMERCE - Marketplace Angola
+</footer>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs, query, limit } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
+  authDomain: "angcomerce-v1.firebaseapp.com",
+  projectId: "angcomerce-v1",
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const container = document.getElementById("popularProducts");
+
+async function loadPopular(){
+  const q = query(collection(db,"products"), limit(6));
+  const snapshot = await getDocs(q);
+
+  snapshot.forEach(doc=>{
+    const data = doc.data();
+    let firstImage = data.images?.length
+      ? data.images[0]
+      : "https://via.placeholder.com/300x200?text=Produto";
+
+    container.innerHTML += `
+      <div class="card">
+        <img src="${firstImage}">
+        <div class="card-content">
+          <div>${data.name}</div>
+          <div class="price">${Number(data.price).toLocaleString()} Kz</div>
+        </div>
+      </div>
+    `;
+  });
+}
+
+loadPopular();
+
+/* DARK MODE */
+window.toggleDark = function(){
+  document.body.classList.toggle("dark");
+}
+
+</script>
+
+</body>
 </html>
