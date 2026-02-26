@@ -6,108 +6,136 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body {
-  font-family: Arial;
-  background:#f4f4f4;
+body{
+  font-family:Arial;
+  background:#f2f2f2;
   margin:0;
 }
 
-header {
+/* HEADER */
+header{
   background:#111;
   color:white;
-  padding:15px;
+  padding:15px 20px;
   display:flex;
   justify-content:space-between;
   align-items:center;
 }
 
-.cart-box {
+.cart-box{
   position:relative;
-  font-size:26px;
+  font-size:24px;
   cursor:pointer;
 }
 
-.cart-count {
+.cart-count{
   position:absolute;
   top:-8px;
   right:-10px;
   background:red;
   color:white;
   border-radius:50%;
-  padding:5px 9px;
-  font-size:14px;
+  padding:4px 8px;
+  font-size:12px;
   font-weight:bold;
 }
 
-.search-box {
+/* SEARCH */
+.search-box{
   padding:15px;
   background:white;
 }
 
-.search-box input {
+.search-box input{
   width:100%;
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #ccc;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #ddd;
+  font-size:14px;
 }
 
-.products {
+/* GRID */
+.products{
   display:grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
   gap:15px;
   padding:15px;
 }
 
-.card {
+/* CARD */
+.card{
   background:white;
-  border-radius:12px;
+  border-radius:16px;
   overflow:hidden;
-  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
+  transition:0.3s;
 }
 
-.card img {
+.card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 12px 25px rgba(0,0,0,0.15);
+}
+
+.card img{
   width:100%;
   height:180px;
   object-fit:cover;
   cursor:pointer;
 }
 
-.card-content {
-  padding:10px;
+.card-content{
+  padding:12px;
 }
 
-.price {
+.card h4{
+  margin:0;
+  font-size:15px;
+}
+
+.price{
   font-weight:bold;
-  color:green;
-  margin-top:5px;
+  color:#0a8f3c;
+  margin-top:6px;
 }
 
-.city {
-  font-size:13px;
-  color:#666;
-  margin-top:5px;
+.city{
+  font-size:12px;
+  color:#777;
+  margin-top:4px;
 }
 
-button {
-  padding:8px;
+button{
+  padding:10px;
   border:none;
-  border-radius:6px;
+  border-radius:8px;
   margin-top:8px;
   width:100%;
   cursor:pointer;
+  font-size:13px;
+  transition:0.3s;
 }
 
-.add-btn {
+.detail-btn{
   background:#111;
   color:white;
 }
 
-.whatsapp-btn {
+.detail-btn:hover{
+  background:#333;
+}
+
+.add-btn{
+  background:#222;
+  color:white;
+}
+
+.whatsapp-btn{
   background:#25D366;
   color:white;
 }
 
-#imageModal {
+/* MODAL */
+#imageModal{
   display:none;
   position:fixed;
   top:0;
@@ -119,9 +147,10 @@ button {
   align-items:center;
 }
 
-#imageModal img {
+#imageModal img{
   max-width:95%;
   max-height:95%;
+  border-radius:10px;
 }
 </style>
 </head>
@@ -129,14 +158,13 @@ button {
 <body>
 
 <header>
-  <h2>Produtos</h2>
+  <h2>Marketplace</h2>
   <div class="cart-box" onclick="goToCart()">
     🛒
     <span id="cartCount" class="cart-count">0</span>
   </div>
 </header>
 
-<!-- BARRE DE RECHERCHE -->
 <div class="search-box">
   <input type="text" id="searchInput" placeholder="Pesquisar produto...">
 </div>
@@ -150,7 +178,7 @@ button {
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, getDocs } 
+import { getFirestore, collection, getDocs, doc, getDoc } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -167,31 +195,42 @@ const searchInput = document.getElementById("searchInput");
 
 let allProducts = [];
 
-async function loadProducts() {
+async function loadProducts(){
 
-  const snapshot = await getDocs(collection(db, "products"));
-  container.innerHTML = "";
+  const snapshot = await getDocs(collection(db,"products"));
   allProducts = [];
 
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    const id = doc.id;
+  for(const document of snapshot.docs){
+
+    const data = document.data();
+    const merchantSnap = await getDoc(doc(db,"merchants",data.merchantId));
+
+    let merchantPhone = "";
+    let merchantCity = "";
+
+    if(merchantSnap.exists()){
+      merchantPhone = merchantSnap.data().phone;
+      merchantCity = merchantSnap.data().city;
+    }
 
     allProducts.push({
-      id,
-      ...data
+      id: document.id,
+      ...data,
+      merchantPhone,
+      merchantCity
     });
-  });
+  }
 
   displayProducts(allProducts);
 }
 
 function displayProducts(products){
+
   container.innerHTML = "";
 
-  products.forEach(data => {
+  products.forEach(data=>{
 
-    let firstImage = data.images && data.images.length > 0
+    let firstImage = data.images?.length
       ? data.images[0]
       : "https://via.placeholder.com/300x200?text=Sem+Imagem";
 
@@ -202,14 +241,15 @@ function displayProducts(products){
         <div class="card-content">
           <h4>${data.name}</h4>
           <div class="price">${Number(data.price).toLocaleString()} Kz</div>
-          <div class="city">Cidade: ${data.merchantCity || "Não informada"}</div>
+          <div class="city">${data.merchantCity || "Luanda"}</div>
 
-          <button class="add-btn" onclick='addToCart({
-            id:"${data.id}",
-            name:"${data.name}",
-            price:${Number(data.price)},
-            merchantId:"${data.merchantId}"
-          })'>
+          <button class="detail-btn"
+            onclick="window.location.href='product.html?id=${data.id}'">
+            Ver Detalhe
+          </button>
+
+          <button class="add-btn"
+            onclick='addToCart(${JSON.stringify(data)})'>
             Adicionar ao carrinho
           </button>
 
@@ -224,8 +264,8 @@ function displayProducts(products){
   });
 }
 
-/* 🔍 RECHERCHE */
-searchInput.addEventListener("input", function(){
+/* SEARCH */
+searchInput.addEventListener("input",function(){
   const value = this.value.toLowerCase();
   const filtered = allProducts.filter(p =>
     p.name.toLowerCase().includes(value)
@@ -242,21 +282,25 @@ window.contactWhatsApp = function(phone,name,price){
   }
 
   const message = `Olá, tenho interesse no produto: ${name} - ${price} Kz`;
-  const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-  window.open(url, "_blank");
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`,"_blank");
 }
 
-/* PANIER */
+/* CART */
 window.addToCart = function(product){
 
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  cart.push(product);
+  const existing = cart.find(p=>p.id===product.id);
 
-  localStorage.setItem("cart", JSON.stringify(cart));
+  if(existing){
+    existing.quantity = (existing.quantity||1)+1;
+  }else{
+    cart.push({...product, quantity:1});
+  }
 
+  localStorage.setItem("cart",JSON.stringify(cart));
   updateCartCount();
-  alert("Produto adicionado ao carrinho");
+  alert("Produto adicionado 🛒");
 }
 
 function updateCartCount(){
@@ -265,17 +309,17 @@ function updateCartCount(){
 }
 
 window.goToCart = function(){
-  window.location.href = "cart.html";
+  window.location.href="cart.html";
 }
 
-/* IMAGE ZOOM */
+/* MODAL */
 window.showImage = function(src){
-  document.getElementById("modalImg").src = src;
-  document.getElementById("imageModal").style.display = "flex";
+  document.getElementById("modalImg").src=src;
+  document.getElementById("imageModal").style.display="flex";
 }
 
 window.closeImage = function(){
-  document.getElementById("imageModal").style.display = "none";
+  document.getElementById("imageModal").style.display="none";
 }
 
 updateCartCount();
