@@ -147,40 +147,43 @@ async function loadStats(){
   document.getElementById("totalProducts").innerText = products.size;
 }
 
-async function loadMerchants(){
-
-  const snapshot = await getDocs(collection(db,"merchants"));
-  merchantList.innerHTML="";
-
-  snapshot.forEach(docSnap=>{
+async function loadMerchants() {
+  
+  const snapshot = await getDocs(collection(db, "users"));
+  merchantList.innerHTML = "";
+  
+  snapshot.forEach(docSnap => {
     const data = docSnap.data();
-
-    if(data.approved === false){
+    
+    if (data.role === "merchant" && data.approved === false) {
+      
       merchantList.innerHTML += `
         <div class="card">
           ${data.email}<br><br>
-          <button class="approve" onclick="approve('${docSnap.id}')">Approuver</button>
-          <button class="reject" onclick="ban('${docSnap.id}')">Refuser</button>
+          <button class="approve" onclick="approve('${docSnap.id}')">
+            Approuver
+          </button>
+          <button class="reject" onclick="ban('${docSnap.id}')">
+            Refuser
+          </button>
         </div>
       `;
     }
   });
 }
-
-window.approve = async(id)=>{
-  await updateDoc(doc(db,"merchants",id),{
-    approved:true
+window.approve = async (id) => {
+  await updateDoc(doc(db, "users", id), {
+    approved: true
   });
-  alert("Commerçant validé !");
+  
+  alert("Marchand validé !");
   loadMerchants();
-  loadStats();
 };
 
-window.ban = async(id)=>{
-  if(confirm("Supprimer ce commerçant ?")){
-    await deleteDoc(doc(db,"merchants",id));
+window.ban = async (id) => {
+  if (confirm("Supprimer ce marchand ?")) {
+    await deleteDoc(doc(db, "users", id));
     loadMerchants();
-    loadStats();
   }
 };
 
