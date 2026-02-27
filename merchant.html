@@ -18,7 +18,9 @@
 
   <input type="file" id="productImages" multiple><br><br>
 
-  <button onclick="addProduct()">Ajouter</button>
+  <button id="addBtn" onclick="addProduct()">
+    Ajouter
+  </button>
 
   <hr>
 
@@ -41,6 +43,7 @@ import {
   deleteDoc,
   doc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
   authDomain: "angcomerce-v1.firebaseapp.com",
@@ -68,9 +71,13 @@ onAuthStateChanged(auth, (user) => {
   loadMyProducts();
 });
 
-/* ================= AJOUT PRODUIT ================= */
+/* ================= AJOUT PRODUIT ULTRA RAPIDE ================= */
 
 window.addProduct = async function() {
+
+  const btn = document.getElementById("addBtn");
+  btn.disabled = true;
+  btn.innerText = "Upload en cours...";
 
   const name = document.getElementById("productName").value;
   const price = document.getElementById("productPrice").value;
@@ -79,42 +86,60 @@ window.addProduct = async function() {
 
   if (!name || !price || !description || files.length === 0) {
     alert("Remplis tous les champs");
+    btn.disabled = false;
+    btn.innerText = "Ajouter";
     return;
   }
 
-  let imageUrls = [];
+  try {
 
-  for (let i = 0; i < files.length; i++) {
+    // 🔥 Upload images en parallèle (beaucoup plus rapide)
+    const uploadPromises = [];
 
-    const formData = new FormData();
-    formData.append("file", files[i]);
-    formData.append("upload_preset", "angcomerce-upload");
+    for (let i = 0; i < files.length; i++) {
 
-    const response = await fetch(
-      "https://api.cloudinary.com/v1_1/df2oxw2qp/image/upload",
-      {
-        method: "POST",
-        body: formData
-      }
-    );
+      const formData = new FormData();
+      formData.append("file", files[i]);
+      formData.append("upload_preset", "angcomerce-upload");
 
-    const data = await response.json();
-    imageUrls.push(data.secure_url);
+      uploadPromises.push(
+        fetch("https://api.cloudinary.com/v1_1/df2oxw2qp/image/upload", {
+          method: "POST",
+          body: formData
+        }).then(res => res.json())
+      );
+    }
+
+    const uploadResults = await Promise.all(uploadPromises);
+    const imageUrls = uploadResults.map(data => data.secure_url);
+
+    // 🔥 Ajout dans Firestore
+    await addDoc(collection(db, "products"), {
+      name,
+      price: Number(price),
+      description,
+      images: imageUrls,
+      merchantId: currentUser.uid,
+      merchantPhone: currentUser.email,
+      merchantCity: "Luanda",
+      createdAt: new Date()
+    });
+
+    alert("Produit ajouté avec succès !");
+    loadMyProducts();
+
+    // Reset champs
+    document.getElementById("productName").value = "";
+    document.getElementById("productPrice").value = "";
+    document.getElementById("productDescription").value = "";
+    document.getElementById("productImages").value = "";
+
+  } catch (error) {
+    alert("Erreur : " + error.message);
   }
 
-  await addDoc(collection(db, "products"), {
-  name,
-  price,
-  description,
-  images: imageUrls,
-  merchantId: currentUser.uid,
-  merchantPhone: currentUser.email, // temporaire
-  merchantCity: "Luanda",
-  createdAt: new Date()
-});
-
-  alert("Produit ajouté !");
-  loadMyProducts();
+  btn.disabled = false;
+  btn.innerText = "Ajouter";
 };
 
 /* ================= MES PRODUITS ================= */
@@ -173,6 +198,9 @@ async function loadMyProducts() {
     `;
   });
 }
+
+/* ================= SUPPRESSION ================= */
+
 window.deleteProduct = async function(productId){
 
   const confirmDelete = confirm("Voulez-vous supprimer ce produit ?");
@@ -184,7 +212,8 @@ window.deleteProduct = async function(productId){
   alert("Produit supprimé avec succès");
 
   loadMyProducts();
-}
+};
+
 </script>
 
 </body>
