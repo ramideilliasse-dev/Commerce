@@ -118,21 +118,37 @@ const productList = document.getElementById("productList");
 onAuthStateChanged(auth, async(user)=>{
 
   if(!user){
+    alert("Aucun utilisateur connecté");
     window.location.href="merchant-login.html";
     return;
   }
 
-  // 🔐 Vérification rôle admin
+  // 🔍 Affiche UID connecté
+  alert("UID connecté : " + user.uid);
+
   const adminRef = doc(db,"users",user.uid);
   const adminSnap = await getDoc(adminRef);
 
-  if(!adminSnap.exists() || adminSnap.data().role !== "admin"){
+  if(!adminSnap.exists()){
+    alert("Document user introuvable dans Firestore !");
+    window.location.href="index.html";
+    return;
+  }
+
+  const userData = adminSnap.data();
+
+  // 🔍 Affiche rôle trouvé
+  alert("Role trouvé : " + userData.role);
+
+  if(!userData.role || userData.role.trim() !== "admin"){
     alert("Accès refusé. Vous n'êtes pas admin.");
     window.location.href="index.html";
     return;
   }
 
-  // Si admin confirmé
+  // ✅ ADMIN CONFIRMÉ
+  alert("Admin confirmé ✅");
+
   loadStats();
   loadMerchants();
   loadProducts();
@@ -171,6 +187,7 @@ async function loadMerchants() {
     }
   });
 }
+
 window.approve = async (id) => {
   await updateDoc(doc(db, "users", id), {
     approved: true
