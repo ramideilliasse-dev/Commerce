@@ -115,53 +115,63 @@ const auth = getAuth(app);
 const merchantList = document.getElementById("merchantList");
 const productList = document.getElementById("productList");
 
-onAuthStateChanged(auth, async(user)=>{
-alert("UID connecté : " + user.uid);
-  if(!user){
+/* ===============================
+   AUTH + VERIFICATION ADMIN
+=================================*/
+
+onAuthStateChanged(auth, async (user) => {
+
+  if (!user) {
     alert("Aucun utilisateur connecté");
-    window.location.href="merchant-login.html";
+    window.location.href = "merchant-login.html";
     return;
   }
 
-  // 🔍 Affiche UID connecté
-  alert("UID connecté : " + user.uid);
+  console.log("UID connecté :", user.uid);
 
-  const adminRef = doc(db,"users",user.uid);
-  const adminSnap = await getDoc(adminRef);
+  try {
 
-  if(!adminSnap.exists()){
-    alert("Document user introuvable dans Firestore !");
-    window.location.href="index.html";
-    return;
+    const adminRef = doc(db, "users", user.uid);
+    const adminSnap = await getDoc(adminRef);
+
+    if (!adminSnap.exists()) {
+      alert("Document users introuvable dans Firestore !");
+      return;
+    }
+
+    const userData = adminSnap.data();
+
+    if (userData.role !== "admin") {
+      alert("Accès refusé. Vous n'êtes pas admin.");
+      return;
+    }
+
+    // ADMIN CONFIRMÉ
+    loadStats();
+    loadMerchants();
+    loadProducts();
+
+  } catch (error) {
+    alert("Erreur Firestore : " + error.message);
   }
-
-  const userData = adminSnap.data();
-
-  // 🔍 Affiche rôle trouvé
-  alert("Role trouvé : " + userData.role);
-
-  if(!userData.role || userData.role.trim() !== "admin"){
-    alert("Accès refusé. Vous n'êtes pas admin.");
-    window.location.href="index.html";
-    return;
-  }
-
-  // ✅ ADMIN CONFIRMÉ
-  alert("Admin confirmé ✅");
-
-  loadStats();
-  loadMerchants();
-  loadProducts();
 
 });
 
+/* ===============================
+   STATS
+=================================*/
+
 async function loadStats(){
-  const merchants = await getDocs(collection(db,"merchants"));
+  const merchants = await getDocs(collection(db,"users"));
   const products = await getDocs(collection(db,"products"));
 
   document.getElementById("totalMerchants").innerText = merchants.size;
   document.getElementById("totalProducts").innerText = products.size;
 }
+
+/* ===============================
+   MERCHANTS
+=================================*/
 
 async function loadMerchants() {
   
@@ -201,8 +211,13 @@ window.ban = async (id) => {
   if (confirm("Supprimer ce marchand ?")) {
     await deleteDoc(doc(db, "users", id));
     loadMerchants();
+    loadStats();
   }
 };
+
+/* ===============================
+   PRODUCTS
+=================================*/
 
 async function loadProducts(){
 
@@ -230,6 +245,10 @@ window.deleteProduct = async(id)=>{
     loadStats();
   }
 };
+
+/* ===============================
+   LOGOUT
+=================================*/
 
 window.logout = ()=>{
   signOut(auth).then(()=>{
