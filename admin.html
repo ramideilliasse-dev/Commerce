@@ -116,7 +116,7 @@ const merchantList = document.getElementById("merchantList");
 const productList = document.getElementById("productList");
 
 onAuthStateChanged(auth, async(user)=>{
-
+alert("UID connecté : " + user.uid);
   if(!user){
     alert("Aucun utilisateur connecté");
     window.location.href="merchant-login.html";
