@@ -103,9 +103,7 @@ import {
   setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-/* ===============================
-   FIREBASE CONFIG
-=================================*/
+/* FIREBASE CONFIG */
 
 const firebaseConfig = {
   apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
@@ -120,9 +118,7 @@ const auth = getAuth(app);
 const merchantList = document.getElementById("merchantList");
 const productList = document.getElementById("productList");
 
-/* ===============================
-   AUTH + ADMIN AUTO-CREATION
-=================================*/
+/* AUTH + SECURITY */
 
 onAuthStateChanged(auth, async (user) => {
 
@@ -130,43 +126,37 @@ onAuthStateChanged(auth, async (user) => {
     window.location.href = "merchant-login.html";
     return;
   }
-  // 🔐 EMAIL ADMIN AUTORISÉ
+
   const authorizedAdminEmail = "ramideilliasse@gmail.com";
-  
+
   if (user.email !== authorizedAdminEmail) {
-  alert("Accès interdit");
-  await signOut(auth);
-  window.location.href = "index.html";
-  return;
+    alert("Accès interdit");
+    await signOut(auth);
+    window.location.href = "index.html";
+    return;
   }
+
   try {
 
     const adminRef = doc(db, "users", user.uid);
     const adminSnap = await getDoc(adminRef);
 
-    // 🔥 Si le document n'existe pas → on le crée automatiquement
     if (!adminSnap.exists()) {
-
       await setDoc(adminRef, {
         email: user.email,
         role: "admin",
         approved: true,
-        verified: true,
         createdAt: new Date()
       });
-
-      alert("Admin créé automatiquement ✅");
     }
 
-    const finalSnap = await getDoc(adminRef);
-    const userData = finalSnap.data();
+    const userData = (await getDoc(adminRef)).data();
 
     if (userData.role !== "admin") {
-      alert("Accès refusé. Vous n'êtes pas admin.");
+      alert("Accès refusé.");
       return;
     }
 
-    // ✅ ADMIN VALIDÉ
     loadStats();
     loadMerchants();
     loadProducts();
@@ -177,73 +167,76 @@ onAuthStateChanged(auth, async (user) => {
 
 });
 
-/* ===============================
-   STATS
-=================================*/
+/* STATS */
 
 async function loadStats(){
-  const merchants = await getDocs(collection(db,"users"));
-  const products = await getDocs(collection(db,"products"));
+  const usersSnapshot = await getDocs(collection(db,"users"));
+  const productsSnapshot = await getDocs(collection(db,"products"));
 
-  document.getElementById("totalMerchants").innerText = merchants.size;
-  document.getElementById("totalProducts").innerText = products.size;
+  let merchantCount = 0;
+
+  usersSnapshot.forEach(docSnap=>{
+    const data = docSnap.data();
+    if(data.role === "merchant"){
+      merchantCount++;
+    }
+  });
+
+  document.getElementById("totalMerchants").innerText = merchantCount;
+  document.getElementById("totalProducts").innerText = productsSnapshot.size;
 }
 
-/* ===============================
-   MERCHANTS
-=================================*/
+/* MERCHANTS */
 
-async function loadMerchants() {
-  
-  const snapshot = await getDocs(collection(db, "users"));
+async function loadMerchants(){
+  const snapshot = await getDocs(collection(db,"users"));
   merchantList.innerHTML = "";
-  
-  snapshot.forEach(docSnap => {
+
+  snapshot.forEach(docSnap=>{
     const data = docSnap.data();
-    
-    if (data.role === "merchant" && data.approved === false) {
-      
+
+    if(data.role === "merchant" && data.approved === false){
       merchantList.innerHTML += `
         <div class="card">
           ${data.email}<br><br>
-          <button class="approve" onclick="approve('${docSnap.id}')">
-            Approuver
-          </button>
-          <button class="reject" onclick="ban('${docSnap.id}')">
-            Refuser
-          </button>
+          <button class="approve" onclick="approve('${docSnap.id}')">Approuver</button>
+          <button class="reject" onclick="ban('${docSnap.id}')">Refuser</button>
         </div>
       `;
     }
   });
 }
 
-window.approve = async (id) => {
-  await updateDoc(doc(db, "users", id), {
-    approved: true
-  });
-  
-  alert("Marchand validé !");
-  loadMerchants();
-  loadStats();
-};
-
-window.ban = async (id) => {
-  if (confirm("Supprimer ce marchand ?")) {
-    await deleteDoc(doc(db, "users", id));
+window.approve = async(id)=>{
+  try{
+    await updateDoc(doc(db,"users",id),{
+      approved:true
+    });
+    alert("Marchand approuvé ✅");
     loadMerchants();
     loadStats();
+  }catch(error){
+    alert("Erreur : "+error.message);
   }
 };
 
-/* ===============================
-   PRODUCTS
-=================================*/
+window.ban = async(id)=>{
+  if(confirm("Supprimer ce marchand ?")){
+    try{
+      await deleteDoc(doc(db,"users",id));
+      loadMerchants();
+      loadStats();
+    }catch(error){
+      alert("Erreur : "+error.message);
+    }
+  }
+};
+
+/* PRODUCTS */
 
 async function loadProducts(){
-
   const snapshot = await getDocs(collection(db,"products"));
-  productList.innerHTML="";
+  productList.innerHTML = "";
 
   snapshot.forEach(docSnap=>{
     const data = docSnap.data();
@@ -261,15 +254,17 @@ async function loadProducts(){
 
 window.deleteProduct = async(id)=>{
   if(confirm("Supprimer ce produit ?")){
-    await deleteDoc(doc(db,"products",id));
-    loadProducts();
-    loadStats();
+    try{
+      await deleteDoc(doc(db,"products",id));
+      loadProducts();
+      loadStats();
+    }catch(error){
+      alert("Erreur : "+error.message);
+    }
   }
 };
 
-/* ===============================
-   LOGOUT
-=================================*/
+/* LOGOUT */
 
 window.logout = ()=>{
   signOut(auth).then(()=>{
@@ -278,6 +273,5 @@ window.logout = ()=>{
 };
 
 </script>
-
 </body>
 </html>
