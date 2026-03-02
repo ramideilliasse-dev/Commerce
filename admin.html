@@ -130,7 +130,15 @@ onAuthStateChanged(auth, async (user) => {
     window.location.href = "merchant-login.html";
     return;
   }
-
+  // 🔐 EMAIL ADMIN AUTORISÉ
+  const authorizedAdminEmail = "ramideilliasse@gmail.com";
+  
+  if (user.email !== authorizedAdminEmail) {
+  alert("Accès interdit");
+  await signOut(auth);
+  window.location.href = "index.html";
+  return;
+  }
   try {
 
     const adminRef = doc(db, "users", user.uid);
