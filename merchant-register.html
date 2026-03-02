@@ -32,6 +32,8 @@ import {
   getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+/* ================= FIREBASE CONFIG ================= */
+
 const firebaseConfig = {
   apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
   authDomain: "angcomerce-v1.firebaseapp.com",
@@ -64,11 +66,11 @@ document.getElementById("registerBtn").addEventListener("click", async () => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // 🔒 Compte créé MAIS en attente validation admin
-    await setDoc(doc(db, "merchants", user.uid), {
+    // ✅ On crée le document dans "users"
+    await setDoc(doc(db, "users", user.uid), {
       email: user.email,
       role: "merchant",
-      approved: false,   // ⚠️ IMPORTANT
+      approved: false,  // 🔒 En attente admin
       createdAt: new Date()
     });
 
@@ -92,18 +94,23 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // 🔎 Vérifier si approuvé
-    const merchantRef = doc(db, "merchants", user.uid);
-    const merchantSnap = await getDoc(merchantRef);
+    // 🔎 Vérifier dans "users"
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
 
-    if(!merchantSnap.exists()){
-      message.innerText = "Compte marchand introuvable.";
+    if(!userSnap.exists()){
+      message.innerText = "Compte introuvable.";
       return;
     }
 
-    const merchantData = merchantSnap.data();
+    const userData = userSnap.data();
 
-    if(!merchantData.approved){
+    if(userData.role !== "merchant"){
+      message.innerText = "Ce compte n'est pas marchand.";
+      return;
+    }
+
+    if(!userData.approved){
       message.innerText = "Compte en attente de validation admin.";
       return;
     }
