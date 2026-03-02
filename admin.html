@@ -99,8 +99,13 @@ import {
   doc,
   updateDoc,
   deleteDoc,
-  getDoc
+  getDoc,
+  setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+/* ===============================
+   FIREBASE CONFIG
+=================================*/
 
 const firebaseConfig = {
   apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
@@ -116,43 +121,50 @@ const merchantList = document.getElementById("merchantList");
 const productList = document.getElementById("productList");
 
 /* ===============================
-   AUTH + VERIFICATION ADMIN
+   AUTH + ADMIN AUTO-CREATION
 =================================*/
 
 onAuthStateChanged(auth, async (user) => {
 
   if (!user) {
-    alert("Aucun utilisateur connecté");
     window.location.href = "merchant-login.html";
     return;
   }
-
-  console.log("UID connecté :", user.uid);
 
   try {
 
     const adminRef = doc(db, "users", user.uid);
     const adminSnap = await getDoc(adminRef);
 
+    // 🔥 Si le document n'existe pas → on le crée automatiquement
     if (!adminSnap.exists()) {
-      alert("Document users introuvable dans Firestore !");
-      return;
+
+      await setDoc(adminRef, {
+        email: user.email,
+        role: "admin",
+        approved: true,
+        verified: true,
+        createdAt: new Date()
+      });
+
+      alert("Admin créé automatiquement ✅");
     }
 
-    const userData = adminSnap.data();
+    const finalSnap = await getDoc(adminRef);
+    const userData = finalSnap.data();
 
     if (userData.role !== "admin") {
       alert("Accès refusé. Vous n'êtes pas admin.");
       return;
     }
 
-    // ADMIN CONFIRMÉ
+    // ✅ ADMIN VALIDÉ
     loadStats();
     loadMerchants();
     loadProducts();
 
   } catch (error) {
-    alert("Erreur Firestore : " + error.message);
+    alert("Erreur : " + error.message);
   }
 
 });
@@ -205,6 +217,7 @@ window.approve = async (id) => {
   
   alert("Marchand validé !");
   loadMerchants();
+  loadStats();
 };
 
 window.ban = async (id) => {
