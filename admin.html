@@ -1,175 +1,114 @@
  <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Admin Dashboard - ANGCOMERCE</title>
+<title>Admin - ANGcomerce</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#111;
-  color:white;
-}
-
-header{
-  background:#000;
-  padding:15px 20px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.section{
-  padding:20px;
-}
-
-.card{
-  background:#1c1c1c;
-  padding:15px;
-  margin-bottom:15px;
-  border-radius:10px;
-}
-
-button{
-  padding:6px 10px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  margin-right:8px;
-}
-
-.approve{ background:#28a745; color:white; }
-.reject{ background:#dc3545; color:white; }
-.delete{ background:#ff4444; color:white; }
-
-.stats{
-  display:flex;
-  gap:20px;
-  flex-wrap:wrap;
-}
-
-.stat-box{
-  background:#1c1c1c;
-  padding:20px;
-  border-radius:10px;
-  flex:1;
-  min-width:150px;
-}
-</style>
 </head>
 <body>
 
-<header>
-  <h2>Admin Dashboard</h2>
-  <button onclick="logout()">Logout</button>
-</header>
+<h1>Dashboard Admin</h1>
 
-<div class="section">
+<h2>Commerçants en attente</h2>
+<div id="merchantList"></div>
 
-  <div class="stats">
-    <div class="stat-box">
-      <h3 id="totalMerchants">0</h3>
-      <p>Commerçants</p>
-    </div>
-    <div class="stat-box">
-      <h3 id="totalProducts">0</h3>
-      <p>Produits</p>
-    </div>
-  </div>
+<h2>Total Commerçants</h2>
+<p id="totalMerchants">0</p>
 
-  <h3>Commerçants en attente</h3>
-  <div id="merchantList"></div>
-
-  <h3>Tous les Produits</h3>
-  <div id="productList"></div>
-
-</div>
+<h2>Total Produits</h2>
+<p id="totalProducts">0</p>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } 
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { 
-  getFirestore,
-  collection,
-  getDocs,
+  getFirestore, 
+  collection, 
+  getDocs, 
+  query, 
+  where, 
+  updateDoc, 
   doc,
-  updateDoc,
-  deleteDoc,
-  getDoc,
-  setDoc
+  deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-/* FIREBASE CONFIG */
+/* ================= FIREBASE CONFIG ================= */
 
 const firebaseConfig = {
   apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
   authDomain: "angcomerce-v1.firebaseapp.com",
   projectId: "angcomerce-v1",
+  storageBucket: "angcomerce-v1.firebasestorage.app",
+  messagingSenderId: "238735890157",
+  appId: "1:238735890157:web:db3f87960db7916d7fdee4"
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-const merchantList = document.getElementById("merchantList");
-const productList = document.getElementById("productList");
+/* ================= CHARGER MARCHANDS EN ATTENTE ================= */
 
-/* AUTH + SECURITY */
+async function loadPendingMerchants(){
 
-onAuthStateChanged(auth, async (user) => {
+  const q = query(
+    collection(db,"users"),
+    where("role","==","merchant"),
+    where("approved","==",false)
+  );
 
-  if (!user) {
-    window.location.href = "merchant-login.html";
-    return;
-  }
+  const querySnapshot = await getDocs(q);
 
-  const authorizedAdminEmail = "ramideilliasse@gmail.com";
+  const merchantList = document.getElementById("merchantList");
+  merchantList.innerHTML = "";
 
-  if (user.email !== authorizedAdminEmail) {
-    alert("Accès interdit");
-    await signOut(auth);
-    window.location.href = "index.html";
-    return;
-  }
+  querySnapshot.forEach((docSnap)=>{
 
-  try {
+    const data = docSnap.data();
+    const div = document.createElement("div");
 
-    const adminRef = doc(db, "users", user.uid);
-    const adminSnap = await getDoc(adminRef);
+    div.innerHTML = `
+      <p>${data.email}</p>
+      <button onclick="approveMerchant('${docSnap.id}')">Approuver</button>
+      <button onclick="deleteMerchant('${docSnap.id}')">Supprimer</button>
+      <hr>
+    `;
 
-    if (!adminSnap.exists()) {
-      await setDoc(adminRef, {
-        email: user.email,
-        role: "admin",
-        approved: true,
-        createdAt: new Date()
-      });
-    }
+    merchantList.appendChild(div);
 
-    const userData = (await getDoc(adminRef)).data();
+  });
 
-    if (userData.role !== "admin") {
-      alert("Accès refusé.");
-      return;
-    }
+}
 
-    loadStats();
-    loadMerchants();
-    loadProducts();
+/* ================= APPROUVER ================= */
 
-  } catch (error) {
-    alert("Erreur : " + error.message);
-  }
+window.approveMerchant = async function(uid){
 
-});
+  await updateDoc(doc(db,"users",uid),{
+    approved:true
+  });
 
-/* STATS */
+  alert("Marchand approuvé !");
+  loadPendingMerchants();
+  loadTotals();
+}
 
-async function loadStats(){
+/* ================= SUPPRIMER ================= */
+
+window.deleteMerchant = async function(uid){
+
+  await deleteDoc(doc(db,"users",uid));
+
+  alert("Marchand supprimé !");
+  loadPendingMerchants();
+  loadTotals();
+}
+
+/* ================= TOTALS ================= */
+
+async function loadTotals(){
+
   const usersSnapshot = await getDocs(collection(db,"users"));
   const productsSnapshot = await getDocs(collection(db,"products"));
 
@@ -184,94 +123,15 @@ async function loadStats(){
 
   document.getElementById("totalMerchants").innerText = merchantCount;
   document.getElementById("totalProducts").innerText = productsSnapshot.size;
+
 }
 
-/* MERCHANTS */
+/* ================= INIT ================= */
 
-async function loadMerchants(){
-  const snapshot = await getDocs(collection(db,"users"));
-  merchantList.innerHTML = "";
-
-  snapshot.forEach(docSnap=>{
-    const data = docSnap.data();
-
-    if(data.role === "merchant" && data.approved === false){
-      merchantList.innerHTML += `
-        <div class="card">
-          ${data.email}<br><br>
-          <button class="approve" onclick="approve('${docSnap.id}')">Approuver</button>
-          <button class="reject" onclick="ban('${docSnap.id}')">Refuser</button>
-        </div>
-      `;
-    }
-  });
-}
-
-window.approve = async(id)=>{
-  try{
-    await updateDoc(doc(db,"users",id),{
-      approved:true
-    });
-    alert("Marchand approuvé ✅");
-    loadMerchants();
-    loadStats();
-  }catch(error){
-    alert("Erreur : "+error.message);
-  }
-};
-
-window.ban = async(id)=>{
-  if(confirm("Supprimer ce marchand ?")){
-    try{
-      await deleteDoc(doc(db,"users",id));
-      loadMerchants();
-      loadStats();
-    }catch(error){
-      alert("Erreur : "+error.message);
-    }
-  }
-};
-
-/* PRODUCTS */
-
-async function loadProducts(){
-  const snapshot = await getDocs(collection(db,"products"));
-  productList.innerHTML = "";
-
-  snapshot.forEach(docSnap=>{
-    const data = docSnap.data();
-
-    productList.innerHTML += `
-      <div class="card">
-        <b>${data.name}</b> - ${data.price} Kz<br><br>
-        <button class="delete" onclick="deleteProduct('${docSnap.id}')">
-          Supprimer
-        </button>
-      </div>
-    `;
-  });
-}
-
-window.deleteProduct = async(id)=>{
-  if(confirm("Supprimer ce produit ?")){
-    try{
-      await deleteDoc(doc(db,"products",id));
-      loadProducts();
-      loadStats();
-    }catch(error){
-      alert("Erreur : "+error.message);
-    }
-  }
-};
-
-/* LOGOUT */
-
-window.logout = ()=>{
-  signOut(auth).then(()=>{
-    window.location.href="index.html";
-  });
-};
+loadPendingMerchants();
+loadTotals();
 
 </script>
+
 </body>
 </html>
