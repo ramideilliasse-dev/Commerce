@@ -20,19 +20,10 @@
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { 
-  getAuth, 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword 
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { 
-  getFirestore, 
-  doc, 
-  setDoc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-/* ================= FIREBASE CONFIG ================= */
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
@@ -66,15 +57,16 @@ document.getElementById("registerBtn").addEventListener("click", async () => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // ✅ On crée le document dans "users"
+    // 🔥 ÉCRIT DANS users (IMPORTANT)
     await setDoc(doc(db, "users", user.uid), {
       email: user.email,
       role: "merchant",
-      approved: false,  // 🔒 En attente admin
+      approved: false,
+      verified: false,
       createdAt: new Date()
     });
 
-    message.innerText = "Compte créé ! En attente validation de l'admin.";
+    message.innerText = "Compte créé ! En attente validation admin.";
 
   } catch(error) {
     message.innerText = error.message;
@@ -94,7 +86,6 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // 🔎 Vérifier dans "users"
     const userRef = doc(db, "users", user.uid);
     const userSnap = await getDoc(userRef);
 
@@ -106,7 +97,7 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
     const userData = userSnap.data();
 
     if(userData.role !== "merchant"){
-      message.innerText = "Ce compte n'est pas marchand.";
+      message.innerText = "Accès refusé.";
       return;
     }
 
@@ -115,7 +106,6 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
       return;
     }
 
-    // ✅ Si approuvé → accès dashboard
     window.location.href = "merchant.html";
 
   } catch(error) {
