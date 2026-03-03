@@ -21,7 +21,7 @@
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { 
   getFirestore, 
   collection, 
@@ -30,7 +30,8 @@ import {
   where, 
   updateDoc, 
   doc,
-  deleteDoc
+  deleteDoc,
+  getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 /* ================= FIREBASE CONFIG ================= */
@@ -48,6 +49,29 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+/* ================= AUTH CHECK ================= */
+
+onAuthStateChanged(auth, async (user) => {
+
+  if(!user){
+    alert("Connecte-toi en admin.");
+    return;
+  }
+
+  // Vérifie que c'est bien un admin
+  const userDoc = await getDoc(doc(db,"users",user.uid));
+
+  if(!userDoc.exists() || userDoc.data().role !== "admin"){
+    alert("Accès refusé.");
+    return;
+  }
+
+  // Si admin OK → charger données
+  loadPendingMerchants();
+  loadTotals();
+
+});
+
 /* ================= CHARGER MARCHANDS EN ATTENTE ================= */
 
 async function loadPendingMerchants(){
@@ -62,6 +86,11 @@ async function loadPendingMerchants(){
 
   const merchantList = document.getElementById("merchantList");
   merchantList.innerHTML = "";
+
+  if(querySnapshot.empty){
+    merchantList.innerHTML = "<p>Aucun marchand en attente</p>";
+    return;
+  }
 
   querySnapshot.forEach((docSnap)=>{
 
@@ -125,11 +154,6 @@ async function loadTotals(){
   document.getElementById("totalProducts").innerText = productsSnapshot.size;
 
 }
-
-/* ================= INIT ================= */
-
-loadPendingMerchants();
-loadTotals();
 
 </script>
 
