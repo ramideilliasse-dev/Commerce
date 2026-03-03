@@ -4,19 +4,66 @@
 <meta charset="UTF-8">
 <title>Admin - ANGcomerce</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- BOOTSTRAP -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body {
+  background-color: #f4f6f9;
+}
+.card-stats {
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+.badge-pending {
+  background-color: orange;
+}
+.badge-approved {
+  background-color: green;
+}
+</style>
+
 </head>
 <body>
 
-<h1>Dashboard Admin</h1>
+<div class="container py-4">
 
-<h2>Commerçants en attente</h2>
-<div id="merchantList"></div>
+<h2 class="mb-4">Dashboard Admin</h2>
 
-<h2>Total Commerçants</h2>
-<p id="totalMerchants">0</p>
+<!-- STAT CARDS -->
+<div class="row g-3 mb-4">
 
-<h2>Total Produits</h2>
-<p id="totalProducts">0</p>
+  <div class="col-md-4">
+    <div class="card card-stats p-3">
+      <h6>Total Commerçants</h6>
+      <h3 id="totalMerchants">0</h3>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card card-stats p-3">
+      <h6>Marchands en attente</h6>
+      <h3 id="pendingCount">0</h3>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card card-stats p-3">
+      <h6>Total Produits</h6>
+      <h3 id="totalProducts">0</h3>
+    </div>
+  </div>
+
+</div>
+
+<!-- LISTE MARCHANDS -->
+<div class="card p-3">
+  <h5>Commerçants en attente</h5>
+  <div id="merchantList"></div>
+</div>
+
+</div>
 
 <script type="module">
 
@@ -34,10 +81,9 @@ import {
   getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-/* ================= FIREBASE CONFIG ================= */
-
+/* FIREBASE CONFIG */
 const firebaseConfig = {
-  apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
+  apiKey: "YOUR_KEY",
   authDomain: "angcomerce-v1.firebaseapp.com",
   projectId: "angcomerce-v1",
   storageBucket: "angcomerce-v1.firebasestorage.app",
@@ -49,110 +95,82 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* ================= AUTH CHECK ================= */
-
+/* AUTH CHECK */
 onAuthStateChanged(auth, async (user) => {
 
   if(!user){
-    alert("Connecte-toi en admin.");
+    alert("Connecte-toi en admin");
     return;
   }
 
-  // Vérifie que c'est bien un admin
   const userDoc = await getDoc(doc(db,"users",user.uid));
 
   if(!userDoc.exists() || userDoc.data().role !== "admin"){
-    alert("Accès refusé.");
+    alert("Accès refusé");
     return;
   }
 
-  // Si admin OK → charger données
-  loadPendingMerchants();
-  loadTotals();
+  loadData();
 
 });
 
-/* ================= CHARGER MARCHANDS EN ATTENTE ================= */
-
-async function loadPendingMerchants(){
-
-  const q = query(
-    collection(db,"users"),
-    where("role","==","merchant"),
-    where("approved","==",false)
-  );
-
-  const querySnapshot = await getDocs(q);
-
-  const merchantList = document.getElementById("merchantList");
-  merchantList.innerHTML = "";
-
-  if(querySnapshot.empty){
-    merchantList.innerHTML = "<p>Aucun marchand en attente</p>";
-    return;
-  }
-
-  querySnapshot.forEach((docSnap)=>{
-
-    const data = docSnap.data();
-    const div = document.createElement("div");
-
-    div.innerHTML = `
-      <p>${data.email}</p>
-      <button onclick="approveMerchant('${docSnap.id}')">Approuver</button>
-      <button onclick="deleteMerchant('${docSnap.id}')">Supprimer</button>
-      <hr>
-    `;
-
-    merchantList.appendChild(div);
-
-  });
-
-}
-
-/* ================= APPROUVER ================= */
-
-window.approveMerchant = async function(uid){
-
-  await updateDoc(doc(db,"users",uid),{
-    approved:true
-  });
-
-  alert("Marchand approuvé !");
-  loadPendingMerchants();
-  loadTotals();
-}
-
-/* ================= SUPPRIMER ================= */
-
-window.deleteMerchant = async function(uid){
-
-  await deleteDoc(doc(db,"users",uid));
-
-  alert("Marchand supprimé !");
-  loadPendingMerchants();
-  loadTotals();
-}
-
-/* ================= TOTALS ================= */
-
-async function loadTotals(){
+/* LOAD DATA */
+async function loadData(){
 
   const usersSnapshot = await getDocs(collection(db,"users"));
   const productsSnapshot = await getDocs(collection(db,"products"));
 
   let merchantCount = 0;
+  let pendingCount = 0;
+
+  const merchantList = document.getElementById("merchantList");
+  merchantList.innerHTML = "";
 
   usersSnapshot.forEach(docSnap=>{
     const data = docSnap.data();
+
     if(data.role === "merchant"){
       merchantCount++;
+
+      if(data.approved === false){
+
+        pendingCount++;
+
+        const div = document.createElement("div");
+        div.className = "border rounded p-3 mb-2 bg-light";
+
+        div.innerHTML = `
+          <strong>${data.email}</strong>
+          <span class="badge badge-pending ms-2">En attente</span>
+          <div class="mt-2">
+            <button class="btn btn-success btn-sm me-2" onclick="approveMerchant('${docSnap.id}')">Approuver</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteMerchant('${docSnap.id}')">Supprimer</button>
+          </div>
+        `;
+
+        merchantList.appendChild(div);
+      }
     }
   });
 
   document.getElementById("totalMerchants").innerText = merchantCount;
+  document.getElementById("pendingCount").innerText = pendingCount;
   document.getElementById("totalProducts").innerText = productsSnapshot.size;
 
+}
+
+/* APPROVE */
+window.approveMerchant = async function(uid){
+  await updateDoc(doc(db,"users",uid),{
+    approved:true
+  });
+  loadData();
+}
+
+/* DELETE */
+window.deleteMerchant = async function(uid){
+  await deleteDoc(doc(db,"users",uid));
+  loadData();
 }
 
 </script>
