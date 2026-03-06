@@ -6,281 +6,305 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+
 :root{
-  --bg:#f4f4f4;
-  --card:#ffffff;
-  --text:#222;
-  --primary:#25D366;
+--bg:#f4f4f4;
+--card:#ffffff;
+--text:#222;
+--primary:#25D366;
 }
 
 body.dark{
-  --bg:#111;
-  --card:#1c1c1c;
-  --text:#fff;
+--bg:#111;
+--card:#1c1c1c;
+--text:#fff;
 }
 
 body{
-  font-family:Arial;
-  background:var(--bg);
-  margin:0;
-  padding:20px;
-  color:var(--text);
-  transition:0.3s;
+font-family:Arial;
+background:var(--bg);
+margin:0;
+padding:20px;
+color:var(--text);
+transition:0.3s;
 }
 
 .container{
-  max-width:700px;
-  margin:auto;
-  background:var(--card);
-  padding:20px;
-  border-radius:12px;
-  box-shadow:0 5px 20px rgba(0,0,0,0.1);
-  animation:fadeIn 0.6s ease-in-out;
+max-width:700px;
+margin:auto;
+background:var(--card);
+padding:20px;
+border-radius:12px;
+box-shadow:0 5px 20px rgba(0,0,0,0.1);
 }
 
 .slider{
-  position:relative;
-  text-align:center;
+position:relative;
+text-align:center;
 }
 
 .slider img,
 .slider video{
-  width:100%;
-  max-height:500px;
-  object-fit:contain;
-  border-radius:10px;
+width:100%;
+max-height:500px;
+object-fit:contain;
+border-radius:10px;
 }
 
 .nav{
-  position:absolute;
-  top:50%;
-  transform:translateY(-50%);
-  background:black;
-  color:white;
-  border:none;
-  padding:10px;
-  cursor:pointer;
-  opacity:0.7;
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+background:black;
+color:white;
+border:none;
+padding:10px;
+cursor:pointer;
+opacity:0.7;
 }
 
 .prev{ left:10px; }
 .next{ right:10px; }
 
 .price{
-  color:green;
-  font-size:22px;
-  font-weight:bold;
-  margin-top:10px;
+color:green;
+font-size:22px;
+font-weight:bold;
+margin-top:10px;
 }
 
 button{
-  border:none;
-  padding:12px;
-  width:100%;
-  font-size:16px;
-  border-radius:8px;
-  margin-top:15px;
-  cursor:pointer;
-  transition:0.3s;
+border:none;
+padding:12px;
+width:100%;
+font-size:16px;
+border-radius:8px;
+margin-top:15px;
+cursor:pointer;
 }
 
 .cart-btn{
-  background:#111;
-  color:white;
-}
-
-.cart-btn:hover{
-  transform:scale(1.03);
+background:#111;
+color:white;
 }
 
 .whatsapp-btn{
-  background:var(--primary);
-  color:white;
+background:var(--primary);
+color:white;
 }
 
-.whatsapp-btn:hover{
-  transform:scale(1.03);
-}
-
-@keyframes fadeIn{
-  from{opacity:0; transform:translateY(20px);}
-  to{opacity:1; transform:translateY(0);}
-}
 </style>
 </head>
+
 <body>
 
 <div class="container">
 
-  <div class="slider" id="mediaContainer"></div>
+<div class="slider" id="mediaContainer"></div>
 
-  <h2 id="productName"></h2>
-  <p id="productDescription"></p>
-  <div class="price" id="productPrice"></div>
+<h2 id="productName"></h2>
+<p id="productDescription"></p>
+<div class="price" id="productPrice"></div>
 
-  <button class="cart-btn" onclick="addToCart()">Ajouter au panier 🛒</button>
-  <button class="whatsapp-btn" onclick="order()">Commander via WhatsApp</button>
+<button class="cart-btn" onclick="addToCart()">Ajouter au panier 🛒</button>
+<button class="whatsapp-btn" onclick="order()">Commander via WhatsApp</button>
 
 </div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc } 
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+import { 
+getFirestore,
+doc,
+getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+/* FIREBASE */
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
-  authDomain: "angcomerce-v1.firebaseapp.com",
-  projectId: "angcomerce-v1",
+apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
+authDomain: "angcomerce-v1.firebaseapp.com",
+projectId: "angcomerce-v1",
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+/* VARIABLES */
+
 const params = new URLSearchParams(window.location.search);
 const productId = params.get("id");
 
-let mediaList = [];
-let currentIndex = 0;
 let productData = null;
 let merchantPhone = "";
+let mediaList = [];
+let currentIndex = 0;
+
+/* CHARGER PRODUIT */
 
 async function loadProduct(){
 
-  if(!productId){
-    alert("Produit introuvable");
-    return;
-  }
+if(!productId){
+alert("Produit introuvable");
+return;
+}
 
-  const docRef = doc(db, "products", productId);
-  const docSnap = await getDoc(docRef);
+const productRef = doc(db,"products",productId);
+const productSnap = await getDoc(productRef);
 
-  if(!docSnap.exists()){
-    alert("Produit supprimé ou introuvable");
-    return;
-  }
+if(!productSnap.exists()){
+alert("Produit introuvable");
+return;
+}
 
-  productData = docSnap.data();
+productData = productSnap.data();
 
-  document.getElementById("productName").innerText = productData.name || "";
-  document.getElementById("productDescription").innerText = productData.description || "";
-  document.getElementById("productPrice").innerText =
-    Number(productData.price).toLocaleString() + " Kz";
+document.getElementById("productName").innerText = productData.name || "";
+document.getElementById("productDescription").innerText = productData.description || "";
+document.getElementById("productPrice").innerText =
+Number(productData.price).toLocaleString()+" Kz";
 
-  // Charger médias
-  if(productData.images){
-    productData.images.forEach(img=>{
-      mediaList.push({type:"image", url:img});
-    });
-  }
+/* MEDIAS */
 
-  if(productData.video){
-    mediaList.push({type:"video", url:productData.video});
-  }
+if(productData.images){
 
-  if(mediaList.length > 0){
-    displayMedia(0);
-  }
-
-  // Charger téléphone marchand
-  if(productData.merchantId){
-    const merchantRef = doc(db,"merchants",productData.merchantId);
-    const merchantSnap = await getDoc(merchantRef);
-
-    if(merchantSnap.exists()){
-      merchantPhone = merchantSnap.data().phone || "";
-    }
-  }
+productData.images.forEach(img=>{
+mediaList.push({type:"image",url:img});
+});
 
 }
+
+if(productData.video){
+mediaList.push({type:"video",url:productData.video});
+}
+
+displayMedia(0);
+
+/* TELEPHONE MARCHAND */
+
+if(productData.merchantId){
+
+const merchantRef = doc(db,"users",productData.merchantId);
+const merchantSnap = await getDoc(merchantRef);
+
+if(merchantSnap.exists()){
+merchantPhone = merchantSnap.data().phone || "";
+}
+
+}
+
+}
+
+/* SLIDER MEDIA */
 
 function displayMedia(index){
 
-  const container = document.getElementById("mediaContainer");
+const container = document.getElementById("mediaContainer");
 
-  if(mediaList.length === 0){
-    container.innerHTML = "<p>Aucun média disponible</p>";
-    return;
-  }
+if(mediaList.length === 0){
 
-  let html = "";
+container.innerHTML = "<p>Aucun média</p>";
+return;
 
-  if(mediaList[index].type === "image"){
-    html += `<img src="${mediaList[index].url}">`;
-  }
-
-  if(mediaList[index].type === "video"){
-    html += `
-      <video controls>
-        <source src="${mediaList[index].url}">
-      </video>
-    `;
-  }
-
-  html += `
-    <button class="nav prev" onclick="prevMedia()">‹</button>
-    <button class="nav next" onclick="nextMedia()">›</button>
-  `;
-
-  container.innerHTML = html;
 }
 
-window.nextMedia = function(){
-  if(mediaList.length === 0) return;
-  currentIndex = (currentIndex + 1) % mediaList.length;
-  displayMedia(currentIndex);
+let html="";
+
+if(mediaList[index].type==="image"){
+html+=`<img src="${mediaList[index].url}">`;
 }
 
-window.prevMedia = function(){
-  if(mediaList.length === 0) return;
-  currentIndex = (currentIndex - 1 + mediaList.length) % mediaList.length;
-  displayMedia(currentIndex);
+if(mediaList[index].type==="video"){
+html+=`
+<video controls>
+<source src="${mediaList[index].url}">
+</video>
+`;
 }
 
-window.order = function(){
+html+=`
+<button class="nav prev" onclick="prevMedia()">‹</button>
+<button class="nav next" onclick="nextMedia()">›</button>
+`;
 
-  if(!merchantPhone){
-    alert("Numéro WhatsApp indisponible");
-    return;
-  }
+container.innerHTML=html;
 
-  const message =
-    `Bonjour, je veux commander : ${productData.name} - ${productData.price} Kz`;
-
-  const url = `https://wa.me/${merchantPhone}?text=${encodeURIComponent(message)}`;
-  window.open(url, "_blank");
 }
 
-window.addToCart = function(){
+window.nextMedia=function(){
 
-  if(!productData) return;
+currentIndex=(currentIndex+1)%mediaList.length;
+displayMedia(currentIndex);
 
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-  const existing = cart.find(item => item.id === productId);
-
-  if(existing){
-    existing.quantity += 1;
-  } else {
-    cart.push({
-      id: productId,
-      name: productData.name,
-      price: productData.price,
-      image: productData.images ? productData.images[0] : "",
-      quantity: 1
-    });
-  }
-
-  localStorage.setItem("cart", JSON.stringify(cart));
-  alert("Produit ajouté au panier 🛒");
 }
+
+window.prevMedia=function(){
+
+currentIndex=(currentIndex-1+mediaList.length)%mediaList.length;
+displayMedia(currentIndex);
+
+}
+
+/* WHATSAPP */
+
+window.order=function(){
+
+if(!merchantPhone){
+
+alert("WhatsApp indisponible");
+return;
+
+}
+
+const message=
+`Bonjour je veux commander : ${productData.name} - ${productData.price} Kz`;
+
+const url=`https://wa.me/${merchantPhone}?text=${encodeURIComponent(message)}`;
+
+window.open(url,"_blank");
+
+}
+
+/* PANIER */
+
+window.addToCart=function(){
+
+let cart=JSON.parse(localStorage.getItem("cart")) || [];
+
+const existing=cart.find(p=>p.id===productId);
+
+if(existing){
+
+existing.quantity+=1;
+
+}else{
+
+cart.push({
+id:productId,
+name:productData.name,
+price:productData.price,
+image:productData.images ? productData.images[0] : "",
+quantity:1
+});
+
+}
+
+localStorage.setItem("cart",JSON.stringify(cart));
+
+alert("Produit ajouté au panier 🛒");
+
+}
+
+/* INIT */
 
 loadProduct();
 
-/* Mode sombre automatique selon système */
+/* DARK MODE AUTO */
+
 if(window.matchMedia("(prefers-color-scheme: dark)").matches){
-  document.body.classList.add("dark");
+document.body.classList.add("dark");
 }
 
 </script>
