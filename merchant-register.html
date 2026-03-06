@@ -4,35 +4,101 @@
 <meta charset="UTF-8">
 <title>Connexion Commerçant</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6f9;
+padding:30px;
+}
+
+.container{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+max-width:400px;
+margin:auto;
+}
+
+input{
+width:100%;
+padding:10px;
+margin-top:10px;
+border-radius:5px;
+border:1px solid #ccc;
+}
+
+button{
+width:100%;
+padding:10px;
+margin-top:10px;
+border:none;
+border-radius:5px;
+background:#111;
+color:white;
+cursor:pointer;
+}
+
+button:hover{
+background:#333;
+}
+
+#message{
+margin-top:15px;
+font-weight:bold;
+}
+
+</style>
+
 </head>
+
 <body>
+
+<div class="container">
 
 <h2>Connexion / Inscription Commerçant</h2>
 
-<input type="email" id="email" placeholder="Email"><br><br>
-<input type="password" id="password" placeholder="Mot de passe"><br><br>
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Mot de passe">
 
 <button id="registerBtn">S'inscrire</button>
 <button id="loginBtn">Se connecter</button>
 
 <p id="message"></p>
 
+</div>
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } 
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc } 
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+import {
+getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+import {
+getFirestore,
+doc,
+setDoc,
+getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* FIREBASE CONFIG */
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
-  authDomain: "angcomerce-v1.firebaseapp.com",
-  projectId: "angcomerce-v1",
-  storageBucket: "angcomerce-v1.firebasestorage.app",
-  messagingSenderId: "238735890157",
-  appId: "1:238735890157:web:db3f87960db7916d7fdee4"
+apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
+authDomain: "angcomerce-v1.firebaseapp.com",
+projectId: "angcomerce-v1",
+storageBucket: "angcomerce-v1.firebasestorage.app",
+messagingSenderId: "238735890157",
+appId: "1:238735890157:web:db3f87960db7916d7fdee4"
 };
+
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -40,77 +106,119 @@ const db = getFirestore(app);
 
 const message = document.getElementById("message");
 
+
 /* ================= INSCRIPTION ================= */
 
-document.getElementById("registerBtn").addEventListener("click", async () => {
+document.getElementById("registerBtn").addEventListener("click", async ()=>{
 
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
 
-  if(!email || !password){
-    message.innerText = "Remplis tous les champs";
-    return;
-  }
+if(!email || !password){
 
-  try {
+message.innerText="Remplis tous les champs";
+return;
 
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
+}
 
-    // 🔥 ÉCRIT DANS users (IMPORTANT)
-    await setDoc(doc(db, "users", user.uid), {
-      email: user.email,
-      role: "merchant",
-      approved: false,
-      verified: false,
-      createdAt: new Date()
-    });
+try{
 
-    message.innerText = "Compte créé ! En attente validation admin.";
+const userCredential = await createUserWithEmailAndPassword(auth,email,password);
 
-  } catch(error) {
-    message.innerText = error.message;
-  }
+const user = userCredential.user;
+
+
+/* USERS COLLECTION */
+
+await setDoc(doc(db,"users",user.uid),{
+
+email:user.email,
+role:"merchant",
+approved:false,
+verified:false,
+createdAt:new Date()
 
 });
 
+
+/* MERCHANTS COLLECTION (IMPORTANT POUR ADMIN) */
+
+await setDoc(doc(db,"merchants",user.uid),{
+
+email:user.email,
+approved:false,
+createdAt:new Date()
+
+});
+
+
+message.innerText="Compte créé ! En attente validation admin.";
+
+}catch(error){
+
+message.innerText=error.message;
+
+}
+
+});
+
+
 /* ================= CONNEXION ================= */
 
-document.getElementById("loginBtn").addEventListener("click", async () => {
+document.getElementById("loginBtn").addEventListener("click", async ()=>{
 
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
 
-  try {
+try{
 
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
+const userCredential = await signInWithEmailAndPassword(auth,email,password);
 
-    const userRef = doc(db, "users", user.uid);
-    const userSnap = await getDoc(userRef);
+const user = userCredential.user;
 
-    if(!userSnap.exists()){
-      message.innerText = "Compte introuvable.";
-      return;
-    }
 
-    const userData = userSnap.data();
+/* CHECK USERS */
 
-    if(userData.role !== "merchant"){
-      message.innerText = "Accès refusé.";
-      return;
-    }
+const userRef = doc(db,"users",user.uid);
 
-    if(!userData.approved){
-      message.innerText = "Compte en attente de validation admin.";
-      return;
-    }
+const userSnap = await getDoc(userRef);
 
-    window.location.href = "merchant.html";
+if(!userSnap.exists()){
 
-  } catch(error) {
-    message.innerText = error.message;
-  }
+message.innerText="Compte introuvable";
+return;
+
+}
+
+const userData = userSnap.data();
+
+
+if(userData.role !== "merchant"){
+
+message.innerText="Accès refusé";
+return;
+
+}
+
+
+if(!userData.approved){
+
+message.innerText="Compte en attente validation admin";
+return;
+
+}
+
+
+/* REDIRECT MERCHANT DASHBOARD */
+
+window.location.href="merchant.html";
+
+
+}catch(error){
+
+message.innerText=error.message;
+
+}
 
 });
 
