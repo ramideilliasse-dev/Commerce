@@ -1,23 +1,22 @@
  <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>ANGcommerce Admin</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ANGcomerce Admin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 
 body{
 font-family:Arial;
-margin:0;
 background:#f4f6f9;
+margin:0;
 }
 
 header{
 background:#111;
 color:white;
 padding:15px;
-font-size:20px;
 }
 
 .container{
@@ -25,48 +24,37 @@ padding:20px;
 }
 
 .stats{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:15px;
-margin-bottom:20px;
-}
-
-.stat{
-background:white;
-padding:20px;
-border-radius:10px;
-box-shadow:0 2px 10px rgba(0,0,0,0.1);
-}
-
-.stat h3{
-margin:0;
-color:#666;
-}
-
-.stat p{
-font-size:25px;
-margin-top:5px;
-font-weight:bold;
-}
-
-.section{
-margin-top:30px;
+display:flex;
+gap:20px;
+flex-wrap:wrap;
 }
 
 .card{
 background:white;
-padding:15px;
-margin-bottom:10px;
+padding:20px;
 border-radius:10px;
-box-shadow:0 2px 10px rgba(0,0,0,0.1);
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
+min-width:200px;
+}
+
+.list{
+margin-top:30px;
+}
+
+.item{
+background:white;
+padding:15px;
+margin:10px 0;
+border-radius:8px;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
 
 button{
 padding:8px 12px;
 border:none;
-border-radius:5px;
+border-radius:6px;
 cursor:pointer;
-margin-top:5px;
+margin-right:5px;
 }
 
 .approve{
@@ -80,37 +68,29 @@ color:white;
 }
 
 </style>
-
 </head>
 
 <body>
 
 <header>
-ANGcommerce Admin Dashboard
+<h2>ANGcomerce Admin Dashboard</h2>
 </header>
 
 <div class="container">
 
-<!-- STATS -->
-
 <div class="stats">
 
-<div class="stat">
+<div class="card">
 <h3>Total Marchands</h3>
 <p id="merchantCount">0</p>
 </div>
 
-<div class="stat">
+<div class="card">
 <h3>Total Produits</h3>
 <p id="productCount">0</p>
 </div>
 
-<div class="stat">
-<h3>Marchands approuvés</h3>
-<p id="approvedCount">0</p>
-</div>
-
-<div class="stat">
+<div class="card">
 <h3>Marchands en attente</h3>
 <p id="pendingCount">0</p>
 </div>
@@ -118,23 +98,17 @@ ANGcommerce Admin Dashboard
 </div>
 
 
-<!-- MARCHANDS -->
+<div class="list">
 
-<div class="section">
-
-<h2>Gestion Marchands</h2>
-
+<h2>Marchands</h2>
 <div id="merchantList"></div>
 
 </div>
 
 
-<!-- PRODUITS -->
+<div class="list">
 
-<div class="section">
-
-<h2>Gestion Produits</h2>
-
+<h2>Produits</h2>
 <div id="productList"></div>
 
 </div>
@@ -143,14 +117,15 @@ ANGcommerce Admin Dashboard
 </div>
 
 
+
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
 import {
 getAuth,
 onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 import {
 getFirestore,
@@ -160,22 +135,25 @@ collection,
 getDocs,
 updateDoc,
 deleteDoc
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
 
 const firebaseConfig = {
-apiKey:"AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
-authDomain:"angcomerce-v1.firebaseapp.com",
-projectId:"angcomerce-v1"
+  apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
+  authDomain: "angcomerce-v1.firebaseapp.com",
+  projectId: "angcomerce-v1",
+  storageBucket: "angcomerce-v1.firebasestorage.app",
+  messagingSenderId: "238735890157",
+  appId: "1:238735890157:web:db3f87960db7916d7fdee4"
 };
 
 const app = initializeApp(firebaseConfig);
 
-const auth = getAuth();
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-const db = getFirestore();
 
-
-/* AUTH ADMIN */
+/* ================= CHECK ADMIN ================= */
 
 onAuthStateChanged(auth, async(user)=>{
 
@@ -209,7 +187,7 @@ loadDashboard();
 });
 
 
-/* DASHBOARD */
+/* ================= DASHBOARD ================= */
 
 async function loadDashboard(){
 
@@ -219,39 +197,41 @@ loadProducts();
 }
 
 
-/* LOAD MERCHANTS */
+/* ================= MERCHANTS ================= */
 
 async function loadMerchants(){
 
-const snapshot = await getDocs(collection(db,"merchants"));
-
-let approved = 0;
-let pending = 0;
-
-document.getElementById("merchantCount").innerText = snapshot.size;
+const snapshot = await getDocs(collection(db,"users"));
 
 const container = document.getElementById("merchantList");
 
 container.innerHTML="";
 
+let merchantCount=0;
+let pendingCount=0;
+
 snapshot.forEach(docSnap=>{
 
 const data = docSnap.data();
 
-if(data.approved){
-approved++;
-}else{
-pending++;
+if(data.role === "merchant"){
+
+merchantCount++;
+
+if(!data.approved){
+pendingCount++;
 }
 
-const div = document.createElement("div");
+const div=document.createElement("div");
 
-div.className="card";
+div.className="item";
 
 div.innerHTML=`
 
-<p><b>Email:</b> ${data.email}</p>
-<p><b>Status:</b> ${data.approved ? "Approuvé" : "En attente"}</p>
+<b>${data.email}</b><br>
+Approved: ${data.approved}
+
+<br><br>
 
 <button class="approve" onclick="approveMerchant('${docSnap.id}')">
 Approuver
@@ -265,41 +245,45 @@ Supprimer
 
 container.appendChild(div);
 
+}
+
 });
 
-document.getElementById("approvedCount").innerText = approved;
-document.getElementById("pendingCount").innerText = pending;
+document.getElementById("merchantCount").innerText=merchantCount;
+document.getElementById("pendingCount").innerText=pendingCount;
 
 }
 
 
-/* LOAD PRODUCTS */
+/* ================= PRODUCTS ================= */
 
 async function loadProducts(){
 
 const snapshot = await getDocs(collection(db,"products"));
 
-document.getElementById("productCount").innerText = snapshot.size;
+document.getElementById("productCount").innerText=snapshot.size;
 
-const container = document.getElementById("productList");
+const container=document.getElementById("productList");
 
 container.innerHTML="";
 
 snapshot.forEach(docSnap=>{
 
-const data = docSnap.data();
+const data=docSnap.data();
 
-const div = document.createElement("div");
+const div=document.createElement("div");
 
-div.className="card";
+div.className="item";
 
 div.innerHTML=`
 
-<p><b>Produit:</b> ${data.name}</p>
-<p><b>Prix:</b> ${data.price}</p>
+<b>${data.name}</b><br>
+Prix: ${data.price}
+
+<br><br>
 
 <button class="delete" onclick="deleteProduct('${docSnap.id}')">
-Supprimer
+Supprimer produit
 </button>
 
 `;
@@ -311,14 +295,12 @@ container.appendChild(div);
 }
 
 
-/* APPROVE MERCHANT */
+/* ================= ACTIONS ================= */
 
 window.approveMerchant = async(id)=>{
 
-await updateDoc(doc(db,"merchants",id),{
-
+await updateDoc(doc(db,"users",id),{
 approved:true
-
 });
 
 alert("Marchand approuvé");
@@ -328,11 +310,9 @@ loadDashboard();
 }
 
 
-/* DELETE MERCHANT */
-
 window.deleteMerchant = async(id)=>{
 
-await deleteDoc(doc(db,"merchants",id));
+await deleteDoc(doc(db,"users",id));
 
 alert("Marchand supprimé");
 
@@ -340,8 +320,6 @@ loadDashboard();
 
 }
 
-
-/* DELETE PRODUCT */
 
 window.deleteProduct = async(id)=>{
 
