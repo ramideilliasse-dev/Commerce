@@ -1,177 +1,228 @@
  <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Admin - ANGcomerce</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- BOOTSTRAP -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<title>Admin Dashboard</title>
 
 <style>
-body {
-  background-color: #f4f6f9;
-}
-.card-stats {
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-.badge-pending {
-  background-color: orange;
-}
-.badge-approved {
-  background-color: green;
-}
-</style>
 
+body{
+font-family:Arial;
+background:#f5f5f5;
+padding:20px;
+}
+
+h1{
+color:#333;
+}
+
+.card{
+background:white;
+padding:15px;
+margin:10px 0;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+button{
+padding:8px 12px;
+border:none;
+border-radius:5px;
+cursor:pointer;
+}
+
+.approve{
+background:green;
+color:white;
+}
+
+.delete{
+background:red;
+color:white;
+}
+
+.stats{
+display:flex;
+gap:20px;
+}
+
+.stat{
+background:white;
+padding:15px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+</style>
 </head>
+
 <body>
 
-<div class="container py-4">
+<h1>Admin Dashboard</h1>
 
-<h2 class="mb-4">Dashboard Admin</h2>
-
-<!-- STAT CARDS -->
-<div class="row g-3 mb-4">
-
-  <div class="col-md-4">
-    <div class="card card-stats p-3">
-      <h6>Total Commerçants</h6>
-      <h3 id="totalMerchants">0</h3>
-    </div>
-  </div>
-
-  <div class="col-md-4">
-    <div class="card card-stats p-3">
-      <h6>Marchands en attente</h6>
-      <h3 id="pendingCount">0</h3>
-    </div>
-  </div>
-
-  <div class="col-md-4">
-    <div class="card card-stats p-3">
-      <h6>Total Produits</h6>
-      <h3 id="totalProducts">0</h3>
-    </div>
-  </div>
-
+<div class="stats">
+<div class="stat">
+<h3>Total Marchands</h3>
+<p id="merchantCount">0</p>
 </div>
 
-<!-- LISTE MARCHANDS -->
-<div class="card p-3">
-  <h5>Commerçants en attente</h5>
-  <div id="merchantList"></div>
+<div class="stat">
+<h3>Total Produits</h3>
+<p id="productCount">0</p>
+</div>
 </div>
 
-</div>
+<h2>Liste des marchands</h2>
+
+<div id="merchantList"></div>
+
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { 
-  getFirestore, 
-  collection, 
-  getDocs, 
-  query, 
-  where, 
-  updateDoc, 
-  doc,
-  deleteDoc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 
-/* FIREBASE CONFIG */
+import {
+getAuth,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+import {
+getFirestore,
+doc,
+getDoc,
+collection,
+getDocs,
+updateDoc,
+deleteDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
 const firebaseConfig = {
-  apiKey: "YOUR_KEY",
+  apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
   authDomain: "angcomerce-v1.firebaseapp.com",
   projectId: "angcomerce-v1",
-  storageBucket: "angcomerce-v1.firebasestorage.app",
-  messagingSenderId: "238735890157",
-  appId: "1:238735890157:web:db3f87960db7916d7fdee4"
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
 
-/* AUTH CHECK */
-onAuthStateChanged(auth, async (user) => {
+const auth = getAuth();
 
-  if(!user){
-    alert("Connecte-toi en admin");
-    return;
-  }
+const db = getFirestore();
 
-  const userDoc = await getDoc(doc(db,"users",user.uid));
 
-  if(!userDoc.exists() || userDoc.data().role !== "admin"){
-    alert("Accès refusé");
-    return;
-  }
+onAuthStateChanged(auth, async(user)=>{
 
-  loadData();
+if(!user){
+
+document.body.innerHTML="Connecte-toi en admin";
+return;
+
+}
+
+
+const userDoc = await getDoc(doc(db,"users",user.uid));
+
+if(!userDoc.exists()){
+
+document.body.innerHTML="Utilisateur introuvable";
+return;
+
+}
+
+
+const data = userDoc.data();
+
+if(data.role !== "admin"){
+
+document.body.innerHTML="Connecte-toi en admin";
+return;
+
+}
+
+loadDashboard();
 
 });
 
-/* LOAD DATA */
-async function loadData(){
 
-  const usersSnapshot = await getDocs(collection(db,"users"));
-  const productsSnapshot = await getDocs(collection(db,"products"));
+async function loadDashboard(){
 
-  let merchantCount = 0;
-  let pendingCount = 0;
-
-  const merchantList = document.getElementById("merchantList");
-  merchantList.innerHTML = "";
-
-  usersSnapshot.forEach(docSnap=>{
-    const data = docSnap.data();
-
-    if(data.role === "merchant"){
-      merchantCount++;
-
-      if(data.approved === false){
-
-        pendingCount++;
-
-        const div = document.createElement("div");
-        div.className = "border rounded p-3 mb-2 bg-light";
-
-        div.innerHTML = `
-          <strong>${data.email}</strong>
-          <span class="badge badge-pending ms-2">En attente</span>
-          <div class="mt-2">
-            <button class="btn btn-success btn-sm me-2" onclick="approveMerchant('${docSnap.id}')">Approuver</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteMerchant('${docSnap.id}')">Supprimer</button>
-          </div>
-        `;
-
-        merchantList.appendChild(div);
-      }
-    }
-  });
-
-  document.getElementById("totalMerchants").innerText = merchantCount;
-  document.getElementById("pendingCount").innerText = pendingCount;
-  document.getElementById("totalProducts").innerText = productsSnapshot.size;
+loadMerchants();
+loadProducts();
 
 }
 
-/* APPROVE */
-window.approveMerchant = async function(uid){
-  await updateDoc(doc(db,"users",uid),{
-    approved:true
-  });
-  loadData();
+
+async function loadMerchants(){
+
+const snapshot = await getDocs(collection(db,"merchants"));
+
+document.getElementById("merchantCount").innerText = snapshot.size;
+
+const container = document.getElementById("merchantList");
+
+container.innerHTML="";
+
+snapshot.forEach(docSnap=>{
+
+const data = docSnap.data();
+
+const div = document.createElement("div");
+
+div.className="card";
+
+div.innerHTML = `
+<p><b>Email:</b> ${data.email}</p>
+<p><b>Approved:</b> ${data.approved}</p>
+
+<button class="approve" onclick="approveMerchant('${docSnap.id}')">
+Approuver
+</button>
+
+<button class="delete" onclick="deleteMerchant('${docSnap.id}')">
+Supprimer
+</button>
+`;
+
+container.appendChild(div);
+
+});
+
 }
 
-/* DELETE */
-window.deleteMerchant = async function(uid){
-  await deleteDoc(doc(db,"users",uid));
-  loadData();
+
+async function loadProducts(){
+
+const snapshot = await getDocs(collection(db,"products"));
+
+document.getElementById("productCount").innerText = snapshot.size;
+
 }
+
+
+window.approveMerchant = async(id)=>{
+
+await updateDoc(doc(db,"merchants",id),{
+
+approved:true
+
+});
+
+alert("Marchand approuvé");
+
+location.reload();
+
+}
+
+
+window.deleteMerchant = async(id)=>{
+
+await deleteDoc(doc(db,"merchants",id));
+
+alert("Marchand supprimé");
+
+location.reload();
+
+}
+
 
 </script>
 
