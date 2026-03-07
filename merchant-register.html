@@ -61,9 +61,13 @@ font-weight:bold;
 <h2>Connexion / Inscription Commerçant</h2>
 
 <input type="email" id="email" placeholder="Email">
+
 <input type="password" id="password" placeholder="Mot de passe">
 
+<input type="text" id="phone" placeholder="Numéro WhatsApp (ex: 244923000000)">
+
 <button id="registerBtn">S'inscrire</button>
+
 <button id="loginBtn">Se connecter</button>
 
 <p id="message"></p>
@@ -88,17 +92,18 @@ getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 
-/* FIREBASE CONFIG */
+/* FIREBASE */
 
 const firebaseConfig = {
+
 apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
 authDomain: "angcomerce-v1.firebaseapp.com",
 projectId: "angcomerce-v1",
 storageBucket: "angcomerce-v1.firebasestorage.app",
 messagingSenderId: "238735890157",
 appId: "1:238735890157:web:db3f87960db7916d7fdee4"
-};
 
+};
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -111,10 +116,11 @@ const message = document.getElementById("message");
 
 document.getElementById("registerBtn").addEventListener("click", async ()=>{
 
-const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
+const email = document.getElementById("email").value.trim();
+const password = document.getElementById("password").value.trim();
+const phone = document.getElementById("phone").value.trim();
 
-if(!email || !password){
+if(!email || !password || !phone){
 
 message.innerText="Remplis tous les champs";
 return;
@@ -128,24 +134,25 @@ const userCredential = await createUserWithEmailAndPassword(auth,email,password)
 const user = userCredential.user;
 
 
-/* USERS COLLECTION */
+/* USERS */
 
 await setDoc(doc(db,"users",user.uid),{
 
 email:user.email,
+phone:phone,
 role:"merchant",
 approved:false,
-verified:false,
 createdAt:new Date()
 
 });
 
 
-/* MERCHANTS COLLECTION (IMPORTANT POUR ADMIN) */
+/* MERCHANTS */
 
 await setDoc(doc(db,"merchants",user.uid),{
 
 email:user.email,
+phone:phone,
 approved:false,
 createdAt:new Date()
 
@@ -176,9 +183,6 @@ const userCredential = await signInWithEmailAndPassword(auth,email,password);
 
 const user = userCredential.user;
 
-
-/* CHECK USERS */
-
 const userRef = doc(db,"users",user.uid);
 
 const userSnap = await getDoc(userRef);
@@ -192,14 +196,12 @@ return;
 
 const userData = userSnap.data();
 
-
 if(userData.role !== "merchant"){
 
 message.innerText="Accès refusé";
 return;
 
 }
-
 
 if(!userData.approved){
 
@@ -208,11 +210,9 @@ return;
 
 }
 
-
-/* REDIRECT MERCHANT DASHBOARD */
+/* REDIRECTION DASHBOARD */
 
 window.location.href="merchant.html";
-
 
 }catch(error){
 
