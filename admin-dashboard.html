@@ -94,16 +94,24 @@ const auth = getAuth(app);
 const ADMIN_EMAIL = "ramideilliiasse@gmail.com";
 
 
-// sécurité admin
+// 🔐 sécurité admin
 onAuthStateChanged(auth,(user)=>{
 
-if(!user || user.email !== ADMIN_EMAIL){
-
-alert("Acesso negado");
-
+if(!user){
+alert("Vous devez vous connecter");
 window.location.href="merchant-login.html";
-
+return;
 }
+
+if(user.email !== ADMIN_EMAIL){
+alert("Acesso negado");
+window.location.href="merchant-login.html";
+return;
+}
+
+// si admin → charger données
+loadMerchants();
+loadProducts();
 
 });
 
@@ -128,8 +136,8 @@ div.innerHTML=`
 
 <p>
 
-<b>${data.shopName}</b>  
-${data.email}  
+<b>${data.shopName}</b><br>
+${data.email}<br>
 Status: ${data.status}
 
 <br><br>
@@ -205,7 +213,7 @@ div.innerHTML=`
 
 <p>
 
-<b>${data.name}</b>  
+<b>${data.name}</b><br>
 Preço: ${data.price}
 
 <br><br>
@@ -238,12 +246,6 @@ alert("Produit supprimé");
 loadProducts();
 
 }
-
-
-
-loadMerchants();
-
-loadProducts();
 
 </script>
 
