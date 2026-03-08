@@ -35,6 +35,10 @@ margin-right:5px;
 background:red;
 }
 
+.logout{
+background:orange;
+}
+
 </style>
 
 </head>
@@ -42,6 +46,8 @@ background:red;
 <body>
 
 <h1>Painel Admin</h1>
+
+<button class="logout" onclick="logout()">Logout</button>
 
 <div class="box">
 
@@ -74,7 +80,8 @@ doc
 
 import {
 getAuth,
-onAuthStateChanged
+onAuthStateChanged,
+signOut
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 
@@ -91,6 +98,7 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 
+// EMAIL ADMIN
 const ADMIN_EMAIL = "ramideilliasse@gmail.com";
 
 
@@ -98,15 +106,26 @@ const ADMIN_EMAIL = "ramideilliasse@gmail.com";
 onAuthStateChanged(auth,(user)=>{
 
 if(!user){
+
 alert("Vous devez vous connecter");
+
 window.location.href="merchant-login.html";
+
 return;
+
 }
 
+// afficher email connecté (debug)
+console.log("Utilisateur connecté:", user.email);
+
 if(user.email !== ADMIN_EMAIL){
+
 alert("Acesso negado");
+
 window.location.href="merchant-login.html";
+
 return;
+
 }
 
 // si admin → charger données
@@ -114,6 +133,17 @@ loadMerchants();
 loadProducts();
 
 });
+
+
+
+// logout
+window.logout = async function(){
+
+await signOut(auth);
+
+window.location.href="merchant-login.html";
+
+}
 
 
 
