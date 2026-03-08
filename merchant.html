@@ -54,7 +54,6 @@ border-radius:6px;
 <h3>Ajouter un produit</h3>
 
 <input id="productName" placeholder="Nom du produit">
-
 <input id="productPrice" placeholder="Prix">
 
 <select id="productCategory">
@@ -119,10 +118,14 @@ projectId: "angcomerce-v1",
 };
 
 const app = initializeApp(firebaseConfig);
-
 const auth = getAuth(app);
-
 const db = getFirestore(app);
+
+
+/* 🔐 EMAIL ADMIN */
+
+const ADMIN_EMAIL = "ramideilliasse@gmail.com";
+
 
 let currentUser;
 let merchantPhone="";
@@ -136,7 +139,16 @@ onAuthStateChanged(auth, async(user)=>{
 
 if(!user){
 
-window.location.href="merchant-register.html";
+window.location.href="merchant-login.html";
+return;
+
+}
+
+/* redirection admin */
+
+if(user.email === ADMIN_EMAIL){
+
+window.location.href="admin-dashboard.html";
 return;
 
 }
@@ -144,6 +156,7 @@ return;
 currentUser=user;
 
 welcome.innerText="Bienvenue "+user.email;
+
 
 /* charger téléphone marchand */
 
@@ -188,8 +201,6 @@ return;
 
 try{
 
-/* ================= UPLOAD IMAGES ================= */
-
 const uploadPromises=[];
 
 for(let i=0;i<imageFiles.length;i++){
@@ -217,7 +228,7 @@ const uploadResults=await Promise.all(uploadPromises);
 const imageUrls=uploadResults.map(data=>data.secure_url);
 
 
-/* ================= UPLOAD VIDEO ================= */
+/* upload vidéo */
 
 let videoUrl="";
 
@@ -243,7 +254,7 @@ videoUrl=videoData.secure_url;
 }
 
 
-/* ================= FIRESTORE ================= */
+/* FIRESTORE */
 
 await addDoc(collection(db,"products"),{
 
@@ -263,7 +274,6 @@ alert("Produit ajouté avec succès");
 
 loadMyProducts();
 
-/* reset */
 
 document.getElementById("productName").value="";
 document.getElementById("productPrice").value="";
@@ -278,7 +288,6 @@ alert("Erreur : "+error.message);
 }
 
 btn.disabled=false;
-
 btn.innerText="Ajouter produit";
 
 };
