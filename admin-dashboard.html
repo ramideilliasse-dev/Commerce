@@ -92,22 +92,42 @@ projectId: "angcomerce-v1"
 };
 
 const app = initializeApp(firebaseConfig);
-
 const db = getFirestore(app);
-
 const auth = getAuth(app);
 
 
-// EMAIL ADMIN
-const ADMIN_EMAIL = "ramideilliasse@gmail.com";
 
+/* 🔐 VERIFICATION ADMIN VIA COLLECTION ADMINS */
 
-// 🔐 sécurité admin
-onAuthStateChanged(auth,(user)=>{
+onAuthStateChanged(auth, async (user)=>{
 
 if(!user){
 
 alert("Vous devez vous connecter");
+window.location.href="merchant-login.html";
+return;
+
+}
+
+/* vérifier si email existe dans admins */
+
+const adminsRef = collection(db,"admins");
+const snapshot = await getDocs(adminsRef);
+
+let isAdmin=false;
+
+snapshot.forEach(docSnap=>{
+
+if(docSnap.data().email === user.email){
+isAdmin=true;
+}
+
+});
+
+
+if(!isAdmin){
+
+alert("Accès refusé");
 
 window.location.href="merchant-login.html";
 
@@ -115,20 +135,8 @@ return;
 
 }
 
-// afficher email connecté (debug)
-console.log("Utilisateur connecté:", user.email);
+/* si admin → charger dashboard */
 
-if(user.email !== ADMIN_EMAIL){
-
-alert("Acesso negado");
-
-window.location.href="merchant-login.html";
-
-return;
-
-}
-
-// si admin → charger données
 loadMerchants();
 loadProducts();
 
@@ -136,7 +144,8 @@ loadProducts();
 
 
 
-// logout
+/* LOGOUT */
+
 window.logout = async function(){
 
 await signOut(auth);
@@ -147,7 +156,8 @@ window.location.href="merchant-login.html";
 
 
 
-// charger marchands
+/* ================= MARCHANDS ================= */
+
 async function loadMerchants(){
 
 const querySnapshot = await getDocs(collection(db,"merchants"));
@@ -194,7 +204,8 @@ container.appendChild(div);
 
 
 
-// valider marchand
+/* VALIDER MARCHAND */
+
 window.approveMerchant = async function(id){
 
 await updateDoc(doc(db,"merchants",id),{
@@ -211,7 +222,8 @@ loadMerchants();
 
 
 
-// supprimer marchand
+/* SUPPRIMER MARCHAND */
+
 window.deleteMerchant = async function(id){
 
 await deleteDoc(doc(db,"merchants",id));
@@ -224,7 +236,8 @@ loadMerchants();
 
 
 
-// charger produits
+/* ================= PRODUITS ================= */
+
 async function loadProducts(){
 
 const querySnapshot = await getDocs(collection(db,"products"));
@@ -266,7 +279,8 @@ container.appendChild(div);
 
 
 
-// supprimer produit
+/* SUPPRIMER PRODUIT */
+
 window.deleteProduct = async function(id){
 
 await deleteDoc(doc(db,"products",id));
