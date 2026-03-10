@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<title>Boutique Marchand</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Boutique Marchand</h2>
+
+<div id="products"></div>
+
+</div>
+
+
+<script type="module">
+
+import { db } from "./firebase.js";
+
+import {
+collection,
+query,
+where,
+getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+const params=new URLSearchParams(window.location.search);
+
+const merchantId=params.get("id");
+
+const container=document.getElementById("products");
+
+
+async function loadProducts(){
+
+const q=query(
+
+collection(db,"products"),
+where("merchantId","==",merchantId)
+
+);
+
+const snapshot=await getDocs(q);
+
+snapshot.forEach(doc=>{
+
+const data=doc.data();
+
+container.innerHTML+=`
+
+<div>
+
+<img src="${data.images[0]}" width="150">
+
+<h4>${data.name}</h4>
+
+<p>${data.price} Kz</p>
+
+<a href="product.html?id=${doc.id}">
+
+<button>Voir produit</button>
+
+</a>
+
+</div>
+
+`;
+
+});
+
+}
+
+loadProducts();
+
+</script>
+
+</body>
+</html>
