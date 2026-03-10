@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 <head>
 
@@ -13,11 +13,22 @@
 width:120px;
 margin:5px;
 border-radius:8px;
+cursor:pointer;
 }
 
 .mainImage{
 width:300px;
 border-radius:10px;
+}
+
+button{
+padding:10px;
+margin-top:10px;
+border:none;
+border-radius:6px;
+background:black;
+color:white;
+cursor:pointer;
 }
 
 </style>
@@ -46,6 +57,10 @@ border-radius:10px;
 Contacter le marchand
 </button>
 
+<button onclick="addToCart()">
+Ajouter au panier
+</button>
+
 </div>
 
 
@@ -65,12 +80,32 @@ const params = new URLSearchParams(window.location.search);
 
 const productId = params.get("id");
 
+let data;
+
+
+/* charger produit */
 
 async function loadProduct(){
 
+if(!productId){
+
+alert("Produit introuvable");
+
+return;
+
+}
+
 const snap = await getDoc(doc(db,"products",productId));
 
-const data = snap.data();
+if(!snap.exists()){
+
+alert("Produit supprimé");
+
+return;
+
+}
+
+data = snap.data();
 
 
 document.getElementById("name").innerText = data.name;
@@ -95,6 +130,8 @@ const gallery = document.getElementById("gallery");
 
 gallery.innerHTML="";
 
+if(data.images){
+
 data.images.forEach(img=>{
 
 gallery.innerHTML += `
@@ -105,12 +142,18 @@ gallery.innerHTML += `
 
 });
 
+}
+
 
 /* VIDEO */
 
 if(data.video){
 
 document.getElementById("video").src = data.video;
+
+}else{
+
+document.getElementById("video").style.display="none";
 
 }
 
@@ -131,11 +174,37 @@ window.open(url);
 
 }
 
+
+/* changer image */
+
 window.changeImage=function(src){
 
 document.getElementById("mainImage").src=src;
 
 }
+
+
+/* AJOUT PANIER */
+
+window.addToCart=function(){
+
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+cart.push({
+
+name:data.name,
+price:data.price
+
+});
+
+localStorage.setItem("cart",JSON.stringify(cart));
+
+alert("Produit ajouté au panier");
+
+}
+
+
+/* lancer */
 
 loadProduct();
 
