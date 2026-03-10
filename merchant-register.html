@@ -1,1 +1,101 @@
+ <!DOCTYPE html>
+<html>
+<head>
 
+<meta charset="UTF-8">
+<title>Inscription Marchand</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Créer compte marchand</h2>
+
+<input id="shopName" placeholder="Nom de la boutique">
+
+<input id="phone" placeholder="Téléphone">
+
+<input id="email" type="email" placeholder="Email">
+
+<input id="password" type="password" placeholder="Mot de passe">
+
+<button onclick="register()">Créer compte</button>
+
+<p>
+Déjà un compte ?
+<a href="login.html">Connexion</a>
+</p>
+
+</div>
+
+
+<script type="module">
+
+import { auth, db } from "./firebase.js";
+
+import { 
+createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+import {
+doc,
+setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+window.register = async function(){
+
+const shopName=document.getElementById("shopName").value;
+const phone=document.getElementById("phone").value;
+const email=document.getElementById("email").value;
+const password=document.getElementById("password").value;
+
+if(!shopName || !phone || !email || !password){
+
+alert("Remplis tous les champs");
+
+return;
+
+}
+
+try{
+
+const userCredential = await createUserWithEmailAndPassword(auth,email,password);
+
+const user=userCredential.user;
+
+
+/* enregistrer marchand */
+
+await setDoc(doc(db,"merchants",user.uid),{
+
+shopName:shopName,
+phone:phone,
+email:email,
+status:"pending",
+createdAt:new Date()
+
+});
+
+
+alert("Compte créé. En attente validation admin.");
+
+window.location.href="login.html";
+
+}catch(error){
+
+alert(error.message);
+
+}
+
+}
+
+</script>
+
+</body>
+
+</html>
