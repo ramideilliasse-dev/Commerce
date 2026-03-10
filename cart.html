@@ -1,1 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
 
+<meta charset="UTF-8">
+<title>Panier</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Mon Panier</h2>
+
+<div id="cartItems"></div>
+
+<h3 id="total"></h3>
+
+<button onclick="checkout()">Commander via WhatsApp</button>
+
+</div>
+
+
+<script>
+
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+const container = document.getElementById("cartItems");
+
+const totalElement = document.getElementById("total");
+
+function loadCart(){
+
+container.innerHTML="";
+
+let total=0;
+
+cart.forEach((item,index)=>{
+
+total += item.price;
+
+container.innerHTML+=`
+
+<div class="product">
+
+<h4>${item.name}</h4>
+
+<p>${item.price} Kz</p>
+
+<button onclick="removeItem(${index})">
+
+Supprimer
+
+</button>
+
+</div>
+
+`;
+
+});
+
+totalElement.innerText = "Total : "+total+" Kz";
+
+}
+
+function removeItem(index){
+
+cart.splice(index,1);
+
+localStorage.setItem("cart",JSON.stringify(cart));
+
+loadCart();
+
+}
+
+function checkout(){
+
+if(cart.length===0){
+
+alert("Panier vide");
+
+return;
+
+}
+
+let message="Commande :%0A";
+
+cart.forEach(item=>{
+
+message += item.name+" - "+item.price+" Kz%0A";
+
+});
+
+window.open("https://wa.me/?text="+message);
+
+}
+
+loadCart();
+
+</script>
+
+</body>
+</html>
