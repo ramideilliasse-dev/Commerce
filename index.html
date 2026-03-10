@@ -1,1 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
 
+<meta charset="UTF-8">
+
+<title>AngCommerce</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<header>
+
+<h2>AngCommerce</h2>
+
+<div>
+
+<a href="login.html">
+<button>Login</button>
+</a>
+
+</div>
+
+</header>
+
+<div class="container">
+
+<h2>Produits</h2>
+
+<div id="products"></div>
+
+</div>
+
+
+<script type="module">
+
+import { db } from "./firebase.js";
+
+import { 
+collection,
+getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+const container=document.getElementById("products");
+
+
+async function loadProducts(){
+
+const snapshot=await getDocs(collection(db,"products"));
+
+container.innerHTML="";
+
+
+snapshot.forEach(doc=>{
+
+const data=doc.data();
+
+container.innerHTML+=`
+
+<div class="product">
+
+<h3>${data.name}</h3>
+
+<p>${data.price} Kz</p>
+
+<a href="product.html?id=${doc.id}">
+
+<button>Voir produit</button>
+
+</a>
+
+</div>
+
+`;
+
+});
+
+}
+
+loadProducts();
+
+</script>
+
+</body>
+
+</html> 
