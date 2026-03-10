@@ -1,1 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
 
+<meta charset="UTF-8">
+<title>Admin Dashboard</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+
+.box{
+background:white;
+padding:20px;
+margin-bottom:20px;
+border-radius:10px;
+}
+
+button{
+padding:8px 12px;
+margin-top:5px;
+border:none;
+border-radius:6px;
+background:black;
+color:white;
+cursor:pointer;
+}
+
+.delete{
+background:red;
+}
+
+.logout{
+background:orange;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Admin Dashboard</h1>
+
+<button class="logout" onclick="logout()">Logout</button>
+
+<div class="box">
+
+<h2>Marchands</h2>
+
+<div id="merchantList"></div>
+
+</div>
+
+<div class="box">
+
+<h2>Produits</h2>
+
+<div id="productList"></div>
+
+</div>
+
+</div>
+
+
+<script type="module">
+
+import { db } from "./firebase.js";
+
+import {
+collection,
+getDocs,
+updateDoc,
+deleteDoc,
+doc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+import {
+getAuth,
+onAuthStateChanged,
+signOut
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+
+const auth = getAuth();
+
+const ADMIN_EMAIL = "ramideilliasse@gmail.com";
+
+
+/* sécurité admin */
+
+onAuthStateChanged(auth,(user)=>{
+
+if(!user){
+
+window.location.href="login.html";
+return;
+
+}
+
+if(user.email !== ADMIN_EMAIL){
+
+alert("Accès refusé");
+
+window.location.href="index.html";
+
+return;
+
+}
+
+loadMerchants();
+loadProducts();
+
+});
+
+
+/* logout */
+
+window.logout = async function(){
+
+await signOut(auth);
+
+window.location.href="login.html";
+
+}
+
+
+/* charger marchands */
+
+async function loadMerchants(){
+
+const snapshot = await getDocs(collection(db,"merchants"));
+
+const container = document.getElementById("merchantList");
+
+container.innerHTML="";
+
+snapshot.forEach(docSnap=>{
+
+const data = docSnap.data();
+
+container.innerHTML += `
+
+<div>
+
+<b>${data.shopName}</b><br>
+${data.email}<br>
+Status : ${data.status}
+
+<br>
+
+<button onclick="approveMerchant('${docSnap.id}')">
+Valider
+</button>
+
+<button class="delete"
+onclick="deleteMerchant('${docSnap.id}')">
+
+Supprimer
+
+</button>
+
+<hr>
+
+</div>
+
+`;
+
+});
+
+}
+
+
+/* valider marchand */
+
+window.approveMerchant = async function(id){
+
+await updateDoc(doc(db,"merchants",id),{
+
+status:"approved"
+
+});
+
+alert("Marchand validé");
+
+loadMerchants();
+
+}
+
+
+/* supprimer marchand */
+
+window.deleteMerchant = async function(id){
+
+await deleteDoc(doc(db,"merchants",id));
+
+alert("Marchand supprimé");
+
+loadMerchants();
+
+}
+
+
+/* charger produits */
+
+async function loadProducts(){
+
+const snapshot = await getDocs(collection(db,"products"));
+
+const container = document.getElementById("productList");
+
+container.innerHTML="";
+
+snapshot.forEach(docSnap=>{
+
+const data = docSnap.data();
+
+container.innerHTML += `
+
+<div>
+
+<b>${data.name}</b><br>
+
+Prix : ${data.price} Kz
+
+<br>
+
+<button class="delete"
+onclick="deleteProduct('${docSnap.id}')">
+
+Supprimer produit
+
+</button>
+
+<hr>
+
+</div>
+
+`;
+
+});
+
+}
+
+
+/* supprimer produit */
+
+window.deleteProduct = async function(id){
+
+await deleteDoc(doc(db,"products",id));
+
+alert("Produit supprimé");
+
+loadProducts();
+
+}
+
+</script>
+
+</body>
+</html>
