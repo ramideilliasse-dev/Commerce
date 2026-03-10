@@ -3,34 +3,71 @@
 <head>
 
 <meta charset="UTF-8">
-
-<title>AngCommerce</title>
+<title>Marketplace</title>
 
 <link rel="stylesheet" href="style.css">
+
+<style>
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+#search{
+padding:10px;
+width:200px;
+}
+
+.products{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+gap:20px;
+}
+
+.product{
+background:white;
+padding:15px;
+border-radius:10px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+.product img{
+width:100%;
+border-radius:6px;
+}
+
+</style>
 
 </head>
 
 <body>
 
-<header>
+<div class="container">
 
-<h2>AngCommerce</h2>
+<div class="header">
 
-<div>
+<h2>Marketplace</h2>
 
-<a href="login.html">
-<button>Login</button>
-</a>
+<input id="search" placeholder="Rechercher produit">
+
+<select id="categoryFilter">
+
+<option value="">Toutes catégories</option>
+<option>Electronique</option>
+<option>Téléphone</option>
+<option>Vêtements</option>
+<option>Maison</option>
+
+</select>
+
+<a href="cart.html">Panier</a>
 
 </div>
 
-</header>
-
-<div class="container">
-
-<h2>Produits</h2>
-
-<div id="products"></div>
+<div class="products" id="products"></div>
 
 </div>
 
@@ -39,37 +76,68 @@
 
 import { db } from "./firebase.js";
 
-import { 
+import {
 collection,
 getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 
+let allProducts=[];
+
 const container=document.getElementById("products");
 
+
+/* charger produits */
 
 async function loadProducts(){
 
 const snapshot=await getDocs(collection(db,"products"));
 
-container.innerHTML="";
-
-
 snapshot.forEach(doc=>{
 
-const data=doc.data();
+allProducts.push({
+
+id:doc.id,
+...doc.data()
+
+});
+
+});
+
+displayProducts(allProducts);
+
+}
+
+
+/* afficher produits */
+
+function displayProducts(products){
+
+container.innerHTML="";
+
+products.forEach(product=>{
 
 container.innerHTML+=`
 
 <div class="product">
 
-<h3>${data.name}</h3>
+<img src="${product.images[0]}">
 
-<p>${data.price} Kz</p>
+<h4>${product.name}</h4>
 
-<a href="product.html?id=${doc.id}">
+<p>${product.price} Kz</p>
+
+<p>${product.category}</p>
+
+<a href="product.html?id=${product.id}">
 
 <button>Voir produit</button>
+
+</a>
+
+<a href="merchant-shop.html?id=${product.merchantId}">
+
+<button>Boutique marchand</button>
 
 </a>
 
@@ -81,10 +149,44 @@ container.innerHTML+=`
 
 }
 
+
+/* recherche */
+
+document.getElementById("search").addEventListener("input",function(){
+
+const text=this.value.toLowerCase();
+
+const filtered=allProducts.filter(p=>p.name.toLowerCase().includes(text));
+
+displayProducts(filtered);
+
+});
+
+
+/* filtre catégorie */
+
+document.getElementById("categoryFilter").addEventListener("change",function(){
+
+const cat=this.value;
+
+if(cat===""){
+
+displayProducts(allProducts);
+
+return;
+
+}
+
+const filtered=allProducts.filter(p=>p.category===cat);
+
+displayProducts(filtered);
+
+});
+
+
 loadProducts();
 
 </script>
 
 </body>
-
-</html> 
+</html>
