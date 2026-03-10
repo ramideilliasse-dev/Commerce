@@ -1,1 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
 
+<meta charset="UTF-8">
+<title>Dashboard Marchand</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Dashboard Marchand</h2>
+
+<button onclick="logout()">Logout</button>
+
+<h3>Ajouter produit</h3>
+
+<input id="name" placeholder="Nom produit">
+
+<input id="price" placeholder="Prix">
+
+<textarea id="description" placeholder="Description"></textarea>
+
+<select id="category">
+
+<option value="">Catégorie</option>
+<option>Electronique</option>
+<option>Téléphone</option>
+<option>Vêtements</option>
+<option>Maison</option>
+
+</select>
+
+<label>Images produit</label>
+<input type="file" id="images" multiple>
+
+<label>Vidéo produit</label>
+<input type="file" id="video">
+
+<button onclick="addProduct()">Ajouter produit</button>
+
+<hr>
+
+<h3>Mes produits</h3>
+
+<div id="products"></div>
+
+</div>
+
+
+<script type="module">
+
+import { auth, db } from "./firebase.js";
+
+import {
+onAuthStateChanged,
+signOut
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+import {
+collection,
+addDoc,
+query,
+where,
+getDocs,
+deleteDoc,
+doc,
+getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+let currentUser;
+
+let merchantPhone="";
+
+
+/* AUTH */
+
+onAuthStateChanged(auth, async(user)=>{
+
+if(!user){
+
+window.location.href="login.html";
+return;
+
+}
+
+currentUser=user;
+
+
+/* vérifier statut marchand */
+
+const merchantSnap = await getDoc(doc(db,"merchants",user.uid));
+
+if(!merchantSnap.exists()){
+
+alert("Compte marchand introuvable");
+
+return;
+
+}
+
+const merchantData = merchantSnap.data();
+
+if(merchantData.status !== "approved"){
+
+alert("Votre compte est en attente validation admin");
+
+return;
+
+}
+
+merchantPhone = merchantData.phone;
+
+loadProducts();
+
+});
+
+
+/* LOGOUT */
+
+window.logout = async function(){
+
+await signOut(auth);
+
+window.location.href="login.html";
+
+}
+
+
+
+/* ADD PRODUCT */
+
+window.addProduct = async function(){
+
+const name=document.getElementById("name").value;
+const price=document.getElementById("price").value;
+const description=document.getElementById("description").value;
+const category=document.getElementById("category").value;
+
+const imageFiles=document.getElementById("images").files;
+const videoFile=document.getElementById("video").files[0];
+
+
+if(!name || !price || !description || !category){
+
+alert("Remplis tous les champs");
+
+return;
+
+}
+
+
+try{
+
+
+/* UPLOAD IMAGES */
+
+let imageUrls=[];
+
+for(let i=0;i<imageFiles.length;i++){
+
+const formData=new FormData();
+
+formData.append("file",imageFiles[i]);
+
+formData.append("upload_preset","angcomerce-upload");
+
+const res = await fetch(
+
+"https://api.cloudinary.com/v1_1/df2oxw2qp/image/upload",
+
+{
+
+method:"POST",
+
+body:formData
+
+}
+
+);
+
+const data=await res.json();
+
+imageUrls.push(data.secure_url);
+
+}
+
+
+
+/* UPLOAD VIDEO */
+
+let videoUrl="";
+
+if(videoFile){
+
+const formData=new FormData();
+
+formData.append("file",videoFile);
+
+formData.append("upload_preset","angcomerce-upload");
+
+const res = await fetch(
+
+"https://api.cloudinary.com/v1_1/df2oxw2qp/video/upload",
+
+{
+
+method:"POST",
+
+body:formData
+
+}
+
+);
+
+const data=await res.json();
+
+videoUrl=data.secure_url;
+
+}
+
+
+
+/* FIRESTORE */
+
+await addDoc(collection(db,"products"),{
+
+name:name,
+
+price:Number(price),
+
+description:description,
+
+category:category,
+
+images:imageUrls,
+
+video:videoUrl,
+
+merchantId:currentUser.uid,
+
+merchantPhone:merchantPhone,
+
+createdAt:new Date()
+
+});
+
+
+alert("Produit ajouté");
+
+loadProducts();
+
+}catch(error){
+
+alert(error.message);
+
+}
+
+}
+
+
+
+/* LOAD PRODUCTS */
+
+async function loadProducts(){
+
+const q=query(
+
+collection(db,"products"),
+
+where("merchantId","==",currentUser.uid)
+
+);
+
+const snapshot=await getDocs(q);
+
+const container=document.getElementById("products");
+
+container.innerHTML="";
+
+
+snapshot.forEach(docSnap=>{
+
+const data=docSnap.data();
+
+container.innerHTML+=`
+
+<div class="product">
+
+<h4>${data.name}</h4>
+
+<p>${data.price} Kz</p>
+
+<button onclick="deleteProduct('${docSnap.id}')">
+
+Supprimer
+
+</button>
+
+</div>
+
+`;
+
+});
+
+}
+
+
+
+/* DELETE PRODUCT */
+
+window.deleteProduct = async function(id){
+
+await deleteDoc(doc(db,"products",id));
+
+alert("Produit supprimé");
+
+loadProducts();
+
+}
+
+</script>
+
+</body>
+</html>
