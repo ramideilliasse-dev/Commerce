@@ -1,1 +1,97 @@
+ <!DOCTYPE html>
+<html>
+<head>
 
+<meta charset="UTF-8">
+<title>Connexion</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Connexion</h2>
+
+<input id="email" type="email" placeholder="Email">
+
+<input id="password" type="password" placeholder="Mot de passe">
+
+<button onclick="login()">Se connecter</button>
+
+<p>
+Pas de compte ?
+<a href="merchant-register.html">Créer compte marchand</a>
+</p>
+
+</div>
+
+
+<script type="module">
+
+import { auth, db } from "./firebase.js";
+
+import { 
+signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+import {
+collection,
+getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+window.login = async function(){
+
+const email=document.getElementById("email").value;
+const password=document.getElementById("password").value;
+
+try{
+
+const userCredential = await signInWithEmailAndPassword(auth,email,password);
+
+const user=userCredential.user;
+
+
+/* vérifier si admin */
+
+const admins=await getDocs(collection(db,"admins"));
+
+let isAdmin=false;
+
+admins.forEach(doc=>{
+
+if(doc.data().email === user.email){
+
+isAdmin=true;
+
+}
+
+});
+
+
+if(isAdmin){
+
+window.location.href="admin-dashboard.html";
+
+}else{
+
+window.location.href="merchant-dashboard.html";
+
+}
+
+}catch(error){
+
+alert("Email ou mot de passe incorrect");
+
+}
+
+}
+
+</script>
+
+</body>
+
+</html>
