@@ -1,0 +1,158 @@
+ <!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+<title>Chat</title>
+
+<style>
+
+body{
+font-family:Arial;
+margin:0;
+background:#f4f6f9;
+}
+
+header{
+background:#ff6a00;
+color:white;
+padding:15px;
+font-size:22px;
+}
+
+#messages{
+padding:20px;
+height:70vh;
+overflow:auto;
+}
+
+.msg{
+padding:10px;
+margin-bottom:10px;
+border-radius:10px;
+max-width:70%;
+}
+
+.me{
+background:#ff6a00;
+color:white;
+margin-left:auto;
+}
+
+.other{
+background:white;
+box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
+.inputBox{
+position:fixed;
+bottom:0;
+width:100%;
+background:white;
+padding:10px;
+display:flex;
+}
+
+input{
+flex:1;
+padding:12px;
+font-size:16px;
+border-radius:20px;
+border:1px solid #ccc;
+}
+
+button{
+background:#ff6a00;
+color:white;
+border:none;
+padding:10px 15px;
+border-radius:10px;
+margin-left:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+Chat vendeur
+</header>
+
+<div id="messages"></div>
+
+<div class="inputBox">
+<input id="text">
+<button onclick="send()">Enviar</button>
+</div>
+
+<script type="module">
+
+import { db } from "./firebase.js"
+
+import {
+collection,
+addDoc,
+query,
+orderBy,
+onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
+
+const params=new URLSearchParams(window.location.search)
+
+const merchant=params.get("merchant")
+
+const product=params.get("product")
+
+const chatId=merchant+"_"+product
+
+
+const messagesRef=
+collection(db,"chats",chatId,"messages")
+
+
+onSnapshot(query(messagesRef,orderBy("time")),snap=>{
+
+const box=document.getElementById("messages")
+
+box.innerHTML=""
+
+snap.forEach(doc=>{
+
+const data=doc.data()
+
+box.innerHTML+=`
+<div class="msg ${data.sender}">
+${data.text}
+</div>
+`
+
+})
+
+})
+
+
+window.send=async function(){
+
+const text=document.getElementById("text").value
+
+if(!text) return
+
+await addDoc(messagesRef,{
+text:text,
+sender:"me",
+time:Date.now()
+})
+
+document.getElementById("text").value=""
+
+}
+
+</script>
+
+</body>
+
+</html>
