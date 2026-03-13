@@ -1,34 +1,129 @@
  <!DOCTYPE html>
-<html>
+<html lang="pt">
+
 <head>
 
 <meta charset="UTF-8">
-<title>Produit</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="style.css">
+<title>Detalhe do Produto</title>
 
 <style>
 
+body{
+font-family:Arial;
+margin:0;
+background:#f3f3f3;
+font-size:18px;
+}
+
+/* HEADER */
+
+.header{
+background:#ff6a00;
+color:white;
+padding:15px;
+font-size:22px;
+font-weight:bold;
+}
+
+.back{
+margin-right:10px;
+cursor:pointer;
+}
+
+/* CONTAINER */
+
+.container{
+padding:15px;
+}
+
+/* MAIN IMAGE */
+
+.mainImage{
+width:100%;
+border-radius:12px;
+box-shadow:0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* GALLERY */
+
+.gallery{
+display:flex;
+gap:10px;
+margin-top:10px;
+overflow:auto;
+}
+
 .gallery img{
-width:120px;
-margin:5px;
+width:90px;
+height:90px;
+object-fit:cover;
 border-radius:8px;
 cursor:pointer;
 }
 
-.mainImage{
-width:300px;
+/* VIDEO */
+
+video{
+width:100%;
 border-radius:10px;
+margin-top:10px;
+}
+
+/* PRODUCT INFO */
+
+.name{
+font-size:26px;
+font-weight:bold;
+margin-top:15px;
+}
+
+.price{
+color:#ff6a00;
+font-size:28px;
+font-weight:bold;
+margin-top:10px;
+}
+
+/* DESCRIPTION */
+
+.description{
+background:white;
+padding:15px;
+border-radius:10px;
+margin-top:15px;
+line-height:1.6;
+font-size:18px;
+color:#333;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+/* BUTTONS */
+
+.buttons{
+margin-top:20px;
+display:flex;
+gap:10px;
 }
 
 button{
-padding:10px;
-margin-top:10px;
+flex:1;
+padding:14px;
 border:none;
-border-radius:6px;
-background:black;
-color:white;
+border-radius:10px;
+font-size:18px;
 cursor:pointer;
+}
+
+.whatsapp{
+background:#25D366;
+color:white;
+}
+
+.shop{
+background:#ff6a00;
+color:white;
 }
 
 </style>
@@ -37,29 +132,45 @@ cursor:pointer;
 
 <body>
 
-<div class="container">
 
-<h2 id="name"></h2>
+<div class="header">
+
+<span class="back" onclick="history.back()">⬅</span>
+Produto
+
+</div>
+
+
+<div class="container">
 
 <img id="mainImage" class="mainImage">
 
+
 <div class="gallery" id="gallery"></div>
 
-<br>
 
-<video id="video" width="300" controls></video>
+<video id="video" controls></video>
 
-<p id="price"></p>
 
-<p id="description"></p>
+<div class="name" id="name"></div>
 
-<button id="whatsappBtn">
-Contacter le marchand
+<div class="price" id="price"></div>
+
+
+<div class="description" id="description"></div>
+
+
+<div class="buttons">
+
+<button class="whatsapp" id="whatsappBtn">
+Contactar vendedor
 </button>
 
-<button onclick="addToCart()">
-Ajouter au panier
+<button class="shop" id="shopBtn">
+Ver loja
 </button>
+
+</div>
 
 </div>
 
@@ -74,38 +185,16 @@ getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 
-/* récupérer ID produit */
-
 const params = new URLSearchParams(window.location.search);
 
 const productId = params.get("id");
 
-let data;
-
-
-/* charger produit */
 
 async function loadProduct(){
 
-if(!productId){
-
-alert("Produit introuvable");
-
-return;
-
-}
-
 const snap = await getDoc(doc(db,"products",productId));
 
-if(!snap.exists()){
-
-alert("Produit supprimé");
-
-return;
-
-}
-
-data = snap.data();
+const data = snap.data();
 
 
 document.getElementById("name").innerText = data.name;
@@ -134,7 +223,7 @@ if(data.images){
 
 data.images.forEach(img=>{
 
-gallery.innerHTML += `
+gallery.innerHTML+=`
 
 <img src="${img}" onclick="changeImage('${img}')">
 
@@ -151,10 +240,6 @@ if(data.video){
 
 document.getElementById("video").src = data.video;
 
-}else{
-
-document.getElementById("video").style.display="none";
-
 }
 
 
@@ -162,53 +247,39 @@ document.getElementById("video").style.display="none";
 
 const phone = data.merchantPhone;
 
-const message = "Bonjour je veux acheter : " + data.name;
+const message = "Olá quero comprar: " + data.name;
 
 const url = "https://wa.me/"+phone+"?text="+encodeURIComponent(message);
 
-document.getElementById("whatsappBtn").onclick = function(){
+document.getElementById("whatsappBtn").onclick=function(){
 
-window.open(url);
+window.open(url)
+
+}
+
+
+/* SHOP */
+
+document.getElementById("shopBtn").onclick=function(){
+
+window.location.href="merchant-shop.html?id="+data.merchantId
 
 }
 
 }
 
-
-/* changer image */
 
 window.changeImage=function(src){
 
-document.getElementById("mainImage").src=src;
+document.getElementById("mainImage").src=src
 
 }
 
-
-/* AJOUT PANIER */
-
-window.addToCart=function(){
-
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-cart.push({
-
-name:data.name,
-price:data.price
-
-});
-
-localStorage.setItem("cart",JSON.stringify(cart));
-
-alert("Produit ajouté au panier");
-
-}
-
-
-/* lancer */
 
 loadProduct();
 
 </script>
 
 </body>
+
 </html>
