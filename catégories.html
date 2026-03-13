@@ -1,0 +1,60 @@
+ <!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+<title>Categorias</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f5f5f5;
+padding:20px;
+font-size:20px;
+}
+
+.cat{
+background:white;
+padding:20px;
+border-radius:10px;
+margin-bottom:10px;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>Categorias</h2>
+
+<div class="cat" onclick="go('telefone')">📱 Telefones</div>
+
+<div class="cat" onclick="go('roupas')">👕 Roupas</div>
+
+<div class="cat" onclick="go('beleza')">💄 Beleza</div>
+
+<div class="cat" onclick="go('eletronica')">💻 Eletrónica</div>
+
+<div class="cat" onclick="go('casa')">🏠 Casa</div>
+
+<div class="cat" onclick="go('auto')">🚗 Auto</div>
+
+
+<script>
+
+function go(cat){
+
+window.location.href="index.html?cat="+cat
+
+}
+
+</script>
+
+</body>
+
+</html>
