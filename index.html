@@ -4,6 +4,7 @@
 <head>
 
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Marketplace Angola</title>
 
@@ -12,7 +13,8 @@
 body{
 font-family:Arial;
 margin:0;
-background:#f5f5f5;
+background:#f3f3f3;
+font-size:18px;
 }
 
 /* HEADER */
@@ -20,8 +22,8 @@ background:#f5f5f5;
 .header{
 background:#ff6a00;
 color:white;
-padding:15px;
-font-size:20px;
+padding:18px;
+font-size:26px;
 font-weight:bold;
 display:flex;
 justify-content:space-between;
@@ -32,22 +34,24 @@ align-items:center;
 background:white;
 color:#ff6a00;
 border:none;
-padding:5px 10px;
-border-radius:5px;
+padding:8px 12px;
+border-radius:6px;
+font-size:16px;
 }
 
 /* SEARCH */
 
 .searchBox{
 background:white;
-padding:10px;
+padding:12px;
 }
 
 .searchBox input{
 width:100%;
-padding:12px;
-border-radius:25px;
+padding:16px;
+border-radius:30px;
 border:2px solid #ff6a00;
+font-size:18px;
 }
 
 /* CATEGORIES */
@@ -55,29 +59,43 @@ border:2px solid #ff6a00;
 .categories{
 display:flex;
 overflow:auto;
-gap:10px;
-padding:10px;
+gap:12px;
+padding:12px;
 }
 
 .cat{
 background:white;
-padding:10px;
-border-radius:10px;
-min-width:100px;
+padding:12px;
+border-radius:12px;
+min-width:110px;
 text-align:center;
-font-size:13px;
-box-shadow:0 3px 8px rgba(0,0,0,0.1);
+font-size:16px;
+font-weight:bold;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+cursor:pointer;
 }
 
-/* SLIDER */
+/* BANNER */
 
 .banner{
-margin:10px;
+margin:12px;
 background:linear-gradient(45deg,#ff6a00,#ff9900);
 color:white;
-padding:30px;
-border-radius:10px;
+padding:35px;
+border-radius:12px;
 text-align:center;
+}
+
+.banner h2{
+font-size:26px;
+}
+
+/* SECTION TITLE */
+
+.sectionTitle{
+padding:10px 15px;
+font-size:22px;
+font-weight:bold;
 }
 
 /* PRODUCTS */
@@ -85,36 +103,44 @@ text-align:center;
 .products{
 display:grid;
 grid-template-columns:repeat(2,1fr);
-gap:10px;
-padding:10px;
+gap:14px;
+padding:14px;
 }
 
 .product{
 background:white;
-border-radius:10px;
-padding:10px;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
+border-radius:14px;
+padding:12px;
+box-shadow:0 5px 14px rgba(0,0,0,0.1);
 }
 
 .product img{
 width:100%;
-height:140px;
+height:180px;
 object-fit:cover;
-border-radius:8px;
+border-radius:10px;
+}
+
+.product h4{
+font-size:20px;
+margin:6px 0;
 }
 
 .price{
 color:#ff6a00;
 font-weight:bold;
+font-size:22px;
 }
 
-button{
+.product button{
 background:#ff6a00;
 color:white;
 border:none;
-padding:6px 8px;
-border-radius:6px;
-margin-top:5px;
+padding:10px;
+border-radius:8px;
+margin-top:6px;
+font-size:16px;
+width:100%;
 }
 
 /* NAVBAR */
@@ -127,9 +153,14 @@ right:0;
 background:white;
 display:flex;
 justify-content:space-around;
-padding:10px;
+padding:12px;
 border-top:1px solid #ddd;
-font-size:12px;
+font-size:16px;
+}
+
+.nav div{
+text-align:center;
+cursor:pointer;
 }
 
 </style>
@@ -143,12 +174,9 @@ font-size:12px;
 
 <span>Marketplace Angola</span>
 
-<select id="lang" class="lang">
-
-<option value="pt">Português</option>
-
-<option value="fr">Français</option>
-
+<select class="lang">
+<option>Português</option>
+<option>Français</option>
 </select>
 
 </div>
@@ -167,35 +195,37 @@ font-size:12px;
 
 <div class="categories">
 
-<div class="cat">📱 Telefones</div>
+<div class="cat" onclick="filterCat('telefone')">📱 Telefones</div>
 
-<div class="cat">👕 Roupas</div>
+<div class="cat" onclick="filterCat('roupas')">👕 Roupas</div>
 
-<div class="cat">💄 Beleza</div>
+<div class="cat" onclick="filterCat('beleza')">💄 Beleza</div>
 
-<div class="cat">💻 Eletrónica</div>
+<div class="cat" onclick="filterCat('eletronica')">💻 Eletrónica</div>
 
-<div class="cat">🏠 Casa</div>
+<div class="cat" onclick="filterCat('casa')">🏠 Casa</div>
 
-<div class="cat">🚗 Auto</div>
+<div class="cat" onclick="filterCat('auto')">🚗 Auto</div>
 
 </div>
 
 
-
-<!-- BANNER -->
 
 <div class="banner">
 
-<h2>Compre direto do vendedor</h2>
+<h2>Compre direto dos vendedores</h2>
 
-<p>Produtos de comerciantes de Angola</p>
+<p>Marketplace nacional de Angola</p>
 
 </div>
 
 
 
-<!-- PRODUCTS -->
+<div class="sectionTitle">
+🔥 Produtos em destaque
+</div>
+
+
 
 <div id="productList" class="products"></div>
 
@@ -205,15 +235,25 @@ font-size:12px;
 
 <div class="nav">
 
-<div>🏠<br>Início</div>
+<div onclick="location.href='index.html'">
+🏠<br>Início
+</div>
 
-<div>📦<br>Categorias</div>
+<div onclick="location.href='categories.html'">
+📦<br>Categorias
+</div>
 
-<div>💬<br>Mensagens</div>
+<div onclick="location.href='messages.html'">
+💬<br>Mensagens
+</div>
 
-<div>🛒<br>Carrinho</div>
+<div onclick="location.href='cart.html'">
+🛒<br>Carrinho
+</div>
 
-<div>👤<br>Conta</div>
+<div onclick="location.href='account.html'">
+👤<br>Conta
+</div>
 
 </div>
 
@@ -224,13 +264,44 @@ font-size:12px;
 import { db } from "./firebase.js";
 
 import {
-
 collection,
 getDocs
-
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+
 let products=[];
+
+
+
+function productHTML(data){
+
+const img = data.image || (data.images ? data.images[0] : "")
+
+return `
+
+<div class="product">
+
+<img src="${img}">
+
+<h4>${data.name}</h4>
+
+<div class="price">${data.price} Kz</div>
+
+<button onclick="viewProduct('${data.id}')">
+Ver produto
+</button>
+
+<button onclick="viewShop('${data.merchantId}')">
+Loja do vendedor
+</button>
+
+</div>
+
+`
+
+}
+
+
 
 async function loadProducts(){
 
@@ -250,35 +321,13 @@ data.id=docSnap.id;
 
 products.push(data);
 
-container.innerHTML+=`
-
-<div class="product">
-
-<img src="${data.image}">
-
-<h4>${data.name}</h4>
-
-<div class="price">${data.price} Kz</div>
-
-<button onclick="viewProduct('${data.id}')">
-
-Ver produto
-
-</button>
-
-<button onclick="viewShop('${data.merchantId}')">
-
-Loja
-
-</button>
-
-</div>
-
-`;
+container.innerHTML+=productHTML(data);
 
 });
 
 }
+
+
 
 window.viewProduct=function(id){
 
@@ -286,11 +335,14 @@ window.location.href="product.html?id="+id;
 
 }
 
+
+
 window.viewShop=function(id){
 
 window.location.href="merchant-shop.html?id="+id;
 
 }
+
 
 
 /* SEARCH */
@@ -307,37 +359,37 @@ products.forEach(p=>{
 
 if(p.name.toLowerCase().includes(value)){
 
-container.innerHTML+=`
-
-<div class="product">
-
-<img src="${p.image}">
-
-<h4>${p.name}</h4>
-
-<div class="price">${p.price} Kz</div>
-
-<button onclick="viewProduct('${p.id}')">
-
-Ver produto
-
-</button>
-
-<button onclick="viewShop('${p.merchantId}')">
-
-Loja
-
-</button>
-
-</div>
-
-`;
+container.innerHTML+=productHTML(p)
 
 }
 
-});
+})
 
-});
+})
+
+
+
+/* CATEGORY FILTER */
+
+window.filterCat=function(cat){
+
+const container=document.getElementById("productList")
+
+container.innerHTML=""
+
+products.forEach(p=>{
+
+if(p.category==cat){
+
+container.innerHTML+=productHTML(p)
+
+}
+
+})
+
+}
+
+
 
 loadProducts();
 
