@@ -25,6 +25,8 @@ color:white;
 padding:15px;
 font-size:22px;
 font-weight:bold;
+display:flex;
+align-items:center;
 }
 
 .back{
@@ -38,7 +40,7 @@ cursor:pointer;
 padding:15px;
 }
 
-/* MAIN IMAGE */
+/* IMAGE PRINCIPAL */
 
 .mainImage{
 width:100%;
@@ -46,7 +48,7 @@ border-radius:12px;
 box-shadow:0 4px 12px rgba(0,0,0,0.2);
 }
 
-/* GALLERY */
+/* GALERIE */
 
 .gallery{
 display:flex;
@@ -71,7 +73,7 @@ border-radius:10px;
 margin-top:10px;
 }
 
-/* PRODUCT INFO */
+/* INFO PRODUIT */
 
 .name{
 font-size:26px;
@@ -99,16 +101,16 @@ color:#333;
 box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
 
-/* BUTTONS */
+/* BOUTONS */
 
 .buttons{
 margin-top:20px;
 display:flex;
+flex-direction:column;
 gap:10px;
 }
 
 button{
-flex:1;
 padding:14px;
 border:none;
 border-radius:10px;
@@ -118,6 +120,16 @@ cursor:pointer;
 
 .whatsapp{
 background:#25D366;
+color:white;
+}
+
+.chat{
+background:#0084ff;
+color:white;
+}
+
+.cart{
+background:#222;
 color:white;
 }
 
@@ -132,10 +144,10 @@ color:white;
 
 <body>
 
-
 <div class="header">
 
 <span class="back" onclick="history.back()">⬅</span>
+
 Produto
 
 </div>
@@ -163,11 +175,19 @@ Produto
 <div class="buttons">
 
 <button class="whatsapp" id="whatsappBtn">
-Contactar vendedor
+📱 Contactar vendedor
+</button>
+
+<button class="chat" id="chatBtn">
+💬 Mensagem vendedor
+</button>
+
+<button class="cart" onclick="addCart()">
+🛒 Adicionar ao carrinho
 </button>
 
 <button class="shop" id="shopBtn">
-Ver loja
+🏪 Ver loja
 </button>
 
 </div>
@@ -189,6 +209,10 @@ const params = new URLSearchParams(window.location.search);
 
 const productId = params.get("id");
 
+let productData = null;
+
+
+/* CARREGAR PRODUTO */
 
 async function loadProduct(){
 
@@ -196,12 +220,16 @@ const snap = await getDoc(doc(db,"products",productId));
 
 const data = snap.data();
 
+productData = data;
 
-document.getElementById("name").innerText = data.name;
 
-document.getElementById("price").innerText = data.price + " Kz";
+/* TEXTE */
 
-document.getElementById("description").innerText = data.description;
+document.getElementById("name").innerText = data.name || "";
+
+document.getElementById("price").innerText = (data.price || 0) + " Kz";
+
+document.getElementById("description").innerText = data.description || "";
 
 
 /* IMAGE PRINCIPALE */
@@ -245,11 +273,11 @@ document.getElementById("video").src = data.video;
 
 /* WHATSAPP */
 
-const phone = data.merchantPhone;
+if(data.merchantPhone){
 
 const message = "Olá quero comprar: " + data.name;
 
-const url = "https://wa.me/"+phone+"?text="+encodeURIComponent(message);
+const url = "https://wa.me/"+data.merchantPhone+"?text="+encodeURIComponent(message);
 
 document.getElementById("whatsappBtn").onclick=function(){
 
@@ -257,12 +285,24 @@ window.open(url)
 
 }
 
+}
 
-/* SHOP */
+
+/* BOUTIQUE */
 
 document.getElementById("shopBtn").onclick=function(){
 
 window.location.href="merchant-shop.html?id="+data.merchantId
+
+}
+
+
+/* CHAT VENDEUR */
+
+document.getElementById("chatBtn").onclick=function(){
+
+window.location.href=
+"chat.html?merchant="+data.merchantId+"&product="+productId
 
 }
 
@@ -272,6 +312,31 @@ window.location.href="merchant-shop.html?id="+data.merchantId
 window.changeImage=function(src){
 
 document.getElementById("mainImage").src=src
+
+}
+
+
+/* PANIER */
+
+window.addCart=function(){
+
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+cart.push({
+
+id:productId,
+
+name:productData.name,
+
+price:productData.price,
+
+image:productData.images ? productData.images[0] : ""
+
+})
+
+localStorage.setItem("cart",JSON.stringify(cart))
+
+alert("Produto adicionado ao carrinho")
 
 }
 
