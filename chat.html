@@ -1,74 +1,116 @@
  <!DOCTYPE html>
-<html>
+<html lang="pt">
 
 <head>
 
 <meta charset="UTF-8">
-<title>Chat</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Chat vendedor</title>
 
 <style>
 
 body{
 font-family:Arial;
 margin:0;
-background:#f4f6f9;
+background:#ece5dd;
 }
 
-header{
-background:#ff6a00;
+/* HEADER */
+
+.header{
+background:#075e54;
 color:white;
-padding:15px;
+padding:10px;
+display:flex;
+align-items:center;
+}
+
+.back{
+margin-right:10px;
+cursor:pointer;
 font-size:22px;
 }
 
-#messages{
-padding:20px;
-height:70vh;
-overflow:auto;
+/* SHOP INFO */
+
+.shopInfo{
+display:flex;
+align-items:center;
+gap:10px;
 }
 
+.shopInfo img{
+width:40px;
+height:40px;
+border-radius:50%;
+object-fit:cover;
+}
+
+/* CHAT AREA */
+
+.chatArea{
+height:72vh;
+overflow-y:auto;
+padding:15px;
+}
+
+/* MESSAGE */
+
 .msg{
-padding:10px;
+max-width:75%;
+padding:12px;
 margin-bottom:10px;
-border-radius:10px;
-max-width:70%;
+border-radius:12px;
+font-size:18px;
 }
 
 .me{
-background:#ff6a00;
-color:white;
+background:#dcf8c6;
 margin-left:auto;
 }
 
 .other{
 background:white;
-box-shadow:0 2px 5px rgba(0,0,0,0.1);
 }
 
-.inputBox{
+/* IMAGE MESSAGE */
+
+.msg img{
+width:150px;
+border-radius:8px;
+margin-top:5px;
+}
+
+/* INPUT */
+
+.inputArea{
 position:fixed;
 bottom:0;
-width:100%;
+left:0;
+right:0;
 background:white;
-padding:10px;
 display:flex;
+gap:5px;
+padding:10px;
 }
 
 input{
 flex:1;
 padding:12px;
-font-size:16px;
-border-radius:20px;
+font-size:18px;
+border-radius:25px;
 border:1px solid #ccc;
 }
 
 button{
-background:#ff6a00;
-color:white;
+background:#25d366;
 border:none;
+color:white;
 padding:10px 15px;
-border-radius:10px;
-margin-left:10px;
+border-radius:20px;
+font-size:16px;
+cursor:pointer;
 }
 
 </style>
@@ -77,28 +119,49 @@ margin-left:10px;
 
 <body>
 
-<header>
-Chat vendeur
-</header>
+<div class="header">
 
-<div id="messages"></div>
+<span class="back" onclick="history.back()">⬅</span>
 
-<div class="inputBox">
-<input id="text">
-<button onclick="send()">Enviar</button>
+<div class="shopInfo">
+
+<img id="shopPhoto">
+
+<div id="shopName"></div>
+
 </div>
+
+</div>
+
+
+<div id="chat" class="chatArea"></div>
+
+
+<div class="inputArea">
+
+<input id="text" placeholder="Escreva mensagem...">
+
+<input type="file" id="image">
+
+<button onclick="send()">Enviar</button>
+
+</div>
+
 
 <script type="module">
 
-import { db } from "./firebase.js"
+import { db } from "./firebase.js";
 
 import {
+doc,
+getDoc,
 collection,
 addDoc,
 query,
 orderBy,
-onSnapshot
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+onSnapshot,
+updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 
 const params=new URLSearchParams(window.location.search)
@@ -110,44 +173,123 @@ const product=params.get("product")
 const chatId=merchant+"_"+product
 
 
-const messagesRef=
-collection(db,"chats",chatId,"messages")
+const chatRef=doc(db,"chats",chatId)
 
+const messagesRef=collection(db,"chats",chatId,"messages")
+
+
+/* LOAD SHOP INFO */
+
+async function loadShop(){
+
+const snap=await getDoc(chatRef)
+
+if(snap.exists()){
+
+const data=snap.data()
+
+document.getElementById("shopName").innerText=data.merchantName
+
+document.getElementById("shopPhoto").src=data.merchantPhoto
+
+}
+
+}
+
+loadShop()
+
+
+/* LOAD MESSAGES */
 
 onSnapshot(query(messagesRef,orderBy("time")),snap=>{
 
-const box=document.getElementById("messages")
+const chat=document.getElementById("chat")
 
-box.innerHTML=""
+chat.innerHTML=""
 
-snap.forEach(doc=>{
+snap.forEach(async docSnap=>{
 
-const data=doc.data()
+const data=docSnap.data()
 
-box.innerHTML+=`
+chat.innerHTML+=`
+
 <div class="msg ${data.sender}">
-${data.text}
+
+${data.text || ""}
+
+${data.image ? "<img src='"+data.image+"'>" : ""}
+
+${data.read ? "✔✔" : "✔"}
+
 </div>
+
 `
 
-})
+if(data.sender!="me"){
+
+await updateDoc(docSnap.ref,{read:true})
+
+}
 
 })
 
+chat.scrollTop=chat.scrollHeight
+
+})
+
+
+/* SEND MESSAGE */
 
 window.send=async function(){
 
 const text=document.getElementById("text").value
 
-if(!text) return
+const imageFile=document.getElementById("image").files[0]
 
-await addDoc(messagesRef,{
-text:text,
-sender:"me",
-time:Date.now()
+let imageURL=""
+
+
+if(imageFile){
+
+const form=new FormData()
+
+form.append("file",imageFile)
+
+form.append("upload_preset","upload")
+
+const res=await fetch("https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/image/upload",{
+
+method:"POST",
+
+body:form
+
 })
 
+const data=await res.json()
+
+imageURL=data.secure_url
+
+}
+
+
+await addDoc(messagesRef,{
+
+text:text,
+
+image:imageURL,
+
+sender:"me",
+
+time:Date.now(),
+
+read:false
+
+})
+
+
 document.getElementById("text").value=""
+
+document.getElementById("image").value=""
 
 }
 
