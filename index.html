@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Marketplace Angola</title>
+<title>Shopping online Angola 🇦🇴</title>
 
 <style>
 
@@ -23,11 +23,22 @@ font-size:18px;
 background:#ff6a00;
 color:white;
 padding:18px;
-font-size:26px;
+font-size:22px;
 font-weight:bold;
 display:flex;
 justify-content:space-between;
 align-items:center;
+}
+
+.loginBtn{
+background:white;
+color:#ff6a00;
+border:none;
+padding:8px 14px;
+border-radius:8px;
+font-size:15px;
+cursor:pointer;
+font-weight:bold;
 }
 
 /* SEARCH */
@@ -39,10 +50,29 @@ padding:12px;
 
 .searchBox input{
 width:100%;
-padding:16px;
+padding:15px;
 border-radius:30px;
 border:2px solid #ff6a00;
-font-size:18px;
+font-size:17px;
+}
+
+/* SLIDER */
+
+.slider{
+display:flex;
+overflow:auto;
+gap:10px;
+padding:12px;
+}
+
+.slide{
+min-width:260px;
+background:linear-gradient(45deg,#ff6a00,#ff9900);
+color:white;
+padding:30px;
+border-radius:12px;
+font-size:20px;
+font-weight:bold;
 }
 
 /* CATEGORIES */
@@ -66,15 +96,18 @@ box-shadow:0 4px 10px rgba(0,0,0,0.1);
 cursor:pointer;
 }
 
-/* BANNER */
+/* TRUST */
 
-.banner{
+.trust{
+background:white;
 margin:12px;
-background:linear-gradient(45deg,#ff6a00,#ff9900);
-color:white;
-padding:35px;
+padding:20px;
 border-radius:12px;
-text-align:center;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+.trust h3{
+margin-top:0;
 }
 
 /* SECTION */
@@ -103,20 +136,20 @@ box-shadow:0 5px 14px rgba(0,0,0,0.1);
 
 .product img{
 width:100%;
-height:180px;
+height:170px;
 object-fit:cover;
 border-radius:10px;
 }
 
 .product h4{
-font-size:20px;
+font-size:18px;
 margin:6px 0;
 }
 
 .price{
 color:#ff6a00;
 font-weight:bold;
-font-size:22px;
+font-size:20px;
 }
 
 /* BADGE */
@@ -124,7 +157,7 @@ font-size:22px;
 .badge{
 color:green;
 font-weight:bold;
-font-size:16px;
+font-size:14px;
 }
 
 /* BUTTON */
@@ -133,10 +166,10 @@ font-size:16px;
 background:#ff6a00;
 color:white;
 border:none;
-padding:10px;
+padding:9px;
 border-radius:8px;
 margin-top:6px;
-font-size:16px;
+font-size:15px;
 width:100%;
 }
 
@@ -152,7 +185,7 @@ display:flex;
 justify-content:space-around;
 padding:12px;
 border-top:1px solid #ddd;
-font-size:16px;
+font-size:15px;
 }
 
 .nav div{
@@ -186,10 +219,13 @@ border-radius:50%;
 
 <div class="header">
 
-<span>Marketplace Angola</span>
+<span>Shopping online Angola 🇦🇴</span>
+
+<button class="loginBtn" onclick="location.href='merchant-login.html'">
+Criar conta / Entrar
+</button>
 
 </div>
-
 
 
 <div class="searchBox">
@@ -198,6 +234,24 @@ border-radius:50%;
 
 </div>
 
+
+<!-- SLIDER PROMO -->
+
+<div class="slider">
+
+<div class="slide">
+🔥 Promo até -30%
+</div>
+
+<div class="slide">
+🚚 Entrega rápida em Luanda
+</div>
+
+<div class="slide">
+🛡 Compra segura
+</div>
+
+</div>
 
 
 <!-- CATEGORIES -->
@@ -219,21 +273,23 @@ border-radius:50%;
 </div>
 
 
+<!-- TRUST -->
 
-<div class="banner">
+<div class="trust">
 
-<h2>Compre direto dos vendedores</h2>
+<h3>🛡 Compra segura</h3>
 
-<p>Marketplace nacional de Angola</p>
+<p>
+Fale com o vendedor no chat antes de pagar.  
+Verifique os produtos e compre apenas de vendedores confiáveis.
+</p>
 
 </div>
-
 
 
 <div class="sectionTitle">
 🔥 Produtos em destaque
 </div>
-
 
 
 <div id="productList" class="products"></div>
@@ -261,12 +317,11 @@ border-radius:50%;
 🛒<br>Carrinho
 </div>
 
-<div onclick="location.href='account.html'">
+<div onclick="location.href='merchant-login.html'">
 👤<br>Conta
 </div>
 
 </div>
-
 
 
 <script type="module">
@@ -278,10 +333,7 @@ collection,
 getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-
 let products=[];
-
-
 
 function productHTML(data){
 
@@ -313,8 +365,6 @@ Loja do vendedor
 
 }
 
-
-
 async function loadProducts(){
 
 const snap = await getDocs(collection(db,"products"));
@@ -339,29 +389,17 @@ container.innerHTML+=productHTML(data);
 
 }
 
-
-
-/* VIEW PRODUCT */
-
 window.viewProduct=function(id){
 
 window.location.href="product.html?id="+id;
 
 }
 
-
-
-/* VIEW SHOP */
-
 window.viewShop=function(id){
 
 window.location.href="merchant-shop.html?id="+id;
 
 }
-
-
-
-/* SEARCH */
 
 document.getElementById("search").addEventListener("input",function(){
 
@@ -383,10 +421,6 @@ container.innerHTML+=productHTML(p)
 
 })
 
-
-
-/* CATEGORY */
-
 window.filterCat=function(cat){
 
 const container=document.getElementById("productList")
@@ -404,10 +438,6 @@ container.innerHTML+=productHTML(p)
 })
 
 }
-
-
-
-/* MESSAGE NOTIFICATION (simulation) */
 
 let notifications=localStorage.getItem("msgNotif") || 0
 
