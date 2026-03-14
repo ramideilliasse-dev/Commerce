@@ -21,7 +21,7 @@ background:#ece5dd;
 .header{
 background:#075e54;
 color:white;
-padding:10px;
+padding:12px;
 display:flex;
 align-items:center;
 }
@@ -31,8 +31,6 @@ margin-right:10px;
 cursor:pointer;
 font-size:22px;
 }
-
-/* SHOP INFO */
 
 .shopInfo{
 display:flex;
@@ -47,15 +45,18 @@ border-radius:50%;
 object-fit:cover;
 }
 
-/* CHAT AREA */
+#shopName{
+font-size:18px;
+font-weight:bold;
+}
+
+/* CHAT */
 
 .chatArea{
-height:72vh;
+height:70vh;
 overflow-y:auto;
 padding:15px;
 }
-
-/* MESSAGE */
 
 .msg{
 max-width:75%;
@@ -74,11 +75,20 @@ margin-left:auto;
 background:white;
 }
 
-/* IMAGE MESSAGE */
-
 .msg img{
 width:150px;
 border-radius:8px;
+margin-top:5px;
+}
+
+audio{
+margin-top:5px;
+width:180px;
+}
+
+.status{
+font-size:12px;
+text-align:right;
 margin-top:5px;
 }
 
@@ -91,25 +101,38 @@ left:0;
 right:0;
 background:white;
 display:flex;
-gap:5px;
+align-items:center;
+gap:8px;
 padding:10px;
+border-top:1px solid #ddd;
 }
 
-input{
+#text{
 flex:1;
-padding:12px;
+padding:14px;
 font-size:18px;
 border-radius:25px;
 border:1px solid #ccc;
 }
 
-button{
+.iconBtn{
+background:#eee;
+border:none;
+width:40px;
+height:40px;
+border-radius:50%;
+font-size:18px;
+cursor:pointer;
+}
+
+.sendBtn{
 background:#25d366;
 border:none;
 color:white;
-padding:10px 15px;
-border-radius:20px;
-font-size:16px;
+width:45px;
+height:45px;
+border-radius:50%;
+font-size:20px;
 cursor:pointer;
 }
 
@@ -127,7 +150,7 @@ cursor:pointer;
 
 <img id="shopPhoto">
 
-<div id="shopName"></div>
+<div id="shopName">Vendedor</div>
 
 </div>
 
@@ -141,9 +164,13 @@ cursor:pointer;
 
 <input id="text" placeholder="Escreva mensagem...">
 
-<input type="file" id="image">
+<input type="file" id="image" accept="image/*" capture="environment" style="display:none">
 
-<button onclick="send()">Enviar</button>
+<button class="iconBtn" onclick="camera()">📷</button>
+
+<button class="iconBtn" id="recordBtn">🎤</button>
+
+<button class="sendBtn" onclick="send()">➤</button>
 
 </div>
 
@@ -163,7 +190,6 @@ onSnapshot,
 updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-
 const params=new URLSearchParams(window.location.search)
 
 const merchant=params.get("merchant")
@@ -172,13 +198,12 @@ const product=params.get("product")
 
 const chatId=merchant+"_"+product
 
-
 const chatRef=doc(db,"chats",chatId)
 
 const messagesRef=collection(db,"chats",chatId,"messages")
 
 
-/* LOAD SHOP INFO */
+/* LOAD SHOP */
 
 async function loadShop(){
 
@@ -188,9 +213,9 @@ if(snap.exists()){
 
 const data=snap.data()
 
-document.getElementById("shopName").innerText=data.merchantName
+document.getElementById("shopName").innerText=data.merchantName || "Vendedor"
 
-document.getElementById("shopPhoto").src=data.merchantPhoto
+document.getElementById("shopPhoto").src=data.merchantPhoto || ""
 
 }
 
@@ -219,7 +244,9 @@ ${data.text || ""}
 
 ${data.image ? "<img src='"+data.image+"'>" : ""}
 
-${data.read ? "✔✔" : "✔"}
+${data.audio ? "<audio controls src='"+data.audio+"'></audio>" : ""}
+
+<div class="status">${data.read ? "✔✔" : "✔"}</div>
 
 </div>
 
@@ -238,22 +265,61 @@ chat.scrollTop=chat.scrollHeight
 })
 
 
-/* SEND MESSAGE */
+/* SEND TEXT */
 
 window.send=async function(){
 
-const text=document.getElementById("text").value
+const text=document.getElementById("text").value.trim()
 
-const imageFile=document.getElementById("image").files[0]
+if(!text) return
 
-let imageURL=""
+await addDoc(messagesRef,{
+
+text:text,
+
+sender:"me",
+
+time:Date.now(),
+
+read:false
+
+})
+
+document.getElementById("text").value=""
+
+}
 
 
-if(imageFile){
+/* ENTER KEY SEND */
+
+document.getElementById("text").addEventListener("keypress",function(e){
+
+if(e.key==="Enter"){
+
+send()
+
+}
+
+})
+
+
+/* CAMERA */
+
+window.camera=function(){
+
+document.getElementById("image").click()
+
+}
+
+document.getElementById("image").addEventListener("change",async function(){
+
+const file=this.files[0]
+
+if(!file) return
 
 const form=new FormData()
 
-form.append("file",imageFile)
+form.append("file",file)
 
 form.append("upload_preset","upload")
 
@@ -267,16 +333,9 @@ body:form
 
 const data=await res.json()
 
-imageURL=data.secure_url
-
-}
-
-
 await addDoc(messagesRef,{
 
-text:text,
-
-image:imageURL,
+image:data.secure_url,
 
 sender:"me",
 
@@ -286,10 +345,79 @@ read:false
 
 })
 
+})
 
-document.getElementById("text").value=""
 
-document.getElementById("image").value=""
+/* AUDIO RECORD */
+
+let recorder
+
+let chunks=[]
+
+const btn=document.getElementById("recordBtn")
+
+btn.onclick=async function(){
+
+if(!recorder){
+
+const stream=await navigator.mediaDevices.getUserMedia({audio:true})
+
+recorder=new MediaRecorder(stream)
+
+recorder.ondataavailable=e=>chunks.push(e.data)
+
+recorder.onstop=uploadAudio
+
+recorder.start()
+
+btn.innerText="⏹"
+
+}else{
+
+recorder.stop()
+
+recorder=null
+
+btn.innerText="🎤"
+
+}
+
+}
+
+
+async function uploadAudio(){
+
+const blob=new Blob(chunks,{type:"audio/webm"})
+
+chunks=[]
+
+const form=new FormData()
+
+form.append("file",blob)
+
+form.append("upload_preset","upload")
+
+const res=await fetch("https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/video/upload",{
+
+method:"POST",
+
+body:form
+
+})
+
+const data=await res.json()
+
+await addDoc(messagesRef,{
+
+audio:data.secure_url,
+
+sender:"me",
+
+time:Date.now(),
+
+read:false
+
+})
 
 }
 
