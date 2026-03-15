@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="pt">
 
 <head>
@@ -6,94 +6,90 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Loja</title>
+<title>Loja do vendedor</title>
 
 <style>
 
 body{
 font-family:Arial;
 margin:0;
-background:#f3f3f3;
-}
-
-/* BANNER */
-
-.banner{
-height:150px;
-background:linear-gradient(45deg,#ff6a00,#ff9900);
+background:#f5f5f5;
 }
 
 /* SHOP HEADER */
 
 .shopHeader{
 background:white;
-padding:15px;
-margin-top:-50px;
-border-radius:14px 14px 0 0;
+padding-bottom:15px;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
 
-.shopTop{
-display:flex;
-align-items:center;
-gap:12px;
-}
-
-.shopTop img{
-width:70px;
-height:70px;
-border-radius:50%;
-border:4px solid white;
+.banner{
+width:100%;
+height:150px;
 object-fit:cover;
 }
 
+.shopInfo{
+display:flex;
+align-items:center;
+padding:12px;
+gap:12px;
+}
+
+.logo{
+width:60px;
+height:60px;
+border-radius:50%;
+object-fit:cover;
+border:3px solid white;
+margin-top:-30px;
+background:white;
+}
+
 .shopName{
-font-size:22px;
+font-size:20px;
 font-weight:bold;
+color:#0b6b3a;
 }
 
-.verified{
-color:green;
-font-weight:bold;
-font-size:14px;
-}
-
-/* ACTION BUTTONS */
-
-.actions{
+.shopActions{
 display:flex;
 gap:10px;
-margin-top:10px;
+padding:10px;
 }
 
-.followBtn{
-background:#ff6a00;
-color:white;
+.shopActions button{
+flex:1;
+padding:10px;
 border:none;
-padding:10px 15px;
-border-radius:20px;
+border-radius:8px;
+font-size:15px;
 cursor:pointer;
 }
 
 .chatBtn{
-background:#eee;
-border:none;
-padding:10px 15px;
-border-radius:20px;
-cursor:pointer;
+background:#ff6a00;
+color:white;
+}
+
+.followBtn{
+background:black;
+color:white;
 }
 
 /* SEARCH */
 
-.search{
-background:white;
+.searchBox{
 padding:10px;
 }
 
-.search input{
+.searchBox input{
 width:100%;
 padding:12px;
 border-radius:20px;
 border:1px solid #ddd;
+font-size:15px;
 }
 
 /* PRODUCTS */
@@ -101,30 +97,39 @@ border:1px solid #ddd;
 .products{
 display:grid;
 grid-template-columns:repeat(2,1fr);
-gap:10px;
-padding:10px;
+gap:12px;
+padding:12px;
 }
 
 .product{
 background:white;
-border-radius:10px;
-padding:6px;
-box-shadow:0 3px 8px rgba(0,0,0,0.1);
+border-radius:12px;
+overflow:hidden;
+box-shadow:0 4px 12px rgba(0,0,0,0.1);
 cursor:pointer;
 }
 
 .product img{
 width:100%;
-height:170px;
+height:180px;
 object-fit:cover;
-border-radius:8px;
+}
+
+.info{
+padding:8px;
+}
+
+.name{
+font-weight:bold;
+font-size:15px;
+color:black;
 }
 
 .price{
 color:#ff6a00;
 font-weight:bold;
-margin-top:5px;
-text-align:center;
+font-size:18px;
+margin-top:4px;
 }
 
 </style>
@@ -134,34 +139,30 @@ text-align:center;
 <body>
 
 
-<div class="banner"></div>
-
-
 <div class="shopHeader">
 
-<div class="shopTop">
+<img id="banner" class="banner">
 
-<img id="shopPhoto">
+<div class="shopInfo">
+
+<img id="logo" class="logo">
 
 <div>
 
 <div id="shopName" class="shopName"></div>
 
-<div id="verified" class="verified"></div>
-
 </div>
 
 </div>
 
-
-<div class="actions">
-
-<button class="followBtn" onclick="followShop()">
-Seguir loja
-</button>
+<div class="shopActions">
 
 <button class="chatBtn" onclick="chatSeller()">
-Discuter
+💬 Discuter
+</button>
+
+<button class="followBtn" onclick="followShop()">
+⭐ Seguir
 </button>
 
 </div>
@@ -169,9 +170,9 @@ Discuter
 </div>
 
 
-<div class="search">
+<div class="searchBox">
 
-<input id="search" placeholder="Pesquisar produto nesta loja...">
+<input id="search" placeholder="Procurar produto na loja...">
 
 </div>
 
@@ -185,12 +186,12 @@ Discuter
 import { db } from "./firebase.js"
 
 import {
-doc,
-getDoc,
 collection,
 query,
 where,
-getDocs
+getDocs,
+doc,
+getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
 
@@ -205,19 +206,17 @@ let products=[]
 
 async function loadShop(){
 
-const snap=await getDoc(doc(db,"merchants",merchantId))
+const ref=doc(db,"merchants",merchantId)
+
+const snap=await getDoc(ref)
 
 const data=snap.data()
 
-document.getElementById("shopName").innerText=data.name
+document.getElementById("shopName").innerText=data.shopName
 
-document.getElementById("shopPhoto").src=data.photo
+document.getElementById("logo").src=data.logo || ""
 
-if(data.verified){
-
-document.getElementById("verified").innerText="✔ Vendedor verificado"
-
-}
+document.getElementById("banner").src=data.banner || ""
 
 }
 
@@ -231,7 +230,6 @@ async function loadProducts(){
 const q=query(
 
 collection(db,"products"),
-
 where("merchantId","==",merchantId)
 
 )
@@ -261,15 +259,26 @@ container.innerHTML+=productHTML(data)
 loadProducts()
 
 
+
+/* PRODUCT CARD */
+
 function productHTML(data){
+
+const img=data.image || (data.images ? data.images[0] : "")
 
 return `
 
 <div class="product" onclick="viewProduct('${data.id}')">
 
-<img src="${data.image}">
+<img src="${img}">
+
+<div class="info">
+
+<div class="name">${data.name}</div>
 
 <div class="price">${data.price} Kz</div>
+
+</div>
 
 </div>
 
@@ -278,6 +287,8 @@ return `
 }
 
 
+/* VIEW PRODUCT */
+
 window.viewProduct=function(id){
 
 location.href="product.html?id="+id
@@ -285,7 +296,7 @@ location.href="product.html?id="+id
 }
 
 
-/* SEARCH IN SHOP */
+/* SEARCH */
 
 document.getElementById("search").addEventListener("input",function(){
 
@@ -308,30 +319,20 @@ container.innerHTML+=productHTML(p)
 })
 
 
-/* FOLLOW SHOP */
-
-window.followShop=function(){
-
-let follows=JSON.parse(localStorage.getItem("follows"))||[]
-
-if(!follows.includes(merchantId)){
-
-follows.push(merchantId)
-
-localStorage.setItem("follows",JSON.stringify(follows))
-
-alert("Loja seguida com sucesso")
-
-}
-
-}
-
-
-/* CHAT SELLER */
+/* CHAT */
 
 window.chatSeller=function(){
 
 location.href="chat.html?merchant="+merchantId
+
+}
+
+
+/* FOLLOW SHOP */
+
+window.followShop=function(){
+
+alert("Loja seguida com sucesso")
 
 }
 
