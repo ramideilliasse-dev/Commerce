@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="pt">
 
 <head>
@@ -16,133 +16,95 @@ margin:0;
 background:#f3f3f3;
 }
 
-/* HEADER */
-
-.header{
-background:#ff6a00;
-color:white;
-padding:16px;
-font-size:22px;
-font-weight:bold;
-}
-
-/* PRODUCT */
-
-.productBox{
-background:white;
-margin:12px;
-padding:15px;
-border-radius:12px;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
-}
+/* IMAGE */
 
 .mainImg{
 width:100%;
-height:280px;
+height:320px;
 object-fit:cover;
-border-radius:10px;
+background:white;
 }
 
-.gallery{
+/* PHOTO VIDEO BAR */
+
+.tabs{
 display:flex;
-gap:10px;
-margin-top:10px;
-overflow:auto;
+justify-content:center;
+gap:20px;
+background:white;
+padding:10px;
+font-weight:bold;
+border-bottom:1px solid #ddd;
 }
 
-.gallery img{
-width:80px;
-height:80px;
-object-fit:cover;
-border-radius:8px;
+.tab{
 cursor:pointer;
+padding:6px 10px;
+border-radius:8px;
+}
+
+.active{
+background:#eee;
 }
 
 /* INFO */
 
-.name{
-font-size:22px;
-font-weight:bold;
-margin-top:10px;
+.info{
+background:white;
+margin-top:8px;
+padding:15px;
 }
 
 .price{
+font-size:26px;
 color:#ff6a00;
-font-size:24px;
 font-weight:bold;
-margin-top:6px;
 }
 
-.badge{
-color:green;
-font-weight:bold;
-margin-top:4px;
-}
-
-/* BUTTONS */
-
-.btn{
-width:100%;
-padding:14px;
-border:none;
-border-radius:10px;
-font-size:18px;
+.desc{
 margin-top:10px;
+font-size:16px;
+line-height:1.4;
+}
+
+/* BOTTOM BAR */
+
+.bottomBar{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+background:white;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:10px;
+border-top:1px solid #ddd;
+}
+
+.lojaBtn{
+text-align:center;
+font-size:14px;
 cursor:pointer;
 }
 
-.cartBtn{
+.chatBtn{
+background:#eee;
+border:none;
+padding:12px 18px;
+border-radius:30px;
+font-size:16px;
+cursor:pointer;
+}
+
+.orderBtn{
 background:#ff6a00;
 color:white;
-}
-
-.chatBtn{
-background:#333;
-color:white;
-}
-
-.shopBtn{
-background:#0a7cff;
-color:white;
-}
-
-/* SIMILAR */
-
-.sectionTitle{
-padding:12px;
-font-size:20px;
-font-weight:bold;
-}
-
-.products{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:12px;
-padding:12px;
-}
-
-.product{
-background:white;
-padding:10px;
-border-radius:10px;
-box-shadow:0 3px 10px rgba(0,0,0,0.1);
-}
-
-.product img{
-width:100%;
-height:140px;
-object-fit:cover;
-border-radius:8px;
-}
-
-.product h4{
-margin:6px 0;
-font-size:17px;
-}
-
-.priceSmall{
-color:#ff6a00;
-font-weight:bold;
+border:none;
+padding:12px 20px;
+border-radius:30px;
+font-size:16px;
+cursor:pointer;
 }
 
 </style>
@@ -151,37 +113,66 @@ font-weight:bold;
 
 <body>
 
-<div class="header">
-Produto
+
+<img id="mainImg" class="mainImg">
+
+
+<div class="tabs">
+
+<div id="tabPhotos" class="tab active" onclick="showPhotos()">
+Photos
+</div>
+
+<div id="tabVideo" class="tab" onclick="showVideo()">
+Vídeo
+</div>
+
 </div>
 
 
-<div id="productBox" class="productBox"></div>
+<div class="info">
 
+<div id="price" class="price"></div>
 
-<div class="sectionTitle">
-Produtos semelhantes
+<div id="desc" class="desc"></div>
+
 </div>
 
-<div id="similarProducts" class="products"></div>
+
+
+<div class="bottomBar">
+
+<div class="lojaBtn" onclick="openShop()">
+🏪<br>Loja
+</div>
+
+<button class="chatBtn" onclick="openChat()">
+Discuter ici
+</button>
+
+<button class="orderBtn" onclick="orderProduct()">
+Commander
+</button>
+
+</div>
+
 
 
 <script type="module">
 
-import { db } from "./firebase.js";
+import { db } from "./firebase.js"
 
 import {
 doc,
-getDoc,
-collection,
-getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
 
 const params=new URLSearchParams(window.location.search)
 
 const productId=params.get("id")
 
+let merchantId=""
 
 /* LOAD PRODUCT */
 
@@ -193,128 +184,79 @@ const snap=await getDoc(ref)
 
 const data=snap.data()
 
-const container=document.getElementById("productBox")
+merchantId=data.merchantId
 
-const img=data.image || ""
+document.getElementById("mainImg").src=data.image
 
-container.innerHTML=`
+document.getElementById("price").innerText=data.price+" Kz"
 
-<img class="mainImg" id="mainImg" src="${img}">
+document.getElementById("desc").innerText=data.description
 
-<div class="gallery">
-<img src="${img}" onclick="changeImg('${img}')">
-</div>
+}
 
-<div class="name">${data.name}</div>
+loadProduct()
 
-<div class="price">${data.price} Kz</div>
 
-${data.verified ? "<div class='badge'>✔ Vendedor verificado</div>" : ""}
 
-<button class="btn cartBtn" onclick="addCart('${data.name}','${data.price}','${img}')">
-🛒 Adicionar ao carrinho
-</button>
+/* PHOTOS TAB */
 
-<button class="btn chatBtn" onclick="chatSeller('${data.merchantId}')">
-💬 Falar com vendedor
-</button>
+window.showPhotos=function(){
 
-<button class="btn shopBtn" onclick="viewShop('${data.merchantId}')">
-🏪 Ver loja
-</button>
+document.getElementById("tabPhotos").classList.add("active")
 
-`
+document.getElementById("tabVideo").classList.remove("active")
 
 }
 
 
-/* CHANGE IMAGE */
 
-window.changeImg=function(src){
+/* VIDEO TAB */
 
-document.getElementById("mainImg").src=src
+window.showVideo=function(){
+
+document.getElementById("tabVideo").classList.add("active")
+
+document.getElementById("tabPhotos").classList.remove("active")
+
+alert("Video produto ainda não disponível")
 
 }
 
 
-/* ADD CART */
 
-window.addCart=function(name,price,image){
+/* OPEN SHOP */
 
-let cart=JSON.parse(localStorage.getItem("cart")) || []
+window.openShop=function(){
 
-cart.push({
-name:name,
-price:price,
-image:image
-})
+location.href="merchant-shop.html?id="+merchantId
+
+}
+
+
+
+/* CHAT */
+
+window.openChat=function(){
+
+location.href="chat.html?merchant="+merchantId
+
+}
+
+
+
+/* ORDER */
+
+window.orderProduct=function(){
+
+let cart=JSON.parse(localStorage.getItem("cart"))||[]
+
+cart.push(productId)
 
 localStorage.setItem("cart",JSON.stringify(cart))
 
 alert("Produto adicionado ao carrinho")
 
 }
-
-
-/* CHAT */
-
-window.chatSeller=function(id){
-
-window.location.href="chat.html?merchant="+id
-
-}
-
-
-/* VIEW SHOP */
-
-window.viewShop=function(id){
-
-window.location.href="merchant-shop.html?id="+id
-
-}
-
-
-/* SIMILAR PRODUCTS */
-
-async function loadSimilar(){
-
-const snap=await getDocs(collection(db,"products"))
-
-const container=document.getElementById("similarProducts")
-
-snap.forEach(docSnap=>{
-
-const data=docSnap.data()
-
-const id=docSnap.id
-
-container.innerHTML+=`
-
-<div class="product" onclick="viewProduct('${id}')">
-
-<img src="${data.image}">
-
-<h4>${data.name}</h4>
-
-<div class="priceSmall">${data.price} Kz</div>
-
-</div>
-
-`
-
-})
-
-}
-
-window.viewProduct=function(id){
-
-location.href="product.html?id="+id
-
-}
-
-
-loadProduct()
-loadSimilar()
 
 </script>
 
