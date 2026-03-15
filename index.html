@@ -25,8 +25,7 @@ padding:18px;
 font-size:22px;
 font-weight:bold;
 display:flex;
-justify-content:space-between;
-align-items:center;
+justify-content:center;
 }
 
 /* SEARCH */
@@ -60,40 +59,60 @@ border-radius:10px;
 font-weight:bold;
 box-shadow:0 3px 8px rgba(0,0,0,0.1);
 cursor:pointer;
+white-space:nowrap;
 }
 
-/* PRODUCTS GRID */
+/* PRODUCTS GRID STYLE MARKETPLACE */
 
 .products{
 display:grid;
 grid-template-columns:repeat(2,1fr);
-gap:12px;
-padding:12px;
+grid-auto-rows:180px;
+gap:10px;
+padding:10px;
 }
-
-/* PRODUCT */
 
 .product{
 background:white;
 border-radius:12px;
-padding:6px;
+overflow:hidden;
 box-shadow:0 4px 12px rgba(0,0,0,0.1);
 cursor:pointer;
+display:flex;
+flex-direction:column;
+justify-content:flex-end;
+position:relative;
 }
+
+/* GRAND PRODUIT */
+
+.product.big{
+grid-column:span 2;
+grid-row:span 2;
+}
+
+/* LARGE */
+
+.product.wide{
+grid-column:span 2;
+}
+
+/* IMAGE */
 
 .product img{
 width:100%;
-height:200px;
+height:100%;
 object-fit:cover;
-border-radius:10px;
 }
 
+/* PRICE */
+
 .price{
-text-align:center;
-color:#ff6a00;
+background:white;
+padding:6px;
 font-weight:bold;
-margin-top:6px;
-font-size:18px;
+color:#ff6a00;
+text-align:center;
 }
 
 /* NAVBAR */
@@ -124,31 +143,22 @@ cursor:pointer;
 
 
 <div class="header">
-
 Shopping Online Angola 🇦🇴
-
 </div>
 
 
 <div class="searchBox">
-
 <input id="search" placeholder="Procurar produto...">
-
 </div>
 
 
 <div class="categories">
 
 <div class="cat" onclick="filterCat('telefone')">📱 Telefones</div>
-
 <div class="cat" onclick="filterCat('roupas')">👕 Roupas</div>
-
 <div class="cat" onclick="filterCat('beleza')">💄 Beleza</div>
-
 <div class="cat" onclick="filterCat('eletronica')">💻 Eletrónica</div>
-
 <div class="cat" onclick="filterCat('casa')">🏠 Casa</div>
-
 <div class="cat" onclick="filterCat('auto')">🚗 Auto</div>
 
 </div>
@@ -182,15 +192,14 @@ Shopping Online Angola 🇦🇴
 </div>
 
 
-
 <script type="module">
 
-import { db } from "./firebase.js";
+import { db } from "./firebase.js"
 
 import {
 collection,
 getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
 
 let products=[]
@@ -198,13 +207,27 @@ let products=[]
 
 /* PRODUCT CARD */
 
-function productHTML(data){
+function productHTML(data,index){
 
-const img = data.image || ""
+const img=data.image || (data.images ? data.images[0] : "")
+
+let size=""
+
+if(index%7==0){
+
+size="big"
+
+}
+
+else if(index%5==0){
+
+size="wide"
+
+}
 
 return `
 
-<div class="product" onclick="viewProduct('${data.id}')">
+<div class="product ${size}" onclick="viewProduct('${data.id}')">
 
 <img src="${img}">
 
@@ -221,13 +244,15 @@ return `
 
 async function loadProducts(){
 
-const snap = await getDocs(collection(db,"products"))
+const snap=await getDocs(collection(db,"products"))
 
 const container=document.getElementById("productList")
 
 container.innerHTML=""
 
 products=[]
+
+let index=0
 
 snap.forEach(docSnap=>{
 
@@ -237,7 +262,9 @@ data.id=docSnap.id
 
 products.push(data)
 
-container.innerHTML+=productHTML(data)
+container.innerHTML+=productHTML(data,index)
+
+index++
 
 })
 
@@ -263,11 +290,11 @@ const container=document.getElementById("productList")
 
 container.innerHTML=""
 
-products.forEach(p=>{
+products.forEach((p,i)=>{
 
 if(p.name.toLowerCase().includes(value)){
 
-container.innerHTML+=productHTML(p)
+container.innerHTML+=productHTML(p,i)
 
 }
 
@@ -276,7 +303,7 @@ container.innerHTML+=productHTML(p)
 })
 
 
-/* CATEGORY FILTER */
+/* FILTER CATEGORY */
 
 window.filterCat=function(cat){
 
@@ -284,11 +311,11 @@ const container=document.getElementById("productList")
 
 container.innerHTML=""
 
-products.forEach(p=>{
+products.forEach((p,i)=>{
 
 if(p.category==cat){
 
-container.innerHTML+=productHTML(p)
+container.innerHTML+=productHTML(p,i)
 
 }
 
