@@ -1,96 +1,219 @@
  <!DOCTYPE html>
-<html>
+<html lang="pt">
+
 <head>
 
 <meta charset="UTF-8">
-<title>Connexion</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="style.css">
+<title>Conta vendedor</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f2f2f2;
+margin:0;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+font-size:18px;
+}
+
+/* CARD */
+
+.card{
+background:white;
+padding:30px;
+border-radius:14px;
+width:90%;
+max-width:420px;
+box-shadow:0 6px 20px rgba(0,0,0,0.15);
+}
+
+/* TITLE */
+
+.title{
+text-align:center;
+font-size:26px;
+font-weight:bold;
+margin-bottom:20px;
+color:#ff6a00;
+}
+
+/* INPUT */
+
+input{
+width:100%;
+padding:14px;
+margin-bottom:12px;
+border-radius:8px;
+border:1px solid #ccc;
+font-size:17px;
+}
+
+/* BUTTON */
+
+button{
+width:100%;
+padding:14px;
+border:none;
+border-radius:8px;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+margin-top:5px;
+}
+
+/* CREATE */
+
+.createBtn{
+background:#ff6a00;
+color:white;
+}
+
+/* LOGIN */
+
+.loginBtn{
+background:#333;
+color:white;
+}
+
+/* TEXT */
+
+.info{
+text-align:center;
+margin-top:10px;
+color:#555;
+font-size:16px;
+}
+
+</style>
 
 </head>
 
 <body>
 
-<div class="container">
 
-<h2>Connexion</h2>
+<div class="card">
+
+<div class="title">
+Conta vendedor
+</div>
+
+<input id="shopName" placeholder="Nome da loja">
 
 <input id="email" type="email" placeholder="Email">
 
-<input id="password" type="password" placeholder="Mot de passe">
+<input id="password" type="password" placeholder="Senha">
 
-<button onclick="login()">Se connecter</button>
+<button class="createBtn" onclick="createAccount()">
+Criar conta vendedor
+</button>
 
-<p>
-Pas de compte ?
-<a href="merchant-register.html">Créer compte marchand</a>
-</p>
+<button class="loginBtn" onclick="loginAccount()">
+Entrar
+</button>
+
+<div class="info">
+Venda seus produtos online em Angola 🇦🇴
+</div>
 
 </div>
+
 
 
 <script type="module">
 
 import { auth, db } from "./firebase.js";
 
-import { 
+import {
+createUserWithEmailAndPassword,
 signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 import {
-collection,
-getDocs
+doc,
+setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 
-window.login = async function(){
+/* CREATE ACCOUNT */
 
-const email=document.getElementById("email").value;
-const password=document.getElementById("password").value;
+window.createAccount = async function(){
+
+const email=document.getElementById("email").value
+const password=document.getElementById("password").value
+const shopName=document.getElementById("shopName").value
+
+if(!email || !password || !shopName){
+
+alert("Preencha todos campos")
+
+return
+
+}
 
 try{
 
-const userCredential = await signInWithEmailAndPassword(auth,email,password);
+const user = await createUserWithEmailAndPassword(auth,email,password)
 
-const user=userCredential.user;
+await setDoc(doc(db,"merchants",user.user.uid),{
 
+shopName:shopName,
+email:email,
+verified:false,
+followers:0
 
-/* vérifier si admin */
+})
 
-const admins=await getDocs(collection(db,"admins"));
+alert("Conta criada com sucesso")
 
-let isAdmin=false;
-
-admins.forEach(doc=>{
-
-if(doc.data().email === user.email){
-
-isAdmin=true;
-
-}
-
-});
-
-
-if(isAdmin){
-
-window.location.href="admin-dashboard.html";
-
-}else{
-
-window.location.href="merchant-dashboard.html";
-
-}
+location.href="index.html"
 
 }catch(error){
 
-alert("Email ou mot de passe incorrect");
+alert(error.message)
+
+}
+
+}
+
+
+/* LOGIN */
+
+window.loginAccount = async function(){
+
+const email=document.getElementById("email").value
+const password=document.getElementById("password").value
+
+if(!email || !password){
+
+alert("Digite email e senha")
+
+return
+
+}
+
+try{
+
+await signInWithEmailAndPassword(auth,email,password)
+
+alert("Login realizado")
+
+location.href="index.html"
+
+}catch(error){
+
+alert("Email ou senha incorreta")
 
 }
 
 }
 
 </script>
+
 
 </body>
 
