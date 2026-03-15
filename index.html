@@ -152,15 +152,11 @@ font-weight:bold;
 font-size:20px;
 }
 
-/* BADGE */
-
 .badge{
 color:green;
 font-weight:bold;
 font-size:14px;
 }
-
-/* BUTTON */
 
 .product button{
 background:#ff6a00;
@@ -221,21 +217,17 @@ border-radius:50%;
 
 <span>Shopping online Angola 🇦🇴</span>
 
-<button class="loginBtn" onclick="location.href='merchant-login.html'">
-Criar conta / Entrar
+<button id="accountBtn" class="loginBtn">
+Entrar
 </button>
 
 </div>
 
 
 <div class="searchBox">
-
 <input id="search" placeholder="Procurar produto...">
-
 </div>
 
-
-<!-- SLIDER PROMO -->
 
 <div class="slider">
 
@@ -254,34 +246,25 @@ Criar conta / Entrar
 </div>
 
 
-<!-- CATEGORIES -->
-
 <div class="categories">
 
 <div class="cat" onclick="filterCat('telefone')">📱 Telefones</div>
-
 <div class="cat" onclick="filterCat('roupas')">👕 Roupas</div>
-
 <div class="cat" onclick="filterCat('beleza')">💄 Beleza</div>
-
 <div class="cat" onclick="filterCat('eletronica')">💻 Eletrónica</div>
-
 <div class="cat" onclick="filterCat('casa')">🏠 Casa</div>
-
 <div class="cat" onclick="filterCat('auto')">🚗 Auto</div>
 
 </div>
 
-
-<!-- TRUST -->
 
 <div class="trust">
 
 <h3>🛡 Compra segura</h3>
 
 <p>
-Fale com o vendedor no chat antes de pagar.  
-Verifique os produtos e compre apenas de vendedores confiáveis.
+Comande e receba em casa com segurança.  
+Converse com o vendedor antes de pagar e verifique avaliações.
 </p>
 
 </div>
@@ -294,9 +277,6 @@ Verifique os produtos e compre apenas de vendedores confiáveis.
 
 <div id="productList" class="products"></div>
 
-
-
-<!-- NAVBAR -->
 
 <div class="nav">
 
@@ -317,27 +297,36 @@ Verifique os produtos e compre apenas de vendedores confiáveis.
 🛒<br>Carrinho
 </div>
 
-<div onclick="location.href='merchant-login.html'">
+<div onclick="location.href='account.html'">
 👤<br>Conta
 </div>
 
 </div>
 
 
+
 <script type="module">
 
-import { db } from "./firebase.js";
+import { db, auth } from "./firebase.js";
 
 import {
 collection,
-getDocs
+getDocs,
+doc,
+getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+import {
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 let products=[];
 
+/* PRODUCT HTML */
+
 function productHTML(data){
 
-const img = data.image || (data.images ? data.images[0] : "")
+const img = data.image || ""
 
 return `
 
@@ -365,6 +354,8 @@ Loja do vendedor
 
 }
 
+/* LOAD PRODUCTS */
+
 async function loadProducts(){
 
 const snap = await getDocs(collection(db,"products"));
@@ -389,17 +380,23 @@ container.innerHTML+=productHTML(data);
 
 }
 
+/* VIEW PRODUCT */
+
 window.viewProduct=function(id){
 
 window.location.href="product.html?id="+id;
 
 }
 
+/* VIEW SHOP */
+
 window.viewShop=function(id){
 
 window.location.href="merchant-shop.html?id="+id;
 
 }
+
+/* SEARCH */
 
 document.getElementById("search").addEventListener("input",function(){
 
@@ -421,6 +418,8 @@ container.innerHTML+=productHTML(p)
 
 })
 
+/* CATEGORY FILTER */
+
 window.filterCat=function(cat){
 
 const container=document.getElementById("productList")
@@ -439,6 +438,8 @@ container.innerHTML+=productHTML(p)
 
 }
 
+/* MESSAGE NOTIFICATION */
+
 let notifications=localStorage.getItem("msgNotif") || 0
 
 if(notifications>0){
@@ -446,6 +447,38 @@ if(notifications>0){
 document.getElementById("notif").innerText=notifications
 
 }
+
+/* SELLER DETECTION */
+
+const accountBtn=document.getElementById("accountBtn")
+
+onAuthStateChanged(auth, async(user)=>{
+
+if(!user){
+
+accountBtn.innerText="Entrar"
+accountBtn.onclick=()=>location.href="merchant-login.html"
+return
+
+}
+
+const ref=doc(db,"merchants",user.uid)
+
+const snap=await getDoc(ref)
+
+if(snap.exists()){
+
+accountBtn.innerText="Minha loja"
+accountBtn.onclick=()=>location.href="merchant-dashboard.html"
+
+}else{
+
+accountBtn.innerText="Vender"
+accountBtn.onclick=()=>location.href="merchant-login.html"
+
+}
+
+})
 
 loadProducts();
 
