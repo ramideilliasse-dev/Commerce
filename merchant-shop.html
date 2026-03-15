@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt">
 
 <head>
@@ -6,98 +6,116 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Loja do vendedor</title>
+<title>Loja</title>
 
 <style>
 
 body{
 font-family:Arial;
 margin:0;
-background:#f4f6f9;
+background:#f3f3f3;
 }
 
-/* HEADER */
+/* BANNER */
 
-.header{
-background:#ff6a00;
-color:white;
-padding:18px;
-font-size:22px;
-font-weight:bold;
-display:flex;
-align-items:center;
-}
-
-.back{
-margin-right:10px;
-cursor:pointer;
+.banner{
+height:150px;
+background:linear-gradient(45deg,#ff6a00,#ff9900);
 }
 
 /* SHOP HEADER */
 
 .shopHeader{
 background:white;
-padding:20px;
-text-align:center;
-box-shadow:0 3px 10px rgba(0,0,0,0.1);
+padding:15px;
+margin-top:-50px;
+border-radius:14px 14px 0 0;
 }
 
-.shopHeader img{
-width:90px;
-height:90px;
+.shopTop{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.shopTop img{
+width:70px;
+height:70px;
 border-radius:50%;
+border:4px solid white;
 object-fit:cover;
 }
 
 .shopName{
-font-size:26px;
+font-size:22px;
 font-weight:bold;
 }
 
 .verified{
 color:green;
 font-weight:bold;
+font-size:14px;
+}
+
+/* ACTION BUTTONS */
+
+.actions{
+display:flex;
+gap:10px;
+margin-top:10px;
 }
 
 .followBtn{
-background:red;
+background:#ff6a00;
 color:white;
 border:none;
-padding:10px 20px;
-border-radius:8px;
-margin-top:10px;
+padding:10px 15px;
+border-radius:20px;
 cursor:pointer;
 }
 
-/* STATS */
+.chatBtn{
+background:#eee;
+border:none;
+padding:10px 15px;
+border-radius:20px;
+cursor:pointer;
+}
 
-.stats{
-display:flex;
-justify-content:center;
-gap:20px;
-margin-top:10px;
-font-size:18px;
+/* SEARCH */
+
+.search{
+background:white;
+padding:10px;
+}
+
+.search input{
+width:100%;
+padding:12px;
+border-radius:20px;
+border:1px solid #ddd;
 }
 
 /* PRODUCTS */
 
 .products{
 display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:12px;
-padding:15px;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+padding:10px;
 }
 
 .product{
 background:white;
 border-radius:10px;
-padding:10px;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
+padding:6px;
+box-shadow:0 3px 8px rgba(0,0,0,0.1);
+cursor:pointer;
 }
 
 .product img{
 width:100%;
-height:140px;
+height:170px;
 object-fit:cover;
 border-radius:8px;
 }
@@ -105,23 +123,8 @@ border-radius:8px;
 .price{
 color:#ff6a00;
 font-weight:bold;
-}
-
-/* REVIEWS */
-
-.reviews{
-padding:15px;
-}
-
-.review{
-background:white;
-padding:10px;
-border-radius:8px;
-margin-bottom:10px;
-}
-
-.star{
-color:gold;
+margin-top:5px;
+text-align:center;
 }
 
 </style>
@@ -130,51 +133,56 @@ color:gold;
 
 <body>
 
-<div class="header">
 
-<span class="back" onclick="history.back()">⬅</span>
-
-Perfil vendedor
-
-</div>
+<div class="banner"></div>
 
 
 <div class="shopHeader">
 
+<div class="shopTop">
+
 <img id="shopPhoto">
 
-<div class="shopName" id="shopName"></div>
+<div>
 
-<div class="verified" id="verified"></div>
+<div id="shopName" class="shopName"></div>
 
-<div class="stats">
-
-<div id="productCount"></div>
-
-<div id="followers"></div>
+<div id="verified" class="verified"></div>
 
 </div>
 
+</div>
+
+
+<div class="actions">
+
 <button class="followBtn" onclick="followShop()">
-❤️ Seguir loja
+Seguir loja
+</button>
+
+<button class="chatBtn" onclick="chatSeller()">
+Discuter
 </button>
 
 </div>
 
+</div>
 
-<h2 style="padding:15px">🔥 Produtos populares</h2>
+
+<div class="search">
+
+<input id="search" placeholder="Pesquisar produto nesta loja...">
+
+</div>
+
 
 <div id="productList" class="products"></div>
 
 
-<h2 style="padding:15px">⭐ Avaliações</h2>
-
-<div id="reviews" class="reviews"></div>
-
 
 <script type="module">
 
-import { db } from "./firebase.js";
+import { db } from "./firebase.js"
 
 import {
 doc,
@@ -182,32 +190,28 @@ getDoc,
 collection,
 query,
 where,
-getDocs,
-addDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
 
 const params=new URLSearchParams(window.location.search)
 
 const merchantId=params.get("id")
 
+let products=[]
 
-/* LOAD MERCHANT */
 
-async function loadMerchant(){
+/* LOAD SHOP */
+
+async function loadShop(){
 
 const snap=await getDoc(doc(db,"merchants",merchantId))
 
-if(!snap.exists()) return
-
 const data=snap.data()
 
-document.getElementById("shopName").innerText=data.shopName
+document.getElementById("shopName").innerText=data.name
 
-document.getElementById("shopPhoto").src=data.photo || ""
-
-document.getElementById("followers").innerText=
-(data.followers || 0)+" seguidores"
+document.getElementById("shopPhoto").src=data.photo
 
 if(data.verified){
 
@@ -217,24 +221,7 @@ document.getElementById("verified").innerText="✔ Vendedor verificado"
 
 }
 
-loadMerchant()
-
-
-/* FOLLOW SHOP */
-
-window.followShop=async function(){
-
-await addDoc(collection(db,"followers"),{
-
-merchantId:merchantId,
-
-time:Date.now()
-
-})
-
-alert("Você segue esta loja")
-
-}
+loadShop()
 
 
 /* LOAD PRODUCTS */
@@ -242,8 +229,11 @@ alert("Você segue esta loja")
 async function loadProducts(){
 
 const q=query(
+
 collection(db,"products"),
+
 where("merchantId","==",merchantId)
+
 )
 
 const snap=await getDocs(q)
@@ -252,23 +242,32 @@ const container=document.getElementById("productList")
 
 container.innerHTML=""
 
-let count=0
+products=[]
 
 snap.forEach(docSnap=>{
 
 const data=docSnap.data()
 
-count++
+data.id=docSnap.id
 
-const img=data.image || (data.images ? data.images[0] : "")
+products.push(data)
 
-container.innerHTML+=`
+container.innerHTML+=productHTML(data)
 
-<div class="product">
+})
 
-<img src="${img}">
+}
 
-<div>${data.name}</div>
+loadProducts()
+
+
+function productHTML(data){
+
+return `
+
+<div class="product" onclick="viewProduct('${data.id}')">
+
+<img src="${data.image}">
 
 <div class="price">${data.price} Kz</div>
 
@@ -276,60 +275,65 @@ container.innerHTML+=`
 
 `
 
-})
+}
 
-document.getElementById("productCount").innerText=
-count+" produtos"
+
+window.viewProduct=function(id){
+
+location.href="product.html?id="+id
 
 }
 
-loadProducts()
 
+/* SEARCH IN SHOP */
 
-/* LOAD REVIEWS */
+document.getElementById("search").addEventListener("input",function(){
 
-async function loadReviews(){
+const value=this.value.toLowerCase()
 
-const q=query(
-collection(db,"reviews"),
-where("merchantId","==",merchantId)
-)
-
-const snap=await getDocs(q)
-
-const container=document.getElementById("reviews")
+const container=document.getElementById("productList")
 
 container.innerHTML=""
 
-snap.forEach(docSnap=>{
+products.forEach(p=>{
 
-const data=docSnap.data()
+if(p.name.toLowerCase().includes(value)){
 
-let stars=""
-
-for(let i=0;i<data.rating;i++){
-
-stars+="⭐"
+container.innerHTML+=productHTML(p)
 
 }
-
-container.innerHTML+=`
-
-<div class="review">
-
-<div class="star">${stars}</div>
-
-<div>${data.comment}</div>
-
-</div>
-
-`
 
 })
 
+})
+
+
+/* FOLLOW SHOP */
+
+window.followShop=function(){
+
+let follows=JSON.parse(localStorage.getItem("follows"))||[]
+
+if(!follows.includes(merchantId)){
+
+follows.push(merchantId)
+
+localStorage.setItem("follows",JSON.stringify(follows))
+
+alert("Loja seguida com sucesso")
+
 }
 
-loadReviews()
+}
+
+
+/* CHAT SELLER */
+
+window.chatSeller=function(){
+
+location.href="chat.html?merchant="+merchantId
+
+}
 
 </script>
 
