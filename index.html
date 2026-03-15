@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Shopping online Angola 🇦🇴</title>
+<title>Shopping Online Angola</title>
 
 <style>
 
@@ -14,7 +14,6 @@ body{
 font-family:Arial;
 margin:0;
 background:#f3f3f3;
-font-size:18px;
 }
 
 /* HEADER */
@@ -30,17 +29,6 @@ justify-content:space-between;
 align-items:center;
 }
 
-.loginBtn{
-background:white;
-color:#ff6a00;
-border:none;
-padding:8px 14px;
-border-radius:8px;
-font-size:15px;
-cursor:pointer;
-font-weight:bold;
-}
-
 /* SEARCH */
 
 .searchBox{
@@ -50,29 +38,10 @@ padding:12px;
 
 .searchBox input{
 width:100%;
-padding:15px;
+padding:14px;
 border-radius:30px;
 border:2px solid #ff6a00;
-font-size:17px;
-}
-
-/* SLIDER */
-
-.slider{
-display:flex;
-overflow:auto;
-gap:10px;
-padding:12px;
-}
-
-.slide{
-min-width:260px;
-background:linear-gradient(45deg,#ff6a00,#ff9900);
-color:white;
-padding:30px;
-border-radius:12px;
-font-size:20px;
-font-weight:bold;
+font-size:16px;
 }
 
 /* CATEGORIES */
@@ -80,93 +49,51 @@ font-weight:bold;
 .categories{
 display:flex;
 overflow:auto;
-gap:12px;
+gap:10px;
 padding:12px;
 }
 
 .cat{
 background:white;
-padding:12px;
-border-radius:12px;
-min-width:110px;
-text-align:center;
-font-size:16px;
+padding:10px 14px;
+border-radius:10px;
 font-weight:bold;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
+box-shadow:0 3px 8px rgba(0,0,0,0.1);
 cursor:pointer;
 }
 
-/* TRUST */
-
-.trust{
-background:white;
-margin:12px;
-padding:20px;
-border-radius:12px;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
-}
-
-.trust h3{
-margin-top:0;
-}
-
-/* SECTION */
-
-.sectionTitle{
-padding:10px 15px;
-font-size:22px;
-font-weight:bold;
-}
-
-/* PRODUCTS */
+/* PRODUCTS GRID */
 
 .products{
 display:grid;
 grid-template-columns:repeat(2,1fr);
-gap:14px;
-padding:14px;
+gap:12px;
+padding:12px;
 }
+
+/* PRODUCT */
 
 .product{
 background:white;
-border-radius:14px;
-padding:12px;
-box-shadow:0 5px 14px rgba(0,0,0,0.1);
+border-radius:12px;
+padding:6px;
+box-shadow:0 4px 12px rgba(0,0,0,0.1);
+cursor:pointer;
 }
 
 .product img{
 width:100%;
-height:170px;
+height:200px;
 object-fit:cover;
 border-radius:10px;
 }
 
-.product h4{
-font-size:18px;
-margin:6px 0;
-}
-
 .price{
+text-align:center;
 color:#ff6a00;
 font-weight:bold;
-font-size:20px;
-}
-
-.badge{
-color:green;
-font-weight:bold;
-font-size:14px;
-}
-
-.product button{
-background:#ff6a00;
-color:white;
-border:none;
-padding:9px;
-border-radius:8px;
 margin-top:6px;
-font-size:15px;
-width:100%;
+font-size:18px;
 }
 
 /* NAVBAR */
@@ -189,23 +116,6 @@ text-align:center;
 cursor:pointer;
 }
 
-/* MESSAGE NOTIFICATION */
-
-.msgIcon{
-position:relative;
-}
-
-.notif{
-position:absolute;
-top:-5px;
-right:-10px;
-background:red;
-color:white;
-font-size:12px;
-padding:2px 6px;
-border-radius:50%;
-}
-
 </style>
 
 </head>
@@ -215,33 +125,14 @@ border-radius:50%;
 
 <div class="header">
 
-<span>Shopping online Angola 🇦🇴</span>
-
-<button id="accountBtn" class="loginBtn">
-Entrar
-</button>
+Shopping Online Angola 🇦🇴
 
 </div>
 
 
 <div class="searchBox">
+
 <input id="search" placeholder="Procurar produto...">
-</div>
-
-
-<div class="slider">
-
-<div class="slide">
-🔥 Promo até -30%
-</div>
-
-<div class="slide">
-🚚 Entrega rápida em Luanda
-</div>
-
-<div class="slide">
-🛡 Compra segura
-</div>
 
 </div>
 
@@ -249,29 +140,17 @@ Entrar
 <div class="categories">
 
 <div class="cat" onclick="filterCat('telefone')">📱 Telefones</div>
+
 <div class="cat" onclick="filterCat('roupas')">👕 Roupas</div>
+
 <div class="cat" onclick="filterCat('beleza')">💄 Beleza</div>
+
 <div class="cat" onclick="filterCat('eletronica')">💻 Eletrónica</div>
+
 <div class="cat" onclick="filterCat('casa')">🏠 Casa</div>
+
 <div class="cat" onclick="filterCat('auto')">🚗 Auto</div>
 
-</div>
-
-
-<div class="trust">
-
-<h3>🛡 Compra segura</h3>
-
-<p>
-Comande e receba em casa com segurança.  
-Converse com o vendedor antes de pagar e verifique avaliações.
-</p>
-
-</div>
-
-
-<div class="sectionTitle">
-🔥 Produtos em destaque
 </div>
 
 
@@ -281,16 +160,15 @@ Converse com o vendedor antes de pagar e verifique avaliações.
 <div class="nav">
 
 <div onclick="location.href='index.html'">
-🏠<br>Início
+🏠<br>Inicio
 </div>
 
 <div onclick="location.href='categories.html'">
 📦<br>Categorias
 </div>
 
-<div class="msgIcon" onclick="location.href='messages.html'">
+<div onclick="location.href='messages.html'">
 💬<br>Mensagens
-<span id="notif" class="notif"></span>
 </div>
 
 <div onclick="location.href='cart.html'">
@@ -307,22 +185,18 @@ Converse com o vendedor antes de pagar e verifique avaliações.
 
 <script type="module">
 
-import { db, auth } from "./firebase.js";
+import { db } from "./firebase.js";
 
 import {
 collection,
-getDocs,
-doc,
-getDoc
+getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-import {
-onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-let products=[];
+let products=[]
 
-/* PRODUCT HTML */
+
+/* PRODUCT CARD */
 
 function productHTML(data){
 
@@ -330,23 +204,11 @@ const img = data.image || ""
 
 return `
 
-<div class="product">
+<div class="product" onclick="viewProduct('${data.id}')">
 
 <img src="${img}">
 
-<h4>${data.name}</h4>
-
 <div class="price">${data.price} Kz</div>
-
-${data.verified ? "<div class='badge'>✔ Vendedor verificado</div>" : ""}
-
-<button onclick="viewProduct('${data.id}')">
-Ver produto
-</button>
-
-<button onclick="viewShop('${data.merchantId}')">
-Loja do vendedor
-</button>
 
 </div>
 
@@ -354,57 +216,52 @@ Loja do vendedor
 
 }
 
+
 /* LOAD PRODUCTS */
 
 async function loadProducts(){
 
-const snap = await getDocs(collection(db,"products"));
+const snap = await getDocs(collection(db,"products"))
 
-const container=document.getElementById("productList");
+const container=document.getElementById("productList")
 
-container.innerHTML="";
+container.innerHTML=""
 
-products=[];
+products=[]
 
 snap.forEach(docSnap=>{
 
-const data=docSnap.data();
+const data=docSnap.data()
 
-data.id=docSnap.id;
+data.id=docSnap.id
 
-products.push(data);
+products.push(data)
 
-container.innerHTML+=productHTML(data);
+container.innerHTML+=productHTML(data)
 
-});
+})
 
 }
+
 
 /* VIEW PRODUCT */
 
 window.viewProduct=function(id){
 
-window.location.href="product.html?id="+id;
+window.location.href="product.html?id="+id
 
 }
 
-/* VIEW SHOP */
-
-window.viewShop=function(id){
-
-window.location.href="merchant-shop.html?id="+id;
-
-}
 
 /* SEARCH */
 
 document.getElementById("search").addEventListener("input",function(){
 
-const value=this.value.toLowerCase();
+const value=this.value.toLowerCase()
 
-const container=document.getElementById("productList");
+const container=document.getElementById("productList")
 
-container.innerHTML="";
+container.innerHTML=""
 
 products.forEach(p=>{
 
@@ -417,6 +274,7 @@ container.innerHTML+=productHTML(p)
 })
 
 })
+
 
 /* CATEGORY FILTER */
 
@@ -438,49 +296,8 @@ container.innerHTML+=productHTML(p)
 
 }
 
-/* MESSAGE NOTIFICATION */
 
-let notifications=localStorage.getItem("msgNotif") || 0
-
-if(notifications>0){
-
-document.getElementById("notif").innerText=notifications
-
-}
-
-/* SELLER DETECTION */
-
-const accountBtn=document.getElementById("accountBtn")
-
-onAuthStateChanged(auth, async(user)=>{
-
-if(!user){
-
-accountBtn.innerText="Entrar"
-accountBtn.onclick=()=>location.href="merchant-login.html"
-return
-
-}
-
-const ref=doc(db,"merchants",user.uid)
-
-const snap=await getDoc(ref)
-
-if(snap.exists()){
-
-accountBtn.innerText="Minha loja"
-accountBtn.onclick=()=>location.href="merchant-dashboard.html"
-
-}else{
-
-accountBtn.innerText="Vender"
-accountBtn.onclick=()=>location.href="merchant-login.html"
-
-}
-
-})
-
-loadProducts();
+loadProducts()
 
 </script>
 
