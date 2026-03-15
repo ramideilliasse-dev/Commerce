@@ -1,57 +1,129 @@
  <!DOCTYPE html>
-<html>
+<html lang="pt">
 
 <head>
+
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Carrinho</title>
 
 <style>
 
 body{
 font-family:Arial;
-background:#f4f6f9;
 margin:0;
+background:#f4f4f4;
+font-size:18px;
 }
 
-header{
+/* HEADER */
+
+.header{
 background:#ff6a00;
 color:white;
 padding:18px;
-font-size:22px;
-}
-
-.container{
-padding:20px;
-}
-
-.item{
-background:white;
-padding:15px;
-border-radius:10px;
-margin-bottom:15px;
-display:flex;
-gap:15px;
-align-items:center;
-box-shadow:0 3px 10px rgba(0,0,0,0.1);
-}
-
-img{
-width:80px;
-border-radius:8px;
-}
-
-.total{
 font-size:24px;
 font-weight:bold;
-margin-top:20px;
 }
 
-button{
+/* CONTAINER */
+
+.container{
+padding:15px;
+}
+
+/* EMPTY CART */
+
+.empty{
+text-align:center;
+padding:60px 20px;
+color:#666;
+}
+
+.empty button{
 background:#ff6a00;
 color:white;
 border:none;
-padding:10px 15px;
+padding:14px 20px;
+font-size:18px;
+border-radius:8px;
+margin-top:15px;
+}
+
+/* PRODUCT */
+
+.item{
+background:white;
+border-radius:12px;
+padding:12px;
+margin-bottom:12px;
+display:flex;
+gap:12px;
+align-items:center;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+.item img{
+width:90px;
+height:90px;
+object-fit:cover;
+border-radius:10px;
+}
+
+.info{
+flex:1;
+}
+
+.name{
+font-size:20px;
+font-weight:bold;
+}
+
+.price{
+color:#ff6a00;
+font-size:19px;
+margin-top:5px;
+}
+
+/* DELETE */
+
+.delete{
+background:red;
+color:white;
+border:none;
+padding:8px;
 border-radius:6px;
+margin-top:6px;
+}
+
+/* FOOTER */
+
+.footer{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+background:white;
+padding:15px;
+border-top:1px solid #ddd;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.total{
+font-size:22px;
+font-weight:bold;
+}
+
+.orderBtn{
+background:#ff6a00;
+color:white;
+border:none;
+padding:14px 20px;
+font-size:18px;
+border-radius:8px;
 }
 
 </style>
@@ -60,37 +132,83 @@ border-radius:6px;
 
 <body>
 
-<header>Meu Carrinho</header>
-
-<div class="container" id="cartList"></div>
-
-<div class="container">
-<div class="total" id="total"></div>
+<div class="header">
+🛒 Carrinho
 </div>
+
+<div class="container" id="cartContainer"></div>
+
+<div class="footer">
+
+<div class="total">
+Total: <span id="total">0</span> Kz
+</div>
+
+<button class="orderBtn" onclick="order()">
+📦 Encomendar
+</button>
+
+</div>
+
 
 <script>
 
-let cart=JSON.parse(localStorage.getItem("cart")) || []
+let cart = JSON.parse(localStorage.getItem("cart")) || []
 
-const container=document.getElementById("cartList")
+const container = document.getElementById("cartContainer")
+const totalText = document.getElementById("total")
+
+function renderCart(){
+
+container.innerHTML=""
+
+if(cart.length==0){
+
+container.innerHTML=`
+
+<div class="empty">
+
+<h2>Seu carrinho está vazio</h2>
+
+<p>
+Adicione produtos para começar suas compras.
+</p>
+
+<button onclick="location.href='index.html'">
+Adicionar produtos
+</button>
+
+</div>
+
+`
+
+totalText.innerText="0"
+
+return
+
+}
 
 let total=0
 
-cart.forEach(p=>{
+cart.forEach((item,index)=>{
 
-total+=p.price
+total += Number(item.price)
 
 container.innerHTML+=`
 
 <div class="item">
 
-<img src="${p.image}">
+<img src="${item.image}">
 
-<div>
+<div class="info">
 
-<h3>${p.name}</h3>
+<div class="name">${item.name}</div>
 
-<p>${p.price} Kz</p>
+<div class="price">${item.price} Kz</div>
+
+<button class="delete" onclick="removeItem(${index})">
+Remover
+</button>
 
 </div>
 
@@ -100,7 +218,39 @@ container.innerHTML+=`
 
 })
 
-document.getElementById("total").innerText="Total: "+total+" Kz"
+totalText.innerText=total
+
+}
+
+function removeItem(index){
+
+cart.splice(index,1)
+
+localStorage.setItem("cart",JSON.stringify(cart))
+
+renderCart()
+
+}
+
+function order(){
+
+if(cart.length==0){
+
+alert("Seu carrinho está vazio")
+
+return
+
+}
+
+alert("Pedido enviado ao vendedor")
+
+localStorage.removeItem("cart")
+
+location.href="messages.html"
+
+}
+
+renderCart()
 
 </script>
 
