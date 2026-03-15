@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt">
 
 <head>
@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Detalhe do Produto</title>
+<title>Produto</title>
 
 <style>
 
@@ -14,7 +14,6 @@ body{
 font-family:Arial;
 margin:0;
 background:#f3f3f3;
-font-size:18px;
 }
 
 /* HEADER */
@@ -22,33 +21,27 @@ font-size:18px;
 .header{
 background:#ff6a00;
 color:white;
-padding:15px;
+padding:16px;
 font-size:22px;
 font-weight:bold;
-display:flex;
-align-items:center;
 }
 
-.back{
-margin-right:10px;
-cursor:pointer;
-}
+/* PRODUCT */
 
-/* CONTAINER */
-
-.container{
+.productBox{
+background:white;
+margin:12px;
 padding:15px;
-}
-
-/* IMAGE PRINCIPAL */
-
-.mainImage{
-width:100%;
 border-radius:12px;
-box-shadow:0 4px 12px rgba(0,0,0,0.2);
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
 }
 
-/* GALERIE */
+.mainImg{
+width:100%;
+height:280px;
+object-fit:cover;
+border-radius:10px;
+}
 
 .gallery{
 display:flex;
@@ -58,84 +51,98 @@ overflow:auto;
 }
 
 .gallery img{
-width:90px;
-height:90px;
+width:80px;
+height:80px;
 object-fit:cover;
 border-radius:8px;
 cursor:pointer;
 }
 
-/* VIDEO */
-
-video{
-width:100%;
-border-radius:10px;
-margin-top:10px;
-}
-
-/* INFO PRODUIT */
+/* INFO */
 
 .name{
-font-size:26px;
+font-size:22px;
 font-weight:bold;
-margin-top:15px;
+margin-top:10px;
 }
 
 .price{
 color:#ff6a00;
-font-size:28px;
+font-size:24px;
 font-weight:bold;
-margin-top:10px;
+margin-top:6px;
 }
 
-/* DESCRIPTION */
-
-.description{
-background:white;
-padding:15px;
-border-radius:10px;
-margin-top:15px;
-line-height:1.6;
-font-size:18px;
-color:#333;
-box-shadow:0 3px 10px rgba(0,0,0,0.1);
+.badge{
+color:green;
+font-weight:bold;
+margin-top:4px;
 }
 
-/* BOUTONS */
+/* BUTTONS */
 
-.buttons{
-margin-top:20px;
-display:flex;
-flex-direction:column;
-gap:10px;
-}
-
-button{
+.btn{
+width:100%;
 padding:14px;
 border:none;
 border-radius:10px;
 font-size:18px;
+margin-top:10px;
 cursor:pointer;
 }
 
-.whatsapp{
-background:#25D366;
-color:white;
-}
-
-.chat{
-background:#0084ff;
-color:white;
-}
-
-.cart{
-background:#222;
-color:white;
-}
-
-.shop{
+.cartBtn{
 background:#ff6a00;
 color:white;
+}
+
+.chatBtn{
+background:#333;
+color:white;
+}
+
+.shopBtn{
+background:#0a7cff;
+color:white;
+}
+
+/* SIMILAR */
+
+.sectionTitle{
+padding:12px;
+font-size:20px;
+font-weight:bold;
+}
+
+.products{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+padding:12px;
+}
+
+.product{
+background:white;
+padding:10px;
+border-radius:10px;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+.product img{
+width:100%;
+height:140px;
+object-fit:cover;
+border-radius:8px;
+}
+
+.product h4{
+margin:6px 0;
+font-size:17px;
+}
+
+.priceSmall{
+color:#ff6a00;
+font-weight:bold;
 }
 
 </style>
@@ -145,54 +152,18 @@ color:white;
 <body>
 
 <div class="header">
-
-<span class="back" onclick="history.back()">⬅</span>
-
 Produto
-
 </div>
 
 
-<div class="container">
-
-<img id="mainImage" class="mainImage">
+<div id="productBox" class="productBox"></div>
 
 
-<div class="gallery" id="gallery"></div>
-
-
-<video id="video" controls></video>
-
-
-<div class="name" id="name"></div>
-
-<div class="price" id="price"></div>
-
-
-<div class="description" id="description"></div>
-
-
-<div class="buttons">
-
-<button class="whatsapp" id="whatsappBtn">
-📱 Contactar vendedor
-</button>
-
-<button class="chat" id="chatBtn">
-💬 Mensagem vendedor
-</button>
-
-<button class="cart" onclick="addCart()">
-🛒 Adicionar ao carrinho
-</button>
-
-<button class="shop" id="shopBtn">
-🏪 Ver loja
-</button>
-
+<div class="sectionTitle">
+Produtos semelhantes
 </div>
 
-</div>
+<div id="similarProducts" class="products"></div>
 
 
 <script type="module">
@@ -201,137 +172,81 @@ import { db } from "./firebase.js";
 
 import {
 doc,
-getDoc
+getDoc,
+collection,
+getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 
-const params = new URLSearchParams(window.location.search);
+const params=new URLSearchParams(window.location.search)
 
-const productId = params.get("id");
-
-let productData = null;
+const productId=params.get("id")
 
 
-/* CARREGAR PRODUTO */
+/* LOAD PRODUCT */
 
 async function loadProduct(){
 
-const snap = await getDoc(doc(db,"products",productId));
+const ref=doc(db,"products",productId)
 
-const data = snap.data();
+const snap=await getDoc(ref)
 
-productData = data;
+const data=snap.data()
 
+const container=document.getElementById("productBox")
 
-/* TEXTE */
+const img=data.image || ""
 
-document.getElementById("name").innerText = data.name || "";
+container.innerHTML=`
 
-document.getElementById("price").innerText = (data.price || 0) + " Kz";
+<img class="mainImg" id="mainImg" src="${img}">
 
-document.getElementById("description").innerText = data.description || "";
+<div class="gallery">
+<img src="${img}" onclick="changeImg('${img}')">
+</div>
 
+<div class="name">${data.name}</div>
 
-/* IMAGE PRINCIPALE */
+<div class="price">${data.price} Kz</div>
 
-if(data.images && data.images.length > 0){
+${data.verified ? "<div class='badge'>✔ Vendedor verificado</div>" : ""}
 
-document.getElementById("mainImage").src = data.images[0];
+<button class="btn cartBtn" onclick="addCart('${data.name}','${data.price}','${img}')">
+🛒 Adicionar ao carrinho
+</button>
 
-}
+<button class="btn chatBtn" onclick="chatSeller('${data.merchantId}')">
+💬 Falar com vendedor
+</button>
 
+<button class="btn shopBtn" onclick="viewShop('${data.merchantId}')">
+🏪 Ver loja
+</button>
 
-/* GALERIE */
-
-const gallery = document.getElementById("gallery");
-
-gallery.innerHTML="";
-
-if(data.images){
-
-data.images.forEach(img=>{
-
-gallery.innerHTML+=`
-
-<img src="${img}" onclick="changeImage('${img}')">
-
-`;
-
-});
+`
 
 }
 
 
-/* VIDEO */
+/* CHANGE IMAGE */
 
-if(data.video){
+window.changeImg=function(src){
 
-document.getElementById("video").src = data.video;
-
-}
-
-
-/* WHATSAPP */
-
-if(data.merchantPhone){
-
-const message = "Olá quero comprar: " + data.name;
-
-const url = "https://wa.me/"+data.merchantPhone+"?text="+encodeURIComponent(message);
-
-document.getElementById("whatsappBtn").onclick=function(){
-
-window.open(url)
-
-}
+document.getElementById("mainImg").src=src
 
 }
 
 
-/* BOUTIQUE */
+/* ADD CART */
 
-document.getElementById("shopBtn").onclick=function(){
+window.addCart=function(name,price,image){
 
-window.location.href="merchant-shop.html?id="+data.merchantId
-
-}
-
-
-/* CHAT VENDEUR */
-
-document.getElementById("chatBtn").onclick=function(){
-
-window.location.href=
-"chat.html?merchant="+data.merchantId+"&product="+productId
-
-}
-
-}
-
-
-window.changeImage=function(src){
-
-document.getElementById("mainImage").src=src
-
-}
-
-
-/* PANIER */
-
-window.addCart=function(){
-
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let cart=JSON.parse(localStorage.getItem("cart")) || []
 
 cart.push({
-
-id:productId,
-
-name:productData.name,
-
-price:productData.price,
-
-image:productData.images ? productData.images[0] : ""
-
+name:name,
+price:price,
+image:image
 })
 
 localStorage.setItem("cart",JSON.stringify(cart))
@@ -341,7 +256,65 @@ alert("Produto adicionado ao carrinho")
 }
 
 
-loadProduct();
+/* CHAT */
+
+window.chatSeller=function(id){
+
+window.location.href="chat.html?merchant="+id
+
+}
+
+
+/* VIEW SHOP */
+
+window.viewShop=function(id){
+
+window.location.href="merchant-shop.html?id="+id
+
+}
+
+
+/* SIMILAR PRODUCTS */
+
+async function loadSimilar(){
+
+const snap=await getDocs(collection(db,"products"))
+
+const container=document.getElementById("similarProducts")
+
+snap.forEach(docSnap=>{
+
+const data=docSnap.data()
+
+const id=docSnap.id
+
+container.innerHTML+=`
+
+<div class="product" onclick="viewProduct('${id}')">
+
+<img src="${data.image}">
+
+<h4>${data.name}</h4>
+
+<div class="priceSmall">${data.price} Kz</div>
+
+</div>
+
+`
+
+})
+
+}
+
+window.viewProduct=function(id){
+
+location.href="product.html?id="+id
+
+}
+
+
+loadProduct()
+loadSimilar()
 
 </script>
 
