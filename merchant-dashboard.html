@@ -1,55 +1,202 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt">
+
 <head>
 
 <meta charset="UTF-8">
-<title>Dashboard Marchand</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="style.css">
+<title>Painel do vendedor</title>
+
+<style>
+
+body{
+font-family:Arial;
+margin:0;
+background:#f3f3f3;
+font-size:18px;
+}
+
+/* HEADER */
+
+.header{
+background:#ff6a00;
+color:white;
+padding:18px;
+font-size:24px;
+font-weight:bold;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+/* CONTAINER */
+
+.container{
+padding:15px;
+}
+
+/* STATS */
+
+.stats{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+margin-bottom:20px;
+}
+
+.card{
+background:white;
+padding:15px;
+border-radius:10px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+text-align:center;
+}
+
+.card h2{
+margin:0;
+font-size:28px;
+color:#ff6a00;
+}
+
+/* FORM */
+
+.form{
+background:white;
+padding:15px;
+border-radius:10px;
+margin-bottom:20px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+.form input,
+.form select{
+width:100%;
+padding:12px;
+margin-bottom:10px;
+border-radius:8px;
+border:1px solid #ccc;
+font-size:16px;
+}
+
+.form button{
+background:#ff6a00;
+color:white;
+border:none;
+padding:12px;
+border-radius:8px;
+font-size:18px;
+width:100%;
+}
+
+/* PRODUCT LIST */
+
+.products{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+}
+
+.product{
+background:white;
+padding:10px;
+border-radius:10px;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+.product img{
+width:100%;
+height:150px;
+object-fit:cover;
+border-radius:8px;
+}
+
+.product h4{
+margin:5px 0;
+}
+
+.deleteBtn{
+background:red;
+color:white;
+border:none;
+padding:8px;
+border-radius:6px;
+width:100%;
+}
+
+</style>
 
 </head>
 
 <body>
 
+
+<div class="header">
+
+<span>Painel do vendedor</span>
+
+<button onclick="logout()">Sair</button>
+
+</div>
+
+
 <div class="container">
 
-<h2>Dashboard Marchand</h2>
 
-<button onclick="logout()">Logout</button>
+<!-- STATS -->
 
-<h3>Ajouter produit</h3>
+<div class="stats">
 
-<input id="name" placeholder="Nom produit">
+<div class="card">
+<h2 id="totalProducts">0</h2>
+Produtos
+</div>
 
-<input id="price" placeholder="Prix">
+<div class="card">
+<h2 id="followers">0</h2>
+Seguidores
+</div>
 
-<textarea id="description" placeholder="Description"></textarea>
+</div>
+
+
+<!-- ADD PRODUCT -->
+
+<div class="form">
+
+<h3>Adicionar produto</h3>
+
+<input id="name" placeholder="Nome do produto">
+
+<input id="price" placeholder="Preço">
+
+<input id="image" placeholder="Link da imagem">
 
 <select id="category">
 
-<option value="">Catégorie</option>
-<option>Electronique</option>
-<option>Téléphone</option>
-<option>Vêtements</option>
-<option>Maison</option>
+<option value="telefone">Telefone</option>
+<option value="roupas">Roupas</option>
+<option value="beleza">Beleza</option>
+<option value="eletronica">Eletrónica</option>
+<option value="casa">Casa</option>
+<option value="auto">Auto</option>
 
 </select>
 
-<label>Images produit</label>
-<input type="file" id="images" multiple>
-
-<label>Vidéo produit</label>
-<input type="file" id="video">
-
-<button onclick="addProduct()">Ajouter produit</button>
-
-<hr>
-
-<h3>Mes produits</h3>
-
-<div id="products"></div>
+<button onclick="addProduct()">
+Publicar produto
+</button>
 
 </div>
+
+
+<h3>Meus produtos</h3>
+
+<div id="productList" class="products"></div>
+
+
+</div>
+
 
 
 <script type="module">
@@ -57,274 +204,146 @@
 import { auth, db } from "./firebase.js";
 
 import {
+collection,
+addDoc,
+getDocs,
+deleteDoc,
+doc,
+query,
+where
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+import {
 onAuthStateChanged,
 signOut
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-import {
-collection,
-addDoc,
-query,
-where,
-getDocs,
-deleteDoc,
-doc,
-getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-
-let currentUser;
-
-let merchantPhone="";
+let userId="";
 
 
 /* AUTH */
 
-onAuthStateChanged(auth, async(user)=>{
+onAuthStateChanged(auth,(user)=>{
 
-if(!user){
+if(user){
 
-window.location.href="login.html";
-return;
+userId=user.uid
 
-}
+loadProducts()
 
-currentUser=user;
+}else{
 
-
-/* vérifier statut marchand */
-
-const merchantSnap = await getDoc(doc(db,"merchants",user.uid));
-
-if(!merchantSnap.exists()){
-
-alert("Compte marchand introuvable");
-
-return;
+location.href="merchant-login.html"
 
 }
 
-const merchantData = merchantSnap.data();
-
-if(merchantData.status !== "approved"){
-
-alert("Votre compte est en attente validation admin");
-
-return;
-
-}
-
-merchantPhone = merchantData.phone;
-
-loadProducts();
-
-});
-
-
-/* LOGOUT */
-
-window.logout = async function(){
-
-await signOut(auth);
-
-window.location.href="login.html";
-
-}
-
+})
 
 
 /* ADD PRODUCT */
 
-window.addProduct = async function(){
+window.addProduct=async function(){
 
-const name=document.getElementById("name").value;
-const price=document.getElementById("price").value;
-const description=document.getElementById("description").value;
-const category=document.getElementById("category").value;
+const name=document.getElementById("name").value
+const price=document.getElementById("price").value
+const image=document.getElementById("image").value
+const category=document.getElementById("category").value
 
-const imageFiles=document.getElementById("images").files;
-const videoFile=document.getElementById("video").files[0];
+if(!name || !price){
 
+alert("Preencha nome e preço")
 
-if(!name || !price || !description || !category){
-
-alert("Remplis tous les champs");
-
-return;
+return
 
 }
-
-
-try{
-
-
-/* UPLOAD IMAGES */
-
-let imageUrls=[];
-
-for(let i=0;i<imageFiles.length;i++){
-
-const formData=new FormData();
-
-formData.append("file",imageFiles[i]);
-
-formData.append("upload_preset","angcomerce-upload");
-
-const res = await fetch(
-
-"https://api.cloudinary.com/v1_1/df2oxw2qp/image/upload",
-
-{
-
-method:"POST",
-
-body:formData
-
-}
-
-);
-
-const data=await res.json();
-
-imageUrls.push(data.secure_url);
-
-}
-
-
-
-/* UPLOAD VIDEO */
-
-let videoUrl="";
-
-if(videoFile){
-
-const formData=new FormData();
-
-formData.append("file",videoFile);
-
-formData.append("upload_preset","angcomerce-upload");
-
-const res = await fetch(
-
-"https://api.cloudinary.com/v1_1/df2oxw2qp/video/upload",
-
-{
-
-method:"POST",
-
-body:formData
-
-}
-
-);
-
-const data=await res.json();
-
-videoUrl=data.secure_url;
-
-}
-
-
-
-/* FIRESTORE */
 
 await addDoc(collection(db,"products"),{
 
-name:name,
+name,
+price,
+image,
+category,
+merchantId:userId,
+verified:true
 
-price:Number(price),
+})
 
-description:description,
+alert("Produto publicado")
 
-category:category,
-
-images:imageUrls,
-
-video:videoUrl,
-
-merchantId:currentUser.uid,
-
-merchantPhone:merchantPhone,
-
-createdAt:new Date()
-
-});
-
-
-alert("Produit ajouté");
-
-loadProducts();
-
-}catch(error){
-
-alert(error.message);
+loadProducts()
 
 }
-
-}
-
 
 
 /* LOAD PRODUCTS */
 
 async function loadProducts(){
 
-const q=query(
+const q=query(collection(db,"products"),where("merchantId","==",userId))
 
-collection(db,"products"),
+const snap=await getDocs(q)
 
-where("merchantId","==",currentUser.uid)
+const container=document.getElementById("productList")
 
-);
+container.innerHTML=""
 
-const snapshot=await getDocs(q);
+let total=0
 
-const container=document.getElementById("products");
+snap.forEach(docSnap=>{
 
-container.innerHTML="";
+const data=docSnap.data()
 
-
-snapshot.forEach(docSnap=>{
-
-const data=docSnap.data();
+total++
 
 container.innerHTML+=`
 
 <div class="product">
 
+<img src="${data.image}">
+
 <h4>${data.name}</h4>
 
 <p>${data.price} Kz</p>
 
-<button onclick="deleteProduct('${docSnap.id}')">
-
-Supprimer
-
+<button class="deleteBtn" onclick="deleteProduct('${docSnap.id}')">
+Excluir
 </button>
 
 </div>
 
-`;
+`
 
-});
+})
+
+document.getElementById("totalProducts").innerText=total
 
 }
 
 
+/* DELETE */
 
-/* DELETE PRODUCT */
+window.deleteProduct=async function(id){
 
-window.deleteProduct = async function(id){
+await deleteDoc(doc(db,"products",id))
 
-await deleteDoc(doc(db,"products",id));
+loadProducts()
 
-alert("Produit supprimé");
+}
 
-loadProducts();
+
+/* LOGOUT */
+
+window.logout=function(){
+
+signOut(auth)
+
+location.href="index.html"
 
 }
 
 </script>
 
 </body>
+
 </html>
