@@ -1,0 +1,219 @@
+ <!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Seguimento da encomenda</title>
+
+<style>
+
+body{
+font-family:Arial;
+margin:0;
+background:#f4f4f4;
+}
+
+.header{
+background:#ff6a00;
+color:white;
+padding:18px;
+font-size:20px;
+font-weight:bold;
+}
+
+.container{
+max-width:700px;
+margin:auto;
+padding:20px;
+}
+
+input{
+width:100%;
+padding:14px;
+border-radius:10px;
+border:1px solid #ddd;
+font-size:16px;
+}
+
+button{
+width:100%;
+padding:14px;
+margin-top:10px;
+background:#ff6a00;
+color:white;
+border:none;
+border-radius:10px;
+font-size:16px;
+cursor:pointer;
+}
+
+.result{
+background:white;
+padding:20px;
+border-radius:10px;
+margin-top:20px;
+box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+.status{
+font-size:20px;
+font-weight:bold;
+color:#ff6a00;
+margin-top:10px;
+}
+
+.timeline{
+margin-top:20px;
+}
+
+.step{
+padding:10px;
+border-left:4px solid #ddd;
+margin-bottom:10px;
+}
+
+.active{
+border-color:#ff6a00;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+Seguimento da encomenda
+
+</div>
+
+<div class="container">
+
+<input id="trackInput" placeholder="Digite número de tracking">
+
+<button onclick="trackOrder()">
+
+Procurar encomenda
+
+</button>
+
+<div id="result"></div>
+
+</div>
+
+
+<script type="module">
+
+import { db } from "./firebase.js"
+
+import {
+collection,
+getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
+
+window.trackOrder=async function(){
+
+const code=document.getElementById("trackInput").value
+
+const snap=await getDocs(collection(db,"orders"))
+
+let found=null
+
+snap.forEach(doc=>{
+
+const data=doc.data()
+
+if(data.tracking==code){
+
+found=data
+
+}
+
+})
+
+
+const box=document.getElementById("result")
+
+
+if(!found){
+
+box.innerHTML="<p>Encomenda não encontrada</p>"
+
+return
+
+}
+
+
+box.innerHTML=`
+
+<div class="result">
+
+<h3>Tracking: ${found.tracking}</h3>
+
+<p><b>Cliente:</b> ${found.name}</p>
+
+<p><b>Endereço:</b> ${found.address}</p>
+
+<div class="status">
+
+Status: ${found.status}
+
+</div>
+
+<div class="timeline">
+
+<div class="step ${found.status=="nova"?"active":""}">
+
+Pedido recebido
+
+</div>
+
+<div class="step ${found.status=="confirmada"?"active":""}">
+
+Pedido confirmado
+
+</div>
+
+<div class="step ${found.status=="preparando"?"active":""}">
+
+Preparando encomenda
+
+</div>
+
+<div class="step ${found.status=="enviada"?"active":""}">
+
+Encomenda enviada
+
+</div>
+
+<div class="step ${found.status=="em entrega"?"active":""}">
+
+Estafeta a caminho
+
+</div>
+
+<div class="step ${found.status=="entregue"?"active":""}">
+
+Entregue
+
+</div>
+
+</div>
+
+</div>
+
+`
+
+}
+
+</script>
+
+</body>
+
+</html>
