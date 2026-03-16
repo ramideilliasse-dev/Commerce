@@ -1,11 +1,57 @@
  <!DOCTYPE html>
-<html>
+<html lang="pt">
+
 <head>
 
 <meta charset="UTF-8">
-<title>Inscription Marchand</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="style.css">
+<title>Criar conta vendedor</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f5f5f5;
+margin:0;
+}
+
+.container{
+max-width:400px;
+margin:auto;
+margin-top:60px;
+background:white;
+padding:25px;
+border-radius:12px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+h2{
+text-align:center;
+}
+
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+border-radius:8px;
+border:1px solid #ddd;
+font-size:15px;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:15px;
+background:#ff6a00;
+border:none;
+color:white;
+font-size:16px;
+border-radius:8px;
+cursor:pointer;
+}
+
+</style>
 
 </head>
 
@@ -13,82 +59,72 @@
 
 <div class="container">
 
-<h2>Créer compte marchand</h2>
+<h2>Criar conta vendedor</h2>
 
-<input id="shopName" placeholder="Nom de la boutique">
+<input id="shopName" placeholder="Nome da loja">
 
-<input id="phone" placeholder="Téléphone">
+<input id="email" placeholder="Email">
 
-<input id="email" type="email" placeholder="Email">
+<input id="password" type="password" placeholder="Senha">
 
-<input id="password" type="password" placeholder="Mot de passe">
-
-<button onclick="register()">Créer compte</button>
-
-<p>
-Déjà un compte ?
-<a href="login.html">Connexion</a>
-</p>
+<button onclick="register()">
+Criar conta
+</button>
 
 </div>
 
 
+
 <script type="module">
 
-import { auth, db } from "./firebase.js";
+import { auth, db } from "./firebase.js"
 
-import { 
+import {
 createUserWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 import {
 doc,
 setDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
 
 
 window.register = async function(){
 
-const shopName=document.getElementById("shopName").value;
-const phone=document.getElementById("phone").value;
-const email=document.getElementById("email").value;
-const password=document.getElementById("password").value;
+const shopName=document.getElementById("shopName").value
 
-if(!shopName || !phone || !email || !password){
+const email=document.getElementById("email").value
 
-alert("Remplis tous les champs");
+const password=document.getElementById("password").value
 
-return;
+if(!shopName || !email || !password){
+
+alert("Preencha todos campos")
+
+return
 
 }
 
 try{
 
-const userCredential = await createUserWithEmailAndPassword(auth,email,password);
+const user = await createUserWithEmailAndPassword(auth,email,password)
 
-const user=userCredential.user;
-
-
-/* enregistrer marchand */
-
-await setDoc(doc(db,"merchants",user.uid),{
+await setDoc(doc(db,"merchants",user.user.uid),{
 
 shopName:shopName,
-phone:phone,
 email:email,
-status:"pending",
-createdAt:new Date()
+created:Date.now()
 
-});
+})
 
+alert("Conta criada com sucesso")
 
-alert("Compte créé. En attente validation admin.");
+location.href="merchant-dashboard.html"
 
-window.location.href="login.html";
+}catch(e){
 
-}catch(error){
-
-alert(error.message);
+alert(e.message)
 
 }
 
