@@ -101,6 +101,16 @@ font-weight:bold;
 margin-top:10px;
 }
 
+/* TRACKING */
+
+.tracking{
+background:#fff3e8;
+padding:8px;
+border-radius:6px;
+margin-top:10px;
+font-weight:bold;
+}
+
 /* STATUS */
 
 .status{
@@ -140,7 +150,12 @@ background:#ff6a00;
 color:white;
 }
 
-/* POPUP NOTIFICATION */
+.copy{
+background:#2ecc71;
+color:white;
+}
+
+/* POPUP */
 
 .popup{
 position:fixed;
@@ -165,11 +180,8 @@ box-shadow:0 4px 10px rgba(0,0,0,0.2);
 Pedidos recebidos
 
 <div class="bell">
-
 🔔
-
 <span id="notifCount" class="count">0</span>
-
 </div>
 
 </div>
@@ -183,17 +195,19 @@ Pedidos recebidos
 import { db } from "./firebase.js"
 
 import {
+
 collection,
 onSnapshot,
 updateDoc,
 doc
+
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
 
 let lastOrderCount=0
 
 
-/* LOAD ORDERS REALTIME */
+/* LOAD ORDERS */
 
 function loadOrders(){
 
@@ -274,6 +288,12 @@ ${productsHTML}
 
 </div>
 
+<div class="tracking">
+
+Tracking: ${data.tracking || "Não disponível"}
+
+</div>
+
 <div class="total">
 
 Total: ${data.total} Kz
@@ -285,11 +305,9 @@ Total: ${data.total} Kz
 <select id="status-${orderDoc.id}">
 
 <option value="nova">Nova</option>
-
 <option value="confirmada">Confirmada</option>
-
+<option value="preparando">Preparando</option>
 <option value="enviada">Enviada</option>
-
 <option value="entregue">Entregue</option>
 
 </select>
@@ -300,7 +318,13 @@ Total: ${data.total} Kz
 
 <button class="contact" onclick="contactClient('${data.phone}')">
 
-Contactar
+WhatsApp
+
+</button>
+
+<button class="copy" onclick="copyTracking('${data.tracking}')">
+
+Copiar Tracking
 
 </button>
 
@@ -323,11 +347,22 @@ Atualizar
 }
 
 
-/* WHATSAPP CONTACT */
+/* CONTACT CLIENT */
 
 window.contactClient=function(phone){
 
 window.open("https://wa.me/"+phone)
+
+}
+
+
+/* COPY TRACKING */
+
+window.copyTracking=function(code){
+
+navigator.clipboard.writeText(code)
+
+alert("Tracking copiado")
 
 }
 
@@ -349,7 +384,7 @@ alert("Status atualizado")
 }
 
 
-/* POPUP NOTIFICATION */
+/* NOTIFICATION POPUP */
 
 function showNotification(n){
 
