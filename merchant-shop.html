@@ -6,130 +6,127 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Loja do vendedor</title>
+<title>Minha Loja</title>
 
 <style>
 
 body{
 font-family:Arial;
 margin:0;
-background:#f5f5f5;
+background:#f4f4f4;
 }
 
-/* SHOP HEADER */
+/* HEADER SHOP */
 
 .shopHeader{
 background:white;
-padding-bottom:15px;
-box-shadow:0 3px 10px rgba(0,0,0,0.1);
+padding:25px;
+border-bottom:1px solid #eee;
+text-align:center;
 }
 
-.banner{
-width:100%;
-height:150px;
-object-fit:cover;
-}
-
-.shopInfo{
+.shopTop{
 display:flex;
+justify-content:space-between;
 align-items:center;
-padding:12px;
-gap:12px;
-}
-
-.logo{
-width:60px;
-height:60px;
-border-radius:50%;
-object-fit:cover;
-border:3px solid white;
-margin-top:-30px;
-background:white;
 }
 
 .shopName{
-font-size:20px;
+font-size:30px;
 font-weight:bold;
-color:#0b6b3a;
+color:#111;
 }
 
-.shopActions{
-display:flex;
-gap:10px;
-padding:10px;
+.profile{
+width:50px;
+height:50px;
+border-radius:50%;
+object-fit:cover;
+background:#ddd;
 }
 
-.shopActions button{
-flex:1;
-padding:10px;
+.publishBtn{
+background:#1aa34a;
+color:white;
 border:none;
-border-radius:8px;
-font-size:15px;
-cursor:pointer;
-}
-
-.chatBtn{
-background:#ff6a00;
-color:white;
-}
-
-.followBtn{
-background:black;
-color:white;
-}
-
-/* SEARCH */
-
-.searchBox{
-padding:10px;
-}
-
-.searchBox input{
-width:100%;
-padding:12px;
+padding:10px 18px;
 border-radius:20px;
-border:1px solid #ddd;
-font-size:15px;
+font-weight:bold;
+cursor:pointer;
 }
 
 /* PRODUCTS */
 
 .products{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:12px;
+column-count:2;
+column-gap:12px;
 padding:12px;
 }
 
 .product{
 background:white;
 border-radius:12px;
+margin-bottom:12px;
+break-inside:avoid;
+box-shadow:0 4px 10px rgba(0,0,0,0.08);
 overflow:hidden;
-box-shadow:0 4px 12px rgba(0,0,0,0.1);
-cursor:pointer;
+position:relative;
 }
 
 .product img{
 width:100%;
-height:180px;
-object-fit:cover;
 }
 
 .info{
-padding:8px;
+padding:10px;
 }
 
 .name{
 font-weight:bold;
-font-size:15px;
-color:black;
+margin-bottom:4px;
 }
 
 .price{
 color:#ff6a00;
 font-weight:bold;
-font-size:18px;
+}
+
+.desc{
+font-size:13px;
+color:#555;
 margin-top:4px;
+}
+
+/* DELETE BUTTON */
+
+.deleteBtn{
+position:absolute;
+top:8px;
+right:8px;
+background:red;
+color:white;
+border:none;
+border-radius:20px;
+padding:5px 10px;
+font-size:12px;
+cursor:pointer;
+}
+
+/* REVIEWS */
+
+.reviews{
+background:white;
+margin-top:20px;
+padding:15px;
+}
+
+.review{
+border-bottom:1px solid #eee;
+padding:8px 0;
+}
+
+.stars{
+color:orange;
 }
 
 </style>
@@ -139,30 +136,20 @@ margin-top:4px;
 <body>
 
 
+<!-- SHOP HEADER -->
+
 <div class="shopHeader">
 
-<img id="banner" class="banner">
+<div class="shopTop">
 
-<div class="shopInfo">
-
-<img id="logo" class="logo">
-
-<div>
-
-<div id="shopName" class="shopName"></div>
-
+<div class="shopName" id="shopName">
+Minha Loja
 </div>
 
-</div>
+<img id="profilePic" class="profile">
 
-<div class="shopActions">
-
-<button class="chatBtn" onclick="chatSeller()">
-💬 Discuter
-</button>
-
-<button class="followBtn" onclick="followShop()">
-⭐ Seguir
+<button class="publishBtn" onclick="location.href='add-product.html'">
+Publicar produtos
 </button>
 
 </div>
@@ -170,113 +157,85 @@ margin-top:4px;
 </div>
 
 
-<div class="searchBox">
 
-<input id="search" placeholder="Procurar produto na loja...">
-
-</div>
-
+<!-- PRODUCTS -->
 
 <div id="productList" class="products"></div>
 
 
 
+<!-- CLIENT REVIEWS -->
+
+<div class="reviews">
+
+<h3>Avaliações dos clientes</h3>
+
+<div id="reviewList"></div>
+
+</div>
+
+
+
 <script type="module">
 
-import { db } from "./firebase.js"
+import { db,auth } from "./firebase.js"
 
 import {
 collection,
+getDocs,
 query,
 where,
-getDocs,
-doc,
-getDoc
+deleteDoc,
+doc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
-
-const params=new URLSearchParams(window.location.search)
-
-const merchantId=params.get("id")
-
-let products=[]
+import {
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 
-/* LOAD SHOP */
 
-async function loadShop(){
-
-const ref=doc(db,"merchants",merchantId)
-
-const snap=await getDoc(ref)
-
-const data=snap.data()
-
-document.getElementById("shopName").innerText=data.shopName
-
-document.getElementById("logo").src=data.logo || ""
-
-document.getElementById("banner").src=data.banner || ""
-
-}
-
-loadShop()
+let currentUser
 
 
-/* LOAD PRODUCTS */
 
-async function loadProducts(){
+/* PROFILE PHOTO */
 
-const q=query(
+const profilePic=document.getElementById("profilePic")
 
-collection(db,"products"),
-where("merchantId","==",merchantId)
-
-)
-
-const snap=await getDocs(q)
-
-const container=document.getElementById("productList")
-
-container.innerHTML=""
-
-products=[]
-
-snap.forEach(docSnap=>{
-
-const data=docSnap.data()
-
-data.id=docSnap.id
-
-products.push(data)
-
-container.innerHTML+=productHTML(data)
-
-})
-
-}
-
-loadProducts()
+profilePic.src=localStorage.getItem("profilePic") || ""
 
 
 
 /* PRODUCT CARD */
 
-function productHTML(data){
+function productHTML(p){
 
-const img=data.image || (data.images ? data.images[0] : "")
+let desc=""
+
+if(p.description){
+desc=p.description.split("\n")[0].slice(0,50)
+}
+
+const img=p.images ? p.images[0] : ""
 
 return `
 
-<div class="product" onclick="viewProduct('${data.id}')">
+<div class="product">
+
+<button onclick="deleteProduct('${p.id}')" class="deleteBtn">
+Excluir
+</button>
 
 <img src="${img}">
 
 <div class="info">
 
-<div class="name">${data.name}</div>
+<div class="name">${p.name}</div>
 
-<div class="price">${data.price} Kz</div>
+<div class="price">${p.price} Kz</div>
+
+<div class="desc">${desc}</div>
 
 </div>
 
@@ -287,54 +246,110 @@ return `
 }
 
 
-/* VIEW PRODUCT */
 
-window.viewProduct=function(id){
+/* LOAD MERCHANT PRODUCTS */
 
-location.href="product.html?id="+id
+async function loadProducts(uid){
 
-}
+const q=query(
+collection(db,"products"),
+where("merchantId","==",uid)
+)
 
-
-/* SEARCH */
-
-document.getElementById("search").addEventListener("input",function(){
-
-const value=this.value.toLowerCase()
+const snap=await getDocs(q)
 
 const container=document.getElementById("productList")
 
 container.innerHTML=""
 
-products.forEach(p=>{
+snap.forEach(docSnap=>{
 
-if(p.name.toLowerCase().includes(value)){
+const data=docSnap.data()
 
-container.innerHTML+=productHTML(p)
+data.id=docSnap.id
 
-}
-
-})
+container.innerHTML+=productHTML(data)
 
 })
 
+}
 
-/* CHAT */
 
-window.chatSeller=function(){
 
-location.href="chat.html?merchant="+merchantId
+/* DELETE PRODUCT */
+
+window.deleteProduct=async function(id){
+
+const ok=confirm("Excluir produto?")
+
+if(!ok)return
+
+await deleteDoc(doc(db,"products",id))
+
+alert("Produto removido")
+
+location.reload()
 
 }
 
 
-/* FOLLOW SHOP */
 
-window.followShop=function(){
+/* LOAD REVIEWS */
 
-alert("Loja seguida com sucesso")
+async function loadReviews(uid){
+
+const q=query(
+collection(db,"reviews"),
+where("merchantId","==",uid)
+)
+
+const snap=await getDocs(q)
+
+const box=document.getElementById("reviewList")
+
+snap.forEach(docSnap=>{
+
+const r=docSnap.data()
+
+box.innerHTML+=`
+
+<div class="review">
+
+<div class="stars">
+⭐ ${r.rating}/5
+</div>
+
+<div>${r.comment}</div>
+
+</div>
+
+`
+
+})
 
 }
+
+
+
+/* AUTH */
+
+onAuthStateChanged(auth,(user)=>{
+
+if(!user){
+
+location.href="index.html"
+
+return
+
+}
+
+currentUser=user
+
+loadProducts(user.uid)
+
+loadReviews(user.uid)
+
+})
 
 </script>
 
