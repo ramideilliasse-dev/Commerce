@@ -1,0 +1,333 @@
+ <!DOCTYPE html>
+<html lang="pt">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Adicionar Produto</title>
+
+<style>
+
+body{
+font-family:Arial;
+margin:0;
+background:#f4f4f4;
+}
+
+/* HEADER */
+
+.header{
+background:#ff6a00;
+color:white;
+padding:18px;
+font-size:20px;
+font-weight:bold;
+text-align:center;
+}
+
+/* CONTAINER */
+
+.container{
+max-width:600px;
+margin:auto;
+padding:20px;
+}
+
+/* CARD */
+
+.card{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+margin-bottom:15px;
+}
+
+label{
+font-weight:bold;
+display:block;
+margin-bottom:6px;
+}
+
+input,textarea,select{
+width:100%;
+padding:12px;
+border-radius:8px;
+border:1px solid #ddd;
+font-size:15px;
+margin-bottom:12px;
+}
+
+textarea{
+min-height:100px;
+}
+
+/* FILE */
+
+.fileBox{
+border:2px dashed #ccc;
+padding:20px;
+text-align:center;
+border-radius:10px;
+cursor:pointer;
+}
+
+/* BUTTON */
+
+button{
+width:100%;
+padding:14px;
+background:#ff6a00;
+color:white;
+border:none;
+font-size:18px;
+border-radius:10px;
+cursor:pointer;
+}
+
+/* PREVIEW */
+
+.preview{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-top:10px;
+}
+
+.preview img,
+.preview video{
+width:90px;
+height:90px;
+object-fit:cover;
+border-radius:8px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+Publicar novo produto
+</div>
+
+<div class="container">
+
+<div class="card">
+
+<label>Nome do produto</label>
+<input id="name" placeholder="Ex: iPhone 13 Pro">
+
+<label>Preço (Kz)</label>
+<input id="price" type="number" placeholder="Ex: 350000">
+
+<label>Categoria</label>
+
+<select id="category">
+<option value="telefone">Telefones</option>
+<option value="roupas">Roupas</option>
+<option value="beleza">Beleza</option>
+<option value="eletronica">Eletrónica</option>
+<option value="casa">Casa</option>
+<option value="auto">Auto</option>
+</select>
+
+<label>Descrição</label>
+<textarea id="description" placeholder="Descrição do produto..."></textarea>
+
+</div>
+
+<div class="card">
+
+<label>Imagens do produto</label>
+
+<input type="file" id="images" multiple accept="image/*">
+
+<div class="preview" id="imagePreview"></div>
+
+</div>
+
+<div class="card">
+
+<label>Vídeo do produto (opcional)</label>
+
+<input type="file" id="video" accept="video/*">
+
+<div class="preview" id="videoPreview"></div>
+
+</div>
+
+<button onclick="publishProduct()">
+Publicar produto
+</button>
+
+</div>
+
+
+<script type="module">
+
+import { db, auth } from "./firebase.js"
+
+import {
+collection,
+addDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
+import {
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
+
+
+let imageFiles=[]
+let videoFile=null
+
+
+/* IMAGE PREVIEW */
+
+document.getElementById("images").addEventListener("change",function(){
+
+imageFiles=[...this.files]
+
+const preview=document.getElementById("imagePreview")
+
+preview.innerHTML=""
+
+imageFiles.forEach(file=>{
+
+const url=URL.createObjectURL(file)
+
+preview.innerHTML+=`<img src="${url}">`
+
+})
+
+})
+
+
+/* VIDEO PREVIEW */
+
+document.getElementById("video").addEventListener("change",function(){
+
+videoFile=this.files[0]
+
+const preview=document.getElementById("videoPreview")
+
+preview.innerHTML=""
+
+if(videoFile){
+
+const url=URL.createObjectURL(videoFile)
+
+preview.innerHTML=`<video src="${url}" controls></video>`
+
+}
+
+})
+
+
+/* CLOUDINARY UPLOAD */
+
+async function uploadFile(file){
+
+const cloudName="df2oxw2qp"
+const uploadPreset="angcomerce-upload"
+
+const formData=new FormData()
+
+formData.append("file",file)
+formData.append("upload_preset",uploadPreset)
+
+const res=await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`,{
+
+method:"POST",
+body:formData
+
+})
+
+const data=await res.json()
+
+return data.secure_url
+
+}
+
+
+/* PUBLISH PRODUCT */
+
+window.publishProduct=async function(){
+
+const name=document.getElementById("name").value
+const price=document.getElementById("price").value
+const category=document.getElementById("category").value
+const description=document.getElementById("description").value
+
+if(!name || !price){
+
+alert("Preencha nome e preço")
+
+return
+
+}
+
+const user=auth.currentUser
+
+if(!user){
+
+alert("Precisa fazer login")
+
+return
+
+}
+
+
+/* UPLOAD IMAGES */
+
+let imageUrls=[]
+
+for(const file of imageFiles){
+
+const url=await uploadFile(file)
+
+imageUrls.push(url)
+
+}
+
+
+/* UPLOAD VIDEO */
+
+let videoUrl=""
+
+if(videoFile){
+
+videoUrl=await uploadFile(videoFile)
+
+}
+
+
+/* SAVE PRODUCT */
+
+await addDoc(collection(db,"products"),{
+
+name:name,
+price:price,
+category:category,
+description:description,
+images:imageUrls,
+video:videoUrl,
+merchantId:user.uid,
+created:Date.now()
+
+})
+
+alert("Produto publicado com sucesso")
+
+location.href="merchant-dashboard.html"
+
+}
+
+</script>
+
+</body>
+
+</html>
