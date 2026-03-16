@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt">
 
 <head>
@@ -31,6 +31,21 @@ border-bottom:1px solid #eee;
 font-size:28px;
 font-weight:bold;
 color:#111;
+}
+
+.headerRight{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.profile{
+width:35px;
+height:35px;
+border-radius:50%;
+object-fit:cover;
+background:#ddd;
+cursor:pointer;
 }
 
 .accountBtn{
@@ -74,6 +89,7 @@ break-inside:avoid;
 box-shadow:0 4px 10px rgba(0,0,0,0.08);
 cursor:pointer;
 overflow:hidden;
+position:relative;
 }
 
 .product img{
@@ -96,6 +112,30 @@ margin-bottom:4px;
 color:#ff6a00;
 font-weight:bold;
 font-size:16px;
+}
+
+.desc{
+font-size:13px;
+color:#555;
+margin-top:4px;
+}
+
+/* CART BUTTON */
+
+.cartBtn{
+position:absolute;
+right:10px;
+bottom:10px;
+background:#1aa34a;
+color:white;
+width:36px;
+height:36px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:18px;
+cursor:pointer;
 }
 
 /* NAVBAR */
@@ -130,16 +170,20 @@ cursor:pointer;
 <div class="header">
 
 <div class="logo">
-
 Shopping Online Angola 🇦🇴
-
 </div>
 
+<div class="headerRight">
+
+<img id="profilePic" class="profile">
+
+<input type="file" id="profileUpload" hidden>
+
 <button id="accountButton" class="accountBtn">
-
 Criar conta
-
 </button>
+
+</div>
 
 </div>
 
@@ -200,6 +244,32 @@ onAuthStateChanged
 let products=[]
 
 
+
+/* PHOTO PROFIL */
+
+const profilePic=document.getElementById("profilePic")
+const upload=document.getElementById("profileUpload")
+
+profilePic.onclick=function(){
+upload.click()
+}
+
+upload.onchange=function(){
+
+const file=this.files[0]
+
+const url=URL.createObjectURL(file)
+
+profilePic.src=url
+
+localStorage.setItem("profilePic",url)
+
+}
+
+profilePic.src=localStorage.getItem("profilePic") || ""
+
+
+
 /* SMART ACCOUNT BUTTON */
 
 const accountButton=document.getElementById("accountButton")
@@ -208,11 +278,11 @@ onAuthStateChanged(auth,(user)=>{
 
 if(user){
 
-accountButton.innerText="Dashboard"
+accountButton.innerText="Minha Loja"
 
 accountButton.onclick=function(){
 
-location.href="merchant-dashboard.html"
+location.href="merchant-shop.html"
 
 }
 
@@ -238,17 +308,29 @@ function productHTML(p){
 
 const img=p.images ? p.images[0] : p.image || ""
 
+let desc=""
+
+if(p.description){
+desc=p.description.split("\n")[0].slice(0,60)
+}
+
 return `
 
-<div class="product" onclick="viewProduct('${p.id}')">
+<div class="product">
 
-<img src="${img}">
+<div onclick="addToCart('${p.id}')" class="cartBtn">
+🛒
+</div>
+
+<img onclick="viewProduct('${p.id}')" src="${img}">
 
 <div class="info">
 
 <div class="name">${p.name}</div>
 
 <div class="price">${p.price} Kz</div>
+
+<div class="desc">${desc}</div>
 
 </div>
 
@@ -298,6 +380,22 @@ location.href="product.html?id="+id
 
 
 
+/* ADD TO CART */
+
+window.addToCart=function(id){
+
+let cart=JSON.parse(localStorage.getItem("cart") || "[]")
+
+cart.push(id)
+
+localStorage.setItem("cart",JSON.stringify(cart))
+
+alert("Produto adicionado ao carrinho")
+
+}
+
+
+
 /* SEARCH */
 
 document.getElementById("search").addEventListener("input",function(){
@@ -327,4 +425,4 @@ loadProducts()
 
 </body>
 
-</html>
+</html> 
