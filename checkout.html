@@ -1,0 +1,259 @@
+ <!DOCTYPE html>
+<html lang="pt">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Finalizar Compra</title>
+
+<style>
+
+body{
+font-family:Arial;
+margin:0;
+background:#f5f5f5;
+}
+
+/* HEADER */
+
+.header{
+background:#ff6a00;
+color:white;
+padding:18px;
+font-size:20px;
+font-weight:bold;
+text-align:center;
+}
+
+/* CONTAINER */
+
+.container{
+max-width:700px;
+margin:auto;
+padding:15px;
+}
+
+/* CARD */
+
+.card{
+background:white;
+padding:18px;
+border-radius:12px;
+margin-bottom:15px;
+box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* PRODUCT */
+
+.product{
+display:flex;
+gap:10px;
+margin-bottom:10px;
+}
+
+.product img{
+width:70px;
+height:70px;
+object-fit:cover;
+border-radius:8px;
+}
+
+.productInfo{
+flex:1;
+}
+
+.productName{
+font-weight:bold;
+}
+
+.productPrice{
+color:#ff6a00;
+font-weight:bold;
+}
+
+/* TOTAL */
+
+.total{
+font-size:20px;
+font-weight:bold;
+color:#ff6a00;
+text-align:right;
+}
+
+/* FORM */
+
+label{
+font-weight:bold;
+display:block;
+margin-top:10px;
+}
+
+input,textarea{
+width:100%;
+padding:12px;
+border-radius:8px;
+border:1px solid #ddd;
+font-size:15px;
+margin-top:5px;
+}
+
+textarea{
+min-height:80px;
+}
+
+/* BUTTON */
+
+button{
+width:100%;
+padding:15px;
+margin-top:15px;
+background:#ff6a00;
+color:white;
+border:none;
+font-size:18px;
+border-radius:10px;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+Finalizar compra
+</div>
+
+<div class="container">
+
+<div class="card">
+
+<h3>Produtos no carrinho</h3>
+
+<div id="cartProducts"></div>
+
+<div class="total" id="totalPrice">
+Total: 0 Kz
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h3>Informações do cliente</h3>
+
+<label>Nome completo</label>
+<input id="name">
+
+<label>Telefone</label>
+<input id="phone">
+
+<label>Endereço de entrega</label>
+<textarea id="address"></textarea>
+
+<label>Mensagem para o vendedor (opcional)</label>
+<textarea id="note"></textarea>
+
+<button onclick="placeOrder()">
+Confirmar pedido
+</button>
+
+</div>
+
+</div>
+
+
+
+<script type="module">
+
+import { db } from "./firebase.js"
+
+import {
+collection,
+addDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
+
+let cart=JSON.parse(localStorage.getItem("cart")) || []
+
+const container=document.getElementById("cartProducts")
+
+let total=0
+
+
+cart.forEach(p=>{
+
+total+=Number(p.price)
+
+container.innerHTML+=`
+
+<div class="product">
+
+<img src="${p.image}">
+
+<div class="productInfo">
+
+<div class="productName">${p.name}</div>
+
+<div class="productPrice">${p.price} Kz</div>
+
+</div>
+
+</div>
+
+`
+
+})
+
+
+document.getElementById("totalPrice").innerText="Total: "+total+" Kz"
+
+
+
+/* PLACE ORDER */
+
+window.placeOrder=async function(){
+
+const name=document.getElementById("name").value
+const phone=document.getElementById("phone").value
+const address=document.getElementById("address").value
+const note=document.getElementById("note").value
+
+if(!name || !phone || !address){
+
+alert("Preencha todos campos")
+
+return
+
+}
+
+await addDoc(collection(db,"orders"),{
+
+name:name,
+phone:phone,
+address:address,
+note:note,
+products:cart,
+total:total,
+status:"nova",
+date:Date.now()
+
+})
+
+alert("Pedido enviado com sucesso")
+
+localStorage.removeItem("cart")
+
+location.href="index.html"
+
+}
+
+</script>
+
+</body>
+
+</html>
