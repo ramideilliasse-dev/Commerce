@@ -16,8 +16,6 @@ margin:0;
 background:#f4f4f4;
 }
 
-/* HEADER */
-
 .header{
 background:#ff6a00;
 color:white;
@@ -25,8 +23,6 @@ padding:18px;
 font-size:22px;
 font-weight:bold;
 }
-
-/* SEARCH */
 
 .searchBox{
 padding:12px;
@@ -41,8 +37,6 @@ border:2px solid #ff6a00;
 font-size:16px;
 }
 
-/* SECTION */
-
 .section{
 margin-top:10px;
 background:white;
@@ -54,8 +48,6 @@ font-size:18px;
 font-weight:bold;
 margin-bottom:10px;
 }
-
-/* PRODUCTS GRID */
 
 .grid{
 display:grid;
@@ -89,8 +81,6 @@ color:#ff6a00;
 font-weight:bold;
 }
 
-/* SHOP */
-
 .shop{
 display:flex;
 align-items:center;
@@ -118,26 +108,18 @@ color:#0a7a2f;
 <body>
 
 <div class="header">
-
 Marketplace Angola 🇦🇴
-
 </div>
 
 <div class="searchBox">
-
 <input id="search" placeholder="Procurar produto...">
-
 </div>
 
 <!-- SPONSORED -->
 
 <div class="section">
 
-<div class="title">
-
-⭐ Produtos patrocinados
-
-</div>
+<div class="title">⭐ Produtos patrocinados</div>
 
 <div id="sponsored" class="grid"></div>
 
@@ -147,11 +129,7 @@ Marketplace Angola 🇦🇴
 
 <div class="section">
 
-<div class="title">
-
-🔥 Produtos populares
-
-</div>
+<div class="title">🔥 Produtos populares</div>
 
 <div id="popular" class="grid"></div>
 
@@ -161,11 +139,7 @@ Marketplace Angola 🇦🇴
 
 <div class="section">
 
-<div class="title">
-
-🤖 Recomendado para você
-
-</div>
+<div class="title">🤖 Recomendado para você</div>
 
 <div id="recommend" class="grid"></div>
 
@@ -175,11 +149,7 @@ Marketplace Angola 🇦🇴
 
 <div class="section">
 
-<div class="title">
-
-🏪 Lojas recomendadas
-
-</div>
+<div class="title">🏪 Lojas recomendadas</div>
 
 <div id="shops"></div>
 
@@ -189,11 +159,7 @@ Marketplace Angola 🇦🇴
 
 <div class="section">
 
-<div class="title">
-
-🛍 Produtos
-
-</div>
+<div class="title">🛍 Produtos</div>
 
 <div id="products" class="grid"></div>
 
@@ -219,11 +185,13 @@ limit
 
 function productCard(p){
 
+const img=p.images ? p.images[0] : p.image || ""
+
 return `
 
 <div class="product" onclick="viewProduct('${p.id}')">
 
-<img src="${p.image}">
+<img src="${img}">
 
 <div class="name">${p.name}</div>
 
@@ -245,6 +213,7 @@ location.href="product.html?id="+id
 }
 
 
+
 /* LOAD SPONSORED */
 
 async function loadSponsored(){
@@ -261,6 +230,8 @@ const snap=await getDocs(q)
 
 const box=document.getElementById("sponsored")
 
+box.innerHTML=""
+
 snap.forEach(doc=>{
 
 let p=doc.data()
@@ -274,27 +245,43 @@ box.innerHTML+=productCard(p)
 }
 
 
-/* LOAD POPULAR */
+
+/* POPULAR ALGORITHM */
 
 async function loadPopular(){
 
-const q=query(
+const snap=await getDocs(collection(db,"products"))
 
-collection(db,"products"),
-orderBy("sales","desc"),
-limit(6)
-
-)
-
-const snap=await getDocs(q)
-
-const box=document.getElementById("popular")
+let products=[]
 
 snap.forEach(doc=>{
 
 let p=doc.data()
 
 p.id=doc.id
+
+let sales=p.sales || 0
+let rating=p.rating || 0
+let reviews=p.reviews || 0
+let created=p.created || 0
+
+let recencyScore=(Date.now()-created)/10000000000
+
+let score=(sales*3)+(rating*2)+(reviews)-recencyScore
+
+p.popularScore=score
+
+products.push(p)
+
+})
+
+products.sort((a,b)=>b.popularScore-a.popularScore)
+
+const box=document.getElementById("popular")
+
+box.innerHTML=""
+
+products.slice(0,6).forEach(p=>{
 
 box.innerHTML+=productCard(p)
 
@@ -303,13 +290,16 @@ box.innerHTML+=productCard(p)
 }
 
 
-/* LOAD AI RECOMMEND */
+
+/* AI RECOMMEND */
 
 async function loadRecommend(){
 
 const snap=await getDocs(collection(db,"products"))
 
 const box=document.getElementById("recommend")
+
+box.innerHTML=""
 
 snap.forEach(doc=>{
 
@@ -328,13 +318,16 @@ box.innerHTML+=productCard(p)
 }
 
 
-/* LOAD SHOPS */
+
+/* SHOPS */
 
 async function loadShops(){
 
 const snap=await getDocs(collection(db,"shops"))
 
 const box=document.getElementById("shops")
+
+box.innerHTML=""
 
 snap.forEach(doc=>{
 
@@ -363,6 +356,7 @@ box.innerHTML+=`
 }
 
 
+
 /* OPEN SHOP */
 
 window.openShop=function(id){
@@ -372,13 +366,16 @@ location.href="merchant-shop.html?id="+id
 }
 
 
-/* LOAD PRODUCTS */
+
+/* ALL PRODUCTS */
 
 async function loadProducts(){
 
 const snap=await getDocs(collection(db,"products"))
 
 const box=document.getElementById("products")
+
+box.innerHTML=""
 
 snap.forEach(doc=>{
 
@@ -393,14 +390,28 @@ box.innerHTML+=productCard(p)
 }
 
 
+
+/* SEARCH */
+
+document.getElementById("search").addEventListener("input",function(){
+
+const value=this.value.toLowerCase()
+
+const cards=document.querySelectorAll(".product")
+
+cards.forEach(card=>{
+
+card.style.display=card.innerText.toLowerCase().includes(value) ? "block" : "none"
+
+})
+
+})
+
+
 loadSponsored()
-
 loadPopular()
-
 loadRecommend()
-
 loadShops()
-
 loadProducts()
 
 </script>
