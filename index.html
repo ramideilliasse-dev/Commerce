@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Marketplace Angola</title>
+<title>Shopping Online Angola</title>
 
 <style>
 
@@ -16,13 +16,34 @@ margin:0;
 background:#f4f4f4;
 }
 
+/* HEADER */
+
 .header{
-background:#ff6a00;
+background:white;
+padding:20px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:1px solid #eee;
+}
+
+.logo{
+font-size:28px;
+font-weight:bold;
+color:#111;
+}
+
+.accountBtn{
+background:black;
 color:white;
-padding:18px;
-font-size:22px;
+border:none;
+padding:8px 16px;
+border-radius:20px;
+cursor:pointer;
 font-weight:bold;
 }
+
+/* SEARCH */
 
 .searchBox{
 padding:12px;
@@ -33,72 +54,68 @@ background:white;
 width:100%;
 padding:14px;
 border-radius:30px;
-border:2px solid #ff6a00;
+border:1px solid #ddd;
 font-size:16px;
 }
 
-.section{
-margin-top:10px;
-background:white;
+/* PRODUCTS */
+
+.products{
+column-count:2;
+column-gap:12px;
 padding:12px;
-}
-
-.title{
-font-size:18px;
-font-weight:bold;
-margin-bottom:10px;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:10px;
 }
 
 .product{
 background:white;
-border-radius:10px;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
-padding:6px;
+border-radius:12px;
+margin-bottom:12px;
+break-inside:avoid;
+box-shadow:0 4px 10px rgba(0,0,0,0.08);
 cursor:pointer;
+overflow:hidden;
 }
 
 .product img{
 width:100%;
-height:170px;
-object-fit:cover;
-border-radius:8px;
+display:block;
+}
+
+.info{
+padding:10px;
 }
 
 .name{
-font-size:14px;
+font-size:15px;
 font-weight:bold;
-margin-top:5px;
+color:#111;
+margin-bottom:4px;
 }
 
 .price{
 color:#ff6a00;
 font-weight:bold;
+font-size:16px;
 }
 
-.shop{
+/* NAVBAR */
+
+.nav{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+background:white;
 display:flex;
-align-items:center;
-gap:10px;
-margin-bottom:10px;
+justify-content:space-around;
+padding:10px;
+border-top:1px solid #ddd;
+}
+
+.nav div{
+text-align:center;
+font-size:14px;
 cursor:pointer;
-}
-
-.shop img{
-width:50px;
-height:50px;
-border-radius:50%;
-object-fit:cover;
-}
-
-.shopName{
-font-weight:bold;
-color:#0a7a2f;
 }
 
 </style>
@@ -107,61 +124,59 @@ color:#0a7a2f;
 
 <body>
 
+
+<!-- HEADER -->
+
 <div class="header">
-Marketplace Angola 🇦🇴
+
+<div class="logo">
+
+Shopping Online Angola 🇦🇴
+
 </div>
+
+<button id="accountButton" class="accountBtn">
+
+Criar conta
+
+</button>
+
+</div>
+
+
+<!-- SEARCH -->
 
 <div class="searchBox">
+
 <input id="search" placeholder="Procurar produto...">
-</div>
-
-<!-- SPONSORED -->
-
-<div class="section">
-
-<div class="title">⭐ Produtos patrocinados</div>
-
-<div id="sponsored" class="grid"></div>
 
 </div>
 
-<!-- POPULAR -->
 
-<div class="section">
+<!-- PRODUCTS -->
 
-<div class="title">🔥 Produtos populares</div>
+<div id="productList" class="products"></div>
 
-<div id="popular" class="grid"></div>
 
+<!-- NAVBAR -->
+
+<div class="nav">
+
+<div onclick="location.href='index.html'">
+🏠<br>Inicio
 </div>
 
-<!-- AI RECOMMEND -->
-
-<div class="section">
-
-<div class="title">🤖 Recomendado para você</div>
-
-<div id="recommend" class="grid"></div>
-
+<div onclick="location.href='categories.html'">
+📦<br>Categorias
 </div>
 
-<!-- SHOPS -->
-
-<div class="section">
-
-<div class="title">🏪 Lojas recomendadas</div>
-
-<div id="shops"></div>
-
+<div onclick="location.href='messages.html'">
+💬<br>Mensagens
 </div>
 
-<!-- ALL PRODUCTS -->
-
-<div class="section">
-
-<div class="title">🛍 Produtos</div>
-
-<div id="products" class="grid"></div>
+<div onclick="location.href='cart.html'">
+🛒<br>Carrinho
+</div>
 
 </div>
 
@@ -169,21 +184,57 @@ Marketplace Angola 🇦🇴
 
 <script type="module">
 
-import { db } from "./firebase.js"
+import { db,auth } from "./firebase.js"
 
 import {
-
 collection,
-getDocs,
-query,
-orderBy,
-limit
-
+getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
+import {
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 
-function productCard(p){
+
+let products=[]
+
+
+/* SMART ACCOUNT BUTTON */
+
+const accountButton=document.getElementById("accountButton")
+
+onAuthStateChanged(auth,(user)=>{
+
+if(user){
+
+accountButton.innerText="Dashboard"
+
+accountButton.onclick=function(){
+
+location.href="merchant-dashboard.html"
+
+}
+
+}else{
+
+accountButton.innerText="Criar conta"
+
+accountButton.onclick=function(){
+
+location.href="merchant-register.html"
+
+}
+
+}
+
+})
+
+
+
+/* PRODUCT CARD */
+
+function productHTML(p){
 
 const img=p.images ? p.images[0] : p.image || ""
 
@@ -193,15 +244,48 @@ return `
 
 <img src="${img}">
 
+<div class="info">
+
 <div class="name">${p.name}</div>
 
 <div class="price">${p.price} Kz</div>
 
 </div>
 
+</div>
+
 `
 
 }
+
+
+
+/* LOAD PRODUCTS */
+
+async function loadProducts(){
+
+const snap=await getDocs(collection(db,"products"))
+
+const container=document.getElementById("productList")
+
+container.innerHTML=""
+
+products=[]
+
+snap.forEach(docSnap=>{
+
+const data=docSnap.data()
+
+data.id=docSnap.id
+
+products.push(data)
+
+container.innerHTML+=productHTML(data)
+
+})
+
+}
+
 
 
 /* VIEW PRODUCT */
@@ -214,204 +298,29 @@ location.href="product.html?id="+id
 
 
 
-/* LOAD SPONSORED */
-
-async function loadSponsored(){
-
-const q=query(
-
-collection(db,"products"),
-orderBy("created","desc"),
-limit(4)
-
-)
-
-const snap=await getDocs(q)
-
-const box=document.getElementById("sponsored")
-
-box.innerHTML=""
-
-snap.forEach(doc=>{
-
-let p=doc.data()
-
-p.id=doc.id
-
-box.innerHTML+=productCard(p)
-
-})
-
-}
-
-
-
-/* POPULAR ALGORITHM */
-
-async function loadPopular(){
-
-const snap=await getDocs(collection(db,"products"))
-
-let products=[]
-
-snap.forEach(doc=>{
-
-let p=doc.data()
-
-p.id=doc.id
-
-let sales=p.sales || 0
-let rating=p.rating || 0
-let reviews=p.reviews || 0
-let created=p.created || 0
-
-let recencyScore=(Date.now()-created)/10000000000
-
-let score=(sales*3)+(rating*2)+(reviews)-recencyScore
-
-p.popularScore=score
-
-products.push(p)
-
-})
-
-products.sort((a,b)=>b.popularScore-a.popularScore)
-
-const box=document.getElementById("popular")
-
-box.innerHTML=""
-
-products.slice(0,6).forEach(p=>{
-
-box.innerHTML+=productCard(p)
-
-})
-
-}
-
-
-
-/* AI RECOMMEND */
-
-async function loadRecommend(){
-
-const snap=await getDocs(collection(db,"products"))
-
-const box=document.getElementById("recommend")
-
-box.innerHTML=""
-
-snap.forEach(doc=>{
-
-let p=doc.data()
-
-p.id=doc.id
-
-if(Math.random()>0.6){
-
-box.innerHTML+=productCard(p)
-
-}
-
-})
-
-}
-
-
-
-/* SHOPS */
-
-async function loadShops(){
-
-const snap=await getDocs(collection(db,"shops"))
-
-const box=document.getElementById("shops")
-
-box.innerHTML=""
-
-snap.forEach(doc=>{
-
-const s=doc.data()
-
-box.innerHTML+=`
-
-<div class="shop" onclick="openShop('${doc.id}')">
-
-<img src="${s.logo || 'https://i.imgur.com/2DhmtJ4.png'}">
-
-<div>
-
-<div class="shopName">${s.name}</div>
-
-<div>${s.followers || 0} seguidores</div>
-
-</div>
-
-</div>
-
-`
-
-})
-
-}
-
-
-
-/* OPEN SHOP */
-
-window.openShop=function(id){
-
-location.href="merchant-shop.html?id="+id
-
-}
-
-
-
-/* ALL PRODUCTS */
-
-async function loadProducts(){
-
-const snap=await getDocs(collection(db,"products"))
-
-const box=document.getElementById("products")
-
-box.innerHTML=""
-
-snap.forEach(doc=>{
-
-let p=doc.data()
-
-p.id=doc.id
-
-box.innerHTML+=productCard(p)
-
-})
-
-}
-
-
-
 /* SEARCH */
 
 document.getElementById("search").addEventListener("input",function(){
 
 const value=this.value.toLowerCase()
 
-const cards=document.querySelectorAll(".product")
+const container=document.getElementById("productList")
 
-cards.forEach(card=>{
+container.innerHTML=""
 
-card.style.display=card.innerText.toLowerCase().includes(value) ? "block" : "none"
+products.forEach(p=>{
+
+if(p.name.toLowerCase().includes(value)){
+
+container.innerHTML+=productHTML(p)
+
+}
 
 })
 
 })
 
 
-loadSponsored()
-loadPopular()
-loadRecommend()
-loadShops()
 loadProducts()
 
 </script>
