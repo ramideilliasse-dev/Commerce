@@ -117,6 +117,15 @@ border-radius:10px;
 cursor:pointer;
 }
 
+.success{
+background:#e8fff0;
+border:1px solid #2ecc71;
+padding:15px;
+border-radius:10px;
+margin-top:15px;
+display:none;
+}
+
 </style>
 
 </head>
@@ -162,6 +171,8 @@ Total: 0 Kz
 Confirmar pedido
 </button>
 
+<div id="successBox" class="success"></div>
+
 </div>
 
 </div>
@@ -174,7 +185,10 @@ import { db } from "./firebase.js"
 
 import {
 collection,
-addDoc
+addDoc,
+updateDoc,
+doc,
+increment
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
 
@@ -184,6 +198,8 @@ const container=document.getElementById("cartProducts")
 
 let total=0
 
+
+/* SHOW PRODUCTS */
 
 cart.forEach(p=>{
 
@@ -231,6 +247,14 @@ return
 
 }
 
+
+/* GENERATE TRACKING NUMBER */
+
+const tracking="ANG"+Date.now()
+
+
+/* SAVE ORDER */
+
 await addDoc(collection(db,"orders"),{
 
 name:name,
@@ -239,16 +263,57 @@ address:address,
 note:note,
 products:cart,
 total:total,
+
 status:"nova",
+
+tracking:tracking,
+
 date:Date.now()
 
 })
 
-alert("Pedido enviado com sucesso")
+
+/* INCREASE PRODUCT SALES */
+
+for(let p of cart){
+
+if(p.id){
+
+const ref=doc(db,"products",p.id)
+
+await updateDoc(ref,{
+sales:increment(1)
+})
+
+}
+
+}
+
+
+/* SUCCESS MESSAGE */
+
+const box=document.getElementById("successBox")
+
+box.style.display="block"
+
+box.innerHTML=`
+
+✅ Pedido enviado com sucesso<br><br>
+
+<b>Número de seguimento:</b><br>
+${tracking}
+
+`
+
 
 localStorage.removeItem("cart")
 
+
+setTimeout(()=>{
+
 location.href="index.html"
+
+},4000)
 
 }
 
