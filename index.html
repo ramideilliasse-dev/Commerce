@@ -177,9 +177,6 @@ cursor:pointer;
 
 <body>
 
-
-<!-- HEADER -->
-
 <div class="header">
 
 <div class="logo">
@@ -200,139 +197,80 @@ Criar conta
 
 </div>
 
-
-<!-- SEARCH -->
-
 <div class="searchBox">
-
 <input id="search" placeholder="Procurar produto...">
-
 </div>
-
-
-<!-- PRODUCTS -->
 
 <div id="productList" class="products"></div>
 
-
-<!-- NAVBAR -->
-
 <div class="nav">
 
-<div onclick="location.href='index.html'">
-🏠<br>Inicio
-</div>
-
-<div onclick="location.href='categories.html'">
-📦<br>Categorias
-</div>
-
-<div onclick="location.href='messages.html'">
-💬<br>Mensagens
-</div>
-
-<div onclick="location.href='cart.html'">
-🛒<br>Carrinho
-</div>
+<div onclick="location.href='index.html'">🏠<br>Inicio</div>
+<div onclick="location.href='categories.html'">📦<br>Categorias</div>
+<div onclick="location.href='messages.html'">💬<br>Mensagens</div>
+<div onclick="location.href='cart.html'">🛒<br>Carrinho</div>
 
 </div>
-
-
 
 <script type="module">
 
 import { db,auth } from "./firebase.js"
-
-import {
-collection,
-getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-
-import {
-onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
-
-
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 let products=[]
 
-
-
-/* PHOTO PROFIL */
-
+/* PROFILE */
 const profilePic=document.getElementById("profilePic")
 const upload=document.getElementById("profileUpload")
 
-profilePic.onclick=function(){
-upload.click()
-}
+profilePic.onclick=()=>upload.click()
 
 upload.onchange=function(){
-
 const file=this.files[0]
-
 const url=URL.createObjectURL(file)
-
 profilePic.src=url
-
 localStorage.setItem("profilePic",url)
-
 }
 
 profilePic.src=localStorage.getItem("profilePic") || "https://via.placeholder.com/35"
 
-
-
-/* SMART ACCOUNT BUTTON */
-
+/* ACCOUNT BUTTON */
 const accountButton=document.getElementById("accountButton")
 
 onAuthStateChanged(auth,(user)=>{
-
 if(user){
-
 accountButton.innerText="Minha Loja"
-
-accountButton.onclick=function(){
-location.href="merchant-shop.html"
-}
-
+accountButton.onclick=()=>location.href="merchant-shop.html"
 }else{
-
 accountButton.innerText="Criar conta"
-
-accountButton.onclick=function(){
-location.href="merchant-register.html"
+accountButton.onclick=()=>location.href="merchant-register.html"
 }
-
-}
-
 })
 
-
-
-/* PRODUCT CARD */
-
+/* PRODUCT CARD FIXED */
 function productHTML(p){
+
+const img = (p.images && p.images.length) ? p.images[0] : "https://via.placeholder.com/300"
+const desc = p.description ? p.description.slice(0,50) : ""
+
+let badge = p.sales > 5 ? `<div class="badge">🔥 Popular</div>` : ""
+
+/* 🍽️ RESTAURANT STYLE */
 if(p.category==="restaurant"){
 return `
 
-<div class="product">
+<div class="product" onclick="openProduct('${p.id}')">
 
-<img src="${p.images[0]}">
+<div class="badge">🍽️ Restaurante</div>
+
+<img src="${img}">
 
 <div class="info">
 
 <div class="name">🍽️ ${p.name}</div>
-
 <div class="price">${p.price} Kz</div>
-
-<div class="desc">${p.description.slice(0,50)}</div>
-
-<button style="background:#1aa34a;color:white;border:none;padding:8px;border-radius:10px;width:100%;margin-top:8px;"
-onclick="openProduct('${p.id}')">
-Ver prato
-</button>
+<div class="desc">${desc}</div>
 
 </div>
 
@@ -340,33 +278,22 @@ Ver prato
 
 `
 }
-const img=p.images ? p.images[0] : p.image || ""
 
-let desc=""
-if(p.description){
-desc=p.description.split("\n")[0].slice(0,60)
-}
-
-let badge = p.sales > 5 ? `<div class="badge">🔥 Popular</div>` : ""
-
+/* NORMAL PRODUCT */
 return `
 
 <div class="product" onclick="openProduct('${p.id}')">
 
 ${badge}
 
-<div onclick="event.stopPropagation();addToCart('${p.id}')" class="cartBtn">
-🛒
-</div>
+<div onclick="event.stopPropagation();addToCart('${p.id}')" class="cartBtn">🛒</div>
 
 <img src="${img}">
 
 <div class="info">
 
 <div class="name">${p.name}</div>
-
 <div class="price">${p.price} Kz</div>
-
 <div class="desc">${desc}</div>
 
 </div>
@@ -377,10 +304,7 @@ ${badge}
 
 }
 
-
-
-/* LOAD PRODUCTS */
-
+/* LOAD */
 async function loadProducts(){
 
 const snap=await getDocs(collection(db,"products"))
@@ -388,71 +312,45 @@ const snap=await getDocs(collection(db,"products"))
 const container=document.getElementById("productList")
 
 container.innerHTML=""
-
 products=[]
 
 snap.forEach(docSnap=>{
-
 const data=docSnap.data()
 data.id=docSnap.id
-
 products.push(data)
-
 container.innerHTML+=productHTML(data)
-
 })
 
 }
 
-
-
-/* OPEN PRODUCT (FIX IMPORTANT) */
-
+/* OPEN */
 window.openProduct=function(id){
-
 localStorage.setItem("selectedProduct", id)
 location.href="product.html"
-
 }
 
-
-
-/* ADD TO CART */
-
+/* CART */
 window.addToCart=function(id){
-
 let cart=JSON.parse(localStorage.getItem("cart") || "[]")
-
 cart.push(id)
-
 localStorage.setItem("cart",JSON.stringify(cart))
-
 alert("Produto adicionado ao carrinho")
-
 }
-
-
 
 /* SEARCH */
-
 document.getElementById("search").addEventListener("input",function(){
 
 const value=this.value.toLowerCase()
-
 const container=document.getElementById("productList")
-
 container.innerHTML=""
 
 products.forEach(p=>{
-
 if(p.name.toLowerCase().includes(value)){
 container.innerHTML+=productHTML(p)
 }
-
 })
 
 })
-
 
 loadProducts()
 
