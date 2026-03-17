@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="pt">
 
 <head>
@@ -120,6 +120,19 @@ color:#555;
 margin-top:4px;
 }
 
+/* BADGE */
+
+.badge{
+position:absolute;
+top:8px;
+left:8px;
+background:red;
+color:white;
+padding:3px 6px;
+border-radius:6px;
+font-size:12px;
+}
+
 /* CART BUTTON */
 
 .cartBtn{
@@ -175,7 +188,7 @@ Shopping Online Angola 🇦🇴
 
 <div class="headerRight">
 
-<img id="profilePic" class="profile">
+<img id="profilePic" class="profile" src="">
 
 <input type="file" id="profileUpload" hidden>
 
@@ -266,7 +279,7 @@ localStorage.setItem("profilePic",url)
 
 }
 
-profilePic.src=localStorage.getItem("profilePic") || ""
+profilePic.src=localStorage.getItem("profilePic") || "https://via.placeholder.com/35"
 
 
 
@@ -281,9 +294,7 @@ if(user){
 accountButton.innerText="Minha Loja"
 
 accountButton.onclick=function(){
-
 location.href="merchant-shop.html"
-
 }
 
 }else{
@@ -291,9 +302,7 @@ location.href="merchant-shop.html"
 accountButton.innerText="Criar conta"
 
 accountButton.onclick=function(){
-
 location.href="merchant-register.html"
-
 }
 
 }
@@ -309,20 +318,23 @@ function productHTML(p){
 const img=p.images ? p.images[0] : p.image || ""
 
 let desc=""
-
 if(p.description){
 desc=p.description.split("\n")[0].slice(0,60)
 }
 
+let badge = p.sales > 5 ? `<div class="badge">🔥 Popular</div>` : ""
+
 return `
 
-<div class="product">
+<div class="product" onclick="openProduct('${p.id}')">
 
-<div onclick="addToCart('${p.id}')" class="cartBtn">
+${badge}
+
+<div onclick="event.stopPropagation();addToCart('${p.id}')" class="cartBtn">
 🛒
 </div>
 
-<img onclick="viewProduct('${p.id}')" src="${img}">
+<img src="${img}">
 
 <div class="info">
 
@@ -357,7 +369,6 @@ products=[]
 snap.forEach(docSnap=>{
 
 const data=docSnap.data()
-
 data.id=docSnap.id
 
 products.push(data)
@@ -370,11 +381,12 @@ container.innerHTML+=productHTML(data)
 
 
 
-/* VIEW PRODUCT */
+/* OPEN PRODUCT (FIX IMPORTANT) */
 
-window.viewProduct=function(id){
+window.openProduct=function(id){
 
-location.href="product.html?id="+id
+localStorage.setItem("selectedProduct", id)
+location.href="product.html"
 
 }
 
@@ -409,9 +421,7 @@ container.innerHTML=""
 products.forEach(p=>{
 
 if(p.name.toLowerCase().includes(value)){
-
 container.innerHTML+=productHTML(p)
-
 }
 
 })
@@ -425,4 +435,4 @@ loadProducts()
 
 </body>
 
-</html> 
+</html>
