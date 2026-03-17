@@ -76,6 +76,10 @@ background:#1aa34a;
 color:white;
 }
 
+.qty{
+margin-top:10px;
+}
+
 .section{
 padding:10px;
 }
@@ -180,8 +184,12 @@ loadProduct()
 function renderProduct(p){
 
 let badge = p.sales > 5 ? "🔥 Produto popular" : ""
-
 const img = p.images && p.images.length ? p.images[0] : ""
+
+let orderText = "Comprar"
+if(p.category==="restaurant"){
+orderText="Pedir comida 🍽️"
+}
 
 document.getElementById("productBox").innerHTML=`
 
@@ -197,6 +205,11 @@ document.getElementById("productBox").innerHTML=`
 
 <div class="desc">${p.description || ""}</div>
 
+<div class="qty">
+<label>Quantidade:</label>
+<input type="number" id="qty" value="1" min="1" style="width:70px;padding:6px;">
+</div>
+
 <div class="actions">
 
 <button class="btn shopBtn" onclick="openShop('${p.merchantId}')">
@@ -204,7 +217,7 @@ Ver loja
 </button>
 
 <button class="btn buyBtn" onclick="orderNow()">
-Comprar
+${orderText}
 </button>
 
 </div>
@@ -237,19 +250,19 @@ Enviar avaliação
 
 }
 
-/* FIX IMPORTANT ICI */
+/* SHOP */
 window.openShop=function(id){
-
-// on envoie l'id dans l'URL (clé principale)
 location.href="merchant-shop.html?id="+id
-
 }
 
 /* FAVORITE */
 window.addFavorite=function(){
 
 let favs=JSON.parse(localStorage.getItem("favorites")) || []
+
+if(!favs.includes(productId)){
 favs.push(productId)
+}
 
 localStorage.setItem("favorites", JSON.stringify(favs))
 
@@ -260,7 +273,15 @@ alert("Adicionado aos favoritos ❤️")
 /* ORDER */
 window.orderNow=function(){
 
-localStorage.setItem("checkoutProduct", JSON.stringify(currentProduct))
+const qty = document.getElementById("qty").value || 1
+
+const orderData = {
+...currentProduct,
+quantity: qty
+}
+
+localStorage.setItem("checkoutProduct", JSON.stringify(orderData))
+
 location.href="checkout.html"
 
 }
@@ -337,10 +358,11 @@ let html=""
 snap.forEach(doc=>{
 
 const p=doc.data()
+const img = p.images && p.images.length ? p.images[0] : ""
 
 html+=`
 <div class="card" onclick="openProduct('${doc.id}')">
-<img src="${p.images[0]}">
+<img src="${img}">
 <div>${p.name}</div>
 <div class="cardPrice">${p.price} Kz</div>
 </div>
@@ -362,10 +384,11 @@ let html=""
 snap.forEach(doc=>{
 
 const p=doc.data()
+const img = p.images && p.images.length ? p.images[0] : ""
 
 html+=`
 <div class="card" onclick="openProduct('${doc.id}')">
-<img src="${p.images[0]}">
+<img src="${img}">
 <div>${p.name}</div>
 <div class="cardPrice">${p.price} Kz</div>
 </div>
