@@ -2,71 +2,65 @@
 <html lang="pt">
 
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Produto</title>
 
 <style>
 
 body{
-font-family:Arial;
 margin:0;
+font-family:Arial;
 background:#f5f5f5;
 }
 
-/* IMAGE */
-
-.productImg{
-width:100%;
-height:320px;
-object-fit:cover;
-background:white;
-}
-
-/* INFO */
-
-.info{
+/* HEADER */
+.header{
 background:white;
 padding:15px;
-margin-top:6px;
+font-size:20px;
+font-weight:bold;
+text-align:center;
+box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* PRODUCT */
+.product{
+background:white;
+padding:15px;
+margin-bottom:10px;
+}
+
+.product img{
+width:100%;
+border-radius:10px;
 }
 
 .name{
 font-size:20px;
 font-weight:bold;
-color:black;
-margin-bottom:6px;
-}
-
-.shop{
-color:#0b6b3a;
-font-weight:bold;
-margin-bottom:8px;
+margin-top:10px;
 }
 
 .price{
 color:#ff6a00;
-font-size:26px;
+font-size:22px;
 font-weight:bold;
-margin-bottom:10px;
+margin:8px 0;
 }
 
 .desc{
-color:#444;
-line-height:1.4;
+color:#555;
 }
 
-/* ACTION BUTTONS */
-
+/* BUTTONS */
 .actions{
 display:flex;
 gap:10px;
-padding:12px;
+margin-top:15px;
 }
 
-.actions button{
+.btn{
 flex:1;
 padding:12px;
 border:none;
@@ -76,44 +70,53 @@ cursor:pointer;
 }
 
 .shopBtn{
-background:#eee;
-}
-
-.chatBtn{
-background:#ddd;
-}
-
-.cartBtn{
 background:black;
 color:white;
 }
 
-.orderBtn{
-background:#ff6a00;
+.buyBtn{
+background:#1aa34a;
 color:white;
 }
 
-/* BOTTOM BAR */
-
-.bottomBar{
-position:fixed;
-bottom:0;
-left:0;
-right:0;
-background:white;
-display:flex;
-gap:10px;
+/* GRID */
+.section{
 padding:10px;
-border-top:1px solid #ddd;
 }
 
-.bottomBar button{
-flex:1;
-padding:12px;
-border:none;
-border-radius:8px;
-font-size:16px;
+.grid{
+display:flex;
+gap:10px;
+overflow-x:auto;
+}
+
+.card{
+min-width:150px;
+background:white;
+padding:10px;
+border-radius:10px;
+box-shadow:0 2px 5px rgba(0,0,0,0.1);
 cursor:pointer;
+}
+
+.card img{
+width:100%;
+height:120px;
+object-fit:cover;
+border-radius:8px;
+}
+
+.cardPrice{
+color:#ff6a00;
+font-weight:bold;
+}
+
+/* REVIEW */
+.review{
+background:white;
+padding:10px;
+margin-top:5px;
+border-radius:8px;
 }
 
 </style>
@@ -122,44 +125,21 @@ cursor:pointer;
 
 <body>
 
-
-<img id="productImg" class="productImg">
-
-
-<div class="info">
-
-<div id="productName" class="name"></div>
-
-<div id="shopName" class="shop"></div>
-
-<div id="productPrice" class="price"></div>
-
-<div id="productDesc" class="desc"></div>
-
+<div class="header">
+Detalhes do produto
 </div>
 
+<div id="productBox"></div>
 
-<div class="bottomBar">
-
-<button class="shopBtn" onclick="openShop()">
-🏪 Loja
-</button>
-
-<button class="chatBtn" onclick="openChat()">
-💬 Discuter
-</button>
-
-<button class="cartBtn" onclick="addCart()">
-🛒 Panier
-</button>
-
-<button class="orderBtn" onclick="orderNow()">
-⚡ Commander
-</button>
-
+<div class="section">
+<h3>Produtos similares</h3>
+<div class="grid" id="similar"></div>
 </div>
 
-
+<div class="section">
+<h3>Outros produtos</h3>
+<div class="grid" id="others"></div>
+</div>
 
 <script type="module">
 
@@ -167,102 +147,251 @@ import { db } from "./firebase.js"
 
 import {
 doc,
-getDoc
+getDoc,
+collection,
+getDocs,
+addDoc,
+updateDoc,
+increment,
+query,
+where
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
-
-const params=new URLSearchParams(window.location.search)
-
-const productId=params.get("id")
-
-let merchantId=""
-
-let productData={}
-
+const productId=localStorage.getItem("selectedProduct")
+let currentProduct=null
 
 /* LOAD PRODUCT */
-
 async function loadProduct(){
 
 const ref=doc(db,"products",productId)
-
 const snap=await getDoc(ref)
 
-const data=snap.data()
+if(!snap.exists()){
+alert("Produto não encontrado")
+return
+}
 
-productData=data
+currentProduct=snap.data()
 
-merchantId=data.merchantId
+renderProduct(currentProduct)
 
-const img=data.image || (data.images ? data.images[0] : "")
-
-document.getElementById("productImg").src=img
-
-document.getElementById("productName").innerText=data.name
-
-document.getElementById("shopName").innerText=data.shopName || "Loja"
-
-document.getElementById("productPrice").innerText=data.price+" Kz"
-
-document.getElementById("productDesc").innerText=data.description || ""
+loadSimilar()
+loadOthers()
+loadReviews()
 
 }
 
 loadProduct()
 
+/* RENDER */
+function renderProduct(p){
 
-/* OPEN SHOP */
+let badge = p.sales > 5 ? "🔥 Produto popular" : ""
 
-window.openShop=function(){
+document.getElementById("productBox").innerHTML=`
 
-location.href="merchant-shop.html?id="+merchantId
+<div class="product">
+
+<img src="${p.images[0]}">
+
+<div class="name">${p.name}</div>
+
+<div style="color:red;font-weight:bold;">${badge}</div>
+
+<div class="price">${p.price} Kz</div>
+
+<div class="desc">${p.description}</div>
+
+<div class="actions">
+
+<button class="btn shopBtn" onclick="openShop('${p.merchantId}')">
+Ver loja
+</button>
+
+<button class="btn buyBtn" onclick="orderNow()">
+Comprar
+</button>
+
+</div>
+
+<div style="margin-top:15px;">
+<button onclick="addFavorite()" style="background:#ff4757;color:white;padding:10px;border:none;border-radius:8px;">
+❤️ Favori
+</button>
+</div>
+
+<div style="margin-top:20px;">
+
+<h3>Avaliações</h3>
+
+<input id="userRating" type="number" max="5" min="1" placeholder="Nota (1-5)" style="width:100%;padding:10px;margin-bottom:5px;">
+
+<textarea id="userComment" placeholder="Comentário..." style="width:100%;padding:10px;"></textarea>
+
+<button onclick="submitReview()" style="margin-top:5px;">
+Enviar avaliação
+</button>
+
+<div id="reviewsList"></div>
+
+</div>
+
+</div>
+
+`
 
 }
 
+/* FAVORITE */
+window.addFavorite=function(){
 
-/* OPEN CHAT */
+let favs=JSON.parse(localStorage.getItem("favorites")) || []
 
-window.openChat=function(){
+favs.push(productId)
 
-location.href="chat.html?merchant="+merchantId
+localStorage.setItem("favorites", JSON.stringify(favs))
+
+alert("Adicionado aos favoritos ❤️")
 
 }
 
+/* REVIEW */
+window.submitReview=async function(){
 
-/* ADD CART */
+const rating=parseInt(document.getElementById("userRating").value)
+const comment=document.getElementById("userComment").value
 
-window.addCart=function(){
+if(!rating){
+alert("Coloque uma nota")
+return
+}
 
-let cart=JSON.parse(localStorage.getItem("cart")) || []
+await addDoc(collection(db,"reviews"),{
+productId:productId,
+rating:rating,
+comment:comment,
+date:Date.now()
+})
 
-cart.push({
+const ref=doc(db,"products",productId)
 
-id:productId,
-name:productData.name,
-price:productData.price,
-image:productData.image
+await updateDoc(ref,{
+rating:increment(rating),
+reviews:increment(1)
+})
+
+alert("Avaliação enviada")
+
+loadReviews()
+
+}
+
+/* LOAD REVIEWS */
+async function loadReviews(){
+
+const snap=await getDocs(collection(db,"reviews"))
+
+let html=""
+
+snap.forEach(doc=>{
+
+const r=doc.data()
+
+if(r.productId===productId){
+
+html+=`
+<div class="review">
+⭐ ${r.rating}/5<br>
+${r.comment}
+</div>
+`
+
+}
 
 })
 
-localStorage.setItem("cart",JSON.stringify(cart))
-
-alert("Produto adicionado ao carrinho")
+document.getElementById("reviewsList").innerHTML=html
 
 }
 
+/* OPEN SHOP */
+window.openShop=function(id){
+
+localStorage.setItem("shopId",id)
+location.href="merchant-shop.html"
+
+}
 
 /* ORDER */
-
 window.orderNow=function(){
 
-addCart()
+localStorage.setItem("checkoutProduct", JSON.stringify(currentProduct))
+location.href="checkout.html"
 
-location.href="cart.html"
+}
 
+/* SIMILAR */
+async function loadSimilar(){
+
+const q=query(
+collection(db,"products"),
+where("category","==",currentProduct.category)
+)
+
+const snap=await getDocs(q)
+
+let html=""
+
+snap.forEach(doc=>{
+
+const p=doc.data()
+
+html+=`
+<div class="card" onclick="openProduct('${doc.id}')">
+<img src="${p.images[0]}">
+<div>${p.name}</div>
+<div class="cardPrice">${p.price} Kz</div>
+</div>
+`
+
+})
+
+document.getElementById("similar").innerHTML=html
+
+}
+
+/* OTHERS */
+async function loadOthers(){
+
+const snap=await getDocs(collection(db,"products"))
+
+let html=""
+
+snap.forEach(doc=>{
+
+const p=doc.data()
+
+html+=`
+<div class="card" onclick="openProduct('${doc.id}')">
+<img src="${p.images[0]}">
+<div>${p.name}</div>
+<div class="cardPrice">${p.price} Kz</div>
+</div>
+`
+
+})
+
+document.getElementById("others").innerHTML=html
+
+}
+
+/* NAV */
+window.openProduct=function(id){
+localStorage.setItem("selectedProduct", id)
+location.reload()
 }
 
 </script>
 
 </body>
-
 </html>
