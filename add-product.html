@@ -28,8 +28,6 @@ text-align:center;
 position:relative;
 }
 
-/* BACK BUTTON */
-
 .backBtn{
 position:absolute;
 left:10px;
@@ -110,6 +108,23 @@ object-fit:cover;
 border-radius:8px;
 }
 
+/* LOADING BAR */
+
+.progressBox{
+display:none;
+margin-top:15px;
+background:#ddd;
+border-radius:20px;
+overflow:hidden;
+}
+
+.progressBar{
+height:10px;
+width:0%;
+background:#1aa34a;
+transition:0.3s;
+}
+
 </style>
 
 </head>
@@ -175,6 +190,11 @@ Publicar novo produto
 <button onclick="publishProduct()">
 Publicar produto
 </button>
+
+<!-- PROGRESS BAR -->
+<div class="progressBox" id="progressBox">
+<div class="progressBar" id="progressBar"></div>
+</div>
 
 </div>
 
@@ -248,10 +268,8 @@ formData.append("file",file)
 formData.append("upload_preset",uploadPreset)
 
 const res=await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`,{
-
 method:"POST",
 body:formData
-
 })
 
 const data=await res.json()
@@ -261,21 +279,15 @@ return data.secure_url
 }
 
 
-/* RESET FORM (publication rapide) */
+/* PROGRESS */
 
-function resetForm(){
+function updateProgress(percent){
 
-document.getElementById("name").value=""
-document.getElementById("price").value=""
-document.getElementById("description").value=""
-document.getElementById("images").value=""
-document.getElementById("video").value=""
+const box=document.getElementById("progressBox")
+const bar=document.getElementById("progressBar")
 
-document.getElementById("imagePreview").innerHTML=""
-document.getElementById("videoPreview").innerHTML=""
-
-imageFiles=[]
-videoFile=null
+box.style.display="block"
+bar.style.width=percent+"%"
 
 }
 
@@ -301,14 +313,26 @@ alert("Precisa fazer login")
 return
 }
 
+updateProgress(10)
 
 /* UPLOAD IMAGES */
 
 let imageUrls=[]
 
+let count=0
+
 for(const file of imageFiles){
+
 const url=await uploadFile(file)
+
 imageUrls.push(url)
+
+count++
+
+let percent=10 + (count/imageFiles.length)*60
+
+updateProgress(percent)
+
 }
 
 
@@ -317,9 +341,11 @@ imageUrls.push(url)
 let videoUrl=""
 
 if(videoFile){
+updateProgress(75)
 videoUrl=await uploadFile(videoFile)
 }
 
+updateProgress(90)
 
 /* SAVE */
 
@@ -341,10 +367,12 @@ popular:false
 
 })
 
-alert("Produto publicado ✔")
+updateProgress(100)
 
-/* PAS DE REDIRECTION → publication rapide */
-resetForm()
+alert("Produto publicado com sucesso ✔")
+
+/* REDIRECTION */
+location.href="merchant-shop.html"
 
 }
 
