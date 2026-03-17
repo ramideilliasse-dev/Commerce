@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="pt">
 
 <head>
@@ -17,7 +17,6 @@ background:#f4f4f4;
 }
 
 /* HEADER */
-
 .header{
 background:black;
 color:white;
@@ -27,14 +26,21 @@ font-size:20px;
 font-weight:bold;
 }
 
-/* CONTAINER */
+/* COUNT */
+.countBox{
+background:white;
+padding:10px;
+font-weight:bold;
+text-align:center;
+border-bottom:1px solid #eee;
+}
 
+/* CONTAINER */
 .container{
 padding:10px;
 }
 
 /* CARD */
-
 .order{
 background:white;
 padding:15px;
@@ -54,18 +60,17 @@ margin-top:5px;
 }
 
 /* STATUS */
-
 .status{
 margin-top:10px;
 font-weight:bold;
 }
 
 /* BUTTONS */
-
 .actions{
 display:flex;
 gap:8px;
 margin-top:10px;
+flex-wrap:wrap;
 }
 
 button{
@@ -74,15 +79,21 @@ padding:10px;
 border:none;
 border-radius:8px;
 cursor:pointer;
+font-size:13px;
 }
 
-.paid{
-background:#1aa34a;
+.confirm{
+background:#ff9800;
 color:white;
 }
 
 .sent{
 background:#007bff;
+color:white;
+}
+
+.done{
+background:#1aa34a;
 color:white;
 }
 
@@ -99,6 +110,10 @@ color:white;
 
 <div class="header">
 Pedidos do vendedor
+</div>
+
+<div class="countBox">
+📦 Novos pedidos: <span id="orderCount">0</span>
 </div>
 
 <div class="container" id="ordersList"></div>
@@ -121,10 +136,7 @@ import {
 onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
-
-
 let currentUser=null
-
 
 onAuthStateChanged(auth,(user)=>{
 
@@ -135,7 +147,6 @@ return
 }
 
 currentUser=user
-
 loadOrders()
 
 })
@@ -154,17 +165,24 @@ where("merchantId","==",currentUser.uid)
 const snap=await getDocs(q)
 
 const container=document.getElementById("ordersList")
-
 container.innerHTML=""
+
+let count=0
 
 snap.forEach(docSnap=>{
 
 const o=docSnap.data()
 const id=docSnap.id
 
+if(o.seen===false){
+count++
+}
+
 container.innerHTML+=orderHTML(o,id)
 
 })
+
+document.getElementById("orderCount").innerText=count
 
 }
 
@@ -190,20 +208,24 @@ return `
 
 <div class="info">💳 ${o.paymentMethod}</div>
 
-<div class="status">Status: ${o.status}</div>
+<div class="status">Status: ${o.status || "pendente"}</div>
 
 <div class="actions">
 
-<button class="whatsapp" onclick="contactClient('${o.clientPhone}')">
+<button class="whatsapp" onclick="contactClient('${o.clientPhone}','${o.productName}')">
 WhatsApp
 </button>
 
-<button class="paid" onclick="markPaid('${id}')">
-Pago
+<button class="confirm" onclick="confirmOrder('${id}')">
+Confirmar
 </button>
 
 <button class="sent" onclick="markSent('${id}')">
 Enviado
+</button>
+
+<button class="done" onclick="markDelivered('${id}')">
+Entregue
 </button>
 
 </div>
@@ -216,11 +238,12 @@ Enviado
 
 
 
-/* WHATSAPP */
+/* WHATSAPP AUTO */
 
-window.contactClient=function(phone){
+window.contactClient=function(phone,product){
 
-const message="Olá, sobre o seu pedido..."
+const message=`Olá, recebemos seu pedido de ${product}. Vamos tratar disso rapidamente.`
+
 const url=`https://wa.me/${phone}?text=${encodeURIComponent(message)}`
 
 window.open(url,"_blank")
@@ -229,15 +252,16 @@ window.open(url,"_blank")
 
 
 
-/* UPDATE STATUS */
+/* STATUS UPDATE */
 
-window.markPaid=async function(id){
+window.confirmOrder=async function(id){
 
 await updateDoc(doc(db,"orders",id),{
-status:"pago"
+status:"confirmado",
+seen:true
 })
 
-alert("Marcado como pago")
+alert("Pedido confirmado ✔")
 
 loadOrders()
 
@@ -249,7 +273,19 @@ await updateDoc(doc(db,"orders",id),{
 status:"enviado"
 })
 
-alert("Marcado como enviado")
+alert("Pedido enviado 🚚")
+
+loadOrders()
+
+}
+
+window.markDelivered=async function(id){
+
+await updateDoc(doc(db,"orders",id),{
+status:"entregue"
+})
+
+alert("Entrega concluída ✅")
 
 loadOrders()
 
@@ -259,4 +295,4 @@ loadOrders()
 
 </body>
 
-</html> 
+</html>
