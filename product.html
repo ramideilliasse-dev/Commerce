@@ -14,7 +14,6 @@ font-family:Arial;
 background:#f5f5f5;
 }
 
-/* HEADER */
 .header{
 background:white;
 padding:15px;
@@ -24,7 +23,6 @@ text-align:center;
 box-shadow:0 2px 5px rgba(0,0,0,0.1);
 }
 
-/* PRODUCT */
 .product{
 background:white;
 padding:15px;
@@ -53,7 +51,6 @@ margin:8px 0;
 color:#555;
 }
 
-/* BUTTONS */
 .actions{
 display:flex;
 gap:10px;
@@ -79,7 +76,6 @@ background:#1aa34a;
 color:white;
 }
 
-/* GRID */
 .section{
 padding:10px;
 }
@@ -111,7 +107,6 @@ color:#ff6a00;
 font-weight:bold;
 }
 
-/* REVIEW */
 .review{
 background:white;
 padding:10px;
@@ -160,7 +155,6 @@ where
 const productId=localStorage.getItem("selectedProduct")
 let currentProduct=null
 
-/* LOAD PRODUCT */
 async function loadProduct(){
 
 const ref=doc(db,"products",productId)
@@ -183,16 +177,17 @@ loadReviews()
 
 loadProduct()
 
-/* RENDER */
 function renderProduct(p){
 
 let badge = p.sales > 5 ? "🔥 Produto popular" : ""
+
+const img = p.images && p.images.length ? p.images[0] : ""
 
 document.getElementById("productBox").innerHTML=`
 
 <div class="product">
 
-<img src="${p.images[0]}">
+<img src="${img}">
 
 <div class="name">${p.name}</div>
 
@@ -200,7 +195,7 @@ document.getElementById("productBox").innerHTML=`
 
 <div class="price">${p.price} Kz</div>
 
-<div class="desc">${p.description}</div>
+<div class="desc">${p.description || ""}</div>
 
 <div class="actions">
 
@@ -242,11 +237,18 @@ Enviar avaliação
 
 }
 
+/* FIX IMPORTANT ICI */
+window.openShop=function(id){
+
+// on envoie l'id dans l'URL (clé principale)
+location.href="merchant-shop.html?id="+id
+
+}
+
 /* FAVORITE */
 window.addFavorite=function(){
 
 let favs=JSON.parse(localStorage.getItem("favorites")) || []
-
 favs.push(productId)
 
 localStorage.setItem("favorites", JSON.stringify(favs))
@@ -255,7 +257,15 @@ alert("Adicionado aos favoritos ❤️")
 
 }
 
-/* REVIEW */
+/* ORDER */
+window.orderNow=function(){
+
+localStorage.setItem("checkoutProduct", JSON.stringify(currentProduct))
+location.href="checkout.html"
+
+}
+
+/* REVIEWS */
 window.submitReview=async function(){
 
 const rating=parseInt(document.getElementById("userRating").value)
@@ -281,12 +291,10 @@ reviews:increment(1)
 })
 
 alert("Avaliação enviada")
-
 loadReviews()
 
 }
 
-/* LOAD REVIEWS */
 async function loadReviews(){
 
 const snap=await getDocs(collection(db,"reviews"))
@@ -311,22 +319,6 @@ ${r.comment}
 })
 
 document.getElementById("reviewsList").innerHTML=html
-
-}
-
-/* OPEN SHOP */
-window.openShop=function(id){
-
-localStorage.setItem("shopId",id)
-location.href="merchant-shop.html"
-
-}
-
-/* ORDER */
-window.orderNow=function(){
-
-localStorage.setItem("checkoutProduct", JSON.stringify(currentProduct))
-location.href="checkout.html"
 
 }
 
@@ -385,7 +377,6 @@ document.getElementById("others").innerHTML=html
 
 }
 
-/* NAV */
 window.openProduct=function(id){
 localStorage.setItem("selectedProduct", id)
 location.reload()
