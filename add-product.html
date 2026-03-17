@@ -25,6 +25,22 @@ padding:18px;
 font-size:20px;
 font-weight:bold;
 text-align:center;
+position:relative;
+}
+
+/* BACK BUTTON */
+
+.backBtn{
+position:absolute;
+left:10px;
+top:15px;
+background:white;
+color:#ff6a00;
+border:none;
+padding:6px 12px;
+border-radius:20px;
+font-weight:bold;
+cursor:pointer;
 }
 
 /* CONTAINER */
@@ -64,16 +80,6 @@ textarea{
 min-height:100px;
 }
 
-/* FILE */
-
-.fileBox{
-border:2px dashed #ccc;
-padding:20px;
-text-align:center;
-border-radius:10px;
-cursor:pointer;
-}
-
 /* BUTTON */
 
 button{
@@ -111,7 +117,13 @@ border-radius:8px;
 <body>
 
 <div class="header">
+
+<button class="backBtn" onclick="location.href='merchant-shop.html'">
+← Voltar
+</button>
+
 Publicar novo produto
+
 </div>
 
 <div class="container">
@@ -119,10 +131,10 @@ Publicar novo produto
 <div class="card">
 
 <label>Nome do produto</label>
-<input id="name" placeholder="Ex: iPhone 13 Pro">
+<input id="name">
 
 <label>Preço (Kz)</label>
-<input id="price" type="number" placeholder="Ex: 350000">
+<input id="price" type="number">
 
 <label>Categoria</label>
 
@@ -136,7 +148,7 @@ Publicar novo produto
 </select>
 
 <label>Descrição</label>
-<textarea id="description" placeholder="Descrição do produto..."></textarea>
+<textarea id="description"></textarea>
 
 </div>
 
@@ -175,10 +187,6 @@ import {
 collection,
 addDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-
-import {
-onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 
 let imageFiles=[]
@@ -227,7 +235,7 @@ preview.innerHTML=`<video src="${url}" controls></video>`
 })
 
 
-/* CLOUDINARY UPLOAD */
+/* CLOUDINARY */
 
 async function uploadFile(file){
 
@@ -253,7 +261,26 @@ return data.secure_url
 }
 
 
-/* PUBLISH PRODUCT */
+/* RESET FORM (publication rapide) */
+
+function resetForm(){
+
+document.getElementById("name").value=""
+document.getElementById("price").value=""
+document.getElementById("description").value=""
+document.getElementById("images").value=""
+document.getElementById("video").value=""
+
+document.getElementById("imagePreview").innerHTML=""
+document.getElementById("videoPreview").innerHTML=""
+
+imageFiles=[]
+videoFile=null
+
+}
+
+
+/* PUBLISH */
 
 window.publishProduct=async function(){
 
@@ -263,21 +290,15 @@ const category=document.getElementById("category").value
 const description=document.getElementById("description").value
 
 if(!name || !price){
-
 alert("Preencha nome e preço")
-
 return
-
 }
 
 const user=auth.currentUser
 
 if(!user){
-
 alert("Precisa fazer login")
-
 return
-
 }
 
 
@@ -286,42 +307,32 @@ return
 let imageUrls=[]
 
 for(const file of imageFiles){
-
 const url=await uploadFile(file)
-
 imageUrls.push(url)
-
 }
 
 
-/* UPLOAD VIDEO */
+/* VIDEO */
 
 let videoUrl=""
 
 if(videoFile){
-
 videoUrl=await uploadFile(videoFile)
-
 }
 
 
-/* SAVE PRODUCT */
+/* SAVE */
 
 await addDoc(collection(db,"products"),{
 
-name:name,
-price:price,
-category:category,
-description:description,
-
+name,
+price,
+category,
+description,
 images:imageUrls,
 video:videoUrl,
-
 merchantId:user.uid,
-
 created:Date.now(),
-
-/* SYSTEM MARKETPLACE */
 
 sales:0,
 rating:0,
@@ -330,9 +341,10 @@ popular:false
 
 })
 
-alert("Produto publicado com sucesso")
+alert("Produto publicado ✔")
 
-location.href="merchant-dashboard.html"
+/* PAS DE REDIRECTION → publication rapide */
+resetForm()
 
 }
 
