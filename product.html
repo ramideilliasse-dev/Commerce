@@ -273,16 +273,29 @@ alert("Adicionado aos favoritos ❤️")
 /* ORDER */
 window.orderNow=function(){
 
-const qty = document.getElementById("qty").value || 1
+const qty = parseInt(document.getElementById("qty").value) || 1
 
-const orderData = {
-...currentProduct,
-quantity: qty
+let cart = JSON.parse(localStorage.getItem("cart") || "[]")
+
+// vérifier si produit déjà dans panier
+let existing = cart.find(item => item.id === productId)
+
+if(existing){
+existing.qty += qty
+}else{
+cart.push({
+id: productId,
+name: currentProduct.name,
+price: currentProduct.price,
+image: currentProduct.images ? currentProduct.images[0] : "",
+qty: qty,
+category: currentProduct.category
+})
 }
 
-localStorage.setItem("checkoutProduct", JSON.stringify(orderData))
+localStorage.setItem("cart", JSON.stringify(cart))
 
-location.href="checkout.html"
+alert("Adicionado ao carrinho 🛒")
 
 }
 
