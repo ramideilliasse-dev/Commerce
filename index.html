@@ -314,7 +314,32 @@ location.href="merchant-register.html"
 /* PRODUCT CARD */
 
 function productHTML(p){
+if(p.category==="restaurant"){
+return `
 
+<div class="product">
+
+<img src="${p.images[0]}">
+
+<div class="info">
+
+<div class="name">🍽️ ${p.name}</div>
+
+<div class="price">${p.price} Kz</div>
+
+<div class="desc">${p.description.slice(0,50)}</div>
+
+<button style="background:#1aa34a;color:white;border:none;padding:8px;border-radius:10px;width:100%;margin-top:8px;"
+onclick="openProduct('${p.id}')">
+Ver prato
+</button>
+
+</div>
+
+</div>
+
+`
+}
 const img=p.images ? p.images[0] : p.image || ""
 
 let desc=""
