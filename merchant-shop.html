@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Minha Loja</title>
+<title>Loja</title>
 
 <style>
 
@@ -15,8 +15,6 @@ font-family:Arial;
 margin:0;
 background:#f4f4f4;
 }
-
-/* HEADER SHOP */
 
 .shopHeader{
 background:white;
@@ -32,7 +30,7 @@ align-items:center;
 }
 
 .shopName{
-font-size:30px;
+font-size:26px;
 font-weight:bold;
 color:#111;
 }
@@ -54,8 +52,6 @@ border-radius:20px;
 font-weight:bold;
 cursor:pointer;
 }
-
-/* PRODUCTS */
 
 .products{
 column-count:2;
@@ -83,7 +79,6 @@ padding:10px;
 
 .name{
 font-weight:bold;
-margin-bottom:4px;
 }
 
 .price{
@@ -94,10 +89,7 @@ font-weight:bold;
 .desc{
 font-size:13px;
 color:#555;
-margin-top:4px;
 }
-
-/* DELETE BUTTON */
 
 .deleteBtn{
 position:absolute;
@@ -111,8 +103,6 @@ padding:5px 10px;
 font-size:12px;
 cursor:pointer;
 }
-
-/* REVIEWS */
 
 .reviews{
 background:white;
@@ -135,20 +125,17 @@ color:orange;
 
 <body>
 
-
-<!-- SHOP HEADER -->
-
 <div class="shopHeader">
 
 <div class="shopTop">
 
 <div class="shopName" id="shopName">
-Minha Loja
+Loja
 </div>
 
 <img id="profilePic" class="profile">
 
-<button class="publishBtn" onclick="location.href='add-product.html'">
+<button id="publishBtn" class="publishBtn">
 Publicar produtos
 </button>
 
@@ -156,24 +143,12 @@ Publicar produtos
 
 </div>
 
-
-
-<!-- PRODUCTS -->
-
 <div id="productList" class="products"></div>
 
-
-
-<!-- CLIENT REVIEWS -->
-
 <div class="reviews">
-
 <h3>Avaliações dos clientes</h3>
-
 <div id="reviewList"></div>
-
 </div>
-
 
 
 <script type="module">
@@ -194,49 +169,35 @@ onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 
+/* GET ID FROM URL */
+const params = new URLSearchParams(location.search)
+const shopId = params.get("id")
 
-let currentUser
+let currentUser=null
 
-
-
-/* PROFILE PHOTO */
-
-const profilePic=document.getElementById("profilePic")
-
-profilePic.src=localStorage.getItem("profilePic") || ""
-
+/* PROFILE */
+document.getElementById("profilePic").src =
+localStorage.getItem("profilePic") || "https://via.placeholder.com/50"
 
 
 /* PRODUCT CARD */
+function productHTML(p, isOwner){
 
-function productHTML(p){
-
-let desc=""
-
-if(p.description){
-desc=p.description.split("\n")[0].slice(0,50)
-}
-
-const img=p.images ? p.images[0] : ""
+let desc = p.description ? p.description.slice(0,50) : ""
+const img = p.images ? p.images[0] : ""
 
 return `
 
 <div class="product">
 
-<button onclick="deleteProduct('${p.id}')" class="deleteBtn">
-Excluir
-</button>
+${isOwner ? `<button onclick="deleteProduct('${p.id}')" class="deleteBtn">Excluir</button>` : ""}
 
 <img src="${img}">
 
 <div class="info">
-
 <div class="name">${p.name}</div>
-
 <div class="price">${p.price} Kz</div>
-
 <div class="desc">${desc}</div>
-
 </div>
 
 </div>
@@ -246,17 +207,15 @@ Excluir
 }
 
 
+/* LOAD PRODUCTS */
+async function loadProducts(uid, isOwner){
 
-/* LOAD MERCHANT PRODUCTS */
-
-async function loadProducts(uid){
-
-const q=query(
+const q = query(
 collection(db,"products"),
 where("merchantId","==",uid)
 )
 
-const snap=await getDocs(q)
+const snap = await getDocs(q)
 
 const container=document.getElementById("productList")
 
@@ -265,24 +224,19 @@ container.innerHTML=""
 snap.forEach(docSnap=>{
 
 const data=docSnap.data()
-
 data.id=docSnap.id
 
-container.innerHTML+=productHTML(data)
+container.innerHTML+=productHTML(data, isOwner)
 
 })
 
 }
 
 
+/* DELETE */
+window.deleteProduct = async function(id){
 
-/* DELETE PRODUCT */
-
-window.deleteProduct=async function(id){
-
-const ok=confirm("Excluir produto?")
-
-if(!ok)return
+if(!confirm("Excluir produto?")) return
 
 await deleteDoc(doc(db,"products",id))
 
@@ -293,61 +247,62 @@ location.reload()
 }
 
 
-
 /* LOAD REVIEWS */
-
 async function loadReviews(uid){
 
-const q=query(
-collection(db,"reviews"),
-where("merchantId","==",uid)
-)
-
-const snap=await getDocs(q)
+const snap = await getDocs(collection(db,"reviews"))
 
 const box=document.getElementById("reviewList")
+box.innerHTML=""
 
 snap.forEach(docSnap=>{
 
 const r=docSnap.data()
 
+if(r.merchantId === uid){
+
 box.innerHTML+=`
-
 <div class="review">
-
-<div class="stars">
-⭐ ${r.rating}/5
-</div>
-
+<div class="stars">⭐ ${r.rating}/5</div>
 <div>${r.comment}</div>
-
 </div>
-
 `
+}
 
 })
 
 }
 
 
-
-/* AUTH */
-
+/* MAIN LOGIC */
 onAuthStateChanged(auth,(user)=>{
-
-if(!user){
-
-location.href="index.html"
-
-return
-
-}
 
 currentUser=user
 
-loadProducts(user.uid)
+/* CAS 1: CLIENT (id dans URL) */
+if(shopId){
 
+loadProducts(shopId, false)
+loadReviews(shopId)
+
+document.getElementById("publishBtn").style.display="none"
+
+/* CAS 2: VENDEUR */
+}else{
+
+if(!user){
+location.href="index.html"
+return
+}
+
+loadProducts(user.uid, true)
 loadReviews(user.uid)
+
+document.getElementById("publishBtn").onclick = function(){
+location.href="add-product.html"
+}
+
+}
 
 })
 
