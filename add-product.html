@@ -89,6 +89,12 @@ border:none;
 font-size:18px;
 border-radius:10px;
 cursor:pointer;
+transition:0.3s;
+}
+
+button:disabled{
+background:#ccc;
+cursor:not-allowed;
 }
 
 /* PREVIEW */
@@ -122,7 +128,7 @@ overflow:hidden;
 height:10px;
 width:0%;
 background:#1aa34a;
-transition:0.3s;
+transition:width 0.4s ease;
 }
 
 </style>
@@ -160,6 +166,7 @@ Publicar novo produto
 <option value="eletronica">Eletrónica</option>
 <option value="casa">Casa</option>
 <option value="auto">Auto</option>
+<option value="restaurant">🍽️ Restaurante</option>
 </select>
 
 <label>Descrição</label>
@@ -187,7 +194,7 @@ Publicar novo produto
 
 </div>
 
-<button onclick="publishProduct()">
+<button id="publishBtn" onclick="publishProduct()">
 Publicar produto
 </button>
 
@@ -211,6 +218,7 @@ addDoc
 
 let imageFiles=[]
 let videoFile=null
+let isPublishing=false // 🔥 bloque double clic
 
 
 /* IMAGE PREVIEW */
@@ -296,6 +304,14 @@ bar.style.width=percent+"%"
 
 window.publishProduct=async function(){
 
+if(isPublishing) return // 🔥 bloque double clic
+
+const btn=document.getElementById("publishBtn")
+btn.disabled=true
+btn.innerText="Publicando..."
+
+isPublishing=true
+
 const name=document.getElementById("name").value
 const price=document.getElementById("price").value
 const category=document.getElementById("category").value
@@ -303,6 +319,9 @@ const description=document.getElementById("description").value
 
 if(!name || !price){
 alert("Preencha nome e preço")
+btn.disabled=false
+btn.innerText="Publicar produto"
+isPublishing=false
 return
 }
 
@@ -341,7 +360,7 @@ updateProgress(percent)
 let videoUrl=""
 
 if(videoFile){
-updateProgress(75)
+updateProgress(80)
 videoUrl=await uploadFile(videoFile)
 }
 
@@ -369,10 +388,12 @@ popular:false
 
 updateProgress(100)
 
-alert("Produto publicado com sucesso ✔")
+btn.innerText="Publicado ✔"
 
-/* REDIRECTION */
+setTimeout(()=>{
+alert("Produto publicado com sucesso ✔")
 location.href="merchant-shop.html"
+},800)
 
 }
 
