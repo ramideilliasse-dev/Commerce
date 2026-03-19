@@ -139,7 +139,7 @@ transition:width 0.4s ease;
 
 <div class="header">
 
-<button class="backBtn" onclick="location.href='merchant-shop.html'">
+<button class="backBtn" onclick="goBack()">
 ← Voltar
 </button>
 
@@ -218,7 +218,21 @@ addDoc
 
 let imageFiles=[]
 let videoFile=null
-let isPublishing=false // 🔥 bloque double clic
+let isPublishing=false
+
+
+/* BACK BUTTON SMART */
+window.goBack=function(){
+
+const shopId = localStorage.getItem("shopId")
+
+if(shopId){
+location.href="merchant-shop.html?id="+shopId
+}else{
+location.href="merchant-shop.html"
+}
+
+}
 
 
 /* IMAGE PREVIEW */
@@ -228,13 +242,11 @@ document.getElementById("images").addEventListener("change",function(){
 imageFiles=[...this.files]
 
 const preview=document.getElementById("imagePreview")
-
 preview.innerHTML=""
 
 imageFiles.forEach(file=>{
 
 const url=URL.createObjectURL(file)
-
 preview.innerHTML+=`<img src="${url}">`
 
 })
@@ -249,13 +261,11 @@ document.getElementById("video").addEventListener("change",function(){
 videoFile=this.files[0]
 
 const preview=document.getElementById("videoPreview")
-
 preview.innerHTML=""
 
 if(videoFile){
 
 const url=URL.createObjectURL(videoFile)
-
 preview.innerHTML=`<video src="${url}" controls></video>`
 
 }
@@ -304,7 +314,7 @@ bar.style.width=percent+"%"
 
 window.publishProduct=async function(){
 
-if(isPublishing) return // 🔥 bloque double clic
+if(isPublishing) return
 
 const btn=document.getElementById("publishBtn")
 btn.disabled=true
@@ -337,19 +347,15 @@ updateProgress(10)
 /* UPLOAD IMAGES */
 
 let imageUrls=[]
-
 let count=0
 
 for(const file of imageFiles){
 
 const url=await uploadFile(file)
-
 imageUrls.push(url)
 
 count++
-
 let percent=10 + (count/imageFiles.length)*60
-
 updateProgress(percent)
 
 }
@@ -400,5 +406,4 @@ location.href="merchant-shop.html"
 </script>
 
 </body>
-
 </html>
