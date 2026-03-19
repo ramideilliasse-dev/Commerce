@@ -9,11 +9,7 @@
 
 <style>
 
-body{
-font-family:Arial;
-margin:0;
-background:#f4f4f4;
-}
+body{font-family:Arial;margin:0;background:#f4f4f4;}
 
 .header{
 background:#1aa34a;
@@ -82,9 +78,7 @@ font-size:18px;
 
 <body>
 
-<div class="header">
-Finalizar Pedido
-</div>
+<div class="header">Finalizar Pedido</div>
 
 <div class="container">
 
@@ -99,7 +93,6 @@ Total: <span id="totalPrice">0</span>
 
 <div class="card">
 <h3>Dados do cliente</h3>
-
 <input id="clientName" placeholder="Seu nome">
 <input id="clientPhone" placeholder="Telefone">
 <input id="clientAddress" placeholder="Endereço de entrega">
@@ -133,9 +126,7 @@ Entrega: <b><span id="deliveryPrice">0</span> Kz</b>
 
 </div>
 
-<button onclick="placeOrder()">
-Confirmar Pedido
-</button>
+<button id="confirmBtn">Confirmar Pedido</button>
 
 </div>
 
@@ -152,11 +143,9 @@ doc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
 
-/* ✅ CORRECTION ICI */
-let cart = JSON.parse(localStorage.getItem("cart") || "[]")
+let cart = JSON.parse(localStorage.getItem("cart") || [])
 
-
-/* LOAD CART */
+/* LOAD */
 function loadCheckout(){
 
 if(cart.length === 0){
@@ -169,7 +158,6 @@ let html=""
 let subtotal=0
 
 cart.forEach(item=>{
-
 subtotal += item.price * item.qty
 
 html += `
@@ -177,52 +165,37 @@ html += `
 ${item.name} x${item.qty} - ${item.price * item.qty} Kz
 </div>
 `
-
 })
 
 document.getElementById("cartItems").innerHTML = html
-
 calculateTotal()
 
 }
 
 loadCheckout()
 
-
 /* TOTAL */
 window.calculateTotal=function(){
 
 let subtotal=0
-
-cart.forEach(item=>{
-subtotal += item.price * item.qty
-})
+cart.forEach(item=> subtotal += item.price * item.qty)
 
 const delivery = parseInt(document.getElementById("deliveryZone").value)
 
 document.getElementById("deliveryPrice").innerText = delivery
-
-const total = subtotal + delivery
-
-document.getElementById("totalPrice").innerText = total + " Kz"
+document.getElementById("totalPrice").innerText = (subtotal+delivery)+" Kz"
 
 }
 
-
-/* PAYMENT INFO */
+/* PAYMENT */
 window.showPaymentInfo=async function(){
 
 if(cart.length === 0) return
 
-const firstProduct = cart[0]
-
-if(!firstProduct.merchantId) return
-
-const ref=doc(db,"merchants",firstProduct.merchantId)
+const ref=doc(db,"merchants",cart[0].merchantId)
 const snap=await getDoc(ref)
 
 let merchant=snap.data()
-
 let method=document.getElementById("paymentMethod").value
 
 let html=""
@@ -241,27 +214,29 @@ document.getElementById("paymentInfo").innerHTML=html
 
 showPaymentInfo()
 
+/* ✅ FIX CLICK BUTTON */
+document.getElementById("confirmBtn").addEventListener("click", placeOrder)
 
-/* PLACE ORDER */
-window.placeOrder=async function(){
+/* ORDER */
+async function placeOrder(){
+
+try{
 
 const name=document.getElementById("clientName").value
 const phone=document.getElementById("clientPhone").value
 const address=document.getElementById("clientAddress").value
 const payment=document.getElementById("paymentMethod").value
-
-const delivery = parseInt(document.getElementById("deliveryZone").value)
+const delivery=parseInt(document.getElementById("deliveryZone").value)
 
 if(!name || !phone || !address){
 alert("Preencha todos os campos")
 return
 }
 
-/* 🔥 ENVOYER CHAQUE PRODUIT */
 for(const item of cart){
 
 if(!item.merchantId){
-alert("Erro: produto sem vendedor")
+alert("Produto sem vendedor ❌")
 return
 }
 
@@ -290,17 +265,23 @@ date:Date.now()
 
 }
 
-/* RESET */
+/* SUCCESS */
 localStorage.removeItem("cart")
 
 alert("Pedido enviado com sucesso 🚀")
 
 location.href="index.html"
 
+}catch(e){
+
+console.error(e)
+alert("Erro ao enviar pedido ❌")
+
+}
+
 }
 
 </script>
 
 </body>
-
 </html>
