@@ -15,7 +15,6 @@ margin:0;
 background:#f4f4f4;
 }
 
-/* HEADER */
 .header{
 background:#1aa34a;
 color:white;
@@ -25,14 +24,12 @@ font-size:20px;
 font-weight:bold;
 }
 
-/* CONTAINER */
 .container{
 max-width:600px;
 margin:auto;
 padding:15px;
 }
 
-/* CARD */
 .card{
 background:white;
 padding:15px;
@@ -54,7 +51,6 @@ border-radius:8px;
 border:1px solid #ddd;
 }
 
-/* BUTTON */
 button{
 width:100%;
 padding:15px;
@@ -66,7 +62,6 @@ font-size:18px;
 cursor:pointer;
 }
 
-/* INFO */
 .info{
 background:#eef7ee;
 padding:10px;
@@ -75,7 +70,6 @@ margin-top:10px;
 font-size:14px;
 }
 
-/* TOTAL */
 .total{
 font-weight:bold;
 margin-top:10px;
@@ -94,7 +88,6 @@ Finalizar Pedido
 
 <div class="container">
 
-<!-- CART -->
 <div class="card">
 <h3>Seus produtos</h3>
 <div id="cartItems"></div>
@@ -104,20 +97,15 @@ Total: <span id="totalPrice">0</span>
 </div>
 </div>
 
-<!-- CLIENT -->
 <div class="card">
-
 <h3>Dados do cliente</h3>
 
 <input id="clientName" placeholder="Seu nome">
 <input id="clientPhone" placeholder="Telefone">
 <input id="clientAddress" placeholder="Endereço de entrega">
-
 </div>
 
-<!-- DELIVERY -->
 <div class="card">
-
 <h3>Entrega</h3>
 
 <select id="deliveryZone" onchange="calculateTotal()">
@@ -133,9 +121,7 @@ Entrega: <b><span id="deliveryPrice">0</span> Kz</b>
 
 </div>
 
-<!-- PAYMENT -->
 <div class="card">
-
 <h3>Forma de pagamento</h3>
 
 <select id="paymentMethod" onchange="showPaymentInfo()">
@@ -166,10 +152,18 @@ doc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
 
-let cart = JSON.parse(localStorage.getItem("checkoutCart") || "[]")
+/* ✅ CORRECTION ICI */
+let cart = JSON.parse(localStorage.getItem("cart") || "[]")
+
 
 /* LOAD CART */
 function loadCheckout(){
+
+if(cart.length === 0){
+alert("Carrinho vazio")
+location.href="index.html"
+return
+}
 
 let html=""
 let subtotal=0
@@ -195,7 +189,7 @@ calculateTotal()
 loadCheckout()
 
 
-/* TOTAL + DELIVERY */
+/* TOTAL */
 window.calculateTotal=function(){
 
 let subtotal=0
@@ -218,9 +212,11 @@ document.getElementById("totalPrice").innerText = total + " Kz"
 /* PAYMENT INFO */
 window.showPaymentInfo=async function(){
 
-if(cart.length===0) return
+if(cart.length === 0) return
 
 const firstProduct = cart[0]
+
+if(!firstProduct.merchantId) return
 
 const ref=doc(db,"merchants",firstProduct.merchantId)
 const snap=await getDoc(ref)
@@ -261,8 +257,13 @@ alert("Preencha todos os campos")
 return
 }
 
-/* ENVOYER CHAQUE PRODUIT */
+/* 🔥 ENVOYER CHAQUE PRODUIT */
 for(const item of cart){
+
+if(!item.merchantId){
+alert("Erro: produto sem vendedor")
+return
+}
 
 await addDoc(collection(db,"orders"),{
 
@@ -291,7 +292,6 @@ date:Date.now()
 
 /* RESET */
 localStorage.removeItem("cart")
-localStorage.removeItem("checkoutCart")
 
 alert("Pedido enviado com sucesso 🚀")
 
