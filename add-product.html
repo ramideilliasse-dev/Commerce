@@ -382,7 +382,10 @@ category,
 description,
 images:imageUrls,
 video:videoUrl,
+
 merchantId:user.uid,
+merchantEmail:user.email, // 🔥 IMPORTANT
+
 created:Date.now(),
 
 sales:0,
@@ -391,7 +394,6 @@ reviews:0,
 popular:false
 
 })
-
 updateProgress(100)
 
 btn.innerText="Publicado ✔"
