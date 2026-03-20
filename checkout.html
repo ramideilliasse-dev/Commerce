@@ -1,14 +1,12 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt">
 
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Checkout</title>
 
 <style>
-
 body{font-family:Arial;margin:0;background:#f4f4f4;}
 
 .header{
@@ -58,20 +56,11 @@ font-size:18px;
 cursor:pointer;
 }
 
-.info{
-background:#eef7ee;
-padding:10px;
-border-radius:8px;
-margin-top:10px;
-font-size:14px;
-}
-
 .total{
 font-weight:bold;
 margin-top:10px;
 font-size:18px;
 }
-
 </style>
 
 </head>
@@ -85,159 +74,82 @@ font-size:18px;
 <div class="card">
 <h3>Seus produtos</h3>
 <div id="cartItems"></div>
-
-<div class="total">
-Total: <span id="totalPrice">0</span>
-</div>
+<div class="total">Total: <span id="totalPrice">0</span></div>
 </div>
 
 <div class="card">
 <h3>Dados do cliente</h3>
 <input id="clientName" placeholder="Seu nome">
 <input id="clientPhone" placeholder="Telefone">
-<input id="clientAddress" placeholder="Endereço de entrega">
-</div>
-
-<div class="card">
-<h3>Entrega</h3>
-
-<select id="deliveryZone" onchange="calculateTotal()">
-<option value="0">Retirada (Grátis)</option>
-<option value="1000">Luanda Centro (1000 Kz)</option>
-<option value="1500">Talatona / Kilamba (1500 Kz)</option>
-<option value="2000">Fora de Luanda (2000 Kz)</option>
-</select>
-
-<div class="info">
-Entrega: <b><span id="deliveryPrice">0</span> Kz</b>
-</div>
-
-</div>
-
-<div class="card">
-<h3>Forma de pagamento</h3>
-
-<select id="paymentMethod" onchange="showPaymentInfo()">
-<option value="mobile">Mobile Money</option>
-<option value="bank">Transferência bancária</option>
-</select>
-
-<div id="paymentInfo" class="info"></div>
-
+<input id="clientAddress" placeholder="Endereço">
 </div>
 
 <button id="confirmBtn">Confirmar Pedido</button>
 
 </div>
 
+<!-- 🔥 SCRIPT SIMPLE + FIREBASE -->
+<script>
 
-<script type="module">
-
-import { db } from "./firebase.js"
-
-import {
-collection,
-addDoc,
-getDoc,
-doc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-
-
-/* ✅ CORRECTION IMPORTANTE */
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
 
-console.log("Cart chargé:", cart)
+console.log("Cart:", cart)
 
-/* LOAD */
-function loadCheckout(){
+/* LOAD CART */
+function loadCart(){
 
 if(cart.length === 0){
 alert("Carrinho vazio")
-location.href="index.html"
 return
 }
 
 let html=""
-let subtotal=0
+let total=0
 
 cart.forEach(item=>{
-subtotal += item.price * item.qty
+total += item.price * item.qty
 
 html += `
 <div class="item">
-${item.name} x${item.qty} - ${item.price * item.qty} Kz
+${item.name} x${item.qty} = ${item.price * item.qty} Kz
 </div>
 `
 })
 
 document.getElementById("cartItems").innerHTML = html
-calculateTotal()
+document.getElementById("totalPrice").innerText = total + " Kz"
 
 }
 
-loadCheckout()
+loadCart()
 
-/* TOTAL */
-window.calculateTotal=function(){
+/* CLICK BUTTON */
+document.getElementById("confirmBtn").addEventListener("click", function(){
 
-let subtotal=0
-cart.forEach(item=> subtotal += item.price * item.qty)
+alert("Clique OK ✅")
 
-const delivery = parseInt(document.getElementById("deliveryZone").value)
+placeOrder()
 
-document.getElementById("deliveryPrice").innerText = delivery
-document.getElementById("totalPrice").innerText = (subtotal+delivery)+" Kz"
+})
 
-}
-
-/* PAYMENT */
-window.showPaymentInfo=async function(){
-
-if(cart.length === 0) return
-
-const ref=doc(db,"merchants",cart[0].merchantId)
-const snap=await getDoc(ref)
-
-let merchant=snap.data()
-let method=document.getElementById("paymentMethod").value
-
-let html=""
-
-if(method==="mobile"){
-html=`📱 Envie para: <b>${merchant?.phone || "Sem número"}</b>`
-}
-
-if(method==="bank"){
-html=`🏦 Banco: ${merchant?.bank || "N/A"}<br>Conta: ${merchant?.account || "N/A"}`
-}
-
-document.getElementById("paymentInfo").innerHTML=html
-
-}
-
-showPaymentInfo()
-
-/* ✅ FIX BUTTON */
-document.getElementById("confirmBtn").addEventListener("click", placeOrder)
-
-/* ORDER */
+/* FIREBASE IMPORT DYNAMIQUE */
 async function placeOrder(){
 
-alert("Clique detectado ✅") // 🔥 test
-
 try{
+
+const { db } = await import("./firebase.js")
+const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js")
 
 const name=document.getElementById("clientName").value
 const phone=document.getElementById("clientPhone").value
 const address=document.getElementById("clientAddress").value
-const payment=document.getElementById("paymentMethod").value
-const delivery=parseInt(document.getElementById("deliveryZone").value)
 
 if(!name || !phone || !address){
 alert("Preencha todos os campos")
 return
 }
 
+/* ENVOI COMMANDES */
 for(const item of cart){
 
 if(!item.merchantId){
@@ -256,14 +168,9 @@ clientName:name,
 clientPhone:phone,
 clientAddress:address,
 
-paymentMethod:payment,
-deliveryPrice:delivery,
-
 merchantId:item.merchantId,
 
 status:"pendente",
-seen:false,
-
 date:Date.now()
 
 })
@@ -280,7 +187,7 @@ location.href="index.html"
 }catch(e){
 
 console.error(e)
-alert("Erro ao enviar pedido ❌")
+alert("Erro Firebase ❌")
 
 }
 
