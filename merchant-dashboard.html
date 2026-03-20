@@ -1,0 +1,269 @@
+ <!DOCTYPE html>
+<html lang="pt">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Painel do Vendedor</title>
+
+<style>
+
+body{
+font-family:Arial;
+margin:0;
+background:#f4f4f4;
+}
+
+/* HEADER */
+.header{
+background:black;
+color:white;
+padding:15px;
+text-align:center;
+font-size:20px;
+font-weight:bold;
+}
+
+/* CONTAINER */
+.container{
+padding:15px;
+max-width:800px;
+margin:auto;
+}
+
+/* CARD */
+.card{
+background:white;
+padding:20px;
+border-radius:12px;
+margin-bottom:15px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* SHOP NAME */
+.shopName{
+font-size:22px;
+font-weight:bold;
+margin-bottom:5px;
+}
+
+/* STATS */
+.stats{
+display:flex;
+justify-content:space-between;
+margin-top:10px;
+}
+
+.stat{
+text-align:center;
+flex:1;
+}
+
+.stat h2{
+margin:5px 0;
+color:#ff6a00;
+}
+
+/* BUTTONS */
+.menu{
+display:flex;
+flex-direction:column;
+gap:10px;
+margin-top:15px;
+}
+
+.menu button{
+padding:15px;
+border:none;
+border-radius:10px;
+font-size:16px;
+cursor:pointer;
+font-weight:bold;
+}
+
+/* COLORS */
+.productsBtn{background:#1aa34a;color:white;}
+.addBtn{background:#ff6a00;color:white;}
+.ordersBtn{background:#007bff;color:white;}
+.logoutBtn{background:red;color:white;}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+Painel do Vendedor
+</div>
+
+<div class="container">
+
+<!-- INFOS -->
+<div class="card">
+
+<div class="shopName" id="shopName">
+Minha Loja
+</div>
+
+<div id="shopEmail"></div>
+
+<div class="stats">
+
+<div class="stat">
+<div>Produtos</div>
+<h2 id="totalProducts">0</h2>
+</div>
+
+<div class="stat">
+<div>Pedidos</div>
+<h2 id="totalOrders">0</h2>
+</div>
+
+<div class="stat">
+<div>Vendas</div>
+<h2 id="totalSales">0</h2>
+</div>
+
+</div>
+
+</div>
+
+<!-- MENU -->
+<div class="card">
+
+<div class="menu">
+
+<button class="productsBtn" onclick="location.href='merchant-shop.html'">
+📦 Ver meus produtos
+</button>
+
+<button class="addBtn" onclick="location.href='add-product.html'">
+➕ Adicionar produto
+</button>
+
+<button class="ordersBtn" onclick="location.href='merchant-orders.html'">
+📥 Ver pedidos
+</button>
+
+<button class="logoutBtn" onclick="logout()">
+🚪 Sair
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { db, auth } from "./firebase.js"
+
+import {
+doc,
+getDoc,
+collection,
+getDocs,
+query,
+where
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
+import {
+onAuthStateChanged,
+signOut
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
+
+
+let currentUser = null
+
+
+/* AUTH */
+onAuthStateChanged(auth, async (user)=>{
+
+if(!user){
+location.href="index.html"
+return
+}
+
+currentUser = user
+
+loadMerchantData()
+loadStats()
+
+})
+
+
+/* LOAD MERCHANT INFO */
+async function loadMerchantData(){
+
+const ref = doc(db,"merchants",currentUser.uid)
+const snap = await getDoc(ref)
+
+if(snap.exists()){
+
+const data = snap.data()
+
+document.getElementById("shopName").innerText = data.shopName || "Minha Loja"
+document.getElementById("shopEmail").innerText = data.email || ""
+
+}
+
+}
+
+
+/* LOAD STATS */
+async function loadStats(){
+
+/* PRODUCTS */
+const q1 = query(
+collection(db,"products"),
+where("merchantId","==",currentUser.uid)
+)
+
+const snap1 = await getDocs(q1)
+
+document.getElementById("totalProducts").innerText = snap1.size
+
+
+/* ORDERS */
+const q2 = query(
+collection(db,"orders"),
+where("merchantId","==",currentUser.uid)
+)
+
+const snap2 = await getDocs(q2)
+
+document.getElementById("totalOrders").innerText = snap2.size
+
+
+/* SALES */
+let total = 0
+
+snap2.forEach(doc=>{
+const o = doc.data()
+total += (o.price || 0) * (o.qty || 1)
+})
+
+document.getElementById("totalSales").innerText = total + " Kz"
+
+}
+
+
+/* LOGOUT */
+window.logout = async function(){
+
+await signOut(auth)
+
+alert("Saiu com sucesso")
+
+location.href="index.html"
+
+}
+
+</script>
+
+</body>
+
+</html>
