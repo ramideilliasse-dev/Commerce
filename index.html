@@ -1,11 +1,8 @@
  <!DOCTYPE html>
 <html lang="pt">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Shopping Online Angola</title>
 
 <style>
@@ -16,26 +13,28 @@ margin:0;
 background:#f4f4f4;
 }
 
-/* HEADER */
-
+/* 🔥 HEADER FIXE */
 .header{
+position:fixed;
+top:0;
+left:0;
+right:0;
 background:white;
-padding:20px;
+padding:15px;
 display:flex;
 justify-content:space-between;
 align-items:center;
 border-bottom:1px solid #eee;
+z-index:1000;
 }
 
 .logo{
-font-size:28px;
+font-size:22px;
 font-weight:bold;
-color:#111;
 }
 
 .headerRight{
 display:flex;
-align-items:center;
 gap:10px;
 }
 
@@ -43,8 +42,6 @@ gap:10px;
 width:35px;
 height:35px;
 border-radius:50%;
-object-fit:cover;
-background:#ddd;
 cursor:pointer;
 }
 
@@ -52,33 +49,50 @@ cursor:pointer;
 background:black;
 color:white;
 border:none;
-padding:8px 16px;
+padding:6px 12px;
 border-radius:20px;
-cursor:pointer;
-font-weight:bold;
 }
 
-/* SEARCH */
-
+/* 🔥 SEARCH FIXE */
 .searchBox{
-padding:12px;
+position:fixed;
+top:65px;
+left:0;
+right:0;
 background:white;
+padding:10px;
+z-index:999;
 }
 
 .searchBox input{
 width:100%;
-padding:14px;
-border-radius:30px;
+padding:12px;
+border-radius:20px;
 border:1px solid #ddd;
-font-size:16px;
+}
+
+/* 🔥 MESSAGE ANIMÉ */
+.banner{
+margin-top:120px;
+background:#ff6a00;
+color:white;
+padding:10px;
+text-align:center;
+font-weight:bold;
+animation:slide 2s infinite alternate;
+}
+
+@keyframes slide{
+from{opacity:0.5;transform:translateY(0);}
+to{opacity:1;transform:translateY(-3px);}
 }
 
 /* PRODUCTS */
-
 .products{
 column-count:2;
 column-gap:12px;
 padding:12px;
+padding-bottom:80px;
 }
 
 .product{
@@ -87,40 +101,21 @@ border-radius:12px;
 margin-bottom:12px;
 break-inside:avoid;
 box-shadow:0 4px 10px rgba(0,0,0,0.08);
-cursor:pointer;
 overflow:hidden;
 position:relative;
 }
 
 .product img{
 width:100%;
-display:block;
 }
 
 .info{
 padding:10px;
 }
 
-.name{
-font-size:15px;
-font-weight:bold;
-color:#111;
-margin-bottom:4px;
-}
-
-.price{
-color:#ff6a00;
-font-weight:bold;
-font-size:16px;
-}
-
-.desc{
-font-size:13px;
-color:#555;
-margin-top:4px;
-}
-
-/* BADGE */
+.name{font-weight:bold;}
+.price{color:#ff6a00;font-weight:bold;}
+.desc{font-size:13px;color:#555;}
 
 .badge{
 position:absolute;
@@ -133,8 +128,7 @@ border-radius:6px;
 font-size:12px;
 }
 
-/* CART BUTTON */
-
+/* 🔥 CART BUTTON */
 .cartBtn{
 position:absolute;
 right:10px;
@@ -147,12 +141,10 @@ border-radius:50%;
 display:flex;
 align-items:center;
 justify-content:center;
-font-size:18px;
 cursor:pointer;
 }
 
-/* NAVBAR */
-
+/* 🔥 NAV FIXE */
 .nav{
 position:fixed;
 bottom:0;
@@ -163,6 +155,7 @@ display:flex;
 justify-content:space-around;
 padding:10px;
 border-top:1px solid #ddd;
+z-index:1000;
 }
 
 .nav div{
@@ -172,44 +165,36 @@ cursor:pointer;
 }
 
 </style>
-
 </head>
 
 <body>
 
 <div class="header">
-
-<div class="logo">
-Shopping Online Angola 🇦🇴
-</div>
+<div class="logo">Shopping Online 🇦🇴</div>
 
 <div class="headerRight">
-
-<img id="profilePic" class="profile" src="">
-
+<img id="profilePic" class="profile">
 <input type="file" id="profileUpload" hidden>
-
-<button id="accountButton" class="accountBtn">
-Criar conta
-</button>
-
+<button id="accountButton" class="accountBtn">Criar conta</button>
 </div>
-
 </div>
 
 <div class="searchBox">
 <input id="search" placeholder="Procurar produto...">
 </div>
 
+<!-- 🔥 MESSAGE PRO -->
+<div class="banner">
+🔥 Promoções incríveis hoje • Entrega rápida em Angola 🚀
+</div>
+
 <div id="productList" class="products"></div>
 
 <div class="nav">
-
 <div onclick="location.href='index.html'">🏠<br>Inicio</div>
 <div onclick="location.href='categories.html'">📦<br>Categorias</div>
 <div onclick="location.href='messages.html'">💬<br>Mensagens</div>
 <div onclick="location.href='cart.html'">🛒<br>Carrinho</div>
-
 </div>
 
 <script type="module">
@@ -227,15 +212,14 @@ const upload=document.getElementById("profileUpload")
 profilePic.onclick=()=>upload.click()
 
 upload.onchange=function(){
-const file=this.files[0]
-const url=URL.createObjectURL(file)
+const url=URL.createObjectURL(this.files[0])
 profilePic.src=url
 localStorage.setItem("profilePic",url)
 }
 
 profilePic.src=localStorage.getItem("profilePic") || "https://via.placeholder.com/35"
 
-/* ACCOUNT BUTTON */
+/* ACCOUNT */
 const accountButton=document.getElementById("accountButton")
 
 onAuthStateChanged(auth,(user)=>{
@@ -248,69 +232,60 @@ accountButton.onclick=()=>location.href="merchant-register.html"
 }
 })
 
-/* PRODUCT CARD FIXED */
+/* PRODUCT CARD PRO */
 function productHTML(p){
 
-const img = (p.images && p.images.length) ? p.images[0] : "https://via.placeholder.com/300"
-const desc = p.description ? p.description.slice(0,50) : ""
+const img = p.images?.[0] || "https://via.placeholder.com/300"
+const desc = p.description?.slice(0,50) || ""
 
-let badge = p.sales > 5 ? `<div class="badge">🔥 Popular</div>` : ""
-
-/* 🍽️ RESTAURANT STYLE */
 if(p.category==="restaurant"){
 return `
-
-<div class="product" onclick="openProduct('${p.id}')">
+<div class="product">
 
 <div class="badge">🍽️ Restaurante</div>
 
+<div onclick="openProduct('${p.id}')">
 <img src="${img}">
+</div>
 
 <div class="info">
-
-<div class="name">🍽️ ${p.name}</div>
+<div class="name">${p.name}</div>
 <div class="price">${p.price} Kz</div>
 <div class="desc">${desc}</div>
 
-</div>
+<!-- 🔥 UX PRO -->
+<button onclick="openProduct('${p.id}')">Ver prato</button>
+<button onclick="addToCart('${p.id}')" style="background:#1aa34a;color:white;border:none;padding:8px;border-radius:8px;width:100%;margin-top:5px;">
+Adicionar 🛒
+</button>
 
 </div>
-
+</div>
 `
 }
 
-/* NORMAL PRODUCT */
+/* NORMAL */
 return `
-
 <div class="product" onclick="openProduct('${p.id}')">
-
-${badge}
 
 <div onclick="event.stopPropagation();addToCart('${p.id}')" class="cartBtn">🛒</div>
 
 <img src="${img}">
 
 <div class="info">
-
 <div class="name">${p.name}</div>
 <div class="price">${p.price} Kz</div>
 <div class="desc">${desc}</div>
-
 </div>
 
 </div>
-
 `
-
 }
 
 /* LOAD */
 async function loadProducts(){
-
 const snap=await getDocs(collection(db,"products"))
-
 const container=document.getElementById("productList")
-
 container.innerHTML=""
 products=[]
 
@@ -320,7 +295,6 @@ data.id=docSnap.id
 products.push(data)
 container.innerHTML+=productHTML(data)
 })
-
 }
 
 /* OPEN */
@@ -330,49 +304,44 @@ location.href="product.html"
 }
 
 /* CART */
- window.addToCart=function(id){
+window.addToCart=function(id){
 
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
-
 const product = products.find(p => p.id === id)
 
 if(!product){
-alert("Produto não encontrado ❌")
+alert("Erro produto ❌")
 return
 }
 
-/* 🔥 IMPORTANT */
 const exist = cart.find(p => p.id === id)
 
 if(exist){
-exist.qty += 1
+exist.qty++
 }else{
-
 cart.push({
-id: product.id,
-name: product.name,
-price: product.price,
-image: product.images?.[0] || "",
-qty: 1,
-merchantId: product.merchantId || "unknown" // 🔥 sécurité
+id:product.id,
+name:product.name,
+price:product.price,
+image:product.images?.[0] || "",
+qty:1,
+merchantId:product.merchantId || "unknown"
 })
-
 }
 
 localStorage.setItem("cart", JSON.stringify(cart))
-
-alert("Adicionado ao carrinho 🛒")
-
+alert("Adicionado 🛒")
 }
+
 /* SEARCH */
 document.getElementById("search").addEventListener("input",function(){
 
-const value=this.value.toLowerCase()
+const v=this.value.toLowerCase()
 const container=document.getElementById("productList")
 container.innerHTML=""
 
 products.forEach(p=>{
-if(p.name.toLowerCase().includes(value)){
+if(p.name.toLowerCase().includes(v)){
 container.innerHTML+=productHTML(p)
 }
 })
@@ -384,5 +353,4 @@ loadProducts()
 </script>
 
 </body>
-
 </html>
