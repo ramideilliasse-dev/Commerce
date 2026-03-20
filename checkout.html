@@ -137,9 +137,6 @@ async function placeOrder(){
 
 try{
 
-const { db } = await import("./firebase.js")
-const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js")
-
 const name=document.getElementById("clientName").value
 const phone=document.getElementById("clientPhone").value
 const address=document.getElementById("clientAddress").value
@@ -149,50 +146,59 @@ alert("Preencha todos os campos")
 return
 }
 
-/* ENVOI COMMANDES */
-for(const item of cart){
+/* 🔥 GROUPE PAR VENDEUR */
+let vendors = {}
 
-if(!item.merchantId){
-alert("Produto sem vendedor ❌")
-return
+cart.forEach(item=>{
+if(!vendors[item.merchantId]){
+vendors[item.merchantId] = []
 }
-
-await addDoc(collection(db,"orders"),{
-
-productId:item.id,
-productName:item.name,
-price:item.price,
-qty:item.qty,
-
-clientName:name,
-clientPhone:phone,
-clientAddress:address,
-
-merchantId:item.merchantId,
-
-status:"pendente",
-date:Date.now()
-
+vendors[item.merchantId].push(item)
 })
 
+/* 🔥 POUR CHAQUE VENDEUR */
+for(const merchantId in vendors){
+
+const ref=doc(db,"merchants",merchantId)
+const snap=await getDoc(ref)
+
+if(!snap.exists()){
+alert("Vendedor não encontrado ❌")
+continue
 }
 
-/* SUCCESS */
+const merchant = snap.data()
+const items = vendors[merchantId]
+
+/* MESSAGE */
+let message = `🛒 NOVO PEDIDO\n\n`
+
+items.forEach(i=>{
+message += `• ${i.name} x${i.qty} - ${i.price*i.qty} Kz\n`
+})
+
+message += `\n👤 Cliente: ${name}`
+message += `\n📞 Tel: ${phone}`
+message += `\n📍 Endereço: ${address}`
+
+const url = `https://wa.me/${merchant.phone}?text=${encodeURIComponent(message)}`
+
+/* 🔥 OUVRIR WHATSAPP */
+window.open(url, "_blank")
+
+}
+
+/* RESET */
 localStorage.removeItem("cart")
 
-alert("Pedido enviado com sucesso 🚀")
-
-location.href="index.html"
+alert("Redirecionando para WhatsApp 🚀")
 
 }catch(e){
-
 console.error(e)
-alert("Erro Firebase ❌")
-
+alert("Erro ❌")
 }
 
 }
-
 </script>
 
 </body>
