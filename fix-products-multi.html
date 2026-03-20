@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Fix Multi Vendeur</title>
+</head>
+
+<body>
+
+<h2>Correction multi vendeur...</h2>
+
+<script type="module">
+
+import { db } from "./firebase.js"
+
+import {
+collection,
+getDocs,
+updateDoc,
+doc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
+
+async function fixProducts(){
+
+const productsSnap = await getDocs(collection(db,"products"))
+const merchantsSnap = await getDocs(collection(db,"merchants"))
+
+let merchants = []
+
+// 🔥 charger tous les vendeurs
+merchantsSnap.forEach(d=>{
+merchants.push({
+id: d.id,
+...d.data()
+})
+})
+
+let count = 0
+
+for(const p of productsSnap.docs){
+
+const data = p.data()
+
+// 🔥 ignorer déjà corrigés
+if(data.merchantId) continue
+
+// 🔥 chercher vendeur par email
+const merchant = merchants.find(m => m.email === data.merchantEmail)
+
+if(merchant){
+
+await updateDoc(doc(db,"products",p.id),{
+merchantId: merchant.id
+})
+
+count++
+
+console.log("Corrigé:", p.id)
+
+}else{
+
+console.log("Aucun vendeur trouvé pour:", p.id)
+
+}
+
+}
+
+alert("Produits corrigés: " + count)
+
+}
+
+fixProducts()
+
+</script>
+
+</body>
+</html>
