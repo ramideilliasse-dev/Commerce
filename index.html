@@ -332,31 +332,32 @@ location.href="product.html"
 /* CART */
 window.addToCart=function(id){
 
-const product = products.find(p => p.id === id)
-
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
 
-let existing = cart.find(item => item.id === id)
+const product = products.find(p => p.id === id)
 
-if(existing){
-existing.qty += 1
+const exist = cart.find(p => p.id === id)
+
+if(exist){
+exist.qty += 1
 }else{
+
 cart.push({
-id: id,
+id: product.id,
 name: product.name,
 price: product.price,
 image: product.images ? product.images[0] : "",
 qty: 1,
-category: product.category
+merchantId: product.merchantId   // 🔥 IMPORTANT
 })
+
 }
 
 localStorage.setItem("cart", JSON.stringify(cart))
 
-alert("Produto adicionado 🛒")
+alert("Adicionado ao carrinho 🛒")
 
 }
-
 /* SEARCH */
 document.getElementById("search").addEventListener("input",function(){
 
