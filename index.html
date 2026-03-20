@@ -341,12 +341,7 @@ alert("Produto não encontrado ❌")
 return
 }
 
-if(!product.merchantId){
-alert("ERRO: produto sem merchantId ❌")
-console.log(product)
-return
-}
-
+/* 🔥 IMPORTANT */
 const exist = cart.find(p => p.id === id)
 
 if(exist){
@@ -359,7 +354,7 @@ name: product.name,
 price: product.price,
 image: product.images?.[0] || "",
 qty: 1,
-merchantId: product.merchantId
+merchantId: product.merchantId || "unknown" // 🔥 sécurité
 })
 
 }
