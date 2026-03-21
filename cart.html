@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
@@ -7,7 +7,15 @@
 
 <style>
 body{font-family:Arial;background:#f4f4f4;margin:0;}
-.header{background:#ff6a00;color:white;padding:15px;text-align:center;font-size:20px;}
+
+.header{
+background:#ff6a00;
+color:white;
+padding:15px;
+text-align:center;
+font-size:20px;
+font-weight:bold;
+}
 
 .item{
 background:white;
@@ -16,6 +24,8 @@ padding:10px;
 border-radius:10px;
 display:flex;
 gap:10px;
+align-items:center;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
 }
 
 .item img{
@@ -41,6 +51,11 @@ border-radius:5px;
 cursor:pointer;
 }
 
+.remove{
+background:red;
+color:white;
+}
+
 .total{
 padding:15px;
 font-size:18px;
@@ -56,6 +71,18 @@ margin:10px;
 border-radius:10px;
 cursor:pointer;
 font-size:18px;
+transition:0.3s;
+}
+
+.checkout:hover{
+background:#14863a;
+}
+
+.empty{
+text-align:center;
+padding:30px;
+color:#777;
+font-size:16px;
 }
 </style>
 
@@ -83,12 +110,24 @@ let cart = JSON.parse(localStorage.getItem("cart") || "[]")
 let html=""
 let total=0
 
+if(cart.length === 0){
+document.getElementById("cartList").innerHTML = `
+<div class="empty">
+Seu carrinho está vazio 😢
+</div>
+`
+document.getElementById("total").innerText=""
+return
+}
+
 cart.forEach((item,index)=>{
 
-// sécurité si qty n'existe pas
 if(!item.qty){ item.qty = 1 }
 
-total += item.price * item.qty
+/* sécurité */
+let price = Number(item.price) || 0
+
+total += price * item.qty
 
 html += `
 <div class="item">
@@ -98,13 +137,15 @@ html += `
 <div class="info">
 
 <div><b>${item.name}</b></div>
-<div>${item.price} Kz</div>
+<div>${price} Kz</div>
 
 <div class="qty">
 
 <button onclick="changeQty(${index},-1)">-</button>
 <div>${item.qty}</div>
 <button onclick="changeQty(${index},1)">+</button>
+
+<button class="remove" onclick="removeItem(${index})">🗑️</button>
 
 </div>
 
@@ -114,8 +155,8 @@ html += `
 `
 })
 
-document.getElementById("cartList").innerHTML=html
-document.getElementById("total").innerText="Total: "+total+" Kz"
+document.getElementById("cartList").innerHTML = html
+document.getElementById("total").innerText = "Total: " + total + " Kz"
 
 }
 
@@ -127,11 +168,24 @@ function changeQty(index,delta){
 
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
 
-cart[index].qty += delta
+cart[index].qty = (cart[index].qty || 1) + delta
 
 if(cart[index].qty <= 0){
 cart.splice(index,1)
 }
+
+localStorage.setItem("cart",JSON.stringify(cart))
+loadCart()
+
+}
+
+
+/* REMOVE ITEM */
+function removeItem(index){
+
+let cart = JSON.parse(localStorage.getItem("cart") || "[]")
+
+cart.splice(index,1)
 
 localStorage.setItem("cart",JSON.stringify(cart))
 
@@ -140,27 +194,32 @@ loadCart()
 }
 
 
-/* GO CHECKOUT (IMPORTANT) */
+/* GO CHECKOUT */
 function goCheckout(){
 
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
 
 if(cart.length === 0){
-alert("Carrinho vazio")
+alert("Carrinho vazio ❌")
 return
 }
 
-/* NORMALISER LES DONNÉES */
+/* 🔥 NORMALISER (IMPORTANT) */
 let checkoutCart = cart.map(item => ({
-id: item.id,
-name: item.name,
-price: item.price,
+
+id: item.id || "",
+name: item.name || "Produto",
+price: Number(item.price) || 0,
 qty: item.qty || 1,
 image: item.image || "",
 merchantId: item.merchantId || ""
+
 }))
 
-/* envoyer vers checkout */
+/* DEBUG */
+console.log("CHECKOUT CART:", checkoutCart)
+
+/* ENVOI */
 localStorage.setItem("checkoutCart", JSON.stringify(checkoutCart))
 
 location.href = "checkout.html"
@@ -170,4 +229,4 @@ location.href = "checkout.html"
 </script>
 
 </body>
-</html>
+</html> 
