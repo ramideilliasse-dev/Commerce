@@ -91,7 +91,6 @@ font-size:18px;
 <script type="module">
 
 import { db } from "./firebase.js"
-
 import {
 collection,
 addDoc,
@@ -99,10 +98,8 @@ doc,
 getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
-/* ✅ PANIER CORRECT */
+/* PANIER */
 let cart = JSON.parse(localStorage.getItem("checkoutCart") || "[]")
-
-console.log("Cart:", cart)
 
 /* LOAD */
 function loadCart(){
@@ -136,7 +133,7 @@ loadCart()
 /* CLICK */
 document.getElementById("confirmBtn").addEventListener("click", placeOrder)
 
-/* ORDER */
+/* ORDER MULTI VENDEUR */
 async function placeOrder(){
 
 try{
@@ -155,13 +152,56 @@ alert("Carrinho vazio ❌")
 return
 }
 
-/* 🔥 ENVOYER COMMANDE FIREBASE */
-for(const item of cart){
+/* 🔥 GROUPER PAR VENDEUR */
+let grouped = {}
 
-if(!item.merchantId || item.merchantId==="unknown"){
-alert("Produto sem vendedor ❌")
-return
+cart.forEach(item => {
+
+if(!item.merchantId || item.merchantId==="unknown") return
+
+if(!grouped[item.merchantId]){
+grouped[item.merchantId] = []
 }
+
+grouped[item.merchantId].push(item)
+
+})
+
+/* 🔥 TRAITER CHAQUE VENDEUR */
+for(const merchantId in grouped){
+
+let items = grouped[merchantId]
+
+/* 🔥 GET VENDEUR */
+const ref = doc(db,"merchants",merchantId)
+const snap = await getDoc(ref)
+
+let merchant = snap.data()
+
+/* 🔥 MESSAGE WHATSAPP */
+let message = "🛒 *Novo Pedido*\n\n"
+
+items.forEach(p=>{
+message += `• ${p.name} x${p.qty} = ${p.price * p.qty} Kz\n`
+})
+
+message += `\n👤 Cliente: ${name}`
+message += `\n📞 Tel: ${phone}`
+message += `\n📍 Endereço: ${address}`
+
+/* 🔥 WHATSAPP */
+let sellerPhone = merchant?.phone || ""
+
+if(sellerPhone){
+
+let url = "https://wa.me/" + sellerPhone + "?text=" + encodeURIComponent(message)
+
+window.open(url, "_blank")
+
+}
+
+/* 🔥 FIRESTORE */
+for(const item of items){
 
 await addDoc(collection(db,"orders"),{
 
@@ -174,7 +214,7 @@ clientName:name,
 clientPhone:phone,
 clientAddress:address,
 
-merchantId:item.merchantId,
+merchantId:merchantId,
 
 status:"pendente",
 seen:false,
@@ -185,47 +225,13 @@ date:Date.now()
 
 }
 
-/* ✅ WHATSAPP AUTO MULTI VENDEUR */
-let first = cart[0]
-
-if(first && first.merchantId){
-
-const ref = doc(db,"merchants", first.merchantId)
-const snap = await getDoc(ref)
-
-if(snap.exists()){
-
-let merchant = snap.data()
-let sellerPhone = merchant.phone
-
-if(sellerPhone){
-
-let message = "🛒 NOVO PEDIDO\n\n"
-
-cart.forEach(item=>{
-message += `• ${item.name} x${item.qty} = ${item.price * item.qty} Kz\n`
-})
-
-message += `\n👤 Cliente: ${name}`
-message += `\n📞 Tel: ${phone}`
-message += `\n📍 Endereço: ${address}`
-
-let url = "https://wa.me/" + sellerPhone + "?text=" + encodeURIComponent(message)
-
-/* ouvrir WhatsApp */
-window.open(url,"_blank")
-
-}
-
-}
-
 }
 
 /* RESET */
 localStorage.removeItem("cart")
 localStorage.removeItem("checkoutCart")
 
-alert("Pedido enviado com sucesso 🚀")
+alert("Pedidos enviados com sucesso 🚀")
 
 location.href="index.html"
 
