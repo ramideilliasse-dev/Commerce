@@ -196,13 +196,14 @@ alert("Pedido enviado com sucesso 🚀")
 
 location.href="index.html"
 
-}catch(e){
+catch(e){
 
 console.error("ERRO REAL:", e)
-alert("Erro ao enviar pedido ❌")
+
+/* 🔥 IMPORTANT */
+alert("Erro: " + e.message)
 
 }
-
 }
 </script>
 
