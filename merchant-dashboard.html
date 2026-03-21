@@ -1,14 +1,11 @@
  <!DOCTYPE html>
 <html lang="pt">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Painel do Vendedor</title>
+<title>Dashboard Vendedor</title>
 
 <style>
-
 body{
 font-family:Arial;
 margin:0;
@@ -17,12 +14,12 @@ background:#f4f4f4;
 
 /* HEADER */
 .header{
-background:black;
+background:#ff6a00;
 color:white;
 padding:15px;
-text-align:center;
 font-size:20px;
 font-weight:bold;
+text-align:center;
 }
 
 /* CONTAINER */
@@ -35,125 +32,100 @@ margin:auto;
 /* CARD */
 .card{
 background:white;
-padding:20px;
-border-radius:12px;
+padding:15px;
+border-radius:10px;
 margin-bottom:15px;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
-}
-
-/* SHOP NAME */
-.shopName{
-font-size:22px;
-font-weight:bold;
-margin-bottom:5px;
+box-shadow:0 3px 8px rgba(0,0,0,0.1);
 }
 
 /* STATS */
 .stats{
 display:flex;
-justify-content:space-between;
-margin-top:10px;
+gap:10px;
 }
 
 .stat{
-text-align:center;
 flex:1;
-}
-
-.stat h2{
-margin:5px 0;
-color:#ff6a00;
-}
-
-/* BUTTONS */
-.menu{
-display:flex;
-flex-direction:column;
-gap:10px;
-margin-top:15px;
-}
-
-.menu button{
-padding:15px;
-border:none;
+background:#1aa34a;
+color:white;
+padding:10px;
 border-radius:10px;
-font-size:16px;
-cursor:pointer;
-font-weight:bold;
+text-align:center;
 }
 
-/* COLORS */
-.productsBtn{background:#1aa34a;color:white;}
-.addBtn{background:#ff6a00;color:white;}
-.ordersBtn{background:#007bff;color:white;}
-.logoutBtn{background:red;color:white;}
+/* ORDER */
+.order{
+border-bottom:1px solid #eee;
+padding:10px 0;
+}
+
+button{
+padding:8px 12px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+margin-top:5px;
+}
+
+.btnWhats{
+background:#25D366;
+color:white;
+}
+
+.btnDone{
+background:#1aa34a;
+color:white;
+}
+
+.btnLogout{
+background:black;
+color:white;
+width:100%;
+padding:10px;
+margin-top:10px;
+}
 
 </style>
-
 </head>
 
 <body>
 
 <div class="header">
-Painel do Vendedor
+Dashboard do Vendedor 📊
 </div>
 
 <div class="container">
 
-<!-- INFOS -->
+<!-- STATS -->
 <div class="card">
-
-<div class="shopName" id="shopName">
-Minha Loja
-</div>
-
-<div id="shopEmail"></div>
+<h3>Resumo</h3>
 
 <div class="stats">
-
 <div class="stat">
-<div>Produtos</div>
-<h2 id="totalProducts">0</h2>
-</div>
-
-<div class="stat">
-<div>Pedidos</div>
-<h2 id="totalOrders">0</h2>
+Pedidos<br>
+<span id="totalOrders">0</span>
 </div>
 
 <div class="stat">
-<div>Vendas</div>
-<h2 id="totalSales">0</h2>
+Vendas (Kz)<br>
+<span id="totalSales">0</span>
+</div>
 </div>
 
 </div>
 
-</div>
-
-<!-- MENU -->
+<!-- ORDERS -->
 <div class="card">
+<h3>Pedidos recebidos</h3>
 
-<div class="menu">
-
-<button class="productsBtn" onclick="location.href='merchant-shop.html'">
-📦 Ver meus produtos
-</button>
-
-<button class="addBtn" onclick="location.href='add-product.html'">
-➕ Adicionar produto
-</button>
-
-<button class="ordersBtn" onclick="location.href='merchant-orders.html'">
-📥 Ver pedidos
-</button>
-
-<button class="logoutBtn" onclick="logout()">
-🚪 Sair
-</button>
+<div id="ordersList"></div>
 
 </div>
 
-</div>
+<!-- LOGOUT -->
+<button class="btnLogout" onclick="logout()">
+Sair da conta
+</button>
 
 </div>
 
@@ -162,12 +134,12 @@ Minha Loja
 import { db, auth } from "./firebase.js"
 
 import {
-doc,
-getDoc,
 collection,
-getDocs,
 query,
-where
+where,
+getDocs,
+updateDoc,
+doc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
 import {
@@ -178,86 +150,101 @@ signOut
 
 let currentUser = null
 
-
 /* AUTH */
 onAuthStateChanged(auth, async (user)=>{
 
 if(!user){
-location.href="index.html"
+alert("Faça login ❌")
+location.href="merchant-register.html"
 return
 }
 
 currentUser = user
 
-loadMerchantData()
-loadStats()
+loadOrders()
 
 })
 
+/* LOAD ORDERS */
+async function loadOrders(){
 
-/* LOAD MERCHANT INFO */
-async function loadMerchantData(){
-
-const ref = doc(db,"merchants",currentUser.uid)
-const snap = await getDoc(ref)
-
-if(snap.exists()){
-
-const data = snap.data()
-
-document.getElementById("shopName").innerText = data.shopName || "Minha Loja"
-document.getElementById("shopEmail").innerText = data.email || ""
-
-}
-
-}
-
-
-/* LOAD STATS */
-async function loadStats(){
-
-/* PRODUCTS */
-const q1 = query(
-collection(db,"products"),
-where("merchantId","==",currentUser.uid)
-)
-
-const snap1 = await getDocs(q1)
-
-document.getElementById("totalProducts").innerText = snap1.size
-
-
-/* ORDERS */
-const q2 = query(
+const q = query(
 collection(db,"orders"),
 where("merchantId","==",currentUser.uid)
 )
 
-const snap2 = await getDocs(q2)
+const snap = await getDocs(q)
 
-document.getElementById("totalOrders").innerText = snap2.size
+let html=""
+let totalSales = 0
+let totalOrders = 0
 
+snap.forEach(docSnap=>{
 
-/* SALES */
-let total = 0
+const o = docSnap.data()
+const id = docSnap.id
 
-snap2.forEach(doc=>{
-const o = doc.data()
-total += (o.price || 0) * (o.qty || 1)
+totalOrders++
+totalSales += (o.price * o.qty)
+
+html += `
+<div class="order">
+
+<b>${o.productName}</b><br>
+${o.qty} x ${o.price} Kz<br>
+
+👤 ${o.clientName}<br>
+📞 ${o.clientPhone}<br>
+📍 ${o.clientAddress}<br>
+
+Status: ${o.status}<br>
+
+<button class="btnWhats" onclick="contactClient('${o.clientPhone}')">
+WhatsApp
+</button>
+
+<button class="btnDone" onclick="markDone('${id}')">
+Concluir
+</button>
+
+</div>
+`
 })
 
-document.getElementById("totalSales").innerText = total + " Kz"
+document.getElementById("ordersList").innerHTML = html
+document.getElementById("totalSales").innerText = totalSales
+document.getElementById("totalOrders").innerText = totalOrders
 
 }
 
+/* CONTACT CLIENT */
+window.contactClient = function(phone){
+
+let msg = "Olá 👋, sobre o seu pedido..."
+
+let url = "https://wa.me/" + phone + "?text=" + encodeURIComponent(msg)
+
+window.open(url,"_blank")
+
+}
+
+/* MARK DONE */
+window.markDone = async function(id){
+
+await updateDoc(doc(db,"orders",id),{
+status:"concluido"
+})
+
+alert("Pedido concluído ✔")
+
+loadOrders()
+
+}
 
 /* LOGOUT */
-window.logout = async function(){
+window.logout = function(){
 
-await signOut(auth)
-
-alert("Saiu com sucesso")
-
+signOut(auth)
 location.href="index.html"
 
 }
@@ -265,5 +252,4 @@ location.href="index.html"
 </script>
 
 </body>
-
 </html>
