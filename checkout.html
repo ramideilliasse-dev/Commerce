@@ -140,62 +140,67 @@ try{
 const name=document.getElementById("clientName").value
 const phone=document.getElementById("clientPhone").value
 const address=document.getElementById("clientAddress").value
+const payment=document.getElementById("paymentMethod").value
+const delivery=parseInt(document.getElementById("deliveryZone").value)
 
 if(!name || !phone || !address){
 alert("Preencha todos os campos")
 return
 }
 
-/* 🔥 GROUPE PAR VENDEUR */
-let vendors = {}
-
-cart.forEach(item=>{
-if(!vendors[item.merchantId]){
-vendors[item.merchantId] = []
-}
-vendors[item.merchantId].push(item)
-})
-
-/* 🔥 POUR CHAQUE VENDEUR */
-for(const merchantId in vendors){
-
-const ref=doc(db,"merchants",merchantId)
-const snap=await getDoc(ref)
-
-if(!snap.exists()){
-alert("Vendedor não encontrado ❌")
-continue
+if(cart.length === 0){
+alert("Carrinho vazio ❌")
+return
 }
 
-const merchant = snap.data()
-const items = vendors[merchantId]
+let validItems = cart.filter(item => item.merchantId && item.merchantId !== "unknown")
 
-/* MESSAGE */
-let message = `🛒 NOVO PEDIDO\n\n`
+if(validItems.length === 0){
+alert("Erro: produtos sem vendedor ❌")
+console.log(cart)
+return
+}
 
-items.forEach(i=>{
-message += `• ${i.name} x${i.qty} - ${i.price*i.qty} Kz\n`
+/* 🔥 ENVOYER */
+for(const item of validItems){
+
+await addDoc(collection(db,"orders"),{
+
+productId:item.id || "",
+productName:item.name || "",
+price:Number(item.price) || 0,
+qty:Number(item.qty) || 1,
+
+clientName:name,
+clientPhone:phone,
+clientAddress:address,
+
+paymentMethod:payment,
+deliveryPrice:delivery,
+
+merchantId:item.merchantId,
+
+status:"pendente",
+seen:false,
+
+date:Date.now()
+
 })
-
-message += `\n👤 Cliente: ${name}`
-message += `\n📞 Tel: ${phone}`
-message += `\n📍 Endereço: ${address}`
-
-const url = `https://wa.me/${merchant.phone}?text=${encodeURIComponent(message)}`
-
-/* 🔥 OUVRIR WHATSAPP */
-window.open(url, "_blank")
 
 }
 
 /* RESET */
 localStorage.removeItem("cart")
 
-alert("Redirecionando para WhatsApp 🚀")
+alert("Pedido enviado com sucesso 🚀")
+
+location.href="index.html"
 
 }catch(e){
-console.error(e)
-alert("Erro ❌")
+
+console.error("ERRO REAL:", e)
+alert("Erro ao enviar pedido ❌")
+
 }
 
 }
