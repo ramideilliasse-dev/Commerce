@@ -37,7 +37,7 @@ border-bottom:1px solid #eee;
 padding:8px 0;
 }
 
-input,select{
+input{
 width:100%;
 padding:12px;
 margin-top:8px;
@@ -88,18 +88,27 @@ font-size:18px;
 
 </div>
 
-<!-- 🔥 SCRIPT SIMPLE + FIREBASE -->
-<script>
+<!-- ✅ SCRIPT CORRIGÉ -->
+<script type="module">
 
-let cart = JSON.parse(localStorage.getItem("cart") || "[]")
- alert("CART: " + JSON.stringify(cart))
+import { db } from "./firebase.js"
+
+import {
+collection,
+addDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
+/* ✅ BON PANIER */
+let cart = JSON.parse(localStorage.getItem("checkoutCart") || "[]")
+
 console.log("Cart:", cart)
 
-/* LOAD CART */
+/* LOAD */
 function loadCart(){
 
 if(cart.length === 0){
-alert("Carrinho vazio")
+alert("Carrinho vazio ❌")
+location.href="index.html"
 return
 }
 
@@ -123,16 +132,10 @@ document.getElementById("totalPrice").innerText = total + " Kz"
 
 loadCart()
 
-/* CLICK BUTTON */
-document.getElementById("confirmBtn").addEventListener("click", function(){
+/* CLICK */
+document.getElementById("confirmBtn").addEventListener("click", placeOrder)
 
-alert("Clique OK ✅")
-
-placeOrder()
-
-})
-
-/* FIREBASE IMPORT DYNAMIQUE */
+/* ORDER */
 async function placeOrder(){
 
 try{
@@ -140,8 +143,6 @@ try{
 const name=document.getElementById("clientName").value
 const phone=document.getElementById("clientPhone").value
 const address=document.getElementById("clientAddress").value
-const payment=document.getElementById("paymentMethod").value
-const delivery=parseInt(document.getElementById("deliveryZone").value)
 
 if(!name || !phone || !address){
 alert("Preencha todos os campos")
@@ -153,30 +154,24 @@ alert("Carrinho vazio ❌")
 return
 }
 
-let validItems = cart.filter(item => item.merchantId && item.merchantId !== "unknown")
+/* 🔥 ENVOYER */
+for(const item of cart){
 
-if(validItems.length === 0){
-alert("Erro: produtos sem vendedor ❌")
-console.log(cart)
+if(!item.merchantId || item.merchantId==="unknown"){
+alert("Produto sem vendedor ❌")
 return
 }
 
-/* 🔥 ENVOYER */
-for(const item of validItems){
-
 await addDoc(collection(db,"orders"),{
 
-productId:item.id || "",
-productName:item.name || "",
-price:Number(item.price) || 0,
-qty:Number(item.qty) || 1,
+productId:item.id,
+productName:item.name,
+price:item.price,
+qty:item.qty,
 
 clientName:name,
 clientPhone:phone,
 clientAddress:address,
-
-paymentMethod:payment,
-deliveryPrice:delivery,
 
 merchantId:item.merchantId,
 
@@ -191,20 +186,21 @@ date:Date.now()
 
 /* RESET */
 localStorage.removeItem("cart")
+localStorage.removeItem("checkoutCart")
 
 alert("Pedido enviado com sucesso 🚀")
 
 location.href="index.html"
 
-catch(e){
+}catch(e){
 
 console.error("ERRO REAL:", e)
-
-/* 🔥 IMPORTANT */
 alert("Erro: " + e.message)
 
 }
+
 }
+
 </script>
 
 </body>
