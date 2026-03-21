@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="pt">
 
 <head>
@@ -88,17 +88,18 @@ font-size:18px;
 
 </div>
 
-<!-- ✅ SCRIPT CORRIGÉ -->
 <script type="module">
 
 import { db } from "./firebase.js"
 
 import {
 collection,
-addDoc
+addDoc,
+doc,
+getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
-/* ✅ BON PANIER */
+/* ✅ PANIER CORRECT */
 let cart = JSON.parse(localStorage.getItem("checkoutCart") || "[]")
 
 console.log("Cart:", cart)
@@ -154,7 +155,7 @@ alert("Carrinho vazio ❌")
 return
 }
 
-/* 🔥 ENVOYER */
+/* 🔥 ENVOYER COMMANDE FIREBASE */
 for(const item of cart){
 
 if(!item.merchantId || item.merchantId==="unknown"){
@@ -181,6 +182,42 @@ seen:false,
 date:Date.now()
 
 })
+
+}
+
+/* ✅ WHATSAPP AUTO MULTI VENDEUR */
+let first = cart[0]
+
+if(first && first.merchantId){
+
+const ref = doc(db,"merchants", first.merchantId)
+const snap = await getDoc(ref)
+
+if(snap.exists()){
+
+let merchant = snap.data()
+let sellerPhone = merchant.phone
+
+if(sellerPhone){
+
+let message = "🛒 NOVO PEDIDO\n\n"
+
+cart.forEach(item=>{
+message += `• ${item.name} x${item.qty} = ${item.price * item.qty} Kz\n`
+})
+
+message += `\n👤 Cliente: ${name}`
+message += `\n📞 Tel: ${phone}`
+message += `\n📍 Endereço: ${address}`
+
+let url = "https://wa.me/" + sellerPhone + "?text=" + encodeURIComponent(message)
+
+/* ouvrir WhatsApp */
+window.open(url,"_blank")
+
+}
+
+}
 
 }
 
