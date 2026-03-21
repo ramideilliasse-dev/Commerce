@@ -3,30 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Vendedor</title>
+<title>Dashboard PRO</title>
 
 <style>
-body{
-font-family:Arial;
-margin:0;
-background:#f4f4f4;
-}
+body{font-family:Arial;margin:0;background:#f4f4f4;}
 
-/* HEADER */
 .header{
 background:#ff6a00;
 color:white;
 padding:15px;
+text-align:center;
 font-size:20px;
 font-weight:bold;
-text-align:center;
 }
 
 /* CONTAINER */
 .container{
-padding:15px;
-max-width:800px;
+max-width:900px;
 margin:auto;
+padding:15px;
 }
 
 /* CARD */
@@ -48,9 +43,30 @@ gap:10px;
 flex:1;
 background:#1aa34a;
 color:white;
-padding:10px;
+padding:12px;
 border-radius:10px;
 text-align:center;
+font-weight:bold;
+}
+
+/* FILTER */
+.filter{
+display:flex;
+gap:10px;
+margin-bottom:10px;
+}
+
+.filter button{
+flex:1;
+padding:10px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+.active{
+background:#ff6a00;
+color:white;
 }
 
 /* ORDER */
@@ -60,28 +76,24 @@ padding:10px 0;
 }
 
 button{
-padding:8px 12px;
-border:none;
-border-radius:8px;
-cursor:pointer;
 margin-top:5px;
+padding:6px 10px;
+border:none;
+border-radius:6px;
+cursor:pointer;
 }
 
-.btnWhats{
-background:#25D366;
-color:white;
-}
-
-.btnDone{
-background:#1aa34a;
-color:white;
-}
+.btnWhats{background:#25D366;color:white;}
+.btnDone{background:#1aa34a;color:white;}
+.btnDelete{background:red;color:white;}
 
 .btnLogout{
+width:100%;
+padding:12px;
 background:black;
 color:white;
-width:100%;
-padding:10px;
+border:none;
+border-radius:10px;
 margin-top:10px;
 }
 
@@ -91,7 +103,7 @@ margin-top:10px;
 <body>
 
 <div class="header">
-Dashboard do Vendedor 📊
+Dashboard PRO 🚀
 </div>
 
 <div class="container">
@@ -102,32 +114,39 @@ Dashboard do Vendedor 📊
 
 <div class="stats">
 <div class="stat">
-Pedidos<br>
-<span id="totalOrders">0</span>
+Hoje<br><span id="todaySales">0</span> Kz
 </div>
 
 <div class="stat">
-Vendas (Kz)<br>
-<span id="totalSales">0</span>
+Total<br><span id="totalSales">0</span> Kz
+</div>
+
+<div class="stat">
+Pedidos<br><span id="totalOrders">0</span>
 </div>
 </div>
 
 </div>
 
-<!-- ORDERS -->
+<!-- FILTER -->
 <div class="card">
-<h3>Pedidos recebidos</h3>
+
+<div class="filter">
+<button id="allBtn" class="active" onclick="setFilter('all')">Todos</button>
+<button id="pendingBtn" onclick="setFilter('pendente')">Pendentes</button>
+<button id="doneBtn" onclick="setFilter('concluido')">Concluídos</button>
+</div>
 
 <div id="ordersList"></div>
 
 </div>
 
-<!-- LOGOUT -->
-<button class="btnLogout" onclick="logout()">
-Sair da conta
-</button>
+<button class="btnLogout" onclick="logout()">Sair</button>
 
 </div>
+
+<!-- 🔊 SOUND -->
+<audio id="notifSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
 
 <script type="module">
 
@@ -137,8 +156,9 @@ import {
 collection,
 query,
 where,
-getDocs,
+onSnapshot,
 updateDoc,
+deleteDoc,
 doc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
@@ -147,45 +167,54 @@ onAuthStateChanged,
 signOut
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
-
 let currentUser = null
+let filter = "all"
+let firstLoad = true
 
 /* AUTH */
-onAuthStateChanged(auth, async (user)=>{
+onAuthStateChanged(auth, (user)=>{
 
 if(!user){
-alert("Faça login ❌")
 location.href="merchant-register.html"
 return
 }
 
 currentUser = user
-
-loadOrders()
+listenOrders()
 
 })
 
-/* LOAD ORDERS */
-async function loadOrders(){
+/* REALTIME LISTENER */
+function listenOrders(){
 
 const q = query(
 collection(db,"orders"),
 where("merchantId","==",currentUser.uid)
 )
 
-const snap = await getDocs(q)
+onSnapshot(q, (snapshot)=>{
 
 let html=""
-let totalSales = 0
-let totalOrders = 0
+let totalSales=0
+let todaySales=0
+let totalOrders=0
 
-snap.forEach(docSnap=>{
+const today = new Date().toDateString()
+
+snapshot.forEach(docSnap=>{
 
 const o = docSnap.data()
 const id = docSnap.id
 
+/* FILTER */
+if(filter !== "all" && o.status !== filter) return
+
 totalOrders++
-totalSales += (o.price * o.qty)
+totalSales += o.price * o.qty
+
+if(new Date(o.date).toDateString() === today){
+todaySales += o.price * o.qty
+}
 
 html += `
 <div class="order">
@@ -207,37 +236,71 @@ WhatsApp
 Concluir
 </button>
 
+<button class="btnDelete" onclick="deleteOrder('${id}')">
+Supprimer
+</button>
+
 </div>
 `
 })
 
 document.getElementById("ordersList").innerHTML = html
 document.getElementById("totalSales").innerText = totalSales
+document.getElementById("todaySales").innerText = todaySales
 document.getElementById("totalOrders").innerText = totalOrders
 
+/* 🔊 SOUND NEW ORDER */
+if(!firstLoad && snapshot.docChanges().length > 0){
+document.getElementById("notifSound").play()
 }
 
-/* CONTACT CLIENT */
+firstLoad = false
+
+})
+
+}
+
+/* FILTER */
+window.setFilter = function(f){
+
+filter = f
+
+document.getElementById("allBtn").classList.remove("active")
+document.getElementById("pendingBtn").classList.remove("active")
+document.getElementById("doneBtn").classList.remove("active")
+
+if(f==="all") document.getElementById("allBtn").classList.add("active")
+if(f==="pendente") document.getElementById("pendingBtn").classList.add("active")
+if(f==="concluido") document.getElementById("doneBtn").classList.add("active")
+
+listenOrders()
+
+}
+
+/* WHATSAPP */
 window.contactClient = function(phone){
 
-let msg = "Olá 👋, sobre o seu pedido..."
+let msg="Olá 👋 sobre o seu pedido..."
 
-let url = "https://wa.me/" + phone + "?text=" + encodeURIComponent(msg)
-
-window.open(url,"_blank")
+window.open("https://wa.me/"+phone+"?text="+encodeURIComponent(msg),"_blank")
 
 }
 
-/* MARK DONE */
+/* DONE */
 window.markDone = async function(id){
 
 await updateDoc(doc(db,"orders",id),{
 status:"concluido"
 })
 
-alert("Pedido concluído ✔")
+}
 
-loadOrders()
+/* DELETE */
+window.deleteOrder = async function(id){
+
+if(confirm("Apagar pedido?")){
+await deleteDoc(doc(db,"orders",id))
+}
 
 }
 
