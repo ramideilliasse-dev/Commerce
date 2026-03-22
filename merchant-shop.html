@@ -1,6 +1,5 @@
  <!DOCTYPE html>
 <html lang="pt">
-
 <head>
 
 <meta charset="UTF-8">
@@ -18,9 +17,8 @@ background:#f4f4f4;
 
 .shopHeader{
 background:white;
-padding:25px;
+padding:20px;
 border-bottom:1px solid #eee;
-text-align:center;
 }
 
 .shopTop{
@@ -30,29 +28,42 @@ align-items:center;
 }
 
 .shopName{
-font-size:26px;
+font-size:22px;
 font-weight:bold;
-color:#111;
 }
 
 .profile{
-width:50px;
-height:50px;
+width:45px;
+height:45px;
 border-radius:50%;
-object-fit:cover;
 background:#ddd;
+}
+
+/* 🔥 BUTTONS TOP */
+.topButtons{
+display:flex;
+gap:8px;
+}
+
+.btn{
+border:none;
+padding:8px 12px;
+border-radius:10px;
+font-size:12px;
+cursor:pointer;
 }
 
 .publishBtn{
 background:#1aa34a;
 color:white;
-border:none;
-padding:10px 18px;
-border-radius:20px;
-font-weight:bold;
-cursor:pointer;
 }
 
+.dashboardBtn{
+background:black;
+color:white;
+}
+
+/* PRODUCTS */
 .products{
 column-count:2;
 column-gap:12px;
@@ -65,8 +76,8 @@ border-radius:12px;
 margin-bottom:12px;
 break-inside:avoid;
 box-shadow:0 4px 10px rgba(0,0,0,0.08);
-overflow:hidden;
 position:relative;
+overflow:hidden;
 }
 
 .product img{
@@ -77,19 +88,9 @@ width:100%;
 padding:10px;
 }
 
-.name{
-font-weight:bold;
-}
-
-.price{
-color:#ff6a00;
-font-weight:bold;
-}
-
-.desc{
-font-size:13px;
-color:#555;
-}
+.name{font-weight:bold;}
+.price{color:#ff6a00;font-weight:bold;}
+.desc{font-size:13px;color:#555;}
 
 .deleteBtn{
 position:absolute;
@@ -104,6 +105,7 @@ font-size:12px;
 cursor:pointer;
 }
 
+/* REVIEWS */
 .reviews{
 background:white;
 margin-top:20px;
@@ -120,7 +122,6 @@ color:orange;
 }
 
 </style>
-
 </head>
 
 <body>
@@ -129,15 +130,22 @@ color:orange;
 
 <div class="shopTop">
 
-<div class="shopName" id="shopName">
-Loja
-</div>
+<div class="shopName">Loja</div>
 
 <img id="profilePic" class="profile">
 
-<button id="publishBtn" class="publishBtn">
-Publicar produtos
+<div class="topButtons">
+
+<button id="publishBtn" class="btn publishBtn">
++ Produto
 </button>
+
+<!-- 🔥 DASHBOARD -->
+<button id="dashboardBtn" class="btn dashboardBtn">
+⚙️ Painel
+</button>
+
+</div>
 
 </div>
 
@@ -149,7 +157,6 @@ Publicar produtos
 <h3>Avaliações dos clientes</h3>
 <div id="reviewList"></div>
 </div>
-
 
 <script type="module">
 
@@ -168,8 +175,7 @@ import {
 onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
-
-/* GET ID FROM URL */
+/* GET URL */
 const params = new URLSearchParams(location.search)
 const shopId = params.get("id")
 
@@ -179,15 +185,13 @@ let currentUser=null
 document.getElementById("profilePic").src =
 localStorage.getItem("profilePic") || "https://via.placeholder.com/50"
 
-
-/* PRODUCT CARD */
+/* PRODUCT */
 function productHTML(p, isOwner){
 
 let desc = p.description ? p.description.slice(0,50) : ""
-const img = p.images ? p.images[0] : ""
+const img = p.images?.[0] || ""
 
 return `
-
 <div class="product">
 
 ${isOwner ? `<button onclick="deleteProduct('${p.id}')" class="deleteBtn">Excluir</button>` : ""}
@@ -201,11 +205,8 @@ ${isOwner ? `<button onclick="deleteProduct('${p.id}')" class="deleteBtn">Exclui
 </div>
 
 </div>
-
 `
-
 }
-
 
 /* LOAD PRODUCTS */
 async function loadProducts(uid, isOwner){
@@ -218,20 +219,15 @@ where("merchantId","==",uid)
 const snap = await getDocs(q)
 
 const container=document.getElementById("productList")
-
 container.innerHTML=""
 
 snap.forEach(docSnap=>{
-
 const data=docSnap.data()
 data.id=docSnap.id
-
 container.innerHTML+=productHTML(data, isOwner)
-
 })
 
 }
-
 
 /* DELETE */
 window.deleteProduct = async function(id){
@@ -241,13 +237,11 @@ if(!confirm("Excluir produto?")) return
 await deleteDoc(doc(db,"products",id))
 
 alert("Produto removido")
-
 location.reload()
 
 }
 
-
-/* LOAD REVIEWS */
+/* REVIEWS */
 async function loadReviews(uid){
 
 const snap = await getDocs(collection(db,"reviews"))
@@ -256,11 +250,9 @@ const box=document.getElementById("reviewList")
 box.innerHTML=""
 
 snap.forEach(docSnap=>{
-
 const r=docSnap.data()
 
 if(r.merchantId === uid){
-
 box.innerHTML+=`
 <div class="review">
 <div class="stars">⭐ ${r.rating}/5</div>
@@ -268,38 +260,49 @@ box.innerHTML+=`
 </div>
 `
 }
-
 })
 
 }
 
-
-/* MAIN LOGIC */
+/* MAIN */
 onAuthStateChanged(auth,(user)=>{
 
 currentUser=user
 
-/* CAS 1: CLIENT (id dans URL) */
+const publishBtn=document.getElementById("publishBtn")
+const dashboardBtn=document.getElementById("dashboardBtn")
+
+/* 🔥 CLIENT VIEW */
 if(shopId){
 
-loadProducts(shopId, false)
+loadProducts(shopId,false)
 loadReviews(shopId)
 
-document.getElementById("publishBtn").style.display="none"
+/* cacher boutons */
+publishBtn.style.display="none"
+dashboardBtn.style.display="none"
 
-/* CAS 2: VENDEUR */
-}else{
+}
+
+/* 🔥 VENDEUR */
+else{
 
 if(!user){
 location.href="index.html"
 return
 }
 
-loadProducts(user.uid, true)
+loadProducts(user.uid,true)
 loadReviews(user.uid)
 
-document.getElementById("publishBtn").onclick = function(){
+/* publier */
+publishBtn.onclick=()=>{
 location.href="add-product.html"
+}
+
+/* dashboard */
+dashboardBtn.onclick=()=>{
+location.href="merchant-dashboard.html"
 }
 
 }
@@ -309,5 +312,4 @@ location.href="add-product.html"
 </script>
 
 </body>
-
 </html>
