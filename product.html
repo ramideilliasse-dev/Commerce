@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt">
 
 <head>
@@ -23,25 +23,29 @@ text-align:center;
 box-shadow:0 2px 5px rgba(0,0,0,0.1);
 }
 
-.product{
-background:white;
-padding:15px;
-margin-bottom:10px;
+/* 🔥 IMAGE FULL */
+.imageContainer{
+position:relative;
+width:100%;
+height:350px;
+overflow:hidden;
+background:#000;
 }
 
-/* 🔥 IMAGE PRO */
 .mainImage{
 width:100%;
-height:300px;
+height:100%;
 object-fit:cover;
-border-radius:10px;
+transition:0.3s;
 }
 
+/* 🔥 GALLERY */
 .gallery{
 display:flex;
 gap:8px;
-margin-top:10px;
+padding:10px;
 overflow-x:auto;
+background:white;
 }
 
 .gallery img{
@@ -51,31 +55,41 @@ object-fit:cover;
 border-radius:8px;
 cursor:pointer;
 opacity:0.6;
-transition:0.3s;
 }
 
 .gallery img.active{
 border:2px solid #ff6a00;
 opacity:1;
-transform:scale(1.05);
 }
 
-.name{
-font-size:20px;
-font-weight:bold;
-margin-top:10px;
+/* 🔥 ZOOM FULLSCREEN */
+.zoomBox{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:black;
+display:none;
+align-items:center;
+justify-content:center;
+z-index:9999;
 }
 
-.price{
-color:#ff6a00;
-font-size:22px;
-font-weight:bold;
-margin:8px 0;
+.zoomBox img{
+max-width:100%;
+max-height:100%;
 }
 
-.desc{
-color:#555;
+/* PRODUCT */
+.product{
+background:white;
+padding:15px;
 }
+
+.name{font-size:20px;font-weight:bold;}
+.price{color:#ff6a00;font-size:22px;font-weight:bold;}
+.desc{color:#555;}
 
 .actions{
 display:flex;
@@ -92,57 +106,10 @@ font-size:16px;
 cursor:pointer;
 }
 
-.shopBtn{
-background:black;
-color:white;
-}
+.shopBtn{background:black;color:white;}
+.buyBtn{background:#1aa34a;color:white;}
 
-.buyBtn{
-background:#1aa34a;
-color:white;
-}
-
-.qty{
-margin-top:10px;
-}
-
-.section{
-padding:10px;
-}
-
-.grid{
-display:flex;
-gap:10px;
-overflow-x:auto;
-}
-
-.card{
-min-width:150px;
-background:white;
-padding:10px;
-border-radius:10px;
-box-shadow:0 2px 5px rgba(0,0,0,0.1);
-cursor:pointer;
-}
-
-.card img{
-width:100%;
-height:120px;
-object-fit:cover;
-border-radius:8px;
-}
-
-.cardPrice{
-color:#ff6a00;
-font-weight:bold;
-}
-
-.review{
-background:white;
-padding:10px;
-margin-top:5px;
-border-radius:8px;
-}
+.qty{margin-top:10px;}
 
 </style>
 
@@ -150,39 +117,24 @@ border-radius:8px;
 
 <body>
 
-<div class="header">
-Detalhes do produto
-</div>
+<div class="header">Detalhes do produto</div>
 
 <div id="productBox"></div>
 
-<div class="section">
-<h3>Produtos similares</h3>
-<div class="grid" id="similar"></div>
-</div>
-
-<div class="section">
-<h3>Outros produtos</h3>
-<div class="grid" id="others"></div>
+<!-- 🔥 ZOOM -->
+<div id="zoomBox" class="zoomBox" onclick="closeZoom()">
+<img id="zoomImg">
 </div>
 
 <script type="module">
 
 import { db } from "./firebase.js"
-
-import {
-doc,
-getDoc,
-collection,
-getDocs,
-addDoc,
-updateDoc,
-increment,
-query,
-where
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+import { doc,getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
 const productId=localStorage.getItem("selectedProduct")
+
+let images=[]
+let currentIndex=0
 let currentProduct=null
 
 async function loadProduct(){
@@ -196,127 +148,126 @@ return
 }
 
 currentProduct=snap.data()
+images = currentProduct.images || []
 
-renderProduct(currentProduct)
-
-loadSimilar()
-loadOthers()
-loadReviews()
+renderProduct()
 
 }
 
 loadProduct()
 
-/* 🔥 RENDER PRO */
-function renderProduct(p){
+function renderProduct(){
 
-let badge = p.sales > 5 ? "🔥 Produto popular" : ""
-
-const images = p.images && p.images.length ? p.images : []
-
-let mainImg = images[0] || ""
-
-let orderText = "Comprar"
-if(p.category==="restaurant"){
-orderText="Pedir comida 🍽️"
-}
+let main = images[0] || ""
 
 document.getElementById("productBox").innerHTML=`
 
-<div class="product">
+<div class="imageContainer">
 
-<img id="mainImage" class="mainImage" src="${mainImg}">
+<img id="mainImage" class="mainImage" src="${main}" onclick="zoomImage()">
+
+</div>
 
 <div class="gallery">
 ${images.map((img,i)=>`
-<img src="${img}" onclick="changeImage('${img}', this)" class="${i===0?'active':''}">
+<img src="${img}" onclick="selectImage(${i})" class="${i===0?'active':''}">
 `).join("")}
 </div>
 
-<div class="name">${p.name}</div>
+<div class="product">
 
-<div style="color:red;font-weight:bold;">${badge}</div>
-
-<div class="price">${p.price} Kz</div>
-
-<div class="desc">${p.description || ""}</div>
+<div class="name">${currentProduct.name}</div>
+<div class="price">${currentProduct.price} Kz</div>
+<div class="desc">${currentProduct.description || ""}</div>
 
 <div class="qty">
 <label>Quantidade:</label>
-<input type="number" id="qty" value="1" min="1" style="width:70px;padding:6px;">
+<input type="number" id="qty" value="1" min="1">
 </div>
 
 <div class="actions">
-
-<button class="btn shopBtn" onclick="openShop('${p.merchantId}')">
-Ver loja
-</button>
-
-<button class="btn buyBtn" onclick="orderNow()">
-${orderText}
-</button>
-
-</div>
-
-<div style="margin-top:15px;">
-<button onclick="addFavorite()" style="background:#ff4757;color:white;padding:10px;border:none;border-radius:8px;">
-❤️ Favori
-</button>
-</div>
-
-<div style="margin-top:20px;">
-
-<h3>Avaliações</h3>
-
-<input id="userRating" type="number" max="5" min="1" placeholder="Nota (1-5)" style="width:100%;padding:10px;margin-bottom:5px;">
-
-<textarea id="userComment" placeholder="Comentário..." style="width:100%;padding:10px;"></textarea>
-
-<button onclick="submitReview()" style="margin-top:5px;">
-Enviar avaliação
-</button>
-
-<div id="reviewsList"></div>
-
+<button class="btn shopBtn" onclick="openShop('${currentProduct.merchantId}')">Loja</button>
+<button class="btn buyBtn" onclick="orderNow()">Comprar</button>
 </div>
 
 </div>
 
 `
 
+initSwipe()
+
 }
 
-/* 🔥 CHANGE IMAGE */
-window.changeImage = function(src, el){
+/* 🔥 SELECT IMAGE */
+window.selectImage=function(i){
 
-document.getElementById("mainImage").src = src
+currentIndex=i
+document.getElementById("mainImage").src=images[i]
 
-document.querySelectorAll(".gallery img").forEach(img=>{
-img.classList.remove("active")
+document.querySelectorAll(".gallery img").forEach((img,index)=>{
+img.classList.toggle("active", index===i)
 })
 
-el.classList.add("active")
+}
 
+/* 🔥 SWIPE MOBILE */
+function initSwipe(){
+
+let startX=0
+
+const img=document.getElementById("mainImage")
+
+img.addEventListener("touchstart",e=>{
+startX=e.touches[0].clientX
+})
+
+img.addEventListener("touchend",e=>{
+
+let endX=e.changedTouches[0].clientX
+
+if(startX - endX > 50){
+nextImage()
+}
+
+if(endX - startX > 50){
+prevImage()
+}
+
+})
+
+}
+
+function nextImage(){
+if(currentIndex < images.length-1){
+selectImage(currentIndex+1)
+}
+}
+
+function prevImage(){
+if(currentIndex > 0){
+selectImage(currentIndex-1)
+}
+}
+
+/* 🔥 ZOOM */
+window.zoomImage=function(){
+
+const zoomBox=document.getElementById("zoomBox")
+const zoomImg=document.getElementById("zoomImg")
+
+zoomImg.src=images[currentIndex]
+
+zoomBox.style.display="flex"
+
+}
+
+window.closeZoom=function(){
+document.getElementById("zoomBox").style.display="none"
 }
 
 /* SHOP */
 window.openShop=function(id){
 location.href="merchant-shop.html?id="+id
-}
-
-/* FAVORITE */
-window.addFavorite=function(){
-
-let favs=JSON.parse(localStorage.getItem("favorites")) || []
-
-if(!favs.includes(productId)){
-favs.push(productId)
-}
-
-localStorage.setItem("favorites", JSON.stringify(favs))
-
-alert("Adicionado aos favoritos ❤️")
-
 }
 
 /* ORDER */
@@ -326,18 +277,18 @@ const qty = parseInt(document.getElementById("qty").value) || 1
 
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
 
-let existing = cart.find(item => item.id === productId)
+let exist = cart.find(p => p.id === productId)
 
-if(existing){
-existing.qty += qty
+if(exist){
+exist.qty += qty
 }else{
 cart.push({
-id: productId,
-name: currentProduct.name,
-price: currentProduct.price,
-image: currentProduct.images?.[0] || "",
-qty: qty,
-merchantId: currentProduct.merchantId || ""
+id:productId,
+name:currentProduct.name,
+price:currentProduct.price,
+image:images[0],
+qty:qty,
+merchantId:currentProduct.merchantId
 })
 }
 
@@ -347,126 +298,7 @@ alert("Adicionado ao carrinho 🛒")
 
 }
 
-/* REVIEWS */
-window.submitReview=async function(){
-
-const rating=parseInt(document.getElementById("userRating").value)
-const comment=document.getElementById("userComment").value
-
-if(!rating){
-alert("Coloque uma nota")
-return
-}
-
-await addDoc(collection(db,"reviews"),{
-productId:productId,
-rating:rating,
-comment:comment,
-date:Date.now()
-})
-
-const ref=doc(db,"products",productId)
-
-await updateDoc(ref,{
-rating:increment(rating),
-reviews:increment(1)
-})
-
-alert("Avaliação enviada")
-loadReviews()
-
-}
-
-async function loadReviews(){
-
-const snap=await getDocs(collection(db,"reviews"))
-
-let html=""
-
-snap.forEach(doc=>{
-
-const r=doc.data()
-
-if(r.productId===productId){
-
-html+=`
-<div class="review">
-⭐ ${r.rating}/5<br>
-${r.comment}
-</div>
-`
-
-}
-
-})
-
-document.getElementById("reviewsList").innerHTML=html
-
-}
-
-/* SIMILAR */
-async function loadSimilar(){
-
-const q=query(
-collection(db,"products"),
-where("category","==",currentProduct.category)
-)
-
-const snap=await getDocs(q)
-
-let html=""
-
-snap.forEach(doc=>{
-
-const p=doc.data()
-const img = p.images?.[0] || ""
-
-html+=`
-<div class="card" onclick="openProduct('${doc.id}')">
-<img src="${img}">
-<div>${p.name}</div>
-<div class="cardPrice">${p.price} Kz</div>
-</div>
-`
-
-})
-
-document.getElementById("similar").innerHTML=html
-
-}
-
-/* OTHERS */
-async function loadOthers(){
-
-const snap=await getDocs(collection(db,"products"))
-
-let html=""
-
-snap.forEach(doc=>{
-
-const p=doc.data()
-const img = p.images?.[0] || ""
-
-html+=`
-<div class="card" onclick="openProduct('${doc.id}')">
-<img src="${img}">
-<div>${p.name}</div>
-<div class="cardPrice">${p.price} Kz</div>
-</div>
-`
-
-})
-
-document.getElementById("others").innerHTML=html
-
-}
-
-window.openProduct=function(id){
-localStorage.setItem("selectedProduct", id)
-location.reload()
-}
-
 </script>
 
 </body>
-</html>
+</html> 
