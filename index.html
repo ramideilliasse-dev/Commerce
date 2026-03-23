@@ -226,21 +226,35 @@ const accountButton=document.getElementById("accountButton")
 
 onAuthStateChanged(auth, async (user)=>{
 
+console.log("USER CONNECTÉ:", user)
+
 if(user){
 
-/* 🔥 CREATE USER AUTO */
 const ref = doc(db, "users", user.uid)
 const snap = await getDoc(ref)
 
+console.log("EXISTE:", snap.exists())
+
 if(!snap.exists()){
+
 await setDoc(ref,{
 email:user.email,
 createdAt:Date.now(),
 approved:false,
 role:"client"
 })
-console.log("Utilisateur ajouté ✅")
+
+alert("User créé dans Firestore ✅")
+
+}else{
+console.log("User déjà existe")
 }
+
+}else{
+console.log("Aucun user connecté")
+}
+
+})
 
 /* 🔥 GET ROLE */
 const userData = (await getDoc(ref)).data()
