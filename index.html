@@ -13,7 +13,7 @@ margin:0;
 background:#f4f4f4;
 }
 
-/* HEADER FIXE */
+/* HEADER */
 .header{
 position:fixed;
 top:0;
@@ -53,7 +53,7 @@ padding:6px 12px;
 border-radius:20px;
 }
 
-/* SEARCH FIXE */
+/* SEARCH */
 .searchBox{
 position:fixed;
 top:65px;
@@ -83,8 +83,8 @@ animation:slide 2s infinite alternate;
 }
 
 @keyframes slide{
-from{opacity:0.5;transform:translateY(0);}
-to{opacity:1;transform:translateY(-3px);}
+from{opacity:0.5;}
+to{opacity:1;}
 }
 
 /* PRODUCTS */
@@ -143,7 +143,7 @@ justify-content:center;
 cursor:pointer;
 }
 
-/* NAV FIXE */
+/* NAV */
 .nav{
 position:fixed;
 bottom:0;
@@ -183,7 +183,7 @@ cursor:pointer;
 </div>
 
 <div class="banner">
-🔥 Promoções incríveis hoje • Entrega rápida em Angola 🚀
+🔥 Promoções incríveis hoje • Entrega rápida 🚀
 </div>
 
 <div id="productList" class="products"></div>
@@ -198,10 +198,8 @@ cursor:pointer;
 <script type="module">
 
 import { db,auth } from "./firebase.js"
-
 import { collection, getDocs, doc, getDoc, setDoc } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
@@ -221,45 +219,34 @@ localStorage.setItem("profilePic",url)
 
 profilePic.src=localStorage.getItem("profilePic") || "https://via.placeholder.com/35"
 
-/* 🔥 ACCOUNT + USER SYSTEM */
+/* ACCOUNT BUTTON */
 const accountButton=document.getElementById("accountButton")
 
+/* 🔥 AUTH + USER SYSTEM */
 onAuthStateChanged(auth, async (user)=>{
 
-console.log("USER CONNECTÉ:", user)
+try{
 
 if(user){
 
 const ref = doc(db, "users", user.uid)
-const snap = await getDoc(ref)
+let snap = await getDoc(ref)
 
-console.log("EXISTE:", snap.exists())
-
+/* CREATE USER */
 if(!snap.exists()){
-
 await setDoc(ref,{
 email:user.email,
 createdAt:Date.now(),
 approved:false,
 role:"client"
 })
-
-alert("User créé dans Firestore ✅")
-
-}else{
-console.log("User déjà existe")
+console.log("User créé ✅")
+snap = await getDoc(ref)
 }
 
-}else{
-console.log("Aucun user connecté")
-}
+const userData = snap.data()
 
-})
-
-/* 🔥 GET ROLE */
-const userData = (await getDoc(ref)).data()
-
-/* 🔥 REDIRECTION */
+/* ROLE UI */
 if(userData.role === "merchant" || userData.role === "superadmin"){
 accountButton.innerText="Minha Loja"
 accountButton.onclick=()=>location.href="merchant-dashboard.html"
@@ -269,10 +256,12 @@ accountButton.onclick=()=>location.href="merchant-register.html"
 }
 
 }else{
-
 accountButton.innerText="Criar conta"
 accountButton.onclick=()=>location.href="merchant-register.html"
+}
 
+}catch(e){
+console.error("ERRO AUTH:", e)
 }
 
 })
@@ -330,6 +319,7 @@ return `
 
 /* LOAD PRODUCTS */
 async function loadProducts(){
+try{
 const snap=await getDocs(collection(db,"products"))
 const container=document.getElementById("productList")
 container.innerHTML=""
@@ -341,6 +331,9 @@ data.id=docSnap.id
 products.push(data)
 container.innerHTML+=productHTML(data)
 })
+}catch(e){
+console.error("ERRO LOAD PRODUCTS:", e)
+}
 }
 
 /* OPEN */
