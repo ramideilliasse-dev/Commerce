@@ -222,7 +222,7 @@ profilePic.src=localStorage.getItem("profilePic") || "https://via.placeholder.co
 /* ACCOUNT BUTTON */
 const accountButton=document.getElementById("accountButton")
 
-/* 🔥 AUTH + USER SYSTEM */
+/* 🔥 AUTH + ROLE SYSTEM */
 onAuthStateChanged(auth, async (user)=>{
 
 try{
@@ -232,7 +232,7 @@ if(user){
 const ref = doc(db, "users", user.uid)
 let snap = await getDoc(ref)
 
-/* CREATE USER */
+/* CREATE USER AUTO */
 if(!snap.exists()){
 await setDoc(ref,{
 email:user.email,
@@ -240,17 +240,27 @@ createdAt:Date.now(),
 approved:false,
 role:"client"
 })
-console.log("User créé ✅")
 snap = await getDoc(ref)
 }
 
 const userData = snap.data()
 
-/* ROLE UI */
-if(userData.role === "merchant" || userData.role === "superadmin"){
+console.log("ROLE:", userData.role)
+
+/* 👑 ADMIN */
+if(userData.role === "superadmin"){
+accountButton.innerText="Admin 👑"
+accountButton.onclick=()=>location.href="admin-dashboard.html"
+}
+
+/* 🏪 MERCHANT */
+else if(userData.role === "merchant"){
 accountButton.innerText="Minha Loja"
 accountButton.onclick=()=>location.href="merchant-dashboard.html"
-}else{
+}
+
+/* 👤 CLIENT */
+else{
 accountButton.innerText="Criar loja"
 accountButton.onclick=()=>location.href="merchant-register.html"
 }
