@@ -1,0 +1,281 @@
+ <!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Dashboard</title>
+
+<style>
+body{
+font-family:Arial;
+margin:0;
+background:#f4f4f4;
+}
+
+/* HEADER */
+.header{
+background:black;
+color:white;
+padding:15px;
+text-align:center;
+font-size:20px;
+font-weight:bold;
+}
+
+/* MENU */
+.tabs{
+display:flex;
+background:white;
+border-bottom:1px solid #ddd;
+}
+
+.tab{
+flex:1;
+text-align:center;
+padding:12px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.active{
+background:#1aa34a;
+color:white;
+}
+
+/* CONTENT */
+.container{
+padding:10px;
+}
+
+.card{
+background:white;
+padding:10px;
+margin-bottom:10px;
+border-radius:10px;
+box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
+button{
+padding:6px 10px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+margin-top:5px;
+}
+
+.approve{background:#1aa34a;color:white;}
+.reject{background:red;color:white;}
+.admin{background:black;color:white;}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+Admin Dashboard 👑
+</div>
+
+<div class="tabs">
+<div class="tab active" onclick="showTab('users')">👤 Utilisateurs</div>
+<div class="tab" onclick="showTab('orders')">🛒 Commandes</div>
+<div class="tab" onclick="showTab('merchants')">🏪 Vendeurs</div>
+</div>
+
+<div class="container" id="content"></div>
+
+<script type="module">
+
+import { db, auth } from "./firebase.js"
+
+import {
+collection,
+getDocs,
+doc,
+updateDoc,
+query,
+where
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
+import {
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
+
+let currentUser=null
+
+/* 🔐 SECURITE ADMIN */
+onAuthStateChanged(auth, async (user)=>{
+
+if(!user){
+location.href="index.html"
+return
+}
+
+currentUser=user
+
+const snap = await getDocs(collection(db,"users"))
+
+let isAdmin=false
+
+snap.forEach(d=>{
+if(d.id===user.uid){
+let data=d.data()
+if(data.role==="admin" || data.role==="superadmin"){
+isAdmin=true
+}
+}
+})
+
+if(!isAdmin){
+alert("Acesso negado ❌")
+location.href="index.html"
+return
+}
+
+/* LOAD DEFAULT */
+loadUsers()
+
+})
+
+/* NAVIGATION */
+window.showTab=function(tab){
+
+document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"))
+
+event.target.classList.add("active")
+
+if(tab==="users") loadUsers()
+if(tab==="orders") loadOrders()
+if(tab==="merchants") loadMerchants()
+
+}
+
+/* 👤 USERS */
+async function loadUsers(){
+
+const snap = await getDocs(collection(db,"users"))
+
+let html=""
+
+snap.forEach(docSnap=>{
+
+const u=docSnap.data()
+
+html+=`
+<div class="card">
+<b>${u.email}</b><br>
+Role: ${u.role}<br>
+Approved: ${u.approved}
+
+<br>
+
+<button class="approve" onclick="approve('${docSnap.id}')">Aprovar vendedor</button>
+<button class="reject" onclick="reject('${docSnap.id}')">Recusar</button>
+<button class="admin" onclick="makeAdmin('${docSnap.id}')">Admin</button>
+
+</div>
+`
+})
+
+document.getElementById("content").innerHTML=html
+
+}
+
+/* ACTIONS */
+window.approve = async function(id){
+
+await updateDoc(doc(db,"users",id),{
+role:"merchant",
+approved:true
+})
+
+alert("Vendedor aprovado ✅")
+loadUsers()
+
+}
+
+window.reject = async function(id){
+
+await updateDoc(doc(db,"users",id),{
+role:"client",
+approved:false
+})
+
+alert("Recusado ❌")
+loadUsers()
+
+}
+
+window.makeAdmin = async function(id){
+
+await updateDoc(doc(db,"users",id),{
+role:"admin"
+})
+
+alert("Agora é admin 👑")
+loadUsers()
+
+}
+
+/* 🛒 ORDERS */
+async function loadOrders(){
+
+const snap = await getDocs(collection(db,"orders"))
+
+let html=""
+
+snap.forEach(docSnap=>{
+
+const o=docSnap.data()
+
+html+=`
+<div class="card">
+<b>${o.productName}</b><br>
+${o.qty} x ${o.price} Kz<br>
+
+👤 ${o.clientName}<br>
+📞 ${o.clientPhone}<br>
+
+Status: ${o.status}
+
+</div>
+`
+})
+
+document.getElementById("content").innerHTML=html
+
+}
+
+/* 🏪 MERCHANTS */
+async function loadMerchants(){
+
+const q = query(
+collection(db,"users"),
+where("role","==","merchant")
+)
+
+const snap = await getDocs(q)
+
+let html=""
+
+snap.forEach(docSnap=>{
+
+const m=docSnap.data()
+
+html+=`
+<div class="card">
+<b>${m.email}</b><br>
+Vendedor aprovado ✅
+</div>
+`
+})
+
+document.getElementById("content").innerHTML=html
+
+}
+
+</script>
+
+</body>
+</html>
