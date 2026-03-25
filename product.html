@@ -23,7 +23,7 @@ text-align:center;
 box-shadow:0 2px 5px rgba(0,0,0,0.1);
 }
 
-/* 🔥 IMAGE FULL */
+/* IMAGE */
 .imageContainer{
 position:relative;
 width:100%;
@@ -36,10 +36,9 @@ background:#000;
 width:100%;
 height:100%;
 object-fit:cover;
-transition:0.3s;
 }
 
-/* 🔥 GALLERY */
+/* GALLERY */
 .gallery{
 display:flex;
 gap:8px;
@@ -60,25 +59,6 @@ opacity:0.6;
 .gallery img.active{
 border:2px solid #ff6a00;
 opacity:1;
-}
-
-/* 🔥 ZOOM FULLSCREEN */
-.zoomBox{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:black;
-display:none;
-align-items:center;
-justify-content:center;
-z-index:9999;
-}
-
-.zoomBox img{
-max-width:100%;
-max-height:100%;
 }
 
 /* PRODUCT */
@@ -111,6 +91,38 @@ cursor:pointer;
 
 .qty{margin-top:10px;}
 
+/* 🔥 SECTIONS */
+.section{
+padding:10px;
+}
+
+.grid{
+display:flex;
+gap:10px;
+overflow-x:auto;
+}
+
+.card{
+min-width:140px;
+background:white;
+border-radius:10px;
+padding:8px;
+box-shadow:0 2px 5px rgba(0,0,0,0.1);
+cursor:pointer;
+}
+
+.card img{
+width:100%;
+height:100px;
+object-fit:cover;
+border-radius:8px;
+}
+
+.cardPrice{
+color:#ff6a00;
+font-weight:bold;
+}
+
 </style>
 
 </head>
@@ -121,20 +133,29 @@ cursor:pointer;
 
 <div id="productBox"></div>
 
-<!-- 🔥 ZOOM -->
-<div id="zoomBox" class="zoomBox" onclick="closeZoom()">
-<img id="zoomImg">
+<!-- 🔥 SIMILAR -->
+<div class="section">
+<h3>Produtos similares</h3>
+<div id="similar" class="grid"></div>
+</div>
+
+<!-- 🔥 OTHER MERCHANTS -->
+<div class="section">
+<h3>Outros vendedores</h3>
+<div id="others" class="grid"></div>
 </div>
 
 <script type="module">
 
 import { db } from "./firebase.js"
-import { doc,getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+import {
+doc,getDoc,
+collection,getDocs,query,where
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
 const productId=localStorage.getItem("selectedProduct")
 
 let images=[]
-let currentIndex=0
 let currentProduct=null
 
 async function loadProduct(){
@@ -151,6 +172,8 @@ currentProduct=snap.data()
 images = currentProduct.images || []
 
 renderProduct()
+loadSimilar()
+loadOthers()
 
 }
 
@@ -163,9 +186,7 @@ let main = images[0] || ""
 document.getElementById("productBox").innerHTML=`
 
 <div class="imageContainer">
-
-<img id="mainImage" class="mainImage" src="${main}" onclick="zoomImage()">
-
+<img id="mainImage" class="mainImage" src="${main}">
 </div>
 
 <div class="gallery">
@@ -191,17 +212,12 @@ ${images.map((img,i)=>`
 </div>
 
 </div>
-
 `
-
-initSwipe()
-
 }
 
-/* 🔥 SELECT IMAGE */
+/* SELECT IMAGE */
 window.selectImage=function(i){
 
-currentIndex=i
 document.getElementById("mainImage").src=images[i]
 
 document.querySelectorAll(".gallery img").forEach((img,index)=>{
@@ -210,59 +226,71 @@ img.classList.toggle("active", index===i)
 
 }
 
-/* 🔥 SWIPE MOBILE */
-function initSwipe(){
+/* 🔥 SIMILAR (same category) */
+async function loadSimilar(){
 
-let startX=0
+const q=query(
+collection(db,"products"),
+where("category","==",currentProduct.category)
+)
 
-const img=document.getElementById("mainImage")
+const snap=await getDocs(q)
 
-img.addEventListener("touchstart",e=>{
-startX=e.touches[0].clientX
+let html=""
+
+snap.forEach(docSnap=>{
+
+const p=docSnap.data()
+
+if(docSnap.id !== productId){
+
+html+=`
+<div class="card" onclick="openProduct('${docSnap.id}')">
+<img src="${p.images?.[0] || ''}">
+<div>${p.name}</div>
+<div class="cardPrice">${p.price} Kz</div>
+</div>
+`
+}
+
 })
 
-img.addEventListener("touchend",e=>{
+document.getElementById("similar").innerHTML=html
 
-let endX=e.changedTouches[0].clientX
-
-if(startX - endX > 50){
-nextImage()
 }
 
-if(endX - startX > 50){
-prevImage()
+/* 🔥 OTHER MERCHANTS */
+async function loadOthers(){
+
+const snap=await getDocs(collection(db,"products"))
+
+let html=""
+
+snap.forEach(docSnap=>{
+
+const p=docSnap.data()
+
+if(p.merchantId !== currentProduct.merchantId){
+
+html+=`
+<div class="card" onclick="openProduct('${docSnap.id}')">
+<img src="${p.images?.[0] || ''}">
+<div>${p.name}</div>
+<div class="cardPrice">${p.price} Kz</div>
+</div>
+`
 }
 
 })
 
-}
-
-function nextImage(){
-if(currentIndex < images.length-1){
-selectImage(currentIndex+1)
-}
-}
-
-function prevImage(){
-if(currentIndex > 0){
-selectImage(currentIndex-1)
-}
-}
-
-/* 🔥 ZOOM */
-window.zoomImage=function(){
-
-const zoomBox=document.getElementById("zoomBox")
-const zoomImg=document.getElementById("zoomImg")
-
-zoomImg.src=images[currentIndex]
-
-zoomBox.style.display="flex"
+document.getElementById("others").innerHTML=html
 
 }
 
-window.closeZoom=function(){
-document.getElementById("zoomBox").style.display="none"
+/* OPEN */
+window.openProduct=function(id){
+localStorage.setItem("selectedProduct", id)
+location.reload()
 }
 
 /* SHOP */
@@ -301,4 +329,4 @@ alert("Adicionado ao carrinho 🛒")
 </script>
 
 </body>
-</html> 
+</html>
