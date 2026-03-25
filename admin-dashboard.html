@@ -4,57 +4,78 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Admin Dashboard</title>
+<title>Admin Dashboard PRO</title>
 
 <style>
-body{
-font-family:Arial;
-margin:0;
-background:#f4f4f4;
-}
+body{font-family:Arial;margin:0;background:#f4f4f4;}
 
-/* HEADER */
 .header{
-background:black;
-color:white;
-padding:15px;
-text-align:center;
-font-size:20px;
-font-weight:bold;
+background:black;color:white;padding:15px;text-align:center;
+font-size:20px;font-weight:bold;
 }
 
-/* MENU */
-.tabs{
-display:flex;
+/* STATS */
+.stats{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+padding:10px;
+}
+
+.stat{
 background:white;
-border-bottom:1px solid #ddd;
-}
-
-.tab{
-flex:1;
+padding:10px;
+border-radius:10px;
 text-align:center;
-padding:12px;
-cursor:pointer;
 font-weight:bold;
 }
 
-.active{
+/* TABS */
+.tabs{display:flex;background:white;border-bottom:1px solid #ddd;}
+.tab{flex:1;text-align:center;padding:12px;cursor:pointer;font-weight:bold;}
+.active{background:#1aa34a;color:white;}
+
+/* FILTER */
+.filter{
+padding:10px;
+display:flex;
+gap:5px;
+flex-wrap:wrap;
+}
+
+.filter button{
+background:#ddd;
+border:none;
+padding:6px 10px;
+border-radius:6px;
+cursor:pointer;
+}
+
+.filter .activeFilter{
 background:#1aa34a;
 color:white;
 }
 
-/* CONTENT */
-.container{
-padding:10px;
-}
-
+/* CARDS */
+.container{padding:10px;}
 .card{
 background:white;
-padding:10px;
+padding:12px;
 margin-bottom:10px;
 border-radius:10px;
 box-shadow:0 2px 5px rgba(0,0,0,0.1);
 }
+
+.badge{
+padding:3px 8px;
+border-radius:6px;
+color:white;
+font-size:12px;
+}
+
+.green{background:#1aa34a;}
+.red{background:red;}
+.orange{background:orange;}
 
 button{
 padding:6px 10px;
@@ -62,26 +83,35 @@ border:none;
 border-radius:6px;
 cursor:pointer;
 margin-top:5px;
+margin-right:5px;
 }
 
 .approve{background:#1aa34a;color:white;}
 .reject{background:red;color:white;}
 .admin{background:black;color:white;}
-
 </style>
 </head>
 
 <body>
 
-<div class="header">
-Admin Dashboard 👑
+<div class="header">Admin Dashboard 👑</div>
+
+<!-- 📊 STATS -->
+<div class="stats">
+<div class="stat" id="totalUsers">👤 0</div>
+<div class="stat" id="totalMerchants">🏪 0</div>
+<div class="stat" id="totalOrders">🛒 0</div>
+<div class="stat" id="totalRevenue">💰 0 Kz</div>
 </div>
 
 <div class="tabs">
-<div class="tab active" onclick="showTab('users')">👤 Utilisateurs</div>
-<div class="tab" onclick="showTab('orders')">🛒 Commandes</div>
-<div class="tab" onclick="showTab('merchants')">🏪 Vendeurs</div>
+<div class="tab active" onclick="showTab(event,'users')">👤 Utilisateurs</div>
+<div class="tab" onclick="showTab(event,'orders')">🛒 Commandes</div>
+<div class="tab" onclick="showTab(event,'merchants')">🏪 Vendeurs</div>
 </div>
+
+<!-- 🔍 FILTER -->
+<div class="filter" id="filters"></div>
 
 <div class="container" id="content"></div>
 
@@ -98,13 +128,12 @@ query,
 where
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
-import {
-onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
-let currentUser=null
+let currentUserData=null
+let allUsers=[]
 
-/* 🔐 SECURITE ADMIN */
+/* 🔐 AUTH */
 onAuthStateChanged(auth, async (user)=>{
 
 if(!user){
@@ -112,67 +141,129 @@ location.href="index.html"
 return
 }
 
-currentUser=user
-
 const snap = await getDocs(collection(db,"users"))
-
-let isAdmin=false
 
 snap.forEach(d=>{
 if(d.id===user.uid){
-let data=d.data()
-if(data.role==="admin" || data.role==="superadmin"){
-isAdmin=true
-}
+currentUserData=d.data()
 }
 })
 
-if(!isAdmin){
+if(!currentUserData || (currentUserData.role!=="admin" && currentUserData.role!=="superadmin")){
 alert("Acesso negado ❌")
 location.href="index.html"
 return
 }
 
-/* LOAD DEFAULT */
+/* LOAD DATA */
+await loadStats()
 loadUsers()
 
 })
 
-/* NAVIGATION */
-window.showTab=function(tab){
+/* 📊 STATS */
+async function loadStats(){
 
+let usersSnap = await getDocs(collection(db,"users"))
+let ordersSnap = await getDocs(collection(db,"orders"))
+
+let totalUsers=0
+let totalMerchants=0
+let totalOrders=0
+let totalRevenue=0
+
+usersSnap.forEach(d=>{
+totalUsers++
+if(d.data().role==="merchant") totalMerchants++
+})
+
+ordersSnap.forEach(d=>{
+let o=d.data()
+totalOrders++
+totalRevenue += (o.price||0)*(o.qty||1)
+})
+
+document.getElementById("totalUsers").innerText="👤 "+totalUsers
+document.getElementById("totalMerchants").innerText="🏪 "+totalMerchants
+document.getElementById("totalOrders").innerText="🛒 "+totalOrders
+document.getElementById("totalRevenue").innerText="💰 "+totalRevenue+" Kz"
+
+}
+
+/* NAV */
+window.showTab=function(e,tab){
 document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"))
-
-event.target.classList.add("active")
+e.target.classList.add("active")
 
 if(tab==="users") loadUsers()
 if(tab==="orders") loadOrders()
 if(tab==="merchants") loadMerchants()
+}
+
+/* 👤 USERS + FILTER */
+async function loadUsers(filter="all"){
+
+const snap = await getDocs(collection(db,"users"))
+allUsers=[]
+
+snap.forEach(d=>{
+allUsers.push({id:d.id,...d.data()})
+})
+
+renderFilters(filter)
+renderUsers(filter)
 
 }
 
-/* 👤 USERS */
-async function loadUsers(){
+function renderFilters(active){
 
-const snap = await getDocs(collection(db,"users"))
+let filters = ["all","client","merchant","pending"]
 
 let html=""
 
-snap.forEach(docSnap=>{
+filters.forEach(f=>{
+html+=`<button class="${f===active?"activeFilter":""}" onclick="applyFilter('${f}')">${f}</button>`
+})
 
-const u=docSnap.data()
+document.getElementById("filters").innerHTML=html
+}
+
+window.applyFilter=function(f){
+renderUsers(f)
+renderFilters(f)
+}
+
+function renderUsers(filter){
+
+let html=""
+
+let users = allUsers.filter(u=>{
+if(filter==="all") return true
+if(filter==="client") return u.role==="client"
+if(filter==="merchant") return u.role==="merchant"
+if(filter==="pending") return !u.approved
+})
+
+users.forEach(u=>{
+
+let badge = u.approved 
+? `<span class="badge green">Aprovado</span>` 
+: `<span class="badge orange">Pendente</span>`
 
 html+=`
 <div class="card">
 <b>${u.email}</b><br>
 Role: ${u.role}<br>
-Approved: ${u.approved}
+${badge}
 
 <br>
 
-<button class="approve" onclick="approve('${docSnap.id}')">Aprovar vendedor</button>
-<button class="reject" onclick="reject('${docSnap.id}')">Recusar</button>
-<button class="admin" onclick="makeAdmin('${docSnap.id}')">Admin</button>
+<button class="approve" onclick="approve('${u.id}')">Aprovar</button>
+<button class="reject" onclick="reject('${u.id}')">Recusar</button>
+
+${currentUserData.role==="superadmin" 
+? `<button class="admin" onclick="makeAdmin('${u.id}')">Admin</button>` 
+: ""}
 
 </div>
 `
@@ -184,61 +275,38 @@ document.getElementById("content").innerHTML=html
 
 /* ACTIONS */
 window.approve = async function(id){
-
-await updateDoc(doc(db,"users",id),{
-role:"merchant",
-approved:true
-})
-
-alert("Vendedor aprovado ✅")
+await updateDoc(doc(db,"users",id),{role:"merchant",approved:true})
 loadUsers()
-
 }
 
 window.reject = async function(id){
-
-await updateDoc(doc(db,"users",id),{
-role:"client",
-approved:false
-})
-
-alert("Recusado ❌")
+await updateDoc(doc(db,"users",id),{role:"client",approved:false})
 loadUsers()
-
 }
 
 window.makeAdmin = async function(id){
-
-await updateDoc(doc(db,"users",id),{
-role:"admin"
-})
-
-alert("Agora é admin 👑")
+await updateDoc(doc(db,"users",id),{role:"admin"})
 loadUsers()
-
 }
 
 /* 🛒 ORDERS */
 async function loadOrders(){
 
+document.getElementById("filters").innerHTML=""
+
 const snap = await getDocs(collection(db,"orders"))
 
 let html=""
 
-snap.forEach(docSnap=>{
-
-const o=docSnap.data()
+snap.forEach(d=>{
+let o=d.data()
 
 html+=`
 <div class="card">
 <b>${o.productName}</b><br>
 ${o.qty} x ${o.price} Kz<br>
-
 👤 ${o.clientName}<br>
-📞 ${o.clientPhone}<br>
-
-Status: ${o.status}
-
+📞 ${o.clientPhone}
 </div>
 `
 })
@@ -250,23 +318,20 @@ document.getElementById("content").innerHTML=html
 /* 🏪 MERCHANTS */
 async function loadMerchants(){
 
-const q = query(
-collection(db,"users"),
-where("role","==","merchant")
-)
+document.getElementById("filters").innerHTML=""
 
+const q = query(collection(db,"users"), where("role","==","merchant"))
 const snap = await getDocs(q)
 
 let html=""
 
-snap.forEach(docSnap=>{
-
-const m=docSnap.data()
+snap.forEach(d=>{
+let m=d.data()
 
 html+=`
 <div class="card">
 <b>${m.email}</b><br>
-Vendedor aprovado ✅
+<span class="badge green">Ativo</span>
 </div>
 `
 })
