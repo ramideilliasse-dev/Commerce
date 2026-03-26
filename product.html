@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt">
 
 <head>
@@ -61,7 +61,7 @@ border:2px solid #ff6a00;
 opacity:1;
 }
 
-/* 🔥 ZOOM FULLSCREEN */
+/* ZOOM */
 .zoomBox{
 position:fixed;
 top:0;
@@ -80,7 +80,6 @@ max-width:100%;
 max-height:100%;
 }
 
-/* CLOSE BTN */
 .closeZoom{
 position:absolute;
 top:20px;
@@ -106,6 +105,7 @@ padding:15px;
 display:flex;
 gap:10px;
 margin-top:15px;
+flex-wrap:wrap;
 }
 
 .btn{
@@ -119,6 +119,7 @@ cursor:pointer;
 
 .shopBtn{background:black;color:white;}
 .buyBtn{background:#1aa34a;color:white;}
+.chatBtn{background:#075e54;color:white;}
 
 .qty{margin-top:10px;}
 
@@ -162,7 +163,7 @@ font-weight:bold;
 
 <div id="productBox"></div>
 
-<!-- 🔥 ZOOM -->
+<!-- ZOOM -->
 <div id="zoomBox" class="zoomBox">
 <div class="closeZoom" onclick="closeZoom()">X</div>
 <img id="zoomImg">
@@ -232,6 +233,7 @@ ${images.map((img,i)=>`
 </div>
 
 <div class="product">
+
 <div class="name">${currentProduct.name}</div>
 <div class="price">${currentProduct.price} Kz</div>
 <div class="desc">${currentProduct.description || ""}</div>
@@ -242,12 +244,30 @@ ${images.map((img,i)=>`
 </div>
 
 <div class="actions">
-<button class="btn shopBtn" onclick="openShop('${currentProduct.merchantId}')">Loja</button>
-<button class="btn buyBtn" onclick="orderNow()">Comprar</button>
+
+<button class="btn shopBtn" onclick="openShop('${currentProduct.merchantId}')">
+Loja
+</button>
+
+<button class="btn buyBtn" onclick="orderNow()">
+Comprar
+</button>
+
+<!-- 🔥 CHAT AJOUTÉ -->
+<button class="btn chatBtn" onclick="openChat()">
+💬 Chat
+</button>
+
 </div>
+
 </div>
 `
 
+}
+
+/* 🔥 CHAT */
+window.openChat = function(){
+location.href = "chat.html?merchant=" + currentProduct.merchantId
 }
 
 /* SELECT IMAGE */
@@ -260,18 +280,17 @@ img.classList.toggle("active", index===i)
 })
 }
 
-/* 🔥 ZOOM OPEN */
+/* ZOOM */
 window.zoomImage=function(){
 document.getElementById("zoomBox").style.display="flex"
 document.getElementById("zoomImg").src=images[currentIndex]
 }
 
-/* CLOSE */
 window.closeZoom=function(){
 document.getElementById("zoomBox").style.display="none"
 }
 
-/* 🔥 SWIPE ZOOM */
+/* SWIPE */
 let startX=0
 
 document.getElementById("zoomBox").addEventListener("touchstart",e=>{
@@ -281,13 +300,8 @@ startX=e.touches[0].clientX
 document.getElementById("zoomBox").addEventListener("touchend",e=>{
 let endX=e.changedTouches[0].clientX
 
-if(startX - endX > 50){
-nextImage()
-}
-
-if(endX - startX > 50){
-prevImage()
-}
+if(startX - endX > 50) nextImage()
+if(endX - startX > 50) prevImage()
 })
 
 function nextImage(){
@@ -335,7 +349,6 @@ html+=`
 })
 
 document.getElementById("similar").innerHTML=html
-
 }
 
 /* OTHERS */
@@ -360,7 +373,6 @@ html+=`
 })
 
 document.getElementById("others").innerHTML=html
-
 }
 
 /* OPEN */
@@ -399,7 +411,6 @@ merchantId:currentProduct.merchantId
 localStorage.setItem("cart", JSON.stringify(cart))
 
 alert("Adicionado ao carrinho 🛒")
-
 }
 
 </script>
