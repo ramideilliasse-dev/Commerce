@@ -115,7 +115,6 @@ border:none;
 border-radius:10px;
 margin-top:10px;
 }
-
 </style>
 </head>
 
@@ -127,7 +126,7 @@ Dashboard PRO 🚀
 
 <div class="container">
 
-<!-- 🔥 ACTIONS PRO -->
+<!-- 🔥 ACTIONS -->
 <div class="actions">
 <button class="btnShop" onclick="openShop()">Ver minha loja 🏪</button>
 <button class="btnAdd" onclick="addProduct()">+ Publicar produto</button>
@@ -153,7 +152,7 @@ Pedidos<br><span id="totalOrders">0</span>
 
 </div>
 
-<!-- FILTER -->
+<!-- ORDERS -->
 <div class="card">
 
 <div class="filter">
@@ -209,7 +208,7 @@ listenOrders()
 
 })
 
-/* 🔥 NAVIGATION */
+/* NAVIGATION */
 window.openShop = function(){
 location.href = "merchant-shop.html?id=" + currentUser.uid
 }
@@ -218,7 +217,7 @@ window.addProduct = function(){
 location.href = "add-product.html"
 }
 
-/* REALTIME LISTENER */
+/* REALTIME */
 function listenOrders(){
 
 const q = query(
@@ -233,6 +232,9 @@ let totalSales=0
 let todaySales=0
 let totalOrders=0
 
+/* 🔥 NOUVEAU */
+let productStats = {}
+
 const today = new Date().toDateString()
 
 snapshot.forEach(docSnap=>{
@@ -240,6 +242,7 @@ snapshot.forEach(docSnap=>{
 const o = docSnap.data()
 const id = docSnap.id
 
+/* FILTER */
 if(filter !== "all" && o.status !== filter) return
 
 totalOrders++
@@ -248,6 +251,12 @@ totalSales += o.price * o.qty
 if(new Date(o.date).toDateString() === today){
 todaySales += o.price * o.qty
 }
+
+/* 🔥 STATS PAR PRODUIT */
+if(!productStats[o.productName]){
+productStats[o.productName] = 0
+}
+productStats[o.productName] += o.qty
 
 html += `
 <div class="order">
@@ -277,14 +286,20 @@ Supprimer
 `
 })
 
+/* UI */
 document.getElementById("ordersList").innerHTML = html
 document.getElementById("totalSales").innerText = totalSales
 document.getElementById("todaySales").innerText = todaySales
 document.getElementById("totalOrders").innerText = totalOrders
 
+/* 🔥 ALERT + SOUND */
 if(!firstLoad && snapshot.docChanges().length > 0){
+alert("Nova encomenda 🛒")
 document.getElementById("notifSound").play()
 }
+
+/* DEBUG STATS */
+console.log("📊 Stats produits:", productStats)
 
 firstLoad = false
 
