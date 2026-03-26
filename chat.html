@@ -1,49 +1,25 @@
  <!DOCTYPE html>
 <html lang="pt">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chat vendedor</title>
+<title>Chat</title>
 
 <style>
-
-body{
-font-family:Arial;
-margin:0;
-background:#ece5dd;
-}
-
-/* HEADER */
+body{font-family:Arial;margin:0;background:#ece5dd;}
 
 .header{
 background:#075e54;
 color:white;
 padding:12px;
 display:flex;
+justify-content:space-between;
 align-items:center;
 }
 
-.back{
-margin-right:10px;
-cursor:pointer;
-font-size:22px;
-}
+.left{display:flex;gap:10px;align-items:center;}
 
-.shopInfo{
-display:flex;
-align-items:center;
-gap:10px;
-}
-
-.shopInfo img{
-width:40px;
-height:40px;
-border-radius:50%;
-object-fit:cover;
-}
-
-/* CHAT */
+.status{font-size:12px;opacity:0.8;}
 
 .chatArea{
 height:70vh;
@@ -56,17 +32,11 @@ max-width:75%;
 padding:12px;
 margin-bottom:10px;
 border-radius:12px;
-font-size:18px;
+font-size:16px;
 }
 
-.me{
-background:#dcf8c6;
-margin-left:auto;
-}
-
-.other{
-background:white;
-}
+.me{background:#dcf8c6;margin-left:auto;}
+.other{background:white;}
 
 .msg img{
 width:150px;
@@ -75,18 +45,16 @@ margin-top:5px;
 }
 
 audio{
-width:180px;
+width:150px;
 margin-top:5px;
 }
 
-.status{
-font-size:12px;
+.msg .status{
+font-size:11px;
 text-align:right;
 margin-top:5px;
 color:#666;
 }
-
-/* INPUT */
 
 .inputArea{
 position:fixed;
@@ -95,220 +63,250 @@ left:0;
 right:0;
 background:white;
 display:flex;
-align-items:center;
-gap:6px;
 padding:10px;
-border-top:1px solid #ddd;
+gap:5px;
+align-items:center;
 }
 
 #text{
 flex:1;
-padding:12px;
-font-size:17px;
-border-radius:25px;
+padding:10px;
+border-radius:20px;
 border:1px solid #ccc;
 }
 
 .iconBtn{
 background:#eee;
 border:none;
-width:38px;
-height:38px;
+width:40px;
+height:40px;
 border-radius:50%;
-font-size:18px;
 cursor:pointer;
 }
 
 .sendBtn{
 background:#25d366;
-border:none;
 color:white;
-width:42px;
-height:42px;
+border:none;
+width:45px;
+height:45px;
 border-radius:50%;
-font-size:18px;
 cursor:pointer;
 }
-
 </style>
 </head>
 
 <body>
 
 <div class="header">
-
-<span class="back" onclick="history.back()">⬅</span>
-
-<div class="shopInfo">
-<img id="shopPhoto">
-<div id="shopName">Vendedor</div>
+<div class="left">
+<span onclick="history.back()">⬅</span>
+<div>
+<div>Chat</div>
+<div id="status" class="status">offline</div>
 </div>
-
 </div>
-
+<div id="typingStatus"></div>
+</div>
 
 <div id="chat" class="chatArea"></div>
 
-
 <div class="inputArea">
-
 <input id="text" placeholder="Mensagem...">
 
-<input type="file" id="image" accept="image/*" capture="environment" style="display:none">
+<input type="file" id="image" hidden>
 
-<button class="iconBtn" onclick="camera()">📷</button>
-
+<button class="iconBtn" onclick="pickImage()">📷</button>
 <button class="iconBtn" id="recordBtn">🎤</button>
-
-<button class="iconBtn" onclick="createOrder()">🛒</button>
-
 <button class="sendBtn" onclick="send()">➤</button>
-
 </div>
-
 
 <script type="module">
 
-import { db } from "./firebase.js";
+import { db, auth } from "./firebase.js"
 
 import {
-doc,
-getDoc,
 collection,
 addDoc,
 query,
 orderBy,
 onSnapshot,
+doc,
+setDoc,
+getDoc,
 updateDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
-const params=new URLSearchParams(window.location.search)
+import {
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
-const merchant=params.get("merchant")
+const CLOUD_NAME = "df2oxw2qp"
+const UPLOAD_PRESET = "angcomerce-upload"
 
-const product=params.get("product")
+const params = new URLSearchParams(location.search)
+const merchant = params.get("merchant")
 
-const chatId=merchant+"_"+product
+let currentUser=null
+let chatId=null
+let messagesRef=null
+let chatRef=null
 
-const chatRef=doc(db,"chats",chatId)
+let lastMessageTime = 0
 
-const messagesRef=collection(db,"chats",chatId,"messages")
+/* AUTH */
+onAuthStateChanged(auth, async (user)=>{
 
-
-/* LOAD SHOP */
-
-async function loadShop(){
-
-const snap=await getDoc(chatRef)
-
-if(snap.exists()){
-
-const data=snap.data()
-
-document.getElementById("shopName").innerText=data.merchantName || "Vendedor"
-
-document.getElementById("shopPhoto").src=data.merchantPhoto || ""
-
+if(!user){
+location.href="merchant-register.html"
+return
 }
 
+currentUser=user
+
+/* 🔥 CHECK BLOCKED */
+const userSnap = await getDoc(doc(db,"users",user.uid))
+if(userSnap.data()?.blocked){
+alert("Conta bloqueada ❌")
+return
 }
 
-loadShop()
+chatId = user.uid + "_" + merchant
+messagesRef = collection(db,"chats",chatId,"messages")
+chatRef = doc(db,"chats",chatId)
 
+/* ONLINE */
+setDoc(chatRef,{
+online:true,
+typing:false
+},{merge:true})
 
-/* LOAD MESSAGES */
+listenMessages()
+listenStatus()
 
-onSnapshot(query(messagesRef,orderBy("time")),snap=>{
+})
+
+/* 🔔 LISTEN MESSAGES */
+function listenMessages(){
+
+onSnapshot(query(messagesRef,orderBy("time")),(snap)=>{
 
 const chat=document.getElementById("chat")
-
 chat.innerHTML=""
+
+let unread=0
 
 snap.forEach(async docSnap=>{
 
-const data=docSnap.data()
+const m=docSnap.data()
+const isMe = m.sender === currentUser.uid
 
-chat.innerHTML+=`
+/* COUNT UNREAD */
+if(!isMe && !m.read) unread++
 
-<div class="msg ${data.sender}">
-
-${data.text || ""}
-
-${data.image ? "<img src='"+data.image+"'>" : ""}
-
-${data.audio ? "<audio controls src='"+data.audio+"'></audio>" : ""}
-
-<div class="status">${data.read ? "✔✔" : "✔"}</div>
-
-</div>
-
-`
-
-if(data.sender!="me"){
-
+/* MARK AS READ */
+if(!isMe && !m.read){
 await updateDoc(docSnap.ref,{read:true})
-
 }
 
+chat.innerHTML += `
+<div class="msg ${isMe ? "me":"other"}">
+${m.text || ""}
+${m.image ? `<img src="${m.image}">` : ""}
+${m.audio ? `<audio controls src="${m.audio}"></audio>` : ""}
+
+<div class="status">
+${isMe ? (m.read ? "✔✔":"✔") : ""}
+</div>
+</div>
+`
+
 })
+
+/* 🔴 BADGE */
+document.title = unread>0 ? "("+unread+") Chat" : "Chat"
 
 chat.scrollTop=chat.scrollHeight
 
 })
 
+}
 
-/* SEND TEXT */
+/* STATUS */
+function listenStatus(){
 
+onSnapshot(chatRef,(snap)=>{
+
+if(!snap.exists()) return
+
+const d = snap.data()
+
+document.getElementById("status").innerText = d.online ? "online" : "offline"
+document.getElementById("typingStatus").innerText = d.typing ? "digitando..." : ""
+
+})
+
+}
+
+/* SEND */
 window.send=async function(){
 
 const text=document.getElementById("text").value.trim()
 
 if(!text) return
 
+/* 🛡️ ANTI SPAM */
+const now = Date.now()
+if(now - lastMessageTime < 1000){
+alert("Trop rapide ⚠️")
+return
+}
+lastMessageTime = now
+
+if(text.length > 300){
+alert("Message trop long ❌")
+return
+}
+
 await addDoc(messagesRef,{
 text:text,
-sender:"me",
+sender:currentUser.uid,
 time:Date.now(),
 read:false
 })
 
 document.getElementById("text").value=""
 
+setDoc(chatRef,{typing:false},{merge:true})
+
 }
 
+/* TYPING */
+document.getElementById("text").addEventListener("input",()=>{
 
-/* ENTER SEND */
+setDoc(chatRef,{typing:true},{merge:true})
 
-document.getElementById("text").addEventListener("keypress",function(e){
-
-if(e.key==="Enter"){
-send()
-}
+setTimeout(()=>{
+setDoc(chatRef,{typing:false},{merge:true})
+},1500)
 
 })
 
-
-/* CAMERA */
-
-window.camera=function(){
-
+/* IMAGE */
+window.pickImage=function(){
 document.getElementById("image").click()
-
 }
 
 document.getElementById("image").addEventListener("change",async function(){
 
 const file=this.files[0]
-
 if(!file) return
 
 const form=new FormData()
-
 form.append("file",file)
+form.append("upload_preset",UPLOAD_PRESET)
 
-form.append("upload_preset","upload")
-
-const res=await fetch("https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/image/upload",{
+const res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,{
 method:"POST",
 body:form
 })
@@ -317,19 +315,15 @@ const data=await res.json()
 
 await addDoc(messagesRef,{
 image:data.secure_url,
-sender:"me",
+sender:currentUser.uid,
 time:Date.now(),
 read:false
 })
 
 })
 
-
-/* AUDIO RECORD */
-
-let recorder
-let chunks=[]
-
+/* AUDIO */
+let recorder, chunks=[]
 const recordBtn=document.getElementById("recordBtn")
 
 recordBtn.onclick=async function(){
@@ -339,43 +333,33 @@ if(!recorder){
 const stream=await navigator.mediaDevices.getUserMedia({audio:true})
 
 recorder=new MediaRecorder(stream)
-
 recorder.start()
 
 recordBtn.innerText="⏹"
 
-recorder.ondataavailable=e=>{
-chunks.push(e.data)
-}
-
+recorder.ondataavailable=e=>chunks.push(e.data)
 recorder.onstop=uploadAudio
 
 }else{
 
 recorder.stop()
-
 recorder=null
-
 recordBtn.innerText="🎤"
 
 }
 
 }
 
-
 async function uploadAudio(){
 
 const blob=new Blob(chunks,{type:"audio/webm"})
-
 chunks=[]
 
 const form=new FormData()
-
 form.append("file",blob)
+form.append("upload_preset",UPLOAD_PRESET)
 
-form.append("upload_preset","upload")
-
-const res=await fetch("https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/video/upload",{
+const res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/video/upload`,{
 method:"POST",
 body:form
 })
@@ -384,37 +368,10 @@ const data=await res.json()
 
 await addDoc(messagesRef,{
 audio:data.secure_url,
-sender:"me",
+sender:currentUser.uid,
 time:Date.now(),
 read:false
 })
-
-}
-
-
-/* CREATE ORDER */
-
-window.createOrder=async function(){
-
-const orderId="ORD-"+Date.now()
-
-await addDoc(collection(db,"orders"),{
-
-orderId:orderId,
-merchantId:merchant,
-productId:product,
-status:"Pedido criado",
-time:Date.now()
-
-})
-
-await addDoc(messagesRef,{
-text:"🛒 Pedido criado\nReferência: "+orderId,
-sender:"system",
-time:Date.now()
-})
-
-alert("Pedido criado")
 
 }
 
