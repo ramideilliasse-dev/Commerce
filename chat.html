@@ -137,9 +137,8 @@ getDoc,
 updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
-import {
-onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
+import { onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 const CLOUD_NAME = "df2oxw2qp"
 const UPLOAD_PRESET = "angcomerce-upload"
@@ -152,7 +151,7 @@ let chatId=null
 let messagesRef=null
 let chatRef=null
 
-let lastMessageTime = 0
+let sending = false
 
 /* AUTH */
 onAuthStateChanged(auth, async (user)=>{
@@ -162,10 +161,15 @@ location.href="merchant-register.html"
 return
 }
 
+if(!merchant){
+alert("Erreur chat ❌ (merchant manquant)")
+return
+}
+
 currentUser=user
 
-/* 🔥 CHECK BLOCKED */
 const userSnap = await getDoc(doc(db,"users",user.uid))
+
 if(userSnap.data()?.blocked){
 alert("Conta bloqueada ❌")
 return
@@ -176,17 +180,16 @@ messagesRef = collection(db,"chats",chatId,"messages")
 chatRef = doc(db,"chats",chatId)
 
 /* ONLINE */
-setDoc(chatRef,{
+await setDoc(chatRef,{
 online:true,
 typing:false
 },{merge:true})
 
 listenMessages()
-listenStatus()
 
 })
 
-/* 🔔 LISTEN MESSAGES */
+/* LISTEN */
 function listenMessages(){
 
 onSnapshot(query(messagesRef,orderBy("time")),(snap)=>{
@@ -194,56 +197,25 @@ onSnapshot(query(messagesRef,orderBy("time")),(snap)=>{
 const chat=document.getElementById("chat")
 chat.innerHTML=""
 
-let unread=0
-
-snap.forEach(async docSnap=>{
+snap.forEach(docSnap=>{
 
 const m=docSnap.data()
 const isMe = m.sender === currentUser.uid
-
-/* COUNT UNREAD */
-if(!isMe && !m.read) unread++
-
-/* MARK AS READ */
-if(!isMe && !m.read){
-await updateDoc(docSnap.ref,{read:true})
-}
 
 chat.innerHTML += `
 <div class="msg ${isMe ? "me":"other"}">
 ${m.text || ""}
 ${m.image ? `<img src="${m.image}">` : ""}
 ${m.audio ? `<audio controls src="${m.audio}"></audio>` : ""}
-
-<div class="status">
-${isMe ? (m.read ? "✔✔":"✔") : ""}
-</div>
 </div>
 `
 
 })
 
-/* 🔴 BADGE */
-document.title = unread>0 ? "("+unread+") Chat" : "Chat"
-
 chat.scrollTop=chat.scrollHeight
 
-})
-
-}
-
-/* STATUS */
-function listenStatus(){
-
-onSnapshot(chatRef,(snap)=>{
-
-if(!snap.exists()) return
-
-const d = snap.data()
-
-document.getElementById("status").innerText = d.online ? "online" : "offline"
-document.getElementById("typingStatus").innerText = d.typing ? "digitando..." : ""
-
+},(err)=>{
+console.error("ERRO LISTEN:", err)
 })
 
 }
@@ -251,22 +223,14 @@ document.getElementById("typingStatus").innerText = d.typing ? "digitando..." : 
 /* SEND */
 window.send=async function(){
 
-const text=document.getElementById("text").value.trim()
+if(sending) return
 
+const text=document.getElementById("text").value.trim()
 if(!text) return
 
-/* 🛡️ ANTI SPAM */
-const now = Date.now()
-if(now - lastMessageTime < 1000){
-alert("Trop rapide ⚠️")
-return
-}
-lastMessageTime = now
+sending = true
 
-if(text.length > 300){
-alert("Message trop long ❌")
-return
-}
+try{
 
 await addDoc(messagesRef,{
 text:text,
@@ -277,20 +241,16 @@ read:false
 
 document.getElementById("text").value=""
 
-setDoc(chatRef,{typing:false},{merge:true})
+}catch(e){
+
+console.error("ERRO SEND:", e)
+alert("Erro ao enviar ❌")
 
 }
 
-/* TYPING */
-document.getElementById("text").addEventListener("input",()=>{
+sending = false
 
-setDoc(chatRef,{typing:true},{merge:true})
-
-setTimeout(()=>{
-setDoc(chatRef,{typing:false},{merge:true})
-},1500)
-
-})
+}
 
 /* IMAGE */
 window.pickImage=function(){
@@ -301,6 +261,8 @@ document.getElementById("image").addEventListener("change",async function(){
 
 const file=this.files[0]
 if(!file) return
+
+try{
 
 const form=new FormData()
 form.append("file",file)
@@ -313,12 +275,21 @@ body:form
 
 const data=await res.json()
 
+if(!data.secure_url){
+throw new Error("Upload falhou")
+}
+
 await addDoc(messagesRef,{
 image:data.secure_url,
 sender:currentUser.uid,
 time:Date.now(),
 read:false
 })
+
+}catch(e){
+console.error("ERRO IMAGE:", e)
+alert("Erro upload imagem ❌")
+}
 
 })
 
@@ -352,6 +323,8 @@ recordBtn.innerText="🎤"
 
 async function uploadAudio(){
 
+try{
+
 const blob=new Blob(chunks,{type:"audio/webm"})
 chunks=[]
 
@@ -366,6 +339,10 @@ body:form
 
 const data=await res.json()
 
+if(!data.secure_url){
+throw new Error("Upload audio falhou")
+}
+
 await addDoc(messagesRef,{
 audio:data.secure_url,
 sender:currentUser.uid,
@@ -373,9 +350,11 @@ time:Date.now(),
 read:false
 })
 
+}catch(e){
+console.error("ERRO AUDIO:", e)
+alert("Erro audio ❌")
+}
+
 }
 
 </script>
-
-</body>
-</html>
