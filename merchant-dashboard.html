@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
@@ -32,6 +32,25 @@ border-radius:10px;
 margin-bottom:15px;
 box-shadow:0 3px 8px rgba(0,0,0,0.1);
 }
+
+/* ACTIONS */
+.actions{
+display:flex;
+gap:10px;
+margin-bottom:15px;
+}
+
+.actions button{
+flex:1;
+padding:12px;
+border:none;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.btnShop{background:black;color:white;}
+.btnAdd{background:#1aa34a;color:white;}
 
 /* STATS */
 .stats{
@@ -107,6 +126,12 @@ Dashboard PRO 🚀
 </div>
 
 <div class="container">
+
+<!-- 🔥 ACTIONS PRO -->
+<div class="actions">
+<button class="btnShop" onclick="openShop()">Ver minha loja 🏪</button>
+<button class="btnAdd" onclick="addProduct()">+ Publicar produto</button>
+</div>
 
 <!-- STATS -->
 <div class="card">
@@ -184,6 +209,15 @@ listenOrders()
 
 })
 
+/* 🔥 NAVIGATION */
+window.openShop = function(){
+location.href = "merchant-shop.html?id=" + currentUser.uid
+}
+
+window.addProduct = function(){
+location.href = "add-product.html"
+}
+
 /* REALTIME LISTENER */
 function listenOrders(){
 
@@ -206,7 +240,6 @@ snapshot.forEach(docSnap=>{
 const o = docSnap.data()
 const id = docSnap.id
 
-/* FILTER */
 if(filter !== "all" && o.status !== filter) return
 
 totalOrders++
@@ -249,7 +282,6 @@ document.getElementById("totalSales").innerText = totalSales
 document.getElementById("todaySales").innerText = todaySales
 document.getElementById("totalOrders").innerText = totalOrders
 
-/* 🔊 SOUND NEW ORDER */
 if(!firstLoad && snapshot.docChanges().length > 0){
 document.getElementById("notifSound").play()
 }
