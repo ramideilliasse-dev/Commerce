@@ -174,7 +174,7 @@ cursor:pointer;
 <div class="headerRight">
 <img id="profilePic" class="profile">
 <input type="file" id="profileUpload" hidden>
-<button id="accountButton" class="accountBtn">Criar conta</button>
+<button id="accountButton" class="accountBtn">...</button>
 </div>
 </div>
 
@@ -219,44 +219,58 @@ localStorage.setItem("profilePic",url)
 
 profilePic.src=localStorage.getItem("profilePic") || "https://via.placeholder.com/35"
 
-/* ACCOUNT BUTTON */
+/* BUTTON */
 const accountButton=document.getElementById("accountButton")
 
-/* 🔥 AUTH + ROLE SYSTEM */
+/* 🔐 AUTH + ROLE */
 onAuthStateChanged(auth, async (user)=>{
 
 try{
 
 if(user){
 
-const ref = doc(db, "users", user.uid)
+const ref = doc(db,"users",user.uid)
 let snap = await getDoc(ref)
 
-/* CREATE USER AUTO */
+/* CREATE USER */
 if(!snap.exists()){
 await setDoc(ref,{
 email:user.email,
 createdAt:Date.now(),
 approved:false,
-role:"client"
+role:"client",
+blocked:false
 })
 snap = await getDoc(ref)
 }
 
 const userData = snap.data()
 
-console.log("ROLE:", userData.role)
+/* 🚫 BLOQUÉ */
+if(userData.blocked){
+alert("Conta bloqueada ❌")
+accountButton.innerText="Bloqueado"
+accountButton.onclick=null
+return
+}
 
 /* 👑 ADMIN */
-if(userData.role === "superadmin"){
+if(userData.role === "superadmin" || userData.role === "admin"){
 accountButton.innerText="Admin 👑"
 accountButton.onclick=()=>location.href="admin-dashboard.html"
 }
 
 /* 🏪 MERCHANT */
 else if(userData.role === "merchant"){
+
+if(userData.approved){
 accountButton.innerText="Minha Loja"
 accountButton.onclick=()=>location.href="merchant-dashboard.html"
+}else{
+accountButton.innerText="Aguardando aprovação ⏳"
+accountButton.onclick=null
+}
+
 }
 
 /* 👤 CLIENT */
@@ -266,8 +280,11 @@ accountButton.onclick=()=>location.href="merchant-register.html"
 }
 
 }else{
-accountButton.innerText="Criar conta"
-accountButton.onclick=()=>location.href="merchant-register.html"
+
+/* 🔥 NON CONNECTÉ */
+accountButton.innerText="Conectar"
+accountButton.onclick=()=>location.href="login.html"
+
 }
 
 }catch(e){
@@ -282,34 +299,6 @@ function productHTML(p){
 const img = p.images?.[0] || "https://via.placeholder.com/300"
 const desc = p.description?.slice(0,50) || ""
 
-if(p.category==="restaurant"){
-return `
-<div class="product">
-
-<div class="badge">🍽️ Restaurante</div>
-
-<div onclick="openProduct('${p.id}')">
-<img src="${img}">
-</div>
-
-<div class="info">
-<div class="name">${p.name}</div>
-<div class="price">${p.price} Kz</div>
-<div class="desc">${desc}</div>
-
-<button onclick="openProduct('${p.id}')">Ver prato</button>
-
-<button onclick="addToCart('${p.id}')" 
-style="background:#1aa34a;color:white;border:none;padding:8px;border-radius:8px;width:100%;margin-top:5px;">
-Adicionar 🛒
-</button>
-
-</div>
-</div>
-`
-}
-
-/* NORMAL */
 return `
 <div class="product" onclick="openProduct('${p.id}')">
 
@@ -327,11 +316,12 @@ return `
 `
 }
 
-/* LOAD PRODUCTS */
+/* LOAD */
 async function loadProducts(){
-try{
+
 const snap=await getDocs(collection(db,"products"))
 const container=document.getElementById("productList")
+
 container.innerHTML=""
 products=[]
 
@@ -341,9 +331,7 @@ data.id=docSnap.id
 products.push(data)
 container.innerHTML+=productHTML(data)
 })
-}catch(e){
-console.error("ERRO LOAD PRODUCTS:", e)
-}
+
 }
 
 /* OPEN */
@@ -380,6 +368,7 @@ merchantId:product.merchantId || "unknown"
 
 localStorage.setItem("cart", JSON.stringify(cart))
 alert("Adicionado 🛒")
+
 }
 
 /* SEARCH */
@@ -387,6 +376,7 @@ document.getElementById("search").addEventListener("input",function(){
 
 const v=this.value.toLowerCase()
 const container=document.getElementById("productList")
+
 container.innerHTML=""
 
 products.forEach(p=>{
