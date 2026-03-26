@@ -3,11 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chat</title>
+<title>Chat PRO</title>
 
 <style>
-body{font-family:Arial;margin:0;background:#ece5dd;}
+body{
+margin:0;
+font-family:Arial;
+display:flex;
+flex-direction:column;
+height:100vh;
+background:#ece5dd;
+overflow:hidden;
+}
 
+/* HEADER */
 .header{
 background:#075e54;
 color:white;
@@ -17,55 +26,42 @@ justify-content:space-between;
 align-items:center;
 }
 
-.left{display:flex;gap:10px;align-items:center;}
+.status{font-size:12px;opacity:0.8}
 
-.status{font-size:12px;opacity:0.8;}
-
+/* CHAT */
 .chatArea{
-height:70vh;
+flex:1;
 overflow-y:auto;
-padding:15px;
+padding:10px;
 }
 
 .msg{
 max-width:75%;
-padding:12px;
-margin-bottom:10px;
-border-radius:12px;
-font-size:16px;
+padding:10px;
+margin-bottom:8px;
+border-radius:10px;
+position:relative;
+font-size:15px;
 }
 
 .me{background:#dcf8c6;margin-left:auto;}
 .other{background:white;}
 
-.msg img{
-width:150px;
-border-radius:8px;
-margin-top:5px;
-}
+.msg img{width:140px;border-radius:8px;margin-top:5px;}
+audio{width:150px;margin-top:5px;}
 
-audio{
-width:150px;
-margin-top:5px;
-}
-
-.msg .status{
+.tick{
 font-size:11px;
 text-align:right;
-margin-top:5px;
-color:#666;
+margin-top:3px;
 }
 
+/* INPUT */
 .inputArea{
-position:fixed;
-bottom:0;
-left:0;
-right:0;
-background:white;
 display:flex;
 padding:10px;
+background:white;
 gap:5px;
-align-items:center;
 }
 
 #text{
@@ -75,22 +71,22 @@ border-radius:20px;
 border:1px solid #ccc;
 }
 
-.iconBtn{
-background:#eee;
+.btn{
+width:45px;
+height:45px;
 border:none;
-width:40px;
-height:40px;
 border-radius:50%;
+background:#25d366;
+color:white;
 cursor:pointer;
 }
 
-.sendBtn{
-background:#25d366;
-color:white;
-border:none;
-width:45px;
-height:45px;
+.iconBtn{
+width:40px;
+height:40px;
 border-radius:50%;
+border:none;
+background:#eee;
 cursor:pointer;
 }
 </style>
@@ -99,26 +95,21 @@ cursor:pointer;
 <body>
 
 <div class="header">
-<div class="left">
-<span onclick="history.back()">⬅</span>
 <div>
-<div>Chat</div>
-<div id="status" class="status">offline</div>
+⬅ Chat<br>
+<span id="status" class="status">offline</span>
 </div>
-</div>
-<div id="typingStatus"></div>
+<div id="typing"></div>
 </div>
 
 <div id="chat" class="chatArea"></div>
 
 <div class="inputArea">
 <input id="text" placeholder="Mensagem...">
-
 <input type="file" id="image" hidden>
-
 <button class="iconBtn" onclick="pickImage()">📷</button>
 <button class="iconBtn" id="recordBtn">🎤</button>
-<button class="sendBtn" onclick="send()">➤</button>
+<button class="btn" onclick="send()">➤</button>
 </div>
 
 <script type="module">
@@ -126,70 +117,43 @@ cursor:pointer;
 import { db, auth } from "./firebase.js"
 
 import {
-collection,
-addDoc,
-query,
-orderBy,
-onSnapshot,
-doc,
-setDoc,
-getDoc,
-updateDoc
+collection, addDoc, query, orderBy, onSnapshot,
+doc, setDoc, getDoc, updateDoc, deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
-import { onAuthStateChanged } 
+import { onAuthStateChanged }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
-const CLOUD_NAME = "df2oxw2qp"
-const UPLOAD_PRESET = "angcomerce-upload"
+const CLOUD_NAME="df2oxw2qp"
+const UPLOAD_PRESET="angcomerce-upload"
 
-const params = new URLSearchParams(location.search)
-const merchant = params.get("merchant")
+const merchant = new URLSearchParams(location.search).get("merchant")
 
-let currentUser=null
-let chatId=null
-let messagesRef=null
-let chatRef=null
-
-let sending = false
+let user, chatId, messagesRef, chatRef
 
 /* AUTH */
-onAuthStateChanged(auth, async (user)=>{
+onAuthStateChanged(auth, async(u)=>{
 
-if(!user){
+if(!u){
 location.href="merchant-register.html"
 return
 }
 
-if(!merchant){
-alert("Erreur chat ❌ (merchant manquant)")
-return
-}
+user=u
 
-currentUser=user
-
-const userSnap = await getDoc(doc(db,"users",user.uid))
-
-if(userSnap.data()?.blocked){
-alert("Conta bloqueada ❌")
-return
-}
-
-chatId = user.uid + "_" + merchant
+chatId = user.uid+"_"+merchant
 messagesRef = collection(db,"chats",chatId,"messages")
 chatRef = doc(db,"chats",chatId)
 
 /* ONLINE */
-await setDoc(chatRef,{
-online:true,
-typing:false
-},{merge:true})
+setDoc(chatRef,{online:true},{merge:true})
 
 listenMessages()
+listenStatus()
 
 })
 
-/* LISTEN */
+/* LISTEN MESSAGES */
 function listenMessages(){
 
 onSnapshot(query(messagesRef,orderBy("time")),(snap)=>{
@@ -197,16 +161,30 @@ onSnapshot(query(messagesRef,orderBy("time")),(snap)=>{
 const chat=document.getElementById("chat")
 chat.innerHTML=""
 
-snap.forEach(docSnap=>{
+snap.forEach(async d=>{
 
-const m=docSnap.data()
-const isMe = m.sender === currentUser.uid
+let m=d.data()
+let id=d.id
+let isMe = m.sender===user.uid
 
-chat.innerHTML += `
-<div class="msg ${isMe ? "me":"other"}">
+/* MARK READ */
+if(!isMe && !m.read){
+await updateDoc(d.ref,{read:true})
+}
+
+chat.innerHTML+=`
+<div class="msg ${isMe?"me":"other"}"
+onclick="showOptions('${id}')">
+
+${m.deleted ? "<i>Mensagem apagada</i>" : ""}
 ${m.text || ""}
-${m.image ? `<img src="${m.image}">` : ""}
-${m.audio ? `<audio controls src="${m.audio}"></audio>` : ""}
+${m.image?`<img src="${m.image}">`:""}
+${m.audio?`<audio controls src="${m.audio}"></audio>`:""}
+
+<div class="tick">
+${isMe ? (m.read ? "✔✔ azul":"✔✔") : ""}
+</div>
+
 </div>
 `
 
@@ -214,8 +192,25 @@ ${m.audio ? `<audio controls src="${m.audio}"></audio>` : ""}
 
 chat.scrollTop=chat.scrollHeight
 
-},(err)=>{
-console.error("ERRO LISTEN:", err)
+})
+
+}
+
+/* STATUS */
+function listenStatus(){
+
+onSnapshot(chatRef,(snap)=>{
+
+if(!snap.exists()) return
+
+const d=snap.data()
+
+document.getElementById("status").innerText =
+d.online ? "online" : "offline"
+
+document.getElementById("typing").innerText =
+d.typing ? "digitando..." : ""
+
 })
 
 }
@@ -223,107 +218,89 @@ console.error("ERRO LISTEN:", err)
 /* SEND */
 window.send=async function(){
 
-if(sending) return
-
 const text=document.getElementById("text").value.trim()
 if(!text) return
 
-sending = true
-
-try{
-
 await addDoc(messagesRef,{
-text:text,
-sender:currentUser.uid,
-time:Date.now(),
-read:false
+text, sender:user.uid, time:Date.now(), read:false
 })
 
 document.getElementById("text").value=""
-
-}catch(e){
-
-console.error("ERRO SEND:", e)
-alert("Erro ao enviar ❌")
+setDoc(chatRef,{typing:false},{merge:true})
 
 }
 
-sending = false
+/* TYPING */
+text.oninput=()=>{
+setDoc(chatRef,{typing:true},{merge:true})
+
+setTimeout(()=>{
+setDoc(chatRef,{typing:false},{merge:true})
+},1500)
+}
+
+/* DELETE OPTIONS */
+window.showOptions = function(id){
+
+let choice = prompt("1 Supprimer pour moi\n2 Supprimer pour tous")
+
+if(choice=="1"){
+deleteDoc(doc(db,"chats",chatId,"messages",id))
+}
+
+if(choice=="2"){
+updateDoc(doc(db,"chats",chatId,"messages",id),{
+deleted:true,text:""
+})
+}
 
 }
 
 /* IMAGE */
-window.pickImage=function(){
-document.getElementById("image").click()
-}
+window.pickImage=()=>image.click()
 
-document.getElementById("image").addEventListener("change",async function(){
+image.onchange=async function(){
 
 const file=this.files[0]
-if(!file) return
-
-try{
 
 const form=new FormData()
 form.append("file",file)
 form.append("upload_preset",UPLOAD_PRESET)
 
 const res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,{
-method:"POST",
-body:form
+method:"POST",body:form
 })
 
 const data=await res.json()
 
-if(!data.secure_url){
-throw new Error("Upload falhou")
-}
-
 await addDoc(messagesRef,{
 image:data.secure_url,
-sender:currentUser.uid,
-time:Date.now(),
-read:false
+sender:user.uid,
+time:Date.now()
 })
 
-}catch(e){
-console.error("ERRO IMAGE:", e)
-alert("Erro upload imagem ❌")
 }
 
-})
+/* AUDIO HOLD */
+let recorder,chunks=[]
+const btn=document.getElementById("recordBtn")
 
-/* AUDIO */
-let recorder, chunks=[]
-const recordBtn=document.getElementById("recordBtn")
-
-recordBtn.onclick=async function(){
-
-if(!recorder){
+btn.onmousedown=async()=>{
 
 const stream=await navigator.mediaDevices.getUserMedia({audio:true})
-
 recorder=new MediaRecorder(stream)
-recorder.start()
 
-recordBtn.innerText="⏹"
+recorder.start()
+btn.innerText="⏹"
 
 recorder.ondataavailable=e=>chunks.push(e.data)
-recorder.onstop=uploadAudio
-
-}else{
-
-recorder.stop()
-recorder=null
-recordBtn.innerText="🎤"
-
 }
 
-}
+btn.onmouseup=()=>recorder.stop()
+
+recorder?.onstop=uploadAudio
 
 async function uploadAudio(){
-
-try{
 
 const blob=new Blob(chunks,{type:"audio/webm"})
 chunks=[]
@@ -333,28 +310,22 @@ form.append("file",blob)
 form.append("upload_preset",UPLOAD_PRESET)
 
 const res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/video/upload`,{
-method:"POST",
-body:form
+method:"POST",body:form
 })
 
 const data=await res.json()
 
-if(!data.secure_url){
-throw new Error("Upload audio falhou")
-}
-
 await addDoc(messagesRef,{
 audio:data.secure_url,
-sender:currentUser.uid,
-time:Date.now(),
-read:false
+sender:user.uid,
+time:Date.now()
 })
 
-}catch(e){
-console.error("ERRO AUDIO:", e)
-alert("Erro audio ❌")
-}
+btn.innerText="🎤"
 
 }
 
 </script>
+
+</body>
+</html>
