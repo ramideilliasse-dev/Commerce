@@ -1,6 +1,5 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt">
-
 <head>
 
 <meta charset="UTF-8">
@@ -9,14 +8,11 @@
 <title>Adicionar Produto</title>
 
 <style>
-
 body{
 font-family:Arial;
 margin:0;
 background:#f4f4f4;
 }
-
-/* HEADER */
 
 .header{
 background:#ff6a00;
@@ -41,15 +37,11 @@ font-weight:bold;
 cursor:pointer;
 }
 
-/* CONTAINER */
-
 .container{
 max-width:600px;
 margin:auto;
 padding:20px;
 }
-
-/* CARD */
 
 .card{
 background:white;
@@ -74,11 +66,7 @@ font-size:15px;
 margin-bottom:12px;
 }
 
-textarea{
-min-height:100px;
-}
-
-/* BUTTON */
+textarea{min-height:100px;}
 
 button{
 width:100%;
@@ -89,15 +77,12 @@ border:none;
 font-size:18px;
 border-radius:10px;
 cursor:pointer;
-transition:0.3s;
 }
 
 button:disabled{
 background:#ccc;
 cursor:not-allowed;
 }
-
-/* PREVIEW */
 
 .preview{
 display:flex;
@@ -114,8 +99,6 @@ object-fit:cover;
 border-radius:8px;
 }
 
-/* LOADING BAR */
-
 .progressBox{
 display:none;
 margin-top:15px;
@@ -130,7 +113,6 @@ width:0%;
 background:#1aa34a;
 transition:width 0.4s ease;
 }
-
 </style>
 
 </head>
@@ -138,19 +120,13 @@ transition:width 0.4s ease;
 <body>
 
 <div class="header">
-
-<button class="backBtn" onclick="goBack()">
-← Voltar
-</button>
-
+<button class="backBtn" onclick="goBack()">← Voltar</button>
 Publicar novo produto
-
 </div>
 
 <div class="container">
 
 <div class="card">
-
 <label>Nome do produto</label>
 <input id="name">
 
@@ -158,7 +134,6 @@ Publicar novo produto
 <input id="price" type="number">
 
 <label>Categoria</label>
-
 <select id="category">
 <option value="telefone">Telefones</option>
 <option value="roupas">Roupas</option>
@@ -171,237 +146,193 @@ Publicar novo produto
 
 <label>Descrição</label>
 <textarea id="description"></textarea>
-
 </div>
 
 <div class="card">
-
 <label>Imagens do produto</label>
-
 <input type="file" id="images" multiple accept="image/*">
-
 <div class="preview" id="imagePreview"></div>
-
 </div>
 
 <div class="card">
-
 <label>Vídeo do produto (opcional)</label>
-
 <input type="file" id="video" accept="video/*">
-
 <div class="preview" id="videoPreview"></div>
-
 </div>
 
-<button id="publishBtn" onclick="publishProduct()">
-Publicar produto
-</button>
+<button id="publishBtn" onclick="publishProduct()">Publicar produto</button>
 
-<!-- PROGRESS BAR -->
 <div class="progressBox" id="progressBox">
 <div class="progressBar" id="progressBar"></div>
 </div>
 
 </div>
 
-
 <script type="module">
 
 import { db, auth } from "./firebase.js"
+import { collection, addDoc } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
-import {
-collection,
-addDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-
+const CLOUD_NAME="df2oxw2qp"
+const UPLOAD_PRESET="angcomerce-upload"
 
 let imageFiles=[]
 let videoFile=null
 let isPublishing=false
 
-
-/* BACK BUTTON SMART */
+/* BACK */
 window.goBack=function(){
-
-const shopId = localStorage.getItem("shopId")
-
-if(shopId){
-location.href="merchant-shop.html?id="+shopId
-}else{
 location.href="merchant-shop.html"
 }
 
-}
-
-
 /* IMAGE PREVIEW */
-
-document.getElementById("images").addEventListener("change",function(){
-
+images.onchange=function(){
 imageFiles=[...this.files]
-
-const preview=document.getElementById("imagePreview")
-preview.innerHTML=""
-
+imagePreview.innerHTML=""
 imageFiles.forEach(file=>{
-
-const url=URL.createObjectURL(file)
-preview.innerHTML+=`<img src="${url}">`
-
+imagePreview.innerHTML+=`<img src="${URL.createObjectURL(file)}">`
 })
-
-})
-
+}
 
 /* VIDEO PREVIEW */
-
-document.getElementById("video").addEventListener("change",function(){
-
+video.onchange=function(){
 videoFile=this.files[0]
-
-const preview=document.getElementById("videoPreview")
-preview.innerHTML=""
-
+videoPreview.innerHTML=""
 if(videoFile){
-
-const url=URL.createObjectURL(videoFile)
-preview.innerHTML=`<video src="${url}" controls></video>`
-
+videoPreview.innerHTML=`<video src="${URL.createObjectURL(videoFile)}" controls></video>`
+}
 }
 
-})
+/* CLOUDINARY FIXED */
+async function uploadFile(file,type="image"){
 
+try{
 
-/* CLOUDINARY */
+const form=new FormData()
+form.append("file",file)
+form.append("upload_preset",UPLOAD_PRESET)
 
-async function uploadFile(file){
+const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${type}/upload`
 
-const cloudName="df2oxw2qp"
-const uploadPreset="angcomerce-upload"
-
-const formData=new FormData()
-
-formData.append("file",file)
-formData.append("upload_preset",uploadPreset)
-
-const res=await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`,{
+const res=await fetch(url,{
 method:"POST",
-body:formData
+body:form
 })
 
 const data=await res.json()
 
+if(!data.secure_url){
+throw new Error("Upload falhou")
+}
+
 return data.secure_url
 
+}catch(e){
+console.error("UPLOAD ERROR:", e)
+throw e
 }
 
+}
 
 /* PROGRESS */
-
-function updateProgress(percent){
-
-const box=document.getElementById("progressBox")
-const bar=document.getElementById("progressBar")
-
-box.style.display="block"
-bar.style.width=percent+"%"
-
+function updateProgress(p){
+progressBox.style.display="block"
+progressBar.style.width=p+"%"
 }
 
-
 /* PUBLISH */
-
 window.publishProduct=async function(){
 
 if(isPublishing) return
 
-const btn=document.getElementById("publishBtn")
-btn.disabled=true
-btn.innerText="Publicando..."
-
-isPublishing=true
-
-const name=document.getElementById("name").value
-const price=document.getElementById("price").value
-const category=document.getElementById("category").value
-const description=document.getElementById("description").value
+const name=nameInput.value.trim()
+const price=priceInput.value
+const category=categoryInput.value
+const description=descriptionInput.value
 
 if(!name || !price){
-alert("Preencha nome e preço")
-btn.disabled=false
-btn.innerText="Publicar produto"
-isPublishing=false
+alert("Preencha nome e preço ❌")
+return
+}
+
+if(imageFiles.length===0){
+alert("Adicione pelo menos 1 imagem ❌")
 return
 }
 
 const user=auth.currentUser
-
 if(!user){
-alert("Precisa fazer login")
+alert("Login necessário ❌")
 return
 }
+
+isPublishing=true
+publishBtn.disabled=true
+publishBtn.innerText="Publicando..."
+
+try{
 
 updateProgress(10)
 
 /* UPLOAD IMAGES */
-
 let imageUrls=[]
 let count=0
 
 for(const file of imageFiles){
 
-const url=await uploadFile(file)
+const url=await uploadFile(file,"image")
 imageUrls.push(url)
 
 count++
-let percent=10 + (count/imageFiles.length)*60
-updateProgress(percent)
-
+updateProgress(10 + (count/imageFiles.length)*60)
 }
 
-
 /* VIDEO */
-
 let videoUrl=""
-
 if(videoFile){
 updateProgress(80)
-videoUrl=await uploadFile(videoFile)
+videoUrl=await uploadFile(videoFile,"video")
 }
 
 updateProgress(90)
 
-/* SAVE */
-
+/* SAVE FIRESTORE */
 await addDoc(collection(db,"products"),{
 
 name,
-price,
+price:Number(price),
 category,
 description,
 images:imageUrls,
 video:videoUrl,
 
 merchantId:user.uid,
-merchantEmail:user.email, // 🔥 IMPORTANT
-
 created:Date.now(),
 
-sales:0,
-rating:0,
-reviews:0,
-popular:false
+sales:0
 
 })
+
 updateProgress(100)
 
-btn.innerText="Publicado ✔"
+publishBtn.innerText="Publicado ✔"
 
 setTimeout(()=>{
-alert("Produto publicado com sucesso ✔")
-location.href="merchant-shop.html"
+alert("Produto publicado ✔")
+location.href="merchant-shop.html?id="+user.uid
 },800)
+
+}catch(e){
+
+console.error("ERRO:", e)
+alert("Erro ao publicar ❌")
+
+publishBtn.disabled=false
+publishBtn.innerText="Publicar produto"
+isPublishing=false
+
+}
 
 }
 
