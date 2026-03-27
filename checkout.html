@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Checkout</title>
+<title>Checkout DEBUG</title>
 
 <style>
 body{font-family:Arial;margin:0;background:#f4f4f4;}
@@ -67,7 +67,7 @@ font-size:18px;
 
 <body>
 
-<div class="header">Finalizar Pedido</div>
+<div class="header">Finalizar Pedido (DEBUG)</div>
 
 <div class="container">
 
@@ -90,13 +90,25 @@ font-size:18px;
 
 <script type="module">
 
-import { db } from "./firebase.js"
+import { db, auth } from "./firebase.js"
 import {
 collection,
 addDoc,
 doc,
 getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
+import { onAuthStateChanged }
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
+
+/* 🔥 DEBUG USER */
+onAuthStateChanged(auth,(user)=>{
+if(!user){
+alert("❌ USER NON CONNECTÉ")
+}else{
+alert("✅ USER OK: " + user.uid)
+}
+})
 
 /* PANIER */
 let cart = JSON.parse(localStorage.getItem("checkoutCart") || "[]")
@@ -133,31 +145,33 @@ loadCart()
 /* CLICK */
 document.getElementById("confirmBtn").addEventListener("click", placeOrder)
 
-/* ORDER MULTI VENDEUR */
+/* ORDER */
 async function placeOrder(){
 
 try{
+
+alert("🚀 START ORDER")
 
 const name=document.getElementById("clientName").value
 const phone=document.getElementById("clientPhone").value
 const address=document.getElementById("clientAddress").value
 
 if(!name || !phone || !address){
-alert("Preencha todos os campos")
+alert("❌ Champs manquants")
 return
 }
 
-if(cart.length === 0){
-alert("Carrinho vazio ❌")
-return
-}
+alert("✅ Champs OK")
 
-/* 🔥 GROUPER PAR VENDEUR */
+/* GROUP */
 let grouped = {}
 
 cart.forEach(item => {
 
-if(!item.merchantId || item.merchantId==="unknown") return
+if(!item.merchantId){
+alert("❌ merchantId manquant sur produit: " + item.name)
+return
+}
 
 if(!grouped[item.merchantId]){
 grouped[item.merchantId] = []
@@ -167,41 +181,46 @@ grouped[item.merchantId].push(item)
 
 })
 
-/* 🔥 TRAITER CHAQUE VENDEUR */
+alert("📦 GROUP OK: " + Object.keys(grouped).length + " vendeurs")
+
+/* LOOP MERCHANT */
 for(const merchantId in grouped){
+
+alert("👤 Merchant: " + merchantId)
 
 let items = grouped[merchantId]
 
-/* 🔥 GET VENDEUR */
+/* GET MERCHANT */
+try{
+
 const ref = doc(db,"merchants",merchantId)
 const snap = await getDoc(ref)
 
+if(!snap.exists()){
+alert("❌ Merchant introuvable: " + merchantId)
+}else{
+alert("✅ Merchant trouvé")
+}
+
 let merchant = snap.data()
 
-/* 🔥 MESSAGE WHATSAPP */
-let message = "🛒 *Novo Pedido*\n\n"
-
-items.forEach(p=>{
-message += `• ${p.name} x${p.qty} = ${p.price * p.qty} Kz\n`
-})
-
-message += `\n👤 Cliente: ${name}`
-message += `\n📞 Tel: ${phone}`
-message += `\n📍 Endereço: ${address}`
-
-/* 🔥 WHATSAPP */
+/* WHATSAPP */
 let sellerPhone = merchant?.phone || ""
 
 if(sellerPhone){
-
-let url = "https://wa.me/" + sellerPhone + "?text=" + encodeURIComponent(message)
-
-window.open(url, "_blank")
-
+alert("📞 WhatsApp OK")
 }
 
-/* 🔥 FIRESTORE */
+}catch(e){
+alert("❌ ERRO GET MERCHANT: " + e.message)
+}
+
+/* SAVE ORDERS */
 for(const item of items){
+
+try{
+
+alert("💾 Envoi produit: " + item.name)
 
 await addDoc(collection(db,"orders"),{
 
@@ -223,22 +242,31 @@ date:Date.now()
 
 })
 
+alert("✅ OK Firestore produit: " + item.name)
+
+}catch(e){
+
+alert("🔥 ERRO FIRESTORE: " + e.message)
+console.error(e)
+
+}
+
 }
 
 }
 
-/* RESET */
+/* SUCCESS */
+alert("🎉 FIN PROCESS")
+
 localStorage.removeItem("cart")
 localStorage.removeItem("checkoutCart")
-
-alert("Pedidos enviados com sucesso 🚀")
 
 location.href="index.html"
 
 }catch(e){
 
-console.error("ERRO REAL:", e)
-alert("Erro: " + e.message)
+alert("🔥 ERRO GLOBAL: " + e.message)
+console.error(e)
 
 }
 
