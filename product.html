@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="pt">
 
 <head>
@@ -183,10 +183,10 @@ font-weight:bold;
 
 <script type="module">
 
-import { db } from "./firebase.js"
+import { db, auth } from "./firebase.js"
 import {
 doc,getDoc,
-collection,getDocs,query,where
+collection,getDocs,query,where,addDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
 const productId=localStorage.getItem("selectedProduct")
@@ -197,11 +197,16 @@ let currentProduct=null
 
 async function loadProduct(){
 
+if(!productId){
+alert("Produto inválido ❌")
+return
+}
+
 const ref=doc(db,"products",productId)
 const snap=await getDoc(ref)
 
 if(!snap.exists()){
-alert("Produto não encontrado")
+alert("Produto não encontrado ❌")
 return
 }
 
@@ -218,7 +223,7 @@ loadProduct()
 
 function renderProduct(){
 
-let main = images[0] || ""
+let main = images[0] || "https://via.placeholder.com/300"
 
 document.getElementById("productBox").innerHTML=`
 
@@ -234,8 +239,8 @@ ${images.map((img,i)=>`
 
 <div class="product">
 
-<div class="name">${currentProduct.name}</div>
-<div class="price">${currentProduct.price} Kz</div>
+<div class="name">${currentProduct.name || ""}</div>
+<div class="price">${currentProduct.price || 0} Kz</div>
 <div class="desc">${currentProduct.description || ""}</div>
 
 <div class="qty">
@@ -253,7 +258,6 @@ Loja
 Comprar
 </button>
 
-<!-- 🔥 CHAT AJOUTÉ -->
 <button class="btn chatBtn" onclick="openChat()">
 💬 Chat
 </button>
@@ -267,10 +271,14 @@ Comprar
 
 /* 🔥 CHAT */
 window.openChat = function(){
+if(!currentProduct?.merchantId){
+alert("Erro chat ❌")
+return
+}
 location.href = "chat.html?merchant=" + currentProduct.merchantId
 }
 
-/* SELECT IMAGE */
+/* IMAGE */
 window.selectImage=function(i){
 currentIndex=i
 document.getElementById("mainImage").src=images[i]
@@ -324,6 +332,8 @@ document.getElementById("zoomImg").src=images[currentIndex]
 
 /* SIMILAR */
 async function loadSimilar(){
+
+if(!currentProduct?.category) return
 
 const q=query(
 collection(db,"products"),
@@ -386,31 +396,38 @@ window.openShop=function(id){
 location.href="merchant-shop.html?id="+id
 }
 
-/* ORDER */
-window.orderNow=function(){
+/* 🔥 ORDER FIX (SECURE FIRESTORE) */
+window.orderNow=async function(){
 
 const qty = parseInt(document.getElementById("qty").value) || 1
 
-let cart = JSON.parse(localStorage.getItem("cart") || "[]")
-
-let exist = cart.find(p => p.id === productId)
-
-if(exist){
-exist.qty += qty
-}else{
-cart.push({
-id:productId,
-name:currentProduct.name,
-price:currentProduct.price,
-image:images[0],
-qty:qty,
-merchantId:currentProduct.merchantId
-})
+if(!auth.currentUser){
+alert("Connecte-toi ❌")
+return
 }
 
-localStorage.setItem("cart", JSON.stringify(cart))
+try{
 
-alert("Adicionado ao carrinho 🛒")
+await addDoc(collection(db,"orders"),{
+productId: productId,
+productName: currentProduct.name,
+price: currentProduct.price,
+qty: qty,
+
+merchantId: currentProduct.merchantId,
+clientId: auth.currentUser.uid,
+
+status: "pendente",
+date: Date.now()
+})
+
+alert("Pedido enviado ✅")
+
+}catch(e){
+console.error(e)
+alert("Erro pedido ❌")
+}
+
 }
 
 </script>
