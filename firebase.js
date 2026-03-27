@@ -1,13 +1,15 @@
- // firebase.js
+// firebase.js
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
-apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
+apiKey: "AIzaSy...",
 authDomain: "angcomerce-v1.firebaseapp.com",
 projectId: "angcomerce-v1",
 storageBucket: "angcomerce-v1.appspot.com",
@@ -19,3 +21,32 @@ const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+/* 🔥 CREATE USER ONLY */
+onAuthStateChanged(auth, async (user)=>{
+
+if(!user) return;
+
+try{
+
+const ref = doc(db,"users",user.uid);
+const snap = await getDoc(ref);
+
+/* 🔥 CREATE USER SI PAS EXISTE */
+if(!snap.exists()){
+
+await setDoc(ref,{
+email: user.email,
+role: "client", // 🔥 par défaut client
+created: Date.now()
+});
+
+console.log("✅ User créé (client)");
+
+}
+
+}catch(e){
+console.error("Erreur user:", e);
+}
+
+});
