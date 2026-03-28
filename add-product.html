@@ -266,7 +266,17 @@ if(!user){
 alert("Login necessário ❌")
 return
 }
+/* 🔒 CHECK ROLE MERCHANT */
+const userRef = doc(db,"users",user.uid)
+const userSnap = await getDoc(userRef)
 
+if(userSnap.data()?.role !== "merchant"){
+alert("Apenas vendedores autorizados ❌")
+btn.disabled=false
+btn.innerText="Publicar produto"
+isPublishing=false
+return
+}
 isPublishing=true
 publishBtn.disabled=true
 publishBtn.innerText="Publicando..."
