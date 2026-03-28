@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
@@ -92,7 +92,7 @@ to{opacity:1;}
 column-count:2;
 column-gap:12px;
 padding:12px;
-padding-bottom:80px;
+padding-bottom:100px;
 }
 
 .product{
@@ -116,17 +116,6 @@ padding:10px;
 .name{font-weight:bold;}
 .price{color:#ff6a00;font-weight:bold;}
 .desc{font-size:13px;color:#555;}
-
-.badge{
-position:absolute;
-top:8px;
-left:8px;
-background:red;
-color:white;
-padding:3px 6px;
-border-radius:6px;
-font-size:12px;
-}
 
 .cartBtn{
 position:absolute;
@@ -157,9 +146,18 @@ border-top:1px solid #ddd;
 z-index:1000;
 }
 
-.nav div{
-text-align:center;
-font-size:14px;
+/* SUPPORT BUTTON */
+.supportBtn{
+position:fixed;
+bottom:80px;
+right:15px;
+background:#25D366;
+color:white;
+border:none;
+padding:14px;
+border-radius:50%;
+font-size:20px;
+box-shadow:0 4px 10px rgba(0,0,0,0.2);
 cursor:pointer;
 }
 
@@ -187,6 +185,9 @@ cursor:pointer;
 </div>
 
 <div id="productList" class="products"></div>
+
+<!-- SUPPORT BUTTON -->
+<button class="supportBtn" onclick="contactSupport()">💬</button>
 
 <div class="nav">
 <div onclick="location.href='index.html'">🏠<br>Inicio</div>
@@ -222,7 +223,7 @@ profilePic.src=localStorage.getItem("profilePic") || "https://via.placeholder.co
 /* BUTTON */
 const accountButton=document.getElementById("accountButton")
 
-/* 🔐 AUTH + ROLE */
+/* AUTH + ROLE */
 onAuthStateChanged(auth, async (user)=>{
 
 try{
@@ -246,49 +247,35 @@ snap = await getDoc(ref)
 
 const userData = snap.data()
 
-/* 🚫 BLOQUÉ */
 if(userData.blocked){
 alert("Conta bloqueada ❌")
-accountButton.innerText="Bloqueado"
-accountButton.onclick=null
 return
 }
 
-/* 👑 ADMIN */
-if(userData.role === "superadmin" || userData.role === "admin"){
+if(userData.role === "admin"){
 accountButton.innerText="Admin 👑"
 accountButton.onclick=()=>location.href="admin-dashboard.html"
 }
-
-/* 🏪 MERCHANT */
 else if(userData.role === "merchant"){
-
 if(userData.approved){
 accountButton.innerText="Minha Loja"
 accountButton.onclick=()=>location.href="merchant-dashboard.html"
 }else{
-accountButton.innerText="Aguardando aprovação ⏳"
-accountButton.onclick=null
+accountButton.innerText="Aguardando ⏳"
 }
-
 }
-
-/* 👤 CLIENT */
 else{
 accountButton.innerText="Criar loja"
 accountButton.onclick=()=>location.href="merchant-register.html"
 }
 
 }else{
-
-/* 🔥 NON CONNECTÉ */
 accountButton.innerText="Conectar"
 accountButton.onclick=()=>location.href="login.html"
-
 }
 
 }catch(e){
-console.error("ERRO AUTH:", e)
+console.error(e)
 }
 
 })
@@ -297,7 +284,6 @@ console.error("ERRO AUTH:", e)
 function productHTML(p){
 
 const img = p.images?.[0] || "https://via.placeholder.com/300"
-const desc = p.description?.slice(0,50) || ""
 
 return `
 <div class="product" onclick="openProduct('${p.id}')">
@@ -309,7 +295,7 @@ return `
 <div class="info">
 <div class="name">${p.name}</div>
 <div class="price">${p.price} Kz</div>
-<div class="desc">${desc}</div>
+<div class="desc">${(p.description||"").slice(0,50)}</div>
 </div>
 
 </div>
@@ -346,10 +332,7 @@ window.addToCart=function(id){
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
 const product = products.find(p => p.id === id)
 
-if(!product){
-alert("Erro produto ❌")
-return
-}
+if(!product) return
 
 const exist = cart.find(p => p.id === id)
 
@@ -360,7 +343,6 @@ cart.push({
 id:product.id,
 name:product.name,
 price:product.price,
-image:product.images?.[0] || "",
 qty:1,
 merchantId:product.merchantId || "unknown"
 })
@@ -386,6 +368,18 @@ container.innerHTML+=productHTML(p)
 })
 
 })
+
+/* SUPPORT SYSTEM */
+window.contactSupport = function(){
+
+const phone = "244922623238" // 🔥 TON NUMÉRO SUPPORT
+const message = "Olá, preciso de ajuda com a aplicação."
+
+const url = "https://wa.me/" + phone + "?text=" + encodeURIComponent(message)
+
+window.open(url, "_blank")
+
+}
 
 loadProducts()
 
