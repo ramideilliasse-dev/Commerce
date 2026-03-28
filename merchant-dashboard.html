@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
@@ -126,7 +126,7 @@ Dashboard PRO 🚀
 
 <div class="container">
 
-<!-- 🔥 ACTIONS -->
+<!-- ACTIONS -->
 <div class="actions">
 <button class="btnShop" onclick="openShop()">Ver minha loja 🏪</button>
 <button class="btnAdd" onclick="addProduct()">+ Publicar produto</button>
@@ -171,6 +171,15 @@ Pedidos<br><span id="totalOrders">0</span>
 
 <!-- 🔊 SOUND -->
 <audio id="notifSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+
+<!-- ✅ SUPPORT BUTTON -->
+<button onclick="contactSupport()" 
+style="position:fixed;bottom:80px;right:15px;
+background:#25D366;color:white;
+border:none;padding:12px;
+border-radius:50%;font-size:20px;z-index:2000;">
+💬
+</button>
 
 <script type="module">
 
@@ -232,7 +241,6 @@ let totalSales=0
 let todaySales=0
 let totalOrders=0
 
-/* 🔥 NOUVEAU */
 let productStats = {}
 
 const today = new Date().toDateString()
@@ -242,7 +250,6 @@ snapshot.forEach(docSnap=>{
 const o = docSnap.data()
 const id = docSnap.id
 
-/* FILTER */
 if(filter !== "all" && o.status !== filter) return
 
 totalOrders++
@@ -252,7 +259,6 @@ if(new Date(o.date).toDateString() === today){
 todaySales += o.price * o.qty
 }
 
-/* 🔥 STATS PAR PRODUIT */
 if(!productStats[o.productName]){
 productStats[o.productName] = 0
 }
@@ -264,9 +270,9 @@ html += `
 <b>${o.productName}</b><br>
 ${o.qty} x ${o.price} Kz<br>
 
-👤 ${o.clientName}<br>
-📞 ${o.clientPhone}<br>
-📍 ${o.clientAddress}<br>
+👤 ${o.clientName || ""}<br>
+📞 ${o.clientPhone || ""}<br>
+📍 ${o.clientAddress || ""}<br>
 
 Status: ${o.status}<br>
 
@@ -286,20 +292,15 @@ Supprimer
 `
 })
 
-/* UI */
 document.getElementById("ordersList").innerHTML = html
 document.getElementById("totalSales").innerText = totalSales
 document.getElementById("todaySales").innerText = todaySales
 document.getElementById("totalOrders").innerText = totalOrders
 
-/* 🔥 ALERT + SOUND */
 if(!firstLoad && snapshot.docChanges().length > 0){
 alert("Nova encomenda 🛒")
 document.getElementById("notifSound").play()
 }
-
-/* DEBUG STATS */
-console.log("📊 Stats produits:", productStats)
 
 firstLoad = false
 
@@ -324,8 +325,13 @@ listenOrders()
 
 }
 
-/* WHATSAPP */
+/* WHATSAPP CLIENT */
 window.contactClient = function(phone){
+
+if(!phone){
+alert("Sem número ❌")
+return
+}
 
 let msg="Olá 👋 sobre o seu pedido..."
 
@@ -356,6 +362,19 @@ window.logout = function(){
 
 signOut(auth)
 location.href="index.html"
+
+}
+
+/* ✅ SUPPORT */
+window.contactSupport = function(){
+
+let message = "Olá 👋 sou vendedor e preciso de suporte"
+
+let phone = "244922623238" // 🔥 MET TON NUMÉRO
+
+let url = "https://wa.me/" + phone + "?text=" + encodeURIComponent(message)
+
+window.open(url, "_blank")
 
 }
 
