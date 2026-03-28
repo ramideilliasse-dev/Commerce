@@ -1,18 +1,12 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Produto</title>
 
 <style>
-
-body{
-margin:0;
-font-family:Arial;
-background:#f5f5f5;
-}
+body{margin:0;font-family:Arial;background:#f5f5f5;}
 
 .header{
 background:white;
@@ -23,163 +17,53 @@ text-align:center;
 box-shadow:0 2px 5px rgba(0,0,0,0.1);
 }
 
-/* IMAGE */
-.imageContainer{
-width:100%;
-height:350px;
-overflow:hidden;
-background:#000;
-}
+.imageContainer{width:100%;height:350px;overflow:hidden;background:#000;}
+.mainImage{width:100%;height:100%;object-fit:cover;}
 
-.mainImage{
-width:100%;
-height:100%;
-object-fit:cover;
-cursor:pointer;
-}
+.gallery{display:flex;gap:8px;padding:10px;overflow-x:auto;background:white;}
+.gallery img{width:70px;height:70px;border-radius:8px;opacity:0.6;}
+.gallery img.active{border:2px solid #ff6a00;opacity:1;}
 
-/* GALLERY */
-.gallery{
-display:flex;
-gap:8px;
-padding:10px;
-overflow-x:auto;
-background:white;
-}
-
-.gallery img{
-width:70px;
-height:70px;
-object-fit:cover;
-border-radius:8px;
-cursor:pointer;
-opacity:0.6;
-}
-
-.gallery img.active{
-border:2px solid #ff6a00;
-opacity:1;
-}
-
-/* ZOOM */
-.zoomBox{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:black;
-display:none;
-align-items:center;
-justify-content:center;
-z-index:9999;
-}
-
-.zoomBox img{
-max-width:100%;
-max-height:100%;
-}
-
-.closeZoom{
-position:absolute;
-top:20px;
-right:20px;
-background:white;
-padding:8px 12px;
-border-radius:8px;
-font-weight:bold;
-cursor:pointer;
-}
-
-/* PRODUCT */
-.product{
-background:white;
-padding:15px;
-}
-
+.product{background:white;padding:15px;}
 .name{font-size:20px;font-weight:bold;}
 .price{color:#ff6a00;font-size:22px;font-weight:bold;}
-.desc{color:#555;}
 
-.actions{
-display:flex;
-gap:10px;
-margin-top:15px;
-flex-wrap:wrap;
-}
-
-.btn{
-flex:1;
-padding:12px;
-border:none;
-border-radius:8px;
-font-size:16px;
-cursor:pointer;
-}
-
+.actions{display:flex;gap:10px;margin-top:15px;}
+.btn{flex:1;padding:12px;border:none;border-radius:8px;cursor:pointer;}
 .shopBtn{background:black;color:white;}
 .buyBtn{background:#1aa34a;color:white;}
 .chatBtn{background:#075e54;color:white;}
 
-.qty{margin-top:10px;}
+.stars{color:#FFD700;font-size:18px;}
 
-/* SECTIONS */
-.section{padding:10px;}
-
-.grid{
-display:flex;
-gap:10px;
-overflow-x:auto;
+.review{
+border-bottom:1px solid #eee;
+padding:8px 0;
 }
 
-.card{
-min-width:140px;
-background:white;
-border-radius:10px;
-padding:8px;
-box-shadow:0 2px 5px rgba(0,0,0,0.1);
-cursor:pointer;
-}
-
-.card img{
-width:100%;
-height:100px;
-object-fit:cover;
-border-radius:8px;
-}
-
-.cardPrice{
-color:#ff6a00;
-font-weight:bold;
+/* SUPPORT */
+.supportBtn{
+position:fixed;
+bottom:80px;
+right:15px;
+background:#25D366;
+color:white;
+border:none;
+padding:15px;
+border-radius:50%;
+font-size:20px;
 }
 
 </style>
-
 </head>
 
 <body>
 
 <div class="header">Detalhes do produto</div>
-
 <div id="productBox"></div>
 
-<!-- ZOOM -->
-<div id="zoomBox" class="zoomBox">
-<div class="closeZoom" onclick="closeZoom()">X</div>
-<img id="zoomImg">
-</div>
-
-<!-- SIMILAR -->
-<div class="section">
-<h3>Produtos similares</h3>
-<div id="similar" class="grid"></div>
-</div>
-
-<!-- OTHER -->
-<div class="section">
-<h3>Outros vendedores</h3>
-<div id="others" class="grid"></div>
-</div>
+<!-- SUPPORT -->
+<button class="supportBtn" onclick="contactSupport()">💬</button>
 
 <script type="module">
 
@@ -189,33 +73,25 @@ doc,getDoc,
 collection,getDocs,query,where,addDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
-const productId=localStorage.getItem("selectedProduct")
+const productId = localStorage.getItem("selectedProduct")
 
-let images=[]
-let currentIndex=0
 let currentProduct=null
+let images=[]
 
 async function loadProduct(){
 
-if(!productId){
-alert("Produto inválido ❌")
-return
-}
-
-const ref=doc(db,"products",productId)
-const snap=await getDoc(ref)
+const snap = await getDoc(doc(db,"products",productId))
 
 if(!snap.exists()){
 alert("Produto não encontrado ❌")
 return
 }
 
-currentProduct=snap.data()
+currentProduct = snap.data()
 images = currentProduct.images || []
 
 renderProduct()
-loadSimilar()
-loadOthers()
+loadReviews()
 
 }
 
@@ -223,214 +99,143 @@ loadProduct()
 
 function renderProduct(){
 
-let main = images[0] || "https://via.placeholder.com/300"
+let main = images[0] || ""
 
-document.getElementById("productBox").innerHTML=`
+document.getElementById("productBox").innerHTML = `
 
 <div class="imageContainer">
-<img id="mainImage" class="mainImage" src="${main}" onclick="zoomImage()">
-</div>
-
-<div class="gallery">
-${images.map((img,i)=>`
-<img src="${img}" onclick="selectImage(${i})" class="${i===0?'active':''}">
-`).join("")}
+<img class="mainImage" src="${main}">
 </div>
 
 <div class="product">
 
-<div class="name">${currentProduct.name || ""}</div>
-<div class="price">${currentProduct.price || 0} Kz</div>
-<div class="desc">${currentProduct.description || ""}</div>
-
-<div class="qty">
-<label>Quantidade:</label>
-<input type="number" id="qty" value="1" min="1">
-</div>
+<div class="name">${currentProduct.name}</div>
+<div class="price">${currentProduct.price} Kz</div>
 
 <div class="actions">
+<button class="btn buyBtn" onclick="orderNow()">Comprar</button>
+<button class="btn chatBtn" onclick="openChat()">💬 Chat</button>
+</div>
 
-<button class="btn shopBtn" onclick="openShop('${currentProduct.merchantId}')">
-Loja
-</button>
+<!-- ⭐ REVIEWS -->
+<div style="margin-top:20px;">
+<h3>Avaliações</h3>
 
-<button class="btn buyBtn" onclick="orderNow()">
-Comprar
-</button>
+<div id="avgRating"></div>
+<div id="reviewsList"></div>
 
-<button class="btn chatBtn" onclick="openChat()">
-💬 Chat
-</button>
+<button onclick="leaveReview()">⭐ Avaliar</button>
 
 </div>
 
 </div>
 `
-
 }
 
-/* 🔥 CHAT */
-window.openChat = function(){
-if(!currentProduct?.merchantId){
-alert("Erro chat ❌")
-return
-}
-location.href = "chat.html?merchant=" + currentProduct.merchantId
-}
+/* ⭐ LOAD REVIEWS */
+async function loadReviews(){
 
-/* IMAGE */
-window.selectImage=function(i){
-currentIndex=i
-document.getElementById("mainImage").src=images[i]
-
-document.querySelectorAll(".gallery img").forEach((img,index)=>{
-img.classList.toggle("active", index===i)
-})
-}
-
-/* ZOOM */
-window.zoomImage=function(){
-document.getElementById("zoomBox").style.display="flex"
-document.getElementById("zoomImg").src=images[currentIndex]
-}
-
-window.closeZoom=function(){
-document.getElementById("zoomBox").style.display="none"
-}
-
-/* SWIPE */
-let startX=0
-
-document.getElementById("zoomBox").addEventListener("touchstart",e=>{
-startX=e.touches[0].clientX
-})
-
-document.getElementById("zoomBox").addEventListener("touchend",e=>{
-let endX=e.changedTouches[0].clientX
-
-if(startX - endX > 50) nextImage()
-if(endX - startX > 50) prevImage()
-})
-
-function nextImage(){
-if(currentIndex < images.length-1){
-currentIndex++
-updateZoom()
-}
-}
-
-function prevImage(){
-if(currentIndex > 0){
-currentIndex--
-updateZoom()
-}
-}
-
-function updateZoom(){
-document.getElementById("zoomImg").src=images[currentIndex]
-}
-
-/* SIMILAR */
-async function loadSimilar(){
-
-if(!currentProduct?.category) return
-
-const q=query(
-collection(db,"products"),
-where("category","==",currentProduct.category)
+const q = query(
+collection(db,"reviews"),
+where("productId","==",productId)
 )
 
-const snap=await getDocs(q)
+const snap = await getDocs(q)
 
+let total=0
+let count=0
 let html=""
 
-snap.forEach(docSnap=>{
-const p=docSnap.data()
+snap.forEach(doc=>{
+let r = doc.data()
 
-if(docSnap.id !== productId){
-html+=`
-<div class="card" onclick="openProduct('${docSnap.id}')">
-<img src="${p.images?.[0] || ''}">
-<div>${p.name}</div>
-<div class="cardPrice">${p.price} Kz</div>
+total += r.rating
+count++
+
+html += `
+<div class="review">
+<div class="stars">${"⭐".repeat(r.rating)}</div>
+<div>${r.comment || ""}</div>
 </div>
 `
-}
 })
 
-document.getElementById("similar").innerHTML=html
+let avg = count ? (total/count).toFixed(1) : 0
+
+document.getElementById("avgRating").innerHTML =
+`<b>${avg} ⭐ (${count} avaliações)</b>`
+
+document.getElementById("reviewsList").innerHTML = html
+
 }
 
-/* OTHERS */
-async function loadOthers(){
-
-const snap=await getDocs(collection(db,"products"))
-
-let html=""
-
-snap.forEach(docSnap=>{
-const p=docSnap.data()
-
-if(p.merchantId !== currentProduct.merchantId){
-html+=`
-<div class="card" onclick="openProduct('${docSnap.id}')">
-<img src="${p.images?.[0] || ''}">
-<div>${p.name}</div>
-<div class="cardPrice">${p.price} Kz</div>
-</div>
-`
-}
-})
-
-document.getElementById("others").innerHTML=html
-}
-
-/* OPEN */
-window.openProduct=function(id){
-localStorage.setItem("selectedProduct", id)
-location.reload()
-}
-
-/* SHOP */
-window.openShop=function(id){
-location.href="merchant-shop.html?id="+id
-}
-
-/* 🔥 ORDER FIX (SECURE FIRESTORE) */
-window.orderNow=async function(){
-
-const qty = parseInt(document.getElementById("qty").value) || 1
+/* ⭐ ADD REVIEW */
+window.leaveReview = async function(){
 
 if(!auth.currentUser){
-alert("Connecte-toi ❌")
+alert("Login necessário ❌")
 return
 }
 
-try{
+let rating = prompt("Nota (1-5)")
+if(!rating) return
+
+rating = Math.max(1, Math.min(5, Number(rating)))
+
+let comment = prompt("Comentário")
+
+await addDoc(collection(db,"reviews"),{
+productId,
+userId: auth.currentUser.uid,
+rating,
+comment: comment || "",
+date: Date.now()
+})
+
+alert("Obrigado ⭐")
+
+loadReviews()
+
+}
+
+/* ORDER */
+window.orderNow = async function(){
+
+if(!auth.currentUser){
+alert("Login ❌")
+return
+}
 
 await addDoc(collection(db,"orders"),{
-productId: productId,
+productId,
 productName: currentProduct.name,
 price: currentProduct.price,
-qty: qty,
-
+qty:1,
 merchantId: currentProduct.merchantId,
 clientId: auth.currentUser.uid,
-
-status: "pendente",
-date: Date.now()
+date:Date.now()
 })
 
 alert("Pedido enviado ✅")
 
-}catch(e){
-console.error(e)
-alert("Erro pedido ❌")
 }
+
+/* CHAT */
+window.openChat = function(){
+location.href="chat.html?merchant="+currentProduct.merchantId
+}
+
+/* SUPPORT */
+window.contactSupport = function(){
+
+window.open(
+"https://wa.me/244922623238?text=Preciso de ajuda",
+"_blank"
+)
 
 }
 
 </script>
 
 </body>
-</html>
+</html> 
