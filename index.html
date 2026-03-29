@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
@@ -28,63 +28,43 @@ border-bottom:1px solid #eee;
 z-index:1000;
 }
 
-.logo{
-font-size:22px;
-font-weight:bold;
-}
+.logo{font-size:22px;font-weight:bold;}
 
-.headerRight{
-display:flex;
-gap:10px;
-}
+.headerRight{display:flex;gap:10px;align-items:center;}
 
 .profile{
-width:35px;
-height:35px;
-border-radius:50%;
-cursor:pointer;
+width:35px;height:35px;border-radius:50%;cursor:pointer;
 }
 
 .accountBtn{
-background:black;
-color:white;
-border:none;
-padding:6px 12px;
-border-radius:20px;
+background:black;color:white;border:none;
+padding:6px 12px;border-radius:20px;
+}
+
+/* CART BADGE */
+.cartBadge{
+background:red;color:white;
+border-radius:50%;
+padding:3px 7px;
+font-size:12px;
+position:absolute;
+top:-5px;right:-5px;
 }
 
 /* SEARCH */
 .searchBox{
-position:fixed;
-top:65px;
-left:0;
-right:0;
-background:white;
-padding:10px;
-z-index:999;
+position:fixed;top:65px;left:0;right:0;
+background:white;padding:10px;z-index:999;
 }
 
 .searchBox input{
-width:100%;
-padding:12px;
-border-radius:20px;
-border:1px solid #ddd;
+width:100%;padding:12px;border-radius:20px;border:1px solid #ddd;
 }
 
 /* BANNER */
 .banner{
-margin-top:120px;
-background:#ff6a00;
-color:white;
-padding:10px;
-text-align:center;
-font-weight:bold;
-animation:slide 2s infinite alternate;
-}
-
-@keyframes slide{
-from{opacity:0.5;}
-to{opacity:1;}
+margin-top:120px;background:#ff6a00;color:white;
+padding:10px;text-align:center;font-weight:bold;
 }
 
 /* PRODUCTS */
@@ -103,15 +83,17 @@ break-inside:avoid;
 box-shadow:0 4px 10px rgba(0,0,0,0.08);
 overflow:hidden;
 position:relative;
+cursor:pointer;
+transition:0.3s;
 }
 
-.product img{
-width:100%;
+.product:hover{
+transform:scale(1.03);
 }
 
-.info{
-padding:10px;
-}
+.product img{width:100%;}
+
+.info{padding:10px;}
 
 .name{font-weight:bold;}
 .price{color:#ff6a00;font-weight:bold;}
@@ -123,8 +105,7 @@ right:10px;
 bottom:10px;
 background:#1aa34a;
 color:white;
-width:36px;
-height:36px;
+width:36px;height:36px;
 border-radius:50%;
 display:flex;
 align-items:center;
@@ -134,10 +115,7 @@ cursor:pointer;
 
 /* NAV */
 .nav{
-position:fixed;
-bottom:0;
-left:0;
-right:0;
+position:fixed;bottom:0;left:0;right:0;
 background:white;
 display:flex;
 justify-content:space-around;
@@ -146,7 +124,7 @@ border-top:1px solid #ddd;
 z-index:1000;
 }
 
-/* SUPPORT BUTTON */
+/* SUPPORT */
 .supportBtn{
 position:fixed;
 bottom:80px;
@@ -161,18 +139,39 @@ box-shadow:0 4px 10px rgba(0,0,0,0.2);
 cursor:pointer;
 }
 
+/* TOAST */
+.toast{
+position:fixed;
+bottom:100px;
+left:50%;
+transform:translateX(-50%);
+background:black;
+color:white;
+padding:10px 15px;
+border-radius:20px;
+display:none;
+}
+
 </style>
 </head>
 
 <body>
 
 <div class="header">
-<div class="logo">Shopping Online 🇦🇴</div>
+<div class="logo">Shopping 🇦🇴</div>
 
 <div class="headerRight">
+
+<div style="position:relative;">
+🛒
+<span id="cartCount" class="cartBadge">0</span>
+</div>
+
 <img id="profilePic" class="profile">
 <input type="file" id="profileUpload" hidden>
+
 <button id="accountButton" class="accountBtn">...</button>
+
 </div>
 </div>
 
@@ -181,20 +180,21 @@ cursor:pointer;
 </div>
 
 <div class="banner">
-🔥 Promoções incríveis hoje • Entrega rápida 🚀
+🔥 Promoções hoje • Entrega rápida 🚀
 </div>
 
 <div id="productList" class="products"></div>
 
-<!-- SUPPORT BUTTON -->
 <button class="supportBtn" onclick="contactSupport()">💬</button>
 
 <div class="nav">
 <div onclick="location.href='index.html'">🏠<br>Inicio</div>
-<div onclick="location.href='categories.html'">📦<br>Categorias</div>
-<div onclick="location.href='messages.html'">💬<br>Mensagens</div>
-<div onclick="location.href='cart.html'">🛒<br>Carrinho</div>
+<div onclick="location.href='categories.html'">📦</div>
+<div onclick="location.href='messages.html'">💬</div>
+<div onclick="location.href='cart.html'">🛒</div>
 </div>
+
+<div id="toast" class="toast"></div>
 
 <script type="module">
 
@@ -205,6 +205,21 @@ import { onAuthStateChanged }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 let products=[]
+
+/* TOAST */
+function showToast(msg){
+const t=document.getElementById("toast")
+t.innerText=msg
+t.style.display="block"
+setTimeout(()=>t.style.display="none",2000)
+}
+
+/* CART COUNT */
+function updateCartCount(){
+let cart = JSON.parse(localStorage.getItem("cart") || "[]")
+document.getElementById("cartCount").innerText = cart.length
+}
+updateCartCount()
 
 /* PROFILE */
 const profilePic=document.getElementById("profilePic")
@@ -220,49 +235,36 @@ localStorage.setItem("profilePic",url)
 
 profilePic.src=localStorage.getItem("profilePic") || "https://via.placeholder.com/35"
 
-/* BUTTON */
+/* AUTH */
 const accountButton=document.getElementById("accountButton")
 
-/* AUTH + ROLE */
 onAuthStateChanged(auth, async (user)=>{
-
-try{
 
 if(user){
 
 const ref = doc(db,"users",user.uid)
 let snap = await getDoc(ref)
 
-/* CREATE USER */
 if(!snap.exists()){
 await setDoc(ref,{
 email:user.email,
-createdAt:Date.now(),
-approved:false,
 role:"client",
-blocked:false
+approved:false,
+blocked:false,
+createdAt:Date.now()
 })
 snap = await getDoc(ref)
 }
 
-const userData = snap.data()
+const data = snap.data()
 
-if(userData.blocked){
-alert("Conta bloqueada ❌")
-return
-}
-
-if(userData.role === "admin"){
+if(data.role === "admin" || data.role === "superadmin"){
 accountButton.innerText="Admin 👑"
 accountButton.onclick=()=>location.href="admin-dashboard.html"
 }
-else if(userData.role === "merchant"){
-if(userData.approved){
+else if(data.role === "merchant"){
 accountButton.innerText="Minha Loja"
 accountButton.onclick=()=>location.href="merchant-dashboard.html"
-}else{
-accountButton.innerText="Aguardando ⏳"
-}
 }
 else{
 accountButton.innerText="Criar loja"
@@ -270,17 +272,13 @@ accountButton.onclick=()=>location.href="merchant-register.html"
 }
 
 }else{
-accountButton.innerText="Conectar"
+accountButton.innerText="Login"
 accountButton.onclick=()=>location.href="login.html"
-}
-
-}catch(e){
-console.error(e)
 }
 
 })
 
-/* PRODUCT CARD */
+/* PRODUCT */
 function productHTML(p){
 
 const img = p.images?.[0] || "https://via.placeholder.com/300"
@@ -309,7 +307,6 @@ const snap=await getDocs(collection(db,"products"))
 const container=document.getElementById("productList")
 
 container.innerHTML=""
-products=[]
 
 snap.forEach(docSnap=>{
 const data=docSnap.data()
@@ -343,13 +340,15 @@ cart.push({
 id:product.id,
 name:product.name,
 price:product.price,
+image:product.images?.[0] || "",
 qty:1,
-merchantId:product.merchantId || "unknown"
+merchantId:product.merchantId
 })
 }
 
 localStorage.setItem("cart", JSON.stringify(cart))
-alert("Adicionado 🛒")
+updateCartCount()
+showToast("Adicionado 🛒")
 
 }
 
@@ -369,15 +368,13 @@ container.innerHTML+=productHTML(p)
 
 })
 
-/* SUPPORT SYSTEM */
+/* SUPPORT */
 window.contactSupport = function(){
 
-const phone = "244922623238" // 🔥 TON NUMÉRO SUPPORT
-const message = "Olá, preciso de ajuda com a aplicação."
+let phone="244922623238"
+let msg="Olá preciso de ajuda"
 
-const url = "https://wa.me/" + phone + "?text=" + encodeURIComponent(message)
-
-window.open(url, "_blank")
+window.open("https://wa.me/"+phone+"?text="+encodeURIComponent(msg))
 
 }
 
