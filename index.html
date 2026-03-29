@@ -30,41 +30,72 @@ z-index:1000;
 
 .logo{font-size:22px;font-weight:bold;}
 
-.headerRight{display:flex;gap:10px;align-items:center;}
-
-.profile{
-width:35px;height:35px;border-radius:50%;cursor:pointer;
-}
-
-.accountBtn{
-background:black;color:white;border:none;
-padding:6px 12px;border-radius:20px;
+.headerRight{
+display:flex;
+gap:10px;
+align-items:center;
 }
 
 /* CART BADGE */
+.cartIcon{
+position:relative;
+cursor:pointer;
+font-size:22px;
+}
+
 .cartBadge{
-background:red;color:white;
+background:red;
+color:white;
 border-radius:50%;
 padding:3px 7px;
 font-size:12px;
 position:absolute;
-top:-5px;right:-5px;
+top:-8px;
+right:-10px;
+}
+
+/* PROFILE */
+.profile{
+width:35px;
+height:35px;
+border-radius:50%;
+cursor:pointer;
+}
+
+.accountBtn{
+background:black;
+color:white;
+border:none;
+padding:6px 12px;
+border-radius:20px;
 }
 
 /* SEARCH */
 .searchBox{
-position:fixed;top:65px;left:0;right:0;
-background:white;padding:10px;z-index:999;
+position:fixed;
+top:65px;
+left:0;
+right:0;
+background:white;
+padding:10px;
+z-index:999;
 }
 
 .searchBox input{
-width:100%;padding:12px;border-radius:20px;border:1px solid #ddd;
+width:100%;
+padding:12px;
+border-radius:20px;
+border:1px solid #ddd;
 }
 
 /* BANNER */
 .banner{
-margin-top:120px;background:#ff6a00;color:white;
-padding:10px;text-align:center;font-weight:bold;
+margin-top:120px;
+background:#ff6a00;
+color:white;
+padding:10px;
+text-align:center;
+font-weight:bold;
 }
 
 /* PRODUCTS */
@@ -91,21 +122,28 @@ transition:0.3s;
 transform:scale(1.03);
 }
 
-.product img{width:100%;}
+.product img{
+width:100%;
+height:160px;
+object-fit:cover;
+}
 
+/* INFO */
 .info{padding:10px;}
 
 .name{font-weight:bold;}
 .price{color:#ff6a00;font-weight:bold;}
 .desc{font-size:13px;color:#555;}
 
+/* CART BTN */
 .cartBtn{
 position:absolute;
 right:10px;
 bottom:10px;
 background:#1aa34a;
 color:white;
-width:36px;height:36px;
+width:36px;
+height:36px;
 border-radius:50%;
 display:flex;
 align-items:center;
@@ -115,7 +153,10 @@ cursor:pointer;
 
 /* NAV */
 .nav{
-position:fixed;bottom:0;left:0;right:0;
+position:fixed;
+bottom:0;
+left:0;
+right:0;
 background:white;
 display:flex;
 justify-content:space-around;
@@ -124,18 +165,9 @@ border-top:1px solid #ddd;
 z-index:1000;
 }
 
-/* SUPPORT */
-.supportBtn{
-position:fixed;
-bottom:80px;
-right:15px;
-background:#25D366;
-color:white;
-border:none;
-padding:14px;
-border-radius:50%;
-font-size:20px;
-box-shadow:0 4px 10px rgba(0,0,0,0.2);
+.nav div{
+text-align:center;
+font-size:13px;
 cursor:pointer;
 }
 
@@ -158,11 +190,12 @@ display:none;
 <body>
 
 <div class="header">
+
 <div class="logo">Shopping 🇦🇴</div>
 
 <div class="headerRight">
 
-<div style="position:relative;">
+<div class="cartIcon" onclick="location.href='cart.html'">
 🛒
 <span id="cartCount" class="cartBadge">0</span>
 </div>
@@ -185,13 +218,11 @@ display:none;
 
 <div id="productList" class="products"></div>
 
-<button class="supportBtn" onclick="contactSupport()">💬</button>
-
 <div class="nav">
 <div onclick="location.href='index.html'">🏠<br>Inicio</div>
-<div onclick="location.href='categories.html'">📦</div>
-<div onclick="location.href='messages.html'">💬</div>
-<div onclick="location.href='cart.html'">🛒</div>
+<div onclick="location.href='categories.html'">📦<br>Categorias</div>
+<div onclick="location.href='messages.html'">💬<br>Mensagens</div>
+<div onclick="location.href='cart.html'">🛒<br>Carrinho</div>
 </div>
 
 <div id="toast" class="toast"></div>
@@ -214,10 +245,14 @@ t.style.display="block"
 setTimeout(()=>t.style.display="none",2000)
 }
 
-/* CART COUNT */
+/* CART COUNT (FIX IMPORTANT) */
 function updateCartCount(){
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
-document.getElementById("cartCount").innerText = cart.length
+
+let total = 0
+cart.forEach(i=> total += i.qty || 1)
+
+document.getElementById("cartCount").innerText = total
 }
 updateCartCount()
 
@@ -268,7 +303,7 @@ accountButton.onclick=()=>location.href="merchant-dashboard.html"
 }
 else{
 accountButton.innerText="Criar loja"
-accountButton.onclick=()=>location.href="merchant-register.html"
+accountButton.onclick=()=>location.href="settings.html"
 }
 
 }else{
@@ -307,6 +342,7 @@ const snap=await getDocs(collection(db,"products"))
 const container=document.getElementById("productList")
 
 container.innerHTML=""
+products=[] // 🔥 FIX IMPORTANT
 
 snap.forEach(docSnap=>{
 const data=docSnap.data()
@@ -339,10 +375,10 @@ exist.qty++
 cart.push({
 id:product.id,
 name:product.name,
-price:product.price,
+price:Number(product.price) || 0,
 image:product.images?.[0] || "",
 qty:1,
-merchantId:product.merchantId
+merchantId:product.merchantId || ""
 })
 }
 
@@ -367,16 +403,6 @@ container.innerHTML+=productHTML(p)
 })
 
 })
-
-/* SUPPORT */
-window.contactSupport = function(){
-
-let phone="244922623238"
-let msg="Olá preciso de ajuda"
-
-window.open("https://wa.me/"+phone+"?text="+encodeURIComponent(msg))
-
-}
 
 loadProducts()
 
