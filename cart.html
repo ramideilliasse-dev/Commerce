@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
@@ -26,6 +26,12 @@ display:flex;
 gap:10px;
 align-items:center;
 box-shadow:0 2px 6px rgba(0,0,0,0.1);
+animation:fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn{
+from{opacity:0; transform:translateY(10px);}
+to{opacity:1; transform:translateY(0);}
 }
 
 .item img{
@@ -33,6 +39,7 @@ width:80px;
 height:80px;
 border-radius:8px;
 object-fit:cover;
+background:#eee;
 }
 
 .info{flex:1;}
@@ -74,8 +81,19 @@ font-size:18px;
 transition:0.3s;
 }
 
-.checkout:hover{
-background:#14863a;
+.checkout.disabled{
+background:#ccc;
+cursor:not-allowed;
+}
+
+.clearCart{
+background:black;
+color:white;
+margin:10px;
+padding:10px;
+text-align:center;
+border-radius:10px;
+cursor:pointer;
 }
 
 .empty{
@@ -96,8 +114,12 @@ font-size:16px;
 
 <div class="total" id="total"></div>
 
-<div class="checkout" onclick="goCheckout()">
+<div id="checkoutBtn" class="checkout" onclick="goCheckout()">
 Finalizar pedido
+</div>
+
+<div class="clearCart" onclick="clearCart()">
+🗑️ Limpar carrinho
 </div>
 
 <script>
@@ -110,33 +132,40 @@ let cart = JSON.parse(localStorage.getItem("cart") || "[]")
 let html=""
 let total=0
 
+const checkoutBtn = document.getElementById("checkoutBtn")
+
 if(cart.length === 0){
+
 document.getElementById("cartList").innerHTML = `
 <div class="empty">
 Seu carrinho está vazio 😢
 </div>
 `
+
 document.getElementById("total").innerText=""
+checkoutBtn.classList.add("disabled")
 return
 }
+
+checkoutBtn.classList.remove("disabled")
 
 cart.forEach((item,index)=>{
 
 if(!item.qty){ item.qty = 1 }
 
-/* sécurité */
 let price = Number(item.price) || 0
+let image = item.image || "https://via.placeholder.com/80"
 
 total += price * item.qty
 
 html += `
 <div class="item">
 
-<img src="${item.image || ''}">
+<img src="${image}">
 
 <div class="info">
 
-<div><b>${item.name}</b></div>
+<div><b>${item.name || "Produto"}</b></div>
 <div>${price} Kz</div>
 
 <div class="qty">
@@ -162,7 +191,6 @@ document.getElementById("total").innerText = "Total: " + total + " Kz"
 
 loadCart()
 
-
 /* CHANGE QTY */
 function changeQty(index,delta){
 
@@ -179,7 +207,6 @@ loadCart()
 
 }
 
-
 /* REMOVE ITEM */
 function removeItem(index){
 
@@ -188,11 +215,19 @@ let cart = JSON.parse(localStorage.getItem("cart") || "[]")
 cart.splice(index,1)
 
 localStorage.setItem("cart",JSON.stringify(cart))
-
 loadCart()
 
 }
 
+/* CLEAR CART */
+function clearCart(){
+
+if(!confirm("Limpar carrinho?")) return
+
+localStorage.removeItem("cart")
+loadCart()
+
+}
 
 /* GO CHECKOUT */
 function goCheckout(){
@@ -204,7 +239,7 @@ alert("Carrinho vazio ❌")
 return
 }
 
-/* 🔥 NORMALISER (IMPORTANT) */
+/* NORMALISER */
 let checkoutCart = cart.map(item => ({
 
 id: item.id || "",
@@ -216,10 +251,6 @@ merchantId: item.merchantId || ""
 
 }))
 
-/* DEBUG */
-console.log("CHECKOUT CART:", checkoutCart)
-
-/* ENVOI */
 localStorage.setItem("checkoutCart", JSON.stringify(checkoutCart))
 
 location.href = "checkout.html"
@@ -229,4 +260,4 @@ location.href = "checkout.html"
 </script>
 
 </body>
-</html> 
+</html>
