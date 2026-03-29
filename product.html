@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
@@ -17,20 +17,67 @@ text-align:center;
 box-shadow:0 2px 5px rgba(0,0,0,0.1);
 }
 
-.imageContainer{width:100%;height:350px;overflow:hidden;background:#000;}
-.mainImage{width:100%;height:100%;object-fit:cover;}
+/* IMAGE */
+.imageContainer{
+width:100%;
+height:320px;
+background:#000;
+}
 
-.gallery{display:flex;gap:8px;padding:10px;overflow-x:auto;background:white;}
-.gallery img{width:70px;height:70px;border-radius:8px;opacity:0.6;}
-.gallery img.active{border:2px solid #ff6a00;opacity:1;}
+.mainImage{
+width:100%;
+height:100%;
+object-fit:cover;
+cursor:pointer;
+}
 
-.product{background:white;padding:15px;}
+/* GALLERY */
+.gallery{
+display:flex;
+gap:8px;
+padding:10px;
+overflow-x:auto;
+background:white;
+}
+
+.gallery img{
+width:70px;
+height:70px;
+border-radius:8px;
+opacity:0.6;
+cursor:pointer;
+}
+
+.gallery img.active{
+border:2px solid #ff6a00;
+opacity:1;
+}
+
+/* PRODUCT */
+.product{
+background:white;
+padding:15px;
+}
+
 .name{font-size:20px;font-weight:bold;}
 .price{color:#ff6a00;font-size:22px;font-weight:bold;}
 
-.actions{display:flex;gap:10px;margin-top:15px;}
-.btn{flex:1;padding:12px;border:none;border-radius:8px;cursor:pointer;}
-.shopBtn{background:black;color:white;}
+.actions{
+display:flex;
+gap:10px;
+margin-top:15px;
+}
+
+.btn{
+flex:1;
+padding:12px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-size:15px;
+}
+
+.cartBtn{background:#ff6a00;color:white;}
 .buyBtn{background:#1aa34a;color:white;}
 .chatBtn{background:#075e54;color:white;}
 
@@ -39,6 +86,25 @@ box-shadow:0 2px 5px rgba(0,0,0,0.1);
 .review{
 border-bottom:1px solid #eee;
 padding:8px 0;
+}
+
+/* ZOOM */
+.zoom{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:black;
+display:none;
+align-items:center;
+justify-content:center;
+z-index:9999;
+}
+
+.zoom img{
+max-width:100%;
+max-height:100%;
 }
 
 /* SUPPORT */
@@ -54,16 +120,35 @@ border-radius:50%;
 font-size:20px;
 }
 
+/* TOAST */
+.toast{
+position:fixed;
+bottom:100px;
+left:50%;
+transform:translateX(-50%);
+background:black;
+color:white;
+padding:10px 15px;
+border-radius:20px;
+display:none;
+}
+
 </style>
 </head>
 
 <body>
 
 <div class="header">Detalhes do produto</div>
+
 <div id="productBox"></div>
 
-<!-- SUPPORT -->
+<!-- ZOOM -->
+<div id="zoom" class="zoom" onclick="closeZoom()">
+<img id="zoomImg">
+</div>
+
 <button class="supportBtn" onclick="contactSupport()">💬</button>
+<div id="toast" class="toast"></div>
 
 <script type="module">
 
@@ -77,13 +162,23 @@ const productId = localStorage.getItem("selectedProduct")
 
 let currentProduct=null
 let images=[]
+let currentIndex=0
 
+/* TOAST */
+function showToast(msg){
+const t=document.getElementById("toast")
+t.innerText=msg
+t.style.display="block"
+setTimeout(()=>t.style.display="none",2000)
+}
+
+/* LOAD */
 async function loadProduct(){
 
 const snap = await getDoc(doc(db,"products",productId))
 
 if(!snap.exists()){
-alert("Produto não encontrado ❌")
+showToast("Produto não encontrado ❌")
 return
 }
 
@@ -97,42 +192,108 @@ loadReviews()
 
 loadProduct()
 
+/* RENDER */
 function renderProduct(){
 
-let main = images[0] || ""
+let main = images.length ? images[0] : "https://via.placeholder.com/300"
 
 document.getElementById("productBox").innerHTML = `
 
 <div class="imageContainer">
-<img class="mainImage" src="${main}">
+<img id="mainImage" class="mainImage" src="${main}" onclick="openZoom()">
+</div>
+
+<div class="gallery">
+${images.map((img,i)=>`
+<img src="${img}" onclick="selectImage(${i})" class="${i===0?'active':''}">
+`).join("")}
 </div>
 
 <div class="product">
 
-<div class="name">${currentProduct.name}</div>
-<div class="price">${currentProduct.price} Kz</div>
+<div class="name">${currentProduct.name || ""}</div>
+<div class="price">${currentProduct.price || 0} Kz</div>
 
 <div class="actions">
+<button class="btn cartBtn" onclick="addToCart()">🛒 Carrinho</button>
 <button class="btn buyBtn" onclick="orderNow()">Comprar</button>
-<button class="btn chatBtn" onclick="openChat()">💬 Chat</button>
+<button class="btn chatBtn" onclick="openChat()">💬</button>
 </div>
 
-<!-- ⭐ REVIEWS -->
+<!-- REVIEWS -->
 <div style="margin-top:20px;">
 <h3>Avaliações</h3>
-
 <div id="avgRating"></div>
 <div id="reviewsList"></div>
-
 <button onclick="leaveReview()">⭐ Avaliar</button>
-
 </div>
 
 </div>
 `
 }
 
-/* ⭐ LOAD REVIEWS */
+/* IMAGE SELECT */
+window.selectImage = function(i){
+currentIndex=i
+document.getElementById("mainImage").src=images[i]
+
+document.querySelectorAll(".gallery img").forEach((img,index)=>{
+img.classList.toggle("active", index===i)
+})
+}
+
+/* ZOOM */
+window.openZoom = function(){
+document.getElementById("zoom").style.display="flex"
+document.getElementById("zoomImg").src=images[currentIndex]
+}
+
+window.closeZoom = function(){
+document.getElementById("zoom").style.display="none"
+}
+
+/* CART */
+window.addToCart = function(){
+
+let cart = JSON.parse(localStorage.getItem("cart") || "[]")
+
+cart.push({
+id:productId,
+name:currentProduct.name,
+price:currentProduct.price,
+image:images[0],
+qty:1,
+merchantId:currentProduct.merchantId
+})
+
+localStorage.setItem("cart", JSON.stringify(cart))
+showToast("Adicionado ao carrinho 🛒")
+
+}
+
+/* ORDER */
+window.orderNow = async function(){
+
+if(!auth.currentUser){
+showToast("Login necessário ❌")
+return
+}
+
+await addDoc(collection(db,"orders"),{
+productId,
+productName: currentProduct.name,
+price: currentProduct.price,
+qty:1,
+merchantId: currentProduct.merchantId,
+clientId: auth.currentUser.uid,
+date:Date.now()
+})
+
+showToast("Pedido enviado ✅")
+
+}
+
+/* REVIEWS */
 async function loadReviews(){
 
 const q = query(
@@ -148,7 +309,6 @@ let html=""
 
 snap.forEach(doc=>{
 let r = doc.data()
-
 total += r.rating
 count++
 
@@ -163,21 +323,21 @@ html += `
 let avg = count ? (total/count).toFixed(1) : 0
 
 document.getElementById("avgRating").innerHTML =
-`<b>${avg} ⭐ (${count} avaliações)</b>`
+`<b>${avg} ⭐ (${count})</b>`
 
 document.getElementById("reviewsList").innerHTML = html
 
 }
 
-/* ⭐ ADD REVIEW */
+/* ADD REVIEW */
 window.leaveReview = async function(){
 
 if(!auth.currentUser){
-alert("Login necessário ❌")
+showToast("Login necessário ❌")
 return
 }
 
-let rating = prompt("Nota (1-5)")
+let rating = prompt("Nota 1-5")
 if(!rating) return
 
 rating = Math.max(1, Math.min(5, Number(rating)))
@@ -192,31 +352,8 @@ comment: comment || "",
 date: Date.now()
 })
 
-alert("Obrigado ⭐")
-
+showToast("Obrigado ⭐")
 loadReviews()
-
-}
-
-/* ORDER */
-window.orderNow = async function(){
-
-if(!auth.currentUser){
-alert("Login ❌")
-return
-}
-
-await addDoc(collection(db,"orders"),{
-productId,
-productName: currentProduct.name,
-price: currentProduct.price,
-qty:1,
-merchantId: currentProduct.merchantId,
-clientId: auth.currentUser.uid,
-date:Date.now()
-})
-
-alert("Pedido enviado ✅")
 
 }
 
@@ -227,15 +364,10 @@ location.href="chat.html?merchant="+currentProduct.merchantId
 
 /* SUPPORT */
 window.contactSupport = function(){
-
-window.open(
-"https://wa.me/244922623238?text=Preciso de ajuda",
-"_blank"
-)
-
+window.open("https://wa.me/244922623238?text=Preciso de ajuda")
 }
 
 </script>
 
 </body>
-</html> 
+</html>
