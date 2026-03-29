@@ -21,6 +21,16 @@ border-bottom:1px solid #eee;z-index:1000;
 
 .headerRight{display:flex;gap:10px;align-items:center;}
 
+/* NEW BUTTONS */
+.topBtn{
+background:#eee;
+border:none;
+padding:6px 10px;
+border-radius:8px;
+cursor:pointer;
+font-size:14px;
+}
+
 /* CART */
 .cartIcon{position:relative;cursor:pointer;font-size:22px;}
 
@@ -153,6 +163,10 @@ display:none;
 
 <div class="headerRight">
 
+<!-- 🔥 NEW BUTTONS -->
+<button class="topBtn" onclick="location.href='settings.html'">⚙️</button>
+<button class="topBtn" onclick="location.href='guide.html'">📘</button>
+
 <div class="cartIcon" onclick="location.href='cart.html'">
 🛒
 <span id="cartCount" class="cartBadge">0</span>
@@ -197,7 +211,6 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 let products=[]
 
-/* TOAST */
 function showToast(msg){
 const t=document.getElementById("toast")
 t.innerText=msg
@@ -205,7 +218,6 @@ t.style.display="block"
 setTimeout(()=>t.style.display="none",2000)
 }
 
-/* CART COUNT */
 function updateCartCount(){
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
 let total=0
@@ -214,7 +226,6 @@ document.getElementById("cartCount").innerText = total
 }
 updateCartCount()
 
-/* PROFILE */
 const profilePic=document.getElementById("profilePic")
 const upload=document.getElementById("profileUpload")
 
@@ -228,7 +239,6 @@ localStorage.setItem("profilePic",url)
 
 profilePic.src=localStorage.getItem("profilePic") || "https://via.placeholder.com/35"
 
-/* AUTH */
 const accountButton=document.getElementById("accountButton")
 
 onAuthStateChanged(auth, async (user)=>{
@@ -271,7 +281,6 @@ accountButton.onclick=()=>location.href="login.html"
 
 })
 
-/* PRODUCT CARD */
 function productHTML(p){
 
 const img = p.images?.[0] || "https://via.placeholder.com/300"
@@ -296,7 +305,6 @@ return `
 `
 }
 
-/* LOAD */
 async function loadProducts(){
 
 document.getElementById("loader").style.display="block"
@@ -315,7 +323,6 @@ data.id=docSnap.id
 products.push(data)
 })
 
-/* SORT (BEST SELLERS) */
 products.sort((a,b)=>(b.sales||0)-(a.sales||0))
 
 products.forEach(p=>{
@@ -324,13 +331,11 @@ container.innerHTML+=productHTML(p)
 
 }
 
-/* OPEN */
 window.openProduct=function(id){
 localStorage.setItem("selectedProduct", id)
 location.href="product.html"
 }
 
-/* CART */
 window.addToCart=function(id){
 
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
@@ -359,7 +364,6 @@ showToast("Adicionado 🛒")
 
 }
 
-/* FAVORITES */
 window.toggleFav=function(id){
 
 let fav = JSON.parse(localStorage.getItem("fav") || "[]")
@@ -375,7 +379,6 @@ showToast("Adicionado ❤️")
 localStorage.setItem("fav", JSON.stringify(fav))
 }
 
-/* SEARCH + SUGGESTIONS */
 const suggestionsBox = document.getElementById("suggestions")
 
 document.getElementById("search").addEventListener("input",function(){
