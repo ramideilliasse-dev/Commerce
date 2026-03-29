@@ -1,0 +1,243 @@
+ <!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configurações</title>
+
+<style>
+body{
+font-family:Arial;
+margin:0;
+background:#f4f4f4;
+}
+
+/* HEADER */
+.header{
+background:#ff6a00;
+color:white;
+padding:15px;
+text-align:center;
+font-size:20px;
+font-weight:bold;
+}
+
+/* CONTAINER */
+.container{
+max-width:600px;
+margin:auto;
+padding:15px;
+}
+
+/* CARD */
+.card{
+background:white;
+padding:15px;
+border-radius:12px;
+margin-bottom:15px;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+/* PROFILE */
+.profileBox{
+text-align:center;
+}
+
+.profileImg{
+width:90px;
+height:90px;
+border-radius:50%;
+object-fit:cover;
+cursor:pointer;
+border:3px solid #ff6a00;
+}
+
+/* BUTTONS */
+button{
+width:100%;
+padding:14px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+font-size:16px;
+cursor:pointer;
+}
+
+.btnPrimary{background:#1aa34a;color:white;}
+.btnDanger{background:red;color:white;}
+.btnDark{background:black;color:white;}
+
+/* SELECT */
+select{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:1px solid #ddd;
+margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">⚙️ Configurações</div>
+
+<div class="container">
+
+<!-- PROFILE -->
+<div class="card profileBox">
+<img id="profileImg" class="profileImg" src="https://via.placeholder.com/100">
+<input type="file" id="upload" hidden>
+<p id="userEmail"></p>
+<button class="btnPrimary" onclick="triggerUpload()">Alterar foto</button>
+</div>
+
+<!-- LANGUAGE -->
+<div class="card">
+<h3>🌍 Idioma / Language</h3>
+<select id="languageSelect" onchange="changeLang()">
+<option value="pt">Português</option>
+<option value="fr">Français</option>
+<option value="en">English</option>
+</select>
+</div>
+
+<!-- SUPPORT -->
+<div class="card">
+<h3>💬 Suporte</h3>
+<button class="btnPrimary" onclick="openSupport()">Abrir chat suporte</button>
+</div>
+
+<!-- DELETE -->
+<div class="card">
+<h3>⚠️ Conta</h3>
+<button class="btnDanger" onclick="deleteAccount()">Excluir conta</button>
+</div>
+
+</div>
+
+<script type="module">
+
+import { auth, db } from "./firebase.js"
+
+import {
+onAuthStateChanged,
+deleteUser
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
+
+import {
+doc,
+getDoc,
+updateDoc,
+deleteDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
+/* PROFILE ELEMENTS */
+const img = document.getElementById("profileImg")
+const upload = document.getElementById("upload")
+
+/* LOAD USER */
+onAuthStateChanged(auth, async (user)=>{
+
+if(!user){
+location.href="login.html"
+return
+}
+
+document.getElementById("userEmail").innerText = user.email
+
+const ref = doc(db,"users",user.uid)
+const snap = await getDoc(ref)
+
+if(snap.exists()){
+const data = snap.data()
+
+if(data.photo){
+img.src = data.photo
+}
+}
+
+/* LOAD LANG */
+const lang = localStorage.getItem("lang") || "pt"
+document.getElementById("languageSelect").value = lang
+
+})
+
+/* UPLOAD IMAGE */
+window.triggerUpload = function(){
+upload.click()
+}
+
+upload.onchange = async function(){
+
+const file = this.files[0]
+if(!file) return
+
+const url = URL.createObjectURL(file)
+img.src = url
+
+/* SAVE FIRESTORE */
+const user = auth.currentUser
+
+await updateDoc(doc(db,"users",user.uid),{
+photo:url
+})
+
+alert("Foto atualizada ✅")
+
+}
+
+/* LANGUAGE */
+window.changeLang = function(){
+
+const lang = document.getElementById("languageSelect").value
+localStorage.setItem("lang",lang)
+
+alert("Idioma atualizado 🌍")
+location.reload()
+
+}
+
+/* SUPPORT CHAT */
+window.openSupport = function(){
+
+const user = auth.currentUser
+if(!user) return
+
+location.href = "chat.html?support=true&user=" + user.uid
+
+}
+
+/* DELETE ACCOUNT */
+window.deleteAccount = async function(){
+
+const confirmDelete = confirm("Tem certeza que deseja excluir sua conta? ❌")
+
+if(!confirmDelete) return
+
+const user = auth.currentUser
+
+try{
+
+/* DELETE FIRESTORE USER */
+await deleteDoc(doc(db,"users",user.uid))
+
+/* DELETE AUTH */
+await deleteUser(user)
+
+alert("Conta excluída com sucesso ❌")
+
+location.href="index.html"
+
+}catch(e){
+
+alert("Erro: " + e.message)
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
