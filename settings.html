@@ -6,13 +6,8 @@
 <title>Configurações</title>
 
 <style>
-body{
-font-family:Arial;
-margin:0;
-background:#f4f4f4;
-}
+body{font-family:Arial;margin:0;background:#f4f4f4;}
 
-/* HEADER */
 .header{
 background:#ff6a00;
 color:white;
@@ -22,96 +17,84 @@ font-size:20px;
 font-weight:bold;
 }
 
-/* CONTAINER */
 .container{
-max-width:600px;
-margin:auto;
 padding:15px;
+max-width:500px;
+margin:auto;
 }
 
-/* CARD */
 .card{
 background:white;
 padding:15px;
-border-radius:12px;
+border-radius:10px;
 margin-bottom:15px;
-box-shadow:0 3px 10px rgba(0,0,0,0.1);
+box-shadow:0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* PROFILE */
-.profileBox{
-text-align:center;
-}
-
-.profileImg{
-width:90px;
-height:90px;
+.profile{
+width:80px;
+height:80px;
 border-radius:50%;
-object-fit:cover;
+display:block;
+margin:auto;
 cursor:pointer;
-border:3px solid #ff6a00;
 }
 
-/* BUTTONS */
-button{
+select,button{
 width:100%;
-padding:14px;
+padding:10px;
 margin-top:10px;
 border:none;
-border-radius:10px;
-font-size:16px;
-cursor:pointer;
+border-radius:8px;
 }
 
-.btnPrimary{background:#1aa34a;color:white;}
-.btnDanger{background:red;color:white;}
-.btnDark{background:black;color:white;}
+.btn{
+background:#1aa34a;
+color:white;
+}
 
-/* SELECT */
-select{
-width:100%;
-padding:12px;
-border-radius:10px;
-border:1px solid #ddd;
-margin-top:10px;
+.btnDanger{
+background:red;
+color:white;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">⚙️ Configurações</div>
+<div class="header" id="title">Configurações</div>
 
 <div class="container">
 
-<!-- PROFILE -->
-<div class="card profileBox">
-<img id="profileImg" class="profileImg" src="https://via.placeholder.com/100">
+<div class="card">
+
+<img id="profilePic" class="profile">
 <input type="file" id="upload" hidden>
-<p id="userEmail"></p>
-<button class="btnPrimary" onclick="triggerUpload()">Alterar foto</button>
+
 </div>
 
-<!-- LANGUAGE -->
 <div class="card">
-<h3>🌍 Idioma / Language</h3>
-<select id="languageSelect" onchange="changeLang()">
+
+<label id="langLabel">Idioma</label>
+
+<select id="langSelect">
 <option value="pt">Português</option>
 <option value="fr">Français</option>
 <option value="en">English</option>
 </select>
+
 </div>
 
-<!-- SUPPORT -->
 <div class="card">
-<h3>💬 Suporte</h3>
-<button class="btnPrimary" onclick="openSupport()">Abrir chat suporte</button>
-</div>
 
-<!-- DELETE -->
-<div class="card">
-<h3>⚠️ Conta</h3>
-<button class="btnDanger" onclick="deleteAccount()">Excluir conta</button>
+<button class="btn" onclick="contactSupport()" id="helpBtn">
+Ajuda
+</button>
+
+<button class="btnDanger" onclick="deleteAccount()" id="deleteBtn">
+Apagar conta
+</button>
+
 </div>
 
 </div>
@@ -119,120 +102,142 @@ margin-top:10px;
 <script type="module">
 
 import { auth, db } from "./firebase.js"
+import { doc, getDoc, updateDoc, deleteDoc } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+import { deleteUser, onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
-import {
-onAuthStateChanged,
-deleteUser
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
-
-import {
-doc,
-getDoc,
-updateDoc,
-deleteDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-
-/* PROFILE ELEMENTS */
-const img = document.getElementById("profileImg")
+/* PROFILE IMAGE (FIRESTORE) */
+const profilePic = document.getElementById("profilePic")
 const upload = document.getElementById("upload")
 
-/* LOAD USER */
+profilePic.onclick = ()=> upload.click()
+
+let currentUser = null
+
 onAuthStateChanged(auth, async (user)=>{
 
-if(!user){
-location.href="login.html"
-return
-}
+if(!user) return
 
-document.getElementById("userEmail").innerText = user.email
+currentUser = user
 
 const ref = doc(db,"users",user.uid)
 const snap = await getDoc(ref)
 
-if(snap.exists()){
 const data = snap.data()
 
-if(data.photo){
-img.src = data.photo
+if(data?.photo){
+profilePic.src = data.photo
+}else{
+profilePic.src = "https://via.placeholder.com/80"
 }
-}
-
-/* LOAD LANG */
-const lang = localStorage.getItem("lang") || "pt"
-document.getElementById("languageSelect").value = lang
 
 })
 
-/* UPLOAD IMAGE */
-window.triggerUpload = function(){
-upload.click()
-}
-
-upload.onchange = async function(){
+/* UPLOAD + SAVE FIRESTORE */
+upload.onchange = function(){
 
 const file = this.files[0]
-if(!file) return
+const reader = new FileReader()
 
-const url = URL.createObjectURL(file)
-img.src = url
+reader.onload = async function(){
 
-/* SAVE FIRESTORE */
-const user = auth.currentUser
+const base64 = reader.result
 
-await updateDoc(doc(db,"users",user.uid),{
-photo:url
+profilePic.src = base64
+
+await updateDoc(doc(db,"users",currentUser.uid),{
+photo: base64
 })
 
-alert("Foto atualizada ✅")
+alert("Foto salva ✅")
 
 }
 
-/* LANGUAGE */
-window.changeLang = function(){
+reader.readAsDataURL(file)
 
-const lang = document.getElementById("languageSelect").value
+}
+
+/* 🌍 LANGUAGE SYSTEM */
+const langSelect = document.getElementById("langSelect")
+
+const translations = {
+
+pt:{
+title:"Configurações",
+lang:"Idioma",
+help:"Ajuda",
+delete:"Apagar conta"
+},
+
+fr:{
+title:"Paramètres",
+lang:"Langue",
+help:"Aide",
+delete:"Supprimer le compte"
+},
+
+en:{
+title:"Settings",
+lang:"Language",
+help:"Support",
+delete:"Delete account"
+}
+
+}
+
+/* APPLY LANGUAGE */
+function applyLang(lang){
+
 localStorage.setItem("lang",lang)
 
-alert("Idioma atualizado 🌍")
-location.reload()
+document.getElementById("title").innerText = translations[lang].title
+document.getElementById("langLabel").innerText = translations[lang].lang
+document.getElementById("helpBtn").innerText = translations[lang].help
+document.getElementById("deleteBtn").innerText = translations[lang].delete
 
 }
 
-/* SUPPORT CHAT */
-window.openSupport = function(){
+/* INIT LANG */
+const savedLang = localStorage.getItem("lang") || "pt"
+langSelect.value = savedLang
+applyLang(savedLang)
 
-const user = auth.currentUser
-if(!user) return
+/* CHANGE */
+langSelect.onchange = function(){
+applyLang(this.value)
+}
 
-location.href = "chat.html?support=true&user=" + user.uid
+/* 💬 SUPPORT WHATSAPP */
+window.contactSupport = function(){
+
+const phone = "244922623238"
+const msg = "Olá preciso de ajuda"
+
+window.open(
+"https://wa.me/"+phone+"?text="+encodeURIComponent(msg),
+"_blank"
+)
 
 }
 
 /* DELETE ACCOUNT */
 window.deleteAccount = async function(){
 
-const confirmDelete = confirm("Tem certeza que deseja excluir sua conta? ❌")
-
-if(!confirmDelete) return
-
-const user = auth.currentUser
+if(!confirm("Tem certeza?")) return
 
 try{
 
-/* DELETE FIRESTORE USER */
-await deleteDoc(doc(db,"users",user.uid))
+await deleteDoc(doc(db,"users",currentUser.uid))
+await deleteUser(currentUser)
 
-/* DELETE AUTH */
-await deleteUser(user)
-
-alert("Conta excluída com sucesso ❌")
+alert("Conta apagada ✅")
 
 location.href="index.html"
 
 }catch(e){
-
-alert("Erro: " + e.message)
-
+alert("Erro ❌")
+console.error(e)
 }
 
 }
