@@ -1,0 +1,115 @@
+ <!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loading...</title>
+
+<style>
+body{
+margin:0;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#ffffff,#f2f2f2);
+font-family:Arial, sans-serif;
+overflow:hidden;
+}
+
+/* CONTAINER */
+.container{
+text-align:center;
+animation:fadeIn 1.5s ease;
+}
+
+/* LOGO TEXT */
+.logo{
+position:relative;
+display:inline-block;
+}
+
+/* GRAND S */
+.bigS{
+font-size:90px;
+color:#8B0000; /* rouge foncé */
+font-weight:bold;
+position:absolute;
+left:-20px;
+top:-30px;
+opacity:0.9;
+}
+
+/* SHOPPING */
+.shopping{
+font-size:38px;
+color:#8B0000;
+font-weight:bold;
+letter-spacing:1px;
+}
+
+/* ANGOLA */
+.angola{
+font-size:34px;
+color:#111;
+font-weight:bold;
+margin-top:5px;
+letter-spacing:2px;
+}
+
+/* ICON BAG */
+.bag{
+font-size:80px;
+margin-top:30px;
+animation:bounce 1.5s infinite;
+}
+
+/* LOADING DOTS */
+.loading{
+margin-top:15px;
+font-size:14px;
+color:#777;
+letter-spacing:2px;
+}
+
+/* ANIMATIONS */
+@keyframes fadeIn{
+from{opacity:0; transform:translateY(20px);}
+to{opacity:1; transform:translateY(0);}
+}
+
+@keyframes bounce{
+0%,100%{transform:translateY(0);}
+50%{transform:translateY(-10px);}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="logo">
+<div class="bigS">S</div>
+<div class="shopping">hopping</div>
+<div class="angola">ANGOLA</div>
+</div>
+
+<div class="bag">🛍️</div>
+
+<div class="loading">Carregando...</div>
+
+</div>
+
+<script>
+
+/* REDIRECTION AUTOMATIQUE */
+setTimeout(()=>{
+window.location.href="index.html"
+},2500)
+
+</script>
+
+</body>
+</html>
