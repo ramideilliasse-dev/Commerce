@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="pt">
 <head>
 
@@ -51,18 +51,13 @@ box-shadow:0 5px 15px rgba(0,0,0,0.1);
 margin-bottom:15px;
 }
 
-label{
-font-weight:bold;
-display:block;
-margin-bottom:6px;
-}
+label{font-weight:bold;margin-bottom:6px;display:block;}
 
 input,textarea,select{
 width:100%;
 padding:12px;
 border-radius:8px;
 border:1px solid #ddd;
-font-size:15px;
 margin-bottom:12px;
 }
 
@@ -77,6 +72,7 @@ border:none;
 font-size:18px;
 border-radius:10px;
 cursor:pointer;
+transition:0.3s;
 }
 
 button:disabled{
@@ -84,34 +80,43 @@ background:#ccc;
 cursor:not-allowed;
 }
 
+/* PREVIEW */
 .preview{
 display:flex;
 gap:10px;
 flex-wrap:wrap;
-margin-top:10px;
 }
 
-.preview img,
-.preview video{
+.preview img{
 width:90px;
 height:90px;
 object-fit:cover;
 border-radius:8px;
 }
 
+/* 🔥 PROGRESS PRO */
 .progressBox{
 display:none;
 margin-top:15px;
-background:#ddd;
+background:#eee;
 border-radius:20px;
 overflow:hidden;
+height:12px;
 }
 
 .progressBar{
-height:10px;
+height:100%;
 width:0%;
-background:#1aa34a;
-transition:width 0.4s ease;
+background:linear-gradient(90deg,#1aa34a,#4cff88);
+transition:width 0.3s ease;
+}
+
+/* TEXT LOADING */
+.loadingText{
+text-align:center;
+font-size:13px;
+margin-top:8px;
+color:#555;
 }
 </style>
 
@@ -128,13 +133,13 @@ Publicar novo produto
 
 <div class="card">
 <label>Nome do produto</label>
-<input id="name">
+<input id="nameInput">
 
 <label>Preço (Kz)</label>
-<input id="price" type="number">
+<input id="priceInput" type="number">
 
 <label>Categoria</label>
-<select id="category">
+<select id="categoryInput">
 <option value="telefone">Telefones</option>
 <option value="roupas">Roupas</option>
 <option value="beleza">Beleza</option>
@@ -145,7 +150,7 @@ Publicar novo produto
 </select>
 
 <label>Descrição</label>
-<textarea id="description"></textarea>
+<textarea id="descriptionInput"></textarea>
 </div>
 
 <div class="card">
@@ -154,34 +159,27 @@ Publicar novo produto
 <div class="preview" id="imagePreview"></div>
 </div>
 
-<div class="card">
-<label>Vídeo do produto (opcional)</label>
-<input type="file" id="video" accept="video/*">
-<div class="preview" id="videoPreview"></div>
-</div>
-
 <button id="publishBtn" onclick="publishProduct()">Publicar produto</button>
 
 <div class="progressBox" id="progressBox">
 <div class="progressBar" id="progressBar"></div>
 </div>
+<div class="loadingText" id="loadingText"></div>
 
 </div>
 
 <script type="module">
 
 import { db, auth } from "./firebase.js"
-import { collection, addDoc } 
+import { collection, addDoc, doc, getDoc } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
 const CLOUD_NAME="df2oxw2qp"
 const UPLOAD_PRESET="angcomerce-upload"
 
 let imageFiles=[]
-let videoFile=null
 let isPublishing=false
 
-/* BACK */
 window.goBack=function(){
 location.href="merchant-shop.html"
 }
@@ -195,50 +193,28 @@ imagePreview.innerHTML+=`<img src="${URL.createObjectURL(file)}">`
 })
 }
 
-/* VIDEO PREVIEW */
-video.onchange=function(){
-videoFile=this.files[0]
-videoPreview.innerHTML=""
-if(videoFile){
-videoPreview.innerHTML=`<video src="${URL.createObjectURL(videoFile)}" controls></video>`
-}
-}
-
-/* CLOUDINARY FIXED */
-async function uploadFile(file,type="image"){
-
-try{
-
+/* UPLOAD */
+async function uploadFile(file){
 const form=new FormData()
 form.append("file",file)
 form.append("upload_preset",UPLOAD_PRESET)
 
-const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${type}/upload`
-
-const res=await fetch(url,{
+const res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,{
 method:"POST",
 body:form
 })
 
 const data=await res.json()
-
-if(!data.secure_url){
-throw new Error("Upload falhou")
-}
+if(!data.secure_url) throw new Error("Upload falhou")
 
 return data.secure_url
-
-}catch(e){
-console.error("UPLOAD ERROR:", e)
-throw e
-}
-
 }
 
 /* PROGRESS */
-function updateProgress(p){
+function updateProgress(p,text=""){
 progressBox.style.display="block"
 progressBar.style.width=p+"%"
+loadingText.innerText=text
 }
 
 /* PUBLISH */
@@ -246,10 +222,10 @@ window.publishProduct=async function(){
 
 if(isPublishing) return
 
-const name=nameInput.value.trim()
-const price=priceInput.value
-const category=categoryInput.value
-const description=descriptionInput.value
+const name=document.getElementById("nameInput").value.trim()
+const price=document.getElementById("priceInput").value
+const category=document.getElementById("categoryInput").value
+const description=document.getElementById("descriptionInput").value
 
 if(!name || !price){
 alert("Preencha nome e preço ❌")
@@ -266,76 +242,60 @@ if(!user){
 alert("Login necessário ❌")
 return
 }
-/* 🔒 CHECK ROLE MERCHANT */
-const userRef = doc(db,"users",user.uid)
-const userSnap = await getDoc(userRef)
 
+/* 🔒 ROLE CHECK */
+const userSnap = await getDoc(doc(db,"users",user.uid))
 if(userSnap.data()?.role !== "merchant"){
 alert("Apenas vendedores autorizados ❌")
-btn.disabled=false
-btn.innerText="Publicar produto"
-isPublishing=false
 return
 }
+
+/* 🔥 LOCK BUTTON */
 isPublishing=true
 publishBtn.disabled=true
 publishBtn.innerText="Publicando..."
 
 try{
 
-updateProgress(10)
+updateProgress(10,"Preparando...")
 
-/* UPLOAD IMAGES */
 let imageUrls=[]
 let count=0
 
 for(const file of imageFiles){
 
-const url=await uploadFile(file,"image")
+const url=await uploadFile(file)
 imageUrls.push(url)
 
 count++
-updateProgress(10 + (count/imageFiles.length)*60)
+updateProgress(10 + (count/imageFiles.length)*70,"Upload imagens...")
 }
 
-/* VIDEO */
-let videoUrl=""
-if(videoFile){
-updateProgress(80)
-videoUrl=await uploadFile(videoFile,"video")
-}
+updateProgress(90,"Salvando produto...")
 
-updateProgress(90)
-
-/* SAVE FIRESTORE */
 await addDoc(collection(db,"products"),{
-
 name,
 price:Number(price),
 category,
 description,
 images:imageUrls,
-video:videoUrl,
-
 merchantId:user.uid,
 created:Date.now(),
-
 sales:0
-
 })
 
-updateProgress(100)
+updateProgress(100,"Finalizado ✔")
 
 publishBtn.innerText="Publicado ✔"
 
 setTimeout(()=>{
 alert("Produto publicado ✔")
 location.href="merchant-shop.html?id="+user.uid
-},800)
+},1000)
 
 }catch(e){
 
-console.error("ERRO:", e)
+console.error(e)
 alert("Erro ao publicar ❌")
 
 publishBtn.disabled=false
