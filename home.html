@@ -6,17 +6,11 @@
 <title>Shopping Online Angola</title>
 
 <style>
+body{font-family:Arial;margin:0;background:#f4f4f4;}
 
-body{
-font-family:Arial;
-margin:0;
-background:#f4f4f4;
-}
-
-/* HEADER (ULTRA LIGHT + GLASS EFFECT) */
+/* HEADER */
 .header{
-position:fixed;
-top:0;left:0;right:0;
+position:fixed;top:0;left:0;right:0;
 background:rgba(255,255,255,0.85);
 backdrop-filter:blur(10px);
 padding:10px;
@@ -27,10 +21,7 @@ border-bottom:1px solid #eee;
 z-index:1000;
 }
 
-.logo{
-font-size:20px;
-font-weight:bold;
-}
+.logo{font-size:20px;font-weight:bold;}
 
 .headerRight{
 display:flex;
@@ -49,31 +40,15 @@ font-size:13px;
 }
 
 /* CART */
-.cartIcon{
-position:relative;
-cursor:pointer;
-font-size:20px;
-}
+.cartIcon{position:relative;cursor:pointer;font-size:20px;}
 
 .cartBadge{
-background:red;
-color:white;
-border-radius:50%;
-padding:2px 6px;
-font-size:11px;
-position:absolute;
-top:-6px;
-right:-8px;
+background:red;color:white;border-radius:50%;
+padding:2px 6px;font-size:11px;
+position:absolute;top:-6px;right:-8px;
 }
 
-/* PROFILE */
-.profile{
-width:32px;
-height:32px;
-border-radius:50%;
-cursor:pointer;
-}
-
+/* ACCOUNT */
 .accountBtn{
 background:black;
 color:white;
@@ -85,19 +60,12 @@ font-size:13px;
 
 /* SEARCH */
 .searchBox{
-position:fixed;
-top:55px;
-left:0;right:0;
-background:white;
-padding:8px;
-z-index:999;
+position:fixed;top:55px;left:0;right:0;
+background:white;padding:8px;z-index:999;
 }
 
 .searchBox input{
-width:100%;
-padding:10px;
-border-radius:15px;
-border:1px solid #ddd;
+width:100%;padding:10px;border-radius:15px;border:1px solid #ddd;
 }
 
 /* SUGGESTIONS */
@@ -122,10 +90,7 @@ font-size:14px;
 }
 
 /* LOADER */
-#loader{
-text-align:center;
-padding:20px;
-}
+#loader{text-align:center;padding:20px;}
 
 /* PRODUCTS */
 .products{
@@ -147,9 +112,7 @@ cursor:pointer;
 transition:0.2s;
 }
 
-.product:hover{
-transform:scale(1.02);
-}
+.product:hover{transform:scale(1.02);}
 
 .product img{
 width:100%;
@@ -159,27 +122,10 @@ object-fit:cover;
 
 /* INFO */
 .info{padding:8px;}
-
-.name{
-font-weight:bold;
-font-size:14px;
-}
-
-.price{
-color:#ff6a00;
-font-weight:bold;
-font-size:14px;
-}
-
-.desc{
-font-size:12px;
-color:#555;
-}
-
-.stars{
-color:#FFD700;
-font-size:13px;
-}
+.name{font-weight:bold;font-size:14px;}
+.price{color:#ff6a00;font-weight:bold;font-size:14px;}
+.desc{font-size:12px;color:#555;}
+.stars{color:#FFD700;font-size:13px;}
 
 /* CART BTN */
 .cartBtn{
@@ -231,7 +177,6 @@ border-radius:20px;
 display:none;
 font-size:13px;
 }
-
 </style>
 </head>
 
@@ -251,8 +196,7 @@ font-size:13px;
 <span id="cartCount" class="cartBadge">0</span>
 </div>
 
-<img id="profilePic" class="profile">
-<input type="file" id="profileUpload" hidden>
+<!-- ✅ PROFILE SUPPRIMÉ -->
 
 <button id="accountButton" class="accountBtn">...</button>
 
@@ -283,7 +227,7 @@ font-size:13px;
 <script type="module">
 
 import { db,auth } from "./firebase.js"
-import { collection, getDocs, doc, getDoc, setDoc } 
+import { collection, getDocs } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
@@ -305,31 +249,14 @@ document.getElementById("cartCount").innerText = total
 }
 updateCartCount()
 
-/* PROFILE (optimisé) */
-const profilePic=document.getElementById("profilePic")
-profilePic.src=localStorage.getItem("profilePic") || "https://via.placeholder.com/35"
-
 /* AUTH */
 const accountButton=document.getElementById("accountButton")
 
-onAuthStateChanged(auth, async (user)=>{
+onAuthStateChanged(auth, (user)=>{
 
 if(user){
-
-const ref = doc(db,"users",user.uid)
-let snap = await getDoc(ref)
-
-if(!snap.exists()){
-await setDoc(ref,{
-email:user.email,
-role:"client",
-createdAt:Date.now()
-})
-}
-
 accountButton.innerText="Conta"
-accountButton.onclick=()=>location.href="settings.html"
-
+accountButton.onclick=()=>location.href="login.html" // ✅ CORRIGÉ
 }else{
 accountButton.innerText="Login"
 accountButton.onclick=()=>location.href="login.html"
