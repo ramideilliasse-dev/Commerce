@@ -1,41 +1,171 @@
  <!DOCTYPE html>
-<html>
+<html lang="pt">
 <head>
-<title>Login</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entrar</title>
+
+<style>
+
+body{
+font-family:Arial;
+margin:0;
+background:linear-gradient(135deg,#ff6a00,#ff3c00);
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+/* CARD */
+.card{
+background:white;
+padding:25px;
+border-radius:15px;
+width:320px;
+box-shadow:0 5px 20px rgba(0,0,0,0.2);
+text-align:center;
+}
+
+/* TITLE */
+.title{
+font-size:22px;
+font-weight:bold;
+margin-bottom:15px;
+}
+
+/* TABS */
+.tabs{
+display:flex;
+margin-bottom:15px;
+}
+
+.tab{
+flex:1;
+padding:10px;
+cursor:pointer;
+border-bottom:2px solid #ddd;
+}
+
+.active{
+border-bottom:2px solid #ff6a00;
+font-weight:bold;
+}
+
+/* INPUT */
+input{
+width:100%;
+padding:12px;
+margin-bottom:10px;
+border-radius:10px;
+border:1px solid #ddd;
+}
+
+/* BUTTON */
+button{
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+background:#ff6a00;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+/* SMALL */
+.small{
+font-size:13px;
+color:#777;
+margin-top:10px;
+}
+
+</style>
 </head>
 
 <body>
 
-<h2>Entrar</h2>
+<div class="card">
 
-<input id="email" placeholder="Email"><br><br>
-<input id="password" type="password" placeholder="Senha"><br><br>
+<div class="title">Shopping 🇦🇴</div>
 
-<button onclick="login()">Entrar</button>
+<!-- TABS -->
+<div class="tabs">
+<div id="loginTab" class="tab active" onclick="switchTab('login')">Entrar</div>
+<div id="registerTab" class="tab" onclick="switchTab('register')">Criar conta</div>
+</div>
+
+<!-- FORM -->
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Senha">
+
+<button id="actionBtn" onclick="handleAction()">Entrar</button>
+
+<div class="small" id="msg"></div>
+
+</div>
 
 <script type="module">
 
 import { auth } from "./firebase.js"
-import { signInWithEmailAndPassword } 
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
+import {
+signInWithEmailAndPassword,
+createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
-window.login = async function(){
+let mode = "login"
 
-const email=document.getElementById("email").value
-const pass=document.getElementById("password").value
+/* SWITCH */
+window.switchTab = function(tab){
+
+mode = tab
+
+document.getElementById("loginTab").classList.remove("active")
+document.getElementById("registerTab").classList.remove("active")
+
+if(tab==="login"){
+document.getElementById("loginTab").classList.add("active")
+document.getElementById("actionBtn").innerText="Entrar"
+}else{
+document.getElementById("registerTab").classList.add("active")
+document.getElementById("actionBtn").innerText="Criar conta"
+}
+
+}
+
+/* ACTION */
+window.handleAction = async function(){
+
+const email = document.getElementById("email").value
+const password = document.getElementById("password").value
+const msg = document.getElementById("msg")
+
+if(!email || !password){
+msg.innerText="Preencha todos os campos ❌"
+return
+}
 
 try{
 
-await signInWithEmailAndPassword(auth,email,pass)
+if(mode==="login"){
 
-alert("Login sucesso ✅")
+await signInWithEmailAndPassword(auth,email,password)
+msg.innerText="Login realizado ✅"
 
+}else{
+
+await createUserWithEmailAndPassword(auth,email,password)
+msg.innerText="Conta criada com sucesso ✅"
+
+}
+
+/* REDIRECT */
+setTimeout(()=>{
 location.href="index.html"
+},1000)
 
 }catch(e){
-
-alert("Erro: "+e.message)
-
+msg.innerText=e.message
 }
 
 }
