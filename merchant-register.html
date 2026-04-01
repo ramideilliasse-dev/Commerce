@@ -67,10 +67,13 @@ color:#1aa34a;
 
 <div class="box">
 
-<h2>Criar Conta</h2>
+<h2>Criar Conta Comerciante</h2>
 
 <input id="email" placeholder="Email">
 <input id="password" type="password" placeholder="Senha">
+
+<!-- 🔥 NEW -->
+<input id="whatsapp" placeholder="WhatsApp (ex: 244923000000)">
 
 <button onclick="register()">Criar conta</button>
 
@@ -99,22 +102,29 @@ window.register = async function(){
 
 const email = document.getElementById("email").value.trim()
 const password = document.getElementById("password").value.trim()
+const whatsapp = document.getElementById("whatsapp").value.trim()
 
 /* ✅ VALIDATION */
-if(!email || !password){
+if(!email || !password || !whatsapp){
 alert("Preencha todos os campos ❌")
 return
 }
 
-/* 🔥 EMAIL VALIDATION PRO */
+/* 🔥 EMAIL VALIDATION */
 if(!email.includes("@")){
-alert("Email invalido ❌")
+alert("Email inválido ❌")
 return
 }
 
-/* 🔥 PASSWORD MIN */
+/* 🔥 PASSWORD */
 if(password.length < 6){
 alert("Senha deve ter no mínimo 6 caracteres ❌")
+return
+}
+
+/* 🔥 WHATSAPP VALIDATION */
+if(!whatsapp.startsWith("244") || whatsapp.length < 12){
+alert("Número WhatsApp inválido ❌ Ex: 244923000000")
 return
 }
 
@@ -123,19 +133,20 @@ try{
 /* ✅ CREATE AUTH */
 const cred = await createUserWithEmailAndPassword(auth, email, password)
 
-/* ✅ CREATE FIRESTORE USER */
+/* ✅ FIRESTORE USER */
 await setDoc(doc(db, "users", cred.user.uid), {
 email: cred.user.email,
+whatsapp: whatsapp,        // 🔥 IMPORTANT
 createdAt: Date.now(),
-approved: false,   // 🔥 validation admin
-role: "client",    // 🔥 default
-blocked: false     // 🔥 sécurité future
+approved: true,            // 🔥 peut publier direct
+role: "merchant",          // 🔥 DIRECT MERCHANT
+blocked: false
 })
 
-alert("Conta criada com sucesso ✅")
+alert("Conta comerciante criada com sucesso ✅")
 
 /* REDIRECTION */
-location.href = "index.html"
+location.href = "merchant-dashboard.html"
 
 }catch(e){
 
