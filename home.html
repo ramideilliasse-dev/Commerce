@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
@@ -7,69 +7,100 @@
 
 <style>
 
-body{font-family:Arial;margin:0;background:#f4f4f4;}
+body{
+font-family:Arial;
+margin:0;
+background:#f4f4f4;
+}
 
+/* HEADER (ULTRA LIGHT + GLASS EFFECT) */
 .header{
-position:fixed;top:0;left:0;right:0;
-background:white;padding:15px;
-display:flex;justify-content:space-between;align-items:center;
-border-bottom:1px solid #eee;z-index:1000;
+position:fixed;
+top:0;left:0;right:0;
+background:rgba(255,255,255,0.85);
+backdrop-filter:blur(10px);
+padding:10px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:1px solid #eee;
+z-index:1000;
 }
 
-.logo{font-size:22px;font-weight:bold;}
+.logo{
+font-size:20px;
+font-weight:bold;
+}
 
-.headerRight{display:flex;gap:10px;align-items:center;}
+.headerRight{
+display:flex;
+gap:8px;
+align-items:center;
+}
 
+/* BUTTONS */
 .topBtn{
-background:#eee;border:none;
-padding:6px 10px;border-radius:8px;
-cursor:pointer;font-size:14px;
+background:#f1f1f1;
+border:none;
+padding:5px 8px;
+border-radius:8px;
+cursor:pointer;
+font-size:13px;
 }
 
-/* 🔔 NOTIFICATION */
-.notifIcon{
+/* CART */
+.cartIcon{
 position:relative;
 cursor:pointer;
 font-size:20px;
 }
 
-.notifBadge{
+.cartBadge{
+background:red;
+color:white;
+border-radius:50%;
+padding:2px 6px;
+font-size:11px;
 position:absolute;
 top:-6px;
 right:-8px;
-background:red;
-color:white;
-font-size:11px;
-padding:2px 6px;
-border-radius:50%;
-}
-
-/* CART */
-.cartIcon{position:relative;cursor:pointer;font-size:22px;}
-
-.cartBadge{
-background:red;color:white;border-radius:50%;
-padding:3px 7px;font-size:12px;
-position:absolute;top:-8px;right:-10px;
 }
 
 /* PROFILE */
-.profile{width:35px;height:35px;border-radius:50%;cursor:pointer;}
-
-.accountBtn{
-background:black;color:white;border:none;
-padding:6px 12px;border-radius:20px;
+.profile{
+width:32px;
+height:32px;
+border-radius:50%;
+cursor:pointer;
 }
 
+.accountBtn{
+background:black;
+color:white;
+border:none;
+padding:5px 10px;
+border-radius:15px;
+font-size:13px;
+}
+
+/* SEARCH */
 .searchBox{
-position:fixed;top:65px;left:0;right:0;
-background:white;padding:10px;z-index:999;
+position:fixed;
+top:55px;
+left:0;right:0;
+background:white;
+padding:8px;
+z-index:999;
 }
 
 .searchBox input{
-width:100%;padding:12px;border-radius:20px;border:1px solid #ddd;
+width:100%;
+padding:10px;
+border-radius:15px;
+border:1px solid #ddd;
 }
 
+/* SUGGESTIONS */
 #suggestions{
 background:white;
 position:absolute;
@@ -79,75 +110,126 @@ border-radius:10px;
 overflow:hidden;
 }
 
+/* BANNER */
 .banner{
-margin-top:120px;background:#ff6a00;color:white;
-padding:10px;text-align:center;font-weight:bold;
+margin-top:105px;
+background:#ff6a00;
+color:white;
+padding:8px;
+text-align:center;
+font-weight:bold;
+font-size:14px;
 }
 
-#loader{text-align:center;padding:20px;}
+/* LOADER */
+#loader{
+text-align:center;
+padding:20px;
+}
 
+/* PRODUCTS */
 .products{
 column-count:2;
-column-gap:12px;
-padding:12px;
+column-gap:10px;
+padding:10px;
 padding-bottom:100px;
 }
 
 .product{
-background:white;border-radius:12px;
-margin-bottom:12px;
+background:white;
+border-radius:12px;
+margin-bottom:10px;
 break-inside:avoid;
-box-shadow:0 4px 10px rgba(0,0,0,0.08);
-overflow:hidden;position:relative;
-cursor:pointer;transition:0.3s;
+box-shadow:0 3px 8px rgba(0,0,0,0.08);
+overflow:hidden;
+position:relative;
+cursor:pointer;
+transition:0.2s;
 }
 
-.product:hover{transform:scale(1.03);}
+.product:hover{
+transform:scale(1.02);
+}
 
 .product img{
 width:100%;
-height:160px;
+height:150px;
 object-fit:cover;
 }
 
-.info{padding:10px;}
-.name{font-weight:bold;}
-.price{color:#ff6a00;font-weight:bold;}
-.desc{font-size:13px;color:#555;}
-.stars{color:#FFD700;font-size:14px;}
+/* INFO */
+.info{padding:8px;}
 
-.cartBtn{
-position:absolute;
-right:10px;
-bottom:10px;
-background:#1aa34a;color:white;
-width:36px;height:36px;border-radius:50%;
-display:flex;align-items:center;justify-content:center;
+.name{
+font-weight:bold;
+font-size:14px;
 }
 
+.price{
+color:#ff6a00;
+font-weight:bold;
+font-size:14px;
+}
+
+.desc{
+font-size:12px;
+color:#555;
+}
+
+.stars{
+color:#FFD700;
+font-size:13px;
+}
+
+/* CART BTN */
+.cartBtn{
+position:absolute;
+right:8px;
+bottom:8px;
+background:#1aa34a;
+color:white;
+width:32px;
+height:32px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+/* FAVORITE */
 .favBtn{
 position:absolute;
-top:10px;
-right:10px;
-font-size:18px;
+top:8px;
+right:8px;
+font-size:16px;
 cursor:pointer;
 }
 
+/* NAV */
 .nav{
-position:fixed;bottom:0;left:0;right:0;
-background:white;display:flex;
+position:fixed;
+bottom:0;
+left:0;right:0;
+background:white;
+display:flex;
 justify-content:space-around;
-padding:10px;border-top:1px solid #ddd;
+padding:8px;
+border-top:1px solid #ddd;
+font-size:13px;
 }
 
+/* TOAST */
 .toast{
 position:fixed;
-bottom:100px;
+bottom:90px;
 left:50%;
 transform:translateX(-50%);
-background:black;color:white;
-padding:10px 15px;border-radius:20px;
+background:black;
+color:white;
+padding:8px 12px;
+border-radius:20px;
 display:none;
+font-size:13px;
 }
 
 </style>
@@ -164,18 +246,12 @@ display:none;
 <button class="topBtn" onclick="location.href='settings.html'">⚙️</button>
 <button class="topBtn" onclick="location.href='guide.html'">📘</button>
 
-<!-- 🔔 NOTIFICATIONS -->
-<div class="notifIcon" onclick="openNotifications()">
-🔔
-<span id="notifCount" class="notifBadge">0</span>
-</div>
-
 <div class="cartIcon" onclick="location.href='cart.html'">
 🛒
 <span id="cartCount" class="cartBadge">0</span>
 </div>
 
-<img id="profilePic" class="profile" onclick="openProfile()">
+<img id="profilePic" class="profile">
 <input type="file" id="profileUpload" hidden>
 
 <button id="accountButton" class="accountBtn">...</button>
@@ -221,23 +297,6 @@ t.style.display="block"
 setTimeout(()=>t.style.display="none",2000)
 }
 
-/* 🔔 NOTIFICATIONS */
-function updateNotif(){
-let n = JSON.parse(localStorage.getItem("notifications")||"[]")
-document.getElementById("notifCount").innerText = n.length
-}
-updateNotif()
-
-window.openNotifications=function(){
-alert("Notificações 🔔")
-}
-
-/* PROFILE PAGE */
-window.openProfile=function(){
-location.href="settings.html"
-}
-
-/* CART */
 function updateCartCount(){
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
 let total=0
@@ -246,18 +305,8 @@ document.getElementById("cartCount").innerText = total
 }
 updateCartCount()
 
-/* PROFILE IMAGE */
+/* PROFILE (optimisé) */
 const profilePic=document.getElementById("profilePic")
-const upload=document.getElementById("profileUpload")
-
-profilePic.onclick=()=>upload.click()
-
-upload.onchange=function(){
-const url=URL.createObjectURL(this.files[0])
-profilePic.src=url
-localStorage.setItem("profilePic",url)
-}
-
 profilePic.src=localStorage.getItem("profilePic") || "https://via.placeholder.com/35"
 
 /* AUTH */
@@ -274,27 +323,12 @@ if(!snap.exists()){
 await setDoc(ref,{
 email:user.email,
 role:"client",
-approved:false,
-blocked:false,
 createdAt:Date.now()
 })
-snap = await getDoc(ref)
 }
 
-const data = snap.data()
-
-if(data.role === "admin" || data.role === "superadmin"){
-accountButton.innerText="Admin 👑"
-accountButton.onclick=()=>location.href="admin-dashboard.html"
-}
-else if(data.role === "merchant"){
-accountButton.innerText="Minha Loja"
-accountButton.onclick=()=>location.href="merchant-dashboard.html"
-}
-else{
-accountButton.innerText="Configurações"
+accountButton.innerText="Conta"
 accountButton.onclick=()=>location.href="settings.html"
-}
 
 }else{
 accountButton.innerText="Login"
@@ -314,12 +348,12 @@ return `
 
 <div onclick="event.stopPropagation();addToCart('${p.id}')" class="cartBtn">🛒</div>
 
-<img src="${img}">
+<img loading="lazy" src="${img}">
 
 <div class="info">
 <div class="name">${p.name}</div>
 <div class="price">${p.price} Kz</div>
-<div class="desc">${(p.description||"").slice(0,50)}</div>
+<div class="desc">${(p.description||"").slice(0,40)}</div>
 <div class="stars">${"⭐".repeat(Math.round(p.rating || 4))}</div>
 </div>
 
@@ -329,14 +363,11 @@ return `
 
 async function loadProducts(){
 
-document.getElementById("loader").style.display="block"
-
 const snap=await getDocs(collection(db,"products"))
 
+const container=document.getElementById("productList")
 document.getElementById("loader").style.display="none"
 
-const container=document.getElementById("productList")
-container.innerHTML=""
 products=[]
 
 snap.forEach(docSnap=>{
@@ -347,10 +378,7 @@ products.push(data)
 
 products.sort((a,b)=>(b.sales||0)-(a.sales||0))
 
-products.forEach(p=>{
-container.innerHTML+=productHTML(p)
-})
-
+container.innerHTML = products.map(p=>productHTML(p)).join("")
 }
 
 window.openProduct=function(id){
@@ -375,20 +403,12 @@ id:product.id,
 name:product.name,
 price:Number(product.price) || 0,
 image:product.images?.[0] || "",
-qty:1,
-merchantId:product.merchantId || ""
+qty:1
 })
 }
 
 localStorage.setItem("cart", JSON.stringify(cart))
 updateCartCount()
-
-/* 🔔 ADD NOTIFICATION */
-let n = JSON.parse(localStorage.getItem("notifications")||"[]")
-n.push("Produto adicionado ao carrinho")
-localStorage.setItem("notifications", JSON.stringify(n))
-updateNotif()
-
 showToast("Adicionado 🛒")
 
 }
@@ -399,40 +419,12 @@ let fav = JSON.parse(localStorage.getItem("fav") || "[]")
 
 if(fav.includes(id)){
 fav = fav.filter(i=>i!==id)
-showToast("Removido ❤️")
 }else{
 fav.push(id)
-showToast("Adicionado ❤️")
 }
 
 localStorage.setItem("fav", JSON.stringify(fav))
 }
-
-const suggestionsBox = document.getElementById("suggestions")
-
-document.getElementById("search").addEventListener("input",function(){
-
-const v=this.value.toLowerCase()
-
-if(!v){
-suggestionsBox.innerHTML=""
-return
-}
-
-let html=""
-
-products.forEach(p=>{
-if(p.name.toLowerCase().includes(v)){
-html += `<div onclick="openProduct('${p.id}')" 
-style="padding:10px;border-bottom:1px solid #eee;">
-${p.name}
-</div>`
-}
-})
-
-suggestionsBox.innerHTML = html
-
-})
 
 loadProducts()
 
