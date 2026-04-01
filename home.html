@@ -8,7 +8,6 @@
 <style>
 body{font-family:Arial;margin:0;background:#f4f4f4;}
 
-/* HEADER */
 .header{
 position:fixed;top:0;left:0;right:0;
 background:rgba(255,255,255,0.85);
@@ -23,23 +22,14 @@ z-index:1000;
 
 .logo{font-size:20px;font-weight:bold;}
 
-.headerRight{
-display:flex;
-gap:8px;
-align-items:center;
-}
+.headerRight{display:flex;gap:8px;align-items:center;}
 
-/* BUTTONS */
 .topBtn{
-background:#f1f1f1;
-border:none;
-padding:5px 8px;
-border-radius:8px;
-cursor:pointer;
-font-size:13px;
+background:#f1f1f1;border:none;
+padding:5px 8px;border-radius:8px;
+cursor:pointer;font-size:13px;
 }
 
-/* CART */
 .cartIcon{position:relative;cursor:pointer;font-size:20px;}
 
 .cartBadge{
@@ -48,17 +38,12 @@ padding:2px 6px;font-size:11px;
 position:absolute;top:-6px;right:-8px;
 }
 
-/* ACCOUNT */
 .accountBtn{
-background:black;
-color:white;
-border:none;
-padding:5px 10px;
-border-radius:15px;
+background:black;color:white;border:none;
+padding:5px 10px;border-radius:15px;
 font-size:13px;
 }
 
-/* SEARCH */
 .searchBox{
 position:fixed;top:55px;left:0;right:0;
 background:white;padding:8px;z-index:999;
@@ -68,114 +53,67 @@ background:white;padding:8px;z-index:999;
 width:100%;padding:10px;border-radius:15px;border:1px solid #ddd;
 }
 
-/* SUGGESTIONS */
 #suggestions{
-background:white;
-position:absolute;
-width:100%;
-z-index:999;
-border-radius:10px;
-overflow:hidden;
+background:white;position:absolute;width:100%;
+z-index:999;border-radius:10px;overflow:hidden;
 }
 
-/* BANNER */
 .banner{
-margin-top:105px;
-background:#ff6a00;
-color:white;
-padding:8px;
-text-align:center;
-font-weight:bold;
-font-size:14px;
+margin-top:105px;background:#ff6a00;color:white;
+padding:8px;text-align:center;font-weight:bold;font-size:14px;
 }
 
-/* LOADER */
 #loader{text-align:center;padding:20px;}
 
-/* PRODUCTS */
 .products{
-column-count:2;
-column-gap:10px;
-padding:10px;
-padding-bottom:100px;
+column-count:2;column-gap:10px;
+padding:10px;padding-bottom:100px;
 }
 
 .product{
-background:white;
-border-radius:12px;
-margin-bottom:10px;
-break-inside:avoid;
+background:white;border-radius:12px;
+margin-bottom:10px;break-inside:avoid;
 box-shadow:0 3px 8px rgba(0,0,0,0.08);
-overflow:hidden;
-position:relative;
-cursor:pointer;
-transition:0.2s;
+overflow:hidden;position:relative;
+cursor:pointer;transition:0.2s;
 }
 
 .product:hover{transform:scale(1.02);}
 
-.product img{
-width:100%;
-height:150px;
-object-fit:cover;
-}
+.product img{width:100%;height:150px;object-fit:cover;}
 
-/* INFO */
 .info{padding:8px;}
 .name{font-weight:bold;font-size:14px;}
 .price{color:#ff6a00;font-weight:bold;font-size:14px;}
 .desc{font-size:12px;color:#555;}
 .stars{color:#FFD700;font-size:13px;}
 
-/* CART BTN */
 .cartBtn{
-position:absolute;
-right:8px;
-bottom:8px;
-background:#1aa34a;
-color:white;
-width:32px;
-height:32px;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
+position:absolute;right:8px;bottom:8px;
+background:#1aa34a;color:white;
+width:32px;height:32px;border-radius:50%;
+display:flex;align-items:center;justify-content:center;
 }
 
-/* FAVORITE */
 .favBtn{
-position:absolute;
-top:8px;
-right:8px;
-font-size:16px;
-cursor:pointer;
+position:absolute;top:8px;right:8px;
+font-size:16px;cursor:pointer;
 }
 
-/* NAV */
 .nav{
-position:fixed;
-bottom:0;
-left:0;right:0;
-background:white;
-display:flex;
+position:fixed;bottom:0;left:0;right:0;
+background:white;display:flex;
 justify-content:space-around;
-padding:8px;
-border-top:1px solid #ddd;
+padding:8px;border-top:1px solid #ddd;
 font-size:13px;
 }
 
-/* TOAST */
 .toast{
-position:fixed;
-bottom:90px;
-left:50%;
+position:fixed;bottom:90px;left:50%;
 transform:translateX(-50%);
-background:black;
-color:white;
-padding:8px 12px;
-border-radius:20px;
-display:none;
-font-size:13px;
+background:black;color:white;
+padding:8px 12px;border-radius:20px;
+display:none;font-size:13px;
 }
 </style>
 </head>
@@ -183,7 +121,6 @@ font-size:13px;
 <body>
 
 <div class="header">
-
 <div class="logo">Shopping 🇦🇴</div>
 
 <div class="headerRight">
@@ -195,8 +132,6 @@ font-size:13px;
 🛒
 <span id="cartCount" class="cartBadge">0</span>
 </div>
-
-<!-- ✅ PROFILE SUPPRIMÉ -->
 
 <button id="accountButton" class="accountBtn">...</button>
 
@@ -227,7 +162,7 @@ font-size:13px;
 <script type="module">
 
 import { db,auth } from "./firebase.js"
-import { collection, getDocs } 
+import { collection, getDocs, doc, getDoc } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
@@ -249,14 +184,36 @@ document.getElementById("cartCount").innerText = total
 }
 updateCartCount()
 
-/* AUTH */
+/* 🔥 AUTH + ROLE SYSTEM */
 const accountButton=document.getElementById("accountButton")
 
-onAuthStateChanged(auth, (user)=>{
+onAuthStateChanged(auth, async (user)=>{
 
 if(user){
+
+const snap = await getDoc(doc(db,"users",user.uid))
+
+if(snap.exists()){
+const data = snap.data()
+
+if(data.role === "superadmin" || data.role === "admin"){
+accountButton.innerText="Admin 👑"
+accountButton.onclick=()=>location.href="admin-dashboard.html"
+}
+else if(data.role === "merchant"){
+accountButton.innerText="Minha Loja"
+accountButton.onclick=()=>location.href="merchant-dashboard.html"
+}
+else{
 accountButton.innerText="Conta"
-accountButton.onclick=()=>location.href="login.html" // ✅ CORRIGÉ
+accountButton.onclick=()=>location.href="settings.html"
+}
+
+}else{
+accountButton.innerText="Conta"
+accountButton.onclick=()=>location.href="settings.html"
+}
+
 }else{
 accountButton.innerText="Login"
 accountButton.onclick=()=>location.href="login.html"
@@ -265,7 +222,6 @@ accountButton.onclick=()=>location.href="login.html"
 })
 
 function productHTML(p){
-
 const img = p.images?.[0] || "https://via.placeholder.com/300"
 
 return `
@@ -292,7 +248,6 @@ async function loadProducts(){
 
 const snap=await getDocs(collection(db,"products"))
 
-const container=document.getElementById("productList")
 document.getElementById("loader").style.display="none"
 
 products=[]
@@ -305,7 +260,8 @@ products.push(data)
 
 products.sort((a,b)=>(b.sales||0)-(a.sales||0))
 
-container.innerHTML = products.map(p=>productHTML(p)).join("")
+document.getElementById("productList").innerHTML =
+products.map(p=>productHTML(p)).join("")
 }
 
 window.openProduct=function(id){
