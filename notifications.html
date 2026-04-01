@@ -1,0 +1,60 @@
+ <!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Notificações</title>
+</head>
+
+<body>
+
+<h2>🔔 Notificações</h2>
+<div id="list"></div>
+
+<script type="module">
+
+import { db, auth } from "./firebase.js"
+import {
+collection, query, where, onSnapshot, updateDoc, doc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
+const list = document.getElementById("list")
+
+auth.onAuthStateChanged(user=>{
+
+if(!user) return
+
+const q = query(
+collection(db,"notifications"),
+where("userId","==",user.uid)
+)
+
+onSnapshot(q,(snap)=>{
+
+list.innerHTML=""
+
+snap.forEach(async d=>{
+
+let n = d.data()
+
+list.innerHTML += `
+<div style="background:white;margin:10px;padding:10px;border-radius:10px;">
+<b>${n.title}</b>
+<p>${n.message}</p>
+</div>
+`
+
+/* 🔥 MARQUER COMME LU */
+await updateDoc(doc(db,"notifications",d.id),{
+read:true
+})
+
+})
+
+})
+
+})
+
+</script>
+
+</body>
+</html>
