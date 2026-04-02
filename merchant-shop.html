@@ -1,313 +1,218 @@
  <!DOCTYPE html>
 <html lang="pt">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Loja</title>
 
 <style>
 
 body{
-font-family:Arial;
 margin:0;
-background:#f4f4f4;
+font-family:Arial;
+background:#f5f5f5;
 }
 
-.shopHeader{
-background:white;
-padding:20px;
-border-bottom:1px solid #eee;
-}
-
-.shopTop{
+/* BANNER */
+.banner{
+height:120px;
+background:linear-gradient(135deg,#ff6a00,#ff8c42);
 display:flex;
-justify-content:space-between;
 align-items:center;
-}
-
-.shopName{
+justify-content:center;
+color:white;
 font-size:22px;
 font-weight:bold;
 }
 
-.profile{
-width:45px;
-height:45px;
-border-radius:50%;
-background:#ddd;
+/* SHOP CARD */
+.shopCard{
+background:white;
+margin:-30px 15px 10px;
+padding:15px;
+border-radius:12px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+text-align:center;
 }
 
-/* 🔥 BUTTONS TOP */
-.topButtons{
-display:flex;
-gap:8px;
+/* NAME */
+.shopName{
+font-size:20px;
+font-weight:bold;
 }
 
-.btn{
-border:none;
-padding:8px 12px;
-border-radius:10px;
+/* BADGE */
+.badge{
+background:#1aa34a;
+color:white;
+padding:3px 8px;
+border-radius:12px;
 font-size:12px;
+margin-left:5px;
+}
+
+/* INFO */
+.info{
+font-size:13px;
+color:#555;
+margin-top:5px;
+}
+
+/* BUTTON */
+.contactBtn{
+margin-top:10px;
+background:#25D366;
+color:white;
+border:none;
+padding:10px;
+border-radius:8px;
+width:100%;
+font-size:15px;
 cursor:pointer;
 }
 
-.publishBtn{
-background:#1aa34a;
-color:white;
-}
-
-.dashboardBtn{
-background:black;
-color:white;
-}
-
-/* PRODUCTS */
+/* PRODUCTS GRID */
 .products{
-column-count:2;
-column-gap:12px;
-padding:12px;
-}
-
-.product{
-background:white;
-border-radius:12px;
-margin-bottom:12px;
-break-inside:avoid;
-box-shadow:0 4px 10px rgba(0,0,0,0.08);
-position:relative;
-overflow:hidden;
-}
-
-.product img{
-width:100%;
-}
-
-.info{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
 padding:10px;
 }
 
-.name{font-weight:bold;}
-.price{color:#ff6a00;font-weight:bold;}
-.desc{font-size:13px;color:#555;}
-
-.deleteBtn{
-position:absolute;
-top:8px;
-right:8px;
-background:red;
-color:white;
-border:none;
-border-radius:20px;
-padding:5px 10px;
-font-size:12px;
-cursor:pointer;
-}
-
-/* REVIEWS */
-.reviews{
+/* CARD */
+.card{
 background:white;
-margin-top:20px;
-padding:15px;
+border-radius:12px;
+padding:8px;
+box-shadow:0 2px 6px rgba(0,0,0,0.08);
+cursor:pointer;
+transition:0.2s;
 }
 
-.review{
-border-bottom:1px solid #eee;
-padding:8px 0;
+.card:hover{
+transform:scale(1.02);
 }
 
-.stars{
-color:orange;
+.card img{
+width:100%;
+height:140px;
+object-fit:cover;
+border-radius:8px;
+}
+
+/* TEXT */
+.name{
+font-size:13px;
+font-weight:bold;
+margin-top:5px;
+}
+
+.price{
+color:#ff6a00;
+font-weight:bold;
+font-size:14px;
 }
 
 </style>
+
 </head>
 
 <body>
 
-<div class="shopHeader">
+<div id="banner" class="banner">Carregando...</div>
 
-<div class="shopTop">
+<div id="shopCard" class="shopCard"></div>
 
-<div class="shopName">Loja</div>
-
-<img id="profilePic" class="profile">
-
-<div class="topButtons">
-
-<button id="publishBtn" class="btn publishBtn">
-+ Produto
-</button>
-
-<!-- 🔥 DASHBOARD -->
-<button id="dashboardBtn" class="btn dashboardBtn">
-⚙️ Painel
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-<div id="productList" class="products"></div>
-
-<div class="reviews">
-<h3>Avaliações dos clientes</h3>
-<div id="reviewList"></div>
-</div>
+<div id="products" class="products"></div>
 
 <script type="module">
 
-import { db,auth } from "./firebase.js"
-
+import { db } from "./firebase.js"
 import {
-collection,
-getDocs,
-query,
-where,
-deleteDoc,
-doc
+collection,getDocs,query,where,doc,getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
-import {
-onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
+const urlParams = new URLSearchParams(window.location.search)
+const merchantId = urlParams.get("id")
 
-/* GET URL */
-const params = new URLSearchParams(location.search)
-const shopId = params.get("id")
+let shopData=null
 
-let currentUser=null
+async function loadShop(){
 
-/* PROFILE */
-document.getElementById("profilePic").src =
-localStorage.getItem("profilePic") || "https://via.placeholder.com/50"
+/* 🔥 LOAD SHOP */
+const userSnap = await getDoc(doc(db,"users",merchantId))
+shopData = userSnap.data()
 
-/* PRODUCT */
-function productHTML(p, isOwner){
-
-let desc = p.description ? p.description.slice(0,50) : ""
-const img = p.images?.[0] || ""
-
-return `
-<div class="product">
-
-${isOwner ? `<button onclick="deleteProduct('${p.id}')" class="deleteBtn">Excluir</button>` : ""}
-
-<img src="${img}">
-
-<div class="info">
-<div class="name">${p.name}</div>
-<div class="price">${p.price} Kz</div>
-<div class="desc">${desc}</div>
-</div>
-
-</div>
-`
-}
+/* BANNER */
+document.getElementById("banner").innerText = shopData?.shopName || "Loja"
 
 /* LOAD PRODUCTS */
-async function loadProducts(uid, isOwner){
-
 const q = query(
 collection(db,"products"),
-where("merchantId","==",uid)
+where("merchantId","==",merchantId)
 )
 
 const snap = await getDocs(q)
 
-const container=document.getElementById("productList")
-container.innerHTML=""
+let count = snap.size
+
+/* SHOP CARD */
+document.getElementById("shopCard").innerHTML = `
+<div class="shopName">
+${shopData?.shopName || "Loja"}
+<span class="badge">Verificado</span>
+</div>
+
+<div class="info">
+${count} produtos disponíveis
+</div>
+
+<button class="contactBtn" onclick="contactShop()">
+💬 Falar no WhatsApp
+</button>
+`
+
+/* PRODUCTS */
+let html=""
 
 snap.forEach(docSnap=>{
-const data=docSnap.data()
-data.id=docSnap.id
-container.innerHTML+=productHTML(data, isOwner)
-})
+const p = docSnap.data()
 
-}
-
-/* DELETE */
-window.deleteProduct = async function(id){
-
-if(!confirm("Excluir produto?")) return
-
-await deleteDoc(doc(db,"products",id))
-
-alert("Produto removido")
-location.reload()
-
-}
-
-/* REVIEWS */
-async function loadReviews(uid){
-
-const snap = await getDocs(collection(db,"reviews"))
-
-const box=document.getElementById("reviewList")
-box.innerHTML=""
-
-snap.forEach(docSnap=>{
-const r=docSnap.data()
-
-if(r.merchantId === uid){
-box.innerHTML+=`
-<div class="review">
-<div class="stars">⭐ ${r.rating}/5</div>
-<div>${r.comment}</div>
+html += `
+<div class="card" onclick="openProduct('${docSnap.id}')">
+<img src="${p.images?.[0] || ''}">
+<div class="name">${p.name}</div>
+<div class="price">${p.price} Kz</div>
 </div>
 `
-}
 })
 
-}
-
-/* MAIN */
-onAuthStateChanged(auth,(user)=>{
-
-currentUser=user
-
-const publishBtn=document.getElementById("publishBtn")
-const dashboardBtn=document.getElementById("dashboardBtn")
-
-/* 🔥 CLIENT VIEW */
-if(shopId){
-
-loadProducts(shopId,false)
-loadReviews(shopId)
-
-/* cacher boutons */
-publishBtn.style.display="none"
-dashboardBtn.style.display="none"
+document.getElementById("products").innerHTML = html
 
 }
 
-/* 🔥 VENDEUR */
-else{
+/* OPEN PRODUCT */
+window.openProduct = function(id){
+localStorage.setItem("selectedProduct", id)
+location.href="product.html"
+}
 
-if(!user){
-location.href="index.html"
+/* WHATSAPP */
+window.contactShop = function(){
+
+if(!shopData?.whatsapp){
+alert("Número indisponível ❌")
 return
 }
 
-loadProducts(user.uid,true)
-loadReviews(user.uid)
+const msg = encodeURIComponent("Olá, vi sua loja e gostaria de mais informações.")
 
-/* publier */
-publishBtn.onclick=()=>{
-location.href="add-product.html"
+const url = "https://wa.me/" + shopData.whatsapp + "?text=" + msg
+
+window.open(url,"_blank")
 }
 
-/* dashboard */
-dashboardBtn.onclick=()=>{
-location.href="merchant-dashboard.html"
-}
-
-}
-
-})
+loadShop()
 
 </script>
 
