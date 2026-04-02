@@ -32,7 +32,7 @@ object-fit:cover;
 cursor:pointer;
 }
 
-/* FULLSCREEN VIEW */
+/* FULLSCREEN */
 .fullscreen{
 position:fixed;
 top:0;left:0;
@@ -49,7 +49,6 @@ flex-direction:column;
 .fullscreen img{
 max-width:100%;
 max-height:100%;
-transition:0.3s;
 }
 
 .closeBtn{
@@ -109,6 +108,7 @@ padding:15px;
 display:flex;
 gap:10px;
 margin-top:15px;
+flex-wrap:wrap;
 }
 
 .btn{
@@ -121,7 +121,9 @@ cursor:pointer;
 
 .buyBtn{background:#1aa34a;color:white;}
 .chatBtn{background:#075e54;color:white;}
+.shopBtn{background:#ff6a00;color:white;} /* ✅ NEW */
 
+/* SECTION */
 .section{padding:10px;}
 
 .grid{
@@ -166,7 +168,7 @@ padding:8px 0;
 
 <div id="productBox"></div>
 
-<!-- FULLSCREEN ZOOM -->
+<!-- FULLSCREEN -->
 <div id="fullscreen" class="fullscreen">
 <div class="closeBtn" onclick="closeFullscreen()">✕</div>
 <div class="navBtn prev" onclick="prevImage()">‹</div>
@@ -243,13 +245,16 @@ ${images.map((img,i)=>`
 </div>
 
 <div class="product">
+
 <div class="name">${currentProduct.name}</div>
 <div class="price">${currentProduct.price} Kz</div>
 
 <div class="actions">
 <button class="btn buyBtn" onclick="orderNow()">Comprar</button>
 <button class="btn chatBtn" onclick="openChat()">💬 Chat</button>
+<button class="btn shopBtn" onclick="openShop()">🏪 Ver Loja</button>
 </div>
+
 </div>
 `
 }
@@ -281,7 +286,7 @@ currentIndex=i
 document.querySelector(".mainImage").src=images[i]
 }
 
-/* REVIEWS */
+/* ⭐ REVIEWS */
 async function loadReviews(){
 
 const q = query(
@@ -340,6 +345,15 @@ window.open("https://wa.me/"+phone+"?text="+encodeURIComponent(msg))
 /* CHAT */
 window.openChat=function(){
 location.href="chat.html?merchant="+currentProduct.merchantId
+}
+
+/* ✅ NEW : OPEN SHOP */
+window.openShop=function(){
+if(!currentProduct?.merchantId){
+alert("Loja não encontrada ❌")
+return
+}
+location.href="merchant-shop.html?id="+currentProduct.merchantId
 }
 
 /* SIMILAR */
