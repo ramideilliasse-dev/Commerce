@@ -80,7 +80,6 @@ background:#ccc;
 cursor:not-allowed;
 }
 
-/* PREVIEW */
 .preview{
 display:flex;
 gap:10px;
@@ -94,7 +93,6 @@ object-fit:cover;
 border-radius:8px;
 }
 
-/* 🔥 PROGRESS PRO */
 .progressBox{
 display:none;
 margin-top:15px;
@@ -111,7 +109,6 @@ background:linear-gradient(90deg,#1aa34a,#4cff88);
 transition:width 0.3s ease;
 }
 
-/* TEXT LOADING */
 .loadingText{
 text-align:center;
 font-size:13px;
@@ -243,14 +240,19 @@ alert("Login necessário ❌")
 return
 }
 
-/* 🔒 ROLE CHECK */
+/* 🔒 GET USER DATA */
 const userSnap = await getDoc(doc(db,"users",user.uid))
-if(userSnap.data()?.role !== "merchant"){
+const userData = userSnap.data()
+
+if(userData?.role !== "merchant"){
 alert("Apenas vendedores autorizados ❌")
 return
 }
 
-/* 🔥 LOCK BUTTON */
+/* ✅ SHOP NAME */
+const shopName = userData?.shopName || "Loja"
+
+/* 🔥 LOCK */
 isPublishing=true
 publishBtn.disabled=true
 publishBtn.innerText="Publicando..."
@@ -273,13 +275,17 @@ updateProgress(10 + (count/imageFiles.length)*70,"Upload imagens...")
 
 updateProgress(90,"Salvando produto...")
 
+/* ✅ SAVE WITH SHOP NAME */
 await addDoc(collection(db,"products"),{
 name,
 price:Number(price),
 category,
 description,
 images:imageUrls,
+
 merchantId:user.uid,
+shopName:shopName,   // 🔥 IMPORTANT
+
 created:Date.now(),
 sales:0
 })
