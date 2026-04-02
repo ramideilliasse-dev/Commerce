@@ -1,0 +1,106 @@
+ <!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Devenir Vendedor</title>
+
+<style>
+body{
+font-family:Arial;
+background:#f4f4f4;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
+
+.box{
+background:white;
+padding:25px;
+border-radius:12px;
+width:90%;
+max-width:400px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+h2{text-align:center;margin-bottom:15px;}
+
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+border-radius:8px;
+border:1px solid #ddd;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:15px;
+background:#ff6a00;
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>Devenir vendeur 🏪</h2>
+
+<input id="shopName" placeholder="Nom da loja">
+<input id="whatsapp" placeholder="WhatsApp (244...)">
+
+<button onclick="sendRequest()">Enviar pedido</button>
+
+</div>
+
+<script type="module">
+
+import { auth, db } from "./firebase.js"
+import { doc, updateDoc } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
+window.sendRequest = async function(){
+
+const user = auth.currentUser
+
+if(!user){
+alert("Faça login ❌")
+return
+}
+
+const shopName = document.getElementById("shopName").value.trim()
+const whatsapp = document.getElementById("whatsapp").value.trim()
+
+if(!shopName || !whatsapp){
+alert("Preencha tudo ❌")
+return
+}
+
+/* 🔥 UPDATE USER */
+await updateDoc(doc(db,"users",user.uid),{
+
+shopName:shopName,
+whatsapp:whatsapp,
+role:"pending",     // 🔥 ATTENTE ADMIN
+approved:false
+
+})
+
+alert("Pedido enviado para aprovação ✅")
+
+location.href="index.html"
+
+}
+
+</script>
+
+</body>
+</html>
