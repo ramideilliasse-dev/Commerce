@@ -17,7 +17,6 @@ align-items:center;
 height:100vh;
 }
 
-/* CARD */
 .card{
 background:white;
 padding:25px;
@@ -27,14 +26,12 @@ box-shadow:0 5px 20px rgba(0,0,0,0.2);
 text-align:center;
 }
 
-/* TITLE */
 .title{
 font-size:22px;
 font-weight:bold;
 margin-bottom:15px;
 }
 
-/* TABS */
 .tabs{
 display:flex;
 margin-bottom:15px;
@@ -52,7 +49,6 @@ border-bottom:2px solid #ff6a00;
 font-weight:bold;
 }
 
-/* INPUT */
 input{
 width:100%;
 padding:12px;
@@ -61,7 +57,6 @@ border-radius:10px;
 border:1px solid #ddd;
 }
 
-/* BUTTON */
 button{
 width:100%;
 padding:12px;
@@ -73,11 +68,18 @@ font-weight:bold;
 cursor:pointer;
 }
 
-/* SMALL */
 .small{
 font-size:13px;
 color:#777;
 margin-top:10px;
+}
+
+/* 🔥 NEW LINK */
+.link{
+margin-top:10px;
+font-size:13px;
+color:#ff6a00;
+cursor:pointer;
 }
 
 </style>
@@ -89,13 +91,11 @@ margin-top:10px;
 
 <div class="title">Shopping 🇦🇴</div>
 
-<!-- TABS -->
 <div class="tabs">
 <div id="loginTab" class="tab active" onclick="switchTab('login')">Entrar</div>
 <div id="registerTab" class="tab" onclick="switchTab('register')">Criar conta</div>
 </div>
 
-<!-- FORM -->
 <input id="email" placeholder="Email">
 <input id="password" type="password" placeholder="Senha">
 
@@ -103,15 +103,26 @@ margin-top:10px;
 
 <div class="small" id="msg"></div>
 
+<!-- 🔥 GO MERCHANT -->
+<div class="link" onclick="location.href='merchant-register.html'">
+Criar conta comerciante 🏪
+</div>
+
 </div>
 
 <script type="module">
 
-import { auth } from "./firebase.js"
+import { auth, db } from "./firebase.js"
+
 import {
 signInWithEmailAndPassword,
 createUserWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
+
+import {
+doc,
+setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
 let mode = "login"
 
@@ -120,25 +131,25 @@ window.switchTab = function(tab){
 
 mode = tab
 
-document.getElementById("loginTab").classList.remove("active")
-document.getElementById("registerTab").classList.remove("active")
+loginTab.classList.remove("active")
+registerTab.classList.remove("active")
 
 if(tab==="login"){
-document.getElementById("loginTab").classList.add("active")
-document.getElementById("actionBtn").innerText="Entrar"
+loginTab.classList.add("active")
+actionBtn.innerText="Entrar"
 }else{
-document.getElementById("registerTab").classList.add("active")
-document.getElementById("actionBtn").innerText="Criar conta"
+registerTab.classList.add("active")
+actionBtn.innerText="Criar conta"
 }
 
+msg.innerText=""
 }
 
 /* ACTION */
 window.handleAction = async function(){
 
-const email = document.getElementById("email").value
-const password = document.getElementById("password").value
-const msg = document.getElementById("msg")
+const email = document.getElementById("email").value.trim()
+const password = document.getElementById("password").value.trim()
 
 if(!email || !password){
 msg.innerText="Preencha todos os campos ❌"
@@ -154,7 +165,16 @@ msg.innerText="Login realizado ✅"
 
 }else{
 
-await createUserWithEmailAndPassword(auth,email,password)
+const cred = await createUserWithEmailAndPassword(auth,email,password)
+
+/* 🔥 CREATE CLIENT USER */
+await setDoc(doc(db,"users",cred.user.uid),{
+email:cred.user.email,
+role:"client",
+createdAt:Date.now(),
+blocked:false
+})
+
 msg.innerText="Conta criada com sucesso ✅"
 
 }
@@ -165,7 +185,7 @@ location.href="index.html"
 },1000)
 
 }catch(e){
-msg.innerText=e.message
+msg.innerText="Erro: " + e.message
 }
 
 }
