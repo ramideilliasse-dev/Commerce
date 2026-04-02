@@ -69,10 +69,9 @@ color:#1aa34a;
 
 <h2>Criar Conta Comerciante</h2>
 
+<input id="shopName" placeholder="Nome da loja (ex: Loja Maria)">
 <input id="email" placeholder="Email">
 <input id="password" type="password" placeholder="Senha">
-
-<!-- 🔥 NEW -->
 <input id="whatsapp" placeholder="WhatsApp (ex: 244923000000)">
 
 <button onclick="register()">Criar conta</button>
@@ -100,13 +99,20 @@ setDoc
 /* 🔥 REGISTER PRO */
 window.register = async function(){
 
+const shopName = document.getElementById("shopName").value.trim()
 const email = document.getElementById("email").value.trim()
 const password = document.getElementById("password").value.trim()
 const whatsapp = document.getElementById("whatsapp").value.trim()
 
 /* ✅ VALIDATION */
-if(!email || !password || !whatsapp){
+if(!shopName || !email || !password || !whatsapp){
 alert("Preencha todos os campos ❌")
+return
+}
+
+/* 🔥 SHOP NAME MIN */
+if(shopName.length < 3){
+alert("Nome da loja muito curto ❌")
 return
 }
 
@@ -135,12 +141,17 @@ const cred = await createUserWithEmailAndPassword(auth, email, password)
 
 /* ✅ FIRESTORE USER */
 await setDoc(doc(db, "users", cred.user.uid), {
+
 email: cred.user.email,
-whatsapp: whatsapp,        // 🔥 IMPORTANT
+
+shopName: shopName,      // 🔥 IMPORTANT (nouveau)
+whatsapp: whatsapp,      // 🔥 pour commandes
+
 createdAt: Date.now(),
-approved: true,            // 🔥 peut publier direct
-role: "merchant",          // 🔥 DIRECT MERCHANT
+approved: true,
+role: "merchant",
 blocked: false
+
 })
 
 alert("Conta comerciante criada com sucesso ✅")
