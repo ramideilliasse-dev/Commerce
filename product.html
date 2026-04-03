@@ -1,5 +1,4 @@
- <!DOCTYPE html>
-<html lang="pt">
+ <html lang="pt">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,7 +16,6 @@ font-weight:bold;
 box-shadow:0 2px 5px rgba(0,0,0,0.1);
 }
 
-/* IMAGE */
 .imageContainer{
 width:100%;
 height:300px;
@@ -32,7 +30,6 @@ object-fit:cover;
 cursor:pointer;
 }
 
-/* FULLSCREEN */
 .fullscreen{
 position:fixed;
 top:0;left:0;
@@ -73,7 +70,6 @@ padding:10px;
 .prev{left:10px;}
 .next{right:10px;}
 
-/* GALLERY */
 .gallery{
 display:flex;
 gap:8px;
@@ -95,7 +91,6 @@ border:2px solid #ff6a00;
 opacity:1;
 }
 
-/* PRODUCT */
 .product{
 background:white;
 padding:15px;
@@ -121,9 +116,8 @@ cursor:pointer;
 
 .buyBtn{background:#1aa34a;color:white;}
 .chatBtn{background:#075e54;color:white;}
-.shopBtn{background:#ff6a00;color:white;} /* ✅ NEW */
+.shopBtn{background:#ff6a00;color:white;}
 
-/* SECTION */
 .section{padding:10px;}
 
 .grid{
@@ -168,7 +162,6 @@ padding:8px 0;
 
 <div id="productBox"></div>
 
-<!-- FULLSCREEN -->
 <div id="fullscreen" class="fullscreen">
 <div class="closeBtn" onclick="closeFullscreen()">✕</div>
 <div class="navBtn prev" onclick="prevImage()">‹</div>
@@ -227,7 +220,6 @@ loadOthers()
 
 loadProduct()
 
-/* RENDER */
 function renderProduct(){
 
 let main = images[0] || ""
@@ -280,13 +272,12 @@ currentIndex=(currentIndex-1+images.length)%images.length
 fullscreenImg.src=images[currentIndex]
 }
 
-/* SELECT */
 window.selectImage=function(i){
 currentIndex=i
 document.querySelector(".mainImage").src=images[i]
 }
 
-/* ⭐ REVIEWS */
+/* REVIEWS */
 async function loadReviews(){
 
 const q = query(
@@ -320,7 +311,7 @@ reviewsList.innerHTML = html
 
 }
 
-/* WHATSAPP */
+/* 🔥 WHATSAPP PRO */
 window.orderNow = async function(){
 
 if(!auth.currentUser){
@@ -328,17 +319,41 @@ alert("Connexion requise ❌")
 return
 }
 
+try{
+
 const snap = await getDoc(doc(db,"users",currentProduct.merchantId))
-const phone = snap.data()?.whatsapp
+const data = snap.data()
+
+let phone = data?.whatsapp
 
 if(!phone){
-alert("Sem WhatsApp ❌")
+alert("Vendedor sem WhatsApp ❌")
 return
 }
 
-const msg = `🛒 Pedido\n${currentProduct.name}\n${currentProduct.price} Kz`
+/* CLEAN NUMBER */
+phone = phone.replace(/\D/g,"")
 
-window.open("https://wa.me/"+phone+"?text="+encodeURIComponent(msg))
+/* MESSAGE PRO */
+const msg = `
+🛒 *NOVO PEDIDO*
+
+📦 Produto: ${currentProduct.name}
+💰 Preço: ${currentProduct.price} Kz
+
+👤 Cliente ID: ${auth.currentUser.uid}
+
+📱 Enviado via App
+`
+
+const url = "https://wa.me/"+phone+"?text="+encodeURIComponent(msg)
+
+window.open(url,"_blank")
+
+}catch(e){
+console.error(e)
+alert("Erro ao enviar pedido ❌")
+}
 
 }
 
@@ -347,7 +362,7 @@ window.openChat=function(){
 location.href="chat.html?merchant="+currentProduct.merchantId
 }
 
-/* ✅ NEW : OPEN SHOP */
+/* SHOP */
 window.openShop=function(){
 if(!currentProduct?.merchantId){
 alert("Loja não encontrada ❌")
