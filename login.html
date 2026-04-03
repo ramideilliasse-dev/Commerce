@@ -74,7 +74,6 @@ color:#777;
 margin-top:10px;
 }
 
-/* 🔥 NEW LINK */
 .link{
 margin-top:10px;
 font-size:13px;
@@ -121,7 +120,8 @@ createUserWithEmailAndPassword
 
 import {
 doc,
-setDoc
+setDoc,
+getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
 let mode = "login"
@@ -145,6 +145,28 @@ actionBtn.innerText="Criar conta"
 msg.innerText=""
 }
 
+/* 🔥 AUTO FIRESTORE SYSTEM */
+async function ensureUser(user){
+
+const ref = doc(db,"users",user.uid)
+const snap = await getDoc(ref)
+
+if(!snap.exists()){
+
+await setDoc(ref,{
+email:user.email,
+role:"client",
+createdAt:Date.now(),
+approved:false,
+blocked:false
+})
+
+console.log("User criado automaticamente 🔥")
+
+}
+
+}
+
 /* ACTION */
 window.handleAction = async function(){
 
@@ -158,26 +180,32 @@ return
 
 try{
 
+let cred
+
 if(mode==="login"){
 
-await signInWithEmailAndPassword(auth,email,password)
+cred = await signInWithEmailAndPassword(auth,email,password)
 msg.innerText="Login realizado ✅"
 
 }else{
 
-const cred = await createUserWithEmailAndPassword(auth,email,password)
+cred = await createUserWithEmailAndPassword(auth,email,password)
 
-/* 🔥 CREATE CLIENT USER */
+/* 🔥 CREATE USER */
 await setDoc(doc(db,"users",cred.user.uid),{
 email:cred.user.email,
 role:"client",
 createdAt:Date.now(),
+approved:false,
 blocked:false
 })
 
 msg.innerText="Conta criada com sucesso ✅"
 
 }
+
+/* 🔥 ALWAYS ENSURE USER EXISTS */
+await ensureUser(cred.user)
 
 /* REDIRECT */
 setTimeout(()=>{
