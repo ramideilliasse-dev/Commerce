@@ -1,93 +1,3 @@
- <!DOCTYPE html>
-<html lang="pt">
-
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Checkout</title>
-
-<style>
-body{font-family:Arial;margin:0;background:#f4f4f4;}
-
-.header{
-background:#1aa34a;
-color:white;
-padding:15px;
-text-align:center;
-font-size:20px;
-font-weight:bold;
-}
-
-.container{
-max-width:600px;
-margin:auto;
-padding:15px;
-}
-
-.card{
-background:white;
-padding:15px;
-border-radius:10px;
-margin-bottom:15px;
-box-shadow:0 3px 8px rgba(0,0,0,0.1);
-}
-
-.item{
-border-bottom:1px solid #eee;
-padding:8px 0;
-}
-
-input{
-width:100%;
-padding:12px;
-margin-top:8px;
-border-radius:8px;
-border:1px solid #ddd;
-}
-
-button{
-width:100%;
-padding:15px;
-background:#1aa34a;
-color:white;
-border:none;
-border-radius:10px;
-font-size:18px;
-cursor:pointer;
-}
-
-.total{
-font-weight:bold;
-margin-top:10px;
-font-size:18px;
-}
-</style>
-
-</head>
-
-<body>
-
-<div class="header">Finalizar Pedido</div>
-
-<div class="container">
-
-<div class="card">
-<h3>Seus produtos</h3>
-<div id="cartItems"></div>
-<div class="total">Total: <span id="totalPrice">0</span></div>
-</div>
-
-<div class="card">
-<h3>Dados do cliente</h3>
-<input id="clientName" placeholder="Seu nome">
-<input id="clientPhone" placeholder="Telefone">
-<input id="clientAddress" placeholder="Endereço">
-</div>
-
-<button id="confirmBtn">Confirmar Pedido</button>
-
-</div>
-
 <script type="module">
 
 import { db, auth } from "./firebase.js"
@@ -103,15 +13,12 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 let currentUser = null
 
-/* AUTH */
 onAuthStateChanged(auth,(user)=>{
 currentUser = user
 })
 
-/* PANIER */
 let cart = JSON.parse(localStorage.getItem("checkoutCart") || "[]")
 
-/* LOAD */
 function loadCart(){
 
 if(cart.length === 0){
@@ -132,35 +39,31 @@ ${item.name} x${item.qty} = ${item.price * item.qty} Kz
 `
 })
 
-document.getElementById("cartItems").innerHTML = html
-document.getElementById("totalPrice").innerText = total + " Kz"
+cartItems.innerHTML = html
+totalPrice.innerText = total + " Kz"
 
 }
 
 loadCart()
 
-/* CLICK */
-document.getElementById("confirmBtn").addEventListener("click", placeOrder)
+confirmBtn.addEventListener("click", placeOrder)
 
-/* ORDER */
+/* 🔥 FIX TOTAL */
 async function placeOrder(){
 
 try{
 
-const name=document.getElementById("clientName").value.trim()
-const phone=document.getElementById("clientPhone").value.trim()
-const address=document.getElementById("clientAddress").value.trim()
+const name=clientName.value.trim()
+const phone=clientPhone.value.trim()
+const address=clientAddress.value.trim()
 
 if(!name || !phone || !address){
-alert("Preencha todos os campos")
+alert("Preencha todos os campos ❌")
 return
 }
 
-if(cart.length === 0){
-return
-}
+if(cart.length === 0) return
 
-/* GROUP */
 let grouped = {}
 
 cart.forEach(item => {
@@ -175,51 +78,52 @@ grouped[item.merchantId].push(item)
 
 })
 
-/* LOOP MERCHANT */
+let successCount = 0
+
 for(const merchantId in grouped){
 
 let items = grouped[merchantId]
 
-let merchant = null
+/* ✅ FIX: USERS (NOT merchants) */
+const snap = await getDoc(doc(db,"users",merchantId))
 
-/* GET MERCHANT (safe) */
-try{
-const snap = await getDoc(doc(db,"merchants",merchantId))
-if(snap.exists()){
-merchant = snap.data()
-}else{
-console.warn("Merchant introuvable:", merchantId)
-continue
-}
-}catch(e){
-console.error("Erro merchant:", e)
+if(!snap.exists()){
+console.warn("Vendedor não encontrado:", merchantId)
 continue
 }
 
-/* WHATSAPP */
-let sellerPhone = merchant?.phone || ""
+const merchant = snap.data()
 
-if(sellerPhone){
+let sellerPhone = merchant?.whatsapp || ""
 
-let message = "🛒 Novo Pedido\n\n"
+/* 🔥 CLEAN NUMBER */
+sellerPhone = sellerPhone.replace(/\D/g,"")
+
+if(!sellerPhone || sellerPhone.length < 9){
+console.warn("Número inválido:", sellerPhone)
+continue
+}
+
+/* MESSAGE PRO */
+let message = "🛒 *NOVO PEDIDO*\n\n"
 
 items.forEach(p=>{
 message += `• ${p.name} x${p.qty} = ${p.price * p.qty} Kz\n`
 })
 
-message += `\n👤 ${name}`
+message += `\n👤 Cliente: ${name}`
 message += `\n📞 ${phone}`
 message += `\n📍 ${address}`
 
 let url = "https://wa.me/" + sellerPhone + "?text=" + encodeURIComponent(message)
 
+/* OPEN WHATSAPP */
 window.open(url, "_blank")
-}
 
-/* SAVE ORDERS */
+successCount++
+
+/* SAVE DB */
 for(const item of items){
-
-try{
 
 await addDoc(collection(db,"orders"),{
 
@@ -241,21 +145,25 @@ date:Date.now()
 
 })
 
-}catch(e){
-console.error("Erro Firestore:", e)
 }
 
 }
 
-}
+/* ✅ SUCCESS ONLY IF SENT */
+if(successCount > 0){
 
-/* SUCCESS */
 localStorage.removeItem("cart")
 localStorage.removeItem("checkoutCart")
 
 alert("Pedido enviado com sucesso 🚀")
 
 location.href="index.html"
+
+}else{
+
+alert("Erro: nenhum vendedor recebeu o pedido ❌")
+
+}
 
 }catch(e){
 
@@ -267,6 +175,3 @@ alert("Erro ao finalizar pedido ❌")
 }
 
 </script>
-
-</body>
-</html>
