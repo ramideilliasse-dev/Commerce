@@ -10,8 +10,7 @@ body{font-family:Arial;margin:0;background:#f4f4f4;}
 
 .header{
 position:fixed;top:0;left:0;right:0;
-background:rgba(255,255,255,0.85);
-backdrop-filter:blur(10px);
+background:rgba(255,255,255,0.9);
 padding:10px;
 display:flex;
 justify-content:space-between;
@@ -53,33 +52,57 @@ background:white;padding:8px;z-index:999;
 width:100%;padding:10px;border-radius:15px;border:1px solid #ddd;
 }
 
-.banner{
-margin-top:105px;background:#ff6a00;color:white;
-padding:8px;text-align:center;font-weight:bold;font-size:14px;
+#suggestions{
+background:white;
+position:absolute;
+width:100%;
+border-radius:10px;
+overflow:hidden;
+box-shadow:0 2px 10px rgba(0,0,0,0.1);
 }
 
-#loader{text-align:center;padding:20px;}
+.suggestItem{
+padding:8px;
+cursor:pointer;
+border-bottom:1px solid #eee;
+}
+
+.banner{
+margin-top:105px;
+background:#ff6a00;
+color:white;
+padding:8px;
+text-align:center;
+font-weight:bold;
+}
 
 .products{
-column-count:2;column-gap:10px;
-padding:10px;padding-bottom:100px;
+column-count:2;
+column-gap:10px;
+padding:10px;
+padding-bottom:120px;
 }
 
 .product{
-background:white;border-radius:12px;
-margin-bottom:10px;break-inside:avoid;
+background:white;
+border-radius:12px;
+margin-bottom:10px;
+break-inside:avoid;
 box-shadow:0 3px 8px rgba(0,0,0,0.08);
-overflow:hidden;position:relative;
+overflow:hidden;
+position:relative;
 cursor:pointer;
 }
 
-.product img{width:100%;height:150px;object-fit:cover;}
+.product img{
+width:100%;
+height:150px;
+object-fit:cover;
+}
 
 .info{padding:8px;}
 .name{font-weight:bold;font-size:14px;}
-.price{color:#ff6a00;font-weight:bold;font-size:14px;}
-.desc{font-size:12px;color:#555;}
-.stars{color:#FFD700;font-size:13px;}
+.price{color:#ff6a00;font-weight:bold;}
 
 .cartBtn{
 position:absolute;right:8px;bottom:8px;
@@ -96,12 +119,17 @@ padding:8px;border-top:1px solid #ddd;
 font-size:13px;
 }
 
-.toast{
-position:fixed;bottom:90px;left:50%;
+/* GUIDE */
+.guide{
+position:fixed;
+bottom:60px;
+left:50%;
 transform:translateX(-50%);
-background:black;color:white;
-padding:8px 12px;border-radius:20px;
-display:none;font-size:13px;
+background:black;
+color:white;
+padding:8px 12px;
+border-radius:20px;
+font-size:13px;
 }
 </style>
 </head>
@@ -114,6 +142,7 @@ display:none;font-size:13px;
 <div class="headerRight">
 
 <button class="topBtn" onclick="location.href='settings.html'">⚙️</button>
+<button class="topBtn" onclick="location.href='guide.html'">📘</button>
 
 <div class="cartIcon" onclick="location.href='cart.html'">
 🛒
@@ -125,24 +154,29 @@ display:none;font-size:13px;
 </div>
 </div>
 
+<!-- SEARCH -->
 <div class="searchBox">
 <input id="search" placeholder="Procurar produto...">
+<div id="suggestions"></div>
 </div>
 
 <div class="banner">
 🔥 Promoções hoje • Entrega rápida 🚀
 </div>
 
-<div id="loader">Carregando...</div>
 <div id="productList" class="products"></div>
+
+<!-- GUIDE -->
+<div class="guide">
+📘 Clique no botão guia para aprender a usar o app
+</div>
 
 <div class="nav">
 <div onclick="location.href='index.html'">🏠<br>Inicio</div>
 <div onclick="location.href='categories.html'">📦<br>Categorias</div>
+<div onclick="location.href='messages.html'">💬<br>Mensagens</div>
 <div onclick="location.href='cart.html'">🛒<br>Carrinho</div>
 </div>
-
-<div id="toast" class="toast"></div>
 
 <script type="module">
 
@@ -154,13 +188,7 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 let products=[]
 
-function showToast(msg){
-const t=document.getElementById("toast")
-t.innerText=msg
-t.style.display="block"
-setTimeout(()=>t.style.display="none",2000)
-}
-
+/* CART COUNT */
 function updateCartCount(){
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
 let total=0
@@ -169,7 +197,7 @@ document.getElementById("cartCount").innerText = total
 }
 updateCartCount()
 
-/* AUTH */
+/* ROLE SYSTEM */
 const accountButton=document.getElementById("accountButton")
 
 onAuthStateChanged(auth, async (user)=>{
@@ -181,10 +209,15 @@ const snap = await getDoc(doc(db,"users",user.uid))
 if(snap.exists()){
 const data = snap.data()
 
-if(data.role === "merchant"){
+if(data.role === "admin"){
+accountButton.innerText="Admin 👑"
+accountButton.onclick=()=>location.href="admin-dashboard.html"
+}
+else if(data.role === "merchant"){
 accountButton.innerText="Minha Loja"
 accountButton.onclick=()=>location.href="merchant-dashboard.html"
-}else{
+}
+else{
 accountButton.innerText="Conta"
 accountButton.onclick=()=>location.href="settings.html"
 }
@@ -201,31 +234,10 @@ accountButton.onclick=()=>location.href="login.html"
 
 })
 
-function productHTML(p){
-const img = p.images?.[0] || "https://via.placeholder.com/300"
-
-return `
-<div class="product" onclick="openProduct('${p.id}')">
-
-<div onclick="event.stopPropagation();addToCart('${p.id}')" class="cartBtn">🛒</div>
-
-<img src="${img}">
-
-<div class="info">
-<div class="name">${p.name}</div>
-<div class="price">${p.price} Kz</div>
-<div class="desc">${(p.description||"").slice(0,40)}</div>
-</div>
-
-</div>
-`
-}
-
+/* LOAD PRODUCTS */
 async function loadProducts(){
 
 const snap=await getDocs(collection(db,"products"))
-
-document.getElementById("loader").style.display="none"
 
 products=[]
 
@@ -239,12 +251,27 @@ document.getElementById("productList").innerHTML =
 products.map(p=>productHTML(p)).join("")
 }
 
-window.openProduct=function(id){
-localStorage.setItem("selectedProduct", id)
-location.href="product.html"
+function productHTML(p){
+
+const img = p.images?.[0] || "https://via.placeholder.com/300"
+
+return `
+<div class="product" onclick="openProduct('${p.id}')">
+
+<div onclick="event.stopPropagation();addToCart('${p.id}')" class="cartBtn">🛒</div>
+
+<img src="${img}">
+
+<div class="info">
+<div class="name">${p.name}</div>
+<div class="price">${p.price} Kz</div>
+</div>
+
+</div>
+`
 }
 
-/* 🔥 FIX IMPORTANT ICI */
+/* ADD TO CART (🔥 FIX merchantId) */
 window.addToCart=function(id){
 
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
@@ -260,17 +287,47 @@ exist.qty++
 cart.push({
 id:product.id,
 name:product.name,
-price:Number(product.price) || 0,
+price:Number(product.price),
 image:product.images?.[0] || "",
 qty:1,
-merchantId: product.merchantId || "" // ✅ FIX CRITIQUE
+merchantId: product.merchantId || ""   // 🔥 FIX IMPORTANT
 })
 }
 
 localStorage.setItem("cart", JSON.stringify(cart))
 updateCartCount()
-showToast("Adicionado 🛒")
 
+}
+
+/* SEARCH */
+const searchInput=document.getElementById("search")
+const suggestions=document.getElementById("suggestions")
+
+searchInput.oninput=function(){
+
+const value=this.value.toLowerCase()
+
+if(!value){
+suggestions.innerHTML=""
+return
+}
+
+const filtered = products.filter(p =>
+p.name.toLowerCase().includes(value)
+)
+
+suggestions.innerHTML = filtered.slice(0,5).map(p=>`
+<div class="suggestItem" onclick="openProduct('${p.id}')">
+${p.name}
+</div>
+`).join("")
+
+}
+
+/* OPEN PRODUCT */
+window.openProduct=function(id){
+localStorage.setItem("selectedProduct", id)
+location.href="product.html"
 }
 
 loadProducts()
