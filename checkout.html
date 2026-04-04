@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="pt">
 
 <head>
@@ -13,7 +13,6 @@ margin:0;
 background:#f4f4f4;
 }
 
-/* HEADER */
 .header{
 background:#1aa34a;
 color:white;
@@ -23,14 +22,12 @@ font-size:20px;
 font-weight:bold;
 }
 
-/* CONTAINER */
 .container{
 max-width:600px;
 margin:auto;
 padding:15px;
 }
 
-/* CARD */
 .card{
 background:white;
 padding:15px;
@@ -39,14 +36,12 @@ margin-bottom:15px;
 box-shadow:0 4px 12px rgba(0,0,0,0.1);
 }
 
-/* ITEM */
 .item{
 border-bottom:1px solid #eee;
 padding:10px 0;
 font-size:15px;
 }
 
-/* INPUT */
 input{
 width:100%;
 padding:12px;
@@ -56,7 +51,6 @@ border:1px solid #ddd;
 font-size:15px;
 }
 
-/* BUTTON */
 button{
 width:100%;
 padding:15px;
@@ -74,7 +68,6 @@ background:#999;
 cursor:not-allowed;
 }
 
-/* TOTAL */
 .total{
 font-weight:bold;
 margin-top:10px;
@@ -139,7 +132,6 @@ background:#1aa34a;
 
 </div>
 
-<!-- LOADER -->
 <div id="loaderOverlay">
 <div class="loader"></div>
 <p>Enviando pedido...</p>
@@ -175,12 +167,18 @@ onAuthStateChanged(auth,(user)=>{
 currentUser = user
 })
 
-/* CART */
+/* 🔥 FIX IMPORTANT (fallback cart) */
 let cart = JSON.parse(localStorage.getItem("checkoutCart") || "[]")
 
+if(cart.length === 0){
+cart = JSON.parse(localStorage.getItem("cart") || "[]")
+}
+
+/* LOAD */
 function loadCart(){
 
 if(cart.length === 0){
+alert("Carrinho vazio ❌")
 location.href="index.html"
 return
 }
@@ -189,11 +187,11 @@ let html=""
 let total=0
 
 cart.forEach(item=>{
-total += item.price * item.qty
+total += (Number(item.price) || 0) * (item.qty || 1)
 
 html += `
 <div class="item">
-${item.name} x${item.qty} = ${item.price * item.qty} Kz
+${item.name} x${item.qty} = ${(item.price * item.qty)} Kz
 </div>
 `
 })
@@ -224,19 +222,20 @@ alert("Preencha todos os campos ❌")
 return
 }
 
-if(cart.length === 0) return
-
 /* LOCK */
 confirmBtn.disabled = true
 confirmBtn.innerText = "Enviando..."
 loader.style.display = "flex"
 
-/* GROUP */
+/* 🔥 GROUP FIX */
 let grouped = {}
 
 cart.forEach(item => {
 
-if(!item.merchantId) return
+if(!item.merchantId){
+console.warn("Produto sem merchantId ❌", item)
+return
+}
 
 if(!grouped[item.merchantId]){
 grouped[item.merchantId] = []
@@ -246,6 +245,8 @@ grouped[item.merchantId].push(item)
 
 })
 
+console.log("GROUPED:", grouped)
+
 let successCount = 0
 
 for(const merchantId in grouped){
@@ -254,15 +255,28 @@ let items = grouped[merchantId]
 
 const snap = await getDoc(doc(db,"users",merchantId))
 
-if(!snap.exists()) continue
+if(!snap.exists()){
+console.warn("Vendedor não encontrado ❌", merchantId)
+continue
+}
 
 const merchant = snap.data()
 
 let sellerPhone = merchant?.whatsapp || ""
+
+/* 🔥 CLEAN + FIX COUNTRY */
 sellerPhone = sellerPhone.replace(/\D/g,"")
 
-if(!sellerPhone) continue
+if(!sellerPhone.startsWith("244")){
+sellerPhone = "244" + sellerPhone
+}
 
+if(sellerPhone.length < 12){
+console.warn("Número inválido ❌", sellerPhone)
+continue
+}
+
+/* MESSAGE */
 let message = "🛒 *NOVO PEDIDO*\n\n"
 
 items.forEach(p=>{
@@ -279,11 +293,10 @@ window.open(url, "_blank")
 
 successCount++
 
-/* SAVE */
+/* SAVE FIRESTORE */
 for(const item of items){
 
 await addDoc(collection(db,"orders"),{
-
 productId:item.id,
 productName:item.name,
 price:item.price,
@@ -294,12 +307,9 @@ clientPhone:phone,
 clientAddress:address,
 
 merchantId:merchantId,
-
 status:"pendente",
 seen:false,
-
 date:Date.now()
-
 })
 
 }
