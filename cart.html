@@ -26,12 +26,6 @@ display:flex;
 gap:10px;
 align-items:center;
 box-shadow:0 2px 6px rgba(0,0,0,0.1);
-animation:fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn{
-from{opacity:0; transform:translateY(10px);}
-to{opacity:1; transform:translateY(0);}
 }
 
 .item img{
@@ -78,7 +72,6 @@ margin:10px;
 border-radius:10px;
 cursor:pointer;
 font-size:18px;
-transition:0.3s;
 }
 
 .checkout.disabled{
@@ -129,6 +122,8 @@ function loadCart(){
 
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
 
+console.log("CART RAW:", cart) // 🔥 DEBUG
+
 let html=""
 let total=0
 
@@ -137,9 +132,7 @@ const checkoutBtn = document.getElementById("checkoutBtn")
 if(cart.length === 0){
 
 document.getElementById("cartList").innerHTML = `
-<div class="empty">
-Seu carrinho está vazio 😢
-</div>
+<div class="empty">Seu carrinho está vazio 😢</div>
 `
 
 document.getElementById("total").innerText=""
@@ -160,26 +153,17 @@ total += price * item.qty
 
 html += `
 <div class="item">
-
 <img src="${image}">
-
 <div class="info">
-
 <div><b>${item.name || "Produto"}</b></div>
 <div>${price} Kz</div>
-
 <div class="qty">
-
 <button onclick="changeQty(${index},-1)">-</button>
 <div>${item.qty}</div>
 <button onclick="changeQty(${index},1)">+</button>
-
 <button class="remove" onclick="removeItem(${index})">🗑️</button>
-
 </div>
-
 </div>
-
 </div>
 `
 })
@@ -188,8 +172,6 @@ document.getElementById("cartList").innerHTML = html
 document.getElementById("total").innerText = "Total: " + total + " Kz"
 
 }
-
-loadCart()
 
 /* CHANGE QTY */
 function changeQty(index,delta){
@@ -229,7 +211,7 @@ loadCart()
 
 }
 
-/* GO CHECKOUT */
+/* GO CHECKOUT (🔥 FIX IMPORTANT) */
 function goCheckout(){
 
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
@@ -239,7 +221,19 @@ alert("Carrinho vazio ❌")
 return
 }
 
-/* NORMALISER */
+/* 🔥 VALIDATION */
+let invalid = cart.filter(item => !item.merchantId)
+
+if(invalid.length > 0){
+
+console.error("Produtos inválidos:", invalid)
+
+alert("Erro: alguns produtos não têm vendedor ❌\nRecarregue a página")
+
+return
+}
+
+/* NORMALISER PRO */
 let checkoutCart = cart.map(item => ({
 
 id: item.id || "",
@@ -247,15 +241,19 @@ name: item.name || "Produto",
 price: Number(item.price) || 0,
 qty: item.qty || 1,
 image: item.image || "",
-merchantId: item.merchantId || ""
+merchantId: String(item.merchantId) // 🔥 FORCE STRING
 
 }))
+
+console.log("CHECKOUT CART:", checkoutCart) // 🔥 DEBUG
 
 localStorage.setItem("checkoutCart", JSON.stringify(checkoutCart))
 
 location.href = "checkout.html"
 
 }
+
+loadCart()
 
 </script>
 
