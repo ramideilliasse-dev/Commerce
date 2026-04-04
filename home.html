@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shopping Online Angola</title>
+<title>Shopping Angola</title>
 
 <style>
 body{font-family:Arial;margin:0;background:#f4f4f4;}
@@ -23,6 +23,18 @@ z-index:1000;
 
 .headerRight{display:flex;gap:8px;align-items:center;}
 
+button{
+border:none;
+padding:6px 10px;
+border-radius:8px;
+cursor:pointer;
+}
+
+.accountBtn{
+background:black;color:white;
+border-radius:15px;
+}
+
 .cartIcon{position:relative;cursor:pointer;font-size:20px;}
 
 .cartBadge{
@@ -31,48 +43,36 @@ padding:2px 6px;font-size:11px;
 position:absolute;top:-6px;right:-8px;
 }
 
-.accountBtn{
-background:black;color:white;border:none;
-padding:5px 10px;border-radius:15px;
-font-size:13px;
-}
-
-/* SEARCH */
 .searchBox{
 position:fixed;top:60px;left:0;right:0;
 background:white;padding:8px;z-index:999;
 }
 
 .searchBox input{
-width:100%;padding:10px;border-radius:15px;border:1px solid #ddd;
+width:100%;
+padding:10px;border-radius:15px;border:1px solid #ddd;
 }
 
-/* BANNER */
 .banner{
 margin-top:110px;
-background:#ff6a00;
-color:white;
-padding:8px;
-text-align:center;
-font-weight:bold;
+background:#ff6a00;color:white;
+padding:10px;text-align:center;font-weight:bold;
 }
 
-/* PRODUCTS */
 .products{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
+column-count:2;
+column-gap:10px;
 padding:10px;
-padding-bottom:100px;
 }
 
 .product{
 background:white;
 border-radius:12px;
+margin-bottom:10px;
+break-inside:avoid;
+box-shadow:0 3px 8px rgba(0,0,0,0.08);
 overflow:hidden;
-box-shadow:0 3px 8px rgba(0,0,0,0.1);
 cursor:pointer;
-position:relative;
 }
 
 .product img{
@@ -85,45 +85,56 @@ object-fit:cover;
 
 .name{font-weight:bold;}
 .price{color:#ff6a00;font-weight:bold;}
+.desc{font-size:12px;color:#555;}
 
-.desc{
-font-size:12px;
-color:#555;
-}
-
-/* BUTTON CART */
 .cartBtn{
 position:absolute;
 right:8px;
 bottom:8px;
 background:#1aa34a;
 color:white;
-width:35px;height:35px;
+width:32px;height:32px;
 border-radius:50%;
 display:flex;
 align-items:center;
 justify-content:center;
 }
 
-/* NAV */
 .nav{
-position:fixed;bottom:0;left:0;right:0;
+position:fixed;
+bottom:0;left:0;right:0;
 background:white;
 display:flex;
 justify-content:space-around;
 padding:8px;
 border-top:1px solid #ddd;
+font-size:13px;
 }
 
+.toast{
+position:fixed;
+bottom:90px;
+left:50%;
+transform:translateX(-50%);
+background:black;
+color:white;
+padding:8px 12px;
+border-radius:20px;
+display:none;
+}
 </style>
 </head>
 
 <body>
 
+<!-- HEADER -->
 <div class="header">
 <div class="logo">Shopping 🇦🇴</div>
 
 <div class="headerRight">
+
+<button onclick="location.href='settings.html'">⚙️</button>
+<button onclick="location.href='guide.html'">📘</button>
 
 <div class="cartIcon" onclick="location.href='cart.html'">
 🛒
@@ -135,10 +146,12 @@ border-top:1px solid #ddd;
 </div>
 </div>
 
+<!-- SEARCH -->
 <div class="searchBox">
 <input id="search" placeholder="Procurar produto...">
 </div>
 
+<!-- BANNER -->
 <div class="banner">
 🔥 Promoções hoje • Entrega rápida 🚀
 </div>
@@ -152,9 +165,11 @@ border-top:1px solid #ddd;
 <div onclick="location.href='cart.html'">🛒<br>Carrinho</div>
 </div>
 
+<div id="toast" class="toast"></div>
+
 <script type="module">
 
-import { db, auth } from "./firebase.js"
+import { db,auth } from "./firebase.js"
 import { collection, getDocs, doc, getDoc } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 import { onAuthStateChanged } 
@@ -162,7 +177,15 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 let products=[]
 
-/* 🔥 CART COUNT */
+/* TOAST */
+function showToast(msg){
+const t=document.getElementById("toast")
+t.innerText=msg
+t.style.display="block"
+setTimeout(()=>t.style.display="none",2000)
+}
+
+/* CART COUNT */
 function updateCartCount(){
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
 let total=0
@@ -171,8 +194,8 @@ document.getElementById("cartCount").innerText = total
 }
 updateCartCount()
 
-/* 🔥 ROLE SYSTEM FIX */
-const accountButton = document.getElementById("accountButton")
+/* ACCOUNT BUTTON */
+const accountButton=document.getElementById("accountButton")
 
 onAuthStateChanged(auth, async (user)=>{
 
@@ -181,8 +204,6 @@ accountButton.innerText="Login"
 accountButton.onclick=()=>location.href="login.html"
 return
 }
-
-try{
 
 const snap = await getDoc(doc(db,"users",user.uid))
 
@@ -194,47 +215,42 @@ return
 
 const data = snap.data()
 
-/* ✅ ADMIN */
 if(data.role === "admin" || data.role === "superadmin"){
 accountButton.innerText="Admin 👑"
 accountButton.onclick=()=>location.href="admin-dashboard.html"
 }
-
-/* ✅ MERCHANT */
 else if(data.role === "merchant"){
 accountButton.innerText="Minha Loja 🏪"
 accountButton.onclick=()=>location.href="merchant-dashboard.html"
 }
-
-/* ✅ CLIENT */
 else{
 accountButton.innerText="Conta"
 accountButton.onclick=()=>location.href="settings.html"
 }
 
-}catch(e){
-console.error(e)
-accountButton.innerText="Conta"
-}
-
 })
 
-/* PRODUCT HTML */
+/* PRODUCT UI */
 function productHTML(p){
 
 const img = p.images?.[0] || "https://via.placeholder.com/300"
+const desc = (p.description || "").split(" ").slice(0,5).join(" ")
 
 return `
 <div class="product" onclick="openProduct('${p.id}')">
 
-<div onclick="event.stopPropagation();addToCart('${p.id}')" class="cartBtn">🛒</div>
+<div style="position:relative">
 
 <img src="${img}">
+
+<div onclick="event.stopPropagation();addToCart('${p.id}')" class="cartBtn">🛒</div>
+
+</div>
 
 <div class="info">
 <div class="name">${p.name}</div>
 <div class="price">${p.price} Kz</div>
-<div class="desc">${(p.description || "").split("\n")[0].slice(0,40)}</div>
+<div class="desc">${desc}</div>
 </div>
 
 </div>
@@ -244,13 +260,13 @@ return `
 /* LOAD PRODUCTS */
 async function loadProducts(){
 
-const snap = await getDocs(collection(db,"products"))
+const snap=await getDocs(collection(db,"products"))
 
 products=[]
 
 snap.forEach(docSnap=>{
-let data = docSnap.data()
-data.id = docSnap.id
+const data=docSnap.data()
+data.id=docSnap.id
 products.push(data)
 })
 
@@ -269,25 +285,24 @@ document.getElementById("search").addEventListener("input",(e)=>{
 let val = e.target.value.toLowerCase()
 
 let filtered = products.filter(p =>
-(p.name || "").toLowerCase().includes(val)
+(p.name||"").toLowerCase().includes(val)
 )
 
 renderProducts(filtered)
 })
 
 /* OPEN PRODUCT */
-window.openProduct = function(id){
+window.openProduct=function(id){
 localStorage.setItem("selectedProduct", id)
 location.href="product.html"
 }
 
-/* 🔥 FIX ADD TO CART (IMPORTANT) */
-window.addToCart = function(id){
+/* ADD TO CART 🔥 FIX MERCHANT */
+window.addToCart=function(id){
 
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
 
 const product = products.find(p => p.id === id)
-
 if(!product) return
 
 const exist = cart.find(p => p.id === id)
@@ -296,20 +311,18 @@ if(exist){
 exist.qty++
 }else{
 cart.push({
-id: product.id,
-name: product.name,
-price: Number(product.price) || 0,
-image: product.images?.[0] || "",
-qty: 1,
-
-/* 🔥 CRITICAL FIX */
-merchantId: product.merchantId || ""
+id:product.id,
+name:product.name,
+price:Number(product.price) || 0,
+image:product.images?.[0] || "",
+qty:1,
+merchantId: product.merchantId || "" /* 🔥 FIX */
 })
 }
 
 localStorage.setItem("cart", JSON.stringify(cart))
-
 updateCartCount()
+showToast("Adicionado 🛒")
 
 }
 
