@@ -17,6 +17,49 @@ font-size:20px;
 font-weight:bold;
 }
 
+/* 🔴 BADGE */
+.notifBell{
+position:fixed;
+top:15px;
+right:15px;
+font-size:22px;
+z-index:2000;
+}
+
+.notifBadge{
+position:absolute;
+top:-5px;
+right:-10px;
+background:red;
+color:white;
+border-radius:50%;
+padding:2px 6px;
+font-size:11px;
+display:none;
+}
+
+/* 🔥 TOAST UBER */
+.toast{
+position:fixed;
+top:20px;
+left:50%;
+transform:translateX(-50%) translateY(-100px);
+background:#1aa34a;
+color:white;
+padding:12px 20px;
+border-radius:25px;
+font-weight:bold;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
+transition:0.4s;
+z-index:3000;
+opacity:0;
+}
+
+.toast.show{
+transform:translateX(-50%) translateY(0);
+opacity:1;
+}
+
 /* CONTAINER */
 .container{
 max-width:900px;
@@ -124,15 +167,22 @@ margin-top:10px;
 Dashboard PRO 🚀
 </div>
 
+<!-- 🔔 NOTIF -->
+<div class="notifBell" onclick="markAllSeen()">
+🔔
+<span id="notifBadge" class="notifBadge">0</span>
+</div>
+
+<!-- 🔥 TOAST -->
+<div id="toast" class="toast">Nova encomenda 🛒</div>
+
 <div class="container">
 
-<!-- ACTIONS -->
 <div class="actions">
 <button class="btnShop" onclick="openShop()">Ver minha loja 🏪</button>
 <button class="btnAdd" onclick="addProduct()">+ Publicar produto</button>
 </div>
 
-<!-- STATS -->
 <div class="card">
 <h3>Resumo</h3>
 
@@ -149,10 +199,8 @@ Total<br><span id="totalSales">0</span> Kz
 Pedidos<br><span id="totalOrders">0</span>
 </div>
 </div>
-
 </div>
 
-<!-- ORDERS -->
 <div class="card">
 
 <div class="filter">
@@ -170,213 +218,195 @@ Pedidos<br><span id="totalOrders">0</span>
 </div>
 
 <!-- 🔊 SOUND -->
-<audio id="notifSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
-
-<!-- ✅ SUPPORT BUTTON -->
-<button onclick="contactSupport()" 
-style="position:fixed;bottom:80px;right:15px;
-background:#25D366;color:white;
-border:none;padding:12px;
-border-radius:50%;font-size:20px;z-index:2000;">
-💬
-</button>
+<audio id="notifSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
 
 <script type="module">
 
 import { db, auth } from "./firebase.js"
 
 import {
-collection,
-query,
-where,
-onSnapshot,
-updateDoc,
-deleteDoc,
-doc
+collection,query,where,onSnapshot,updateDoc,deleteDoc,doc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
-import {
-onAuthStateChanged,
-signOut
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
+import { onAuthStateChanged,signOut }
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
-let currentUser = null
-let filter = "all"
-let firstLoad = true
+let currentUser=null
+let filter="all"
+let firstLoad=true
+
+const toast=document.getElementById("toast")
+const sound=document.getElementById("notifSound")
+const badge=document.getElementById("notifBadge")
+
+/* 🔥 TOAST FUNCTION */
+function showToast(msg){
+toast.innerText=msg
+toast.classList.add("show")
+
+setTimeout(()=>{
+toast.classList.remove("show")
+},3000)
+}
+
+/* 🔊 VIBRATION */
+function vibrate(){
+if(navigator.vibrate){
+navigator.vibrate([200,100,200])
+}
+}
 
 /* AUTH */
-onAuthStateChanged(auth, (user)=>{
+onAuthStateChanged(auth,(user)=>{
 
 if(!user){
 location.href="merchant-register.html"
 return
 }
 
-currentUser = user
+currentUser=user
 listenOrders()
 
 })
 
-/* NAVIGATION */
-window.openShop = function(){
-location.href = "merchant-shop.html?id=" + currentUser.uid
-}
-
-window.addProduct = function(){
-location.href = "add-product.html"
-}
-
 /* REALTIME */
 function listenOrders(){
 
-const q = query(
+const q=query(
 collection(db,"orders"),
 where("merchantId","==",currentUser.uid)
 )
 
-onSnapshot(q, (snapshot)=>{
+onSnapshot(q,(snapshot)=>{
 
 let html=""
 let totalSales=0
 let todaySales=0
 let totalOrders=0
+let unseen=0
 
-let productStats = {}
-
-const today = new Date().toDateString()
+const today=new Date().toDateString()
 
 snapshot.forEach(docSnap=>{
 
-const o = docSnap.data()
-const id = docSnap.id
+const o=docSnap.data()
+const id=docSnap.id
 
-if(filter !== "all" && o.status !== filter) return
+if(!o.seen) unseen++
+
+if(filter!=="all" && o.status!==filter) return
 
 totalOrders++
-totalSales += o.price * o.qty
+totalSales+=o.price*o.qty
 
-if(new Date(o.date).toDateString() === today){
-todaySales += o.price * o.qty
+if(new Date(o.date).toDateString()===today){
+todaySales+=o.price*o.qty
 }
 
-if(!productStats[o.productName]){
-productStats[o.productName] = 0
-}
-productStats[o.productName] += o.qty
-
-html += `
+html+=`
 <div class="order">
-
 <b>${o.productName}</b><br>
 ${o.qty} x ${o.price} Kz<br>
-
 👤 ${o.clientName || ""}<br>
 📞 ${o.clientPhone || ""}<br>
 📍 ${o.clientAddress || ""}<br>
-
 Status: ${o.status}<br>
 
-<button class="btnWhats" onclick="contactClient('${o.clientPhone}')">
-WhatsApp
-</button>
-
-<button class="btnDone" onclick="markDone('${id}')">
-Concluir
-</button>
-
-<button class="btnDelete" onclick="deleteOrder('${id}')">
-Supprimer
-</button>
-
+<button class="btnWhats" onclick="contactClient('${o.clientPhone}')">WhatsApp</button>
+<button class="btnDone" onclick="markDone('${id}')">Concluir</button>
+<button class="btnDelete" onclick="deleteOrder('${id}')">Supprimer</button>
 </div>
 `
 })
 
-document.getElementById("ordersList").innerHTML = html
-document.getElementById("totalSales").innerText = totalSales
-document.getElementById("todaySales").innerText = todaySales
-document.getElementById("totalOrders").innerText = totalOrders
+ordersList.innerHTML=html
+totalSalesEl.innerText=totalSales
+todaySalesEl.innerText=todaySales
+totalOrdersEl.innerText=totalOrders
 
-if(!firstLoad && snapshot.docChanges().length > 0){
-alert("Nova encomenda 🛒")
-document.getElementById("notifSound").play()
+/* 🔴 BADGE */
+if(unseen>0){
+badge.style.display="block"
+badge.innerText=unseen
+}else{
+badge.style.display="none"
 }
 
-firstLoad = false
+/* 🔥 NOTIFICATION PRO */
+if(!firstLoad){
+
+snapshot.docChanges().forEach(change=>{
+
+if(change.type==="added"){
+
+const data=change.doc.data()
+
+if(!data.seen){
+
+showToast("🛒 Nova encomenda!")
+sound.play()
+vibrate()
+
+}
+
+}
 
 })
 
 }
 
-/* FILTER */
-window.setFilter = function(f){
+firstLoad=false
 
-filter = f
+})
 
-document.getElementById("allBtn").classList.remove("active")
-document.getElementById("pendingBtn").classList.remove("active")
-document.getElementById("doneBtn").classList.remove("active")
+}
 
-if(f==="all") document.getElementById("allBtn").classList.add("active")
-if(f==="pendente") document.getElementById("pendingBtn").classList.add("active")
-if(f==="concluido") document.getElementById("doneBtn").classList.add("active")
+/* MARK SEEN */
+window.markAllSeen=async function(){
 
+const q=query(
+collection(db,"orders"),
+where("merchantId","==",currentUser.uid)
+)
+
+onSnapshot(q,(snapshot)=>{
+snapshot.forEach(async docSnap=>{
+if(!docSnap.data().seen){
+await updateDoc(doc(db,"orders",docSnap.id),{seen:true})
+}
+})
+})
+
+}
+
+/* OTHER FUNCTIONS */
+window.setFilter=function(f){
+filter=f
 listenOrders()
-
 }
 
-/* WHATSAPP CLIENT */
-window.contactClient = function(phone){
-
-if(!phone){
-alert("Sem número ❌")
-return
+window.contactClient=function(phone){
+if(!phone) return
+window.open("https://wa.me/"+phone,"_blank")
 }
 
-let msg="Olá 👋 sobre o seu pedido..."
-
-window.open("https://wa.me/"+phone+"?text="+encodeURIComponent(msg),"_blank")
-
+window.markDone=async id=>{
+await updateDoc(doc(db,"orders",id),{status:"concluido"})
 }
 
-/* DONE */
-window.markDone = async function(id){
-
-await updateDoc(doc(db,"orders",id),{
-status:"concluido"
-})
-
-}
-
-/* DELETE */
-window.deleteOrder = async function(id){
-
+window.deleteOrder=async id=>{
 if(confirm("Apagar pedido?")){
 await deleteDoc(doc(db,"orders",id))
 }
-
 }
 
-/* LOGOUT */
-window.logout = function(){
-
+window.logout=function(){
 signOut(auth)
 location.href="index.html"
-
 }
 
-/* ✅ SUPPORT */
-window.contactSupport = function(){
-
-let message = "Olá 👋 sou vendedor e preciso de suporte"
-
-let phone = "244922623238" // 🔥 MET TON NUMÉRO
-
-let url = "https://wa.me/" + phone + "?text=" + encodeURIComponent(message)
-
-window.open(url, "_blank")
-
-}
+window.openShop=()=>location.href="merchant-shop.html?id="+currentUser.uid
+window.addProduct=()=>location.href="add-product.html"
 
 </script>
 
