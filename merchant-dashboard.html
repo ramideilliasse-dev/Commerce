@@ -38,7 +38,7 @@ font-size:11px;
 display:none;
 }
 
-/* 🔥 TOAST UBER */
+/* 🔥 TOAST */
 .toast{
 position:fixed;
 top:20px;
@@ -60,120 +60,35 @@ transform:translateX(-50%) translateY(0);
 opacity:1;
 }
 
-/* CONTAINER */
-.container{
-max-width:900px;
-margin:auto;
-padding:15px;
-}
-
-/* CARD */
-.card{
-background:white;
-padding:15px;
-border-radius:10px;
-margin-bottom:15px;
-box-shadow:0 3px 8px rgba(0,0,0,0.1);
-}
-
-/* ACTIONS */
-.actions{
-display:flex;
-gap:10px;
-margin-bottom:15px;
-}
-
-.actions button{
-flex:1;
-padding:12px;
-border:none;
-border-radius:10px;
-font-weight:bold;
-cursor:pointer;
-}
-
+/* UI */
+.container{max-width:900px;margin:auto;padding:15px;}
+.card{background:white;padding:15px;border-radius:10px;margin-bottom:15px;box-shadow:0 3px 8px rgba(0,0,0,0.1);}
+.actions{display:flex;gap:10px;margin-bottom:15px;}
+.actions button{flex:1;padding:12px;border:none;border-radius:10px;font-weight:bold;cursor:pointer;}
 .btnShop{background:black;color:white;}
 .btnAdd{background:#1aa34a;color:white;}
-
-/* STATS */
-.stats{
-display:flex;
-gap:10px;
-}
-
-.stat{
-flex:1;
-background:#1aa34a;
-color:white;
-padding:12px;
-border-radius:10px;
-text-align:center;
-font-weight:bold;
-}
-
-/* FILTER */
-.filter{
-display:flex;
-gap:10px;
-margin-bottom:10px;
-}
-
-.filter button{
-flex:1;
-padding:10px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-}
-
-.active{
-background:#ff6a00;
-color:white;
-}
-
-/* ORDER */
-.order{
-border-bottom:1px solid #eee;
-padding:10px 0;
-}
-
-button{
-margin-top:5px;
-padding:6px 10px;
-border:none;
-border-radius:6px;
-cursor:pointer;
-}
-
+.stats{display:flex;gap:10px;}
+.stat{flex:1;background:#1aa34a;color:white;padding:12px;border-radius:10px;text-align:center;font-weight:bold;}
+.filter{display:flex;gap:10px;margin-bottom:10px;}
+.filter button{flex:1;padding:10px;border:none;border-radius:8px;cursor:pointer;}
+.active{background:#ff6a00;color:white;}
+.order{border-bottom:1px solid #eee;padding:10px 0;}
+button{margin-top:5px;padding:6px 10px;border:none;border-radius:6px;cursor:pointer;}
 .btnWhats{background:#25D366;color:white;}
 .btnDone{background:#1aa34a;color:white;}
 .btnDelete{background:red;color:white;}
-
-.btnLogout{
-width:100%;
-padding:12px;
-background:black;
-color:white;
-border:none;
-border-radius:10px;
-margin-top:10px;
-}
+.btnLogout{width:100%;padding:12px;background:black;color:white;border:none;border-radius:10px;margin-top:10px;}
 </style>
 </head>
 
 <body>
 
-<div class="header">
-Dashboard PRO 🚀
-</div>
+<div class="header">Dashboard PRO 🚀</div>
 
-<!-- 🔔 NOTIF -->
 <div class="notifBell" onclick="markAllSeen()">
-🔔
-<span id="notifBadge" class="notifBadge">0</span>
+🔔 <span id="notifBadge" class="notifBadge">0</span>
 </div>
 
-<!-- 🔥 TOAST -->
 <div id="toast" class="toast">Nova encomenda 🛒</div>
 
 <div class="container">
@@ -185,71 +100,74 @@ Dashboard PRO 🚀
 
 <div class="card">
 <h3>Resumo</h3>
-
 <div class="stats">
-<div class="stat">
-Hoje<br><span id="todaySales">0</span> Kz
-</div>
-
-<div class="stat">
-Total<br><span id="totalSales">0</span> Kz
-</div>
-
-<div class="stat">
-Pedidos<br><span id="totalOrders">0</span>
-</div>
+<div class="stat">Hoje<br><span id="todaySales">0</span> Kz</div>
+<div class="stat">Total<br><span id="totalSales">0</span> Kz</div>
+<div class="stat">Pedidos<br><span id="totalOrders">0</span></div>
 </div>
 </div>
 
 <div class="card">
-
 <div class="filter">
 <button id="allBtn" class="active" onclick="setFilter('all')">Todos</button>
 <button id="pendingBtn" onclick="setFilter('pendente')">Pendentes</button>
 <button id="doneBtn" onclick="setFilter('concluido')">Concluídos</button>
 </div>
-
 <div id="ordersList"></div>
-
 </div>
 
 <button class="btnLogout" onclick="logout()">Sair</button>
 
 </div>
 
-<!-- 🔊 SOUND -->
 <audio id="notifSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
 
 <script type="module">
 
 import { db, auth } from "./firebase.js"
-
-import {
-collection,query,where,onSnapshot,updateDoc,deleteDoc,doc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-
+import { collection,query,where,onSnapshot,updateDoc,deleteDoc,doc }
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 import { onAuthStateChanged,signOut }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 let currentUser=null
 let filter="all"
 let firstLoad=true
+let unsubscribe=null
 
 const toast=document.getElementById("toast")
 const sound=document.getElementById("notifSound")
 const badge=document.getElementById("notifBadge")
 
-/* 🔥 TOAST FUNCTION */
+const totalSalesEl=document.getElementById("totalSales")
+const todaySalesEl=document.getElementById("todaySales")
+const totalOrdersEl=document.getElementById("totalOrders")
+
+/* 🔓 ACTIVATE SOUND */
+let soundEnabled=false
+document.body.addEventListener("click", ()=>{
+if(!soundEnabled){
+sound.play().then(()=>{
+sound.pause()
+sound.currentTime=0
+soundEnabled=true
+}).catch(()=>{})
+}
+})
+
+function playSound(){
+sound.currentTime=0
+sound.play().catch(()=>{})
+}
+
+/* TOAST */
 function showToast(msg){
 toast.innerText=msg
 toast.classList.add("show")
-
-setTimeout(()=>{
-toast.classList.remove("show")
-},3000)
+setTimeout(()=>toast.classList.remove("show"),3000)
 }
 
-/* 🔊 VIBRATION */
+/* VIBRATION */
 function vibrate(){
 if(navigator.vibrate){
 navigator.vibrate([200,100,200])
@@ -258,26 +176,25 @@ navigator.vibrate([200,100,200])
 
 /* AUTH */
 onAuthStateChanged(auth,(user)=>{
-
 if(!user){
 location.href="merchant-register.html"
 return
 }
-
 currentUser=user
 listenOrders()
-
 })
 
 /* REALTIME */
 function listenOrders(){
+
+if(unsubscribe) unsubscribe()
 
 const q=query(
 collection(db,"orders"),
 where("merchantId","==",currentUser.uid)
 )
 
-onSnapshot(q,(snapshot)=>{
+unsubscribe = onSnapshot(q,(snapshot)=>{
 
 let html=""
 let totalSales=0
@@ -324,7 +241,7 @@ totalSalesEl.innerText=totalSales
 todaySalesEl.innerText=todaySales
 totalOrdersEl.innerText=totalOrders
 
-/* 🔴 BADGE */
+/* BADGE */
 if(unseen>0){
 badge.style.display="block"
 badge.innerText=unseen
@@ -332,27 +249,18 @@ badge.innerText=unseen
 badge.style.display="none"
 }
 
-/* 🔥 NOTIFICATION PRO */
+/* 🔥 NOTIFICATION */
 if(!firstLoad){
-
 snapshot.docChanges().forEach(change=>{
-
 if(change.type==="added"){
-
 const data=change.doc.data()
-
 if(!data.seen){
-
 showToast("🛒 Nova encomenda!")
-sound.play()
+playSound()
 vibrate()
-
 }
-
 }
-
 })
-
 }
 
 firstLoad=false
@@ -361,46 +269,35 @@ firstLoad=false
 
 }
 
-/* MARK SEEN */
-window.markAllSeen=async function(){
-
-const q=query(
-collection(db,"orders"),
-where("merchantId","==",currentUser.uid)
-)
-
-onSnapshot(q,(snapshot)=>{
-snapshot.forEach(async docSnap=>{
-if(!docSnap.data().seen){
-await updateDoc(doc(db,"orders",docSnap.id),{seen:true})
-}
-})
-})
-
-}
-
-/* OTHER FUNCTIONS */
-window.setFilter=function(f){
+/* ACTIONS */
+window.setFilter=f=>{
 filter=f
 listenOrders()
 }
 
-window.contactClient=function(phone){
-if(!phone) return
-window.open("https://wa.me/"+phone,"_blank")
+window.markAllSeen=async ()=>{
+const q=query(collection(db,"orders"),where("merchantId","==",currentUser.uid))
+onSnapshot(q,(snapshot)=>{
+snapshot.forEach(async d=>{
+if(!d.data().seen){
+await updateDoc(doc(db,"orders",d.id),{seen:true})
+}
+})
+})
 }
 
-window.markDone=async id=>{
-await updateDoc(doc(db,"orders",id),{status:"concluido"})
+window.contactClient=phone=>{
+if(phone) window.open("https://wa.me/"+phone,"_blank")
 }
 
-window.deleteOrder=async id=>{
+window.markDone=id=>updateDoc(doc(db,"orders",id),{status:"concluido"})
+window.deleteOrder=id=>{
 if(confirm("Apagar pedido?")){
-await deleteDoc(doc(db,"orders",id))
+deleteDoc(doc(db,"orders",id))
 }
 }
 
-window.logout=function(){
+window.logout=()=>{
 signOut(auth)
 location.href="index.html"
 }
