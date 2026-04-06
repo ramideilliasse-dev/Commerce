@@ -63,6 +63,7 @@ padding:10px;text-align:center;font-weight:bold;
 column-count:2;
 column-gap:10px;
 padding:10px;
+padding-bottom:90px;
 }
 
 .product{
@@ -172,6 +173,7 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 let products=[]
 
+/* TOAST */
 function showToast(msg){
 const t=document.getElementById("toast")
 t.innerText=msg
@@ -179,6 +181,7 @@ t.style.display="block"
 setTimeout(()=>t.style.display="none",2000)
 }
 
+/* CART COUNT */
 function updateCartCount(){
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
 let total=0
@@ -187,53 +190,53 @@ document.getElementById("cartCount").innerText = total
 }
 updateCartCount()
 
+/* 🔥 ACCOUNT BUTTON FINAL */
 const accountButton=document.getElementById("accountButton")
 
-/* 🔥 DEBUG VERSION */
 onAuthStateChanged(auth, async (user)=>{
 
 if(!user){
-alert("❌ Utilisateur NON connecté")
 accountButton.innerText="Login"
 accountButton.onclick=()=>location.href="login.html"
 return
 }
 
-/* 🔥 UID */
-alert("✅ UID connecté:\n" + user.uid)
-
 try{
 
 const snap = await getDoc(doc(db,"users",user.uid))
 
-if(!snap.exists()){
-alert("❌ Document users NON trouvé avec cet UID")
-accountButton.innerText="Conta"
-accountButton.onclick=()=>location.href="settings.html"
-return
+let role = "client"
+
+if(snap.exists()){
+role = snap.data().role || "client"
 }
 
-/* 🔥 ROLE */
-const data = snap.data()
-alert("✅ ROLE trouvé:\n" + data.role)
-
-let role = data.role || "client"
-
+/* 🔥 ADMIN */
 if(role === "admin" || role === "superadmin"){
 accountButton.innerText="Admin 👑"
-accountButton.onclick=()=>location.href="admin-dashboard.html"
+accountButton.onclick=()=>{
+window.location.href="admin-dashboard.html"
 }
+}
+
+/* 🔥 MERCHANT */
 else if(role === "merchant"){
 accountButton.innerText="Minha Loja 🏪"
-accountButton.onclick=()=>location.href="merchant-dashboard.html"
+accountButton.onclick=()=>{
+window.location.href="merchant-dashboard.html"
 }
+}
+
+/* 🔥 CLIENT */
 else{
 accountButton.innerText="Conta"
-accountButton.onclick=()=>location.href="settings.html"
+accountButton.onclick=()=>{
+window.location.href="settings.html"
+}
 }
 
 }catch(e){
-alert("❌ ERREUR:\n" + e.message)
+console.error(e)
 accountButton.innerText="Conta"
 accountButton.onclick=()=>location.href="settings.html"
 }
@@ -242,55 +245,73 @@ accountButton.onclick=()=>location.href="settings.html"
 
 /* PRODUCTS */
 function productHTML(p){
+
 const img = p.images?.[0] || "https://via.placeholder.com/300"
 const desc = (p.description || "").split(" ").slice(0,5).join(" ")
 
 return `
 <div class="product" onclick="openProduct('${p.id}')">
+
 <div style="position:relative">
 <img src="${img}">
 <div onclick="event.stopPropagation();addToCart('${p.id}')" class="cartBtn">🛒</div>
 </div>
+
 <div class="info">
 <div class="name">${p.name}</div>
 <div class="price">${p.price} Kz</div>
 <div class="desc">${desc}</div>
 </div>
+
 </div>
 `
 }
 
+/* LOAD PRODUCTS */
 async function loadProducts(){
+
 const snap=await getDocs(collection(db,"products"))
+
 products=[]
+
 snap.forEach(docSnap=>{
 const data=docSnap.data()
 data.id=docSnap.id
 products.push(data)
 })
+
 renderProducts(products)
+
 }
 
+/* RENDER */
 function renderProducts(list){
 document.getElementById("productList").innerHTML =
 list.map(p=>productHTML(p)).join("")
 }
 
+/* SEARCH */
 document.getElementById("search").addEventListener("input",(e)=>{
 let val = e.target.value.toLowerCase()
+
 let filtered = products.filter(p =>
 (p.name||"").toLowerCase().includes(val)
 )
+
 renderProducts(filtered)
 })
 
+/* OPEN PRODUCT */
 window.openProduct=function(id){
 localStorage.setItem("selectedProduct", id)
 location.href="product.html"
 }
 
+/* ADD TO CART */
 window.addToCart=function(id){
+
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
+
 const product = products.find(p => p.id === id)
 if(!product) return
 
@@ -312,6 +333,7 @@ merchantId: product.merchantId || ""
 localStorage.setItem("cart", JSON.stringify(cart))
 updateCartCount()
 showToast("Adicionado 🛒")
+
 }
 
 loadProducts()
