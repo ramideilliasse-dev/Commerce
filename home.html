@@ -194,7 +194,7 @@ document.getElementById("cartCount").innerText = total
 }
 updateCartCount()
 
-/* ACCOUNT BUTTON */
+/* 🔥 ACCOUNT BUTTON FIX */
 const accountButton=document.getElementById("accountButton")
 
 onAuthStateChanged(auth, async (user)=>{
@@ -205,25 +205,40 @@ accountButton.onclick=()=>location.href="login.html"
 return
 }
 
+try{
+
 const snap = await getDoc(doc(db,"users",user.uid))
 
-if(!snap.exists()){
-accountButton.innerText="Conta"
-accountButton.onclick=()=>location.href="settings.html"
-return
+/* 🔥 FALLBACK ADMIN SI BUG FIRESTORE */
+let role = "client"
+
+if(snap.exists()){
+role = snap.data().role || "client"
+}else{
+/* ⚠️ IMPORTANT: fallback si doc supprimé */
+console.warn("User doc introuvable ⚠️")
 }
 
-const data = snap.data()
+/* 🔥 FORCE ADMIN SI TU VEUX (OPTIONNEL) */
+// if(user.email === "TON_EMAIL_ADMIN@gmail.com"){
+// role = "superadmin"
+// }
 
-if(data.role === "admin" || data.role === "superadmin"){
+if(role === "admin" || role === "superadmin"){
 accountButton.innerText="Admin 👑"
 accountButton.onclick=()=>location.href="admin-dashboard.html"
 }
-else if(data.role === "merchant"){
+else if(role === "merchant"){
 accountButton.innerText="Minha Loja 🏪"
 accountButton.onclick=()=>location.href="merchant-dashboard.html"
 }
 else{
+accountButton.innerText="Conta"
+accountButton.onclick=()=>location.href="settings.html"
+}
+
+}catch(e){
+console.error(e)
 accountButton.innerText="Conta"
 accountButton.onclick=()=>location.href="settings.html"
 }
@@ -297,7 +312,7 @@ localStorage.setItem("selectedProduct", id)
 location.href="product.html"
 }
 
-/* ADD TO CART 🔥 FIX MERCHANT */
+/* ADD TO CART 🔥 */
 window.addToCart=function(id){
 
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
@@ -316,7 +331,7 @@ name:product.name,
 price:Number(product.price) || 0,
 image:product.images?.[0] || "",
 qty:1,
-merchantId: product.merchantId || "" /* 🔥 FIX */
+merchantId: product.merchantId || "" /* IMPORTANT */
 })
 }
 
