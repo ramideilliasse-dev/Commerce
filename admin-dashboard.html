@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
@@ -109,7 +109,6 @@ margin-right:5px;
 </div>
 
 <div class="filter" id="filters"></div>
-
 <div class="container" id="content"></div>
 
 <script type="module">
@@ -120,40 +119,59 @@ import {
 collection,
 getDocs,
 doc,
+getDoc,
 updateDoc,
 query,
 where
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
+import { onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 let currentUserData=null
 let allUsers=[]
 
-/* 🔐 AUTH */
+/* 🔥 AUTH DEBUG FIX */
 onAuthStateChanged(auth, async (user)=>{
 
 if(!user){
+alert("❌ Utilisateur NON connecté → redirection login")
+location.href="login.html"
+return
+}
+
+console.log("✅ Connecté:", user.uid)
+
+try{
+
+/* 🔥 LIRE DIRECT USER DOC */
+const snap = await getDoc(doc(db,"users",user.uid))
+
+if(!snap.exists()){
+alert("❌ Document user introuvable")
 location.href="index.html"
 return
 }
 
-const snap = await getDocs(collection(db,"users"))
+currentUserData = snap.data()
 
-snap.forEach(d=>{
-if(d.id===user.uid){
-currentUserData=d.data()
-}
-})
+console.log("ROLE:", currentUserData.role)
 
-if(!currentUserData || (currentUserData.role!=="admin" && currentUserData.role!=="superadmin")){
-alert("Acesso negado ❌")
+/* 🔥 CHECK ROLE */
+if(currentUserData.role !== "admin" && currentUserData.role !== "superadmin"){
+alert("⛔ Accès refusé")
 location.href="index.html"
 return
 }
 
+/* ✅ OK → LOAD */
 await loadStats()
 loadUsers()
+
+}catch(e){
+alert("❌ ERREUR: " + e.message)
+location.href="index.html"
+}
 
 })
 
@@ -243,31 +261,13 @@ if(filter==="blocked") return u.blocked===true
 
 users.forEach(u=>{
 
-let statusBadge = ""
-
-if(u.blocked){
-statusBadge = `<span class="badge red">Bloqué ❌</span>`
-}else if(u.approved){
-statusBadge = `<span class="badge green">Aprovado</span>`
-}else{
-statusBadge = `<span class="badge orange">Pendente</span>`
-}
-
 html+=`
 <div class="card">
 <b>${u.email}</b><br>
 Role: ${u.role}<br>
-${statusBadge}
-
-<br>
 
 <button class="approve" onclick="approve('${u.id}')">Aprovar</button>
 <button class="reject" onclick="reject('${u.id}')">Recusar</button>
-
-${u.blocked 
-? `<button class="unblock" onclick="unblockUser('${u.id}')">Desbloquear</button>`
-: `<button class="block" onclick="blockUser('${u.id}')">Bloquear</button>`
-}
 
 ${currentUserData.role==="superadmin" 
 ? `<button class="admin" onclick="makeAdmin('${u.id}')">Admin</button>` 
@@ -289,24 +289,6 @@ loadUsers()
 
 window.reject = async function(id){
 await updateDoc(doc(db,"users",id),{role:"client",approved:false})
-loadUsers()
-}
-
-/* 🔥 BLOCK USER */
-window.blockUser = async function(id){
-await updateDoc(doc(db,"users",id),{
-blocked:true
-})
-alert("Utilisateur bloqué ❌")
-loadUsers()
-}
-
-/* 🔥 UNBLOCK USER */
-window.unblockUser = async function(id){
-await updateDoc(doc(db,"users",id),{
-blocked:false
-})
-alert("Utilisateur débloqué ✅")
 loadUsers()
 }
 
