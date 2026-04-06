@@ -134,39 +134,57 @@ let allUsers=[]
 /* 🔥 AUTH DEBUG FIX */
 onAuthStateChanged(auth, async (user)=>{
 
+/* 🔥 FALLBACK SI FIREBASE BUG */
 if(!user){
-alert("❌ Utilisateur NON connecté → redirection login")
+
+let savedUID = localStorage.getItem("userUID")
+
+if(!savedUID){
+alert("❌ Session perdue → reconnecte-toi")
 location.href="login.html"
 return
 }
 
-console.log("✅ Connecté:", user.uid)
+console.warn("⚠️ Firebase perdu → fallback localStorage")
 
-try{
-
-/* 🔥 LIRE DIRECT USER DOC */
-const snap = await getDoc(doc(db,"users",user.uid))
+/* 🔥 RECUP USER MANUEL */
+const snap = await getDoc(doc(db,"users",savedUID))
 
 if(!snap.exists()){
-alert("❌ Document user introuvable")
-location.href="index.html"
+alert("❌ Utilisateur introuvable")
+location.href="login.html"
 return
 }
 
 currentUserData = snap.data()
 
-console.log("ROLE:", currentUserData.role)
+}else{
 
-/* 🔥 CHECK ROLE */
+/* NORMAL */
+const snap = await getDoc(doc(db,"users",user.uid))
+
+if(!snap.exists()){
+alert("❌ User doc introuvable")
+location.href="login.html"
+return
+}
+
+currentUserData = snap.data()
+
+}
+
+/* 🔐 CHECK ROLE */
 if(currentUserData.role !== "admin" && currentUserData.role !== "superadmin"){
 alert("⛔ Accès refusé")
 location.href="index.html"
 return
 }
 
-/* ✅ OK → LOAD */
+/* OK */
 await loadStats()
 loadUsers()
+
+})
 
 }catch(e){
 alert("❌ ERREUR: " + e.message)
