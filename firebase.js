@@ -75,3 +75,12 @@ console.error("❌ Erreur création user:", e);
 
 /* EXPORT */
 export { auth, db };
+onAuthStateChanged(auth, (user)=>{
+
+if(user){
+localStorage.setItem("userUID", user.uid)
+}else{
+localStorage.removeItem("userUID")
+}
+
+})
