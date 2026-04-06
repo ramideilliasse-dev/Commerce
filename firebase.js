@@ -1,14 +1,22 @@
- // firebase.js
+// firebase.js
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
-import { getAuth, onAuthStateChanged } 
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { 
+  getAuth, 
+  onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-import { getFirestore, doc, setDoc, getDoc } 
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { 
+  getFirestore, 
+  doc, 
+  setDoc, 
+  getDoc 
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-/* ✅ CONFIG CORRECTE */
+/* ✅ CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
   authDomain: "angcomerce-v1.firebaseapp.com",
@@ -21,10 +29,22 @@ const firebaseConfig = {
 /* 🔥 INIT */
 const app = initializeApp(firebaseConfig);
 
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+/* 🔥 AUTH */
+const auth = getAuth(app);
 
-/* 🔥 CREATE USER (CLIENT PAR DÉFAUT) */
+/* 🔥 PERSISTENCE (TRÈS IMPORTANT) */
+setPersistence(auth, browserLocalPersistence)
+.then(()=>{
+  console.log("✅ Session persistante activée");
+})
+.catch((e)=>{
+  console.error("❌ Erreur persistence:", e);
+});
+
+/* 🔥 FIRESTORE */
+const db = getFirestore(app);
+
+/* 🔥 CREATE USER AUTO */
 onAuthStateChanged(auth, async (user)=>{
 
 if(!user) return;
@@ -39,7 +59,7 @@ if(!snap.exists()){
 
 await setDoc(ref,{
 email: user.email || "",
-role: "client", // 🔥 IMPORTANT
+role: "client", // ⚠️ défaut
 created: Date.now()
 });
 
@@ -52,3 +72,6 @@ console.error("❌ Erreur création user:", e);
 }
 
 });
+
+/* EXPORT */
+export { auth, db };
