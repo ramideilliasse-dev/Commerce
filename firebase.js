@@ -1,86 +1,53 @@
-// firebase.js
+ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-
-import { 
-  getAuth, 
-  onAuthStateChanged,
-  setPersistence,
-  browserLocalPersistence
+import {
+getAuth,
+setPersistence,
+browserLocalPersistence,
+onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-import { 
-  getFirestore, 
-  doc, 
-  setDoc, 
-  getDoc 
+import {
+getFirestore,
+doc,
+setDoc,
+getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-/* ✅ CONFIG */
+/* CONFIG */
 const firebaseConfig = {
-  apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
-  authDomain: "angcomerce-v1.firebaseapp.com",
-  projectId: "angcomerce-v1",
-  storageBucket: "angcomerce-v1.firebasestorage.app",
-  messagingSenderId: "238735890157",
-  appId: "1:238735890157:web:db3f87960db7916d7fdee4"
+apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
+authDomain: "angcomerce-v1.firebaseapp.com",
+projectId: "angcomerce-v1",
+storageBucket: "angcomerce-v1.firebasestorage.app",
+messagingSenderId: "238735890157",
+appId: "1:238735890157:web:db3f87960db7916d7fdee4"
 };
 
-/* 🔥 INIT */
+/* INIT */
 const app = initializeApp(firebaseConfig);
 
-/* 🔥 AUTH */
-const auth = getAuth(app);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
 
-/* 🔥 PERSISTENCE (TRÈS IMPORTANT) */
-setPersistence(auth, browserLocalPersistence)
-.then(()=>{
-  console.log("✅ Session persistante activée");
-})
-.catch((e)=>{
-  console.error("❌ Erreur persistence:", e);
-});
+/* 🔥 ULTRA FIX SESSION */
+await setPersistence(auth, browserLocalPersistence);
 
-/* 🔥 FIRESTORE */
-const db = getFirestore(app);
-
-/* 🔥 CREATE USER AUTO */
+/* 🔥 AUTO CREATE USER */
 onAuthStateChanged(auth, async (user)=>{
 
 if(!user) return;
 
-try{
-
 const ref = doc(db,"users",user.uid);
 const snap = await getDoc(ref);
 
-/* ✅ SI UTILISATEUR N'EXISTE PAS */
 if(!snap.exists()){
-
 await setDoc(ref,{
-email: user.email || "",
-role: "client", // ⚠️ défaut
-created: Date.now()
+email:user.email || "",
+role:"client",
+created:Date.now()
 });
-
-console.log("✅ Utilisateur créé");
-
-}
-
-}catch(e){
-console.error("❌ Erreur création user:", e);
+console.log("User créé");
 }
 
 });
-
-/* EXPORT */
-export { auth, db };
-onAuthStateChanged(auth, (user)=>{
-
-if(user){
-localStorage.setItem("userUID", user.uid)
-}else{
-localStorage.removeItem("userUID")
-}
-
-})
