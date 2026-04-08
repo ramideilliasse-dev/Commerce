@@ -109,6 +109,7 @@ margin-right:5px;
 </div>
 
 <div class="filter" id="filters"></div>
+
 <div class="container" id="content"></div>
 
 <script type="module">
@@ -118,8 +119,8 @@ import { db, auth } from "./firebase.js"
 import {
 collection,
 getDocs,
-doc,
 getDoc,
+doc,
 updateDoc,
 query,
 where
@@ -131,63 +132,46 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 let currentUserData=null
 let allUsers=[]
 
-/* 🔥 AUTH DEBUG FIX */
+/* 🔐 AUTH FIX FINAL */
 onAuthStateChanged(auth, async (user)=>{
 
-/* 🔥 FALLBACK SI FIREBASE BUG */
 if(!user){
-
-let savedUID = localStorage.getItem("userUID")
-
-if(!savedUID){
-alert("❌ Session perdue → reconnecte-toi")
+alert("Session perdue ❌ reconnecte-toi")
 location.href="login.html"
 return
 }
 
-console.warn("⚠️ Firebase perdu → fallback localStorage")
+try{
 
-/* 🔥 RECUP USER MANUEL */
-const snap = await getDoc(doc(db,"users",savedUID))
+const ref = doc(db,"users",user.uid)
+const snap = await getDoc(ref)
 
 if(!snap.exists()){
-alert("❌ Utilisateur introuvable")
-location.href="login.html"
-return
-}
-
-currentUserData = snap.data()
-
-}else{
-
-/* NORMAL */
-const snap = await getDoc(doc(db,"users",user.uid))
-
-if(!snap.exists()){
-alert("❌ User doc introuvable")
-location.href="login.html"
-return
-}
-
-currentUserData = snap.data()
-
-}
-
-/* 🔐 CHECK ROLE */
-if(currentUserData.role !== "admin" && currentUserData.role !== "superadmin"){
-alert("⛔ Accès refusé")
+alert("Compte introuvable ❌")
 location.href="index.html"
 return
 }
 
-/* OK */
+const data = snap.data()
+
+console.log("UID:", user.uid)
+console.log("ROLE:", data.role)
+
+/* 🔥 CHECK ADMIN */
+if(data.role !== "admin" && data.role !== "superadmin"){
+alert("Acesso negado ❌")
+location.href="index.html"
+return
+}
+
+currentUserData = data
+
 await loadStats()
 loadUsers()
 
-})
-
 }catch(e){
-alert("❌ ERREUR: " + e.message)
+console.error(e)
+alert("Erro admin ❌")
 location.href="index.html"
 }
 
@@ -279,13 +263,31 @@ if(filter==="blocked") return u.blocked===true
 
 users.forEach(u=>{
 
+let statusBadge = ""
+
+if(u.blocked){
+statusBadge = `<span class="badge red">Bloqué ❌</span>`
+}else if(u.approved){
+statusBadge = `<span class="badge green">Aprovado</span>`
+}else{
+statusBadge = `<span class="badge orange">Pendente</span>`
+}
+
 html+=`
 <div class="card">
 <b>${u.email}</b><br>
 Role: ${u.role}<br>
+${statusBadge}
+
+<br>
 
 <button class="approve" onclick="approve('${u.id}')">Aprovar</button>
 <button class="reject" onclick="reject('${u.id}')">Recusar</button>
+
+${u.blocked 
+? `<button class="unblock" onclick="unblockUser('${u.id}')">Desbloquear</button>`
+: `<button class="block" onclick="blockUser('${u.id}')">Bloquear</button>`
+}
 
 ${currentUserData.role==="superadmin" 
 ? `<button class="admin" onclick="makeAdmin('${u.id}')">Admin</button>` 
@@ -307,6 +309,18 @@ loadUsers()
 
 window.reject = async function(id){
 await updateDoc(doc(db,"users",id),{role:"client",approved:false})
+loadUsers()
+}
+
+window.blockUser = async function(id){
+await updateDoc(doc(db,"users",id),{blocked:true})
+alert("Utilisateur bloqué ❌")
+loadUsers()
+}
+
+window.unblockUser = async function(id){
+await updateDoc(doc(db,"users",id),{blocked:false})
+alert("Utilisateur débloqué ✅")
 loadUsers()
 }
 
