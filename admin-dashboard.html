@@ -1,4 +1,116 @@
- <script type="module">
+ <!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard PRO</title>
+
+<style>
+body{font-family:Arial;margin:0;background:#f4f4f4;}
+
+.header{
+background:black;color:white;padding:15px;text-align:center;
+font-size:20px;font-weight:bold;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+padding:10px;
+}
+
+.stat{
+background:white;
+padding:10px;
+border-radius:10px;
+text-align:center;
+font-weight:bold;
+}
+
+.tabs{display:flex;background:white;border-bottom:1px solid #ddd;}
+.tab{flex:1;text-align:center;padding:12px;cursor:pointer;font-weight:bold;}
+.active{background:#1aa34a;color:white;}
+
+.filter{
+padding:10px;
+display:flex;
+gap:5px;
+flex-wrap:wrap;
+}
+
+.filter button{
+background:#ddd;
+border:none;
+padding:6px 10px;
+border-radius:6px;
+cursor:pointer;
+}
+
+.filter .activeFilter{
+background:#1aa34a;
+color:white;
+}
+
+.container{padding:10px;}
+
+.card{
+background:white;
+padding:12px;
+margin-bottom:10px;
+border-radius:10px;
+box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
+.badge{
+padding:3px 8px;
+border-radius:6px;
+color:white;
+font-size:12px;
+}
+
+.green{background:#1aa34a;}
+.red{background:red;}
+.orange{background:orange;}
+
+button{
+padding:6px 10px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+margin-top:5px;
+margin-right:5px;
+}
+
+.approve{background:#1aa34a;color:white;}
+.reject{background:red;color:white;}
+.admin{background:black;color:white;}
+.block{background:#ff4757;color:white;}
+.unblock{background:#2ed573;color:white;}
+</style>
+</head>
+
+<body>
+
+<div class="header">Admin Dashboard 👑</div>
+
+<div class="stats">
+<div class="stat" id="totalUsers">👤 0</div>
+<div class="stat" id="totalMerchants">🏪 0</div>
+<div class="stat" id="totalOrders">🛒 0</div>
+<div class="stat" id="totalRevenue">💰 0 Kz</div>
+</div>
+
+<div class="tabs">
+<div class="tab active" onclick="showTab(event,'users')">👤 Utilisateurs</div>
+<div class="tab" onclick="showTab(event,'orders')">🛒 Commandes</div>
+<div class="tab" onclick="showTab(event,'merchants')">🏪 Vendeurs</div>
+</div>
+
+<div class="filter" id="filters"></div>
+<div class="container" id="content"></div>
+
+<script type="module">
 
 import { db, auth } from "./firebase.js"
 
@@ -29,21 +141,21 @@ return
 
 try{
 
-/* 🔥 IMPORTANT (attendre user stable) */
-await new Promise(resolve => setTimeout(resolve, 500))
+/* 🔥 petit délai pour stabiliser */
+await new Promise(r=>setTimeout(r,500))
 
-/* 🔥 FIRESTORE DIRECT */
+/* 🔥 récupération directe */
 const snap = await getDoc(doc(db,"users",user.uid))
 
 if(!snap.exists()){
-alert("❌ Utilisateur non trouvé")
+alert("❌ Utilisateur introuvable")
 location.href="index.html"
 return
 }
 
 currentUserData = snap.data()
 
-/* 🔥 CHECK ROLE */
+/* 🔥 sécurité admin */
 if(
 currentUserData.role !== "admin" &&
 currentUserData.role !== "superadmin"
@@ -53,10 +165,9 @@ location.href="index.html"
 return
 }
 
-/* ✅ OK */
-console.log("ADMIN connecté:", user.uid)
+console.log("ADMIN OK:", user.uid)
 
-/* LOAD DATA */
+/* charger données */
 await loadStats()
 loadUsers()
 
@@ -154,14 +265,14 @@ if(filter==="blocked") return u.blocked===true
 
 users.forEach(u=>{
 
-let statusBadge = ""
+let statusBadge=""
 
 if(u.blocked){
-statusBadge = `<span class="badge red">Bloqué ❌</span>`
+statusBadge=`<span class="badge red">Bloqué ❌</span>`
 }else if(u.approved){
-statusBadge = `<span class="badge green">Aprovado</span>`
+statusBadge=`<span class="badge green">Aprovado</span>`
 }else{
-statusBadge = `<span class="badge orange">Pendente</span>`
+statusBadge=`<span class="badge orange">Pendente</span>`
 }
 
 html+=`
@@ -193,29 +304,29 @@ document.getElementById("content").innerHTML=html
 }
 
 /* ACTIONS */
-window.approve = async function(id){
+window.approve = async (id)=>{
 await updateDoc(doc(db,"users",id),{role:"merchant",approved:true})
 loadUsers()
 }
 
-window.reject = async function(id){
+window.reject = async (id)=>{
 await updateDoc(doc(db,"users",id),{role:"client",approved:false})
 loadUsers()
 }
 
-window.blockUser = async function(id){
+window.blockUser = async (id)=>{
 await updateDoc(doc(db,"users",id),{blocked:true})
-alert("Utilisateur bloqué ❌")
+alert("Bloqué ❌")
 loadUsers()
 }
 
-window.unblockUser = async function(id){
+window.unblockUser = async (id)=>{
 await updateDoc(doc(db,"users",id),{blocked:false})
-alert("Utilisateur débloqué ✅")
+alert("Débloqué ✅")
 loadUsers()
 }
 
-window.makeAdmin = async function(id){
+window.makeAdmin = async (id)=>{
 await updateDoc(doc(db,"users",id),{role:"admin"})
 loadUsers()
 }
@@ -272,3 +383,6 @@ document.getElementById("content").innerHTML=html
 }
 
 </script>
+
+</body>
+</html>
