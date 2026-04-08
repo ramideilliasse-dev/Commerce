@@ -112,7 +112,8 @@ margin-right:5px;
 
 <script type="module">
 
-import { db, auth } from "./firebase.js"
+import { db } from "./firebase.js"
+import { requireAuth } from "./auth-guard.js"
 
 import {
 collection,
@@ -124,56 +125,40 @@ query,
 where
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
-import { onAuthStateChanged } 
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
-
 let currentUserData=null
 let allUsers=[]
 
-/* 🔐 AUTH FIX FINAL */
-onAuthStateChanged(auth, async (user)=>{
-
-if(!user){
-alert("❌ Non connecté")
-location.href="login.html"
-return
-}
+/* 🔐 AUTH ULTRA FIX */
+requireAuth(async (user)=>{
 
 try{
 
-/* 🔥 petit délai pour stabiliser */
-await new Promise(r=>setTimeout(r,500))
-
-/* 🔥 récupération directe */
 const snap = await getDoc(doc(db,"users",user.uid))
 
 if(!snap.exists()){
-alert("❌ Utilisateur introuvable")
+alert("Utilisateur introuvable ❌")
 location.href="index.html"
 return
 }
 
-currentUserData = snap.data()
+const data = snap.data()
 
-/* 🔥 sécurité admin */
-if(
-currentUserData.role !== "admin" &&
-currentUserData.role !== "superadmin"
-){
-alert("Acesso negado ❌")
+if(data.role !== "admin" && data.role !== "superadmin"){
+alert("Accès refusé ❌")
 location.href="index.html"
 return
 }
 
-console.log("ADMIN OK:", user.uid)
+currentUserData = data
 
-/* charger données */
+console.log("ADMIN OK")
+
 await loadStats()
 loadUsers()
 
 }catch(e){
 console.error(e)
-alert("Erro admin ❌")
+alert("Erreur admin ❌")
 location.href="index.html"
 }
 
