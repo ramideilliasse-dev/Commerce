@@ -173,6 +173,9 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 let products=[]
 
+/* 🔥 Réveil Firebase (important) */
+onAuthStateChanged(auth,()=>{})
+
 /* TOAST */
 function showToast(msg){
 const t=document.getElementById("toast")
@@ -190,7 +193,7 @@ document.getElementById("cartCount").innerText = total
 }
 updateCartCount()
 
-/* 🔥 ACCOUNT BUTTON FINAL */
+/* ACCOUNT BUTTON */
 const accountButton=document.getElementById("accountButton")
 
 onAuthStateChanged(auth, async (user)=>{
@@ -204,35 +207,42 @@ return
 try{
 
 const snap = await getDoc(doc(db,"users",user.uid))
+let role = snap.exists() ? snap.data().role : "client"
 
-let role = "client"
-
-if(snap.exists()){
-role = snap.data().role || "client"
-}
-
-/* 🔥 ADMIN */
+/* 🔥 ADMIN FIX FINAL */
 if(role === "admin" || role === "superadmin"){
 accountButton.innerText="Admin 👑"
-accountButton.onclick=()=>{
+
+accountButton.onclick = () => {
+
+accountButton.innerText="Chargement..."
+
+const unsubscribe = onAuthStateChanged(auth, (u)=>{
+
+if(u){
+unsubscribe()
 window.location.href="admin-dashboard.html"
-}
+}else{
+alert("Session expirée ❌")
+location.href="login.html"
 }
 
-/* 🔥 MERCHANT */
+})
+
+}
+
+}
+
+/* MERCHANT */
 else if(role === "merchant"){
 accountButton.innerText="Minha Loja 🏪"
-accountButton.onclick=()=>{
-window.location.href="merchant-dashboard.html"
-}
+accountButton.onclick=()=>location.href="merchant-dashboard.html"
 }
 
-/* 🔥 CLIENT */
+/* CLIENT */
 else{
 accountButton.innerText="Conta"
-accountButton.onclick=()=>{
-window.location.href="settings.html"
-}
+accountButton.onclick=()=>location.href="settings.html"
 }
 
 }catch(e){
@@ -284,7 +294,6 @@ renderProducts(products)
 
 }
 
-/* RENDER */
 function renderProducts(list){
 document.getElementById("productList").innerHTML =
 list.map(p=>productHTML(p)).join("")
@@ -293,25 +302,20 @@ list.map(p=>productHTML(p)).join("")
 /* SEARCH */
 document.getElementById("search").addEventListener("input",(e)=>{
 let val = e.target.value.toLowerCase()
-
 let filtered = products.filter(p =>
 (p.name||"").toLowerCase().includes(val)
 )
-
 renderProducts(filtered)
 })
 
-/* OPEN PRODUCT */
 window.openProduct=function(id){
 localStorage.setItem("selectedProduct", id)
 location.href="product.html"
 }
 
-/* ADD TO CART */
 window.addToCart=function(id){
 
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
-
 const product = products.find(p => p.id === id)
 if(!product) return
 
