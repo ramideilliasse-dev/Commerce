@@ -173,7 +173,7 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 let products=[]
 
-/* 🔥 Réveil Firebase (important) */
+/* 🔥 Réveil Firebase */
 onAuthStateChanged(auth,()=>{})
 
 /* TOAST */
@@ -209,28 +209,12 @@ try{
 const snap = await getDoc(doc(db,"users",user.uid))
 let role = snap.exists() ? snap.data().role : "client"
 
-/* 🔥 ADMIN FIX FINAL */
+/* ✅ ADMIN SIMPLE (SANS BUG) */
 if(role === "admin" || role === "superadmin"){
 accountButton.innerText="Admin 👑"
-
-accountButton.onclick = () => {
-
-accountButton.innerText="Chargement..."
-
-const unsubscribe = onAuthStateChanged(auth, (u)=>{
-
-if(u){
-unsubscribe()
+accountButton.onclick=()=>{
 window.location.href="admin-dashboard.html"
-}else{
-alert("Session expirée ❌")
-location.href="login.html"
 }
-
-})
-
-}
-
 }
 
 /* MERCHANT */
