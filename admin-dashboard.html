@@ -112,8 +112,7 @@ margin-right:5px;
 
 <script type="module">
 
-import { db } from "./firebase.js"
-import { requireAuth } from "./auth-guard.js"
+import { db, auth } from "./firebase.js"
 
 import {
 collection,
@@ -125,33 +124,51 @@ query,
 where
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
+import { onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
+
 let currentUserData=null
 let allUsers=[]
 
-/* 🔐 AUTH ULTRA FIX */
-requireAuth(async (user)=>{
+/* 🔐 AUTH DIRECT (ULTRA FIX) */
+onAuthStateChanged(auth, async (user)=>{
+
+if(!user){
+alert("❌ Non connecté")
+location.href="login.html"
+return
+}
+
+alert("✅ UID DASHBOARD:\n" + user.uid)
 
 try{
+
+/* attendre Firebase */
+await new Promise(r=>setTimeout(r,500))
 
 const snap = await getDoc(doc(db,"users",user.uid))
 
 if(!snap.exists()){
-alert("Utilisateur introuvable ❌")
+alert("❌ Utilisateur introuvable Firestore")
 location.href="index.html"
 return
 }
 
 const data = snap.data()
 
+alert("ROLE DASHBOARD: " + data.role)
+console.log("DATA:", data)
+
+/* 🔥 CHECK ADMIN */
 if(data.role !== "admin" && data.role !== "superadmin"){
-alert("Accès refusé ❌")
+alert("Accès refusé ❌ ROLE = " + data.role)
 location.href="index.html"
 return
 }
 
 currentUserData = data
 
-console.log("ADMIN OK")
+alert("✅ ADMIN AUTORISÉ")
 
 await loadStats()
 loadUsers()
