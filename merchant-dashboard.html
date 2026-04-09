@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
@@ -17,7 +17,6 @@ font-size:20px;
 font-weight:bold;
 }
 
-/* 🔴 BADGE */
 .notifBell{
 position:fixed;
 top:15px;
@@ -38,7 +37,6 @@ font-size:11px;
 display:none;
 }
 
-/* 🔥 TOAST */
 .toast{
 position:fixed;
 top:20px;
@@ -49,34 +47,36 @@ color:white;
 padding:12px 20px;
 border-radius:25px;
 font-weight:bold;
-box-shadow:0 5px 15px rgba(0,0,0,0.2);
 transition:0.4s;
 z-index:3000;
 opacity:0;
 }
-
 .toast.show{
 transform:translateX(-50%) translateY(0);
 opacity:1;
 }
 
-/* UI */
 .container{max-width:900px;margin:auto;padding:15px;}
-.card{background:white;padding:15px;border-radius:10px;margin-bottom:15px;box-shadow:0 3px 8px rgba(0,0,0,0.1);}
+.card{background:white;padding:15px;border-radius:10px;margin-bottom:15px;}
 .actions{display:flex;gap:10px;margin-bottom:15px;}
-.actions button{flex:1;padding:12px;border:none;border-radius:10px;font-weight:bold;cursor:pointer;}
+.actions button{flex:1;padding:12px;border:none;border-radius:10px;font-weight:bold;}
 .btnShop{background:black;color:white;}
 .btnAdd{background:#1aa34a;color:white;}
+
 .stats{display:flex;gap:10px;}
-.stat{flex:1;background:#1aa34a;color:white;padding:12px;border-radius:10px;text-align:center;font-weight:bold;}
+.stat{flex:1;background:#1aa34a;color:white;padding:12px;border-radius:10px;text-align:center;}
+
 .filter{display:flex;gap:10px;margin-bottom:10px;}
-.filter button{flex:1;padding:10px;border:none;border-radius:8px;cursor:pointer;}
+.filter button{flex:1;padding:10px;border:none;border-radius:8px;}
 .active{background:#ff6a00;color:white;}
+
 .order{border-bottom:1px solid #eee;padding:10px 0;}
-button{margin-top:5px;padding:6px 10px;border:none;border-radius:6px;cursor:pointer;}
-.btnWhats{background:#25D366;color:white;}
+.productCard{border-bottom:1px solid #eee;padding:10px 0;}
+
+button{margin-top:5px;padding:6px 10px;border:none;border-radius:6px;}
 .btnDone{background:#1aa34a;color:white;}
 .btnDelete{background:red;color:white;}
+
 .btnLogout{width:100%;padding:12px;background:black;color:white;border:none;border-radius:10px;margin-top:10px;}
 </style>
 </head>
@@ -95,7 +95,7 @@ button{margin-top:5px;padding:6px 10px;border:none;border-radius:6px;cursor:poin
 
 <div class="actions">
 <button class="btnShop" onclick="openShop()">Ver minha loja 🏪</button>
-<button class="btnAdd" onclick="addProduct()">+ Publicar produto</button>
+<button class="btnAdd" onclick="addProduct()">+ Produto</button>
 </div>
 
 <div class="card">
@@ -108,101 +108,69 @@ button{margin-top:5px;padding:6px 10px;border:none;border-radius:6px;cursor:poin
 </div>
 
 <div class="card">
+<h3>Pedidos</h3>
 <div class="filter">
-<button id="allBtn" class="active" onclick="setFilter('all')">Todos</button>
-<button id="pendingBtn" onclick="setFilter('pendente')">Pendentes</button>
-<button id="doneBtn" onclick="setFilter('concluido')">Concluídos</button>
+<button class="active" onclick="setFilter('all')">Todos</button>
+<button onclick="setFilter('pendente')">Pendentes</button>
+<button onclick="setFilter('concluido')">Concluídos</button>
 </div>
 <div id="ordersList"></div>
+</div>
+
+<div class="card">
+<h3>Mes Produits</h3>
+<div id="productsList"></div>
 </div>
 
 <button class="btnLogout" onclick="logout()">Sair</button>
 
 </div>
 
-<audio id="notifSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
-
 <script type="module">
 
 import { db, auth } from "./firebase.js"
-import { collection,query,where,onSnapshot,updateDoc,deleteDoc,doc }
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-import { onAuthStateChanged,signOut }
+
+/* 🔔 GLOBAL NOTIFICATIONS */
+import { startNotifications } from "./notifications.js"
+startNotifications()
+
+import {
+collection,query,where,onSnapshot,
+updateDoc,deleteDoc,doc,getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
+import { onAuthStateChanged,signOut } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 let currentUser=null
 let filter="all"
-let firstLoad=true
-let unsubscribe=null
 
 const toast=document.getElementById("toast")
-const sound=document.getElementById("notifSound")
 const badge=document.getElementById("notifBadge")
-
-const totalSalesEl=document.getElementById("totalSales")
-const todaySalesEl=document.getElementById("todaySales")
-const totalOrdersEl=document.getElementById("totalOrders")
-
-/* 🔓 ACTIVATE SOUND */
-let soundEnabled=false
-document.body.addEventListener("click", ()=>{
-if(!soundEnabled){
-sound.play().then(()=>{
-sound.pause()
-sound.currentTime=0
-soundEnabled=true
-}).catch(()=>{})
-}
-})
-
-function playSound(){
-sound.currentTime=0
-sound.play().catch(()=>{})
-}
-
-/* TOAST */
-function showToast(msg){
-toast.innerText=msg
-toast.classList.add("show")
-setTimeout(()=>toast.classList.remove("show"),3000)
-}
-
-/* VIBRATION */
-function vibrate(){
-if(navigator.vibrate){
-navigator.vibrate([200,100,200])
-}
-}
 
 /* AUTH */
 onAuthStateChanged(auth,(user)=>{
 if(!user){
-location.href="merchant-register.html"
+location.href="login.html"
 return
 }
 currentUser=user
 listenOrders()
+loadProducts()
 })
 
-/* REALTIME */
+/* COMMANDES */
 function listenOrders(){
-
-if(unsubscribe) unsubscribe()
 
 const q=query(
 collection(db,"orders"),
 where("merchantId","==",currentUser.uid)
 )
 
-unsubscribe = onSnapshot(q,(snapshot)=>{
+onSnapshot(q,(snapshot)=>{
 
 let html=""
-let totalSales=0
-let todaySales=0
-let totalOrders=0
 let unseen=0
-
-const today=new Date().toDateString()
 
 snapshot.forEach(docSnap=>{
 
@@ -213,23 +181,11 @@ if(!o.seen) unseen++
 
 if(filter!=="all" && o.status!==filter) return
 
-totalOrders++
-totalSales+=o.price*o.qty
-
-if(new Date(o.date).toDateString()===today){
-todaySales+=o.price*o.qty
-}
-
 html+=`
 <div class="order">
 <b>${o.productName}</b><br>
 ${o.qty} x ${o.price} Kz<br>
-👤 ${o.clientName || ""}<br>
-📞 ${o.clientPhone || ""}<br>
-📍 ${o.clientAddress || ""}<br>
-Status: ${o.status}<br>
 
-<button class="btnWhats" onclick="contactClient('${o.clientPhone}')">WhatsApp</button>
 <button class="btnDone" onclick="markDone('${id}')">Concluir</button>
 <button class="btnDelete" onclick="deleteOrder('${id}')">Supprimer</button>
 </div>
@@ -237,35 +193,41 @@ Status: ${o.status}<br>
 })
 
 ordersList.innerHTML=html
-totalSalesEl.innerText=totalSales
-todaySalesEl.innerText=todaySales
-totalOrdersEl.innerText=totalOrders
 
-/* BADGE */
-if(unseen>0){
-badge.style.display="block"
+badge.style.display = unseen>0 ? "block":"none"
 badge.innerText=unseen
-}else{
-badge.style.display="none"
-}
-
-/* 🔥 NOTIFICATION */
-if(!firstLoad){
-snapshot.docChanges().forEach(change=>{
-if(change.type==="added"){
-const data=change.doc.data()
-if(!data.seen){
-showToast("🛒 Nova encomenda!")
-playSound()
-vibrate()
-}
-}
-})
-}
-
-firstLoad=false
 
 })
+
+}
+
+/* PRODUITS */
+async function loadProducts(){
+
+const q=query(
+collection(db,"products"),
+where("merchantId","==",currentUser.uid)
+)
+
+const snap=await getDocs(q)
+
+let html=""
+
+snap.forEach(d=>{
+const p=d.data()
+const id=d.id
+
+html+=`
+<div class="productCard">
+<b>${p.name}</b><br>
+💰 ${p.price} Kz<br>
+
+<button class="btnDelete" onclick="deleteProduct('${id}')">Supprimer</button>
+</div>
+`
+})
+
+document.getElementById("productsList").innerHTML=html
 
 }
 
@@ -275,25 +237,20 @@ filter=f
 listenOrders()
 }
 
-window.markAllSeen=async ()=>{
-const q=query(collection(db,"orders"),where("merchantId","==",currentUser.uid))
-onSnapshot(q,(snapshot)=>{
-snapshot.forEach(async d=>{
-if(!d.data().seen){
-await updateDoc(doc(db,"orders",d.id),{seen:true})
-}
-})
-})
+window.markDone=id=>{
+updateDoc(doc(db,"orders",id),{status:"concluido"})
 }
 
-window.contactClient=phone=>{
-if(phone) window.open("https://wa.me/"+phone,"_blank")
-}
-
-window.markDone=id=>updateDoc(doc(db,"orders",id),{status:"concluido"})
 window.deleteOrder=id=>{
 if(confirm("Apagar pedido?")){
 deleteDoc(doc(db,"orders",id))
+}
+}
+
+window.deleteProduct=async (id)=>{
+if(confirm("Supprimer ce produit ?")){
+await deleteDoc(doc(db,"products",id))
+loadProducts()
 }
 }
 
