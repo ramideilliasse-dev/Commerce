@@ -114,40 +114,23 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 let products=[]
 
-/* DEBUG START */
-console.log("🔥 HOME chargé")
-
 /* ACCOUNT BUTTON */
 const accountButton=document.getElementById("accountButton")
 
 onAuthStateChanged(auth, async (user)=>{
 
 if(!user){
-alert("❌ Utilisateur NON connecté")
 accountButton.innerText="Login"
 accountButton.onclick=()=>location.href="login.html"
 return
 }
 
-alert("✅ UID:\n"+user.uid)
-console.log("UID:", user.uid)
-console.log("EMAIL:", user.email)
-
 try{
 
 const snap = await getDoc(doc(db,"users",user.uid))
 
-if(!snap.exists()){
-alert("❌ Document Firestore introuvable")
-console.log("❌ Pas de document users")
-}else{
-console.log("✅ DATA:", snap.data())
-alert("ROLE Firestore: " + snap.data().role)
-}
-
-/* 🔥 FORCE ADMIN PAR EMAIL */
+/* 🔥 PRIORITÉ ADMIN PAR EMAIL */
 if(user.email === "ramideilliasse@gmail.com"){
-alert("🔥 ADMIN PAR EMAIL ACTIVÉ")
 accountButton.innerText="Admin 👑"
 accountButton.onclick=()=>{
 window.location.href="admin-dashboard.html"
@@ -155,11 +138,10 @@ window.location.href="admin-dashboard.html"
 return
 }
 
-/* FIRESTORE ROLE */
+/* 🔥 ROLE FIRESTORE */
 let role = snap.exists() ? snap.data().role : "client"
 
 if(role === "admin" || role === "superadmin"){
-alert("✅ ADMIN FIRESTORE")
 accountButton.innerText="Admin 👑"
 accountButton.onclick=()=>{
 window.location.href="admin-dashboard.html"
@@ -175,7 +157,6 @@ accountButton.onclick=()=>location.href="settings.html"
 }
 
 }catch(e){
-alert("❌ ERREUR:\n"+e.message)
 console.error(e)
 accountButton.innerText="Conta"
 accountButton.onclick=()=>location.href="settings.html"
