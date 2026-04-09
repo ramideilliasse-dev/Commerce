@@ -1,30 +1,51 @@
- import { db } from "./firebase.js"
-import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+ import { db, auth } from "./firebase.js"
+import { collection, onSnapshot, query, where } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+import { onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 let audio = new Audio("notification.mp3")
-
 let count = 0
+let firstLoad = true
 
 export function startNotifications(){
 
-onSnapshot(collection(db,"orders"), (snap)=>{
+onAuthStateChanged(auth,(user)=>{
+
+if(!user) return
+
+/* 🔥 écouter uniquement SES commandes */
+const q = query(
+collection(db,"orders"),
+where("merchantId","==",user.uid)
+)
+
+onSnapshot(q, (snap)=>{
 
 snap.docChanges().forEach(change => {
 
 if(change.type === "added"){
 
+/* 🚫 éviter bruit au chargement */
+if(firstLoad) return
+
 count++
 
 /* 🔔 SON */
+audio.currentTime = 0
 audio.play().catch(()=>{})
 
 /* 🔴 BADGE */
 updateBadge()
 
 /* 💬 POPUP */
-showPopup("Nouvelle commande reçue 🛒")
+showPopup("Nouvelle commande 🛒")
 
 }
+
+})
+
+firstLoad = false
 
 })
 
