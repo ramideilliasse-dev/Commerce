@@ -58,12 +58,6 @@ position:fixed;bottom:0;left:0;right:0;
 background:white;display:flex;justify-content:space-around;
 padding:8px;border-top:1px solid #ddd;font-size:13px;
 }
-.toast{
-position:fixed;bottom:90px;left:50%;
-transform:translateX(-50%);
-background:black;color:white;padding:8px 12px;
-border-radius:20px;display:none;
-}
 </style>
 </head>
 
@@ -102,8 +96,6 @@ border-radius:20px;display:none;
 <div onclick="location.href='cart.html'">🛒<br>Carrinho</div>
 </div>
 
-<div id="toast" class="toast"></div>
-
 <script type="module">
 
 import { db,auth } from "./firebase.js"
@@ -112,7 +104,23 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
+/* 🔔 notifications */
+import { startNotifications } from "./notifications.js"
+startNotifications()
+
 let products=[]
+
+/* 🛒 UPDATE CART */
+function updateCartCount(){
+let cart = JSON.parse(localStorage.getItem("cart") || "[]")
+let total=0
+cart.forEach(i=> total += i.qty || 1)
+document.getElementById("cartCount").innerText = total
+}
+updateCartCount()
+
+window.addEventListener("focus", updateCartCount)
+window.addEventListener("storage", updateCartCount)
 
 /* ACCOUNT BUTTON */
 const accountButton=document.getElementById("accountButton")
@@ -125,39 +133,25 @@ accountButton.onclick=()=>location.href="login.html"
 return
 }
 
-try{
-
 const snap = await getDoc(doc(db,"users",user.uid))
 
-/* 🔥 PRIORITÉ ADMIN PAR EMAIL */
 if(user.email === "ramideilliasse@gmail.com"){
 accountButton.innerText="Admin 👑"
-accountButton.onclick=()=>{
-window.location.href="admin-dashboard.html"
-}
+accountButton.onclick=()=>location.href="admin-dashboard.html"
 return
 }
 
-/* 🔥 ROLE FIRESTORE */
 let role = snap.exists() ? snap.data().role : "client"
 
 if(role === "admin" || role === "superadmin"){
 accountButton.innerText="Admin 👑"
-accountButton.onclick=()=>{
-window.location.href="admin-dashboard.html"
-}
+accountButton.onclick=()=>location.href="admin-dashboard.html"
 }
 else if(role === "merchant"){
 accountButton.innerText="Minha Loja 🏪"
 accountButton.onclick=()=>location.href="merchant-dashboard.html"
 }
 else{
-accountButton.innerText="Conta"
-accountButton.onclick=()=>location.href="settings.html"
-}
-
-}catch(e){
-console.error(e)
 accountButton.innerText="Conta"
 accountButton.onclick=()=>location.href="settings.html"
 }
@@ -214,6 +208,7 @@ location.href="product.html"
 }
 
 window.addToCart=function(id){
+
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
 const product = products.find(p => p.id === id)
 if(!product) return
@@ -233,6 +228,8 @@ merchantId: product.merchantId || ""
 }
 
 localStorage.setItem("cart", JSON.stringify(cart))
+
+updateCartCount() // 🔥 FIX IMPORTANT
 }
 
 loadProducts()
