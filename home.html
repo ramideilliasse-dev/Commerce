@@ -104,13 +104,13 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
-/* 🔔 notifications */
+/* 🔔 NOTIFICATIONS (UNE SEULE FOIS) */
 import { startNotifications } from "./notifications.js"
 startNotifications()
 
 let products=[]
 
-/* 🛒 UPDATE CART */
+/* 🛒 CART */
 function updateCartCount(){
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
 let total=0
@@ -122,7 +122,7 @@ updateCartCount()
 window.addEventListener("focus", updateCartCount)
 window.addEventListener("storage", updateCartCount)
 
-/* ACCOUNT BUTTON */
+/* ACCOUNT */
 const accountButton=document.getElementById("accountButton")
 
 onAuthStateChanged(auth, async (user)=>{
@@ -133,6 +133,7 @@ accountButton.onclick=()=>location.href="login.html"
 return
 }
 
+try{
 const snap = await getDoc(doc(db,"users",user.uid))
 
 if(user.email === "ramideilliasse@gmail.com"){
@@ -154,6 +155,10 @@ accountButton.onclick=()=>location.href="merchant-dashboard.html"
 else{
 accountButton.innerText="Conta"
 accountButton.onclick=()=>location.href="settings.html"
+}
+
+}catch(e){
+console.error("ERREUR USER:", e)
 }
 
 })
@@ -179,14 +184,25 @@ return `
 }
 
 async function loadProducts(){
+try{
+
 const snap=await getDocs(collection(db,"products"))
+
 products=[]
+
 snap.forEach(docSnap=>{
 const data=docSnap.data()
 data.id=docSnap.id
 products.push(data)
 })
+
+console.log("Produits:", products)
+
 renderProducts(products)
+
+}catch(e){
+console.error("ERREUR PRODUITS:", e)
+}
 }
 
 function renderProducts(list){
@@ -194,6 +210,7 @@ document.getElementById("productList").innerHTML =
 list.map(p=>productHTML(p)).join("")
 }
 
+/* SEARCH */
 document.getElementById("search").addEventListener("input",(e)=>{
 let val = e.target.value.toLowerCase()
 let filtered = products.filter(p =>
@@ -202,6 +219,7 @@ let filtered = products.filter(p =>
 renderProducts(filtered)
 })
 
+/* ACTIONS */
 window.openProduct=function(id){
 localStorage.setItem("selectedProduct", id)
 location.href="product.html"
@@ -228,13 +246,13 @@ merchantId: product.merchantId || ""
 }
 
 localStorage.setItem("cart", JSON.stringify(cart))
+updateCartCount()
 
-updateCartCount() // 🔥 FIX IMPORTANT
 }
 
+/* LOAD */
 loadProducts()
-import { startNotifications } from "./notifications.js"
-startNotifications()
+
 </script>
 
 </body>
