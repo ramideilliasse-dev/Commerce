@@ -1,196 +1,179 @@
  <!DOCTYPE html>
 <html lang="pt">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Mensagens</title>
 
 <style>
-
 body{
-font-family:Arial;
 margin:0;
-background:#f2f2f2;
-font-size:18px;
+font-family:Arial;
+background:#f4f4f4;
 }
 
 /* HEADER */
-
 .header{
 background:#ff6a00;
 color:white;
-padding:18px;
-font-size:24px;
-font-weight:bold;
-}
-
-/* CHAT LIST */
-
-.chatList{
-padding:10px;
-}
-
-/* CHAT ITEM */
-
-.chatItem{
-background:white;
-border-radius:12px;
-padding:14px;
-margin-bottom:10px;
-display:flex;
-align-items:center;
-gap:12px;
-box-shadow:0 3px 10px rgba(0,0,0,0.1);
-cursor:pointer;
-}
-
-/* PHOTO */
-
-.chatItem img{
-width:60px;
-height:60px;
-border-radius:50%;
-object-fit:cover;
-}
-
-/* CHAT INFO */
-
-.chatInfo{
-flex:1;
-}
-
-/* NAME */
-
-.chatName{
+padding:15px;
 font-size:20px;
 font-weight:bold;
 }
 
-/* LAST MESSAGE */
-
-.chatMsg{
-font-size:17px;
-color:#555;
-margin-top:4px;
+/* LIST */
+#list{
+padding:10px;
 }
 
-/* RIGHT */
+/* ITEM */
+.item{
+background:white;
+padding:12px;
+border-radius:12px;
+margin-bottom:10px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+cursor:pointer;
+box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
 
-.chatRight{
+.left{
+display:flex;
+gap:10px;
+align-items:center;
+}
+
+.avatar{
+width:45px;
+height:45px;
+border-radius:50%;
+background:#ddd;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+}
+
+.texts{
+display:flex;
+flex-direction:column;
+}
+
+.name{
+font-weight:bold;
+}
+
+.last{
+font-size:13px;
+color:#666;
+}
+
+.right{
 text-align:right;
+font-size:12px;
+color:#888;
 }
-
-/* TIME */
-
-.time{
-font-size:14px;
-color:#777;
-}
-
-/* NOTIFICATION */
 
 .badge{
 background:red;
 color:white;
-font-size:13px;
+border-radius:50%;
 padding:3px 7px;
-border-radius:20px;
-margin-top:6px;
+font-size:11px;
+margin-top:5px;
 display:inline-block;
 }
-
 </style>
-
 </head>
 
 <body>
 
-<div class="header">
-Mensagens
-</div>
+<div class="header">Mensagens 💬</div>
 
-<div id="chatList" class="chatList"></div>
-
+<div id="list"></div>
 
 <script type="module">
 
-import { db } from "./firebase.js";
-
+import { db, auth } from "./firebase.js"
 import {
 collection,
-getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+query,
+where,
+onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
+import { onAuthStateChanged }
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
-async function loadChats(){
+const list = document.getElementById("list")
 
-const snap = await getDocs(collection(db,"chats"))
+onAuthStateChanged(auth,(user)=>{
 
-const container = document.getElementById("chatList")
+if(!user) return
 
-container.innerHTML=""
+const q = query(
+collection(db,"conversations"),
+where("participants","array-contains",user.uid)
+)
 
-snap.forEach(doc=>{
+onSnapshot(q,(snap)=>{
 
-const data = doc.data()
+let html=""
 
-const time = new Date(data.lastTime || Date.now())
+snap.forEach(docSnap=>{
 
-const hour = time.getHours()+":"+time.getMinutes()
+const c = docSnap.data()
 
-container.innerHTML += `
+/* 🔥 nom autre utilisateur */
+let other = c.participants.find(p => p !== user.uid)
 
-<div class="chatItem" onclick="openChat('${data.merchantId}','${data.productId}')">
+/* 🔴 messages non lus */
+let unread = c.unread?.[user.uid] || 0
 
-<img src="${data.merchantPhoto || ''}">
+html += `
+<div class="item" onclick="openChat('${docSnap.id}')">
 
-<div class="chatInfo">
+<div class="left">
+<div class="avatar">👤</div>
 
-<div class="chatName">
-${data.merchantName || "Vendedor"}
+<div class="texts">
+<div class="name">Vendedor</div>
+<div class="last">${c.lastMessage || "Nova conversa"}</div>
+</div>
 </div>
 
-<div class="chatMsg">
-${data.lastMessage || "Nova conversa"}
+<div class="right">
+<div>${formatTime(c.lastMessageTime)}</div>
+${unread > 0 ? `<div class="badge">${unread}</div>` : ""}
 </div>
 
 </div>
-
-<div class="chatRight">
-
-<div class="time">
-${hour}
-</div>
-
-${data.unread ? "<div class='badge'>Novo</div>" : ""}
-
-</div>
-
-</div>
-
 `
 
 })
 
+list.innerHTML = html
+
+})
+
+})
+
+/* ⏰ FORMAT TEMPS */
+function formatTime(t){
+if(!t) return ""
+
+let d = new Date(t)
+return d.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})
 }
 
-
-/* OPEN CHAT */
-
-window.openChat=function(merchant,product){
-
-window.location.href="chat.html?merchant="+merchant+"&product="+product
-
+/* 👉 OUVRIR CHAT */
+window.openChat = (id)=>{
+location.href = "chat.html?id=" + id
 }
-
-
-loadChats()
 
 </script>
 
 </body>
-
 </html>
