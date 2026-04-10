@@ -3,144 +3,182 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chat PRO FIX</title>
+<title>Chat Premium</title>
 
 <style>
 body{
 margin:0;
-font-family:Arial;
-background:#ece5dd;
-height:100dvh;
+font-family:-apple-system,BlinkMacSystemFont;
+background:#0b141a;
+color:white;
 display:flex;
 flex-direction:column;
+height:100dvh;
 }
 
 /* HEADER */
 .header{
-background:#075e54;
-color:white;
-padding:12px;
+background:#202c33;
+padding:10px;
+display:flex;
+align-items:center;
+gap:10px;
 }
 
+.avatar{
+width:40px;height:40px;
+border-radius:50%;
+background:#555;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.name{font-weight:bold;}
+.status{font-size:12px;color:#aaa}
+
 /* CHAT */
-.chatArea{
+.chat{
 flex:1;
 overflow-y:auto;
 padding:10px;
-padding-bottom:80px; /* 🔥 espace pour éviter que le input cache les messages */
+background:url('https://i.imgur.com/3QZQZ6F.png');
 }
 
-/* MSG */
+/* MESSAGES */
 .msg{
 max-width:75%;
 padding:10px;
-margin-bottom:8px;
 border-radius:10px;
+margin-bottom:8px;
+position:relative;
+animation:fade 0.2s ease;
 }
 
-.me{background:#dcf8c6;margin-left:auto;}
-.other{background:white;}
+@keyframes fade{
+from{opacity:0;transform:translateY(5px)}
+to{opacity:1}
+}
 
-.msg img{width:140px;border-radius:8px;margin-top:5px;}
-audio{width:140px;margin-top:5px;}
+.me{
+background:#005c4b;
+margin-left:auto;
+border-bottom-right-radius:2px;
+}
 
-/* INPUT FIXED */
-.inputArea{
-position:fixed;
-bottom:0;
-left:0;
-right:0;
-background:white;
+.other{
+background:#202c33;
+border-bottom-left-radius:2px;
+}
+
+.time{
+font-size:10px;
+opacity:0.7;
+text-align:right;
+margin-top:5px;
+}
+
+.read{color:#53bdeb;font-size:10px;margin-left:5px;}
+
+.msg img{width:150px;border-radius:8px;margin-top:5px;}
+audio{width:150px;margin-top:5px}
+
+/* INPUT */
+.input{
 display:flex;
 gap:5px;
 padding:10px;
-border-top:1px solid #ddd;
+background:#202c33;
 }
 
 #text{
 flex:1;
 padding:10px;
-border-radius:20px;
-border:1px solid #ccc;
-}
-
-.btn, .iconBtn{
+border-radius:25px;
 border:none;
-border-radius:50%;
-cursor:pointer;
+outline:none;
 }
 
 .btn{
-background:#25d366;
+background:#00a884;
+border:none;
+width:45px;height:45px;
+border-radius:50%;
 color:white;
-width:45px;
-height:45px;
+font-size:18px;
 }
 
-.iconBtn{
-background:#eee;
-width:40px;
-height:40px;
+/* POPUP */
+.popup{
+position:fixed;
+top:20px;
+left:50%;
+transform:translateX(-50%);
+background:#00a884;
+padding:10px 20px;
+border-radius:20px;
+display:none;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">Chat</div>
-
-<div id="chat" class="chatArea"></div>
-
-<div class="inputArea">
-<input id="text" placeholder="Mensagem...">
-<input type="file" id="image" hidden>
-<button class="iconBtn" onclick="pickImage()">📷</button>
-<button class="iconBtn" id="recordBtn">🎤</button>
-<button class="btn" onclick="send()">➤</button>
+<div class="header">
+<div class="avatar">👤</div>
+<div>
+<div class="name">Vendedor</div>
+<div id="status" class="status">offline</div>
 </div>
+</div>
+
+<div id="chat" class="chat"></div>
+
+<div class="input">
+<input id="text" placeholder="Mensagem...">
+<button onclick="send()" class="btn">➤</button>
+</div>
+
+<div id="popup" class="popup">Nova mensagem 💬</div>
 
 <script type="module">
 
 import { db, auth } from "./firebase.js"
 import {
 collection, addDoc, query, orderBy, onSnapshot,
-doc, setDoc
+doc, setDoc, updateDoc, getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
 import { onAuthStateChanged }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
-const CLOUD_NAME="df2oxw2qp"
-const UPLOAD_PRESET="angcomerce-upload"
+const chatId = new URLSearchParams(location.search).get("id")
 
-const merchant = new URLSearchParams(location.search).get("merchant")
+let user, merchant, messagesRef
 
-let user, chatId, messagesRef
-let recorder, chunks=[]
+/* 🔔 SON PREMIUM */
+const audio = new Audio("https://actions.google.com/sounds/v1/notifications/message_new.ogg")
+
+function notify(){
+audio.currentTime=0
+audio.play().catch(()=>{})
+
+const popup=document.getElementById("popup")
+popup.style.display="block"
+setTimeout(()=>popup.style.display="none",3000)
+}
 
 /* AUTH */
-onAuthStateChanged(auth,(u)=>{
+onAuthStateChanged(auth, async (u)=>{
 
-if(!u){
-alert("Login ❌")
-return
-}
-
-if(!merchant){
-alert("Erro chat ❌ merchant mancante")
-return
-}
+if(!u) return
 
 user=u
 
-chatId = user.uid+"_"+merchant
-messagesRef = collection(db,"chats",chatId,"messages")
+const parts = chatId.split("_")
+merchant = parts.find(p => p !== user.uid)
 
-/* 🔥 créer chat doc (important pour rules) */
-setDoc(doc(db,"chats",chatId),{
-participants:[user.uid, merchant],
-updatedAt:Date.now()
-},{merge:true})
+messagesRef = collection(db,"chats",chatId,"messages")
 
 listen()
 
@@ -154,9 +192,14 @@ onSnapshot(query(messagesRef,orderBy("time")),(snap)=>{
 const chat=document.getElementById("chat")
 chat.innerHTML=""
 
+snap.docChanges().forEach(change=>{
+if(change.type==="added" && change.doc.data().senderId!==user.uid){
+notify()
+}
+})
+
 snap.forEach(d=>{
 let m=d.data()
-
 let isMe = m.senderId===user.uid
 
 chat.innerHTML+=`
@@ -164,6 +207,11 @@ chat.innerHTML+=`
 ${m.text||""}
 ${m.image?`<img src="${m.image}">`:""}
 ${m.audio?`<audio controls src="${m.audio}"></audio>`:""}
+
+<div class="time">
+${new Date(m.time).toLocaleTimeString()}
+${isMe ? `<span class="read">${m.read ? "✔✔" : "✔"}</span>` : ""}
+</div>
 </div>
 `
 })
@@ -172,128 +220,39 @@ chat.scrollTop=chat.scrollHeight
 
 })
 
+/* ONLINE */
+onSnapshot(doc(db,"users",merchant),(snap)=>{
+if(snap.exists()){
+document.getElementById("status").innerText =
+snap.data().online ? "🟢 online" : "offline"
+}
+})
+
 }
 
-/* SEND TEXT */
+/* SEND */
 window.send=async function(){
 
 const text=document.getElementById("text").value.trim()
 if(!text) return
 
-try{
 await addDoc(messagesRef,{
-text:text,
+text,
 senderId:user.uid,
 receiverId:merchant,
-chatId:chatId,
+chatId,
 time:Date.now(),
 read:false
 })
+
+await setDoc(doc(db,"conversations",chatId),{
+participants:[user.uid, merchant],
+lastMessage:text,
+lastMessageTime:Date.now()
+},{merge:true})
+
 document.getElementById("text").value=""
-}catch(e){
-console.error(e)
-alert("Erro envio ❌")
-}
 
-}
-
-/* IMAGE */
-window.pickImage=()=>image.click()
-
-image.onchange=async function(){
-
-const file=this.files[0]
-if(!file) return
-
-try{
-
-const form=new FormData()
-form.append("file",file)
-form.append("upload_preset",UPLOAD_PRESET)
-
-const res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,{
-method:"POST",
-body:form
-})
-
-const data=await res.json()
-
-if(!data.secure_url){
-alert("Erro upload ❌")
-return
-}
-
-await addDoc(messagesRef,{
-image:data.secure_url,
-senderId:user.uid,
-receiverId:merchant,
-chatId:chatId,
-time:Date.now(),
-read:false
-})
-
-}catch(e){
-console.error(e)
-alert("Erro imagem ❌")
-}
-
-}
-
-/* AUDIO */
-const btn=document.getElementById("recordBtn")
-
-btn.onmousedown = async ()=>{
-
-const stream = await navigator.mediaDevices.getUserMedia({audio:true})
-
-recorder = new MediaRecorder(stream)
-chunks=[]
-
-recorder.ondataavailable=e=>chunks.push(e.data)
-
-recorder.onstop = async ()=>{
-
-try{
-
-const blob=new Blob(chunks,{type:"audio/webm"})
-
-const form=new FormData()
-form.append("file",blob)
-form.append("upload_preset",UPLOAD_PRESET)
-
-const res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/video/upload`,{
-method:"POST",
-body:form
-})
-
-const data=await res.json()
-
-await addDoc(messagesRef,{
-audio:data.secure_url,
-senderId:user.uid,
-receiverId:merchant,
-chatId:chatId,
-time:Date.now(),
-read:false
-})
-
-}catch(e){
-console.error(e)
-alert("Erro áudio ❌")
-}
-
-}
-
-recorder.start()
-btn.innerText="⏹"
-
-}
-
-btn.onmouseup = ()=>{
-if(recorder){
-recorder.stop()
-btn.innerText="🎤"
-}
 }
 
 </script>
