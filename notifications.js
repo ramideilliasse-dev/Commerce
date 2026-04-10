@@ -8,7 +8,8 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 let audio = new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg")
 
 let count = 0
-let firstLoad = true
+let firstLoadOrders = true
+let firstLoadMessages = true
 let soundEnabled = false
 
 /* 🔓 ACTIVER SON (IMPORTANT iPhone) */
@@ -29,37 +30,65 @@ onAuthStateChanged(auth,(user)=>{
 
 if(!user) return
 
-/* 🔥 FILTRE PAR VENDEUR */
-const q = query(
+/* ============================= */
+/* 🛒 1. COMMANDES (VENDEUR) */
+/* ============================= */
+
+const ordersQuery = query(
 collection(db,"orders"),
 where("merchantId","==",user.uid)
 )
 
-onSnapshot(q, (snap)=>{
+onSnapshot(ordersQuery, (snap)=>{
 
 snap.docChanges().forEach(change => {
 
 if(change.type === "added"){
 
-/* 🚫 éviter son au chargement */
-if(firstLoad) return
+if(firstLoadOrders) return
 
 count++
 
-/* 🔔 SON */
 playSound()
-
-/* 🔴 BADGE */
 updateBadge()
-
-/* 💬 POPUP */
-showPopup("Nouvelle commande 🛒")
+showPopup("🛒 Nouvelle commande")
 
 }
 
 })
 
-firstLoad = false
+firstLoadOrders = false
+
+})
+
+/* ============================= */
+/* 💬 2. MESSAGES (GLOBAL) */
+/* ============================= */
+
+const messagesQuery = query(
+collection(db,"messages"),
+where("receiverId","==",user.uid)
+)
+
+onSnapshot(messagesQuery, (snap)=>{
+
+snap.docChanges().forEach(change => {
+
+if(change.type === "added"){
+
+if(firstLoadMessages) return
+
+count++
+
+playSound()
+updateBadge()
+showPopup("💬 Nouveau message")
+
+}
+
+})
+
+firstLoadMessages = false
 
 })
 
@@ -67,7 +96,9 @@ firstLoad = false
 
 }
 
+/* ============================= */
 /* 🔔 SON PREMIUM */
+/* ============================= */
 function playSound(){
 
 if(!soundEnabled) return
@@ -84,7 +115,9 @@ navigator.vibrate([200,100,200])
 
 }
 
-/* 🔴 BADGE */
+/* ============================= */
+/* 🔴 BADGE GLOBAL */
+/* ============================= */
 function updateBadge(){
 
 let badge = document.getElementById("notifBadge")
@@ -98,11 +131,12 @@ badge.style.top="10px"
 badge.style.right="10px"
 badge.style.background="red"
 badge.style.color="white"
-badge.style.padding="5px 8px"
+badge.style.padding="6px 10px"
 badge.style.borderRadius="50%"
 badge.style.zIndex="9999"
 badge.style.fontSize="12px"
 badge.style.fontWeight="bold"
+badge.style.boxShadow="0 3px 10px rgba(0,0,0,0.3)"
 
 document.body.appendChild(badge)
 }
@@ -111,7 +145,9 @@ badge.innerText = count
 
 }
 
+/* ============================= */
 /* 💬 POPUP PREMIUM */
+/* ============================= */
 function showPopup(msg){
 
 let popup = document.createElement("div")
@@ -134,7 +170,7 @@ popup.style.transition="0.3s"
 
 document.body.appendChild(popup)
 
-/* animation entrée */
+/* animation */
 setTimeout(()=>{
 popup.style.opacity="1"
 popup.style.transform="translateX(-50%) scale(1)"
