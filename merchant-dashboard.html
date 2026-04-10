@@ -261,7 +261,8 @@ location.href="index.html"
 
 window.openShop=()=>location.href="merchant-shop.html?id="+currentUser.uid
 window.addProduct=()=>location.href="add-product.html"
-
+import { startNotifications } from "./notifications.js"
+startNotifications()
 </script>
 
 </body>
