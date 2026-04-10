@@ -172,7 +172,8 @@ return d.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})
 window.openChat = (id)=>{
 location.href = "chat.html?id=" + id
 }
-
+import { startNotifications } from "./notifications.js"
+startNotifications()
 </script>
 
 </body>
