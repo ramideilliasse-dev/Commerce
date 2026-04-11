@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chat Premium</title>
+<title>Chat PRO MAX</title>
 
 <style>
 body{
@@ -45,13 +45,12 @@ padding:10px;
 background:url('https://i.imgur.com/3QZQZ6F.png');
 }
 
-/* MESSAGES */
+/* MSG */
 .msg{
 max-width:75%;
 padding:10px;
 border-radius:10px;
 margin-bottom:8px;
-position:relative;
 animation:fade 0.2s ease;
 }
 
@@ -80,8 +79,16 @@ margin-top:5px;
 
 .read{color:#53bdeb;font-size:10px;margin-left:5px;}
 
-.msg img{width:150px;border-radius:8px;margin-top:5px;}
-audio{width:150px;margin-top:5px}
+.msg img{
+width:150px;
+border-radius:8px;
+margin-top:5px;
+}
+
+audio{
+width:150px;
+margin-top:5px;
+}
 
 /* INPUT */
 .input{
@@ -144,6 +151,7 @@ display:none;
 <script type="module">
 
 import { db, auth } from "./firebase.js"
+
 import {
 collection, addDoc, query, orderBy, onSnapshot,
 doc, setDoc, updateDoc, getDoc
@@ -152,11 +160,15 @@ doc, setDoc, updateDoc, getDoc
 import { onAuthStateChanged }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
+/* 🔔 NOTIFICATIONS GLOBALES */
+import { startNotifications } from "./notifications.js"
+startNotifications()
+
 const chatId = new URLSearchParams(location.search).get("id")
 
 let user, merchant, messagesRef
 
-/* 🔔 SON PREMIUM */
+/* 🔊 SON */
 const audio = new Audio("https://actions.google.com/sounds/v1/notifications/message_new.ogg")
 
 function notify(){
@@ -180,6 +192,13 @@ merchant = parts.find(p => p !== user.uid)
 
 messagesRef = collection(db,"chats",chatId,"messages")
 
+/* 🔥 ONLINE STATUS */
+await updateDoc(doc(db,"users",user.uid),{online:true})
+
+window.addEventListener("beforeunload",()=>{
+updateDoc(doc(db,"users",user.uid),{online:false})
+})
+
 listen()
 
 })
@@ -192,6 +211,7 @@ onSnapshot(query(messagesRef,orderBy("time")),(snap)=>{
 const chat=document.getElementById("chat")
 chat.innerHTML=""
 
+/* 🔔 NOTIF */
 snap.docChanges().forEach(change=>{
 if(change.type==="added" && change.doc.data().senderId!==user.uid){
 notify()
@@ -199,18 +219,36 @@ notify()
 })
 
 snap.forEach(d=>{
+
 let m=d.data()
+let id=d.id
 let isMe = m.senderId===user.uid
+
+/* 🔥 MARQUER COMME LU */
+if(!isMe && !m.read){
+updateDoc(doc(db,"chats",chatId,"messages",id),{read:true})
+}
 
 chat.innerHTML+=`
 <div class="msg ${isMe?"me":"other"}">
+
 ${m.text||""}
-${m.image?`<img src="${m.image}">`:""}
-${m.audio?`<audio controls src="${m.audio}"></audio>`:""}
+
+${m.image ? `
+<img src="${m.image}" onerror="this.style.display='none'">
+` : ""}
+
+${m.audio ? `<audio controls src="${m.audio}"></audio>` : ""}
 
 <div class="time">
 ${new Date(m.time).toLocaleTimeString()}
-${isMe ? `<span class="read">${m.read ? "✔✔" : "✔"}</span>` : ""}
+
+${isMe ? `
+<span class="read">
+${m.read ? "✔✔" : "✔"}
+</span>
+` : ""}
+
 </div>
 </div>
 `
@@ -220,7 +258,7 @@ chat.scrollTop=chat.scrollHeight
 
 })
 
-/* ONLINE */
+/* 🟢 ONLINE */
 onSnapshot(doc(db,"users",merchant),(snap)=>{
 if(snap.exists()){
 document.getElementById("status").innerText =
@@ -245,6 +283,7 @@ time:Date.now(),
 read:false
 })
 
+/* 🔥 UPDATE CONVERSATION */
 await setDoc(doc(db,"conversations",chatId),{
 participants:[user.uid, merchant],
 lastMessage:text,
@@ -256,5 +295,6 @@ document.getElementById("text").value=""
 }
 
 </script>
+
 </body>
 </html>
