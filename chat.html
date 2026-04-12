@@ -3,108 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chat WhatsApp PRO</title>
+<title>Chat Debug</title>
 
 <style>
-body{
-margin:0;
-font-family:-apple-system;
-background:#0b141a;
-color:white;
-display:flex;
-flex-direction:column;
-height:100dvh;
-}
-
-.header{
-background:#202c33;
-padding:10px;
-display:flex;
-align-items:center;
-gap:10px;
-}
-
-.avatar{
-width:40px;height:40px;
-border-radius:50%;
-background:#555;
-display:flex;
-align-items:center;
-justify-content:center;
-}
-
-.status{font-size:12px;color:#aaa}
-
-.chat{
-flex:1;
-overflow-y:auto;
-padding:10px;
-
-background:
-linear-gradient(rgba(11,20,26,0.85), rgba(11,20,26,0.85)),
-url('https://i.ibb.co/7QpKsCX/whatsapp-bg.png');
-
-background-size:cover;
-animation:moveBg 30s linear infinite;
-}
-
-@keyframes moveBg{
-0%{background-position:0 0;}
-100%{background-position:100% 100%;}
-}
-
-.msg{
-max-width:75%;
-padding:10px;
-margin-bottom:8px;
-border-radius:10px;
-}
-
+body{margin:0;font-family:Arial;background:#0b141a;color:white;display:flex;flex-direction:column;height:100vh;}
+.header{background:#202c33;padding:10px;}
+.chat{flex:1;overflow:auto;padding:10px;}
+.msg{padding:10px;margin-bottom:8px;border-radius:10px;max-width:70%;}
 .me{background:#005c4b;margin-left:auto;}
 .other{background:#202c33;}
-
-.time{font-size:10px;text-align:right;opacity:0.7;}
-.read{color:#53bdeb}
-
-.input{
-display:flex;
-gap:5px;
-padding:10px;
-background:#202c33;
-}
-
-#text{
-flex:1;
-padding:10px;
-border-radius:25px;
-border:none;
-}
-
-.btn{
-background:#00a884;
-border:none;
-width:45px;height:45px;
-border-radius:50%;
-color:white;
-}
-
-.icon{
-background:#eee;
-width:40px;height:40px;
-border-radius:50%;
-}
+.input{display:flex;padding:10px;background:#202c33;}
+#text{flex:1;padding:10px;border-radius:20px;border:none;}
+.btn{width:45px;height:45px;border-radius:50%;background:#00a884;color:white;border:none;}
+.icon{width:40px;height:40px;border-radius:50%;}
 </style>
 </head>
 
 <body>
 
-<div class="header">
-<div class="avatar">👤</div>
-<div>
-<div>Chat</div>
-<div id="status" class="status">offline</div>
-</div>
-</div>
+<div class="header">Chat DEBUG</div>
 
 <div id="chat" class="chat"></div>
 
@@ -116,12 +33,13 @@ border-radius:50%;
 <button class="icon" id="recordBtn">🎤</button>
 <button class="btn" onclick="send()">➤</button>
 </div>
- <script type="module">
+
+<script type="module">
 
 import { db, auth } from "./firebase.js"
 import {
 collection, addDoc, query, orderBy, onSnapshot,
-doc, setDoc, updateDoc
+doc, setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
 import { onAuthStateChanged }
@@ -132,43 +50,46 @@ const UPLOAD_PRESET="angcomerce-upload"
 
 const chatId = new URLSearchParams(location.search).get("id")
 
-let user = null
-let merchant = null
-let messagesRef = null
+let user=null
+let merchant=null
+let messagesRef=null
 
-const imageInput = document.getElementById("image")
-const chatBox = document.getElementById("chat")
+const chatBox=document.getElementById("chat")
+const imageInput=document.getElementById("image")
 
-console.log("chatId =", chatId)
+alert("ChatID = " + chatId)
 
 /* AUTH */
-onAuthStateChanged(auth, async (u)=>{
+onAuthStateChanged(auth,(u)=>{
 
 if(!u){
-alert("Login necessário ❌")
+alert("❌ Utilisateur non connecté")
 return
 }
+
+user=u
+
+alert("✅ User connecté: " + user.uid)
 
 if(!chatId){
-alert("Chat ID inválido ❌")
+alert("❌ ChatID manquant")
 return
 }
 
-user = u
+const parts=chatId.split("_")
 
-const parts = chatId.split("_")
-
-if(parts.length !== 2){
-alert("Formato chat inválido ❌")
+if(parts.length!==2){
+alert("❌ Mauvais format ChatID")
 return
 }
 
-merchant = parts.find(p => p !== user.uid)
+merchant=parts.find(p=>p!==user.uid)
 
-console.log("user:", user.uid)
-console.log("merchant:", merchant)
+alert("✅ Merchant trouvé: " + merchant)
 
 messagesRef = collection(db,"chats",chatId,"messages")
+
+alert("✅ messagesRef OK")
 
 listen()
 
@@ -178,7 +99,7 @@ listen()
 function listen(){
 
 if(!messagesRef){
-console.error("messagesRef NULL ❌")
+alert("❌ messagesRef NULL")
 return
 }
 
@@ -188,12 +109,12 @@ chatBox.innerHTML=""
 
 snap.forEach(d=>{
 let m=d.data()
-let isMe = m.senderId===user.uid
+let isMe=m.senderId===user.uid
 
 chatBox.innerHTML+=`
 <div class="msg ${isMe?"me":"other"}">
 ${m.text||""}
-${m.image?`<img src="${m.image}" width="140">`:""}
+${m.image?`<img src="${m.image}" width="120">`:""}
 ${m.audio?`<audio controls src="${m.audio}"></audio>`:"}
 </div>
 `
@@ -205,31 +126,31 @@ chatBox.scrollTop=chatBox.scrollHeight
 
 }
 
-/* SEND TEXT */
-window.send = async function(){
+/* SEND */
+window.send=async function(){
 
-console.log("SEND CLICK")
+alert("📤 Clique envoyer")
 
 try{
 
 if(!user){
-alert("User NULL ❌")
+alert("❌ user NULL")
 return
 }
 
 if(!messagesRef){
-alert("messagesRef NULL ❌")
+alert("❌ messagesRef NULL")
 return
 }
 
-let text = document.getElementById("text").value.trim()
+let text=document.getElementById("text").value.trim()
 
 if(!text){
-alert("Mensagem vazia ❌")
+alert("❌ message vide")
 return
 }
 
-console.log("Enviando mensagem...")
+alert("🚀 Envoi en cours...")
 
 await addDoc(messagesRef,{
 text,
@@ -240,10 +161,10 @@ time:Date.now(),
 read:false
 })
 
-console.log("Mensagem enviada ✅")
+alert("✅ Message envoyé")
 
 await setDoc(doc(db,"conversations",chatId),{
-participants:[user.uid, merchant],
+participants:[user.uid,merchant],
 lastMessage:text,
 lastMessageTime:Date.now()
 },{merge:true})
@@ -251,46 +172,45 @@ lastMessageTime:Date.now()
 document.getElementById("text").value=""
 
 }catch(e){
-console.error("ERRO SEND:", e)
-alert("Erro envio ❌")
+alert("❌ ERREUR: " + e.message)
+console.error(e)
 }
 
 }
 
 /* IMAGE */
-window.pickImage = ()=>{
+window.pickImage=()=>{
 imageInput.click()
 }
 
-imageInput.onchange = async function(){
+imageInput.onchange=async function(){
+
+alert("📷 Image sélectionnée")
 
 try{
 
-if(!messagesRef){
-alert("Chat não pronto ❌")
+const file=this.files[0]
+if(!file){
+alert("❌ fichier vide")
 return
 }
-
-const file=this.files[0]
-if(!file) return
 
 let form=new FormData()
 form.append("file",file)
 form.append("upload_preset",UPLOAD_PRESET)
 
 let res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,{
-method:"POST",
-body:form
+method:"POST",body:form
 })
 
 let data=await res.json()
 
-console.log("Image upload:", data)
-
 if(!data.secure_url){
-alert("Upload falhou ❌")
+alert("❌ upload échoué")
 return
 }
+
+alert("✅ Image upload OK")
 
 await addDoc(messagesRef,{
 image:data.secure_url,
@@ -302,32 +222,28 @@ read:false
 })
 
 }catch(e){
-console.error("ERRO IMAGE:", e)
-alert("Erro imagem ❌")
+alert("❌ erreur image: "+e.message)
 }
 
 }
 
 /* AUDIO */
-const btn=document.getElementById("recordBtn")
+document.getElementById("recordBtn").onclick=async ()=>{
 
-btn.addEventListener("click", async ()=>{
+alert("🎤 Micro activé")
 
 try{
 
-if(!messagesRef){
-alert("Chat não pronto ❌")
-return
-}
+const stream=await navigator.mediaDevices.getUserMedia({audio:true})
 
-const stream = await navigator.mediaDevices.getUserMedia({audio:true})
-
-const recorder = new MediaRecorder(stream)
+const recorder=new MediaRecorder(stream)
 let chunks=[]
 
 recorder.ondataavailable=e=>chunks.push(e.data)
 
-recorder.onstop = async ()=>{
+recorder.onstop=async ()=>{
+
+alert("📤 Envoi audio")
 
 let blob=new Blob(chunks,{type:"audio/webm"})
 
@@ -336,13 +252,10 @@ form.append("file",blob)
 form.append("upload_preset",UPLOAD_PRESET)
 
 let res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/video/upload`,{
-method:"POST",
-body:form
+method:"POST",body:form
 })
 
 let data=await res.json()
-
-console.log("Audio upload:", data)
 
 await addDoc(messagesRef,{
 audio:data.secure_url,
@@ -353,6 +266,8 @@ time:Date.now(),
 read:false
 })
 
+alert("✅ Audio envoyé")
+
 }
 
 recorder.start()
@@ -362,10 +277,12 @@ recorder.stop()
 },3000)
 
 }catch(e){
-console.error("ERRO AUDIO:", e)
-alert("Erro micro ❌")
+alert("❌ erreur micro: "+e.message)
 }
 
-})
+}
 
 </script>
+
+</body>
+</html>
