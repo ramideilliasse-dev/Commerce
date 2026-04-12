@@ -40,8 +40,13 @@ body{margin:0;font-family:Arial;background:#0b141a;color:white;display:flex;flex
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <script>
+
+/* ✅ DEFINIR AVANT */
+const chatId = new URLSearchParams(location.search).get("id")
+
 alert("chatId: " + chatId)
-/* 🔥 CONFIG FIREBASE (MET TON CONFIG ICI) */
+
+/* 🔥 CONFIG FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
   authDomain: "angcomerce-v1.firebaseapp.com",
@@ -49,13 +54,14 @@ const firebaseConfig = {
   storageBucket: "angcomerce-v1.firebasestorage.app",
   messagingSenderId: "238735890157",
   appId: "1:238735890157:web:db3f87960db7916d7fdee4"
-};    
+};
 
 firebase.initializeApp(firebaseConfig)
 
 const db = firebase.firestore()
 const auth = firebase.auth()
 
+alert("Firebase OK ✅")
 const chatId = new URLSearchParams(location.search).get("id")
 
 let user, merchant
