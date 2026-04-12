@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chat Debug</title>
+<title>Chat FIX</title>
 
 <style>
 body{margin:0;font-family:Arial;background:#0b141a;color:white;display:flex;flex-direction:column;height:100vh;}
@@ -21,7 +21,7 @@ body{margin:0;font-family:Arial;background:#0b141a;color:white;display:flex;flex
 
 <body>
 
-<div class="header">Chat DEBUG</div>
+<div class="header">Chat FIX</div>
 
 <div id="chat" class="chat"></div>
 
@@ -30,10 +30,177 @@ body{margin:0;font-family:Arial;background:#0b141a;color:white;display:flex;flex
 <input type="file" id="image" hidden>
 
 <button class="icon" onclick="pickImage()">📷</button>
-<button class="icon" id="recordBtn">🎤</button>
+<button class="icon" onclick="sendAudio()">🎤</button>
 <button class="btn" onclick="send()">➤</button>
 </div>
 
+<!-- 🔥 FIREBASE COMPAT -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
 <script>
-alert("TEST SIMPLE ✅")
+
+/* 🔥 CONFIG FIREBASE (MET TON CONFIG ICI) */
+const firebaseConfig = {
+  apiKey: "TON_API_KEY",
+  authDomain: "TON_PROJECT.firebaseapp.com",
+  projectId: "TON_PROJECT_ID",
+}
+
+firebase.initializeApp(firebaseConfig)
+
+const db = firebase.firestore()
+const auth = firebase.auth()
+
+const chatId = new URLSearchParams(location.search).get("id")
+
+let user, merchant
+
+const chatBox = document.getElementById("chat")
+const imageInput = document.getElementById("image")
+
+alert("Script OK 🚀")
+
+/* AUTH */
+auth.onAuthStateChanged(u => {
+
+if(!u){
+alert("Login ❌")
+return
+}
+
+user = u
+
+const parts = chatId.split("_")
+merchant = parts.find(p => p !== user.uid)
+
+listen()
+
+})
+
+/* LISTEN */
+function listen(){
+
+db.collection("chats").doc(chatId)
+.collection("messages")
+.orderBy("time")
+.onSnapshot(snap => {
+
+chatBox.innerHTML=""
+
+snap.forEach(d => {
+
+let m=d.data()
+let isMe = m.senderId===user.uid
+
+chatBox.innerHTML+=`
+<div class="msg ${isMe?"me":"other"}">
+${m.text||""}
+${m.image?`<img src="${m.image}" width="120">`:""}
+${m.audio?`<audio controls src="${m.audio}"></audio>`:"}
+</div>
+`
+})
+
+chatBox.scrollTop=chatBox.scrollHeight
+
+})
+
+}
+
+/* SEND TEXT */
+function send(){
+
+let text=document.getElementById("text").value.trim()
+if(!text){
+alert("Message vide ❌")
+return
+}
+
+db.collection("chats").doc(chatId)
+.collection("messages").add({
+text,
+senderId:user.uid,
+receiverId:merchant,
+time:Date.now()
+})
+
+document.getElementById("text").value=""
+
+}
+
+/* IMAGE */
+function pickImage(){
+imageInput.click()
+}
+
+imageInput.onchange = async function(){
+
+const file=this.files[0]
+if(!file) return
+
+let form=new FormData()
+form.append("file",file)
+form.append("upload_preset","angcomerce-upload")
+
+let res=await fetch("https://api.cloudinary.com/v1_1/df2oxw2qp/image/upload",{
+method:"POST",body:form
+})
+
+let data=await res.json()
+
+db.collection("chats").doc(chatId)
+.collection("messages").add({
+image:data.secure_url,
+senderId:user.uid,
+receiverId:merchant,
+time:Date.now()
+})
+
+}
+
+/* AUDIO */
+async function sendAudio(){
+
+const stream = await navigator.mediaDevices.getUserMedia({audio:true})
+
+const recorder = new MediaRecorder(stream)
+let chunks=[]
+
+recorder.ondataavailable=e=>chunks.push(e.data)
+
+recorder.onstop=async ()=>{
+
+let blob=new Blob(chunks,{type:"audio/webm"})
+
+let form=new FormData()
+form.append("file",blob)
+form.append("upload_preset","angcomerce-upload")
+
+let res=await fetch("https://api.cloudinary.com/v1_1/df2oxw2qp/video/upload",{
+method:"POST",body:form
+})
+
+let data=await res.json()
+
+db.collection("chats").doc(chatId)
+.collection("messages").add({
+audio:data.secure_url,
+senderId:user.uid,
+receiverId:merchant,
+time:Date.now()
+})
+
+}
+
+recorder.start()
+
+setTimeout(()=>recorder.stop(),3000)
+
+}
+
 </script>
+
+</body>
+</html>
