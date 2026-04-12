@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chat FIX</title>
+<title>Chat FIX FINAL</title>
 
 <style>
 body{margin:0;font-family:Arial;background:#0b141a;color:white;display:flex;flex-direction:column;height:100vh;}
@@ -21,12 +21,9 @@ body{margin:0;font-family:Arial;background:#0b141a;color:white;display:flex;flex
 
 <body>
 
-<script>
-alert("JS fonctionne ✅")
-</script>
+<script>alert("PAGE OK 🚀")</script>
 
-<div class="header">Chat FIX</div>
-
+<div class="header">Chat</div>
 <div id="chat" class="chat"></div>
 
 <div class="input">
@@ -38,48 +35,49 @@ alert("JS fonctionne ✅")
 <button class="btn" onclick="send()">➤</button>
 </div>
 
-<!-- 🔥 FIREBASE COMPAT -->
+<!-- 🔥 FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <script>
 
-/* ✅ DEFINIR AVANT */
+/* 🔥 CHECK FIREBASE */
+if(typeof firebase === "undefined"){
+alert("Firebase NON chargé ❌")
+}else{
+alert("Firebase OK ✅")
+}
+
+/* 🔥 CHAT ID */
 const chatId = new URLSearchParams(location.search).get("id")
 
-alert("chatId: " + chatId)
+if(!chatId){
+alert("chatId manquant ❌")
+}
 
-/* 🔥 CONFIG FIREBASE */
-const firebaseConfig = {
-  apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
-  authDomain: "angcomerce-v1.firebaseapp.com",
-  projectId: "angcomerce-v1",
-  storageBucket: "angcomerce-v1.firebasestorage.app",
-  messagingSenderId: "238735890157",
-  appId: "1:238735890157:web:db3f87960db7916d7fdee4"
-};
-
-firebase.initializeApp(firebaseConfig)
+/* 🔥 CONFIG */
+firebase.initializeApp({
+apiKey:"AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
+authDomain:"angcomerce-v1.firebaseapp.com",
+projectId:"angcomerce-v1"
+})
 
 const db = firebase.firestore()
 const auth = firebase.auth()
-
-alert("Firebase OK ✅")
-const chatId = new URLSearchParams(location.search).get("id")
 
 let user, merchant
 
 const chatBox = document.getElementById("chat")
 const imageInput = document.getElementById("image")
 
-alert("Script OK 🚀")
+alert("Script lancé ✅")
 
 /* AUTH */
-auth.onAuthStateChanged(u => {
+auth.onAuthStateChanged(u=>{
 
 if(!u){
-alert("Login ❌")
+alert("Pas connecté ❌")
 return
 }
 
@@ -87,6 +85,8 @@ user = u
 
 const parts = chatId.split("_")
 merchant = parts.find(p => p !== user.uid)
+
+alert("User OK ✅")
 
 listen()
 
@@ -98,11 +98,11 @@ function listen(){
 db.collection("chats").doc(chatId)
 .collection("messages")
 .orderBy("time")
-.onSnapshot(snap => {
+.onSnapshot(snap=>{
 
 chatBox.innerHTML=""
 
-snap.forEach(d => {
+snap.forEach(d=>{
 
 let m=d.data()
 let isMe = m.senderId===user.uid
@@ -118,14 +118,17 @@ ${m.audio?`<audio controls src="${m.audio}"></audio>`:"}
 
 chatBox.scrollTop=chatBox.scrollHeight
 
+},err=>{
+alert("Erreur Firestore ❌ "+err.message)
 })
 
 }
 
-/* SEND TEXT */
+/* SEND */
 function send(){
 
 let text=document.getElementById("text").value.trim()
+
 if(!text){
 alert("Message vide ❌")
 return
@@ -138,8 +141,12 @@ senderId:user.uid,
 receiverId:merchant,
 time:Date.now()
 })
-
-document.getElementById("text").value=""
+.then(()=>{
+alert("Message envoyé ✅")
+})
+.catch(e=>{
+alert("Erreur envoi ❌ "+e.message)
+})
 
 }
 
@@ -148,19 +155,18 @@ function pickImage(){
 imageInput.click()
 }
 
-imageInput.onchange = async function(){
+imageInput.onchange=async function(){
 
 const file=this.files[0]
 if(!file) return
+
+alert("Upload image...")
 
 let form=new FormData()
 form.append("file",file)
 form.append("upload_preset","angcomerce-upload")
 
-let res=await fetch("https://api.cloudinary.com/v1_1/df2oxw2qp/image/upload",{
-method:"POST",body:form
-})
-
+let res=await fetch("https://api.cloudinary.com/v1_1/df2oxw2qp/image/upload",{method:"POST",body:form})
 let data=await res.json()
 
 db.collection("chats").doc(chatId)
@@ -171,10 +177,13 @@ receiverId:merchant,
 time:Date.now()
 })
 
+alert("Image envoyée ✅")
 }
 
 /* AUDIO */
 async function sendAudio(){
+
+alert("Micro start 🎤")
 
 const stream = await navigator.mediaDevices.getUserMedia({audio:true})
 
@@ -185,16 +194,15 @@ recorder.ondataavailable=e=>chunks.push(e.data)
 
 recorder.onstop=async ()=>{
 
+alert("Upload audio...")
+
 let blob=new Blob(chunks,{type:"audio/webm"})
 
 let form=new FormData()
 form.append("file",blob)
 form.append("upload_preset","angcomerce-upload")
 
-let res=await fetch("https://api.cloudinary.com/v1_1/df2oxw2qp/video/upload",{
-method:"POST",body:form
-})
-
+let res=await fetch("https://api.cloudinary.com/v1_1/df2oxw2qp/video/upload",{method:"POST",body:form})
 let data=await res.json()
 
 db.collection("chats").doc(chatId)
@@ -205,6 +213,7 @@ receiverId:merchant,
 time:Date.now()
 })
 
+alert("Audio envoyé ✅")
 }
 
 recorder.start()
