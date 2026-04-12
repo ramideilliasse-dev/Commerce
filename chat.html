@@ -16,7 +16,6 @@ flex-direction:column;
 height:100dvh;
 }
 
-/* HEADER */
 .header{
 background:#202c33;
 padding:10px;
@@ -36,7 +35,6 @@ justify-content:center;
 
 .status{font-size:12px;color:#aaa}
 
-/* CHAT */
 .chat{
 flex:1;
 overflow-y:auto;
@@ -55,7 +53,6 @@ animation:moveBg 30s linear infinite;
 100%{background-position:100% 100%;}
 }
 
-/* MSG */
 .msg{
 max-width:75%;
 padding:10px;
@@ -69,7 +66,6 @@ border-radius:10px;
 .time{font-size:10px;text-align:right;opacity:0.7;}
 .read{color:#53bdeb}
 
-/* INPUT */
 .input{
 display:flex;
 gap:5px;
@@ -84,7 +80,6 @@ border-radius:25px;
 border:none;
 }
 
-/* BUTTONS */
 .btn{
 background:#00a884;
 border:none;
@@ -97,13 +92,6 @@ color:white;
 background:#eee;
 width:40px;height:40px;
 border-radius:50%;
-}
-
-/* typing */
-.typing{
-font-size:12px;
-color:#53bdeb;
-margin-left:10px;
 }
 </style>
 </head>
@@ -120,16 +108,12 @@ margin-left:10px;
 
 <div id="chat" class="chat"></div>
 
-<div id="typing" class="typing"></div>
-
 <div class="input">
 <input id="text" placeholder="Mensagem...">
-
 <input type="file" id="image" hidden>
 
 <button class="icon" onclick="pickImage()">📷</button>
 <button class="icon" id="recordBtn">🎤</button>
-
 <button class="btn" onclick="send()">➤</button>
 </div>
 
@@ -144,33 +128,29 @@ doc, setDoc, updateDoc
 import { onAuthStateChanged }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
-import { startNotifications } from "./notifications.js"
-startNotifications()
-
 const CLOUD_NAME="df2oxw2qp"
 const UPLOAD_PRESET="angcomerce-upload"
 
 const chatId = new URLSearchParams(location.search).get("id")
 
-if(!chatId){
-alert("Chat ID manquant ❌")
-}
-
 let user, merchant, messagesRef
 let recorder, chunks=[]
 
-/* 🔊 SON */
-const audioNotif = new Audio("https://actions.google.com/sounds/v1/notifications/message_new.ogg")
-
-function notify(){
-audioNotif.currentTime=0
-audioNotif.play().catch(()=>{})
-}
+const imageInput = document.getElementById("image")
+const chatBox = document.getElementById("chat")
 
 /* AUTH */
 onAuthStateChanged(auth, async (u)=>{
 
-if(!u) return
+if(!u){
+alert("Login necessário ❌")
+return
+}
+
+if(!chatId){
+alert("Chat ID inválido ❌")
+return
+}
 
 user=u
 
@@ -179,7 +159,9 @@ merchant = parts.find(p => p !== user.uid)
 
 messagesRef = collection(db,"chats",chatId,"messages")
 
+try{
 await updateDoc(doc(db,"users",user.uid),{online:true})
+}catch(e){}
 
 listen()
 
@@ -190,28 +172,18 @@ function listen(){
 
 onSnapshot(query(messagesRef,orderBy("time")),(snap)=>{
 
-const chat=document.getElementById("chat")
-chat.innerHTML=""
-
-/* 🔔 notif */
-snap.docChanges().forEach(change=>{
-if(change.type==="added" && change.doc.data().senderId!==user.uid){
-notify()
-}
-})
+chatBox.innerHTML=""
 
 snap.forEach(d=>{
-
 let m=d.data()
 let id=d.id
 let isMe = m.senderId===user.uid
 
-/* ✔✔ lu */
 if(!isMe && !m.read){
 updateDoc(doc(db,"chats",chatId,"messages",id),{read:true})
 }
 
-chat.innerHTML+=`
+chatBox.innerHTML+=`
 <div class="msg ${isMe?"me":"other"}">
 ${m.text||""}
 ${m.image?`<img src="${m.image}" width="140">`:""}
@@ -225,34 +197,23 @@ ${isMe ? `<span class="read">${m.read?"✔✔":"✔"}</span>`:""}
 `
 })
 
-chat.scrollTop=chat.scrollHeight
+chatBox.scrollTop=chatBox.scrollHeight
 
-})
-
-/* ONLINE */
-onSnapshot(doc(db,"users",merchant),(snap)=>{
-document.getElementById("status").innerText =
-snap.data()?.online ? "🟢 online" : "offline"
 })
 
 }
 
-/* ✅ SEND FIX COMPLET */
+/* ✅ SEND FIX */
 window.send = async function(){
 
 try{
 
-if(!user){
-alert("Utilisateur non connecté ❌")
+if(!user || !messagesRef){
+alert("Chat não pronto ❌")
 return
 }
 
-if(!messagesRef){
-alert("Chat non prêt ❌")
-return
-}
-
-let text=document.getElementById("text").value.trim()
+let text = document.getElementById("text").value.trim()
 if(!text) return
 
 await addDoc(messagesRef,{
@@ -274,22 +235,24 @@ document.getElementById("text").value=""
 
 }catch(e){
 console.error(e)
-alert("Erreur envoi ❌")
+alert("Erro ao enviar ❌")
 }
 
 }
 
 /* ENTER SEND */
 document.getElementById("text").addEventListener("keypress",(e)=>{
-if(e.key==="Enter"){
-send()
-}
+if(e.key==="Enter") send()
 })
 
 /* IMAGE */
-window.pickImage=()=>image.click()
+window.pickImage = ()=>{
+imageInput.click()
+}
 
-image.onchange=async function(){
+imageInput.onchange = async function(){
+
+try{
 
 const file=this.files[0]
 if(!file) return
@@ -299,10 +262,16 @@ form.append("file",file)
 form.append("upload_preset",UPLOAD_PRESET)
 
 let res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,{
-method:"POST",body:form
+method:"POST",
+body:form
 })
 
 let data=await res.json()
+
+if(!data.secure_url){
+alert("Erro upload ❌")
+return
+}
 
 await addDoc(messagesRef,{
 image:data.secure_url,
@@ -313,21 +282,50 @@ time:Date.now(),
 read:false
 })
 
+}catch(e){
+console.error(e)
+alert("Erro imagem ❌")
+}
+
 }
 
 /* AUDIO */
 const btn=document.getElementById("recordBtn")
 
-btn.onmousedown = async ()=>{
+btn.addEventListener("touchstart", startRecord)
+btn.addEventListener("touchend", stopRecord)
+btn.addEventListener("mousedown", startRecord)
+btn.addEventListener("mouseup", stopRecord)
 
+async function startRecord(){
+
+try{
 const stream = await navigator.mediaDevices.getUserMedia({audio:true})
-recorder = new MediaRecorder(stream)
 
+recorder = new MediaRecorder(stream)
 chunks=[]
 
 recorder.ondataavailable=e=>chunks.push(e.data)
 
+recorder.start()
+btn.innerText="⏹"
+
+}catch(e){
+alert("Micro bloqueado ❌")
+}
+
+}
+
+async function stopRecord(){
+
+if(!recorder) return
+
+recorder.stop()
+btn.innerText="🎤"
+
 recorder.onstop = async ()=>{
+
+try{
 
 let blob=new Blob(chunks,{type:"audio/webm"})
 
@@ -336,10 +334,16 @@ form.append("file",blob)
 form.append("upload_preset",UPLOAD_PRESET)
 
 let res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/video/upload`,{
-method:"POST",body:form
+method:"POST",
+body:form
 })
 
 let data=await res.json()
+
+if(!data.secure_url){
+alert("Erro áudio ❌")
+return
+}
 
 await addDoc(messagesRef,{
 audio:data.secure_url,
@@ -350,38 +354,14 @@ time:Date.now(),
 read:false
 })
 
+}catch(e){
+console.error(e)
+alert("Erro áudio ❌")
 }
 
-recorder.start()
-btn.innerText="⏹"
-
 }
 
-btn.onmouseup = ()=>{
-if(recorder){
-recorder.stop()
-btn.innerText="🎤"
 }
-}
-
-/* TYPING */
-const input=document.getElementById("text")
-
-input.addEventListener("input", async ()=>{
-await setDoc(doc(db,"typing",chatId),{
-user:user.uid,
-time:Date.now()
-})
-})
-
-onSnapshot(doc(db,"typing",chatId),(snap)=>{
-const t=snap.data()
-
-if(t && t.user!==user.uid){
-document.getElementById("typing").innerText="✍️ digitando..."
-setTimeout(()=>document.getElementById("typing").innerText="",2000)
-}
-})
 
 </script>
 
