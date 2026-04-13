@@ -1,12 +1,131 @@
  <!DOCTYPE html>
-<html>
+<html lang="pt">
 <head>
-<title>TEST</title>
+<meta charset="UTF-8">
+<title>Chat DEBUG</title>
 </head>
-<body>
+
+<body onload="alert('PAGE OK 🚀')">
+
+<h2>Chat Debug</h2>
+
+<div id="chat"></div>
+
+<input id="text" placeholder="Mensagem...">
+<button onclick="send()">Envoyer</button>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <script>
-alert("TEST JS OK ✅")
+
+alert("Firebase chargé 🚀")
+
+/* CONFIG */
+const firebaseConfig = {
+  apiKey: "AIzaSyB...",
+  authDomain: "angcomerce-v1.firebaseapp.com",
+  projectId: "angcomerce-v1"
+}
+
+firebase.initializeApp(firebaseConfig)
+
+const db = firebase.firestore()
+const auth = firebase.auth()
+
+alert("Firebase initialisé ✅")
+
+/* 🔥 FIX IMPORTANT */
+const chatId = new URLSearchParams(location.search).get("id")
+
+alert("chatId: " + chatId)
+
+let user, merchant
+
+/* AUTH */
+auth.onAuthStateChanged(u => {
+
+alert("AUTH détecté 👤")
+
+if(!u){
+alert("Utilisateur NON connecté ❌")
+return
+}
+
+user = u
+
+alert("User UID: " + user.uid)
+
+if(!chatId){
+alert("chatId manquant ❌")
+return
+}
+
+/* 🔥 FIX merchant */
+const parts = chatId.split("_")
+merchant = parts.find(p => p !== user.uid)
+
+alert("Merchant: " + merchant)
+
+listen()
+
+})
+
+/* LISTEN */
+function listen(){
+
+alert("LISTEN START 🔥")
+
+db.collection("chats").doc(chatId)
+.collection("messages")
+.orderBy("time")
+.onSnapshot(snap => {
+
+alert("Messages reçus 📩")
+
+const chat=document.getElementById("chat")
+chat.innerHTML=""
+
+snap.forEach(d=>{
+let m=d.data()
+
+chat.innerHTML += `
+<div>
+${m.text || ""}
+</div>
+`
+})
+
+})
+
+}
+
+/* SEND */
+function send(){
+
+alert("CLICK SEND 🚀")
+
+let text=document.getElementById("text").value
+
+if(!text){
+alert("Message vide ❌")
+return
+}
+
+db.collection("chats").doc(chatId)
+.collection("messages").add({
+text,
+senderId:user.uid,
+receiverId:merchant,
+time:Date.now()
+})
+
+alert("Message envoyé ✅")
+
+}
+
 </script>
 
 </body>
