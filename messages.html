@@ -9,13 +9,13 @@
 body{
 margin:0;
 font-family:Arial;
-background:#f4f4f4;
+background:#0b141a;
+color:white;
 }
 
 /* HEADER */
 .header{
-background:#ff6a00;
-color:white;
+background:#202c33;
 padding:15px;
 font-size:20px;
 font-weight:bold;
@@ -28,7 +28,7 @@ padding:10px;
 
 /* ITEM */
 .item{
-background:white;
+background:#202c33;
 padding:12px;
 border-radius:12px;
 margin-bottom:10px;
@@ -36,7 +36,6 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 cursor:pointer;
-box-shadow:0 2px 5px rgba(0,0,0,0.1);
 }
 
 .left{
@@ -49,11 +48,10 @@ align-items:center;
 width:45px;
 height:45px;
 border-radius:50%;
-background:#ddd;
+background:#555;
 display:flex;
 align-items:center;
 justify-content:center;
-font-weight:bold;
 }
 
 .texts{
@@ -67,17 +65,17 @@ font-weight:bold;
 
 .last{
 font-size:13px;
-color:#666;
+color:#aaa;
 }
 
 .right{
 text-align:right;
 font-size:12px;
-color:#888;
+color:#aaa;
 }
 
 .badge{
-background:red;
+background:#00a884;
 color:white;
 border-radius:50%;
 padding:3px 7px;
@@ -86,11 +84,12 @@ margin-top:5px;
 display:inline-block;
 }
 </style>
+
 </head>
 
 <body>
 
-<div class="header">Mensagens 💬</div>
+<div class="header">💬 Mensagens</div>
 
 <div id="list"></div>
 
@@ -111,8 +110,12 @@ const list = document.getElementById("list")
 
 onAuthStateChanged(auth,(user)=>{
 
-if(!user) return
+if(!user){
+list.innerHTML = "<p style='padding:10px'>Faça login ❌</p>"
+return
+}
 
+/* 🔥 RECUPERER CONVERSATIONS */
 const q = query(
 collection(db,"conversations"),
 where("participants","array-contains",user.uid)
@@ -122,14 +125,18 @@ onSnapshot(q,(snap)=>{
 
 let html=""
 
+if(snap.empty){
+html = "<p style='padding:10px'>Sem mensagens 💬</p>"
+}
+
 snap.forEach(docSnap=>{
 
 const c = docSnap.data()
 
-/* 🔥 nom autre utilisateur */
+/* 🔥 AUTRE USER */
 let other = c.participants.find(p => p !== user.uid)
 
-/* 🔴 messages non lus */
+/* 🔴 UNREAD */
 let unread = c.unread?.[user.uid] || 0
 
 html += `
@@ -139,7 +146,7 @@ html += `
 <div class="avatar">👤</div>
 
 <div class="texts">
-<div class="name">Vendedor</div>
+<div class="name">Cliente</div>
 <div class="last">${c.lastMessage || "Nova conversa"}</div>
 </div>
 </div>
@@ -151,7 +158,6 @@ ${unread > 0 ? `<div class="badge">${unread}</div>` : ""}
 
 </div>
 `
-
 })
 
 list.innerHTML = html
@@ -160,20 +166,18 @@ list.innerHTML = html
 
 })
 
-/* ⏰ FORMAT TEMPS */
+/* ⏰ TEMPS */
 function formatTime(t){
 if(!t) return ""
-
 let d = new Date(t)
 return d.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})
 }
 
-/* 👉 OUVRIR CHAT */
-window.openChat = (id)=>{
+/* 🔥 FIX CRITIQUE ICI */
+window.openChat = (chatId)=>{
 location.href = "chat.html?id=" + chatId
 }
-import { startNotifications } from "./notifications.js"
-startNotifications()
+
 </script>
 
 </body>
