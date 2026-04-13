@@ -30,46 +30,6 @@ object-fit:cover;
 cursor:pointer;
 }
 
-.fullscreen{
-position:fixed;
-top:0;left:0;
-width:100%;
-height:100%;
-background:black;
-display:none;
-justify-content:center;
-align-items:center;
-z-index:9999;
-flex-direction:column;
-}
-
-.fullscreen img{
-max-width:100%;
-max-height:100%;
-}
-
-.closeBtn{
-position:absolute;
-top:20px;
-right:20px;
-color:white;
-font-size:30px;
-cursor:pointer;
-}
-
-.navBtn{
-position:absolute;
-top:50%;
-transform:translateY(-50%);
-font-size:40px;
-color:white;
-cursor:pointer;
-padding:10px;
-}
-
-.prev{left:10px;}
-.next{right:10px;}
-
 .gallery{
 display:flex;
 gap:8px;
@@ -119,40 +79,6 @@ cursor:pointer;
 .shopBtn{background:#ff6a00;color:white;}
 
 .section{padding:10px;}
-
-.grid{
-display:flex;
-gap:10px;
-overflow-x:auto;
-}
-
-.card{
-min-width:140px;
-background:white;
-border-radius:10px;
-padding:8px;
-box-shadow:0 2px 5px rgba(0,0,0,0.1);
-cursor:pointer;
-}
-
-.card img{
-width:100%;
-height:100px;
-object-fit:cover;
-border-radius:8px;
-}
-
-.cardPrice{
-color:#ff6a00;
-font-weight:bold;
-}
-
-.review{
-border-bottom:1px solid #eee;
-padding:8px 0;
-}
-
-.stars{color:#FFD700;}
 </style>
 </head>
 
@@ -161,29 +87,6 @@ padding:8px 0;
 <div class="header">Detalhes do produto</div>
 
 <div id="productBox"></div>
-
-<div id="fullscreen" class="fullscreen">
-<div class="closeBtn" onclick="closeFullscreen()">✕</div>
-<div class="navBtn prev" onclick="prevImage()">‹</div>
-<img id="fullscreenImg">
-<div class="navBtn next" onclick="nextImage()">›</div>
-</div>
-
-<div class="section">
-<h3>Avaliações</h3>
-<div id="avgRating"></div>
-<div id="reviewsList"></div>
-</div>
-
-<div class="section">
-<h3>Produtos similares</h3>
-<div id="similar" class="grid"></div>
-</div>
-
-<div class="section">
-<h3>Outros vendedores</h3>
-<div id="others" class="grid"></div>
-</div>
 
 <script type="module">
 
@@ -197,7 +100,6 @@ const productId = localStorage.getItem("selectedProduct")
 
 let currentProduct=null
 let images=[]
-let currentIndex=0
 
 async function loadProduct(){
 
@@ -212,10 +114,6 @@ currentProduct = snap.data()
 images = currentProduct.images || []
 
 renderProduct()
-loadReviews()
-loadSimilar()
-loadOthers()
-
 }
 
 loadProduct()
@@ -227,12 +125,12 @@ let main = images[0] || ""
 document.getElementById("productBox").innerHTML = `
 
 <div class="imageContainer">
-<img class="mainImage" src="${main}" onclick="openFullscreen(0)">
+<img class="mainImage" src="${main}">
 </div>
 
 <div class="gallery">
 ${images.map((img,i)=>`
-<img src="${img}" onclick="selectImage(${i})" class="${i===0?'active':''}">
+<img src="${img}" onclick="selectImage(${i})">
 `).join("")}
 </div>
 
@@ -243,7 +141,7 @@ ${images.map((img,i)=>`
 
 <div class="actions">
 <button class="btn buyBtn" onclick="orderNow()">Comprar</button>
-<button class="btn chatBtn" onclick="openChat()">💬 Chat</button>
+<button class="btn chatBtn" onclick="contactSeller()">💬 Contatar vendedor</button>
 <button class="btn shopBtn" onclick="openShop()">🏪 Ver Loja</button>
 </div>
 
@@ -251,67 +149,31 @@ ${images.map((img,i)=>`
 `
 }
 
-/* FULLSCREEN */
-window.openFullscreen=function(i){
-currentIndex=i
-fullscreen.style.display="flex"
-fullscreenImg.src=images[i]
+/* 🔥 CONTACT SELLER (FIX IMPORTANT) */
+window.contactSeller = function(){
+
+if(!auth.currentUser){
+alert("Faz login primeiro ❌")
+return
 }
 
-window.closeFullscreen=function(){
-fullscreen.style.display="none"
+const userId = auth.currentUser.uid
+const merchantId = currentProduct.merchantId
+
+if(!merchantId){
+alert("Vendedor não encontrado ❌")
+return
 }
 
-window.nextImage=function(){
-currentIndex=(currentIndex+1)%images.length
-fullscreenImg.src=images[currentIndex]
-}
+/* 🔥 CREATE CHAT ID */
+const chatId = [userId, merchantId].sort().join("_")
 
-window.prevImage=function(){
-currentIndex=(currentIndex-1+images.length)%images.length
-fullscreenImg.src=images[currentIndex]
-}
-
-window.selectImage=function(i){
-currentIndex=i
-document.querySelector(".mainImage").src=images[i]
-}
-
-/* REVIEWS */
-async function loadReviews(){
-
-const q = query(
-collection(db,"reviews"),
-where("productId","==",productId)
-)
-
-const snap = await getDocs(q)
-
-let total=0
-let count=0
-let html=""
-
-snap.forEach(doc=>{
-let r = doc.data()
-total += r.rating
-count++
-
-html += `
-<div class="review">
-<div class="stars">${"⭐".repeat(r.rating)}</div>
-<div>${r.comment || ""}</div>
-</div>
-`
-})
-
-let avg = count ? (total/count).toFixed(1) : 0
-
-avgRating.innerHTML = `<b>${avg} ⭐ (${count})</b>`
-reviewsList.innerHTML = html
+/* 🔥 GO CHAT */
+location.href = "chat.html?id=" + chatId
 
 }
 
-/* 🔥 WHATSAPP PRO */
+/* WHATSAPP */
 window.orderNow = async function(){
 
 if(!auth.currentUser){
@@ -331,19 +193,13 @@ alert("Vendedor sem WhatsApp ❌")
 return
 }
 
-/* CLEAN NUMBER */
 phone = phone.replace(/\D/g,"")
 
-/* MESSAGE PRO */
 const msg = `
 🛒 *NOVO PEDIDO*
 
 📦 Produto: ${currentProduct.name}
 💰 Preço: ${currentProduct.price} Kz
-
-👤 Cliente ID: ${auth.currentUser.uid}
-
-📱 Enviado via App
 `
 
 const url = "https://wa.me/"+phone+"?text="+encodeURIComponent(msg)
@@ -351,83 +207,19 @@ const url = "https://wa.me/"+phone+"?text="+encodeURIComponent(msg)
 window.open(url,"_blank")
 
 }catch(e){
-console.error(e)
-alert("Erro ao enviar pedido ❌")
+alert("Erro ❌")
 }
 
-}
-
-/* CHAT */
-window.openChat=function(){
-location.href="chat.html?merchant="+currentProduct.merchantId
 }
 
 /* SHOP */
 window.openShop=function(){
-if(!currentProduct?.merchantId){
-alert("Loja não encontrada ❌")
-return
-}
 location.href="merchant-shop.html?id="+currentProduct.merchantId
 }
 
-/* SIMILAR */
-async function loadSimilar(){
-
-const q=query(
-collection(db,"products"),
-where("category","==",currentProduct.category)
-)
-
-const snap=await getDocs(q)
-
-let html=""
-
-snap.forEach(docSnap=>{
-const p=docSnap.data()
-
-if(docSnap.id!==productId){
-html+=`
-<div class="card" onclick="openProduct('${docSnap.id}')">
-<img src="${p.images?.[0]}">
-<div>${p.name}</div>
-<div class="cardPrice">${p.price} Kz</div>
-</div>
-`
-}
-})
-
-similar.innerHTML=html
-}
-
-/* OTHERS */
-async function loadOthers(){
-
-const snap=await getDocs(collection(db,"products"))
-
-let html=""
-
-snap.forEach(docSnap=>{
-const p=docSnap.data()
-
-if(p.merchantId!==currentProduct.merchantId){
-html+=`
-<div class="card" onclick="openProduct('${docSnap.id}')">
-<img src="${p.images?.[0]}">
-<div>${p.name}</div>
-<div class="cardPrice">${p.price} Kz</div>
-</div>
-`
-}
-})
-
-others.innerHTML=html
-}
-
-/* OPEN */
-window.openProduct=function(id){
-localStorage.setItem("selectedProduct", id)
-location.reload()
+/* SELECT IMAGE */
+window.selectImage=function(i){
+document.querySelector(".mainImage").src=images[i]
 }
 
 </script>
