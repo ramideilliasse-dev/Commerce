@@ -9,6 +9,9 @@
 
 <h2>Chat Debug</h2>
 
+<!-- 🔥 LOGIN TEST -->
+<button onclick="login()">Login test</button>
+
 <div id="chat"></div>
 
 <input id="text" placeholder="Mensagem...">
@@ -43,6 +46,19 @@ const chatId = new URLSearchParams(location.search).get("id")
 alert("chatId: " + chatId)
 
 let user, merchant
+
+/* 🔥 LOGIN TEST */
+function login(){
+
+auth.signInAnonymously()
+.then(()=>{
+alert("Connecté ✅")
+})
+.catch(e=>{
+alert("Erreur login ❌ " + e.message)
+})
+
+}
 
 /* AUTH */
 auth.onAuthStateChanged(u => {
@@ -107,6 +123,16 @@ function send(){
 
 alert("CLICK SEND 🚀")
 
+if(!user){
+alert("Pas connecté ❌")
+return
+}
+
+if(!chatId){
+alert("chatId manquant ❌")
+return
+}
+
 let text=document.getElementById("text").value
 
 if(!text){
@@ -123,6 +149,8 @@ time:Date.now()
 })
 
 alert("Message envoyé ✅")
+
+document.getElementById("text").value=""
 
 }
 
