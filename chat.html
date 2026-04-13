@@ -2,29 +2,149 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Chat AUTO PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat WhatsApp FINAL</title>
+
+<style>
+body{
+margin:0;
+font-family:-apple-system;
+background:#0b141a;
+color:white;
+display:flex;
+flex-direction:column;
+height:100dvh;
+}
+
+/* HEADER */
+.header{
+background:#202c33;
+padding:10px;
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.avatar{
+width:40px;height:40px;
+border-radius:50%;
+background:#555;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.status{font-size:12px;color:#aaa}
+
+/* CHAT */
+.chat{
+flex:1;
+overflow-y:auto;
+padding:10px;
+
+background:
+linear-gradient(rgba(11,20,26,0.85), rgba(11,20,26,0.85)),
+url('https://i.ibb.co/7QpKsCX/whatsapp-bg.png');
+
+background-size:cover;
+animation:moveBg 30s linear infinite;
+}
+
+@keyframes moveBg{
+0%{background-position:0 0;}
+100%{background-position:100% 100%;}
+}
+
+/* MSG */
+.msg{
+max-width:75%;
+padding:10px;
+margin-bottom:8px;
+border-radius:10px;
+animation:fade 0.2s ease;
+}
+
+@keyframes fade{
+from{opacity:0;transform:translateY(5px)}
+to{opacity:1}
+}
+
+.me{background:#005c4b;margin-left:auto;}
+.other{background:#202c33;}
+
+.time{font-size:10px;text-align:right;opacity:0.7;}
+.read{color:#53bdeb}
+
+/* INPUT */
+.input{
+display:flex;
+gap:5px;
+padding:10px;
+background:#202c33;
+}
+
+#text{
+flex:1;
+padding:10px;
+border-radius:25px;
+border:none;
+}
+
+/* BUTTONS */
+.btn{
+background:#00a884;
+border:none;
+width:45px;height:45px;
+border-radius:50%;
+color:white;
+}
+
+.icon{
+background:#eee;
+width:40px;height:40px;
+border-radius:50%;
+}
+
+/* typing */
+.typing{
+font-size:12px;
+color:#53bdeb;
+margin-left:10px;
+}
+</style>
 </head>
 
-<body onload="alert('PAGE OK 🚀')">
+<body>
 
-<h2>Chat Auto</h2>
+<div class="header">
+<div class="avatar">👤</div>
+<div>
+<div>Chat</div>
+<div id="status" class="status">offline</div>
+</div>
+</div>
 
-<button onclick="login()">Login test</button>
+<div id="chat" class="chat"></div>
 
-<div id="chat"></div>
+<div id="typing" class="typing"></div>
 
+<div class="input">
 <input id="text" placeholder="Mensagem...">
-<button onclick="send()">Envoyer</button>
+<input type="file" id="image" hidden>
 
-<!-- Firebase -->
+<button class="icon" onclick="pickImage()">📷</button>
+<button class="icon" id="recordBtn">🎤</button>
+<button class="btn" onclick="send()">➤</button>
+</div>
+
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <script>
 
-alert("Firebase chargé 🚀")
-
+/* CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
   authDomain: "angcomerce-v1.firebaseapp.com",
@@ -39,52 +159,38 @@ firebase.initializeApp(firebaseConfig)
 const db = firebase.firestore()
 const auth = firebase.auth()
 
-alert("Firebase initialisé ✅")
+/* VARIABLES */
+let user, merchant, chatId
+let recorder, chunks=[]
 
-/* 🔥 AUTO CHAT */
-let chatId = null
-let user, merchant
+const CLOUD_NAME="df2oxw2qp"
+const UPLOAD_PRESET="angcomerce-upload"
 
-/* 🔥 LOGIN */
-function login(){
+/* 🔊 SON */
+const sound = new Audio("https://actions.google.com/sounds/v1/notifications/message_new.ogg")
+
+/* LOGIN AUTO */
 auth.signInAnonymously()
-.then(()=> alert("Connecté ✅"))
-.catch(e=> alert("Erreur ❌ " + e.message))
-}
 
 /* AUTH */
 auth.onAuthStateChanged(async u => {
 
-alert("AUTH détecté 👤")
-
-if(!u){
-alert("Pas connecté ❌")
-return
-}
+if(!u) return
 
 user = u
 
-alert("User UID: " + user.uid)
+/* MERCHANT AUTO */
+merchant = new URLSearchParams(location.search).get("merchant") || "testMerchant"
 
-/* 🔥 RÉCUPÉRER MERCHANT (IMPORTANT) */
-const urlParams = new URLSearchParams(location.search)
-merchant = urlParams.get("merchant")
-
-if(!merchant){
-merchant = "testMerchant" // fallback pour test
-alert("Merchant AUTO: " + merchant)
-}
-
-/* 🔥 CRÉER CHAT ID */
+/* CHAT ID AUTO */
 chatId = user.uid + "_" + merchant
 
-alert("chatId AUTO: " + chatId)
+/* ONLINE */
+db.collection("users").doc(user.uid).set({online:true},{merge:true})
 
-/* 🔥 CRÉER CONVERSATION */
-await db.collection("conversations").doc(chatId).set({
-participants:[user.uid, merchant],
-createdAt: Date.now()
-},{merge:true})
+window.addEventListener("beforeunload",()=>{
+db.collection("users").doc(user.uid).set({online:false},{merge:true})
+})
 
 listen()
 
@@ -93,68 +199,179 @@ listen()
 /* LISTEN */
 function listen(){
 
-alert("LISTEN START 🔥")
-
 db.collection("chats").doc(chatId)
 .collection("messages")
 .orderBy("time")
 .onSnapshot(snap => {
 
-alert("Messages reçus 📩")
-
 const chat=document.getElementById("chat")
 chat.innerHTML=""
 
-snap.forEach(d=>{
-let m=d.data()
+/* 🔔 NOTIF */
+snap.docChanges().forEach(change=>{
+if(change.type==="added" && change.doc.data().senderId!==user.uid){
+sound.play().catch(()=>{})
+}
+})
 
-chat.innerHTML += `
-<div>
-${m.text || ""}
+snap.forEach(d=>{
+
+let m=d.data()
+let id=d.id
+let isMe = m.senderId===user.uid
+
+/* ✔✔ LU */
+if(!isMe && !m.read){
+db.collection("chats").doc(chatId)
+.collection("messages").doc(id).update({read:true})
+}
+
+chat.innerHTML+=`
+<div class="msg ${isMe?"me":"other"}">
+${m.text||""}
+${m.image?`<img src="${m.image}" width="140">`:""}
+${m.audio?`<audio controls src="${m.audio}"></audio>`:""}
+
+<div class="time">
+${new Date(m.time).toLocaleTimeString()}
+${isMe ? `<span class="read">${m.read?"✔✔":"✔"}</span>`:""}
+</div>
 </div>
 `
 })
 
+chat.scrollTop=chat.scrollHeight
+
+})
+
+/* ONLINE STATUS */
+db.collection("users").doc(merchant)
+.onSnapshot(snap=>{
+document.getElementById("status").innerText =
+snap.data()?.online ? "🟢 online" : "offline"
 })
 
 }
 
-/* SEND */
+/* SEND TEXT */
 function send(){
 
-alert("CLICK SEND 🚀")
-
-if(!user){
-alert("Pas connecté ❌")
-return
-}
-
 let text=document.getElementById("text").value.trim()
-
-if(!text){
-alert("Message vide ❌")
-return
-}
+if(!text) return
 
 db.collection("chats").doc(chatId)
 .collection("messages").add({
 text,
 senderId:user.uid,
 receiverId:merchant,
-time:Date.now()
+time:Date.now(),
+read:false
 })
 
-/* 🔥 UPDATE CONVERSATION */
 db.collection("conversations").doc(chatId).set({
+participants:[user.uid, merchant],
 lastMessage:text,
 lastMessageTime:Date.now()
 },{merge:true})
 
-alert("Message envoyé ✅")
-
 document.getElementById("text").value=""
+}
+
+/* IMAGE */
+function pickImage(){
+document.getElementById("image").click()
+}
+
+document.getElementById("image").onchange=async function(){
+
+const file=this.files[0]
+if(!file) return
+
+let form=new FormData()
+form.append("file",file)
+form.append("upload_preset",UPLOAD_PRESET)
+
+let res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,{
+method:"POST",body:form
+})
+
+let data=await res.json()
+
+db.collection("chats").doc(chatId)
+.collection("messages").add({
+image:data.secure_url,
+senderId:user.uid,
+receiverId:merchant,
+time:Date.now(),
+read:false
+})
 
 }
+
+/* AUDIO */
+const btn=document.getElementById("recordBtn")
+
+btn.onmousedown = async ()=>{
+
+const stream = await navigator.mediaDevices.getUserMedia({audio:true})
+recorder = new MediaRecorder(stream)
+chunks=[]
+
+recorder.ondataavailable=e=>chunks.push(e.data)
+
+recorder.onstop = async ()=>{
+
+let blob=new Blob(chunks,{type:"audio/webm"})
+
+let form=new FormData()
+form.append("file",blob)
+form.append("upload_preset",UPLOAD_PRESET)
+
+let res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/video/upload`,{
+method:"POST",body:form
+})
+
+let data=await res.json()
+
+db.collection("chats").doc(chatId)
+.collection("messages").add({
+audio:data.secure_url,
+senderId:user.uid,
+receiverId:merchant,
+time:Date.now(),
+read:false
+})
+
+}
+
+recorder.start()
+btn.innerText="⏹"
+
+}
+
+btn.onmouseup = ()=>{
+if(recorder){
+recorder.stop()
+btn.innerText="🎤"
+}
+}
+
+/* TYPING */
+document.getElementById("text").addEventListener("input", ()=>{
+db.collection("typing").doc(chatId).set({
+user:user.uid,
+time:Date.now()
+})
+})
+
+db.collection("typing").doc(chatId)
+.onSnapshot(snap=>{
+let t=snap.data()
+if(t && t.user!==user.uid){
+document.getElementById("typing").innerText="✍️ digitando..."
+setTimeout(()=>document.getElementById("typing").innerText="",2000)
+}
+})
 
 </script>
 
