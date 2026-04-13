@@ -2,14 +2,13 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Chat DEBUG</title>
+<title>Chat AUTO PRO</title>
 </head>
 
 <body onload="alert('PAGE OK 🚀')">
 
-<h2>Chat Debug</h2>
+<h2>Chat Auto</h2>
 
-<!-- 🔥 LOGIN TEST -->
 <button onclick="login()">Login test</button>
 
 <div id="chat"></div>
@@ -26,7 +25,6 @@
 
 alert("Firebase chargé 🚀")
 
-/* ✅ TON VRAI CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
   authDomain: "angcomerce-v1.firebaseapp.com",
@@ -43,33 +41,24 @@ const auth = firebase.auth()
 
 alert("Firebase initialisé ✅")
 
-/* 🔥 FIX IMPORTANT */
-const chatId = new URLSearchParams(location.search).get("id")
-
-alert("chatId: " + chatId)
-
+/* 🔥 AUTO CHAT */
+let chatId = null
 let user, merchant
 
-/* 🔥 LOGIN TEST */
+/* 🔥 LOGIN */
 function login(){
-
 auth.signInAnonymously()
-.then(()=>{
-alert("Connecté ✅")
-})
-.catch(e=>{
-alert("Erreur login ❌ " + e.message)
-})
-
+.then(()=> alert("Connecté ✅"))
+.catch(e=> alert("Erreur ❌ " + e.message))
 }
 
 /* AUTH */
-auth.onAuthStateChanged(u => {
+auth.onAuthStateChanged(async u => {
 
 alert("AUTH détecté 👤")
 
 if(!u){
-alert("Utilisateur NON connecté ❌")
+alert("Pas connecté ❌")
 return
 }
 
@@ -77,16 +66,25 @@ user = u
 
 alert("User UID: " + user.uid)
 
-if(!chatId){
-alert("chatId manquant ❌")
-return
+/* 🔥 RÉCUPÉRER MERCHANT (IMPORTANT) */
+const urlParams = new URLSearchParams(location.search)
+merchant = urlParams.get("merchant")
+
+if(!merchant){
+merchant = "testMerchant" // fallback pour test
+alert("Merchant AUTO: " + merchant)
 }
 
-/* 🔥 FIX merchant */
-const parts = chatId.split("_")
-merchant = parts.find(p => p !== user.uid)
+/* 🔥 CRÉER CHAT ID */
+chatId = user.uid + "_" + merchant
 
-alert("Merchant: " + merchant)
+alert("chatId AUTO: " + chatId)
+
+/* 🔥 CRÉER CONVERSATION */
+await db.collection("conversations").doc(chatId).set({
+participants:[user.uid, merchant],
+createdAt: Date.now()
+},{merge:true})
 
 listen()
 
@@ -131,11 +129,6 @@ alert("Pas connecté ❌")
 return
 }
 
-if(!chatId){
-alert("chatId manquant ❌")
-return
-}
-
 let text=document.getElementById("text").value.trim()
 
 if(!text){
@@ -150,6 +143,12 @@ senderId:user.uid,
 receiverId:merchant,
 time:Date.now()
 })
+
+/* 🔥 UPDATE CONVERSATION */
+db.collection("conversations").doc(chatId).set({
+lastMessage:text,
+lastMessageTime:Date.now()
+},{merge:true})
 
 alert("Message envoyé ✅")
 
