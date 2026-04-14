@@ -175,7 +175,7 @@ return d.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})
 
 /* 🔥 FIX CRITIQUE ICI */
 window.openChat = (id)=>{
-location.href = "chat.html?merchant=" + id.split("_").find(p => p !== auth.currentUser.uid)
+location.href = "chat.html?id=" + id
 }
 </script>
 
