@@ -118,6 +118,7 @@ margin-left:10px;
 <button class="btn" onclick="send()">➤</button>
 </div>
 
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -147,23 +148,26 @@ const UPLOAD_PRESET="angcomerce-upload"
 
 const sound = new Audio("https://actions.google.com/sounds/v1/notifications/message_new.ogg")
 
+/* 🔥 GET CHAT ID */
+chatId = new URLSearchParams(location.search).get("id")
+
+if(!chatId){
+alert("Lien invalide ❌ (chatId manquant)")
+}
+
+/* LOGIN AUTO */
 auth.signInAnonymously()
 
+/* AUTH */
 auth.onAuthStateChanged(async u => {
 
 if(!u) return
 
 user = u
 
-merchant = new URLSearchParams(location.search).get("merchant")
-
-if(!merchant){
-alert("Lien invalide ❌ retourne à la page produit")
-location.href = "index.html"
-}
-
-/* 🔥 CHAT ID FIX */
-chatId = [user.uid, merchant].sort().join("_")
+/* 🔥 EXTRAIRE MERCHANT */
+const parts = chatId.split("_")
+merchant = parts.find(p => p !== user.uid)
 
 /* ONLINE */
 db.collection("users").doc(user.uid).set({online:true},{merge:true})
@@ -179,7 +183,6 @@ listen()
 /* LISTEN */
 function listen(){
 
-/* RESET UNREAD */
 db.collection("conversations").doc(chatId).set({
 unread:{ [user.uid]:0 }
 },{merge:true})
@@ -192,6 +195,7 @@ db.collection("chats").doc(chatId)
 const chat=document.getElementById("chat")
 chat.innerHTML=""
 
+/* 🔔 notif */
 snap.docChanges().forEach(change=>{
 if(change.type==="added" && change.doc.data().senderId!==user.uid){
 sound.play().catch(()=>{})
@@ -250,7 +254,6 @@ time:Date.now(),
 read:false
 })
 
-/* 🔥 CONVERSATION FIX */
 db.collection("conversations").doc(chatId).set({
 participants:[user.uid, merchant],
 lastMessage:text,
@@ -263,7 +266,7 @@ unread:{
 document.getElementById("text").value=""
 }
 
-/* IMAGE FIX */
+/* IMAGE */
 function pickImage(){
 document.getElementById("image").click()
 }
@@ -299,7 +302,7 @@ read:false
 
 }
 
-/* AUDIO FIX */
+/* AUDIO */
 const btn=document.getElementById("recordBtn")
 
 btn.onmousedown = async ()=>{
