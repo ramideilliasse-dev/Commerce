@@ -190,14 +190,12 @@ ${images.map((img,i)=>`
 /* 🔥 CONTACT SELLER FINAL FIX */
 window.contactSeller = function(){
 
-const user = auth.currentUser
-
-if(!user){
+if(!auth.currentUser){
 alert("Faz login primeiro ❌")
 return
 }
 
-const userId = user.uid
+const userId = auth.currentUser.uid
 const merchantId = currentProduct.merchantId
 
 if(!merchantId){
@@ -205,11 +203,12 @@ alert("Vendedor não encontrado ❌")
 return
 }
 
-/* 🔥 CHAT ID UNIQUE */
+/* ✅ CHAT ID UNIQUE CORRECT */
 const chatId = [userId, merchantId].sort().join("_")
 
-/* 🔥 REDIRECT */
+/* ✅ REDIRECTION CORRECTE */
 location.href = "chat.html?id=" + chatId
+
 }
 
 /* IMAGE */
