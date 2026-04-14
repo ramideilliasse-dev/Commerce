@@ -1,4 +1,5 @@
- <html lang="pt">
+ <!DOCTYPE html>
+<html lang="pt">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,7 +28,6 @@ overflow:hidden;
 width:100%;
 height:100%;
 object-fit:cover;
-cursor:pointer;
 }
 
 .gallery{
@@ -79,6 +79,33 @@ cursor:pointer;
 .shopBtn{background:#ff6a00;color:white;}
 
 .section{padding:10px;}
+
+.grid{
+display:flex;
+gap:10px;
+overflow-x:auto;
+}
+
+.card{
+min-width:140px;
+background:white;
+border-radius:10px;
+padding:8px;
+box-shadow:0 2px 5px rgba(0,0,0,0.1);
+cursor:pointer;
+}
+
+.card img{
+width:100%;
+height:100px;
+object-fit:cover;
+border-radius:8px;
+}
+
+.cardPrice{
+color:#ff6a00;
+font-weight:bold;
+}
 </style>
 </head>
 
@@ -87,6 +114,16 @@ cursor:pointer;
 <div class="header">Detalhes do produto</div>
 
 <div id="productBox"></div>
+
+<div class="section">
+<h3>Produtos similares</h3>
+<div id="similar" class="grid"></div>
+</div>
+
+<div class="section">
+<h3>Outros produtos</h3>
+<div id="others" class="grid"></div>
+</div>
 
 <script type="module">
 
@@ -101,6 +138,7 @@ const productId = localStorage.getItem("selectedProduct")
 let currentProduct=null
 let images=[]
 
+/* LOAD */
 async function loadProduct(){
 
 const snap = await getDoc(doc(db,"products",productId))
@@ -114,16 +152,18 @@ currentProduct = snap.data()
 images = currentProduct.images || []
 
 renderProduct()
+loadSimilar()
+loadOthers()
 }
 
 loadProduct()
 
+/* RENDER */
 function renderProduct(){
 
 let main = images[0] || ""
 
 document.getElementById("productBox").innerHTML = `
-
 <div class="imageContainer">
 <img class="mainImage" src="${main}">
 </div>
@@ -135,7 +175,6 @@ ${images.map((img,i)=>`
 </div>
 
 <div class="product">
-
 <div class="name">${currentProduct.name}</div>
 <div class="price">${currentProduct.price} Kz</div>
 
@@ -144,20 +183,21 @@ ${images.map((img,i)=>`
 <button class="btn chatBtn" onclick="contactSeller()">💬 Contatar vendedor</button>
 <button class="btn shopBtn" onclick="openShop()">🏪 Ver Loja</button>
 </div>
-
 </div>
 `
 }
 
-/* 🔥 CONTACT SELLER (FIX IMPORTANT) */
+/* 🔥 CONTACT SELLER FINAL FIX */
 window.contactSeller = function(){
 
-if(!auth.currentUser){
+const user = auth.currentUser
+
+if(!user){
 alert("Faz login primeiro ❌")
 return
 }
 
-const userId = auth.currentUser.uid
+const userId = user.uid
 const merchantId = currentProduct.merchantId
 
 if(!merchantId){
@@ -165,51 +205,16 @@ alert("Vendedor não encontrado ❌")
 return
 }
 
-/* 🔥 CREATE CHAT ID */
+/* 🔥 CHAT ID UNIQUE */
 const chatId = [userId, merchantId].sort().join("_")
 
-/* 🔥 GO CHAT */
+/* 🔥 REDIRECT */
 location.href = "chat.html?id=" + chatId
-
 }
 
-/* WHATSAPP */
-window.orderNow = async function(){
-
-if(!auth.currentUser){
-alert("Connexion requise ❌")
-return
-}
-
-try{
-
-const snap = await getDoc(doc(db,"users",currentProduct.merchantId))
-const data = snap.data()
-
-let phone = data?.whatsapp
-
-if(!phone){
-alert("Vendedor sem WhatsApp ❌")
-return
-}
-
-phone = phone.replace(/\D/g,"")
-
-const msg = `
-🛒 *NOVO PEDIDO*
-
-📦 Produto: ${currentProduct.name}
-💰 Preço: ${currentProduct.price} Kz
-`
-
-const url = "https://wa.me/"+phone+"?text="+encodeURIComponent(msg)
-
-window.open(url,"_blank")
-
-}catch(e){
-alert("Erro ❌")
-}
-
+/* IMAGE */
+window.selectImage=function(i){
+document.querySelector(".mainImage").src=images[i]
 }
 
 /* SHOP */
@@ -217,9 +222,92 @@ window.openShop=function(){
 location.href="merchant-shop.html?id="+currentProduct.merchantId
 }
 
-/* SELECT IMAGE */
-window.selectImage=function(i){
-document.querySelector(".mainImage").src=images[i]
+/* WHATSAPP */
+window.orderNow = async function(){
+
+if(!auth.currentUser){
+alert("Login necessário ❌")
+return
+}
+
+const snap = await getDoc(doc(db,"users",currentProduct.merchantId))
+const data = snap.data()
+
+let phone = data?.whatsapp
+
+if(!phone){
+alert("Sem WhatsApp ❌")
+return
+}
+
+phone = phone.replace(/\D/g,"")
+
+const msg = `
+🛒 Pedido
+Produto: ${currentProduct.name}
+Preço: ${currentProduct.price} Kz
+`
+
+window.open("https://wa.me/"+phone+"?text="+encodeURIComponent(msg))
+}
+
+/* SIMILAR */
+async function loadSimilar(){
+
+const q=query(
+collection(db,"products"),
+where("category","==",currentProduct.category)
+)
+
+const snap=await getDocs(q)
+
+let html=""
+
+snap.forEach(docSnap=>{
+const p=docSnap.data()
+
+if(docSnap.id!==productId){
+html+=`
+<div class="card" onclick="openProduct('${docSnap.id}')">
+<img src="${p.images?.[0]}">
+<div>${p.name}</div>
+<div class="cardPrice">${p.price} Kz</div>
+</div>
+`
+}
+})
+
+similar.innerHTML=html
+}
+
+/* OTHERS */
+async function loadOthers(){
+
+const snap=await getDocs(collection(db,"products"))
+
+let html=""
+
+snap.forEach(docSnap=>{
+const p=docSnap.data()
+
+if(p.merchantId!==currentProduct.merchantId){
+html+=`
+<div class="card" onclick="openProduct('${docSnap.id}')">
+<img src="${p.images?.[0]}">
+<div>${p.name}</div>
+<div class="cardPrice">${p.price} Kz</div>
+</div>
+`
+}
+})
+
+others.innerHTML=html
+}
+
+/* OPEN PRODUCT */
+window.openProduct=function(id){
+localStorage.setItem("selectedProduct", id)
+location.reload()
 }
 
 </script>
