@@ -156,9 +156,10 @@ if(!u) return
 user = u
 
 merchant = new URLSearchParams(location.search).get("merchant")
+
 if(!merchant){
-alert("merchant manquant ❌")
-return
+alert("Lien invalide ❌ retourne à la page produit")
+location.href = "index.html"
 }
 
 /* 🔥 CHAT ID FIX */
