@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
@@ -49,9 +49,7 @@ width:45px;
 height:45px;
 border-radius:50%;
 background:#555;
-display:flex;
-align-items:center;
-justify-content:center;
+object-fit:cover;
 }
 
 .texts{
@@ -100,7 +98,9 @@ import {
 collection,
 query,
 where,
-onSnapshot
+onSnapshot,
+doc,
+getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
 import { onAuthStateChanged }
@@ -108,20 +108,20 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 const list = document.getElementById("list")
 
-onAuthStateChanged(auth,(user)=>{
+onAuthStateChanged(auth, async (user)=>{
 
 if(!user){
 list.innerHTML = "<p style='padding:10px'>Faça login ❌</p>"
 return
 }
 
-/* 🔥 RECUPERER CONVERSATIONS */
+/* 🔥 LISTE CONVERSATIONS */
 const q = query(
 collection(db,"conversations"),
 where("participants","array-contains",user.uid)
 )
 
-onSnapshot(q,(snap)=>{
+onSnapshot(q, async (snap)=>{
 
 let html=""
 
@@ -129,12 +129,19 @@ if(snap.empty){
 html = "<p style='padding:10px'>Sem mensagens 💬</p>"
 }
 
-snap.forEach(docSnap=>{
+for(const docSnap of snap.docs){
 
 const c = docSnap.data()
 
 /* 🔥 AUTRE USER */
-let other = c.participants.find(p => p !== user.uid)
+let other = c.participants?.find(p => p !== user.uid)
+
+/* 🔥 LOAD USER INFO */
+let userData = {}
+if(other){
+const userSnap = await getDoc(doc(db,"users",other))
+userData = userSnap.data() || {}
+}
 
 /* 🔴 UNREAD */
 let unread = c.unread?.[user.uid] || 0
@@ -143,10 +150,10 @@ html += `
 <div class="item" onclick="openChat('${docSnap.id}')">
 
 <div class="left">
-<div class="avatar">👤</div>
+<img class="avatar" src="${userData.photo || 'https://i.ibb.co/4pDNDk1/avatar.png'}">
 
 <div class="texts">
-<div class="name">Cliente</div>
+<div class="name">${userData.shopName || userData.email || "Utilizador"}</div>
 <div class="last">${c.lastMessage || "Nova conversa"}</div>
 </div>
 </div>
@@ -158,7 +165,7 @@ ${unread > 0 ? `<div class="badge">${unread}</div>` : ""}
 
 </div>
 `
-})
+}
 
 list.innerHTML = html
 
@@ -173,11 +180,11 @@ let d = new Date(t)
 return d.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})
 }
 
-/* 🔥 FIX CRITIQUE ICI */
+/* ✅ OUVRIR CHAT */
 window.openChat = (id)=>{
 location.href = "chat.html?id=" + id
 }
 </script>
 
 </body>
-</html>
+</html> 
