@@ -125,17 +125,27 @@ alert("Lien invalide ❌")
 throw new Error("chatId manquant")
 }
 
-/* LOGIN AUTO */
-auth.signInAnonymously()
+/* 🔥 PAS DE ANONYMOUS LOGIN ICI */
 
+/* AUTH */
 auth.onAuthStateChanged(async u => {
 
-if(!u) return
+if(!u){
+alert("Non connecté ❌")
+location.href="login.html"
+return
+}
+
 user = u
 
-/* GET MERCHANT */
+/* 🔥 MERCHANT FIX */
 const parts = chatId.split("_")
 merchant = parts.find(p => p !== user.uid)
+
+if(!merchant){
+alert("Erreur merchant ❌")
+return
+}
 
 /* LOAD USER INFO */
 const snap = await db.collection("users").doc(merchant).get()
@@ -153,6 +163,10 @@ s.data()?.online ? "🟢 online" : "offline"
 
 /* SET ONLINE */
 db.collection("users").doc(user.uid).set({online:true},{merge:true})
+
+window.addEventListener("beforeunload",()=>{
+db.collection("users").doc(user.uid).set({online:false},{merge:true})
+})
 
 listen()
 
@@ -174,13 +188,20 @@ db.collection("chats").doc(chatId)
 const chat=document.getElementById("chat")
 chat.innerHTML=""
 
+/* 🔔 NOTIFICATION SON */
+snap.docChanges().forEach(change=>{
+if(change.type==="added" && change.doc.data().senderId!==user.uid){
+new Audio("https://actions.google.com/sounds/v1/notifications/message_new.ogg").play().catch(()=>{})
+}
+})
+
 snap.forEach(d=>{
 
 let m=d.data()
 let id=d.id
 let isMe = m.senderId===user.uid
 
-/* READ RECEIPT */
+/* ✔✔ READ */
 if(!isMe && !m.read){
 db.collection("chats").doc(chatId)
 .collection("messages").doc(id).update({read:true})
@@ -225,7 +246,7 @@ time:Date.now(),
 read:false
 })
 
-/* UPDATE CONVERSATION */
+/* 🔥 UPDATE CONVERSATION */
 db.collection("conversations").doc(chatId).set({
 participants:[user.uid, merchant],
 lastMessage:text,
