@@ -1,4 +1,108 @@
- <script>
+ <!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat DEBUG</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#0b141a;
+color:white;
+display:flex;
+flex-direction:column;
+height:100vh;
+}
+
+.header{
+background:#202c33;
+padding:10px;
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.avatar{
+width:40px;height:40px;border-radius:50%;
+object-fit:cover;
+}
+
+.name{font-weight:bold}
+.status{font-size:12px;color:#aaa}
+
+.chat{
+flex:1;
+overflow-y:auto;
+padding:10px;
+}
+
+.msg{
+max-width:75%;
+padding:10px;
+margin-bottom:8px;
+border-radius:10px;
+}
+
+.me{background:#005c4b;margin-left:auto;}
+.other{background:#202c33;}
+
+.time{
+font-size:10px;
+text-align:right;
+opacity:0.7;
+}
+
+.read{color:#53bdeb;}
+
+.input{
+display:flex;
+gap:5px;
+padding:10px;
+background:#202c33;
+}
+
+#text{
+flex:1;
+padding:10px;
+border-radius:20px;
+border:none;
+}
+
+.btn{
+width:45px;height:45px;
+border-radius:50%;
+background:#00a884;
+color:white;
+border:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<img id="avatar" class="avatar" src="">
+<div>
+<div id="name" class="name">...</div>
+<div id="status" class="status">offline</div>
+</div>
+</div>
+
+<div id="chat" class="chat"></div>
+
+<div class="input">
+<input id="text" placeholder="Mensagem...">
+<button class="btn" onclick="send()">➤</button>
+</div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<script>
 
 /* CONFIG */
 const firebaseConfig = {
@@ -15,18 +119,20 @@ const auth = firebase.auth()
 let user, merchant
 let chatId = new URLSearchParams(location.search).get("id")
 
+/* 🔴 CHECK CHAT ID */
 if(!chatId){
 alert("❌ chatId manquant")
 throw new Error("chatId manquant")
 }
 
-console.log("📌 CHAT ID URL:", chatId)
+alert("📌 CHAT ID = " + chatId)
+console.log("CHAT ID:", chatId)
 
 /* AUTH */
 auth.onAuthStateChanged(async u => {
 
 if(!u){
-alert("❌ Pas connecté → redirection login")
+alert("❌ Non connecté → login")
 location.href="login.html"
 return
 }
@@ -34,42 +140,45 @@ return
 user = u
 
 alert("✅ USER connecté: " + user.uid)
-console.log("👤 USER UID:", user.uid)
+console.log("USER UID:", user.uid)
 
-/* EXTRAIRE MERCHANT */
+/* 🔥 EXTRACTION MERCHANT */
 const parts = chatId.split("_")
 merchant = parts.find(p => p !== user.uid)
 
-console.log("🏪 MERCHANT UID:", merchant)
+console.log("MERCHANT UID:", merchant)
 
 if(!merchant){
-alert("❌ Merchant introuvable dans chatId")
+alert("❌ Merchant introuvable")
 return
 }
 
-/* LOAD MERCHANT DATA */
+alert("🏪 MERCHANT = " + merchant)
+
+/* LOAD MERCHANT */
 const snap = await db.collection("users").doc(merchant).get()
 
 if(!snap.exists){
-alert("❌ Merchant user n'existe pas en base")
+alert("❌ Merchant non trouvé en base")
 }
 
 const data = snap.data()
 
-name.innerText = data?.shopName || "Vendedor"
-avatar.src = data?.photo || "https://i.ibb.co/4pDNDk1/avatar.png"
+document.getElementById("name").innerText = data?.shopName || "Vendedor"
+document.getElementById("avatar").src = data?.photo || "https://i.ibb.co/4pDNDk1/avatar.png"
 
 /* ONLINE */
 db.collection("users").doc(merchant)
 .onSnapshot(s=>{
-console.log("🟢 STATUS UPDATE:", s.data())
-status.innerText = s.data()?.online ? "🟢 online" : "offline"
+console.log("STATUS:", s.data())
+document.getElementById("status").innerText =
+s.data()?.online ? "🟢 online" : "offline"
 })
 
 /* SET ONLINE */
 db.collection("users").doc(user.uid).set({online:true},{merge:true})
 
-alert("🚀 Chat prêt !")
+alert("🚀 Chat prêt")
 
 listen()
 
@@ -78,7 +187,7 @@ listen()
 /* LISTEN */
 function listen(){
 
-console.log("👂 LISTENING messages...")
+console.log("👂 Listening messages...")
 
 db.collection("conversations").doc(chatId).set({
 unread:{ [user.uid]:0 }
@@ -89,12 +198,13 @@ db.collection("chats").doc(chatId)
 .orderBy("time")
 .onSnapshot(snap => {
 
-console.log("📩 SNAPSHOT reçu:", snap.size)
+console.log("📩 Messages count:", snap.size)
 
 chat.innerHTML=""
 
+/* DEBUG CHANGES */
 snap.docChanges().forEach(change=>{
-console.log("🔄 CHANGE:", change.type, change.doc.data())
+console.log("CHANGE:", change.type, change.doc.data())
 })
 
 snap.forEach(d=>{
@@ -103,6 +213,7 @@ let m=d.data()
 let id=d.id
 let isMe = m.senderId===user.uid
 
+/* READ */
 if(!isMe && !m.read){
 db.collection("chats").doc(chatId)
 .collection("messages").doc(id).update({read:true})
@@ -111,7 +222,6 @@ db.collection("chats").doc(chatId)
 chat.innerHTML+=`
 <div class="msg ${isMe?"me":"other"}">
 ${m.text || ""}
-${m.image ? `<img src="${m.image}" width="140">` : ""}
 
 <div class="time">
 ${new Date(m.time).toLocaleTimeString()}
@@ -123,24 +233,24 @@ ${isMe ? `<span class="read">${m.read?"✔✔":"✔"}</span>` : ""}
 
 chat.scrollTop = chat.scrollHeight
 
-}, err => {
-console.error("❌ ERREUR LISTEN:", err)
+}, err=>{
+console.error("❌ LISTEN ERROR:", err)
 alert("Erreur lecture messages ❌")
 })
 
 }
 
-/* SEND TEXT */
+/* SEND */
 function send(){
 
-let text = textInput().value.trim()
+let text = document.getElementById("text").value.trim()
 
 if(!text){
 alert("❌ Message vide")
 return
 }
 
-console.log("📤 Envoi message:", text)
+console.log("📤 Envoi:", text)
 
 db.collection("chats").doc(chatId)
 .collection("messages").add({
@@ -151,80 +261,29 @@ time:Date.now(),
 read:false
 })
 .then(()=>{
-console.log("✅ Message envoyé Firestore")
 alert("✅ Message envoyé")
+console.log("Message OK")
 })
 .catch(e=>{
-console.error("❌ Erreur envoi:", e)
-alert("❌ Erreur envoi message")
+alert("❌ Erreur envoi")
+console.error(e)
 })
-
-updateConversation(text)
-
-textInput().value=""
-}
-
-/* IMAGE */
-function pickImage(){
-image.click()
-}
-
-image.onchange = async function(){
-
-const file=this.files[0]
-if(!file){
-alert("❌ Aucun fichier")
-return
-}
-
-console.log("📷 Upload image...")
-
-let form=new FormData()
-form.append("file",file)
-form.append("upload_preset","angcomerce-upload")
-
-let res=await fetch("https://api.cloudinary.com/v1_1/dy9qnhimc/image/upload",{method:"POST",body:form})
-let data=await res.json()
-
-if(!data.secure_url){
-alert("❌ Upload échoué")
-return
-}
-
-console.log("✅ Image URL:", data.secure_url)
-
-db.collection("chats").doc(chatId)
-.collection("messages").add({
-image:data.secure_url,
-senderId:user.uid,
-receiverId:merchant,
-time:Date.now(),
-read:false
-})
-
-updateConversation("📷 Image")
-
-}
 
 /* UPDATE CONVERSATION */
-function updateConversation(last){
-
-console.log("🧠 Update conversation:", last)
-
 db.collection("conversations").doc(chatId).set({
 participants:[user.uid, merchant],
-lastMessage:last,
+lastMessage:text,
 lastMessageTime:Date.now(),
 unread:{
 [merchant]: firebase.firestore.FieldValue.increment(1)
 }
 },{merge:true})
 
-}
+document.getElementById("text").value=""
 
-/* HELP */
-function textInput(){
-return document.getElementById("text")
 }
 
 </script>
+
+</body>
+</html>
