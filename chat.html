@@ -26,7 +26,6 @@ gap:10px;
 
 .avatar{
 width:40px;height:40px;border-radius:50%;
-background:#555;
 object-fit:cover;
 }
 
@@ -78,6 +77,12 @@ background:#00a884;
 color:white;
 border:none;
 }
+
+.icon{
+width:40px;height:40px;
+border-radius:50%;
+background:#eee;
+}
 </style>
 </head>
 
@@ -95,6 +100,9 @@ border:none;
 
 <div class="input">
 <input id="text" placeholder="Mensagem...">
+<input type="file" id="image" hidden>
+
+<button class="icon" onclick="pickImage()">📷</button>
 <button class="btn" onclick="send()">➤</button>
 </div>
 
@@ -125,20 +133,16 @@ alert("Lien invalide ❌")
 throw new Error("chatId manquant")
 }
 
-/* 🔥 PAS DE ANONYMOUS LOGIN ICI */
-
 /* AUTH */
 auth.onAuthStateChanged(async u => {
 
 if(!u){
-alert("Non connecté ❌")
 location.href="login.html"
 return
 }
 
 user = u
 
-/* 🔥 MERCHANT FIX */
 const parts = chatId.split("_")
 merchant = parts.find(p => p !== user.uid)
 
@@ -147,26 +151,20 @@ alert("Erreur merchant ❌")
 return
 }
 
-/* LOAD USER INFO */
+/* LOAD USER */
 const snap = await db.collection("users").doc(merchant).get()
 const data = snap.data()
 
-document.getElementById("name").innerText = data?.shopName || "Vendedor"
-document.getElementById("avatar").src = data?.photo || "https://i.ibb.co/4pDNDk1/avatar.png"
+name.innerText = data?.shopName || "Vendedor"
+avatar.src = data?.photo || "https://i.ibb.co/4pDNDk1/avatar.png"
 
-/* ONLINE STATUS */
+/* ONLINE */
 db.collection("users").doc(merchant)
 .onSnapshot(s=>{
-document.getElementById("status").innerText =
-s.data()?.online ? "🟢 online" : "offline"
+status.innerText = s.data()?.online ? "🟢 online" : "offline"
 })
 
-/* SET ONLINE */
 db.collection("users").doc(user.uid).set({online:true},{merge:true})
-
-window.addEventListener("beforeunload",()=>{
-db.collection("users").doc(user.uid).set({online:false},{merge:true})
-})
 
 listen()
 
@@ -175,7 +173,6 @@ listen()
 /* LISTEN */
 function listen(){
 
-/* RESET UNREAD */
 db.collection("conversations").doc(chatId).set({
 unread:{ [user.uid]:0 }
 },{merge:true})
@@ -185,15 +182,7 @@ db.collection("chats").doc(chatId)
 .orderBy("time")
 .onSnapshot(snap => {
 
-const chat=document.getElementById("chat")
 chat.innerHTML=""
-
-/* 🔔 NOTIFICATION SON */
-snap.docChanges().forEach(change=>{
-if(change.type==="added" && change.doc.data().senderId!==user.uid){
-new Audio("https://actions.google.com/sounds/v1/notifications/message_new.ogg").play().catch(()=>{})
-}
-})
 
 snap.forEach(d=>{
 
@@ -201,7 +190,6 @@ let m=d.data()
 let id=d.id
 let isMe = m.senderId===user.uid
 
-/* ✔✔ READ */
 if(!isMe && !m.read){
 db.collection("chats").doc(chatId)
 .collection("messages").doc(id).update({read:true})
@@ -210,16 +198,11 @@ db.collection("chats").doc(chatId)
 chat.innerHTML+=`
 <div class="msg ${isMe?"me":"other"}">
 ${m.text || ""}
+${m.image ? `<img src="${m.image}" width="140">` : ""}
 
 <div class="time">
 ${new Date(m.time).toLocaleTimeString()}
-
-${isMe ? `
-<span class="read">
-${m.read ? "✔✔" : "✔"}
-</span>
-` : ""}
-
+${isMe ? `<span class="read">${m.read?"✔✔":"✔"}</span>` : ""}
 </div>
 </div>
 `
@@ -231,10 +214,10 @@ chat.scrollTop = chat.scrollHeight
 
 }
 
-/* SEND */
+/* SEND TEXT */
 function send(){
 
-let text = document.getElementById("text").value.trim()
+let text = textInput().value.trim()
 if(!text) return
 
 db.collection("chats").doc(chatId)
@@ -246,18 +229,57 @@ time:Date.now(),
 read:false
 })
 
-/* 🔥 UPDATE CONVERSATION */
+updateConversation(text)
+
+textInput().value=""
+}
+
+/* IMAGE */
+function pickImage(){
+image.click()
+}
+
+image.onchange = async function(){
+
+const file=this.files[0]
+if(!file) return
+
+let form=new FormData()
+form.append("file",file)
+form.append("upload_preset","angcomerce-upload")
+
+let res=await fetch("https://api.cloudinary.com/v1_1/dy9qnhimc/image/upload",{method:"POST",body:form})
+let data=await res.json()
+
+db.collection("chats").doc(chatId)
+.collection("messages").add({
+image:data.secure_url,
+senderId:user.uid,
+receiverId:merchant,
+time:Date.now(),
+read:false
+})
+
+updateConversation("📷 Image")
+}
+
+/* 🔥 CENTRAL UPDATE */
+function updateConversation(last){
+
 db.collection("conversations").doc(chatId).set({
 participants:[user.uid, merchant],
-lastMessage:text,
+lastMessage:last,
 lastMessageTime:Date.now(),
 unread:{
 [merchant]: firebase.firestore.FieldValue.increment(1)
 }
 },{merge:true})
 
-document.getElementById("text").value=""
+}
 
+/* HELP */
+function textInput(){
+return document.getElementById("text")
 }
 
 </script>
