@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chat DEBUG</title>
+<title>Chat</title>
 
 <style>
 body{
@@ -25,7 +25,9 @@ gap:10px;
 }
 
 .avatar{
-width:40px;height:40px;border-radius:50%;
+width:40px;
+height:40px;
+border-radius:50%;
 object-fit:cover;
 }
 
@@ -71,7 +73,8 @@ border:none;
 }
 
 .btn{
-width:45px;height:45px;
+width:45px;
+height:45px;
 border-radius:50%;
 background:#00a884;
 color:white;
@@ -119,58 +122,41 @@ const auth = firebase.auth()
 let user, merchant
 let chatId = new URLSearchParams(location.search).get("id")
 
-/* 🔴 CHECK CHAT ID */
 if(!chatId){
-alert("❌ chatId manquant")
+alert("Lien invalide ❌")
 throw new Error("chatId manquant")
 }
-
-alert("📌 CHAT ID = " + chatId)
-console.log("CHAT ID:", chatId)
 
 /* AUTH */
 auth.onAuthStateChanged(async u => {
 
 if(!u){
-alert("❌ Non connecté → login")
 location.href="login.html"
 return
 }
 
 user = u
 
-alert("✅ USER connecté: " + user.uid)
-console.log("USER UID:", user.uid)
-
-/* 🔥 EXTRACTION MERCHANT */
+/* 🔥 GET MERCHANT */
 const parts = chatId.split("_")
-merchant = parts.find(p => p !== user.uid)
 
-console.log("MERCHANT UID:", merchant)
-
-if(!merchant){
-alert("❌ Merchant introuvable")
+if(parts.length !== 2){
+alert("chatId invalide ❌")
 return
 }
 
-alert("🏪 MERCHANT = " + merchant)
+merchant = parts[0] === user.uid ? parts[1] : parts[0]
 
-/* LOAD MERCHANT */
+/* LOAD MERCHANT INFO */
 const snap = await db.collection("users").doc(merchant).get()
-
-if(!snap.exists){
-alert("❌ Merchant non trouvé en base")
-}
-
 const data = snap.data()
 
 document.getElementById("name").innerText = data?.shopName || "Vendedor"
 document.getElementById("avatar").src = data?.photo || "https://i.ibb.co/4pDNDk1/avatar.png"
 
-/* ONLINE */
+/* ONLINE STATUS */
 db.collection("users").doc(merchant)
 .onSnapshot(s=>{
-console.log("STATUS:", s.data())
 document.getElementById("status").innerText =
 s.data()?.online ? "🟢 online" : "offline"
 })
@@ -178,7 +164,9 @@ s.data()?.online ? "🟢 online" : "offline"
 /* SET ONLINE */
 db.collection("users").doc(user.uid).set({online:true},{merge:true})
 
-alert("🚀 Chat prêt")
+window.addEventListener("beforeunload",()=>{
+db.collection("users").doc(user.uid).set({online:false},{merge:true})
+})
 
 listen()
 
@@ -187,8 +175,7 @@ listen()
 /* LISTEN */
 function listen(){
 
-console.log("👂 Listening messages...")
-
+/* RESET UNREAD */
 db.collection("conversations").doc(chatId).set({
 unread:{ [user.uid]:0 }
 },{merge:true})
@@ -198,13 +185,15 @@ db.collection("chats").doc(chatId)
 .orderBy("time")
 .onSnapshot(snap => {
 
-console.log("📩 Messages count:", snap.size)
-
+const chat=document.getElementById("chat")
 chat.innerHTML=""
 
-/* DEBUG CHANGES */
+/* 🔔 SON */
 snap.docChanges().forEach(change=>{
-console.log("CHANGE:", change.type, change.doc.data())
+if(change.type==="added" && change.doc.data().senderId!==user.uid){
+new Audio("https://actions.google.com/sounds/v1/notifications/message_new.ogg")
+.play().catch(()=>{})
+}
 })
 
 snap.forEach(d=>{
@@ -213,7 +202,7 @@ let m=d.data()
 let id=d.id
 let isMe = m.senderId===user.uid
 
-/* READ */
+/* ✔✔ READ */
 if(!isMe && !m.read){
 db.collection("chats").doc(chatId)
 .collection("messages").doc(id).update({read:true})
@@ -225,7 +214,13 @@ ${m.text || ""}
 
 <div class="time">
 ${new Date(m.time).toLocaleTimeString()}
-${isMe ? `<span class="read">${m.read?"✔✔":"✔"}</span>` : ""}
+
+${isMe ? `
+<span class="read">
+${m.read ? "✔✔" : "✔"}
+</span>
+` : ""}
+
 </div>
 </div>
 `
@@ -233,9 +228,6 @@ ${isMe ? `<span class="read">${m.read?"✔✔":"✔"}</span>` : ""}
 
 chat.scrollTop = chat.scrollHeight
 
-}, err=>{
-console.error("❌ LISTEN ERROR:", err)
-alert("Erreur lecture messages ❌")
 })
 
 }
@@ -244,13 +236,7 @@ alert("Erreur lecture messages ❌")
 function send(){
 
 let text = document.getElementById("text").value.trim()
-
-if(!text){
-alert("❌ Message vide")
-return
-}
-
-console.log("📤 Envoi:", text)
+if(!text) return
 
 db.collection("chats").doc(chatId)
 .collection("messages").add({
@@ -260,16 +246,8 @@ receiverId:merchant,
 time:Date.now(),
 read:false
 })
-.then(()=>{
-alert("✅ Message envoyé")
-console.log("Message OK")
-})
-.catch(e=>{
-alert("❌ Erreur envoi")
-console.error(e)
-})
 
-/* UPDATE CONVERSATION */
+/* 🔥 UPDATE CONVERSATION */
 db.collection("conversations").doc(chatId).set({
 participants:[user.uid, merchant],
 lastMessage:text,
