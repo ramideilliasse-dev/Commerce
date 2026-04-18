@@ -141,6 +141,11 @@ let images=[]
 /* LOAD */
 async function loadProduct(){
 
+if(!productId){
+alert("Produto inválido ❌")
+return
+}
+
 const snap = await getDoc(doc(db,"products",productId))
 
 if(!snap.exists()){
@@ -187,23 +192,33 @@ ${images.map((img,i)=>`
 `
 }
 
-/* 🔥 CONTACT SELLER FINAL (STABLE VERSION) */
+/* ✅ CONTACT SELLER FINAL FIX */
 window.contactSeller = function(){
 
-if(!auth.currentUser){
+const user = auth.currentUser
+
+if(!user){
 alert("Faz login primeiro ❌")
 return
 }
 
-const merchantId = currentProduct.merchantId
+const userId = user.uid
+const merchantId = currentProduct?.merchantId
 
 if(!merchantId){
 alert("Vendedor não encontrado ❌")
 return
 }
 
-/* ✅ ENVOI SEULEMENT MERCHANT */
-location.href = "chat.html?merchant=" + merchantId
+if(userId === merchantId){
+alert("Você não pode conversar consigo mesmo ❌")
+return
+}
+
+/* 🔥 CHAT ID UNIQUE */
+const chatId = [userId, merchantId].sort().join("_")
+
+location.href = "chat.html?id=" + chatId
 
 }
 
