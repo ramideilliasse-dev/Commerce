@@ -98,7 +98,7 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 const list = document.getElementById("list")
 
-onAuthStateChanged(auth, async (user)=>{
+onAuthStateChanged(auth, (user)=>{
 
 if(!user){
 list.innerHTML = "<p style='padding:10px'>Faça login ❌</p>"
@@ -122,17 +122,30 @@ for(const docSnap of snap.docs){
 
 const c = docSnap.data()
 
-/* 🔥 AUTRE USER */
-let other = c.participants?.find(p => p !== user.uid)
+/* 🔥 SECURISER PARTICIPANTS */
+if(!c.participants || c.participants.length !== 2){
+console.warn("Conversation invalide:", docSnap.id)
+continue
+}
 
-/* 🔥 RECONSTRUIRE CHAT ID CORRECT */
+/* 🔥 TROUVER AUTRE USER */
+let other = c.participants.find(p => p !== user.uid)
+
+if(!other){
+console.warn("Other user introuvable:", docSnap.id)
+continue
+}
+
+/* 🔥 CHAT ID UNIQUE GARANTI */
 const chatId = [user.uid, other].sort().join("_")
 
-/* 🔥 USER INFO */
+/* 🔥 LOAD USER INFO */
 let userData = {}
-if(other){
+try{
 const userSnap = await getDoc(doc(db,"users",other))
 userData = userSnap.data() || {}
+}catch(e){
+console.error("Erreur chargement user:", e)
 }
 
 /* 🔴 UNREAD */
@@ -171,8 +184,12 @@ let d = new Date(t)
 return d.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})
 }
 
-/* 🔥 OPEN CHAT FIX */
+/* 🔥 OPEN CHAT SAFE */
 window.openChat = (chatId)=>{
+if(!chatId || !chatId.includes("_")){
+alert("Chat inválido ❌")
+return
+}
 location.href = "chat.html?id=" + chatId
 }
 
