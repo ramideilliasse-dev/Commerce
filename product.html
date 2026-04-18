@@ -195,33 +195,31 @@ ${images.map((img,i)=>`
 /* ✅ CONTACT SELLER FINAL FIX */
 window.contactSeller = function(){
 
-const user = auth.currentUser
-
-if(!user){
+if(!auth.currentUser){
 alert("Faz login primeiro ❌")
 return
 }
 
-const userId = user.uid
-const merchantId = currentProduct?.merchantId
+const userId = auth.currentUser.uid
+const merchantId = currentProduct.merchantId
 
 if(!merchantId){
 alert("Vendedor não encontrado ❌")
 return
 }
 
-if(userId === merchantId){
-alert("Você não pode conversar consigo mesmo ❌")
-return
-}
+/* DEBUG */
+alert("USER = " + userId)
+alert("MERCHANT = " + merchantId)
 
-/* 🔥 CHAT ID UNIQUE */
+/* CHAT ID UNIQUE */
 const chatId = [userId, merchantId].sort().join("_")
 
+alert("CHAT ID = " + chatId)
+
+/* REDIRECT */
 location.href = "chat.html?id=" + chatId
-
 }
-
 /* IMAGE */
 window.selectImage=function(i){
 document.querySelector(".mainImage").src=images[i]
