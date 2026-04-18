@@ -109,7 +109,7 @@ border:none;
 
 /* CONFIG */
 const firebaseConfig = {
-  apiKey: "AIzaSy...",
+  apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
   authDomain: "angcomerce-v1.firebaseapp.com",
   projectId: "angcomerce-v1"
 };
@@ -121,16 +121,13 @@ const auth = firebase.auth()
 
 let user, merchant
 
-/* ✅ GET CHAT ID D'ABORD */
-let chatId = new URLSearchParams(location.search).get("id")
+/* ✅ GET CHAT ID */
+const chatId = new URLSearchParams(location.search).get("id")
 
 if(!chatId){
-alert("Lien invalide ❌ (chatId manquant)")
-throw new Error("chatId manquant")
+alert("Lien invalide ❌")
+location.href="index.html"
 }
-
-/* ✅ ALERT MAINTENANT CORRECT */
-alert("CHAT ID UTILISÉ = " + chatId)
 
 /* AUTH */
 auth.onAuthStateChanged(async u => {
@@ -142,7 +139,7 @@ return
 
 user = u
 
-/* 🔥 EXTRACTION MERCHANT FIX */
+/* ✅ EXTRACTION CORRECTE */
 const parts = chatId.split("_")
 
 if(parts.length !== 2){
@@ -152,17 +149,14 @@ return
 
 merchant = parts[0] === user.uid ? parts[1] : parts[0]
 
-alert("USER = " + user.uid)
-alert("MERCHANT = " + merchant)
-
-/* LOAD MERCHANT INFO */
+/* LOAD MERCHANT */
 const snap = await db.collection("users").doc(merchant).get()
 const data = snap.data()
 
 document.getElementById("name").innerText = data?.shopName || "Vendedor"
 document.getElementById("avatar").src = data?.photo || "https://i.ibb.co/4pDNDk1/avatar.png"
 
-/* ONLINE STATUS */
+/* ONLINE */
 db.collection("users").doc(merchant)
 .onSnapshot(s=>{
 document.getElementById("status").innerText =
@@ -183,6 +177,7 @@ listen()
 /* LISTEN */
 function listen(){
 
+/* RESET UNREAD */
 db.collection("conversations").doc(chatId).set({
 unread:{ [user.uid]:0 }
 },{merge:true})
@@ -209,6 +204,7 @@ let m=d.data()
 let id=d.id
 let isMe = m.senderId===user.uid
 
+/* ✔✔ READ */
 if(!isMe && !m.read){
 db.collection("chats").doc(chatId)
 .collection("messages").doc(id).update({read:true})
@@ -220,7 +216,13 @@ ${m.text || ""}
 
 <div class="time">
 ${new Date(m.time).toLocaleTimeString()}
-${isMe ? `<span class="read">${m.read?"✔✔":"✔"}</span>` : ""}
+
+${isMe ? `
+<span class="read">
+${m.read ? "✔✔" : "✔"}
+</span>
+` : ""}
+
 </div>
 </div>
 `
@@ -247,6 +249,7 @@ time:Date.now(),
 read:false
 })
 
+/* UPDATE CONVERSATION */
 db.collection("conversations").doc(chatId).set({
 participants:[user.uid, merchant],
 lastMessage:text,
@@ -255,8 +258,6 @@ unread:{
 [merchant]: firebase.firestore.FieldValue.increment(1)
 }
 },{merge:true})
-
-alert("✅ Message envoyé")
 
 document.getElementById("text").value=""
 
