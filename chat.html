@@ -25,20 +25,11 @@ gap:10px;
 }
 
 .avatar{
-width:40px;
-height:40px;
-border-radius:50%;
+width:40px;height:40px;border-radius:50%;
 object-fit:cover;
 }
 
-.name{font-weight:bold}
-.status{font-size:12px;color:#aaa}
-
-.chat{
-flex:1;
-overflow-y:auto;
-padding:10px;
-}
+.chat{flex:1;overflow-y:auto;padding:10px;}
 
 .msg{
 max-width:75%;
@@ -49,14 +40,6 @@ border-radius:10px;
 
 .me{background:#005c4b;margin-left:auto;}
 .other{background:#202c33;}
-
-.time{
-font-size:10px;
-text-align:right;
-opacity:0.7;
-}
-
-.read{color:#53bdeb;}
 
 .input{
 display:flex;
@@ -73,23 +56,22 @@ border:none;
 }
 
 .btn{
-width:45px;
-height:45px;
-border-radius:50%;
-background:#00a884;
-color:white;
-border:none;
+width:45px;height:45px;border-radius:50%;
+background:#00a884;color:white;border:none;
 }
+
+img{max-width:150px;border-radius:10px;}
+audio{width:150px;}
 </style>
 </head>
 
 <body>
 
 <div class="header">
-<img id="avatar" class="avatar" src="">
+<img id="avatar" class="avatar">
 <div>
-<div id="name" class="name">...</div>
-<div id="status" class="status">offline</div>
+<div id="name">...</div>
+<div id="status">offline</div>
 </div>
 </div>
 
@@ -97,19 +79,24 @@ border:none;
 
 <div class="input">
 <input id="text" placeholder="Mensagem...">
+
+<input type="file" id="image" hidden>
+<button onclick="pickImage()">📷</button>
+
+<button onclick="recordAudio()">🎤</button>
+
 <button class="btn" onclick="send()">➤</button>
 </div>
 
-<!-- FIREBASE -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <script>
 
-/* CONFIG */
 const firebaseConfig = {
-  apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
+  apiKey: "AIzaSy...",
   authDomain: "angcomerce-v1.firebaseapp.com",
   projectId: "angcomerce-v1"
 };
@@ -120,55 +107,53 @@ const db = firebase.firestore()
 const auth = firebase.auth()
 
 let user, merchant
-
-/* ✅ GET CHAT ID */
 const chatId = new URLSearchParams(location.search).get("id")
 
 if(!chatId){
-alert("Lien invalide ❌")
+alert("Chat inválido ❌")
 location.href="index.html"
 }
 
 /* AUTH */
-auth.onAuthStateChanged(async u => {
+auth.onAuthStateChanged(async u=>{
 
 if(!u){
 location.href="login.html"
 return
 }
 
-user = u
+user=u
 
-/* ✅ EXTRACTION CORRECTE */
-const parts = chatId.split("_")
+const parts=chatId.split("_")
 
-if(parts.length !== 2){
-alert("chatId invalide ❌")
+if(!parts.includes(user.uid)){
+alert("Acesso negado ❌")
+location.href="index.html"
 return
 }
 
-merchant = parts[0] === user.uid ? parts[1] : parts[0]
+merchant = parts[0]===user.uid?parts[1]:parts[0]
 
-/* LOAD MERCHANT */
+/* LOAD USER */
 const snap = await db.collection("users").doc(merchant).get()
 const data = snap.data()
 
-document.getElementById("name").innerText = data?.shopName || "Vendedor"
-document.getElementById("avatar").src = data?.photo || "https://i.ibb.co/4pDNDk1/avatar.png"
+name.innerText = data?.shopName || "User"
+avatar.src = data?.photo || "https://i.ibb.co/4pDNDk1/avatar.png"
 
 /* ONLINE */
 db.collection("users").doc(merchant)
 .onSnapshot(s=>{
-document.getElementById("status").innerText =
-s.data()?.online ? "🟢 online" : "offline"
+let d=s.data()
+status.innerText = d?.online ? "🟢 online" :
+"visto " + new Date(d?.lastSeen||0).toLocaleTimeString()
 })
 
 /* SET ONLINE */
-db.collection("users").doc(user.uid).set({online:true},{merge:true})
-
-window.addEventListener("beforeunload",()=>{
-db.collection("users").doc(user.uid).set({online:false},{merge:true})
-})
+db.collection("users").doc(user.uid).set({
+online:true,
+lastSeen:Date.now()
+},{merge:true})
 
 listen()
 
@@ -177,89 +162,136 @@ listen()
 /* LISTEN */
 function listen(){
 
-/* RESET UNREAD */
-db.collection("conversations").doc(chatId).set({
-unread:{ [user.uid]:0 }
-},{merge:true})
-
 db.collection("chats").doc(chatId)
 .collection("messages")
 .orderBy("time")
-.onSnapshot(snap => {
+.limit(50)
+.onSnapshot(snap=>{
 
-const chat=document.getElementById("chat")
 chat.innerHTML=""
 
-/* 🔔 SON */
-snap.docChanges().forEach(change=>{
-if(change.type==="added" && change.doc.data().senderId!==user.uid){
-new Audio("https://actions.google.com/sounds/v1/notifications/message_new.ogg")
-.play().catch(()=>{})
-}
-})
-
 snap.forEach(d=>{
-
 let m=d.data()
-let id=d.id
-let isMe = m.senderId===user.uid
-
-/* ✔✔ READ */
-if(!isMe && !m.read){
-db.collection("chats").doc(chatId)
-.collection("messages").doc(id).update({read:true})
-}
+let isMe=m.senderId===user.uid
 
 chat.innerHTML+=`
 <div class="msg ${isMe?"me":"other"}">
-${m.text || ""}
 
-<div class="time">
-${new Date(m.time).toLocaleTimeString()}
+${m.text||""}
+${m.image?`<img src="${m.image}">`:``}
+${m.audio?`<audio controls src="${m.audio}"></audio>`:``}
 
-${isMe ? `
-<span class="read">
-${m.read ? "✔✔" : "✔"}
-</span>
-` : ""}
+<div>${new Date(m.time).toLocaleTimeString()}</div>
 
-</div>
 </div>
 `
 })
 
-chat.scrollTop = chat.scrollHeight
+chat.scrollTop=chat.scrollHeight
 
 })
 
 }
 
-/* SEND */
+/* SEND TEXT */
 function send(){
 
-let text = document.getElementById("text").value.trim()
+let text=document.getElementById("text").value.trim()
 if(!text) return
 
 db.collection("chats").doc(chatId)
 .collection("messages").add({
 text,
 senderId:user.uid,
-receiverId:merchant,
-time:Date.now(),
-read:false
+time:Date.now()
 })
 
+updateConv(text)
+text.value=""
+
+}
+
+/* IMAGE */
+function pickImage(){
+image.click()
+}
+
+image.onchange=async function(){
+
+let file=this.files[0]
+
+let form=new FormData()
+form.append("file",file)
+form.append("upload_preset","angcomerce-upload")
+
+let res=await fetch("https://api.cloudinary.com/v1_1/dy9qnhimc/image/upload",{method:"POST",body:form})
+let data=await res.json()
+
+db.collection("chats").doc(chatId)
+.collection("messages").add({
+image:data.secure_url,
+senderId:user.uid,
+time:Date.now()
+})
+
+updateConv("📷 Image")
+
+}
+
+/* AUDIO */
+let mediaRecorder, audioChunks=[]
+
+async function recordAudio(){
+
+let stream = await navigator.mediaDevices.getUserMedia({audio:true})
+
+mediaRecorder = new MediaRecorder(stream)
+
+mediaRecorder.start()
+
+mediaRecorder.ondataavailable=e=>{
+audioChunks.push(e.data)
+}
+
+mediaRecorder.onstop=async ()=>{
+
+let blob=new Blob(audioChunks)
+audioChunks=[]
+
+let form=new FormData()
+form.append("file",blob)
+form.append("upload_preset","angcomerce-upload")
+
+let res=await fetch("https://api.cloudinary.com/v1_1/dy9qnhimc/video/upload",{method:"POST",body:form})
+let data=await res.json()
+
+db.collection("chats").doc(chatId)
+.collection("messages").add({
+audio:data.secure_url,
+senderId:user.uid,
+time:Date.now()
+})
+
+updateConv("🎤 Audio")
+
+}
+
+/* stop après 3 sec */
+setTimeout(()=>mediaRecorder.stop(),3000)
+
+}
+
 /* UPDATE CONVERSATION */
+function updateConv(last){
+
 db.collection("conversations").doc(chatId).set({
-participants:[user.uid, merchant],
-lastMessage:text,
+participants:[user.uid,merchant],
+lastMessage:last,
 lastMessageTime:Date.now(),
 unread:{
-[merchant]: firebase.firestore.FieldValue.increment(1)
+[merchant]:firebase.firestore.FieldValue.increment(1)
 }
 },{merge:true})
-
-document.getElementById("text").value=""
 
 }
 
