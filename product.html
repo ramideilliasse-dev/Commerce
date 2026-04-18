@@ -187,7 +187,7 @@ ${images.map((img,i)=>`
 `
 }
 
-/* 🔥 CONTACT SELLER FINAL FIX */
+/* 🔥 CONTACT SELLER FINAL (STABLE VERSION) */
 window.contactSeller = function(){
 
 if(!auth.currentUser){
@@ -195,7 +195,6 @@ alert("Faz login primeiro ❌")
 return
 }
 
-const userId = auth.currentUser.uid
 const merchantId = currentProduct.merchantId
 
 if(!merchantId){
@@ -203,11 +202,8 @@ alert("Vendedor não encontrado ❌")
 return
 }
 
-/* ✅ CHAT ID UNIQUE CORRECT */
-const chatId = [userId, merchantId].sort().join("_")
-
-/* ✅ REDIRECTION CORRECTE */
-location.href = "chat.html?id=" + chatId
+/* ✅ ENVOI SEULEMENT MERCHANT */
+location.href = "chat.html?merchant=" + merchantId
 
 }
 
