@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,6 @@ background:#0b141a;
 color:white;
 }
 
-/* HEADER */
 .header{
 background:#202c33;
 padding:15px;
@@ -21,12 +20,10 @@ font-size:20px;
 font-weight:bold;
 }
 
-/* LIST */
 #list{
 padding:10px;
 }
 
-/* ITEM */
 .item{
 background:#202c33;
 padding:12px;
@@ -48,8 +45,8 @@ align-items:center;
 width:45px;
 height:45px;
 border-radius:50%;
-background:#555;
 object-fit:cover;
+background:#555;
 }
 
 .texts{
@@ -57,14 +54,8 @@ display:flex;
 flex-direction:column;
 }
 
-.name{
-font-weight:bold;
-}
-
-.last{
-font-size:13px;
-color:#aaa;
-}
+.name{font-weight:bold;}
+.last{font-size:13px;color:#aaa;}
 
 .right{
 text-align:right;
@@ -88,7 +79,6 @@ display:inline-block;
 <body>
 
 <div class="header">💬 Mensagens</div>
-
 <div id="list"></div>
 
 <script type="module">
@@ -115,7 +105,6 @@ list.innerHTML = "<p style='padding:10px'>Faça login ❌</p>"
 return
 }
 
-/* 🔥 LISTE CONVERSATIONS */
 const q = query(
 collection(db,"conversations"),
 where("participants","array-contains",user.uid)
@@ -136,7 +125,10 @@ const c = docSnap.data()
 /* 🔥 AUTRE USER */
 let other = c.participants?.find(p => p !== user.uid)
 
-/* 🔥 LOAD USER INFO */
+/* 🔥 RECONSTRUIRE CHAT ID CORRECT */
+const chatId = [user.uid, other].sort().join("_")
+
+/* 🔥 USER INFO */
 let userData = {}
 if(other){
 const userSnap = await getDoc(doc(db,"users",other))
@@ -147,7 +139,7 @@ userData = userSnap.data() || {}
 let unread = c.unread?.[user.uid] || 0
 
 html += `
-<div class="item" onclick="openChat('${docSnap.id}')">
+<div class="item" onclick="openChat('${chatId}')">
 
 <div class="left">
 <img class="avatar" src="${userData.photo || 'https://i.ibb.co/4pDNDk1/avatar.png'}">
@@ -173,18 +165,18 @@ list.innerHTML = html
 
 })
 
-/* ⏰ TEMPS */
 function formatTime(t){
 if(!t) return ""
 let d = new Date(t)
 return d.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})
 }
 
-/* ✅ OUVRIR CHAT */
-window.openChat = (id)=>{
-location.href = "chat.html?id=" + id
+/* 🔥 OPEN CHAT FIX */
+window.openChat = (chatId)=>{
+location.href = "chat.html?id=" + chatId
 }
+
 </script>
 
 </body>
-</html> 
+</html>
