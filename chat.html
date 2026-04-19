@@ -79,25 +79,24 @@ background:#00a884;color:white;border:none;
 <button class="btn" onclick="send()">➤</button>
 </div>
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script type="module">
 
-<script>
+import { db, auth } from "./firebase.js"
+import {
+collection,
+addDoc,
+onSnapshot,
+query,
+orderBy,
+doc,
+getDoc,
+setDoc,
+updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
-const firebaseConfig = {
-  apiKey: "AIzaSy...",
-  authDomain: "angcomerce-v1.firebaseapp.com",
-  projectId: "angcomerce-v1"
-};
+import { onAuthStateChanged }
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
-firebase.initializeApp(firebaseConfig)
-
-const db = firebase.firestore()
-const auth = firebase.auth()
-
-let user, merchant
 const chatId = new URLSearchParams(location.search).get("id")
 
 if(!chatId){
@@ -105,8 +104,9 @@ alert("Chat inválido ❌")
 location.href="index.html"
 }
 
-/* AUTH */
-auth.onAuthStateChanged(async u=>{
+let user, merchant
+
+onAuthStateChanged(auth, async (u)=>{
 
 if(!u){
 location.href="login.html"
@@ -118,22 +118,19 @@ user = u
 const parts = chatId.split("_")
 
 if(parts.length !== 2){
-alert("Chat ID inválido ❌")
-location.href="index.html"
+alert("Chat inválido ❌")
 return
 }
 
-/* 🔥 EXTRACTION SÛRE */
-merchant = parts[0] === user.uid ? parts[1] : parts[0]
+merchant = parts.find(p => p !== user.uid)
 
-/* ⚠️ SUPPRESSION DU BLOCAGE */
 if(!merchant){
-alert("Erro identificação usuário ❌")
+alert("Erro usuário ❌")
 return
 }
 
-/* LOAD USER */
-const snap = await db.collection("users").doc(merchant).get()
+/* LOAD MERCHANT */
+const snap = await getDoc(doc(db,"users",merchant))
 const data = snap.data()
 
 document.getElementById("name").innerText = data?.shopName || "User"
@@ -141,18 +138,15 @@ document.getElementById("avatar").src =
 data?.photo || "https://i.ibb.co/4pDNDk1/avatar.png"
 
 /* ONLINE */
-db.collection("users").doc(merchant)
-.onSnapshot(s=>{
-let d = s.data()
+onSnapshot(doc(db,"users",merchant),(s)=>{
+let d=s.data()
 document.getElementById("status").innerText =
-d?.online ? "🟢 online" :
-"visto " + new Date(d?.lastSeen||0).toLocaleTimeString()
+d?.online ? "🟢 online" : "offline"
 })
 
 /* SET ONLINE */
-db.collection("users").doc(user.uid).set({
-online:true,
-lastSeen:Date.now()
+await setDoc(doc(db,"users",user.uid),{
+online:true
 },{merge:true})
 
 listen()
@@ -162,18 +156,19 @@ listen()
 /* LISTEN */
 function listen(){
 
-db.collection("chats").doc(chatId)
-.collection("messages")
-.orderBy("time")
-.limit(50)
-.onSnapshot(snap=>{
+const q = query(
+collection(db,"chats",chatId,"messages"),
+orderBy("time")
+)
+
+onSnapshot(q,(snap)=>{
 
 const chat = document.getElementById("chat")
 chat.innerHTML=""
 
 snap.forEach(d=>{
 let m=d.data()
-let isMe=m.senderId===user.uid
+let isMe = m.senderId === user.uid
 
 chat.innerHTML+=`
 <div class="msg ${isMe?"me":"other"}">
@@ -190,35 +185,30 @@ chat.scrollTop = chat.scrollHeight
 }
 
 /* SEND */
-function send(){
+window.send = async function(){
 
-let input = document.getElementById("text")
-let text = input.value.trim()
+const input = document.getElementById("text")
+const text = input.value.trim()
+
 if(!text) return
 
-db.collection("chats").doc(chatId)
-.collection("messages").add({
+await addDoc(collection(db,"chats",chatId,"messages"),{
 text,
 senderId:user.uid,
 time:Date.now()
 })
 
-updateConv(text)
-
-input.value=""
-}
-
 /* UPDATE CONVERSATION */
-function updateConv(last){
-
-db.collection("conversations").doc(chatId).set({
+await setDoc(doc(db,"conversations",chatId),{
 participants:[user.uid,merchant],
-lastMessage:last,
+lastMessage:text,
 lastMessageTime:Date.now(),
 unread:{
-[merchant]:firebase.firestore.FieldValue.increment(1)
+[merchant]:1
 }
 },{merge:true})
+
+input.value=""
 
 }
 
