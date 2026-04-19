@@ -30,12 +30,27 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-/* 🔥 ULTRA FIX SESSION */
-await setPersistence(auth, browserLocalPersistence);
+/* 🔥 FIX CRITIQUE (SAFE PERSISTENCE) */
+setPersistence(auth, browserLocalPersistence)
+.then(()=>{
+console.log("✅ Persistence OK");
+})
+.catch((e)=>{
+console.error("❌ Persistence erreur:", e);
+});
 
-/* 🔥 AUTO CREATE USER */
+/* 🔥 WAIT AUTH READY (IMPORTANT) */
+export let currentUser = null;
+export let authReady = false;
+
 onAuthStateChanged(auth, async (user)=>{
 
+currentUser = user;
+authReady = true;
+
+console.log("🔥 Auth ready:", user?.uid);
+
+/* AUTO CREATE USER */
 if(!user) return;
 
 const ref = doc(db,"users",user.uid);
@@ -47,7 +62,7 @@ email:user.email || "",
 role:"client",
 created:Date.now()
 });
-console.log("User créé");
+console.log("👤 User créé");
 }
 
 });
