@@ -190,12 +190,15 @@ ${images.map((img,i)=>`
 /* 🔥 CONTACT SELLER (VERSION PRO STABLE) */
 window.contactSeller = function(){
 
-if(!auth.currentUser){
+auth.onAuthStateChanged(user => {
+
+if(!user){
 alert("Faz login primeiro ❌")
+location.href = "login.html"
 return
 }
 
-const userId = auth.currentUser.uid
+const userId = user.uid
 const merchantId = currentProduct.merchantId
 
 if(!merchantId){
@@ -203,11 +206,13 @@ alert("Vendedor não encontrado ❌")
 return
 }
 
-/* ✅ CHAT ID UNIQUE GLOBAL */
+/* CHAT ID UNIQUE */
 const chatId = [userId, merchantId].sort().join("_")
 
-/* 🚀 REDIRECT */
+/* REDIRECT */
 location.href = "chat.html?id=" + chatId
+
+})
 
 }
 
