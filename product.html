@@ -46,11 +46,6 @@ opacity:0.6;
 cursor:pointer;
 }
 
-.gallery img.active{
-border:2px solid #ff6a00;
-opacity:1;
-}
-
 .product{
 background:white;
 padding:15px;
@@ -192,7 +187,7 @@ ${images.map((img,i)=>`
 `
 }
 
-/* ✅ CONTACT SELLER FINAL FIX */
+/* 🔥 CONTACT SELLER (VERSION PRO STABLE) */
 window.contactSeller = function(){
 
 if(!auth.currentUser){
@@ -208,18 +203,14 @@ alert("Vendedor não encontrado ❌")
 return
 }
 
-/* DEBUG */
-alert("USER = " + userId)
-alert("MERCHANT = " + merchantId)
-
-/* CHAT ID UNIQUE */
+/* ✅ CHAT ID UNIQUE GLOBAL */
 const chatId = [userId, merchantId].sort().join("_")
 
-alert("CHAT ID = " + chatId)
-
-/* REDIRECT */
+/* 🚀 REDIRECT */
 location.href = "chat.html?id=" + chatId
+
 }
+
 /* IMAGE */
 window.selectImage=function(i){
 document.querySelector(".mainImage").src=images[i]
