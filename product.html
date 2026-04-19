@@ -6,21 +6,40 @@
 <title>Produto</title>
 
 <style>
-body{margin:0;font-family:Arial;background:#f5f5f5;}
-
-.header{
-background:white;
-padding:15px;
-text-align:center;
-font-size:20px;
-font-weight:bold;
-box-shadow:0 2px 5px rgba(0,0,0,0.1);
+body{
+margin:0;
+font-family:Arial;
+background:#0f172a;
+color:white;
 }
 
+/* HEADER */
+.header{
+background:#111827;
+padding:15px;
+text-align:center;
+font-size:18px;
+font-weight:bold;
+}
+
+/* PRODUCT */
+.container{
+padding:10px;
+}
+
+.card{
+background:#1f2937;
+border-radius:15px;
+overflow:hidden;
+box-shadow:0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* IMAGE */
 .imageContainer{
 width:100%;
-height:300px;
-background:#000;
+height:320px;
+background:black;
+position:relative;
 overflow:hidden;
 }
 
@@ -28,52 +47,78 @@ overflow:hidden;
 width:100%;
 height:100%;
 object-fit:cover;
+transition:transform 0.3s ease;
 }
 
+/* ZOOM */
+.zoomed{
+transform:scale(1.5);
+cursor:zoom-out;
+}
+
+/* GALLERY */
 .gallery{
 display:flex;
 gap:8px;
 padding:10px;
-background:white;
 overflow-x:auto;
+background:#111827;
 }
 
 .gallery img{
 width:70px;
 height:70px;
-border-radius:8px;
+border-radius:10px;
 opacity:0.6;
 cursor:pointer;
 }
 
-.product{
-background:white;
+.gallery img.active{
+border:2px solid #f97316;
+opacity:1;
+}
+
+/* INFO */
+.info{
 padding:15px;
 }
 
-.name{font-size:20px;font-weight:bold;}
-.price{color:#ff6a00;font-size:22px;font-weight:bold;}
+.name{
+font-size:20px;
+font-weight:bold;
+}
 
+.price{
+color:#f97316;
+font-size:22px;
+font-weight:bold;
+margin-top:5px;
+}
+
+/* BUTTONS */
 .actions{
 display:flex;
 gap:10px;
 margin-top:15px;
-flex-wrap:wrap;
 }
 
 .btn{
 flex:1;
 padding:12px;
 border:none;
-border-radius:8px;
+border-radius:10px;
 cursor:pointer;
+font-weight:bold;
 }
 
-.buyBtn{background:#1aa34a;color:white;}
-.chatBtn{background:#075e54;color:white;}
-.shopBtn{background:#ff6a00;color:white;}
+.buyBtn{background:#22c55e;color:white;}
+.whatsBtn{background:#25D366;color:white;}
+.shopBtn{background:#f97316;color:white;}
 
-.section{padding:10px;}
+/* SIMILAR */
+.section{
+padding:10px;
+}
 
 .grid{
 display:flex;
@@ -81,25 +126,46 @@ gap:10px;
 overflow-x:auto;
 }
 
-.card{
+.smallCard{
 min-width:140px;
-background:white;
-border-radius:10px;
+background:#1f2937;
+border-radius:12px;
 padding:8px;
-box-shadow:0 2px 5px rgba(0,0,0,0.1);
 cursor:pointer;
 }
 
-.card img{
+.smallCard img{
 width:100%;
 height:100px;
 object-fit:cover;
-border-radius:8px;
+border-radius:10px;
 }
 
-.cardPrice{
-color:#ff6a00;
-font-weight:bold;
+/* MODAL */
+.modal{
+position:fixed;
+top:0;left:0;
+width:100%;
+height:100%;
+background:black;
+display:none;
+align-items:center;
+justify-content:center;
+z-index:999;
+}
+
+.modal img{
+max-width:100%;
+max-height:100%;
+}
+
+.close{
+position:absolute;
+top:15px;
+right:15px;
+font-size:30px;
+color:white;
+cursor:pointer;
 }
 </style>
 </head>
@@ -108,16 +174,44 @@ font-weight:bold;
 
 <div class="header">Detalhes do produto</div>
 
-<div id="productBox"></div>
+<div class="container">
 
+<div class="card">
+
+<!-- IMAGE -->
+<div class="imageContainer">
+<img id="mainImage" class="mainImage" src="">
+</div>
+
+<!-- GALLERY -->
+<div id="gallery" class="gallery"></div>
+
+<!-- INFO -->
+<div class="info">
+<div id="name" class="name"></div>
+<div id="price" class="price"></div>
+
+<div class="actions">
+<button class="btn buyBtn" onclick="buy()">Comprar</button>
+<button class="btn whatsBtn" onclick="whatsapp()">WhatsApp</button>
+<button class="btn shopBtn" onclick="openShop()">Loja</button>
+</div>
+</div>
+
+</div>
+
+</div>
+
+<!-- SIMILAR -->
 <div class="section">
 <h3>Produtos similares</h3>
 <div id="similar" class="grid"></div>
 </div>
 
-<div class="section">
-<h3>Outros produtos</h3>
-<div id="others" class="grid"></div>
+<!-- MODAL ZOOM -->
+<div id="modal" class="modal" onclick="closeModal()">
+<span class="close">✖</span>
+<img id="modalImg">
 </div>
 
 <script type="module">
@@ -130,11 +224,12 @@ collection,getDocs,query,where
 
 const productId = localStorage.getItem("selectedProduct")
 
-let currentProduct=null
-let images=[]
+let product = null
+let images = []
+let index = 0
 
 /* LOAD */
-async function loadProduct(){
+async function load(){
 
 if(!productId){
 alert("Produto inválido ❌")
@@ -148,90 +243,83 @@ alert("Produto não encontrado ❌")
 return
 }
 
-currentProduct = snap.data()
-images = currentProduct.images || []
+product = snap.data()
+images = product.images || []
 
-renderProduct()
+render()
 loadSimilar()
-loadOthers()
 }
 
-loadProduct()
+load()
 
 /* RENDER */
-function renderProduct(){
+function render(){
 
-let main = images[0] || ""
+document.getElementById("name").innerText = product.name
+document.getElementById("price").innerText = product.price + " Kz"
 
-document.getElementById("productBox").innerHTML = `
-<div class="imageContainer">
-<img class="mainImage" src="${main}">
-</div>
+setImage(0)
 
-<div class="gallery">
-${images.map((img,i)=>`
-<img src="${img}" onclick="selectImage(${i})">
-`).join("")}
-</div>
-
-<div class="product">
-<div class="name">${currentProduct.name}</div>
-<div class="price">${currentProduct.price} Kz</div>
-
-<div class="actions">
-<button class="btn buyBtn" onclick="orderNow()">Comprar</button>
-<button class="btn chatBtn" onclick="contactSeller()">💬 Contatar vendedor</button>
-<button class="btn shopBtn" onclick="openShop()">🏪 Ver Loja</button>
-</div>
-</div>
-`
-}
-
-/* 🔥 VERSION STABLE DEFINITIVE */
-window.contactSeller = function(){
-
-const user = auth.currentUser
-
-if(!user){
-alert("Session expirée ❌\nReconnecte-toi")
-location.href = "login.html"
-return
-}
-
-const merchantId = currentProduct.merchantId
-
-if(!merchantId){
-alert("Vendedor não encontrado ❌")
-return
-}
-
-/* CHAT ID UNIQUE */
-const chatId = [user.uid, merchantId].sort().join("_")
-
-location.href = "chat.html?id=" + chatId
+let gal = document.getElementById("gallery")
+gal.innerHTML = images.map((img,i)=>`
+<img src="${img}" onclick="setImage(${i})">
+`).join("")
 }
 
 /* IMAGE */
-window.selectImage=function(i){
-document.querySelector(".mainImage").src=images[i]
+window.setImage = function(i){
+index = i
+document.getElementById("mainImage").src = images[i]
 }
 
-/* SHOP */
-window.openShop=function(){
-location.href="merchant-shop.html?id="+currentProduct.merchantId
+/* SWIPE */
+let startX = 0
+
+document.addEventListener("touchstart",e=>{
+startX = e.touches[0].clientX
+})
+
+document.addEventListener("touchend",e=>{
+let endX = e.changedTouches[0].clientX
+
+if(endX < startX - 50) next()
+if(endX > startX + 50) prev()
+})
+
+function next(){
+index = (index + 1) % images.length
+setImage(index)
 }
 
-/* WHATSAPP */
-window.orderNow = async function(){
+function prev(){
+index = (index - 1 + images.length) % images.length
+setImage(index)
+}
+
+/* ZOOM */
+const mainImg = document.getElementById("mainImage")
+
+mainImg.onclick = ()=>{
+document.getElementById("modal").style.display="flex"
+document.getElementById("modalImg").src = mainImg.src
+}
+
+window.closeModal = function(){
+document.getElementById("modal").style.display="none"
+}
+
+/* WHATSAPP (CHAT SUPPRIMÉ) */
+window.whatsapp = async function(){
 
 const user = auth.currentUser
 
 if(!user){
 alert("Login necessário ❌")
+location.href="login.html"
 return
 }
 
-const snap = await getDoc(doc(db,"users",currentProduct.merchantId))
+const snap = await getDoc(doc(db,"users",product.merchantId))
 const data = snap.data()
 
 let phone = data?.whatsapp
@@ -243,13 +331,19 @@ return
 
 phone = phone.replace(/\D/g,"")
 
-const msg = `
-🛒 Pedido
-Produto: ${currentProduct.name}
-Preço: ${currentProduct.price} Kz
-`
+const msg = `Olá, estou interessado no produto: ${product.name} - ${product.price} Kz`
 
 window.open("https://wa.me/"+phone+"?text="+encodeURIComponent(msg))
+}
+
+/* SHOP */
+window.openShop = function(){
+location.href="merchant-shop.html?id="+product.merchantId
+}
+
+/* BUY */
+window.buy = function(){
+whatsapp()
 }
 
 /* SIMILAR */
@@ -257,57 +351,33 @@ async function loadSimilar(){
 
 const q=query(
 collection(db,"products"),
-where("category","==",currentProduct.category)
+where("category","==",product.category)
 )
 
 const snap=await getDocs(q)
 
 let html=""
 
-snap.forEach(docSnap=>{
-const p=docSnap.data()
+snap.forEach(d=>{
+let p=d.data()
 
-if(docSnap.id!==productId){
+if(d.id !== productId){
 html+=`
-<div class="card" onclick="openProduct('${docSnap.id}')">
+<div class="smallCard" onclick="openProduct('${d.id}')">
 <img src="${p.images?.[0]}">
 <div>${p.name}</div>
-<div class="cardPrice">${p.price} Kz</div>
+<div>${p.price} Kz</div>
 </div>
 `
 }
 })
 
-similar.innerHTML=html
+document.getElementById("similar").innerHTML = html
 }
 
-/* OTHERS */
-async function loadOthers(){
-
-const snap=await getDocs(collection(db,"products"))
-
-let html=""
-
-snap.forEach(docSnap=>{
-const p=docSnap.data()
-
-if(p.merchantId!==currentProduct.merchantId){
-html+=`
-<div class="card" onclick="openProduct('${docSnap.id}')">
-<img src="${p.images?.[0]}">
-<div>${p.name}</div>
-<div class="cardPrice">${p.price} Kz</div>
-</div>
-`
-}
-})
-
-others.innerHTML=html
-}
-
-/* OPEN PRODUCT */
-window.openProduct=function(id){
-localStorage.setItem("selectedProduct", id)
+/* OPEN */
+window.openProduct = function(id){
+localStorage.setItem("selectedProduct",id)
 location.reload()
 }
 
