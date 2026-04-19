@@ -133,10 +133,13 @@ const productId = localStorage.getItem("selectedProduct")
 let currentProduct=null
 let images=[]
 
-/* 🔥 FIX AUTH GLOBAL */
+/* 🔥 AUTH FIX FINAL */
 let currentUser = null
+let authReady = false
+
 auth.onAuthStateChanged(user=>{
 currentUser = user
+authReady = true
 })
 
 /* LOAD */
@@ -193,11 +196,17 @@ ${images.map((img,i)=>`
 `
 }
 
-/* 🔥 CONTACT SELLER FINAL FIX (ULTRA STABLE) */
+/* 🔥 CONTACT SELLER FINAL ULTRA FIX */
 window.contactSeller = function(){
 
+if(!authReady){
+alert("Carregando... aguarde ⏳")
+return
+}
+
 if(!currentUser){
-alert("A carregar... tenta novamente ⏳")
+alert("Faz login primeiro ❌")
+location.href = "login.html"
 return
 }
 
@@ -209,10 +218,10 @@ alert("Vendedor não encontrado ❌")
 return
 }
 
-/* ✅ CHAT ID UNIQUE GLOBAL */
+/* CHAT ID UNIQUE GLOBAL */
 const chatId = [userId, merchantId].sort().join("_")
 
-/* 🚀 REDIRECT */
+/* REDIRECT */
 location.href = "chat.html?id=" + chatId
 
 }
