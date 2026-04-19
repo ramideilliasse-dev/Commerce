@@ -59,9 +59,6 @@ border:none;
 width:45px;height:45px;border-radius:50%;
 background:#00a884;color:white;border:none;
 }
-
-img{max-width:150px;border-radius:10px;}
-audio{width:150px;}
 </style>
 </head>
 
@@ -79,12 +76,6 @@ audio{width:150px;}
 
 <div class="input">
 <input id="text" placeholder="Mensagem...">
-
-<input type="file" id="image" hidden>
-<button onclick="pickImage()">📷</button>
-
-<button onclick="recordAudio()">🎤</button>
-
 <button class="btn" onclick="send()">➤</button>
 </div>
 
@@ -122,30 +113,39 @@ location.href="login.html"
 return
 }
 
-user=u
+user = u
 
-const parts=chatId.split("_")
+const parts = chatId.split("_")
 
-if(!parts.includes(user.uid)){
-alert("Acesso negado ❌")
+if(parts.length !== 2){
+alert("Chat ID inválido ❌")
 location.href="index.html"
 return
 }
 
-merchant = parts[0]===user.uid?parts[1]:parts[0]
+/* 🔥 EXTRACTION SÛRE */
+merchant = parts[0] === user.uid ? parts[1] : parts[0]
+
+/* ⚠️ SUPPRESSION DU BLOCAGE */
+if(!merchant){
+alert("Erro identificação usuário ❌")
+return
+}
 
 /* LOAD USER */
 const snap = await db.collection("users").doc(merchant).get()
 const data = snap.data()
 
-name.innerText = data?.shopName || "User"
-avatar.src = data?.photo || "https://i.ibb.co/4pDNDk1/avatar.png"
+document.getElementById("name").innerText = data?.shopName || "User"
+document.getElementById("avatar").src =
+data?.photo || "https://i.ibb.co/4pDNDk1/avatar.png"
 
 /* ONLINE */
 db.collection("users").doc(merchant)
 .onSnapshot(s=>{
-let d=s.data()
-status.innerText = d?.online ? "🟢 online" :
+let d = s.data()
+document.getElementById("status").innerText =
+d?.online ? "🟢 online" :
 "visto " + new Date(d?.lastSeen||0).toLocaleTimeString()
 })
 
@@ -168,6 +168,7 @@ db.collection("chats").doc(chatId)
 .limit(50)
 .onSnapshot(snap=>{
 
+const chat = document.getElementById("chat")
 chat.innerHTML=""
 
 snap.forEach(d=>{
@@ -176,27 +177,23 @@ let isMe=m.senderId===user.uid
 
 chat.innerHTML+=`
 <div class="msg ${isMe?"me":"other"}">
-
 ${m.text||""}
-${m.image?`<img src="${m.image}">`:``}
-${m.audio?`<audio controls src="${m.audio}"></audio>`:``}
-
 <div>${new Date(m.time).toLocaleTimeString()}</div>
-
 </div>
 `
 })
 
-chat.scrollTop=chat.scrollHeight
+chat.scrollTop = chat.scrollHeight
 
 })
 
 }
 
-/* SEND TEXT */
+/* SEND */
 function send(){
 
-let text=document.getElementById("text").value.trim()
+let input = document.getElementById("text")
+let text = input.value.trim()
 if(!text) return
 
 db.collection("chats").doc(chatId)
@@ -207,78 +204,8 @@ time:Date.now()
 })
 
 updateConv(text)
-text.value=""
 
-}
-
-/* IMAGE */
-function pickImage(){
-image.click()
-}
-
-image.onchange=async function(){
-
-let file=this.files[0]
-
-let form=new FormData()
-form.append("file",file)
-form.append("upload_preset","angcomerce-upload")
-
-let res=await fetch("https://api.cloudinary.com/v1_1/dy9qnhimc/image/upload",{method:"POST",body:form})
-let data=await res.json()
-
-db.collection("chats").doc(chatId)
-.collection("messages").add({
-image:data.secure_url,
-senderId:user.uid,
-time:Date.now()
-})
-
-updateConv("📷 Image")
-
-}
-
-/* AUDIO */
-let mediaRecorder, audioChunks=[]
-
-async function recordAudio(){
-
-let stream = await navigator.mediaDevices.getUserMedia({audio:true})
-
-mediaRecorder = new MediaRecorder(stream)
-
-mediaRecorder.start()
-
-mediaRecorder.ondataavailable=e=>{
-audioChunks.push(e.data)
-}
-
-mediaRecorder.onstop=async ()=>{
-
-let blob=new Blob(audioChunks)
-audioChunks=[]
-
-let form=new FormData()
-form.append("file",blob)
-form.append("upload_preset","angcomerce-upload")
-
-let res=await fetch("https://api.cloudinary.com/v1_1/dy9qnhimc/video/upload",{method:"POST",body:form})
-let data=await res.json()
-
-db.collection("chats").doc(chatId)
-.collection("messages").add({
-audio:data.secure_url,
-senderId:user.uid,
-time:Date.now()
-})
-
-updateConv("🎤 Audio")
-
-}
-
-/* stop après 3 sec */
-setTimeout(()=>mediaRecorder.stop(),3000)
-
+input.value=""
 }
 
 /* UPDATE CONVERSATION */
