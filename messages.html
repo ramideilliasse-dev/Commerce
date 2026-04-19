@@ -122,37 +122,24 @@ for(const docSnap of snap.docs){
 
 const c = docSnap.data()
 
-/* 🔥 SECURISER PARTICIPANTS */
-if(!c.participants || c.participants.length !== 2){
-console.warn("Conversation invalide:", docSnap.id)
-continue
-}
+/* 🔥 VALIDATION */
+if(!c.participants || c.participants.length !== 2) continue
 
-/* 🔥 TROUVER AUTRE USER */
 let other = c.participants.find(p => p !== user.uid)
+if(!other) continue
 
-if(!other){
-console.warn("Other user introuvable:", docSnap.id)
-continue
-}
-
-/* 🔥 CHAT ID UNIQUE GARANTI */
-const chatId = [user.uid, other].sort().join("_")
-
-/* 🔥 LOAD USER INFO */
+/* 🔥 LOAD USER */
 let userData = {}
 try{
 const userSnap = await getDoc(doc(db,"users",other))
 userData = userSnap.data() || {}
-}catch(e){
-console.error("Erreur chargement user:", e)
-}
+}catch(e){}
 
 /* 🔴 UNREAD */
 let unread = c.unread?.[user.uid] || 0
 
 html += `
-<div class="item" onclick="openChat('${chatId}')">
+<div class="item" onclick="openChat('${other}')">
 
 <div class="left">
 <img class="avatar" src="${userData.photo || 'https://i.ibb.co/4pDNDk1/avatar.png'}">
@@ -184,12 +171,20 @@ let d = new Date(t)
 return d.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})
 }
 
-/* 🔥 OPEN CHAT SAFE */
-window.openChat = (chatId)=>{
-if(!chatId || !chatId.includes("_")){
-alert("Chat inválido ❌")
+/* 🔥 VERSION ULTRA STABLE */
+window.openChat = (otherId)=>{
+
+const user = auth.currentUser
+
+if(!user){
+alert("Login necessário ❌")
+location.href="login.html"
 return
 }
+
+/* 🔥 RECONSTRUCTION GARANTIE */
+const chatId = [user.uid, otherId].sort().join("_")
+
 location.href = "chat.html?id=" + chatId
 }
 
