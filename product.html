@@ -133,6 +133,12 @@ const productId = localStorage.getItem("selectedProduct")
 let currentProduct=null
 let images=[]
 
+/* 🔥 FIX AUTH GLOBAL */
+let currentUser = null
+auth.onAuthStateChanged(user=>{
+currentUser = user
+})
+
 /* LOAD */
 async function loadProduct(){
 
@@ -187,18 +193,15 @@ ${images.map((img,i)=>`
 `
 }
 
-/* 🔥 CONTACT SELLER (VERSION PRO STABLE) */
+/* 🔥 CONTACT SELLER FINAL FIX (ULTRA STABLE) */
 window.contactSeller = function(){
 
-auth.onAuthStateChanged(user => {
-
-if(!user){
-alert("Faz login primeiro ❌")
-location.href = "login.html"
+if(!currentUser){
+alert("A carregar... tenta novamente ⏳")
 return
 }
 
-const userId = user.uid
+const userId = currentUser.uid
 const merchantId = currentProduct.merchantId
 
 if(!merchantId){
@@ -206,13 +209,11 @@ alert("Vendedor não encontrado ❌")
 return
 }
 
-/* CHAT ID UNIQUE */
+/* ✅ CHAT ID UNIQUE GLOBAL */
 const chatId = [userId, merchantId].sort().join("_")
 
-/* REDIRECT */
+/* 🚀 REDIRECT */
 location.href = "chat.html?id=" + chatId
-
-})
 
 }
 
@@ -229,7 +230,7 @@ location.href="merchant-shop.html?id="+currentProduct.merchantId
 /* WHATSAPP */
 window.orderNow = async function(){
 
-if(!auth.currentUser){
+if(!currentUser){
 alert("Login necessário ❌")
 return
 }
