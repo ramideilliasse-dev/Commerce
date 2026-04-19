@@ -133,15 +133,6 @@ const productId = localStorage.getItem("selectedProduct")
 let currentProduct=null
 let images=[]
 
-/* 🔥 AUTH FIX FINAL */
-let currentUser = null
-let authReady = false
-
-auth.onAuthStateChanged(user=>{
-currentUser = user
-authReady = true
-})
-
 /* LOAD */
 async function loadProduct(){
 
@@ -196,21 +187,17 @@ ${images.map((img,i)=>`
 `
 }
 
-/* 🔥 CONTACT SELLER FINAL ULTRA FIX */
+/* 🔥 VERSION STABLE DEFINITIVE */
 window.contactSeller = function(){
 
-if(!authReady){
-alert("Carregando... aguarde ⏳")
-return
-}
+const user = auth.currentUser
 
-if(!currentUser){
-alert("Faz login primeiro ❌")
+if(!user){
+alert("Session expirée ❌\nReconnecte-toi")
 location.href = "login.html"
 return
 }
 
-const userId = currentUser.uid
 const merchantId = currentProduct.merchantId
 
 if(!merchantId){
@@ -218,12 +205,10 @@ alert("Vendedor não encontrado ❌")
 return
 }
 
-/* CHAT ID UNIQUE GLOBAL */
-const chatId = [userId, merchantId].sort().join("_")
+/* CHAT ID UNIQUE */
+const chatId = [user.uid, merchantId].sort().join("_")
 
-/* REDIRECT */
 location.href = "chat.html?id=" + chatId
-
 }
 
 /* IMAGE */
@@ -239,7 +224,9 @@ location.href="merchant-shop.html?id="+currentProduct.merchantId
 /* WHATSAPP */
 window.orderNow = async function(){
 
-if(!currentUser){
+const user = auth.currentUser
+
+if(!user){
 alert("Login necessário ❌")
 return
 }
