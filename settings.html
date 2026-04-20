@@ -48,21 +48,9 @@ border:none;
 border-radius:8px;
 }
 
-.btn{
-background:#1aa34a;
-color:white;
-}
-
-.btnDanger{
-background:red;
-color:white;
-}
-
-.btnMerchant{
-background:#ff6a00;
-color:white;
-font-weight:bold;
-}
+.btn{background:#1aa34a;color:white;}
+.btnDanger{background:red;color:white;}
+.btnMerchant{background:#ff6a00;color:white;font-weight:bold;}
 </style>
 </head>
 
@@ -72,44 +60,62 @@ font-weight:bold;
 
 <div class="container">
 
+<!-- PROFILE -->
 <div class="card">
-
 <img id="profilePic" class="profile">
 <input type="file" id="upload" hidden>
-
 </div>
 
+<!-- LANGUAGE -->
 <div class="card">
-
 <label id="langLabel">Idioma</label>
-
 <select id="langSelect">
 <option value="pt">Português</option>
 <option value="fr">Français</option>
 <option value="en">English</option>
 </select>
-
 </div>
 
-<!-- 🔥 NEW MERCHANT CARD -->
+<!-- 🔥 MERCHANT -->
 <div class="card" id="merchantCard">
-
 <button class="btnMerchant" id="merchantBtn" onclick="becomeMerchant()">
 Devenir marchand 🏪
 </button>
-
 </div>
 
+<!-- 🔥 PROVINCE (NOUVEAU) -->
+<div class="card" id="provinceCard" style="display:none;">
+<label>📍 Província</label>
+
+<select id="provinceSelect">
+<option value="">Selecionar província</option>
+<option>Luanda</option>
+<option>Benguela</option>
+<option>Huambo</option>
+<option>Huíla</option>
+<option>Bié</option>
+<option>Malanje</option>
+<option>Uíge</option>
+<option>Cabinda</option>
+<option>Zaire</option>
+<option>Namibe</option>
+<option>Cunene</option>
+<option>Cuando Cubango</option>
+<option>Moxico</option>
+<option>Lunda Norte</option>
+<option>Lunda Sul</option>
+<option>Kwanza Norte</option>
+<option>Kwanza Sul</option>
+<option>Bengo</option>
+</select>
+
+<button class="btn" onclick="saveProvince()">Salvar província</button>
+</div>
+
+<!-- ACTIONS -->
 <div class="card">
-
-<button class="btn" onclick="contactSupport()" id="helpBtn">
-Ajuda
-</button>
-
-<button class="btnDanger" onclick="deleteAccount()" id="deleteBtn">
-Apagar conta
-</button>
-
+<button class="btn" onclick="contactSupport()" id="helpBtn">Ajuda</button>
+<button class="btnDanger" onclick="deleteAccount()" id="deleteBtn">Apagar conta</button>
 </div>
 
 </div>
@@ -122,14 +128,16 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 import { deleteUser, onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
-/* PROFILE */
 const profilePic = document.getElementById("profilePic")
 const upload = document.getElementById("upload")
-
-profilePic.onclick = ()=> upload.click()
+const provinceCard = document.getElementById("provinceCard")
+const provinceSelect = document.getElementById("provinceSelect")
 
 let currentUser = null
 
+profilePic.onclick = ()=> upload.click()
+
+/* 🔥 LOAD USER */
 onAuthStateChanged(auth, async (user)=>{
 
 if(!user) return
@@ -138,31 +146,54 @@ currentUser = user
 
 const ref = doc(db,"users",user.uid)
 const snap = await getDoc(ref)
-const data = snap.data()
+const data = snap.data() || {}
 
 /* PROFILE */
-if(data?.photo){
-profilePic.src = data.photo
-}else{
-profilePic.src = "https://via.placeholder.com/80"
-}
+profilePic.src = data.photo || "https://via.placeholder.com/80"
 
-/* 🔥 MERCHANT BUTTON LOGIC */
+/* 🔥 MERCHANT BUTTON */
 const merchantBtn = document.getElementById("merchantBtn")
 
-if(data?.role === "merchant"){
+if(data.role === "merchant"){
+
 merchantBtn.innerText = "Painel da loja 🏪"
 merchantBtn.onclick = ()=>location.href="merchant-dashboard.html"
+
+/* 🔥 SHOW PROVINCE */
+provinceCard.style.display = "block"
+
+/* LOAD SAVED PROVINCE */
+if(data.province){
+provinceSelect.value = data.province
 }
 
-else if(data?.role === "pending"){
+}
+else if(data.role === "pending"){
 merchantBtn.innerText = "Em validação ⏳"
 merchantBtn.disabled = true
 }
 
 })
 
-/* UPLOAD */
+/* 🔥 SAVE PROVINCE */
+window.saveProvince = async function(){
+
+const province = provinceSelect.value
+
+if(!province){
+alert("Seleciona a província ❌")
+return
+}
+
+await updateDoc(doc(db,"users",currentUser.uid),{
+province: province
+})
+
+alert("Província salva ✅")
+
+}
+
+/* PHOTO */
 upload.onchange = function(){
 
 const file = this.files[0]
@@ -189,42 +220,17 @@ reader.readAsDataURL(file)
 const langSelect = document.getElementById("langSelect")
 
 const translations = {
-
-pt:{
-title:"Configurações",
-lang:"Idioma",
-help:"Ajuda",
-delete:"Apagar conta",
-merchant:"Devenir marchand 🏪"
-},
-
-fr:{
-title:"Paramètres",
-lang:"Langue",
-help:"Aide",
-delete:"Supprimer le compte",
-merchant:"Devenir vendeur 🏪"
-},
-
-en:{
-title:"Settings",
-lang:"Language",
-help:"Support",
-delete:"Delete account",
-merchant:"Become seller 🏪"
-}
-
+pt:{title:"Configurações",lang:"Idioma",help:"Ajuda",delete:"Apagar conta"},
+fr:{title:"Paramètres",lang:"Langue",help:"Aide",delete:"Supprimer le compte"},
+en:{title:"Settings",lang:"Language",help:"Support",delete:"Delete account"}
 }
 
 function applyLang(lang){
-
 localStorage.setItem("lang",lang)
-
 title.innerText = translations[lang].title
 langLabel.innerText = translations[lang].lang
 helpBtn.innerText = translations[lang].help
 deleteBtn.innerText = translations[lang].delete
-
 }
 
 const savedLang = localStorage.getItem("lang") || "pt"
@@ -235,7 +241,7 @@ langSelect.onchange = function(){
 applyLang(this.value)
 }
 
-/* 🔥 BECOME MERCHANT */
+/* MERCHANT */
 window.becomeMerchant = function(){
 location.href="become-merchant.html"
 }
@@ -246,10 +252,7 @@ window.contactSupport = function(){
 const phone = "244922623238"
 const msg = "Olá preciso de ajuda"
 
-window.open(
-"https://wa.me/"+phone+"?text="+encodeURIComponent(msg),
-"_blank"
-)
+window.open("https://wa.me/"+phone+"?text="+encodeURIComponent(msg))
 
 }
 
@@ -259,7 +262,6 @@ window.deleteAccount = async function(){
 if(!confirm("Tem certeza?")) return
 
 try{
-
 await deleteDoc(doc(db,"users",currentUser.uid))
 await deleteUser(currentUser)
 
