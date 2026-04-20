@@ -345,39 +345,45 @@ let timer=null
 
 async function loadBanner(){
 
+try{
+
 const snap = await getDoc(doc(db,"promoBanner","main"))
-if(!snap.exists()) return
 
-bannerItems = snap.data().items || []
-if(bannerItems.length === 0) return
+if(!snap.exists()){
+alert("❌ Bannière promo introuvable (promoBanner/main)")
+return
+}
 
-banner.innerHTML = bannerItems.map((item,i)=>`
-<img src="${item.image}" class="${i===0?'active':''}">
-`).join("")
+const data = snap.data()
+
+bannerItems = data.items || []
+
+if(!bannerItems.length){
+alert("⚠️ Aucun produit ajouté dans la bannière promo")
+return
+}
+
+/* 🔥 construire images */
+banner.innerHTML = bannerItems.map((item,i)=>{
+
+let img = item.image || item.img || ""
+
+return `<img src="${img}" class="${i===0?'active':''}">`
+
+}).join("")
+
+alert("✅ Bannière promo chargée avec succès")
 
 startAutoplay()
 enableSwipe()
+
+}catch(e){
+
+alert("🔥 Erreur bannière : " + e.message)
+
 }
 
-function showSlide(i){
-let imgs = banner.querySelectorAll("img")
-imgs.forEach(el=>el.classList.remove("active"))
-imgs[i].classList.add("active")
-currentIndex=i
 }
-
-function startAutoplay(){
-clearTimeout(timer)
-
-let duration = bannerItems[currentIndex]?.duration || 3000
-
-timer = setTimeout(()=>{
-let next = (currentIndex+1)%bannerItems.length
-showSlide(next)
-startAutoplay()
-}, duration)
-}
-
 /* SWIPE */
 function enableSwipe(){
 
