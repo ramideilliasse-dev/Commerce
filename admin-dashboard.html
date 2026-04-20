@@ -8,26 +8,86 @@
 <style>
 body{font-family:Arial;margin:0;background:#f4f4f4;}
 .header{background:black;color:white;padding:15px;text-align:center;font-size:20px;font-weight:bold;}
-.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px;}
-.stat{background:white;padding:10px;border-radius:10px;text-align:center;font-weight:bold;}
+
 .tabs{display:flex;background:white;border-bottom:1px solid #ddd;}
 .tab{flex:1;text-align:center;padding:12px;cursor:pointer;font-weight:bold;}
 .active{background:#1aa34a;color:white;}
-.filter{padding:10px;display:flex;gap:5px;flex-wrap:wrap;}
-.filter button{background:#ddd;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;}
-.filter .activeFilter{background:#1aa34a;color:white;}
+
 .container{padding:10px;}
-.card{background:white;padding:12px;margin-bottom:10px;border-radius:10px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
-.badge{padding:3px 8px;border-radius:6px;color:white;font-size:12px;}
-.green{background:#1aa34a;}
-.red{background:red;}
-.orange{background:orange;}
-button{padding:6px 10px;border:none;border-radius:6px;cursor:pointer;margin-top:5px;margin-right:5px;}
-.approve{background:#1aa34a;color:white;}
-.reject{background:red;color:white;}
-.admin{background:black;color:white;}
-.block{background:#ff4757;color:white;}
-.unblock{background:#2ed573;color:white;}
+
+.card{
+background:white;
+padding:12px;
+margin-bottom:10px;
+border-radius:12px;
+box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* PROMO GRID */
+.promoGrid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+}
+
+.promoCard{
+background:#fff;
+border-radius:12px;
+padding:8px;
+box-shadow:0 2px 8px rgba(0,0,0,0.1);
+cursor:pointer;
+position:relative;
+}
+
+.promoCard.active{
+border:2px solid #1aa34a;
+}
+
+.promoCard img{
+width:100%;
+height:100px;
+object-fit:cover;
+border-radius:8px;
+}
+
+/* BADGE */
+.selectedBadge{
+position:absolute;
+top:6px;
+left:6px;
+background:#1aa34a;
+color:white;
+padding:2px 6px;
+font-size:11px;
+border-radius:6px;
+}
+
+/* ACTIONS */
+.actions{
+margin-top:8px;
+display:flex;
+flex-direction:column;
+gap:5px;
+}
+
+.actions input{
+padding:6px;
+border-radius:6px;
+border:1px solid #ddd;
+font-size:12px;
+}
+
+.actions button{
+padding:6px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+font-size:12px;
+}
+
+.saveBtn{background:#1aa34a;color:white;}
+.deleteBtn{background:red;color:white;}
+
 </style>
 </head>
 
@@ -35,43 +95,26 @@ button{padding:6px 10px;border:none;border-radius:6px;cursor:pointer;margin-top:
 
 <div class="header">Admin Dashboard 👑</div>
 
-<div class="stats">
-<div class="stat" id="totalUsers">👤 0</div>
-<div class="stat" id="totalMerchants">🏪 0</div>
-<div class="stat" id="totalOrders">🛒 0</div>
-<div class="stat" id="totalRevenue">💰 0 Kz</div>
-</div>
-
 <div class="tabs">
-<div class="tab active" onclick="showTab(event,'users')">👤 Utilisateurs</div>
-<div class="tab" onclick="showTab(event,'orders')">🛒 Commandes</div>
-<div class="tab" onclick="showTab(event,'merchants')">🏪 Vendeurs</div>
+<div class="tab active" onclick="showTab(event,'promo')">🎯 Banner Promo</div>
+<div class="tab" onclick="showTab(event,'users')">👤 Users</div>
 </div>
 
-<div class="filter" id="filters"></div>
 <div class="container" id="content"></div>
 
 <script type="module">
 
 import { db, auth } from "./firebase.js"
-
 import {
-collection,
-getDocs,
-doc,
-getDoc,
-updateDoc,
-query,
-where
+collection,getDocs,doc,getDoc,setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
-let currentUserData=null
-let allUsers=[]
+let products=[]
+let promoData=[]
 
-/* 🔐 AUTH FIX FINAL */
+/* 🔐 AUTH */
 onAuthStateChanged(auth, async (user)=>{
 
 if(!user){
@@ -79,238 +122,146 @@ location.href="login.html"
 return
 }
 
-try{
-
-await new Promise(r=>setTimeout(r,500))
-
 const snap = await getDoc(doc(db,"users",user.uid))
+let role = snap.data()?.role
 
-if(!snap.exists()){
-location.href="index.html"
-return
-}
-
-/* 🔥 FIX IMPORTANT ICI */
-const data = snap.data()
-let role = (data.role || "").trim().toLowerCase()
-
-console.log("ROLE CLEAN:", role)
-
-/* 🔥 CHECK ADMIN CORRIGÉ */
 if(role !== "admin" && role !== "superadmin"){
-console.log("REFUSÉ:", role)
 location.href="index.html"
 return
 }
 
-currentUserData = data
-
-console.log("ADMIN OK")
-
-await loadStats()
-loadUsers()
-
-}catch(e){
-console.error(e)
-location.href="index.html"
-}
+loadPromo()
 
 })
-
-/* 📊 STATS */
-async function loadStats(){
-
-let usersSnap = await getDocs(collection(db,"users"))
-let ordersSnap = await getDocs(collection(db,"orders"))
-
-let totalUsers=0
-let totalMerchants=0
-let totalOrders=0
-let totalRevenue=0
-
-usersSnap.forEach(d=>{
-totalUsers++
-if((d.data().role || "").trim().toLowerCase()==="merchant") totalMerchants++
-})
-
-ordersSnap.forEach(d=>{
-let o=d.data()
-totalOrders++
-totalRevenue += (o.price||0)*(o.qty||1)
-})
-
-document.getElementById("totalUsers").innerText="👤 "+totalUsers
-document.getElementById("totalMerchants").innerText="🏪 "+totalMerchants
-document.getElementById("totalOrders").innerText="🛒 "+totalOrders
-document.getElementById("totalRevenue").innerText="💰 "+totalRevenue+" Kz"
-
-}
 
 /* NAV */
-window.showTab=function(e,tab){
+window.showTab = function(e,tab){
+
 document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"))
 e.target.classList.add("active")
 
-if(tab==="users") loadUsers()
-if(tab==="orders") loadOrders()
-if(tab==="merchants") loadMerchants()
+if(tab==="promo") loadPromo()
+
 }
 
-/* USERS */
-async function loadUsers(filter="all"){
+/* 🔥 LOAD PROMO */
+async function loadPromo(){
 
-const snap = await getDocs(collection(db,"users"))
-allUsers=[]
+const container = document.getElementById("content")
+
+container.innerHTML = "Carregando..."
+
+const configSnap = await getDoc(doc(db,"promoBanner","main"))
+
+promoData = configSnap.exists() ? configSnap.data().items || [] : []
+
+const snap = await getDocs(collection(db,"products"))
+
+products=[]
 
 snap.forEach(d=>{
-let u = d.data()
-u.role = (u.role || "").trim().toLowerCase()
-allUsers.push({id:d.id,...u})
+let p=d.data()
+p.id=d.id
+products.push(p)
 })
 
-renderFilters(filter)
-renderUsers(filter)
+renderPromo()
 
 }
 
-function renderFilters(active){
+/* 🔥 RENDER */
+function renderPromo(){
 
-let filters = ["all","client","merchant","pending","blocked"]
+const container = document.getElementById("content")
 
-let html=""
+container.innerHTML = `
+<h3>🎯 Selecionar produtos para banner</h3>
+<div class="promoGrid">
+${products.map(p=>{
 
-filters.forEach(f=>{
-html+=`<button class="${f===active?"activeFilter":""}" onclick="applyFilter('${f}')">${f}</button>`
-})
+let selected = promoData.find(x=>x.id===p.id)
 
-document.getElementById("filters").innerHTML=html
+return `
+<div class="promoCard ${selected?"active":""}">
+
+${selected?`<div class="selectedBadge">Selecionado</div>`:""}
+
+<img src="${selected?.image || p.images?.[0] || ''}">
+
+<div>${p.name}</div>
+
+<div class="actions">
+
+<input placeholder="Imagem promo (URL)"
+value="${selected?.image || ""}"
+onchange="updateImage('${p.id}',this.value)">
+
+<input placeholder="Duração (ms)"
+value="${selected?.duration || 3000}"
+onchange="updateDuration('${p.id}',this.value)">
+
+<button class="saveBtn" onclick="togglePromo('${p.id}')">
+${selected ? "Remover" : "Adicionar"}
+</button>
+
+</div>
+
+</div>
+`
+}).join("")}
+</div>
+
+<button class="saveBtn" style="margin-top:10px;width:100%" onclick="savePromo()">
+💾 Salvar Banner
+</button>
+`
+
 }
 
-window.applyFilter=function(f){
-renderUsers(f)
-renderFilters(f)
-}
+/* 🔥 TOGGLE */
+window.togglePromo = function(id){
 
-function renderUsers(filter){
+let index = promoData.findIndex(x=>x.id===id)
 
-let html=""
-
-let users = allUsers.filter(u=>{
-if(filter==="all") return true
-if(filter==="client") return u.role==="client"
-if(filter==="merchant") return u.role==="merchant"
-if(filter==="pending") return !u.approved
-if(filter==="blocked") return u.blocked===true
-})
-
-users.forEach(u=>{
-
-let statusBadge=""
-
-if(u.blocked){
-statusBadge=`<span class="badge red">Bloqué ❌</span>`
-}else if(u.approved){
-statusBadge=`<span class="badge green">Aprovado</span>`
+if(index>-1){
+promoData.splice(index,1)
 }else{
-statusBadge=`<span class="badge orange">Pendente</span>`
+promoData.push({
+id:id,
+image:"",
+duration:3000
+})
 }
 
-html+=`
-<div class="card">
-<b>${u.email}</b><br>
-Role: ${u.role}<br>
-${statusBadge}
-<br>
-<button class="approve" onclick="approve('${u.id}')">Aprovar</button>
-<button class="reject" onclick="reject('${u.id}')">Recusar</button>
+renderPromo()
 
-${u.blocked 
-? `<button class="unblock" onclick="unblockUser('${u.id}')">Desbloquear</button>`
-: `<button class="block" onclick="blockUser('${u.id}')">Bloquear</button>`
 }
 
-${currentUserData.role==="superadmin" 
-? `<button class="admin" onclick="makeAdmin('${u.id}')">Admin</button>` 
-: ""}
+/* 🔥 UPDATE IMAGE */
+window.updateImage = function(id,value){
 
-</div>
-`
+let item = promoData.find(x=>x.id===id)
+if(item) item.image = value
+
+}
+
+/* 🔥 UPDATE DURATION */
+window.updateDuration = function(id,value){
+
+let item = promoData.find(x=>x.id===id)
+if(item) item.duration = Number(value)
+
+}
+
+/* 🔥 SAVE */
+window.savePromo = async function(){
+
+await setDoc(doc(db,"promoBanner","main"),{
+items: promoData
 })
 
-document.getElementById("content").innerHTML=html
+alert("Banner salvo ✅")
 
-}
-
-/* ACTIONS */
-window.approve = async (id)=>{
-await updateDoc(doc(db,"users",id),{role:"merchant",approved:true})
-loadUsers()
-}
-
-window.reject = async (id)=>{
-await updateDoc(doc(db,"users",id),{role:"client",approved:false})
-loadUsers()
-}
-
-window.blockUser = async (id)=>{
-await updateDoc(doc(db,"users",id),{blocked:true})
-loadUsers()
-}
-
-window.unblockUser = async (id)=>{
-await updateDoc(doc(db,"users",id),{blocked:false})
-loadUsers()
-}
-
-window.makeAdmin = async (id)=>{
-await updateDoc(doc(db,"users",id),{role:"admin"})
-loadUsers()
-}
-
-/* ORDERS */
-async function loadOrders(){
-document.getElementById("filters").innerHTML=""
-const snap = await getDocs(collection(db,"orders"))
-
-let html=""
-
-snap.forEach(d=>{
-let o=d.data()
-
-html+=`
-<div class="card">
-<b>${o.productName}</b><br>
-${o.qty} x ${o.price} Kz<br>
-👤 ${o.clientName}<br>
-📞 ${o.clientPhone}
-</div>
-`
-})
-
-document.getElementById("content").innerHTML=html
-}
-
-/* MERCHANTS */
-async function loadMerchants(){
-document.getElementById("filters").innerHTML=""
-
-const q = query(collection(db,"users"), where("role","==","merchant"))
-const snap = await getDocs(q)
-
-let html=""
-
-snap.forEach(d=>{
-let m=d.data()
-
-html+=`
-<div class="card">
-<b>${m.email}</b><br>
-<span class="badge green">Ativo</span>
-</div>
-`
-})
-
-document.getElementById("content").innerHTML=html
 }
 
 </script>
