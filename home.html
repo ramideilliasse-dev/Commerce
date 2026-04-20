@@ -3,179 +3,178 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shopping Angola</title>
+<title>Produto</title>
 
 <style>
 body{
-font-family:Arial;
 margin:0;
-background:#0f1720;
-color:white;
+font-family:Arial;
+background:#f9f9ff;
+color:#222;
 }
 
 /* HEADER */
 .header{
-position:fixed;top:0;left:0;right:0;
-background:#1f2a33;
-padding:10px;
-display:flex;justify-content:space-between;align-items:center;
-z-index:1000;
+background:white;
+padding:15px;
+text-align:center;
+font-size:18px;
+font-weight:bold;
+box-shadow:0 2px 8px rgba(0,0,0,0.05);
+position:relative;
 }
 
-.logo{font-size:20px;font-weight:bold;color:#00a884;}
-
-.headerRight{display:flex;gap:8px;align-items:center;}
-
-button{
+/* ADMIN BUTTON */
+.adminBtn{
+position:absolute;
+right:15px;
+top:12px;
+background:#7c3aed;
+color:white;
 border:none;
 padding:6px 10px;
 border-radius:8px;
+font-size:12px;
 cursor:pointer;
+display:none;
 }
 
-.accountBtn{
-background:#00a884;
-color:white;
-border-radius:20px;
-}
-
-/* CART */
-.cartIcon{
-position:relative;
-cursor:pointer;
-font-size:20px;
-}
-
-.cartBadge{
-background:red;
-color:white;
-border-radius:50%;
-padding:2px 6px;
-font-size:11px;
-position:absolute;
-top:-6px;
-right:-8px;
-}
-
-/* SEARCH */
-.searchBox{
-position:fixed;
-top:60px;
-left:0;
-right:0;
-background:#1f2a33;
+/* CONTAINER */
+.container{
 padding:10px;
-z-index:999;
 }
 
-.searchBox input{
-width:100%;
-padding:12px;
-border-radius:20px;
-border:none;
-background:#0f1720;
-color:white;
-}
-
-/* BANNER */
-.banner{
-margin-top:110px;
-background:#00a884;
-padding:12px;
-text-align:center;
-font-weight:bold;
-}
-
-/* PRODUCTS GRID */
-.products{
-column-count:2;
-column-gap:10px;
-padding:10px;
-padding-bottom:90px;
-}
-
-/* PRODUCT CARD */
-.product{
-background:#1f2a33;
-border-radius:14px;
-margin-bottom:10px;
-break-inside:avoid;
-box-shadow:0 4px 10px rgba(0,0,0,0.4);
+.card{
+background:white;
+border-radius:15px;
 overflow:hidden;
-cursor:pointer;
-transition:0.2s;
+box-shadow:0 5px 15px rgba(0,0,0,0.08);
 }
 
-.product:hover{
-transform:scale(1.02);
-}
-
-.product img{
+/* IMAGE */
+.imageContainer{
 width:100%;
-height:150px;
+height:320px;
+background:#eee;
+overflow:hidden;
+}
+
+.mainImage{
+width:100%;
+height:100%;
 object-fit:cover;
+}
+
+/* GALLERY */
+.gallery{
+display:flex;
+gap:8px;
+padding:10px;
+overflow-x:auto;
+background:#fafafa;
+}
+
+.gallery img{
+width:70px;
+height:70px;
+border-radius:10px;
+opacity:0.6;
+cursor:pointer;
+}
+
+.gallery img.active{
+border:2px solid #7c3aed;
+opacity:1;
 }
 
 /* INFO */
 .info{
-padding:10px;
+padding:15px;
 }
 
 .name{
+font-size:20px;
 font-weight:bold;
-font-size:14px;
 }
 
 .price{
-color:#00e676;
+color:#7c3aed;
+font-size:22px;
 font-weight:bold;
-margin-top:3px;
-}
-
-.desc{
-font-size:12px;
-color:#aaa;
-margin-top:3px;
-}
-
-/* 🔥 PROVINCE */
-.province{
-font-size:11px;
-color:#00a884;
 margin-top:5px;
 }
 
-/* CART BTN */
-.cartBtn{
-position:absolute;
-right:8px;
-bottom:8px;
-background:#00a884;
-color:white;
-width:34px;
-height:34px;
-border-radius:50%;
+/* BUTTONS */
+.actions{
 display:flex;
+gap:10px;
+margin-top:15px;
+}
+
+.btn{
+flex:1;
+padding:12px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.buyBtn{background:#22c55e;color:white;}
+.whatsBtn{background:#7c3aed;color:white;}
+.shopBtn{background:#f97316;color:white;}
+
+/* SECTION */
+.section{
+padding:10px;
+}
+
+.grid{
+display:flex;
+gap:10px;
+overflow-x:auto;
+}
+
+.smallCard{
+min-width:140px;
+background:white;
+border-radius:12px;
+padding:8px;
+box-shadow:0 3px 10px rgba(0,0,0,0.08);
+cursor:pointer;
+}
+
+.smallCard img{
+width:100%;
+height:100px;
+object-fit:cover;
+border-radius:10px;
+}
+
+/* MODAL */
+.modal{
+position:fixed;
+top:0;left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.9);
+display:none;
 align-items:center;
 justify-content:center;
-font-size:16px;
+z-index:999;
 }
 
-/* NAV */
-.nav{
-position:fixed;
-bottom:0;
-left:0;
-right:0;
-background:#1f2a33;
-display:flex;
-justify-content:space-around;
-padding:8px;
-font-size:13px;
-border-top:1px solid #333;
+.modal img{
+max-width:100%;
+max-height:100%;
 }
 
-.nav div{
+.close{
+position:absolute;
+top:15px;
+right:15px;
+font-size:30px;
+color:white;
 cursor:pointer;
 }
 </style>
@@ -184,174 +183,231 @@ cursor:pointer;
 <body>
 
 <div class="header">
-<div class="logo">Shopping 🇦🇴</div>
-
-<div class="headerRight">
-<button onclick="location.href='settings.html'">⚙️</button>
-<button onclick="location.href='guide.html'">📘</button>
-
-<div class="cartIcon" onclick="location.href='cart.html'">
-🛒
-<span id="cartCount" class="cartBadge">0</span>
+Detalhes do produto
+<button id="adminBtn" class="adminBtn">Admin</button>
 </div>
 
-<button id="accountButton" class="accountBtn">...</button>
+<div class="container">
+
+<div class="card">
+
+<div class="imageContainer">
+<img id="mainImage" class="mainImage" src="">
+</div>
+
+<div id="gallery" class="gallery"></div>
+
+<div class="info">
+<div id="name" class="name"></div>
+<div id="price" class="price"></div>
+
+<div class="actions">
+<button class="btn buyBtn" onclick="buy()">Comprar</button>
+<button class="btn whatsBtn" onclick="whatsapp()">WhatsApp</button>
+<button class="btn shopBtn" onclick="openShop()">Loja</button>
 </div>
 </div>
 
-<div class="searchBox">
-<input id="search" placeholder="Procurar produto...">
 </div>
 
-<div class="banner">
-🔥 Promoções hoje • Entrega rápida 🚀
 </div>
 
-<div id="productList" class="products"></div>
+<div class="section">
+<h3>Produtos similares</h3>
+<div id="similar" class="grid"></div>
+</div>
 
-<div class="nav">
-<div onclick="location.href='index.html'">🏠<br>Inicio</div>
-<div onclick="location.href='categories.html'">📦<br>Categorias</div>
-<div onclick="location.href='cart.html'">🛒<br>Carrinho</div>
+<!-- MODAL -->
+<div id="modal" class="modal" onclick="closeModal()">
+<span class="close">✖</span>
+<img id="modalImg">
 </div>
 
 <script type="module">
 
-import { db,auth } from "./firebase.js"
-import { collection, getDocs, doc, getDoc } 
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-import { onAuthStateChanged } 
+import { db, auth } from "./firebase.js"
+import {
+doc,getDoc,
+collection,getDocs,query,where
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
+import { onAuthStateChanged }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
-/* CART */
-function updateCartCount(){
-let cart = JSON.parse(localStorage.getItem("cart") || "[]")
-let total=0
-cart.forEach(i=> total += i.qty || 1)
-document.getElementById("cartCount").innerText = total
-}
-updateCartCount()
+const productId = localStorage.getItem("selectedProduct")
 
-window.addEventListener("focus", updateCartCount)
+let product = null
+let images = []
+let index = 0
 
-/* ACCOUNT */
-const accountButton=document.getElementById("accountButton")
-
+/* ADMIN BUTTON LOGIC */
 onAuthStateChanged(auth, async (user)=>{
 
-if(!user){
-accountButton.innerText="Login"
-accountButton.onclick=()=>location.href="login.html"
+if(!user) return
+
+const snap = await getDoc(doc(db,"users",user.uid))
+const role = snap.data()?.role
+
+if(role === "admin" || role === "superadmin"){
+const btn = document.getElementById("adminBtn")
+btn.style.display = "block"
+btn.onclick = ()=>location.href="admin-dashboard.html"
+}
+
+})
+
+/* LOAD */
+async function load(){
+
+if(!productId){
+alert("Produto inválido ❌")
 return
 }
 
-const snap = await getDoc(doc(db,"users",user.uid))
-let role = snap.exists() ? snap.data().role : "client"
+const snap = await getDoc(doc(db,"products",productId))
 
-if(role === "merchant"){
-accountButton.innerText="Minha Loja 🏪"
-accountButton.onclick=()=>location.href="merchant-dashboard.html"
-}
-else{
-accountButton.innerText="Conta"
-accountButton.onclick=()=>location.href="settings.html"
+if(!snap.exists()){
+alert("Produto não encontrado ❌")
+return
 }
 
+product = snap.data()
+images = product.images || []
+
+render()
+loadSimilar()
+}
+
+load()
+
+/* RENDER */
+function render(){
+
+document.getElementById("name").innerText = product.name
+document.getElementById("price").innerText = product.price + " Kz"
+
+setImage(0)
+
+let gal = document.getElementById("gallery")
+gal.innerHTML = images.map((img,i)=>`
+<img src="${img}" onclick="setImage(${i})">
+`).join("")
+}
+
+/* IMAGE */
+window.setImage = function(i){
+index = i
+document.getElementById("mainImage").src = images[i]
+}
+
+/* SWIPE */
+let startX = 0
+
+document.addEventListener("touchstart",e=>{
+startX = e.touches[0].clientX
 })
 
-/* PRODUCTS */
-let products=[]
+document.addEventListener("touchend",e=>{
+let endX = e.changedTouches[0].clientX
 
-function productHTML(p){
+if(endX < startX - 50) next()
+if(endX > startX + 50) prev()
+})
 
-const img = p.images?.[0] || "https://via.placeholder.com/300"
-const desc = (p.description || "").split(" ").slice(0,5).join(" ")
+function next(){
+index = (index + 1) % images.length
+setImage(index)
+}
 
-return `
-<div class="product" onclick="openProduct('${p.id}')">
+function prev(){
+index = (index - 1 + images.length) % images.length
+setImage(index)
+}
 
-<div style="position:relative">
-<img src="${img}">
-<div onclick="event.stopPropagation();addToCart('${p.id}')" class="cartBtn">🛒</div>
-</div>
+/* ZOOM */
+const mainImg = document.getElementById("mainImage")
 
-<div class="info">
-<div class="name">${p.name}</div>
-<div class="price">${p.price} Kz</div>
-<div class="desc">${desc}</div>
+mainImg.onclick = ()=>{
+document.getElementById("modal").style.display="flex"
+document.getElementById("modalImg").src = mainImg.src
+}
 
-<div class="province">
-📍 ${p.province || "Angola"}
-</div>
+window.closeModal = function(){
+document.getElementById("modal").style.display="none"
+}
 
-</div>
+/* WHATSAPP */
+window.whatsapp = async function(){
 
+const user = auth.currentUser
+
+if(!user){
+alert("Login necessário ❌")
+location.href="login.html"
+return
+}
+
+const snap = await getDoc(doc(db,"users",product.merchantId))
+const data = snap.data()
+
+let phone = data?.whatsapp
+
+if(!phone){
+alert("Sem WhatsApp ❌")
+return
+}
+
+phone = phone.replace(/\D/g,"")
+
+const msg = `Olá, estou interessado no produto: ${product.name} - ${product.price} Kz`
+
+window.open("https://wa.me/"+phone+"?text="+encodeURIComponent(msg))
+}
+
+/* SHOP */
+window.openShop = function(){
+location.href="merchant-shop.html?id="+product.merchantId
+}
+
+/* BUY */
+window.buy = function(){
+whatsapp()
+}
+
+/* SIMILAR */
+async function loadSimilar(){
+
+const q=query(
+collection(db,"products"),
+where("category","==",product.category)
+)
+
+const snap=await getDocs(q)
+
+let html=""
+
+snap.forEach(d=>{
+let p=d.data()
+
+if(d.id !== productId){
+html+=`
+<div class="smallCard" onclick="openProduct('${d.id}')">
+<img src="${p.images?.[0]}">
+<div>${p.name}</div>
+<div>${p.price} Kz</div>
 </div>
 `
 }
-
-async function loadProducts(){
-
-const snap=await getDocs(collection(db,"products"))
-
-products=[]
-
-snap.forEach(docSnap=>{
-const data=docSnap.data()
-data.id=docSnap.id
-products.push(data)
 })
 
-renderProducts(products)
+document.getElementById("similar").innerHTML = html
 }
 
-function renderProducts(list){
-document.getElementById("productList").innerHTML =
-list.map(p=>productHTML(p)).join("")
+/* OPEN */
+window.openProduct = function(id){
+localStorage.setItem("selectedProduct",id)
+location.reload()
 }
-
-/* SEARCH */
-document.getElementById("search").addEventListener("input",(e)=>{
-let val = e.target.value.toLowerCase()
-let filtered = products.filter(p =>
-(p.name||"").toLowerCase().includes(val)
-)
-renderProducts(filtered)
-})
-
-/* ACTIONS */
-window.openProduct=function(id){
-localStorage.setItem("selectedProduct", id)
-location.href="product.html"
-}
-
-window.addToCart=function(id){
-
-let cart = JSON.parse(localStorage.getItem("cart") || "[]")
-const product = products.find(p => p.id === id)
-
-if(!product) return
-
-const exist = cart.find(p => p.id === id)
-
-if(exist){ exist.qty++ }
-else{
-cart.push({
-id:product.id,
-name:product.name,
-price:Number(product.price) || 0,
-image:product.images?.[0] || "",
-qty:1
-})
-}
-
-localStorage.setItem("cart", JSON.stringify(cart))
-updateCartCount()
-
-}
-
-/* LOAD */
-loadProducts()
 
 </script>
 
