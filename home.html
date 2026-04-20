@@ -26,7 +26,7 @@ z-index:1000;
 .logo{
 font-size:18px;
 font-weight:bold;
-color:#7c3aed;
+color:#cc5500;
 }
 
 .headerRight{
@@ -43,12 +43,11 @@ cursor:pointer;
 }
 
 .accountBtn{
-background:#7c3aed;
+background:#ff6a00;
 color:white;
 border-radius:20px;
 }
 
-/* ADMIN */
 .adminBtn{
 background:#111;
 color:white;
@@ -56,7 +55,6 @@ border-radius:8px;
 display:none;
 }
 
-/* CART */
 .cartIcon{
 position:relative;
 cursor:pointer;
@@ -74,7 +72,7 @@ top:-6px;
 right:-8px;
 }
 
-/* SEARCH + FILTER */
+/* SEARCH */
 .topBar{
 position:fixed;
 top:60px;
@@ -95,7 +93,7 @@ border-radius:10px;
 border:1px solid #ddd;
 }
 
-/* 🔥 BANNER ANIMÉ */
+/* BANNER */
 .banner{
 margin-top:120px;
 height:180px;
@@ -143,7 +141,6 @@ height:150px;
 object-fit:cover;
 }
 
-/* INFO */
 .info{
 padding:10px;
 }
@@ -153,7 +150,6 @@ font-weight:bold;
 font-size:14px;
 }
 
-/* 🔥 PRIX ORANGE ANIMÉ */
 .price{
 color:#ff6a00;
 font-weight:bold;
@@ -173,14 +169,12 @@ color:#666;
 margin-top:3px;
 }
 
-/* 🔥 PROVINCE VERTE */
 .province{
 font-size:11px;
 color:#1aa34a;
 margin-top:5px;
 }
 
-/* 🔥 PANIER VERT */
 .cartBtn{
 position:absolute;
 right:8px;
@@ -195,13 +189,12 @@ align-items:center;
 justify-content:center;
 }
 
-/* NAV */
 .nav{
 position:fixed;
 bottom:0;
 left:0;
 right:0;
-background:white;
+background:#d4f8d4;
 display:flex;
 justify-content:space-around;
 padding:8px;
@@ -233,7 +226,6 @@ border-top:1px solid #ddd;
 </div>
 </div>
 
-<!-- SEARCH + FILTER -->
 <div class="topBar">
 <input id="search" placeholder="Procurar produto...">
 
@@ -254,7 +246,6 @@ border-top:1px solid #ddd;
 </select>
 </div>
 
-<!-- 🔥 BANNER PRODUITS -->
 <div id="banner" class="banner"></div>
 
 <div id="productList" class="products"></div>
@@ -268,7 +259,7 @@ border-top:1px solid #ddd;
 <script type="module">
 
 import { db,auth } from "./firebase.js"
-import { collection, getDocs, doc, getDoc, query, where } 
+import { collection, getDocs, doc, getDoc } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
@@ -318,7 +309,6 @@ const desc = (p.description || "").slice(0,30)
 
 return `
 <div class="product" onclick="openProduct('${p.id}')">
-
 <div style="position:relative">
 <img src="${img}">
 <div onclick="event.stopPropagation();addToCart('${p.id}')" class="cartBtn">🛒</div>
@@ -330,7 +320,6 @@ return `
 <div class="desc">${desc}</div>
 <div class="province">📍 ${p.province || "Angola"}</div>
 </div>
-
 </div>
 `
 }
@@ -339,44 +328,80 @@ async function loadProducts(){
 const snap=await getDocs(collection(db,"products"))
 
 products=[]
-
-snap.forEach(docSnap=>{
-const data=docSnap.data()
-data.id=docSnap.id
-products.push(data)
+snap.forEach(d=>{
+let p=d.data()
+p.id=d.id
+products.push(p)
 })
 
 applyFilters()
 loadBanner()
 }
 
-/* 🔥 BANNER ADMIN */
+/* 🔥 BANNER AVEC AUTOPLAY + SWIPE */
+let bannerItems=[]
+let currentIndex=0
+let timer=null
+
 async function loadBanner(){
 
-// produits marqués promo = true
-const q = query(collection(db,"products"), where("promo","==",true))
-const snap = await getDocs(q)
+const snap = await getDoc(doc(db,"promoBanner","main"))
+if(!snap.exists()) return
 
-let imgs = []
+bannerItems = snap.data().items || []
+if(bannerItems.length === 0) return
 
-snap.forEach(d=>{
-let p = d.data()
-if(p.images?.[0]) imgs.push(p.images[0])
+banner.innerHTML = bannerItems.map((item,i)=>`
+<img src="${item.image}" class="${i===0?'active':''}">
+`).join("")
+
+startAutoplay()
+enableSwipe()
+}
+
+function showSlide(i){
+let imgs = banner.querySelectorAll("img")
+imgs.forEach(el=>el.classList.remove("active"))
+imgs[i].classList.add("active")
+currentIndex=i
+}
+
+function startAutoplay(){
+clearTimeout(timer)
+
+let duration = bannerItems[currentIndex]?.duration || 3000
+
+timer = setTimeout(()=>{
+let next = (currentIndex+1)%bannerItems.length
+showSlide(next)
+startAutoplay()
+}, duration)
+}
+
+/* SWIPE */
+function enableSwipe(){
+
+let startX=0
+
+banner.addEventListener("touchstart",e=>{
+startX = e.touches[0].clientX
 })
 
-if(imgs.length === 0) return
+banner.addEventListener("touchend",e=>{
+let endX = e.changedTouches[0].clientX
 
-banner.innerHTML = imgs.map((img,i)=>
-`<img src="${img}" class="${i===0?'active':''}">`
-).join("")
+if(endX < startX - 50){
+let next = (currentIndex+1)%bannerItems.length
+showSlide(next)
+startAutoplay()
+}
 
-let i=0
-setInterval(()=>{
-let all = banner.querySelectorAll("img")
-all.forEach(el=>el.classList.remove("active"))
-i = (i+1)%all.length
-all[i].classList.add("active")
-},3000)
+if(endX > startX + 50){
+let prev = (currentIndex-1+bannerItems.length)%bannerItems.length
+showSlide(prev)
+startAutoplay()
+}
+})
 
 }
 
@@ -438,10 +463,8 @@ qty:1
 
 localStorage.setItem("cart", JSON.stringify(cart))
 updateCartCount()
-
 }
 
-/* LOAD */
 loadProducts()
 
 </script>
