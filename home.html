@@ -95,14 +95,28 @@ border-radius:10px;
 border:1px solid #ddd;
 }
 
-/* BANNER */
+/* 🔥 BANNER ANIMÉ */
 .banner{
 margin-top:120px;
-background:#7c3aed;
-color:white;
-padding:12px;
-text-align:center;
-font-weight:bold;
+height:180px;
+border-radius:12px;
+margin-left:10px;
+margin-right:10px;
+overflow:hidden;
+position:relative;
+}
+
+.banner img{
+width:100%;
+height:100%;
+object-fit:cover;
+position:absolute;
+opacity:0;
+transition:opacity 0.8s;
+}
+
+.banner img.active{
+opacity:1;
 }
 
 /* PRODUCTS */
@@ -121,11 +135,6 @@ break-inside:avoid;
 box-shadow:0 4px 10px rgba(0,0,0,0.08);
 overflow:hidden;
 cursor:pointer;
-transition:0.2s;
-}
-
-.product:hover{
-transform:scale(1.02);
 }
 
 .product img{
@@ -144,10 +153,18 @@ font-weight:bold;
 font-size:14px;
 }
 
+/* 🔥 PRIX ORANGE ANIMÉ */
 .price{
-color:#7c3aed;
+color:#ff6a00;
 font-weight:bold;
 margin-top:3px;
+animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+0%{opacity:1;}
+50%{opacity:0.5;}
+100%{opacity:1;}
 }
 
 .desc{
@@ -156,18 +173,19 @@ color:#666;
 margin-top:3px;
 }
 
+/* 🔥 PROVINCE VERTE */
 .province{
 font-size:11px;
-color:#7c3aed;
+color:#1aa34a;
 margin-top:5px;
 }
 
-/* CART BTN */
+/* 🔥 PANIER VERT */
 .cartBtn{
 position:absolute;
 right:8px;
 bottom:8px;
-background:#7c3aed;
+background:#1aa34a;
 color:white;
 width:34px;
 height:34px;
@@ -199,6 +217,10 @@ border-top:1px solid #ddd;
 <div class="logo">Shopping 🇦🇴</div>
 
 <div class="headerRight">
+
+<button onclick="location.href='settings.html'">⚙️</button>
+<button onclick="location.href='guide.html'">📘</button>
+
 <button id="adminBtn" class="adminBtn">Admin</button>
 
 <div class="cartIcon" onclick="location.href='cart.html'">
@@ -207,10 +229,11 @@ border-top:1px solid #ddd;
 </div>
 
 <button id="accountButton" class="accountBtn">...</button>
+
 </div>
 </div>
 
-<!-- SEARCH + PROVINCE -->
+<!-- SEARCH + FILTER -->
 <div class="topBar">
 <input id="search" placeholder="Procurar produto...">
 
@@ -231,9 +254,8 @@ border-top:1px solid #ddd;
 </select>
 </div>
 
-<div class="banner">
-🔥 Promoções hoje • Entrega rápida 🚀
-</div>
+<!-- 🔥 BANNER PRODUITS -->
+<div id="banner" class="banner"></div>
 
 <div id="productList" class="products"></div>
 
@@ -246,7 +268,7 @@ border-top:1px solid #ddd;
 <script type="module">
 
 import { db,auth } from "./firebase.js"
-import { collection, getDocs, doc, getDoc } 
+import { collection, getDocs, doc, getDoc, query, where } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
@@ -256,14 +278,11 @@ function updateCartCount(){
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
 let total=0
 cart.forEach(i=> total += i.qty || 1)
-document.getElementById("cartCount").innerText = total
+cartCount.innerText = total
 }
 updateCartCount()
 
 /* ACCOUNT + ADMIN */
-const accountButton=document.getElementById("accountButton")
-const adminBtn=document.getElementById("adminBtn")
-
 onAuthStateChanged(auth, async (user)=>{
 
 if(!user){
@@ -294,7 +313,6 @@ accountButton.onclick=()=>location.href="settings.html"
 let products=[]
 
 function productHTML(p){
-
 const img = p.images?.[0] || "https://via.placeholder.com/300"
 const desc = (p.description || "").slice(0,30)
 
@@ -318,7 +336,6 @@ return `
 }
 
 async function loadProducts(){
-
 const snap=await getDocs(collection(db,"products"))
 
 products=[]
@@ -330,12 +347,40 @@ products.push(data)
 })
 
 applyFilters()
+loadBanner()
+}
+
+/* 🔥 BANNER ADMIN */
+async function loadBanner(){
+
+// produits marqués promo = true
+const q = query(collection(db,"products"), where("promo","==",true))
+const snap = await getDocs(q)
+
+let imgs = []
+
+snap.forEach(d=>{
+let p = d.data()
+if(p.images?.[0]) imgs.push(p.images[0])
+})
+
+if(imgs.length === 0) return
+
+banner.innerHTML = imgs.map((img,i)=>
+`<img src="${img}" class="${i===0?'active':''}">`
+).join("")
+
+let i=0
+setInterval(()=>{
+let all = banner.querySelectorAll("img")
+all.forEach(el=>el.classList.remove("active"))
+i = (i+1)%all.length
+all[i].classList.add("active")
+},3000)
+
 }
 
 /* FILTER */
-const search = document.getElementById("search")
-const provinceFilter = document.getElementById("provinceFilter")
-
 function applyFilters(){
 
 let filtered = products
@@ -362,13 +407,13 @@ search.addEventListener("input", applyFilters)
 provinceFilter.addEventListener("change", applyFilters)
 
 function renderProducts(list){
-document.getElementById("productList").innerHTML =
-list.map(p=>productHTML(p)).join("")
+productList.innerHTML = list.map(p=>productHTML(p)).join("")
 }
 
 /* ACTIONS */
 window.openProduct=function(id){
 localStorage.setItem("selectedProduct", id)
+location.href="product.html"
 }
 
 window.addToCart=function(id){
