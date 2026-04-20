@@ -6,57 +6,177 @@
 <title>Shopping Angola</title>
 
 <style>
-body{font-family:Arial;margin:0;background:#f4f4f4;}
+body{
+font-family:Arial;
+margin:0;
+background:#0f1720;
+color:white;
+}
+
+/* HEADER */
 .header{
 position:fixed;top:0;left:0;right:0;
-background:white;padding:10px;
+background:#1f2a33;
+padding:10px;
 display:flex;justify-content:space-between;align-items:center;
-border-bottom:1px solid #eee;z-index:1000;
+z-index:1000;
 }
-.logo{font-size:20px;font-weight:bold;}
+
+.logo{font-size:20px;font-weight:bold;color:#00a884;}
+
 .headerRight{display:flex;gap:8px;align-items:center;}
-button{border:none;padding:6px 10px;border-radius:8px;cursor:pointer;}
-.accountBtn{background:black;color:white;border-radius:15px;}
-.cartIcon{position:relative;cursor:pointer;font-size:20px;}
+
+button{
+border:none;
+padding:6px 10px;
+border-radius:8px;
+cursor:pointer;
+}
+
+.accountBtn{
+background:#00a884;
+color:white;
+border-radius:20px;
+}
+
+/* CART */
+.cartIcon{
+position:relative;
+cursor:pointer;
+font-size:20px;
+}
+
 .cartBadge{
-background:red;color:white;border-radius:50%;
-padding:2px 6px;font-size:11px;
-position:absolute;top:-6px;right:-8px;
+background:red;
+color:white;
+border-radius:50%;
+padding:2px 6px;
+font-size:11px;
+position:absolute;
+top:-6px;
+right:-8px;
 }
+
+/* SEARCH */
 .searchBox{
-position:fixed;top:60px;left:0;right:0;
-background:white;padding:8px;z-index:999;
+position:fixed;
+top:60px;
+left:0;
+right:0;
+background:#1f2a33;
+padding:10px;
+z-index:999;
 }
+
 .searchBox input{
-width:100%;padding:10px;border-radius:15px;border:1px solid #ddd;
+width:100%;
+padding:12px;
+border-radius:20px;
+border:none;
+background:#0f1720;
+color:white;
 }
+
+/* BANNER */
 .banner{
-margin-top:110px;background:#ff6a00;color:white;
-padding:10px;text-align:center;font-weight:bold;
+margin-top:110px;
+background:#00a884;
+padding:12px;
+text-align:center;
+font-weight:bold;
 }
+
+/* PRODUCTS GRID */
 .products{
-column-count:2;column-gap:10px;
-padding:10px;padding-bottom:90px;
+column-count:2;
+column-gap:10px;
+padding:10px;
+padding-bottom:90px;
 }
+
+/* PRODUCT CARD */
 .product{
-background:white;border-radius:12px;margin-bottom:10px;
-break-inside:avoid;box-shadow:0 3px 8px rgba(0,0,0,0.08);
-overflow:hidden;cursor:pointer;
+background:#1f2a33;
+border-radius:14px;
+margin-bottom:10px;
+break-inside:avoid;
+box-shadow:0 4px 10px rgba(0,0,0,0.4);
+overflow:hidden;
+cursor:pointer;
+transition:0.2s;
 }
-.product img{width:100%;height:150px;object-fit:cover;}
-.info{padding:8px;}
-.name{font-weight:bold;}
-.price{color:#ff6a00;font-weight:bold;}
-.desc{font-size:12px;color:#555;}
+
+.product:hover{
+transform:scale(1.02);
+}
+
+.product img{
+width:100%;
+height:150px;
+object-fit:cover;
+}
+
+/* INFO */
+.info{
+padding:10px;
+}
+
+.name{
+font-weight:bold;
+font-size:14px;
+}
+
+.price{
+color:#00e676;
+font-weight:bold;
+margin-top:3px;
+}
+
+.desc{
+font-size:12px;
+color:#aaa;
+margin-top:3px;
+}
+
+/* 🔥 PROVINCE */
+.province{
+font-size:11px;
+color:#00a884;
+margin-top:5px;
+}
+
+/* CART BTN */
 .cartBtn{
-position:absolute;right:8px;bottom:8px;
-background:#1aa34a;color:white;width:32px;height:32px;
-border-radius:50%;display:flex;align-items:center;justify-content:center;
+position:absolute;
+right:8px;
+bottom:8px;
+background:#00a884;
+color:white;
+width:34px;
+height:34px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:16px;
 }
+
+/* NAV */
 .nav{
-position:fixed;bottom:0;left:0;right:0;
-background:white;display:flex;justify-content:space-around;
-padding:8px;border-top:1px solid #ddd;font-size:13px;
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+background:#1f2a33;
+display:flex;
+justify-content:space-around;
+padding:8px;
+font-size:13px;
+border-top:1px solid #333;
+}
+
+.nav div{
+cursor:pointer;
 }
 </style>
 </head>
@@ -92,7 +212,6 @@ padding:8px;border-top:1px solid #ddd;font-size:13px;
 <div class="nav">
 <div onclick="location.href='index.html'">🏠<br>Inicio</div>
 <div onclick="location.href='categories.html'">📦<br>Categorias</div>
-<div onclick="location.href='messages.html'">💬<br>Mensagens</div>
 <div onclick="location.href='cart.html'">🛒<br>Carrinho</div>
 </div>
 
@@ -104,13 +223,7 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
-/* 🔔 NOTIFICATIONS (UNE SEULE FOIS) */
-import { startNotifications } from "./notifications.js"
-startNotifications()
-
-let products=[]
-
-/* 🛒 CART */
+/* CART */
 function updateCartCount(){
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
 let total=0
@@ -120,7 +233,6 @@ document.getElementById("cartCount").innerText = total
 updateCartCount()
 
 window.addEventListener("focus", updateCartCount)
-window.addEventListener("storage", updateCartCount)
 
 /* ACCOUNT */
 const accountButton=document.getElementById("accountButton")
@@ -133,22 +245,10 @@ accountButton.onclick=()=>location.href="login.html"
 return
 }
 
-try{
 const snap = await getDoc(doc(db,"users",user.uid))
-
-if(user.email === "ramideilliasse@gmail.com"){
-accountButton.innerText="Admin 👑"
-accountButton.onclick=()=>location.href="admin-dashboard.html"
-return
-}
-
 let role = snap.exists() ? snap.data().role : "client"
 
-if(role === "admin" || role === "superadmin"){
-accountButton.innerText="Admin 👑"
-accountButton.onclick=()=>location.href="admin-dashboard.html"
-}
-else if(role === "merchant"){
+if(role === "merchant"){
 accountButton.innerText="Minha Loja 🏪"
 accountButton.onclick=()=>location.href="merchant-dashboard.html"
 }
@@ -157,34 +257,40 @@ accountButton.innerText="Conta"
 accountButton.onclick=()=>location.href="settings.html"
 }
 
-}catch(e){
-console.error("ERREUR USER:", e)
-}
-
 })
 
 /* PRODUCTS */
+let products=[]
+
 function productHTML(p){
+
 const img = p.images?.[0] || "https://via.placeholder.com/300"
 const desc = (p.description || "").split(" ").slice(0,5).join(" ")
 
 return `
 <div class="product" onclick="openProduct('${p.id}')">
+
 <div style="position:relative">
 <img src="${img}">
 <div onclick="event.stopPropagation();addToCart('${p.id}')" class="cartBtn">🛒</div>
 </div>
+
 <div class="info">
 <div class="name">${p.name}</div>
 <div class="price">${p.price} Kz</div>
 <div class="desc">${desc}</div>
+
+<div class="province">
+📍 ${p.province || "Angola"}
 </div>
+
+</div>
+
 </div>
 `
 }
 
 async function loadProducts(){
-try{
 
 const snap=await getDocs(collection(db,"products"))
 
@@ -196,13 +302,7 @@ data.id=docSnap.id
 products.push(data)
 })
 
-console.log("Produits:", products)
-
 renderProducts(products)
-
-}catch(e){
-console.error("ERREUR PRODUITS:", e)
-}
 }
 
 function renderProducts(list){
@@ -229,6 +329,7 @@ window.addToCart=function(id){
 
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
 const product = products.find(p => p.id === id)
+
 if(!product) return
 
 const exist = cart.find(p => p.id === id)
@@ -240,8 +341,7 @@ id:product.id,
 name:product.name,
 price:Number(product.price) || 0,
 image:product.images?.[0] || "",
-qty:1,
-merchantId: product.merchantId || ""
+qty:1
 })
 }
 
