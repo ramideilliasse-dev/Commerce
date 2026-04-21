@@ -23,16 +23,16 @@ box-shadow:0 2px 8px rgba(0,0,0,0.05);
 z-index:1000;
 }
 
+/* 🔥 LOGO MODIFIÉ */
 .logo{
-font-size:20px;
+font-size:26px;
 font-weight:bold;
-color:#cc5500;
+color:#111;
 }
 
-/* 🔥 style Amazon sur le A */
 .logo span{
 color:#ff6a00;
-font-size:22px;
+font-size:30px;
 }
 
 .headerRight{
@@ -55,6 +55,17 @@ color:white;
 border-radius:20px;
 border:none;
 padding:6px 12px;
+}
+
+/* 🔥 ADMIN */
+.adminBtn{
+background:black;
+color:white;
+border:none;
+padding:6px 10px;
+border-radius:8px;
+display:none;
+cursor:pointer;
 }
 
 /* 🔥 BANNER PREMIUM */
@@ -88,7 +99,6 @@ height:100%;
 object-fit:cover;
 }
 
-/* overlay */
 .overlay{
 position:relative;
 z-index:2;
@@ -98,16 +108,8 @@ padding:15px;
 color:white;
 }
 
-.title{
-font-size:16px;
-font-weight:bold;
-}
-
-.price{
-color:#ff6a00;
-font-weight:bold;
-margin-top:5px;
-}
+.title{font-size:16px;font-weight:bold;}
+.price{color:#ff6a00;font-weight:bold;margin-top:5px;}
 
 .buyBtn{
 margin-top:8px;
@@ -193,6 +195,8 @@ padding:8px;
 <button class="iconBtn" onclick="location.href='guide.html'">📘</button>
 <button class="iconBtn" onclick="location.href='settings.html'">⚙️</button>
 
+<button id="adminBtn" class="adminBtn">Admin</button>
+
 <button id="accountButton" class="accountBtn">Conta</button>
 
 </div>
@@ -212,12 +216,39 @@ padding:8px;
 
 <script type="module">
 
-import { db } from "./firebase.js"
+import { db, auth } from "./firebase.js"
 import { collection, getDocs, doc, getDoc } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+import { onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
+
+/* 🔥 ADMIN FIX */
+const adminBtn = document.getElementById("adminBtn")
+const accountButton = document.getElementById("accountButton")
+
+onAuthStateChanged(auth, async (user)=>{
+
+if(!user){
+accountButton.innerText="Login"
+accountButton.onclick=()=>location.href="login.html"
+return
+}
+
+const snap = await getDoc(doc(db,"users",user.uid))
+let role = (snap.data()?.role || "").toLowerCase()
+
+if(role === "admin" || role === "superadmin"){
+adminBtn.style.display="block"
+adminBtn.onclick=()=>location.href="admin-dashboard.html"
+}
+
+accountButton.innerText="Conta"
+accountButton.onclick=()=>location.href="settings.html"
+
+})
 
 /* =========================
-   🔥 BANNER PREMIUM
+   🔥 BANNER
 ========================= */
 let bannerItems=[]
 let currentIndex=0
@@ -227,66 +258,53 @@ async function loadBanner(){
 
 const snap = await getDoc(doc(db,"promoBanner","main"))
 
-if(!snap.exists()){
-alert("❌ Banner introuvable")
-return
-}
+if(!snap.exists()) return
 
 bannerItems = snap.data().items || []
+if(!bannerItems.length) return
 
-if(!bannerItems.length){
-alert("⚠️ Banner vide")
-return
-}
-
-let slidesHTML = ""
+let html=""
 
 for(let i=0;i<bannerItems.length;i++){
 
-let item = bannerItems[i]
-
-let productSnap = await getDoc(doc(db,"products",item.id))
+let item=bannerItems[i]
+let productSnap=await getDoc(doc(db,"products",item.id))
 if(!productSnap.exists()) continue
 
-let p = productSnap.data()
+let p=productSnap.data()
+let img=p.images?.[0]||"https://via.placeholder.com/400"
 
-let img = p.images?.[0] || "https://via.placeholder.com/400"
-
-slidesHTML += `
+html+=`
 <div class="slide ${i===0?'active':''}" onclick="openProduct('${item.id}')">
 <img src="${img}">
 <div class="overlay">
-<div class="title">${p.name || ""}</div>
-<div class="price">${p.price || 0} Kz</div>
+<div class="title">${p.name}</div>
+<div class="price">${p.price} Kz</div>
 <div class="buyBtn">Comprar</div>
 </div>
 </div>
 `
 }
 
-banner.innerHTML = slidesHTML
-
+banner.innerHTML=html
 startAutoplay()
 enableSwipe()
-
 }
 
-/* autoplay */
 function startAutoplay(){
 clearInterval(timer)
-timer = setInterval(()=>{
+timer=setInterval(()=>{
 showSlide((currentIndex+1)%bannerItems.length)
 },3000)
 }
 
 function showSlide(i){
-let slides = document.querySelectorAll(".slide")
+let slides=document.querySelectorAll(".slide")
 slides.forEach(s=>s.classList.remove("active"))
 currentIndex=i
 slides[i]?.classList.add("active")
 }
 
-/* swipe */
 function enableSwipe(){
 let startX=0
 
@@ -297,12 +315,12 @@ startX=e.touches[0].clientX
 banner.addEventListener("touchend",e=>{
 let endX=e.changedTouches[0].clientX
 
-if(endX < startX-50){
+if(endX<startX-50){
 showSlide((currentIndex+1)%bannerItems.length)
 startAutoplay()
 }
 
-if(endX > startX+50){
+if(endX>startX+50){
 showSlide((currentIndex-1+bannerItems.length)%bannerItems.length)
 startAutoplay()
 }
@@ -317,13 +335,13 @@ let products=[]
 
 async function loadProducts(){
 
-const snap = await getDocs(collection(db,"products"))
+const snap=await getDocs(collection(db,"products"))
 
 products=[]
 
-snap.forEach(docSnap=>{
-let p = docSnap.data()
-p.id = docSnap.id
+snap.forEach(d=>{
+let p=d.data()
+p.id=d.id
 products.push(p)
 })
 
@@ -336,9 +354,9 @@ let html=""
 
 list.forEach(p=>{
 
-let img = p.images?.[0] || "https://via.placeholder.com/300"
+let img=p.images?.[0]||"https://via.placeholder.com/300"
 
-html += `
+html+=`
 <div class="product" onclick="openProduct('${p.id}')">
 
 <div style="position:relative">
@@ -356,7 +374,7 @@ html += `
 `
 })
 
-productList.innerHTML = html
+productList.innerHTML=html
 }
 
 /* ACTIONS */
@@ -367,20 +385,20 @@ location.href="product.html"
 
 window.addToCart=function(id){
 
-let cart = JSON.parse(localStorage.getItem("cart") || "[]")
+let cart=JSON.parse(localStorage.getItem("cart")||"[]")
 
-const product = products.find(p => p.id === id)
+const product=products.find(p=>p.id===id)
 if(!product) return
 
-const exist = cart.find(p => p.id === id)
+const exist=cart.find(p=>p.id===id)
 
-if(exist){ exist.qty++ }
+if(exist){exist.qty++}
 else{
 cart.push({
 id:product.id,
 name:product.name,
 price:product.price,
-image:product.images?.[0] || "",
+image:product.images?.[0]||"",
 qty:1
 })
 }
