@@ -52,6 +52,58 @@ background:#ddd;
 background:#1aa34a;
 color:white;
 }
+
+/* 🔥 PROMO GRID */
+.promoGrid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+}
+
+.promoCard{
+background:#fff;
+border-radius:12px;
+padding:8px;
+box-shadow:0 2px 8px rgba(0,0,0,0.1);
+cursor:pointer;
+position:relative;
+}
+
+.promoCard.active{
+border:2px solid #1aa34a;
+}
+
+.promoCard img{
+width:100%;
+height:100px;
+object-fit:cover;
+border-radius:8px;
+}
+
+.selectedBadge{
+position:absolute;
+top:6px;
+left:6px;
+background:#1aa34a;
+color:white;
+padding:2px 6px;
+font-size:11px;
+border-radius:6px;
+}
+
+/* 🔥 BIG SAVE BUTTON */
+.bigSave{
+margin-top:15px;
+width:100%;
+padding:12px;
+font-size:16px;
+font-weight:bold;
+background:#1aa34a;
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+}
 </style>
 </head>
 
@@ -79,6 +131,8 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 let users=[]
 let orders=[]
+let products=[]
+let promoData=[]
 let currentFilter="all"
 
 /* 🔐 AUTH */
@@ -114,19 +168,87 @@ if(tab==="orders") loadOrders()
 }
 
 /* =========================
-   🔥 PROMO (INCHANGÉ)
+   🎯 PROMO FIX COMPLET
 ========================= */
 async function loadPromo(){
 
 const container = document.getElementById("content")
-container.innerHTML = "Banner OK ✅"
+container.innerHTML = "Carregando banner..."
+
+const configSnap = await getDoc(doc(db,"promoBanner","main"))
+promoData = configSnap.exists() ? configSnap.data().items || [] : []
+
+const snap = await getDocs(collection(db,"products"))
+
+products=[]
+snap.forEach(d=>{
+let p=d.data()
+p.id=d.id
+products.push(p)
+})
+
+renderPromo()
 
 }
 
-/* =========================
-   👤 USERS PRO
-========================= */
+function renderPromo(){
 
+const container = document.getElementById("content")
+
+container.innerHTML = `
+<h3>🎯 Selecionar produtos para banner</h3>
+
+<div class="promoGrid">
+${products.map(p=>{
+
+let selected = promoData.find(x=>x.id===p.id)
+
+return `
+<div class="promoCard ${selected?"active":""}">
+
+${selected?`<div class="selectedBadge">✔</div>`:""}
+
+<img src="${selected?.image || p.images?.[0] || ''}">
+
+<div>${p.name}</div>
+
+<button onclick="togglePromo('${p.id}')">
+${selected ? "Remover" : "Adicionar"}
+</button>
+
+</div>
+`
+}).join("")}
+</div>
+
+<button class="bigSave" onclick="savePromo()">
+💾 SALVAR BANNER
+</button>
+`
+}
+
+/* ACTIONS PROMO */
+window.togglePromo = function(id){
+
+let index = promoData.findIndex(x=>x.id===id)
+
+if(index>-1){
+promoData.splice(index,1)
+}else{
+promoData.push({ id:id })
+}
+
+renderPromo()
+}
+
+window.savePromo = async function(){
+await setDoc(doc(db,"promoBanner","main"),{ items: promoData })
+alert("✅ Banner salvo com sucesso")
+}
+
+/* =========================
+   👤 USERS
+========================= */
 async function loadUsers(){
 
 const container = document.getElementById("content")
@@ -135,7 +257,6 @@ container.innerHTML = "Carregando usuários..."
 const snap = await getDocs(collection(db,"users"))
 
 users=[]
-
 snap.forEach(d=>{
 let u=d.data()
 u.id=d.id
@@ -143,7 +264,6 @@ users.push(u)
 })
 
 renderUsers()
-
 }
 
 function renderUsers(){
@@ -161,38 +281,24 @@ filtered = users.filter(u=>u.role==="merchant")
 const container = document.getElementById("content")
 
 container.innerHTML = `
-
 <div class="filterBar">
-<button class="${currentFilter==='all'?'activeFilter':''}" onclick="setFilter('all')">All</button>
-<button class="${currentFilter==='merchant'?'activeFilter':''}" onclick="setFilter('merchant')">Merchants</button>
-<button class="${currentFilter==='pending'?'activeFilter':''}" onclick="setFilter('pending')">Pending</button>
+<button onclick="setFilter('all')">All</button>
+<button onclick="setFilter('merchant')">Merchants</button>
+<button onclick="setFilter('pending')">Pending</button>
 </div>
 
 ${filtered.map(u=>`
-
 <div class="card">
-<b>${u.email || "Sem email"}</b><br>
-Role: ${u.role || "client"}<br>
-Status: ${u.blocked ? "Bloqué ❌" : u.approved ? "Aprovado ✅" : "Pendente ⏳"}
-
-<br>
+<b>${u.email}</b><br>
+Role: ${u.role}<br>
 
 ${u.role==="merchant" && !u.approved ? 
 `<button class="approve" onclick="approveUser('${u.id}')">Valider</button>` : ""}
 
-${u.blocked 
-? `<button class="unblock" onclick="toggleBlock('${u.id}',false)">Débloquer</button>`
-: `<button class="block" onclick="toggleBlock('${u.id}',true)">Bloquer</button>`
-}
-
 <button class="delete" onclick="deleteUser('${u.id}')">Supprimer</button>
-
 </div>
-
 `).join("")}
-
 `
-
 }
 
 window.setFilter = function(f){
@@ -200,30 +306,19 @@ currentFilter=f
 renderUsers()
 }
 
-/* ACTIONS */
 window.approveUser = async (id)=>{
-await updateDoc(doc(db,"users",id),{
-role:"merchant",
-approved:true
-})
-loadUsers()
-}
-
-window.toggleBlock = async (id,val)=>{
-await updateDoc(doc(db,"users",id),{
-blocked:val
-})
+await updateDoc(doc(db,"users",id),{approved:true})
 loadUsers()
 }
 
 window.deleteUser = async (id)=>{
-if(!confirm("Supprimer cet utilisateur ?")) return
+if(!confirm("Supprimer ?")) return
 await deleteDoc(doc(db,"users",id))
 loadUsers()
 }
 
 /* =========================
-   🛒 ORDERS
+   🛒 ORDERS + DELETE
 ========================= */
 
 async function loadOrders(){
@@ -237,23 +332,32 @@ orders=[]
 
 snap.forEach(d=>{
 let o=d.data()
+o.id=d.id
 orders.push(o)
 })
 
 container.innerHTML = `
-<h3>🛒 Toutes les commandes</h3>
+<h3>🛒 Commandes</h3>
 
 ${orders.map(o=>`
-
 <div class="card">
-<b>${o.productName || "Produit"}</b><br>
-${o.qty || 1} x ${o.price || 0} Kz<br>
-👤 ${o.clientName || "Client"}<br>
-📞 ${o.clientPhone || ""}
-</div>
+<b>${o.productName}</b><br>
+${o.qty} x ${o.price} Kz<br>
+👤 ${o.clientName}<br>
 
+<button class="delete" onclick="deleteOrder('${o.id}')">
+❌ Supprimer
+</button>
+
+</div>
 `).join("")}
 `
+}
+
+window.deleteOrder = async (id)=>{
+if(!confirm("Supprimer cette commande ?")) return
+await deleteDoc(doc(db,"orders",id))
+loadOrders()
 }
 
 </script>
