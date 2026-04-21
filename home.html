@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shopping Angola</title>
+<title>AngoShop</title>
 
 <style>
 body{
@@ -24,15 +24,29 @@ z-index:1000;
 }
 
 .logo{
-font-size:18px;
+font-size:20px;
 font-weight:bold;
 color:#cc5500;
 }
 
+/* 🔥 style Amazon sur le A */
+.logo span{
+color:#ff6a00;
+font-size:22px;
+}
+
 .headerRight{
 display:flex;
-gap:8px;
+gap:6px;
 align-items:center;
+}
+
+.iconBtn{
+background:#f1f1f1;
+border:none;
+padding:6px 10px;
+border-radius:8px;
+cursor:pointer;
 }
 
 .accountBtn{
@@ -40,7 +54,7 @@ background:#ff6a00;
 color:white;
 border-radius:20px;
 border:none;
-padding:6px 10px;
+padding:6px 12px;
 }
 
 /* 🔥 BANNER PREMIUM */
@@ -171,10 +185,16 @@ padding:8px;
 <body>
 
 <div class="header">
-<div class="logo">Shopping 🇦🇴</div>
+
+<div class="logo"><span>A</span>ngoShop 🇦🇴</div>
 
 <div class="headerRight">
+
+<button class="iconBtn" onclick="location.href='guide.html'">📘</button>
+<button class="iconBtn" onclick="location.href='settings.html'">⚙️</button>
+
 <button id="accountButton" class="accountBtn">Conta</button>
+
 </div>
 </div>
 
@@ -290,7 +310,7 @@ startAutoplay()
 }
 
 /* =========================
-   🛒 PRODUITS (FIX ICI)
+   🛒 PRODUITS
 ========================= */
 
 let products=[]
