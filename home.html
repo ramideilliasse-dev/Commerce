@@ -102,6 +102,7 @@ margin-left:10px;
 margin-right:10px;
 overflow:hidden;
 position:relative;
+cursor:pointer;
 }
 
 .banner img{
@@ -210,10 +211,8 @@ border-top:1px solid #ddd;
 <div class="logo">Shopping 🇦🇴</div>
 
 <div class="headerRight">
-
 <button onclick="location.href='settings.html'">⚙️</button>
 <button onclick="location.href='guide.html'">📘</button>
-
 <button id="adminBtn" class="adminBtn">Admin</button>
 
 <div class="cartIcon" onclick="location.href='cart.html'">
@@ -222,7 +221,6 @@ border-top:1px solid #ddd;
 </div>
 
 <button id="accountButton" class="accountBtn">...</button>
-
 </div>
 </div>
 
@@ -273,14 +271,9 @@ cartCount.innerText = total
 }
 updateCartCount()
 
-/* ACCOUNT + ADMIN */
+/* ADMIN */
 onAuthStateChanged(auth, async (user)=>{
-
-if(!user){
-accountButton.innerText="Login"
-accountButton.onclick=()=>location.href="login.html"
-return
-}
+if(!user) return
 
 const snap = await getDoc(doc(db,"users",user.uid))
 let role = snap.data()?.role
@@ -289,15 +282,6 @@ if(role === "admin" || role === "superadmin"){
 adminBtn.style.display="block"
 adminBtn.onclick=()=>location.href="admin-dashboard.html"
 }
-
-if(role === "merchant"){
-accountButton.innerText="Minha Loja 🏪"
-accountButton.onclick=()=>location.href="merchant-dashboard.html"
-}else{
-accountButton.innerText="Conta"
-accountButton.onclick=()=>location.href="settings.html"
-}
-
 })
 
 /* PRODUCTS */
@@ -338,7 +322,7 @@ applyFilters()
 loadBanner()
 }
 
-/* 🔥 BANNER AVEC AUTOPLAY + SWIPE */
+/* 🔥 BANNER FIX COMPLET */
 let bannerItems=[]
 let currentIndex=0
 let timer=null
@@ -350,41 +334,68 @@ try{
 const snap = await getDoc(doc(db,"promoBanner","main"))
 
 if(!snap.exists()){
-alert("❌ Bannière promo introuvable (promoBanner/main)")
+alert("❌ Bannière introuvable")
 return
 }
 
 const data = snap.data()
-
 bannerItems = data.items || []
 
 if(!bannerItems.length){
-alert("⚠️ Aucun produit ajouté dans la bannière promo")
+alert("⚠️ Bannière vide")
 return
 }
 
-/* 🔥 construire images */
+/* images */
 banner.innerHTML = bannerItems.map((item,i)=>{
-
 let img = item.image || item.img || ""
-
 return `<img src="${img}" class="${i===0?'active':''}">`
-
 }).join("")
 
-alert("✅ Bannière promo chargée avec succès")
+/* CLICK */
+banner.onclick = ()=>{
+let item = bannerItems[currentIndex]
+if(item.productId){
+localStorage.setItem("selectedProduct", item.productId)
+location.href="product.html"
+}
+}
 
 startAutoplay()
 enableSwipe()
 
+alert("✅ Bannière OK")
+
 }catch(e){
-
-alert("🔥 Erreur bannière : " + e.message)
-
+alert("🔥 Erreur bannière: "+e.message)
 }
 
 }
-/* SWIPE */
+
+/* 🔥 AUTOPLAY */
+function startAutoplay(){
+
+if(timer) clearInterval(timer)
+
+timer = setInterval(()=>{
+let next = (currentIndex+1)%bannerItems.length
+showSlide(next)
+},3000)
+
+}
+
+/* 🔥 SHOW SLIDE */
+function showSlide(i){
+
+let imgs = banner.querySelectorAll("img")
+imgs.forEach(el=>el.classList.remove("active"))
+
+currentIndex = i
+imgs[i].classList.add("active")
+
+}
+
+/* 🔥 SWIPE */
 function enableSwipe(){
 
 let startX=0
@@ -397,14 +408,12 @@ banner.addEventListener("touchend",e=>{
 let endX = e.changedTouches[0].clientX
 
 if(endX < startX - 50){
-let next = (currentIndex+1)%bannerItems.length
-showSlide(next)
+showSlide((currentIndex+1)%bannerItems.length)
 startAutoplay()
 }
 
 if(endX > startX + 50){
-let prev = (currentIndex-1+bannerItems.length)%bannerItems.length
-showSlide(prev)
+showSlide((currentIndex-1+bannerItems.length)%bannerItems.length)
 startAutoplay()
 }
 })
@@ -415,7 +424,6 @@ startAutoplay()
 function applyFilters(){
 
 let filtered = products
-
 const text = search.value.toLowerCase()
 const province = provinceFilter.value
 
