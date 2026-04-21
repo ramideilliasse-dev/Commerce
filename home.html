@@ -35,54 +35,12 @@ gap:8px;
 align-items:center;
 }
 
-button{
-border:none;
-padding:6px 10px;
-border-radius:8px;
-cursor:pointer;
-}
-
 .accountBtn{
 background:#ff6a00;
 color:white;
 border-radius:20px;
-}
-
-.adminBtn{
-background:#111;
-color:white;
-border-radius:8px;
-display:none;
-}
-
-.cartIcon{
-position:relative;
-cursor:pointer;
-font-size:20px;
-}
-
-.cartBadge{
-background:red;
-color:white;
-border-radius:50%;
-padding:2px 6px;
-font-size:11px;
-position:absolute;
-top:-6px;
-right:-8px;
-}
-
-/* SEARCH */
-.topBar{
-position:fixed;
-top:60px;
-left:0;
-right:0;
-background:white;
-padding:10px;
-display:flex;
-gap:8px;
-z-index:999;
+border:none;
+padding:6px 10px;
 }
 
 /* 🔥 BANNER PREMIUM */
@@ -150,6 +108,7 @@ display:inline-block;
 .products{
 column-count:2;
 padding:10px;
+padding-bottom:80px;
 }
 
 .product{
@@ -158,6 +117,7 @@ border-radius:14px;
 margin-bottom:10px;
 box-shadow:0 4px 10px rgba(0,0,0,0.08);
 overflow:hidden;
+cursor:pointer;
 }
 
 .product img{
@@ -214,20 +174,14 @@ padding:8px;
 <div class="logo">Shopping 🇦🇴</div>
 
 <div class="headerRight">
-<button onclick="location.href='settings.html'">⚙️</button>
-<button onclick="location.href='guide.html'">📘</button>
-<button id="adminBtn" class="adminBtn">Admin</button>
-
-<div class="cartIcon" onclick="location.href='cart.html'">
-🛒 <span id="cartCount" class="cartBadge">0</span>
-</div>
-
-<button id="accountButton" class="accountBtn">...</button>
+<button id="accountButton" class="accountBtn">Conta</button>
 </div>
 </div>
 
+<!-- BANNER -->
 <div id="banner" class="banner"></div>
 
+<!-- PRODUITS -->
 <div id="productList" class="products"></div>
 
 <div class="nav">
@@ -238,11 +192,13 @@ padding:8px;
 
 <script type="module">
 
-import { db,auth } from "./firebase.js"
+import { db } from "./firebase.js"
 import { collection, getDocs, doc, getDoc } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
-/* 🔥 BANNER PREMIUM */
+/* =========================
+   🔥 BANNER PREMIUM
+========================= */
 let bannerItems=[]
 let currentIndex=0
 let timer=null
@@ -269,9 +225,7 @@ for(let i=0;i<bannerItems.length;i++){
 
 let item = bannerItems[i]
 
-/* 🔥 récupérer produit automatiquement */
 let productSnap = await getDoc(doc(db,"products",item.id))
-
 if(!productSnap.exists()) continue
 
 let p = productSnap.data()
@@ -280,15 +234,12 @@ let img = p.images?.[0] || "https://via.placeholder.com/400"
 
 slidesHTML += `
 <div class="slide ${i===0?'active':''}" onclick="openProduct('${item.id}')">
-
 <img src="${img}">
-
 <div class="overlay">
 <div class="title">${p.name || ""}</div>
 <div class="price">${p.price || 0} Kz</div>
 <div class="buyBtn">Comprar</div>
 </div>
-
 </div>
 `
 }
@@ -297,8 +248,6 @@ banner.innerHTML = slidesHTML
 
 startAutoplay()
 enableSwipe()
-
-alert("✅ Banner PREMIUM OK")
 
 }
 
@@ -314,7 +263,7 @@ function showSlide(i){
 let slides = document.querySelectorAll(".slide")
 slides.forEach(s=>s.classList.remove("active"))
 currentIndex=i
-slides[i].classList.add("active")
+slides[i]?.classList.add("active")
 }
 
 /* swipe */
@@ -340,14 +289,89 @@ startAutoplay()
 })
 }
 
-/* OPEN PRODUCT */
+/* =========================
+   🛒 PRODUITS (FIX ICI)
+========================= */
+
+let products=[]
+
+async function loadProducts(){
+
+const snap = await getDocs(collection(db,"products"))
+
+products=[]
+
+snap.forEach(docSnap=>{
+let p = docSnap.data()
+p.id = docSnap.id
+products.push(p)
+})
+
+renderProducts(products)
+}
+
+function renderProducts(list){
+
+let html=""
+
+list.forEach(p=>{
+
+let img = p.images?.[0] || "https://via.placeholder.com/300"
+
+html += `
+<div class="product" onclick="openProduct('${p.id}')">
+
+<div style="position:relative">
+<img src="${img}">
+<div class="cartBtn" onclick="event.stopPropagation();addToCart('${p.id}')">🛒</div>
+</div>
+
+<div class="info">
+<div class="name">${p.name}</div>
+<div class="priceP">${p.price} Kz</div>
+<div class="province">📍 ${p.province || "Angola"}</div>
+</div>
+
+</div>
+`
+})
+
+productList.innerHTML = html
+}
+
+/* ACTIONS */
 window.openProduct=function(id){
 localStorage.setItem("selectedProduct", id)
 location.href="product.html"
 }
 
+window.addToCart=function(id){
+
+let cart = JSON.parse(localStorage.getItem("cart") || "[]")
+
+const product = products.find(p => p.id === id)
+if(!product) return
+
+const exist = cart.find(p => p.id === id)
+
+if(exist){ exist.qty++ }
+else{
+cart.push({
+id:product.id,
+name:product.name,
+price:product.price,
+image:product.images?.[0] || "",
+qty:1
+})
+}
+
+localStorage.setItem("cart", JSON.stringify(cart))
+alert("🛒 Ajouté au panier")
+}
+
 /* LOAD */
 loadBanner()
+loadProducts()
 
 </script>
 
