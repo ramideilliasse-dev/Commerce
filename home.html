@@ -85,55 +85,79 @@ gap:8px;
 z-index:999;
 }
 
-.topBar input,
-.topBar select{
-flex:1;
-padding:10px;
-border-radius:10px;
-border:1px solid #ddd;
-}
-
-/* BANNER */
+/* 🔥 BANNER PREMIUM */
 .banner{
 margin-top:120px;
-height:180px;
+height:200px;
 border-radius:12px;
-margin-left:10px;
-margin-right:10px;
+margin:10px;
 overflow:hidden;
 position:relative;
-cursor:pointer;
 }
 
-.banner img{
+.slide{
+position:absolute;
+width:100%;
+height:100%;
+opacity:0;
+transition:0.8s;
+display:flex;
+align-items:flex-end;
+}
+
+.slide.active{
+opacity:1;
+}
+
+.slide img{
+position:absolute;
 width:100%;
 height:100%;
 object-fit:cover;
-position:absolute;
-opacity:0;
-transition:opacity 0.8s;
 }
 
-.banner img.active{
-opacity:1;
+/* overlay */
+.overlay{
+position:relative;
+z-index:2;
+background:linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+width:100%;
+padding:15px;
+color:white;
+}
+
+.title{
+font-size:16px;
+font-weight:bold;
+}
+
+.price{
+color:#ff6a00;
+font-weight:bold;
+margin-top:5px;
+}
+
+.buyBtn{
+margin-top:8px;
+background:#1aa34a;
+color:white;
+padding:6px 12px;
+border-radius:8px;
+display:inline-block;
 }
 
 /* PRODUCTS */
 .products{
 column-count:2;
-column-gap:10px;
 padding:10px;
-padding-bottom:90px;
 }
 
 .product{
 background:white;
 border-radius:14px;
 margin-bottom:10px;
-break-inside:avoid;
 box-shadow:0 4px 10px rgba(0,0,0,0.08);
 overflow:hidden;
-cursor:pointer;
 }
 
 .product img{
@@ -142,39 +166,19 @@ height:150px;
 object-fit:cover;
 }
 
-.info{
-padding:10px;
-}
+.info{padding:10px;}
+.name{font-weight:bold;font-size:14px;}
 
-.name{
-font-weight:bold;
-font-size:14px;
-}
-
-.price{
+.priceP{
 color:#ff6a00;
-font-weight:bold;
-margin-top:3px;
 animation:pulse 1.5s infinite;
 }
 
 @keyframes pulse{
-0%{opacity:1;}
-50%{opacity:0.5;}
-100%{opacity:1;}
+0%{opacity:1;}50%{opacity:0.5;}100%{opacity:1;}
 }
 
-.desc{
-font-size:12px;
-color:#666;
-margin-top:3px;
-}
-
-.province{
-font-size:11px;
-color:#1aa34a;
-margin-top:5px;
-}
+.province{color:#1aa34a;font-size:11px;}
 
 .cartBtn{
 position:absolute;
@@ -190,6 +194,7 @@ align-items:center;
 justify-content:center;
 }
 
+/* NAV */
 .nav{
 position:fixed;
 bottom:0;
@@ -199,8 +204,6 @@ background:#d4f8d4;
 display:flex;
 justify-content:space-around;
 padding:8px;
-font-size:13px;
-border-top:1px solid #ddd;
 }
 </style>
 </head>
@@ -216,32 +219,11 @@ border-top:1px solid #ddd;
 <button id="adminBtn" class="adminBtn">Admin</button>
 
 <div class="cartIcon" onclick="location.href='cart.html'">
-🛒
-<span id="cartCount" class="cartBadge">0</span>
+🛒 <span id="cartCount" class="cartBadge">0</span>
 </div>
 
 <button id="accountButton" class="accountBtn">...</button>
 </div>
-</div>
-
-<div class="topBar">
-<input id="search" placeholder="Procurar produto...">
-
-<select id="provinceFilter">
-<option value="">Todas províncias</option>
-<option>Luanda</option>
-<option>Benguela</option>
-<option>Huambo</option>
-<option>Huíla</option>
-<option>Bié</option>
-<option>Cabinda</option>
-<option>Uíge</option>
-<option>Malanje</option>
-<option>Namibe</option>
-<option>Cunene</option>
-<option>Moxico</option>
-<option>Zaire</option>
-</select>
 </div>
 
 <div id="banner" class="banner"></div>
@@ -249,9 +231,9 @@ border-top:1px solid #ddd;
 <div id="productList" class="products"></div>
 
 <div class="nav">
-<div onclick="location.href='index.html'">🏠<br>Inicio</div>
-<div onclick="location.href='categories.html'">📦<br>Categorias</div>
-<div onclick="location.href='cart.html'">🛒<br>Carrinho</div>
+<div onclick="location.href='index.html'">🏠 Inicio</div>
+<div onclick="location.href='categories.html'">📦 Categorias</div>
+<div onclick="location.href='cart.html'">🛒 Carrinho</div>
 </div>
 
 <script type="module">
@@ -259,227 +241,113 @@ border-top:1px solid #ddd;
 import { db,auth } from "./firebase.js"
 import { collection, getDocs, doc, getDoc } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-import { onAuthStateChanged } 
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
-/* CART */
-function updateCartCount(){
-let cart = JSON.parse(localStorage.getItem("cart") || "[]")
-let total=0
-cart.forEach(i=> total += i.qty || 1)
-cartCount.innerText = total
-}
-updateCartCount()
-
-/* ADMIN */
-onAuthStateChanged(auth, async (user)=>{
-if(!user) return
-
-const snap = await getDoc(doc(db,"users",user.uid))
-let role = snap.data()?.role
-
-if(role === "admin" || role === "superadmin"){
-adminBtn.style.display="block"
-adminBtn.onclick=()=>location.href="admin-dashboard.html"
-}
-})
-
-/* PRODUCTS */
-let products=[]
-
-function productHTML(p){
-const img = p.images?.[0] || "https://via.placeholder.com/300"
-const desc = (p.description || "").slice(0,30)
-
-return `
-<div class="product" onclick="openProduct('${p.id}')">
-<div style="position:relative">
-<img src="${img}">
-<div onclick="event.stopPropagation();addToCart('${p.id}')" class="cartBtn">🛒</div>
-</div>
-
-<div class="info">
-<div class="name">${p.name}</div>
-<div class="price">${p.price} Kz</div>
-<div class="desc">${desc}</div>
-<div class="province">📍 ${p.province || "Angola"}</div>
-</div>
-</div>
-`
-}
-
-async function loadProducts(){
-const snap=await getDocs(collection(db,"products"))
-
-products=[]
-snap.forEach(d=>{
-let p=d.data()
-p.id=d.id
-products.push(p)
-})
-
-applyFilters()
-loadBanner()
-}
-
-/* 🔥 BANNER FIX COMPLET */
+/* 🔥 BANNER PREMIUM */
 let bannerItems=[]
 let currentIndex=0
 let timer=null
 
 async function loadBanner(){
 
-try{
-
 const snap = await getDoc(doc(db,"promoBanner","main"))
 
 if(!snap.exists()){
-alert("❌ Bannière introuvable")
+alert("❌ Banner introuvable")
 return
 }
 
-const data = snap.data()
-bannerItems = data.items || []
+bannerItems = snap.data().items || []
 
 if(!bannerItems.length){
-alert("⚠️ Bannière vide")
+alert("⚠️ Banner vide")
 return
 }
 
-/* images */
-banner.innerHTML = bannerItems.map((item,i)=>{
-let img = item.image || item.img || ""
-return `<img src="${img}" class="${i===0?'active':''}">`
-}).join("")
+let slidesHTML = ""
 
-/* CLICK */
-banner.onclick = ()=>{
-let item = bannerItems[currentIndex]
-if(item.productId){
-localStorage.setItem("selectedProduct", item.productId)
-location.href="product.html"
+for(let i=0;i<bannerItems.length;i++){
+
+let item = bannerItems[i]
+
+/* 🔥 récupérer produit automatiquement */
+let productSnap = await getDoc(doc(db,"products",item.id))
+
+if(!productSnap.exists()) continue
+
+let p = productSnap.data()
+
+let img = p.images?.[0] || "https://via.placeholder.com/400"
+
+slidesHTML += `
+<div class="slide ${i===0?'active':''}" onclick="openProduct('${item.id}')">
+
+<img src="${img}">
+
+<div class="overlay">
+<div class="title">${p.name || ""}</div>
+<div class="price">${p.price || 0} Kz</div>
+<div class="buyBtn">Comprar</div>
+</div>
+
+</div>
+`
 }
-}
+
+banner.innerHTML = slidesHTML
 
 startAutoplay()
 enableSwipe()
 
-alert("✅ Bannière OK")
-
-}catch(e){
-alert("🔥 Erreur bannière: "+e.message)
-}
+alert("✅ Banner PREMIUM OK")
 
 }
 
-/* 🔥 AUTOPLAY */
+/* autoplay */
 function startAutoplay(){
-
-if(timer) clearInterval(timer)
-
+clearInterval(timer)
 timer = setInterval(()=>{
-let next = (currentIndex+1)%bannerItems.length
-showSlide(next)
+showSlide((currentIndex+1)%bannerItems.length)
 },3000)
-
 }
 
-/* 🔥 SHOW SLIDE */
 function showSlide(i){
-
-let imgs = banner.querySelectorAll("img")
-imgs.forEach(el=>el.classList.remove("active"))
-
-currentIndex = i
-imgs[i].classList.add("active")
-
+let slides = document.querySelectorAll(".slide")
+slides.forEach(s=>s.classList.remove("active"))
+currentIndex=i
+slides[i].classList.add("active")
 }
 
-/* 🔥 SWIPE */
+/* swipe */
 function enableSwipe(){
-
 let startX=0
 
 banner.addEventListener("touchstart",e=>{
-startX = e.touches[0].clientX
+startX=e.touches[0].clientX
 })
 
 banner.addEventListener("touchend",e=>{
-let endX = e.changedTouches[0].clientX
+let endX=e.changedTouches[0].clientX
 
-if(endX < startX - 50){
+if(endX < startX-50){
 showSlide((currentIndex+1)%bannerItems.length)
 startAutoplay()
 }
 
-if(endX > startX + 50){
+if(endX > startX+50){
 showSlide((currentIndex-1+bannerItems.length)%bannerItems.length)
 startAutoplay()
 }
 })
-
 }
 
-/* FILTER */
-function applyFilters(){
-
-let filtered = products
-const text = search.value.toLowerCase()
-const province = provinceFilter.value
-
-if(text){
-filtered = filtered.filter(p =>
-(p.name||"").toLowerCase().includes(text)
-)
-}
-
-if(province){
-filtered = filtered.filter(p =>
-p.province === province
-)
-}
-
-renderProducts(filtered)
-}
-
-search.addEventListener("input", applyFilters)
-provinceFilter.addEventListener("change", applyFilters)
-
-function renderProducts(list){
-productList.innerHTML = list.map(p=>productHTML(p)).join("")
-}
-
-/* ACTIONS */
+/* OPEN PRODUCT */
 window.openProduct=function(id){
 localStorage.setItem("selectedProduct", id)
 location.href="product.html"
 }
 
-window.addToCart=function(id){
-
-let cart = JSON.parse(localStorage.getItem("cart") || "[]")
-const product = products.find(p => p.id === id)
-
-if(!product) return
-
-const exist = cart.find(p => p.id === id)
-
-if(exist){ exist.qty++ }
-else{
-cart.push({
-id:product.id,
-name:product.name,
-price:Number(product.price) || 0,
-image:product.images?.[0] || "",
-qty:1
-})
-}
-
-localStorage.setItem("cart", JSON.stringify(cart))
-updateCartCount()
-}
-
-loadProducts()
+/* LOAD */
+loadBanner()
 
 </script>
 
