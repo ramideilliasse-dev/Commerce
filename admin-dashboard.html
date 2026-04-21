@@ -87,7 +87,6 @@ font-size:12px;
 
 .saveBtn{background:#1aa34a;color:white;}
 .deleteBtn{background:red;color:white;}
-
 </style>
 </head>
 
@@ -108,11 +107,13 @@ import { db, auth } from "./firebase.js"
 import {
 collection,getDocs,doc,getDoc,setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 let products=[]
 let promoData=[]
+let users=[]
 
 /* 🔐 AUTH */
 onAuthStateChanged(auth, async (user)=>{
@@ -141,24 +142,24 @@ document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"))
 e.target.classList.add("active")
 
 if(tab==="promo") loadPromo()
+if(tab==="users") loadUsers()
 
 }
 
-/* 🔥 LOAD PROMO */
+/* =========================
+   🔥 PROMO (INCHANGÉ)
+========================= */
 async function loadPromo(){
 
 const container = document.getElementById("content")
-
 container.innerHTML = "Carregando..."
 
 const configSnap = await getDoc(doc(db,"promoBanner","main"))
-
 promoData = configSnap.exists() ? configSnap.data().items || [] : []
 
 const snap = await getDocs(collection(db,"products"))
 
 products=[]
-
 snap.forEach(d=>{
 let p=d.data()
 p.id=d.id
@@ -166,10 +167,8 @@ products.push(p)
 })
 
 renderPromo()
-
 }
 
-/* 🔥 RENDER */
 function renderPromo(){
 
 const container = document.getElementById("content")
@@ -215,52 +214,89 @@ ${selected ? "Remover" : "Adicionar"}
 💾 Salvar Banner
 </button>
 `
-
 }
 
-/* 🔥 TOGGLE */
+/* PROMO ACTIONS */
 window.togglePromo = function(id){
-
 let index = promoData.findIndex(x=>x.id===id)
 
 if(index>-1){
 promoData.splice(index,1)
 }else{
-promoData.push({
-id:id,
-image:"",
-duration:3000
-})
+promoData.push({ id:id, image:"", duration:3000 })
 }
 
 renderPromo()
-
 }
 
-/* 🔥 UPDATE IMAGE */
 window.updateImage = function(id,value){
-
 let item = promoData.find(x=>x.id===id)
 if(item) item.image = value
-
 }
 
-/* 🔥 UPDATE DURATION */
 window.updateDuration = function(id,value){
-
 let item = promoData.find(x=>x.id===id)
 if(item) item.duration = Number(value)
+}
+
+window.savePromo = async function(){
+await setDoc(doc(db,"promoBanner","main"),{ items: promoData })
+alert("Banner salvo ✅")
+}
+
+/* =========================
+   👤 USERS (FIX ICI)
+========================= */
+
+async function loadUsers(){
+
+const container = document.getElementById("content")
+container.innerHTML = "Carregando usuários..."
+
+try{
+
+const snap = await getDocs(collection(db,"users"))
+
+users=[]
+
+snap.forEach(d=>{
+let u = d.data()
+u.id = d.id
+users.push(u)
+})
+
+if(users.length === 0){
+container.innerHTML = "⚠️ Aucun utilisateur trouvé"
+return
+}
+
+renderUsers()
+
+}catch(e){
+container.innerHTML = "❌ Erreur chargement users"
+alert(e.message)
+}
 
 }
 
-/* 🔥 SAVE */
-window.savePromo = async function(){
+function renderUsers(){
 
-await setDoc(doc(db,"promoBanner","main"),{
-items: promoData
-})
+const container = document.getElementById("content")
 
-alert("Banner salvo ✅")
+container.innerHTML = `
+<h3>👤 Lista de usuários</h3>
+
+${users.map(u=>`
+
+<div class="card">
+<b>${u.email || "Sem email"}</b><br>
+Role: ${u.role || "client"}<br>
+Status: ${u.blocked ? "Bloqueado ❌" : "Ativo ✅"}
+</div>
+
+`).join("")}
+
+`
 
 }
 
