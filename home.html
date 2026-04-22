@@ -76,45 +76,6 @@ overflow:hidden;
 position:relative;
 }
 
-.slide{
-position:absolute;
-width:100%;
-height:100%;
-opacity:0;
-transition:0.8s;
-display:flex;
-align-items:flex-end;
-}
-
-.slide.active{opacity:1;}
-
-.slide img{
-position:absolute;
-width:100%;
-height:100%;
-object-fit:cover;
-}
-
-.overlay{
-position:relative;
-z-index:2;
-background:linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-width:100%;
-padding:15px;
-color:white;
-}
-
-.title{font-size:16px;font-weight:bold;}
-.price{color:#ff6a00;font-weight:bold;margin-top:5px;}
-
-.buyBtn{
-margin-top:8px;
-background:#1aa34a;
-color:white;
-padding:6px 12px;
-border-radius:8px;
-}
-
 /* PRODUCTS */
 .products{
 column-count:2;
@@ -148,11 +109,6 @@ margin-top:3px;
 
 .priceP{
 color:#ff6a00;
-animation:pulse 1.5s infinite;
-}
-
-@keyframes pulse{
-0%{opacity:1;}50%{opacity:0.5;}100%{opacity:1;}
 }
 
 .province{color:#1aa34a;font-size:11px;}
@@ -197,7 +153,6 @@ padding:8px;
 <button class="iconBtn" onclick="location.href='settings.html'">⚙️</button>
 
 <button id="adminBtn" class="adminBtn">Admin</button>
-
 <button id="accountButton" class="accountBtn">...</button>
 
 </div>
@@ -223,7 +178,7 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 const adminBtn = document.getElementById("adminBtn")
 const accountButton = document.getElementById("accountButton")
 
-/* 🔥 FIX ROLE */
+/* AUTH */
 onAuthStateChanged(auth, async (user)=>{
 
 if(!user){
@@ -238,109 +193,69 @@ const data = snap.data() || {}
 const role = (data.role || "").toLowerCase()
 const approved = data.approved === true
 
-/* ADMIN */
 if(role === "admin" || role === "superadmin"){
 adminBtn.style.display="block"
 adminBtn.onclick=()=>location.href="admin-dashboard.html"
 }
 
-/* MERCHANT VALIDÉ */
 if(role === "merchant" && approved){
 accountButton.innerText="Minha Loja"
 accountButton.onclick=()=>location.href="merchant-dashboard.html"
 return
 }
 
-/* DEFAULT */
 accountButton.innerText="Conta"
 accountButton.onclick=()=>location.href="settings.html"
 
 })
 
-/* BANNER */
-let bannerItems=[]
-let currentIndex=0
-let timer=null
-
-async function loadBanner(){
-
-const snap = await getDoc(doc(db,"promoBanner","main"))
-if(!snap.exists()) return
-
-bannerItems = snap.data().items || []
-if(!bannerItems.length) return
-
-let html=""
-
-for(let item of bannerItems){
-
-let productSnap=await getDoc(doc(db,"products",item.id))
-if(!productSnap.exists()) continue
-
-let p=productSnap.data()
-let img=p.images?.[0]||"https://via.placeholder.com/400"
-
-html+=`
-<div class="slide ${html===""?'active':''}" onclick="openProduct('${item.id}')">
-<img src="${img}">
-<div class="overlay">
-<div class="title">${p.name}</div>
-<div class="price">${p.price} Kz</div>
-<div class="buyBtn">Comprar</div>
-</div>
-</div>
-`
-}
-
-banner.innerHTML=html
-startAutoplay()
-}
-
-/* AUTOPLAY */
-function startAutoplay(){
-clearInterval(timer)
-timer=setInterval(()=>{
-let slides=document.querySelectorAll(".slide")
-slides.forEach(s=>s.classList.remove("active"))
-currentIndex=(currentIndex+1)%slides.length
-slides[currentIndex]?.classList.add("active")
-},3000)
-}
-
-/* PRODUCTS */
+/* 🔥 FIX iPhone ici */
 let products=[]
 
 async function loadProducts(){
 
-const snap = await getDocs(collection(db,"products"))
+const productSnap = await getDocs(collection(db,"products"))
+const userSnap = await getDocs(collection(db,"users"))
+
+/* 🔥 construire map users */
+let usersMap = {}
+
+userSnap.forEach(u=>{
+usersMap[u.id] = u.data()
+})
 
 products=[]
 
-for(const d of snap.docs){
+productSnap.forEach(d=>{
 
 let p = d.data()
 p.id = d.id
 
-// 🔥 vérifier marchand
-if(!p.merchantId) continue
+let merchant = usersMap[p.merchantId]
 
-const userSnap = await getDoc(doc(db,"users", p.merchantId))
-
-if(!userSnap.exists()) continue
-
-let u = userSnap.data()
-
-// ✅ filtrage correct
-if(u.role === "merchant" && u.approved && !u.blocked){
+/* ✅ filtre rapide */
+if(
+merchant &&
+merchant.role === "merchant" &&
+merchant.approved === true &&
+!merchant.blocked
+){
 products.push(p)
 }
 
-}
+})
 
 renderProducts(products)
+
 }
 
+/* RENDER */
 function renderProducts(list){
+
+if(list.length === 0){
+productList.innerHTML = "⚠️ Aucun produit disponible"
+return
+}
 
 let html=""
 
@@ -393,7 +308,8 @@ id:product.id,
 name:product.name,
 price:product.price,
 image:product.images?.[0]||"",
-qty:1
+qty:1,
+merchantId:product.merchantId
 })
 }
 
@@ -402,7 +318,6 @@ alert("🛒 Ajouté au panier")
 }
 
 /* LOAD */
-loadBanner()
 loadProducts()
 
 </script>
