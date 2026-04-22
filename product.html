@@ -13,7 +13,6 @@ background:#f9f9ff;
 color:#222;
 }
 
-/* HEADER */
 .header{
 background:#fff;
 padding:15px;
@@ -23,7 +22,6 @@ font-weight:bold;
 box-shadow:0 2px 8px rgba(0,0,0,0.05);
 }
 
-/* CONTAINER */
 .container{padding:10px;}
 
 .card{
@@ -33,7 +31,6 @@ overflow:hidden;
 box-shadow:0 4px 12px rgba(0,0,0,0.08);
 }
 
-/* IMAGE */
 .imageContainer{
 width:100%;
 height:300px;
@@ -46,7 +43,6 @@ height:100%;
 object-fit:cover;
 }
 
-/* GALLERY */
 .gallery{
 display:flex;
 gap:8px;
@@ -67,7 +63,6 @@ border:2px solid #ff6a00;
 opacity:1;
 }
 
-/* INFO */
 .info{padding:15px;}
 
 .name{font-size:20px;font-weight:bold;}
@@ -79,7 +74,6 @@ font-weight:bold;
 margin-top:5px;
 }
 
-/* ⭐ RATING */
 .rating{
 margin-top:6px;
 font-size:14px;
@@ -92,7 +86,6 @@ font-size:14px;
 color:#555;
 }
 
-/* BUTTONS */
 .actions{
 display:flex;
 gap:10px;
@@ -111,7 +104,6 @@ font-weight:bold;
 .buyBtn{background:#1aa34a;color:white;}
 .shopBtn{background:#111;color:white;}
 
-/* SECTION */
 .section{padding:10px;}
 
 .grid{
@@ -136,7 +128,6 @@ object-fit:cover;
 border-radius:10px;
 }
 
-/* REVIEWS */
 .review{
 background:white;
 padding:10px;
@@ -145,21 +136,9 @@ margin-bottom:8px;
 box-shadow:0 2px 6px rgba(0,0,0,0.05);
 }
 
-.reviewName{
-font-weight:bold;
-font-size:13px;
-}
-
-.reviewStars{
-color:#f59e0b;
-font-size:13px;
-}
-
-.reviewText{
-font-size:13px;
-color:#555;
-margin-top:4px;
-}
+.reviewName{font-weight:bold;font-size:13px;}
+.reviewStars{color:#f59e0b;font-size:13px;}
+.reviewText{font-size:13px;color:#555;margin-top:4px;}
 </style>
 </head>
 
@@ -172,7 +151,7 @@ margin-top:4px;
 <div class="card">
 
 <div class="imageContainer" id="imageContainer">
-<img id="mainImage" class="mainImage">
+<img id="mainImage" class="mainImage" src="">
 </div>
 
 <div id="gallery" class="gallery"></div>
@@ -180,36 +159,29 @@ margin-top:4px;
 <div class="info">
 <div id="name" class="name"></div>
 <div id="price" class="price"></div>
-
-<!-- ⭐ NOTE -->
 <div id="rating" class="rating"></div>
-
 <div id="desc" class="desc"></div>
 
 <div class="actions">
 <button class="btn buyBtn" onclick="buy()">Comprar</button>
 <button class="btn shopBtn" onclick="openShop()">Loja</button>
 </div>
-
 </div>
 
 </div>
 
 </div>
 
-<!-- SIMILAR -->
 <div class="section">
 <h3>Produtos similares</h3>
 <div id="similar" class="grid"></div>
 </div>
 
-<!-- AUTRES -->
 <div class="section">
 <h3>Outros produtos</h3>
 <div id="others" class="grid"></div>
 </div>
 
-<!-- REVIEWS -->
 <div class="section">
 <h3>💬 Avaliações dos clientes</h3>
 <div id="reviews"></div>
@@ -229,10 +201,32 @@ let product=null
 let images=[]
 let index=0
 
+// 🔥 DOM FIX (IMPORTANT)
+const nameEl = document.getElementById("name")
+const priceEl = document.getElementById("price")
+const descEl = document.getElementById("desc")
+const ratingEl = document.getElementById("rating")
+const galleryEl = document.getElementById("gallery")
+const mainImage = document.getElementById("mainImage")
+const imageContainer = document.getElementById("imageContainer")
+const similarEl = document.getElementById("similar")
+const othersEl = document.getElementById("others")
+const reviewsEl = document.getElementById("reviews")
+
 async function load(){
 
+if(!productId){
+alert("Produto inválido ❌")
+return
+}
+
+try{
 const snap = await getDoc(doc(db,"products",productId))
-if(!snap.exists()) return
+
+if(!snap.exists()){
+alert("Produto não encontrado ❌")
+return
+}
 
 product = snap.data()
 images = product.images || []
@@ -241,22 +235,31 @@ render()
 loadSimilar()
 loadOthers()
 loadReviews()
+
+}catch(e){
+console.error(e)
+alert("Erro ao carregar produto ❌")
+}
+
 }
 load()
 
 function render(){
 
-name.innerText = product.name
-price.innerText = product.price + " Kz"
-desc.innerText = product.description || "Sem descrição"
+nameEl.innerText = product.name || ""
+priceEl.innerText = (product.price || 0) + " Kz"
+descEl.innerText = product.description || "Sem descrição"
 
-/* ⭐ rating */
 let stars = product.rating || 0
-rating.innerText = "⭐ " + stars + " / 5"
+ratingEl.innerText = "⭐ " + stars + " / 5"
 
+if(images.length){
 setImage(0)
+}else{
+mainImage.src = "https://via.placeholder.com/400"
+}
 
-gallery.innerHTML = images.map((img,i)=>`
+galleryEl.innerHTML = images.map((img,i)=>`
 <img src="${img}" onclick="setImage(${i})">
 `).join("")
 }
@@ -266,19 +269,28 @@ index=i
 mainImage.src = images[i]
 }
 
-/* SWIPE */
 let startX=0
 imageContainer.addEventListener("touchstart",e=>{
 startX = e.touches[0].clientX
 })
+
 imageContainer.addEventListener("touchend",e=>{
 let endX = e.changedTouches[0].clientX
 if(endX < startX-50) next()
 if(endX > startX+50) prev()
 })
 
-function next(){index=(index+1)%images.length;setImage(index)}
-function prev(){index=(index-1+images.length)%images.length;setImage(index)}
+function next(){
+if(!images.length) return
+index=(index+1)%images.length
+setImage(index)
+}
+
+function prev(){
+if(!images.length) return
+index=(index-1+images.length)%images.length
+setImage(index)
+}
 
 /* BUY */
 window.buy = function(){
@@ -314,15 +326,16 @@ let html=""
 snap.forEach(d=>{
 if(d.id!==productId){
 let p=d.data()
-html+=`<div class="smallCard" onclick="openProduct('${d.id}')">
-<img src="${p.images?.[0]}">
+html+=`
+<div class="smallCard" onclick="openProduct('${d.id}')">
+<img src="${p.images?.[0] || ''}">
 <div>${p.name}</div>
 <div>${p.price} Kz</div>
 </div>`
 }
 })
 
-similar.innerHTML=html
+similarEl.innerHTML=html
 }
 
 /* AUTRES */
@@ -334,18 +347,19 @@ let html=""
 snap.forEach(d=>{
 if(d.id!==productId){
 let p=d.data()
-html+=`<div class="smallCard" onclick="openProduct('${d.id}')">
-<img src="${p.images?.[0]}">
+html+=`
+<div class="smallCard" onclick="openProduct('${d.id}')">
+<img src="${p.images?.[0] || ''}">
 <div>${p.name}</div>
 <div>${p.price} Kz</div>
 </div>`
 }
 })
 
-others.innerHTML=html
+othersEl.innerHTML=html
 }
 
-/* ⭐ REVIEWS */
+/* REVIEWS */
 async function loadReviews(){
 
 const q=query(collection(db,"reviews"),
@@ -357,7 +371,6 @@ let html=""
 
 snap.forEach(d=>{
 let r=d.data()
-
 let stars="⭐".repeat(r.rating || 5)
 
 html+=`
@@ -369,7 +382,7 @@ html+=`
 `
 })
 
-reviews.innerHTML = html || "Sem avaliações ainda"
+reviewsEl.innerHTML = html || "Sem avaliações ainda"
 }
 
 /* OPEN */
