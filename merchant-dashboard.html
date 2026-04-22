@@ -3,35 +3,168 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard PRO</title>
+<title>Dashboard Merchant</title>
 
 <style>
-body{font-family:Arial;margin:0;background:#f4f4f4;}
-.header{background:#ff6a00;color:white;padding:15px;text-align:center;font-size:20px;font-weight:bold;}
-.notifBell{position:fixed;top:15px;right:15px;font-size:22px;z-index:2000;}
-.notifBadge{position:absolute;top:-5px;right:-10px;background:red;color:white;border-radius:50%;padding:2px 6px;font-size:11px;display:none;}
-.container{max-width:900px;margin:auto;padding:15px;}
-.card{background:white;padding:15px;border-radius:10px;margin-bottom:15px;}
-.actions{display:flex;gap:10px;margin-bottom:15px;}
-.actions button{flex:1;padding:12px;border:none;border-radius:10px;font-weight:bold;cursor:pointer;}
-.btnShop{background:black;color:white;}
+body{
+font-family:Arial;
+margin:0;
+background:#f6f7fb;
+}
+
+/* HEADER */
+.header{
+background:#111;
+color:white;
+padding:18px;
+text-align:center;
+font-size:20px;
+font-weight:bold;
+}
+
+/* NOTIF */
+.notifBell{
+position:fixed;
+top:15px;
+right:15px;
+font-size:22px;
+}
+
+.notifBadge{
+position:absolute;
+top:-5px;
+right:-10px;
+background:red;
+color:white;
+border-radius:50%;
+padding:2px 6px;
+font-size:11px;
+display:none;
+}
+
+/* CONTAINER */
+.container{
+max-width:900px;
+margin:auto;
+padding:15px;
+}
+
+/* ACTIONS */
+.actions{
+display:flex;
+gap:10px;
+margin-bottom:15px;
+}
+
+.actions button{
+flex:1;
+padding:14px;
+border:none;
+border-radius:12px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.btnShop{background:#111;color:white;}
 .btnAdd{background:#1aa34a;color:white;}
-.stats{display:flex;gap:10px;}
-.stat{flex:1;background:#1aa34a;color:white;padding:12px;border-radius:10px;text-align:center;}
-.filter{display:flex;gap:10px;margin-bottom:10px;}
-.filter button{flex:1;padding:10px;border:none;border-radius:8px;cursor:pointer;}
-.active{background:#ff6a00;color:white;}
-.order,.productCard{border-bottom:1px solid #eee;padding:10px 0;}
-button{margin-top:5px;padding:6px 10px;border:none;border-radius:6px;cursor:pointer;}
+
+/* CARD */
+.card{
+background:white;
+padding:18px;
+border-radius:16px;
+margin-bottom:15px;
+box-shadow:0 6px 18px rgba(0,0,0,0.08);
+}
+
+/* FILTER */
+.filter{
+display:flex;
+gap:8px;
+margin-bottom:10px;
+}
+
+.filter button{
+flex:1;
+padding:10px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+background:#eee;
+}
+
+.filter .active{
+background:#1aa34a;
+color:white;
+}
+
+/* ORDER CARD */
+.order{
+background:#fff;
+padding:15px;
+border-radius:14px;
+margin-bottom:10px;
+box-shadow:0 3px 10px rgba(0,0,0,0.06);
+}
+
+.orderHeader{
+display:flex;
+justify-content:space-between;
+font-weight:bold;
+margin-bottom:8px;
+}
+
+.status{
+padding:4px 8px;
+border-radius:8px;
+font-size:12px;
+color:white;
+}
+
+.pending{background:#f39c12;}
+.done{background:#1aa34a;}
+
+/* ITEMS */
+.items{
+margin-top:8px;
+font-size:13px;
+color:#444;
+}
+
+/* BUTTONS */
+button{
+margin-top:6px;
+padding:8px 10px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
 .btnDone{background:#1aa34a;color:white;}
 .btnDelete{background:red;color:white;}
-.btnLogout{width:100%;padding:12px;background:black;color:white;border:none;border-radius:10px;margin-top:10px;}
+
+/* PRODUCTS */
+.productCard{
+padding:10px;
+border-bottom:1px solid #eee;
+}
+
+/* LOGOUT */
+.btnLogout{
+width:100%;
+padding:14px;
+background:#111;
+color:white;
+border:none;
+border-radius:12px;
+margin-top:10px;
+}
 </style>
 </head>
 
 <body>
 
-<div class="header">Dashboard PRO 🚀</div>
+<div class="header">Dashboard Merchant 🚀</div>
 
 <div class="notifBell">
 🔔 <span id="notifBadge" class="notifBadge">0</span>
@@ -40,22 +173,24 @@ button{margin-top:5px;padding:6px 10px;border:none;border-radius:6px;cursor:poin
 <div class="container">
 
 <div class="actions">
-<button class="btnShop" onclick="openShop()">Ver minha loja 🏪</button>
+<button class="btnShop" onclick="openShop()">Minha loja 🏪</button>
 <button class="btnAdd" onclick="addProduct()">+ Produto</button>
 </div>
 
 <div class="card">
-<h3>Pedidos</h3>
+<h3>📦 Pedidos</h3>
+
 <div class="filter">
-<button onclick="setFilter('all')">Todos</button>
-<button onclick="setFilter('pendente')">Pendentes</button>
-<button onclick="setFilter('concluido')">Concluídos</button>
+<button onclick="setFilter('all')" id="f_all">Todos</button>
+<button onclick="setFilter('pending')" id="f_pending">Pendentes</button>
+<button onclick="setFilter('concluido')" id="f_done">Concluídos</button>
 </div>
+
 <div id="ordersList"></div>
 </div>
 
 <div class="card">
-<h3>Mes Produits</h3>
+<h3>🛍️ Meus produtos</h3>
 <div id="productsList"></div>
 </div>
 
@@ -66,8 +201,6 @@ button{margin-top:5px;padding:6px 10px;border:none;border-radius:6px;cursor:poin
 <script type="module">
 
 import { db, auth } from "./firebase.js"
-import { startNotifications } from "./notifications.js"
-startNotifications()
 
 import {
 collection,query,where,onSnapshot,
@@ -81,6 +214,7 @@ let currentUser=null
 let filter="all"
 
 const ordersList = document.getElementById("ordersList")
+const notifBadge = document.getElementById("notifBadge")
 
 /* AUTH */
 onAuthStateChanged(auth,(user)=>{
@@ -93,7 +227,7 @@ listenOrders()
 loadProducts()
 })
 
-/* COMMANDES */
+/* LISTEN ORDERS */
 function listenOrders(){
 
 const q=query(
@@ -104,6 +238,7 @@ where("merchantId","==",currentUser.uid)
 onSnapshot(q,(snapshot)=>{
 
 let html=""
+let count=0
 
 snapshot.forEach(docSnap=>{
 
@@ -112,18 +247,57 @@ const id=docSnap.id
 
 if(filter!=="all" && o.status!==filter) return
 
+if(!o.seen) count++
+
+/* PRODUITS */
+let itemsHTML = ""
+
+if(o.items){
+o.items.forEach(i=>{
+itemsHTML += `• ${i.name} x${i.qty}<br>`
+})
+}else{
+itemsHTML = `${o.productName} x${o.qty}`
+}
+
 html+=`
 <div class="order">
-<b>${o.productName}</b><br>
-${o.qty} x ${o.price} Kz<br>
 
-<button class="btnDone" onclick="markDone('${id}')">Concluir</button>
-<button class="btnDelete" onclick="deleteOrder('${id}')">Supprimer</button>
+<div class="orderHeader">
+<span>Pedido</span>
+<span class="status ${o.status==="concluido"?"done":"pending"}">
+${o.status || "pending"}
+</span>
+</div>
+
+👤 <b>${o.clientName}</b><br>
+📞 ${o.clientPhone}<br>
+📍 ${o.clientAddress}<br>
+
+<div class="items">
+${itemsHTML}
+</div>
+
+💰 Total: <b>${o.total || o.price || 0} Kz</b>
+
+<br>
+
+<button class="btnDone" onclick="markDone('${id}')">✔ Concluir</button>
+<button class="btnDelete" onclick="deleteOrder('${id}')">🗑 Supprimer</button>
+
 </div>
 `
 })
 
-ordersList.innerHTML=html
+ordersList.innerHTML = html || "Sem pedidos"
+
+/* 🔔 NOTIF */
+if(count>0){
+notifBadge.style.display="inline-block"
+notifBadge.innerText=count
+}else{
+notifBadge.style.display="none"
+}
 
 })
 
@@ -162,11 +336,16 @@ document.getElementById("productsList").innerHTML=html
 /* ACTIONS */
 window.setFilter=f=>{
 filter=f
+document.querySelectorAll(".filter button").forEach(b=>b.classList.remove("active"))
+document.getElementById("f_"+(f==="pending"?"pending":f==="concluido"?"done":"all")).classList.add("active")
 listenOrders()
 }
 
 window.markDone=id=>{
-updateDoc(doc(db,"orders",id),{status:"concluido"})
+updateDoc(doc(db,"orders",id),{
+status:"concluido",
+seen:true
+})
 }
 
 window.deleteOrder=id=>{
@@ -182,9 +361,7 @@ loadProducts()
 }
 }
 
-/* 🔥 FIX NAVIGATION */
 window.openShop=()=>{
-if(!currentUser) return alert("Erreur utilisateur")
 location.href="merchant-shop.html?id="+currentUser.uid
 }
 
