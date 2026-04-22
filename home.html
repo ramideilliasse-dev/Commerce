@@ -312,15 +312,30 @@ let products=[]
 
 async function loadProducts(){
 
-const snap=await getDocs(collection(db,"products"))
+const snap = await getDocs(collection(db,"products"))
 
 products=[]
 
-snap.forEach(d=>{
-let p=d.data()
-p.id=d.id
+for(const d of snap.docs){
+
+let p = d.data()
+p.id = d.id
+
+// 🔥 vérifier marchand
+if(!p.merchantId) continue
+
+const userSnap = await getDoc(doc(db,"users", p.merchantId))
+
+if(!userSnap.exists()) continue
+
+let u = userSnap.data()
+
+// ✅ filtrage correct
+if(u.role === "merchant" && u.approved && !u.blocked){
 products.push(p)
-})
+}
+
+}
 
 renderProducts(products)
 }
