@@ -23,7 +23,6 @@ box-shadow:0 2px 8px rgba(0,0,0,0.05);
 z-index:1000;
 }
 
-/* 🔥 LOGO MODIFIÉ */
 .logo{
 font-size:26px;
 font-weight:bold;
@@ -57,7 +56,6 @@ border:none;
 padding:6px 12px;
 }
 
-/* 🔥 ADMIN */
 .adminBtn{
 background:black;
 color:white;
@@ -68,7 +66,7 @@ display:none;
 cursor:pointer;
 }
 
-/* 🔥 BANNER PREMIUM */
+/* BANNER */
 .banner{
 margin-top:120px;
 height:200px;
@@ -88,9 +86,7 @@ display:flex;
 align-items:flex-end;
 }
 
-.slide.active{
-opacity:1;
-}
+.slide.active{opacity:1;}
 
 .slide img{
 position:absolute;
@@ -117,7 +113,6 @@ background:#1aa34a;
 color:white;
 padding:6px 12px;
 border-radius:8px;
-display:inline-block;
 }
 
 /* PRODUCTS */
@@ -144,6 +139,12 @@ object-fit:cover;
 
 .info{padding:10px;}
 .name{font-weight:bold;font-size:14px;}
+
+.desc{
+font-size:12px;
+color:#666;
+margin-top:3px;
+}
 
 .priceP{
 color:#ff6a00;
@@ -197,15 +198,12 @@ padding:8px;
 
 <button id="adminBtn" class="adminBtn">Admin</button>
 
-<button id="accountButton" class="accountBtn">Conta</button>
+<button id="accountButton" class="accountBtn">...</button>
 
 </div>
 </div>
 
-<!-- BANNER -->
 <div id="banner" class="banner"></div>
-
-<!-- PRODUITS -->
 <div id="productList" class="products"></div>
 
 <div class="nav">
@@ -222,10 +220,10 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
-/* 🔥 ADMIN FIX */
 const adminBtn = document.getElementById("adminBtn")
 const accountButton = document.getElementById("accountButton")
 
+/* 🔥 FIX ROLE */
 onAuthStateChanged(auth, async (user)=>{
 
 if(!user){
@@ -235,21 +233,31 @@ return
 }
 
 const snap = await getDoc(doc(db,"users",user.uid))
-let role = (snap.data()?.role || "").toLowerCase()
+const data = snap.data() || {}
 
+const role = (data.role || "").toLowerCase()
+const approved = data.approved === true
+
+/* ADMIN */
 if(role === "admin" || role === "superadmin"){
 adminBtn.style.display="block"
 adminBtn.onclick=()=>location.href="admin-dashboard.html"
 }
 
+/* MERCHANT VALIDÉ */
+if(role === "merchant" && approved){
+accountButton.innerText="Minha Loja"
+accountButton.onclick=()=>location.href="merchant-dashboard.html"
+return
+}
+
+/* DEFAULT */
 accountButton.innerText="Conta"
 accountButton.onclick=()=>location.href="settings.html"
 
 })
 
-/* =========================
-   🔥 BANNER
-========================= */
+/* BANNER */
 let bannerItems=[]
 let currentIndex=0
 let timer=null
@@ -257,7 +265,6 @@ let timer=null
 async function loadBanner(){
 
 const snap = await getDoc(doc(db,"promoBanner","main"))
-
 if(!snap.exists()) return
 
 bannerItems = snap.data().items || []
@@ -265,9 +272,8 @@ if(!bannerItems.length) return
 
 let html=""
 
-for(let i=0;i<bannerItems.length;i++){
+for(let item of bannerItems){
 
-let item=bannerItems[i]
 let productSnap=await getDoc(doc(db,"products",item.id))
 if(!productSnap.exists()) continue
 
@@ -275,7 +281,7 @@ let p=productSnap.data()
 let img=p.images?.[0]||"https://via.placeholder.com/400"
 
 html+=`
-<div class="slide ${i===0?'active':''}" onclick="openProduct('${item.id}')">
+<div class="slide ${html===""?'active':''}" onclick="openProduct('${item.id}')">
 <img src="${img}">
 <div class="overlay">
 <div class="title">${p.name}</div>
@@ -288,49 +294,20 @@ html+=`
 
 banner.innerHTML=html
 startAutoplay()
-enableSwipe()
 }
 
+/* AUTOPLAY */
 function startAutoplay(){
 clearInterval(timer)
 timer=setInterval(()=>{
-showSlide((currentIndex+1)%bannerItems.length)
+let slides=document.querySelectorAll(".slide")
+slides.forEach(s=>s.classList.remove("active"))
+currentIndex=(currentIndex+1)%slides.length
+slides[currentIndex]?.classList.add("active")
 },3000)
 }
 
-function showSlide(i){
-let slides=document.querySelectorAll(".slide")
-slides.forEach(s=>s.classList.remove("active"))
-currentIndex=i
-slides[i]?.classList.add("active")
-}
-
-function enableSwipe(){
-let startX=0
-
-banner.addEventListener("touchstart",e=>{
-startX=e.touches[0].clientX
-})
-
-banner.addEventListener("touchend",e=>{
-let endX=e.changedTouches[0].clientX
-
-if(endX<startX-50){
-showSlide((currentIndex+1)%bannerItems.length)
-startAutoplay()
-}
-
-if(endX>startX+50){
-showSlide((currentIndex-1+bannerItems.length)%bannerItems.length)
-startAutoplay()
-}
-})
-}
-
-/* =========================
-   🛒 PRODUITS
-========================= */
-
+/* PRODUCTS */
 let products=[]
 
 async function loadProducts(){
@@ -355,6 +332,7 @@ let html=""
 list.forEach(p=>{
 
 let img=p.images?.[0]||"https://via.placeholder.com/300"
+let desc=(p.description||"").split("\n")[0]
 
 html+=`
 <div class="product" onclick="openProduct('${p.id}')">
@@ -366,6 +344,7 @@ html+=`
 
 <div class="info">
 <div class="name">${p.name}</div>
+<div class="desc">${desc}</div>
 <div class="priceP">${p.price} Kz</div>
 <div class="province">📍 ${p.province || "Angola"}</div>
 </div>
@@ -386,8 +365,8 @@ location.href="product.html"
 window.addToCart=function(id){
 
 let cart=JSON.parse(localStorage.getItem("cart")||"[]")
-
 const product=products.find(p=>p.id===id)
+
 if(!product) return
 
 const exist=cart.find(p=>p.id===id)
