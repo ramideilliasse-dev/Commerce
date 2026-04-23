@@ -1,0 +1,173 @@
+ <!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minhas Encomendas</title>
+
+<style>
+body{
+font-family:Arial;
+margin:0;
+background:#f6f7fb;
+}
+
+/* HEADER */
+.header{
+background:#111;
+color:white;
+padding:18px;
+text-align:center;
+font-size:20px;
+font-weight:bold;
+}
+
+/* CONTAINER */
+.container{
+max-width:700px;
+margin:auto;
+padding:15px;
+}
+
+/* CARD */
+.card{
+background:white;
+border-radius:16px;
+padding:15px;
+margin-bottom:15px;
+box-shadow:0 6px 18px rgba(0,0,0,0.08);
+}
+
+/* ITEM */
+.item{
+font-size:14px;
+border-bottom:1px solid #eee;
+padding:6px 0;
+}
+
+/* STATUS */
+.status{
+margin-top:10px;
+font-size:13px;
+font-weight:bold;
+}
+
+.pending{color:#ff6a00;}
+.done{color:#1aa34a;}
+
+/* EMPTY */
+.empty{
+text-align:center;
+margin-top:50px;
+color:#777;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">📦 Minhas Encomendas</div>
+
+<div class="container">
+<div id="ordersList"></div>
+</div>
+
+<script type="module">
+
+import { db } from "./firebase.js"
+import {
+collection,
+getDocs,
+query,
+where
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
+const ordersList = document.getElementById("ordersList")
+
+/* 🔥 récupérer numéro client */
+let clientPhone = localStorage.getItem("clientPhone")
+
+if(!clientPhone){
+clientPhone = prompt("Digite seu número para ver suas encomendas")
+localStorage.setItem("clientPhone", clientPhone)
+}
+
+/* LOAD ORDERS */
+async function loadOrders(){
+
+const q = query(
+collection(db,"orders"),
+where("clientPhone","==",clientPhone)
+)
+
+const snap = await getDocs(q)
+
+if(snap.empty){
+ordersList.innerHTML = `<div class="empty">📭 Nenhuma encomenda encontrada</div>`
+return
+}
+
+let html=""
+
+/* 🔥 afficher commandes */
+snap.forEach(docSnap=>{
+
+const o = docSnap.data()
+
+let itemsHtml=""
+
+/* 🔥 MULTI PRODUITS */
+if(o.items){
+o.items.forEach(p=>{
+itemsHtml += `
+<div class="item">
+${p.name} x${p.qty} = ${p.price * p.qty} Kz
+</div>
+`
+})
+}else{
+/* fallback ancien système */
+itemsHtml += `
+<div class="item">
+${o.productName} x${o.qty} = ${o.price * o.qty} Kz
+</div>
+`
+}
+
+let statusClass = o.status === "concluido" ? "done" : "pending"
+let statusText = o.status === "concluido" ? "Concluído" : "Pendente"
+
+html += `
+<div class="card">
+
+<div><b>📅</b> ${new Date(o.createdAt || o.date).toLocaleString()}</div>
+
+<div style="margin-top:10px">
+${itemsHtml}
+</div>
+
+<div style="margin-top:10px">
+💰 Total: ${o.total || (o.price * o.qty)} Kz
+</div>
+
+<div>
+📍 ${o.clientAddress}
+</div>
+
+<div class="status ${statusClass}">
+📦 ${statusText}
+</div>
+
+</div>
+`
+})
+
+ordersList.innerHTML = html
+}
+
+loadOrders()
+
+</script>
+
+</body>
+</html>
