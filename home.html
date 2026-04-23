@@ -118,11 +118,8 @@ object-fit:cover;
 
 .info{padding:10px;}
 .name{font-weight:bold;font-size:14px;}
-
 .desc{font-size:12px;color:#666;}
-
 .priceP{color:#ff6a00;}
-
 .province{color:#1aa34a;font-size:11px;}
 
 .cartBtn{
@@ -195,10 +192,14 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 const adminBtn = document.getElementById("adminBtn")
 const accountButton = document.getElementById("accountButton")
 const cartCount = document.getElementById("cartCount")
+const banner = document.getElementById("banner")
 
-let currentUser=null
+let products=[]
+let currentSlide=0
+let slides=[]
+let autoTimer=null
 
-/* 🔥 CART COUNT */
+/* CART COUNT */
 function updateCartCount(){
 let cart=JSON.parse(localStorage.getItem("cart")||"[]")
 let total=cart.reduce((a,b)=>a+(b.qty||1),0)
@@ -215,8 +216,6 @@ accountButton.onclick=()=>location.href="login.html"
 return
 }
 
-currentUser=user
-
 const snap = await getDoc(doc(db,"users",user.uid))
 const data = snap.data() || {}
 
@@ -227,14 +226,12 @@ adminBtn.style.display="block"
 adminBtn.onclick=()=>location.href="admin-dashboard.html"
 }
 
-/* 🔥 COMMAND COUNT */
 if(role==="merchant"){
 const q=query(collection(db,"orders"),
 where("merchantId","==",user.uid),
 where("seen","==",false))
 
 const ordersSnap=await getDocs(q)
-
 let count=ordersSnap.size
 
 accountButton.innerText = count>0 ? `Minha Loja (${count})` : "Minha Loja"
@@ -247,9 +244,7 @@ accountButton.onclick=()=>location.href="settings.html"
 
 })
 
-/* 🔥 PRODUCTS FIX */
-let products=[]
-
+/* LOAD PRODUCTS */
 async function loadProducts(){
 
 const productSnap = await getDocs(collection(db,"products"))
@@ -272,11 +267,11 @@ products.push(p)
 })
 
 renderProducts(products)
-loadBanner(usersMap)
+loadBanner()
 }
 
-/* 🔥 BANNER FIX */
-async function loadBanner(usersMap){
+/* BANNER */
+async function loadBanner(){
 
 const snap = await getDoc(doc(db,"promoBanner","main"))
 if(!snap.exists()) return
@@ -286,15 +281,14 @@ let items = snap.data().items || []
 let html=""
 let index=0
 
-for(let item of items){
-
+items.forEach(item=>{
 let p=products.find(x=>x.id===item.id)
-if(!p) continue
+if(!p) return
 
 let img=p.images?.[0]||"https://via.placeholder.com/400"
 
 html+=`
-<div class="slide ${index===0?'active':''}" onclick="openProduct('${p.id}')">
+<div class="slide ${index===0?'active':''}">
 <img src="${img}">
 <div class="overlay">
 <div>${p.name}</div>
@@ -303,22 +297,67 @@ html+=`
 </div>
 `
 index++
-}
+})
 
 banner.innerHTML=html
+slides=document.querySelectorAll(".slide")
 
-setInterval(()=>{
-let slides=document.querySelectorAll(".slide")
-slides.forEach(s=>s.classList.remove("active"))
-let active=document.querySelector(".slide.active")
-let i=[...slides].indexOf(active)
-let next=(i+1)%slides.length
-slides[next].classList.add("active")
+startAutoSlide()
+enableSwipe()
+}
+
+/* AUTOPLAY */
+function startAutoSlide(){
+clearInterval(autoTimer)
+if(slides.length<=1) return
+
+autoTimer=setInterval(()=>{
+goToSlide((currentSlide+1)%slides.length)
 },3000)
+}
+
+function goToSlide(i){
+slides.forEach(s=>s.classList.remove("active"))
+currentSlide=i
+slides[i]?.classList.add("active")
+}
+
+/* 🔥 SWIPE iPhone FIX */
+function enableSwipe(){
+
+let startX=0
+let endX=0
+
+banner.addEventListener("touchstart",e=>{
+startX=e.touches[0].clientX
+})
+
+banner.addEventListener("touchmove",e=>{
+endX=e.touches[0].clientX
+})
+
+banner.addEventListener("touchend",()=>{
+if(!startX || !endX) return
+
+let diff = startX - endX
+
+if(diff > 50){
+goToSlide((currentSlide+1)%slides.length)
+startAutoSlide()
+}
+
+if(diff < -50){
+goToSlide((currentSlide-1+slides.length)%slides.length)
+startAutoSlide()
+}
+
+startX=0
+endX=0
+})
 
 }
 
-/* RENDER */
+/* PRODUCTS */
 function renderProducts(list){
 
 if(list.length===0){
