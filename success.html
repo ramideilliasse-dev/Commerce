@@ -27,6 +27,7 @@ font-weight:bold;
 max-width:700px;
 margin:auto;
 padding:15px;
+padding-bottom:100px;
 }
 
 /* CARD */
@@ -61,6 +62,38 @@ text-align:center;
 margin-top:50px;
 color:#777;
 }
+
+/* ACTIONS FIXED */
+.actionsBar{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+background:white;
+padding:10px;
+display:flex;
+gap:10px;
+box-shadow:0 -2px 10px rgba(0,0,0,0.08);
+}
+
+.btn{
+flex:1;
+padding:14px;
+border:none;
+border-radius:12px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.homeBtn{
+background:#1aa34a;
+color:white;
+}
+
+.refreshBtn{
+background:#111;
+color:white;
+}
 </style>
 </head>
 
@@ -70,6 +103,12 @@ color:#777;
 
 <div class="container">
 <div id="ordersList"></div>
+</div>
+
+<!-- 🔥 ACTION BUTTONS -->
+<div class="actionsBar">
+<button class="btn homeBtn" onclick="goHome()">🏠 Voltar ao início</button>
+<button class="btn refreshBtn" onclick="reloadPage()">🔄 Atualizar</button>
 </div>
 
 <script type="module">
@@ -89,6 +128,12 @@ let clientPhone = localStorage.getItem("clientPhone")
 
 if(!clientPhone){
 clientPhone = prompt("Digite seu número para ver suas encomendas")
+
+if(!clientPhone){
+alert("Número obrigatório ❌")
+location.href="index.html"
+}
+
 localStorage.setItem("clientPhone", clientPhone)
 }
 
@@ -116,7 +161,7 @@ const o = docSnap.data()
 
 let itemsHtml=""
 
-/* 🔥 MULTI PRODUITS */
+/* MULTI PRODUITS */
 if(o.items){
 o.items.forEach(p=>{
 itemsHtml += `
@@ -126,7 +171,6 @@ ${p.name} x${p.qty} = ${p.price * p.qty} Kz
 `
 })
 }else{
-/* fallback ancien système */
 itemsHtml += `
 <div class="item">
 ${o.productName} x${o.qty} = ${o.price * o.qty} Kz
@@ -166,6 +210,15 @@ ordersList.innerHTML = html
 }
 
 loadOrders()
+
+/* ACTIONS */
+window.goHome = function(){
+location.href = "index.html"
+}
+
+window.reloadPage = function(){
+location.reload()
+}
 
 </script>
 
