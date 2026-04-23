@@ -201,56 +201,71 @@ confirmBtn.disabled = true
 confirmBtn.innerText = "Enviando..."
 loader.style.display = "flex"
 
-let grouped = {}
+/* 🔥 STEP 1: sécuriser cart */
+let validCart = []
 
-/* 🔥 FIX merchantId manquant */
 for(const item of cart){
 
-let merchantId = item.merchantId
+if(!item.id) continue
 
-/* 🔥 fallback */
-if(!merchantId){
 try{
-const snap = await getDoc(doc(db,"products",item.id))
-if(snap.exists()){
-merchantId = snap.data().merchantId
-item.merchantId = merchantId
-}
+
+const snap = await getDoc(doc(db,"products", item.id))
+
+if(!snap.exists()) continue
+
+const product = snap.data()
+
+validCart.push({
+id: item.id,
+name: product.name || item.name,
+price: Number(product.price) || 0,
+qty: item.qty || 1,
+merchantId: product.merchantId
+})
+
 }catch(e){
-console.log("Erro ao recuperar merchant", e)
-}
-}
-
-if(!merchantId){
-console.warn("Produto sem merchant ❌", item)
-continue
+console.log("Erro produto:", e)
 }
 
-if(!grouped[merchantId]){
-grouped[merchantId] = []
 }
 
-grouped[merchantId].push(item)
+/* 🔥 STOP si vide */
+if(validCart.length === 0){
+loader.style.display = "none"
+alert("Erro: carrinho inválido ❌")
+confirmBtn.disabled = false
+confirmBtn.innerText = "Confirmar Pedido"
+return
 }
+
+/* 🔥 STEP 2: group by merchant */
+let grouped = {}
+
+validCart.forEach(item=>{
+if(!item.merchantId) return
+
+if(!grouped[item.merchantId]){
+grouped[item.merchantId] = []
+}
+
+grouped[item.merchantId].push(item)
+})
 
 let success = false
 
+/* 🔥 STEP 3: save orders */
 for(const merchantId in grouped){
 
 const items = grouped[merchantId]
 
 try{
 
-const snap = await getDoc(doc(db,"users",merchantId))
+const snap = await getDoc(doc(db,"users", merchantId))
 if(!snap.exists()) continue
 
-const merchant = snap.data()
-
-/* 🔥 plus tolérant */
-if(merchant.blocked === true) continue
-
 let total = 0
-items.forEach(i=> total += (i.price || 0) * (i.qty || 1))
+items.forEach(i=> total += i.price * i.qty)
 
 await addDoc(collection(db,"orders"),{
 
@@ -271,7 +286,31 @@ createdAt: Date.now()
 success = true
 
 }catch(err){
-console.log("Erro pedido:", err)
+console.log("Erro order:", err)
+}
+
+}
+
+/* RESULT */
+loader.style.display = "none"
+
+if(success){
+
+localStorage.removeItem("cart")
+
+confirmBtn.innerText = "✔ Pedido enviado"
+
+setTimeout(()=>{
+window.location.href = "success.html"
+},1000)
+
+}else{
+
+alert("Erro: nenhum vendedor recebeu ❌")
+
+confirmBtn.disabled = false
+confirmBtn.innerText = "Confirmar Pedido"
+
 }
 
 }
