@@ -12,7 +12,6 @@ margin:0;
 background:#f6f7fb;
 }
 
-/* HEADER */
 .header{
 background:#111;
 color:white;
@@ -22,14 +21,12 @@ font-size:20px;
 font-weight:bold;
 }
 
-/* CONTAINER */
 .container{
 max-width:600px;
 margin:auto;
 padding:15px;
 }
 
-/* CARD PRO */
 .card{
 background:white;
 padding:18px;
@@ -38,7 +35,6 @@ margin-bottom:15px;
 box-shadow:0 6px 18px rgba(0,0,0,0.08);
 }
 
-/* ITEM */
 .item{
 display:flex;
 justify-content:space-between;
@@ -47,7 +43,6 @@ border-bottom:1px solid #eee;
 font-size:14px;
 }
 
-/* INPUT */
 input{
 width:100%;
 padding:14px;
@@ -57,7 +52,6 @@ border:1px solid #ddd;
 font-size:14px;
 }
 
-/* BUTTON */
 button{
 width:100%;
 padding:16px;
@@ -68,10 +62,8 @@ border-radius:14px;
 font-size:18px;
 font-weight:bold;
 cursor:pointer;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
 }
 
-/* TOTAL */
 .total{
 font-weight:bold;
 margin-top:15px;
@@ -79,7 +71,6 @@ font-size:18px;
 text-align:right;
 }
 
-/* LOADER */
 #loaderOverlay{
 position:fixed;
 top:0;left:0;
@@ -172,10 +163,8 @@ let html=""
 let total=0
 
 cart.forEach(item=>{
-
 const price = Number(item.price) || 0
 const qty = item.qty || 1
-
 total += price * qty
 
 html += `
@@ -194,7 +183,7 @@ loadCart()
 
 confirmBtn.onclick = placeOrder
 
-/* 🚀 MULTI-VENDOR ORDER */
+/* 🚀 FIX MULTI-VENDOR */
 async function placeOrder(){
 
 if(confirmBtn.disabled) return
@@ -212,20 +201,37 @@ confirmBtn.disabled = true
 confirmBtn.innerText = "Enviando..."
 loader.style.display = "flex"
 
-/* 🔥 GROUP BY MERCHANT */
 let grouped = {}
 
-cart.forEach(item=>{
+/* 🔥 FIX merchantId manquant */
+for(const item of cart){
 
-if(!item.merchantId) return
+let merchantId = item.merchantId
 
-if(!grouped[item.merchantId]){
-grouped[item.merchantId] = []
+/* 🔥 fallback */
+if(!merchantId){
+try{
+const snap = await getDoc(doc(db,"products",item.id))
+if(snap.exists()){
+merchantId = snap.data().merchantId
+item.merchantId = merchantId
+}
+}catch(e){
+console.log("Erro ao recuperar merchant", e)
+}
 }
 
-grouped[item.merchantId].push(item)
+if(!merchantId){
+console.warn("Produto sem merchant ❌", item)
+continue
+}
 
-})
+if(!grouped[merchantId]){
+grouped[merchantId] = []
+}
+
+grouped[merchantId].push(item)
+}
 
 let success = false
 
@@ -233,19 +239,19 @@ for(const merchantId in grouped){
 
 const items = grouped[merchantId]
 
+try{
+
 const snap = await getDoc(doc(db,"users",merchantId))
 if(!snap.exists()) continue
 
 const merchant = snap.data()
 
-/* 🔐 sécurité */
-if(!merchant.approved || merchant.blocked) continue
+/* 🔥 plus tolérant */
+if(merchant.blocked === true) continue
 
-/* 💰 total */
 let total = 0
-items.forEach(i=> total += i.price * i.qty)
+items.forEach(i=> total += (i.price || 0) * (i.qty || 1))
 
-/* 💾 SAVE ORDER */
 await addDoc(collection(db,"orders"),{
 
 merchantId: merchantId,
@@ -263,6 +269,11 @@ createdAt: Date.now()
 })
 
 success = true
+
+}catch(err){
+console.log("Erro pedido:", err)
+}
+
 }
 
 /* RESULT */
@@ -274,10 +285,10 @@ localStorage.removeItem("cart")
 
 confirmBtn.innerText = "✔ Pedido enviado"
 
-/* ✅ FIX REDIRECTION */
+/* ✅ REDIRECTION SAFE */
 setTimeout(()=>{
-location.href="success.html"
-},1200)
+window.location.href = "./success.html"
+},1000)
 
 }else{
 
