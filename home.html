@@ -6,14 +6,8 @@
 <title>AngoShop</title>
 
 <style>
-body{
-font-family:Arial;
-margin:0;
-background:#f9f9ff;
-color:#222;
-}
+body{font-family:Arial;margin:0;background:#f9f9ff;color:#222;}
 
-/* HEADER */
 .header{
 position:fixed;top:0;left:0;right:0;
 background:white;
@@ -23,22 +17,10 @@ box-shadow:0 2px 8px rgba(0,0,0,0.05);
 z-index:1000;
 }
 
-.logo{
-font-size:26px;
-font-weight:bold;
-color:#111;
-}
+.logo{font-size:26px;font-weight:bold;}
+.logo span{color:#ff6a00;font-size:30px;}
 
-.logo span{
-color:#ff6a00;
-font-size:30px;
-}
-
-.headerRight{
-display:flex;
-gap:6px;
-align-items:center;
-}
+.headerRight{display:flex;gap:6px;align-items:center;}
 
 .iconBtn{
 background:#f1f1f1;
@@ -46,6 +28,18 @@ border:none;
 padding:6px 10px;
 border-radius:8px;
 cursor:pointer;
+position:relative;
+}
+
+.cartBadge{
+position:absolute;
+top:-5px;
+right:-5px;
+background:red;
+color:white;
+font-size:10px;
+padding:2px 6px;
+border-radius:50%;
 }
 
 .accountBtn{
@@ -63,7 +57,6 @@ border:none;
 padding:6px 10px;
 border-radius:8px;
 display:none;
-cursor:pointer;
 }
 
 /* BANNER */
@@ -74,6 +67,31 @@ border-radius:12px;
 margin:10px;
 overflow:hidden;
 position:relative;
+}
+
+.slide{
+position:absolute;
+width:100%;
+height:100%;
+opacity:0;
+transition:0.6s;
+}
+
+.slide.active{opacity:1;}
+
+.slide img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.overlay{
+position:absolute;
+bottom:0;
+width:100%;
+padding:10px;
+background:linear-gradient(to top,rgba(0,0,0,0.7),transparent);
+color:white;
 }
 
 /* PRODUCTS */
@@ -101,15 +119,9 @@ object-fit:cover;
 .info{padding:10px;}
 .name{font-weight:bold;font-size:14px;}
 
-.desc{
-font-size:12px;
-color:#666;
-margin-top:3px;
-}
+.desc{font-size:12px;color:#666;}
 
-.priceP{
-color:#ff6a00;
-}
+.priceP{color:#ff6a00;}
 
 .province{color:#1aa34a;font-size:11px;}
 
@@ -119,8 +131,7 @@ right:8px;
 bottom:8px;
 background:#1aa34a;
 color:white;
-width:34px;
-height:34px;
+width:34px;height:34px;
 border-radius:50%;
 display:flex;
 align-items:center;
@@ -149,6 +160,10 @@ padding:8px;
 
 <div class="headerRight">
 
+<button class="iconBtn" onclick="location.href='cart.html'">
+🛒 <span id="cartCount" class="cartBadge">0</span>
+</button>
+
 <button class="iconBtn" onclick="location.href='guide.html'">📘</button>
 <button class="iconBtn" onclick="location.href='settings.html'">⚙️</button>
 
@@ -170,13 +185,26 @@ padding:8px;
 <script type="module">
 
 import { db, auth } from "./firebase.js"
-import { collection, getDocs, doc, getDoc } 
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+import {
+collection,getDocs,doc,getDoc,query,where
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 const adminBtn = document.getElementById("adminBtn")
 const accountButton = document.getElementById("accountButton")
+const cartCount = document.getElementById("cartCount")
+
+let currentUser=null
+
+/* 🔥 CART COUNT */
+function updateCartCount(){
+let cart=JSON.parse(localStorage.getItem("cart")||"[]")
+let total=cart.reduce((a,b)=>a+(b.qty||1),0)
+cartCount.innerText=total
+}
+updateCartCount()
 
 /* AUTH */
 onAuthStateChanged(auth, async (user)=>{
@@ -187,19 +215,29 @@ accountButton.onclick=()=>location.href="login.html"
 return
 }
 
+currentUser=user
+
 const snap = await getDoc(doc(db,"users",user.uid))
 const data = snap.data() || {}
 
 const role = (data.role || "").toLowerCase()
-const approved = data.approved === true
 
-if(role === "admin" || role === "superadmin"){
+if(role==="admin"||role==="superadmin"){
 adminBtn.style.display="block"
 adminBtn.onclick=()=>location.href="admin-dashboard.html"
 }
 
-if(role === "merchant" && approved){
-accountButton.innerText="Minha Loja"
+/* 🔥 COMMAND COUNT */
+if(role==="merchant"){
+const q=query(collection(db,"orders"),
+where("merchantId","==",user.uid),
+where("seen","==",false))
+
+const ordersSnap=await getDocs(q)
+
+let count=ordersSnap.size
+
+accountButton.innerText = count>0 ? `Minha Loja (${count})` : "Minha Loja"
 accountButton.onclick=()=>location.href="merchant-dashboard.html"
 return
 }
@@ -209,7 +247,7 @@ accountButton.onclick=()=>location.href="settings.html"
 
 })
 
-/* 🔥 FIX iPhone ici */
+/* 🔥 PRODUCTS FIX */
 let products=[]
 
 async function loadProducts(){
@@ -217,43 +255,74 @@ async function loadProducts(){
 const productSnap = await getDocs(collection(db,"products"))
 const userSnap = await getDocs(collection(db,"users"))
 
-/* 🔥 construire map users */
-let usersMap = {}
-
-userSnap.forEach(u=>{
-usersMap[u.id] = u.data()
-})
+let usersMap={}
+userSnap.forEach(u=>usersMap[u.id]=u.data())
 
 products=[]
 
 productSnap.forEach(d=>{
+let p=d.data()
+p.id=d.id
 
-let p = d.data()
-p.id = d.id
+let m=usersMap[p.merchantId]
 
-let merchant = usersMap[p.merchantId]
-
-/* ✅ filtre rapide */
-if(
-merchant &&
-merchant.role === "merchant" &&
-merchant.approved === true &&
-!merchant.blocked
-){
+if(m && m.role==="merchant" && m.approved && !m.blocked){
 products.push(p)
 }
-
 })
 
 renderProducts(products)
+loadBanner(usersMap)
+}
+
+/* 🔥 BANNER FIX */
+async function loadBanner(usersMap){
+
+const snap = await getDoc(doc(db,"promoBanner","main"))
+if(!snap.exists()) return
+
+let items = snap.data().items || []
+
+let html=""
+let index=0
+
+for(let item of items){
+
+let p=products.find(x=>x.id===item.id)
+if(!p) continue
+
+let img=p.images?.[0]||"https://via.placeholder.com/400"
+
+html+=`
+<div class="slide ${index===0?'active':''}" onclick="openProduct('${p.id}')">
+<img src="${img}">
+<div class="overlay">
+<div>${p.name}</div>
+<div>${p.price} Kz</div>
+</div>
+</div>
+`
+index++
+}
+
+banner.innerHTML=html
+
+setInterval(()=>{
+let slides=document.querySelectorAll(".slide")
+slides.forEach(s=>s.classList.remove("active"))
+let active=document.querySelector(".slide.active")
+let i=[...slides].indexOf(active)
+let next=(i+1)%slides.length
+slides[next].classList.add("active")
+},3000)
 
 }
 
 /* RENDER */
 function renderProducts(list){
 
-if(list.length === 0){
-productList.innerHTML = "⚠️ Aucun produit disponible"
+if(list.length===0){
+productList.innerHTML="⚠️ Aucun produit"
 return
 }
 
@@ -287,19 +356,19 @@ productList.innerHTML=html
 }
 
 /* ACTIONS */
-window.openProduct=function(id){
-localStorage.setItem("selectedProduct", id)
+window.openProduct=id=>{
+localStorage.setItem("selectedProduct",id)
 location.href="product.html"
 }
 
-window.addToCart=function(id){
+window.addToCart=id=>{
 
-let cart=JSON.parse(localStorage.getItem("cart")||"[]")
-const product=products.find(p=>p.id===id)
+let cart=JSON.parse(localStorage.getItem("cart")||[])
+let product=products.find(p=>p.id===id)
 
 if(!product) return
 
-const exist=cart.find(p=>p.id===id)
+let exist=cart.find(p=>p.id===id)
 
 if(exist){exist.qty++}
 else{
@@ -313,8 +382,9 @@ merchantId:product.merchantId
 })
 }
 
-localStorage.setItem("cart", JSON.stringify(cart))
-alert("🛒 Ajouté au panier")
+localStorage.setItem("cart",JSON.stringify(cart))
+updateCartCount()
+alert("🛒 Ajouté")
 }
 
 /* LOAD */
