@@ -199,13 +199,27 @@ let currentSlide=0
 let slides=[]
 let autoTimer=null
 
-/* CART COUNT */
+/* 🔥 FIX CART */
+function getCart(){
+try{
+return JSON.parse(localStorage.getItem("cart") || "[]")
+}catch{
+return []
+}
+}
+
+/* 🔥 CART COUNT */
 function updateCartCount(){
-let cart=JSON.parse(localStorage.getItem("cart")||"[]")
-let total=cart.reduce((a,b)=>a+(b.qty||1),0)
-cartCount.innerText=total
+let cart = getCart()
+let total = cart.reduce((a,b)=>a+(b.qty||1),0)
+cartCount.innerText = total
 }
 updateCartCount()
+
+/* 🔥 REALTIME SYNC ENTRE PAGES */
+window.addEventListener("storage", ()=>{
+updateCartCount()
+})
 
 /* AUTH */
 onAuthStateChanged(auth, async (user)=>{
@@ -322,7 +336,7 @@ currentSlide=i
 slides[i]?.classList.add("active")
 }
 
-/* 🔥 SWIPE iPhone FIX */
+/* SWIPE */
 function enableSwipe(){
 
 let startX=0
@@ -337,33 +351,21 @@ endX=e.touches[0].clientX
 })
 
 banner.addEventListener("touchend",()=>{
-if(!startX || !endX) return
-
 let diff = startX - endX
 
 if(diff > 50){
 goToSlide((currentSlide+1)%slides.length)
-startAutoSlide()
 }
 
 if(diff < -50){
 goToSlide((currentSlide-1+slides.length)%slides.length)
-startAutoSlide()
 }
-
-startX=0
-endX=0
 })
 
 }
 
 /* PRODUCTS */
 function renderProducts(list){
-
-if(list.length===0){
-productList.innerHTML="⚠️ Aucun produit"
-return
-}
 
 let html=""
 
@@ -402,7 +404,7 @@ location.href="product.html"
 
 window.addToCart=id=>{
 
-let cart=JSON.parse(localStorage.getItem("cart")||[])
+let cart = getCart()
 let product=products.find(p=>p.id===id)
 
 if(!product) return
@@ -422,7 +424,12 @@ merchantId:product.merchantId
 }
 
 localStorage.setItem("cart",JSON.stringify(cart))
+
 updateCartCount()
+
+/* 🔥 trigger sync */
+window.dispatchEvent(new Event("storage"))
+
 alert("🛒 Ajouté")
 }
 
