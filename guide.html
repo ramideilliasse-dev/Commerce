@@ -61,17 +61,6 @@ border-radius:8px;
 margin-top:10px;
 }
 
-.btnReport{
-background:red;
-color:white;
-padding:10px;
-border:none;
-border-radius:8px;
-margin-top:10px;
-width:100%;
-cursor:pointer;
-}
-
 </style>
 </head>
 
@@ -92,7 +81,8 @@ A plataforma conecta clientes e vendedores de forma direta e segura.
 </p>
 
 <p>
-Você pode ver produtos, conversar com vendedores e fazer pedidos facilmente.
+Todos os vendedores são verificados e aprovados pelo administrador antes de poder vender.
+Vendedores não aprovados não têm acesso à plataforma.
 </p>
 
 </div>
@@ -103,9 +93,14 @@ Você pode ver produtos, conversar com vendedores e fazer pedidos facilmente.
 
 <ol>
 <li>Escolher produto</li>
-<li>Clicar em "Comprar"</li>
-<li>Falar com o vendedor</li>
-<li>Combinar entrega</li>
+<li>Adicionar ao carrinho</li>
+<li>Clicar em finalizar a compra</li>
+<li>Inserir seus dados</li>
+<li>Seu nome</li>
+<li>Seu número de telefone</li>
+<li>Local de entrega</li>
+<li>Clicar em confirmar pedido</li>
+<li>O vendedor entrará em contacto para a entrega</li>
 </ol>
 
 </div>
@@ -137,7 +132,7 @@ Você pode ver produtos, conversar com vendedores e fazer pedidos facilmente.
 
 </div>
 
-<!-- ANTI FRAUDE AVANCÉ -->
+<!-- ANTI FRAUDE -->
 <div class="card">
 <h2>🛡️ Sistema Anti-Fraude</h2>
 
@@ -155,14 +150,10 @@ Você pode ver produtos, conversar com vendedores e fazer pedidos facilmente.
 ✔️ Boas práticas:
 <ul>
 <li>Pagar apenas após verificar produto</li>
-<li>Conversar dentro da plataforma</li>
-<li>Ver avaliações do vendedor</li>
+<li>Comprar apenas de vendedores aprovados</li>
+<li>Verificar sempre os detalhes do produto</li>
 </ul>
 </div>
-
-<button class="btnReport" onclick="reportUser()">
-🚨 Denunciar vendedor suspeito
-</button>
 
 </div>
 
@@ -184,52 +175,16 @@ Você pode ver produtos, conversar com vendedores e fazer pedidos facilmente.
 <h2>🙏 Mensagem</h2>
 
 <div class="success">
-Obrigado por usar nossa plataforma 🙌
+Todos os vendedores são rigorosamente controlados e validados pela administração.
 <br><br>
-Com sua colaboração, podemos construir a melhor plataforma de compras de Angola 🇦🇴
+Nosso objetivo é garantir uma experiência segura e confiável para todos os utilizadores.
+<br><br>
+Obrigado por usar nossa plataforma 🙌 🇦🇴
 </div>
 
 </div>
 
 </div>
-
-<script type="module">
-
-import { db, auth } from "./firebase.js"
-import { addDoc, collection } 
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-
-/* 🚨 REPORT SYSTEM */
-window.reportUser = async function(){
-
-if(!auth.currentUser){
-alert("Login necessário ❌")
-return
-}
-
-let reason = prompt("Motivo da denúncia")
-
-if(!reason) return
-
-try{
-
-await addDoc(collection(db,"reports"),{
-userId: auth.currentUser.uid,
-reason: reason,
-date: Date.now(),
-status: "pending"
-})
-
-alert("Denúncia enviada ✅")
-
-}catch(e){
-console.error(e)
-alert("Erro ❌")
-}
-
-}
-
-</script>
 
 </body>
 </html>
