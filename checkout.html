@@ -245,7 +245,7 @@ if(!merchant.approved || merchant.blocked) continue
 let total = 0
 items.forEach(i=> total += i.price * i.qty)
 
-/* 💾 SAVE ORDER (IMPORTANT POUR DASHBOARD) */
+/* 💾 SAVE ORDER */
 await addDoc(collection(db,"orders"),{
 
 merchantId: merchantId,
@@ -274,9 +274,10 @@ localStorage.removeItem("cart")
 
 confirmBtn.innerText = "✔ Pedido enviado"
 
+/* ✅ FIX REDIRECTION */
 setTimeout(()=>{
-location.href="success.html"
-},1000)
+location.href="index.html"
+},1200)
 
 }else{
 
@@ -284,6 +285,7 @@ alert("Erro: nenhum vendedor recebeu ❌")
 
 confirmBtn.disabled = false
 confirmBtn.innerText = "Confirmar Pedido"
+
 }
 
 }
