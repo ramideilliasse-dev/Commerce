@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AngoShop</title>
+<title>Toma</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a84ff">
 
 <style>
 body{font-family:Arial;margin:0;background:#f9f9ff;color:#222;}
@@ -153,7 +156,7 @@ padding:8px;
 
 <div class="header">
 
-<div class="logo"><span>A</span>ngoShop 🇦🇴</div>
+<div class="logo"><span>T</span>oma 🇦🇴</div>
 
 <div class="headerRight">
 
@@ -199,7 +202,6 @@ let currentSlide=0
 let slides=[]
 let autoTimer=null
 
-/* 🔥 FIX CART */
 function getCart(){
 try{
 return JSON.parse(localStorage.getItem("cart") || "[]")
@@ -208,7 +210,6 @@ return []
 }
 }
 
-/* 🔥 CART COUNT */
 function updateCartCount(){
 let cart = getCart()
 let total = cart.reduce((a,b)=>a+(b.qty||1),0)
@@ -216,12 +217,10 @@ cartCount.innerText = total
 }
 updateCartCount()
 
-/* 🔥 REALTIME SYNC ENTRE PAGES */
 window.addEventListener("storage", ()=>{
 updateCartCount()
 })
 
-/* AUTH */
 onAuthStateChanged(auth, async (user)=>{
 
 if(!user){
@@ -258,7 +257,6 @@ accountButton.onclick=()=>location.href="settings.html"
 
 })
 
-/* LOAD PRODUCTS */
 async function loadProducts(){
 
 const productSnap = await getDocs(collection(db,"products"))
@@ -284,7 +282,6 @@ renderProducts(products)
 loadBanner()
 }
 
-/* BANNER */
 async function loadBanner(){
 
 const snap = await getDoc(doc(db,"promoBanner","main"))
@@ -320,7 +317,6 @@ startAutoSlide()
 enableSwipe()
 }
 
-/* AUTOPLAY */
 function startAutoSlide(){
 clearInterval(autoTimer)
 if(slides.length<=1) return
@@ -336,7 +332,6 @@ currentSlide=i
 slides[i]?.classList.add("active")
 }
 
-/* SWIPE */
 function enableSwipe(){
 
 let startX=0
@@ -364,7 +359,6 @@ goToSlide((currentSlide-1+slides.length)%slides.length)
 
 }
 
-/* PRODUCTS */
 function renderProducts(list){
 
 let html=""
@@ -396,7 +390,6 @@ html+=`
 productList.innerHTML=html
 }
 
-/* ACTIONS */
 window.openProduct=id=>{
 localStorage.setItem("selectedProduct",id)
 location.href="product.html"
@@ -426,16 +419,18 @@ merchantId:product.merchantId
 localStorage.setItem("cart",JSON.stringify(cart))
 
 updateCartCount()
-
-/* 🔥 trigger sync */
 window.dispatchEvent(new Event("storage"))
-
 alert("🛒 Ajouté")
 }
 
-/* LOAD */
 loadProducts()
 
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
 </script>
 
 </body>
