@@ -144,19 +144,21 @@ await setDoc(doc(db, "users", cred.user.uid), {
 
 email: cred.user.email,
 
-shopName: shopName,      // 🔥 IMPORTANT (nouveau)
-whatsapp: whatsapp,      // 🔥 pour commandes
+shopName: shopName,
+whatsapp: whatsapp,
 
 createdAt: Date.now(),
-approved: true,
+
+/* 🔥 IMPORTANT */
 role: "merchant",
+approved: true,
+requestMerchant: false,   // ✅ évite bugs admin
 blocked: false
 
 })
 
 alert("Conta comerciante criada com sucesso ✅")
 
-/* REDIRECTION */
 location.href = "merchant-dashboard.html"
 
 }catch(e){
