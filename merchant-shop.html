@@ -32,13 +32,13 @@ margin:-30px 15px 10px;
 padding:15px;
 border-radius:12px;
 box-shadow:0 4px 10px rgba(0,0,0,0.1);
-text-align:center;
 }
 
 /* NAME */
 .shopName{
 font-size:20px;
 font-weight:bold;
+text-align:center;
 }
 
 /* BADGE */
@@ -55,7 +55,26 @@ margin-left:5px;
 .info{
 font-size:13px;
 color:#555;
-margin-top:5px;
+margin-top:8px;
+text-align:center;
+}
+
+/* DESCRIPTION */
+.description{
+font-size:14px;
+color:#333;
+margin-top:10px;
+line-height:1.4;
+}
+
+/* WHATSAPP */
+.whatsappBox{
+margin-top:10px;
+font-size:13px;
+color:#444;
+background:#f1f1f1;
+padding:8px;
+border-radius:8px;
 }
 
 /* BUTTON */
@@ -141,7 +160,7 @@ async function loadShop(){
 
 /* 🔥 LOAD SHOP */
 const userSnap = await getDoc(doc(db,"users",merchantId))
-shopData = userSnap.data()
+shopData = userSnap.data() || {}
 
 /* BANNER */
 document.getElementById("banner").innerText = shopData?.shopName || "Loja"
@@ -156,7 +175,7 @@ const snap = await getDocs(q)
 
 let count = snap.size
 
-/* SHOP CARD */
+/* 🔥 SHOP CARD PRO */
 document.getElementById("shopCard").innerHTML = `
 <div class="shopName">
 ${shopData?.shopName || "Loja"}
@@ -166,6 +185,18 @@ ${shopData?.shopName || "Loja"}
 <div class="info">
 ${count} produtos disponíveis
 </div>
+
+${shopData?.description ? `
+<div class="description">
+📝 ${shopData.description}
+</div>
+` : ""}
+
+${shopData?.whatsapp ? `
+<div class="whatsappBox">
+📞 WhatsApp: ${shopData.whatsapp}
+</div>
+` : ""}
 
 <button class="contactBtn" onclick="contactShop()">
 💬 Falar no WhatsApp
@@ -206,7 +237,6 @@ return
 }
 
 const msg = encodeURIComponent("Olá, vi sua loja e gostaria de mais informações.")
-
 const url = "https://wa.me/" + shopData.whatsapp + "?text=" + msg
 
 window.open(url,"_blank")
