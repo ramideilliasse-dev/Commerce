@@ -35,20 +35,53 @@ font-size:12px;
 .approve{background:#1aa34a;color:white;}
 .delete{background:red;color:white;}
 
-.filterBar{
-display:flex;
-gap:6px;
-margin-bottom:10px;
+.promoGrid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
 }
 
-.filterBar button{
-flex:1;
-background:#ddd;
+.promoCard{
+background:#fff;
+border-radius:12px;
+padding:8px;
+box-shadow:0 2px 8px rgba(0,0,0,0.1);
+position:relative;
 }
 
-.filterBar .activeFilter{
+.promoCard.active{
+border:2px solid #1aa34a;
+}
+
+.promoCard img{
+width:100%;
+height:100px;
+object-fit:cover;
+border-radius:8px;
+}
+
+.selectedBadge{
+position:absolute;
+top:6px;
+left:6px;
 background:#1aa34a;
 color:white;
+padding:2px 6px;
+font-size:11px;
+border-radius:6px;
+}
+
+.bigSave{
+margin-top:15px;
+width:100%;
+padding:12px;
+font-size:16px;
+font-weight:bold;
+background:#1aa34a;
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
 }
 </style>
 </head>
@@ -76,8 +109,12 @@ import { onAuthStateChanged }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 let users=[]
+let orders=[]
+let products=[]
+let promoData=[]
 let currentFilter="all"
 
+/* AUTH */
 onAuthStateChanged(auth, async (user)=>{
 if(!user){ location.href="login.html"; return }
 
@@ -89,17 +126,103 @@ location.href="index.html"
 return
 }
 
-loadUsers()
+loadPromo()
 })
 
 window.showTab = function(e,tab){
 document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"))
 e.target.classList.add("active")
 
+if(tab==="promo") loadPromo()
 if(tab==="users") loadUsers()
+if(tab==="orders") loadOrders()
 }
 
-/* USERS */
+/* ================= PROMO ================= */
+async function loadPromo(){
+const container = document.getElementById("content")
+container.innerHTML = "Carregando banner..."
+
+const configSnap = await getDoc(doc(db,"promoBanner","main"))
+promoData = configSnap.exists() ? configSnap.data().items || [] : []
+
+const snap = await getDocs(collection(db,"products"))
+
+products=[]
+snap.forEach(d=>{
+let p=d.data()
+p.id=d.id
+products.push(p)
+})
+
+renderPromo()
+}
+
+function renderPromo(){
+const container = document.getElementById("content")
+
+if(products.length === 0){
+container.innerHTML = "⚠️ Nenhum produto encontrado"
+return
+}
+
+container.innerHTML = `
+<h3>🎯 Selecionar produtos para banner</h3>
+
+<div class="promoGrid">
+${products.map(p=>{
+
+let selected = promoData.find(x=>x.id===p.id)
+let img = p.images?.[0] || "https://via.placeholder.com/300"
+
+return `
+<div class="promoCard ${selected?"active":""}">
+
+${selected?`<div class="selectedBadge">✔</div>`:""}
+
+<img src="${img}">
+<div>${p.name || "Produto"}</div>
+
+<button onclick="togglePromo('${p.id}')">
+${selected ? "Remover" : "Adicionar"}
+</button>
+
+<button class="delete" onclick="deleteProduct('${p.id}')">
+❌ Supprimer
+</button>
+
+</div>
+`
+}).join("")}
+</div>
+
+<button class="bigSave" onclick="savePromo()">
+💾 SALVAR BANNER
+</button>
+`
+}
+
+/* DELETE PRODUCT */
+window.deleteProduct = async (id)=>{
+if(!confirm("Supprimer ce produit ?")) return
+await deleteDoc(doc(db,"products",id))
+alert("✅ Produit supprimé")
+loadPromo()
+}
+
+window.togglePromo = function(id){
+let index = promoData.findIndex(x=>x.id===id)
+if(index>-1){ promoData.splice(index,1) }
+else{ promoData.push({ id:id }) }
+renderPromo()
+}
+
+window.savePromo = async function(){
+await setDoc(doc(db,"promoBanner","main"),{ items: promoData })
+alert("✅ Banner salvo com sucesso")
+}
+
+/* ================= USERS ================= */
 async function loadUsers(){
 const container = document.getElementById("content")
 container.innerHTML = "Carregando usuários..."
@@ -117,19 +240,13 @@ renderUsers()
 }
 
 function renderUsers(){
-
 let filtered = users
 
-/* 🔥 FIX PENDING */
 if(currentFilter==="pending"){
-filtered = users.filter(u =>
-(u.role === "merchant" && u.approved !== true) ||
-u.requestMerchant === true
-)
+filtered = users.filter(u=>u.requestMerchant === true && !u.approved)
 }
-
 if(currentFilter==="merchant"){
-filtered = users.filter(u => u.role==="merchant" && u.approved === true)
+filtered = users.filter(u=>u.role==="merchant")
 }
 
 const container = document.getElementById("content")
@@ -143,10 +260,9 @@ container.innerHTML = `
 
 ${filtered.map(u=>`
 <div class="card">
-<b>${u.email || "Sem email"}</b><br>
-Role: ${u.role || "user"}<br>
+<b>${u.email}</b><br>
 
-${(u.role==="merchant" && u.approved !== true) || u.requestMerchant ? 
+${u.requestMerchant && !u.approved ? 
 `<button class="approve" onclick="approveUser('${u.id}')">Valider</button>` : ""}
 
 <button class="delete" onclick="deleteUser('${u.id}')">Supprimer</button>
@@ -155,19 +271,14 @@ ${(u.role==="merchant" && u.approved !== true) || u.requestMerchant ?
 `
 }
 
-window.setFilter = function(f){
-currentFilter=f
-renderUsers()
-}
+window.setFilter = function(f){ currentFilter=f; renderUsers() }
 
-/* 🔥 APPROVE FIX */
 window.approveUser = async (id)=>{
 await updateDoc(doc(db,"users",id),{
-role: "merchant",
-approved: true,
-requestMerchant: false
+approved:true,
+role:"merchant",
+requestMerchant:false
 })
-alert("✅ Utilisateur validé")
 loadUsers()
 }
 
@@ -175,6 +286,63 @@ window.deleteUser = async (id)=>{
 if(!confirm("Supprimer ?")) return
 await deleteDoc(doc(db,"users",id))
 loadUsers()
+}
+
+/* ================= ORDERS ================= */
+async function loadOrders(){
+const container = document.getElementById("content")
+container.innerHTML = "Carregando commandes..."
+
+const snap = await getDocs(collection(db,"orders"))
+
+orders=[]
+snap.forEach(d=>{
+let o=d.data()
+o.id=d.id
+orders.push(o)
+})
+
+container.innerHTML = `
+<h3>🛒 Commandes</h3>
+
+${orders.map(o=>{
+
+let itemsHtml = ""
+
+/* ✅ NEW SYSTEM */
+if(o.items){
+o.items.forEach(p=>{
+itemsHtml += `<div>${p.name} x${p.qty} = ${p.price * p.qty} Kz</div>`
+})
+}
+
+/* ✅ OLD SYSTEM */
+else{
+itemsHtml += `<div>${o.productName} x${o.qty} = ${o.price * o.qty} Kz</div>`
+}
+
+return `
+<div class="card">
+
+<div>${itemsHtml}</div>
+
+<div>👤 ${o.clientName || ""}</div>
+<div>📞 ${o.clientPhone || ""}</div>
+
+<button class="delete" onclick="deleteOrder('${o.id}')">
+❌ Supprimer
+</button>
+
+</div>
+`
+}).join("")}
+`
+}
+
+window.deleteOrder = async (id)=>{
+if(!confirm("Supprimer cette commande ?")) return
+await deleteDoc(doc(db,"orders",id))
+loadOrders()
 }
 
 </script>
