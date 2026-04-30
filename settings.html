@@ -40,12 +40,16 @@ margin:auto;
 cursor:pointer;
 }
 
-select,button{
+select,input,textarea,button{
 width:100%;
 padding:10px;
 margin-top:10px;
 border:none;
 border-radius:8px;
+}
+
+textarea{
+border:1px solid #ddd;
 }
 
 .btn{background:#1aa34a;color:white;}
@@ -78,9 +82,23 @@ border-radius:8px;
 
 <!-- 🔥 MERCHANT -->
 <div class="card" id="merchantCard">
+
 <button class="btnMerchant" id="merchantBtn" onclick="becomeMerchant()">
 Devenir marchand 🏪
 </button>
+
+<!-- 🔥 NOUVEAUX CHAMPS -->
+<div id="merchantForm" style="display:none;">
+
+<input id="shopName" placeholder="Nome da loja">
+<input id="whatsapp" placeholder="WhatsApp (244...)">
+
+<textarea id="shopDesc" placeholder="Descreva sua loja (produtos, qualidade, etc)"></textarea>
+
+<button class="btn" onclick="saveMerchantInfo()">Salvar informações</button>
+
+</div>
+
 </div>
 
 <!-- 🔥 PROVINCE -->
@@ -132,6 +150,7 @@ const profilePic = document.getElementById("profilePic")
 const upload = document.getElementById("upload")
 const provinceCard = document.getElementById("provinceCard")
 const provinceSelect = document.getElementById("provinceSelect")
+const merchantForm = document.getElementById("merchantForm")
 
 let currentUser = null
 
@@ -148,19 +167,23 @@ const ref = doc(db,"users",user.uid)
 const snap = await getDoc(ref)
 const data = snap.data() || {}
 
-/* PROFILE */
 profilePic.src = data.photo || "https://via.placeholder.com/80"
 
-/* 🔥 MERCHANT BUTTON */
 const merchantBtn = document.getElementById("merchantBtn")
 
-/* ✅ SI DÉJÀ MARCHAND */
+/* ✅ SI MARCHAND */
 if(data.role === "merchant"){
 
 merchantBtn.innerText = "Painel da loja 🏪"
 merchantBtn.onclick = ()=>location.href="merchant-dashboard.html"
 
 provinceCard.style.display = "block"
+merchantForm.style.display = "block"
+
+/* LOAD DATA */
+if(data.shopName) document.getElementById("shopName").value = data.shopName
+if(data.whatsapp) document.getElementById("whatsapp").value = data.whatsapp
+if(data.description) document.getElementById("shopDesc").value = data.description
 
 if(data.province){
 provinceSelect.value = data.province
@@ -168,10 +191,11 @@ provinceSelect.value = data.province
 
 }
 
-/* ✅ SI DEMANDE EN ATTENTE 🔥 */
+/* ⏳ DEMANDE EN ATTENTE */
 else if(data.requestMerchant){
 merchantBtn.innerText = "⏳ Demande en attente"
 merchantBtn.disabled = true
+merchantForm.style.display = "block"
 }
 
 /* DEFAULT */
@@ -183,22 +207,51 @@ merchantBtn.onclick = becomeMerchant
 
 })
 
-/* 🔥 SAVE PROVINCE */
-window.saveProvince = async function(){
+/* 🔥 SAVE MERCHANT INFO */
+window.saveMerchantInfo = async function(){
 
-const province = provinceSelect.value
+const shopName = document.getElementById("shopName").value.trim()
+const whatsapp = document.getElementById("whatsapp").value.trim()
+const description = document.getElementById("shopDesc").value.trim()
 
-if(!province){
-alert("Seleciona a província ❌")
+if(!shopName || !whatsapp){
+alert("Preencha nome da loja e WhatsApp ❌")
 return
 }
+
+await updateDoc(doc(db,"users",currentUser.uid),{
+shopName: shopName,
+whatsapp: whatsapp,
+description: description
+})
+
+alert("Informações salvas ✅")
+
+}
+
+/* 🔥 DEMANDE */
+window.becomeMerchant = async function(){
+
+await updateDoc(doc(db,"users",currentUser.uid),{
+requestMerchant: true,
+approved: false
+})
+
+alert("✅ Pedido enviado para admin")
+location.reload()
+
+}
+
+/* PROVINCE */
+window.saveProvince = async function(){
+const province = provinceSelect.value
+if(!province){ alert("Seleciona a província ❌"); return }
 
 await updateDoc(doc(db,"users",currentUser.uid),{
 province: province
 })
 
 alert("Província salva ✅")
-
 }
 
 /* PHOTO */
@@ -208,7 +261,6 @@ const file = this.files[0]
 const reader = new FileReader()
 
 reader.onload = async function(){
-
 const base64 = reader.result
 profilePic.src = base64
 
@@ -217,65 +269,15 @@ photo: base64
 })
 
 alert("Foto salva ✅")
-
 }
 
 reader.readAsDataURL(file)
 
 }
 
-/* 🌍 LANGUAGE */
-const langSelect = document.getElementById("langSelect")
-
-const translations = {
-pt:{title:"Configurações",lang:"Idioma",help:"Ajuda",delete:"Apagar conta"},
-fr:{title:"Paramètres",lang:"Langue",help:"Aide",delete:"Supprimer le compte"},
-en:{title:"Settings",lang:"Language",help:"Support",delete:"Delete account"}
-}
-
-function applyLang(lang){
-localStorage.setItem("lang",lang)
-title.innerText = translations[lang].title
-langLabel.innerText = translations[lang].lang
-helpBtn.innerText = translations[lang].help
-deleteBtn.innerText = translations[lang].delete
-}
-
-const savedLang = localStorage.getItem("lang") || "pt"
-langSelect.value = savedLang
-applyLang(savedLang)
-
-langSelect.onchange = function(){
-applyLang(this.value)
-}
-
-/* 🔥 MERCHANT DEMANDE */
-window.becomeMerchant = async function(){
-
-if(!currentUser){
-alert("Login necessário ❌")
-return
-}
-
-await updateDoc(doc(db,"users",currentUser.uid),{
-requestMerchant: true,
-approved: false
-})
-
-alert("✅ Pedido enviado para admin")
-
-location.reload()
-
-}
-
 /* SUPPORT */
 window.contactSupport = function(){
-
-const phone = "244922623238"
-const msg = "Olá preciso de ajuda"
-
-window.open("https://wa.me/"+phone+"?text="+encodeURIComponent(msg))
-
+window.open("https://wa.me/244922623238?text=Olá preciso de ajuda")
 }
 
 /* DELETE */
@@ -283,18 +285,11 @@ window.deleteAccount = async function(){
 
 if(!confirm("Tem certeza?")) return
 
-try{
 await deleteDoc(doc(db,"users",currentUser.uid))
 await deleteUser(currentUser)
 
 alert("Conta apagada ✅")
 location.href="index.html"
-
-}catch(e){
-alert("Erro ❌")
-console.error(e)
-}
-
 }
 
 </script>
