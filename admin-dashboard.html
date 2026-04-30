@@ -33,8 +33,6 @@ font-size:12px;
 }
 
 .approve{background:#1aa34a;color:white;}
-.block{background:#ff4757;color:white;}
-.unblock{background:#2ed573;color:white;}
 .delete{background:red;color:white;}
 
 .filterBar{
@@ -51,56 +49,6 @@ background:#ddd;
 .filterBar .activeFilter{
 background:#1aa34a;
 color:white;
-}
-
-.promoGrid{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:10px;
-}
-
-.promoCard{
-background:#fff;
-border-radius:12px;
-padding:8px;
-box-shadow:0 2px 8px rgba(0,0,0,0.1);
-cursor:pointer;
-position:relative;
-}
-
-.promoCard.active{
-border:2px solid #1aa34a;
-}
-
-.promoCard img{
-width:100%;
-height:100px;
-object-fit:cover;
-border-radius:8px;
-}
-
-.selectedBadge{
-position:absolute;
-top:6px;
-left:6px;
-background:#1aa34a;
-color:white;
-padding:2px 6px;
-font-size:11px;
-border-radius:6px;
-}
-
-.bigSave{
-margin-top:15px;
-width:100%;
-padding:12px;
-font-size:16px;
-font-weight:bold;
-background:#1aa34a;
-color:white;
-border:none;
-border-radius:10px;
-cursor:pointer;
 }
 </style>
 </head>
@@ -128,9 +76,6 @@ import { onAuthStateChanged }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 let users=[]
-let orders=[]
-let products=[]
-let promoData=[]
 let currentFilter="all"
 
 onAuthStateChanged(auth, async (user)=>{
@@ -144,94 +89,14 @@ location.href="index.html"
 return
 }
 
-loadPromo()
+loadUsers()
 })
 
 window.showTab = function(e,tab){
 document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"))
 e.target.classList.add("active")
 
-if(tab==="promo") loadPromo()
 if(tab==="users") loadUsers()
-if(tab==="orders") loadOrders()
-}
-
-/* PROMO */
-async function loadPromo(){
-const container = document.getElementById("content")
-container.innerHTML = "Carregando banner..."
-
-const configSnap = await getDoc(doc(db,"promoBanner","main"))
-promoData = configSnap.exists() ? configSnap.data().items || [] : []
-
-const snap = await getDocs(collection(db,"products"))
-
-products=[]
-snap.forEach(d=>{
-let p=d.data()
-p.id=d.id
-products.push(p)
-})
-
-renderPromo()
-}
-
-function renderPromo(){
-const container = document.getElementById("content")
-
-container.innerHTML = `
-<h3>🎯 Selecionar produtos para banner</h3>
-
-<div class="promoGrid">
-${products.map(p=>{
-
-let selected = promoData.find(x=>x.id===p.id)
-
-return `
-<div class="promoCard ${selected?"active":""}">
-
-${selected?`<div class="selectedBadge">✔</div>`:""}
-
-<img src="${selected?.image || p.images?.[0] || ''}">
-<div>${p.name}</div>
-
-<button onclick="togglePromo('${p.id}')">
-${selected ? "Remover" : "Adicionar"}
-</button>
-
-<button class="delete" onclick="deleteProduct('${p.id}')">
-❌ Supprimer
-</button>
-
-</div>
-`
-}).join("")}
-</div>
-
-<button class="bigSave" onclick="savePromo()">
-💾 SALVAR BANNER
-</button>
-`
-}
-
-/* DELETE PRODUCT 🔥 */
-window.deleteProduct = async (id)=>{
-if(!confirm("Supprimer ce produit ?")) return
-await deleteDoc(doc(db,"products",id))
-alert("✅ Produit supprimé")
-loadPromo()
-}
-
-window.togglePromo = function(id){
-let index = promoData.findIndex(x=>x.id===id)
-if(index>-1){ promoData.splice(index,1) }
-else{ promoData.push({ id:id }) }
-renderPromo()
-}
-
-window.savePromo = async function(){
-await setDoc(doc(db,"promoBanner","main"),{ items: promoData })
-alert("✅ Banner salvo com sucesso")
 }
 
 /* USERS */
@@ -252,13 +117,19 @@ renderUsers()
 }
 
 function renderUsers(){
+
 let filtered = users
 
+/* 🔥 FIX PENDING */
 if(currentFilter==="pending"){
-filtered = users.filter(u=>u.role==="merchant" && !u.approved)
+filtered = users.filter(u =>
+(u.role === "merchant" && u.approved !== true) ||
+u.requestMerchant === true
+)
 }
+
 if(currentFilter==="merchant"){
-filtered = users.filter(u=>u.role==="merchant")
+filtered = users.filter(u => u.role==="merchant" && u.approved === true)
 }
 
 const container = document.getElementById("content")
@@ -272,10 +143,10 @@ container.innerHTML = `
 
 ${filtered.map(u=>`
 <div class="card">
-<b>${u.email}</b><br>
-Role: ${u.role}<br>
+<b>${u.email || "Sem email"}</b><br>
+Role: ${u.role || "user"}<br>
 
-${u.role==="merchant" && !u.approved ? 
+${(u.role==="merchant" && u.approved !== true) || u.requestMerchant ? 
 `<button class="approve" onclick="approveUser('${u.id}')">Valider</button>` : ""}
 
 <button class="delete" onclick="deleteUser('${u.id}')">Supprimer</button>
@@ -284,10 +155,19 @@ ${u.role==="merchant" && !u.approved ?
 `
 }
 
-window.setFilter = function(f){ currentFilter=f; renderUsers() }
+window.setFilter = function(f){
+currentFilter=f
+renderUsers()
+}
 
+/* 🔥 APPROVE FIX */
 window.approveUser = async (id)=>{
-await updateDoc(doc(db,"users",id),{approved:true})
+await updateDoc(doc(db,"users",id),{
+role: "merchant",
+approved: true,
+requestMerchant: false
+})
+alert("✅ Utilisateur validé")
 loadUsers()
 }
 
@@ -295,44 +175,6 @@ window.deleteUser = async (id)=>{
 if(!confirm("Supprimer ?")) return
 await deleteDoc(doc(db,"users",id))
 loadUsers()
-}
-
-/* ORDERS */
-async function loadOrders(){
-const container = document.getElementById("content")
-container.innerHTML = "Carregando commandes..."
-
-const snap = await getDocs(collection(db,"orders"))
-
-orders=[]
-snap.forEach(d=>{
-let o=d.data()
-o.id=d.id
-orders.push(o)
-})
-
-container.innerHTML = `
-<h3>🛒 Commandes</h3>
-
-${orders.map(o=>`
-<div class="card">
-<b>${o.productName}</b><br>
-${o.qty} x ${o.price} Kz<br>
-👤 ${o.clientName}<br>
-
-<button class="delete" onclick="deleteOrder('${o.id}')">
-❌ Supprimer
-</button>
-
-</div>
-`).join("")}
-`
-}
-
-window.deleteOrder = async (id)=>{
-if(!confirm("Supprimer cette commande ?")) return
-await deleteDoc(doc(db,"orders",id))
-loadOrders()
 }
 
 </script>
