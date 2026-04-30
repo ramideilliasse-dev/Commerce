@@ -53,7 +53,6 @@ background:#1aa34a;
 color:white;
 }
 
-/* 🔥 PROMO GRID */
 .promoGrid{
 display:grid;
 grid-template-columns:repeat(2,1fr);
@@ -91,7 +90,6 @@ font-size:11px;
 border-radius:6px;
 }
 
-/* 🔥 BIG SAVE BUTTON */
 .bigSave{
 margin-top:15px;
 width:100%;
@@ -135,13 +133,8 @@ let products=[]
 let promoData=[]
 let currentFilter="all"
 
-/* 🔐 AUTH */
 onAuthStateChanged(auth, async (user)=>{
-
-if(!user){
-location.href="login.html"
-return
-}
+if(!user){ location.href="login.html"; return }
 
 const snap = await getDoc(doc(db,"users",user.uid))
 let role = snap.data()?.role
@@ -152,26 +145,19 @@ return
 }
 
 loadPromo()
-
 })
 
-/* NAV */
 window.showTab = function(e,tab){
-
 document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"))
 e.target.classList.add("active")
 
 if(tab==="promo") loadPromo()
 if(tab==="users") loadUsers()
 if(tab==="orders") loadOrders()
-
 }
 
-/* =========================
-   🎯 PROMO FIX COMPLET
-========================= */
+/* PROMO */
 async function loadPromo(){
-
 const container = document.getElementById("content")
 container.innerHTML = "Carregando banner..."
 
@@ -188,11 +174,9 @@ products.push(p)
 })
 
 renderPromo()
-
 }
 
 function renderPromo(){
-
 const container = document.getElementById("content")
 
 container.innerHTML = `
@@ -209,11 +193,14 @@ return `
 ${selected?`<div class="selectedBadge">✔</div>`:""}
 
 <img src="${selected?.image || p.images?.[0] || ''}">
-
 <div>${p.name}</div>
 
 <button onclick="togglePromo('${p.id}')">
 ${selected ? "Remover" : "Adicionar"}
+</button>
+
+<button class="delete" onclick="deleteProduct('${p.id}')">
+❌ Supprimer
 </button>
 
 </div>
@@ -227,17 +214,18 @@ ${selected ? "Remover" : "Adicionar"}
 `
 }
 
-/* ACTIONS PROMO */
-window.togglePromo = function(id){
-
-let index = promoData.findIndex(x=>x.id===id)
-
-if(index>-1){
-promoData.splice(index,1)
-}else{
-promoData.push({ id:id })
+/* DELETE PRODUCT 🔥 */
+window.deleteProduct = async (id)=>{
+if(!confirm("Supprimer ce produit ?")) return
+await deleteDoc(doc(db,"products",id))
+alert("✅ Produit supprimé")
+loadPromo()
 }
 
+window.togglePromo = function(id){
+let index = promoData.findIndex(x=>x.id===id)
+if(index>-1){ promoData.splice(index,1) }
+else{ promoData.push({ id:id }) }
 renderPromo()
 }
 
@@ -246,11 +234,8 @@ await setDoc(doc(db,"promoBanner","main"),{ items: promoData })
 alert("✅ Banner salvo com sucesso")
 }
 
-/* =========================
-   👤 USERS
-========================= */
+/* USERS */
 async function loadUsers(){
-
 const container = document.getElementById("content")
 container.innerHTML = "Carregando usuários..."
 
@@ -267,13 +252,11 @@ renderUsers()
 }
 
 function renderUsers(){
-
 let filtered = users
 
 if(currentFilter==="pending"){
 filtered = users.filter(u=>u.role==="merchant" && !u.approved)
 }
-
 if(currentFilter==="merchant"){
 filtered = users.filter(u=>u.role==="merchant")
 }
@@ -301,10 +284,7 @@ ${u.role==="merchant" && !u.approved ?
 `
 }
 
-window.setFilter = function(f){
-currentFilter=f
-renderUsers()
-}
+window.setFilter = function(f){ currentFilter=f; renderUsers() }
 
 window.approveUser = async (id)=>{
 await updateDoc(doc(db,"users",id),{approved:true})
@@ -317,19 +297,14 @@ await deleteDoc(doc(db,"users",id))
 loadUsers()
 }
 
-/* =========================
-   🛒 ORDERS + DELETE
-========================= */
-
+/* ORDERS */
 async function loadOrders(){
-
 const container = document.getElementById("content")
 container.innerHTML = "Carregando commandes..."
 
 const snap = await getDocs(collection(db,"orders"))
 
 orders=[]
-
 snap.forEach(d=>{
 let o=d.data()
 o.id=d.id
