@@ -83,7 +83,7 @@ Devenir marchand 🏪
 </button>
 </div>
 
-<!-- 🔥 PROVINCE (NOUVEAU) -->
+<!-- 🔥 PROVINCE -->
 <div class="card" id="provinceCard" style="display:none;">
 <label>📍 Província</label>
 
@@ -154,23 +154,31 @@ profilePic.src = data.photo || "https://via.placeholder.com/80"
 /* 🔥 MERCHANT BUTTON */
 const merchantBtn = document.getElementById("merchantBtn")
 
+/* ✅ SI DÉJÀ MARCHAND */
 if(data.role === "merchant"){
 
 merchantBtn.innerText = "Painel da loja 🏪"
 merchantBtn.onclick = ()=>location.href="merchant-dashboard.html"
 
-/* 🔥 SHOW PROVINCE */
 provinceCard.style.display = "block"
 
-/* LOAD SAVED PROVINCE */
 if(data.province){
 provinceSelect.value = data.province
 }
 
 }
-else if(data.role === "pending"){
-merchantBtn.innerText = "Em validação ⏳"
+
+/* ✅ SI DEMANDE EN ATTENTE 🔥 */
+else if(data.requestMerchant){
+merchantBtn.innerText = "⏳ Demande en attente"
 merchantBtn.disabled = true
+}
+
+/* DEFAULT */
+else{
+merchantBtn.innerText = "Devenir marchand 🏪"
+merchantBtn.disabled = false
+merchantBtn.onclick = becomeMerchant
 }
 
 })
@@ -241,9 +249,23 @@ langSelect.onchange = function(){
 applyLang(this.value)
 }
 
-/* MERCHANT */
-window.becomeMerchant = function(){
-location.href="become-merchant.html"
+/* 🔥 MERCHANT DEMANDE */
+window.becomeMerchant = async function(){
+
+if(!currentUser){
+alert("Login necessário ❌")
+return
+}
+
+await updateDoc(doc(db,"users",currentUser.uid),{
+requestMerchant: true,
+approved: false
+})
+
+alert("✅ Pedido enviado para admin")
+
+location.reload()
+
 }
 
 /* SUPPORT */
