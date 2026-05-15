@@ -149,18 +149,17 @@ whatsapp: whatsapp,
 
 createdAt: Date.now(),
 
-/* 🔥 IMPORTANT */
-role: "merchant",
-approved: true,
-requestMerchant: false,   // ✅ évite bugs admin
+/* 🔥 ADMIN VALIDATION */
+role: "client",
+approved: false,
+requestMerchant: true,
 blocked: false
 
 })
 
-alert("Conta comerciante criada com sucesso ✅")
+alert("Pedido enviado para validação ✅")
 
-location.href = "merchant-dashboard.html"
-
+location.href = "settings.html"
 }catch(e){
 
 console.error(e)
