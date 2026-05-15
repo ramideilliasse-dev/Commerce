@@ -180,7 +180,7 @@ return `
 
 ${selected?`<div class="selectedBadge">✔</div>`:""}
 
-<img src="${img}">
+<img loading="lazy" src="${img}">
 <div>${p.name || "Produto"}</div>
 
 <button onclick="togglePromo('${p.id}')">
