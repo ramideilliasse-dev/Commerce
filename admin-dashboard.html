@@ -273,16 +273,29 @@ ${u.requestMerchant && !u.approved ?
 
 window.setFilter = function(f){ currentFilter=f; renderUsers() }
 
-window.approveUser = async (id)=>{
+window.approveUser = async function(id){
+
+try{
+
 await updateDoc(doc(db,"users",id),{
-approved:true,
-role:"merchant",
-requestMerchant:false
+approved: true,
+role: "merchant",
+requestMerchant: false
 })
+
+alert("✅ Marchand validé")
+
 loadUsers()
+
+}catch(e){
+
+console.error(e)
+alert("❌ Erro ao validar")
+
 }
 
-window.deleteUser = async (id)=>{
+}
+window.deleteUser = async function(id){
 if(!confirm("Supprimer ?")) return
 await deleteDoc(doc(db,"users",id))
 loadUsers()
