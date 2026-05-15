@@ -211,7 +211,7 @@ const p = docSnap.data()
 
 html += `
 <div class="card" onclick="openProduct('${docSnap.id}')">
-<img src="${p.images?.[0] || ''}">
+<img loading="lazy" src="${p.images?.[0] || ''}">
 <div class="name">${p.name}</div>
 <div class="price">${p.price} Kz</div>
 </div>
