@@ -8,39 +8,126 @@
 <title>Adicionar Produto</title>
 
 <style>
-body{font-family:Arial;margin:0;background:#f4f4f4;}
-.header{
-background:#ff6a00;color:white;padding:18px;
-font-size:20px;font-weight:bold;text-align:center;position:relative;
+body{
+font-family:Arial;
+margin:0;
+background:#f4f4f4;
 }
+
+.header{
+background:#ff6a00;
+color:white;
+padding:18px;
+font-size:20px;
+font-weight:bold;
+text-align:center;
+position:relative;
+}
+
 .backBtn{
-position:absolute;left:10px;top:15px;background:white;
-color:#ff6a00;border:none;padding:6px 12px;border-radius:20px;
+position:absolute;
+left:10px;
+top:15px;
+background:white;
+color:#ff6a00;
+border:none;
+padding:6px 12px;
+border-radius:20px;
 cursor:pointer;
 }
-.container{max-width:600px;margin:auto;padding:20px;}
+
+.container{
+max-width:600px;
+margin:auto;
+padding:20px;
+}
+
 .card{
-background:white;padding:20px;border-radius:12px;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);margin-bottom:15px;
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+margin-bottom:15px;
 }
+
 input,textarea,select{
-width:100%;padding:12px;border-radius:8px;
-border:1px solid #ddd;margin-bottom:12px;
+width:100%;
+padding:12px;
+border-radius:8px;
+border:1px solid #ddd;
+margin-bottom:12px;
+font-size:15px;
+box-sizing:border-box;
 }
+
+textarea{
+min-height:120px;
+resize:vertical;
+}
+
 button{
-width:100%;padding:14px;background:#ff6a00;
-color:white;border:none;font-size:18px;border-radius:10px;
+width:100%;
+padding:14px;
+background:#ff6a00;
+color:white;
+border:none;
+font-size:18px;
+border-radius:10px;
+cursor:pointer;
 }
-.preview{display:flex;gap:10px;flex-wrap:wrap;}
+
+.preview{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
 .preview img{
-width:90px;height:90px;object-fit:cover;border-radius:8px;
+width:90px;
+height:90px;
+object-fit:cover;
+border-radius:8px;
+border:2px solid #eee;
 }
+
 .progressBox{
-display:none;margin-top:15px;background:#eee;
-border-radius:20px;overflow:hidden;height:12px;
+display:none;
+margin-top:15px;
+background:#eee;
+border-radius:20px;
+overflow:hidden;
+height:12px;
 }
-.progressBar{height:100%;width:0%;background:#1aa34a;}
-.loadingText{text-align:center;font-size:13px;margin-top:8px;}
+
+.progressBar{
+height:100%;
+width:0%;
+background:#1aa34a;
+transition:0.3s;
+}
+
+.loadingText{
+text-align:center;
+font-size:13px;
+margin-top:8px;
+}
+
+.infoBox{
+background:#fff3cd;
+padding:10px;
+border-radius:10px;
+font-size:13px;
+margin-bottom:15px;
+color:#444;
+}
+
+.counter{
+font-size:12px;
+color:#666;
+text-align:right;
+margin-top:-8px;
+margin-bottom:10px;
+}
 </style>
 
 </head>
@@ -54,23 +141,63 @@ Publicar produto
 
 <div class="container">
 
+<div class="infoBox">
+📌 Produtos claros e com boas imagens vendem mais rápido.
+</div>
+
 <div class="card">
+
 <input id="nameInput" placeholder="Nome do produto">
+
 <input id="priceInput" type="number" placeholder="Preço">
-<textarea id="descriptionInput" placeholder="Descrição"></textarea>
+
+<select id="provinceInput">
+<option value="">Selecionar província</option>
+<option>Luanda</option>
+<option>Benguela</option>
+<option>Huambo</option>
+<option>Huíla</option>
+<option>Bié</option>
+<option>Malanje</option>
+<option>Uíge</option>
+<option>Cabinda</option>
+<option>Zaire</option>
+<option>Namibe</option>
+<option>Cunene</option>
+<option>Cuando Cubango</option>
+<option>Moxico</option>
+<option>Lunda Norte</option>
+<option>Lunda Sul</option>
+<option>Kwanza Norte</option>
+<option>Kwanza Sul</option>
+<option>Bengo</option>
+</select>
+
+<textarea id="descriptionInput" placeholder="Descrição completa do produto"></textarea>
+
+<div class="counter">
+<span id="descCount">0</span>/1000
+</div>
+
 </div>
 
 <div class="card">
+
 <input type="file" id="images" multiple accept="image/*">
+
 <div id="imagePreview" class="preview"></div>
+
 </div>
 
-<button id="publishBtn">Publicar</button>
+<button id="publishBtn">
+Publicar
+</button>
 
 <div id="progressBox" class="progressBox">
 <div id="progressBar" class="progressBar"></div>
 </div>
-<div id="loadingText"></div>
+
+<div id="loadingText" class="loadingText"></div>
 
 </div>
 
@@ -83,9 +210,9 @@ Publicar produto
 
 /* CONFIG */
 const firebaseConfig = {
-  apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
-  authDomain: "angcomerce-v1.firebaseapp.com",
-  projectId: "angcomerce-v1"
+apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
+authDomain: "angcomerce-v1.firebaseapp.com",
+projectId: "angcomerce-v1"
 };
 
 firebase.initializeApp(firebaseConfig)
@@ -100,43 +227,114 @@ const progressBox = document.getElementById("progressBox")
 const progressBar = document.getElementById("progressBar")
 const loadingText = document.getElementById("loadingText")
 const publishBtn = document.getElementById("publishBtn")
+const descInput = document.getElementById("descriptionInput")
+const descCount = document.getElementById("descCount")
 
 let imageFiles = []
 
-/* LOGIN AUTO TEST */
-auth.signInAnonymously()
+/* 🔥 AUTH PERSIST */
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+
+/* 🔥 DESCRIPTION COUNT */
+descInput.addEventListener("input",()=>{
+descCount.innerText = descInput.value.length
+})
 
 /* IMAGE PREVIEW */
 imageInput.onchange = function(){
+
 imageFiles = [...this.files]
+
 preview.innerHTML=""
 
-imageFiles.forEach(file=>{
-preview.innerHTML += `<img src="${URL.createObjectURL(file)}">`
-})
+/* 🔥 LIMIT */
+if(imageFiles.length > 6){
+
+alert("Máximo 6 imagens ❌")
+
+imageFiles = imageFiles.slice(0,6)
+
 }
 
-/* UPLOAD */
+imageFiles.forEach(file=>{
+
+preview.innerHTML += `
+<img loading="lazy" src="${URL.createObjectURL(file)}">
+`
+
+})
+
+}
+
+/* 🔥 COMPRESS IMAGE */
+function compressImage(file){
+
+return new Promise((resolve)=>{
+
+const reader = new FileReader()
+
+reader.readAsDataURL(file)
+
+reader.onload = function(event){
+
+const img = new Image()
+
+img.src = event.target.result
+
+img.onload = function(){
+
+const canvas = document.createElement("canvas")
+
+const maxWidth = 900
+const scale = maxWidth / img.width
+
+canvas.width = maxWidth
+canvas.height = img.height * scale
+
+const ctx = canvas.getContext("2d")
+
+ctx.drawImage(img,0,0,canvas.width,canvas.height)
+
+canvas.toBlob((blob)=>{
+
+resolve(blob)
+
+},"image/jpeg",0.7)
+
+}
+
+}
+
+})
+
+}
+
+/* UPLOAD CLOUDINARY */
 async function upload(file){
 
+let compressed = await compressImage(file)
+
 let form = new FormData()
-form.append("file", file)
+
+form.append("file", compressed)
+
 form.append("upload_preset","angcomerce-upload")
 
-let res = await fetch("https://api.cloudinary.com/v1_1/dy9qnhimc/image/upload",{
+let res = await fetch(
+"https://api.cloudinary.com/v1_1/dy9qnhimc/image/upload",
+{
 method:"POST",
 body:form
 })
 
 let data = await res.json()
 
-console.log("UPLOAD RESULT:", data)
-
 if(!data.secure_url){
 throw new Error("Upload falhou")
 }
 
 return data.secure_url
+
 }
 
 /* PUBLISH */
@@ -144,81 +342,187 @@ publishBtn.onclick = async function(){
 
 try{
 
+publishBtn.disabled = true
+publishBtn.innerText = "Publicando..."
+
 let user = auth.currentUser
 
 if(!user){
+
 alert("Login necessário ❌")
+
+publishBtn.disabled = false
+publishBtn.innerText = "Publicar"
+
 return
+
 }
 
-let name = nameInput.value.trim()
-let price = priceInput.value
+let name = document.getElementById("nameInput").value.trim()
 
-if(!name || !price){
-alert("Preencha dados ❌")
+let price = document.getElementById("priceInput").value
+
+let description = document.getElementById("descriptionInput").value.trim()
+
+let province = document.getElementById("provinceInput").value
+
+/* VALIDATION */
+if(!name || !price || !description || !province){
+
+alert("Preencha todos os campos ❌")
+
+publishBtn.disabled = false
+publishBtn.innerText = "Publicar"
+
 return
+
+}
+
+if(Number(price) <= 0){
+
+alert("Preço inválido ❌")
+
+publishBtn.disabled = false
+publishBtn.innerText = "Publicar"
+
+return
+
 }
 
 if(imageFiles.length === 0){
+
 alert("Adicione imagem ❌")
+
+publishBtn.disabled = false
+publishBtn.innerText = "Publicar"
+
 return
+
 }
 
-/* 🔥 CHECK USER ROLE */
+/* USER */
 let snap = await db.collection("users").doc(user.uid).get()
+
 let data = snap.data()
 
 if(!data){
-alert("User não existe no Firestore ❌")
+
+alert("User não existe ❌")
+
+publishBtn.disabled = false
+publishBtn.innerText = "Publicar"
+
 return
+
 }
 
-if(data.role !== "merchant"){
-alert("Não é vendedor ❌")
+/* SECURITY */
+if(data.role !== "merchant" || !data.approved){
+
+alert("Conta comerciante não validada ❌")
+
+publishBtn.disabled = false
+publishBtn.innerText = "Publicar"
+
 return
+
 }
 
 /* PROGRESS */
 progressBox.style.display="block"
-progressBar.style.width="20%"
-loadingText.innerText="Upload..."
+
+progressBar.style.width="10%"
+
+loadingText.innerText="Preparando imagens..."
 
 let urls=[]
 
+let progress = 20
+
 for(let file of imageFiles){
+
 let url = await upload(file)
+
 urls.push(url)
+
+progress += 10
+
+if(progress > 90){
+progress = 90
+}
+
+progressBar.style.width = progress + "%"
+
+loadingText.innerText = "Upload imagens..."
+
 }
 
 /* SAVE */
-progressBar.style.width="90%"
-loadingText.innerText="Salvando..."
+progressBar.style.width="95%"
+
+loadingText.innerText="Salvando produto..."
 
 await db.collection("products").add({
-name,
+
+name:name,
+
 price:Number(price),
-description:descriptionInput.value,
+
+description:description,
+
+province:province,
+
 images:urls,
+
 merchantId:user.uid,
+
 shopName:data.shopName || "Loja",
+
+merchantWhatsapp:data.whatsapp || "",
+
+merchantDescription:data.shopDescription || "",
+
 created:Date.now()
+
 })
 
 progressBar.style.width="100%"
-loadingText.innerText="Finalizado ✔"
+
+loadingText.innerText="Produto publicado ✔"
+
+/* RESET */
+document.getElementById("nameInput").value=""
+document.getElementById("priceInput").value=""
+document.getElementById("descriptionInput").value=""
+document.getElementById("provinceInput").value=""
+
+preview.innerHTML=""
+
+imageFiles=[]
+
+descCount.innerText="0"
 
 alert("Produto publicado ✔")
 
+publishBtn.disabled = false
+publishBtn.innerText = "Publicar"
+
 }catch(e){
+
 console.error(e)
+
 alert("Erro ao publicar ❌\n" + e.message)
+
+publishBtn.disabled = false
+publishBtn.innerText = "Publicar"
+
 }
 
 }
 
 /* BACK */
 function goBack(){
-location.href="merchant-shop.html"
+location.href="merchant-dashboard.html"
 }
 
 </script>
