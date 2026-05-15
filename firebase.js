@@ -8,7 +8,8 @@ onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 import {
-getFirestore,
+initializeFirestore,
+persistentLocalCache,
 doc,
 setDoc,
 getDoc
@@ -28,7 +29,11 @@ appId: "1:238735890157:web:db3f87960db7916d7fdee4"
 const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+
+/* 🔥 FIRESTORE OPTIMISÉ + CACHE LOCAL */
+export const db = initializeFirestore(app,{
+localCache: persistentLocalCache({})
+});
 
 /* 🔥 FIX CRITIQUE (SAFE PERSISTENCE) */
 setPersistence(auth, browserLocalPersistence)
@@ -53,16 +58,30 @@ console.log("🔥 Auth ready:", user?.uid);
 /* AUTO CREATE USER */
 if(!user) return;
 
+try{
+
 const ref = doc(db,"users",user.uid);
 const snap = await getDoc(ref);
 
 if(!snap.exists()){
+
 await setDoc(ref,{
 email:user.email || "",
 role:"client",
-created:Date.now()
+created:Date.now(),
+approved:false,
+blocked:false,
+requestMerchant:false
 });
+
 console.log("👤 User créé");
+
+}
+
+}catch(e){
+
+console.error("❌ Erro Firestore:", e);
+
 }
 
 });
