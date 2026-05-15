@@ -328,7 +328,7 @@ if(d.id!==productId){
 let p=d.data()
 html+=`
 <div class="smallCard" onclick="openProduct('${d.id}')">
-<img src="${p.images?.[0] || ''}">
+<img loading="lazy" src="${p.images?.[0] || ''}">
 <div>${p.name}</div>
 <div>${p.price} Kz</div>
 </div>`
