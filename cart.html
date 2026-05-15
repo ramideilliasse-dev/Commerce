@@ -6,7 +6,11 @@
 <title>Carrinho</title>
 
 <style>
-body{font-family:Arial;background:#f4f4f4;margin:0;}
+body{
+font-family:Arial;
+background:#f4f4f4;
+margin:0;
+}
 
 .header{
 background:#ff6a00;
@@ -15,6 +19,9 @@ padding:15px;
 text-align:center;
 font-size:20px;
 font-weight:bold;
+position:sticky;
+top:0;
+z-index:100;
 }
 
 .item{
@@ -36,7 +43,9 @@ object-fit:cover;
 background:#eee;
 }
 
-.info{flex:1;}
+.info{
+flex:1;
+}
 
 .qty{
 display:flex;
@@ -50,6 +59,11 @@ padding:5px 10px;
 border:none;
 border-radius:5px;
 cursor:pointer;
+}
+
+.qty button{
+background:#f1f1f1;
+font-weight:bold;
 }
 
 .remove{
@@ -72,6 +86,7 @@ margin:10px;
 border-radius:10px;
 cursor:pointer;
 font-size:18px;
+transition:0.2s;
 }
 
 .checkout.disabled{
@@ -95,13 +110,25 @@ padding:30px;
 color:#777;
 font-size:16px;
 }
+
+.badge{
+background:#ff6a00;
+color:white;
+padding:2px 8px;
+border-radius:20px;
+font-size:12px;
+margin-left:5px;
+}
 </style>
 
 </head>
 
 <body>
 
-<div class="header">Meu Carrinho 🛒</div>
+<div class="header">
+Meu Carrinho 🛒
+<span id="cartBadge" class="badge">0</span>
+</div>
 
 <div id="cartList"></div>
 
@@ -117,22 +144,51 @@ Finalizar pedido
 
 <script>
 
+/* 🔥 SAFE CART */
+function getCart(){
+try{
+return JSON.parse(localStorage.getItem("cart") || "[]")
+}catch(e){
+console.error("Erro cart:",e)
+return []
+}
+}
+
+/* 🔥 SAVE CART */
+function saveCart(cart){
+localStorage.setItem("cart",JSON.stringify(cart))
+window.dispatchEvent(new Event("storage"))
+}
+
+/* 🔥 UPDATE BADGE */
+function updateBadge(){
+let cart = getCart()
+
+let totalQty = cart.reduce((a,b)=>{
+return a + (b.qty || 1)
+},0)
+
+document.getElementById("cartBadge").innerText = totalQty
+}
+
 /* LOAD CART */
 function loadCart(){
 
-let cart = JSON.parse(localStorage.getItem("cart") || "[]")
-
-console.log("CART RAW:", cart) // 🔥 DEBUG
+let cart = getCart()
 
 let html=""
 let total=0
 
 const checkoutBtn = document.getElementById("checkoutBtn")
 
+updateBadge()
+
 if(cart.length === 0){
 
 document.getElementById("cartList").innerHTML = `
-<div class="empty">Seu carrinho está vazio 😢</div>
+<div class="empty">
+Seu carrinho está vazio 😢
+</div>
 `
 
 document.getElementById("total").innerText=""
@@ -144,39 +200,66 @@ checkoutBtn.classList.remove("disabled")
 
 cart.forEach((item,index)=>{
 
-if(!item.qty){ item.qty = 1 }
+if(!item.qty){
+item.qty = 1
+}
 
 let price = Number(item.price) || 0
+
 let image = item.image || "https://via.placeholder.com/80"
 
 total += price * item.qty
 
 html += `
 <div class="item">
-<img src="${image}">
+
+<img loading="lazy" src="${image}">
+
 <div class="info">
-<div><b>${item.name || "Produto"}</b></div>
-<div>${price} Kz</div>
+
+<div>
+<b>${item.name || "Produto"}</b>
+</div>
+
+<div>
+${price} Kz
+</div>
+
 <div class="qty">
-<button onclick="changeQty(${index},-1)">-</button>
+
+<button onclick="changeQty(${index},-1)">
+-
+</button>
+
 <div>${item.qty}</div>
-<button onclick="changeQty(${index},1)">+</button>
-<button class="remove" onclick="removeItem(${index})">🗑️</button>
+
+<button onclick="changeQty(${index},1)">
++
+</button>
+
+<button class="remove" onclick="removeItem(${index})">
+🗑️
+</button>
+
 </div>
+
 </div>
+
 </div>
 `
 })
 
 document.getElementById("cartList").innerHTML = html
-document.getElementById("total").innerText = "Total: " + total + " Kz"
+
+document.getElementById("total").innerText =
+"Total: " + total + " Kz"
 
 }
 
 /* CHANGE QTY */
 function changeQty(index,delta){
 
-let cart = JSON.parse(localStorage.getItem("cart") || "[]")
+let cart = getCart()
 
 cart[index].qty = (cart[index].qty || 1) + delta
 
@@ -184,7 +267,8 @@ if(cart[index].qty <= 0){
 cart.splice(index,1)
 }
 
-localStorage.setItem("cart",JSON.stringify(cart))
+saveCart(cart)
+
 loadCart()
 
 }
@@ -192,11 +276,12 @@ loadCart()
 /* REMOVE ITEM */
 function removeItem(index){
 
-let cart = JSON.parse(localStorage.getItem("cart") || "[]")
+let cart = getCart()
 
 cart.splice(index,1)
 
-localStorage.setItem("cart",JSON.stringify(cart))
+saveCart(cart)
+
 loadCart()
 
 }
@@ -207,51 +292,65 @@ function clearCart(){
 if(!confirm("Limpar carrinho?")) return
 
 localStorage.removeItem("cart")
+
 loadCart()
 
 }
 
-/* GO CHECKOUT (🔥 FIX IMPORTANT) */
+/* GO CHECKOUT */
 function goCheckout(){
 
-let cart = JSON.parse(localStorage.getItem("cart") || "[]")
+let cart = getCart()
 
 if(cart.length === 0){
+
 alert("Carrinho vazio ❌")
+
 return
 }
 
-/* 🔥 VALIDATION */
+/* VALIDATION */
 let invalid = cart.filter(item => !item.merchantId)
 
 if(invalid.length > 0){
 
 console.error("Produtos inválidos:", invalid)
 
-alert("Erro: alguns produtos não têm vendedor ❌\nRecarregue a página")
+alert("Erro: alguns produtos não têm vendedor ❌")
 
 return
 }
 
-/* NORMALISER PRO */
+/* NORMALIZE */
 let checkoutCart = cart.map(item => ({
 
 id: item.id || "",
+
 name: item.name || "Produto",
+
 price: Number(item.price) || 0,
+
 qty: item.qty || 1,
+
 image: item.image || "",
-merchantId: String(item.merchantId) // 🔥 FORCE STRING
+
+merchantId: String(item.merchantId)
 
 }))
 
-console.log("CHECKOUT CART:", checkoutCart) // 🔥 DEBUG
-
-localStorage.setItem("checkoutCart", JSON.stringify(checkoutCart))
+localStorage.setItem(
+"checkoutCart",
+JSON.stringify(checkoutCart)
+)
 
 location.href = "checkout.html"
 
 }
+
+/* 🔥 AUTO SYNC */
+window.addEventListener("storage",()=>{
+loadCart()
+})
 
 loadCart()
 
