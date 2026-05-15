@@ -195,9 +195,14 @@ padding:8px;
 
 import { db, auth } from "./firebase.js"
 import {
-collection,getDocs,doc,getDoc,query,where
+collection,
+getDocs,
+doc,
+getDoc,
+query,
+where,
+limit
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
@@ -268,7 +273,12 @@ accountButton.onclick=()=>location.href="settings.html"
 
 async function loadProducts(){
 
-const productSnap = await getDocs(collection(db,"products"))
+const qProducts = query(
+collection(db,"products"),
+limit(20)
+)
+
+const productSnap = await getDocs(qProducts)
 const userSnap = await getDocs(collection(db,"users"))
 
 let usersMap={}
@@ -309,7 +319,7 @@ let img=p.images?.[0]||"https://via.placeholder.com/400"
 
 html+=`
 <div class="slide ${index===0?'active':''}">
-<img src="${img}">
+<img loading="lazy" src="${img}">
 <div class="overlay">
 <div>${p.name}</div>
 <div>${p.price} Kz</div>
