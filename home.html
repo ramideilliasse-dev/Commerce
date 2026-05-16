@@ -221,6 +221,11 @@ min-width:18px;
 <span>Categorias</span>
 </div>
 
+<div id="shopNav" class="navItem" style="display:none">
+🏪<br>
+<span>Minha Loja</span>
+</div>
+
 <div class="navItem cartNav" onclick="location.href='cart.html'">
 🛒<br>
 <span>Carrinho</span>
@@ -250,7 +255,7 @@ import { onAuthStateChanged }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 const adminBtn = document.getElementById("adminBtn")
-const accountButton = document.getElementById("accountButton")
+const shopNav = document.getElementById("shopNav")
 const banner = document.getElementById("banner")
 
 let products=[]
@@ -304,20 +309,13 @@ adminBtn.onclick=()=>location.href="admin-dashboard.html"
 }
 
 if(role==="merchant"){
-const q=query(collection(db,"orders"),
-where("merchantId","==",user.uid),
-where("seen","==",false))
 
-const ordersSnap=await getDocs(q)
-let count=ordersSnap.size
+shopNav.style.display = "block"
 
-accountButton.innerText = count>0 ? `Minha Loja (${count})` : "Minha Loja"
-accountButton.onclick=()=>location.href="merchant-dashboard.html"
-return
+shopNav.onclick = ()=>{
+location.href = "merchant-dashboard.html"
 }
 
-accountButton.innerText="Conta"
-accountButton.onclick=()=>location.href="settings.html"
 
 })
 
