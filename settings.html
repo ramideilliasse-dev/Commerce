@@ -261,16 +261,16 @@ const file = this.files[0]
 const reader = new FileReader()
 
 reader.onload = async function(){
+
 const base64 = reader.result
+
+/* PREVIEW LOCAL SEULEMENT */
 profilePic.src = base64
 
-await updateDoc(doc(db,"users",currentUser.uid),{
-photo: base64
-})
+/* TEMPORAIREMENT PAS SAVE FIRESTORE */
+alert("Foto carregada ✅")
 
-alert("Foto salva ✅")
 }
-
 reader.readAsDataURL(file)
 
 }
