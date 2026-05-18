@@ -333,7 +333,10 @@ if(!data.secure_url){
 throw new Error("Upload falhou")
 }
 
-return data.secure_url
+return data.secure_url.replace(
+"/upload/",
+"/upload/w_600,q_auto,f_auto/"
+)
 
 }
 
