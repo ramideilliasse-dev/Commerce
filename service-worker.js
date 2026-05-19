@@ -1,44 +1,76 @@
- const CACHE_NAME = "toma-v1"
+ const CACHE_NAME = "toma-cache-v2";
 
 const urlsToCache = [
-
 "/",
 "/index.html",
 "/offline.html",
-"/styles.css",
-"/firebase.js",
 "/manifest.json"
+];
 
-]
-
-self.addEventListener("install",event=>{
+self.addEventListener("install", event => {
 
 event.waitUntil(
 
 caches.open(CACHE_NAME)
-.then(cache=>cache.addAll(urlsToCache))
+.then(cache => cache.addAll(urlsToCache))
 
-)
+);
+
+self.skipWaiting();
+
+});
+
+self.addEventListener("activate", event => {
+
+event.waitUntil(
+
+caches.keys().then(keys => {
+
+return Promise.all(
+
+keys.map(key => {
+
+if(key !== CACHE_NAME){
+return caches.delete(key);
+}
 
 })
 
-self.addEventListener("fetch",event=>{
+);
+
+})
+
+);
+
+self.clients.claim();
+
+});
+
+self.addEventListener("fetch", event => {
 
 event.respondWith(
 
 fetch(event.request)
 
-.catch(()=>{
+.then(response => {
 
-return caches.match(event.request)
-.then(response=>{
+const clone = response.clone();
 
-return response || caches.match("/offline.html")
+caches.open(CACHE_NAME)
+.then(cache => cache.put(event.request, clone));
+
+return response;
+
+})
+
+.catch(async () => {
+
+const cached = await caches.match(event.request);
+
+return cached || caches.match("/offline.html");
 
 })
 
-})
+);
 
-)
-
-})
+});
