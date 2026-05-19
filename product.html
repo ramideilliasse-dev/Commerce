@@ -6,106 +6,219 @@
 <title>Produto</title>
 
 <style>
+
 body{
 margin:0;
 font-family:Arial;
-background:#f9f9ff;
+background:#f5f5f5;
 color:#222;
+overflow-x:hidden;
 }
 
+/* HEADER */
 .header{
-background:#fff;
+background:#ff6a00;
+color:white;
 padding:15px;
 text-align:center;
 font-size:18px;
 font-weight:bold;
-box-shadow:0 2px 8px rgba(0,0,0,0.05);
+position:sticky;
+top:0;
+z-index:100;
 }
 
-.container{padding:10px;}
+/* CONTAINER */
+.container{
+padding:10px;
+padding-bottom:90px;
+}
 
+/* CARD */
 .card{
 background:white;
-border-radius:15px;
+border-radius:18px;
 overflow:hidden;
-box-shadow:0 4px 12px rgba(0,0,0,0.08);
+box-shadow:0 4px 14px rgba(0,0,0,0.08);
 }
 
-.imageContainer{
-width:100%;
-height:300px;
+/* IMAGE VIEWER */
+.viewer{
+position:relative;
+background:black;
+height:420px;
 overflow:hidden;
 }
 
-.mainImage{
+.slider{
+display:flex;
+height:100%;
+transition:transform .3s ease;
+}
+
+.slide{
+min-width:100%;
+height:100%;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+}
+
+.slide img{
 width:100%;
 height:100%;
-object-fit:cover;
+object-fit:contain;
+transition:transform .2s ease;
 }
 
+/* CLOSE */
+.closeZoom{
+position:absolute;
+top:15px;
+left:15px;
+width:38px;
+height:38px;
+border-radius:50%;
+background:rgba(0,0,0,0.5);
+color:white;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+z-index:10;
+cursor:pointer;
+}
+
+/* COUNT */
+.counter{
+position:absolute;
+top:15px;
+right:15px;
+background:rgba(0,0,0,0.5);
+color:white;
+padding:6px 12px;
+border-radius:20px;
+font-size:14px;
+font-weight:bold;
+z-index:10;
+}
+
+/* DOTS */
+.dots{
+position:absolute;
+bottom:15px;
+left:50%;
+transform:translateX(-50%);
+display:flex;
+gap:8px;
+z-index:10;
+}
+
+.dot{
+width:8px;
+height:8px;
+border-radius:50%;
+background:#777;
+}
+
+.dot.active{
+width:22px;
+border-radius:10px;
+background:white;
+}
+
+/* GALLERY */
 .gallery{
 display:flex;
 gap:8px;
 padding:10px;
 overflow-x:auto;
+background:white;
 }
 
 .gallery img{
 width:70px;
 height:70px;
 border-radius:10px;
-opacity:0.6;
+object-fit:cover;
+opacity:.5;
 cursor:pointer;
+border:2px solid transparent;
 }
 
 .gallery img.active{
-border:2px solid #ff6a00;
 opacity:1;
+border:2px solid #ff6a00;
 }
 
-.info{padding:15px;}
+/* INFO */
+.info{
+padding:15px;
+}
 
-.name{font-size:20px;font-weight:bold;}
-
-.price{
-color:#ff6a00;
+.name{
 font-size:22px;
 font-weight:bold;
+}
+
+.price{
+font-size:24px;
+font-weight:bold;
+color:#ff6a00;
 margin-top:5px;
 }
 
 .rating{
-margin-top:6px;
-font-size:14px;
+margin-top:5px;
 color:#f59e0b;
+font-size:14px;
 }
 
 .desc{
 margin-top:10px;
 font-size:14px;
+line-height:1.5;
 color:#555;
 }
 
+/* ACTIONS */
 .actions{
 display:flex;
 gap:10px;
-margin-top:15px;
+margin-top:18px;
 }
 
 .btn{
 flex:1;
-padding:12px;
+padding:14px;
 border:none;
-border-radius:10px;
-cursor:pointer;
+border-radius:12px;
 font-weight:bold;
+font-size:15px;
+cursor:pointer;
 }
 
-.buyBtn{background:#1aa34a;color:white;}
-.shopBtn{background:#111;color:white;}
+.buyBtn{
+background:#1aa34a;
+color:white;
+}
 
-.section{padding:10px;}
+.shopBtn{
+background:#111;
+color:white;
+}
 
+/* SECTION */
+.section{
+padding:10px;
+}
+
+.section h3{
+margin-bottom:10px;
+}
+
+/* GRID */
 .grid{
 display:flex;
 gap:10px;
@@ -115,280 +228,605 @@ overflow-x:auto;
 .smallCard{
 min-width:140px;
 background:white;
-border-radius:12px;
+border-radius:14px;
 padding:8px;
-box-shadow:0 2px 8px rgba(0,0,0,0.08);
+box-shadow:0 2px 10px rgba(0,0,0,0.08);
 cursor:pointer;
 }
 
 .smallCard img{
 width:100%;
-height:100px;
+height:110px;
 object-fit:cover;
 border-radius:10px;
 }
 
-.review{
-background:white;
-padding:10px;
-border-radius:10px;
-margin-bottom:8px;
-box-shadow:0 2px 6px rgba(0,0,0,0.05);
+.smallCard div{
+margin-top:4px;
+font-size:13px;
 }
 
-.reviewName{font-weight:bold;font-size:13px;}
-.reviewStars{color:#f59e0b;font-size:13px;}
-.reviewText{font-size:13px;color:#555;margin-top:4px;}
+/* REVIEW */
+.review{
+background:white;
+padding:12px;
+border-radius:12px;
+margin-bottom:10px;
+box-shadow:0 2px 8px rgba(0,0,0,0.06);
+}
+
+.reviewName{
+font-weight:bold;
+font-size:14px;
+}
+
+.reviewStars{
+color:#f59e0b;
+font-size:13px;
+margin-top:3px;
+}
+
+.reviewText{
+margin-top:5px;
+font-size:13px;
+color:#555;
+}
+
+/* TOAST */
+#toastBox{
+position:fixed;
+top:15px;
+left:50%;
+transform:translateX(-50%);
+z-index:99999;
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.toast{
+min-width:220px;
+max-width:90vw;
+padding:14px 16px;
+border-radius:14px;
+font-size:14px;
+font-weight:bold;
+color:white;
+animation:showToast .25s ease;
+box-shadow:0 4px 15px rgba(0,0,0,0.2);
+}
+
+.success{
+background:#1aa34a;
+}
+
+.error{
+background:#e53935;
+}
+
+@keyframes showToast{
+from{
+opacity:0;
+transform:translateY(-20px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="header">Produto</div>
+<div id="toastBox"></div>
+
+<div class="header">
+Produto
+</div>
 
 <div class="container">
 
 <div class="card">
 
-<div class="imageContainer" id="imageContainer">
-<img id="mainImage" class="mainImage" src="">
+<!-- VIEWER -->
+<div class="viewer" id="viewer">
+
+<div class="closeZoom" onclick="history.back()">✕</div>
+
+<div class="counter">
+<span id="counter">1 / 1</span>
 </div>
 
+<div class="slider" id="slider"></div>
+
+<div class="dots" id="dots"></div>
+
+</div>
+
+<!-- GALLERY -->
 <div id="gallery" class="gallery"></div>
 
+<!-- INFO -->
 <div class="info">
+
 <div id="name" class="name"></div>
+
 <div id="price" class="price"></div>
+
 <div id="rating" class="rating"></div>
+
 <div id="desc" class="desc"></div>
 
 <div class="actions">
-<button class="btn buyBtn" onclick="buy()">Comprar</button>
-<button class="btn shopBtn" onclick="openShop()">Loja</button>
-</div>
-</div>
+
+<button class="btn buyBtn" onclick="buy()">
+🛒 Comprar
+</button>
+
+<button class="btn shopBtn" onclick="openShop()">
+🏪 Loja
+</button>
 
 </div>
 
 </div>
 
+</div>
+
+</div>
+
+<!-- SIMILAR -->
 <div class="section">
+
 <h3>Produtos similares</h3>
+
 <div id="similar" class="grid"></div>
+
 </div>
 
+<!-- OTHERS -->
 <div class="section">
+
 <h3>Outros produtos</h3>
+
 <div id="others" class="grid"></div>
+
 </div>
 
+<!-- REVIEWS -->
 <div class="section">
-<h3>💬 Avaliações dos clientes</h3>
+
+<h3>💬 Avaliações</h3>
+
 <div id="reviews"></div>
+
 </div>
 
 <script type="module">
 
 import { db } from "./firebase.js"
+
 import {
-doc,getDoc,
-collection,getDocs,query,where
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+doc,
+getDoc,
+collection,
+getDocs,
+query,
+where
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
+/* ================= TOAST ================= */
+
+function showToast(message,type="success"){
+
+const box = document.getElementById("toastBox")
+
+const toast = document.createElement("div")
+
+toast.className = "toast " + type
+
+toast.innerText = message
+
+box.appendChild(toast)
+
+setTimeout(()=>{
+toast.remove()
+},3000)
+
+}
+
+/* ================= VARIABLES ================= */
 
 const productId = localStorage.getItem("selectedProduct")
 
-let product=null
-let images=[]
-let index=0
+let product = null
+let images = []
+let currentIndex = 0
 
-// 🔥 DOM FIX (IMPORTANT)
+const slider = document.getElementById("slider")
+const gallery = document.getElementById("gallery")
+const dots = document.getElementById("dots")
+const counter = document.getElementById("counter")
+
 const nameEl = document.getElementById("name")
 const priceEl = document.getElementById("price")
 const descEl = document.getElementById("desc")
 const ratingEl = document.getElementById("rating")
-const galleryEl = document.getElementById("gallery")
-const mainImage = document.getElementById("mainImage")
-const imageContainer = document.getElementById("imageContainer")
+
 const similarEl = document.getElementById("similar")
 const othersEl = document.getElementById("others")
 const reviewsEl = document.getElementById("reviews")
 
+/* ================= LOAD ================= */
+
 async function load(){
 
 if(!productId){
-alert("Produto inválido ❌")
+
+showToast("Produto inválido","error")
 return
+
 }
 
 try{
+
 const snap = await getDoc(doc(db,"products",productId))
 
 if(!snap.exists()){
-alert("Produto não encontrado ❌")
+
+showToast("Produto não encontrado","error")
 return
+
 }
 
 product = snap.data()
+
 images = product.images || []
 
 render()
+
 loadSimilar()
 loadOthers()
 loadReviews()
 
 }catch(e){
+
 console.error(e)
-alert("Erro ao carregar produto ❌")
+
+showToast("Erro ao carregar produto","error")
+
 }
 
 }
+
 load()
+
+/* ================= RENDER ================= */
 
 function render(){
 
 nameEl.innerText = product.name || ""
+
 priceEl.innerText = (product.price || 0) + " Kz"
+
 descEl.innerText = product.description || "Sem descrição"
 
-let stars = product.rating || 0
-ratingEl.innerText = "⭐ " + stars + " / 5"
+ratingEl.innerText = "⭐ " + (product.rating || 5) + "/5"
 
-if(images.length){
-setImage(0)
-}else{
-mainImage.src = "https://via.placeholder.com/400"
+if(images.length === 0){
+
+images = ["https://via.placeholder.com/500"]
+
 }
 
-galleryEl.innerHTML = images.map((img,i)=>`
-<img src="${img}" onclick="setImage(${i})">
+renderSlider()
+renderGallery()
+updateViewer()
+
+}
+
+/* ================= SLIDER ================= */
+
+function renderSlider(){
+
+slider.innerHTML = images.map(img=>`
+<div class="slide">
+<img src="${img}">
+</div>
 `).join("")
+
+dots.innerHTML = images.map((_,i)=>`
+<div class="dot ${i===0?'active':''}"></div>
+`).join("")
+
 }
+
+/* ================= GALLERY ================= */
+
+function renderGallery(){
+
+gallery.innerHTML = images.map((img,i)=>`
+<img 
+src="${img}"
+class="${i===0?'active':''}"
+onclick="setImage(${i})"
+>
+`).join("")
+
+}
+
+/* ================= IMAGE ================= */
 
 window.setImage = function(i){
-index=i
-mainImage.src = images[i]
+
+currentIndex = i
+
+updateViewer()
+
 }
 
-let startX=0
-imageContainer.addEventListener("touchstart",e=>{
-startX = e.touches[0].clientX
+function updateViewer(){
+
+slider.style.transform = `translateX(-${currentIndex * 100}%)`
+
+counter.innerText = (currentIndex + 1) + " / " + images.length
+
+document.querySelectorAll(".dot").forEach((d,i)=>{
+d.classList.toggle("active", i===currentIndex)
 })
 
-imageContainer.addEventListener("touchend",e=>{
+document.querySelectorAll(".gallery img").forEach((g,i)=>{
+g.classList.toggle("active", i===currentIndex)
+})
+
+}
+
+/* ================= SWIPE ================= */
+
+let startX = 0
+
+slider.addEventListener("touchstart",(e)=>{
+
+startX = e.touches[0].clientX
+
+})
+
+slider.addEventListener("touchend",(e)=>{
+
 let endX = e.changedTouches[0].clientX
-if(endX < startX-50) next()
-if(endX > startX+50) prev()
+
+if(endX < startX - 50){
+
+next()
+
+}
+
+if(endX > startX + 50){
+
+prev()
+
+}
+
 })
 
 function next(){
-if(!images.length) return
-index=(index+1)%images.length
-setImage(index)
+
+currentIndex++
+
+if(currentIndex >= images.length){
+
+currentIndex = 0
+
+}
+
+updateViewer()
+
 }
 
 function prev(){
-if(!images.length) return
-index=(index-1+images.length)%images.length
-setImage(index)
+
+currentIndex--
+
+if(currentIndex < 0){
+
+currentIndex = images.length - 1
+
 }
 
-/* BUY */
+updateViewer()
+
+}
+
+/* ================= ZOOM ================= */
+
+document.querySelector("#viewer").addEventListener("dblclick",(e)=>{
+
+const img = slider.children[currentIndex].querySelector("img")
+
+if(img.style.transform === "scale(2)"){
+
+img.style.transform = "scale(1)"
+
+}else{
+
+img.style.transform = "scale(2)"
+
+}
+
+})
+
+/* ================= BUY ================= */
+
 window.buy = function(){
 
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
 
+let exist = cart.find(p=>p.id===productId)
+
+if(exist){
+
+exist.qty++
+
+}else{
+
 cart.push({
-id:productId,
-name:product.name,
-price:product.price,
-image:product.images?.[0] || "",
-qty:1
+
+id: productId,
+name: product.name,
+price: product.price,
+image: product.images?.[0] || "",
+qty: 1,
+merchantId: product.merchantId
+
 })
+
+}
 
 localStorage.setItem("cart", JSON.stringify(cart))
-location.href="checkout.html"
+
+showToast("Produto adicionado ao carrinho")
+
+setTimeout(()=>{
+location.href = "checkout.html"
+},800)
+
 }
 
-/* SHOP */
+/* ================= SHOP ================= */
+
 window.openShop = function(){
-location.href="merchant-shop.html?id="+product.merchantId
+
+location.href = "merchant-shop.html?id=" + product.merchantId
+
 }
 
-/* SIMILAR */
+/* ================= SIMILAR ================= */
+
 async function loadSimilar(){
 
-const q=query(collection(db,"products"),
-where("category","==",product.category))
+if(!product.category) return
 
-const snap=await getDocs(q)
+const q = query(
+collection(db,"products"),
+where("category","==",product.category)
+)
 
-let html=""
+const snap = await getDocs(q)
+
+let html = ""
+
 snap.forEach(d=>{
-if(d.id!==productId){
-let p=d.data()
-html+=`
+
+if(d.id !== productId){
+
+let p = d.data()
+
+html += `
 <div class="smallCard" onclick="openProduct('${d.id}')">
+
 <img loading="lazy" src="${p.images?.[0] || ''}">
+
 <div>${p.name}</div>
+
 <div>${p.price} Kz</div>
-</div>`
-}
-})
 
-similarEl.innerHTML=html
-}
-
-/* AUTRES */
-async function loadOthers(){
-
-const snap=await getDocs(collection(db,"products"))
-
-let html=""
-snap.forEach(d=>{
-if(d.id!==productId){
-let p=d.data()
-html+=`
-<div class="smallCard" onclick="openProduct('${d.id}')">
-<img src="${p.images?.[0] || ''}">
-<div>${p.name}</div>
-<div>${p.price} Kz</div>
-</div>`
-}
-})
-
-othersEl.innerHTML=html
-}
-
-/* REVIEWS */
-async function loadReviews(){
-
-const q=query(collection(db,"reviews"),
-where("productId","==",productId))
-
-const snap=await getDocs(q)
-
-let html=""
-
-snap.forEach(d=>{
-let r=d.data()
-let stars="⭐".repeat(r.rating || 5)
-
-html+=`
-<div class="review">
-<div class="reviewName">${r.userName || "Cliente"}</div>
-<div class="reviewStars">${stars}</div>
-<div class="reviewText">${r.comment || ""}</div>
 </div>
 `
+
+}
+
+})
+
+similarEl.innerHTML = html
+
+}
+
+/* ================= OTHERS ================= */
+
+async function loadOthers(){
+
+const snap = await getDocs(collection(db,"products"))
+
+let html = ""
+
+snap.forEach(d=>{
+
+if(d.id !== productId){
+
+let p = d.data()
+
+html += `
+<div class="smallCard" onclick="openProduct('${d.id}')">
+
+<img loading="lazy" src="${p.images?.[0] || ''}">
+
+<div>${p.name}</div>
+
+<div>${p.price} Kz</div>
+
+</div>
+`
+
+}
+
+})
+
+othersEl.innerHTML = html
+
+}
+
+/* ================= REVIEWS ================= */
+
+async function loadReviews(){
+
+const q = query(
+collection(db,"reviews"),
+where("productId","==",productId)
+)
+
+const snap = await getDocs(q)
+
+let html = ""
+
+snap.forEach(d=>{
+
+let r = d.data()
+
+html += `
+<div class="review">
+
+<div class="reviewName">
+${r.userName || "Cliente"}
+</div>
+
+<div class="reviewStars">
+${"⭐".repeat(r.rating || 5)}
+</div>
+
+<div class="reviewText">
+${r.comment || ""}
+</div>
+
+</div>
+`
+
 })
 
 reviewsEl.innerHTML = html || "Sem avaliações ainda"
+
 }
 
-/* OPEN */
+/* ================= OPEN PRODUCT ================= */
+
 window.openProduct = function(id){
-localStorage.setItem("selectedProduct",id)
+
+localStorage.setItem("selectedProduct", id)
+
 location.reload()
+
 }
 
 </script>
