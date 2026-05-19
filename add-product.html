@@ -128,6 +128,62 @@ text-align:right;
 margin-top:-8px;
 margin-bottom:10px;
 }
+ /* ================= TOAST MODERNE ================= */
+
+.toastBox{
+position:fixed;
+top:20px;
+left:50%;
+transform:translateX(-50%);
+z-index:999999;
+display:flex;
+flex-direction:column;
+gap:10px;
+pointer-events:none;
+}
+
+.toast{
+min-width:220px;
+max-width:320px;
+padding:14px 18px;
+border-radius:14px;
+color:white;
+font-size:14px;
+font-weight:bold;
+box-shadow:0 6px 18px rgba(0,0,0,0.2);
+animation:toastIn .3s ease, toastOut .3s ease 3.7s forwards;
+backdrop-filter:blur(10px);
+}
+
+.toast.success{
+background:linear-gradient(135deg,#1aa34a,#23c55e);
+}
+
+.toast.error{
+background:linear-gradient(135deg,#dc2626,#ef4444);
+}
+
+.toast.warning{
+background:linear-gradient(135deg,#ff6a00,#ff9f43);
+}
+
+@keyframes toastIn{
+from{
+opacity:0;
+transform:translateY(-20px) scale(.9);
+}
+to{
+opacity:1;
+transform:translateY(0) scale(1);
+}
+}
+
+@keyframes toastOut{
+to{
+opacity:0;
+transform:translateY(-20px) scale(.9);
+}
+}
 </style>
 
 </head>
@@ -372,7 +428,7 @@ let province = document.getElementById("provinceInput").value
 /* VALIDATION */
 if(!name || !price || !description || !province){
 
-alert("Preencha todos os campos ❌")
+showToast("Preencha todos os campos","warning")
 
 publishBtn.disabled = false
 publishBtn.innerText = "Publicar"
@@ -514,7 +570,7 @@ publishBtn.innerText = "Publicar"
 
 console.error(e)
 
-alert("Erro ao publicar ❌\n" + e.message)
+showToast("❌ Ocorreu um erro","error")
 
 publishBtn.disabled = false
 publishBtn.innerText = "Publicar"
@@ -527,8 +583,26 @@ publishBtn.innerText = "Publicar"
 function goBack(){
 location.href="merchant-dashboard.html"
 }
+/* ================= TOAST ================= */
 
+function showToast(message,type="success"){
+
+const box = document.getElementById("toastBox")
+
+const toast = document.createElement("div")
+
+toast.className = "toast " + type
+
+toast.innerText = message
+
+box.appendChild(toast)
+
+setTimeout(()=>{
+toast.remove()
+},4000)
+
+}
 </script>
-
+<div id="toastBox" class="toastBox"></div>
 </body>
 </html>
