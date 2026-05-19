@@ -6,6 +6,7 @@
 <title>Carrinho</title>
 
 <style>
+
 body{
 font-family:Arial;
 background:#f4f4f4;
@@ -119,7 +120,8 @@ border-radius:20px;
 font-size:12px;
 margin-left:5px;
 }
-/* ================= TOAST MODERNE ================= */
+
+/* ================= TOAST ================= */
 
 .toastBox{
 position:fixed;
@@ -175,8 +177,8 @@ opacity:0;
 transform:translateY(-20px) scale(.9);
 }
 }
-</style>
 
+</style>
 </head>
 
 <body>
@@ -198,28 +200,57 @@ Finalizar pedido
 🗑️ Limpar carrinho
 </div>
 
+<div id="toastBox" class="toastBox"></div>
+
 <script type="module">
 
 import { auth } from "./firebase.js"
 
-/* 🔥 SAFE CART */
+/* ================= TOAST ================= */
+
+function showToast(message,type="success"){
+
+const box = document.getElementById("toastBox")
+
+const toast = document.createElement("div")
+
+toast.className = "toast " + type
+
+toast.innerText = message
+
+box.appendChild(toast)
+
+setTimeout(()=>{
+toast.remove()
+},4000)
+
+}
+
+/* ================= CART ================= */
+
 function getCart(){
+
 try{
 return JSON.parse(localStorage.getItem("cart") || "[]")
 }catch(e){
+
 console.error("Erro cart:",e)
+
 return []
 }
+
 }
 
-/* 🔥 SAVE CART */
 function saveCart(cart){
+
 localStorage.setItem("cart",JSON.stringify(cart))
+
 window.dispatchEvent(new Event("storage"))
+
 }
 
-/* 🔥 UPDATE BADGE */
 function updateBadge(){
+
 let cart = getCart()
 
 let totalQty = cart.reduce((a,b)=>{
@@ -227,9 +258,11 @@ return a + (b.qty || 1)
 },0)
 
 document.getElementById("cartBadge").innerText = totalQty
+
 }
 
-/* LOAD CART */
+/* ================= LOAD CART ================= */
+
 function loadCart(){
 
 let cart = getCart()
@@ -250,8 +283,11 @@ Seu carrinho está vazio 😢
 `
 
 document.getElementById("total").innerText=""
+
 checkoutBtn.classList.add("disabled")
+
 return
+
 }
 
 checkoutBtn.classList.remove("disabled")
@@ -305,6 +341,7 @@ ${price} Kz
 
 </div>
 `
+
 })
 
 document.getElementById("cartList").innerHTML = html
@@ -314,8 +351,9 @@ document.getElementById("total").innerText =
 
 }
 
-/* CHANGE QTY */
-function changeQty(index,delta){
+/* ================= CHANGE QTY ================= */
+
+window.changeQty = function(index,delta){
 
 let cart = getCart()
 
@@ -331,8 +369,9 @@ loadCart()
 
 }
 
-/* REMOVE ITEM */
-function removeItem(index){
+/* ================= REMOVE ITEM ================= */
+
+window.removeItem = function(index){
 
 let cart = getCart()
 
@@ -342,30 +381,38 @@ saveCart(cart)
 
 loadCart()
 
+showToast("🗑️ Produto removido","warning")
+
 }
 
-/* CLEAR CART */
-function clearCart(){
+/* ================= CLEAR CART ================= */
 
-if(!confirm("Limpar carrinho?")) return
+window.clearCart = function(){
 
 localStorage.removeItem("cart")
 
 loadCart()
 
+showToast("🧹 Carrinho limpo","success")
+
 }
 
-/* GO CHECKOUT */
-function goCheckout(){
+/* ================= CHECKOUT ================= */
+
+window.goCheckout = function(){
+
 if(!auth.currentUser){
 
 showToast("🔐 Faça login primeiro","warning")
 
+setTimeout(()=>{
 location.href = "login.html"
+},1000)
 
 return
 
 }
+
 let cart = getCart()
 
 if(cart.length === 0){
@@ -373,21 +420,25 @@ if(cart.length === 0){
 showToast("⚠️ Carrinho vazio","warning")
 
 return
+
 }
 
 /* VALIDATION */
+
 let invalid = cart.filter(item => !item.merchantId)
 
 if(invalid.length > 0){
 
 console.error("Produtos inválidos:", invalid)
 
-alert("Erro: alguns produtos não têm vendedor ❌")
+showToast("⚠️ Alguns produtos estão inválidos","error")
 
 return
+
 }
 
 /* NORMALIZE */
+
 let checkoutCart = cart.map(item => ({
 
 id: item.id || "",
@@ -409,36 +460,23 @@ localStorage.setItem(
 JSON.stringify(checkoutCart)
 )
 
+showToast("✅ Redirecionando...","success")
+
+setTimeout(()=>{
 location.href = "checkout.html"
+},800)
 
 }
 
-/* 🔥 AUTO SYNC */
+/* ================= AUTO SYNC ================= */
+
 window.addEventListener("storage",()=>{
 loadCart()
 })
 
 loadCart()
-/* ================= TOAST ================= */
 
-function showToast(message,type="success"){
-
-const box = document.getElementById("toastBox")
-
-const toast = document.createElement("div")
-
-toast.className = "toast " + type
-
-toast.innerText = message
-
-box.appendChild(toast)
-
-setTimeout(()=>{
-toast.remove()
-},4000)
-
-}
 </script>
-<div id="toastBox" class="toastBox"></div>
+
 </body>
 </html>
