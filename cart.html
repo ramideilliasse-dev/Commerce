@@ -198,7 +198,9 @@ Finalizar pedido
 🗑️ Limpar carrinho
 </div>
 
-<script>
+<script type="module">
+
+import { auth } from "./firebase.js"
 
 /* 🔥 SAFE CART */
 function getCart(){
@@ -355,7 +357,15 @@ loadCart()
 
 /* GO CHECKOUT */
 function goCheckout(){
+if(!auth.currentUser){
 
+showToast("🔐 Faça login primeiro","warning")
+
+location.href = "login.html"
+
+return
+
+}
 let cart = getCart()
 
 if(cart.length === 0){
