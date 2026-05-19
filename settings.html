@@ -420,7 +420,7 @@ document.getElementById("shopDesc")
 
 if(!shopName || !whatsapp){
 
-alert("Preencha nome da loja e WhatsApp ❌")
+showToast("⚠️ Preencha loja e WhatsApp","warning")
 
 return
 
@@ -434,7 +434,7 @@ description: description
 
 })
 
-alert("Informações salvas ✅")
+showToast("✅ Informações salvas","success")
 
 }
 
@@ -443,7 +443,7 @@ window.becomeMerchant = async function(){
 
 if(!currentUser){
 
-alert("Faça login primeiro ❌")
+showToast("🔐 Faça login primeiro","warning")
 
 location.href = "login.html"
 
@@ -458,7 +458,7 @@ approved: false
 
 })
 
-alert("✅ Pedido enviado para admin")
+showToast("✅ Pedido enviado ao administrador","success")
 
 location.reload()
 
@@ -471,7 +471,7 @@ const province = provinceSelect.value
 
 if(!province){
 
-alert("Seleciona a província ❌")
+showToast("⚠️ Selecione uma província","warning")
 
 return
 
@@ -481,7 +481,7 @@ await updateDoc(doc(db,"users",currentUser.uid),{
 province: province
 })
 
-alert("Província salva ✅")
+showToast("✅ Província salva","success")
 
 }
 
@@ -504,7 +504,7 @@ await updateDoc(doc(db,"users",currentUser.uid),{
 photo: base64
 })
 
-alert("Foto salva ✅")
+showToast("✅ Foto atualizada","success")
 
 }
 
