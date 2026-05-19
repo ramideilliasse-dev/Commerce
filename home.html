@@ -522,7 +522,15 @@ location.href="product.html"
 }
 
 window.addToCart=id=>{
+if(!auth.currentUser){
 
+showToast("🔐 Faça login primeiro","warning")
+
+location.href = "login.html"
+
+return
+
+}
 let cart = getCart()
 let product=products.find(p=>p.id===id)
 
