@@ -6,7 +6,11 @@
 <title>Configurações</title>
 
 <style>
-body{font-family:Arial;margin:0;background:#f4f4f4;}
+body{
+font-family:Arial;
+margin:0;
+background:#f4f4f4;
+}
 
 .header{
 background:#ff6a00;
@@ -38,6 +42,8 @@ border-radius:50%;
 display:block;
 margin:auto;
 cursor:pointer;
+object-fit:cover;
+background:#eee;
 }
 
 select,input,textarea,button{
@@ -46,15 +52,40 @@ padding:10px;
 margin-top:10px;
 border:none;
 border-radius:8px;
+box-sizing:border-box;
 }
 
-textarea{
+input,textarea,select{
 border:1px solid #ddd;
 }
 
-.btn{background:#1aa34a;color:white;}
-.btnDanger{background:red;color:white;}
-.btnMerchant{background:#ff6a00;color:white;font-weight:bold;}
+textarea{
+min-height:100px;
+resize:none;
+}
+
+.btn{
+background:#1aa34a;
+color:white;
+}
+
+.btnDanger{
+background:red;
+color:white;
+}
+
+.btnMerchant{
+background:#ff6a00;
+color:white;
+font-weight:bold;
+}
+
+.guestTitle{
+text-align:center;
+font-size:14px;
+margin-top:15px;
+color:#555;
+}
 </style>
 </head>
 
@@ -66,47 +97,81 @@ border:1px solid #ddd;
 
 <!-- PROFILE -->
 <div class="card">
+
 <img id="profilePic" class="profile">
+
 <input type="file" id="upload" hidden>
+
+<!-- 🔥 LOGIN / REGISTER -->
+<div id="guestActions" style="display:none">
+
+<div class="guestTitle">
+Entre ou crie uma conta
+</div>
+
+<button class="btn" onclick="location.href='login.html'">
+🔐 Entrar
+</button>
+
+<button class="btnMerchant" onclick="location.href='register.html'">
+👤 Criar conta cliente
+</button>
+
+<button class="btn" onclick="location.href='merchant-register.html'">
+🏪 Criar conta comerciante
+</button>
+
+</div>
+
 </div>
 
 <!-- LANGUAGE -->
 <div class="card">
 <label id="langLabel">Idioma</label>
+
 <select id="langSelect">
 <option value="pt">Português</option>
 <option value="fr">Français</option>
 <option value="en">English</option>
 </select>
+
 </div>
 
 <!-- 🔥 MERCHANT -->
 <div class="card" id="merchantCard">
 
-<button class="btnMerchant" id="merchantBtn" onclick="becomeMerchant()">
+<button class="btnMerchant" id="merchantBtn">
 Devenir marchand 🏪
 </button>
 
-<!-- 🔥 NOUVEAUX CHAMPS -->
+<!-- FORM -->
 <div id="merchantForm" style="display:none;">
 
 <input id="shopName" placeholder="Nome da loja">
+
 <input id="whatsapp" placeholder="WhatsApp (244...)">
 
-<textarea id="shopDesc" placeholder="Descreva sua loja (produtos, qualidade, etc)"></textarea>
+<textarea id="shopDesc"
+placeholder="Descreva sua loja (produtos, qualidade, etc)">
+</textarea>
 
-<button class="btn" onclick="saveMerchantInfo()">Salvar informações</button>
+<button class="btn" onclick="saveMerchantInfo()">
+Salvar informações
+</button>
 
 </div>
 
 </div>
 
-<!-- 🔥 PROVINCE -->
+<!-- PROVINCE -->
 <div class="card" id="provinceCard" style="display:none;">
+
 <label>📍 Província</label>
 
 <select id="provinceSelect">
+
 <option value="">Selecionar província</option>
+
 <option>Luanda</option>
 <option>Benguela</option>
 <option>Huambo</option>
@@ -125,15 +190,26 @@ Devenir marchand 🏪
 <option>Kwanza Norte</option>
 <option>Kwanza Sul</option>
 <option>Bengo</option>
+
 </select>
 
-<button class="btn" onclick="saveProvince()">Salvar província</button>
+<button class="btn" onclick="saveProvince()">
+Salvar província
+</button>
+
 </div>
 
 <!-- ACTIONS -->
 <div class="card">
-<button class="btn" onclick="contactSupport()" id="helpBtn">Ajuda</button>
-<button class="btnDanger" onclick="deleteAccount()" id="deleteBtn">Apagar conta</button>
+
+<button class="btn" onclick="contactSupport()" id="helpBtn">
+Ajuda
+</button>
+
+<button class="btnDanger" onclick="deleteAccount()" id="deleteBtn">
+Apagar conta
+</button>
+
 </div>
 
 </div>
@@ -141,9 +217,19 @@ Devenir marchand 🏪
 <script type="module">
 
 import { auth, db } from "./firebase.js"
-import { doc, getDoc, updateDoc, deleteDoc } 
+
+import {
+doc,
+getDoc,
+updateDoc,
+deleteDoc
+}
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-import { deleteUser, onAuthStateChanged } 
+
+import {
+deleteUser,
+onAuthStateChanged
+}
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 const profilePic = document.getElementById("profilePic")
@@ -154,36 +240,80 @@ const merchantForm = document.getElementById("merchantForm")
 
 let currentUser = null
 
-profilePic.onclick = ()=> upload.click()
+profilePic.onclick = ()=>{
 
-/* 🔥 LOAD USER */
+if(currentUser){
+upload.click()
+}
+
+}
+
+/* LOAD USER */
 onAuthStateChanged(auth, async (user)=>{
 
-if(!user) return
+const guestActions =
+document.getElementById("guestActions")
+
+/* 🔥 USER NOT CONNECTED */
+if(!user){
+
+guestActions.style.display = "block"
+
+profilePic.src =
+"https://via.placeholder.com/80"
+
+document.getElementById("merchantCard")
+.style.display = "none"
+
+document.getElementById("provinceCard")
+.style.display = "none"
+
+return
+
+}
 
 currentUser = user
 
 const ref = doc(db,"users",user.uid)
 const snap = await getDoc(ref)
+
 const data = snap.data() || {}
 
-profilePic.src = data.photo || "https://via.placeholder.com/80"
+profilePic.src =
+data.photo || "https://via.placeholder.com/80"
 
-const merchantBtn = document.getElementById("merchantBtn")
+const merchantBtn =
+document.getElementById("merchantBtn")
 
-/* ✅ SI MARCHAND */
+/* MERCHANT */
 if(data.role === "merchant"){
 
-merchantBtn.innerText = "Painel da loja 🏪"
-merchantBtn.onclick = ()=>location.href="merchant-dashboard.html"
+merchantBtn.innerText =
+"Painel da loja 🏪"
+
+merchantBtn.onclick = ()=>{
+location.href="merchant-dashboard.html"
+}
 
 provinceCard.style.display = "block"
+
 merchantForm.style.display = "block"
 
 /* LOAD DATA */
-if(data.shopName) document.getElementById("shopName").value = data.shopName
-if(data.whatsapp) document.getElementById("whatsapp").value = data.whatsapp
-if(data.description) document.getElementById("shopDesc").value = data.description
+if(data.shopName){
+document.getElementById("shopName").value =
+data.shopName
+}
+
+if(data.whatsapp){
+document.getElementById("whatsapp").value =
+data.whatsapp
+}
+
+if(data.description){
+document.getElementById("shopDesc").value =
+data.description
+}
 
 if(data.province){
 provinceSelect.value = data.province
@@ -191,105 +321,181 @@ provinceSelect.value = data.province
 
 }
 
-/* ⏳ DEMANDE EN ATTENTE */
+/* REQUEST PENDING */
 else if(data.requestMerchant){
-merchantBtn.innerText = "⏳ Demande en attente"
+
+merchantBtn.innerText =
+"⏳ Demande en attente"
+
 merchantBtn.disabled = true
+
 merchantForm.style.display = "block"
+
 }
 
-/* DEFAULT */
+/* NORMAL USER */
 else{
-merchantBtn.innerText = "Devenir marchand 🏪"
+
+merchantBtn.innerText =
+"Devenir marchand 🏪"
+
 merchantBtn.disabled = false
+
 merchantBtn.onclick = becomeMerchant
+
 }
 
 })
 
-/* 🔥 SAVE MERCHANT INFO */
+/* SAVE MERCHANT INFO */
 window.saveMerchantInfo = async function(){
 
-const shopName = document.getElementById("shopName").value.trim()
-const whatsapp = document.getElementById("whatsapp").value.trim()
-const description = document.getElementById("shopDesc").value.trim()
+const shopName =
+document.getElementById("shopName")
+.value.trim()
+
+const whatsapp =
+document.getElementById("whatsapp")
+.value.trim()
+
+const description =
+document.getElementById("shopDesc")
+.value.trim()
 
 if(!shopName || !whatsapp){
+
 alert("Preencha nome da loja e WhatsApp ❌")
+
 return
+
 }
 
 await updateDoc(doc(db,"users",currentUser.uid),{
+
 shopName: shopName,
 whatsapp: whatsapp,
 description: description
+
 })
 
 alert("Informações salvas ✅")
 
 }
 
-/* 🔥 DEMANDE */
+/* BECOME MERCHANT */
 window.becomeMerchant = async function(){
 
+if(!currentUser){
+
+alert("Faça login primeiro ❌")
+
+location.href = "login.html"
+
+return
+
+}
+
 await updateDoc(doc(db,"users",currentUser.uid),{
+
 requestMerchant: true,
 approved: false
+
 })
 
 alert("✅ Pedido enviado para admin")
+
 location.reload()
 
 }
 
-/* PROVINCE */
+/* SAVE PROVINCE */
 window.saveProvince = async function(){
+
 const province = provinceSelect.value
-if(!province){ alert("Seleciona a província ❌"); return }
+
+if(!province){
+
+alert("Seleciona a província ❌")
+
+return
+
+}
 
 await updateDoc(doc(db,"users",currentUser.uid),{
 province: province
 })
 
 alert("Província salva ✅")
+
 }
 
 /* PHOTO */
 upload.onchange = function(){
 
 const file = this.files[0]
+
+if(!file) return
+
 const reader = new FileReader()
 
 reader.onload = async function(){
 
 const base64 = reader.result
 
-/* PREVIEW LOCAL SEULEMENT */
 profilePic.src = base64
 
-/* TEMPORAIREMENT PAS SAVE FIRESTORE */
-alert("Foto carregada ✅")
+await updateDoc(doc(db,"users",currentUser.uid),{
+photo: base64
+})
+
+alert("Foto salva ✅")
 
 }
+
 reader.readAsDataURL(file)
 
 }
 
 /* SUPPORT */
 window.contactSupport = function(){
-window.open("https://wa.me/244922623238?text=Olá preciso de ajuda")
+
+window.open(
+"https://wa.me/244922623238?text=Olá preciso de ajuda"
+)
+
 }
 
-/* DELETE */
+/* DELETE ACCOUNT */
 window.deleteAccount = async function(){
+
+if(!currentUser){
+
+location.href = "login.html"
+
+return
+
+}
 
 if(!confirm("Tem certeza?")) return
 
+try{
+
 await deleteDoc(doc(db,"users",currentUser.uid))
+
 await deleteUser(currentUser)
 
 alert("Conta apagada ✅")
+
 location.href="index.html"
+
+}catch(e){
+
+alert("Erro ❌")
+
+console.error(e)
+
+}
+
 }
 
 </script>
