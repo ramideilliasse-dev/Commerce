@@ -10,17 +10,58 @@
 
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#ff6a00">
- <title>Admin Dashboard PRO</title>
+
+<title>Admin Dashboard PRO</title>
 
 <style>
-body{font-family:Arial;margin:0;background:#f4f4f4;}
-.header{background:black;color:white;padding:15px;text-align:center;font-size:20px;font-weight:bold;}
 
-.tabs{display:flex;background:white;border-bottom:1px solid #ddd;}
-.tab{flex:1;text-align:center;padding:12px;cursor:pointer;font-weight:bold;}
-.active{background:#1aa34a;color:white;}
+body{
+font-family:Arial;
+margin:0;
+background:#f4f4f4;
+}
 
-.container{padding:10px;}
+.header{
+background:black;
+color:white;
+padding:15px;
+text-align:center;
+font-size:20px;
+font-weight:bold;
+}
+
+/* TABS */
+
+.tabs{
+display:flex;
+background:white;
+border-bottom:1px solid #ddd;
+position:sticky;
+top:0;
+z-index:50;
+}
+
+.tab{
+flex:1;
+text-align:center;
+padding:12px;
+cursor:pointer;
+font-weight:bold;
+font-size:14px;
+}
+
+.active{
+background:#1aa34a;
+color:white;
+}
+
+/* CONTAINER */
+
+.container{
+padding:10px;
+}
+
+/* CARD */
 
 .card{
 background:white;
@@ -30,22 +71,45 @@ border-radius:12px;
 box-shadow:0 4px 12px rgba(0,0,0,0.08);
 }
 
+/* BUTTON */
+
 button{
 margin-top:5px;
-padding:6px 8px;
+padding:8px 10px;
 border:none;
-border-radius:6px;
+border-radius:8px;
 cursor:pointer;
-font-size:12px;
+font-size:13px;
+font-weight:bold;
 }
 
-.approve{background:#1aa34a;color:white;}
-.delete{background:red;color:white;}
+.approve{
+background:#1aa34a;
+color:white;
+}
+
+.delete{
+background:red;
+color:white;
+}
+
+.saveBtn{
+background:#1aa34a;
+color:white;
+}
+
+.grayBtn{
+background:#333;
+color:white;
+}
+
+/* PROMO */
 
 .promoGrid{
 display:grid;
 grid-template-columns:repeat(2,1fr);
 gap:10px;
+margin-top:15px;
 }
 
 .promoCard{
@@ -81,7 +145,7 @@ border-radius:6px;
 .bigSave{
 margin-top:15px;
 width:100%;
-padding:12px;
+padding:14px;
 font-size:16px;
 font-weight:bold;
 background:#1aa34a;
@@ -90,7 +154,73 @@ border:none;
 border-radius:10px;
 cursor:pointer;
 }
- /* ================= TOAST MODERNE ================= */
+
+/* BANNER CUSTOM */
+
+.bannerBox{
+background:white;
+padding:12px;
+border-radius:12px;
+margin-bottom:15px;
+box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+.bannerPreview{
+width:100%;
+height:180px;
+border-radius:12px;
+overflow:hidden;
+position:relative;
+background:#eee;
+margin-top:10px;
+}
+
+.bannerPreview img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.bannerOverlay{
+position:absolute;
+bottom:0;
+left:0;
+right:0;
+padding:12px;
+background:linear-gradient(to top,rgba(0,0,0,.8),transparent);
+color:white;
+font-weight:bold;
+font-size:18px;
+}
+
+input,textarea{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:1px solid #ddd;
+margin-top:10px;
+box-sizing:border-box;
+font-size:14px;
+}
+
+textarea{
+min-height:90px;
+resize:none;
+}
+
+/* FILTER */
+
+.filterBar{
+display:flex;
+gap:8px;
+margin-bottom:15px;
+}
+
+.filterBar button{
+flex:1;
+}
+
+/* TOAST */
 
 .toastBox{
 position:fixed;
@@ -146,29 +276,54 @@ opacity:0;
 transform:translateY(-20px) scale(.9);
 }
 }
+
 </style>
 </head>
 
 <body>
 
-<div class="header">Admin Dashboard 👑</div>
+<div class="header">
+Admin Dashboard 👑
+</div>
 
 <div class="tabs">
-<div class="tab active" onclick="showTab(event,'promo')">🎯 Banner Promo</div>
-<div class="tab" onclick="showTab(event,'users')">👤 Users</div>
-<div class="tab" onclick="showTab(event,'orders')">🛒 Commandes</div>
+
+<div class="tab active" onclick="showTab(event,'promo')">
+🎯 Banner
+</div>
+
+<div class="tab" onclick="showTab(event,'users')">
+👤 Users
+</div>
+
+<div class="tab" onclick="showTab(event,'orders')">
+🛒 Commandes
+</div>
+
 </div>
 
 <div class="container" id="content"></div>
 
+<div id="toastBox" class="toastBox"></div>
+
 <script type="module">
 
 import { db, auth } from "./firebase.js"
-import {
-collection,getDocs,doc,getDoc,setDoc,updateDoc,deleteDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
-import { onAuthStateChanged } 
+import {
+collection,
+getDocs,
+doc,
+getDoc,
+setDoc,
+updateDoc,
+deleteDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
+import {
+onAuthStateChanged
+}
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 let users=[]
@@ -177,260 +332,17 @@ let products=[]
 let promoData=[]
 let currentFilter="all"
 
-/* AUTH */
-onAuthStateChanged(auth, async (user)=>{
-if(!user){ location.href="login.html"; return }
-
-const snap = await getDoc(doc(db,"users",user.uid))
-let role = snap.data()?.role
-
-if(role !== "admin" && role !== "superadmin"){
-location.href="index.html"
-return
-}
-
-loadPromo()
-})
-
-window.showTab = function(e,tab){
-document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"))
-e.target.classList.add("active")
-
-if(tab==="promo") loadPromo()
-if(tab==="users") loadUsers()
-if(tab==="orders") loadOrders()
-}
-
-/* ================= PROMO ================= */
-async function loadPromo(){
-const container = document.getElementById("content")
-container.innerHTML = "Carregando banner..."
-
-const configSnap = await getDoc(doc(db,"promoBanner","main"))
-promoData = configSnap.exists() ? configSnap.data().items || [] : []
-
-const snap = await getDocs(collection(db,"products"))
-
-products=[]
-snap.forEach(d=>{
-let p=d.data()
-p.id=d.id
-products.push(p)
-})
-
-renderPromo()
-}
-
-function renderPromo(){
-const container = document.getElementById("content")
-
-if(products.length === 0){
-container.innerHTML = "⚠️ Nenhum produto encontrado"
-return
-}
-
-container.innerHTML = `
-<h3>🎯 Selecionar produtos para banner</h3>
-
-<div class="promoGrid">
-${products.map(p=>{
-
-let selected = promoData.find(x=>x.id===p.id)
-let img = p.images?.[0] || "https://via.placeholder.com/300"
-
-return `
-<div class="promoCard ${selected?"active":""}">
-
-${selected?`<div class="selectedBadge">✔</div>`:""}
-
-<img loading="lazy" src="${img}">
-<div>${p.name || "Produto"}</div>
-
-<button onclick="togglePromo('${p.id}')">
-${selected ? "Remover" : "Adicionar"}
-</button>
-
-<button class="delete" onclick="deleteProduct('${p.id}')">
-❌ Supprimer
-</button>
-
-</div>
-`
-}).join("")}
-</div>
-
-<button class="bigSave" onclick="savePromo()">
-💾 SALVAR BANNER
-</button>
-`
-}
-
-/* DELETE PRODUCT */
-window.deleteProduct = async (id)=>{
-if(!confirm("Supprimer ce produit ?")) return
-await deleteDoc(doc(db,"products",id))
-alert("✅ Produit supprimé")
-loadPromo()
-}
-
-window.togglePromo = function(id){
-let index = promoData.findIndex(x=>x.id===id)
-if(index>-1){ promoData.splice(index,1) }
-else{ promoData.push({ id:id }) }
-renderPromo()
-}
-
-window.savePromo = async function(){
-await setDoc(doc(db,"promoBanner","main"),{ items: promoData })
-alert("✅ Banner salvo com sucesso")
-}
-
-/* ================= USERS ================= */
-async function loadUsers(){
-const container = document.getElementById("content")
-container.innerHTML = "Carregando usuários..."
-
-const snap = await getDocs(collection(db,"users"))
-
-users=[]
-snap.forEach(d=>{
-let u=d.data()
-u.id=d.id
-users.push(u)
-})
-
-renderUsers()
-}
-
-function renderUsers(){
-let filtered = users
-
-if(currentFilter==="pending"){
-filtered = users.filter(u=>u.requestMerchant === true && !u.approved)
-}
-if(currentFilter==="merchant"){
-filtered = users.filter(u=>u.role==="merchant")
-}
-
-const container = document.getElementById("content")
-
-container.innerHTML = `
-<div class="filterBar">
-<button onclick="setFilter('all')">All</button>
-<button onclick="setFilter('merchant')">Merchants</button>
-<button onclick="setFilter('pending')">Pending</button>
-</div>
-
-${filtered.map(u=>`
-<div class="card">
-<b>${u.email}</b><br>
-
-${u.requestMerchant && !u.approved ? 
-`<button class="approve" onclick="approveUser('${u.id}')">Valider</button>` : ""}
-
-<button class="delete" onclick="deleteUser('${u.id}')">Supprimer</button>
-</div>
-`).join("")}
-`
-}
-
-window.setFilter = function(f){ currentFilter=f; renderUsers() }
-
-window.approveUser = async function(id){
-
-try{
-
-await updateDoc(doc(db,"users",id),{
-approved: true,
-role: "merchant",
-requestMerchant: false
-})
-
-alert("✅ Marchand validé")
-
-loadUsers()
-
-}catch(e){
-
-console.error(e)
-alert("❌ Erro ao validar")
-
-}
-
-}
-window.deleteUser = async function(id){
-if(!confirm("Supprimer ?")) return
-await deleteDoc(doc(db,"users",id))
-loadUsers()
-}
-
-/* ================= ORDERS ================= */
-async function loadOrders(){
-const container = document.getElementById("content")
-container.innerHTML = "Carregando commandes..."
-
-const snap = await getDocs(collection(db,"orders"))
-
-orders=[]
-snap.forEach(d=>{
-let o=d.data()
-o.id=d.id
-orders.push(o)
-})
-
-container.innerHTML = `
-<h3>🛒 Commandes</h3>
-
-${orders.map(o=>{
-
-let itemsHtml = ""
-
-/* ✅ NEW SYSTEM */
-if(o.items){
-o.items.forEach(p=>{
-itemsHtml += `<div>${p.name} x${p.qty} = ${p.price * p.qty} Kz</div>`
-})
-}
-
-/* ✅ OLD SYSTEM */
-else{
-itemsHtml += `<div>${o.productName} x${o.qty} = ${o.price * o.qty} Kz</div>`
-}
-
-return `
-<div class="card">
-
-<div>${itemsHtml}</div>
-
-<div>👤 ${o.clientName || ""}</div>
-<div>📞 ${o.clientPhone || ""}</div>
-
-<button class="delete" onclick="deleteOrder('${o.id}')">
-❌ Supprimer
-</button>
-
-</div>
-`
-}).join("")}
-`
-}
-
-window.deleteOrder = async (id)=>{
-if(!confirm("Supprimer cette commande ?")) return
-await deleteDoc(doc(db,"orders",id))
-loadOrders()
-}
 /* ================= TOAST ================= */
 
 function showToast(message,type="success"){
 
-const box = document.getElementById("toastBox")
+const box=document.getElementById("toastBox")
 
-const toast = document.createElement("div")
+const toast=document.createElement("div")
 
-toast.className = "toast " + type
+toast.className="toast "+type
 
-toast.innerText = message
+toast.innerText=message
 
 box.appendChild(toast)
 
@@ -439,9 +351,602 @@ toast.remove()
 },4000)
 
 }
+
+/* ================= AUTH ================= */
+
+onAuthStateChanged(auth, async (user)=>{
+
+if(!user){
+location.href="login.html"
+return
+}
+
+const snap = await getDoc(doc(db,"users",user.uid))
+
+let role = snap.data()?.role
+
+if(role !== "admin" && role !== "superadmin"){
+
+location.href="index.html"
+return
+
+}
+
+loadPromo()
+
+})
+
+/* ================= TABS ================= */
+
+window.showTab = function(e,tab){
+
+document.querySelectorAll(".tab")
+.forEach(t=>t.classList.remove("active"))
+
+e.target.classList.add("active")
+
+if(tab==="promo") loadPromo()
+
+if(tab==="users") loadUsers()
+
+if(tab==="orders") loadOrders()
+
+}
+
+/* ================= PROMO ================= */
+
+async function loadPromo(){
+
+const container=document.getElementById("content")
+
+container.innerHTML="Carregando banner..."
+
+const configSnap = await getDoc(doc(db,"promoBanner","main"))
+
+promoData = configSnap.exists()
+? configSnap.data().items || []
+: []
+
+const bannerMessage = configSnap.exists()
+? configSnap.data().message || ""
+: ""
+
+const bannerImage = configSnap.exists()
+? configSnap.data().customImage || ""
+: ""
+
+const snap = await getDocs(collection(db,"products"))
+
+products=[]
+
+snap.forEach(d=>{
+
+let p=d.data()
+
+p.id=d.id
+
+products.push(p)
+
+})
+
+renderPromo(bannerMessage,bannerImage)
+
+}
+
+function renderPromo(message="",customImage=""){
+
+const container=document.getElementById("content")
+
+container.innerHTML=`
+
+<div class="bannerBox">
+
+<h3>🖼️ Banner personalizado</h3>
+
+<input
+type="text"
+id="bannerMessage"
+placeholder="Mensagem do banner..."
+value="${message}"
+>
+
+<input
+type="file"
+id="bannerImageInput"
+accept="image/*"
+>
+
+<div class="bannerPreview">
+
+<img
+id="bannerPreviewImage"
+src="${customImage || 'https://via.placeholder.com/900x400'}"
+>
+
+<div class="bannerOverlay" id="bannerPreviewText">
+${message || 'Sua mensagem aparecerá aqui'}
+</div>
+
+</div>
+
+<button class="saveBtn" onclick="saveCustomBanner()">
+💾 Salvar Banner
+</button>
+
+</div>
+
+<h3>🎯 Produtos do banner</h3>
+
+<div class="promoGrid">
+
+${products.map(p=>{
+
+let selected = promoData.find(x=>x.id===p.id)
+
+let img = p.images?.[0] || "https://via.placeholder.com/300"
+
+return `
+
+<div class="promoCard ${selected?'active':''}">
+
+${selected?`
+<div class="selectedBadge">
+✔
+</div>
+`:""}
+
+<img loading="lazy" src="${img}">
+
+<div style="margin-top:6px;font-weight:bold;">
+${p.name || "Produto"}
+</div>
+
+<div style="color:#ff6a00;margin-top:4px;">
+${p.price || 0} Kz
+</div>
+
+<button onclick="togglePromo('${p.id}')">
+
+${selected ? "Remover" : "Adicionar"}
+
+</button>
+
+<button
+class="delete"
+onclick="deleteProduct('${p.id}')"
+>
+
+❌ Supprimer
+
+</button>
+
+</div>
+
+`
+
+}).join("")}
+
+</div>
+
+<button class="bigSave" onclick="savePromo()">
+
+💾 SALVAR PRODUTOS DO BANNER
+
+</button>
+
+`
+
+/* PREVIEW TEXT */
+
+const msgInput=document.getElementById("bannerMessage")
+
+const previewText=document.getElementById("bannerPreviewText")
+
+msgInput.addEventListener("input",()=>{
+
+previewText.innerText =
+msgInput.value || "Sua mensagem aparecerá aqui"
+
+})
+
+/* PREVIEW IMAGE */
+
+const imageInput=document.getElementById("bannerImageInput")
+
+imageInput.addEventListener("change",(e)=>{
+
+const file=e.target.files[0]
+
+if(!file) return
+
+const reader=new FileReader()
+
+reader.onload=function(ev){
+
+document.getElementById("bannerPreviewImage").src =
+ev.target.result
+
+}
+
+reader.readAsDataURL(file)
+
+})
+
+}
+
+/* ================= SAVE CUSTOM BANNER ================= */
+
+window.saveCustomBanner = async function(){
+
+try{
+
+const message =
+document.getElementById("bannerMessage").value
+
+const image =
+document.getElementById("bannerPreviewImage").src
+
+const oldSnap =
+await getDoc(doc(db,"promoBanner","main"))
+
+const oldItems =
+oldSnap.exists()
+? oldSnap.data().items || []
+: []
+
+await setDoc(
+doc(db,"promoBanner","main"),
+{
+items: oldItems,
+message: message,
+customImage: image
+}
+)
+
+showToast("✅ Banner salvo","success")
+
+}catch(e){
+
+console.error(e)
+
+showToast("❌ Erro ao salvar","error")
+
+}
+
+}
+
+/* ================= DELETE PRODUCT ================= */
+
+window.deleteProduct = async (id)=>{
+
+if(!confirm("Supprimer ce produit ?")) return
+
+try{
+
+await deleteDoc(doc(db,"products",id))
+
+showToast("✅ Produto apagado","success")
+
+loadPromo()
+
+}catch(e){
+
+console.error(e)
+
+showToast("❌ Erro ao apagar","error")
+
+}
+
+}
+
+/* ================= TOGGLE PROMO ================= */
+
+window.togglePromo = function(id){
+
+let index = promoData.findIndex(x=>x.id===id)
+
+if(index>-1){
+
+promoData.splice(index,1)
+
+}else{
+
+promoData.push({ id:id })
+
+}
+
+loadPromo()
+
+}
+
+/* ================= SAVE PROMO ================= */
+
+window.savePromo = async function(){
+
+try{
+
+const oldSnap =
+await getDoc(doc(db,"promoBanner","main"))
+
+const oldData =
+oldSnap.exists()
+? oldSnap.data()
+: {}
+
+await setDoc(
+doc(db,"promoBanner","main"),
+{
+items: promoData,
+message: oldData.message || "",
+customImage: oldData.customImage || ""
+}
+)
+
+showToast("✅ Produtos do banner salvos","success")
+
+}catch(e){
+
+console.error(e)
+
+showToast("❌ Erro ao salvar","error")
+
+}
+
+}
+
+/* ================= USERS ================= */
+
+async function loadUsers(){
+
+const container=document.getElementById("content")
+
+container.innerHTML="Carregando usuários..."
+
+const snap=await getDocs(collection(db,"users"))
+
+users=[]
+
+snap.forEach(d=>{
+
+let u=d.data()
+
+u.id=d.id
+
+users.push(u)
+
+})
+
+renderUsers()
+
+}
+
+function renderUsers(){
+
+let filtered = users
+
+if(currentFilter==="pending"){
+
+filtered = users.filter(
+u=>u.requestMerchant===true && !u.approved
+)
+
+}
+
+if(currentFilter==="merchant"){
+
+filtered = users.filter(
+u=>u.role==="merchant"
+)
+
+}
+
+const container=document.getElementById("content")
+
+container.innerHTML=`
+
+<div class="filterBar">
+
+<button onclick="setFilter('all')">
+Todos
+</button>
+
+<button onclick="setFilter('merchant')">
+Merchants
+</button>
+
+<button onclick="setFilter('pending')">
+Pendentes
+</button>
+
+</div>
+
+${filtered.map(u=>`
+
+<div class="card">
+
+<b>${u.email}</b><br><br>
+
+${u.requestMerchant && !u.approved
+?
+`
+<button
+class="approve"
+onclick="approveUser('${u.id}')"
+>
+
+✔ Validar Merchant
+
+</button>
+`
+:""
+}
+
+<button
+class="delete"
+onclick="deleteUser('${u.id}')"
+>
+
+❌ Supprimer
+
+</button>
+
+</div>
+
+`).join("")}
+
+`
+
+}
+
+window.setFilter=function(f){
+
+currentFilter=f
+
+renderUsers()
+
+}
+
+window.approveUser = async function(id){
+
+try{
+
+await updateDoc(doc(db,"users",id),{
+approved:true,
+role:"merchant",
+requestMerchant:false
+})
+
+showToast("✅ Merchant aprovado","success")
+
+loadUsers()
+
+}catch(e){
+
+console.error(e)
+
+showToast("❌ Erro ao validar","error")
+
+}
+
+}
+
+window.deleteUser = async function(id){
+
+if(!confirm("Supprimer ?")) return
+
+await deleteDoc(doc(db,"users",id))
+
+showToast("✅ Usuário apagado","success")
+
+loadUsers()
+
+}
+
+/* ================= ORDERS ================= */
+
+async function loadOrders(){
+
+const container=document.getElementById("content")
+
+container.innerHTML="Carregando commandes..."
+
+const snap=await getDocs(collection(db,"orders"))
+
+orders=[]
+
+snap.forEach(d=>{
+
+let o=d.data()
+
+o.id=d.id
+
+orders.push(o)
+
+})
+
+container.innerHTML=`
+
+<h3>🛒 Commandes</h3>
+
+${orders.map(o=>{
+
+let itemsHtml=""
+
+if(o.items){
+
+o.items.forEach(p=>{
+
+itemsHtml += `
+<div>
+${p.name} x${p.qty}
+=
+${p.price * p.qty} Kz
+</div>
+`
+
+})
+
+}else{
+
+itemsHtml += `
+<div>
+${o.productName} x${o.qty}
+=
+${o.price * o.qty} Kz
+</div>
+`
+
+}
+
+return `
+
+<div class="card">
+
+<div>${itemsHtml}</div>
+
+<br>
+
+<div>👤 ${o.clientName || ""}</div>
+
+<div>📞 ${o.clientPhone || ""}</div>
+
+<br>
+
+<button
+class="delete"
+onclick="deleteOrder('${o.id}')"
+>
+
+❌ Supprimer
+
+</button>
+
+</div>
+
+`
+
+}).join("")}
+
+`
+
+}
+
+window.deleteOrder = async (id)=>{
+
+if(!confirm("Supprimer cette commande ?")) return
+
+await deleteDoc(doc(db,"orders",id))
+
+showToast("✅ Commande supprimée","success")
+
+loadOrders()
+
+}
+
 </script>
-<div id="toastBox" class="toastBox"></div>
+
 <script>
+
 if ("serviceWorker" in navigator) {
 
 window.addEventListener("load", () => {
@@ -459,6 +964,8 @@ console.log("SW ERROR", err)
 })
 
 }
+
 </script>
+
 </body>
 </html>
