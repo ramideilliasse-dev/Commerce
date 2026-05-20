@@ -476,16 +476,31 @@ let newDiscount = prompt("Desconto %", discount || 0)
 
 if(newDiscount === null) return
 
+let finalPrice = Number(newPrice)
+
+let discountValue = Number(newDiscount)
+
+let oldPrice = finalPrice
+
+if(discountValue > 0){
+
+finalPrice = Math.round(
+oldPrice - (oldPrice * discountValue / 100)
+)
+
+}
+
 await updateDoc(doc(db,"products",id),{
 
 name: newName.trim(),
 
-price: Number(newPrice),
+price: finalPrice,
 
-discount: Number(newDiscount)
+oldPrice: oldPrice,
+
+discount: discountValue
 
 })
-
 showToast("Produto atualizado ✅","success")
 
 loadProducts()
