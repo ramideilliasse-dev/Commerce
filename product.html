@@ -3,14 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Toma">
-<link rel="apple-touch-icon" href="/icon-192.png">
 
+<link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="manifest" href="/manifest.json">
+
 <meta name="theme-color" content="#ff6a00">
- <title>Produto</title>
+
+<title>Produto</title>
 
 <style>
 
@@ -76,7 +79,7 @@ overflow:hidden;
 width:100%;
 height:100%;
 object-fit:contain;
-transition:transform .2s ease;
+transition:transform .25s ease;
 }
 
 /* CLOSE */
@@ -127,6 +130,7 @@ width:8px;
 height:8px;
 border-radius:50%;
 background:#777;
+transition:.2s;
 }
 
 .dot.active{
@@ -145,18 +149,20 @@ background:white;
 }
 
 .gallery img{
-width:70px;
-height:70px;
-border-radius:10px;
+width:72px;
+height:72px;
+border-radius:12px;
 object-fit:cover;
 opacity:.5;
 cursor:pointer;
 border:2px solid transparent;
+transition:.2s;
 }
 
 .gallery img.active{
 opacity:1;
 border:2px solid #ff6a00;
+transform:scale(1.05);
 }
 
 /* INFO */
@@ -194,6 +200,7 @@ color:#555;
 display:flex;
 gap:10px;
 margin-top:18px;
+flex-wrap:wrap;
 }
 
 .btn{
@@ -204,6 +211,11 @@ border-radius:12px;
 font-weight:bold;
 font-size:15px;
 cursor:pointer;
+transition:.2s;
+}
+
+.btn:active{
+transform:scale(.97);
 }
 
 .buyBtn{
@@ -213,6 +225,11 @@ color:white;
 
 .shopBtn{
 background:#111;
+color:white;
+}
+
+.shareBtn{
+background:#0a84ff;
 color:white;
 }
 
@@ -311,6 +328,10 @@ background:#1aa34a;
 background:#e53935;
 }
 
+.warning{
+background:#ff6a00;
+}
+
 @keyframes showToast{
 from{
 opacity:0;
@@ -374,6 +395,10 @@ Produto
 
 <button class="btn shopBtn" onclick="openShop()">
 🏪 Loja
+</button>
+
+<button class="btn shareBtn" onclick="shareProduct()">
+📤 Partilhar
 </button>
 
 </div>
@@ -447,7 +472,11 @@ toast.remove()
 
 /* ================= VARIABLES ================= */
 
-const productId = localStorage.getItem("selectedProduct")
+const params = new URLSearchParams(location.search)
+
+const productId =
+params.get("id") ||
+localStorage.getItem("selectedProduct")
 
 let product = null
 let images = []
@@ -541,7 +570,7 @@ function renderSlider(){
 
 slider.innerHTML = images.map(img=>`
 <div class="slide">
-<img src="${img}">
+<img loading="lazy" src="${img}">
 </div>
 `).join("")
 
@@ -557,6 +586,7 @@ function renderGallery(){
 
 gallery.innerHTML = images.map((img,i)=>`
 <img 
+loading="lazy"
 src="${img}"
 class="${i===0?'active':''}"
 onclick="setImage(${i})"
@@ -606,15 +636,11 @@ slider.addEventListener("touchend",(e)=>{
 let endX = e.changedTouches[0].clientX
 
 if(endX < startX - 50){
-
 next()
-
 }
 
 if(endX > startX + 50){
-
 prev()
-
 }
 
 })
@@ -624,9 +650,7 @@ function next(){
 currentIndex++
 
 if(currentIndex >= images.length){
-
 currentIndex = 0
-
 }
 
 updateViewer()
@@ -638,9 +662,7 @@ function prev(){
 currentIndex--
 
 if(currentIndex < 0){
-
 currentIndex = images.length - 1
-
 }
 
 updateViewer()
@@ -649,7 +671,7 @@ updateViewer()
 
 /* ================= ZOOM ================= */
 
-document.querySelector("#viewer").addEventListener("dblclick",(e)=>{
+document.querySelector("#viewer").addEventListener("dblclick",()=>{
 
 const img = slider.children[currentIndex].querySelector("img")
 
@@ -694,11 +716,11 @@ merchantId: product.merchantId
 
 localStorage.setItem("cart", JSON.stringify(cart))
 
-showToast("Produto adicionado ao carrinho")
+showToast("🛒 Produto adicionado","success")
 
 setTimeout(()=>{
 location.href = "checkout.html"
-},800)
+},700)
 
 }
 
@@ -707,6 +729,56 @@ location.href = "checkout.html"
 window.openShop = function(){
 
 location.href = "merchant-shop.html?id=" + product.merchantId
+
+}
+
+/* ================= SHARE ================= */
+
+window.shareProduct = async function(){
+
+if(!product) return
+
+const link =
+window.location.origin +
+"/product.html?id=" +
+productId
+
+const text =
+`🛍️ ${product.name}
+
+💰 ${product.price} Kz
+
+📲 Veja este produto no Toma 🇦🇴`
+
+if(navigator.share){
+
+try{
+
+await navigator.share({
+
+title: product.name,
+
+text: text,
+
+url: link
+
+})
+
+showToast("📤 Produto compartilhado","success")
+
+}catch(e){
+
+console.log(e)
+
+}
+
+}else{
+
+navigator.clipboard.writeText(link)
+
+showToast("🔗 Link copiado","success")
+
+}
 
 }
 
@@ -832,11 +904,12 @@ window.openProduct = function(id){
 
 localStorage.setItem("selectedProduct", id)
 
-location.reload()
+location.href = "product.html?id=" + id
 
 }
 
 </script>
+
 <script>
 if ("serviceWorker" in navigator) {
 
@@ -856,5 +929,6 @@ console.log("SW ERROR", err)
 
 }
 </script>
+
 </body>
 </html>
