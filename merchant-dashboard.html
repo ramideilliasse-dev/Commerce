@@ -384,10 +384,54 @@ const id=d.id
 
 html+=`
 <div class="productCard">
-<b>${p.name}</b><br>
-💰 ${p.price} Kz<br>
 
-<button class="btnDelete" onclick="deleteProduct('${id}')">Supprimer</button>
+<div style="display:flex;justify-content:space-between;align-items:center">
+
+<div>
+
+<b>${p.name}</b><br>
+
+💰 ${p.price} Kz
+
+${p.discount ? `
+<span style="
+background:red;
+color:white;
+padding:2px 8px;
+border-radius:20px;
+font-size:12px;
+margin-left:5px;
+">
+-${p.discount}%
+</span>
+` : ""}
+
+</div>
+
+<img 
+src="${p.images?.[0] || ''}" 
+style="
+width:60px;
+height:60px;
+object-fit:cover;
+border-radius:10px;
+"
+>
+
+</div>
+
+<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+
+<button onclick="editProduct('${id}','${p.name}',${p.price},${p.discount || 0})">
+✏️ Modifier
+</button>
+
+<button class="btnDelete" onclick="deleteProduct('${id}')">
+🗑 Supprimer
+</button>
+
+</div>
+
 </div>
 `
 })
@@ -416,7 +460,37 @@ if(confirm("Apagar pedido?")){
 deleteDoc(doc(db,"orders",id))
 }
 }
+/* ================= EDIT PRODUCT ================= */
 
+window.editProduct = async function(id,name,price,discount){
+
+let newName = prompt("Novo nome do produto", name)
+
+if(newName === null) return
+
+let newPrice = prompt("Novo preço", price)
+
+if(newPrice === null) return
+
+let newDiscount = prompt("Desconto %", discount || 0)
+
+if(newDiscount === null) return
+
+await updateDoc(doc(db,"products",id),{
+
+name: newName.trim(),
+
+price: Number(newPrice),
+
+discount: Number(newDiscount)
+
+})
+
+showToast("Produto atualizado ✅","success")
+
+loadProducts()
+
+}
 window.deleteProduct=async (id)=>{
 if(confirm("Supprimer ce produit ?")){
 await deleteDoc(doc(db,"products",id))
