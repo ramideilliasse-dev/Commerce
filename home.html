@@ -293,6 +293,44 @@ width:max-content;
 font-size:14px;
 font-weight:bold;
 }
+ .promoSlider{
+width:100%;
+height:180px;
+border-radius:16px;
+overflow:hidden;
+position:relative;
+margin-bottom:15px;
+}
+
+.promoSlide{
+position:absolute;
+width:100%;
+height:100%;
+opacity:0;
+transition:opacity .8s ease;
+}
+
+.promoSlide.active{
+opacity:1;
+}
+
+.promoSlide img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.promoText{
+position:absolute;
+bottom:0;
+left:0;
+right:0;
+padding:14px;
+background:linear-gradient(to top,rgba(0,0,0,.8),transparent);
+color:white;
+font-size:18px;
+font-weight:bold;
+}
 </style>
 </head>
 
@@ -730,6 +768,65 @@ console.log("SW ERROR", err)
 })
 
 }
+ let currentBanner = 0
+
+async function loadBanner(){
+
+const snap = await getDoc(
+doc(db,"promoBanner","main")
+)
+
+if(!snap.exists()) return
+
+const data = snap.data()
+
+const images = data.customImages || []
+
+const message = data.message || ""
+
+const slider =
+document.getElementById("promoSlider")
+
+slider.innerHTML = images.map((img,i)=>`
+
+<div class="promoSlide ${i===0?'active':''}">
+
+<img src="${img}">
+
+<div class="promoText">
+${message}
+</div>
+
+</div>
+
+`).join("")
+
+const slides =
+document.querySelectorAll(".promoSlide")
+
+if(slides.length === 0) return
+
+setInterval(()=>{
+
+slides[currentBanner]
+.classList.remove("active")
+
+currentBanner++
+
+if(currentBanner >= slides.length){
+
+currentBanner = 0
+
+}
+
+slides[currentBanner]
+.classList.add("active")
+
+},3000)
+
+}
+
+loadBanner()
 </script>
 <div id="toastBox" class="toastBox"></div>
 </body>
