@@ -493,9 +493,7 @@ p.id=d.id
 
 let m=usersMap[p.merchantId]
 
-if(m && m.role==="merchant" && m.approved && !m.blocked){
 products.push(p)
-}
 })
 
 renderProducts(products)
@@ -720,7 +718,7 @@ toast.remove()
 
 if ("serviceWorker" in navigator) {
 
-window.addEventListener("load", () => {
+loadProducts()
 
 navigator.serviceWorker.register("/service-worker.js")
 
