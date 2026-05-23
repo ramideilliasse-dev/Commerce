@@ -6,14 +6,22 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Toma">
-<link rel="apple-touch-icon" href="/icon-192.png">
- <title>Toma</title>
+
+<title>Toma</title>
 
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#0a84ff">
+<meta name="theme-color" content="#ff6a00">
 
 <style>
-body{font-family:Arial;margin:0;background:#f9f9ff;color:#222;}
+
+body{
+font-family:Arial;
+margin:0;
+background:#f5f5f5;
+color:#222;
+}
+
+/* HEADER */
 
 .header{
 position:fixed;
@@ -25,76 +33,121 @@ padding:12px;
 display:flex;
 justify-content:space-between;
 align-items:center;
-box-shadow:0 2px 8px rgba(0,0,0,0.05);
 z-index:1000;
+box-shadow:0 2px 8px rgba(0,0,0,.1);
 }
+
 .logo{
 font-size:26px;
 font-weight:bold;
 color:white;
 }
 
-.logo span{
-color:white;
-font-size:30px;
+.headerRight{
+display:flex;
+gap:8px;
 }
-
-.headerRight{display:flex;gap:6px;align-items:center;}
 
 .iconBtn{
 background:white;
 border:none;
-padding:8px 10px;
-border-radius:10px;
+padding:10px 12px;
+border-radius:12px;
+font-size:18px;
 cursor:pointer;
-position:relative;
-font-size:16px;
-}
-
-.accountBtn{
-background:#ff6a00;
-color:white;
-border-radius:20px;
-border:none;
-padding:6px 12px;
 }
 
 .adminBtn{
 background:black;
 color:white;
 border:none;
-padding:6px 10px;
-border-radius:8px;
+padding:10px 14px;
+border-radius:12px;
 display:none;
 }
 
+/* SLIDER */
+
+.promoSlider{
+margin-top:95px;
+width:calc(100% - 20px);
+height:220px;
+margin-left:10px;
+margin-right:10px;
+border-radius:20px;
+overflow:hidden;
+position:relative;
+background:#ddd;
+}
+
+.promoSlide{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+opacity:0;
+transition:opacity 1s ease;
+}
+
+.promoSlide.active{
+opacity:1;
+z-index:2;
+}
+
+.promoSlide img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.promoText{
+position:absolute;
+left:0;
+right:0;
+bottom:0;
+padding:15px;
+color:white;
+font-size:18px;
+font-weight:bold;
+background:linear-gradient(to top,rgba(0,0,0,.7),transparent);
+}
 
 /* PRODUCTS */
+
 .products{
 column-count:2;
+column-gap:10px;
 padding:10px;
-padding-bottom:80px;
+padding-bottom:90px;
 }
 
 .product{
 background:white;
-border-radius:14px;
+border-radius:16px;
 margin-bottom:10px;
-box-shadow:0 4px 10px rgba(0,0,0,0.08);
 overflow:hidden;
+break-inside:avoid;
+box-shadow:0 4px 10px rgba(0,0,0,.08);
 cursor:pointer;
 }
 
 .product img{
 width:100%;
-height:150px;
+height:170px;
 object-fit:cover;
 }
 
-.info{padding:10px;}
-.name{font-weight:bold;font-size:14px;}
+.info{
+padding:10px;
+}
 
-/* 🔥 FIX DESCRIPTION (UNE LIGNE SEULEMENT) */
+.name{
+font-size:16px;
+font-weight:bold;
+margin-bottom:4px;
+}
+
 .desc{
 font-size:12px;
 color:#666;
@@ -103,23 +156,36 @@ overflow:hidden;
 text-overflow:ellipsis;
 }
 
-.priceP{color:#ff6a00;}
-.province{color:#1aa34a;font-size:11px;}
+.priceP{
+color:#ff6a00;
+font-size:18px;
+font-weight:bold;
+margin-top:5px;
+}
+
+.province{
+color:#1aa34a;
+font-size:12px;
+margin-top:4px;
+}
 
 .cartBtn{
 position:absolute;
 right:8px;
 bottom:8px;
-background:#1aa34a;
+background:#16a34a;
 color:white;
-width:34px;height:34px;
+width:36px;
+height:36px;
 border-radius:50%;
 display:flex;
 align-items:center;
 justify-content:center;
+font-size:18px;
 }
 
 /* NAV */
+
 .nav{
 position:fixed;
 bottom:0;
@@ -129,7 +195,7 @@ background:white;
 display:flex;
 justify-content:space-around;
 padding:10px 0;
-box-shadow:0 -2px 10px rgba(0,0,0,0.08);
+box-shadow:0 -2px 10px rgba(0,0,0,.1);
 z-index:1000;
 }
 
@@ -139,11 +205,6 @@ text-align:center;
 font-size:13px;
 color:#444;
 position:relative;
-cursor:pointer;
-}
-
-.navItem span{
-font-size:12px;
 }
 
 .bottomBadge{
@@ -155,9 +216,9 @@ color:white;
 font-size:10px;
 padding:2px 6px;
 border-radius:50%;
-min-width:18px;
 }
- /* ================= TOAST MODERNE ================= */
+
+/* TOAST */
 
 .toastBox{
 position:fixed;
@@ -172,241 +233,139 @@ pointer-events:none;
 }
 
 .toast{
-min-width:220px;
-max-width:320px;
 padding:14px 18px;
 border-radius:14px;
 color:white;
-font-size:14px;
 font-weight:bold;
-box-shadow:0 6px 18px rgba(0,0,0,0.2);
-animation:toastIn .3s ease, toastOut .3s ease 3.7s forwards;
-backdrop-filter:blur(10px);
+animation:fade .3s;
 }
 
 .toast.success{
-background:linear-gradient(135deg,#1aa34a,#23c55e);
-}
-
-.toast.error{
-background:linear-gradient(135deg,#dc2626,#ef4444);
+background:#16a34a;
 }
 
 .toast.warning{
-background:linear-gradient(135deg,#ff6a00,#ff9f43);
+background:#ff6a00;
 }
 
-@keyframes toastIn{
+@keyframes fade{
 from{
 opacity:0;
-transform:translateY(-20px) scale(.9);
+transform:translateY(-10px);
 }
 to{
 opacity:1;
-transform:translateY(0) scale(1);
+transform:translateY(0);
 }
 }
 
-@keyframes toastOut{
-to{
-opacity:0;
-transform:translateY(-20px) scale(.9);
-}
-}
- .promoBanner{
-margin:12px;
-border-radius:18px;
-overflow:hidden;
-position:relative;
-height:180px;
-background:#111;
-color:white;
-}
-
-.promoBanner img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
-
-.promoOverlay{
-position:absolute;
-inset:0;
-background:linear-gradient(
-to top,
-rgba(0,0,0,0.8),
-rgba(0,0,0,0.2)
-);
-
-display:flex;
-flex-direction:column;
-justify-content:flex-end;
-padding:20px;
-}
-
-.promoText{
-font-size:22px;
-font-weight:bold;
-}
-
-.promoBtn{
-margin-top:10px;
-background:#ff6a00;
-color:white;
-padding:10px 16px;
-border-radius:30px;
-width:max-content;
-font-size:14px;
-font-weight:bold;
-}
-.promoSlider{
-width:calc(100% - 20px);
-height:230px;
-margin:120px 10px 15px 10px;
-border-radius:20px;
-overflow:hidden;
-position:relative;
-}
-
-.promoSlide{
-position:absolute;
-top:0;
-left:0;
-width:100%;
-height:100%;
-opacity:0;
-transition:opacity 1s ease;
-z-index:1;
-}
-
-.promoSlide.active{
-opacity:1;
-z-index:2;
-}
-.promoSlide img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
-
-.promoText{
-position:absolute;
-bottom:0;
-left:0;
-right:0;
-padding:14px;
-background:linear-gradient(to top,rgba(0,0,0,.8),transparent);
-color:white;
-font-size:18px;
-font-weight:bold;
-}
- /* BANNER */
-.banner{
-height:200px;
-border-radius:12px;
-margin:10px;
-overflow:hidden;
-position:relative;
-}
-
-.slide{
-position:absolute;
-width:100%;
-height:100%;
-opacity:0;
-transition:0.3s;
-}
-
-.slide.active{
-opacity:1;
-}
-
-.slide img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
-
-.overlay{
-position:absolute;
-bottom:0;
-width:100%;
-padding:10px;
-background:linear-gradient(to top,rgba(0,0,0,0.7),transparent);
-color:white;
-}
 </style>
 </head>
 
 <body>
 
+<!-- HEADER -->
+
 <div class="header">
 
-<div class="logo"><span>T</span>oma 🇦🇴</div>
+<div class="logo">Toma 🇦🇴</div>
 
 <div class="headerRight">
 
-<button class="iconBtn" onclick="location.href='search.html'">🔎</button>
-<button class="iconBtn" onclick="location.href='guide.html'">📘</button>
+<button class="iconBtn"
+onclick="location.href='search.html'">
+🔎
+</button>
 
-<button id="adminBtn" class="adminBtn">Admin</button>
+<button class="iconBtn"
+onclick="location.href='guide.html'">
+📘
+</button>
+
+<button id="adminBtn"
+class="adminBtn">
+Admin
+</button>
 
 </div>
+
 </div>
 
-<div class="promoSlider" id="promoSlider"></div>
+<!-- SLIDER -->
 
-<div id="productList" class="products"></div>
+<div id="promoSlider"
+class="promoSlider">
+</div>
+
+<!-- PRODUCTS -->
+
+<div id="productList"
+class="products">
+</div>
+
+<!-- NAV -->
 
 <div class="nav">
 
-<div class="navItem" onclick="location.href='index.html'">
+<div class="navItem"
+onclick="location.href='index.html'">
 🏠<br>
-<span>Inicio</span>
+Inicio
 </div>
 
-<div class="navItem" onclick="location.href='categories.html'">
+<div class="navItem"
+onclick="location.href='categories.html'">
 📦<br>
-<span>Categorias</span>
+Categorias
 </div>
 
-<div id="shopNav" class="navItem" style="display:none">
-🏪<br>
-<span>Minha Loja</span>
-</div>
-
-<div class="navItem cartNav" onclick="location.href='cart.html'">
+<div class="navItem"
+onclick="location.href='cart.html'">
 🛒<br>
-<span>Carrinho</span>
-<div id="bottomCartCount" class="bottomBadge">0</div>
+Carrinho
+
+<div id="bottomCartCount"
+class="bottomBadge">
+0
 </div>
 
-<div class="navItem" onclick="location.href='settings.html'">
+</div>
+
+<div class="navItem"
+onclick="location.href='settings.html'">
 ⚙️<br>
-<span>Conta</span>
+Conta
 </div>
 
+</div>
+
+<div id="toastBox"
+class="toastBox">
 </div>
 
 <script type="module">
 
 import { db, auth } from "./firebase.js"
+
 import {
 collection,
 getDocs,
 doc,
 getDoc,
 query,
-where,
 limit
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-import { onAuthStateChanged } 
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
+import {
+onAuthStateChanged
+}
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
-const adminBtn = document.getElementById("adminBtn")
+/* ELEMENTS */
 
-const shopNav =
-document.getElementById("shopNav")
+const adminBtn =
+document.getElementById("adminBtn")
 
 const productList =
 document.getElementById("productList")
@@ -414,209 +373,269 @@ document.getElementById("productList")
 const promoSlider =
 document.getElementById("promoSlider")
 
-let products=[]
+const cartBadge =
+document.getElementById("bottomCartCount")
+
+/* VARIABLES */
+
+let products = []
 
 let currentPromo = 0
+
+let promoInterval = null
+
+/* CART */
+
 function getCart(){
+
 try{
-return JSON.parse(localStorage.getItem("cart") || "[]")
+return JSON.parse(
+localStorage.getItem("cart") || "[]"
+)
 }catch{
 return []
 }
+
 }
 
 function updateCartCount(){
 
-let cart = getCart()
+const cart = getCart()
 
-let total = cart.reduce((a,b)=>a+(b.qty||1),0)
+const total =
+cart.reduce((a,b)=>a+(b.qty||1),0)
 
-const badge = document.getElementById("bottomCartCount")
-
-if(badge){
-badge.innerText = total
-}
+cartBadge.innerText = total
 
 }
+
 updateCartCount()
 
-window.addEventListener("storage", ()=>{
-updateCartCount()
-})
+/* AUTH */
 
-onAuthStateChanged(auth, async (user)=>{
+onAuthStateChanged(auth, async(user)=>{
 
-if(!user){
-return
-}
+if(!user) return
 
-const snap = await getDoc(doc(db,"users",user.uid))
+const snap = await getDoc(
+doc(db,"users",user.uid)
+)
+
 const data = snap.data() || {}
 
-const role = (data.role || "").toLowerCase()
+const role =
+(data.role || "").toLowerCase()
 
-if(role==="admin"||role==="superadmin"){
-adminBtn.style.display="block"
-adminBtn.onclick=()=>location.href="admin-dashboard.html"
+if(
+role==="admin" ||
+role==="superadmin"
+){
+adminBtn.style.display = "block"
+
+adminBtn.onclick = ()=>{
+location.href =
+"admin-dashboard.html"
 }
-
-if(role==="merchant"){
-
-shopNav.style.display = "block"
-
-shopNav.onclick = ()=>{
-location.href = "merchant-dashboard.html"
-}
-
 }
 
 })
 
+/* PRODUCTS */
+
 async function loadProducts(){
+
+try{
 
 const qProducts = query(
 collection(db,"products"),
 limit(20)
 )
 
-const productSnap = await getDocs(qProducts)
-const userSnap = await getDocs(collection(db,"users"))
+const productSnap =
+await getDocs(qProducts)
 
-let usersMap={}
-userSnap.forEach(u=>usersMap[u.id]=u.data())
+const userSnap =
+await getDocs(collection(db,"users"))
 
-products=[]
+let usersMap = {}
+
+userSnap.forEach(u=>{
+
+usersMap[u.id] = u.data()
+
+})
+
+products = []
 
 productSnap.forEach(d=>{
-let p=d.data()
-p.id=d.id
 
-let m=usersMap[p.merchantId]
+let p = d.data()
 
+p.id = d.id
+
+let merchant =
+usersMap[p.merchantId]
+
+if(
+merchant &&
+merchant.role==="merchant" &&
+merchant.approved &&
+!merchant.blocked
+){
 products.push(p)
+}
+
 })
 
 renderProducts(products)
-loadPromoSlider()
+
+}catch(err){
+
+console.log(err)
+
+showToast(
+"Erro ao carregar produtos",
+"warning"
+)
+
 }
 
+}
 
-
-
+/* RENDER PRODUCTS */
 
 function renderProducts(list){
 
-let html=""
+let html = ""
 
 list.forEach(p=>{
 
-let img=p.images?.[0]||"https://via.placeholder.com/300"
+let img =
+p.images?.[0] ||
+"https://via.placeholder.com/300"
 
-/* 🔥 FIX DESCRIPTION */
-let desc = (p.description || "").trim()
+let desc =
+(p.description || "").trim()
 
-html+=`
-<div class="product" onclick="openProduct('${p.id}')">
+html += `
 
-<div style="position:relative">
+<div class="product"
+onclick="openProduct('${p.id}')">
 
-${p.discount ? `
-<div style="
-position:absolute;
-top:8px;
-left:8px;
-background:red;
-color:white;
-padding:4px 8px;
-border-radius:20px;
-font-size:12px;
-font-weight:bold;
-z-index:5;
-">
--${p.discount}%
-</div>
-` : ""}
+<div style="position:relative;">
 
 <img src="${img}">
-<div class="cartBtn" onclick="event.stopPropagation();addToCart('${p.id}')">🛒</div>
+
+<div class="cartBtn"
+onclick="event.stopPropagation();addToCart('${p.id}')">
+🛒
+</div>
+
 </div>
 
 <div class="info">
-<div class="name">${p.name}</div>
-<div class="desc">${desc}</div>
+
+<div class="name">
+${p.name}
+</div>
+
+<div class="desc">
+${desc}
+</div>
+
 <div class="priceP">
-
-${p.oldPrice ? `
-<span style="
-text-decoration:line-through;
-color:#888;
-font-size:12px;
-margin-right:5px;
-">
-${p.oldPrice} Kz
-</span>
-` : ""}
-
 ${p.price} Kz
-
-</div>
-<div class="province">📍 ${p.province || "Angola"}</div>
 </div>
 
+<div class="province">
+📍 ${p.province || "Angola"}
 </div>
+
+</div>
+
+</div>
+
 `
+
 })
 
-document.getElementById("productList")
-.innerHTML = html
+productList.innerHTML = html
+
 }
 
-window.openProduct=id=>{
-localStorage.setItem("selectedProduct",id)
-location.href="product.html"
+/* PRODUCT PAGE */
+
+window.openProduct = (id)=>{
+
+localStorage.setItem(
+"selectedProduct",
+id
+)
+
+location.href = "product.html"
+
 }
 
-window.addToCart=id=>{
+/* ADD TO CART */
+
+window.addToCart = (id)=>{
+
 if(!auth.currentUser){
 
-showToast("🔐 Faça login primeiro","warning")
+showToast(
+"Faça login primeiro",
+"warning"
+)
 
 location.href = "login.html"
 
 return
 
 }
+
 let cart = getCart()
-let product=products.find(p=>p.id===id)
+
+let product =
+products.find(p=>p.id===id)
 
 if(!product) return
 
-let exist=cart.find(p=>p.id===id)
+let exist =
+cart.find(p=>p.id===id)
 
-if(exist){exist.qty++}
-else{
+if(exist){
+exist.qty++
+}else{
+
 cart.push({
 id:product.id,
 name:product.name,
 price:product.price,
-image:product.images?.[0]||"",
-qty:1,
-merchantId:product.merchantId
+image:product.images?.[0] || "",
+qty:1
 })
+
 }
 
-localStorage.setItem("cart",JSON.stringify(cart))
+localStorage.setItem(
+"cart",
+JSON.stringify(cart)
+)
 
 updateCartCount()
-window.dispatchEvent(new Event("storage"))
-showToast("🛒 Produto adicionado ao carrinho","success")
+
+showToast(
+"Produto adicionado",
+"success"
+)
+
 }
 
- 
-
-let promoInterval = null
+/* PROMO SLIDER */
 
 async function loadPromoSlider(){
+
+try{
 
 const snap = await getDoc(
 doc(db,"promoBanner","main")
@@ -626,22 +645,22 @@ if(!snap.exists()) return
 
 const data = snap.data()
 
-const images = data.customImages || []
-const message = data.message || ""
+const images =
+data.customImages || []
 
-const slider =
-document.getElementById("promoSlider")
+const message =
+data.message || ""
 
 if(images.length === 0){
 
-slider.style.display = "none"
+promoSlider.style.display = "none"
+
 return
 
 }
 
-/* CREATE SLIDES */
-
-slider.innerHTML = images.map((img,i)=>`
+promoSlider.innerHTML =
+images.map((img,i)=>`
 
 <div class="promoSlide ${i===0?'active':''}">
 
@@ -658,13 +677,7 @@ ${message}
 const slides =
 document.querySelectorAll(".promoSlide")
 
-if(slides.length <= 1) return
-
-/* CLEAR OLD INTERVAL */
-
 clearInterval(promoInterval)
-
-/* START ANIMATION */
 
 promoInterval = setInterval(()=>{
 
@@ -674,9 +687,7 @@ slides[currentPromo]
 currentPromo++
 
 if(currentPromo >= slides.length){
-
 currentPromo = 0
-
 }
 
 slides[currentPromo]
@@ -684,24 +695,26 @@ slides[currentPromo]
 
 },3000)
 
+}catch(err){
+
+console.log(err)
+
 }
- window.addEventListener("load",()=>{
 
-loadPromoSlider()
+}
 
-loadProducts()
-
-})
-
-/* ================= TOAST ================= */
+/* TOAST */
 
 function showToast(message,type="success"){
 
-const box = document.getElementById("toastBox")
+const box =
+document.getElementById("toastBox")
 
-const toast = document.createElement("div")
+const toast =
+document.createElement("div")
 
-toast.className = "toast " + type
+toast.className =
+"toast " + type
 
 toast.innerText = message
 
@@ -709,32 +722,16 @@ box.appendChild(toast)
 
 setTimeout(()=>{
 toast.remove()
-},4000)
+},3000)
 
 }
-</script>
 
-<script>
+/* START */
 
-if ("serviceWorker" in navigator) {
-
+loadPromoSlider()
 loadProducts()
 
-navigator.serviceWorker.register("/service-worker.js")
-
-.then(() => {
-console.log("SW OK")
-})
-
-.catch(err => {
-console.log("SW ERROR", err)
-})
-
-})
-
-}
-
 </script>
-<div id="toastBox" class="toastBox"></div>
+
 </body>
 </html>
