@@ -605,56 +605,8 @@ updateCartCount()
 window.dispatchEvent(new Event("storage"))
 showToast("🛒 Produto adicionado ao carrinho","success")
 }
-async function loadPromoBanner(){
 
-const snap = await getDoc(
-doc(db,"promoBanner","main")
-)
-
-if(!snap.exists()) return
-
-const data = snap.data()
-
-if(!data.customBanner) return
-
-const b = data.customBanner
-
-document.getElementById("promoBanner")
-.innerHTML = `
-
-<div class="promoBanner"
-onclick="openPromo('${b.productId || ""}')">
-
-<img src="${b.image || ""}">
-
-<div class="promoOverlay">
-
-<div class="promoText">
-${b.text || ""}
-</div>
-
-<div class="promoBtn">
-${b.button || "Comprar"}
-</div>
-
-</div>
-
-</div>
-`
-
-}
- window.openPromo = function(id){
-
-if(!id) return
-
-localStorage.setItem(
-"selectedProduct",
-id
-)
-
-location.href = "product.html"
-
-}
+ 
  let currentPromo = 0
 let promoInterval = null
 
