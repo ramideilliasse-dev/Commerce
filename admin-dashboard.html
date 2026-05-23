@@ -454,6 +454,7 @@ value="${message}"
 type="file"
 id="bannerImageInput"
 accept="image/*"
+multiple
 >
 
 <div class="bannerPreview">
@@ -600,10 +601,10 @@ oldSnap.exists()
 
 /* KEEP OLD IMAGE */
 
-let imageUrl =
+let imageUrls =
 oldSnap.exists()
-? oldSnap.data().customImage || ""
-: ""
+? oldSnap.data().customImages || []
+: []
 
 /* ================= NEW IMAGE ================= */
 
@@ -658,7 +659,7 @@ throw new Error("Cloudinary upload failed")
 
 /* SAVE URL */
 
-imageUrl = data.secure_url
+imageUrls.push(data.secure_url)
 
 }
 
@@ -669,7 +670,7 @@ doc(db,"promoBanner","main"),
 {
 items: oldItems,
 message: message,
-customImage: imageUrl
+customImages: imageUrls
 }
 )
 
