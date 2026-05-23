@@ -405,12 +405,10 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 const adminBtn = document.getElementById("adminBtn")
 const shopNav = document.getElementById("shopNav")
-const banner = document.getElementById("banner")
+
 
 let products=[]
-let currentSlide=0
-let slides=[]
-let autoTimer=null
+
 let currentPromo = 0
 function getCart(){
 try{
@@ -499,30 +497,7 @@ loadPromoSlider()
 
 
 
-let startX=0
-let endX=0
 
-banner.addEventListener("touchstart",e=>{
-startX=e.touches[0].clientX
-})
-
-banner.addEventListener("touchmove",e=>{
-endX=e.touches[0].clientX
-})
-
-banner.addEventListener("touchend",()=>{
-let diff = startX - endX
-
-if(diff > 50){
-goToSlide((currentSlide+1)%slides.length)
-}
-
-if(diff < -50){
-goToSlide((currentSlide-1+slides.length)%slides.length)
-}
-})
-
-}
 
 function renderProducts(list){
 
