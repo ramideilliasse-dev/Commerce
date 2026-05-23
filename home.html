@@ -268,17 +268,21 @@ overflow:hidden;
 position:relative;
 }
 
-.promoSlide img{
+.promoSlide{
+position:absolute;
+top:0;
+left:0;
 width:100%;
 height:100%;
-object-fit:contain;
-background:#fff;
+opacity:0;
+transition:opacity 1s ease;
+z-index:1;
 }
 
 .promoSlide.active{
 opacity:1;
+z-index:2;
 }
-
 .promoSlide img{
 width:100%;
 height:100%;
@@ -694,7 +698,10 @@ id
 location.href = "product.html"
 
 }
- async function loadPromoSlider(){
+ let currentPromo = 0
+let promoInterval = null
+
+async function loadPromoSlider(){
 
 const snap = await getDoc(
 doc(db,"promoBanner","main")
@@ -717,7 +724,7 @@ return
 
 }
 
-slider.style.display = "block"
+/* CREATE SLIDES */
 
 slider.innerHTML = images.map((img,i)=>`
 
@@ -738,7 +745,13 @@ document.querySelectorAll(".promoSlide")
 
 if(slides.length <= 1) return
 
-setInterval(()=>{
+/* CLEAR OLD INTERVAL */
+
+clearInterval(promoInterval)
+
+/* START ANIMATION */
+
+promoInterval = setInterval(()=>{
 
 slides[currentPromo]
 .classList.remove("active")
