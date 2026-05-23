@@ -352,6 +352,8 @@ font-weight:bold;
 
 <div id="promoBanner"></div>
 
+<div class="promoSlider" id="promoSlider"></div>
+
 <div id="banner" class="banner"></div>
 <div id="productList" class="products"></div>
 
@@ -768,9 +770,9 @@ console.log("SW ERROR", err)
 })
 
 }
- let currentBanner = 0
+ let currentPromo = 0
 
-async function loadBanner(){
+async function loadPromoSlider(){
 
 const snap = await getDoc(
 doc(db,"promoBanner","main")
@@ -781,11 +783,17 @@ if(!snap.exists()) return
 const data = snap.data()
 
 const images = data.customImages || []
-
 const message = data.message || ""
 
 const slider =
 document.getElementById("promoSlider")
+
+if(images.length === 0){
+
+slider.style.display = "none"
+return
+
+}
 
 slider.innerHTML = images.map((img,i)=>`
 
@@ -804,29 +812,27 @@ ${message}
 const slides =
 document.querySelectorAll(".promoSlide")
 
-if(slides.length === 0) return
-
 setInterval(()=>{
 
-slides[currentBanner]
+slides[currentPromo]
 .classList.remove("active")
 
-currentBanner++
+currentPromo++
 
-if(currentBanner >= slides.length){
+if(currentPromo >= slides.length){
 
-currentBanner = 0
+currentPromo = 0
 
 }
 
-slides[currentBanner]
+slides[currentPromo]
 .classList.add("active")
 
 },3000)
 
 }
 
-loadBanner()
+loadPromoSlider()
 </script>
 <div id="toastBox" class="toastBox"></div>
 </body>
