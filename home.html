@@ -410,7 +410,7 @@ let products=[]
 let currentSlide=0
 let slides=[]
 let autoTimer=null
-
+let currentPromo = 0
 function getCart(){
 try{
 return JSON.parse(localStorage.getItem("cart") || "[]")
@@ -729,7 +729,70 @@ id
 location.href = "product.html"
 
 }
-loadPromoBanner()
+ async function loadPromoSlider(){
+
+const snap = await getDoc(
+doc(db,"promoBanner","main")
+)
+
+if(!snap.exists()) return
+
+const data = snap.data()
+
+const images = data.customImages || []
+const message = data.message || ""
+
+const slider =
+document.getElementById("promoSlider")
+
+if(images.length === 0){
+
+slider.style.display = "none"
+return
+
+}
+
+slider.style.display = "block"
+
+slider.innerHTML = images.map((img,i)=>`
+
+<div class="promoSlide ${i===0?'active':''}">
+
+<img src="${img}">
+
+<div class="promoText">
+${message}
+</div>
+
+</div>
+
+`).join("")
+
+const slides =
+document.querySelectorAll(".promoSlide")
+
+if(slides.length <= 1) return
+
+setInterval(()=>{
+
+slides[currentPromo]
+.classList.remove("active")
+
+currentPromo++
+
+if(currentPromo >= slides.length){
+
+currentPromo = 0
+
+}
+
+slides[currentPromo]
+.classList.add("active")
+
+},3000)
+
+}
+loadPromoSlider()
 loadProducts()
 /* ================= TOAST ================= */
 
@@ -753,6 +816,7 @@ toast.remove()
 </script>
 
 <script>
+
 if ("serviceWorker" in navigator) {
 
 window.addEventListener("load", () => {
@@ -770,69 +834,7 @@ console.log("SW ERROR", err)
 })
 
 }
- let currentPromo = 0
 
-async function loadPromoSlider(){
-
-const snap = await getDoc(
-doc(db,"promoBanner","main")
-)
-
-if(!snap.exists()) return
-
-const data = snap.data()
-
-const images = data.customImages || []
-const message = data.message || ""
-
-const slider =
-document.getElementById("promoSlider")
-
-if(images.length === 0){
-
-slider.style.display = "none"
-return
-
-}
-
-slider.innerHTML = images.map((img,i)=>`
-
-<div class="promoSlide ${i===0?'active':''}">
-
-<img src="${img}">
-
-<div class="promoText">
-${message}
-</div>
-
-</div>
-
-`).join("")
-
-const slides =
-document.querySelectorAll(".promoSlide")
-
-setInterval(()=>{
-
-slides[currentPromo]
-.classList.remove("active")
-
-currentPromo++
-
-if(currentPromo >= slides.length){
-
-currentPromo = 0
-
-}
-
-slides[currentPromo]
-.classList.add("active")
-
-},3000)
-
-}
-
-loadPromoSlider()
 </script>
 <div id="toastBox" class="toastBox"></div>
 </body>
