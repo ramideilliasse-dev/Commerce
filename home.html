@@ -404,8 +404,15 @@ import { onAuthStateChanged }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 const adminBtn = document.getElementById("adminBtn")
-const shopNav = document.getElementById("shopNav")
-const productList = document.getElementById("productList")
+
+const shopNav =
+document.getElementById("shopNav")
+
+const productList =
+document.getElementById("productList")
+
+const promoSlider =
+document.getElementById("promoSlider")
 
 let products=[]
 
@@ -562,7 +569,8 @@ ${p.price} Kz
 `
 })
 
-productList.innerHTML=html
+document.getElementById("productList")
+.innerHTML = html
 }
 
 window.openProduct=id=>{
@@ -679,8 +687,14 @@ slides[currentPromo]
 },3000)
 
 }
+ window.addEventListener("load",()=>{
+
 loadPromoSlider()
+
 loadProducts()
+
+})
+
 /* ================= TOAST ================= */
 
 function showToast(message,type="success"){
