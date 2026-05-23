@@ -300,6 +300,41 @@ color:white;
 font-size:18px;
 font-weight:bold;
 }
+ /* BANNER */
+.banner{
+height:200px;
+border-radius:12px;
+margin:10px;
+overflow:hidden;
+position:relative;
+}
+
+.slide{
+position:absolute;
+width:100%;
+height:100%;
+opacity:0;
+transition:0.3s;
+}
+
+.slide.active{
+opacity:1;
+}
+
+.slide img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.overlay{
+position:absolute;
+bottom:0;
+width:100%;
+padding:10px;
+background:linear-gradient(to top,rgba(0,0,0,0.7),transparent);
+color:white;
+}
 </style>
 </head>
 
@@ -319,10 +354,7 @@ font-weight:bold;
 </div>
 </div>
 
-<div id="promoBanner"></div>
-
 <div class="promoSlider" id="promoSlider"></div>
-
 
 <div id="productList" class="products"></div>
 
@@ -462,60 +494,10 @@ products.push(p)
 })
 
 renderProducts(products)
-loadBanner()
+loadPromoSlider()
 }
 
-async function loadBanner(){
 
-const snap = await getDoc(doc(db,"promoBanner","main"))
-if(!snap.exists()) return
-
-let items = snap.data().items || []
-
-let html=""
-let index=0
-
-items.forEach(item=>{
-let p=products.find(x=>x.id===item.id)
-if(!p) return
-
-let img=p.images?.[0]||"https://via.placeholder.com/400"
-
-html+=`
-<div class="slide ${index===0?'active':''}">
-<img loading="lazy" src="${img}">
-<div class="overlay">
-<div>${p.name}</div>
-<div>${p.price} Kz</div>
-</div>
-</div>
-`
-index++
-})
-
-banner.innerHTML=html
-slides=document.querySelectorAll(".slide")
-
-startAutoSlide()
-enableSwipe()
-}
-
-function startAutoSlide(){
-clearInterval(autoTimer)
-if(slides.length<=1) return
-
-autoTimer=setInterval(()=>{
-goToSlide((currentSlide+1)%slides.length)
-},3000)
-}
-
-function goToSlide(i){
-slides.forEach(s=>s.classList.remove("active"))
-currentSlide=i
-slides[i]?.classList.add("active")
-}
-
-function enableSwipe(){
 
 let startX=0
 let endX=0
