@@ -502,6 +502,10 @@ products.push(p)
 
 })
 
+renderProducts(products)
+loadPromoSlider()
+
+}
 
 
 
@@ -719,8 +723,6 @@ toast.remove()
 
 if ("serviceWorker" in navigator) {
 
-loadProducts()
-
 navigator.serviceWorker.register("/service-worker.js")
 
 .then(() => {
@@ -731,10 +733,7 @@ console.log("SW OK")
 console.log("SW ERROR", err)
 })
 
-})
-
 }
-
 </script>
 <div id="toastBox" class="toastBox"></div>
 </body>
