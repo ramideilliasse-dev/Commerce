@@ -492,10 +492,23 @@ productSnap.forEach(d=>{
 let p = d.data()
 p.id = d.id
 
+console.log("PRODUCT:", p)
+
+let m = usersMap[p.merchantId]
+
+console.log("MERCHANT:", m)
+
+if(m && m.status === "approved"){
+
 products.push(p)
 
-})
+}else{
 
+console.log("NOT APPROVED:", p.name)
+
+}
+
+})
 renderProducts(products)
 loadPromoSlider()
 
