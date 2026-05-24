@@ -474,18 +474,25 @@ location.href = "merchant-dashboard.html"
 
 async function loadProducts(){
 
+try{
+
 const qProducts = query(
 collection(db,"products"),
-limit(20)
+limit(50)
 )
 
 const productSnap = await getDocs(qProducts)
 const userSnap = await getDocs(collection(db,"users"))
 
-let usersMap={}
-userSnap.forEach(u=>usersMap[u.id]=u.data())
+let usersMap = {}
 
-products=[]
+userSnap.forEach(u=>{
+
+usersMap[u.id] = u.data()
+
+})
+
+products = []
 
 productSnap.forEach(d=>{
 
@@ -494,12 +501,12 @@ p.id = d.id
 
 let m = usersMap[p.merchantId]
 
+/* ✅ SHOW ONLY VALID MERCHANT PRODUCTS */
 if(
-p.merchantId &&
 m &&
 m.role === "merchant" &&
 m.approved === true &&
-!m.blocked
+m.blocked !== true
 ){
 
 products.push(p)
@@ -507,6 +514,47 @@ products.push(p)
 }
 
 })
+
+/* ✅ EMPTY PRODUCTS */
+if(products.length === 0){
+
+productList.innerHTML = `
+<div style="
+padding:30px;
+text-align:center;
+color:#777;
+font-size:15px;
+">
+Nenhum produto disponível
+</div>
+`
+
+return
+
+}
+
+renderProducts(products)
+
+}catch(error){
+
+console.error(error)
+
+productList.innerHTML = `
+<div style="
+padding:30px;
+text-align:center;
+color:red;
+font-size:15px;
+">
+Erro ao carregar produtos
+</div>
+`
+
+showToast("Erro ao carregar produtos","error")
+
+}
+
+}
 renderProducts(products)
 loadPromoSlider()
 
@@ -547,7 +595,12 @@ z-index:5;
 </div>
 ` : ""}
 
-<img src="${img}">
+<img 
+src="${img}" 
+loading="lazy"
+referrerpolicy="no-referrer"
+onerror="this.src='https://via.placeholder.com/300'"
+>
 <div class="cartBtn" onclick="event.stopPropagation();addToCart('${p.id}')">🛒</div>
 </div>
 
@@ -695,13 +748,8 @@ slides[currentPromo]
 },3000)
 
 }
- window.addEventListener("load",()=>{
-
-loadPromoSlider()
-
+ loadPromoSlider()
 loadProducts()
-
-})
 
 /* ================= TOAST ================= */
 
@@ -726,19 +774,25 @@ toast.remove()
 
 <script>
 
-if ("serviceWorker" in navigator) {
+if("serviceWorker" in navigator){
 
-navigator.serviceWorker.register("/service-worker.js")
+window.addEventListener("load",()=>{
 
-.then(() => {
+navigator.serviceWorker
+.register("/service-worker.js")
+
+.then(()=>{
 console.log("SW OK")
 })
 
-.catch(err => {
-console.log("SW ERROR", err)
+.catch((err)=>{
+console.log("SW ERROR",err)
+})
+
 })
 
 }
+
 </script>
 <div id="toastBox" class="toastBox"></div>
 </body>
