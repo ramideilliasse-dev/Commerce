@@ -492,19 +492,29 @@ productSnap.forEach(d=>{
 let p = d.data()
 p.id = d.id
 
-console.log("PRODUCT:", p)
-
 let m = usersMap[p.merchantId]
 
-console.log("MERCHANT:", m)
+if(!p.merchantId){
 
-if(m && m.status === "approved"){
+alert("❌ Produit sans merchantId : " + p.name)
+
+}
+
+else if(!m){
+
+alert("❌ Vendeur introuvable pour : " + p.name)
+
+}
+
+else if(m.status !== "approved"){
+
+alert("❌ Vendeur non approuvé : " + p.name)
+
+}
+
+else{
 
 products.push(p)
-
-}else{
-
-console.log("NOT APPROVED:", p.name)
 
 }
 
