@@ -488,18 +488,19 @@ userSnap.forEach(u=>usersMap[u.id]=u.data())
 products=[]
 
 productSnap.forEach(d=>{
-let p=d.data()
-p.id=d.id
 
-let m=usersMap[p.merchantId]
+let p = d.data()
+p.id = d.id
+
+let m = usersMap[p.merchantId]
+
+if(m && m.status === "approved"){
 
 products.push(p)
-})
 
-renderProducts(products)
-loadPromoSlider()
 }
 
+})
 
 
 
