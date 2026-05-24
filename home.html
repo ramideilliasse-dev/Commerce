@@ -494,43 +494,13 @@ p.id = d.id
 
 let m = usersMap[p.merchantId]
 
-/* ❌ NO MERCHANT ID */
-if(!p.merchantId){
-
-alert("❌ Produit sans merchantId : " + p.name)
-
-}
-
-/* ❌ USER NOT FOUND */
-else if(!m){
-
-alert("❌ Vendeur introuvable : " + p.name)
-
-}
-
-/* ❌ NOT MERCHANT */
-else if(m.role !== "merchant"){
-
-alert("❌ Utilisateur non marchand : " + p.name)
-
-}
-
-/* ❌ NOT APPROVED */
-else if(m.approved !== true){
-
-alert("❌ Vendeur non approuvé : " + p.name)
-
-}
-
-/* ❌ BLOCKED */
-else if(m.blocked === true){
-
-alert("❌ Vendeur bloqué : " + p.name)
-
-}
-
-/* ✅ OK */
-else{
+if(
+p.merchantId &&
+m &&
+m.role === "merchant" &&
+m.approved === true &&
+!m.blocked
+){
 
 products.push(p)
 
