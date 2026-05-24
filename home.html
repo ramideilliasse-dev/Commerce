@@ -560,74 +560,89 @@ showToast("Erro ao carregar produtos","error")
 
 function renderProducts(list){
 
-let html=""
+let html = ""
 
 list.forEach(p=>{
 
-let img=p.images?.[0]||"https://via.placeholder.com/300"
+const img = p.images?.[0] || "https://via.placeholder.com/300"
 
-/* 🔥 FIX DESCRIPTION */
-let desc = (p.description || "").trim()
+const desc = (p.description || "").trim()
 
-html+=`
+html += `
 <div class="product" onclick="openProduct('${p.id}')">
 
-<div style="position:relative">
+  <div style="position:relative">
 
-${p.discount ? `
-<div style="
-position:absolute;
-top:8px;
-left:8px;
-background:red;
-color:white;
-padding:4px 8px;
-border-radius:20px;
-font-size:12px;
-font-weight:bold;
-z-index:5;
-">
--${p.discount}%
-</div>
-` : ""}
+    ${p.discount ? `
+    <div style="
+      position:absolute;
+      top:8px;
+      left:8px;
+      background:red;
+      color:white;
+      padding:4px 8px;
+      border-radius:20px;
+      font-size:12px;
+      font-weight:bold;
+      z-index:5;
+    ">
+      -${p.discount}%
+    </div>
+    ` : ""}
 
-<img 
-src="${img}" 
-loading="lazy"
-referrerpolicy="no-referrer"
-onerror="this.src='https://via.placeholder.com/300'"
->
-<div class="cartBtn" onclick="event.stopPropagation();addToCart('${p.id}')">🛒</div>
-</div>
+    <img
+      src="${img}"
+      loading="lazy"
+      onerror="this.src='https://via.placeholder.com/300'"
+    >
 
-<div class="info">
-<div class="name">${p.name}</div>
-<div class="desc">${desc}</div>
-<div class="priceP">
+    <div class="cartBtn"
+      onclick="event.stopPropagation();addToCart('${p.id}')">
+      🛒
+    </div>
 
-${p.oldPrice ? `
-<span style="
-text-decoration:line-through;
-color:#888;
-font-size:12px;
-margin-right:5px;
-">
-${p.oldPrice} Kz
-</span>
-` : ""}
+  </div>
 
-${p.price} Kz
+  <div class="info">
 
-</div>
-<div class="province">📍 ${p.province || "Angola"}</div>
-</div>
+    <div class="name">
+      ${p.name || ""}
+    </div>
+
+    <div class="desc">
+      ${desc}
+    </div>
+
+    <div class="priceP">
+
+      ${p.oldPrice ? `
+      <span style="
+        text-decoration:line-through;
+        color:#888;
+        font-size:12px;
+        margin-right:5px;
+      ">
+        ${p.oldPrice} Kz
+      </span>
+      ` : ""}
+
+      ${p.price || 0} Kz
+
+    </div>
+
+    <div class="province">
+      📍 ${p.province || "Angola"}
+    </div>
+
+  </div>
 
 </div>
 `
+
 })
 
-document.getElementById("productList")
-.innerHTML = html
+productList.innerHTML = html
+
 }
 
 window.openProduct=id=>{
