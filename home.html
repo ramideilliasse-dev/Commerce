@@ -482,7 +482,10 @@ limit(50)
 )
 
 const productSnap = await getDocs(qProducts)
-const userSnap = await getDocs(collection(db,"users"))
+
+const userSnap = await getDocs(
+collection(db,"users")
+)
 
 let usersMap = {}
 
@@ -515,7 +518,7 @@ products.push(p)
 
 })
 
-/* ✅ EMPTY PRODUCTS */
+/* ✅ EMPTY */
 if(products.length === 0){
 
 productList.innerHTML = `
@@ -533,6 +536,7 @@ return
 
 }
 
+/* ✅ RENDER */
 renderProducts(products)
 
 }catch(error){
@@ -555,12 +559,6 @@ showToast("Erro ao carregar produtos","error")
 }
 
 }
-renderProducts(products)
-loadPromoSlider()
-
-}
-
-
 
 function renderProducts(list){
 
