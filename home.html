@@ -483,17 +483,7 @@ limit(50)
 
 const productSnap = await getDocs(qProducts)
 
-const userSnap = await getDocs(
-collection(db,"users")
-)
 
-let usersMap = {}
-
-userSnap.forEach(u=>{
-
-usersMap[u.id] = u.data()
-
-})
 
 products = []
 
@@ -502,17 +492,10 @@ productSnap.forEach(d=>{
 let p = d.data()
 p.id = d.id
 
-let m = usersMap[p.merchantId]
+
 
 /* ✅ SHOW ONLY VALID MERCHANT PRODUCTS */
-if(
-m &&
-m.blocked !== true
-){
-
 products.push(p)
-
-}
 
 })
 
