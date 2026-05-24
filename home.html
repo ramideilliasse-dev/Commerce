@@ -507,8 +507,6 @@ let m = usersMap[p.merchantId]
 /* ✅ SHOW ONLY VALID MERCHANT PRODUCTS */
 if(
 m &&
-m.role === "merchant" &&
-m.approved === true &&
 m.blocked !== true
 ){
 
