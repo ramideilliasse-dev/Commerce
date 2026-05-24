@@ -482,7 +482,7 @@ limit(50)
 )
 
 const productSnap = await getDocs(qProducts)
-
+alert("Produits trouvés : " + productSnap.size)
 
 
 products = []
@@ -495,6 +495,7 @@ p.id = d.id
 
 
 /* ✅ SHOW ONLY VALID MERCHANT PRODUCTS */
+ alert("Produit OK : " + p.name)
 products.push(p)
 
 })
@@ -522,7 +523,7 @@ renderProducts(products)
 
 }catch(error){
 
-console.error(error)
+alert("ERRO: " + error.message)
 
 productList.innerHTML = `
 <div style="
