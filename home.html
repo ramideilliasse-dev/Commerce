@@ -686,63 +686,68 @@ window.openProduct = (id)=>{
 
 /* ================= CART ================= */
 
-window.addToCart = (id)=>{
+window.addToCart = id => {
 
-  if(!auth.currentUser){
+alert("CLICK OK")
 
-    showToast(
-      "🔐 Faça login primeiro",
-      "warning"
-    )
+alert("ID RECEBIDO: " + id)
 
-    location.href = "login.html"
+alert("TOTAL PRODUCTS: " + products.length)
 
-    return
+let product = products.find(p => p.id === id)
 
-  }
+if(!product){
 
-  let cart = getCart()
+alert("PRODUTO NÃO ENCONTRADO")
 
-  const product =
-  products.find(p=>p.id===id)
-
-  if(!product) return
-
-  const exist =
-  cart.find(p=>p.id===id)
-
-  if(exist){
-
-    exist.qty++
-
-  }else{
-alert("MERCHANT ID: " + product.merchantId)
-    cart.push({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.images?.[0] || "",
-      qty: 1,
-      merchantId: product.merchantId
-    })
-
-  }
-
-  localStorage.setItem(
-    "cart",
-    JSON.stringify(cart)
-  )
-
-  updateCartCount()
-
-  showToast(
-    "🛒 Produto adicionado ao carrinho",
-    "success"
-  )
+return
 
 }
 
+alert("PRODUTO OK: " + product.name)
 
+alert("MERCHANT ID: " + product.merchantId)
+
+if(!auth.currentUser){
+
+showToast("🔐 Faça login primeiro","warning")
+
+location.href = "login.html"
+
+return
+
+}
+
+let cart = getCart()
+
+let exist = cart.find(p => p.id === id)
+
+if(exist){
+
+exist.qty++
+
+}else{
+
+cart.push({
+id: product.id,
+name: product.name,
+price: product.price,
+image: product.images?.[0] || "",
+qty: 1,
+merchantId: product.merchantId
+})
+
+}
+
+localStorage.setItem("cart", JSON.stringify(cart))
+
+updateCartCount()
+
+window.dispatchEvent(new Event("storage"))
+
+showToast("🛒 Produto adicionado","success")
+
+}
 /* ================= PROMO ================= */
 
 async function loadPromoSlider(){
