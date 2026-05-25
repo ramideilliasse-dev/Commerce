@@ -348,12 +348,15 @@ if(success){
 
 localStorage.removeItem("cart")
 
+showToast("✅ Pedido enviado com sucesso","success")
+
 confirmBtn.innerText = "✔ Pedido enviado"
+
+localStorage.removeItem("checkoutCart")
 
 setTimeout(()=>{
 window.location.href = "./success.html"
-},1000)
-
+},1500)
 }else{
 
 showToast("❌ Nenhum vendedor encontrado","error")
