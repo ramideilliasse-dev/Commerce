@@ -743,10 +743,18 @@ slides[currentPromo]
 },3000)
 
 }
+ alert("AVANT LOAD EVENT")
  window.addEventListener("load",()=>{
 
+alert("LOAD EVENT OK")
+
 loadPromoSlider()
+
+alert("PROMO OK")
+
 loadProducts()
+
+alert("LOAD PRODUCTS LANCÉ")
 
 })
 
