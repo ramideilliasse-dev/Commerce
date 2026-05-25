@@ -684,26 +684,17 @@ window.openProduct = (id)=>{
 /* ================= CART ================= */
 
 window.addToCart = id => {
-alert("ADD TO CART OK")
-alert("CLICK OK")
-
-alert("ID RECEBIDO: " + id)
-
-alert("TOTAL PRODUCTS: " + products.length)
 
 let product = products.find(p => p.id === id)
 
 if(!product){
 
-alert("PRODUTO NÃO ENCONTRADO")
+
 
 return
 
 }
 
-alert("PRODUTO OK: " + product.name)
-
-alert("MERCHANT ID: " + product.merchantId)
 
 if(!auth.currentUser){
 
