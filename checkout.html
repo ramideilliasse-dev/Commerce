@@ -291,7 +291,6 @@ const userRef = doc(db,"users", merchantId)
 const userSnap = await getDoc(userRef)
 
 
-alert("USER EXISTS: " + userSnap.exists())
 
 if(!userSnap.exists()){
 
