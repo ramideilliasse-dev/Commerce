@@ -618,13 +618,10 @@ function renderProducts(list){
           onerror="this.src='https://via.placeholder.com/300'"
         >
 
-        <div
-          class="cartBtn"
-          onclick="event.stopPropagation();addToCart('${p.id}')"
-        >
-          🛒
-        </div>
-
+        <button class="cartBtn"
+onclick="addToCart('${p.id}'); return false;">
+🛒
+</button>
       </div>
 
       <div class="info">
@@ -687,7 +684,7 @@ window.openProduct = (id)=>{
 /* ================= CART ================= */
 
 window.addToCart = id => {
-
+alert("ADD TO CART OK")
 alert("CLICK OK")
 
 alert("ID RECEBIDO: " + id)
