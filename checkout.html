@@ -279,13 +279,43 @@ for(const merchantId in grouped){
 
 try{
 
+alert("MERCHANT ID: " + merchantId)
+
 const items = grouped[merchantId]
 
-const userSnap = await getDoc(doc(db,"users", merchantId))
-if(!userSnap.exists()) continue
+alert("ITEMS OK: " + items.length)
+
+const userRef = doc(db,"users", merchantId)
+
+alert("USER REF OK")
+
+const userSnap = await getDoc(userRef)
+
+alert("GET USER OK")
+
+alert("USER EXISTS: " + userSnap.exists())
+
+if(!userSnap.exists()){
+
+alert("UTILISATEUR INTROUVABLE DANS USERS")
+
+continue
+
+}
+
+const userData = userSnap.data()
+
+alert("ROLE: " + userData.role)
 
 let total = 0
-items.forEach(i=> total += i.price * i.qty)
+
+items.forEach(i=>{
+
+total += i.price * i.qty
+
+})
+
+alert("TOTAL: " + total)
 
 await addDoc(collection(db,"orders"),{
 
@@ -303,14 +333,19 @@ createdAt: Date.now()
 
 })
 
+alert("ORDER SAVED OK")
+
 success = true
 
 }catch(err){
-console.log("Erro order:", err)
-}
+
+alert("ERRO ORDER: " + err.message)
+
+console.log(err)
 
 }
 
+}
 /* RESULT */
 loader.style.display = "none"
 
