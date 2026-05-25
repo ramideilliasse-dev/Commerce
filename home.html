@@ -619,7 +619,7 @@ function renderProducts(list){
         >
 
         <button class="cartBtn"
-onclick="addToCart('${p.id}'); return false;">
+onclick="event.stopPropagation(); addToCart('${p.id}')">
 🛒
 </button>
       </div>
@@ -683,24 +683,27 @@ window.openProduct = (id)=>{
 
 /* ================= CART ================= */
 
-window.addToCart = id => {
+window.addToCart = (id) => {
 
-let product = products.find(p => p.id === id)
-
-if(!product){
-
-
-
-return
-
-}
-
+event.stopPropagation()
 
 if(!auth.currentUser){
 
 showToast("🔐 Faça login primeiro","warning")
 
+setTimeout(()=>{
 location.href = "login.html"
+},800)
+
+return
+
+}
+
+const product = products.find(p => p.id === id)
+
+if(!product){
+
+showToast("❌ Produto não encontrado","error")
 
 return
 
@@ -708,32 +711,40 @@ return
 
 let cart = getCart()
 
-let exist = cart.find(p => p.id === id)
+const exist = cart.find(p => p.id === id)
 
 if(exist){
 
-exist.qty++
+exist.qty += 1
 
 }else{
 
 cart.push({
+
 id: product.id,
-name: product.name,
-price: product.price,
+name: product.name || "",
+price: Number(product.price || 0),
 image: product.images?.[0] || "",
 qty: 1,
-merchantId: product.merchantId
+merchantId: product.merchantId || ""
+
 })
 
 }
 
-localStorage.setItem("cart", JSON.stringify(cart))
+localStorage.setItem(
+"cart",
+JSON.stringify(cart)
+)
 
 updateCartCount()
 
 window.dispatchEvent(new Event("storage"))
 
-showToast("🛒 Produto adicionado","success")
+showToast(
+"🛒 Produto adicionado ao carrinho",
+"success"
+)
 
 }
 /* ================= PROMO ================= */
