@@ -396,7 +396,7 @@ showToast("🗑️ Produto removido","warning")
 
 window.clearCart = function(){
 
-localStorage.removeItem("cart")
+
 
 loadCart()
 
@@ -467,12 +467,11 @@ localStorage.setItem(
 JSON.stringify(checkoutCart)
 )
 
-showToast("✅ Redirecionando...","success")
+showToast("✅ Indo para checkout","success")
 
 setTimeout(()=>{
 location.href = "checkout.html"
-},800)
-
+},500)
 }
 
 /* ================= AUTO SYNC ================= */
