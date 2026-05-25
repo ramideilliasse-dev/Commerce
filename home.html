@@ -389,419 +389,473 @@ color:white;
 </div>
 
 <script type="module">
-alert("SCRIPT START")
+
 import { db, auth } from "./firebase.js"
+
 import {
-collection,
-getDocs,
-doc,
-getDoc,
-query,
-where,
-limit
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  query,
+  limit
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-import { onAuthStateChanged } 
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
-alert("IMPORT OK")
+
+import {
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
+
+
 const adminBtn = document.getElementById("adminBtn")
+const shopNav = document.getElementById("shopNav")
+const productList = document.getElementById("productList")
+const promoSlider = document.getElementById("promoSlider")
 
-const shopNav =
-document.getElementById("shopNav")
-
-const productList =
-document.getElementById("productList")
-
-const promoSlider =
-document.getElementById("promoSlider")
-
-let products=[]
-
+let products = []
 let currentPromo = 0
+let promoInterval = null
+
+
+/* ================= CART ================= */
+
 function getCart(){
-try{
-return JSON.parse(localStorage.getItem("cart") || "[]")
-}catch{
-return []
-}
+
+  try{
+    return JSON.parse(localStorage.getItem("cart") || "[]")
+  }catch{
+    return []
+  }
+
 }
 
 function updateCartCount(){
 
-let cart = getCart()
+  const cart = getCart()
 
-let total = cart.reduce((a,b)=>a+(b.qty||1),0)
+  const total = cart.reduce((a,b)=>a+(b.qty || 1),0)
 
-const badge = document.getElementById("bottomCartCount")
+  const badge =
+  document.getElementById("bottomCartCount")
 
-if(badge){
-badge.innerText = total
+  if(badge){
+    badge.innerText = total
+  }
+
 }
 
-}
 updateCartCount()
 
-window.addEventListener("storage", ()=>{
-updateCartCount()
+window.addEventListener("storage",()=>{
+  updateCartCount()
 })
+
+
+/* ================= AUTH ================= */
 
 onAuthStateChanged(auth, async (user)=>{
 
-if(!user){
-return
-}
+  if(!user) return
 
-const snap = await getDoc(doc(db,"users",user.uid))
-const data = snap.data() || {}
+  try{
 
-const role = (data.role || "").toLowerCase()
+    const snap =
+    await getDoc(doc(db,"users",user.uid))
 
-if(role==="admin"||role==="superadmin"){
-adminBtn.style.display="block"
-adminBtn.onclick=()=>location.href="admin-dashboard.html"
-}
+    const data = snap.data() || {}
 
-if(role==="merchant"){
+    const role =
+    (data.role || "").toLowerCase()
 
-shopNav.style.display = "block"
+    if(
+      role === "admin" ||
+      role === "superadmin"
+    ){
 
-shopNav.onclick = ()=>{
-location.href = "merchant-dashboard.html"
-}
+      adminBtn.style.display = "block"
 
-}
+      adminBtn.onclick = ()=>{
+        location.href = "admin-dashboard.html"
+      }
+
+    }
+
+    if(role === "merchant"){
+
+      shopNav.style.display = "block"
+
+      shopNav.onclick = ()=>{
+        location.href = "merchant-dashboard.html"
+      }
+
+    }
+
+  }catch(err){
+
+    console.log(err)
+
+  }
 
 })
+
+
+/* ================= LOAD PRODUCTS ================= */
 
 async function loadProducts(){
 
-try{
+  try{
 
-const qProducts = query(
-collection(db,"products"),
-limit(50)
-)
+    const qProducts = query(
+      collection(db,"products"),
+      limit(50)
+    )
 
-const productSnap = await getDocs(qProducts)
-alert("Produits trouvés : " + productSnap.size)
+    const productSnap =
+    await getDocs(qProducts)
 
+    products = []
 
-products = []
+    productSnap.forEach(docSnap=>{
 
-productSnap.forEach(d=>{
+      const p = docSnap.data()
 
-let p = d.data()
-p.id = d.id
+      p.id = docSnap.id
 
+      products.push(p)
 
+    })
 
-/* ✅ SHOW ONLY VALID MERCHANT PRODUCTS */
- alert("Produit OK : " + p.name)
-products.push(p)
+    if(products.length === 0){
 
-})
+      productList.innerHTML = `
+      <div style="
+        padding:30px;
+        text-align:center;
+        color:#777;
+        font-size:15px;
+      ">
+        Nenhum produto disponível
+      </div>
+      `
 
-/* ✅ EMPTY */
-if(products.length === 0){
+      return
 
-productList.innerHTML = `
-<div style="
-padding:30px;
-text-align:center;
-color:#777;
-font-size:15px;
-">
-Nenhum produto disponível
-</div>
-`
+    }
 
-return
+    renderProducts(products)
 
-}
+  }catch(error){
 
-/* ✅ RENDER */
-renderProducts(products)
+    console.log(error)
 
-}catch(error){
+    productList.innerHTML = `
+    <div style="
+      padding:30px;
+      text-align:center;
+      color:red;
+      font-size:15px;
+    ">
+      Erro ao carregar produtos
+    </div>
+    `
 
-alert("ERRO: " + error.message)
+    showToast(
+      "Erro ao carregar produtos",
+      "error"
+    )
 
-productList.innerHTML = `
-<div style="
-padding:30px;
-text-align:center;
-color:red;
-font-size:15px;
-">
-Erro ao carregar produtos
-</div>
-`
-
-showToast("Erro ao carregar produtos","error")
-
-}
+  }
 
 }
+
+
+/* ================= RENDER PRODUCTS ================= */
 
 function renderProducts(list){
 
-try{
+  let html = ""
 
-alert("RENDER START")
+  list.forEach(p=>{
 
-let html = ""
+    let img =
+    "https://via.placeholder.com/300"
 
-list.forEach(p=>{
+    if(
+      Array.isArray(p.images) &&
+      p.images.length > 0
+    ){
+      img = p.images[0]
+    }
 
-alert("RENDER PRODUTO: " + (p.name || "SEM NOME"))
+    const desc =
+    (p.description || "").trim()
 
-let img = "https://via.placeholder.com/300"
+    html += `
+    <div class="product"
+      onclick="openProduct('${p.id}')">
 
-if(
-Array.isArray(p.images) &&
-p.images.length > 0
-){
-img = p.images[0]
-}
+      <div style="position:relative">
 
-let desc = (p.description || "").trim()
+        ${p.discount ? `
+        <div style="
+          position:absolute;
+          top:8px;
+          left:8px;
+          background:red;
+          color:white;
+          padding:4px 8px;
+          border-radius:20px;
+          font-size:12px;
+          font-weight:bold;
+          z-index:5;
+        ">
+          -${p.discount}%
+        </div>
+        ` : ""}
 
-html += `
-<div class="product" onclick="openProduct('${p.id}')">
+        <img
+          src="${img}"
+          loading="lazy"
+          onerror="this.src='https://via.placeholder.com/300'"
+        >
 
-<div style="position:relative">
+        <div
+          class="cartBtn"
+          onclick="event.stopPropagation();addToCart('${p.id}')"
+        >
+          🛒
+        </div>
 
-${p.discount ? `
-<div style="
-position:absolute;
-top:8px;
-left:8px;
-background:red;
-color:white;
-padding:4px 8px;
-border-radius:20px;
-font-size:12px;
-font-weight:bold;
-z-index:5;
-">
--${p.discount}%
-</div>
-` : ""}
+      </div>
 
-<img
-src="${img}"
-loading="lazy"
-onerror="this.src='https://via.placeholder.com/300'"
->
+      <div class="info">
 
-<div class="cartBtn"
-onclick="event.stopPropagation();addToCart('${p.id}')">
-🛒
-</div>
+        <div class="name">
+          ${p.name || ""}
+        </div>
 
-</div>
+        <div class="desc">
+          ${desc}
+        </div>
 
-<div class="info">
+        <div class="priceP">
 
-<div class="name">
-${p.name || ""}
-</div>
+          ${p.oldPrice ? `
+          <span style="
+            text-decoration:line-through;
+            color:#888;
+            font-size:12px;
+            margin-right:5px;
+          ">
+            ${p.oldPrice} Kz
+          </span>
+          ` : ""}
 
-<div class="desc">
-${desc}
-</div>
+          ${Number(p.price || 0)} Kz
 
-<div class="priceP">
+        </div>
 
-${p.oldPrice ? `
-<span style="
-text-decoration:line-through;
-color:#888;
-font-size:12px;
-margin-right:5px;
-">
-${p.oldPrice} Kz
-</span>
-` : ""}
+        <div class="province">
+          📍 ${p.province || "Angola"}
+        </div>
 
-${Number(p.price || 0)} Kz
+      </div>
 
-</div>
+    </div>
+    `
 
-<div class="province">
-📍 ${p.province || "Angola"}
-</div>
+  })
 
-</div>
-
-</div>
-`
-
-})
-
-alert("ANTES INNERHTML")
-
-productList.innerHTML = html
-
-alert("HTML OK")
-
-}catch(err){
-
-alert("ERRO RENDER: " + err.message)
+  productList.innerHTML = html
 
 }
 
-}
 
-window.openProduct=id=>{
-localStorage.setItem("selectedProduct",id)
-location.href="product.html"
-}
+/* ================= PRODUCT ================= */
 
-window.addToCart=id=>{
-if(!auth.currentUser){
+window.openProduct = (id)=>{
 
-showToast("🔐 Faça login primeiro","warning")
+  localStorage.setItem(
+    "selectedProduct",
+    id
+  )
 
-location.href = "login.html"
-
-return
+  location.href = "product.html"
 
 }
-let cart = getCart()
-let product=products.find(p=>p.id===id)
 
-if(!product) return
 
-let exist=cart.find(p=>p.id===id)
+/* ================= CART ================= */
 
-if(exist){exist.qty++}
-else{
-cart.push({
-id:product.id,
-name:product.name,
-price:product.price,
-image:product.images?.[0]||"",
-qty:1,
-merchantId:product.merchantId
-})
+window.addToCart = (id)=>{
+
+  if(!auth.currentUser){
+
+    showToast(
+      "🔐 Faça login primeiro",
+      "warning"
+    )
+
+    location.href = "login.html"
+
+    return
+
+  }
+
+  let cart = getCart()
+
+  const product =
+  products.find(p=>p.id===id)
+
+  if(!product) return
+
+  const exist =
+  cart.find(p=>p.id===id)
+
+  if(exist){
+
+    exist.qty++
+
+  }else{
+
+    cart.push({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images?.[0] || "",
+      qty: 1,
+      merchantId: product.merchantId
+    })
+
+  }
+
+  localStorage.setItem(
+    "cart",
+    JSON.stringify(cart)
+  )
+
+  updateCartCount()
+
+  showToast(
+    "🛒 Produto adicionado ao carrinho",
+    "success"
+  )
+
 }
 
-localStorage.setItem("cart",JSON.stringify(cart))
 
-updateCartCount()
-window.dispatchEvent(new Event("storage"))
-showToast("🛒 Produto adicionado ao carrinho","success")
-}
-
- 
-
-let promoInterval = null
+/* ================= PROMO ================= */
 
 async function loadPromoSlider(){
 
-const snap = await getDoc(
-doc(db,"promoBanner","main")
-)
+  try{
 
-if(!snap.exists()) return
+    const snap = await getDoc(
+      doc(db,"promoBanner","main")
+    )
 
-const data = snap.data()
+    if(!snap.exists()) return
 
-const images = data.customImages || []
-const message = data.message || ""
+    const data = snap.data()
 
-const slider =
-document.getElementById("promoSlider")
+    const images =
+    data.customImages || []
 
-if(images.length === 0){
+    const message =
+    data.message || ""
 
-slider.style.display = "none"
-return
+    if(images.length === 0){
+
+      promoSlider.style.display = "none"
+
+      return
+
+    }
+
+    promoSlider.innerHTML =
+    images.map((img,i)=>`
+
+      <div class="promoSlide ${i===0 ? 'active' : ''}">
+
+        <img src="${img}">
+
+        <div class="promoText">
+          ${message}
+        </div>
+
+      </div>
+
+    `).join("")
+
+    const slides =
+    document.querySelectorAll(".promoSlide")
+
+    if(slides.length <= 1) return
+
+    clearInterval(promoInterval)
+
+    promoInterval = setInterval(()=>{
+
+      slides[currentPromo]
+      .classList.remove("active")
+
+      currentPromo++
+
+      if(currentPromo >= slides.length){
+        currentPromo = 0
+      }
+
+      slides[currentPromo]
+      .classList.add("active")
+
+    },3000)
+
+  }catch(err){
+
+    console.log(err)
+
+  }
 
 }
 
-/* CREATE SLIDES */
 
-slider.innerHTML = images.map((img,i)=>`
+/* ================= START ================= */
 
-<div class="promoSlide ${i===0?'active':''}">
+window.addEventListener("load",()=>{
 
-<img src="${img}">
+  loadPromoSlider()
 
-<div class="promoText">
-${message}
-</div>
-
-</div>
-
-`).join("")
-
-const slides =
-document.querySelectorAll(".promoSlide")
-
-if(slides.length <= 1) return
-
-/* CLEAR OLD INTERVAL */
-
-clearInterval(promoInterval)
-
-/* START ANIMATION */
-
-promoInterval = setInterval(()=>{
-
-slides[currentPromo]
-.classList.remove("active")
-
-currentPromo++
-
-if(currentPromo >= slides.length){
-
-currentPromo = 0
-
-}
-
-slides[currentPromo]
-.classList.add("active")
-
-},3000)
-
-}
- alert("AVANT LOAD EVENT")
- window.addEventListener("load",()=>{
-
-alert("LOAD EVENT OK")
-
-loadPromoSlider()
-
-alert("PROMO OK")
-
-loadProducts()
-
-alert("LOAD PRODUCTS LANCÉ")
+  loadProducts()
 
 })
 
+
 /* ================= TOAST ================= */
 
-function showToast(message,type="success"){
+function showToast(
+  message,
+  type="success"
+){
 
-const box = document.getElementById("toastBox")
+  const box =
+  document.getElementById("toastBox")
 
-const toast = document.createElement("div")
+  const toast =
+  document.createElement("div")
 
-toast.className = "toast " + type
+  toast.className =
+  "toast " + type
 
-toast.innerText = message
+  toast.innerText = message
 
-box.appendChild(toast)
+  box.appendChild(toast)
 
-setTimeout(()=>{
-toast.remove()
-},4000)
+  setTimeout(()=>{
+    toast.remove()
+  },4000)
 
 }
-</script>
 
+</script>
 <script>
 
 if("serviceWorker" in navigator){
