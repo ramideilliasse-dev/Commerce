@@ -170,7 +170,11 @@ const clientAddress = document.getElementById("clientAddress")
 const loader = document.getElementById("loaderOverlay")
 
 /* CART */
-let cart = JSON.parse(localStorage.getItem("cart") || "[]")
+let cart = JSON.parse(
+localStorage.getItem("checkoutCart") ||
+localStorage.getItem("cart") ||
+"[]"
+)
 
 function loadCart(){
 
