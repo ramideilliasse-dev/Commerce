@@ -1,4 +1,4 @@
- const CACHE_NAME = "toma-v2";
+ const CACHE_NAME = "toma-v999";
 
 self.addEventListener("install", event => {
   self.skipWaiting();
