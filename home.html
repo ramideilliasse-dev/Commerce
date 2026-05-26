@@ -861,26 +861,26 @@ function showToast(
 
 </script>
 <script>
-if ("serviceWorker" in navigator) {
 
-navigator.serviceWorker.getRegistrations()
-.then(registrations => {
+if("serviceWorker" in navigator){
 
-for (let reg of registrations) {
-reg.unregister()
-}
+window.addEventListener("load",()=>{
+
+navigator.serviceWorker
+.register("/service-worker.js")
+
+.then(()=>{
+console.log("SW OK")
+})
+
+.catch((err)=>{
+console.log("SW ERROR",err)
+})
 
 })
 
-caches.keys().then(names => {
-
-for (let name of names){
-caches.delete(name)
 }
 
-})
-
-}
 </script>
 <div id="toastBox" class="toastBox"></div>
 </body>
