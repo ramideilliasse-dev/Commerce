@@ -444,7 +444,9 @@ Produto
 <script type="module">
 
 import { db } from "./firebase.js"
+import { updateSocialMeta } from "./js/social-preview.js"
 
+import { generateProductLink } from "./js/generate-product-link.js"
 import {
 doc,
 getDoc,
@@ -524,7 +526,7 @@ return
 }
 
 product = snap.data()
-
+updateSocialMeta(product, productId)
 images = product.images || []
 
 render()
@@ -743,10 +745,7 @@ window.shareProduct = async function(){
 
 if(!product) return
 
-const link =
-window.location.origin +
-"/product.html?id=" +
-productId
+const link = generateProductLink(product, productId)
 
 const text =
 `🛍️ ${product.name}
