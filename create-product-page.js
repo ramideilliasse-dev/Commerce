@@ -126,3 +126,39 @@ return text
 .replace(/-+/g,"-")
 
 }
+// ================= SEND TO API =================
+
+export async function sendProductToAPI(product, productId){
+
+try{
+
+const response = await fetch("/api/generate-product",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body: JSON.stringify({
+
+product,
+productId
+
+})
+
+})
+
+const data = await response.json()
+
+console.log("API RESPONSE", data)
+
+return data
+
+}catch(e){
+
+console.error(e)
+
+}
+
+}
