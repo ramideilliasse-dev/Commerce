@@ -2,7 +2,7 @@
 
 export function generateSocialImage(product){
 
-if(!product) return ""
+if(!product) return {}
 
 // ================= IMAGE =================
 
@@ -23,14 +23,12 @@ image = image.replace(
 // ================= TITLE =================
 
 const title =
-encodeURIComponent(product.name || "Produto")
+product.name || "Produto"
 
 // ================= PRICE =================
 
 const price =
-encodeURIComponent(
 (product.price || 0) + " Kz"
-)
 
 // ================= BADGE =================
 
@@ -38,17 +36,25 @@ let badge = ""
 
 if(product.oldPrice){
 
-badge = "PROMO"
+badge = "🔥 PROMO"
 
 }else if(product.isNew){
 
-badge = "NOVO"
+badge = "🆕 NOVO"
 
 }else if(product.bestSeller){
 
-badge = "MAIS VENDIDO"
+badge = "⭐ MAIS VENDIDO"
+
+}else if(product.freeDelivery){
+
+badge = "🚚 ENTREGA GRÁTIS"
 
 }
+
+// ================= BRAND =================
+
+const brand = "Toma 🇦🇴"
 
 // ================= RESULT =================
 
@@ -57,7 +63,8 @@ return {
 image,
 title,
 price,
-badge
+badge,
+brand
 
 }
 
