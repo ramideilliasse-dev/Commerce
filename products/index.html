@@ -101,19 +101,33 @@ console.error(e)
 
 function updateMeta(product){
 
+const image =
+product.images?.[0] || ""
+
+const price =
+(product.price || 0) + " Kz"
+
+const description =
+(product.description || "")
+.substring(0,150)
+
+// ================= TITLE =================
+
 document.title =
 product.name || "Toma"
+
+// ================= BASIC =================
 
 setMeta("og:title", product.name)
 
 setMeta(
 "og:description",
-product.description || ""
+description
 )
 
 setMeta(
 "og:image",
-product.images?.[0] || ""
+image
 )
 
 setMeta(
@@ -122,22 +136,47 @@ window.location.href
 )
 
 setMeta(
+"og:type",
+"product"
+)
+
+// ================= PRODUCT =================
+
+setMeta(
+"product:price:amount",
+product.price || 0
+)
+
+setMeta(
+"product:price:currency",
+"AOA"
+)
+
+// ================= TWITTER =================
+
+setMeta(
 "twitter:title",
 product.name
 )
 
 setMeta(
 "twitter:description",
-product.description || ""
+description
 )
 
 setMeta(
 "twitter:image",
-product.images?.[0] || ""
+image
+)
+
+// ================= EXTRA =================
+
+setMeta(
+"description",
+description
 )
 
 }
-
 // ================= SET META =================
 
 function setMeta(property, content){
