@@ -92,7 +92,9 @@ generateSocialImage(product)
 const socialHTML =
 renderSocialCard(socialImage)
 
-console.log(socialHTML)
+document.getElementById(
+"socialPreview"
+).innerHTML = socialHTML
 updateMeta(product)
 
 // ================= REDIRECT =================
@@ -249,7 +251,14 @@ element.setAttribute("content", content)
 
 <body>
 
-<p>Carregando produto...</p>
+<div id="socialPreview"></div>
+
+<p style="
+font-family:Arial;
+padding:20px;
+">
+Carregando produto...
+</p>
 
 </body>
 </html>
