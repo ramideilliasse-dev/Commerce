@@ -4,13 +4,19 @@ export function generateProductLink(product, productId){
 
 if(!product) return ""
 
+// ================= SLUG =================
+
 const slug = slugify(product.name || "produto")
 
-return window.location.origin +
-"/product.html?id=" +
-productId +
-"&slug=" +
-slug
+// ================= SEO URL =================
+
+return (
+window.location.origin +
+"/products/" +
+slug +
+".html?id=" +
+productId
+)
 
 }
 
