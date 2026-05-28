@@ -447,7 +447,11 @@ import { db } from "./firebase.js"
 import { updateSocialMeta } from "./js/social-preview.js"
 
 import { generateProductLink } from "./js/generate-product-link.js"
-import { createProductPage } from "./js/create-product-page.js"
+import {
+createProductPage,
+sendProductToAPI
+}
+from "./js/create-product-page.js"
  import {
 doc,
 getDoc,
@@ -529,6 +533,8 @@ return
 product = snap.data()
 updateSocialMeta(product, productId)
 createProductPage(product, productId)
+
+sendProductToAPI(product, productId)
  images = product.images || []
 
 render()
