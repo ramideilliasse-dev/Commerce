@@ -24,7 +24,27 @@ image = image.replace(
 
 const price =
 (product.price || 0) + " Kz"
+// ================= BADGES =================
 
+let badge = ""
+
+if(product.oldPrice){
+
+badge = "PROMO"
+
+}else if(product.isNew){
+
+badge = "NOVO"
+
+}else if(product.freeDelivery){
+
+badge = "FRETE GRÁTIS"
+
+}else if(product.bestSeller){
+
+badge = "MAIS VENDIDO"
+
+}
 // ================= RESULT =================
 
 return {
@@ -36,10 +56,10 @@ product.name || "Produto",
 
 price,
 
+badge,
+
 description:
 (product.description || "")
 .substring(0,120)
-
-}
 
 }
