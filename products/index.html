@@ -19,6 +19,11 @@ content="summary_large_image">
 <script type="module">
 import { generateSocialCard }
 from "/js/social-card.js"
+ import { generateSocialImage }
+from "/js/social-image-generator.js"
+
+import { renderSocialCard }
+from "/js/render-social-card.js"
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"
 
@@ -80,6 +85,14 @@ const product = snap.data()
 // ================= META =================
 const social =
 generateSocialCard(product)
+
+const socialImage =
+generateSocialImage(product)
+
+const socialHTML =
+renderSocialCard(socialImage)
+
+console.log(socialHTML)
 updateMeta(product)
 
 // ================= REDIRECT =================
