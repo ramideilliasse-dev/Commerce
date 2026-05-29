@@ -106,7 +106,19 @@ const uploadedImage =
 await uploadSocialImage(
 generatedImage
 )
+if(uploadedImage){
 
+setMeta(
+"og:image",
+uploadedImage
+)
+
+setMeta(
+"twitter:image",
+uploadedImage
+)
+
+}
 console.log(uploadedImage)
 updateMeta(product)
 
