@@ -26,6 +26,8 @@ import { renderSocialCard }
 from "/js/render-social-card.js"
  import { exportSocialImage }
 from "/js/export-social-image.js"
+ import { uploadSocialImage }
+from "/js/upload-social-image.js"
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"
 
@@ -100,7 +102,12 @@ document.getElementById(
  const generatedImage =
 await exportSocialImage()
 
-console.log(generatedImage)
+const uploadedImage =
+await uploadSocialImage(
+generatedImage
+)
+
+console.log(uploadedImage)
 updateMeta(product)
 
 // ================= REDIRECT =================
