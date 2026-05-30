@@ -512,6 +512,8 @@ const reviewsEl = document.getElementById("reviews")
 
 async function load(){
 
+alert("2 - Fonction load démarrée")
+alert("3 - Product ID = " + productId)
 if(!productId){
 
 showToast("Produto inválido","error")
@@ -520,10 +522,11 @@ return
 }
 
 try{
-
+alert("4 - Avant getDoc")
 const snap = await getDoc(doc(db,"products",productId))
-
-if(!snap.exists()){
+alert("5 - Après getDoc")
+alert("6 - Document trouvé ? " + snap.exists())
+ if(!snap.exists()){
 
 showToast("Produto não encontrado","error")
 return
@@ -545,16 +548,16 @@ loadReviews()
 
 }catch(e){
 
-console.error(e)
-
-alert(e.message)
-
-showToast("Erro ao carregar produto","error")
-
-}
+alert(
+"ERREUR : " +
+e.message
+)
 
 }
 
+}
+
+alert("1 - Avant load()")
 load()
 
 /* ================= RENDER ================= */
