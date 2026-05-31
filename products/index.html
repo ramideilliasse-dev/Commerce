@@ -87,25 +87,14 @@ return
 const product = snap.data()
 
 // ================= META =================
-const social =
-generateSocialCard(product)
+updateMeta(product)
 
-const socialImage =
-generateSocialImage(product)
+setTimeout(()=>{
 
-const socialHTML =
-renderSocialCard(socialImage)
+window.location.href =
+"/product.html?id=" + id
 
-document.getElementById(
-"socialPreview"
-).innerHTML = socialHTML
- const generatedImage =
-await exportSocialImage()
-
-const uploadedImage =
-await uploadSocialImage(
-generatedImage
-)
+},500)
 if(uploadedImage){
 
 setMeta(
