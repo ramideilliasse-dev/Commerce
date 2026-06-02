@@ -455,10 +455,32 @@ seen:true
 })
 }
 
-window.deleteOrder=id=>{
-if(confirm("Apagar pedido?")){
-deleteDoc(doc(db,"orders",id))
+window.deleteOrder = async (id)=>{
+
+if(!confirm("Apagar pedido?")) return
+
+try{
+
+await deleteDoc(
+doc(db,"orders",id)
+)
+
+showToast(
+"Pedido apagado ✅",
+"success"
+)
+
+}catch(e){
+
+showToast(
+"Erro ao apagar pedido ❌",
+"error"
+)
+
+console.error(e)
+
 }
+
 }
 /* ================= EDIT PRODUCT ================= */
 
