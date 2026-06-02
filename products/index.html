@@ -76,18 +76,63 @@ return
 
 const product = snap.data()
 
+// ================= SOCIAL CARD =================
+
+const socialData =
+generateSocialImage(product)
+
+document.getElementById(
+"socialPreview"
+).innerHTML =
+renderSocialCard(socialData)
+
 // ================= META =================
 
 updateMeta(product)
 
-// ================= REDIRECT =================
+// ================= CREATE IMAGE =================
 
-setTimeout(()=>{
+setTimeout(async()=>{
+
+try{
+
+const base64 =
+await exportSocialImage()
+
+const uploadedImage =
+await uploadSocialImage(base64)
+
+if(uploadedImage){
+
+setMeta(
+"og:image",
+uploadedImage
+)
+
+setMeta(
+"twitter:image",
+uploadedImage
+)
+
+console.log(
+"Social image uploaded:",
+uploadedImage
+)
+
+}
+
+}catch(e){
+
+console.error(e)
+
+}
+
+// ================= REDIRECT =================
 
 window.location.href =
 "/product.html?id=" + id
 
-},500)
+},1500)
 
 }catch(e){
 
@@ -96,7 +141,6 @@ console.error(e)
 }
 
 }
-
 // ================= META =================
 
 function updateMeta(product){
