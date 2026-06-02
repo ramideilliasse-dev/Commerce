@@ -514,8 +514,11 @@ const reviewsEl = document.getElementById("reviews")
 
 async function load(){
 
+alert("LOAD START")
 
 if(!productId){
+
+alert("NO PRODUCT ID")
 
 showToast("Produto inválido","error")
 return
@@ -524,9 +527,17 @@ return
 
 try{
 
-const snap = await getDoc(doc(db,"products",productId))
+alert("GET DOC")
 
- if(!snap.exists()){
+const snap = await getDoc(
+doc(db,"products",productId)
+)
+
+alert("SNAP = " + snap.exists())
+
+if(!snap.exists()){
+
+alert("NOT FOUND")
 
 showToast("Produto não encontrado","error")
 return
@@ -534,13 +545,16 @@ return
 }
 
 product = snap.data()
-updateSocialMeta(product, productId)
-createProductPage(product, productId)
 
-sendProductToAPI(product, productId)
- images = product.images || []
+alert("PRODUCT LOADED")
+
+updateSocialMeta(product, productId)
+
+images = product.images || []
 
 render()
+
+alert("RENDER OK")
 
 loadSimilar()
 loadOthers()
@@ -548,14 +562,13 @@ loadReviews()
 
 }catch(e){
 
+alert("ERROR: " + e.message)
+
 console.error(e)
 
-showToast("Erro ao carregar produto","error")
-
 }
 
 }
-
 
 load()
 
