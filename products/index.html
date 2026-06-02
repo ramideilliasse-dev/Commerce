@@ -61,12 +61,22 @@ loadProduct(id)
 
 async function loadProduct(id){
 
+alert("LOAD START")
+
 try{
+
+alert("AVANT GETDOC")
 
 const snap =
 await getDoc(doc(db,"products",id))
 
+alert("APRES GETDOC")
+
+alert("EXISTS = " + snap.exists())
+
 if(!snap.exists()){
+
+alert("PRODUIT INTROUVABLE")
 
 window.location.href = "/"
 
@@ -76,23 +86,15 @@ return
 
 const product = snap.data()
 
-// ================= SOCIAL CARD =================
-
-const socialData =
-generateSocialImage(product)
-
-document.getElementById(
-"socialPreview"
-).innerHTML =
-renderSocialCard(socialData)
-
-// ================= META =================
+alert("PRODUIT CHARGE")
 
 updateMeta(product)
 
-// ================= CREATE IMAGE =================
+alert("META OK")
 
 setTimeout(()=>{
+
+alert("REDIRECTION")
 
 window.location.href =
 "/product.html?id=" + id
@@ -101,7 +103,10 @@ window.location.href =
 
 }catch(e){
 
-console.error(e)
+alert(
+"ERREUR : " +
+e.message
+)
 
 }
 
