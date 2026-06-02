@@ -575,7 +575,10 @@ function renderProducts(list){
   let html = ""
 
   list.forEach(p=>{
+const favorites = getFavorites()
 
+const isFavorite =
+favorites.includes(p.id)
     let img =
     "https://via.placeholder.com/300"
 
@@ -632,7 +635,9 @@ z-index:5;
           loading="lazy"
           onerror="this.src='https://via.placeholder.com/300'"
         >
-<div style="
+<div
+onclick="event.stopPropagation();toggleFavorite('${p.id}')"
+style="
 position:absolute;
 top:8px;
 right:8px;
@@ -647,7 +652,7 @@ font-size:18px;
 box-shadow:0 2px 8px rgba(0,0,0,.15);
 z-index:10;
 ">
-❤️
+${isFavorite ? "❤️" : "🤍"}
 </div>
         <button class="cartBtn"
 onclick="event.stopPropagation(); addToCart('${p.id}')">
@@ -905,7 +910,55 @@ function showToast(
   },4000)
 
 }
+/* ================= FAVORITES ================= */
 
+function getFavorites(){
+
+try{
+return JSON.parse(
+localStorage.getItem("favorites") || "[]"
+)
+}catch{
+return []
+}
+
+}
+
+window.toggleFavorite = function(productId){
+
+let favorites = getFavorites()
+
+const index =
+favorites.indexOf(productId)
+
+if(index > -1){
+
+favorites.splice(index,1)
+
+showToast(
+"💔 Removido dos favoritos",
+"warning"
+)
+
+}else{
+
+favorites.push(productId)
+
+showToast(
+"❤️ Adicionado aos favoritos",
+"success"
+)
+
+}
+
+localStorage.setItem(
+"favorites",
+JSON.stringify(favorites)
+)
+
+loadProducts()
+
+}
 </script>
 <script>
 
