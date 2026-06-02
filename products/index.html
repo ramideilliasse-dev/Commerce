@@ -92,42 +92,7 @@ updateMeta(product)
 
 // ================= CREATE IMAGE =================
 
-setTimeout(async()=>{
-
-try{
-
-const base64 =
-await exportSocialImage()
-
-const uploadedImage =
-await uploadSocialImage(base64)
-
-if(uploadedImage){
-
-setMeta(
-"og:image",
-uploadedImage
-)
-
-setMeta(
-"twitter:image",
-uploadedImage
-)
-
-console.log(
-"Social image uploaded:",
-uploadedImage
-)
-
-}
-
-}catch(e){
-
-console.error(e)
-
-}
-
-// ================= REDIRECT =================
+setTimeout(()=>{
 
 window.location.href =
 "/product.html?id=" + id
