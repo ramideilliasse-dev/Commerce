@@ -285,14 +285,56 @@ if(cart.length === 0){
 
 document.getElementById("cartList").innerHTML = `
 <div class="empty">
-Seu carrinho está vazio 😢
+
+<div style="
+font-size:60px;
+margin-bottom:15px;
+">
+🛒
+</div>
+
+<div style="
+font-size:18px;
+font-weight:bold;
+margin-bottom:10px;
+">
+Seu carrinho está vazio
+</div>
+
+<div style="
+color:#777;
+margin-bottom:20px;
+">
+Descubra produtos incríveis no Toma
+</div>
+
+<button
+onclick="goHome()"
+style="
+background:linear-gradient(135deg,#ff6a00,#ff8c1a);
+color:white;
+border:none;
+padding:14px 24px;
+border-radius:14px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+box-shadow:0 6px 18px rgba(255,106,0,.3);
+">
+🔍 Procurar produtos
+</button>
+
 </div>
 `
+document.getElementById("checkoutBtn").style.display = "none"
 
+document.querySelector(".clearCart").style.display = "none"
 document.getElementById("total").innerText=""
 
 checkoutBtn.classList.add("disabled")
+document.getElementById("checkoutBtn").style.display = "block"
 
+document.querySelector(".clearCart").style.display = "block"
 return
 
 }
@@ -479,7 +521,11 @@ location.href = "checkout.html"
 window.addEventListener("storage",()=>{
 loadCart()
 })
+window.goHome = function(){
 
+location.href = "index.html"
+
+}
 loadCart()
 
 </script>
