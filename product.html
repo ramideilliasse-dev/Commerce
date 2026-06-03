@@ -453,16 +453,18 @@ import {
 createProductPage,
 sendProductToAPI
 }
-from "./create-product-page.js"
- import {
+from "./create-product-page.js"import {
 doc,
 getDoc,
+updateDoc,
+increment,
 collection,
 getDocs,
 query,
 where
 }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+ 
 
 /* ================= TOAST ================= */
 
@@ -536,10 +538,22 @@ return
 
 product = snap.data()
 
+await updateDoc(
+doc(db,"products",productId),
+{
+views: increment(1)
+}
+)
+
+product.views = (product.views || 0) + 1
+
 updateSocialMeta(product, productId)
 
-images = product.images || []
+createProductPage(product, productId)
 
+sendProductToAPI(product, productId)
+
+images = product.images || []
 render()
 
 await loadSimilar()
