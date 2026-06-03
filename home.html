@@ -359,6 +359,49 @@ color:#ff6a00;
 font-weight:bold;
 margin-top:5px;
 }
+ .sectionTitle{
+font-size:20px;
+font-weight:bold;
+padding:0 15px;
+margin:15px 0 10px;
+}
+
+.bestSellers{
+display:flex;
+overflow-x:auto;
+gap:12px;
+padding:0 15px 15px;
+}
+
+.bestSellerCard{
+min-width:180px;
+background:white;
+border-radius:16px;
+overflow:hidden;
+box-shadow:0 4px 12px rgba(0,0,0,.08);
+cursor:pointer;
+}
+
+.bestSellerCard img{
+width:100%;
+height:140px;
+object-fit:cover;
+}
+
+.bestSellerInfo{
+padding:10px;
+}
+
+.bestSellerName{
+font-weight:bold;
+font-size:14px;
+}
+
+.bestSellerPrice{
+color:#ff6a00;
+font-weight:bold;
+margin-top:5px;
+}
 </style>
 </head>
 
@@ -379,7 +422,13 @@ margin-top:5px;
 </div>
 
 <div class="promoSlider" id="promoSlider"></div>
+<!-- MAIS VENDIDOS -->
 
+<div class="sectionTitle">
+🔥 Mais Vendidos
+</div>
+
+<div id="bestSellers" class="bestSellers"></div>
 <div id="productList" class="products"></div>
 <div style="
 padding:12px;
@@ -1038,6 +1087,49 @@ ${p.name}
 </div>
 
 <div class="bestPrice">
+${p.price} Kz
+</div>
+
+</div>
+
+</div>
+
+`).join("")
+
+}
+ function loadBestSellers(){
+
+const best =
+[...products]
+.sort((a,b)=>
+(b.salesCount || 0) -
+(a.salesCount || 0)
+)
+.slice(0,10)
+
+const container =
+document.getElementById("bestSellers")
+
+container.innerHTML =
+best.map(p=>`
+
+<div
+class="bestSellerCard"
+onclick="openProduct('${p.id}')"
+>
+
+<img
+src="${p.images?.[0] || ''}"
+loading="lazy"
+>
+
+<div class="bestSellerInfo">
+
+<div class="bestSellerName">
+${p.name}
+</div>
+
+<div class="bestSellerPrice">
 ${p.price} Kz
 </div>
 
