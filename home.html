@@ -402,6 +402,67 @@ color:#ff6a00;
 font-weight:bold;
 margin-top:5px;
 }
+ .sectionTitle{
+font-size:20px;
+font-weight:bold;
+padding:0 15px;
+margin-top:10px;
+margin-bottom:10px;
+}
+
+.topProducts{
+display:flex;
+overflow-x:auto;
+gap:12px;
+padding:0 15px 15px;
+scrollbar-width:none;
+}
+
+.topProducts::-webkit-scrollbar{
+display:none;
+}
+
+.topCard{
+min-width:170px;
+background:white;
+border-radius:16px;
+overflow:hidden;
+box-shadow:0 4px 12px rgba(0,0,0,.08);
+cursor:pointer;
+}
+
+.topCard img{
+width:100%;
+height:130px;
+object-fit:cover;
+}
+
+.topInfo{
+padding:10px;
+}
+
+.topName{
+font-weight:bold;
+font-size:14px;
+}
+
+.topPrice{
+color:#ff6a00;
+font-weight:bold;
+margin-top:5px;
+}
+
+.topBadge{
+position:absolute;
+top:8px;
+left:8px;
+background:#ff6a00;
+color:white;
+padding:4px 8px;
+border-radius:20px;
+font-size:11px;
+font-weight:bold;
+}
 </style>
 </head>
 
@@ -422,7 +483,16 @@ margin-top:5px;
 </div>
 
 <div class="promoSlider" id="promoSlider"></div>
-<!-- MAIS VENDIDOS -->
+<div class="topSection">
+
+<h2 class="sectionTitle">
+🔥 Mais Vendidos
+</h2>
+
+<div id="topProducts" class="topProducts"></div>
+
+</div>
+ <!-- MAIS VENDIDOS -->
 
 <div class="sectionTitle">
 🔥 Mais Vendidos
