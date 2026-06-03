@@ -500,24 +500,7 @@ font-weight:bold;
 
 <div id="bestSellers" class="bestSellers"></div>
 <div id="productList" class="products"></div>
-<div style="
-padding:12px;
-font-size:20px;
-font-weight:bold;
-">
-🔥 Mais Vendidos
-</div>
 
-<div
-id="bestSellers"
-style="
-display:flex;
-gap:10px;
-overflow-x:auto;
-padding:10px;
-margin-bottom:10px;
-">
-</div>
 <div class="nav">
 
 <div class="navItem" onclick="location.href='index.html'">
@@ -706,6 +689,9 @@ async function loadProducts(){
     }
 
     renderProducts(products)
+
+renderTopProducts()
+
 loadBestSellers()
   }catch(error){
 
@@ -880,7 +866,53 @@ font-size:11px;
   productList.innerHTML = html
 
 }
+function renderTopProducts(){
 
+const container =
+document.getElementById("topProducts")
+
+if(!container) return
+
+let sorted = [...products]
+
+sorted.sort((a,b)=>{
+return (b.views || 0) - (a.views || 0)
+})
+
+sorted = sorted.slice(0,10)
+
+container.innerHTML = sorted.map(p=>`
+
+<div class="topCard"
+onclick="openProduct('${p.id}')">
+
+<div style="position:relative">
+
+<div class="topBadge">
+🔥 TOP
+</div>
+
+<img src="${p.images?.[0] || ''}">
+
+</div>
+
+<div class="topInfo">
+
+<div class="topName">
+${p.name}
+</div>
+
+<div class="topPrice">
+${p.price} Kz
+</div>
+
+</div>
+
+</div>
+
+`).join("")
+
+}
 
 /* ================= PRODUCT ================= */
 
@@ -1121,50 +1153,6 @@ JSON.stringify(favorites)
 )
 
 loadProducts()
-
-}
- async function loadBestSellers(){
-
-const container =
-document.getElementById("bestSellers")
-
-const bestProducts =
-products
-.filter(p => p.bestSeller)
-.slice(0,10)
-
-if(bestProducts.length === 0){
-
-container.style.display = "none"
-
-return
-
-}
-
-container.innerHTML =
-bestProducts.map(p=>`
-
-<div
-class="bestCard"
-onclick="openProduct('${p.id}')">
-
-<img src="${p.images?.[0] || ''}">
-
-<div class="bestInfo">
-
-<div>
-${p.name}
-</div>
-
-<div class="bestPrice">
-${p.price} Kz
-</div>
-
-</div>
-
-</div>
-
-`).join("")
 
 }
  function loadBestSellers(){
