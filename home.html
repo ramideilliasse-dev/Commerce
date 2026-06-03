@@ -335,6 +335,30 @@ padding:10px;
 background:linear-gradient(to top,rgba(0,0,0,0.7),transparent);
 color:white;
 }
+ .bestCard{
+min-width:170px;
+background:white;
+border-radius:14px;
+overflow:hidden;
+box-shadow:0 4px 10px rgba(0,0,0,.08);
+cursor:pointer;
+}
+
+.bestCard img{
+width:100%;
+height:130px;
+object-fit:cover;
+}
+
+.bestInfo{
+padding:10px;
+}
+
+.bestPrice{
+color:#ff6a00;
+font-weight:bold;
+margin-top:5px;
+}
 </style>
 </head>
 
@@ -357,7 +381,24 @@ color:white;
 <div class="promoSlider" id="promoSlider"></div>
 
 <div id="productList" class="products"></div>
+<div style="
+padding:12px;
+font-size:20px;
+font-weight:bold;
+">
+🔥 Mais Vendidos
+</div>
 
+<div
+id="bestSellers"
+style="
+display:flex;
+gap:10px;
+overflow-x:auto;
+padding:10px;
+margin-bottom:10px;
+">
+</div>
 <div class="nav">
 
 <div class="navItem" onclick="location.href='index.html'">
@@ -546,7 +587,7 @@ async function loadProducts(){
     }
 
     renderProducts(products)
-
+loadBestSellers()
   }catch(error){
 
     console.log(error)
@@ -961,6 +1002,50 @@ JSON.stringify(favorites)
 )
 
 loadProducts()
+
+}
+ async function loadBestSellers(){
+
+const container =
+document.getElementById("bestSellers")
+
+const bestProducts =
+products
+.filter(p => p.bestSeller)
+.slice(0,10)
+
+if(bestProducts.length === 0){
+
+container.style.display = "none"
+
+return
+
+}
+
+container.innerHTML =
+bestProducts.map(p=>`
+
+<div
+class="bestCard"
+onclick="openProduct('${p.id}')">
+
+<img src="${p.images?.[0] || ''}">
+
+<div class="bestInfo">
+
+<div>
+${p.name}
+</div>
+
+<div class="bestPrice">
+${p.price} Kz
+</div>
+
+</div>
+
+</div>
+
+`).join("")
 
 }
 </script>
