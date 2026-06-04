@@ -3,15 +3,282 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<meta name="theme-color" content="#ff6a00">
+
 <title>Meus Pedidos</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#f5f5f5;
+}
+
+.header{
+background:#ff6a00;
+color:white;
+padding:16px;
+text-align:center;
+font-size:22px;
+font-weight:bold;
+position:sticky;
+top:0;
+z-index:100;
+}
+
+.ordersList{
+padding:15px;
+padding-bottom:90px;
+}
+
+.orderCard{
+background:white;
+border-radius:16px;
+padding:15px;
+margin-bottom:15px;
+box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+.orderTop{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
+}
+
+.orderDate{
+font-size:12px;
+color:#666;
+}
+
+.orderStatus{
+padding:6px 12px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
+color:white;
+}
+
+.pending{
+background:#ff9800;
+}
+
+.confirmed{
+background:#2196f3;
+}
+
+.delivered{
+background:#1aa34a;
+}
+
+.item{
+padding:6px 0;
+font-size:14px;
+border-bottom:1px solid #eee;
+}
+
+.item:last-child{
+border-bottom:none;
+}
+
+.orderTotal{
+margin-top:12px;
+font-size:18px;
+font-weight:bold;
+color:#ff6a00;
+}
+
+.empty{
+text-align:center;
+padding:50px 20px;
+color:#777;
+font-size:15px;
+}
+
+.loading{
+text-align:center;
+padding:50px;
+}
+
+.backBtn{
+position:absolute;
+left:15px;
+top:15px;
+background:rgba(255,255,255,.2);
+border:none;
+color:white;
+padding:8px 12px;
+border-radius:8px;
+cursor:pointer;
+}
+
+</style>
 </head>
+
 <body>
 
-<h1>📦 Meus Pedidos</h1>
+<div class="header">
 
-<div id="ordersList">
-Nenhum pedido encontrado
+<button
+class="backBtn"
+onclick="history.back()">
+←
+</button>
+
+📦 Meus Pedidos
+
 </div>
+
+<div id="ordersList" class="ordersList">
+
+<div class="loading">
+Carregando pedidos...
+</div>
+
+</div>
+
+<script type="module">
+
+import { auth, db } from "./firebase.js"
+
+import {
+collection,
+getDocs,
+query,
+where
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
+import {
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
+
+const ordersList =
+document.getElementById("ordersList")
+
+onAuthStateChanged(auth, async(user)=>{
+
+if(!user){
+
+location.href = "login.html"
+return
+
+}
+
+loadOrders(user.uid)
+
+})
+
+async function loadOrders(userId){
+
+try{
+
+const q = query(
+collection(db,"orders"),
+where("userId","==",userId)
+)
+
+const snap = await getDocs(q)
+
+if(snap.empty){
+
+ordersList.innerHTML = `
+<div class="empty">
+📦 Nenhum pedido encontrado
+</div>
+`
+
+return
+
+}
+
+let html = ""
+
+snap.forEach(docSnap=>{
+
+const order = docSnap.data()
+
+const date =
+new Date(order.createdAt)
+.toLocaleString()
+
+let statusClass = "pending"
+
+if(order.status === "confirmed"){
+statusClass = "confirmed"
+}
+
+if(order.status === "delivered"){
+statusClass = "delivered"
+}
+
+html += `
+
+<div class="orderCard">
+
+<div class="orderTop">
+
+<div class="orderDate">
+${date}
+</div>
+
+<div class="orderStatus ${statusClass}">
+${order.status || "pending"}
+</div>
+
+</div>
+
+${(order.items || [])
+.map(item=>`
+
+<div class="item">
+
+🛍️ ${item.name || ""}
+
+<br>
+
+Quantidade: ${item.qty || 1}
+
+</div>
+
+`).join("")}
+
+<div class="orderTotal">
+
+💰 ${Number(order.total || 0).toLocaleString()} Kz
+
+</div>
+
+</div>
+
+`
+
+})
+
+ordersList.innerHTML = html
+
+}catch(err){
+
+console.error(err)
+
+ordersList.innerHTML = `
+
+<div class="empty">
+
+❌ Erro ao carregar pedidos
+
+</div>
+
+`
+
+}
+
+}
+
+</script>
 
 </body>
 </html>
