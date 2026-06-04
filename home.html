@@ -1209,6 +1209,53 @@ ${p.price} Kz
  function renderRecommendedProducts(){
 
 const container =
+document.getElementById("recommendedProducts")
+
+if(!container) return
+
+const favorites = getFavorites()
+
+let recommended = [...products]
+
+if(favorites.length > 0){
+
+recommended = products.filter(p=>{
+
+return !favorites.includes(p.id)
+
+})
+
+}
+
+recommended = recommended.slice(0,10)
+
+container.innerHTML = recommended.map(p=>`
+
+<div class="topCard"
+onclick="openProduct('${p.id}')">
+
+<img src="${p.images?.[0] || ''}">
+
+<div class="topInfo">
+
+<div class="topName">
+${p.name}
+</div>
+
+<div class="topPrice">
+${p.price} Kz
+</div>
+
+</div>
+
+</div>
+
+`).join("")
+
+}
+ function renderRecommendedProducts(){
+
+const container =
 document.getElementById(
 "recommendedProducts"
 )
