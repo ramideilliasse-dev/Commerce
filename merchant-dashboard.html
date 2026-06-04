@@ -236,10 +236,32 @@ transform:translateY(-20px) scale(.9);
 <div class="container">
 
 <div class="actions">
-<button class="btnShop" onclick="openShop()">Minha loja 🏪</button>
-<button class="btnAdd" onclick="addProduct()">+ Produto</button>
-</div>
 
+<button class="btnShop"
+onclick="openShop()">
+Minha loja 🏪
+</button>
+
+<button class="btnAdd"
+onclick="addProduct()">
++ Produto
+</button>
+
+<button
+style="
+background:#ff6a00;
+color:white;
+font-weight:bold;
+border:none;
+border-radius:12px;
+padding:14px;
+cursor:pointer;
+"
+onclick="openCoupons()">
+🎟️ Cupons
+</button>
+
+</div>
 <div class="card">
 <h3>📦 Pedidos</h3>
 
@@ -542,7 +564,12 @@ location.href="merchant-shop.html?id="+currentUser.uid
 window.addProduct=()=>{
 location.href="add-product.html"
 }
+window.openCoupons = ()=>{
 
+location.href =
+"merchant-coupons.html"
+
+}
 window.logout=async ()=>{
 await signOut(auth)
 location.href="index.html"
