@@ -162,7 +162,28 @@ transform:translateY(-20px) scale(.9);
 <div class="card">
 
 <img id="profilePic" class="profile">
+<div style="
+text-align:center;
+margin-top:10px;
+">
 
+<div id="profileName"
+style="
+font-size:18px;
+font-weight:bold;
+">
+Utilizador
+</div>
+
+<div id="profileEmail"
+style="
+font-size:13px;
+color:#777;
+">
+email@email.com
+</div>
+
+</div>
 <input type="file" id="upload" hidden>
 
 <!-- 🔥 LOGIN / REGISTER -->
@@ -261,7 +282,59 @@ Salvar província
 </button>
 
 </div>
+<div class="card">
 
+<button class="btn"
+onclick="location.href='orders.html'">
+
+📦 Meus Pedidos
+
+</button>
+
+</div>
+ <div class="card">
+
+<button class="btn"
+onclick="location.href='favorites.html'">
+
+❤️ Favoritos
+
+</button>
+
+</div>
+ <div class="card">
+
+<h3>🔔 Notificações</h3>
+
+<label>
+<input type="checkbox"
+id="promoNotif">
+ Promoções
+</label>
+
+<br><br>
+
+<label>
+<input type="checkbox"
+id="orderNotif">
+ Pedidos
+</label>
+
+</div>
+ <div class="card">
+
+<h3>🌙 Modo Escuro</h3>
+
+<label>
+
+<input type="checkbox"
+id="darkMode">
+
+ Ativar
+
+</label>
+
+</div>
 <!-- ACTIONS -->
 <div class="card">
 
@@ -344,7 +417,13 @@ const data = snap.data() || {}
 
 profilePic.src =
 data.photo || "https://via.placeholder.com/80"
+document.getElementById("profileName").innerText =
+data.name ||
+user.displayName ||
+"Utilizador"
 
+document.getElementById("profileEmail").innerText =
+user.email || ""
 const merchantBtn =
 document.getElementById("merchantBtn")
 
@@ -560,6 +639,66 @@ console.error(e)
 }
 
 }
+ const promoNotif =
+document.getElementById("promoNotif")
+
+const orderNotif =
+document.getElementById("orderNotif")
+
+if(promoNotif){
+
+promoNotif.checked =
+localStorage.getItem("promoNotif")
+=== "true"
+
+promoNotif.onchange = ()=>{
+
+localStorage.setItem(
+"promoNotif",
+promoNotif.checked
+)
+
+}
+
+}
+
+if(orderNotif){
+
+orderNotif.checked =
+localStorage.getItem("orderNotif")
+=== "true"
+
+orderNotif.onchange = ()=>{
+
+localStorage.setItem(
+"orderNotif",
+orderNotif.checked
+)
+
+}
+
+}
+ const darkMode =
+document.getElementById("darkMode")
+
+if(darkMode){
+
+darkMode.checked =
+localStorage.getItem("darkMode")
+=== "true"
+
+darkMode.onchange = ()=>{
+
+localStorage.setItem(
+"darkMode",
+darkMode.checked
+)
+
+location.reload()
+
+}
+
+}
 /* ================= TOAST ================= */
 
 function showToast(message,type="success"){
@@ -580,7 +719,18 @@ toast.remove()
 
 }
 </script>
-<div id="toastBox" class="toastBox"></div>
+<div style="
+text-align:center;
+padding:20px;
+color:#888;
+font-size:12px;
+">
+
+Toma 🇦🇴<br>
+Versão 1.0.0
+
+</div>
+ <div id="toastBox" class="toastBox"></div>
 <script>
 if ("serviceWorker" in navigator) {
 
