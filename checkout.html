@@ -153,7 +153,7 @@ transform:translateY(-20px) scale(.9);
 
 <script type="module">
 
-import { db } from "./firebase.js"
+import { auth, db } from "./firebase.js"
 import {
 collection, addDoc, doc, getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
@@ -314,6 +314,8 @@ total += i.price * i.qty
 
 
 await addDoc(collection(db,"orders"),{
+
+userId: auth.currentUser.uid,
 
 merchantId: merchantId,
 items: items,
