@@ -1,1 +1,267 @@
- 
+ <!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cupons</title>
+<style>
+body{
+font-family:Arial;
+margin:0;
+background:#f5f6fa;
+}
+.header{
+background:#111;
+color:white;
+padding:18px;
+text-align:center;
+font-size:20px;
+font-weight:bold;
+}
+.container{
+max-width:900px;
+margin:auto;
+padding:15px;
+}
+.card{
+background:white;
+padding:15px;
+border-radius:14px;
+margin-bottom:15px;
+box-shadow:0 4px 14px rgba(0,0,0,.08);
+}
+input{
+width:100%;
+padding:12px;
+margin-bottom:10px;
+border:1px solid #ddd;
+border-radius:10px;
+box-sizing:border-box;
+}
+button{
+padding:12px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+}
+.btnCreate{
+background:#1aa34a;
+color:white;
+width:100%;
+}
+.coupon{
+padding:12px;
+border:1px solid #ddd;
+border-radius:10px;
+margin-bottom:10px;
+}
+.active{
+color:#1aa34a;
+font-weight:bold;
+}
+.inactive{
+color:red;
+font-weight:bold;
+}
+.row{
+display:flex;
+gap:8px;
+margin-top:10px;
+flex-wrap:wrap;
+}
+.btnDisable{
+background:#ff6a00;
+color:white;
+}
+.btnDelete{
+background:red;
+color:white;
+}
+</style>
+</head>
+<body>
+<div class="header">
+🎟️ Cupons Influenciadores
+</div>
+<div class="container">
+<div class="card">
+<h3>Criar Cupom</h3>
+
+<input
+id=“couponCode”
+placeholder=“Código (RAMI10)”
+
+<input
+id=“influencerName”
+placeholder=“Nome do influenciador”
+
+<input
+id=“discount”
+type=“number”
+placeholder=“Desconto (%)”
+
+<input
+id=“commission”
+type=“number”
+placeholder=“Comissão (%)”
+
+Criar Cupom
+</div>
+<div class="card">
+<h3>Meus Cupons</h3>
+<div id="couponList">
+Carregando...
+</div>
+</div>
+</div>
+<script type="module">
+import { db, auth } from "./firebase.js"
+import {
+collection,
+addDoc,
+getDocs,
+query,
+where,
+doc,
+updateDoc,
+deleteDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+import {
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
+let currentUser = null
+onAuthStateChanged(auth,(user)=>{
+if(!user){
+location.href="login.html"
+return
+}
+currentUser = user
+loadCoupons()
+})
+window.createCoupon = async function(){
+const code =
+document.getElementById("couponCode")
+.value.trim().toUpperCase()
+const influencer =
+document.getElementById("influencerName")
+.value.trim()
+const discount =
+Number(
+document.getElementById("discount")
+.value
+)
+const commission =
+Number(
+document.getElementById("commission")
+.value
+)
+if(
+!code ||
+!influencer ||
+!discount
+){
+alert("Preencha todos os campos")
+return
+}
+await addDoc(
+collection(db,"merchantCoupons"),
+{
+merchantId: currentUser.uid,
+code: code,
+influencerName: influencer,
+discount: discount,
+commission: commission,
+active: true,
+createdAt: Date.now()
+}
+)
+document.getElementById("couponCode").value=""
+document.getElementById("influencerName").value=""
+document.getElementById("discount").value=""
+document.getElementById("commission").value=""
+loadCoupons()
+}
+async function loadCoupons(){
+const q = query(
+collection(db,"merchantCoupons"),
+where(
+"merchantId",
+"==",
+currentUser.uid
+)
+)
+const snap =
+await getDocs(q)
+let html = ""
+snap.forEach(d=>{
+const c = d.data()
+html += `
+<div class="coupon">
+<b>${c.code}</b>
+<br><br>
+👤 ${c.influencerName}
+<br>
+🏷️ ${c.discount}% desconto
+<br>
+💰 ${c.commission}% comissão
+<br><br>
+<span class="${
+c.active ?
+"active" :
+"inactive"
+}">
+${c.active ? "Ativo" : "Desativado"}
+</span>
+<div class="row">
+<button
+class="btnDisable"
+onclick="toggleCoupon(
+'${d.id}',
+${c.active}
+)">
+${c.active ? "Desativar" : "Ativar"}
+</button>
+<button
+class="btnDelete"
+onclick="removeCoupon(
+'${d.id}'
+)">
+Apagar
+</button>
+</div>
+</div>
+`
+})
+document.getElementById(
+"couponList"
+).innerHTML =
+html || "Nenhum cupom"
+}
+window.toggleCoupon =
+async function(id,active){
+await updateDoc(
+doc(db,"merchantCoupons",id),
+{
+active: !active
+}
+)
+loadCoupons()
+}
+window.removeCoupon =
+async function(id){
+if(
+!confirm(
+"Apagar cupom?"
+)
+) return
+await deleteDoc(
+doc(db,"merchantCoupons",id)
+)
+loadCoupons()
+}
+</script>
+</body>
+</html
