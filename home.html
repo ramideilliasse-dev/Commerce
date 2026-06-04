@@ -497,7 +497,13 @@ font-weight:bold;
 <div class="sectionTitle">
 🔥 Mais Vendidos
 </div>
+<div class="sectionTitle">
+✨ Recomendados para você
+</div>
 
+<div id="recommendedProducts"
+class="topProducts">
+</div>
 <div id="bestSellers" class="bestSellers"></div>
 <div id="productList" class="products"></div>
 
@@ -693,6 +699,8 @@ async function loadProducts(){
 renderTopProducts()
 
 loadBestSellers()
+
+renderRecommendedProducts()
   }catch(error){
 
     console.log(error)
@@ -1188,6 +1196,47 @@ ${p.name}
 </div>
 
 <div class="bestSellerPrice">
+${p.price} Kz
+</div>
+
+</div>
+
+</div>
+
+`).join("")
+
+}
+ function renderRecommendedProducts(){
+
+const container =
+document.getElementById(
+"recommendedProducts"
+)
+
+if(!container) return
+
+let recommended =
+[...products]
+.sort(()=> Math.random() - 0.5)
+.slice(0,8)
+
+container.innerHTML =
+recommended.map(p=>`
+
+<div class="topCard"
+onclick="openProduct('${p.id}')">
+
+<img
+src="${p.images?.[0] || ''}"
+loading="lazy">
+
+<div class="topInfo">
+
+<div class="topName">
+${p.name}
+</div>
+
+<div class="topPrice">
 ${p.price} Kz
 </div>
 
