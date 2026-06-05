@@ -204,8 +204,10 @@ const loader = document.getElementById("loaderOverlay")
 
 /* CART */
 let cart = JSON.parse(
- let appliedCoupon = null
+let appliedCoupon = null
 let discountAmount = 0
+
+let cart = JSON.parse(
 localStorage.getItem("checkoutCart") ||
 localStorage.getItem("cart") ||
 "[]"
@@ -332,10 +334,7 @@ if(confirmBtn.disabled) return
 const name = clientName.value.trim()
 const phone = clientPhone.value.trim()
 const address = clientAddress.value.trim()
-const couponCode =
-document.getElementById("couponCode")
-.value.trim()
-.toUpperCase()
+
 if(!name || !phone || !address){
 showToast("Preencha todos os campos","warning")
 return
@@ -445,7 +444,8 @@ clientAddress: address,
 
 status: "pending",
 seen: false,
-createdAt: Date.now()
+createdAt: Date.now(),
+
 couponCode:
 appliedCoupon?.code || "",
 
