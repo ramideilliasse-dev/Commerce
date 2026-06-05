@@ -1,0 +1,149 @@
+ <div class="container">
+<h2>✏️ Editar Produto</h2>
+<img
+id="productImage"
+style="
+width:120px;
+height:120px;
+object-fit:cover;
+border-radius:12px;
+display:block;
+margin:auto;
+margin-bottom:15px;
+">
+<input id="name" placeholder="Nome do produto">
+<input id="price" type="number" placeholder="Preço">
+<input id="discount" type="number" placeholder="Desconto %">
+<textarea
+id="description"
+placeholder="Descrição"
+style="
+width:100%;
+padding:12px;
+margin-top:10px;
+border-radius:10px;
+border:1px solid #ddd;
+height:120px;
+"></textarea>
+<button id="saveBtn">
+💾 Guardar Alterações
+</button>
+</div
+<script type="module">
+
+import { db } from "./firebase.js"
+
+import {
+doc,
+getDoc,
+updateDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
+const productId =
+new URLSearchParams(location.search)
+.get("id")
+
+const nameInput =
+document.getElementById("name")
+
+const priceInput =
+document.getElementById("price")
+
+const discountInput =
+document.getElementById("discount")
+
+const descriptionInput =
+document.getElementById("description")
+
+const saveBtn =
+document.getElementById("saveBtn")
+
+/* CHARGER PRODUIT */
+
+async function loadProduct(){
+
+if(!productId){
+
+alert("Produto não encontrado")
+return
+
+}
+
+const snap =
+await getDoc(
+doc(db,"products",productId)
+)
+
+if(!snap.exists()){
+
+alert("Produto não encontrado")
+return
+
+}
+
+const p = snap.data()
+document.getElementById("productImage").src =
+p.images?.[0] || ""
+nameInput.value =
+p.name || ""
+
+priceInput.value =
+p.price || ""
+
+discountInput.value =
+p.discount || 0
+
+descriptionInput.value =
+p.description || ""
+
+}
+
+loadProduct()
+
+/* GUARDAR */
+
+saveBtn.onclick = async ()=>{
+
+saveBtn.disabled = true
+saveBtn.innerText = "Guardando..."
+
+try{
+
+await updateDoc(
+doc(db,"products",productId),
+{
+name:
+nameInput.value.trim(),
+
+price:
+Number(priceInput.value),
+
+discount:
+Number(discountInput.value),
+
+description:
+descriptionInput.value.trim()
+}
+)
+
+alert("Produto atualizado com sucesso ✅")
+
+location.href =
+"merchant-dashboard.html"
+
+}catch(err){
+
+console.error(err)
+
+alert("Erro ao atualizar produto")
+
+saveBtn.disabled = false
+saveBtn.innerText =
+"💾 Guardar Alterações"
+
+}
+
+}
+
+</script>
