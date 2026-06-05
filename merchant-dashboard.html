@@ -273,7 +273,15 @@ onclick="openCoupons()">
 
 <div id="ordersList"></div>
 </div>
+<div class="card">
 
+<h3>📊 Vendas por Influenciador</h3>
+
+<div id="influencerSales">
+Carregando...
+</div>
+
+</div>
 <div class="card">
 <h3>🛍️ Meus produtos</h3>
 <div id="productsList"></div>
@@ -307,9 +315,15 @@ if(!user){
 location.href="login.html"
 return
 }
+
 currentUser=user
+
 listenOrders()
+
 loadProducts()
+
+loadInfluencerSales()
+
 })
 
 /* LISTEN ORDERS */
@@ -387,7 +401,70 @@ notifBadge.style.display="none"
 })
 
 }
+async function loadInfluencerSales(){
 
+const q = query(
+collection(db,"orders"),
+where("merchantId","==",currentUser.uid)
+)
+
+const snap = await getDocs(q)
+
+let stats = {}
+
+snap.forEach(docSnap=>{
+
+const o = docSnap.data()
+
+if(!o.couponCode) return
+
+if(!stats[o.couponCode]){
+
+stats[o.couponCode] = {
+sales:0,
+amount:0
+}
+
+}
+
+stats[o.couponCode].sales++
+
+stats[o.couponCode].amount +=
+Number(o.total || 0)
+
+})
+
+let html = ""
+
+Object.keys(stats).forEach(code=>{
+
+html += `
+
+<div style="
+padding:12px;
+border-bottom:1px solid #eee;
+">
+
+<b>${code}</b><br>
+
+🛒 ${stats[code].sales} vendas
+
+<br>
+
+💰 ${stats[code].amount} Kz
+
+</div>
+
+`
+
+})
+
+document.getElementById(
+"influencerSales"
+).innerHTML =
+html || "Nenhuma venda"
+
+}
 /* PRODUITS */
 async function loadProducts(){
 
@@ -444,7 +521,7 @@ border-radius:10px;
 
 <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
 
-<button onclick="editProduct('${id}','${p.name}',${p.price},${p.discount || 0})">
+<button onclick="editProduct('${id}')">
 ✏️ Modifier
 </button>
 
@@ -506,7 +583,12 @@ console.error(e)
 }
 /* ================= EDIT PRODUCT ================= */
 
-window.editProduct = async function(id,name,price,discount){
+window.editProduct = function(id){
+
+location.href =
+"edit-product.html?id=" + id
+
+}
 
 let newName = prompt("Novo nome do produto", name)
 
