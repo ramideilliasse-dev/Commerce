@@ -23,7 +23,7 @@ return;
 const token = await getToken(
 messaging,
 {
-vapidKey:"TA_CLE_VAPID_ICI"
+vapidKey:"BAv9JCvzV_TZ3C-rcXv6LwJL9sIzp6m-Wf0qWX6uEj33F2OVqGNBTf4E7MV1s6UbSrcyuXbIQXpZQaaduPzCPt8"
 }
 );
 
