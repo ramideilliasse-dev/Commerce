@@ -28,7 +28,8 @@ height:120px;
 <button id="saveBtn">
 💾 Guardar Alterações
 </button>
-</div
+</div>
+
 <script type="module">
 
 import { db } from "./firebase.js"
@@ -83,8 +84,10 @@ return
 }
 
 const p = snap.data()
+if(p.images && p.images.length > 0){
 document.getElementById("productImage").src =
-p.images?.[0] || ""
+p.images[0]
+}
 nameInput.value =
 p.name || ""
 
