@@ -299,6 +299,17 @@ Carregando...
 </div>
 <div class="card">
 <h3>🛍️ Meus produtos</h3>
+ <input
+id="searchProduct"
+placeholder="🔍 Procurar produto..."
+oninput="filterProducts()"
+style="
+width:100%;
+padding:12px;
+margin-bottom:10px;
+border-radius:10px;
+border:1px solid #ddd;
+">
 <div id="productsList"></div>
 </div>
 
@@ -320,7 +331,7 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 let currentUser=null
 let filter="all"
-
+let allProducts = []
 const ordersList = document.getElementById("ordersList")
 const notifBadge = document.getElementById("notifBadge")
 
@@ -541,11 +552,14 @@ where("merchantId","==",currentUser.uid)
 const snap=await getDocs(q)
 
 let html=""
-
+allProducts = []
 snap.forEach(d=>{
 const p=d.data()
 const id=d.id
-
+allProducts.push({
+id,
+...p
+})
 html+=`
 <div class="productCard">
 
@@ -662,7 +676,64 @@ await deleteDoc(doc(db,"products",id))
 loadProducts()
 }
 }
+window.filterProducts = function(){
 
+const search =
+document.getElementById("searchProduct")
+.value
+.toLowerCase()
+
+const filtered =
+allProducts.filter(p=>
+
+(p.name || "")
+.toLowerCase()
+.includes(search)
+
+)
+
+let html = ""
+
+filtered.forEach(p=>{
+
+html += `
+<div class="productCard">
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center">
+
+<div>
+
+<b>${p.name}</b><br>
+
+💰 ${p.price} Kz
+
+</div>
+
+<img
+src="${p.images?.[0] || ''}"
+style="
+width:60px;
+height:60px;
+object-fit:cover;
+border-radius:10px;
+">
+
+</div>
+
+</div>
+`
+
+})
+
+document.getElementById(
+"productsList"
+).innerHTML =
+html || "Nenhum produto encontrado"
+
+}
 window.openShop=()=>{
 location.href="merchant-shop.html?id="+currentUser.uid
 }
