@@ -262,6 +262,21 @@ onclick="openCoupons()">
 </button>
 
 </div>
+ <div class="card">
+
+<h3>📊 Estatísticas</h3>
+
+<div id="statsBox">
+
+💰 Receita: 0 Kz<br>
+
+📦 Pedidos: 0<br>
+
+🛍️ Produtos: 0
+
+</div>
+
+</div>
 <div class="card">
 <h3>📦 Pedidos</h3>
 
@@ -323,7 +338,7 @@ listenOrders()
 loadProducts()
 
 loadInfluencerSales()
-
+loadStats()
 })
 
 /* LISTEN ORDERS */
@@ -465,6 +480,49 @@ document.getElementById(
 html || "Nenhuma venda"
 
 }
+ async function loadStats(){
+
+const ordersSnap = await getDocs(
+query(
+collection(db,"orders"),
+where("merchantId","==",currentUser.uid)
+)
+)
+
+const productsSnap = await getDocs(
+query(
+collection(db,"products"),
+where("merchantId","==",currentUser.uid)
+)
+)
+
+let totalRevenue = 0
+let totalOrders = 0
+
+ordersSnap.forEach(docSnap=>{
+
+const o = docSnap.data()
+
+totalOrders++
+
+totalRevenue += Number(o.total || 0)
+
+})
+
+document.getElementById("statsBox").innerHTML = `
+
+💰 Receita:
+<b>${totalRevenue} Kz</b><br><br>
+
+📦 Pedidos:
+<b>${totalOrders}</b><br><br>
+
+🛍️ Produtos:
+<b>${productsSnap.size}</b>
+
+`
+
+}
 /* PRODUITS */
 async function loadProducts(){
 
@@ -590,48 +648,7 @@ location.href =
 
 }
 
-let newName = prompt("Novo nome do produto", name)
 
-if(newName === null) return
-
-let newPrice = prompt("Novo preço", price)
-
-if(newPrice === null) return
-
-let newDiscount = prompt("Desconto %", discount || 0)
-
-if(newDiscount === null) return
-
-let finalPrice = Number(newPrice)
-
-let discountValue = Number(newDiscount)
-
-let oldPrice = finalPrice
-
-if(discountValue > 0){
-
-finalPrice = Math.round(
-oldPrice - (oldPrice * discountValue / 100)
-)
-
-}
-
-await updateDoc(doc(db,"products",id),{
-
-name: newName.trim(),
-
-price: finalPrice,
-
-oldPrice: oldPrice,
-
-discount: discountValue
-
-})
-showToast("Produto atualizado ✅","success")
-
-loadProducts()
-
-}
 window.deleteProduct=async (id)=>{
 if(confirm("Supprimer ce produit ?")){
 await deleteDoc(doc(db,"products",id))
