@@ -391,8 +391,15 @@ ${o.status || "pending"}
 <div class="items">
 ${itemsHTML}
 </div>
-
 💰 Total: <b>${o.total || o.price || 0} Kz</b>
+
+<br>
+
+🕒 ${
+o.createdAt
+? new Date(o.createdAt).toLocaleString("pt-PT")
+: "-"
+}
 
 <br>
 
