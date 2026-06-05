@@ -134,7 +134,29 @@ transform:translateY(-20px) scale(.9);
 <div id="cartItems"></div>
 <div class="total">Total: <span id="totalPrice">0</span></div>
 </div>
+<input
+id="couponCode"
+placeholder="Código Promocional (Opcional)"
+>
 
+<button
+type="button"
+onclick="applyCoupon()"
+style="
+margin-top:10px;
+background:#ff6a00;
+">
+Aplicar Cupom
+</button>
+
+<div
+id="couponInfo"
+style="
+margin-top:10px;
+font-weight:bold;
+color:#1aa34a;
+">
+</div>
 <div class="card">
 <h3>👤 Dados do cliente</h3>
 <input id="clientName" placeholder="Seu nome">
@@ -155,8 +177,15 @@ transform:translateY(-20px) scale(.9);
 
 import { auth, db } from "./firebase.js"
 import {
-collection, addDoc, doc, getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+collection,
+addDoc,
+doc,
+getDoc,
+getDocs,
+query,
+where
+}
+ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
 /* DOM */
 const cartItems = document.getElementById("cartItems")
@@ -171,6 +200,8 @@ const loader = document.getElementById("loaderOverlay")
 
 /* CART */
 let cart = JSON.parse(
+ let appliedCoupon = null
+let discountAmount = 0
 localStorage.getItem("checkoutCart") ||
 localStorage.getItem("cart") ||
 "[]"
@@ -202,13 +233,93 @@ html += `
 })
 
 cartItems.innerHTML = html
-totalPrice.innerText = total + " Kz"
+const finalTotal =
+Math.max(
+0,
+total - discountAmount
+)
+
+totalPrice.innerText =
+finalTotal + " Kz"
 }
 
 loadCart()
 
 confirmBtn.onclick = placeOrder
+window.applyCoupon = async function(){
 
+const code =
+document.getElementById("couponCode")
+.value.trim()
+.toUpperCase()
+
+if(!code){
+
+showToast("Digite um cupom","warning")
+return
+
+}
+
+const q = query(
+collection(db,"merchantCoupons"),
+where("code","==",code)
+)
+
+const snap = await getDocs(q)
+
+if(snap.empty){
+
+showToast("Cupom inválido","error")
+return
+
+}
+
+const coupon =
+snap.docs[0].data()
+
+if(!coupon.active){
+
+showToast("Cupom desativado","error")
+return
+
+}
+
+let total = 0
+
+cart.forEach(item=>{
+
+total +=
+(Number(item.price)||0)
+*
+(item.qty||1)
+
+})
+
+discountAmount =
+Math.round(
+total *
+coupon.discount / 100
+)
+
+appliedCoupon = coupon
+
+document.getElementById(
+"couponInfo"
+).innerHTML =
+
+`✅ ${coupon.code}
+(-${coupon.discount}%)
+Economia:
+${discountAmount} Kz`
+
+showToast(
+"Cupom aplicado",
+"success"
+)
+
+loadCart()
+
+}
 /* 🚀 VERSION STABLE */
 async function placeOrder(){
 
@@ -328,7 +439,17 @@ clientAddress: address,
 status: "pending",
 seen: false,
 createdAt: Date.now()
+couponCode:
+appliedCoupon?.code || "",
 
+influencerName:
+appliedCoupon?.influencerName || "",
+
+discount:
+appliedCoupon?.discount || 0,
+
+commission:
+appliedCoupon?.commission || 0
 })
 
 
