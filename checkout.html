@@ -163,9 +163,6 @@ color:#1aa34a;
 <input id="clientPhone" placeholder="Telefone">
 <input id="clientAddress" placeholder="Endereço">
 
-<input
-id="couponCode"
-placeholder="🎟️ Código de cupom (opcional)">
 </div>
 
 <button id="confirmBtn">Confirmar Pedido</button>
@@ -203,7 +200,7 @@ const clientAddress = document.getElementById("clientAddress")
 const loader = document.getElementById("loaderOverlay")
 
 /* CART */
-let cart = JSON.parse(
+
 let appliedCoupon = null
 let discountAmount = 0
 
