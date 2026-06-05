@@ -1,6 +1,10 @@
  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
 import {
+getMessaging
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
+
+import {
 getAuth,
 setPersistence,
 browserLocalPersistence,
@@ -27,7 +31,7 @@ appId: "1:238735890157:web:db3f87960db7916d7fdee4"
 
 /* INIT */
 const app = initializeApp(firebaseConfig);
-
+export const messaging = getMessaging(app);
 export const auth = getAuth(app);
 
 /* 🔥 FIRESTORE OPTIMISÉ + CACHE LOCAL */
