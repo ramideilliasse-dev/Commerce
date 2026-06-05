@@ -162,6 +162,10 @@ color:#1aa34a;
 <input id="clientName" placeholder="Seu nome">
 <input id="clientPhone" placeholder="Telefone">
 <input id="clientAddress" placeholder="Endereço">
+
+<input
+id="couponCode"
+placeholder="🎟️ Código de cupom (opcional)">
 </div>
 
 <button id="confirmBtn">Confirmar Pedido</button>
@@ -328,7 +332,10 @@ if(confirmBtn.disabled) return
 const name = clientName.value.trim()
 const phone = clientPhone.value.trim()
 const address = clientAddress.value.trim()
-
+const couponCode =
+document.getElementById("couponCode")
+.value.trim()
+.toUpperCase()
 if(!name || !phone || !address){
 showToast("Preencha todos os campos","warning")
 return
