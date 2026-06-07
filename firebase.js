@@ -66,6 +66,25 @@ try{
 
 const ref = doc(db,"users",user.uid);
 const snap = await getDoc(ref);
+if(snap.exists()){
+
+const data = snap.data()
+
+if(data.blocked){
+
+alert(
+"Conta bloqueada pelo administrador"
+)
+
+await auth.signOut()
+
+location.href="login.html"
+
+return
+
+}
+
+}
 
 if(!snap.exists()){
 
