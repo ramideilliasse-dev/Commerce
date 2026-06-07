@@ -89,23 +89,32 @@ color:white;
 <h3>Criar Cupom</h3>
 
 <input
-id=“couponCode”
-placeholder=“Código (RAMI10)”
+id="couponCode"
+placeholder="Código (RAMI10)"
+>
 
 <input
-id=“influencerName”
-placeholder=“Nome do influenciador”
+id="influencerName"
+placeholder="Nome do influenciador"
+>
 
 <input
-id=“discount”
-type=“number”
-placeholder=“Desconto (%)”
+id="discount"
+type="number"
+placeholder="Desconto (%)"
+>
 
 <input
-id=“commission”
-type=“number”
-placeholder=“Comissão (%)”
-
+id="commission"
+type="number"
+placeholder="Comissão (%)"
+>
+<button
+class="btnCreate"
+onclick="createCoupon()"
+>
+Criar Cupom
+</button>
 Criar Cupom
 </div>
 <div class="card">
@@ -161,15 +170,44 @@ document.getElementById("commission")
 if(
 !code ||
 !influencer ||
-!discount
+discount <= 0 ||
+discount > 90
 ){
+alert("Desconto inválido")
+return
+}
+
+if(
+commission < 0 ||
+commission > 100
+){
+alert("Comissão inválida")
+return
+}
 alert("Preencha todos os campos")
 return
+}
+ const existingQuery = query(
+collection(db,"merchantCoupons"),
+where("code","==",code)
+)
+
+const existingSnap =
+await getDocs(existingQuery)
+
+if(!existingSnap.empty){
+
+alert("Este código já existe")
+
+return
+
 }
 await addDoc(
 collection(db,"merchantCoupons"),
 {
 merchantId: currentUser.uid,
+merchantEmail:
+currentUser.email || "",
 code: code,
 influencerName: influencer,
 discount: discount,
