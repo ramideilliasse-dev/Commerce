@@ -343,7 +343,7 @@ let orders=[]
 let products=[]
 let promoData=[]
 let currentFilter="all"
-
+let searchText=""
 /* ================= TOAST ================= */
 
 function showToast(message,type="success"){
@@ -892,6 +892,24 @@ function renderUsers(){
 
 let filtered = users
 
+if(searchText){
+
+filtered = filtered.filter(u =>
+
+(u.email || "")
+.toLowerCase()
+.includes(searchText)
+
+||
+
+(u.phone || "")
+.toLowerCase()
+.includes(searchText)
+
+)
+
+}
+
 if(currentFilter==="pending"){
 
 filtered = users.filter(
@@ -913,7 +931,19 @@ const container=document.getElementById("content")
 container.innerHTML=`
 
 <div class="filterBar">
-
+<input
+id="searchUser"
+placeholder="🔍 Pesquisar usuário..."
+oninput="searchUsers()"
+style="
+margin-bottom:10px;
+padding:12px;
+border-radius:10px;
+border:1px solid #ddd;
+width:100%;
+box-sizing:border-box;
+"
+>
 <button onclick="setFilter('all')">
 Todos
 </button>
@@ -965,7 +995,16 @@ onclick="deleteUser('${u.id}')"
 `
 
 }
+window.searchUsers = function(){
 
+searchText =
+document.getElementById("searchUser")
+.value
+.toLowerCase()
+
+renderUsers()
+
+}
 window.setFilter=function(f){
 
 currentFilter=f
