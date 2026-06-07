@@ -303,7 +303,16 @@ Admin Dashboard 👑
 </div>
 
 <div class="container" id="content"></div>
-
+<div
+id="globalStats"
+style="
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+padding:10px;
+"
+>
+</div>
 <div id="toastBox" class="toastBox"></div>
 
 <script type="module">
@@ -317,7 +326,9 @@ doc,
 getDoc,
 setDoc,
 updateDoc,
-deleteDoc
+deleteDoc,
+query,
+where
 }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 import { initFCM }
@@ -373,10 +384,90 @@ return
 
 }
 
+loadGlobalStats()
 loadPromo()
 
 })
+/* ================= GLOBAL STATS ================= */
 
+async function loadGlobalStats(){
+
+try{
+
+const usersSnap =
+await getDocs(collection(db,"users"))
+
+const ordersSnap =
+await getDocs(collection(db,"orders"))
+
+const productsSnap =
+await getDocs(collection(db,"products"))
+
+let revenue = 0
+let merchants = 0
+
+ordersSnap.forEach(d=>{
+
+const o = d.data()
+
+revenue += Number(o.total || 0)
+
+})
+
+usersSnap.forEach(d=>{
+
+const u = d.data()
+
+if(
+u.role === "merchant" ||
+u.approved === true
+){
+merchants++
+}
+
+})
+
+document.getElementById("globalStats").innerHTML = `
+
+<div class="card" style="flex:1;min-width:150px">
+💰<br>
+<b>${revenue.toLocaleString()} Kz</b><br>
+Receita
+</div>
+
+<div class="card" style="flex:1;min-width:150px">
+📦<br>
+<b>${ordersSnap.size}</b><br>
+Pedidos
+</div>
+
+<div class="card" style="flex:1;min-width:150px">
+👥<br>
+<b>${usersSnap.size}</b><br>
+Usuários
+</div>
+
+<div class="card" style="flex:1;min-width:150px">
+🏪<br>
+<b>${merchants}</b><br>
+Merchants
+</div>
+
+<div class="card" style="flex:1;min-width:150px">
+🛍️<br>
+<b>${productsSnap.size}</b><br>
+Produtos
+</div>
+
+`
+
+}catch(err){
+
+console.error(err)
+
+}
+
+}
 /* ================= TABS ================= */
 
 window.showTab = function(e,tab){
