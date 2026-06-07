@@ -279,7 +279,38 @@ return
 
 const coupon =
 snap.docs[0].data()
+const merchantIds =
+[
+...new Set(
+cart.map(i => i.merchantId)
+)
+]
 
+if(
+merchantIds.length > 1
+){
+
+showToast(
+"Os cupons funcionam apenas para uma loja",
+"warning"
+)
+
+return
+
+}
+
+if(
+coupon.merchantId !== merchantIds[0]
+){
+
+showToast(
+"Este cupom não pertence a esta loja",
+"error"
+)
+
+return
+
+}
 if(!coupon.active){
 
 showToast("Cupom desativado","error")
@@ -425,6 +456,21 @@ total += i.price * i.qty
 
 })
 
+let finalTotal = total
+
+if(
+appliedCoupon &&
+appliedCoupon.merchantId === merchantId
+){
+
+finalTotal =
+total -
+Math.round(
+total *
+appliedCoupon.discount / 100
+)
+
+}
 
 
 await addDoc(collection(db,"orders"),{
@@ -433,7 +479,7 @@ userId: auth.currentUser.uid,
 
 merchantId: merchantId,
 items: items,
-total: total,
+total: finalTotal,
 
 clientName: name,
 clientPhone: phone,
