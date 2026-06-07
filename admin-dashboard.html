@@ -614,21 +614,15 @@ ${p.name || "Produto"}
 ${p.price || 0} Kz
 </div>
 
-<button
-onclick="toggleBlockUser('${u.id}', ${u.blocked ? false : true})"
-style="
-background:${u.blocked ? '#1aa34a' : '#ff6a00'};
-color:white;
-"
->
+<button onclick="togglePromo('${p.id}')">
 
-${u.blocked ? "✅ Débloquer" : "🚫 Bloquer"}
+${selected ? "Remover" : "Adicionar"}
 
 </button>
 
 <button
 class="delete"
-onclick="deleteUser('${u.id}')"
+onclick="deleteProduct('${p.id}')"
 >
 
 ❌ Supprimer
@@ -867,7 +861,33 @@ showToast("❌ Erro ao salvar","error")
 }
 
 }
+window.deleteProduct = async function(id){
 
+if(!confirm("Supprimer ce produit ?")) return
+
+try{
+
+await deleteDoc(doc(db,"products",id))
+
+showToast(
+"✅ Produit supprimé",
+"success"
+)
+
+loadPromo()
+
+}catch(e){
+
+console.error(e)
+
+showToast(
+"❌ Erreur suppression",
+"error"
+)
+
+}
+
+}
 /* ================= USERS ================= */
 
 async function loadUsers(){
