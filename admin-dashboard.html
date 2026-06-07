@@ -614,15 +614,21 @@ ${p.name || "Produto"}
 ${p.price || 0} Kz
 </div>
 
-<button onclick="togglePromo('${p.id}')">
+<button
+onclick="toggleBlockUser('${u.id}', ${u.blocked ? false : true})"
+style="
+background:${u.blocked ? '#1aa34a' : '#ff6a00'};
+color:white;
+"
+>
 
-${selected ? "Remover" : "Adicionar"}
+${u.blocked ? "✅ Débloquer" : "🚫 Bloquer"}
 
 </button>
 
 <button
 class="delete"
-onclick="deleteProduct('${p.id}')"
+onclick="deleteUser('${u.id}')"
 >
 
 ❌ Supprimer
@@ -1036,7 +1042,38 @@ showToast("❌ Erro ao validar","error")
 }
 
 }
+window.toggleBlockUser = async function(id, blocked){
 
+try{
+
+await updateDoc(
+doc(db,"users",id),
+{
+blocked: blocked
+}
+)
+
+showToast(
+blocked
+? "🚫 Utilisateur bloqué"
+: "✅ Utilisateur débloqué",
+"success"
+)
+
+loadUsers()
+
+}catch(e){
+
+console.error(e)
+
+showToast(
+"❌ Erro",
+"error"
+)
+
+}
+
+}
 window.deleteUser = async function(id){
 
 if(!confirm("Supprimer ?")) return
