@@ -984,7 +984,18 @@ onclick="approveUser('${u.id}')"
 `
 :""
 }
+<button
+onclick="toggleMerchant('${u.id}', ${u.blocked ? false : true})"
+style="
+background:${u.blocked ? '#1aa34a' : '#ff6a00'};
+color:white;
+">
 
+${u.blocked
+? "✅ Réactiver boutique"
+: "🚫 Bloquer boutique"}
+
+</button>
 <button
 class="delete"
 onclick="deleteUser('${u.id}')"
@@ -1057,6 +1068,38 @@ showToast(
 blocked
 ? "🚫 Utilisateur bloqué"
 : "✅ Utilisateur débloqué",
+"success"
+)
+
+loadUsers()
+
+}catch(e){
+
+console.error(e)
+
+showToast(
+"❌ Erro",
+"error"
+)
+
+}
+
+}
+ window.toggleMerchant = async function(id, blocked){
+
+try{
+
+await updateDoc(
+doc(db,"users",id),
+{
+blocked: blocked
+}
+)
+
+showToast(
+blocked
+? "🚫 Boutique bloquée"
+: "✅ Boutique réactivée",
 "success"
 )
 
