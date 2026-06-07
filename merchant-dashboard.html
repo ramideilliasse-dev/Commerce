@@ -477,7 +477,8 @@ if(!stats[o.couponCode]){
 
 stats[o.couponCode] = {
 sales:0,
-amount:0
+amount:0,
+commission:0
 }
 
 }
@@ -486,7 +487,13 @@ stats[o.couponCode].sales++
 
 stats[o.couponCode].amount +=
 Number(o.total || 0)
-
+stats[o.couponCode].commission +=
+(
+Number(o.total || 0)
+*
+Number(o.commission || 0)
+)
+/100
 })
 
 let html = ""
@@ -507,6 +514,13 @@ border-bottom:1px solid #eee;
 <br>
 
 💰 ${stats[code].amount} Kz
+
+<br>
+
+💸 Comissão:
+${Math.round(
+stats[code].commission
+)} Kz
 
 </div>
 
