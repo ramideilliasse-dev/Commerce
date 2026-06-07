@@ -438,14 +438,13 @@ showToast("🗑️ Produto removido","warning")
 
 window.clearCart = function(){
 
-
+localStorage.removeItem("cart")
 
 loadCart()
 
 showToast("🧹 Carrinho limpo","success")
 
 }
-
 /* ================= CHECKOUT ================= */
 
 window.goCheckout = function(){
