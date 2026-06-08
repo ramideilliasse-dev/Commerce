@@ -320,11 +320,19 @@ border:1px solid #ddd;
 <script type="module">
 
 import { db, auth } from "./firebase.js"
-
 import {
-collection,query,where,onSnapshot,
-updateDoc,deleteDoc,doc,getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+collection,
+query,
+where,
+onSnapshot,
+updateDoc,
+deleteDoc,
+doc,
+getDocs,
+getDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
 import { initFCM }
 from "./notifications-fcm.js";
 import { onAuthStateChanged,signOut } 
