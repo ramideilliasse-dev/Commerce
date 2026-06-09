@@ -160,9 +160,25 @@ transform:translateY(0);
 <img id="productImage">
 </div>
 
-Nome do Produto
-Preço (Kz)
-Desconto (%)
+<label>Nome do Produto</label>
+<input
+id="name"
+placeholder="Nome do produto"
+>
+
+<label>Preço (Kz)</label>
+<input
+id="price"
+type="number"
+placeholder="Preço"
+>
+
+<label>Desconto (%)</label>
+<input
+id="discount"
+type="number"
+placeholder="Desconto"
+>
 <div class="preview">
 <div class="previewBox">
 Preço Original
@@ -182,8 +198,11 @@ Descrição
 
 <textarea id="description"></textarea>
 
+<button
+id="saveBtn"
+class="saveBtn"
+>
 💾 Guardar Alterações
-
 </button>
 </div>
 </div>
