@@ -199,6 +199,15 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 const productId =
 new URLSearchParams(location.search)
 .get("id")
+ alert(
+"URL:\n" +
+location.href
+)
+
+alert(
+"Product ID:\n" +
+productId
+)
 const nameInput =
 document.getElementById("name")
 const priceInput =
@@ -263,6 +272,10 @@ return
 const snap =
 await getDoc(
 doc(db,"products",productId)
+)
+ alert(
+"Document existe ?\n" +
+snap.exists()
 )
 if(!snap.exists()){
 showToast(
