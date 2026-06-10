@@ -206,7 +206,34 @@ Publicar produto
 <input id="nameInput" placeholder="Nome do produto">
 
 <input id="priceInput" type="number" placeholder="Preço">
+<select id="categoryInput">
+<option value="">Selecionar categoria</option>
 
+<option value="Alimentação">
+🍚 Alimentação
+</option>
+
+<option value="Eletrónica">
+📱 Eletrónica
+</option>
+
+<option value="Moda">
+👕 Moda
+</option>
+
+<option value="Beleza">
+💄 Beleza
+</option>
+
+<option value="Casa">
+🏠 Casa
+</option>
+
+<option value="Auto">
+🚗 Auto
+</option>
+
+</select>
 <select id="provinceInput">
 <option value="">Selecionar província</option>
 <option>Luanda</option>
@@ -424,9 +451,16 @@ let price = document.getElementById("priceInput").value
 let description = document.getElementById("descriptionInput").value.trim()
 
 let province = document.getElementById("provinceInput").value
-
+let category =
+document.getElementById("categoryInput").value
 /* VALIDATION */
-if(!name || !price || !description || !province){
+if(
+!name ||
+!price ||
+!description ||
+!province ||
+!category
+){
 
 showToast("Preencha todos os campos","warning")
 
@@ -526,7 +560,7 @@ await db.collection("products").add({
 name:name,
 
 price:Number(price),
-
+category: category,
 description:description,
 
 province:province,
@@ -554,7 +588,7 @@ document.getElementById("nameInput").value=""
 document.getElementById("priceInput").value=""
 document.getElementById("descriptionInput").value=""
 document.getElementById("provinceInput").value=""
-
+document.getElementById("categoryInput").value=""
 preview.innerHTML=""
 
 imageFiles=[]
