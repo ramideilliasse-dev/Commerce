@@ -159,7 +159,34 @@ transform:translateY(0);
 <div class="imageBox">
 <img id="productImage">
 </div>
+<h3>📷 Imagens</h3>
 
+<div id="imagesContainer"></div>
+
+<input
+id="newImage"
+placeholder="Cole URL da imagem"
+style="
+width:100%;
+padding:12px;
+margin-top:10px;
+border-radius:10px;
+border:1px solid #ddd;
+">
+
+<button
+id="addImageBtn"
+style="
+margin-top:10px;
+padding:12px;
+background:#ff6a00;
+color:white;
+border:none;
+border-radius:10px;
+width:100%;
+">
+➕ Adicionar imagem
+</button>
 <label>Nome do Produto</label>
 <input
 id="name"
@@ -229,6 +256,7 @@ const descriptionInput =
 document.getElementById("description")
 const saveBtn =
 document.getElementById("saveBtn")
+let productImages = []
 function showToast(
 message,
 type="success"
@@ -245,6 +273,54 @@ box.appendChild(toast)
 setTimeout(()=>{
 toast.remove()
 },3000)
+}
+function renderImages(){
+
+const container =
+document.getElementById(
+"imagesContainer"
+)
+
+let html = ""
+
+productImages.forEach((img,index)=>{
+
+html += `
+<div style="
+display:flex;
+align-items:center;
+gap:10px;
+margin-bottom:10px;
+">
+
+<img
+src="${img}"
+style="
+width:70px;
+height:70px;
+object-fit:cover;
+border-radius:10px;
+">
+
+<button
+onclick="removeImage(${index})"
+style="
+background:red;
+color:white;
+border:none;
+padding:8px 12px;
+border-radius:8px;
+">
+🗑
+</button>
+
+</div>
+`
+
+})
+
+container.innerHTML = html
+
 }
 function updatePreview(){
 const price =
@@ -293,7 +369,9 @@ showToast(
 return
 }
 const p = snap.data()
+productImages = p.images || []
 
+renderImages()
 
 
 if(p.images && p.images.length > 0){
@@ -309,6 +387,56 @@ p.discount || 0
 descriptionInput.value =
 p.description || ""
 updatePreview()
+}
+window.removeImage =
+function(index){
+
+if(
+!confirm(
+"Remover esta imagem?"
+)
+) return
+
+productImages.splice(index,1)
+
+renderImages()
+
+}
+document
+.getElementById(
+"addImageBtn"
+)
+.onclick = ()=>{
+
+const url =
+document
+.getElementById(
+"newImage"
+)
+.value
+.trim()
+
+if(!url){
+
+showToast(
+"Insira URL da imagem",
+"error"
+)
+
+return
+
+}
+
+productImages.push(url)
+
+document
+.getElementById(
+"newImage"
+)
+.value = ""
+
+renderImages()
+
 }
 loadProduct()
 saveBtn.onclick =
@@ -326,16 +454,22 @@ productId
 {
 name:
 nameInput.value.trim(),
+
 price:
 Number(
 priceInput.value
 ),
+
 discount:
 Number(
 discountInput.value
 ),
+
 description:
-descriptionInput.value.trim()
+descriptionInput.value.trim(),
+
+images:
+productImages
 }
 )
 showToast(
