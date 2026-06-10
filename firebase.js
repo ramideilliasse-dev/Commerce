@@ -1,10 +1,9 @@
  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
 import {
-getMessaging
+getMessaging,
+getToken
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
-
-import {
 getAuth,
 setPersistence,
 browserLocalPersistence,
@@ -58,7 +57,47 @@ currentUser = user;
 authReady = true;
 
 console.log("🔥 Auth ready:", user?.uid);
+try{
 
+const permission =
+await Notification.requestPermission();
+
+if(permission === "granted"){
+
+const token =
+await getToken(
+messaging,
+{
+vapidKey:"BAv9JCvzV_TZ3C-rcXv6LwJL9sIzp6m-Wf0qWX6uEj33F2OVqGNBTf4E7MV1s6UbSrcyuXbIQXpZQaaduPzCPt8"
+}
+);
+
+if(token){
+
+await setDoc(
+doc(db,"users",user.uid),
+{
+fcmToken: token
+},
+{
+merge:true
+}
+);
+
+console.log("✅ FCM Token:", token);
+
+}
+
+}
+
+}catch(err){
+
+console.error(
+"FCM ERROR:",
+err
+);
+
+}
 /* AUTO CREATE USER */
 if(!user) return;
 
