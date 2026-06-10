@@ -58,6 +58,8 @@ currentUser = user;
 authReady = true;
 
 console.log("🔥 Auth ready:", user?.uid);
+
+if(!user) return;
 try{
 
 const permission =
