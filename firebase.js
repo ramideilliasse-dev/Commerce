@@ -1,15 +1,16 @@
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
 import {
 getMessaging
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
+
 import {
 getAuth,
 setPersistence,
 browserLocalPersistence,
 onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
 import {
 initializeFirestore,
 persistentLocalCache,
@@ -30,7 +31,6 @@ appId: "1:238735890157:web:db3f87960db7916d7fdee4"
 
 /* INIT */
 const app = initializeApp(firebaseConfig);
-
 export const messaging = getMessaging(app);
 export const auth = getAuth(app);
 
@@ -59,29 +59,14 @@ authReady = true;
 
 console.log("🔥 Auth ready:", user?.uid);
 
-console.log("✅ FCM Token:", token);
-
-}
-
-}
-
-}catch(err){
-
-console.error(
-"FCM ERROR:",
-err
-);
-}
 /* AUTO CREATE USER */
 if(!user) return;
 
 try{
 
 const ref = doc(db,"users",user.uid);
-
- const snap = await getDoc(ref);
-
- if(snap.exists()){
+const snap = await getDoc(ref);
+if(snap.exists()){
 
 const data = snap.data()
 
