@@ -164,8 +164,10 @@ transform:translateY(0);
 <div id="imagesContainer"></div>
 
 <input
-id="newImage"
-placeholder="Cole URL da imagem"
+type="file"
+id="imagePicker"
+accept="image/*"
+multiple
 style="
 width:100%;
 padding:12px;
@@ -173,20 +175,6 @@ margin-top:10px;
 border-radius:10px;
 border:1px solid #ddd;
 ">
-
-<button
-id="addImageBtn"
-style="
-margin-top:10px;
-padding:12px;
-background:#ff6a00;
-color:white;
-border:none;
-border-radius:10px;
-width:100%;
-">
-➕ Adicionar imagem
-</button>
 <label>Nome do Produto</label>
 <input
 id="name"
@@ -242,6 +230,8 @@ getDoc,
 updateDoc
 }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+const CLOUD_NAME = "dy9qnhimc"
+const UPLOAD_PRESET = "toma_unsigned"
 const productId =
 new URLSearchParams(location.search)
 .get("id")
@@ -403,41 +393,71 @@ renderImages()
 
 }
 document
-.getElementById(
-"addImageBtn"
-)
-.onclick = ()=>{
+.getElementById("imagePicker")
+.addEventListener(
+"change",
+async (e)=>{
 
-const url =
-document
-.getElementById(
-"newImage"
-)
-.value
-.trim()
+const files = e.target.files
 
-if(!url){
+if(!files.length) return
 
 showToast(
-"Insira URL da imagem",
+"Carregando imagens..."
+)
+
+for(const file of files){
+
+const formData =
+new FormData()
+
+formData.append(
+"file",
+file
+)
+
+formData.append(
+"upload_preset",
+UPLOAD_PRESET
+)
+
+try{
+
+const res =
+await fetch(
+`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+{
+method:"POST",
+body:formData
+}
+)
+
+const data =
+await res.json()
+
+productImages.push(
+data.secure_url
+)
+
+}catch(err){
+
+showToast(
+"Erro ao carregar imagem",
 "error"
 )
 
-return
-
 }
 
-productImages.push(url)
-
-document
-.getElementById(
-"newImage"
-)
-.value = ""
+}
 
 renderImages()
 
+showToast(
+"Imagens adicionadas ✅"
+)
+
 }
+)
 loadProduct()
 saveBtn.onclick =
 async ()=>{
