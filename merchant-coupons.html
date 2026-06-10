@@ -170,6 +170,15 @@ document.getElementById("commission")
 if(
 !code ||
 !influencer ||
+!discount ||
+!commission
+){
+alert("Preencha todos os campos")
+return
+}
+if(
+!code ||
+!influencer ||
 discount <= 0 ||
 discount > 90
 ){
@@ -182,9 +191,6 @@ commission < 0 ||
 commission > 100
 ){
 alert("Comissão inválida")
-return
-}
-alert("Preencha todos os campos")
 return
 }
  const existingQuery = query(
