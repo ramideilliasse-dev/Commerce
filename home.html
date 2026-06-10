@@ -575,7 +575,7 @@ onclick="openCategory('Auto')">
 <div class="topSection">
 
 <h2 class="sectionTitle">
-🔥 Mais Vendidos
+ Mais Vendidos
 </h2>
 
 <div id="topProducts" class="topProducts"></div>
@@ -584,7 +584,7 @@ onclick="openCategory('Auto')">
  <!-- MAIS VENDIDOS -->
 
 <div class="sectionTitle">
-🔥 Mais Vendidos
+ Mais Vendidos
 </div>
 <div class="sectionTitle">
 ✨ Recomendados para você
@@ -593,8 +593,56 @@ onclick="openCategory('Auto')">
 <div id="recommendedProducts"
 class="topProducts">
 </div>
-<div id="bestSellers" class="bestSellers"></div>
-<div id="productList" class="products"></div>
+
+<div id="bestSellers"
+class="bestSellers">
+</div>
+
+<h2 class="sectionTitle">
+🍚 Alimentação
+</h2>
+<div id="foodProducts"
+class="topProducts">
+</div>
+
+<h2 class="sectionTitle">
+📱 Eletrónica
+</h2>
+<div id="electronicsProducts"
+class="topProducts">
+</div>
+
+<h2 class="sectionTitle">
+👕 Moda
+</h2>
+<div id="fashionProducts"
+class="topProducts">
+</div>
+
+<h2 class="sectionTitle">
+💄 Beleza
+</h2>
+<div id="beautyProducts"
+class="topProducts">
+</div>
+
+<h2 class="sectionTitle">
+🏠 Casa
+</h2>
+<div id="homeProducts"
+class="topProducts">
+</div>
+
+<h2 class="sectionTitle">
+🚗 Auto
+</h2>
+<div id="autoProducts"
+class="topProducts">
+</div>
+
+<div id="productList"
+class="products">
+</div>
 
 <div class="nav">
 
@@ -790,6 +838,36 @@ renderTopProducts()
 loadBestSellers()
 
 renderRecommendedProducts()
+
+renderCategorySection(
+"Alimentação",
+"foodProducts"
+)
+
+renderCategorySection(
+"Eletrónica",
+"electronicsProducts"
+)
+
+renderCategorySection(
+"Moda",
+"fashionProducts"
+)
+
+renderCategorySection(
+"Beleza",
+"beautyProducts"
+)
+
+renderCategorySection(
+"Casa",
+"homeProducts"
+)
+
+renderCategorySection(
+"Auto",
+"autoProducts"
+)
   }catch(error){
 
     console.log(error)
@@ -1319,6 +1397,53 @@ onclick="openProduct('${p.id}')">
 <img
 src="${p.images?.[0] || ''}"
 loading="lazy">
+
+<div class="topInfo">
+
+<div class="topName">
+${p.name}
+</div>
+
+<div class="topPrice">
+${p.price} Kz
+</div>
+
+</div>
+
+</div>
+
+`).join("")
+
+}
+function renderCategorySection(
+category,
+containerId
+){
+
+const container =
+document.getElementById(containerId)
+
+if(!container) return
+
+const categoryProducts =
+products
+.filter(p =>
+(p.category || "")
+.toLowerCase() ===
+category.toLowerCase()
+)
+.slice(0,10)
+
+container.innerHTML =
+categoryProducts.map(p => `
+
+<div class="topCard"
+onclick="openProduct('${p.id}')">
+
+<img
+src="${p.images?.[0] || ''}"
+loading="lazy"
+>
 
 <div class="topInfo">
 
