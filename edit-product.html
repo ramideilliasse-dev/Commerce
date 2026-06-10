@@ -218,13 +218,7 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 const productId =
 new URLSearchParams(location.search)
 .get("id")
- alert("SCRIPT OK")
 
-alert(location.href)
-
-alert(location.search)
-
-alert(productId)
 const nameInput =
 document.getElementById("name")
 const priceInput =
@@ -290,10 +284,7 @@ const snap =
 await getDoc(
 doc(db,"products",productId)
 )
- alert(
-"Document existe ?\n" +
-snap.exists()
-)
+ 
 if(!snap.exists()){
 showToast(
 "Produto não encontrado",
@@ -303,20 +294,7 @@ return
 }
 const p = snap.data()
 
-alert(
-"Nome:\n" +
-(p.name || "VIDE")
-)
 
-alert(
-"Preço:\n" +
-(p.price || 0)
-)
-
-alert(
-"Imagem:\n" +
-(p.images?.[0] || "SEM IMAGEM")
-)
 
 if(p.images && p.images.length > 0){
 document.getElementById("productImage").src =
