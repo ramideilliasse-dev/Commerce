@@ -68,30 +68,34 @@ await Notification.requestPermission();
 alert("Permission = " + permission);
 if(permission === "granted"){
 
-const token =
-await getToken(
-messaging,
-{
-vapidKey:"BAv9JCvzV_TZ3C-rcXv6LwJL9sIzp6m-Wf0qWX6uEj33F2OVqGNBTf4E7MV1s6UbSrcyuXbIQXpZQaaduPzCPt8"
-}
+alert("Avant getToken");
+
+const token = await getToken(
+  messaging,
+  {
+    vapidKey:"BAv9JCvzV_TZ3C-rcXv6LwJL9sIzp6m-Wf0qWX6uEj33F2OVqGNBTf4E7MV1s6UbSrcyuXbIQXpZQaaduPzCPt8"
+  }
 );
+
+alert("TOKEN = " + token);
 
 if(token){
-alert("TOKEN CRIADO");
-await setDoc(
-doc(db,"users",user.uid),
-{
-fcmToken: token
-},
-{
-merge:true
+
+  alert("Avant Firestore");
+
+  await setDoc(
+    doc(db,"users",user.uid),
+    {
+      fcmToken: token
+    },
+    {
+      merge:true
+    }
+  );
+
+  alert("FCM SAUVEGARDE OK");
+
 }
-);
-
-console.log("✅ FCM Token:", token);
-
-}
-
 }
 
 }catch(err){
