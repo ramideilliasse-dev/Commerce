@@ -1,9 +1,15 @@
- import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+ alert("1 - FIREBASE FILE CHARGÉ");
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+alert("2 - FIREBASE APP IMPORT OK");
 
 import {
 getMessaging,
 getToken
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
+
+alert("3 - FIREBASE MESSAGING IMPORT OK");
 
 import {
 getAuth,
@@ -11,6 +17,9 @@ setPersistence,
 browserLocalPersistence,
 onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+alert("4 - FIREBASE AUTH IMPORT OK");
+
 import {
 initializeFirestore,
 persistentLocalCache,
@@ -19,7 +28,8 @@ setDoc,
 getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-/* CONFIG */
+alert("5 - FIRESTORE IMPORT OK");
+
 const firebaseConfig = {
 apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
 authDomain: "angcomerce-v1.firebaseapp.com",
@@ -29,15 +39,38 @@ messagingSenderId: "238735890157",
 appId: "1:238735890157:web:db3f87960db7916d7fdee4"
 };
 
-/* INIT */
+alert("6 - CONFIG OK");
+
 const app = initializeApp(firebaseConfig);
+
+alert("7 - APP INITIALIZED");
+
+export const auth = getAuth(app);
+
+alert("8 - AUTH OK");
+
+export const db = initializeFirestore(app,{
+localCache: persistentLocalCache({})
+});
+
+alert("9 - FIRESTORE OK");
+
 export let messaging = null;
 
 try{
-  messaging = getMessaging(app);
-  console.log("Messaging OK");
+
+alert("10 - AVANT MESSAGING");
+
+messaging = getMessaging(app);
+
+alert("11 - MESSAGING OK");
+
 }catch(err){
-  console.log("Messaging non supporté", err);
+
+alert("ERREUR MESSAGING");
+
+console.error(err);
+
 }
 export const auth = getAuth(app);
 
