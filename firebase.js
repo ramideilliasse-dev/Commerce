@@ -57,7 +57,7 @@ onAuthStateChanged(auth,(user)=>{
 
   currentUser = user;
   authReady = true;
-
+  
   if(user){
     alert("11 - USER CONNECTE");
     alert(user.uid);
