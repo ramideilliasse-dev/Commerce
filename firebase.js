@@ -61,6 +61,20 @@ onAuthStateChanged(auth,(user)=>{
   if(user){
     alert("11 - USER CONNECTE");
     alert(user.uid);
+    alert("13 - TEST FCM");
+
+try{
+
+  const permission =
+  await Notification.requestPermission();
+
+  alert("14 - PERMISSION = " + permission);
+
+}catch(err){
+
+  alert("15 - ERREUR PERMISSION");
+
+}
   }else{
     alert("11 - AUCUN USER");
   }
