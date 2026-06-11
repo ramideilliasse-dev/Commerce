@@ -791,7 +791,7 @@ onAuthStateChanged(auth, async (user)=>{
 /* ================= LOAD PRODUCTS ================= */
 
 async function loadProducts(){
-
+alert("loadProducts démarré");
   try{
 
     const qProducts = query(
@@ -801,7 +801,7 @@ async function loadProducts(){
 
     const productSnap =
     await getDocs(qProducts)
-
+alert("Produits trouvés : " + productSnap.size);
     products = []
 
     productSnap.forEach(docSnap=>{
@@ -869,7 +869,10 @@ renderCategorySection(
 "autoProducts"
 )
   }catch(error){
-
+alert(
+"ERREUR FIRESTORE : " +
+error.message
+);
     console.log(error)
 
     productList.innerHTML = `
