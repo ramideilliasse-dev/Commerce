@@ -31,7 +31,14 @@ appId: "1:238735890157:web:db3f87960db7916d7fdee4"
 
 /* INIT */
 const app = initializeApp(firebaseConfig);
-export const messaging = getMessaging(app);
+export let messaging = null;
+
+try{
+  messaging = getMessaging(app);
+  console.log("Messaging OK");
+}catch(err){
+  console.log("Messaging non supporté", err);
+}
 export const auth = getAuth(app);
 
 /* 🔥 FIRESTORE OPTIMISÉ + CACHE LOCAL */
@@ -43,7 +50,7 @@ localCache: persistentLocalCache({})
 setPersistence(auth, browserLocalPersistence)
 .then(()=>{
 console.log("✅ Persistence OK");
- alert("FCM TOKEN OK");
+ alert("Persistence OK");
 })
 .catch((e)=>{
 console.error("❌ Persistence erreur:", e);
@@ -68,7 +75,7 @@ await Notification.requestPermission();
 alert("Permission = " + permission);
 alert("URL = " + location.origin);
 alert("USER AGENT = " + navigator.userAgent);
- if(permission !== "granted"){
+if(permission === "granted" && messaging){
   alert("NOTIFICATION BLOQUÉE");
 }
 alert("Avant getToken");
