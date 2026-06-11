@@ -78,6 +78,16 @@ alert("USER AGENT = " + navigator.userAgent);
 if(permission === "granted" && messaging){
   alert("NOTIFICATION BLOQUÉE");
 }
+if(permission !== "granted"){
+  alert("Permission refusée");
+  return;
+}
+
+if(!messaging){
+  alert("Messaging indisponível");
+  return;
+}
+
 alert("Avant getToken");
 
 const token = await getToken(
@@ -88,7 +98,6 @@ const token = await getToken(
 );
 
 alert("TOKEN = " + token);
-
 if(token){
 
   alert("Avant Firestore");
