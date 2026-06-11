@@ -66,8 +66,11 @@ try{
 const permission =
 await Notification.requestPermission();
 alert("Permission = " + permission);
-if(permission === "granted"){
-
+alert("URL = " + location.origin);
+alert("USER AGENT = " + navigator.userAgent);
+ if(permission !== "granted"){
+  alert("NOTIFICATION BLOQUÉE");
+}
 alert("Avant getToken");
 
 const token = await getToken(
