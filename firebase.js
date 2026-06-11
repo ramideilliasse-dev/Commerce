@@ -1,7 +1,8 @@
  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
 import {
-getMessaging
+getMessaging,
+getToken
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
 
 import {
@@ -10,7 +11,6 @@ setPersistence,
 browserLocalPersistence,
 onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
 import {
 initializeFirestore,
 persistentLocalCache,
@@ -43,6 +43,7 @@ localCache: persistentLocalCache({})
 setPersistence(auth, browserLocalPersistence)
 .then(()=>{
 console.log("✅ Persistence OK");
+ alert("FCM TOKEN OK");
 })
 .catch((e)=>{
 console.error("❌ Persistence erreur:", e);
@@ -59,6 +60,48 @@ authReady = true;
 
 console.log("🔥 Auth ready:", user?.uid);
 
+if(!user) return;
+try{
+
+const permission =
+await Notification.requestPermission();
+alert("Permission = " + permission);
+if(permission === "granted"){
+
+const token =
+await getToken(
+messaging,
+{
+vapidKey:"BAv9JCvzV_TZ3C-rcXv6LwJL9sIzp6m-Wf0qWX6uEj33F2OVqGNBTf4E7MV1s6UbSrcyuXbIQXpZQaaduPzCPt8"
+}
+);
+
+if(token){
+alert("TOKEN CRIADO");
+await setDoc(
+doc(db,"users",user.uid),
+{
+fcmToken: token
+},
+{
+merge:true
+}
+);
+
+console.log("✅ FCM Token:", token);
+
+}
+
+}
+
+}catch(err){
+alert("FCM ERROR");
+console.error(
+"FCM ERROR:",
+err
+);
+
+}
 /* AUTO CREATE USER */
 if(!user) return;
 
