@@ -63,6 +63,10 @@ onAuthStateChanged(auth, async (user)=>{
     alert(user.uid);
     alert("13 - TEST FCM");
 alert("Notification API = " + ("Notification" in window));
+ alert(
+"Permission actuelle = " +
+Notification.permission
+); 
 try{
 
   const permission =
