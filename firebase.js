@@ -1,3 +1,6 @@
+alert("VERSION FIREBASE 2026");
+alert("1 - DEBUT FIREBASE");
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 alert("2 - FIREBASE APP IMPORTE");
 
@@ -14,9 +17,13 @@ import {
   persistentLocalCache
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 alert("4 - FIRESTORE IMPORTE");
-alert("VERSION FIREBASE 2026");
-alert("1 - DEBUT FIREBASE");
-alert("🔥 VERSION FIREBASE FCM V2");
+
+import {
+  getMessaging,
+  getToken
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
+alert("5 - MESSAGING IMPORTE");
+
 const firebaseConfig = {
   apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
   authDomain: "angcomerce-v1.firebaseapp.com",
@@ -26,22 +33,22 @@ const firebaseConfig = {
   appId: "1:238735890157:web:db3f87960db7916d7fdee4"
 };
 
-alert("5 - CONFIG OK");
+alert("6 - CONFIG OK");
 
 const app = initializeApp(firebaseConfig);
-alert("6 - APP OK");
+alert("7 - APP OK");
 
 export const auth = getAuth(app);
-alert("7 - AUTH OK");
+alert("8 - AUTH OK");
 
 export const db = initializeFirestore(app,{
   localCache: persistentLocalCache({})
 });
-alert("8 - FIRESTORE OK");
+alert("9 - FIRESTORE OK");
 
 setPersistence(auth, browserLocalPersistence)
 .then(()=>{
-  alert("9 - PERSISTENCE OK");
+  alert("10 - PERSISTENCE OK");
 })
 .catch((e)=>{
   alert("ERREUR PERSISTENCE");
@@ -53,58 +60,57 @@ export let authReady = false;
 
 onAuthStateChanged(auth, async (user)=>{
 
-  alert("10 - AUTH STATE CHANGE");
+  alert("11 - AUTH STATE CHANGE");
 
   currentUser = user;
   authReady = true;
-  
-  if(user){
-    alert("11 - USER CONNECTE");
-    alert(user.uid);
-try{
 
-const messaging = getMessaging(app);
+  if(!user){
 
-const token = await getToken(
-messaging,
-{
-vapidKey:"BAv9JCvzV_TZ3C-rcXv6LwJL9sIzp6m-Wf0qWX6uEj33F2OVqGNBTf4E7MV1s6UbSrcyuXbIQXpZQaaduPzCPt8"
-}
-);
+    alert("12 - AUCUN USER");
 
-alert("TOKEN FCM");
+    return;
 
-alert(token);
+  }
 
-}catch(err){
+  alert("13 - USER CONNECTE");
+  alert(user.uid);
 
-alert("FCM ERROR");
+  try{
 
-alert(err.message);
+    alert(
+      "14 - Notification API = " +
+      ("Notification" in window)
+    );
 
-}
-    alert("13 - TEST FCM");
-alert("Notification API = " + ("Notification" in window));
- alert(
-"Permission actuelle = " +
-Notification.permission
-); 
-try{
+    alert(
+      "15 - Permission actuelle = " +
+      Notification.permission
+    );
 
-  const permission =
-  await Notification.requestPermission();
+    const messaging = getMessaging(app);
 
-  alert("14 - PERMISSION = " + permission);
+    alert("16 - MESSAGING OK");
 
-}catch(err){
+    const token = await getToken(
+      messaging,
+      {
+        vapidKey:"BAv9JCvzV_TZ3C-rcXv6LwJL9sIzp6m-Wf0qWX6uEj33F2OVqGNBTf4E7MV1s6UbSrcyuXbIQXpZQaaduPzCPt8"
+      }
+    );
 
-  alert("15 - ERREUR PERMISSION");
+    alert("17 - TOKEN FCM");
 
-}
-  }else{
-    alert("11 - AUCUN USER");
+    alert(token);
+
+  }catch(err){
+
+    alert("18 - FCM ERROR");
+
+    alert(err.message);
+
   }
 
 });
 
-alert("12 - FIN FIREBASE");
+alert("19 - FIN FIREBASE");
