@@ -1,3 +1,4 @@
+alert("VERSION FIREBASE 2026");
 alert("1 - DEBUT FIREBASE");
 alert("🔥 VERSION FIREBASE FCM V2");
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
