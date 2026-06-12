@@ -61,6 +61,28 @@ onAuthStateChanged(auth, async (user)=>{
   if(user){
     alert("11 - USER CONNECTE");
     alert(user.uid);
+try{
+
+const messaging = getMessaging(app);
+
+const token = await getToken(
+messaging,
+{
+vapidKey:"BAv9JCvzV_TZ3C-rcXv6LwJL9sIzp6m-Wf0qWX6uEj33F2OVqGNBTf4E7MV1s6UbSrcyuXbIQXpZQaaduPzCPt8"
+}
+);
+
+alert("TOKEN FCM");
+
+alert(token);
+
+}catch(err){
+
+alert("FCM ERROR");
+
+alert(err.message);
+
+}
     alert("13 - TEST FCM");
 alert("Notification API = " + ("Notification" in window));
  alert(
