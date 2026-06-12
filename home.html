@@ -1487,6 +1487,13 @@ encodeURIComponent(category)
 </script>
 <script>
 
+alert("SW support = " + ("serviceWorker" in navigator));
+
+alert(
+"STANDALONE = " +
+window.matchMedia("(display-mode: standalone)").matches
+);
+
 if("serviceWorker" in navigator){
 
 window.addEventListener("load",()=>{
@@ -1495,17 +1502,21 @@ navigator.serviceWorker
 .register("/service-worker.js")
 
 .then(()=>{
-console.log("SW OK")
+
+alert("SERVICE WORKER OK");
+
 })
 
 .catch((err)=>{
-console.log("SW ERROR",err)
-})
 
-})
+alert("SERVICE WORKER ERROR");
+alert(err.message);
+
+});
+
+});
 
 }
-
 </script>
 <div id="toastBox" class="toastBox"></div>
 </body>
