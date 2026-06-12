@@ -1,4 +1,4 @@
-alert("VERSION FIREBASE 2026");
+ alert("VERSION FIREBASE 2026");
 alert("1 - DEBUT FIREBASE");
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
