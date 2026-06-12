@@ -525,7 +525,18 @@ color:#444;
 
 </div>
 </div>
-
+<button id="testNotif"
+style="
+margin:10px;
+padding:12px;
+background:#ff6a00;
+color:white;
+border:none;
+border-radius:10px;
+font-weight:bold;
+">
+Activer Notifications
+</button>
 <div class="promoSlider" id="promoSlider"></div>
 
 <!-- CATEGORIAS -->
@@ -1484,6 +1495,24 @@ location.href =
 encodeURIComponent(category)
 
 }
+document
+.getElementById("testNotif")
+.addEventListener("click", async ()=>{
+
+  alert(
+    "Avant permission : " +
+    Notification.permission
+  );
+
+  const permission =
+  await Notification.requestPermission();
+
+  alert(
+    "Après permission : " +
+    permission
+  );
+
+});
 </script>
 <script>
 
