@@ -1,6 +1,3 @@
-alert("VERSION FIREBASE 2026");
-alert("1 - DEBUT FIREBASE");
-alert("🔥 VERSION FIREBASE FCM V2");
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 alert("2 - FIREBASE APP IMPORTE");
 
@@ -17,7 +14,9 @@ import {
   persistentLocalCache
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 alert("4 - FIRESTORE IMPORTE");
-
+alert("VERSION FIREBASE 2026");
+alert("1 - DEBUT FIREBASE");
+alert("🔥 VERSION FIREBASE FCM V2");
 const firebaseConfig = {
   apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
   authDomain: "angcomerce-v1.firebaseapp.com",
@@ -52,7 +51,7 @@ setPersistence(auth, browserLocalPersistence)
 export let currentUser = null;
 export let authReady = false;
 
-onAuthStateChanged(auth,(user)=>{
+onAuthStateChanged(auth, async (user)=>{
 
   alert("10 - AUTH STATE CHANGE");
 
