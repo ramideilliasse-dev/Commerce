@@ -14,7 +14,9 @@ alert("3 - AUTH IMPORTE");
 
 import {
   initializeFirestore,
-  persistentLocalCache
+  persistentLocalCache,
+  doc,
+  setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 alert("4 - FIRESTORE IMPORTE");
 
@@ -100,17 +102,34 @@ onAuthStateChanged(auth, async (user)=>{
     );
 
     alert("17 - TOKEN FCM");
-
     alert(token);
+
+    if(token){
+
+      alert("18 - AVANT SAUVEGARDE");
+
+      await setDoc(
+        doc(db,"users",user.uid),
+        {
+          fcmToken: token,
+          lastTokenUpdate: Date.now()
+        },
+        {
+          merge:true
+        }
+      );
+
+      alert("19 - TOKEN SAUVEGARDE");
+
+    }
 
   }catch(err){
 
-    alert("18 - FCM ERROR");
-
+    alert("20 - FCM ERROR");
     alert(err.message);
 
   }
 
 });
 
-alert("19 - FIN FIREBASE");
+alert("21 - FIN FIREBASE");
