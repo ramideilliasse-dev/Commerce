@@ -388,7 +388,9 @@ Produto
 
 <div id="price" class="price"></div>
 
-<div id="rating" class="rating"></div>
+<div id="rating" class="rating">
+⭐ 0.0 (0 avaliações)
+</div>
 
 <div id="desc" class="desc"></div>
 
@@ -915,9 +917,11 @@ where("productId","==",productId)
 const snap = await getDocs(q)
 
 let html = ""
-
+let totalStars = 0
+let totalReviews = 0
 snap.forEach(d=>{
-
+totalStars += Number(r.rating || 0)
+totalReviews++
 let r = d.data()
 
 html += `
@@ -941,7 +945,20 @@ ${r.comment || ""}
 })
 
 reviewsEl.innerHTML = html || "Sem avaliações ainda"
+if(totalReviews > 0){
 
+const media =
+(totalStars / totalReviews).toFixed(1)
+
+ratingEl.innerHTML =
+`⭐ ${media} (${totalReviews} avaliações)`
+
+}else{
+
+ratingEl.innerHTML =
+"⭐ 0.0 (0 avaliações)"
+
+}
 }
 
 /* ================= OPEN PRODUCT ================= */
