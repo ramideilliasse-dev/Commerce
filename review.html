@@ -1,62 +1,85 @@
  <!DOCTYPE html>
-<html>
-
+<html lang="pt">
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Avaliar produto</title>
+<title>Avaliar Produto</title>
 
 <style>
 
 body{
 font-family:Arial;
-background:#f4f4f4;
+background:#f5f5f5;
 margin:0;
+padding:20px;
 }
 
 .container{
 max-width:600px;
 margin:auto;
-padding:20px;
 }
 
 .box{
 background:white;
 padding:20px;
-border-radius:10px;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
+border-radius:16px;
+box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+h2{
+margin-top:0;
+text-align:center;
 }
 
 .stars{
-font-size:30px;
-color:#ddd;
-cursor:pointer;
+text-align:center;
+font-size:40px;
+margin:20px 0;
 }
 
-.active{
-color:orange;
+.stars span{
+cursor:pointer;
+color:#ddd;
+transition:.2s;
+}
+
+.stars span.active{
+color:#ff9800;
 }
 
 textarea{
 width:100%;
-height:100px;
-margin-top:10px;
-padding:10px;
-border-radius:8px;
+height:120px;
+padding:12px;
+border-radius:10px;
 border:1px solid #ddd;
+resize:none;
+box-sizing:border-box;
 }
 
 button{
 width:100%;
-padding:12px;
+padding:14px;
+margin-top:15px;
+border:none;
+border-radius:12px;
 background:#ff6a00;
 color:white;
-border:none;
-border-radius:10px;
-margin-top:10px;
 font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:disabled{
+opacity:.6;
+}
+
+.message{
+text-align:center;
+margin-top:10px;
+font-weight:bold;
 }
 
 </style>
@@ -69,74 +92,210 @@ font-size:16px;
 
 <div class="box">
 
-<h2>Avaliar produto</h2>
+<h2>⭐ Avaliar Produto</h2>
 
-<div id="stars">
+<div class="stars" id="stars">
 
-<span onclick="rate(1)">★</span>
-<span onclick="rate(2)">★</span>
-<span onclick="rate(3)">★</span>
-<span onclick="rate(4)">★</span>
-<span onclick="rate(5)">★</span>
+<span data-rate="1">★</span>
+<span data-rate="2">★</span>
+<span data-rate="3">★</span>
+<span data-rate="4">★</span>
+<span data-rate="5">★</span>
 
 </div>
 
-<textarea id="comment" placeholder="Escreva seu comentário"></textarea>
+<textarea
+id="comment"
+placeholder="Escreva a sua opinião sobre o produto..."
+></textarea>
 
-<button onclick="sendReview()">
-
-Enviar avaliação
-
+<button id="sendBtn">
+Enviar Avaliação
 </button>
 
-</div>
+<div id="message" class="message"></div>
 
 </div>
 
+</div>
 
 <script type="module">
 
-import { db } from "./firebase.js"
+import {
+auth,
+db
+}
+from "./firebase.js";
 
 import {
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+import {
+collection,
 addDoc,
-collection
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+doc,
+updateDoc,
+serverTimestamp
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-let rating=0
+const params =
+new URLSearchParams(location.search);
 
-window.rate=function(n){
+const productId =
+params.get("productId");
 
-rating=n
+const orderId =
+params.get("orderId");
 
-const stars=document.querySelectorAll("#stars span")
+const stars =
+document.querySelectorAll("#stars span");
 
-stars.forEach((s,i)=>{
+const commentInput =
+document.getElementById("comment");
 
-s.classList.toggle("active",i<n)
+const sendBtn =
+document.getElementById("sendBtn");
 
-})
+const message =
+document.getElementById("message");
+
+let rating = 0;
+let currentUser = null;
+
+/* ESTRELAS */
+
+stars.forEach(star=>{
+
+star.addEventListener("click",()=>{
+
+rating =
+Number(star.dataset.rate);
+
+stars.forEach(s=>{
+
+s.classList.toggle(
+"active",
+Number(s.dataset.rate) <= rating
+);
+
+});
+
+});
+
+});
+
+/* AUTH */
+
+onAuthStateChanged(auth,user=>{
+
+if(!user){
+
+location.href =
+"login.html";
+
+return;
 
 }
 
-window.sendReview=async function(){
+currentUser = user;
 
-const text=document.getElementById("comment").value
+});
 
-await addDoc(collection(db,"reviews"),{
+/* ENVIAR */
 
-rating:rating,
-comment:text,
-date:Date.now()
+sendBtn.addEventListener("click",sendReview);
 
-})
+async function sendReview(){
 
-alert("Obrigado pela avaliação")
+if(!currentUser){
+
+alert("Faça login");
+
+return;
+
+}
+
+if(!productId){
+
+alert("Produto inválido");
+
+return;
+
+}
+
+if(rating === 0){
+
+alert("Escolha uma nota");
+
+return;
+
+}
+
+sendBtn.disabled = true;
+
+try{
+
+await addDoc(
+collection(db,"reviews"),
+{
+productId: productId,
+orderId: orderId,
+userId: currentUser.uid,
+userName:
+currentUser.displayName ||
+"Cliente",
+rating: rating,
+comment:
+commentInput.value.trim(),
+createdAt:
+Date.now()
+}
+);
+
+if(orderId){
+
+await updateDoc(
+doc(db,"orders",orderId),
+{
+reviewed:true
+}
+);
+
+}
+
+message.style.color =
+"#1aa34a";
+
+message.innerHTML =
+"✅ Avaliação enviada com sucesso";
+
+setTimeout(()=>{
+
+history.back();
+
+},1500);
+
+}
+catch(err){
+
+console.error(err);
+
+message.style.color =
+"red";
+
+message.innerHTML =
+"❌ Erro ao enviar avaliação";
+
+}
+
+sendBtn.disabled = false;
 
 }
 
 </script>
 
 </body>
-
 </html>
