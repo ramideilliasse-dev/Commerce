@@ -158,7 +158,12 @@ from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 const ordersList =
 document.getElementById("ordersList")
+window.openReview = function(productId, orderId){
 
+location.href =
+`review.html?product=${productId}&order=${orderId}`
+
+}
 onAuthStateChanged(auth, async(user)=>{
 
 if(!user){
@@ -246,22 +251,34 @@ ${order.status === "concluido" || order.status === "delivered" ? `
 
 <br><br>
 
+${!order.reviewed ? `
+
 <button
-onclick="openReview(
-'${item.id}',
-'${docSnap.id}'
-)"
 style="
 background:#ff6a00;
 color:white;
 border:none;
-padding:8px 12px;
-border-radius:8px;
-font-weight:bold;
-cursor:pointer;
-">
+padding:10px;
+border-radius:10px;
+margin-top:10px;
+"
+onclick="openReview(
+'${order.items?.[0]?.id}',
+'${docSnap.id}'
+)">
 ⭐ Avaliar Produto
 </button>
+
+` : `
+<div
+style="
+margin-top:10px;
+color:#1aa34a;
+font-weight:bold;
+">
+✅ Avaliação enviada
+</div>
+`}
 
 ` : ""}
 
@@ -304,6 +321,15 @@ window.openReview = function(productId, orderId){
 
 location.href =
 `review.html?product=${productId}&order=${orderId}`
+
+}
+window.openReview = function(productId, orderId){
+
+location.href =
+"review.html?productId=" +
+productId +
+"&orderId=" +
+orderId
 
 }
 </script>
