@@ -242,6 +242,29 @@ ${(order.items || [])
 
 Quantidade: ${item.qty || 1}
 
+${order.status === "concluido" || order.status === "delivered" ? `
+
+<br><br>
+
+<button
+onclick="openReview(
+'${item.id}',
+'${docSnap.id}'
+)"
+style="
+background:#ff6a00;
+color:white;
+border:none;
+padding:8px 12px;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+">
+⭐ Avaliar Produto
+</button>
+
+` : ""}
+
 </div>
 
 `).join("")}
@@ -277,7 +300,12 @@ ordersList.innerHTML = `
 }
 
 }
+window.openReview = function(productId, orderId){
 
+location.href =
+`review.html?product=${productId}&order=${orderId}`
+
+}
 </script>
 
 </body>
