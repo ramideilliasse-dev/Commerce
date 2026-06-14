@@ -390,6 +390,7 @@ loadProducts()
 
 loadInfluencerSales()
 loadStats()
+loadReviews()
  initFCM();
 })
 
@@ -791,6 +792,79 @@ document.getElementById(
 "productsList"
 ).innerHTML =
 html || "Nenhum produto encontrado"
+
+}
+async function loadReviews(){
+
+const q = query(
+collection(db,"reviews"),
+where("merchantId","==",currentUser.uid)
+)
+
+const snap = await getDocs(q)
+
+let html = ""
+
+let totalStars = 0
+
+snap.forEach(docSnap=>{
+
+const r = docSnap.data()
+
+totalStars += Number(r.rating || 0)
+
+html += `
+
+<div style="
+padding:12px;
+border-bottom:1px solid #eee;
+">
+
+<div style="
+color:#f59e0b;
+font-size:18px;
+">
+${"⭐".repeat(r.rating || 0)}
+</div>
+
+<b>${r.clientName || "Cliente"}</b>
+
+<br>
+
+${r.comment || ""}
+
+<br>
+
+<small style="color:#666">
+${r.productName || ""}
+</small>
+
+</div>
+
+`
+
+})
+
+const avg =
+snap.size > 0
+? (totalStars / snap.size).toFixed(1)
+: "0.0"
+
+document.getElementById("reviewsBox").innerHTML = `
+
+<div style="
+margin-bottom:12px;
+font-weight:bold;
+">
+
+⭐ Média: ${avg}/5
+(${snap.size} avaliações)
+
+</div>
+
+${html || "Nenhuma avaliação"}
+
+`
 
 }
 window.openShop=()=>{
