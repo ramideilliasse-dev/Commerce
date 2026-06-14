@@ -219,7 +219,9 @@ statusClass = "confirmed"
 if(order.status === "delivered"){
 statusClass = "delivered"
 }
-
+if(order.status === "concluido"){
+statusClass = "delivered"
+}
 html += `
 
 <div class="orderCard">
@@ -263,7 +265,7 @@ border-radius:10px;
 margin-top:10px;
 "
 onclick="openReview(
-'${order.items?.[0]?.id}',
+'${item.id}',
 '${docSnap.id}'
 )">
 ⭐ Avaliar Produto
@@ -317,21 +319,7 @@ ordersList.innerHTML = `
 }
 
 }
-window.openReview = function(productId, orderId){
 
-location.href =
-`review.html?product=${productId}&order=${orderId}`
-
-}
-window.openReview = function(productId, orderId){
-
-location.href =
-"review.html?productId=" +
-productId +
-"&orderId=" +
-orderId
-
-}
 </script>
 
 </body>
