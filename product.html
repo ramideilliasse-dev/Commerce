@@ -274,7 +274,12 @@ border-radius:10px;
 margin-top:4px;
 font-size:13px;
 }
-
+.merchantCard{
+background:white;
+padding:15px;
+border-radius:14px;
+box-shadow:0 2px 10px rgba(0,0,0,.08);
+}
 /* REVIEW */
 .review{
 background:white;
@@ -300,7 +305,37 @@ margin-top:5px;
 font-size:13px;
 color:#555;
 }
+/* STICKY BUY */
 
+.stickyBuy{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+background:white;
+padding:12px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+box-shadow:0 -3px 12px rgba(0,0,0,.15);
+z-index:999;
+}
+
+.stickyBtn{
+background:#1aa34a;
+color:white;
+border:none;
+padding:14px 22px;
+border-radius:12px;
+font-weight:bold;
+font-size:15px;
+}
+
+#stickyPrice{
+font-size:22px;
+font-weight:bold;
+color:#ff6a00;
+}
 /* TOAST */
 #toastBox{
 position:fixed;
@@ -415,7 +450,34 @@ Produto
 </div>
 
 </div>
+<div class="stickyBuy">
 
+<div id="stickyPrice">
+0 Kz
+</div>
+
+<button
+onclick="buy()"
+class="stickyBtn">
+🛒 Comprar Agora
+</button>
+
+</div>
+<div class="section">
+
+<div class="merchantCard">
+
+<h3>🏪 Loja</h3>
+
+<div id="merchantInfo">
+
+Carregando...
+
+</div>
+
+</div>
+
+</div>
 <!-- SIMILAR -->
 <div class="section">
 
@@ -512,12 +574,15 @@ const nameEl = document.getElementById("name")
 const priceEl = document.getElementById("price")
 const descEl = document.getElementById("desc")
 const ratingEl = document.getElementById("rating")
+const stickyPrice =
+document.getElementById("stickyPrice")
 const stockInfo =
 document.getElementById("stockInfo")
 const similarEl = document.getElementById("similar")
 const othersEl = document.getElementById("others")
 const reviewsEl = document.getElementById("reviews")
-
+const merchantInfo =
+document.getElementById("merchantInfo")
 /* ================= LOAD ================= */
 
 async function load(){
@@ -575,6 +640,7 @@ await loadOthers()
 
 try{
 await loadReviews()
+await loadMerchant()
 }catch(e){
 console.error("Reviews error:", e)
 }
@@ -601,7 +667,8 @@ function render(){
 nameEl.innerText = product.name || ""
 
 priceEl.innerText = (product.price || 0) + " Kz"
-
+stickyPrice.innerText =
+(product.price || 0) + " Kz"
 descEl.innerText = product.description || "Sem descrição"
 
 ratingEl.innerText = "⭐ " + (product.rating || 5) + "/5"
@@ -1004,6 +1071,51 @@ ratingEl.innerHTML =
 
 ratingEl.innerHTML =
 "Sem avaliações"
+
+}
+
+}
+async function loadMerchant(){
+
+try{
+
+const snap =
+await getDoc(
+doc(
+db,
+"users",
+product.merchantId
+)
+)
+
+if(!snap.exists()) return
+
+const merchant =
+snap.data()
+
+merchantInfo.innerHTML = `
+
+<b>
+${merchant.shopName || "Loja"}
+</b>
+
+<br><br>
+
+📞 ${
+merchant.whatsapp || "-"
+}
+
+<br>
+
+📝 ${
+merchant.shopDescription || ""
+}
+
+`
+
+}catch(err){
+
+console.log(err)
 
 }
 
