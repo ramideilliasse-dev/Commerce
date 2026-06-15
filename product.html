@@ -437,7 +437,9 @@ Produto
 <!-- REVIEWS -->
 <div class="section">
 
-<h3>💬 Avaliações</h3>
+<h3 id="reviewsTitle">
+💬 Avaliações
+</h3>
 
 <div id="reviews"></div>
 
@@ -917,14 +919,20 @@ where("productId","==",productId)
 const snap = await getDocs(q)
 
 let html = ""
+
 let totalStars = 0
 let totalReviews = 0
+
 snap.forEach(d=>{
-totalStars += Number(r.rating || 0)
+
+const r = d.data()
+
 totalReviews++
-let r = d.data()
+
+totalStars += Number(r.rating || 0)
 
 html += `
+
 <div class="review">
 
 <div class="reviewName">
@@ -940,27 +948,34 @@ ${r.comment || ""}
 </div>
 
 </div>
+
 `
 
 })
 
-reviewsEl.innerHTML = html || "Sem avaliações ainda"
+reviewsEl.innerHTML =
+html || "Sem avaliações ainda"
+document.getElementById(
+"reviewsTitle"
+).innerHTML =
+`💬 Avaliações (${totalReviews})`
 if(totalReviews > 0){
 
-const media =
-(totalStars / totalReviews).toFixed(1)
+const average =
+(totalStars / totalReviews)
+.toFixed(1)
 
 ratingEl.innerHTML =
-`⭐ ${media} (${totalReviews} avaliações)`
+`⭐ ${average}/5 (${totalReviews} avaliações)`
 
 }else{
 
 ratingEl.innerHTML =
-"⭐ 0.0 (0 avaliações)"
+"Sem avaliações"
 
 }
-}
 
+}
 /* ================= OPEN PRODUCT ================= */
 
 window.openProduct = async function(id){
