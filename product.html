@@ -387,7 +387,7 @@ Produto
 <div id="name" class="name"></div>
 
 <div id="price" class="price"></div>
-
+<div id="stockInfo"></div>
 <div id="rating" class="rating">
 ⭐ 0.0 (0 avaliações)
 </div>
@@ -512,7 +512,8 @@ const nameEl = document.getElementById("name")
 const priceEl = document.getElementById("price")
 const descEl = document.getElementById("desc")
 const ratingEl = document.getElementById("rating")
-
+const stockInfo =
+document.getElementById("stockInfo")
 const similarEl = document.getElementById("similar")
 const othersEl = document.getElementById("others")
 const reviewsEl = document.getElementById("reviews")
@@ -604,7 +605,29 @@ priceEl.innerText = (product.price || 0) + " Kz"
 descEl.innerText = product.description || "Sem descrição"
 
 ratingEl.innerText = "⭐ " + (product.rating || 5) + "/5"
+if(product.stock > 0){
 
+stockInfo.innerHTML = `
+<span style="
+color:#1aa34a;
+font-weight:bold;
+">
+✅ Em stock (${product.stock})
+</span>
+`
+
+}else{
+
+stockInfo.innerHTML = `
+<span style="
+color:red;
+font-weight:bold;
+">
+❌ Esgotado
+</span>
+`
+
+}
 if(images.length === 0){
 
 images = ["https://via.placeholder.com/500"]
@@ -743,7 +766,16 @@ img.style.transform = "scale(2)"
 /* ================= BUY ================= */
 
 window.buy = function(){
+if(product.stock <= 0){
 
+showToast(
+"Produto esgotado",
+"error"
+)
+
+return
+
+}
 let cart = JSON.parse(localStorage.getItem("cart") || "[]")
 
 let exist = cart.find(p=>p.id===productId)
