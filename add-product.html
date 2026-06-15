@@ -206,6 +206,11 @@ Publicar produto
 <input id="nameInput" placeholder="Nome do produto">
 
 <input id="priceInput" type="number" placeholder="Preço">
+<input
+id="stockInput"
+type="number"
+placeholder="Quantidade em stock"
+min="0">
 <select id="categoryInput">
 <option value="">Selecionar categoria</option>
 
@@ -447,7 +452,8 @@ return
 let name = document.getElementById("nameInput").value.trim()
 
 let price = document.getElementById("priceInput").value
-
+let stock =
+document.getElementById("stockInput").value
 let description = document.getElementById("descriptionInput").value.trim()
 
 let province = document.getElementById("provinceInput").value
@@ -474,7 +480,19 @@ return
 if(Number(price) <= 0){
 
 alert("Preço inválido ❌")
+if(Number(stock) < 0){
 
+showToast(
+"Stock inválido",
+"error"
+)
+
+publishBtn.disabled = false
+publishBtn.innerText = "Publicar"
+
+return
+
+}
 publishBtn.disabled = false
 publishBtn.innerText = "Publicar"
 
@@ -560,6 +578,7 @@ await db.collection("products").add({
 name:name,
 
 price:Number(price),
+stock:Number(stock),
 category: category,
 description:description,
 
@@ -586,6 +605,7 @@ loadingText.innerText="Produto publicado ✔"
 /* RESET */
 document.getElementById("nameInput").value=""
 document.getElementById("priceInput").value=""
+document.getElementById("stockInput").value=""
 document.getElementById("descriptionInput").value=""
 document.getElementById("provinceInput").value=""
 document.getElementById("categoryInput").value=""
