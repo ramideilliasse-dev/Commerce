@@ -431,7 +431,10 @@ Produto
 
 <div class="actions">
 
-<button class="btn buyBtn" onclick="buy()">
+<button
+id="buyBtn"
+class="btn buyBtn"
+onclick="buy()">
 🛒 Comprar
 </button>
 
@@ -457,11 +460,11 @@ Produto
 </div>
 
 <button
+id="stickyBuyBtn"
 onclick="buy()"
 class="stickyBtn">
 🛒 Comprar Agora
 </button>
-
 </div>
 <div class="section">
 
@@ -578,6 +581,11 @@ const stickyPrice =
 document.getElementById("stickyPrice")
 const stockInfo =
 document.getElementById("stockInfo")
+const buyBtn =
+document.getElementById("buyBtn")
+
+const stickyBuyBtn =
+document.getElementById("stickyBuyBtn")
 const similarEl = document.getElementById("similar")
 const othersEl = document.getElementById("others")
 const reviewsEl = document.getElementById("reviews")
@@ -674,7 +682,43 @@ descEl.innerText = product.description || "Sem descrição"
 ratingEl.innerText = "⭐ " + (product.rating || 5) + "/5"
 const stock =
 Number(product.stock || 0)
+if(stock <= 0){
 
+buyBtn.disabled = true
+
+stickyBuyBtn.disabled = true
+
+buyBtn.innerHTML =
+"❌ Esgotado"
+
+stickyBuyBtn.innerHTML =
+"❌ Esgotado"
+
+buyBtn.style.background =
+"#999"
+
+stickyBuyBtn.style.background =
+"#999"
+
+}else{
+
+buyBtn.disabled = false
+
+stickyBuyBtn.disabled = false
+
+buyBtn.innerHTML =
+"🛒 Comprar"
+
+stickyBuyBtn.innerHTML =
+"🛒 Comprar Agora"
+
+buyBtn.style.background =
+"#1aa34a"
+
+stickyBuyBtn.style.background =
+"#1aa34a"
+
+}
 if(stock <= 0){
 
 stockInfo.innerHTML =
