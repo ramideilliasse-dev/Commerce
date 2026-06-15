@@ -672,27 +672,35 @@ stickyPrice.innerText =
 descEl.innerText = product.description || "Sem descrição"
 
 ratingEl.innerText = "⭐ " + (product.rating || 5) + "/5"
-if(product.stock > 0){
+const stock =
+Number(product.stock || 0)
 
-stockInfo.innerHTML = `
-<span style="
-color:#1aa34a;
-font-weight:bold;
-">
-✅ Em stock (${product.stock})
-</span>
-`
+if(stock <= 0){
+
+stockInfo.innerHTML =
+"❌ Esgotado"
+
+stockInfo.style.color = "red"
+
+}else if(stock <= 5){
+
+stockInfo.innerHTML =
+"⚠️ Restam apenas " +
+stock +
+" unidades"
+
+stockInfo.style.color =
+"#ff6a00"
 
 }else{
 
-stockInfo.innerHTML = `
-<span style="
-color:red;
-font-weight:bold;
-">
-❌ Esgotado
-</span>
-`
+stockInfo.innerHTML =
+"✅ Em stock (" +
+stock +
+")"
+
+stockInfo.style.color =
+"#1aa34a"
 
 }
 if(images.length === 0){
