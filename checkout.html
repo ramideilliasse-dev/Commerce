@@ -386,9 +386,8 @@ const p = snap.data()
 
 if(!p.merchantId) continue
 if(
-typeof p.stock !== "undefined" &&
-p.stock < item.qty
-){
+Number(p.stock || 0) < item.qty
+)
 
 loader.style.display="none"
 
