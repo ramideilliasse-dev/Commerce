@@ -184,7 +184,8 @@ doc,
 getDoc,
 getDocs,
 query,
-where
+where,
+updateDoc
 }
  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
@@ -384,7 +385,24 @@ if(!snap.exists()) continue
 const p = snap.data()
 
 if(!p.merchantId) continue
+if(
+typeof p.stock !== "undefined" &&
+p.stock < item.qty
+){
 
+loader.style.display="none"
+
+showToast(
+`${p.name} sem stock suficiente`,
+"error"
+)
+
+confirmBtn.disabled=false
+confirmBtn.innerText="Confirmar Pedido"
+
+return
+
+}
 validCart.push({
 id: item.id,
 name: p.name,
@@ -507,7 +525,35 @@ appliedCoupon?.merchantId || "",
 couponActive:
 appliedCoupon ? true : false,
 })
+for(const item of items){
 
+const productRef =
+doc(db,"products",item.id)
+
+const productSnap =
+await getDoc(productRef)
+
+if(productSnap.exists()){
+
+const productData =
+productSnap.data()
+
+const currentStock =
+Number(productData.stock || 0)
+
+await updateDoc(productRef,{
+
+stock:
+Math.max(
+0,
+currentStock - item.qty
+)
+
+})
+
+}
+
+}
 
 success = true
 }catch(err){
