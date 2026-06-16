@@ -384,9 +384,35 @@ return
 
 }
 
-loadGlobalStats()
-loadPromo()
+alert("AUTH OK")
 
+try{
+
+alert("Avant Stats")
+
+await loadGlobalStats()
+
+alert("Stats OK")
+
+}catch(e){
+
+alert("ERREUR STATS : " + e.message)
+
+}
+
+try{
+
+alert("Avant Promo")
+
+await loadPromo()
+
+alert("Promo OK")
+
+}catch(e){
+
+alert("ERREUR PROMO : " + e.message)
+
+}
 })
 /* ================= GLOBAL STATS ================= */
 
