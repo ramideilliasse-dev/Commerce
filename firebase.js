@@ -39,7 +39,7 @@ export const auth = getAuth(app);
 export const db = initializeFirestore(app,{
   localCache: persistentLocalCache({})
 });
-
+export const messaging = getMessaging(app);
 /* PERSISTENCE */
 
 setPersistence(
