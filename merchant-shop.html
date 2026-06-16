@@ -131,7 +131,16 @@ color:#ff6a00;
 font-weight:bold;
 font-size:14px;
 }
-
+.soldOut{
+background:red;
+color:white;
+font-weight:bold;
+font-size:12px;
+padding:4px 8px;
+border-radius:8px;
+display:inline-block;
+margin-top:5px;
+}
 </style>
 
 </head>
@@ -155,7 +164,7 @@ const urlParams = new URLSearchParams(window.location.search)
 const merchantId = urlParams.get("id")
 
 let shopData=null
-
+let shopProducts = {}
 async function loadShop(){
 
 /* 🔥 LOAD SHOP */
@@ -207,15 +216,39 @@ ${shopData?.whatsapp ? `
 let html=""
 
 snap.forEach(docSnap=>{
+
 const p = docSnap.data()
+shopProducts[docSnap.id] = p
+const soldOut =
+Number(p.stock || 0) <= 0
 
 html += `
-<div class="card" onclick="openProduct('${docSnap.id}')">
-<img loading="lazy" src="${p.images?.[0] || ''}">
-<div class="name">${p.name}</div>
-<div class="price">${p.price} Kz</div>
+<div class="card"
+onclick="openProduct('${docSnap.id}')">
+
+<img
+loading="lazy"
+src="${p.images?.[0] || ''}">
+
+<div class="name">
+${p.name}
+</div>
+
+${
+soldOut
+?
+`<div class="soldOut">
+ESGOTADO
+</div>`
+:
+`<div class="price">
+${p.price} Kz
+</div>`
+}
+
 </div>
 `
+
 })
 
 document.getElementById("products").innerHTML = html
@@ -224,8 +257,27 @@ document.getElementById("products").innerHTML = html
 
 /* OPEN PRODUCT */
 window.openProduct = function(id){
-localStorage.setItem("selectedProduct", id)
-location.href="product.html"
+
+const product = shopProducts[id]
+
+if(
+product &&
+Number(product.stock || 0) <= 0
+){
+
+alert("Produto esgotado")
+
+return
+
+}
+
+localStorage.setItem(
+"selectedProduct",
+id
+)
+
+location.href = "product.html"
+
 }
 
 /* WHATSAPP */
