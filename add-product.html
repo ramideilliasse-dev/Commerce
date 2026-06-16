@@ -480,7 +480,27 @@ return
 if(Number(price) <= 0){
 
 alert("Preço inválido ❌")
+
+publishBtn.disabled = false
+publishBtn.innerText = "Publicar"
+
+return
+
+}
+
 if(Number(stock) < 0){
+
+showToast(
+"Stock inválido",
+"error"
+)
+
+publishBtn.disabled = false
+publishBtn.innerText = "Publicar"
+
+return
+
+}
 
 showToast(
 "Stock inválido",
