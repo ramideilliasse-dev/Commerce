@@ -504,7 +504,7 @@ const bannerMessage = configSnap.exists()
 : ""
 
 const bannerImage = configSnap.exists()
-? configSnap.data().customImage || ""
+? (configSnap.data().customImages?.[0] || "")
 : ""
 
 const snap = await getDocs(collection(db,"products"))
@@ -754,9 +754,9 @@ images.push(data.secure_url)
 await setDoc(
 doc(db,"promoBanner","main"),
 {
-items: oldItems,
-message: message,
-customImages: images
+items: promoData,
+message: oldData.message || "",
+customImages: oldData.customImages || []
 }
 )
 
