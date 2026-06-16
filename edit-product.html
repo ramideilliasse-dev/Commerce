@@ -187,7 +187,13 @@ id="price"
 type="number"
 placeholder="Preço"
 >
-
+<label>Stock</label>
+<input
+id="stock"
+type="number"
+placeholder="Quantidade em stock"
+min="0"
+>
 <label>Desconto (%)</label>
 <input
 id="discount"
@@ -240,6 +246,8 @@ const nameInput =
 document.getElementById("name")
 const priceInput =
 document.getElementById("price")
+const stockInput =
+document.getElementById("stock")
 const discountInput =
 document.getElementById("discount")
 const descriptionInput =
@@ -372,6 +380,10 @@ nameInput.value =
 p.name || ""
 priceInput.value =
 p.price || ""
+
+stockInput.value =
+p.stock || 0
+
 discountInput.value =
 p.discount || 0
 descriptionInput.value =
@@ -465,6 +477,20 @@ saveBtn.disabled = true
 saveBtn.innerText =
 "Guardando..."
 try{
+if(Number(stockInput.value) < 0){
+
+showToast(
+"Stock inválido",
+"error"
+)
+
+saveBtn.disabled = false
+saveBtn.innerText =
+"💾 Guardar Alterações"
+
+return
+
+}
 await updateDoc(
 doc(
 db,
@@ -478,6 +504,11 @@ nameInput.value.trim(),
 price:
 Number(
 priceInput.value
+),
+
+stock:
+Number(
+stockInput.value
 ),
 
 discount:
