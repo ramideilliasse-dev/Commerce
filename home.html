@@ -930,7 +930,22 @@ favorites.includes(p.id)
 
       <div style="position:relative">
 
-        ${p.discount ? `
+${Number(p.stock || 0) <= 0 ? `
+<div style="
+position:absolute;
+top:8px;
+left:8px;
+background:red;
+color:white;
+padding:4px 8px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
+z-index:5;
+">
+ESGOTADO
+</div>
+` : p.discount ? `
 <div style="
 position:absolute;
 top:8px;
@@ -961,7 +976,6 @@ z-index:5;
 🆕 NOVO
 </div>
 ` : ""}
-
         <img
           src="${img}"
           loading="lazy"
@@ -986,10 +1000,23 @@ z-index:10;
 ">
 ${isFavorite ? "❤️" : "🤍"}
 </div>
-        <button class="cartBtn"
+${Number(p.stock || 0) <= 0 ? `
+<button
+class="cartBtn"
+style="
+background:#999;
+cursor:not-allowed;
+"
+disabled>
+✖
+</button>
+` : `
+<button
+class="cartBtn"
 onclick="event.stopPropagation(); addToCart('${p.id}')">
 🛒
 </button>
+`}        
       </div>
 
       <div class="info">
@@ -1130,7 +1157,16 @@ return
 }
 
 const product = products.find(p => p.id === id)
+if(Number(product.stock || 0) <= 0){
 
+showToast(
+"❌ Produto esgotado",
+"error"
+)
+
+return
+
+}
 if(!product){
 
 showToast("❌ Produto não encontrado","error")
