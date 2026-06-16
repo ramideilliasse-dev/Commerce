@@ -55,7 +55,16 @@ font-weight:bold;
 color:#ff6a00;
 margin-top:5px;
 }
-
+.soldOut{
+background:red;
+color:white;
+padding:4px 8px;
+border-radius:8px;
+font-size:12px;
+font-weight:bold;
+display:inline-block;
+margin-top:5px;
+}
 .empty{
 text-align:center;
 padding:50px 20px;
@@ -147,9 +156,12 @@ if(!snap.exists()) continue
 
 const p = snap.data()
 
+const soldOut =
+Number(p.stock || 0) <= 0
+
 html += `
 <div class="product"
-onclick="location.href='product.html?id=${id}'">
+${soldOut ? "" : `onclick="location.href='product.html?id=${id}'"`}>
 
 <img src="${p.images?.[0] || ''}">
 
@@ -159,9 +171,21 @@ onclick="location.href='product.html?id=${id}'">
 ${p.name}
 </div>
 
+${
+soldOut
+?
+`
+<div class="soldOut">
+ESGOTADO
+</div>
+`
+:
+`
 <div class="price">
 ${p.price} Kz
 </div>
+`
+}
 
 </div>
 
