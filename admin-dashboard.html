@@ -314,13 +314,11 @@ padding:10px;
 >
 </div>
 <div id="toastBox" class="toastBox"></div>
-<script>
-alert("HTML OK");
-</script>
+
 <script type="module">
-alert("MODULE START");
+
 import { db, auth } from "./firebase.js"
-alert("IMPORT FIREBASE OK");
+
 import {
 collection,
 getDocs,
@@ -339,7 +337,7 @@ import {
 onAuthStateChanged
 }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
-alert("IMPORT AUTH OK");
+
 let users=[]
 let orders=[]
 let products=[]
@@ -386,35 +384,8 @@ return
 
 }
 
-alert("AUTH OK")
-
-try{
-
-alert("Avant Stats")
-
-await loadGlobalStats()
-
-alert("Stats OK")
-
-}catch(e){
-
-alert("ERREUR STATS : " + e.message)
-
-}
-
-try{
-
-alert("Avant Promo")
-
-await loadPromo()
-
-alert("Promo OK")
-
-}catch(e){
-
-alert("ERREUR PROMO : " + e.message)
-
-}
+loadGlobalStats()
+loadPromo()
 })
 /* ================= GLOBAL STATS ================= */
 
