@@ -95,7 +95,16 @@ color:#ff6a00;
 font-weight:bold;
 margin-top:5px;
 }
-
+.soldOut{
+background:red;
+color:white;
+padding:4px 8px;
+border-radius:8px;
+font-size:12px;
+font-weight:bold;
+display:inline-block;
+margin-top:5px;
+}
 .empty{
 text-align:center;
 padding:30px;
@@ -179,7 +188,7 @@ list.forEach(p=>{
 let img = p.images?.[0] || "https://via.placeholder.com/300"
 
 let desc = (p.description || "").split("\n")[0]
-
+let isSoldOut = Number(p.stock || 0) <= 0
 html += `
 <div class="card" onclick="openProduct('${p.id}')">
 
@@ -191,7 +200,10 @@ html += `
 
 <div class="desc">${desc}</div>
 
-<div class="price">${p.price || 0} Kz</div>
+${isSoldOut
+? `<div class="soldOut">ESGOTADO</div>`
+: `<div class="price">${p.price || 0} Kz</div>`
+}
 
 </div>
 
@@ -234,7 +246,21 @@ renderProducts(filtered)
 /* OPEN */
 window.openProduct = function(id){
 
-localStorage.setItem("selectedProduct",id)
+const product =
+allProducts.find(p => p.id === id)
+
+if(product && Number(product.stock || 0) <= 0){
+
+alert("Produto esgotado")
+
+return
+
+}
+
+localStorage.setItem(
+"selectedProduct",
+id
+)
 
 location.href = "product.html"
 
