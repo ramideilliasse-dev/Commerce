@@ -463,52 +463,80 @@ border-radius:20px;
 font-size:11px;
 font-weight:bold;
 }
- .categoriesSection{
-display:flex;
-gap:14px;
-overflow-x:auto;
-padding:15px;
-scrollbar-width:none;
+/*======================
+CATEGORIES PREMIUM
+=======================*/
+
+.categoriesGrid{
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:15px;
+
+padding:18px;
+
+margin-top:10px;
+
 }
 
-.categoriesSection::-webkit-scrollbar{
-display:none;
-}
+.categoryCard{
 
-.categoryItem{
-min-width:85px;
-display:flex;
-flex-direction:column;
-align-items:center;
-cursor:pointer;
-}
-
-.categoryIcon{
-width:65px;
-height:65px;
-border-radius:20px;
-overflow:hidden;
 background:white;
-box-shadow:0 4px 12px rgba(0,0,0,.08);
+
+border-radius:22px;
+
+overflow:hidden;
+
+box-shadow:0 8px 20px rgba(0,0,0,.10);
+
+transition:.25s;
+
+cursor:pointer;
+
 }
 
-.categoryIcon img{
+.categoryCard:hover{
+
+transform:translateY(-5px);
+
+box-shadow:0 14px 25px rgba(0,0,0,.15);
+
+}
+
+.categoryCard:active{
+
+transform:scale(.97);
+
+}
+
+.categoryImage{
+
 width:100%;
-height:100%;
+
+height:120px;
+
 object-fit:cover;
+
 display:block;
+
 }
 
-.categoryItem:active .categoryIcon{
-transform:scale(.95);
-}
+.categoryTitle{
 
-.categoryName{
-margin-top:8px;
-font-size:12px;
-font-weight:600;
+padding:14px;
+
+font-size:15px;
+
+font-weight:bold;
+
 text-align:center;
-color:#444;
+
+color:#333;
+
+background:white;
+
 }
 </style>
 </head>
@@ -533,58 +561,39 @@ color:#444;
 
 <!-- CATEGORIAS -->
 
-<div class="categoriesSection">
+<div class="categoriesGrid">
 
-<div class="categoryItem"
-onclick="openCategory('Alimentação')">
-<div class="categoryIcon">
-<img src="images/alimentacao.jpg">
-</div>
-<div class="categoryName">Alimentação</div>
+<div class="categoryCard" onclick="openCategory('Alimentação')">
+<img src="images/alimentacao.jpeg" class="categoryImage" loading="lazy">
+<div class="categoryTitle">🍚 Alimentação</div>
 </div>
 
-<div class="categoryItem"
-onclick="openCategory('Eletrónica')">
-<div class="categoryIcon">
-<img src="images/eletronica.jpg">
-</div>
-<div class="categoryName">Eletrónica</div>
+<div class="categoryCard" onclick="openCategory('Eletrónica')">
+<img src="images/eletronica.jpeg" class="categoryImage" loading="lazy">
+<div class="categoryTitle">📱 Eletrónica</div>
 </div>
 
-<div class="categoryItem"
-onclick="openCategory('Moda')">
-<div class="categoryIcon">
-<img src="images/moda.jpg">
-</div>
-<div class="categoryName">Moda</div>
+<div class="categoryCard" onclick="openCategory('Moda')">
+<img src="images/moda.jpeg" class="categoryImage" loading="lazy">
+<div class="categoryTitle">👕 Moda</div>
 </div>
 
-<div class="categoryItem"
-onclick="openCategory('Beleza')">
-<div class="categoryIcon">
-<img src="images/beleza.jpg">
-</div>
-<div class="categoryName">Beleza</div>
+<div class="categoryCard" onclick="openCategory('Beleza')">
+<img src="images/beleza.jpeg" class="categoryImage" loading="lazy">
+<div class="categoryTitle">💄 Beleza</div>
 </div>
 
-<div class="categoryItem"
-onclick="openCategory('Casa')">
-<div class="categoryIcon">
-<img src="images/casa.jpg">
-</div>
-<div class="categoryName">Casa</div>
+<div class="categoryCard" onclick="openCategory('Casa')">
+<img src="images/casa.jpeg" class="categoryImage" loading="lazy">
+<div class="categoryTitle">🏠 Casa</div>
 </div>
 
-<div class="categoryItem"
-onclick="openCategory('Auto')">
-<div class="categoryIcon">
-<img src="images/auto.jpg">
-</div>
-<div class="categoryName">Auto</div>
+<div class="categoryCard" onclick="openCategory('Auto')">
+<img src="images/auto.jpeg" class="categoryImage" loading="lazy">
+<div class="categoryTitle">🚗 Auto</div>
 </div>
 
 </div>
-
 <!-- TOP PRODUTOS -->
 
 <div class="topSection">
