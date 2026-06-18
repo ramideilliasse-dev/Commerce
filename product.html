@@ -915,6 +915,142 @@ object-fit:contain;
 user-select:none;
 
 }
+/* ==========================
+PREMIUM PRODUCT INFO V2
+========================== */
+
+.premiumBadge{
+display:inline-flex;
+align-items:center;
+gap:6px;
+padding:8px 16px;
+background:linear-gradient(135deg,#ff8a00,#ff5e00);
+color:#fff;
+font-size:13px;
+font-weight:700;
+border-radius:30px;
+margin-bottom:14px;
+box-shadow:0 6px 18px rgba(255,106,0,.25);
+}
+
+.ratingRow{
+display:flex;
+align-items:center;
+gap:10px;
+margin-top:10px;
+margin-bottom:16px;
+flex-wrap:wrap;
+}
+
+.verifiedBadge{
+background:#e8f8ed;
+color:#14a44d;
+padding:7px 14px;
+border-radius:30px;
+font-size:13px;
+font-weight:bold;
+}
+
+.priceRow{
+display:flex;
+align-items:flex-end;
+gap:10px;
+flex-wrap:wrap;
+margin-bottom:16px;
+}
+
+.oldPrice{
+font-size:18px;
+color:#999;
+text-decoration:line-through;
+}
+
+.discount{
+background:#ff3b30;
+color:#fff;
+padding:4px 10px;
+border-radius:8px;
+font-size:13px;
+font-weight:bold;
+}
+
+.productMeta{
+display:flex;
+flex-direction:column;
+gap:10px;
+margin-top:18px;
+margin-bottom:20px;
+}
+
+.metaItem{
+display:flex;
+align-items:center;
+gap:8px;
+padding:12px 14px;
+background:#fafafa;
+border-radius:14px;
+font-size:14px;
+font-weight:600;
+color:#444;
+border:1px solid #ececec;
+}
+
+.actions{
+display:grid;
+grid-template-columns:60px 60px 60px 1fr;
+gap:12px;
+margin-top:25px;
+align-items:center;
+}
+
+.iconBtn{
+width:60px;
+height:60px;
+border:none;
+border-radius:18px;
+background:#fff;
+font-size:24px;
+cursor:pointer;
+box-shadow:0 6px 18px rgba(0,0,0,.08);
+transition:.25s;
+}
+
+.iconBtn:hover{
+transform:translateY(-3px);
+}
+
+.buyBtn{
+height:60px;
+font-size:17px;
+font-weight:bold;
+border-radius:18px;
+background:linear-gradient(135deg,#18b85d,#0fa94f);
+box-shadow:0 10px 22px rgba(24,184,93,.35);
+}
+
+.buyBtn:hover{
+transform:translateY(-2px);
+}
+
+@media(max-width:480px){
+
+.actions{
+grid-template-columns:55px 55px 55px 1fr;
+gap:8px;
+}
+
+.iconBtn{
+width:55px;
+height:55px;
+font-size:22px;
+}
+
+.buyBtn{
+height:55px;
+font-size:15px;
+}
+
+}
 </style>
 </head>
 
