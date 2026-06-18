@@ -1089,15 +1089,11 @@ class="grid">
 font-size:13px;
 color:#777;
 ">
-
 Preço
-
 </div>
 
 <div id="stickyPrice">
-
 0 Kz
-
 </div>
 
 </div>
@@ -1106,14 +1102,38 @@ Preço
 id="stickyBuyBtn"
 class="stickyBtn"
 onclick="buy()">
-
 🛒 Comprar
-
 </button>
 
 </div>
-<script type="module">
 
+<!-- =========================
+FULLSCREEN GALLERY
+========================= -->
+
+<div id="fullscreenViewer" class="fullscreenViewer">
+
+<div class="fullscreenHeader">
+
+<button id="closeViewer">
+✕
+</button>
+
+<div id="fullscreenCounter">
+1 / 1
+</div>
+
+</div>
+
+<div
+id="fullscreenSlider"
+class="fullscreenSlider">
+
+</div>
+
+</div>
+
+<script type="module">
 import { db } from "./firebase.js"
 import { updateSocialMeta }
 from "./social-preview.js"
@@ -1171,6 +1191,7 @@ let images = []
 let currentIndex = 0
 
 const slider = document.getElementById("slider")
+const viewer = document.getElementById("viewer")
 const gallery = document.getElementById("gallery")
 const dots = document.getElementById("dots")
 const counter = document.getElementById("counter")
