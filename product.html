@@ -952,53 +952,85 @@ Produto
 
 <div class="info">
 
-<div id="name" class="name">
-Carregando...
+<div class="premiumBadge">
+🔥 Produto Premium
 </div>
 
-<div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;">
+<h1 id="name" class="name">
+Carregando...
+</h1>
+
+<div class="ratingRow">
+
+<div id="rating" class="rating">
+⭐⭐⭐⭐⭐ 0.0
+</div>
+
+<div class="verifiedBadge">
+✔ Verificado
+</div>
+
+</div>
+
+<div class="priceRow">
 
 <div id="price" class="price">
 0 Kz
 </div>
 
-<div id="rating" class="rating">
-⭐ 0.0
+<div class="oldPrice" id="oldPrice">
+</div>
+
+<div class="discount" id="discountBadge">
 </div>
 
 </div>
+
+<div class="productMeta">
 
 <div id="stockInfo"></div>
 
+<div class="metaItem">
+📍 <span id="provinceName">Angola</span>
+</div>
+
+<div class="metaItem">
+🚚 Entrega rápida
+</div>
+
+<div class="metaItem">
+🔒 Pagamento Seguro
+</div>
+
+</div>
+
 <div id="desc" class="desc"></div>
 
-<!-- ACTIONS -->
-
 <div class="actions">
+
+<button
+class="iconBtn"
+onclick="toggleFavorite()">
+❤️
+</button>
+
+<button
+class="iconBtn"
+onclick="shareProduct()">
+📤
+</button>
+
+<button
+class="iconBtn"
+onclick="openShop()">
+🏪
+</button>
 
 <button
 id="buyBtn"
 class="btn buyBtn"
 onclick="buy()">
-
 🛒 Comprar Agora
-
-</button>
-
-<button
-class="btn shopBtn"
-onclick="openShop()">
-
-🏪 Visitar Loja
-
-</button>
-
-<button
-class="btn shareBtn"
-onclick="shareProduct()">
-
-📤 Partilhar
-
 </button>
 
 </div>
