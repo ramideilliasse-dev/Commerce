@@ -825,10 +825,11 @@ Produto
 
 <div class="card">
 
-<!-- VIEWER -->
+<!-- GALERIE -->
+
 <div class="viewer" id="viewer">
 
-<div class="closeZoom" onclick="history.back()">✕</div>
+<div class="closeZoom" onclick="history.back()">←</div>
 
 <div class="counter">
 <span id="counter">1 / 1</span>
@@ -840,21 +841,33 @@ Produto
 
 </div>
 
-<!-- GALLERY -->
 <div id="gallery" class="gallery"></div>
 
-<!-- INFO -->
+<!-- INFORMATIONS -->
+
 <div class="info">
 
-<div id="name" class="name"></div>
-
-<div id="price" class="price"></div>
-<div id="stockInfo"></div>
-<div id="rating" class="rating">
-⭐ 0.0 (0 avaliações)
+<div id="name" class="name">
+Carregando...
 </div>
 
+<div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;">
+
+<div id="price" class="price">
+0 Kz
+</div>
+
+<div id="rating" class="rating">
+⭐ 0.0
+</div>
+
+</div>
+
+<div id="stockInfo"></div>
+
 <div id="desc" class="desc"></div>
+
+<!-- ACTIONS -->
 
 <div class="actions">
 
@@ -862,42 +875,42 @@ Produto
 id="buyBtn"
 class="btn buyBtn"
 onclick="buy()">
-🛒 Comprar
+
+🛒 Comprar Agora
+
 </button>
-
-<button class="btn shopBtn" onclick="openShop()">
-🏪 Loja
-</button>
-
-<button class="btn shareBtn" onclick="shareProduct()">
-📤 Partilhar
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-<div class="stickyBuy">
-
-<div id="stickyPrice">
-0 Kz
-</div>
 
 <button
-id="stickyBuyBtn"
-onclick="buy()"
-class="stickyBtn">
-🛒 Comprar Agora
+class="btn shopBtn"
+onclick="openShop()">
+
+🏪 Visitar Loja
+
 </button>
+
+<button
+class="btn shareBtn"
+onclick="shareProduct()">
+
+📤 Partilhar
+
+</button>
+
 </div>
+
+</div>
+
+</div>
+
+<!-- LOJA -->
+
 <div class="section">
 
 <div class="merchantCard">
 
-<h3>🏪 Loja</h3>
+<h3>
+🏪 Loja Oficial
+</h3>
 
 <div id="merchantInfo">
 
@@ -908,35 +921,92 @@ Carregando...
 </div>
 
 </div>
-<!-- SIMILAR -->
+
+<!-- PRODUTOS SIMILARES -->
+
 <div class="section">
 
-<h3>Produtos similares</h3>
+<h3>
 
-<div id="similar" class="grid"></div>
+🔥 Produtos Similares
+
+</h3>
+
+<div
+id="similar"
+class="grid">
 
 </div>
 
-<!-- OTHERS -->
+</div>
+
+<!-- OUTROS PRODUTOS -->
+
 <div class="section">
 
-<h3>Outros produtos</h3>
+<h3>
 
-<div id="others" class="grid"></div>
+✨ Também pode gostar
+
+</h3>
+
+<div
+id="others"
+class="grid">
 
 </div>
 
-<!-- REVIEWS -->
+</div>
+
+<!-- AVALIAÇÕES -->
+
 <div class="section">
 
 <h3 id="reviewsTitle">
-💬 Avaliações
+
+⭐ Avaliações dos Clientes
+
 </h3>
 
 <div id="reviews"></div>
 
 </div>
 
+</div>
+
+<!-- STICKY -->
+
+<div class="stickyBuy">
+
+<div>
+
+<div style="
+font-size:13px;
+color:#777;
+">
+
+Preço
+
+</div>
+
+<div id="stickyPrice">
+
+0 Kz
+
+</div>
+
+</div>
+
+<button
+id="stickyBuyBtn"
+class="stickyBtn"
+onclick="buy()">
+
+🛒 Comprar
+
+</button>
+
+</div>
 <script type="module">
 
 import { db } from "./firebase.js"
