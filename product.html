@@ -810,6 +810,111 @@ height:135px;
 }
 
 }
+/* =========================
+FULLSCREEN PREMIUM
+========================= */
+
+.fullscreenViewer{
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:black;
+
+display:none;
+
+z-index:999999;
+
+overflow:hidden;
+
+}
+
+.fullscreenViewer.show{
+
+display:block;
+
+}
+
+.fullscreenHeader{
+
+position:absolute;
+
+top:0;
+
+left:0;
+
+right:0;
+
+height:70px;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+padding:20px;
+
+z-index:20;
+
+}
+
+.fullscreenHeader button{
+
+width:45px;
+
+height:45px;
+
+border:none;
+
+border-radius:50%;
+
+background:rgba(255,255,255,.15);
+
+color:white;
+
+font-size:24px;
+
+backdrop-filter:blur(15px);
+
+}
+
+#fullscreenCounter{
+
+color:white;
+
+font-size:18px;
+
+font-weight:bold;
+
+}
+
+.fullscreenSlider{
+
+display:flex;
+
+height:100%;
+
+transition:.35s;
+
+}
+
+.fullscreenSlider img{
+
+min-width:100%;
+
+height:100%;
+
+object-fit:contain;
+
+user-select:none;
+
+}
 </style>
 </head>
 
@@ -1718,6 +1823,120 @@ return text
 .replace(/-+/g,"-")
 
 }
+/* =========================
+FULLSCREEN
+========================= */
+
+const fullscreenViewer =
+document.getElementById("fullscreenViewer")
+
+const fullscreenSlider =
+document.getElementById("fullscreenSlider")
+
+const fullscreenCounter =
+document.getElementById("fullscreenCounter")
+
+document
+.getElementById("closeViewer")
+.onclick = ()=>{
+
+fullscreenViewer.classList.remove("show")
+
+document.body.style.overflow="auto"
+
+}
+
+/* ouvrir */
+
+viewer.onclick = ()=>{
+
+fullscreenSlider.innerHTML=""
+
+images.forEach(img=>{
+
+fullscreenSlider.innerHTML+=`
+
+<img src="${img}">
+
+`
+
+})
+
+fullscreenViewer.classList.add("show")
+
+document.body.style.overflow="hidden"
+
+updateFullscreen()
+
+}
+
+/* changer */
+
+function updateFullscreen(){
+
+fullscreenSlider.style.transform=
+
+`translateX(-${currentIndex*100}%)`
+
+fullscreenCounter.innerHTML=
+
+(currentIndex+1)+" / "+images.length
+
+}
+
+/* swipe */
+
+let start=0
+
+fullscreenSlider.addEventListener(
+
+"touchstart",
+
+e=>{
+
+start=e.touches[0].clientX
+
+}
+
+)
+
+fullscreenSlider.addEventListener(
+
+"touchend",
+
+e=>{
+
+let end=e.changedTouches[0].clientX
+
+if(end<start-60){
+
+currentIndex++
+
+}
+
+if(end>start+60){
+
+currentIndex--
+
+}
+
+if(currentIndex<0){
+
+currentIndex=images.length-1
+
+}
+
+if(currentIndex>=images.length){
+
+currentIndex=0
+
+}
+
+updateFullscreen()
+
+}
+
+)
 </script>
 
 <script>
