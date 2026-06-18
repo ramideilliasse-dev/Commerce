@@ -1051,6 +1051,161 @@ font-size:15px;
 }
 
 }
+/* ==========================
+MERCHANT PREMIUM
+========================== */
+
+.merchantCard{
+
+background:#fff;
+
+border-radius:24px;
+
+padding:20px;
+
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.merchantTop{
+
+display:flex;
+
+align-items:center;
+
+gap:16px;
+
+margin-bottom:20px;
+
+}
+
+.merchantLogo{
+
+width:72px;
+
+height:72px;
+
+border-radius:20px;
+
+object-fit:cover;
+
+background:#eee;
+
+}
+
+.merchantName{
+
+font-size:20px;
+
+font-weight:700;
+
+}
+
+.merchantLevel{
+
+margin-top:6px;
+
+display:inline-block;
+
+padding:6px 12px;
+
+border-radius:20px;
+
+background:#e8f8ed;
+
+color:#14a44d;
+
+font-size:13px;
+
+font-weight:bold;
+
+}
+
+.merchantStats{
+
+display:grid;
+
+grid-template-columns:repeat(3,1fr);
+
+gap:12px;
+
+margin-bottom:20px;
+
+}
+
+.merchantBox{
+
+background:#fafafa;
+
+border-radius:18px;
+
+padding:14px;
+
+text-align:center;
+
+}
+
+.merchantValue{
+
+font-size:22px;
+
+font-weight:bold;
+
+color:#ff6a00;
+
+}
+
+.merchantLabel{
+
+font-size:13px;
+
+color:#777;
+
+margin-top:6px;
+
+}
+
+.merchantDescription{
+
+font-size:15px;
+
+line-height:1.7;
+
+color:#555;
+
+margin-bottom:20px;
+
+}
+
+.merchantButton{
+
+width:100%;
+
+height:55px;
+
+border:none;
+
+border-radius:18px;
+
+background:#111;
+
+color:#fff;
+
+font-size:16px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+transition:.25s;
+
+}
+
+.merchantButton:hover{
+
+transform:translateY(-2px);
+
+}
 </style>
 </head>
 
@@ -1181,15 +1336,102 @@ onclick="buy()">
 
 <div class="merchantCard">
 
-<h3>
-🏪 Loja Oficial
-</h3>
+<div class="merchantTop">
 
-<div id="merchantInfo">
+<img
+id="merchantLogo"
+class="merchantLogo"
+src="/icon-192.png">
+
+<div class="merchantTexts">
+
+<div id="merchantName"
+class="merchantName">
+
+Loja Oficial
+
+</div>
+
+<div class="merchantLevel">
+
+✔ Loja Verificada
+
+</div>
+
+</div>
+
+</div>
+
+<div class="merchantStats">
+
+<div class="merchantBox">
+
+<div class="merchantValue"
+id="merchantRating">
+
+⭐ 5.0
+
+</div>
+
+<div class="merchantLabel">
+
+Avaliação
+
+</div>
+
+</div>
+
+<div class="merchantBox">
+
+<div class="merchantValue"
+id="merchantProducts">
+
+0
+
+</div>
+
+<div class="merchantLabel">
+
+Produtos
+
+</div>
+
+</div>
+
+<div class="merchantBox">
+
+<div class="merchantValue"
+id="merchantSince">
+
+2026
+
+</div>
+
+<div class="merchantLabel">
+
+Desde
+
+</div>
+
+</div>
+
+</div>
+
+<div
+id="merchantDescription"
+class="merchantDescription">
 
 Carregando...
 
 </div>
+
+<button
+class="merchantButton"
+onclick="openShop()">
+
+🏪 Ver Loja
+
+</button>
 
 </div>
 
@@ -1936,7 +2178,21 @@ if(!snap.exists()) return
 const merchant =
 snap.data()
 
-merchantInfo.innerHTML = `
+document.getElementById("merchantName").textContent =
+merchant.shopName || "Loja";
+
+document.getElementById("merchantDescription").textContent =
+merchant.shopDescription || "";
+
+document.getElementById("merchantSince").textContent =
+merchant.createdYear || "2026";
+
+if(merchant.logo){
+
+document.getElementById("merchantLogo").src =
+merchant.logo;
+
+}
 
 <b>
 ${merchant.shopName || "Loja"}
