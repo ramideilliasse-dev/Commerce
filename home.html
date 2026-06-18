@@ -467,75 +467,79 @@ font-weight:bold;
 CATEGORIES PREMIUM
 =======================*/
 
-.categoriesGrid{
+.categoriesBar{
 
-display:grid;
+display:flex;
 
-grid-template-columns:repeat(2,1fr);
+overflow-x:auto;
 
 gap:15px;
 
-padding:18px;
+padding:15px;
 
-margin-top:10px;
+scrollbar-width:none;
 
 }
 
-.categoryCard{
+.categoriesBar::-webkit-scrollbar{
 
-background:white;
+display:none;
 
-border-radius:22px;
+}
 
-overflow:hidden;
+.categoryItem{
 
-box-shadow:0 8px 20px rgba(0,0,0,.10);
+min-width:95px;
 
-transition:.25s;
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
 
 cursor:pointer;
 
-}
-
-.categoryCard:hover{
-
-transform:translateY(-5px);
-
-box-shadow:0 14px 25px rgba(0,0,0,.15);
-
-}
-
-.categoryCard:active{
-
-transform:scale(.97);
+flex-shrink:0;
 
 }
 
 .categoryImage{
 
-width:100%;
+width:72px;
 
-height:120px;
+height:72px;
+
+border-radius:22px;
 
 object-fit:cover;
 
-display:block;
+box-shadow:0 8px 18px rgba(0,0,0,.12);
+
+transition:.25s;
+
+background:white;
 
 }
 
-.categoryTitle{
+.categoryItem:active .categoryImage{
 
-padding:14px;
+transform:scale(.94);
 
-font-size:15px;
+}
 
-font-weight:bold;
+.categoryItem span{
+
+margin-top:8px;
+
+font-size:13px;
+
+font-weight:600;
 
 text-align:center;
 
 color:#333;
 
-background:white;
+line-height:16px;
 
 }
 </style>
@@ -558,42 +562,42 @@ background:white;
 </div>
 
 <div class="promoSlider" id="promoSlider"></div>
+<!-- CATEGORIES -->
 
-<!-- CATEGORIAS -->
+<div class="categoriesBar">
 
-<div class="categoriesGrid">
-
-<div class="categoryCard" onclick="openCategory('Alimentação')">
-<img src="images/alimentacao.jpeg" class="categoryImage" loading="lazy">
-<div class="categoryTitle">🍚 Alimentação</div>
+<div class="categoryItem" onclick="openCategory('Alimentação')">
+<img src="images/alimentacao.jpeg" class="categoryImage">
+<span>Alimentação</span>
 </div>
 
-<div class="categoryCard" onclick="openCategory('Eletrónica')">
-<img src="images/eletronica.jpeg" class="categoryImage" loading="lazy">
-<div class="categoryTitle">📱 Eletrónica</div>
+<div class="categoryItem" onclick="openCategory('Eletrónica')">
+<img src="images/eletronica.jpeg" class="categoryImage">
+<span>Eletrónica</span>
 </div>
 
-<div class="categoryCard" onclick="openCategory('Moda')">
-<img src="images/moda.jpeg" class="categoryImage" loading="lazy">
-<div class="categoryTitle">👕 Moda</div>
+<div class="categoryItem" onclick="openCategory('Moda')">
+<img src="images/moda.jpeg" class="categoryImage">
+<span>Moda</span>
 </div>
 
-<div class="categoryCard" onclick="openCategory('Beleza')">
-<img src="images/beleza.jpeg" class="categoryImage" loading="lazy">
-<div class="categoryTitle">💄 Beleza</div>
+<div class="categoryItem" onclick="openCategory('Beleza')">
+<img src="images/beleza.jpeg" class="categoryImage">
+<span>Beleza</span>
 </div>
 
-<div class="categoryCard" onclick="openCategory('Casa')">
-<img src="images/casa.jpeg" class="categoryImage" loading="lazy">
-<div class="categoryTitle">🏠 Casa</div>
+<div class="categoryItem" onclick="openCategory('Casa')">
+<img src="images/casa.jpeg" class="categoryImage">
+<span>Casa</span>
 </div>
 
-<div class="categoryCard" onclick="openCategory('Auto')">
-<img src="images/auto.jpeg" class="categoryImage" loading="lazy">
-<div class="categoryTitle">🚗 Auto</div>
+<div class="categoryItem" onclick="openCategory('Auto')">
+<img src="images/auto.jpeg" class="categoryImage">
+<span>Auto</span>
 </div>
 
 </div>
+
 <!-- TOP PRODUTOS -->
 
 <div class="topSection">
