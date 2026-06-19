@@ -1753,25 +1753,61 @@ const nameEl = document.getElementById("name")
 const priceEl = document.getElementById("price")
 const descEl = document.getElementById("desc")
 const ratingEl = document.getElementById("rating")
+
 const stickyPrice =
 document.getElementById("stickyPrice")
+
 const stockInfo =
 document.getElementById("stockInfo")
+
 const buyBtn =
 document.getElementById("buyBtn")
 
 const stickyBuyBtn =
 document.getElementById("stickyBuyBtn")
-const similarEl = document.getElementById("similar")
-const othersEl = document.getElementById("others")
-const reviewsEl = document.getElementById("reviews")
+
+const similarEl =
+document.getElementById("similar")
+
+const othersEl =
+document.getElementById("others")
+
+const reviewsEl =
+document.getElementById("reviews")
+
+/* ===== MERCHANT ===== */
+
+const merchantName =
+document.getElementById("merchantName")
+
+const merchantLogo =
+document.getElementById("merchantLogo")
+
+const merchantDescription =
+document.getElementById("merchantDescription")
+
+const merchantSince =
+document.getElementById("merchantSince")
+
 const merchantProducts =
 document.getElementById("merchantProducts")
 
 const merchantRating =
 document.getElementById("merchantRating")
-const merchantInfo =
-document.getElementById("merchantInfo")
+
+/* ===== PRODUCT ===== */
+
+const oldPrice =
+document.getElementById("oldPrice")
+
+const discountBadge =
+document.getElementById("discountBadge")
+
+const provinceName =
+document.getElementById("provinceName")
+
+const productProvince =
+document.getElementById("productProvince")
 /* ================= LOAD ================= */
 
 async function load(){
@@ -2165,140 +2201,209 @@ showToast("🔗 Link copiado","success")
 
 }
 
-/* ================= SIMILAR ================= */
+/* ==========================
+LOAD SIMILAR PREMIUM V3
+========================== */
 
 async function loadSimilar(){
 
-if(!product.category) return
+    try{
 
-const q = query(
-collection(db,"products"),
-where("category","==",product.category)
-)
+        if(!product || !product.category){
 
-const snap = await getDocs(q)
+            similarEl.innerHTML = `
+                <div style="
+                    padding:20px;
+                    color:#777;
+                    font-size:15px;
+                ">
+                    Nenhum produto semelhante encontrado.
+                </div>
+            `;
+            return;
+        }
 
-let html = ""
+        const q = query(
+            collection(db,"products"),
+            where("category","==",product.category)
+        );
 
-snap.forEach(d=>{
+        const snap = await getDocs(q);
 
-if(d.id !== productId){
+        let html = "";
+        let count = 0;
 
-let p = d.data()
-html += `
+        snap.forEach(docSnap=>{
 
-<div class="smallCard"
+            if(docSnap.id === productId) return;
 
-onclick="openProduct('${d.id}')">
+            if(count >= 10) return;
 
-<div class="premiumBadge">
+            const p = docSnap.data();
 
-PREMIUM
+            html += `
 
-</div>
+            <div class="smallCard"
+                 onclick="openProduct('${docSnap.id}')">
 
-<img
-loading="lazy"
-src="${p.images?.[0] || ''}">
+                <div class="premiumBadge">
+                    PREMIUM
+                </div>
 
-<div class="smallInfo">
+                <img
+                    loading="lazy"
+                    src="${p.images?.[0] || 'https://via.placeholder.com/400'}"
+                    alt="${p.name}">
 
-<div class="smallPrice">
+                <div class="smallInfo">
 
-${p.price} Kz
+                    <div class="smallPrice">
+                        ${Number(p.price || 0).toLocaleString()} Kz
+                    </div>
 
-</div>
+                    <div class="smallProvince">
+                        📍 ${p.province || "Angola"}
+                    </div>
 
-<div class="smallProvince">
+                    <div class="smallName">
+                        ${p.name || "Produto"}
+                    </div>
 
-📍 ${p.province || "Angola"}
+                </div>
 
-</div>
+            </div>
 
-<div class="smallName">
+            `;
 
-${p.name}
+            count++;
 
-</div>
+        });
 
-</div>
+        if(html===""){
 
-</div>
+            html=`
+                <div style="
+                    padding:20px;
+                    color:#777;
+                    font-size:15px;
+                ">
+                    Nenhum produto semelhante encontrado.
+                </div>
+            `;
 
-`
+        }
+
+        similarEl.innerHTML = html;
+
+    }catch(err){
+
+        console.error("Erro Similar:",err);
+
+        similarEl.innerHTML = `
+            <div style="
+                padding:20px;
+                color:red;
+                font-size:15px;
+            ">
+                Erro ao carregar produtos semelhantes.
+            </div>
+        `;
+
+    }
 
 }
-
-})
-
-similarEl.innerHTML = html
-
-}
-
-/* ================= OTHERS ================= */
+/* ==========================
+LOAD OTHERS PREMIUM V3
+========================== */
 
 async function loadOthers(){
 
-const snap = await getDocs(collection(db,"products"))
+    try{
 
-let html = ""
+        const snap = await getDocs(collection(db,"products"));
 
-snap.forEach(d=>{
+        let html = "";
+        let count = 0;
 
-if(d.id !== productId){
+        snap.forEach(docSnap=>{
 
-let p = d.data()
+            if(docSnap.id === productId) return;
 
-html += `
+            if(count >= 12) return;
 
-<div class="smallCard"
+            const p = docSnap.data();
 
-onclick="openProduct('${d.id}')">
+            html += `
 
-<div class="premiumBadge">
+            <div class="smallCard"
+                 onclick="openProduct('${docSnap.id}')">
 
-PREMIUM
+                <div class="premiumBadge">
+                    PREMIUM
+                </div>
 
-</div>
+                <img
+                    loading="lazy"
+                    src="${p.images?.[0] || 'https://via.placeholder.com/400'}"
+                    alt="${p.name || 'Produto'}">
 
-<img
-loading="lazy"
-src="${p.images?.[0] || ''}">
+                <div class="smallInfo">
 
-<div class="smallInfo">
+                    <div class="smallPrice">
+                        ${Number(p.price || 0).toLocaleString()} Kz
+                    </div>
 
-<div class="smallPrice">
+                    <div class="smallProvince">
+                        📍 ${p.province || "Angola"}
+                    </div>
 
-${p.price} Kz
+                    <div class="smallName">
+                        ${p.name || "Produto"}
+                    </div>
 
-</div>
+                </div>
 
-<div class="smallProvince">
+            </div>
 
-📍 ${p.province || "Angola"}
+            `;
 
-</div>
+            count++;
 
-<div class="smallName">
+        });
 
-${p.name}
+        if(html === ""){
 
-</div>
+            html = `
+                <div style="
+                    padding:20px;
+                    color:#777;
+                    font-size:15px;
+                ">
+                    Nenhum produto encontrado.
+                </div>
+            `;
 
-</div>
+        }
 
-</div>
+        othersEl.innerHTML = html;
 
-`
+    }catch(err){
+
+        console.error("Erro Others:", err);
+
+        othersEl.innerHTML = `
+            <div style="
+                padding:20px;
+                color:red;
+                font-size:15px;
+            ">
+                Erro ao carregar produtos.
+            </div>
+        `;
+
+    }
 
 }
-
-})
-
-othersEl.innerHTML = html
-
-}
-
 /* ================= REVIEWS ================= */
 
 async function loadReviews(){
@@ -2368,63 +2473,99 @@ ratingEl.innerHTML =
 }
 
 }
+/* ================= MERCHANT ================= */
+
 async function loadMerchant(){
 
-try{
+    try{
 
-const snap =
-await getDoc(
-doc(
-db,
-"users",
-product.merchantId
-)
-)
+        // Charger les informations du vendeur
+        const merchantSnap = await getDoc(
+            doc(db,"users",product.merchantId)
+        );
 
-if(!snap.exists()) return
+        if(!merchantSnap.exists()) return;
 
-const merchant =
-snap.data()
+        const merchant = merchantSnap.data();
 
-document.getElementById("merchantName").textContent =
-merchant.shopName || "Loja";
+        // Nom
+        document.getElementById("merchantName").textContent =
+            merchant.shopName || "Loja Oficial";
 
-document.getElementById("merchantDescription").textContent =
-merchant.shopDescription || "";
+        // Description
+        document.getElementById("merchantDescription").textContent =
+            merchant.shopDescription || "Sem descrição.";
 
-document.getElementById("merchantSince").textContent =
-merchant.createdYear || "2026";
+        // Année
+        document.getElementById("merchantSince").textContent =
+            merchant.createdYear ||
+            new Date().getFullYear();
 
-if(merchant.logo){
+        // Logo
+        if(merchant.logo){
 
-document.getElementById("merchantLogo").src =
-merchant.logo;
+            document.getElementById("merchantLogo").src =
+                merchant.logo;
 
-}
+        }else{
 
-<b>
-${merchant.shopName || "Loja"}
-</b>
+            document.getElementById("merchantLogo").src =
+                "/icon-192.png";
 
-<br><br>
+        }
 
-📞 ${
-merchant.whatsapp || "-"
-}
+        // ==========================
+        // Nombre de produits
+        // ==========================
 
-<br>
+        const productsQuery = query(
+            collection(db,"products"),
+            where("merchantId","==",product.merchantId)
+        );
 
-📝 ${
-merchant.shopDescription || ""
-}
+        const productsSnap = await getDocs(productsQuery);
 
-`
+        document.getElementById("merchantProducts").textContent =
+            productsSnap.size;
 
-}catch(err){
+        // ==========================
+        // Note moyenne
+        // ==========================
 
-console.log(err)
+        const reviewsQuery = query(
+            collection(db,"reviews"),
+            where("merchantId","==",product.merchantId)
+        );
 
-}
+        const reviewsSnap = await getDocs(reviewsQuery);
+
+        let totalStars = 0;
+
+        reviewsSnap.forEach(doc=>{
+
+            totalStars += Number(doc.data().rating || 5);
+
+        });
+
+        let average = "5.0";
+
+        if(reviewsSnap.size > 0){
+
+            average = (
+                totalStars /
+                reviewsSnap.size
+            ).toFixed(1);
+
+        }
+
+        document.getElementById("merchantRating").textContent =
+            "⭐ " + average;
+
+    }catch(error){
+
+        console.error("Erro Merchant:", error);
+
+    }
 
 }
 // Compter les produits du vendeur
