@@ -1206,6 +1206,81 @@ transition:.25s;
 transform:translateY(-2px);
 
 }
+/*==========================
+PRODUCT FEATURES
+==========================*/
+
+.productFeatures{
+
+display:flex;
+
+flex-direction:column;
+
+gap:12px;
+
+margin-top:20px;
+
+margin-bottom:20px;
+
+}
+
+.featureItem{
+
+display:flex;
+
+align-items:center;
+
+gap:15px;
+
+padding:14px;
+
+background:#fafafa;
+
+border-radius:18px;
+
+border:1px solid #eee;
+
+}
+
+.featureIcon{
+
+width:48px;
+
+height:48px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+border-radius:14px;
+
+background:#fff;
+
+font-size:24px;
+
+box-shadow:0 4px 12px rgba(0,0,0,.06);
+
+}
+
+.featureItem b{
+
+display:block;
+
+font-size:15px;
+
+margin-bottom:3px;
+
+}
+
+.featureItem div{
+
+font-size:14px;
+
+color:#666;
+
+}
 </style>
 </head>
 
@@ -1296,7 +1371,41 @@ Carregando...
 </div>
 
 <div id="desc" class="desc"></div>
+<div class="productFeatures">
 
+<div class="featureItem">
+<span class="featureIcon">📍</span>
+<div>
+<b>Localização</b>
+<div id="productProvince">Luanda</div>
+</div>
+</div>
+
+<div class="featureItem">
+<span class="featureIcon">🚚</span>
+<div>
+<b>Entrega</b>
+<div>Entrega disponível em Angola</div>
+</div>
+</div>
+
+<div class="featureItem">
+<span class="featureIcon">💳</span>
+<div>
+<b>Pagamento</b>
+<div>Transferência ou pagamento na entrega</div>
+</div>
+</div>
+
+<div class="featureItem">
+<span class="featureIcon">🛡️</span>
+<div>
+<b>Proteção</b>
+<div>Compra segura no Toma</div>
+</div>
+</div>
+
+</div>
 <div class="actions">
 
 <button
@@ -1716,7 +1825,8 @@ priceEl.innerText = (product.price || 0) + " Kz"
 stickyPrice.innerText =
 (product.price || 0) + " Kz"
 descEl.innerText = product.description || "Sem descrição"
-
+document.getElementById("productProvince").textContent =
+product.province || "Angola";
 ratingEl.innerText = "⭐ " + (product.rating || 5) + "/5"
 const stock =
 Number(product.stock || 0)
