@@ -1622,6 +1622,11 @@ document.getElementById("stickyBuyBtn")
 const similarEl = document.getElementById("similar")
 const othersEl = document.getElementById("others")
 const reviewsEl = document.getElementById("reviews")
+const merchantProducts =
+document.getElementById("merchantProducts")
+
+const merchantRating =
+document.getElementById("merchantRating")
 const merchantInfo =
 document.getElementById("merchantInfo")
 /* ================= LOAD ================= */
@@ -2217,6 +2222,46 @@ merchant.shopDescription || ""
 console.log(err)
 
 }
+
+}
+// Compter les produits du vendeur
+
+const productsQuery = query(
+collection(db,"products"),
+where("merchantId","==",product.merchantId)
+)
+
+const productsSnap = await getDocs(productsQuery)
+
+merchantProducts.textContent =
+productsSnap.size
+
+// Calculer la note moyenne
+
+const reviewsQuery = query(
+collection(db,"reviews"),
+where("merchantId","==",product.merchantId)
+)
+
+const reviewsSnap = await getDocs(reviewsQuery)
+
+let total = 0
+
+reviewsSnap.forEach(doc=>{
+
+total += Number(doc.data().rating || 5)
+
+})
+
+if(reviewsSnap.size>0){
+
+merchantRating.textContent =
+"⭐ " + (total/reviewsSnap.size).toFixed(1)
+
+}else{
+
+merchantRating.textContent =
+"⭐ 5.0"
 
 }
 /* ================= OPEN PRODUCT ================= */
