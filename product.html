@@ -1931,13 +1931,34 @@ nameEl.innerText = product.name || ""
 priceEl.innerText = (product.price || 0) + " Kz"
 stickyPrice.innerText =
 (product.price || 0) + " Kz"
-descEl.textContent =
-product.description || "Sem descrição";
+descEl.textContent = product.description || "Sem descrição";
 
 descEl.classList.remove("expanded");
 
-document.getElementById("toggleDescription").innerText =
-"Ver mais";
+const toggleBtn = document.getElementById("toggleDescription");
+
+toggleBtn.innerText = "Ver mais";
+
+/* force le mode réduit */
+descEl.style.display = "-webkit-box";
+descEl.style.webkitBoxOrient = "vertical";
+descEl.style.webkitLineClamp = "4";
+descEl.style.overflow = "hidden";
+
+/* afficher le bouton seulement si nécessaire */
+setTimeout(() => {
+
+    if (descEl.scrollHeight > descEl.clientHeight + 5) {
+
+        toggleBtn.style.display = "inline-block";
+
+    } else {
+
+        toggleBtn.style.display = "none";
+
+    }
+
+}, 50);
 document.getElementById("productProvince").textContent =
 product.province || "Angola";
 ratingEl.innerText = "⭐ " + (product.rating || 5) + "/5"
@@ -2817,19 +2838,30 @@ updateFullscreen()
 const toggleDescription =
 document.getElementById("toggleDescription");
 
-toggleDescription.onclick = ()=>{
+toggleDescription.onclick = () => {
 
-descEl.classList.toggle("expanded");
+    if (descEl.classList.contains("expanded")) {
 
-if(descEl.classList.contains("expanded")){
+        descEl.classList.remove("expanded");
 
-toggleDescription.innerText="Ver menos";
+        descEl.style.display = "-webkit-box";
+        descEl.style.webkitBoxOrient = "vertical";
+        descEl.style.webkitLineClamp = "4";
+        descEl.style.overflow = "hidden";
 
-}else{
+        toggleDescription.innerText = "Ver mais";
 
-toggleDescription.innerText="Ver mais";
+    } else {
 
-}
+        descEl.classList.add("expanded");
+
+        descEl.style.display = "block";
+        descEl.style.webkitLineClamp = "unset";
+        descEl.style.overflow = "visible";
+
+        toggleDescription.innerText = "Ver menos";
+
+    }
 
 };
 </script>
