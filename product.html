@@ -390,17 +390,7 @@ background:#f7f7f7;
 ACTIONS
 ========================== */
 
-.actions{
 
-display:grid;
-
-grid-template-columns:1fr;
-
-gap:12px;
-
-margin-top:20px;
-
-}
 
 .btn{
 
@@ -426,31 +416,9 @@ transform:translateY(-2px);
 
 }
 
-.buyBtn{
 
-background:linear-gradient(135deg,#18b85d,#0fa94f);
 
-color:#fff;
 
-box-shadow:0 8px 18px rgba(24,184,93,.35);
-
-}
-
-.shopBtn{
-
-background:#111;
-
-color:white;
-
-}
-
-.shareBtn{
-
-background:#0a84ff;
-
-color:white;
-
-}
 /* ==========================
 SECTION PREMIUM
 ========================== */
@@ -1424,9 +1392,7 @@ Carregando...
 
 <div id="stockInfo"></div>
 
-<div class="metaItem">
-📍 <span id="provinceName">Angola</span>
-</div>
+
 
 <div class="metaItem">
 🚚 Entrega rápida
@@ -1840,8 +1806,7 @@ document.getElementById("oldPrice")
 const discountBadge =
 document.getElementById("discountBadge")
 
-const provinceName =
-document.getElementById("provinceName")
+
 
 const productProvince =
 document.getElementById("productProvince")
@@ -2632,44 +2597,6 @@ async function loadMerchant(){
     }
 
 }
-// Compter les produits du vendeur
-
-const productsQuery = query(
-collection(db,"products"),
-where("merchantId","==",product.merchantId)
-)
-
-const productsSnap = await getDocs(productsQuery)
-
-merchantProducts.textContent =
-productsSnap.size
-
-// Calculer la note moyenne
-
-const reviewsQuery = query(
-collection(db,"reviews"),
-where("merchantId","==",product.merchantId)
-)
-
-const reviewsSnap = await getDocs(reviewsQuery)
-
-let total = 0
-
-reviewsSnap.forEach(doc=>{
-
-total += Number(doc.data().rating || 5)
-
-})
-
-if(reviewsSnap.size>0){
-
-merchantRating.textContent =
-"⭐ " + (total/reviewsSnap.size).toFixed(1)
-
-}else{
-
-merchantRating.textContent =
-"⭐ 5.0"
 
 }
 /* ================= OPEN PRODUCT ================= */
