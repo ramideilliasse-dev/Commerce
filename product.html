@@ -327,19 +327,25 @@ line-height:1.8;
 color:#555;
 margin-top:15px;
 
-display:-webkit-box;
--webkit-line-clamp:4;
--webkit-box-orient:vertical;
-
 overflow:hidden;
 
-transition:.3s;
+display:-webkit-box;
+display:box;
+
+-webkit-box-orient:vertical;
+-webkit-line-clamp:4;
+
+word-break:break-word;
+
+max-height:7.2em;
 
 }
 
 .desc.expanded{
 
 display:block;
+
+max-height:none;
 
 overflow:visible;
 
@@ -359,10 +365,7 @@ font-weight:700;
 
 cursor:pointer;
 
-user-select:none;
-
-} 
-
+}
 /* ==========================
 STOCK
 ========================== */
