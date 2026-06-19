@@ -323,12 +323,43 @@ margin-bottom:14px;
 .desc{
 
 font-size:15px;
+line-height:1.8;
+color:#555;
+margin-top:15px;
 
-line-height:1.7;
+display:-webkit-box;
+-webkit-line-clamp:4;
+-webkit-box-orient:vertical;
 
-color:#666;
+overflow:hidden;
 
-margin-top:10px;
+transition:.3s;
+
+}
+
+.desc.expanded{
+
+display:block;
+
+overflow:visible;
+
+}
+
+#toggleDescription{
+
+display:inline-block;
+
+margin-top:12px;
+
+color:#ff6a00;
+
+font-size:15px;
+
+font-weight:700;
+
+cursor:pointer;
+
+user-select:none;
 
 }
 
@@ -1405,6 +1436,9 @@ Carregando...
 </div>
 
 <div id="desc" class="desc"></div>
+<div id="toggleDescription">
+Ver mais
+</div>
 <div class="productFeatures">
 
 <div class="featureItem">
@@ -1894,7 +1928,13 @@ nameEl.innerText = product.name || ""
 priceEl.innerText = (product.price || 0) + " Kz"
 stickyPrice.innerText =
 (product.price || 0) + " Kz"
-descEl.innerText = product.description || "Sem descrição"
+descEl.textContent =
+product.description || "Sem descrição";
+
+descEl.classList.remove("expanded");
+
+document.getElementById("toggleDescription").innerText =
+"Ver mais";
 document.getElementById("productProvince").textContent =
 product.province || "Angola";
 ratingEl.innerText = "⭐ " + (product.rating || 5) + "/5"
@@ -2771,6 +2811,24 @@ updateFullscreen()
 }
 
 )
+const toggleDescription =
+document.getElementById("toggleDescription");
+
+toggleDescription.onclick = ()=>{
+
+descEl.classList.toggle("expanded");
+
+if(descEl.classList.contains("expanded")){
+
+toggleDescription.innerText="Ver menos";
+
+}else{
+
+toggleDescription.innerText="Ver mais";
+
+}
+
+};
 </script>
 
 <script>
