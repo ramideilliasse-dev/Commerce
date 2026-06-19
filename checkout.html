@@ -223,7 +223,10 @@ localStorage.getItem("checkoutCart") ||
 localStorage.getItem("cart") ||
 "[]"
 )
-
+alert(
+"Panier :\n\n" +
+JSON.stringify(cart, null, 2)
+);
 function loadCart(){
 
 if(cart.length === 0){
