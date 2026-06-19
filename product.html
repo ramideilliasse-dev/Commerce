@@ -491,15 +491,17 @@ PRODUCT CARD
 
 .smallCard{
 
-min-width:170px;
+position:relative;
 
-background:#fff;
+min-width:175px;
 
-border-radius:20px;
+background:white;
+
+border-radius:22px;
 
 overflow:hidden;
 
-box-shadow:0 6px 18px rgba(0,0,0,.08);
+box-shadow:0 8px 22px rgba(0,0,0,.10);
 
 cursor:pointer;
 
@@ -511,7 +513,7 @@ flex-shrink:0;
 
 .smallCard:hover{
 
-transform:translateY(-4px);
+transform:translateY(-5px);
 
 }
 
@@ -519,7 +521,7 @@ transform:translateY(-4px);
 
 width:100%;
 
-height:150px;
+height:175px;
 
 object-fit:cover;
 
@@ -527,13 +529,35 @@ display:block;
 
 }
 
-.smallCard div{
+.smallInfo{
 
-padding:8px 10px;
+padding:12px;
 
 }
 
-.smallCard div:first-of-type{
+.smallPrice{
+
+font-size:20px;
+
+font-weight:700;
+
+color:#ff6a00;
+
+margin-bottom:6px;
+
+}
+
+.smallProvince{
+
+font-size:12px;
+
+color:#888;
+
+margin-bottom:6px;
+
+}
+
+.smallName{
 
 font-size:14px;
 
@@ -541,23 +565,33 @@ font-weight:700;
 
 line-height:1.4;
 
-height:42px;
+height:38px;
 
 overflow:hidden;
 
 }
 
-.smallCard div:last-of-type{
+.premiumBadge{
 
-font-size:18px;
+position:absolute;
+
+top:10px;
+
+left:10px;
+
+background:#ff6a00;
+
+color:white;
+
+font-size:11px;
+
+padding:5px 10px;
+
+border-radius:20px;
 
 font-weight:bold;
 
-color:#ff6a00;
-
-padding-top:0;
-
-padding-bottom:12px;
+box-shadow:0 4px 10px rgba(0,0,0,.2);
 
 }
 
@@ -2151,17 +2185,46 @@ snap.forEach(d=>{
 if(d.id !== productId){
 
 let p = d.data()
-
 html += `
-<div class="smallCard" onclick="openProduct('${d.id}')">
 
-<img loading="lazy" src="${p.images?.[0] || ''}">
+<div class="smallCard"
 
-<div>${p.name}</div>
+onclick="openProduct('${d.id}')">
 
-<div>${p.price} Kz</div>
+<div class="premiumBadge">
+
+PREMIUM
 
 </div>
+
+<img
+loading="lazy"
+src="${p.images?.[0] || ''}">
+
+<div class="smallInfo">
+
+<div class="smallPrice">
+
+${p.price} Kz
+
+</div>
+
+<div class="smallProvince">
+
+📍 ${p.province || "Angola"}
+
+</div>
+
+<div class="smallName">
+
+${p.name}
+
+</div>
+
+</div>
+
+</div>
+
 `
 
 }
@@ -2187,15 +2250,45 @@ if(d.id !== productId){
 let p = d.data()
 
 html += `
-<div class="smallCard" onclick="openProduct('${d.id}')">
 
-<img loading="lazy" src="${p.images?.[0] || ''}">
+<div class="smallCard"
 
-<div>${p.name}</div>
+onclick="openProduct('${d.id}')">
 
-<div>${p.price} Kz</div>
+<div class="premiumBadge">
+
+PREMIUM
 
 </div>
+
+<img
+loading="lazy"
+src="${p.images?.[0] || ''}">
+
+<div class="smallInfo">
+
+<div class="smallPrice">
+
+${p.price} Kz
+
+</div>
+
+<div class="smallProvince">
+
+📍 ${p.province || "Angola"}
+
+</div>
+
+<div class="smallName">
+
+${p.name}
+
+</div>
+
+</div>
+
+</div>
+
 `
 
 }
