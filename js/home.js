@@ -25,3 +25,21 @@ let currentPromo = 0;
 let promoInterval = null;
 
 alert("DOM OK");
+alert("Imports OK");
+alert("DOM OK");
+
+let cart = JSON.parse(
+  localStorage.getItem("checkoutCart") ||
+  localStorage.getItem("cart") ||
+  "[]"
+);
+
+alert("Cart OK");
+
+loadCart();
+
+alert("loadCart OK");
+
+confirmBtn.onclick = placeOrder;
+
+alert("Fin du script");
