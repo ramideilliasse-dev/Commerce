@@ -1,1 +1,1 @@
-
+ alert("home.js chargé");
