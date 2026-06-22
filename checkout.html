@@ -191,9 +191,50 @@ color:#1aa34a;
 import { auth, db } from "./firebase.js";
 
 import {
-collection
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+collection,
+addDoc,
+doc,
+getDoc,
+getDocs,
+query,
+where,
+updateDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-alert("Firestore OK");
+alert("1");
+
+const cartItems = document.getElementById("cartItems");
+alert("2");
+
+const totalPrice = document.getElementById("totalPrice");
+alert("3");
+
+const confirmBtn = document.getElementById("confirmBtn");
+alert("4");
+
+const clientName = document.getElementById("clientName");
+alert("5");
+
+const clientPhone = document.getElementById("clientPhone");
+alert("6");
+
+const clientAddress = document.getElementById("clientAddress");
+alert("7");
+
+const loader = document.getElementById("loaderOverlay");
+alert("8");
+
+let appliedCoupon = null;
+let discountAmount = 0;
+alert("9");
+
+let cart = JSON.parse(
+localStorage.getItem("checkoutCart") ||
+localStorage.getItem("cart") ||
+"[]"
+);
+
+alert("10");
 
 </script>
