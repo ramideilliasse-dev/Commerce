@@ -14,3 +14,15 @@ onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 alert("Imports OK");
+/* ================= DOM ================= */
+
+const adminBtn = document.getElementById("adminBtn");
+const shopNav = document.getElementById("shopNav");
+const productList = document.getElementById("productList");
+const promoSlider = document.getElementById("promoSlider");
+
+let products = [];
+let currentPromo = 0;
+let promoInterval = null;
+
+alert("DOM OK");
