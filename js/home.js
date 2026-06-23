@@ -28,5 +28,10 @@ import {
   addToCart,
   setProducts
 } from "./cart.js";
-
+import {
+    setProducts,
+    getProducts,
+    getProduct,
+    openProduct
+} from "./products.js";
 console.log("Home.js démarré");
