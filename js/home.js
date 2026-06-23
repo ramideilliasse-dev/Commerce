@@ -20,4 +20,11 @@ import {
   updateBadge
 } from "./ui.js";
 
+import {
+  getCart,
+  updateCartCount,
+  addToCart,
+  setProducts
+} from "./cart.js";
+
 console.log("Home.js démarré");
