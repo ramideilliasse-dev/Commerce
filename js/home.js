@@ -14,10 +14,12 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 import {
-  showToast,
-  showLoader,
-  hideLoader,
-  updateBadge
+    showToast,
+    showLoader,
+    hideLoader,
+    updateBadge,
+    getProductImage,
+    formatPrice
 } from "./ui.js";
 
 import {
