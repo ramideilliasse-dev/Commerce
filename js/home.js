@@ -48,3 +48,11 @@ alert("loadCart OK");
 confirmBtn.onclick = placeOrder;
 
 alert("Fin du script");
+import {
+    showToast,
+    showLoader,
+    hideLoader,
+    updateBadge
+} from "./ui.js";
+
+alert("UI OK");
