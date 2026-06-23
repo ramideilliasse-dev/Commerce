@@ -13,6 +13,15 @@ import {
 onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 alert("Imports OK");
+import {
+    showToast,
+    showLoader,
+    hideLoader,
+    updateBadge
+} from "./ui.js";
+
+alert("UI OK");
+
 /* ================= DOM ================= */
 
 const adminBtn = document.getElementById("adminBtn");
@@ -48,11 +57,3 @@ alert("loadCart OK");
 confirmBtn.onclick = placeOrder;
 
 alert("Fin du script");
-import {
-    showToast,
-    showLoader,
-    hideLoader,
-    updateBadge
-} from "./ui.js";
-
-alert("UI OK");
