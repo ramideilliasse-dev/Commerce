@@ -36,7 +36,12 @@ let cart = JSON.parse(
 
 alert("Cart OK");
 
-loadCart();
+try{
+    loadCart();
+    alert("loadCart OK");
+}catch(e){
+    alert("ERREUR loadCart : " + e.message);
+}
 
 alert("loadCart OK");
 
