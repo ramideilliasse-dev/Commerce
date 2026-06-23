@@ -1,17 +1,12 @@
  // ==============================
 // UI.JS
-// Fonctions d'interface communes
 // ==============================
 
-// Toast moderne
 export function showToast(message, type = "success") {
 
     const box = document.getElementById("toastBox");
 
-    if (!box) {
-        console.warn("toastBox introuvable");
-        return;
-    }
+    if (!box) return;
 
     const toast = document.createElement("div");
 
@@ -26,12 +21,11 @@ export function showToast(message, type = "success") {
 
 }
 
-// Loader
 export function showLoader(id = "loaderOverlay") {
 
     const loader = document.getElementById(id);
 
-    if (loader) {
+    if(loader){
         loader.style.display = "flex";
     }
 
@@ -41,25 +35,28 @@ export function hideLoader(id = "loaderOverlay") {
 
     const loader = document.getElementById(id);
 
-    if (loader) {
+    if(loader){
         loader.style.display = "none";
     }
 
 }
 
-// Badge compteur
-export function updateBadge(id, value) {
+export function updateBadge(id, value){
 
     const badge = document.getElementById(id);
 
-    if (!badge) return;
+    if(!badge) return;
 
     badge.innerText = value;
 
-    if (value <= 0) {
+    if(value <= 0){
+
         badge.style.display = "none";
-    } else {
+
+    }else{
+
         badge.style.display = "flex";
+
     }
 
 }
