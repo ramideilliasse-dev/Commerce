@@ -26,7 +26,7 @@ import {
   getCart,
   updateCartCount,
   addToCart,
-  setProducts
+  setCartProducts
 } from "./cart.js";
 import {
     setProducts,
