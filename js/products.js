@@ -188,3 +188,59 @@ ${formatPrice(p.price)}
     productList.innerHTML = html;
 
 }
+/* ===========================
+TOP PRODUCTS
+=========================== */
+
+export function renderTopProducts(products){
+
+const container =
+document.getElementById("topProducts");
+
+if(!container) return;
+
+let sorted = [...products];
+
+sorted.sort((a,b)=>
+(b.views || 0) -
+(a.views || 0)
+);
+
+sorted = sorted.slice(0,10);
+
+container.innerHTML =
+sorted.map(p=>`
+
+<div class="topCard"
+onclick="openProduct('${p.id}')">
+
+<div style="position:relative">
+
+<div class="topBadge">
+🔥 TOP
+</div>
+
+<img
+src="${productImage(p)}"
+loading="lazy"
+>
+
+</div>
+
+<div class="topInfo">
+
+<div class="topName">
+${p.name}
+</div>
+
+<div class="topPrice">
+${productPrice(p)}
+</div>
+
+</div>
+
+</div>
+
+`).join("");
+
+}
