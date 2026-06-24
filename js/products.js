@@ -46,7 +46,80 @@ export function openProduct(id){
    RENDERS
 =============================== */
 
-export function renderProducts(){
+export function renderProducts(containerId = "productList") {
+
+    const container = document.getElementById(containerId);
+
+    if (!container) return;
+
+    let html = "";
+
+    products.forEach(product => {
+
+        const favorites = getFavorites();
+        const isFavorite = favorites.includes(product.id);
+
+        const image = getProductImage(product);
+
+        html += `
+
+        <div class="product"
+             onclick="openProduct('${product.id}')">
+
+            <div style="position:relative;">
+
+                <img
+                    src="${image}"
+                    loading="lazy"
+                    onerror="this.src='https://via.placeholder.com/300'"
+                >
+
+                <div
+                    onclick="event.stopPropagation();toggleFavorite('${product.id}')"
+                    style="
+                        position:absolute;
+                        top:8px;
+                        right:8px;
+                        width:34px;
+                        height:34px;
+                        border-radius:50%;
+                        background:white;
+                        display:flex;
+                        justify-content:center;
+                        align-items:center;
+                        box-shadow:0 2px 8px rgba(0,0,0,.15);
+                        cursor:pointer;
+                    ">
+
+                    ${isFavorite ? "❤️" : "🤍"}
+
+                </div>
+
+            </div>
+
+            <div class="info">
+
+                <div class="name">
+                    ${product.name || ""}
+                </div>
+
+                <div class="priceP">
+                    ${formatPrice(product.price)}
+                </div>
+
+                <div class="province">
+                    📍 ${product.province || "Angola"}
+                </div>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+    container.innerHTML = html;
 
 }
 
