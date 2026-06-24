@@ -62,7 +62,6 @@ export function renderProducts(containerId = "productList") {
         const image = getProductImage(product);
 
         html += `
-
         <div class="product"
              onclick="openProduct('${product.id}')">
 
@@ -75,21 +74,8 @@ export function renderProducts(containerId = "productList") {
                 >
 
                 <div
-                    onclick="event.stopPropagation();toggleFavorite('${product.id}')"
-                    style="
-                        position:absolute;
-                        top:8px;
-                        right:8px;
-                        width:34px;
-                        height:34px;
-                        border-radius:50%;
-                        background:white;
-                        display:flex;
-                        justify-content:center;
-                        align-items:center;
-                        box-shadow:0 2px 8px rgba(0,0,0,.15);
-                        cursor:pointer;
-                    ">
+                    class="favoriteBtn"
+                    data-id="${product.id}">
 
                     ${isFavorite ? "❤️" : "🤍"}
 
@@ -114,15 +100,25 @@ export function renderProducts(containerId = "productList") {
             </div>
 
         </div>
-
         `;
-
     });
 
     container.innerHTML = html;
 
-}
+    // Activation des favoris
+    container.querySelectorAll(".favoriteBtn").forEach(btn => {
 
+        btn.onclick = (e) => {
+
+            e.stopPropagation();
+
+            toggleFavorite(btn.dataset.id);
+
+        };
+
+    });
+
+}
 export function renderTopProducts(containerId = "topProducts") {
 
     const container = document.getElementById(containerId);
