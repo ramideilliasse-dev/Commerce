@@ -330,8 +330,39 @@ export function getFavorites(){
 
 export function toggleFavorite(productId){
 
-}
+    let favorites = getFavorites();
 
+    const index = favorites.indexOf(productId);
+
+    if(index > -1){
+
+        favorites.splice(index,1);
+
+        showToast(
+            "💔 Removido dos favoritos",
+            "warning"
+        );
+
+    }else{
+
+        favorites.push(productId);
+
+        showToast(
+            "❤️ Adicionado aos favoritos",
+            "success"
+        );
+
+    }
+
+    localStorage.setItem(
+        "favorites",
+        JSON.stringify(favorites)
+    );
+
+    // Recharger l'affichage pour mettre à jour les cœurs
+    renderProducts();
+
+}
 /* ===============================
    PROMO SLIDER
 =============================== */
