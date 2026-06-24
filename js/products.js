@@ -1,4 +1,9 @@
- // ===============================
+import {
+    showToast,
+    getProductImage,
+    formatPrice
+} from "./ui.js";
+// ===============================
 // PRODUCTS.JS
 // Gestion complète des produits
 // ===============================
