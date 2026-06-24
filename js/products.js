@@ -261,7 +261,50 @@ export function renderCategorySection(category, containerId){
 
 }
 
-export function loadBestSellers(){
+export function loadBestSellers(containerId = "bestSellers") {
+
+    const container = document.getElementById(containerId);
+
+    if (!container) return;
+
+    const best = [...products]
+        .sort((a, b) => (b.salesCount || 0) - (a.salesCount || 0))
+        .slice(0, 10);
+
+    container.innerHTML = best.map(product => {
+
+        return `
+
+        <div
+            class="bestSellerCard"
+            onclick="openProduct('${product.id}')">
+
+            <img
+                src="${getProductImage(product)}"
+                loading="lazy"
+                onerror="this.src='https://via.placeholder.com/300'"
+            >
+
+            <div class="bestSellerInfo">
+
+                <div class="bestSellerName">
+                    ${product.name || ""}
+
+                </div>
+
+                <div class="bestSellerPrice">
+
+                    ${formatPrice(product.price)}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        `;
+
+    }).join("");
 
 }
 
