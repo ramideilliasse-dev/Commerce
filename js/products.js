@@ -123,7 +123,50 @@ export function renderProducts(containerId = "productList") {
 
 }
 
-export function renderTopProducts(){
+export function renderTopProducts(containerId = "topProducts") {
+
+    const container = document.getElementById(containerId);
+
+    if (!container) return;
+
+    const topProducts = [...products]
+        .sort((a, b) => (b.views || 0) - (a.views || 0))
+        .slice(0, 10);
+
+    container.innerHTML = topProducts.map(product => `
+
+        <div class="topCard"
+             onclick="openProduct('${product.id}')">
+
+            <div style="position:relative">
+
+                <div class="topBadge">
+                    🔥 TOP
+                </div>
+
+                <img
+                    src="${getProductImage(product)}"
+                    loading="lazy"
+                    onerror="this.src='https://via.placeholder.com/300'"
+                >
+
+            </div>
+
+            <div class="topInfo">
+
+                <div class="topName">
+                    ${product.name || ""}
+                </div>
+
+                <div class="topPrice">
+                    ${formatPrice(product.price)}
+                </div>
+
+            </div>
+
+        </div>
+
+    `).join("");
 
 }
 
