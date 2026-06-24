@@ -33,6 +33,7 @@ import {
     getProducts,
     getProduct,
     openProduct,
-    renderProducts
+    renderProducts,
+    renderTopProducts
 } from "./products.js";
 console.log("Home.js démarré");
