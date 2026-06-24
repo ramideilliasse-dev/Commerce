@@ -119,29 +119,43 @@ export function renderProducts(containerId = "productList") {
     });
 
 }
+/* ===============================
+   TOP PRODUCTS
+=============================== */
+
 export function renderTopProducts(containerId = "topProducts") {
 
     const container = document.getElementById(containerId);
 
     if (!container) return;
 
-    const topProducts = [...products]
-        .sort((a, b) => (b.views || 0) - (a.views || 0))
-        .slice(0, 10);
+    let sorted = [...products];
 
-    container.innerHTML = topProducts.map(product => `
+    sorted.sort((a, b) => {
+        return (b.views || 0) - (a.views || 0);
+    });
 
-        <div class="topCard"
-             onclick="openProduct('${product.id}')">
+    sorted = sorted.slice(0, 10);
 
-            <div style="position:relative">
+    container.innerHTML = sorted.map(product => {
+
+        const image = getProductImage(product);
+
+        return `
+
+        <div
+            class="topCard"
+            onclick="openProduct('${product.id}')"
+        >
+
+            <div style="position:relative;">
 
                 <div class="topBadge">
                     🔥 TOP
                 </div>
 
                 <img
-                    src="${getProductImage(product)}"
+                    src="${image}"
                     loading="lazy"
                     onerror="this.src='https://via.placeholder.com/300'"
                 >
@@ -162,7 +176,9 @@ export function renderTopProducts(containerId = "topProducts") {
 
         </div>
 
-    `).join("");
+        `;
+
+    }).join("");
 
 }
 
