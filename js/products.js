@@ -208,10 +208,44 @@ export function renderRecommendedProducts(containerId = "recommendedProducts") {
     `).join("");
 
 }
-export function renderCategorySection(
-    category,
-    containerId
-){
+export function renderCategorySection(category, containerId){
+
+    const container = document.getElementById(containerId);
+
+    if(!container) return;
+
+    const categoryProducts = products
+        .filter(product =>
+            (product.category || "").toLowerCase() === category.toLowerCase()
+        )
+        .slice(0,10);
+
+    container.innerHTML = categoryProducts.map(product => `
+
+        <div class="topCard"
+             onclick="openProduct('${product.id}')">
+
+            <img
+                src="${getProductImage(product)}"
+                loading="lazy"
+                onerror="this.src='https://via.placeholder.com/300'"
+            >
+
+            <div class="topInfo">
+
+                <div class="topName">
+                    ${product.name || ""}
+                </div>
+
+                <div class="topPrice">
+                    ${formatPrice(product.price)}
+                </div>
+
+            </div>
+
+        </div>
+
+    `).join("");
 
 }
 
