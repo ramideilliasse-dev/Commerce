@@ -170,10 +170,44 @@ export function renderTopProducts(containerId = "topProducts") {
 
 }
 
-export function renderRecommendedProducts(){
+export function renderRecommendedProducts(containerId = "recommendedProducts") {
+
+    const container = document.getElementById(containerId);
+
+    if (!container) return;
+
+    const recommended = [...products]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 8);
+
+    container.innerHTML = recommended.map(product => `
+
+        <div class="topCard"
+             onclick="openProduct('${product.id}')">
+
+            <img
+                src="${getProductImage(product)}"
+                loading="lazy"
+                onerror="this.src='https://via.placeholder.com/300'"
+            >
+
+            <div class="topInfo">
+
+                <div class="topName">
+                    ${product.name || ""}
+                </div>
+
+                <div class="topPrice">
+                    ${formatPrice(product.price)}
+                </div>
+
+            </div>
+
+        </div>
+
+    `).join("");
 
 }
-
 export function renderCategorySection(
     category,
     containerId
