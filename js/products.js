@@ -497,3 +497,5 @@ export function searchProducts(text){
     });
 
 }
+window.openProduct = openProduct;
+window.toggleFavorite = toggleFavorite;
