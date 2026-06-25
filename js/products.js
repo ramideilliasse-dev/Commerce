@@ -1,15 +1,20 @@
-import {
-    showToast,
-    getProductImage,
-    formatPrice
-} from "./ui.js";
 // ===============================
 // PRODUCTS.JS
 // Gestion complète des produits
 // ===============================
 
-let products = [];
+import {
+    doc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+import {
+    showToast,
+    getProductImage,
+    formatPrice
+} from "./ui.js";
+
+let products = [];
 /* ===============================
    STOCKAGE
 =============================== */
