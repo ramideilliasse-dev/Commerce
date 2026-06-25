@@ -89,3 +89,132 @@ window.addEventListener("storage", () => {
 let products = [];
 
 console.log("✅ DOM OK");
+/* ===============================
+   CHARGEMENT DES PRODUITS
+=============================== */
+
+async function loadProducts(){
+
+    try{
+
+        const q = query(
+
+            collection(db,"products"),
+
+            limit(50)
+
+        );
+
+        const snapshot = await getDocs(q);
+
+        products = [];
+
+        snapshot.forEach(docSnap=>{
+
+            const product = docSnap.data();
+
+            product.id = docSnap.id;
+
+            products.push(product);
+
+        });
+
+        if(products.length === 0){
+
+            productList.innerHTML = `
+
+                <div style="
+                    padding:40px;
+                    text-align:center;
+                    color:#777;
+                ">
+
+                    Nenhum produto disponível.
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+        // Envoie les produits aux autres modules
+
+        setProducts(products);
+
+        setCartProducts(products);
+
+        // Affichage principal
+
+        renderProducts();
+
+        renderTopProducts();
+
+        renderRecommendedProducts();
+
+        loadBestSellers();
+
+        // Catégories
+
+        renderCategorySection(
+            "Alimentação",
+            "foodProducts"
+        );
+
+        renderCategorySection(
+            "Eletrónica",
+            "electronicsProducts"
+        );
+
+        renderCategorySection(
+            "Moda",
+            "fashionProducts"
+        );
+
+        renderCategorySection(
+            "Beleza",
+            "beautyProducts"
+        );
+
+        renderCategorySection(
+            "Casa",
+            "homeProducts"
+        );
+
+        renderCategorySection(
+            "Auto",
+            "autoProducts"
+        );
+
+        console.log("✅ Produits chargés :", products.length);
+
+    }catch(error){
+
+        console.error(error);
+
+        productList.innerHTML = `
+
+            <div style="
+                padding:40px;
+                color:red;
+                text-align:center;
+            ">
+
+                Erro ao carregar produtos
+
+            </div>
+
+        `;
+
+        showToast(
+
+            "Erro ao carregar produtos",
+
+            "error"
+
+        );
+
+    }
+
+}
