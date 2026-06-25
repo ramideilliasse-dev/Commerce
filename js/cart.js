@@ -143,12 +143,13 @@ export function addToCart(productId, quantity = 1){
 
         cart.push({
 
-            id: product.id,
+    id: product.id,
 
-            quantity: quantity
+    product: product,
 
-        });
+    quantity: quantity
 
+});
     }
 
     saveCart();
@@ -222,11 +223,7 @@ export function renderCart(containerId = "cartItems"){
 
     container.innerHTML = cart.map(item=>{
 
-        const product = products.find(
-
-            p => p.id === item.id
-
-        );
+        const product = item.product;
 
         if(!product) return "";
 
@@ -316,12 +313,7 @@ export function updateTotal(){
 
     cart.forEach(item=>{
 
-        const product = products.find(
-
-            p => p.id === item.id
-
-        );
-
+        const product = item.product;
         if(product){
 
             total +=
