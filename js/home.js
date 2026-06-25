@@ -87,7 +87,71 @@ window.addEventListener("storage", () => {
 =============================== */
 
 let products = [];
+/* ===============================
+   CACHE
+=============================== */
 
+const PRODUCTS_CACHE = "products_cache_v1";
+const CACHE_TIME = "products_cache_time";
+
+const CACHE_DURATION = 1000 * 60 * 10; // 10 minutes
+/* ===============================
+   CACHE FUNCTIONS
+=============================== */
+
+function saveProductsCache(data){
+
+    localStorage.setItem(
+        PRODUCTS_CACHE,
+        JSON.stringify(data)
+    );
+
+    localStorage.setItem(
+        CACHE_TIME,
+        Date.now()
+    );
+
+}
+
+function loadProductsCache(){
+
+    try{
+
+        const data = JSON.parse(
+
+            localStorage.getItem(PRODUCTS_CACHE)
+
+            || "[]"
+
+        );
+
+        return data;
+
+    }catch{
+
+        return [];
+
+    }
+
+}
+
+function cacheIsValid(){
+
+    const last = Number(
+
+        localStorage.getItem(CACHE_TIME)
+
+        || 0
+
+    );
+
+    return (
+
+        Date.now() - last
+
+    ) < CACHE_DURATION;
+
+}
 console.log("✅ DOM OK");
 /* ===============================
    CHARGEMENT DES PRODUITS
@@ -96,7 +160,59 @@ console.log("✅ DOM OK");
 async function loadProducts(){
 
     try{
+// Charger le cache immédiatement
 
+const cachedProducts = loadProductsCache();
+
+if(cachedProducts.length){
+
+    products = cachedProducts;
+
+    setProducts(products);
+
+    setCartProducts(products);
+
+    renderProducts();
+
+    renderTopProducts();
+
+    renderRecommendedProducts();
+
+    loadBestSellers();
+
+    renderCategorySection(
+        "Alimentação",
+        "foodProducts"
+    );
+
+    renderCategorySection(
+        "Eletrónica",
+        "electronicsProducts"
+    );
+
+    renderCategorySection(
+        "Moda",
+        "fashionProducts"
+    );
+
+    renderCategorySection(
+        "Beleza",
+        "beautyProducts"
+    );
+
+    renderCategorySection(
+        "Casa",
+        "homeProducts"
+    );
+
+    renderCategorySection(
+        "Auto",
+        "autoProducts"
+    );
+
+    console.log("📦 Produits chargés depuis le cache");
+
+}
         const q = query(
 
             collection(db,"products"),
@@ -140,7 +256,7 @@ async function loadProducts(){
         }
 
         // Envoie les produits aux autres modules
-
+saveProductsCache(products);
         setProducts(products);
 
         setCartProducts(products);
