@@ -273,3 +273,51 @@ onAuthStateChanged(auth, async (user) => {
     }
 
 });
+/* ===============================
+   DÉMARRAGE
+=============================== */
+
+window.addEventListener("load", async () => {
+
+    try{
+
+        // Charger le slider promotionnel
+        await loadPromoSlider(db);
+
+        // Charger tous les produits
+        await loadProducts();
+
+        console.log("✅ Home entièrement chargé");
+
+    }catch(err){
+
+        console.error(err);
+
+        showToast(
+            "Erro ao iniciar aplicação",
+            "error"
+        );
+
+    }
+
+});
+/* ===============================
+   SERVICE WORKER
+=============================== */
+
+if("serviceWorker" in navigator){
+
+    navigator.serviceWorker
+    .register("/service-worker.js")
+    .then(()=>{
+
+        console.log("✅ Service Worker OK");
+
+    })
+    .catch(err=>{
+
+        console.error(err);
+
+    });
+
+}
