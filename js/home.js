@@ -23,11 +23,9 @@ import {
 } from "./ui.js";
 
 import {
-    getCart,
     updateCartCount,
     setProducts as setCartProducts
 } from "./cart.js";
-
 import {
 
     setProducts,
@@ -54,20 +52,6 @@ console.log("✅ Home.js démarré");
 
 const adminBtn = document.getElementById("adminBtn");
 const shopNav = document.getElementById("shopNav");
-
-const promoSlider = document.getElementById("promoSlider");
-
-const topProducts = document.getElementById("topProducts");
-const recommendedProducts = document.getElementById("recommendedProducts");
-const bestSellers = document.getElementById("bestSellers");
-
-const foodProducts = document.getElementById("foodProducts");
-const electronicsProducts = document.getElementById("electronicsProducts");
-const fashionProducts = document.getElementById("fashionProducts");
-const beautyProducts = document.getElementById("beautyProducts");
-const homeProducts = document.getElementById("homeProducts");
-const autoProducts = document.getElementById("autoProducts");
-
 const productList = document.getElementById("productList");
 
 /* ===============================
@@ -430,19 +414,23 @@ window.addEventListener("load", async () => {
    SERVICE WORKER
 =============================== */
 
-if("serviceWorker" in navigator){
+window.addEventListener("load", () => {
 
-    navigator.serviceWorker
-    .register("/service-worker.js")
-    .then(()=>{
+    if ("serviceWorker" in navigator) {
 
-        console.log("✅ Service Worker OK");
+        navigator.serviceWorker
+            .register("/service-worker.js")
+            .then(() => {
 
-    })
-    .catch(err=>{
+                console.log("✅ Service Worker OK");
 
-        console.error(err);
+            })
+            .catch((err) => {
 
-    });
+                console.error("❌ Service Worker :", err);
 
-}
+            });
+
+    }
+
+});
