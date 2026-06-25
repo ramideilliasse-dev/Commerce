@@ -13,7 +13,9 @@ import {
     getProductImage,
     formatPrice
 } from "./ui.js";
-
+import {
+    addToCart
+} from "./cart.js";
 let products = [];
 /* ===============================
    STOCKAGE
@@ -85,7 +87,13 @@ export function renderProducts(containerId = "productList") {
                     ${isFavorite ? "❤️" : "🤍"}
 
                 </div>
+<button
+    class="cartBtn"
+    onclick="event.stopPropagation();addToCart('${product.id}')">
 
+    🛒
+
+</button>
             </div>
 
             <div class="info">
@@ -101,7 +109,7 @@ export function renderProducts(containerId = "productList") {
                 <div class="province">
                     📍 ${product.province || "Angola"}
                 </div>
-
+                
             </div>
 
         </div>
@@ -366,6 +374,9 @@ export function toggleFavorite(productId){
 
     // Recharger l'affichage pour mettre à jour les cœurs
     renderProducts();
+renderTopProducts();
+renderRecommendedProducts();
+loadBestSellers();
 
 }
 /* ===============================
@@ -428,7 +439,9 @@ export async function loadPromoSlider(db){
 
         let current = 0;
 
-        setInterval(()=>{
+        clearInterval(window.promoInterval);
+
+window.promoInterval = setInterval(()=>{
 
             slides[current].classList.remove("active");
 
@@ -442,8 +455,7 @@ export async function loadPromoSlider(db){
 
             slides[current].classList.add("active");
 
-        },3000);
-
+  },3000);
     }catch(err){
 
         console.error(err);
@@ -499,3 +511,4 @@ export function searchProducts(text){
 }
 window.openProduct = openProduct;
 window.toggleFavorite = toggleFavorite;
+window.addToCart = addToCart;
