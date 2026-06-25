@@ -341,3 +341,74 @@ export function updateTotal(){
         formatPrice(total);
 
 }
+/* ===============================
+   CHANGER LA QUANTITÉ
+=============================== */
+
+export function changeQuantity(productId, delta){
+
+    const item = cart.find(
+
+        p => p.id === productId
+
+    );
+
+    if(!item) return;
+
+    item.quantity += delta;
+
+    if(item.quantity <= 0){
+
+        removeFromCart(productId);
+
+        renderCart();
+
+        return;
+
+    }
+
+    saveCart();
+
+    renderCart();
+
+}
+/* ===============================
+   CHECKOUT
+=============================== */
+
+export function checkout(){
+
+    if(cart.length === 0){
+
+        showToast(
+
+            "O carrinho está vazio",
+
+            "warning"
+
+        );
+
+        return;
+
+    }
+
+    window.location.href =
+
+        "checkout.html";
+
+}
+/* ===============================
+   WINDOW
+=============================== */
+
+window.changeQuantity = changeQuantity;
+
+window.removeFromCart = function(id){
+
+    removeFromCart(id);
+
+    renderCart();
+
+};
+
+window.checkout = checkout;
