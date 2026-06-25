@@ -449,17 +449,46 @@ export async function loadPromoSlider(db){
 /* ===============================
    RECHERCHE
 =============================== */
-
 export function searchProducts(text){
 
-    const q = text.toLowerCase();
+    if(!text){
 
-    return products.filter(p =>
+        return products;
 
-        (p.name || "")
-        .toLowerCase()
-        .includes(q)
+    }
 
-    );
+    const query = text.toLowerCase().trim();
+
+    return products.filter(product=>{
+
+        const name =
+            (product.name || "")
+            .toLowerCase();
+
+        const category =
+            (product.category || "")
+            .toLowerCase();
+
+        const province =
+            (product.province || "")
+            .toLowerCase();
+
+        const description =
+            (product.description || "")
+            .toLowerCase();
+
+        return (
+
+            name.includes(query) ||
+
+            category.includes(query) ||
+
+            province.includes(query) ||
+
+            description.includes(query)
+
+        );
+
+    });
 
 }
