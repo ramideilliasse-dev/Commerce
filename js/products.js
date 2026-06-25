@@ -367,10 +367,85 @@ export function toggleFavorite(productId){
    PROMO SLIDER
 =============================== */
 
-export async function loadPromoSlider(){
+export async function loadPromoSlider(db){
+
+    const promoSlider = document.getElementById("promoSlider");
+
+    if(!promoSlider) return;
+
+    try{
+
+        const promoRef = doc(db,"promoBanner","main");
+
+        const snap = await getDoc(promoRef);
+
+        if(!snap.exists()){
+
+            promoSlider.style.display = "none";
+
+            return;
+
+        }
+
+        const data = snap.data();
+
+        const images = data.customImages || [];
+
+        const message = data.message || "";
+
+        if(images.length === 0){
+
+            promoSlider.style.display = "none";
+
+            return;
+
+        }
+
+        promoSlider.innerHTML = images.map((img,index)=>`
+
+            <div class="promoSlide ${index===0 ? "active" : ""}">
+
+                <img src="${img}">
+
+                <div class="promoText">
+
+                    ${message}
+
+                </div>
+
+            </div>
+
+        `).join("");
+
+        const slides = promoSlider.querySelectorAll(".promoSlide");
+
+        if(slides.length <= 1) return;
+
+        let current = 0;
+
+        setInterval(()=>{
+
+            slides[current].classList.remove("active");
+
+            current++;
+
+            if(current >= slides.length){
+
+                current = 0;
+
+            }
+
+            slides[current].classList.add("active");
+
+        },3000);
+
+    }catch(err){
+
+        console.error(err);
+
+    }
 
 }
-
 /* ===============================
    RECHERCHE
 =============================== */
