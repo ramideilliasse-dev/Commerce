@@ -213,6 +213,11 @@ if(cachedProducts.length){
     console.log("📦 Produits chargés depuis le cache");
 
 }
+     if(cacheIsValid()){
+
+    console.log("📦 Cache récent détecté");
+
+}
         const q = query(
 
             collection(db,"products"),
@@ -256,55 +261,59 @@ if(cachedProducts.length){
         }
 
         // Envoie les produits aux autres modules
-saveProductsCache(products);
-        setProducts(products);
+const oldData = JSON.stringify(loadProductsCache());
 
-        setCartProducts(products);
+const newData = JSON.stringify(products);
 
-        // Affichage principal
+if(oldData !== newData){
 
-        renderProducts();
+    saveProductsCache(products);
 
-        renderTopProducts();
+    setProducts(products);
 
-        renderRecommendedProducts();
+    setCartProducts(products);
 
-        loadBestSellers();
+    renderProducts();
 
-        // Catégories
+    renderTopProducts();
 
-        renderCategorySection(
-            "Alimentação",
-            "foodProducts"
-        );
+    renderRecommendedProducts();
 
-        renderCategorySection(
-            "Eletrónica",
-            "electronicsProducts"
-        );
+    loadBestSellers();
 
-        renderCategorySection(
-            "Moda",
-            "fashionProducts"
-        );
+    renderCategorySection(
+        "Alimentação",
+        "foodProducts"
+    );
 
-        renderCategorySection(
-            "Beleza",
-            "beautyProducts"
-        );
+    renderCategorySection(
+        "Eletrónica",
+        "electronicsProducts"
+    );
 
-        renderCategorySection(
-            "Casa",
-            "homeProducts"
-        );
+    renderCategorySection(
+        "Moda",
+        "fashionProducts"
+    );
 
-        renderCategorySection(
-            "Auto",
-            "autoProducts"
-        );
+    renderCategorySection(
+        "Beleza",
+        "beautyProducts"
+    );
 
-        console.log("✅ Produits chargés :", products.length);
+    renderCategorySection(
+        "Casa",
+        "homeProducts"
+    );
 
+    renderCategorySection(
+        "Auto",
+        "autoProducts"
+    );
+
+    console.log("🔄 Interface mise à jour");
+
+}
     }catch(error){
 
         console.error(error);
