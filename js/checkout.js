@@ -83,17 +83,13 @@ export function renderCheckout(){
     if(cart.length === 0){
 
         checkoutItems.innerHTML = `
-
             <div style="
                 padding:40px;
                 text-align:center;
                 color:#777;
             ">
-
                 O carrinho está vazio.
-
             </div>
-
         `;
 
         if(totalPrice){
@@ -110,18 +106,21 @@ export function renderCheckout(){
 
     checkoutItems.innerHTML = cart.map(item=>{
 
-        const product = item.product || {};
+        const product = item.product;
 
-        const price = Number(product.price || 0);
+        const subtotal =
+            Number(product.price || 0)
+            *
+            item.quantity;
 
-        total += price * item.quantity;
+        total += subtotal;
 
         return `
 
             <div class="checkoutItem">
 
                 <img
-                    src="${product.image || ""}"
+                    src="${product.image || product.images?.[0] || ""}"
                     class="checkoutImage"
                 >
 
@@ -129,13 +128,19 @@ export function renderCheckout(){
 
                     <div class="checkoutName">
 
-                        ${product.name || ""}
+                        ${product.name}
 
                     </div>
 
                     <div class="checkoutQty">
 
-                        ${item.quantity} × ${formatPrice(price)}
+                        ${item.quantity} × ${formatPrice(product.price)}
+
+                    </div>
+
+                    <div class="checkoutSubtotal">
+
+                        ${formatPrice(subtotal)}
 
                     </div>
 
@@ -147,11 +152,7 @@ export function renderCheckout(){
 
     }).join("");
 
-    if(totalPrice){
-
-        totalPrice.textContent = formatPrice(total);
-
-    }
+    totalPrice.textContent = formatPrice(total);
 
 }
 /* ===============================
@@ -186,21 +187,37 @@ async function placeOrder(){
 
         await addDoc(
 
-            collection(db,"orders"),
+    collection(db,"orders"),
 
-            {
+    {
 
-                uid: currentUser.uid,
+        uid: currentUser.uid,
 
-                items: cart,
+        items: cart,
 
-                status: "pending",
+        total: cart.reduce(
 
-                createdAt: serverTimestamp()
+            (sum,item)=>
 
-            }
+                sum +
 
-        );
+                (Number(item.product.price || 0)
+
+                *
+
+                item.quantity),
+
+            0
+
+        ),
+
+        status: "pending",
+
+        createdAt: serverTimestamp()
+
+    }
+
+);
 
         clearCart();
 
