@@ -218,3 +218,58 @@ async function loadProducts(){
     }
 
 }
+/* ===============================
+   AUTHENTIFICATION
+=============================== */
+
+onAuthStateChanged(auth, async (user) => {
+
+    if (!user) return;
+
+    try {
+
+        const snap = await getDoc(
+            doc(db, "users", user.uid)
+        );
+
+        if (!snap.exists()) return;
+
+        const data = snap.data() || {};
+
+        const role = (data.role || "").toLowerCase();
+
+        // Bouton Admin
+        if (role === "admin" || role === "superadmin") {
+
+            adminBtn.style.display = "block";
+
+            adminBtn.onclick = () => {
+
+                window.location.href =
+                    "admin-dashboard.html";
+
+            };
+
+        }
+
+        // Bouton Merchant
+        if (role === "merchant") {
+
+            shopNav.style.display = "flex";
+
+            shopNav.onclick = () => {
+
+                window.location.href =
+                    "merchant-dashboard.html";
+
+            };
+
+        }
+
+    } catch (err) {
+
+        console.error("Erreur Auth :", err);
+
+    }
+
+});
