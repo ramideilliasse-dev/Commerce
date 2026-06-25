@@ -1,103 +1,84 @@
- // ==============================
+ // ===============================
 // CART.JS
-// ==============================
+// Gestion complète du panier
+// ===============================
 
-import { showToast, updateBadge } from "./ui.js";
+import {
+
+    showToast,
+
+    updateBadge,
+
+    formatPrice,
+
+    getProductImage
+
+} from "./ui.js";
+
+/* ===============================
+   VARIABLES
+=============================== */
 
 let products = [];
 
-/* Permet à home.js de transmettre la liste des produits */
-export function setProducts(list) {
-    products = list || [];
-}
+let cart = [];
 
-/* Lire le panier */
-export function getCart() {
+/* ===============================
+   INITIALISATION
+=============================== */
 
-    try {
-        return JSON.parse(localStorage.getItem("cart") || "[]");
-    } catch (e) {
-        return [];
-    }
+loadCart();
 
-}
+/* ===============================
+   PRODUITS
+=============================== */
 
-/* Mettre à jour le badge */
-export function updateCartCount() {
+export function setProducts(data){
 
-    const cart = getCart();
-
-    const total = cart.reduce((sum, item) => {
-        return sum + (item.qty || 1);
-    }, 0);
-
-    updateBadge("bottomCartCount", total);
+    products = data || [];
 
 }
 
-/* Ajouter un produit */
-export function addToCart(productId, auth) {
+/* ===============================
+   PANIER
+=============================== */
 
-    if (!auth.currentUser) {
+export function getCart(){
 
-        showToast("🔐 Faça login primeiro", "warning");
+    return cart;
 
-        setTimeout(() => {
-            location.href = "login.html";
-        }, 800);
+}
 
-        return;
-    }
+export function loadCart(){
 
-    const product = products.find(p => p.id === productId);
+    try{
 
-    if (!product) {
-        showToast("❌ Produto não encontrado", "error");
-        return;
-    }
+        cart = JSON.parse(
 
-    if (Number(product.stock || 0) <= 0) {
-        showToast("❌ Produto esgotado", "error");
-        return;
-    }
+            localStorage.getItem("cart")
 
-    let cart = getCart();
+            || "[]"
 
-    const exist = cart.find(p => p.id === productId);
+        );
 
-    if (exist) {
+    }catch{
 
-        exist.qty += 1;
-
-    } else {
-
-        cart.push({
-
-            id: product.id,
-            name: product.name || "",
-            price: Number(product.price || 0),
-            image: product.images?.[0] || "",
-            qty: 1,
-            merchantId: product.merchantId || ""
-
-        });
+        cart = [];
 
     }
 
-    localStorage.setItem("cart", JSON.stringify(cart));
+}
+
+export function saveCart(){
+
+    localStorage.setItem(
+
+        "cart",
+
+        JSON.stringify(cart)
+
+    );
 
     updateCartCount();
 
-    window.dispatchEvent(new Event("storage"));
-
-    showToast(
-        "🛒 Produto adicionado ao carrinho",
-        "success"
-    );
-
 }
-
-/* Démarrage */
-window.addEventListener("storage", updateCartCount);
-
-updateCartCount();
