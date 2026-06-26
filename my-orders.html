@@ -1,120 +1,432 @@
  <!DOCTYPE html>
 <html lang="pt">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<meta name="theme-color" content="#ff6a00">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<meta name="theme-color"
+content="#ff6a00">
 
 <title>Meus Pedidos</title>
 
 <style>
 
-body{
+*{
 margin:0;
-font-family:Arial,sans-serif;
-background:#f5f5f5;
+padding:0;
+box-sizing:border-box;
 }
+
+body{
+
+font-family:Arial,sans-serif;
+
+background:#f5f6fb;
+
+color:#222;
+
+}
+
+/* ===========================
+HEADER
+=========================== */
 
 .header{
-background:#ff6a00;
-color:white;
-padding:16px;
-text-align:center;
-font-size:22px;
-font-weight:bold;
-position:sticky;
+
+position:fixed;
+
 top:0;
-z-index:100;
-}
 
-.ordersList{
-padding:15px;
-padding-bottom:90px;
-}
+left:0;
 
-.orderCard{
+right:0;
+
+height:70px;
+
 background:white;
-border-radius:16px;
-padding:15px;
-margin-bottom:15px;
-box-shadow:0 4px 12px rgba(0,0,0,.08);
-}
 
-.orderTop{
 display:flex;
-justify-content:space-between;
+
 align-items:center;
-margin-bottom:10px;
-}
 
-.orderDate{
-font-size:12px;
-color:#666;
-}
+justify-content:center;
 
-.orderStatus{
-padding:6px 12px;
-border-radius:20px;
-font-size:12px;
-font-weight:bold;
-color:white;
-}
+box-shadow:0 4px 15px rgba(0,0,0,.08);
 
-.pending{
-background:#ff9800;
-}
+z-index:100;
 
-.confirmed{
-background:#2196f3;
-}
-
-.delivered{
-background:#1aa34a;
-}
-
-.item{
-padding:6px 0;
-font-size:14px;
-border-bottom:1px solid #eee;
-}
-
-.item:last-child{
-border-bottom:none;
-}
-
-.orderTotal{
-margin-top:12px;
-font-size:18px;
-font-weight:bold;
-color:#ff6a00;
-}
-
-.empty{
-text-align:center;
-padding:50px 20px;
-color:#777;
-font-size:15px;
-}
-
-.loading{
-text-align:center;
-padding:50px;
 }
 
 .backBtn{
+
 position:absolute;
+
 left:15px;
-top:15px;
-background:rgba(255,255,255,.2);
+
+width:42px;
+
+height:42px;
+
 border:none;
-color:white;
-padding:8px 12px;
-border-radius:8px;
+
+border-radius:50%;
+
+background:#f2f2f2;
+
+font-size:20px;
+
 cursor:pointer;
+
+}
+
+.title{
+
+font-size:22px;
+
+font-weight:bold;
+
+color:#ff6a00;
+
+}
+
+/* ===========================
+CONTAINER
+=========================== */
+
+.container{
+
+padding:
+
+90px 15px
+
+120px;
+
+}
+
+/* ===========================
+ORDER CARD
+=========================== */
+
+.orderCard{
+
+background:white;
+
+border-radius:18px;
+
+padding:18px;
+
+margin-bottom:18px;
+
+box-shadow:0 4px 15px rgba(0,0,0,.08);
+
+}
+
+/* ===========================
+TOP
+=========================== */
+
+.orderTop{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:15px;
+
+}
+
+.orderNumber{
+
+font-size:15px;
+
+font-weight:bold;
+
+}
+
+.orderDate{
+
+font-size:12px;
+
+color:#777;
+
+margin-top:5px;
+
+}
+
+/* ===========================
+STATUS
+=========================== */
+
+.status{
+
+padding:7px 14px;
+
+border-radius:20px;
+
+font-size:12px;
+
+font-weight:bold;
+
+color:white;
+
+}
+
+.pending{
+
+background:#ff9800;
+
+}
+
+.accepted{
+
+background:#2196f3;
+
+}
+
+.preparing{
+
+background:#673ab7;
+
+}
+
+.shipping{
+
+background:#00bcd4;
+
+}
+
+.delivered{
+
+background:#16a34a;
+
+}
+
+.cancelled{
+
+background:#dc2626;
+
+}
+
+/* ===========================
+PRODUCT
+=========================== */
+
+.orderItem{
+
+display:flex;
+
+gap:12px;
+
+margin-top:15px;
+
+padding-top:15px;
+
+border-top:1px solid #eee;
+
+}
+
+.orderImage{
+
+width:70px;
+
+height:70px;
+
+border-radius:12px;
+
+object-fit:cover;
+
+background:#f4f4f4;
+
+}
+
+.orderInfo{
+
+flex:1;
+
+}
+
+.productName{
+
+font-weight:bold;
+
+font-size:15px;
+
+margin-bottom:6px;
+
+}
+
+.productQty{
+
+font-size:13px;
+
+color:#666;
+
+}
+
+.productPrice{
+
+margin-top:6px;
+
+color:#ff6a00;
+
+font-weight:bold;
+
+}
+
+/* ===========================
+TOTAL
+=========================== */
+
+.total{
+
+margin-top:18px;
+
+padding-top:15px;
+
+border-top:1px solid #eee;
+
+display:flex;
+
+justify-content:space-between;
+
+font-size:18px;
+
+font-weight:bold;
+
+}
+
+/* ===========================
+TIMELINE
+=========================== */
+
+.timeline{
+
+margin-top:20px;
+
+padding-top:15px;
+
+border-top:1px dashed #ddd;
+
+}
+
+.timelineTitle{
+
+font-weight:bold;
+
+margin-bottom:12px;
+
+}
+
+.timelineItem{
+
+display:flex;
+
+gap:10px;
+
+margin-bottom:10px;
+
+font-size:13px;
+
+}
+
+.timelineDot{
+
+width:10px;
+
+height:10px;
+
+background:#16a34a;
+
+border-radius:50%;
+
+margin-top:4px;
+
+}
+
+/* ===========================
+EMPTY
+=========================== */
+
+.empty{
+
+text-align:center;
+
+padding:80px 20px;
+
+color:#777;
+
+font-size:16px;
+
+}
+
+/* ===========================
+LOADER
+=========================== */
+
+.loader{
+
+text-align:center;
+
+padding:80px;
+
+font-size:16px;
+
+}
+
+/* ===========================
+BUTTON
+=========================== */
+
+.actionBtn{
+
+margin-top:15px;
+
+height:46px;
+
+border:none;
+
+border-radius:14px;
+
+background:#ff6a00;
+
+color:white;
+
+font-size:15px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+width:100%;
+
+}
+
+/* ===========================
+TOAST
+=========================== */
+
+.toastBox{
+
+position:fixed;
+
+top:20px;
+
+left:50%;
+
+transform:translateX(-50%);
+
+z-index:99999;
+
 }
 
 </style>
+
 </head>
 
 <body>
@@ -124,203 +436,157 @@ cursor:pointer;
 <button
 class="backBtn"
 onclick="history.back()">
+
 ←
+
 </button>
+
+<div class="title">
 
 📦 Meus Pedidos
 
 </div>
 
-<div id="ordersList" class="ordersList">
+</div>
 
-<div class="loading">
+<div class="container">
+
+<div
+id="ordersContainer"
+class="loader">
+
 Carregando pedidos...
-</div>
 
 </div>
+<!-- ===========================
+TOAST
+=========================== -->
 
-<script type="module">
-
-import { auth, db } from "./firebase.js"
-
-import {
-collection,
-getDocs,
-query,
-where
-}
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-
-import {
-onAuthStateChanged
-}
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
-
-const ordersList =
-document.getElementById("ordersList")
-window.openReview = function(productId, orderId){
-
-location.href =
-`review.html?product=${productId}&order=${orderId}`
-
-}
-onAuthStateChanged(auth, async(user)=>{
-
-if(!user){
-
-location.href = "login.html"
-return
-
-}
-
-loadOrders(user.uid)
-
-})
-
-async function loadOrders(userId){
-
-try{
-
-const q = query(
-collection(db,"orders"),
-where("userId","==",userId)
-)
-
-const snap = await getDocs(q)
-
-if(snap.empty){
-
-ordersList.innerHTML = `
-<div class="empty">
-📦 Nenhum pedido encontrado
-</div>
-`
-
-return
-
-}
-
-let html = ""
-
-snap.forEach(docSnap=>{
-
-const order = docSnap.data()
-
-const date =
-new Date(order.createdAt)
-.toLocaleString()
-
-let statusClass = "pending"
-
-if(order.status === "confirmed"){
-statusClass = "confirmed"
-}
-
-if(order.status === "delivered"){
-statusClass = "delivered"
-}
-if(order.status === "concluido"){
-statusClass = "delivered"
-}
-html += `
-
-<div class="orderCard">
-
-<div class="orderTop">
-
-<div class="orderDate">
-${date}
-</div>
-
-<div class="orderStatus ${statusClass}">
-${order.status || "pending"}
-</div>
+<div
+id="toastBox"
+class="toastBox">
 
 </div>
 
-${(order.items || [])
-.map(item=>`
+<!-- ===========================
+LOADER OVERLAY
+=========================== -->
 
-<div class="item">
+<div
+id="loaderOverlay"
 
-🛍️ ${item.name || ""}
-
-<br>
-
-Quantidade: ${item.qty || 1}
-
-${order.status === "concluido" || order.status === "delivered" ? `
-
-<br><br>
-
-${!order.reviewed ? `
-
-<button
 style="
-background:#ff6a00;
-color:white;
-border:none;
-padding:10px;
-border-radius:10px;
-margin-top:10px;
-"
-onclick="openReview(
-'${item.id}',
-'${docSnap.id}'
-)">
-⭐ Avaliar Produto
-</button>
+display:none;
+position:fixed;
+top:0;
+left:0;
+right:0;
+bottom:0;
+background:rgba(0,0,0,.45);
+backdrop-filter:blur(3px);
+justify-content:center;
+align-items:center;
+z-index:999999;
+">
 
-` : `
 <div
 style="
-margin-top:10px;
-color:#1aa34a;
+background:white;
+padding:30px;
+border-radius:18px;
+text-align:center;
+width:260px;
+">
+
+<div
+
+style="
+width:45px;
+height:45px;
+border:5px solid #eee;
+border-top:5px solid #ff6a00;
+border-radius:50%;
+margin:auto;
+animation:spin 1s linear infinite;
+">
+
+</div>
+
+<p
+
+style="
+margin-top:20px;
 font-weight:bold;
 ">
-✅ Avaliação enviada
-</div>
-`}
 
-` : ""}
+Carregando...
 
-</div>
-
-`).join("")}
-
-<div class="orderTotal">
-
-💰 ${Number(order.total || 0).toLocaleString()} Kz
+</p>
 
 </div>
 
 </div>
 
-`
+<style>
+
+@keyframes spin{
+
+0%{
+
+transform:rotate(0deg);
+
+}
+
+100%{
+
+transform:rotate(360deg);
+
+}
+
+}
+
+</style>
+
+</div>
+
+<!-- ===========================
+MY ORDERS JS
+=========================== -->
+
+<script
+type="module"
+src="./js/my-orders.js">
+
+</script>
+
+<!-- ===========================
+SERVICE WORKER
+=========================== -->
+
+<script>
+
+window.addEventListener("load",()=>{
+
+if("serviceWorker" in navigator){
+
+navigator.serviceWorker
+
+.register("/service-worker.js")
+
+.then(()=>{
+
+console.log("✅ Service Worker OK");
 
 })
 
-ordersList.innerHTML = html
-
-}catch(err){
-
-console.error(err)
-
-ordersList.innerHTML = `
-
-<div class="empty">
-
-❌ Erro ao carregar pedidos
-
-</div>
-
-`
+.catch(console.error);
 
 }
 
-}
+});
 
 </script>
 
 </body>
+
 </html>
