@@ -252,6 +252,31 @@ if(loader){
 }
 
 confirmBtn.disabled = true;
+     const orderItems = cart.map(item => ({
+
+    ...item,
+
+    merchantId:
+
+        item.product.merchantId ||
+
+        item.product.ownerId ||
+
+        "",
+
+    shopId:
+
+        item.product.shopId ||
+
+        "",
+
+    shopName:
+
+        item.product.shopName ||
+
+        ""
+
+}));
         await addDoc(
 
     collection(db,"orders"),
@@ -286,7 +311,7 @@ paymentMethod:
 note:
 
     orderNote?.value || "",
-        items: cart,
+        items: orderItems,
 
         total: cart.reduce(
 
