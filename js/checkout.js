@@ -243,7 +243,15 @@ if(
     }
 
     try{
+const loader = document.getElementById("loaderOverlay");
 
+if(loader){
+
+    loader.style.display = "flex";
+
+}
+
+confirmBtn.disabled = true;
         await addDoc(
 
     collection(db,"orders"),
@@ -305,7 +313,13 @@ note:
 );
 
         clearCart();
+if(loader){
 
+    loader.style.display = "none";
+
+}
+
+confirmBtn.disabled = false;
         showToast(
             "✅ Pedido enviado",
             "success"
@@ -318,7 +332,13 @@ note:
         },1000);
 
     }catch(err){
+if(loader){
 
+    loader.style.display = "none";
+
+}
+
+confirmBtn.disabled = false;
         console.error(err);
 
         showToast(
