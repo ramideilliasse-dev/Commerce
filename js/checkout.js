@@ -47,6 +47,36 @@ let currentUser = null;
 
 let cart = [];
 /* ===============================
+   CLIENT
+=============================== */
+
+const clientName =
+    document.getElementById("clientName");
+
+const clientPhone =
+    document.getElementById("clientPhone");
+
+const clientProvince =
+    document.getElementById("clientProvince");
+
+const clientCity =
+    document.getElementById("clientCity");
+
+const clientAddress =
+    document.getElementById("clientAddress");
+
+const paymentMethod =
+    document.getElementById("paymentMethod");
+
+const orderNote =
+    document.getElementById("orderNote");
+
+const couponCode =
+    document.getElementById("couponCode");
+
+const couponInfo =
+    document.getElementById("couponInfo");
+/* ===============================
    DOM
 =============================== */
 
@@ -173,7 +203,31 @@ async function placeOrder(){
     }
 
     if(cart.length === 0){
+if(
 
+    !clientName.value ||
+
+    !clientPhone.value ||
+
+    !clientProvince.value ||
+
+    !clientCity.value ||
+
+    !clientAddress.value
+
+){
+
+    showToast(
+
+        "Preencha todos os campos.",
+
+        "warning"
+
+    );
+
+    return;
+
+}
         showToast(
             "Carrinho vazio",
             "warning"
@@ -192,7 +246,33 @@ async function placeOrder(){
     {
 
         uid: currentUser.uid,
+customerName:
 
+    clientName?.value || "",
+
+customerPhone:
+
+    clientPhone?.value || "",
+
+province:
+
+    clientProvince?.value || "",
+
+city:
+
+    clientCity?.value || "",
+
+address:
+
+    clientAddress?.value || "",
+
+paymentMethod:
+
+    paymentMethod?.value || "",
+
+note:
+
+    orderNote?.value || "",
         items: cart,
 
         total: cart.reduce(
