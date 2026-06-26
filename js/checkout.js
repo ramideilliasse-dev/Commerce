@@ -444,4 +444,14 @@ window.addEventListener("load",()=>{
 
     }
 
+    const applyBtn =
+
+        document.getElementById("applyCouponBtn");
+
+    if(applyBtn){
+
+        applyBtn.onclick = applyCoupon;
+
+    }
+
 });
