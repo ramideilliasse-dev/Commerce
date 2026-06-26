@@ -656,3 +656,74 @@ OBSERVAÇÕES
     Confirmar Pedido
 
 </button>
+<!-- =========================
+LOADER
+========================= -->
+
+<div id="loaderOverlay">
+
+    <div class="loader"></div>
+
+    <div
+        style="
+        margin-top:20px;
+        font-size:18px;
+        font-weight:bold;
+        ">
+
+        A processar o seu pedido...
+
+    </div>
+
+</div>
+
+<!-- =========================
+TOAST
+========================= -->
+
+<div id="toastBox" class="toastBox"></div>
+
+</div>
+<!-- Fim Container -->
+
+<!-- =========================
+CHECKOUT JS
+========================= -->
+
+<script type="module" src="./js/checkout.js"></script>
+
+<!-- =========================
+SERVICE WORKER
+========================= -->
+
+<script>
+
+window.addEventListener("load",()=>{
+
+    if("serviceWorker" in navigator){
+
+        navigator.serviceWorker
+
+        .register("/service-worker.js")
+
+        .then(()=>{
+
+            console.log("✅ Service Worker OK");
+
+        })
+
+        .catch(err=>{
+
+            console.error(err);
+
+        });
+
+    }
+
+});
+
+</script>
+
+</body>
+
+</html>
