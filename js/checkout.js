@@ -11,6 +11,8 @@ import {
 
     addDoc,
 
+    getDocs,
+
     serverTimestamp
 
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -46,6 +48,7 @@ import {
 let currentUser = null;
 
 let cart = [];
+let discount = 0;
 /* ===============================
    CLIENT
 =============================== */
@@ -182,7 +185,9 @@ export function renderCheckout(){
 
     }).join("");
 
-    totalPrice.textContent = formatPrice(total);
+    const finalTotal = Math.max(0, total - discount);
+
+totalPrice.textContent = formatPrice(finalTotal);
 
 }
 /* ===============================
@@ -320,6 +325,107 @@ note:
             "Erro ao enviar pedido",
             "error"
         );
+
+    }
+
+}
+/* ===============================
+COUPON
+=============================== */
+
+async function applyCoupon(){
+
+    const code =
+
+        couponCode.value
+
+        .trim()
+
+        .toUpperCase();
+
+    if(!code){
+
+        showToast(
+
+            "Introduza um cupão.",
+
+            "warning"
+
+        );
+
+        return;
+
+    }
+
+    try{
+
+        const snapshot = await getDocs(
+
+            collection(db,"coupons")
+
+        );
+
+        let found = false;
+
+        snapshot.forEach(doc=>{
+
+            const data = doc.data();
+
+            if(
+
+                (data.code || "").toUpperCase()
+
+                === code
+
+            ){
+
+                found = true;
+
+                discount = Number(
+
+                    data.discount || 0
+
+                );
+
+            }
+
+        });
+
+        if(found){
+
+            couponInfo.innerHTML =
+
+                "✅ Cupão aplicado.";
+
+            renderCheckout();
+
+            showToast(
+
+                "Cupão aplicado.",
+
+                "success"
+
+            );
+
+        }else{
+
+            couponInfo.innerHTML =
+
+                "";
+
+            showToast(
+
+                "Cupão inválido.",
+
+                "error"
+
+            );
+
+        }
+
+    }catch(err){
+
+        console.error(err);
 
     }
 
