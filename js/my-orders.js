@@ -15,7 +15,15 @@ import {
 
     where,
 
-    orderBy
+    orderBy,
+
+    doc,
+
+    updateDoc,
+
+    arrayUnion,
+
+    serverTimestamp
 
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -263,3 +271,275 @@ async function loadOrders(){
     }
 
 }
+/* ===============================
+   AFFICHAGE DES COMMANDES
+=============================== */
+
+function renderOrders(){
+
+    if(!ordersContainer) return;
+
+    if(orders.length === 0){
+
+        ordersContainer.innerHTML = `
+
+            <div class="empty">
+
+                📦 Nenhum pedido encontrado.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    let html = "";
+
+    orders.forEach(order=>{
+
+        html += `
+
+        <div class="orderCard">
+
+            <div class="orderTop">
+
+                <div>
+
+                    <div class="orderNumber">
+
+                        Pedido Nº
+
+                        ${order.orderNumber || "-"}
+
+                    </div>
+
+                    <div class="orderDate">
+
+                        ${formatOrderDate(order.createdAt)}
+
+                    </div>
+
+                </div>
+
+                <div class="status ${getStatusClass(order.status)}">
+
+                    ${getStatusText(order.status)}
+
+                </div>
+
+            </div>
+
+        `;
+
+        (order.items || []).forEach(item=>{
+
+            const product = item.product || {};
+
+            html += `
+
+                <div class="orderItem">
+
+                    <img
+
+                        class="orderImage"
+
+                        src="${getProductImage(product)}"
+
+                        onerror="this.src='https://via.placeholder.com/150'"
+
+                    >
+
+                    <div class="orderInfo">
+
+                        <div class="productName">
+
+                            ${product.name || ""}
+
+                        </div>
+
+                        <div class="productQty">
+
+                            Quantidade:
+
+                            ${item.quantity || 1}
+
+                        </div>
+
+                        <div class="productPrice">
+
+                            ${formatPrice(product.price || 0)}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        });
+if(order.status === "pending"){
+
+    html += `
+
+    <button
+
+        class="actionBtn"
+
+        onclick="cancelOrder('${order.id}')">
+
+        ❌ Cancelar Pedido
+
+    </button>
+
+    `;
+
+}
+        html += `
+
+            <div class="total">
+
+                <span>Total</span>
+
+                <span>
+
+                    ${formatPrice(order.total || 0)}
+
+                </span>
+
+            </div>
+
+        `;
+
+        if(order.statusHistory && order.statusHistory.length){
+
+            html += `
+
+            <div class="timeline">
+
+                <div class="timelineTitle">
+
+                    Histórico
+
+                </div>
+
+            `;
+
+            order.statusHistory.forEach(history=>{
+
+                html += `
+
+                    <div class="timelineItem">
+
+                        <div class="timelineDot"></div>
+
+                        <div>
+
+                            <b>
+
+                                ${getStatusText(history.status)}
+
+                            </b>
+
+                            <br>
+
+                            ${history.message || ""}
+
+                            <br>
+
+                            <small>
+
+                                ${formatOrderDate(history.date)}
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            });
+
+            html += `
+
+            </div>
+
+            `;
+
+        }
+
+        html += `
+
+        </div>
+
+        `;
+
+    });
+
+    ordersContainer.innerHTML = html;
+
+}
+/* ===============================
+   ANNULER UNE COMMANDE
+=============================== */
+
+async function cancelOrder(orderId){
+
+    try{
+
+        await updateDoc(
+
+            doc(db,"orders",orderId),
+
+            {
+
+                status:"cancelled",
+
+                updatedAt:serverTimestamp(),
+
+                cancelledAt:serverTimestamp(),
+
+                statusHistory:arrayUnion({
+
+                    status:"cancelled",
+
+                    message:"Pedido cancelado pelo cliente",
+
+                    date:new Date()
+
+                })
+
+            }
+
+        );
+
+        showToast(
+
+            "Pedido cancelado.",
+
+            "success"
+
+        );
+
+        loadOrders();
+
+    }catch(err){
+
+        console.error(err);
+
+        showToast(
+
+            "Erro ao cancelar pedido.",
+
+            "error"
+
+        );
+
+    }
+
+}
+
+window.cancelOrder = cancelOrder;
