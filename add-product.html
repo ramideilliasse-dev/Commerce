@@ -1,682 +1,808 @@
  <!DOCTYPE html>
 <html lang="pt">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<meta
+name="theme-color"
+content="#ff6a00">
+
+<meta
+name="apple-mobile-web-app-capable"
+content="yes">
+
+<meta
+name="apple-mobile-web-app-status-bar-style"
+content="black-translucent">
 
 <title>Adicionar Produto</title>
 
+<link
+rel="manifest"
+href="/manifest.json">
+
 <style>
-body{
-font-family:Arial;
+
+*{
+
 margin:0;
-background:#f4f4f4;
+padding:0;
+box-sizing:border-box;
+
 }
 
+body{
+
+font-family:Arial,sans-serif;
+
+background:#f5f5f5;
+
+color:#222;
+
+padding-bottom:120px;
+
+}
+
+/* ===============================
+HEADER
+=============================== */
+
 .header{
+
+position:sticky;
+
+top:0;
+
+z-index:500;
+
+height:65px;
+
 background:#ff6a00;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
 color:white;
-padding:18px;
-font-size:20px;
+
+font-size:22px;
+
 font-weight:bold;
-text-align:center;
-position:relative;
+
+box-shadow:0 4px 10px rgba(0,0,0,.15);
+
 }
 
 .backBtn{
+
 position:absolute;
-left:10px;
-top:15px;
-background:white;
-color:#ff6a00;
+
+left:15px;
+
+width:42px;
+
+height:42px;
+
 border:none;
-padding:6px 12px;
-border-radius:20px;
+
+border-radius:50%;
+
+background:white;
+
+color:#ff6a00;
+
+font-size:22px;
+
 cursor:pointer;
+
 }
+
+/* ===============================
+CONTAINER
+=============================== */
 
 .container{
-max-width:600px;
+
+max-width:700px;
+
 margin:auto;
-padding:20px;
+
+padding:15px;
+
 }
+
+/* ===============================
+CARD
+=============================== */
 
 .card{
+
 background:white;
-padding:20px;
-border-radius:12px;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);
-margin-bottom:15px;
+
+border-radius:18px;
+
+padding:18px;
+
+margin-bottom:18px;
+
+box-shadow:0 6px 18px rgba(0,0,0,.08);
+
 }
 
-input,textarea,select{
+.cardTitle{
+
+font-size:18px;
+
+font-weight:bold;
+
+margin-bottom:15px;
+
+color:#ff6a00;
+
+}
+
+/* ===============================
+INPUTS
+=============================== */
+
+input,
+textarea,
+select{
+
 width:100%;
-padding:12px;
-border-radius:8px;
+
+padding:14px;
+
+margin-bottom:14px;
+
 border:1px solid #ddd;
-margin-bottom:12px;
+
+border-radius:12px;
+
 font-size:15px;
-box-sizing:border-box;
+
+outline:none;
+
+transition:.25s;
+
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+
+border-color:#ff6a00;
+
+box-shadow:0 0 0 3px rgba(255,106,0,.15);
+
 }
 
 textarea{
-min-height:120px;
-resize:vertical;
+
+resize:none;
+
+min-height:130px;
+
 }
 
-button{
-width:100%;
-padding:14px;
-background:#ff6a00;
-color:white;
-border:none;
-font-size:18px;
-border-radius:10px;
-cursor:pointer;
+/* ===============================
+DESCRIPTION
+=============================== */
+
+.counter{
+
+text-align:right;
+
+font-size:12px;
+
+color:#666;
+
+margin-top:-8px;
+
+margin-bottom:12px;
+
 }
+
+/* ===============================
+UPLOAD
+=============================== */
+
+.uploadBox{
+
+border:2px dashed #ff6a00;
+
+border-radius:16px;
+
+padding:30px;
+
+text-align:center;
+
+cursor:pointer;
+
+background:#fffaf6;
+
+transition:.3s;
+
+}
+
+.uploadBox:hover{
+
+background:#fff2e8;
+
+}
+
+.uploadIcon{
+
+font-size:45px;
+
+margin-bottom:10px;
+
+}
+
+.uploadText{
+
+font-size:15px;
+
+color:#666;
+
+}
+
+/* ===============================
+PREVIEW
+=============================== */
 
 .preview{
-display:flex;
+
+display:grid;
+
+grid-template-columns:repeat(3,1fr);
+
 gap:10px;
-flex-wrap:wrap;
+
+margin-top:15px;
+
 }
 
 .preview img{
-width:90px;
-height:90px;
+
+width:100%;
+
+aspect-ratio:1;
+
 object-fit:cover;
-border-radius:8px;
-border:2px solid #eee;
+
+border-radius:12px;
+
 }
 
+/* ===============================
+LOADER
+=============================== */
+
 .progressBox{
+
 display:none;
-margin-top:15px;
-background:#eee;
-border-radius:20px;
-overflow:hidden;
+
+margin-top:20px;
+
 height:12px;
+
+background:#eee;
+
+border-radius:20px;
+
+overflow:hidden;
+
 }
 
 .progressBar{
+
 height:100%;
+
 width:0%;
+
 background:#1aa34a;
-transition:0.3s;
+
+transition:.25s;
+
 }
 
 .loadingText{
+
+margin-top:10px;
+
+font-size:13px;
+
 text-align:center;
-font-size:13px;
-margin-top:8px;
-}
 
-.infoBox{
-background:#fff3cd;
-padding:10px;
-border-radius:10px;
-font-size:13px;
-margin-bottom:15px;
-color:#444;
-}
-
-.counter{
-font-size:12px;
 color:#666;
-text-align:right;
-margin-top:-8px;
-margin-bottom:10px;
+
 }
- /* ================= TOAST MODERNE ================= */
+
+/* ===============================
+BUTTON
+=============================== */
+
+.publishBtn{
+
+position:fixed;
+
+left:15px;
+
+right:15px;
+
+bottom:15px;
+
+height:58px;
+
+border:none;
+
+border-radius:16px;
+
+background:#ff6a00;
+
+color:white;
+
+font-size:19px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+box-shadow:0 8px 20px rgba(255,106,0,.35);
+
+}
+
+/* ===============================
+TOAST
+=============================== */
 
 .toastBox{
+
 position:fixed;
+
 top:20px;
+
 left:50%;
+
 transform:translateX(-50%);
-z-index:999999;
+
 display:flex;
+
 flex-direction:column;
+
 gap:10px;
-pointer-events:none;
+
+z-index:99999;
+
 }
 
-.toast{
-min-width:220px;
-max-width:320px;
-padding:14px 18px;
-border-radius:14px;
-color:white;
-font-size:14px;
-font-weight:bold;
-box-shadow:0 6px 18px rgba(0,0,0,0.2);
-animation:toastIn .3s ease, toastOut .3s ease 3.7s forwards;
-backdrop-filter:blur(10px);
-}
-
-.toast.success{
-background:linear-gradient(135deg,#1aa34a,#23c55e);
-}
-
-.toast.error{
-background:linear-gradient(135deg,#dc2626,#ef4444);
-}
-
-.toast.warning{
-background:linear-gradient(135deg,#ff6a00,#ff9f43);
-}
-
-@keyframes toastIn{
-from{
-opacity:0;
-transform:translateY(-20px) scale(.9);
-}
-to{
-opacity:1;
-transform:translateY(0) scale(1);
-}
-}
-
-@keyframes toastOut{
-to{
-opacity:0;
-transform:translateY(-20px) scale(.9);
-}
-}
 </style>
 
 </head>
-
 <body>
 
+<!-- ===============================
+HEADER
+=============================== -->
+
 <div class="header">
-<button class="backBtn" onclick="goBack()">← Voltar</button>
-Publicar produto
+
+<button
+class="backBtn"
+onclick="history.back()">
+
+←
+
+</button>
+
+Adicionar Produto
+
 </div>
+
+<!-- ===============================
+CONTAINER
+=============================== -->
 
 <div class="container">
 
-<div class="infoBox">
-📌 Produtos claros e com boas imagens vendem mais rápido.
-</div>
+<!-- ===============================
+INFORMAÇÕES
+=============================== -->
 
 <div class="card">
 
-<input id="nameInput" placeholder="Nome do produto">
+<div class="cardTitle">
 
-<input id="priceInput" type="number" placeholder="Preço">
+Informações do Produto
+
+</div>
+
 <input
-id="stockInput"
+
+id="productName"
+
+placeholder="Nome do produto"
+
+maxlength="120">
+
+<input
+
+id="productPrice"
+
 type="number"
+
+placeholder="Preço (Kz)"
+
+min="1">
+
+<input
+
+id="productStock"
+
+type="number"
+
 placeholder="Quantidade em stock"
+
 min="0">
-<select id="categoryInput">
-<option value="">Selecionar categoria</option>
+
+<select id="productCategory">
+
+<option value="">
+
+Selecionar categoria
+
+</option>
 
 <option value="Alimentação">
+
 🍚 Alimentação
+
 </option>
 
 <option value="Eletrónica">
+
 📱 Eletrónica
+
 </option>
 
 <option value="Moda">
+
 👕 Moda
+
 </option>
 
 <option value="Beleza">
+
 💄 Beleza
+
 </option>
 
 <option value="Casa">
+
 🏠 Casa
+
 </option>
 
 <option value="Auto">
+
 🚗 Auto
+
 </option>
 
 </select>
-<select id="provinceInput">
-<option value="">Selecionar província</option>
+
+<select id="productProvince">
+
+<option value="">
+
+Selecionar província
+
+</option>
+
 <option>Luanda</option>
+
 <option>Benguela</option>
+
 <option>Huambo</option>
+
 <option>Huíla</option>
+
 <option>Bié</option>
+
 <option>Malanje</option>
-<option>Uíge</option>
+
 <option>Cabinda</option>
+
+<option>Uíge</option>
+
 <option>Zaire</option>
+
 <option>Namibe</option>
+
 <option>Cunene</option>
-<option>Cuando Cubango</option>
+
 <option>Moxico</option>
+
 <option>Lunda Norte</option>
+
 <option>Lunda Sul</option>
+
 <option>Kwanza Norte</option>
+
 <option>Kwanza Sul</option>
+
 <option>Bengo</option>
+
 </select>
 
-<textarea id="descriptionInput" placeholder="Descrição completa do produto"></textarea>
+<textarea
+
+id="productDescription"
+
+maxlength="1000"
+
+placeholder="Descrição completa do produto">
+
+</textarea>
 
 <div class="counter">
-<span id="descCount">0</span>/1000
+
+<span id="descriptionCounter">
+
+0
+
+</span>
+
+/1000
+
 </div>
 
 </div>
+
+<!-- ===============================
+IMAGENS
+=============================== -->
 
 <div class="card">
 
-<input type="file" id="images" multiple accept="image/*">
+<div class="cardTitle">
 
-<div id="imagePreview" class="preview"></div>
+Fotos do Produto
 
 </div>
 
-<button id="publishBtn">
-Publicar
+<label
+
+for="productImages"
+
+class="uploadBox">
+
+<div class="uploadIcon">
+
+📷
+
+</div>
+
+<div class="uploadText">
+
+Toque para selecionar até 6 imagens
+
+</div>
+
+</label>
+
+<input
+
+id="productImages"
+
+type="file"
+
+accept="image/*"
+
+multiple
+
+hidden>
+
+<div
+
+id="previewImages"
+
+class="preview">
+
+</div>
+
+</div>
+
+<!-- ===============================
+PROGRESSO
+=============================== -->
+
+<div class="card">
+
+<div
+
+id="progressBox"
+
+class="progressBox">
+
+<div
+
+id="progressBar"
+
+class="progressBar">
+
+</div>
+
+</div>
+
+<div
+
+id="loadingText"
+
+class="loadingText">
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ===============================
+BOTÃO
+=============================== -->
+
+<button
+
+id="publishBtn"
+
+class="publishBtn">
+
+🚀 Publicar Produto
+
 </button>
 
-<div id="progressBox" class="progressBox">
-<div id="progressBar" class="progressBar"></div>
+<!-- ===============================
+TOAST
+=============================== -->
+
+<div
+
+id="toastBox"
+
+class="toastBox">
+
+</div>
+<!-- ===============================
+LOADER OVERLAY
+=============================== -->
+
+<div
+
+id="loaderOverlay"
+
+style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+right:0;
+bottom:0;
+background:rgba(0,0,0,.45);
+backdrop-filter:blur(4px);
+justify-content:center;
+align-items:center;
+z-index:999999;
+">
+
+<div
+
+style="
+width:280px;
+background:white;
+padding:30px;
+border-radius:18px;
+text-align:center;
+">
+
+<div
+
+style="
+width:50px;
+height:50px;
+margin:auto;
+border:5px solid #eee;
+border-top:5px solid #ff6a00;
+border-radius:50%;
+animation:spin 1s linear infinite;
+">
+
 </div>
 
-<div id="loadingText" class="loadingText"></div>
+<p
+
+style="
+margin-top:18px;
+font-size:15px;
+font-weight:bold;
+">
+
+A publicar produto...
+
+</p>
 
 </div>
 
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</div>
+
+<style>
+
+@keyframes spin{
+
+0%{
+
+transform:rotate(0deg);
+
+}
+
+100%{
+
+transform:rotate(360deg);
+
+}
+
+}
+
+</style>
+
+<!-- ===============================
+ADD PRODUCT JS
+=============================== -->
+
+<script
+
+type="module"
+
+src="./js/add-product.js">
+
+</script>
+
+<!-- ===============================
+SERVICE WORKER
+=============================== -->
 
 <script>
 
-/* CONFIG */
-const firebaseConfig = {
-apiKey: "AIzaSyB3rKXZjJqskewJM-cBvBRw8-ecJPvoeBw",
-authDomain: "angcomerce-v1.firebaseapp.com",
-projectId: "angcomerce-v1"
-};
+window.addEventListener("load",()=>{
 
-firebase.initializeApp(firebaseConfig)
+if("serviceWorker" in navigator){
 
-const db = firebase.firestore()
-const auth = firebase.auth()
+navigator.serviceWorker
 
-/* VARIABLES */
-const imageInput = document.getElementById("images")
-const preview = document.getElementById("imagePreview")
-const progressBox = document.getElementById("progressBox")
-const progressBar = document.getElementById("progressBar")
-const loadingText = document.getElementById("loadingText")
-const publishBtn = document.getElementById("publishBtn")
-const descInput = document.getElementById("descriptionInput")
-const descCount = document.getElementById("descCount")
+.register("/service-worker.js")
 
-let imageFiles = []
+.then(()=>{
 
-/* 🔥 AUTH PERSIST */
-auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-
-/* 🔥 DESCRIPTION COUNT */
-descInput.addEventListener("input",()=>{
-descCount.innerText = descInput.value.length
-})
-
-/* IMAGE PREVIEW */
-imageInput.onchange = function(){
-
-imageFiles = [...this.files]
-
-preview.innerHTML=""
-
-/* 🔥 LIMIT */
-if(imageFiles.length > 6){
-
-alert("Máximo 6 imagens ❌")
-
-imageFiles = imageFiles.slice(0,6)
-
-}
-
-imageFiles.forEach(file=>{
-
-preview.innerHTML += `
-<img loading="lazy" src="${URL.createObjectURL(file)}">
-`
+console.log("✅ Service Worker OK");
 
 })
 
-}
-
-/* 🔥 COMPRESS IMAGE */
-function compressImage(file){
-
-return new Promise((resolve)=>{
-
-const reader = new FileReader()
-
-reader.readAsDataURL(file)
-
-reader.onload = function(event){
-
-const img = new Image()
-
-img.src = event.target.result
-
-img.onload = function(){
-
-const canvas = document.createElement("canvas")
-
-const maxWidth = 900
-const scale = maxWidth / img.width
-
-canvas.width = maxWidth
-canvas.height = img.height * scale
-
-const ctx = canvas.getContext("2d")
-
-ctx.drawImage(img,0,0,canvas.width,canvas.height)
-
-canvas.toBlob((blob)=>{
-
-resolve(blob)
-
-},"image/jpeg",0.7)
+.catch(console.error);
 
 }
 
-}
+});
 
-})
-
-}
-
-/* UPLOAD CLOUDINARY */
-async function upload(file){
-
-let compressed = await compressImage(file)
-
-let form = new FormData()
-
-form.append("file", compressed)
-
-form.append("upload_preset","angcomerce-upload")
-
-let res = await fetch(
-"https://api.cloudinary.com/v1_1/dy9qnhimc/image/upload",
-{
-method:"POST",
-body:form
-})
-
-let data = await res.json()
-
-if(!data.secure_url){
-throw new Error("Upload falhou")
-}
-
-return data.secure_url.replace(
-"/upload/",
-"/upload/w_600,q_auto,f_auto/"
-)
-
-}
-
-/* PUBLISH */
-publishBtn.onclick = async function(){
-
-try{
-
-publishBtn.disabled = true
-publishBtn.innerText = "Publicando..."
-
-let user = auth.currentUser
-
-if(!user){
-
-alert("Login necessário ❌")
-
-publishBtn.disabled = false
-publishBtn.innerText = "Publicar"
-
-return
-
-}
-
-let name = document.getElementById("nameInput").value.trim()
-
-let price = document.getElementById("priceInput").value
-let stock =
-document.getElementById("stockInput").value
-let description = document.getElementById("descriptionInput").value.trim()
-
-let province = document.getElementById("provinceInput").value
-let category =
-document.getElementById("categoryInput").value
-/* VALIDATION */
-if(
-!name ||
-!price ||
-!description ||
-!province ||
-!category
-){
-
-showToast("Preencha todos os campos","warning")
-
-publishBtn.disabled = false
-publishBtn.innerText = "Publicar"
-
-return
-
-}
-
-if(Number(price) <= 0){
-
-alert("Preço inválido ❌")
-
-publishBtn.disabled = false
-publishBtn.innerText = "Publicar"
-
-return
-
-}
-
-if(Number(stock) < 0){
-
-showToast(
-"Stock inválido",
-"error"
-)
-
-publishBtn.disabled = false
-publishBtn.innerText = "Publicar"
-
-return
-
-}
-
-showToast(
-"Stock inválido",
-"error"
-)
-
-publishBtn.disabled = false
-publishBtn.innerText = "Publicar"
-
-return
-
-}
-publishBtn.disabled = false
-publishBtn.innerText = "Publicar"
-
-return
-
-}
-
-if(imageFiles.length === 0){
-
-alert("Adicione imagem ❌")
-
-publishBtn.disabled = false
-publishBtn.innerText = "Publicar"
-
-return
-
-}
-
-/* USER */
-let snap = await db.collection("users").doc(user.uid).get()
-
-let data = snap.data()
-
-if(!data){
-
-alert("User não existe ❌")
-
-publishBtn.disabled = false
-publishBtn.innerText = "Publicar"
-
-return
-
-}
-
-/* SECURITY */
-if(data.role !== "merchant" || !data.approved){
-
-alert("Conta comerciante não validada ❌")
-
-publishBtn.disabled = false
-publishBtn.innerText = "Publicar"
-
-return
-
-}
-
-/* PROGRESS */
-progressBox.style.display="block"
-
-progressBar.style.width="10%"
-
-loadingText.innerText="Preparando imagens..."
-
-let urls=[]
-
-let progress = 20
-
-for(let file of imageFiles){
-
-let url = await upload(file)
-
-urls.push(url)
-
-progress += 10
-
-if(progress > 90){
-progress = 90
-}
-
-progressBar.style.width = progress + "%"
-
-loadingText.innerText = "Upload imagens..."
-
-}
-
-/* SAVE */
-progressBar.style.width="95%"
-
-loadingText.innerText="Salvando produto..."
-
-await db.collection("products").add({
-
-name:name,
-
-price:Number(price),
-stock:Number(stock),
-category: category,
-description:description,
-
-province:province,
-
-images:urls,
-
-merchantId:user.uid,
-
-shopName:data.shopName || "Loja",
-
-merchantWhatsapp:data.whatsapp || "",
-
-merchantDescription:data.shopDescription || "",
-
-created:Date.now()
-
-})
-
-progressBar.style.width="100%"
-
-loadingText.innerText="Produto publicado ✔"
-
-/* RESET */
-document.getElementById("nameInput").value=""
-document.getElementById("priceInput").value=""
-document.getElementById("stockInput").value=""
-document.getElementById("descriptionInput").value=""
-document.getElementById("provinceInput").value=""
-document.getElementById("categoryInput").value=""
-preview.innerHTML=""
-
-imageFiles=[]
-
-descCount.innerText="0"
-
-alert("Produto publicado ✔")
-
-publishBtn.disabled = false
-publishBtn.innerText = "Publicar"
-
-}catch(e){
-
-console.error(e)
-
-showToast("❌ Ocorreu um erro","error")
-
-publishBtn.disabled = false
-publishBtn.innerText = "Publicar"
-
-}
-
-}
-
-/* BACK */
-function goBack(){
-location.href="merchant-dashboard.html"
-}
-/* ================= TOAST ================= */
-
-function showToast(message,type="success"){
-
-const box = document.getElementById("toastBox")
-
-const toast = document.createElement("div")
-
-toast.className = "toast " + type
-
-toast.innerText = message
-
-box.appendChild(toast)
-
-setTimeout(()=>{
-toast.remove()
-},4000)
-
-}
 </script>
-<div id="toastBox" class="toastBox"></div>
+
 </body>
+
 </html>
