@@ -362,8 +362,32 @@ note:
 
         status: "pending",
 
-        createdAt: serverTimestamp()
+statusHistory:[
 
+    {
+
+        status:"pending",
+
+        date:serverTimestamp(),
+
+        message:"Pedido criado"
+
+    }
+
+],
+
+        createdAt: serverTimestamp(),
+updatedAt: serverTimestamp(),
+
+acceptedAt:null,
+
+preparingAt:null,
+
+shippingAt:null,
+
+deliveredAt:null,
+
+cancelledAt:null
     }
 
 );
