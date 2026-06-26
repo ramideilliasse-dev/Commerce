@@ -241,3 +241,419 @@ function activateRemoveButtons(){
     });
 
 }
+/* ===============================
+   COMPRESSION IMAGE
+=============================== */
+
+function compressImage(file){
+
+    return new Promise((resolve,reject)=>{
+
+        const reader = new FileReader();
+
+        reader.onload = e=>{
+
+            const img = new Image();
+
+            img.onload = ()=>{
+
+                const canvas = document.createElement("canvas");
+
+                const ctx = canvas.getContext("2d");
+
+                const MAX_WIDTH = 900;
+
+                const scale =
+
+                    Math.min(
+
+                        1,
+
+                        MAX_WIDTH / img.width
+
+                    );
+
+                canvas.width = img.width * scale;
+
+                canvas.height = img.height * scale;
+
+                ctx.drawImage(
+
+                    img,
+
+                    0,
+
+                    0,
+
+                    canvas.width,
+
+                    canvas.height
+
+                );
+
+                canvas.toBlob(
+
+                    blob=>{
+
+                        resolve(blob);
+
+                    },
+
+                    "image/jpeg",
+
+                    0.75
+
+                );
+
+            };
+
+            img.onerror = reject;
+
+            img.src = e.target.result;
+
+        };
+
+        reader.onerror = reject;
+
+        reader.readAsDataURL(file);
+
+    });
+
+}
+
+/* ===============================
+   CLOUDINARY
+=============================== */
+
+const CLOUDINARY_URL =
+
+"https://api.cloudinary.com/v1_1/dy9qnhimc/image/upload";
+
+const CLOUDINARY_PRESET =
+
+"angcomerce-upload";
+
+/* ===============================
+   UPLOAD CLOUDINARY
+=============================== */
+
+async function uploadImage(file){
+
+    const compressed =
+
+        await compressImage(file);
+
+    const formData = new FormData();
+
+    formData.append(
+
+        "file",
+
+        compressed
+
+    );
+
+    formData.append(
+
+        "upload_preset",
+
+        CLOUDINARY_PRESET
+
+    );
+
+    const response = await fetch(
+
+        CLOUDINARY_URL,
+
+        {
+
+            method:"POST",
+
+            body:formData
+
+        }
+
+    );
+
+    const data = await response.json();
+
+    if(!data.secure_url){
+
+        throw new Error(
+
+            "Erro Cloudinary"
+
+        );
+
+    }
+
+    return data.secure_url.replace(
+
+        "/upload/",
+
+        "/upload/w_800,q_auto,f_auto/"
+
+    );
+
+}
+/* ===============================
+   PUBLICATION
+=============================== */
+
+async function publishProduct(){
+
+    try{
+
+        if(!currentUser){
+
+            showToast(
+                "Faça login primeiro",
+                "warning"
+            );
+
+            return;
+
+        }
+
+        const name =
+            productName.value.trim();
+
+        const price =
+            Number(productPrice.value);
+
+        const stock =
+            Number(productStock.value);
+
+        const category =
+            productCategory.value;
+
+        const province =
+            productProvince.value;
+
+        const description =
+            productDescription.value.trim();
+
+        /* ===============================
+           VALIDATION
+        =============================== */
+
+        if(
+
+            !name ||
+
+            !price ||
+
+            !category ||
+
+            !province ||
+
+            !description
+
+        ){
+
+            showToast(
+
+                "Preencha todos os campos",
+
+                "warning"
+
+            );
+
+            return;
+
+        }
+
+        if(imageFiles.length === 0){
+
+            showToast(
+
+                "Adicione pelo menos uma imagem",
+
+                "warning"
+
+            );
+
+            return;
+
+        }
+
+        showLoader();
+
+        publishBtn.disabled = true;
+
+        progressBox.style.display = "block";
+
+        progressBar.style.width = "5%";
+
+        loadingText.textContent =
+            "Verificando comerciante...";
+
+        /* ===============================
+           MERCHANT
+        =============================== */
+
+        const merchantRef = await getDoc(
+
+            doc(
+
+                db,
+
+                "users",
+
+                currentUser.uid
+
+            )
+
+        );
+
+        if(!merchantRef.exists()){
+
+            throw new Error(
+                "Conta inexistente"
+            );
+
+        }
+
+        const merchant =
+            merchantRef.data();
+
+        if(
+
+            merchant.role !== "merchant" ||
+
+            merchant.approved !== true
+
+        ){
+
+            throw new Error(
+                "Conta comerciante não aprovada"
+            );
+
+        }
+
+        /* ===============================
+           UPLOAD IMAGES
+        =============================== */
+
+        loadingText.textContent =
+            "Enviando imagens...";
+
+        let images = [];
+
+        let progress = 10;
+
+        for(const file of imageFiles){
+
+            const url =
+                await uploadImage(file);
+
+            images.push(url);
+
+            progress +=
+
+                70 /
+
+                imageFiles.length;
+
+            progressBar.style.width =
+                progress + "%";
+
+        }
+
+        loadingText.textContent =
+            "Publicando produto...";
+
+        progressBar.style.width = "90%";
+
+        await addDoc(
+
+            collection(
+
+                db,
+
+                "products"
+
+            ),
+
+            {
+
+                name,
+
+                price,
+
+                stock,
+
+                category,
+
+                province,
+
+                description,
+
+                images,
+
+                merchantId:
+
+                    currentUser.uid,
+
+                shopName:
+
+                    merchant.shopName || "",
+
+                merchantWhatsapp:
+
+                    merchant.whatsapp || "",
+
+                merchantDescription:
+
+                    merchant.shopDescription || "",
+
+                active:true,
+
+                salesCount:0,
+
+                views:0,
+
+                createdAt:
+
+                    serverTimestamp()
+
+            }
+
+        );
+
+        progressBar.style.width = "100%";
+
+        loadingText.textContent =
+            "Produto publicado ✔";
+
+        showToast(
+
+            "Produto publicado com sucesso",
+
+            "success"
+
+        );
+
+        resetForm();
+
+    }catch(err){
+
+        console.error(err);
+
+        showToast(
+
+            err.message,
+
+            "error"
+
+        );
+
+    }finally{
+
+        hideLoader();
+
+        publishBtn.disabled = false;
+
+    }
+
+}
