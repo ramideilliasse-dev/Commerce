@@ -657,3 +657,56 @@ async function publishProduct(){
     }
 
 }
+/* ===============================
+   RESET FORMULAIRE
+=============================== */
+
+function resetForm(){
+
+    productName.value = "";
+
+    productPrice.value = "";
+
+    productStock.value = "";
+
+    productCategory.value = "";
+
+    productProvince.value = "";
+
+    productDescription.value = "";
+
+    descriptionCounter.textContent = "0";
+
+    productImages.value = "";
+
+    imageFiles = [];
+
+    previewImages.innerHTML = "";
+
+    progressBar.style.width = "0%";
+
+    progressBox.style.display = "none";
+
+    loadingText.textContent = "";
+
+}
+
+/* ===============================
+   BOUTON PUBLIER
+=============================== */
+
+publishBtn.addEventListener("click",()=>{
+
+    publishProduct();
+
+});
+
+/* ===============================
+   DÉMARRAGE
+=============================== */
+
+window.addEventListener("load",()=>{
+
+    console.log("✅ Add Product prêt");
+
+});
