@@ -424,3 +424,235 @@ Finalizar Pedido
 </div>
 
 <div class="container">
+<!-- =========================
+RÉSUMÉ DE LA COMMANDE
+========================= -->
+
+<div class="card">
+
+    <div class="cardTitle">
+
+        🛒 Resumo da Compra
+
+    </div>
+
+    <div id="checkoutItems">
+
+    </div>
+
+    <div class="totalBox">
+
+        <span>Total</span>
+
+        <span id="totalPrice">0 Kz</span>
+
+    </div>
+
+</div>
+
+<!-- =========================
+COUPON
+========================= -->
+
+<div class="card">
+
+    <div class="cardTitle">
+
+        🎁 Cupão de Desconto
+
+    </div>
+
+    <input
+        id="couponCode"
+        type="text"
+        placeholder="Código promocional">
+
+    <button
+        id="applyCouponBtn"
+        style="
+        margin-top:15px;
+        background:#ff6a00;
+        color:white;
+        border:none;
+        border-radius:14px;
+        height:48px;
+        width:100%;
+        font-size:16px;
+        font-weight:bold;
+        cursor:pointer;
+        ">
+
+        Aplicar Cupão
+
+    </button>
+
+    <div
+        id="couponInfo"
+        style="
+        margin-top:12px;
+        color:#16a34a;
+        font-weight:bold;
+        ">
+
+    </div>
+
+</div>
+
+<!-- =========================
+CLIENT
+========================= -->
+
+<div class="card">
+
+    <div class="cardTitle">
+
+        👤 Dados do Cliente
+
+    </div>
+
+    <input
+        id="clientName"
+        placeholder="Nome completo">
+
+    <input
+        id="clientPhone"
+        type="tel"
+        placeholder="Telefone">
+
+</div>
+
+<!-- =========================
+ENDEREÇO
+========================= -->
+
+<div class="card">
+
+    <div class="cardTitle">
+
+        📍 Endereço de Entrega
+
+    </div>
+
+    <select id="clientProvince">
+
+        <option value="">
+
+            Selecione a Província
+
+        </option>
+
+        <option>Luanda</option>
+
+        <option>Benguela</option>
+
+        <option>Huambo</option>
+
+        <option>Huíla</option>
+
+        <option>Bié</option>
+
+        <option>Cabinda</option>
+
+        <option>Malanje</option>
+
+        <option>Uíge</option>
+
+        <option>Zaire</option>
+
+        <option>Cunene</option>
+
+        <option>Namibe</option>
+
+        <option>Bengo</option>
+
+        <option>Cuanza Norte</option>
+
+        <option>Cuanza Sul</option>
+
+        <option>Lunda Norte</option>
+
+        <option>Lunda Sul</option>
+
+        <option>Moxico</option>
+
+        <option>Cuando Cubango</option>
+
+    </select>
+
+    <input
+        id="clientCity"
+        placeholder="Cidade">
+
+    <input
+        id="clientAddress"
+        placeholder="Rua / Bairro / Casa">
+
+</div>
+
+<!-- =========================
+PAGAMENTO
+========================= -->
+
+<div class="card">
+
+    <div class="cardTitle">
+
+        💳 Método de Pagamento
+
+    </div>
+
+    <select id="paymentMethod">
+
+        <option value="cash">
+
+            Pagamento na Entrega
+
+        </option>
+
+        <option value="transfer">
+
+            Transferência Bancária
+
+        </option>
+
+        <option value="express">
+
+            Multicaixa Express
+
+        </option>
+
+    </select>
+
+</div>
+
+<!-- =========================
+OBSERVAÇÕES
+========================= -->
+
+<div class="card">
+
+    <div class="cardTitle">
+
+        📝 Observações
+
+    </div>
+
+    <textarea
+
+        id="orderNote"
+
+        placeholder="Escreva aqui alguma informação adicional...">
+
+    </textarea>
+
+</div>
+
+<button
+
+    id="confirmBtn"
+
+    class="confirmBtn">
+
+    Confirmar Pedido
+
+</button>
