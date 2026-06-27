@@ -105,13 +105,13 @@ onAuthStateChanged(auth,(user)=>{
 =============================== */
 
 cart = getCart();
-
+alert("Panier : " + JSON.stringify(cart));
 /* ===============================
    AFFICHAGE DU CHECKOUT
 =============================== */
 
 export function renderCheckout(){
-
+alert("renderCheckout appelé");
     if(!checkoutItems) return;
 
     if(cart.length === 0){
@@ -139,7 +139,7 @@ export function renderCheckout(){
     let total = 0;
 
     checkoutItems.innerHTML = cart.map(item=>{
-
+alert("Premier produit : " + JSON.stringify(cart[0]));
         const product = item.product || item;
 
         const subtotal =
