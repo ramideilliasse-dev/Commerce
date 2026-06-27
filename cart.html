@@ -1,551 +1,381 @@
  <!DOCTYPE html>
 <html lang="pt">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Toma">
-<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Meu Carrinho</title>
 
 <link rel="manifest" href="/manifest.json">
+
 <meta name="theme-color" content="#ff6a00">
- <title>Carrinho</title>
 
 <style>
 
-body{
-font-family:Arial;
-background:#f4f4f4;
+*{
 margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f5f5f5;
+padding-bottom:120px;
 }
 
 .header{
-background:#ff6a00;
-color:white;
-padding:15px;
-text-align:center;
-font-size:20px;
-font-weight:bold;
+
 position:sticky;
 top:0;
 z-index:100;
-}
 
-.item{
-background:white;
-margin:10px;
-padding:10px;
-border-radius:10px;
+background:linear-gradient(135deg,#ff6a00,#ff8c1a);
+
+color:#fff;
+
+padding:20px;
+
 display:flex;
+justify-content:center;
+align-items:center;
 gap:10px;
-align-items:center;
-box-shadow:0 2px 6px rgba(0,0,0,0.1);
-}
 
-.item img{
-width:80px;
-height:80px;
-border-radius:8px;
-object-fit:cover;
-background:#eee;
-}
-
-.info{
-flex:1;
-}
-
-.qty{
-display:flex;
-gap:5px;
-margin-top:5px;
-align-items:center;
-}
-
-button{
-padding:5px 10px;
-border:none;
-border-radius:5px;
-cursor:pointer;
-}
-
-.qty button{
-background:#f1f1f1;
+font-size:30px;
 font-weight:bold;
-}
 
-.remove{
-background:red;
-color:white;
-}
-
-.total{
-padding:15px;
-font-size:18px;
-font-weight:bold;
-}
-
-.checkout{
-background:#1aa34a;
-color:white;
-padding:15px;
-text-align:center;
-margin:10px;
-border-radius:10px;
-cursor:pointer;
-font-size:18px;
-transition:0.2s;
-}
-
-.checkout.disabled{
-background:#ccc;
-cursor:not-allowed;
-}
-
-.clearCart{
-background:black;
-color:white;
-margin:10px;
-padding:10px;
-text-align:center;
-border-radius:10px;
-cursor:pointer;
-}
-
-.empty{
-text-align:center;
-padding:30px;
-color:#777;
-font-size:16px;
 }
 
 .badge{
-background:#ff6a00;
-color:white;
-padding:2px 8px;
-border-radius:20px;
-font-size:12px;
-margin-left:5px;
-}
 
-/* ================= TOAST ================= */
+background:#fff;
+color:#ff6a00;
 
-.toastBox{
-position:fixed;
-top:20px;
-left:50%;
-transform:translateX(-50%);
-z-index:999999;
-display:flex;
-flex-direction:column;
-gap:10px;
-pointer-events:none;
-}
+padding:3px 10px;
 
-.toast{
-min-width:220px;
-max-width:320px;
-padding:14px 18px;
-border-radius:14px;
-color:white;
+border-radius:30px;
+
 font-size:14px;
+
 font-weight:bold;
-box-shadow:0 6px 18px rgba(0,0,0,0.2);
-animation:toastIn .3s ease, toastOut .3s ease 3.7s forwards;
-backdrop-filter:blur(10px);
+
 }
 
-.toast.success{
-background:linear-gradient(135deg,#1aa34a,#23c55e);
+#cartItems{
+
+padding:15px;
+
 }
 
-.toast.error{
-background:linear-gradient(135deg,#dc2626,#ef4444);
+.cartItem{
+
+background:#fff;
+
+border-radius:15px;
+
+padding:12px;
+
+margin-bottom:12px;
+
+display:flex;
+
+gap:12px;
+
+box-shadow:0 3px 10px rgba(0,0,0,.08);
+
 }
 
-.toast.warning{
-background:linear-gradient(135deg,#ff6a00,#ff9f43);
+.cartImage{
+
+width:100px;
+
+height:100px;
+
+object-fit:cover;
+
+border-radius:12px;
+
+background:#eee;
+
 }
 
-@keyframes toastIn{
-from{
-opacity:0;
-transform:translateY(-20px) scale(.9);
-}
-to{
-opacity:1;
-transform:translateY(0) scale(1);
-}
+.cartInfo{
+
+flex:1;
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:space-between;
+
 }
 
-@keyframes toastOut{
-to{
-opacity:0;
-transform:translateY(-20px) scale(.9);
+.cartName{
+
+font-size:18px;
+
+font-weight:bold;
+
 }
+
+.cartPrice{
+
+color:#ff6a00;
+
+font-size:18px;
+
+font-weight:bold;
+
+margin-top:6px;
+
+}
+
+.cartActions{
+
+display:flex;
+
+align-items:center;
+
+gap:8px;
+
+margin-top:12px;
+
+}
+
+.qtyBtn{
+
+width:36px;
+
+height:36px;
+
+border:none;
+
+border-radius:8px;
+
+background:#f2f2f2;
+
+font-size:20px;
+
+cursor:pointer;
+
+}
+
+.removeBtn{
+
+border:none;
+
+background:#ff3b30;
+
+color:#fff;
+
+padding:8px 12px;
+
+border-radius:8px;
+
+cursor:pointer;
+
+}
+
+.footer{
+
+position:fixed;
+
+left:0;
+
+right:0;
+
+bottom:0;
+
+background:#fff;
+
+padding:15px;
+
+box-shadow:0 -4px 15px rgba(0,0,0,.1);
+
+}
+
+.total{
+
+font-size:22px;
+
+font-weight:bold;
+
+margin-bottom:15px;
+
+}
+
+.checkoutBtn{
+
+width:100%;
+
+padding:16px;
+
+border:none;
+
+border-radius:12px;
+
+background:#18a84f;
+
+color:#fff;
+
+font-size:20px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+margin-bottom:10px;
+
+}
+
+.clearBtn{
+
+width:100%;
+
+padding:14px;
+
+border:none;
+
+border-radius:12px;
+
+background:#000;
+
+color:#fff;
+
+font-size:18px;
+
+cursor:pointer;
+
 }
 
 </style>
+
 </head>
 
 <body>
 
 <div class="header">
+
 Meu Carrinho 🛒
-<span id="cartBadge" class="badge">0</span>
+
+<span
+id="bottomCartCount"
+class="badge">
+0
+</span>
+
 </div>
 
-<div id="cartList"></div>
+<div id="cartItems">
 
-<div class="total" id="total"></div>
-
-<div id="checkoutBtn" class="checkout" onclick="goCheckout()">
-Finalizar pedido
 </div>
 
-<div class="clearCart" onclick="clearCart()">
-🗑️ Limpar carrinho
-</div>
+<div class="footer">
 
-<div id="toastBox" class="toastBox"></div>
+<div
+id="cartTotal"
+class="total">
 
-<script type="module">
+0 Kz
 
-import { auth } from "./firebase.js"
-
-/* ================= TOAST ================= */
-
-function showToast(message,type="success"){
-
-const box = document.getElementById("toastBox")
-
-const toast = document.createElement("div")
-
-toast.className = "toast " + type
-
-toast.innerText = message
-
-box.appendChild(toast)
-
-setTimeout(()=>{
-toast.remove()
-},4000)
-
-}
-
-/* ================= CART ================= */
-
-function getCart(){
-
-try{
-return JSON.parse(localStorage.getItem("cart") || "[]")
-}catch(e){
-
-console.error("Erro cart:",e)
-
-return []
-}
-
-}
-
-function saveCart(cart){
-
-localStorage.setItem("cart",JSON.stringify(cart))
-
-window.dispatchEvent(new Event("storage"))
-
-}
-
-function updateBadge(){
-
-let cart = getCart()
-
-let totalQty = cart.reduce((a,b)=>{
-return a + (b.qty || 1)
-},0)
-
-document.getElementById("cartBadge").innerText = totalQty
-
-}
-
-/* ================= LOAD CART ================= */
-
-function loadCart(){
-
-let cart = getCart()
-
-let html=""
-let total=0
-
-const checkoutBtn = document.getElementById("checkoutBtn")
-
-updateBadge()
-
-if(cart.length === 0){
-
-document.getElementById("cartList").innerHTML = `
-<div class="empty">
-
-<div style="
-font-size:60px;
-margin-bottom:15px;
-">
-🛒
-</div>
-
-<div style="
-font-size:18px;
-font-weight:bold;
-margin-bottom:10px;
-">
-Seu carrinho está vazio
-</div>
-
-<div style="
-color:#777;
-margin-bottom:20px;
-">
-Descubra produtos incríveis no Toma
 </div>
 
 <button
-onclick="goHome()"
-style="
-background:linear-gradient(135deg,#ff6a00,#ff8c1a);
-color:white;
-border:none;
-padding:14px 24px;
-border-radius:14px;
-font-size:16px;
-font-weight:bold;
-cursor:pointer;
-box-shadow:0 6px 18px rgba(255,106,0,.3);
-">
-🔍 Procurar produtos
+id="checkoutBtn"
+class="checkoutBtn">
+
+Finalizar pedido
+
+</button>
+
+<button
+id="clearBtn"
+class="clearBtn">
+
+🗑️ Limpar carrinho
+
 </button>
 
 </div>
-`
-document.getElementById("checkoutBtn").style.display = "none"
+<script type="module">
 
-document.querySelector(".clearCart").style.display = "none"
-document.getElementById("total").innerText=""
+import {
+renderCart,
+updateCartCount,
+checkout,
+clearCart
+} from "./js/cart.js";
 
-checkoutBtn.classList.add("disabled")
-document.getElementById("checkoutBtn").style.display = "block"
+/* ==========================
+DÉMARRAGE
+========================== */
 
-document.querySelector(".clearCart").style.display = "block"
-return
+window.addEventListener("load",()=>{
 
-}
+renderCart();
 
-checkoutBtn.classList.remove("disabled")
+updateCartCount();
 
-cart.forEach((item,index)=>{
+});
 
-if(!item.qty){
-item.qty = 1
-}
+/* ==========================
+BOUTON CHECKOUT
+========================== */
 
-let price = Number(item.price) || 0
+document
+.getElementById("checkoutBtn")
+.addEventListener("click",()=>{
 
-let image = item.image || "https://via.placeholder.com/80"
+checkout();
 
-total += price * item.qty
+});
 
-html += `
-<div class="item">
+/* ==========================
+VIDER PANIER
+========================== */
 
-<img loading="lazy" src="${image}">
+document
+.getElementById("clearBtn")
+.addEventListener("click",()=>{
 
-<div class="info">
+if(confirm("Limpar todo o carrinho?")){
 
-<div>
-<b>${item.name || "Produto"}</b>
-</div>
+clearCart();
 
-<div>
-${price} Kz
-</div>
-
-<div class="qty">
-
-<button onclick="changeQty(${index},-1)">
--
-</button>
-
-<div>${item.qty}</div>
-
-<button onclick="changeQty(${index},1)">
-+
-</button>
-
-<button class="remove" onclick="removeItem(${index})">
-🗑️
-</button>
-
-</div>
-
-</div>
-
-</div>
-`
-
-})
-
-document.getElementById("cartList").innerHTML = html
-
-document.getElementById("total").innerText =
-"Total: " + total + " Kz"
+renderCart();
 
 }
 
-/* ================= CHANGE QTY ================= */
+});
 
-window.changeQty = function(index,delta){
-
-let cart = getCart()
-
-cart[index].qty = (cart[index].qty || 1) + delta
-
-if(cart[index].qty <= 0){
-cart.splice(index,1)
-}
-
-saveCart(cart)
-
-loadCart()
-
-}
-
-/* ================= REMOVE ITEM ================= */
-
-window.removeItem = function(index){
-
-let cart = getCart()
-
-cart.splice(index,1)
-
-saveCart(cart)
-
-loadCart()
-
-showToast("🗑️ Produto removido","warning")
-
-}
-
-/* ================= CLEAR CART ================= */
-
-window.clearCart = function(){
-
-localStorage.removeItem("cart")
-
-loadCart()
-
-showToast("🧹 Carrinho limpo","success")
-
-}
-/* ================= CHECKOUT ================= */
-
-window.goCheckout = function(){
-
-if(!auth.currentUser){
-
-showToast("🔐 Faça login primeiro","warning")
-
-setTimeout(()=>{
-location.href = "login.html"
-},1000)
-
-return
-
-}
-
-let cart = getCart()
-
-if(cart.length === 0){
-
-showToast("⚠️ Carrinho vazio","warning")
-
-return
-
-}
-
-/* VALIDATION */
-
-let invalid = cart.filter(item => !item.merchantId)
-
-if(invalid.length > 0){
-
-console.error("Produtos inválidos:", invalid)
-
-showToast("⚠️ Alguns produtos estão inválidos","error")
-
-return
-
-}
-
-/* NORMALIZE */
-
-let checkoutCart = cart.map(item => ({
-
-id: item.id || "",
-
-name: item.name || "Produto",
-
-price: Number(item.price) || 0,
-
-qty: item.qty || 1,
-
-image: item.image || "",
-
-merchantId: String(item.merchantId)
-
-}))
-
-localStorage.setItem(
-"checkoutCart",
-JSON.stringify(checkoutCart)
-)
-
-showToast("✅ Indo para checkout","success")
-
-setTimeout(()=>{
-location.href = "checkout.html"
-},500)
-}
-
-/* ================= AUTO SYNC ================= */
+/* ==========================
+SYNC ENTRE PAGES
+========================== */
 
 window.addEventListener("storage",()=>{
-loadCart()
-})
-window.goHome = function(){
 
-location.href = "home.html"
+renderCart();
 
-}
-loadCart()
+updateCartCount();
+
+});
 
 </script>
+
 <script>
-if ("serviceWorker" in navigator) {
 
-window.addEventListener("load", () => {
+if("serviceWorker" in navigator){
 
-navigator.serviceWorker.register("/service-worker.js")
-
-.then(() => {
-console.log("SW OK")
-})
-
-.catch(err => {
-console.log("SW ERROR", err)
-})
-
-})
+navigator.serviceWorker
+.register("/service-worker.js")
+.catch(()=>{});
 
 }
+
 </script>
+
 </body>
+
 </html>
