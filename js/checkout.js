@@ -1,565 +1,84 @@
  // ===============================
 // CHECKOUT.JS
-// Gestion du checkout
+// TOMA Marketplace
+// Version Premium
+// Partie 1
 // ===============================
 
 import { db, auth } from "../firebase.js";
 
 import {
-
     collection,
-
     addDoc,
-
     getDocs,
-
     serverTimestamp
-
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import {
-
     onAuthStateChanged
-
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 import {
-
     showToast,
-
     formatPrice
-
 } from "./ui.js";
-
-import {
-
-    getCart,
-
-    clearCart,
-
-    setProducts
-
-} from "./cart.js";
 
 /* ===============================
    VARIABLES
 =============================== */
 
 let currentUser = null;
-
 let cart = [];
 let discount = 0;
-/* ===============================
-   CLIENT
-=============================== */
 
-const clientName =
-    document.getElementById("clientName");
-
-const clientPhone =
-    document.getElementById("clientPhone");
-
-const clientProvince =
-    document.getElementById("clientProvince");
-
-const clientCity =
-    document.getElementById("clientCity");
-
-const clientAddress =
-    document.getElementById("clientAddress");
-
-const paymentMethod =
-    document.getElementById("paymentMethod");
-
-const orderNote =
-    document.getElementById("orderNote");
-
-const couponCode =
-    document.getElementById("couponCode");
-
-const couponInfo =
-    document.getElementById("couponInfo");
 /* ===============================
    DOM
 =============================== */
 
-const checkoutItems =
-    document.getElementById("checkoutItems");
+const checkoutItems = document.getElementById("checkoutItems");
+const totalPrice = document.getElementById("totalPrice");
+const confirmBtn = document.getElementById("confirmBtn");
 
-const totalPrice =
-    document.getElementById("totalPrice");
+const clientName = document.getElementById("clientName");
+const clientPhone = document.getElementById("clientPhone");
+const clientProvince = document.getElementById("clientProvince");
+const clientCity = document.getElementById("clientCity");
+const clientAddress = document.getElementById("clientAddress");
 
-const confirmBtn =
-    document.getElementById("confirmBtn");
+const paymentMethod = document.getElementById("paymentMethod");
+const orderNote = document.getElementById("orderNote");
+
+const couponCode = document.getElementById("couponCode");
+const couponInfo = document.getElementById("couponInfo");
+
 /* ===============================
    AUTH
 =============================== */
 
-onAuthStateChanged(auth,(user)=>{
+onAuthStateChanged(auth, (user) => {
 
     currentUser = user;
 
 });
+
 /* ===============================
-   PANIER
+   CHARGER LE PANIER
 =============================== */
 
-cart = JSON.parse(
-    localStorage.getItem("checkoutCart") || "[]"
-);
+function loadCheckoutCart() {
 
-console.log("CheckoutCart :", cart);
-alert("Panier : " + JSON.stringify(cart));
-/* ===============================
-   AFFICHAGE DU CHECKOUT
-=============================== */
+    try {
 
-export function renderCheckout(){
-alert("renderCheckout appelé");
-    if(!checkoutItems) return;
-
-    if(cart.length === 0){
-
-        checkoutItems.innerHTML = `
-            <div style="
-                padding:40px;
-                text-align:center;
-                color:#777;
-            ">
-                O carrinho está vazio.
-            </div>
-        `;
-
-        if(totalPrice){
-
-            totalPrice.textContent = formatPrice(0);
-
-        }
-
-        return;
-
-    }
-
-    let total = 0;
-
-    checkoutItems.innerHTML = cart.map(item=>{
-alert("Premier produit : " + JSON.stringify(cart[0]));
-        const product = item;
-
-        const subtotal =
-    Number(product.price || 0) *
-    Number(product.qty || 1);
-        total += subtotal;
-
-        return `
-
-            <div class="checkoutItem">
-
-                <img
-                    src="${product.image || product.images?.[0] || ""}"
-                    class="checkoutImage"
-                >
-
-                <div class="checkoutInfo">
-
-                    <div class="checkoutName">
-
-                        ${product.name}
-
-                    </div>
-
-                    <div class="checkoutQty">
-
-                        ${product.qty} × ${formatPrice(product.price)}
-
-                    </div>
-
-                    <div class="checkoutSubtotal">
-
-                        ${formatPrice(subtotal)}
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        `;
-
-    }).join("");
-
-    const finalTotal = Math.max(0, total - discount);
-
-totalPrice.textContent = formatPrice(finalTotal);
-
-}
-/* ===============================
-   GÉNÉRER LE NUMÉRO DE COMMANDE
-=============================== */
-
-function generateOrderNumber(){
-
-    const now = new Date();
-
-    const year = now.getFullYear();
-
-    const month = String(
-        now.getMonth()+1
-    ).padStart(2,"0");
-
-    const day = String(
-        now.getDate()
-    ).padStart(2,"0");
-
-    const random = Math.floor(
-
-        100000 +
-
-        Math.random()*900000
-
-    );
-
-    return `TOMA-${year}${month}${day}-${random}`;
-
-}
-/* ===============================
-   CONFIRMER LA COMMANDE
-=============================== */
-
-async function placeOrder(){
-
-    if(!currentUser){
-
-        showToast(
-            "Faça login primeiro",
-            "warning"
+        cart = JSON.parse(
+            localStorage.getItem("checkoutCart") || "[]"
         );
 
-        return;
+    } catch (e) {
+
+        cart = [];
 
     }
 
-    if(cart.length === 0){
-if(
-
-    !clientName.value ||
-
-    !clientPhone.value ||
-
-    !clientProvince.value ||
-
-    !clientCity.value ||
-
-    !clientAddress.value
-
-){
-
-    showToast(
-
-        "Preencha todos os campos.",
-
-        "warning"
-
-    );
-
-    return;
+    console.log("Checkout Cart :", cart);
 
 }
-        showToast(
-            "Carrinho vazio",
-            "warning"
-        );
-
-        return;
-
-    }
-
-    try{
-const loader = document.getElementById("loaderOverlay");
-
-if(loader){
-
-    loader.style.display = "flex";
-
-}
-
-confirmBtn.disabled = true;
-     const orderItems = cart.map(item => {
-
-    const product = item.product || item;
-
-    return {
-
-        ...item,
-
-        merchantId:
-
-            product.merchantId ||
-
-            product.ownerId ||
-
-            "",
-
-        shopId:
-
-            product.shopId ||
-
-            "",
-
-        shopName:
-
-            product.shopName ||
-
-            ""
-
-    };
-
-});
-     const orderNumber = generateOrderNumber();
-        await addDoc(
-
-    collection(db,"orders"),
-
-    {
-
-        uid: currentUser.uid,
-     orderNumber: orderNumber,
-customerName:
-
-    clientName?.value || "",
-
-customerPhone:
-
-    clientPhone?.value || "",
-
-province:
-
-    clientProvince?.value || "",
-
-city:
-
-    clientCity?.value || "",
-
-address:
-
-    clientAddress?.value || "",
-
-paymentMethod:
-
-    paymentMethod?.value || "",
-
-note:
-
-    orderNote?.value || "",
-        items: orderItems,
-
-        total: cart.reduce(
-
-            (sum,item)=>
-
-                sum +
-
-                Number((item.product || item).price || 0)
-                *
-
-                item.quantity),
-
-            0
-
-        ),
-
-        status: "pending",
-
-statusHistory:[
-
-    {
-
-        status:"pending",
-
-        date:serverTimestamp(),
-
-        message:"Pedido criado"
-
-    }
-
-],
-
-        createdAt: serverTimestamp(),
-updatedAt: serverTimestamp(),
-
-acceptedAt:null,
-
-preparingAt:null,
-
-shippingAt:null,
-
-deliveredAt:null,
-
-cancelledAt:null
-    }
-
-);
-
-        clearCart();
-if(loader){
-
-    loader.style.display = "none";
-
-}
-
-confirmBtn.disabled = false;
-        showToast(
-            "✅ Pedido enviado",
-            "success"
-        );
-
-        setTimeout(()=>{
-
-            window.location.href = "orders.html";
-
-        },1000);
-
-    }catch(err){
-if(loader){
-
-    loader.style.display = "none";
-
-}
-
-confirmBtn.disabled = false;
-        console.error(err);
-
-        showToast(
-            "Erro ao enviar pedido",
-            "error"
-        );
-
-    }
-
-}
-/* ===============================
-COUPON
-=============================== */
-
-async function applyCoupon(){
-
-    const code =
-
-        couponCode.value
-
-        .trim()
-
-        .toUpperCase();
-
-    if(!code){
-
-        showToast(
-
-            "Introduza um cupão.",
-
-            "warning"
-
-        );
-
-        return;
-
-    }
-
-    try{
-
-        const snapshot = await getDocs(
-
-            collection(db,"coupons")
-
-        );
-
-        let found = false;
-
-        snapshot.forEach(doc=>{
-
-            const data = doc.data();
-
-            if(
-
-                (data.code || "").toUpperCase()
-
-                === code
-
-            ){
-
-                found = true;
-
-                discount = Number(
-
-                    data.discount || 0
-
-                );
-
-            }
-
-        });
-
-        if(found){
-
-            couponInfo.innerHTML =
-
-                "✅ Cupão aplicado.";
-
-            renderCheckout();
-
-            showToast(
-
-                "Cupão aplicado.",
-
-                "success"
-
-            );
-
-        }else{
-
-            couponInfo.innerHTML =
-
-                "";
-
-            showToast(
-
-                "Cupão inválido.",
-
-                "error"
-
-            );
-
-        }
-
-    }catch(err){
-
-        console.error(err);
-
-    }
-
-}
-/* ===============================
-   DÉMARRAGE
-=============================== */
-
-window.addEventListener("load",()=>{
-
-    renderCheckout();
-
-    if(confirmBtn){
-
-        confirmBtn.onclick = placeOrder;
-
-    }
-
-    const applyBtn =
-
-        document.getElementById("applyCouponBtn");
-
-    if(applyBtn){
-
-        applyBtn.onclick = applyCoupon;
-
-    }
-
-});
