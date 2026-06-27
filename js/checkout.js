@@ -104,7 +104,11 @@ onAuthStateChanged(auth,(user)=>{
    PANIER
 =============================== */
 
-cart = getCart();
+cart = JSON.parse(
+    localStorage.getItem("checkoutCart") || "[]"
+);
+
+console.log("CheckoutCart :", cart);
 alert("Panier : " + JSON.stringify(cart));
 /* ===============================
    AFFICHAGE DU CHECKOUT
@@ -140,12 +144,11 @@ alert("renderCheckout appelé");
 
     checkoutItems.innerHTML = cart.map(item=>{
 alert("Premier produit : " + JSON.stringify(cart[0]));
-        const product = item.product || item;
+        const product = item;
 
         const subtotal =
-    Number(product.price || 0)
-    *
-    (item.quantity || item.qty || 1);
+    Number(product.price || 0) *
+    Number(product.qty || 1);
         total += subtotal;
 
         return `
@@ -167,7 +170,7 @@ alert("Premier produit : " + JSON.stringify(cart[0]));
 
                     <div class="checkoutQty">
 
-                        ${item.quantity || item.qty || 1} × ${formatPrice(product.price)}
+                        ${product.qty} × ${formatPrice(product.price)}
 
                     </div>
 
