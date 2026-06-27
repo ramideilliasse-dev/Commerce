@@ -105,6 +105,17 @@ onAuthStateChanged(auth,(user)=>{
 =============================== */
 
 cart = getCart();
+alert(
+"Nombre d'articles : " + cart.length
+);
+
+if(cart.length > 0){
+
+    alert(
+        JSON.stringify(cart[0], null, 2)
+    );
+
+}
 /* ===============================
    AFFICHAGE DU CHECKOUT
 =============================== */
