@@ -61,7 +61,10 @@ export function loadCart(){
             || "[]"
 
         );
-
+alert(
+"Panier chargé :\n" +
+JSON.stringify(cart, null, 2)
+);
     }catch{
 
         cart = [];
@@ -71,7 +74,10 @@ export function loadCart(){
 }
 
 export function saveCart(){
-
+alert(
+"Sauvegarde panier :\n" +
+JSON.stringify(cart, null, 2)
+);
     localStorage.setItem(
 
         "cart",
@@ -115,7 +121,10 @@ export function addToCart(productId, quantity = 1){
         p => p.id === productId
 
     );
-
+alert(
+"Produit trouvé : " +
+JSON.stringify(product, null, 2)
+);
     if(!product){
 
         showToast(
@@ -152,7 +161,10 @@ export function addToCart(productId, quantity = 1){
 
 });
     }
-
+alert(
+"Panier avant sauvegarde :\n" +
+JSON.stringify(cart, null, 2)
+);
     saveCart();
 
     showToast(
