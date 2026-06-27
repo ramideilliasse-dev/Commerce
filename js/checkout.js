@@ -105,17 +105,7 @@ onAuthStateChanged(auth,(user)=>{
 =============================== */
 
 cart = getCart();
-alert(
-"Nombre d'articles : " + cart.length
-);
 
-if(cart.length > 0){
-
-    alert(
-        JSON.stringify(cart[0], null, 2)
-    );
-
-}
 /* ===============================
    AFFICHAGE DU CHECKOUT
 =============================== */
@@ -150,13 +140,12 @@ export function renderCheckout(){
 
     checkoutItems.innerHTML = cart.map(item=>{
 
-        const product = item.product;
+        const product = item.product || item;
 
         const subtotal =
-            Number(product.price || 0)
-            *
-            item.quantity;
-
+    Number(product.price || 0)
+    *
+    (item.quantity || item.qty || 1);
         total += subtotal;
 
         return `
@@ -178,7 +167,7 @@ export function renderCheckout(){
 
                     <div class="checkoutQty">
 
-                        ${item.quantity} × ${formatPrice(product.price)}
+                        ${item.quantity || item.qty || 1} × ${formatPrice(product.price)}
 
                     </div>
 
@@ -292,31 +281,37 @@ if(loader){
 }
 
 confirmBtn.disabled = true;
-     const orderItems = cart.map(item => ({
+     const orderItems = cart.map(item => {
 
-    ...item,
+    const product = item.product || item;
 
-    merchantId:
+    return {
 
-        item.product.merchantId ||
+        ...item,
 
-        item.product.ownerId ||
+        merchantId:
 
-        "",
+            product.merchantId ||
 
-    shopId:
+            product.ownerId ||
 
-        item.product.shopId ||
+            "",
 
-        "",
+        shopId:
 
-    shopName:
+            product.shopId ||
 
-        item.product.shopName ||
+            "",
 
-        ""
+        shopName:
 
-}));
+            product.shopName ||
+
+            ""
+
+    };
+
+});
      const orderNumber = generateOrderNumber();
         await addDoc(
 
@@ -361,8 +356,7 @@ note:
 
                 sum +
 
-                (Number(item.product.price || 0)
-
+                Number((item.product || item).price || 0)
                 *
 
                 item.quantity),
