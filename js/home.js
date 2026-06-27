@@ -155,7 +155,10 @@ if(cachedProducts.length){
     setProducts(products);
 
     setCartProducts(products);
-
+localStorage.setItem(
+    "products_cache_checkout",
+    JSON.stringify(products)
+);
     renderProducts();
 
     renderTopProducts();
@@ -256,7 +259,10 @@ if(oldData !== newData){
     setProducts(products);
 
     setCartProducts(products);
-
+localStorage.setItem(
+    "products_cache_checkout",
+    JSON.stringify(products)
+);
     renderProducts();
 
     renderTopProducts();
