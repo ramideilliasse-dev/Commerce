@@ -45,10 +45,11 @@ export function setProducts(data){
 
 export function getCart(){
 
+    loadCart();
+
     return cart;
 
 }
-
 export function loadCart(){
 
     try{
