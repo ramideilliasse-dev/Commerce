@@ -83,14 +83,12 @@ function loadCheckoutCart() {
 
 }
 /* ===============================
-   AFFICHER LE PANIER
+   AFFICHAGE DU PANIER
 =============================== */
 
 function renderCheckout() {
 
     if (!checkoutItems) return;
-
-    loadCheckoutCart();
 
     if (cart.length === 0) {
 
@@ -106,69 +104,58 @@ function renderCheckout() {
 
         totalPrice.textContent = formatPrice(0);
 
-        if (confirmBtn) {
-            confirmBtn.disabled = true;
-        }
-
         return;
-    }
-
-    if (confirmBtn) {
-        confirmBtn.disabled = false;
     }
 
     let total = 0;
 
     checkoutItems.innerHTML = "";
 
-    cart.forEach(product => {
+    cart.forEach(item => {
 
-        const qty = Number(product.qty || 1);
-        const price = Number(product.price || 0);
+        const qty = item.quantity || item.qty || 1;
 
-        const subtotal = qty * price;
+        const subtotal = Number(item.price || 0) * qty;
 
         total += subtotal;
 
         checkoutItems.innerHTML += `
 
-        <div class="checkoutItem">
+            <div class="checkoutItem">
 
-            <img
-                class="checkoutImage"
-                src="${product.image || ""}"
-                onerror="this.src='https://via.placeholder.com/80'"
-            >
+                <img
+                    class="checkoutImage"
+                    src="${item.image || ""}"
+                    onerror="this.src='https://via.placeholder.com/80'"
+                >
 
-            <div class="checkoutInfo">
+                <div class="checkoutInfo">
 
-                <div class="checkoutName">
+                    <div class="checkoutName">
 
-                    ${product.name || "Produto"}
+                        ${item.name || "Produto"}
 
-                </div>
+                    </div>
 
-                <div class="checkoutQty">
+                    <div class="checkoutQty">
 
-                    ${qty} × ${formatPrice(price)}
+                        ${qty} × ${formatPrice(item.price)}
 
-                </div>
+                    </div>
 
-                <div class="checkoutSubtotal">
+                    <div class="checkoutSubtotal">
 
-                    ${formatPrice(subtotal)}
+                        ${formatPrice(subtotal)}
+
+                    </div>
 
                 </div>
 
             </div>
 
-        </div>
-
         `;
 
     });
-
-    total = Math.max(0, total - discount);
 
     totalPrice.textContent = formatPrice(total);
 
