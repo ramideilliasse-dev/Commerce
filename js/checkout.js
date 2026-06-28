@@ -332,7 +332,7 @@ async function placeOrder(){
 
         setTimeout(()=>{
 
-            window.location.href="my-orders.html";
+            window.location.href = "my-orders.html";
 
         },1000);
 
