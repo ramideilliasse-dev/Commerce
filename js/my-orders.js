@@ -333,53 +333,46 @@ function renderOrders(){
 
         `;
 
-        (order.items || []).forEach(item=>{
+    (order.items || []).forEach(item => {
 
-            const product = item.product || {};
+    html += `
 
-            html += `
+        <div class="orderItem">
 
-                <div class="orderItem">
+            <img
+                class="orderImage"
+                src="${item.image || ''}"
+                onerror="this.src='https://via.placeholder.com/150'"
+            >
 
-                    <img
+            <div class="orderInfo">
 
-                        class="orderImage"
+                <div class="productName">
 
-                        src="${getProductImage(product)}"
-
-                        onerror="this.src='https://via.placeholder.com/150'"
-
-                    >
-
-                    <div class="orderInfo">
-
-                        <div class="productName">
-
-                            ${product.name || ""}
-
-                        </div>
-
-                        <div class="productQty">
-
-                            Quantidade:
-
-                            ${item.quantity || 1}
-
-                        </div>
-
-                        <div class="productPrice">
-
-                            ${formatPrice(product.price || 0)}
-
-                        </div>
-
-                    </div>
+                    ${item.name || ""}
 
                 </div>
 
-            `;
+                <div class="productQty">
 
-        });
+                    Quantidade:
+                    ${item.qty || item.quantity || 1}
+
+                </div>
+
+                <div class="productPrice">
+
+                    ${formatPrice(item.price || 0)}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+});
 if(order.status === "pending"){
 
     html += `
