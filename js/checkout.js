@@ -357,3 +357,103 @@ async function placeOrder(){
     }
 
 }
+/* ===============================
+   COUPON
+=============================== */
+
+async function applyCoupon() {
+
+    const code = couponCode.value.trim().toUpperCase();
+
+    if (!code) {
+
+        showToast("Introduza um cupão", "warning");
+        return;
+
+    }
+
+    try {
+
+        const snapshot = await getDocs(
+            collection(db, "coupons")
+        );
+
+        let found = false;
+
+        snapshot.forEach(doc => {
+
+            const data = doc.data();
+
+            if ((data.code || "").toUpperCase() === code) {
+
+                found = true;
+                discount = Number(data.discount || 0);
+
+            }
+
+        });
+
+        if (found) {
+
+            couponInfo.innerHTML =
+                `✅ Desconto: ${formatPrice(discount)}`;
+
+            renderCheckout();
+
+            showToast(
+                "Cupão aplicado",
+                "success"
+            );
+
+        } else {
+
+            discount = 0;
+
+            couponInfo.innerHTML = "";
+
+            showToast(
+                "Cupão inválido",
+                "error"
+            );
+
+        }
+
+    } catch (err) {
+
+        console.error(err);
+
+        showToast(
+            "Erro ao verificar cupão",
+            "error"
+        );
+
+    }
+
+}
+
+/* ===============================
+   INICIAR
+=============================== */
+
+window.addEventListener("load", () => {
+
+    loadCheckoutCart();
+
+    renderCheckout();
+
+    if (confirmBtn) {
+
+        confirmBtn.onclick = placeOrder;
+
+    }
+
+    const applyBtn =
+        document.getElementById("applyCouponBtn");
+
+    if (applyBtn) {
+
+        applyBtn.onclick = applyCoupon;
+
+    }
+
+});
