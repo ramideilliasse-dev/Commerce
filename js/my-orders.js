@@ -248,8 +248,7 @@ async function loadOrders(){
 
         hideLoader();
 
-        alert(err.message);
-console.error(err);
+        console.error(err);
 
         ordersContainer.innerHTML = `
 
