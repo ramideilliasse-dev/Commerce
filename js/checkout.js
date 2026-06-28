@@ -269,7 +269,8 @@ async function placeOrder(){
             collection(db,"orders"),
 
             {
-
+merchantId: cart[0].merchantId,
+shopName: cart[0].shopName || "",
                 uid:currentUser.uid,
 
                 orderNumber:
