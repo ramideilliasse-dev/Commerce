@@ -381,25 +381,45 @@ export function changeQuantity(productId, delta){
    CHECKOUT
 =============================== */
 
-export function checkout(){
+export function checkout() {
 
-    if(cart.length === 0){
+    loadCart();
+
+    if (cart.length === 0) {
 
         showToast(
-
             "O carrinho está vazio",
-
             "warning"
-
         );
 
         return;
 
     }
 
-    window.location.href =
+    const checkoutCart = cart.map(item => {
 
-        "checkout.html";
+        const product = item.product || item;
+
+        return {
+
+            id: product.id,
+            name: product.name,
+            price: Number(product.price || 0),
+            qty: item.quantity || item.qty || 1,
+            image: product.image || product.images?.[0] || "",
+            merchantId: product.merchantId || "",
+            shopName: product.shopName || ""
+
+        };
+
+    });
+
+    localStorage.setItem(
+        "checkoutCart",
+        JSON.stringify(checkoutCart)
+    );
+
+    window.location.href = "checkout.html";
 
 }
 /* ===============================
