@@ -82,3 +82,94 @@ function loadCheckoutCart() {
     console.log("Checkout Cart :", cart);
 
 }
+/* ===============================
+   AFFICHER LE PANIER
+=============================== */
+
+function renderCheckout() {
+
+    if (!checkoutItems) return;
+
+    loadCheckoutCart();
+
+    if (cart.length === 0) {
+
+        checkoutItems.innerHTML = `
+            <div style="
+                padding:40px;
+                text-align:center;
+                color:#777;
+            ">
+                O carrinho está vazio.
+            </div>
+        `;
+
+        totalPrice.textContent = formatPrice(0);
+
+        if (confirmBtn) {
+            confirmBtn.disabled = true;
+        }
+
+        return;
+    }
+
+    if (confirmBtn) {
+        confirmBtn.disabled = false;
+    }
+
+    let total = 0;
+
+    checkoutItems.innerHTML = "";
+
+    cart.forEach(product => {
+
+        const qty = Number(product.qty || 1);
+        const price = Number(product.price || 0);
+
+        const subtotal = qty * price;
+
+        total += subtotal;
+
+        checkoutItems.innerHTML += `
+
+        <div class="checkoutItem">
+
+            <img
+                class="checkoutImage"
+                src="${product.image || ""}"
+                onerror="this.src='https://via.placeholder.com/80'"
+            >
+
+            <div class="checkoutInfo">
+
+                <div class="checkoutName">
+
+                    ${product.name || "Produto"}
+
+                </div>
+
+                <div class="checkoutQty">
+
+                    ${qty} × ${formatPrice(price)}
+
+                </div>
+
+                <div class="checkoutSubtotal">
+
+                    ${formatPrice(subtotal)}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+    total = Math.max(0, total - discount);
+
+    totalPrice.textContent = formatPrice(total);
+
+}
