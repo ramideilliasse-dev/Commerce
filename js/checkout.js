@@ -173,3 +173,200 @@ function renderCheckout() {
     totalPrice.textContent = formatPrice(total);
 
 }
+/* ===============================
+   NUMÉRO DE COMMANDE
+=============================== */
+
+function generateOrderNumber(){
+
+    const now = new Date();
+
+    return "TOMA-" +
+
+        now.getFullYear() +
+
+        String(now.getMonth()+1).padStart(2,"0") +
+
+        String(now.getDate()).padStart(2,"0") +
+
+        "-" +
+
+        Math.floor(
+
+            100000 +
+
+            Math.random()*900000
+
+        );
+
+}
+
+/* ===============================
+   ENVOYER LA COMMANDE
+=============================== */
+
+async function placeOrder(){
+
+    if(!currentUser){
+
+        showToast(
+            "Faça login primeiro",
+            "warning"
+        );
+
+        return;
+
+    }
+
+    if(cart.length===0){
+
+        showToast(
+            "Carrinho vazio",
+            "warning"
+        );
+
+        return;
+
+    }
+
+    if(
+
+        !clientName.value ||
+
+        !clientPhone.value ||
+
+        !clientProvince.value ||
+
+        !clientCity.value ||
+
+        !clientAddress.value
+
+    ){
+
+        showToast(
+            "Preencha todos os campos",
+            "warning"
+        );
+
+        return;
+
+    }
+
+    const loader =
+        document.getElementById("loaderOverlay");
+
+    loader.style.display="flex";
+
+    confirmBtn.disabled=true;
+
+    try{
+
+        const total = cart.reduce(
+
+            (sum,p)=>
+
+                sum +
+
+                (Number(p.price||0)
+
+                *
+
+                Number(p.qty||1)),
+
+            0
+
+        ) - discount;
+
+        await addDoc(
+
+            collection(db,"orders"),
+
+            {
+
+                uid:currentUser.uid,
+
+                orderNumber:
+
+                    generateOrderNumber(),
+
+                customerName:
+
+                    clientName.value,
+
+                customerPhone:
+
+                    clientPhone.value,
+
+                province:
+
+                    clientProvince.value,
+
+                city:
+
+                    clientCity.value,
+
+                address:
+
+                    clientAddress.value,
+
+                paymentMethod:
+
+                    paymentMethod.value,
+
+                note:
+
+                    orderNote.value,
+
+                items:cart,
+
+                total:total,
+
+                status:"pending",
+
+                createdAt:
+
+                    serverTimestamp()
+
+            }
+
+        );
+
+        localStorage.removeItem("checkoutCart");
+
+        localStorage.removeItem("cart");
+
+        showToast(
+
+            "✅ Pedido enviado",
+
+            "success"
+
+        );
+
+        setTimeout(()=>{
+
+            window.location.href="orders.html";
+
+        },1000);
+
+    }catch(err){
+
+        console.error(err);
+
+        showToast(
+
+            "Erro ao enviar pedido",
+
+            "error"
+
+        );
+
+    }finally{
+
+        loader.style.display="none";
+
+        confirmBtn.disabled=false;
+
+    }
+
+}
