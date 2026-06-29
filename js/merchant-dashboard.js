@@ -798,3 +798,336 @@ window.deleteProduct = async function (id) {
     }
 
 };
+/* ======================================
+   AVIS CLIENTS
+====================================== */
+
+async function loadReviews() {
+
+    try {
+
+        const q = query(
+            collection(db, "reviews"),
+            where("merchantId", "==", currentUser.uid)
+        );
+
+        const snap = await getDocs(q);
+
+        let html = "";
+
+        let totalStars = 0;
+
+        snap.forEach(docSnap => {
+
+            const review = docSnap.data();
+
+            totalStars += Number(review.rating || 0);
+
+            html += `
+
+            <div class="productCard">
+
+                <div style="font-size:18px;color:#f59e0b">
+
+                    ${"⭐".repeat(review.rating || 0)}
+
+                </div>
+
+                <h4 style="margin:8px 0">
+
+                    ${review.clientName || "Cliente"}
+
+                </h4>
+
+                <div style="color:#666">
+
+                    ${review.comment || ""}
+
+                </div>
+
+                <small style="color:#999">
+
+                    ${review.productName || ""}
+
+                </small>
+
+            </div>
+
+            `;
+
+        });
+
+        const average =
+
+            snap.size > 0
+
+            ? (totalStars / snap.size).toFixed(1)
+
+            : "0.0";
+
+        if (ratingValue)
+
+            ratingValue.textContent = average;
+
+        reviewsBox.innerHTML =
+
+            html ||
+
+            "<p>Nenhuma avaliação.</p>";
+
+    }
+
+    catch(err){
+
+        console.error(err);
+
+    }
+
+}
+
+
+/* ======================================
+   VENDAS POR INFLUENCIADOR
+====================================== */
+
+async function loadInfluencerSales(){
+
+    try{
+
+        const q = query(
+
+            collection(db,"orders"),
+
+            where("merchantId","==",currentUser.uid)
+
+        );
+
+        const snap = await getDocs(q);
+
+        let stats = {};
+
+        snap.forEach(docSnap=>{
+
+            const order = docSnap.data();
+
+            if(!order.couponCode) return;
+
+            if(!stats[order.couponCode]){
+
+                stats[order.couponCode]={
+
+                    sales:0,
+
+                    amount:0,
+
+                    commission:0
+
+                };
+
+            }
+
+            stats[order.couponCode].sales++;
+
+            stats[order.couponCode].amount +=
+
+                Number(order.total || 0);
+
+            stats[order.couponCode].commission +=
+
+                (
+
+                    Number(order.total || 0)
+
+                    *
+
+                    Number(order.commission || 0)
+
+                ) / 100;
+
+        });
+
+        let html="";
+
+        Object.keys(stats).forEach(code=>{
+
+            html += `
+
+            <div class="productCard">
+
+                <h3>${code}</h3>
+
+                🛒 ${stats[code].sales} vendas
+
+                <br>
+
+                💰 ${stats[code].amount.toLocaleString()} Kz
+
+                <br>
+
+                💸 Comissão:
+
+                ${Math.round(
+
+                    stats[code].commission
+
+                ).toLocaleString()} Kz
+
+            </div>
+
+            `;
+
+        });
+
+        influencerSales.innerHTML =
+
+            html ||
+
+            "<p>Nenhuma venda.</p>";
+
+    }
+
+    catch(err){
+
+        console.error(err);
+
+    }
+
+}
+/* ======================================
+   NAVIGATION
+====================================== */
+
+window.openShop = function () {
+
+    window.location.href =
+        "merchant-shop.html?id=" + currentUser.uid;
+
+};
+
+
+/* ======================================
+   AJOUT PRODUIT
+====================================== */
+
+window.addProduct = function () {
+
+    window.location.href =
+        "add-product.html";
+
+};
+
+
+/* ======================================
+   COUPONS
+====================================== */
+
+window.openCoupons = function () {
+
+    window.location.href =
+        "merchant-coupons.html";
+
+};
+
+
+/* ======================================
+   RAPPORTS
+====================================== */
+
+window.openReports = function () {
+
+    window.location.href =
+        "merchant-reports.html";
+
+};
+
+
+/* ======================================
+   DÉCONNEXION
+====================================== */
+
+window.logout = async function () {
+
+    try {
+
+        await signOut(auth);
+
+        window.location.href = "index.html";
+
+    }
+
+    catch(err){
+
+        console.error(err);
+
+    }
+
+};
+/* ======================================
+   TOAST PREMIUM
+====================================== */
+
+function showToast(message, type = "success") {
+
+    const box = document.getElementById("toastBox");
+
+    if (!box) return;
+
+    const toast = document.createElement("div");
+
+    toast.className = "toast " + type;
+
+    toast.innerHTML = message;
+
+    box.appendChild(toast);
+
+    setTimeout(() => {
+
+        toast.style.opacity = "0";
+
+        toast.style.transform = "translateY(-20px)";
+
+        setTimeout(() => {
+
+            toast.remove();
+
+        },300);
+
+    },3500);
+
+}
+
+
+/* ======================================
+   SERVICE WORKER
+====================================== */
+
+if ("serviceWorker" in navigator) {
+
+    window.addEventListener("load", () => {
+
+        navigator.serviceWorker
+
+            .register("/service-worker.js")
+
+            .then(() => {
+
+                console.log("✅ Service Worker carregado");
+
+            })
+
+            .catch((err) => {
+
+                console.error(err);
+
+            });
+
+    });
+
+}
+
+
+/* ======================================
+   DASHBOARD READY
+====================================== */
+
+console.log("✅ Merchant Dashboard Premium carregado.");
