@@ -1131,3 +1131,77 @@ if ("serviceWorker" in navigator) {
 ====================================== */
 
 console.log("✅ Merchant Dashboard Premium carregado.");
+// ================================
+// EDITAR PRODUTO
+// ================================
+
+window.editProduct = function(id) {
+
+    alert("ID enviado:\n" + id);
+
+    location.href = "edit-product.html?id=" + id;
+
+};
+// ================================
+// MINHA LOJA
+// ================================
+
+window.openShop = function () {
+
+    location.href = "merchant-shop.html?id=" + currentUser.uid;
+
+};
+// ================================
+// NOVO PRODUTO
+// ================================
+
+window.addProduct = function () {
+
+    location.href = "add-product.html";
+
+};
+// ================================
+// CUPONS
+// ================================
+
+window.openCoupons = function () {
+
+    location.href = "merchant-coupons.html";
+
+};
+// ================================
+// LOGOUT
+// ================================
+
+window.logout = async function () {
+
+    await signOut(auth);
+
+    location.href = "index.html";
+
+};
+// ================================
+// TOAST
+// ================================
+
+function showToast(message, type = "success") {
+
+    const box = document.getElementById("toastBox");
+
+    if (!box) return;
+
+    const toast = document.createElement("div");
+
+    toast.className = "toast " + type;
+
+    toast.innerText = message;
+
+    box.appendChild(toast);
+
+    setTimeout(() => {
+
+        toast.remove();
+
+    }, 4000);
+
+}
