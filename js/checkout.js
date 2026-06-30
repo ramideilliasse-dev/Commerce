@@ -392,7 +392,11 @@ status:
 async function applyCoupon() {
 
     const code = couponCode.value.trim().toUpperCase();
-
+alert(
+"Coupon saisi : " + code +
+"\n\nMerchantId panier : " +
+(cart[0]?.merchantId || "VIDE")
+);
     if (!code) {
 
         showToast("Introduza um cupão", "warning");
@@ -431,9 +435,13 @@ snapshot.forEach(docSnap => {
     }
 
 });
-
+alert(
+"Coupon Firestore : " + data.code +
+"\nMerchantId coupon : " + data.merchantId +
+"\nActive : " + data.active
+);
         if (found) {
-
+alert("✅ Coupon trouvé");
             couponInfo.innerHTML =
                 `✅ Desconto: ${formatPrice(discount)}`;
 
