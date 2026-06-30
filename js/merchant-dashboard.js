@@ -673,3 +673,349 @@ async function loadProducts() {
     }
 
 }
+// ======================================================
+// RECHERCHE DES PRODUITS
+// ======================================================
+
+window.filterProducts = function () {
+
+    const search = searchProduct.value
+        .toLowerCase()
+        .trim();
+
+    const filtered = allProducts.filter(product =>
+
+        (product.name || "")
+            .toLowerCase()
+            .includes(search)
+
+    );
+
+    let html = "";
+
+    filtered.forEach(product => {
+
+        html += `
+
+<div class="productCard">
+
+    <div style="
+        display:flex;
+        align-items:center;
+        gap:15px;
+    ">
+
+        <img
+            src="${product.images?.[0] || ""}"
+            style="
+                width:90px;
+                height:90px;
+                object-fit:cover;
+                border-radius:15px;
+                background:#eee;
+            "
+        >
+
+        <div style="flex:1;">
+
+            <h3 style="margin:0">
+
+                ${product.name}
+
+            </h3>
+
+            <div style="
+                margin-top:8px;
+                color:#16a34a;
+                font-size:18px;
+                font-weight:bold;
+            ">
+
+                ${Number(product.price || 0).toLocaleString("pt-PT")} Kz
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div style="
+        display:flex;
+        gap:10px;
+        margin-top:15px;
+    ">
+
+        <button
+            class="btnDone"
+            onclick="editProduct('${product.id}')">
+
+            ✏️ Modifier
+
+        </button>
+
+        <button
+            class="btnDelete"
+            onclick="deleteProduct('${product.id}')">
+
+            🗑 Supprimer
+
+        </button>
+
+    </div>
+
+</div>
+
+`;
+
+    });
+
+    productsList.innerHTML =
+
+        html ||
+
+        "<p>Nenhum produto encontrado.</p>";
+
+};
+
+
+// ======================================================
+// MODIFIER PRODUIT
+// ======================================================
+
+window.editProduct = function(id){
+
+    window.location.href =
+        "edit-product.html?id=" + id;
+
+};
+
+
+// ======================================================
+// SUPPRIMER PRODUIT
+// ======================================================
+
+window.deleteProduct = async function(id){
+
+    if(!confirm("Deseja apagar este produto?")){
+
+        return;
+
+    }
+
+    try{
+
+        await deleteDoc(
+            doc(db,"products",id)
+        );
+
+        showToast(
+            "Produto apagado com sucesso ✅",
+            "success"
+        );
+
+        loadProducts();
+
+        loadStats();
+
+    }
+
+    catch(err){
+
+        console.error(err);
+
+        showToast(
+            "Erro ao apagar produto ❌",
+            "error"
+        );
+
+    }
+
+};
+// ======================================================
+// CHARGER LES AVIS
+// ======================================================
+
+async function loadReviews() {
+
+    try {
+
+        const q = query(
+            collection(db, "reviews"),
+            where("merchantId", "==", currentUser.uid)
+        );
+
+        const snap = await getDocs(q);
+
+        let html = "";
+
+        let totalStars = 0;
+
+        snap.forEach(docSnap => {
+
+            const review = docSnap.data();
+
+            totalStars += Number(review.rating || 0);
+
+            html += `
+
+<div class="productCard">
+
+    <div style="font-size:18px;color:#f59e0b">
+
+        ${"⭐".repeat(review.rating || 0)}
+
+    </div>
+
+    <h3 style="margin:10px 0 6px">
+
+        ${review.clientName || "Cliente"}
+
+    </h3>
+
+    <div style="color:#666">
+
+        ${review.comment || ""}
+
+    </div>
+
+    <small style="color:#999">
+
+        ${review.productName || ""}
+
+    </small>
+
+</div>
+
+`;
+
+        });
+
+        const average =
+
+            snap.size > 0
+
+            ? (totalStars / snap.size).toFixed(1)
+
+            : "0.0";
+
+        if (ratingValue)
+
+            ratingValue.textContent = average;
+
+        reviewsBox.innerHTML =
+
+            html ||
+
+            "<p>Nenhuma avaliação.</p>";
+
+    }
+
+    catch(err){
+
+        console.error(err);
+
+    }
+
+}
+
+
+
+// ======================================================
+// VENTES DES INFLUENCEURS
+// ======================================================
+
+async function loadInfluencerSales(){
+
+    try{
+
+        const q = query(
+
+            collection(db,"orders"),
+
+            where("merchantId","==",currentUser.uid)
+
+        );
+
+        const snap = await getDocs(q);
+
+        let stats = {};
+
+        snap.forEach(docSnap=>{
+
+            const order = docSnap.data();
+
+            if(!order.couponCode) return;
+
+            if(!stats[order.couponCode]){
+
+                stats[order.couponCode]={
+
+                    sales:0,
+
+                    amount:0,
+
+                    commission:0
+
+                };
+
+            }
+
+            stats[order.couponCode].sales++;
+
+            stats[order.couponCode].amount +=
+                Number(order.total || 0);
+
+            stats[order.couponCode].commission +=
+                (
+                    Number(order.total || 0)
+                    *
+                    Number(order.commission || 0)
+                ) / 100;
+
+        });
+
+        let html="";
+
+        Object.keys(stats).forEach(code=>{
+
+            html += `
+
+<div class="productCard">
+
+<h3>${code}</h3>
+
+🛒 ${stats[code].sales} vendas
+
+<br>
+
+💰 ${stats[code].amount.toLocaleString()} Kz
+
+<br>
+
+💸 Comissão
+
+${Math.round(
+stats[code].commission
+).toLocaleString()} Kz
+
+</div>
+
+`;
+
+        });
+
+        influencerSales.innerHTML =
+
+            html ||
+
+            "<p>Nenhuma venda.</p>";
+
+    }
+
+    catch(err){
+
+        console.error(err);
+
+    }
+
+}
