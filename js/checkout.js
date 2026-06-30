@@ -469,16 +469,14 @@ alert("✅ Coupon trouvé");
 
         }
 
-    } catch (err) {
+    catch (err) {
 
-        console.error(err);
+    alert(
+        "ERREUR :\n\n" +
+        err.message
+    );
 
-        showToast(
-            "Erro ao verificar cupão",
-            "error"
-        );
-
-    }
+}
 
 }
 
