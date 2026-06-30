@@ -418,15 +418,24 @@ snapshot.forEach(docSnap => {
 
     const data = docSnap.data();
 
+    alert(
+        "Coupon Firestore : " + data.code +
+        "\nMerchantId coupon : " + data.merchantId +
+        "\nMerchantId panier : " + (cart[0]?.merchantId || "VIDE") +
+        "\nActive : " + data.active
+    );
+
     if (
 
         (data.code || "").toUpperCase() === code &&
 
-        data.merchantId === cart[0].merchantId &&
+        data.merchantId === cart[0]?.merchantId &&
 
         data.active === true
 
     ) {
+
+        alert("✅ Coupon trouvé");
 
         found = true;
 
@@ -435,11 +444,6 @@ snapshot.forEach(docSnap => {
     }
 
 });
-alert(
-"Coupon Firestore : " + data.code +
-"\nMerchantId coupon : " + data.merchantId +
-"\nActive : " + data.active
-);
         if (found) {
 alert("✅ Coupon trouvé");
             couponInfo.innerHTML =
