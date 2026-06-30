@@ -1019,3 +1019,125 @@ stats[code].commission
     }
 
 }
+// ======================================================
+// NAVIGATION
+// ======================================================
+
+window.openShop = function () {
+
+    window.location.href =
+        "merchant-shop.html?id=" + currentUser.uid;
+
+};
+
+window.addProduct = function () {
+
+    window.location.href =
+        "add-product.html";
+
+};
+
+window.openCoupons = function () {
+
+    window.location.href =
+        "merchant-coupons.html";
+
+};
+
+window.openReports = function () {
+
+    window.location.href =
+        "merchant-reports.html";
+
+};
+
+
+// ======================================================
+// DÉCONNEXION
+// ======================================================
+
+window.logout = async function () {
+
+    try {
+
+        await signOut(auth);
+
+        window.location.href = "index.html";
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+    }
+
+};
+
+
+// ======================================================
+// TOAST
+// ======================================================
+
+function showToast(message, type = "success") {
+
+    const box = document.getElementById("toastBox");
+
+    if (!box) return;
+
+    const toast = document.createElement("div");
+
+    toast.className = "toast " + type;
+
+    toast.innerHTML = message;
+
+    box.appendChild(toast);
+
+    setTimeout(() => {
+
+        toast.style.opacity = "0";
+
+        toast.style.transform = "translateY(-20px)";
+
+        setTimeout(() => {
+
+            toast.remove();
+
+        }, 300);
+
+    }, 3500);
+
+}
+
+
+// ======================================================
+// SERVICE WORKER
+// ======================================================
+
+if ("serviceWorker" in navigator) {
+
+    window.addEventListener("load", () => {
+
+        navigator.serviceWorker
+            .register("/service-worker.js")
+            .then(() => {
+
+                console.log("✅ Service Worker carregado");
+
+            })
+            .catch(err => {
+
+                console.error(err);
+
+            });
+
+    });
+
+}
+
+
+// ======================================================
+// DASHBOARD PRÊT
+// ======================================================
+
+console.log("✅ Merchant Dashboard Premium carregado.");
