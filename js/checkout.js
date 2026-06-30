@@ -392,14 +392,17 @@ status:
 async function applyCoupon() {
 
     const code = couponCode.value.trim().toUpperCase();
-alert(
-"Coupon saisi : " + code +
-"\n\nMerchantId panier : " +
-(cart[0]?.merchantId || "VIDE")
-);
+
+    alert(
+        "Coupon saisi : " + code +
+        "\n\nMerchantId panier : " +
+        (cart[0]?.merchantId || "VIDE")
+    );
+
     if (!code) {
 
         showToast("Introduza um cupão", "warning");
+
         return;
 
     }
@@ -407,47 +410,44 @@ alert(
     try {
 
         const snapshot = await getDocs(
+            collection(db, "coupons")
+        );
 
-    collection(db, "coupons")
+        let found = false;
 
-);
+        snapshot.forEach(docSnap => {
 
-let found = false;
+            const data = docSnap.data();
 
-snapshot.forEach(docSnap => {
+            alert(
+                "Coupon Firestore : " + (data.code || "") +
+                "\nMerchantId coupon : " + (data.merchantId || "VIDE") +
+                "\nMerchantId panier : " + (cart[0]?.merchantId || "VIDE") +
+                "\nActive : " + data.active
+            );
 
-    const data = docSnap.data();
+            if (
 
-    alert(
-        "Coupon Firestore : " + data.code +
-        "\nMerchantId coupon : " + data.merchantId +
-        "\nMerchantId panier : " + (cart[0]?.merchantId || "VIDE") +
-        "\nActive : " + data.active
-    );
+                (data.code || "").toUpperCase() === code &&
+                data.merchantId === cart[0]?.merchantId &&
+                data.active === true
 
-    if (
+            ) {
 
-        (data.code || "").toUpperCase() === code &&
+                alert("✅ Coupon trouvé");
 
-        data.merchantId === cart[0]?.merchantId &&
+                found = true;
 
-        data.active === true
+                discount = Number(data.discount || 0);
 
-    ) {
+            }
 
-        alert("✅ Coupon trouvé");
+        });
 
-        found = true;
-
-        discount = Number(data.discount || 0);
-
-    }
-
-});
         if (found) {
-alert("✅ Coupon trouvé");
+
             couponInfo.innerHTML =
-                `✅ Desconto: ${formatPrice(discount)}`;
+                `✅ Desconto : ${formatPrice(discount)}`;
 
             renderCheckout();
 
@@ -469,14 +469,14 @@ alert("✅ Coupon trouvé");
 
         }
 
-    catch (err) {
+    } catch (err) {
 
-    alert(
-        "ERREUR :\n\n" +
-        err.message
-    );
+        alert(
+            "ERREUR :\n\n" +
+            err.message
+        );
 
-}
+    }
 
 }
 /* ===============================
