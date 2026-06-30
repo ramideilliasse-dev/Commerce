@@ -393,12 +393,7 @@ async function applyCoupon() {
 
     const code = couponCode.value.trim().toUpperCase();
 
-    alert(
-        "Coupon saisi : " + code +
-        "\n\nMerchantId panier : " +
-        (cart[0]?.merchantId || "VIDE")
-    );
-
+    
     if (!code) {
 
         showToast("Introduza um cupão", "warning");
@@ -418,13 +413,7 @@ async function applyCoupon() {
 
             const data = docSnap.data();
 
-            alert(
-                "Coupon Firestore : " + (data.code || "") +
-                "\nMerchantId coupon : " + (data.merchantId || "VIDE") +
-                "\nMerchantId panier : " + (cart[0]?.merchantId || "VIDE") +
-                "\nActive : " + data.active
-            );
-
+            
             if (
 
                 (data.code || "").toUpperCase() === code &&
@@ -433,7 +422,7 @@ async function applyCoupon() {
 
             ) {
 
-                alert("✅ Coupon trouvé");
+                
 
                 found = true;
 
@@ -470,12 +459,14 @@ async function applyCoupon() {
 
     } catch (err) {
 
-        alert(
-            "ERREUR :\n\n" +
-            err.message
-        );
+    console.error(err);
 
-    }
+    showToast(
+        "Erro ao verificar cupão",
+        "error"
+    );
+
+}
 
 }
 /* ===============================
