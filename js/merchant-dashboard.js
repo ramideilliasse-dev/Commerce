@@ -405,3 +405,271 @@ function listenOrders() {
     });
 
 }
+// ======================================================
+// CONCLURE UNE COMMANDE
+// ======================================================
+
+window.markDone = async function (id) {
+
+    try {
+
+        await updateDoc(
+            doc(db, "orders", id),
+            {
+                status: "concluido",
+                seen: true
+            }
+        );
+
+        showToast(
+            "Pedido concluído com sucesso ✅",
+            "success"
+        );
+
+        loadStats();
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        showToast(
+            "Erro ao concluir pedido ❌",
+            "error"
+        );
+
+    }
+
+};
+
+
+// ======================================================
+// SUPPRIMER UNE COMMANDE
+// ======================================================
+
+window.deleteOrder = async function (id) {
+
+    if (!confirm("Deseja apagar este pedido?")) {
+
+        return;
+
+    }
+
+    try {
+
+        await deleteDoc(
+            doc(db, "orders", id)
+        );
+
+        showToast(
+            "Pedido apagado com sucesso 🗑",
+            "success"
+        );
+
+        loadStats();
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        showToast(
+            "Erro ao apagar pedido ❌",
+            "error"
+        );
+
+    }
+
+};
+
+
+// ======================================================
+// FILTRE DES COMMANDES
+// ======================================================
+
+window.setFilter = function (newFilter) {
+
+    filter = newFilter;
+
+    document
+        .querySelectorAll(".filter button")
+        .forEach(btn => {
+
+            btn.classList.remove("active");
+
+        });
+
+    switch (newFilter) {
+
+        case "pending":
+
+            document
+                .getElementById("f_pending")
+                ?.classList.add("active");
+
+            break;
+
+        case "concluido":
+
+            document
+                .getElementById("f_done")
+                ?.classList.add("active");
+
+            break;
+
+        default:
+
+            document
+                .getElementById("f_all")
+                ?.classList.add("active");
+
+    }
+
+    listenOrders();
+
+};
+// ======================================================
+// CHARGER LES PRODUITS
+// ======================================================
+
+async function loadProducts() {
+
+    try {
+
+        const q = query(
+            collection(db, "products"),
+            where("merchantId", "==", currentUser.uid)
+        );
+
+        const snap = await getDocs(q);
+
+        allProducts = [];
+
+        let html = "";
+
+        snap.forEach(docSnap => {
+
+            const product = docSnap.data();
+            const id = docSnap.id;
+
+            allProducts.push({
+                id,
+                ...product
+            });
+
+            html += `
+
+<div class="productCard">
+
+    <div style="
+        display:flex;
+        align-items:center;
+        gap:15px;
+    ">
+
+        <img
+            src="${product.images?.[0] || ""}"
+            style="
+                width:90px;
+                height:90px;
+                object-fit:cover;
+                border-radius:15px;
+                background:#eee;
+            "
+        >
+
+        <div style="flex:1;">
+
+            <h3 style="
+                margin:0;
+                font-size:18px;
+            ">
+
+                ${product.name}
+
+            </h3>
+
+            <div style="
+                color:#16a34a;
+                font-weight:bold;
+                font-size:18px;
+                margin-top:8px;
+            ">
+
+                ${Number(product.price || 0).toLocaleString("pt-PT")} Kz
+
+            </div>
+
+            ${
+                product.discount
+                ?
+
+                `<span style="
+                    background:#ef4444;
+                    color:white;
+                    padding:4px 10px;
+                    border-radius:20px;
+                    font-size:12px;
+                    display:inline-block;
+                    margin-top:8px;
+                ">
+                    -${product.discount}%
+                </span>`
+
+                :
+
+                ""
+
+            }
+
+        </div>
+
+    </div>
+
+    <div style="
+        display:flex;
+        gap:10px;
+        margin-top:15px;
+    ">
+
+        <button
+            class="btnDone"
+            onclick="editProduct('${id}')">
+
+            ✏️ Modifier
+
+        </button>
+
+        <button
+            class="btnDelete"
+            onclick="deleteProduct('${id}')">
+
+            🗑 Supprimer
+
+        </button>
+
+    </div>
+
+</div>
+
+`;
+
+        });
+
+        productsList.innerHTML =
+
+            html ||
+
+            "<p>Nenhum produto.</p>";
+
+    }
+
+    catch(err){
+
+        console.error(err);
+
+    }
+
+}
