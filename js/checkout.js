@@ -322,10 +322,17 @@ clientAddress:
 
 couponCode:
     couponCode.value.trim(),
-
+couponName:
+    couponCode.value.trim(),
 discount:
     discount,
+commission:
 
+    discount > 0
+
+        ? discount
+
+        : 0,
 total:
     total,
 
@@ -396,23 +403,34 @@ async function applyCoupon() {
     try {
 
         const snapshot = await getDocs(
-            collection(db, "coupons")
-        );
 
-        let found = false;
+    collection(db, "coupons")
 
-        snapshot.forEach(doc => {
+);
 
-            const data = doc.data();
+let found = false;
 
-            if ((data.code || "").toUpperCase() === code) {
+snapshot.forEach(docSnap => {
 
-                found = true;
-                discount = Number(data.discount || 0);
+    const data = docSnap.data();
 
-            }
+    if (
 
-        });
+        (data.code || "").toUpperCase() === code &&
+
+        data.merchantId === cart[0].merchantId &&
+
+        data.active === true
+
+    ) {
+
+        found = true;
+
+        discount = Number(data.discount || 0);
+
+    }
+
+});
 
         if (found) {
 
