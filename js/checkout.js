@@ -410,9 +410,8 @@ async function applyCoupon() {
     try {
 
         const snapshot = await getDocs(
-            collection(db, "coupons")
-        );
-
+    collection(db, "merchantCoupons")
+);
         let found = false;
 
         snapshot.forEach(docSnap => {
