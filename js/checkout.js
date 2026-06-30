@@ -157,7 +157,13 @@ function renderCheckout() {
 
     });
 
-    totalPrice.textContent = formatPrice(total);
+    const finalTotal = Math.max(
+    total - discount,
+    0
+);
+
+totalPrice.textContent =
+    formatPrice(finalTotal);
 
 }
 /* ===============================
@@ -248,22 +254,30 @@ async function placeOrder(){
 
     try{
 
-        const total = cart.reduce(
+        const subtotal = cart.reduce(
 
-            (sum,p)=>
+    (sum, p) =>
 
-                sum +
+        sum +
 
-                (Number(p.price||0)
+        (
 
-                *
+            Number(p.price || 0)
 
-                Number(p.qty||1)),
+            *
 
-            0
+            Number(p.quantity || p.qty || 1)
 
-        ) - discount;
+        ),
 
+    0
+
+);
+
+const total = Math.max(
+    subtotal - discount,
+    0
+);
         await addDoc(
 
             collection(db,"orders"),
@@ -277,25 +291,24 @@ shopName: cart[0].shopName || "",
 
                     generateOrderNumber(),
 
-                customerName:
+                clientName:
+    clientName.value,
 
-                    clientName.value,
+clientPhone:
+    clientPhone.value,
 
-                customerPhone:
+clientProvince:
+    clientProvince.value,
 
-                    clientPhone.value,
+clientCity:
+    clientCity.value,
 
-                province:
-
-                    clientProvince.value,
-
-                city:
-
-                    clientCity.value,
-
-                address:
-
-                    clientAddress.value,
+clientAddress:
+    clientProvince.value +
+    ", " +
+    clientCity.value +
+    ", " +
+    clientAddress.value,
 
                 paymentMethod:
 
@@ -305,12 +318,19 @@ shopName: cart[0].shopName || "",
 
                     orderNote.value,
 
-                items:cart,
+                items: cart,
 
-                total:total,
+couponCode:
+    couponCode.value.trim(),
 
-                status:"pending",
+discount:
+    discount,
 
+total:
+    total,
+
+status:
+    "pending",
                 createdAt:
 
                     serverTimestamp()
