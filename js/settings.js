@@ -23,7 +23,7 @@ import {
 =============================== */
 
 let currentUser = null;
-
+let currentUserData = {};
 /* ===============================
    DOM
 =============================== */
@@ -93,7 +93,7 @@ onAuthStateChanged(auth, async (user) => {
     const snap = await getDoc(ref);
 
     const data = snap.data() || {};
-
+    currentUserData = data;
     profilePic.src =
         data.photo ||
         "https://via.placeholder.com/80";
@@ -587,7 +587,11 @@ phone:editPhone.value,
 whatsapp:editWhatsapp.value
 }
 );
+currentUserData.name = editName.value;
 
+currentUserData.phone = editPhone.value;
+
+currentUserData.whatsapp = editWhatsapp.value;
 profileName.innerText =
 editName.value;
 
