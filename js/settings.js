@@ -28,6 +28,7 @@ import {
 
 let currentUser = null;
 let currentUserData = {};
+let editingAddressId = null;
 /* ===============================
    DOM
 =============================== */
@@ -760,7 +761,20 @@ addressModal.style.display="none";
 
 };
 if(saveAddressBtn){
+editingAddressId = null;
 
+saveAddressBtn.textContent =
+"Guardar endereço";
+
+addressName.value = "";
+
+addressPhone.value = "";
+
+addressProvince.value = "";
+
+addressCity.value = "";
+
+addressStreet.value = "";
 saveAddressBtn.onclick = async ()=>{
 
 if(
@@ -791,37 +805,66 @@ return;
 
 try{
 
+const addressData = {
+
+name: addressName.value,
+
+phone: addressPhone.value,
+
+province: addressProvince.value,
+
+city: addressCity.value,
+
+street: addressStreet.value
+
+};
+
+if(editingAddressId){
+
+await updateDoc(
+
+doc(
+db,
+"users",
+currentUser.uid,
+"addresses",
+editingAddressId
+),
+
+addressData
+
+);
+
+showToast(
+"Endereço atualizado",
+"success"
+);
+
+editingAddressId = null;
+
+}else{
+
+addressData.createdAt = new Date();
+
 await addDoc(
 
 collection(
-
 db,
-
 "users",
-
 currentUser.uid,
-
 "addresses"
-
 ),
 
-{
-
-name:addressName.value,
-
-phone:addressPhone.value,
-
-province:addressProvince.value,
-
-city:addressCity.value,
-
-street:addressStreet.value,
-
-createdAt:new Date()
-
-}
+addressData
 
 );
+
+showToast(
+"Endereço guardado",
+"success"
+);
+
+}
 
 showToast(
 
