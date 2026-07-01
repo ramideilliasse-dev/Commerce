@@ -749,7 +749,22 @@ if(addAddressBtn){
 
 addAddressBtn.onclick = ()=>{
 
-addressModal.style.display="flex";
+editingAddressId = null;
+
+addressName.value = "";
+
+addressPhone.value = "";
+
+addressProvince.value = "";
+
+addressCity.value = "";
+
+addressStreet.value = "";
+
+saveAddressBtn.textContent =
+"Guardar endereço";
+
+openAddressModal();
 
 };
 
@@ -758,6 +773,11 @@ addressModal.style.display="flex";
 window.closeAddressModal = function(){
 
 addressModal.style.display="none";
+
+};
+window.openAddressModal = function(){
+
+addressModal.style.display = "flex";
 
 };
 if(saveAddressBtn){
