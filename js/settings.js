@@ -269,3 +269,112 @@ window.saveProvince = async function () {
     );
 
 };
+/* ===============================
+   PHOTO DE PROFIL
+=============================== */
+
+upload.onchange = function () {
+
+    const file = this.files[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = async function () {
+
+        try {
+
+            const base64 = reader.result;
+
+            profilePic.src = base64;
+
+            await updateDoc(
+                doc(db, "users", currentUser.uid),
+                {
+                    photo: base64
+                }
+            );
+
+            showToast(
+                "✅ Foto atualizada",
+                "success"
+            );
+
+        } catch (err) {
+
+            showToast(
+                "❌ Erro ao atualizar foto",
+                "error"
+            );
+
+        }
+
+    };
+
+    reader.readAsDataURL(file);
+
+};
+
+/* ===============================
+   SUPORTE
+=============================== */
+
+window.contactSupport = function () {
+
+    window.open(
+        "https://wa.me/244922623238?text=Olá preciso de ajuda",
+        "_blank"
+    );
+
+};
+
+/* ===============================
+   APAGAR CONTA
+=============================== */
+
+window.deleteAccount = async function () {
+
+    if (!currentUser) {
+
+        location.href = "login.html";
+
+        return;
+
+    }
+
+    if (!confirm("Tem certeza que deseja apagar a conta?")) {
+
+        return;
+
+    }
+
+    try {
+
+        await deleteDoc(
+            doc(db, "users", currentUser.uid)
+        );
+
+        await deleteUser(currentUser);
+
+        showToast(
+            "✅ Conta apagada",
+            "success"
+        );
+
+        setTimeout(() => {
+
+            location.href = "index.html";
+
+        }, 1000);
+
+    } catch (err) {
+
+        showToast(
+            "❌ Erro ao apagar conta",
+            "error"
+        );
+
+    }
+
+};
