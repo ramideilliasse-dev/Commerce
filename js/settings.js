@@ -7,15 +7,15 @@
 import { auth, db } from "../firebase.js";
 
 import {
-    doc,
-    getDoc,
-    updateDoc,
-    deleteDoc,
-    collection,
-    addDoc,
-    onSnapshot,
-    setDoc,
-    deleteField
+doc,
+getDoc,
+updateDoc,
+deleteDoc,
+collection,
+addDoc,
+onSnapshot,
+getDocs,
+writeBatch
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import {
     deleteUser,
@@ -969,9 +969,66 @@ window.editAddress = function(id){
 
 };
 
-window.setDefaultAddress = function(id){
+window.setDefaultAddress = async function(id){
 
-    alert("Adresse principale : " + id);
+try{
+
+const addressesRef = collection(
+db,
+"users",
+currentUser.uid,
+"addresses"
+);
+
+const snap = await getDocs(addressesRef);
+
+const batch = writeBatch(db);
+
+snap.forEach(docSnap=>{
+
+batch.update(
+doc(
+db,
+"users",
+currentUser.uid,
+"addresses",
+docSnap.id
+),
+{
+default:false
+}
+);
+
+});
+
+batch.update(
+doc(
+db,
+"users",
+currentUser.uid,
+"addresses",
+id
+),
+{
+default:true
+}
+);
+
+await batch.commit();
+
+showToast(
+"✅ Endereço principal atualizado",
+"success"
+);
+
+}catch(err){
+
+showToast(
+"Erro ao atualizar",
+"error"
+);
+
+}
 
 };
 
