@@ -10,7 +10,10 @@ import {
     doc,
     getDoc,
     updateDoc,
-    deleteDoc
+    deleteDoc,
+    collection,
+    addDoc,
+    onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import {
@@ -70,6 +73,20 @@ document.getElementById("addressList");
 
 const saveAddressBtn =
 document.getElementById("saveAddressBtn");
+const addressName =
+document.getElementById("addressName");
+
+const addressPhone =
+document.getElementById("addressPhone");
+
+const addressProvince =
+document.getElementById("addressProvince");
+
+const addressCity =
+document.getElementById("addressCity");
+
+const addressStreet =
+document.getElementById("addressStreet");
 console.log("✅ settings.js chargé");
 /* ===============================
    AUTHENTIFICATION
@@ -718,6 +735,116 @@ showToast(
 "success"
 
 );
+
+};
+
+}
+/* ===============================
+   ENDEREÇOS
+=============================== */
+
+if(addAddressBtn){
+
+addAddressBtn.onclick = ()=>{
+
+addressModal.style.display="flex";
+
+};
+
+}
+
+window.closeAddressModal = function(){
+
+addressModal.style.display="none";
+
+};
+if(saveAddressBtn){
+
+saveAddressBtn.onclick = async ()=>{
+
+if(
+
+!addressName.value ||
+
+!addressPhone.value ||
+
+!addressProvince.value ||
+
+!addressCity.value ||
+
+!addressStreet.value
+
+){
+
+showToast(
+
+"Preencha todos os campos",
+
+"warning"
+
+);
+
+return;
+
+}
+
+try{
+
+await addDoc(
+
+collection(
+
+db,
+
+"users",
+
+currentUser.uid,
+
+"addresses"
+
+),
+
+{
+
+name:addressName.value,
+
+phone:addressPhone.value,
+
+province:addressProvince.value,
+
+city:addressCity.value,
+
+street:addressStreet.value,
+
+createdAt:new Date()
+
+}
+
+);
+
+showToast(
+
+"Endereço guardado",
+
+"success"
+
+);
+
+closeAddressModal();
+
+loadAddresses();
+
+}catch(err){
+
+showToast(
+
+"Erro ao guardar",
+
+"error"
+
+);
+
+}
 
 };
 
