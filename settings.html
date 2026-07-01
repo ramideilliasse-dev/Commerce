@@ -158,57 +158,104 @@ transform:translateY(-20px) scale(.9);
 
 <div class="container">
 
-<!-- PROFILE -->
+<!-- PROFILE PREMIUM -->
 <div class="card">
 
-<img id="profilePic" class="profile">
-<div style="
-text-align:center;
-margin-top:10px;
-">
+<div style="text-align:center;">
 
-<div id="profileName"
+<img
+id="profilePic"
+class="profile">
+
+<input
+type="file"
+id="upload"
+hidden>
+
+<h2
+id="profileName"
 style="
-font-size:18px;
-font-weight:bold;
+margin:15px 0 5px;
+font-size:22px;
 ">
 Utilizador
-</div>
+</h2>
 
-<div id="profileEmail"
+<div
+id="profileEmail"
 style="
-font-size:13px;
-color:#777;
+color:#666;
+font-size:14px;
+margin-bottom:12px;
 ">
 email@email.com
 </div>
 
-</div>
-<input type="file" id="upload" hidden>
+<div
+id="accountType"
+style="
+display:inline-block;
+padding:6px 14px;
+background:#fff3e8;
+color:#ff6a00;
+border-radius:30px;
+font-size:13px;
+font-weight:bold;
+margin-bottom:15px;
+">
 
-<!-- 🔥 LOGIN / REGISTER -->
-<div id="guestActions" style="display:none">
+👤 Cliente
+
+</div>
+
+<button
+class="btn"
+id="editProfileBtn">
+
+✏️ Editar Perfil
+
+</button>
+
+</div>
+
+<!-- LOGIN / REGISTER -->
+
+<div id="guestActions"
+style="display:none;">
 
 <div class="guestTitle">
+
 Entre ou crie uma conta
+
 </div>
 
-<button class="btn" onclick="location.href='login.html'">
+<button
+class="btn"
+onclick="location.href='login.html'">
+
 🔐 Entrar
+
 </button>
 
-<button class="btnMerchant" onclick="location.href='register.html'">
+<button
+class="btnMerchant"
+onclick="location.href='register.html'">
+
 👤 Criar conta cliente
+
 </button>
 
-<button class="btn" onclick="location.href='merchant-register.html'">
+<button
+class="btn"
+onclick="location.href='merchant-register.html'">
+
 🏪 Criar conta comerciante
+
 </button>
 
 </div>
 
 </div>
-
 <!-- LANGUAGE -->
 <div class="card">
 <label id="langLabel">Idioma</label>
