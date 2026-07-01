@@ -123,7 +123,14 @@ onAuthStateChanged(auth, async (user) => {
     }
 
     currentUser = user;
+if (user.emailVerified && verifyEmailBtn) {
 
+    verifyEmailBtn.innerHTML =
+    "✅ E-mail verificado";
+
+    verifyEmailBtn.disabled = true;
+
+}
     guestActions.style.display = "none";
 
     const ref = doc(db, "users", user.uid);
@@ -699,27 +706,45 @@ if(changePasswordBtn){
 
 changePasswordBtn.onclick = async ()=>{
 
-    if(!currentUser){
+    if(!auth.currentUser){
+
+        showToast(
+            "Faça login primeiro",
+            "warning"
+        );
+
         return;
+
     }
 
     try{
 
         await sendPasswordResetEmail(
+
             auth,
-            currentUser.email
+
+            auth.currentUser.email
+
         );
 
         showToast(
-            "📧 Email enviado para alterar a palavra-passe",
+
+            "📩 Verifique o seu e-mail para alterar a palavra-passe.",
+
             "success"
+
         );
 
-    }catch(err){
+    }
+
+    catch(err){
 
         showToast(
-            "Erro ao enviar email",
+
+            err.message,
+
             "error"
+
         );
 
     }
@@ -727,44 +752,56 @@ changePasswordBtn.onclick = async ()=>{
 };
 
 }
-if(verifyEmailBtn){
+if (verifyEmailBtn) {
 
-verifyEmailBtn.onclick = async ()=>{
+    if (currentUser?.emailVerified) {
 
-    if(!currentUser){
-        return;
-    }
+        verifyEmailBtn.innerHTML =
+        "✅ E-mail verificado";
 
-    if(currentUser.emailVerified){
-
-        showToast(
-            "✅ Email já verificado",
-            "success"
-        );
-
-        return;
+        verifyEmailBtn.disabled = true;
 
     }
 
-    try{
+    verifyEmailBtn.onclick = async () => {
 
-        await sendEmailVerification(currentUser);
+        try {
 
-        showToast(
-            "📧 Email de verificação enviado",
-            "success"
-        );
+            if (auth.currentUser.emailVerified) {
 
-    }catch(err){
+                showToast(
+                    "O seu e-mail já está verificado.",
+                    "success"
+                );
 
-        showToast(
-            "Erro ao enviar email",
-            "error"
-        );
+                verifyEmailBtn.innerHTML =
+                "✅ E-mail verificado";
 
-    }
+                verifyEmailBtn.disabled = true;
 
-};
+                return;
+
+            }
+
+            await sendEmailVerification(
+                auth.currentUser
+            );
+
+            showToast(
+                "📩 E-mail de verificação enviado.",
+                "success"
+            );
+
+        } catch (err) {
+
+            showToast(
+                err.message,
+                "error"
+            );
+
+        }
+
+    };
 
 }
 if(exportDataBtn){
