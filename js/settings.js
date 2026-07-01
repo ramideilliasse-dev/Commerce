@@ -59,6 +59,17 @@ document.getElementById("verifyEmailBtn");
 
 const exportDataBtn =
 document.getElementById("exportDataBtn");
+const addAddressBtn =
+document.getElementById("addAddressBtn");
+
+const addressModal =
+document.getElementById("addressModal");
+
+const addressList =
+document.getElementById("addressList");
+
+const saveAddressBtn =
+document.getElementById("saveAddressBtn");
 console.log("✅ settings.js chargé");
 /* ===============================
    AUTHENTIFICATION
