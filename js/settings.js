@@ -53,3 +53,109 @@ const profileEmail =
 document.getElementById("profileEmail");
 
 console.log("✅ settings.js chargé");
+/* ===============================
+   AUTHENTIFICATION
+=============================== */
+
+profilePic.onclick = () => {
+
+    if (currentUser) {
+
+        upload.click();
+
+    }
+
+};
+
+onAuthStateChanged(auth, async (user) => {
+
+    if (!user) {
+
+        guestActions.style.display = "block";
+
+        profilePic.src =
+            "https://via.placeholder.com/80";
+
+        document.getElementById("merchantCard").style.display = "none";
+
+        provinceCard.style.display = "none";
+
+        return;
+
+    }
+
+    currentUser = user;
+
+    guestActions.style.display = "none";
+
+    const ref = doc(db, "users", user.uid);
+
+    const snap = await getDoc(ref);
+
+    const data = snap.data() || {};
+
+    profilePic.src =
+        data.photo ||
+        "https://via.placeholder.com/80";
+
+    profileName.innerText =
+        data.name ||
+        user.displayName ||
+        "Utilizador";
+
+    profileEmail.innerText =
+        user.email || "";
+
+    if (data.role === "merchant") {
+
+        merchantBtn.innerText =
+            "Painel da loja 🏪";
+
+        merchantBtn.onclick = () => {
+
+            location.href =
+                "merchant-dashboard.html";
+
+        };
+
+        provinceCard.style.display = "block";
+
+        merchantForm.style.display = "block";
+
+        if (data.shopName)
+            document.getElementById("shopName").value = data.shopName;
+
+        if (data.whatsapp)
+            document.getElementById("whatsapp").value = data.whatsapp;
+
+        if (data.description)
+            document.getElementById("shopDesc").value = data.description;
+
+        if (data.province)
+            provinceSelect.value = data.province;
+
+    }
+
+    else if (data.requestMerchant) {
+
+        merchantBtn.innerText =
+            "⏳ Demande en attente";
+
+        merchantBtn.disabled = true;
+
+        merchantForm.style.display = "block";
+
+    }
+
+    else {
+
+        merchantBtn.innerText =
+            "Devenir marchand 🏪";
+
+        merchantBtn.disabled = false;
+
+        merchantBtn.onclick = becomeMerchant;
+
+    }
+
+});
