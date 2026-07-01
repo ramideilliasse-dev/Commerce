@@ -522,3 +522,92 @@ function showToast(message, type = "success") {
 }
 
 console.log("✅ Settings Premium carregado.");
+/* ===============================
+   EDIT PROFILE
+=============================== */
+
+const editProfileBtn =
+document.getElementById("editProfileBtn");
+
+const editProfileModal =
+document.getElementById("editProfileModal");
+
+const editName =
+document.getElementById("editName");
+
+const editPhone =
+document.getElementById("editPhone");
+
+const saveProfileBtn =
+document.getElementById("saveProfileBtn");
+
+if(editProfileBtn){
+
+editProfileBtn.onclick = ()=>{
+
+editName.value =
+profileName.innerText;
+
+editPhone.value = "";
+
+editProfileModal.style.display =
+"flex";
+
+};
+
+}
+
+window.closeProfileModal = function(){
+
+editProfileModal.style.display =
+"none";
+
+};
+if(saveProfileBtn){
+
+saveProfileBtn.onclick = async ()=>{
+
+try{
+
+await updateDoc(
+
+doc(db,"users",currentUser.uid),
+
+{
+
+name:editName.value,
+
+phone:editPhone.value
+
+}
+
+);
+
+profileName.innerText =
+editName.value;
+
+closeProfileModal();
+
+showToast(
+
+"✅ Perfil atualizado",
+
+"success"
+
+);
+
+}catch(err){
+
+showToast(
+
+"❌ Erro",
+
+"error"
+
+);
+
+}
+
+};
+
+}
