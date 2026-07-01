@@ -19,9 +19,10 @@ writeBatch
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import {
     deleteUser,
-    onAuthStateChanged
+    onAuthStateChanged,
+    sendPasswordResetEmail,
+    sendEmailVerification
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
 /* ===============================
    VARIABLES
 =============================== */
@@ -696,36 +697,76 @@ showToast(
 
 if(changePasswordBtn){
 
-changePasswordBtn.onclick = ()=>{
+changePasswordBtn.onclick = async ()=>{
 
-showToast(
+    if(!currentUser){
+        return;
+    }
 
-"🚧 Em breve disponível",
+    try{
 
-"warning"
+        await sendPasswordResetEmail(
+            auth,
+            currentUser.email
+        );
 
-);
+        showToast(
+            "📧 Email enviado para alterar a palavra-passe",
+            "success"
+        );
+
+    }catch(err){
+
+        showToast(
+            "Erro ao enviar email",
+            "error"
+        );
+
+    }
 
 };
 
 }
-
 if(verifyEmailBtn){
 
-verifyEmailBtn.onclick = ()=>{
+verifyEmailBtn.onclick = async ()=>{
 
-showToast(
+    if(!currentUser){
+        return;
+    }
 
-"🚧 Em breve disponível",
+    if(currentUser.emailVerified){
 
-"warning"
+        showToast(
+            "✅ Email já verificado",
+            "success"
+        );
 
-);
+        return;
+
+    }
+
+    try{
+
+        await sendEmailVerification(currentUser);
+
+        showToast(
+            "📧 Email de verificação enviado",
+            "success"
+        );
+
+    }catch(err){
+
+        showToast(
+            "Erro ao enviar email",
+            "error"
+        );
+
+    }
 
 };
 
 }
-
 if(exportDataBtn){
 
 exportDataBtn.onclick = ()=>{
