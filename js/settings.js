@@ -378,3 +378,119 @@ window.deleteAccount = async function () {
     }
 
 };
+/* ===============================
+   NOTIFICATIONS
+=============================== */
+
+const promoNotif =
+document.getElementById("promoNotif");
+
+const orderNotif =
+document.getElementById("orderNotif");
+
+if (promoNotif) {
+
+    promoNotif.checked =
+        localStorage.getItem("promoNotif") === "true";
+
+    promoNotif.onchange = () => {
+
+        localStorage.setItem(
+            "promoNotif",
+            promoNotif.checked
+        );
+
+        showToast(
+            "✅ Preferência guardada",
+            "success"
+        );
+
+    };
+
+}
+
+if (orderNotif) {
+
+    orderNotif.checked =
+        localStorage.getItem("orderNotif") === "true";
+
+    orderNotif.onchange = () => {
+
+        localStorage.setItem(
+            "orderNotif",
+            orderNotif.checked
+        );
+
+        showToast(
+            "✅ Preferência guardada",
+            "success"
+        );
+
+    };
+
+}
+
+/* ===============================
+   DARK MODE
+=============================== */
+
+const darkMode =
+document.getElementById("darkMode");
+
+if (darkMode) {
+
+    darkMode.checked =
+        localStorage.getItem("darkMode") === "true";
+
+    darkMode.onchange = () => {
+
+        localStorage.setItem(
+            "darkMode",
+            darkMode.checked
+        );
+
+        showToast(
+            "✅ Configuração guardada",
+            "success"
+        );
+
+        setTimeout(() => {
+
+            location.reload();
+
+        }, 500);
+
+    };
+
+}
+
+/* ===============================
+   TOAST
+=============================== */
+
+function showToast(message, type = "success") {
+
+    const box =
+        document.getElementById("toastBox");
+
+    if (!box) return;
+
+    const toast =
+        document.createElement("div");
+
+    toast.className =
+        "toast " + type;
+
+    toast.innerText = message;
+
+    box.appendChild(toast);
+
+    setTimeout(() => {
+
+        toast.remove();
+
+    }, 4000);
+
+}
+
+console.log("✅ Settings Premium carregado.");
