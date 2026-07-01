@@ -159,3 +159,113 @@ onAuthStateChanged(auth, async (user) => {
     }
 
 });
+/* ===============================
+   SAUVER LES INFORMATIONS MARCHAND
+=============================== */
+
+window.saveMerchantInfo = async function () {
+
+    const shopName =
+        document.getElementById("shopName").value.trim();
+
+    const whatsapp =
+        document.getElementById("whatsapp").value.trim();
+
+    const description =
+        document.getElementById("shopDesc").value.trim();
+
+    if (!shopName || !whatsapp) {
+
+        showToast(
+            "⚠️ Preencha loja e WhatsApp",
+            "warning"
+        );
+
+        return;
+
+    }
+
+    await updateDoc(
+        doc(db, "users", currentUser.uid),
+        {
+            shopName,
+            whatsapp,
+            description
+        }
+    );
+
+    showToast(
+        "✅ Informações salvas",
+        "success"
+    );
+
+};
+
+/* ===============================
+   PEDIR CONTA DE MARCHAND
+=============================== */
+
+window.becomeMerchant = async function () {
+
+    if (!currentUser) {
+
+        showToast(
+            "🔐 Faça login primeiro",
+            "warning"
+        );
+
+        location.href = "login.html";
+
+        return;
+
+    }
+
+    await updateDoc(
+        doc(db, "users", currentUser.uid),
+        {
+            requestMerchant: true,
+            approved: false
+        }
+    );
+
+    showToast(
+        "✅ Pedido enviado ao administrador",
+        "success"
+    );
+
+    location.reload();
+
+};
+
+/* ===============================
+   SAUVER LA PROVINCE
+=============================== */
+
+window.saveProvince = async function () {
+
+    const province = provinceSelect.value;
+
+    if (!province) {
+
+        showToast(
+            "⚠️ Selecione uma província",
+            "warning"
+        );
+
+        return;
+
+    }
+
+    await updateDoc(
+        doc(db, "users", currentUser.uid),
+        {
+            province
+        }
+    );
+
+    showToast(
+        "✅ Província salva",
+        "success"
+    );
+
+};
