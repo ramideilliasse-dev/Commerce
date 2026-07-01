@@ -13,9 +13,10 @@ import {
     deleteDoc,
     collection,
     addDoc,
-    onSnapshot
+    onSnapshot,
+    setDoc,
+    deleteField
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
 import {
     deleteUser,
     onAuthStateChanged
@@ -849,3 +850,133 @@ showToast(
 };
 
 }
+/* ===============================
+   CHARGER LES ADRESSES
+=============================== */
+
+function loadAddresses() {
+
+    if (!currentUser) return;
+
+    const q = collection(
+        db,
+        "users",
+        currentUser.uid,
+        "addresses"
+    );
+
+    onSnapshot(q, (snapshot) => {
+
+        let html = "";
+
+        if (snapshot.empty) {
+
+            addressList.innerHTML =
+                "<p>Nenhum endereço.</p>";
+
+            return;
+
+        }
+
+        snapshot.forEach(docSnap => {
+
+            const data = docSnap.data();
+
+            const id = docSnap.id;
+
+            html += `
+
+            <div class="productCard">
+
+                <h4 style="margin:0">
+
+                    ${data.name}
+
+                    ${
+                        data.default
+                        ?
+                        `<span style="
+                            color:#16a34a;
+                            font-size:13px;
+                        ">
+                        ⭐ Principal
+                        </span>`
+                        :
+                        ""
+                    }
+
+                </h4>
+
+                <div style="margin-top:8px">
+
+                    📞 ${data.phone}<br>
+
+                    📍 ${data.province}<br>
+
+                    🏙 ${data.city}<br>
+
+                    🏠 ${data.street}
+
+                </div>
+
+                <div style="
+                    display:flex;
+                    gap:10px;
+                    margin-top:15px;
+                    flex-wrap:wrap;
+                ">
+
+                    <button
+                        class="btn"
+                        onclick="editAddress('${id}')">
+
+                        ✏️ Modifier
+
+                    </button>
+
+                    <button
+                        class="btnMerchant"
+                        onclick="setDefaultAddress('${id}')">
+
+                        ⭐ Principal
+
+                    </button>
+
+                    <button
+                        class="btnDanger"
+                        onclick="deleteAddress('${id}')">
+
+                        🗑 Supprimer
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            `;
+
+        });
+
+        addressList.innerHTML = html;
+
+    });
+
+}
+window.editAddress = function(id){
+
+    alert("Modifier : " + id);
+
+};
+
+window.setDefaultAddress = function(id){
+
+    alert("Adresse principale : " + id);
+
+};
+
+window.deleteAddress = function(id){
+
+    alert("Supprimer : " + id);
+
+};
