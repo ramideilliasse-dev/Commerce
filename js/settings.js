@@ -105,7 +105,35 @@ onAuthStateChanged(auth, async (user) => {
 
     profileEmail.innerText =
         user.email || "";
+const accountType =
+document.getElementById("accountType");
 
+if (accountType) {
+
+    if (data.role === "merchant") {
+
+        accountType.innerHTML =
+        "🏪 Comerciante";
+
+    }
+
+    else if (
+        data.role === "admin"
+    ) {
+
+        accountType.innerHTML =
+        "👑 Administrador";
+
+    }
+
+    else {
+
+        accountType.innerHTML =
+        "👤 Cliente";
+
+    }
+
+}
     if (data.role === "merchant") {
 
         merchantBtn.innerText =
