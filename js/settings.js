@@ -539,7 +539,14 @@ const editPhone =
 document.getElementById("editPhone");
 const editWhatsapp =
 document.getElementById("editWhatsapp");
+const editProvince =
+document.getElementById("editProvince");
 
+const editCity =
+document.getElementById("editCity");
+
+const editAddress =
+document.getElementById("editAddress");
 const editEmail =
 document.getElementById("editEmail");
 const saveProfileBtn =
@@ -557,7 +564,14 @@ currentUserData.phone || "";
 
 editWhatsapp.value =
 currentUserData.whatsapp || "";
+editProvince.value =
+currentUserData.province || "";
 
+editCity.value =
+currentUserData.city || "";
+
+editAddress.value =
+currentUserData.address || "";
 editEmail.value =
 currentUser.email || "";
 editProfileModal.style.display =
@@ -582,16 +596,35 @@ try{
 await updateDoc(
 doc(db,"users",currentUser.uid),
 {
-name:editName.value,
-phone:editPhone.value,
-whatsapp:editWhatsapp.value
+
+name: editName.value,
+
+phone: editPhone.value,
+
+whatsapp: editWhatsapp.value,
+
+province: editProvince.value,
+
+city: editCity.value,
+
+address: editAddress.value
+
 }
+
 );
 currentUserData.name = editName.value;
 
 currentUserData.phone = editPhone.value;
 
 currentUserData.whatsapp = editWhatsapp.value;
+ currentUserData.province =
+editProvince.value;
+
+currentUserData.city =
+editCity.value;
+
+currentUserData.address =
+editAddress.value;
 profileName.innerText =
 editName.value;
 
