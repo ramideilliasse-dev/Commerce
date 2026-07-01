@@ -537,7 +537,11 @@ document.getElementById("editName");
 
 const editPhone =
 document.getElementById("editPhone");
+const editWhatsapp =
+document.getElementById("editWhatsapp");
 
+const editEmail =
+document.getElementById("editEmail");
 const saveProfileBtn =
 document.getElementById("saveProfileBtn");
 
@@ -548,8 +552,14 @@ editProfileBtn.onclick = ()=>{
 editName.value =
 profileName.innerText;
 
-editPhone.value = "";
+editPhone.value =
+currentUserData.phone || "";
 
+editWhatsapp.value =
+currentUserData.whatsapp || "";
+
+editEmail.value =
+currentUser.email || "";
 editProfileModal.style.display =
 "flex";
 
@@ -570,17 +580,12 @@ saveProfileBtn.onclick = async ()=>{
 try{
 
 await updateDoc(
-
 doc(db,"users",currentUser.uid),
-
 {
-
 name:editName.value,
-
-phone:editPhone.value
-
+phone:editPhone.value,
+whatsapp:editWhatsapp.value
 }
-
 );
 
 profileName.innerText =
