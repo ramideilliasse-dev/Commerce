@@ -963,9 +963,49 @@ function loadAddresses() {
     });
 
 }
-window.editAddress = function(id){
+window.editAddress = async function(id){
 
-    alert("Modifier : " + id);
+try{
+
+const ref = doc(
+db,
+"users",
+currentUser.uid,
+"addresses",
+id
+);
+
+const snap = await getDoc(ref);
+
+if(!snap.exists()) return;
+
+const data = snap.data();
+
+editingAddressId = id;
+
+addressName.value = data.name || "";
+
+addressPhone.value = data.phone || "";
+
+addressProvince.value = data.province || "";
+
+addressCity.value = data.city || "";
+
+addressStreet.value = data.street || "";
+
+openAddressModal();
+
+saveAddressBtn.textContent =
+"Atualizar endereço";
+
+}catch(err){
+
+showToast(
+"Erro ao carregar endereço",
+"error"
+);
+
+}
 
 };
 
@@ -1032,8 +1072,40 @@ showToast(
 
 };
 
-window.deleteAddress = function(id){
+window.deleteAddress = async function(id){
 
-    alert("Supprimer : " + id);
+const ok = confirm(
+"Deseja apagar este endereço?"
+);
+
+if(!ok) return;
+
+try{
+
+await deleteDoc(
+
+doc(
+db,
+"users",
+currentUser.uid,
+"addresses",
+id
+)
+
+);
+
+showToast(
+"✅ Endereço apagado",
+"success"
+);
+
+}catch(err){
+
+showToast(
+"❌ Erro ao apagar",
+"error"
+);
+
+}
 
 };
