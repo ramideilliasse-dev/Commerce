@@ -409,6 +409,64 @@ Toma 🇦🇴<br>
 Versão 1.0.0
 
 </div>
+ <!-- MODAL EDIT PROFILE -->
+
+<div id="editProfileModal"
+style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.45);
+z-index:9999;
+justify-content:center;
+align-items:center;
+">
+
+<div
+style="
+background:#fff;
+width:92%;
+max-width:420px;
+border-radius:18px;
+padding:20px;
+">
+
+<h2 style="margin-top:0">
+
+Editar Perfil
+
+</h2>
+
+<input
+id="editName"
+placeholder="Nome">
+
+<input
+id="editPhone"
+placeholder="Telefone">
+
+<button
+class="btn"
+id="saveProfileBtn">
+
+💾 Guardar
+
+</button>
+
+<button
+class="btnDanger"
+onclick="closeProfileModal()">
+
+Cancelar
+
+</button>
+
+</div>
+
+</div>
  <div id="toastBox" class="toastBox"></div>
 <script>
 if ("serviceWorker" in navigator) {
