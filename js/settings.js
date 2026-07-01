@@ -51,7 +51,14 @@ document.getElementById("profileName");
 
 const profileEmail =
 document.getElementById("profileEmail");
+const changePasswordBtn =
+document.getElementById("changePasswordBtn");
 
+const verifyEmailBtn =
+document.getElementById("verifyEmailBtn");
+
+const exportDataBtn =
+document.getElementById("exportDataBtn");
 console.log("✅ settings.js chargé");
 /* ===============================
    AUTHENTIFICATION
@@ -649,6 +656,57 @@ showToast(
 );
 
 }
+
+};
+
+}
+/* ===============================
+   SEGURANÇA
+=============================== */
+
+if(changePasswordBtn){
+
+changePasswordBtn.onclick = ()=>{
+
+showToast(
+
+"🚧 Em breve disponível",
+
+"warning"
+
+);
+
+};
+
+}
+
+if(verifyEmailBtn){
+
+verifyEmailBtn.onclick = ()=>{
+
+showToast(
+
+"🚧 Em breve disponível",
+
+"warning"
+
+);
+
+};
+
+}
+
+if(exportDataBtn){
+
+exportDataBtn.onclick = ()=>{
+
+showToast(
+
+"📥 Preparando exportação...",
+
+"success"
+
+);
 
 };
 
