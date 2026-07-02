@@ -138,8 +138,7 @@ onAuthStateChanged(auth, async (user) => {
 
     }
 
-    currentUser = user;
-if (user.emailVerified && verifyEmailBtn) {
+    currentUser = user;if (auth.currentUser?.emailVerified && verifyEmailBtn) {
 
     verifyEmailBtn.innerHTML =
     "✅ E-mail verificado";
@@ -155,7 +154,10 @@ if (user.emailVerified && verifyEmailBtn) {
 
     const data = snap.data() || {};
     currentUserData = data;
- loadStats();
+
+loadStats();
+
+loadAddresses();
     profilePic.src =
         data.photo ||
         "https://via.placeholder.com/80";
@@ -1279,14 +1281,13 @@ let myOrders = 0;
 
 ordersSnap.forEach(doc=>{
 
-if(doc.data().uid===currentUser.uid){
+if(doc.data().userId===currentUser.uid){
 
 myOrders++;
 
 }
 
 });
-
 document.getElementById("statOrders").innerText =
 myOrders;
 
