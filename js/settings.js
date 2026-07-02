@@ -95,18 +95,7 @@ document.getElementById("helpBtn");
 
 const deleteBtn =
 document.getElementById("deleteBtn");
-if (helpBtn) {
-
-    helpBtn.onclick = contactSupport;
-
-}
-
-if (deleteBtn) {
-
-    deleteBtn.onclick = deleteAccount;
-
-}
-alert("1 - settings.js chargé");
+alert("Tous les const sont chargés");
 /* ===============================
    AUTHENTIFICATION
 =============================== */
