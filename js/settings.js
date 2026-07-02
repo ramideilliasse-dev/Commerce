@@ -34,68 +34,85 @@ let editingAddressId = null;
    DOM
 =============================== */
 
-const profilePic = document.getElementById("profilePic");
-const upload = document.getElementById("upload");
+const $ = (id) => document.getElementById(id);
 
-const provinceCard =
-document.getElementById("provinceCard");
+// Profil
+const profilePic = $("profilePic");
+const upload = $("upload");
+const profileName = $("profileName");
+const profileEmail = $("profileEmail");
+const accountType = $("accountType");
 
-const provinceSelect =
-document.getElementById("provinceSelect");
+// Marchand
+const merchantCard = $("merchantCard");
+const merchantBtn = $("merchantBtn");
+const merchantForm = $("merchantForm");
 
-const merchantForm =
-document.getElementById("merchantForm");
+// Province
+const provinceCard = $("provinceCard");
+const provinceSelect = $("provinceSelect");
 
-const merchantBtn =
-document.getElementById("merchantBtn");
+// Invité
+const guestActions = $("guestActions");
 
-const guestActions =
-document.getElementById("guestActions");
+// Langue
+const langSelect = $("langSelect");
 
-const profileName =
-document.getElementById("profileName");
+// Sécurité
+const helpBtn = $("helpBtn");
+const deleteBtn = $("deleteBtn");
+const changePasswordBtn = $("changePasswordBtn");
+const verifyEmailBtn = $("verifyEmailBtn");
+const exportDataBtn = $("exportDataBtn");
 
-const profileEmail =
-document.getElementById("profileEmail");
-const changePasswordBtn =
-document.getElementById("changePasswordBtn");
+// Profil
+const editProfileBtn = $("editProfileBtn");
+const editProfileModal = $("editProfileModal");
+const saveProfileBtn = $("saveProfileBtn");
 
-const verifyEmailBtn =
-document.getElementById("verifyEmailBtn");
+// Adresses
+const addressModal = $("addressModal");
+const addressList = $("addressList");
+const addAddressBtn = $("addAddressBtn");
+const saveAddressBtn = $("saveAddressBtn");
 
-const exportDataBtn =
-document.getElementById("exportDataBtn");
-const addAddressBtn =
-document.getElementById("addAddressBtn");
+// Statistiques
+const statOrders = $("statOrders");
+const statFavorites = $("statFavorites");
+const statAddresses = $("statAddresses");
 
-const addressModal =
-document.getElementById("addressModal");
+// Toast
+const toastBox = $("toastBox");
 
-const addressList =
-document.getElementById("addressList");
+console.log("✅ DOM chargé");
+function updateProfileUI(data, user) {
 
-const saveAddressBtn =
-document.getElementById("saveAddressBtn");
-const addressName =
-document.getElementById("addressName");
+    profileName.textContent =
+        data.name ||
+        user.displayName ||
+        "Utilizador";
 
-const addressPhone =
-document.getElementById("addressPhone");
+    profileEmail.textContent =
+        user.email || "";
 
-const addressProvince =
-document.getElementById("addressProvince");
+    profilePic.src =
+        data.photo ||
+        "https://via.placeholder.com/80";
 
-const addressCity =
-document.getElementById("addressCity");
+    if (accountType) {
 
-const addressStreet =
-document.getElementById("addressStreet");
-const helpBtn =
-document.getElementById("helpBtn");
+        const roles = {
+            customer: "👤 Cliente",
+            merchant: "🏪 Comerciante",
+            admin: "👑 Administrador",
+            superadmin: "👑 Super Administrador"
+        };
 
-const deleteBtn =
-document.getElementById("deleteBtn");
-console.log("✅ settings.js chargé");
+        accountType.textContent =
+            roles[data.role] || "👤 Cliente";
+    }
+
+}
 /* ===============================
    AUTHENTIFICATION
 =============================== */
@@ -147,52 +164,14 @@ onAuthStateChanged(auth, async (user) => {
  
     currentUserData = data;
 
-loadStats();
-
-loadAddresses();
-    profilePic.src =
-        data.photo ||
-        "https://via.placeholder.com/80";
-
-    profileName.innerText =
-        data.name ||
-        user.displayName ||
-        "Utilizador";
-
-    profileEmail.innerText =
-        user.email || "";
-const accountType =
-document.getElementById("accountType");
-
-if (accountType) {
-
+Promise.all([
+    loadStats(),
+    loadAddresses()
+]);
+    updateProfileUI(data, user);
     if (data.role === "merchant") {
 
-        accountType.innerHTML =
-        "🏪 Comerciante";
-
-    }
-
-    else if (
-        data.role === "admin"
-    ) {
-
-        accountType.innerHTML =
-        "👑 Administrador";
-
-    }
-
-    else {
-
-        accountType.innerHTML =
-        "👤 Cliente";
-
-    }
-
-}
-    if (data.role === "merchant") {
-
-        merchantBtn.innerText =
+       merchantBtn.textContent =
             "Painel da loja 🏪";
 
         merchantBtn.onclick = () => {
@@ -222,7 +201,7 @@ if (accountType) {
 
     else if (data.requestMerchant) {
 
-        merchantBtn.innerText =
+        merchantBtn.textContent =
             "⏳ Demande en attente";
 
         merchantBtn.disabled = true;
@@ -233,7 +212,7 @@ if (accountType) {
 
     else {
 
-        merchantBtn.innerText =
+        merchantBtn.textContent =
             "Devenir marchand 🏪";
 
         merchantBtn.disabled = false;
@@ -1016,7 +995,11 @@ function loadAddresses() {
         currentUser.uid,
         "addresses"
     );
-
+addressList.innerHTML = `
+<div style="padding:20px;text-align:center;">
+⏳ A carregar endereços...
+</div>
+`;
     onSnapshot(q, (snapshot) => {
 
         let html = "";
@@ -1261,50 +1244,78 @@ showToast(
 }
 
 };
-async function loadStats(){
+async function loadStats() {
 
-if(!currentUser) return;
+    if (!currentUser) return;
 
-const ordersSnap = await getDocs(
-collection(db,"orders")
-);
+    try {
 
-let myOrders = 0;
+        const ordersPromise = getDocs(
+            collection(db, "orders")
+        );
 
-ordersSnap.forEach(doc=>{
+        const addressesPromise = getDocs(
+            collection(
+                db,
+                "users",
+                currentUser.uid,
+                "addresses"
+            )
+        );
 
-if(doc.data().userId===currentUser.uid){
+        const favorites =
+            JSON.parse(
+                localStorage.getItem("favorites") || "[]"
+            );
 
-myOrders++;
+        const [
+            ordersSnap,
+            addressesSnap
+        ] = await Promise.all([
+            ordersPromise,
+            addressesPromise
+        ]);
 
-}
+        let myOrders = 0;
 
-});
-document.getElementById("statOrders").innerText =
-myOrders;
+        ordersSnap.forEach(docSnap => {
 
-const favs =
-JSON.parse(
-localStorage.getItem("favorites") || "[]"
-);
+            const order = docSnap.data();
 
-document.getElementById("statFavorites").innerText =
-favs.length;
+            if (
+                order.uid === currentUser.uid ||
+                order.userId === currentUser.uid
+            ) {
 
-const addressesSnap =
-await getDocs(
+                myOrders++;
 
-collection(
-db,
-"users",
-currentUser.uid,
-"addresses"
-)
+            }
 
-);
+        });
 
-document.getElementById("statAddresses").innerText =
-addressesSnap.size;
+        if (statOrders)
+            statOrders.textContent = myOrders;
+
+        if (statFavorites)
+            statFavorites.textContent =
+                favorites.length;
+
+        if (statAddresses)
+            statAddresses.textContent =
+                addressesSnap.size;
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        showToast(
+            "Erro ao carregar estatísticas",
+            "error"
+        );
+
+    }
 
 }
 helpBtn?.addEventListener("click", contactSupport);
