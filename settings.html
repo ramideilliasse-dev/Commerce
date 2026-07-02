@@ -204,6 +204,87 @@ font-size:13px;
 color:#666;
 
 }
+/* ===============================
+PREMIUM MENU
+=============================== */
+
+.menuButton{
+
+display:flex;
+
+align-items:center;
+
+justify-content:space-between;
+
+padding:15px;
+
+background:white;
+
+border-radius:14px;
+
+margin-bottom:12px;
+
+cursor:pointer;
+
+transition:.25s;
+
+box-shadow:0 2px 8px rgba(0,0,0,.08);
+
+}
+
+.menuButton:hover{
+
+transform:translateY(-2px);
+
+box-shadow:0 6px 16px rgba(0,0,0,.12);
+
+}
+
+.menuLeft{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+}
+
+.menuIcon{
+
+width:42px;
+
+height:42px;
+
+border-radius:12px;
+
+background:#fff4eb;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:22px;
+
+}
+
+.menuTitle{
+
+font-weight:bold;
+
+font-size:15px;
+
+}
+
+.menuArrow{
+
+font-size:20px;
+
+color:#999;
+
+}
 </style>
 </head>
 
@@ -457,24 +538,46 @@ id="addAddressBtn">
 </button>
 
 </div>
-<div class="card">
-
-<button class="btn"
+<div
+class="menuButton"
 onclick="location.href='my-orders.html'">
 
-📦 Meus Pedidos
+<div class="menuLeft">
 
-</button>
+<div class="menuIcon">
+📦
+</div>
+
+<div class="menuTitle">
+Meus Pedidos
+</div>
 
 </div>
- <div class="card">
 
-<button class="btn"
+<div class="menuArrow">
+›
+</div>
+
+</div>
+ <div
+class="menuButton"
 onclick="location.href='favorites.html'">
 
-❤️ Favoritos
+<div class="menuLeft">
 
-</button>
+<div class="menuIcon">
+❤️
+</div>
+
+<div class="menuTitle">
+Favoritos
+</div>
+
+</div>
+
+<div class="menuArrow">
+›
+</div>
 
 </div>
  <div class="card">
