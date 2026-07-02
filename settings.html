@@ -149,6 +149,61 @@ opacity:0;
 transform:translateY(-20px) scale(.9);
 }
 }
+/* ===============================
+STATISTIQUES
+=============================== */
+
+.statsGrid{
+
+display:grid;
+
+grid-template-columns:repeat(3,1fr);
+
+gap:15px;
+
+}
+
+.statItem{
+
+text-align:center;
+
+padding:15px;
+
+border-radius:12px;
+
+background:#fafafa;
+
+transition:.3s;
+
+}
+
+.statItem:hover{
+
+background:#fff4eb;
+
+transform:translateY(-2px);
+
+}
+
+.statNumber{
+
+font-size:28px;
+
+font-weight:bold;
+
+color:#ff6a00;
+
+margin-bottom:5px;
+
+}
+
+.statLabel{
+
+font-size:13px;
+
+color:#666;
+
+}
 </style>
 </head>
 
@@ -217,7 +272,53 @@ id="editProfileBtn">
 </button>
 
 </div>
+<!-- ===========================
+STATISTIQUES
+=========================== -->
 
+<div class="card" id="statsCard">
+
+<div class="statsGrid">
+
+<div class="statItem">
+
+<div id="statOrders" class="statNumber">
+0
+</div>
+
+<div class="statLabel">
+Pedidos
+</div>
+
+</div>
+
+<div class="statItem">
+
+<div id="statFavorites" class="statNumber">
+0
+</div>
+
+<div class="statLabel">
+Favoritos
+</div>
+
+</div>
+
+<div class="statItem">
+
+<div id="statAddresses" class="statNumber">
+0
+</div>
+
+<div class="statLabel">
+Endereços
+</div>
+
+</div>
+
+</div>
+
+</div>
 <!-- LOGIN / REGISTER -->
 
 <div id="guestActions"
