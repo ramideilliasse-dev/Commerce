@@ -285,6 +285,39 @@ font-size:20px;
 color:#999;
 
 }
+/* ===============================
+PREMIUM CARD
+=============================== */
+
+.sectionTitle{
+
+font-size:13px;
+
+font-weight:bold;
+
+color:#888;
+
+margin:25px 0 10px;
+
+text-transform:uppercase;
+
+letter-spacing:1px;
+
+}
+
+.premiumCard{
+
+background:white;
+
+border-radius:18px;
+
+padding:18px;
+
+box-shadow:0 3px 15px rgba(0,0,0,.08);
+
+margin-bottom:15px;
+
+}
 </style>
 </head>
 
@@ -538,6 +571,11 @@ id="addAddressBtn">
 </button>
 
 </div>
+<div class="sectionTitle">
+Conta
+</div>
+
+<div class="premiumCard">
 <div
 class="menuButton"
 onclick="location.href='my-orders.html'">
@@ -580,6 +618,7 @@ Favoritos
 </div>
 
 </div>
+</div>
  <div class="card">
 
 <h3>🔔 Notificações</h3>
@@ -613,46 +652,16 @@ id="darkMode">
 </label>
 
 </div>
- <!-- SECURITY -->
-
-<div class="card">
-
-<h3 style="margin-top:0">
-
-🔒 Segurança
-
-</h3>
-
-<button
-class="btn"
-id="changePasswordBtn">
-
-🔑 Alterar palavra-passe
-
-</button>
-
-<button
-class="btn"
-id="verifyEmailBtn">
-
-📧 Verificar e-mail
-
-</button>
-
-<button
-class="btn"
-id="exportDataBtn">
-
-📥 Exportar meus dados
-
-</button>
-
-</div>
+ 
 <!-- ACTIONS -->
 <!-- ===============================
 AJUDA
 =============================== -->
+<div class="sectionTitle">
+Segurança
+</div>
 
+<div class="premiumCard">
 <div
 class="menuButton"
 id="helpBtn">
@@ -700,11 +709,15 @@ Alterar Palavra-passe
 </div>
 
 </div>
-
+</div>
 <!-- ===============================
 VERIFICAR EMAIL
 =============================== -->
+<div class="sectionTitle">
+Suporte
+</div>
 
+<div class="premiumCard">
 <div
 class="menuButton"
 id="verifyEmailBtn">
@@ -762,7 +775,7 @@ Apagar Conta
 </div>
 
 </div>
-
+</div>
 <script type="module" src="./js/settings.js"></script>
 <div style="
 text-align:center;
