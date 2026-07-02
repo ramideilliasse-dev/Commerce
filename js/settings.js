@@ -112,6 +112,43 @@ const exportDataBtn = $("exportDataBtn");
 const toastBox = $("toastBox");
 
 console.log("✅ DOM Premium chargé");
+function updateProfileUI(data, user) {
+
+    profileName.textContent =
+        data.name ||
+        user.displayName ||
+        "Utilizador";
+
+    profileEmail.textContent =
+        user.email || "";
+
+    profilePic.src =
+        data.photo ||
+        "https://via.placeholder.com/80";
+
+    if (accountType) {
+
+        if (data.role === "merchant") {
+
+            accountType.textContent = "🏪 Comerciante";
+
+        } else if (data.role === "admin") {
+
+            accountType.textContent = "👑 Administrador";
+
+        } else if (data.role === "superadmin") {
+
+            accountType.textContent = "👑 Super Administrador";
+
+        } else {
+
+            accountType.textContent = "👤 Cliente";
+
+        }
+
+    }
+
+}
 /* ===============================
    AUTHENTIFICATION
 =============================== */
