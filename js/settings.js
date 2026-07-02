@@ -122,7 +122,7 @@ profilePic.onclick = () => {
 };
 
 onAuthStateChanged(auth, async (user) => {
-
+alert("Étape 1 : onAuthStateChanged lancé");
     if (!user) {
 
         guestActions.style.display = "block";
@@ -138,7 +138,9 @@ onAuthStateChanged(auth, async (user) => {
 
     }
 
-    currentUser = user;if (auth.currentUser?.emailVerified && verifyEmailBtn) {
+    currentUser = user;
+ alert("Étape 2 : connecté = " + user.uid);
+ if (auth.currentUser?.emailVerified && verifyEmailBtn) {
 
     verifyEmailBtn.innerHTML =
     "✅ E-mail verificado";
@@ -151,8 +153,9 @@ onAuthStateChanged(auth, async (user) => {
     const ref = doc(db, "users", user.uid);
 
     const snap = await getDoc(ref);
-
+alert("Étape 3 : document trouvé = " + snap.exists());
     const data = snap.data() || {};
+ alert("Étape 4 : " + JSON.stringify(data));
     currentUserData = data;
 
 loadStats();
@@ -166,7 +169,7 @@ loadAddresses();
         data.name ||
         user.displayName ||
         "Utilizador";
-
+alert("Étape 5 : Nom affiché = " + profileName.innerText);
     profileEmail.innerText =
         user.email || "";
 const accountType =
@@ -1015,7 +1018,7 @@ showToast(
 =============================== */
 
 function loadAddresses() {
-
+alert("loadAddresses lancé");
     if (!currentUser) return;
 
     const q = collection(
@@ -1270,7 +1273,7 @@ showToast(
 
 };
 async function loadStats(){
-
+alert("loadStats lancé");
 if(!currentUser) return;
 
 const ordersSnap = await getDocs(
