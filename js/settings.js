@@ -106,7 +106,7 @@ if (deleteBtn) {
     deleteBtn.onclick = deleteAccount;
 
 }
-console.log("✅ settings.js chargé");
+alert("1 - settings.js chargé");
 /* ===============================
    AUTHENTIFICATION
 =============================== */
