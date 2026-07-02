@@ -33,7 +33,7 @@ let editingAddressId = null;
 /* ===============================
    DOM
 =============================== */
-alert("1 - settings.js chargé");
+
 const profilePic = document.getElementById("profilePic");
 const upload = document.getElementById("upload");
 
@@ -95,7 +95,7 @@ document.getElementById("helpBtn");
 
 const deleteBtn =
 document.getElementById("deleteBtn");
-alert("Tous les const sont chargés");
+console.log("✅ settings.js chargé");
 /* ===============================
    AUTHENTIFICATION
 =============================== */
@@ -111,7 +111,7 @@ profilePic.onclick = () => {
 };
 
 onAuthStateChanged(auth, async (user) => {
-alert("Étape 1 : onAuthStateChanged lancé");
+
     if (!user) {
 
         guestActions.style.display = "block";
@@ -128,7 +128,7 @@ alert("Étape 1 : onAuthStateChanged lancé");
     }
 
     currentUser = user;
- alert("Étape 2 : connecté = " + user.uid);
+ 
  if (auth.currentUser?.emailVerified && verifyEmailBtn) {
 
     verifyEmailBtn.innerHTML =
@@ -142,7 +142,7 @@ alert("Étape 1 : onAuthStateChanged lancé");
     const ref = doc(db, "users", user.uid);
 
     const snap = await getDoc(ref);
-alert("Étape 3 : document trouvé = " + snap.exists());
+
     const data = snap.data() || {};
  alert("Étape 4 : " + JSON.stringify(data));
     currentUserData = data;
@@ -158,7 +158,7 @@ loadAddresses();
         data.name ||
         user.displayName ||
         "Utilizador";
-alert("Étape 5 : Nom affiché = " + profileName.innerText);
+
     profileEmail.innerText =
         user.email || "";
 const accountType =
@@ -1007,7 +1007,7 @@ showToast(
 =============================== */
 
 function loadAddresses() {
-alert("loadAddresses lancé");
+
     if (!currentUser) return;
 
     const q = collection(
@@ -1262,7 +1262,7 @@ showToast(
 
 };
 async function loadStats(){
-alert("loadStats lancé");
+
 if(!currentUser) return;
 
 const ordersSnap = await getDocs(
