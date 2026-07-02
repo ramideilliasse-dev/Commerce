@@ -1,4 +1,4 @@
- // ===============================
+// ===============================
 // SETTINGS.JS
 // TOMA Marketplace
 // Version Premium
@@ -33,7 +33,7 @@ let editingAddressId = null;
 /* ===============================
    DOM
 =============================== */
-
+alert("1 - settings.js chargé");
 const profilePic = document.getElementById("profilePic");
 const upload = document.getElementById("upload");
 
