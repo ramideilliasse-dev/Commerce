@@ -90,6 +90,22 @@ document.getElementById("addressCity");
 
 const addressStreet =
 document.getElementById("addressStreet");
+const helpBtn =
+document.getElementById("helpBtn");
+
+const deleteBtn =
+document.getElementById("deleteBtn");
+if (helpBtn) {
+
+    helpBtn.onclick = contactSupport;
+
+}
+
+if (deleteBtn) {
+
+    deleteBtn.onclick = deleteAccount;
+
+}
 console.log("✅ settings.js chargé");
 /* ===============================
    AUTHENTIFICATION
