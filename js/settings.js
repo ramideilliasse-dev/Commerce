@@ -139,6 +139,7 @@ if (user.emailVerified && verifyEmailBtn) {
 
     const data = snap.data() || {};
     currentUserData = data;
+ loadStats();
     profilePic.src =
         data.photo ||
         "https://via.placeholder.com/80";
@@ -1250,3 +1251,50 @@ showToast(
 }
 
 };
+async function loadStats(){
+
+if(!currentUser) return;
+
+const ordersSnap = await getDocs(
+collection(db,"orders")
+);
+
+let myOrders = 0;
+
+ordersSnap.forEach(doc=>{
+
+if(doc.data().uid===currentUser.uid){
+
+myOrders++;
+
+}
+
+});
+
+document.getElementById("statOrders").innerText =
+myOrders;
+
+const favs =
+JSON.parse(
+localStorage.getItem("favorites") || "[]"
+);
+
+document.getElementById("statFavorites").innerText =
+favs.length;
+
+const addressesSnap =
+await getDocs(
+
+collection(
+db,
+"users",
+currentUser.uid,
+"addresses"
+)
+
+);
+
+document.getElementById("statAddresses").innerText =
+addressesSnap.size;
+
+}
