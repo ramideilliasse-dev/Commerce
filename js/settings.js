@@ -132,43 +132,51 @@ onAuthStateChanged(auth, async (user) => {
 
         guestActions.style.display = "block";
 
-        profilePic.src =
-            "https://via.placeholder.com/80";
+        if (merchantCard)
+            merchantCard.style.display = "none";
 
-        document.getElementById("merchantCard").style.display = "none";
+        if (provinceCard)
+            provinceCard.style.display = "none";
 
-        provinceCard.style.display = "none";
+        if (profilePic)
+            profilePic.src = "https://via.placeholder.com/80";
 
         return;
-
     }
 
     currentUser = user;
- 
- if (auth.currentUser?.emailVerified && verifyEmailBtn) {
 
-    verifyEmailBtn.innerHTML =
-    "✅ E-mail verificado";
-
-    verifyEmailBtn.disabled = true;
-
-}
     guestActions.style.display = "none";
 
-    const ref = doc(db, "users", user.uid);
+    try {
 
-    const snap = await getDoc(ref);
+        const snap = await getDoc(
+            doc(db, "users", user.uid)
+        );
 
-    const data = snap.data() || {};
- 
-    currentUserData = data;
+        currentUserData =
+            snap.exists()
+            ? snap.data()
+            : {};
 
-Promise.all([
-    loadStats(),
-    loadAddresses()
-]);
-    updateProfileUI(data, user);
-    if (data.role === "merchant") {
+    } catch (err) {
+
+        console.error(err);
+
+        currentUserData = {};
+
+    }
+
+updateProfileUI(currentUserData, user);
+
+requestAnimationFrame(() => {
+
+    loadStats();
+
+    loadAddresses();
+
+});
+    if (currentUserData.role === "merchant") {
 
        merchantBtn.textContent =
             "Painel da loja 🏪";
@@ -184,21 +192,21 @@ Promise.all([
 
         merchantForm.style.display = "block";
 
-        if (data.shopName)
+        if (currentUserData.shopName)
             document.getElementById("shopName").value = data.shopName;
 
-        if (data.whatsapp)
+        if (currentUserData.whatsapp)
             document.getElementById("whatsapp").value = data.whatsapp;
 
-        if (data.description)
+        if (currentUserData.description)
             document.getElementById("shopDesc").value = data.description;
 
-        if (data.province)
+        if (currentUserData.province)
             provinceSelect.value = data.province;
 
     }
 
-    else if (data.requestMerchant) {
+    else if (currentUserData.requestMerchant) {
 
         merchantBtn.textContent =
             "⏳ Demande en attente";
