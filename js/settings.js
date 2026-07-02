@@ -1307,3 +1307,6 @@ document.getElementById("statAddresses").innerText =
 addressesSnap.size;
 
 }
+helpBtn?.addEventListener("click", contactSupport);
+
+deleteBtn?.addEventListener("click", deleteAccount);
