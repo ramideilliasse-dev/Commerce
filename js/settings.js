@@ -230,13 +230,13 @@ requestAnimationFrame(() => {
         merchantForm.style.display = "block";
 
         if (currentUserData.shopName)
-            document.getElementById("shopName").value = data.shopName;
+            $("shopName").value = data.shopName;
 
         if (currentUserData.whatsapp)
-            document.getElementById("whatsapp").value = data.whatsapp;
+           $("whatsapp").value = data.whatsapp;
 
         if (currentUserData.description)
-            document.getElementById("shopDesc").value = data.description;
+            $("shopDesc").value = data.description;
 
         if (currentUserData.province)
             provinceSelect.value = data.province;
@@ -273,13 +273,13 @@ requestAnimationFrame(() => {
 window.saveMerchantInfo = async function () {
 
     const shopName =
-        document.getElementById("shopName").value.trim();
+   $("shopName").value.trim();
 
     const whatsapp =
-        document.getElementById("whatsapp").value.trim();
+       $("whatsapp").value.trim();
 
     const description =
-        document.getElementById("shopDesc").value.trim();
+        $("shopDesc").value.trim();
 
     if (!shopName || !whatsapp) {
 
@@ -490,10 +490,10 @@ window.deleteAccount = async function () {
 =============================== */
 
 const promoNotif =
-document.getElementById("promoNotif");
+$("promoNotif");
 
 const orderNotif =
-document.getElementById("orderNotif");
+$("orderNotif");
 
 if (promoNotif) {
 
@@ -542,7 +542,7 @@ if (orderNotif) {
 =============================== */
 
 const darkMode =
-document.getElementById("darkMode");
+$("darkMode");
 
 if (darkMode) {
 
@@ -578,7 +578,7 @@ if (darkMode) {
 function showToast(message, type = "success") {
 
     const box =
-        document.getElementById("toastBox");
+        const box = toastBox;
 
     if (!box) return;
 
@@ -606,30 +606,30 @@ console.log("✅ Settings Premium carregado.");
 =============================== */
 
 const editProfileBtn =
-document.getElementById("editProfileBtn");
+$("editProfileBtn");
 
 const editProfileModal =
-document.getElementById("editProfileModal");
+$("editProfileModal");
 
 const editName =
-document.getElementById("editName");
+$("editName");
 
 const editPhone =
-document.getElementById("editPhone");
+$("editPhone");
 const editWhatsapp =
-document.getElementById("editWhatsapp");
+$("editWhatsapp");
 const editProvince =
-document.getElementById("editProvince");
+$("editProvince");
 
 const editCity =
-document.getElementById("editCity");
+$("editCity");
 
 const editAddress =
-document.getElementById("editAddress");
+$("editAddress");
 const editEmail =
-document.getElementById("editEmail");
+$("editEmail");
 const saveProfileBtn =
-document.getElementById("saveProfileBtn");
+$("saveProfileBtn");
 
 if(editProfileBtn){
 
