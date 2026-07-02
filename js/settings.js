@@ -36,83 +36,82 @@ let editingAddressId = null;
 
 const $ = (id) => document.getElementById(id);
 
-// Profil
+/* ---------- Profil ---------- */
 const profilePic = $("profilePic");
 const upload = $("upload");
 const profileName = $("profileName");
 const profileEmail = $("profileEmail");
 const accountType = $("accountType");
 
-// Marchand
+/* ---------- Invité ---------- */
+const guestActions = $("guestActions");
+
+/* ---------- Marchand ---------- */
 const merchantCard = $("merchantCard");
 const merchantBtn = $("merchantBtn");
 const merchantForm = $("merchantForm");
 
-// Province
+const shopNameInput = $("shopName");
+const whatsappInput = $("whatsapp");
+const shopDescInput = $("shopDesc");
+
+/* ---------- Province ---------- */
 const provinceCard = $("provinceCard");
 const provinceSelect = $("provinceSelect");
 
-// Invité
-const guestActions = $("guestActions");
-
-// Langue
+/* ---------- Langue ---------- */
 const langSelect = $("langSelect");
 
-// Sécurité
+/* ---------- Statistiques ---------- */
+const statOrders = $("statOrders");
+const statFavorites = $("statFavorites");
+const statAddresses = $("statAddresses");
+
+/* ---------- Notifications ---------- */
+const promoNotif = $("promoNotif");
+const orderNotif = $("orderNotif");
+
+/* ---------- Dark Mode ---------- */
+const darkMode = $("darkMode");
+
+/* ---------- Profil (Modal) ---------- */
+const editProfileBtn = $("editProfileBtn");
+const editProfileModal = $("editProfileModal");
+
+const editName = $("editName");
+const editPhone = $("editPhone");
+const editWhatsapp = $("editWhatsapp");
+const editProvince = $("editProvince");
+const editCity = $("editCity");
+const editAddress = $("editAddress");
+const editEmail = $("editEmail");
+
+const saveProfileBtn = $("saveProfileBtn");
+
+/* ---------- Adresses ---------- */
+const addAddressBtn = $("addAddressBtn");
+const addressModal = $("addressModal");
+const addressList = $("addressList");
+
+const addressName = $("addressName");
+const addressPhone = $("addressPhone");
+const addressProvince = $("addressProvince");
+const addressCity = $("addressCity");
+const addressStreet = $("addressStreet");
+
+const saveAddressBtn = $("saveAddressBtn");
+
+/* ---------- Sécurité ---------- */
 const helpBtn = $("helpBtn");
 const deleteBtn = $("deleteBtn");
 const changePasswordBtn = $("changePasswordBtn");
 const verifyEmailBtn = $("verifyEmailBtn");
 const exportDataBtn = $("exportDataBtn");
 
-// Profil
-const editProfileBtn = $("editProfileBtn");
-const editProfileModal = $("editProfileModal");
-const saveProfileBtn = $("saveProfileBtn");
-
-// Adresses
-const addressModal = $("addressModal");
-const addressList = $("addressList");
-const addAddressBtn = $("addAddressBtn");
-const saveAddressBtn = $("saveAddressBtn");
-
-// Statistiques
-const statOrders = $("statOrders");
-const statFavorites = $("statFavorites");
-const statAddresses = $("statAddresses");
-
-// Toast
+/* ---------- Toast ---------- */
 const toastBox = $("toastBox");
 
-console.log("✅ DOM chargé");
-function updateProfileUI(data, user) {
-
-    profileName.textContent =
-        data.name ||
-        user.displayName ||
-        "Utilizador";
-
-    profileEmail.textContent =
-        user.email || "";
-
-    profilePic.src =
-        data.photo ||
-        "https://via.placeholder.com/80";
-
-    if (accountType) {
-
-        const roles = {
-            customer: "👤 Cliente",
-            merchant: "🏪 Comerciante",
-            admin: "👑 Administrador",
-            superadmin: "👑 Super Administrador"
-        };
-
-        accountType.textContent =
-            roles[data.role] || "👤 Cliente";
-    }
-
-}
+console.log("✅ DOM Premium chargé");
 /* ===============================
    AUTHENTIFICATION
 =============================== */
