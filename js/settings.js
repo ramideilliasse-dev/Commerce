@@ -144,7 +144,7 @@ onAuthStateChanged(auth, async (user) => {
     const snap = await getDoc(ref);
 
     const data = snap.data() || {};
- alert("Étape 4 : " + JSON.stringify(data));
+ 
     currentUserData = data;
 
 loadStats();
