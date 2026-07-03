@@ -852,3 +852,111 @@ if (addAddressBtn) {
 }
 
 alert("✅ Bloc 10A chargé");
+/* ===============================
+   BLOC 10B : SAUVEGARDER ADRESSE
+=============================== */
+
+if (saveAddressBtn) {
+
+    saveAddressBtn.onclick = async () => {
+
+        if (
+            !addressName.value.trim() ||
+            !addressPhone.value.trim() ||
+            !addressProvince.value.trim() ||
+            !addressCity.value.trim() ||
+            !addressStreet.value.trim()
+        ) {
+
+            showToast(
+                "Preencha todos os campos",
+                "warning"
+            );
+
+            return;
+
+        }
+
+        const addressData = {
+
+            name: addressName.value.trim(),
+
+            phone: addressPhone.value.trim(),
+
+            province: addressProvince.value.trim(),
+
+            city: addressCity.value.trim(),
+
+            street: addressStreet.value.trim()
+
+        };
+
+        try {
+
+            if (editingAddressId) {
+
+                await updateDoc(
+
+                    doc(
+                        db,
+                        "users",
+                        currentUser.uid,
+                        "addresses",
+                        editingAddressId
+                    ),
+
+                    addressData
+
+                );
+
+                showToast(
+                    "Endereço atualizado",
+                    "success"
+                );
+
+            } else {
+
+                addressData.createdAt = Date.now();
+
+                addressData.default = false;
+
+                await addDoc(
+
+                    collection(
+                        db,
+                        "users",
+                        currentUser.uid,
+                        "addresses"
+                    ),
+
+                    addressData
+
+                );
+
+                showToast(
+                    "Endereço guardado",
+                    "success"
+                );
+
+            }
+
+            closeAddressModal();
+
+        }
+
+        catch (err) {
+
+            console.error(err);
+
+            showToast(
+                "Erro ao guardar endereço",
+                "error"
+            );
+
+        }
+
+    };
+
+}
+
+alert("✅ Bloc 10B chargé");
