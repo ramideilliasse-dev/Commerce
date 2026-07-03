@@ -484,6 +484,7 @@ window.saveProvince = async function () {
 };
 
 console.log("✅ Bloc 6 marchand chargé");
+alert("➡️ Avant Bloc 7");
 /* ===============================
    PHOTO DE PROFIL
 =============================== */
@@ -540,6 +541,7 @@ if (upload) {
 }
 
 console.log("✅ Bloc 7 photo chargé");
+alert("✅ Bloc 7 photo chargé");
 /* ===============================
    BLOC 8 : EDIT PROFILE
 =============================== */
@@ -640,3 +642,4 @@ if (saveProfileBtn) {
 }
 
 console.log("✅ Bloc 8 profil chargé");
+alert("✅ Bloc 8 profil chargé");
