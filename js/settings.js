@@ -643,3 +643,166 @@ if (saveProfileBtn) {
 
 console.log("✅ Bloc 8 profil chargé");
 alert("✅ Bloc 8 profil chargé");
+/* ===============================
+   BLOC 9 : SÉCURITÉ
+=============================== */
+
+if (changePasswordBtn) {
+
+    changePasswordBtn.onclick = async () => {
+
+        try {
+
+            if (!auth.currentUser) {
+
+                showToast(
+                    "Faça login primeiro",
+                    "warning"
+                );
+
+                return;
+
+            }
+
+            await sendPasswordResetEmail(
+                auth,
+                auth.currentUser.email
+            );
+
+            showToast(
+                "Verifique o seu e-mail",
+                "success"
+            );
+
+        }
+
+        catch (err) {
+
+            console.error(err);
+
+            showToast(
+                "Erro ao enviar e-mail",
+                "error"
+            );
+
+        }
+
+    };
+
+}
+
+if (verifyEmailBtn) {
+
+    if (auth.currentUser?.emailVerified) {
+
+        verifyEmailBtn.innerHTML =
+            "✅ E-mail verificado";
+
+        verifyEmailBtn.disabled = true;
+
+    }
+
+    verifyEmailBtn.onclick = async () => {
+
+        try {
+
+            if (auth.currentUser.emailVerified) {
+
+                showToast(
+                    "E-mail já verificado",
+                    "success"
+                );
+
+                return;
+
+            }
+
+            await sendEmailVerification(
+                auth.currentUser
+            );
+
+            showToast(
+                "E-mail enviado",
+                "success"
+            );
+
+        }
+
+        catch (err) {
+
+            console.error(err);
+
+            showToast(
+                "Erro",
+                "error"
+            );
+
+        }
+
+    };
+
+}
+
+if (deleteBtn) {
+
+    deleteBtn.onclick = async () => {
+
+        const ok = confirm(
+            "Tem certeza que deseja apagar a conta?"
+        );
+
+        if (!ok) return;
+
+        try {
+
+            await deleteDoc(
+                doc(
+                    db,
+                    "users",
+                    currentUser.uid
+                )
+            );
+
+            await deleteUser(
+                auth.currentUser
+            );
+
+            showToast(
+                "Conta apagada",
+                "success"
+            );
+
+            location.href =
+                "index.html";
+
+        }
+
+        catch (err) {
+
+            console.error(err);
+
+            showToast(
+                "Erro ao apagar",
+                "error"
+            );
+
+        }
+
+    };
+
+}
+
+if (helpBtn) {
+
+    helpBtn.onclick = () => {
+
+        window.open(
+            "https://wa.me/244922623238?text=Olá preciso de ajuda",
+            "_blank"
+        );
+
+    };
+
+}
+
+alert("✅ Bloc 9 sécurité chargé");
