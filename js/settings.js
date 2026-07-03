@@ -129,3 +129,101 @@ function showToast(message, type = "success") {
 }
 
 alert("✅ Bloc 3 Toast chargé");
+/* ===============================
+   AUTHENTIFICATION
+=============================== */
+
+onAuthStateChanged(auth, async (user) => {
+
+    alert("🔹 Auth lancée");
+
+    if (!user) {
+
+        alert("❌ Aucun utilisateur connecté");
+
+        currentUser = null;
+
+        if (guestActions)
+            guestActions.style.display = "block";
+
+        return;
+
+    }
+
+    currentUser = user;
+
+    alert("✅ Utilisateur : " + user.uid);
+
+    try {
+
+        const userRef = doc(db, "users", user.uid);
+
+        const userSnap = await getDoc(userRef);
+
+        if (!userSnap.exists()) {
+
+            alert("❌ Document utilisateur introuvable");
+
+            return;
+
+        }
+
+        currentUserData = userSnap.data();
+
+        alert("✅ Données récupérées");
+
+        profileName.textContent =
+            currentUserData.name ||
+            user.displayName ||
+            "Utilizador";
+
+        profileEmail.textContent =
+            user.email || "";
+
+        profilePic.src =
+            currentUserData.photo ||
+            "https://via.placeholder.com/80";
+
+        if (accountType) {
+
+            if (currentUserData.role === "merchant") {
+
+                accountType.textContent =
+                "🏪 Comerciante";
+
+            } else if (currentUserData.role === "admin") {
+
+                accountType.textContent =
+                "👑 Administrador";
+
+            } else if (currentUserData.role === "superadmin") {
+
+                accountType.textContent =
+                "👑 Super Administrador";
+
+            } else {
+
+                accountType.textContent =
+                "👤 Cliente";
+
+            }
+
+        }
+
+        guestActions.style.display = "none";
+
+        alert("✅ Profil affiché");
+
+    }
+
+    catch (err) {
+
+        alert("❌ " + err.message);
+
+        console.error(err);
+
+    }
+
+});
+
+alert("✅ Bloc 4 chargé");
