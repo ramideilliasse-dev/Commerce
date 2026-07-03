@@ -378,3 +378,109 @@ function loadMerchant() {
     }
 
 }
+/* ===============================
+   MARCHAND
+=============================== */
+
+window.becomeMerchant = async function () {
+
+    if (!currentUser) {
+        showToast("Faça login primeiro", "warning");
+        return;
+    }
+
+    try {
+
+        await updateDoc(
+            doc(db, "users", currentUser.uid),
+            {
+                requestMerchant: true,
+                approved: false
+            }
+        );
+
+        showToast(
+            "Pedido enviado",
+            "success"
+        );
+
+        location.reload();
+
+    } catch (e) {
+
+        console.error(e);
+
+        showToast(
+            "Erro",
+            "error"
+        );
+
+    }
+
+};
+
+window.saveMerchantInfo = async function () {
+
+    try {
+
+        await updateDoc(
+            doc(db, "users", currentUser.uid),
+            {
+                shopName: $("shopName").value.trim(),
+                whatsapp: $("whatsapp").value.trim(),
+                description: $("shopDesc").value.trim()
+            }
+        );
+
+        showToast(
+            "Informações guardadas",
+            "success"
+        );
+
+    }
+
+    catch (e) {
+
+        console.error(e);
+
+        showToast(
+            "Erro",
+            "error"
+        );
+
+    }
+
+};
+
+window.saveProvince = async function () {
+
+    try {
+
+        await updateDoc(
+            doc(db, "users", currentUser.uid),
+            {
+                province: provinceSelect.value
+            }
+        );
+
+        showToast(
+            "Província guardada",
+            "success"
+        );
+
+    }
+
+    catch (e) {
+
+        console.error(e);
+
+        showToast(
+            "Erro",
+            "error"
+        );
+
+    }
+
+};
+
+console.log("✅ Bloc 6 marchand chargé");
