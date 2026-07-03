@@ -806,3 +806,22 @@ if (helpBtn) {
 }
 
 alert("✅ Bloc 9 sécurité chargé");
+alert("Entrée Bloc 10A");
+
+console.log("addressModal =", addressModal);
+console.log("saveAddressBtn =", saveAddressBtn);
+console.log("addAddressBtn =", addAddressBtn);
+
+const addressName = $("addressName");
+const addressPhone = $("addressPhone");
+const addressProvince = $("addressProvince");
+const addressCity = $("addressCity");
+const addressStreet = $("addressStreet");
+
+console.log("addressName =", addressName);
+console.log("addressPhone =", addressPhone);
+console.log("addressProvince =", addressProvince);
+console.log("addressCity =", addressCity);
+console.log("addressStreet =", addressStreet);
+
+alert("Variables adresses OK");
