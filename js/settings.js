@@ -213,7 +213,7 @@ onAuthStateChanged(auth, async (user) => {
         guestActions.style.display = "none";
 
         alert("✅ Profil affiché");
-
+     await loadStats();
     }
 
     catch (err) {
@@ -227,3 +227,89 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 alert("✅ Bloc 4 chargé");
+/* ===============================
+   STATISTIQUES
+=============================== */
+
+async function loadStats() {
+
+    alert("📊 Chargement statistiques");
+
+    try {
+
+        // Commandes
+        const ordersSnap = await getDocs(
+            collection(db, "orders")
+        );
+
+        let totalOrders = 0;
+
+        ordersSnap.forEach(doc => {
+
+            const order = doc.data();
+
+            if (
+                order.uid === currentUser.uid ||
+                order.userId === currentUser.uid
+            ) {
+
+                totalOrders++;
+
+            }
+
+        });
+
+        if (statOrders) {
+
+            statOrders.textContent =
+            totalOrders;
+
+        }
+
+        // Favoris
+
+        const favorites =
+        JSON.parse(
+            localStorage.getItem("favorites") || "[]"
+        );
+
+        if (statFavorites) {
+
+            statFavorites.textContent =
+            favorites.length;
+
+        }
+
+        // Adresses
+
+        const addressSnap = await getDocs(
+
+            collection(
+                db,
+                "users",
+                currentUser.uid,
+                "addresses"
+            )
+
+        );
+
+        if (statAddresses) {
+
+            statAddresses.textContent =
+            addressSnap.size;
+
+        }
+
+        alert("✅ Statistiques chargées");
+
+    }
+
+    catch(err){
+
+        console.error(err);
+
+        alert("❌ Erreur statistiques");
+
+    }
+
+}
