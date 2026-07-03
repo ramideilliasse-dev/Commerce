@@ -960,3 +960,222 @@ if (saveAddressBtn) {
 }
 
 alert("✅ Bloc 10B chargé");
+/* ===============================
+   BLOC 10C : LISTE DES ADRESSES
+=============================== */
+
+function loadAddresses() {
+
+    if (!currentUser) return;
+
+    addressList.innerHTML = `
+        <div style="padding:20px;text-align:center;">
+            ⏳ A carregar endereços...
+        </div>
+    `;
+
+    const ref = collection(
+        db,
+        "users",
+        currentUser.uid,
+        "addresses"
+    );
+
+    onSnapshot(ref, (snapshot) => {
+
+        if (snapshot.empty) {
+
+            addressList.innerHTML =
+            "<p>Nenhum endereço guardado.</p>";
+
+            return;
+
+        }
+
+        let html = "";
+
+        snapshot.forEach(docSnap => {
+
+            const data = docSnap.data();
+
+            html += `
+
+            <div class="productCard">
+
+                <h4>
+
+                    ${data.name}
+
+                    ${data.default ?
+                    '<span style="color:#16a34a">⭐ Principal</span>'
+                    : ""}
+
+                </h4>
+
+                <p>📞 ${data.phone}</p>
+
+                <p>📍 ${data.province}</p>
+
+                <p>🏙 ${data.city}</p>
+
+                <p>🏠 ${data.street}</p>
+
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+
+                    <button class="btn"
+
+                    onclick="editAddress('${docSnap.id}')">
+
+                    ✏️ Editar
+
+                    </button>
+
+                    <button class="btnMerchant"
+
+                    onclick="setDefaultAddress('${docSnap.id}')">
+
+                    ⭐ Principal
+
+                    </button>
+
+                    <button class="btnDanger"
+
+                    onclick="deleteAddress('${docSnap.id}')">
+
+                    🗑 Apagar
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            `;
+
+        });
+
+        addressList.innerHTML = html;
+
+    });
+
+}
+
+window.editAddress = async function(id){
+
+    const snap = await getDoc(
+
+        doc(
+            db,
+            "users",
+            currentUser.uid,
+            "addresses",
+            id
+        )
+
+    );
+
+    if(!snap.exists()) return;
+
+    const data = snap.data();
+
+    editingAddressId = id;
+
+    addressName.value = data.name || "";
+
+    addressPhone.value = data.phone || "";
+
+    addressProvince.value = data.province || "";
+
+    addressCity.value = data.city || "";
+
+    addressStreet.value = data.street || "";
+
+    saveAddressBtn.textContent =
+    "Atualizar endereço";
+
+    openAddressModal();
+
+};
+
+window.deleteAddress = async function(id){
+
+    if(!confirm("Apagar este endereço?")) return;
+
+    await deleteDoc(
+
+        doc(
+            db,
+            "users",
+            currentUser.uid,
+            "addresses",
+            id
+        )
+
+    );
+
+    showToast(
+        "Endereço apagado",
+        "success"
+    );
+
+};
+
+window.setDefaultAddress = async function(id){
+
+    const ref = collection(
+        db,
+        "users",
+        currentUser.uid,
+        "addresses"
+    );
+
+    const docs = await getDocs(ref);
+
+    const batch = writeBatch(db);
+
+    docs.forEach(item=>{
+
+        batch.update(
+
+            doc(
+                db,
+                "users",
+                currentUser.uid,
+                "addresses",
+                item.id
+            ),
+
+            {
+                default:false
+            }
+
+        );
+
+    });
+
+    batch.update(
+
+        doc(
+            db,
+            "users",
+            currentUser.uid,
+            "addresses",
+            id
+        ),
+
+        {
+            default:true
+        }
+
+    );
+
+    await batch.commit();
+
+    showToast(
+        "Endereço principal atualizado",
+        "success"
+    );
+
+};
+
+alert("✅ Bloc 10C chargé");
