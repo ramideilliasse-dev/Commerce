@@ -804,7 +804,7 @@ if (helpBtn) {
     };
 
 }
-
+console.log("FIN BLOC 9");
 alert("✅ Bloc 9 sécurité chargé");
 alert("FIN BLOC 9");
 /* ===============================
