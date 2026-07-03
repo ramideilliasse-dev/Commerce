@@ -214,6 +214,7 @@ onAuthStateChanged(auth, async (user) => {
 
         alert("✅ Profil affiché");
      await loadStats();
+     loadMerchant();
     }
 
     catch (err) {
@@ -309,6 +310,70 @@ async function loadStats() {
         console.error(err);
 
         alert("❌ Erreur statistiques");
+
+    }
+
+}
+/* ===============================
+   MARCHAND
+=============================== */
+
+function loadMerchant() {
+
+    if (!currentUserData) return;
+
+    if (currentUserData.role === "merchant") {
+
+        merchantBtn.textContent =
+        "Painel da loja 🏪";
+
+        merchantBtn.onclick = () => {
+
+            location.href =
+            "merchant-dashboard.html";
+
+        };
+
+        merchantCard.style.display = "block";
+
+        merchantForm.style.display = "block";
+
+        provinceCard.style.display = "block";
+
+        $("shopName").value =
+        currentUserData.shopName || "";
+
+        $("whatsapp").value =
+        currentUserData.whatsapp || "";
+
+        $("shopDesc").value =
+        currentUserData.description || "";
+
+        provinceSelect.value =
+        currentUserData.province || "";
+
+    }
+
+    else if (currentUserData.requestMerchant) {
+
+        merchantBtn.textContent =
+        "⏳ Demande en attente";
+
+        merchantBtn.disabled = true;
+
+        merchantForm.style.display = "block";
+
+    }
+
+    else {
+
+        merchantBtn.textContent =
+        "Devenir marchand 🏪";
+
+        merchantBtn.disabled = false;
+
+        merchantBtn.onclick =
+        becomeMerchant;
 
     }
 
