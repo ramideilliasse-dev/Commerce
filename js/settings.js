@@ -806,6 +806,12 @@ if (helpBtn) {
 }
 
 alert("✅ Bloc 9 sécurité chargé");
+/* ===============================
+   BLOC 10A : ADRESSES
+=============================== */
+
+let editingAddressId = null;
+
 alert("Entrée Bloc 10A");
 
 console.log("addressModal =", addressModal);
@@ -825,3 +831,38 @@ console.log("addressCity =", addressCity);
 console.log("addressStreet =", addressStreet);
 
 alert("Variables adresses OK");
+
+window.openAddressModal = function () {
+
+    editingAddressId = null;
+
+    addressName.value = "";
+
+    addressPhone.value = "";
+
+    addressProvince.value = "";
+
+    addressCity.value = "";
+
+    addressStreet.value = "";
+
+    saveAddressBtn.textContent =
+    "Guardar endereço";
+
+    addressModal.style.display = "flex";
+
+};
+
+window.closeAddressModal = function () {
+
+    addressModal.style.display = "none";
+
+};
+
+if (addAddressBtn) {
+
+    addAddressBtn.onclick = openAddressModal;
+
+}
+
+alert("✅ Bloc 10A chargé");
