@@ -484,3 +484,59 @@ window.saveProvince = async function () {
 };
 
 console.log("✅ Bloc 6 marchand chargé");
+/* ===============================
+   PHOTO DE PROFIL
+=============================== */
+
+if (upload) {
+
+    upload.addEventListener("change", async (e) => {
+
+        const file = e.target.files[0];
+
+        if (!file) return;
+
+        const reader = new FileReader();
+
+        reader.onload = async () => {
+
+            try {
+
+                const base64 = reader.result;
+
+                profilePic.src = base64;
+
+                await updateDoc(
+                    doc(db, "users", currentUser.uid),
+                    {
+                        photo: base64
+                    }
+                );
+
+                showToast(
+                    "Foto atualizada",
+                    "success"
+                );
+
+            }
+
+            catch (err) {
+
+                console.error(err);
+
+                showToast(
+                    "Erro ao atualizar foto",
+                    "error"
+                );
+
+            }
+
+        };
+
+        reader.readAsDataURL(file);
+
+    });
+
+}
+
+console.log("✅ Bloc 7 photo chargé");
