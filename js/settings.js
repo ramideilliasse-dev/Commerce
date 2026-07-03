@@ -806,3 +806,4 @@ if (helpBtn) {
 }
 
 alert("✅ Bloc 9 sécurité chargé");
+alert("Tous les const sont chargés");
