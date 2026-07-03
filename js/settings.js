@@ -99,3 +99,33 @@ const langSelect = $("langSelect");
 const toastBox = $("toastBox");
 
 alert("✅ Bloc 2 DOM chargé");
+/* ===============================
+   TOAST
+=============================== */
+
+function showToast(message, type = "success") {
+
+    if (!toastBox) {
+
+        alert(message);
+        return;
+
+    }
+
+    const toast = document.createElement("div");
+
+    toast.className = "toast " + type;
+
+    toast.textContent = message;
+
+    toastBox.appendChild(toast);
+
+    setTimeout(() => {
+
+        toast.remove();
+
+    }, 4000);
+
+}
+
+alert("✅ Bloc 3 Toast chargé");
