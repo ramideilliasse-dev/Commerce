@@ -153,21 +153,32 @@ function updateProfileUI(data, user) {
    AUTHENTIFICATION
 =============================== */
 
-profilePic.onclick = () => {
+if (profilePic) {
 
-    if (currentUser) {
+    profilePic.onclick = () => {
 
-        upload.click();
+        if (currentUser) {
 
-    }
+            upload.click();
 
-};
+        }
+
+    };
+
+}
 
 onAuthStateChanged(auth, async (user) => {
 
+    alert("1 - onAuthStateChanged lancé");
+
     if (!user) {
 
-        guestActions.style.display = "block";
+        alert("2 - Aucun utilisateur");
+
+        currentUser = null;
+
+        if (guestActions)
+            guestActions.style.display = "block";
 
         if (merchantCard)
             merchantCard.style.display = "none";
@@ -176,92 +187,119 @@ onAuthStateChanged(auth, async (user) => {
             provinceCard.style.display = "none";
 
         if (profilePic)
-            profilePic.src = "https://via.placeholder.com/80";
+            profilePic.src =
+            "https://via.placeholder.com/80";
 
         return;
+
     }
+
+    alert("2 - Connecté : " + user.uid);
 
     currentUser = user;
 
-    guestActions.style.display = "none";
+    if (guestActions)
+        guestActions.style.display = "none";
 
     try {
 
-        const snap = await getDoc(
-            doc(db, "users", user.uid)
-        );
+        const ref = doc(db, "users", user.uid);
 
-        currentUserData =
-            snap.exists()
+        const snap = await getDoc(ref);
+
+        alert("3 - Document trouvé : " + snap.exists());
+
+        const data = snap.exists()
             ? snap.data()
             : {};
 
-    } catch (err) {
+        currentUserData = data;
 
-        console.error(err);
+        alert("4 - Données chargées");
 
-        currentUserData = {};
+        updateProfileUI(data, user);
 
-    }
+        alert("5 - Profil affiché");
 
-updateProfileUI(currentUserData, user);
+        if (verifyEmailBtn) {
 
-requestAnimationFrame(() => {
+            if (user.emailVerified) {
 
-    loadStats();
+                verifyEmailBtn.innerHTML =
+                "✅ E-mail verificado";
 
-    loadAddresses();
+                verifyEmailBtn.disabled = true;
 
-});
-    if (currentUserData.role === "merchant") {
+            }
 
-       merchantBtn.textContent =
+        }
+
+        if (data.role === "merchant") {
+
+            merchantBtn.textContent =
             "Painel da loja 🏪";
 
-        merchantBtn.onclick = () => {
+            merchantBtn.onclick = () => {
 
-            location.href =
+                location.href =
                 "merchant-dashboard.html";
 
-        };
+            };
 
-        provinceCard.style.display = "block";
+            merchantForm.style.display = "block";
 
-        merchantForm.style.display = "block";
+            provinceCard.style.display = "block";
 
-        if (currentUserData.shopName)
-            $("shopName").value = data.shopName;
+            $("shopName").value =
+            data.shopName || "";
 
-        if (currentUserData.whatsapp)
-           $("whatsapp").value = data.whatsapp;
+            $("whatsapp").value =
+            data.whatsapp || "";
 
-        if (currentUserData.description)
-            $("shopDesc").value = data.description;
+            $("shopDesc").value =
+            data.description || "";
 
-        if (currentUserData.province)
-            provinceSelect.value = data.province;
+            provinceSelect.value =
+            data.province || "";
 
-    }
+        }
 
-    else if (currentUserData.requestMerchant) {
+        else if (data.requestMerchant) {
 
-        merchantBtn.textContent =
+            merchantBtn.textContent =
             "⏳ Demande en attente";
 
-        merchantBtn.disabled = true;
+            merchantBtn.disabled = true;
 
-        merchantForm.style.display = "block";
+            merchantForm.style.display = "block";
+
+        }
+
+        else {
+
+            merchantBtn.textContent =
+            "Devenir marchand 🏪";
+
+            merchantBtn.disabled = false;
+
+            merchantBtn.onclick =
+            becomeMerchant;
+
+        }
+
+        await loadStats();
+
+        loadAddresses();
+
+        alert("6 - Auth terminé");
 
     }
 
-    else {
+    catch (err) {
 
-        merchantBtn.textContent =
-            "Devenir marchand 🏪";
+        alert("ERREUR AUTH : " + err.message);
 
-        merchantBtn.disabled = false;
-
-        merchantBtn.onclick = becomeMerchant;
+        console.error(err);
 
     }
 
