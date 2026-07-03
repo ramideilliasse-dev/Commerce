@@ -806,6 +806,7 @@ if (helpBtn) {
 }
 
 alert("✅ Bloc 9 sécurité chargé");
+alert("FIN BLOC 9");
 /* ===============================
    BLOC 10A : ADRESSES
 =============================== */
