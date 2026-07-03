@@ -806,4 +806,87 @@ if (helpBtn) {
 }
 
 alert("✅ Bloc 9 sécurité chargé");
-alert("Tous les const sont chargés");
+/* ===============================
+   BLOC 11 : DARK MODE + NOTIFICATIONS
+=============================== */
+
+const darkMode = $("darkMode");
+const promoNotif = $("promoNotif");
+const orderNotif = $("orderNotif");
+
+/* ---------- DARK MODE ---------- */
+
+if (darkMode) {
+
+    darkMode.checked =
+        localStorage.getItem("darkMode") === "true";
+
+    darkMode.addEventListener("change", () => {
+
+        localStorage.setItem(
+            "darkMode",
+            darkMode.checked
+        );
+
+        document.body.classList.toggle(
+            "dark",
+            darkMode.checked
+        );
+
+        showToast(
+            "Modo alterado",
+            "success"
+        );
+
+    });
+
+}
+
+/* ---------- PROMO ---------- */
+
+if (promoNotif) {
+
+    promoNotif.checked =
+        localStorage.getItem("promoNotif") === "true";
+
+    promoNotif.addEventListener("change", () => {
+
+        localStorage.setItem(
+            "promoNotif",
+            promoNotif.checked
+        );
+
+        showToast(
+            "Preferência guardada",
+            "success"
+        );
+
+    });
+
+}
+
+/* ---------- PEDIDOS ---------- */
+
+if (orderNotif) {
+
+    orderNotif.checked =
+        localStorage.getItem("orderNotif") === "true";
+
+    orderNotif.addEventListener("change", () => {
+
+        localStorage.setItem(
+            "orderNotif",
+            orderNotif.checked
+        );
+
+        showToast(
+            "Preferência guardada",
+            "success"
+        );
+
+    });
+
+}
+
+alert("✅ Bloc 11 chargé");
+
