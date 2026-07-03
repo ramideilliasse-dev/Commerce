@@ -540,3 +540,103 @@ if (upload) {
 }
 
 console.log("✅ Bloc 7 photo chargé");
+/* ===============================
+   BLOC 8 : EDIT PROFILE
+=============================== */
+
+const editName = $("editName");
+const editPhone = $("editPhone");
+const editWhatsapp = $("editWhatsapp");
+const editProvince = $("editProvince");
+const editCity = $("editCity");
+const editAddress = $("editAddress");
+const editEmail = $("editEmail");
+
+window.closeProfileModal = function () {
+
+    if (editProfileModal) {
+        editProfileModal.style.display = "none";
+    }
+
+};
+
+if (editProfileBtn) {
+
+    editProfileBtn.onclick = () => {
+
+        editName.value = currentUserData.name || "";
+
+        editPhone.value = currentUserData.phone || "";
+
+        editWhatsapp.value = currentUserData.whatsapp || "";
+
+        editProvince.value = currentUserData.province || "";
+
+        editCity.value = currentUserData.city || "";
+
+        editAddress.value = currentUserData.address || "";
+
+        editEmail.value = auth.currentUser?.email || "";
+
+        editProfileModal.style.display = "flex";
+
+    };
+
+}
+
+if (saveProfileBtn) {
+
+    saveProfileBtn.onclick = async () => {
+
+        try {
+
+            const data = {
+
+                name: editName.value.trim(),
+
+                phone: editPhone.value.trim(),
+
+                whatsapp: editWhatsapp.value.trim(),
+
+                province: editProvince.value,
+
+                city: editCity.value.trim(),
+
+                address: editAddress.value.trim()
+
+            };
+
+            await updateDoc(
+                doc(db, "users", currentUser.uid),
+                data
+            );
+
+            Object.assign(currentUserData, data);
+
+            updateProfileUI(currentUserData, auth.currentUser);
+
+            closeProfileModal();
+
+            showToast(
+                "Perfil atualizado",
+                "success"
+            );
+
+        }
+
+        catch (err) {
+
+            console.error(err);
+
+            showToast(
+                "Erro ao atualizar perfil",
+                "error"
+            );
+
+        }
+
+    };
+
+}
+
+console.log("✅ Bloc 8 profil chargé");
