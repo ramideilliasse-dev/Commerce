@@ -806,3 +806,49 @@ if (helpBtn) {
 }
 
 alert("✅ Bloc 9 sécurité chargé");
+/* ===============================
+   BLOC 10A : ADRESSES
+=============================== */
+
+let editingAddressId = null;
+
+const addressName = $("addressName");
+const addressPhone = $("addressPhone");
+const addressProvince = $("addressProvince");
+const addressCity = $("addressCity");
+const addressStreet = $("addressStreet");
+
+window.openAddressModal = function () {
+
+    editingAddressId = null;
+
+    addressName.value = "";
+
+    addressPhone.value = "";
+
+    addressProvince.value = "";
+
+    addressCity.value = "";
+
+    addressStreet.value = "";
+
+    saveAddressBtn.textContent =
+    "Guardar endereço";
+
+    addressModal.style.display = "flex";
+
+};
+
+window.closeAddressModal = function () {
+
+    addressModal.style.display = "none";
+
+};
+
+if (addAddressBtn) {
+
+    addAddressBtn.onclick = openAddressModal;
+
+}
+
+alert("✅ Bloc 10A chargé");
