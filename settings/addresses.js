@@ -286,20 +286,5 @@ function loadAddresses() {
 
 }
 
-let addressesLoaded = false;
-
-const waitAddresses = setInterval(() => {
-
-    if (currentUser && !addressesLoaded) {
-
-        addressesLoaded = true;
-
-        loadAddresses();
-
-        clearInterval(waitAddresses);
-
-    }
-
-}, 300);
-
+export { loadAddresses };
 alert("✅ addresses.js Bloc 4 chargé");
