@@ -86,15 +86,4 @@ async function loadStats() {
 
 }
 
-// attendre que profile.js ait chargé l'utilisateur
-setInterval(() => {
-
-    if (currentUser) {
-
-        loadStats();
-
-        clearInterval(this);
-
-    }
-
-}, 300); 
+export { loadStats };
