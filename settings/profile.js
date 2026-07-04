@@ -17,7 +17,9 @@ import {
     $,
     updateProfileUI
 } from "./ui.js";
-
+import { loadStats } from "./stats.js";
+import { loadMerchant } from "./merchant.js";
+import { loadAddresses } from "./addresses.js";
 export let currentUser = null;
 export let currentUserData = {};
 
@@ -58,12 +60,20 @@ onAuthStateChanged(auth, async (user) => {
         alert("✅ Données utilisateur chargées");
 
         updateProfileUI(
-            currentUserData,
-            user
-        );
+    currentUserData,
+    user
+);
 
-        alert("✅ Profil affiché");
+alert("✅ Profil affiché");
 
+// Lancer tous les modules
+await loadStats();
+
+loadMerchant();
+
+loadAddresses();
+
+alert("✅ Tous les modules chargés");
     }
 
     catch (err) {
