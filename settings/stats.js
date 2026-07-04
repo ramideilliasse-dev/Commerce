@@ -21,13 +21,13 @@ const statOrders = $("statOrders");
 const statFavorites = $("statFavorites");
 const statAddresses = $("statAddresses");
 
-alert("✅ stats.js chargé");
+
 
 async function loadStats() {
 
     if (!currentUser) return;
 
-    alert("📊 Chargement statistiques");
+    
 
     try {
 
@@ -74,7 +74,7 @@ async function loadStats() {
         if (statAddresses)
             statAddresses.textContent = addressesSnap.size;
 
-        alert("✅ Statistiques chargées");
+        
 
     } catch (err) {
 
