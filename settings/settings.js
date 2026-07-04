@@ -1,16 +1,6 @@
- // ===============================
-// SETTINGS.JS
-// TOMA Marketplace Premium
-// ===============================
+ alert("🚀 Début settings");
 
 import "./ui.js";
 import "./profile.js";
-import "./merchant.js";
-import "./addresses.js";
-import "./stats.js";
-import "./security.js";
-import "./notifications.js";
 
-alert("✅ Nouveau Settings chargé");
-
-console.log("✅ settings/settings.js chargé");
+alert("✅ profile OK");
