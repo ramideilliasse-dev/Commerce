@@ -202,3 +202,102 @@ if (saveAddressBtn) {
 }
 
 alert("✅ addresses.js Bloc 3 chargé");
+// ===============================
+// ADDRESSES.JS
+// Bloc 4
+// ===============================
+
+function loadAddresses() {
+
+    if (!currentUser) return;
+
+    addressList.innerHTML = `
+    <div style="padding:20px;text-align:center;">
+        ⏳ A carregar endereços...
+    </div>
+    `;
+
+    const ref = collection(
+        db,
+        "users",
+        currentUser.uid,
+        "addresses"
+    );
+
+    onSnapshot(ref, (snapshot) => {
+
+        if (snapshot.empty) {
+
+            addressList.innerHTML =
+            "<p>Nenhum endereço guardado.</p>";
+
+            return;
+
+        }
+
+        let html = "";
+
+        snapshot.forEach(docSnap => {
+
+            const data = docSnap.data();
+
+            html += `
+
+            <div class="productCard">
+
+                <h4>
+                    ${data.name}
+                    ${data.default ?
+                    '<span style="color:#16a34a;"> ⭐ Principal</span>' : ""}
+                </h4>
+
+                <p>📞 ${data.phone}</p>
+
+                <p>📍 ${data.province}</p>
+
+                <p>🏙 ${data.city}</p>
+
+                <p>🏠 ${data.street}</p>
+
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+
+                    <button class="btn"
+                    onclick="editAddress('${docSnap.id}')">
+                    ✏️ Editar
+                    </button>
+
+                    <button class="btnMerchant"
+                    onclick="setDefaultAddress('${docSnap.id}')">
+                    ⭐ Principal
+                    </button>
+
+                    <button class="btnDanger"
+                    onclick="deleteAddress('${docSnap.id}')">
+                    🗑 Apagar
+                    </button>
+
+                </div>
+
+            </div>
+
+            `;
+
+        });
+
+        addressList.innerHTML = html;
+
+    });
+
+}
+
+setInterval(() => {
+
+    if (currentUser) {
+
+        loadAddresses();
+
+    }
+
+}, 600);
+
+alert("✅ addresses.js Bloc 4 chargé");
