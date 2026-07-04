@@ -42,3 +42,54 @@ const addressCity = $("addressCity");
 const addressStreet = $("addressStreet");
 
 alert("✅ addresses.js Bloc 1 chargé");
+// ===============================
+// ADDRESSES.JS
+// Bloc 2
+// ===============================
+
+window.openAddressModal = function () {
+
+    editingAddressId = null;
+
+    addressName.value = "";
+    addressPhone.value = "";
+    addressProvince.value = "";
+    addressCity.value = "";
+    addressStreet.value = "";
+
+    if (saveAddressBtn) {
+
+        saveAddressBtn.textContent =
+        "Guardar endereço";
+
+    }
+
+    if (addressModal) {
+
+        addressModal.style.display = "flex";
+
+    }
+
+};
+
+window.closeAddressModal = function () {
+
+    if (addressModal) {
+
+        addressModal.style.display = "none";
+
+    }
+
+};
+
+if (addAddressBtn) {
+
+    addAddressBtn.onclick = () => {
+
+        openAddressModal();
+
+    };
+
+}
+
+alert("✅ addresses.js Bloc 2 chargé");
