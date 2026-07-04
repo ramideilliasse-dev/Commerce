@@ -219,12 +219,4 @@ window.saveProvince = async function(){
 
 };
 
-setInterval(()=>{
-
-    if(currentUser){
-
-        loadMerchant();
-
-    }
-
-},500);
+export { loadMerchant };
