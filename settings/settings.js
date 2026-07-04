@@ -1,5 +1,6 @@
  alert("🚀 Début settings");
 
 import "./ui.js";
+import "./profile.js";
 
-alert("✅ ui OK");
+alert("✅ profile OK");
