@@ -288,3 +288,111 @@ function loadAddresses() {
 
 export { loadAddresses };
 alert("✅ addresses.js Bloc 4 chargé");
+// ===============================
+// BLOC 5 : SUPPRIMER + PRINCIPAL
+// ===============================
+
+window.deleteAddress = async function(id){
+
+    const ok = confirm(
+        "Deseja apagar este endereço?"
+    );
+
+    if(!ok) return;
+
+    try{
+
+        await deleteDoc(
+            doc(
+                db,
+                "users",
+                currentUser.uid,
+                "addresses",
+                id
+            )
+        );
+
+        showToast(
+            "✅ Endereço apagado",
+            "success"
+        );
+
+    }catch(err){
+
+        console.error(err);
+
+        showToast(
+            "❌ Erro ao apagar endereço",
+            "error"
+        );
+
+    }
+
+};
+
+window.setDefaultAddress = async function(id){
+
+    try{
+
+        const ref = collection(
+            db,
+            "users",
+            currentUser.uid,
+            "addresses"
+        );
+
+        const snapshot = await getDocs(ref);
+
+        const batch = writeBatch(db);
+
+        snapshot.forEach(docSnap=>{
+
+            batch.update(
+                doc(
+                    db,
+                    "users",
+                    currentUser.uid,
+                    "addresses",
+                    docSnap.id
+                ),
+                {
+                    default:false
+                }
+            );
+
+        });
+
+        batch.update(
+            doc(
+                db,
+                "users",
+                currentUser.uid,
+                "addresses",
+                id
+            ),
+            {
+                default:true
+            }
+        );
+
+        await batch.commit();
+
+        showToast(
+            "⭐ Endereço principal atualizado",
+            "success"
+        );
+
+    }catch(err){
+
+        console.error(err);
+
+        showToast(
+            "❌ Erro ao atualizar endereço",
+            "error"
+        );
+
+    }
+
+};
+
+alert("✅ addresses.js Bloc 5 chargé");
