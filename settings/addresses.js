@@ -211,11 +211,7 @@ function loadAddresses() {
 
     if (!currentUser) return;
 
-    addressList.innerHTML = `
-    <div style="padding:20px;text-align:center;">
-        ⏳ A carregar endereços...
-    </div>
-    `;
+    
 
     const ref = collection(
         db,
@@ -290,14 +286,20 @@ function loadAddresses() {
 
 }
 
-setInterval(() => {
+let addressesLoaded = false;
 
-    if (currentUser) {
+const waitAddresses = setInterval(() => {
+
+    if (currentUser && !addressesLoaded) {
+
+        addressesLoaded = true;
 
         loadAddresses();
 
+        clearInterval(waitAddresses);
+
     }
 
-}, 600);
+}, 300);
 
 alert("✅ addresses.js Bloc 4 chargé");
