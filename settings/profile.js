@@ -17,9 +17,7 @@ import {
     $,
     updateProfileUI
 } from "./ui.js";
-import { loadStats } from "./stats.js";
-import { loadMerchant } from "./merchant.js";
-import { loadAddresses } from "./addresses.js";
+import { emitProfileReady } from "./events.js";
 export let currentUser = null;
 export let currentUserData = {};
 
@@ -66,14 +64,16 @@ onAuthStateChanged(auth, async (user) => {
 
 alert("✅ Profil affiché");
 
-// Lancer tous les modules
-await loadStats();
+// Informer tous les modules
+emitProfileReady({
 
-loadMerchant();
+    user: currentUser,
 
-loadAddresses();
+    data: currentUserData
 
-alert("✅ Tous les modules chargés");
+});
+
+alert("📢 Événement profileReady envoyé");
     }
 
     catch (err) {
