@@ -183,7 +183,7 @@ if (saveAddressBtn) {
             }
 
             closeAddressModal();
-
+await refreshAddresses();
         }
 
         catch (err) {
@@ -316,7 +316,7 @@ window.deleteAddress = async function(id){
             "✅ Endereço apagado",
             "success"
         );
-
+await refreshAddresses();
     }catch(err){
 
         console.error(err);
@@ -381,7 +381,7 @@ window.setDefaultAddress = async function(id){
             "⭐ Endereço principal atualizado",
             "success"
         );
-
+await refreshAddresses();
     }catch(err){
 
         console.error(err);
@@ -396,3 +396,24 @@ window.setDefaultAddress = async function(id){
 };
 
 alert("✅ addresses.js Bloc 5 chargé");
+// ===============================
+// BLOC 6 : FINALISATION
+// ===============================
+
+// Rafraîchir automatiquement après
+// ajout / modification / suppression
+
+async function refreshAddresses(){
+
+    await loadAddresses();
+
+}
+
+// Exports
+
+export {
+    loadAddresses,
+    refreshAddresses
+};
+
+alert("✅ addresses.js terminé");
