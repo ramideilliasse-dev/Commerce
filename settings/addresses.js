@@ -183,7 +183,7 @@ if (saveAddressBtn) {
             }
 
             closeAddressModal();
-await refreshAddresses();
+
         }
 
         catch (err) {
@@ -286,7 +286,7 @@ function loadAddresses() {
 
 }
 
-export { loadAddresses };
+
 alert("✅ addresses.js Bloc 4 chargé");
 // ===============================
 // BLOC 5 : SUPPRIMER + PRINCIPAL
@@ -316,7 +316,7 @@ window.deleteAddress = async function(id){
             "✅ Endereço apagado",
             "success"
         );
-await refreshAddresses();
+
     }catch(err){
 
         console.error(err);
@@ -381,7 +381,7 @@ window.setDefaultAddress = async function(id){
             "⭐ Endereço principal atualizado",
             "success"
         );
-await refreshAddresses();
+
     }catch(err){
 
         console.error(err);
@@ -403,11 +403,6 @@ alert("✅ addresses.js Bloc 5 chargé");
 // Rafraîchir automatiquement après
 // ajout / modification / suppression
 
-async function refreshAddresses(){
-
-    await loadAddresses();
-
-}
 
 // Exports
 
