@@ -2,5 +2,6 @@
 import "./ui.js";
 import "./profile.js";
 import "./merchant.js";
+import "./addresses.js";
 
-alert("4");
+alert("5");
