@@ -1,3 +1,4 @@
  import "./events.js";
+import "./ui.js";
 
-alert("1");
+alert("2");
