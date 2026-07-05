@@ -276,23 +276,33 @@ if (data.city) {
 
     <div class="addressHeader">
 
-        <div>
+        <div class="addressAvatar">
+
+            ${data.name.charAt(0).toUpperCase()}
+
+        </div>
+
+        <div class="addressInfo">
 
             <div class="addressName">
+
                 ${data.name}
+
             </div>
 
-            <div class="addressBadge">
+            <div class="addressSubtitle">
 
-                ${
-                    data.default
-                    ? "⭐ Principal"
-                    : "📍 Secundário"
-                }
+                ${data.phone}
 
             </div>
 
         </div>
+
+        ${
+            data.default
+            ? `<div class="addressBadge">⭐ Principal</div>`
+            : ""
+        }
 
     </div>
 
