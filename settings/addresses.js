@@ -364,14 +364,19 @@ if (data.city) {
 
 `;
 
-            `;
-
         });
-$("summaryAddresses").textContent = totalAddresses;
+     const summaryAddresses = $("summaryAddresses");
+const summaryPrincipal = $("summaryPrincipal");
+const summaryCities = $("summaryCities");
 
-$("summaryPrincipal").textContent = principal;
+if (summaryAddresses)
+    summaryAddresses.textContent = totalAddresses;
 
-$("summaryCities").textContent = cities.size;
+if (summaryPrincipal)
+    summaryPrincipal.textContent = principal;
+
+if (summaryCities)
+    summaryCities.textContent = cities.size;
         addressList.innerHTML = html;
 
     });
