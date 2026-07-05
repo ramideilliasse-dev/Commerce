@@ -251,11 +251,25 @@ function loadAddresses() {
         }
 
         let html = "";
-
+let totalAddresses = 0;
+let principal = 0;
+const cities = new Set();
         snapshot.forEach((docSnap) => {
 
             const data = docSnap.data();
+totalAddresses++;
 
+if (data.default) {
+
+    principal++;
+
+}
+
+if (data.city) {
+
+    cities.add(data.city);
+
+}
             html += `
 
 <div class="addressCard">
@@ -353,7 +367,11 @@ function loadAddresses() {
             `;
 
         });
+$("summaryAddresses").textContent = totalAddresses;
 
+$("summaryPrincipal").textContent = principal;
+
+$("summaryCities").textContent = cities.size;
         addressList.innerHTML = html;
 
     });
