@@ -258,41 +258,97 @@ function loadAddresses() {
 
             html += `
 
-            <div class="productCard">
+<div class="addressCard">
 
-                <h4>
-                    ${data.name}
-                    ${data.default ? "⭐" : ""}
-                </h4>
+    <div class="addressHeader">
 
-                <p>📞 ${data.phone}</p>
+        <div>
 
-                <p>📍 ${data.province}</p>
+            <div class="addressName">
+                ${data.name}
+            </div>
 
-                <p>🏙 ${data.city}</p>
+            <div class="addressBadge">
 
-                <p>🏠 ${data.street}</p>
-
-                <div style="display:flex;gap:8px;flex-wrap:wrap;">
-
-                    <button class="btn"
-                    onclick="editAddress('${docSnap.id}')">
-                    ✏️ Editar
-                    </button>
-
-                    <button class="btnMerchant"
-                    onclick="setDefaultAddress('${docSnap.id}')">
-                    ⭐ Principal
-                    </button>
-
-                    <button class="btnDanger"
-                    onclick="deleteAddress('${docSnap.id}')">
-                    🗑 Apagar
-                    </button>
-
-                </div>
+                ${
+                    data.default
+                    ? "⭐ Principal"
+                    : "📍 Secundário"
+                }
 
             </div>
+
+        </div>
+
+    </div>
+
+    <div class="addressBody">
+
+        <div class="addressItem">
+
+            <span>📞</span>
+
+            <span>${data.phone}</span>
+
+        </div>
+
+        <div class="addressItem">
+
+            <span>📍</span>
+
+            <span>${data.province}</span>
+
+        </div>
+
+        <div class="addressItem">
+
+            <span>🏙</span>
+
+            <span>${data.city}</span>
+
+        </div>
+
+        <div class="addressItem">
+
+            <span>🏠</span>
+
+            <span>${data.street}</span>
+
+        </div>
+
+    </div>
+
+    <div class="addressActions">
+
+        <button
+        class="actionBtn edit"
+        onclick="editAddress('${docSnap.id}')">
+
+            ✏️
+
+        </button>
+
+        <button
+        class="actionBtn star"
+        onclick="setDefaultAddress('${docSnap.id}')">
+
+            ⭐
+
+        </button>
+
+        <button
+        class="actionBtn delete"
+        onclick="deleteAddress('${docSnap.id}')">
+
+            🗑️
+
+        </button>
+
+    </div>
+
+</div>
+
+`;
 
             `;
 
