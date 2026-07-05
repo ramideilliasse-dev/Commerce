@@ -1,4 +1,4 @@
-// ===============================
+ // ===============================
 // STATS.JS
 // ===============================
 
@@ -10,41 +10,52 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import {
-    currentUser
-} from "./profile.js";
+    settingsEvents
+} from "./events.js";
 
 import {
     $
 } from "./ui.js";
 
+let currentUser = null;
+
 const statOrders = $("statOrders");
 const statFavorites = $("statFavorites");
 const statAddresses = $("statAddresses");
 
+settingsEvents.addEventListener(
+    "profileReady",
+    (event)=>{
 
+        currentUser = event.detail.user;
 
-async function loadStats() {
+        loadStats();
 
-    if (!currentUser) return;
+    }
+);
 
-    
+async function loadStats(){
 
-    try {
+    if(!currentUser) return;
+
+    try{
+
+        // Commandes
 
         const ordersSnap = await getDocs(
-            collection(db, "orders")
+            collection(db,"orders")
         );
 
         let totalOrders = 0;
 
-        ordersSnap.forEach(docSnap => {
+        ordersSnap.forEach((docSnap)=>{
 
             const order = docSnap.data();
 
-            if (
+            if(
                 order.uid === currentUser.uid ||
                 order.userId === currentUser.uid
-            ) {
+            ){
 
                 totalOrders++;
 
@@ -52,31 +63,53 @@ async function loadStats() {
 
         });
 
-        if (statOrders)
-            statOrders.textContent = totalOrders;
+        if(statOrders){
+
+            statOrders.textContent =
+            totalOrders;
+
+        }
+
+        // Favoris
 
         const favorites = JSON.parse(
+
             localStorage.getItem("favorites") || "[]"
+
         );
 
-        if (statFavorites)
-            statFavorites.textContent = favorites.length;
+        if(statFavorites){
+
+            statFavorites.textContent =
+            favorites.length;
+
+        }
+
+        // Adresses
 
         const addressesSnap = await getDocs(
+
             collection(
                 db,
                 "users",
                 currentUser.uid,
                 "addresses"
             )
+
         );
 
-        if (statAddresses)
-            statAddresses.textContent = addressesSnap.size;
+        if(statAddresses){
 
-        
+            statAddresses.textContent =
+            addressesSnap.size;
 
-    } catch (err) {
+        }
+
+        console.log("✅ Statistiques chargées");
+
+    }
+
+    catch(err){
 
         console.error(err);
 
@@ -86,4 +119,4 @@ async function loadStats() {
 
 }
 
-export { loadStats };
+alert("✅ stats.js chargé");
