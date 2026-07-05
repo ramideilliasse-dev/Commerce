@@ -308,39 +308,39 @@ if (data.city) {
 
     <div class="addressBody">
 
-        <div class="addressItem">
+    <div class="addressLine">
 
-            <span>📞</span>
+        <span class="icon">📞</span>
 
-            <span>${data.phone}</span>
-
-        </div>
-
-        <div class="addressItem">
-
-            <span>📍</span>
-
-            <span>${data.province}</span>
-
-        </div>
-
-        <div class="addressItem">
-
-            <span>🏙</span>
-
-            <span>${data.city}</span>
-
-        </div>
-
-        <div class="addressItem">
-
-            <span>🏠</span>
-
-            <span>${data.street}</span>
-
-        </div>
+        <span class="text">${data.phone}</span>
 
     </div>
+
+    <div class="addressLine">
+
+        <span class="icon">📍</span>
+
+        <span class="text">${data.province}</span>
+
+    </div>
+
+    <div class="addressLine">
+
+        <span class="icon">🏙</span>
+
+        <span class="text">${data.city}</span>
+
+    </div>
+
+    <div class="addressLine">
+
+        <span class="icon">🏠</span>
+
+        <span class="text">${data.street}</span>
+
+    </div>
+
+</div>
 
     <div class="addressActions">
 
