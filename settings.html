@@ -477,6 +477,89 @@ font-size:22px;
 color:#9ca3af;
 
 }
+/* ===============================
+   PREMIUM ANIMATIONS
+=============================== */
+
+.card{
+
+transition:
+transform .20s ease,
+box-shadow .20s ease;
+
+}
+
+.card:hover{
+
+transform:translateY(-2px);
+
+box-shadow:
+0 10px 24px rgba(0,0,0,.08);
+
+}
+
+.menuButton{
+
+transition:
+background .20s ease,
+transform .15s ease;
+
+border-radius:12px;
+
+padding-left:10px;
+
+padding-right:10px;
+
+}
+
+.menuButton:active{
+
+transform:scale(.98);
+
+background:#f8fafc;
+
+}
+
+.menuIcon{
+
+transition:
+transform .25s ease;
+
+}
+
+.menuButton:hover .menuIcon{
+
+transform:scale(1.08);
+
+}
+
+.btn,
+.btnMerchant,
+.btnDanger{
+
+transition:
+transform .18s ease,
+box-shadow .18s ease;
+
+}
+
+.btn:hover,
+.btnMerchant:hover,
+.btnDanger:hover{
+
+transform:translateY(-1px);
+
+box-shadow:0 6px 14px rgba(0,0,0,.12);
+
+}
+
+.btn:active,
+.btnMerchant:active,
+.btnDanger:active{
+
+transform:scale(.97);
+
+}
 </style>
 </head>
 
