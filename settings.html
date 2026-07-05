@@ -731,6 +731,55 @@ background:#F8FAFC;
 transform:scale(1.05);
 
 }
+/* ===============================
+   ADDRESS SUMMARY
+=============================== */
+
+.addressSummary{
+
+display:grid;
+
+grid-template-columns:repeat(3,1fr);
+
+gap:12px;
+
+margin-bottom:20px;
+
+}
+
+.summaryItem{
+
+background:#fff;
+
+border-radius:18px;
+
+padding:16px;
+
+text-align:center;
+
+box-shadow:0 6px 18px rgba(0,0,0,.05);
+
+}
+
+.summaryNumber{
+
+font-size:24px;
+
+font-weight:700;
+
+color:#16A34A;
+
+margin-bottom:4px;
+
+}
+
+.summaryLabel{
+
+font-size:13px;
+
+color:#6B7280;
+
+}
 </style>
 </head>
 
@@ -966,7 +1015,45 @@ Salvar província
 📍 Meus Endereços
 
 </h3>
+<div class="addressSummary">
 
+    <div class="summaryItem">
+
+        <div id="summaryAddresses" class="summaryNumber">
+            0
+        </div>
+
+        <div class="summaryLabel">
+            Endereços
+        </div>
+
+    </div>
+
+    <div class="summaryItem">
+
+        <div id="summaryPrincipal" class="summaryNumber">
+            0
+        </div>
+
+        <div class="summaryLabel">
+            Principal
+        </div>
+
+    </div>
+
+    <div class="summaryItem">
+
+        <div id="summaryCities" class="summaryNumber">
+            0
+        </div>
+
+        <div class="summaryLabel">
+            Cidades
+        </div>
+
+    </div>
+
+</div>
 <div
 id="addressList"
 style="margin-top:15px;">
