@@ -218,3 +218,90 @@ if (saveAddressBtn) {
 }
 
 alert("✅ addresses.js Partie 2 chargée");
+// ===============================
+// ADDRESSES.JS
+// Partie 3 : Charger les adresses
+// ===============================
+
+function loadAddresses() {
+
+    if (!currentUser) return;
+
+    const ref = collection(
+        db,
+        "users",
+        currentUser.uid,
+        "addresses"
+    );
+
+    onSnapshot(ref, (snapshot) => {
+
+        if (!addressList) return;
+
+        if (snapshot.empty) {
+
+            addressList.innerHTML = `
+                <p style="padding:15px;text-align:center;">
+                    Nenhum endereço guardado.
+                </p>
+            `;
+
+            return;
+
+        }
+
+        let html = "";
+
+        snapshot.forEach((docSnap) => {
+
+            const data = docSnap.data();
+
+            html += `
+
+            <div class="productCard">
+
+                <h4>
+                    ${data.name}
+                    ${data.default ? "⭐" : ""}
+                </h4>
+
+                <p>📞 ${data.phone}</p>
+
+                <p>📍 ${data.province}</p>
+
+                <p>🏙 ${data.city}</p>
+
+                <p>🏠 ${data.street}</p>
+
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+
+                    <button class="btn"
+                    onclick="editAddress('${docSnap.id}')">
+                    ✏️ Editar
+                    </button>
+
+                    <button class="btnMerchant"
+                    onclick="setDefaultAddress('${docSnap.id}')">
+                    ⭐ Principal
+                    </button>
+
+                    <button class="btnDanger"
+                    onclick="deleteAddress('${docSnap.id}')">
+                    🗑 Apagar
+                    </button>
+
+                </div>
+
+            </div>
+
+            `;
+
+        });
+
+        addressList.innerHTML = html;
+
+    });
+
+}
+
+alert("✅ addresses.js Partie 3 chargée");
