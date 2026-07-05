@@ -780,6 +780,69 @@ font-size:13px;
 color:#6B7280;
 
 }
+/* ===============================
+   FLOATING ADDRESS BUTTON
+=============================== */
+
+.floatingAddressBtn{
+
+position:fixed;
+
+right:22px;
+
+bottom:28px;
+
+width:64px;
+
+height:64px;
+
+border:none;
+
+border-radius:50%;
+
+background:#16A34A;
+
+color:#fff;
+
+font-size:34px;
+
+cursor:pointer;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+box-shadow:
+0 12px 30px rgba(22,163,74,.35);
+
+transition:.25s;
+
+z-index:999;
+
+}
+
+.floatingAddressBtn:hover{
+
+transform:translateY(-3px);
+
+box-shadow:
+0 18px 40px rgba(22,163,74,.45);
+
+}
+
+.floatingAddressBtn:active{
+
+transform:scale(.94);
+
+}
+
+.floatingAddressBtn span{
+
+margin-top:-4px;
+
+}
 </style>
 </head>
 
@@ -1063,13 +1126,12 @@ Nenhum endereço.
 </div>
 
 <button
-class="btn"
-id="addAddressBtn">
+id="addAddressBtn"
+class="floatingAddressBtn">
 
-➕ Novo Endereço
+<span>＋</span>
 
 </button>
-
 </div>
 <div class="sectionTitle">
 Conta
