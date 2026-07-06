@@ -988,6 +988,51 @@ transform:translateY(-2px);
 background:#EEF2F7;
 
 }
+.addressDivider{
+
+height:1px;
+
+background:#EEF2F7;
+
+margin:18px 0;
+
+}
+
+.addressCard{
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.addressCard::before{
+
+content:"";
+
+position:absolute;
+
+left:0;
+
+top:0;
+
+width:5px;
+
+height:100%;
+
+background:#16A34A;
+
+border-radius:20px 0 0 20px;
+
+}
+
+.addressCard:hover::before{
+
+background:#F59E0B;
+
+transition:.25s;
+
+}
 </style>
 </head>
 
