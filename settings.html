@@ -1363,6 +1363,85 @@ transition:.25s;
 transform:translateY(-2px);
 
 }
+/* ===============================
+   ADDRESS SECTION PREMIUM
+=============================== */
+
+.addressSection{
+
+border-radius:24px;
+
+padding:22px;
+
+}
+
+.addressSectionHeader{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:22px;
+
+}
+
+.sectionSmallTitle{
+
+font-size:12px;
+
+font-weight:700;
+
+letter-spacing:1px;
+
+color:#9CA3AF;
+
+text-transform:uppercase;
+
+}
+
+.sectionBigTitle{
+
+margin:4px 0 0;
+
+font-size:28px;
+
+font-weight:700;
+
+color:#111827;
+
+}
+
+.addAddressMini{
+
+width:52px;
+
+height:52px;
+
+border:none;
+
+border-radius:18px;
+
+background:#16A34A;
+
+color:white;
+
+font-size:30px;
+
+cursor:pointer;
+
+box-shadow:0 10px 20px rgba(22,163,74,.25);
+
+transition:.25s;
+
+}
+
+.addAddressMini:hover{
+
+transform:scale(1.05);
+
+}
 </style>
 </head>
 
@@ -1605,15 +1684,37 @@ Salvar província
 </button>
 
 </div>
- <!-- ADDRESSES -->
+ <!-- PREMIUM ADDRESSES -->
 
-<div class="card">
+<div class="card addressSection">
 
-<h3 style="margin-top:0;">
+<div class="addressSectionHeader">
 
-📍 Meus Endereços
+<div>
 
-</h3>
+<div class="sectionSmallTitle">
+
+ENDEREÇOS
+
+</div>
+
+<h2 class="sectionBigTitle">
+
+Meus Endereços
+
+</h2>
+
+</div>
+
+<button
+class="addAddressMini"
+onclick="openAddressModal()">
+
+＋
+
+</button>
+
+</div>
 <div class="addressSummary">
 
     <div class="summaryItem">
@@ -1661,13 +1762,7 @@ Nenhum endereço.
 
 </div>
 
-<button
-id="addAddressBtn"
-class="floatingAddressBtn">
 
-<span>＋</span>
-
-</button>
 </div>
 <div class="sectionTitle">
 Conta
