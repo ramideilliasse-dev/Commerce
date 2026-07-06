@@ -274,110 +274,87 @@ if (data.city) {
 
 <div class="addressCard">
 
-    <div class="addressHeader">
+<div class="addressTop">
 
-        <div class="addressAvatar">
+<div class="addressAvatar">
 
-            ${data.name.charAt(0).toUpperCase()}
+${data.name.charAt(0).toUpperCase()}
 
-        </div>
+</div>
 
-        <div class="addressInfo">
+<div class="addressMain">
 
-            <div class="addressName">
+<div class="addressName">
 
-                ${data.name}
+${data.name}
 
-            </div>
+</div>
 
-            <div class="addressSubtitle">
+<div class="addressPhone">
 
-                ${data.phone}
+📞 ${data.phone}
 
-            </div>
+</div>
 
-        </div>
+</div>
 
-        ${
-            data.default
-            ? `<div class="addressBadge">⭐ Principal</div>`
-            : ""
-        }
+${
+data.default
+?
+`<div class="addressBadge">
+Principal
+</div>`
+:
+""
+}
 
-    </div>
+</div>
 
-    <div class="addressBody">
+<div class="addressLocation">
 
-    <div class="addressLine">
+📍 ${data.street}
 
-        <span class="icon">📞</span>
+</div>
 
-        <span class="text">${data.phone}</span>
+<div class="addressCity">
 
-    </div>
-
-    <div class="addressLine">
-
-        <span class="icon">📍</span>
-
-        <span class="text">${data.province}</span>
-
-    </div>
-
-    <div class="addressLine">
-
-        <span class="icon">🏙</span>
-
-        <span class="text">${data.city}</span>
-
-    </div>
-
-    <div class="addressLine">
-
-        <span class="icon">🏠</span>
-
-        <span class="text">${data.street}</span>
-
-    </div>
+${data.city} • ${data.province}
 
 </div>
 
 <div class="addressDivider"></div>
 
 <div class="addressActions">
-    <button
-    class="actionBtn edit"
-    onclick="editAddress('${docSnap.id}')">
 
-        ✏️
-        <span>Editar</span>
+<button
+class="actionBtn edit"
+onclick="editAddress('${docSnap.id}')">
 
-    </button>
+✏️
 
-    <button
-    class="actionBtn star"
-    onclick="setDefaultAddress('${docSnap.id}')">
+</button>
 
-        ⭐
-        <span>Principal</span>
+<button
+class="actionBtn star"
+onclick="setDefaultAddress('${docSnap.id}')">
 
-    </button>
+⭐
 
-    <button
-    class="actionBtn delete"
-    onclick="deleteAddress('${docSnap.id}')">
+</button>
 
-        🗑
-        <span>Apagar</span>
+<button
+class="actionBtn delete"
+onclick="deleteAddress('${docSnap.id}')">
 
-    </button>
+🗑
+
+</button>
 
 </div>
 
 </div>
 
 `;
-
         });
      const summaryAddresses = $("summaryAddresses");
 const summaryPrincipal = $("summaryPrincipal");
