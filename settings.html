@@ -1794,6 +1794,75 @@ transition:.25s;
 transform:scale(1.08);
 
 }
+/* ===============================
+WELCOME PREMIUM
+=============================== */
+
+.welcomeBanner{
+
+background:linear-gradient(135deg,#ff6a00,#ff8c1a);
+
+border-radius:26px;
+
+padding:24px;
+
+color:white;
+
+margin-bottom:24px;
+
+position:relative;
+
+overflow:hidden;
+
+box-shadow:0 14px 32px rgba(255,106,0,.25);
+
+}
+
+.welcomeBanner::after{
+
+content:"🛍";
+
+position:absolute;
+
+right:22px;
+
+top:12px;
+
+font-size:68px;
+
+opacity:.12;
+
+}
+
+.welcomeSmall{
+
+font-size:14px;
+
+opacity:.9;
+
+margin-bottom:8px;
+
+}
+
+.welcomeName{
+
+font-size:30px;
+
+font-weight:700;
+
+line-height:1.2;
+
+}
+
+.welcomeText{
+
+margin-top:10px;
+
+font-size:14px;
+
+opacity:.95;
+
+}
 </style>
 </head>
 
@@ -1816,7 +1885,29 @@ Configurações
 </div>
 
 <div class="container">
+<div class="welcomeBanner">
 
+<div class="welcomeSmall">
+
+Bem-vindo 👋
+
+</div>
+
+<div
+id="welcomeUser"
+class="welcomeName">
+
+Utilizador
+
+</div>
+
+<div class="welcomeText">
+
+Gerencie a sua conta, pedidos e preferências.
+
+</div>
+
+</div>
 <!-- PROFILE PREMIUM V2 -->
 
 <div class="profileCard">
