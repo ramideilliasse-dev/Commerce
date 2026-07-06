@@ -342,8 +342,9 @@ if (data.city) {
 
 </div>
 
-    <div class="addressActions">
+<div class="addressDivider"></div>
 
+<div class="addressActions">
     <button
     class="actionBtn edit"
     onclick="editAddress('${docSnap.id}')">
