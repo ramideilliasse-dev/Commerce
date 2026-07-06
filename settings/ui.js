@@ -73,4 +73,4 @@ export function updateProfileUI(data, user) {
 
 }
 
-alert("✅ ui.js chargé");
+
