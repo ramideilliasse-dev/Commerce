@@ -1203,6 +1203,77 @@ transition:.25s;
 transform:translateY(-2px);
 box-shadow:0 10px 20px rgba(22,163,74,.25);
 }
+/* ===============================
+   STATS PREMIUM V2
+=============================== */
+
+.statsPremium{
+
+display:grid;
+
+grid-template-columns:repeat(3,1fr);
+
+gap:14px;
+
+margin-top:18px;
+
+}
+
+.statPremium{
+
+background:#fff;
+
+border-radius:18px;
+
+padding:18px 12px;
+
+text-align:center;
+
+box-shadow:0 6px 18px rgba(0,0,0,.05);
+
+transition:.25s;
+
+}
+
+.statPremium:hover{
+
+transform:translateY(-2px);
+
+box-shadow:0 10px 24px rgba(0,0,0,.08);
+
+}
+
+.statPremiumIcon{
+
+font-size:24px;
+
+margin-bottom:8px;
+
+}
+
+.statPremiumNumber{
+
+font-size:30px;
+
+font-weight:700;
+
+color:#16A34A;
+
+line-height:1;
+
+margin-bottom:8px;
+
+}
+
+.statPremiumLabel{
+
+font-size:13px;
+
+color:#6B7280;
+
+font-weight:600;
+
+}
 </style>
 </head>
 
@@ -1261,44 +1332,52 @@ box-shadow:0 10px 20px rgba(22,163,74,.25);
 STATISTIQUES
 =========================== -->
 
-<div class="card" id="statsCard">
+<div id="statsCard" class="statsPremium">
 
-<div class="statsGrid">
+<div class="statPremium">
 
-<div class="statItem">
+<div class="statPremiumIcon">
+📦
+</div>
 
-<div id="statOrders" class="statNumber">
+<div id="statOrders" class="statPremiumNumber">
 0
 </div>
 
-<div class="statLabel">
+<div class="statPremiumLabel">
 Pedidos
 </div>
 
 </div>
 
-<div class="statItem">
+<div class="statPremium">
 
-<div id="statFavorites" class="statNumber">
+<div class="statPremiumIcon">
+❤️
+</div>
+
+<div id="statFavorites" class="statPremiumNumber">
 0
 </div>
 
-<div class="statLabel">
+<div class="statPremiumLabel">
 Favoritos
 </div>
 
 </div>
 
-<div class="statItem">
+<div class="statPremium">
 
-<div id="statAddresses" class="statNumber">
+<div class="statPremiumIcon">
+📍
+</div>
+
+<div id="statAddresses" class="statPremiumNumber">
 0
 </div>
 
-<div class="statLabel">
+<div class="statPremiumLabel">
 Endereços
-</div>
-
 </div>
 
 </div>
