@@ -31,7 +31,7 @@ const profilePic = $("profilePic");
 const uploadInput = $("upload");
 
 const cameraBtn = $("cameraBtn");
-
+const profileLoader = $("profileLoader");
 function openFile() {
 
     uploadInput.click();
@@ -144,7 +144,9 @@ uploadInput.addEventListener(
         const file = event.target.files[0];
 
         if(!file) return;
+profileLoader.style.display = "flex";
 
+cameraBtn.style.display = "none";
         try{
 
             showToast(
@@ -212,7 +214,9 @@ uploadInput.addEventListener(
             );
 
             profilePic.src = result.secure_url;
+profileLoader.style.display = "none";
 
+cameraBtn.style.display = "flex";
             showToast(
 
                 "✅ Fotografia atualizada",
@@ -226,7 +230,9 @@ uploadInput.addEventListener(
         catch(err){
 
             console.error(err);
+profileLoader.style.display = "none";
 
+cameraBtn.style.display = "flex";
             showToast(
 
                 "Erro ao enviar fotografia",
