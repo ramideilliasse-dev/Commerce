@@ -344,31 +344,34 @@ if (data.city) {
 
     <div class="addressActions">
 
-        <button
-        class="actionBtn edit"
-        onclick="editAddress('${docSnap.id}')">
+    <button
+    class="actionBtn edit"
+    onclick="editAddress('${docSnap.id}')">
 
-            ✏️
+        ✏️
+        <span>Editar</span>
 
-        </button>
+    </button>
 
-        <button
-        class="actionBtn star"
-        onclick="setDefaultAddress('${docSnap.id}')">
+    <button
+    class="actionBtn star"
+    onclick="setDefaultAddress('${docSnap.id}')">
 
-            ⭐
+        ⭐
+        <span>Principal</span>
 
-        </button>
+    </button>
 
-        <button
-        class="actionBtn delete"
-        onclick="deleteAddress('${docSnap.id}')">
+    <button
+    class="actionBtn delete"
+    onclick="deleteAddress('${docSnap.id}')">
 
-            🗑️
+        🗑
+        <span>Apagar</span>
 
-        </button>
+    </button>
 
-    </div>
+</div>
 
 </div>
 
