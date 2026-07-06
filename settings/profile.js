@@ -50,7 +50,7 @@ if (profilePic) {
 }
 onAuthStateChanged(auth, async (user) => {
 
-    alert("🔐 Auth lancée");
+    
 
     if (!user) {
 
