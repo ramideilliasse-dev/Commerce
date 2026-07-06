@@ -24,7 +24,7 @@ const UPLOAD_PRESET = "angcomerce-upload";
 export let currentUser = null;
 export let currentUserData = {};
 
-alert("✅ profile.js chargé");
+
 const profilePic = $("profilePic");
 
 const uploadInput = $("upload");
@@ -54,7 +54,7 @@ onAuthStateChanged(auth, async (user) => {
 
     if (!user) {
 
-        alert("❌ Aucun utilisateur");
+        
 
         return;
 
@@ -62,7 +62,7 @@ onAuthStateChanged(auth, async (user) => {
 
     currentUser = user;
 
-    alert("✅ Utilisateur connecté");
+    
 
     try {
 
@@ -72,7 +72,7 @@ onAuthStateChanged(auth, async (user) => {
 
         if (!snap.exists()) {
 
-            alert("❌ Utilisateur introuvable");
+            
 
             return;
 
@@ -80,7 +80,7 @@ onAuthStateChanged(auth, async (user) => {
 
         currentUserData = snap.data();
 
-        alert("✅ Données utilisateur chargées");
+    
 
         updateProfileUI(
     currentUserData,
@@ -96,7 +96,7 @@ if (welcome) {
         "Utilizador";
 
 }
-alert("✅ Profil affiché");
+
 
 // Informer tous les modules
 emitProfileReady({
@@ -107,7 +107,7 @@ emitProfileReady({
 
 });
 
-alert("📢 Événement profileReady envoyé");
+
     }
 
     catch (err) {
