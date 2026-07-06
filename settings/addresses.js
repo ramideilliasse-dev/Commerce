@@ -548,4 +548,4 @@ export {
     loadAddresses
 };
 
-console("✅ addresses.js TERMINÉ");
+
