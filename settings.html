@@ -1998,6 +1998,69 @@ transform:translateY(0) scale(1);
 }
 
 }
+/* ===============================
+PROFILE LOADER
+=============================== */
+
+.profileWrapper{
+
+position:relative;
+
+display:inline-block;
+
+}
+
+.profileLoader{
+
+position:absolute;
+
+left:0;
+
+top:0;
+
+width:100%;
+
+height:100%;
+
+background:rgba(255,255,255,.75);
+
+border-radius:50%;
+
+display:none;
+
+align-items:center;
+
+justify-content:center;
+
+backdrop-filter:blur(2px);
+
+}
+
+.profileSpinner{
+
+width:34px;
+
+height:34px;
+
+border:4px solid #e5e7eb;
+
+border-top:4px solid #16A34A;
+
+border-radius:50%;
+
+animation:spinProfile .8s linear infinite;
+
+}
+
+@keyframes spinProfile{
+
+100%{
+
+transform:rotate(360deg);
+
+}
+
+}
 </style>
 </head>
 
@@ -2051,23 +2114,39 @@ Gerencie a sua conta, pedidos e preferências.
 
         <div class="profileLeft">
 
+<div class="profileWrapper">
+
 <div class="profileImageWrapper">
 
-    <img
-        id="profilePic"
-        class="profilePhoto"
-        src="default.png">
+<img
+id="profilePic"
+class="profilePhoto"
+src="default.png">
 
-    <div class="cameraButton" id="cameraBtn">
+<div
+class="cameraButton"
+id="cameraBtn">
 
-        📷
-
-    </div>
-
-    <input type="file" id="upload" hidden>
+📷
 
 </div>
 
+<input
+type="file"
+id="upload"
+hidden>
+
+</div>
+
+<div
+id="profileLoader"
+class="profileLoader">
+
+<div class="profileSpinner"></div>
+
+</div>
+
+</div>
             <div class="profileTexts">
 
                 <h2 id="profileName">
