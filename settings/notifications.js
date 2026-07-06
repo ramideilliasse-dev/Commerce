@@ -8,7 +8,7 @@ const promoNotif = $("promoNotif");
 const orderNotif = $("orderNotif");
 const darkMode = $("darkMode");
 
-alert("✅ notifications.js Bloc 1 chargé");
+
 // ===============================
 // BLOC 2 : PROMOTIONS
 // ===============================
@@ -34,8 +34,7 @@ if (promoNotif) {
 
 }
 
-alert("✅ notifications.js Bloc 2 chargé");
-// ===============================
+
 // BLOC 3 : COMMANDES
 // ===============================
 
@@ -60,7 +59,7 @@ if (orderNotif) {
 
 }
 
-alert("✅ notifications.js Bloc 3 chargé");
+
 // ===============================
 // BLOC 4 : DARK MODE
 // ===============================
@@ -91,4 +90,4 @@ if (darkMode) {
 
 }
 
-alert("✅ notifications.js terminé");
+
