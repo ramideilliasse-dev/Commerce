@@ -61,7 +61,16 @@ onAuthStateChanged(auth, async (user) => {
     currentUserData,
     user
 );
+const welcome = document.getElementById("welcomeUser");
 
+if (welcome) {
+
+    welcome.textContent =
+        currentUserData.name ||
+        user.displayName ||
+        "Utilizador";
+
+}
 alert("✅ Profil affiché");
 
 // Informer tous les modules
