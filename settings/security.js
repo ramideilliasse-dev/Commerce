@@ -89,3 +89,62 @@ if (changePasswordBtn) {
 }
 
 alert("✅ security.js Partie 2 chargée");
+// ===============================
+// SECURITY.JS
+// Partie 3
+// Vérifier l'e-mail
+// ===============================
+
+if (verifyEmailBtn) {
+
+    verifyEmailBtn.onclick = async () => {
+
+        if (!currentUser) {
+
+            showToast(
+                "Utilizador não encontrado",
+                "error"
+            );
+
+            return;
+
+        }
+
+        if (currentUser.emailVerified) {
+
+            showToast(
+                "O seu email já está verificado.",
+                "success"
+            );
+
+            return;
+
+        }
+
+        try {
+
+            await sendEmailVerification(currentUser);
+
+            showToast(
+                "📧 Email de verificação enviado.",
+                "success"
+            );
+
+        }
+
+        catch (err) {
+
+            console.error(err);
+
+            showToast(
+                "Erro ao enviar email",
+                "error"
+            );
+
+        }
+
+    };
+
+}
+
+alert("✅ security.js Partie 3 chargée");
