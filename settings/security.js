@@ -1,4 +1,4 @@
- // ===============================
+// ===============================
 // SECURITY.JS
 // Partie 1
 // ===============================
@@ -12,13 +12,17 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 import {
-    currentUser
-} from "./profile.js";
+    settingsEvents
+} from "./events.js";
 
 import {
     $,
     showToast
 } from "./ui.js";
+
+// Utilisateur connecté
+
+let currentUser = null;
 
 // Boutons
 
@@ -27,6 +31,24 @@ const changePasswordBtn = $("changePasswordBtn");
 const verifyEmailBtn = $("verifyEmailBtn");
 
 const deleteBtn = $("deleteBtn");
+
+// Attendre profile.js
+
+settingsEvents.addEventListener(
+
+    "profileReady",
+
+    (event)=>{
+
+        currentUser = event.detail.user;
+
+        console.log(
+            "✅ Utilisateur reçu dans security.js"
+        );
+
+    }
+
+);
 
 alert("✅ security.js Partie 1 chargée");
 // ===============================
