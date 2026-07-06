@@ -119,4 +119,4 @@ async function loadStats(){
 
 }
 
-alert("✅ stats.js chargé");
+
