@@ -142,25 +142,24 @@ uploadInput.addEventListener(
 
     async (event)=>{
 
+        alert("📷 Image sélectionnée");
+
         const file = event.target.files[0];
 
-        if(!file) return;
-     alert("📷 Image sélectionnée");
+        if (!file) {
 
-const file = event.target.files[0];
+            alert("❌ Aucun fichier");
 
-if (!file) {
+            return;
 
-    alert("❌ Aucun fichier");
+        }
 
-    return;
+        alert("✅ Fichier reçu");
 
-}
+        profileLoader.style.display = "flex";
 
-alert("✅ Fichier reçu");
-profileLoader.style.display = "flex";
+        cameraBtn.style.display = "none";
 
-cameraBtn.style.display = "none";
         try{
 
             showToast(
