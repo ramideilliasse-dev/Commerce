@@ -6,7 +6,8 @@ import { auth, db } from "../firebase.js";
 
 import {
     doc,
-    getDoc
+    getDoc,
+    updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import {
@@ -86,6 +87,17 @@ onAuthStateChanged(auth, async (user) => {
     currentUserData,
     user
 );
+if (
+
+    currentUserData.photoURL &&
+
+    profilePic
+
+){
+
+    profilePic.src = currentUserData.photoURL;
+
+}     
 const welcome = document.getElementById("welcomeUser");
 
 if (welcome) {
