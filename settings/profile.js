@@ -119,3 +119,112 @@ emitProfileReady({
     }
 
 });
+// ===============================
+// CLOUDINARY PROFILE PHOTO
+// ===============================
+
+uploadInput.addEventListener(
+
+    "change",
+
+    async (event)=>{
+
+        const file = event.target.files[0];
+
+        if(!file) return;
+
+        try{
+
+            showToast(
+
+                "📤 A enviar fotografia...",
+
+                "warning"
+
+            );
+
+            const formData = new FormData();
+
+            formData.append("file", file);
+
+            formData.append(
+
+                "upload_preset",
+
+                UPLOAD_PRESET
+
+            );
+
+            const response = await fetch(
+
+                `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+
+                {
+
+                    method:"POST",
+
+                    body:formData
+
+                }
+
+            );
+
+            const result = await response.json();
+
+            if(!result.secure_url){
+
+                throw new Error("Cloudinary");
+
+            }
+
+            await updateDoc(
+
+                doc(
+
+                    db,
+
+                    "users",
+
+                    currentUser.uid
+
+                ),
+
+                {
+
+                    photoURL:
+
+                    result.secure_url
+
+                }
+
+            );
+
+            profilePic.src = result.secure_url;
+
+            showToast(
+
+                "✅ Fotografia atualizada",
+
+                "success"
+
+            );
+
+        }
+
+        catch(err){
+
+            console.error(err);
+
+            showToast(
+
+                "Erro ao enviar fotografia",
+
+                "error"
+
+            );
+
+        }
+
+    }
+
+);
