@@ -16,7 +16,8 @@ import {
 
 import {
     $,
-    updateProfileUI
+    updateProfileUI,
+    showToast
 } from "./ui.js";
 import { emitProfileReady } from "./events.js";
 const CLOUD_NAME = "dy9qnhimc";
@@ -144,6 +145,19 @@ uploadInput.addEventListener(
         const file = event.target.files[0];
 
         if(!file) return;
+     alert("📷 Image sélectionnée");
+
+const file = event.target.files[0];
+
+if (!file) {
+
+    alert("❌ Aucun fichier");
+
+    return;
+
+}
+
+alert("✅ Fichier reçu");
 profileLoader.style.display = "flex";
 
 cameraBtn.style.display = "none";
