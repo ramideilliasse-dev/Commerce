@@ -1078,6 +1078,53 @@ transform:translateY(0);
 }
 
 }
+/* ===============================
+   ADDRESS MODAL BUTTONS
+=============================== */
+
+.modalButtons{
+
+display:flex;
+
+gap:12px;
+
+margin-top:20px;
+
+}
+
+.modalButtons button{
+
+flex:1;
+
+margin-top:0;
+
+}
+
+.btnSecondary{
+
+background:#F3F4F6;
+
+color:#374151;
+
+border:none;
+
+padding:12px;
+
+border-radius:14px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.2s;
+
+}
+
+.btnSecondary:hover{
+
+background:#E5E7EB;
+
+}
 </style>
 </head>
 
@@ -1787,21 +1834,25 @@ placeholder="Cidade">
 id="addressStreet"
 placeholder="Endereço">
 
+<div class="modalButtons">
+
 <button
 class="btn"
 id="saveAddressBtn">
 
-Guardar
+💾 Guardar
 
 </button>
 
 <button
-class="btnDanger"
+class="btnSecondary"
 onclick="closeAddressModal()">
 
 Cancelar
 
 </button>
+
+</div>
 
 </div>
 
