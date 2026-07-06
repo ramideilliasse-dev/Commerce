@@ -148,3 +148,85 @@ if (verifyEmailBtn) {
 }
 
 alert("✅ security.js Partie 3 chargée");
+// ===============================
+// SECURITY.JS
+// Partie 4
+// Supprimer le compte
+// ===============================
+
+if (deleteBtn) {
+
+    deleteBtn.onclick = async () => {
+
+        if (!currentUser) {
+
+            showToast(
+                "Utilizador não encontrado",
+                "error"
+            );
+
+            return;
+
+        }
+
+        const confirmDelete = confirm(
+
+            "⚠️ Tem a certeza que deseja apagar definitivamente a sua conta?\n\nEsta ação não pode ser desfeita."
+
+        );
+
+        if (!confirmDelete) return;
+
+        try {
+
+            await deleteUser(currentUser);
+
+            showToast(
+
+                "Conta apagada com sucesso.",
+
+                "success"
+
+            );
+
+            setTimeout(() => {
+
+                location.href = "index.html";
+
+            }, 1200);
+
+        }
+
+        catch (err) {
+
+            console.error(err);
+
+            if (err.code === "auth/requires-recent-login") {
+
+                showToast(
+
+                    "Por segurança, volte a iniciar sessão antes de apagar a conta.",
+
+                    "warning"
+
+                );
+
+            } else {
+
+                showToast(
+
+                    "Erro ao apagar conta.",
+
+                    "error"
+
+                );
+
+            }
+
+        };
+
+    };
+
+}
+
+alert("✅ security.js Partie 4 chargée");
