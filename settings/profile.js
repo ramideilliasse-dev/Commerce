@@ -29,15 +29,24 @@ const profilePic = $("profilePic");
 
 const uploadInput = $("upload");
 
-if (profilePic && uploadInput) {
+const cameraBtn = $("cameraBtn");
 
-    profilePic.onclick = () => {
-
-    alert("📷 Photo cliquée");
+function openFile() {
 
     uploadInput.click();
 
-};
+}
+
+if (cameraBtn) {
+
+    cameraBtn.onclick = openFile;
+
+}
+
+if (profilePic) {
+
+    profilePic.onclick = openFile;
+
 }
 onAuthStateChanged(auth, async (user) => {
 
