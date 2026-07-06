@@ -18,11 +18,26 @@ import {
     updateProfileUI
 } from "./ui.js";
 import { emitProfileReady } from "./events.js";
+const CLOUD_NAME = "dy9qnhimc";
+
+const UPLOAD_PRESET = "angcomerce-upload";
 export let currentUser = null;
 export let currentUserData = {};
 
 alert("✅ profile.js chargé");
+const profilePic = $("profilePic");
 
+const uploadInput = $("upload");
+
+if (profilePic && uploadInput) {
+
+    profilePic.onclick = () => {
+
+        uploadInput.click();
+
+    };
+
+}
 onAuthStateChanged(auth, async (user) => {
 
     alert("🔐 Auth lancée");
