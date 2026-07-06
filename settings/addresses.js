@@ -108,7 +108,7 @@ if(addAddressBtn){
 
 }
 
-alert("✅ addresses.js Partie 1 chargée");
+
 // ===============================
 // ADDRESSES.JS
 // Partie 2
@@ -218,7 +218,7 @@ if (saveAddressBtn) {
 
 }
 
-alert("✅ addresses.js Partie 2 chargée");
+
 // ===============================
 // ADDRESSES.JS
 // Partie 3 : Charger les adresses
@@ -375,7 +375,7 @@ if (summaryCities)
 
 }
 
-alert("✅ addresses.js Partie 3 chargée");
+
 // ===============================
 // ADDRESSES.JS
 // Partie 4 : Modifier / Supprimer / Principal
@@ -548,4 +548,4 @@ export {
     loadAddresses
 };
 
-alert("✅ addresses.js TERMINÉ");
+console("✅ addresses.js TERMINÉ");
