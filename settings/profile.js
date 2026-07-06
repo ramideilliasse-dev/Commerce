@@ -127,8 +127,7 @@ emitProfileReady({
 
         console.error(err);
 
-        alert("❌ " + err.message);
-
+        
     }
 
 });
@@ -142,20 +141,17 @@ uploadInput.addEventListener(
 
     async (event)=>{
 
-        alert("📷 Image sélectionnée");
-
+        
         const file = event.target.files[0];
 
         if (!file) {
 
-            alert("❌ Aucun fichier");
-
+           
             return;
 
         }
 
-        alert("✅ Fichier reçu");
-
+        
         profileLoader.style.display = "flex";
 
         cameraBtn.style.display = "none";
