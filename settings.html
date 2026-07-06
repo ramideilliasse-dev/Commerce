@@ -1274,6 +1274,95 @@ color:#6B7280;
 font-weight:600;
 
 }
+/* ===============================
+   MERCHANT PREMIUM
+=============================== */
+
+.merchantHero{
+
+background:linear-gradient(135deg,#16A34A,#22C55E);
+
+border-radius:24px;
+
+padding:22px;
+
+color:white;
+
+margin-top:22px;
+
+box-shadow:0 12px 30px rgba(22,163,74,.25);
+
+overflow:hidden;
+
+position:relative;
+
+}
+
+.merchantHero::after{
+
+content:"🏪";
+
+position:absolute;
+
+right:20px;
+
+top:18px;
+
+font-size:60px;
+
+opacity:.15;
+
+}
+
+.merchantHeroTitle{
+
+font-size:24px;
+
+font-weight:700;
+
+margin-bottom:8px;
+
+}
+
+.merchantHeroText{
+
+font-size:14px;
+
+line-height:1.5;
+
+opacity:.95;
+
+margin-bottom:18px;
+
+}
+
+.merchantHero button{
+
+width:auto;
+
+padding:14px 22px;
+
+border:none;
+
+border-radius:14px;
+
+background:white;
+
+color:#16A34A;
+
+font-weight:700;
+
+cursor:pointer;
+
+transition:.25s;
+
+}
+
+.merchantHero button:hover{
+
+transform:translateY(-2px);
+
+}
 </style>
 </head>
 
@@ -1433,26 +1522,48 @@ onclick="location.href='merchant-register.html'">
 
 </div>
 
-<!-- 🔥 MERCHANT -->
-<div class="card" id="merchantCard">
+<!-- MERCHANT PREMIUM -->
 
-<button class="btnMerchant" id="merchantBtn">
-Devenir marchand 🏪
+<div id="merchantCard" class="merchantHero">
+
+<div class="merchantHeroTitle">
+
+Venda na Toma
+
+</div>
+
+<div class="merchantHeroText">
+
+Crie a sua loja, publique produtos e venda para milhares de clientes em Angola.
+
+</div>
+
+<button id="merchantBtn">
+
+Tornar-se comerciante
+
 </button>
 
-<!-- FORM -->
-<div id="merchantForm" style="display:none;">
+<div id="merchantForm" style="display:none;margin-top:20px;">
 
-<input id="shopName" placeholder="Nome da loja">
+<input
+id="shopName"
+placeholder="Nome da loja">
 
-<input id="whatsapp" placeholder="WhatsApp (244...)">
+<input
+id="whatsapp"
+placeholder="WhatsApp">
 
-<textarea id="shopDesc"
-placeholder="Descreva sua loja (produtos, qualidade, etc)">
-</textarea>
+<textarea
+id="shopDesc"
+placeholder="Descrição da loja"></textarea>
 
-<button class="btn" onclick="saveMerchantInfo()">
-Salvar informações
+<button
+class="btn"
+onclick="saveMerchantInfo()">
+
+Guardar informações
+
 </button>
 
 </div>
