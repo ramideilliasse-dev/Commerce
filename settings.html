@@ -1863,6 +1863,141 @@ font-size:14px;
 opacity:.95;
 
 }
+/* ===============================
+ADDRESS MODAL PREMIUM
+=============================== */
+
+.modalCard{
+
+background:#fff;
+
+width:92%;
+
+max-width:460px;
+
+border-radius:28px;
+
+padding:24px;
+
+box-shadow:0 20px 45px rgba(0,0,0,.18);
+
+animation:modalOpen .25s ease;
+
+}
+
+.modalTitle{
+
+font-size:24px;
+
+font-weight:700;
+
+color:#111827;
+
+margin-bottom:4px;
+
+}
+
+.modalSubtitle{
+
+font-size:14px;
+
+color:#6B7280;
+
+margin-bottom:22px;
+
+}
+
+.fieldLabel{
+
+font-size:13px;
+
+font-weight:600;
+
+color:#6B7280;
+
+margin-bottom:6px;
+
+margin-top:16px;
+
+display:block;
+
+}
+
+.modalInput{
+
+width:100%;
+
+padding:14px 16px;
+
+border:1px solid #E5E7EB;
+
+border-radius:16px;
+
+font-size:15px;
+
+background:#FAFAFA;
+
+transition:.25s;
+
+box-sizing:border-box;
+
+}
+
+.modalInput:focus{
+
+outline:none;
+
+border-color:#16A34A;
+
+background:white;
+
+box-shadow:0 0 0 4px rgba(22,163,74,.10);
+
+}
+
+.modalButtons{
+
+display:flex;
+
+gap:12px;
+
+margin-top:26px;
+
+}
+
+.modalButtons button{
+
+flex:1;
+
+}
+
+.cancelBtn{
+
+background:#F3F4F6;
+
+color:#374151;
+
+}
+
+@keyframes modalOpen{
+
+from{
+
+opacity:0;
+
+transform:translateY(20px) scale(.95);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0) scale(1);
+
+}
+
+}
 </style>
 </head>
 
@@ -2730,51 +2865,136 @@ top:0;
 width:100%;
 height:100%;
 background:rgba(0,0,0,.45);
+backdrop-filter:blur(5px);
 justify-content:center;
 align-items:center;
 z-index:9999;
 ">
 
+<div class="modalCard">
 
+<div class="modalTitle">
 
-<h2>
+📍 Novo Endereço
 
-Novo Endereço
+</div>
 
-</h2>
+<div class="modalSubtitle">
+
+Preencha as informações abaixo.
+
+</div>
+
+<label class="fieldLabel">
+
+👤 Nome completo
+
+</label>
 
 <input
 id="addressName"
-placeholder="Nome">
+class="modalInput"
+placeholder="Nome completo">
+
+<label class="fieldLabel">
+
+📞 Telefone
+
+</label>
 
 <input
 id="addressPhone"
-placeholder="Telefone">
+class="modalInput"
+placeholder="+244...">
+
+<label class="fieldLabel">
+
+📍 Província
+
+</label>
 
 <input
 id="addressProvince"
+class="modalInput"
 placeholder="Província">
+
+<label class="fieldLabel">
+
+🏙 Cidade
+
+</label>
 
 <input
 id="addressCity"
+class="modalInput"
 placeholder="Cidade">
+
+<label class="fieldLabel">
+
+🏠 Rua / Bairro
+
+</label>
 
 <input
 id="addressStreet"
-placeholder="Endereço">
+class="modalInput"
+placeholder="Rua ou Bairro">
+<div
+style="
+margin-top:18px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:12px 0;
+">
 
+<div>
+
+<div
+style="
+font-weight:600;
+font-size:15px;
+">
+
+⭐ Endereço principal
+
+</div>
+
+<div
+style="
+font-size:12px;
+color:#6B7280;
+">
+
+Usar este endereço por defeito
+
+</div>
+
+</div>
+
+<label class="switch">
+
+<input
+type="checkbox"
+id="addressDefault">
+
+<span class="slider"></span>
+
+</label>
+
+</div>
 <div class="modalButtons">
 
 <button
-class="btn"
-id="saveAddressBtn">
+id="saveAddressBtn"
+class="btn">
 
-💾 Guardar
+Guardar
 
 </button>
 
 <button
-class="btnSecondary"
+class="cancelBtn"
 onclick="closeAddressModal()">
 
 Cancelar
