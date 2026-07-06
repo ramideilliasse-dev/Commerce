@@ -33,10 +33,11 @@ if (profilePic && uploadInput) {
 
     profilePic.onclick = () => {
 
-        uploadInput.click();
+    alert("📷 Photo cliquée");
 
-    };
+    uploadInput.click();
 
+};
 }
 onAuthStateChanged(auth, async (user) => {
 
