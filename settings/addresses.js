@@ -69,7 +69,7 @@ window.openAddressModal = function(){
     addressProvince.value = "";
     addressCity.value = "";
     addressStreet.value = "";
-
+$("addressDefault").checked = false;
     if(saveAddressBtn){
 
         saveAddressBtn.textContent =
@@ -137,18 +137,19 @@ if (saveAddressBtn) {
 
         const addressData = {
 
-            name: addressName.value.trim(),
+    name: addressName.value.trim(),
 
-            phone: addressPhone.value.trim(),
+    phone: addressPhone.value.trim(),
 
-            province: addressProvince.value.trim(),
+    province: addressProvince.value.trim(),
 
-            city: addressCity.value.trim(),
+    city: addressCity.value.trim(),
 
-            street: addressStreet.value.trim()
+    street: addressStreet.value.trim(),
 
-        };
+    default: $("addressDefault").checked
 
+};
         try {
 
             if (editingAddressId) {
