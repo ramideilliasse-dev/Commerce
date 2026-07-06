@@ -50,7 +50,7 @@ settingsEvents.addEventListener(
 
 );
 
-alert("✅ security.js Partie 1 chargée");
+
 // ===============================
 // SECURITY.JS
 // Partie 2
@@ -110,7 +110,6 @@ if (changePasswordBtn) {
 
 }
 
-alert("✅ security.js Partie 2 chargée");
 // ===============================
 // SECURITY.JS
 // Partie 3
@@ -169,7 +168,7 @@ if (verifyEmailBtn) {
 
 }
 
-alert("✅ security.js Partie 3 chargée");
+
 // ===============================
 // SECURITY.JS
 // Partie 4
@@ -251,7 +250,7 @@ if (deleteBtn) {
 
 }
 
-alert("✅ security.js Partie 4 chargée");
+
 // ===============================
 // SECURITY.JS
 // Partie 5
@@ -260,4 +259,4 @@ alert("✅ security.js Partie 4 chargée");
 
 export {};
 
-alert("✅ security.js terminé");
+
