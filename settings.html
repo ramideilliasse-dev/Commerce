@@ -2051,15 +2051,20 @@ Gerencie a sua conta, pedidos e preferências.
 
         <div class="profileLeft">
 
-<img
-id="profilePic"
-class="profilePhoto">
+<div class="profileImageWrapper">
 
-<div
-class="cameraButton"
-onclick="document.getElementById('upload').click()">
+    <img
+        id="profilePic"
+        class="profilePhoto"
+        src="default.png">
 
-📷
+    <div class="cameraButton" id="cameraBtn">
+
+        📷
+
+    </div>
+
+    <input type="file" id="upload" hidden>
 
 </div>
 
