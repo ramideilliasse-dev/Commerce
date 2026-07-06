@@ -26,7 +26,7 @@ const merchantForm = $("merchantForm");
 const provinceCard = $("provinceCard");
 const provinceSelect = $("provinceSelect");
 
-alert("✅ merchant.js chargé");
+
 
 function loadMerchant() {
 
