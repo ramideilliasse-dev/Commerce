@@ -1212,64 +1212,50 @@ box-shadow:0 10px 20px rgba(22,163,74,.25);
 
 <div class="container">
 
-<!-- PROFILE PREMIUM -->
-<div class="card">
+<!-- PROFILE PREMIUM V2 -->
 
-<div style="text-align:center;">
+<div class="profileCard">
 
-<img
-id="profilePic"
-class="profile">
+    <div class="profileTop">
 
-<input
-type="file"
-id="upload"
-hidden>
+        <div class="profileLeft">
 
-<h2
-id="profileName"
-style="
-margin:15px 0 5px;
-font-size:22px;
-">
-Utilizador
-</h2>
+            <img
+                id="profilePic"
+                class="profilePhoto">
 
-<div
-id="profileEmail"
-style="
-color:#666;
-font-size:14px;
-margin-bottom:12px;
-">
-email@email.com
-</div>
+            <div class="profileTexts">
 
-<div
-id="accountType"
-style="
-display:inline-block;
-padding:6px 14px;
-background:#fff3e8;
-color:#ff6a00;
-border-radius:30px;
-font-size:13px;
-font-weight:bold;
-margin-bottom:15px;
-">
+                <h2 id="profileName">
+                    Utilizador
+                </h2>
 
-👤 Cliente
+                <p id="profileEmail">
+                    email@email.com
+                </p>
 
-</div>
+                <div
+                    id="accountType"
+                    class="accountBadge">
 
-<button
-class="btn"
-id="editProfileBtn">
+                    👤 Cliente
 
-✏️ Editar Perfil
+                </div>
 
-</button>
-</div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <button
+        id="editProfileBtn"
+        class="editProfileButton">
+
+        ✏️ Editar Perfil
+
+    </button>
+
 </div>
 <!-- ===========================
 STATISTIQUES
