@@ -7,4 +7,4 @@ import "./stats.js";
 import "./security.js";
 import "./notifications.js";
 
-alert("8");
+
