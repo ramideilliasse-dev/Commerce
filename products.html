@@ -68,8 +68,47 @@ placeholder="Pesquisar produtos...">
 <section id="searchSection"></section>
 
 <!-- Filtres -->
-<section id="filtersSection"></section>
+<section id="filtersSection">
 
+<div class="filterChip active" data-filter="all">
+
+Todos
+
+</div>
+
+<div class="filterChip" data-filter="promo">
+
+🔥 Promoções
+
+</div>
+
+<div class="filterChip" data-filter="new">
+
+🆕
+
+Novidades
+
+</div>
+
+<div class="filterChip" data-filter="top">
+
+⭐ Mais vendidos
+
+</div>
+
+<div class="filterChip" data-filter="cheap">
+
+💰 Menor preço
+
+</div>
+
+<div class="filterChip" data-filter="expensive">
+
+💎 Maior preço
+
+</div>
+
+</section>
 <!-- Informations catalogue -->
 <section id="catalogInfo"></section>
 
@@ -78,7 +117,23 @@ placeholder="Pesquisar produtos...">
 
 <!-- Loader -->
 <div id="loader"></div>
+<script>
 
+document.querySelectorAll(".filterChip").forEach(chip=>{
+
+chip.onclick=()=>{
+
+document.querySelectorAll(".filterChip")
+
+.forEach(c=>c.classList.remove("active"));
+
+chip.classList.add("active");
+
+};
+
+});
+
+</script>
 <script type="module" src="./js/products.js"></script>
 
 </body>
