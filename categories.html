@@ -239,6 +239,92 @@ font-size:30px;
 color:white;
 
 }
+/* ===============================
+ANIMATIONS PREMIUM
+=============================== */
+
+.categoryCard{
+
+transition:
+transform .25s ease,
+box-shadow .25s ease,
+filter .25s ease;
+
+}
+
+.categoryCard:hover{
+
+transform:translateY(-4px);
+
+box-shadow:0 18px 40px rgba(0,0,0,.12);
+
+}
+
+.categoryCard:active{
+
+transform:scale(.97);
+
+}
+
+.categoryImage{
+
+transition:
+transform .45s ease;
+
+}
+
+.categoryCard:hover .categoryImage{
+
+transform:scale(1.08);
+
+}
+
+.categoryOverlay{
+
+transition:
+background .30s ease;
+
+}
+
+.categoryCard:hover .categoryOverlay{
+
+background:linear-gradient(
+
+90deg,
+
+rgba(0,0,0,.55),
+
+rgba(0,0,0,.10)
+
+);
+
+}
+
+.categoryArrow{
+
+transition:
+transform .25s ease;
+
+}
+
+.categoryCard:hover .categoryArrow{
+
+transform:translateX(6px);
+
+}
+
+.categoryIcon{
+
+transition:
+transform .25s ease;
+
+}
+
+.categoryCard:hover .categoryIcon{
+
+transform:rotate(-8deg) scale(1.08);
+
+}
 </style>
 
 </head>
