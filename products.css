@@ -322,3 +322,54 @@ outline:none;
 font-size:16px;
 
 }
+/* ===============================
+FILTER CHIPS PREMIUM
+=============================== */
+
+.filterChip{
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+min-width:max-content;
+
+padding:12px 20px;
+
+border-radius:999px;
+
+font-size:15px;
+
+font-weight:600;
+
+background:white;
+
+border:1px solid #E5E7EB;
+
+transition:.25s;
+
+user-select:none;
+
+}
+
+.filterChip:hover{
+
+transform:translateY(-2px);
+
+box-shadow:0 8px 18px rgba(0,0,0,.08);
+
+}
+
+.filterChip.active{
+
+background:#16A34A;
+
+color:white;
+
+border-color:#16A34A;
+
+box-shadow:0 8px 20px rgba(22,163,74,.25);
+
+}
