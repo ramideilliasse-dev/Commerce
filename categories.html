@@ -725,6 +725,76 @@ produtos • Veículos e acessórios
 
 </div>
 </div>
+<script type="module">
+
+import { db } from "./firebase.js";
+
+import {
+
+collection,
+
+getDocs
+
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+async function loadCategoryCounters(){
+
+    try{
+
+        const snap = await getDocs(
+
+            collection(db,"products")
+
+        );
+
+        const counters={};
+
+        snap.forEach(doc=>{
+
+            const p=doc.data();
+
+            if(!p.category) return;
+
+            const cat=p.category.toLowerCase();
+
+            counters[cat]=(counters[cat]||0)+1;
+
+        });
+
+        Object.keys(counters).forEach(cat=>{
+
+            const el=document.getElementById(
+
+                "count-"+cat
+
+            );
+
+            if(el){
+
+                el.textContent=counters[cat];
+
+            }
+
+        });
+
+    }
+
+    catch(err){
+
+        console.error(err);
+
+    }
+
+}
+
+loadCategoryCounters();
+function go(cat){
+
+    location.href="home.html?cat="+cat;
+
+}
+
+window.go=go;
+</script>
 <script>
 
 const searchInput = document.getElementById("searchCategory");
