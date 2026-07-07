@@ -20,6 +20,7 @@ import {
     showToast
 } from "./ui.js";
 import { emitProfileReady } from "./events.js";
+alert("🚀 profile chargé");
 const CLOUD_NAME = "dy9qnhimc";
 
 const UPLOAD_PRESET = "angcomerce-upload";
@@ -255,3 +256,4 @@ cameraBtn.style.display = "flex";
     }
 
 );
+alert("🚀 fin profile");
