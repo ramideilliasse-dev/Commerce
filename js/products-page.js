@@ -1,5 +1,6 @@
- // ===============================
-// PRODUCTS.JS
+
+// ===============================
+// PRODUCTS-PAGE.JS
 // Partie 1
 // ===============================
 
@@ -13,14 +14,15 @@ getDocs
 
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const productsGrid =
-document.getElementById("productsGrid");
+const productsGrid = document.getElementById("productsGrid");
+
+const catalogInfo = document.getElementById("catalogInfo");
 
 let allProducts = [];
 
-alert("✅ products.js Partie 1 chargée");
+alert("✅ products-page.js Partie 1 chargée");
 // ===============================
-// PRODUCTS.JS
+// PRODUCTS-PAGE.JS
 // Partie 2
 // ===============================
 
@@ -28,7 +30,7 @@ async function loadProducts(){
 
     try{
 
-        const snap = await getDocs(
+        const snapshot = await getDocs(
 
             collection(db,"products")
 
@@ -36,7 +38,7 @@ async function loadProducts(){
 
         allProducts = [];
 
-        snap.forEach(doc=>{
+        snapshot.forEach(doc=>{
 
             allProducts.push({
 
@@ -47,6 +49,16 @@ async function loadProducts(){
             });
 
         });
+
+        if(catalogInfo){
+
+            catalogInfo.textContent =
+
+            allProducts.length +
+
+            " produtos encontrados";
+
+        }
 
         renderProducts(allProducts);
 
@@ -62,4 +74,7 @@ async function loadProducts(){
 
 }
 
-alert("✅ products.js Partie 2 chargée");
+alert("✅ products-page.js Partie 2 chargée");
+loadProducts();
+
+alert("✅ products-page.js Parte 3 carregada");
