@@ -476,6 +476,52 @@ Veículos e acessórios
 
 </div>
 </div>
+<script>
 
+const searchInput = document.getElementById("searchCategory");
+
+searchInput.addEventListener("input", () => {
+
+    const value = searchInput.value.toLowerCase();
+
+    const cards = document.querySelectorAll(".categoryCard");
+
+    cards.forEach(card => {
+
+        const title = card.querySelector(".categoryTitle")
+        .textContent
+        .toLowerCase();
+
+        const subtitle = card.querySelector(".categorySubtitle")
+        .textContent
+        .toLowerCase();
+
+        if(
+
+            title.includes(value) ||
+
+            subtitle.includes(value)
+
+        ){
+
+            card.style.display = "";
+
+        }else{
+
+            card.style.display = "none";
+
+        }
+
+    });
+
+});
+
+function go(cat){
+
+    location.href = "home.html?cat=" + cat;
+
+}
+
+</script>
 </body>
 </html>
