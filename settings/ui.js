@@ -2,7 +2,7 @@
 // UI.JS
 // Fonctions communes
 // ===============================
-
+alert("🚀 ui.js chargé");
 export const $ = (id) => document.getElementById(id);
 
 // Toast
@@ -73,4 +73,4 @@ export function updateProfileUI(data, user) {
 
 }
 
-
+alert("🚀 fin de ui.js");
