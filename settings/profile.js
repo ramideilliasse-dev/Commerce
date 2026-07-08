@@ -34,6 +34,7 @@ const uploadInput = $("upload");
 
 const cameraBtn = $("cameraBtn");
 const profileLoader = $("profileLoader");
+const guestActions = $("guestActions");
 function openFile() {
 
     uploadInput.click();
@@ -57,15 +58,22 @@ onAuthStateChanged(auth, async (user) => {
 
     if (!user) {
 
-        
+    if (guestActions) {
 
-        return;
+        guestActions.style.display = "block";
 
     }
 
+    return;
+
+}
     currentUser = user;
 
-    
+    if (guestActions) {
+
+    guestActions.style.display = "none";
+
+}
 
     try {
 
