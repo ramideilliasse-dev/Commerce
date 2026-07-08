@@ -25,7 +25,7 @@ import {
     $,
     showToast
 } from "./ui.js";
-
+alert("🚀 adresses chargé");
 let currentUser = null;
 let editingAddressId = null;
 
@@ -547,5 +547,5 @@ window.setDefaultAddress = async function(id){
 export {
     loadAddresses
 };
-
+alert("🚀 fin adresse");
 
