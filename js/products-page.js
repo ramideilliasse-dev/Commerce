@@ -194,3 +194,40 @@ if (searchInput) {
 }
 
 alert("✅ Pesquisa instantânea pronta");
+// =====================================
+// Catégorie depuis l'URL
+// =====================================
+
+function getCategoryFromURL(){
+
+    const params = new URLSearchParams(window.location.search);
+
+    return params.get("cat");
+
+}
+
+const categorySelected = getCategoryFromURL();
+
+if(categorySelected){
+
+    const filtered = allProducts.filter(product=>{
+
+        return product.category === categorySelected;
+
+    });
+
+    renderProducts(filtered);
+
+    if(catalogInfo){
+
+        catalogInfo.textContent =
+
+        filtered.length +
+
+        " produtos em " +
+
+        categorySelected;
+
+    }
+
+}
