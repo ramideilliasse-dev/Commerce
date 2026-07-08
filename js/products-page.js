@@ -220,13 +220,29 @@ if(categorySelected){
 
     if(catalogInfo){
 
-        catalogInfo.textContent =
+        const categoryNames = {
 
-        filtered.length +
+telefone:"📱 Telefones",
 
-        " produtos em " +
+roupas:"👕 Moda",
 
-        categorySelected;
+beleza:"💄 Beleza",
+
+eletronica:"💻 Eletrónica",
+
+casa:"🏠 Casa",
+
+auto:"🚗 Auto & Moto"
+
+};
+
+if(catalogInfo){
+
+catalogInfo.textContent =
+
+`${filtered.length} produtos • ${categoryNames[categorySelected] || categorySelected}`;
+
+}
 
     }
 
