@@ -20,4 +20,4 @@ export function emitProfileReady(detail){
 
 }
 
-alert("🚀 events est lancé");
+
