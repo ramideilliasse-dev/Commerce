@@ -146,18 +146,19 @@ color:#6B7280;
 
 display:grid;
 
-grid-template-columns:repeat(2,1fr);
+grid-template-columns:repeat(2,minmax(0,1fr));
 
-gap:14px;
+gap:12px;
 
-padding:14px;
+padding:12px;
+
+align-items:start;
 
 }
-
 /* PRODUCT */
 
 .productCard{
-
+width:100%;
 background:#fff;
 
 border-radius:18px;
