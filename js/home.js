@@ -440,3 +440,104 @@ window.addEventListener("load", () => {
     }
 
 });
+// ===============================
+// LOJAS OFICIAIS
+// ===============================
+
+const officialStores = [
+
+{
+
+name:"Nike",
+
+logo:"images/stores/nike.png",
+
+verified:true,
+
+link:"store.html?store=nike"
+
+},
+
+{
+
+name:"Puma",
+
+logo:"images/stores/puma.png",
+
+verified:true,
+
+link:"store.html?store=puma"
+
+},
+
+{
+
+name:"Real Madrid",
+
+logo:"images/stores/realmadrid.png",
+
+verified:true,
+
+link:"store.html?store=realmadrid"
+
+},
+
+{
+
+name:"FC Barcelona",
+
+logo:"images/stores/barcelona.png",
+
+verified:true,
+
+link:"store.html?store=barcelona"
+
+},
+
+{
+
+name:"PSG",
+
+logo:"images/stores/psg.png",
+
+verified:true,
+
+link:"store.html?store=psg"
+
+}
+
+];
+
+const officialStoresContainer = document.getElementById("officialStores");
+
+if(officialStoresContainer){
+
+officialStores.forEach(store=>{
+
+officialStoresContainer.innerHTML += `
+
+<div class="storeCard"
+
+onclick="location.href='${store.link}'">
+
+<img
+
+src="${store.logo}"
+
+class="storeLogo">
+
+<div class="storeName">
+
+${store.name}
+
+${store.verified ? '<span class="verifiedBadge">✔️</span>' : ''}
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
