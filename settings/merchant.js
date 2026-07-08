@@ -18,7 +18,7 @@ import {
     $,
     showToast
 } from "./ui.js";
-alert("🚀 merchant chargé");
+
 const merchantBtn = $("merchantBtn");
 const merchantCard = $("merchantCard");
 const merchantForm = $("merchantForm");
@@ -220,4 +220,4 @@ window.saveProvince = async function(){
 };
 
 export { loadMerchant };
-alert("🚀 fin merchant");
+
