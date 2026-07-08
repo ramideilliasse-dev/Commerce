@@ -1,4 +1,5 @@
- import "./events.js";
+alert("🚀 settings est chargé");
+import "./events.js";
 import "./ui.js";
 import "./profile.js";
 import "./merchant.js";
@@ -7,4 +8,4 @@ import "./stats.js";
 import "./security.js";
 import "./notifications.js";
 
-
+alert("🚀 fin settings");
