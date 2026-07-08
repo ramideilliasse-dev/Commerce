@@ -51,48 +51,88 @@ if (profilePic) {
     profilePic.onclick = openFile;
 
 }
-alert("1️⃣ profile.js avant Auth");
-
 onAuthStateChanged(auth, async (user) => {
 
-    alert("2️⃣ onAuthStateChanged exécuté");
+    
 
-    if (!user){
+    if (!user) {
 
-        alert("❌ Aucun utilisateur connecté");
+        
 
         return;
+
     }
 
-    alert("3️⃣ Utilisateur connecté");
+    currentUser = user;
 
-    try{
+    
 
-        alert("4️⃣ Avant getDoc");
+    try {
 
-        const snap = await getDoc(doc(db,"users",user.uid));
+        const snap = await getDoc(
+            doc(db, "users", user.uid)
+        );
 
-        alert("5️⃣ Après getDoc");
+        if (!snap.exists()) {
 
-        if(!snap.exists()){
-
-            alert("❌ Document utilisateur introuvable");
+            
 
             return;
 
         }
 
-        alert("6️⃣ Données trouvées");
+        currentUserData = snap.data();
+
+    
+
+        updateProfileUI(
+    currentUserData,
+    user
+);
+if (
+
+    currentUserData.photoURL &&
+
+    profilePic
+
+){
+
+    profilePic.src = currentUserData.photoURL;
+
+}     
+const welcome = document.getElementById("welcomeUser");
+
+if (welcome) {
+
+    welcome.textContent =
+        currentUserData.name ||
+        user.displayName ||
+        "Utilizador";
+
+}
+
+
+// Informer tous les modules
+emitProfileReady({
+
+    user: currentUser,
+
+    data: currentUserData
+
+});
+
 
     }
 
-    catch(err){
+    catch (err) {
 
-        alert("🔥 "+err.message);
+        console.error(err);
 
+        
     }
 
 });
+
 // ===============================
 // CLOUDINARY PROFILE PHOTO
 // ===============================
