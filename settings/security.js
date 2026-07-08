@@ -19,7 +19,7 @@ import {
     $,
     showToast
 } from "./ui.js";
-
+alert("🚀security chargé");
 // Utilisateur connecté
 
 let currentUser = null;
@@ -258,5 +258,5 @@ if (deleteBtn) {
 // ===============================
 
 export {};
-
+alert("🚀 fin secutity");
 
