@@ -115,14 +115,9 @@ card.innerHTML = `
 <img
 class="productImage"
 src="${
-product.image ||
-product.imageUrl ||
-product.photoURL ||
-product.photo ||
-product.thumbnail ||
-(product.images && product.images[0]) ||
-(product.imageUrls && product.imageUrls[0]) ||
-'https://via.placeholder.com/400'
+(product.images?.length
+? product.images[0]
+: 'https://via.placeholder.com/400')
 }"
 
 <div class="favoriteBtn">
