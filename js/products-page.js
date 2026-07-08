@@ -89,7 +89,23 @@ productsGrid.innerHTML = "";
 products.forEach(product=>{
 
 const card = document.createElement("div");
+alert(
 
+"image = " + product.image +
+
+"\n\nimageUrl = " + product.imageUrl +
+
+"\n\nphoto = " + product.photo +
+
+"\n\nphotoURL = " + product.photoURL +
+
+"\n\nthumbnail = " + product.thumbnail +
+
+"\n\nimages = " + JSON.stringify(product.images) +
+
+"\n\nimageUrls = " + JSON.stringify(product.imageUrls)
+
+);
 card.className = "productCard";
 
 card.innerHTML = `
@@ -98,7 +114,16 @@ card.innerHTML = `
 
 <img
 class="productImage"
-src="${product.image || product.imageUrl || 'https://via.placeholder.com/400'}">
+src="${
+product.image ||
+product.imageUrl ||
+product.photoURL ||
+product.photo ||
+product.thumbnail ||
+(product.images && product.images[0]) ||
+(product.imageUrls && product.imageUrls[0]) ||
+'https://via.placeholder.com/400'
+}"
 
 <div class="favoriteBtn">
 
