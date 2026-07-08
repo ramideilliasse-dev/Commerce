@@ -157,3 +157,40 @@ productsGrid.appendChild(card);
 });
 
 }
+// =====================================
+// Recherche instantanée
+// =====================================
+
+const searchInput = document.getElementById("searchInput");
+
+if (searchInput) {
+
+    searchInput.addEventListener("input", () => {
+
+        const value = searchInput.value.toLowerCase();
+
+        const filtered = allProducts.filter(product => {
+
+            return (
+
+                (product.name || "")
+                    .toLowerCase()
+                    .includes(value)
+
+                ||
+
+                (product.storeName || "")
+                    .toLowerCase()
+                    .includes(value)
+
+            );
+
+        });
+
+        renderProducts(filtered);
+
+    });
+
+}
+
+alert("✅ Pesquisa instantânea pronta");
