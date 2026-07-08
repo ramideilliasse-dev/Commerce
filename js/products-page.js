@@ -24,7 +24,7 @@ document.getElementById("catalogInfo");
 
 let allProducts = [];
 
-alert("✅ products-page.js Partie 1");
+
 // =====================================
 // Charger tous les produits
 // =====================================
@@ -53,15 +53,7 @@ id:doc.id,
 
 });
 
-alert(
 
-"📦 " +
-
-allProducts.length +
-
-" produits chargés"
-
-);
 renderProducts(allProducts);
 }
 
@@ -77,7 +69,7 @@ console.error(err);
 
 loadProducts();
 
-alert("✅ products-page.js Partie 2");
+
 // =====================================
 // Affichage des produits
 // =====================================
@@ -89,23 +81,7 @@ productsGrid.innerHTML = "";
 products.forEach(product=>{
 
 const card = document.createElement("div");
-alert(
 
-"image = " + product.image +
-
-"\n\nimageUrl = " + product.imageUrl +
-
-"\n\nphoto = " + product.photo +
-
-"\n\nphotoURL = " + product.photoURL +
-
-"\n\nthumbnail = " + product.thumbnail +
-
-"\n\nimages = " + JSON.stringify(product.images) +
-
-"\n\nimageUrls = " + JSON.stringify(product.imageUrls)
-
-);
 card.className = "productCard";
 
 card.innerHTML = `
@@ -213,7 +189,7 @@ if (searchInput) {
 
 }
 
-alert("✅ Pesquisa instantânea pronta");
+
 // =====================================
 // Catégorie depuis l'URL
 // =====================================
