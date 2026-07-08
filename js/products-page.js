@@ -243,3 +243,80 @@ catalogInfo.textContent =
     }
 
 }
+// =====================================
+// FILTRES
+// =====================================
+
+document.querySelectorAll(".filterChip").forEach(chip=>{
+
+chip.onclick=()=>{
+
+document.querySelectorAll(".filterChip")
+
+.forEach(c=>c.classList.remove("active"));
+
+chip.classList.add("active");
+
+const type = chip.dataset.filter;
+
+let list = [...allProducts];
+
+switch(type){
+
+case "cheap":
+
+list.sort(
+
+(a,b)=>
+
+Number(a.price||0)-
+
+Number(b.price||0)
+
+);
+
+break;
+
+case "expensive":
+
+list.sort(
+
+(a,b)=>
+
+Number(b.price||0)-
+
+Number(a.price||0)
+
+);
+
+break;
+
+case "new":
+
+list.reverse();
+
+break;
+
+default:
+
+break;
+
+}
+
+renderProducts(list);
+
+if(catalogInfo){
+
+catalogInfo.textContent =
+
+list.length +
+
+" produtos";
+
+}
+
+};
+
+});
+
+alert("✅ Filtros prontos");
