@@ -16,7 +16,7 @@ import {
 import {
     $
 } from "./ui.js";
-alert("🚀 stats chargé");
+
 let currentUser = null;
 
 const statOrders = $("statOrders");
@@ -119,4 +119,4 @@ async function loadStats(){
 
 }
 
-alert("🚀 fin stats");
+
