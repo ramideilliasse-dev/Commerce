@@ -7,7 +7,7 @@ import { $, showToast } from "./ui.js";
 const promoNotif = $("promoNotif");
 const orderNotif = $("orderNotif");
 const darkMode = $("darkMode");
-
+alert("🚀 notificatoins chargé");
 
 // ===============================
 // BLOC 2 : PROMOTIONS
@@ -90,4 +90,4 @@ if (darkMode) {
 
 }
 
-
+alert("🚀 fin notificatoins");
