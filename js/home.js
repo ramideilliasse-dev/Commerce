@@ -554,17 +554,12 @@ officialStoresContainer.innerHTML += `
 onclick="location.href='store.html?store=${store.id}'">
 
 <img
-
 src="${store.logo}"
-
 class="storeLogo">
 
 <div class="storeName">
-
 ${store.name}
-
-${store.verified ? '<img src="images/meta-verified.png" class="verifiedBadge">' : ''}
-
+${store.verified ? '<img src="images/stores/meta-verified.png" class="verifiedBadge">' : ''}
 </div>
 
 <div class="storeStatus">
