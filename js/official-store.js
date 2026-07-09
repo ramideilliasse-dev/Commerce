@@ -127,3 +127,68 @@ document.getElementById("storeBanner").src =
 store.banner;
 
 }
+/* ===========================
+CHARGER LES PRODUITS
+=========================== */
+
+const grid = document.getElementById("productsGrid");
+
+async function loadProducts(){
+
+const snap = await getDocs(
+collection(db,"products")
+);
+
+let total = 0;
+
+grid.innerHTML = "";
+
+snap.forEach(docu=>{
+
+const product = docu.data();
+
+if(product.store !== storeId) return;
+
+total++;
+
+grid.innerHTML += `
+
+<div class="productCard"
+onclick="location.href='product.html?id=${docu.id}'">
+
+<div class="productImageBox">
+
+<img
+class="productImage"
+src="${product.image || product.images?.[0] || 'images/no-image.png'}">
+
+</div>
+
+<div class="productInfo">
+
+<div class="productName">
+
+${product.name}
+
+</div>
+
+<div class="productPrice">
+
+${product.price} Kz
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("storeProducts")
+.textContent = `${total} produtos`;
+
+}
+
+loadProducts();
