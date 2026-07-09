@@ -447,6 +447,60 @@ window.addEventListener("load", () => {
 const officialStores = [
 
 {
+    name: "Apple",
+    logo: "images/stores/apple.png",
+    verified: true
+},
+
+{
+    name: "Samsung",
+    logo: "images/stores/samsung.png",
+    verified: true
+},
+
+{
+    name: "Xiaomi",
+    logo: "images/stores/xiaomi.png",
+    verified: true
+},
+
+{
+    name: "Huawei",
+    logo: "images/stores/huawei.png",
+    verified: true
+},
+
+{
+    name: "Sony",
+    logo: "images/stores/sony.png",
+    verified: true
+},
+
+{
+    name: "Adidas",
+    logo: "images/stores/adidas.png",
+    verified: true
+},
+
+{
+    name: "Rolex",
+    logo: "images/stores/rolex.png",
+    verified: true
+},
+
+{
+    name: "Gucci",
+    logo: "images/stores/gucci.png",
+    verified: true
+},
+
+{
+    name: "Louis Vuitton",
+    logo: "images/stores/louis-vuitton.png",
+    verified: true
+},
+
+{
 id:"nike",
 name:"Nike",
 logo:"images/stores/nike.png",
