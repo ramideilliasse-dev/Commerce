@@ -513,6 +513,12 @@ ${store.verified ? '<img src="images/meta-verified.png" class="verifiedBadge">' 
 
 </div>
 
+<div class="storeStatus">
+
+Verificado
+
+</div>
+
 <div class="storeProducts">
 
 ${store.products} produtos
