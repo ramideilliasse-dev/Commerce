@@ -551,7 +551,7 @@ officialStoresContainer.innerHTML += `
 
 <div class="storeCard"
 
-onclick="location.href='store.html?store=${store.id}'">
+onclick="location.href='official-store.html?store=${store.id}'">
 
 <img
 src="${store.logo}"
