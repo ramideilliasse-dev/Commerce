@@ -549,7 +549,7 @@ officialStores.forEach(store=>{
 
 officialStoresContainer.innerHTML += `
 
-<div class="storeCard">
+<div class="storeCard"
 
 onclick="location.href='store.html?store=${store.id}'">
 
