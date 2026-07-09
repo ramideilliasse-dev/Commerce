@@ -581,9 +581,3 @@ ${store.products} produtos
 });
 
 }
-function openOfficialStore(storeId){
-
-window.location.href =
-`official-store.html?id=${storeId}`;
-
-}
