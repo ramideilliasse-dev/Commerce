@@ -447,67 +447,46 @@ window.addEventListener("load", () => {
 const officialStores = [
 
 {
-
+id:"nike",
 name:"Nike",
-
 logo:"images/stores/nike.png",
-
 verified:true,
-
-link:"store.html?store=nike"
-
+products:0
 },
 
 {
-
+id:"puma",
 name:"Puma",
-
 logo:"images/stores/puma.png",
-
 verified:true,
-
-link:"store.html?store=puma"
-
+products:0
 },
 
 {
-
+id:"realmadrid",
 name:"Real Madrid",
-
 logo:"images/stores/realmadrid.png",
-
 verified:true,
-
-link:"store.html?store=realmadrid"
-
+products:0
 },
 
 {
-
+id:"barcelona",
 name:"FC Barcelona",
-
 logo:"images/stores/barcelona.png",
-
 verified:true,
-
-link:"store.html?store=barcelona"
-
+products:0
 },
 
 {
-
+id:"psg",
 name:"PSG",
-
 logo:"images/stores/psg.png",
-
 verified:true,
-
-link:"store.html?store=psg"
-
+products:0
 }
 
 ];
-
 const officialStoresContainer = document.getElementById("officialStores");
 
 if(officialStoresContainer){
@@ -518,7 +497,7 @@ officialStoresContainer.innerHTML += `
 
 <div class="storeCard"
 
-onclick="location.href='${store.link}'">
+onclick="location.href='store.html?store=${store.id}'">
 
 <img
 
@@ -530,7 +509,13 @@ class="storeLogo">
 
 ${store.name}
 
-${store.verified ? '<span class="verifiedBadge">✔️</span>' : ''}
+${store.verified ? '<span class="verifiedBadge">🔵</span>' : ''}
+
+</div>
+
+<div class="storeProducts">
+
+${store.products} produtos
 
 </div>
 
