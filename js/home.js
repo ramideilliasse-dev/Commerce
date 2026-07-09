@@ -509,7 +509,7 @@ class="storeLogo">
 
 ${store.name}
 
-${store.verified ? '<span class="verifiedBadge">🔵</span>' : ''}
+${store.verified ? '<img src="images/meta-verified.png" class="verifiedBadge">' : ''}
 
 </div>
 
