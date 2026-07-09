@@ -447,9 +447,11 @@ window.addEventListener("load", () => {
 const officialStores = [
 
 {
-    name: "Apple",
+   id:"apple" 
+ name: "Apple",
     logo: "images/stores/apple.png",
     verified: true
+products:0
 },
 
 {
