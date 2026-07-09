@@ -549,8 +549,7 @@ officialStores.forEach(store=>{
 
 officialStoresContainer.innerHTML += `
 
-<div class="storeCard"
-onclick="openOfficialStore('${store.id}')">
+<div class="storeCard">
 
 onclick="location.href='store.html?store=${store.id}'">
 
