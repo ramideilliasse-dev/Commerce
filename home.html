@@ -814,21 +814,65 @@ margin:0;
 
 }
 
+/* ==========================
+BOUTON VER TUDO PREMIUM
+========================== */
+
 .seeAll{
 
-font-size:14px;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:8px;
 
+padding:10px 18px;
+
+background:#ffffff;
+
+border:1px solid #E5E7EB;
+
+border-radius:14px;
+
+font-size:14px;
 font-weight:700;
 
-color:#16A34A;
+color:#111827;
 
 text-decoration:none;
 
+box-shadow:0 4px 12px rgba(0,0,0,.06);
+
+transition:.25s;
+
 }
 
-.seeAll:active{
+.seeAll:hover{
 
-opacity:.7;
+transform:translateY(-2px);
+
+box-shadow:0 8px 18px rgba(0,0,0,.10);
+
+background:#FAFAFA;
+
+}
+
+.seeAll::after{
+
+content:"→";
+
+font-size:18px;
+
+font-weight:bold;
+
+color:#ff6a00;
+
+transition:.25s;
+
+}
+
+.seeAll:hover::after{
+
+transform:translateX(4px);
 
 }
 /* ===========================
