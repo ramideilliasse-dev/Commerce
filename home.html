@@ -1050,27 +1050,34 @@ color:#666;
 
 }
 .material-symbols-rounded{
-
-font-size:40px;
-
-font-variation-settings:
-'FILL' 1,
-'wght' 700,
-'GRAD' 0,
-'opsz' 48;
-
-display:block;
-
-line-height:1;
-
+    font-family: 'Material Symbols Rounded' !important;
+    font-size:40px !important;
+    font-weight:normal;
+    font-style:normal;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    line-height:1;
+    width:40px;
+    height:40px;
 }
 
 .navItem.active .material-symbols-rounded{
+    color:#fff;
+}
 
-font-size:42px;
+.navIcon{
+    width:62px;
+    height:62px;
+    border-radius:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#f4f4f4;
+}
 
-color:white;
-
+.navItem.active .navIcon{
+    background:linear-gradient(135deg,#ff6a00,#ff9d00);
 }
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
