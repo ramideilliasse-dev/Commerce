@@ -299,12 +299,75 @@ justify-content:center;
 
 cursor:pointer;
 
+position:relative;
+
 transition:.25s;
 
-position:relative;
+padding:6px 0;
+
+}
+.navIcon{
+
+width:56px;
+
+height:56px;
+
+border-radius:18px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+background:#F5F5F5;
+
+font-size:28px;
+
+transition:.25s;
+
+box-shadow:0 4px 12px rgba(0,0,0,.05);
 
 }
 
+.navItem.active .navIcon{
+
+background:linear-gradient(135deg,#ff6a00,#ff8f00);
+
+color:white;
+
+box-shadow:0 10px 22px rgba(255,106,0,.35);
+
+transform:translateY(-4px);
+
+}
+
+.navItem:hover .navIcon{
+
+transform:translateY(-3px);
+
+}
+
+.navItem span{
+
+margin-top:8px;
+
+font-size:12px;
+
+font-weight:700;
+
+color:#666;
+
+transition:.25s;
+
+}
+
+.navItem.active span{
+
+color:#ff6a00;
+
+}
+ 
 .navItem i{
 
 font-size:26px;
@@ -1253,7 +1316,9 @@ class="products">
 <div class="navItem active"
 onclick="location.href='home.html'">
 
+<div class="navIcon">
 🏠
+</div>
 
 <span>Início</span>
 
@@ -1262,7 +1327,9 @@ onclick="location.href='home.html'">
 <div class="navItem"
 onclick="location.href='categories.html'">
 
+<div class="navIcon">
 📂
+</div>
 
 <span>Categorias</span>
 
@@ -1281,7 +1348,9 @@ style="display:none">
 <div class="navItem"
 onclick="location.href='cart.html'">
 
+<div class="navIcon">
 🛒
+</div>
 
 <span>Carrinho</span>
 
@@ -1298,7 +1367,9 @@ class="bottomBadge">
 <div class="navItem"
 onclick="location.href='favorites.html'">
 
+<div class="navIcon">
 ❤️
+</div>
 
 <span>Favoritos</span>
 
@@ -1307,7 +1378,9 @@ onclick="location.href='favorites.html'">
 <div class="navItem"
 onclick="location.href='settings.html'">
 
+<div class="navIcon">
 👤
+</div>
 
 <span>Conta</span>
 
