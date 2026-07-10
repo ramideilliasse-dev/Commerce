@@ -42,7 +42,7 @@ let editingAddressId = null;
 
 const $ = (id) => document.getElementById(id);
 
-alert("✅ Bloc 1 chargé");
+
 /* ===============================
    DOM
 =============================== */
@@ -98,7 +98,7 @@ const langSelect = $("langSelect");
 // Toast
 const toastBox = $("toastBox");
 
-alert("✅ Bloc 2 DOM chargé");
+
 /* ===============================
    TOAST
 =============================== */
@@ -128,18 +128,18 @@ function showToast(message, type = "success") {
 
 }
 
-alert("✅ Bloc 3 Toast chargé");
+
 /* ===============================
    AUTHENTIFICATION
 =============================== */
 
 onAuthStateChanged(auth, async (user) => {
 
-    alert("🔹 Auth lancée");
+    
 
     if (!user) {
 
-        alert("❌ Aucun utilisateur connecté");
+        
 
         currentUser = null;
 
@@ -152,7 +152,7 @@ onAuthStateChanged(auth, async (user) => {
 
     currentUser = user;
 
-    alert("✅ Utilisateur : " + user.uid);
+    
 
     try {
 
@@ -162,7 +162,7 @@ onAuthStateChanged(auth, async (user) => {
 
         if (!userSnap.exists()) {
 
-            alert("❌ Document utilisateur introuvable");
+            
 
             return;
 
@@ -170,7 +170,7 @@ onAuthStateChanged(auth, async (user) => {
 
         currentUserData = userSnap.data();
 
-        alert("✅ Données récupérées");
+        
 
         profileName.textContent =
             currentUserData.name ||
@@ -212,14 +212,12 @@ onAuthStateChanged(auth, async (user) => {
 
         guestActions.style.display = "none";
 
-        alert("✅ Profil affiché");
      await loadStats();
      loadMerchant();
     }
 
     catch (err) {
 
-        alert("❌ " + err.message);
 
         console.error(err);
 
@@ -227,14 +225,13 @@ onAuthStateChanged(auth, async (user) => {
 
 });
 
-alert("✅ Bloc 4 chargé");
 /* ===============================
    STATISTIQUES
 =============================== */
 
 async function loadStats() {
 
-    alert("📊 Chargement statistiques");
+    
 
     try {
 
@@ -301,7 +298,7 @@ async function loadStats() {
 
         }
 
-        alert("✅ Statistiques chargées");
+        
 
     }
 
@@ -309,7 +306,7 @@ async function loadStats() {
 
         console.error(err);
 
-        alert("❌ Erreur statistiques");
+        
 
     }
 
@@ -484,7 +481,7 @@ window.saveProvince = async function () {
 };
 
 console.log("✅ Bloc 6 marchand chargé");
-alert("➡️ Avant Bloc 7");
+
 /* ===============================
    PHOTO DE PROFIL
 =============================== */
@@ -541,7 +538,7 @@ if (upload) {
 }
 
 console.log("✅ Bloc 7 photo chargé");
-alert("✅ Bloc 7 photo chargé");
+
 /* ===============================
    BLOC 8 : EDIT PROFILE
 =============================== */
@@ -642,7 +639,7 @@ if (saveProfileBtn) {
 }
 
 console.log("✅ Bloc 8 profil chargé");
-alert("✅ Bloc 8 profil chargé");
+
 /* ===============================
    BLOC 9 : SÉCURITÉ
 =============================== */
@@ -805,8 +802,7 @@ if (helpBtn) {
 
 }
 console.log("FIN BLOC 9");
-alert("✅ Bloc 9 sécurité chargé");
-alert("FIN BLOC 9");
+
 /* ===============================
    BLOC 10A : ADRESSES
 =============================== */
@@ -866,4 +862,4 @@ if (addAddressBtn) {
 
 }
 
-alert("✅ Bloc 10A chargé");
+
