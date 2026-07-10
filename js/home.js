@@ -581,3 +581,33 @@ ${store.products} produtos
 });
 
 }
+const merchantBtn = document.getElementById("merchantBtn");
+const merchantBtnText = document.getElementById("merchantBtnText");
+
+if(userData.role === "admin"){
+
+merchantBtn.style.display = "flex";
+
+merchantBtnText.textContent = "Admin";
+
+merchantBtn.onclick = () => {
+
+location.href = "admin-dashboard.html";
+
+};
+
+}
+
+else if(userData.role === "merchant"){
+
+merchantBtn.style.display = "flex";
+
+merchantBtnText.textContent = "Loja";
+
+merchantBtn.onclick = () => {
+
+location.href = "merchant-dashboard.html";
+
+};
+
+}
