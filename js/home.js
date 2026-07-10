@@ -584,7 +584,10 @@ ${store.products} produtos
 const merchantBtn = document.getElementById("merchantBtn");
 const merchantBtnText = document.getElementById("merchantBtnText");
 
-if(userData.role === "superadmin"){
+if(
+userData.role === "admin" ||
+userData.role === "superadmin"
+){
 
 merchantBtn.style.display = "flex";
 
