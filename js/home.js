@@ -50,7 +50,6 @@ console.log("✅ Home.js démarré");
    DOM
 =============================== */
 
-const adminBtn = document.getElementById("adminBtn");
 const shopNav = document.getElementById("shopNav");
 const productList = document.getElementById("productList");
 
@@ -352,20 +351,39 @@ onAuthStateChanged(auth, async (user) => {
         const data = snap.data() || {};
 
         const role = (data.role || "").toLowerCase();
+const merchantBtn = document.getElementById("merchantBtn");
+const merchantBtnText = document.getElementById("merchantBtnText");
 
-        // Bouton Admin
-        if (role === "admin" || role === "superadmin") {
+merchantBtn.style.display = "none";
 
-            adminBtn.style.display = "block";
+if(role === "admin" || role === "superadmin"){
 
-            adminBtn.onclick = () => {
+    merchantBtn.style.display = "flex";
 
-                window.location.href =
-                    "admin-dashboard.html";
+    merchantBtnText.textContent = "Admin";
 
-            };
+    merchantBtn.onclick = () => {
 
-        }
+        window.location.href = "admin-dashboard.html";
+
+    };
+
+}
+
+else if(role === "merchant"){
+
+    merchantBtn.style.display = "flex";
+
+    merchantBtnText.textContent = "Loja";
+
+    merchantBtn.onclick = () => {
+
+        window.location.href = "merchant-dashboard.html";
+
+    };
+
+}
+       
 
         // Bouton Merchant
         if (role === "merchant") {
@@ -579,38 +597,5 @@ ${store.products} produtos
 `;
 
 });
-
-}
-const merchantBtn = document.getElementById("merchantBtn");
-const merchantBtnText = document.getElementById("merchantBtnText");
-
-if(
-userData.role === "admin" ||
-userData.role === "superadmin"
-){
-
-merchantBtn.style.display = "flex";
-
-merchantBtnText.textContent = "Admin";
-
-merchantBtn.onclick = () => {
-
-location.href = "admin-dashboard.html";
-
-};
-
-}
-
-else if(userData.role === "merchant"){
-
-merchantBtn.style.display = "flex";
-
-merchantBtnText.textContent = "Loja";
-
-merchantBtn.onclick = () => {
-
-location.href = "merchant-dashboard.html";
-
-};
 
 }
