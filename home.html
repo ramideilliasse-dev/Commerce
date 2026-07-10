@@ -257,17 +257,21 @@ BOTTOM NAV PREMIUM
 
 position:fixed;
 
-bottom:0;
+bottom:12px;
 
-left:0;
+left:12px;
 
-right:0;
+right:12px;
 
-height:75px;
+height:82px;
 
 background:rgba(255,255,255,.96);
 
-backdrop-filter:blur(20px);
+backdrop-filter:blur(30px);
+
+-webkit-backdrop-filter:blur(30px);
+
+border-radius:28px;
 
 display:flex;
 
@@ -275,13 +279,14 @@ justify-content:space-around;
 
 align-items:center;
 
-box-shadow:0 -5px 20px rgba(0,0,0,.08);
+padding:0 8px;
+
+box-shadow:
+0 10px 35px rgba(0,0,0,.10);
+
+border:1px solid rgba(255,255,255,.8);
 
 z-index:9999;
-
-border-top-left-radius:22px;
-
-border-top-right-radius:22px;
 
 }
 
@@ -404,11 +409,19 @@ font-weight:700;
 
 position:absolute;
 
-top:6px;
+top:2px;
 
-right:28%;
+right:20px;
 
-background:red;
+min-width:20px;
+
+height:20px;
+
+padding:0 6px;
+
+border-radius:999px;
+
+background:#FF3B30;
 
 color:white;
 
@@ -416,13 +429,13 @@ font-size:11px;
 
 font-weight:bold;
 
-padding:3px 7px;
+display:flex;
 
-border-radius:50px;
+align-items:center;
 
-min-width:20px;
+justify-content:center;
 
-text-align:center;
+box-shadow:0 4px 10px rgba(255,59,48,.35);
 
 }
  /* ================= TOAST MODERNE ================= */
