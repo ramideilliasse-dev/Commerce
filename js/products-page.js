@@ -69,7 +69,69 @@ console.error(err);
 
 loadProducts();
 
+// =====================================
+// FAVORIS
+// =====================================
 
+const FAVORITES_KEY = "toma_favorites";
+
+function getFavorites(){
+
+try{
+
+return JSON.parse(
+
+localStorage.getItem(FAVORITES_KEY)
+
+|| "[]"
+
+);
+
+}catch{
+
+return [];
+
+}
+
+}
+
+function saveFavorites(list){
+
+localStorage.setItem(
+
+FAVORITES_KEY,
+
+JSON.stringify(list)
+
+);
+
+}
+
+function isFavorite(productId){
+
+return getFavorites().includes(productId);
+
+}
+
+function toggleFavorite(productId){
+
+let favorites = getFavorites();
+
+if(favorites.includes(productId)){
+
+favorites = favorites.filter(id=>id!==productId);
+
+}else{
+
+favorites.push(productId);
+
+}
+
+saveFavorites(favorites);
+
+return favorites.includes(productId);
+
+}
 // =====================================
 // Affichage des produits
 // =====================================
