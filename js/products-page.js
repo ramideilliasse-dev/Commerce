@@ -250,11 +250,11 @@ ${product.storeName || "Loja"}
 
 </div>
 
-<button class="buyButton">
+<div class="cartButton">
 
-Ver produto
+🛒
 
-</button>
+</div>
 
 </div>
 
@@ -272,6 +272,21 @@ e.stopPropagation();
 const favorite = toggleFavorite(product.id);
 
 favoriteBtn.textContent = favorite ? "❤️" : "🤍";
+
+});
+// ===============================
+// PANIER
+// ===============================
+
+const cartButton = card.querySelector(".cartButton");
+
+cartButton.addEventListener("click",(e)=>{
+
+e.stopPropagation();
+
+addToCart(product);
+
+alert("Produto adicionado ao carrinho ✅");
 
 });
 card.onclick = ()=>{
