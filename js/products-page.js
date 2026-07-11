@@ -199,6 +199,51 @@ quantity:1
 saveCart(cart);
 
 }
+// ===============================
+// BADGE AUTOMATIQUE
+// ===============================
+
+function getProductBadge(product){
+
+// Nouveau produit
+if(product.isNew){
+    return {
+        text:"🆕 Novo",
+        className:"badgeNew"
+    };
+}
+
+// Promotion
+if(product.oldPrice && Number(product.oldPrice) > Number(product.price)){
+    return {
+        text:"🔥 Promo",
+        className:"badgePromo"
+    };
+}
+
+// Plus vendu
+if(product.sales >= 50){
+    return {
+        text:"⭐ Mais vendido",
+        className:"badgeTop"
+    };
+}
+
+// Livraison rapide
+if(product.fastDelivery){
+    return {
+        text:"🚚 Entrega rápida",
+        className:"badgeDelivery"
+    };
+}
+
+// Produit vérifié
+return {
+    text:"✔ Original",
+    className:"badgeVerified"
+};
+
+}
 // =====================================
 // Affichage des produits
 // =====================================
@@ -208,7 +253,7 @@ function renderProducts(products){
 productsGrid.innerHTML = "";
 
 products.forEach(product=>{
-
+const badge = getProductBadge(product);
 const card = document.createElement("div");
 
 card.className = "productCard";
@@ -224,18 +269,19 @@ src="${
 : "https://via.placeholder.com/400")
 }">
 
+<div class="productBadge ${badge.className}">
+${badge.text}
+</div>
+
 <div class="favoriteBtn">
-
 ${isFavorite(product.id) ? "❤️" : "🤍"}
-
 </div>
 
 <div class="cartButton">
-
 🛒
-
 </div>
 
+</div>
 </div>
 
 <div class="productInfo">
