@@ -223,36 +223,58 @@ src="${
 ? product.images[0]
 : "https://via.placeholder.com/400")
 }">
+
 <div class="favoriteBtn">
 
 ${isFavorite(product.id) ? "❤️" : "🤍"}
-
-</div>
-</div>
-
-<div class="productInfo">
-
-<div class="productName">
-${product.name || "Produto"}
-</div>
-
-<div class="productPrice">
-${product.price || 0} Kz
-</div>
-
-<div class="productStore">
-
-<span class="storeBadge">
-✔
-</span>
-
-${product.storeName || "Loja"}
 
 </div>
 
 <div class="cartButton">
 
 🛒
+
+</div>
+
+</div>
+
+<div class="productInfo">
+
+<div class="productName">
+
+${product.name || "Produto"}
+
+</div>
+
+<div class="productPrice">
+
+${product.price || 0} Kz
+
+</div>
+
+<div class="productBottom">
+
+<div class="productStore">
+
+<span class="storeBadge">
+
+✔
+
+</span>
+
+<span>
+
+${product.storeName || "Loja"}
+
+</span>
+
+</div>
+
+<div class="productLocation">
+
+📍 Angola
+
+</div>
 
 </div>
 
