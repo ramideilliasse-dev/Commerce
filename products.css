@@ -541,3 +541,52 @@ transform:translateY(-2px);
 box-shadow:0 10px 20px rgba(22,163,74,.28);
 
 }
+/* ===========================
+PANIER FLOTTANT
+=========================== */
+
+.cartButton{
+
+position:absolute;
+
+bottom:10px;
+
+right:10px;
+
+width:42px;
+
+height:42px;
+
+border-radius:14px;
+
+background:#16A34A;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-size:20px;
+
+color:white;
+
+box-shadow:0 8px 18px rgba(22,163,74,.35);
+
+cursor:pointer;
+
+transition:.25s;
+
+}
+
+.cartButton:hover{
+
+transform:scale(1.08);
+
+}
+
+.cartButton:active{
+
+transform:scale(.95);
+
+}
