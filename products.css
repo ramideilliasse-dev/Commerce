@@ -557,24 +557,23 @@ width:46px;
 
 height:46px;
 
-border-radius:16px;
-
-background:#ffffff;
-
 display:flex;
 
 justify-content:center;
 
 align-items:center;
 
+border-radius:14px;
+
+background:#16A34A;
+
+color:#FFFFFF;
+
 font-size:24px;
 
-color:#16A34A;
+border:none;
 
-box-shadow:
-0 8px 22px rgba(0,0,0,.18);
-
-border:2px solid #F3F4F6;
+box-shadow:0 8px 20px rgba(22,163,74,.40);
 
 cursor:pointer;
 
@@ -586,17 +585,15 @@ z-index:20;
 
 .cartButton:hover{
 
+background:#15803D;
+
 transform:scale(1.08);
-
-background:#16A34A;
-
-color:#fff;
 
 }
 
 .cartButton:active{
 
-transform:scale(.94);
+transform:scale(.95);
 
 }
 .productImageBox{
