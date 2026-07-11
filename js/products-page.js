@@ -133,6 +133,73 @@ return favorites.includes(productId);
 
 }
 // =====================================
+// CARRINHO
+// =====================================
+
+const CART_KEY = "toma_cart";
+
+function getCart(){
+
+try{
+
+return JSON.parse(
+
+localStorage.getItem(CART_KEY)
+
+|| "[]"
+
+);
+
+}catch{
+
+return [];
+
+}
+
+}
+
+function saveCart(cart){
+
+localStorage.setItem(
+
+CART_KEY,
+
+JSON.stringify(cart)
+
+);
+
+}
+
+function addToCart(product){
+
+let cart = getCart();
+
+const index = cart.findIndex(
+
+item=>item.id===product.id
+
+);
+
+if(index>=0){
+
+cart[index].quantity++;
+
+}else{
+
+cart.push({
+
+...product,
+
+quantity:1
+
+});
+
+}
+
+saveCart(cart);
+
+}
+// =====================================
 // Affichage des produits
 // =====================================
 
