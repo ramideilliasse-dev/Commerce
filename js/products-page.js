@@ -83,7 +83,6 @@ products.forEach(product=>{
 const card = document.createElement("div");
 
 card.className = "productCard";
-
 card.innerHTML = `
 
 <div class="productImageBox">
@@ -93,13 +92,11 @@ class="productImage"
 src="${
 (product.images?.length
 ? product.images[0]
-: 'https://via.placeholder.com/400')
-}"
+: "https://via.placeholder.com/400")
+}">
 
 <div class="favoriteBtn">
-
 🤍
-
 </div>
 
 </div>
@@ -107,26 +104,20 @@ src="${
 <div class="productInfo">
 
 <div class="productName">
-
 ${product.name || "Produto"}
-
 </div>
 
 <div class="productPrice">
-
 ${product.price || 0} Kz
-
 </div>
 
 <div class="productStore">
 
-${product.storeName || "Loja"}
-
 <span class="storeBadge">
-
-✔️
-
+✔
 </span>
+
+${product.storeName || "Loja"}
 
 </div>
 
@@ -139,7 +130,6 @@ Ver produto
 </div>
 
 `;
-
 card.onclick = ()=>{
 
 location.href =
