@@ -208,7 +208,7 @@ function getProductBadge(product){
 // Nouveau produit
 if(product.isNew){
     return {
-        text:"🆕 Novo",
+        text:"Novo",
         className:"badgeNew"
     };
 }
@@ -216,7 +216,7 @@ if(product.isNew){
 // Promotion
 if(product.oldPrice && Number(product.oldPrice) > Number(product.price)){
     return {
-        text:"🔥 Promo",
+        text:"Promo",
         className:"badgePromo"
     };
 }
@@ -224,7 +224,7 @@ if(product.oldPrice && Number(product.oldPrice) > Number(product.price)){
 // Plus vendu
 if(product.sales >= 50){
     return {
-        text:"⭐ Mais vendido",
+        text:"Mais vendido",
         className:"badgeTop"
     };
 }
@@ -232,14 +232,14 @@ if(product.sales >= 50){
 // Livraison rapide
 if(product.fastDelivery){
     return {
-        text:"🚚 Entrega rápida",
+        text:"Entrega rápida",
         className:"badgeDelivery"
     };
 }
 
 // Produit vérifié
 return {
-    text:"✔ Original",
+    text:"Original",
     className:"badgeVerified"
 };
 
