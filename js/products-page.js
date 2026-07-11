@@ -309,4 +309,43 @@ list.length +
 
 });
 
+// =====================================
+// NAVIGATION
+// =====================================
 
+const backButton = document.getElementById("backButton");
+const filterButton = document.getElementById("filterButton");
+
+// Bouton Retour
+if(backButton){
+
+backButton.addEventListener("click",(e)=>{
+
+e.stopPropagation();
+
+if(history.length > 1){
+
+history.back();
+
+}else{
+
+location.href = "home.html";
+
+}
+
+});
+
+}
+
+// Bouton Paramètres
+if(filterButton){
+
+filterButton.addEventListener("click",(e)=>{
+
+e.stopPropagation();
+
+location.href = "settings.html";
+
+});
+
+}
