@@ -156,11 +156,11 @@ src="${
 ? product.images[0]
 : "https://via.placeholder.com/400")
 }">
-
 <div class="favoriteBtn">
-🤍
-</div>
 
+${isFavorite(product.id) ? "❤️" : "🤍"}
+
+</div>
 </div>
 
 <div class="productInfo">
@@ -192,6 +192,21 @@ Ver produto
 </div>
 
 `;
+// ===============================
+// FAVORIS
+// ===============================
+
+const favoriteBtn = card.querySelector(".favoriteBtn");
+
+favoriteBtn.addEventListener("click",(e)=>{
+
+e.stopPropagation();
+
+const favorite = toggleFavorite(product.id);
+
+favoriteBtn.textContent = favorite ? "❤️" : "🤍";
+
+});
 card.onclick = ()=>{
 
 location.href =
