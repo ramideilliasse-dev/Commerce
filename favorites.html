@@ -117,6 +117,81 @@ z-index:100;
 transform:scale(1.08);
 
 }
+.cartAdd{
+
+position:absolute;
+
+bottom:10px;
+
+right:10px;
+
+width:48px;
+
+height:48px;
+
+border-radius:50%;
+
+background:#16A34A;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:24px;
+
+color:white;
+
+box-shadow:0 8px 18px rgba(22,163,74,.30);
+
+cursor:pointer;
+
+transition:.25s;
+
+z-index:100;
+
+}
+
+.cartAdd:hover{
+
+transform:scale(1.08);
+
+}
+
+.product{
+
+background:#fff;
+
+border-radius:18px;
+
+overflow:hidden;
+
+box-shadow:0 6px 18px rgba(0,0,0,.08);
+
+transition:.25s;
+
+}
+
+.product:hover{
+
+transform:translateY(-3px);
+
+box-shadow:0 10px 26px rgba(0,0,0,.12);
+
+}
+
+.store{
+
+margin-top:8px;
+
+font-size:13px;
+
+color:#666;
+
+font-weight:600;
+
+}
 </style>
 </head>
 
@@ -209,21 +284,35 @@ return
 
 }
 
-let html = `<div class="products">`
+let html = `<div class="products">`;
 
-for(const id of ids){
+const products = await Promise.all(
 
-try{
+ids.map(async(id)=>{
 
-const snap =
-await getDoc(doc(db,"products",id))
+const snap = await getDoc(doc(db,"products",id));
 
-if(!snap.exists()) continue
+if(!snap.exists()) return null;
 
-const p = snap.data()
+return{
 
-const soldOut =
-Number(p.stock || 0) <= 0
+id,
+
+...snap.data()
+
+};
+
+})
+
+);
+
+for(const p of products){
+
+if(!p) continue;
+
+const id = p.id;
+
+const soldOut = Number(p.stock||0)<=0;
 
 html += `
 
@@ -294,12 +383,6 @@ ${p.price} Kz
 </div>
 
 `;
-
-}catch(e){
-
-console.log(e)
-
-}
 
 }
 
