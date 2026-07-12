@@ -14,12 +14,7 @@ import {
     getProductImage
 
 } from "./ui.js";
-import {
 
-getCart,
-saveCart
-
-} from "./storage.js";
 /* ===============================
    VARIABLES
 =============================== */
@@ -32,7 +27,7 @@ let cart = [];
    INITIALISATION
 =============================== */
 
-cart = getCart();
+loadCart();
 
 /* ===============================
    PRODUITS
@@ -50,12 +45,30 @@ export function setProducts(data){
 
 export function getCart(){
 
-cart = getCart();    
+loadCart();
 
     return cart;
 
 }
+export function loadCart(){
 
+    try{
+
+        cart = JSON.parse(
+
+            localStorage.getItem("cart")
+
+            || "[]"
+
+        );
+
+    }catch{
+
+        cart = [];
+
+    }
+
+}
 
 export function saveCart(){
 
@@ -358,7 +371,7 @@ export function changeQuantity(productId, delta){
 
 export function checkout() {
 
-    cart = getCart();
+    loadCart();
 
     if (cart.length === 0) {
 
