@@ -5,7 +5,16 @@
 // =====================================
 
 import { db } from "../firebase.js";
+import {
 
+getFavorites,
+isFavorite,
+toggleFavorite,
+removeFavorite,
+getCart,
+addToCart
+
+} from "./storage.js";
 import {
 
 collection,
@@ -69,136 +78,7 @@ console.error(err);
 
 loadProducts();
 
-// =====================================
-// FAVORIS
-// =====================================
 
-const FAVORITES_KEY = "toma_favorites";
-
-function getFavorites(){
-
-try{
-
-return JSON.parse(
-
-localStorage.getItem(FAVORITES_KEY)
-
-|| "[]"
-
-);
-
-}catch{
-
-return [];
-
-}
-
-}
-
-function saveFavorites(list){
-
-localStorage.setItem(
-
-FAVORITES_KEY,
-
-JSON.stringify(list)
-
-);
-
-}
-
-function isFavorite(productId){
-
-return getFavorites().includes(productId);
-
-}
-
-function toggleFavorite(productId){
-
-let favorites = getFavorites();
-
-if(favorites.includes(productId)){
-
-favorites = favorites.filter(id=>id!==productId);
-
-}else{
-
-favorites.push(productId);
-
-}
-
-saveFavorites(favorites);
-
-return favorites.includes(productId);
-
-}
-// =====================================
-// CARRINHO
-// =====================================
-
-const CART_KEY = "toma_cart";
-
-function getCart(){
-
-try{
-
-return JSON.parse(
-
-localStorage.getItem(CART_KEY)
-
-|| "[]"
-
-);
-
-}catch{
-
-return [];
-
-}
-
-}
-
-function saveCart(cart){
-
-localStorage.setItem(
-
-CART_KEY,
-
-JSON.stringify(cart)
-
-);
-
-}
-
-function addToCart(product){
-
-let cart = getCart();
-
-const index = cart.findIndex(
-
-item=>item.id===product.id
-
-);
-
-if(index>=0){
-
-cart[index].quantity++;
-
-}else{
-
-cart.push({
-
-...product,
-
-quantity:1
-
-});
-
-}
-
-saveCart(cart);
-
-}
 // ===============================
 // BADGE AUTOMATIQUE
 // ===============================
