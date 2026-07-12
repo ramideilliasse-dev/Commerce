@@ -5,13 +5,18 @@
 
 import {
 
-    showToast,
+getCart,
+saveCart,
+addToCart
 
-    updateBadge,
+} from "./storage.js";
 
-    formatPrice,
+import {
 
-    getProductImage
+showToast,
+updateBadge,
+formatPrice,
+getProductImage
 
 } from "./ui.js";
 
@@ -21,7 +26,11 @@ import {
 
 let products = [];
 
-let cart = [];
+function cart(){
+
+    return getCart();
+
+}
 
 /* ===============================
    INITIALISATION
