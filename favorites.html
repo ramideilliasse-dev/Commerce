@@ -80,7 +80,43 @@ border-radius:30px;
 margin-top:15px;
 font-weight:bold;
 }
+.favoriteRemove{
 
+position:absolute;
+
+top:10px;
+
+right:10px;
+
+width:40px;
+
+height:40px;
+
+border-radius:50%;
+
+background:white;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-size:20px;
+
+box-shadow:0 5px 15px rgba(0,0,0,.18);
+
+cursor:pointer;
+
+z-index:100;
+
+}
+
+.favoriteRemove:hover{
+
+transform:scale(1.08);
+
+}
 </style>
 </head>
 
@@ -113,7 +149,23 @@ return []
 }
 
 }
+function removeFavorite(id){
 
+let favorites = getFavorites();
+
+favorites = favorites.filter(item => item !== id);
+
+localStorage.setItem(
+
+"toma_favorites",
+
+JSON.stringify(favorites)
+
+);
+
+loadFavorites();
+
+}
 async function loadFavorites(){
 
 const ids = getFavorites()
