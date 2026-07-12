@@ -22,7 +22,7 @@ collection,
 getDocs
 
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
+import { createProductCard } from "./product-card.js";
 const productsGrid =
 
 document.getElementById("productsGrid");
@@ -130,124 +130,15 @@ return {
 
 function renderProducts(products){
 
-productsGrid.innerHTML = "";
+    productsGrid.innerHTML = "";
 
-products.forEach(product=>{
-const badge = getProductBadge(product);
-const card = document.createElement("div");
+    products.forEach(product=>{
 
-card.className = "productCard";
-card.innerHTML = `
+        const card = createProductCard(product);
 
-<div class="productImageBox">
+        productsGrid.appendChild(card);
 
-<img
-class="productImage"
-src="${
-(product.images?.length
-? product.images[0]
-: "https://via.placeholder.com/400")
-}">
-
-<div class="productBadge ${badge.className}">
-${badge.text}
-</div>
-
-<div class="favoriteBtn">
-${isFavorite(product.id) ? "❤️" : "🤍"}
-</div>
-
-<div class="cartButton">
-🛒
-</div>
-
-</div>
-</div>
-
-<div class="productInfo">
-
-<div class="productName">
-
-${product.name || "Produto"}
-
-</div>
-
-<div class="productPrice">
-
-${product.price || 0} Kz
-
-</div>
-
-<div class="productBottom">
-
-<div class="productStore">
-
-<span class="storeBadge">
-
-✔
-
-</span>
-
-<span>
-
-${product.storeName || "Loja"}
-
-</span>
-
-</div>
-
-<div class="productLocation">
-
-📍 Angola
-
-</div>
-
-</div>
-
-</div>
-
-`;
-// ===============================
-// FAVORIS
-// ===============================
-
-const favoriteBtn = card.querySelector(".favoriteBtn");
-
-favoriteBtn.addEventListener("click",(e)=>{
-
-e.stopPropagation();
-
-const favorite = toggleFavorite(product.id);
-
-favoriteBtn.textContent = favorite ? "❤️" : "🤍";
-
-});
-// ===============================
-// PANIER
-// ===============================
-
-const cartButton = card.querySelector(".cartButton");
-
-cartButton.addEventListener("click",(e)=>{
-
-e.stopPropagation();
-
-addToCart(product);
-
-alert("Produto adicionado ao carrinho ✅");
-
-});
-card.onclick = ()=>{
-
-location.href =
-
-`product.html?id=${product.id}`;
-
-};
-
-productsGrid.appendChild(card);
-
-});
+    });
 
 }
 // =====================================
