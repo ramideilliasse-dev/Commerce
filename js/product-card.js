@@ -112,7 +112,62 @@ ${product.storeName || "Loja"}
 </div>
 
 `;
+// ======================================
+// BOUTON FAVORIS
+// ======================================
 
+const favoriteBtn = card.querySelector(".favoriteBtn");
+
+favoriteBtn.addEventListener("click",(e)=>{
+
+    e.stopPropagation();
+
+    const favorite = toggleFavorite(product.id);
+
+    favoriteBtn.textContent = favorite
+        ? "❤️"
+        : "🤍";
+
+});
+
+// ======================================
+// BOUTON PANIER
+// ======================================
+
+const cartButton = card.querySelector(".cartButton");
+
+cartButton.addEventListener("click",(e)=>{
+
+    e.stopPropagation();
+
+    addToCart(product);
+
+    cartButton.animate([
+        {
+            transform:"scale(1)"
+        },
+        {
+            transform:"scale(1.25)"
+        },
+        {
+            transform:"scale(1)"
+        }
+    ],{
+        duration:250
+    });
+
+});
+
+// ======================================
+// CLIC SUR LA CARTE
+// ======================================
+
+card.addEventListener("click",()=>{
+
+    location.href =
+    `product.html?id=${product.id}`;
+
+});
     return card;
 
 }
