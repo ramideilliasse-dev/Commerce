@@ -160,15 +160,41 @@ const soldOut =
 Number(p.stock || 0) <= 0
 
 html += `
-<div class="product"
-${soldOut ? "" : `onclick="location.href='product.html?id=${id}'"`}>
 
-<img src="${p.images?.[0] || ''}">
+<div class="product">
+
+<div style="position:relative;">
+
+<img
+src="${p.images?.[0] || ''}"
+onclick="location.href='product.html?id=${id}'">
+
+<div
+class="favoriteRemove"
+onclick="removeFavorite('${id}')">
+
+❤️
+
+</div>
+
+<div
+class="cartAdd"
+onclick="addToCart('${id}')">
+
+🛒
+
+</div>
+
+</div>
 
 <div class="info">
 
-<div class="name">
+<div
+class="name"
+onclick="location.href='product.html?id=${id}'">
+
 ${p.name}
+
 </div>
 
 ${
@@ -176,13 +202,23 @@ soldOut
 ?
 `
 <div class="soldOut">
+
 ESGOTADO
+
 </div>
 `
 :
 `
 <div class="price">
+
 ${p.price} Kz
+
+</div>
+
+<div class="store">
+
+✔ ${p.storeName || "Loja"}
+
 </div>
 `
 }
@@ -190,7 +226,8 @@ ${p.price} Kz
 </div>
 
 </div>
-`
+
+`;
 
 }catch(e){
 
