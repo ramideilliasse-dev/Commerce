@@ -142,17 +142,17 @@ getDoc
 import {
 
 getFavorites,
-removeFavorite,
+removeFavorite as removeFavoriteStorage,
 addToCart
 
 } from "./js/storage.js";
 window.removeFavorite = function(id){
 
-removeFavorite(id);
+    removeFavorite(id); // fonction de storage.js
 
-loadFavorites();
+    loadFavorites();
 
-}
+};
 
 window.addToCart = async function(id){
 
@@ -179,23 +179,7 @@ console.log(e);
 }
 
 }
-function removeFavorite(id){
 
-let favorites = getFavorites();
-
-favorites = favorites.filter(item => item !== id);
-
-localStorage.setItem(
-
-"toma_favorites",
-
-JSON.stringify(favorites)
-
-);
-
-loadFavorites();
-
-}
 async function loadFavorites(){
 
 const ids = getFavorites()
