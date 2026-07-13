@@ -128,7 +128,7 @@ function cacheValid(){
 ===================================== */
 
 async function loadProducts(){
-
+alert("1 - loadProducts démarré");
     /* ---------- Cache ---------- */
 
     const cache = loadCache();
@@ -144,7 +144,7 @@ async function loadProducts(){
     /* ---------- Firebase ---------- */
 
     try{
-
+alert("2 - Avant Firestore");
         const q = query(
 
             collection(db,"products"),
@@ -154,7 +154,7 @@ async function loadProducts(){
         );
 
         const snapshot = await getDocs(q);
-
+alert("3 - Après Firestore : " + snapshot.size);
         products = [];
 
         snapshot.forEach(docSnap=>{
