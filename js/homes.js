@@ -168,7 +168,17 @@ async function loadProducts(){
             });
 
         });
+if(products.length){
 
+    alert(
+
+        "Première catégorie : " +
+
+        (products[0].category || "AUCUNE")
+
+    );
+
+}
         saveCache(products);
 
         renderHome();
