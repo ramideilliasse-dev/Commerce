@@ -1,34 +1,37 @@
- // =====================================
+// =====================================
 // HOMES.JS
 // Accueil Toma V2
 // =====================================
 
-import { db, auth } from "../firebase.js";
+alert("1 - homes.js démarre");
 
-import {
-    collection,
-    getDocs,
-    query,
-    limit,
-    doc,
-    getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+// import { db, auth } from "../firebase.js";
+// import {
+// collection,
+// getDocs,
+// query,
+// limit,
+// doc,
+// getDoc
+// } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-import {
-    onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+// import {
+// onAuthStateChanged
+// } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-import {
-    updateCartCount
-} from "./cart.js";
+// import {
+// updateCartCount
+// } from "./cart.js";
 
-import {
-    showToast
-} from "./ui.js";
+// import {
+// showToast
+// } from "./ui.js";
 
-import {
-    createProductCard
-} from "./product-card.js";
+// import {
+// createProductCard
+// } from "./product-card.js";
+
+alert("2 - imports supprimés");
 
 /* =====================================
    DOM
