@@ -19,10 +19,10 @@ alert("1 - homes.js démarre");
 // onAuthStateChanged
 // } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-// import {
-// updateCartCount
-// } from "./cart.js";
-
+import {
+    updateCartCount
+} from "./cart.js";
+alert("4 - cart importé");
 // import {
 // showToast
 // } from "./ui.js";
