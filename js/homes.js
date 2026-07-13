@@ -43,7 +43,7 @@ document.getElementById("categories");
 const recommendedProducts =
 document.getElementById("recommendedProducts");
 
-const officialStores =
+const officialStoresContainer =
 document.getElementById("officialStores");
 
 const sectionsContainer =
@@ -458,3 +458,94 @@ function renderOfficialStores(){
     });
 
 }
+/* =====================================
+   AUTH
+===================================== */
+
+onAuthStateChanged(auth, async(user)=>{
+
+    if(!user) return;
+
+    try{
+
+        const snap = await getDoc(
+            doc(db,"users",user.uid)
+        );
+
+        if(!snap.exists()) return;
+
+        const data = snap.data() || {};
+
+        const role = (data.role || "").toLowerCase();
+
+        merchantBtn.style.display = "none";
+
+        if(role==="merchant"){
+
+            merchantBtn.style.display = "flex";
+
+            merchantBtn.onclick=()=>{
+
+                location.href="merchant-dashboard.html";
+
+            };
+
+        }
+
+        if(role==="admin" || role==="superadmin"){
+
+            merchantBtn.style.display="flex";
+
+            merchantBtn.querySelector("span:last-child").textContent="Admin";
+
+            merchantBtn.onclick=()=>{
+
+                location.href="admin-dashboard.html";
+
+            };
+
+        }
+
+    }catch(err){
+
+        console.error(err);
+
+    }
+
+});
+
+
+/* =====================================
+   EVENTS
+===================================== */
+
+searchInput.onclick=()=>{
+
+    location.href="search.html";
+
+};
+
+document.getElementById("searchBtn").onclick=()=>{
+
+    location.href="search.html";
+
+};
+
+document.getElementById("supportBtn").onclick=()=>{
+
+    location.href="guide.html";
+
+};
+
+
+/* =====================================
+   START
+===================================== */
+
+window.addEventListener("load",()=>{
+
+    updateCartCount();
+
+    loadProducts();
+
+});
