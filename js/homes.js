@@ -236,3 +236,225 @@ function renderRecommended(){
     });
 
 }
+/* =====================================
+   CATÉGORIES
+===================================== */
+
+function renderCategories(){
+
+    const sections = [
+
+        {
+            title:"Alimentação",
+            id:"foodProducts"
+        },
+
+        {
+            title:"Eletrónica",
+            id:"electronicsProducts"
+        },
+
+        {
+            title:"Moda",
+            id:"fashionProducts"
+        },
+
+        {
+            title:"Beleza",
+            id:"beautyProducts"
+        },
+
+        {
+            title:"Casa",
+            id:"homeProducts"
+        },
+
+        {
+            title:"Auto",
+            id:"autoProducts"
+        }
+
+    ];
+
+    sectionsContainer.innerHTML = "";
+
+    sections.forEach(section=>{
+
+        const sectionProducts = products.filter(product=>{
+
+            return (
+
+                product.category ||
+
+                ""
+
+            ).toLowerCase() ===
+
+            section.title.toLowerCase();
+
+        });
+
+        if(sectionProducts.length===0) return;
+
+        const html = document.createElement("section");
+
+        html.innerHTML = `
+
+        <div class="sectionHeader">
+
+            <h2>${section.title}</h2>
+
+            <a href="products-page.html?cat=${encodeURIComponent(section.title)}">
+
+                Ver tudo
+
+            </a>
+
+        </div>
+
+        <div
+
+            class="productsRow"
+
+            id="${section.id}">
+
+        </div>
+
+        `;
+
+        sectionsContainer.appendChild(html);
+
+        const container = html.querySelector(".productsRow");
+
+        sectionProducts
+
+        .slice(0,10)
+
+        .forEach(product=>{
+
+            container.appendChild(
+
+                createProductCard(product)
+
+            );
+
+        });
+
+    });
+
+}
+/* =====================================
+   LOJAS OFICIAIS
+===================================== */
+
+const officialStores = [
+
+    {
+        id:"apple",
+        name:"Apple",
+        logo:"images/stores/apple.png",
+        verified:true
+    },
+
+    {
+        id:"samsung",
+        name:"Samsung",
+        logo:"images/stores/samsung.png",
+        verified:true
+    },
+
+    {
+        id:"xiaomi",
+        name:"Xiaomi",
+        logo:"images/stores/xiaomi.png",
+        verified:true
+    },
+
+    {
+        id:"huawei",
+        name:"Huawei",
+        logo:"images/stores/huawei.png",
+        verified:true
+    },
+
+    {
+        id:"nike",
+        name:"Nike",
+        logo:"images/stores/nike.png",
+        verified:true
+    },
+
+    {
+        id:"adidas",
+        name:"Adidas",
+        logo:"images/stores/adidas.png",
+        verified:true
+    },
+
+    {
+        id:"gucci",
+        name:"Gucci",
+        logo:"images/stores/gucci.png",
+        verified:true
+    },
+
+    {
+        id:"rolex",
+        name:"Rolex",
+        logo:"images/stores/rolex.png",
+        verified:true
+    }
+
+];
+
+function renderOfficialStores(){
+
+    if(!officialStoresContainer) return;
+
+    officialStoresContainer.innerHTML = "";
+
+    officialStores.forEach(store=>{
+
+        const card = document.createElement("div");
+
+        card.className = "storeCard";
+
+        card.onclick = ()=>{
+
+            location.href =
+
+            `official-store.html?store=${store.id}`;
+
+        };
+
+        card.innerHTML = `
+
+            <img
+
+                class="storeLogo"
+
+                src="${store.logo}"
+
+                loading="lazy">
+
+            <div class="storeName">
+
+                ${store.name}
+
+                ${store.verified ? "✔️" : ""}
+
+            </div>
+
+            <div class="storeStatus">
+
+                Verificado
+
+            </div>
+
+        `;
+
+        officialStoresContainer.appendChild(card);
+
+    });
+
+}
