@@ -123,3 +123,116 @@ function cacheValid(){
     ) < CACHE_DURATION;
 
 }
+/* =====================================
+   CHARGEMENT DES PRODUITS
+===================================== */
+
+async function loadProducts(){
+
+    /* ---------- Cache ---------- */
+
+    const cache = loadCache();
+
+    if(cache.length){
+
+        products = cache;
+
+        renderHome();
+
+    }
+
+    /* ---------- Firebase ---------- */
+
+    try{
+
+        const q = query(
+
+            collection(db,"products"),
+
+            limit(300)
+
+        );
+
+        const snapshot = await getDocs(q);
+
+        products = [];
+
+        snapshot.forEach(docSnap=>{
+
+            products.push({
+
+                id:docSnap.id,
+
+                ...docSnap.data()
+
+            });
+
+        });
+
+        saveCache(products);
+
+        renderHome();
+
+        console.log(
+
+            "✅ Produits Firebase :",products.length
+
+        );
+
+    }catch(e){
+
+        console.error(e);
+
+        if(products.length===0){
+
+            showToast(
+
+                "Erro ao carregar produtos",
+
+                "error"
+
+            );
+
+        }
+
+    }
+
+}
+/* =====================================
+   AFFICHAGE DE LA PAGE
+===================================== */
+
+function renderHome(){
+
+    renderRecommended();
+
+    renderCategories();
+
+    renderOfficialStores();
+
+}
+/* =====================================
+   RECOMMANDÉS
+===================================== */
+
+function renderRecommended(){
+
+    if(!recommendedProducts) return;
+
+    recommendedProducts.innerHTML = "";
+
+    products
+
+    .slice(0,10)
+
+    .forEach(product=>{
+
+        recommendedProducts.appendChild(
+
+            createProductCard(product)
+
+        );
+
+    });
+
+}
