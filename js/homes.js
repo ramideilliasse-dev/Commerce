@@ -27,10 +27,10 @@ alert("1 - homes.js démarre");
 // showToast
 // } from "./ui.js";
 
-// import {
-// createProductCard
-// } from "./product-card.js";
-
+import {
+    createProductCard
+} from "./product-card.js";
+alert("3 - product-card importé");
 alert("2 - imports supprimés");
 
 /* =====================================
