@@ -5,20 +5,21 @@
 
 alert("1 - homes.js démarre");
 
-// import { db, auth } from "../firebase.js";
-// import {
-// collection,
-// getDocs,
-// query,
-// limit,
-// doc,
-// getDoc
-// } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { db, auth } from "../firebase.js";
 
-// import {
-// onAuthStateChanged
-// } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+    collection,
+    getDocs,
+    query,
+    limit,
+    doc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+alert("6 - firebase importé");
 import {
     updateCartCount
 } from "./cart.js";
