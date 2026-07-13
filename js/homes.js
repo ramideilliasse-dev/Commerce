@@ -546,6 +546,92 @@ window.addEventListener("load",()=>{
 
     updateCartCount();
 
+    renderPromoSlider();
+
     loadProducts();
 
 });
+/* =====================================
+   SLIDER PROMOTIONNEL
+===================================== */
+
+const promoSlides = [
+
+{
+image:"images/banner1.jpg",
+title:"Promoções incríveis"
+},
+
+{
+image:"images/banner2.jpg",
+title:"Entrega rápida"
+},
+
+{
+image:"images/banner3.jpg",
+title:"Produtos verificados"
+}
+
+];
+
+function renderPromoSlider(){
+
+    if(!promoSlider) return;
+
+    promoSlider.innerHTML="";
+
+    promoSlides.forEach((slide,index)=>{
+
+        promoSlider.innerHTML+=`
+
+        <div class="promoSlide ${index===0?"active":""}">
+
+            <img
+            src="${slide.image}"
+            loading="lazy">
+
+            <div class="promoOverlay">
+
+                <div class="promoTitle">
+
+                    ${slide.title}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+    startSlider();
+
+}
+
+function startSlider(){
+
+    const slides=document.querySelectorAll(".promoSlide");
+
+    if(slides.length===0) return;
+
+    let current=0;
+
+    setInterval(()=>{
+
+        slides[current].classList.remove("active");
+
+        current++;
+
+        if(current>=slides.length){
+
+            current=0;
+
+        }
+
+        slides[current].classList.add("active");
+
+    },5000);
+
+}
