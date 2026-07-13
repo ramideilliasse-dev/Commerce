@@ -541,16 +541,18 @@ document.getElementById("supportBtn").onclick=()=>{
 /* =====================================
    START
 ===================================== */
-
 window.addEventListener("load",()=>{
 
     updateCartCount();
 
     renderPromoSlider();
 
+    renderCategoriesBar();
+
     loadProducts();
 
 });
+
 /* =====================================
    SLIDER PROMOTIONNEL
 ===================================== */
@@ -633,5 +635,85 @@ function startSlider(){
         slides[current].classList.add("active");
 
     },5000);
+
+}
+/* =====================================
+   CATÉGORIES
+===================================== */
+
+const categoriesData = [
+
+{
+name:"Alimentação",
+image:"images/alimentacao.jpeg"
+},
+
+{
+name:"Eletrónica",
+image:"images/eletronica.jpeg"
+},
+
+{
+name:"Moda",
+image:"images/moda.jpeg"
+},
+
+{
+name:"Beleza",
+image:"images/beleza.jpeg"
+},
+
+{
+name:"Casa",
+image:"images/casa.jpeg"
+},
+
+{
+name:"Auto",
+image:"images/auto.jpeg"
+}
+
+];
+
+function renderCategoriesBar(){
+
+    if(!categories) return;
+
+    categories.innerHTML="";
+
+    categoriesData.forEach(category=>{
+
+        const item=document.createElement("div");
+
+        item.className="categoryItem";
+
+        item.innerHTML=`
+
+            <img
+            src="${category.image}"
+            class="categoryImage"
+            loading="lazy">
+
+            <span>
+
+                ${category.name}
+
+            </span>
+
+        `;
+
+        item.onclick=()=>{
+
+            location.href=
+
+            "products-page.html?cat="+
+
+            encodeURIComponent(category.name);
+
+        };
+
+        categories.appendChild(item);
+
+    });
 
 }
