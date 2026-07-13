@@ -23,10 +23,10 @@ import {
     updateCartCount
 } from "./cart.js";
 alert("4 - cart importé");
-// import {
-// showToast
-// } from "./ui.js";
-
+import {
+    showToast
+} from "./ui.js";
+alert("5 - ui importé");
 import {
     createProductCard
 } from "./product-card.js";
