@@ -357,6 +357,121 @@ function renderCategories(){
     });
 
 }
+const officialStores = [
+
+{
+id:"apple",
+name:"Apple",
+logo:"images/stores/apple.png",
+verified:true,
+products:0
+},
+
+{
+id:"samsung",
+name:"Samsung",
+logo:"images/stores/samsung.png",
+verified:true,
+products:0
+},
+
+{
+id:"xiaomi",
+name:"Xiaomi",
+logo:"images/stores/xiaomi.png",
+verified:true,
+products:0
+},
+
+{
+id:"huawei",
+name:"Huawei",
+logo:"images/stores/huawei.png",
+verified:true,
+products:0
+},
+
+{
+id:"sony",
+name:"Sony",
+logo:"images/stores/sony.png",
+verified:true,
+products:0
+},
+
+{
+id:"adidas",
+name:"Adidas",
+logo:"images/stores/adidas.png",
+verified:true,
+products:0
+},
+
+{
+id:"rolex",
+name:"Rolex",
+logo:"images/stores/rolex.png",
+verified:true,
+products:0
+},
+
+{
+id:"gucci",
+name:"Gucci",
+logo:"images/stores/gucci.png",
+verified:true,
+products:0
+},
+
+{
+id:"louisvuitton",
+name:"Louis Vuitton",
+logo:"images/stores/louis-vuitton.png",
+verified:true,
+products:0
+},
+
+{
+id:"nike",
+name:"Nike",
+logo:"images/stores/nike.png",
+verified:true,
+products:0
+},
+
+{
+id:"puma",
+name:"Puma",
+logo:"images/stores/puma.png",
+verified:true,
+products:0
+},
+
+{
+id:"realmadrid",
+name:"Real Madrid",
+logo:"images/stores/realmadrid.png",
+verified:true,
+products:0
+},
+
+{
+id:"barcelona",
+name:"FC Barcelona",
+logo:"images/stores/barcelona.png",
+verified:true,
+products:0
+},
+
+{
+id:"psg",
+name:"PSG",
+logo:"images/stores/psg.png",
+verified:true,
+products:0
+}
+
+];
 
 // =====================================
 // LOJAS OFICIAIS
@@ -598,122 +713,39 @@ function startSlider(){
    CATÉGORIES
 ===================================== */
 
-const officialStores = [
+const categoriesData = [
 
 {
-id:"apple",
-name:"Apple",
-logo:"images/stores/apple.png",
-verified:true,
-products:0
+name:"Alimentação",
+image:"images/alimentacao.jpeg"
 },
 
 {
-id:"samsung",
-name:"Samsung",
-logo:"images/stores/samsung.png",
-verified:true,
-products:0
+name:"Eletrónica",
+image:"images/eletronica.jpeg"
 },
 
 {
-id:"xiaomi",
-name:"Xiaomi",
-logo:"images/stores/xiaomi.png",
-verified:true,
-products:0
+name:"Moda",
+image:"images/moda.jpeg"
 },
 
 {
-id:"huawei",
-name:"Huawei",
-logo:"images/stores/huawei.png",
-verified:true,
-products:0
+name:"Beleza",
+image:"images/beleza.jpeg"
 },
 
 {
-id:"sony",
-name:"Sony",
-logo:"images/stores/sony.png",
-verified:true,
-products:0
+name:"Casa",
+image:"images/casa.jpeg"
 },
 
 {
-id:"adidas",
-name:"Adidas",
-logo:"images/stores/adidas.png",
-verified:true,
-products:0
-},
-
-{
-id:"rolex",
-name:"Rolex",
-logo:"images/stores/rolex.png",
-verified:true,
-products:0
-},
-
-{
-id:"gucci",
-name:"Gucci",
-logo:"images/stores/gucci.png",
-verified:true,
-products:0
-},
-
-{
-id:"louisvuitton",
-name:"Louis Vuitton",
-logo:"images/stores/louis-vuitton.png",
-verified:true,
-products:0
-},
-
-{
-id:"nike",
-name:"Nike",
-logo:"images/stores/nike.png",
-verified:true,
-products:0
-},
-
-{
-id:"puma",
-name:"Puma",
-logo:"images/stores/puma.png",
-verified:true,
-products:0
-},
-
-{
-id:"realmadrid",
-name:"Real Madrid",
-logo:"images/stores/realmadrid.png",
-verified:true,
-products:0
-},
-
-{
-id:"barcelona",
-name:"FC Barcelona",
-logo:"images/stores/barcelona.png",
-verified:true,
-products:0
-},
-
-{
-id:"psg",
-name:"PSG",
-logo:"images/stores/psg.png",
-verified:true,
-products:0
+name:"Auto",
+image:"images/auto.jpeg"
 }
 
 ];
-
 function renderCategoriesBar(){
 
     if(!categories) return;
