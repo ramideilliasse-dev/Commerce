@@ -632,17 +632,20 @@ function renderPromoSlider(){
 
     if(!promoSlider) return;
 
-    promoSlider.innerHTML="";
+    const dots = document.getElementById("promoDots");
+
+    promoSlider.innerHTML = "";
+    dots.innerHTML = "";
 
     promoSlides.forEach((slide,index)=>{
 
-        promoSlider.innerHTML+=`
+        promoSlider.innerHTML += `
 
         <div class="promoSlide ${index===0?"active":""}">
 
             <img
-            src="${slide.image}"
-            loading="lazy">
+                src="${slide.image}"
+                loading="lazy">
 
             <div class="promoOverlay">
 
@@ -658,33 +661,57 @@ function renderPromoSlider(){
 
         `;
 
+        dots.innerHTML += `
+
+        <span
+            class="promoDot ${index===0?"active":""}"
+            data-index="${index}">
+        </span>
+
+        `;
+
     });
 
     startSlider();
 
 }
+let currentSlide = 0;
+
+let sliderTimer = null;
 
 function startSlider(){
 
-    const slides=document.querySelectorAll(".promoSlide");
+    const slides = document.querySelectorAll(".promoSlide");
 
-    if(slides.length===0) return;
+    const dots = document.querySelectorAll(".promoDot");
 
-    let current=0;
+    if(!slides.length) return;
 
-    setInterval(()=>{
+    function showSlide(index){
 
-        slides[current].classList.remove("active");
+        slides.forEach(slide=>slide.classList.remove("active"));
 
-        current++;
+        dots.forEach(dot=>dot.classList.remove("active"));
 
-        if(current>=slides.length){
+        slides[index].classList.add("active");
 
-            current=0;
+        dots[index].classList.add("active");
+
+        currentSlide = index;
+
+    }
+
+    sliderTimer = setInterval(()=>{
+
+        let next = currentSlide + 1;
+
+        if(next >= slides.length){
+
+            next = 0;
 
         }
 
-        slides[current].classList.add("active");
+        showSlide(next);
 
     },5000);
 
