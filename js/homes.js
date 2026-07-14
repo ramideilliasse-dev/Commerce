@@ -697,23 +697,95 @@ function startSlider(){
 
         dots[index].classList.add("active");
 
-        currentSlide = index;
+        currentSlide=index;
 
     }
 
-    sliderTimer = setInterval(()=>{
+    function nextSlide(){
 
-        let next = currentSlide + 1;
+        let next=currentSlide+1;
 
-        if(next >= slides.length){
+        if(next>=slides.length){
 
-            next = 0;
+            next=0;
 
         }
 
         showSlide(next);
 
-    },5000);
+    }
+
+    function previousSlide(){
+
+        let prev=currentSlide-1;
+
+        if(prev<0){
+
+            prev=slides.length-1;
+
+        }
+
+        showSlide(prev);
+
+    }
+
+    function restartTimer(){
+
+        clearInterval(sliderTimer);
+
+        sliderTimer=setInterval(nextSlide,5000);
+
+    }
+
+    restartTimer();
+
+    // Clique sur les points
+
+    dots.forEach((dot,index)=>{
+
+        dot.onclick=()=>{
+
+            showSlide(index);
+
+            restartTimer();
+
+        };
+
+    });
+
+    // Swipe tactile
+
+    let startX=0;
+
+    let endX=0;
+
+    promoSlider.addEventListener("touchstart",(e)=>{
+
+        startX=e.touches[0].clientX;
+
+    });
+
+    promoSlider.addEventListener("touchend",(e)=>{
+
+        endX=e.changedTouches[0].clientX;
+
+        const distance=endX-startX;
+
+        if(Math.abs(distance)<40)return;
+
+        if(distance<0){
+
+            nextSlide();
+
+        }else{
+
+            previousSlide();
+
+        }
+
+        restartTimer();
+
+    });
 
 }
 /* =====================================
