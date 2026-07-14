@@ -318,7 +318,7 @@ function renderCategories(){
 
             <h2>${section.title}</h2>
 
-            <a href="products-page.html?cat=${encodeURIComponent(section.title)}">
+            <a href="products.html?cat=${encodeURIComponent(section.title)}">
 
                 Ver tudo
 
@@ -777,7 +777,7 @@ function renderCategoriesBar(){
 
             location.href=
 
-            "products-page.html?cat="+
+            "products.html?cat="+
 
             encodeURIComponent(category.name);
 
