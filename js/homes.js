@@ -421,6 +421,10 @@ const officialStores = [
 
 ];
 
+// =====================================
+// LOJAS OFICIAIS
+// =====================================
+
 function renderOfficialStores(){
 
     if(!officialStoresContainer) return;
@@ -429,33 +433,29 @@ function renderOfficialStores(){
 
     officialStores.forEach(store=>{
 
-        const card = document.createElement("div");
+        officialStoresContainer.innerHTML += `
 
-        card.className = "storeCard";
-
-        card.onclick = ()=>{
-
-            location.href =
-
-            `official-store.html?store=${store.id}`;
-
-        };
-
-        card.innerHTML = `
+        <div class="storeCard"
+        onclick="location.href='official-store.html?store=${store.id}'">
 
             <img
-
-                class="storeLogo"
-
-                src="${store.logo}"
-
-                loading="lazy">
+            src="${store.logo}"
+            class="storeLogo"
+            loading="lazy">
 
             <div class="storeName">
 
                 ${store.name}
 
-                ${store.verified ? "✔️" : ""}
+                ${
+                    store.verified
+                    ?
+                    `<img
+                        src="images/stores/meta-verified.png"
+                        class="verifiedBadge">`
+                    :
+                    ""
+                }
 
             </div>
 
@@ -465,9 +465,15 @@ function renderOfficialStores(){
 
             </div>
 
-        `;
+            <div class="storeProducts">
 
-        officialStoresContainer.appendChild(card);
+                ${store.products} produtos
+
+            </div>
+
+        </div>
+
+        `;
 
     });
 
