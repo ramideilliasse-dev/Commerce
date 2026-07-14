@@ -3,7 +3,6 @@
 // Accueil Toma V2
 // =====================================
 
-alert("1 - homes.js démarre");
 
 import { db, auth } from "../firebase.js";
 
@@ -19,20 +18,19 @@ import {
 import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-alert("6 - firebase importé");
+
 import {
     updateCartCount
 } from "./cart.js";
-alert("4 - cart importé");
+
 import {
     showToast
 } from "./ui.js";
-alert("5 - ui importé");
+
 import {
     createProductCard
 } from "./product-card.js";
-alert("3 - product-card importé");
-alert("2 - imports supprimés");
+
 
 /* =====================================
    DOM
@@ -132,7 +130,7 @@ function cacheValid(){
 ===================================== */
 
 async function loadProducts(){
-alert("1 - loadProducts démarré");
+
     /* ---------- Cache ---------- */
 
     const cache = loadCache();
@@ -148,7 +146,7 @@ alert("1 - loadProducts démarré");
     /* ---------- Firebase ---------- */
 
     try{
-alert("2 - Avant Firestore");
+
         const q = query(
 
             collection(db,"products"),
@@ -158,7 +156,7 @@ alert("2 - Avant Firestore");
         );
 
         const snapshot = await getDocs(q);
-alert("3 - Après Firestore : " + snapshot.size);
+
         products = [];
 
         snapshot.forEach(docSnap=>{
@@ -174,12 +172,7 @@ alert("3 - Après Firestore : " + snapshot.size);
         });
 if(products.length){
 
-    alert(
-
-        "Première catégorie : " +
-
-        (products[0].category || "AUCUNE")
-
+    
     );
 
 }
