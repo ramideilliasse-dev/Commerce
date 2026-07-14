@@ -168,12 +168,7 @@ async function loadProducts(){
             });
 
         });
-if(products.length){
 
-    
-    );
-
-}
         saveCache(products);
 
         renderHome();
