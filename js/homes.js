@@ -357,69 +357,6 @@ function renderCategories(){
     });
 
 }
-/* =====================================
-   LOJAS OFICIAIS
-===================================== */
-
-const officialStores = [
-
-    {
-        id:"apple",
-        name:"Apple",
-        logo:"images/stores/apple.png",
-        verified:true
-    },
-
-    {
-        id:"samsung",
-        name:"Samsung",
-        logo:"images/stores/samsung.png",
-        verified:true
-    },
-
-    {
-        id:"xiaomi",
-        name:"Xiaomi",
-        logo:"images/stores/xiaomi.png",
-        verified:true
-    },
-
-    {
-        id:"huawei",
-        name:"Huawei",
-        logo:"images/stores/huawei.png",
-        verified:true
-    },
-
-    {
-        id:"nike",
-        name:"Nike",
-        logo:"images/stores/nike.png",
-        verified:true
-    },
-
-    {
-        id:"adidas",
-        name:"Adidas",
-        logo:"images/stores/adidas.png",
-        verified:true
-    },
-
-    {
-        id:"gucci",
-        name:"Gucci",
-        logo:"images/stores/gucci.png",
-        verified:true
-    },
-
-    {
-        id:"rolex",
-        name:"Rolex",
-        logo:"images/stores/rolex.png",
-        verified:true
-    }
-
-];
 
 // =====================================
 // LOJAS OFICIAIS
