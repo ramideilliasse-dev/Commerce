@@ -2,8 +2,6 @@
 // HOMES.JS
 // Accueil Toma V2
 // =====================================
-
-
 import { db, auth } from "../firebase.js";
 
 import {
@@ -305,29 +303,23 @@ function renderCategories(){
 
         const html = document.createElement("section");
 
-        html.innerHTML = `
+html.innerHTML = `
 
-        <div class="sectionHeader">
+<div class="sectionHeader">
 
-            <h2>${section.title}</h2>
+    <h2>${section.title}</h2>
 
-            <a href="products.html?cat=${encodeURIComponent(section.title)}">
+    <a href="products.html?cat=${encodeURIComponent(section.title)}">
 
-                Ver tudo
+        Ver tudo
 
-            </a>
+    </a>
 
-        </div>
+</div>
 
-        <div
+<div class="productsRow" id="${section.id}"></div>
 
-            class="productsRow"
-
-            id="${section.id}">
-
-        </div>
-
-        `;
+`;
 
         sectionsContainer.appendChild(html);
 
@@ -766,15 +758,13 @@ function renderCategoriesBar(){
 
         `;
 
-        item.onclick=()=>{
+        item.onclick = ()=>{
 
-            location.href=
+    location.href =
+    "products.html?cat=" +
+    encodeURIComponent(category.name);
 
-            "products.html?cat="+
-
-            encodeURIComponent(category.name);
-
-        };
+};
 
         categories.appendChild(item);
 
