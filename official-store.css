@@ -219,3 +219,76 @@ padding:12px;
 padding-bottom:100px;
 
 }
+.officialMessage{
+
+margin:40px 20px;
+
+padding:35px 25px;
+
+background:white;
+
+border-radius:26px;
+
+text-align:center;
+
+box-shadow:0 10px 35px rgba(0,0,0,.08);
+
+}
+
+.officialIcon{
+
+font-size:64px;
+
+color:#ff6a00;
+
+margin-bottom:15px;
+
+}
+
+.officialMessage h2{
+
+font-size:30px;
+
+font-weight:800;
+
+margin-bottom:15px;
+
+}
+
+.officialMessage p{
+
+font-size:16px;
+
+line-height:1.7;
+
+color:#666;
+
+margin-bottom:15px;
+
+}
+
+.officialStatus{
+
+display:flex;
+
+flex-direction:column;
+
+gap:12px;
+
+margin-top:25px;
+
+}
+
+.officialStatus span{
+
+background:#f5fff7;
+
+color:#2e7d32;
+
+padding:12px;
+
+border-radius:14px;
+
+font-weight:700;
+
+}
