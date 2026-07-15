@@ -1,1 +1,457 @@
+/* =========================================
+   STORES.CSS
+   Lojas Oficiais
+========================================= */
 
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+
+background:#f5f5f5;
+
+font-family:Arial,Helvetica,sans-serif;
+
+padding-bottom:95px;
+
+color:#222;
+
+}
+
+/* ==========================
+HEADER
+========================== */
+
+.header{
+
+height:65px;
+
+background:#ffffff;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+position:sticky;
+
+top:0;
+
+z-index:100;
+
+box-shadow:0 2px 10px rgba(0,0,0,.08);
+
+}
+
+.backBtn{
+
+position:absolute;
+
+left:15px;
+
+width:42px;
+
+height:42px;
+
+border:none;
+
+background:none;
+
+cursor:pointer;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+}
+
+.backBtn span{
+
+font-size:28px;
+
+color:#222;
+
+}
+
+.logo{
+
+font-size:28px;
+
+font-weight:bold;
+
+color:#111;
+
+}
+
+.logo span{
+
+color:#ff6a00;
+
+}
+
+/* ==========================
+RECHERCHE
+========================== */
+
+.searchContainer{
+
+padding:15px;
+
+position:relative;
+
+}
+
+.searchContainer input{
+
+width:100%;
+
+height:48px;
+
+border:none;
+
+border-radius:30px;
+
+background:#ffffff;
+
+padding-left:50px;
+
+font-size:16px;
+
+box-shadow:0 2px 8px rgba(0,0,0,.08);
+
+outline:none;
+
+}
+
+.searchIcon{
+
+position:absolute;
+
+left:30px;
+
+top:27px;
+
+color:#999;
+
+font-size:24px;
+
+}
+
+/* ==========================
+TITRE
+========================== */
+
+.pageTitle{
+
+padding:0 18px 20px;
+
+}
+
+.pageTitle h1{
+
+font-size:28px;
+
+margin-bottom:5px;
+
+}
+
+.pageTitle p{
+
+color:#666;
+
+font-size:15px;
+
+}
+/* ==========================
+SECTION
+========================== */
+
+.storesSection{
+
+padding:0 15px 20px;
+
+}
+
+.storesGrid{
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:16px;
+
+}
+
+/* ==========================
+CARTE LOJA
+========================== */
+
+.storeCard{
+
+background:#ffffff;
+
+border-radius:18px;
+
+padding:18px 12px;
+
+text-align:center;
+
+cursor:pointer;
+
+transition:.25s;
+
+box-shadow:0 4px 12px rgba(0,0,0,.08);
+
+}
+
+.storeCard:hover{
+
+transform:translateY(-4px);
+
+box-shadow:0 10px 20px rgba(0,0,0,.15);
+
+}
+
+.storeLogo{
+
+width:80px;
+
+height:80px;
+
+border-radius:50%;
+
+object-fit:cover;
+
+background:#ffffff;
+
+padding:8px;
+
+border:1px solid #eee;
+
+margin:auto;
+
+display:block;
+
+}
+
+/* ==========================
+NOM
+========================== */
+
+.storeName{
+
+margin-top:12px;
+
+font-size:17px;
+
+font-weight:700;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+gap:6px;
+
+flex-wrap:wrap;
+
+}
+
+/* ==========================
+BADGE META
+========================== */
+
+.verifiedBadge{
+
+width:20px;
+
+height:20px;
+
+object-fit:contain;
+
+}
+
+/* ==========================
+STATUT
+========================== */
+
+.storeStatus{
+
+margin-top:8px;
+
+display:inline-block;
+
+background:#e8f5e9;
+
+color:#2e7d32;
+
+padding:4px 12px;
+
+border-radius:20px;
+
+font-size:13px;
+
+font-weight:600;
+
+}
+
+/* ==========================
+NB PRODUITS
+========================== */
+
+.storeProducts{
+
+margin-top:10px;
+
+font-size:14px;
+
+color:#666;
+
+}
+
+/* ==========================
+RESPONSIVE
+========================== */
+
+@media(min-width:768px){
+
+.storesGrid{
+
+grid-template-columns:repeat(3,1fr);
+
+}
+
+}
+// =====================================
+// STORES.JS
+// Lojas Oficiais
+// =====================================
+
+const stores = [
+
+{
+id:"apple",
+name:"Apple",
+logo:"images/stores/apple.png",
+verified:true,
+products:0
+},
+
+{
+id:"samsung",
+name:"Samsung",
+logo:"images/stores/samsung.png",
+verified:true,
+products:0
+},
+
+{
+id:"xiaomi",
+name:"Xiaomi",
+logo:"images/stores/xiaomi.png",
+verified:true,
+products:0
+},
+
+{
+id:"huawei",
+name:"Huawei",
+logo:"images/stores/huawei.png",
+verified:true,
+products:0
+},
+
+{
+id:"sony",
+name:"Sony",
+logo:"images/stores/sony.png",
+verified:true,
+products:0
+},
+
+{
+id:"nike",
+name:"Nike",
+logo:"images/stores/nike.png",
+verified:true,
+products:0
+},
+
+{
+id:"adidas",
+name:"Adidas",
+logo:"images/stores/adidas.png",
+verified:true,
+products:0
+},
+
+{
+id:"gucci",
+name:"Gucci",
+logo:"images/stores/gucci.png",
+verified:true,
+products:0
+},
+
+{
+id:"rolex",
+name:"Rolex",
+logo:"images/stores/rolex.png",
+verified:true,
+products:0
+},
+
+{
+id:"louisvuitton",
+name:"Louis Vuitton",
+logo:"images/stores/louis-vuitton.png",
+verified:true,
+products:0
+},
+
+{
+id:"puma",
+name:"Puma",
+logo:"images/stores/puma.png",
+verified:true,
+products:0
+},
+
+{
+id:"realmadrid",
+name:"Real Madrid",
+logo:"images/stores/realmadrid.png",
+verified:true,
+products:0
+},
+
+{
+id:"barcelona",
+name:"FC Barcelona",
+logo:"images/stores/barcelona.png",
+verified:true,
+products:0
+},
+
+{
+id:"psg",
+name:"PSG",
+logo:"images/stores/psg.png",
+verified:true,
+products:0
+}
+
+];
+
+const storesGrid =
+document.getElementById("storesGrid");
+
+const searchInput =
+document.getElementById("searchInput");
