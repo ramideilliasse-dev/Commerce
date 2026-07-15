@@ -170,9 +170,15 @@ function renderStores(list = stores){
 
             <div class="storeProducts">
 
-                ${store.products} produtos
+    ${store.products} produtos
 
-            </div>
+</div>
+
+<button class="visitStoreBtn">
+
+    Visitar Loja
+
+</button>
 
         </div>
 
