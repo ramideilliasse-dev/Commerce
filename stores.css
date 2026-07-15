@@ -548,3 +548,48 @@ font-weight:700;
 backdrop-filter:blur(6px);
 
 }
+/* ===========================
+   VISIT STORE BUTTON
+=========================== */
+
+.visitStoreBtn{
+
+width:85%;
+
+height:44px;
+
+margin-top:18px;
+
+border:none;
+
+border-radius:14px;
+
+background:#ff6a00;
+
+color:white;
+
+font-size:15px;
+
+font-weight:700;
+
+cursor:pointer;
+
+transition:.25s;
+
+box-shadow:0 8px 18px rgba(255,106,0,.25);
+
+}
+
+.visitStoreBtn:hover{
+
+transform:translateY(-2px);
+
+background:#ff7d1f;
+
+}
+
+.visitStoreBtn:active{
+
+transform:scale(.97);
+
+}
