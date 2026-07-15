@@ -181,3 +181,26 @@ function renderStores(list = stores){
     });
 
 }
+// =====================================
+// RECHERCHE
+// =====================================
+
+searchInput.addEventListener("input", () => {
+
+    const text = searchInput.value.toLowerCase().trim();
+
+    const filtered = stores.filter(store =>
+
+        store.name.toLowerCase().includes(text)
+
+    );
+
+    renderStores(filtered);
+
+});
+
+// =====================================
+// START
+// =====================================
+
+renderStores();
