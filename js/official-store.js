@@ -11,7 +11,7 @@ ID DE LA MARQUE
 
 const params = new URLSearchParams(window.location.search);
 
-const storeId = params.get("id");
+const storeId = params.get("store");
 
 /* ===========================
 BOUTON RETOUR
@@ -115,16 +115,21 @@ banner:"images/stores/louis-vuitton-banner.jpg"
 
 const store = stores[storeId];
 
-if(store){
+if (!store) {
 
-document.getElementById("storeName").textContent =
-store.name;
+    alert("Loja não encontrada");
 
-document.getElementById("storeLogo").src =
-store.logo;
+} else {
 
-document.getElementById("storeBanner").src =
-store.banner;
+    document.getElementById("storeName").textContent = store.name;
+
+    document.getElementById("storeLogo").src = store.logo;
+
+    document.getElementById("storeLogo").alt = store.name;
+
+    document.getElementById("storeBanner").src = store.banner;
+
+    document.getElementById("storeBanner").alt = store.name;
 
 }
 /* ===========================
