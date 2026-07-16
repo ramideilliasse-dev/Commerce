@@ -93,11 +93,8 @@ Loja
 <div class="searchContainer">
 
 <input
-
 id="searchInput"
-
-type="text"
-
+data-i18n-placeholder="search"
 placeholder="Pesquisar produtos..."
 
 readonly
@@ -120,14 +117,14 @@ class="categories">
 
 <div class="sectionHeader">
 
-<h2 id="recommendedTitle">
+<h2 data-i18n="recommended">
 Recomendados
 </h2>
-<a id="recommendedSeeAll"
-href="products.html">
+
+<a href="products.html"
+data-i18n="seeAll">
 Ver tudo
 </a>
-
 </div>
 
 <div
@@ -141,17 +138,13 @@ class="productsRow">
 
 <div class="sectionHeader">
 
-<h2>
-
+<h2 data-i18n="officialStores">
 Lojas Oficiais
-
 </h2>
 
-<a
-href="stores.html">
-
+<a href="stores.html"
+data-i18n="seeAll">
 Ver tudo
-
 </a>
 
 </div>
@@ -180,21 +173,27 @@ id="toastBox">
 <div class="navIcon">
 <span class="material-symbols-rounded">home</span>
 </div>
-<span>Início</span>
+<span data-i18n="home">
+Início
+</span>
 </div>
 
 <div class="navItem" onclick="location.href='categories.html'">
 <div class="navIcon">
 <span class="material-symbols-rounded">grid_view</span>
 </div>
-<span>Categorias</span>
+<span data-i18n="categories">
+Categorias
+</span>
 </div>
 
 <div class="navItem" onclick="location.href='cart.html'">
 <div class="navIcon">
 <span class="material-symbols-rounded">shopping_cart</span>
 </div>
-<span>Carrinho</span>
+<span data-i18n="cart">
+Carrinho
+</span>
 
 <div id="bottomCartCount" class="bottomBadge">
 0
@@ -206,14 +205,19 @@ id="toastBox">
 <div class="navIcon">
 <span class="material-symbols-rounded">favorite</span>
 </div>
-<span>Favoritos</span>
+<span data-i18n="favorites">
+Favoritos
+</span>
+
 </div>
 
 <div class="navItem" onclick="location.href='settings.html'">
 <div class="navIcon">
 <span class="material-symbols-rounded">person</span>
 </div>
-<span>Conta</span>
+<span data-i18n="account">
+Conta
+</span>
 </div>
 
 </nav>
