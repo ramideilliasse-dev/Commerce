@@ -53,3 +53,38 @@ export function getLanguage(){
     return currentLanguage;
 
 }
+// ==========================
+// Traduire toute la page
+// ==========================
+
+export function translatePage(){
+
+    const dict = dictionaries[getLanguage()];
+
+    // Texte
+    document.querySelectorAll("[data-i18n]").forEach(el=>{
+
+        const key = el.dataset.i18n;
+
+        if(dict[key]){
+
+            el.textContent = dict[key];
+
+        }
+
+    });
+
+    // Placeholder
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{
+
+        const key = el.dataset.i18nPlaceholder;
+
+        if(dict[key]){
+
+            el.placeholder = dict[key];
+
+        }
+
+    });
+
+}
