@@ -589,12 +589,45 @@ document.getElementById("supportBtn").onclick=()=>{
 
 };
 
+// =====================================
+// TRADUÇÕES
+// =====================================
 
+function applyTranslations(){
+
+    const recommendedTitle =
+    document.getElementById("recommendedTitle");
+
+    if(recommendedTitle){
+
+        recommendedTitle.textContent =
+        t.recommended;
+
+    }
+
+    const recommendedSeeAll =
+    document.getElementById("recommendedSeeAll");
+
+    if(recommendedSeeAll){
+
+        recommendedSeeAll.textContent =
+        t.seeAll;
+
+    }
+
+    if(searchInput){
+
+        searchInput.placeholder =
+        t.search;
+
+    }
+
+}
 /* =====================================
    START
 ===================================== */
 window.addEventListener("load",()=>{
-
+applyTranslations();
     updateCartCount();
 
     renderPromoSlider();
