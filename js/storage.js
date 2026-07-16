@@ -105,10 +105,15 @@ export function addToCart(product) {
     } else {
 
         cart.push({
-            ...product,
-            quantity: 1
-        });
+    ...product,
 
+    image:
+        product.image ||
+        product.images?.[0] ||
+        "images/no-image.png",
+
+    quantity: 1
+});
     }
 
     saveCart(cart);
