@@ -83,3 +83,72 @@ transform:scale(.98);
 font-size:40px;
 
 }
+/* =========================
+   LANGUE
+========================= */
+
+.settingsCard{
+
+background:#fff;
+border-radius:24px;
+padding:22px;
+margin:20px;
+box-shadow:0 10px 30px rgba(0,0,0,.05);
+
+}
+
+.settingsTitle{
+
+font-size:26px;
+font-weight:700;
+margin-bottom:20px;
+
+}
+
+.languageItem{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:14px 0;
+cursor:pointer;
+
+}
+
+.languageLeft{
+
+display:flex;
+align-items:center;
+gap:16px;
+
+}
+
+.languageLeft .material-symbols-rounded{
+
+font-size:34px;
+color:#ff6a00;
+
+}
+
+.languageLeft strong{
+
+display:block;
+font-size:18px;
+color:#111;
+
+}
+
+.languageLeft p{
+
+margin-top:4px;
+font-size:14px;
+color:#777;
+
+}
+
+.languageItem>span{
+
+font-size:30px;
+color:#999;
+
+}
