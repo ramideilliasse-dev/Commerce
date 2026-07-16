@@ -29,7 +29,7 @@ import {
     createProductCard
 } from "./product-card.js";
 
-
+import { t } from "./lang/i18n.js";
 /* =====================================
    DOM
 ===================================== */
