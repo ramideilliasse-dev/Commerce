@@ -31,3 +31,7 @@ support:"Assistance",
 categories:"Catégories"
 
 };
+language: "Langue",
+english: "Anglais",
+french: "Français",
+portuguese: "Portugais",
