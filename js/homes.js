@@ -30,6 +30,7 @@ import {
 } from "./product-card.js";
 
 import { t } from "./lang/i18n.js";
+alert("homes.js chargé");
 /* =====================================
    DOM
 ===================================== */
@@ -126,7 +127,7 @@ function cacheValid(){
 /* =====================================
    CHARGEMENT DES PRODUITS
 ===================================== */
-
+alert("loadProducts démarre");
 async function loadProducts(){
 
     /* ---------- Cache ---------- */
@@ -198,6 +199,7 @@ async function loadProducts(){
     }
 
 }
+alert("Avant loadProducts");
 /* =====================================
    AFFICHAGE DE LA PAGE
 ===================================== */
