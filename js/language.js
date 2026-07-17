@@ -1,19 +1,15 @@
  import { setLanguage } from "./lang/i18n.js";
 
-document
+alert("language.js chargé");
 
-.querySelectorAll(".languageCard")
+document.querySelectorAll(".languageCard").forEach(card => {
 
-.forEach(card=>{
+    card.onclick = () => {
 
-card.onclick=()=>{
+        alert("Langue choisie : " + card.dataset.lang);
 
-setLanguage(
+        setLanguage(card.dataset.lang);
 
-card.dataset.lang
-
-);
-
-};
+    };
 
 });
