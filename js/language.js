@@ -1,6 +1,6 @@
  import { setLanguage } from "./lang/i18n.js";
-
-alert("language.js chargé");
+import { translatePage } from "./lang/i18n.js";
+translatePage();
 
 document.querySelectorAll(".languageCard").forEach(card => {
 
