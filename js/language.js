@@ -6,10 +6,10 @@ document.querySelectorAll(".languageCard").forEach(card => {
 
     card.onclick = () => {
 
-        alert("Langue choisie : " + card.dataset.lang);
+    localStorage.setItem("toma_language", card.dataset.lang);
 
-        setLanguage(card.dataset.lang);
+    alert(localStorage.getItem("toma_language"));
 
-    };
+    setLanguage(card.dataset.lang);
 
-});
+};
