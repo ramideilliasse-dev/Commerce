@@ -629,7 +629,7 @@ function applyTranslations(){
    START
 ===================================== */
 window.addEventListener("load",()=>{
-applyTranslations();
+
     updateCartCount();
 
     renderPromoSlider();
