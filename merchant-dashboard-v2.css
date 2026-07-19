@@ -934,3 +934,96 @@ height:220px;
 /* =====================================
 FIN
 ===================================== */
+/* ===========================
+SIDEBAR COLLAPSE
+=========================== */
+
+.sidebar.collapsed{
+
+width:90px;
+
+}
+
+.sidebar.collapsed .logo h2{
+
+display:none;
+
+}
+
+.sidebar.collapsed .merchantCard div{
+
+display:none;
+
+}
+
+.sidebar.collapsed .menu a{
+
+justify-content:center;
+
+}
+
+.sidebar.collapsed .menu a{
+
+font-size:0;
+
+}
+
+.sidebar.collapsed .menu .material-symbols-rounded{
+
+font-size:28px;
+
+}
+
+.content.expanded{
+
+margin-left:90px;
+
+}
+
+/* ===========================
+MENU BUTTON
+=========================== */
+
+.headerLeft{
+
+display:flex;
+
+align-items:center;
+
+gap:18px;
+
+}
+
+.toggleSidebar{
+
+width:52px;
+
+height:52px;
+
+border:none;
+
+background:#ffffff;
+
+border-radius:16px;
+
+cursor:pointer;
+
+box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+transition:.25s;
+
+}
+
+.toggleSidebar:hover{
+
+background:#ff6a00;
+
+color:white;
+
+}
+
+.toggleSidebar .material-symbols-rounded{
+
+font-size:28px;
+
+}
