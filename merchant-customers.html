@@ -7,9 +7,13 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>clientes | Toma</title>
+<title>Clientes | Toma</title>
 
 <link rel="stylesheet" href="merchant-dashboard-v2.css">
+
+<link rel="stylesheet" href="merchant-customers.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
 
@@ -17,9 +21,15 @@
 
 <body>
 
-<div style="padding:30px;">
+<div class="productsPage">
 
-<a href="merchant-dashboard-v2.html">
+<header class="productsHeader">
+
+<div class="leftHeader">
+
+<a href="merchant-dashboard-v2.html"
+
+class="backButton">
 
 <span class="material-symbols-rounded">
 
@@ -27,23 +37,89 @@ arrow_back
 
 </span>
 
-Voltar
-
 </a>
 
-<h1 style="margin-top:20px;">
+<div>
 
-clientes
+<h1>
+
+Clientes
 
 </h1>
 
 <p>
 
-Página em desenvolvimento...
+Todos os clientes da sua loja.
 
 </p>
 
 </div>
+
+</div>
+
+</header>
+
+<section class="searchSection">
+
+<div class="searchBox">
+
+<span class="material-symbols-rounded">
+
+search
+
+</span>
+
+<input
+
+type="text"
+
+id="searchCustomer"
+
+placeholder="Pesquisar cliente...">
+
+</div>
+
+</section>
+
+<section class="filters">
+
+<button class="filter active">
+
+Todos
+
+</button>
+
+<button class="filter">
+
+Novos
+
+</button>
+
+<button class="filter">
+
+Mais Compras
+
+</button>
+
+</section>
+
+<section
+
+id="customersGrid"
+
+class="customersGrid">
+
+<!-- Clientes aparecerão aqui -->
+
+</section>
+
+</div>
+
+<script type="module"
+
+src="./js/merchant-customers.js">
+
+</script>
 
 </body>
 
