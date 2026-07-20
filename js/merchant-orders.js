@@ -137,8 +137,7 @@ list.forEach(order=>{
 
 ordersContainer.innerHTML += `
 
-<div class="orderCard">
-
+<div class="orderCard" onclick="openOrder('${order.id}')">
 <div class="orderInfo">
 
 <h3>
@@ -250,3 +249,13 @@ return(
 renderOrders(result);
 
 });
+/* ==========================
+OPEN ORDER
+========================== */
+
+window.openOrder = function(orderId){
+
+location.href =
+`merchant-order-details.html?id=${orderId}`;
+
+};
