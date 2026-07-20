@@ -1,0 +1,110 @@
+ <!DOCTYPE html>
+<html lang="pt">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Pedidos | Toma</title>
+
+<link rel="stylesheet" href="merchant-dashboard-v2.css">
+
+<link rel="stylesheet" href="merchant-orders.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="productsPage">
+
+<header class="productsHeader">
+
+<div class="leftHeader">
+
+<a href="merchant-dashboard-v2.html" class="backButton">
+
+<span class="material-symbols-rounded">
+
+arrow_back
+
+</span>
+
+</a>
+
+<div>
+
+<h1>Pedidos</h1>
+
+<p>Gerencie todos os pedidos da sua loja.</p>
+
+</div>
+
+</div>
+
+</header>
+
+<section class="searchSection">
+
+<div class="searchBox">
+
+<span class="material-symbols-rounded">
+
+search
+
+</span>
+
+<input
+
+type="text"
+
+id="searchOrder"
+
+placeholder="Pesquisar pedido...">
+
+</div>
+
+</section>
+
+<section class="filters">
+
+<button class="filter active">Todos</button>
+
+<button class="filter">Pendentes</button>
+
+<button class="filter">Confirmados</button>
+
+<button class="filter">Enviados</button>
+
+<button class="filter">Entregues</button>
+
+<button class="filter">Cancelados</button>
+
+</section>
+
+<section
+
+id="ordersContainer"
+
+class="ordersContainer">
+
+<!-- Pedidos aparecerão aqui -->
+
+</section>
+
+</div>
+
+<script type="module"
+
+src="./js/merchant-orders.js">
+
+</script>
+
+</body>
+
+</html>
