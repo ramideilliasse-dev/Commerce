@@ -7,9 +7,13 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Produtos | Toma</title>
+<title>Meus Produtos | Toma</title>
 
 <link rel="stylesheet" href="merchant-dashboard-v2.css">
+
+<link rel="stylesheet" href="merchant-products.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
 
@@ -17,9 +21,13 @@
 
 <body>
 
-<div style="padding:30px;">
+<div class="productsPage">
 
-<a href="merchant-dashboard-v2.html">
+<header class="productsHeader">
+
+<div class="leftHeader">
+
+<a href="merchant-dashboard-v2.html" class="backButton">
 
 <span class="material-symbols-rounded">
 
@@ -27,23 +35,107 @@ arrow_back
 
 </span>
 
-Voltar
-
 </a>
 
-<h1 style="margin-top:20px;">
+<div>
 
-Produtos
+<h1>
+
+Meus Produtos
 
 </h1>
 
 <p>
 
-Página em desenvolvimento...
+Gerencie todos os produtos da sua loja.
 
 </p>
 
 </div>
+
+</div>
+
+<a href="add-product.html" class="newProductBtn">
+
+<span class="material-symbols-rounded">
+
+add
+
+</span>
+
+Novo Produto
+
+</a>
+
+</header>
+
+<section class="searchSection">
+
+<div class="searchBox">
+
+<span class="material-symbols-rounded">
+
+search
+
+</span>
+
+<input
+
+type="text"
+
+id="searchProduct"
+
+placeholder="Pesquisar produto...">
+
+</div>
+
+</section>
+
+<section class="filters">
+
+<button class="filter active">
+
+Todos
+
+</button>
+
+<button class="filter">
+
+Ativos
+
+</button>
+
+<button class="filter">
+
+Sem Stock
+
+</button>
+
+<button class="filter">
+
+Promoções
+
+</button>
+
+</section>
+
+<section
+
+id="productsGrid"
+
+class="productsGrid">
+
+<!-- Les produits apparaîtront ici automatiquement -->
+
+</section>
+
+</div>
+
+<script type="module"
+
+src="./js/merchant-products.js">
+
+</script>
 
 </body>
 
