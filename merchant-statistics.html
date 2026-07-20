@@ -7,9 +7,13 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>estatisticas | Toma</title>
+<title>Estatísticas | Toma</title>
 
 <link rel="stylesheet" href="merchant-dashboard-v2.css">
+
+<link rel="stylesheet" href="merchant-statistics.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
 
@@ -17,9 +21,15 @@
 
 <body>
 
-<div style="padding:30px;">
+<div class="productsPage">
 
-<a href="merchant-dashboard-v2.html">
+<header class="productsHeader">
+
+<div class="leftHeader">
+
+<a href="merchant-dashboard-v2.html"
+
+class="backButton">
 
 <span class="material-symbols-rounded">
 
@@ -27,23 +37,171 @@ arrow_back
 
 </span>
 
-Voltar
-
 </a>
 
-<h1 style="margin-top:20px;">
+<div>
 
-estatisticas
+<h1>
+
+Estatísticas
 
 </h1>
 
 <p>
 
-Página em desenvolvimento...
+Acompanhe o desempenho da sua loja.
 
 </p>
 
 </div>
+
+</div>
+
+</header>
+
+<section class="statsGrid">
+
+<div class="statCard">
+
+<span class="material-symbols-rounded statIcon orange">
+
+payments
+
+</span>
+
+<h4>Receita Total</h4>
+
+<h2 id="totalRevenue">
+
+0 Kz
+
+</h2>
+
+</div>
+
+<div class="statCard">
+
+<span class="material-symbols-rounded statIcon blue">
+
+shopping_bag
+
+</span>
+
+<h4>Pedidos</h4>
+
+<h2 id="totalOrders">
+
+0
+
+</h2>
+
+</div>
+
+<div class="statCard">
+
+<span class="material-symbols-rounded statIcon green">
+
+inventory_2
+
+</span>
+
+<h4>Produtos Vendidos</h4>
+
+<h2 id="soldProducts">
+
+0
+
+</h2>
+
+</div>
+
+<div class="statCard">
+
+<span class="material-symbols-rounded statIcon purple">
+
+group
+
+</span>
+
+<h4>Clientes</h4>
+
+<h2 id="totalCustomers">
+
+0
+
+</h2>
+
+</div>
+
+</section>
+
+<section class="dashboardContent">
+
+<div class="chartCard">
+
+<div class="cardHeader">
+
+<h2>
+
+Vendas Mensais
+
+</h2>
+
+</div>
+
+<div id="salesChart"
+
+class="chartPlaceholder">
+
+<span class="material-symbols-rounded">
+
+monitoring
+
+</span>
+
+<p>
+
+O gráfico aparecerá aqui.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="ordersCard">
+
+<div class="cardHeader">
+
+<h2>
+
+Resumo
+
+</h2>
+
+</div>
+
+<div id="statisticsSummary">
+
+<p>Total de vendas: <strong>0 Kz</strong></p>
+
+<p>Pedidos concluídos: <strong>0</strong></p>
+
+<p>Clientes ativos: <strong>0</strong></p>
+
+<p>Produto mais vendido: <strong>--</strong></p>
+
+</div>
+
+</div>
+
+</section>
+
+<script type="module"
+
+src="./js/merchant-statistics.js">
+
+</script>
 
 </body>
 
