@@ -7,9 +7,13 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>configurações | Toma</title>
+<title>Configurações | Toma</title>
 
 <link rel="stylesheet" href="merchant-dashboard-v2.css">
+
+<link rel="stylesheet" href="merchant-settings.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
 
@@ -17,9 +21,15 @@
 
 <body>
 
-<div style="padding:30px;">
+<div class="productsPage">
 
-<a href="merchant-dashboard-v2.html">
+<header class="productsHeader">
+
+<div class="leftHeader">
+
+<a href="merchant-dashboard-v2.html"
+
+class="backButton">
 
 <span class="material-symbols-rounded">
 
@@ -27,23 +37,99 @@ arrow_back
 
 </span>
 
-Voltar
-
 </a>
 
-<h1 style="margin-top:20px;">
+<div>
 
-configurações
+<h1>
+
+Configurações
 
 </h1>
 
 <p>
 
-Página em desenvolvimento...
+Gerencie a configuração da sua loja.
 
 </p>
 
 </div>
+
+</div>
+
+</header>
+
+<section class="settingsContainer">
+
+<div class="settingsCard">
+
+<h2>Informações da Loja</h2>
+
+<input type="text"
+
+id="shopName"
+
+placeholder="Nome da loja">
+
+<input type="text"
+
+id="shopPhone"
+
+placeholder="Telefone">
+
+<input type="text"
+
+id="shopCity"
+
+placeholder="Cidade">
+
+<textarea
+
+id="shopDescription"
+
+placeholder="Descrição da loja"></textarea>
+
+<button id="saveShopBtn">
+
+Guardar alterações
+
+</button>
+
+</div>
+
+<div class="settingsCard">
+
+<h2>Preferências</h2>
+
+<button id="changeLogoBtn">
+
+Alterar Logótipo
+
+</button>
+
+<button id="changeBannerBtn">
+
+Alterar Banner
+
+</button>
+
+<button id="logoutBtn">
+
+Terminar Sessão
+
+</button>
+
+</div>
+
+</section>
+
+</div>
+
+<script type="module"
+
+src="./js/merchant-settings.js">
+
+</script>
 
 </body>
 
