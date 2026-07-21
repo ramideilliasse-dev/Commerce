@@ -1,10 +1,14 @@
  import { db } from "../firebase.js";
 
 import {
-doc,
-getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+doc,
+
+getDoc,
+
+updateDoc
+
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 const params = new URLSearchParams(window.location.search);
 
 const orderId = params.get("id");
@@ -113,12 +117,19 @@ ${renderProducts(order.products)}
 
 <div class="detailButtons">
 
-<button id="changeStatus">
+<select id="changeStatus">
 
-Alterar Status
+<option>Pendente</option>
 
-</button>
+<option>Confirmado</option>
 
+<option>Enviado</option>
+
+<option>Entregue</option>
+
+<option>Cancelado</option>
+
+</select>
 <button id="contactClient">
 
 WhatsApp
@@ -148,7 +159,43 @@ window.open(
 }
 
 };
+const statusSelect =
 
+document.getElementById("changeStatus");
+
+statusSelect.value =
+
+order.status || "Pendente";
+
+statusSelect.onchange = async()=>{
+
+try{
+
+await updateDoc(
+
+doc(db,"orders",orderId),
+
+{
+
+status:statusSelect.value
+
+}
+
+);
+
+alert("Status atualizado.");
+
+}
+
+catch(error){
+
+console.error(error);
+
+alert("Erro ao atualizar o status.");
+
+}
+
+};
 }
 
 function renderProducts(products){
