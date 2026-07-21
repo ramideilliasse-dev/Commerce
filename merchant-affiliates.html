@@ -1,0 +1,170 @@
+ <!DOCTYPE html>
+<html lang="pt">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Influenciadores | Toma</title>
+
+<link rel="stylesheet" href="merchant-dashboard-v2.css">
+
+<link rel="stylesheet" href="merchant-affiliates.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="productsPage">
+
+<header class="productsHeader">
+
+<div class="leftHeader">
+
+<a href="merchant-dashboard-v2.html" class="backButton">
+
+<span class="material-symbols-rounded">
+
+arrow_back
+
+</span>
+
+</a>
+
+<div>
+
+<h1>Influenciadores</h1>
+
+<p>
+
+Gerencie os seus parceiros.
+
+</p>
+
+</div>
+
+</div>
+
+<button id="addAffiliateBtn" class="addProductBtn">
+
+<span class="material-symbols-rounded">
+
+person_add
+
+</span>
+
+Novo Influenciador
+
+</button>
+
+</header>
+
+<!-- FORMULÁRIO -->
+
+<section class="affiliateForm">
+
+<input
+
+type="text"
+
+id="affiliateName"
+
+placeholder="Nome do influenciador">
+
+<input
+
+type="tel"
+
+id="affiliatePhone"
+
+placeholder="WhatsApp">
+
+<input
+
+type="text"
+
+id="affiliateInstagram"
+
+placeholder="Instagram">
+
+<input
+
+type="text"
+
+id="affiliateFacebook"
+
+placeholder="Facebook">
+
+<input
+
+type="text"
+
+id="affiliateTikTok"
+
+placeholder="TikTok">
+
+<input
+
+type="text"
+
+id="affiliateCoupon"
+
+placeholder="Cupom (Ex: MARIA10)">
+
+<button id="saveAffiliateBtn">
+
+Guardar
+
+</button>
+
+</section>
+
+<!-- LISTA -->
+
+<section
+
+id="affiliateList"
+
+class="affiliateList">
+
+<div class="emptyCard">
+
+<span class="material-symbols-rounded">
+
+groups
+
+</span>
+
+<h2>
+
+Nenhum influenciador
+
+</h2>
+
+<p>
+
+Adicione o primeiro parceiro.
+
+</p>
+
+</div>
+
+</section>
+
+</div>
+
+<script type="module"
+
+src="./js/merchant-affiliates.js">
+
+</script>
+
+</body>
+
+</html>
