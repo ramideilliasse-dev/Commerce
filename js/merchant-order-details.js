@@ -99,10 +99,21 @@ Pedido #${orderId.slice(0,6)}
 
 <strong>Status</strong>
 
-<span>${order.status || "Pendente"}</span>
+<select id="changeStatus">
+
+<option value="Pendente">Pendente</option>
+
+<option value="Confirmado">Confirmado</option>
+
+<option value="Enviado">Enviado</option>
+
+<option value="Entregue">Entregue</option>
+
+<option value="Cancelado">Cancelado</option>
+
+</select>
 
 </div>
-
 <h3>
 
 Produtos
@@ -117,19 +128,6 @@ ${renderProducts(order.products)}
 
 <div class="detailButtons">
 
-<select id="changeStatus">
-
-<option>Pendente</option>
-
-<option>Confirmado</option>
-
-<option>Enviado</option>
-
-<option>Entregue</option>
-
-<option>Cancelado</option>
-
-</select>
 <button id="contactClient">
 
 WhatsApp
@@ -137,7 +135,6 @@ WhatsApp
 </button>
 
 </div>
-
 </div>
 
 `;
