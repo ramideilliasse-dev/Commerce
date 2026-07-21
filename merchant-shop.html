@@ -1,302 +1,128 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Loja</title>
 
-<style>
+<title>Minha Loja | Toma</title>
 
-body{
-margin:0;
-font-family:Arial;
-background:#f5f5f5;
-}
+<link rel="stylesheet" href="merchant-dashboard-v2.css">
 
-/* BANNER */
-.banner{
-height:120px;
-background:linear-gradient(135deg,#ff6a00,#ff8c42);
-display:flex;
-align-items:center;
-justify-content:center;
-color:white;
-font-size:22px;
-font-weight:bold;
-}
+<link rel="stylesheet" href="merchant-shop.css">
 
-/* SHOP CARD */
-.shopCard{
-background:white;
-margin:-30px 15px 10px;
-padding:15px;
-border-radius:12px;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
-}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-/* NAME */
-.shopName{
-font-size:20px;
-font-weight:bold;
-text-align:center;
-}
-
-/* BADGE */
-.badge{
-background:#1aa34a;
-color:white;
-padding:3px 8px;
-border-radius:12px;
-font-size:12px;
-margin-left:5px;
-}
-
-/* INFO */
-.info{
-font-size:13px;
-color:#555;
-margin-top:8px;
-text-align:center;
-}
-
-/* DESCRIPTION */
-.description{
-font-size:14px;
-color:#333;
-margin-top:10px;
-line-height:1.4;
-}
-
-/* WHATSAPP */
-.whatsappBox{
-margin-top:10px;
-font-size:13px;
-color:#444;
-background:#f1f1f1;
-padding:8px;
-border-radius:8px;
-}
-
-/* BUTTON */
-.contactBtn{
-margin-top:10px;
-background:#25D366;
-color:white;
-border:none;
-padding:10px;
-border-radius:8px;
-width:100%;
-font-size:15px;
-cursor:pointer;
-}
-
-/* PRODUCTS GRID */
-.products{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:10px;
-padding:10px;
-}
-
-/* CARD */
-.card{
-background:white;
-border-radius:12px;
-padding:8px;
-box-shadow:0 2px 6px rgba(0,0,0,0.08);
-cursor:pointer;
-transition:0.2s;
-}
-
-.card:hover{
-transform:scale(1.02);
-}
-
-.card img{
-width:100%;
-height:140px;
-object-fit:cover;
-border-radius:8px;
-}
-
-/* TEXT */
-.name{
-font-size:13px;
-font-weight:bold;
-margin-top:5px;
-}
-
-.price{
-color:#ff6a00;
-font-weight:bold;
-font-size:14px;
-}
-.soldOut{
-background:red;
-color:white;
-font-weight:bold;
-font-size:12px;
-padding:4px 8px;
-border-radius:8px;
-display:inline-block;
-margin-top:5px;
-}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
 
 </head>
 
 <body>
 
-<div id="banner" class="banner">Carregando...</div>
+<div class="productsPage">
 
-<div id="shopCard" class="shopCard"></div>
+<header class="productsHeader">
 
-<div id="products" class="products"></div>
+<div class="leftHeader">
 
-<script type="module">
+<a href="merchant-dashboard-v2.html" class="backButton">
 
-import { db } from "./firebase.js"
-import {
-collection,getDocs,query,where,doc,getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+<span class="material-symbols-rounded">
 
-const urlParams = new URLSearchParams(window.location.search)
-const merchantId = urlParams.get("id")
+arrow_back
 
-let shopData=null
-let shopProducts = {}
-async function loadShop(){
+</span>
 
-/* 🔥 LOAD SHOP */
-const userSnap = await getDoc(doc(db,"users",merchantId))
-shopData = userSnap.data() || {}
+</a>
 
-/* BANNER */
-document.getElementById("banner").innerText = shopData?.shopName || "Loja"
+<div>
 
-/* LOAD PRODUCTS */
-const q = query(
-collection(db,"products"),
-where("merchantId","==",merchantId)
-)
+<h1>Minha Loja</h1>
 
-const snap = await getDocs(q)
+<p>Gerencie o perfil da sua loja.</p>
 
-let count = snap.size
-
-/* 🔥 SHOP CARD PRO */
-document.getElementById("shopCard").innerHTML = `
-<div class="shopName">
-${shopData?.shopName || "Loja"}
-<span class="badge">Verificado</span>
 </div>
 
-<div class="info">
-${count} produtos disponíveis
 </div>
 
-${shopData?.description ? `
-<div class="description">
-📝 ${shopData.description}
-</div>
-` : ""}
+</header>
 
-${shopData?.whatsapp ? `
-<div class="whatsappBox">
-📞 WhatsApp: ${shopData.whatsapp}
-</div>
-` : ""}
+<section class="shopProfile">
 
-<button class="contactBtn" onclick="contactShop()">
-💬 Falar no WhatsApp
+<div class="shopBanner">
+
+<img id="shopBannerImage"
+
+src="assets/default-banner.jpg"
+
+alt="Banner da Loja">
+
+</div>
+
+<div class="shopInfoCard">
+
+<img id="shopLogo"
+
+class="shopLogo"
+
+src="assets/default-store.png"
+
+alt="Logo da Loja">
+
+<h2 id="shopTitle">
+
+Minha Loja
+
+</h2>
+
+<p id="shopDescription">
+
+Descrição da loja...
+
+</p>
+
+<div class="shopDetails">
+
+<p><strong>📍 Cidade:</strong> <span id="shopCity">-</span></p>
+
+<p><strong>📞 Telefone:</strong> <span id="shopPhone">-</span></p>
+
+<p><strong>⭐ Avaliação:</strong> <span>5.0</span></p>
+
+<p><strong>📦 Produtos:</strong> <span id="shopProducts">0</span></p>
+
+</div>
+
+<div class="shopButtons">
+
+<button id="editShopBtn">
+
+Editar Loja
+
 </button>
-`
 
-/* PRODUCTS */
-let html=""
+<button id="shareShopBtn">
 
-snap.forEach(docSnap=>{
+Partilhar Loja
 
-const p = docSnap.data()
-shopProducts[docSnap.id] = p
-const soldOut =
-Number(p.stock || 0) <= 0
-
-html += `
-<div class="card"
-onclick="openProduct('${docSnap.id}')">
-
-<img
-loading="lazy"
-src="${p.images?.[0] || ''}">
-
-<div class="name">
-${p.name}
-</div>
-
-${
-soldOut
-?
-`<div class="soldOut">
-ESGOTADO
-</div>`
-:
-`<div class="price">
-${p.price} Kz
-</div>`
-}
+</button>
 
 </div>
-`
 
-})
+</div>
 
-document.getElementById("products").innerHTML = html
+</section>
 
-}
+</div>
 
-/* OPEN PRODUCT */
-window.openProduct = function(id){
+<script type="module"
 
-const product = shopProducts[id]
-
-if(
-product &&
-Number(product.stock || 0) <= 0
-){
-
-alert("Produto esgotado")
-
-return
-
-}
-
-localStorage.setItem(
-"selectedProduct",
-id
-)
-
-location.href = "product.html"
-
-}
-
-/* WHATSAPP */
-window.contactShop = function(){
-
-if(!shopData?.whatsapp){
-alert("Número indisponível ❌")
-return
-}
-
-const msg = encodeURIComponent("Olá, vi sua loja e gostaria de mais informações.")
-const url = "https://wa.me/" + shopData.whatsapp + "?text=" + msg
-
-window.open(url,"_blank")
-}
-
-loadShop()
+src="./js/merchant-shop.js">
 
 </script>
 
 </body>
-</html>
+
+</html> 
