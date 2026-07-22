@@ -351,3 +351,66 @@ font-size:70px;
 display:block;
 margin-bottom:10px;
 }
+/* =====================================
+FILTER CHIPS
+===================================== */
+
+.productsFilters{
+
+display:flex;
+
+gap:12px;
+
+overflow-x:auto;
+
+padding:5px 0 15px;
+
+scrollbar-width:none;
+
+}
+
+.productsFilters::-webkit-scrollbar{
+
+display:none;
+
+}
+
+.filterChip{
+
+flex:none;
+
+padding:12px 22px;
+
+border:none;
+
+border-radius:18px;
+
+background:#f2f2f2;
+
+font-size:15px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.25s;
+
+white-space:nowrap;
+
+color:#444;
+
+}
+
+.filterChip.active{
+
+background:#ff6b00;
+
+color:#fff;
+
+}
+
+.filterChip:hover{
+
+transform:translateY(-2px);
+
+}
