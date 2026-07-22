@@ -70,42 +70,53 @@ placeholder="Pesquisar pedido...">
 </div>
 
 </section>
-
 <div class="ordersFilters">
 
-<button class="orderChip active">
+<button class="orderChip active" data-status="all">
 
 Todos
 
+<span id="countAll">0</span>
+
 </button>
 
-<button class="orderChip">
+<button class="orderChip" data-status="Pendente">
 
 Pendentes
 
+<span id="countPending">0</span>
+
 </button>
 
-<button class="orderChip">
+<button class="orderChip" data-status="Confirmado">
 
 Confirmados
 
+<span id="countConfirmed">0</span>
+
 </button>
 
-<button class="orderChip">
+<button class="orderChip" data-status="Enviado">
 
 Enviados
 
+<span id="countSent">0</span>
+
 </button>
 
-<button class="orderChip">
+<button class="orderChip" data-status="Entregue">
 
 Entregues
 
+<span id="countDelivered">0</span>
+
 </button>
 
-<button class="orderChip">
+<button class="orderChip" data-status="Cancelado">
 
 Cancelados
+
+<span id="countCanceled">0</span>
 
 </button>
 
