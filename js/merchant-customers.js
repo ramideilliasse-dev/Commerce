@@ -6,40 +6,34 @@
 import { db, auth } from "../firebase.js";
 
 import {
-
 collection,
-
 query,
-
 where,
-
 getDocs
-
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import {
-
 onAuthStateChanged
-
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 /* =====================================
 DOM
 ===================================== */
 
-const customersGrid =
-document.getElementById("customersGrid");
+const customersGrid=document.getElementById("customersGrid");
+const searchInput=document.getElementById("searchCustomer");
 
-const searchInput =
-document.getElementById("searchCustomer");
+const countAll=document.getElementById("countAllCustomers");
+const countNew=document.getElementById("countNewCustomers");
+const countBest=document.getElementById("countBestCustomers");
 
 /* =====================================
 VARIABLES
 ===================================== */
 
 let customers=[];
-
 let filteredCustomers=[];
+let currentFilter="all";
 
 /* =====================================
 AUTH
@@ -47,15 +41,14 @@ AUTH
 
 onAuthStateChanged(auth,async(user)=>{
 
-    if(!user){
+if(!user){
 
-        location.href="login.html";
+location.href="login.html";
+return;
 
-        return;
+}
 
-    }
-
-    await loadCustomers(user.uid);
+await loadCustomers(user.uid);
 
 });
 
@@ -65,25 +58,79 @@ LOAD CUSTOMERS
 
 async function loadCustomers(uid){
 
-    try{
+try{
 
-        // Pour l'instant, on prépare la structure.
-        // Plus tard, on chargera les clients à partir
-        // des commandes de ce commerçant.
+const q=query(
+collection(db,"orders"),
+where("merchantId","==",uid)
+);
 
-        customers=[];
+const snapshot=await getDocs(q);
 
-        filteredCustomers=[...customers];
+const map={};
 
-        renderCustomers();
+snapshot.forEach(docSnap=>{
 
-    }
+const order=docSnap.data();
 
-    catch(error){
+const customerId=
+order.customerId||
+order.phone||
+docSnap.id;
 
-        console.error(error);
+if(!map[customerId]){
 
-    }
+map[customerId]={
+
+id:customerId,
+name:order.customerName||"Cliente",
+phone:order.phone||"",
+city:order.city||"-",
+orders:0,
+totalSpent:0,
+lastOrder:order.createdAt||null
+
+};
+
+}
+
+map[customerId].orders++;
+
+map[customerId].totalSpent+=Number(order.total||0);
+
+});
+
+customers=Object.values(map);
+
+filteredCustomers=[...customers];
+
+updateCounters();
+
+renderCustomers();
+
+}catch(error){
+
+console.error(error);
+
+}
+
+}
+
+/* =====================================
+COUNTERS
+===================================== */
+
+function updateCounters(){
+
+countAll.textContent=customers.length;
+
+countNew.textContent=
+
+customers.filter(c=>c.orders===1).length;
+
+countBest.textContent=
+
+customers.filter(c=>c.orders>=5).length;
 
 }
 
@@ -93,117 +140,147 @@ RENDER
 
 function renderCustomers(){
 
-    customersGrid.innerHTML="";
+customersGrid.innerHTML="";
 
-    if(filteredCustomers.length===0){
+if(filteredCustomers.length===0){
 
-        customersGrid.innerHTML=`
+customersGrid.innerHTML=`
 
-        <div class="emptyCard">
+<div class="emptyCard">
 
-            <span class="material-symbols-rounded">
+<span class="material-symbols-rounded">
 
-                group
+group
 
-            </span>
+</span>
 
-            <h2>
+<h2>
 
-                Nenhum cliente encontrado
+Nenhum cliente encontrado
 
-            </h2>
+</h2>
 
-            <p>
+<p>
 
-                Os clientes aparecerão aqui depois das primeiras vendas.
+Os clientes aparecerão aqui depois das primeiras vendas.
 
-            </p>
+</p>
 
-        </div>
+</div>
 
-        `;
+`;
 
-        return;
+return;
 
-    }
+}
 
-    filteredCustomers.forEach(customer=>{
+filteredCustomers.forEach(customer=>{
 
-        customersGrid.innerHTML+=`
+customersGrid.innerHTML+=`
 
-        <div class="customerCard">
+<div class="customerCard">
 
-            <div class="customerTop">
+<div class="customerTop">
 
-                <img
+<img
+class="customerAvatar"
+src="images/default-avatar.png">
 
-                class="customerAvatar"
+<div>
 
-                src="${customer.photo||'images/default-avatar.png'}">
+<div class="customerName">
 
-                <div>
+${customer.name}
 
-                    <div class="customerName">
+</div>
 
-                        ${customer.name}
+<div class="customerInfo">
 
-                    </div>
+${customer.phone}
 
-                    <div class="customerInfo">
+</div>
 
-                        ${customer.phone||''}
+</div>
 
-                    </div>
+</div>
 
-                </div>
+<div class="customerStats">
 
-            </div>
+<div>
 
-            <div class="customerStats">
+<h3>
 
-                <div>
+${customer.orders}
 
-                    <h3>${customer.orders||0}</h3>
+</h3>
 
-                    <p>Pedidos</p>
+<p>
 
-                </div>
+Pedidos
 
-                <div>
+</p>
 
-                    <h3>${customer.city||'-'}</h3>
+</div>
 
-                    <p>Cidade</p>
+<div>
 
-                </div>
+<h3>
 
-            </div>
+${customer.totalSpent.toLocaleString()} Kz
 
-            <div class="customerActions">
+</h3>
 
-                <button
+<p>
 
-                class="contactBtn">
+Total gasto
 
-                    Contactar
+</p>
 
-                </button>
+</div>
 
-                <button
+<div>
 
-                class="profileBtn">
+<h3>
 
-                    Perfil
+${customer.city}
 
-                </button>
+</h3>
 
-            </div>
+<p>
 
-        </div>
+Cidade
 
-        `;
+</p>
 
-    });
+</div>
+
+</div>
+
+<div class="customerActions">
+
+<button
+class="contactBtn"
+onclick="window.open('https://wa.me/${customer.phone}','_blank')">
+
+WhatsApp
+
+</button>
+
+<button
+class="profileBtn"
+data-id="${customer.id}">
+
+Perfil
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+});
 
 }
 
@@ -213,22 +290,82 @@ SEARCH
 
 searchInput.addEventListener("input",()=>{
 
-    const value=
+const value=searchInput.value.toLowerCase();
 
-    searchInput.value.toLowerCase();
+filteredCustomers=customers.filter(customer=>{
 
-    filteredCustomers=
+return(
 
-    customers.filter(c=>
+customer.name.toLowerCase().includes(value)||
 
-        c.name
+customer.phone.includes(value)
 
-        ?.toLowerCase()
+);
 
-        .includes(value)
+});
 
-    );
+renderCustomers();
 
-    renderCustomers();
+});
+
+/* =====================================
+FILTERS
+===================================== */
+
+document.querySelectorAll(".customerChip").forEach(button=>{
+
+button.onclick=()=>{
+
+document.querySelectorAll(".customerChip")
+
+.forEach(chip=>chip.classList.remove("active"));
+
+button.classList.add("active");
+
+currentFilter=button.dataset.filter;
+
+switch(currentFilter){
+
+case "new":
+
+filteredCustomers=
+
+customers.filter(c=>c.orders===1);
+
+break;
+
+case "best":
+
+filteredCustomers=
+
+customers.filter(c=>c.orders>=5);
+
+break;
+
+default:
+
+filteredCustomers=[...customers];
+
+}
+
+renderCustomers();
+
+};
+
+});
+
+/* =====================================
+PROFILE
+===================================== */
+
+customersGrid.addEventListener("click",(e)=>{
+
+const profile=e.target.closest(".profileBtn");
+
+if(!profile)return;
+
+location.href=
+
+`merchant-customer-details.html?id=${profile.dataset.id}`;
 
 });
