@@ -383,3 +383,100 @@ gap:15px;
 }
 
 } 
+/* =====================================
+BACK BUTTON
+===================================== */
+
+.backButton{
+
+width:52px;
+
+height:52px;
+
+border-radius:16px;
+
+background:#fff;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+box-shadow:0 6px 18px rgba(0,0,0,.08);
+
+text-decoration:none;
+
+transition:.25s;
+
+}
+
+.backButton:hover{
+
+transform:translateY(-2px);
+
+}
+
+.backButton .material-symbols-rounded{
+
+font-size:34px;
+
+color:#222;
+
+font-variation-settings:
+'FILL' 1;
+
+}
+/* =====================================
+ORDER FILTERS
+===================================== */
+
+.ordersFilters{
+
+display:flex;
+
+gap:12px;
+
+overflow-x:auto;
+
+padding:5px 0 15px;
+
+scrollbar-width:none;
+
+}
+
+.ordersFilters::-webkit-scrollbar{
+
+display:none;
+
+}
+
+.orderChip{
+
+flex:none;
+
+padding:12px 20px;
+
+border:none;
+
+border-radius:18px;
+
+background:#f3f3f3;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.25s;
+
+white-space:nowrap;
+
+}
+
+.orderChip.active{
+
+background:#ff6b00;
+
+color:#fff;
+
+}
