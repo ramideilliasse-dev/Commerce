@@ -123,13 +123,13 @@ function renderProducts(){
 
             <span class="material-symbols-rounded">
 
-            inventory_2
+                inventory_2
 
             </span>
 
             <h2>
 
-            Nenhum produto encontrado
+                Nenhum produto encontrado
 
             </h2>
 
@@ -143,57 +143,73 @@ function renderProducts(){
 
     filteredProducts.forEach(product=>{
 
-        productsGrid.innerHTML+=`
+        const image = product.image || "images/no-image.png";
 
-        <div class="productCard">
+        const stock = Number(product.stock || 0);
+
+        const promotion = product.promotion===true;
+
+        productsGrid.innerHTML += `
+
+        <div class="merchantProductCard">
+
+            ${promotion ? `
+
+            <div class="promotionBadge">
+
+                Promo
+
+            </div>
+
+            ` : ""}
 
             <img
 
-            src="${product.image||''}"
+                src="${image}"
 
-            class="productImage">
+                class="merchantProductImage"
 
-            <div class="productInfo">
+                loading="lazy">
+
+            <div class="merchantProductBody">
 
                 <h3>
 
-                ${product.name||''}
+                    ${product.name || ""}
 
                 </h3>
 
-                <p class="price">
+                <div class="merchantPrice">
 
-                ${product.price||0} Kz
+                    ${Number(product.price||0).toLocaleString()} Kz
 
-                </p>
+                </div>
 
-                <p>
+                <div class="merchantStock">
 
-                Stock:
+                    Stock: ${stock}
 
-                ${product.stock||0}
+                </div>
 
-                </p>
-
-                <div class="actions">
+                <div class="merchantButtons">
 
                     <button
 
-                    class="editBtn"
+                        class="editBtn"
 
-                    data-id="${product.id}">
+                        data-id="${product.id}">
 
-                    ✏️ Editar
+                        ✏️
 
                     </button>
 
                     <button
 
-                    class="deleteBtn"
+                        class="deleteBtn"
 
-                    data-id="${product.id}">
+                        data-id="${product.id}">
 
-                    🗑️ Apagar
+                        🗑️
 
                     </button>
 
@@ -208,7 +224,6 @@ function renderProducts(){
     });
 
 }
-
 /* =====================================
 SEARCH
 ===================================== */
