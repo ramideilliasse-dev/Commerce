@@ -1,0 +1,140 @@
+ <!DOCTYPE html>
+<html lang="pt">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
+
+<title>Chat | Toma</title>
+
+<link rel="stylesheet"
+href="chat.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
+rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="chatPage">
+
+<header class="chatHeader">
+
+<div class="chatHeaderLeft">
+
+<a
+href="javascript:history.back()"
+class="backButton">
+
+<span class="material-symbols-rounded">
+
+arrow_back
+
+</span>
+
+</a>
+
+<img
+id="merchantPhoto"
+class="customerAvatar"
+src="images/default-store.png">
+
+<div>
+
+<h2 id="merchantName">
+
+Loja
+
+</h2>
+
+<p id="productName">
+
+Produto
+
+</p>
+
+</div>
+
+</div>
+
+</header>
+
+<div
+id="messagesContainer"
+class="messagesContainer">
+
+<div class="emptyMessages">
+
+<span class="material-symbols-rounded">
+
+chat
+
+</span>
+
+<h3>
+
+Comece a conversa
+
+</h3>
+
+<p>
+
+Envie uma mensagem para a loja.
+
+</p>
+
+</div>
+
+</div>
+
+<footer class="chatFooter">
+
+<button
+id="sendImage"
+class="iconButton">
+
+<span class="material-symbols-rounded">
+
+image
+
+</span>
+
+</button>
+
+<input
+id="messageInput"
+type="text"
+placeholder="Escreva uma mensagem...">
+
+<button
+id="sendMessage"
+class="sendButton">
+
+<span class="material-symbols-rounded">
+
+send
+
+</span>
+
+</button>
+
+</footer>
+
+</div>
+
+<script
+type="module"
+src="./js/chat.js">
+
+</script>
+
+</body>
+
+</html>
