@@ -4,13 +4,11 @@
 <head>
 
 <meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
 <title>Mensagens | Toma</title>
 
 <link rel="stylesheet" href="merchant-dashboard-v2.css">
-
 <link rel="stylesheet" href="merchant-messages.css">
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -21,15 +19,13 @@
 
 <body>
 
-<div class="productsPage">
+<div class="messagesPage">
 
-<header class="productsHeader">
+<header class="messagesHeader">
 
 <div class="leftHeader">
 
-<a href="merchant-dashboard-v2.html"
-
-class="backButton">
+<a href="merchant-dashboard-v2.html" class="backButton">
 
 <span class="material-symbols-rounded">
 
@@ -41,11 +37,7 @@ arrow_back
 
 <div>
 
-<h1>
-
-Mensagens
-
-</h1>
+<h1>Mensagens</h1>
 
 <p>
 
@@ -70,31 +62,44 @@ search
 </span>
 
 <input
-
 type="text"
-
-id="searchMessage"
-
+id="searchConversation"
 placeholder="Pesquisar conversa...">
 
 </div>
 
 </section>
 
-<section
+<section id="conversationsList" class="conversationList">
 
-id="messagesContainer"
+<div class="emptyMessages">
 
-class="messagesContainer">
+<span class="material-symbols-rounded">
 
-<!-- Conversas aparecerão aqui -->
+chat
+
+</span>
+
+<h2>
+
+Nenhuma conversa
+
+</h2>
+
+<p>
+
+As mensagens dos clientes aparecerão aqui.
+
+</p>
+
+</div>
 
 </section>
 
 </div>
 
-<script type="module"
-
+<script
+type="module"
 src="./js/merchant-messages.js">
 
 </script>
