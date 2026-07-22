@@ -338,3 +338,78 @@ productsGrid.addEventListener("click", async(e)=>{
     }
 
 });
+/* =====================================
+FILTERS
+===================================== */
+
+document.querySelectorAll(".filterChip")
+
+.forEach(button=>{
+
+button.onclick=()=>{
+
+document
+
+.querySelectorAll(".filterChip")
+
+.forEach(item=>
+
+item.classList.remove("active")
+
+);
+
+button.classList.add("active");
+
+const filter=
+
+button.dataset.filter;
+
+switch(filter){
+
+case "active":
+
+filteredProducts=
+
+products.filter(product=>
+
+Number(product.stock)>0
+
+);
+
+break;
+
+case "stock":
+
+filteredProducts=
+
+products.filter(product=>
+
+Number(product.stock)<=0
+
+);
+
+break;
+
+case "promo":
+
+filteredProducts=
+
+products.filter(product=>
+
+product.promotion===true
+
+);
+
+break;
+
+default:
+
+filteredProducts=[...products];
+
+}
+
+renderProducts();
+
+};
+
+});
