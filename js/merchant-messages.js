@@ -3,31 +3,36 @@
 // TOMA
 // =====================================
 
-import { auth } from "../firebase.js";
+import { db, auth } from "../firebase.js";
 
 import {
+collection,
+query,
+where,
+orderBy,
+onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+import {
 onAuthStateChanged
-
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 /* =====================================
 DOM
 ===================================== */
 
-const messagesContainer =
-document.getElementById("messagesContainer");
+const conversationsList =
+document.getElementById("conversationsList");
 
 const searchInput =
-document.getElementById("searchMessage");
+document.getElementById("searchConversation");
 
 /* =====================================
 VARIABLES
 ===================================== */
 
-let conversations=[];
-
-let filteredConversations=[];
+let conversations = [];
+let filtered = [];
 
 /* =====================================
 AUTH
@@ -35,15 +40,14 @@ AUTH
 
 onAuthStateChanged(auth,(user)=>{
 
-    if(!user){
+if(!user){
 
-        location.href="login.html";
+location.href="login.html";
+return;
 
-        return;
+}
 
-    }
-
-    loadMessages();
+loadConversations(user.uid);
 
 });
 
@@ -51,13 +55,38 @@ onAuthStateChanged(auth,(user)=>{
 LOAD
 ===================================== */
 
-function loadMessages(){
+function loadConversations(uid){
 
-    conversations=[];
+const q=query(
 
-    filteredConversations=[...conversations];
+collection(db,"merchantChats"),
 
-    renderMessages();
+where("merchantId","==",uid),
+orderBy("updatedAt","desc")
+
+);
+
+onSnapshot(q,(snapshot)=>{
+
+conversations=[];
+
+snapshot.forEach(docSnap=>{
+
+conversations.push({
+
+id:docSnap.id,
+
+...docSnap.data()
+
+});
+
+});
+
+filtered=[...conversations];
+
+render();
+
+});
 
 }
 
@@ -65,95 +94,107 @@ function loadMessages(){
 RENDER
 ===================================== */
 
-function renderMessages(){
+function render(){
 
-    messagesContainer.innerHTML="";
+conversationsList.innerHTML="";
 
-    if(filteredConversations.length===0){
+if(filtered.length===0){
 
-        messagesContainer.innerHTML=`
+conversationsList.innerHTML=`
 
-        <div class="emptyMessages">
+<div class="emptyMessages">
 
-            <span class="material-symbols-rounded">
+<span class="material-symbols-rounded">
 
-                forum
+chat
 
-            </span>
+</span>
 
-            <h2>
+<h2>
 
-                Nenhuma conversa
+Nenhuma conversa
 
-            </h2>
+</h2>
 
-            <p>
+<p>
 
-                As mensagens dos clientes aparecerão aqui.
+As mensagens dos clientes aparecerão aqui.
 
-            </p>
+</p>
 
-        </div>
+</div>
 
-        `;
+`;
 
-        return;
+return;
 
-    }
+}
 
-    filteredConversations.forEach(chat=>{
+filtered.forEach(chat=>{
 
-        messagesContainer.innerHTML+=`
+const unread = chat.unreadMerchant || 0;
 
-        <div class="messageCard">
+conversationsList.innerHTML +=`
 
-            <div class="messageLeft">
+<div class="conversationCard"
 
-                <img
+onclick="location.href='merchant-chat.html?id=${chat.id}'">
 
-                class="messageAvatar"
+<img
 
-                src="${chat.photo||'images/default-avatar.png'}">
+src="${chat.customerPhoto || 'images/default-avatar.png'}"
 
-                <div>
+class="avatar">
 
-                    <div class="messageName">
+<div class="conversationContent">
 
-                        ${chat.name}
+<div class="topRow">
 
-                    </div>
+<div class="customerName">
 
-                    <div class="messagePreview">
+${chat.customerName || "Cliente"}
 
-                        ${chat.lastMessage}
+</div>
 
-                    </div>
+<div class="time">
 
-                </div>
+${formatTime(chat.updatedAt)}
 
-            </div>
+</div>
 
-            <div class="messageRight">
+</div>
 
-                <div class="messageTime">
+<div class="lastMessage">
 
-                    ${chat.time}
+${chat.lastMessage || ""}
 
-                </div>
+</div>
 
-                <div class="unreadBadge">
+</div>
 
-                    ${chat.unread}
+${
 
-                </div>
+unread>0
 
-            </div>
+?
 
-        </div>
+`<div class="unreadBadge">
 
-        `;
+${unread}
 
-    });
+</div>`
+
+:
+
+""
+
+}
+
+</div>
+
+`;
+
+});
 
 }
 
@@ -163,22 +204,68 @@ SEARCH
 
 searchInput.addEventListener("input",()=>{
 
-    const value=
+const value=
 
-    searchInput.value.toLowerCase();
+searchInput.value.toLowerCase();
 
-    filteredConversations=
+filtered=
 
-    conversations.filter(c=>
+conversations.filter(chat=>{
 
-        c.name
+return(
 
-        ?.toLowerCase()
+(chat.customerName || "")
 
-        .includes(value)
+.toLowerCase()
 
-    );
+.includes(value)
 
-    renderMessages();
+);
 
 });
+
+render();
+
+});
+
+/* =====================================
+TIME
+===================================== */
+
+function formatTime(timestamp){
+
+if(!timestamp) return "";
+
+try{
+
+const date =
+
+timestamp.toDate ?
+
+timestamp.toDate()
+
+:
+
+new Date(timestamp);
+
+return date.toLocaleTimeString(
+
+"pt-PT",
+
+{
+
+hour:"2-digit",
+
+minute:"2-digit"
+
+}
+
+);
+
+}catch{
+
+return "";
+
+}
+
+}
