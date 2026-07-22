@@ -2,25 +2,21 @@
 MERCHANT MESSAGES
 ===================================== */
 
-.messagesContainer{
+.messagesPage{
 
-display:flex;
+padding:30px;
 
-flex-direction:column;
+max-width:950px;
 
-gap:18px;
-
-margin-top:25px;
+margin:auto;
 
 }
 
-.messageCard{
+/* =========================
+HEADER
+========================= */
 
-background:#ffffff;
-
-border-radius:22px;
-
-padding:20px;
+.messagesHeader{
 
 display:flex;
 
@@ -28,19 +24,11 @@ align-items:center;
 
 justify-content:space-between;
 
-box-shadow:0 8px 25px rgba(0,0,0,.05);
-
-transition:.25s;
+margin-bottom:25px;
 
 }
 
-.messageCard:hover{
-
-transform:translateY(-4px);
-
-}
-
-.messageLeft{
+.leftHeader{
 
 display:flex;
 
@@ -50,71 +38,247 @@ gap:18px;
 
 }
 
-.messageAvatar{
+.backButton{
 
-width:65px;
+width:64px;
 
-height:65px;
+height:64px;
 
-border-radius:50%;
+display:flex;
 
-background:#f2f2f2;
+align-items:center;
 
-object-fit:cover;
+justify-content:center;
+
+background:#fff;
+
+border-radius:20px;
+
+text-decoration:none;
+
+box-shadow:0 8px 25px rgba(0,0,0,.06);
+
+transition:.25s;
 
 }
 
-.messageName{
+.backButton:hover{
 
-font-size:18px;
+transform:translateY(-3px);
+
+}
+
+.backButton .material-symbols-rounded{
+
+font-size:38px;
+
+color:#222;
+
+}
+
+.messagesHeader h1{
+
+font-size:54px;
 
 font-weight:700;
 
-margin-bottom:5px;
+margin:0;
 
 }
 
-.messagePreview{
+.messagesHeader p{
 
-font-size:14px;
+font-size:20px;
+
+color:#666;
+
+margin-top:6px;
+
+}
+
+/* =========================
+SEARCH
+========================= */
+
+.searchSection{
+
+margin-bottom:28px;
+
+}
+
+.searchBox{
+
+display:flex;
+
+align-items:center;
+
+gap:15px;
+
+background:#fff;
+
+padding:18px 22px;
+
+border-radius:20px;
+
+box-shadow:0 6px 18px rgba(0,0,0,.05);
+
+}
+
+.searchBox .material-symbols-rounded{
+
+font-size:30px;
 
 color:#777;
 
 }
 
-.messageRight{
+.searchBox input{
 
-text-align:right;
+flex:1;
+
+border:none;
+
+outline:none;
+
+font-size:18px;
+
+font-family:Poppins,sans-serif;
+
+background:transparent;
 
 }
 
-.messageTime{
+/* =========================
+LIST
+========================= */
 
-font-size:13px;
+.conversationList{
 
-color:#999;
+display:flex;
 
-margin-bottom:10px;
+flex-direction:column;
+
+gap:18px;
+
+}
+
+/* =========================
+CARD
+========================= */
+
+.conversationCard{
+
+display:flex;
+
+align-items:center;
+
+gap:18px;
+
+background:#fff;
+
+padding:18px;
+
+border-radius:22px;
+
+cursor:pointer;
+
+transition:.25s;
+
+box-shadow:0 6px 18px rgba(0,0,0,.05);
+
+}
+
+.conversationCard:hover{
+
+transform:translateY(-4px);
+
+}
+
+.avatar{
+
+width:72px;
+
+height:72px;
+
+border-radius:50%;
+
+object-fit:cover;
+
+background:#eee;
+
+}
+
+.conversationContent{
+
+flex:1;
+
+display:flex;
+
+flex-direction:column;
+
+gap:6px;
+
+}
+
+.topRow{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+}
+
+.customerName{
+
+font-size:20px;
+
+font-weight:700;
+
+}
+
+.time{
+
+font-size:14px;
+
+color:#888;
+
+}
+
+.lastMessage{
+
+font-size:15px;
+
+color:#666;
+
+overflow:hidden;
+
+text-overflow:ellipsis;
+
+white-space:nowrap;
 
 }
 
 .unreadBadge{
 
-display:inline-flex;
-
-justify-content:center;
-
-align-items:center;
-
-width:28px;
+min-width:28px;
 
 height:28px;
 
-border-radius:50%;
+padding:0 8px;
 
-background:#ff6a00;
+border-radius:50px;
 
-color:white;
+background:#ff3b30;
+
+color:#fff;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
 
 font-size:13px;
 
@@ -122,25 +286,29 @@ font-weight:700;
 
 }
 
+/* =========================
+EMPTY
+========================= */
+
 .emptyMessages{
 
-background:white;
+background:#fff;
 
-border-radius:22px;
+border-radius:28px;
 
-padding:60px 20px;
+padding:70px 30px;
 
 text-align:center;
 
-box-shadow:0 8px 25px rgba(0,0,0,.05);
+box-shadow:0 8px 22px rgba(0,0,0,.05);
 
 }
 
 .emptyMessages .material-symbols-rounded{
 
-font-size:70px;
+font-size:100px;
 
-color:#bdbdbd;
+color:#d4d4d4;
 
 margin-bottom:18px;
 
@@ -148,16 +316,90 @@ margin-bottom:18px;
 
 .emptyMessages h2{
 
-margin-bottom:10px;
+font-size:42px;
 
-font-size:24px;
+margin-bottom:12px;
 
 }
 
 .emptyMessages p{
 
+font-size:20px;
+
 color:#888;
 
-font-size:15px;
+line-height:1.6;
+
+}
+
+/* =========================
+RESPONSIVE
+========================= */
+
+@media(max-width:768px){
+
+.messagesPage{
+
+padding:20px;
+
+}
+
+.messagesHeader h1{
+
+font-size:44px;
+
+}
+
+.messagesHeader p{
+
+font-size:17px;
+
+}
+
+.backButton{
+
+width:58px;
+
+height:58px;
+
+}
+
+.avatar{
+
+width:60px;
+
+height:60px;
+
+}
+
+.customerName{
+
+font-size:18px;
+
+}
+
+.lastMessage{
+
+font-size:14px;
+
+}
+
+.emptyMessages{
+
+padding:50px 25px;
+
+}
+
+.emptyMessages h2{
+
+font-size:32px;
+
+}
+
+.emptyMessages p{
+
+font-size:16px;
+
+}
 
 }
