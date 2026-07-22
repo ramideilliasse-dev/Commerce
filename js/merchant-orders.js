@@ -13,9 +13,11 @@ query,
 
 where,
 
-orderBy,
+onSnapshot,
 
-onSnapshot
+deleteDoc,
+
+doc
 
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -59,40 +61,41 @@ loadOrders();
 LOAD ORDERS
 ========================== */
 
-function loadOrders(){
+function loadOrders(uid){
 
 const q = query(
 
 collection(db,"orders"),
 
-where("merchantId","==",merchantId),
-
-orderBy("createdAt","desc")
+where("merchantId","==",uid)
 
 );
 
 onSnapshot(q,(snapshot)=>{
 
-allOrders = [];
+orders=[];
 
-snapshot.forEach(doc=>{
+snapshot.forEach(docSnap=>{
 
-allOrders.push({
+orders.push({
 
-id:doc.id,
+id:docSnap.id,
 
-...doc.data()
-
-});
+...docSnap.data()
 
 });
 
-renderOrders(allOrders);
+});
+
+filteredOrders=[...orders];
+
+renderOrders();
+
+updateCounters();
 
 });
 
 }
-
 /* ==========================
 RENDER
 ========================== */
