@@ -2,15 +2,55 @@
 MERCHANT CUSTOMERS
 ===================================== */
 
+.customersFilters{
+display:flex;
+flex-wrap:wrap;
+gap:12px;
+margin:20px 0 30px;
+}
+
+.customerChip{
+display:flex;
+align-items:center;
+gap:8px;
+padding:12px 20px;
+border:none;
+border-radius:18px;
+background:#f5f5f5;
+font-weight:600;
+font-size:15px;
+cursor:pointer;
+transition:.25s;
+}
+
+.customerChip span{
+background:#ffffff;
+padding:4px 10px;
+border-radius:20px;
+font-size:13px;
+font-weight:700;
+color:#666;
+}
+
+.customerChip.active{
+background:#ff6a00;
+color:#fff;
+}
+
+.customerChip.active span{
+background:rgba(255,255,255,.2);
+color:#fff;
+}
+
 .customersGrid{
 
 display:grid;
 
-grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
 
 gap:22px;
 
-margin-top:25px;
+margin-top:10px;
 
 }
 
@@ -98,6 +138,8 @@ border-top:1px solid #ececec;
 
 text-align:center;
 
+flex:1;
+
 }
 
 .customerStats h3{
@@ -132,7 +174,7 @@ margin-top:20px;
 
 flex:1;
 
-padding:12px;
+padding:14px;
 
 border:none;
 
@@ -141,6 +183,8 @@ border-radius:14px;
 cursor:pointer;
 
 font-weight:600;
+
+font-size:15px;
 
 transition:.25s;
 
@@ -169,5 +213,95 @@ background:#f4f4f4;
 .profileBtn:hover{
 
 background:#e8e8e8;
+
+}
+
+/* ===========================
+EMPTY
+=========================== */
+
+.emptyCard{
+
+background:#fff;
+
+border-radius:25px;
+
+padding:60px 30px;
+
+text-align:center;
+
+box-shadow:0 8px 25px rgba(0,0,0,.05);
+
+grid-column:1/-1;
+
+}
+
+.emptyCard .material-symbols-rounded{
+
+font-size:90px;
+
+color:#d0d0d0;
+
+margin-bottom:20px;
+
+}
+
+.emptyCard h2{
+
+font-size:34px;
+
+font-weight:700;
+
+margin-bottom:12px;
+
+}
+
+.emptyCard p{
+
+font-size:18px;
+
+color:#8b8b8b;
+
+line-height:1.6;
+
+}
+
+/* ===========================
+RESPONSIVE
+=========================== */
+
+@media(max-width:768px){
+
+.customersGrid{
+
+grid-template-columns:1fr;
+
+}
+
+.customerActions{
+
+flex-direction:column;
+
+}
+
+.customerChip{
+
+font-size:14px;
+
+padding:10px 16px;
+
+}
+
+.emptyCard h2{
+
+font-size:28px;
+
+}
+
+.emptyCard p{
+
+font-size:16px;
+
+}
 
 }
