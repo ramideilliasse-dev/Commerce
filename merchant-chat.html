@@ -1,0 +1,137 @@
+ <!DOCTYPE html>
+<html lang="pt">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Chat | Toma</title>
+
+<link rel="stylesheet" href="merchant-dashboard-v2.css">
+<link rel="stylesheet" href="merchant-chat.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="chatPage">
+
+<!-- HEADER -->
+
+<header class="chatHeader">
+
+<div class="chatHeaderLeft">
+
+<a href="merchant-messages.html" class="backButton">
+
+<span class="material-symbols-rounded">
+
+arrow_back
+
+</span>
+
+</a>
+
+<img
+id="customerPhoto"
+class="customerAvatar"
+src="images/default-avatar.png">
+
+<div>
+
+<h2 id="customerName">
+
+Cliente
+
+</h2>
+
+<p id="productName">
+
+Produto
+
+</p>
+
+</div>
+
+</div>
+
+</header>
+
+<!-- MESSAGES -->
+
+<div
+id="messagesContainer"
+class="messagesContainer">
+
+<div class="emptyMessages">
+
+<span class="material-symbols-rounded">
+
+chat
+
+</span>
+
+<h3>
+
+Nenhuma mensagem
+
+</h3>
+
+<p>
+
+Inicie a conversa com o cliente.
+
+</p>
+
+</div>
+
+</div>
+
+<!-- INPUT -->
+
+<footer class="chatFooter">
+
+<button
+id="sendImage"
+class="iconButton">
+
+<span class="material-symbols-rounded">
+
+image
+
+</span>
+
+</button>
+
+<input
+type="text"
+id="messageInput"
+placeholder="Escreva uma mensagem...">
+
+<button
+id="sendMessage"
+class="sendButton">
+
+<span class="material-symbols-rounded">
+
+send
+
+</span>
+
+</button>
+
+</footer>
+
+</div>
+
+<script type="module"
+src="./js/merchant-chat.js"></script>
+
+</body>
+
+</html>
