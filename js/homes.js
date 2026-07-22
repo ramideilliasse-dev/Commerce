@@ -536,16 +536,17 @@ onAuthStateChanged(auth, async(user)=>{
 
         if(role==="merchant"){
 
-            merchantBtn.style.display = "flex";
+    merchantBtn.style.display = "flex";
 
-            merchantBtn.onclick=()=>{
+    merchantBtn.querySelector("span:last-child").textContent = "Loja";
 
-                location.href="merchant-dashboard.html";
+    merchantBtn.onclick = ()=>{
 
-            };
+        location.href = "merchant-dashboard-v2.html";
 
-        }
+    };
 
+}
         if(role==="admin" || role==="superadmin"){
 
             merchantBtn.style.display="flex";
