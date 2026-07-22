@@ -27,9 +27,7 @@
 
 <div class="leftHeader">
 
-<a href="merchant-dashboard-v2.html"
-
-class="backButton">
+<a href="merchant-dashboard-v2.html" class="backButton">
 
 <span class="material-symbols-rounded">
 
@@ -70,56 +68,91 @@ search
 </span>
 
 <input
-
 type="text"
-
 id="searchCustomer"
-
 placeholder="Pesquisar cliente...">
 
 </div>
 
 </section>
 
-<section class="filters">
+<section class="customersFilters">
 
-<button class="filter active">
+<button
+class="customerChip active"
+data-filter="all">
 
 Todos
 
+<span id="countAllCustomers">
+
+0
+
+</span>
+
 </button>
 
-<button class="filter">
+<button
+class="customerChip"
+data-filter="new">
 
 Novos
 
+<span id="countNewCustomers">
+
+0
+
+</span>
+
 </button>
 
-<button class="filter">
+<button
+class="customerChip"
+data-filter="best">
 
 Mais Compras
+
+<span id="countBestCustomers">
+
+0
+
+</span>
 
 </button>
 
 </section>
 
 <section
-
 id="customersGrid"
-
 class="customersGrid">
 
-<!-- Clientes aparecerão aqui -->
+<div class="emptyCard">
+
+<span class="material-symbols-rounded">
+
+group
+
+</span>
+
+<h2>
+
+Nenhum cliente encontrado
+
+</h2>
+
+<p>
+
+Os clientes aparecerão aqui depois das primeiras vendas.
+
+</p>
+
+</div>
 
 </section>
 
 </div>
 
-<script type="module"
-
-src="./js/merchant-customers.js">
-
-</script>
+<script type="module" src="./js/merchant-customers.js"></script>
 
 </body>
 
