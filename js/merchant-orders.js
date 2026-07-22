@@ -135,46 +135,68 @@ ordersContainer.innerHTML = "";
 
 list.forEach(order=>{
 
-ordersContainer.innerHTML += `
+ordersList.innerHTML += `
 
-<div class="orderCard" onclick="openOrder('${order.id}')">
-<div class="orderInfo">
+<div class="orderCard">
 
-<h3>
+    <div class="orderImage">
 
-Pedido #${order.id.slice(0,6)}
+        <img
+        src="${order.products?.[0]?.image || 'images/no-image.png'}"
+        loading="lazy">
+    </div>
 
-</h3>
+    <div class="orderContent">
 
-<p>
+        <div class="orderTop">
 
-Cliente: ${order.customerName || "Cliente"}
+            <h3>
 
-</p>
+                Pedido #${order.id?.slice(0,6) || ""}
 
-<p>
+            </h3>
 
-${order.createdDate || ""}
+            <span class="statusBadge ${getStatusClass(order.status)}">
 
-</p>
+                ${order.status || "Pendente"}
 
-<div class="orderPrice">
+            </span>
 
-${order.total || 0} Kz
+        </div>
 
-</div>
+        <p class="customerName">
 
-</div>
+            👤 ${order.customerName || "Cliente"}
 
-<div>
+        </p>
 
-<span class="orderStatus ${statusClass(order.status)}">
+        <p class="orderDate">
 
-${order.status || "Pendente"}
+            📅 ${formatDate(order.createdAt)}
 
-</span>
+        </p>
 
-</div>
+        <div class="orderBottom">
+
+            <strong>
+
+                ${(Number(order.total)||0).toLocaleString()} Kz
+
+            </strong>
+
+            <button
+
+                class="viewOrderBtn"
+
+                data-id="${order.id}">
+
+                Ver detalhes
+
+            </button>
+
+        </div>
+
+    </div>
 
 </div>
 
@@ -184,37 +206,6 @@ ${order.status || "Pendente"}
 
 }
 
-/* ==========================
-STATUS COLOR
-========================== */
-
-function statusClass(status){
-
-switch(status){
-
-case "Confirmado":
-
-return "statusConfirmed";
-
-case "Enviado":
-
-return "statusShipping";
-
-case "Entregue":
-
-return "statusDelivered";
-
-case "Cancelado":
-
-return "statusCanceled";
-
-default:
-
-return "statusPending";
-
-}
-
-}
 
 /* ==========================
 SEARCH
@@ -259,3 +250,51 @@ location.href =
 `merchant-order-details.html?id=${orderId}`;
 
 };
+function getStatusClass(status){
+
+switch(status){
+
+case "Confirmado":
+return "status-confirmado";
+
+case "Enviado":
+return "status-enviado";
+
+case "Entregue":
+return "status-entregue";
+
+case "Cancelado":
+return "status-cancelado";
+
+default:
+return "status-pendente";
+
+}
+
+}
+
+function formatDate(timestamp){
+
+if(!timestamp) return "-";
+
+try{
+
+const date = timestamp.toDate
+? timestamp.toDate()
+: new Date(timestamp);
+
+return date.toLocaleDateString("pt-PT")+" · "+date.toLocaleTimeString("pt-PT",{
+
+hour:"2-digit",
+
+minute:"2-digit"
+
+});
+
+}catch{
+
+return "-";
+
+}
+
+}
