@@ -1,4 +1,4 @@
- // =====================================
+// =====================================
 // MERCHANT SHOP
 // TOMA
 // =====================================
@@ -6,54 +6,40 @@
 import { db, auth } from "../firebase.js";
 
 import {
+collection,
+query,
+where,
+getDocs,
 doc,
 getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import {
-collection,
-query,
-where,
-getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-import {
 onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+// =====================================
+// DOM
+// =====================================
 
-/* ==========================
-DOM
-========================== */
+const shopTitle = document.getElementById("shopTitle");
 
-const shopTitle =
-document.getElementById("shopTitle");
+const shopDescription = document.getElementById("shopDescription");
 
-const shopDescription =
-document.getElementById("shopDescription");
+const shopCity = document.getElementById("shopCity");
 
-const shopCity =
-document.getElementById("shopCity");
+const shopPhone = document.getElementById("shopPhone");
 
-const shopPhone =
-document.getElementById("shopPhone");
+const shopLogo = document.getElementById("shopLogo");
 
-const shopLogo =
-document.getElementById("shopLogo");
+const shopBanner = document.getElementById("shopBannerImage");
 
-const shopBanner =
-document.getElementById("shopBannerImage");
+const shopProducts = document.getElementById("shopProducts");
 
-const shopProducts =
-document.getElementById("shopProducts");
+const shopProductsGrid = document.getElementById("shopProductsGrid");
 
-const editShopBtn =
-document.getElementById("editShopBtn");
+const editShopBtn = document.getElementById("editShopBtn");
 
-const shareShopBtn =
-document.getElementById("shareShopBtn");
-const shopProductsGrid =
-document.getElementById("shopProductsGrid");
-alert(shopProductsGrid);
+const shareShopBtn = document.getElementById("shareShopBtn");
 /* ==========================
 AUTH
 ========================== */
