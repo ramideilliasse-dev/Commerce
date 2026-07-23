@@ -149,34 +149,24 @@ url:window.location.href
 };
 function renderProducts(snapshot){
 
-shopProductsGrid.innerHTML = "";
+shopProductsGrid.innerHTML="";
 
 snapshot.forEach(docSnap=>{
 
 const product = docSnap.data();
 
+alert(product.name);
+
 shopProductsGrid.innerHTML += `
-
-<div class="shopProductCard">
-
-<img
-src="${product.image || 'assets/default-product.png'}"
-class="shopProductImage">
-
-<div class="shopProductInfo">
-
-<h3>${product.name || ""}</h3>
-
-<p class="shopProductPrice">
-
-${product.price || 0} Kz
-
-</p>
-
+<div style="
+background:red;
+color:white;
+padding:20px;
+margin:10px;
+font-size:20px;
+">
+${product.name}
 </div>
-
-</div>
-
 `;
 
 });
