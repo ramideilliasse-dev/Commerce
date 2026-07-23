@@ -6,13 +6,10 @@
 import { db, auth } from "../firebase.js";
 
 import {
-
 doc,
-
 getDoc,
-
-updateDoc
-
+updateDoc,
+setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import {
@@ -113,23 +110,29 @@ saveShopBtn.onclick = async()=>{
 
     try{
 
-        await updateDoc(
+        await setDoc(
 
-            doc(db,"merchants",currentUid),
+doc(db,"merchants",currentUid),
 
-            {
+{
 
-                shopName:shopName.value,
+shopName:shopName.value,
 
-                phone:shopPhone.value,
+phone:shopPhone.value,
 
-                city:shopCity.value,
+city:shopCity.value,
 
-                description:shopDescription.value
+description:shopDescription.value
 
-            }
+},
 
-        );
+{
+
+merge:true
+
+}
+
+);
 
         alert("Loja atualizada com sucesso.");
 
