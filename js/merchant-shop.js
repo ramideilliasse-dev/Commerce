@@ -53,6 +53,7 @@ const shareShopBtn =
 document.getElementById("shareShopBtn");
 const shopProductsGrid =
 document.getElementById("shopProductsGrid");
+alert(shopProductsGrid);
 /* ==========================
 AUTH
 ========================== */
