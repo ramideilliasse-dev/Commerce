@@ -40,73 +40,90 @@ const shopProductsGrid = document.getElementById("shopProductsGrid");
 const editShopBtn = document.getElementById("editShopBtn");
 
 const shareShopBtn = document.getElementById("shareShopBtn");
-/* ==========================
-AUTH
-========================== */
+// =====================================
+// AUTH
+// =====================================
 
-onAuthStateChanged(auth,async(user)=>{
-alert("UID connecté : " + user.uid);
-if(!user){
+onAuthStateChanged(auth, async(user)=>{
 
-location.href="login.html";
+    if(!user){
 
-return;
+        location.href="login.html";
+        return;
 
-}
+    }
 
-loadShop(user.uid);
+    await loadShop(user.uid);
 
 });
 
-/* ==========================
-LOAD SHOP
-========================== */
+// =====================================
+// LOAD SHOP
+// =====================================
 
 async function loadShop(uid){
 
-    alert("1 - loadShop démarré");
-
     try{
 
-        alert("2 - Avant merchants");
+        // Boutique
 
-        const merchantSnap =
-        await getDoc(
-            doc(db,"merchants",uid)
-        );
+        const merchantRef = doc(db,"merchants",uid);
 
-        alert("3 - Merchant chargé");
+        const merchantSnap = await getDoc(merchantRef);
 
         if(merchantSnap.exists()){
-
-            alert("4 - Merchant existe");
 
             const merchant = merchantSnap.data();
 
             shopTitle.textContent =
             merchant.shopName || "Minha Loja";
 
+            shopDescription.textContent =
+            merchant.description || "";
+
+            shopCity.textContent =
+            merchant.city || "-";
+
+            shopPhone.textContent =
+            merchant.phone || "-";
+
+            if(merchant.logo){
+
+                shopLogo.src = merchant.logo;
+
+            }
+
+            if(merchant.banner){
+
+                shopBanner.src = merchant.banner;
+
+            }
+
         }
 
-        alert("5 - Avant produits");
+        // Produits
 
-        const q = query(
+        const productsQuery = query(
+
             collection(db,"products"),
+
             where("merchantId","==",uid)
+
         );
 
-        alert("6 - Requête créée");
+        const productsSnap = await getDocs(productsQuery);
 
-        const productsSnap =
-        await getDocs(q);
+        shopProducts.textContent = productsSnap.size;
 
-        alert("7 - Produits trouvés : " + productsSnap.size);
+        renderProducts(productsSnap);
 
     }
 
     catch(error){
 
-        alert("ERREUR : " + error.message);
+        console.error(error);
+
+        alert(error.message);
 
     }
 
