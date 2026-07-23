@@ -99,17 +99,47 @@ Guardar alterações
 
 <div class="settingsCard">
 
-<h2>Preferências</h2>
+<h2>Personalização da Loja</h2>
 
-<button id="changeLogoBtn">
+<div class="previewBanner">
 
-Alterar Logótipo
+<img
+id="bannerPreview"
+src="assets/default-banner.jpg"
+alt="Banner">
 
-</button>
+</div>
+
+<div class="previewLogo">
+
+<img
+id="logoPreview"
+src="assets/default-store.png"
+alt="Logo">
+
+</div>
+
+<input
+type="file"
+id="bannerInput"
+accept="image/*"
+hidden>
+
+<input
+type="file"
+id="logoInput"
+accept="image/*"
+hidden>
 
 <button id="changeBannerBtn">
 
 Alterar Banner
+
+</button>
+
+<button id="changeLogoBtn">
+
+Alterar Logótipo
 
 </button>
 
@@ -120,7 +150,6 @@ Terminar Sessão
 </button>
 
 </div>
-
 </section>
 
 </div>
