@@ -51,7 +51,8 @@ document.getElementById("editShopBtn");
 
 const shareShopBtn =
 document.getElementById("shareShopBtn");
-
+const shopProductsGrid =
+document.getElementById("shopProductsGrid");
 /* ==========================
 AUTH
 ========================== */
@@ -132,7 +133,7 @@ await getDocs(q);
 
 shopProducts.textContent =
 productsSnap.size;
-
+renderProducts(productsSnap);
 }
 
 catch(error){
@@ -166,3 +167,38 @@ url:window.location.href
 }).catch(()=>{});
 
 };
+function renderProducts(snapshot){
+
+shopProductsGrid.innerHTML = "";
+
+snapshot.forEach(docSnap=>{
+
+const product = docSnap.data();
+
+shopProductsGrid.innerHTML += `
+
+<div class="shopProductCard">
+
+<img
+src="${product.image || 'assets/default-product.png'}"
+class="shopProductImage">
+
+<div class="shopProductInfo">
+
+<h3>${product.name || ""}</h3>
+
+<p class="shopProductPrice">
+
+${product.price || 0} Kz
+
+</p>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
