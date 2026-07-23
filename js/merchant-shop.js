@@ -77,73 +77,53 @@ LOAD SHOP
 
 async function loadShop(uid){
 
-try{
+    alert("1 - loadShop démarré");
 
-const merchantSnap =
+    try{
 
-await getDoc(
+        alert("2 - Avant merchants");
 
-doc(db,"merchants",uid)
+        const merchantSnap =
+        await getDoc(
+            doc(db,"merchants",uid)
+        );
 
-);
+        alert("3 - Merchant chargé");
 
-if(merchantSnap.exists()){
+        if(merchantSnap.exists()){
 
-const merchant = merchantSnap.data();
+            alert("4 - Merchant existe");
 
-shopTitle.textContent =
-merchant.shopName || "Minha Loja";
+            const merchant = merchantSnap.data();
 
-shopDescription.textContent =
-merchant.description || "";
+            shopTitle.textContent =
+            merchant.shopName || "Minha Loja";
 
-shopCity.textContent =
-merchant.city || "-";
+        }
 
-shopPhone.textContent =
-merchant.phone || "-";
+        alert("5 - Avant produits");
 
-if(merchant.logo){
+        const q = query(
+            collection(db,"products"),
+            where("merchantId","==",uid)
+        );
 
-shopLogo.src =
-merchant.logo;
+        alert("6 - Requête créée");
 
-}
+        const productsSnap =
+        await getDocs(q);
 
-if(merchant.banner){
+        alert("7 - Produits trouvés : " + productsSnap.size);
 
-shopBanner.src =
-merchant.banner;
+    }
 
-}
+    catch(error){
 
-}
-alert("UID recherché : " + uid);
-const q=query(
+        alert("ERREUR : " + error.message);
 
-collection(db,"products"),
-
-where("merchantId","==",uid)
-
-);
-alert("Produits trouvés : " + productsSnap.size);
-const productsSnap=
-
-await getDocs(q);
-
-shopProducts.textContent =
-productsSnap.size;
-renderProducts(productsSnap);
-}
-
-catch(error){
-
-console.error(error);
+    }
 
 }
-
-}
-
 /* ==========================
 BUTTONS
 ========================== */
