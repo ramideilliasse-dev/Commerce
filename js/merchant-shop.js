@@ -128,51 +128,127 @@ async function loadShop(uid){
     }
 
 }
-/* ==========================
-BUTTONS
-========================== */
+// =====================================
+// RENDER PRODUCTS
+// =====================================
 
-editShopBtn.onclick=()=>{
-
-location.href="merchant-settings.html";
-
-};
-
-shareShopBtn.onclick=()=>{
-
-navigator.share({
-
-title:shopTitle.textContent,
-
-text:"Visite minha loja no Toma.",
-
-url:window.location.href
-
-}).catch(()=>{});
-
-};
 function renderProducts(snapshot){
 
-shopProductsGrid.innerHTML="";
+    shopProductsGrid.innerHTML = "";
 
-snapshot.forEach(docSnap=>{
+    if(snapshot.empty){
 
-const product = docSnap.data();
+        shopProductsGrid.innerHTML = `
 
-alert(product.name);
+        <div class="emptyProducts">
 
-shopProductsGrid.innerHTML += `
-<div style="
-background:red;
-color:white;
-padding:20px;
-margin:10px;
-font-size:20px;
-">
-${product.name}
-</div>
-`;
+            <span class="material-symbols-rounded">
+
+                inventory_2
+
+            </span>
+
+            <h3>
+
+                Nenhum produto
+
+            </h3>
+
+            <p>
+
+                Ainda não publicou produtos.
+
+            </p>
+
+        </div>
+
+        `;
+
+        return;
+
+    }
+
+    snapshot.forEach(docSnap=>{
+
+        const product = docSnap.data();
+
+        const image =
+
+            product.images && product.images.length
+
+            ? product.images[0]
+
+            : "assets/default-product.png";
+
+        shopProductsGrid.innerHTML += `
+
+        <div
+            class="shopProductCard"
+            onclick="location.href='product.html?id=${docSnap.id}'">
+
+            <img
+                src="${image}"
+                class="shopProductImage">
+
+            <div class="shopProductInfo">
+
+                <h3>
+
+                    ${product.name || ""}
+
+                </h3>
+
+                <p class="shopProductPrice">
+
+                    ${(product.price || 0).toLocaleString()} Kz
+
+                </p>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+}
+// =====================================
+// BUTTONS
+// =====================================
+
+editShopBtn.addEventListener("click",()=>{
+
+    location.href="merchant-settings.html";
 
 });
 
-}
+shareShopBtn.addEventListener("click",async()=>{
+
+    try{
+
+        await navigator.share({
+
+            title:shopTitle.textContent,
+
+            text:"Visite minha loja na Toma.",
+
+            url:window.location.href
+
+        });
+
+    }
+
+    catch(e){
+
+        navigator.clipboard.writeText(
+
+            window.location.href
+
+        );
+
+        alert("Link da loja copiado.");
+
+    }
+
+});
