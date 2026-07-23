@@ -58,7 +58,7 @@ AUTH
 ========================== */
 
 onAuthStateChanged(auth,async(user)=>{
-
+alert("UID connecté : " + user.uid);
 if(!user){
 
 location.href="login.html";
@@ -118,7 +118,7 @@ merchant.banner;
 }
 
 }
-
+alert("UID recherché : " + uid);
 const q=query(
 
 collection(db,"products"),
@@ -126,7 +126,7 @@ collection(db,"products"),
 where("merchantId","==",uid)
 
 );
-
+alert("Produits trouvés : " + productsSnap.size);
 const productsSnap=
 
 await getDocs(q);
