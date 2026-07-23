@@ -41,7 +41,27 @@ document.getElementById("saveShopBtn");
 
 const logoutBtn =
 document.getElementById("logoutBtn");
+// =====================================
+// LOGO & BANNER
+// =====================================
 
+const logoPreview =
+document.getElementById("logoPreview");
+
+const bannerPreview =
+document.getElementById("bannerPreview");
+
+const logoInput =
+document.getElementById("logoInput");
+
+const bannerInput =
+document.getElementById("bannerInput");
+
+const changeLogoBtn =
+document.getElementById("changeLogoBtn");
+
+const changeBannerBtn =
+document.getElementById("changeBannerBtn");
 /* =====================================
 CURRENT USER
 ===================================== */
@@ -91,7 +111,17 @@ async function loadMerchant(){
         shopCity.value = data.city || "";
 
         shopDescription.value = data.description || "";
+if(data.logo){
 
+    logoPreview.src = data.logo;
+
+}
+
+if(data.banner){
+
+    bannerPreview.src = data.banner;
+
+}
     }
 
     catch(error){
