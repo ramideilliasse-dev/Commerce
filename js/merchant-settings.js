@@ -231,3 +231,138 @@ logoutBtn.onclick = async()=>{
     location.href="login.html";
 
 };
+// =====================================
+// CLOUDINARY UPLOAD
+// =====================================
+
+async function uploadImage(file){
+
+    const formData = new FormData();
+
+    formData.append("file", file);
+
+    formData.append(
+        "upload_preset",
+        "angcomerce-upload"
+    );
+
+    const response = await fetch(
+
+        "https://api.cloudinary.com/v1_1/dy9qnhimc/image/upload",
+
+        {
+
+            method:"POST",
+
+            body:formData
+
+        }
+
+    );
+
+    const data = await response.json();
+
+    if(!data.secure_url){
+
+        throw new Error("Erro ao enviar imagem.");
+
+    }
+
+    return data.secure_url;
+
+}
+// =====================================
+// SAVE LOGO
+// =====================================
+
+logoInput.onchange = async(e)=>{
+
+    const file = e.target.files[0];
+
+    if(!file) return;
+
+    try{
+
+        const url = await uploadImage(file);
+
+        logoPreview.src = url;
+
+        await setDoc(
+
+            doc(db,"merchants",currentUid),
+
+            {
+
+                logo:url
+
+            },
+
+            {
+
+                merge:true
+
+            }
+
+        );
+
+        alert("Logótipo atualizado com sucesso.");
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        alert("Erro ao enviar logótipo.");
+
+    }
+
+};
+
+// =====================================
+// SAVE BANNER
+// =====================================
+
+bannerInput.onchange = async(e)=>{
+
+    const file = e.target.files[0];
+
+    if(!file) return;
+
+    try{
+
+        const url = await uploadImage(file);
+
+        bannerPreview.src = url;
+
+        await setDoc(
+
+            doc(db,"merchants",currentUid),
+
+            {
+
+                banner:url
+
+            },
+
+            {
+
+                merge:true
+
+            }
+
+        );
+
+        alert("Banner atualizado com sucesso.");
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        alert("Erro ao enviar banner.");
+
+    }
+
+};
