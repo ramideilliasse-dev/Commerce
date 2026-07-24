@@ -1,0 +1,149 @@
+ <!DOCTYPE html>
+<html lang="pt">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Promoções | TOMA</title>
+
+<link rel="stylesheet"
+href="merchant-dashboard-v2.css">
+
+<link rel="stylesheet"
+href="merchant-promotions.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
+rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="productsPage">
+
+<header class="productsHeader">
+
+<div class="leftHeader">
+
+<a
+href="merchant-dashboard-v2.html"
+class="backButton">
+
+<span class="material-symbols-rounded">
+
+arrow_back
+
+</span>
+
+</a>
+
+<div>
+
+<h1>
+
+Promoções
+
+</h1>
+
+<p>
+
+Crie e gerencie promoções da sua loja.
+
+</p>
+
+</div>
+
+</div>
+
+</header>
+
+<!-- PESQUISA -->
+
+<section class="searchSection">
+
+<div class="searchBox">
+
+<span class="material-symbols-rounded">
+
+search
+
+</span>
+
+<input
+
+id="searchPromotion"
+
+type="text"
+
+placeholder="Pesquisar produto...">
+
+</div>
+
+</section>
+
+<!-- FILTROS -->
+
+<section class="filters">
+
+<button
+class="filterChip active"
+data-filter="all">
+
+Todos
+
+</button>
+
+<button
+class="filterChip"
+data-filter="promotion">
+
+Em promoção
+
+</button>
+
+<button
+class="filterChip"
+data-filter="normal">
+
+Sem promoção
+
+</button>
+
+<button
+class="filterChip"
+data-filter="expired">
+
+Expiradas
+
+</button>
+
+</section>
+
+<!-- GRID -->
+
+<section
+
+id="promotionGrid"
+
+class="promotionGrid">
+
+</section>
+
+</div>
+
+<script
+type="module"
+src="./js/merchant-promotions.js">
+
+</script>
+
+</body>
+
+</html>
