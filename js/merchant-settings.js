@@ -62,6 +62,44 @@ document.getElementById("changeLogoBtn");
 
 const changeBannerBtn =
 document.getElementById("changeBannerBtn");
+// =====================================
+// OPEN PICKER
+// =====================================
+
+changeLogoBtn.onclick = () => {
+
+    logoInput.click();
+
+};
+
+changeBannerBtn.onclick = () => {
+
+    bannerInput.click();
+
+};
+// =====================================
+// PREVIEW IMAGES
+// =====================================
+
+logoInput.onchange = (e)=>{
+
+    const file = e.target.files[0];
+
+    if(!file) return;
+
+    logoPreview.src = URL.createObjectURL(file);
+
+};
+
+bannerInput.onchange = (e)=>{
+
+    const file = e.target.files[0];
+
+    if(!file) return;
+
+    bannerPreview.src = URL.createObjectURL(file);
+
+};
 /* =====================================
 CURRENT USER
 ===================================== */
