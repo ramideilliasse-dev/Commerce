@@ -142,8 +142,19 @@ function renderProducts(){
     }
 
     filteredProducts.forEach(product=>{
+const image =
 
-        const image = product.image || "images/no-image.png";
+    product.images && product.images.length
+
+    ? product.images[0]
+
+    : (
+
+        product.image ||
+
+        "images/no-image.png"
+
+    );
 
         const stock = Number(product.stock || 0);
 
@@ -165,12 +176,13 @@ function renderProducts(){
 
             <img
 
-                src="${image}"
+    src="${image}"
 
-                class="merchantProductImage"
+    class="merchantProductImage"
 
-                loading="lazy">
+    loading="lazy"
 
+    onerror="this.src='images/no-image.png'">
             <div class="merchantProductBody">
 
                 <h3>
