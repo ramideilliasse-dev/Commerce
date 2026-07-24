@@ -308,3 +308,89 @@ async function loadStatistics(){
     }
 
 }
+/* =====================================
+MENU MOBILE
+===================================== */
+
+toggleSidebar.onclick = ()=>{
+
+    sidebar.classList.toggle("collapsed");
+
+    content.classList.toggle("expanded");
+
+};
+
+/* =====================================
+ADD PRODUCT
+===================================== */
+
+if(addProductBtn){
+
+    addProductBtn.onclick = ()=>{
+
+        location.href = "add-product.html";
+
+    };
+
+}
+
+/* =====================================
+NOTIFICATION
+===================================== */
+
+const notificationBtn =
+document.querySelector(".notificationBtn");
+
+if(notificationBtn){
+
+    notificationBtn.onclick = ()=>{
+
+        location.href = "merchant-orders.html";
+
+    };
+
+}
+
+/* =====================================
+QUICK ANIMATIONS
+===================================== */
+
+window.addEventListener("load",()=>{
+
+    document
+
+    .querySelectorAll(".statCard")
+
+    .forEach((card,index)=>{
+
+        card.style.opacity="0";
+
+        card.style.transform="translateY(20px)";
+
+        setTimeout(()=>{
+
+            card.style.transition=".4s";
+
+            card.style.opacity="1";
+
+            card.style.transform="translateY(0)";
+
+        },index*120);
+
+    });
+
+});
+
+/* =====================================
+REFRESH DASHBOARD
+===================================== */
+
+setInterval(async()=>{
+
+    if(currentUid){
+
+        await loadStatistics();
+
+    }
+
+},30000);
