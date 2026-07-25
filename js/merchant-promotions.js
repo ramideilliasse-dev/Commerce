@@ -216,7 +216,21 @@ ${currentPrice.toLocaleString()} Kz
 </div>
 
 <div class="discountInfo">
+${product.promotion ? `
 
+<div class="expireBox">
+
+⏳ Expira em
+
+<strong>
+
+${getPromotionCountdown(product.promotionEnd)}
+
+</strong>
+
+</div>
+
+` : ""}
 <span>
 
 ${product.promotion ? "-" + product.promotionPercent + "%" : "Sem promoção"}
@@ -807,3 +821,46 @@ alert("Erro ao remover promoção.");
 }
 
 });
+/* =====================================
+COUNTDOWN
+===================================== */
+
+function getPromotionCountdown(endDate){
+
+if(!endDate){
+
+return "";
+
+}
+
+const today = new Date();
+
+const end = new Date(endDate);
+
+const diff =
+end.getTime() - today.getTime();
+
+const days =
+Math.ceil(diff / (1000*60*60*24));
+
+if(days < 0){
+
+return "Promoção expirada";
+
+}
+
+if(days === 0){
+
+return "Termina hoje";
+
+}
+
+if(days === 1){
+
+return "1 dia";
+
+}
+
+return days + " dias";
+
+}
