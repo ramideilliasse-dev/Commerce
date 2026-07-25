@@ -1,0 +1,263 @@
+ <!DOCTYPE html>
+<html lang="pt">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1.0">
+
+<title>Produto</title>
+
+<meta name="theme-color" content="#ff6a00">
+
+<link rel="manifest" href="/manifest.json">
+
+<link rel="apple-touch-icon" href="/icon-192.png">
+
+<meta
+name="apple-mobile-web-app-capable"
+content="yes">
+
+<meta
+name="apple-mobile-web-app-status-bar-style"
+content="black-translucent">
+
+<meta
+name="apple-mobile-web-app-title"
+content="Toma">
+
+<meta property="og:type" content="product">
+<meta property="og:site_name" content="Toma">
+<meta name="twitter:card" content="summary_large_image">
+
+<link
+href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+rel="stylesheet">
+
+<link
+href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
+rel="stylesheet">
+
+<link rel="stylesheet" href="css/product-detail.css">
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<header class="productHeader">
+
+<button
+id="backButton"
+class="headerButton">
+
+<span class="material-symbols-rounded">
+arrow_back
+</span>
+
+</button>
+
+<h1>
+Produto
+</h1>
+
+<div class="headerSpacer"></div>
+
+</header>
+
+<!-- CONTENU -->
+
+<main class="productContainer">
+
+<!-- ========================= -->
+<!-- GALERIE -->
+<!-- ========================= -->
+
+<section class="galleryCard">
+
+<div
+id="imageSlider"
+class="imageSlider">
+
+<!-- Images -->
+
+</div>
+
+<div
+id="sliderCounter"
+class="sliderCounter">
+
+1 / 1
+
+</div>
+
+<div
+id="sliderDots"
+class="sliderDots">
+
+</div>
+
+<div
+id="galleryThumbs"
+class="galleryThumbs">
+
+</div>
+
+</section>
+
+<!-- ========================= -->
+<!-- INFORMATIONS -->
+<!-- ========================= -->
+
+<section class="infoCard">
+
+<h2 id="productName">
+
+Carregando...
+
+</h2>
+
+<div class="badgeRow">
+
+<div id="ratingBadge" class="ratingBadge">
+
+⭐⭐⭐⭐⭐ 0
+
+</div>
+
+<div class="verifiedBadge">
+
+✔ Verificado
+
+</div>
+
+</div>
+
+<div
+id="productPrice"
+class="productPrice">
+
+0 Kz
+
+</div>
+
+<div
+id="stockBadge"
+class="stockBadge">
+
+Carregando...
+
+</div>
+
+<p
+id="productDescription"
+class="productDescription">
+
+</p>
+
+</section>
+
+<!-- ========================= -->
+<!-- ACTIONS -->
+<!-- ========================= -->
+
+<section class="actionButtons">
+
+<button
+id="favoriteButton"
+class="iconButton">
+
+❤️
+
+<span>
+Favoritos
+</span>
+
+</button>
+
+<button
+id="shareButton"
+class="iconButton">
+
+📤
+
+<span>
+Partilhar
+</span>
+
+</button>
+
+<button
+id="chatButton"
+class="iconButton">
+
+💬
+
+<span>
+Chat
+</span>
+
+</button>
+
+<button
+id="buyButton"
+class="buyButton">
+
+🛒 Comprar Agora
+
+</button>
+
+</section>
+
+<!-- ========================= -->
+<!-- PROCHAINS BLOCS -->
+<!-- ========================= -->
+
+<div id="merchantSection"></div>
+
+<div id="similarSection"></div>
+
+<div id="recommendSection"></div>
+
+<div id="reviewsSection"></div>
+
+</main>
+
+<!-- STICKY BUY -->
+
+<footer class="stickyBuyBar">
+
+<div>
+
+<div class="stickyLabel">
+
+Preço
+
+</div>
+
+<div id="stickyPrice">
+
+0 Kz
+
+</div>
+
+</div>
+
+<button
+id="stickyBuyButton">
+
+🛒 Comprar Agora
+
+</button>
+
+</footer>
+
+<script type="module" src="js/product-detail.js"></script>
+
+</body>
+
+</html>
