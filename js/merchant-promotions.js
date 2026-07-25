@@ -393,3 +393,124 @@ promotionGrid.addEventListener("click", async(e)=>{
     }
 
 });
+/* =====================================
+PROMOTION MODAL
+===================================== */
+
+const promotionModal =
+document.getElementById("promotionModal");
+
+const closePromotionModal =
+document.getElementById("closePromotionModal");
+
+const cancelPromotion =
+document.getElementById("cancelPromotion");
+
+const savePromotion =
+document.getElementById("savePromotion");
+
+const modalProductImage =
+document.getElementById("modalProductImage");
+
+const modalProductName =
+document.getElementById("modalProductName");
+
+const modalOldPrice =
+document.getElementById("modalOldPrice");
+
+const promotionPrice =
+document.getElementById("promotionPrice");
+
+const promotionStart =
+document.getElementById("promotionStart");
+
+const promotionEnd =
+document.getElementById("promotionEnd");
+
+let selectedProduct = null;
+
+let selectedPercent = 0;
+
+/* ==========================
+OUVRIR MODAL
+========================== */
+
+promotionGrid.addEventListener("click",(e)=>{
+
+const btn = e.target.closest(".addPromotion");
+
+if(!btn) return;
+
+const id = btn.dataset.id;
+
+selectedProduct =
+products.find(p=>p.id===id);
+
+if(!selectedProduct) return;
+
+modalProductImage.src =
+
+selectedProduct.images?.[0] ||
+
+selectedProduct.image ||
+
+"images/no-image.png";
+
+modalProductName.textContent =
+selectedProduct.name;
+
+modalOldPrice.textContent =
+
+Number(selectedProduct.price)
+
+.toLocaleString()
+
++" Kz";
+
+promotionPrice.value="";
+
+promotionStart.value="";
+
+promotionEnd.value="";
+
+selectedPercent=0;
+
+document
+
+.querySelectorAll(".discountOption")
+
+.forEach(item=>{
+
+item.classList.remove("active");
+
+});
+
+promotionModal.classList.add("active");
+
+});
+
+/* ==========================
+FERMER
+========================== */
+
+closePromotionModal.onclick=()=>{
+
+promotionModal.classList.remove("active");
+
+};
+
+cancelPromotion.onclick=()=>{
+
+promotionModal.classList.remove("active");
+
+};
+
+promotionModal.onclick=(e)=>{
+
+if(e.target===promotionModal){
+
+promotionModal.classList.remove("active");
+
+}
+
+};
