@@ -29,7 +29,9 @@ import {
     createProductCard
 } from "./product-card.js";
 
-
+import { checkExpiredPromotions }
+from "./promotion-manager.js";
+await checkExpiredPromotions();
 
 /* =====================================
    DOM
