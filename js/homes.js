@@ -637,13 +637,13 @@ window.addEventListener("load", async()=>{
     renderPromoSlider();
 
     renderCategoriesBar();
+// Charge ensuite les produits
+    loadProducts();
 
     // Vérifie toutes les promotions expirées
     await checkExpiredPromotions();
 
-    // Charge ensuite les produits
-    loadProducts();
-
+   
 });
 /* =====================================
    SLIDER PROMOTIONNEL
