@@ -31,7 +31,7 @@ import {
 
 import { checkExpiredPromotions }
 from "./promotion-manager.js";
-await checkExpiredPromotions();
+
 
 /* =====================================
    DOM
@@ -126,6 +126,7 @@ function cacheValid(){
     ) < CACHE_DURATION;
 
 }
+await checkExpiredPromotions();
 /* =====================================
    CHARGEMENT DES PRODUITS
 ===================================== */
