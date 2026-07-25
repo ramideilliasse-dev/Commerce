@@ -17,6 +17,9 @@ getDoc
 import {
 onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+checkExpiredPromotions
+} from "./promotion-manager.js";
 // =====================================
 // DOM
 // =====================================
@@ -63,8 +66,10 @@ onAuthStateChanged(auth, async(user)=>{
 
 async function loadShop(uid){
 
-    try{
+    // Vérifie automatiquement les promotions expirées
+    await checkExpiredPromotions();
 
+    try{
         // Boutique
 
         const merchantRef = doc(db,"merchants",uid);
@@ -198,12 +203,40 @@ function renderProducts(snapshot){
 
                 </h3>
 
-                <p class="shopProductPrice">
+                ${
+product.promotion && product.promotionPrice
 
-                    ${(product.price || 0).toLocaleString()} Kz
+?
 
-                </p>
+`
 
+<p class="shopProductOldPrice">
+
+${Number(product.oldPrice || product.price).toLocaleString()} Kz
+
+</p>
+
+<p class="shopProductPrice">
+
+${Number(product.promotionPrice).toLocaleString()} Kz
+
+</p>
+
+`
+
+:
+
+`
+
+<p class="shopProductPrice">
+
+${Number(product.price || 0).toLocaleString()} Kz
+
+</p>
+
+`
+
+}
             </div>
 
         </div>
