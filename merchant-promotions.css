@@ -1036,3 +1036,192 @@ font-weight:600;
 color:#ff6a00;
 
 }
+/* =====================================
+PREMIUM SEARCH
+===================================== */
+
+.searchSection{
+
+margin:25px 0;
+
+}
+
+.searchBox{
+
+display:flex;
+
+align-items:center;
+
+gap:15px;
+
+background:#fff;
+
+border-radius:22px;
+
+padding:18px 22px;
+
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+border:2px solid transparent;
+
+transition:.25s;
+
+}
+
+.searchBox:focus-within{
+
+border-color:#ff6a00;
+
+box-shadow:0 12px 30px rgba(255,106,0,.20);
+
+}
+
+.searchBox .material-symbols-rounded{
+
+font-size:30px;
+
+color:#ff6a00;
+
+}
+
+.searchBox input{
+
+flex:1;
+
+border:none;
+
+outline:none;
+
+background:transparent;
+
+font-size:17px;
+
+font-weight:500;
+
+color:#222;
+
+}
+
+.searchBox input::placeholder{
+
+color:#999;
+
+}
+
+/* =====================================
+PREMIUM FILTERS
+===================================== */
+
+.filters{
+
+display:flex;
+
+gap:14px;
+
+overflow-x:auto;
+
+padding:5px 2px 18px;
+
+scrollbar-width:none;
+
+}
+
+.filters::-webkit-scrollbar{
+
+display:none;
+
+}
+
+.filterChip{
+
+border:none;
+
+padding:14px 24px;
+
+border-radius:999px;
+
+background:#fff;
+
+color:#555;
+
+font-weight:700;
+
+font-size:15px;
+
+white-space:nowrap;
+
+cursor:pointer;
+
+box-shadow:0 8px 20px rgba(0,0,0,.06);
+
+transition:.25s;
+
+}
+
+.filterChip:hover{
+
+transform:translateY(-2px);
+
+}
+
+.filterChip.active{
+
+background:linear-gradient(135deg,#ff6a00,#ff8a00);
+
+color:#fff;
+
+box-shadow:0 12px 30px rgba(255,106,0,.30);
+
+}
+
+.filterChip[data-filter="promotion"]::before{
+
+content:"🔥 ";
+
+}
+
+.filterChip[data-filter="normal"]::before{
+
+content:"📦 ";
+
+}
+
+.filterChip[data-filter="expired"]::before{
+
+content:"⏳ ";
+
+}
+
+.filterChip[data-filter="all"]::before{
+
+content:"✨ ";
+
+}
+
+/* =====================================
+MOBILE
+===================================== */
+
+@media(max-width:768px){
+
+.searchBox{
+
+padding:16px 18px;
+
+}
+
+.searchBox input{
+
+font-size:16px;
+
+}
+
+.filterChip{
+
+padding:13px 20px;
+
+font-size:14px;
+
+}
+
+}
