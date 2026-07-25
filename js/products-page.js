@@ -23,6 +23,7 @@ getDocs
 
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { createProductCard } from "./product-card.js";
+import { checkExpiredPromotions } from "./promotion-manager.js";
 const productsGrid =
 
 document.getElementById("productsGrid");
@@ -40,8 +41,10 @@ let allProducts = [];
 
 async function loadProducts(){
 
-try{
+// Vérifie les promotions expirées
+await checkExpiredPromotions();
 
+try{
 const snapshot = await getDocs(
 
 collection(db,"products")
