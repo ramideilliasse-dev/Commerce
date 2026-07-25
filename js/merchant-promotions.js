@@ -109,118 +109,151 @@ RENDER PRODUCTS
 
 function renderProducts(){
 
-    promotionGrid.innerHTML = "";
+promotionGrid.innerHTML="";
 
-    if(filteredProducts.length===0){
+if(filteredProducts.length===0){
 
-        promotionGrid.innerHTML = `
+promotionGrid.innerHTML=`
 
-        <div class="emptyPromotion">
+<div class="emptyPromotion">
 
-            <span class="material-symbols-rounded">
+<span class="material-symbols-rounded">
 
-                local_offer
+local_offer
 
-            </span>
+</span>
 
-            <h2>
+<h2>
 
-                Nenhum produto encontrado
+Nenhum produto encontrado
 
-            </h2>
+</h2>
 
-            <p>
+<p>
 
-                Adicione produtos para criar promoções.
+Crie a sua primeira promoção.
 
-            </p>
+</p>
 
-        </div>
+</div>
 
-        `;
+`;
 
-        return;
+return;
 
-    }
+}
 
-    filteredProducts.forEach(product=>{
+let active = 0;
 
-        const image =
-        product.image ||
-        "images/no-image.png";
+filteredProducts.forEach(product=>{
 
-        const promotion =
-        product.promotion===true;
+if(product.promotion===true){
 
-        promotionGrid.innerHTML += `
+active++;
 
-        <div class="promotionCard">
+}
 
-            ${promotion ? `
+const image =
 
-            <div class="promoBadge">
+product.images?.[0] ||
 
-                🔥 PROMO
+product.image ||
 
-            </div>
+"images/no-image.png";
 
-            ` : ""}
+const oldPrice =
 
-            <img
+Number(product.oldPrice || product.price);
 
-            src="${image}"
+const currentPrice =
 
-            class="promotionImage">
+Number(product.promotionPrice || product.price);
 
-            <div class="promotionBody">
+promotionGrid.innerHTML += `
 
-                <div class="promotionTitle">
+<div class="promotionCard">
 
-                    ${product.name || ""}
+${product.promotion ? `
 
-                </div>
+<div class="promoBadge">
 
-                ${promotion ? `
+🔥 PROMOÇÃO
 
-                <div class="oldPrice">
+</div>
 
-                    ${Number(product.oldPrice || product.price).toLocaleString()} Kz
+` : ""}
 
-                </div>
+<img
 
-                <div class="currentPrice">
+class="promotionImage"
 
-                    ${Number(product.promotionPrice || product.price).toLocaleString()} Kz
+src="${image}"
 
-                </div>
+loading="lazy">
 
-                ` : `
+<div class="promotionBody">
 
-                <div class="currentPrice">
+<h3 class="promotionTitle">
 
-                    ${Number(product.price || 0).toLocaleString()} Kz
+${product.name}
 
-                </div>
+</h3>
 
-                `}
+${product.promotion ? `
 
-                <button
+<div class="oldPrice">
 
-                class="promotionButton ${promotion ? "removePromotion":"addPromotion"}"
+${oldPrice.toLocaleString()} Kz
 
-                data-id="${product.id}">
+</div>
 
-                    ${promotion ? "Remover Promoção":"Adicionar Promoção"}
+` : ""}
 
-                </button>
+<div class="currentPrice">
 
-            </div>
+${currentPrice.toLocaleString()} Kz
 
-        </div>
+</div>
 
-        `;
+<div class="discountInfo">
 
-    });
+<span>
+
+${product.promotion ? "-" + product.promotionPercent + "%" : "Sem promoção"}
+
+</span>
+
+<span>
+
+Stock: ${product.stock || 0}
+
+</span>
+
+</div>
+
+<button
+
+class="promotionButton ${product.promotion ? "removePromotion":"addPromotion"}"
+
+data-id="${product.id}">
+
+${product.promotion ? "Remover Promoção":"Adicionar Promoção"}
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("activePromotions").textContent = active;
+
+document.getElementById("scheduledPromotions").textContent = "0";
+
+document.getElementById("expiredPromotions").textContent = "0";
 
 }
 /* =====================================
