@@ -29,7 +29,7 @@ import {
     createProductCard
 } from "./product-card.js";
 
-
+import { checkExpiredPromotions } from "./promotion-manager.js";
 
 /* =====================================
    DOM
@@ -630,7 +630,7 @@ function applyTranslations(){
 /* =====================================
    START
 ===================================== */
-window.addEventListener("load",()=>{
+window.addEventListener("load", async()=>{
 
     updateCartCount();
 
@@ -638,10 +638,13 @@ window.addEventListener("load",()=>{
 
     renderCategoriesBar();
 
+    // Vérifie toutes les promotions expirées
+    await checkExpiredPromotions();
+
+    // Charge ensuite les produits
     loadProducts();
 
 });
-
 /* =====================================
    SLIDER PROMOTIONNEL
 ===================================== */
