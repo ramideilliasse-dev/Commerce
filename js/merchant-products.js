@@ -26,7 +26,9 @@ import {
 onAuthStateChanged
 
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
+import {
+checkExpiredPromotions
+} from "./promotion-manager.js";
 /* =====================================
 DOM
 ===================================== */
@@ -68,6 +70,9 @@ LOAD PRODUCTS
 ===================================== */
 
 async function loadProducts(uid){
+
+    // Vérifie toutes les promotions expirées
+    await checkExpiredPromotions();
 
     try{
 
@@ -193,9 +198,42 @@ const image =
 
                 <div class="merchantPrice">
 
-                    ${Number(product.price||0).toLocaleString()} Kz
+${
+product.promotion && product.promotionPrice
 
-                </div>
+?
+
+`
+
+<div class="oldPrice">
+
+${Number(product.oldPrice || product.price).toLocaleString()} Kz
+
+</div>
+
+<div class="newPrice">
+
+${Number(product.promotionPrice).toLocaleString()} Kz
+
+</div>
+
+`
+
+:
+
+`
+
+<div class="newPrice">
+
+${Number(product.price).toLocaleString()} Kz
+
+</div>
+
+`
+
+}
+
+</div>
 
                 <div class="merchantStock">
 
