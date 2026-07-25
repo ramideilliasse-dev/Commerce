@@ -1,4 +1,4 @@
- // =====================================
+// =====================================
 // MERCHANT PROMOTIONS
 // TOMA
 // =====================================
@@ -231,15 +231,39 @@ Stock: ${product.stock || 0}
 
 </div>
 
+<div class="promotionActions">
+
+${product.promotion ? `
+
 <button
-
-class="promotionButton ${product.promotion ? "removePromotion":"addPromotion"}"
-
+class="promotionButton editPromotion"
 data-id="${product.id}">
 
-${product.promotion ? "Remover Promoção":"Adicionar Promoção"}
+✏️ Editar
 
 </button>
+
+<button
+class="promotionButton removePromotion"
+data-id="${product.id}">
+
+🗑️ Remover
+
+</button>
+
+` : `
+
+<button
+class="promotionButton addPromotion"
+data-id="${product.id}">
+
+🔥 Adicionar Promoção
+
+</button>
+
+`}
+
+</div>
 
 </div>
 
@@ -510,6 +534,125 @@ promotionModal.onclick=(e)=>{
 if(e.target===promotionModal){
 
 promotionModal.classList.remove("active");
+
+}
+
+};
+/* =====================================
+DISCOUNT BUTTONS
+===================================== */
+
+document
+.querySelectorAll(".discountOption")
+.forEach(button=>{
+
+button.onclick=()=>{
+
+document
+.querySelectorAll(".discountOption")
+.forEach(item=>{
+
+item.classList.remove("active");
+
+});
+
+button.classList.add("active");
+
+selectedPercent = Number(
+button.dataset.percent
+);
+
+if(!selectedProduct) return;
+
+const oldPrice =
+Number(selectedProduct.price);
+
+const newPrice =
+Math.round(
+oldPrice -
+(oldPrice * selectedPercent / 100)
+);
+
+promotionPrice.value = newPrice;
+
+};
+
+});
+
+/* =====================================
+SAVE PROMOTION
+===================================== */
+
+savePromotion.onclick = async()=>{
+
+if(!selectedProduct){
+
+alert("Nenhum produto selecionado.");
+
+return;
+
+}
+
+const newPrice =
+Number(promotionPrice.value);
+
+if(newPrice<=0){
+
+alert("Preço inválido.");
+
+return;
+
+}
+
+try{
+
+await updateDoc(
+
+doc(db,"products",selectedProduct.id),
+
+{
+
+promotion:true,
+
+promotionPercent:selectedPercent,
+
+promotionPrice:newPrice,
+
+oldPrice:Number(selectedProduct.price),
+
+promotionStart:promotionStart.value || null,
+
+promotionEnd:promotionEnd.value || null
+
+}
+
+);
+
+selectedProduct.promotion = true;
+
+selectedProduct.promotionPercent = selectedPercent;
+
+selectedProduct.promotionPrice = newPrice;
+
+selectedProduct.oldPrice = Number(selectedProduct.price);
+
+selectedProduct.promotionStart = promotionStart.value;
+
+selectedProduct.promotionEnd = promotionEnd.value;
+
+promotionModal.classList.remove("active");
+
+renderProducts();
+
+alert("Promoção criada com sucesso.");
+
+}
+
+catch(error){
+
+console.error(error);
+
+alert("Erro ao guardar promoção.");
 
 }
 
