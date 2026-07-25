@@ -287,7 +287,175 @@ local_offer
 </button>
 
 </div>
+<!-- =====================================
+MODAL NOVA PROMOÇÃO
+===================================== -->
 
+<div id="promotionModal" class="promotionModal">
+
+<div class="promotionModalContent">
+
+<div class="promotionModalHeader">
+
+<h2>
+
+🔥 Nova Promoção
+
+</h2>
+
+<button id="closePromotionModal">
+
+<span class="material-symbols-rounded">
+
+close
+
+</span>
+
+</button>
+
+</div>
+
+<div class="promotionProduct">
+
+<img
+id="modalProductImage"
+src="images/no-image.png">
+
+<div>
+
+<h3 id="modalProductName">
+
+Produto
+
+</h3>
+
+<p>
+
+Preço atual
+
+</p>
+
+<h2 id="modalOldPrice">
+
+0 Kz
+
+</h2>
+
+</div>
+
+</div>
+
+<label>
+
+Desconto (%)
+
+</label>
+
+<div class="discountGrid">
+
+<button class="discountOption" data-percent="10">
+
+10%
+
+</button>
+
+<button class="discountOption" data-percent="20">
+
+20%
+
+</button>
+
+<button class="discountOption" data-percent="30">
+
+30%
+
+</button>
+
+<button class="discountOption" data-percent="40">
+
+40%
+
+</button>
+
+<button class="discountOption" data-percent="50">
+
+50%
+
+</button>
+
+</div>
+
+<div class="orDivider">
+
+OU
+
+</div>
+
+<label>
+
+Novo preço
+
+</label>
+
+<input
+
+id="promotionPrice"
+
+type="number"
+
+placeholder="Novo preço">
+
+<label>
+
+Data início
+
+</label>
+
+<input
+
+id="promotionStart"
+
+type="date">
+
+<label>
+
+Data fim
+
+</label>
+
+<input
+
+id="promotionEnd"
+
+type="date">
+
+<div class="promotionModalButtons">
+
+<button
+
+id="cancelPromotion"
+
+class="cancelPromotion">
+
+Cancelar
+
+</button>
+
+<button
+
+id="savePromotion"
+
+class="savePromotion">
+
+Guardar Promoção
+
+</button>
+
+</div>
+
+</div>
+
+</div>
 <script
 type="module"
 src="./js/merchant-promotions.js">
