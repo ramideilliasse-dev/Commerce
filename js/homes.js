@@ -29,8 +29,6 @@ import {
     createProductCard
 } from "./product-card.js";
 
-import { checkExpiredPromotions }
-from "./promotion-manager.js";
 
 
 /* =====================================
@@ -126,7 +124,7 @@ function cacheValid(){
     ) < CACHE_DURATION;
 
 }
-await checkExpiredPromotions();
+
 /* =====================================
    CHARGEMENT DES PRODUITS
 ===================================== */
