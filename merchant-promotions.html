@@ -5,22 +5,17 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Promoções | TOMA</title>
 
-<link rel="stylesheet"
-href="merchant-dashboard-v2.css">
+<link rel="stylesheet" href="merchant-dashboard-v2.css">
 
-<link rel="stylesheet"
-href="merchant-promotions.css">
+<link rel="stylesheet" href="merchant-promotions.css">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
-rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
 
 </head>
 
@@ -32,9 +27,7 @@ rel="stylesheet">
 
 <div class="leftHeader">
 
-<a
-href="merchant-dashboard-v2.html"
-class="backButton">
+<a href="merchant-dashboard-v2.html" class="backButton">
 
 <span class="material-symbols-rounded">
 
@@ -64,7 +57,105 @@ Crie e gerencie promoções da sua loja.
 
 </header>
 
-<!-- PESQUISA -->
+<!-- ===========================
+RESUMO
+=========================== -->
+
+<section class="promotionSummary">
+
+<div class="summaryCard">
+
+<div>
+
+<h2>
+
+🔥 Promoções Ativas
+
+</h2>
+
+<p>
+
+Gerencie descontos dos seus produtos.
+
+</p>
+
+</div>
+
+<button id="newPromotionBtn">
+
+<span class="material-symbols-rounded">
+
+add
+
+</span>
+
+Nova Promoção
+
+</button>
+
+</div>
+
+</section>
+
+<!-- ===========================
+ESTATÍSTICAS
+=========================== -->
+
+<section class="promotionStats">
+
+<div class="promoStat">
+
+<h3 id="activePromotions">
+
+0
+
+</h3>
+
+<span>
+
+Ativas
+
+</span>
+
+</div>
+
+<div class="promoStat">
+
+<h3 id="scheduledPromotions">
+
+0
+
+</h3>
+
+<span>
+
+Agendadas
+
+</span>
+
+</div>
+
+<div class="promoStat">
+
+<h3 id="expiredPromotions">
+
+0
+
+</h3>
+
+<span>
+
+Expiradas
+
+</span>
+
+</div>
+
+</section>
+
+<!-- ===========================
+PESQUISA
+=========================== -->
 
 <section class="searchSection">
 
@@ -88,7 +179,9 @@ placeholder="Pesquisar produto...">
 
 </section>
 
-<!-- FILTROS -->
+<!-- ===========================
+FILTROS
+=========================== -->
 
 <section class="filters">
 
@@ -126,15 +219,39 @@ Expiradas
 
 </section>
 
-<!-- GRID -->
+<!-- ===========================
+PRODUTOS
+=========================== -->
 
-<section
+<section class="shopProductsSection">
+
+<div
 
 id="promotionGrid"
 
 class="promotionGrid">
 
+</div>
+
 </section>
+
+<!-- ===========================
+BOTÃO FLUTUANTE
+=========================== -->
+
+<button
+
+id="floatingPromotionBtn"
+
+class="floatingPromotionBtn">
+
+<span class="material-symbols-rounded">
+
+local_offer
+
+</span>
+
+</button>
 
 </div>
 
