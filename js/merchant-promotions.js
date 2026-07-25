@@ -657,3 +657,153 @@ alert("Erro ao guardar promoção.");
 }
 
 };
+/* =====================================
+EDIT PROMOTION
+===================================== */
+
+promotionGrid.addEventListener("click",(e)=>{
+
+const btn = e.target.closest(".editPromotion");
+
+if(!btn) return;
+
+const id = btn.dataset.id;
+
+selectedProduct =
+products.find(p=>p.id===id);
+
+if(!selectedProduct) return;
+
+/* Produit */
+
+modalProductImage.src =
+selectedProduct.images?.[0] ||
+selectedProduct.image ||
+"images/no-image.png";
+
+modalProductName.textContent =
+selectedProduct.name;
+
+modalOldPrice.textContent =
+Number(selectedProduct.price).toLocaleString() +
+" Kz";
+
+/* Prix */
+
+promotionPrice.value =
+selectedProduct.promotionPrice || "";
+
+/* Dates */
+
+promotionStart.value =
+selectedProduct.promotionStart || "";
+
+promotionEnd.value =
+selectedProduct.promotionEnd || "";
+
+/* Pourcentage */
+
+selectedPercent =
+Number(selectedProduct.promotionPercent || 0);
+
+/* Boutons */
+
+document
+.querySelectorAll(".discountOption")
+.forEach(button=>{
+
+button.classList.remove("active");
+
+if(
+Number(button.dataset.percent)===selectedPercent
+){
+
+button.classList.add("active");
+
+}
+
+});
+
+/* Ouvrir */
+
+promotionModal.classList.add("active");
+
+});
+/* =====================================
+REMOVE PROMOTION
+===================================== */
+
+promotionGrid.addEventListener("click",async(e)=>{
+
+const btn = e.target.closest(".removePromotion");
+
+if(!btn) return;
+
+const id = btn.dataset.id;
+
+const confirmDelete = confirm(
+
+"Remover esta promoção?"
+
+);
+
+if(!confirmDelete) return;
+
+try{
+
+await updateDoc(
+
+doc(db,"products",id),
+
+{
+
+promotion:false,
+
+promotionPrice:null,
+
+promotionPercent:null,
+
+promotionStart:null,
+
+promotionEnd:null,
+
+oldPrice:null
+
+}
+
+);
+
+const product =
+products.find(p=>p.id===id);
+
+if(product){
+
+product.promotion=false;
+
+product.promotionPrice=null;
+
+product.promotionPercent=null;
+
+product.promotionStart=null;
+
+product.promotionEnd=null;
+
+product.oldPrice=null;
+
+}
+
+renderProducts();
+
+alert("Promoção removida.");
+
+}
+
+catch(error){
+
+console.error(error);
+
+alert("Erro ao remover promoção.");
+
+}
+
+});
