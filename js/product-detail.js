@@ -839,3 +839,180 @@ updateFullscreen();
 updateGallery();
 
 });
+// =====================================
+// ZOOM PREMIUM
+// =====================================
+
+let zoomScale = 1;
+
+let startDistance = 0;
+
+let translateX = 0;
+
+let translateY = 0;
+// =====================================
+// DOUBLE TAP
+// =====================================
+
+fullscreenSlider.addEventListener("dblclick",(e)=>{
+
+const img = e.target;
+
+if(!img.classList.contains("zoomImage")) return;
+
+if(zoomScale===1){
+
+zoomScale=2;
+
+}else{
+
+zoomScale=1;
+
+translateX=0;
+
+translateY=0;
+
+}
+
+img.style.transform=
+
+`translate(${translateX}px,${translateY}px) scale(${zoomScale})`;
+
+});
+// =====================================
+// PINCH TO ZOOM
+// =====================================
+
+fullscreenSlider.addEventListener("touchstart",(e)=>{
+
+if(e.touches.length!==2) return;
+
+const dx=
+
+e.touches[0].clientX-
+
+e.touches[1].clientX;
+
+const dy=
+
+e.touches[0].clientY-
+
+e.touches[1].clientY;
+
+startDistance=
+
+Math.sqrt(dx*dx+dy*dy);
+
+});
+// =====================================
+// ZOOM AVEC DEUX DOIGTS
+// =====================================
+
+fullscreenSlider.addEventListener("touchmove",(e)=>{
+
+if(e.touches.length!==2) return;
+
+e.preventDefault();
+
+const dx=
+
+e.touches[0].clientX-
+
+e.touches[1].clientX;
+
+const dy=
+
+e.touches[0].clientY-
+
+e.touches[1].clientY;
+
+const distance=
+
+Math.sqrt(dx*dx+dy*dy);
+
+let ratio=
+
+distance/startDistance;
+
+zoomScale*=ratio;
+
+zoomScale=Math.max(1,Math.min(4,zoomScale));
+
+startDistance=distance;
+
+const img=
+
+fullscreenSlider
+
+.children[currentImage]
+
+.querySelector("img");
+
+img.style.transform=
+
+`translate(${translateX}px,${translateY}px) scale(${zoomScale})`;
+
+},{
+passive:false
+});
+// =====================================
+// DÉPLACEMENT IMAGE ZOOMÉE
+// =====================================
+
+let drag=false;
+
+let dragStartX=0;
+
+let dragStartY=0;
+
+fullscreenSlider.addEventListener("touchstart",(e)=>{
+
+if(zoomScale<=1) return;
+
+drag=true;
+
+dragStartX=e.touches[0].clientX;
+
+dragStartY=e.touches[0].clientY;
+
+});
+
+fullscreenSlider.addEventListener("touchmove",(e)=>{
+
+if(!drag) return;
+
+const dx=
+
+e.touches[0].clientX-dragStartX;
+
+const dy=
+
+e.touches[0].clientY-dragStartY;
+
+dragStartX=e.touches[0].clientX;
+
+dragStartY=e.touches[0].clientY;
+
+translateX+=dx;
+
+translateY+=dy;
+
+const img=
+
+fullscreenSlider
+
+.children[currentImage]
+
+.querySelector("img");
+
+img.style.transform=
+
+`translate(${translateX}px,${translateY}px) scale(${zoomScale})`;
+
+});
+
+fullscreenSlider.addEventListener("touchend",()=>{
+
+drag=false;
+
+});
