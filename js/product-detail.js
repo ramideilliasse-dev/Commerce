@@ -2155,3 +2155,71 @@ function buy(){
     location.href = "checkout.html";
 
 }
+// =====================================
+// BADGE PANIER
+// =====================================
+
+const cartBadge =
+document.getElementById("cartBadge");
+
+// Mettre à jour le badge
+function updateCartBadge(){
+
+    if(!cartBadge) return;
+
+    const cart = JSON.parse(
+
+        localStorage.getItem("cart") || "[]"
+
+    );
+
+    let total = 0;
+
+    cart.forEach(item=>{
+
+        total += Number(item.qty || 0);
+
+    });
+
+    if(total<=0){
+
+        cartBadge.style.display = "none";
+
+        return;
+
+    }
+
+    cartBadge.style.display = "flex";
+
+    if(total>99){
+
+        cartBadge.textContent = "99+";
+
+    }else{
+
+        cartBadge.textContent = total;
+
+    }
+
+}
+
+// Chargement
+updateCartBadge();
+
+
+// =====================================
+// OUVRIR LE PANIER
+// =====================================
+
+const cartButton =
+document.getElementById("cartButton");
+
+if(cartButton){
+
+    cartButton.addEventListener("click",()=>{
+
+        location.href = "checkout.html";
+
+    });
+
+}
