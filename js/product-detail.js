@@ -1670,3 +1670,116 @@ item
 });
 
 }
+// =====================================
+// VARIANTES
+// =====================================
+
+let selectedVariant=null;
+
+function renderVariants(){
+
+const container=
+
+document.getElementById(
+
+"variantsContainer"
+
+);
+
+const section=
+
+document.getElementById(
+
+"variantsSection"
+
+);
+
+if(
+
+!product.variants ||
+
+!product.variants.length
+
+){
+
+section.style.display="none";
+
+return;
+
+}
+
+section.style.display="block";
+
+container.innerHTML="";
+
+product.variants.forEach(
+
+(variant,index)=>{
+
+const button=
+
+document.createElement("button");
+
+button.className=
+
+"variantButton";
+
+button.textContent=
+
+variant;
+
+if(index===0){
+
+button.classList.add(
+
+"active"
+
+);
+
+selectedVariant=
+
+variant;
+
+}
+
+button.onclick=()=>{
+
+document
+
+.querySelectorAll(
+
+".variantButton"
+
+)
+
+.forEach(
+
+b=>b.classList.remove(
+
+"active"
+
+)
+
+);
+
+button.classList.add(
+
+"active"
+
+);
+
+selectedVariant=
+
+variant;
+
+};
+
+container.appendChild(
+
+button
+
+);
+
+});
+
+}
