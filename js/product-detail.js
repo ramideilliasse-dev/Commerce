@@ -1016,3 +1016,173 @@ fullscreenSlider.addEventListener("touchend",()=>{
 drag=false;
 
 });
+// =====================================
+// CHARGER LE MARCHAND
+// =====================================
+
+async function loadMerchant(){
+
+try{
+
+const merchantRef = doc(
+
+db,
+
+"merchants",
+
+product.merchantId
+
+);
+
+const merchantSnap = await getDoc(merchantRef);
+
+if(!merchantSnap.exists()) return;
+
+merchant = merchantSnap.data();
+
+// Logo
+
+merchantLogo.src =
+
+merchant.logo ||
+
+"images/default-store.png";
+
+// Nom
+
+merchantName.textContent =
+
+merchant.shopName ||
+
+"Loja Oficial";
+
+// Description
+
+merchantDescription.textContent =
+
+merchant.description ||
+
+"Loja verificada na TOMA.";
+
+// Depuis
+
+merchantSince.textContent =
+
+merchant.createdYear ||
+
+new Date().getFullYear();
+
+// Nombre de produits
+
+const q = query(
+
+collection(db,"products"),
+
+where(
+
+"merchantId",
+
+"==",
+
+product.merchantId
+
+)
+
+);
+
+const productsSnap =
+
+await getDocs(q);
+
+merchantProducts.textContent =
+
+productsSnap.size;
+
+// Note moyenne
+
+let totalStars = 0;
+
+let totalReviews = 0;
+
+const reviewQuery = query(
+
+collection(db,"reviews"),
+
+where(
+
+"merchantId",
+
+"==",
+
+product.merchantId
+
+)
+
+);
+
+const reviewSnap =
+
+await getDocs(reviewQuery);
+
+reviewSnap.forEach(doc=>{
+
+totalStars +=
+
+Number(doc.data().rating || 5);
+
+totalReviews++;
+
+});
+
+if(totalReviews){
+
+merchantRating.textContent =
+
+"⭐ " +
+
+(totalStars/totalReviews)
+
+.toFixed(1);
+
+}else{
+
+merchantRating.textContent =
+
+"⭐ 5.0";
+
+}
+
+}catch(error){
+
+console.error(error);
+
+}
+
+}
+// =====================================
+// BOUTONS MARCHAND
+// =====================================
+
+window.openMerchantShop = function(){
+
+location.href =
+
+"merchant-shop.html?id=" +
+
+product.merchantId;
+
+};
+
+window.openMerchantChat = function(){
+
+location.href =
+
+"chat.html?merchant=" +
+
+product.merchantId +
+
+"&product=" +
+
+product.id;
+
+};
