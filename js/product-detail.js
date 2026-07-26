@@ -1831,3 +1831,39 @@ updateViewer();
 }
 
 }
+// =====================================
+// QUANTITÉ
+// =====================================
+
+let quantity = 1;
+
+const quantityValue =
+document.getElementById("quantityValue");
+
+document.getElementById("minusQty").onclick = ()=>{
+
+if(quantity<=1) return;
+
+quantity--;
+
+quantityValue.textContent = quantity;
+
+};
+
+document.getElementById("plusQty").onclick = ()=>{
+
+const stock =
+
+selectedVariantData
+
+? Number(selectedVariantData.stock||0)
+
+: Number(product.stock||0);
+
+if(quantity>=stock) return;
+
+quantity++;
+
+quantityValue.textContent = quantity;
+
+};
