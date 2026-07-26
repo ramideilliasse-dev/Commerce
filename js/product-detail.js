@@ -237,7 +237,8 @@ await loadMerchant();
 
 await loadMerchantProducts();
 await loadRecommendations();
-
+await loadSimilarProducts();
+await loadRecommendedProducts();
 await loadReviews();
 
 }catch(error){
@@ -1311,5 +1312,252 @@ ${Number(p.price||0)
 `;
 
 return card;
+
+}
+// =====================================
+// PRODUITS SIMILAIRES
+// =====================================
+
+async function loadSimilarProducts(){
+
+try{
+
+const q=query(
+
+collection(db,"products"),
+
+where(
+
+"category",
+
+"==",
+
+product.category
+
+)
+
+);
+
+const snapshot=await getDocs(q);
+
+recommendProductsGrid.innerHTML="";
+
+let count=0;
+
+snapshot.forEach(docSnap=>{
+
+if(docSnap.id===product.id) return;
+
+if(count>=12) return;
+
+recommendProductsGrid.appendChild(
+
+createProductCard(
+
+docSnap.id,
+
+docSnap.data()
+
+)
+
+);
+
+count++;
+
+});
+
+}catch(error){
+
+console.error(error);
+
+}
+
+}
+// =====================================
+// PRODUCT CARD PREMIUM
+// =====================================
+
+function createProductCard(id,p){
+
+const card=document.createElement("div");
+
+card.className="productCard";
+
+card.onclick=()=>{
+
+location.href=
+
+"product-detail.html?id="+id;
+
+};
+
+const image=
+
+p.images?.[0] ||
+
+p.image ||
+
+"images/no-image.png";
+
+const oldPrice=
+
+Number(p.oldPrice||0);
+
+const price=
+
+Number(p.price||0);
+
+const promo=
+
+oldPrice>price;
+
+card.innerHTML=`
+
+<div class="productImageBox">
+
+${promo?
+
+`<div class="promoBadge">
+
+-${Math.round(
+
+(oldPrice-price)
+
+/oldPrice*100
+
+)}%
+
+</div>`
+
+:""}
+
+<img
+
+src="${image}"
+
+loading="lazy"
+
+class="productImage">
+
+</div>
+
+<div class="productBody">
+
+<div class="productPrice">
+
+${price.toLocaleString()} Kz
+
+</div>
+
+${promo?
+
+`<div class="oldPrice">
+
+${oldPrice.toLocaleString()} Kz
+
+</div>`
+
+:""}
+
+<h3>
+
+${p.name||""}
+
+</h3>
+
+<div class="productProvince">
+
+📍 ${p.province||"Angola"}
+
+</div>
+
+</div>
+
+`;
+
+return card;
+
+}
+// =====================================
+// RECOMMANDÉS POUR VOUS
+// =====================================
+
+async function loadRecommendedProducts(){
+
+try{
+
+const snapshot = await getDocs(
+
+collection(db,"products")
+
+);
+
+let list=[];
+
+snapshot.forEach(docSnap=>{
+
+if(docSnap.id===product.id) return;
+
+list.push({
+
+id:docSnap.id,
+
+...docSnap.data()
+
+});
+
+});
+
+// Tri intelligent
+
+list.sort((a,b)=>{
+
+const scoreA=
+
+(Number(a.sales||0)*4)+
+
+(Number(a.views||0))+
+
+(Number(a.rating||5)*20)+
+
+(a.promotion?100:0);
+
+const scoreB=
+
+(Number(b.sales||0)*4)+
+
+(Number(b.views||0))+
+
+(Number(b.rating||5)*20)+
+
+(b.promotion?100:0);
+
+return scoreB-scoreA;
+
+});
+
+recommendProductsGrid.innerHTML="";
+
+list.slice(0,12).forEach(item=>{
+
+recommendProductsGrid.appendChild(
+
+createProductCard(
+
+item.id,
+
+item
+
+)
+
+);
+
+});
+
+}catch(error){
+
+console.error(error);
+
+}
 
 }
