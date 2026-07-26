@@ -1913,3 +1913,466 @@ height:72px;
 }
 
 }
+/* =======================================
+   STICKY BUY BAR PREMIUM
+======================================= */
+
+.stickyBar{
+
+position:fixed;
+
+left:0;
+
+right:0;
+
+bottom:0;
+
+z-index:9999;
+
+background:rgba(255,255,255,.96);
+
+backdrop-filter:blur(20px);
+
+-webkit-backdrop-filter:blur(20px);
+
+border-top:1px solid #e8e8e8;
+
+box-shadow:0 -10px 35px rgba(0,0,0,.10);
+
+padding:14px 18px calc(14px + env(safe-area-inset-bottom));
+
+display:flex;
+
+align-items:center;
+
+justify-content:space-between;
+
+gap:16px;
+
+}
+
+.stickyPriceBox{
+
+display:flex;
+
+flex-direction:column;
+
+}
+
+.stickyLabel{
+
+font-size:12px;
+
+font-weight:600;
+
+color:#888;
+
+margin-bottom:4px;
+
+}
+
+.stickyPrice{
+
+font-size:30px;
+
+font-weight:800;
+
+color:#16a34a;
+
+line-height:1;
+
+}
+
+.stickyOldPrice{
+
+margin-top:5px;
+
+font-size:14px;
+
+color:#999;
+
+text-decoration:line-through;
+
+}
+
+.stickyButtons{
+
+display:flex;
+
+gap:12px;
+
+align-items:center;
+
+}
+
+.cartButton{
+
+width:60px;
+
+height:60px;
+
+border:none;
+
+border-radius:18px;
+
+background:#ffffff;
+
+color:#16a34a;
+
+cursor:pointer;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+box-shadow:0 8px 22px rgba(0,0,0,.08);
+
+transition:.25s;
+
+}
+
+.cartButton:hover{
+
+transform:translateY(-3px);
+
+}
+
+.cartButton .material-symbols-rounded{
+
+font-size:30px;
+
+}
+
+.buyNowButton{
+
+height:60px;
+
+padding:0 28px;
+
+border:none;
+
+border-radius:18px;
+
+background:linear-gradient(135deg,#16a34a,#0f9f4a);
+
+color:#fff;
+
+font-size:16px;
+
+font-weight:700;
+
+cursor:pointer;
+
+display:flex;
+
+align-items:center;
+
+gap:10px;
+
+box-shadow:0 12px 28px rgba(22,163,74,.35);
+
+transition:.25s;
+
+}
+
+.buyNowButton:hover{
+
+transform:translateY(-3px);
+
+box-shadow:0 16px 35px rgba(22,163,74,.40);
+
+}
+
+.buyNowButton .material-symbols-rounded{
+
+font-size:26px;
+
+}
+
+.buyNowButton:disabled{
+
+background:#bdbdbd;
+
+box-shadow:none;
+
+cursor:not-allowed;
+
+}
+
+.cartButton:active,
+
+.buyNowButton:active{
+
+transform:scale(.96);
+
+}
+
+/* Mobile */
+
+@media(max-width:768px){
+
+.stickyBar{
+
+padding:12px 14px calc(12px + env(safe-area-inset-bottom));
+
+}
+
+.stickyPrice{
+
+font-size:24px;
+
+}
+
+.buyNowButton{
+
+height:54px;
+
+padding:0 18px;
+
+font-size:15px;
+
+}
+
+.cartButton{
+
+width:54px;
+
+height:54px;
+
+}
+
+.cartButton .material-symbols-rounded{
+
+font-size:26px;
+
+}
+
+}
+/* =======================================
+   PREMIUM ANIMATIONS
+======================================= */
+
+/* Apparition de la page */
+
+body{
+
+animation:pageFade .35s ease;
+
+}
+
+@keyframes pageFade{
+
+from{
+
+opacity:0;
+
+transform:translateY(12px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+/* Cartes */
+
+.card,
+.merchantCard,
+.reviewCard,
+.productMiniCard{
+
+animation:cardAppear .45s ease;
+
+}
+
+@keyframes cardAppear{
+
+from{
+
+opacity:0;
+
+transform:translateY(20px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+/* Image principale */
+
+.productViewer img{
+
+transition:
+
+transform .35s ease,
+
+opacity .35s ease;
+
+}
+
+.productViewer img:hover{
+
+transform:scale(1.04);
+
+}
+
+/* Boutons */
+
+button{
+
+transition:
+
+transform .25s ease,
+
+box-shadow .25s ease,
+
+background .25s ease;
+
+}
+
+button:hover{
+
+transform:translateY(-2px);
+
+}
+
+button:active{
+
+transform:scale(.96);
+
+}
+
+/* Icônes */
+
+.actionButton{
+
+transition:.25s;
+
+}
+
+.actionButton:hover{
+
+transform:translateY(-3px);
+
+}
+
+.actionButton:active{
+
+transform:scale(.92);
+
+}
+
+/* Images galerie */
+
+.gallery img{
+
+transition:.30s;
+
+}
+
+.gallery img:hover{
+
+transform:scale(1.08);
+
+}
+
+/* Produits similaires */
+
+.productMiniCard img{
+
+transition:.35s ease;
+
+}
+
+.productMiniCard:hover img{
+
+transform:scale(1.08);
+
+}
+
+/* Merchant */
+
+.merchantButton{
+
+transition:.30s;
+
+}
+
+.merchantButton:hover{
+
+transform:translateY(-3px);
+
+box-shadow:0 14px 30px rgba(0,0,0,.15);
+
+}
+
+/* Avis */
+
+.reviewImages img{
+
+transition:.25s;
+
+}
+
+.reviewImages img:hover{
+
+transform:scale(1.08);
+
+}
+
+/* Sticky */
+
+.stickyBar{
+
+animation:stickyUp .35s ease;
+
+}
+
+@keyframes stickyUp{
+
+from{
+
+transform:translateY(100%);
+
+}
+
+to{
+
+transform:translateY(0);
+
+}
+
+}
+
+/* Scroll fluide */
+
+html{
+
+scroll-behavior:smooth;
+
+}
+
+/* Sélection */
+
+::selection{
+
+background:#16a34a;
+
+color:#fff;
+
+}
