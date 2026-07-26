@@ -2028,3 +2028,130 @@ document
     `merchant-shop.html?id=${product.merchantId}`;
 
 });
+// =====================================
+// ACHETER / PANIER PREMIUM
+// =====================================
+
+buyButton.addEventListener("click", buy);
+
+const stickyBuyButton =
+document.getElementById("stickyBuyButton");
+
+if(stickyBuyButton){
+
+    stickyBuyButton.addEventListener(
+        "click",
+        buy
+    );
+
+}
+
+function buy(){
+
+    if(!product) return;
+
+    const stock =
+
+        selectedVariantData
+
+        ? Number(selectedVariantData.stock || 0)
+
+        : Number(product.stock || 0);
+
+    if(stock <= 0){
+
+        alert("Produto esgotado.");
+
+        return;
+
+    }
+
+    let cart = JSON.parse(
+
+        localStorage.getItem("cart") || "[]"
+
+    );
+
+    const cartId =
+
+        selectedVariant
+
+        ? product.id + "_" + selectedVariant
+
+        : product.id;
+
+    const exist = cart.find(item =>
+
+        item.cartId === cartId
+
+    );
+
+    if(exist){
+
+        exist.qty += quantity;
+
+        if(exist.qty > stock){
+
+            exist.qty = stock;
+
+        }
+
+    }else{
+
+        cart.push({
+
+            cartId,
+
+            id: product.id,
+
+            merchantId: product.merchantId,
+
+            name: product.name,
+
+            image:
+
+                selectedVariantData?.image ||
+
+                product.images?.[0] ||
+
+                product.image ||
+
+                "images/no-image.png",
+
+            price:
+
+                Number(
+
+                    selectedVariantData?.price ||
+
+                    product.price
+
+                ),
+
+            qty: quantity,
+
+            stock,
+
+            variant:
+
+                selectedVariant ||
+
+                null
+
+        });
+
+    }
+
+    localStorage.setItem(
+
+        "cart",
+
+        JSON.stringify(cart)
+
+    );
+
+    updateCartBadge();
+
+    location.href = "checkout.html";
+
+}
