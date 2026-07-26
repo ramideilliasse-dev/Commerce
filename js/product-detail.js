@@ -229,6 +229,7 @@ product.image ||
 
 renderProduct();
 saveRecentProduct();
+renderVariants();
 renderGallery();
 
 updateGallery();
@@ -1674,7 +1675,9 @@ item
 // VARIANTES
 // =====================================
 
-let selectedVariant=null;
+let selectedVariant = null;
+
+let selectedVariantData = null;
 
 function renderVariants(){
 
@@ -1712,33 +1715,21 @@ section.style.display="block";
 
 container.innerHTML="";
 
-product.variants.forEach(
+const button=document.createElement("button");
 
-(variant,index)=>{
+button.className="variantButton";
 
-const button=
-
-document.createElement("button");
-
-button.className=
-
-"variantButton";
-
-button.textContent=
-
-variant;
+button.textContent=variant.name;
 
 if(index===0){
 
-button.classList.add(
+button.classList.add("active");
 
-"active"
+selectedVariant=variant.name;
 
-);
+selectedVariantData=variant;
 
-selectedVariant=
-
-variant;
+applyVariant();
 
 }
 
@@ -1746,40 +1737,22 @@ button.onclick=()=>{
 
 document
 
-.querySelectorAll(
-
-".variantButton"
-
-)
+.querySelectorAll(".variantButton")
 
 .forEach(
 
-b=>b.classList.remove(
-
-"active"
-
-)
+b=>b.classList.remove("active")
 
 );
 
-button.classList.add(
+button.classList.add("active");
 
-"active"
+selectedVariant=variant.name;
 
-);
+selectedVariantData=variant;
 
-selectedVariant=
-
-variant;
+applyVariant();
 
 };
 
-container.appendChild(
-
-button
-
-);
-
-});
-
-}
+container.appendChild(button);
