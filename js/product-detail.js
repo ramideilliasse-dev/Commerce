@@ -228,6 +228,7 @@ product.image ||
 // Charger l'interface
 
 renderProduct();
+addToHistory();
 saveRecentProduct();
 renderVariants();
 renderGallery();
@@ -2221,5 +2222,79 @@ if(cartButton){
         location.href = "checkout.html";
 
     });
+
+}
+// =====================================
+// HISTORIQUE DE CONSULTATION
+// =====================================
+
+function addToHistory(){
+
+    if(!product) return;
+
+    let history = JSON.parse(
+
+        localStorage.getItem("historyProducts") || "[]"
+
+    );
+
+    // supprimer ancien doublon
+    history = history.filter(item =>
+
+        item.id !== product.id
+
+    );
+
+    // ajouter en premier
+    history.unshift({
+
+        id: product.id,
+
+        merchantId: product.merchantId,
+
+        name: product.name,
+
+        image:
+
+            selectedVariantData?.image ||
+
+            product.images?.[0] ||
+
+            product.image ||
+
+            "images/no-image.png",
+
+        price:
+
+            Number(
+
+                selectedVariantData?.price ||
+
+                product.price
+
+            ),
+
+        province:
+
+            product.province || "Angola",
+
+        category:
+
+            product.category || "",
+
+        viewedAt: Date.now()
+
+    });
+
+    // garder uniquement les 30 derniers
+    history = history.slice(0,30);
+
+    localStorage.setItem(
+
+        "historyProducts",
+
+        JSON.stringify(history)
+
+    );
 
 }
