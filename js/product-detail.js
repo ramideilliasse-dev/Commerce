@@ -2153,7 +2153,7 @@ function buy(){
 
     updateCartBadge();
 
-    location.href = "checkout.html";
+    showCartToast();
 
 }
 // =====================================
@@ -2298,3 +2298,32 @@ function addToHistory(){
     );
 
 }
+// =====================================
+// TOAST PANIER
+// =====================================
+
+const cartToast =
+document.getElementById("cartToast");
+
+const toastCheckout =
+document.getElementById("toastCheckout");
+
+function showCartToast(){
+
+    if(!cartToast) return;
+
+    cartToast.classList.add("show");
+
+    setTimeout(()=>{
+
+        cartToast.classList.remove("show");
+
+    },3000);
+
+}
+
+toastCheckout?.addEventListener("click",()=>{
+
+    location.href="checkout.html";
+
+});
