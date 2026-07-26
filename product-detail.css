@@ -2621,3 +2621,74 @@ cursor:grabbing;
 touch-action:none;
 
 }
+/* =====================================
+VARIANTES PREMIUM
+===================================== */
+
+.variantsSection{
+
+margin-top:20px;
+
+padding:20px;
+
+background:#fff;
+
+border-radius:22px;
+
+box-shadow:0 8px 22px rgba(0,0,0,.06);
+
+}
+
+.variantsSection h3{
+
+font-size:18px;
+
+font-weight:700;
+
+margin-bottom:15px;
+
+}
+
+#variantsContainer{
+
+display:flex;
+
+flex-wrap:wrap;
+
+gap:12px;
+
+}
+
+.variantButton{
+
+padding:12px 20px;
+
+border-radius:30px;
+
+border:2px solid #e5e5e5;
+
+background:white;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.25s;
+
+}
+
+.variantButton:hover{
+
+border-color:#ff6a00;
+
+}
+
+.variantButton.active{
+
+background:#ff6a00;
+
+color:white;
+
+border-color:#ff6a00;
+
+}
