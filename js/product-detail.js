@@ -1867,3 +1867,164 @@ quantity++;
 quantityValue.textContent = quantity;
 
 };
+// =====================================
+// FAVORIS
+// =====================================
+
+favoriteButton.addEventListener("click", () => {
+
+    let favorites = JSON.parse(
+        localStorage.getItem("favorites") || "[]"
+    );
+
+    const index = favorites.findIndex(item => item === product.id);
+
+    if(index >= 0){
+
+        favorites.splice(index,1);
+
+        favoriteButton.classList.remove("active");
+
+        favoriteButton.innerHTML = `
+            ❤️
+            <span>Favoritos</span>
+        `;
+
+    }else{
+
+        favorites.push(product.id);
+
+        favoriteButton.classList.add("active");
+
+        favoriteButton.innerHTML = `
+            ❤️
+            <span>Remover</span>
+        `;
+
+    }
+
+    localStorage.setItem(
+        "favorites",
+        JSON.stringify(favorites)
+    );
+
+});
+
+// état au chargement
+
+(function(){
+
+    let favorites = JSON.parse(
+        localStorage.getItem("favorites") || "[]"
+    );
+
+    if(favorites.includes(productId)){
+
+        favoriteButton.classList.add("active");
+
+    }
+
+})();
+
+
+// =====================================
+// PARTAGER
+// =====================================
+
+shareButton.addEventListener("click", async()=>{
+
+    const url =
+        location.origin +
+        "/product-detail.html?id=" +
+        product.id;
+
+    try{
+
+        if(navigator.share){
+
+            await navigator.share({
+
+                title: product.name,
+
+                text: product.name,
+
+                url
+
+            });
+
+        }else{
+
+            await navigator.clipboard.writeText(url);
+
+            alert("Link copiado.");
+
+        }
+
+    }catch(e){
+
+        console.log(e);
+
+    }
+
+});
+
+
+// =====================================
+// WHATSAPP
+// =====================================
+
+whatsappButton.addEventListener("click",()=>{
+
+    const phone =
+        merchant?.phone || "";
+
+    if(!phone){
+
+        alert("WhatsApp indisponível.");
+
+        return;
+
+    }
+
+    const message =
+        encodeURIComponent(
+            `Olá.\nTenho interesse neste produto:\n\n${product.name}\n${Number(product.price).toLocaleString()} Kz`
+        );
+
+    window.open(
+
+        `https://wa.me/${phone}?text=${message}`,
+
+        "_blank"
+
+    );
+
+});
+
+
+// =====================================
+// CHAT
+// =====================================
+
+chatButton.addEventListener("click",()=>{
+
+    location.href =
+
+    `chat.html?merchant=${product.merchantId}&product=${product.id}`;
+
+});
+
+
+// =====================================
+// VER LOJA
+// =====================================
+
+document
+.getElementById("merchantShopButton")
+.addEventListener("click",()=>{
+
+    location.href =
+
+    `merchant-shop.html?id=${product.merchantId}`;
+
+});
