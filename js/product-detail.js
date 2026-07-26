@@ -1,0 +1,841 @@
+ // =====================================
+// PRODUCT DETAIL
+// TOMA Marketplace
+// =====================================
+
+import { db, auth } from "../firebase.js";
+
+import {
+
+doc,
+getDoc,
+updateDoc,
+increment,
+collection,
+getDocs,
+query,
+where
+
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+import {
+
+onAuthStateChanged
+
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+import {
+
+addToCart
+
+} from "./storage.js";
+
+
+// =====================================
+// VARIABLES
+// =====================================
+
+let product = null;
+
+let merchant = null;
+
+let currentUser = null;
+
+let images = [];
+
+let currentImage = 0;
+
+let scale = 1;
+
+const params = new URLSearchParams(location.search);
+
+const productId = params.get("id");
+
+
+// =====================================
+// DOM
+// =====================================
+
+// Galerie
+
+const slider =
+document.getElementById("slider");
+
+const gallery =
+document.getElementById("gallery");
+
+const dots =
+document.getElementById("dots");
+
+const counter =
+document.getElementById("counter");
+
+// Produit
+
+const productName =
+document.getElementById("productName");
+
+const productPrice =
+document.getElementById("productPrice");
+
+const oldPrice =
+document.getElementById("oldPrice");
+
+const discount =
+document.getElementById("discount");
+
+const description =
+document.getElementById("description");
+
+const stockInfo =
+document.getElementById("stockInfo");
+
+const province =
+document.getElementById("productProvince");
+
+const rating =
+document.getElementById("productRating");
+
+// Marchand
+
+const merchantLogo =
+document.getElementById("merchantLogo");
+
+const merchantName =
+document.getElementById("merchantName");
+
+const merchantDescription =
+document.getElementById("merchantDescription");
+
+const merchantProducts =
+document.getElementById("merchantProducts");
+
+const merchantRating =
+document.getElementById("merchantRating");
+
+const merchantSince =
+document.getElementById("merchantSince");
+
+// Sections
+
+const recommendSection =
+document.getElementById("recommendSection");
+
+const reviewsSection =
+document.getElementById("reviewsSection");
+
+// Sticky
+
+const stickyPrice =
+document.getElementById("stickyPrice");
+
+const buyButton =
+document.getElementById("buyButton");
+
+// Actions
+
+const favoriteButton =
+document.getElementById("favoriteButton");
+
+const shareButton =
+document.getElementById("shareButton");
+
+const whatsappButton =
+document.getElementById("whatsappButton");
+
+const chatButton =
+document.getElementById("chatButton");
+// =====================================
+// INITIALISATION
+// =====================================
+
+onAuthStateChanged(auth, async(user)=>{
+
+currentUser = user || null;
+
+if(!productId){
+
+showError("Produto não encontrado.");
+
+return;
+
+}
+
+await loadProduct();
+
+});
+
+// =====================================
+// CHARGER LE PRODUIT
+// =====================================
+
+async function loadProduct(){
+
+try{
+
+const productRef = doc(db,"products",productId);
+
+const productSnap = await getDoc(productRef);
+
+if(!productSnap.exists()){
+
+showError("Produto inexistente.");
+
+return;
+
+}
+
+product = {
+
+id:productSnap.id,
+
+...productSnap.data()
+
+};
+
+// Incrémenter les vues
+
+try{
+
+await updateDoc(productRef,{
+
+views:increment(1)
+
+});
+
+}catch(e){
+
+console.log("Views:",e);
+
+}
+
+// Images
+
+images =
+
+product.images?.length
+
+? product.images
+
+: [
+
+product.image ||
+
+"images/no-image.png"
+
+];
+
+// Charger l'interface
+
+renderProduct();
+
+renderGallery();
+
+updateGallery();
+
+await loadMerchant();
+
+await loadRecommendations();
+
+await loadReviews();
+
+}catch(error){
+
+console.error(error);
+
+showError("Erro ao carregar o produto.");
+
+}
+
+}
+
+// =====================================
+// MESSAGE D'ERREUR
+// =====================================
+
+function showError(message){
+
+document.body.innerHTML = `
+
+<div style="
+
+padding:60px 20px;
+
+text-align:center;
+
+font-family:Poppins,sans-serif;
+
+">
+
+<h2>
+
+❌ ${message}
+
+</h2>
+
+<br>
+
+<button
+
+onclick="history.back()"
+
+style="
+
+padding:14px 24px;
+
+border:none;
+
+border-radius:14px;
+
+background:#18b85d;
+
+color:#fff;
+
+font-size:16px;
+
+cursor:pointer;
+
+">
+
+Voltar
+
+</button>
+
+</div>
+
+`;
+
+}
+// =====================================
+// AFFICHAGE DU PRODUIT
+// =====================================
+
+function renderProduct(){
+
+// Nom
+
+productName.textContent =
+product.name || "Produto";
+
+// Prix
+
+productPrice.textContent =
+Number(product.price || 0).toLocaleString() + " Kz";
+
+stickyPrice.textContent =
+Number(product.price || 0).toLocaleString() + " Kz";
+
+// Ancien prix
+
+if(
+
+product.oldPrice &&
+
+Number(product.oldPrice) >
+
+Number(product.price)
+
+){
+
+oldPrice.style.display="inline-block";
+
+oldPrice.textContent=
+
+Number(product.oldPrice)
+
+.toLocaleString()
+
++ " Kz";
+
+const reduction = Math.round(
+
+(
+
+(
+
+Number(product.oldPrice)-
+
+Number(product.price)
+
+)
+
+/
+
+Number(product.oldPrice)
+
+)
+
+*100
+
+);
+
+discount.style.display="inline-flex";
+
+discount.textContent=
+
+"-"+reduction+"%";
+
+}else{
+
+oldPrice.style.display="none";
+
+discount.style.display="none";
+
+}
+
+// Description
+
+description.textContent=
+
+product.description ||
+
+"Sem descrição.";
+
+// Province
+
+province.textContent=
+
+product.province ||
+
+"Angola";
+
+// Note
+
+rating.textContent=
+
+"⭐ " +
+
+(product.rating || 5.0);
+
+// Stock
+
+const stock =
+
+Number(product.stock || 0);
+
+if(stock<=0){
+
+stockInfo.innerHTML=
+
+"❌ Produto esgotado";
+
+stockInfo.className=
+
+"stockOut";
+
+buyButton.disabled=true;
+
+buyButton.innerHTML=
+
+"Produto indisponível";
+
+}else if(stock<=5){
+
+stockInfo.innerHTML=
+
+"⚠️ Restam apenas "
+
++ stock +
+
+" unidades";
+
+stockInfo.className=
+
+"stockLow";
+
+}else{
+
+stockInfo.innerHTML=
+
+"✅ Em stock";
+
+stockInfo.className=
+
+"stockOk";
+
+}
+
+// Images
+
+images =
+
+product.images?.length
+
+?
+
+product.images
+
+:
+
+[
+
+product.image ||
+
+"images/no-image.png"
+
+];
+
+}
+// =====================================
+// GALERIE PREMIUM
+// =====================================
+
+function renderGallery(){
+
+slider.innerHTML="";
+
+gallery.innerHTML="";
+
+dots.innerHTML="";
+
+images.forEach((image,index)=>{
+
+// Slider
+
+slider.innerHTML+=`
+
+<div class="slide">
+
+<img
+
+class="zoomImage"
+
+src="${image}"
+
+loading="lazy"
+
+alt="Produto">
+
+</div>
+
+`;
+
+// Miniatures
+
+gallery.innerHTML+=`
+
+<img
+
+src="${image}"
+
+loading="lazy"
+
+class="${
+index===0
+?
+"active"
+:
+""
+}"
+
+data-index="${index}">
+
+`;
+
+// Dots
+
+dots.innerHTML+=`
+
+<div
+
+class="dot ${
+index===0
+?
+"active"
+:
+""
+}"
+
+data-index="${index}">
+
+</div>
+
+`;
+
+});
+
+// Click miniature
+
+gallery.querySelectorAll("img")
+
+.forEach(img=>{
+
+img.onclick=()=>{
+
+currentImage=
+
+Number(img.dataset.index);
+
+updateGallery();
+
+};
+
+});
+
+// Click dot
+
+dots.querySelectorAll(".dot")
+
+.forEach(dot=>{
+
+dot.onclick=()=>{
+
+currentImage=
+
+Number(dot.dataset.index);
+
+updateGallery();
+
+};
+
+});
+
+}
+// =====================================
+// UPDATE GALERIE
+// =====================================
+
+function updateGallery(){
+
+slider.style.transform=
+
+`translateX(-${currentImage*100}%)`;
+
+counter.textContent=
+
+`${currentImage+1} / ${images.length}`;
+
+gallery
+
+.querySelectorAll("img")
+
+.forEach((img,index)=>{
+
+img.classList.toggle(
+
+"active",
+
+index===currentImage
+
+);
+
+});
+
+dots
+
+.querySelectorAll(".dot")
+
+.forEach((dot,index)=>{
+
+dot.classList.toggle(
+
+"active",
+
+index===currentImage
+
+);
+
+});
+
+}
+// =====================================
+// SWIPE PREMIUM
+// =====================================
+
+let startX=0;
+
+slider.addEventListener("touchstart",(e)=>{
+
+startX=e.touches[0].clientX;
+
+});
+
+slider.addEventListener("touchend",(e)=>{
+
+const endX=
+
+e.changedTouches[0].clientX;
+
+const distance=endX-startX;
+
+if(Math.abs(distance)<50) return;
+
+if(distance<0){
+
+nextImage();
+
+}else{
+
+previousImage();
+
+}
+
+});
+// =====================================
+// NAVIGATION IMAGES
+// =====================================
+
+function nextImage(){
+
+currentImage++;
+
+if(currentImage>=images.length){
+
+currentImage=0;
+
+}
+
+updateGallery();
+
+}
+
+function previousImage(){
+
+currentImage--;
+
+if(currentImage<0){
+
+currentImage=images.length-1;
+
+}
+
+updateGallery();
+
+}
+// =====================================
+// FULLSCREEN VIEWER
+// =====================================
+
+const fullscreenViewer =
+document.getElementById("fullscreenViewer");
+
+const fullscreenSlider =
+document.getElementById("fullscreenSlider");
+
+const fullscreenCounter =
+document.getElementById("fullscreenCounter");
+
+const closeViewer =
+document.getElementById("closeViewer");
+// =====================================
+// OUVRIR LE FULLSCREEN
+// =====================================
+
+function openFullscreen(){
+
+fullscreenSlider.innerHTML="";
+
+images.forEach(image=>{
+
+fullscreenSlider.innerHTML += `
+
+<div class="slide">
+
+<img
+class="zoomImage"
+src="${image}"
+loading="lazy">
+
+</div>
+
+`;
+
+});
+
+fullscreenViewer.classList.add("show");
+
+document.body.style.overflow="hidden";
+
+updateFullscreen();
+
+}
+// =====================================
+// FERMER
+// =====================================
+
+function closeFullscreen(){
+
+fullscreenViewer.classList.remove("show");
+
+document.body.style.overflow="";
+
+}
+
+closeViewer.onclick = closeFullscreen;
+// =====================================
+// UPDATE FULLSCREEN
+// =====================================
+
+function updateFullscreen(){
+
+fullscreenSlider.style.transform=
+
+`translateX(-${currentImage*100}%)`;
+
+fullscreenCounter.textContent=
+
+`${currentImage+1} / ${images.length}`;
+
+}
+// =====================================
+// OUVERTURE SUR CLIC
+// =====================================
+
+document.getElementById("viewer")
+
+.addEventListener("click",()=>{
+
+openFullscreen();
+
+});
+// =====================================
+// SWIPE FULLSCREEN
+// =====================================
+
+let fullStartX = 0;
+
+fullscreenSlider.addEventListener("touchstart",(e)=>{
+
+fullStartX = e.touches[0].clientX;
+
+});
+
+fullscreenSlider.addEventListener("touchend",(e)=>{
+
+const fullEndX =
+
+e.changedTouches[0].clientX;
+
+const distance =
+
+fullEndX-fullStartX;
+
+if(Math.abs(distance)<50) return;
+
+if(distance<0){
+
+currentImage++;
+
+}else{
+
+currentImage--;
+
+}
+
+if(currentImage<0){
+
+currentImage=images.length-1;
+
+}
+
+if(currentImage>=images.length){
+
+currentImage=0;
+
+}
+
+updateFullscreen();
+
+updateGallery();
+
+});
