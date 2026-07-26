@@ -228,7 +228,7 @@ product.image ||
 // Charger l'interface
 
 renderProduct();
-
+saveRecentProduct();
 renderGallery();
 
 updateGallery();
@@ -239,6 +239,7 @@ await loadMerchantProducts();
 await loadRecommendations();
 await loadSimilarProducts();
 await loadRecommendedProducts();
+loadRecentProducts();
 await loadReviews();
 
 }catch(error){
@@ -1559,5 +1560,113 @@ item
 console.error(error);
 
 }
+
+}
+// =====================================
+// HISTORIQUE DES PRODUITS
+// =====================================
+
+function saveRecentProduct(){
+
+if(!product) return;
+
+let history = JSON.parse(
+
+localStorage.getItem("recentProducts") ||
+
+"[]"
+
+);
+
+// supprimer si déjà présent
+
+history = history.filter(
+
+item => item.id !== product.id
+
+);
+
+// ajouter en premier
+
+history.unshift({
+
+id: product.id,
+
+name: product.name,
+
+price: product.price,
+
+image:
+
+product.images?.[0] ||
+
+product.image ||
+
+"images/no-image.png",
+
+province:
+
+product.province ||
+
+"Angola"
+
+});
+
+// maximum 20 produits
+
+history = history.slice(0,20);
+
+localStorage.setItem(
+
+"recentProducts",
+
+JSON.stringify(history)
+
+);
+
+}
+// =====================================
+// DERNIERS PRODUITS CONSULTÉS
+// =====================================
+
+function loadRecentProducts(){
+
+const list = JSON.parse(
+
+localStorage.getItem("recentProducts") ||
+
+"[]"
+
+);
+
+const container =
+
+document.getElementById(
+
+"recentProductsGrid"
+
+);
+
+if(!container) return;
+
+container.innerHTML="";
+
+list.forEach(item=>{
+
+if(item.id===product.id) return;
+
+container.appendChild(
+
+createProductCard(
+
+item.id,
+
+item
+
+)
+
+);
+
+});
 
 }
