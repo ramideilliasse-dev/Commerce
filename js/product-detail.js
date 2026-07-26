@@ -1756,3 +1756,78 @@ applyVariant();
 };
 
 container.appendChild(button);
+// =====================================
+// APPLIQUER UNE VARIANTE
+// =====================================
+
+function applyVariant(){
+
+if(!selectedVariantData) return;
+
+// Prix
+
+priceEl.textContent=
+
+Number(
+
+selectedVariantData.price
+
+).toLocaleString()
+
++" Kz";
+
+stickyPrice.textContent=
+
+priceEl.textContent;
+
+// Stock
+
+const stock=
+
+Number(
+
+selectedVariantData.stock||0
+
+);
+
+if(stock<=0){
+
+stockBadge.textContent=
+
+"Esgotado";
+
+buyButton.disabled=true;
+
+stickyBuyButton.disabled=true;
+
+}else{
+
+stockBadge.textContent=
+
+stock+" em stock";
+
+buyButton.disabled=false;
+
+stickyBuyButton.disabled=false;
+
+}
+
+// Image
+
+if(selectedVariantData.image){
+
+images=[
+
+selectedVariantData.image
+
+];
+
+renderSlider();
+
+renderGallery();
+
+updateViewer();
+
+}
+
+}
