@@ -235,6 +235,7 @@ updateGallery();
 
 await loadMerchant();
 
+await loadMerchantProducts();
 await loadRecommendations();
 
 await loadReviews();
@@ -1186,3 +1187,129 @@ product.merchantId +
 product.id;
 
 };
+// =====================================
+// PRODUITS DU MARCHAND
+// =====================================
+
+async function loadMerchantProducts(){
+
+try{
+
+const q = query(
+
+collection(db,"products"),
+
+where(
+
+"merchantId",
+
+"==",
+
+product.merchantId
+
+)
+
+);
+
+const snapshot = await getDocs(q);
+
+merchantProductsGrid.innerHTML="";
+
+let count=0;
+
+snapshot.forEach(docSnap=>{
+
+if(docSnap.id===product.id) return;
+
+if(count>=10) return;
+
+const p = docSnap.data();
+
+merchantProductsGrid.appendChild(
+
+createHorizontalCard(
+
+docSnap.id,
+
+p
+
+)
+
+);
+
+count++;
+
+});
+
+}catch(error){
+
+console.error(error);
+
+}
+
+}
+// =====================================
+// CARTE PRODUIT HORIZONTALE
+// =====================================
+
+function createHorizontalCard(id,p){
+
+const card=document.createElement("div");
+
+card.className="horizontalCard";
+
+card.onclick=()=>{
+
+location.href=
+
+"product-detail.html?id="+id;
+
+};
+
+const image=
+
+p.images?.[0] ||
+
+p.image ||
+
+"images/no-image.png";
+
+card.innerHTML=`
+
+<img
+
+src="${image}"
+
+loading="lazy"
+
+class="horizontalImage">
+
+<div class="horizontalBody">
+
+<h3>
+
+${p.name||""}
+
+</h3>
+
+<div class="horizontalPrice">
+
+${Number(p.price||0)
+
+.toLocaleString()} Kz
+
+</div>
+
+<div class="horizontalProvince">
+
+📍 ${p.province||"Angola"}
+
+</div>
+
+</div>
+
+`;
+
+return card;
+
+}
