@@ -2763,3 +2763,116 @@ font-size:22px;
 font-weight:700;
 
 }
+/* =======================================
+   PANIER HEADER PREMIUM
+======================================= */
+
+#cartButton{
+
+position:relative;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+width:46px;
+
+height:46px;
+
+border:none;
+
+border-radius:50%;
+
+background:#ffffff;
+
+cursor:pointer;
+
+transition:.25s;
+
+box-shadow:0 4px 12px rgba(0,0,0,.08);
+
+}
+
+#cartButton:hover{
+
+transform:translateY(-2px);
+
+box-shadow:0 8px 20px rgba(0,0,0,.15);
+
+}
+
+#cartButton .material-symbols-rounded{
+
+font-size:26px;
+
+color:#222;
+
+}
+
+/* Badge */
+
+.cartBadge{
+
+position:absolute;
+
+top:-4px;
+
+right:-4px;
+
+min-width:20px;
+
+height:20px;
+
+padding:0 5px;
+
+display:none;
+
+align-items:center;
+
+justify-content:center;
+
+border-radius:999px;
+
+background:#ff3b30;
+
+color:#fff;
+
+font-size:11px;
+
+font-weight:700;
+
+line-height:20px;
+
+box-shadow:0 2px 8px rgba(0,0,0,.25);
+
+animation:cartPop .35s ease;
+
+}
+
+@keyframes cartPop{
+
+0%{
+
+transform:scale(.4);
+
+opacity:0;
+
+}
+
+70%{
+
+transform:scale(1.15);
+
+}
+
+100%{
+
+transform:scale(1);
+
+opacity:1;
+
+}
+
+}
