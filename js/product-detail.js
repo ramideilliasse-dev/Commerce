@@ -193,6 +193,8 @@ document.getElementById("whatsappButton");
 
 const chatButton =
 document.getElementById("chatButton");
+const backButton =
+document.getElementById("backButton");
 // =====================================
 // INITIALISATION
 // =====================================
@@ -1878,73 +1880,75 @@ product.variants.forEach((variant, index) => {
 
 function applyVariant(){
 
-if(!selectedVariantData) return;
+    if(!selectedVariantData) return;
 
-// Prix
+    // Prix
+    productPrice.textContent =
+    Number(
+        selectedVariantData.price
+    ).toLocaleString() + " Kz";
 
-priceEl.textContent=
+    stickyPrice.textContent =
+    productPrice.textContent;
 
-Number(
+    // Stock
+    const stock =
+    Number(
+        selectedVariantData.stock || 0
+    );
 
-selectedVariantData.price
+    if(stock <= 0){
 
-).toLocaleString()
+        stockInfo.innerHTML =
+        "❌ Produto esgotado";
 
-+" Kz";
+        stockInfo.className =
+        "stockOut";
 
-stickyPrice.textContent=
+        buyButton.disabled = true;
 
-priceEl.textContent;
+        if(stickyBuyButton){
 
-// Stock
+            stickyBuyButton.disabled = true;
 
-const stock=
+        }
 
-Number(
+    }else{
 
-selectedVariantData.stock||0
+        stockInfo.innerHTML =
+        "✅ Em stock (" + stock + ")";
 
-);
+        stockInfo.className =
+        "stockOk";
 
-if(stock<=0){
+        buyButton.disabled = false;
 
-stockBadge.textContent=
+        if(stickyBuyButton){
 
-"Esgotado";
+            stickyBuyButton.disabled = false;
 
-buyButton.disabled=true;
+        }
 
-stickyBuyButton.disabled=true;
+    }
 
-}else{
+    // Image
+    if(selectedVariantData.image){
 
-stockBadge.textContent=
+        images = [
 
-stock+" em stock";
+            selectedVariantData.image
 
-buyButton.disabled=false;
+        ];
 
-stickyBuyButton.disabled=false;
+        renderSlider();
 
-}
+        renderGallery();
 
-// Image
+        updateViewer();
 
-if(selectedVariantData.image){
+        updateGallery();
 
-images=[
-
-selectedVariantData.image
-
-];
-
-renderSlider();
-
-renderGallery();
-
-updateViewer();
-
-}
+    }
 
 }
 // =====================================
@@ -2463,5 +2467,26 @@ async function loadReviews(){
 
         </div>
     `;
+
+}
+// =====================================
+// RETOUR
+// =====================================
+
+if(backButton){
+
+    backButton.addEventListener("click",()=>{
+
+        if(history.length > 1){
+
+            history.back();
+
+        }else{
+
+            location.href = "homes.html";
+
+        }
+
+    });
 
 }
