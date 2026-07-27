@@ -162,12 +162,13 @@ cartButton.addEventListener("click",(e)=>{
 // CLIC SUR LA CARTE
 // ======================================
 
-card.addEventListener("click",()=>{
+card.addEventListener("click", () => {
 
     location.href =
-    `product.html?id=${product.id}`;
+    `product-detail.html?id=${product.id}`;
 
 });
-    return card;
+
+return card;
 
 }
