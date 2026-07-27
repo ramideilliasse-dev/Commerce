@@ -1739,3 +1739,257 @@ font-size:16px;
 }
 
 }
+/* =====================================
+   BLOC 11 — ANIMATIONS PREMIUM
+===================================== */
+
+/* Apparition */
+
+@keyframes fadeUp{
+
+from{
+
+opacity:0;
+
+transform:translateY(25px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+.galleryCard,
+.infoCard,
+.actionButtons,
+.merchantCard,
+.merchantProductsSection,
+.similarSection,
+.recommendSection,
+.reviewsSection{
+
+animation:fadeUp .45s ease both;
+
+}
+
+/* Délais */
+
+.galleryCard{animation-delay:.05s;}
+
+.infoCard{animation-delay:.10s;}
+
+.actionButtons{animation-delay:.15s;}
+
+.merchantCard{animation-delay:.20s;}
+
+.merchantProductsSection{animation-delay:.25s;}
+
+.similarSection{animation-delay:.30s;}
+
+.recommendSection{animation-delay:.35s;}
+
+.reviewsSection{animation-delay:.40s;}
+
+/* ===========================
+   Skeleton Loading
+=========================== */
+
+.skeleton{
+
+position:relative;
+
+overflow:hidden;
+
+background:#EEEEEE;
+
+border-radius:12px;
+
+}
+
+.skeleton::after{
+
+content:"";
+
+position:absolute;
+
+top:0;
+
+left:-150px;
+
+width:150px;
+
+height:100%;
+
+background:
+
+linear-gradient(
+
+90deg,
+
+transparent,
+
+rgba(255,255,255,.7),
+
+transparent
+
+);
+
+animation:skeletonMove 1.2s infinite;
+
+}
+
+@keyframes skeletonMove{
+
+100%{
+
+left:100%;
+
+}
+
+}
+
+/* ===========================
+   Effets des cartes
+=========================== */
+
+.productCard,
+.horizontalCard,
+.reviewCard,
+.merchantStat{
+
+transition:
+
+transform .25s,
+
+box-shadow .25s;
+
+}
+
+.productCard:active,
+.horizontalCard:active,
+.reviewCard:active{
+
+transform:scale(.98);
+
+}
+
+/* ===========================
+   Images
+=========================== */
+
+.productImage,
+.horizontalImage,
+.galleryThumbs img,
+.slide img{
+
+transition:
+
+transform .35s ease;
+
+}
+
+.productImage:hover,
+.horizontalImage:hover{
+
+transform:scale(1.04);
+
+}
+
+/* ===========================
+   Boutons
+=========================== */
+
+button{
+
+transition:
+
+transform .18s,
+
+box-shadow .25s,
+
+background .25s;
+
+}
+
+button:active{
+
+transform:scale(.96);
+
+}
+
+/* Ripple */
+
+button{
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+/* ===========================
+   Scroll
+=========================== */
+
+html{
+
+scroll-behavior:smooth;
+
+}
+
+/* ===========================
+   Sélection
+=========================== */
+
+::selection{
+
+background:#18B85D;
+
+color:#fff;
+
+}
+
+/* ===========================
+   Scrollbar
+=========================== */
+
+::-webkit-scrollbar{
+
+width:8px;
+
+height:8px;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+background:#18B85D;
+
+border-radius:999px;
+
+}
+
+::-webkit-scrollbar-track{
+
+background:#F2F2F2;
+
+}
+
+/* ===========================
+   Focus
+=========================== */
+
+button:focus,
+input:focus{
+
+outline:none;
+
+box-shadow:0 0 0 4px rgba(24,184,93,.20);
+
+}
