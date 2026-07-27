@@ -115,7 +115,55 @@ document.getElementById("merchantRating");
 
 const merchantSince =
 document.getElementById("merchantSince");
+// =====================================
+// AUTRES ÉLÉMENTS DOM
+// =====================================
 
+// Produits du marchand
+const merchantProductsGrid =
+document.getElementById("merchantProductsGrid");
+
+// Produits similaires
+const recommendProductsGrid =
+document.getElementById("recommendProductsGrid");
+
+// Historique
+const recentProductsGrid =
+document.getElementById("recentProductsGrid");
+
+// Variantes
+const variantsContainer =
+document.getElementById("variantsContainer");
+
+const variantsSection =
+document.getElementById("variantsSection");
+
+// Fullscreen
+const viewer =
+document.getElementById("viewer");
+
+// Sticky
+const stickyBuyButton =
+document.getElementById("stickyBuyButton");
+
+// Toast
+const cartToast =
+document.getElementById("cartToast");
+
+const toastCheckout =
+document.getElementById("toastCheckout");
+
+// Badge panier
+const cartBadge =
+document.getElementById("cartBadge");
+
+// Bouton panier
+const cartButton =
+document.getElementById("cartButton");
+
+// Bouton boutique
+const merchantShopButton =
+document.getElementById("merchantShopButton");
 // Sections
 
 const recommendSection =
@@ -597,6 +645,35 @@ updateGallery();
 
 }
 // =====================================
+// RENDER SLIDER
+// =====================================
+
+function renderSlider(){
+
+    if(!slider) return;
+
+    slider.innerHTML = "";
+
+    images.forEach(image=>{
+
+        slider.innerHTML += `
+
+        <div class="slide">
+
+            <img
+                class="zoomImage"
+                src="${image}"
+                loading="lazy"
+                alt="Produto">
+
+        </div>
+
+        `;
+
+    });
+
+}
+// =====================================
 // UPDATE GALERIE
 // =====================================
 
@@ -767,6 +844,36 @@ document.body.style.overflow="";
 }
 
 closeViewer.onclick = closeFullscreen;
+// =====================================
+// UPDATE VIEWER
+// =====================================
+
+function updateViewer(){
+
+    if(!fullscreenSlider) return;
+
+    fullscreenSlider.innerHTML = "";
+
+    images.forEach(image=>{
+
+        fullscreenSlider.innerHTML += `
+
+        <div class="slide">
+
+            <img
+                class="zoomImage"
+                src="${image}"
+                loading="lazy">
+
+        </div>
+
+        `;
+
+    });
+
+    updateFullscreen();
+
+}
 // =====================================
 // UPDATE FULLSCREEN
 // =====================================
@@ -1479,6 +1586,15 @@ ${p.name||""}
 `;
 
 return card;
+
+}
+// =====================================
+// RECOMMANDATIONS
+// =====================================
+
+async function loadRecommendations(){
+
+    return await loadRecommendedProducts();
 
 }
 // =====================================
@@ -2326,3 +2442,26 @@ toastCheckout?.addEventListener("click",()=>{
     location.href="checkout.html";
 
 });
+// =====================================
+// AVIS
+// =====================================
+
+async function loadReviews(){
+
+    if(!reviewsSection) return;
+
+    reviewsSection.innerHTML = `
+        <div class="emptyReviews">
+
+            ⭐⭐⭐⭐⭐
+
+            <p>
+
+                Ainda não existem avaliações para este produto.
+
+            </p>
+
+        </div>
+    `;
+
+}
