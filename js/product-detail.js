@@ -1714,49 +1714,48 @@ return;
 
 section.style.display="block";
 
-container.innerHTML="";
+container.innerHTML = "";
 
-const button=document.createElement("button");
+product.variants.forEach((variant, index) => {
 
-button.className="variantButton";
+    const button = document.createElement("button");
 
-button.textContent=variant.name;
+    button.className = "variantButton";
 
-if(index===0){
+    button.textContent = variant.name;
 
-button.classList.add("active");
+    if(index === 0){
 
-selectedVariant=variant.name;
+        button.classList.add("active");
 
-selectedVariantData=variant;
+        selectedVariant = variant.name;
 
-applyVariant();
+        selectedVariantData = variant;
 
-}
+        applyVariant();
 
-button.onclick=()=>{
+    }
 
-document
+    button.onclick = () => {
 
-.querySelectorAll(".variantButton")
+        document
+        .querySelectorAll(".variantButton")
+        .forEach(b => b.classList.remove("active"));
 
-.forEach(
+        button.classList.add("active");
 
-b=>b.classList.remove("active")
+        selectedVariant = variant.name;
 
-);
+        selectedVariantData = variant;
 
-button.classList.add("active");
+        applyVariant();
 
-selectedVariant=variant.name;
+    };
 
-selectedVariantData=variant;
+    container.appendChild(button);
 
-applyVariant();
-
-};
-
-container.appendChild(button);
+});
+ }
 // =====================================
 // APPLIQUER UNE VARIANTE
 // =====================================
