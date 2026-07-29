@@ -158,66 +158,7 @@ if (missing === 0) {
     alert("❌ Bloc 2 : " + missing + " élément(s) HTML manquant(s).");
 
 }
-// ======================================================
-// BLOC 3
-// CHARGEMENT DU PRODUIT FIREBASE
-// ======================================================
 
-onAuthStateChanged(auth, async (user) => {
-
-    currentUser = user || null;
-
-    alert("👤 Utilisateur vérifié");
-
-    await loadProduct();
-
-});
-
-async function loadProduct() {
-
-    alert("🔍 Recherche du produit...");
-
-    try {
-
-        const productRef = doc(db, "products", productId);
-
-        const productSnap = await getDoc(productRef);
-
-        if (!productSnap.exists()) {
-
-            alert("❌ Produit introuvable dans Firestore");
-
-            return;
-
-        }
-
-        alert("✅ Produit trouvé dans Firestore");
-
-        product = {
-
-            id: productSnap.id,
-
-            ...productSnap.data()
-
-        };
-
-        alert("📦 Nom : " + (product.name || "Sans nom"));
-
-        alert("💰 Prix : " + (product.price || "Sans prix"));
-
-        alert("🖼 Images : " + (product.images?.length || 0));
-
-    }
-
-    catch (error) {
-
-        alert("❌ Erreur Firebase");
-
-        alert(error.message);
-
-    }
-
-}
 // ======================================================
 // BLOC 3
 // CHARGEMENT DU PRODUIT FIREBASE
