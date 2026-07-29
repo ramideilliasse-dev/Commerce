@@ -1,856 +1,117 @@
- <!DOCTYPE html>
-<html lang="pt">
+ // ======================================
+// PRODUCT DETAIL PREMIUM V3
+// TOMA Marketplace
+// ======================================
 
-<head>
+import { db, auth } from "../firebase.js";
 
-<meta charset="UTF-8">
+import {
+    doc,
+    getDoc,
+    collection,
+    getDocs,
+    query,
+    where,
+    updateDoc,
+    increment
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-<meta
-name="viewport"
-content="width=device-width,initial-scale=1.0">
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-<title>Produto</title>
+import {
+    addToCart
+} from "./storage.js";
 
-<meta name="theme-color" content="#ff6a00">
+// ======================================
+// VARIABLES
+// ======================================
 
-<link rel="manifest" href="/manifest.json">
+let product = null;
+let merchant = null;
+let currentUser = null;
 
-<link rel="apple-touch-icon" href="/icon-192.png">
+let images = [];
+let currentImage = 0;
 
-<meta
-name="apple-mobile-web-app-capable"
-content="yes">
+let quantity = 1;
 
-<meta
-name="apple-mobile-web-app-status-bar-style"
-content="black-translucent">
+let selectedVariant = null;
+let selectedVariantData = null;
 
-<meta
-name="apple-mobile-web-app-title"
-content="Toma">
+// ======================================
+// URL
+// ======================================
 
-<meta property="og:type" content="product">
-<meta property="og:site_name" content="Toma">
-<meta name="twitter:card" content="summary_large_image">
+const params = new URLSearchParams(window.location.search);
+const productId = params.get("id");
 
-<link
-href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-rel="stylesheet">
+// ======================================
+// DOM
+// ======================================
 
-<link
-href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
-rel="stylesheet">
+// Header
 
-<link rel="stylesheet" href="product-detail.css">
+const backButton = document.getElementById("backButton");
+const cartButton = document.getElementById("cartButton");
+const cartBadge = document.getElementById("cartBadge");
 
-</head>
+// Galerie
 
-<body>
+const imageSlider = document.getElementById("imageSlider");
+const galleryThumbs = document.getElementById("galleryThumbs");
+const sliderDots = document.getElementById("sliderDots");
+const sliderCounter = document.getElementById("sliderCounter");
 
-<!-- HEADER -->
+// Produit
 
-<header class="productHeader">
+const productName = document.getElementById("productName");
+const productPrice = document.getElementById("productPrice");
+const stickyPrice = document.getElementById("stickyPrice");
+const productDescription = document.getElementById("productDescription");
+const stockBadge = document.getElementById("stockBadge");
+const ratingBadge = document.getElementById("ratingBadge");
 
-<button
-id="backButton"
-class="headerButton">
+// Variantes
 
-<span class="material-symbols-rounded">
-arrow_back
-</span>
+const variantsContainer = document.getElementById("variantsContainer");
 
-</button>
+// Quantité
 
-<h1>
-Produto
-</h1>
+const quantityValue = document.getElementById("quantityValue");
+const minusQty = document.getElementById("minusQty");
+const plusQty = document.getElementById("plusQty");
 
-<button id="cartButton" class="headerButton">
+// Boutons
 
-    <span class="material-symbols-rounded">
-        shopping_cart
-    </span>
+const favoriteButton = document.getElementById("favoriteButton");
+const shareButton = document.getElementById("shareButton");
+const chatButton = document.getElementById("chatButton");
+const buyButton = document.getElementById("buyButton");
+const stickyBuyButton = document.getElementById("stickyBuyButton");
 
-    <span id="cartBadge" class="cartBadge">
-        0
-    </span>
+// Marchand
 
-</button>
+const merchantLogo = document.getElementById("merchantLogo");
+const merchantName = document.getElementById("merchantName");
+const merchantDescription = document.getElementById("merchantDescription");
+const merchantRating = document.getElementById("merchantRating");
+const merchantProducts = document.getElementById("merchantProducts");
+const merchantFollowers = document.getElementById("merchantFollowers");
+const merchantSince = document.getElementById("merchantSince");
 
-<div class="headerSpacer"></div>
+// Sections
 
-</header>
-<!-- CONTENU -->
+const merchantProductsGrid = document.getElementById("merchantProductsGrid");
+const similarProductsGrid = document.getElementById("similarProductsGrid");
+const recommendProductsGrid = document.getElementById("recommendProductsGrid");
+const recentProductsGrid = document.getElementById("recentProductsGrid");
 
-<main class="productContainer">
+// Avis
 
-<!-- ========================= -->
-<!-- GALERIE -->
-<!-- ========================= -->
+const reviewsList = document.getElementById("reviewsList");
+const averageRating = document.getElementById("averageRating");
+const reviewsCount = document.getElementById("reviewsCount");
 
-<section class="galleryCard">
-
-<div
-id="imageSlider"
-class="imageSlider">
-
-<!-- Images -->
-
-</div>
-
-<div
-id="sliderCounter"
-class="sliderCounter">
-
-1 / 1
-
-</div>
-
-<div
-id="sliderDots"
-class="sliderDots">
-
-</div>
-
-<div
-id="galleryThumbs"
-class="galleryThumbs">
-
-</div>
-
-</section>
-
-<!-- ========================= -->
-<!-- INFORMATIONS -->
-<!-- ========================= -->
-
-<section class="infoCard">
-
-<h2 id="productName">
-
-Carregando...
-
-</h2>
-
-<div class="badgeRow">
-
-<div id="ratingBadge" class="ratingBadge">
-
-⭐⭐⭐⭐⭐ 0
-
-</div>
-
-<div class="verifiedBadge">
-
-✔ Verificado
-
-</div>
-
-</div>
-
-<div
-id="productPrice"
-class="productPrice">
-
-0 Kz
-
-</div>
-
-<div
-id="stockBadge"
-class="stockBadge">
-
-Carregando...
-
-</div>
-
-<p
-id="productDescription"
-class="productDescription">
-
-</p>
-
-</section>
-<!-- ===================================== -->
-<!-- VARIANTES -->
-<!-- ===================================== -->
-
-<section
-id="variantsSection"
-class="variantsSection">
-
-<h3>
-
-Escolha uma opção
-
-</h3>
-
-<div
-id="variantsContainer">
-
-</div>
-
-</section>
-<!-- ===================================== -->
-<!-- QUANTITÉ -->
-<!-- ===================================== -->
-
-<section class="quantitySection">
-
-<h3>
-
-Quantidade
-
-</h3>
-
-<div class="quantityBox">
-
-<button
-id="minusQty"
-class="qtyButton">
-
-−
-
-</button>
-
-<div
-id="quantityValue"
-class="quantityValue">
-
-1
-
-</div>
-
-<button
-id="plusQty"
-class="qtyButton">
-
-+
-
-</button>
-
-</div>
-
-</section>
-<!-- ========================= -->
-<!-- ACTIONS -->
-<!-- ========================= -->
-
-<section class="actionButtons">
-
-<button
-id="favoriteButton"
-class="iconButton">
-
-❤️
-
-<span>
-Favoritos
-</span>
-
-</button>
-
-<button
-id="shareButton"
-class="iconButton">
-
-📤
-
-<span>
-Partilhar
-</span>
-
-</button>
-
-<button
-id="chatButton"
-class="iconButton">
-
-💬
-
-<span>
-Chat
-</span>
-
-</button>
-
-<button
-id="buyButton"
-class="buyButton">
-
-🛒 Comprar Agora
-
-</button>
-
-</section>
-
-<!-- ========================= -->
-<!-- PROCHAINS BLOCS -->
-<!-- ========================= -->
-
-<!-- ========================= -->
-<!-- CARTE MARCHAND PREMIUM -->
-<!-- ========================= -->
-
-<section id="merchantSection" class="merchantCard">
-
-<div class="merchantHeader">
-
-<img
-id="merchantLogo"
-class="merchantLogo"
-src="images/default-store.png"
-loading="lazy">
-
-<div class="merchantInfo">
-
-<div class="merchantTop">
-
-<h2 id="merchantName">
-
-Loja Oficial
-
-</h2>
-
-<span class="merchantVerified">
-
-✔ Verificada
-
-</span>
-
-</div>
-
-<p id="merchantCategory">
-
-Loja Premium Toma
-
-</p>
-
-</div>
-
-</div>
-
-<div class="merchantStats">
-
-<div class="merchantStat">
-
-<div
-id="merchantRating"
-class="merchantValue">
-
-⭐ 5.0
-
-</div>
-
-<div class="merchantLabel">
-
-Avaliação
-
-</div>
-
-</div>
-
-<div class="merchantStat">
-
-<div
-id="merchantProducts">
-
-0
-
-</div>
-
-<div class="merchantLabel">
-
-Produtos
-
-</div>
-
-</div>
-
-<div class="merchantStat">
-
-<div
-id="merchantFollowers">
-
-0
-
-</div>
-
-<div class="merchantLabel">
-
-Seguidores
-
-</div>
-
-</div>
-
-<div class="merchantStat">
-
-<div
-id="merchantSince">
-
-2026
-
-</div>
-
-<div class="merchantLabel">
-
-Desde
-
-</div>
-
-</div>
-
-</div>
-
-<div
-id="merchantDescription"
-class="merchantDescription">
-
-Carregando informações da loja...
-
-</div>
-
-<div class="merchantActions">
-
-<button
-class="merchantChatButton"
-onclick="openMerchantChat()">
-
-<span class="material-symbols-rounded">
-chat
-</span>
-
-Conversar
-
-</button>
-
-<button
-class="merchantShopButton"
-onclick="openMerchantShop()">
-
-<span class="material-symbols-rounded">
-storefront
-</span>
-
-Ver Loja
-
-</button>
-
-</div>
-
-</section>
-
-<!-- ===================================== -->
-<!-- OUTROS PRODUTOS DA LOJA -->
-<!-- ===================================== -->
-
-<section class="merchantProductsSection">
-
-<div class="sectionHeader">
-
-<div>
-
-<h2>
-
-Mais produtos desta loja
-
-</h2>
-
-<p>
-
-Descubra outros produtos deste vendedor
-
-</p>
-
-</div>
-
-<button
-id="viewMerchantStore"
-class="seeAllButton">
-
-Ver Loja
-
-<span class="material-symbols-rounded">
-
-arrow_forward_ios
-
-</span>
-
-</button>
-
-</div>
-
-<div
-id="merchantProductsGrid"
-class="horizontalProducts">
-
-<!-- Produits du marchand -->
-
-</div>
-
-</section>
-
-<!-- ===================================== -->
-<!-- PRODUTOS SEMELHANTES -->
-<!-- ===================================== -->
-
-<section id="similarSection">
-
-<div class="sectionHeader">
-
-<div>
-
-<h2>
-
-Produtos semelhantes
-
-</h2>
-
-<p>
-
-Selecionados para si
-
-</p>
-
-</div>
-
-</div>
-
-<div
-id="similarProductsGrid"
-class="horizontalProducts">
-
-</div>
-
-</section>
-
-<!-- ===================================== -->
-<!-- TAMBÉM PODE GOSTAR -->
-<!-- ===================================== -->
-
-<section id="recommendSection">
-
-<div class="sectionHeader">
-
-<div>
-
-<h2>
-
-Também pode gostar
-
-</h2>
-
-<p>
-
-Baseado na sua navegação
-
-</p>
-
-</div>
-
-</div>
-
-<div
-id="recommendProductsGrid"
-class="horizontalProducts">
-
-</div>
-
-</section>
-<!-- ===================================== -->
-<!-- RECOMENDADOS -->
-<!-- ===================================== -->
-
-<section id="recommendSection" class="recommendSection">
-
-<div class="sectionHeader">
-
-<div>
-
-<h2>
-
-⭐ Recomendados para si
-
-</h2>
-
-<p>
-
-Produtos escolhidos especialmente para si
-
-</p>
-
-</div>
-
-</div>
-
-<div
-id="recommendProductsGrid"
-class="horizontalProducts">
-
-<!-- Produtos -->
-
-</div>
-
-</section>
-<!-- ===================================== -->
-<!-- RÉCEMMENT CONSULTÉS -->
-<!-- ===================================== -->
-
-<section class="recommendSection">
-
-<div class="sectionHeader">
-
-<div>
-
-<h2>
-
-🕒 Consultados recentemente
-
-</h2>
-
-<p>
-
-Continue onde parou
-
-</p>
-
-</div>
-
-</div>
-
-<div
-
-id="recentProductsGrid"
-
-class="horizontalProducts">
-
-</div>
-
-</section>
-<!-- ===================================== -->
-<!-- AVALIAÇÕES -->
-<!-- ===================================== -->
-
-<section id="reviewsSection" class="reviewsSection">
-
-<div class="sectionHeader">
-
-<div>
-
-<h2>
-
-💬 Avaliações
-
-</h2>
-
-<p>
-
-Veja o que os clientes dizem
-
-</p>
-
-</div>
-
-</div>
-
-<!-- Résumé -->
-
-<div class="reviewsSummary">
-
-<div class="reviewsAverage">
-
-<div
-id="averageRating"
-class="averageRating">
-
-5.0
-
-</div>
-
-<div class="starsRow">
-
-⭐⭐⭐⭐⭐
-
-</div>
-
-<div
-id="reviewsCount"
-class="reviewsCount">
-
-0 avaliações
-
-</div>
-
-</div>
-
-<div class="reviewsBars">
-
-<div class="reviewBar">
-
-<span>5★</span>
-
-<div class="bar">
-
-<div
-id="bar5"
-class="fillBar">
-
-</div>
-
-</div>
-
-</div>
-
-<div class="reviewBar">
-
-<span>4★</span>
-
-<div class="bar">
-
-<div
-id="bar4"
-class="fillBar">
-
-</div>
-
-</div>
-
-</div>
-
-<div class="reviewBar">
-
-<span>3★</span>
-
-<div class="bar">
-
-<div
-id="bar3"
-class="fillBar">
-
-</div>
-
-</div>
-
-</div>
-
-<div class="reviewBar">
-
-<span>2★</span>
-
-<div class="bar">
-
-<div
-id="bar2"
-class="fillBar">
-
-</div>
-
-</div>
-
-</div>
-
-<div class="reviewBar">
-
-<span>1★</span>
-
-<div class="bar">
-
-<div
-id="bar1"
-class="fillBar">
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- Liste des avis -->
-
-<div
-id="reviewsList"
-class="reviewsList">
-
-</div>
-
-<button
-id="loadMoreReviews"
-class="loadMoreButton">
-
-Ver mais avaliações
-
-</button>
-
-</section>
-
-</main>
-
-<!-- STICKY BUY -->
-
-<footer class="stickyBuyBar">
-
-<div>
-
-<div class="stickyLabel">
-
-Preço
-
-</div>
-
-<div id="stickyPrice">
-
-0 Kz
-
-</div>
-
-</div>
-
-<button
-id="stickyBuyButton">
-
-🛒 Comprar Agora
-
-</button>
-
-</footer>
-<div id="cartToast" class="cartToast">
-
-    <div class="cartToastIcon">
-
-        ✓
-
-    </div>
-
-    <div class="cartToastContent">
-
-        <strong>
-
-            Produto adicionado
-
-        </strong>
-
-        <p>
-
-            O produto foi adicionado ao carrinho.
-
-        </p>
-
-    </div>
-
-    <button id="toastCheckout">
-
-        Ver Carrinho
-
-    </button>
-
-</div>
-<script type="module" src="js/product-detail.js"></script>
-
-</body>
-
-</html>
+console.log("✅ product-detail.js Premium V3 chargé");
