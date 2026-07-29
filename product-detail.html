@@ -192,7 +192,7 @@ async function loadProduct() {
             ];
 
         renderProduct();
-
+updatePageMeta();
         renderGallery();
 
         updateGallery();
@@ -1100,3 +1100,164 @@ function renderReviews(reviews) {
     }
 
 }
+// ======================================
+// BARRE D'ACHAT STICKY
+// ======================================
+
+const stickyBar = document.querySelector(".stickyBuyBar");
+
+if (stickyBar) {
+
+    window.addEventListener("scroll", () => {
+
+        if (window.scrollY > 350) {
+
+            stickyBar.classList.add("show");
+
+        } else {
+
+            stickyBar.classList.remove("show");
+
+        }
+
+    });
+
+}
+     // ======================================
+// ANIMATION DES CARTES AU SCROLL
+// ======================================
+
+function animateSections() {
+
+    const sections = document.querySelectorAll("section");
+
+    const observer = new IntersectionObserver(
+
+        (entries) => {
+
+            entries.forEach((entry) => {
+
+                if (entry.isIntersecting) {
+
+                    entry.target.classList.add("show");
+
+                }
+
+            });
+
+        },
+
+        {
+
+            threshold: 0.15
+
+        }
+
+    );
+
+    sections.forEach((section) => {
+
+        observer.observe(section);
+
+    });
+
+}
+     // ======================================
+// BOUTON RETOUR
+// ======================================
+
+const backButton = document.getElementById("backButton");
+
+if (backButton) {
+
+    backButton.addEventListener("click", () => {
+
+        history.back();
+
+    });
+
+}
+     // ======================================
+// META DONNÉES DYNAMIQUES
+// ======================================
+
+function updatePageMeta() {
+
+    if (!product) return;
+
+    document.title = product.name + " • Toma";
+
+    const description =
+
+        product.description ||
+
+        "Produto disponível na Toma.";
+
+    let metaDescription = document.querySelector(
+
+        'meta[name="description"]'
+
+    );
+
+    if (!metaDescription) {
+
+        metaDescription = document.createElement("meta");
+
+        metaDescription.name = "description";
+
+        document.head.appendChild(metaDescription);
+
+    }
+
+    metaDescription.content = description;
+
+    const image =
+
+        product.images?.[0] ||
+
+        product.image ||
+
+        "icon-512.png";
+
+    const ogTitle = document.querySelector(
+
+        'meta[property="og:title"]'
+
+    );
+
+    if (ogTitle)
+
+        ogTitle.content = product.name;
+
+    const ogDescription = document.querySelector(
+
+        'meta[property="og:description"]'
+
+    );
+
+    if (ogDescription)
+
+        ogDescription.content = description;
+
+    const ogImage = document.querySelector(
+
+        'meta[property="og:image"]'
+
+    );
+
+    if (ogImage)
+
+        ogImage.content = image;
+
+    const twitterImage = document.querySelector(
+
+        'meta[name="twitter:image"]'
+
+    );
+
+    if (twitterImage)
+
+        twitterImage.content = image;
+
+}
+     
