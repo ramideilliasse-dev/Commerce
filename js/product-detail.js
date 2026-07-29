@@ -245,31 +245,36 @@ async function loadProduct() {
 
         if (!productSnap.exists()) {
 
-            alert("❌ Produit introuvable dans Firestore");
+            alert("❌ Produit introuvable");
 
             return;
 
         }
 
-        alert("✅ Produit trouvé dans Firestore");
+        alert("✅ Produit trouvé");
 
         product = {
 
             id: productSnap.id,
-
             ...productSnap.data()
 
         };
 
-        alert("📦 Nom : " + (product.name || "Sans nom"));
+        alert("📦 " + product.name);
 
-        alert("💰 Prix : " + (product.price || "Sans prix"));
+        // Images
+        images = product.images?.length
+            ? product.images
+            : [product.image || "images/no-image.png"];
 
-        alert("🖼 Images : " + (product.images?.length || 0));
+        // afficher
+        renderProduct();
+
+        alert("✅ renderProduct exécuté");
 
     }
 
-    catch (error) {
+    catch(error){
 
         alert("❌ Erreur Firebase");
 
