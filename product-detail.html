@@ -250,3 +250,87 @@ function showError(message) {
     `;
 
 }
+// ======================================
+// AFFICHER LE PRODUIT
+// ======================================
+
+function renderProduct() {
+
+    // Nom
+    productName.textContent =
+        product.name || "Produto";
+
+    // Prix
+    const price =
+        Number(product.price || 0);
+
+    productPrice.textContent =
+        price.toLocaleString() + " Kz";
+
+    stickyPrice.textContent =
+        price.toLocaleString() + " Kz";
+
+    // Description
+    productDescription.textContent =
+        product.description ||
+        "Sem descrição disponível.";
+
+    // Note
+    ratingBadge.textContent =
+        "⭐ " + (product.rating || 5.0);
+
+    // Stock
+    const stock =
+        Number(product.stock || 0);
+
+    if (stock <= 0) {
+
+        stockBadge.textContent =
+            "❌ Produto esgotado";
+
+        stockBadge.className =
+            "stockBadge out";
+
+        buyButton.disabled = true;
+
+        stickyBuyButton.disabled = true;
+
+    }
+
+    else if (stock <= 5) {
+
+        stockBadge.textContent =
+            "⚠️ Restam apenas " +
+            stock +
+            " unidades";
+
+        stockBadge.className =
+            "stockBadge low";
+
+    }
+
+    else {
+
+        stockBadge.textContent =
+            "✅ Em stock";
+
+        stockBadge.className =
+            "stockBadge ok";
+
+    }
+
+    // Images
+
+    images = product.images?.length
+
+        ? product.images
+
+        : [
+
+            product.image ||
+
+            "images/no-image.png"
+
+        ];
+
+}
