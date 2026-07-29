@@ -2435,7 +2435,7 @@ toastCheckout?.addEventListener("click",()=>{
 
 });
 // =====================================
-// AVIS
+// CHARGER LES AVIS
 // =====================================
 
 async function loadReviews(){
@@ -2443,17 +2443,19 @@ async function loadReviews(){
     if(!reviewsSection) return;
 
     reviewsSection.innerHTML = `
+
         <div class="emptyReviews">
 
-            ⭐⭐⭐⭐⭐
+            <span style="font-size:40px;">⭐</span>
+
+            <h3>Ainda não existem avaliações</h3>
 
             <p>
-
-                Ainda não existem avaliações para este produto.
-
+                Seja o primeiro cliente a avaliar este produto.
             </p>
 
         </div>
+
     `;
 
 }
