@@ -1301,59 +1301,52 @@ product.id;
 
 async function loadMerchantProducts(){
 
-try{
+    if(!merchantProductsGrid) return;
 
-const q = query(
+    try{
 
-collection(db,"products"),
+        merchantProductsGrid.innerHTML="";
 
-where(
+        const q = query(
 
-"merchantId",
+            collection(db,"products"),
 
-"==",
+            where(
+                "merchantId",
+                "==",
+                product.merchantId
+            )
 
-product.merchantId
+        );
 
-)
+        const snapshot = await getDocs(q);
 
-);
+        let count = 0;
 
-const snapshot = await getDocs(q);
+        snapshot.forEach(docSnap=>{
 
-merchantProductsGrid.innerHTML="";
+            if(docSnap.id===product.id) return;
 
-let count=0;
+            if(count>=10) return;
 
-snapshot.forEach(docSnap=>{
+            merchantProductsGrid.appendChild(
 
-if(docSnap.id===product.id) return;
+                createHorizontalCard(
+                    docSnap.id,
+                    docSnap.data()
+                )
 
-if(count>=10) return;
+            );
 
-const p = docSnap.data();
+            count++;
 
-merchantProductsGrid.appendChild(
+        });
 
-createHorizontalCard(
+    }catch(error){
 
-docSnap.id,
+        console.error(error);
 
-p
-
-)
-
-);
-
-count++;
-
-});
-
-}catch(error){
-
-console.error(error);
-
-}
+    }
 
 }
 // =====================================
@@ -1426,7 +1419,7 @@ return card;
 // =====================================
 
 async function loadSimilarProducts(){
-
+if(!recommendProductsGrid) return;
 try{
 
 const q=query(
@@ -1599,7 +1592,7 @@ async function loadRecommendations(){
 // =====================================
 
 async function loadRecommendedProducts(){
-
+if(!recommendProductsGrid) return;
 try{
 
 const snapshot = await getDocs(
