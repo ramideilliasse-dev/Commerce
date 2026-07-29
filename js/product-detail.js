@@ -536,7 +536,7 @@ product.image ||
 // =====================================
 
 function renderGallery(){
-
+if(!slider || !gallery || !dots) return;
 slider.innerHTML="";
 
 gallery.innerHTML="";
@@ -680,7 +680,7 @@ function renderSlider(){
 // =====================================
 
 function updateGallery(){
-
+if(!slider) return;
 slider.style.transform=
 
 `translateX(-${currentImage*100}%)`;
@@ -689,37 +689,30 @@ counter.textContent=
 
 `${currentImage+1} / ${images.length}`;
 
-gallery
+if(gallery){
 
-.querySelectorAll("img")
+    gallery.querySelectorAll("img")
+    .forEach((img,index)=>{
 
-.forEach((img,index)=>{
+        img.classList.toggle(
+            "active",
+            index===currentImage
+        );
 
-img.classList.toggle(
+    });
 
-"active",
+}
+if(dots){
 
-index===currentImage
+    dots.querySelectorAll(".dot")
+    .forEach((dot,index)=>{
 
-);
+        dot.classList.toggle(
+            "active",
+            index===currentImage
+        );
 
-});
-
-dots
-
-.querySelectorAll(".dot")
-
-.forEach((dot,index)=>{
-
-dot.classList.toggle(
-
-"active",
-
-index===currentImage
-
-);
-
-});
+    });
 
 }
 // =====================================
@@ -895,13 +888,15 @@ fullscreenCounter.textContent=
 // OUVERTURE SUR CLIC
 // =====================================
 
-document.getElementById("viewer")
+if(viewer){
 
-.addEventListener("click",()=>{
+    viewer.addEventListener("click",()=>{
 
-openFullscreen();
+        openFullscreen();
 
-});
+    });
+
+}
 // =====================================
 // SWIPE FULLSCREEN
 // =====================================
