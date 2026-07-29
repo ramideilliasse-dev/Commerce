@@ -1260,4 +1260,22 @@ function updatePageMeta() {
         twitterImage.content = image;
 
 }
-     
+  // ======================================
+// DÉMARRAGE
+// ======================================
+
+window.addEventListener("load", async () => {
+
+    if (!productId) {
+
+        showError("Produto não encontrado.");
+
+        return;
+
+    }
+
+    await loadProduct();
+
+    updateCartBadge();
+
+});   
