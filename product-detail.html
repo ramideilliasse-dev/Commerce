@@ -513,3 +513,101 @@ function previousImage() {
     updateGallery();
 
 }
+// ======================================
+// CHARGER LE MARCHAND
+// ======================================
+
+async function loadMerchant() {
+
+    if (!product.merchantId) return;
+
+    try {
+
+        const merchantRef = doc(
+            db,
+            "merchants",
+            product.merchantId
+        );
+
+        const merchantSnap = await getDoc(merchantRef);
+
+        if (!merchantSnap.exists()) return;
+
+        merchant = merchantSnap.data();
+
+        merchantLogo.src =
+            merchant.logo ||
+            "images/default-store.png";
+
+        merchantName.textContent =
+            merchant.shopName ||
+            "Loja Oficial";
+
+        merchantDescription.textContent =
+            merchant.description ||
+            "Loja verificada na Toma.";
+
+        merchantSince.textContent =
+            merchant.createdYear ||
+            "2026";
+
+        merchantFollowers.textContent =
+            merchant.followers || 0;
+
+        // Nombre de produits
+
+        const q = query(
+
+            collection(db, "products"),
+
+            where(
+                "merchantId",
+                "==",
+                product.merchantId
+            )
+
+        );
+
+        const snapshot = await getDocs(q);
+
+        merchantProducts.textContent =
+            snapshot.size;
+
+        // Note
+
+        merchantRating.textContent =
+            "⭐ " + (merchant.rating || "5.0");
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Erro ao carregar loja:",
+            error
+        );
+
+    }
+
+}
+// ======================================
+// BOUTONS DU MARCHAND
+// ======================================
+
+window.openMerchantShop = function () {
+
+    location.href =
+        "merchant-shop.html?id=" +
+        product.merchantId;
+
+};
+
+window.openMerchantChat = function () {
+
+    location.href =
+        "chat.html?merchant=" +
+        product.merchantId +
+        "&product=" +
+        product.id;
+
+};
