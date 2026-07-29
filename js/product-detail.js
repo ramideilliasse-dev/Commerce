@@ -371,3 +371,74 @@ function updateGallery(){
     });
 
 }
+// ======================================================
+// BLOC 6
+// SWIPE DE LA GALERIE
+// ======================================================
+
+let touchStartX = 0;
+let touchEndX = 0;
+
+imageSlider.addEventListener("touchstart", (e) => {
+
+    touchStartX = e.touches[0].clientX;
+
+});
+
+imageSlider.addEventListener("touchend", (e) => {
+
+    touchEndX = e.changedTouches[0].clientX;
+
+    const distance = touchEndX - touchStartX;
+
+    if (Math.abs(distance) < 50) return;
+
+    if (distance < 0) {
+
+        nextImage();
+
+    } else {
+
+        previousImage();
+
+    }
+
+});
+
+// =====================================
+// IMAGE SUIVANTE
+// =====================================
+
+function nextImage() {
+
+    currentImage++;
+
+    if (currentImage >= images.length) {
+
+        currentImage = 0;
+
+    }
+
+    updateGallery();
+
+}
+
+// =====================================
+// IMAGE PRÉCÉDENTE
+// =====================================
+
+function previousImage() {
+
+    currentImage--;
+
+    if (currentImage < 0) {
+
+        currentImage = images.length - 1;
+
+    }
+
+    updateGallery();
+
+}
+
+alert("✅ Bloc 6 chargé");
