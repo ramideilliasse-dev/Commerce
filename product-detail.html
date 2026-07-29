@@ -334,3 +334,114 @@ function renderProduct() {
         ];
 
 }
+// ======================================
+// GALERIE PREMIUM
+// ======================================
+
+function renderGallery() {
+
+    imageSlider.innerHTML = "";
+    galleryThumbs.innerHTML = "";
+    sliderDots.innerHTML = "";
+
+    images.forEach((image, index) => {
+
+        // Grande image
+        imageSlider.innerHTML += `
+            <div class="slide">
+                <img
+                    src="${image}"
+                    class="productSlideImage"
+                    loading="lazy"
+                    alt="Produto">
+            </div>
+        `;
+
+        // Miniature
+        galleryThumbs.innerHTML += `
+            <img
+                src="${image}"
+                class="thumb ${index === 0 ? "active" : ""}"
+                data-index="${index}"
+                loading="lazy">
+        `;
+
+        // Point
+        sliderDots.innerHTML += `
+            <span
+                class="dot ${index === 0 ? "active" : ""}"
+                data-index="${index}">
+            </span>
+        `;
+
+    });
+
+    // Miniatures
+    galleryThumbs
+        .querySelectorAll(".thumb")
+        .forEach((thumb) => {
+
+            thumb.onclick = () => {
+
+                currentImage =
+                    Number(thumb.dataset.index);
+
+                updateGallery();
+
+            };
+
+        });
+
+    // Points
+    sliderDots
+        .querySelectorAll(".dot")
+        .forEach((dot) => {
+
+            dot.onclick = () => {
+
+                currentImage =
+                    Number(dot.dataset.index);
+
+                updateGallery();
+
+            };
+
+        });
+
+}
+
+// ======================================
+// ACTUALISER LA GALERIE
+// ======================================
+
+function updateGallery() {
+
+    imageSlider.style.transform =
+        `translateX(-${currentImage * 100}%)`;
+
+    sliderCounter.textContent =
+        `${currentImage + 1} / ${images.length}`;
+
+    galleryThumbs
+        .querySelectorAll(".thumb")
+        .forEach((thumb, index) => {
+
+            thumb.classList.toggle(
+                "active",
+                index === currentImage
+            );
+
+        });
+
+    sliderDots
+        .querySelectorAll(".dot")
+        .forEach((dot, index) => {
+
+            dot.classList.toggle(
+                "active",
+                index === currentImage
+            );
+
+        });
+
+}
