@@ -211,7 +211,9 @@ async function loadProduct() {
         // afficher
         renderProduct();
 
-        alert("✅ renderProduct exécuté");
+renderGallery();
+
+alert("✅ Produit affiché");
 
     }
 
@@ -262,5 +264,110 @@ function renderProduct(){
     }
 
     alert("✅ Texte affiché");
+
+}
+// ======================================================
+// BLOC 5
+// GALERIE DES IMAGES
+// ======================================================
+
+function renderGallery() {
+
+    alert("🖼 Construction de la galerie");
+
+    imageSlider.innerHTML = "";
+    galleryThumbs.innerHTML = "";
+    sliderDots.innerHTML = "";
+
+    images.forEach((image, index) => {
+
+        imageSlider.innerHTML += `
+            <div class="slide">
+                <img
+                    src="${image}"
+                    class="productSlideImage"
+                    loading="lazy"
+                    alt="Produit">
+            </div>
+        `;
+
+        galleryThumbs.innerHTML += `
+            <img
+                src="${image}"
+                class="thumb ${index===0 ? "active" : ""}"
+                data-index="${index}"
+                loading="lazy">
+        `;
+
+        sliderDots.innerHTML += `
+            <span
+                class="dot ${index===0 ? "active" : ""}"
+                data-index="${index}">
+            </span>
+        `;
+
+    });
+
+    galleryThumbs.querySelectorAll(".thumb").forEach(thumb=>{
+
+        thumb.onclick=()=>{
+
+            currentImage=Number(thumb.dataset.index);
+
+            updateGallery();
+
+        };
+
+    });
+
+    sliderDots.querySelectorAll(".dot").forEach(dot=>{
+
+        dot.onclick=()=>{
+
+            currentImage=Number(dot.dataset.index);
+
+            updateGallery();
+
+        };
+
+    });
+
+    updateGallery();
+
+    alert("✅ Galerie créée");
+
+}
+
+// =====================================
+// Mise à jour de la galerie
+// =====================================
+
+function updateGallery(){
+
+    imageSlider.style.transform =
+        `translateX(-${currentImage*100}%)`;
+
+    sliderCounter.textContent =
+        `${currentImage+1} / ${images.length}`;
+
+    galleryThumbs.querySelectorAll(".thumb")
+    .forEach((thumb,index)=>{
+
+        thumb.classList.toggle(
+            "active",
+            index===currentImage
+        );
+
+    });
+
+    sliderDots.querySelectorAll(".dot")
+    .forEach((dot,index)=>{
+
+        dot.classList.toggle(
+            "active",
+            index===currentImage
+        );
+
+    });
 
 }
