@@ -218,3 +218,43 @@ async function loadProduct() {
     }
 
 }
+// ======================================================
+// BLOC 4
+// AFFICHER LE PRODUIT
+// ======================================================
+
+function renderProduct(){
+
+    alert("🎨 Affichage du produit");
+
+    productName.textContent =
+        product.name || "Produit";
+
+    productPrice.textContent =
+        Number(product.price || 0).toLocaleString() + " Kz";
+
+    stickyPrice.textContent =
+        Number(product.price || 0).toLocaleString() + " Kz";
+
+    productDescription.textContent =
+        product.description || "Sans description";
+
+    ratingBadge.textContent =
+        "⭐ " + (product.rating || 5);
+
+    const stock = Number(product.stock || 0);
+
+    if(stock <= 0){
+
+        stockBadge.textContent = "❌ Produit épuisé";
+
+    }else{
+
+        stockBadge.textContent =
+            "✅ En stock : " + stock;
+
+    }
+
+    alert("✅ Texte affiché");
+
+}
