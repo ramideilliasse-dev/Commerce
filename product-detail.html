@@ -115,3 +115,138 @@ const averageRating = document.getElementById("averageRating");
 const reviewsCount = document.getElementById("reviewsCount");
 
 console.log("✅ product-detail.js Premium V3 chargé");
+// ======================================
+// INITIALISATION
+// ======================================
+
+onAuthStateChanged(auth, async (user) => {
+
+    currentUser = user || null;
+
+    if (!productId) {
+
+        showError("Produto não encontrado.");
+
+        return;
+
+    }
+
+    await loadProduct();
+
+});
+
+// ======================================
+// CHARGER LE PRODUIT
+// ======================================
+
+async function loadProduct() {
+
+    try {
+
+        const ref = doc(db, "products", productId);
+
+        const snap = await getDoc(ref);
+
+        if (!snap.exists()) {
+
+            showError("Produto inexistente.");
+
+            return;
+
+        }
+
+        product = {
+
+            id: snap.id,
+
+            ...snap.data()
+
+        };
+
+        // Ajouter une vue
+
+        try {
+
+            await updateDoc(ref, {
+
+                views: increment(1)
+
+            });
+
+        } catch (e) {
+
+            console.log("Impossible d'ajouter une vue.");
+
+        }
+
+        images = product.images?.length
+
+            ? product.images
+
+            : [
+
+                product.image ||
+
+                "images/no-image.png"
+
+            ];
+
+        renderProduct();
+
+        renderGallery();
+
+        updateGallery();
+
+        updateCartBadge();
+
+        saveRecentProduct();
+
+        addToHistory();
+
+        await loadMerchant();
+
+        await loadMerchantProducts();
+
+        await loadSimilarProducts();
+
+        await loadRecommendedProducts();
+
+        loadRecentProducts();
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        showError("Erro ao carregar o produto.");
+
+    }
+
+}
+
+// ======================================
+// MESSAGE D'ERREUR
+// ======================================
+
+function showError(message) {
+
+    document.body.innerHTML = `
+
+    <div style="padding:60px;text-align:center;font-family:Inter,sans-serif;">
+
+        <h2>${message}</h2>
+
+        <br>
+
+        <button onclick="history.back()">
+
+            Voltar
+
+        </button>
+
+    </div>
+
+    `;
+
+}
