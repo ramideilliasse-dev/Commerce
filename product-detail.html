@@ -611,3 +611,247 @@ window.openMerchantChat = function () {
         product.id;
 
 };
+// ======================================
+// AUTRES PRODUITS DU MARCHAND
+// ======================================
+
+async function loadMerchantProducts() {
+
+    if (!product.merchantId) return;
+
+    try {
+
+        merchantProductsGrid.innerHTML = "";
+
+        const q = query(
+            collection(db, "products"),
+            where("merchantId", "==", product.merchantId)
+        );
+
+        const snapshot = await getDocs(q);
+
+        let count = 0;
+
+        snapshot.forEach((docSnap) => {
+
+            if (docSnap.id === product.id) return;
+
+            if (count >= 10) return;
+
+            const p = {
+
+                id: docSnap.id,
+                ...docSnap.data()
+
+            };
+
+            merchantProductsGrid.appendChild(
+
+                createHorizontalCard(p)
+
+            );
+
+            count++;
+
+        });
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Erro produtos loja:",
+            error
+        );
+
+    }
+
+}
+
+// ======================================
+// CARTE HORIZONTALE
+// ======================================
+
+function createHorizontalCard(product) {
+
+    const card = document.createElement("div");
+
+    card.className = "horizontalCard";
+
+    const image =
+
+        product.images?.[0] ||
+
+        product.image ||
+
+        "images/no-image.png";
+
+    card.innerHTML = `
+
+        <img
+            src="${image}"
+            class="horizontalImage"
+            loading="lazy">
+
+        <div class="horizontalBody">
+
+            <h3>
+
+                ${product.name || "Produto"}
+
+            </h3>
+
+            <div class="horizontalPrice">
+
+                ${Number(product.price || 0).toLocaleString()} Kz
+
+            </div>
+
+            <div class="horizontalProvince">
+
+                📍 ${product.province || "Angola"}
+
+            </div>
+
+        </div>
+
+    `;
+
+    card.onclick = () => {
+
+        location.href =
+            "product-detail.html?id=" +
+            product.id;
+
+    };
+
+    return card;
+
+}
+ // ======================================
+// PRODUITS SIMILAIRES
+// ======================================
+
+async function loadSimilarProducts() {
+
+    if (!product.category) return;
+
+    try {
+
+        recommendProductsGrid.innerHTML = "";
+
+        const q = query(
+
+            collection(db, "products"),
+
+            where(
+                "category",
+                "==",
+                product.category
+            )
+
+        );
+
+        const snapshot = await getDocs(q);
+
+        let count = 0;
+
+        snapshot.forEach((docSnap) => {
+
+            if (docSnap.id === product.id) return;
+
+            if (count >= 12) return;
+
+            const similarProduct = {
+
+                id: docSnap.id,
+                ...docSnap.data()
+
+            };
+
+            recommendProductsGrid.appendChild(
+
+                createProductCard(similarProduct)
+
+            );
+
+            count++;
+
+        });
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Erro produtos semelhantes:",
+            error
+        );
+
+    }
+
+}
+     // ======================================
+// CARTE PRODUIT PREMIUM
+// ======================================
+
+function createProductCard(product) {
+
+    const card = document.createElement("div");
+
+    card.className = "productCard";
+
+    const image =
+
+        product.images?.[0] ||
+
+        product.image ||
+
+        "images/no-image.png";
+
+    card.innerHTML = `
+
+        <div class="productImageBox">
+
+            <img
+                src="${image}"
+                class="productImage"
+                loading="lazy">
+
+        </div>
+
+        <div class="productBody">
+
+            <div class="productPrice">
+
+                ${Number(product.price || 0).toLocaleString()} Kz
+
+            </div>
+
+            <h3>
+
+                ${product.name || "Produto"}
+
+            </h3>
+
+            <div class="productProvince">
+
+                📍 ${product.province || "Angola"}
+
+            </div>
+
+        </div>
+
+    `;
+
+    card.onclick = () => {
+
+        location.href =
+            "product-detail.html?id=" +
+            product.id;
+
+    };
+
+    return card;
+
+}
