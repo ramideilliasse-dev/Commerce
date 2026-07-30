@@ -213,11 +213,17 @@ async function loadProduct() {
 
 renderGallery();
 
+saveRecentProduct();
+
+loadRecentProducts();
+
 await loadMerchant();
 
 await loadMerchantProducts();
 
 await loadSimilarProducts();
+
+await loadRecommendedProducts();
 alert("✅ Produit affiché");
 
     }
@@ -810,3 +816,262 @@ function createSimilarCard(productData){
 }
 
 alert("✅ Bloc 10 chargé");
+// ======================================================
+// BLOC 11
+// PRODUITS RECOMMANDÉS
+// ======================================================
+
+async function loadRecommendedProducts() {
+
+    recommendProductsGrid.innerHTML = "";
+
+    try {
+
+        const snapshot = await getDocs(collection(db, "products"));
+
+        const products = [];
+
+        snapshot.forEach((docSnap) => {
+
+            if (docSnap.id === product.id) return;
+
+            products.push({
+
+                id: docSnap.id,
+
+                ...docSnap.data()
+
+            });
+
+        });
+
+        // Tri intelligent
+
+        products.sort((a, b) => {
+
+            const scoreA =
+
+                Number(a.sales || 0) * 5 +
+
+                Number(a.views || 0) +
+
+                Number(a.rating || 5) * 20;
+
+            const scoreB =
+
+                Number(b.sales || 0) * 5 +
+
+                Number(b.views || 0) +
+
+                Number(b.rating || 5) * 20;
+
+            return scoreB - scoreA;
+
+        });
+
+        products.slice(0, 12).forEach((item) => {
+
+            recommendProductsGrid.appendChild(
+
+                createRecommendedCard(item)
+
+            );
+
+        });
+
+        alert("✅ Recommandations chargées.");
+
+    }
+
+    catch(error){
+
+        alert("❌ Erreur recommandations");
+
+        alert(error.message);
+
+    }
+
+}
+
+// ======================================================
+// CARTE RECOMMANDÉE
+// ======================================================
+
+function createRecommendedCard(productData){
+
+    const card = document.createElement("div");
+
+    card.className = "horizontalCard";
+
+    const image =
+
+        productData.images?.[0] ||
+
+        productData.image ||
+
+        "images/no-image.png";
+
+    card.innerHTML = `
+
+        <img
+            src="${image}"
+            class="horizontalImage"
+            loading="lazy">
+
+        <div class="horizontalBody">
+
+            <h3>${productData.name}</h3>
+
+            <div class="horizontalPrice">
+
+                ${Number(productData.price || 0).toLocaleString()} Kz
+
+            </div>
+
+        </div>
+
+    `;
+
+    card.onclick = () => {
+
+        location.href =
+            "product-detail.html?id=" + productData.id;
+
+    };
+
+    return card;
+
+}
+
+alert("✅ Bloc 11 chargé");
+// ======================================================
+// BLOC 12
+// CONSULTADOS RECENTEMENTE
+// ======================================================
+
+// Sauvegarder le produit consulté
+
+function saveRecentProduct(){
+
+    if(!product) return;
+
+    let recent =
+        JSON.parse(localStorage.getItem("recentProducts")) || [];
+
+    // supprimer si déjà présent
+
+    recent = recent.filter(item => item.id !== product.id);
+
+    // ajouter au début
+
+    recent.unshift({
+
+        id: product.id,
+
+        name: product.name,
+
+        price: product.price,
+
+        image:
+            product.images?.[0] ||
+            product.image ||
+            "images/no-image.png"
+
+    });
+
+    // garder seulement les 20 derniers
+
+    if(recent.length > 20){
+
+        recent = recent.slice(0,20);
+
+    }
+
+    localStorage.setItem(
+
+        "recentProducts",
+
+        JSON.stringify(recent)
+
+    );
+
+}
+
+// =====================================
+// Charger les produits récents
+// =====================================
+
+function loadRecentProducts(){
+
+    recentProductsGrid.innerHTML = "";
+
+    const recent =
+        JSON.parse(localStorage.getItem("recentProducts")) || [];
+
+    if(recent.length <= 1){
+
+        recentProductsGrid.innerHTML =
+
+        "<p>Nenhum produto recente.</p>";
+
+        return;
+
+    }
+
+    recent.forEach(item=>{
+
+        if(item.id === product.id) return;
+
+        recentProductsGrid.appendChild(
+
+            createRecentCard(item)
+
+        );
+
+    });
+
+}
+
+// =====================================
+// Carte produit récent
+// =====================================
+
+function createRecentCard(item){
+
+    const card = document.createElement("div");
+
+    card.className = "horizontalCard";
+
+    card.innerHTML = `
+
+        <img
+            src="${item.image}"
+            class="horizontalImage"
+            loading="lazy">
+
+        <div class="horizontalBody">
+
+            <h3>${item.name}</h3>
+
+            <div class="horizontalPrice">
+
+                ${Number(item.price||0).toLocaleString()} Kz
+
+            </div>
+
+        </div>
+
+    `;
+
+    card.onclick = ()=>{
+
+        location.href =
+        "product-detail.html?id="+item.id;
+
+    };
+
+    return card;
+
+}
+
+alert("✅ Bloc 12 chargé");
