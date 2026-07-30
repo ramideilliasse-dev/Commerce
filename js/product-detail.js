@@ -209,11 +209,15 @@ async function loadProduct() {
             : [product.image || "images/no-image.png"];
 
         // afficher
-        renderProduct();
+       renderProduct();
 
 renderGallery();
+
 await loadMerchant();
-     await loadMerchantProducts();
+
+await loadMerchantProducts();
+
+await loadSimilarProducts();
 alert("✅ Produit affiché");
 
     }
@@ -689,3 +693,120 @@ function createMerchantCard(productData) {
 }
 
 alert("✅ Bloc 9 chargé");
+// ======================================================
+// BLOC 10
+// PRODUITS SEMBLABLES
+// ======================================================
+
+async function loadSimilarProducts() {
+
+    if (!product || !product.category) {
+
+        alert("⚠️ Catégorie introuvable.");
+
+        return;
+
+    }
+
+    similarProductsGrid.innerHTML = "";
+
+    try {
+
+        const q = query(
+
+            collection(db, "products"),
+
+            where("category", "==", product.category)
+
+        );
+
+        const snapshot = await getDocs(q);
+
+        let total = 0;
+
+        snapshot.forEach((docSnap) => {
+
+            if (docSnap.id === product.id) return;
+
+            const p = {
+
+                id: docSnap.id,
+
+                ...docSnap.data()
+
+            };
+
+            similarProductsGrid.appendChild(
+
+                createSimilarCard(p)
+
+            );
+
+            total++;
+
+        });
+
+        alert("✅ " + total + " produits similaires chargés.");
+
+    }
+
+    catch(error){
+
+        alert("❌ Erreur produits similaires");
+
+        alert(error.message);
+
+    }
+
+}
+
+// ======================================================
+// CARTE PRODUIT SIMILAIRE
+// ======================================================
+
+function createSimilarCard(productData){
+
+    const card = document.createElement("div");
+
+    card.className = "horizontalCard";
+
+    const image =
+
+        productData.images?.[0] ||
+
+        productData.image ||
+
+        "images/no-image.png";
+
+    card.innerHTML = `
+
+        <img
+            src="${image}"
+            class="horizontalImage"
+            loading="lazy">
+
+        <div class="horizontalBody">
+
+            <h3>${productData.name}</h3>
+
+            <div class="horizontalPrice">
+
+                ${Number(productData.price||0).toLocaleString()} Kz
+
+            </div>
+
+        </div>
+
+    `;
+
+    card.onclick=()=>{
+
+        location.href="product-detail.html?id="+productData.id;
+
+    };
+
+    return card;
+
+}
+
+alert("✅ Bloc 10 chargé");
