@@ -442,3 +442,86 @@ function previousImage() {
 }
 
 alert("✅ Bloc 6 chargé");
+// ======================================================
+// BLOC 7
+// CHARGER LES INFORMATIONS DU MARCHAND
+// ======================================================
+
+async function loadMerchant() {
+
+    if (!product.merchantId) {
+
+        alert("⚠️ Aucun marchand associé.");
+
+        return;
+
+    }
+
+    alert("🏪 Chargement du marchand...");
+
+    try {
+
+        const merchantRef = doc(
+            db,
+            "merchants",
+            product.merchantId
+        );
+
+        const merchantSnap = await getDoc(merchantRef);
+
+        if (!merchantSnap.exists()) {
+
+            alert("❌ Marchand introuvable.");
+
+            return;
+
+        }
+
+        merchant = merchantSnap.data();
+
+        merchantLogo.src =
+            merchant.logo ||
+            "images/default-store.png";
+
+        merchantName.textContent =
+            merchant.shopName ||
+            "Loja Oficial";
+
+        merchantDescription.textContent =
+            merchant.description ||
+            "Loja verificada.";
+
+        merchantRating.textContent =
+            "⭐ " + (merchant.rating || "5.0");
+
+        merchantFollowers.textContent =
+            merchant.followers || 0;
+
+        merchantSince.textContent =
+            merchant.createdYear || "2026";
+
+        // Nombre de produits du marchand
+
+        const q = query(
+            collection(db, "products"),
+            where("merchantId", "==", product.merchantId)
+        );
+
+        const snapshot = await getDocs(q);
+
+        merchantProducts.textContent =
+            snapshot.size;
+
+        alert("✅ Marchand chargé.");
+
+    }
+
+    catch(error){
+
+        alert("❌ Erreur marchand");
+
+        alert(error.message);
+
+    }
+
+}
