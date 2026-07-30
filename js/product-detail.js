@@ -212,7 +212,7 @@ async function loadProduct() {
         renderProduct();
 
 renderGallery();
-
+await loadMerchant();
 alert("✅ Produit affiché");
 
     }
