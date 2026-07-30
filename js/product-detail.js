@@ -284,7 +284,7 @@ function renderProduct(){
 
 function renderGallery() {
 
-    alert("🖼 Construction de la galerie");
+    
 
     imageSlider.innerHTML = "";
     galleryThumbs.innerHTML = "";
