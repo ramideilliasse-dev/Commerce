@@ -1993,3 +1993,88 @@ outline:none;
 box-shadow:0 0 0 4px rgba(24,184,93,.20);
 
 }
+/* =======================================
+   QUANTIDADE PREMIUM
+======================================= */
+
+.quantitySection{
+
+margin:20px 0;
+
+padding:18px;
+
+background:#fff;
+
+border-radius:18px;
+
+box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+}
+
+.quantityTitle{
+
+font-size:18px;
+
+font-weight:700;
+
+margin-bottom:16px;
+
+}
+
+.quantitySelector{
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+gap:18px;
+
+}
+
+.quantityBtn{
+
+width:52px;
+
+height:52px;
+
+border:none;
+
+border-radius:50%;
+
+background:#22b455;
+
+color:#fff;
+
+font-size:32px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+transition:.25s;
+
+box-shadow:0 6px 15px rgba(34,180,85,.25);
+
+}
+
+.quantityBtn:active{
+
+transform:scale(.90);
+
+}
+
+.quantityNumber{
+
+min-width:70px;
+
+text-align:center;
+
+font-size:30px;
+
+font-weight:800;
+
+color:#222;
+
+}
