@@ -1215,3 +1215,57 @@ function renderReviews(reviews){
     }
 
 }
+// ======================================================
+// BLOC 14
+// GESTION DE LA QUANTITÉ
+// ======================================================
+
+updateQuantity();
+
+function updateQuantity(){
+
+    quantityValue.textContent = quantity;
+
+    if(quantity<=1){
+
+        minusQty.disabled = true;
+
+        minusQty.style.opacity = ".4";
+
+    }else{
+
+        minusQty.disabled = false;
+
+        minusQty.style.opacity = "1";
+
+    }
+
+}
+
+plusQty.onclick = ()=>{
+
+    const stock = Number(product?.stock || 999);
+
+    if(quantity < stock){
+
+        quantity++;
+
+        updateQuantity();
+
+    }
+
+};
+
+minusQty.onclick = ()=>{
+
+    if(quantity>1){
+
+        quantity--;
+
+        updateQuantity();
+
+    }
+
+};
+
+alert("✅ Bloc 14 chargé");
