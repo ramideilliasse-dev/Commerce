@@ -1444,3 +1444,162 @@ function showCartToast(){
 }
 
 alert("✅ Bloc 15 chargé");
+// ======================================================
+// BLOC 16
+// FAVORITOS • PARTILHAR • CHAT
+// ======================================================
+
+// =====================================
+// FAVORITOS
+// =====================================
+
+favoriteButton.onclick = toggleFavorite;
+
+checkFavorite();
+
+function toggleFavorite(){
+
+    if(!product) return;
+
+    let favorites =
+        JSON.parse(localStorage.getItem("favorites")) || [];
+
+    const index =
+        favorites.findIndex(item=>item.id===product.id);
+
+    if(index>=0){
+
+        favorites.splice(index,1);
+
+        favoriteButton.classList.remove("active");
+
+        favoriteButton.innerHTML="❤️<br>Favoritos";
+
+    }else{
+
+        favorites.unshift({
+
+            id:product.id,
+
+            name:product.name,
+
+            image:
+                product.images?.[0] ||
+                product.image,
+
+            price:product.price
+
+        });
+
+        favoriteButton.classList.add("active");
+
+        favoriteButton.innerHTML="❤️<br>Guardado";
+
+    }
+
+    localStorage.setItem(
+
+        "favorites",
+
+        JSON.stringify(favorites)
+
+    );
+
+}
+
+// =====================================
+
+function checkFavorite(){
+
+    if(!product) return;
+
+    const favorites =
+        JSON.parse(localStorage.getItem("favorites")) || [];
+
+    const exists =
+        favorites.some(item=>item.id===product.id);
+
+    if(exists){
+
+        favoriteButton.classList.add("active");
+
+        favoriteButton.innerHTML="❤️<br>Guardado";
+
+    }
+
+}
+
+// =====================================
+// PARTILHAR
+// =====================================
+
+shareButton.onclick = async ()=>{
+
+    const url =
+        window.location.href;
+
+    const text =
+
+`${product.name}
+
+${Number(product.price).toLocaleString()} Kz
+
+Veja este produto na Toma.
+
+${url}`;
+
+    if(navigator.share){
+
+        try{
+
+            await navigator.share({
+
+                title:product.name,
+
+                text:text,
+
+                url:url
+
+            });
+
+        }
+
+        catch(e){}
+
+    }else{
+
+        await navigator.clipboard.writeText(url);
+
+        alert("Link copiado.");
+
+    }
+
+};
+
+// =====================================
+// CHAT
+// =====================================
+
+chatButton.onclick=()=>{
+
+    if(!product){
+
+        alert("Produto indisponível.");
+
+        return;
+
+    }
+
+    location.href=
+
+"chat.html?merchant="+
+
+product.merchantId+
+
+"&product="+
+
+product.id;
+
+};
+
+alert("✅ Bloc 16 chargé");
