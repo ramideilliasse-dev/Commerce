@@ -49,15 +49,14 @@ const params = new URLSearchParams(window.location.search);
 
 const productId = params.get("id");
 
-alert("✅ Bloc 1 chargé");
+
 
 if (!productId) {
 
-    alert("❌ Aucun ID produit trouvé dans l'URL.");
-
+ 
 } else {
 
-    alert("✅ Produit demandé : " + productId);
+    
 
 }
 // ======================================================
@@ -151,11 +150,11 @@ elements.forEach(el => {
 
 if (missing === 0) {
 
-    alert("✅ Bloc 2 : Tous les éléments HTML sont trouvés.");
+    
 
 } else {
 
-    alert("❌ Bloc 2 : " + missing + " élément(s) HTML manquant(s).");
+    
 
 }
 
@@ -168,7 +167,7 @@ onAuthStateChanged(auth, async (user) => {
 
     currentUser = user || null;
 
-    alert("👤 Utilisateur vérifié");
+    
 
     await loadProduct();
 
@@ -176,7 +175,7 @@ onAuthStateChanged(auth, async (user) => {
 
 async function loadProduct() {
 
-    alert("🔍 Recherche du produit...");
+    
 
     try {
 
@@ -186,13 +185,13 @@ async function loadProduct() {
 
         if (!productSnap.exists()) {
 
-            alert("❌ Produit introuvable");
+  
 
             return;
 
         }
 
-        alert("✅ Produit trouvé");
+        
 
         product = {
 
@@ -201,7 +200,7 @@ async function loadProduct() {
 
         };
 
-        alert("📦 " + product.name);
+        
 
         // Images
         images = product.images?.length
@@ -226,13 +225,13 @@ await loadSimilarProducts();
 await loadRecommendedProducts();
 
 await loadReviews();
-alert("✅ Produit affiché");
+
 
     }
 
     catch(error){
 
-        alert("❌ Erreur Firebase");
+      
 
         alert(error.message);
 
@@ -246,7 +245,7 @@ alert("✅ Produit affiché");
 
 function renderProduct(){
 
-    alert("🎨 Affichage du produit");
+    
 
     productName.textContent =
         product.name || "Produit";
@@ -276,7 +275,6 @@ function renderProduct(){
 
     }
 
-    alert("✅ Texte affiché");
 
 }
 // ======================================================
@@ -347,7 +345,7 @@ function renderGallery() {
 
     updateGallery();
 
-    alert("✅ Galerie créée");
+    
 
 }
 
@@ -454,7 +452,7 @@ function previousImage() {
 
 }
 
-alert("✅ Bloc 6 chargé");
+
 // ======================================================
 // BLOC 7
 // CHARGER LES INFORMATIONS DU MARCHAND
@@ -464,13 +462,11 @@ async function loadMerchant() {
 
     if (!product.merchantId) {
 
-        alert("⚠️ Aucun marchand associé.");
 
         return;
 
     }
 
-    alert("🏪 Chargement du marchand...");
 
     try {
 
@@ -484,8 +480,7 @@ async function loadMerchant() {
 
         if (!merchantSnap.exists()) {
 
-            alert("❌ Marchand introuvable.");
-
+            
             return;
 
         }
@@ -525,7 +520,7 @@ async function loadMerchant() {
         merchantProducts.textContent =
             snapshot.size;
 
-        alert("✅ Marchand chargé.");
+     
 
     }
 
@@ -582,7 +577,7 @@ window.openMerchantChat = function () {
 
 };
 
-alert("✅ Bloc 8 chargé");
+
 // ======================================================
 // BLOC 9
 // AUTRES PRODUITS DE LA BOUTIQUE
@@ -592,7 +587,7 @@ async function loadMerchantProducts() {
 
     if (!product || !product.merchantId) {
 
-        alert("⚠️ Aucun marchand.");
+        
 
         return;
 
@@ -636,7 +631,6 @@ async function loadMerchantProducts() {
 
         });
 
-        alert("✅ " + total + " produits du marchand chargés.");
 
     }
 
@@ -700,7 +694,7 @@ function createMerchantCard(productData) {
 
 }
 
-alert("✅ Bloc 9 chargé");
+
 // ======================================================
 // BLOC 10
 // PRODUITS SEMBLABLES
@@ -710,7 +704,7 @@ async function loadSimilarProducts() {
 
     if (!product || !product.category) {
 
-        alert("⚠️ Catégorie introuvable.");
+        
 
         return;
 
@@ -754,7 +748,7 @@ async function loadSimilarProducts() {
 
         });
 
-        alert("✅ " + total + " produits similaires chargés.");
+        
 
     }
 
@@ -817,7 +811,7 @@ function createSimilarCard(productData){
 
 }
 
-alert("✅ Bloc 10 chargé");
+
 // ======================================================
 // BLOC 11
 // PRODUITS RECOMMANDÉS
@@ -881,7 +875,7 @@ async function loadRecommendedProducts() {
 
         });
 
-        alert("✅ Recommandations chargées.");
+        
 
     }
 
@@ -945,7 +939,7 @@ function createRecommendedCard(productData){
 
 }
 
-alert("✅ Bloc 11 chargé");
+
 // ======================================================
 // BLOC 12
 // CONSULTADOS RECENTEMENTE
@@ -1076,7 +1070,7 @@ function createRecentCard(item){
 
 }
 
-alert("✅ Bloc 12 chargé");
+
 // ======================================================
 // BLOC 13
 // REVIEWS (AVALIAÇÕES)
@@ -1114,7 +1108,7 @@ async function loadReviews() {
 
         renderReviews(reviews);
 
-        alert("✅ " + reviews.length + " avaliações carregadas.");
+        
 
     }
 
@@ -1268,7 +1262,7 @@ minusQty.onclick = ()=>{
 
 };
 
-alert("✅ Bloc 14 chargé");
+
 // ======================================================
 // BLOC 15
 // AJOUT AU PANIER
@@ -1443,7 +1437,7 @@ function showCartToast(){
 
 }
 
-alert("✅ Bloc 15 chargé");
+
 // ======================================================
 // BLOC 16
 // FAVORITOS • PARTILHAR • CHAT
@@ -1602,4 +1596,4 @@ product.id;
 
 };
 
-alert("✅ Bloc 16 chargé");
+
