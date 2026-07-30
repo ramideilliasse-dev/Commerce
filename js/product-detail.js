@@ -224,6 +224,8 @@ await loadMerchantProducts();
 await loadSimilarProducts();
 
 await loadRecommendedProducts();
+
+await loadReviews();
 alert("✅ Produit affiché");
 
     }
@@ -1075,3 +1077,141 @@ function createRecentCard(item){
 }
 
 alert("✅ Bloc 12 chargé");
+// ======================================================
+// BLOC 13
+// REVIEWS (AVALIAÇÕES)
+// ======================================================
+
+async function loadReviews() {
+
+    reviewsList.innerHTML = "";
+
+    try {
+
+        const q = query(
+
+            collection(db, "reviews"),
+
+            where("productId", "==", product.id)
+
+        );
+
+        const snapshot = await getDocs(q);
+
+        const reviews = [];
+
+        snapshot.forEach((docSnap) => {
+
+            reviews.push({
+
+                id: docSnap.id,
+
+                ...docSnap.data()
+
+            });
+
+        });
+
+        renderReviews(reviews);
+
+        alert("✅ " + reviews.length + " avaliações carregadas.");
+
+    }
+
+    catch(error){
+
+        alert("❌ Erro ao carregar avaliações");
+
+        alert(error.message);
+
+    }
+
+}
+
+// ======================================================
+// AFFICHER LES REVIEWS
+// ======================================================
+
+function renderReviews(reviews){
+
+    reviewsList.innerHTML = "";
+
+    if(reviews.length===0){
+
+        averageRating.textContent="0.0";
+
+        reviewsCount.textContent="0 avaliações";
+
+        return;
+
+    }
+
+    let totalStars=0;
+
+    const stars=[0,0,0,0,0];
+
+    reviews.forEach(review=>{
+
+        const rate=Number(review.rating||5);
+
+        totalStars+=rate;
+
+        stars[rate-1]++;
+
+        const card=document.createElement("div");
+
+        card.className="reviewCard";
+
+        card.innerHTML=`
+
+            <div class="reviewTop">
+
+                <strong>
+
+                    ${review.userName || "Cliente"}
+
+                </strong>
+
+                <span>
+
+                    ⭐ ${rate}
+
+                </span>
+
+            </div>
+
+            <div class="reviewComment">
+
+                ${review.comment || ""}
+
+            </div>
+
+        `;
+
+        reviewsList.appendChild(card);
+
+    });
+
+    const average=(totalStars/reviews.length).toFixed(1);
+
+    averageRating.textContent=average;
+
+    reviewsCount.textContent=
+
+        reviews.length+" avaliações";
+
+    const total=reviews.length;
+
+    for(let i=1;i<=5;i++){
+
+        const bar=document.getElementById("bar"+i);
+
+        if(!bar) continue;
+
+        bar.style.width=
+
+        ((stars[i-1]/total)*100)+"%";
+
+    }
+
+}
