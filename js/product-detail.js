@@ -525,3 +525,43 @@ async function loadMerchant() {
     }
 
 }
+// ======================================================
+// BLOC 8
+// ACTIONS DU MARCHAND
+// ======================================================
+
+window.openMerchantShop = function () {
+
+    if (!product) {
+
+        alert("Produit non chargé.");
+
+        return;
+
+    }
+
+    location.href =
+        "merchant-shop.html?id=" +
+        product.merchantId;
+
+};
+
+window.openMerchantChat = function () {
+
+    if (!product) {
+
+        alert("Produit non chargé.");
+
+        return;
+
+    }
+
+    location.href =
+        "chat.html?merchant=" +
+        product.merchantId +
+        "&product=" +
+        product.id;
+
+};
+
+alert("✅ Bloc 8 chargé");
