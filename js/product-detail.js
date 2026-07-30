@@ -529,23 +529,28 @@ async function loadMerchant() {
 // BLOC 8
 // ACTIONS DU MARCHAND
 // ======================================================
+// ======================================================
+// OUVRIR LA BOUTIQUE DU MARCHAND
+// ======================================================
 
 window.openMerchantShop = function () {
 
-    if (!product) {
+    if (!merchant || !product) {
 
-        alert("Produit non chargé.");
+        alert("Loja indisponível.");
 
         return;
 
     }
 
-    location.href =
-        "merchant-shop.html?id=" +
-        product.merchantId;
+    const merchantId = product.merchantId;
+
+    alert("Abrindo loja do vendedor:\n" + merchantId);
+
+    window.location.href =
+        "merchant-shop.html?merchantId=" + encodeURIComponent(merchantId);
 
 };
-
 window.openMerchantChat = function () {
 
     if (!product) {
