@@ -47,6 +47,14 @@ const shareShopBtn = document.getElementById("shareShopBtn");
 // AUTH
 // =====================================
 
+// =====================================
+// OUVRIR LA BONNE BOUTIQUE
+// =====================================
+
+const params = new URLSearchParams(window.location.search);
+
+const merchantId = params.get("merchantId");
+
 onAuthStateChanged(auth, async(user)=>{
 
     if(!user){
@@ -56,10 +64,21 @@ onAuthStateChanged(auth, async(user)=>{
 
     }
 
-    await loadShop(user.uid);
+    if(merchantId){
+
+        // Boutique du vendeur
+
+        await loadShop(merchantId);
+
+    }else{
+
+        // Ma boutique
+
+        await loadShop(user.uid);
+
+    }
 
 });
-
 // =====================================
 // LOAD SHOP
 // =====================================
