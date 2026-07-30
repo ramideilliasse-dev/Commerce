@@ -1269,3 +1269,178 @@ minusQty.onclick = ()=>{
 };
 
 alert("✅ Bloc 14 chargé");
+// ======================================================
+// BLOC 15
+// AJOUT AU PANIER
+// ======================================================
+
+buyButton.onclick = addCurrentProductToCart;
+stickyBuyButton.onclick = addCurrentProductToCart;
+
+async function addCurrentProductToCart(){
+
+    if(!product){
+
+        alert("Produto não carregado.");
+
+        return;
+
+    }
+
+    try{
+
+        await addToCart({
+
+            id: product.id,
+            merchantId: product.merchantId,
+
+            name: product.name,
+
+            price: Number(product.price||0),
+
+            image:
+                product.images?.[0] ||
+                product.image ||
+                "images/no-image.png",
+
+            quantity: quantity,
+
+            variant: selectedVariant,
+
+            variantData: selectedVariantData
+
+        });
+
+        animateBuyButtons();
+
+        updateCartBadge();
+
+        showCartToast();
+
+        if(navigator.vibrate){
+
+            navigator.vibrate(80);
+
+        }
+
+    }
+
+    catch(error){
+
+        alert(error.message);
+
+    }
+
+}
+
+// =====================================
+// Animation bouton
+// =====================================
+
+function animateBuyButtons(){
+
+    buyButton.classList.add("buttonSuccess");
+
+    stickyBuyButton.classList.add("buttonSuccess");
+
+    setTimeout(()=>{
+
+        buyButton.classList.remove("buttonSuccess");
+
+        stickyBuyButton.classList.remove("buttonSuccess");
+
+    },500);
+
+}
+// =====================================
+// Badge du panier
+// =====================================
+
+function updateCartBadge(){
+
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    let total = 0;
+
+    cart.forEach(item=>{
+
+        total += Number(item.quantity||1);
+
+    });
+
+    cartBadge.textContent = total;
+
+    cartBadge.style.display =
+
+        total>0 ? "flex" : "none";
+
+}
+
+updateCartBadge();
+// =====================================
+// Toast moderne
+// =====================================
+
+function showCartToast(){
+
+    const toast = document.createElement("div");
+
+    toast.className = "cartToast";
+
+    toast.innerHTML = `
+
+        <div class="toastIcon">
+
+            🛒
+
+        </div>
+
+        <div class="toastBody">
+
+            <strong>
+
+                Produto adicionado
+
+            </strong>
+
+            <small>
+
+                O produto foi adicionado ao carrinho.
+
+            </small>
+
+        </div>
+
+        <button class="toastButton">
+
+            Ver carrinho
+
+        </button>
+
+    `;
+
+    document.body.appendChild(toast);
+
+    toast.querySelector(".toastButton").onclick=()=>{
+
+        location.href="cart.html";
+
+    };
+
+    setTimeout(()=>{
+
+        toast.classList.add("show");
+
+    },20);
+
+    setTimeout(()=>{
+
+        toast.classList.remove("show");
+
+        setTimeout(()=>toast.remove(),300);
+
+    },3000);
+
+}
+
+alert("✅ Bloc 15 chargé");
