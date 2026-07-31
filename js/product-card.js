@@ -295,3 +295,91 @@ function showAddToCartToast(product){
     },3000);
 
 }
+// ======================================
+// ANIMATION IMAGE -> PANIER
+// ======================================
+
+function flyToCart(card){
+
+    const img = card.querySelector(".productImage");
+
+    const cart =
+        document.getElementById("bottomCartCount") ||
+        document.getElementById("cartButton");
+
+    if(!img || !cart) return;
+
+    const clone = img.cloneNode(true);
+
+    const imgRect = img.getBoundingClientRect();
+
+    const cartRect = cart.getBoundingClientRect();
+
+    clone.style.position = "fixed";
+
+    clone.style.left = imgRect.left + "px";
+
+    clone.style.top = imgRect.top + "px";
+
+    clone.style.width = imgRect.width + "px";
+
+    clone.style.height = imgRect.height + "px";
+
+    clone.style.borderRadius = "12px";
+
+    clone.style.transition =
+        "all .8s cubic-bezier(.2,.8,.2,1)";
+
+    clone.style.zIndex = "999999";
+
+    clone.style.pointerEvents = "none";
+
+    document.body.appendChild(clone);
+
+    requestAnimationFrame(()=>{
+
+        clone.style.left = cartRect.left + "px";
+
+        clone.style.top = cartRect.top + "px";
+
+        clone.style.width = "25px";
+
+        clone.style.height = "25px";
+
+        clone.style.opacity = ".2";
+
+    });
+
+    clone.addEventListener("transitionend",()=>{
+
+        clone.remove();
+
+        cart.animate([
+
+            {
+
+                transform:"scale(1)"
+
+            },
+
+            {
+
+                transform:"scale(1.35)"
+
+            },
+
+            {
+
+                transform:"scale(1)"
+
+            }
+
+        ],{
+
+            duration:250
+
+        });
+
+    });
+
+}
