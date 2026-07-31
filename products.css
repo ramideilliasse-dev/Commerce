@@ -808,3 +808,74 @@ opacity:1;
     opacity:1;
 
 }
+#cartToast{
+
+position:fixed;
+
+left:50%;
+
+bottom:25px;
+
+transform:translateX(-50%) translateY(120px);
+
+background:#ffffff;
+
+border-radius:18px;
+
+padding:14px 18px;
+
+display:flex;
+
+align-items:center;
+
+gap:14px;
+
+box-shadow:0 15px 40px rgba(0,0,0,.20);
+
+transition:.35s;
+
+z-index:99999;
+
+max-width:380px;
+
+width:90%;
+
+}
+
+#cartToast.show{
+
+transform:translateX(-50%) translateY(0);
+
+}
+
+.toastIcon{
+
+font-size:32px;
+
+}
+
+.toastContent{
+
+flex:1;
+
+font-size:14px;
+
+}
+
+.toastButton{
+
+background:#0B7A43;
+
+color:white;
+
+border:none;
+
+padding:10px 18px;
+
+border-radius:12px;
+
+font-weight:700;
+
+cursor:pointer;
+
+}
