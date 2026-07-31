@@ -175,11 +175,48 @@ cartButton.addEventListener("click",(e)=>{
 
 card.addEventListener("click", () => {
 
-    location.href =
-    `product-detail.html?id=${product.id}`;
+    document.body.style.opacity = ".85";
+
+    setTimeout(() => {
+
+        location.href =
+        `product-detail.html?id=${product.id}`;
+
+    },120);
+
+});
+// ======================================
+// ANIMATION DE LA CARTE
+// ======================================
+
+card.addEventListener("mouseenter", () => {
+
+    card.style.transform = "translateY(-6px)";
+
+    card.style.boxShadow =
+    "0 12px 30px rgba(0,0,0,.18)";
 
 });
 
+card.addEventListener("mouseleave", () => {
+
+    card.style.transform = "";
+
+    card.style.boxShadow = "";
+
+});
+
+card.addEventListener("mousedown", () => {
+
+    card.style.transform = "scale(.98)";
+
+});
+
+card.addEventListener("mouseup", () => {
+
+    card.style.transform = "";
+
+});
 return card;
 
 }
