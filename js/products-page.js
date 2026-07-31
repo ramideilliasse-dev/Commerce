@@ -158,21 +158,51 @@ return {
 };
 
 }
+
+
 // =====================================
-// Affichage des produits
+// AFFICHAGE PROGRESSIF
 // =====================================
 
 function renderProducts(products){
 
-    productsGrid.innerHTML = "";
+    productsGrid.innerHTML="";
 
-    products.forEach(product=>{
+    let index=0;
 
-        const card = createProductCard(product);
+    const batchSize=8;
 
-        productsGrid.appendChild(card);
+    function renderBatch(){
 
-    });
+        const fragment=document.createDocumentFragment();
+
+        for(
+
+            let i=0;
+
+            i<batchSize && index<products.length;
+
+            i++,index++
+
+        ){
+
+            const card=createProductCard(products[index]);
+
+            fragment.appendChild(card);
+
+        }
+
+        productsGrid.appendChild(fragment);
+
+        if(index<products.length){
+
+            requestAnimationFrame(renderBatch);
+
+        }
+
+    }
+
+    renderBatch();
 
 }
 // =====================================
@@ -381,3 +411,38 @@ location.href = "settings.html";
 });
 
 }
+// =====================================
+// BADGE PANIER
+// =====================================
+
+const cartButton=document.getElementById("cartButton");
+
+const cartCount=document.getElementById("cartCount");
+
+function updateCartBadge(){
+
+    const cart=getCart();
+
+    let total=0;
+
+    cart.forEach(item=>{
+
+        total+=Number(item.quantity||1);
+
+    });
+
+    cartCount.textContent=total;
+
+}
+
+updateCartBadge();
+
+cartButton.onclick=()=>{
+
+    location.href="cart.html";
+
+};
+
+window.addEventListener("storage",updateCartBadge);
+
+setInterval(updateCartBadge,1000);
