@@ -748,3 +748,41 @@ padding:2px;
 position:relative;
 
 }
+/* =======================================
+ANIMATION DES PRODUITS
+======================================= */
+
+.productCard{
+
+opacity:0;
+
+transform:translateY(25px);
+
+animation:fadeProduct .35s ease forwards;
+
+}
+
+@keyframes fadeProduct{
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+.productCard img{
+
+opacity:0;
+
+transition:.35s;
+
+}
+
+.productCard img.loaded{
+
+opacity:1;
+
+}
