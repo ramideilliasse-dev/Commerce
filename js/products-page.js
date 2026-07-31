@@ -33,7 +33,31 @@ const catalogInfo =
 document.getElementById("catalogInfo");
 
 let allProducts = [];
+// =====================================
+// LOADER
+// =====================================
 
+const loader = document.getElementById("loader");
+
+function showLoader(){
+
+    if(loader){
+
+        loader.classList.remove("hide");
+
+    }
+
+}
+
+function hideLoader(){
+
+    if(loader){
+
+        loader.classList.add("hide");
+
+    }
+
+}
 
 // =====================================
 // Charger tous les produits
@@ -41,41 +65,48 @@ let allProducts = [];
 
 async function loadProducts(){
 
-// Vérifie les promotions expirées
-await checkExpiredPromotions();
+    showLoader();
 
-try{
-const snapshot = await getDocs(
+    // Vérifie les promotions expirées
+    await checkExpiredPromotions();
 
-collection(db,"products")
+    try{
 
-);
+        const snapshot = await getDocs(
 
-allProducts = [];
+            collection(db,"products")
 
-snapshot.forEach(doc=>{
+        );
 
-allProducts.push({
+        allProducts = [];
 
-id:doc.id,
+        snapshot.forEach(doc=>{
 
-...doc.data()
+            allProducts.push({
 
-});
+                id:doc.id,
 
-});
+                ...doc.data()
 
+            });
 
-renderProducts(allProducts);
-}
+        });
 
-catch(err){
+        renderProducts(allProducts);
 
-alert(err.message);
+        hideLoader();
 
-console.error(err);
+    }
 
-}
+    catch(err){
+
+        hideLoader();
+
+        alert(err.message);
+
+        console.error(err);
+
+    }
 
 }
 
