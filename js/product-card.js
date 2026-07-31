@@ -153,29 +153,20 @@ cartButton.addEventListener("click",(e)=>{
 
     addToCart(product);
 
+    // Animation de l'image vers le panier
+    flyToCart(card);
+
+    // Mise à jour du compteur
+    updateCartCount();
+
     // Animation du bouton
-
     cartButton.animate([
-
-        {
-            transform:"scale(1)"
-        },
-
-        {
-            transform:"scale(1.35)"
-        },
-
-        {
-            transform:"scale(1)"
-        }
-
+        { transform:"scale(1)" },
+        { transform:"scale(1.35)" },
+        { transform:"scale(1)" }
     ],{
-
         duration:300
-
     });
-
-    // Message moderne
 
     showAddToCartToast(product);
 
@@ -303,9 +294,7 @@ function flyToCart(card){
 
     const img = card.querySelector(".productImage");
 
-    const cart =
-        document.getElementById("bottomCartCount") ||
-        document.getElementById("cartButton");
+  const cart = document.getElementById("cartButton");
 
     if(!img || !cart) return;
 
@@ -383,3 +372,29 @@ function flyToCart(card){
     });
 
 }
+// ======================================
+// COMPTEUR DU PANIER
+// ======================================
+
+function updateCartCount(){
+
+    const badge = document.getElementById("cartCount");
+
+    if(!badge) return;
+
+    let cart = [];
+
+    try{
+
+        cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    }catch(e){
+
+        cart = [];
+
+    }
+
+    badge.textContent = cart.length;
+
+}
+updateCartCount();
