@@ -1338,91 +1338,77 @@ background:#ff6a00;
 ========================== */
 
 .seeAllBtn{
+    display:flex;
+    align-items:center;
+    gap:10px;
 
-display:inline-flex;
-align-items:center;
-justify-content:center;
-gap:10px;
+    padding:12px 22px;
 
-padding:12px 20px;
+    background:linear-gradient(135deg,#16b84e,#0f9d3f);
 
-min-width:145px;
-height:46px;
+    color:#fff !important;
 
-border-radius:30px;
+    font-size:16px;
+    font-weight:700;
 
-background:linear-gradient(135deg,#16a34a,#22c55e);
+    border-radius:999px;
 
-color:#ffffff;
+    text-decoration:none;
 
-font-size:16px;
-font-weight:700;
+    transition:.25s;
 
-text-decoration:none;
+    box-shadow:
+        0 8px 20px rgba(22,184,78,.28);
 
-box-shadow:
-0 8px 20px rgba(34,197,94,.35);
-
-transition:all .25s ease;
-
-overflow:hidden;
-
-position:relative;
-
+    white-space:nowrap;
 }
 
 .seeAllBtn:hover{
 
-transform:translateY(-3px);
+    transform:translateY(-2px);
 
-box-shadow:
-0 12px 28px rgba(34,197,94,.45);
-
-}
-
-.seeAllBtn:active{
-
-transform:scale(.96);
-
-}
-
-.seeAllBtn .translate-text{
-
-letter-spacing:.3px;
+    box-shadow:
+        0 14px 28px rgba(22,184,78,.35);
 
 }
 
 .seeAllBtn .material-symbols-rounded{
 
-font-size:22px;
+    font-size:26px;
 
-transition:.25s;
+    transition:.25s;
 
 }
 
 .seeAllBtn:hover .material-symbols-rounded{
 
-transform:translateX(4px);
+    transform:translateX(5px);
+
+}
+
+.seeAllBtn .translate-text{
+
+    letter-spacing:.2px;
 
 }
 .sectionHeader{
 
-display:flex;
-justify-content:space-between;
-align-items:center;
+    display:flex;
 
-margin-bottom:18px;
+    align-items:center;
+
+    justify-content:space-between;
+
+    margin-bottom:20px;
 
 }
 
 .sectionHeader h2{
 
-font-size:34px;
+    font-size:42px;
 
-font-weight:800;
+    font-weight:800;
 
-color:#1f2937;
-
-letter-spacing:-.5px;
+    color:#222;
 
 }
