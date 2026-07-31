@@ -307,18 +307,24 @@ html.innerHTML = `
 
     <h2>${section.title}</h2>
 
-    <a href="products.html?cat=${encodeURIComponent(section.title)}">
+    <a
+        href="products.html?cat=${encodeURIComponent(section.title)}"
+        class="seeAllBtn">
 
-        Ver tudo
+        <span class="translate-text">
+            Ver tudo
+        </span>
+
+        <span class="material-symbols-rounded">
+            arrow_forward
+        </span>
 
     </a>
 
 </div>
 
 <div class="productsRow" id="${section.id}"></div>
-
 `;
-
         sectionsContainer.appendChild(html);
 
         const container = html.querySelector(".productsRow");
