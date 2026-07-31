@@ -161,7 +161,7 @@ return {
 
 
 // =====================================
-// AFFICHAGE PROGRESSIF
+// AFFICHAGE ULTRA FLUIDE
 // =====================================
 
 function renderProducts(products){
@@ -187,6 +187,8 @@ function renderProducts(products){
         ){
 
             const card=createProductCard(products[index]);
+
+            card.style.animationDelay=(index*0.03)+"s";
 
             fragment.appendChild(card);
 
@@ -446,3 +448,26 @@ cartButton.onclick=()=>{
 window.addEventListener("storage",updateCartBadge);
 
 setInterval(updateCartBadge,1000);
+// =====================================
+// INFINITE SCROLL
+// =====================================
+
+window.addEventListener("scroll",()=>{
+
+const scrollBottom=
+
+window.innerHeight+
+
+window.scrollY;
+
+const pageHeight=
+
+document.body.offsetHeight;
+
+if(scrollBottom>=pageHeight-500){
+
+renderMoreProducts();
+
+}
+
+});
