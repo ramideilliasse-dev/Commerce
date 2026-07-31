@@ -75,11 +75,19 @@ export function translatePage(){
     });
 
     // Placeholder
-    document.querySelectorAll("[data-i18n]").forEach(el=>{
+    document.querySelectorAll("[data-i18n]").forEach(el => {
 
     const key = el.dataset.i18n;
 
-    if(dict[key]){
+    if (!dict[key]) return;
+
+    const textSpan = el.querySelector(".translate-text");
+
+    if (textSpan) {
+
+        textSpan.textContent = dict[key];
+
+    } else {
 
         el.textContent = dict[key];
 
