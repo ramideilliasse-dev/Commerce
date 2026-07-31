@@ -1338,49 +1338,38 @@ background:#ff6a00;
 ========================== */
 
 .seeAllBtn{
-
-    display:inline-flex;
-
+    display:flex;
     align-items:center;
-
+    justify-content:center;
     gap:8px;
 
-    padding:10px 18px;
+    min-width:130px;
+    height:42px;
 
-    background:#0B8F2D;
+    padding:0 18px;
+
+    background:#16a34a;
 
     color:#fff;
 
-    border-radius:999px;
-
     text-decoration:none;
+
+    border-radius:999px;
 
     font-weight:700;
 
     font-size:15px;
 
-    box-shadow:0 6px 16px rgba(11,143,45,.25);
+    box-shadow:0 8px 18px rgba(22,163,74,.25);
 
     transition:.25s;
-
 }
 
 .seeAllBtn:hover{
-
-    background:#087625;
-
+    background:#15803d;
+    transform:translateY(-2px);
 }
 
 .seeAllBtn .material-symbols-rounded{
-
     font-size:20px;
-
-    transition:.25s;
-
-}
-
-.seeAllBtn:hover .material-symbols-rounded{
-
-    transform:translateX(4px);
-
 }
