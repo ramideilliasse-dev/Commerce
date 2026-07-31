@@ -112,6 +112,17 @@ ${product.storeName || "Loja"}
 </div>
 
 `;
+ // ======================================
+// ANIMATION DE CHARGEMENT DE L'IMAGE
+// ======================================
+
+const productImage = card.querySelector(".productImage");
+
+productImage.onload = () => {
+
+    productImage.classList.add("loaded");
+
+};
 // ======================================
 // BOUTON FAVORIS
 // ======================================
