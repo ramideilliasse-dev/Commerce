@@ -153,19 +153,31 @@ cartButton.addEventListener("click",(e)=>{
 
     addToCart(product);
 
+    // Animation du bouton
+
     cartButton.animate([
+
         {
             transform:"scale(1)"
         },
+
         {
-            transform:"scale(1.25)"
+            transform:"scale(1.35)"
         },
+
         {
             transform:"scale(1)"
         }
+
     ],{
-        duration:250
+
+        duration:300
+
     });
+
+    // Message moderne
+
+    showAddToCartToast(product);
 
 });
 
@@ -218,5 +230,68 @@ card.addEventListener("mouseup", () => {
 
 });
 return card;
+
+}
+// ======================================
+// TOAST AJOUT AU PANIER
+// ======================================
+
+function showAddToCartToast(product){
+
+    let toast = document.getElementById("cartToast");
+
+    if(!toast){
+
+        toast = document.createElement("div");
+
+        toast.id = "cartToast";
+
+        document.body.appendChild(toast);
+
+    }
+
+    toast.innerHTML = `
+
+        <div class="toastIcon">
+
+            🛒
+
+        </div>
+
+        <div class="toastContent">
+
+            <strong>
+
+                Produto adicionado
+
+            </strong>
+
+            <br>
+
+            ${product.name}
+
+        </div>
+
+        <button class="toastButton">
+
+            Ver carrinho
+
+        </button>
+
+    `;
+
+    toast.classList.add("show");
+
+    toast.querySelector(".toastButton").onclick = ()=>{
+
+        location.href="cart.html";
+
+    };
+
+    setTimeout(()=>{
+
+        toast.classList.remove("show");
+
+    },3000);
 
 }
