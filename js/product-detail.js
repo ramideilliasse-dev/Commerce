@@ -387,32 +387,80 @@ function updateGallery(){
 // SWIPE DE LA GALERIE
 // ======================================================
 
-let touchStartX = 0;
-let touchEndX = 0;
+// ======================================================
+// BLOC 19
+// SWIPE PREMIUM GALERIE
+// ======================================================
 
-imageSlider.addEventListener("touchstart", (e) => {
+let startX = 0;
+let currentTranslate = 0;
+let dragging = false;
 
-    touchStartX = e.touches[0].clientX;
+imageSlider.addEventListener("touchstart",(e)=>{
+
+    startX = e.touches[0].clientX;
+
+    dragging = true;
+
+    imageSlider.style.transition = "none";
 
 });
 
-imageSlider.addEventListener("touchend", (e) => {
+imageSlider.addEventListener("touchmove",(e)=>{
 
-    touchEndX = e.changedTouches[0].clientX;
+    if(!dragging) return;
 
-    const distance = touchEndX - touchStartX;
+    const moveX = e.touches[0].clientX;
 
-    if (Math.abs(distance) < 50) return;
+    const distance = moveX - startX;
 
-    if (distance < 0) {
+    currentTranslate =
 
-        nextImage();
+        (-currentImage * window.innerWidth) + distance;
 
-    } else {
+    imageSlider.style.transform =
 
-        previousImage();
+        `translateX(${currentTranslate}px)`;
+
+});
+
+imageSlider.addEventListener("touchend",(e)=>{
+
+    dragging = false;
+
+    imageSlider.style.transition = ".35s ease";
+
+    const endX = e.changedTouches[0].clientX;
+
+    const distance = endX - startX;
+
+    if(Math.abs(distance) > 60){
+
+        if(distance < 0){
+
+            currentImage++;
+
+            if(currentImage >= images.length){
+
+                currentImage = 0;
+
+            }
+
+        }else{
+
+            currentImage--;
+
+            if(currentImage < 0){
+
+                currentImage = images.length-1;
+
+            }
+
+        }
 
     }
+
+    updateGallery();
 
 });
 
@@ -1650,3 +1698,270 @@ if (cartButton) {
 
 // Mise à jour du badge au chargement
 updateCartBadge();
+// ======================================================
+// BLOC 17
+// FULLSCREEN VIEWER
+// ======================================================
+
+const fullscreenViewer =
+document.getElementById("fullscreenViewer");
+
+const fullscreenSlider =
+document.getElementById("fullscreenSlider");
+
+const fullscreenCounter =
+document.getElementById("fullscreenCounter");
+
+const closeViewer =
+document.getElementById("closeViewer");
+
+// ouvrir le visualiseur
+
+function openFullscreenViewer(index = 0){
+
+    currentImage = index;
+
+    fullscreenSlider.innerHTML = "";
+
+    images.forEach(img=>{
+
+        fullscreenSlider.innerHTML += `
+
+        <div class="fullscreenSlide">
+
+            <img
+                src="${img}"
+                class="fullscreenImage">
+
+        </div>
+
+        `;
+
+    });
+
+    fullscreenViewer.classList.add("show");
+
+    updateFullscreen();
+
+}
+
+// fermer
+
+closeViewer.onclick = ()=>{
+
+    fullscreenViewer.classList.remove("show");
+
+};
+
+// cliquer sur le fond
+
+fullscreenViewer.addEventListener("click",(e)=>{
+
+    if(e.target===fullscreenViewer){
+
+        fullscreenViewer.classList.remove("show");
+
+    }
+
+});
+
+// mettre à jour
+
+function updateFullscreen(){
+
+    fullscreenSlider.style.transform =
+
+    `translateX(-${currentImage*100}%)`;
+
+    fullscreenCounter.textContent =
+
+    `${currentImage+1} / ${images.length}`;
+
+}
+
+// =====================================
+// DOUBLE CLIC SUR IMAGE
+// =====================================
+
+imageSlider.addEventListener("dblclick",()=>{
+
+    openFullscreenViewer(currentImage);
+
+});
+// ======================================================
+// BLOC 18
+// SWIPE FULLSCREEN
+// ======================================================
+
+let fullscreenTouchStart = 0;
+let fullscreenTouchEnd = 0;
+
+fullscreenViewer.addEventListener("touchstart",(e)=>{
+
+    fullscreenTouchStart = e.touches[0].clientX;
+
+});
+
+fullscreenViewer.addEventListener("touchend",(e)=>{
+
+    fullscreenTouchEnd = e.changedTouches[0].clientX;
+
+    const distance = fullscreenTouchEnd - fullscreenTouchStart;
+
+    if(Math.abs(distance) < 50) return;
+
+    if(distance < 0){
+
+        fullscreenNextImage();
+
+    }else{
+
+        fullscreenPreviousImage();
+
+    }
+
+});
+
+// =====================================
+// IMAGE SUIVANTE
+// =====================================
+
+function fullscreenNextImage(){
+
+    currentImage++;
+
+    if(currentImage >= images.length){
+
+        currentImage = 0;
+
+    }
+
+    updateFullscreen();
+
+}
+
+// =====================================
+// IMAGE PRÉCÉDENTE
+// =====================================
+
+function fullscreenPreviousImage(){
+
+    currentImage--;
+
+    if(currentImage < 0){
+
+        currentImage = images.length - 1;
+
+    }
+
+    updateFullscreen();
+
+}
+// ======================================================
+// BLOC 20
+// PINCH ZOOM PREMIUM
+// ======================================================
+
+let scale = 1;
+let lastScale = 1;
+
+let startDistance = 0;
+
+function getDistance(touches){
+
+    const dx =
+
+        touches[0].clientX -
+
+        touches[1].clientX;
+
+    const dy =
+
+        touches[0].clientY -
+
+        touches[1].clientY;
+
+    return Math.sqrt(dx*dx + dy*dy);
+
+}
+
+fullscreenViewer.addEventListener("touchstart",(e)=>{
+
+    if(e.touches.length===2){
+
+        startDistance = getDistance(e.touches);
+
+    }
+
+});
+
+fullscreenViewer.addEventListener("touchmove",(e)=>{
+
+    if(e.touches.length!==2) return;
+
+    e.preventDefault();
+
+    const distance = getDistance(e.touches);
+
+    scale = lastScale * (distance/startDistance);
+
+    if(scale<1) scale=1;
+
+    if(scale>4) scale=4;
+
+    const img =
+
+    fullscreenSlider.children[currentImage]
+
+    ?.querySelector("img");
+
+    if(img){
+
+        img.style.transform =
+
+        `scale(${scale})`;
+
+    }
+
+},{passive:false});
+
+fullscreenViewer.addEventListener("touchend",()=>{
+
+    lastScale = scale;
+
+});
+// =====================================
+// DOUBLE CLIC = ZOOM X2
+// =====================================
+
+fullscreenViewer.addEventListener("dblclick",()=>{
+
+    const img =
+
+    fullscreenSlider.children[currentImage]
+
+    ?.querySelector("img");
+
+    if(!img) return;
+
+    if(scale===1){
+
+        scale=2;
+
+        lastScale=2;
+
+    }else{
+
+        scale=1;
+
+        lastScale=1;
+
+    }
+
+    img.style.transition=".25s";
+
+    img.style.transform=
+
+    `scale(${scale})`;
+
+});
