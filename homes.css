@@ -361,18 +361,17 @@ LISTES HORIZONTALES
 
 .storesRow{
 
-display:flex;
+display:grid;
 
-gap:12px;
+grid-template-columns:repeat(3,1fr);
 
-overflow-x:auto;
+gap:10px;
 
-padding:0 15px 15px;
+padding:0 12px 15px;
 
-scrollbar-width:none;
+overflow:hidden;
 
 }
-
 .productsRow::-webkit-scrollbar,
 
 .storesRow::-webkit-scrollbar{
@@ -386,25 +385,17 @@ PRODUCT CARD PREMIUM
 
 .productCard{
 
-min-width:185px;
+width:100%;
 
-max-width:185px;
+border-radius:22px;
 
-background:white;
-
-border-radius:20px;
+background:#fff;
 
 overflow:hidden;
 
-position:relative;
-
-box-shadow:0 6px 18px rgba(0,0,0,.08);
-
-cursor:pointer;
+box-shadow:0 8px 24px rgba(0,0,0,.08);
 
 transition:.25s;
-
-flex-shrink:0;
 
 }
 
@@ -418,12 +409,11 @@ box-shadow:0 12px 28px rgba(0,0,0,.12);
 
 .productImage{
 
-width:100%;
-
-height:165px;
+height:145px;
 
 object-fit:cover;
 
+width:100%;
 display:block;
 
 background:#f5f5f5;
@@ -444,12 +434,11 @@ gap:6px;
 
 .productName{
 
-font-size:14px;
+font-size:18px;
 
 font-weight:700;
 
-line-height:18px;
-
+line-height:1.2;
 display:-webkit-box;
 
 -webkit-line-clamp:2;
@@ -464,12 +453,11 @@ min-height:36px;
 
 .productPrice{
 
-font-size:18px;
+font-size:16px;
 
 font-weight:800;
 
 color:#16a34a;
-
 }
 
 .productOldPrice{
