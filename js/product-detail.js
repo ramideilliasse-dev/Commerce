@@ -1372,19 +1372,23 @@ function updateCartBadge(){
 
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-    let total = 0;
+    const total = cart.reduce((sum,item)=>{
 
-    cart.forEach(item=>{
+        return sum + Number(item.quantity || 1);
 
-        total += Number(item.quantity||1);
+    },0);
 
-    });
+    if(total>0){
 
-    cartBadge.textContent = total;
+        cartBadge.style.display="flex";
 
-    cartBadge.style.display =
+        cartBadge.textContent=total;
 
-        total>0 ? "flex" : "none";
+    }else{
+
+        cartBadge.style.display="none";
+
+    }
 
 }
 
