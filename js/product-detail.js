@@ -1268,9 +1268,15 @@ minusQty.onclick = ()=>{
 // AJOUT AU PANIER
 // ======================================================
 
+// Grand bouton
 buyButton.onclick = addCurrentProductToCart;
-stickyBuyButton.onclick = addCurrentProductToCart;
 
+// Bouton sticky
+stickyBuyButton.onclick = () => {
+
+    location.href = "cart.html";
+
+};
 async function addCurrentProductToCart(){
 
     if(!product){
@@ -1310,7 +1316,19 @@ async function addCurrentProductToCart(){
         updateCartBadge();
 
         showCartToast();
-
+// Met à jour immédiatement le nombre
+updateCartBadge();
+     // Animation du panier du header
+cartButton.animate(
+[
+    { transform:"scale(1)" },
+    { transform:"scale(1.25)" },
+    { transform:"scale(1)" }
+],
+{
+    duration:300
+}
+);
         if(navigator.vibrate){
 
             navigator.vibrate(80);
@@ -1596,4 +1614,40 @@ product.id;
 
 };
 
+// ======================================================
+// BLOC 17
+// HEADER (RETOUR + PANIER)
+// ======================================================
 
+// Bouton retour
+if (backButton) {
+
+    backButton.onclick = () => {
+
+        if (history.length > 1) {
+
+            history.back();
+
+        } else {
+
+            location.href = "homes.html";
+
+        }
+
+    };
+
+}
+
+// Bouton panier
+if (cartButton) {
+
+    cartButton.onclick = () => {
+
+        location.href = "cart.html";
+
+    };
+
+}
+
+// Mise à jour du badge au chargement
+updateCartBadge();
