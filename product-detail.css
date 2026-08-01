@@ -2123,3 +2123,14 @@ box-shadow:0 2px 8px rgba(0,0,0,.2);
 display:none;
 
 }
+.cartIcon{
+
+font-size:26px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+}
