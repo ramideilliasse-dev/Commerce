@@ -1319,6 +1319,7 @@ async function addCurrentProductToCart(){
 // Met à jour immédiatement le nombre
 updateCartBadge();
      // Animation du panier du header
+     setTimeout(updateCartBadge,150);
 cartButton.animate(
 [
     { transform:"scale(1)" },
@@ -1372,23 +1373,17 @@ function updateCartBadge(){
 
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-    const total = cart.reduce((sum,item)=>{
+    let total = 0;
 
-        return sum + Number(item.quantity || 1);
+    cart.forEach(item=>{
 
-    },0);
+        total += Number(item.quantity || 1);
 
-    if(total>0){
+    });
 
-        cartBadge.style.display="flex";
+    cartBadge.textContent = total;
 
-        cartBadge.textContent=total;
-
-    }else{
-
-        cartBadge.style.display="none";
-
-    }
+    cartBadge.style.display = total ? "flex" : "none";
 
 }
 
