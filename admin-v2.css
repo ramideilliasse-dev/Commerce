@@ -626,3 +626,173 @@ font-weight:700;
 color:#fff;
 
 }
+/* =======================================================
+SIDEBAR V2
+======================================================= */
+
+.sidebar{
+    width:260px;
+    background:#111111;
+    color:#fff;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding:25px 18px;
+    border-right:1px solid rgba(255,255,255,.05);
+}
+
+.sidebar-logo{
+    margin-bottom:35px;
+}
+
+.logo-title{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:28px;
+    font-weight:800;
+    letter-spacing:.5px;
+}
+
+.logo-main{
+    color:#ffffff;
+}
+
+.logo-crown{
+    font-size:22px;
+}
+
+.logo-subtitle{
+    margin-top:3px;
+    color:#888;
+    font-size:12px;
+    letter-spacing:2px;
+}
+
+.sidebar-menu{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.menu-item{
+
+    display:flex;
+    align-items:center;
+    gap:14px;
+
+    padding:14px 16px;
+
+    border-radius:14px;
+
+    text-decoration:none;
+
+    color:#d7d7d7;
+
+    transition:.25s;
+
+    font-weight:600;
+
+}
+
+.menu-item:hover{
+
+    background:#1b1b1b;
+
+    color:#fff;
+
+    transform:translateX(5px);
+
+}
+
+.menu-item.active{
+
+    background:#18b74b;
+
+    color:#fff;
+
+    box-shadow:0 8px 18px rgba(24,183,75,.35);
+
+}
+
+.sidebar-profile{
+
+    margin-top:30px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:14px;
+
+    border-radius:16px;
+
+    background:#1a1a1a;
+
+}
+
+.profile-avatar{
+
+    width:48px;
+
+    height:48px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+}
+
+.profile-info{
+
+    flex:1;
+
+}
+
+.profile-info div{
+
+    font-weight:700;
+
+    font-size:15px;
+
+}
+
+.profile-info small{
+
+    color:#999;
+
+}
+
+.logoutButton{
+
+    margin-top:18px;
+
+    width:100%;
+
+    padding:14px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:#202020;
+
+    color:#fff;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    font-weight:700;
+
+    transition:.25s;
+
+}
+
+.logoutButton:hover{
+
+    background:#e53935;
+
+}
