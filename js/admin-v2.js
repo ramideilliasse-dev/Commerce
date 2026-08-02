@@ -1,4 +1,12 @@
- const salesCtx =
+import { db } from "../firebase.js";
+
+import {
+
+collection,
+getDocs
+
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const salesCtx =
 document.getElementById("salesChart");
 
 if(salesCtx){
@@ -195,3 +203,64 @@ Cancelado
 `;
 
 }
+//====================================
+// FIREBASE STATS
+//====================================
+
+async function loadDashboardStats(){
+
+try{
+
+// Produits
+
+const productsSnap =
+await getDocs(collection(db,"products"));
+
+document.getElementById("productsCount").textContent =
+productsSnap.size;
+
+// Commerçants
+
+const merchantsSnap =
+await getDocs(collection(db,"merchants"));
+
+document.getElementById("merchantsCount").textContent =
+merchantsSnap.size;
+
+// Utilisateurs
+
+const usersSnap =
+await getDocs(collection(db,"users"));
+
+document.getElementById("usersCount").textContent =
+usersSnap.size;
+
+// Commandes
+
+const ordersSnap =
+await getDocs(collection(db,"orders"));
+
+let totalSales = 0;
+
+ordersSnap.forEach(doc=>{
+
+const order = doc.data();
+
+totalSales += Number(order.total || 0);
+
+});
+
+document.getElementById("salesCount").textContent =
+totalSales.toLocaleString()+" Kz";
+
+}
+
+catch(error){
+
+console.error(error);
+
+}
+
+}
+
+loadDashboardStats();
