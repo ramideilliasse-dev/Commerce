@@ -80,57 +80,106 @@ Cancelado
 `;
 
 }
-//==================================
+//====================================================
 // DASHBOARD TEMPS RÉEL
-//==================================
+//====================================================
 
 function startRealtimeDashboard(){
 
-// Produits
+    // PRODUITS
+    onSnapshot(collection(db,"products"),snapshot=>{
 
-onSnapshot(collection(db,"products"),snapshot=>{
+        document.getElementById("productsCount").textContent =
+        snapshot.size;
 
-document.getElementById("productsCount").textContent =
-snapshot.size;
+    });
 
-});
+    // COMMERÇANTS
+    onSnapshot(collection(db,"merchants"),snapshot=>{
 
-// Commerçants
+        document.getElementById("merchantsCount").textContent =
+        snapshot.size;
 
-onSnapshot(collection(db,"merchants"),snapshot=>{
+    });
 
-document.getElementById("merchantsCount").textContent =
-snapshot.size;
+    // UTILISATEURS
+    onSnapshot(collection(db,"users"),snapshot=>{
 
-});
+        document.getElementById("usersCount").textContent =
+        snapshot.size;
 
-// Utilisateurs
+    });
 
-onSnapshot(collection(db,"users"),snapshot=>{
+    // COMMANDES
+    onSnapshot(collection(db,"orders"),snapshot=>{
 
-document.getElementById("usersCount").textContent =
-snapshot.size;
+        let totalSales = 0;
 
-});
+        let delivered = 0;
+        let pending = 0;
+        let preparing = 0;
+        let shipping = 0;
 
-// Commandes
+        // ventes des 7 derniers jours
+        const salesDays = [0,0,0,0,0,0,0];
 
-onSnapshot(collection(db,"orders"),snapshot=>{
+        snapshot.forEach(doc=>{
 
-let totalSales = 0;
+            const order = doc.data();
 
-snapshot.forEach(doc=>{
+            totalSales += Number(order.total || 0);
 
-const order = doc.data();
+            switch(order.status){
 
-totalSales += Number(order.total || 0);
+                case "pending":
+                    pending++;
+                    break;
 
-});
+                case "preparing":
+                    preparing++;
+                    break;
 
-document.getElementById("salesCount").textContent =
-totalSales.toLocaleString()+" Kz";
+                case "shipping":
+                    shipping++;
+                    break;
 
-});
+                case "delivered":
+                    delivered++;
+                    break;
+
+            }
+
+            if(order.createdAt){
+
+                const date =
+                order.createdAt.toDate();
+
+                const day =
+                date.getDay();
+
+                salesDays[day] +=
+                Number(order.total || 0);
+
+            }
+
+        });
+
+        document.getElementById("salesCount").textContent =
+        totalSales.toLocaleString()+" Kz";
+
+        updateCharts(
+            salesDays,
+            [
+                pending,
+                preparing,
+                shipping,
+                delivered
+            ]
+        );
+
+        loadLastOrders(snapshot);
+
+    });
 
 }
 
@@ -151,7 +200,31 @@ const ordersCanvas =
 document.getElementById("ordersChart");
 
 if(!salesCanvas || !ordersCanvas) return;
+//====================================================
+// METTRE À JOUR LES GRAPHIQUES
+//====================================================
 
+function updateCharts(salesData,ordersData){
+
+    if(salesChart){
+
+        salesChart.data.datasets[0].data =
+        salesData;
+
+        salesChart.update();
+
+    }
+
+    if(ordersChart){
+
+        ordersChart.data.datasets[0].data =
+        ordersData;
+
+        ordersChart.update();
+
+    }
+
+}
 //====================
 // COURBE DES VENTES
 //====================
