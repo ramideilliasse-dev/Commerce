@@ -477,3 +477,134 @@ ${item.message}
 });
 
 }
+//====================================================
+// PEDIDOS DE COMERCIANTES
+//====================================================
+
+const merchantRequestsList =
+document.getElementById("merchantRequestsList");
+
+const merchantRequestsBadge =
+document.getElementById("merchantRequestsBadge");
+
+function startMerchantRequests(){
+
+onSnapshot(
+
+collection(db,"merchantRequests"),
+
+snapshot=>{
+
+merchantRequestsList.innerHTML="";
+
+merchantRequestsBadge.textContent =
+snapshot.size;
+
+if(snapshot.empty){
+
+merchantRequestsList.innerHTML=`
+
+<div class="emptyState">
+
+Nenhum pedido pendente.
+
+</div>
+
+`;
+
+return;
+
+}
+
+snapshot.forEach(doc=>{
+
+const request = doc.data();
+
+merchantRequestsList.innerHTML += `
+
+<div class="merchantRequest">
+
+<div class="merchantRequestInfo">
+
+<strong>
+
+${request.shopName || "Loja"}
+
+</strong>
+
+<span>
+
+👤 ${request.ownerName || "-"}
+
+</span>
+
+<span>
+
+📞 ${request.phone || "-"}
+
+</span>
+
+<span>
+
+📍 ${request.city || "-"}
+
+</span>
+
+</div>
+
+<div class="requestButtons">
+
+<button
+
+class="approveButton"
+
+onclick="approveMerchant('${doc.id}')">
+
+Aprovar
+
+</button>
+
+<button
+
+class="rejectButton"
+
+onclick="rejectMerchant('${doc.id}')">
+
+Recusar
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+);
+
+}
+
+startMerchantRequests();
+//====================================================
+// APROVAR
+//====================================================
+
+window.approveMerchant = async(id)=>{
+
+alert("Em seguida vamos criar a aprovação completa.");
+
+};
+
+//====================================================
+// RECUSAR
+//====================================================
+
+window.rejectMerchant = async(id)=>{
+
+alert("Em seguida vamos criar a rejeição completa.");
+
+};
