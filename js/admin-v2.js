@@ -121,3 +121,77 @@ position:"bottom"
 });
 
 }
+//==================================
+// TABLE DES COMMANDES
+//==================================
+
+const ordersBody =
+document.getElementById("ordersTableBody");
+
+if(ordersBody){
+
+ordersBody.innerHTML=`
+
+<tr>
+
+<td>João Pedro</td>
+
+<td>iPhone 14 Pro</td>
+
+<td>850 000 Kz</td>
+
+<td>
+
+<span class="statusDone">
+
+Entregue
+
+</span>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Maria</td>
+
+<td>Smartwatch</td>
+
+<td>120 000 Kz</td>
+
+<td>
+
+<span class="statusPending">
+
+Pendente
+
+</span>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Carlos</td>
+
+<td>AirPods</td>
+
+<td>65 000 Kz</td>
+
+<td>
+
+<span class="statusCancel">
+
+Cancelado
+
+</span>
+
+</td>
+
+</tr>
+
+`;
+
+}
