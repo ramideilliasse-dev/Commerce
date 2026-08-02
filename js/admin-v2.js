@@ -10,66 +10,94 @@ onSnapshot
 // TABLE DES COMMANDES
 //==================================
 
+//====================================================
+// DERNIÈRES COMMANDES FIREBASE
+//====================================================
+
 const ordersBody =
 document.getElementById("ordersTableBody");
 
-if(ordersBody){
+function loadLastOrders(snapshot){
 
-ordersBody.innerHTML=`
+    if(!ordersBody) return;
+
+    ordersBody.innerHTML = "";
+
+    let orders = [];
+
+    snapshot.forEach(doc=>{
+
+        orders.push(doc.data());
+
+    });
+
+    orders.sort((a,b)=>{
+
+        if(!a.createdAt || !b.createdAt)
+            return 0;
+
+        return b.createdAt.seconds -
+               a.createdAt.seconds;
+
+    });
+
+    orders.slice(0,10).forEach(order=>{
+
+        let statusClass = "statusPending";
+
+        let statusText = "Pendente";
+
+        switch(order.status){
+
+            case "delivered":
+
+                statusClass = "statusDone";
+
+                statusText = "Entregue";
+
+            break;
+
+            case "shipping":
+
+                statusClass = "statusShipping";
+
+                statusText = "Enviado";
+
+            break;
+
+            case "preparing":
+
+                statusClass = "statusPreparing";
+
+                statusText = "Preparação";
+
+            break;
+
+            case "cancelled":
+
+                statusClass = "statusCancel";
+
+                statusText = "Cancelado";
+
+            break;
+
+        }
+
+        ordersBody.innerHTML += `
 
 <tr>
 
-<td>João Pedro</td>
+<td>${order.customerName || "-"}</td>
 
-<td>iPhone 14 Pro</td>
+<td>${order.productName || "-"}</td>
 
-<td>850 000 Kz</td>
-
-<td>
-
-<span class="statusDone">
-
-Entregue
-
-</span>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td>Maria</td>
-
-<td>Smartwatch</td>
-
-<td>120 000 Kz</td>
+<td>${Number(order.total || 0).toLocaleString()} Kz</td>
 
 <td>
 
-<span class="statusPending">
+<span class="${statusClass}">
 
-Pendente
-
-</span>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td>Carlos</td>
-
-<td>AirPods</td>
-
-<td>65 000 Kz</td>
-
-<td>
-
-<span class="statusCancel">
-
-Cancelado
+${statusText}
 
 </span>
 
@@ -78,6 +106,8 @@ Cancelado
 </tr>
 
 `;
+
+    });
 
 }
 //====================================================
