@@ -487,3 +487,142 @@ grid-template-columns:1fr;
 }
 
 }
+/*==========================
+ORDERS TABLE
+==========================*/
+
+.ordersSection{
+
+margin-top:30px;
+
+}
+
+.ordersCard{
+
+background:#1d1d1d;
+
+border-radius:20px;
+
+padding:22px;
+
+box-shadow:0 10px 25px rgba(0,0,0,.35);
+
+}
+
+.ordersHeader{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:20px;
+
+}
+
+.ordersHeader h3{
+
+font-size:20px;
+
+font-weight:700;
+
+}
+
+.ordersHeader button{
+
+background:#16a34a;
+
+border:none;
+
+color:white;
+
+padding:10px 18px;
+
+border-radius:12px;
+
+cursor:pointer;
+
+font-weight:600;
+
+}
+
+.ordersTable{
+
+width:100%;
+
+border-collapse:collapse;
+
+}
+
+.ordersTable th{
+
+padding:14px;
+
+text-align:left;
+
+font-size:14px;
+
+color:#9ca3af;
+
+border-bottom:1px solid rgba(255,255,255,.08);
+
+}
+
+.ordersTable td{
+
+padding:16px;
+
+border-bottom:1px solid rgba(255,255,255,.05);
+
+font-size:15px;
+
+}
+
+.statusPending{
+
+background:#f59e0b;
+
+padding:6px 12px;
+
+border-radius:999px;
+
+font-size:12px;
+
+font-weight:700;
+
+color:#fff;
+
+}
+
+.statusDone{
+
+background:#16a34a;
+
+padding:6px 12px;
+
+border-radius:999px;
+
+font-size:12px;
+
+font-weight:700;
+
+color:#fff;
+
+}
+
+.statusCancel{
+
+background:#ef4444;
+
+padding:6px 12px;
+
+border-radius:999px;
+
+font-size:12px;
+
+font-weight:700;
+
+color:#fff;
+
+}
