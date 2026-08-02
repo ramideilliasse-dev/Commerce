@@ -400,3 +400,80 @@ color:"#ddd"
 }
 
 initCharts();
+//======================================
+// NOTIFICAÇÕES
+//======================================
+
+const notificationsList =
+document.getElementById("notificationsList");
+
+const notificationsCount =
+document.getElementById("notificationsCount");
+
+let notifications=[];
+
+function addNotification(icon,title,message){
+
+notifications.unshift({
+
+icon,
+
+title,
+
+message,
+
+time:new Date()
+
+});
+
+if(notifications.length>20){
+
+notifications.pop();
+
+}
+
+renderNotifications();
+
+}
+
+function renderNotifications(){
+
+if(!notificationsList) return;
+
+notificationsList.innerHTML="";
+
+notificationsCount.textContent=
+
+notifications.length;
+
+notifications.forEach(item=>{
+
+notificationsList.innerHTML+=`
+
+<div class="notificationItem">
+
+<div class="notificationIcon">
+
+${item.icon}
+
+</div>
+
+<div class="notificationBody">
+
+<strong>
+
+${item.title}
+
+</strong>
+
+${item.message}
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
