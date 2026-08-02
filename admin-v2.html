@@ -52,7 +52,19 @@
         <span>🛍️</span>
         <span>Comerciantes</span>
     </a>
+<a href="#" class="menu-item" id="merchantRequestsMenu">
 
+    <span>📋</span>
+
+    <span>Pedidos de comerciantes</span>
+
+    <span id="merchantRequestsBadge" class="menuBadge">
+
+        0
+
+    </span>
+
+</a>
     <a href="#" class="menu-item">
         <span>📦</span>
         <span>Produtos</span>
@@ -257,6 +269,37 @@ Bem-vindo ao painel administrativo da Toma.
         </div>
 
         <canvas id="ordersChart"></canvas>
+
+    </div>
+
+</section>
+     <!--====================================-->
+<!-- PEDIDOS DE COMERCIANTES -->
+<!--====================================-->
+
+<section class="merchantRequestsSection">
+
+    <div class="ordersCard">
+
+        <div class="ordersHeader">
+
+            <h3>
+
+                📋 Pedidos de comerciantes
+
+            </h3>
+
+            <button id="refreshMerchantRequests">
+
+                Atualizar
+
+            </button>
+
+        </div>
+
+        <div id="merchantRequestsList">
+
+        </div>
 
     </div>
 
