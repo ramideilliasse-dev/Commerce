@@ -201,15 +201,21 @@ Bem-vindo ao painel administrativo da Toma.
     </div>
 
 </section>
-     <section class="chartsSection">
+     <section class="dashboardCharts">
 
     <div class="chartCard">
 
         <div class="chartHeader">
 
-            <h3>Vendas</h3>
+            <h3>Vendas (30 dias)</h3>
 
-            <span>Últimos 7 dias</span>
+            <select id="salesPeriod">
+
+                <option>Últimos 30 dias</option>
+                <option>Últimos 7 dias</option>
+                <option>Hoje</option>
+
+            </select>
 
         </div>
 
@@ -221,9 +227,7 @@ Bem-vindo ao painel administrativo da Toma.
 
         <div class="chartHeader">
 
-            <h3>Pedidos</h3>
-
-            <span>Hoje</span>
+            <h3>Pedidos por estado</h3>
 
         </div>
 
