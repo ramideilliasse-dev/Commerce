@@ -1,10 +1,9 @@
 import { db } from "../firebase.js";
 
 import {
-
 collection,
-getDocs
-
+getDocs,
+onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 const salesCtx =
 document.getElementById("salesChart");
@@ -203,46 +202,46 @@ Cancelado
 `;
 
 }
-//====================================
-// FIREBASE STATS
-//====================================
+//==================================
+// DASHBOARD TEMPS RÉEL
+//==================================
 
-async function loadDashboardStats(){
-
-try{
+function startRealtimeDashboard(){
 
 // Produits
 
-const productsSnap =
-await getDocs(collection(db,"products"));
+onSnapshot(collection(db,"products"),snapshot=>{
 
 document.getElementById("productsCount").textContent =
-productsSnap.size;
+snapshot.size;
+
+});
 
 // Commerçants
 
-const merchantsSnap =
-await getDocs(collection(db,"merchants"));
+onSnapshot(collection(db,"merchants"),snapshot=>{
 
 document.getElementById("merchantsCount").textContent =
-merchantsSnap.size;
+snapshot.size;
+
+});
 
 // Utilisateurs
 
-const usersSnap =
-await getDocs(collection(db,"users"));
+onSnapshot(collection(db,"users"),snapshot=>{
 
 document.getElementById("usersCount").textContent =
-usersSnap.size;
+snapshot.size;
+
+});
 
 // Commandes
 
-const ordersSnap =
-await getDocs(collection(db,"orders"));
+onSnapshot(collection(db,"orders"),snapshot=>{
 
 let totalSales = 0;
 
-ordersSnap.forEach(doc=>{
+snapshot.forEach(doc=>{
 
 const order = doc.data();
 
@@ -253,14 +252,8 @@ totalSales += Number(order.total || 0);
 document.getElementById("salesCount").textContent =
 totalSales.toLocaleString()+" Kz";
 
-}
-
-catch(error){
-
-console.error(error);
+});
 
 }
 
-}
-
-loadDashboardStats();
+startRealtimeDashboard();
