@@ -414,3 +414,76 @@ background:#ea580c;
 background:#15803d;
 
 }
+/*==========================
+CHARTS
+==========================*/
+
+.chartsSection{
+
+display:grid;
+
+grid-template-columns:2fr 1fr;
+
+gap:20px;
+
+margin-top:30px;
+
+}
+
+.chartCard{
+
+background:#1d1d1d;
+
+border-radius:20px;
+
+padding:20px;
+
+box-shadow:0 10px 25px rgba(0,0,0,.35);
+
+}
+
+.chartHeader{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:20px;
+
+}
+
+.chartHeader h3{
+
+font-size:18px;
+
+font-weight:700;
+
+}
+
+.chartHeader span{
+
+color:#9ca3af;
+
+font-size:13px;
+
+}
+
+canvas{
+
+width:100% !important;
+
+height:280px !important;
+
+}
+
+@media(max-width:900px){
+
+.chartsSection{
+
+grid-template-columns:1fr;
+
+}
+
+}
