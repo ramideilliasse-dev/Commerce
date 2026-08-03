@@ -1,0 +1,218 @@
+ <!DOCTYPE html>
+<html lang="pt">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
+
+<title>Pedidos de Comerciantes</title>
+
+<link rel="stylesheet"
+href="merchant-requests.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
+rel="stylesheet">
+
+</head>
+
+<body>
+
+<header class="pageHeader">
+
+<button id="backButton" class="headerButton">
+
+<span class="material-symbols-rounded">
+
+arrow_back
+
+</span>
+
+</button>
+
+<div class="headerTitle">
+
+<h1>Pedidos de Comerciantes</h1>
+
+<p>Validação de novos vendedores</p>
+
+</div>
+
+<button id="refreshButton" class="headerButton">
+
+<span class="material-symbols-rounded">
+
+refresh
+
+</span>
+
+</button>
+
+</header>
+
+<section class="searchSection">
+
+<input
+
+id="searchInput"
+
+type="text"
+
+placeholder="Pesquisar comerciante...">
+
+</section>
+<section class="statsSection">
+
+<div class="statCard blue">
+
+<div class="statIcon">
+
+📥
+
+</div>
+
+<div class="statInfo">
+
+<h2 id="pendingCount">
+
+0
+
+</h2>
+
+<p>Pendentes</p>
+
+</div>
+
+</div>
+
+<div class="statCard green">
+
+<div class="statIcon">
+
+✅
+
+</div>
+
+<div class="statInfo">
+
+<h2 id="approvedToday">
+
+0
+
+</h2>
+
+<p>Aprovados Hoje</p>
+
+</div>
+
+</div>
+
+<div class="statCard red">
+
+<div class="statIcon">
+
+❌
+
+</div>
+
+<div class="statInfo">
+
+<h2 id="rejectedToday">
+
+0
+
+</h2>
+
+<p>Recusados Hoje</p>
+
+</div>
+
+</div>
+
+<div class="statCard purple">
+
+<div class="statIcon">
+
+📊
+
+</div>
+
+<div class="statInfo">
+
+<h2 id="totalRequests">
+
+0
+
+</h2>
+
+<p>Total</p>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="filterSection">
+
+<button class="filterButton active"
+
+data-filter="all">
+
+Todos
+
+</button>
+
+<button class="filterButton"
+
+data-filter="pending">
+
+Pendentes
+
+</button>
+
+<button class="filterButton"
+
+data-filter="approved">
+
+Aprovados
+
+</button>
+
+<button class="filterButton"
+
+data-filter="rejected">
+
+Recusados
+
+</button>
+
+</section>
+<section class="requestsSection">
+
+<div id="merchantRequestsList"
+
+class="merchantRequestsList">
+
+</div>
+
+</section>
+
+<div id="loader"
+
+class="loaderScreen">
+
+<div class="loaderCircle"></div>
+
+<p>
+
+Carregando pedidos...
+
+</p>
+
+</div>
