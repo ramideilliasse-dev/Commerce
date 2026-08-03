@@ -216,3 +216,287 @@ Carregando pedidos...
 </p>
 
 </div>
+<!--====================================-->
+<!-- POPUP DÉTAILS DEMANDE -->
+<!--====================================-->
+
+<div id="requestModal" class="requestModal">
+
+<div class="modalContent">
+
+<div class="modalHeader">
+
+<h2>
+
+Pedido de Comerciante
+
+</h2>
+
+<button id="closeModal">
+
+✕
+
+</button>
+
+</div>
+
+<div class="merchantPreview">
+
+<img
+id="merchantPhoto"
+class="merchantPhoto"
+src="images/avatar.png">
+
+<div class="merchantMainInfo">
+
+<h3 id="merchantFullName">
+
+Nome Completo
+
+</h3>
+
+<p id="merchantShopName">
+
+Nome da Loja
+
+</p>
+
+<span id="merchantStatus"
+class="statusPending">
+
+Pendente
+
+</span>
+
+</div>
+
+</div>
+
+<div class="detailsGrid">
+
+<div class="detailCard">
+
+<label>📞 Telefone</label>
+
+<div id="merchantPhone">
+
+-
+
+</div>
+
+</div>
+
+<div class="detailCard">
+
+<label>📧 Email</label>
+
+<div id="merchantEmail">
+
+-
+
+</div>
+
+</div>
+
+<div class="detailCard">
+
+<label>📍 Província</label>
+
+<div id="merchantProvince">
+
+-
+
+</div>
+
+</div>
+
+<div class="detailCard">
+
+<label>🏙 Cidade</label>
+
+<div id="merchantCity">
+
+-
+
+</div>
+
+</div>
+
+<div class="detailCard">
+
+<label>🏠 Endereço</label>
+
+<div id="merchantAddress">
+
+-
+
+</div>
+
+</div>
+
+<div class="detailCard">
+
+<label>📅 Data do Pedido</label>
+
+<div id="merchantDate">
+
+-
+
+</div>
+
+</div>
+
+</div>
+
+<h3 class="documentsTitle">
+
+Documentos
+
+</h3>
+
+<div class="documentsGrid">
+
+<div class="documentCard">
+
+<img
+id="merchantIdCard"
+src="images/document.png">
+
+<p>
+
+Bilhete de Identidade
+
+</p>
+
+</div>
+
+<div class="documentCard">
+
+<img
+id="merchantAlvara"
+src="images/document.png">
+
+<p>
+
+Alvará Comercial
+
+</p>
+
+</div>
+
+</div>
+
+<div class="modalActions">
+
+<button
+id="approveMerchant"
+class="approveButton">
+
+✅ Aprovar
+
+</button>
+
+<button
+id="rejectMerchant"
+class="rejectButton">
+
+❌ Recusar
+
+</button>
+
+<button
+id="contactMerchant"
+class="contactButton">
+
+💬 Contactar
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+<!--====================================-->
+<!-- TEMPLATE DEMANDE COMMERÇANT -->
+<!--====================================-->
+
+<template id="merchantRequestTemplate">
+
+<div class="requestCard">
+
+<div class="requestLeft">
+
+<img
+class="requestAvatar"
+src="images/avatar.png">
+
+<div class="requestInfo">
+
+<h3 class="requestName">
+
+Nom do Comerciante
+
+</h3>
+
+<p class="requestShop">
+
+Loja Oficial
+
+</p>
+
+<div class="requestMeta">
+
+<span class="requestProvince">
+
+📍 Luanda
+
+</span>
+
+<span class="requestPhone">
+
+📞 +244 xxx xxx xxx
+
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="requestRight">
+
+<span class="requestStatus statusPending">
+
+Pendente
+
+</span>
+
+<div class="requestButtons">
+
+<button class="detailsButton">
+
+👁 Ver detalhes
+
+</button>
+
+<button class="approveSmallButton">
+
+✅ Aprovar
+
+</button>
+
+<button class="rejectSmallButton">
+
+❌ Recusar
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</template>
