@@ -1,0 +1,305 @@
+ <!DOCTYPE html>
+<html lang="pt">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Brand Stores</title>
+
+<link rel="stylesheet" href="brand-stores.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
+
+</head>
+
+<body>
+
+<!--====================================-->
+<!-- HEADER -->
+<!--====================================-->
+
+<header class="pageHeader">
+
+<button id="backButton" class="headerButton">
+
+<span class="material-symbols-rounded">
+
+arrow_back
+
+</span>
+
+</button>
+
+<div class="headerTitle">
+
+<h1>Brand Stores</h1>
+
+<p>Gestão das lojas oficiais da Toma</p>
+
+</div>
+
+<button id="refreshButton" class="headerButton">
+
+<span class="material-symbols-rounded">
+
+refresh
+
+</span>
+
+</button>
+
+</header>
+
+<!--====================================-->
+<!-- RECHERCHE -->
+<!--====================================-->
+
+<section class="searchSection">
+
+<input
+
+id="searchStore"
+
+type="text"
+
+placeholder="Pesquisar marca...">
+
+</section>
+
+<!--====================================-->
+<!-- STATISTIQUES -->
+<!--====================================-->
+
+<section class="statsGrid">
+
+<div class="statCard blue">
+
+<div class="statIcon">
+
+🏪
+
+</div>
+
+<div class="statInfo">
+
+<h2 id="storesCount">
+
+0
+
+</h2>
+
+<p>Lojas Oficiais</p>
+
+</div>
+
+</div>
+
+<div class="statCard green">
+
+<div class="statIcon">
+
+👤
+
+</div>
+
+<div class="statInfo">
+
+<h2 id="assignedMerchants">
+
+0
+
+</h2>
+
+<p>Comerciantes</p>
+
+</div>
+
+</div>
+
+<div class="statCard orange">
+
+<div class="statIcon">
+
+📦
+
+</div>
+
+<div class="statInfo">
+
+<h2 id="storeProducts">
+
+0
+
+</h2>
+
+<p>Produtos</p>
+
+</div>
+
+</div>
+
+<div class="statCard purple">
+
+<div class="statIcon">
+
+💰
+
+</div>
+
+<div class="statInfo">
+
+<h2 id="storeSales">
+
+0 Kz
+
+</h2>
+
+<p>Vendas</p>
+
+</div>
+
+</div>
+
+</section>
+
+<!--====================================-->
+<!-- GRILLE DES MARQUES -->
+<!--====================================-->
+
+<section class="storesSection">
+
+<div
+
+id="brandStoresGrid"
+
+class="brandStoresGrid">
+
+</div>
+
+</section>
+
+<!--====================================-->
+<!-- TEMPLATE -->
+<!--====================================-->
+
+<template id="brandStoreTemplate">
+
+<div class="brandCard">
+
+<div class="brandTop">
+
+<img
+
+class="brandLogo"
+
+src="images/default-store.png">
+
+<div class="brandInfo">
+
+<h2 class="brandName">
+
+Samsung
+
+</h2>
+
+<p class="brandCategory">
+
+Loja Oficial
+
+</p>
+
+</div>
+
+<span class="brandStatus">
+
+ATIVA
+
+</span>
+
+</div>
+
+<div class="brandStats">
+
+<div>
+
+<strong class="merchantCount">
+
+0
+
+</strong>
+
+<span>
+
+Comerciantes
+
+</span>
+
+</div>
+
+<div>
+
+<strong class="productCount">
+
+0
+
+</strong>
+
+<span>
+
+Produtos
+
+</span>
+
+</div>
+
+<div>
+
+<strong class="salesCount">
+
+0
+
+</strong>
+
+<span>
+
+Vendas
+
+</span>
+
+</div>
+
+</div>
+
+<div class="brandButtons">
+
+<button class="manageButton">
+
+⚙️ Gerir Loja
+
+</button>
+
+<button class="viewButton">
+
+👁 Ver
+
+</button>
+
+</div>
+
+</div>
+
+</template>
+
+<!--====================================-->
+<!-- JAVASCRIPT -->
+<!--====================================-->
+
+<script type="module" src="js/brand-stores.js"></script>
+
+</body>
+
+</html>
