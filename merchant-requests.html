@@ -500,3 +500,85 @@ Pendente
 </div>
 
 </template>
+<!--====================================-->
+<!-- TOAST -->
+<!--====================================-->
+
+<div id="toast" class="toast">
+
+    <span id="toastMessage">
+        Operação realizada
+    </span>
+
+</div>
+
+<!--====================================-->
+<!-- CONFIRMAÇÃO -->
+<!--====================================-->
+
+<div id="confirmModal" class="confirmModal hidden">
+
+    <div class="confirmCard">
+
+        <h3 id="confirmTitle">
+            Confirmar ação
+        </h3>
+
+        <p id="confirmText">
+            Tem certeza?
+        </p>
+
+        <div class="confirmButtons">
+
+            <button id="confirmYes" class="approveButton">
+
+                Confirmar
+
+            </button>
+
+            <button id="confirmNo" class="rejectButton">
+
+                Cancelar
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!--====================================-->
+<!-- ESTADO VAZIO -->
+<!--====================================-->
+
+<div id="emptyState" class="emptyState hidden">
+
+    <div class="emptyIcon">
+
+        📋
+
+    </div>
+
+    <h2>
+
+        Nenhum pedido encontrado
+
+    </h2>
+
+    <p>
+
+        Não existem pedidos de comerciantes neste momento.
+
+    </p>
+
+</div>
+
+<!--====================================-->
+<!-- JAVASCRIPT -->
+<!--====================================-->
+
+<script type="module" src="js/merchant-requests.js"></script>
+
+</body>
+</html>
