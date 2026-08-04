@@ -1,0 +1,224 @@
+ <!DOCTYPE html>
+<html lang="pt">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Brand Store Admin</title>
+
+<link rel="stylesheet" href="brand-store-admin.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
+
+</head>
+
+<body>
+
+<!--====================================-->
+<!-- HEADER -->
+<!--====================================-->
+
+<header class="pageHeader">
+
+<button id="backButton" class="headerButton">
+
+<span class="material-symbols-rounded">
+
+arrow_back
+
+</span>
+
+</button>
+
+<div class="headerTitle">
+
+<h1 id="storeName">
+
+Apple Store
+
+</h1>
+
+<p>
+
+Gestão completa da Loja Oficial
+
+</p>
+
+</div>
+
+<button id="refreshButton" class="headerButton">
+
+<span class="material-symbols-rounded">
+
+refresh
+
+</span>
+
+</button>
+
+</header>
+
+<!--====================================-->
+<!-- BANNIÈRE -->
+<!--====================================-->
+
+<section class="storeHero">
+
+<img
+
+id="storeBanner"
+
+class="storeBanner"
+
+src="images/default-banner.jpg">
+
+<div class="storeOverlay">
+
+<img
+
+id="storeLogo"
+
+class="storeLogo"
+
+src="images/default-store.png">
+
+<div>
+
+<h2 id="storeTitle">
+
+Apple
+
+</h2>
+
+<p>
+
+Loja Oficial Toma
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<!--====================================-->
+<!-- STATISTIQUES -->
+<!--====================================-->
+
+<section class="statsGrid">
+
+<div class="statCard">
+
+<h2 id="merchantCount">
+
+0
+
+</h2>
+
+<p>Comerciantes</p>
+
+</div>
+
+<div class="statCard">
+
+<h2 id="productCount">
+
+0
+
+</h2>
+
+<p>Produtos</p>
+
+</div>
+
+<div class="statCard">
+
+<h2 id="orderCount">
+
+0
+
+</h2>
+
+<p>Pedidos</p>
+
+</div>
+
+<div class="statCard">
+
+<h2 id="salesCount">
+
+0 Kz
+
+</h2>
+
+<p>Vendas</p>
+
+</div>
+
+</section>
+
+<!--====================================-->
+<!-- ACTIONS -->
+<!--====================================-->
+
+<section class="actionBar">
+
+<button id="addMerchant">
+
+➕ Adicionar Comerciante
+
+</button>
+
+<button id="manageProducts">
+
+📦 Produtos
+
+</button>
+
+<button id="manageOrders">
+
+🛒 Pedidos
+
+</button>
+
+<button id="analyticsButton">
+
+📊 Estatísticas
+
+</button>
+
+</section>
+
+<!--====================================-->
+<!-- COMMERÇANTS -->
+<!--====================================-->
+
+<section class="merchantSection">
+
+<div class="sectionHeader">
+
+<h2>
+
+Comerciantes desta Loja
+
+</h2>
+
+</div>
+
+<div id="merchantList">
+
+</div>
+
+</section>
+
+<script type="module" src="js/brand-store-admin.js"></script>
+
+</body>
+
+</html>
