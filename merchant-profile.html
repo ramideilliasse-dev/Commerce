@@ -372,3 +372,274 @@ class="redButton">
 </button>
 
 </section>
+<!--==============================-->
+<!-- PRODUITS -->
+<!--==============================-->
+
+<section class="productsSection">
+
+<div class="sectionCard">
+
+<div class="sectionHeader">
+
+<h2>📦 Produtos do Comerciante</h2>
+
+<button id="viewAllProducts">
+
+Ver Todos
+
+</button>
+
+</div>
+
+<div id="merchantProducts">
+
+</div>
+
+</div>
+
+</section>
+
+<!--==============================-->
+<!-- PEDIDOS -->
+<!--==============================-->
+
+<section class="ordersSection">
+
+<div class="sectionCard">
+
+<div class="sectionHeader">
+
+<h2>🛒 Últimos Pedidos</h2>
+
+<button id="viewAllOrders">
+
+Ver Todos
+
+</button>
+
+</div>
+
+<table class="ordersTable">
+
+<thead>
+
+<tr>
+
+<th>Cliente</th>
+
+<th>Produto</th>
+
+<th>Total</th>
+
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+<tbody id="ordersTableBody">
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+<!--==============================-->
+<!-- HISTÓRICO -->
+<!--==============================-->
+
+<section class="historySection">
+
+<div class="sectionCard">
+
+<div class="sectionHeader">
+
+<h2>📈 Histórico de Atividade</h2>
+
+</div>
+
+<div id="activityHistory">
+
+</div>
+
+</div>
+
+</section>
+
+<!--==============================-->
+<!-- MODAL ALTERAR LOJA -->
+<!--==============================-->
+
+<div id="changeStoreModal" class="modal hidden">
+
+<div class="modalContent">
+
+<h2>
+
+Alterar Loja Oficial
+
+</h2>
+
+<select id="storeSelect">
+
+</select>
+
+<div class="modalButtons">
+
+<button id="saveStoreButton"
+class="greenButton">
+
+Guardar
+
+</button>
+
+<button id="cancelStoreButton"
+class="redButton">
+
+Cancelar
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!--==============================-->
+<!-- MODAL DOCUMENTO -->
+<!--==============================-->
+
+<div id="documentModal"
+class="modal hidden">
+
+<div class="modalContent large">
+
+<button id="closeDocumentModal"
+class="closeButton">
+
+✕
+
+</button>
+
+<img
+id="documentPreview"
+class="documentPreview"
+src="">
+
+</div>
+
+</div>
+
+<!--==============================-->
+<!-- MODAL CONFIRMAÇÃO -->
+<!--==============================-->
+
+<div id="confirmModal"
+class="modal hidden">
+
+<div class="modalContent">
+
+<h2 id="confirmTitle">
+
+Confirmar
+
+</h2>
+
+<p id="confirmText">
+
+Tem certeza?
+
+</p>
+
+<div class="modalButtons">
+
+<button id="confirmYes"
+class="greenButton">
+
+Confirmar
+
+</button>
+
+<button id="confirmNo"
+class="redButton">
+
+Cancelar
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!--==============================-->
+<!-- TOAST -->
+<!--==============================-->
+
+<div id="toast"
+class="toast">
+
+<span id="toastMessage">
+
+Operação realizada.
+
+</span>
+
+</div>
+
+<!--==============================-->
+<!-- ESTADO VAZIO -->
+<!--==============================-->
+
+<div id="emptyState"
+class="emptyState hidden">
+
+<div class="icon">
+
+📄
+
+</div>
+
+<h2>
+
+Nenhum dado encontrado
+
+</h2>
+
+<p>
+
+Este comerciante ainda não possui informações para mostrar.
+
+</p>
+
+</div>
+
+<!--==============================-->
+<!-- LOADER -->
+<!--==============================-->
+
+<div id="loader"
+class="loader hidden">
+
+<div class="loaderCircle">
+
+</div>
+
+</div>
+
+<!--==============================-->
+<!-- JAVASCRIPT -->
+<!--==============================-->
+
+<script type="module"
+src="js/merchant-profile.js"></script>
+
+</body>
+
+</html>
