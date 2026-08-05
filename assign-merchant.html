@@ -1,0 +1,180 @@
+ <!DOCTYPE html>
+<html lang="pt">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Atribuir Comerciante</title>
+
+<link rel="stylesheet" href="assign-merchant.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
+
+</head>
+
+<body>
+
+<header class="pageHeader">
+
+<button id="backButton" class="headerButton">
+
+<span class="material-symbols-rounded">
+
+arrow_back
+
+</span>
+
+</button>
+
+<div class="headerTitle">
+
+<h1>
+
+Adicionar Comerciante
+
+</h1>
+
+<p id="storeTitle">
+
+Loja Oficial
+
+</p>
+
+</div>
+
+<button id="refreshButton" class="headerButton">
+
+<span class="material-symbols-rounded">
+
+refresh
+
+</span>
+
+</button>
+
+</header>
+
+<section class="searchSection">
+
+<input
+
+id="searchMerchant"
+
+type="text"
+
+placeholder="Pesquisar comerciante...">
+
+</section>
+
+<section class="statsGrid">
+
+<div class="statCard">
+
+<h2 id="availableCount">
+
+0
+
+</h2>
+
+<p>Disponíveis</p>
+
+</div>
+
+<div class="statCard">
+
+<h2 id="approvedCount">
+
+0
+
+</h2>
+
+<p>Aprovados</p>
+
+</div>
+
+<div class="statCard">
+
+<h2 id="assignedCount">
+
+0
+
+</h2>
+
+<p>Nesta Loja</p>
+
+</div>
+
+</section>
+
+<section class="merchantSection">
+
+<div id="merchantList">
+
+</div>
+
+</section>
+
+<template id="merchantTemplate">
+
+<div class="merchantCard">
+
+<div class="merchantLeft">
+
+<img
+
+class="merchantAvatar"
+
+src="images/avatar.png">
+
+<div class="merchantInfo">
+
+<h3 class="merchantName">
+
+Ramide
+
+</h3>
+
+<p class="merchantPhone">
+
++244
+
+</p>
+
+<span class="merchantStatus">
+
+Aprovado
+
+</span>
+
+</div>
+
+</div>
+
+<div class="merchantRight">
+
+<button class="assignButton">
+
+Adicionar à Loja
+
+</button>
+
+</div>
+
+</div>
+
+</template>
+
+<script type="module"
+
+src="js/assign-merchant.js">
+
+</script>
+
+</body>
+
+</html>
