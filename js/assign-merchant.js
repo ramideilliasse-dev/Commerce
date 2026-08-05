@@ -315,3 +315,90 @@ merchantList.appendChild(card);
 });
 
 }
+//==================================================
+// AFFECTER LE COMMERÇANT À LA LOJA
+//==================================================
+
+async function assignMerchant(merchantId,merchantName){
+
+const confirmAssign = confirm(
+
+`Adicionar ${merchantName} à ${STORE_NAMES[storeId]} ?`
+
+);
+
+if(!confirmAssign) return;
+
+try{
+
+await updateDoc(
+
+doc(db,"merchants",merchantId),
+
+{
+
+officialStore:true,
+
+storeId:storeId,
+
+storeName:STORE_NAMES[storeId],
+
+updatedAt:new Date()
+
+}
+
+);
+
+//==============================
+// RETIRER DE LA LISTE
+//==============================
+
+merchants = merchants.filter(
+
+m=>m.id!==merchantId
+
+);
+
+filteredMerchants = filteredMerchants.filter(
+
+m=>m.id!==merchantId
+
+);
+
+//==============================
+// METTRE À JOUR LES STATS
+//==============================
+
+availableCount.textContent =
+
+filteredMerchants.length;
+
+assignedCount.textContent =
+
+Number(assignedCount.textContent)+1;
+
+//==============================
+// RAFRAÎCHIR
+//==============================
+
+renderMerchants();
+
+alert(
+
+merchantName +
+
+" foi adicionado à Loja Oficial " +
+
+STORE_NAMES[storeId]
+
+);
+
+}catch(error){
+
+console.error(error);
+
+alert("Erro ao adicionar comerciante.");
+
+}
+
+}
