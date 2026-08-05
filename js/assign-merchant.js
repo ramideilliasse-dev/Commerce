@@ -402,3 +402,113 @@ alert("Erro ao adicionar comerciante.");
 }
 
 }
+//==================================================
+// RECHERCHE TEMPS RÉEL
+//==================================================
+
+searchMerchant?.addEventListener("input",()=>{
+
+const text = searchMerchant.value
+
+.toLowerCase()
+
+.trim();
+
+filteredMerchants = merchants.filter(merchant=>{
+
+const name = (merchant.name || "")
+
+.toLowerCase();
+
+const phone = (merchant.phone || "")
+
+.toLowerCase();
+
+const email = (merchant.email || "")
+
+.toLowerCase();
+
+const shop = (merchant.shopName || "")
+
+.toLowerCase();
+
+return (
+
+name.includes(text) ||
+
+phone.includes(text) ||
+
+email.includes(text) ||
+
+shop.includes(text)
+
+);
+
+});
+
+availableCount.textContent =
+
+filteredMerchants.length;
+
+renderMerchants();
+
+});
+//==================================================
+// TEMPS RÉEL FIRESTORE
+//==================================================
+
+const merchantsRealtimeQuery = query(
+    collection(db,"merchants"),
+    where("status","==","approved")
+);
+
+onSnapshot(merchantsRealtimeQuery,(snapshot)=>{
+
+    merchants = [];
+
+    snapshot.forEach(docSnap=>{
+
+        const merchant = {
+            id:docSnap.id,
+            ...docSnap.data()
+        };
+
+        // Seulement les commerçants libres
+        if(
+            merchant.officialStore !== true &&
+            !merchant.storeId
+        ){
+            merchants.push(merchant);
+        }
+
+    });
+
+    // Réappliquer la recherche en cours
+    const text = (searchMerchant?.value || "")
+        .toLowerCase()
+        .trim();
+
+    filteredMerchants = merchants.filter(merchant=>{
+
+        const name = (merchant.name || "").toLowerCase();
+        const phone = (merchant.phone || "").toLowerCase();
+        const email = (merchant.email || "").toLowerCase();
+        const shop = (merchant.shopName || "").toLowerCase();
+
+        return (
+            name.includes(text) ||
+            phone.includes(text) ||
+            email.includes(text) ||
+            shop.includes(text)
+        );
+
+    });
+
+    availableCount.textContent = filteredMerchants.length;
+    approvedCount.textContent = snapshot.size;
+    assignedCount.textContent =
+        snapshot.size - filteredMerchants.length;
+
+    renderMerchants();
+
+});
