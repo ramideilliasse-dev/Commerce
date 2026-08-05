@@ -602,3 +602,190 @@ toast.classList.remove("show");
 },3000);
 
 }
+//==================================================
+// BLOC 5
+// DOCUMENTS + NAVIGATION
+//==================================================
+
+//==============================
+// ELEMENTS
+//==============================
+
+const documentModal =
+document.getElementById("documentModal");
+
+const documentPreview =
+document.getElementById("documentPreview");
+
+const closeDocumentModal =
+document.getElementById("closeDocumentModal");
+
+const openIdDocument =
+document.getElementById("openIdDocument");
+
+const openBusinessLicense =
+document.getElementById("openBusinessLicense");
+
+const backButton =
+document.getElementById("backButton");
+
+const refreshButton =
+document.getElementById("refreshButton");
+
+//==============================
+// OUVRIR BI
+//==============================
+
+openIdDocument?.addEventListener("click",()=>{
+
+documentPreview.src =
+merchantIdDocument.src;
+
+documentModal.classList.remove("hidden");
+
+});
+
+//==============================
+// OUVRIR ALVARÁ
+//==============================
+
+openBusinessLicense?.addEventListener("click",()=>{
+
+documentPreview.src =
+merchantBusinessLicense.src;
+
+documentModal.classList.remove("hidden");
+
+});
+
+//==============================
+// FERMER
+//==============================
+
+closeDocumentModal?.addEventListener("click",()=>{
+
+documentModal.classList.add("hidden");
+
+});
+
+documentModal?.addEventListener("click",(e)=>{
+
+if(e.target===documentModal){
+
+documentModal.classList.add("hidden");
+
+}
+
+});
+
+//==============================
+// RETOUR
+//==============================
+
+backButton?.addEventListener("click",()=>{
+
+window.history.back();
+
+});
+
+//==============================
+// RAFRAICHIR
+//==============================
+
+refreshButton?.addEventListener("click",()=>{
+
+loadMerchant();
+
+loadMerchantStatistics();
+
+showToast("🔄 Página atualizada.");
+
+});
+//==================================================
+// BLOC 6
+// TEMPS RÉEL
+//==================================================
+
+//==============================
+// SURVEILLANCE DU COMMERÇANT
+//==============================
+
+const merchantRef = doc(db,"merchants",merchantId);
+
+onSnapshot(merchantRef,(snapshot)=>{
+
+if(!snapshot.exists()) return;
+
+const data = snapshot.data();
+
+// HERO
+
+merchantPhoto.src =
+data.photo ||
+data.avatar ||
+"images/avatar.png";
+
+merchantName.textContent =
+data.name || "-";
+
+merchantShop.textContent =
+data.shopName || "-";
+
+merchantStatus.textContent =
+data.status || "-";
+
+// INFORMATIONS
+
+merchantPhone.textContent =
+data.phone || "-";
+
+merchantEmail.textContent =
+data.email || "-";
+
+merchantProvince.textContent =
+data.province || "-";
+
+merchantCity.textContent =
+data.city || "-";
+
+merchantAddress.textContent =
+data.address || "-";
+
+merchantOfficialStore.textContent =
+data.storeName || "Sem Loja Oficial";
+
+// DOCUMENTOS
+
+merchantIdDocument.src =
+data.idCard ||
+data.bi ||
+"images/document.png";
+
+merchantBusinessLicense.src =
+data.businessLicense ||
+data.alvara ||
+"images/document.png";
+
+});
+
+//==================================================
+// RAFRAICHIR LES STATISTIQUES
+//==================================================
+
+setInterval(()=>{
+
+loadMerchantStatistics();
+
+},10000);
+
+//==================================================
+// PAGE PRÊTE
+//==================================================
+
+window.addEventListener("load",()=>{
+
+loader.classList.add("hidden");
+
+showToast("✅ Perfil carregado.");
+
+});
