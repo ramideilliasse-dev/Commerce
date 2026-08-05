@@ -201,3 +201,117 @@ renderMerchants();
 }
 
 loadMerchants();
+//==================================================
+// AFFICHER LES COMMERÇANTS
+//==================================================
+
+function renderMerchants(){
+
+merchantList.innerHTML="";
+
+//====================================
+// ETAT VIDE
+//====================================
+
+if(filteredMerchants.length===0){
+
+merchantList.innerHTML=`
+
+<div class="emptyState">
+
+<div class="icon">
+
+👤
+
+</div>
+
+<h2>
+
+Nenhum comerciante disponível
+
+</h2>
+
+<p>
+
+Todos os comerciantes já pertencem a uma Loja Oficial.
+
+</p>
+
+</div>
+
+`;
+
+return;
+
+}
+
+//====================================
+// CARTES
+//====================================
+
+filteredMerchants.forEach(merchant=>{
+
+const card =
+merchantTemplate.content.cloneNode(true);
+
+//====================
+// PHOTO
+//====================
+
+card.querySelector(".merchantAvatar").src=
+
+merchant.photo ||
+
+"images/avatar.png";
+
+//====================
+// NOM
+//====================
+
+card.querySelector(".merchantName").textContent=
+
+merchant.name ||
+
+"Sem nome";
+
+//====================
+// TELEFONE
+//====================
+
+card.querySelector(".merchantPhone").textContent=
+
+merchant.phone ||
+
+"-";
+
+//====================
+// STATUS
+//====================
+
+card.querySelector(".merchantStatus").textContent=
+
+"Aprovado";
+
+//====================
+// BOUTON
+//====================
+
+card.querySelector(".assignButton")
+
+.addEventListener("click",()=>{
+
+assignMerchant(
+
+merchant.id,
+
+merchant.name
+
+);
+
+});
+
+merchantList.appendChild(card);
+
+});
+
+}
