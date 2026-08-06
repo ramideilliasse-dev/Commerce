@@ -219,13 +219,21 @@ window.location.href=
 
 });
 //==============================
+// AJOUTER LA CARTE
+//==============================
+
+grid.appendChild(clone);
+
+}); // ferme le forEach
+
+//==============================
 // TOTAL DE LOJAS
 //==============================
 
 storesCount.textContent =
 Object.keys(stores).length;
 
-}
+} // ferme renderStores()
 
 renderStores();
 //==================================================
