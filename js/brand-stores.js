@@ -191,7 +191,6 @@ clone.querySelector(".merchantCount").textContent="0";
 clone.querySelector(".productCount").textContent="0";
 
 clone.querySelector(".salesCount").textContent="0 Kz";
-
 //==================================
 // GERIR LOJA
 //==================================
@@ -202,7 +201,7 @@ clone.querySelector(".manageButton")
 
 window.location.href=
 
-`official-store.html?store=${store.id}`;
+`brand-store-admin.html?store=${store.id}`;
 
 });
 
