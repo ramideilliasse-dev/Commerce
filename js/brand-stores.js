@@ -206,7 +206,7 @@ window.location.href=
 });
 
 //==================================
-// VER
+// VER LOJA
 //==================================
 
 clone.querySelector(".viewButton")
@@ -215,14 +215,9 @@ clone.querySelector(".viewButton")
 
 window.location.href=
 
-`store.html?store=${store.id}`;
+`official-store.html?store=${store.id}`;
 
 });
-
-grid.appendChild(clone);
-
-});
-
 //==============================
 // TOTAL DE LOJAS
 //==============================
