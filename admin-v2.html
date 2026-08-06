@@ -5,212 +5,822 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
 
-<title>Toma Admin</title>
+<title>TOMA ADMIN</title>
 
-<link rel="stylesheet" href="admin-v2.css">
+<link rel="stylesheet"
+href="admin-dashboard.css">
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+rel="stylesheet">
 
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
+rel="stylesheet">
 
 </head>
 
 <body>
 
-<div class="dashboard">
+<div class="dashboardContainer">
 
-    <!-- SIDEBAR -->
+<!--====================================-->
+<!-- SIDEBAR -->
+<!--====================================-->
 
-    <div class="sidebar-logo">
-    <div class="logo-title">
-        <span class="logo-main">TOMA</span>
-        <span class="logo-crown">👑</span>
-    </div>
-    <div class="logo-subtitle">ADMIN</div>
+<aside class="sidebar">
+
+<div class="sidebarTop">
+
+<div class="logo">
+
+<div class="logoIcon">
+
+🛍️
+
 </div>
 
-<nav class="sidebar-menu">
+<div>
 
-    <a href="#" class="menu-item active">
-        <span>🏠</span>
-        <span>Dashboard</span>
-    </a>
+<h1>TOMA</h1>
 
-    <a href="#" class="menu-item">
-        <span>🏪</span>
-        <span>Lojas Oficiais</span>
-    </a>
+<p>ADMIN</p>
 
-    <a href="#" class="menu-item">
-        <span>👥</span>
-        <span>Utilizadores</span>
-    </a>
+</div>
 
-    <a href="#" class="menu-item">
-        <span>🛍️</span>
-        <span>Comerciantes</span>
-    </a>
-<a href="#" class="menu-item" id="merchantRequestsMenu">
+</div>
 
-    <span>📋</span>
+</div>
 
-    <span>Pedidos de comerciantes</span>
+<nav class="sidebarMenu">
 
-    <span id="merchantRequestsBadge" class="menuBadge">
+<a href="admin-dashboard.html"
+class="menuItem active">
 
-        0
+<span class="material-symbols-rounded">
 
-    </span>
+dashboard
+
+</span>
+
+<span>Dashboard</span>
 
 </a>
-    <a href="#" class="menu-item">
-        <span>📦</span>
-        <span>Produtos</span>
-    </a>
 
-    <a href="#" class="menu-item">
-        <span>🛒</span>
-        <span>Pedidos</span>
-    </a>
+<a href="users.html"
+class="menuItem">
 
-    <a href="#" class="menu-item">
-        <span>🖼️</span>
-        <span>Bannière</span>
-    </a>
+<span class="material-symbols-rounded">
 
-    <a href="#" class="menu-item">
-        <span>📊</span>
-        <span>Estatísticas</span>
-    </a>
+groups
 
-    <a href="#" class="menu-item">
-        <span>⚙️</span>
-        <span>Configurações</span>
-    </a>
+</span>
+
+<span>Utilizadores</span>
+
+</a>
+
+<a href="merchants.html"
+class="menuItem">
+
+<span class="material-symbols-rounded">
+
+storefront
+
+</span>
+
+<span>Comerciantes</span>
+
+</a>
+
+<a href="merchant-requests.html"
+class="menuItem">
+
+<span class="material-symbols-rounded">
+
+approval
+
+</span>
+
+<span>Pedidos</span>
+
+<span id="merchantBadge"
+class="badge">
+
+0
+
+</span>
+
+</a>
+
+<a href="official-stores.html"
+class="menuItem">
+
+<span class="material-symbols-rounded">
+
+verified
+
+</span>
+
+<span>Lojas Oficiais</span>
+
+</a>
+
+<a href="products.html"
+class="menuItem">
+
+<span class="material-symbols-rounded">
+
+inventory_2
+
+</span>
+
+<span>Produtos</span>
+
+</a>
+
+<a href="orders.html"
+class="menuItem">
+
+<span class="material-symbols-rounded">
+
+shopping_cart
+
+</span>
+
+<span>Pedidos</span>
+
+</a>
+
+<a href="statistics.html"
+class="menuItem">
+
+<span class="material-symbols-rounded">
+
+monitoring
+
+</span>
+
+<span>Estatísticas</span>
+
+</a>
+
+<a href="banners.html"
+class="menuItem">
+
+<span class="material-symbols-rounded">
+
+photo_library
+
+</span>
+
+<span>Banners</span>
+
+</a>
+
+<a href="settings.html"
+class="menuItem">
+
+<span class="material-symbols-rounded">
+
+settings
+
+</span>
+
+<span>Configurações</span>
+
+</a>
 
 </nav>
 
-<div class="sidebar-profile">
+<div class="sidebarBottom">
 
-    <img
-        id="adminAvatar"
-        src="images/avatar.png"
-        class="profile-avatar">
+<div class="adminProfile">
 
-    <div class="profile-info">
-        <div id="adminName">Ramide</div>
-        <small>Super Admin</small>
-    </div>
+<img
 
-</div>
+id="adminAvatar"
 
-<button id="logoutAdmin" class="logoutButton">
-    ⎋ Sair
-</button>
+src="images/avatar.png"
 
-    <!-- CONTENU -->
+class="avatar">
 
-    <main class="content">
+<div>
 
-        <!-- Header -->
+<h3 id="adminName">
 
-        <header class="topBar">
+Ramide
 
-            <div>
+</h3>
 
-                <h1>
+<p>
 
-Bom dia, Ramide! 👋
-
-</h1>
-
-                <p>
-
-Bem-vindo ao painel administrativo da Toma.
+Super Admin
 
 </p>
 
-            </div>
+</div>
 
-            <div class="topActions">
+</div>
 
-                <button>
+<button
+id="logoutButton">
 
-🔔
+<span class="material-symbols-rounded">
+
+logout
+
+</span>
+
+Sair
 
 </button>
 
-                <button>
+</div>
 
-＋
+</aside>
+
+<!--====================================-->
+<!-- CONTENU -->
+<!--====================================-->
+
+<main class="mainContent">
+ <!--====================================-->
+<!-- HEADER -->
+<!--====================================-->
+
+<header class="topHeader">
+
+<div class="headerLeft">
+
+<h1>
+
+Dashboard
+
+</h1>
+
+<p>
+
+Bem-vindo ao painel administrativo da TOMA
+
+</p>
+
+</div>
+
+<div class="headerCenter">
+
+<div class="searchBox">
+
+<span class="material-symbols-rounded">
+
+search
+
+</span>
+
+<input
+
+type="text"
+
+id="globalSearch"
+
+placeholder="Pesquisar utilizadores, comerciantes, produtos...">
+
+</div>
+
+</div>
+
+<div class="headerRight">
+
+<button class="headerButton" id="refreshDashboard">
+
+<span class="material-symbols-rounded">
+
+refresh
+
+</span>
 
 </button>
 
-            </div>
+<button class="headerButton" id="notificationsButton">
 
-        </header>
+<span class="material-symbols-rounded">
 
-        <!-- Les cartes seront ajoutées au Bloc 2 -->
+notifications
 
-        <section class="statsGrid">
+</span>
 
-    <div class="statCard">
+<span id="notificationsBadge"
 
-        <div class="statLeft">
-            <span class="statLabel">UTILIZADORES</span>
-            <h2 id="usersCount">0</h2>
-            <span class="statGrowth positive">+0%</span>
-        </div>
+class="notificationBadge">
 
-        <div class="statIcon blue">
-            👥
-        </div>
+0
 
-    </div>
+</span>
 
-    <div class="statCard">
+</button>
 
-        <div class="statLeft">
-            <span class="statLabel">COMERCIANTES</span>
-            <h2 id="merchantsCount">0</h2>
-            <span class="statGrowth positive">+0%</span>
-        </div>
+<button class="headerButton" id="quickAddButton">
 
-        <div class="statIcon green">
-            🏪
-        </div>
+<span class="material-symbols-rounded">
 
-    </div>
+add
 
-    <div class="statCard">
+</span>
 
-        <div class="statLeft">
-            <span class="statLabel">PRODUTOS</span>
-            <h2 id="productsCount">0</h2>
-            <span class="statGrowth positive">+0%</span>
-        </div>
+</button>
 
-        <div class="statIcon orange">
-            📦
-        </div>
+</div>
 
-    </div>
+</header>
 
-    <div class="statCard">
+<!--====================================-->
+<!-- RACCOURCIS -->
+<!--====================================-->
 
-        <div class="statLeft">
-            <span class="statLabel">VENDAS (KZ)</span>
-            <h2 id="salesCount">0 Kz</h2>
-            <span class="statGrowth positive">+0%</span>
-        </div>
+<section class="quickActions">
 
-        <div class="statIcon money">
-            💰
-        </div>
+<button onclick="location.href='merchant-requests.html'">
 
-    </div>
+📋
+
+<span>
+
+Pedidos de Comerciantes
+
+</span>
+
+</button>
+
+<button onclick="location.href='official-stores.html'">
+
+🏪
+
+<span>
+
+Lojas Oficiais
+
+</span>
+
+</button>
+
+<button onclick="location.href='products.html'">
+
+📦
+
+<span>
+
+Produtos
+
+</span>
+
+</button>
+
+<button onclick="location.href='orders.html'">
+
+🛒
+
+<span>
+
+Pedidos
+
+</span>
+
+</button>
+
+<button onclick="location.href='statistics.html'">
+
+📊
+
+<span>
+
+Relatórios
+
+</span>
+
+</button>
+
+<button onclick="location.href='settings.html'">
+
+⚙️
+
+<span>
+
+Configurações
+
+</span>
+
+</button>
+
+</section>
+
+<!--====================================-->
+<!-- CARTES STATISTIQUES -->
+<!--====================================-->
+
+<section class="statsGrid">
+ <!--====================================-->
+<!-- CARTES PREMIUM -->
+<!--====================================-->
+
+<div class="statCard blue">
+
+<div class="statTop">
+
+<span class="material-symbols-rounded">
+
+groups
+
+</span>
+
+</div>
+
+<h2 id="usersCount">
+
+0
+
+</h2>
+
+<p>
+
+Utilizadores
+
+</p>
+
+<small id="usersGrowth">
+
++0%
+
+</small>
+
+</div>
+
+<div class="statCard green">
+
+<div class="statTop">
+
+<span class="material-symbols-rounded">
+
+storefront
+
+</span>
+
+</div>
+
+<h2 id="merchantsCount">
+
+0
+
+</h2>
+
+<p>
+
+Comerciantes
+
+</p>
+
+<small id="merchantsGrowth">
+
++0%
+
+</small>
+
+</div>
+
+<div class="statCard orange">
+
+<div class="statTop">
+
+<span class="material-symbols-rounded">
+
+inventory_2
+
+</span>
+
+</div>
+
+<h2 id="productsCount">
+
+0
+
+</h2>
+
+<p>
+
+Produtos
+
+</p>
+
+<small>
+
+Total publicado
+
+</small>
+
+</div>
+
+<div class="statCard purple">
+
+<div class="statTop">
+
+<span class="material-symbols-rounded">
+
+shopping_cart
+
+</span>
+
+</div>
+
+<h2 id="ordersCount">
+
+0
+
+</h2>
+
+<p>
+
+Pedidos
+
+</p>
+
+<small>
+
+Hoje
+
+</small>
+
+</div>
+
+<div class="statCard yellow">
+
+<div class="statTop">
+
+<span class="material-symbols-rounded">
+
+payments
+
+</span>
+
+</div>
+
+<h2 id="salesCount">
+
+0 Kz
+
+</h2>
+
+<p>
+
+Vendas
+
+</p>
+
+<small>
+
+Receita Total
+
+</small>
+
+</div>
+
+<div class="statCard red">
+
+<div class="statTop">
+
+<span class="material-symbols-rounded">
+
+approval
+
+</span>
+
+</div>
+
+<h2 id="merchantRequestsCount">
+
+0
+
+</h2>
+
+<p>
+
+Pedidos Pendentes
+
+</p>
+
+<small>
+
+Aguardando aprovação
+
+</small>
+
+</div>
+
+<div class="statCard cyan">
+
+<div class="statTop">
+
+<span class="material-symbols-rounded">
+
+verified
+
+</span>
+
+</div>
+
+<h2 id="officialStoresCount">
+
+0
+
+</h2>
+
+<p>
+
+Lojas Oficiais
+
+</p>
+
+<small>
+
+Marcas Premium
+
+</small>
+
+</div>
+
+<div class="statCard dark">
+
+<div class="statTop">
+
+<span class="material-symbols-rounded">
+
+workspace_premium
+
+</span>
+
+</div>
+
+<h2 id="commissionCount">
+
+0 Kz
+
+</h2>
+
+<p>
+
+Comissões
+
+</p>
+
+<small>
+
+Receita TOMA
+
+</small>
+
+</div>
+
+</section>
+
+<!--====================================-->
+<!-- GRÁFICOS -->
+<!--====================================-->
+
+<section class="chartsGrid">
+
+<div class="chartCard">
+
+<div class="cardHeader">
+
+<h3>
+
+📈 Evolução das Vendas
+
+</h3>
+
+<select id="salesPeriod">
+
+<option value="7">
+
+7 dias
+
+</option>
+
+<option value="30" selected>
+
+30 dias
+
+</option>
+
+<option value="365">
+
+1 ano
+
+</option>
+
+</select>
+
+</div>
+
+<canvas id="salesChart">
+
+</canvas>
+
+</div>
+
+<div class="chartCard">
+
+<div class="cardHeader">
+
+<h3>
+
+📊 Estado dos Pedidos
+
+</h3>
+
+</div>
+
+<canvas id="ordersChart">
+
+</canvas>
+
+</div>
+
+</section>
+
+<!--====================================-->
+<!-- DEUXIÈME LIGNE -->
+<!--====================================-->
+
+<section class="chartsGrid">
+
+<div class="chartCard">
+
+<div class="cardHeader">
+
+<h3>
+
+👥 Crescimento dos Utilizadores
+
+</h3>
+
+</div>
+
+<canvas id="usersChart">
+
+</canvas>
+
+</div>
+
+<div class="chartCard">
+
+<div class="cardHeader">
+
+<h3>
+
+💰 Comissões TOMA
+
+</h3>
+
+</div>
+
+<canvas id="commissionChart">
+
+</canvas>
+
+</div>
+
+</section>
+<!--====================================-->
+<!-- LIGNE PRINCIPALE -->
+<!--====================================-->
+
+<div class="dashboardRow">
+
+<!--====================================-->
+<!-- ACTIVITÉS RÉCENTES -->
+<!--====================================-->
+
+<section class="activityCard">
+
+<div class="cardHeader">
+
+<h3>
+
+🕒 Atividade Recente
+
+</h3>
+
+<button id="seeAllActivity">
+
+Ver tudo
+
+</button>
+
+</div>
+
+<div id="activityList" class="activityList">
+
+</div>
 
 </section>
 
@@ -218,113 +828,55 @@ Bem-vindo ao painel administrativo da Toma.
 <!-- NOTIFICAÇÕES -->
 <!--====================================-->
 
-<section class="notificationsSection">
+<section class="notificationsCard">
 
-    <div class="notificationsCard">
-
-        <div class="notificationsHeader">
-
-            <h3>🔔 Notificações</h3>
-
-            <span id="notificationsCount">0</span>
-
-        </div>
-
-        <div id="notificationsList">
-
-        </div>
-
-    </div>
-
-</section>
-
-<section class="dashboardCharts">
-
-    <div class="chartCard">
-
-        <div class="chartHeader">
-
-            <h3>Vendas (30 dias)</h3>
-
-            <select id="salesPeriod">
-
-                <option>Últimos 30 dias</option>
-                <option>Últimos 7 dias</option>
-                <option>Hoje</option>
-
-            </select>
-
-        </div>
-
-        <canvas id="salesChart"></canvas>
-
-    </div>
-
-    <div class="chartCard">
-
-        <div class="chartHeader">
-
-            <h3>Pedidos por estado</h3>
-
-        </div>
-
-        <canvas id="ordersChart"></canvas>
-
-    </div>
-
-</section>
-     <!--====================================-->
-<!-- PEDIDOS DE COMERCIANTES -->
-<!--====================================-->
-
-<section class="merchantRequestsSection">
-
-    <div class="ordersCard">
-
-        <div class="ordersHeader">
-
-            <h3>
-
-                📋 Pedidos de comerciantes
-
-            </h3>
-
-            <button id="refreshMerchantRequests">
-
-                Atualizar
-
-            </button>
-
-        </div>
-
-        <div id="merchantRequestsList">
-
-        </div>
-
-    </div>
-
-</section>
-     <section class="ordersSection">
-
-<div class="ordersCard">
-
-<div class="ordersHeader">
+<div class="cardHeader">
 
 <h3>
 
-Últimos Pedidos
+🔔 Notificações
 
 </h3>
 
-<button id="seeAllOrders">
+<button id="clearNotifications">
 
-Ver todos
+Limpar
 
 </button>
 
 </div>
 
-<table class="ordersTable">
+<div id="notificationsList">
+
+</div>
+
+</section>
+
+</div>
+
+<!--====================================-->
+<!-- DERNIÈRES COMMANDES -->
+<!--====================================-->
+
+<section class="tableCard">
+
+<div class="cardHeader">
+
+<h3>
+
+🛒 Últimos Pedidos
+
+</h3>
+
+<button onclick="location.href='orders.html'">
+
+Ver Todos
+
+</button>
+
+</div>
+
+<table class="dashboardTable">
 
 <thead>
 
@@ -338,24 +890,203 @@ Ver todos
 
 <th>Status</th>
 
+<th>Data</th>
+
 </tr>
 
 </thead>
 
-<tbody id="ordersTableBody">
+<tbody id="lastOrdersTable">
 
 </tbody>
 
 </table>
 
+</section>
+
+<!--====================================-->
+<!-- DERNIERS COMMERÇANTS -->
+<!--====================================-->
+
+<section class="tableCard">
+
+<div class="cardHeader">
+
+<h3>
+
+🛍️ Novos Comerciantes
+
+</h3>
+
+<button onclick="location.href='merchants.html'">
+
+Ver Todos
+
+</button>
+
 </div>
+
+<table class="dashboardTable">
+
+<thead>
+
+<tr>
+
+<th>Foto</th>
+
+<th>Nome</th>
+
+<th>Loja</th>
+
+<th>Estado</th>
+
+<th>Ação</th>
+
+</tr>
+
+</thead>
+
+<tbody id="lastMerchantsTable">
+
+</tbody>
+
+</table>
 
 </section>
-    </main>
+
+<!--====================================-->
+<!-- DERNIERS PRODUITS -->
+<!--====================================-->
+
+<section class="tableCard">
+
+<div class="cardHeader">
+
+<h3>
+
+📦 Produtos Recentes
+
+</h3>
+
+<button onclick="location.href='products.html'">
+
+Ver Todos
+
+</button>
 
 </div>
+
+<table class="dashboardTable">
+
+<thead>
+
+<tr>
+
+<th>Imagem</th>
+
+<th>Produto</th>
+
+<th>Preço</th>
+
+<th>Loja</th>
+
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+<tbody id="lastProductsTable">
+
+</tbody>
+
+</table>
+
+</section>
+
+<!--====================================-->
+<!-- FOOTER -->
+<!--====================================-->
+
+<footer class="dashboardFooter">
+
+<p>
+
+© 2026 TOMA Marketplace — Administração Premium
+
+</p>
+
+</footer>
+
+</main>
+
+</div>
+
+<!--====================================-->
+<!-- MODAL NOTIFICATION -->
+<!--====================================-->
+
+<div id="notificationModal" class="modal hidden">
+
+<div class="modalContent">
+
+<div class="modalHeader">
+
+<h2>
+
+Notificação
+
+</h2>
+
+<button id="closeNotificationModal">
+
+✕
+
+</button>
+
+</div>
+
+<div id="notificationContent">
+
+</div>
+
+</div>
+
+</div>
+
+<!--====================================-->
+<!-- LOADER -->
+<!--====================================-->
+
+<div id="loader" class="loader">
+
+<div class="loaderCircle"></div>
+
+<p>
+
+Carregando Dashboard...
+
+</p>
+
+</div>
+
+<!--====================================-->
+<!-- TOAST -->
+<!--====================================-->
+
+<div id="toast" class="toast">
+
+<span id="toastMessage">
+
+Operação realizada.
+
+</span>
+
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script type="module" src="js/admin-v2.js"></script>
+
+<script type="module" src="js/admin-dashboard.js"></script>
 
 </body>
 
