@@ -4184,3 +4184,849 @@ initializeQuickActions();
 //==================================================
 // FIN BLOC 11
 //==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 12 — ACTIONS ADMINISTRATEUR
+//==================================================
+
+//==================================================
+// NAVIGATION SECURISEE
+//==================================================
+
+function adminNavigate(page){
+
+    if(!page){
+
+        return;
+
+    }
+
+    try{
+
+        window.location.href = page;
+
+    }
+    catch(error){
+
+        registerError(
+            error,
+            "Erro durante a navegação administrativa."
+        );
+
+    }
+
+}
+
+
+//==================================================
+// OUVRIR LA GESTION DES PRODUITS
+//==================================================
+
+function openProductsManagement(){
+
+    adminNavigate(
+        "admin-products.html"
+    );
+
+}
+
+
+//==================================================
+// OUVRIR LA GESTION DES COMMERÇANTS
+//==================================================
+
+function openMerchantsManagement(){
+
+    adminNavigate(
+        "admin-merchants.html"
+    );
+
+}
+
+
+//==================================================
+// OUVRIR LA GESTION DES COMMANDES
+//==================================================
+
+function openOrdersManagement(){
+
+    adminNavigate(
+        "admin-orders.html"
+    );
+
+}
+
+
+//==================================================
+// OUVRIR LES DEMANDES COMMERÇANTS
+//==================================================
+
+function openMerchantRequests(){
+
+    adminNavigate(
+        "admin-merchant-requests.html"
+    );
+
+}
+
+
+//==================================================
+// OUVRIR LES UTILISATEURS
+//==================================================
+
+function openUsersManagement(){
+
+    adminNavigate(
+        "admin-users.html"
+    );
+
+}
+
+
+//==================================================
+// OUVRIR LES RAPPORTS
+//==================================================
+
+function openReports(){
+
+    adminNavigate(
+        "admin-reports.html"
+    );
+
+}
+
+
+//==================================================
+// OUVRIR LES PARAMETRES
+//==================================================
+
+function openAdminSettings(){
+
+    adminNavigate(
+        "admin-settings.html"
+    );
+
+}
+
+
+//==================================================
+// ELEMENTS DE NAVIGATION
+//==================================================
+
+const productsManagementButton =
+    document.getElementById(
+        "productsManagementButton"
+    );
+
+const merchantsManagementButton =
+    document.getElementById(
+        "merchantsManagementButton"
+    );
+
+const ordersManagementButton =
+    document.getElementById(
+        "ordersManagementButton"
+    );
+
+const merchantRequestsButton =
+    document.getElementById(
+        "merchantRequestsButton"
+    );
+
+const usersManagementButton =
+    document.getElementById(
+        "usersManagementButton"
+    );
+
+const reportsButton =
+    document.getElementById(
+        "reportsButton"
+    );
+
+const adminSettingsButton =
+    document.getElementById(
+        "adminSettingsButton"
+    );
+
+
+//==================================================
+// EVENEMENTS NAVIGATION
+//==================================================
+
+productsManagementButton?.addEventListener(
+    "click",
+    openProductsManagement
+);
+
+
+merchantsManagementButton?.addEventListener(
+    "click",
+    openMerchantsManagement
+);
+
+
+ordersManagementButton?.addEventListener(
+    "click",
+    openOrdersManagement
+);
+
+
+merchantRequestsButton?.addEventListener(
+    "click",
+    openMerchantRequests
+);
+
+
+usersManagementButton?.addEventListener(
+    "click",
+    openUsersManagement
+);
+
+
+reportsButton?.addEventListener(
+    "click",
+    openReports
+);
+
+
+adminSettingsButton?.addEventListener(
+    "click",
+    openAdminSettings
+);
+
+
+//==================================================
+// EXPOSER LES ACTIONS POUR LE HTML
+//==================================================
+
+window.TomaAdminActions = {
+
+    openProductsManagement,
+
+    openMerchantsManagement,
+
+    openOrdersManagement,
+
+    openMerchantRequests,
+
+    openUsersManagement,
+
+    openReports,
+
+    openAdminSettings
+
+};
+
+
+//==================================================
+// LOG
+//==================================================
+
+addSystemLog(
+    "Ações administrativas carregadas.",
+    "success"
+);
+
+
+//==================================================
+// FIN BLOC 12
+//==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 13 — NOTIFICATIONS + DEMANDES COMMERÇANTS
+//==================================================
+
+//==================================================
+// CHARGER LES NOTIFICATIONS
+//==================================================
+
+async function loadNotificationsData(){
+
+    try{
+
+        const snapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "notifications"
+                )
+            );
+
+        notifications = [];
+
+        snapshot.forEach(
+            documentSnapshot=>{
+
+                notifications.push({
+
+                    id:
+                        documentSnapshot.id,
+
+                    ...documentSnapshot.data()
+
+                });
+
+            }
+        );
+
+
+        // Trier du plus récent au plus ancien
+
+        notifications =
+            sortByNewest(
+                notifications
+            );
+
+
+        return notifications;
+
+    }
+    catch(error){
+
+        registerError(
+            error,
+            "Erro ao carregar notificações."
+        );
+
+        return [];
+
+    }
+
+}
+
+
+//==================================================
+// GENERER LES NOTIFICATIONS DES DEMANDES
+//==================================================
+
+function generateMerchantNotifications(){
+
+    const pendingRequests =
+        merchantRequests || [];
+
+
+    pendingRequests.forEach(
+        merchant=>{
+
+            const alreadyExists =
+                notifications.some(
+                    notification=>{
+
+                        return (
+
+                            notification.type ===
+                            "merchant_request"
+
+                            &&
+
+                            notification.merchantId ===
+                            merchant.id
+
+                        );
+
+                    }
+                );
+
+
+            if(alreadyExists){
+
+                return;
+
+            }
+
+
+            notifications.push({
+
+                id:
+                    `merchant-${merchant.id}`,
+
+                type:
+                    "merchant_request",
+
+                merchantId:
+                    merchant.id,
+
+                title:
+                    "Nova solicitação de comerciante",
+
+                message:
+                    `${safeText(
+                        merchant.name ||
+                        merchant.firstName,
+                        "Comerciante"
+                    )} aguarda aprovação.`,
+
+                createdAt:
+                    merchant.createdAt ||
+
+                    new Date(),
+
+                read:
+                    false
+
+            });
+
+        }
+    );
+
+
+    notifications =
+        sortByNewest(
+            notifications
+        );
+
+}
+
+
+//==================================================
+// RENDU DES NOTIFICATIONS
+//==================================================
+
+function renderNotifications(){
+
+    if(!notificationsList){
+
+        return;
+
+    }
+
+
+    notificationsList.innerHTML = "";
+
+
+    generateMerchantNotifications();
+
+
+    const latest =
+        notifications.slice(
+            0,
+            10
+        );
+
+
+    if(latest.length === 0){
+
+        notificationsList.innerHTML = `
+
+            <div class="notificationEmpty">
+
+                Nenhuma notificação.
+
+            </div>
+
+        `;
+
+        updateNotificationsBadge();
+
+        return;
+
+    }
+
+
+    latest.forEach(
+        notification=>{
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "notificationItem";
+
+
+            if(
+                notification.read === false
+            ){
+
+                item.classList.add(
+                    "unread"
+                );
+
+            }
+
+
+            //======================================
+            // TITRE
+            //======================================
+
+            const title =
+                document.createElement(
+                    "strong"
+                );
+
+            title.textContent =
+                safeText(
+                    notification.title,
+                    "Notificação"
+                );
+
+
+            //======================================
+            // MESSAGE
+            //======================================
+
+            const message =
+                document.createElement(
+                    "p"
+                );
+
+            message.textContent =
+                safeText(
+                    notification.message
+                );
+
+
+            //======================================
+            // DATE
+            //======================================
+
+            const date =
+                document.createElement(
+                    "small"
+                );
+
+            date.textContent =
+                formatDateTime(
+                    notification.createdAt
+                );
+
+
+            //======================================
+            // ASSEMBLAGE
+            //======================================
+
+            item.appendChild(
+                title
+            );
+
+            item.appendChild(
+                message
+            );
+
+            item.appendChild(
+                date
+            );
+
+
+            //======================================
+            // CLICK
+            //======================================
+
+            item.addEventListener(
+                "click",
+                ()=>{
+
+                    openNotification(
+                        notification
+                    );
+
+                }
+            );
+
+
+            notificationsList.appendChild(
+                item
+            );
+
+        }
+    );
+
+
+    updateNotificationsBadge();
+
+}
+
+
+//==================================================
+// COMPTER LES NOTIFICATIONS NON LUES
+//==================================================
+
+function countUnreadNotifications(){
+
+    generateMerchantNotifications();
+
+
+    return notifications.filter(
+        notification=>{
+
+            return (
+                notification.read === false
+            );
+
+        }
+    ).length;
+
+}
+
+
+//==================================================
+// BADGE NOTIFICATIONS
+//==================================================
+
+function updateNotificationsBadge(){
+
+    const unread =
+        countUnreadNotifications();
+
+
+    if(notificationsBadge){
+
+        notificationsBadge.textContent =
+            formatNumber(
+                unread
+            );
+
+    }
+
+}
+
+
+//==================================================
+// OUVRIR UNE NOTIFICATION
+//==================================================
+
+function openNotification(notification){
+
+    if(!notification){
+
+        return;
+
+    }
+
+
+    //==============================================
+    // MARQUER COMME LUE LOCALEMENT
+    //==============================================
+
+    notification.read =
+        true;
+
+
+    //==============================================
+    // DEMANDE COMMERÇANT
+    //==============================================
+
+    if(
+        notification.type ===
+        "merchant_request"
+    ){
+
+        const merchantId =
+            notification.merchantId;
+
+
+        if(merchantId){
+
+            window.location.href =
+                `merchant-profile.html?id=${encodeURIComponent(
+                    merchantId
+                )}`;
+
+            return;
+
+        }
+
+    }
+
+
+    //==============================================
+    // MODALE
+    //==============================================
+
+    if(notificationModal){
+
+        notificationModal.classList.add(
+            "show"
+        );
+
+    }
+
+
+    if(notificationContent){
+
+        notificationContent.innerHTML = "";
+
+        const title =
+            document.createElement(
+                "h3"
+            );
+
+        title.textContent =
+            safeText(
+                notification.title,
+                "Notificação"
+            );
+
+
+        const message =
+            document.createElement(
+                "p"
+            );
+
+        message.textContent =
+            safeText(
+                notification.message
+            );
+
+
+        const date =
+            document.createElement(
+                "small"
+            );
+
+        date.textContent =
+            formatDateTime(
+                notification.createdAt
+            );
+
+
+        notificationContent.appendChild(
+            title
+        );
+
+        notificationContent.appendChild(
+            message
+        );
+
+        notificationContent.appendChild(
+            date
+        );
+
+    }
+
+
+    updateNotificationsBadge();
+
+}
+
+
+//==================================================
+// BOUTON NOTIFICATIONS
+//==================================================
+
+notificationsButton?.addEventListener(
+    "click",
+    ()=>{
+
+        if(notificationModal){
+
+            notificationModal.classList.add(
+                "show"
+            );
+
+        }
+
+
+        renderNotifications();
+
+    }
+);
+
+
+//==================================================
+// FERMER LA MODALE
+//==================================================
+
+closeNotificationModal?.addEventListener(
+    "click",
+    ()=>{
+
+        if(notificationModal){
+
+            notificationModal.classList.remove(
+                "show"
+            );
+
+        }
+
+    }
+);
+
+
+//==================================================
+// FERMER EN CLIQUANT A L'EXTERIEUR
+//==================================================
+
+notificationModal?.addEventListener(
+    "click",
+    (event)=>{
+
+        if(
+            event.target ===
+            notificationModal
+        ){
+
+            notificationModal.classList.remove(
+                "show"
+            );
+
+        }
+
+    }
+);
+
+
+//==================================================
+// ECOUTE TEMPS REEL DES NOTIFICATIONS
+//==================================================
+
+onSnapshot(
+
+    collection(
+        db,
+        "notifications"
+    ),
+
+    (snapshot)=>{
+
+        notifications = [];
+
+        snapshot.forEach(
+            documentSnapshot=>{
+
+                notifications.push({
+
+                    id:
+                        documentSnapshot.id,
+
+                    ...documentSnapshot.data()
+
+                });
+
+            }
+        );
+
+
+        notifications =
+            sortByNewest(
+                notifications
+            );
+
+
+        if(dashboardInitialized){
+
+            renderNotifications();
+
+        }
+
+    },
+
+    (error)=>{
+
+        registerError(
+            error,
+            "Erro no listener das notificações."
+        );
+
+    }
+
+);
+
+
+//==================================================
+// FIN BLOC 13
+//==================================================
