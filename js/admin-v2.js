@@ -4072,3 +4072,115 @@ globalSearch?.addEventListener(
 //==================================================
 // FIN BLOC 10
 //==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 11 — ACTION RAPIDE
+//==================================================
+
+//==================================================
+// BOUTON AJOUT RAPIDE
+//==================================================
+
+quickAddButton?.addEventListener(
+    "click",
+    ()=>{
+
+        //==========================================
+        // PAGE D'AJOUT DE PRODUIT
+        //==========================================
+
+        window.location.href =
+            "add-product.html";
+
+    }
+);
+
+
+//==================================================
+// RACCOURCIS ADMIN
+//==================================================
+
+document.addEventListener(
+    "keydown",
+    (event)=>{
+
+        //==========================================
+        // CTRL/CMD + K → RECHERCHE
+        //==========================================
+
+        if(
+            (event.ctrlKey || event.metaKey) &&
+            event.key.toLowerCase() === "k"
+        ){
+
+            event.preventDefault();
+
+            if(globalSearch){
+
+                globalSearch.focus();
+
+                globalSearch.select();
+
+            }
+
+        }
+
+
+        //==========================================
+        // ESC → FERMER MODALE NOTIFICATION
+        //==========================================
+
+        if(
+            event.key === "Escape"
+        ){
+
+            if(notificationModal){
+
+                notificationModal.classList.remove(
+                    "show"
+                );
+
+            }
+
+        }
+
+    }
+);
+
+
+//==================================================
+// INITIALISATION DU BOUTON RAPIDE
+//==================================================
+
+function initializeQuickActions(){
+
+    if(!quickAddButton){
+
+        return;
+
+    }
+
+
+    quickAddButton.title =
+        "Adicionar produto";
+
+
+    quickAddButton.setAttribute(
+        "aria-label",
+        "Adicionar produto"
+    );
+
+}
+
+
+//==================================================
+// INITIALISATION
+//==================================================
+
+initializeQuickActions();
+
+
+//==================================================
+// FIN BLOC 11
+//==================================================
