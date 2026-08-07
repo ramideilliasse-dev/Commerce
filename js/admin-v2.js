@@ -2989,3 +2989,503 @@ function renderDashboardTables(){
 //==================================================
 // FIN BLOC 7
 //==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 8 — NOTIFICATIONS
+//==================================================
+
+//==================================================
+// CHARGER LES NOTIFICATIONS
+//==================================================
+
+async function loadNotifications(){
+
+    if(!notificationsList){
+
+        return;
+
+    }
+
+    try{
+
+        const notificationsSnapshot =
+            await getDocs(
+                collection(db,"notifications")
+            );
+
+
+        notifications = [];
+
+
+        notificationsSnapshot.forEach(
+            (documentSnapshot)=>{
+
+                notifications.push({
+
+                    id:
+                        documentSnapshot.id,
+
+                    ...documentSnapshot.data()
+
+                });
+
+            }
+        );
+
+
+        //==========================================
+        // TRI — PLUS RÉCENT EN PREMIER
+        //==========================================
+
+        notifications =
+            [...notifications].sort(
+                (a,b)=>{
+
+                    return (
+                        getTimestamp(b.createdAt)
+                        -
+                        getTimestamp(a.createdAt)
+                    );
+
+                }
+            );
+
+
+        //==========================================
+        // AFFICHAGE
+        //==========================================
+
+        renderNotifications();
+
+
+        //==========================================
+        // COMPTEUR
+        //==========================================
+
+        updateNotificationsBadge();
+
+
+        addSystemLog(
+            "Notificações carregadas com sucesso.",
+            "success"
+        );
+
+    }
+    catch(error){
+
+        registerError(
+            error,
+            "Erro ao carregar as notificações."
+        );
+
+    }
+
+}
+
+
+//==================================================
+// RENDU DES NOTIFICATIONS
+//==================================================
+
+function renderNotifications(){
+
+    if(!notificationsList){
+
+        return;
+
+    }
+
+
+    notificationsList.innerHTML = "";
+
+
+    //==============================================
+    // AUCUNE NOTIFICATION
+    //==============================================
+
+    if(notifications.length === 0){
+
+        const empty =
+            document.createElement("div");
+
+        empty.className =
+            "notificationItem empty";
+
+
+        empty.textContent =
+            "Nenhuma notificação.";
+
+        notificationsList.appendChild(
+            empty
+        );
+
+        return;
+
+    }
+
+
+    //==============================================
+    // AFFICHAGE
+    //==============================================
+
+    notifications
+        .slice(0,20)
+        .forEach(notification=>{
+
+            const item =
+                document.createElement("div");
+
+            item.className =
+                "notificationItem";
+
+
+            //======================================
+            // TITRE
+            //======================================
+
+            const title =
+                document.createElement("strong");
+
+            title.textContent =
+                safeText(
+                    notification.title,
+                    "Notificação"
+                );
+
+
+            //======================================
+            // MESSAGE
+            //======================================
+
+            const message =
+                document.createElement("p");
+
+            message.textContent =
+                safeText(
+                    notification.message,
+                    ""
+                );
+
+
+            //======================================
+            // DATE
+            //======================================
+
+            const date =
+                document.createElement("small");
+
+            date.textContent =
+                formatDateTime(
+                    notification.createdAt
+                );
+
+
+            //======================================
+            // ETAT
+            //======================================
+
+            if(
+                notification.read === false ||
+                notification.read === undefined
+            ){
+
+                item.classList.add(
+                    "unread"
+                );
+
+            }
+
+
+            //======================================
+            // CLICK
+            //======================================
+
+            item.addEventListener(
+                "click",
+                ()=>{
+
+                    openNotification(
+                        notification
+                    );
+
+                }
+            );
+
+
+            item.appendChild(title);
+
+            item.appendChild(message);
+
+            item.appendChild(date);
+
+
+            notificationsList.appendChild(
+                item
+            );
+
+        });
+
+}
+
+
+//==================================================
+// COMPTEUR DES NOTIFICATIONS NON LUES
+//==================================================
+
+function updateNotificationsBadge(){
+
+    const unreadCount =
+        notifications.filter(
+            notification => {
+
+                return (
+                    notification.read === false ||
+                    notification.read === undefined
+                );
+
+            }
+        ).length;
+
+
+    if(notificationsBadge){
+
+        notificationsBadge.textContent =
+            formatNumber(unreadCount);
+
+    }
+
+}
+
+
+//==================================================
+// OUVRIR UNE NOTIFICATION
+//==================================================
+
+function openNotification(notification){
+
+    if(!notification){
+
+        return;
+
+    }
+
+
+    //==============================================
+    // MODAL
+    //==============================================
+
+    if(notificationModal){
+
+        notificationModal.classList.add(
+            "show"
+        );
+
+    }
+
+
+    //==============================================
+    // CONTENU
+    //==============================================
+
+    if(notificationContent){
+
+        notificationContent.innerHTML = "";
+
+
+        const title =
+            document.createElement("h3");
+
+        title.textContent =
+            safeText(
+                notification.title,
+                "Notificação"
+            );
+
+
+        const message =
+            document.createElement("p");
+
+        message.textContent =
+            safeText(
+                notification.message,
+                ""
+            );
+
+
+        const date =
+            document.createElement("small");
+
+        date.textContent =
+            formatDateTime(
+                notification.createdAt
+            );
+
+
+        notificationContent.appendChild(
+            title
+        );
+
+        notificationContent.appendChild(
+            message
+        );
+
+        notificationContent.appendChild(
+            date
+        );
+
+    }
+
+
+    //==============================================
+    // MARQUER COMME LUE
+    //==============================================
+
+    if(notification.read !== true){
+
+        notification.read = true;
+
+        updateNotificationsBadge();
+
+    }
+
+}
+
+
+//==================================================
+// FERMER LA MODALE
+//==================================================
+
+closeNotificationModal?.addEventListener(
+    "click",
+    ()=>{
+
+        if(notificationModal){
+
+            notificationModal.classList.remove(
+                "show"
+            );
+
+        }
+
+    }
+);
+
+
+//==================================================
+// FERMER EN CLIQUANT À L'EXTÉRIEUR
+//==================================================
+
+notificationModal?.addEventListener(
+    "click",
+    (event)=>{
+
+        if(
+            event.target ===
+            notificationModal
+        ){
+
+            notificationModal.classList.remove(
+                "show"
+            );
+
+        }
+
+    }
+);
+
+
+//==================================================
+// BOUTON NOTIFICATIONS
+//==================================================
+
+notificationsButton?.addEventListener(
+    "click",
+    ()=>{
+
+        if(notificationModal){
+
+            notificationModal.classList.add(
+                "show"
+            );
+
+        }
+
+        renderNotifications();
+
+    }
+);
+
+
+//==================================================
+// ECOUTE TEMPS RÉEL — NOTIFICATIONS
+//==================================================
+
+onSnapshot(
+
+    collection(db,"notifications"),
+
+    (snapshot)=>{
+
+        if(!dashboardInitialized){
+
+            return;
+
+        }
+
+
+        notifications = [];
+
+
+        snapshot.forEach(
+            (documentSnapshot)=>{
+
+                notifications.push({
+
+                    id:
+                        documentSnapshot.id,
+
+                    ...documentSnapshot.data()
+
+                });
+
+            }
+        );
+
+
+        notifications =
+            [...notifications].sort(
+                (a,b)=>{
+
+                    return (
+                        getTimestamp(b.createdAt)
+                        -
+                        getTimestamp(a.createdAt)
+                    );
+
+                }
+            );
+
+
+        renderNotifications();
+
+        updateNotificationsBadge();
+
+
+    },
+
+    (error)=>{
+
+        registerError(
+            error,
+            "Erro no listener das notificações."
+        );
+
+    }
+
+);
+
+
+//==================================================
+// FIN BLOC 8
+//==================================================
