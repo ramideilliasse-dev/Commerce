@@ -2248,3 +2248,744 @@ function updatePlatformActivity(){
 //==================================================
 // FIN BLOC 6
 //==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 7 — TABLEAUX + ACTIVITÉ RÉCENTE
+//==================================================
+
+//==================================================
+// OBTENIR LE TIMESTAMP D'UNE DATE
+//==================================================
+
+function getTimestamp(date){
+
+    const converted =
+        getDateValue(date);
+
+    if(!converted){
+
+        return 0;
+
+    }
+
+    return converted.getTime();
+
+}
+
+
+//==================================================
+// TRIER PAR DATE — PLUS RÉCENT EN PREMIER
+//==================================================
+
+function sortByNewest(array){
+
+    return [...array].sort((a,b)=>{
+
+        return (
+            getTimestamp(b.createdAt)
+            -
+            getTimestamp(a.createdAt)
+        );
+
+    });
+
+}
+
+
+//==================================================
+// DERNIÈRES COMMANDES
+//==================================================
+
+function renderLastOrders(){
+
+    if(!lastOrdersTable) return;
+
+    lastOrdersTable.innerHTML = "";
+
+
+    const latestOrders =
+        sortByNewest(orders)
+        .slice(0,10);
+
+
+    if(latestOrders.length === 0){
+
+        lastOrdersTable.innerHTML = `
+
+            <tr>
+
+                <td colspan="5">
+
+                    Nenhum pedido encontrado.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    latestOrders.forEach(order=>{
+
+        const row =
+            document.createElement("tr");
+
+
+        //==========================================
+        // CLIENT
+        //==========================================
+
+        const customerCell =
+            document.createElement("td");
+
+        customerCell.textContent =
+            safeText(
+                order.customerName ||
+                order.customer ||
+                order.userName
+            );
+
+
+        //==========================================
+        // PRODUIT
+        //==========================================
+
+        const productCell =
+            document.createElement("td");
+
+        productCell.textContent =
+            safeText(
+                order.productName ||
+                order.product
+            );
+
+
+        //==========================================
+        // TOTAL
+        //==========================================
+
+        const totalCell =
+            document.createElement("td");
+
+        totalCell.textContent =
+            formatKz(order.total);
+
+
+        //==========================================
+        // STATUS
+        //==========================================
+
+        const statusCell =
+            document.createElement("td");
+
+        const status =
+            safeText(
+                order.status,
+                "pending"
+            );
+
+        const statusElement =
+            document.createElement("span");
+
+        statusElement.className =
+            `status ${status}`;
+
+        statusElement.textContent =
+            status;
+
+        statusCell.appendChild(
+            statusElement
+        );
+
+
+        //==========================================
+        // DATE
+        //==========================================
+
+        const dateCell =
+            document.createElement("td");
+
+        dateCell.textContent =
+            formatDate(
+                order.createdAt
+            );
+
+
+        //==========================================
+        // AJOUT DE LA LIGNE
+        //==========================================
+
+        row.appendChild(
+            customerCell
+        );
+
+        row.appendChild(
+            productCell
+        );
+
+        row.appendChild(
+            totalCell
+        );
+
+        row.appendChild(
+            statusCell
+        );
+
+        row.appendChild(
+            dateCell
+        );
+
+        lastOrdersTable.appendChild(
+            row
+        );
+
+    });
+
+}
+
+
+//==================================================
+// DERNIERS COMMERÇANTS
+//==================================================
+
+function renderLastMerchants(){
+
+    if(!lastMerchantsTable) return;
+
+    lastMerchantsTable.innerHTML = "";
+
+
+    const latestMerchants =
+        sortByNewest(merchants)
+        .slice(0,10);
+
+
+    if(latestMerchants.length === 0){
+
+        lastMerchantsTable.innerHTML = `
+
+            <tr>
+
+                <td colspan="5">
+
+                    Nenhum comerciante encontrado.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    latestMerchants.forEach(merchant=>{
+
+        const row =
+            document.createElement("tr");
+
+
+        //==========================================
+        // PHOTO
+        //==========================================
+
+        const photoCell =
+            document.createElement("td");
+
+        const image =
+            document.createElement("img");
+
+        image.className =
+            "tableAvatar";
+
+        image.src =
+            merchant.photo ||
+            merchant.avatar ||
+            merchant.image ||
+            "images/avatar.png";
+
+        image.alt =
+            "Comerciante";
+
+        image.onerror = ()=>{
+
+            image.src =
+                "images/avatar.png";
+
+        };
+
+        photoCell.appendChild(
+            image
+        );
+
+
+        //==========================================
+        // NOM
+        //==========================================
+
+        const nameCell =
+            document.createElement("td");
+
+        nameCell.textContent =
+            safeText(
+                merchant.name ||
+                merchant.firstName
+            );
+
+
+        //==========================================
+        // BOUTIQUE
+        //==========================================
+
+        const shopCell =
+            document.createElement("td");
+
+        shopCell.textContent =
+            safeText(
+                merchant.shopName ||
+                merchant.storeName ||
+                merchant.businessName
+            );
+
+
+        //==========================================
+        // STATUS
+        //==========================================
+
+        const statusCell =
+            document.createElement("td");
+
+        const status =
+            safeText(
+                merchant.status,
+                "pending"
+            );
+
+        const statusElement =
+            document.createElement("span");
+
+        statusElement.className =
+            `status ${status}`;
+
+        statusElement.textContent =
+            status;
+
+        statusCell.appendChild(
+            statusElement
+        );
+
+
+        //==========================================
+        // ACTION
+        //==========================================
+
+        const actionCell =
+            document.createElement("td");
+
+        const button =
+            document.createElement("button");
+
+        button.className =
+            "viewMerchant";
+
+        button.dataset.id =
+            merchant.id;
+
+        button.textContent =
+            "Ver";
+
+
+        button.addEventListener(
+            "click",
+            ()=>{
+
+                window.location.href =
+                    `merchant-profile.html?id=${encodeURIComponent(
+                        merchant.id
+                    )}`;
+
+            }
+        );
+
+
+        actionCell.appendChild(
+            button
+        );
+
+
+        //==========================================
+        // AJOUT
+        //==========================================
+
+        row.appendChild(
+            photoCell
+        );
+
+        row.appendChild(
+            nameCell
+        );
+
+        row.appendChild(
+            shopCell
+        );
+
+        row.appendChild(
+            statusCell
+        );
+
+        row.appendChild(
+            actionCell
+        );
+
+        lastMerchantsTable.appendChild(
+            row
+        );
+
+    });
+
+}
+
+
+//==================================================
+// DERNIERS PRODUITS
+//==================================================
+
+function renderLastProducts(){
+
+    if(!lastProductsTable) return;
+
+    lastProductsTable.innerHTML = "";
+
+
+    const latestProducts =
+        sortByNewest(products)
+        .slice(0,10);
+
+
+    if(latestProducts.length === 0){
+
+        lastProductsTable.innerHTML = `
+
+            <tr>
+
+                <td colspan="5">
+
+                    Nenhum produto encontrado.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    latestProducts.forEach(product=>{
+
+        const row =
+            document.createElement("tr");
+
+
+        //==========================================
+        // IMAGE
+        //==========================================
+
+        const imageCell =
+            document.createElement("td");
+
+        const image =
+            document.createElement("img");
+
+        image.className =
+            "tableAvatar";
+
+        image.src =
+            product.image ||
+            product.images?.[0] ||
+            product.thumbnail ||
+            "images/product.png";
+
+        image.alt =
+            safeText(
+                product.name,
+                "Produto"
+            );
+
+        image.onerror = ()=>{
+
+            image.src =
+                "images/product.png";
+
+        };
+
+        imageCell.appendChild(
+            image
+        );
+
+
+        //==========================================
+        // NOM
+        //==========================================
+
+        const nameCell =
+            document.createElement("td");
+
+        nameCell.textContent =
+            safeText(
+                product.name
+            );
+
+
+        //==========================================
+        // PRIX
+        //==========================================
+
+        const priceCell =
+            document.createElement("td");
+
+        priceCell.textContent =
+            formatKz(
+                product.price
+            );
+
+
+        //==========================================
+        // BOUTIQUE
+        //==========================================
+
+        const storeCell =
+            document.createElement("td");
+
+        storeCell.textContent =
+            safeText(
+                product.storeName ||
+                product.shopName ||
+                product.merchantName
+            );
+
+
+        //==========================================
+        // STATUS
+        //==========================================
+
+        const statusCell =
+            document.createElement("td");
+
+        const status =
+            safeText(
+                product.status,
+                "published"
+            );
+
+        const statusElement =
+            document.createElement("span");
+
+        statusElement.className =
+            `status ${status}`;
+
+        statusElement.textContent =
+            status === "published"
+            ? "Publicado"
+            : status;
+
+        statusCell.appendChild(
+            statusElement
+        );
+
+
+        //==========================================
+        // AJOUT
+        //==========================================
+
+        row.appendChild(
+            imageCell
+        );
+
+        row.appendChild(
+            nameCell
+        );
+
+        row.appendChild(
+            priceCell
+        );
+
+        row.appendChild(
+            storeCell
+        );
+
+        row.appendChild(
+            statusCell
+        );
+
+        lastProductsTable.appendChild(
+            row
+        );
+
+    });
+
+}
+
+
+//==================================================
+// ACTIVITÉ RÉCENTE
+//==================================================
+
+function renderRecentActivity(){
+
+    if(!activityList) return;
+
+    activityList.innerHTML = "";
+
+
+    const recentOrders =
+        sortByNewest(orders)
+        .slice(0,6);
+
+
+    if(recentOrders.length === 0){
+
+        activityList.innerHTML = `
+
+            <div class="activityItem">
+
+                <div class="activityContent">
+
+                    <p>
+                        Nenhuma atividade recente.
+                    </p>
+
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    recentOrders.forEach(order=>{
+
+        const item =
+            document.createElement("div");
+
+        item.className =
+            "activityItem";
+
+
+        //==========================================
+        // ICONE
+        //==========================================
+
+        const icon =
+            document.createElement("div");
+
+        icon.className =
+            "activityIcon";
+
+        icon.textContent =
+            "🛒";
+
+
+        //==========================================
+        // CONTENU
+        //==========================================
+
+        const content =
+            document.createElement("div");
+
+        content.className =
+            "activityContent";
+
+
+        const title =
+            document.createElement("h4");
+
+        title.textContent =
+            "Novo pedido";
+
+
+        const text =
+            document.createElement("p");
+
+        text.textContent =
+            `${safeText(
+                order.customerName,
+                "Cliente"
+            )} realizou uma compra.`;
+
+
+        const time =
+            document.createElement("div");
+
+        time.className =
+            "activityTime";
+
+        time.textContent =
+            formatDateTime(
+                order.createdAt
+            );
+
+
+        content.appendChild(
+            title
+        );
+
+        content.appendChild(
+            text
+        );
+
+        content.appendChild(
+            time
+        );
+
+
+        item.appendChild(
+            icon
+        );
+
+        item.appendChild(
+            content
+        );
+
+
+        activityList.appendChild(
+            item
+        );
+
+    });
+
+}
+
+
+//==================================================
+// RENDU GLOBAL DES TABLEAUX
+//==================================================
+
+function renderDashboardTables(){
+
+    renderLastOrders();
+
+    renderLastMerchants();
+
+    renderLastProducts();
+
+    renderRecentActivity();
+
+}
+
+
+//==================================================
+// FIN BLOC 7
+//==================================================
