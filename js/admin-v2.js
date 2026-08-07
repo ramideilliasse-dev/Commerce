@@ -1857,3 +1857,394 @@ function updateFinancialSummary(){
 //==================================================
 // FIN BLOC 5
 //==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 6 — MONITORING + RAPPORTS
+//==================================================
+
+//==================================================
+// PRODUITS CRÉÉS AUJOURD'HUI
+//==================================================
+
+function calculateTodayProducts(){
+
+    return products.filter(product => {
+
+        return isToday(
+            product.createdAt
+        );
+
+    }).length;
+
+}
+
+
+//==================================================
+// COMMANDES CRÉÉES AUJOURD'HUI
+//==================================================
+
+function calculateTodayOrders(){
+
+    return orders.filter(order => {
+
+        return isToday(
+            order.createdAt
+        );
+
+    }).length;
+
+}
+
+
+//==================================================
+// COMMANDES DU MOIS
+//==================================================
+
+function calculateMonthlyOrders(){
+
+    return orders.filter(order => {
+
+        return isCurrentMonth(
+            order.createdAt
+        );
+
+    }).length;
+
+}
+
+
+//==================================================
+// VENTES DU MOIS
+//==================================================
+
+function calculateMonthlySales(){
+
+    let total = 0;
+
+    orders.forEach(order => {
+
+        if(!isCurrentMonth(order.createdAt)){
+
+            return;
+
+        }
+
+        total += safeNumber(
+            order.total
+        );
+
+    });
+
+    return total;
+
+}
+
+
+//==================================================
+// PRODUITS ACTIFS
+//==================================================
+
+function calculateActiveProducts(){
+
+    return products.filter(product => {
+
+        // Si le produit possède un statut,
+        // on respecte ce statut.
+
+        if(
+            product.status !== undefined &&
+            product.status !== null &&
+            product.status !== ""
+        ){
+
+            return (
+                product.status === "active" ||
+                product.status === "approved" ||
+                product.status === "published"
+            );
+
+        }
+
+        // Si aucun statut n'existe,
+        // le produit est considéré comme actif.
+
+        return true;
+
+    }).length;
+
+}
+
+
+//==================================================
+// COMMERÇANTS VÉRIFIÉS
+//==================================================
+
+function calculateVerifiedMerchants(){
+
+    return merchants.filter(merchant => {
+
+        return (
+
+            merchant.verified === true ||
+
+            merchant.isVerified === true ||
+
+            merchant.verificationStatus === "verified" ||
+
+            merchant.status === "verified"
+
+        );
+
+    }).length;
+
+}
+
+
+//==================================================
+// MISE À JOUR DU MONITORING
+//==================================================
+
+function updateMonitoring(){
+
+    const todayProductsCount =
+        calculateTodayProducts();
+
+    const todayOrdersCount =
+        calculateTodayOrders();
+
+
+    //==============================================
+    // UTILISATEURS
+    //==============================================
+
+    if(onlineUsers){
+
+        // Le système de présence réel sera connecté
+        // plus tard si la collection de présence existe.
+
+        onlineUsers.textContent =
+            "0";
+
+    }
+
+
+    //==============================================
+    // COMMERÇANTS
+    //==============================================
+
+    if(onlineMerchants){
+
+        onlineMerchants.textContent =
+            "0";
+
+    }
+
+
+    //==============================================
+    // PRODUITS DU JOUR
+    //==============================================
+
+    if(todayProducts){
+
+        todayProducts.textContent =
+            formatNumber(
+                todayProductsCount
+            );
+
+    }
+
+
+    //==============================================
+    // COMMANDES DU JOUR
+    //==============================================
+
+    if(todayOrders){
+
+        todayOrders.textContent =
+            formatNumber(
+                todayOrdersCount
+            );
+
+    }
+
+}
+
+
+//==================================================
+// MISE À JOUR DES RAPPORTS RAPIDES
+//==================================================
+
+function updateQuickReports(){
+
+    const monthSales =
+        calculateMonthlySales();
+
+    const monthOrders =
+        calculateMonthlyOrders();
+
+    const activeProductsCount =
+        calculateActiveProducts();
+
+    const verifiedMerchantsCount =
+        calculateVerifiedMerchants();
+
+
+    //==============================================
+    // VENTES DU MOIS
+    //==============================================
+
+    if(monthlySales){
+
+        monthlySales.textContent =
+            formatKz(monthSales);
+
+    }
+
+
+    //==============================================
+    // COMMANDES DU MOIS
+    //==============================================
+
+    if(monthlyOrders){
+
+        monthlyOrders.textContent =
+            formatNumber(monthOrders);
+
+    }
+
+
+    //==============================================
+    // PRODUITS ACTIFS
+    //==============================================
+
+    if(activeProducts){
+
+        activeProducts.textContent =
+            formatNumber(
+                activeProductsCount
+            );
+
+    }
+
+
+    //==============================================
+    // COMMERÇANTS VÉRIFIÉS
+    //==============================================
+
+    if(verifiedMerchants){
+
+        verifiedMerchants.textContent =
+            formatNumber(
+                verifiedMerchantsCount
+            );
+
+    }
+
+}
+
+
+//==================================================
+// NOUVEAUX UTILISATEURS AUJOURD'HUI
+//==================================================
+
+function calculateNewUsersToday(){
+
+    return users.filter(user => {
+
+        return isToday(
+            user.createdAt
+        );
+
+    }).length;
+
+}
+
+
+//==================================================
+// NOUVELLES COMMANDES AUJOURD'HUI
+//==================================================
+
+function calculateNewOrdersToday(){
+
+    return orders.filter(order => {
+
+        return isToday(
+            order.createdAt
+        );
+
+    }).length;
+
+}
+
+
+//==================================================
+// ACTIVITÉ DE LA PLATEFORME
+//==================================================
+
+function updatePlatformActivity(){
+
+    const usersToday =
+        calculateNewUsersToday();
+
+    const ordersToday =
+        calculateNewOrdersToday();
+
+
+    //==============================================
+    // VISITEURS
+    //==============================================
+
+    if(todayVisitors){
+
+        // Les visiteurs réels nécessitent
+        // une source de données dédiée.
+        // On ne fabrique donc pas de chiffre.
+
+        todayVisitors.textContent =
+            "0";
+
+    }
+
+
+    //==============================================
+    // VUES
+    //==============================================
+
+    if(pageViews){
+
+        pageViews.textContent =
+            "0";
+
+    }
+
+
+    //==============================================
+    // NOUVEAUX UTILISATEURS
+    //==============================================
+
+    if(newUsersToday){
+
+        newUsersToday.textContent =
+            formatNumber(usersToday);
+
+    }
+
+
+    //==============================================
+    // NOUVELLES COMMANDES
+    //==============================================
+
+    if(newOrdersToday){
+
+        newOrdersToday.textContent =
+            formatNumber(ordersToday);
+
+    }
+
+}
+
+
+//==================================================
+// FIN BLOC 6
+//==================================================
