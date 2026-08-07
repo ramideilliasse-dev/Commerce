@@ -1499,3 +1499,790 @@ loadMainData();
 console.log(
     "TOMA ADMIN V2 — BLOC 2 chargé."
 );
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// BLOC 3 / TABLEAUX + ACTIVITÉS + NOTIFICATIONS
+//==================================================
+
+//==================================================
+// TABLEAU — DERNIÈRES COMMANDES
+//==================================================
+
+function renderLatestOrders() {
+
+    if (!lastOrdersTable) return;
+
+    lastOrdersTable.innerHTML = "";
+
+    const latestOrders =
+        sortByDateDescending(
+            orders,
+            "createdAt"
+        ).slice(0, 10);
+
+    if (latestOrders.length === 0) {
+
+        lastOrdersTable.innerHTML = `
+
+            <tr>
+
+                <td colspan="5">
+
+                    Nenhum pedido encontrado.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+    }
+
+    latestOrders.forEach(order => {
+
+        const row =
+            document.createElement("tr");
+
+        const customerName =
+            order.customerName ||
+            order.customer ||
+            order.userName ||
+            "-";
+
+        const productName =
+            order.productName ||
+            order.product ||
+            "-";
+
+        const status =
+            order.status ||
+            "pending";
+
+        const total =
+            Number(order.total || 0);
+
+        row.innerHTML = `
+
+            <td>
+                ${escapeHTML(customerName)}
+            </td>
+
+            <td>
+                ${escapeHTML(productName)}
+            </td>
+
+            <td>
+                ${kz(total)}
+            </td>
+
+            <td>
+
+                <span class="status ${escapeHTML(status)}">
+
+                    ${escapeHTML(status)}
+
+                </span>
+
+            </td>
+
+            <td>
+                ${formatDate(order.createdAt)}
+            </td>
+
+        `;
+
+        lastOrdersTable.appendChild(row);
+
+    });
+
+}
+
+//==================================================
+// TABLEAU — DERNIERS COMMERÇANTS
+//==================================================
+
+function renderLatestMerchants() {
+
+    if (!lastMerchantsTable) return;
+
+    lastMerchantsTable.innerHTML = "";
+
+    const latestMerchants =
+        sortByDateDescending(
+            merchants,
+            "createdAt"
+        ).slice(0, 10);
+
+    if (latestMerchants.length === 0) {
+
+        lastMerchantsTable.innerHTML = `
+
+            <tr>
+
+                <td colspan="5">
+
+                    Nenhum comerciante encontrado.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+    }
+
+    latestMerchants.forEach(merchant => {
+
+        const row =
+            document.createElement("tr");
+
+        const photo =
+            merchant.photo ||
+            merchant.avatar ||
+            merchant.image ||
+            "images/avatar.png";
+
+        const name =
+            merchant.name ||
+            `${merchant.firstName || ""} ${merchant.lastName || ""}`.trim() ||
+            "-";
+
+        const shopName =
+            merchant.shopName ||
+            merchant.storeName ||
+            merchant.store ||
+            "-";
+
+        const status =
+            merchant.status ||
+            "pending";
+
+        row.innerHTML = `
+
+            <td>
+
+                <img
+
+                    src="${escapeAttribute(photo)}"
+
+                    class="tableAvatar"
+
+                    alt="Comerciante"
+
+                    onerror="this.src='images/avatar.png'"
+
+                >
+
+            </td>
+
+            <td>
+
+                ${escapeHTML(name)}
+
+            </td>
+
+            <td>
+
+                ${escapeHTML(shopName)}
+
+            </td>
+
+            <td>
+
+                <span class="status ${escapeHTML(status)}">
+
+                    ${escapeHTML(status)}
+
+                </span>
+
+            </td>
+
+            <td>
+
+                <button
+
+                    class="viewMerchant"
+
+                    data-id="${escapeAttribute(merchant.id)}">
+
+                    Ver
+
+                </button>
+
+            </td>
+
+        `;
+
+        lastMerchantsTable.appendChild(row);
+
+    });
+
+    attachMerchantButtons();
+
+}
+
+//==================================================
+// TABLEAU — DERNIERS PRODUITS
+//==================================================
+
+function renderLatestProducts() {
+
+    if (!lastProductsTable) return;
+
+    lastProductsTable.innerHTML = "";
+
+    const latestProducts =
+        sortByDateDescending(
+            products,
+            "createdAt"
+        ).slice(0, 10);
+
+    if (latestProducts.length === 0) {
+
+        lastProductsTable.innerHTML = `
+
+            <tr>
+
+                <td colspan="5">
+
+                    Nenhum produto encontrado.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+    }
+
+    latestProducts.forEach(product => {
+
+        const row =
+            document.createElement("tr");
+
+        const image =
+            product.image ||
+            product.images?.[0] ||
+            product.photo ||
+            "images/product.png";
+
+        const name =
+            product.name ||
+            product.title ||
+            "-";
+
+        const price =
+            Number(product.price || 0);
+
+        const storeName =
+            product.storeName ||
+            product.shopName ||
+            product.merchantName ||
+            "-";
+
+        row.innerHTML = `
+
+            <td>
+
+                <img
+
+                    src="${escapeAttribute(image)}"
+
+                    class="tableAvatar"
+
+                    alt="Produto"
+
+                    onerror="this.src='images/product.png'"
+
+                >
+
+            </td>
+
+            <td>
+
+                ${escapeHTML(name)}
+
+            </td>
+
+            <td>
+
+                ${kz(price)}
+
+            </td>
+
+            <td>
+
+                ${escapeHTML(storeName)}
+
+            </td>
+
+            <td>
+
+                <span class="status approved">
+
+                    Publicado
+
+                </span>
+
+            </td>
+
+        `;
+
+        lastProductsTable.appendChild(row);
+
+    });
+
+}
+
+//==================================================
+// PROTECTION HTML
+//==================================================
+
+function escapeHTML(value) {
+
+    if (value === null ||
+        value === undefined) {
+
+        return "";
+
+    }
+
+    return String(value)
+
+        .replace(/&/g, "&amp;")
+
+        .replace(/</g, "&lt;")
+
+        .replace(/>/g, "&gt;")
+
+        .replace(/"/g, "&quot;")
+
+        .replace(/'/g, "&#039;");
+
+}
+
+//==================================================
+// PROTECTION ATTRIBUT
+//==================================================
+
+function escapeAttribute(value) {
+
+    return escapeHTML(value);
+
+}
+
+//==================================================
+// BOUTONS — PROFIL COMMERÇANT
+//==================================================
+
+function attachMerchantButtons() {
+
+    document
+        .querySelectorAll(".viewMerchant")
+        .forEach(button => {
+
+            button.onclick = () => {
+
+                const id =
+                    button.dataset.id;
+
+                if (!id) {
+
+                    showToast(
+                        "Comerciante não encontrado."
+                    );
+
+                    return;
+                }
+
+                window.location.href =
+                    `merchant-profile.html?id=${encodeURIComponent(id)}`;
+
+            };
+
+        });
+
+}
+
+//==================================================
+// ACTIVITÉ RÉCENTE
+//==================================================
+
+function renderRecentActivity() {
+
+    if (!activityList) return;
+
+    activityList.innerHTML = "";
+
+    const latestOrders =
+        sortByDateDescending(
+            orders,
+            "createdAt"
+        ).slice(0, 6);
+
+    if (latestOrders.length === 0) {
+
+        activityList.innerHTML = `
+
+            <div class="activityItem">
+
+                <div class="activityIcon">
+
+                    📭
+
+                </div>
+
+                <div class="activityContent">
+
+                    <h4>
+
+                        Nenhuma atividade
+
+                    </h4>
+
+                    <p>
+
+                        Ainda não existem pedidos recentes.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+    latestOrders.forEach(order => {
+
+        const customerName =
+            order.customerName ||
+            order.customer ||
+            order.userName ||
+            "Cliente";
+
+        const productName =
+            order.productName ||
+            order.product ||
+            "produto";
+
+        const item =
+            document.createElement("div");
+
+        item.className =
+            "activityItem";
+
+        item.innerHTML = `
+
+            <div class="activityIcon">
+
+                🛒
+
+            </div>
+
+            <div class="activityContent">
+
+                <h4>
+
+                    Novo pedido
+
+                </h4>
+
+                <p>
+
+                    ${escapeHTML(customerName)}
+
+                    comprou
+
+                    ${escapeHTML(productName)}
+
+                </p>
+
+                <div class="activityTime">
+
+                    ${formatDate(order.createdAt)}
+
+                </div>
+
+            </div>
+
+        `;
+
+        activityList.appendChild(item);
+
+    });
+
+}
+
+//==================================================
+// CONSTRUCTION DES NOTIFICATIONS
+//==================================================
+
+function buildNotifications() {
+
+    notifications = [];
+
+    //==============================================
+    // DEMANDES DE COMMERÇANTS
+    //==============================================
+
+    merchantRequests.forEach(merchant => {
+
+        notifications.push({
+
+            type: "merchant",
+
+            icon: "📋",
+
+            title:
+                "Novo pedido de comerciante",
+
+            text:
+                `${merchant.name || "Comerciante"} pediu aprovação.`,
+
+            date:
+                merchant.createdAt || null
+
+        });
+
+    });
+
+    //==============================================
+    // COMMANDES
+    //==============================================
+
+    sortByDateDescending(
+        orders,
+        "createdAt"
+    )
+    .slice(0, 5)
+    .forEach(order => {
+
+        notifications.push({
+
+            type: "order",
+
+            icon: "🛒",
+
+            title:
+                "Novo Pedido",
+
+            text:
+                `${order.customerName || "Cliente"} realizou uma compra.`,
+
+            date:
+                order.createdAt || null
+
+        });
+
+    });
+
+    //==============================================
+    // PRODUITS
+    //==============================================
+
+    sortByDateDescending(
+        products,
+        "createdAt"
+    )
+    .slice(0, 5)
+    .forEach(product => {
+
+        notifications.push({
+
+            type: "product",
+
+            icon: "📦",
+
+            title:
+                "Novo Produto",
+
+            text:
+                `${product.name || "Produto"} foi publicado.`,
+
+            date:
+                product.createdAt || null
+
+        });
+
+    });
+
+    //==============================================
+    // TRIER TOUTES LES NOTIFICATIONS
+    //==============================================
+
+    notifications.sort((a, b) => {
+
+        return getTimestamp(b.date)
+             - getTimestamp(a.date);
+
+    });
+
+}
+
+//==================================================
+// AFFICHER LES NOTIFICATIONS
+//==================================================
+
+function renderNotifications() {
+
+    if (!notificationsList) return;
+
+    notificationsList.innerHTML = "";
+
+    if (notifications.length === 0) {
+
+        notificationsList.innerHTML = `
+
+            <div class="notificationItem">
+
+                <div class="notificationIcon">
+
+                    🔔
+
+                </div>
+
+                <div class="notificationContent">
+
+                    <h4>
+
+                        Nenhuma notificação
+
+                    </h4>
+
+                    <p>
+
+                        Não existem novas atividades.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        `;
+
+        if (notificationsBadge) {
+
+            notificationsBadge.textContent = "0";
+
+        }
+
+        return;
+    }
+
+    notifications.forEach(notification => {
+
+        const item =
+            document.createElement("div");
+
+        item.className =
+            "notificationItem";
+
+        item.innerHTML = `
+
+            <div class="notificationIcon">
+
+                ${notification.icon}
+
+            </div>
+
+            <div class="notificationContent">
+
+                <h4>
+
+                    ${escapeHTML(
+                        notification.title
+                    )}
+
+                </h4>
+
+                <p>
+
+                    ${escapeHTML(
+                        notification.text
+                    )}
+
+                </p>
+
+                <div class="notificationTime">
+
+                    ${formatDate(
+                        notification.date
+                    )}
+
+                </div>
+
+            </div>
+
+        `;
+
+        notificationsList.appendChild(item);
+
+    });
+
+    if (notificationsBadge) {
+
+        notificationsBadge.textContent =
+            numberFormat(
+                notifications.length
+            );
+
+    }
+
+}
+
+//==================================================
+// RENDU COMPLET DES TABLEAUX
+//==================================================
+
+function renderDashboardTables() {
+
+    renderLatestOrders();
+
+    renderLatestMerchants();
+
+    renderLatestProducts();
+
+    renderRecentActivity();
+
+}
+
+//==================================================
+// RENDU COMPLET DES NOTIFICATIONS
+//==================================================
+
+function renderDashboardNotifications() {
+
+    buildNotifications();
+
+    renderNotifications();
+
+}
+
+//==================================================
+// RAFRAÎCHIR LES DONNÉES VISUELLES
+//==================================================
+
+function renderDashboardContent() {
+
+    renderDashboardTables();
+
+    renderDashboardNotifications();
+
+    updateSyncTime();
+
+}
+
+//==================================================
+// FIN BLOC 3
+//==================================================
+
+console.log(
+    "TOMA ADMIN V2 — BLOC 3 chargé."
+);
