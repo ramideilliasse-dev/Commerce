@@ -3489,3 +3489,790 @@ onSnapshot(
 //==================================================
 // FIN BLOC 8
 //==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 9 — GRAPHIQUES DU DASHBOARD
+//==================================================
+
+//==================================================
+// VERIFICATION DE CHART.JS
+//==================================================
+
+function chartLibraryAvailable(){
+
+    if(typeof window.Chart === "undefined"){
+
+        addSystemLog(
+            "Chart.js não está disponível.",
+            "warning"
+        );
+
+        return false;
+
+    }
+
+    return true;
+
+}
+
+
+//==================================================
+// DETRUIRE UN GRAPHIQUE EXISTANT
+//==================================================
+
+function destroyChart(chart){
+
+    if(!chart){
+
+        return null;
+
+    }
+
+    try{
+
+        chart.destroy();
+
+    }
+    catch(error){
+
+        registerError(
+            error,
+            "Erro ao destruir gráfico."
+        );
+
+    }
+
+    return null;
+
+}
+
+
+//==================================================
+// PREPARER LES DONNEES DES VENTES
+//==================================================
+
+function prepareSalesChartData(){
+
+    const salesByDate = {};
+
+
+    orders.forEach(order=>{
+
+        const date =
+            getDateValue(
+                order.createdAt
+            );
+
+        if(!date){
+
+            return;
+
+        }
+
+
+        const key =
+            date.toLocaleDateString(
+                "pt-PT",
+                {
+                    day:"2-digit",
+                    month:"2-digit"
+                }
+            );
+
+
+        if(!salesByDate[key]){
+
+            salesByDate[key] = 0;
+
+        }
+
+
+        salesByDate[key] +=
+            safeNumber(
+                order.total
+            );
+
+    });
+
+
+    const labels =
+        Object.keys(salesByDate);
+
+
+    const values =
+        labels.map(
+            label =>
+                salesByDate[label]
+        );
+
+
+    return {
+
+        labels,
+
+        values
+
+    };
+
+}
+
+
+//==================================================
+// PREPARER LES DONNEES DES COMMANDES
+//==================================================
+
+function prepareOrdersChartData(){
+
+    const ordersByDate = {};
+
+
+    orders.forEach(order=>{
+
+        const date =
+            getDateValue(
+                order.createdAt
+            );
+
+        if(!date){
+
+            return;
+
+        }
+
+
+        const key =
+            date.toLocaleDateString(
+                "pt-PT",
+                {
+                    day:"2-digit",
+                    month:"2-digit"
+                }
+            );
+
+
+        if(!ordersByDate[key]){
+
+            ordersByDate[key] = 0;
+
+        }
+
+
+        ordersByDate[key]++;
+
+    });
+
+
+    const labels =
+        Object.keys(ordersByDate);
+
+
+    const values =
+        labels.map(
+            label =>
+                ordersByDate[label]
+        );
+
+
+    return {
+
+        labels,
+
+        values
+
+    };
+
+}
+
+
+//==================================================
+// PREPARER LES DONNEES UTILISATEURS
+//==================================================
+
+function prepareUsersChartData(){
+
+    const usersByDate = {};
+
+
+    users.forEach(user=>{
+
+        const date =
+            getDateValue(
+                user.createdAt
+            );
+
+        if(!date){
+
+            return;
+
+        }
+
+
+        const key =
+            date.toLocaleDateString(
+                "pt-PT",
+                {
+                    day:"2-digit",
+                    month:"2-digit"
+                }
+            );
+
+
+        if(!usersByDate[key]){
+
+            usersByDate[key] = 0;
+
+        }
+
+
+        usersByDate[key]++;
+
+    });
+
+
+    const labels =
+        Object.keys(usersByDate);
+
+
+    const values =
+        labels.map(
+            label =>
+                usersByDate[label]
+        );
+
+
+    return {
+
+        labels,
+
+        values
+
+    };
+
+}
+
+
+//==================================================
+// PREPARER LES DONNEES DES COMMISSIONS
+//==================================================
+
+function prepareCommissionChartData(){
+
+    const commissionByDate = {};
+
+
+    orders.forEach(order=>{
+
+        const date =
+            getDateValue(
+                order.createdAt
+            );
+
+        if(!date){
+
+            return;
+
+        }
+
+
+        const key =
+            date.toLocaleDateString(
+                "pt-PT",
+                {
+                    day:"2-digit",
+                    month:"2-digit"
+                }
+            );
+
+
+        if(!commissionByDate[key]){
+
+            commissionByDate[key] = 0;
+
+        }
+
+
+        commissionByDate[key] +=
+            safeNumber(
+                order.total
+            ) * COMMISSION_RATE;
+
+    });
+
+
+    const labels =
+        Object.keys(commissionByDate);
+
+
+    const values =
+        labels.map(
+            label =>
+                commissionByDate[label]
+        );
+
+
+    return {
+
+        labels,
+
+        values
+
+    };
+
+}
+
+
+//==================================================
+// GRAPHIQUE DES VENTES
+//==================================================
+
+function renderSalesChart(){
+
+    if(!salesChartCanvas){
+
+        return;
+
+    }
+
+
+    if(!chartLibraryAvailable()){
+
+        return;
+
+    }
+
+
+    salesChart =
+        destroyChart(
+            salesChart
+        );
+
+
+    const data =
+        prepareSalesChartData();
+
+
+    salesChart =
+        new window.Chart(
+            salesChartCanvas,
+            {
+
+                type:"line",
+
+                data:{
+
+                    labels:
+                        data.labels,
+
+                    datasets:[{
+
+                        label:
+                            "Vendas",
+
+                        data:
+                            data.values,
+
+                        tension:
+                            0.35,
+
+                        fill:
+                            true
+
+                    }]
+
+                },
+
+                options:{
+
+                    responsive:true,
+
+                    maintainAspectRatio:false,
+
+                    plugins:{
+
+                        legend:{
+
+                            display:true
+
+                        }
+
+                    },
+
+                    scales:{
+
+                        y:{
+
+                            beginAtZero:true,
+
+                            ticks:{
+
+                                callback:
+                                    function(value){
+
+                                        return formatKz(
+                                            value
+                                        );
+
+                                    }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+}
+
+
+//==================================================
+// GRAPHIQUE DES COMMANDES
+//==================================================
+
+function renderOrdersChart(){
+
+    if(!ordersChartCanvas){
+
+        return;
+
+    }
+
+
+    if(!chartLibraryAvailable()){
+
+        return;
+
+    }
+
+
+    ordersChart =
+        destroyChart(
+            ordersChart
+        );
+
+
+    const data =
+        prepareOrdersChartData();
+
+
+    ordersChart =
+        new window.Chart(
+            ordersChartCanvas,
+            {
+
+                type:"bar",
+
+                data:{
+
+                    labels:
+                        data.labels,
+
+                    datasets:[{
+
+                        label:
+                            "Pedidos",
+
+                        data:
+                            data.values
+
+                    }]
+
+                },
+
+                options:{
+
+                    responsive:true,
+
+                    maintainAspectRatio:false,
+
+                    plugins:{
+
+                        legend:{
+
+                            display:true
+
+                        }
+
+                    },
+
+                    scales:{
+
+                        y:{
+
+                            beginAtZero:true,
+
+                            ticks:{
+
+                                precision:0
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        );
+
+}
+
+
+//==================================================
+// GRAPHIQUE DES UTILISATEURS
+//==================================================
+
+function renderUsersChart(){
+
+    if(!usersChartCanvas){
+
+        return;
+
+    }
+
+
+    if(!chartLibraryAvailable()){
+
+        return;
+
+    }
+
+
+    usersChart =
+        destroyChart(
+            usersChart
+        );
+
+
+    const data =
+        prepareUsersChartData();
+
+
+    usersChart =
+        new window.Chart(
+            usersChartCanvas,
+            {
+
+                type:"line",
+
+                data:{
+
+                    labels:
+                        data.labels,
+
+                    datasets:[{
+
+                        label:
+                            "Novos utilizadores",
+
+                        data:
+                            data.values,
+
+                        tension:
+                            0.35,
+
+                        fill:
+                            true
+
+                    }]
+
+                },
+
+                options:{
+
+                    responsive:true,
+
+                    maintainAspectRatio:false,
+
+                    plugins:{
+
+                        legend:{
+
+                            display:true
+
+                        }
+
+                    },
+
+                    scales:{
+
+                        y:{
+
+                            beginAtZero:true,
+
+                            ticks:{
+
+                                precision:0
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        );
+
+}
+
+
+//==================================================
+// GRAPHIQUE DES COMMISSIONS
+//==================================================
+
+function renderCommissionChart(){
+
+    if(!commissionChartCanvas){
+
+        return;
+
+    }
+
+
+    if(!chartLibraryAvailable()){
+
+        return;
+
+    }
+
+
+    commissionChart =
+        destroyChart(
+            commissionChart
+        );
+
+
+    const data =
+        prepareCommissionChartData();
+
+
+    commissionChart =
+        new window.Chart(
+            commissionChartCanvas,
+            {
+
+                type:"line",
+
+                data:{
+
+                    labels:
+                        data.labels,
+
+                    datasets:[{
+
+                        label:
+                            "Comissão TOMA",
+
+                        data:
+                            data.values,
+
+                        tension:
+                            0.35,
+
+                        fill:
+                            true
+
+                    }]
+
+                },
+
+                options:{
+
+                    responsive:true,
+
+                    maintainAspectRatio:false,
+
+                    plugins:{
+
+                        legend:{
+
+                            display:true
+
+                        }
+
+                    },
+
+                    scales:{
+
+                        y:{
+
+                            beginAtZero:true,
+
+                            ticks:{
+
+                                callback:
+                                    function(value){
+
+                                        return formatKz(
+                                            value
+                                        );
+
+                                    }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        );
+
+}
+
+
+//==================================================
+// RENDU DE TOUS LES GRAPHIQUES
+//==================================================
+
+function renderAllCharts(){
+
+    renderSalesChart();
+
+    renderOrdersChart();
+
+    renderUsersChart();
+
+    renderCommissionChart();
+
+}
+
+
+//==================================================
+// CHANGEMENT DE PERIODE
+//==================================================
+
+salesPeriod?.addEventListener(
+    "change",
+    ()=>{
+
+        renderSalesChart();
+
+        renderOrdersChart();
+
+        renderCommissionChart();
+
+        addSystemLog(
+            "Período dos gráficos atualizado.",
+            "info"
+        );
+
+    }
+);
+
+
+//==================================================
+// FIN BLOC 9
+//==================================================
