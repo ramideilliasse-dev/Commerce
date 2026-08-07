@@ -3492,785 +3492,211 @@ onSnapshot(
 //==================================================
 // TOMA ADMIN V2 PREMIUM
 // ADMIN-V2.JS
-// BLOC 9 — GRAPHIQUES DU DASHBOARD
+// BLOC 9 — ORCHESTRATION DU DASHBOARD
 //==================================================
 
 //==================================================
-// VERIFICATION DE CHART.JS
+// RAFRAICHISSEMENT COMPLET DU DASHBOARD
 //==================================================
 
-function chartLibraryAvailable(){
-
-    if(typeof window.Chart === "undefined"){
-
-        addSystemLog(
-            "Chart.js não está disponível.",
-            "warning"
-        );
-
-        return false;
-
-    }
-
-    return true;
-
-}
-
-
-//==================================================
-// DETRUIRE UN GRAPHIQUE EXISTANT
-//==================================================
-
-function destroyChart(chart){
-
-    if(!chart){
-
-        return null;
-
-    }
+function refreshDashboardContent(){
 
     try{
 
-        chart.destroy();
+        //==========================================
+        // COMPTEURS
+        //==========================================
+
+        updateDashboardCounters();
+
+
+        //==========================================
+        // FINANCES
+        //==========================================
+
+        updateFinancialSummary();
+
+
+        //==========================================
+        // MONITORING
+        //==========================================
+
+        updateMonitoring();
+
+
+        //==========================================
+        // RAPPORTS
+        //==========================================
+
+        updateQuickReports();
+
+
+        //==========================================
+        // ACTIVITÉ
+        //==========================================
+
+        updatePlatformActivity();
+
+
+        //==========================================
+        // TABLEAUX
+        //==========================================
+
+        renderDashboardTables();
+
+
+        //==========================================
+        // GRAPHIQUES
+        //==========================================
+
+        renderDashboardCharts();
+
+
+        //==========================================
+        // NOTIFICATIONS
+        //==========================================
+
+        renderNotifications();
+
+        updateNotificationsBadge();
+
+
+        //==========================================
+        // SYSTEME
+        //==========================================
+
+        updateLastUpdate();
+
+
+        addSystemLog(
+            "Dashboard atualizado com sucesso.",
+            "success"
+        );
 
     }
     catch(error){
 
         registerError(
             error,
-            "Erro ao destruir gráfico."
+            "Erro ao atualizar o dashboard."
         );
 
     }
-
-    return null;
 
 }
 
 
 //==================================================
-// PREPARER LES DONNEES DES VENTES
+// BOUTON ACTUALISER
 //==================================================
 
-function prepareSalesChartData(){
+refreshDashboard?.addEventListener(
+    "click",
+    async ()=>{
 
-    const salesByDate = {};
-
-
-    orders.forEach(order=>{
-
-        const date =
-            getDateValue(
-                order.createdAt
-            );
-
-        if(!date){
+        if(dashboardLoading){
 
             return;
 
         }
 
+        try{
 
-        const key =
-            date.toLocaleDateString(
-                "pt-PT",
-                {
-                    day:"2-digit",
-                    month:"2-digit"
-                }
+            showLoader();
+
+            addSystemLog(
+                "Atualização manual iniciada.",
+                "info"
             );
 
 
-        if(!salesByDate[key]){
+            await loadAllDashboardData();
 
-            salesByDate[key] = 0;
+
+            refreshDashboardContent();
+
+
+            showToast(
+                "Dashboard atualizado."
+            );
 
         }
+        catch(error){
 
-
-        salesByDate[key] +=
-            safeNumber(
-                order.total
+            registerError(
+                error,
+                "Erro durante a atualização manual."
             );
 
-    });
-
-
-    const labels =
-        Object.keys(salesByDate);
-
-
-    const values =
-        labels.map(
-            label =>
-                salesByDate[label]
-        );
-
-
-    return {
-
-        labels,
-
-        values
-
-    };
-
-}
-
-
-//==================================================
-// PREPARER LES DONNEES DES COMMANDES
-//==================================================
-
-function prepareOrdersChartData(){
-
-    const ordersByDate = {};
-
-
-    orders.forEach(order=>{
-
-        const date =
-            getDateValue(
-                order.createdAt
+            showToast(
+                "Erro ao atualizar o dashboard."
             );
-
-        if(!date){
-
-            return;
 
         }
+        finally{
 
-
-        const key =
-            date.toLocaleDateString(
-                "pt-PT",
-                {
-                    day:"2-digit",
-                    month:"2-digit"
-                }
-            );
-
-
-        if(!ordersByDate[key]){
-
-            ordersByDate[key] = 0;
+            hideLoader();
 
         }
-
-
-        ordersByDate[key]++;
-
-    });
-
-
-    const labels =
-        Object.keys(ordersByDate);
-
-
-    const values =
-        labels.map(
-            label =>
-                ordersByDate[label]
-        );
-
-
-    return {
-
-        labels,
-
-        values
-
-    };
-
-}
-
-
-//==================================================
-// PREPARER LES DONNEES UTILISATEURS
-//==================================================
-
-function prepareUsersChartData(){
-
-    const usersByDate = {};
-
-
-    users.forEach(user=>{
-
-        const date =
-            getDateValue(
-                user.createdAt
-            );
-
-        if(!date){
-
-            return;
-
-        }
-
-
-        const key =
-            date.toLocaleDateString(
-                "pt-PT",
-                {
-                    day:"2-digit",
-                    month:"2-digit"
-                }
-            );
-
-
-        if(!usersByDate[key]){
-
-            usersByDate[key] = 0;
-
-        }
-
-
-        usersByDate[key]++;
-
-    });
-
-
-    const labels =
-        Object.keys(usersByDate);
-
-
-    const values =
-        labels.map(
-            label =>
-                usersByDate[label]
-        );
-
-
-    return {
-
-        labels,
-
-        values
-
-    };
-
-}
-
-
-//==================================================
-// PREPARER LES DONNEES DES COMMISSIONS
-//==================================================
-
-function prepareCommissionChartData(){
-
-    const commissionByDate = {};
-
-
-    orders.forEach(order=>{
-
-        const date =
-            getDateValue(
-                order.createdAt
-            );
-
-        if(!date){
-
-            return;
-
-        }
-
-
-        const key =
-            date.toLocaleDateString(
-                "pt-PT",
-                {
-                    day:"2-digit",
-                    month:"2-digit"
-                }
-            );
-
-
-        if(!commissionByDate[key]){
-
-            commissionByDate[key] = 0;
-
-        }
-
-
-        commissionByDate[key] +=
-            safeNumber(
-                order.total
-            ) * COMMISSION_RATE;
-
-    });
-
-
-    const labels =
-        Object.keys(commissionByDate);
-
-
-    const values =
-        labels.map(
-            label =>
-                commissionByDate[label]
-        );
-
-
-    return {
-
-        labels,
-
-        values
-
-    };
-
-}
-
-
-//==================================================
-// GRAPHIQUE DES VENTES
-//==================================================
-
-function renderSalesChart(){
-
-    if(!salesChartCanvas){
-
-        return;
-
-    }
-
-
-    if(!chartLibraryAvailable()){
-
-        return;
-
-    }
-
-
-    salesChart =
-        destroyChart(
-            salesChart
-        );
-
-
-    const data =
-        prepareSalesChartData();
-
-
-    salesChart =
-        new window.Chart(
-            salesChartCanvas,
-            {
-
-                type:"line",
-
-                data:{
-
-                    labels:
-                        data.labels,
-
-                    datasets:[{
-
-                        label:
-                            "Vendas",
-
-                        data:
-                            data.values,
-
-                        tension:
-                            0.35,
-
-                        fill:
-                            true
-
-                    }]
-
-                },
-
-                options:{
-
-                    responsive:true,
-
-                    maintainAspectRatio:false,
-
-                    plugins:{
-
-                        legend:{
-
-                            display:true
-
-                        }
-
-                    },
-
-                    scales:{
-
-                        y:{
-
-                            beginAtZero:true,
-
-                            ticks:{
-
-                                callback:
-                                    function(value){
-
-                                        return formatKz(
-                                            value
-                                        );
-
-                                    }
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-            }
-        );
-
-}
-
-
-//==================================================
-// GRAPHIQUE DES COMMANDES
-//==================================================
-
-function renderOrdersChart(){
-
-    if(!ordersChartCanvas){
-
-        return;
-
-    }
-
-
-    if(!chartLibraryAvailable()){
-
-        return;
-
-    }
-
-
-    ordersChart =
-        destroyChart(
-            ordersChart
-        );
-
-
-    const data =
-        prepareOrdersChartData();
-
-
-    ordersChart =
-        new window.Chart(
-            ordersChartCanvas,
-            {
-
-                type:"bar",
-
-                data:{
-
-                    labels:
-                        data.labels,
-
-                    datasets:[{
-
-                        label:
-                            "Pedidos",
-
-                        data:
-                            data.values
-
-                    }]
-
-                },
-
-                options:{
-
-                    responsive:true,
-
-                    maintainAspectRatio:false,
-
-                    plugins:{
-
-                        legend:{
-
-                            display:true
-
-                        }
-
-                    },
-
-                    scales:{
-
-                        y:{
-
-                            beginAtZero:true,
-
-                            ticks:{
-
-                                precision:0
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-        );
-
-}
-
-
-//==================================================
-// GRAPHIQUE DES UTILISATEURS
-//==================================================
-
-function renderUsersChart(){
-
-    if(!usersChartCanvas){
-
-        return;
-
-    }
-
-
-    if(!chartLibraryAvailable()){
-
-        return;
-
-    }
-
-
-    usersChart =
-        destroyChart(
-            usersChart
-        );
-
-
-    const data =
-        prepareUsersChartData();
-
-
-    usersChart =
-        new window.Chart(
-            usersChartCanvas,
-            {
-
-                type:"line",
-
-                data:{
-
-                    labels:
-                        data.labels,
-
-                    datasets:[{
-
-                        label:
-                            "Novos utilizadores",
-
-                        data:
-                            data.values,
-
-                        tension:
-                            0.35,
-
-                        fill:
-                            true
-
-                    }]
-
-                },
-
-                options:{
-
-                    responsive:true,
-
-                    maintainAspectRatio:false,
-
-                    plugins:{
-
-                        legend:{
-
-                            display:true
-
-                        }
-
-                    },
-
-                    scales:{
-
-                        y:{
-
-                            beginAtZero:true,
-
-                            ticks:{
-
-                                precision:0
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-        );
-
-}
-
-
-//==================================================
-// GRAPHIQUE DES COMMISSIONS
-//==================================================
-
-function renderCommissionChart(){
-
-    if(!commissionChartCanvas){
-
-        return;
-
-    }
-
-
-    if(!chartLibraryAvailable()){
-
-        return;
-
-    }
-
-
-    commissionChart =
-        destroyChart(
-            commissionChart
-        );
-
-
-    const data =
-        prepareCommissionChartData();
-
-
-    commissionChart =
-        new window.Chart(
-            commissionChartCanvas,
-            {
-
-                type:"line",
-
-                data:{
-
-                    labels:
-                        data.labels,
-
-                    datasets:[{
-
-                        label:
-                            "Comissão TOMA",
-
-                        data:
-                            data.values,
-
-                        tension:
-                            0.35,
-
-                        fill:
-                            true
-
-                    }]
-
-                },
-
-                options:{
-
-                    responsive:true,
-
-                    maintainAspectRatio:false,
-
-                    plugins:{
-
-                        legend:{
-
-                            display:true
-
-                        }
-
-                    },
-
-                    scales:{
-
-                        y:{
-
-                            beginAtZero:true,
-
-                            ticks:{
-
-                                callback:
-                                    function(value){
-
-                                        return formatKz(
-                                            value
-                                        );
-
-                                    }
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-        );
-
-}
-
-
-//==================================================
-// RENDU DE TOUS LES GRAPHIQUES
-//==================================================
-
-function renderAllCharts(){
-
-    renderSalesChart();
-
-    renderOrdersChart();
-
-    renderUsersChart();
-
-    renderCommissionChart();
-
-}
-
-
-//==================================================
-// CHANGEMENT DE PERIODE
-//==================================================
-
-salesPeriod?.addEventListener(
-    "change",
-    ()=>{
-
-        renderSalesChart();
-
-        renderOrdersChart();
-
-        renderCommissionChart();
-
-        addSystemLog(
-            "Período dos gráficos atualizado.",
-            "info"
-        );
 
     }
 );
+
+
+//==================================================
+// INITIALISATION DU DASHBOARD
+//==================================================
+
+async function initializeDashboard(){
+
+    if(dashboardLoading){
+
+        return;
+
+    }
+
+
+    try{
+
+        showLoader();
+
+
+        addSystemLog(
+            "Inicialização do dashboard.",
+            "info"
+        );
+
+
+        await loadAllDashboardData();
+
+
+        refreshDashboardContent();
+
+
+        dashboardInitialized = true;
+
+
+        addSystemLog(
+            "Dashboard pronto.",
+            "success"
+        );
+
+    }
+    catch(error){
+
+        registerError(
+            error,
+            "Erro na inicialização do dashboard."
+        );
+
+    }
+    finally{
+
+        hideLoader();
+
+    }
+
+}
 
 
 //==================================================
