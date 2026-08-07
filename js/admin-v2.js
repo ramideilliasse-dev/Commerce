@@ -894,3 +894,294 @@ initializeDashboardInfo();
 //==================================================
 // FIN BLOC 2
 //==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 3 — AUTHENTIFICATION + SESSION ADMIN
+//==================================================
+
+//==================================================
+// VERIFICATION DE L'AUTHENTIFICATION
+//==================================================
+
+auth.onAuthStateChanged(async (user)=>{
+
+    //==============================================
+    // AUCUN UTILISATEUR CONNECTÉ
+    //==============================================
+
+    if(!user){
+
+        addSystemLog(
+            "Nenhum administrador autenticado.",
+            "error"
+        );
+
+        if(sessionStatus){
+
+            sessionStatus.textContent =
+                "Inativa";
+
+        }
+
+        if(authStatus){
+
+            authStatus.textContent =
+                "Offline";
+
+        }
+
+        // Redirection vers la page de connexion
+        // uniquement si elle existe dans le projet.
+
+        window.location.href =
+            "admin-login.html";
+
+        return;
+
+    }
+
+
+    //==============================================
+    // UTILISATEUR CONNECTÉ
+    //==============================================
+
+    if(authStatus){
+
+        authStatus.textContent =
+            "Online";
+
+    }
+
+    if(sessionStatus){
+
+        sessionStatus.textContent =
+            "Ativa";
+
+    }
+
+    if(connectedAdmin){
+
+        connectedAdmin.textContent =
+            user.email || "Administrador";
+
+    }
+
+
+    //==============================================
+    // DERNIER LOGIN
+    //==============================================
+
+    if(user.metadata?.lastSignInTime){
+
+        lastLogin.textContent =
+            formatDateTime(
+                user.metadata.lastSignInTime
+            );
+
+    }
+
+
+    //==============================================
+    // CHARGER LE PROFIL ADMIN FIRESTORE
+    //==============================================
+
+    try{
+
+        const adminRef =
+            doc(db,"users",user.uid);
+
+        const adminSnapshot =
+            await getDoc(adminRef);
+
+
+        if(adminSnapshot.exists()){
+
+            const adminData =
+                adminSnapshot.data();
+
+
+            //======================================
+            // NOM ADMIN
+            //======================================
+
+            const name =
+                adminData.name ||
+                adminData.firstName ||
+                user.displayName ||
+                "Ramide";
+
+
+            if(adminName){
+
+                adminName.textContent =
+                    name;
+
+            }
+
+            if(connectedAdmin){
+
+                connectedAdmin.textContent =
+                    name;
+
+            }
+
+
+            //======================================
+            // PHOTO ADMIN
+            //======================================
+
+            const photo =
+                adminData.photo ||
+                adminData.avatar ||
+                user.photoURL;
+
+
+            if(
+                photo &&
+                adminAvatar
+            ){
+
+                adminAvatar.src =
+                    photo;
+
+            }
+
+        }
+        else{
+
+            //======================================
+            // PROFIL FIRESTORE ABSENT
+            //======================================
+
+            if(adminName){
+
+                adminName.textContent =
+                    user.displayName ||
+                    "Ramide";
+
+            }
+
+            if(connectedAdmin){
+
+                connectedAdmin.textContent =
+                    user.email ||
+                    "Administrador";
+
+            }
+
+        }
+
+
+        //==========================================
+        // FIREBASE / FIRESTORE OK
+        //==========================================
+
+        if(firebaseStatus){
+
+            firebaseStatus.textContent =
+                "Online";
+
+        }
+
+        if(firestoreStatus){
+
+            firestoreStatus.textContent =
+                "Online";
+
+        }
+
+        if(databaseResponse){
+
+            databaseResponse.textContent =
+                "OK";
+
+        }
+
+        if(serverResponse){
+
+            serverResponse.textContent =
+                "OK";
+
+        }
+
+        updateLastUpdate();
+
+        addSystemLog(
+            "Administrador autenticado com sucesso.",
+            "success"
+        );
+
+
+        //==========================================
+        // DASHBOARD AUTORISÉ
+        //==========================================
+
+        dashboardInitialized = true;
+
+        startDashboard();
+
+    }
+    catch(error){
+
+        registerError(
+            error,
+            "Erro ao carregar o perfil do administrador."
+        );
+
+        setSystemOffline();
+
+        showToast(
+            "Erro ao verificar o administrador."
+        );
+
+    }
+
+});
+
+
+//==================================================
+// DECONNEXION
+//==================================================
+
+logoutButton?.addEventListener(
+    "click",
+    async ()=>{
+
+        try{
+
+            showLoader();
+
+            await auth.signOut();
+
+            addSystemLog(
+                "Administrador desconectado.",
+                "info"
+            );
+
+            window.location.href =
+                "admin-login.html";
+
+        }
+        catch(error){
+
+            hideLoader();
+
+            registerError(
+                error,
+                "Erro durante a desconexão."
+            );
+
+            showToast(
+                "Erro ao sair da conta."
+            );
+
+        }
+
+    }
+);
+
+
+//==================================================
+// FIN BLOC 3
+//==================================================
