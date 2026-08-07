@@ -20,9 +20,9 @@ import {
     orderBy,
     limit,
     onSnapshot,
-    serverTimestamp
+    serverTimestamp,
+    updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
 //==================================================
 // ELEMENTS HTML — STATISTIQUES
 //==================================================
@@ -5029,4 +5029,266 @@ onSnapshot(
 
 //==================================================
 // FIN BLOC 13
+//==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 14 — GESTION DES COMMERÇANTS
+//==================================================
+
+//==================================================
+// MODIFIER LE STATUT D'UN COMMERÇANT
+//==================================================
+
+async function updateMerchantStatus(
+    merchantId,
+    newStatus
+){
+
+    if(!merchantId){
+
+        showToast(
+            "Comerciante inválido."
+        );
+
+        return;
+
+    }
+
+
+    if(!newStatus){
+
+        return;
+
+    }
+
+
+    try{
+
+        showLoader();
+
+
+        const merchantRef =
+            doc(
+                db,
+                "merchants",
+                merchantId
+            );
+
+
+        await updateDoc(
+            merchantRef,
+            {
+
+                status:
+                    newStatus,
+
+                updatedAt:
+                    serverTimestamp()
+
+            }
+        );
+
+
+        //==========================================
+        // METTRE A JOUR LE TABLEAU LOCAL
+        //==========================================
+
+        const merchant =
+            merchants.find(
+                item =>
+                    item.id === merchantId
+            );
+
+
+        if(merchant){
+
+            merchant.status =
+                newStatus;
+
+        }
+
+
+        //==========================================
+        // RECALCULER LES DEMANDES
+        //==========================================
+
+        merchantRequests =
+            merchants.filter(
+                item =>
+                    item.status === "pending"
+            );
+
+
+        //==========================================
+        // MISE A JOUR UI
+        //==========================================
+
+        updateDashboardCounters();
+
+        updateQuickReports();
+
+        renderLastMerchants();
+
+        renderNotifications();
+
+
+        //==========================================
+        // MESSAGE
+        //==========================================
+
+        let message =
+            "Status do comerciante atualizado.";
+
+
+        if(newStatus === "approved"){
+
+            message =
+                "Comerciante aprovado com sucesso.";
+
+        }
+
+
+        if(newStatus === "rejected"){
+
+            message =
+                "Solicitação do comerciante recusada.";
+
+        }
+
+
+        if(newStatus === "suspended"){
+
+            message =
+                "Comerciante suspenso.";
+
+        }
+
+
+        if(newStatus === "active"){
+
+            message =
+                "Comerciante reativado.";
+
+        }
+
+
+        showToast(
+            message
+        );
+
+
+        addSystemLog(
+            message,
+            "success"
+        );
+
+    }
+    catch(error){
+
+        registerError(
+            error,
+            "Erro ao alterar o status do comerciante."
+        );
+
+
+        showToast(
+            "Não foi possível alterar o comerciante."
+        );
+
+    }
+    finally{
+
+        hideLoader();
+
+    }
+
+}
+
+
+//==================================================
+// APROUVER UN COMMERÇANT
+//==================================================
+
+async function approveMerchant(
+    merchantId
+){
+
+    await updateMerchantStatus(
+        merchantId,
+        "approved"
+    );
+
+}
+
+
+//==================================================
+// REFUSER UNE DEMANDE
+//==================================================
+
+async function rejectMerchant(
+    merchantId
+){
+
+    await updateMerchantStatus(
+        merchantId,
+        "rejected"
+    );
+
+}
+
+
+//==================================================
+// SUSPENDRE UN COMMERÇANT
+//==================================================
+
+async function suspendMerchant(
+    merchantId
+){
+
+    await updateMerchantStatus(
+        merchantId,
+        "suspended"
+    );
+
+}
+
+
+//==================================================
+// REACTIVER UN COMMERÇANT
+//==================================================
+
+async function activateMerchant(
+    merchantId
+){
+
+    await updateMerchantStatus(
+        merchantId,
+        "active"
+    );
+
+}
+
+
+//==================================================
+// EXPOSER LES ACTIONS
+//==================================================
+
+window.TomaAdminActions = {
+
+    ...(window.TomaAdminActions || {}),
+
+    approveMerchant,
+
+    rejectMerchant,
+
+    suspendMerchant,
+
+    activateMerchant
+
+};
+
+
+//==================================================
+// FIN BLOC 14
 //==================================================
