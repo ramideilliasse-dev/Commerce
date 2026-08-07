@@ -1185,3 +1185,360 @@ logoutButton?.addEventListener(
 //==================================================
 // FIN BLOC 3
 //==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 4 — CHARGEMENT CENTRAL FIRESTORE
+//==================================================
+
+//==================================================
+// CHARGER LES UTILISATEURS
+//==================================================
+
+async function loadUsersData(){
+
+    const snapshot =
+        await getDocs(
+            collection(db,"users")
+        );
+
+    users = [];
+
+    snapshot.forEach((documentSnapshot)=>{
+
+        users.push({
+
+            id: documentSnapshot.id,
+
+            ...documentSnapshot.data()
+
+        });
+
+    });
+
+    return users;
+
+}
+
+
+//==================================================
+// CHARGER LES COMMERÇANTS
+//==================================================
+
+async function loadMerchantsData(){
+
+    const snapshot =
+        await getDocs(
+            collection(db,"merchants")
+        );
+
+    merchants = [];
+
+    snapshot.forEach((documentSnapshot)=>{
+
+        merchants.push({
+
+            id: documentSnapshot.id,
+
+            ...documentSnapshot.data()
+
+        });
+
+    });
+
+    //==============================================
+    // DEMANDES DE COMMERÇANTS
+    //==============================================
+
+    merchantRequests =
+        merchants.filter(
+            merchant =>
+                merchant.status === "pending"
+        );
+
+    return merchants;
+
+}
+
+
+//==================================================
+// CHARGER LES PRODUITS
+//==================================================
+
+async function loadProductsData(){
+
+    const snapshot =
+        await getDocs(
+            collection(db,"products")
+        );
+
+    products = [];
+
+    snapshot.forEach((documentSnapshot)=>{
+
+        products.push({
+
+            id: documentSnapshot.id,
+
+            ...documentSnapshot.data()
+
+        });
+
+    });
+
+    return products;
+
+}
+
+
+//==================================================
+// CHARGER LES COMMANDES
+//==================================================
+
+async function loadOrdersData(){
+
+    const snapshot =
+        await getDocs(
+            collection(db,"orders")
+        );
+
+    orders = [];
+
+    snapshot.forEach((documentSnapshot)=>{
+
+        orders.push({
+
+            id: documentSnapshot.id,
+
+            ...documentSnapshot.data()
+
+        });
+
+    });
+
+    return orders;
+
+}
+
+
+//==================================================
+// CHARGEMENT GLOBAL
+//==================================================
+
+async function loadAllDashboardData(){
+
+    if(dashboardLoading){
+
+        return;
+
+    }
+
+    dashboardLoading = true;
+
+    showLoader();
+
+    try{
+
+        //==========================================
+        // CHARGEMENT PARALLÈLE
+        //==========================================
+
+        await Promise.all([
+
+            loadUsersData(),
+
+            loadMerchantsData(),
+
+            loadProductsData(),
+
+            loadOrdersData()
+
+        ]);
+
+
+        //==========================================
+        // LOG
+        //==========================================
+
+        addSystemLog(
+            "Dados Firestore carregados com sucesso.",
+            "success"
+        );
+
+
+        //==========================================
+        // MISE À JOUR
+        //==========================================
+
+        updateDashboardCounters();
+
+        updateFinancialSummary();
+
+        updateMonitoring();
+
+        updateQuickReports();
+
+        updateOfficialStoresStats();
+
+        updatePlatformActivity();
+
+        updateLastUpdate();
+
+
+    }
+    catch(error){
+
+        registerError(
+            error,
+            "Erro ao carregar dados do Firestore."
+        );
+
+        showToast(
+            "Erro ao carregar os dados."
+        );
+
+        setSystemOffline();
+
+    }
+    finally{
+
+        dashboardLoading = false;
+
+        hideLoader();
+
+    }
+
+}
+
+
+//==================================================
+// ECOUTE TEMPS RÉEL — UTILISATEURS
+//==================================================
+
+onSnapshot(
+
+    collection(db,"users"),
+
+    ()=>{
+
+        if(!dashboardInitialized){
+
+            return;
+
+        }
+
+        loadAllDashboardData();
+
+    },
+
+    (error)=>{
+
+        registerError(
+            error,
+            "Erro no listener dos utilizadores."
+        );
+
+    }
+
+);
+
+
+//==================================================
+// ECOUTE TEMPS RÉEL — COMMERÇANTS
+//==================================================
+
+onSnapshot(
+
+    collection(db,"merchants"),
+
+    ()=>{
+
+        if(!dashboardInitialized){
+
+            return;
+
+        }
+
+        loadAllDashboardData();
+
+    },
+
+    (error)=>{
+
+        registerError(
+            error,
+            "Erro no listener dos comerciantes."
+        );
+
+    }
+
+);
+
+
+//==================================================
+// ECOUTE TEMPS RÉEL — PRODUITS
+//==================================================
+
+onSnapshot(
+
+    collection(db,"products"),
+
+    ()=>{
+
+        if(!dashboardInitialized){
+
+            return;
+
+        }
+
+        loadAllDashboardData();
+
+    },
+
+    (error)=>{
+
+        registerError(
+            error,
+            "Erro no listener dos produtos."
+        );
+
+    }
+
+);
+
+
+//==================================================
+// ECOUTE TEMPS RÉEL — COMMANDES
+//==================================================
+
+onSnapshot(
+
+    collection(db,"orders"),
+
+    ()=>{
+
+        if(!dashboardInitialized){
+
+            return;
+
+        }
+
+        loadAllDashboardData();
+
+    },
+
+    (error)=>{
+
+        registerError(
+            error,
+            "Erro no listener dos pedidos."
+        );
+
+    }
+
+);
+
+
+//==================================================
+// FIN BLOC 4
+//==================================================
