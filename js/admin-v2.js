@@ -367,3 +367,530 @@ const COMMISSION_RATE = 0.05;
 //==================================================
 // FIN BLOC 1
 //==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 2 — UTILITAIRES
+//==================================================
+
+//==================================================
+// LOADER
+//==================================================
+
+function showLoader(){
+
+    if(!loader) return;
+
+    loader.classList.remove("hidden");
+
+}
+
+
+//==================================================
+// CACHER LE LOADER
+//==================================================
+
+function hideLoader(){
+
+    if(!loader) return;
+
+    loader.classList.add("hidden");
+
+}
+
+
+//==================================================
+// TOAST
+//==================================================
+
+function showToast(message){
+
+    if(!toast || !toastMessage) return;
+
+    toastMessage.textContent =
+        String(message || "");
+
+    toast.classList.add("show");
+
+    setTimeout(()=>{
+
+        toast.classList.remove("show");
+
+    },3000);
+
+}
+
+
+//==================================================
+// FORMATAGE MONETAIRE
+//==================================================
+
+function formatKz(value){
+
+    const number =
+        Number(value || 0);
+
+    return number.toLocaleString("pt-PT") + " Kz";
+
+}
+
+
+//==================================================
+// FORMATAGE NOMBRE
+//==================================================
+
+function formatNumber(value){
+
+    return Number(value || 0)
+        .toLocaleString("pt-PT");
+
+}
+
+
+//==================================================
+// CONVERSION DATE FIREBASE
+//==================================================
+
+function getDateValue(date){
+
+    if(!date) return null;
+
+    // Timestamp Firebase
+
+    if(typeof date.toDate === "function"){
+
+        return date.toDate();
+
+    }
+
+    // Timestamp sous forme seconds
+
+    if(typeof date.seconds === "number"){
+
+        return new Date(
+            date.seconds * 1000
+        );
+
+    }
+
+    // Date JavaScript
+
+    if(date instanceof Date){
+
+        return date;
+
+    }
+
+    // String / nombre
+
+    const parsed =
+        new Date(date);
+
+    if(!isNaN(parsed.getTime())){
+
+        return parsed;
+
+    }
+
+    return null;
+
+}
+
+
+//==================================================
+// FORMATAGE DATE
+//==================================================
+
+function formatDate(date){
+
+    const converted =
+        getDateValue(date);
+
+    if(!converted){
+
+        return "-";
+
+    }
+
+    return converted.toLocaleDateString(
+        "pt-PT",
+        {
+            day:"2-digit",
+            month:"2-digit",
+            year:"numeric"
+        }
+    );
+
+}
+
+
+//==================================================
+// FORMATAGE DATE + HEURE
+//==================================================
+
+function formatDateTime(date){
+
+    const converted =
+        getDateValue(date);
+
+    if(!converted){
+
+        return "-";
+
+    }
+
+    return converted.toLocaleString(
+        "pt-PT",
+        {
+            day:"2-digit",
+            month:"2-digit",
+            year:"numeric",
+            hour:"2-digit",
+            minute:"2-digit"
+        }
+    );
+
+}
+
+
+//==================================================
+// DATE DU JOUR
+//==================================================
+
+function isToday(date){
+
+    const converted =
+        getDateValue(date);
+
+    if(!converted) return false;
+
+    const now =
+        new Date();
+
+    return (
+
+        converted.getDate()
+        === now.getDate()
+
+        &&
+
+        converted.getMonth()
+        === now.getMonth()
+
+        &&
+
+        converted.getFullYear()
+        === now.getFullYear()
+
+    );
+
+}
+
+
+//==================================================
+// DATE DU MOIS ACTUEL
+//==================================================
+
+function isCurrentMonth(date){
+
+    const converted =
+        getDateValue(date);
+
+    if(!converted) return false;
+
+    const now =
+        new Date();
+
+    return (
+
+        converted.getMonth()
+        === now.getMonth()
+
+        &&
+
+        converted.getFullYear()
+        === now.getFullYear()
+
+    );
+
+}
+
+
+//==================================================
+// VALEUR NUMERIQUE SURE
+//==================================================
+
+function safeNumber(value){
+
+    const number =
+        Number(value);
+
+    if(!Number.isFinite(number)){
+
+        return 0;
+
+    }
+
+    return number;
+
+}
+
+
+//==================================================
+// TEXTE SECURISE
+//==================================================
+
+function safeText(value,fallback="-"){
+
+    if(
+        value === null ||
+        value === undefined ||
+        value === ""
+    ){
+
+        return fallback;
+
+    }
+
+    return String(value);
+
+}
+
+
+//==================================================
+// AJOUTER UN LOG SYSTEME
+//==================================================
+
+function addSystemLog(message,type="info"){
+
+    if(!systemLogs) return;
+
+    const item =
+        document.createElement("div");
+
+    item.className =
+        "logItem";
+
+    item.dataset.type =
+        type;
+
+    item.textContent =
+        `[${formatDateTime(new Date())}] ${message}`;
+
+    systemLogs.prepend(item);
+
+    // Garder uniquement les 50 derniers logs
+
+    const logs =
+        systemLogs.querySelectorAll(".logItem");
+
+    if(logs.length > 50){
+
+        logs[logs.length - 1].remove();
+
+    }
+
+}
+
+
+//==================================================
+// NETTOYER LES LOGS
+//==================================================
+
+function clearSystemLogs(){
+
+    if(!systemLogs) return;
+
+    systemLogs.innerHTML = "";
+
+    addSystemLog(
+        "Logs do sistema limpos.",
+        "info"
+    );
+
+}
+
+
+//==================================================
+// COMPTEUR D'ERREURS
+//==================================================
+
+function registerError(error,message="Erro desconhecido"){
+
+    errorCount++;
+
+    if(errorCounter){
+
+        errorCounter.textContent =
+            formatNumber(errorCount);
+
+    }
+
+    console.error(
+        "[TOMA ADMIN]",
+        message,
+        error
+    );
+
+    addSystemLog(
+        message,
+        "error"
+    );
+
+}
+
+
+//==================================================
+// MISE A JOUR DE L'HEURE
+//==================================================
+
+function updateLastUpdate(){
+
+    const now =
+        new Date();
+
+    if(lastUpdate){
+
+        lastUpdate.textContent =
+            formatDateTime(now);
+
+    }
+
+    if(lastSync){
+
+        lastSync.textContent =
+            formatDateTime(now);
+
+    }
+
+}
+
+
+//==================================================
+// ETAT SYSTEME — OK
+//==================================================
+
+function setSystemOnline(){
+
+    if(firebaseStatus){
+
+        firebaseStatus.textContent =
+            "Online";
+
+    }
+
+    if(firestoreStatus){
+
+        firestoreStatus.textContent =
+            "Online";
+
+    }
+
+    if(authStatus){
+
+        authStatus.textContent =
+            "Online";
+
+    }
+
+    if(serverStatus){
+
+        serverStatus.textContent =
+            "Online";
+
+    }
+
+}
+
+
+//==================================================
+// ETAT SYSTEME — ERREUR
+//==================================================
+
+function setSystemOffline(){
+
+    if(firebaseStatus){
+
+        firebaseStatus.textContent =
+            "Offline";
+
+    }
+
+    if(firestoreStatus){
+
+        firestoreStatus.textContent =
+            "Offline";
+
+    }
+
+    if(serverStatus){
+
+        serverStatus.textContent =
+            "Offline";
+
+    }
+
+}
+
+
+//==================================================
+// INITIALISATION DES INFORMATIONS
+//==================================================
+
+function initializeDashboardInfo(){
+
+    if(databaseName){
+
+        databaseName.textContent =
+            "Firebase Firestore";
+
+    }
+
+    if(dashboardVersion){
+
+        dashboardVersion.textContent =
+            "V2 Premium";
+
+    }
+
+    if(sessionStatus){
+
+        sessionStatus.textContent =
+            "Ativa";
+
+    }
+
+    if(ADMIN_VERSION){
+
+        // La constante est utilisée comme référence
+        // pour éviter les versions différentes.
+
+    }
+
+    setSystemOnline();
+
+    updateLastUpdate();
+
+}
+
+
+//==================================================
+// LOG INITIAL
+//==================================================
+
+addSystemLog(
+    "TOMA ADMIN V2 PREMIUM iniciado.",
+    "info"
+);
+
+
+//==================================================
+// INITIALISATION
+//==================================================
+
+initializeDashboardInfo();
+
+
+//==================================================
+// FIN BLOC 2
+//==================================================
