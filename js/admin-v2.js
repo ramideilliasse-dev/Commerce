@@ -849,1154 +849,653 @@ console.log(
     "TOMA ADMIN V2 — BLOC 1 chargé."
 );
 //==================================================
-// TOMA ADMIN V2
-// BLOC 2
-// STATISTIQUES EN TEMPS RÉEL
+// TOMA ADMIN V2 PREMIUM
+// BLOC 2 / FIRESTORE + STATISTIQUES PRINCIPALES
 //==================================================
 
-async function loadDashboardStats(){
+//==================================================
+// CHARGER UNE COLLECTION FIRESTORE
+//==================================================
 
-showLoader();
+async function loadCollection(collectionName) {
 
-try{
+    try {
 
-//==============================
-// UTILISATEURS
-//==============================
+        const snapshot =
+            await getDocs(
+                collection(db, collectionName)
+            );
 
-const usersSnapshot =
-await getDocs(collection(db,"users"));
+        const data = [];
 
-users = [];
+        snapshot.forEach((documentSnapshot) => {
 
-usersSnapshot.forEach(doc=>{
+            data.push({
 
-users.push({
+                id: documentSnapshot.id,
 
-id:doc.id,
+                ...documentSnapshot.data()
 
-...doc.data()
+            });
 
-});
+        });
 
-});
+        return data;
 
-usersCount.textContent =
-users.length;
+    } catch (error) {
 
-//==============================
-// COMERÇANTS
-//==============================
+        console.error(
+            `Erreur collection ${collectionName}:`,
+            error
+        );
 
-const merchantsSnapshot =
-await getDocs(collection(db,"merchants"));
+        addSystemLog(
+            `Erreur lors du chargement de ${collectionName}.`,
+            "error"
+        );
 
-merchants = [];
+        return [];
 
-merchantsSnapshot.forEach(doc=>{
-
-merchants.push({
-
-id:doc.id,
-
-...doc.data()
-
-});
-
-});
-
-merchantsCount.textContent =
-merchants.length;
-
-//==============================
-// PEDIDOS DE COMERCIANTES
-//==============================
-
-merchantRequests =
-merchants.filter(m=>m.status==="pending");
-
-merchantRequestsCount.textContent =
-merchantRequests.length;
-
-merchantBadge.textContent =
-merchantRequests.length;
-
-//==============================
-// PRODUTOS
-//==============================
-
-const productsSnapshot =
-await getDocs(collection(db,"products"));
-
-products = [];
-
-productsSnapshot.forEach(doc=>{
-
-products.push({
-
-id:doc.id,
-
-...doc.data()
-
-});
-
-});
-
-productsCount.textContent =
-products.length;
-
-//==============================
-// PEDIDOS
-//==============================
-
-const ordersSnapshot =
-await getDocs(collection(db,"orders"));
-
-orders = [];
-
-sales = 0;
-
-commissions = 0;
-
-ordersSnapshot.forEach(doc=>{
-
-const order={
-
-id:doc.id,
-
-...doc.data()
-
-};
-
-orders.push(order);
-
-sales += Number(order.total || 0);
-
-commissions +=
-
-Number(order.total || 0)*0.05;
-
-});
-
-ordersCount.textContent =
-orders.length;
-
-salesCount.textContent =
-kz(sales);
-
-commissionCount.textContent =
-kz(commissions);
-
-//==============================
-// LOJAS OFICIAIS
-//==============================
-
-officialStoresCount.textContent = 14;
-
-//==============================
-// BADGE NOTIFICATIONS
-//==============================
-
-notificationsBadge.textContent =
-
-merchantRequests.length;
-
-hideLoader();
-
-}catch(error){
-
-console.error(error);
-
-hideLoader();
-
-showToast("Erro ao carregar Dashboard.");
-
-}
+    }
 
 }
 
 //==================================================
-// TEMPS RÉEL
+// CHARGER LES DONNÉES PRINCIPALES
 //==================================================
 
-onSnapshot(
+async function loadMainData() {
 
-collection(db,"users"),
+    const startTime =
+        performance.now();
 
-()=>{
+    try {
 
-loadDashboardStats();
+        showLoader();
 
-}
+        addSystemLog(
+            "Chargement des données Firestore...",
+            "info"
+        );
 
-);
+        //==========================================
+        // UTILISATEURS
+        //==========================================
 
-onSnapshot(
+        users =
+            await loadCollection("users");
 
-collection(db,"merchants"),
+        if (usersCount) {
 
-()=>{
+            usersCount.textContent =
+                numberFormat(users.length);
 
-loadDashboardStats();
+        }
 
-}
+        //==========================================
+        // COMMERÇANTS
+        //==========================================
 
-);
+        merchants =
+            await loadCollection("merchants");
 
-onSnapshot(
+        if (merchantsCount) {
 
-collection(db,"products"),
+            merchantsCount.textContent =
+                numberFormat(merchants.length);
 
-()=>{
+        }
 
-loadDashboardStats();
+        //==========================================
+        // DEMANDES DE COMMERÇANTS
+        //==========================================
+        //
+        // IMPORTANT :
+        // Pour le moment nous gardons la logique
+        // actuelle : les demandes sont les
+        // commerçants avec status = "pending".
+        //
+        // Nous ne créons PAS encore une collection
+        // "merchantRequests".
+        //
+        // Cela sera décidé après vérification
+        // de merchant-requests.html.
+        //==========================================
 
-}
+        merchantRequests =
+            merchants.filter(
+                merchant =>
+                    merchant.status === "pending"
+            );
 
-);
+        if (merchantRequestsCount) {
 
-onSnapshot(
+            merchantRequestsCount.textContent =
+                numberFormat(
+                    merchantRequests.length
+                );
 
-collection(db,"orders"),
+        }
 
-()=>{
+        if (merchantBadge) {
 
-loadDashboardStats();
+            merchantBadge.textContent =
+                numberFormat(
+                    merchantRequests.length
+                );
 
-}
+        }
 
-);
+        //==========================================
+        // PRODUITS
+        //==========================================
 
-//==================================================
-// LANCER
-//==================================================
+        products =
+            await loadCollection("products");
 
-loadDashboardStats();
-//==================================================
-// TOMA ADMIN V2
-// BLOC 3
-// TABLEAUX + ACTIVITÉS
-//==================================================
+        if (productsCount) {
 
-async function loadDashboardTables(){
+            productsCount.textContent =
+                numberFormat(products.length);
 
-//==================================================
-// DERNIERS PEDIDOS
-//==================================================
+        }
 
-lastOrdersTable.innerHTML="";
+        //==========================================
+        // COMMANDES
+        //==========================================
 
-const latestOrders = orders
+        orders =
+            await loadCollection("orders");
 
-.sort((a,b)=>{
+        if (ordersCount) {
 
-const da=a.createdAt?.seconds||0;
+            ordersCount.textContent =
+                numberFormat(orders.length);
 
-const db=b.createdAt?.seconds||0;
+        }
 
-return db-da;
+        //==========================================
+        // CALCUL DES VENTES
+        //==========================================
 
-})
+        sales = 0;
 
-.slice(0,10);
+        commissions = 0;
 
-latestOrders.forEach(order=>{
+        orders.forEach(order => {
 
-lastOrdersTable.innerHTML += `
+            const total =
+                Number(order.total || 0);
 
-<tr>
+            sales += total;
 
-<td>${order.customerName || "-"}</td>
+            commissions +=
+                total * COMMISSION_RATE;
 
-<td>${order.productName || "-"}</td>
+        });
 
-<td>${kz(order.total)}</td>
+        //==========================================
+        // AFFICHAGE VENTES
+        //==========================================
 
-<td>
+        if (salesCount) {
 
-<span class="status ${order.status || "pending"}">
+            salesCount.textContent =
+                kz(sales);
 
-${order.status || "pending"}
+        }
 
-</span>
+        if (commissionCount) {
 
-</td>
+            commissionCount.textContent =
+                kz(commissions);
 
-<td>${formatDate(order.createdAt)}</td>
+        }
 
-</tr>
+        //==========================================
+        // FINANCES
+        //==========================================
 
-`;
+        if (financeSales) {
 
-});
+            financeSales.textContent =
+                kz(sales);
 
-//==================================================
-// ÚLTIMOS COMERCIANTES
-//==================================================
+        }
 
-lastMerchantsTable.innerHTML="";
+        if (financeCommission) {
 
-const latestMerchants = merchants
+            financeCommission.textContent =
+                kz(commissions);
 
-.sort((a,b)=>{
+        }
 
-const da=a.createdAt?.seconds||0;
+        //==========================================
+        // TICKET MOYEN
+        //==========================================
 
-const db=b.createdAt?.seconds||0;
+        if (orders.length > 0) {
 
-return db-da;
+            averageOrderValue =
+                sales / orders.length;
 
-})
+        } else {
 
-.slice(0,10);
+            averageOrderValue = 0;
 
-latestMerchants.forEach(merchant=>{
+        }
 
-lastMerchantsTable.innerHTML += `
+        if (averageOrder) {
 
-<tr>
+            averageOrder.textContent =
+                kz(averageOrderValue);
 
-<td>
+        }
 
-<img
+        //==========================================
+        // COMMANDES DU JOUR
+        //==========================================
 
-src="${merchant.photo || merchant.avatar || "images/avatar.png"}"
+        const todayOrdersList =
+            orders.filter(order =>
+                isToday(order.createdAt)
+            );
 
-class="tableAvatar">
+        if (todayOrders) {
 
-</td>
+            todayOrders.textContent =
+                numberFormat(
+                    todayOrdersList.length
+                );
 
-<td>${merchant.name || "-"}</td>
+        }
 
-<td>${merchant.shopName || "-"}</td>
+        if (newOrdersToday) {
 
-<td>
+            newOrdersToday.textContent =
+                numberFormat(
+                    todayOrdersList.length
+                );
 
-<span class="status ${merchant.status || "pending"}">
+        }
 
-${merchant.status || "pending"}
+        if (ordersCount) {
 
-</span>
+            ordersCount.title =
+                `${todayOrdersList.length} commande(s) aujourd'hui`;
 
-</td>
+        }
 
-<td>
+        //==========================================
+        // VENTES DU JOUR
+        //==========================================
 
-<button
+        todaySales = 0;
 
-class="viewMerchant"
+        todayOrdersList.forEach(order => {
 
-data-id="${merchant.id}">
+            todaySales +=
+                Number(order.total || 0);
 
-Ver
+        });
 
-</button>
+        if (todayProfit) {
 
-</td>
+            todayProfit.textContent =
+                kz(
+                    todaySales *
+                    COMMISSION_RATE
+                );
 
-</tr>
+        }
 
-`;
+        //==========================================
+        // COMMANDES DU MOIS
+        //==========================================
 
-});
+        const monthlyOrdersList =
+            orders.filter(order =>
+                isThisMonth(order.createdAt)
+            );
 
-//==================================================
-// ÚLTIMOS PRODUTOS
-//==================================================
+        if (monthlyOrders) {
 
-lastProductsTable.innerHTML="";
+            monthlyOrders.textContent =
+                numberFormat(
+                    monthlyOrdersList.length
+                );
 
-const latestProducts = products
+        }
 
-.sort((a,b)=>{
+        //==========================================
+        // VENTES DU MOIS
+        //==========================================
 
-const da=a.createdAt?.seconds||0;
+        monthlySalesValue = 0;
 
-const db=b.createdAt?.seconds||0;
+        monthlyOrdersList.forEach(order => {
 
-return db-da;
+            monthlySalesValue +=
+                Number(order.total || 0);
 
-})
+        });
 
-.slice(0,10);
+        if (monthlySales) {
 
-latestProducts.forEach(product=>{
+            monthlySales.textContent =
+                kz(monthlySalesValue);
 
-lastProductsTable.innerHTML += `
+        }
 
-<tr>
+        //==========================================
+        // PRODUITS ACTIFS
+        //==========================================
 
-<td>
+        const activeProductsList =
+            products.filter(product => {
 
-<img
+                const status =
+                    String(
+                        product.status || ""
+                    ).toLowerCase();
 
-src="${product.image || product.images?.[0] || "images/product.png"}"
+                return (
+                    status === "" ||
+                    status === "active" ||
+                    status === "approved" ||
+                    status === "published"
+                );
 
-class="tableAvatar">
+            });
 
-</td>
+        if (activeProducts) {
 
-<td>${product.name || "-"}</td>
+            activeProducts.textContent =
+                numberFormat(
+                    activeProductsList.length
+                );
 
-<td>${kz(product.price)}</td>
+        }
 
-<td>${product.storeName || "-"}</td>
+        //==========================================
+        // PRODUITS CRÉÉS AUJOURD'HUI
+        //==========================================
 
-<td>
+        const todayProductsList =
+            products.filter(product =>
+                isToday(product.createdAt)
+            );
 
-<span class="status approved">
+        if (todayProducts) {
 
-Publicado
+            todayProducts.textContent =
+                numberFormat(
+                    todayProductsList.length
+                );
 
-</span>
+        }
 
-</td>
+        //==========================================
+        // NOUVEAUX UTILISATEURS AUJOURD'HUI
+        //==========================================
 
-</tr>
+        const todayUsersList =
+            users.filter(user =>
+                isToday(user.createdAt)
+            );
 
-`;
+        if (newUsersToday) {
 
-});
+            newUsersToday.textContent =
+                numberFormat(
+                    todayUsersList.length
+                );
 
-//==================================================
-// ATIVIDADE RECENTE
-//==================================================
+        }
 
-activityList.innerHTML="";
+        //==========================================
+        // COMMERÇANTS VÉRIFIÉS
+        //==========================================
 
-latestOrders.slice(0,6).forEach(order=>{
+        const verifiedList =
+            merchants.filter(merchant => {
 
-activityList.innerHTML += `
+                return (
 
-<div class="activityItem">
+                    merchant.verified === true ||
 
-<div class="activityIcon">
+                    merchant.isVerified === true ||
 
-🛒
+                    merchant.status === "verified" ||
 
-</div>
+                    merchant.status === "approved"
 
-<div class="activityContent">
+                );
 
-<h4>
+            });
 
-Novo pedido
+        if (verifiedMerchants) {
 
-</h4>
+            verifiedMerchants.textContent =
+                numberFormat(
+                    verifiedList.length
+                );
 
-<p>
+        }
 
-${order.customerName || "-"}
+        //==========================================
+        // MAGASINS OFFICIELS
+        //==========================================
+        //
+        // On ne met PAS "14" artificiellement.
+        // Tant qu'on n'a pas confirmé la collection
+        // officielle, on affiche 0.
+        //==========================================
 
-comprou
+        if (officialStoresCount) {
 
-${order.productName || "-"}
+            officialStoresCount.textContent =
+                numberFormat(
+                    OFFICIAL_STORES_FALLBACK
+                );
 
-</p>
+        }
 
-<div class="activityTime">
+        if (activeOfficialStores) {
 
-${formatDate(order.createdAt)}
+            activeOfficialStores.textContent =
+                numberFormat(
+                    OFFICIAL_STORES_FALLBACK
+                );
 
-</div>
+        }
 
-</div>
+        //==========================================
+        // MONITORING
+        //==========================================
 
-</div>
+        if (onlineUsers) {
 
-`;
+            onlineUsers.textContent =
+                "0";
 
-});
+        }
 
-//==================================================
-// EVENTOS
-//==================================================
+        if (onlineMerchants) {
 
-document
+            onlineMerchants.textContent =
+                "0";
 
-.querySelectorAll(".viewMerchant")
+        }
 
-.forEach(button=>{
+        //==========================================
+        // ACTIVITÉ PLATEFORME
+        //==========================================
 
-button.onclick=()=>{
+        if (todayVisitors) {
 
-const id=button.dataset.id;
+            todayVisitors.textContent =
+                "0";
 
-window.location.href=
+        }
 
-`merchant-profile.html?id=${id}`;
+        if (pageViews) {
 
-};
+            pageViews.textContent =
+                "0";
 
-});
+        }
 
-}
+        //==========================================
+        // STORES OFFICIELLES
+        //==========================================
 
-//==================================================
-// LANCER
-//==================================================
+        if (officialProducts) {
 
-loadDashboardTables();
-//==================================================
-// TOMA ADMIN V2
-// BLOC 4
-// NOTIFICATIONS + CHARTS
-//==================================================
+            officialProducts.textContent =
+                "0";
 
-//==================================================
-// NOTIFICATIONS
-//==================================================
+        }
 
-function loadNotifications(){
+        if (officialSales) {
 
-notifications=[];
+            officialSales.textContent =
+                kz(0);
 
-merchantRequests.forEach(m=>{
+        }
 
-notifications.push({
+        if (officialFollowers) {
 
-icon:"📋",
+            officialFollowers.textContent =
+                "0";
 
-title:"Novo pedido de comerciante",
+        }
 
-text:`${m.name || "Comerciante"} pediu aprovação.`,
+        //==========================================
+        // PERFORMANCE FIRESTORE
+        //==========================================
 
-date:m.createdAt
+        const endTime =
+            performance.now();
 
-});
+        const responseTime =
+            Math.round(
+                endTime - startTime
+            );
 
-});
+        if (databaseResponse) {
 
-orders
+            databaseResponse.textContent =
+                `${responseTime} ms`;
 
-.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0))
+        }
 
-.slice(0,5)
+        if (serverResponse) {
 
-.forEach(o=>{
+            serverResponse.textContent =
+                `${responseTime} ms`;
 
-notifications.push({
+        }
 
-icon:"🛒",
+        //==========================================
+        // STATUT FIRESTORE
+        //==========================================
 
-title:"Novo Pedido",
+        if (firestoreStatus) {
 
-text:`${o.customerName || "-"} realizou uma compra.`,
+            firestoreStatus.textContent =
+                "Online";
 
-date:o.createdAt
+        }
 
-});
+        //==========================================
+        // STATUT SERVEUR
+        //==========================================
 
-});
+        if (serverStatus) {
 
-products
+            serverStatus.textContent =
+                "Online";
 
-.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0))
+        }
 
-.slice(0,5)
+        //==========================================
+        // SYNCHRONISATION
+        //==========================================
 
-.forEach(p=>{
+        updateSyncTime();
 
-notifications.push({
+        //==========================================
+        // ÉTAT
+        //==========================================
 
-icon:"📦",
+        dashboardReady = true;
 
-title:"Novo Produto",
+        addSystemLog(
+            "Données Firestore chargées avec succès.",
+            "success"
+        );
 
-text:`${p.name || "-"} foi publicado.`,
+    } catch (error) {
 
-date:p.createdAt
+        console.error(
+            "Erreur Dashboard:",
+            error
+        );
 
-});
+        if (firestoreStatus) {
 
-});
+            firestoreStatus.textContent =
+                "Erreur";
 
-notificationsList.innerHTML="";
+        }
 
-notificationsBadge.textContent=notifications.length;
+        if (serverStatus) {
 
-notifications.forEach(n=>{
+            serverStatus.textContent =
+                "Erreur";
 
-notificationsList.innerHTML += `
+        }
 
-<div class="notificationItem">
+        if (errorCounter) {
 
-<div class="notificationIcon">
+            const current =
+                Number(
+                    errorCounter.textContent || 0
+                );
 
-${n.icon}
+            errorCounter.textContent =
+                current + 1;
 
-</div>
+        }
 
-<div class="notificationContent">
+        addSystemLog(
+            "Erreur pendant le chargement du Dashboard.",
+            "error"
+        );
 
-<h4>${n.title}</h4>
+        showToast(
+            "Erro ao carregar Dashboard."
+        );
 
-<p>${n.text}</p>
+    } finally {
 
-<div class="notificationTime">
+        hideLoader();
 
-${formatDate(n.date)}
-
-</div>
-
-</div>
-
-</div>
-
-`;
-
-});
-
-}
-
-//==================================================
-// SALES CHART
-//==================================================
-
-function createSalesChart(){
-
-const ctx=document
-
-.getElementById("salesChart")
-
-.getContext("2d");
-
-if(salesChart){
-
-salesChart.destroy();
-
-}
-
-salesChart=new Chart(ctx,{
-
-type:"line",
-
-data:{
-
-labels:["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"],
-
-datasets:[{
-
-label:"Vendas",
-
-data:[15,22,18,35,27,44,30],
-
-borderColor:"#22c55e",
-
-backgroundColor:"rgba(34,197,94,.15)",
-
-fill:true,
-
-tension:.4
-
-}]
-
-},
-
-options:{
-
-responsive:true,
-
-plugins:{
-
-legend:{
-
-display:false
-
-}
-
-}
-
-}
-
-});
-
-}
-
-//==================================================
-// ORDERS CHART
-//==================================================
-
-function createOrdersChart(){
-
-const ctx=document
-
-.getElementById("ordersChart")
-
-.getContext("2d");
-
-if(ordersChart){
-
-ordersChart.destroy();
-
-}
-
-ordersChart=new Chart(ctx,{
-
-type:"doughnut",
-
-data:{
-
-labels:[
-
-"Entregues",
-
-"Pendentes",
-
-"Cancelados"
-
-],
-
-datasets:[{
-
-data:[60,25,15],
-
-backgroundColor:[
-
-"#22c55e",
-
-"#f59e0b",
-
-"#ef4444"
-
-]
-
-}]
-
-},
-
-options:{
-
-responsive:true,
-
-plugins:{
-
-legend:{
-
-position:"bottom"
-
-}
-
-}
-
-}
-
-});
-
-}
-
-//==================================================
-// USERS CHART
-//==================================================
-
-function createUsersChart(){
-
-const ctx=document
-
-.getElementById("usersChart")
-
-.getContext("2d");
-
-if(usersChart){
-
-usersChart.destroy();
-
-}
-
-usersChart=new Chart(ctx,{
-
-type:"bar",
-
-data:{
-
-labels:[
-
-"Jan",
-
-"Fev",
-
-"Mar",
-
-"Abr",
-
-"Mai",
-
-"Jun"
-
-],
-
-datasets:[{
-
-label:"Novos Utilizadores",
-
-backgroundColor:"#3b82f6",
-
-data:[10,15,20,25,40,50]
-
-}]
-
-},
-
-options:{
-
-responsive:true,
-
-plugins:{
-
-legend:{
-
-display:false
-
-}
-
-}
-
-}
-
-});
+    }
 
 }
 
 //==================================================
-// COMMISSION CHART
+// PREMIER CHARGEMENT
 //==================================================
 
-function createCommissionChart(){
-
-const ctx=document
-
-.getElementById("commissionChart")
-
-.getContext("2d");
-
-if(commissionChart){
-
-commissionChart.destroy();
-
-}
-
-commissionChart=new Chart(ctx,{
-
-type:"line",
-
-data:{
-
-labels:["1","2","3","4","5","6","7"],
-
-datasets:[{
-
-label:"Comissões",
-
-data:[5,8,7,10,12,14,16],
-
-borderColor:"#8b5cf6",
-
-backgroundColor:"rgba(139,92,246,.12)",
-
-fill:true,
-
-tension:.4
-
-}]
-
-},
-
-options:{
-
-responsive:true,
-
-plugins:{
-
-legend:{
-
-display:false
-
-}
-
-}
-
-}
-
-});
-
-}
+loadMainData();
 
 //==================================================
-// REFRESH
+// FIN BLOC 2
 //==================================================
-
-function refreshDashboard(){
-
-loadDashboardStats();
-
-loadDashboardTables();
-
-loadNotifications();
-
-createSalesChart();
-
-createOrdersChart();
-
-createUsersChart();
-
-createCommissionChart();
-
-}
-
-//==================================================
-// BOUTON REFRESH
-//==================================================
-
-document
-
-.getElementById("refreshDashboard")
-
-?.addEventListener("click",()=>{
-
-refreshDashboard();
-
-showToast("Dashboard atualizado.");
-
-});
-
-//==================================================
-// LANCEMENT
-//==================================================
-
-refreshDashboard();
-//==================================================
-// TOMA ADMIN V2
-// BLOC 5
-// RECHERCHE
-// EXPORT
-// RACCOURCIS
-// MENU
-//==================================================
-
-//====================================
-// RECHERCHE GLOBALE
-//====================================
-
-const globalSearch =
-document.getElementById("globalSearch");
-
-globalSearch?.addEventListener("input",(e)=>{
-
-const text =
-e.target.value.toLowerCase();
-
-document.querySelectorAll("tbody tr")
-.forEach(row=>{
-
-const value =
-row.innerText.toLowerCase();
-
-row.style.display =
-value.includes(text)
-? ""
-: "none";
-
-});
-
-});
-
-//====================================
-// MENU ACTIF
-//====================================
-
-document
-.querySelectorAll(".menuItem")
-.forEach(item=>{
-
-item.addEventListener("click",()=>{
-
-document
-.querySelectorAll(".menuItem")
-.forEach(i=>i.classList.remove("active"));
-
-item.classList.add("active");
-
-});
-
-});
-
-//====================================
-// EXPORT CSV
-//====================================
-
-function exportTable(tableId,fileName){
-
-const table =
-document.getElementById(tableId);
-
-if(!table) return;
-
-let csv=[];
-
-table
-.querySelectorAll("tr")
-.forEach(row=>{
-
-let cols=[];
-
-row
-.querySelectorAll("td,th")
-.forEach(col=>{
-
-cols.push(col.innerText);
-
-});
-
-csv.push(cols.join(";"));
-
-});
-
-const blob =
-new Blob(
-
-[csv.join("\n")],
-
-{type:"text/csv"}
-
-);
-
-const link =
-document.createElement("a");
-
-link.href=
-URL.createObjectURL(blob);
-
-link.download=
-fileName;
-
-link.click();
-
-}
-
-//====================================
-// RACCOURCIS CLAVIER
-//====================================
-
-document.addEventListener("keydown",(e)=>{
-
-if(e.ctrlKey && e.key==="r"){
-
-e.preventDefault();
-
-refreshDashboard();
-
-showToast("Dashboard atualizado.");
-
-}
-
-if(e.ctrlKey && e.key==="f"){
-
-e.preventDefault();
-
-globalSearch.focus();
-
-}
-
-});
-
-//====================================
-// ANIMATION CARTES
-//====================================
-
-const observer =
-new IntersectionObserver(entries=>{
-
-entries.forEach(entry=>{
-
-if(entry.isIntersecting){
-
-entry.target.classList.add("visible");
-
-}
-
-});
-
-});
-
-document
-.querySelectorAll(
-
-".statCard,.chartCard,.tableCard"
-
-)
-
-.forEach(card=>{
-
-observer.observe(card);
-
-});
-
-//====================================
-// COMPTEURS ANIMÉS
-//====================================
-
-function animateCounter(element,value){
-
-let start=0;
-
-const end=Number(value);
-
-const duration=1000;
-
-const step=end/(duration/16);
-
-const timer=setInterval(()=>{
-
-start+=step;
-
-if(start>=end){
-
-start=end;
-
-clearInterval(timer);
-
-}
-
-element.textContent=
-
-Math.floor(start)
-
-.toLocaleString("pt-PT");
-
-},16);
-
-}
-
-//====================================
-// MISE À JOUR AUTOMATIQUE
-//====================================
-
-setInterval(()=>{
-
-refreshDashboard();
-
-},60000);
-
-//====================================
-// MESSAGE D'ACCUEIL
-//====================================
-
-setTimeout(()=>{
-
-showToast(
-
-"Bem-vindo ao painel Premium TOMA 👑"
-
-);
-
-},1200);
-
-//====================================
-// FIN
-//====================================
 
 console.log(
-
-"TOMA ADMIN V2 PREMIUM carregado."
-
+    "TOMA ADMIN V2 — BLOC 2 chargé."
 );
