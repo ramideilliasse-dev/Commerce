@@ -3702,3 +3702,373 @@ async function initializeDashboard(){
 //==================================================
 // FIN BLOC 9
 //==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 10 — RECHERCHE GLOBALE + NAVIGATION
+//==================================================
+
+//==================================================
+// RECHERCHE GLOBALE
+//==================================================
+
+function performGlobalSearch(value){
+
+    const search =
+        String(value || "")
+            .trim()
+            .toLowerCase();
+
+    //==============================================
+    // RECHERCHE VIDE
+    //==============================================
+
+    if(!search){
+
+        renderDashboardTables();
+
+        return;
+
+    }
+
+
+    //==============================================
+    // UTILISATEURS
+    //==============================================
+
+    const matchingUsers =
+        users.filter(user=>{
+
+            const text =
+                [
+
+                    user.name,
+
+                    user.firstName,
+
+                    user.lastName,
+
+                    user.email,
+
+                    user.phone
+
+                ]
+                .filter(Boolean)
+                .join(" ")
+                .toLowerCase();
+
+
+            return text.includes(search);
+
+        });
+
+
+    //==============================================
+    // COMMERÇANTS
+    //==============================================
+
+    const matchingMerchants =
+        merchants.filter(merchant=>{
+
+            const text =
+                [
+
+                    merchant.name,
+
+                    merchant.firstName,
+
+                    merchant.lastName,
+
+                    merchant.shopName,
+
+                    merchant.storeName,
+
+                    merchant.businessName,
+
+                    merchant.email,
+
+                    merchant.phone
+
+                ]
+                .filter(Boolean)
+                .join(" ")
+                .toLowerCase();
+
+
+            return text.includes(search);
+
+        });
+
+
+    //==============================================
+    // PRODUITS
+    //==============================================
+
+    const matchingProducts =
+        products.filter(product=>{
+
+            const text =
+                [
+
+                    product.name,
+
+                    product.description,
+
+                    product.category,
+
+                    product.storeName,
+
+                    product.shopName,
+
+                    product.merchantName
+
+                ]
+                .filter(Boolean)
+                .join(" ")
+                .toLowerCase();
+
+
+            return text.includes(search);
+
+        });
+
+
+    //==============================================
+    // COMMANDES
+    //==============================================
+
+    const matchingOrders =
+        orders.filter(order=>{
+
+            const text =
+                [
+
+                    order.id,
+
+                    order.customerName,
+
+                    order.customer,
+
+                    order.userName,
+
+                    order.productName,
+
+                    order.status
+
+                ]
+                .filter(Boolean)
+                .join(" ")
+                .toLowerCase();
+
+
+            return text.includes(search);
+
+        });
+
+
+    //==============================================
+    // AFFICHER LE RESULTAT
+    //==============================================
+
+    showGlobalSearchResults({
+
+        users:
+            matchingUsers,
+
+        merchants:
+            matchingMerchants,
+
+        products:
+            matchingProducts,
+
+        orders:
+            matchingOrders
+
+    });
+
+}
+
+
+//==================================================
+// AFFICHAGE DES RESULTATS
+//==================================================
+
+function showGlobalSearchResults(results){
+
+    if(!globalSearch){
+
+        return;
+
+    }
+
+
+    const totalResults =
+
+        results.users.length +
+
+        results.merchants.length +
+
+        results.products.length +
+
+        results.orders.length;
+
+
+    //==============================================
+    // MESSAGE
+    //==============================================
+
+    if(totalResults === 0){
+
+        showToast(
+            "Nenhum resultado encontrado."
+        );
+
+        addSystemLog(
+            "Pesquisa sem resultados.",
+            "info"
+        );
+
+        return;
+
+    }
+
+
+    //==============================================
+    // RESUME
+    //==============================================
+
+    showToast(
+
+        `${formatNumber(totalResults)} resultado(s) encontrado(s).`
+
+    );
+
+
+    addSystemLog(
+
+        `Pesquisa: ${formatNumber(totalResults)} resultado(s).`,
+
+        "info"
+
+    );
+
+
+    //==============================================
+    // PREMIER RESULTAT
+    //==============================================
+
+    if(results.products.length > 0){
+
+        const product =
+            results.products[0];
+
+
+        if(product.id){
+
+            localStorage.setItem(
+
+                "selectedProduct",
+
+                JSON.stringify(product)
+
+            );
+
+        }
+
+        return;
+
+    }
+
+
+    if(results.merchants.length > 0){
+
+        const merchant =
+            results.merchants[0];
+
+
+        if(merchant.id){
+
+            window.location.href =
+                `merchant-profile.html?id=${encodeURIComponent(
+                    merchant.id
+                )}`;
+
+        }
+
+        return;
+
+    }
+
+
+    if(results.orders.length > 0){
+
+        const order =
+            results.orders[0];
+
+
+        if(order.id){
+
+            localStorage.setItem(
+
+                "selectedOrder",
+
+                JSON.stringify(order)
+
+            );
+
+        }
+
+        return;
+
+    }
+
+}
+
+
+//==================================================
+// ECOUTE DE LA RECHERCHE
+//==================================================
+
+globalSearch?.addEventListener(
+
+    "input",
+
+    (event)=>{
+
+        performGlobalSearch(
+            event.target.value
+        );
+
+    }
+
+);
+
+
+//==================================================
+// TOUCHE ENTREE
+//==================================================
+
+globalSearch?.addEventListener(
+
+    "keydown",
+
+    (event)=>{
+
+        if(
+            event.key === "Enter"
+        ){
+
+            performGlobalSearch(
+                event.target.value
+            );
+
+        }
+
+    }
+
+);
+
+
+//==================================================
+// FIN BLOC 10
+//==================================================
