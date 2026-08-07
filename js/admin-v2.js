@@ -1542,3 +1542,318 @@ onSnapshot(
 //==================================================
 // FIN BLOC 4
 //==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 5 — COMPTEURS + FINANCES
+//==================================================
+
+//==================================================
+// COMPTEURS PRINCIPAUX
+//==================================================
+
+function updateDashboardCounters(){
+
+    //==============================================
+    // UTILISATEURS
+    //==============================================
+
+    if(usersCount){
+
+        usersCount.textContent =
+            formatNumber(users.length);
+
+    }
+
+
+    //==============================================
+    // COMMERÇANTS
+    //==============================================
+
+    if(merchantsCount){
+
+        merchantsCount.textContent =
+            formatNumber(merchants.length);
+
+    }
+
+
+    //==============================================
+    // PRODUITS
+    //==============================================
+
+    if(productsCount){
+
+        productsCount.textContent =
+            formatNumber(products.length);
+
+    }
+
+
+    //==============================================
+    // COMMANDES
+    //==============================================
+
+    if(ordersCount){
+
+        ordersCount.textContent =
+            formatNumber(orders.length);
+
+    }
+
+
+    //==============================================
+    // DEMANDES DE COMMERÇANTS
+    //==============================================
+
+    if(merchantRequestsCount){
+
+        merchantRequestsCount.textContent =
+            formatNumber(
+                merchantRequests.length
+            );
+
+    }
+
+    if(merchantBadge){
+
+        merchantBadge.textContent =
+            formatNumber(
+                merchantRequests.length
+            );
+
+    }
+
+
+    //==============================================
+    // NOTIFICATIONS
+    //==============================================
+
+    if(notificationsBadge){
+
+        notificationsBadge.textContent =
+            formatNumber(
+                merchantRequests.length
+            );
+
+    }
+
+
+    //==============================================
+    // CROISSANCE
+    //==============================================
+
+    updateGrowthIndicators();
+
+}
+
+
+//==================================================
+// INDICATEURS DE CROISSANCE
+//==================================================
+
+function updateGrowthIndicators(){
+
+    // Pour l'instant, on affiche une valeur neutre.
+    // Le calcul réel de croissance sera ajouté
+    // lorsque nous aurons les dates historiques.
+
+    if(usersGrowth){
+
+        usersGrowth.textContent =
+            "+0%";
+
+    }
+
+    if(merchantsGrowth){
+
+        merchantsGrowth.textContent =
+            "+0%";
+
+    }
+
+}
+
+
+//==================================================
+// CALCUL DES VENTES
+//==================================================
+
+function calculateTotalSales(){
+
+    let total = 0;
+
+    orders.forEach(order=>{
+
+        total += safeNumber(
+            order.total
+        );
+
+    });
+
+    return total;
+
+}
+
+
+//==================================================
+// CALCUL DES COMMISSIONS
+//==================================================
+
+function calculateTotalCommission(){
+
+    const sales =
+        calculateTotalSales();
+
+    return sales * COMMISSION_RATE;
+
+}
+
+
+//==================================================
+// CALCUL DU BENEFICE TOMA AUJOURD'HUI
+//==================================================
+
+function calculateTodayProfit(){
+
+    let total = 0;
+
+    orders.forEach(order=>{
+
+        if(!isToday(order.createdAt)){
+
+            return;
+
+        }
+
+        total +=
+            safeNumber(order.total)
+            * COMMISSION_RATE;
+
+    });
+
+    return total;
+
+}
+
+
+//==================================================
+// CALCUL DU TICKET MOYEN
+//==================================================
+
+function calculateAverageOrder(){
+
+    if(orders.length === 0){
+
+        return 0;
+
+    }
+
+    const total =
+        calculateTotalSales();
+
+    return total / orders.length;
+
+}
+
+
+//==================================================
+// MISE À JOUR FINANCIÈRE
+//==================================================
+
+function updateFinancialSummary(){
+
+    //==============================================
+    // VENTES TOTALES
+    //==============================================
+
+    totalSales =
+        calculateTotalSales();
+
+
+    //==============================================
+    // COMMISSION TOMA
+    //==============================================
+
+    totalCommission =
+        calculateTotalCommission();
+
+
+    //==============================================
+    // BENEFICE AUJOURD'HUI
+    //==============================================
+
+    totalProfitToday =
+        calculateTodayProfit();
+
+
+    //==============================================
+    // TICKET MOYEN
+    //==============================================
+
+    const average =
+        calculateAverageOrder();
+
+
+    //==============================================
+    // CARTE VENTES
+    //==============================================
+
+    if(salesCount){
+
+        salesCount.textContent =
+            formatKz(totalSales);
+
+    }
+
+
+    //==============================================
+    // CARTE COMMISSION
+    //==============================================
+
+    if(commissionCount){
+
+        commissionCount.textContent =
+            formatKz(totalCommission);
+
+    }
+
+
+    //==============================================
+    // RESUME FINANCIER
+    //==============================================
+
+    if(financeSales){
+
+        financeSales.textContent =
+            formatKz(totalSales);
+
+    }
+
+    if(financeCommission){
+
+        financeCommission.textContent =
+            formatKz(totalCommission);
+
+    }
+
+    if(averageOrder){
+
+        averageOrder.textContent =
+            formatKz(average);
+
+    }
+
+    if(todayProfit){
+
+        todayProfit.textContent =
+            formatKz(totalProfitToday);
+
+    }
+
+}
+
+
+//==================================================
+// FIN BLOC 5
+//==================================================
