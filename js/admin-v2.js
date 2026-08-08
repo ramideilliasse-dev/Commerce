@@ -6617,3 +6617,255 @@ window.TomaAdminRealtime = {
 //==================================================
 // FIN BLOC 17
 //==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 18 — INITIALISATION CENTRALE
+//==================================================
+
+
+//==================================================
+// ETAT DE L'INITIALISATION CENTRALE
+//==================================================
+
+let centralInitializationStarted = false;
+
+
+//==================================================
+// INITIALISER L'INTERFACE ADMIN
+//==================================================
+
+function initializeAdminInterface(){
+
+    //==============================================
+    // INFORMATIONS GENERALES
+    //==============================================
+
+    initializeDashboardInfo();
+
+
+    //==============================================
+    // ETAT DE LA SESSION
+    //==============================================
+
+    if(sessionStatus){
+
+        sessionStatus.textContent =
+            "Ativa";
+
+    }
+
+
+    //==============================================
+    // VERSION DU DASHBOARD
+    //==============================================
+
+    if(dashboardVersion){
+
+        dashboardVersion.textContent =
+            "V2 Premium";
+
+    }
+
+
+    //==============================================
+    // BASE DE DONNEES
+    //==============================================
+
+    if(databaseName){
+
+        databaseName.textContent =
+            "Firebase Firestore";
+
+    }
+
+
+    //==============================================
+    // ADMIN CONNECTE
+    //==============================================
+
+    if(auth.currentUser){
+
+        if(connectedAdmin){
+
+            connectedAdmin.textContent =
+                auth.currentUser.email ||
+                "Administrador";
+
+        }
+
+    }
+
+
+    //==============================================
+    // HEURE DE DERNIERE SYNCHRONISATION
+    //==============================================
+
+    updateLastUpdate();
+
+
+    //==============================================
+    // LOG
+    //==============================================
+
+    addSystemLog(
+        "Interface administrativa inicializada.",
+        "success"
+    );
+
+}
+
+
+//==================================================
+// RAFRAICHIR L'INTERFACE COMPLETE
+//==================================================
+
+function refreshAdminInterface(){
+
+    if(!dashboardInitialized){
+
+        return;
+
+    }
+
+
+    try{
+
+        updateDashboardCounters();
+
+        updateFinancialSummary();
+
+        updateMonitoring();
+
+        updateQuickReports();
+
+        updateOfficialStoresStats();
+
+        updatePlatformActivity();
+
+        renderDashboardTables();
+
+        updateLastUpdate();
+
+
+        if(lastSync){
+
+            lastSync.textContent =
+                formatDateTime(new Date());
+
+        }
+
+    }
+    catch(error){
+
+        registerError(
+            error,
+            "Erro ao atualizar a interface administrativa."
+        );
+
+    }
+
+}
+
+
+//==================================================
+// DEMARRAGE CENTRAL
+//==================================================
+
+function initializeAdminDashboard(){
+
+    if(centralInitializationStarted){
+
+        return;
+
+    }
+
+
+    if(!auth.currentUser){
+
+        return;
+
+    }
+
+
+    centralInitializationStarted =
+        true;
+
+
+    //==============================================
+    // INTERFACE
+    //==============================================
+
+    initializeAdminInterface();
+
+
+    //==============================================
+    // ETAT DASHBOARD
+    //==============================================
+
+    dashboardInitialized =
+        true;
+
+
+    //==============================================
+    // SYNCHRONISATION TEMPS REEL
+    //==============================================
+
+    startRealtimeListeners();
+
+
+    //==============================================
+    // RAFRAICHISSEMENT INITIAL
+    //==============================================
+
+    refreshAdminInterface();
+
+
+    //==============================================
+    // LOG FINAL
+    //==============================================
+
+    addSystemLog(
+        "Dashboard administrativo iniciado com sucesso.",
+        "success"
+    );
+
+}
+
+
+//==================================================
+// DEMARRAGE APRES AUTHENTIFICATION
+//==================================================
+
+function startDashboard(){
+
+    if(!auth.currentUser){
+
+        return;
+
+    }
+
+
+    initializeAdminDashboard();
+
+}
+
+
+//==================================================
+// EXPOSER LE CONTROLE DU DASHBOARD
+//==================================================
+
+window.TomaAdminDashboard = {
+
+    start:
+        initializeAdminDashboard,
+
+    refresh:
+        refreshAdminInterface
+
+};
+
+
+//==================================================
+// FIN BLOC 18
+//==================================================
