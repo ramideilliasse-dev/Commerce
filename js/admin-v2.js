@@ -7526,3 +7526,775 @@ document.addEventListener(
 //==================================================
 // FIN BLOC 19
 //==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 20 — GRAPHIQUES + STATISTIQUES
+//==================================================
+
+
+//==================================================
+// VERIFIER LA DISPONIBILITE DE CHART.JS
+//==================================================
+
+function isChartJsAvailable(){
+
+    return (
+        typeof Chart !== "undefined"
+    );
+
+}
+
+
+//==================================================
+// EXTRAIRE LES VENTES PAR JOUR
+//==================================================
+
+function getDailySalesData(){
+
+    const labels = [];
+
+    const values = [];
+
+
+    // Les 7 derniers jours
+
+    for(let i = 6; i >= 0; i--){
+
+        const date =
+            new Date();
+
+        date.setHours(
+            0,
+            0,
+            0,
+            0
+        );
+
+        date.setDate(
+            date.getDate() - i
+        );
+
+
+        const label =
+            date.toLocaleDateString(
+                "pt-PT",
+                {
+                    day:"2-digit",
+                    month:"2-digit"
+                }
+            );
+
+
+        labels.push(label);
+
+
+        let total = 0;
+
+
+        orders.forEach(order=>{
+
+            const orderDate =
+                getDateValue(
+                    order.createdAt
+                );
+
+
+            if(!orderDate){
+
+                return;
+
+            }
+
+
+            if(
+                orderDate.getFullYear()
+                === date.getFullYear()
+
+                &&
+
+                orderDate.getMonth()
+                === date.getMonth()
+
+                &&
+
+                orderDate.getDate()
+                === date.getDate()
+            ){
+
+                total +=
+                    safeNumber(
+                        order.total
+                    );
+
+            }
+
+        });
+
+
+        values.push(total);
+
+    }
+
+
+    return {
+        labels,
+        values
+    };
+
+}
+
+
+//==================================================
+// COMMANDES PAR JOUR
+//==================================================
+
+function getDailyOrdersData(){
+
+    const labels = [];
+
+    const values = [];
+
+
+    for(let i = 6; i >= 0; i--){
+
+        const date =
+            new Date();
+
+        date.setHours(
+            0,
+            0,
+            0,
+            0
+        );
+
+        date.setDate(
+            date.getDate() - i
+        );
+
+
+        labels.push(
+            date.toLocaleDateString(
+                "pt-PT",
+                {
+                    day:"2-digit",
+                    month:"2-digit"
+                }
+            )
+        );
+
+
+        let count = 0;
+
+
+        orders.forEach(order=>{
+
+            const orderDate =
+                getDateValue(
+                    order.createdAt
+                );
+
+
+            if(!orderDate){
+
+                return;
+
+            }
+
+
+            if(
+                orderDate.getFullYear()
+                === date.getFullYear()
+
+                &&
+
+                orderDate.getMonth()
+                === date.getMonth()
+
+                &&
+
+                orderDate.getDate()
+                === date.getDate()
+            ){
+
+                count++;
+
+            }
+
+        });
+
+
+        values.push(count);
+
+    }
+
+
+    return {
+        labels,
+        values
+    };
+
+}
+
+
+//==================================================
+// UTILISATEURS PAR JOUR
+//==================================================
+
+function getDailyUsersData(){
+
+    const labels = [];
+
+    const values = [];
+
+
+    for(let i = 6; i >= 0; i--){
+
+        const date =
+            new Date();
+
+        date.setHours(
+            0,
+            0,
+            0,
+            0
+        );
+
+        date.setDate(
+            date.getDate() - i
+        );
+
+
+        labels.push(
+            date.toLocaleDateString(
+                "pt-PT",
+                {
+                    day:"2-digit",
+                    month:"2-digit"
+                }
+            )
+        );
+
+
+        let count = 0;
+
+
+        users.forEach(user=>{
+
+            const userDate =
+                getDateValue(
+                    user.createdAt
+                );
+
+
+            if(!userDate){
+
+                return;
+
+            }
+
+
+            if(
+                userDate.getFullYear()
+                === date.getFullYear()
+
+                &&
+
+                userDate.getMonth()
+                === date.getMonth()
+
+                &&
+
+                userDate.getDate()
+                === date.getDate()
+            ){
+
+                count++;
+
+            }
+
+        });
+
+
+        values.push(count);
+
+    }
+
+
+    return {
+        labels,
+        values
+    };
+
+}
+
+
+//==================================================
+// COMMISSION PAR JOUR
+//==================================================
+
+function getDailyCommissionData(){
+
+    const salesData =
+        getDailySalesData();
+
+
+    const values =
+        salesData.values.map(
+            value =>
+                value * COMMISSION_RATE
+        );
+
+
+    return {
+
+        labels:
+            salesData.labels,
+
+        values:
+            values
+
+    };
+
+}
+
+
+//==================================================
+// DETRUIRE UN GRAPHIQUE EXISTANT
+//==================================================
+
+function destroyChart(chart){
+
+    if(chart){
+
+        try{
+
+            chart.destroy();
+
+        }
+        catch(error){
+
+            registerError(
+                error,
+                "Erro ao destruir gráfico."
+            );
+
+        }
+
+    }
+
+}
+
+
+//==================================================
+// CREER GRAPHIQUE DES VENTES
+//==================================================
+
+function renderSalesChart(){
+
+    if(!salesChartCanvas){
+
+        return;
+
+    }
+
+
+    if(!isChartJsAvailable()){
+
+        return;
+
+    }
+
+
+    const data =
+        getDailySalesData();
+
+
+    destroyChart(
+        salesChart
+    );
+
+
+    salesChart =
+        new Chart(
+            salesChartCanvas,
+            {
+
+                type:"line",
+
+                data:{
+
+                    labels:
+                        data.labels,
+
+                    datasets:[
+
+                        {
+
+                            label:
+                                "Vendas",
+
+                            data:
+                                data.values,
+
+                            tension:
+                                0.35,
+
+                            fill:
+                                true
+
+                        }
+
+                    ]
+
+                },
+
+                options:{
+
+                    responsive:true,
+
+                    maintainAspectRatio:false,
+
+                    plugins:{
+
+                        legend:{
+
+                            display:true
+
+                        }
+
+                    },
+
+                    scales:{
+
+                        y:{
+
+                            beginAtZero:true
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+}
+
+
+//==================================================
+// CREER GRAPHIQUE DES COMMANDES
+//==================================================
+
+function renderOrdersChart(){
+
+    if(!ordersChartCanvas){
+
+        return;
+
+    }
+
+
+    if(!isChartJsAvailable()){
+
+        return;
+
+    }
+
+
+    const data =
+        getDailyOrdersData();
+
+
+    destroyChart(
+        ordersChart
+    );
+
+
+    ordersChart =
+        new Chart(
+            ordersChartCanvas,
+            {
+
+                type:"bar",
+
+                data:{
+
+                    labels:
+                        data.labels,
+
+                    datasets:[
+
+                        {
+
+                            label:
+                                "Pedidos",
+
+                            data:
+                                data.values
+
+                        }
+
+                    ]
+
+                },
+
+                options:{
+
+                    responsive:true,
+
+                    maintainAspectRatio:false,
+
+                    scales:{
+
+                        y:{
+
+                            beginAtZero:true,
+
+                            ticks:{
+
+                                precision:0
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+}
+
+
+//==================================================
+// CREER GRAPHIQUE DES UTILISATEURS
+//==================================================
+
+function renderUsersChart(){
+
+    if(!usersChartCanvas){
+
+        return;
+
+    }
+
+
+    if(!isChartJsAvailable()){
+
+        return;
+
+    }
+
+
+    const data =
+        getDailyUsersData();
+
+
+    destroyChart(
+        usersChart
+    );
+
+
+    usersChart =
+        new Chart(
+            usersChartCanvas,
+            {
+
+                type:"line",
+
+                data:{
+
+                    labels:
+                        data.labels,
+
+                    datasets:[
+
+                        {
+
+                            label:
+                                "Novos utilizadores",
+
+                            data:
+                                data.values,
+
+                            tension:
+                                0.35,
+
+                            fill:
+                                true
+
+                        }
+
+                    ]
+
+                },
+
+                options:{
+
+                    responsive:true,
+
+                    maintainAspectRatio:false,
+
+                    scales:{
+
+                        y:{
+
+                            beginAtZero:true,
+
+                            ticks:{
+
+                                precision:0
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+}
+
+
+//==================================================
+// CREER GRAPHIQUE DES COMMISSIONS
+//==================================================
+
+function renderCommissionChart(){
+
+    if(!commissionChartCanvas){
+
+        return;
+
+    }
+
+
+    if(!isChartJsAvailable()){
+
+        return;
+
+    }
+
+
+    const data =
+        getDailyCommissionData();
+
+
+    destroyChart(
+        commissionChart
+    );
+
+
+    commissionChart =
+        new Chart(
+            commissionChartCanvas,
+            {
+
+                type:"bar",
+
+                data:{
+
+                    labels:
+                        data.labels,
+
+                    datasets:[
+
+                        {
+
+                            label:
+                                "Comissão TOMA",
+
+                            data:
+                                data.values
+
+                        }
+
+                    ]
+
+                },
+
+                options:{
+
+                    responsive:true,
+
+                    maintainAspectRatio:false,
+
+                    scales:{
+
+                        y:{
+
+                            beginAtZero:true
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+}
+
+
+//==================================================
+// RENDU DE TOUS LES GRAPHIQUES
+//==================================================
+
+function renderAllCharts(){
+
+    if(!isChartJsAvailable()){
+
+        addSystemLog(
+            "Chart.js não está disponível.",
+            "info"
+        );
+
+        return;
+
+    }
+
+
+    renderSalesChart();
+
+    renderOrdersChart();
+
+    renderUsersChart();
+
+    renderCommissionChart();
+
+}
+
+
+//==================================================
+// CHANGEMENT DE PERIODE
+//==================================================
+
+salesPeriod?.addEventListener(
+    "change",
+    ()=>{
+
+        renderSalesChart();
+
+        renderCommissionChart();
+
+
+        addSystemLog(
+            "Período dos gráficos atualizado.",
+            "info"
+        );
+
+    }
+);
+
+
+//==================================================
+// FIN BLOC 20
+//==================================================
