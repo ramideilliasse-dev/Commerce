@@ -5774,3 +5774,400 @@ addSystemLog(
 //==================================================
 // FIN BLOC 15
 //==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 16 — GESTION DES COMMANDES
+//==================================================
+
+//==================================================
+// MODIFIER LE STATUT D'UNE COMMANDE
+//==================================================
+
+async function updateOrderStatus(
+    orderId,
+    newStatus
+){
+
+    if(!orderId){
+
+        showToast(
+            "Pedido inválido."
+        );
+
+        return;
+
+    }
+
+    if(!newStatus){
+
+        return;
+
+    }
+
+    try{
+
+        showLoader();
+
+        const orderRef =
+            doc(
+                db,
+                "orders",
+                orderId
+            );
+
+        await updateDoc(
+            orderRef,
+            {
+
+                status:
+                    newStatus,
+
+                updatedAt:
+                    serverTimestamp(),
+
+                updatedBy:
+                    auth.currentUser?.uid || null
+
+            }
+        );
+
+
+        //==========================================
+        // MISE À JOUR LOCALE
+        //==========================================
+
+        const order =
+            orders.find(
+                item =>
+                    item.id === orderId
+            );
+
+        if(order){
+
+            order.status =
+                newStatus;
+
+        }
+
+
+        //==========================================
+        // RAFRAICHISSEMENT
+        //==========================================
+
+        updateDashboardCounters();
+
+        updateFinancialSummary();
+
+        updateMonitoring();
+
+        updateQuickReports();
+
+        renderLastOrders();
+
+        renderRecentActivity();
+
+
+        //==========================================
+        // MESSAGE
+        //==========================================
+
+        let message =
+            "Status do pedido atualizado.";
+
+        if(newStatus === "confirmed"){
+
+            message =
+                "Pedido confirmado.";
+
+        }
+
+        if(newStatus === "processing"){
+
+            message =
+                "Pedido em preparação.";
+
+        }
+
+        if(newStatus === "shipped"){
+
+            message =
+                "Pedido enviado.";
+
+        }
+
+        if(newStatus === "delivered"){
+
+            message =
+                "Pedido entregue.";
+
+        }
+
+        if(newStatus === "cancelled"){
+
+            message =
+                "Pedido cancelado.";
+
+        }
+
+        if(newStatus === "pending"){
+
+            message =
+                "Pedido colocado como pendente.";
+
+        }
+
+
+        showToast(
+            message
+        );
+
+
+        addSystemLog(
+            message,
+            "success"
+        );
+
+    }
+    catch(error){
+
+        registerError(
+            error,
+            "Erro ao alterar o status do pedido."
+        );
+
+        showToast(
+            "Não foi possível alterar o pedido."
+        );
+
+    }
+    finally{
+
+        hideLoader();
+
+    }
+
+}
+
+
+//==================================================
+// CONFIRMER
+//==================================================
+
+async function confirmOrder(
+    orderId
+){
+
+    await updateOrderStatus(
+        orderId,
+        "confirmed"
+    );
+
+}
+
+
+//==================================================
+// METTRE EN PREPARATION
+//==================================================
+
+async function processOrder(
+    orderId
+){
+
+    await updateOrderStatus(
+        orderId,
+        "processing"
+    );
+
+}
+
+
+//==================================================
+// EXPEDIER
+//==================================================
+
+async function shipOrder(
+    orderId
+){
+
+    await updateOrderStatus(
+        orderId,
+        "shipped"
+    );
+
+}
+
+
+//==================================================
+// MARQUER COMME LIVRÉ
+//==================================================
+
+async function deliverOrder(
+    orderId
+){
+
+    await updateOrderStatus(
+        orderId,
+        "delivered"
+    );
+
+}
+
+
+//==================================================
+// ANNULER
+//==================================================
+
+async function cancelOrder(
+    orderId
+){
+
+    const confirmed =
+        window.confirm(
+            "Tem certeza que deseja cancelar este pedido?"
+        );
+
+    if(!confirmed){
+
+        return;
+
+    }
+
+    await updateOrderStatus(
+        orderId,
+        "cancelled"
+    );
+
+}
+
+
+//==================================================
+// ACTIONS DES BOUTONS HTML
+//==================================================
+
+document.addEventListener(
+    "click",
+    (event)=>{
+
+        const button =
+            event.target.closest(
+                "[data-order-action]"
+            );
+
+        if(!button){
+
+            return;
+
+        }
+
+
+        const action =
+            button.dataset.orderAction;
+
+        const orderId =
+            button.dataset.orderId;
+
+
+        if(!orderId){
+
+            showToast(
+                "ID do pedido não encontrado."
+            );
+
+            return;
+
+        }
+
+
+        if(action === "confirm"){
+
+            confirmOrder(
+                orderId
+            );
+
+            return;
+
+        }
+
+
+        if(action === "process"){
+
+            processOrder(
+                orderId
+            );
+
+            return;
+
+        }
+
+
+        if(action === "ship"){
+
+            shipOrder(
+                orderId
+            );
+
+            return;
+
+        }
+
+
+        if(action === "deliver"){
+
+            deliverOrder(
+                orderId
+            );
+
+            return;
+
+        }
+
+
+        if(action === "cancel"){
+
+            cancelOrder(
+                orderId
+            );
+
+            return;
+
+        }
+
+    }
+);
+
+
+//==================================================
+// EXPOSER LES ACTIONS
+//==================================================
+
+window.TomaAdminActions = {
+
+    ...(window.TomaAdminActions || {}),
+
+    confirmOrder,
+
+    processOrder,
+
+    shipOrder,
+
+    deliverOrder,
+
+    cancelOrder
+
+};
+
+
+//==================================================
+// LOG
+//==================================================
+
+addSystemLog(
+    "Gestão administrativa dos pedidos carregada.",
+    "success"
+);
+
+
+//==================================================
+// FIN BLOC 16
+//==================================================
