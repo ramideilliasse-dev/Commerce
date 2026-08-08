@@ -6171,3 +6171,449 @@ addSystemLog(
 //==================================================
 // FIN BLOC 16
 //==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 17 — TEMPS RÉEL FIRESTORE
+//==================================================
+
+//==================================================
+// ÉTAT DES LISTENERS TEMPS RÉEL
+//==================================================
+
+let realtimeListenersStarted = false;
+
+
+//==================================================
+// REFERENCES DES LISTENERS
+//==================================================
+
+let unsubscribeUsersRealtime = null;
+
+let unsubscribeMerchantsRealtime = null;
+
+let unsubscribeProductsRealtime = null;
+
+let unsubscribeOrdersRealtime = null;
+
+
+//==================================================
+// RAFRAÎCHISSEMENT CENTRAL DU DASHBOARD
+//==================================================
+
+function refreshDashboardRealtime(){
+
+    if(dashboardLoading){
+
+        return;
+
+    }
+
+    updateDashboardCounters();
+
+    updateFinancialSummary();
+
+    updateMonitoring();
+
+    updateQuickReports();
+
+    updateOfficialStoresStats();
+
+    updatePlatformActivity();
+
+    renderDashboardTables();
+
+    updateLastUpdate();
+
+}
+
+
+//==================================================
+// LISTENER UTILISATEURS
+//==================================================
+
+function startUsersRealtimeListener(){
+
+    if(unsubscribeUsersRealtime){
+
+        unsubscribeUsersRealtime();
+
+    }
+
+    unsubscribeUsersRealtime =
+        onSnapshot(
+
+            collection(db,"users"),
+
+            (snapshot)=>{
+
+                users = [];
+
+                snapshot.forEach(
+                    documentSnapshot => {
+
+                        users.push({
+
+                            id:
+                                documentSnapshot.id,
+
+                            ...documentSnapshot.data()
+
+                        });
+
+                    }
+                );
+
+
+                addSystemLog(
+                    "Utilizadores sincronizados em tempo real.",
+                    "success"
+                );
+
+
+                refreshDashboardRealtime();
+
+            },
+
+            (error)=>{
+
+                registerError(
+                    error,
+                    "Erro na sincronização dos utilizadores."
+                );
+
+            }
+
+        );
+
+}
+
+
+//==================================================
+// LISTENER COMMERÇANTS
+//==================================================
+
+function startMerchantsRealtimeListener(){
+
+    if(unsubscribeMerchantsRealtime){
+
+        unsubscribeMerchantsRealtime();
+
+    }
+
+    unsubscribeMerchantsRealtime =
+        onSnapshot(
+
+            collection(db,"merchants"),
+
+            (snapshot)=>{
+
+                merchants = [];
+
+                snapshot.forEach(
+                    documentSnapshot => {
+
+                        merchants.push({
+
+                            id:
+                                documentSnapshot.id,
+
+                            ...documentSnapshot.data()
+
+                        });
+
+                    }
+                );
+
+
+                merchantRequests =
+                    merchants.filter(
+                        merchant =>
+                            merchant.status === "pending"
+                    );
+
+
+                addSystemLog(
+                    "Comerciantes sincronizados em tempo real.",
+                    "success"
+                );
+
+
+                refreshDashboardRealtime();
+
+            },
+
+            (error)=>{
+
+                registerError(
+                    error,
+                    "Erro na sincronização dos comerciantes."
+                );
+
+            }
+
+        );
+
+}
+
+
+//==================================================
+// LISTENER PRODUITS
+//==================================================
+
+function startProductsRealtimeListener(){
+
+    if(unsubscribeProductsRealtime){
+
+        unsubscribeProductsRealtime();
+
+    }
+
+    unsubscribeProductsRealtime =
+        onSnapshot(
+
+            collection(db,"products"),
+
+            (snapshot)=>{
+
+                products = [];
+
+                snapshot.forEach(
+                    documentSnapshot => {
+
+                        products.push({
+
+                            id:
+                                documentSnapshot.id,
+
+                            ...documentSnapshot.data()
+
+                        });
+
+                    }
+                );
+
+
+                addSystemLog(
+                    "Produtos sincronizados em tempo real.",
+                    "success"
+                );
+
+
+                refreshDashboardRealtime();
+
+            },
+
+            (error)=>{
+
+                registerError(
+                    error,
+                    "Erro na sincronização dos produtos."
+                );
+
+            }
+
+        );
+
+}
+
+
+//==================================================
+// LISTENER COMMANDES
+//==================================================
+
+function startOrdersRealtimeListener(){
+
+    if(unsubscribeOrdersRealtime){
+
+        unsubscribeOrdersRealtime();
+
+    }
+
+    unsubscribeOrdersRealtime =
+        onSnapshot(
+
+            collection(db,"orders"),
+
+            (snapshot)=>{
+
+                orders = [];
+
+                snapshot.forEach(
+                    documentSnapshot => {
+
+                        orders.push({
+
+                            id:
+                                documentSnapshot.id,
+
+                            ...documentSnapshot.data()
+
+                        });
+
+                    }
+                );
+
+
+                addSystemLog(
+                    "Pedidos sincronizados em tempo real.",
+                    "success"
+                );
+
+
+                refreshDashboardRealtime();
+
+            },
+
+            (error)=>{
+
+                registerError(
+                    error,
+                    "Erro na sincronização dos pedidos."
+                );
+
+            }
+
+        );
+
+}
+
+
+//==================================================
+// INICIAR TODOS OS LISTENERS
+//==================================================
+
+function startRealtimeListeners(){
+
+    if(realtimeListenersStarted){
+
+        return;
+
+    }
+
+
+    if(!dashboardInitialized){
+
+        return;
+
+    }
+
+
+    realtimeListenersStarted = true;
+
+
+    addSystemLog(
+        "Sincronização Firestore em tempo real iniciada.",
+        "info"
+    );
+
+
+    startUsersRealtimeListener();
+
+    startMerchantsRealtimeListener();
+
+    startProductsRealtimeListener();
+
+    startOrdersRealtimeListener();
+
+
+    if(firebaseStatus){
+
+        firebaseStatus.textContent =
+            "Online";
+
+    }
+
+    if(firestoreStatus){
+
+        firestoreStatus.textContent =
+            "Online";
+
+    }
+
+    if(lastSync){
+
+        lastSync.textContent =
+            formatDateTime(new Date());
+
+    }
+
+}
+
+
+//==================================================
+// ARRÊTER LES LISTENERS
+//==================================================
+
+function stopRealtimeListeners(){
+
+    if(unsubscribeUsersRealtime){
+
+        unsubscribeUsersRealtime();
+
+        unsubscribeUsersRealtime =
+            null;
+
+    }
+
+
+    if(unsubscribeMerchantsRealtime){
+
+        unsubscribeMerchantsRealtime();
+
+        unsubscribeMerchantsRealtime =
+            null;
+
+    }
+
+
+    if(unsubscribeProductsRealtime){
+
+        unsubscribeProductsRealtime();
+
+        unsubscribeProductsRealtime =
+            null;
+
+    }
+
+
+    if(unsubscribeOrdersRealtime){
+
+        unsubscribeOrdersRealtime();
+
+        unsubscribeOrdersRealtime =
+            null;
+
+    }
+
+
+    realtimeListenersStarted =
+        false;
+
+
+    addSystemLog(
+        "Sincronização Firestore em tempo real interrompida.",
+        "info"
+    );
+
+}
+
+
+//==================================================
+// EXPOSER LE CONTRÔLE TEMPS RÉEL
+//==================================================
+
+window.TomaAdminRealtime = {
+
+    start:
+        startRealtimeListeners,
+
+    stop:
+        stopRealtimeListeners
+
+};
+
+
+//==================================================
+// FIN BLOC 17
+//==================================================
