@@ -6869,3 +6869,660 @@ window.TomaAdminDashboard = {
 //==================================================
 // FIN BLOC 18
 //==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 19 — EVENEMENTS DU DASHBOARD
+//==================================================
+
+
+//==================================================
+// ACTUALISER LE DASHBOARD
+//==================================================
+
+refreshDashboard?.addEventListener(
+    "click",
+    async ()=>{
+
+        try{
+
+            showLoader();
+
+            addSystemLog(
+                "Atualização manual do dashboard iniciada.",
+                "info"
+            );
+
+
+            // Recharger les données ponctuellement
+            // pour garantir une synchronisation complète.
+
+            await loadAllDashboardData();
+
+
+            // Rafraîchir l'interface
+
+            refreshAdminInterface();
+
+
+            addSystemLog(
+                "Dashboard atualizado com sucesso.",
+                "success"
+            );
+
+            showToast(
+                "Dashboard atualizado."
+            );
+
+        }
+        catch(error){
+
+            registerError(
+                error,
+                "Erro durante a atualização manual."
+            );
+
+            showToast(
+                "Erro ao atualizar o dashboard."
+            );
+
+        }
+        finally{
+
+            hideLoader();
+
+        }
+
+    }
+);
+
+
+//==================================================
+// BOUTON NOTIFICATIONS
+//==================================================
+
+notificationsButton?.addEventListener(
+    "click",
+    ()=>{
+
+        if(!notificationModal){
+
+            return;
+
+        }
+
+
+        notificationModal.classList.add(
+            "show"
+        );
+
+
+        if(notificationContent){
+
+            notificationContent.innerHTML = "";
+
+
+            //======================================
+            // DEMANDES COMMERÇANTS
+            //======================================
+
+            if(merchantRequests.length > 0){
+
+                const title =
+                    document.createElement("h3");
+
+                title.textContent =
+                    "Demandas de comerciantes";
+
+                notificationContent.appendChild(
+                    title
+                );
+
+
+                merchantRequests
+                    .slice(0,10)
+                    .forEach(merchant=>{
+
+                        const item =
+                            document.createElement("div");
+
+                        item.className =
+                            "notificationItem";
+
+
+                        const name =
+                            safeText(
+                                merchant.name ||
+                                merchant.firstName ||
+                                merchant.shopName,
+                                "Comerciante"
+                            );
+
+
+                        item.textContent =
+                            `${name} aguarda aprovação.`;
+
+
+                        notificationContent.appendChild(
+                            item
+                        );
+
+                    });
+
+            }
+
+
+            //======================================
+            // AUCUNE NOTIFICATION
+            //======================================
+
+            if(
+                merchantRequests.length === 0 &&
+                notifications.length === 0
+            ){
+
+                const empty =
+                    document.createElement("div");
+
+                empty.className =
+                    "notificationItem";
+
+
+                empty.textContent =
+                    "Nenhuma nova notificação.";
+
+
+                notificationContent.appendChild(
+                    empty
+                );
+
+            }
+
+        }
+
+
+        addSystemLog(
+            "Painel de notificações aberto.",
+            "info"
+        );
+
+    }
+);
+
+
+//==================================================
+// FERMER LE MODAL NOTIFICATIONS
+//==================================================
+
+closeNotificationModal?.addEventListener(
+    "click",
+    ()=>{
+
+        notificationModal?.classList.remove(
+            "show"
+        );
+
+    }
+);
+
+
+//==================================================
+// FERMER LE MODAL EN CLIQUANT A L'EXTERIEUR
+//==================================================
+
+notificationModal?.addEventListener(
+    "click",
+    (event)=>{
+
+        if(
+            event.target ===
+            notificationModal
+        ){
+
+            notificationModal.classList.remove(
+                "show"
+            );
+
+        }
+
+    }
+);
+
+
+//==================================================
+// BOUTON AJOUT RAPIDE
+//==================================================
+
+quickAddButton?.addEventListener(
+    "click",
+    ()=>{
+
+        addSystemLog(
+            "Ação de adição rápida solicitada.",
+            "info"
+        );
+
+
+        // La page de création sera utilisée
+        // si elle existe dans le projet.
+
+        const target =
+            "add-product.html";
+
+
+        window.location.href =
+            target;
+
+    }
+);
+
+
+//==================================================
+// NETTOYER LES LOGS
+//==================================================
+
+clearLogs?.addEventListener(
+    "click",
+    ()=>{
+
+        clearSystemLogs();
+
+    }
+);
+
+
+//==================================================
+// RECHERCHE GLOBALE
+//==================================================
+
+globalSearch?.addEventListener(
+    "input",
+    (event)=>{
+
+        const search =
+            safeText(
+                event.target.value,
+                ""
+            )
+            .trim()
+            .toLowerCase();
+
+
+        //==========================================
+        // RECHERCHE VIDE
+        //==========================================
+
+        if(!search){
+
+            renderDashboardTables();
+
+            return;
+
+        }
+
+
+        //==========================================
+        // COMMANDES
+        //==========================================
+
+        const filteredOrders =
+            orders.filter(order=>{
+
+                const text = [
+
+                    order.customerName,
+
+                    order.customer,
+
+                    order.userName,
+
+                    order.productName,
+
+                    order.product,
+
+                    order.status
+
+                ]
+                .filter(Boolean)
+                .join(" ")
+                .toLowerCase();
+
+
+                return text.includes(search);
+
+            });
+
+
+        //==========================================
+        // COMMERÇANTS
+        //==========================================
+
+        const filteredMerchants =
+            merchants.filter(merchant=>{
+
+                const text = [
+
+                    merchant.name,
+
+                    merchant.firstName,
+
+                    merchant.lastName,
+
+                    merchant.shopName,
+
+                    merchant.storeName,
+
+                    merchant.businessName,
+
+                    merchant.phone
+
+                ]
+                .filter(Boolean)
+                .join(" ")
+                .toLowerCase();
+
+
+                return text.includes(search);
+
+            });
+
+
+        //==========================================
+        // PRODUITS
+        //==========================================
+
+        const filteredProducts =
+            products.filter(product=>{
+
+                const text = [
+
+                    product.name,
+
+                    product.category,
+
+                    product.storeName,
+
+                    product.shopName,
+
+                    product.merchantName,
+
+                    product.status
+
+                ]
+                .filter(Boolean)
+                .join(" ")
+                .toLowerCase();
+
+
+                return text.includes(search);
+
+            });
+
+
+        //==========================================
+        // RESULTATS DANS LES TABLEAUX
+        //==========================================
+
+        renderSearchResults(
+            filteredOrders,
+            filteredMerchants,
+            filteredProducts
+        );
+
+
+        addSystemLog(
+            `Pesquisa administrativa: ${search}`,
+            "info"
+        );
+
+    }
+);
+
+
+//==================================================
+// RENDRE LES RESULTATS DE RECHERCHE
+//==================================================
+
+function renderSearchResults(
+    filteredOrders,
+    filteredMerchants,
+    filteredProducts
+){
+
+    //==============================================
+    // COMMANDES
+    //==============================================
+
+    if(lastOrdersTable){
+
+        lastOrdersTable.innerHTML = "";
+
+
+        filteredOrders
+            .slice(0,10)
+            .forEach(order=>{
+
+                const row =
+                    document.createElement("tr");
+
+
+                const customer =
+                    document.createElement("td");
+
+                customer.textContent =
+                    safeText(
+                        order.customerName ||
+                        order.customer ||
+                        order.userName
+                    );
+
+
+                const product =
+                    document.createElement("td");
+
+                product.textContent =
+                    safeText(
+                        order.productName ||
+                        order.product
+                    );
+
+
+                const total =
+                    document.createElement("td");
+
+                total.textContent =
+                    formatKz(
+                        order.total
+                    );
+
+
+                const status =
+                    document.createElement("td");
+
+                status.textContent =
+                    safeText(
+                        order.status,
+                        "pending"
+                    );
+
+
+                const date =
+                    document.createElement("td");
+
+                date.textContent =
+                    formatDate(
+                        order.createdAt
+                    );
+
+
+                row.appendChild(customer);
+
+                row.appendChild(product);
+
+                row.appendChild(total);
+
+                row.appendChild(status);
+
+                row.appendChild(date);
+
+
+                lastOrdersTable.appendChild(row);
+
+            });
+
+    }
+
+
+    //==============================================
+    // COMMERÇANTS
+    //==============================================
+
+    if(lastMerchantsTable){
+
+        lastMerchantsTable.innerHTML = "";
+
+
+        filteredMerchants
+            .slice(0,10)
+            .forEach(merchant=>{
+
+                const row =
+                    document.createElement("tr");
+
+
+                const name =
+                    document.createElement("td");
+
+                name.textContent =
+                    safeText(
+                        merchant.name ||
+                        merchant.firstName
+                    );
+
+
+                const shop =
+                    document.createElement("td");
+
+                shop.textContent =
+                    safeText(
+                        merchant.shopName ||
+                        merchant.storeName ||
+                        merchant.businessName
+                    );
+
+
+                const status =
+                    document.createElement("td");
+
+                status.textContent =
+                    safeText(
+                        merchant.status,
+                        "pending"
+                    );
+
+
+                row.appendChild(name);
+
+                row.appendChild(shop);
+
+                row.appendChild(status);
+
+
+                lastMerchantsTable.appendChild(row);
+
+            });
+
+    }
+
+
+    //==============================================
+    // PRODUITS
+    //==============================================
+
+    if(lastProductsTable){
+
+        lastProductsTable.innerHTML = "";
+
+
+        filteredProducts
+            .slice(0,10)
+            .forEach(product=>{
+
+                const row =
+                    document.createElement("tr");
+
+
+                const name =
+                    document.createElement("td");
+
+                name.textContent =
+                    safeText(
+                        product.name
+                    );
+
+
+                const price =
+                    document.createElement("td");
+
+                price.textContent =
+                    formatKz(
+                        product.price
+                    );
+
+
+                const store =
+                    document.createElement("td");
+
+                store.textContent =
+                    safeText(
+                        product.storeName ||
+                        product.shopName ||
+                        product.merchantName
+                    );
+
+
+                row.appendChild(name);
+
+                row.appendChild(price);
+
+                row.appendChild(store);
+
+
+                lastProductsTable.appendChild(row);
+
+            });
+
+    }
+
+}
+
+
+//==================================================
+// RACCOURCI CLAVIER — RECHERCHE
+//==================================================
+
+document.addEventListener(
+    "keydown",
+    (event)=>{
+
+        // Ctrl + K / Cmd + K
+
+        if(
+            (event.ctrlKey || event.metaKey) &&
+            event.key.toLowerCase() === "k"
+        ){
+
+            event.preventDefault();
+
+
+            globalSearch?.focus();
+
+        }
+
+    }
+);
+
+
+//==================================================
+// FIN BLOC 19
+//==================================================
