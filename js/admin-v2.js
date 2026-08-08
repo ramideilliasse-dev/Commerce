@@ -5292,3 +5292,485 @@ window.TomaAdminActions = {
 //==================================================
 // FIN BLOC 14
 //==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 15 — GESTION ADMINISTRATIVE DES PRODUITS
+//==================================================
+
+//==================================================
+// MODIFIER LE STATUT D'UN PRODUIT
+//==================================================
+
+async function updateProductStatus(
+    productId,
+    newStatus
+){
+
+    //==============================================
+    // VERIFICATION
+    //==============================================
+
+    if(!productId){
+
+        showToast(
+            "Produto inválido."
+        );
+
+        return;
+
+    }
+
+
+    if(!newStatus){
+
+        return;
+
+    }
+
+
+    try{
+
+        showLoader();
+
+
+        //==========================================
+        // REFERENCE FIRESTORE
+        //==========================================
+
+        const productRef =
+            doc(
+                db,
+                "products",
+                productId
+            );
+
+
+        //==========================================
+        // MISE A JOUR FIRESTORE
+        //==========================================
+
+        await updateDoc(
+            productRef,
+            {
+
+                status:
+                    newStatus,
+
+                updatedAt:
+                    serverTimestamp(),
+
+                updatedBy:
+                    auth.currentUser?.uid || null
+
+            }
+        );
+
+
+        //==========================================
+        // MISE A JOUR LOCALE
+        //==========================================
+
+        const product =
+            products.find(
+                item =>
+                    item.id === productId
+            );
+
+
+        if(product){
+
+            product.status =
+                newStatus;
+
+        }
+
+
+        //==========================================
+        // RAFRAICHIR LES INFORMATIONS
+        //==========================================
+
+        updateDashboardCounters();
+
+        updateMonitoring();
+
+        updateQuickReports();
+
+        renderLastProducts();
+
+
+        //==========================================
+        // MESSAGE SELON LE STATUT
+        //==========================================
+
+        let message =
+            "Status do produto atualizado.";
+
+
+        if(newStatus === "approved"){
+
+            message =
+                "Produto aprovado com sucesso.";
+
+        }
+
+
+        if(newStatus === "published"){
+
+            message =
+                "Produto publicado com sucesso.";
+
+        }
+
+
+        if(newStatus === "hidden"){
+
+            message =
+                "Produto ocultado.";
+
+        }
+
+
+        if(newStatus === "suspended"){
+
+            message =
+                "Produto suspenso.";
+
+        }
+
+
+        if(newStatus === "active"){
+
+            message =
+                "Produto reativado.";
+
+        }
+
+
+        if(newStatus === "deleted"){
+
+            message =
+                "Produto removido da plataforma.";
+
+        }
+
+
+        //==========================================
+        // NOTIFICATION ADMIN
+        //==========================================
+
+        showToast(
+            message
+        );
+
+
+        //==========================================
+        // LOG SYSTEME
+        //==========================================
+
+        addSystemLog(
+            message,
+            "success"
+        );
+
+    }
+    catch(error){
+
+        registerError(
+            error,
+            "Erro ao alterar o status do produto."
+        );
+
+
+        showToast(
+            "Não foi possível alterar o produto."
+        );
+
+    }
+    finally{
+
+        hideLoader();
+
+    }
+
+}
+
+
+//==================================================
+// APPROUVER UN PRODUIT
+//==================================================
+
+async function approveProduct(
+    productId
+){
+
+    await updateProductStatus(
+        productId,
+        "approved"
+    );
+
+}
+
+
+//==================================================
+// PUBLIER UN PRODUIT
+//==================================================
+
+async function publishProduct(
+    productId
+){
+
+    await updateProductStatus(
+        productId,
+        "published"
+    );
+
+}
+
+
+//==================================================
+// MASQUER UN PRODUIT
+//==================================================
+
+async function hideProduct(
+    productId
+){
+
+    await updateProductStatus(
+        productId,
+        "hidden"
+    );
+
+}
+
+
+//==================================================
+// SUSPENDRE UN PRODUIT
+//==================================================
+
+async function suspendProduct(
+    productId
+){
+
+    await updateProductStatus(
+        productId,
+        "suspended"
+    );
+
+}
+
+
+//==================================================
+// REACTIVER UN PRODUIT
+//==================================================
+
+async function activateProduct(
+    productId
+){
+
+    await updateProductStatus(
+        productId,
+        "active"
+    );
+
+}
+
+
+//==================================================
+// SUPPRESSION LOGIQUE
+//==================================================
+
+async function deleteProduct(
+    productId
+){
+
+    const confirmed =
+        window.confirm(
+            "Tem certeza que deseja remover este produto?"
+        );
+
+
+    if(!confirmed){
+
+        return;
+
+    }
+
+
+    await updateProductStatus(
+        productId,
+        "deleted"
+    );
+
+}
+
+
+//==================================================
+// ACTIONS DEPUIS DES BOUTONS HTML
+//==================================================
+
+document.addEventListener(
+    "click",
+    (event)=>{
+
+        const button =
+            event.target.closest(
+                "[data-product-action]"
+            );
+
+
+        if(!button){
+
+            return;
+
+        }
+
+
+        const action =
+            button.dataset.productAction;
+
+
+        const productId =
+            button.dataset.productId;
+
+
+        if(!productId){
+
+            showToast(
+                "ID do produto não encontrado."
+            );
+
+            return;
+
+        }
+
+
+        //==========================================
+        // APPROUVER
+        //==========================================
+
+        if(action === "approve"){
+
+            approveProduct(
+                productId
+            );
+
+            return;
+
+        }
+
+
+        //==========================================
+        // PUBLIER
+        //==========================================
+
+        if(action === "publish"){
+
+            publishProduct(
+                productId
+            );
+
+            return;
+
+        }
+
+
+        //==========================================
+        // MASQUER
+        //==========================================
+
+        if(action === "hide"){
+
+            hideProduct(
+                productId
+            );
+
+            return;
+
+        }
+
+
+        //==========================================
+        // SUSPENDRE
+        //==========================================
+
+        if(action === "suspend"){
+
+            suspendProduct(
+                productId
+            );
+
+            return;
+
+        }
+
+
+        //==========================================
+        // REACTIVER
+        //==========================================
+
+        if(action === "activate"){
+
+            activateProduct(
+                productId
+            );
+
+            return;
+
+        }
+
+
+        //==========================================
+        // SUPPRIMER
+        //==========================================
+
+        if(action === "delete"){
+
+            deleteProduct(
+                productId
+            );
+
+            return;
+
+        }
+
+    }
+);
+
+
+//==================================================
+// EXPOSER LES ACTIONS ADMIN
+//==================================================
+
+window.TomaAdminActions = {
+
+    ...(window.TomaAdminActions || {}),
+
+    approveProduct,
+
+    publishProduct,
+
+    hideProduct,
+
+    suspendProduct,
+
+    activateProduct,
+
+    deleteProduct
+
+};
+
+
+//==================================================
+// LOG
+//==================================================
+
+addSystemLog(
+    "Gestão administrativa dos produtos carregada.",
+    "success"
+);
+
+
+//==================================================
+// FIN BLOC 15
+//==================================================
