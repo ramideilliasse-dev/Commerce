@@ -8298,3 +8298,1971 @@ salesPeriod?.addEventListener(
 //==================================================
 // FIN BLOC 20
 //==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 21 — ACTUALISATION DU DASHBOARD
+//==================================================
+
+//==================================================
+// ACTUALISER TOUS LES ELEMENTS VISUELS
+//==================================================
+
+function refreshDashboardView(){
+
+    try{
+
+        updateDashboardCounters();
+
+        updateFinancialSummary();
+
+        updateMonitoring();
+
+        updateQuickReports();
+
+        updateOfficialStoresStats();
+
+        updatePlatformActivity();
+
+        renderDashboardTables();
+
+        renderAllCharts();
+
+        updateLastUpdate();
+
+        addSystemLog(
+            "Dashboard atualizado com sucesso.",
+            "success"
+        );
+
+    }
+    catch(error){
+
+        registerError(
+            error,
+            "Erro ao atualizar a interface do dashboard."
+        );
+
+        showToast(
+            "Erro ao atualizar o dashboard."
+        );
+
+    }
+
+}
+
+
+//==================================================
+// BOUTON ACTUALISER
+//==================================================
+
+refreshDashboard?.addEventListener(
+    "click",
+    async ()=>{
+
+        if(dashboardLoading){
+
+            showToast(
+                "Atualização já em andamento."
+            );
+
+            return;
+
+        }
+
+        try{
+
+            showLoader();
+
+            addSystemLog(
+                "Atualização manual iniciada.",
+                "info"
+            );
+
+            await loadAllDashboardData();
+
+            refreshDashboardView();
+
+            showToast(
+                "Dashboard atualizado."
+            );
+
+        }
+        catch(error){
+
+            registerError(
+                error,
+                "Erro durante a atualização manual."
+            );
+
+            showToast(
+                "Não foi possível atualizar."
+            );
+
+        }
+        finally{
+
+            hideLoader();
+
+        }
+
+    }
+);
+
+
+//==================================================
+// INITIALISATION VISUELLE APRES CHARGEMENT
+//==================================================
+
+async function initializeDashboard(){
+
+    if(!dashboardInitialized){
+
+        return;
+
+    }
+
+    try{
+
+        showLoader();
+
+        addSystemLog(
+            "Inicialização do dashboard iniciada.",
+            "info"
+        );
+
+        await loadAllDashboardData();
+
+        refreshDashboardView();
+
+        dashboardInitialized = true;
+
+        addSystemLog(
+            "Dashboard pronto.",
+            "success"
+        );
+
+    }
+    catch(error){
+
+        registerError(
+            error,
+            "Erro durante a inicialização do dashboard."
+        );
+
+        showToast(
+            "Erro ao inicializar o dashboard."
+        );
+
+    }
+    finally{
+
+        hideLoader();
+
+    }
+
+}
+
+
+//==================================================
+// DÉMARRAGE CENTRAL
+//==================================================
+
+async function startDashboard(){
+
+    if(dashboardLoading){
+
+        return;
+
+    }
+
+    await initializeDashboard();
+
+}
+
+
+//==================================================
+// FIN BLOC 21
+//==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 22 — RECHERCHE GLOBALE
+//==================================================
+
+//==================================================
+// RECHERCHER DANS LES UTILISATEURS
+//==================================================
+
+function searchUsers(term){
+
+    const search =
+        String(term || "")
+            .trim()
+            .toLowerCase();
+
+    if(!search){
+
+        return users;
+
+    }
+
+    return users.filter(user=>{
+
+        const values = [
+
+            user.id,
+            user.name,
+            user.firstName,
+            user.lastName,
+            user.email,
+            user.phone,
+            user.city
+
+        ];
+
+        return values.some(value=>{
+
+            return String(value || "")
+                .toLowerCase()
+                .includes(search);
+
+        });
+
+    });
+
+}
+
+
+//==================================================
+// RECHERCHER DANS LES COMMERÇANTS
+//==================================================
+
+function searchMerchants(term){
+
+    const search =
+        String(term || "")
+            .trim()
+            .toLowerCase();
+
+    if(!search){
+
+        return merchants;
+
+    }
+
+    return merchants.filter(merchant=>{
+
+        const values = [
+
+            merchant.id,
+            merchant.name,
+            merchant.firstName,
+            merchant.lastName,
+            merchant.email,
+            merchant.phone,
+            merchant.shopName,
+            merchant.storeName,
+            merchant.businessName,
+            merchant.city,
+            merchant.status
+
+        ];
+
+        return values.some(value=>{
+
+            return String(value || "")
+                .toLowerCase()
+                .includes(search);
+
+        });
+
+    });
+
+}
+
+
+//==================================================
+// RECHERCHER DANS LES PRODUITS
+//==================================================
+
+function searchProducts(term){
+
+    const search =
+        String(term || "")
+            .trim()
+            .toLowerCase();
+
+    if(!search){
+
+        return products;
+
+    }
+
+    return products.filter(product=>{
+
+        const values = [
+
+            product.id,
+            product.name,
+            product.description,
+            product.category,
+            product.storeName,
+            product.shopName,
+            product.merchantName,
+            product.status
+
+        ];
+
+        return values.some(value=>{
+
+            return String(value || "")
+                .toLowerCase()
+                .includes(search);
+
+        });
+
+    });
+
+}
+
+
+//==================================================
+// RECHERCHER DANS LES COMMANDES
+//==================================================
+
+function searchOrders(term){
+
+    const search =
+        String(term || "")
+            .trim()
+            .toLowerCase();
+
+    if(!search){
+
+        return orders;
+
+    }
+
+    return orders.filter(order=>{
+
+        const values = [
+
+            order.id,
+            order.customerName,
+            order.customer,
+            order.userName,
+            order.productName,
+            order.product,
+            order.status,
+            order.phone
+
+        ];
+
+        return values.some(value=>{
+
+            return String(value || "")
+                .toLowerCase()
+                .includes(search);
+
+        });
+
+    });
+
+}
+
+
+//==================================================
+// RECHERCHE GLOBALE
+//==================================================
+
+function performGlobalSearch(term){
+
+    const search =
+        String(term || "")
+            .trim();
+
+    if(!search){
+
+        return {
+
+            users: users,
+
+            merchants: merchants,
+
+            products: products,
+
+            orders: orders
+
+        };
+
+    }
+
+    return {
+
+        users:
+            searchUsers(search),
+
+        merchants:
+            searchMerchants(search),
+
+        products:
+            searchProducts(search),
+
+        orders:
+            searchOrders(search)
+
+    };
+
+}
+
+
+//==================================================
+// AFFICHER LE RESULTAT DE RECHERCHE
+//==================================================
+
+function displayGlobalSearchResults(term){
+
+    const results =
+        performGlobalSearch(term);
+
+    const totalResults =
+
+        results.users.length +
+
+        results.merchants.length +
+
+        results.products.length +
+
+        results.orders.length;
+
+
+    addSystemLog(
+
+        `Pesquisa global: ${totalResults} resultado(s).`,
+
+        "info"
+
+    );
+
+
+    if(totalResults === 0){
+
+        showToast(
+            "Nenhum resultado encontrado."
+        );
+
+        return results;
+
+    }
+
+
+    showToast(
+
+        `${formatNumber(totalResults)} resultado(s) encontrado(s).`
+
+    );
+
+
+    return results;
+
+}
+
+
+//==================================================
+// EVENTO DE PESQUISA
+//==================================================
+
+globalSearch?.addEventListener(
+    "input",
+    (event)=>{
+
+        const value =
+            event.target.value;
+
+        if(value.trim() === ""){
+
+            return;
+
+        }
+
+        displayGlobalSearchResults(
+            value
+        );
+
+    }
+);
+
+
+//==================================================
+// FIN BLOC 22
+//==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 23 — NOTIFICATIONS DU DASHBOARD
+//==================================================
+
+//==================================================
+// CONSTRUIRE LES NOTIFICATIONS
+//==================================================
+
+function buildDashboardNotifications(){
+
+    const list = [];
+
+    //==============================================
+    // DEMANDES DE COMMERÇANTS
+    //==============================================
+
+    merchantRequests.forEach(merchant=>{
+
+        list.push({
+
+            id:
+                `merchant-${merchant.id}`,
+
+            type:
+                "merchant",
+
+            title:
+                "Nova solicitação de comerciante",
+
+            message:
+                `${safeText(
+                    merchant.name ||
+                    merchant.firstName ||
+                    merchant.shopName,
+                    "Novo comerciante"
+                )} aguarda aprovação.`,
+
+            date:
+                merchant.createdAt,
+
+            priority:
+                "high"
+
+        });
+
+    });
+
+
+    //==============================================
+    // COMMANDES RÉCENTES
+    //==============================================
+
+    sortByNewest(orders)
+        .slice(0,10)
+        .forEach(order=>{
+
+            list.push({
+
+                id:
+                    `order-${order.id}`,
+
+                type:
+                    "order",
+
+                title:
+                    "Novo pedido",
+
+                message:
+                    `${safeText(
+                        order.customerName ||
+                        order.customer ||
+                        order.userName,
+                        "Cliente"
+                    )} realizou um novo pedido.`,
+
+                date:
+                    order.createdAt,
+
+                priority:
+                    "normal"
+
+            });
+
+        });
+
+
+    //==============================================
+    // PRODUITS RÉCENTS
+    //==============================================
+
+    sortByNewest(products)
+        .slice(0,10)
+        .forEach(product=>{
+
+            list.push({
+
+                id:
+                    `product-${product.id}`,
+
+                type:
+                    "product",
+
+                title:
+                    "Novo produto",
+
+                message:
+                    `${safeText(
+                        product.name,
+                        "Produto"
+                    )} foi adicionado à plataforma.`,
+
+                date:
+                    product.createdAt,
+
+                priority:
+                    "normal"
+
+            });
+
+        });
+
+
+    //==============================================
+    // TRI FINAL
+    //==============================================
+
+    return list
+        .sort((a,b)=>{
+
+            return (
+                getTimestamp(b.date) -
+                getTimestamp(a.date)
+            );
+
+        })
+        .slice(0,20);
+
+}
+
+
+//==================================================
+// AFFICHER LES NOTIFICATIONS
+//==================================================
+
+function renderDashboardNotifications(){
+
+    if(!notificationsList){
+
+        return;
+
+    }
+
+
+    notifications =
+        buildDashboardNotifications();
+
+
+    notificationsList.innerHTML = "";
+
+
+    //==============================================
+    // AUCUNE NOTIFICATION
+    //==============================================
+
+    if(notifications.length === 0){
+
+        notificationsList.innerHTML = `
+
+            <div class="notificationEmpty">
+
+                Nenhuma notificação.
+
+            </div>
+
+        `;
+
+        if(notificationsBadge){
+
+            notificationsBadge.textContent =
+                "0";
+
+        }
+
+        return;
+
+    }
+
+
+    //==============================================
+    // AFFICHER LES NOTIFICATIONS
+    //==============================================
+
+    notifications.forEach(notification=>{
+
+        const item =
+            document.createElement("div");
+
+        item.className =
+            "notificationItem";
+
+        item.dataset.id =
+            notification.id;
+
+        item.dataset.type =
+            notification.type;
+
+
+        //==========================================
+        // ICONE
+        //==========================================
+
+        const icon =
+            document.createElement("div");
+
+        icon.className =
+            "notificationIcon";
+
+
+        if(notification.type === "merchant"){
+
+            icon.textContent =
+                "🏪";
+
+        }
+        else if(notification.type === "order"){
+
+            icon.textContent =
+                "🛒";
+
+        }
+        else if(notification.type === "product"){
+
+            icon.textContent =
+                "📦";
+
+        }
+        else{
+
+            icon.textContent =
+                "🔔";
+
+        }
+
+
+        //==========================================
+        // CONTENU
+        //==========================================
+
+        const content =
+            document.createElement("div");
+
+        content.className =
+            "notificationItemContent";
+
+
+        const title =
+            document.createElement("strong");
+
+        title.textContent =
+            notification.title;
+
+
+        const message =
+            document.createElement("p");
+
+        message.textContent =
+            notification.message;
+
+
+        const date =
+            document.createElement("small");
+
+        date.textContent =
+            formatDateTime(
+                notification.date
+            );
+
+
+        content.appendChild(title);
+
+        content.appendChild(message);
+
+        content.appendChild(date);
+
+
+        //==========================================
+        // CLIC
+        //==========================================
+
+        item.addEventListener(
+            "click",
+            ()=>{
+
+                openDashboardNotification(
+                    notification
+                );
+
+            }
+        );
+
+
+        item.appendChild(icon);
+
+        item.appendChild(content);
+
+        notificationsList.appendChild(item);
+
+    });
+
+
+    //==============================================
+    // BADGE
+    //==============================================
+
+    if(notificationsBadge){
+
+        notificationsBadge.textContent =
+            formatNumber(
+                notifications.length
+            );
+
+    }
+
+}
+
+
+//==================================================
+// OUVRIR UNE NOTIFICATION
+//==================================================
+
+function openDashboardNotification(notification){
+
+    if(!notification){
+
+        return;
+
+    }
+
+
+    if(notificationModal){
+
+        notificationModal.classList.add(
+            "show"
+        );
+
+    }
+
+
+    if(notificationContent){
+
+        notificationContent.innerHTML = "";
+
+        const title =
+            document.createElement("h3");
+
+        title.textContent =
+            notification.title;
+
+
+        const message =
+            document.createElement("p");
+
+        message.textContent =
+            notification.message;
+
+
+        const date =
+            document.createElement("small");
+
+        date.textContent =
+            formatDateTime(
+                notification.date
+            );
+
+
+        notificationContent.appendChild(
+            title
+        );
+
+        notificationContent.appendChild(
+            message
+        );
+
+        notificationContent.appendChild(
+            date
+        );
+
+    }
+
+}
+
+
+//==================================================
+// FERMER LE MODAL
+//==================================================
+
+closeNotificationModal?.addEventListener(
+    "click",
+    ()=>{
+
+        notificationModal?.classList.remove(
+            "show"
+        );
+
+    }
+);
+
+
+//==================================================
+// FERMER EN CLIQUANT EN DEHORS
+//==================================================
+
+notificationModal?.addEventListener(
+    "click",
+    (event)=>{
+
+        if(
+            event.target ===
+            notificationModal
+        ){
+
+            notificationModal.classList.remove(
+                "show"
+            );
+
+        }
+
+    }
+);
+
+
+//==================================================
+// BOUTON NOTIFICATIONS
+//==================================================
+
+notificationsButton?.addEventListener(
+    "click",
+    ()=>{
+
+        renderDashboardNotifications();
+
+    }
+);
+
+
+//==================================================
+// FIN BLOC 23
+//==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 24 — GRAPHIQUES DU DASHBOARD
+//==================================================
+
+//==================================================
+// VÉRIFIER LA DISPONIBILITÉ DE CHART.JS
+//==================================================
+
+function isChartJsAvailable(){
+
+    return (
+        typeof Chart !== "undefined"
+    );
+
+}
+
+
+//==================================================
+// DÉTRUIRE UN GRAPHIQUE EXISTANT
+//==================================================
+
+function destroyChart(chart){
+
+    if(chart){
+
+        try{
+
+            chart.destroy();
+
+        }
+        catch(error){
+
+            registerError(
+                error,
+                "Erro ao destruir gráfico."
+            );
+
+        }
+
+    }
+
+}
+
+
+//==================================================
+// DONNÉES DES VENTES PAR MOIS
+//==================================================
+
+function getMonthlySalesData(){
+
+    const labels = [];
+
+    const values = [];
+
+    const now =
+        new Date();
+
+
+    for(let i = 5; i >= 0; i--){
+
+        const date =
+            new Date(
+                now.getFullYear(),
+                now.getMonth() - i,
+                1
+            );
+
+        const year =
+            date.getFullYear();
+
+        const month =
+            date.getMonth();
+
+
+        labels.push(
+
+            date.toLocaleDateString(
+                "pt-PT",
+                {
+                    month:"short"
+                }
+            )
+
+        );
+
+
+        let total = 0;
+
+
+        orders.forEach(order=>{
+
+            const orderDate =
+                getDateValue(
+                    order.createdAt
+                );
+
+            if(!orderDate){
+
+                return;
+
+            }
+
+
+            if(
+
+                orderDate.getFullYear()
+                === year
+
+                &&
+
+                orderDate.getMonth()
+                === month
+
+            ){
+
+                total +=
+                    safeNumber(
+                        order.total
+                    );
+
+            }
+
+        });
+
+
+        values.push(total);
+
+    }
+
+
+    return {
+
+        labels,
+
+        values
+
+    };
+
+}
+
+
+//==================================================
+// DONNÉES DES COMMANDES PAR MOIS
+//==================================================
+
+function getMonthlyOrdersData(){
+
+    const labels = [];
+
+    const values = [];
+
+    const now =
+        new Date();
+
+
+    for(let i = 5; i >= 0; i--){
+
+        const date =
+            new Date(
+                now.getFullYear(),
+                now.getMonth() - i,
+                1
+            );
+
+        const year =
+            date.getFullYear();
+
+        const month =
+            date.getMonth();
+
+
+        labels.push(
+
+            date.toLocaleDateString(
+                "pt-PT",
+                {
+                    month:"short"
+                }
+            )
+
+        );
+
+
+        let count = 0;
+
+
+        orders.forEach(order=>{
+
+            const orderDate =
+                getDateValue(
+                    order.createdAt
+                );
+
+            if(!orderDate){
+
+                return;
+
+            }
+
+
+            if(
+
+                orderDate.getFullYear()
+                === year
+
+                &&
+
+                orderDate.getMonth()
+                === month
+
+            ){
+
+                count++;
+
+            }
+
+        });
+
+
+        values.push(count);
+
+    }
+
+
+    return {
+
+        labels,
+
+        values
+
+    };
+
+}
+
+
+//==================================================
+// DONNÉES DES UTILISATEURS PAR MOIS
+//==================================================
+
+function getMonthlyUsersData(){
+
+    const labels = [];
+
+    const values = [];
+
+    const now =
+        new Date();
+
+
+    for(let i = 5; i >= 0; i--){
+
+        const date =
+            new Date(
+                now.getFullYear(),
+                now.getMonth() - i,
+                1
+            );
+
+        const year =
+            date.getFullYear();
+
+        const month =
+            date.getMonth();
+
+
+        labels.push(
+
+            date.toLocaleDateString(
+                "pt-PT",
+                {
+                    month:"short"
+                }
+            )
+
+        );
+
+
+        let count = 0;
+
+
+        users.forEach(user=>{
+
+            const userDate =
+                getDateValue(
+                    user.createdAt
+                );
+
+            if(!userDate){
+
+                return;
+
+            }
+
+
+            if(
+
+                userDate.getFullYear()
+                === year
+
+                &&
+
+                userDate.getMonth()
+                === month
+
+            ){
+
+                count++;
+
+            }
+
+        });
+
+
+        values.push(count);
+
+    }
+
+
+    return {
+
+        labels,
+
+        values
+
+    };
+
+}
+
+
+//==================================================
+// DONNÉES DES COMMISSIONS PAR MOIS
+//==================================================
+
+function getMonthlyCommissionData(){
+
+    const salesData =
+        getMonthlySalesData();
+
+
+    return {
+
+        labels:
+            salesData.labels,
+
+        values:
+            salesData.values.map(
+                value =>
+                    value * COMMISSION_RATE
+            )
+
+    };
+
+}
+
+
+//==================================================
+// GRAPHIQUE DES VENTES
+//==================================================
+
+function renderSalesChart(){
+
+    if(
+        !salesChartCanvas ||
+        !isChartJsAvailable()
+    ){
+
+        return;
+
+    }
+
+
+    destroyChart(
+        salesChart
+    );
+
+
+    const data =
+        getMonthlySalesData();
+
+
+    salesChart =
+        new Chart(
+            salesChartCanvas,
+            {
+
+                type:"line",
+
+                data:{
+
+                    labels:
+                        data.labels,
+
+                    datasets:[{
+
+                        label:
+                            "Vendas",
+
+                        data:
+                            data.values,
+
+                        tension:
+                            0.35,
+
+                        fill:
+                            true
+
+                    }]
+
+                },
+
+                options:{
+
+                    responsive:true,
+
+                    maintainAspectRatio:false,
+
+                    plugins:{
+
+                        legend:{
+                            display:true
+                        }
+
+                    },
+
+                    scales:{
+
+                        y:{
+
+                            beginAtZero:true
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+}
+
+
+//==================================================
+// GRÁFICO DES COMMANDES
+//==================================================
+
+function renderOrdersChart(){
+
+    if(
+        !ordersChartCanvas ||
+        !isChartJsAvailable()
+    ){
+
+        return;
+
+    }
+
+
+    destroyChart(
+        ordersChart
+    );
+
+
+    const data =
+        getMonthlyOrdersData();
+
+
+    ordersChart =
+        new Chart(
+            ordersChartCanvas,
+            {
+
+                type:"bar",
+
+                data:{
+
+                    labels:
+                        data.labels,
+
+                    datasets:[{
+
+                        label:
+                            "Pedidos",
+
+                        data:
+                            data.values
+
+                    }]
+
+                },
+
+                options:{
+
+                    responsive:true,
+
+                    maintainAspectRatio:false,
+
+                    plugins:{
+
+                        legend:{
+                            display:true
+                        }
+
+                    },
+
+                    scales:{
+
+                        y:{
+
+                            beginAtZero:true,
+
+                            ticks:{
+                                precision:0
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+}
+
+
+//==================================================
+// GRÁFICO DES UTILISATEURS
+//==================================================
+
+function renderUsersChart(){
+
+    if(
+        !usersChartCanvas ||
+        !isChartJsAvailable()
+    ){
+
+        return;
+
+    }
+
+
+    destroyChart(
+        usersChart
+    );
+
+
+    const data =
+        getMonthlyUsersData();
+
+
+    usersChart =
+        new Chart(
+            usersChartCanvas,
+            {
+
+                type:"line",
+
+                data:{
+
+                    labels:
+                        data.labels,
+
+                    datasets:[{
+
+                        label:
+                            "Utilizadores",
+
+                        data:
+                            data.values,
+
+                        tension:
+                            0.35,
+
+                        fill:
+                            true
+
+                    }]
+
+                },
+
+                options:{
+
+                    responsive:true,
+
+                    maintainAspectRatio:false,
+
+                    plugins:{
+
+                        legend:{
+                            display:true
+                        }
+
+                    },
+
+                    scales:{
+
+                        y:{
+
+                            beginAtZero:true,
+
+                            ticks:{
+                                precision:0
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+}
+
+
+//==================================================
+// GRÁFICO DES COMMISSIONS
+//==================================================
+
+function renderCommissionChart(){
+
+    if(
+        !commissionChartCanvas ||
+        !isChartJsAvailable()
+    ){
+
+        return;
+
+    }
+
+
+    destroyChart(
+        commissionChart
+    );
+
+
+    const data =
+        getMonthlyCommissionData();
+
+
+    commissionChart =
+        new Chart(
+            commissionChartCanvas,
+            {
+
+                type:"line",
+
+                data:{
+
+                    labels:
+                        data.labels,
+
+                    datasets:[{
+
+                        label:
+                            "Comissão TOMA",
+
+                        data:
+                            data.values,
+
+                        tension:
+                            0.35,
+
+                        fill:
+                            true
+
+                    }]
+
+                },
+
+                options:{
+
+                    responsive:true,
+
+                    maintainAspectRatio:false,
+
+                    plugins:{
+
+                        legend:{
+                            display:true
+                        }
+
+                    },
+
+                    scales:{
+
+                        y:{
+
+                            beginAtZero:true
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+}
+
+
+//==================================================
+// RENDU DE TOUS LES GRAPHIQUES
+//==================================================
+
+function renderAllCharts(){
+
+    if(!isChartJsAvailable()){
+
+        addSystemLog(
+            "Chart.js não está disponível.",
+            "warning"
+        );
+
+        return;
+
+    }
+
+
+    renderSalesChart();
+
+    renderOrdersChart();
+
+    renderUsersChart();
+
+    renderCommissionChart();
+
+}
+
+
+//==================================================
+// CHANGEMENT DE PÉRIODE DES VENTES
+//==================================================
+
+salesPeriod?.addEventListener(
+    "change",
+    ()=>{
+
+        renderSalesChart();
+
+    }
+);
+
+
+//==================================================
+// FIN BLOC 24
+//==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 25 — INITIALISATION FINALE DU DASHBOARD
+//==================================================
+
+//==================================================
+// RAFRAÎCHIR TOUT LE DASHBOARD
+//==================================================
+
+async function refreshFullDashboard(){
+
+    if(dashboardLoading){
+
+        return;
+
+    }
+
+    try{
+
+        showLoader();
+
+        addSystemLog(
+            "Atualização do dashboard iniciada.",
+            "info"
+        );
+
+
+        //==========================================
+        // RECHARGER LES DONNÉES FIRESTORE
+        //==========================================
+
+        await loadAllDashboardData();
+
+
+        //==========================================
+        // TABLEAUX
+        //==========================================
+
+        renderDashboardTables();
+
+
+        //==========================================
+        // NOTIFICATIONS
+        //==========================================
+
+        renderDashboardNotifications();
+
+
+        //==========================================
+        // GRAPHIQUES
+        //==========================================
+
+        renderAllCharts();
+
+
+        //==========================================
+        // HEURE DE SYNCHRONISATION
+        //==========================================
+
+        updateLastUpdate();
+
+
+        addSystemLog(
+            "Dashboard atualizado com sucesso.",
+            "success"
+        );
+
+    }
+    catch(error){
+
+        registerError(
+            error,
+            "Erro ao atualizar o dashboard."
+        );
+
+        showToast(
+            "Erro ao atualizar o dashboard."
+        );
+
+    }
+    finally{
+
+        hideLoader();
+
+    }
+
+}
+
+
+//==================================================
+// BOUTON ACTUALISER
+//==================================================
+
+refreshDashboard?.addEventListener(
+    "click",
+    ()=>{
+
+        refreshFullDashboard();
+
+    }
+);
+
+
+//==================================================
+// DÉMARRAGE DU DASHBOARD
+//==================================================
+
+async function startDashboard(){
+
+    if(
+        !dashboardInitialized
+    ){
+
+        return;
+
+    }
+
+
+    //==============================================
+    // ÉVITER PLUSIEURS INITIALISATIONS
+    //==============================================
+
+    if(
+        dashboardLoading
+    ){
+
+        return;
+
+    }
+
+
+    try{
+
+        showLoader();
+
+
+        addSystemLog(
+            "Inicialização do dashboard em andamento.",
+            "info"
+        );
+
+
+        //==========================================
+        // CHARGEMENT INITIAL
+        //==========================================
+
+        await loadAllDashboardData();
+
+
+        //==========================================
+        // TABLEAUX
+        //==========================================
+
+        renderDashboardTables();
+
+
+        //==========================================
+        // NOTIFICATIONS
+        //==========================================
+
+        renderDashboardNotifications();
+
+
+        //==========================================
+        // GRAPHIQUES
+        //==========================================
+
+        renderAllCharts();
+
+
+        //==========================================
+        // INFORMATIONS SYSTÈME
+        //==========================================
+
+        initializeDashboardInfo();
+
+        updateLastUpdate();
+
+
+        //==========================================
+        // ÉTAT FINAL
+        //==========================================
+
+        addSystemLog(
+            "TOMA ADMIN V2 PREMIUM pronto.",
+            "success"
+        );
+
+    }
+    catch(error){
+
+        registerError(
+            error,
+            "Erro durante a inicialização do dashboard."
+        );
+
+        setSystemOffline();
+
+        showToast(
+            "Não foi possível inicializar o dashboard."
+        );
+
+    }
+    finally{
+
+        hideLoader();
+
+    }
+
+}
+
+
+//==================================================
+// BOUTON D'AJOUT RAPIDE
+//==================================================
+
+quickAddButton?.addEventListener(
+    "click",
+    ()=>{
+
+        const addProductPage =
+            "add-product.html";
+
+
+        addSystemLog(
+            "Abertura da página de adição rápida.",
+            "info"
+        );
+
+
+        window.location.href =
+            addProductPage;
+
+    }
+);
+
+
+//==================================================
+// INITIALISATION APRÈS CHARGEMENT DU DOM
+//==================================================
+
+if(
+    document.readyState === "loading"
+){
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        ()=>{
+
+            updateLastUpdate();
+
+        }
+    );
+
+}
+else{
+
+    updateLastUpdate();
+
+}
+
+
+//==================================================
+// FIN BLOC 25
+//==================================================
