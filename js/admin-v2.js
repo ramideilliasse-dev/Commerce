@@ -10266,3 +10266,1115 @@ else{
 //==================================================
 // FIN BLOC 25
 //==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 26 — RECHERCHE GLOBALE
+//==================================================
+
+//==================================================
+// RECHERCHE DANS LES DONNÉES DU DASHBOARD
+//==================================================
+
+function searchDashboardData(term){
+
+    const searchTerm =
+        String(term || "")
+            .trim()
+            .toLowerCase();
+
+
+    //==============================================
+    // RECHERCHE VIDE
+    //==============================================
+
+    if(!searchTerm){
+
+        return {
+
+            users: [],
+
+            merchants: [],
+
+            products: [],
+
+            orders: []
+
+        };
+
+    }
+
+
+    //==============================================
+    // UTILISATEURS
+    //==============================================
+
+    const matchedUsers =
+        users.filter(user=>{
+
+            const content = [
+
+                user.name,
+
+                user.firstName,
+
+                user.lastName,
+
+                user.email,
+
+                user.phone,
+
+                user.city
+
+            ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+
+
+            return content.includes(
+                searchTerm
+            );
+
+        });
+
+
+    //==============================================
+    // COMMERÇANTS
+    //==============================================
+
+    const matchedMerchants =
+        merchants.filter(merchant=>{
+
+            const content = [
+
+                merchant.name,
+
+                merchant.firstName,
+
+                merchant.lastName,
+
+                merchant.shopName,
+
+                merchant.storeName,
+
+                merchant.businessName,
+
+                merchant.email,
+
+                merchant.phone,
+
+                merchant.city
+
+            ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+
+
+            return content.includes(
+                searchTerm
+            );
+
+        });
+
+
+    //==============================================
+    // PRODUITS
+    //==============================================
+
+    const matchedProducts =
+        products.filter(product=>{
+
+            const content = [
+
+                product.name,
+
+                product.title,
+
+                product.description,
+
+                product.category,
+
+                product.storeName,
+
+                product.shopName,
+
+                product.merchantName
+
+            ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+
+
+            return content.includes(
+                searchTerm
+            );
+
+        });
+
+
+    //==============================================
+    // COMMANDES
+    //==============================================
+
+    const matchedOrders =
+        orders.filter(order=>{
+
+            const content = [
+
+                order.id,
+
+                order.customerName,
+
+                order.customer,
+
+                order.userName,
+
+                order.productName,
+
+                order.product,
+
+                order.status
+
+            ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+
+
+            return content.includes(
+                searchTerm
+            );
+
+        });
+
+
+    return {
+
+        users:
+            matchedUsers,
+
+        merchants:
+            matchedMerchants,
+
+        products:
+            matchedProducts,
+
+        orders:
+            matchedOrders
+
+    };
+
+}
+
+
+//==================================================
+// AFFICHER LES RÉSULTATS DANS LES TABLEAUX EXISTANTS
+//==================================================
+
+function applyDashboardSearch(term){
+
+    const results =
+        searchDashboardData(term);
+
+
+    //==============================================
+    // SI AUCUNE RECHERCHE
+    //==============================================
+
+    if(
+        !String(term || "").trim()
+    ){
+
+        renderDashboardTables();
+
+        return;
+
+    }
+
+
+    //==============================================
+    // UTILISATEURS
+    //==============================================
+
+    if(usersCount){
+
+        usersCount.textContent =
+            formatNumber(
+                results.users.length
+            );
+
+    }
+
+
+    //==============================================
+    // COMMERÇANTS
+    //==============================================
+
+    if(merchantsCount){
+
+        merchantsCount.textContent =
+            formatNumber(
+                results.merchants.length
+            );
+
+    }
+
+
+    //==============================================
+    // PRODUITS
+    //==============================================
+
+    if(productsCount){
+
+        productsCount.textContent =
+            formatNumber(
+                results.products.length
+            );
+
+    }
+
+
+    //==============================================
+    // COMMANDES
+    //==============================================
+
+    if(ordersCount){
+
+        ordersCount.textContent =
+            formatNumber(
+                results.orders.length
+            );
+
+    }
+
+
+    //==============================================
+    // LOG
+    //==============================================
+
+    addSystemLog(
+
+        `Pesquisa realizada: ${term}`,
+
+        "info"
+
+    );
+
+}
+
+
+//==================================================
+// ÉCOUTER LA RECHERCHE
+//==================================================
+
+globalSearch?.addEventListener(
+    "input",
+    event=>{
+
+        applyDashboardSearch(
+            event.target.value
+        );
+
+    }
+);
+
+
+//==================================================
+// TOUCHE ESCAPE — EFFACER LA RECHERCHE
+//==================================================
+
+globalSearch?.addEventListener(
+    "keydown",
+    event=>{
+
+        if(
+            event.key !== "Escape"
+        ){
+
+            return;
+
+        }
+
+
+        globalSearch.value = "";
+
+        applyDashboardSearch("");
+
+    }
+);
+
+
+//==================================================
+// FIN BLOC 26
+//==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 27 — NOTIFICATIONS DU DASHBOARD
+//==================================================
+
+//==================================================
+// CRÉER UNE NOTIFICATION
+//==================================================
+
+function createDashboardNotification(
+    title,
+    message,
+    type = "info",
+    date = new Date()
+){
+
+    return {
+
+        id:
+            `notification-${Date.now()}-${Math.random()
+                .toString(36)
+                .slice(2,8)}`,
+
+        title:
+            safeText(
+                title,
+                "Notification"
+            ),
+
+        message:
+            safeText(
+                message,
+                ""
+            ),
+
+        type:
+            safeText(
+                type,
+                "info"
+            ),
+
+        createdAt:
+            date,
+
+        read:
+            false
+
+    };
+
+}
+
+
+//==================================================
+// CONSTRUIRE LES NOTIFICATIONS
+//==================================================
+
+function buildDashboardNotifications(){
+
+    const generated = [];
+
+
+    //==============================================
+    // DEMANDES DE COMMERÇANTS
+    //==============================================
+
+    merchantRequests.forEach(merchant=>{
+
+        generated.push(
+
+            createDashboardNotification(
+
+                "Nova solicitação de comerciante",
+
+                `${safeText(
+                    merchant.name ||
+                    merchant.firstName,
+                    "Novo comerciante"
+                )} aguarda aprovação.`,
+
+                "merchant",
+
+                merchant.createdAt ||
+                new Date()
+
+            )
+
+        );
+
+    });
+
+
+    //==============================================
+    // COMMANDES RÉCENTES
+    //==============================================
+
+    sortByNewest(orders)
+        .slice(0,5)
+        .forEach(order=>{
+
+            generated.push(
+
+                createDashboardNotification(
+
+                    "Novo pedido",
+
+                    `${safeText(
+                        order.customerName ||
+                        order.customer,
+                        "Cliente"
+                    )} realizou um novo pedido.`,
+
+                    "order",
+
+                    order.createdAt ||
+                    new Date()
+
+                )
+
+            );
+
+        });
+
+
+    //==============================================
+    // PRODUITS RÉCENTS
+    //==============================================
+
+    sortByNewest(products)
+        .slice(0,5)
+        .forEach(product=>{
+
+            generated.push(
+
+                createDashboardNotification(
+
+                    "Novo produto",
+
+                    `${safeText(
+                        product.name,
+                        "Produto"
+                    )} foi adicionado à plataforma.`,
+
+                    "product",
+
+                    product.createdAt ||
+                    new Date()
+
+                )
+
+            );
+
+        });
+
+
+    //==============================================
+    // TRIER LES NOTIFICATIONS
+    //==============================================
+
+    generated.sort((a,b)=>{
+
+        return (
+            getTimestamp(b.createdAt)
+            -
+            getTimestamp(a.createdAt)
+        );
+
+    });
+
+
+    return generated.slice(0,20);
+
+}
+
+
+//==================================================
+// RENDU DES NOTIFICATIONS
+//==================================================
+
+function renderDashboardNotifications(){
+
+    if(!notificationsList){
+
+        return;
+
+    }
+
+
+    notifications =
+        buildDashboardNotifications();
+
+
+    notificationsList.innerHTML = "";
+
+
+    //==============================================
+    // AUCUNE NOTIFICATION
+    //==============================================
+
+    if(
+        notifications.length === 0
+    ){
+
+        notificationsList.innerHTML = `
+
+            <div class="notificationEmpty">
+
+                <p>
+                    Nenhuma notificação.
+                </p>
+
+            </div>
+
+        `;
+
+
+        if(notificationsBadge){
+
+            notificationsBadge.textContent =
+                "0";
+
+        }
+
+        return;
+
+    }
+
+
+    //==============================================
+    // COMPTEUR
+    //==============================================
+
+    const unreadCount =
+        notifications.filter(
+            notification =>
+                !notification.read
+        ).length;
+
+
+    if(notificationsBadge){
+
+        notificationsBadge.textContent =
+            formatNumber(
+                unreadCount
+            );
+
+    }
+
+
+    //==============================================
+    // AFFICHAGE
+    //==============================================
+
+    notifications.forEach(notification=>{
+
+        const item =
+            document.createElement("div");
+
+        item.className =
+            "notificationItem";
+
+
+        item.dataset.id =
+            notification.id;
+
+
+        item.dataset.type =
+            notification.type;
+
+
+        //==========================================
+        // TITRE
+        //==========================================
+
+        const title =
+            document.createElement("strong");
+
+        title.textContent =
+            notification.title;
+
+
+        //==========================================
+        // MESSAGE
+        //==========================================
+
+        const message =
+            document.createElement("p");
+
+        message.textContent =
+            notification.message;
+
+
+        //==========================================
+        // DATE
+        //==========================================
+
+        const date =
+            document.createElement("small");
+
+        date.textContent =
+            formatDateTime(
+                notification.createdAt
+            );
+
+
+        //==========================================
+        // CONTENU
+        //==========================================
+
+        item.appendChild(title);
+
+        item.appendChild(message);
+
+        item.appendChild(date);
+
+
+        //==========================================
+        // OUVRIR LA NOTIFICATION
+        //==========================================
+
+        item.addEventListener(
+            "click",
+            ()=>{
+
+                openDashboardNotification(
+                    notification
+                );
+
+            }
+        );
+
+
+        notificationsList.appendChild(
+            item
+        );
+
+    });
+
+}
+
+
+//==================================================
+// OUVRIR UNE NOTIFICATION
+//==================================================
+
+function openDashboardNotification(
+    notification
+){
+
+    if(!notification){
+
+        return;
+
+    }
+
+
+    if(notificationContent){
+
+        notificationContent.innerHTML = "";
+
+
+        const title =
+            document.createElement("h3");
+
+        title.textContent =
+            notification.title;
+
+
+        const message =
+            document.createElement("p");
+
+        message.textContent =
+            notification.message;
+
+
+        const date =
+            document.createElement("small");
+
+        date.textContent =
+            formatDateTime(
+                notification.createdAt
+            );
+
+
+        notificationContent.appendChild(
+            title
+        );
+
+        notificationContent.appendChild(
+            message
+        );
+
+        notificationContent.appendChild(
+            date
+        );
+
+    }
+
+
+    if(notificationModal){
+
+        notificationModal.classList.add(
+            "show"
+        );
+
+    }
+
+}
+
+
+//==================================================
+// FERMER LA MODALE
+//==================================================
+
+closeNotificationModal?.addEventListener(
+    "click",
+    ()=>{
+
+        if(notificationModal){
+
+            notificationModal.classList.remove(
+                "show"
+            );
+
+        }
+
+    }
+);
+
+
+//==================================================
+// FERMER EN CLIQUANT À L'EXTÉRIEUR
+//==================================================
+
+notificationModal?.addEventListener(
+    "click",
+    event=>{
+
+        if(
+            event.target !==
+            notificationModal
+        ){
+
+            return;
+
+        }
+
+
+        notificationModal.classList.remove(
+            "show"
+        );
+
+    }
+);
+
+
+//==================================================
+// BOUTON NOTIFICATIONS
+//==================================================
+
+notificationsButton?.addEventListener(
+    "click",
+    ()=>{
+
+        renderDashboardNotifications();
+
+    }
+);
+
+
+//==================================================
+// FIN BLOC 27
+//==================================================
+//==================================================
+// TOMA ADMIN V2 PREMIUM
+// ADMIN-V2.JS
+// BLOC 28 — STATISTIQUES DES BOUTIQUES OFFICIELLES
+//==================================================
+
+//==================================================
+// VÉRIFIER SI UNE BOUTIQUE EST OFFICIELLE
+//==================================================
+
+function isOfficialStore(merchant){
+
+    if(!merchant){
+
+        return false;
+
+    }
+
+
+    return (
+
+        merchant.official === true ||
+
+        merchant.isOfficial === true ||
+
+        merchant.officialStore === true ||
+
+        merchant.storeType === "official" ||
+
+        merchant.type === "official" ||
+
+        merchant.status === "official"
+
+    );
+
+}
+
+
+//==================================================
+// OBTENIR LES BOUTIQUES OFFICIELLES
+//==================================================
+
+function getOfficialStores(){
+
+    return merchants.filter(
+        merchant =>
+            isOfficialStore(merchant)
+    );
+
+}
+
+
+//==================================================
+// CALCULER LES PRODUITS DES BOUTIQUES OFFICIELLES
+//==================================================
+
+function calculateOfficialProducts(
+    officialStores
+){
+
+    const officialIds =
+        new Set(
+            officialStores.map(
+                merchant =>
+                    merchant.id
+            )
+        );
+
+
+    return products.filter(product=>{
+
+        const merchantId =
+            product.merchantId ||
+            product.shopId ||
+            product.storeId;
+
+
+        if(
+            merchantId &&
+            officialIds.has(
+                merchantId
+            )
+        ){
+
+            return true;
+
+        }
+
+
+        // Certains anciens produits
+        // peuvent contenir directement
+        // l'identifiant du commerçant.
+
+        if(
+            product.ownerId &&
+            officialIds.has(
+                product.ownerId
+            )
+        ){
+
+            return true;
+
+        }
+
+
+        return false;
+
+    }).length;
+
+}
+
+
+//==================================================
+// CALCULER LES VENTES DES BOUTIQUES OFFICIELLES
+//==================================================
+
+function calculateOfficialSales(
+    officialStores
+){
+
+    const officialIds =
+        new Set(
+            officialStores.map(
+                merchant =>
+                    merchant.id
+            )
+        );
+
+
+    let total = 0;
+
+
+    orders.forEach(order=>{
+
+        const merchantId =
+            order.merchantId ||
+            order.shopId ||
+            order.storeId;
+
+
+        if(
+            merchantId &&
+            officialIds.has(
+                merchantId
+            )
+        ){
+
+            total +=
+                safeNumber(
+                    order.total
+                );
+
+        }
+
+    });
+
+
+    return total;
+
+}
+
+
+//==================================================
+// CALCULER LES ABONNÉS DES BOUTIQUES OFFICIELLES
+//==================================================
+
+function calculateOfficialFollowers(
+    officialStores
+){
+
+    let total = 0;
+
+
+    officialStores.forEach(
+        merchant=>{
+
+            total +=
+                safeNumber(
+                    merchant.followersCount ||
+                    merchant.followers ||
+                    merchant.followersCountTotal
+                );
+
+        }
+    );
+
+
+    return total;
+
+}
+
+
+//==================================================
+// MISE À JOUR DES STATISTIQUES OFFICIELLES
+//==================================================
+
+function updateOfficialStoresStats(){
+
+    const officialStores =
+        getOfficialStores();
+
+
+    const officialStoreCount =
+        officialStores.length;
+
+
+    const officialProductCount =
+        calculateOfficialProducts(
+            officialStores
+        );
+
+
+    const officialSalesTotal =
+        calculateOfficialSales(
+            officialStores
+        );
+
+
+    const officialFollowerCount =
+        calculateOfficialFollowers(
+            officialStores
+        );
+
+
+    //==============================================
+    // NOMBRE DE BOUTIQUES OFFICIELLES
+    //==============================================
+
+    if(officialStoresCount){
+
+        officialStoresCount.textContent =
+            formatNumber(
+                officialStoreCount
+            );
+
+    }
+
+
+    if(activeOfficialStores){
+
+        activeOfficialStores.textContent =
+            formatNumber(
+                officialStoreCount
+            );
+
+    }
+
+
+    //==============================================
+    // PRODUITS OFFICIELS
+    //==============================================
+
+    if(officialProducts){
+
+        officialProducts.textContent =
+            formatNumber(
+                officialProductCount
+            );
+
+    }
+
+
+    //==============================================
+    // VENTES OFFICIELLES
+    //==============================================
+
+    if(officialSales){
+
+        officialSales.textContent =
+            formatKz(
+                officialSalesTotal
+            );
+
+    }
+
+
+    //==============================================
+    // ABONNÉS OFFICIELS
+    //==============================================
+
+    if(officialFollowers){
+
+        officialFollowers.textContent =
+            formatNumber(
+                officialFollowerCount
+            );
+
+    }
+
+}
+
+
+//==================================================
+// FIN BLOC 28
+//==================================================
