@@ -1034,3 +1034,842 @@
 <!-- ==================================================
      FIN BLOC HTML 2
 ================================================== -->
+<!-- ==================================================
+     TOMA ADMIN V2
+     ADMIN-V2.HTML
+     BLOC HTML 3 — ACTIVITÉ + MONITORING + SYSTÈME
+================================================== -->
+
+
+<!-- ==================================================
+     ZONE ACTIVITÉ + MONITORING
+================================================== -->
+
+<section
+    id="dashboardActivityArea"
+    class="dashboardActivityArea"
+>
+
+
+    <!-- ==================================================
+         ACTIVITÉ RÉCENTE
+    ================================================== -->
+
+    <article
+        id="recentActivityPanel"
+        class="dashboardPanel activityPanel"
+    >
+
+        <div class="panelHeader">
+
+            <div>
+
+                <h2>
+                    Atividade recente
+                </h2>
+
+                <p>
+                    Últimas ações na plataforma
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="activityList"
+            class="activityList"
+        >
+
+            <div class="activityItem">
+
+                <div class="activityIcon">
+                    🛒
+                </div>
+
+                <div class="activityContent">
+
+                    <h4>
+                        Nenhuma atividade
+                    </h4>
+
+                    <p>
+                        As atividades recentes aparecerão aqui.
+                    </p>
+
+                    <div class="activityTime">
+                        -
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </article>
+
+
+
+    <!-- ==================================================
+         MONITORING
+    ================================================== -->
+
+    <article
+        id="monitoringPanel"
+        class="dashboardPanel monitoringPanel"
+    >
+
+        <div class="panelHeader">
+
+            <div>
+
+                <h2>
+                    Monitorização
+                </h2>
+
+                <p>
+                    Estado atual da plataforma
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="monitoringGrid"
+            class="monitoringGrid"
+        >
+
+
+            <!-- UTILIZADORES ONLINE -->
+
+            <div
+                id="onlineUsersCard"
+                class="monitoringItem"
+            >
+
+                <span class="monitoringIcon">
+                    👥
+                </span>
+
+                <div>
+
+                    <span>
+                        Utilizadores online
+                    </span>
+
+                    <strong id="onlineUsers">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- COMMERÇANTS ONLINE -->
+
+            <div
+                id="onlineMerchantsCard"
+                class="monitoringItem"
+            >
+
+                <span class="monitoringIcon">
+                    🏪
+                </span>
+
+                <div>
+
+                    <span>
+                        Comerciantes online
+                    </span>
+
+                    <strong id="onlineMerchants">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- PRODUITS AUJOURD'HUI -->
+
+            <div
+                id="todayProductsCard"
+                class="monitoringItem"
+            >
+
+                <span class="monitoringIcon">
+                    📦
+                </span>
+
+                <div>
+
+                    <span>
+                        Produtos hoje
+                    </span>
+
+                    <strong id="todayProducts">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- COMMANDES AUJOURD'HUI -->
+
+            <div
+                id="todayOrdersCard"
+                class="monitoringItem"
+            >
+
+                <span class="monitoringIcon">
+                    🛒
+                </span>
+
+                <div>
+
+                    <span>
+                        Pedidos hoje
+                    </span>
+
+                    <strong id="todayOrders">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </article>
+
+
+</section>
+
+
+
+<!-- ==================================================
+     RAPPORTS RAPIDES
+================================================== -->
+
+<section
+    id="quickReports"
+    class="quickReports"
+>
+
+
+    <!-- VENTES DU MOIS -->
+
+    <article
+        id="monthlySalesCard"
+        class="reportCard"
+    >
+
+        <span>
+            Vendas este mês
+        </span>
+
+        <strong id="monthlySales">
+            0 Kz
+        </strong>
+
+    </article>
+
+
+    <!-- COMMANDES DU MOIS -->
+
+    <article
+        id="monthlyOrdersCard"
+        class="reportCard"
+    >
+
+        <span>
+            Pedidos este mês
+        </span>
+
+        <strong id="monthlyOrders">
+            0
+        </strong>
+
+    </article>
+
+
+    <!-- PRODUITS ACTIFS -->
+
+    <article
+        id="activeProductsCard"
+        class="reportCard"
+    >
+
+        <span>
+            Produtos ativos
+        </span>
+
+        <strong id="activeProducts">
+            0
+        </strong>
+
+    </article>
+
+
+    <!-- COMMERÇANTS VÉRIFIÉS -->
+
+    <article
+        id="verifiedMerchantsCard"
+        class="reportCard"
+    >
+
+        <span>
+            Comerciantes verificados
+        </span>
+
+        <strong id="verifiedMerchants">
+            0
+        </strong>
+
+    </article>
+
+
+</section>
+
+
+
+<!-- ==================================================
+     ÉTAT DU SYSTÈME
+================================================== -->
+
+<section
+    id="systemStatusPanel"
+    class="dashboardPanel systemStatusPanel"
+>
+
+
+    <div class="panelHeader">
+
+        <div>
+
+            <h2>
+                Estado do sistema
+            </h2>
+
+            <p>
+                Monitorização dos principais serviços
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="systemStatusGrid"
+        class="systemStatusGrid"
+    >
+
+
+        <!-- FIREBASE -->
+
+        <div
+            id="firebaseStatusCard"
+            class="systemStatusItem"
+        >
+
+            <span>
+                Firebase
+            </span>
+
+            <strong
+                id="firebaseStatus"
+            >
+                Online
+            </strong>
+
+        </div>
+
+
+        <!-- FIRESTORE -->
+
+        <div
+            id="firestoreStatusCard"
+            class="systemStatusItem"
+        >
+
+            <span>
+                Firestore
+            </span>
+
+            <strong
+                id="firestoreStatus"
+            >
+                Online
+            </strong>
+
+        </div>
+
+
+        <!-- AUTHENTIFICATION -->
+
+        <div
+            id="authStatusCard"
+            class="systemStatusItem"
+        >
+
+            <span>
+                Autenticação
+            </span>
+
+            <strong
+                id="authStatus"
+            >
+                Online
+            </strong>
+
+        </div>
+
+
+        <!-- SERVEUR -->
+
+        <div
+            id="serverStatusCard"
+            class="systemStatusItem"
+        >
+
+            <span>
+                Servidor
+            </span>
+
+            <strong
+                id="serverStatus"
+            >
+                Online
+            </strong>
+
+        </div>
+
+
+        <!-- BASE DE DONNÉES -->
+
+        <div
+            id="databaseStatusCard"
+            class="systemStatusItem"
+        >
+
+            <span>
+                Base de dados
+            </span>
+
+            <strong
+                id="databaseName"
+            >
+                Firebase Firestore
+            </strong>
+
+        </div>
+
+
+        <!-- DERNIÈRE SYNCHRONISATION -->
+
+        <div
+            id="lastSyncCard"
+            class="systemStatusItem"
+        >
+
+            <span>
+                Última sincronização
+            </span>
+
+            <strong
+                id="lastSync"
+            >
+                -
+            </strong>
+
+        </div>
+
+
+        <!-- DERNIÈRE MISE À JOUR -->
+
+        <div
+            id="lastUpdateCard"
+            class="systemStatusItem"
+        >
+
+            <span>
+                Última atualização
+            </span>
+
+            <strong
+                id="lastUpdate"
+            >
+                -
+            </strong>
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- ==================================================
+     FIN BLOC HTML 3
+================================================== -->
+         <!-- ==================================================
+     TOMA ADMIN V2
+     ADMIN-V2.HTML
+     BLOC HTML 4 — NOTIFICATIONS + LOADER + TOAST
+================================================== -->
+
+
+<!-- ==================================================
+     ZONE NOTIFICATIONS
+================================================== -->
+
+<section
+    id="notificationsPanel"
+    class="dashboardPanel notificationsPanel"
+>
+
+
+    <div class="panelHeader">
+
+        <div>
+
+            <h2>
+                Notificações
+            </h2>
+
+            <p>
+                Alertas importantes da plataforma
+            </p>
+
+        </div>
+
+
+        <a
+            id="viewAllNotifications"
+            href="notifications.html"
+            class="panelLink"
+        >
+            Ver todas
+        </a>
+
+    </div>
+
+
+    <div
+        id="notificationsList"
+        class="notificationsList"
+    >
+
+        <div class="notificationEmpty">
+
+            <span class="notificationEmptyIcon">
+                🔔
+            </span>
+
+            <p>
+                Nenhuma notificação nova.
+            </p>
+
+        </div>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- ==================================================
+     DEMANDES COMMERÇANTS
+================================================== -->
+
+<section
+    id="merchantRequestsSummary"
+    class="dashboardPanel merchantRequestsSummary"
+>
+
+
+    <div class="panelHeader">
+
+        <div>
+
+            <h2>
+                Pedidos de comerciantes
+            </h2>
+
+            <p>
+                Solicitações que aguardam análise
+            </p>
+
+        </div>
+
+
+        <a
+            id="viewMerchantRequests"
+            href="merchants.html"
+            class="panelLink"
+        >
+            Ver pedidos
+        </a>
+
+    </div>
+
+
+    <div class="merchantRequestSummaryContent">
+
+
+        <div class="merchantRequestIcon">
+            🏪
+        </div>
+
+
+        <div class="merchantRequestInfo">
+
+            <span>
+                Solicitações pendentes
+            </span>
+
+            <strong
+                id="merchantRequestsCount"
+            >
+                0
+            </strong>
+
+        </div>
+
+
+        <span
+            id="merchantBadge"
+            class="merchantRequestBadge"
+        >
+            0
+        </span>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- ==================================================
+     LOADER GLOBAL
+================================================== -->
+
+<div
+    id="loader"
+    class="loader hidden"
+    aria-hidden="true"
+>
+
+    <div class="loaderBox">
+
+        <div class="loaderSpinner"></div>
+
+        <p>
+            Carregando...
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==================================================
+     TOAST GLOBAL
+================================================== -->
+
+<div
+    id="toast"
+    class="toast"
+    role="status"
+    aria-live="polite"
+>
+
+    <span
+        id="toastMessage"
+    ></span>
+
+</div>
+
+
+
+<!-- ==================================================
+     MODAL DE NOTIFICAÇÃO
+================================================== -->
+
+<div
+    id="notificationModal"
+    class="modal hidden"
+    aria-hidden="true"
+>
+
+
+    <div
+        id="notificationModalContent"
+        class="modalContent"
+    >
+
+
+        <div class="modalHeader">
+
+            <h2>
+                Notificação
+            </h2>
+
+
+            <button
+                id="closeNotificationModal"
+                type="button"
+                class="modalClose"
+                aria-label="Fechar"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div
+            id="notificationContent"
+            class="modalBody"
+        >
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<!-- ==================================================
+     LOGS DO SISTEMA
+================================================== -->
+
+<section
+    id="systemLogsPanel"
+    class="systemLogsPanel"
+>
+
+
+    <div class="systemLogsHeader">
+
+        <div>
+
+            <h2>
+                Logs do sistema
+            </h2>
+
+            <p>
+                Atividade técnica recente
+            </p>
+
+        </div>
+
+
+        <button
+            id="clearLogs"
+            type="button"
+            class="clearLogsButton"
+        >
+            Limpar
+        </button>
+
+    </div>
+
+
+    <div
+        id="systemLogs"
+        class="systemLogs"
+    >
+
+    </div>
+
+
+</section>
+
+
+
+<!-- ==================================================
+     RODAPÉ
+================================================== -->
+
+<footer
+    id="adminFooter"
+    class="adminFooter"
+>
+
+    <span>
+        TOMA Admin
+    </span>
+
+    <span>
+        |
+    </span>
+
+    <span id="dashboardVersion">
+        V2 Premium
+    </span>
+
+    <span>
+        |
+    </span>
+
+    <span>
+        © 2026 TOMA
+    </span>
+
+</footer>
+
+
+
+<!-- ==================================================
+     FIN DU CONTENU PRINCIPAL
+================================================== -->
+
+</section>
+
+</main>
+
+
+
+<!-- ==================================================
+     FIN APPLICATION ADMIN
+================================================== -->
+
+</div>
+
+
+
+<!-- ==================================================
+     JAVASCRIPT PRINCIPAL
+================================================== -->
+
+<script
+    type="module"
+    src="admin-v2.js"
+></script>
+
+
+</body>
+
+</html>
