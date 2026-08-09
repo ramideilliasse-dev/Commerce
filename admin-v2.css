@@ -6301,3 +6301,765 @@ textarea:focus-visible {
 /* ==================================================
    FIN BLOC CSS 9
 ================================================== */
+/* ==================================================
+   TOMA ADMIN V2 PREMIUM
+   ADMIN-V2.CSS
+
+   BLOC CSS 10 — CORRECTION MOBILE / IPHONE
+   Objectif :
+   - empêcher le Dashboard d'être écrasé
+   - empêcher les tableaux de dépasser
+   - adapter les cartes
+   - corriger les textes trop grands
+   - conserver une interface premium
+================================================== */
+
+
+/* ==================================================
+   PROTECTION GLOBALE CONTRE LE DÉBORDEMENT
+================================================== */
+
+html,
+body {
+
+    width: 100%;
+
+    max-width: 100%;
+
+    overflow-x: hidden;
+
+}
+
+
+*,
+*::before,
+*::after {
+
+    box-sizing:
+        border-box;
+
+}
+
+
+/* ==================================================
+   IMAGES RESPONSIVES
+================================================== */
+
+img {
+
+    max-width:
+        100%;
+
+}
+
+
+/* ==================================================
+   TABLEAUX — PROTECTION
+================================================== */
+
+table {
+
+    width:
+        100%;
+
+    max-width:
+        100%;
+
+    border-collapse:
+        collapse;
+
+}
+
+
+/* ==================================================
+   TABLEAUX DU DASHBOARD
+================================================== */
+
+#lastOrdersTable,
+#lastMerchantsTable,
+#lastProductsTable {
+
+    width:
+        100%;
+
+}
+
+
+/* ==================================================
+   CELLULES DES TABLEAUX
+================================================== */
+
+#lastOrdersTable td,
+#lastOrdersTable th,
+#lastMerchantsTable td,
+#lastMerchantsTable th,
+#lastProductsTable td,
+#lastProductsTable th {
+
+    padding:
+        10px 8px;
+
+    font-size:
+        9px;
+
+    vertical-align:
+        middle;
+
+}
+
+
+/* ==================================================
+   CONTENU LONG DES TABLEAUX
+================================================== */
+
+#lastOrdersTable td,
+#lastMerchantsTable td,
+#lastProductsTable td {
+
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
+
+}
+
+
+/* ==================================================
+   IMAGES DES TABLEAUX
+================================================== */
+
+.tableAvatar {
+
+    flex-shrink:
+        0;
+
+    width:
+        32px;
+
+    height:
+        32px;
+
+}
+
+
+/* ==================================================
+   MOBILE
+================================================== */
+
+@media (max-width: 700px) {
+
+
+    /* ==============================================
+       BODY
+    ============================================== */
+
+    body {
+
+        width:
+            100%;
+
+        min-width:
+            0;
+
+        margin:
+            0;
+
+        padding:
+            0;
+
+        overflow-x:
+            hidden;
+
+    }
+
+
+    /* ==============================================
+       CONTENU PRINCIPAL
+    ============================================== */
+
+    main {
+
+        width:
+            100%;
+
+        max-width:
+            100%;
+
+        min-width:
+            0;
+
+        margin-left:
+            0;
+
+        padding:
+            12px;
+
+        overflow-x:
+            hidden;
+
+    }
+
+
+    /* ==============================================
+       SECTIONS
+    ============================================== */
+
+    section {
+
+        max-width:
+            100%;
+
+        min-width:
+            0;
+
+    }
+
+
+    /* ==============================================
+       TITRES PRINCIPAUX
+    ============================================== */
+
+    h1 {
+
+        font-size:
+            25px;
+
+        line-height:
+            1.15;
+
+    }
+
+
+    h2 {
+
+        font-size:
+            19px;
+
+        line-height:
+            1.2;
+
+    }
+
+
+    h3 {
+
+        font-size:
+            15px;
+
+        line-height:
+            1.25;
+
+    }
+
+
+    h4 {
+
+        font-size:
+            12px;
+
+    }
+
+
+    p {
+
+        max-width:
+            100%;
+
+        line-height:
+            1.45;
+
+    }
+
+
+    /* ==============================================
+       RECHERCHE
+    ============================================== */
+
+    #globalSearch {
+
+        width:
+            100%;
+
+        max-width:
+            100%;
+
+        min-width:
+            0;
+
+    }
+
+
+    /* ==============================================
+       HEADER
+    ============================================== */
+
+    header {
+
+        max-width:
+            100%;
+
+        overflow:
+            hidden;
+
+    }
+
+
+    /* ==============================================
+       ZONES FLEXIBLES
+    ============================================== */
+
+    .dashboardHeader,
+    .dashboardTop,
+    .headerActions,
+    .topActions {
+
+        max-width:
+            100%;
+
+        min-width:
+            0;
+
+        flex-wrap:
+            wrap;
+
+    }
+
+
+    /* ==============================================
+       CARTES STATISTIQUES
+    ============================================== */
+
+    .statCard,
+    .statisticsCard,
+    .dashboardCard {
+
+        min-width:
+            0;
+
+        max-width:
+            100%;
+
+    }
+
+
+    /* ==============================================
+       GRILLES
+    ============================================== */
+
+    .statsGrid,
+    .statisticsGrid,
+    .dashboardGrid,
+    .cardsGrid {
+
+        width:
+            100%;
+
+        max-width:
+            100%;
+
+        min-width:
+            0;
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+
+        gap:
+            10px;
+
+    }
+
+
+    /* ==============================================
+       GRILLES À UNE COLONNE
+       POUR LES GRANDES SECTIONS
+    ============================================== */
+
+    .contentGrid,
+    .mainGrid,
+    .dashboardContentGrid {
+
+        width:
+            100%;
+
+        max-width:
+            100%;
+
+        min-width:
+            0;
+
+        grid-template-columns:
+            minmax(
+                0,
+                1fr
+            );
+
+    }
+
+
+    /* ==============================================
+       PANNEAUX
+    ============================================== */
+
+    .panel,
+    .card,
+    .chartCard,
+    .tableCard,
+    .monitoringCard,
+    .reportCard,
+    .officialStorePanel,
+    .systemPanel,
+    .notificationsPanel {
+
+        width:
+            100%;
+
+        max-width:
+            100%;
+
+        min-width:
+            0;
+
+        overflow:
+            hidden;
+
+    }
+
+
+    /* ==============================================
+       GRAPHIQUES
+    ============================================== */
+
+    canvas {
+
+        max-width:
+            100%;
+
+    }
+
+
+    /* ==============================================
+       CONTENEUR DES TABLEAUX
+    ============================================== */
+
+    .tableContainer,
+    .tableWrapper,
+    .responsiveTable {
+
+        width:
+            100%;
+
+        max-width:
+            100%;
+
+        overflow-x:
+            auto;
+
+        -webkit-overflow-scrolling:
+            touch;
+
+    }
+
+
+    /* ==============================================
+       TABLEAUX
+    ============================================== */
+
+    #lastOrdersTable,
+    #lastMerchantsTable,
+    #lastProductsTable {
+
+        width:
+            100%;
+
+        min-width:
+            520px;
+
+    }
+
+
+    /* ==============================================
+       TEXTES DES TABLEAUX
+    ============================================== */
+
+    #lastOrdersTable td,
+    #lastOrdersTable th,
+    #lastMerchantsTable td,
+    #lastMerchantsTable th,
+    #lastProductsTable td,
+    #lastProductsTable th {
+
+        white-space:
+            nowrap;
+
+        font-size:
+            9px;
+
+    }
+
+
+    /* ==============================================
+       ACTIVITÉ
+    ============================================== */
+
+    .activityItem {
+
+        width:
+            100%;
+
+        max-width:
+            100%;
+
+        min-width:
+            0;
+
+    }
+
+
+    .activityContent {
+
+        min-width:
+            0;
+
+        overflow:
+            hidden;
+
+    }
+
+
+    .activityContent p {
+
+        overflow:
+            hidden;
+
+        text-overflow:
+            ellipsis;
+
+    }
+
+
+    /* ==============================================
+       BOUTONS HEADER
+    ============================================== */
+
+    #refreshDashboard,
+    #quickAddButton {
+
+        flex:
+            1 1 auto;
+
+    }
+
+
+    /* ==============================================
+       MODAL
+    ============================================== */
+
+    #notificationModal {
+
+        width:
+            100%;
+
+        max-width:
+            100%;
+
+    }
+
+
+    .notificationModalContent {
+
+        width:
+            100%;
+
+        max-width:
+            100%;
+
+    }
+
+
+}
+
+
+/* ==================================================
+   IPHONE ÉTROIT
+================================================== */
+
+@media (max-width: 430px) {
+
+
+    /* ==============================================
+       CONTENU
+    ============================================== */
+
+    main {
+
+        padding:
+            10px;
+
+    }
+
+
+    /* ==============================================
+       CARTES STATISTIQUES
+    ============================================== */
+
+    .statsGrid,
+    .statisticsGrid,
+    .dashboardGrid,
+    .cardsGrid {
+
+        grid-template-columns:
+            1fr;
+
+        gap:
+            9px;
+
+    }
+
+
+    /* ==============================================
+       TITRE
+    ============================================== */
+
+    h1 {
+
+        font-size:
+            23px;
+
+    }
+
+
+    h2 {
+
+        font-size:
+            18px;
+
+    }
+
+
+    /* ==============================================
+       STATISTIQUES
+    ============================================== */
+
+    .statCard,
+    .statisticsCard {
+
+        padding:
+            13px;
+
+    }
+
+
+    /* ==============================================
+       ACTIONS
+    ============================================== */
+
+    #refreshDashboard,
+    #quickAddButton {
+
+        width:
+            100%;
+
+        flex:
+            1 1 100%;
+
+    }
+
+
+    /* ==============================================
+       TABLEAUX
+    ============================================== */
+
+    #lastOrdersTable,
+    #lastMerchantsTable,
+    #lastProductsTable {
+
+        min-width:
+            500px;
+
+    }
+
+
+    /* ==============================================
+       ACTIVITÉ
+    ============================================== */
+
+    .activityItem {
+
+        padding:
+            10px;
+
+    }
+
+
+    .activityContent h4 {
+
+        font-size:
+            10px;
+
+    }
+
+
+    .activityContent p {
+
+        font-size:
+            9px;
+
+    }
+
+
+}
+
+
+/* ==================================================
+   IPHONE TRÈS ÉTROIT
+================================================== */
+
+@media (max-width: 360px) {
+
+
+    main {
+
+        padding:
+            8px;
+
+    }
+
+
+    h1 {
+
+        font-size:
+            21px;
+
+    }
+
+
+    h2 {
+
+        font-size:
+            17px;
+
+    }
+
+
+    .statCard,
+    .statisticsCard {
+
+        padding:
+            11px;
+
+    }
+
+
+}
+
+
+/* ==================================================
+   FIN BLOC CSS 10
+================================================== */
