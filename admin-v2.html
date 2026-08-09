@@ -3,1967 +3,533 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width,initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>TOMA ADMIN</title>
+    <meta
+        name="theme-color"
+        content="#111111"
+    >
 
-<link rel="stylesheet"
-href="admin-v2.css">
+    <title>TOMA Admin — Dashboard</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-rel="stylesheet">
-
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
-rel="stylesheet">
+    <!--
+        CSS
+        Nous créerons admin-v2.css après avoir terminé le HTML.
+    -->
+    <link
+        rel="stylesheet"
+        href="admin-v2.css"
+    >
 
 </head>
 
+
 <body>
 
-<div class="dashboardContainer">
 
-<!--====================================-->
-<!-- SIDEBAR -->
-<!--====================================-->
+<!-- ==================================================
+     TOMA ADMIN V2
+     APPLICATION PRINCIPALE
+================================================== -->
 
-<aside class="sidebar">
+<div id="adminApp">
 
-<div class="sidebarTop">
 
-<div class="logo">
+    <!-- ==================================================
+         SIDEBAR
+    ================================================== -->
 
-<div class="logoIcon">
+    <aside
+        id="adminSidebar"
+        class="adminSidebar"
+    >
 
-🛍️
 
-</div>
+        <!-- ==============================================
+             LOGO
+        ============================================== -->
 
-<div>
+        <div
+            id="adminBrand"
+            class="adminBrand"
+        >
 
-<h1>TOMA</h1>
-
-<p>ADMIN</p>
-
-</div>
-
-</div>
-
-</div>
-
-<nav class="sidebarMenu">
-
-<a href="admin-dashboard.html"
-class="menuItem active">
-
-<span class="material-symbols-rounded">
-
-dashboard
-
-</span>
-
-<span>Dashboard</span>
-
-</a>
-
-<a href="users.html"
-class="menuItem">
-
-<span class="material-symbols-rounded">
-
-groups
-
-</span>
-
-<span>Utilizadores</span>
-
-</a>
-
-<a href="merchants.html"
-class="menuItem">
-
-<span class="material-symbols-rounded">
-
-storefront
-
-</span>
-
-<span>Comerciantes</span>
-
-</a>
-
-<a href="merchant-requests.html"
-class="menuItem">
-
-<span class="material-symbols-rounded">
-
-approval
-
-</span>
-
-<span>Pedidos</span>
-
-<span id="merchantBadge"
-class="badge">
-
-0
-
-</span>
-
-</a>
-
-<a href="official-stores.html"
-class="menuItem">
-
-<span class="material-symbols-rounded">
-
-verified
-
-</span>
-
-<span>Lojas Oficiais</span>
-
-</a>
-
-<a href="products.html"
-class="menuItem">
-
-<span class="material-symbols-rounded">
-
-inventory_2
-
-</span>
-
-<span>Produtos</span>
-
-</a>
-
-<a href="orders.html"
-class="menuItem">
-
-<span class="material-symbols-rounded">
-
-shopping_cart
-
-</span>
-
-<span>Pedidos</span>
-
-</a>
-
-<a href="statistics.html"
-class="menuItem">
-
-<span class="material-symbols-rounded">
-
-monitoring
-
-</span>
-
-<span>Estatísticas</span>
-
-</a>
-
-<a href="banners.html"
-class="menuItem">
-
-<span class="material-symbols-rounded">
-
-photo_library
-
-</span>
-
-<span>Banners</span>
-
-</a>
-
-<a href="settings.html"
-class="menuItem">
-
-<span class="material-symbols-rounded">
-
-settings
-
-</span>
-
-<span>Configurações</span>
-
-</a>
-
-</nav>
-
-<div class="sidebarBottom">
-
-<div class="adminProfile">
-
-<img
-
-id="adminAvatar"
-
-src="images/avatar.png"
-
-class="avatar">
-
-<div>
-
-<h3 id="adminName">
-
-Ramide
-
-</h3>
-
-<p>
-
-Super Admin
-
-</p>
-
-</div>
-
-</div>
-
-<button
-id="logoutButton">
-
-<span class="material-symbols-rounded">
-
-logout
-
-</span>
-
-Sair
-
-</button>
-
-</div>
-
-</aside>
-
-<!--====================================-->
-<!-- CONTENU -->
-<!--====================================-->
-
-<main class="mainContent">
- <!--====================================-->
-<!-- HEADER -->
-<!--====================================-->
-
-<header class="topHeader">
-
-<div class="headerLeft">
-
-<h1>
-
-Dashboard
-
-</h1>
-
-<p>
-
-Bem-vindo ao painel administrativo da TOMA
-
-</p>
-
-</div>
-
-<div class="headerCenter">
-
-<div class="searchBox">
-
-<span class="material-symbols-rounded">
-
-search
-
-</span>
-
-<input
-
-type="text"
-
-id="globalSearch"
-
-placeholder="Pesquisar utilizadores, comerciantes, produtos...">
-
-</div>
-
-</div>
-
-<div class="headerRight">
-
-<button class="headerButton" id="refreshDashboard">
-
-<span class="material-symbols-rounded">
-
-refresh
-
-</span>
-
-</button>
-
-<button class="headerButton" id="notificationsButton">
-
-<span class="material-symbols-rounded">
-
-notifications
-
-</span>
-
-<span id="notificationsBadge"
-
-class="notificationBadge">
-
-0
-
-</span>
-
-</button>
-
-<button class="headerButton" id="quickAddButton">
-
-<span class="material-symbols-rounded">
-
-add
-
-</span>
-
-</button>
-
-</div>
-
-</header>
-
-<!--====================================-->
-<!-- RACCOURCIS -->
-<!--====================================-->
-
-<section class="quickActions">
-
-<button onclick="location.href='merchant-requests.html'">
-
-📋
-
-<span>
-
-Pedidos de Comerciantes
-
-</span>
-
-</button>
-
-<button onclick="location.href='brand-stores.html'">
-
-🏪
-
-<span>
-
-Lojas Oficiais
-
-</span>
-
-</button>
-
-<button onclick="location.href='products.html'">
-
-📦
-
-<span>
-
-Produtos
-
-</span>
-
-</button>
-
-<button onclick="location.href='orders.html'">
-
-🛒
-
-<span>
-
-Pedidos
-
-</span>
-
-</button>
-
-<button onclick="location.href='statistics.html'">
-
-📊
-
-<span>
-
-Relatórios
-
-</span>
-
-</button>
-
-<button onclick="location.href='settings.html'">
-
-⚙️
-
-<span>
-
-Configurações
-
-</span>
-
-</button>
-
-</section>
-
-<!--====================================-->
-<!-- CARTES STATISTIQUES -->
-<!--====================================-->
-
-<section class="statsGrid">
- <!--====================================-->
-<!-- CARTES PREMIUM -->
-<!--====================================-->
-
-<div class="statCard blue">
-
-<div class="statTop">
-
-<span class="material-symbols-rounded">
-
-groups
-
-</span>
-
-</div>
-
-<h2 id="usersCount">
-
-0
-
-</h2>
-
-<p>
-
-Utilizadores
-
-</p>
-
-<small id="usersGrowth">
-
-+0%
-
-</small>
-
-</div>
-
-<div class="statCard green">
-
-<div class="statTop">
-
-<span class="material-symbols-rounded">
-
-storefront
-
-</span>
-
-</div>
-
-<h2 id="merchantsCount">
-
-0
-
-</h2>
-
-<p>
-
-Comerciantes
-
-</p>
-
-<small id="merchantsGrowth">
-
-+0%
-
-</small>
-
-</div>
-
-<div class="statCard orange">
-
-<div class="statTop">
-
-<span class="material-symbols-rounded">
-
-inventory_2
-
-</span>
-
-</div>
-
-<h2 id="productsCount">
-
-0
-
-</h2>
-
-<p>
-
-Produtos
-
-</p>
-
-<small>
-
-Total publicado
-
-</small>
-
-</div>
-
-<div class="statCard purple">
-
-<div class="statTop">
-
-<span class="material-symbols-rounded">
-
-shopping_cart
-
-</span>
-
-</div>
-
-<h2 id="ordersCount">
-
-0
-
-</h2>
-
-<p>
-
-Pedidos
-
-</p>
-
-<small>
-
-Hoje
-
-</small>
-
-</div>
-
-<div class="statCard yellow">
-
-<div class="statTop">
-
-<span class="material-symbols-rounded">
-
-payments
-
-</span>
-
-</div>
-
-<h2 id="salesCount">
-
-0 Kz
-
-</h2>
-
-<p>
-
-Vendas
-
-</p>
-
-<small>
-
-Receita Total
-
-</small>
-
-</div>
-
-<div class="statCard red">
-
-<div class="statTop">
-
-<span class="material-symbols-rounded">
-
-approval
-
-</span>
-
-</div>
-
-<h2 id="merchantRequestsCount">
-
-0
-
-</h2>
-
-<p>
-
-Pedidos Pendentes
-
-</p>
-
-<small>
-
-Aguardando aprovação
-
-</small>
-
-</div>
-
-<div class="statCard cyan">
-
-<div class="statTop">
-
-<span class="material-symbols-rounded">
-
-verified
-
-</span>
-
-</div>
-
-<h2 id="officialStoresCount">
-
-0
-
-</h2>
-
-<p>
-
-Lojas Oficiais
-
-</p>
-
-<small>
-
-Marcas Premium
-
-</small>
-
-</div>
-
-<div class="statCard dark">
-
-<div class="statTop">
-
-<span class="material-symbols-rounded">
-
-workspace_premium
-
-</span>
-
-</div>
-
-<h2 id="commissionCount">
-
-0 Kz
-
-</h2>
-
-<p>
-
-Comissões
-
-</p>
-
-<small>
-
-Receita TOMA
-
-</small>
-
-</div>
-
-</section>
-
-<!--====================================-->
-<!-- GRÁFICOS -->
-<!--====================================-->
-
-<section class="chartsGrid">
-
-<div class="chartCard">
-
-<div class="cardHeader">
-
-<h3>
-
-📈 Evolução das Vendas
-
-</h3>
-
-<select id="salesPeriod">
-
-<option value="7">
-
-7 dias
-
-</option>
-
-<option value="30" selected>
-
-30 dias
-
-</option>
-
-<option value="365">
-
-1 ano
-
-</option>
-
-</select>
-
-</div>
-
-<canvas id="salesChart">
-
-</canvas>
-
-</div>
-
-<div class="chartCard">
-
-<div class="cardHeader">
-
-<h3>
-
-📊 Estado dos Pedidos
-
-</h3>
-
-</div>
-
-<canvas id="ordersChart">
-
-</canvas>
-
-</div>
-
-</section>
-
-<!--====================================-->
-<!-- DEUXIÈME LIGNE -->
-<!--====================================-->
-
-<section class="chartsGrid">
-
-<div class="chartCard">
-
-<div class="cardHeader">
-
-<h3>
-
-👥 Crescimento dos Utilizadores
-
-</h3>
-
-</div>
-
-<canvas id="usersChart">
-
-</canvas>
-
-</div>
-
-<div class="chartCard">
-
-<div class="cardHeader">
-
-<h3>
-
-💰 Comissões TOMA
-
-</h3>
-
-</div>
-
-<canvas id="commissionChart">
-
-</canvas>
-
-</div>
-
-</section>
-<!--====================================-->
-<!-- LIGNE PRINCIPALE -->
-<!--====================================-->
-
-<div class="dashboardRow">
-
-<!--====================================-->
-<!-- ACTIVITÉS RÉCENTES -->
-<!--====================================-->
-
-<section class="activityCard">
-
-<div class="cardHeader">
-
-<h3>
-
-🕒 Atividade Recente
-
-</h3>
-
-<button id="seeAllActivity">
-
-Ver tudo
-
-</button>
-
-</div>
-
-<div id="activityList" class="activityList">
-
-</div>
-
-</section>
-
-<!--====================================-->
-<!-- NOTIFICAÇÕES -->
-<!--====================================-->
-
-<section class="notificationsCard">
-
-<div class="cardHeader">
-
-<h3>
-
-🔔 Notificações
-
-</h3>
-
-<button id="clearNotifications">
-
-Limpar
-
-</button>
-
-</div>
-
-<div id="notificationsList">
-
-</div>
-
-</section>
-
-</div>
-
-<!--====================================-->
-<!-- DERNIÈRES COMMANDES -->
-<!--====================================-->
-
-<section class="tableCard">
-
-<div class="cardHeader">
-
-<h3>
-
-🛒 Últimos Pedidos
-
-</h3>
-
-<button onclick="location.href='orders.html'">
-
-Ver Todos
-
-</button>
-
-</div>
-
-<table class="dashboardTable">
-
-<thead>
-
-<tr>
-
-<th>Cliente</th>
-
-<th>Produto</th>
-
-<th>Total</th>
-
-<th>Status</th>
-
-<th>Data</th>
-
-</tr>
-
-</thead>
-
-<tbody id="lastOrdersTable">
-
-</tbody>
-
-</table>
-
-</section>
-
-<!--====================================-->
-<!-- DERNIERS COMMERÇANTS -->
-<!--====================================-->
-
-<section class="tableCard">
-
-<div class="cardHeader">
-
-<h3>
-
-🛍️ Novos Comerciantes
-
-</h3>
-
-<button onclick="location.href='merchants.html'">
-
-Ver Todos
-
-</button>
-
-</div>
-
-<table class="dashboardTable">
-
-<thead>
-
-<tr>
-
-<th>Foto</th>
-
-<th>Nome</th>
-
-<th>Loja</th>
-
-<th>Estado</th>
-
-<th>Ação</th>
-
-</tr>
-
-</thead>
-
-<tbody id="lastMerchantsTable">
-
-</tbody>
-
-</table>
-
-</section>
-
-<!--====================================-->
-<!-- DERNIERS PRODUITS -->
-<!--====================================-->
-
-<section class="tableCard">
-
-<div class="cardHeader">
-
-<h3>
-
-📦 Produtos Recentes
-
-</h3>
-
-<button onclick="location.href='products.html'">
-
-Ver Todos
-
-</button>
-
-</div>
-
-<table class="dashboardTable">
-
-<thead>
-
-<tr>
-
-<th>Imagem</th>
-
-<th>Produto</th>
-
-<th>Preço</th>
-
-<th>Loja</th>
-
-<th>Status</th>
-
-</tr>
-
-</thead>
-
-<tbody id="lastProductsTable">
-
-</tbody>
-
-</table>
-
-</section>
-<!--====================================-->
-<!-- PANNEAU RAPIDE -->
-<!--====================================-->
-
-<section class="tableCard">
-
-    <div class="cardHeader">
-
-        <h3>⚡ Ações Rápidas</h3>
-
-    </div>
-
-    <div class="quickAdminGrid">
-
-        <button id="openUsersButton" class="quickAdminButton">
-
-            👥
-
-            <span>Utilizadores</span>
-
-        </button>
-
-        <button id="openMerchantsButton" class="quickAdminButton">
-
-            🏪
-
-            <span>Comerciantes</span>
-
-        </button>
-
-        <button id="openMerchantRequestsButton" class="quickAdminButton">
-
-            📋
-
-            <span>Pedidos</span>
-
-        </button>
-
-        <button id="openOfficialStoresButton" class="quickAdminButton">
-
-            🏬
-
-            <span>Lojas Oficiais</span>
-
-        </button>
-
-        <button id="openProductsButton" class="quickAdminButton">
-
-            📦
-
-            <span>Produtos</span>
-
-        </button>
-
-        <button id="openOrdersButton" class="quickAdminButton">
-
-            🛒
-
-            <span>Pedidos</span>
-
-        </button>
-
-        <button id="openStatisticsButton" class="quickAdminButton">
-
-            📊
-
-            <span>Relatórios</span>
-
-        </button>
-
-        <button id="openSettingsButton" class="quickAdminButton">
-
-            ⚙️
-
-            <span>Configurações</span>
-
-        </button>
-
-    </div>
-
-</section>
-
-<!--====================================-->
-<!-- EXPORTAÇÕES -->
-<!--====================================-->
-
-<section class="tableCard">
-
-    <div class="cardHeader">
-
-        <h3>📤 Exportações</h3>
-
-    </div>
-
-    <div class="quickAdminGrid">
-
-        <button id="exportUsers">
-
-            Exportar Utilizadores
-
-        </button>
-
-        <button id="exportMerchants">
-
-            Exportar Comerciantes
-
-        </button>
-
-        <button id="exportProducts">
-
-            Exportar Produtos
-
-        </button>
-
-        <button id="exportOrders">
-
-            Exportar Pedidos
-
-        </button>
-
-    </div>
-
-</section>
- <!--====================================-->
-<!-- SAÚDE DA PLATAFORMA -->
-<!--====================================-->
-
-<section class="dashboardRow">
-
-    <section class="tableCard">
-
-        <div class="cardHeader">
-
-            <h3>🖥 Estado da Plataforma</h3>
-
-        </div>
-
-        <div class="systemHealthGrid">
-
-            <div class="healthCard">
-
-                <span class="healthTitle">
-                    Firebase
-                </span>
-
-                <h2 id="firebaseStatus">
-                    Online
-                </h2>
-
+            <div class="brandLogo">
+                TOMA
             </div>
 
-            <div class="healthCard">
-
-                <span class="healthTitle">
-                    Firestore
-                </span>
-
-                <h2 id="firestoreStatus">
-                    Online
-                </h2>
-
-            </div>
-
-            <div class="healthCard">
-
-                <span class="healthTitle">
-                    Autenticação
-                </span>
-
-                <h2 id="authStatus">
-                    Online
-                </h2>
-
-            </div>
-
-            <div class="healthCard">
-
-                <span class="healthTitle">
-                    Última atualização
-                </span>
-
-                <h2 id="lastUpdate">
-                    --
-                </h2>
-
+            <div class="brandSubtitle">
+                ADMIN
             </div>
 
         </div>
 
-    </section>
 
-</section>
+        <!-- ==============================================
+             NAVIGATION PRINCIPALE
+        ============================================== -->
 
-<!--====================================-->
-<!-- RESUMO FINANCEIRO -->
-<!--====================================-->
+        <nav
+            id="dashboardNavigation"
+            class="dashboardNavigation"
+        >
 
-<section class="tableCard">
 
-    <div class="cardHeader">
+            <!-- DASHBOARD -->
 
-        <h3>💰 Resumo Financeiro</h3>
+            <a
+                id="navDashboard"
+                class="navItem active"
+                href="admin-v2.html"
+            >
 
-    </div>
+                <span class="navIcon">📊</span>
 
-    <div class="financeGrid">
-
-        <div class="financeCard">
-
-            <span>
-                Receita Total
-            </span>
-
-            <h2 id="financeSales">
-                0 Kz
-            </h2>
-
-        </div>
-
-        <div class="financeCard">
-
-            <span>
-                Comissão TOMA
-            </span>
-
-            <h2 id="financeCommission">
-                0 Kz
-            </h2>
-
-        </div>
-
-        <div class="financeCard">
-
-            <span>
-                Ticket Médio
-            </span>
-
-            <h2 id="averageOrder">
-                0 Kz
-            </h2>
-
-        </div>
-
-        <div class="financeCard">
-
-            <span>
-                Lucro Hoje
-            </span>
-
-            <h2 id="todayProfit">
-                0 Kz
-            </h2>
-
-        </div>
-
-    </div>
-
-</section>
-
-<!--====================================-->
-<!-- MONITORAMENTO -->
-<!--====================================-->
-
-<section class="tableCard">
-
-    <div class="cardHeader">
-
-        <h3>📡 Monitoramento</h3>
-
-    </div>
-
-    <div class="monitorGrid">
-
-        <div>
-
-            <strong>
-                Utilizadores Online
-            </strong>
-
-            <h2 id="onlineUsers">
-                0
-            </h2>
-
-        </div>
-
-        <div>
-
-            <strong>
-                Comerciantes Online
-            </strong>
-
-            <h2 id="onlineMerchants">
-                0
-            </h2>
-
-        </div>
-
-        <div>
-
-            <strong>
-                Produtos Publicados Hoje
-            </strong>
-
-            <h2 id="todayProducts">
-                0
-            </h2>
-
-        </div>
-
-        <div>
-
-            <strong>
-                Pedidos Hoje
-            </strong>
-
-            <h2 id="todayOrders">
-                0
-            </h2>
-
-        </div>
-
-    </div>
-
-</section>
- <!--====================================-->
-<!-- RAPPORTS RAPIDES -->
-<!--====================================-->
-
-<section class="dashboardRow">
-
-    <section class="tableCard">
-
-        <div class="cardHeader">
-
-            <h3>📑 Relatórios Rápidos</h3>
-
-        </div>
-
-        <div class="reportsGrid">
-
-            <div class="reportCard">
-
-                <span class="material-symbols-rounded">
-
-                    trending_up
-
+                <span class="navText">
+                    Dashboard
                 </span>
 
-                <h4>Vendas do Mês</h4>
+            </a>
 
-                <h2 id="monthlySales">
 
-                    0 Kz
+            <!-- UTILISATEURS -->
 
-                </h2>
+            <a
+                id="navUsers"
+                class="navItem"
+                href="utilisateurs.html"
+            >
 
-            </div>
+                <span class="navIcon">👥</span>
 
-            <div class="reportCard">
-
-                <span class="material-symbols-rounded">
-
-                    calendar_month
-
+                <span class="navText">
+                    Utilizadores
                 </span>
 
-                <h4>Pedidos do Mês</h4>
+            </a>
 
-                <h2 id="monthlyOrders">
 
+            <!-- COMMERÇANTS -->
+
+            <a
+                id="navMerchants"
+                class="navItem"
+                href="merchants.html"
+            >
+
+                <span class="navIcon">🏪</span>
+
+                <span class="navText">
+                    Comerciantes
+                </span>
+
+            </a>
+
+
+            <!-- PRODUITS -->
+
+            <a
+                id="navProducts"
+                class="navItem"
+                href="products.html"
+            >
+
+                <span class="navIcon">📦</span>
+
+                <span class="navText">
+                    Produtos
+                </span>
+
+            </a>
+
+
+            <!-- COMMANDES -->
+
+            <a
+                id="navOrders"
+                class="navItem"
+                href="orders.html"
+            >
+
+                <span class="navIcon">🛒</span>
+
+                <span class="navText">
+                    Pedidos
+                </span>
+
+            </a>
+
+
+            <!-- FINANCES -->
+
+            <a
+                id="navFinances"
+                class="navItem"
+                href="finances.html"
+            >
+
+                <span class="navIcon">💰</span>
+
+                <span class="navText">
+                    Finanças
+                </span>
+
+            </a>
+
+
+            <!-- NOTIFICATIONS -->
+
+            <a
+                id="navNotifications"
+                class="navItem"
+                href="notifications.html"
+            >
+
+                <span class="navIcon">🔔</span>
+
+                <span class="navText">
+                    Notificações
+                </span>
+
+                <span
+                    id="notificationsBadge"
+                    class="navBadge"
+                >
                     0
-
-                </h2>
-
-            </div>
-
-            <div class="reportCard">
-
-                <span class="material-symbols-rounded">
-
-                    inventory
-
                 </span>
 
-                <h4>Produtos Ativos</h4>
+            </a>
 
-                <h2 id="activeProducts">
 
-                    0
+            <!-- RAPPORTS -->
 
-                </h2>
+            <a
+                id="navReports"
+                class="navItem"
+                href="reports.html"
+            >
 
-            </div>
+                <span class="navIcon">📈</span>
 
-            <div class="reportCard">
-
-                <span class="material-symbols-rounded">
-
-                    verified_user
-
+                <span class="navText">
+                    Relatórios
                 </span>
 
-                <h4>Comerciantes Verificados</h4>
+            </a>
 
-                <h2 id="verifiedMerchants">
 
-                    0
+            <!-- BOUTIQUES OFFICIELLES -->
 
-                </h2>
+            <a
+                id="navOfficialStores"
+                class="navItem"
+                href="official-stores.html"
+            >
 
-            </div>
+                <span class="navIcon">🏬</span>
 
-        </div>
-
-    </section>
-
-</section>
-
-<!--====================================-->
-<!-- LOG DO SISTEMA -->
-<!--====================================-->
-
-<section class="tableCard">
-
-    <div class="cardHeader">
-
-        <h3>📜 Log do Sistema</h3>
-
-        <button id="clearLogs">
-
-            Limpar
-
-        </button>
-
-    </div>
-
-    <div id="systemLogs" class="systemLogs">
-
-        <div class="logItem">
-
-            Sistema iniciado...
-
-        </div>
-
-    </div>
-
-</section>
-
-<!--====================================-->
-<!-- INFORMAÇÕES DA VERSÃO -->
-<!--====================================-->
-
-<section class="tableCard">
-
-    <div class="cardHeader">
-
-        <h3>ℹ️ Informações</h3>
-
-    </div>
-
-    <div class="infoGrid">
-
-        <div>
-
-            <strong>Versão</strong>
-
-            <p>
-
-                TOMA ADMIN V2 PREMIUM
-
-            </p>
-
-        </div>
-
-        <div>
-
-            <strong>Base de Dados</strong>
-
-            <p id="databaseName">
-
-                Firebase Firestore
-
-            </p>
-
-        </div>
-
-        <div>
-
-            <strong>Servidor</strong>
-
-            <p id="serverStatus">
-
-                Online
-
-            </p>
-
-        </div>
-
-        <div>
-
-            <strong>Última Sincronização</strong>
-
-            <p id="lastSync">
-
-                --
-
-            </p>
-
-        </div>
-
-    </div>
-
-</section>
- <!--====================================-->
-<!-- ACTIVITÉ DE LA PLATEFORME -->
-<!--====================================-->
-
-<section class="dashboardRow">
-
-    <section class="tableCard">
-
-        <div class="cardHeader">
-
-            <h3>🌍 Atividade da Plataforma</h3>
-
-        </div>
-
-        <div class="platformGrid">
-
-            <div class="platformCard">
-
-                <span class="material-symbols-rounded">
-
-                    public
-
+                <span class="navText">
+                    Lojas oficiais
                 </span>
 
-                <h4>Visitantes Hoje</h4>
+            </a>
 
-                <h2 id="todayVisitors">
 
-                    0
+            <!-- PARAMÈTRES -->
 
-                </h2>
+            <a
+                id="navSettings"
+                class="navItem"
+                href="settings.html"
+            >
 
-            </div>
+                <span class="navIcon">⚙️</span>
 
-            <div class="platformCard">
-
-                <span class="material-symbols-rounded">
-
-                    visibility
-
+                <span class="navText">
+                    Configurações
                 </span>
 
-                <h4>Visualizações</h4>
+            </a>
 
-                <h2 id="pageViews">
 
-                    0
+        </nav>
 
-                </h2>
 
-            </div>
+        <!-- ==============================================
+             PROFIL ADMIN
+        ============================================== -->
 
-            <div class="platformCard">
+        <div
+            id="adminProfile"
+            class="adminProfile"
+        >
 
-                <span class="material-symbols-rounded">
+            <img
+                id="adminAvatar"
+                class="adminAvatar"
+                src="images/avatar.png"
+                alt="Administrador"
+            >
 
-                    person_add
+            <div class="adminProfileInfo">
 
+                <strong id="adminName">
+                    Administrador
+                </strong>
+
+                <span>
+                    Super Admin
                 </span>
 
-                <h4>Novos Utilizadores</h4>
+            </div>
 
-                <h2 id="newUsersToday">
+            <button
+                id="logoutButton"
+                type="button"
+                class="logoutButton"
+            >
+                Sair
+            </button>
 
-                    0
+        </div>
 
-                </h2>
+
+    </aside>
+
+
+
+    <!-- ==================================================
+         CONTENU PRINCIPAL
+    ================================================== -->
+
+    <main
+        id="adminMain"
+        class="adminMain"
+    >
+
+
+        <!-- ==============================================
+             HEADER
+        ============================================== -->
+
+        <header
+            id="adminHeader"
+            class="adminHeader"
+        >
+
+
+            <div class="headerWelcome">
+
+                <h1 id="dashboardTitle">
+                    Dashboard
+                </h1>
+
+                <p id="dashboardSubtitle">
+                    Resumo geral da plataforma TOMA
+                </p>
 
             </div>
 
-            <div class="platformCard">
 
-                <span class="material-symbols-rounded">
+            <div class="headerActions">
 
-                    shopping_bag
 
-                </span>
+                <!-- RECHERCHE -->
 
-                <h4>Novas Compras</h4>
+                <input
+                    id="globalSearch"
+                    type="search"
+                    placeholder="Pesquisar..."
+                    autocomplete="off"
+                >
 
-                <h2 id="newOrdersToday">
 
-                    0
+                <!-- NOTIFICATIONS -->
 
-                </h2>
+                <button
+                    id="notificationsButton"
+                    type="button"
+                    class="headerButton"
+                    aria-label="Notificações"
+                >
+
+                    🔔
+
+                </button>
+
+
+                <!-- RAFRAÎCHIR -->
+
+                <button
+                    id="refreshDashboard"
+                    type="button"
+                    class="headerButton"
+                    aria-label="Atualizar dashboard"
+                >
+
+                    ↻
+
+                </button>
+
 
             </div>
 
-        </div>
 
-    </section>
+        </header>
 
-</section>
 
-<!--====================================-->
-<!-- ESTATÍSTICAS DAS LOJAS -->
-<!--====================================-->
 
-<section class="tableCard">
+        <!-- ==============================================
+             CONTENU DU DASHBOARD
+        ============================================== -->
 
-    <div class="cardHeader">
+        <section
+            id="dashboardContent"
+            class="dashboardContent"
+        >
 
-        <h3>🏪 Lojas Oficiais</h3>
 
-    </div>
+            <!-- ==========================================
+                 CARTES STATISTIQUES
+            ========================================== -->
 
-    <div class="officialStoresStats">
+            <section
+                id="statisticsCards"
+                class="statisticsCards"
+            >
 
-        <div class="storeStat">
 
-            <h4>Lojas Ativas</h4>
+                <!-- UTILISATEURS -->
 
-            <h2 id="activeOfficialStores">
+                <article
+                    id="usersCard"
+                    class="statCard"
+                >
 
-                0
+                    <div class="statCardHeader">
 
-            </h2>
+                        <span>
+                            Utilizadores
+                        </span>
 
-        </div>
+                        <span class="statIcon">
+                            👥
+                        </span>
 
-        <div class="storeStat">
+                    </div>
 
-            <h4>Produtos Oficiais</h4>
+                    <strong id="usersCount">
+                        0
+                    </strong>
 
-            <h2 id="officialProducts">
+                    <span
+                        id="usersGrowth"
+                        class="statGrowth"
+                    >
+                        +0%
+                    </span>
 
-                0
+                </article>
 
-            </h2>
 
-        </div>
 
-        <div class="storeStat">
+                <!-- COMMERÇANTS -->
 
-            <h4>Vendas Oficiais</h4>
+                <article
+                    id="merchantsCard"
+                    class="statCard"
+                >
 
-            <h2 id="officialSales">
+                    <div class="statCardHeader">
 
-                0 Kz
+                        <span>
+                            Comerciantes
+                        </span>
 
-            </h2>
+                        <span class="statIcon">
+                            🏪
+                        </span>
 
-        </div>
+                    </div>
 
-        <div class="storeStat">
+                    <strong id="merchantsCount">
+                        0
+                    </strong>
 
-            <h4>Seguidores</h4>
+                    <span
+                        id="merchantsGrowth"
+                        class="statGrowth"
+                    >
+                        +0%
+                    </span>
 
-            <h2 id="officialFollowers">
+                </article>
 
-                0
 
-            </h2>
 
-        </div>
+                <!-- PRODUITS -->
 
-    </div>
+                <article
+                    id="productsCard"
+                    class="statCard"
+                >
 
-</section>
+                    <div class="statCardHeader">
 
-<!--====================================-->
-<!-- ACESSO RÁPIDO -->
-<!--====================================-->
+                        <span>
+                            Produtos
+                        </span>
 
-<section class="tableCard">
+                        <span class="statIcon">
+                            📦
+                        </span>
 
-    <div class="cardHeader">
+                    </div>
 
-        <h3>🚀 Ferramentas</h3>
+                    <strong id="productsCount">
+                        0
+                    </strong>
 
-    </div>
+                </article>
 
-    <div class="toolsGrid">
 
-        <button id="backupButton">
 
-            💾 Backup
+                <!-- VENTES -->
 
-        </button>
+                <article
+                    id="salesCard"
+                    class="statCard"
+                >
 
-        <button id="restoreButton">
+                    <div class="statCardHeader">
 
-            ♻ Restaurar
+                        <span>
+                            Vendas
+                        </span>
 
-        </button>
+                        <span class="statIcon">
+                            💰
+                        </span>
 
-        <button id="syncButton">
+                    </div>
 
-            🔄 Sincronizar
+                    <strong id="salesCount">
+                        0 Kz
+                    </strong>
 
-        </button>
+                </article>
 
-        <button id="maintenanceButton">
 
-            🛠 Manutenção
+            </section>
 
-        </button>
 
-        <button id="securityButton">
 
-            🔐 Segurança
-
-        </button>
-
-        <button id="reportsButton">
-
-            📑 Relatórios
-
-        </button>
-
-    </div>
-
-</section>
- <!--====================================-->
-<!-- PERFORMANCE -->
-<!--====================================-->
-
-<section class="dashboardRow">
-
-    <section class="tableCard">
-
-        <div class="cardHeader">
-
-            <h3>⚡ Performance da Plataforma</h3>
-
-        </div>
-
-        <div class="performanceGrid">
-
-            <div class="performanceCard">
-
-                <h4>Tempo de Resposta</h4>
-
-                <h2 id="serverResponse">
-
-                    --
-
-                </h2>
-
-                <small>Servidor</small>
-
-            </div>
-
-            <div class="performanceCard">
-
-                <h4>Firestore</h4>
-
-                <h2 id="databaseResponse">
-
-                    --
-
-                </h2>
-
-                <small>Base de Dados</small>
-
-            </div>
-
-            <div class="performanceCard">
-
-                <h4>Uploads Hoje</h4>
-
-                <h2 id="todayUploads">
-
-                    0
-
-                </h2>
-
-                <small>Imagens</small>
-
-            </div>
-
-            <div class="performanceCard">
-
-                <h4>Erros</h4>
-
-                <h2 id="errorCounter">
-
-                    0
-
-                </h2>
-
-                <small>Sistema</small>
-
-            </div>
-
-        </div>
-
-    </section>
-
-</section>
-
-<!--====================================-->
-<!-- SEGURANÇA -->
-<!--====================================-->
-
-<section class="tableCard">
-
-    <div class="cardHeader">
-
-        <h3>🔒 Segurança</h3>
-
-    </div>
-
-    <div class="securityGrid">
-
-        <div class="securityItem">
-
-            <strong>Administrador ligado</strong>
-
-            <span id="connectedAdmin">
-
-                Ramide
-
-            </span>
-
-        </div>
-
-        <div class="securityItem">
-
-            <strong>Último Login</strong>
-
-            <span id="lastLogin">
-
-                --
-
-            </span>
-
-        </div>
-
-        <div class="securityItem">
-
-            <strong>Sessão</strong>
-
-            <span id="sessionStatus">
-
-                Ativa
-
-            </span>
-
-        </div>
-
-        <div class="securityItem">
-
-            <strong>Versão</strong>
-
-            <span id="dashboardVersion">
-
-                V2 Premium
-
-            </span>
-
-        </div>
-
-    </div>
-
-</section>
-
-<!--====================================-->
-<!-- ESPAÇO POUR FUTURES FONCTIONS -->
-<!--====================================-->
-
-<section id="futureModules">
-
-</section>
-<!--====================================-->
-<!-- FOOTER -->
-<!--====================================-->
-
-<footer class="dashboardFooter">
-
-<p>
-
-© 2026 TOMA Marketplace — Administração Premium
-
-</p>
-
-</footer>
-
-</main>
-
-</div>
-
-<!--====================================-->
-<!-- MODAL NOTIFICATION -->
-<!--====================================-->
-
-<div id="notificationModal" class="modal hidden">
-
-<div class="modalContent">
-
-<div class="modalHeader">
-
-<h2>
-
-Notificação
-
-</h2>
-
-<button id="closeNotificationModal">
-
-✕
-
-</button>
-
-</div>
-
-<div id="notificationContent">
-
-</div>
-
-</div>
-
-</div>
-
-<!--====================================-->
-<!-- LOADER -->
-<!--====================================-->
-
-<div id="loader" class="loader">
-
-<div class="loaderCircle"></div>
-
-<p>
-
-Carregando Dashboard...
-
-</p>
-
-</div>
-
-<!--====================================-->
-<!-- TOAST -->
-<!--====================================-->
-
-<div id="toast" class="toast">
-
-<span id="toastMessage">
-
-Operação realizada.
-
-</span>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script type="module" src="js/admin-v2.js"></script>
-
-</body>
-
-</html>
+            <!-- ==================================================
+                 SUITE DU DASHBOARD
+                 BLOC HTML 2
+            ================================================== -->
