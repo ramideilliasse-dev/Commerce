@@ -1,1573 +1,370 @@
- /*==================================================
-TOMA ADMIN
-DASHBOARD PREMIUM
-BLOC 1
-==================================================*/
+ /* ==================================================
+   TOMA ADMIN V2 PREMIUM
+   ADMIN-V2.CSS
 
-*{
+   BLOC CSS 1 — BASE + VARIABLES
+================================================== */
 
-margin:0;
 
-padding:0;
+/* ==================================================
+   VARIABLES GLOBALES
+================================================== */
 
-box-sizing:border-box;
+:root {
 
-font-family:"Inter",sans-serif;
+    /* ----------------------------------------------
+       COULEURS PRINCIPALES
+    ---------------------------------------------- */
 
-}
-
-body{
-
-background:#f4f7fb;
-
-color:#111827;
-
-overflow-x:hidden;
-
-}
-
-.dashboardContainer{
-
-display:flex;
-
-min-height:100vh;
-
-}
-
-/*==================================================
-SIDEBAR
-==================================================*/
-
-.sidebar{
-
-width:290px;
-
-background:#0f172a;
-
-color:white;
-
-display:flex;
-
-flex-direction:column;
-
-justify-content:space-between;
-
-padding:28px 22px;
-
-position:fixed;
-
-left:0;
-
-top:0;
-
-bottom:0;
-
-overflow-y:auto;
-
-box-shadow:8px 0 35px rgba(0,0,0,.15);
-
-z-index:1000;
-
-}
-
-.sidebarTop{
-
-margin-bottom:35px;
-
-}
-
-/*==================================================
-LOGO
-==================================================*/
-
-.logo{
-
-display:flex;
-
-align-items:center;
-
-gap:18px;
-
-margin-bottom:35px;
-
-}
-
-.logoIcon{
-
-width:65px;
-
-height:65px;
-
-border-radius:22px;
-
-background:linear-gradient(135deg,#22c55e,#16a34a);
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-font-size:34px;
-
-box-shadow:0 12px 25px rgba(34,197,94,.35);
-
-}
-
-.logo h1{
-
-font-size:30px;
-
-font-weight:800;
-
-letter-spacing:1px;
-
-}
-
-.logo p{
-
-font-size:13px;
-
-font-weight:600;
-
-opacity:.75;
-
-margin-top:2px;
-
-}
-
-/*==================================================
-MENU
-==================================================*/
-
-.sidebarMenu{
-
-display:flex;
-
-flex-direction:column;
-
-gap:10px;
-
-}
-
-.menuItem{
-
-display:flex;
-
-align-items:center;
-
-gap:15px;
-
-padding:16px 18px;
-
-border-radius:18px;
-
-color:#cbd5e1;
-
-text-decoration:none;
-
-font-weight:600;
-
-transition:.25s;
-
-position:relative;
-
-}
-
-.menuItem:hover{
-
-background:#1e293b;
-
-color:white;
-
-transform:translateX(6px);
-
-}
-
-.menuItem.active{
-
-background:linear-gradient(135deg,#22c55e,#16a34a);
-
-color:white;
-
-box-shadow:0 12px 30px rgba(34,197,94,.30);
-
-}
-
-.menuItem .material-symbols-rounded{
-
-font-size:24px;
-
-}
-
-.badge{
-
-margin-left:auto;
-
-background:#ef4444;
-
-color:white;
-
-font-size:11px;
-
-font-weight:700;
-
-padding:4px 10px;
-
-border-radius:999px;
-
-}
-
-/*==================================================
-PROFILE
-==================================================*/
-
-.sidebarBottom{
-
-margin-top:35px;
-
-border-top:1px solid rgba(255,255,255,.08);
-
-padding-top:25px;
-
-}
-
-.adminProfile{
-
-display:flex;
-
-align-items:center;
-
-gap:15px;
-
-margin-bottom:20px;
-
-}
-
-.avatar{
-
-width:58px;
-
-height:58px;
-
-border-radius:18px;
-
-object-fit:cover;
-
-background:#334155;
-
-}
-
-.adminProfile h3{
-
-font-size:17px;
-
-font-weight:700;
-
-}
-
-.adminProfile p{
-
-font-size:13px;
-
-opacity:.70;
-
-margin-top:4px;
-
-}
-
-#logoutButton{
-
-width:100%;
-
-height:52px;
-
-border:none;
-
-border-radius:18px;
-
-background:#ef4444;
-
-color:white;
-
-font-size:15px;
-
-font-weight:700;
-
-cursor:pointer;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-gap:10px;
-
-transition:.25s;
-
-}
-
-#logoutButton:hover{
-
-background:#dc2626;
-
-transform:translateY(-2px);
-
-box-shadow:0 12px 25px rgba(239,68,68,.35);
-
-}
-
-/*==================================================
-CONTENU
-==================================================*/
-
-.mainContent{
-
-margin-left:290px;
-
-width:calc(100% - 290px);
-
-padding:30px;
-
-}
-/*==================================================
-TOMA ADMIN
-DASHBOARD PREMIUM
-BLOC 2
-HEADER
-SEARCH
-QUICK ACTIONS
-STAT CARDS
-==================================================*/
-
-/*==============================
-HEADER
-==============================*/
-
-.topHeader{
-
-display:flex;
-
-align-items:center;
-
-justify-content:space-between;
-
-gap:30px;
-
-margin-bottom:35px;
-
-padding:30px;
-
-background:#ffffff;
-
-border-radius:28px;
-
-box-shadow:0 20px 45px rgba(15,23,42,.08);
-
-}
-
-.headerLeft h1{
-
-font-size:34px;
-
-font-weight:800;
-
-color:#0f172a;
-
-margin-bottom:8px;
-
-}
-
-.headerLeft p{
-
-font-size:15px;
-
-color:#64748b;
-
-font-weight:500;
-
-}
-
-.headerCenter{
-
-flex:1;
-
-display:flex;
-
-justify-content:center;
-
-}
-
-.searchBox{
-
-width:100%;
-
-max-width:650px;
-
-height:58px;
-
-display:flex;
-
-align-items:center;
-
-gap:15px;
-
-padding:0 22px;
-
-background:#f8fafc;
-
-border:2px solid transparent;
-
-border-radius:18px;
-
-transition:.30s;
-
-}
-
-.searchBox:hover{
-
-border-color:#22c55e;
-
-}
-
-.searchBox:focus-within{
-
-border-color:#22c55e;
-
-background:#fff;
-
-box-shadow:0 0 0 5px rgba(34,197,94,.10);
-
-}
-
-.searchBox input{
-
-flex:1;
-
-border:none;
-
-background:none;
-
-outline:none;
-
-font-size:16px;
-
-font-weight:500;
-
-color:#0f172a;
-
-}
-
-.searchBox input::placeholder{
-
-color:#94a3b8;
-
-}
-
-.headerRight{
-
-display:flex;
-
-align-items:center;
-
-gap:15px;
-
-}
-
-.headerButton{
-
-width:58px;
-
-height:58px;
-
-border:none;
-
-border-radius:18px;
-
-background:#ffffff;
-
-box-shadow:0 10px 25px rgba(0,0,0,.08);
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-cursor:pointer;
-
-transition:.25s;
-
-position:relative;
-
-}
-
-.headerButton:hover{
-
-transform:translateY(-3px);
-
-background:#22c55e;
-
-color:white;
-
-}
-
-.notificationBadge{
-
-position:absolute;
-
-top:-5px;
-
-right:-5px;
-
-min-width:22px;
-
-height:22px;
-
-padding:0 6px;
-
-border-radius:999px;
-
-background:#ef4444;
-
-color:white;
-
-font-size:11px;
-
-font-weight:700;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-}
-
-/*==============================
-QUICK ACTIONS
-==============================*/
-
-.quickActions{
-
-display:grid;
-
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-
-gap:18px;
-
-margin-bottom:35px;
-
-}
-
-.quickActions button{
-
-height:120px;
-
-background:#ffffff;
-
-border:none;
-
-border-radius:24px;
-
-box-shadow:0 15px 35px rgba(15,23,42,.07);
-
-display:flex;
-
-flex-direction:column;
-
-align-items:center;
-
-justify-content:center;
-
-gap:12px;
-
-cursor:pointer;
-
-transition:.30s;
-
-font-weight:700;
-
-font-size:15px;
-
-color:#0f172a;
-
-}
-
-.quickActions button span{
-
-font-size:14px;
-
-font-weight:700;
-
-}
-
-.quickActions button:hover{
-
-transform:translateY(-6px);
-
-background:#22c55e;
-
-color:white;
-
-box-shadow:0 20px 40px rgba(34,197,94,.30);
-
-}
-
-/*==============================
-STATISTIQUES
-==============================*/
-
-.statsGrid{
-
-display:grid;
-
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-
-gap:22px;
-
-margin-bottom:35px;
-
-}
-
-.statCard{
-
-background:#ffffff;
-
-border-radius:28px;
-
-padding:28px;
-
-box-shadow:0 18px 40px rgba(15,23,42,.08);
-
-position:relative;
-
-overflow:hidden;
-
-transition:.30s;
-
-}
-
-.statCard:hover{
-
-transform:translateY(-6px);
-
-}
-
-.statCard::before{
-
-content:"";
-
-position:absolute;
-
-left:0;
-
-top:0;
-
-width:6px;
-
-height:100%;
-
-}
-
-.statCard.blue::before{
-
-background:#3b82f6;
-
-}
-
-.statCard.green::before{
-
-background:#22c55e;
-
-}
-
-.statCard.orange::before{
-
-background:#f97316;
-
-}
-
-.statCard.purple::before{
-
-background:#8b5cf6;
-
-}
-
-.statCard.yellow::before{
-
-background:#eab308;
-
-}
-
-.statCard.red::before{
-
-background:#ef4444;
-
-}
-
-.statCard.cyan::before{
-
-background:#06b6d4;
-
-}
-
-.statCard.dark::before{
-
-background:#0f172a;
-
-}
-
-.statTop{
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-margin-bottom:20px;
-
-}
-
-.statTop .material-symbols-rounded{
-
-font-size:34px;
-
-color:#64748b;
-
-}
-
-.statCard h2{
-
-font-size:34px;
-
-font-weight:800;
-
-margin-bottom:10px;
-
-color:#0f172a;
-
-}
-
-.statCard p{
-
-font-size:15px;
-
-font-weight:700;
-
-color:#475569;
-
-margin-bottom:8px;
-
-}
-
-.statCard small{
-
-font-size:13px;
-
-font-weight:600;
-
-color:#94a3b8;
-
-}
-/*==================================================
-TOMA ADMIN
-DASHBOARD PREMIUM
-BLOC 3
-CHARTS
-TABLES
-ACTIVITY
-NOTIFICATIONS
-==================================================*/
-
-/*==============================
-CHARTS
-==============================*/
-
-.chartsGrid{
-
-display:grid;
-
-grid-template-columns:repeat(auto-fit,minmax(500px,1fr));
-
-gap:25px;
-
-margin-bottom:30px;
-
-}
-
-.chartCard{
-
-background:#ffffff;
-
-border-radius:28px;
-
-padding:28px;
-
-box-shadow:0 18px 40px rgba(15,23,42,.08);
-
-transition:.30s;
-
-}
-
-.chartCard:hover{
+    --toma-black: #111111;
 
-transform:translateY(-5px);
+    --toma-black-soft: #181818;
 
-}
-
-.cardHeader{
-
-display:flex;
-
-align-items:center;
-
-justify-content:space-between;
-
-margin-bottom:22px;
-
-}
-
-.cardHeader h3{
-
-font-size:20px;
-
-font-weight:800;
-
-color:#0f172a;
-
-}
-
-.cardHeader button{
-
-border:none;
-
-background:#22c55e;
-
-color:white;
-
-padding:10px 18px;
-
-border-radius:12px;
-
-font-weight:700;
-
-cursor:pointer;
-
-transition:.25s;
-
-}
-
-.cardHeader button:hover{
-
-background:#16a34a;
-
-}
-
-.cardHeader select{
-
-padding:10px 16px;
-
-border:2px solid #e5e7eb;
-
-border-radius:12px;
-
-font-weight:600;
-
-background:white;
-
-cursor:pointer;
-
-}
-
-.chartCard canvas{
-
-width:100% !important;
-
-height:320px !important;
-
-}
-
-/*==============================
-TABLES
-==============================*/
-
-.tableCard{
-
-background:#ffffff;
-
-border-radius:28px;
-
-padding:28px;
-
-margin-bottom:30px;
-
-box-shadow:0 18px 40px rgba(15,23,42,.08);
-
-overflow:hidden;
-
-}
-
-.dashboardTable{
-
-width:100%;
-
-border-collapse:collapse;
-
-margin-top:20px;
-
-}
-
-.dashboardTable thead{
-
-background:#f8fafc;
-
-}
-
-.dashboardTable th{
-
-padding:18px;
-
-text-align:left;
-
-font-size:14px;
-
-font-weight:800;
-
-color:#334155;
-
-border-bottom:2px solid #e5e7eb;
-
-}
-
-.dashboardTable td{
-
-padding:18px;
-
-font-size:14px;
-
-font-weight:600;
-
-border-bottom:1px solid #edf2f7;
-
-color:#475569;
-
-vertical-align:middle;
-
-}
-
-.dashboardTable tbody tr{
-
-transition:.20s;
-
-}
-
-.dashboardTable tbody tr:hover{
-
-background:#f8fafc;
-
-}
-
-.dashboardTable img{
-
-width:52px;
-
-height:52px;
-
-border-radius:14px;
-
-object-fit:cover;
-
-}
-
-/*==============================
-ACTIVITY
-==============================*/
-
-.dashboardRow{
-
-display:grid;
-
-grid-template-columns:2fr 1fr;
-
-gap:25px;
-
-margin-bottom:30px;
-
-}
-
-.activityCard,
-.notificationsCard{
-
-background:#ffffff;
-
-border-radius:28px;
-
-padding:28px;
-
-box-shadow:0 18px 40px rgba(15,23,42,.08);
-
-}
-
-.activityList,
-#notificationsList{
-
-display:flex;
-
-flex-direction:column;
-
-gap:16px;
-
-margin-top:20px;
-
-}
-
-.activityItem,
-.notificationItem{
-
-display:flex;
-
-align-items:flex-start;
-
-gap:15px;
-
-padding:18px;
-
-background:#f8fafc;
-
-border-radius:18px;
-
-transition:.25s;
-
-}
+    --toma-dark: #202020;
 
-.activityItem:hover,
-.notificationItem:hover{
+    --toma-dark-light: #292929;
 
-background:#eef7ff;
+    --toma-yellow: #f5c400;
 
-transform:translateX(4px);
+    --toma-yellow-light: #ffd84a;
 
-}
-
-.activityIcon,
-.notificationIcon{
-
-width:52px;
-
-height:52px;
-
-border-radius:16px;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-font-size:24px;
-
-background:#22c55e;
-
-color:white;
-
-flex-shrink:0;
-
-}
-
-.activityContent h4,
-.notificationContent h4{
-
-font-size:15px;
-
-font-weight:800;
-
-color:#0f172a;
-
-margin-bottom:6px;
-
-}
-
-.activityContent p,
-.notificationContent p{
-
-font-size:13px;
-
-color:#64748b;
-
-line-height:1.5;
-
-}
-
-.activityTime,
-.notificationTime{
-
-font-size:12px;
-
-font-weight:700;
-
-color:#94a3b8;
-
-margin-top:6px;
-
-}
-/*==================================================
-TOMA ADMIN
-DASHBOARD PREMIUM
-BLOC 4
-MODALES
-TOAST
-LOADER
-FOOTER
-RESPONSIVE
-==================================================*/
-
-/*==============================
-MODALES
-==============================*/
-
-.modal{
-
-position:fixed;
-
-inset:0;
-
-background:rgba(15,23,42,.55);
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-padding:30px;
-
-z-index:5000;
-
-backdrop-filter:blur(8px);
-
-}
-
-.modal.hidden{
-
-display:none;
-
-}
-
-.modalContent{
-
-background:white;
-
-width:100%;
-
-max-width:750px;
-
-border-radius:30px;
-
-padding:35px;
-
-box-shadow:0 35px 80px rgba(0,0,0,.30);
-
-animation:modalAnimation .25s ease;
-
-position:relative;
-
-}
-
-@keyframes modalAnimation{
-
-from{
+    --toma-white: #ffffff;
 
-opacity:0;
+    --toma-background: #f5f6f8;
 
-transform:translateY(35px) scale(.95);
+    --toma-surface: #ffffff;
 
-}
+    --toma-border: #e7e9ed;
 
-to{
+    --toma-text: #17191c;
 
-opacity:1;
+    --toma-text-secondary: #6b7280;
 
-transform:translateY(0) scale(1);
+    --toma-text-muted: #9ca3af;
 
-}
 
-}
+    /* ----------------------------------------------
+       COULEURS ÉTAT
+    ---------------------------------------------- */
 
-.modalHeader{
+    --success: #16a34a;
 
-display:flex;
+    --success-light: #dcfce7;
 
-justify-content:space-between;
+    --warning: #d97706;
 
-align-items:center;
+    --warning-light: #fef3c7;
 
-margin-bottom:25px;
+    --danger: #dc2626;
 
-}
+    --danger-light: #fee2e2;
 
-.modalHeader h2{
+    --info: #2563eb;
 
-font-size:28px;
+    --info-light: #dbeafe;
 
-font-weight:800;
 
-color:#0f172a;
+    /* ----------------------------------------------
+       OMBRES
+    ---------------------------------------------- */
 
-}
+    --shadow-xs:
+        0 1px 2px rgba(0, 0, 0, 0.04);
 
-.modalHeader button{
+    --shadow-sm:
+        0 2px 8px rgba(0, 0, 0, 0.06);
 
-width:48px;
+    --shadow-md:
+        0 6px 20px rgba(0, 0, 0, 0.08);
 
-height:48px;
+    --shadow-lg:
+        0 12px 35px rgba(0, 0, 0, 0.12);
 
-border:none;
 
-border-radius:50%;
+    /* ----------------------------------------------
+       RAYONS
+    ---------------------------------------------- */
 
-background:#ef4444;
+    --radius-xs: 6px;
 
-color:white;
+    --radius-sm: 8px;
 
-font-size:20px;
+    --radius-md: 12px;
 
-cursor:pointer;
+    --radius-lg: 16px;
 
-transition:.25s;
+    --radius-xl: 20px;
 
-}
+    --radius-pill: 999px;
 
-.modalHeader button:hover{
 
-transform:rotate(90deg);
+    /* ----------------------------------------------
+       ESPACEMENTS
+    ---------------------------------------------- */
 
-background:#dc2626;
+    --space-1: 4px;
 
-}
+    --space-2: 8px;
 
-/*==============================
-LOADER
-==============================*/
+    --space-3: 12px;
 
-.loader{
+    --space-4: 16px;
 
-position:fixed;
+    --space-5: 20px;
 
-inset:0;
+    --space-6: 24px;
 
-background:rgba(255,255,255,.85);
+    --space-7: 28px;
 
-display:flex;
+    --space-8: 32px;
 
-flex-direction:column;
+    --space-10: 40px;
 
-align-items:center;
+    --space-12: 48px;
 
-justify-content:center;
 
-gap:25px;
+    /* ----------------------------------------------
+       SIDEBAR
+    ---------------------------------------------- */
 
-z-index:9000;
+    --sidebar-width: 260px;
 
-backdrop-filter:blur(4px);
+    --sidebar-width-collapsed: 78px;
 
-}
 
-.loader.hidden{
+    /* ----------------------------------------------
+       HEADER
+    ---------------------------------------------- */
 
-display:none;
+    --header-height: 76px;
 
-}
 
-.loaderCircle{
+    /* ----------------------------------------------
+       TRANSITIONS
+    ---------------------------------------------- */
 
-width:75px;
+    --transition-fast:
+        0.15s ease;
 
-height:75px;
+    --transition:
+        0.25s ease;
 
-border-radius:50%;
+    --transition-slow:
+        0.35s ease;
 
-border:7px solid #e5e7eb;
 
-border-top-color:#22c55e;
+    /* ----------------------------------------------
+       TYPOGRAPHIE
+    ---------------------------------------------- */
 
-animation:spin 1s linear infinite;
+    --font-main:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
 
 }
-
-.loader p{
-
-font-size:18px;
-
-font-weight:700;
 
-color:#0f172a;
 
-}
+/* ==================================================
+   RESET
+================================================== */
 
-@keyframes spin{
+* {
 
-100%{
+    margin: 0;
 
-transform:rotate(360deg);
+    padding: 0;
 
-}
+    box-sizing: border-box;
 
 }
-
-/*==============================
-TOAST
-==============================*/
-
-.toast{
 
-position:fixed;
 
-left:50%;
+/* ==================================================
+   HTML
+================================================== */
 
-bottom:35px;
+html {
 
-transform:translateX(-50%);
+    width: 100%;
 
-background:#111827;
+    min-height: 100%;
 
-color:white;
+    scroll-behavior: smooth;
 
-padding:18px 30px;
-
-border-radius:999px;
-
-font-weight:700;
-
-box-shadow:0 18px 45px rgba(0,0,0,.30);
-
-opacity:0;
-
-pointer-events:none;
-
-transition:.35s;
-
-z-index:9500;
-
 }
 
-.toast.show{
 
-opacity:1;
+/* ==================================================
+   BODY
+================================================== */
 
-bottom:55px;
+body {
 
-}
-
-/*==============================
-FOOTER
-==============================*/
-
-.dashboardFooter{
-
-margin-top:40px;
+    width: 100%;
 
-padding:30px;
+    min-height: 100vh;
 
-background:white;
+    background:
+        var(--toma-background);
 
-border-radius:25px;
+    color:
+        var(--toma-text);
 
-box-shadow:0 18px 40px rgba(15,23,42,.06);
+    font-family:
+        var(--font-main);
 
-text-align:center;
+    font-size: 14px;
 
-color:#64748b;
+    line-height: 1.5;
 
-font-size:14px;
+    -webkit-font-smoothing: antialiased;
 
-font-weight:600;
+    -moz-osx-font-smoothing: grayscale;
 
 }
 
-/*==============================
-SCROLLBAR
-==============================*/
 
-::-webkit-scrollbar{
+/* ==================================================
+   LIENS
+================================================== */
 
-width:10px;
+a {
 
-height:10px;
+    color: inherit;
 
-}
-
-::-webkit-scrollbar-track{
+    text-decoration: none;
 
-background:#f1f5f9;
-
 }
 
-::-webkit-scrollbar-thumb{
 
-background:#22c55e;
+/* ==================================================
+   BOUTONS
+================================================== */
 
-border-radius:999px;
+button {
 
-}
+    font-family:
+        inherit;
 
-::-webkit-scrollbar-thumb:hover{
+    border: 0;
 
-background:#16a34a;
+    cursor: pointer;
 
 }
 
-/*==============================
-RESPONSIVE TABLET
-==============================*/
 
-@media(max-width:1200px){
+/* ==================================================
+   INPUTS
+================================================== */
 
-.sidebar{
+input,
+select,
+textarea {
 
-width:95px;
+    font-family:
+        inherit;
 
-padding:20px 10px;
-
-}
-
-.logo h1,
-.logo p,
-.menuItem span:last-child,
-.adminProfile div,
-#logoutButton span:last-child{
-
-display:none;
-
 }
-
-.mainContent{
 
-margin-left:95px;
 
-width:calc(100% - 95px);
-
-}
+/* ==================================================
+   IMAGES
+================================================== */
 
-.dashboardRow{
+img {
 
-grid-template-columns:1fr;
+    display: block;
 
-}
+    max-width: 100%;
 
 }
-
-/*==============================
-RESPONSIVE MOBILE
-==============================*/
 
-@media(max-width:768px){
 
-.mainContent{
+/* ==================================================
+   TABLEAUX
+================================================== */
 
-margin-left:0;
+table {
 
-width:100%;
+    border-collapse: collapse;
 
-padding:15px;
+    width: 100%;
 
 }
-
-.sidebar{
-
-position:fixed;
 
-left:-100%;
 
-transition:.35s;
+/* ==================================================
+   SELECTION DU TEXTE
+================================================== */
 
-width:280px;
+::selection {
 
-}
-
-.sidebar.show{
+    background:
+        var(--toma-yellow);
 
-left:0;
+    color:
+        var(--toma-black);
 
 }
 
-.topHeader{
 
-flex-direction:column;
+/* ==================================================
+   SCROLLBAR — DESKTOP
+================================================== */
 
-align-items:stretch;
-
-}
+::-webkit-scrollbar {
 
-.headerCenter{
+    width: 8px;
 
-width:100%;
+    height: 8px;
 
 }
 
-.quickActions{
 
-grid-template-columns:repeat(2,1fr);
+::-webkit-scrollbar-track {
 
-}
-
-.statsGrid{
+    background:
+        transparent;
 
-grid-template-columns:1fr;
-
 }
-
-.chartsGrid{
 
-grid-template-columns:1fr;
 
-}
-
-.dashboardTable{
+::-webkit-scrollbar-thumb {
 
-display:block;
+    background:
+        #cfd3d8;
 
-overflow-x:auto;
+    border-radius:
+        var(--radius-pill);
 
 }
 
-.chartCard canvas{
 
-height:250px !important;
+::-webkit-scrollbar-thumb:hover {
 
-}
+    background:
+        #aeb4bb;
 
 }
-
-/*==============================
-PETITS ÉCRANS
-==============================*/
 
-@media(max-width:500px){
 
-.quickActions{
+/* ==================================================
+   CLASSE UTILITAIRE
+================================================== */
 
-grid-template-columns:1fr;
+.hidden {
 
-}
-
-.headerLeft h1{
+    display: none !important;
 
-font-size:28px;
-
 }
-
-.cardHeader{
 
-flex-direction:column;
 
-align-items:flex-start;
-
-gap:12px;
-
-}
-
-}
+/* ==================================================
+   FIN BLOC CSS 1
+================================================== */
