@@ -368,3 +368,2150 @@ table {
 /* ==================================================
    FIN BLOC CSS 1
 ================================================== */
+/* ==================================================
+   TOMA ADMIN V2 PREMIUM
+   ADMIN-V2.CSS
+
+   BLOC CSS 2 — STRUCTURE + SIDEBAR
+================================================== */
+
+
+/* ==================================================
+   APPLICATION PRINCIPALE
+================================================== */
+
+#adminApp {
+
+    width: 100%;
+
+    min-height: 100vh;
+
+    display: flex;
+
+    background:
+        var(--toma-background);
+
+}
+
+
+/* ==================================================
+   SIDEBAR PRINCIPALE
+================================================== */
+
+#adminSidebar {
+
+    position: fixed;
+
+    top: 0;
+
+    left: 0;
+
+    bottom: 0;
+
+    width:
+        var(--sidebar-width);
+
+    height: 100vh;
+
+    background:
+        linear-gradient(
+            180deg,
+            #111111 0%,
+            #181818 100%
+        );
+
+    color:
+        var(--toma-white);
+
+    display: flex;
+
+    flex-direction: column;
+
+    z-index: 1000;
+
+    overflow: hidden;
+
+    box-shadow:
+        8px 0 30px rgba(
+            0,
+            0,
+            0,
+            0.08
+        );
+
+}
+
+
+/* ==================================================
+   LOGO / IDENTITÉ TOMA
+================================================== */
+
+.adminLogo {
+
+    min-height:
+        var(--header-height);
+
+    display: flex;
+
+    align-items: center;
+
+    gap:
+        12px;
+
+    padding:
+        0 22px;
+
+    border-bottom:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.08
+        );
+
+}
+
+
+.adminLogoMark {
+
+    width: 38px;
+
+    height: 38px;
+
+    min-width: 38px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        var(--toma-yellow);
+
+    color:
+        var(--toma-black);
+
+    border-radius:
+        11px;
+
+    font-size: 18px;
+
+    font-weight: 900;
+
+    box-shadow:
+        0 5px 15px
+        rgba(
+            245,
+            196,
+            0,
+            0.20
+        );
+
+}
+
+
+.adminLogoText {
+
+    display: flex;
+
+    flex-direction: column;
+
+    min-width: 0;
+
+}
+
+
+.adminLogoText strong {
+
+    color:
+        var(--toma-white);
+
+    font-size: 17px;
+
+    font-weight: 800;
+
+    letter-spacing:
+        0.4px;
+
+    line-height: 1.2;
+
+}
+
+
+.adminLogoText span {
+
+    margin-top: 2px;
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            0.48
+        );
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    letter-spacing:
+        1.2px;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+/* ==================================================
+   ZONE NAVIGATION
+================================================== */
+
+.adminNavigation {
+
+    flex: 1;
+
+    padding:
+        18px 12px;
+
+    overflow-y: auto;
+
+    overflow-x: hidden;
+
+}
+
+
+/* ==================================================
+   TITRE DE SECTION NAVIGATION
+================================================== */
+
+.navigationTitle {
+
+    padding:
+        8px 12px;
+
+    margin-bottom:
+        6px;
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            0.36
+        );
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    letter-spacing:
+        1.2px;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+/* ==================================================
+   LIENS DE NAVIGATION
+================================================== */
+
+.adminNavigation a {
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    width: 100%;
+
+    min-height: 46px;
+
+    padding:
+        0 13px;
+
+    margin-bottom: 4px;
+
+    border-radius:
+        var(--radius-md);
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            0.68
+        );
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    transition:
+        background
+        var(--transition),
+
+        color
+        var(--transition),
+
+        transform
+        var(--transition);
+
+}
+
+
+.adminNavigation a:hover {
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.07
+        );
+
+    color:
+        var(--toma-white);
+
+    transform:
+        translateX(2px);
+
+}
+
+
+/* ==================================================
+   LIEN ACTIF
+================================================== */
+
+.adminNavigation a.active {
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(
+                245,
+                196,
+                0,
+                0.18
+            ),
+            rgba(
+                245,
+                196,
+                0,
+                0.07
+            )
+        );
+
+    color:
+        var(--toma-yellow);
+
+}
+
+
+/* ==================================================
+   INDICATEUR DU LIEN ACTIF
+================================================== */
+
+.adminNavigation a.active::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    top: 9px;
+
+    bottom: 9px;
+
+    width: 3px;
+
+    background:
+        var(--toma-yellow);
+
+    border-radius:
+        0 4px 4px 0;
+
+}
+
+
+/* ==================================================
+   ICÔNE NAVIGATION
+================================================== */
+
+.adminNavigation a .navIcon {
+
+    width: 22px;
+
+    min-width: 22px;
+
+    height: 22px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 17px;
+
+    line-height: 1;
+
+}
+
+
+/* ==================================================
+   TEXTE NAVIGATION
+================================================== */
+
+.adminNavigation a .navText {
+
+    flex: 1;
+
+    min-width: 0;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+}
+
+
+/* ==================================================
+   BADGE NAVIGATION
+================================================== */
+
+.adminNavigation a .navBadge {
+
+    min-width: 20px;
+
+    height: 20px;
+
+    padding:
+        0 6px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius:
+        var(--radius-pill);
+
+    background:
+        var(--toma-yellow);
+
+    color:
+        var(--toma-black);
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+}
+
+
+/* ==================================================
+   ZONE ADMIN EN BAS
+================================================== */
+
+.adminSidebarFooter {
+
+    padding:
+        14px 12px;
+
+    border-top:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.08
+        );
+
+}
+
+
+/* ==================================================
+   PROFIL ADMIN
+================================================== */
+
+.adminProfile {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding:
+        10px;
+
+    border-radius:
+        var(--radius-md);
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.05
+        );
+
+}
+
+
+.adminProfile img {
+
+    width: 38px;
+
+    height: 38px;
+
+    min-width: 38px;
+
+    border-radius:
+        50%;
+
+    object-fit: cover;
+
+    background:
+        var(--toma-dark-light);
+
+    border:
+        2px solid
+        rgba(
+            245,
+            196,
+            0,
+            0.55
+        );
+
+}
+
+
+.adminProfileInfo {
+
+    flex: 1;
+
+    min-width: 0;
+
+}
+
+
+.adminProfileInfo strong {
+
+    display: block;
+
+    color:
+        var(--toma-white);
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+}
+
+
+.adminProfileInfo span {
+
+    display: block;
+
+    margin-top: 2px;
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            0.42
+        );
+
+    font-size: 10px;
+
+}
+
+
+/* ==================================================
+   CONTENU PRINCIPAL
+================================================== */
+
+#adminMain {
+
+    width: calc(
+        100% -
+        var(--sidebar-width)
+    );
+
+    min-height: 100vh;
+
+    margin-left:
+        var(--sidebar-width);
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+/* ==================================================
+   CONTENEUR DU DASHBOARD
+================================================== */
+
+#dashboardPage {
+
+    width: 100%;
+
+    padding:
+        28px;
+
+}
+
+
+/* ==================================================
+   CONTENU CENTRAL
+================================================== */
+
+.dashboardContent {
+
+    width: 100%;
+
+    max-width:
+        1600px;
+
+    margin:
+        0 auto;
+
+}
+
+
+/* ==================================================
+   TITRES GÉNÉRAUX
+================================================== */
+
+.dashboardTitle {
+
+    color:
+        var(--toma-text);
+
+    font-size:
+        clamp(
+            24px,
+            3vw,
+            32px
+        );
+
+    font-weight: 800;
+
+    letter-spacing:
+        -0.7px;
+
+}
+
+
+.dashboardSubtitle {
+
+    margin-top: 5px;
+
+    color:
+        var(--toma-text-secondary);
+
+    font-size: 13px;
+
+}
+
+
+/* ==================================================
+   CONTENEUR DE PANNEAUX
+================================================== */
+
+.dashboardGrid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            12,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:
+        var(--space-5);
+
+}
+
+
+/* ==================================================
+   PANNEAU STANDARD
+================================================== */
+
+.dashboardPanel {
+
+    background:
+        var(--toma-surface);
+
+    border:
+        1px solid
+        var(--toma-border);
+
+    border-radius:
+        var(--radius-lg);
+
+    box-shadow:
+        var(--shadow-sm);
+
+    overflow: hidden;
+
+}
+
+
+/* ==================================================
+   HEADER DES PANNEAUX
+================================================== */
+
+.panelHeader {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding:
+        20px 22px;
+
+    border-bottom:
+        1px solid
+        var(--toma-border);
+
+}
+
+
+.panelHeader h2 {
+
+    color:
+        var(--toma-text);
+
+    font-size: 15px;
+
+    font-weight: 750;
+
+}
+
+
+.panelHeader p {
+
+    margin-top: 3px;
+
+    color:
+        var(--toma-text-secondary);
+
+    font-size: 11px;
+
+}
+
+
+/* ==================================================
+   LIEN "VOIR TOUT"
+================================================== */
+
+.panelLink {
+
+    color:
+        #8a6c00;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+
+    transition:
+        color
+        var(--transition);
+
+}
+
+
+.panelLink:hover {
+
+    color:
+        var(--toma-black);
+
+}
+
+
+/* ==================================================
+   FIN BLOC CSS 2
+================================================== */
+/* ==================================================
+   TOMA ADMIN V2 PREMIUM
+   ADMIN-V2.CSS
+
+   BLOC CSS 3 — HEADER + RECHERCHE + ACTIONS
+================================================== */
+
+
+/* ==================================================
+   HEADER PRINCIPAL
+================================================== */
+
+#adminHeader {
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 900;
+
+    width: 100%;
+
+    min-height:
+        var(--header-height);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding:
+        0 28px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.94
+        );
+
+    border-bottom:
+        1px solid
+        var(--toma-border);
+
+    backdrop-filter:
+        blur(14px);
+
+    -webkit-backdrop-filter:
+        blur(14px);
+
+}
+
+
+/* ==================================================
+   PARTIE GAUCHE DU HEADER
+================================================== */
+
+.headerLeft {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    min-width: 0;
+
+}
+
+
+/* ==================================================
+   TITRE DU HEADER
+================================================== */
+
+.headerTitle {
+
+    display: flex;
+
+    flex-direction: column;
+
+    min-width: 0;
+
+}
+
+
+.headerTitle strong {
+
+    color:
+        var(--toma-text);
+
+    font-size: 15px;
+
+    font-weight: 800;
+
+    line-height: 1.2;
+
+}
+
+
+.headerTitle span {
+
+    margin-top: 3px;
+
+    color:
+        var(--toma-text-secondary);
+
+    font-size: 10px;
+
+}
+
+
+/* ==================================================
+   PARTIE DROITE DU HEADER
+================================================== */
+
+.headerRight {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    min-width: 0;
+
+}
+
+
+/* ==================================================
+   RECHERCHE GLOBALE
+================================================== */
+
+#globalSearch {
+
+    width:
+        min(
+            300px,
+            28vw
+        );
+
+    height: 40px;
+
+    padding:
+        0 15px 0 40px;
+
+    border:
+        1px solid
+        var(--toma-border);
+
+    border-radius:
+        var(--radius-pill);
+
+    background:
+        var(--toma-background);
+
+    color:
+        var(--toma-text);
+
+    font-family:
+        inherit;
+
+    font-size: 12px;
+
+    outline: none;
+
+    transition:
+        border-color
+        var(--transition),
+
+        box-shadow
+        var(--transition),
+
+        background
+        var(--transition);
+
+}
+
+
+#globalSearch::placeholder {
+
+    color:
+        #a1a1a1;
+
+}
+
+
+#globalSearch:focus {
+
+    background:
+        var(--toma-white);
+
+    border-color:
+        rgba(
+            245,
+            196,
+            0,
+            0.8
+        );
+
+    box-shadow:
+        0 0 0 4px
+        rgba(
+            245,
+            196,
+            0,
+            0.12
+        );
+
+}
+
+
+/* ==================================================
+   BOUTONS DU HEADER
+================================================== */
+
+#refreshDashboard,
+#notificationsButton,
+#quickAddButton {
+
+    position: relative;
+
+    height: 40px;
+
+    border: none;
+
+    border-radius:
+        var(--radius-md);
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    padding:
+        0 13px;
+
+    font-family:
+        inherit;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        transform
+        var(--transition),
+
+        background
+        var(--transition),
+
+        box-shadow
+        var(--transition),
+
+        color
+        var(--transition);
+
+}
+
+
+/* ==================================================
+   RAFRAÎCHIR
+================================================== */
+
+#refreshDashboard {
+
+    width: 40px;
+
+    padding: 0;
+
+    background:
+        var(--toma-background);
+
+    color:
+        var(--toma-text);
+
+    border:
+        1px solid
+        var(--toma-border);
+
+}
+
+
+#refreshDashboard:hover {
+
+    background:
+        var(--toma-black);
+
+    color:
+        var(--toma-white);
+
+    transform:
+        translateY(-1px);
+
+}
+
+
+/* ==================================================
+   NOTIFICATIONS
+================================================== */
+
+#notificationsButton {
+
+    width: 40px;
+
+    padding: 0;
+
+    background:
+        var(--toma-background);
+
+    color:
+        var(--toma-text);
+
+    border:
+        1px solid
+        var(--toma-border);
+
+}
+
+
+#notificationsButton:hover {
+
+    background:
+        var(--toma-black);
+
+    color:
+        var(--toma-white);
+
+    transform:
+        translateY(-1px);
+
+}
+
+
+/* ==================================================
+   BOUTON AJOUT RAPIDE
+================================================== */
+
+#quickAddButton {
+
+    background:
+        var(--toma-yellow);
+
+    color:
+        var(--toma-black);
+
+    box-shadow:
+        0 5px 15px
+        rgba(
+            245,
+            196,
+            0,
+            0.18
+        );
+
+}
+
+
+#quickAddButton:hover {
+
+    background:
+        var(--toma-yellow-dark);
+
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        0 7px 18px
+        rgba(
+            245,
+            196,
+            0,
+            0.25
+        );
+
+}
+
+
+/* ==================================================
+   BADGE NOTIFICATION
+================================================== */
+
+#notificationsBadge {
+
+    position: absolute;
+
+    top: -5px;
+
+    right: -5px;
+
+    min-width: 18px;
+
+    height: 18px;
+
+    padding:
+        0 5px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border:
+        2px solid
+        var(--toma-white);
+
+    border-radius:
+        var(--radius-pill);
+
+    background:
+        #e53935;
+
+    color:
+        var(--toma-white);
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+}
+
+
+/* ==================================================
+   BADGE DEMANDES COMMERÇANTS
+================================================== */
+
+#merchantBadge {
+
+    min-width: 20px;
+
+    height: 20px;
+
+    padding:
+        0 6px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius:
+        var(--radius-pill);
+
+    background:
+        var(--toma-yellow);
+
+    color:
+        var(--toma-black);
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+}
+
+
+/* ==================================================
+   ZONE TITRE DE PAGE
+================================================== */
+
+.pageHeader {
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 24px;
+
+}
+
+
+.pageHeaderInfo {
+
+    min-width: 0;
+
+}
+
+
+.pageHeaderActions {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    flex-wrap: wrap;
+
+}
+
+
+/* ==================================================
+   BOUTON STANDARD
+================================================== */
+
+.adminButton {
+
+    min-height: 38px;
+
+    padding:
+        0 14px;
+
+    border:
+        1px solid
+        var(--toma-border);
+
+    border-radius:
+        var(--radius-md);
+
+    background:
+        var(--toma-white);
+
+    color:
+        var(--toma-text);
+
+    font-family:
+        inherit;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background
+        var(--transition),
+
+        border-color
+        var(--transition),
+
+        color
+        var(--transition),
+
+        transform
+        var(--transition);
+
+}
+
+
+.adminButton:hover {
+
+    border-color:
+        var(--toma-black);
+
+    background:
+        var(--toma-black);
+
+    color:
+        var(--toma-white);
+
+    transform:
+        translateY(-1px);
+
+}
+
+
+/* ==================================================
+   BOUTON PRINCIPAL
+================================================== */
+
+.adminButton.primary {
+
+    border-color:
+        var(--toma-yellow);
+
+    background:
+        var(--toma-yellow);
+
+    color:
+        var(--toma-black);
+
+}
+
+
+.adminButton.primary:hover {
+
+    border-color:
+        var(--toma-yellow-dark);
+
+    background:
+        var(--toma-yellow-dark);
+
+    color:
+        var(--toma-black);
+
+}
+
+
+/* ==================================================
+   BOUTON DANGER
+================================================== */
+
+.adminButton.danger {
+
+    border-color:
+        rgba(
+            229,
+            57,
+            53,
+            0.20
+        );
+
+    background:
+        rgba(
+            229,
+            57,
+            53,
+            0.06
+        );
+
+    color:
+        #c62828;
+
+}
+
+
+.adminButton.danger:hover {
+
+    background:
+        #c62828;
+
+    border-color:
+        #c62828;
+
+    color:
+        var(--toma-white);
+
+}
+
+
+/* ==================================================
+   RESPONSIVE HEADER
+================================================== */
+
+@media (max-width: 1100px) {
+
+    #globalSearch {
+
+        width: 220px;
+
+    }
+
+    #quickAddButton {
+
+        padding:
+            0 11px;
+
+    }
+
+}
+
+
+/* ==================================================
+   TABLETTE
+================================================== */
+
+@media (max-width: 850px) {
+
+    #adminHeader {
+
+        padding:
+            0 18px;
+
+    }
+
+    #globalSearch {
+
+        width: 180px;
+
+    }
+
+    .headerTitle span {
+
+        display: none;
+
+    }
+
+}
+
+
+/* ==================================================
+   MOBILE
+================================================== */
+
+@media (max-width: 680px) {
+
+    #adminHeader {
+
+        min-height:
+            auto;
+
+        padding:
+            12px 14px;
+
+        flex-wrap: wrap;
+
+        gap: 10px;
+
+    }
+
+
+    .headerLeft {
+
+        width: 100%;
+
+    }
+
+
+    .headerRight {
+
+        width: 100%;
+
+        justify-content:
+            space-between;
+
+    }
+
+
+    #globalSearch {
+
+        flex: 1;
+
+        width: auto;
+
+        min-width: 0;
+
+    }
+
+
+    #quickAddButton {
+
+        width: 40px;
+
+        padding: 0;
+
+        font-size: 0;
+
+    }
+
+
+    .pageHeader {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+
+    }
+
+}
+
+
+/* ==================================================
+   FIN BLOC CSS 3
+================================================== */
+/* ==================================================
+   TOMA ADMIN V2 PREMIUM
+   ADMIN-V2.CSS
+
+   BLOC CSS 4 — CARTES STATISTIQUES PREMIUM
+================================================== */
+
+
+/* ==================================================
+   CONTENEUR DES STATISTIQUES
+================================================== */
+
+.statsGrid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:
+        var(--space-5);
+
+    margin-bottom:
+        var(--space-5);
+
+}
+
+
+/* ==================================================
+   CARTE STATISTIQUE
+================================================== */
+
+.statCard {
+
+    position: relative;
+
+    min-height: 145px;
+
+    padding: 20px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    background:
+        var(--toma-surface);
+
+    border:
+        1px solid
+        var(--toma-border);
+
+    border-radius:
+        var(--radius-lg);
+
+    box-shadow:
+        var(--shadow-sm);
+
+    overflow: hidden;
+
+    transition:
+        transform
+        var(--transition),
+
+        box-shadow
+        var(--transition),
+
+        border-color
+        var(--transition);
+
+}
+
+
+/* ==================================================
+   EFFET DE SURVOL
+================================================== */
+
+.statCard:hover {
+
+    transform:
+        translateY(-3px);
+
+    border-color:
+        rgba(
+            245,
+            196,
+            0,
+            0.45
+        );
+
+    box-shadow:
+        var(--shadow-md);
+
+}
+
+
+/* ==================================================
+   DÉCORATION LUMINEUSE
+================================================== */
+
+.statCard::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 100px;
+
+    height: 100px;
+
+    right: -35px;
+
+    bottom: -45px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(
+            245,
+            196,
+            0,
+            0.08
+        );
+
+    pointer-events: none;
+
+}
+
+
+/* ==================================================
+   PARTIE SUPÉRIEURE
+================================================== */
+
+.statCardHeader {
+
+    position: relative;
+
+    z-index: 1;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 10px;
+
+}
+
+
+/* ==================================================
+   TITRE
+================================================== */
+
+.statCardTitle {
+
+    color:
+        var(--toma-text-secondary);
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        0.55px;
+
+}
+
+
+/* ==================================================
+   ICÔNE STATISTIQUE
+================================================== */
+
+.statCardIcon {
+
+    width: 40px;
+
+    height: 40px;
+
+    min-width: 40px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius:
+        12px;
+
+    background:
+        rgba(
+            245,
+            196,
+            0,
+            0.12
+        );
+
+    color:
+        #8a6c00;
+
+    font-size: 18px;
+
+}
+
+
+/* ==================================================
+   VALEUR PRINCIPALE
+================================================== */
+
+.statCardValue {
+
+    position: relative;
+
+    z-index: 1;
+
+    margin-top: 12px;
+
+    color:
+        var(--toma-text);
+
+    font-size:
+        clamp(
+            22px,
+            2.2vw,
+            29px
+        );
+
+    font-weight: 850;
+
+    line-height: 1;
+
+    letter-spacing:
+        -0.7px;
+
+}
+
+
+/* ==================================================
+   INFORMATIONS INFÉRIEURES
+================================================== */
+
+.statCardFooter {
+
+    position: relative;
+
+    z-index: 1;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 8px;
+
+    margin-top: 15px;
+
+}
+
+
+/* ==================================================
+   INDICATEUR DE CROISSANCE
+================================================== */
+
+.statGrowth {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 4px;
+
+    color:
+        #18864b;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+}
+
+
+.statGrowth.down {
+
+    color:
+        #d13a35;
+
+}
+
+
+/* ==================================================
+   TEXTE SECONDAIRE
+================================================== */
+
+.statDescription {
+
+    color:
+        var(--toma-text-muted);
+
+    font-size: 10px;
+
+    font-weight: 500;
+
+}
+
+
+/* ==================================================
+   CARTES FINANCIÈRES
+================================================== */
+
+.statCard.finance {
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff 0%,
+            #fffdf4 100%
+        );
+
+}
+
+
+/* ==================================================
+   CARTE COMMISSION
+================================================== */
+
+.statCard.commission {
+
+    border-color:
+        rgba(
+            245,
+            196,
+            0,
+            0.35
+        );
+
+}
+
+
+.statCard.commission
+.statCardIcon {
+
+    background:
+        rgba(
+            245,
+            196,
+            0,
+            0.20
+        );
+
+    color:
+        #735900;
+
+}
+
+
+/* ==================================================
+   CARTE VENTES
+================================================== */
+
+.statCard.sales
+.statCardIcon {
+
+    background:
+        rgba(
+            34,
+            197,
+            94,
+            0.12
+        );
+
+    color:
+        #15803d;
+
+}
+
+
+/* ==================================================
+   CARTE COMMANDES
+================================================== */
+
+.statCard.orders
+.statCardIcon {
+
+    background:
+        rgba(
+            59,
+            130,
+            246,
+            0.12
+        );
+
+    color:
+        #2563eb;
+
+}
+
+
+/* ==================================================
+   CARTE UTILISATEURS
+================================================== */
+
+.statCard.users
+.statCardIcon {
+
+    background:
+        rgba(
+            139,
+            92,
+            246,
+            0.12
+        );
+
+    color:
+        #7c3aed;
+
+}
+
+
+/* ==================================================
+   CARTE COMMERÇANTS
+================================================== */
+
+.statCard.merchants
+.statCardIcon {
+
+    background:
+        rgba(
+            236,
+            72,
+            153,
+            0.12
+        );
+
+    color:
+        #db2777;
+
+}
+
+
+/* ==================================================
+   CARTE PRODUITS
+================================================== */
+
+.statCard.products
+.statCardIcon {
+
+    background:
+        rgba(
+            14,
+            165,
+            233,
+            0.12
+        );
+
+    color:
+        #0284c7;
+
+}
+
+
+/* ==================================================
+   CARTE DEMANDES
+================================================== */
+
+.statCard.requests {
+
+    border-left:
+        3px solid
+        var(--toma-yellow);
+
+}
+
+
+.statCard.requests
+.statCardIcon {
+
+    background:
+        rgba(
+            245,
+            196,
+            0,
+            0.16
+        );
+
+    color:
+        #806300;
+
+}
+
+
+/* ==================================================
+   ÉTAT VIDE
+================================================== */
+
+.statCardValue.empty {
+
+    color:
+        var(--toma-text-muted);
+
+}
+
+
+/* ==================================================
+   RESPONSIVE — GRAND TABLETTE
+================================================== */
+
+@media (max-width: 1200px) {
+
+    .statsGrid {
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+
+    }
+
+}
+
+
+/* ==================================================
+   RESPONSIVE — MOBILE
+================================================== */
+
+@media (max-width: 600px) {
+
+    .statsGrid {
+
+        grid-template-columns:
+            1fr;
+
+        gap:
+            12px;
+
+    }
+
+
+    .statCard {
+
+        min-height:
+            130px;
+
+        padding:
+            17px;
+
+    }
+
+
+    .statCardValue {
+
+        font-size:
+            25px;
+
+    }
+
+}
+
+
+/* ==================================================
+   FIN BLOC CSS 4
+================================================== */
