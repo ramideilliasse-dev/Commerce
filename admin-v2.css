@@ -2515,3 +2515,3789 @@ table {
 /* ==================================================
    FIN BLOC CSS 4
 ================================================== */
+/* ==================================================
+   TOMA ADMIN V2 PREMIUM
+   ADMIN-V2.CSS
+
+   BLOC CSS 5 — GRAPHIQUES + FINANCES
+================================================== */
+
+
+/* ==================================================
+   ZONE PRINCIPALE DES GRAPHIQUES
+================================================== */
+
+.chartsGrid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:
+        var(--space-5);
+
+    margin-bottom:
+        var(--space-5);
+
+}
+
+
+/* ==================================================
+   CARTE GRAPHIQUE
+================================================== */
+
+.chartCard {
+
+    position: relative;
+
+    min-width: 0;
+
+    padding:
+        20px;
+
+    background:
+        var(--toma-surface);
+
+    border:
+        1px solid
+        var(--toma-border);
+
+    border-radius:
+        var(--radius-lg);
+
+    box-shadow:
+        var(--shadow-sm);
+
+    overflow: hidden;
+
+}
+
+
+/* ==================================================
+   EN-TÊTE DU GRAPHIQUE
+================================================== */
+
+.chartHeader {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom:
+        18px;
+
+}
+
+
+/* ==================================================
+   TITRE DU GRAPHIQUE
+================================================== */
+
+.chartTitle {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+
+}
+
+
+.chartTitle h3 {
+
+    margin: 0;
+
+    color:
+        var(--toma-text);
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+}
+
+
+.chartTitle span {
+
+    color:
+        var(--toma-text-muted);
+
+    font-size: 10px;
+
+}
+
+
+/* ==================================================
+   SÉLECTEUR DE PÉRIODE
+================================================== */
+
+#salesPeriod {
+
+    height: 34px;
+
+    padding:
+        0 10px;
+
+    border:
+        1px solid
+        var(--toma-border);
+
+    border-radius:
+        var(--radius-md);
+
+    background:
+        var(--toma-background);
+
+    color:
+        var(--toma-text);
+
+    font-family:
+        inherit;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    outline: none;
+
+    cursor: pointer;
+
+}
+
+
+#salesPeriod:focus {
+
+    border-color:
+        var(--toma-yellow);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            245,
+            196,
+            0,
+            0.10
+        );
+
+}
+
+
+/* ==================================================
+   CONTENEUR DU CANVAS
+================================================== */
+
+.chartContainer {
+
+    position: relative;
+
+    width: 100%;
+
+    height: 260px;
+
+}
+
+
+.chartContainer canvas {
+
+    display: block;
+
+    width: 100% !important;
+
+    height: 100% !important;
+
+}
+
+
+/* ==================================================
+   ZONE FINANCES
+================================================== */
+
+.financeGrid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:
+        var(--space-4);
+
+    margin-bottom:
+        var(--space-5);
+
+}
+
+
+/* ==================================================
+   CARTE FINANCE
+================================================== */
+
+.financeCard {
+
+    position: relative;
+
+    padding:
+        18px;
+
+    background:
+        var(--toma-surface);
+
+    border:
+        1px solid
+        var(--toma-border);
+
+    border-radius:
+        var(--radius-lg);
+
+    box-shadow:
+        var(--shadow-sm);
+
+    overflow: hidden;
+
+    transition:
+        transform
+        var(--transition),
+
+        box-shadow
+        var(--transition);
+
+}
+
+
+.financeCard:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        var(--shadow-md);
+
+}
+
+
+/* ==================================================
+   TITRE FINANCE
+================================================== */
+
+.financeCardTitle {
+
+    color:
+        var(--toma-text-muted);
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        0.5px;
+
+}
+
+
+/* ==================================================
+   VALEUR FINANCE
+================================================== */
+
+.financeCardValue {
+
+    margin-top:
+        10px;
+
+    color:
+        var(--toma-text);
+
+    font-size:
+        clamp(
+            18px,
+            2vw,
+            25px
+        );
+
+    font-weight:
+        850;
+
+    letter-spacing:
+        -0.5px;
+
+}
+
+
+/* ==================================================
+   VENTE FINANCE
+================================================== */
+
+#financeSales {
+
+    color:
+        #15803d;
+
+}
+
+
+/* ==================================================
+   COMMISSION
+================================================== */
+
+#financeCommission {
+
+    color:
+        #8a6800;
+
+}
+
+
+/* ==================================================
+   TICKET MOYEN
+================================================== */
+
+#averageOrder {
+
+    color:
+        #2563eb;
+
+}
+
+
+/* ==================================================
+   PROFIT DU JOUR
+================================================== */
+
+#todayProfit {
+
+    color:
+        #7c3aed;
+
+}
+
+
+/* ==================================================
+   INDICATEUR FINANCE
+================================================== */
+
+.financeIndicator {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    margin-top:
+        8px;
+
+    color:
+        var(--toma-text-muted);
+
+    font-size: 9px;
+
+}
+
+
+/* ==================================================
+   POINT INDICATEUR
+================================================== */
+
+.financeIndicator::before {
+
+    content: "";
+
+    width: 6px;
+
+    height: 6px;
+
+    flex: 0 0 6px;
+
+    border-radius: 50%;
+
+    background:
+        var(--toma-yellow);
+
+}
+
+
+/* ==================================================
+   PANNEAU DE DONNÉES
+================================================== */
+
+.dataPanel {
+
+    background:
+        var(--toma-surface);
+
+    border:
+        1px solid
+        var(--toma-border);
+
+    border-radius:
+        var(--radius-lg);
+
+    box-shadow:
+        var(--shadow-sm);
+
+    overflow: hidden;
+
+}
+
+
+/* ==================================================
+   EN-TÊTE PANNEAU
+================================================== */
+
+.dataPanelHeader {
+
+    min-height: 58px;
+
+    padding:
+        0 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    border-bottom:
+        1px solid
+        var(--toma-border);
+
+}
+
+
+/* ==================================================
+   TITRE PANNEAU
+================================================== */
+
+.dataPanelTitle {
+
+    color:
+        var(--toma-text);
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+}
+
+
+/* ==================================================
+   SOUS-TITRE PANNEAU
+================================================== */
+
+.dataPanelSubtitle {
+
+    margin-top: 3px;
+
+    color:
+        var(--toma-text-muted);
+
+    font-size: 9px;
+
+}
+
+
+/* ==================================================
+   CONTENU PANNEAU
+================================================== */
+
+.dataPanelBody {
+
+    padding:
+        20px;
+
+}
+
+
+/* ==================================================
+   RESPONSIVE — TABLETTE
+================================================== */
+
+@media (max-width: 1050px) {
+
+    .chartsGrid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .financeGrid {
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+
+    }
+
+}
+
+
+/* ==================================================
+   RESPONSIVE — MOBILE
+================================================== */
+
+@media (max-width: 600px) {
+
+    .chartsGrid {
+
+        gap:
+            12px;
+
+    }
+
+
+    .chartCard {
+
+        padding:
+            15px;
+
+    }
+
+
+    .chartContainer {
+
+        height:
+            220px;
+
+    }
+
+
+    .financeGrid {
+
+        grid-template-columns:
+            1fr;
+
+        gap:
+            12px;
+
+    }
+
+
+    .financeCard {
+
+        padding:
+            16px;
+
+    }
+
+
+    .dataPanelHeader {
+
+        min-height:
+            52px;
+
+        padding:
+            0 15px;
+
+    }
+
+
+    .dataPanelBody {
+
+        padding:
+            15px;
+
+    }
+
+}
+
+
+/* ==================================================
+   FIN BLOC CSS 5
+================================================== */
+/* ==================================================
+   TOMA ADMIN V2 PREMIUM
+   ADMIN-V2.CSS
+
+   BLOC CSS 6 — TABLEAUX + ACTIVITÉ
+================================================== */
+
+
+/* ==================================================
+   CONTENEUR DES TABLEAUX
+================================================== */
+
+.tablesGrid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:
+        var(--space-5);
+
+    margin-bottom:
+        var(--space-5);
+
+}
+
+
+/* ==================================================
+   CARTE TABLEAU
+================================================== */
+
+.tableCard {
+
+    min-width: 0;
+
+    background:
+        var(--toma-surface);
+
+    border:
+        1px solid
+        var(--toma-border);
+
+    border-radius:
+        var(--radius-lg);
+
+    box-shadow:
+        var(--shadow-sm);
+
+    overflow: hidden;
+
+}
+
+
+/* ==================================================
+   EN-TÊTE TABLEAU
+================================================== */
+
+.tableCardHeader {
+
+    min-height: 58px;
+
+    padding:
+        0 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 12px;
+
+    border-bottom:
+        1px solid
+        var(--toma-border);
+
+}
+
+
+/* ==================================================
+   TITRE TABLEAU
+================================================== */
+
+.tableCardTitle {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+
+}
+
+
+.tableCardTitle h3 {
+
+    margin: 0;
+
+    color:
+        var(--toma-text);
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+}
+
+
+.tableCardTitle span {
+
+    color:
+        var(--toma-text-muted);
+
+    font-size: 9px;
+
+}
+
+
+/* ==================================================
+   CONTENEUR TABLE
+================================================== */
+
+.tableWrapper {
+
+    width: 100%;
+
+    overflow-x: auto;
+
+    -webkit-overflow-scrolling:
+        touch;
+
+}
+
+
+/* ==================================================
+   TABLEAU
+================================================== */
+
+.tableCard table {
+
+    width: 100%;
+
+    min-width: 560px;
+
+    border-collapse:
+        collapse;
+
+}
+
+
+/* ==================================================
+   EN-TÊTE DES COLONNES
+================================================== */
+
+.tableCard thead th {
+
+    height: 44px;
+
+    padding:
+        0 14px;
+
+    background:
+        #fafafa;
+
+    color:
+        var(--toma-text-muted);
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    text-align: left;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        0.45px;
+
+    white-space:
+        nowrap;
+
+    border-bottom:
+        1px solid
+        var(--toma-border);
+
+}
+
+
+/* ==================================================
+   CELLULES
+================================================== */
+
+.tableCard tbody td {
+
+    height: 54px;
+
+    padding:
+        8px 14px;
+
+    color:
+        var(--toma-text);
+
+    font-size: 10px;
+
+    font-weight: 550;
+
+    border-bottom:
+        1px solid
+        #f0f0f0;
+
+    vertical-align:
+        middle;
+
+}
+
+
+/* ==================================================
+   DERNIÈRE LIGNE
+================================================== */
+
+.tableCard tbody tr:last-child td {
+
+    border-bottom:
+        none;
+
+}
+
+
+/* ==================================================
+   SURVOL LIGNE
+================================================== */
+
+.tableCard tbody tr {
+
+    transition:
+        background
+        var(--transition);
+
+}
+
+
+.tableCard tbody tr:hover {
+
+    background:
+        #fffdf4;
+
+}
+
+
+/* ==================================================
+   AVATAR TABLEAU
+================================================== */
+
+.tableAvatar {
+
+    width: 34px;
+
+    height: 34px;
+
+    display: block;
+
+    object-fit: cover;
+
+    border-radius:
+        9px;
+
+    background:
+        #f1f1f1;
+
+    border:
+        1px solid
+        var(--toma-border);
+
+}
+
+
+/* ==================================================
+   STATUT
+================================================== */
+
+.status {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 24px;
+
+    padding:
+        0 9px;
+
+    border-radius:
+        var(--radius-pill);
+
+    background:
+        #f3f4f6;
+
+    color:
+        #4b5563;
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+    text-transform:
+        capitalize;
+
+    white-space:
+        nowrap;
+
+}
+
+
+/* ==================================================
+   STATUT — PENDING
+================================================== */
+
+.status.pending {
+
+    background:
+        rgba(
+            245,
+            196,
+            0,
+            0.14
+        );
+
+    color:
+        #806300;
+
+}
+
+
+/* ==================================================
+   STATUT — APPROVED
+================================================== */
+
+.status.approved,
+.status.active,
+.status.published,
+.status.completed {
+
+    background:
+        rgba(
+            34,
+            197,
+            94,
+            0.11
+        );
+
+    color:
+        #15803d;
+
+}
+
+
+/* ==================================================
+   STATUT — VERIFIED
+================================================== */
+
+.status.verified {
+
+    background:
+        rgba(
+            59,
+            130,
+            246,
+            0.11
+        );
+
+    color:
+        #1d4ed8;
+
+}
+
+
+/* ==================================================
+   STATUT — CANCELLED
+================================================== */
+
+.status.cancelled,
+.status.rejected,
+.status.blocked {
+
+    background:
+        rgba(
+            239,
+            68,
+            68,
+            0.10
+        );
+
+    color:
+        #b91c1c;
+
+}
+
+
+/* ==================================================
+   BOUTON "VER"
+================================================== */
+
+.viewMerchant {
+
+    min-height: 30px;
+
+    padding:
+        0 10px;
+
+    border:
+        1px solid
+        var(--toma-border);
+
+    border-radius:
+        var(--radius-md);
+
+    background:
+        var(--toma-white);
+
+    color:
+        var(--toma-text);
+
+    font-family:
+        inherit;
+
+    font-size: 9px;
+
+    font-weight: 750;
+
+    cursor: pointer;
+
+    transition:
+        background
+        var(--transition),
+
+        color
+        var(--transition),
+
+        border-color
+        var(--transition);
+
+}
+
+
+.viewMerchant:hover {
+
+    background:
+        var(--toma-black);
+
+    color:
+        var(--toma-white);
+
+    border-color:
+        var(--toma-black);
+
+}
+
+
+/* ==================================================
+   ACTIVITÉ RÉCENTE
+================================================== */
+
+#activityList {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+/* ==================================================
+   ÉLÉMENT ACTIVITÉ
+================================================== */
+
+.activityItem {
+
+    min-height: 68px;
+
+    padding:
+        12px 0;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    border-bottom:
+        1px solid
+        #eeeeee;
+
+}
+
+
+.activityItem:last-child {
+
+    border-bottom:
+        none;
+
+}
+
+
+/* ==================================================
+   ICÔNE ACTIVITÉ
+================================================== */
+
+.activityIcon {
+
+    width: 36px;
+
+    height: 36px;
+
+    min-width: 36px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius:
+        10px;
+
+    background:
+        rgba(
+            245,
+            196,
+            0,
+            0.13
+        );
+
+    font-size: 15px;
+
+}
+
+
+/* ==================================================
+   CONTENU ACTIVITÉ
+================================================== */
+
+.activityContent {
+
+    min-width: 0;
+
+    flex: 1;
+
+}
+
+
+.activityContent h4 {
+
+    margin: 0 0 3px;
+
+    color:
+        var(--toma-text);
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+}
+
+
+.activityContent p {
+
+    margin: 0;
+
+    color:
+        var(--toma-text-secondary);
+
+    font-size: 9px;
+
+    line-height: 1.4;
+
+}
+
+
+.activityTime {
+
+    margin-top: 4px;
+
+    color:
+        var(--toma-text-muted);
+
+    font-size: 8px;
+
+}
+
+
+/* ==================================================
+   ÉTAT VIDE
+================================================== */
+
+.tableEmpty {
+
+    min-height: 100px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    color:
+        var(--toma-text-muted);
+
+    font-size: 10px;
+
+    text-align: center;
+
+}
+
+
+/* ==================================================
+   RESPONSIVE — TABLETTE
+================================================== */
+
+@media (max-width: 1050px) {
+
+    .tablesGrid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+}
+
+
+/* ==================================================
+   RESPONSIVE — MOBILE
+================================================== */
+
+@media (max-width: 600px) {
+
+    .tablesGrid {
+
+        gap:
+            12px;
+
+    }
+
+
+    .tableCardHeader {
+
+        padding:
+            0 14px;
+
+    }
+
+
+    .tableCard tbody td {
+
+        padding:
+            7px 10px;
+
+    }
+
+
+    .tableCard thead th {
+
+        padding:
+            0 10px;
+
+    }
+
+
+    .activityItem {
+
+        min-height:
+            62px;
+
+    }
+
+}
+
+
+/* ==================================================
+   FIN BLOC CSS 6
+================================================== */
+/* ==================================================
+   TOMA ADMIN V2 PREMIUM
+   ADMIN-V2.CSS
+
+   BLOC CSS 7 — MONITORING + RAPPORTS + SYSTÈME
+================================================== */
+
+
+/* ==================================================
+   GRILLE MONITORING
+================================================== */
+
+.monitoringGrid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:
+        var(--space-4);
+
+    margin-bottom:
+        var(--space-5);
+
+}
+
+
+/* ==================================================
+   CARTE MONITORING
+================================================== */
+
+.monitoringCard {
+
+    position: relative;
+
+    min-height: 105px;
+
+    padding:
+        16px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    background:
+        var(--toma-surface);
+
+    border:
+        1px solid
+        var(--toma-border);
+
+    border-radius:
+        var(--radius-lg);
+
+    box-shadow:
+        var(--shadow-sm);
+
+    overflow: hidden;
+
+}
+
+
+/* ==================================================
+   TITRE MONITORING
+================================================== */
+
+.monitoringTitle {
+
+    color:
+        var(--toma-text-muted);
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        0.45px;
+
+}
+
+
+/* ==================================================
+   VALEUR MONITORING
+================================================== */
+
+.monitoringValue {
+
+    margin-top:
+        10px;
+
+    color:
+        var(--toma-text);
+
+    font-size:
+        22px;
+
+    font-weight:
+        850;
+
+    line-height: 1;
+
+}
+
+
+/* ==================================================
+   INDICATEUR ONLINE
+================================================== */
+
+.onlineIndicator {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    margin-top:
+        7px;
+
+    color:
+        #15803d;
+
+    font-size: 8px;
+
+    font-weight: 750;
+
+}
+
+
+.onlineIndicator::before {
+
+    content: "";
+
+    width: 6px;
+
+    height: 6px;
+
+    border-radius: 50%;
+
+    background:
+        #22c55e;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(
+            34,
+            197,
+            94,
+            0.10
+        );
+
+}
+
+
+/* ==================================================
+   GRILLE RAPPORTS
+================================================== */
+
+.reportsGrid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:
+        var(--space-4);
+
+    margin-bottom:
+        var(--space-5);
+
+}
+
+
+/* ==================================================
+   CARTE RAPPORT
+================================================== */
+
+.reportCard {
+
+    padding:
+        18px;
+
+    background:
+        var(--toma-surface);
+
+    border:
+        1px solid
+        var(--toma-border);
+
+    border-radius:
+        var(--radius-lg);
+
+    box-shadow:
+        var(--shadow-sm);
+
+    transition:
+        transform
+        var(--transition),
+
+        box-shadow
+        var(--transition);
+
+}
+
+
+.reportCard:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        var(--shadow-md);
+
+}
+
+
+/* ==================================================
+   TITRE RAPPORT
+================================================== */
+
+.reportTitle {
+
+    color:
+        var(--toma-text-muted);
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        0.45px;
+
+}
+
+
+/* ==================================================
+   VALEUR RAPPORT
+================================================== */
+
+.reportValue {
+
+    margin-top:
+        10px;
+
+    color:
+        var(--toma-text);
+
+    font-size:
+        21px;
+
+    font-weight:
+        850;
+
+}
+
+
+/* ==================================================
+   VENTES DU MOIS
+================================================== */
+
+#monthlySales {
+
+    color:
+        #15803d;
+
+}
+
+
+/* ==================================================
+   COMMANDES DU MOIS
+================================================== */
+
+#monthlyOrders {
+
+    color:
+        #2563eb;
+
+}
+
+
+/* ==================================================
+   PRODUITS ACTIFS
+================================================== */
+
+#activeProducts {
+
+    color:
+        #0284c7;
+
+}
+
+
+/* ==================================================
+   COMMERÇANTS VÉRIFIÉS
+================================================== */
+
+#verifiedMerchants {
+
+    color:
+        #7c3aed;
+
+}
+
+
+/* ==================================================
+   BOUTIQUES OFFICIELLES
+================================================== */
+
+.officialStorePanel {
+
+    margin-bottom:
+        var(--space-5);
+
+    background:
+        var(--toma-surface);
+
+    border:
+        1px solid
+        var(--toma-border);
+
+    border-radius:
+        var(--radius-lg);
+
+    box-shadow:
+        var(--shadow-sm);
+
+    overflow: hidden;
+
+}
+
+
+/* ==================================================
+   EN-TÊTE BOUTIQUES OFFICIELLES
+================================================== */
+
+.officialStoreHeader {
+
+    min-height:
+        62px;
+
+    padding:
+        0 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    border-bottom:
+        1px solid
+        var(--toma-border);
+
+}
+
+
+/* ==================================================
+   TITRE BOUTIQUES OFFICIELLES
+================================================== */
+
+.officialStoreTitle {
+
+    color:
+        var(--toma-text);
+
+    font-size:
+        14px;
+
+    font-weight:
+        850;
+
+}
+
+
+/* ==================================================
+   GRILLE BOUTIQUES OFFICIELLES
+================================================== */
+
+.officialStoreStats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:
+        1px;
+
+    background:
+        var(--toma-border);
+
+}
+
+
+/* ==================================================
+   STATISTIQUE OFFICIELLE
+================================================== */
+
+.officialStoreStat {
+
+    min-height:
+        95px;
+
+    padding:
+        17px;
+
+    background:
+        var(--toma-surface);
+
+}
+
+
+.officialStoreStat span {
+
+    display: block;
+
+    color:
+        var(--toma-text-muted);
+
+    font-size:
+        9px;
+
+    font-weight:
+        750;
+
+}
+
+
+.officialStoreStat strong {
+
+    display: block;
+
+    margin-top:
+        8px;
+
+    color:
+        var(--toma-text);
+
+    font-size:
+        20px;
+
+    font-weight:
+        850;
+
+}
+
+
+/* ==================================================
+   VALEURS OFFICIELLES
+================================================== */
+
+#activeOfficialStores {
+
+    color:
+        #8a6800;
+
+}
+
+
+#officialProducts {
+
+    color:
+        #0284c7;
+
+}
+
+
+#officialSales {
+
+    color:
+        #15803d;
+
+}
+
+
+#officialFollowers {
+
+    color:
+        #db2777;
+
+}
+
+
+/* ==================================================
+   PANNEAU SYSTÈME
+================================================== */
+
+.systemPanel {
+
+    margin-bottom:
+        var(--space-5);
+
+    background:
+        var(--toma-surface);
+
+    border:
+        1px solid
+        var(--toma-border);
+
+    border-radius:
+        var(--radius-lg);
+
+    box-shadow:
+        var(--shadow-sm);
+
+    overflow: hidden;
+
+}
+
+
+/* ==================================================
+   EN-TÊTE SYSTÈME
+================================================== */
+
+.systemPanelHeader {
+
+    min-height:
+        58px;
+
+    padding:
+        0 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    border-bottom:
+        1px solid
+        var(--toma-border);
+
+}
+
+
+.systemPanelTitle {
+
+    color:
+        var(--toma-text);
+
+    font-size:
+        13px;
+
+    font-weight:
+        850;
+
+}
+
+
+/* ==================================================
+   GRILLE ÉTAT SYSTÈME
+================================================== */
+
+.systemStatusGrid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:
+        1px;
+
+    background:
+        var(--toma-border);
+
+}
+
+
+/* ==================================================
+   ÉLÉMENT ÉTAT SYSTÈME
+================================================== */
+
+.systemStatusItem {
+
+    min-height:
+        90px;
+
+    padding:
+        16px;
+
+    background:
+        var(--toma-surface);
+
+}
+
+
+.systemStatusItem span {
+
+    display: block;
+
+    color:
+        var(--toma-text-muted);
+
+    font-size:
+        9px;
+
+    font-weight:
+        750;
+
+}
+
+
+.systemStatusItem strong {
+
+    display: block;
+
+    margin-top:
+        8px;
+
+    color:
+        #15803d;
+
+    font-size:
+        12px;
+
+    font-weight:
+        850;
+
+}
+
+
+/* ==================================================
+   RESPONSIVE — TABLETTE
+================================================== */
+
+@media (max-width: 1100px) {
+
+    .monitoringGrid,
+    .reportsGrid {
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+
+    }
+
+
+    .officialStoreStats,
+    .systemStatusGrid {
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+
+    }
+
+}
+
+
+/* ==================================================
+   RESPONSIVE — MOBILE
+================================================== */
+
+@media (max-width: 600px) {
+
+    .monitoringGrid,
+    .reportsGrid {
+
+        grid-template-columns:
+            1fr;
+
+        gap:
+            12px;
+
+    }
+
+
+    .officialStoreStats,
+    .systemStatusGrid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .officialStoreHeader,
+    .systemPanelHeader {
+
+        padding:
+            0 15px;
+
+    }
+
+
+    .officialStoreStat,
+    .systemStatusItem {
+
+        min-height:
+            78px;
+
+        padding:
+            14px;
+
+    }
+
+}
+
+
+/* ==================================================
+   FIN BLOC CSS 7
+================================================== */
+/* ==================================================
+   TOMA ADMIN V2 PREMIUM
+   ADMIN-V2.CSS
+
+   BLOC CSS 8 — NOTIFICATIONS + LOGS + UI SYSTEME
+================================================== */
+
+
+/* ==================================================
+   ZONE NOTIFICATIONS
+================================================== */
+
+.notificationsPanel {
+
+    position: relative;
+
+    background:
+        var(--toma-surface);
+
+    border:
+        1px solid
+        var(--toma-border);
+
+    border-radius:
+        var(--radius-lg);
+
+    box-shadow:
+        var(--shadow-sm);
+
+    overflow: hidden;
+
+}
+
+
+/* ==================================================
+   LISTE NOTIFICATIONS
+================================================== */
+
+#notificationsList {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+/* ==================================================
+   NOTIFICATION
+================================================== */
+
+.notificationItem {
+
+    position: relative;
+
+    min-height: 68px;
+
+    padding:
+        12px 16px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    border-bottom:
+        1px solid
+        #eeeeee;
+
+    cursor: pointer;
+
+    transition:
+        background
+        var(--transition);
+
+}
+
+
+.notificationItem:hover {
+
+    background:
+        #fffdf4;
+
+}
+
+
+.notificationItem:last-child {
+
+    border-bottom:
+        none;
+
+}
+
+
+/* ==================================================
+   ICÔNE NOTIFICATION
+================================================== */
+
+.notificationIcon {
+
+    width: 36px;
+
+    height: 36px;
+
+    min-width: 36px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius:
+        10px;
+
+    background:
+        rgba(
+            245,
+            196,
+            0,
+            0.13
+        );
+
+    color:
+        #806300;
+
+    font-size:
+        15px;
+
+}
+
+
+/* ==================================================
+   CONTENU NOTIFICATION
+================================================== */
+
+.notificationContent {
+
+    min-width: 0;
+
+    flex: 1;
+
+}
+
+
+.notificationContent h4 {
+
+    margin:
+        0 0 3px;
+
+    color:
+        var(--toma-text);
+
+    font-size:
+        10px;
+
+    font-weight:
+        800;
+
+}
+
+
+.notificationContent p {
+
+    margin:
+        0;
+
+    color:
+        var(--toma-text-secondary);
+
+    font-size:
+        9px;
+
+    line-height:
+        1.4;
+
+}
+
+
+.notificationTime {
+
+    margin-top:
+        4px;
+
+    color:
+        var(--toma-text-muted);
+
+    font-size:
+        8px;
+
+}
+
+
+/* ==================================================
+   BADGES NOTIFICATION
+================================================== */
+
+#notificationsBadge,
+#merchantBadge {
+
+    min-width:
+        18px;
+
+    height:
+        18px;
+
+    padding:
+        0 5px;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        var(--radius-pill);
+
+    background:
+        var(--toma-yellow);
+
+    color:
+        #171717;
+
+    font-size:
+        8px;
+
+    font-weight:
+        900;
+
+}
+
+
+/* ==================================================
+   BOUTON NOTIFICATIONS
+================================================== */
+
+#notificationsButton {
+
+    position: relative;
+
+}
+
+
+/* ==================================================
+   MODAL NOTIFICATION
+================================================== */
+
+#notificationModal {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 1000;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding:
+        20px;
+
+    background:
+        rgba(
+            0,
+            0,
+            0,
+            0.48
+        );
+
+    backdrop-filter:
+        blur(5px);
+
+    -webkit-backdrop-filter:
+        blur(5px);
+
+}
+
+
+/* ==================================================
+   MODAL CACHÉ
+================================================== */
+
+#notificationModal.hidden {
+
+    display:
+        none;
+
+}
+
+
+/* ==================================================
+   CONTENU MODAL
+================================================== */
+
+.notificationModalContent {
+
+    width:
+        min(
+            100%,
+            520px
+        );
+
+    max-height:
+        min(
+            80vh,
+            650px
+        );
+
+    overflow-y:
+        auto;
+
+    padding:
+        24px;
+
+    background:
+        var(--toma-surface);
+
+    border:
+        1px solid
+        var(--toma-border);
+
+    border-radius:
+        var(--radius-lg);
+
+    box-shadow:
+        0 25px 70px
+        rgba(
+            0,
+            0,
+            0,
+            0.20
+        );
+
+}
+
+
+/* ==================================================
+   CONTENU NOTIFICATION
+================================================== */
+
+#notificationContent {
+
+    color:
+        var(--toma-text-secondary);
+
+    font-size:
+        12px;
+
+    line-height:
+        1.6;
+
+}
+
+
+/* ==================================================
+   BOUTON FERMETURE MODAL
+================================================== */
+
+#closeNotificationModal {
+
+    width:
+        34px;
+
+    height:
+        34px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border:
+        1px solid
+        var(--toma-border);
+
+    border-radius:
+        var(--radius-md);
+
+    background:
+        var(--toma-white);
+
+    color:
+        var(--toma-text);
+
+    font-size:
+        16px;
+
+    cursor:
+        pointer;
+
+    transition:
+        background
+        var(--transition),
+
+        color
+        var(--transition);
+
+}
+
+
+#closeNotificationModal:hover {
+
+    background:
+        var(--toma-black);
+
+    color:
+        var(--toma-white);
+
+}
+
+
+/* ==================================================
+   LOGS SYSTÈME
+================================================== */
+
+#systemLogs {
+
+    max-height:
+        360px;
+
+    overflow-y:
+        auto;
+
+    padding:
+        4px;
+
+    background:
+        #101010;
+
+    border:
+        1px solid
+        #222222;
+
+    border-radius:
+        var(--radius-md);
+
+}
+
+
+/* ==================================================
+   LIGNE DE LOG
+================================================== */
+
+.logItem {
+
+    padding:
+        8px 10px;
+
+    color:
+        #d7d7d7;
+
+    font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Monaco,
+        Consolas,
+        monospace;
+
+    font-size:
+        9px;
+
+    line-height:
+        1.5;
+
+    border-bottom:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.05
+        );
+
+}
+
+
+/* ==================================================
+   DERNIER LOG
+================================================== */
+
+.logItem:first-child {
+
+    color:
+        #ffffff;
+
+}
+
+
+/* ==================================================
+   LOG ERREUR
+================================================== */
+
+.logItem[data-type="error"] {
+
+    color:
+        #ff8585;
+
+}
+
+
+/* ==================================================
+   LOG SUCCÈS
+================================================== */
+
+.logItem[data-type="success"] {
+
+    color:
+        #72e6a0;
+
+}
+
+
+/* ==================================================
+   LOG AVERTISSEMENT
+================================================== */
+
+.logItem[data-type="warning"] {
+
+    color:
+        #f5d76e;
+
+}
+
+
+/* ==================================================
+   BOUTON NETTOYAGE LOGS
+================================================== */
+
+#clearLogs {
+
+    min-height:
+        32px;
+
+    padding:
+        0 12px;
+
+    border:
+        1px solid
+        var(--toma-border);
+
+    border-radius:
+        var(--radius-md);
+
+    background:
+        var(--toma-white);
+
+    color:
+        var(--toma-text);
+
+    font-family:
+        inherit;
+
+    font-size:
+        9px;
+
+    font-weight:
+        750;
+
+    cursor:
+        pointer;
+
+    transition:
+        background
+        var(--transition),
+
+        color
+        var(--transition);
+
+}
+
+
+#clearLogs:hover {
+
+    background:
+        var(--toma-black);
+
+    color:
+        var(--toma-white);
+
+}
+
+
+/* ==================================================
+   LOADER GLOBAL
+================================================== */
+
+#loader {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 2000;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.78
+        );
+
+    backdrop-filter:
+        blur(4px);
+
+    -webkit-backdrop-filter:
+        blur(4px);
+
+}
+
+
+/* ==================================================
+   LOADER CACHÉ
+================================================== */
+
+#loader.hidden {
+
+    display:
+        none;
+
+}
+
+
+/* ==================================================
+   SPINNER
+================================================== */
+
+.loaderSpinner {
+
+    width:
+        42px;
+
+    height:
+        42px;
+
+    border:
+        3px solid
+        #e9e9e9;
+
+    border-top-color:
+        var(--toma-yellow);
+
+    border-radius:
+        50%;
+
+    animation:
+        tomaSpin
+        0.8s linear infinite;
+
+}
+
+
+@keyframes tomaSpin {
+
+    to {
+
+        transform:
+            rotate(
+                360deg
+            );
+
+    }
+
+}
+
+
+/* ==================================================
+   TOAST
+================================================== */
+
+#toast {
+
+    position: fixed;
+
+    right:
+        20px;
+
+    bottom:
+        20px;
+
+    z-index:
+        2100;
+
+    max-width:
+        min(
+            360px,
+            calc(
+                100vw - 40px
+            )
+        );
+
+    padding:
+        13px 16px;
+
+    background:
+        #171717;
+
+    color:
+        #ffffff;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.08
+        );
+
+    border-radius:
+        var(--radius-md);
+
+    box-shadow:
+        0 12px 35px
+        rgba(
+            0,
+            0,
+            0,
+            0.20
+        );
+
+    opacity:
+        0;
+
+    transform:
+        translateY(
+            12px
+        );
+
+    pointer-events:
+        none;
+
+    transition:
+        opacity
+        0.25s ease,
+
+        transform
+        0.25s ease;
+
+}
+
+
+/* ==================================================
+   TOAST VISIBLE
+================================================== */
+
+#toast.show {
+
+    opacity:
+        1;
+
+    transform:
+        translateY(
+            0
+        );
+
+}
+
+
+/* ==================================================
+   TEXTE TOAST
+================================================== */
+
+#toastMessage {
+
+    color:
+        #ffffff;
+
+    font-size:
+        10px;
+
+    font-weight:
+        650;
+
+    line-height:
+        1.45;
+
+}
+
+
+/* ==================================================
+   RESPONSIVE — MOBILE
+================================================== */
+
+@media (max-width: 600px) {
+
+    #toast {
+
+        right:
+            12px;
+
+        bottom:
+            12px;
+
+        max-width:
+            calc(
+                100vw - 24px
+            );
+
+    }
+
+
+    #notificationModal {
+
+        padding:
+            12px;
+
+    }
+
+
+    .notificationModalContent {
+
+        padding:
+            18px;
+
+        max-height:
+            88vh;
+
+    }
+
+
+    #systemLogs {
+
+        max-height:
+            280px;
+
+    }
+
+}
+
+
+/* ==================================================
+   FIN BLOC CSS 8
+================================================== */
+/* ==================================================
+   TOMA ADMIN V2 PREMIUM
+   ADMIN-V2.CSS
+
+   BLOC CSS 9 — FINITIONS PREMIUM + RESPONSIVE GLOBAL
+================================================== */
+
+
+/* ==================================================
+   ÉTATS GÉNÉRAUX DES BOUTONS
+================================================== */
+
+button {
+
+    font-family: inherit;
+
+    -webkit-tap-highlight-color:
+        transparent;
+
+}
+
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+
+    outline:
+        2px solid
+        var(--toma-yellow);
+
+    outline-offset:
+        2px;
+
+}
+
+
+/* ==================================================
+   CHAMPS DE RECHERCHE
+================================================== */
+
+#globalSearch {
+
+    width:
+        100%;
+
+    min-height:
+        38px;
+
+    padding:
+        0 13px;
+
+    border:
+        1px solid
+        var(--toma-border);
+
+    border-radius:
+        var(--radius-md);
+
+    background:
+        var(--toma-white);
+
+    color:
+        var(--toma-text);
+
+    font-family:
+        inherit;
+
+    font-size:
+        10px;
+
+    transition:
+        border-color
+        var(--transition),
+
+        box-shadow
+        var(--transition);
+
+}
+
+
+#globalSearch::placeholder {
+
+    color:
+        var(--toma-text-muted);
+
+}
+
+
+#globalSearch:focus {
+
+    border-color:
+        var(--toma-yellow);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            245,
+            196,
+            0,
+            0.10
+        );
+
+}
+
+
+/* ==================================================
+   BOUTON ACTUALISER
+================================================== */
+
+#refreshDashboard {
+
+    min-height:
+        36px;
+
+    padding:
+        0 13px;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        7px;
+
+    border:
+        1px solid
+        var(--toma-border);
+
+    border-radius:
+        var(--radius-md);
+
+    background:
+        var(--toma-white);
+
+    color:
+        var(--toma-text);
+
+    font-size:
+        9px;
+
+    font-weight:
+        800;
+
+    cursor:
+        pointer;
+
+    transition:
+        all
+        var(--transition);
+
+}
+
+
+#refreshDashboard:hover {
+
+    background:
+        var(--toma-black);
+
+    color:
+        var(--toma-white);
+
+    border-color:
+        var(--toma-black);
+
+}
+
+
+/* ==================================================
+   BOUTON AJOUT RAPIDE
+================================================== */
+
+#quickAddButton {
+
+    min-height:
+        36px;
+
+    padding:
+        0 14px;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        7px;
+
+    border:
+        1px solid
+        #d5aa00;
+
+    border-radius:
+        var(--radius-md);
+
+    background:
+        var(--toma-yellow);
+
+    color:
+        #171717;
+
+    font-size:
+        9px;
+
+    font-weight:
+        850;
+
+    cursor:
+        pointer;
+
+    box-shadow:
+        0 4px 12px
+        rgba(
+            245,
+            196,
+            0,
+            0.16
+        );
+
+    transition:
+        transform
+        var(--transition),
+
+        box-shadow
+        var(--transition);
+
+}
+
+
+#quickAddButton:hover {
+
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        0 7px 18px
+        rgba(
+            245,
+            196,
+            0,
+            0.22
+        );
+
+}
+
+
+#quickAddButton:active {
+
+    transform:
+        translateY(0);
+
+}
+
+
+/* ==================================================
+   BOUTON DÉCONNEXION
+================================================== */
+
+#logoutButton {
+
+    min-height:
+        34px;
+
+    padding:
+        0 12px;
+
+    border:
+        1px solid
+        #fecaca;
+
+    border-radius:
+        var(--radius-md);
+
+    background:
+        #fffafa;
+
+    color:
+        #b91c1c;
+
+    font-size:
+        9px;
+
+    font-weight:
+        800;
+
+    cursor:
+        pointer;
+
+    transition:
+        all
+        var(--transition);
+
+}
+
+
+#logoutButton:hover {
+
+    background:
+        #dc2626;
+
+    border-color:
+        #dc2626;
+
+    color:
+        #ffffff;
+
+}
+
+
+/* ==================================================
+   LIENS / BOUTONS VOIR COMMERÇANT
+================================================== */
+
+.viewMerchant {
+
+    min-height:
+        30px;
+
+    padding:
+        0 10px;
+
+    border:
+        1px solid
+        var(--toma-border);
+
+    border-radius:
+        var(--radius-sm);
+
+    background:
+        var(--toma-white);
+
+    color:
+        var(--toma-text);
+
+    font-size:
+        8px;
+
+    font-weight:
+        800;
+
+    cursor:
+        pointer;
+
+    transition:
+        all
+        var(--transition);
+
+}
+
+
+.viewMerchant:hover {
+
+    background:
+        var(--toma-black);
+
+    color:
+        var(--toma-white);
+
+}
+
+
+/* ==================================================
+   ÉTATS DE STATUT
+================================================== */
+
+.status {
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    min-height:
+        22px;
+
+    padding:
+        0 8px;
+
+    border-radius:
+        var(--radius-pill);
+
+    font-size:
+        7px;
+
+    font-weight:
+        850;
+
+    text-transform:
+        capitalize;
+
+}
+
+
+/* ==================================================
+   STATUT PENDING
+================================================== */
+
+.status.pending {
+
+    background:
+        #fff7d6;
+
+    color:
+        #856404;
+
+}
+
+
+/* ==================================================
+   STATUT APPROVED
+================================================== */
+
+.status.approved,
+.status.verified,
+.status.active {
+
+    background:
+        #dcfce7;
+
+    color:
+        #166534;
+
+}
+
+
+/* ==================================================
+   STATUT PUBLISHED
+================================================== */
+
+.status.published {
+
+    background:
+        #dbeafe;
+
+    color:
+        #1d4ed8;
+
+}
+
+
+/* ==================================================
+   STATUT REJECTED
+================================================== */
+
+.status.rejected,
+.status.cancelled {
+
+    background:
+        #fee2e2;
+
+    color:
+        #991b1b;
+
+}
+
+
+/* ==================================================
+   TABLEAUX — SURVOL
+================================================== */
+
+#lastOrdersTable tr,
+#lastMerchantsTable tr,
+#lastProductsTable tr {
+
+    transition:
+        background
+        var(--transition);
+
+}
+
+
+#lastOrdersTable tr:hover,
+#lastMerchantsTable tr:hover,
+#lastProductsTable tr:hover {
+
+    background:
+        #fffdf5;
+
+}
+
+
+/* ==================================================
+   IMAGES DES TABLEAUX
+================================================== */
+
+.tableAvatar {
+
+    width:
+        34px;
+
+    height:
+        34px;
+
+    object-fit:
+        cover;
+
+    border-radius:
+        9px;
+
+    border:
+        1px solid
+        var(--toma-border);
+
+    background:
+        #f5f5f5;
+
+}
+
+
+/* ==================================================
+   AVATAR ADMIN
+================================================== */
+
+#adminAvatar {
+
+    width:
+        38px;
+
+    height:
+        38px;
+
+    object-fit:
+        cover;
+
+    border-radius:
+        50%;
+
+    border:
+        2px solid
+        var(--toma-yellow);
+
+    background:
+        #f4f4f4;
+
+}
+
+
+/* ==================================================
+   NOM ADMIN
+================================================== */
+
+#adminName {
+
+    color:
+        var(--toma-text);
+
+    font-size:
+        10px;
+
+    font-weight:
+        850;
+
+}
+
+
+/* ==================================================
+   ACTIVITÉ RÉCENTE
+================================================== */
+
+.activityItem {
+
+    display:
+        flex;
+
+    align-items:
+        flex-start;
+
+    gap:
+        11px;
+
+    padding:
+        13px 15px;
+
+    border-bottom:
+        1px solid
+        var(--toma-border);
+
+}
+
+
+.activityItem:last-child {
+
+    border-bottom:
+        none;
+
+}
+
+
+.activityIcon {
+
+    width:
+        34px;
+
+    height:
+        34px;
+
+    min-width:
+        34px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        10px;
+
+    background:
+        #fff7d6;
+
+    font-size:
+        14px;
+
+}
+
+
+.activityContent {
+
+    min-width:
+        0;
+
+    flex:
+        1;
+
+}
+
+
+.activityContent h4 {
+
+    margin:
+        0 0 3px;
+
+    color:
+        var(--toma-text);
+
+    font-size:
+        10px;
+
+    font-weight:
+        850;
+
+}
+
+
+.activityContent p {
+
+    margin:
+        0;
+
+    color:
+        var(--toma-text-secondary);
+
+    font-size:
+        9px;
+
+}
+
+
+.activityTime {
+
+    margin-top:
+        5px;
+
+    color:
+        var(--toma-text-muted);
+
+    font-size:
+        8px;
+
+}
+
+
+/* ==================================================
+   ANIMATION D'APPARITION
+================================================== */
+
+@keyframes tomaFadeUp {
+
+    from {
+
+        opacity:
+            0;
+
+        transform:
+            translateY(
+                5px
+            );
+
+    }
+
+    to {
+
+        opacity:
+            1;
+
+        transform:
+            translateY(
+                0
+            );
+
+    }
+
+}
+
+
+.monitoringCard,
+.reportCard,
+.officialStorePanel,
+.systemPanel,
+.notificationsPanel {
+
+    animation:
+        tomaFadeUp
+        0.25s ease
+        both;
+
+}
+
+
+/* ==================================================
+   SCROLLBAR PREMIUM
+================================================== */
+
+#systemLogs::-webkit-scrollbar,
+.notificationModalContent::-webkit-scrollbar {
+
+    width:
+        5px;
+
+}
+
+
+#systemLogs::-webkit-scrollbar-track,
+.notificationModalContent::-webkit-scrollbar-track {
+
+    background:
+        transparent;
+
+}
+
+
+#systemLogs::-webkit-scrollbar-thumb,
+.notificationModalContent::-webkit-scrollbar-thumb {
+
+    background:
+        #cfcfcf;
+
+    border-radius:
+        10px;
+
+}
+
+
+/* ==================================================
+   RESPONSIVE GLOBAL — TABLETTE
+================================================== */
+
+@media (max-width: 900px) {
+
+    #globalSearch {
+
+        max-width:
+            100%;
+
+    }
+
+
+    .officialStoreHeader,
+    .systemPanelHeader {
+
+        flex-wrap:
+            wrap;
+
+        padding-top:
+            12px;
+
+        padding-bottom:
+            12px;
+
+    }
+
+}
+
+
+/* ==================================================
+   RESPONSIVE GLOBAL — PETIT MOBILE
+================================================== */
+
+@media (max-width: 600px) {
+
+    #globalSearch {
+
+        min-height:
+            40px;
+
+        font-size:
+            11px;
+
+    }
+
+
+    #refreshDashboard,
+    #quickAddButton {
+
+        min-height:
+            38px;
+
+    }
+
+
+    #logoutButton {
+
+        min-height:
+            36px;
+
+    }
+
+
+    .activityItem {
+
+        padding:
+            11px 12px;
+
+    }
+
+
+    .activityIcon {
+
+        width:
+            32px;
+
+        height:
+            32px;
+
+        min-width:
+            32px;
+
+    }
+
+
+    .tableAvatar {
+
+        width:
+            30px;
+
+        height:
+            30px;
+
+    }
+
+}
+
+
+/* ==================================================
+   FIN BLOC CSS 9
+================================================== */
