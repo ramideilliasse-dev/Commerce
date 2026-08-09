@@ -533,3 +533,504 @@
                  SUITE DU DASHBOARD
                  BLOC HTML 2
             ================================================== -->
+<!-- ==================================================
+     TOMA ADMIN V2
+     ADMIN-V2.HTML
+     BLOC HTML 2 — GRAPHIQUES + ACTIVITÉ
+================================================== -->
+
+
+<!-- ==================================================
+     ZONE GRAPHIQUES
+================================================== -->
+
+<section
+    id="dashboardCharts"
+    class="dashboardCharts"
+>
+
+
+    <!-- ==================================================
+         GRAPHIQUE DES VENTES
+    ================================================== -->
+
+    <article
+        id="salesChartCard"
+        class="dashboardPanel chartPanel"
+    >
+
+        <div class="panelHeader">
+
+            <div>
+
+                <h2>
+                    Vendas
+                </h2>
+
+                <p>
+                    Evolução das vendas
+                </p>
+
+            </div>
+
+
+            <select
+                id="salesPeriod"
+                class="periodSelector"
+            >
+
+                <option value="7">
+                    Últimos 7 dias
+                </option>
+
+                <option value="30">
+                    Últimos 30 dias
+                </option>
+
+                <option value="90">
+                    Últimos 90 dias
+                </option>
+
+                <option value="365">
+                    Último ano
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div
+            id="salesChartContainer"
+            class="chartContainer"
+        >
+
+            <canvas
+                id="salesChart"
+            ></canvas>
+
+        </div>
+
+    </article>
+
+
+
+    <!-- ==================================================
+         GRAPHIQUE DES COMMANDES
+    ================================================== -->
+
+    <article
+        id="ordersChartCard"
+        class="dashboardPanel chartPanel"
+    >
+
+        <div class="panelHeader">
+
+            <div>
+
+                <h2>
+                    Pedidos
+                </h2>
+
+                <p>
+                    Atividade das encomendas
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="ordersChartContainer"
+            class="chartContainer"
+        >
+
+            <canvas
+                id="ordersChart"
+            ></canvas>
+
+        </div>
+
+    </article>
+
+
+</section>
+
+
+
+<!-- ==================================================
+     ZONE FINANCIÈRE
+================================================== -->
+
+<section
+    id="financeOverview"
+    class="financeOverview"
+>
+
+
+    <!-- VENTES -->
+
+    <article
+        id="financeSalesCard"
+        class="financeCard"
+    >
+
+        <span class="financeLabel">
+            Vendas totais
+        </span>
+
+        <strong id="financeSales">
+            0 Kz
+        </strong>
+
+    </article>
+
+
+    <!-- COMMISSION -->
+
+    <article
+        id="financeCommissionCard"
+        class="financeCard"
+    >
+
+        <span class="financeLabel">
+            Comissão TOMA
+        </span>
+
+        <strong id="financeCommission">
+            0 Kz
+        </strong>
+
+    </article>
+
+
+    <!-- PANIER MOYEN -->
+
+    <article
+        id="averageOrderCard"
+        class="financeCard"
+    >
+
+        <span class="financeLabel">
+            Pedido médio
+        </span>
+
+        <strong id="averageOrder">
+            0 Kz
+        </strong>
+
+    </article>
+
+
+    <!-- BENEFICE -->
+
+    <article
+        id="todayProfitCard"
+        class="financeCard"
+    >
+
+        <span class="financeLabel">
+            Comissão hoje
+        </span>
+
+        <strong id="todayProfit">
+            0 Kz
+        </strong>
+
+    </article>
+
+
+</section>
+
+
+
+<!-- ==================================================
+     ZONE TABLEAUX
+================================================== -->
+
+<section
+    id="dashboardTables"
+    class="dashboardTables"
+>
+
+
+    <!-- ==================================================
+         DERNIERS COMMANDES
+    ================================================== -->
+
+    <article
+        id="lastOrdersPanel"
+        class="dashboardPanel tablePanel"
+    >
+
+        <div class="panelHeader">
+
+            <div>
+
+                <h2>
+                    Últimos pedidos
+                </h2>
+
+                <p>
+                    Atividade recente das encomendas
+                </p>
+
+            </div>
+
+
+            <a
+                id="viewAllOrders"
+                href="orders.html"
+                class="panelLink"
+            >
+                Ver todos
+            </a>
+
+        </div>
+
+
+        <div class="tableWrapper">
+
+            <table
+                id="lastOrdersTableContainer"
+                class="adminTable"
+            >
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Cliente
+                        </th>
+
+                        <th>
+                            Produto
+                        </th>
+
+                        <th>
+                            Total
+                        </th>
+
+                        <th>
+                            Estado
+                        </th>
+
+                        <th>
+                            Data
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="lastOrdersTable">
+
+                    <tr>
+
+                        <td colspan="5">
+                            Nenhum pedido encontrado.
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </article>
+
+
+
+    <!-- ==================================================
+         DERNIERS COMMERÇANTS
+    ================================================== -->
+
+    <article
+        id="lastMerchantsPanel"
+        class="dashboardPanel tablePanel"
+    >
+
+        <div class="panelHeader">
+
+            <div>
+
+                <h2>
+                    Comerciantes recentes
+                </h2>
+
+                <p>
+                    Últimos comerciantes registados
+                </p>
+
+            </div>
+
+
+            <a
+                id="viewAllMerchants"
+                href="merchants.html"
+                class="panelLink"
+            >
+                Ver todos
+            </a>
+
+        </div>
+
+
+        <div class="tableWrapper">
+
+            <table
+                id="lastMerchantsTableContainer"
+                class="adminTable"
+            >
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Foto
+                        </th>
+
+                        <th>
+                            Nome
+                        </th>
+
+                        <th>
+                            Loja
+                        </th>
+
+                        <th>
+                            Estado
+                        </th>
+
+                        <th>
+                            Ação
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="lastMerchantsTable">
+
+                    <tr>
+
+                        <td colspan="5">
+                            Nenhum comerciante encontrado.
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </article>
+
+
+
+    <!-- ==================================================
+         DERNIERS PRODUITS
+    ================================================== -->
+
+    <article
+        id="lastProductsPanel"
+        class="dashboardPanel tablePanel"
+    >
+
+        <div class="panelHeader">
+
+            <div>
+
+                <h2>
+                    Produtos recentes
+                </h2>
+
+                <p>
+                    Últimos produtos adicionados
+                </p>
+
+            </div>
+
+
+            <a
+                id="viewAllProducts"
+                href="products.html"
+                class="panelLink"
+            >
+                Ver todos
+            </a>
+
+        </div>
+
+
+        <div class="tableWrapper">
+
+            <table
+                id="lastProductsTableContainer"
+                class="adminTable"
+            >
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Imagem
+                        </th>
+
+                        <th>
+                            Produto
+                        </th>
+
+                        <th>
+                            Preço
+                        </th>
+
+                        <th>
+                            Loja
+                        </th>
+
+                        <th>
+                            Estado
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="lastProductsTable">
+
+                    <tr>
+
+                        <td colspan="5">
+                            Nenhum produto encontrado.
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </article>
+
+
+</section>
+
+
+
+<!-- ==================================================
+     FIN BLOC HTML 2
+================================================== -->
