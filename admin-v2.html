@@ -1189,12 +1189,12 @@
 <!-- ==================================================
      TOMA ADMIN V2
      ADMIN-V2.HTML
-     BLOC HTML 3 — ACTIVITÉ + MONITORING + SYSTÈME
+     BLOC HTML 3 — ACTIVITÉ + RAPPORTS RAPIDES
 ================================================== -->
 
 
 <!-- ==================================================
-     ZONE ACTIVITÉ + MONITORING
+     ZONE ACTIVITÉ RÉCENTE
 ================================================== -->
 
 <section
@@ -1234,11 +1234,15 @@
             class="activityList"
         >
 
+
+            <!-- ACTIVITÉ PAR DÉFAUT -->
+
             <div class="activityItem">
 
                 <div class="activityIcon">
                     🛒
                 </div>
+
 
                 <div class="activityContent">
 
@@ -1253,147 +1257,6 @@
                     <div class="activityTime">
                         -
                     </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </article>
-
-
-
-    <!-- ==================================================
-         MONITORING
-    ================================================== -->
-
-    <article
-        id="monitoringPanel"
-        class="dashboardPanel monitoringPanel"
-    >
-
-        <div class="panelHeader">
-
-            <div>
-
-                <h2>
-                    Monitorização
-                </h2>
-
-                <p>
-                    Estado atual da plataforma
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div
-            id="monitoringGrid"
-            class="monitoringGrid"
-        >
-
-
-            <!-- UTILIZADORES ONLINE -->
-
-            <div
-                id="onlineUsersCard"
-                class="monitoringItem"
-            >
-
-                <span class="monitoringIcon">
-                    👥
-                </span>
-
-                <div>
-
-                    <span>
-                        Utilizadores online
-                    </span>
-
-                    <strong id="onlineUsers">
-                        0
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <!-- COMMERÇANTS ONLINE -->
-
-            <div
-                id="onlineMerchantsCard"
-                class="monitoringItem"
-            >
-
-                <span class="monitoringIcon">
-                    🏪
-                </span>
-
-                <div>
-
-                    <span>
-                        Comerciantes online
-                    </span>
-
-                    <strong id="onlineMerchants">
-                        0
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <!-- PRODUITS AUJOURD'HUI -->
-
-            <div
-                id="todayProductsCard"
-                class="monitoringItem"
-            >
-
-                <span class="monitoringIcon">
-                    📦
-                </span>
-
-                <div>
-
-                    <span>
-                        Produtos hoje
-                    </span>
-
-                    <strong id="todayProducts">
-                        0
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <!-- COMMANDES AUJOURD'HUI -->
-
-            <div
-                id="todayOrdersCard"
-                class="monitoringItem"
-            >
-
-                <span class="monitoringIcon">
-                    🛒
-                </span>
-
-                <div>
-
-                    <span>
-                        Pedidos hoje
-                    </span>
-
-                    <strong id="todayOrders">
-                        0
-                    </strong>
 
                 </div>
 
@@ -1419,7 +1282,9 @@
 >
 
 
-    <!-- VENTES DU MOIS -->
+    <!-- ==================================================
+         VENTES DU MOIS
+    ================================================== -->
 
     <article
         id="monthlySalesCard"
@@ -1430,14 +1295,20 @@
             Vendas este mês
         </span>
 
-        <strong id="monthlySales">
+
+        <strong
+            id="monthlySales"
+        >
             0 Kz
         </strong>
 
     </article>
 
 
-    <!-- COMMANDES DU MOIS -->
+
+    <!-- ==================================================
+         COMMANDES DU MOIS
+    ================================================== -->
 
     <article
         id="monthlyOrdersCard"
@@ -1448,14 +1319,20 @@
             Pedidos este mês
         </span>
 
-        <strong id="monthlyOrders">
+
+        <strong
+            id="monthlyOrders"
+        >
             0
         </strong>
 
     </article>
 
 
-    <!-- PRODUITS ACTIFS -->
+
+    <!-- ==================================================
+         PRODUITS ACTIFS
+    ================================================== -->
 
     <article
         id="activeProductsCard"
@@ -1466,14 +1343,20 @@
             Produtos ativos
         </span>
 
-        <strong id="activeProducts">
+
+        <strong
+            id="activeProducts"
+        >
             0
         </strong>
 
     </article>
 
 
-    <!-- COMMERÇANTS VÉRIFIÉS -->
+
+    <!-- ==================================================
+         COMMERÇANTS VÉRIFIÉS
+    ================================================== -->
 
     <article
         id="verifiedMerchantsCard"
@@ -1484,191 +1367,14 @@
             Comerciantes verificados
         </span>
 
-        <strong id="verifiedMerchants">
+
+        <strong
+            id="verifiedMerchants"
+        >
             0
         </strong>
 
     </article>
-
-
-</section>
-
-
-
-<!-- ==================================================
-     ÉTAT DU SYSTÈME
-================================================== -->
-
-<section
-    id="systemStatusPanel"
-    class="dashboardPanel systemStatusPanel"
->
-
-
-    <div class="panelHeader">
-
-        <div>
-
-            <h2>
-                Estado do sistema
-            </h2>
-
-            <p>
-                Monitorização dos principais serviços
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <div
-        id="systemStatusGrid"
-        class="systemStatusGrid"
-    >
-
-
-        <!-- FIREBASE -->
-
-        <div
-            id="firebaseStatusCard"
-            class="systemStatusItem"
-        >
-
-            <span>
-                Firebase
-            </span>
-
-            <strong
-                id="firebaseStatus"
-            >
-                Online
-            </strong>
-
-        </div>
-
-
-        <!-- FIRESTORE -->
-
-        <div
-            id="firestoreStatusCard"
-            class="systemStatusItem"
-        >
-
-            <span>
-                Firestore
-            </span>
-
-            <strong
-                id="firestoreStatus"
-            >
-                Online
-            </strong>
-
-        </div>
-
-
-        <!-- AUTHENTIFICATION -->
-
-        <div
-            id="authStatusCard"
-            class="systemStatusItem"
-        >
-
-            <span>
-                Autenticação
-            </span>
-
-            <strong
-                id="authStatus"
-            >
-                Online
-            </strong>
-
-        </div>
-
-
-        <!-- SERVEUR -->
-
-        <div
-            id="serverStatusCard"
-            class="systemStatusItem"
-        >
-
-            <span>
-                Servidor
-            </span>
-
-            <strong
-                id="serverStatus"
-            >
-                Online
-            </strong>
-
-        </div>
-
-
-        <!-- BASE DE DONNÉES -->
-
-        <div
-            id="databaseStatusCard"
-            class="systemStatusItem"
-        >
-
-            <span>
-                Base de dados
-            </span>
-
-            <strong
-                id="databaseName"
-            >
-                Firebase Firestore
-            </strong>
-
-        </div>
-
-
-        <!-- DERNIÈRE SYNCHRONISATION -->
-
-        <div
-            id="lastSyncCard"
-            class="systemStatusItem"
-        >
-
-            <span>
-                Última sincronização
-            </span>
-
-            <strong
-                id="lastSync"
-            >
-                -
-            </strong>
-
-        </div>
-
-
-        <!-- DERNIÈRE MISE À JOUR -->
-
-        <div
-            id="lastUpdateCard"
-            class="systemStatusItem"
-        >
-
-            <span>
-                Última atualização
-            </span>
-
-            <strong
-                id="lastUpdate"
-            >
-                -
-            </strong>
-
-        </div>
-
-
-    </div>
 
 
 </section>
