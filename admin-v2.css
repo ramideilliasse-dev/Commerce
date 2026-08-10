@@ -2387,3 +2387,989 @@ img {
 /* =========================================================
    48. FIN GRAND BLOC CSS 2
 ========================================================= */
+/* =========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.CSS
+   BLOC 2 — HEADER + CARTES STATISTIQUES
+========================================================= */
+
+
+/* =========================================================
+   HEADER PRINCIPAL
+========================================================= */
+
+.adminHeader {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+
+    min-height: 82px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 30px;
+
+    padding: 18px 32px;
+
+    background: rgba(255, 255, 255, 0.96);
+
+    border-bottom: 1px solid #e9edf2;
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+
+/* =========================================================
+   BIENVENUE
+========================================================= */
+
+.headerWelcome {
+    min-width: 0;
+}
+
+.headerWelcome h1 {
+    margin: 0;
+
+    font-size: 28px;
+    line-height: 1.15;
+
+    font-weight: 800;
+
+    letter-spacing: -0.6px;
+
+    color: #111827;
+}
+
+.headerWelcome p {
+    margin: 7px 0 0;
+
+    font-size: 14px;
+    line-height: 1.5;
+
+    color: #7b8492;
+}
+
+
+/* =========================================================
+   ACTIONS DU HEADER
+========================================================= */
+
+.headerActions {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   RECHERCHE
+========================================================= */
+
+#globalSearch {
+    width: 245px;
+    height: 44px;
+
+    padding: 0 16px;
+
+    border: 1px solid #e2e7ed;
+    border-radius: 12px;
+
+    outline: none;
+
+    background: #f8fafc;
+
+    color: #111827;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+#globalSearch::placeholder {
+    color: #9aa3af;
+}
+
+#globalSearch:hover {
+    background: #ffffff;
+}
+
+#globalSearch:focus {
+    background: #ffffff;
+
+    border-color: #111827;
+
+    box-shadow:
+        0 0 0 3px rgba(17, 24, 39, 0.06);
+}
+
+
+/* =========================================================
+   BOUTONS HEADER
+========================================================= */
+
+.headerButton {
+    width: 44px;
+    height: 44px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid #e2e7ed;
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    color: #252b34;
+
+    font-size: 18px;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.headerButton:hover {
+    background: #f5f7fa;
+
+    border-color: #d7dde5;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 5px 15px rgba(15, 23, 42, 0.07);
+}
+
+.headerButton:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   CONTENU DASHBOARD
+========================================================= */
+
+.dashboardContent {
+    width: 100%;
+
+    padding: 30px 32px 50px;
+}
+
+
+/* =========================================================
+   CARTES STATISTIQUES
+========================================================= */
+
+.statisticsCards {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 18px;
+
+    width: 100%;
+
+    margin-bottom: 24px;
+}
+
+
+/* =========================================================
+   CARTE STATISTIQUE
+========================================================= */
+
+.statCard {
+    position: relative;
+
+    min-height: 150px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    padding: 22px;
+
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border: 1px solid #e8edf2;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 4px 14px rgba(15, 23, 42, 0.04);
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+/* =========================================================
+   EFFET VISUEL DES CARTES
+========================================================= */
+
+.statCard::after {
+    content: "";
+
+    position: absolute;
+
+    width: 90px;
+    height: 90px;
+
+    right: -35px;
+    bottom: -35px;
+
+    border-radius: 50%;
+
+    background: rgba(17, 24, 39, 0.025);
+
+    pointer-events: none;
+}
+
+.statCard:hover {
+    transform: translateY(-3px);
+
+    border-color: #dce2e9;
+
+    box-shadow:
+        0 12px 28px rgba(15, 23, 42, 0.08);
+}
+
+
+/* =========================================================
+   EN-TÊTE DES CARTES
+========================================================= */
+
+.statCardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    color: #697386;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   ICÔNE STATISTIQUE
+========================================================= */
+
+.statIcon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 12px;
+
+    background: #f4f6f8;
+
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   VALEUR PRINCIPALE
+========================================================= */
+
+.statCard > strong {
+    display: block;
+
+    margin-top: 15px;
+
+    font-size: 29px;
+    line-height: 1;
+
+    font-weight: 800;
+
+    letter-spacing: -0.8px;
+
+    color: #111827;
+}
+
+
+/* =========================================================
+   ÉVOLUTION
+========================================================= */
+
+.statGrowth {
+    display: inline-flex;
+    align-items: center;
+
+    width: fit-content;
+
+    margin-top: 9px;
+
+    padding: 4px 8px;
+
+    border-radius: 7px;
+
+    background: #f1f8f3;
+
+    color: #27854b;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   ADAPTATION TABLETTE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .statisticsCards {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    #globalSearch {
+        width: 200px;
+    }
+
+}
+
+
+/* =========================================================
+   ADAPTATION MOBILE
+========================================================= */
+
+@media (max-width: 760px) {
+
+    .adminHeader {
+        min-height: auto;
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        padding: 20px;
+    }
+
+    .headerActions {
+        width: 100%;
+    }
+
+    #globalSearch {
+        flex: 1;
+
+        width: auto;
+    }
+
+    .dashboardContent {
+        padding: 20px 16px 40px;
+    }
+
+    .statisticsCards {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 12px;
+    }
+
+    .statCard {
+        min-height: 135px;
+
+        padding: 17px;
+
+        border-radius: 15px;
+    }
+
+    .statCard > strong {
+        font-size: 24px;
+    }
+
+    .statIcon {
+        width: 36px;
+        height: 36px;
+
+        border-radius: 10px;
+
+        font-size: 16px;
+    }
+
+}
+
+
+/* =========================================================
+   PETIT MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .headerWelcome h1 {
+        font-size: 24px;
+    }
+
+    .headerActions {
+        gap: 7px;
+    }
+
+    #globalSearch {
+        height: 42px;
+
+        padding: 0 13px;
+    }
+
+    .headerButton {
+        width: 42px;
+        height: 42px;
+    }
+
+    .statisticsCards {
+        gap: 10px;
+    }
+
+    .statCard {
+        min-height: 125px;
+
+        padding: 15px;
+    }
+
+    .statCardHeader {
+        font-size: 11px;
+    }
+
+    .statCard > strong {
+        font-size: 21px;
+    }
+
+    .statGrowth {
+        font-size: 10px;
+    }
+
+}
+/* =========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.CSS
+   BLOC 3 — GRAPHIQUES + FINANCES + TABLEAUX
+========================================================= */
+
+
+/* =========================================================
+   ZONE GRAPHIQUES
+========================================================= */
+
+.dashboardCharts {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 20px;
+
+    width: 100%;
+
+    margin-bottom: 22px;
+}
+
+
+/* =========================================================
+   PANELS GENERAUX
+========================================================= */
+
+.dashboardPanel {
+    background: #ffffff;
+
+    border: 1px solid #e8edf2;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 4px 16px rgba(15, 23, 42, 0.04);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   EN-TÊTE DES PANELS
+========================================================= */
+
+.panelHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 21px 22px;
+
+    border-bottom: 1px solid #eef1f4;
+}
+
+.panelHeader h2 {
+    margin: 0;
+
+    color: #151a22;
+
+    font-size: 17px;
+    line-height: 1.3;
+
+    font-weight: 800;
+
+    letter-spacing: -0.25px;
+}
+
+.panelHeader p {
+    margin: 5px 0 0;
+
+    color: #89919d;
+
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   SELECTEUR DE PERIODE
+========================================================= */
+
+.periodSelector {
+    height: 38px;
+
+    padding: 0 11px;
+
+    border: 1px solid #e1e6eb;
+
+    border-radius: 9px;
+
+    outline: none;
+
+    background: #f8fafc;
+
+    color: #4b5563;
+
+    font-family: inherit;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   CONTENEUR GRAPHIQUE
+========================================================= */
+
+.chartContainer {
+    position: relative;
+
+    width: 100%;
+
+    height: 300px;
+
+    padding: 20px;
+}
+
+.chartContainer canvas {
+    display: block;
+
+    width: 100% !important;
+    height: 100% !important;
+}
+
+
+/* =========================================================
+   FINANCES
+========================================================= */
+
+.financeOverview {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 16px;
+
+    width: 100%;
+
+    margin-bottom: 22px;
+}
+
+
+/* =========================================================
+   CARTE FINANCIERE
+========================================================= */
+
+.financeCard {
+    min-height: 125px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: #ffffff;
+
+    border: 1px solid #e8edf2;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 4px 14px rgba(15, 23, 42, 0.035);
+
+    transition:
+        transform 0.22s ease,
+        box-shadow 0.22s ease;
+}
+
+.financeCard:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 24px rgba(15, 23, 42, 0.07);
+}
+
+.financeLabel {
+    display: block;
+
+    margin-bottom: 10px;
+
+    color: #7c8592;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.financeCard strong {
+    color: #111827;
+
+    font-size: 23px;
+
+    font-weight: 800;
+
+    letter-spacing: -0.4px;
+}
+
+
+/* =========================================================
+   TABLEAUX DASHBOARD
+========================================================= */
+
+.dashboardTables {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 20px;
+
+    width: 100%;
+}
+
+
+/* =========================================================
+   TABLE PANEL
+========================================================= */
+
+.tablePanel {
+    min-width: 0;
+}
+
+.tablePanel:last-child {
+    grid-column: 1 / -1;
+}
+
+
+/* =========================================================
+   LIEN DU PANEL
+========================================================= */
+
+.panelLink {
+    display: inline-flex;
+    align-items: center;
+
+    min-height: 34px;
+
+    padding: 0 11px;
+
+    border-radius: 8px;
+
+    background: #f5f7f9;
+
+    color: #374151;
+
+    text-decoration: none;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.panelLink:hover {
+    background: #111827;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   CONTENEUR TABLE
+========================================================= */
+
+.tableWrapper {
+    width: 100%;
+
+    overflow-x: auto;
+}
+
+
+/* =========================================================
+   TABLEAU
+========================================================= */
+
+.adminTable {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    min-width: 620px;
+}
+
+
+/* =========================================================
+   EN-TÊTE TABLEAU
+========================================================= */
+
+.adminTable thead th {
+    padding: 13px 18px;
+
+    background: #fafbfc;
+
+    border-bottom: 1px solid #e9edf1;
+
+    color: #7b8491;
+
+    text-align: left;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   CELLULES
+========================================================= */
+
+.adminTable tbody td {
+    padding: 15px 18px;
+
+    border-bottom: 1px solid #f0f2f4;
+
+    color: #3f4650;
+
+    font-size: 12px;
+
+    vertical-align: middle;
+}
+
+.adminTable tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* =========================================================
+   HOVER TABLE
+========================================================= */
+
+.adminTable tbody tr {
+    transition:
+        background 0.18s ease;
+}
+
+.adminTable tbody tr:hover {
+    background: #fafbfc;
+}
+
+
+/* =========================================================
+   TABLEAU VIDE
+========================================================= */
+
+.adminTable tbody td[colspan] {
+    padding: 35px 20px;
+
+    text-align: center;
+
+    color: #9aa2ad;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   RESPONSIVE — TABLETTE
+========================================================= */
+
+@media (max-width: 1050px) {
+
+    .dashboardCharts {
+        grid-template-columns:
+            1fr;
+    }
+
+    .financeOverview {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .dashboardTables {
+        grid-template-columns:
+            1fr;
+    }
+
+    .tablePanel:last-child {
+        grid-column: auto;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .dashboardCharts {
+        gap: 14px;
+
+        margin-bottom: 16px;
+    }
+
+    .dashboardPanel {
+        border-radius: 15px;
+    }
+
+    .panelHeader {
+        padding: 17px;
+
+        gap: 12px;
+    }
+
+    .panelHeader h2 {
+        font-size: 15px;
+    }
+
+    .panelHeader p {
+        font-size: 11px;
+    }
+
+    .chartContainer {
+        height: 240px;
+
+        padding: 14px;
+    }
+
+    .financeOverview {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 12px;
+
+        margin-bottom: 16px;
+    }
+
+    .financeCard {
+        min-height: 105px;
+
+        padding: 16px;
+
+        border-radius: 14px;
+    }
+
+    .financeCard strong {
+        font-size: 18px;
+    }
+
+    .dashboardTables {
+        gap: 14px;
+    }
+
+    .adminTable {
+        min-width: 560px;
+    }
+
+    .adminTable thead th,
+    .adminTable tbody td {
+        padding-left: 13px;
+        padding-right: 13px;
+    }
+
+}
+
+
+/* =========================================================
+   PETIT MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .periodSelector {
+        max-width: 125px;
+
+        font-size: 10px;
+    }
+
+    .financeOverview {
+        gap: 9px;
+    }
+
+    .financeCard {
+        padding: 13px;
+    }
+
+    .financeLabel {
+        font-size: 10px;
+    }
+
+    .financeCard strong {
+        font-size: 16px;
+    }
+
+    .panelLink {
+        min-height: 31px;
+
+        padding: 0 8px;
+
+        font-size: 10px;
+    }
+
+}
