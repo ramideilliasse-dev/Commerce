@@ -4744,3 +4744,30 @@ img {
     outline: 2px solid #111827;
     outline-offset: 3px;
 }
+/* =========================================================
+   CARTES DASHBOARD CLIQUABLES
+========================================================= */
+
+.statCardClickable {
+    display: block;
+
+    color: inherit;
+    text-decoration: none;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+
+    position: relative;
+
+    z-index: 5;
+}
+
+.statCardClickable:hover {
+    color: inherit;
+    text-decoration: none;
+}
+
+.statCardClickable:active {
+    transform: scale(0.985);
+}
