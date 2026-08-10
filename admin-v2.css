@@ -2269,3 +2269,737 @@ select:focus-visible {
 /* ==========================================================
    FIN BLOC 3
 ========================================================== */
+/* =========================================================
+   TOMA ADMIN V2
+   BLOC 4 — NOTIFICATIONS + LOADER + TOAST + MODAL + LOGS
+   ========================================================= */
+
+
+/* =========================================================
+   1. PANNEAU NOTIFICATIONS
+   ========================================================= */
+
+#notificationsPanel {
+    position: relative;
+    width: 100%;
+    margin-top: 24px;
+}
+
+
+/* Liste des notifications */
+
+#notificationsList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+
+/* État vide */
+
+#notificationsPanel .notificationEmpty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    min-height: 150px;
+    padding: 30px 20px;
+
+    border: 1px dashed #d9dee7;
+    border-radius: 16px;
+
+    background: #fafbfc;
+
+    text-align: center;
+}
+
+
+#notificationsPanel .notificationEmptyIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 48px;
+    height: 48px;
+
+    margin-bottom: 12px;
+
+    border-radius: 14px;
+
+    background: #f1f3f6;
+
+    font-size: 22px;
+}
+
+
+#notificationsPanel .notificationEmpty p {
+    margin: 0;
+
+    color: #7b8494;
+
+    font-size: 14px;
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   2. DEMANDES COMMERÇANTS
+   ========================================================= */
+
+#merchantRequestsSummary {
+    width: 100%;
+    margin-top: 24px;
+}
+
+
+#merchantRequestsSummary .merchantRequestSummaryContent {
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+
+    min-height: 92px;
+
+    padding: 18px 20px;
+
+    border: 1px solid #e8ebf0;
+    border-radius: 18px;
+
+    background: #ffffff;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+#merchantRequestsSummary .merchantRequestSummaryContent:hover {
+    transform: translateY(-2px);
+
+    border-color: #dfe4eb;
+
+    box-shadow:
+        0 12px 28px rgba(15, 23, 42, 0.07);
+}
+
+
+/* Icône */
+
+#merchantRequestsSummary .merchantRequestIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 52px;
+
+    width: 52px;
+    height: 52px;
+
+    border-radius: 15px;
+
+    background: #f4f5f7;
+
+    font-size: 22px;
+}
+
+
+/* Informations */
+
+#merchantRequestsSummary .merchantRequestInfo {
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+
+    min-width: 0;
+}
+
+
+#merchantRequestsSummary .merchantRequestInfo span {
+    color: #7b8494;
+
+    font-size: 13px;
+    font-weight: 500;
+}
+
+
+#merchantRequestsSummary .merchantRequestInfo strong {
+    color: #111827;
+
+    font-size: 25px;
+    line-height: 1;
+
+    font-weight: 700;
+}
+
+
+/* Badge */
+
+#merchantRequestsSummary .merchantRequestBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 32px;
+    height: 32px;
+
+    margin-left: auto;
+
+    padding: 0 10px;
+
+    border-radius: 999px;
+
+    background: #111111;
+    color: #ffffff;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   3. LOADER GLOBAL
+   ========================================================= */
+
+#loader {
+    position: fixed;
+    inset: 0;
+
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(15, 23, 42, 0.42);
+
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+
+    opacity: 1;
+    visibility: visible;
+
+    transition:
+        opacity 0.2s ease,
+        visibility 0.2s ease;
+}
+
+
+/* Classe cachée */
+
+#loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+
+/* Boîte */
+
+#loader .loaderBox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    gap: 16px;
+
+    min-width: 170px;
+
+    padding: 28px 30px;
+
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 20px;
+
+    background: rgba(255, 255, 255, 0.96);
+
+    box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.18);
+}
+
+
+#loader .loaderBox p {
+    margin: 0;
+
+    color: #4b5563;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* Spinner */
+
+#loader .loaderSpinner {
+    width: 34px;
+    height: 34px;
+
+    border: 3px solid #e5e7eb;
+    border-top-color: #111111;
+
+    border-radius: 50%;
+
+    animation: tomaLoaderSpin 0.75s linear infinite;
+}
+
+
+@keyframes tomaLoaderSpin {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+/* =========================================================
+   4. TOAST
+   ========================================================= */
+
+#toast {
+    position: fixed;
+
+    left: 50%;
+    bottom: 28px;
+
+    z-index: 10000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 220px;
+    max-width: min(420px, calc(100vw - 40px));
+
+    min-height: 46px;
+
+    padding: 12px 18px;
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+
+    background: #111111;
+    color: #ffffff;
+
+    box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.18);
+
+    transform:
+        translate(-50%, 20px);
+
+    opacity: 0;
+    visibility: hidden;
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease,
+        visibility 0.25s ease;
+}
+
+
+/* Toast visible */
+
+#toast.show {
+    opacity: 1;
+    visibility: visible;
+
+    transform:
+        translate(-50%, 0);
+}
+
+
+#toastMessage {
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    line-height: 1.4;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   5. MODAL NOTIFICATION
+   ========================================================= */
+
+#notificationModal {
+    position: fixed;
+    inset: 0;
+
+    z-index: 10001;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(15, 23, 42, 0.48);
+
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+
+    opacity: 1;
+    visibility: visible;
+
+    transition:
+        opacity 0.2s ease,
+        visibility 0.2s ease;
+}
+
+
+/* Modal cachée */
+
+#notificationModal.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+
+/* Contenu */
+
+#notificationModalContent {
+    width: min(520px, 100%);
+
+    max-height: min(680px, calc(100vh - 40px));
+
+    overflow: hidden;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 22px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.20);
+
+    transform: translateY(8px) scale(0.98);
+
+    transition:
+        transform 0.25s ease;
+}
+
+
+#notificationModal:not(.hidden)
+#notificationModalContent {
+    transform: translateY(0) scale(1);
+}
+
+
+/* Header */
+
+#notificationModal .modalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    min-height: 64px;
+
+    padding: 0 20px;
+
+    border-bottom: 1px solid #edf0f3;
+}
+
+
+#notificationModal .modalHeader h2 {
+    margin: 0;
+
+    color: #111827;
+
+    font-size: 17px;
+    font-weight: 700;
+}
+
+
+/* Bouton fermer */
+
+#notificationModal .modalClose {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    padding: 0;
+
+    border: 0;
+    border-radius: 10px;
+
+    background: #f3f4f6;
+    color: #4b5563;
+
+    font-size: 22px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+#notificationModal .modalClose:hover {
+    background: #111111;
+    color: #ffffff;
+
+    transform: rotate(3deg);
+}
+
+
+/* Corps */
+
+#notificationModal .modalBody {
+    max-height: calc(100vh - 125px);
+
+    overflow-y: auto;
+
+    padding: 22px;
+
+    color: #374151;
+
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+
+/* Scrollbar modal */
+
+#notificationModal .modalBody::-webkit-scrollbar {
+    width: 6px;
+}
+
+
+#notificationModal .modalBody::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+#notificationModal .modalBody::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+
+    background: #d1d5db;
+}
+
+
+/* =========================================================
+   6. LOGS DU SYSTÈME
+   ========================================================= */
+
+#systemLogsPanel {
+    width: 100%;
+
+    margin-top: 24px;
+
+    border: 1px solid #e8ebf0;
+    border-radius: 18px;
+
+    background: #ffffff;
+
+    overflow: hidden;
+}
+
+
+#systemLogsPanel .systemLogsHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    padding: 20px 22px;
+
+    border-bottom: 1px solid #edf0f3;
+}
+
+
+#systemLogsPanel .systemLogsHeader h2 {
+    margin: 0 0 4px;
+
+    color: #111827;
+
+    font-size: 16px;
+    font-weight: 700;
+}
+
+
+#systemLogsPanel .systemLogsHeader p {
+    margin: 0;
+
+    color: #8a93a1;
+
+    font-size: 12px;
+    font-weight: 500;
+}
+
+
+/* Bouton nettoyer */
+
+#systemLogsPanel .clearLogsButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 34px;
+
+    padding: 0 13px;
+
+    border: 1px solid #e1e5ea;
+    border-radius: 9px;
+
+    background: #ffffff;
+    color: #4b5563;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+
+#systemLogsPanel .clearLogsButton:hover {
+    border-color: #111111;
+
+    background: #111111;
+    color: #ffffff;
+}
+
+
+/* Conteneur des logs */
+
+#systemLogs {
+    display: flex;
+    flex-direction: column;
+
+    max-height: 360px;
+
+    overflow-y: auto;
+
+    padding: 6px 0;
+}
+
+
+/* Chaque ligne de log générée par JS */
+
+#systemLogs > * {
+    padding: 12px 22px;
+
+    border-bottom: 1px solid #f0f2f5;
+}
+
+
+#systemLogs > *:last-child {
+    border-bottom: 0;
+}
+
+
+/* Scrollbar */
+
+#systemLogs::-webkit-scrollbar {
+    width: 6px;
+}
+
+
+#systemLogs::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+#systemLogs::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+
+    background: #d1d5db;
+}
+
+
+/* =========================================================
+   7. RESPONSIVE — BLOC 4
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    #merchantRequestsSummary
+    .merchantRequestSummaryContent {
+        gap: 12px;
+
+        padding: 15px;
+    }
+
+
+    #merchantRequestsSummary
+    .merchantRequestIcon {
+        flex-basis: 44px;
+
+        width: 44px;
+        height: 44px;
+
+        border-radius: 13px;
+
+        font-size: 19px;
+    }
+
+
+    #merchantRequestsSummary
+    .merchantRequestInfo strong {
+        font-size: 21px;
+    }
+
+
+    #notificationModal {
+        align-items: flex-end;
+
+        padding: 10px;
+    }
+
+
+    #notificationModalContent {
+        max-height: calc(100vh - 20px);
+
+        border-radius: 20px;
+    }
+
+
+    #notificationModal .modalBody {
+        max-height: calc(100vh - 95px);
+
+        padding: 18px;
+    }
+
+
+    #systemLogsPanel .systemLogsHeader {
+        padding: 16px;
+    }
+
+
+    #systemLogsPanel
+    .systemLogsHeader h2 {
+        font-size: 15px;
+    }
+
+
+    #systemLogs > * {
+        padding: 11px 16px;
+    }
+
+
+    #toast {
+        bottom: 18px;
+
+        max-width: calc(100vw - 28px);
+    }
+
+}
