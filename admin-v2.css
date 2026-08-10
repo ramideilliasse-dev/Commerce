@@ -1043,3 +1043,602 @@ select:focus-visible {
 /* ==========================================================
    FIN BLOC 1
 ========================================================== */
+/* ==========================================================
+   TOMA ADMIN V2
+   BLOC 2 — CARTES STATISTIQUES
+   Statistics Cards Premium
+========================================================== */
+
+
+/* ==========================================================
+   1. CONTENEUR DES CARTES
+========================================================== */
+
+#statisticsCards {
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 18px;
+}
+
+
+/* ==========================================================
+   2. CARTE STATISTIQUE — BASE
+========================================================== */
+
+.statCard {
+
+    position: relative;
+
+    min-width: 0;
+
+    min-height: 170px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    padding: 22px;
+
+    background:
+        var(--toma-white);
+
+    border:
+        1px solid var(--toma-border);
+
+    border-radius:
+        var(--radius-lg);
+
+    box-shadow:
+        var(--shadow-soft);
+
+    overflow: hidden;
+
+    cursor: default;
+
+    transition:
+        transform var(--transition),
+        box-shadow var(--transition),
+        border-color var(--transition);
+}
+
+
+/* ==========================================================
+   3. LIGNE DÉCORATIVE SUPÉRIEURE
+========================================================== */
+
+.statCard::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 3px;
+
+    background:
+        var(--toma-black);
+
+    opacity: 0;
+
+    transition:
+        opacity var(--transition);
+}
+
+
+.statCard:hover {
+
+    transform:
+        translateY(-4px);
+
+    border-color:
+        #dedfe2;
+
+    box-shadow:
+        var(--shadow-medium);
+}
+
+
+.statCard:hover::before {
+
+    opacity: 1;
+}
+
+
+/* ==========================================================
+   4. HEADER DE LA CARTE
+========================================================== */
+
+.statCardHeader {
+
+    position: relative;
+
+    z-index: 2;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 12px;
+
+    color:
+        var(--toma-text-soft);
+
+    font-size: 13px;
+
+    font-weight: 700;
+}
+
+
+/* ==========================================================
+   5. ICÔNE
+========================================================== */
+
+.statIcon {
+
+    width: 44px;
+    height: 44px;
+
+    flex: 0 0 44px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius:
+        13px;
+
+    background:
+        #f6f6f7;
+
+    color:
+        var(--toma-text);
+
+    font-size: 19px;
+
+    box-shadow:
+        inset 0 0 0 1px
+        rgba(17,17,17,0.04);
+
+    transition:
+        background var(--transition),
+        transform var(--transition);
+}
+
+
+.statCard:hover .statIcon {
+
+    background:
+        rgba(245,196,0,0.14);
+
+    transform:
+        scale(1.05);
+}
+
+
+/* ==========================================================
+   6. VALEUR PRINCIPALE
+========================================================== */
+
+.statCard > strong {
+
+    position: relative;
+
+    z-index: 2;
+
+    display: block;
+
+    margin-top: 12px;
+
+    color:
+        var(--toma-text);
+
+    font-size: clamp(
+        26px,
+        2.5vw,
+        36px
+    );
+
+    font-weight: 850;
+
+    letter-spacing:
+        -1.2px;
+
+    line-height: 1.05;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* ==========================================================
+   7. ÉVOLUTION
+========================================================== */
+
+.statGrowth {
+
+    position: relative;
+
+    z-index: 2;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    width: fit-content;
+
+    margin-top: 12px;
+
+    padding:
+        5px 9px;
+
+    border-radius:
+        8px;
+
+    background:
+        rgba(22,163,74,0.09);
+
+    color:
+        var(--toma-success);
+
+    font-size: 11px;
+
+    font-weight: 800;
+}
+
+
+/* ==========================================================
+   8. EFFET VISUEL DE FOND
+========================================================== */
+
+.statCard::after {
+
+    content: "";
+
+    position: absolute;
+
+    right: -35px;
+    bottom: -45px;
+
+    width: 130px;
+    height: 130px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(245,196,0,0.055);
+
+    pointer-events: none;
+
+    transition:
+        transform 0.35s ease,
+        background 0.35s ease;
+}
+
+
+.statCard:hover::after {
+
+    transform:
+        scale(1.25);
+
+    background:
+        rgba(245,196,0,0.09);
+}
+
+
+/* ==========================================================
+   9. CARTE UTILISATEURS
+========================================================== */
+
+#usersCard::before {
+
+    background:
+        linear-gradient(
+            90deg,
+            #111111,
+            #444444
+        );
+}
+
+
+/* ==========================================================
+   10. CARTE COMMERÇANTS
+========================================================== */
+
+#merchantsCard::before {
+
+    background:
+        linear-gradient(
+            90deg,
+            #f5c400,
+            #ffd83d
+        );
+}
+
+
+#merchantsCard .statIcon {
+
+    background:
+        rgba(245,196,0,0.10);
+}
+
+
+/* ==========================================================
+   11. CARTE PRODUITS
+========================================================== */
+
+#productsCard::before {
+
+    background:
+        linear-gradient(
+            90deg,
+            #525252,
+            #8a8a8a
+        );
+}
+
+
+/* ==========================================================
+   12. CARTE VENTES
+========================================================== */
+
+#salesCard::before {
+
+    background:
+        linear-gradient(
+            90deg,
+            #111111,
+            #f5c400
+        );
+}
+
+
+#salesCard .statIcon {
+
+    background:
+        rgba(245,196,0,0.10);
+}
+
+
+/* ==========================================================
+   13. VALEURS FINANCIÈRES
+========================================================== */
+
+#salesCount {
+
+    font-size:
+        clamp(
+            24px,
+            2.3vw,
+            33px
+        );
+}
+
+
+/* ==========================================================
+   14. ÉVOLUTION POSITIVE
+========================================================== */
+
+#usersGrowth,
+#merchantsGrowth {
+
+    color:
+        var(--toma-success);
+
+    background:
+        rgba(22,163,74,0.09);
+}
+
+
+/* ==========================================================
+   15. ÉVOLUTION NÉGATIVE
+   Préparé pour le JS
+========================================================== */
+
+.statGrowth.negative {
+
+    color:
+        var(--toma-danger);
+
+    background:
+        rgba(220,38,38,0.09);
+}
+
+
+/* ==========================================================
+   16. ÉVOLUTION NEUTRE
+========================================================== */
+
+.statGrowth.neutral {
+
+    color:
+        var(--toma-text-soft);
+
+    background:
+        #f1f2f4;
+}
+
+
+/* ==========================================================
+   17. RESPONSIVE TABLETTE
+========================================================== */
+
+@media (max-width: 1100px) {
+
+    #statisticsCards {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 16px;
+    }
+
+
+    .statCard {
+
+        min-height:
+            160px;
+
+        padding:
+            20px;
+    }
+
+
+    .statCard > strong {
+
+        font-size:
+            30px;
+    }
+
+}
+
+
+/* ==========================================================
+   18. RESPONSIVE MOBILE
+========================================================== */
+
+@media (max-width: 768px) {
+
+    #statisticsCards {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 12px;
+    }
+
+
+    .statCard {
+
+        min-height:
+            145px;
+
+        padding:
+            16px;
+
+        border-radius:
+            15px;
+    }
+
+
+    .statCardHeader {
+
+        font-size:
+            11px;
+    }
+
+
+    .statIcon {
+
+        width: 36px;
+        height: 36px;
+
+        flex-basis: 36px;
+
+        border-radius:
+            10px;
+
+        font-size:
+            16px;
+    }
+
+
+    .statCard > strong {
+
+        margin-top:
+            10px;
+
+        font-size:
+            25px;
+
+        letter-spacing:
+            -0.8px;
+    }
+
+
+    .statGrowth {
+
+        margin-top:
+            8px;
+
+        padding:
+            4px 7px;
+
+        font-size:
+            10px;
+    }
+
+}
+
+
+/* ==========================================================
+   19. TRÈS PETITS ÉCRANS
+========================================================== */
+
+@media (max-width: 390px) {
+
+    #statisticsCards {
+
+        gap:
+            10px;
+    }
+
+
+    .statCard {
+
+        min-height:
+            138px;
+
+        padding:
+            14px;
+    }
+
+
+    .statCardHeader {
+
+        font-size:
+            10px;
+    }
+
+
+    .statIcon {
+
+        width: 32px;
+        height: 32px;
+
+        flex-basis:
+            32px;
+
+        font-size:
+            14px;
+    }
+
+
+    .statCard > strong {
+
+        font-size:
+            22px;
+    }
+
+}
+
+
+/* ==========================================================
+   FIN BLOC 2
+========================================================== */
