@@ -1,107 +1,124 @@
- /* ==========================================================
+ /* =========================================================
    TOMA ADMIN V2
-   BLOC 1 — STRUCTURE GÉNÉRALE
-   Sidebar + Navigation + Main + Header + Responsive
-========================================================== */
+   ADMIN-V2.CSS
+   GRAND BLOC CSS 1
+   BASE + STRUCTURE + HEADER + CARTES PRINCIPALES
+========================================================= */
 
 
-/* ==========================================================
-   1. VARIABLES GLOBALES
-========================================================== */
+/* =========================================================
+   1. VARIABLES
+========================================================= */
 
 :root {
 
     --toma-black: #111111;
-    --toma-black-soft: #181818;
-    --toma-black-light: #222222;
+    --toma-dark: #181818;
 
-    --toma-yellow: #f5c400;
-    --toma-yellow-light: #ffd83d;
+    --background: #f4f5f7;
+    --surface: #ffffff;
+    --surface-soft: #f8f8f8;
 
-    --toma-white: #ffffff;
-    --toma-bg: #f5f6f8;
-    --toma-surface: #ffffff;
+    --text-main: #111111;
+    --text-secondary: #73767b;
+    --text-muted: #9a9da2;
 
-    --toma-text: #171717;
-    --toma-text-soft: #6f737a;
-    --toma-text-muted: #9a9da3;
+    --border: #e5e6e8;
+    --border-soft: #eeeeef;
 
-    --toma-border: #e8e9ec;
+    --green: #16a05d;
+    --green-soft: #eaf8f0;
 
-    --toma-success: #16a34a;
-    --toma-danger: #dc2626;
+    --red: #e5484d;
+    --red-soft: #fff0f0;
 
-    --sidebar-width: 270px;
-    --sidebar-collapsed-width: 82px;
+    --yellow: #f3c94b;
+    --yellow-soft: #fff9e8;
 
-    --header-height: 82px;
+    --blue: #3977e8;
+    --blue-soft: #eef4ff;
 
-    --radius-sm: 10px;
-    --radius-md: 14px;
-    --radius-lg: 18px;
-    --radius-xl: 22px;
+    --orange: #f39a3d;
+    --orange-soft: #fff4e8;
 
-    --shadow-soft:
-        0 8px 30px rgba(17, 17, 17, 0.06);
+    --shadow-small:
+        0 2px 8px rgba(0, 0, 0, 0.04);
 
-    --shadow-medium:
-        0 14px 40px rgba(17, 17, 17, 0.09);
+    --shadow-card:
+        0 8px 28px rgba(0, 0, 0, 0.055);
+
+    --shadow-hover:
+        0 14px 36px rgba(0, 0, 0, 0.09);
+
+    --radius-small: 14px;
+    --radius-medium: 20px;
+    --radius-large: 26px;
+
+    --sidebar-width: 250px;
 
     --transition:
-        0.25s ease;
+        180ms ease;
 
-    --font-main:
+}
+
+
+/* =========================================================
+   2. RESET
+========================================================= */
+
+*,
+*::before,
+*::after {
+
+    box-sizing: border-box;
+
+}
+
+
+html {
+
+    margin: 0;
+    padding: 0;
+
+    width: 100%;
+
+    min-height: 100%;
+
+    -webkit-text-size-adjust: 100%;
+
+    scroll-behavior: smooth;
+
+}
+
+
+body {
+
+    margin: 0;
+    padding: 0;
+
+    width: 100%;
+
+    min-height: 100vh;
+
+    background: var(--background);
+
+    color: var(--text-main);
+
+    font-family:
         -apple-system,
         BlinkMacSystemFont,
+        "SF Pro Display",
+        "SF Pro Text",
         "Segoe UI",
         Roboto,
         Helvetica,
         Arial,
         sans-serif;
-}
-
-
-/* ==========================================================
-   2. RESET
-========================================================== */
-
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-}
-
-
-html {
-    margin: 0;
-    padding: 0;
-
-    width: 100%;
-    min-height: 100%;
-
-    scroll-behavior: smooth;
-}
-
-
-body {
-    margin: 0;
-    padding: 0;
-
-    width: 100%;
-    min-height: 100vh;
-
-    background: var(--toma-bg);
-
-    color: var(--toma-text);
-
-    font-family: var(--font-main);
-
-    font-size: 15px;
-
-    line-height: 1.5;
 
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+
+    text-rendering: optimizeLegibility;
+
 }
 
 
@@ -109,50 +126,57 @@ button,
 input,
 select,
 textarea {
+
     font: inherit;
+
 }
 
 
 button {
+
     border: 0;
+
+    cursor: pointer;
+
 }
 
 
 a {
+
     color: inherit;
+
     text-decoration: none;
+
 }
 
 
 img {
-    display: block;
+
     max-width: 100%;
-}
 
-
-canvas {
     display: block;
+
 }
 
 
-/* ==========================================================
+/* =========================================================
    3. APPLICATION PRINCIPALE
-========================================================== */
+========================================================= */
 
 #adminApp {
 
     display: flex;
 
     width: 100%;
+
     min-height: 100vh;
 
-    background: var(--toma-bg);
 }
 
 
-/* ==========================================================
-   4. SIDEBAR PRINCIPALE
-========================================================== */
+/* =========================================================
+   4. SIDEBAR
+========================================================= */
 
 #adminSidebar {
 
@@ -162,155 +186,92 @@ canvas {
     left: 0;
     bottom: 0;
 
-    z-index: 1000;
-
     width: var(--sidebar-width);
 
     display: flex;
+
     flex-direction: column;
 
-    background:
-        linear-gradient(
-            180deg,
-            #111111 0%,
-            #151515 100%
-        );
+    background: var(--surface);
 
-    color: var(--toma-white);
+    border-right: 1px solid var(--border);
 
-    border-right:
-        1px solid rgba(255, 255, 255, 0.06);
+    z-index: 100;
 
-    box-shadow:
-        12px 0 35px rgba(0, 0, 0, 0.08);
-
-    overflow: hidden;
-
-    transition:
-        width var(--transition),
-        transform var(--transition);
 }
 
 
-/* ==========================================================
-   5. BRAND / LOGO
-========================================================== */
+/* =========================================================
+   5. BRAND
+========================================================= */
 
 #adminBrand {
 
-    position: relative;
-
     display: flex;
-    flex-direction: column;
 
-    justify-content: center;
+    align-items: center;
 
-    min-height: 110px;
+    gap: 10px;
 
-    padding: 24px 25px;
+    padding: 28px 24px;
 
-    border-bottom:
-        1px solid rgba(255, 255, 255, 0.07);
-}
+    border-bottom: 1px solid var(--border-soft);
 
-
-#adminBrand::before {
-
-    content: "";
-
-    position: absolute;
-
-    top: 0;
-    left: 0;
-
-    width: 4px;
-    height: 100%;
-
-    background: var(--toma-yellow);
 }
 
 
 .brandLogo {
 
-    color: var(--toma-white);
-
     font-size: 25px;
 
     font-weight: 900;
 
-    letter-spacing: 2px;
+    letter-spacing: -1px;
 
-    line-height: 1;
+    color: var(--toma-black);
+
 }
 
 
 .brandSubtitle {
 
-    margin-top: 7px;
+    padding: 5px 9px;
 
-    color:
-        rgba(255, 255, 255, 0.48);
+    border-radius: 8px;
+
+    background: var(--toma-black);
+
+    color: #ffffff;
 
     font-size: 10px;
 
-    font-weight: 700;
+    font-weight: 800;
 
-    letter-spacing: 3px;
+    letter-spacing: 1px;
 
-    text-transform: uppercase;
 }
 
 
-/* ==========================================================
+/* =========================================================
    6. NAVIGATION
-========================================================== */
+========================================================= */
 
 #dashboardNavigation {
 
     flex: 1;
 
     display: flex;
+
     flex-direction: column;
 
-    gap: 6px;
+    gap: 5px;
 
-    padding:
-        22px 14px;
+    padding: 20px 14px;
 
     overflow-y: auto;
 
-    overflow-x: hidden;
-
-    scrollbar-width: thin;
-
-    scrollbar-color:
-        rgba(255,255,255,0.12)
-        transparent;
 }
 
-
-#dashboardNavigation::-webkit-scrollbar {
-    width: 4px;
-}
-
-
-#dashboardNavigation::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-
-#dashboardNavigation::-webkit-scrollbar-thumb {
-
-    background:
-        rgba(255,255,255,0.12);
-
-    border-radius: 20px;
-}
-
-
-/* ==========================================================
-   7. NAVIGATION ITEM
-========================================================== */
 
 .navItem {
 
@@ -320,84 +281,67 @@ canvas {
 
     align-items: center;
 
-    min-height: 50px;
+    gap: 13px;
 
-    padding:
-        0 14px;
+    min-height: 48px;
 
-    border-radius:
-        var(--radius-md);
+    padding: 0 14px;
 
-    color:
-        rgba(255,255,255,0.62);
+    border-radius: 14px;
+
+    color: var(--text-secondary);
 
     font-size: 14px;
 
-    font-weight: 600;
-
-    white-space: nowrap;
+    font-weight: 650;
 
     transition:
         background var(--transition),
         color var(--transition),
         transform var(--transition);
+
 }
 
 
 .navItem:hover {
 
-    color: var(--toma-white);
+    background: #f4f4f5;
 
-    background:
-        rgba(255,255,255,0.07);
+    color: var(--text-main);
 
-    transform:
-        translateX(2px);
 }
 
 
 .navItem.active {
 
-    color: var(--toma-black);
+    background: var(--toma-black);
 
-    background:
-        var(--toma-yellow);
+    color: #ffffff;
 
-    font-weight: 800;
-
-    box-shadow:
-        0 8px 20px
-        rgba(245,196,0,0.18);
 }
 
 
 .navItem.active:hover {
 
-    background:
-        var(--toma-yellow-light);
+    background: #222222;
 
-    transform: none;
 }
 
 
-/* ==========================================================
-   8. NAVIGATION ICON
-========================================================== */
-
 .navIcon {
 
-    flex: 0 0 36px;
+    width: 25px;
 
-    width: 36px;
+    min-width: 25px;
 
     display: flex;
 
     align-items: center;
+
     justify-content: center;
 
     font-size: 18px;
 
-    line-height: 1;
 }
 
 
@@ -405,58 +349,39 @@ canvas {
 
     flex: 1;
 
-    overflow: hidden;
-
-    text-overflow: ellipsis;
 }
 
-
-/* ==========================================================
-   9. BADGE NAVIGATION
-========================================================== */
 
 .navBadge {
 
     min-width: 22px;
+
     height: 22px;
+
+    padding: 0 6px;
 
     display: inline-flex;
 
     align-items: center;
+
     justify-content: center;
-
-    padding:
-        0 6px;
-
-    margin-left: 8px;
 
     border-radius: 50px;
 
-    background:
-        rgba(255,255,255,0.12);
+    background: var(--red);
 
-    color:
-        rgba(255,255,255,0.85);
+    color: #ffffff;
 
     font-size: 11px;
 
     font-weight: 800;
+
 }
 
 
-.navItem.active .navBadge {
-
-    background:
-        var(--toma-black);
-
-    color:
-        var(--toma-yellow);
-}
-
-
-/* ==========================================================
-   10. PROFIL ADMIN
-========================================================== */
+/* =========================================================
+   7. PROFIL ADMIN
+========================================================= */
 
 #adminProfile {
 
@@ -464,160 +389,119 @@ canvas {
 
     align-items: center;
 
-    gap: 11px;
+    gap: 10px;
 
-    padding:
-        17px 15px;
+    padding: 16px;
 
-    border-top:
-        1px solid rgba(255,255,255,0.07);
+    border-top: 1px solid var(--border-soft);
 
-    background:
-        rgba(0,0,0,0.14);
 }
 
 
-/* ==========================================================
-   11. AVATAR ADMIN
-========================================================== */
+.adminAvatar {
 
-#adminAvatar {
+    width: 40px;
 
-    flex: 0 0 42px;
+    height: 40px;
 
-    width: 42px;
-    height: 42px;
+    border-radius: 12px;
 
     object-fit: cover;
 
-    border-radius: 50%;
+    background: #eeeeee;
 
-    border:
-        2px solid
-        rgba(245,196,0,0.8);
-
-    background:
-        #252525;
 }
 
-
-/* ==========================================================
-   12. INFORMATIONS PROFIL
-========================================================== */
 
 .adminProfileInfo {
 
-    min-width: 0;
-
     flex: 1;
 
+    min-width: 0;
+
     display: flex;
+
     flex-direction: column;
 
-    gap: 2px;
+    gap: 3px;
+
 }
 
 
-#adminName {
+.adminProfileInfo strong {
 
-    color: var(--toma-white);
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
 
     font-size: 13px;
 
     font-weight: 800;
 
-    white-space: nowrap;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
 }
 
 
 .adminProfileInfo span {
 
-    color:
-        rgba(255,255,255,0.42);
-
-    font-size: 10px;
-
-    font-weight: 600;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.5px;
-}
-
-
-/* ==========================================================
-   13. BOUTON DÉCONNEXION
-========================================================== */
-
-#logoutButton {
-
-    flex-shrink: 0;
-
-    padding:
-        8px 10px;
-
-    border-radius:
-        9px;
-
-    background:
-        rgba(255,255,255,0.07);
-
-    color:
-        rgba(255,255,255,0.62);
+    color: var(--text-muted);
 
     font-size: 11px;
 
-    font-weight: 700;
+}
 
-    cursor: pointer;
+
+.logoutButton {
+
+    padding: 7px 9px;
+
+    border-radius: 9px;
+
+    background: #f4f4f5;
+
+    color: var(--text-secondary);
+
+    font-size: 11px;
+
+    font-weight: 750;
 
     transition:
         background var(--transition),
         color var(--transition);
+
 }
 
 
-#logoutButton:hover {
+.logoutButton:hover {
 
-    background:
-        rgba(220,38,38,0.16);
+    background: var(--red-soft);
 
-    color:
-        #ff7b7b;
+    color: var(--red);
+
 }
 
 
-/* ==========================================================
-   14. CONTENU PRINCIPAL
-========================================================== */
+/* =========================================================
+   8. CONTENU PRINCIPAL
+========================================================= */
 
 #adminMain {
 
-    width: calc(
-        100% - var(--sidebar-width)
-    );
+    width: calc(100% - var(--sidebar-width));
 
     min-height: 100vh;
 
-    margin-left:
-        var(--sidebar-width);
+    margin-left: var(--sidebar-width);
 
-    display: flex;
-    flex-direction: column;
+    background: var(--background);
 
-    transition:
-        width var(--transition),
-        margin-left var(--transition);
 }
 
 
-/* ==========================================================
-   15. HEADER PRINCIPAL
-========================================================== */
+/* =========================================================
+   9. HEADER
+========================================================= */
 
 #adminHeader {
 
@@ -625,10 +509,7 @@ canvas {
 
     top: 0;
 
-    z-index: 900;
-
-    min-height:
-        var(--header-height);
+    z-index: 50;
 
     display: flex;
 
@@ -636,32 +517,27 @@ canvas {
 
     justify-content: space-between;
 
-    gap: 30px;
+    gap: 25px;
 
-    padding:
-        16px 30px;
+    min-height: 105px;
 
-    background:
-        rgba(255,255,255,0.94);
+    padding: 22px 34px;
 
-    border-bottom:
-        1px solid var(--toma-border);
+    background: rgba(255, 255, 255, 0.94);
 
-    backdrop-filter:
-        blur(18px);
+    border-bottom: 1px solid var(--border);
 
-    -webkit-backdrop-filter:
-        blur(18px);
+    backdrop-filter: blur(18px);
+
+    -webkit-backdrop-filter: blur(18px);
+
 }
 
-
-/* ==========================================================
-   16. HEADER — TITRE
-========================================================== */
 
 .headerWelcome {
 
     min-width: 0;
+
 }
 
 
@@ -669,35 +545,31 @@ canvas {
 
     margin: 0;
 
-    color:
-        var(--toma-text);
+    color: var(--text-main);
 
-    font-size: 25px;
+    font-size: clamp(28px, 3vw, 38px);
 
-    font-weight: 850;
+    line-height: 1.05;
 
-    letter-spacing:
-        -0.7px;
+    font-weight: 900;
 
-    line-height: 1.2;
+    letter-spacing: -1.4px;
+
 }
 
 
 #dashboardSubtitle {
 
-    margin:
-        5px 0 0;
+    margin: 9px 0 0;
 
-    color:
-        var(--toma-text-soft);
+    color: var(--text-secondary);
 
-    font-size: 13px;
+    font-size: 15px;
+
+    font-weight: 550;
+
 }
 
-
-/* ==========================================================
-   17. HEADER — ACTIONS
-========================================================== */
 
 .headerActions {
 
@@ -707,457 +579,232 @@ canvas {
 
     gap: 10px;
 
-    flex-shrink: 0;
 }
 
 
-/* ==========================================================
-   18. RECHERCHE GLOBALE
-========================================================== */
-
 #globalSearch {
 
-    width: 240px;
-    height: 42px;
+    width: 230px;
 
-    padding:
-        0 15px;
+    height: 46px;
 
-    border:
-        1px solid var(--toma-border);
+    padding: 0 16px;
 
-    border-radius:
-        12px;
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
 
     outline: none;
 
-    background:
-        #f8f8f9;
+    background: var(--surface);
 
-    color:
-        var(--toma-text);
+    color: var(--text-main);
 
-    font-size: 13px;
+    box-shadow: var(--shadow-small);
 
     transition:
-        border var(--transition),
-        background var(--transition),
+        border-color var(--transition),
         box-shadow var(--transition);
+
 }
 
 
 #globalSearch::placeholder {
 
-    color:
-        var(--toma-text-muted);
-}
+    color: var(--text-muted);
 
-
-#globalSearch:hover {
-
-    background:
-        var(--toma-white);
 }
 
 
 #globalSearch:focus {
 
-    background:
-        var(--toma-white);
-
-    border-color:
-        rgba(245,196,0,0.8);
+    border-color: #c7c9cd;
 
     box-shadow:
-        0 0 0 4px
-        rgba(245,196,0,0.10);
+        0 0 0 4px rgba(0, 0, 0, 0.045);
+
 }
 
 
-/* ==========================================================
-   19. BOUTONS HEADER
-========================================================== */
-
 .headerButton {
 
-    width: 42px;
-    height: 42px;
+    width: 46px;
 
-    display: inline-flex;
+    height: 46px;
+
+    display: flex;
 
     align-items: center;
+
     justify-content: center;
 
-    border:
-        1px solid var(--toma-border);
+    border: 1px solid var(--border);
 
-    border-radius:
-        12px;
+    border-radius: 14px;
 
-    background:
-        var(--toma-white);
+    background: var(--surface);
 
-    color:
-        var(--toma-text);
+    color: var(--text-main);
 
-    font-size: 17px;
+    font-size: 20px;
 
-    cursor: pointer;
-
-    box-shadow:
-        0 3px 10px
-        rgba(17,17,17,0.03);
+    box-shadow: var(--shadow-small);
 
     transition:
-        background var(--transition),
-        border-color var(--transition),
         transform var(--transition),
+        background var(--transition),
         box-shadow var(--transition);
+
 }
 
 
 .headerButton:hover {
 
-    border-color:
-        #d9dadd;
+    background: #fafafa;
 
-    background:
-        #fafafa;
+    transform: translateY(-2px);
 
-    transform:
-        translateY(-1px);
+    box-shadow: var(--shadow-card);
 
-    box-shadow:
-        0 7px 18px
-        rgba(17,17,17,0.07);
 }
 
 
 .headerButton:active {
 
-    transform:
-        translateY(0);
+    transform: scale(0.96);
+
 }
 
 
-/* ==========================================================
-   20. CONTENU DASHBOARD
-========================================================== */
+/* =========================================================
+   10. CONTENU DASHBOARD
+========================================================= */
 
 #dashboardContent {
 
     width: 100%;
 
-    padding:
-        30px;
+    max-width: 1500px;
 
-    display: flex;
-    flex-direction: column;
+    margin: 0 auto;
 
-    gap: 24px;
-}
-
-
-/* ==========================================================
-   21. RESPONSIVE — TABLETTE
-========================================================== */
-
-@media (max-width: 1100px) {
-
-    :root {
-        --sidebar-width: 235px;
-    }
-
-
-    #adminHeader {
-
-        padding:
-            16px 22px;
-    }
-
-
-    #dashboardContent {
-
-        padding:
-            24px 22px;
-    }
-
-
-    #globalSearch {
-
-        width: 190px;
-    }
+    padding: 30px 34px 60px;
 
 }
 
 
-/* ==========================================================
-   22. RESPONSIVE — MOBILE
-========================================================== */
-
-@media (max-width: 768px) {
-
-    :root {
-
-        --sidebar-width: 0px;
-
-        --header-height: 70px;
-    }
-
-
-    #adminSidebar {
-
-        width: 270px;
-
-        transform:
-            translateX(-100%);
-
-        box-shadow:
-            20px 0 50px
-            rgba(0,0,0,0.18);
-    }
-
-
-    #adminMain {
-
-        width: 100%;
-
-        margin-left: 0;
-    }
-
-
-    #adminHeader {
-
-        min-height:
-            var(--header-height);
-
-        padding:
-            12px 16px;
-
-        gap: 15px;
-    }
-
-
-    #dashboardTitle {
-
-        font-size: 21px;
-    }
-
-
-    #dashboardSubtitle {
-
-        font-size: 11px;
-    }
-
-
-    .headerActions {
-
-        gap: 7px;
-    }
-
-
-    #globalSearch {
-
-        display: none;
-    }
-
-
-    .headerButton {
-
-        width: 40px;
-        height: 40px;
-
-        border-radius: 11px;
-    }
-
-
-    #dashboardContent {
-
-        padding:
-            18px 16px;
-
-        gap: 18px;
-    }
-
-}
-
-
-/* ==========================================================
-   23. PETITS ÉCRANS
-========================================================== */
-
-@media (max-width: 430px) {
-
-    #adminHeader {
-
-        padding:
-            11px 14px;
-    }
-
-
-    #dashboardTitle {
-
-        font-size: 19px;
-    }
-
-
-    #dashboardSubtitle {
-
-        max-width: 180px;
-
-        white-space: nowrap;
-
-        overflow: hidden;
-
-        text-overflow: ellipsis;
-    }
-
-
-    #dashboardContent {
-
-        padding:
-            15px 12px;
-    }
-
-}
-
-
-/* ==========================================================
-   24. ACCESSIBILITÉ
-========================================================== */
-
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-select:focus-visible {
-
-    outline:
-        3px solid
-        rgba(245,196,0,0.35);
-
-    outline-offset:
-        2px;
-}
-
-
-/* ==========================================================
-   FIN BLOC 1
-========================================================== */
-/* ==========================================================
-   TOMA ADMIN V2
-   BLOC 2 — CARTES STATISTIQUES
-   Statistics Cards Premium
-========================================================== */
-
-
-/* ==========================================================
-   1. CONTENEUR DES CARTES
-========================================================== */
+/* =========================================================
+   11. GRAND BLOC DES CARTES PRINCIPALES
+========================================================= */
 
 #statisticsCards {
-
-    width: 100%;
 
     display: grid;
 
     grid-template-columns:
         repeat(4, minmax(0, 1fr));
 
-    gap: 18px;
+    gap: 20px;
+
+    width: 100%;
+
 }
 
 
-/* ==========================================================
-   2. CARTE STATISTIQUE — BASE
-========================================================== */
+/* =========================================================
+   12. CARTE PRINCIPALE
+========================================================= */
 
-.statCard {
+.dashboardCardLink {
 
     position: relative;
 
-    min-width: 0;
-
-    min-height: 170px;
+    min-height: 205px;
 
     display: flex;
 
     flex-direction: column;
 
-    justify-content: space-between;
-
-    padding: 22px;
-
-    background:
-        var(--toma-white);
-
-    border:
-        1px solid var(--toma-border);
-
-    border-radius:
-        var(--radius-lg);
-
-    box-shadow:
-        var(--shadow-soft);
+    justify-content: flex-start;
 
     overflow: hidden;
 
-    cursor: default;
+    padding: 25px;
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-large);
+
+    background: var(--surface);
+
+    box-shadow: var(--shadow-card);
+
+    isolation: isolate;
 
     transition:
-        transform var(--transition),
-        box-shadow var(--transition),
-        border-color var(--transition);
+        transform 220ms ease,
+        box-shadow 220ms ease,
+        border-color 220ms ease;
+
 }
 
 
-/* ==========================================================
-   3. LIGNE DÉCORATIVE SUPÉRIEURE
-========================================================== */
+/* Cercle décoratif */
 
-.statCard::before {
+.dashboardCardLink::after {
 
     content: "";
 
     position: absolute;
 
-    top: 0;
-    left: 0;
+    right: -55px;
 
-    width: 100%;
-    height: 3px;
+    bottom: -80px;
+
+    width: 190px;
+
+    height: 190px;
+
+    border-radius: 50%;
 
     background:
-        var(--toma-black);
+        radial-gradient(
+            circle,
+            rgba(248, 238, 201, 0.45) 0%,
+            rgba(255, 250, 232, 0.8) 55%,
+            rgba(255, 255, 255, 0) 100%
+        );
 
-    opacity: 0;
+    z-index: -1;
 
-    transition:
-        opacity var(--transition);
+    pointer-events: none;
+
 }
 
 
-.statCard:hover {
+/* Effet au survol */
 
-    transform:
-        translateY(-4px);
+.dashboardCardLink:hover {
 
-    border-color:
-        #dedfe2;
+    transform: translateY(-4px);
 
-    box-shadow:
-        var(--shadow-medium);
+    border-color: #d9dade;
+
+    box-shadow: var(--shadow-hover);
+
 }
 
 
-.statCard:hover::before {
+.dashboardCardLink:active {
 
-    opacity: 1;
+    transform: translateY(-1px) scale(0.995);
+
 }
 
 
-/* ==========================================================
-   4. HEADER DE LA CARTE
-========================================================== */
+/* =========================================================
+   13. HEADER DES CARTES
+========================================================= */
 
 .statCardHeader {
 
@@ -1171,69 +818,66 @@ select:focus-visible {
 
     justify-content: space-between;
 
-    gap: 12px;
+    gap: 15px;
 
-    color:
-        var(--toma-text-soft);
-
-    font-size: 13px;
-
-    font-weight: 700;
 }
 
 
-/* ==========================================================
-   5. ICÔNE
-========================================================== */
+.statCardTitle {
+
+    max-width: calc(100% - 60px);
+
+    color: var(--text-secondary);
+
+    font-size: 17px;
+
+    line-height: 1.25;
+
+    font-weight: 800;
+
+    letter-spacing: -0.2px;
+
+}
+
+
+/* =========================================================
+   14. ICÔNE DES CARTES
+========================================================= */
 
 .statIcon {
 
-    width: 44px;
-    height: 44px;
+    width: 56px;
 
-    flex: 0 0 44px;
+    height: 56px;
+
+    min-width: 56px;
 
     display: flex;
 
     align-items: center;
+
     justify-content: center;
 
-    border-radius:
-        13px;
+    border: 1px solid rgba(0, 0, 0, 0.045);
 
-    background:
-        #f6f6f7;
+    border-radius: 16px;
 
-    color:
-        var(--toma-text);
+    background: #f7f7f7;
 
-    font-size: 19px;
+    font-size: 27px;
 
     box-shadow:
-        inset 0 0 0 1px
-        rgba(17,17,17,0.04);
+        inset 0 1px 0 rgba(255,255,255,0.8),
+        0 3px 8px rgba(0,0,0,0.035);
 
-    transition:
-        background var(--transition),
-        transform var(--transition);
 }
 
 
-.statCard:hover .statIcon {
+/* =========================================================
+   15. VALEUR PRINCIPALE
+========================================================= */
 
-    background:
-        rgba(245,196,0,0.14);
-
-    transform:
-        scale(1.05);
-}
-
-
-/* ==========================================================
-   6. VALEUR PRINCIPALE
-========================================================== */
-
-.statCard > strong {
+.dashboardCardLink > strong {
 
     position: relative;
 
@@ -1241,35 +885,24 @@ select:focus-visible {
 
     display: block;
 
-    margin-top: 12px;
+    margin-top: 27px;
 
-    color:
-        var(--toma-text);
+    color: var(--text-main);
 
-    font-size: clamp(
-        26px,
-        2.5vw,
-        36px
-    );
+    font-size: 43px;
 
-    font-weight: 850;
+    line-height: 1;
 
-    letter-spacing:
-        -1.2px;
+    font-weight: 900;
 
-    line-height: 1.05;
+    letter-spacing: -1.8px;
 
-    white-space: nowrap;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
 }
 
 
-/* ==========================================================
-   7. ÉVOLUTION
-========================================================== */
+/* =========================================================
+   16. CROISSANCE
+========================================================= */
 
 .statGrowth {
 
@@ -1277,209 +910,303 @@ select:focus-visible {
 
     z-index: 2;
 
+    align-self: flex-start;
+
+    margin-top: 22px;
+
+    padding: 8px 12px;
+
+    border-radius: 11px;
+
+    background: var(--green-soft);
+
+    color: var(--green);
+
+    font-size: 13px;
+
+    font-weight: 850;
+
+}
+
+
+/* =========================================================
+   17. ACTION DE LA CARTE
+========================================================= */
+
+.cardAction {
+
+    position: relative;
+
+    z-index: 2;
+
     display: inline-flex;
 
     align-items: center;
 
-    width: fit-content;
+    margin-top: auto;
 
-    margin-top: 12px;
+    padding-top: 18px;
 
-    padding:
-        5px 9px;
+    color: var(--text-main);
 
-    border-radius:
-        8px;
-
-    background:
-        rgba(22,163,74,0.09);
-
-    color:
-        var(--toma-success);
-
-    font-size: 11px;
+    font-size: 14px;
 
     font-weight: 800;
+
 }
 
 
-/* ==========================================================
-   8. EFFET VISUEL DE FOND
-========================================================== */
+.cardAction::after {
 
-.statCard::after {
+    content: "→";
 
-    content: "";
+    margin-left: 8px;
 
-    position: absolute;
-
-    right: -35px;
-    bottom: -45px;
-
-    width: 130px;
-    height: 130px;
-
-    border-radius: 50%;
-
-    background:
-        rgba(245,196,0,0.055);
-
-    pointer-events: none;
+    font-size: 17px;
 
     transition:
-        transform 0.35s ease,
-        background 0.35s ease;
+        transform var(--transition);
+
 }
 
 
-.statCard:hover::after {
+.dashboardCardLink:hover .cardAction::after {
 
-    transform:
-        scale(1.25);
+    transform: translateX(4px);
 
-    background:
-        rgba(245,196,0,0.09);
 }
 
 
-/* ==========================================================
-   9. CARTE UTILISATEURS
-========================================================== */
+/* =========================================================
+   18. CARTE PEDIDOS COMERCIANTES
+========================================================= */
 
-#usersCard::before {
+#merchantRequestsCard .merchantRequestBadge {
 
-    background:
-        linear-gradient(
-            90deg,
-            #111111,
-            #444444
-        );
+    position: relative;
+
+    z-index: 2;
+
+    align-self: flex-start;
+
+    margin-top: 15px;
+
+    padding: 7px 10px;
+
+    border-radius: 10px;
+
+    background: var(--orange-soft);
+
+    color: var(--orange);
+
+    font-size: 12px;
+
+    font-weight: 800;
+
 }
 
 
-/* ==========================================================
-   10. CARTE COMMERÇANTS
-========================================================== */
+/* =========================================================
+   19. COULEURS INDIVIDUELLES DES ICÔNES
+========================================================= */
 
-#merchantsCard::before {
+#usersCard .statIcon {
 
-    background:
-        linear-gradient(
-            90deg,
-            #f5c400,
-            #ffd83d
-        );
+    background: #f3f5f7;
+
 }
 
 
 #merchantsCard .statIcon {
 
-    background:
-        rgba(245,196,0,0.10);
+    background: #fff9e8;
+
 }
 
 
-/* ==========================================================
-   11. CARTE PRODUITS
-========================================================== */
+#productsCard .statIcon {
 
-#productsCard::before {
+    background: #f4f4f4;
 
-    background:
-        linear-gradient(
-            90deg,
-            #525252,
-            #8a8a8a
-        );
-}
-
-
-/* ==========================================================
-   12. CARTE VENTES
-========================================================== */
-
-#salesCard::before {
-
-    background:
-        linear-gradient(
-            90deg,
-            #111111,
-            #f5c400
-        );
 }
 
 
 #salesCard .statIcon {
 
-    background:
-        rgba(245,196,0,0.10);
+    background: #fff8e6;
+
 }
 
 
-/* ==========================================================
-   13. VALEURS FINANCIÈRES
-========================================================== */
+#officialStoresCard .statIcon {
 
-#salesCount {
+    background: #f4f4f4;
 
-    font-size:
-        clamp(
-            24px,
-            2.3vw,
-            33px
-        );
 }
 
 
-/* ==========================================================
-   14. ÉVOLUTION POSITIVE
-========================================================== */
+#merchantRequestsCard .statIcon {
 
-#usersGrowth,
-#merchantsGrowth {
+    background: #f5f5f5;
 
-    color:
-        var(--toma-success);
-
-    background:
-        rgba(22,163,74,0.09);
 }
 
 
-/* ==========================================================
-   15. ÉVOLUTION NÉGATIVE
-   Préparé pour le JS
-========================================================== */
+#reportsCard .statIcon {
 
-.statGrowth.negative {
+    background: #f4f4f4;
 
-    color:
-        var(--toma-danger);
-
-    background:
-        rgba(220,38,38,0.09);
 }
 
 
-/* ==========================================================
-   16. ÉVOLUTION NEUTRE
-========================================================== */
+#settingsCard .statIcon {
 
-.statGrowth.neutral {
+    background: #f3f3f3;
 
-    color:
-        var(--toma-text-soft);
-
-    background:
-        #f1f2f4;
 }
 
 
-/* ==========================================================
-   17. RESPONSIVE TABLETTE
-========================================================== */
+/* =========================================================
+   20. RESPONSIVE — TABLETTE
+========================================================= */
 
-@media (max-width: 1100px) {
+@media (max-width: 1150px) {
+
+    :root {
+
+        --sidebar-width: 220px;
+
+    }
+
+
+    #dashboardContent {
+
+        padding-left: 24px;
+
+        padding-right: 24px;
+
+    }
+
+
+    #adminHeader {
+
+        padding-left: 24px;
+
+        padding-right: 24px;
+
+    }
+
+
+    #statisticsCards {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+    }
+
+
+    #globalSearch {
+
+        width: 190px;
+
+    }
+
+}
+
+
+/* =========================================================
+   21. RESPONSIVE — MOBILE
+========================================================= */
+
+@media (max-width: 760px) {
+
+    #adminApp {
+
+        display: block;
+
+    }
+
+
+    #adminSidebar {
+
+        display: none;
+
+    }
+
+
+    #adminMain {
+
+        width: 100%;
+
+        margin-left: 0;
+
+    }
+
+
+    #adminHeader {
+
+        min-height: 110px;
+
+        padding: 20px 18px;
+
+        gap: 12px;
+
+    }
+
+
+    #dashboardTitle {
+
+        font-size: 32px;
+
+    }
+
+
+    #dashboardSubtitle {
+
+        max-width: 230px;
+
+        overflow: hidden;
+
+        white-space: nowrap;
+
+        text-overflow: ellipsis;
+
+        font-size: 14px;
+
+    }
+
+
+    .headerActions {
+
+        gap: 8px;
+
+    }
+
+
+    #globalSearch {
+
+        display: none;
+
+    }
+
+
+    .headerButton {
+
+        width: 48px;
+
+        height: 48px;
+
+        border-radius: 15px;
+
+    }
+
+
+    #dashboardContent {
+
+        padding: 24px 18px 50px;
+
+    }
+
 
     #statisticsCards {
 
@@ -1487,1519 +1214,1176 @@ select:focus-visible {
             repeat(2, minmax(0, 1fr));
 
         gap: 16px;
+
     }
 
 
-    .statCard {
+    .dashboardCardLink {
 
-        min-height:
-            160px;
+        min-height: 205px;
 
-        padding:
-            20px;
+        padding: 20px;
+
+        border-radius: 23px;
+
     }
 
 
-    .statCard > strong {
+    .statCardTitle {
 
-        font-size:
-            30px;
-    }
+        font-size: 15px;
 
-}
-
-
-/* ==========================================================
-   18. RESPONSIVE MOBILE
-========================================================== */
-
-@media (max-width: 768px) {
-
-    #statisticsCards {
-
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-
-        gap: 12px;
-    }
-
-
-    .statCard {
-
-        min-height:
-            145px;
-
-        padding:
-            16px;
-
-        border-radius:
-            15px;
-    }
-
-
-    .statCardHeader {
-
-        font-size:
-            11px;
     }
 
 
     .statIcon {
 
-        width: 36px;
-        height: 36px;
+        width: 52px;
 
-        flex-basis: 36px;
+        height: 52px;
 
-        border-radius:
-            10px;
+        min-width: 52px;
 
-        font-size:
-            16px;
+        border-radius: 15px;
+
+        font-size: 24px;
+
     }
 
 
-    .statCard > strong {
+    .dashboardCardLink > strong {
 
-        margin-top:
-            10px;
+        margin-top: 25px;
 
-        font-size:
-            25px;
+        font-size: 38px;
 
-        letter-spacing:
-            -0.8px;
     }
 
 
     .statGrowth {
 
-        margin-top:
-            8px;
+        margin-top: 20px;
 
-        padding:
-            4px 7px;
+        padding: 7px 10px;
 
-        font-size:
-            10px;
+        font-size: 12px;
+
+    }
+
+
+    .cardAction {
+
+        font-size: 13px;
+
     }
 
 }
 
 
-/* ==========================================================
-   19. TRÈS PETITS ÉCRANS
-========================================================== */
+/* =========================================================
+   22. PETIT MOBILE
+========================================================= */
 
-@media (max-width: 390px) {
+@media (max-width: 430px) {
+
+    #dashboardContent {
+
+        padding-left: 14px;
+
+        padding-right: 14px;
+
+    }
+
+
+    #adminHeader {
+
+        padding-left: 16px;
+
+        padding-right: 16px;
+
+    }
+
 
     #statisticsCards {
 
-        gap:
-            10px;
+        gap: 12px;
+
     }
 
 
-    .statCard {
+    .dashboardCardLink {
 
-        min-height:
-            138px;
+        min-height: 185px;
 
-        padding:
-            14px;
+        padding: 17px;
+
+        border-radius: 20px;
+
     }
 
 
-    .statCardHeader {
+    .statCardTitle {
 
-        font-size:
-            10px;
+        font-size: 14px;
+
     }
 
 
     .statIcon {
 
-        width: 32px;
-        height: 32px;
+        width: 46px;
 
-        flex-basis:
-            32px;
+        height: 46px;
 
-        font-size:
-            14px;
+        min-width: 46px;
+
+        font-size: 21px;
+
+        border-radius: 13px;
+
     }
 
 
-    .statCard > strong {
+    .dashboardCardLink > strong {
 
-        font-size:
-            22px;
+        margin-top: 23px;
+
+        font-size: 34px;
+
+    }
+
+
+    .cardAction {
+
+        padding-top: 14px;
+
+        font-size: 12px;
+
     }
 
 }
 
 
-/* ==========================================================
-   FIN BLOC 2
-========================================================== */
-/* ==========================================================
+/* =========================================================
+   23. ACCESSIBILITÉ
+========================================================= */
+
+.dashboardCardLink:focus-visible,
+.navItem:focus-visible,
+.headerButton:focus-visible,
+.logoutButton:focus-visible {
+
+    outline: 3px solid rgba(57, 119, 232, 0.25);
+
+    outline-offset: 3px;
+
+}
+
+
+/* =========================================================
+   FIN GRAND BLOC CSS 1
+========================================================= */
+/* =========================================================
    TOMA ADMIN V2
-   BLOC 3 — GRAPHIQUES
-   Ventes + Pedidos
-========================================================== */
+   ADMIN-V2.CSS
+   GRAND BLOC CSS 2
+   GRAPHIQUES + FINANCES + TABLEAUX
+========================================================= */
 
 
-/* ==========================================================
-   1. CONTENEUR PRINCIPAL DES GRAPHIQUES
-========================================================== */
+/* =========================================================
+   24. ZONE GRAPHIQUES
+========================================================= */
 
 #dashboardCharts {
-
-    width: 100%;
 
     display: grid;
 
     grid-template-columns:
-        minmax(0, 1.45fr)
-        minmax(0, 1fr);
+        repeat(2, minmax(0, 1fr));
 
-    gap: 18px;
+    gap: 20px;
 
-    align-items: stretch;
+    width: 100%;
+
+    margin-top: 24px;
+
 }
 
 
-/* ==========================================================
-   2. PANNEAU GRAPHIQUE — BASE
-========================================================== */
+/* =========================================================
+   25. PANELS GÉNÉRAUX
+========================================================= */
 
-.chartPanel {
+.dashboardPanel {
 
     position: relative;
-
-    min-width: 0;
-
-    min-height: 390px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    background:
-        var(--toma-white);
-
-    border:
-        1px solid var(--toma-border);
-
-    border-radius:
-        var(--radius-lg);
-
-    box-shadow:
-        var(--shadow-soft);
 
     overflow: hidden;
 
-    transition:
-        transform var(--transition),
-        box-shadow var(--transition),
-        border-color var(--transition);
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-large);
+
+    box-shadow: var(--shadow-card);
+
 }
 
 
-.chartPanel:hover {
+/* =========================================================
+   26. PANELS DES GRAPHIQUES
+========================================================= */
 
-    border-color:
-        #dedfe2;
+.chartPanel {
 
-    box-shadow:
-        var(--shadow-medium);
+    min-width: 0;
+
 }
 
-
-/* ==========================================================
-   3. LIGNE PREMIUM DU PANNEAU
-========================================================== */
-
-.chartPanel::before {
-
-    content: "";
-
-    position: absolute;
-
-    top: 0;
-    left: 0;
-
-    width: 100%;
-    height: 3px;
-
-    background:
-        linear-gradient(
-            90deg,
-            var(--toma-black),
-            var(--toma-yellow)
-        );
-
-    opacity: 0.95;
-}
-
-
-/* ==========================================================
-   4. HEADER DU PANNEAU
-========================================================== */
 
 .chartPanel .panelHeader {
 
-    position: relative;
+    padding-bottom: 0;
 
-    z-index: 2;
+}
 
-    min-height: 82px;
+
+/* =========================================================
+   27. HEADER DES PANELS
+========================================================= */
+
+.panelHeader {
 
     display: flex;
 
-    align-items: center;
+    align-items: flex-start;
 
     justify-content: space-between;
 
     gap: 20px;
 
-    padding:
-        20px 22px;
+    padding: 26px 28px;
 
-    border-bottom:
-        1px solid var(--toma-border);
-
-    background:
-        rgba(255,255,255,0.96);
 }
 
 
-/* ==========================================================
-   5. TITRE DU PANNEAU
-========================================================== */
+.panelHeader > div {
 
-.chartPanel .panelHeader h2 {
+    min-width: 0;
+
+}
+
+
+.panelHeader h2 {
 
     margin: 0;
 
-    color:
-        var(--toma-text);
+    color: var(--text-main);
 
-    font-size:
-        17px;
+    font-size: 22px;
 
-    font-weight:
-        800;
+    line-height: 1.2;
 
-    letter-spacing:
-        -0.3px;
+    font-weight: 900;
+
+    letter-spacing: -0.6px;
+
 }
 
 
-.chartPanel .panelHeader p {
+.panelHeader p {
 
-    margin:
-        4px 0 0;
+    margin: 7px 0 0;
 
-    color:
-        var(--toma-text-muted);
+    color: var(--text-muted);
 
-    font-size:
-        12px;
+    font-size: 14px;
 
-    font-weight:
-        500;
+    line-height: 1.4;
+
+    font-weight: 550;
+
 }
 
 
-/* ==========================================================
-   6. SÉLECTEUR DE PÉRIODE
-========================================================== */
+/* =========================================================
+   28. SELECTEUR DE PÉRIODE
+========================================================= */
 
-#salesPeriod {
+.periodSelector {
 
-    flex-shrink: 0;
+    min-width: 155px;
 
-    height:
-        38px;
-
-    min-width:
-        145px;
+    height: 42px;
 
     padding:
-        0 34px 0 12px;
+        0 38px 0 13px;
 
-    border:
-        1px solid var(--toma-border);
+    border: 1px solid var(--border);
 
-    border-radius:
-        10px;
+    border-radius: 12px;
+
+    background-color: #fafafa;
+
+    color: var(--text-main);
+
+    font-size: 13px;
+
+    font-weight: 750;
 
     outline: none;
 
-    background:
-        #f8f8f9;
-
-    color:
-        var(--toma-text);
-
-    font-size:
-        11px;
-
-    font-weight:
-        700;
-
     cursor: pointer;
 
-    appearance: none;
-
-    -webkit-appearance: none;
-
-    background-image:
-        linear-gradient(
-            45deg,
-            transparent 50%,
-            #777 50%
-        ),
-        linear-gradient(
-            135deg,
-            #777 50%,
-            transparent 50%
-        );
-
-    background-position:
-        calc(100% - 15px) 16px,
-        calc(100% - 10px) 16px;
-
-    background-size:
-        5px 5px,
-        5px 5px;
-
-    background-repeat:
-        no-repeat;
-
-    transition:
-        border-color var(--transition),
-        background var(--transition),
-        box-shadow var(--transition);
 }
 
 
-#salesPeriod:hover {
+.periodSelector:focus {
 
-    background:
-        var(--toma-white);
-
-    border-color:
-        #d7d8dc;
-}
-
-
-#salesPeriod:focus {
-
-    border-color:
-        rgba(245,196,0,0.85);
+    border-color: #c8cbd0;
 
     box-shadow:
-        0 0 0 4px
-        rgba(245,196,0,0.10);
+        0 0 0 3px rgba(0,0,0,0.045);
+
 }
 
 
-/* ==========================================================
-   7. ZONE DU GRAPHIQUE
-========================================================== */
+/* =========================================================
+   29. CONTENEURS DES GRAPHIQUES
+========================================================= */
 
 .chartContainer {
 
     position: relative;
 
-    flex: 1;
-
-    min-height:
-        285px;
-
     width: 100%;
 
-    padding:
-        20px 22px 22px;
+    height: 310px;
 
-    background:
-        linear-gradient(
-            180deg,
-            #ffffff 0%,
-            #fcfcfd 100%
-        );
+    padding:
+        10px 24px 25px;
+
 }
 
 
-/* ==========================================================
-   8. CANVAS
-========================================================== */
-
 .chartContainer canvas {
+
+    display: block;
 
     width: 100% !important;
 
     height: 100% !important;
 
-    min-height:
-        240px;
-
-    max-height:
-        300px;
 }
 
 
-/* ==========================================================
-   9. EFFET DE GRILLE DISCRÈTE
-========================================================== */
+/* =========================================================
+   30. ZONE FINANCIÈRE
+========================================================= */
 
-.chartContainer::before {
+#financeOverview {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 16px;
+
+    width: 100%;
+
+    margin-top: 20px;
+
+}
+
+
+/* =========================================================
+   31. CARTES FINANCIÈRES
+========================================================= */
+
+.financeCard {
+
+    position: relative;
+
+    min-height: 135px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    overflow: hidden;
+
+    padding: 22px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 22px;
+
+    background: var(--surface);
+
+    box-shadow: var(--shadow-small);
+
+    transition:
+        transform var(--transition),
+        box-shadow var(--transition);
+
+}
+
+
+.financeCard::after {
 
     content: "";
 
     position: absolute;
 
-    inset:
-        20px 22px 22px;
+    right: -45px;
 
-    pointer-events: none;
+    bottom: -70px;
 
-    opacity: 0.35;
+    width: 145px;
 
-    background-image:
-        linear-gradient(
-            to bottom,
-            rgba(17,17,17,0.035) 1px,
-            transparent 1px
-        );
-
-    background-size:
-        100% 48px;
-
-    border-radius:
-        8px;
-}
-
-
-/* ==========================================================
-   10. GRAPHIQUE DES VENTES
-========================================================== */
-
-#salesChartCard {
-
-    background:
-        linear-gradient(
-            180deg,
-            #ffffff 0%,
-            #fdfdfd 100%
-        );
-}
-
-
-#salesChartCard .chartContainer {
-
-    min-height:
-        300px;
-}
-
-
-/* ==========================================================
-   11. GRAPHIQUE DES COMMANDES
-========================================================== */
-
-#ordersChartCard {
-
-    background:
-        linear-gradient(
-            180deg,
-            #ffffff 0%,
-            #fdfdfd 100%
-        );
-}
-
-
-#ordersChartCard .chartContainer {
-
-    min-height:
-        300px;
-}
-
-
-/* ==========================================================
-   12. ÉTAT VIDE DU CANVAS
-   Préparation si JS affiche un message
-========================================================== */
-
-.chartEmpty {
-
-    position: absolute;
-
-    inset: 0;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    justify-content: center;
-
-    gap: 8px;
-
-    padding: 30px;
-
-    color:
-        var(--toma-text-muted);
-
-    text-align: center;
-}
-
-
-.chartEmptyIcon {
-
-    width: 48px;
-    height: 48px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 14px;
-
-    background:
-        #f3f4f6;
-
-    font-size: 20px;
-}
-
-
-/* ==========================================================
-   13. RESPONSIVE TABLETTE
-========================================================== */
-
-@media (max-width: 1050px) {
-
-    #dashboardCharts {
-
-        grid-template-columns:
-            1fr;
-    }
-
-
-    .chartPanel {
-
-        min-height:
-            360px;
-    }
-
-
-    #salesChartCard .chartContainer,
-    #ordersChartCard .chartContainer {
-
-        min-height:
-            270px;
-    }
-
-}
-
-
-/* ==========================================================
-   14. RESPONSIVE MOBILE
-========================================================== */
-
-@media (max-width: 768px) {
-
-    #dashboardCharts {
-
-        grid-template-columns:
-            1fr;
-
-        gap:
-            12px;
-    }
-
-
-    .chartPanel {
-
-        min-height:
-            340px;
-
-        border-radius:
-            15px;
-    }
-
-
-    .chartPanel .panelHeader {
-
-        min-height:
-            72px;
-
-        padding:
-            16px;
-
-        gap:
-            12px;
-    }
-
-
-    .chartPanel .panelHeader h2 {
-
-        font-size:
-            15px;
-    }
-
-
-    .chartPanel .panelHeader p {
-
-        font-size:
-            11px;
-    }
-
-
-    #salesPeriod {
-
-        min-width:
-            120px;
-
-        height:
-            34px;
-
-        font-size:
-            10px;
-    }
-
-
-    .chartContainer {
-
-        min-height:
-            250px;
-
-        padding:
-            16px;
-    }
-
-
-    .chartContainer canvas {
-
-        min-height:
-            210px;
-
-        max-height:
-            240px;
-    }
-
-
-    .chartContainer::before {
-
-        inset:
-            16px;
-    }
-
-}
-
-
-/* ==========================================================
-   15. PETIT ÉCRAN
-========================================================== */
-
-@media (max-width: 430px) {
-
-    .chartPanel {
-
-        min-height:
-            315px;
-    }
-
-
-    .chartPanel .panelHeader {
-
-        align-items:
-            flex-start;
-
-        flex-direction:
-            column;
-
-        padding:
-            15px;
-    }
-
-
-    #salesPeriod {
-
-        width:
-            100%;
-
-        min-width:
-            0;
-    }
-
-
-    .chartContainer {
-
-        min-height:
-            225px;
-
-        padding:
-            12px;
-    }
-
-
-    .chartContainer canvas {
-
-        min-height:
-            190px;
-
-        max-height:
-            210px;
-    }
-
-
-    .chartContainer::before {
-
-        inset:
-            12px;
-    }
-
-}
-
-
-/* ==========================================================
-   FIN BLOC 3
-========================================================== */
-/* =========================================================
-   TOMA ADMIN V2
-   BLOC 4 — NOTIFICATIONS + LOADER + TOAST + MODAL + LOGS
-   ========================================================= */
-
-
-/* =========================================================
-   1. PANNEAU NOTIFICATIONS
-   ========================================================= */
-
-#notificationsPanel {
-    position: relative;
-    width: 100%;
-    margin-top: 24px;
-}
-
-
-/* Liste des notifications */
-
-#notificationsList {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-
-/* État vide */
-
-#notificationsPanel .notificationEmpty {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-
-    min-height: 150px;
-    padding: 30px 20px;
-
-    border: 1px dashed #d9dee7;
-    border-radius: 16px;
-
-    background: #fafbfc;
-
-    text-align: center;
-}
-
-
-#notificationsPanel .notificationEmptyIcon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 48px;
-    height: 48px;
-
-    margin-bottom: 12px;
-
-    border-radius: 14px;
-
-    background: #f1f3f6;
-
-    font-size: 22px;
-}
-
-
-#notificationsPanel .notificationEmpty p {
-    margin: 0;
-
-    color: #7b8494;
-
-    font-size: 14px;
-    font-weight: 500;
-}
-
-
-/* =========================================================
-   2. DEMANDES COMMERÇANTS
-   ========================================================= */
-
-#merchantRequestsSummary {
-    width: 100%;
-    margin-top: 24px;
-}
-
-
-#merchantRequestsSummary .merchantRequestSummaryContent {
-    display: flex;
-    align-items: center;
-
-    gap: 16px;
-
-    min-height: 92px;
-
-    padding: 18px 20px;
-
-    border: 1px solid #e8ebf0;
-    border-radius: 18px;
-
-    background: #ffffff;
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        border-color 0.2s ease;
-}
-
-
-#merchantRequestsSummary .merchantRequestSummaryContent:hover {
-    transform: translateY(-2px);
-
-    border-color: #dfe4eb;
-
-    box-shadow:
-        0 12px 28px rgba(15, 23, 42, 0.07);
-}
-
-
-/* Icône */
-
-#merchantRequestsSummary .merchantRequestIcon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    flex: 0 0 52px;
-
-    width: 52px;
-    height: 52px;
-
-    border-radius: 15px;
-
-    background: #f4f5f7;
-
-    font-size: 22px;
-}
-
-
-/* Informations */
-
-#merchantRequestsSummary .merchantRequestInfo {
-    display: flex;
-    flex-direction: column;
-
-    gap: 4px;
-
-    min-width: 0;
-}
-
-
-#merchantRequestsSummary .merchantRequestInfo span {
-    color: #7b8494;
-
-    font-size: 13px;
-    font-weight: 500;
-}
-
-
-#merchantRequestsSummary .merchantRequestInfo strong {
-    color: #111827;
-
-    font-size: 25px;
-    line-height: 1;
-
-    font-weight: 700;
-}
-
-
-/* Badge */
-
-#merchantRequestsSummary .merchantRequestBadge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    min-width: 32px;
-    height: 32px;
-
-    margin-left: auto;
-
-    padding: 0 10px;
-
-    border-radius: 999px;
-
-    background: #111111;
-    color: #ffffff;
-
-    font-size: 12px;
-    font-weight: 700;
-}
-
-
-/* =========================================================
-   3. LOADER GLOBAL
-   ========================================================= */
-
-#loader {
-    position: fixed;
-    inset: 0;
-
-    z-index: 9999;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: rgba(15, 23, 42, 0.42);
-
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-
-    opacity: 1;
-    visibility: visible;
-
-    transition:
-        opacity 0.2s ease,
-        visibility 0.2s ease;
-}
-
-
-/* Classe cachée */
-
-#loader.hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-}
-
-
-/* Boîte */
-
-#loader .loaderBox {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-
-    gap: 16px;
-
-    min-width: 170px;
-
-    padding: 28px 30px;
-
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    border-radius: 20px;
-
-    background: rgba(255, 255, 255, 0.96);
-
-    box-shadow:
-        0 24px 60px rgba(0, 0, 0, 0.18);
-}
-
-
-#loader .loaderBox p {
-    margin: 0;
-
-    color: #4b5563;
-
-    font-size: 13px;
-    font-weight: 600;
-}
-
-
-/* Spinner */
-
-#loader .loaderSpinner {
-    width: 34px;
-    height: 34px;
-
-    border: 3px solid #e5e7eb;
-    border-top-color: #111111;
+    height: 145px;
 
     border-radius: 50%;
 
-    animation: tomaLoaderSpin 0.75s linear infinite;
-}
-
-
-@keyframes tomaLoaderSpin {
-
-    to {
-        transform: rotate(360deg);
-    }
-
-}
-
-
-/* =========================================================
-   4. TOAST
-   ========================================================= */
-
-#toast {
-    position: fixed;
-
-    left: 50%;
-    bottom: 28px;
-
-    z-index: 10000;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    min-width: 220px;
-    max-width: min(420px, calc(100vw - 40px));
-
-    min-height: 46px;
-
-    padding: 12px 18px;
-
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 14px;
-
-    background: #111111;
-    color: #ffffff;
-
-    box-shadow:
-        0 16px 40px rgba(0, 0, 0, 0.18);
-
-    transform:
-        translate(-50%, 20px);
-
-    opacity: 0;
-    visibility: hidden;
+    background:
+        radial-gradient(
+            circle,
+            rgba(246, 239, 211, 0.55),
+            rgba(255,255,255,0)
+        );
 
     pointer-events: none;
 
-    transition:
-        opacity 0.25s ease,
-        transform 0.25s ease,
-        visibility 0.25s ease;
 }
 
 
-/* Toast visible */
+.financeCard:hover {
 
-#toast.show {
-    opacity: 1;
-    visibility: visible;
+    transform: translateY(-3px);
 
-    transform:
-        translate(-50%, 0);
+    box-shadow: var(--shadow-card);
+
 }
 
 
-#toastMessage {
-    color: #ffffff;
+.financeLabel {
+
+    position: relative;
+
+    z-index: 2;
+
+    color: var(--text-secondary);
 
     font-size: 13px;
-    font-weight: 600;
 
-    line-height: 1.4;
-
-    text-align: center;
-}
-
-
-/* =========================================================
-   5. MODAL NOTIFICATION
-   ========================================================= */
-
-#notificationModal {
-    position: fixed;
-    inset: 0;
-
-    z-index: 10001;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 20px;
-
-    background: rgba(15, 23, 42, 0.48);
-
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-
-    opacity: 1;
-    visibility: visible;
-
-    transition:
-        opacity 0.2s ease,
-        visibility 0.2s ease;
-}
-
-
-/* Modal cachée */
-
-#notificationModal.hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-}
-
-
-/* Contenu */
-
-#notificationModalContent {
-    width: min(520px, 100%);
-
-    max-height: min(680px, calc(100vh - 40px));
-
-    overflow: hidden;
-
-    border: 1px solid #e5e7eb;
-    border-radius: 22px;
-
-    background: #ffffff;
-
-    box-shadow:
-        0 30px 80px rgba(0, 0, 0, 0.20);
-
-    transform: translateY(8px) scale(0.98);
-
-    transition:
-        transform 0.25s ease;
-}
-
-
-#notificationModal:not(.hidden)
-#notificationModalContent {
-    transform: translateY(0) scale(1);
-}
-
-
-/* Header */
-
-#notificationModal .modalHeader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    min-height: 64px;
-
-    padding: 0 20px;
-
-    border-bottom: 1px solid #edf0f3;
-}
-
-
-#notificationModal .modalHeader h2 {
-    margin: 0;
-
-    color: #111827;
-
-    font-size: 17px;
     font-weight: 700;
+
 }
 
 
-/* Bouton fermer */
+.financeCard strong {
 
-#notificationModal .modalClose {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: relative;
 
-    width: 34px;
-    height: 34px;
+    z-index: 2;
 
-    padding: 0;
+    margin-top: 10px;
 
-    border: 0;
-    border-radius: 10px;
+    color: var(--text-main);
 
-    background: #f3f4f6;
-    color: #4b5563;
+    font-size: 25px;
 
-    font-size: 22px;
-    line-height: 1;
+    line-height: 1.1;
 
-    cursor: pointer;
+    font-weight: 900;
 
-    transition:
-        background 0.2s ease,
-        color 0.2s ease,
-        transform 0.2s ease;
-}
+    letter-spacing: -0.7px;
 
-
-#notificationModal .modalClose:hover {
-    background: #111111;
-    color: #ffffff;
-
-    transform: rotate(3deg);
-}
-
-
-/* Corps */
-
-#notificationModal .modalBody {
-    max-height: calc(100vh - 125px);
-
-    overflow-y: auto;
-
-    padding: 22px;
-
-    color: #374151;
-
-    font-size: 14px;
-    line-height: 1.6;
-}
-
-
-/* Scrollbar modal */
-
-#notificationModal .modalBody::-webkit-scrollbar {
-    width: 6px;
-}
-
-
-#notificationModal .modalBody::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-
-#notificationModal .modalBody::-webkit-scrollbar-thumb {
-    border-radius: 999px;
-
-    background: #d1d5db;
 }
 
 
 /* =========================================================
-   6. LOGS DU SYSTÈME
-   ========================================================= */
+   32. TABLEAUX
+========================================================= */
 
-#systemLogsPanel {
+#dashboardTables {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr;
+
+    gap: 20px;
+
     width: 100%;
 
     margin-top: 24px;
 
-    border: 1px solid #e8ebf0;
-    border-radius: 18px;
-
-    background: #ffffff;
-
-    overflow: hidden;
-}
-
-
-#systemLogsPanel .systemLogsHeader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 16px;
-
-    padding: 20px 22px;
-
-    border-bottom: 1px solid #edf0f3;
-}
-
-
-#systemLogsPanel .systemLogsHeader h2 {
-    margin: 0 0 4px;
-
-    color: #111827;
-
-    font-size: 16px;
-    font-weight: 700;
-}
-
-
-#systemLogsPanel .systemLogsHeader p {
-    margin: 0;
-
-    color: #8a93a1;
-
-    font-size: 12px;
-    font-weight: 500;
-}
-
-
-/* Bouton nettoyer */
-
-#systemLogsPanel .clearLogsButton {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    min-height: 34px;
-
-    padding: 0 13px;
-
-    border: 1px solid #e1e5ea;
-    border-radius: 9px;
-
-    background: #ffffff;
-    color: #4b5563;
-
-    font-size: 12px;
-    font-weight: 600;
-
-    cursor: pointer;
-
-    transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        color 0.2s ease;
-}
-
-
-#systemLogsPanel .clearLogsButton:hover {
-    border-color: #111111;
-
-    background: #111111;
-    color: #ffffff;
-}
-
-
-/* Conteneur des logs */
-
-#systemLogs {
-    display: flex;
-    flex-direction: column;
-
-    max-height: 360px;
-
-    overflow-y: auto;
-
-    padding: 6px 0;
-}
-
-
-/* Chaque ligne de log générée par JS */
-
-#systemLogs > * {
-    padding: 12px 22px;
-
-    border-bottom: 1px solid #f0f2f5;
-}
-
-
-#systemLogs > *:last-child {
-    border-bottom: 0;
-}
-
-
-/* Scrollbar */
-
-#systemLogs::-webkit-scrollbar {
-    width: 6px;
-}
-
-
-#systemLogs::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-
-#systemLogs::-webkit-scrollbar-thumb {
-    border-radius: 999px;
-
-    background: #d1d5db;
 }
 
 
 /* =========================================================
-   7. RESPONSIVE — BLOC 4
-   ========================================================= */
+   33. PANELS TABLEAUX
+========================================================= */
 
-@media (max-width: 700px) {
+.tablePanel {
 
-    #merchantRequestsSummary
-    .merchantRequestSummaryContent {
-        gap: 12px;
+    width: 100%;
 
-        padding: 15px;
+}
+
+
+.tablePanel .panelHeader {
+
+    padding-bottom: 20px;
+
+}
+
+
+/* =========================================================
+   34. LIENS DES PANELS
+========================================================= */
+
+.panelLink {
+
+    flex-shrink: 0;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 38px;
+
+    padding:
+        0 13px;
+
+    border-radius: 11px;
+
+    background: #f5f5f6;
+
+    color: var(--text-main);
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    transition:
+        background var(--transition),
+        transform var(--transition);
+
+}
+
+
+.panelLink:hover {
+
+    background: #ededee;
+
+    transform: translateY(-1px);
+
+}
+
+
+.panelLink:active {
+
+    transform: scale(0.97);
+
+}
+
+
+/* =========================================================
+   35. CONTENEUR TABLEAU
+========================================================= */
+
+.tableWrapper {
+
+    width: 100%;
+
+    overflow-x: auto;
+
+    -webkit-overflow-scrolling: touch;
+
+}
+
+
+.adminTable {
+
+    width: 100%;
+
+    min-width: 650px;
+
+    border-collapse: collapse;
+
+    table-layout: auto;
+
+}
+
+
+.adminTable thead {
+
+    background: #fafafa;
+
+}
+
+
+.adminTable th {
+
+    padding:
+        14px 20px;
+
+    border-top: 1px solid var(--border-soft);
+
+    border-bottom: 1px solid var(--border-soft);
+
+    color: var(--text-muted);
+
+    text-align: left;
+
+    font-size: 11px;
+
+    line-height: 1.2;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.45px;
+
+    white-space: nowrap;
+
+}
+
+
+.adminTable td {
+
+    padding:
+        16px 20px;
+
+    border-bottom: 1px solid var(--border-soft);
+
+    color: var(--text-main);
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    vertical-align: middle;
+
+}
+
+
+.adminTable tbody tr {
+
+    transition:
+        background var(--transition);
+
+}
+
+
+.adminTable tbody tr:hover {
+
+    background: #fafafa;
+
+}
+
+
+.adminTable tbody tr:last-child td {
+
+    border-bottom: 0;
+
+}
+
+
+/* =========================================================
+   36. MESSAGE TABLEAU VIDE
+========================================================= */
+
+.adminTable td[colspan] {
+
+    padding:
+        38px 20px;
+
+    color: var(--text-muted);
+
+    text-align: center;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+}
+
+
+/* =========================================================
+   37. IMAGES DANS LES TABLEAUX
+========================================================= */
+
+.adminTable img {
+
+    width: 42px;
+
+    height: 42px;
+
+    object-fit: cover;
+
+    border-radius: 11px;
+
+    border: 1px solid var(--border);
+
+    background: #f5f5f5;
+
+}
+
+
+/* =========================================================
+   38. STATUTS — BASE
+========================================================= */
+
+.statusBadge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 28px;
+
+    padding:
+        0 10px;
+
+    border-radius: 50px;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+
+}
+
+
+/* =========================================================
+   39. STATUT POSITIF
+========================================================= */
+
+.statusActive,
+.statusOnline,
+.statusApproved,
+.statusVerified,
+.statusCompleted {
+
+    background: var(--green-soft);
+
+    color: var(--green);
+
+}
+
+
+/* =========================================================
+   40. STATUT EN ATTENTE
+========================================================= */
+
+.statusPending,
+.statusWaiting {
+
+    background: var(--yellow-soft);
+
+    color: #a97900;
+
+}
+
+
+/* =========================================================
+   41. STATUT NÉGATIF
+========================================================= */
+
+.statusBlocked,
+.statusRejected,
+.statusCancelled {
+
+    background: var(--red-soft);
+
+    color: var(--red);
+
+}
+
+
+/* =========================================================
+   42. ACTIONS TABLEAUX
+========================================================= */
+
+.tableAction {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 34px;
+
+    height: 34px;
+
+    border-radius: 10px;
+
+    background: #f5f5f6;
+
+    color: var(--text-main);
+
+    transition:
+        background var(--transition),
+        transform var(--transition);
+
+}
+
+
+.tableAction:hover {
+
+    background: #eaeaec;
+
+    transform: translateY(-1px);
+
+}
+
+
+/* =========================================================
+   43. CLIENT / PRODUIT — INFORMATIONS
+========================================================= */
+
+.tablePrimary {
+
+    display: block;
+
+    color: var(--text-main);
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+}
+
+
+.tableSecondary {
+
+    display: block;
+
+    margin-top: 3px;
+
+    color: var(--text-muted);
+
+    font-size: 11px;
+
+    font-weight: 550;
+
+}
+
+
+/* =========================================================
+   44. PRIX TABLEAU
+========================================================= */
+
+.tablePrice {
+
+    color: var(--text-main);
+
+    font-size: 13px;
+
+    font-weight: 850;
+
+    white-space: nowrap;
+
+}
+
+
+/* =========================================================
+   45. RESPONSIVE — TABLETTE
+========================================================= */
+
+@media (max-width: 1150px) {
+
+    #dashboardCharts {
+
+        grid-template-columns:
+            1fr;
+
     }
 
 
-    #merchantRequestsSummary
-    .merchantRequestIcon {
-        flex-basis: 44px;
+    #financeOverview {
 
-        width: 44px;
-        height: 44px;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
 
-        border-radius: 13px;
-
-        font-size: 19px;
     }
 
 
-    #merchantRequestsSummary
-    .merchantRequestInfo strong {
-        font-size: 21px;
-    }
+    .chartContainer {
 
+        height: 320px;
 
-    #notificationModal {
-        align-items: flex-end;
-
-        padding: 10px;
-    }
-
-
-    #notificationModalContent {
-        max-height: calc(100vh - 20px);
-
-        border-radius: 20px;
-    }
-
-
-    #notificationModal .modalBody {
-        max-height: calc(100vh - 95px);
-
-        padding: 18px;
-    }
-
-
-    #systemLogsPanel .systemLogsHeader {
-        padding: 16px;
-    }
-
-
-    #systemLogsPanel
-    .systemLogsHeader h2 {
-        font-size: 15px;
-    }
-
-
-    #systemLogs > * {
-        padding: 11px 16px;
-    }
-
-
-    #toast {
-        bottom: 18px;
-
-        max-width: calc(100vw - 28px);
     }
 
 }
+
+
+/* =========================================================
+   46. RESPONSIVE — MOBILE
+========================================================= */
+
+@media (max-width: 760px) {
+
+    #dashboardCharts {
+
+        gap: 16px;
+
+        margin-top: 18px;
+
+    }
+
+
+    .dashboardPanel {
+
+        border-radius: 22px;
+
+    }
+
+
+    .panelHeader {
+
+        padding:
+            22px 20px;
+
+        gap: 14px;
+
+    }
+
+
+    .panelHeader h2 {
+
+        font-size: 20px;
+
+    }
+
+
+    .panelHeader p {
+
+        font-size: 13px;
+
+    }
+
+
+    .periodSelector {
+
+        width: 100%;
+
+        min-width: 0;
+
+        height: 46px;
+
+        margin-top: 14px;
+
+        font-size: 13px;
+
+    }
+
+
+    .chartPanel .panelHeader {
+
+        display: block;
+
+    }
+
+
+    .chartContainer {
+
+        height: 285px;
+
+        padding:
+            8px 15px 20px;
+
+    }
+
+
+    #financeOverview {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 12px;
+
+        margin-top: 18px;
+
+    }
+
+
+    .financeCard {
+
+        min-height: 125px;
+
+        padding: 18px;
+
+        border-radius: 19px;
+
+    }
+
+
+    .financeLabel {
+
+        font-size: 12px;
+
+    }
+
+
+    .financeCard strong {
+
+        font-size: 21px;
+
+    }
+
+
+    #dashboardTables {
+
+        gap: 16px;
+
+        margin-top: 18px;
+
+    }
+
+
+    .tablePanel .panelHeader {
+
+        display: flex;
+
+        align-items: center;
+
+        padding-bottom: 18px;
+
+    }
+
+
+    .panelLink {
+
+        min-height: 35px;
+
+        padding:
+            0 11px;
+
+        font-size: 11px;
+
+    }
+
+
+    .adminTable {
+
+        min-width: 620px;
+
+    }
+
+
+    .adminTable th {
+
+        padding:
+            12px 15px;
+
+    }
+
+
+    .adminTable td {
+
+        padding:
+            14px 15px;
+
+    }
+
+}
+
+
+/* =========================================================
+   47. PETIT MOBILE
+========================================================= */
+
+@media (max-width: 430px) {
+
+    .panelHeader {
+
+        padding:
+            20px 17px;
+
+    }
+
+
+    .panelHeader h2 {
+
+        font-size: 19px;
+
+    }
+
+
+    .panelHeader p {
+
+        font-size: 12px;
+
+    }
+
+
+    .chartContainer {
+
+        height: 250px;
+
+        padding:
+            5px 10px 16px;
+
+    }
+
+
+    #financeOverview {
+
+        gap: 10px;
+
+    }
+
+
+    .financeCard {
+
+        min-height: 115px;
+
+        padding: 15px;
+
+        border-radius: 17px;
+
+    }
+
+
+    .financeCard strong {
+
+        font-size: 19px;
+
+    }
+
+
+    .financeLabel {
+
+        font-size: 11px;
+
+    }
+
+
+    .adminTable {
+
+        min-width: 590px;
+
+    }
+
+}
+
+
+/* =========================================================
+   48. FIN GRAND BLOC CSS 2
+========================================================= */
