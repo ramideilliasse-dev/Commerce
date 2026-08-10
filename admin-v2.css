@@ -3373,3 +3373,642 @@ img {
     }
 
 }
+/* =========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.CSS
+   BLOC 4 — ACTIVITÉ + MONITORING + RAPPORTS + SYSTÈME
+========================================================= */
+
+
+/* =========================================================
+   ZONE ACTIVITÉ + MONITORING
+========================================================= */
+
+.dashboardActivityArea {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.15fr)
+        minmax(0, 0.85fr);
+
+    gap: 20px;
+
+    width: 100%;
+
+    margin-top: 22px;
+    margin-bottom: 22px;
+}
+
+
+/* =========================================================
+   PANELS ACTIVITÉ / MONITORING
+========================================================= */
+
+.activityPanel,
+.monitoringPanel {
+    min-width: 0;
+}
+
+
+/* =========================================================
+   LISTE ACTIVITÉ
+========================================================= */
+
+.activityList {
+    width: 100%;
+
+    padding: 6px 0;
+}
+
+
+/* =========================================================
+   ÉLÉMENT ACTIVITÉ
+========================================================= */
+
+.activityItem {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 14px;
+
+    padding: 17px 20px;
+
+    border-bottom: 1px solid #f0f2f5;
+
+    transition:
+        background 0.2s ease;
+}
+
+.activityItem:last-child {
+    border-bottom: none;
+}
+
+.activityItem:hover {
+    background: #fafbfc;
+}
+
+
+/* =========================================================
+   ICÔNE ACTIVITÉ
+========================================================= */
+
+.activityIcon {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 11px;
+
+    background: #f3f5f7;
+
+    font-size: 17px;
+}
+
+
+/* =========================================================
+   CONTENU ACTIVITÉ
+========================================================= */
+
+.activityContent {
+    min-width: 0;
+    flex: 1;
+}
+
+.activityContent h4 {
+    margin: 1px 0 5px;
+
+    color: #202631;
+
+    font-size: 13px;
+    line-height: 1.4;
+
+    font-weight: 700;
+}
+
+.activityContent p {
+    margin: 0;
+
+    color: #8a929d;
+
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.activityTime {
+    margin-top: 7px;
+
+    color: #adb4bd;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   MONITORING GRID
+========================================================= */
+
+.monitoringGrid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+
+    padding: 18px;
+}
+
+
+/* =========================================================
+   ÉLÉMENT MONITORING
+========================================================= */
+
+.monitoringItem {
+    display: flex;
+    align-items: center;
+
+    gap: 11px;
+
+    min-height: 82px;
+
+    padding: 14px;
+
+    background: #fafbfc;
+
+    border: 1px solid #edf0f3;
+
+    border-radius: 13px;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.monitoringItem:hover {
+    background: #ffffff;
+
+    border-color: #e1e5ea;
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   ICÔNE MONITORING
+========================================================= */
+
+.monitoringIcon {
+    width: 37px;
+    height: 37px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    border: 1px solid #e9edf1;
+
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   TEXTE MONITORING
+========================================================= */
+
+.monitoringItem > div {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+.monitoringItem > div > span {
+    color: #818a96;
+
+    font-size: 10px;
+
+    line-height: 1.3;
+}
+
+.monitoringItem strong {
+    color: #161b23;
+
+    font-size: 18px;
+
+    line-height: 1;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   RAPPORTS RAPIDES
+========================================================= */
+
+.quickReports {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 16px;
+
+    width: 100%;
+
+    margin-bottom: 22px;
+}
+
+
+/* =========================================================
+   CARTE RAPPORT
+========================================================= */
+
+.reportCard {
+    position: relative;
+
+    min-height: 110px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: #ffffff;
+
+    border: 1px solid #e8edf2;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 4px 14px rgba(15, 23, 42, 0.035);
+
+    overflow: hidden;
+
+    transition:
+        transform 0.22s ease,
+        box-shadow 0.22s ease,
+        border-color 0.22s ease;
+}
+
+.reportCard::after {
+    content: "";
+
+    position: absolute;
+
+    width: 70px;
+    height: 70px;
+
+    right: -28px;
+    bottom: -28px;
+
+    border-radius: 50%;
+
+    background: rgba(17, 24, 39, 0.025);
+
+    pointer-events: none;
+}
+
+.reportCard:hover {
+    transform: translateY(-3px);
+
+    border-color: #dce2e8;
+
+    box-shadow:
+        0 10px 25px rgba(15, 23, 42, 0.07);
+}
+
+
+/* =========================================================
+   TEXTE RAPPORT
+========================================================= */
+
+.reportCard > span {
+    display: block;
+
+    margin-bottom: 9px;
+
+    color: #7f8894;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+.reportCard > strong {
+    display: block;
+
+    color: #111827;
+
+    font-size: 22px;
+
+    line-height: 1;
+
+    font-weight: 800;
+
+    letter-spacing: -0.4px;
+}
+
+
+/* =========================================================
+   ÉTAT DU SYSTÈME
+========================================================= */
+
+.systemStatusPanel {
+    width: 100%;
+
+    margin-bottom: 22px;
+}
+
+
+/* =========================================================
+   GRILLE ÉTAT SYSTÈME
+========================================================= */
+
+.systemStatusGrid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 10px;
+
+    padding: 18px;
+}
+
+
+/* =========================================================
+   ÉLÉMENT ÉTAT SYSTÈME
+========================================================= */
+
+.systemStatusItem {
+    position: relative;
+
+    min-height: 76px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    gap: 7px;
+
+    padding: 14px 15px;
+
+    background: #fafbfc;
+
+    border: 1px solid #edf0f3;
+
+    border-radius: 12px;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.systemStatusItem:hover {
+    background: #ffffff;
+
+    border-color: #dfe4e9;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   NOM DU SERVICE
+========================================================= */
+
+.systemStatusItem > span {
+    color: #7d8692;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    line-height: 1.3;
+}
+
+
+/* =========================================================
+   VALEUR DU SERVICE
+========================================================= */
+
+.systemStatusItem > strong {
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+
+    color: #252b34;
+
+    font-size: 12px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   POINT VERT POUR LES SERVICES ONLINE
+========================================================= */
+
+.systemStatusItem > strong::before {
+    content: "";
+
+    width: 7px;
+    height: 7px;
+
+    display: inline-block;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #28a65a;
+
+    box-shadow:
+        0 0 0 3px rgba(40, 166, 90, 0.10);
+}
+
+
+/* =========================================================
+   RESPONSIVE — TABLETTE
+========================================================= */
+
+@media (max-width: 1050px) {
+
+    .dashboardActivityArea {
+        grid-template-columns:
+            1fr;
+    }
+
+    .quickReports {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .systemStatusGrid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .dashboardActivityArea {
+        gap: 14px;
+
+        margin-top: 16px;
+        margin-bottom: 16px;
+    }
+
+    .monitoringGrid {
+        padding: 14px;
+
+        gap: 8px;
+    }
+
+    .monitoringItem {
+        min-height: 76px;
+
+        padding: 11px;
+
+        gap: 8px;
+    }
+
+    .monitoringIcon {
+        width: 33px;
+        height: 33px;
+
+        font-size: 14px;
+    }
+
+    .monitoringItem strong {
+        font-size: 16px;
+    }
+
+    .quickReports {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 11px;
+
+        margin-bottom: 16px;
+    }
+
+    .reportCard {
+        min-height: 100px;
+
+        padding: 16px;
+
+        border-radius: 14px;
+    }
+
+    .reportCard > strong {
+        font-size: 18px;
+    }
+
+    .systemStatusGrid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        padding: 14px;
+
+        gap: 8px;
+    }
+
+    .systemStatusItem {
+        min-height: 70px;
+
+        padding: 11px;
+    }
+
+}
+
+
+/* =========================================================
+   PETIT MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .activityItem {
+        padding: 14px 15px;
+
+        gap: 10px;
+    }
+
+    .activityIcon {
+        width: 35px;
+        height: 35px;
+
+        border-radius: 9px;
+
+        font-size: 15px;
+    }
+
+    .activityContent h4 {
+        font-size: 12px;
+    }
+
+    .activityContent p {
+        font-size: 10px;
+    }
+
+    .monitoringGrid {
+        grid-template-columns:
+            1fr;
+    }
+
+    .monitoringItem {
+        min-height: 68px;
+    }
+
+    .quickReports {
+        gap: 8px;
+    }
+
+    .reportCard {
+        min-height: 92px;
+
+        padding: 13px;
+    }
+
+    .reportCard > span {
+        font-size: 9px;
+    }
+
+    .reportCard > strong {
+        font-size: 16px;
+    }
+
+    .systemStatusGrid {
+        grid-template-columns:
+            1fr;
+    }
+
+    .systemStatusItem {
+        min-height: 64px;
+    }
+
+}
