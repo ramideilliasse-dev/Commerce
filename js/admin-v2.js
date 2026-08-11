@@ -780,3 +780,246 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 });
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 2 — STATISTIQUES DASHBOARD
+========================================================== */
+
+
+/* ==========================================================
+   ALERTE DÉBUT BLOC 2
+========================================================== */
+
+alert(
+    "▶️ BLOC JS 2\n\n" +
+    "Connexion aux données du Dashboard..."
+);
+
+
+/* ==========================================================
+   IMPORTS FIRESTORE
+========================================================== */
+
+import {
+    collection,
+    getDocs,
+    query,
+    where
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+/* ==========================================================
+   RÉFÉRENCE FIRESTORE
+========================================================== */
+
+const usersCollection =
+    collection(db, "users");
+
+const merchantsCollection =
+    collection(db, "merchants");
+
+const productsCollection =
+    collection(db, "products");
+
+const ordersCollection =
+    collection(db, "orders");
+
+
+/* ==========================================================
+   FONCTION UTILITAIRE
+========================================================== */
+
+function setElementText(id, value) {
+
+    const element =
+        document.getElementById(id);
+
+    if (element) {
+
+        element.textContent = value;
+
+    }
+
+}
+
+
+/* ==========================================================
+   CHARGER LE NOMBRE D'UTILISATEURS
+========================================================== */
+
+async function loadUsersCount() {
+
+    try {
+
+        const snapshot =
+            await getDocs(usersCollection);
+
+        setElementText(
+            "usersCount",
+            snapshot.size
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Erreur utilisateurs :",
+            error
+        );
+
+        setElementText(
+            "usersCount",
+            "0"
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   CHARGER LE NOMBRE DE COMMERÇANTS
+========================================================== */
+
+async function loadMerchantsCount() {
+
+    try {
+
+        const snapshot =
+            await getDocs(merchantsCollection);
+
+        setElementText(
+            "merchantsCount",
+            snapshot.size
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Erreur commerçants :",
+            error
+        );
+
+        setElementText(
+            "merchantsCount",
+            "0"
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   CHARGER LE NOMBRE DE PRODUITS
+========================================================== */
+
+async function loadProductsCount() {
+
+    try {
+
+        const snapshot =
+            await getDocs(productsCollection);
+
+        setElementText(
+            "productsCount",
+            snapshot.size
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Erreur produits :",
+            error
+        );
+
+        setElementText(
+            "productsCount",
+            "0"
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   CHARGER LE NOMBRE DE COMMANDES
+========================================================== */
+
+async function loadOrdersCount() {
+
+    try {
+
+        const snapshot =
+            await getDocs(ordersCollection);
+
+        setElementText(
+            "monthlyOrders",
+            snapshot.size
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Erreur commandes :",
+            error
+        );
+
+        setElementText(
+            "monthlyOrders",
+            "0"
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   CHARGER LES STATISTIQUES
+========================================================== */
+
+async function loadDashboardStatistics() {
+
+    await Promise.all([
+
+        loadUsersCount(),
+
+        loadMerchantsCount(),
+
+        loadProductsCount(),
+
+        loadOrdersCount()
+
+    ]);
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE
+========================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
+
+        await loadDashboardStatistics();
+
+
+        /* ==================================================
+           FIN DU BLOC 2
+        ================================================== */
+
+        alert(
+            "━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+            "✅ BLOC JS 2 TERMINÉ\n" +
+            "━━━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+            "Les statistiques principales du Dashboard\n" +
+            "ont été connectées à Firebase.\n\n" +
+            "Aucune fonction du bloc 1 n'a été modifiée."
+        );
+
+    }
+);
