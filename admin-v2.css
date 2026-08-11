@@ -4771,3 +4771,48 @@ img {
 .statCardClickable:active {
     transform: scale(0.985);
 }
+/* ==================================================
+   ACTION DES CARTES STATISTIQUES
+================================================== */
+
+.statCardAction {
+    display: block;
+
+    position: relative;
+    z-index: 20;
+
+    width: fit-content;
+
+    margin-top: 18px;
+
+    padding: 14px 22px;
+
+    border-radius: 18px;
+
+    background: #ffffff;
+
+    border: 1px solid #e1e1e1;
+
+    color: #111111;
+
+    text-decoration: none;
+
+    font-size: 18px;
+    font-weight: 700;
+
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.04);
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.statCardAction:hover {
+    color: #111111;
+    text-decoration: none;
+}
+
+.statCardAction:active {
+    transform: scale(0.97);
+}
