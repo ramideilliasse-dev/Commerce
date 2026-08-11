@@ -962,3 +962,540 @@ document.addEventListener(
 
     }
 );
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 3 — GRAPHIQUES + FINANCES
+========================================================== */
+
+
+/* ==========================================================
+   ALERTE — DÉBUT DU BLOC 3
+========================================================== */
+
+alert(
+    "▶️ BLOC JS 3\n\n" +
+    "Graphiques et données financières..."
+);
+
+
+/* ==========================================================
+   FONCTION UTILITAIRE
+========================================================== */
+
+function setBlock3Text(id, value) {
+
+    const element = document.getElementById(id);
+
+    if (element) {
+        element.textContent = value;
+    }
+
+}
+
+
+/* ==========================================================
+   FORMATAGE MONÉTAIRE
+========================================================== */
+
+function formatKz(value) {
+
+    const number = Number(value) || 0;
+
+    return (
+        number.toLocaleString("pt-PT") +
+        " Kz"
+    );
+
+}
+
+
+/* ==========================================================
+   CHARGEMENT DES DONNÉES FINANCIÈRES
+========================================================== */
+
+async function loadFinancialData() {
+
+    try {
+
+        const snapshot = await getDocs(
+            collection(db, "orders")
+        );
+
+
+        let totalSales = 0;
+
+        let totalOrders = snapshot.size;
+
+
+        snapshot.forEach((orderDoc) => {
+
+            const data = orderDoc.data();
+
+
+            const total =
+                Number(
+                    data.total ??
+                    data.totalPrice ??
+                    data.amount ??
+                    0
+                );
+
+
+            if (!Number.isNaN(total)) {
+
+                totalSales += total;
+
+            }
+
+        });
+
+
+        /* ==================================================
+           COMMISSION TOMA — 5 %
+        ================================================== */
+
+        const tomaCommission =
+            totalSales * 0.05;
+
+
+        /* ==================================================
+           PANIER MOYEN
+        ================================================== */
+
+        const averageOrder =
+            totalOrders > 0
+                ? totalSales / totalOrders
+                : 0;
+
+
+        /* ==================================================
+           MISE À JOUR DES CARTES
+        ================================================== */
+
+        setBlock3Text(
+            "financeSales",
+            formatKz(totalSales)
+        );
+
+
+        setBlock3Text(
+            "financeCommission",
+            formatKz(tomaCommission)
+        );
+
+
+        setBlock3Text(
+            "averageOrder",
+            formatKz(averageOrder)
+        );
+
+
+        setBlock3Text(
+            "todayProfit",
+            formatKz(0)
+        );
+
+
+        setBlock3Text(
+            "monthlySales",
+            formatKz(totalSales)
+        );
+
+
+        setBlock3Text(
+            "monthlyOrders",
+            totalOrders
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erreur données financières :",
+            error
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   CHART.JS — CHARGEMENT AUTOMATIQUE
+========================================================== */
+
+function loadChartJS() {
+
+    return new Promise((resolve) => {
+
+
+        /* CHART.JS DÉJÀ PRÉSENT */
+
+        if (window.Chart) {
+
+            resolve(true);
+
+            return;
+
+        }
+
+
+        /* SCRIPT CHART.JS */
+
+        const script =
+            document.createElement("script");
+
+
+        script.src =
+            "https://cdn.jsdelivr.net/npm/chart.js";
+
+
+        script.onload = () => {
+
+            resolve(true);
+
+        };
+
+
+        script.onerror = () => {
+
+            console.error(
+                "Impossible de charger Chart.js."
+            );
+
+            resolve(false);
+
+        };
+
+
+        document.head.appendChild(script);
+
+    });
+
+}
+
+
+/* ==========================================================
+   GRAPHIQUE VENTES
+========================================================== */
+
+function createSalesChart() {
+
+    const canvas =
+        document.getElementById(
+            "salesChart"
+        );
+
+
+    if (!canvas) {
+        return;
+    }
+
+
+    if (!window.Chart) {
+        return;
+    }
+
+
+    const existingChart =
+        window.tomaSalesChart;
+
+
+    if (existingChart) {
+
+        existingChart.destroy();
+
+    }
+
+
+    window.tomaSalesChart =
+        new Chart(
+            canvas,
+            {
+
+                type: "line",
+
+                data: {
+
+                    labels: [
+                        "Lun",
+                        "Mar",
+                        "Mer",
+                        "Jeu",
+                        "Ven",
+                        "Sam",
+                        "Dom"
+                    ],
+
+                    datasets: [
+
+                        {
+
+                            label:
+                                "Vendas",
+
+                            data: [
+                                0,
+                                0,
+                                0,
+                                0,
+                                0,
+                                0,
+                                0
+                            ],
+
+                            tension: 0.35,
+
+                            fill: true
+
+                        }
+
+                    ]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    plugins: {
+
+                        legend: {
+
+                            display: false
+
+                        }
+
+                    },
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero: true
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+}
+
+
+/* ==========================================================
+   GRAPHIQUE COMMANDES
+========================================================== */
+
+function createOrdersChart() {
+
+    const canvas =
+        document.getElementById(
+            "ordersChart"
+        );
+
+
+    if (!canvas) {
+        return;
+    }
+
+
+    if (!window.Chart) {
+        return;
+    }
+
+
+    const existingChart =
+        window.tomaOrdersChart;
+
+
+    if (existingChart) {
+
+        existingChart.destroy();
+
+    }
+
+
+    window.tomaOrdersChart =
+        new Chart(
+            canvas,
+            {
+
+                type: "bar",
+
+                data: {
+
+                    labels: [
+                        "Lun",
+                        "Mar",
+                        "Mer",
+                        "Jeu",
+                        "Ven",
+                        "Sam",
+                        "Dom"
+                    ],
+
+                    datasets: [
+
+                        {
+
+                            label:
+                                "Pedidos",
+
+                            data: [
+                                0,
+                                0,
+                                0,
+                                0,
+                                0,
+                                0,
+                                0
+                            ]
+
+                        }
+
+                    ]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    plugins: {
+
+                        legend: {
+
+                            display: false
+
+                        }
+
+                    },
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            ticks: {
+
+                                precision: 0
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+}
+
+
+/* ==========================================================
+   SÉLECTEUR DE PÉRIODE DES VENTES
+========================================================== */
+
+function initializeSalesPeriod() {
+
+    const selector =
+        document.getElementById(
+            "salesPeriod"
+        );
+
+
+    if (!selector) {
+        return;
+    }
+
+
+    selector.addEventListener(
+        "change",
+        () => {
+
+            console.log(
+                "Période des ventes :",
+                selector.value
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 3
+========================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
+
+
+        try {
+
+
+            /* DONNÉES FINANCIÈRES */
+
+            await loadFinancialData();
+
+
+            /* CHART.JS */
+
+            const chartReady =
+                await loadChartJS();
+
+
+            if (chartReady) {
+
+                createSalesChart();
+
+                createOrdersChart();
+
+            }
+
+
+            /* SÉLECTEUR */
+
+            initializeSalesPeriod();
+
+
+        } catch (error) {
+
+            console.error(
+                "Erreur générale bloc 3 :",
+                error
+            );
+
+        }
+
+
+        /* ==================================================
+           ALERTE — FIN DU BLOC 3
+        ================================================== */
+
+        alert(
+            "━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+            "✅ BLOC JS 3 TERMINÉ\n" +
+            "━━━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+            "Graphiques et données financières\n" +
+            "ont été initialisés.\n\n" +
+            "Les blocs 1 et 2 restent inchangés."
+        );
+
+
+    }
+);
