@@ -5013,3 +5013,241 @@ if (
     );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 15 — RAPPORTS RAPIDES
+========================================================== */
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 15
+========================================================== */
+
+function initializeBlock15() {
+
+
+    /* ======================================================
+       ZONE RAPPORTS
+    ====================================================== */
+
+    const quickReports =
+        document.getElementById(
+            "quickReports"
+        );
+
+
+    /* ======================================================
+       VENTES DU MOIS
+    ====================================================== */
+
+    const monthlySalesCard =
+        document.getElementById(
+            "monthlySalesCard"
+        );
+
+    const monthlySales =
+        document.getElementById(
+            "monthlySales"
+        );
+
+
+    /* ======================================================
+       COMMANDES DU MOIS
+    ====================================================== */
+
+    const monthlyOrdersCard =
+        document.getElementById(
+            "monthlyOrdersCard"
+        );
+
+    const monthlyOrders =
+        document.getElementById(
+            "monthlyOrders"
+        );
+
+
+    /* ======================================================
+       PRODUITS ACTIFS
+    ====================================================== */
+
+    const activeProductsCard =
+        document.getElementById(
+            "activeProductsCard"
+        );
+
+    const activeProducts =
+        document.getElementById(
+            "activeProducts"
+        );
+
+
+    /* ======================================================
+       COMMERÇANTS VÉRIFIÉS
+    ====================================================== */
+
+    const verifiedMerchantsCard =
+        document.getElementById(
+            "verifiedMerchantsCard"
+        );
+
+    const verifiedMerchants =
+        document.getElementById(
+            "verifiedMerchants"
+        );
+
+
+    /* ======================================================
+       VALEURS INITIALES
+       
+       Firebase sera connecté plus tard.
+    ====================================================== */
+
+    if (monthlySales) {
+
+        monthlySales.textContent =
+            "0 Kz";
+
+    }
+
+
+    if (monthlyOrders) {
+
+        monthlyOrders.textContent =
+            "0";
+
+    }
+
+
+    if (activeProducts) {
+
+        activeProducts.textContent =
+            "0";
+
+    }
+
+
+    if (verifiedMerchants) {
+
+        verifiedMerchants.textContent =
+            "0";
+
+    }
+
+
+    /* ======================================================
+       STRUCTURE DES RAPPORTS
+    ====================================================== */
+
+    window.tomaAdminQuickReports = {
+
+        container:
+            quickReports,
+
+        monthlySales:
+            0,
+
+        monthlyOrders:
+            0,
+
+        activeProducts:
+            0,
+
+        verifiedMerchants:
+            0,
+
+        initialized:
+            true
+
+    };
+
+
+    /* ======================================================
+       VÉRIFICATION
+    ====================================================== */
+
+    console.log(
+        "📊 quickReports:",
+        !!quickReports
+    );
+
+    console.log(
+        "💰 monthlySalesCard:",
+        !!monthlySalesCard
+    );
+
+    console.log(
+        "💰 monthlySales:",
+        !!monthlySales
+    );
+
+    console.log(
+        "🛒 monthlyOrdersCard:",
+        !!monthlyOrdersCard
+    );
+
+    console.log(
+        "🛒 monthlyOrders:",
+        !!monthlyOrders
+    );
+
+    console.log(
+        "📦 activeProductsCard:",
+        !!activeProductsCard
+    );
+
+    console.log(
+        "📦 activeProducts:",
+        !!activeProducts
+    );
+
+    console.log(
+        "🏪 verifiedMerchantsCard:",
+        !!verifiedMerchantsCard
+    );
+
+    console.log(
+        "🏪 verifiedMerchants:",
+        !!verifiedMerchants
+    );
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 15
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            initializeBlock15();
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 15 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Os relatórios rápidos do Dashboard foram inicializados."
+            );
+
+        }
+    );
+
+} else {
+
+    initializeBlock15();
+
+    alert(
+        "━━━━━━━━━━━━━━━━━━━━━━\n" +
+        "✅ BLOC JS 15 TERMINÉ\n" +
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+        "Os relatórios rápidos do Dashboard foram inicializados."
+    );
+
+}
