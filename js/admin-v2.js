@@ -2556,3 +2556,322 @@ if (
     );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 6 — CARTES D'ACCÈS + NAVIGATION
+========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 6
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 6 chargé."
+);
+
+
+/* ==========================================================
+   INITIALISATION
+========================================================== */
+
+function initializeBlock6() {
+
+
+    /* ======================================================
+       LOJAS OFICIAIS
+    ====================================================== */
+
+    const officialStoresCard =
+        document.getElementById(
+            "officialStoresCard"
+        );
+
+    const officialStoresDashboardLink =
+        document.getElementById(
+            "officialStoresDashboardLink"
+        );
+
+
+    if (officialStoresCard) {
+
+        console.log(
+            "✅ officialStoresCard existe"
+        );
+
+    }
+
+
+    if (officialStoresDashboardLink) {
+
+        console.log(
+            "✅ officialStoresDashboardLink existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       PEDIDOS DE COMERCIANTES
+    ====================================================== */
+
+    const merchantRequestsCard =
+        document.getElementById(
+            "merchantRequestsCard"
+        );
+
+    const merchantRequestsDashboardLink =
+        document.getElementById(
+            "merchantRequestsDashboardLink"
+        );
+
+
+    if (merchantRequestsCard) {
+
+        console.log(
+            "✅ merchantRequestsCard existe"
+        );
+
+    }
+
+
+    if (merchantRequestsDashboardLink) {
+
+        console.log(
+            "✅ merchantRequestsDashboardLink existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       RELATÓRIOS
+    ====================================================== */
+
+    const reportsCard =
+        document.getElementById(
+            "reportsCard"
+        );
+
+    const reportsDashboardLink =
+        document.getElementById(
+            "reportsDashboardLink"
+        );
+
+
+    if (reportsCard) {
+
+        console.log(
+            "✅ reportsCard existe"
+        );
+
+    }
+
+
+    if (reportsDashboardLink) {
+
+        console.log(
+            "✅ reportsDashboardLink existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       CONFIGURAÇÕES / PARÂMETROS
+    ====================================================== */
+
+    const settingsCard =
+        document.getElementById(
+            "settingsCard"
+        );
+
+    const settingsDashboardLink =
+        document.getElementById(
+            "settingsDashboardLink"
+        );
+
+
+    if (settingsCard) {
+
+        console.log(
+            "✅ settingsCard existe"
+        );
+
+    }
+
+
+    if (settingsDashboardLink) {
+
+        console.log(
+            "✅ settingsDashboardLink existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       NAVEGAÇÃO DAS CARTES
+       
+       Os links continuam sendo responsáveis
+       pela abertura das páginas.
+    ====================================================== */
+
+    const dashboardLinks = [
+
+        officialStoresDashboardLink,
+
+        merchantRequestsDashboardLink,
+
+        reportsDashboardLink,
+
+        settingsDashboardLink
+
+    ];
+
+
+    dashboardLinks.forEach(
+        function (link) {
+
+            if (!link) {
+                return;
+            }
+
+
+            link.addEventListener(
+                "click",
+                function () {
+
+                    console.log(
+                        "Navigation vers :",
+                        link.href
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    /* ======================================================
+       NOTIFICATIONS BADGE
+    ====================================================== */
+
+    const notificationsBadge =
+        document.getElementById(
+            "notificationsBadge"
+        );
+
+
+    if (notificationsBadge) {
+
+        console.log(
+            "✅ notificationsBadge existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       COMPTEURS DES CARTES
+    ====================================================== */
+
+    const officialStoresCount =
+        document.getElementById(
+            "officialStoresCount"
+        );
+
+    const merchantRequestsDashboardCount =
+        document.getElementById(
+            "merchantRequestsDashboardCount"
+        );
+
+    const reportsCount =
+        document.getElementById(
+            "reportsCount"
+        );
+
+    const settingsStatus =
+        document.getElementById(
+            "settingsStatus"
+        );
+
+
+    if (officialStoresCount) {
+
+        console.log(
+            "✅ officialStoresCount existe"
+        );
+
+    }
+
+
+    if (merchantRequestsDashboardCount) {
+
+        console.log(
+            "✅ merchantRequestsDashboardCount existe"
+        );
+
+    }
+
+
+    if (reportsCount) {
+
+        console.log(
+            "✅ reportsCount existe"
+        );
+
+    }
+
+
+    if (settingsStatus) {
+
+        console.log(
+            "✅ settingsStatus existe"
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            initializeBlock6();
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 6 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Les cartes d'accès et leur navigation sont initialisées."
+            );
+
+        }
+    );
+
+} else {
+
+    initializeBlock6();
+
+    alert(
+        "━━━━━━━━━━━━━━━━━━━━━━\n" +
+        "✅ BLOC JS 6 TERMINÉ\n" +
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+        "Les cartes d'accès et leur navigation sont initialisées."
+    );
+
+}
