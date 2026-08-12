@@ -2875,3 +2875,296 @@ if (
     );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 7 — HEADER + RECHERCHE + ACTUALISATION
+========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 7
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 7 chargé."
+);
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 7
+========================================================== */
+
+function initializeBlock7() {
+
+
+    /* ======================================================
+       RECHERCHE GLOBALE
+    ====================================================== */
+
+    const globalSearch =
+        document.getElementById(
+            "globalSearch"
+        );
+
+
+    if (globalSearch) {
+
+        console.log(
+            "✅ globalSearch existe"
+        );
+
+
+        globalSearch.addEventListener(
+            "input",
+            function () {
+
+                const searchValue =
+                    globalSearch.value
+                        .trim()
+                        .toLowerCase();
+
+
+                console.log(
+                    "Recherche :",
+                    searchValue
+                );
+
+            }
+        );
+
+    } else {
+
+        console.warn(
+            "⚠️ globalSearch introuvable"
+        );
+
+    }
+
+
+    /* ======================================================
+       BOUTON NOTIFICATIONS
+    ====================================================== */
+
+    const notificationsButton =
+        document.getElementById(
+            "notificationsButton"
+        );
+
+
+    if (notificationsButton) {
+
+        console.log(
+            "✅ notificationsButton existe"
+        );
+
+
+        notificationsButton.addEventListener(
+            "click",
+            function () {
+
+                window.location.href =
+                    "notifications.html";
+
+            }
+        );
+
+    } else {
+
+        console.warn(
+            "⚠️ notificationsButton introuvable"
+        );
+
+    }
+
+
+    /* ======================================================
+       BADGE NOTIFICATIONS
+    ====================================================== */
+
+    const notificationsBadge =
+        document.getElementById(
+            "notificationsBadge"
+        );
+
+
+    if (notificationsBadge) {
+
+        console.log(
+            "✅ notificationsBadge existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       BOUTON ACTUALISER
+    ====================================================== */
+
+    const refreshDashboard =
+        document.getElementById(
+            "refreshDashboard"
+        );
+
+
+    if (refreshDashboard) {
+
+        console.log(
+            "✅ refreshDashboard existe"
+        );
+
+
+        refreshDashboard.addEventListener(
+            "click",
+            function () {
+
+                refreshDashboard.disabled =
+                    true;
+
+
+                refreshDashboard.style.opacity =
+                    "0.6";
+
+
+                console.log(
+                    "🔄 Actualisation du dashboard..."
+                );
+
+
+                setTimeout(
+                    function () {
+
+                        refreshDashboard.disabled =
+                            false;
+
+                        refreshDashboard.style.opacity =
+                            "1";
+
+                    },
+                    700
+                );
+
+            }
+        );
+
+    } else {
+
+        console.warn(
+            "⚠️ refreshDashboard introuvable"
+        );
+
+    }
+
+
+    /* ======================================================
+       TITRE DU DASHBOARD
+    ====================================================== */
+
+    const dashboardTitle =
+        document.getElementById(
+            "dashboardTitle"
+        );
+
+
+    const dashboardSubtitle =
+        document.getElementById(
+            "dashboardSubtitle"
+        );
+
+
+    if (dashboardTitle) {
+
+        console.log(
+            "✅ dashboardTitle existe"
+        );
+
+    }
+
+
+    if (dashboardSubtitle) {
+
+        console.log(
+            "✅ dashboardSubtitle existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       HEADER
+    ====================================================== */
+
+    const adminHeader =
+        document.getElementById(
+            "adminHeader"
+        );
+
+
+    if (adminHeader) {
+
+        console.log(
+            "✅ adminHeader existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       ACTIONS HEADER
+    ====================================================== */
+
+    const headerActions =
+        document.querySelector(
+            ".headerActions"
+        );
+
+
+    if (headerActions) {
+
+        console.log(
+            "✅ headerActions existe"
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            initializeBlock7();
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 7 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Header, pesquisa, notificações e atualização inicializados."
+            );
+
+        }
+    );
+
+} else {
+
+    initializeBlock7();
+
+    alert(
+        "━━━━━━━━━━━━━━━━━━━━━━\n" +
+        "✅ BLOC JS 7 TERMINÉ\n" +
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+        "Header, pesquisa, notificações e atualização inicializados."
+    );
+
+}
