@@ -3587,3 +3587,346 @@ if (
     );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 9 — STATISTIQUES PRINCIPALES
+========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 9
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 9 chargé."
+);
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 9
+========================================================== */
+
+function initializeBlock9() {
+
+
+    /* ======================================================
+       UTILISATEURS
+    ====================================================== */
+
+    const usersCard =
+        document.getElementById(
+            "usersCard"
+        );
+
+    const usersCount =
+        document.getElementById(
+            "usersCount"
+        );
+
+    const usersGrowth =
+        document.getElementById(
+            "usersGrowth"
+        );
+
+
+    if (usersCard) {
+
+        console.log(
+            "✅ usersCard existe"
+        );
+
+    }
+
+
+    if (usersCount) {
+
+        console.log(
+            "✅ usersCount existe"
+        );
+
+    }
+
+
+    if (usersGrowth) {
+
+        console.log(
+            "✅ usersGrowth existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       COMMERÇANTS
+    ====================================================== */
+
+    const merchantsCard =
+        document.getElementById(
+            "merchantsCard"
+        );
+
+    const merchantsCount =
+        document.getElementById(
+            "merchantsCount"
+        );
+
+    const merchantsGrowth =
+        document.getElementById(
+            "merchantsGrowth"
+        );
+
+
+    if (merchantsCard) {
+
+        console.log(
+            "✅ merchantsCard existe"
+        );
+
+    }
+
+
+    if (merchantsCount) {
+
+        console.log(
+            "✅ merchantsCount existe"
+        );
+
+    }
+
+
+    if (merchantsGrowth) {
+
+        console.log(
+            "✅ merchantsGrowth existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       PRODUITS
+    ====================================================== */
+
+    const productsCard =
+        document.getElementById(
+            "productsCard"
+        );
+
+    const productsCount =
+        document.getElementById(
+            "productsCount"
+        );
+
+
+    if (productsCard) {
+
+        console.log(
+            "✅ productsCard existe"
+        );
+
+    }
+
+
+    if (productsCount) {
+
+        console.log(
+            "✅ productsCount existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       VENTES
+    ====================================================== */
+
+    const salesCard =
+        document.getElementById(
+            "salesCard"
+        );
+
+    const salesCount =
+        document.getElementById(
+            "salesCount"
+        );
+
+
+    if (salesCard) {
+
+        console.log(
+            "✅ salesCard existe"
+        );
+
+    }
+
+
+    if (salesCount) {
+
+        console.log(
+            "✅ salesCount existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       SECTION STATISTIQUES
+    ====================================================== */
+
+    const statisticsCards =
+        document.getElementById(
+            "statisticsCards"
+        );
+
+
+    if (statisticsCards) {
+
+        console.log(
+            "✅ statisticsCards existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       FONCTION DE FORMATAGE
+    ====================================================== */
+
+    function formatNumber(value) {
+
+        const number =
+            Number(value) || 0;
+
+
+        return number.toLocaleString(
+            "pt-PT"
+        );
+
+    }
+
+
+    /* ======================================================
+       VALEURS INITIALES
+       
+       Firebase sera connecté plus tard.
+    ====================================================== */
+
+    if (usersCount) {
+
+        usersCount.textContent =
+            formatNumber(0);
+
+    }
+
+
+    if (merchantsCount) {
+
+        merchantsCount.textContent =
+            formatNumber(0);
+
+    }
+
+
+    if (productsCount) {
+
+        productsCount.textContent =
+            formatNumber(0);
+
+    }
+
+
+    if (salesCount) {
+
+        salesCount.textContent =
+            "0 Kz";
+
+    }
+
+
+    /* ======================================================
+       CROISSANCE INITIALE
+    ====================================================== */
+
+    if (usersGrowth) {
+
+        usersGrowth.textContent =
+            "+0%";
+
+    }
+
+
+    if (merchantsGrowth) {
+
+        merchantsGrowth.textContent =
+            "+0%";
+
+    }
+
+
+    /* ======================================================
+       OBJET LOCAL DU DASHBOARD
+       
+       Il servira plus tard de structure pour
+       les données Firebase.
+    ====================================================== */
+
+    window.tomaAdminStats =
+        {
+
+            users: 0,
+
+            merchants: 0,
+
+            products: 0,
+
+            sales: 0
+
+        };
+
+
+    console.log(
+        "📊 Structure des statistiques TOMA créée."
+    );
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 9
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            initializeBlock9();
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 9 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "As estatísticas principais foram inicializadas."
+            );
+
+        }
+    );
+
+} else {
+
+    initializeBlock9();
+
+    alert(
+        "━━━━━━━━━━━━━━━━━━━━━━\n" +
+        "✅ BLOC JS 9 TERMINÉ\n" +
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+        "As estatísticas principais foram inicializadas."
+    );
+
+}
