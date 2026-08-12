@@ -3930,3 +3930,275 @@ if (
     );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 10 — CARTES D'ACCÈS DU DASHBOARD
+========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 10
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 10 chargé."
+);
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 10
+========================================================== */
+
+function initializeBlock10() {
+
+
+    /* ======================================================
+       LOJAS OFFICIAIS
+    ====================================================== */
+
+    const officialStoresCard =
+        document.getElementById(
+            "officialStoresCard"
+        );
+
+    const officialStoresCount =
+        document.getElementById(
+            "officialStoresCount"
+        );
+
+    const officialStoresDashboardLink =
+        document.getElementById(
+            "officialStoresDashboardLink"
+        );
+
+
+    if (officialStoresCard) {
+
+        console.log(
+            "✅ officialStoresCard existe"
+        );
+
+    }
+
+
+    if (officialStoresCount) {
+
+        officialStoresCount.textContent =
+            "0";
+
+    }
+
+
+    if (officialStoresDashboardLink) {
+
+        console.log(
+            "✅ officialStoresDashboardLink existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       PEDIDOS DE COMERCIANTES
+    ====================================================== */
+
+    const merchantRequestsCard =
+        document.getElementById(
+            "merchantRequestsCard"
+        );
+
+    const merchantRequestsDashboardCount =
+        document.getElementById(
+            "merchantRequestsDashboardCount"
+        );
+
+    const merchantRequestsDashboardLink =
+        document.getElementById(
+            "merchantRequestsDashboardLink"
+        );
+
+
+    if (merchantRequestsCard) {
+
+        console.log(
+            "✅ merchantRequestsCard existe"
+        );
+
+    }
+
+
+    if (merchantRequestsDashboardCount) {
+
+        merchantRequestsDashboardCount.textContent =
+            "0";
+
+    }
+
+
+    if (merchantRequestsDashboardLink) {
+
+        console.log(
+            "✅ merchantRequestsDashboardLink existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       RELATÓRIOS
+    ====================================================== */
+
+    const reportsCard =
+        document.getElementById(
+            "reportsCard"
+        );
+
+    const reportsCount =
+        document.getElementById(
+            "reportsCount"
+        );
+
+    const reportsDashboardLink =
+        document.getElementById(
+            "reportsDashboardLink"
+        );
+
+
+    if (reportsCard) {
+
+        console.log(
+            "✅ reportsCard existe"
+        );
+
+    }
+
+
+    if (reportsCount) {
+
+        reportsCount.textContent =
+            "0";
+
+    }
+
+
+    if (reportsDashboardLink) {
+
+        console.log(
+            "✅ reportsDashboardLink existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       CONFIGURAÇÕES
+    ====================================================== */
+
+    const settingsCard =
+        document.getElementById(
+            "settingsCard"
+        );
+
+    const settingsStatus =
+        document.getElementById(
+            "settingsStatus"
+        );
+
+    const settingsDashboardLink =
+        document.getElementById(
+            "settingsDashboardLink"
+        );
+
+
+    if (settingsCard) {
+
+        console.log(
+            "✅ settingsCard existe"
+        );
+
+    }
+
+
+    if (settingsStatus) {
+
+        settingsStatus.textContent =
+            "OK";
+
+    }
+
+
+    if (settingsDashboardLink) {
+
+        console.log(
+            "✅ settingsDashboardLink existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       OBJET DE STRUCTURE
+       
+       Firebase sera connecté plus tard.
+    ====================================================== */
+
+    window.tomaAdminAccessCards =
+        {
+
+            officialStores: 0,
+
+            merchantRequests: 0,
+
+            reports: 0,
+
+            settings: true
+
+        };
+
+
+    console.log(
+        "🧩 Cartes d'accès TOMA initialisées."
+    );
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 10
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            initializeBlock10();
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 10 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Lojas oficiais, pedidos de comerciantes, relatórios e configurações foram inicializados."
+            );
+
+        }
+    );
+
+} else {
+
+    initializeBlock10();
+
+    alert(
+        "━━━━━━━━━━━━━━━━━━━━━━\n" +
+        "✅ BLOC JS 10 TERMINÉ\n" +
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+        "Lojas oficiais, pedidos de comerciantes, relatórios e configurações foram inicializados."
+    );
+
+}
