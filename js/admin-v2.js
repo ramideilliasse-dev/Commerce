@@ -2286,3 +2286,710 @@ document.addEventListener(
 
     }
 );
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 5 — ACTIONS + NAVIGATION + RECHERCHE
+========================================================== */
+
+
+/* ==========================================================
+   ALERTE — DÉBUT DU BLOC 5
+========================================================== */
+
+alert(
+    "▶️ BLOC JS 5\n\n" +
+    "Actions et navigation du dashboard..."
+);
+
+
+/* ==========================================================
+   OUTIL — NAVIGATION SÉCURISÉE
+========================================================== */
+
+function navigateBlock5(url) {
+
+    if (!url) {
+        return;
+    }
+
+    window.location.href = url;
+
+}
+
+
+/* ==========================================================
+   CARTES UTILISATEURS
+========================================================== */
+
+function initializeUsersCard() {
+
+    const card =
+        document.getElementById(
+            "usersCard"
+        );
+
+    const link =
+        document.getElementById(
+            "viewUsers"
+        );
+
+
+    if (link) {
+
+        link.addEventListener(
+            "click",
+            (event) => {
+
+                event.stopPropagation();
+
+            }
+        );
+
+    }
+
+
+    if (card && !link) {
+
+        card.addEventListener(
+            "click",
+            () => {
+
+                navigateBlock5(
+                    "utilizadores.html"
+                );
+
+            }
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   CARTES COMMERÇANTS
+========================================================== */
+
+function initializeMerchantsCard() {
+
+    const card =
+        document.getElementById(
+            "merchantsCard"
+        );
+
+    const link =
+        document.getElementById(
+            "viewMerchants"
+        );
+
+
+    if (link) {
+
+        link.addEventListener(
+            "click",
+            (event) => {
+
+                event.stopPropagation();
+
+            }
+        );
+
+    }
+
+
+    if (card && !link) {
+
+        card.addEventListener(
+            "click",
+            () => {
+
+                navigateBlock5(
+                    "merchants.html"
+                );
+
+            }
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   CARTES DASHBOARD
+========================================================== */
+
+function initializeDashboardCards() {
+
+
+    const cards = [
+
+        {
+            id:
+                "officialStoresDashboardLink",
+
+            url:
+                "official-stores.html"
+        },
+
+        {
+            id:
+                "merchantRequestsDashboardLink",
+
+            url:
+                "merchants.html"
+        },
+
+        {
+            id:
+                "reportsDashboardLink",
+
+            url:
+                "reports.html"
+        },
+
+        {
+            id:
+                "settingsDashboardLink",
+
+            url:
+                "settings.html"
+        }
+
+    ];
+
+
+    cards.forEach(
+        (item) => {
+
+            const element =
+                document.getElementById(
+                    item.id
+                );
+
+
+            if (!element) {
+
+                return;
+
+            }
+
+
+            element.addEventListener(
+                "click",
+                (event) => {
+
+                    event.stopPropagation();
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   RECHERCHE GLOBALE
+========================================================== */
+
+function initializeGlobalSearch() {
+
+    const search =
+        document.getElementById(
+            "globalSearch"
+        );
+
+
+    if (!search) {
+
+        return;
+
+    }
+
+
+    search.addEventListener(
+        "input",
+        () => {
+
+            const value =
+                search.value
+                    .trim()
+                    .toLowerCase();
+
+
+            const rows =
+                document.querySelectorAll(
+                    ".adminTable tbody tr"
+                );
+
+
+            if (!value) {
+
+                rows.forEach(
+                    (row) => {
+
+                        row.style.display =
+                            "";
+
+                    }
+                );
+
+                return;
+
+            }
+
+
+            rows.forEach(
+                (row) => {
+
+                    const text =
+                        row.textContent
+                            .toLowerCase();
+
+
+                    row.style.display =
+                        text.includes(value)
+                            ? ""
+                            : "none";
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   BOUTON ACTUALISER
+========================================================== */
+
+function initializeRefreshButton() {
+
+    const button =
+        document.getElementById(
+            "refreshDashboard"
+        );
+
+
+    if (!button) {
+
+        return;
+
+    }
+
+
+    button.addEventListener(
+        "click",
+        async () => {
+
+
+            button.disabled =
+                true;
+
+
+            button.classList.add(
+                "isRefreshing"
+            );
+
+
+            try {
+
+                if (
+                    typeof loadDashboardData ===
+                    "function"
+                ) {
+
+                    await loadDashboardData();
+
+                }
+
+
+                if (
+                    typeof loadBlock4Data ===
+                    "function"
+                ) {
+
+                    await loadBlock4Data();
+
+                }
+
+
+            } catch (error) {
+
+                console.error(
+                    "Erreur actualisation dashboard :",
+                    error
+                );
+
+            }
+
+
+            button.disabled =
+                false;
+
+
+            button.classList.remove(
+                "isRefreshing"
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   BOUTON NOTIFICATIONS HEADER
+========================================================== */
+
+function initializeHeaderNotifications() {
+
+    const button =
+        document.getElementById(
+            "notificationsButton"
+        );
+
+
+    if (!button) {
+
+        return;
+
+    }
+
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            const panel =
+                document.getElementById(
+                    "notificationsPanel"
+                );
+
+
+            if (panel) {
+
+                panel.scrollIntoView({
+
+                    behavior:
+                        "smooth",
+
+                    block:
+                        "start"
+
+                });
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   BOUTON LOGOUT
+========================================================== */
+
+function initializeLogoutButton() {
+
+    const button =
+        document.getElementById(
+            "logoutButton"
+        );
+
+
+    if (!button) {
+
+        return;
+
+    }
+
+
+    button.addEventListener(
+        "click",
+        async () => {
+
+
+            const confirmation =
+                window.confirm(
+                    "Deseja realmente sair da área administrativa?"
+                );
+
+
+            if (!confirmation) {
+
+                return;
+
+            }
+
+
+            try {
+
+
+                if (
+                    typeof signOut ===
+                    "function"
+                ) {
+
+                    await signOut(auth);
+
+                }
+
+
+                window.location.href =
+                    "login.html";
+
+
+            } catch (error) {
+
+                console.error(
+                    "Erro ao terminar sessão:",
+                    error
+                );
+
+                alert(
+                    "Não foi possível terminar a sessão."
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   NAVIGATION SIDEBAR
+========================================================== */
+
+function initializeSidebarNavigation() {
+
+    const navigation =
+        document.getElementById(
+            "dashboardNavigation"
+        );
+
+
+    if (!navigation) {
+
+        return;
+
+    }
+
+
+    const links =
+        navigation.querySelectorAll(
+            "a.navItem"
+        );
+
+
+    links.forEach(
+        (link) => {
+
+            link.addEventListener(
+                "click",
+                () => {
+
+
+                    links.forEach(
+                        (item) => {
+
+                            item.classList.remove(
+                                "active"
+                            );
+
+                        }
+                    );
+
+
+                    link.classList.add(
+                        "active"
+                    );
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   PÉRIODE DU GRAPHIQUE
+========================================================== */
+
+function initializeSalesPeriod() {
+
+    const selector =
+        document.getElementById(
+            "salesPeriod"
+        );
+
+
+    if (!selector) {
+
+        return;
+
+    }
+
+
+    selector.addEventListener(
+        "change",
+        async () => {
+
+
+            const period =
+                selector.value;
+
+
+            console.log(
+                "Période des ventes sélectionnée :",
+                period
+            );
+
+
+            if (
+                typeof loadSalesChart ===
+                "function"
+            ) {
+
+                try {
+
+                    await loadSalesChart(
+                        Number(period)
+                    );
+
+                } catch (error) {
+
+                    console.error(
+                        "Erreur graphique ventes :",
+                        error
+                    );
+
+                }
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   LIENS DES PANELS
+========================================================== */
+
+function initializePanelLinks() {
+
+    const links =
+        document.querySelectorAll(
+            ".panelLink"
+        );
+
+
+    links.forEach(
+        (link) => {
+
+            link.addEventListener(
+                "click",
+                (event) => {
+
+                    const href =
+                        link.getAttribute(
+                            "href"
+                        );
+
+
+                    if (!href) {
+
+                        event.preventDefault();
+
+                        return;
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 5
+========================================================== */
+
+function initializeBlock5() {
+
+
+    initializeUsersCard();
+
+    initializeMerchantsCard();
+
+    initializeDashboardCards();
+
+    initializeGlobalSearch();
+
+    initializeRefreshButton();
+
+    initializeHeaderNotifications();
+
+    initializeLogoutButton();
+
+    initializeSidebarNavigation();
+
+    initializeSalesPeriod();
+
+    initializePanelLinks();
+
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE
+========================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        try {
+
+            initializeBlock5();
+
+        } catch (error) {
+
+            console.error(
+                "Erreur générale du bloc 5 :",
+                error
+            );
+
+        }
+
+
+        /* ==================================================
+           ALERTE — FIN DU BLOC 5
+        ================================================== */
+
+        alert(
+            "━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+            "✅ BLOC JS 5 TERMINÉ\n" +
+            "━━━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+            "Actions, navigation et recherche initialisées.\n\n" +
+            "Les blocs précédents restent inchangés."
+        );
+
+    }
+);
