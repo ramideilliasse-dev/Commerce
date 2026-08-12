@@ -5475,3 +5475,603 @@ if (
     );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 17 — LOADER + TOAST + MODAL
+========================================================== */
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 17
+========================================================== */
+
+function initializeBlock17() {
+
+
+    /* ======================================================
+       LOADER
+    ====================================================== */
+
+    const loader =
+        document.getElementById(
+            "loader"
+        );
+
+
+    /* ======================================================
+       TOAST
+    ====================================================== */
+
+    const toast =
+        document.getElementById(
+            "toast"
+        );
+
+
+    const toastMessage =
+        document.getElementById(
+            "toastMessage"
+        );
+
+
+    /* ======================================================
+       MODAL NOTIFICATION
+    ====================================================== */
+
+    const notificationModal =
+        document.getElementById(
+            "notificationModal"
+        );
+
+
+    const notificationModalContent =
+        document.getElementById(
+            "notificationModalContent"
+        );
+
+
+    const notificationContent =
+        document.getElementById(
+            "notificationContent"
+        );
+
+
+    const closeNotificationModal =
+        document.getElementById(
+            "closeNotificationModal"
+        );
+
+
+    /* ======================================================
+       FONCTION LOADER
+    ====================================================== */
+
+    window.tomaAdminLoader = {
+
+        element:
+            loader,
+
+        show: function () {
+
+            if (loader) {
+
+                loader.classList.remove(
+                    "hidden"
+                );
+
+                loader.setAttribute(
+                    "aria-hidden",
+                    "false"
+                );
+
+            }
+
+        },
+
+        hide: function () {
+
+            if (loader) {
+
+                loader.classList.add(
+                    "hidden"
+                );
+
+                loader.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
+
+            }
+
+        }
+
+    };
+
+
+    /* ======================================================
+       FONCTION TOAST
+    ====================================================== */
+
+    window.tomaAdminToast = {
+
+        element:
+            toast,
+
+        messageElement:
+            toastMessage,
+
+        show: function (message) {
+
+            if (!toast) return;
+
+
+            if (toastMessage) {
+
+                toastMessage.textContent =
+                    message || "";
+
+            }
+
+
+            toast.classList.add(
+                "show"
+            );
+
+
+            setTimeout(
+                function () {
+
+                    toast.classList.remove(
+                        "show"
+                    );
+
+                },
+                2500
+            );
+
+        }
+
+    };
+
+
+    /* ======================================================
+       OUVERTURE MODAL
+    ====================================================== */
+
+    window.tomaAdminNotificationModal = {
+
+        element:
+            notificationModal,
+
+        content:
+            notificationContent,
+
+        open: function (content) {
+
+            if (!notificationModal) return;
+
+
+            if (notificationContent) {
+
+                notificationContent.innerHTML =
+                    content || "";
+
+            }
+
+
+            notificationModal.classList.remove(
+                "hidden"
+            );
+
+
+            notificationModal.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+
+        },
+
+        close: function () {
+
+            if (!notificationModal) return;
+
+
+            notificationModal.classList.add(
+                "hidden"
+            );
+
+
+            notificationModal.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+        }
+
+    };
+
+
+    /* ======================================================
+       BOUTON FERMER MODAL
+    ====================================================== */
+
+    if (closeNotificationModal) {
+
+        closeNotificationModal.addEventListener(
+            "click",
+            function () {
+
+                window.tomaAdminNotificationModal.close();
+
+            }
+        );
+
+    }
+
+
+    /* ======================================================
+       FERMETURE EN CLIQUANT SUR L'EXTÉRIEUR
+    ====================================================== */
+
+    if (notificationModal) {
+
+        notificationModal.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    event.target ===
+                    notificationModal
+                ) {
+
+                    window.tomaAdminNotificationModal.close();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* ======================================================
+       STRUCTURE GLOBALE
+    ====================================================== */
+
+    window.tomaAdminUI = {
+
+        loader:
+            window.tomaAdminLoader,
+
+        toast:
+            window.tomaAdminToast,
+
+        notificationModal:
+            window.tomaAdminNotificationModal,
+
+        initialized:
+            true
+
+    };
+
+
+    /* ======================================================
+       VÉRIFICATION DES IDS
+    ====================================================== */
+
+    console.log(
+        "⏳ loader:",
+        !!loader
+    );
+
+    console.log(
+        "💬 toast:",
+        !!toast
+    );
+
+    console.log(
+        "💬 toastMessage:",
+        !!toastMessage
+    );
+
+    console.log(
+        "🔔 notificationModal:",
+        !!notificationModal
+    );
+
+    console.log(
+        "📄 notificationModalContent:",
+        !!notificationModalContent
+    );
+
+    console.log(
+        "📝 notificationContent:",
+        !!notificationContent
+    );
+
+    console.log(
+        "❌ closeNotificationModal:",
+        !!closeNotificationModal
+    );
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 17
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            initializeBlock17();
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 17 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Loader, toast e modal de notificações inicializados."
+            );
+
+        }
+    );
+
+} else {
+
+    initializeBlock17();
+
+    alert(
+        "━━━━━━━━━━━━━━━━━━━━━━\n" +
+        "✅ BLOC JS 17 TERMINÉ\n" +
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+        "Loader, toast e modal de notificações inicializados."
+    );
+
+}
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 18 — PRÉPARATION FINALE AVANT FIREBASE
+========================================================== */
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 18
+========================================================== */
+
+function initializeBlock18() {
+
+
+    /* ======================================================
+       STRUCTURE PRINCIPALE
+    ====================================================== */
+
+    const adminApp =
+        document.getElementById(
+            "adminApp"
+        );
+
+
+    const adminMain =
+        document.getElementById(
+            "adminMain"
+        );
+
+
+    const dashboardContent =
+        document.getElementById(
+            "dashboardContent"
+        );
+
+
+    const statisticsCards =
+        document.getElementById(
+            "statisticsCards"
+        );
+
+
+    /* ======================================================
+       SECTIONS DU DASHBOARD
+    ====================================================== */
+
+    const dashboardCharts =
+        document.getElementById(
+            "dashboardCharts"
+        );
+
+
+    const financeOverview =
+        document.getElementById(
+            "financeOverview"
+        );
+
+
+    const dashboardTables =
+        document.getElementById(
+            "dashboardTables"
+        );
+
+
+    const dashboardActivityArea =
+        document.getElementById(
+            "dashboardActivityArea"
+        );
+
+
+    const quickReports =
+        document.getElementById(
+            "quickReports"
+        );
+
+
+    const notificationsPanel =
+        document.getElementById(
+            "notificationsPanel"
+        );
+
+
+    const merchantRequestsSummary =
+        document.getElementById(
+            "merchantRequestsSummary"
+        );
+
+
+    /* ======================================================
+       VÉRIFICATION GLOBALE
+    ====================================================== */
+
+    const dashboardElements = {
+
+        adminApp:
+            !!adminApp,
+
+        adminMain:
+            !!adminMain,
+
+        dashboardContent:
+            !!dashboardContent,
+
+        statisticsCards:
+            !!statisticsCards,
+
+        dashboardCharts:
+            !!dashboardCharts,
+
+        financeOverview:
+            !!financeOverview,
+
+        dashboardTables:
+            !!dashboardTables,
+
+        dashboardActivityArea:
+            !!dashboardActivityArea,
+
+        quickReports:
+            !!quickReports,
+
+        notificationsPanel:
+            !!notificationsPanel,
+
+        merchantRequestsSummary:
+            !!merchantRequestsSummary
+
+    };
+
+
+    console.log(
+        "📋 Vérification globale TOMA Admin :",
+        dashboardElements
+    );
+
+
+    /* ======================================================
+       STRUCTURE ADMIN GLOBALE
+       
+       Cette structure sera utilisée lors de la
+       connexion Firebase.
+    ====================================================== */
+
+    window.tomaAdmin = {
+
+        initialized:
+            true,
+
+        firebaseConnected:
+            false,
+
+        dashboard:
+            dashboardElements,
+
+        data:
+            {
+
+                users:
+                    0,
+
+                merchants:
+                    0,
+
+                products:
+                    0,
+
+                sales:
+                    0,
+
+                officialStores:
+                    0,
+
+                merchantRequests:
+                    0,
+
+                reports:
+                    0,
+
+                notifications:
+                    0
+
+            }
+
+    };
+
+
+    /* ======================================================
+       ÉTAT INITIAL
+    ====================================================== */
+
+    console.log(
+        "🧩 Structure globale TOMA Admin créée."
+    );
+
+    console.log(
+        "🔥 Firebase connecté :",
+        window.tomaAdmin.firebaseConnected
+    );
+
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 18
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            initializeBlock18();
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 18 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Dashboard TOMA preparado para a próxima etapa."
+            );
+
+        }
+    );
+
+} else {
+
+    initializeBlock18();
+
+    alert(
+        "━━━━━━━━━━━━━━━━━━━━━━\n" +
+        "✅ BLOC JS 18 TERMINÉ\n" +
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+        "Dashboard TOMA preparado para a próxima etapa."
+    );
+
+}
