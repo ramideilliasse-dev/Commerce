@@ -4875,3 +4875,141 @@ if (
     );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 14 — ACTIVITÉ RÉCENTE
+========================================================== */
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 14
+========================================================== */
+
+function initializeBlock14() {
+
+
+    /* ======================================================
+       ZONE ACTIVITÉ
+    ====================================================== */
+
+    const dashboardActivityArea =
+        document.getElementById(
+            "dashboardActivityArea"
+        );
+
+
+    const recentActivityPanel =
+        document.getElementById(
+            "recentActivityPanel"
+        );
+
+
+    const activityList =
+        document.getElementById(
+            "activityList"
+        );
+
+
+    /* ======================================================
+       STRUCTURE DE L'ACTIVITÉ
+       
+       Les données réelles seront ajoutées plus tard.
+    ====================================================== */
+
+    window.tomaAdminActivity = {
+
+        area:
+            dashboardActivityArea,
+
+        panel:
+            recentActivityPanel,
+
+        list:
+            activityList,
+
+        initialized:
+            true
+
+    };
+
+
+    /* ======================================================
+       MESSAGE INITIAL
+    ====================================================== */
+
+    if (activityList) {
+
+        const activityItems =
+            activityList.querySelectorAll(
+                ".activityItem"
+            );
+
+
+        console.log(
+            "📋 Activités présentes :",
+            activityItems.length
+        );
+
+    }
+
+
+    /* ======================================================
+       VÉRIFICATION
+    ====================================================== */
+
+    console.log(
+        "📊 dashboardActivityArea:",
+        !!dashboardActivityArea
+    );
+
+    console.log(
+        "📋 recentActivityPanel:",
+        !!recentActivityPanel
+    );
+
+    console.log(
+        "📝 activityList:",
+        !!activityList
+    );
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 14
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            initializeBlock14();
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 14 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "A atividade recente do Dashboard foi inicializada."
+            );
+
+        }
+    );
+
+} else {
+
+    initializeBlock14();
+
+    alert(
+        "━━━━━━━━━━━━━━━━━━━━━━\n" +
+        "✅ BLOC JS 14 TERMINÉ\n" +
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+        "A atividade recente do Dashboard foi inicializada."
+    );
+
+}
