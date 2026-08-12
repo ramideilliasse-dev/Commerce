@@ -6225,3 +6225,369 @@ if (
     );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 20 — CONNEXION FIREBASE
+========================================================== */
+
+
+/* ==========================================================
+   IMPORT FIREBASE
+========================================================== */
+
+import {
+    auth,
+    db,
+    messaging,
+    currentUser,
+    authReady
+} from "./firebase.js";
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 20
+========================================================== */
+
+function initializeBlock20() {
+
+
+    /* ======================================================
+       VÉRIFICATION FIREBASE APP
+    ====================================================== */
+
+    if (!auth) {
+
+        console.error(
+            "❌ Firebase Auth introuvable."
+        );
+
+        return;
+
+    }
+
+
+    if (!db) {
+
+        console.error(
+            "❌ Firestore introuvable."
+        );
+
+        return;
+
+    }
+
+
+    if (!messaging) {
+
+        console.warn(
+            "⚠️ Firebase Messaging introuvable."
+        );
+
+    }
+
+
+    /* ======================================================
+       STRUCTURE FIREBASE DU DASHBOARD
+    ====================================================== */
+
+    if (!window.tomaAdmin) {
+
+        window.tomaAdmin = {};
+
+    }
+
+
+    window.tomaAdmin.firebase = {
+
+        auth:
+            auth,
+
+        db:
+            db,
+
+        messaging:
+            messaging,
+
+        connected:
+            true,
+
+        initialized:
+            true,
+
+        ready:
+            false
+
+    };
+
+
+    /* ======================================================
+       ÉTAT AUTHENTIFICATION
+    ====================================================== */
+
+    window.tomaAdmin.firebase.authState = {
+
+        ready:
+            authReady,
+
+        user:
+            currentUser
+
+    };
+
+
+    /* ======================================================
+       VÉRIFICATION UTILISATEUR
+    ====================================================== */
+
+    if (currentUser) {
+
+        console.log(
+            "👤 Utilisateur Firebase connecté :",
+            currentUser.uid
+        );
+
+    } else {
+
+        console.log(
+            "👤 Aucun utilisateur Firebase actuellement connecté."
+        );
+
+    }
+
+
+    /* ======================================================
+       FIREBASE PRÊT
+    ====================================================== */
+
+    window.tomaAdmin.firebase.ready =
+        true;
+
+
+    window.tomaAdmin.firebaseStatus = {
+
+        connected:
+            true,
+
+        message:
+            "Firebase conectado com sucesso."
+
+    };
+
+
+    /* ======================================================
+       LOG FINAL
+    ====================================================== */
+
+    console.log(
+        "🔥 Firebase conectado ao TOMA Admin V2."
+    );
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 20
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            initializeBlock20();
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 20 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Firebase conectado ao TOMA Admin V2.\n" +
+                "Nenhum dado Firestore foi modificado."
+            );
+
+        }
+    );
+
+} else {
+
+    initializeBlock20();
+
+    alert(
+        "━━━━━━━━━━━━━━━━━━━━━━\n" +
+        "✅ BLOC JS 20 TERMINÉ\n" +
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+        "Firebase conectado ao TOMA Admin V2.\n" +
+        "Nenhum dado Firestore foi modificado."
+    );
+
+}
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 21 — UTILISATEURS FIREBASE
+========================================================== */
+
+import {
+    collection,
+    getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 21
+========================================================== */
+
+async function initializeBlock21() {
+
+
+    /* ======================================================
+       VÉRIFICATION FIREBASE
+    ====================================================== */
+
+    if (!window.tomaAdmin ||
+        !window.tomaAdmin.firebase ||
+        !window.tomaAdmin.firebase.db) {
+
+        console.error(
+            "❌ Firestore TOMA Admin indisponible."
+        );
+
+        return;
+
+    }
+
+
+    const db =
+        window.tomaAdmin.firebase.db;
+
+
+    /* ======================================================
+       ÉLÉMENT UTILISATEURS
+    ====================================================== */
+
+    const usersCount =
+        document.getElementById(
+            "usersCount"
+        );
+
+
+    if (!usersCount) {
+
+        console.warn(
+            "⚠️ usersCount introuvable."
+        );
+
+        return;
+
+    }
+
+
+    /* ======================================================
+       LECTURE FIRESTORE
+    ====================================================== */
+
+    try {
+
+        const usersSnapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "users"
+                )
+            );
+
+
+        const totalUsers =
+            usersSnapshot.size;
+
+
+        /* ==================================================
+           AFFICHAGE
+        ================================================== */
+
+        usersCount.textContent =
+            totalUsers.toLocaleString(
+                "pt-PT"
+            );
+
+
+        /* ==================================================
+           STOCKAGE LOCAL DE LA STATISTIQUE
+        ================================================== */
+
+        if (!window.tomaAdmin.data) {
+
+            window.tomaAdmin.data = {};
+
+        }
+
+
+        window.tomaAdmin.data.users =
+            totalUsers;
+
+
+        console.log(
+            "👥 Utilisateurs Firebase :",
+            totalUsers
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "❌ Erreur lecture users :",
+            error
+        );
+
+
+        usersCount.textContent =
+            "0";
+
+    }
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 21
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        async function () {
+
+            await initializeBlock21();
+
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 21 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Utilizadores carregados desde Firebase."
+            );
+
+        }
+    );
+
+} else {
+
+    await initializeBlock21();
+
+
+    alert(
+        "━━━━━━━━━━━━━━━━━━━━━━\n" +
+        "✅ BLOC JS 21 TERMINÉ\n" +
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+        "Utilizadores carregados desde Firebase."
+    );
+
+}
