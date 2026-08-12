@@ -5251,3 +5251,227 @@ if (
     );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 16 — NOTIFICATIONS + DEMANDES COMMERÇANTS
+========================================================== */
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 16
+========================================================== */
+
+function initializeBlock16() {
+
+
+    /* ======================================================
+       NOTIFICATIONS
+    ====================================================== */
+
+    const notificationsPanel =
+        document.getElementById(
+            "notificationsPanel"
+        );
+
+
+    const notificationsList =
+        document.getElementById(
+            "notificationsList"
+        );
+
+
+    const viewAllNotifications =
+        document.getElementById(
+            "viewAllNotifications"
+        );
+
+
+    /* ======================================================
+       DEMANDES COMMERÇANTS
+    ====================================================== */
+
+    const merchantRequestsSummary =
+        document.getElementById(
+            "merchantRequestsSummary"
+        );
+
+
+    const merchantRequestsCount =
+        document.getElementById(
+            "merchantRequestsCount"
+        );
+
+
+    const merchantBadge =
+        document.getElementById(
+            "merchantBadge"
+        );
+
+
+    const viewMerchantRequests =
+        document.getElementById(
+            "viewMerchantRequests"
+        );
+
+
+    /* ======================================================
+       VALEURS INITIALES
+       
+       Firebase sera connecté plus tard.
+    ====================================================== */
+
+    if (merchantRequestsCount) {
+
+        merchantRequestsCount.textContent =
+            "0";
+
+    }
+
+
+    if (merchantBadge) {
+
+        merchantBadge.textContent =
+            "0";
+
+    }
+
+
+    /* ======================================================
+       STRUCTURE DES NOTIFICATIONS
+    ====================================================== */
+
+    window.tomaAdminNotifications = {
+
+        panel:
+            notificationsPanel,
+
+        list:
+            notificationsList,
+
+        count:
+            0,
+
+        initialized:
+            true
+
+    };
+
+
+    /* ======================================================
+       STRUCTURE DES DEMANDES COMMERÇANTS
+    ====================================================== */
+
+    window.tomaAdminMerchantRequests = {
+
+        summary:
+            merchantRequestsSummary,
+
+        countElement:
+            merchantRequestsCount,
+
+        badge:
+            merchantBadge,
+
+        count:
+            0,
+
+        initialized:
+            true
+
+    };
+
+
+    /* ======================================================
+       LIENS D'ACCÈS
+       
+       Ces liens ouvrent leurs pages respectives.
+    ====================================================== */
+
+    if (viewAllNotifications) {
+
+        console.log(
+            "✅ viewAllNotifications existe"
+        );
+
+    }
+
+
+    if (viewMerchantRequests) {
+
+        console.log(
+            "✅ viewMerchantRequests existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       VÉRIFICATION
+    ====================================================== */
+
+    console.log(
+        "🔔 notificationsPanel:",
+        !!notificationsPanel
+    );
+
+    console.log(
+        "🔔 notificationsList:",
+        !!notificationsList
+    );
+
+    console.log(
+        "🏪 merchantRequestsSummary:",
+        !!merchantRequestsSummary
+    );
+
+    console.log(
+        "🏪 merchantRequestsCount:",
+        !!merchantRequestsCount
+    );
+
+    console.log(
+        "🏷️ merchantBadge:",
+        !!merchantBadge
+    );
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 16
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            initializeBlock16();
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 16 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Notificações e pedidos de comerciantes foram inicializados."
+            );
+
+        }
+    );
+
+} else {
+
+    initializeBlock16();
+
+    alert(
+        "━━━━━━━━━━━━━━━━━━━━━━\n" +
+        "✅ BLOC JS 16 TERMINÉ\n" +
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+        "Notificações e pedidos de comerciantes foram inicializados."
+    );
+
+}
