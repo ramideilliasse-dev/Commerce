@@ -6075,3 +6075,153 @@ if (
     );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 19 — PRÉPARATION FIREBASE
+========================================================== */
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 19
+========================================================== */
+
+function initializeBlock19() {
+
+
+    /* ======================================================
+       VÉRIFICATION DE LA STRUCTURE TOMA ADMIN
+    ====================================================== */
+
+    if (!window.tomaAdmin) {
+
+        console.warn(
+            "⚠️ window.tomaAdmin n'existe pas encore."
+        );
+
+        return;
+
+    }
+
+
+    /* ======================================================
+       ÉTAT FIREBASE
+    ====================================================== */
+
+    window.tomaAdmin.firebase = {
+
+        connected:
+            false,
+
+        initialized:
+            false,
+
+        ready:
+            false
+
+    };
+
+
+    /* ======================================================
+       PRÉPARATION DES COLLECTIONS
+       
+       Aucun accès Firebase ici.
+       Elles seront utilisées dans le prochain bloc.
+    ====================================================== */
+
+    window.tomaAdmin.firebase.collections = {
+
+        users:
+            "users",
+
+        merchants:
+            "merchants",
+
+        products:
+            "products",
+
+        orders:
+            "orders",
+
+        notifications:
+            "notifications",
+
+        officialStores:
+            "officialStores",
+
+        reports:
+            "reports"
+
+    };
+
+
+    /* ======================================================
+       ÉTAT DE CONNEXION
+    ====================================================== */
+
+    window.tomaAdmin.firebaseStatus = {
+
+        connected:
+            false,
+
+        message:
+            "Firebase ainda não conectado."
+
+    };
+
+
+    /* ======================================================
+       LOG DE PRÉPARATION
+    ====================================================== */
+
+    console.log(
+        "🔥 Estrutura Firebase TOMA preparada."
+    );
+
+    console.log(
+        "📦 Coleções preparadas:",
+        window.tomaAdmin.firebase.collections
+    );
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 19
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            initializeBlock19();
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 19 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Estrutura Firebase preparada.\n" +
+                "Nenhum dado Firebase foi carregado."
+            );
+
+        }
+    );
+
+} else {
+
+    initializeBlock19();
+
+    alert(
+        "━━━━━━━━━━━━━━━━━━━━━━\n" +
+        "✅ BLOC JS 19 TERMINÉ\n" +
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+        "Estrutura Firebase preparada.\n" +
+        "Nenhum dado Firebase foi carregado."
+    );
+
+}
