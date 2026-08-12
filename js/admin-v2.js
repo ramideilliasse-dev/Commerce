@@ -4202,3 +4202,206 @@ if (
     );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 11 — GRAPHIQUES DU DASHBOARD
+========================================================== */
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 11
+========================================================== */
+
+function initializeBlock11() {
+
+
+    /* ======================================================
+       GRAPHIQUE DES VENTES
+    ====================================================== */
+
+    const salesChartCard =
+        document.getElementById(
+            "salesChartCard"
+        );
+
+    const salesChartContainer =
+        document.getElementById(
+            "salesChartContainer"
+        );
+
+    const salesChart =
+        document.getElementById(
+            "salesChart"
+        );
+
+    const salesPeriod =
+        document.getElementById(
+            "salesPeriod"
+        );
+
+
+    /* ======================================================
+       GRAPHIQUE DES COMMANDES
+    ====================================================== */
+
+    const ordersChartCard =
+        document.getElementById(
+            "ordersChartCard"
+        );
+
+    const ordersChartContainer =
+        document.getElementById(
+            "ordersChartContainer"
+        );
+
+    const ordersChart =
+        document.getElementById(
+            "ordersChart"
+        );
+
+
+    /* ======================================================
+       STRUCTURE DES GRAPHIQUES
+       
+       Les données Firebase seront ajoutées plus tard.
+    ====================================================== */
+
+    window.tomaAdminCharts = {
+
+        sales: {
+
+            card: salesChartCard,
+
+            container: salesChartContainer,
+
+            element: salesChart,
+
+            period: salesPeriod
+                ? salesPeriod.value
+                : "7",
+
+            initialized: true
+
+        },
+
+
+        orders: {
+
+            card: ordersChartCard,
+
+            container: ordersChartContainer,
+
+            element: ordersChart,
+
+            initialized: true
+
+        }
+
+    };
+
+
+    /* ======================================================
+       CHANGEMENT DE PÉRIODE
+    ====================================================== */
+
+    if (salesPeriod) {
+
+        salesPeriod.addEventListener(
+            "change",
+            function () {
+
+                window.tomaAdminCharts.sales.period =
+                    salesPeriod.value;
+
+                console.log(
+                    "📊 Período das vendas:",
+                    salesPeriod.value,
+                    "dias"
+                );
+
+            }
+        );
+
+    }
+
+
+    /* ======================================================
+       VÉRIFICATION DES ÉLÉMENTS
+    ====================================================== */
+
+    console.log(
+        "📈 salesChartCard:",
+        !!salesChartCard
+    );
+
+    console.log(
+        "📈 salesChartContainer:",
+        !!salesChartContainer
+    );
+
+    console.log(
+        "📈 salesChart:",
+        !!salesChart
+    );
+
+    console.log(
+        "📈 salesPeriod:",
+        !!salesPeriod
+    );
+
+    console.log(
+        "📦 ordersChartCard:",
+        !!ordersChartCard
+    );
+
+    console.log(
+        "📦 ordersChartContainer:",
+        !!ordersChartContainer
+    );
+
+    console.log(
+        "📦 ordersChart:",
+        !!ordersChart
+    );
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 11
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            initializeBlock11();
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 11 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Gráficos de vendas e pedidos inicializados."
+            );
+
+        }
+    );
+
+} else {
+
+    initializeBlock11();
+
+    alert(
+        "━━━━━━━━━━━━━━━━━━━━━━\n" +
+        "✅ BLOC JS 11 TERMINÉ\n" +
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+        "Gráficos de vendas e pedidos inicializados."
+    );
+
+}
