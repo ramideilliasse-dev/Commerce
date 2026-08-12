@@ -4603,3 +4603,275 @@ if (
     );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 13 — TABLEAUX DU DASHBOARD
+========================================================== */
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 13
+========================================================== */
+
+function initializeBlock13() {
+
+
+    /* ======================================================
+       DERNIERS PEDIDOS
+    ====================================================== */
+
+    const lastOrdersPanel =
+        document.getElementById(
+            "lastOrdersPanel"
+        );
+
+    const lastOrdersTableContainer =
+        document.getElementById(
+            "lastOrdersTableContainer"
+        );
+
+    const lastOrdersTable =
+        document.getElementById(
+            "lastOrdersTable"
+        );
+
+    const viewAllOrders =
+        document.getElementById(
+            "viewAllOrders"
+        );
+
+
+    /* ======================================================
+       DERNIERS COMMERÇANTS
+    ====================================================== */
+
+    const lastMerchantsPanel =
+        document.getElementById(
+            "lastMerchantsPanel"
+        );
+
+    const lastMerchantsTableContainer =
+        document.getElementById(
+            "lastMerchantsTableContainer"
+        );
+
+    const lastMerchantsTable =
+        document.getElementById(
+            "lastMerchantsTable"
+        );
+
+    const viewAllMerchants =
+        document.getElementById(
+            "viewAllMerchants"
+        );
+
+
+    /* ======================================================
+       DERNIERS PRODUITS
+    ====================================================== */
+
+    const lastProductsPanel =
+        document.getElementById(
+            "lastProductsPanel"
+        );
+
+    const lastProductsTableContainer =
+        document.getElementById(
+            "lastProductsTableContainer"
+        );
+
+    const lastProductsTable =
+        document.getElementById(
+            "lastProductsTable"
+        );
+
+    const viewAllProducts =
+        document.getElementById(
+            "viewAllProducts"
+        );
+
+
+    /* ======================================================
+       STRUCTURE DES TABLEAUX
+       
+       Les données Firebase seront ajoutées plus tard.
+    ====================================================== */
+
+    window.tomaAdminTables = {
+
+        orders: {
+
+            panel:
+                lastOrdersPanel,
+
+            container:
+                lastOrdersTableContainer,
+
+            table:
+                lastOrdersTable,
+
+            initialized:
+                true
+
+        },
+
+
+        merchants: {
+
+            panel:
+                lastMerchantsPanel,
+
+            container:
+                lastMerchantsTableContainer,
+
+            table:
+                lastMerchantsTable,
+
+            initialized:
+                true
+
+        },
+
+
+        products: {
+
+            panel:
+                lastProductsPanel,
+
+            container:
+                lastProductsTableContainer,
+
+            table:
+                lastProductsTable,
+
+            initialized:
+                true
+
+        }
+
+    };
+
+
+    /* ======================================================
+       LIENS "VER TODOS"
+    ====================================================== */
+
+    if (viewAllOrders) {
+
+        console.log(
+            "✅ viewAllOrders existe"
+        );
+
+    }
+
+
+    if (viewAllMerchants) {
+
+        console.log(
+            "✅ viewAllMerchants existe"
+        );
+
+    }
+
+
+    if (viewAllProducts) {
+
+        console.log(
+            "✅ viewAllProducts existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       VÉRIFICATION DES TABLEAUX
+    ====================================================== */
+
+    console.log(
+        "🛒 lastOrdersPanel:",
+        !!lastOrdersPanel
+    );
+
+    console.log(
+        "🛒 lastOrdersTableContainer:",
+        !!lastOrdersTableContainer
+    );
+
+    console.log(
+        "🛒 lastOrdersTable:",
+        !!lastOrdersTable
+    );
+
+
+    console.log(
+        "🏪 lastMerchantsPanel:",
+        !!lastMerchantsPanel
+    );
+
+    console.log(
+        "🏪 lastMerchantsTableContainer:",
+        !!lastMerchantsTableContainer
+    );
+
+    console.log(
+        "🏪 lastMerchantsTable:",
+        !!lastMerchantsTable
+    );
+
+
+    console.log(
+        "📦 lastProductsPanel:",
+        !!lastProductsPanel
+    );
+
+    console.log(
+        "📦 lastProductsTableContainer:",
+        !!lastProductsTableContainer
+    );
+
+    console.log(
+        "📦 lastProductsTable:",
+        !!lastProductsTable
+    );
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 13
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            initializeBlock13();
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 13 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Os três quadros do Dashboard foram inicializados."
+            );
+
+        }
+    );
+
+} else {
+
+    initializeBlock13();
+
+    alert(
+        "━━━━━━━━━━━━━━━━━━━━━━\n" +
+        "✅ BLOC JS 13 TERMINÉ\n" +
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+        "Os três quadros do Dashboard foram inicializados."
+    );
+
+}
