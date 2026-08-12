@@ -1499,3 +1499,790 @@ document.addEventListener(
 
     }
 );
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 4 — ACTIVITÉ + NOTIFICATIONS + DEMANDES
+========================================================== */
+
+
+/* ==========================================================
+   ALERTE — DÉBUT DU BLOC 4
+========================================================== */
+
+alert(
+    "▶️ BLOC JS 4\n\n" +
+    "Activité, notifications et demandes commerçants..."
+);
+
+
+/* ==========================================================
+   OUTIL — MODIFIER UN ÉLÉMENT
+========================================================== */
+
+function setBlock4Text(id, value) {
+
+    const element =
+        document.getElementById(id);
+
+    if (element) {
+
+        element.textContent = value;
+
+    }
+
+}
+
+
+/* ==========================================================
+   OUTIL — AFFICHER / MASQUER UN ÉLÉMENT
+========================================================== */
+
+function setBlock4Display(id, displayValue) {
+
+    const element =
+        document.getElementById(id);
+
+    if (element) {
+
+        element.style.display =
+            displayValue;
+
+    }
+
+}
+
+
+/* ==========================================================
+   ACTIVITÉ RÉCENTE
+========================================================== */
+
+async function loadRecentActivity() {
+
+    const activityList =
+        document.getElementById(
+            "activityList"
+        );
+
+
+    if (!activityList) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const ordersSnapshot =
+            await getDocs(
+                collection(db, "orders")
+            );
+
+
+        if (ordersSnapshot.empty) {
+
+            return;
+
+        }
+
+
+        const activities = [];
+
+
+        ordersSnapshot.forEach(
+            (orderDoc) => {
+
+                const data =
+                    orderDoc.data();
+
+
+                activities.push({
+
+                    id:
+                        orderDoc.id,
+
+                    type:
+                        "order",
+
+                    title:
+                        "Novo pedido",
+
+                    description:
+                        data.productName ||
+                        data.product ||
+                        "Novo pedido registado",
+
+                    timestamp:
+                        data.createdAt ||
+                        null
+
+                });
+
+            }
+        );
+
+
+        activities
+            .sort(
+                (a, b) => {
+
+                    const dateA =
+                        a.timestamp?.toMillis
+                            ? a.timestamp.toMillis()
+                            : 0;
+
+                    const dateB =
+                        b.timestamp?.toMillis
+                            ? b.timestamp.toMillis()
+                            : 0;
+
+                    return dateB - dateA;
+
+                }
+            );
+
+
+        const recentActivities =
+            activities.slice(0, 5);
+
+
+        activityList.innerHTML = "";
+
+
+        recentActivities.forEach(
+            (activity) => {
+
+
+                const item =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                item.className =
+                    "activityItem";
+
+
+                item.innerHTML = `
+
+                    <div class="activityIcon">
+                        🛒
+                    </div>
+
+                    <div class="activityContent">
+
+                        <h4>
+                            ${escapeBlock4HTML(
+                                activity.title
+                            )}
+                        </h4>
+
+                        <p>
+                            ${escapeBlock4HTML(
+                                activity.description
+                            )}
+                        </p>
+
+                        <div class="activityTime">
+                            ${formatBlock4Date(
+                                activity.timestamp
+                            )}
+                        </div>
+
+                    </div>
+
+                `;
+
+
+                activityList.appendChild(
+                    item
+                );
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erreur activité récente :",
+            error
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   ÉCHAPPER LE HTML
+========================================================== */
+
+function escapeBlock4HTML(value) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+    div.textContent =
+        String(value ?? "");
+
+    return div.innerHTML;
+
+}
+
+
+/* ==========================================================
+   FORMAT DATE
+========================================================== */
+
+function formatBlock4Date(timestamp) {
+
+    if (!timestamp) {
+
+        return "-";
+
+    }
+
+
+    try {
+
+        const date =
+            timestamp.toDate
+                ? timestamp.toDate()
+                : new Date(timestamp);
+
+
+        return date.toLocaleString(
+            "pt-PT",
+            {
+                dateStyle: "short",
+                timeStyle: "short"
+            }
+        );
+
+
+    } catch {
+
+        return "-";
+
+    }
+
+}
+
+
+/* ==========================================================
+   NOTIFICATIONS
+========================================================== */
+
+async function loadNotifications() {
+
+    const notificationsList =
+        document.getElementById(
+            "notificationsList"
+        );
+
+
+    if (!notificationsList) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const snapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "notifications"
+                )
+            );
+
+
+        setBlock4Text(
+            "notificationsBadge",
+            snapshot.size
+        );
+
+
+        if (snapshot.empty) {
+
+            return;
+
+        }
+
+
+        notificationsList.innerHTML = "";
+
+
+        const notifications = [];
+
+
+        snapshot.forEach(
+            (notificationDoc) => {
+
+                const data =
+                    notificationDoc.data();
+
+
+                notifications.push({
+
+                    id:
+                        notificationDoc.id,
+
+                    title:
+                        data.title ||
+                        "Notificação",
+
+                    message:
+                        data.message ||
+                        data.text ||
+                        "Nova notificação",
+
+                    createdAt:
+                        data.createdAt ||
+                        null
+
+                });
+
+            }
+        );
+
+
+        notifications
+            .sort(
+                (a, b) => {
+
+                    const dateA =
+                        a.createdAt?.toMillis
+                            ? a.createdAt.toMillis()
+                            : 0;
+
+                    const dateB =
+                        b.createdAt?.toMillis
+                            ? b.createdAt.toMillis()
+                            : 0;
+
+                    return dateB - dateA;
+
+                }
+            );
+
+
+        notifications
+            .slice(0, 5)
+            .forEach(
+                (notification) => {
+
+
+                    const item =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    item.className =
+                        "notificationItem";
+
+
+                    item.dataset.id =
+                        notification.id;
+
+
+                    item.innerHTML = `
+
+                        <span class="notificationIcon">
+                            🔔
+                        </span>
+
+                        <div class="notificationInfo">
+
+                            <strong>
+                                ${escapeBlock4HTML(
+                                    notification.title
+                                )}
+                            </strong>
+
+                            <p>
+                                ${escapeBlock4HTML(
+                                    notification.message
+                                )}
+                            </p>
+
+                        </div>
+
+                    `;
+
+
+                    item.addEventListener(
+                        "click",
+                        () => {
+
+                            openNotificationModal(
+                                notification
+                            );
+
+                        }
+                    );
+
+
+                    notificationsList
+                        .appendChild(item);
+
+                }
+            );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erreur notifications :",
+            error
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   DEMANDES DE COMMERÇANTS
+========================================================== */
+
+async function loadMerchantRequests() {
+
+    try {
+
+        const merchantsSnapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "merchants"
+                )
+            );
+
+
+        let pendingCount = 0;
+
+
+        merchantsSnapshot.forEach(
+            (merchantDoc) => {
+
+                const data =
+                    merchantDoc.data();
+
+
+                const status =
+                    String(
+                        data.status ||
+                        data.estado ||
+                        ""
+                    ).toLowerCase();
+
+
+                if (
+
+                    status === "pending" ||
+
+                    status === "pendente" ||
+
+                    status === "pending_review" ||
+
+                    status === "aguardando"
+
+                ) {
+
+                    pendingCount++;
+
+                }
+
+            }
+        );
+
+
+        setBlock4Text(
+            "merchantRequestsCount",
+            pendingCount
+        );
+
+
+        setBlock4Text(
+            "merchantBadge",
+            pendingCount
+        );
+
+
+        setBlock4Text(
+            "merchantRequestsDashboardCount",
+            pendingCount
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erreur demandes commerçants :",
+            error
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   MODAL NOTIFICATION
+========================================================== */
+
+function openNotificationModal(
+    notification
+) {
+
+    const modal =
+        document.getElementById(
+            "notificationModal"
+        );
+
+
+    const content =
+        document.getElementById(
+            "notificationContent"
+        );
+
+
+    if (!modal || !content) {
+
+        return;
+
+    }
+
+
+    content.innerHTML = `
+
+        <h3>
+            ${escapeBlock4HTML(
+                notification.title
+            )}
+        </h3>
+
+        <p>
+            ${escapeBlock4HTML(
+                notification.message
+            )}
+        </p>
+
+        <small>
+            ${formatBlock4Date(
+                notification.createdAt
+            )}
+        </small>
+
+    `;
+
+
+    modal.classList.remove(
+        "hidden"
+    );
+
+
+    modal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+}
+
+
+/* ==========================================================
+   FERMER LE MODAL
+========================================================== */
+
+function closeNotificationModal() {
+
+    const modal =
+        document.getElementById(
+            "notificationModal"
+        );
+
+
+    if (!modal) {
+
+        return;
+
+    }
+
+
+    modal.classList.add(
+        "hidden"
+    );
+
+
+    modal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+}
+
+
+/* ==========================================================
+   INITIALISATION DU MODAL
+========================================================== */
+
+function initializeNotificationModal() {
+
+    const closeButton =
+        document.getElementById(
+            "closeNotificationModal"
+        );
+
+
+    if (closeButton) {
+
+        closeButton.addEventListener(
+            "click",
+            closeNotificationModal
+        );
+
+    }
+
+
+    const modal =
+        document.getElementById(
+            "notificationModal"
+        );
+
+
+    if (modal) {
+
+        modal.addEventListener(
+            "click",
+            (event) => {
+
+                if (
+                    event.target === modal
+                ) {
+
+                    closeNotificationModal();
+
+                }
+
+            }
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   BOUTON NOTIFICATIONS DU HEADER
+========================================================== */
+
+function initializeNotificationsButton() {
+
+    const button =
+        document.getElementById(
+            "notificationsButton"
+        );
+
+
+    if (!button) {
+
+        return;
+
+    }
+
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            const panel =
+                document.getElementById(
+                    "notificationsPanel"
+                );
+
+
+            if (panel) {
+
+                panel.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   CHARGEMENT DU BLOC 4
+========================================================== */
+
+async function loadBlock4Data() {
+
+    await Promise.all([
+
+        loadRecentActivity(),
+
+        loadNotifications(),
+
+        loadMerchantRequests()
+
+    ]);
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 4
+========================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
+
+
+        try {
+
+            initializeNotificationModal();
+
+            initializeNotificationsButton();
+
+            await loadBlock4Data();
+
+
+        } catch (error) {
+
+            console.error(
+                "Erreur générale bloc 4 :",
+                error
+            );
+
+        }
+
+
+        /* ==================================================
+           ALERTE — FIN DU BLOC 4
+        ================================================== */
+
+        alert(
+            "━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+            "✅ BLOC JS 4 TERMINÉ\n" +
+            "━━━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+            "Activité, notifications et demandes\n" +
+            "de commerçants initialisées.\n\n" +
+            "Les blocs 1, 2 et 3 restent inchangés."
+        );
+
+
+    }
+);
