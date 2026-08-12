@@ -3168,3 +3168,422 @@ if (
     );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 8 — SIDEBAR + PROFIL ADMIN + NAVIGATION
+========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 8
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 8 chargé."
+);
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 8
+========================================================== */
+
+function initializeBlock8() {
+
+
+    /* ======================================================
+       SIDEBAR
+    ====================================================== */
+
+    const adminSidebar =
+        document.getElementById(
+            "adminSidebar"
+        );
+
+    if (adminSidebar) {
+
+        console.log(
+            "✅ adminSidebar existe"
+        );
+
+    } else {
+
+        console.warn(
+            "⚠️ adminSidebar introuvable"
+        );
+
+    }
+
+
+    /* ======================================================
+       BRAND TOMA
+    ====================================================== */
+
+    const adminBrand =
+        document.getElementById(
+            "adminBrand"
+        );
+
+    if (adminBrand) {
+
+        console.log(
+            "✅ adminBrand existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       NAVIGATION
+    ====================================================== */
+
+    const dashboardNavigation =
+        document.getElementById(
+            "dashboardNavigation"
+        );
+
+    if (dashboardNavigation) {
+
+        console.log(
+            "✅ dashboardNavigation existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       NAVIGATION PRINCIPALE
+    ====================================================== */
+
+    const navigationIds = [
+
+        "navDashboard",
+        "navProducts",
+        "navOrders",
+        "navFinances",
+        "navNotifications",
+        "navReports",
+        "navOfficialStores",
+        "navSettings"
+
+    ];
+
+
+    navigationIds.forEach(
+        function (id) {
+
+            const element =
+                document.getElementById(id);
+
+
+            if (element) {
+
+                console.log(
+                    "✅ " + id + " existe"
+                );
+
+            } else {
+
+                console.warn(
+                    "⚠️ " + id +
+                    " introuvable"
+                );
+
+            }
+
+        }
+    );
+
+
+    /* ======================================================
+       CARTES UTILISATEURS
+    ====================================================== */
+
+    const viewUsers =
+        document.getElementById(
+            "viewUsers"
+        );
+
+
+    if (viewUsers) {
+
+        console.log(
+            "✅ viewUsers existe"
+        );
+
+
+        viewUsers.addEventListener(
+            "click",
+            function () {
+
+                console.log(
+                    "➡️ Ouverture de la page utilisateurs"
+                );
+
+            }
+        );
+
+    }
+
+
+    /* ======================================================
+       CARTES COMMERÇANTS
+    ====================================================== */
+
+    const viewMerchants =
+        document.getElementById(
+            "viewMerchants"
+        );
+
+
+    if (viewMerchants) {
+
+        console.log(
+            "✅ viewMerchants existe"
+        );
+
+
+        viewMerchants.addEventListener(
+            "click",
+            function () {
+
+                console.log(
+                    "➡️ Ouverture de la page commerçants"
+                );
+
+            }
+        );
+
+    }
+
+
+    /* ======================================================
+       PROFIL ADMIN
+    ====================================================== */
+
+    const adminProfile =
+        document.getElementById(
+            "adminProfile"
+        );
+
+
+    if (adminProfile) {
+
+        console.log(
+            "✅ adminProfile existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       AVATAR ADMIN
+    ====================================================== */
+
+    const adminAvatar =
+        document.getElementById(
+            "adminAvatar"
+        );
+
+
+    if (adminAvatar) {
+
+        console.log(
+            "✅ adminAvatar existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       NOM ADMIN
+    ====================================================== */
+
+    const adminName =
+        document.getElementById(
+            "adminName"
+        );
+
+
+    if (adminName) {
+
+        console.log(
+            "✅ adminName existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       BOUTON DÉCONNEXION
+    ====================================================== */
+
+    const logoutButton =
+        document.getElementById(
+            "logoutButton"
+        );
+
+
+    if (logoutButton) {
+
+        console.log(
+            "✅ logoutButton existe"
+        );
+
+
+        logoutButton.addEventListener(
+            "click",
+            function () {
+
+
+                const confirmation =
+                    window.confirm(
+                        "Deseja realmente sair do painel administrativo?"
+                    );
+
+
+                if (!confirmation) {
+
+                    return;
+
+                }
+
+
+                console.log(
+                    "🚪 Déconnexion demandée"
+                );
+
+
+                /*
+                 * Pour le moment nous ne supprimons
+                 * aucune session Firebase ici.
+                 *
+                 * La déconnexion Firebase sera ajoutée
+                 * dans le bloc dédié à l'authentification.
+                 */
+
+
+                window.location.href =
+                    "index.html";
+
+            }
+        );
+
+    } else {
+
+        console.warn(
+            "⚠️ logoutButton introuvable"
+        );
+
+    }
+
+
+    /* ======================================================
+       BADGES DE NAVIGATION
+    ====================================================== */
+
+    const navBadges =
+        document.querySelectorAll(
+            ".navBadge"
+        );
+
+
+    if (navBadges.length > 0) {
+
+        console.log(
+            "✅ Badges de navigation détectés :",
+            navBadges.length
+        );
+
+    }
+
+
+    /* ======================================================
+       ÉTAT ACTIF DE LA NAVIGATION
+    ====================================================== */
+
+    const currentPage =
+        window.location.pathname
+            .split("/")
+            .pop();
+
+
+    const navigationLinks =
+        document.querySelectorAll(
+            ".navItem"
+        );
+
+
+    navigationLinks.forEach(
+        function (link) {
+
+            const href =
+                link.getAttribute(
+                    "href"
+                );
+
+
+            if (
+                href &&
+                href === currentPage
+            ) {
+
+                link.classList.add(
+                    "active"
+                );
+
+            }
+
+        }
+    );
+
+
+    /* ======================================================
+       FIN INITIALISATION
+    ====================================================== */
+
+    console.log(
+        "✅ Initialisation du BLOC JS 8 terminée."
+    );
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 8
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            initializeBlock8();
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 8 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Sidebar, navegação, perfil e saída inicializados."
+            );
+
+        }
+    );
+
+} else {
+
+    initializeBlock8();
+
+    alert(
+        "━━━━━━━━━━━━━━━━━━━━━━\n" +
+        "✅ BLOC JS 8 TERMINÉ\n" +
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+        "Sidebar, navegação, perfil e saída inicializados."
+    );
+
+}
