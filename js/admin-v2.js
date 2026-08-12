@@ -4405,3 +4405,201 @@ if (
     );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 12 — ZONE FINANCIÈRE
+========================================================== */
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 12
+========================================================== */
+
+function initializeBlock12() {
+
+
+    /* ======================================================
+       ZONE FINANCIÈRE
+    ====================================================== */
+
+    const financeOverview =
+        document.getElementById(
+            "financeOverview"
+        );
+
+
+    /* ======================================================
+       VENTES TOTALES
+    ====================================================== */
+
+    const financeSales =
+        document.getElementById(
+            "financeSales"
+        );
+
+
+    /* ======================================================
+       COMMISSION TOMA
+    ====================================================== */
+
+    const financeCommission =
+        document.getElementById(
+            "financeCommission"
+        );
+
+
+    /* ======================================================
+       PANIER MOYEN
+    ====================================================== */
+
+    const averageOrder =
+        document.getElementById(
+            "averageOrder"
+        );
+
+
+    /* ======================================================
+       COMMISSION AUJOURD'HUI
+    ====================================================== */
+
+    const todayProfit =
+        document.getElementById(
+            "todayProfit"
+        );
+
+
+    /* ======================================================
+       VALEURS INITIALES
+       
+       Firebase sera connecté plus tard.
+    ====================================================== */
+
+    if (financeSales) {
+
+        financeSales.textContent =
+            "0 Kz";
+
+    }
+
+
+    if (financeCommission) {
+
+        financeCommission.textContent =
+            "0 Kz";
+
+    }
+
+
+    if (averageOrder) {
+
+        averageOrder.textContent =
+            "0 Kz";
+
+    }
+
+
+    if (todayProfit) {
+
+        todayProfit.textContent =
+            "0 Kz";
+
+    }
+
+
+    /* ======================================================
+       STRUCTURE FINANCIÈRE TOMA
+    ====================================================== */
+
+    window.tomaAdminFinance = {
+
+        overview:
+            financeOverview,
+
+        sales:
+            0,
+
+        commission:
+            0,
+
+        averageOrder:
+            0,
+
+        todayProfit:
+            0,
+
+        initialized:
+            true
+
+    };
+
+
+    /* ======================================================
+       VÉRIFICATION
+    ====================================================== */
+
+    console.log(
+        "💰 financeOverview:",
+        !!financeOverview
+    );
+
+    console.log(
+        "💰 financeSales:",
+        !!financeSales
+    );
+
+    console.log(
+        "💰 financeCommission:",
+        !!financeCommission
+    );
+
+    console.log(
+        "💰 averageOrder:",
+        !!averageOrder
+    );
+
+    console.log(
+        "💰 todayProfit:",
+        !!todayProfit
+    );
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 12
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            initializeBlock12();
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 12 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "A zona financeira do Dashboard foi inicializada."
+            );
+
+        }
+    );
+
+} else {
+
+    initializeBlock12();
+
+    alert(
+        "━━━━━━━━━━━━━━━━━━━━━━\n" +
+        "✅ BLOC JS 12 TERMINÉ\n" +
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+        "A zona financeira do Dashboard foi inicializada."
+    );
+
+}
