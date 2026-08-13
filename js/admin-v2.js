@@ -6591,11 +6591,22 @@ if (
     );
 
 }
+
 /* ==========================================================
    TOMA ADMIN V2
    ADMIN-V2.JS
    BLOC JS 22 — COMMERÇANTS FIREBASE
 ========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 22
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 22 chargé."
+);
 
 
 /* ==========================================================
@@ -6665,11 +6676,6 @@ async function initializeBlock22() {
 
     try {
 
-        /*
-         * IMPORTANT :
-         * On utilise ici la collection "merchants".
-         */
-
         const merchantsSnapshot =
             await getDocs(
                 collection(
@@ -6684,7 +6690,7 @@ async function initializeBlock22() {
 
 
         /* ==================================================
-           AFFICHAGE DU NOMBRE
+           AFFICHAGE
         ================================================== */
 
         merchantsCount.textContent =
@@ -6694,7 +6700,7 @@ async function initializeBlock22() {
 
 
         /* ==================================================
-           STOCKAGE DANS LA STRUCTURE TOMA
+           STRUCTURE TOMA
         ================================================== */
 
         if (!window.tomaAdmin.data) {
@@ -6707,10 +6713,6 @@ async function initializeBlock22() {
         window.tomaAdmin.data.merchants =
             totalMerchants;
 
-
-        /* ==================================================
-           LOG
-        ================================================== */
 
         console.log(
             "🏪 Comerciantes Firebase :",
@@ -6762,14 +6764,30 @@ if (
 
 } else {
 
-    await initializeBlock22();
+    initializeBlock22()
+        .then(function () {
 
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 22 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Comerciantes carregados desde Firebase."
+            );
 
-    alert(
-        "━━━━━━━━━━━━━━━━━━━━━━\n" +
-        "✅ BLOC JS 22 TERMINÉ\n" +
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-        "Comerciantes carregados desde Firebase."
-    );
+        })
+        .catch(function (error) {
+
+            console.error(
+                "❌ Erreur Bloc 22 :",
+                error
+            );
+
+            alert(
+                "⚠️ BLOC JS 22\n\n" +
+                "Une erreur est survenue.\n" +
+                "Regarde la console."
+            );
+
+        });
 
 }
