@@ -6591,3 +6591,185 @@ if (
     );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 22 — COMMERÇANTS FIREBASE
+========================================================== */
+
+
+/* ==========================================================
+   IMPORT FIRESTORE
+========================================================== */
+
+import {
+    collection,
+    getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 22
+========================================================== */
+
+async function initializeBlock22() {
+
+
+    /* ======================================================
+       VÉRIFICATION FIREBASE
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin ||
+        !window.tomaAdmin.firebase ||
+        !window.tomaAdmin.firebase.db
+    ) {
+
+        console.error(
+            "❌ Firestore TOMA Admin indisponible."
+        );
+
+        return;
+
+    }
+
+
+    const db =
+        window.tomaAdmin.firebase.db;
+
+
+    /* ======================================================
+       ÉLÉMENT COMMERÇANTS
+    ====================================================== */
+
+    const merchantsCount =
+        document.getElementById(
+            "merchantsCount"
+        );
+
+
+    if (!merchantsCount) {
+
+        console.warn(
+            "⚠️ merchantsCount introuvable."
+        );
+
+        return;
+
+    }
+
+
+    /* ======================================================
+       LECTURE FIRESTORE
+    ====================================================== */
+
+    try {
+
+        /*
+         * IMPORTANT :
+         * On utilise ici la collection "merchants".
+         */
+
+        const merchantsSnapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "merchants"
+                )
+            );
+
+
+        const totalMerchants =
+            merchantsSnapshot.size;
+
+
+        /* ==================================================
+           AFFICHAGE DU NOMBRE
+        ================================================== */
+
+        merchantsCount.textContent =
+            totalMerchants.toLocaleString(
+                "pt-PT"
+            );
+
+
+        /* ==================================================
+           STOCKAGE DANS LA STRUCTURE TOMA
+        ================================================== */
+
+        if (!window.tomaAdmin.data) {
+
+            window.tomaAdmin.data = {};
+
+        }
+
+
+        window.tomaAdmin.data.merchants =
+            totalMerchants;
+
+
+        /* ==================================================
+           LOG
+        ================================================== */
+
+        console.log(
+            "🏪 Comerciantes Firebase :",
+            totalMerchants
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "❌ Erreur lecture merchants :",
+            error
+        );
+
+
+        merchantsCount.textContent =
+            "0";
+
+    }
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 22
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        async function () {
+
+            await initializeBlock22();
+
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 22 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Comerciantes carregados desde Firebase."
+            );
+
+        }
+    );
+
+} else {
+
+    await initializeBlock22();
+
+
+    alert(
+        "━━━━━━━━━━━━━━━━━━━━━━\n" +
+        "✅ BLOC JS 22 TERMINÉ\n" +
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+        "Comerciantes carregados desde Firebase."
+    );
+
+}
