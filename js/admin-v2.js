@@ -14980,3 +14980,515 @@ else {
         );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 40 — DERNIERS COMMERÇANTS FIREBASE
+========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 40
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 40 chargé."
+);
+
+
+/* ==========================================================
+   IMPORT FIRESTORE
+========================================================== */
+
+import {
+    collection as firestoreCollection40,
+    getDocs as firestoreGetDocs40
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 40
+========================================================== */
+
+async function initializeBlock40() {
+
+
+    /* ======================================================
+       VÉRIFICATION FIREBASE
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin ||
+        !window.tomaAdmin.firebase ||
+        !window.tomaAdmin.firebase.db
+    ) {
+
+        console.error(
+            "❌ Firestore TOMA Admin indisponible."
+        );
+
+        return;
+
+    }
+
+
+    const db =
+        window.tomaAdmin.firebase.db;
+
+
+    /* ======================================================
+       ÉLÉMENT HTML
+    ====================================================== */
+
+    const lastMerchantsTable =
+        document.getElementById(
+            "lastMerchantsTable"
+        );
+
+
+    if (!lastMerchantsTable) {
+
+        console.warn(
+            "⚠️ lastMerchantsTable introuvable."
+        );
+
+        return;
+
+    }
+
+
+    console.log(
+        "✅ lastMerchantsTable existe"
+    );
+
+
+    /* ======================================================
+       LECTURE FIRESTORE
+    ====================================================== */
+
+    let merchants =
+        [];
+
+
+    try {
+
+        const merchantsSnapshot =
+            await firestoreGetDocs40(
+                firestoreCollection40(
+                    db,
+                    "merchants"
+                )
+            );
+
+
+        merchantsSnapshot.forEach(
+            function (documentSnapshot) {
+
+                const merchant =
+                    documentSnapshot.data();
+
+
+                merchants.push({
+
+                    id:
+                        documentSnapshot.id,
+
+                    data:
+                        merchant,
+
+                    date:
+                        getMerchantDate40(
+                            merchant.createdAt ||
+                            merchant.createdDate ||
+                            merchant.date ||
+                            merchant.timestamp
+                        )
+
+                });
+
+            }
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.warn(
+            "⚠️ Impossible de charger merchants :",
+            error
+        );
+
+        merchants =
+            [];
+
+    }
+
+
+    /* ======================================================
+       TRI PAR DATE
+    ====================================================== */
+
+    merchants.sort(
+        function (a, b) {
+
+            const dateA =
+                a.date
+                    ? a.date.getTime()
+                    : 0;
+
+
+            const dateB =
+                b.date
+                    ? b.date.getTime()
+                    : 0;
+
+
+            return dateB - dateA;
+
+        }
+    );
+
+
+    /* ======================================================
+       5 DERNIERS COMMERÇANTS
+    ====================================================== */
+
+    const latestMerchants =
+        merchants.slice(
+            0,
+            5
+        );
+
+
+    /* ======================================================
+       AFFICHAGE
+    ====================================================== */
+
+    if (
+        latestMerchants.length ===
+        0
+    ) {
+
+        lastMerchantsTable.innerHTML =
+
+            '<tr>' +
+
+                '<td colspan="5">' +
+                    'Nenhum comerciante encontrado.' +
+                '</td>' +
+
+            '</tr>';
+
+    }
+
+    else {
+
+        lastMerchantsTable.innerHTML =
+            "";
+
+
+        latestMerchants.forEach(
+            function (item) {
+
+
+                const merchant =
+                    item.data ||
+                    {};
+
+
+                const name =
+                    merchant.name ||
+                    merchant.fullName ||
+                    (
+                        (
+                            merchant.firstName ||
+                            ""
+                        ) +
+                        " " +
+                        (
+                            merchant.lastName ||
+                            ""
+                        )
+                    ).trim() ||
+                    "Comerciante";
+
+
+                const shop =
+                    merchant.shopName ||
+                    merchant.storeName ||
+                    merchant.shop ||
+                    merchant.businessName ||
+                    "Loja";
+
+
+                const status =
+                    merchant.status ||
+                    (
+                        merchant.verified
+                            ? "Verificado"
+                            : "Pendente"
+                    );
+
+
+                const photo =
+                    merchant.photoURL ||
+                    merchant.photoUrl ||
+                    merchant.photo ||
+                    merchant.avatar ||
+                    "images/avatar.png";
+
+
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                row.innerHTML =
+
+                    "<td>" +
+
+                        '<img ' +
+                            'src="' +
+                            escapeHtml40(
+                                photo
+                            ) +
+                            '" ' +
+                            'alt="Comerciante" ' +
+                            'style="' +
+                                "width:40px;" +
+                                "height:40px;" +
+                                "border-radius:50%;" +
+                                "object-fit:cover;" +
+                            '"' +
+                        ">" +
+
+                    "</td>" +
+
+                    "<td>" +
+                        escapeHtml40(
+                            name
+                        ) +
+                    "</td>" +
+
+                    "<td>" +
+                        escapeHtml40(
+                            shop
+                        ) +
+                    "</td>" +
+
+                    "<td>" +
+                        escapeHtml40(
+                            status
+                        ) +
+                    "</td>" +
+
+                    "<td>" +
+
+                        '<a ' +
+                            'href="merchants.html" ' +
+                            'class="panelLink"' +
+                        ">" +
+
+                            "Ver" +
+
+                        "</a>" +
+
+                    "</td>";
+
+
+                lastMerchantsTable.appendChild(
+                    row
+                );
+
+            }
+        );
+
+    }
+
+
+    /* ======================================================
+       STRUCTURE TOMA ADMIN
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin.data
+    ) {
+
+        window.tomaAdmin.data = {};
+
+    }
+
+
+    window.tomaAdmin.data.recentMerchants =
+        latestMerchants;
+
+
+    /* ======================================================
+       LOG
+    ====================================================== */
+
+    console.log(
+        "🏪 Últimos comerciantes Firebase :",
+        latestMerchants
+    );
+
+}
+
+
+/* ==========================================================
+   CONVERSION DATE FIREBASE
+========================================================== */
+
+function getMerchantDate40(
+    value
+) {
+
+    if (!value) {
+
+        return null;
+
+    }
+
+
+    try {
+
+        if (
+            typeof value.toDate ===
+            "function"
+        ) {
+
+            return value.toDate();
+
+        }
+
+
+        const date =
+            new Date(
+                value
+            );
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return null;
+
+        }
+
+
+        return date;
+
+    }
+
+    catch (error) {
+
+        return null;
+
+    }
+
+}
+
+
+/* ==========================================================
+   PROTECTION HTML
+========================================================== */
+
+function escapeHtml40(
+    value
+) {
+
+    return String(
+        value || ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 40
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        async function () {
+
+            await initializeBlock40();
+
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 40 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Comerciantes recentes carregados desde Firebase."
+            );
+
+        }
+    );
+
+}
+
+else {
+
+    initializeBlock40()
+        .then(
+            function () {
+
+                alert(
+                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                    "✅ BLOC JS 40 TERMINÉ\n" +
+                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                    "Comerciantes recentes carregados desde Firebase."
+                );
+
+            }
+        )
+        .catch(
+            function (error) {
+
+                console.error(
+                    "❌ Erreur Bloc 40 :",
+                    error
+                );
+
+
+                alert(
+                    "⚠️ BLOC JS 40\n\n" +
+                    "Une erreur est survenue.\n" +
+                    "Regarde la console."
+                );
+
+            }
+        );
+
+}
