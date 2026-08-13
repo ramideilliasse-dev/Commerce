@@ -11368,3 +11368,564 @@ else {
         );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 33 — SYNCHRONISATION FINANCIÈRE FIREBASE
+========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 33
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 33 chargé."
+);
+
+
+/* ==========================================================
+   IMPORT FIRESTORE
+========================================================== */
+
+import {
+    collection as firestoreCollection33,
+    getDocs as firestoreGetDocs33
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 33
+========================================================== */
+
+async function initializeBlock33() {
+
+
+    /* ======================================================
+       VÉRIFICATION FIREBASE
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin ||
+        !window.tomaAdmin.firebase ||
+        !window.tomaAdmin.firebase.db
+    ) {
+
+        console.error(
+            "❌ Firestore TOMA Admin indisponible."
+        );
+
+        return;
+
+    }
+
+
+    const db =
+        window.tomaAdmin.firebase.db;
+
+
+    /* ======================================================
+       ÉLÉMENTS HTML
+    ====================================================== */
+
+    const salesCount =
+        document.getElementById(
+            "salesCount"
+        );
+
+
+    const financeSales =
+        document.getElementById(
+            "financeSales"
+        );
+
+
+    const financeCommission =
+        document.getElementById(
+            "financeCommission"
+        );
+
+
+    const averageOrder =
+        document.getElementById(
+            "averageOrder"
+        );
+
+
+    const todayProfit =
+        document.getElementById(
+            "todayProfit"
+        );
+
+
+    if (salesCount) {
+
+        console.log(
+            "✅ salesCount existe"
+        );
+
+    }
+
+
+    if (financeSales) {
+
+        console.log(
+            "✅ financeSales existe"
+        );
+
+    }
+
+
+    if (financeCommission) {
+
+        console.log(
+            "✅ financeCommission existe"
+        );
+
+    }
+
+
+    if (averageOrder) {
+
+        console.log(
+            "✅ averageOrder existe"
+        );
+
+    }
+
+
+    if (todayProfit) {
+
+        console.log(
+            "✅ todayProfit existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       VARIABLES FINANCIÈRES
+    ====================================================== */
+
+    let totalSales =
+        0;
+
+    let totalOrders =
+        0;
+
+    let totalCommission =
+        0;
+
+    let todayCommission =
+        0;
+
+
+    /* ======================================================
+       TAUX DE COMMISSION TOMA
+       
+       Valeur actuelle :
+       5 %
+    ====================================================== */
+
+    const TOMA_COMMISSION_RATE =
+        0.05;
+
+
+    /* ======================================================
+       DATE DU JOUR
+    ====================================================== */
+
+    const now =
+        new Date();
+
+
+    const currentDay =
+        now.getDate();
+
+
+    const currentMonth =
+        now.getMonth();
+
+
+    const currentYear =
+        now.getFullYear();
+
+
+    /* ======================================================
+       LECTURE DES COMMANDES
+    ====================================================== */
+
+    try {
+
+        const ordersSnapshot =
+            await firestoreGetDocs33(
+                firestoreCollection33(
+                    db,
+                    "orders"
+                )
+            );
+
+
+        ordersSnapshot.forEach(
+            function (documentSnapshot) {
+
+                const order =
+                    documentSnapshot.data();
+
+
+                /* ==========================================
+                   MONTANT DE LA COMMANDE
+                ========================================== */
+
+                const amount =
+                    Number(
+                        order.total ||
+                        order.totalAmount ||
+                        order.amount ||
+                        order.price ||
+                        0
+                    );
+
+
+                if (
+                    !Number.isFinite(
+                        amount
+                    )
+                ) {
+
+                    return;
+
+                }
+
+
+                /* ==========================================
+                   VENTE
+                ========================================== */
+
+                totalSales +=
+                    amount;
+
+
+                totalOrders++;
+
+
+                /* ==========================================
+                   COMMISSION 5 %
+                ========================================== */
+
+                const commission =
+                    amount *
+                    TOMA_COMMISSION_RATE;
+
+
+                totalCommission +=
+                    commission;
+
+
+                /* ==========================================
+                   DATE DE LA COMMANDE
+                ========================================== */
+
+                const orderDate =
+                    getOrderDate33(
+                        order.createdAt ||
+                        order.date ||
+                        order.timestamp
+                    );
+
+
+                if (!orderDate) {
+
+                    return;
+
+                }
+
+
+                /* ==========================================
+                   COMMISSION DU JOUR
+                ========================================== */
+
+                if (
+                    orderDate.getDate() ===
+                    currentDay &&
+
+                    orderDate.getMonth() ===
+                    currentMonth &&
+
+                    orderDate.getFullYear() ===
+                    currentYear
+                ) {
+
+                    todayCommission +=
+                        commission;
+
+                }
+
+            }
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.warn(
+            "⚠️ Impossible de charger orders :",
+            error
+        );
+
+    }
+
+
+    /* ======================================================
+       PANIER MOYEN
+    ====================================================== */
+
+    let average =
+        0;
+
+
+    if (
+        totalOrders >
+        0
+    ) {
+
+        average =
+            totalSales /
+            totalOrders;
+
+    }
+
+
+    /* ======================================================
+       AFFICHAGE
+    ====================================================== */
+
+    if (salesCount) {
+
+        salesCount.textContent =
+            formatKz33(
+                totalSales
+            );
+
+    }
+
+
+    if (financeSales) {
+
+        financeSales.textContent =
+            formatKz33(
+                totalSales
+            );
+
+    }
+
+
+    if (financeCommission) {
+
+        financeCommission.textContent =
+            formatKz33(
+                totalCommission
+            );
+
+    }
+
+
+    if (averageOrder) {
+
+        averageOrder.textContent =
+            formatKz33(
+                average
+            );
+
+    }
+
+
+    if (todayProfit) {
+
+        todayProfit.textContent =
+            formatKz33(
+                todayCommission
+            );
+
+    }
+
+
+    /* ======================================================
+       STRUCTURE TOMA
+    ====================================================== */
+
+    if (!window.tomaAdmin.data) {
+
+        window.tomaAdmin.data = {};
+
+    }
+
+
+    window.tomaAdmin.data.finance = {
+
+        totalSales:
+            totalSales,
+
+        totalOrders:
+            totalOrders,
+
+        totalCommission:
+            totalCommission,
+
+        averageOrder:
+            average,
+
+        todayCommission:
+            todayCommission,
+
+        commissionRate:
+            TOMA_COMMISSION_RATE
+
+    };
+
+
+    /* ======================================================
+       LOG
+    ====================================================== */
+
+    console.log(
+        "💰 Données financières TOMA :",
+        window.tomaAdmin.data.finance
+    );
+
+}
+
+
+/* ==========================================================
+   FORMATAGE KZ
+========================================================== */
+
+function formatKz33(value) {
+
+    return Number(
+        value || 0
+    ).toLocaleString(
+        "pt-PT"
+    ) + " Kz";
+
+}
+
+
+/* ==========================================================
+   CONVERSION DATE FIREBASE
+========================================================== */
+
+function getOrderDate33(value) {
+
+    if (!value) {
+
+        return null;
+
+    }
+
+
+    try {
+
+        if (
+            typeof value.toDate ===
+            "function"
+        ) {
+
+            return value.toDate();
+
+        }
+
+
+        const date =
+            new Date(value);
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return null;
+
+        }
+
+
+        return date;
+
+    }
+
+    catch (error) {
+
+        return null;
+
+    }
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 33
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        async function () {
+
+            await initializeBlock33();
+
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 33 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Dados financeiros sincronizados com Firebase."
+            );
+
+        }
+    );
+
+}
+
+
+else {
+
+    initializeBlock33()
+        .then(
+            function () {
+
+                alert(
+                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                    "✅ BLOC JS 33 TERMINÉ\n" +
+                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                    "Dados financeiros sincronizados com Firebase."
+                );
+
+            }
+        )
+        .catch(
+            function (error) {
+
+                console.error(
+                    "❌ Erreur Bloc 33 :",
+                    error
+                );
+
+
+                alert(
+                    "⚠️ BLOC JS 33\n\n" +
+                    "Une erreur est survenue.\n" +
+                    "Regarde la console."
+                );
+
+            }
+        );
+
+}
