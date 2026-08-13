@@ -13715,3 +13715,382 @@ else {
         );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 37 — DEMANDES DE COMMERÇANTS FIREBASE
+========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 37
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 37 chargé."
+);
+
+
+/* ==========================================================
+   IMPORT FIRESTORE
+========================================================== */
+
+import {
+    collection as firestoreCollection37,
+    getDocs as firestoreGetDocs37
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 37
+========================================================== */
+
+async function initializeBlock37() {
+
+
+    /* ======================================================
+       VÉRIFICATION FIREBASE
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin ||
+        !window.tomaAdmin.firebase ||
+        !window.tomaAdmin.firebase.db
+    ) {
+
+        console.error(
+            "❌ Firestore TOMA Admin indisponible."
+        );
+
+        return;
+
+    }
+
+
+    const db =
+        window.tomaAdmin.firebase.db;
+
+
+    /* ======================================================
+       ÉLÉMENTS HTML EXISTANTS
+    ====================================================== */
+
+    const merchantRequestsCount =
+        document.getElementById(
+            "merchantRequestsCount"
+        );
+
+
+    const merchantBadge =
+        document.getElementById(
+            "merchantBadge"
+        );
+
+
+    const merchantRequestsDashboardCount =
+        document.getElementById(
+            "merchantRequestsDashboardCount"
+        );
+
+
+    const merchantRequestsDashboardLink =
+        document.getElementById(
+            "merchantRequestsDashboardLink"
+        );
+
+
+    const viewMerchantRequests =
+        document.getElementById(
+            "viewMerchantRequests"
+        );
+
+
+    if (merchantRequestsCount) {
+
+        console.log(
+            "✅ merchantRequestsCount existe"
+        );
+
+    }
+
+
+    if (merchantBadge) {
+
+        console.log(
+            "✅ merchantBadge existe"
+        );
+
+    }
+
+
+    if (merchantRequestsDashboardCount) {
+
+        console.log(
+            "✅ merchantRequestsDashboardCount existe"
+        );
+
+    }
+
+
+    if (merchantRequestsDashboardLink) {
+
+        console.log(
+            "✅ merchantRequestsDashboardLink existe"
+        );
+
+    }
+
+
+    if (viewMerchantRequests) {
+
+        console.log(
+            "✅ viewMerchantRequests existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       NOMBRE DE DEMANDES EN ATTENTE
+    ====================================================== */
+
+    let pendingRequests =
+        0;
+
+
+    /* ======================================================
+       LECTURE FIRESTORE
+       
+       Collection prévue :
+       merchantRequests
+    ====================================================== */
+
+    try {
+
+        const requestsSnapshot =
+            await firestoreGetDocs37(
+                firestoreCollection37(
+                    db,
+                    "merchantRequests"
+                )
+            );
+
+
+        requestsSnapshot.forEach(
+            function (documentSnapshot) {
+
+                const request =
+                    documentSnapshot.data();
+
+
+                const status =
+                    String(
+                        request.status ||
+                        request.state ||
+                        "pending"
+                    )
+                    .toLowerCase()
+                    .trim();
+
+
+                /* ==========================================
+                   DEMANDE EN ATTENTE
+                ========================================== */
+
+                if (
+                    status === "pending" ||
+                    status === "pendente" ||
+                    status === "pending_review" ||
+                    status === "waiting"
+                ) {
+
+                    pendingRequests++;
+
+                }
+
+            }
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.warn(
+            "⚠️ Impossible de charger merchantRequests :",
+            error
+        );
+
+        pendingRequests =
+            0;
+
+    }
+
+
+    /* ======================================================
+       AFFICHAGE DANS LE RÉSUMÉ
+    ====================================================== */
+
+    if (merchantRequestsCount) {
+
+        merchantRequestsCount.textContent =
+            pendingRequests.toLocaleString(
+                "pt-PT"
+            );
+
+    }
+
+
+    /* ======================================================
+       BADGE
+    ====================================================== */
+
+    if (merchantBadge) {
+
+        merchantBadge.textContent =
+            pendingRequests.toString();
+
+    }
+
+
+    /* ======================================================
+       CARTE DU DASHBOARD
+       
+       Cette carte sert uniquement d'accès.
+       On affiche uniquement le compteur.
+    ====================================================== */
+
+    if (merchantRequestsDashboardCount) {
+
+        merchantRequestsDashboardCount.textContent =
+            pendingRequests.toLocaleString(
+                "pt-PT"
+            );
+
+    }
+
+
+    /* ======================================================
+       STRUCTURE TOMA ADMIN
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin.data
+    ) {
+
+        window.tomaAdmin.data = {};
+
+    }
+
+
+    window.tomaAdmin.data.merchantRequests = {
+
+        pending:
+            pendingRequests,
+
+        collection:
+            "merchantRequests"
+
+    };
+
+
+    /* ======================================================
+       LOG
+    ====================================================== */
+
+    console.log(
+        "🏪 Demandes de commerçants Firebase :",
+        pendingRequests
+    );
+
+
+    /* ======================================================
+       LIENS
+       
+       Aucun changement d'URL.
+       Les liens HTML existants restent utilisés.
+    ====================================================== */
+
+    if (merchantRequestsDashboardLink) {
+
+        console.log(
+            "🔗 Lien demandes commerçants prêt."
+        );
+
+    }
+
+
+    if (viewMerchantRequests) {
+
+        console.log(
+            "🔗 Accès aux demandes commerçants prêt."
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 37
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        async function () {
+
+            await initializeBlock37();
+
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 37 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Pedidos de comerciantes carregados desde Firebase."
+            );
+
+        }
+    );
+
+}
+
+else {
+
+    initializeBlock37()
+        .then(
+            function () {
+
+                alert(
+                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                    "✅ BLOC JS 37 TERMINÉ\n" +
+                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                    "Pedidos de comerciantes carregados desde Firebase."
+                );
+
+            }
+        )
+        .catch(
+            function (error) {
+
+                console.error(
+                    "❌ Erreur Bloc 37 :",
+                    error
+                );
+
+
+                alert(
+                    "⚠️ BLOC JS 37\n\n" +
+                    "Une erreur est survenue.\n" +
+                    "Regarde la console."
+                );
+
+            }
+        );
+
+}
