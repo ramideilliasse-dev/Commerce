@@ -8679,3 +8679,554 @@ else {
         );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 28 — PRODUITS RÉCENTS FIREBASE
+========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 28
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 28 chargé."
+);
+
+
+/* ==========================================================
+   IMPORT FIRESTORE
+========================================================== */
+
+import {
+    collection as firestoreCollection28,
+    getDocs as firestoreGetDocs28
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 28
+========================================================== */
+
+async function initializeBlock28() {
+
+
+    /* ======================================================
+       VÉRIFICATION FIREBASE
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin ||
+        !window.tomaAdmin.firebase ||
+        !window.tomaAdmin.firebase.db
+    ) {
+
+        console.error(
+            "❌ Firestore TOMA Admin indisponible."
+        );
+
+        return;
+
+    }
+
+
+    const db =
+        window.tomaAdmin.firebase.db;
+
+
+    /* ======================================================
+       ÉLÉMENTS HTML
+    ====================================================== */
+
+    const lastProductsPanel =
+        document.getElementById(
+            "lastProductsPanel"
+        );
+
+    const lastProductsTableContainer =
+        document.getElementById(
+            "lastProductsTableContainer"
+        );
+
+    const lastProductsTable =
+        document.getElementById(
+            "lastProductsTable"
+        );
+
+
+    if (lastProductsPanel) {
+
+        console.log(
+            "✅ lastProductsPanel existe"
+        );
+
+    }
+
+
+    if (lastProductsTableContainer) {
+
+        console.log(
+            "✅ lastProductsTableContainer existe"
+        );
+
+    }
+
+
+    if (!lastProductsTable) {
+
+        console.warn(
+            "⚠️ lastProductsTable introuvable."
+        );
+
+        return;
+
+    }
+
+
+    /* ======================================================
+       LECTURE FIRESTORE
+    ====================================================== */
+
+    try {
+
+        const productsSnapshot =
+            await firestoreGetDocs28(
+                firestoreCollection28(
+                    db,
+                    "products"
+                )
+            );
+
+
+        const products = [];
+
+
+        productsSnapshot.forEach(
+            function (documentSnapshot) {
+
+                const data =
+                    documentSnapshot.data();
+
+
+                products.push({
+
+                    id:
+                        documentSnapshot.id,
+
+                    image:
+                        data.image ||
+                        data.imageUrl ||
+                        data.photo ||
+                        data.photoURL ||
+                        "",
+
+                    name:
+                        data.name ||
+                        data.productName ||
+                        data.title ||
+                        "Produto",
+
+                    price:
+                        Number(
+                            data.price ||
+                            data.productPrice ||
+                            data.amount ||
+                            0
+                        ),
+
+                    shop:
+                        data.shopName ||
+                        data.storeName ||
+                        data.shop ||
+                        data.merchantName ||
+                        "Loja",
+
+                    status:
+                        data.status ||
+                        (
+                            data.active === true
+                                ? "Ativo"
+                                : "Inativo"
+                        ),
+
+                    createdAt:
+                        data.createdAt ||
+                        data.date ||
+                        data.created_at ||
+                        null
+
+                });
+
+            }
+        );
+
+
+        /* ==================================================
+           PLUS RÉCENT EN PREMIER
+        ================================================== */
+
+        products.sort(
+            function (a, b) {
+
+                return getTime28(
+                    b.createdAt
+                ) -
+                getTime28(
+                    a.createdAt
+                );
+
+            }
+        );
+
+
+        /* ==================================================
+           5 PRODUITS
+        ================================================== */
+
+        const latestProducts =
+            products.slice(
+                0,
+                5
+            );
+
+
+        /* ==================================================
+           AUCUN PRODUIT
+        ================================================== */
+
+        if (
+            latestProducts.length ===
+            0
+        ) {
+
+            lastProductsTable.innerHTML =
+
+                `
+                <tr>
+                    <td colspan="5">
+                        Nenhum produto encontrado.
+                    </td>
+                </tr>
+                `;
+
+        }
+
+
+        /* ==================================================
+           AFFICHAGE DES PRODUITS
+        ================================================== */
+
+        else {
+
+            lastProductsTable.innerHTML =
+                "";
+
+
+            latestProducts.forEach(
+                function (product) {
+
+
+                    const row =
+                        document.createElement(
+                            "tr"
+                        );
+
+
+                    /* ======================================
+                       IMAGE
+                    ====================================== */
+
+                    const imageCell =
+                        document.createElement(
+                            "td"
+                        );
+
+
+                    if (product.image) {
+
+                        const image =
+                            document.createElement(
+                                "img"
+                            );
+
+
+                        image.src =
+                            product.image;
+
+
+                        image.alt =
+                            "Produto";
+
+
+                        image.style.width =
+                            "45px";
+
+
+                        image.style.height =
+                            "45px";
+
+
+                        image.style.objectFit =
+                            "cover";
+
+
+                        image.style.borderRadius =
+                            "8px";
+
+
+                        imageCell.appendChild(
+                            image
+                        );
+
+                    }
+
+                    else {
+
+                        imageCell.textContent =
+                            "📦";
+
+                    }
+
+
+                    row.appendChild(
+                        imageCell
+                    );
+
+
+                    /* ======================================
+                       NOM
+                    ====================================== */
+
+                    const nameCell =
+                        document.createElement(
+                            "td"
+                        );
+
+
+                    nameCell.textContent =
+                        product.name;
+
+
+                    row.appendChild(
+                        nameCell
+                    );
+
+
+                    /* ======================================
+                       PRIX
+                    ====================================== */
+
+                    const priceCell =
+                        document.createElement(
+                            "td"
+                        );
+
+
+                    priceCell.textContent =
+                        Number(
+                            product.price || 0
+                        ).toLocaleString(
+                            "pt-PT"
+                        ) +
+                        " Kz";
+
+
+                    row.appendChild(
+                        priceCell
+                    );
+
+
+                    /* ======================================
+                       LOJA
+                    ====================================== */
+
+                    const shopCell =
+                        document.createElement(
+                            "td"
+                        );
+
+
+                    shopCell.textContent =
+                        product.shop;
+
+
+                    row.appendChild(
+                        shopCell
+                    );
+
+
+                    /* ======================================
+                       STATUS
+                    ====================================== */
+
+                    const statusCell =
+                        document.createElement(
+                            "td"
+                        );
+
+
+                    statusCell.textContent =
+                        product.status;
+
+
+                    row.appendChild(
+                        statusCell
+                    );
+
+
+                    lastProductsTable.appendChild(
+                        row
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* ==================================================
+           STRUCTURE TOMA
+        ================================================== */
+
+        if (!window.tomaAdmin.data) {
+
+            window.tomaAdmin.data = {};
+
+        }
+
+
+        window.tomaAdmin.data.latestProducts =
+            latestProducts;
+
+
+        console.log(
+            "📦 Derniers produits Firebase :",
+            latestProducts
+        );
+
+    }
+
+
+    catch (error) {
+
+        console.error(
+            "❌ Erreur lecture products :",
+            error
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   FORMAT DATE / TIMESTAMP
+========================================================== */
+
+function getTime28(value) {
+
+    if (!value) {
+
+        return 0;
+
+    }
+
+
+    try {
+
+        if (
+            typeof value.toDate ===
+            "function"
+        ) {
+
+            return value
+                .toDate()
+                .getTime();
+
+        }
+
+
+        const time =
+            new Date(value).getTime();
+
+
+        return Number.isNaN(time)
+            ? 0
+            : time;
+
+    }
+
+    catch (error) {
+
+        return 0;
+
+    }
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 28
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        async function () {
+
+            await initializeBlock28();
+
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 28 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Produtos recentes carregados desde Firebase."
+            );
+
+        }
+    );
+
+}
+
+
+else {
+
+    initializeBlock28()
+        .then(
+            function () {
+
+                alert(
+                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                    "✅ BLOC JS 28 TERMINÉ\n" +
+                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                    "Produtos recentes carregados desde Firebase."
+                );
+
+            }
+        )
+        .catch(
+            function (error) {
+
+                console.error(
+                    "❌ Erreur Bloc 28 :",
+                    error
+                );
+
+
+                alert(
+                    "⚠️ BLOC JS 28\n\n" +
+                    "Une erreur est survenue.\n" +
+                    "Regarde la console."
+                );
+
+            }
+        );
+
+}
