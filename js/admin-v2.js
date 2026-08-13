@@ -6805,3 +6805,217 @@ else {
         );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 23 — PRODUITS FIREBASE
+========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 23
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 23 chargé."
+);
+
+
+/* ==========================================================
+   IMPORT FIRESTORE
+   ALIAS UNIQUES DU BLOC 23
+========================================================== */
+
+import {
+    collection as firestoreCollection23,
+    getDocs as firestoreGetDocs23
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 23
+========================================================== */
+
+async function initializeBlock23() {
+
+
+    /* ======================================================
+       VÉRIFICATION FIREBASE
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin ||
+        !window.tomaAdmin.firebase ||
+        !window.tomaAdmin.firebase.db
+    ) {
+
+        console.error(
+            "❌ Firestore TOMA Admin indisponible."
+        );
+
+        return;
+
+    }
+
+
+    const db =
+        window.tomaAdmin.firebase.db;
+
+
+    /* ======================================================
+       ID PRODUITS
+    ====================================================== */
+
+    const productsCount =
+        document.getElementById(
+            "productsCount"
+        );
+
+
+    if (!productsCount) {
+
+        console.warn(
+            "⚠️ productsCount introuvable."
+        );
+
+        return;
+
+    }
+
+
+    /* ======================================================
+       LECTURE FIRESTORE
+    ====================================================== */
+
+    try {
+
+        const productsSnapshot =
+            await firestoreGetDocs23(
+                firestoreCollection23(
+                    db,
+                    "products"
+                )
+            );
+
+
+        const totalProducts =
+            productsSnapshot.size;
+
+
+        /* ==================================================
+           AFFICHAGE
+        ================================================== */
+
+        productsCount.textContent =
+            totalProducts.toLocaleString(
+                "pt-PT"
+            );
+
+
+        /* ==================================================
+           STRUCTURE TOMA
+        ================================================== */
+
+        if (!window.tomaAdmin.data) {
+
+            window.tomaAdmin.data = {};
+
+        }
+
+
+        window.tomaAdmin.data.products =
+            totalProducts;
+
+
+        /* ==================================================
+           LOG
+        ================================================== */
+
+        console.log(
+            "📦 Produtos Firebase :",
+            totalProducts
+        );
+
+    }
+
+
+    catch (error) {
+
+        console.error(
+            "❌ Erreur lecture products :",
+            error
+        );
+
+
+        productsCount.textContent =
+            "0";
+
+    }
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 23
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        async function () {
+
+            await initializeBlock23();
+
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 23 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Produtos carregados desde Firebase."
+            );
+
+        }
+    );
+
+}
+
+
+else {
+
+    initializeBlock23()
+        .then(
+            function () {
+
+                alert(
+                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                    "✅ BLOC JS 23 TERMINÉ\n" +
+                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                    "Produtos carregados desde Firebase."
+                );
+
+            }
+        )
+        .catch(
+            function (error) {
+
+                console.error(
+                    "❌ Erreur Bloc 23 :",
+                    error
+                );
+
+
+                alert(
+                    "⚠️ BLOC JS 23\n\n" +
+                    "Une erreur est survenue.\n" +
+                    "Regarde la console."
+                );
+
+            }
+        );
+
+}
