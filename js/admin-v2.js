@@ -13021,3 +13021,697 @@ else {
         );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 36 — NOTIFICATIONS FIREBASE
+========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 36
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 36 chargé."
+);
+
+
+/* ==========================================================
+   IMPORT FIRESTORE
+========================================================== */
+
+import {
+    collection as firestoreCollection36,
+    getDocs as firestoreGetDocs36,
+    query as firestoreQuery36,
+    orderBy as firestoreOrderBy36,
+    limit as firestoreLimit36
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 36
+========================================================== */
+
+async function initializeBlock36() {
+
+
+    /* ======================================================
+       VÉRIFICATION FIREBASE
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin ||
+        !window.tomaAdmin.firebase ||
+        !window.tomaAdmin.firebase.db
+    ) {
+
+        console.error(
+            "❌ Firestore TOMA Admin indisponible."
+        );
+
+        return;
+
+    }
+
+
+    const db =
+        window.tomaAdmin.firebase.db;
+
+
+    /* ======================================================
+       ÉLÉMENTS HTML EXISTANTS
+    ====================================================== */
+
+    const notificationsList =
+        document.getElementById(
+            "notificationsList"
+        );
+
+
+    const notificationsBadge =
+        document.getElementById(
+            "notificationsBadge"
+        );
+
+
+    const notificationsButton =
+        document.getElementById(
+            "notificationsButton"
+        );
+
+
+    const notificationModal =
+        document.getElementById(
+            "notificationModal"
+        );
+
+
+    const notificationContent =
+        document.getElementById(
+            "notificationContent"
+        );
+
+
+    const closeNotificationModal =
+        document.getElementById(
+            "closeNotificationModal"
+        );
+
+
+    if (notificationsList) {
+
+        console.log(
+            "✅ notificationsList existe"
+        );
+
+    }
+
+
+    if (notificationsBadge) {
+
+        console.log(
+            "✅ notificationsBadge existe"
+        );
+
+    }
+
+
+    if (notificationsButton) {
+
+        console.log(
+            "✅ notificationsButton existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       VARIABLES
+    ====================================================== */
+
+    let notifications = [];
+
+
+    /* ======================================================
+       LECTURE FIRESTORE
+    ====================================================== */
+
+    try {
+
+        const notificationsQuery =
+            firestoreQuery36(
+                firestoreCollection36(
+                    db,
+                    "notifications"
+                ),
+                firestoreOrderBy36(
+                    "createdAt",
+                    "desc"
+                ),
+                firestoreLimit36(
+                    20
+                )
+            );
+
+
+        const notificationsSnapshot =
+            await firestoreGetDocs36(
+                notificationsQuery
+            );
+
+
+        notificationsSnapshot.forEach(
+            function (documentSnapshot) {
+
+                const notification =
+                    documentSnapshot.data();
+
+
+                notifications.push({
+
+                    id:
+                        documentSnapshot.id,
+
+                    title:
+                        notification.title ||
+                        notification.titre ||
+                        "Notification",
+
+                    message:
+                        notification.message ||
+                        notification.text ||
+                        notification.description ||
+                        "",
+
+                    type:
+                        notification.type ||
+                        "info",
+
+                    read:
+                        notification.read === true,
+
+                    date:
+                        getNotificationDate36(
+                            notification.createdAt ||
+                            notification.date ||
+                            notification.timestamp
+                        )
+
+                });
+
+            }
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.warn(
+            "⚠️ Impossible de charger notifications :",
+            error
+        );
+
+        /*
+         * Si la collection existe mais qu'elle ne possède
+         * pas encore de données compatibles, le Dashboard
+         * reste fonctionnel.
+         */
+
+        notifications = [];
+
+    }
+
+
+    /* ======================================================
+       NOTIFICATIONS NON LUES
+    ====================================================== */
+
+    const unreadNotifications =
+        notifications.filter(
+            function (notification) {
+
+                return notification.read !== true;
+
+            }
+        );
+
+
+    /* ======================================================
+       BADGE
+    ====================================================== */
+
+    if (notificationsBadge) {
+
+        notificationsBadge.textContent =
+            unreadNotifications.length
+                .toString();
+
+    }
+
+
+    /* ======================================================
+       AFFICHAGE
+    ====================================================== */
+
+    if (notificationsList) {
+
+        renderNotifications36(
+            notificationsList,
+            notifications
+        );
+
+    }
+
+
+    /* ======================================================
+       BOUTON NOTIFICATIONS
+    ====================================================== */
+
+    if (
+        notificationsButton &&
+        notificationModal
+    ) {
+
+        notificationsButton.addEventListener(
+            "click",
+            function () {
+
+                notificationModal.classList.remove(
+                    "hidden"
+                );
+
+
+                notificationModal.setAttribute(
+                    "aria-hidden",
+                    "false"
+                );
+
+            }
+        );
+
+    }
+
+
+    /* ======================================================
+       FERMETURE MODAL
+    ====================================================== */
+
+    if (
+        closeNotificationModal &&
+        notificationModal
+    ) {
+
+        closeNotificationModal.addEventListener(
+            "click",
+            function () {
+
+                notificationModal.classList.add(
+                    "hidden"
+                );
+
+
+                notificationModal.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
+
+            }
+        );
+
+    }
+
+
+    /* ======================================================
+       STOCKAGE TOMA ADMIN
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin.data
+    ) {
+
+        window.tomaAdmin.data = {};
+
+    }
+
+
+    window.tomaAdmin.data.notifications = {
+
+        total:
+            notifications.length,
+
+        unread:
+            unreadNotifications.length,
+
+        items:
+            notifications
+
+    };
+
+
+    /* ======================================================
+       LOG
+    ====================================================== */
+
+    console.log(
+        "🔔 Notifications Firebase :",
+        window.tomaAdmin.data.notifications
+    );
+
+}
+
+
+/* ==========================================================
+   AFFICHAGE DES NOTIFICATIONS
+========================================================== */
+
+function renderNotifications36(
+    container,
+    notifications
+) {
+
+
+    if (
+        !notifications ||
+        notifications.length === 0
+    ) {
+
+        container.innerHTML =
+
+            '<div class="notificationEmpty">' +
+
+                '<span class="notificationEmptyIcon">' +
+                    '🔔' +
+                '</span>' +
+
+                '<p>' +
+                    'Nenhuma notificação nova.' +
+                '</p>' +
+
+            '</div>';
+
+        return;
+
+    }
+
+
+    container.innerHTML = "";
+
+
+    notifications.forEach(
+        function (notification) {
+
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "notificationItem";
+
+
+            item.innerHTML =
+
+                '<div class="notificationIcon">' +
+                    '🔔' +
+                '</div>' +
+
+                '<div class="notificationInfo">' +
+
+                    '<strong>' +
+                        escapeHtml36(
+                            notification.title
+                        ) +
+                    '</strong>' +
+
+                    '<p>' +
+                        escapeHtml36(
+                            notification.message
+                        ) +
+                    '</p>' +
+
+                    '<small>' +
+                        formatNotificationDate36(
+                            notification.date
+                        ) +
+                    '</small>' +
+
+                '</div>';
+
+
+            item.addEventListener(
+                "click",
+                function () {
+
+                    const modal =
+                        document.getElementById(
+                            "notificationModal"
+                        );
+
+
+                    const content =
+                        document.getElementById(
+                            "notificationContent"
+                        );
+
+
+                    if (
+                        modal &&
+                        content
+                    ) {
+
+                        content.innerHTML =
+
+                            "<h3>" +
+                                escapeHtml36(
+                                    notification.title
+                                ) +
+                            "</h3>" +
+
+                            "<p>" +
+                                escapeHtml36(
+                                    notification.message
+                                ) +
+                            "</p>" +
+
+                            "<small>" +
+                                formatNotificationDate36(
+                                    notification.date
+                                ) +
+                            "</small>";
+
+
+                        modal.classList.remove(
+                            "hidden"
+                        );
+
+
+                        modal.setAttribute(
+                            "aria-hidden",
+                            "false"
+                        );
+
+                    }
+
+                }
+            );
+
+
+            container.appendChild(
+                item
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   CONVERSION DATE FIREBASE
+========================================================== */
+
+function getNotificationDate36(
+    value
+) {
+
+    if (!value) {
+
+        return null;
+
+    }
+
+
+    try {
+
+        if (
+            typeof value.toDate ===
+            "function"
+        ) {
+
+            return value.toDate();
+
+        }
+
+
+        const date =
+            new Date(
+                value
+            );
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return null;
+
+        }
+
+
+        return date;
+
+    }
+
+    catch (error) {
+
+        return null;
+
+    }
+
+}
+
+
+/* ==========================================================
+   FORMATAGE DATE
+========================================================== */
+
+function formatNotificationDate36(
+    date
+) {
+
+    if (!date) {
+
+        return "-";
+
+    }
+
+
+    return date.toLocaleString(
+        "pt-PT",
+        {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   PROTECTION HTML
+========================================================== */
+
+function escapeHtml36(
+    value
+) {
+
+    return String(
+        value || ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 36
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        async function () {
+
+            await initializeBlock36();
+
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 36 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Notificações carregadas desde Firebase."
+            );
+
+        }
+    );
+
+}
+
+else {
+
+    initializeBlock36()
+        .then(
+            function () {
+
+                alert(
+                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                    "✅ BLOC JS 36 TERMINÉ\n" +
+                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                    "Notificações carregadas desde Firebase."
+                );
+
+            }
+        )
+        .catch(
+            function (error) {
+
+                console.error(
+                    "❌ Erreur Bloc 36 :",
+                    error
+                );
+
+
+                alert(
+                    "⚠️ BLOC JS 36\n\n" +
+                    "Une erreur est survenue.\n" +
+                    "Regarde la console."
+                );
+
+            }
+        );
+
+}
