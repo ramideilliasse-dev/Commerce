@@ -8165,3 +8165,517 @@ else {
         );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 27 — COMMERÇANTS RÉCENTS FIREBASE
+========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 27
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 27 chargé."
+);
+
+
+/* ==========================================================
+   IMPORT FIRESTORE
+========================================================== */
+
+import {
+    collection as firestoreCollection27,
+    getDocs as firestoreGetDocs27
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 27
+========================================================== */
+
+async function initializeBlock27() {
+
+
+    /* ======================================================
+       VÉRIFICATION FIREBASE
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin ||
+        !window.tomaAdmin.firebase ||
+        !window.tomaAdmin.firebase.db
+    ) {
+
+        console.error(
+            "❌ Firestore TOMA Admin indisponible."
+        );
+
+        return;
+
+    }
+
+
+    const db =
+        window.tomaAdmin.firebase.db;
+
+
+    /* ======================================================
+       ÉLÉMENTS HTML
+    ====================================================== */
+
+    const lastMerchantsPanel =
+        document.getElementById(
+            "lastMerchantsPanel"
+        );
+
+    const lastMerchantsTableContainer =
+        document.getElementById(
+            "lastMerchantsTableContainer"
+        );
+
+    const lastMerchantsTable =
+        document.getElementById(
+            "lastMerchantsTable"
+        );
+
+
+    if (lastMerchantsPanel) {
+
+        console.log(
+            "✅ lastMerchantsPanel existe"
+        );
+
+    }
+
+
+    if (lastMerchantsTableContainer) {
+
+        console.log(
+            "✅ lastMerchantsTableContainer existe"
+        );
+
+    }
+
+
+    if (!lastMerchantsTable) {
+
+        console.warn(
+            "⚠️ lastMerchantsTable introuvable."
+        );
+
+        return;
+
+    }
+
+
+    /* ======================================================
+       LECTURE FIRESTORE
+    ====================================================== */
+
+    try {
+
+        const merchantsSnapshot =
+            await firestoreGetDocs27(
+                firestoreCollection27(
+                    db,
+                    "merchants"
+                )
+            );
+
+
+        const merchants = [];
+
+
+        merchantsSnapshot.forEach(
+            function (documentSnapshot) {
+
+                const data =
+                    documentSnapshot.data();
+
+
+                merchants.push({
+
+                    id:
+                        documentSnapshot.id,
+
+                    photo:
+                        data.photo ||
+                        data.photoURL ||
+                        data.image ||
+                        data.imageUrl ||
+                        data.avatar ||
+                        "",
+
+                    name:
+                        data.name ||
+                        data.fullName ||
+                        (
+                            (data.firstName || "") +
+                            " " +
+                            (data.lastName || "")
+                        ).trim() ||
+                        "Comerciante",
+
+                    shop:
+                        data.shopName ||
+                        data.storeName ||
+                        data.shop ||
+                        "Loja",
+
+                    status:
+                        data.status ||
+                        "Pendente",
+
+                    createdAt:
+                        data.createdAt ||
+                        data.date ||
+                        null
+
+                });
+
+            }
+        );
+
+
+        /* ==================================================
+           PLUS RÉCENT EN PREMIER
+        ================================================== */
+
+        merchants.sort(
+            function (a, b) {
+
+                return getTime27(
+                    b.createdAt
+                ) -
+                getTime27(
+                    a.createdAt
+                );
+
+            }
+        );
+
+
+        /* ==================================================
+           5 DERNIERS COMMERÇANTS
+        ================================================== */
+
+        const latestMerchants =
+            merchants.slice(
+                0,
+                5
+            );
+
+
+        /* ==================================================
+           AUCUN COMMERÇANT
+        ================================================== */
+
+        if (
+            latestMerchants.length ===
+            0
+        ) {
+
+            lastMerchantsTable.innerHTML =
+
+                `
+                <tr>
+                    <td colspan="5">
+                        Nenhum comerciante encontrado.
+                    </td>
+                </tr>
+                `;
+
+        }
+
+
+        /* ==================================================
+           AFFICHAGE
+        ================================================== */
+
+        else {
+
+            lastMerchantsTable.innerHTML =
+                "";
+
+
+            latestMerchants.forEach(
+                function (merchant) {
+
+                    const row =
+                        document.createElement(
+                            "tr"
+                        );
+
+
+                    const photoCell =
+                        document.createElement(
+                            "td"
+                        );
+
+
+                    if (
+                        merchant.photo
+                    ) {
+
+                        const image =
+                            document.createElement(
+                                "img"
+                            );
+
+                        image.src =
+                            merchant.photo;
+
+                        image.alt =
+                            "Foto";
+
+                        image.style.width =
+                            "40px";
+
+                        image.style.height =
+                            "40px";
+
+                        image.style.objectFit =
+                            "cover";
+
+                        image.style.borderRadius =
+                            "50%";
+
+                        photoCell.appendChild(
+                            image
+                        );
+
+                    }
+
+                    else {
+
+                        photoCell.textContent =
+                            "👤";
+
+                    }
+
+
+                    row.appendChild(
+                        photoCell
+                    );
+
+
+                    row.innerHTML +=
+
+                        `
+                        <td>
+                            ${escapeHtml27(
+                                merchant.name
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml27(
+                                merchant.shop
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml27(
+                                merchant.status
+                            )}
+                        </td>
+
+                        <td>
+                            <a
+                                href="merchants.html"
+                                class="panelLink"
+                            >
+                                Ver
+                            </a>
+                        </td>
+                        `;
+
+
+                    lastMerchantsTable.appendChild(
+                        row
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* ==================================================
+           STRUCTURE TOMA
+        ================================================== */
+
+        if (!window.tomaAdmin.data) {
+
+            window.tomaAdmin.data = {};
+
+        }
+
+
+        window.tomaAdmin.data.latestMerchants =
+            latestMerchants;
+
+
+        console.log(
+            "🏪 Derniers commerçants Firebase :",
+            latestMerchants
+        );
+
+    }
+
+
+    catch (error) {
+
+        console.error(
+            "❌ Erreur lecture merchants :",
+            error
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   FORMAT DATE / TIMESTAMP
+========================================================== */
+
+function getTime27(value) {
+
+    if (!value) {
+
+        return 0;
+
+    }
+
+
+    try {
+
+        if (
+            typeof value.toDate ===
+            "function"
+        ) {
+
+            return value.toDate().getTime();
+
+        }
+
+
+        const time =
+            new Date(value).getTime();
+
+
+        return Number.isNaN(time)
+            ? 0
+            : time;
+
+    }
+
+    catch (error) {
+
+        return 0;
+
+    }
+
+}
+
+
+/* ==========================================================
+   PROTECTION HTML
+========================================================== */
+
+function escapeHtml27(value) {
+
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 27
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        async function () {
+
+            await initializeBlock27();
+
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 27 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Comerciantes recentes carregados desde Firebase."
+            );
+
+        }
+    );
+
+}
+
+
+else {
+
+    initializeBlock27()
+        .then(
+            function () {
+
+                alert(
+                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                    "✅ BLOC JS 27 TERMINÉ\n" +
+                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                    "Comerciantes recentes carregados desde Firebase."
+                );
+
+            }
+        )
+        .catch(
+            function (error) {
+
+                console.error(
+                    "❌ Erreur Bloc 27 :",
+                    error
+                );
+
+
+                alert(
+                    "⚠️ BLOC JS 27\n\n" +
+                    "Une erreur est survenue.\n" +
+                    "Regarde la console."
+                );
+
+            }
+        );
+
+}
