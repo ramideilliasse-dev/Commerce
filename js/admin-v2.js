@@ -7019,3 +7019,245 @@ else {
         );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 24 — VENTES FIREBASE
+========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 24
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 24 chargé."
+);
+
+
+/* ==========================================================
+   IMPORT FIRESTORE
+   ALIAS UNIQUES DU BLOC 24
+========================================================== */
+
+import {
+    collection as firestoreCollection24,
+    getDocs as firestoreGetDocs24
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 24
+========================================================== */
+
+async function initializeBlock24() {
+
+
+    /* ======================================================
+       VÉRIFICATION FIREBASE
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin ||
+        !window.tomaAdmin.firebase ||
+        !window.tomaAdmin.firebase.db
+    ) {
+
+        console.error(
+            "❌ Firestore TOMA Admin indisponible."
+        );
+
+        return;
+
+    }
+
+
+    const db =
+        window.tomaAdmin.firebase.db;
+
+
+    /* ======================================================
+       ID VENTES
+    ====================================================== */
+
+    const salesCount =
+        document.getElementById(
+            "salesCount"
+        );
+
+
+    if (!salesCount) {
+
+        console.warn(
+            "⚠️ salesCount introuvable."
+        );
+
+        return;
+
+    }
+
+
+    /* ======================================================
+       LECTURE FIRESTORE
+    ====================================================== */
+
+    try {
+
+        const salesSnapshot =
+            await firestoreGetDocs24(
+                firestoreCollection24(
+                    db,
+                    "orders"
+                )
+            );
+
+
+        /* ==================================================
+           CALCUL DU TOTAL DES VENTES
+        ================================================== */
+
+        let totalSales = 0;
+
+
+        salesSnapshot.forEach(
+            function (documentSnapshot) {
+
+                const data =
+                    documentSnapshot.data();
+
+
+                const amount =
+                    Number(
+                        data.total ||
+                        data.totalAmount ||
+                        data.amount ||
+                        data.price ||
+                        0
+                    );
+
+
+                totalSales += amount;
+
+            }
+        );
+
+
+        /* ==================================================
+           AFFICHAGE
+        ================================================== */
+
+        salesCount.textContent =
+            totalSales.toLocaleString(
+                "pt-PT"
+            ) +
+            " Kz";
+
+
+        /* ==================================================
+           STRUCTURE TOMA
+        ================================================== */
+
+        if (!window.tomaAdmin.data) {
+
+            window.tomaAdmin.data = {};
+
+        }
+
+
+        window.tomaAdmin.data.sales =
+            totalSales;
+
+
+        /* ==================================================
+           LOG
+        ================================================== */
+
+        console.log(
+            "💰 Vendas Firebase :",
+            totalSales,
+            "Kz"
+        );
+
+    }
+
+
+    catch (error) {
+
+        console.error(
+            "❌ Erreur lecture ventes :",
+            error
+        );
+
+
+        salesCount.textContent =
+            "0 Kz";
+
+    }
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 24
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        async function () {
+
+            await initializeBlock24();
+
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 24 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Vendas carregadas desde Firebase."
+            );
+
+        }
+    );
+
+}
+
+
+else {
+
+    initializeBlock24()
+        .then(
+            function () {
+
+                alert(
+                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                    "✅ BLOC JS 24 TERMINÉ\n" +
+                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                    "Vendas carregadas desde Firebase."
+                );
+
+            }
+        )
+        .catch(
+            function (error) {
+
+                console.error(
+                    "❌ Erreur Bloc 24 :",
+                    error
+                );
+
+
+                alert(
+                    "⚠️ BLOC JS 24\n\n" +
+                    "Une erreur est survenue.\n" +
+                    "Regarde la console."
+                );
+
+            }
+        );
+
+}
