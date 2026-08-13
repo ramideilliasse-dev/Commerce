@@ -9230,3 +9230,630 @@ else {
         );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 29 — ACTIVITÉ RÉCENTE FIREBASE
+========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 29
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 29 chargé."
+);
+
+
+/* ==========================================================
+   IMPORT FIRESTORE
+========================================================== */
+
+import {
+    collection as firestoreCollection29,
+    getDocs as firestoreGetDocs29
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 29
+========================================================== */
+
+async function initializeBlock29() {
+
+
+    /* ======================================================
+       VÉRIFICATION FIREBASE
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin ||
+        !window.tomaAdmin.firebase ||
+        !window.tomaAdmin.firebase.db
+    ) {
+
+        console.error(
+            "❌ Firestore TOMA Admin indisponible."
+        );
+
+        return;
+
+    }
+
+
+    const db =
+        window.tomaAdmin.firebase.db;
+
+
+    /* ======================================================
+       ÉLÉMENTS HTML
+    ====================================================== */
+
+    const recentActivityPanel =
+        document.getElementById(
+            "recentActivityPanel"
+        );
+
+
+    const activityList =
+        document.getElementById(
+            "activityList"
+        );
+
+
+    if (recentActivityPanel) {
+
+        console.log(
+            "✅ recentActivityPanel existe"
+        );
+
+    }
+
+
+    if (!activityList) {
+
+        console.warn(
+            "⚠️ activityList introuvable."
+        );
+
+        return;
+
+    }
+
+
+    /* ======================================================
+       LECTURE DE LA COLLECTION ACTIVITIES
+    ====================================================== */
+
+    try {
+
+        const activitiesSnapshot =
+            await firestoreGetDocs29(
+                firestoreCollection29(
+                    db,
+                    "activities"
+                )
+            );
+
+
+        const activities = [];
+
+
+        activitiesSnapshot.forEach(
+            function (documentSnapshot) {
+
+                const data =
+                    documentSnapshot.data();
+
+
+                activities.push({
+
+                    id:
+                        documentSnapshot.id,
+
+                    type:
+                        data.type ||
+                        "activity",
+
+                    title:
+                        data.title ||
+                        data.name ||
+                        "Nova atividade",
+
+                    description:
+                        data.description ||
+                        data.message ||
+                        "",
+
+                    time:
+                        data.createdAt ||
+                        data.timestamp ||
+                        data.date ||
+                        null
+
+                });
+
+            }
+        );
+
+
+        /* ==================================================
+           TRI : PLUS RÉCENT EN PREMIER
+        ================================================== */
+
+        activities.sort(
+            function (a, b) {
+
+                return getTime29(
+                    b.time
+                ) -
+                getTime29(
+                    a.time
+                );
+
+            }
+        );
+
+
+        /* ==================================================
+           5 ACTIVITÉS MAXIMUM
+        ================================================== */
+
+        const latestActivities =
+            activities.slice(
+                0,
+                5
+            );
+
+
+        /* ==================================================
+           AUCUNE ACTIVITÉ
+        ================================================== */
+
+        if (
+            latestActivities.length ===
+            0
+        ) {
+
+            activityList.innerHTML =
+
+                `
+                <div class="activityItem">
+
+                    <div class="activityIcon">
+                        🛒
+                    </div>
+
+                    <div class="activityContent">
+
+                        <h4>
+                            Nenhuma atividade
+                        </h4>
+
+                        <p>
+                            As atividades recentes aparecerão aqui.
+                        </p>
+
+                        <div class="activityTime">
+                            -
+                        </div>
+
+                    </div>
+
+                </div>
+                `;
+
+        }
+
+
+        /* ==================================================
+           AFFICHAGE
+        ================================================== */
+
+        else {
+
+            activityList.innerHTML =
+                "";
+
+
+            latestActivities.forEach(
+                function (activity) {
+
+
+                    const item =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    item.className =
+                        "activityItem";
+
+
+                    /* ======================================
+                       ICÔNE
+                    ====================================== */
+
+                    let icon =
+                        "🛒";
+
+
+                    if (
+                        activity.type ===
+                        "user"
+                    ) {
+
+                        icon =
+                            "👤";
+
+                    }
+
+
+                    if (
+                        activity.type ===
+                        "merchant"
+                    ) {
+
+                        icon =
+                            "🏪";
+
+                    }
+
+
+                    if (
+                        activity.type ===
+                        "product"
+                    ) {
+
+                        icon =
+                            "📦";
+
+                    }
+
+
+                    if (
+                        activity.type ===
+                        "order"
+                    ) {
+
+                        icon =
+                            "🛒";
+
+                    }
+
+
+                    if (
+                        activity.type ===
+                        "sale"
+                    ) {
+
+                        icon =
+                            "💰";
+
+                    }
+
+
+                    item.innerHTML =
+
+                        `
+                        <div class="activityIcon">
+                            ${icon}
+                        </div>
+
+                        <div class="activityContent">
+
+                            <h4>
+                                ${escapeHtml29(
+                                    activity.title
+                                )}
+                            </h4>
+
+                            <p>
+                                ${escapeHtml29(
+                                    activity.description
+                                )}
+                            </p>
+
+                            <div class="activityTime">
+                                ${formatDate29(
+                                    activity.time
+                                )}
+                            </div>
+
+                        </div>
+                        `;
+
+
+                    activityList.appendChild(
+                        item
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* ==================================================
+           STRUCTURE TOMA
+        ================================================== */
+
+        if (!window.tomaAdmin.data) {
+
+            window.tomaAdmin.data = {};
+
+        }
+
+
+        window.tomaAdmin.data.latestActivities =
+            latestActivities;
+
+
+        console.log(
+            "📋 Actividades recentes Firebase :",
+            latestActivities
+        );
+
+    }
+
+
+    catch (error) {
+
+        /*
+         * Si la collection "activities"
+         * n'existe pas encore ou si elle est vide,
+         * on conserve l'interface actuelle.
+         */
+
+        console.warn(
+            "⚠️ Collection activities indisponible :",
+            error
+        );
+
+
+        activityList.innerHTML =
+
+            `
+            <div class="activityItem">
+
+                <div class="activityIcon">
+                    🛒
+                </div>
+
+                <div class="activityContent">
+
+                    <h4>
+                        Nenhuma atividade
+                    </h4>
+
+                    <p>
+                        As atividades recentes aparecerão aqui.
+                    </p>
+
+                    <div class="activityTime">
+                        -
+                    </div>
+
+                </div>
+
+            </div>
+            `;
+
+    }
+
+}
+
+
+/* ==========================================================
+   CONVERSION DATE
+========================================================== */
+
+function getTime29(value) {
+
+    if (!value) {
+
+        return 0;
+
+    }
+
+
+    try {
+
+        if (
+            typeof value.toDate ===
+            "function"
+        ) {
+
+            return value
+                .toDate()
+                .getTime();
+
+        }
+
+
+        const time =
+            new Date(value).getTime();
+
+
+        return Number.isNaN(time)
+            ? 0
+            : time;
+
+    }
+
+    catch (error) {
+
+        return 0;
+
+    }
+
+}
+
+
+/* ==========================================================
+   FORMAT DATE
+========================================================== */
+
+function formatDate29(value) {
+
+    if (!value) {
+
+        return "-";
+
+    }
+
+
+    try {
+
+        let date;
+
+
+        if (
+            typeof value.toDate ===
+            "function"
+        ) {
+
+            date =
+                value.toDate();
+
+        }
+
+        else {
+
+            date =
+                new Date(value);
+
+        }
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return "-";
+
+        }
+
+
+        return date.toLocaleString(
+            "pt-PT",
+            {
+                dateStyle:
+                    "short",
+
+                timeStyle:
+                    "short"
+            }
+        );
+
+    }
+
+    catch (error) {
+
+        return "-";
+
+    }
+
+}
+
+
+/* ==========================================================
+   PROTECTION HTML
+========================================================== */
+
+function escapeHtml29(value) {
+
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 29
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        async function () {
+
+            await initializeBlock29();
+
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 29 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Atividade recente preparada para Firebase."
+            );
+
+        }
+    );
+
+}
+
+
+else {
+
+    initializeBlock29()
+        .then(
+            function () {
+
+                alert(
+                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                    "✅ BLOC JS 29 TERMINÉ\n" +
+                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                    "Atividade recente preparada para Firebase."
+                );
+
+            }
+        )
+        .catch(
+            function (error) {
+
+                console.error(
+                    "❌ Erreur Bloc 29 :",
+                    error
+                );
+
+
+                alert(
+                    "⚠️ BLOC JS 29\n\n" +
+                    "Une erreur est survenue.\n" +
+                    "Regarde la console."
+                );
+
+            }
+        );
+
+}
