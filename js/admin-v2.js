@@ -6425,3 +6425,169 @@ if (
     );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 21 — UTILISATEURS FIREBASE
+========================================================== */
+
+import {
+    collection,
+    getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 21
+========================================================== */
+
+async function initializeBlock21() {
+
+
+    /* ======================================================
+       VÉRIFICATION FIREBASE
+    ====================================================== */
+
+    if (!window.tomaAdmin ||
+        !window.tomaAdmin.firebase ||
+        !window.tomaAdmin.firebase.db) {
+
+        console.error(
+            "❌ Firestore TOMA Admin indisponible."
+        );
+
+        return;
+
+    }
+
+
+    const db =
+        window.tomaAdmin.firebase.db;
+
+
+    /* ======================================================
+       ÉLÉMENT UTILISATEURS
+    ====================================================== */
+
+    const usersCount =
+        document.getElementById(
+            "usersCount"
+        );
+
+
+    if (!usersCount) {
+
+        console.warn(
+            "⚠️ usersCount introuvable."
+        );
+
+        return;
+
+    }
+
+
+    /* ======================================================
+       LECTURE FIRESTORE
+    ====================================================== */
+
+    try {
+
+        const usersSnapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "users"
+                )
+            );
+
+
+        const totalUsers =
+            usersSnapshot.size;
+
+
+        /* ==================================================
+           AFFICHAGE
+        ================================================== */
+
+        usersCount.textContent =
+            totalUsers.toLocaleString(
+                "pt-PT"
+            );
+
+
+        /* ==================================================
+           STOCKAGE LOCAL DE LA STATISTIQUE
+        ================================================== */
+
+        if (!window.tomaAdmin.data) {
+
+            window.tomaAdmin.data = {};
+
+        }
+
+
+        window.tomaAdmin.data.users =
+            totalUsers;
+
+
+        console.log(
+            "👥 Utilisateurs Firebase :",
+            totalUsers
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "❌ Erreur lecture users :",
+            error
+        );
+
+
+        usersCount.textContent =
+            "0";
+
+    }
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 21
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        async function () {
+
+            await initializeBlock21();
+
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 21 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Utilizadores carregados desde Firebase."
+            );
+
+        }
+    );
+
+} else {
+
+    await initializeBlock21();
+
+
+    alert(
+        "━━━━━━━━━━━━━━━━━━━━━━\n" +
+        "✅ BLOC JS 21 TERMINÉ\n" +
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+        "Utilizadores carregados desde Firebase."
+    );
+
+}
