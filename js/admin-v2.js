@@ -14319,3 +14319,664 @@ else {
         );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 39 — COMMANDES FIREBASE
+========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 39
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 39 chargé."
+);
+
+
+/* ==========================================================
+   IMPORT FIRESTORE
+========================================================== */
+
+import {
+    collection as firestoreCollection39,
+    getDocs as firestoreGetDocs39
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 39
+========================================================== */
+
+async function initializeBlock39() {
+
+
+    /* ======================================================
+       VÉRIFICATION FIREBASE
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin ||
+        !window.tomaAdmin.firebase ||
+        !window.tomaAdmin.firebase.db
+    ) {
+
+        console.error(
+            "❌ Firestore TOMA Admin indisponible."
+        );
+
+        return;
+
+    }
+
+
+    const db =
+        window.tomaAdmin.firebase.db;
+
+
+    /* ======================================================
+       ÉLÉMENTS HTML EXISTANTS
+    ====================================================== */
+
+    const ordersChartCard =
+        document.getElementById(
+            "ordersChartCard"
+        );
+
+
+    const ordersChartContainer =
+        document.getElementById(
+            "ordersChartContainer"
+        );
+
+
+    const ordersChart =
+        document.getElementById(
+            "ordersChart"
+        );
+
+
+    const monthlyOrders =
+        document.getElementById(
+            "monthlyOrders"
+        );
+
+
+    const lastOrdersTable =
+        document.getElementById(
+            "lastOrdersTable"
+        );
+
+
+    if (ordersChartCard) {
+
+        console.log(
+            "✅ ordersChartCard existe"
+        );
+
+    }
+
+
+    if (ordersChartContainer) {
+
+        console.log(
+            "✅ ordersChartContainer existe"
+        );
+
+    }
+
+
+    if (ordersChart) {
+
+        console.log(
+            "✅ ordersChart existe"
+        );
+
+    }
+
+
+    if (monthlyOrders) {
+
+        console.log(
+            "✅ monthlyOrders existe"
+        );
+
+    }
+
+
+    if (lastOrdersTable) {
+
+        console.log(
+            "✅ lastOrdersTable existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       VARIABLES
+    ====================================================== */
+
+    let totalOrders =
+        0;
+
+
+    let currentMonthOrders =
+        0;
+
+
+    let ordersData =
+        [];
+
+
+    /* ======================================================
+       DATE ACTUELLE
+    ====================================================== */
+
+    const now =
+        new Date();
+
+
+    const currentMonth =
+        now.getMonth();
+
+
+    const currentYear =
+        now.getFullYear();
+
+
+    /* ======================================================
+       LECTURE FIRESTORE
+    ====================================================== */
+
+    try {
+
+        const ordersSnapshot =
+            await firestoreGetDocs39(
+                firestoreCollection39(
+                    db,
+                    "orders"
+                )
+            );
+
+
+        ordersSnapshot.forEach(
+            function (documentSnapshot) {
+
+                const order =
+                    documentSnapshot.data();
+
+
+                const orderDate =
+                    getOrderDate39(
+                        order.createdAt ||
+                        order.date ||
+                        order.timestamp
+                    );
+
+
+                ordersData.push({
+
+                    id:
+                        documentSnapshot.id,
+
+                    data:
+                        order,
+
+                    date:
+                        orderDate
+
+                });
+
+
+                totalOrders++;
+
+
+                /* ==========================================
+                   COMMANDES DU MOIS
+                ========================================== */
+
+                if (orderDate) {
+
+                    if (
+                        orderDate.getMonth() ===
+                        currentMonth &&
+
+                        orderDate.getFullYear() ===
+                        currentYear
+                    ) {
+
+                        currentMonthOrders++;
+
+                    }
+
+                }
+
+            }
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.warn(
+            "⚠️ Impossible de charger orders :",
+            error
+        );
+
+        totalOrders =
+            0;
+
+        currentMonthOrders =
+            0;
+
+        ordersData =
+            [];
+
+    }
+
+
+    /* ======================================================
+       AFFICHAGE COMMANDES DU MOIS
+    ====================================================== */
+
+    if (monthlyOrders) {
+
+        monthlyOrders.textContent =
+            currentMonthOrders.toLocaleString(
+                "pt-PT"
+            );
+
+    }
+
+
+    /* ======================================================
+       TABLEAU DERNIÈRES COMMANDES
+    ====================================================== */
+
+    if (lastOrdersTable) {
+
+        renderLastOrders39(
+            lastOrdersTable,
+            ordersData
+        );
+
+    }
+
+
+    /* ======================================================
+       STRUCTURE TOMA ADMIN
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin.data
+    ) {
+
+        window.tomaAdmin.data = {};
+
+    }
+
+
+    window.tomaAdmin.data.orders = {
+
+        total:
+            totalOrders,
+
+        currentMonth:
+            currentMonthOrders,
+
+        items:
+            ordersData
+
+    };
+
+
+    /* ======================================================
+       LOG
+    ====================================================== */
+
+    console.log(
+        "🛒 Commandes Firebase :",
+        window.tomaAdmin.data.orders
+    );
+
+}
+
+
+/* ==========================================================
+   DATE FIREBASE
+========================================================== */
+
+function getOrderDate39(
+    value
+) {
+
+    if (!value) {
+
+        return null;
+
+    }
+
+
+    try {
+
+        if (
+            typeof value.toDate ===
+            "function"
+        ) {
+
+            return value.toDate();
+
+        }
+
+
+        const date =
+            new Date(
+                value
+            );
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return null;
+
+        }
+
+
+        return date;
+
+    }
+
+    catch (error) {
+
+        return null;
+
+    }
+
+}
+
+
+/* ==========================================================
+   AFFICHAGE DERNIÈRES COMMANDES
+========================================================== */
+
+function renderLastOrders39(
+    container,
+    orders
+) {
+
+
+    if (
+        !orders ||
+        orders.length === 0
+    ) {
+
+        container.innerHTML =
+
+            '<tr>' +
+
+                '<td colspan="5">' +
+                    'Nenhum pedido encontrado.' +
+                '</td>' +
+
+            '</tr>';
+
+        return;
+
+    }
+
+
+    /* ======================================================
+       TRI PAR DATE
+    ====================================================== */
+
+    orders.sort(
+        function (a, b) {
+
+            const dateA =
+                a.date
+                    ? a.date.getTime()
+                    : 0;
+
+
+            const dateB =
+                b.date
+                    ? b.date.getTime()
+                    : 0;
+
+
+            return dateB - dateA;
+
+        }
+    );
+
+
+    /* ======================================================
+       5 DERNIÈRES COMMANDES
+    ====================================================== */
+
+    const latestOrders =
+        orders.slice(
+            0,
+            5
+        );
+
+
+    container.innerHTML =
+        "";
+
+
+    latestOrders.forEach(
+        function (item) {
+
+
+            const order =
+                item.data ||
+                {};
+
+
+            const customer =
+                order.customerName ||
+                order.customer ||
+                order.userName ||
+                "Cliente";
+
+
+            const product =
+                order.productName ||
+                order.product ||
+                "Produto";
+
+
+            const total =
+                Number(
+                    order.total ||
+                    order.totalAmount ||
+                    order.amount ||
+                    order.price ||
+                    0
+                );
+
+
+            const status =
+                order.status ||
+                order.state ||
+                "Pendente";
+
+
+            const date =
+                item.date
+                    ? item.date.toLocaleDateString(
+                        "pt-PT"
+                    )
+                    : "-";
+
+
+            const row =
+                document.createElement(
+                    "tr"
+                );
+
+
+            row.innerHTML =
+
+                "<td>" +
+                    escapeHtml39(
+                        customer
+                    ) +
+                "</td>" +
+
+                "<td>" +
+                    escapeHtml39(
+                        product
+                    ) +
+                "</td>" +
+
+                "<td>" +
+                    formatKz39(
+                        total
+                    ) +
+                "</td>" +
+
+                "<td>" +
+                    escapeHtml39(
+                        status
+                    ) +
+                "</td>" +
+
+                "<td>" +
+                    date +
+                "</td>";
+
+
+            container.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   FORMATAGE KZ
+========================================================== */
+
+function formatKz39(
+    value
+) {
+
+    return Number(
+        value || 0
+    ).toLocaleString(
+        "pt-PT"
+    ) + " Kz";
+
+}
+
+
+/* ==========================================================
+   PROTECTION HTML
+========================================================== */
+
+function escapeHtml39(
+    value
+) {
+
+    return String(
+        value || ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 39
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        async function () {
+
+            await initializeBlock39();
+
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 39 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Pedidos carregados desde Firebase."
+            );
+
+        }
+    );
+
+}
+
+else {
+
+    initializeBlock39()
+        .then(
+            function () {
+
+                alert(
+                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                    "✅ BLOC JS 39 TERMINÉ\n" +
+                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                    "Pedidos carregados desde Firebase."
+                );
+
+            }
+        )
+        .catch(
+            function (error) {
+
+                console.error(
+                    "❌ Erreur Bloc 39 :",
+                    error
+                );
+
+
+                alert(
+                    "⚠️ BLOC JS 39\n\n" +
+                    "Une erreur est survenue.\n" +
+                    "Regarde la console."
+                );
+
+            }
+        );
+
+}
