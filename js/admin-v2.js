@@ -10397,3 +10397,647 @@ else {
         );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 31 — NOTIFICATIONS FIREBASE
+========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 31
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 31 chargé."
+);
+
+
+/* ==========================================================
+   IMPORT FIRESTORE
+========================================================== */
+
+import {
+    collection as firestoreCollection31,
+    getDocs as firestoreGetDocs31
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 31
+========================================================== */
+
+async function initializeBlock31() {
+
+
+    /* ======================================================
+       VÉRIFICATION FIREBASE
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin ||
+        !window.tomaAdmin.firebase ||
+        !window.tomaAdmin.firebase.db
+    ) {
+
+        console.error(
+            "❌ Firestore TOMA Admin indisponible."
+        );
+
+        return;
+
+    }
+
+
+    const db =
+        window.tomaAdmin.firebase.db;
+
+
+    /* ======================================================
+       ÉLÉMENTS HTML
+    ====================================================== */
+
+    const notificationsPanel =
+        document.getElementById(
+            "notificationsPanel"
+        );
+
+
+    const notificationsList =
+        document.getElementById(
+            "notificationsList"
+        );
+
+
+    const notificationsBadge =
+        document.getElementById(
+            "notificationsBadge"
+        );
+
+
+    if (notificationsPanel) {
+
+        console.log(
+            "✅ notificationsPanel existe"
+        );
+
+    }
+
+
+    if (!notificationsList) {
+
+        console.warn(
+            "⚠️ notificationsList introuvable."
+        );
+
+        return;
+
+    }
+
+
+    if (notificationsBadge) {
+
+        console.log(
+            "✅ notificationsBadge existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       LECTURE FIRESTORE
+    ====================================================== */
+
+    let notifications = [];
+
+
+    try {
+
+        const notificationsSnapshot =
+            await firestoreGetDocs31(
+                firestoreCollection31(
+                    db,
+                    "notifications"
+                )
+            );
+
+
+        notificationsSnapshot.forEach(
+            function (documentSnapshot) {
+
+                const data =
+                    documentSnapshot.data();
+
+
+                notifications.push({
+
+                    id:
+                        documentSnapshot.id,
+
+                    title:
+                        data.title ||
+                        data.name ||
+                        "Notificação",
+
+                    message:
+                        data.message ||
+                        data.description ||
+                        "",
+
+                    type:
+                        data.type ||
+                        "info",
+
+                    read:
+                        data.read === true ||
+                        data.isRead === true,
+
+                    createdAt:
+                        data.createdAt ||
+                        data.timestamp ||
+                        data.date ||
+                        null
+
+                });
+
+            }
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.warn(
+            "⚠️ Impossible de charger notifications :",
+            error
+        );
+
+        notifications = [];
+
+    }
+
+
+    /* ======================================================
+       TRI PAR DATE
+    ====================================================== */
+
+    notifications.sort(
+        function (a, b) {
+
+            return getTime31(
+                b.createdAt
+            ) -
+            getTime31(
+                a.createdAt
+            );
+
+        }
+    );
+
+
+    /* ======================================================
+       NOTIFICATIONS NON LUES
+    ====================================================== */
+
+    const unreadNotifications =
+        notifications.filter(
+            function (notification) {
+
+                return !notification.read;
+
+            }
+        );
+
+
+    /* ======================================================
+       BADGE
+    ====================================================== */
+
+    if (notificationsBadge) {
+
+        notificationsBadge.textContent =
+            unreadNotifications.length
+                .toLocaleString(
+                    "pt-PT"
+                );
+
+    }
+
+
+    /* ======================================================
+       5 NOTIFICATIONS RÉCENTES
+    ====================================================== */
+
+    const latestNotifications =
+        notifications.slice(
+            0,
+            5
+        );
+
+
+    /* ======================================================
+       AUCUNE NOTIFICATION
+    ====================================================== */
+
+    if (
+        latestNotifications.length ===
+        0
+    ) {
+
+        notificationsList.innerHTML =
+
+            `
+            <div class="notificationEmpty">
+
+                <span class="notificationEmptyIcon">
+                    🔔
+                </span>
+
+                <p>
+                    Nenhuma notificação nova.
+                </p>
+
+            </div>
+            `;
+
+    }
+
+
+    /* ======================================================
+       AFFICHAGE
+    ====================================================== */
+
+    else {
+
+        notificationsList.innerHTML =
+            "";
+
+
+        latestNotifications.forEach(
+            function (notification) {
+
+
+                const item =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                item.className =
+                    "notificationItem";
+
+
+                /* ==========================================
+                   ICÔNE
+                ========================================== */
+
+                let icon =
+                    "🔔";
+
+
+                if (
+                    notification.type ===
+                    "order"
+                ) {
+
+                    icon =
+                        "🛒";
+
+                }
+
+
+                if (
+                    notification.type ===
+                    "merchant"
+                ) {
+
+                    icon =
+                        "🏪";
+
+                }
+
+
+                if (
+                    notification.type ===
+                    "product"
+                ) {
+
+                    icon =
+                        "📦";
+
+                }
+
+
+                if (
+                    notification.type ===
+                    "sale"
+                ) {
+
+                    icon =
+                        "💰";
+
+                }
+
+
+                /* ==========================================
+                   ÉTAT
+                ========================================== */
+
+                if (
+                    !notification.read
+                ) {
+
+                    item.classList.add(
+                        "unread"
+                    );
+
+                }
+
+
+                item.innerHTML =
+
+                    `
+                    <div class="notificationIcon">
+                        ${icon}
+                    </div>
+
+                    <div class="notificationInfo">
+
+                        <strong>
+                            ${escapeHtml31(
+                                notification.title
+                            )}
+                        </strong>
+
+                        <p>
+                            ${escapeHtml31(
+                                notification.message
+                            )}
+                        </p>
+
+                        <small>
+                            ${formatDate31(
+                                notification.createdAt
+                            )}
+                        </small>
+
+                    </div>
+                    `;
+
+
+                notificationsList.appendChild(
+                    item
+                );
+
+            }
+        );
+
+    }
+
+
+    /* ======================================================
+       STRUCTURE TOMA
+    ====================================================== */
+
+    if (!window.tomaAdmin.data) {
+
+        window.tomaAdmin.data = {};
+
+    }
+
+
+    window.tomaAdmin.data.notifications = {
+
+        total:
+            notifications.length,
+
+        unread:
+            unreadNotifications.length,
+
+        latest:
+            latestNotifications
+
+    };
+
+
+    console.log(
+        "🔔 Notifications Firebase :",
+        window.tomaAdmin.data.notifications
+    );
+
+}
+
+
+/* ==========================================================
+   CONVERSION DATE
+========================================================== */
+
+function getTime31(value) {
+
+    if (!value) {
+
+        return 0;
+
+    }
+
+
+    try {
+
+        if (
+            typeof value.toDate ===
+            "function"
+        ) {
+
+            return value
+                .toDate()
+                .getTime();
+
+        }
+
+
+        const time =
+            new Date(value).getTime();
+
+
+        return Number.isNaN(time)
+            ? 0
+            : time;
+
+    }
+
+    catch (error) {
+
+        return 0;
+
+    }
+
+}
+
+
+/* ==========================================================
+   FORMAT DATE
+========================================================== */
+
+function formatDate31(value) {
+
+    if (!value) {
+
+        return "-";
+
+    }
+
+
+    try {
+
+        let date;
+
+
+        if (
+            typeof value.toDate ===
+            "function"
+        ) {
+
+            date =
+                value.toDate();
+
+        }
+
+        else {
+
+            date =
+                new Date(value);
+
+        }
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return "-";
+
+        }
+
+
+        return date.toLocaleString(
+            "pt-PT",
+            {
+                dateStyle:
+                    "short",
+
+                timeStyle:
+                    "short"
+            }
+        );
+
+    }
+
+    catch (error) {
+
+        return "-";
+
+    }
+
+}
+
+
+/* ==========================================================
+   PROTECTION HTML
+========================================================== */
+
+function escapeHtml31(value) {
+
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 31
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        async function () {
+
+            await initializeBlock31();
+
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 31 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Notificações carregadas desde Firebase."
+            );
+
+        }
+    );
+
+}
+
+
+else {
+
+    initializeBlock31()
+        .then(
+            function () {
+
+                alert(
+                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                    "✅ BLOC JS 31 TERMINÉ\n" +
+                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                    "Notificações carregadas desde Firebase."
+                );
+
+            }
+        )
+        .catch(
+            function (error) {
+
+                console.error(
+                    "❌ Erreur Bloc 31 :",
+                    error
+                );
+
+
+                alert(
+                    "⚠️ BLOC JS 31\n\n" +
+                    "Une erreur est survenue.\n" +
+                    "Regarde la console."
+                );
+
+            }
+        );
+
+}
