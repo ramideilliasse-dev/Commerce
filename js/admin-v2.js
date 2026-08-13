@@ -11041,3 +11041,330 @@ else {
         );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 32 — DEMANDES COMMERÇANTS FIREBASE
+========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 32
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 32 chargé."
+);
+
+
+/* ==========================================================
+   IMPORT FIRESTORE
+========================================================== */
+
+import {
+    collection as firestoreCollection32,
+    getDocs as firestoreGetDocs32
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 32
+========================================================== */
+
+async function initializeBlock32() {
+
+
+    /* ======================================================
+       VÉRIFICATION FIREBASE
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin ||
+        !window.tomaAdmin.firebase ||
+        !window.tomaAdmin.firebase.db
+    ) {
+
+        console.error(
+            "❌ Firestore TOMA Admin indisponible."
+        );
+
+        return;
+
+    }
+
+
+    const db =
+        window.tomaAdmin.firebase.db;
+
+
+    /* ======================================================
+       ÉLÉMENTS HTML
+    ====================================================== */
+
+    const merchantRequestsSummary =
+        document.getElementById(
+            "merchantRequestsSummary"
+        );
+
+
+    const merchantRequestsCount =
+        document.getElementById(
+            "merchantRequestsCount"
+        );
+
+
+    const merchantBadge =
+        document.getElementById(
+            "merchantBadge"
+        );
+
+
+    const viewMerchantRequests =
+        document.getElementById(
+            "viewMerchantRequests"
+        );
+
+
+    if (merchantRequestsSummary) {
+
+        console.log(
+            "✅ merchantRequestsSummary existe"
+        );
+
+    }
+
+
+    if (merchantRequestsCount) {
+
+        console.log(
+            "✅ merchantRequestsCount existe"
+        );
+
+    }
+
+
+    if (merchantBadge) {
+
+        console.log(
+            "✅ merchantBadge existe"
+        );
+
+    }
+
+
+    if (viewMerchantRequests) {
+
+        console.log(
+            "✅ viewMerchantRequests existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       COMPTEUR INITIAL
+    ====================================================== */
+
+    let pendingRequests =
+        0;
+
+
+    let totalRequests =
+        0;
+
+
+    /* ======================================================
+       LECTURE FIRESTORE
+    ====================================================== */
+
+    try {
+
+        const requestsSnapshot =
+            await firestoreGetDocs32(
+                firestoreCollection32(
+                    db,
+                    "merchantRequests"
+                )
+            );
+
+
+        totalRequests =
+            requestsSnapshot.size;
+
+
+        requestsSnapshot.forEach(
+            function (documentSnapshot) {
+
+                const request =
+                    documentSnapshot.data();
+
+
+                const status =
+                    String(
+                        request.status ||
+                        request.state ||
+                        ""
+                    )
+                    .trim()
+                    .toLowerCase();
+
+
+                /* ==========================================
+                   DEMANDE EN ATTENTE
+                ========================================== */
+
+                if (
+                    status === "" ||
+                    status === "pending" ||
+                    status === "pending_review" ||
+                    status === "waiting" ||
+                    status === "requested" ||
+                    status === "en attente" ||
+                    status === "aguardando"
+                ) {
+
+                    pendingRequests++;
+
+                }
+
+            }
+        );
+
+    }
+
+
+    catch (error) {
+
+        console.warn(
+            "⚠️ Collection merchantRequests indisponible :",
+            error
+        );
+
+        pendingRequests =
+            0;
+
+    }
+
+
+    /* ======================================================
+       AFFICHAGE
+    ====================================================== */
+
+    if (merchantRequestsCount) {
+
+        merchantRequestsCount.textContent =
+            pendingRequests.toLocaleString(
+                "pt-PT"
+            );
+
+    }
+
+
+    if (merchantBadge) {
+
+        merchantBadge.textContent =
+            pendingRequests.toLocaleString(
+                "pt-PT"
+            );
+
+    }
+
+
+    /* ======================================================
+       STRUCTURE TOMA
+    ====================================================== */
+
+    if (!window.tomaAdmin.data) {
+
+        window.tomaAdmin.data = {};
+
+    }
+
+
+    window.tomaAdmin.data.merchantRequests = {
+
+        total:
+            totalRequests,
+
+        pending:
+            pendingRequests
+
+    };
+
+
+    /* ======================================================
+       LOG
+    ====================================================== */
+
+    console.log(
+        "🏪 Pedidos de comerciantes Firebase :",
+        window.tomaAdmin.data.merchantRequests
+    );
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 32
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        async function () {
+
+            await initializeBlock32();
+
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 32 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Pedidos de comerciantes carregados desde Firebase."
+            );
+
+        }
+    );
+
+}
+
+
+else {
+
+    initializeBlock32()
+        .then(
+            function () {
+
+                alert(
+                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                    "✅ BLOC JS 32 TERMINÉ\n" +
+                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                    "Pedidos de comerciantes carregados desde Firebase."
+                );
+
+            }
+        )
+        .catch(
+            function (error) {
+
+                console.error(
+                    "❌ Erreur Bloc 32 :",
+                    error
+                );
+
+
+                alert(
+                    "⚠️ BLOC JS 32\n\n" +
+                    "Une erreur est survenue.\n" +
+                    "Regarde la console."
+                );
+
+            }
+        );
+
+}
