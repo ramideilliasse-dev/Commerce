@@ -11929,3 +11929,561 @@ else {
         );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 34 — RAPPORTS RAPIDES FIREBASE
+========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 34
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 34 chargé."
+);
+
+
+/* ==========================================================
+   IMPORT FIRESTORE
+========================================================== */
+
+import {
+    collection as firestoreCollection34,
+    getDocs as firestoreGetDocs34
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 34
+========================================================== */
+
+async function initializeBlock34() {
+
+
+    /* ======================================================
+       VÉRIFICATION FIREBASE
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin ||
+        !window.tomaAdmin.firebase ||
+        !window.tomaAdmin.firebase.db
+    ) {
+
+        console.error(
+            "❌ Firestore TOMA Admin indisponible."
+        );
+
+        return;
+
+    }
+
+
+    const db =
+        window.tomaAdmin.firebase.db;
+
+
+    /* ======================================================
+       IDS HTML RÉELS
+    ====================================================== */
+
+    const monthlySales =
+        document.getElementById(
+            "monthlySales"
+        );
+
+
+    const monthlyOrders =
+        document.getElementById(
+            "monthlyOrders"
+        );
+
+
+    const activeProducts =
+        document.getElementById(
+            "activeProducts"
+        );
+
+
+    const verifiedMerchants =
+        document.getElementById(
+            "verifiedMerchants"
+        );
+
+
+    /* ======================================================
+       VÉRIFICATION DES IDS
+    ====================================================== */
+
+    if (monthlySales) {
+
+        console.log(
+            "✅ monthlySales existe"
+        );
+
+    }
+
+
+    if (monthlyOrders) {
+
+        console.log(
+            "✅ monthlyOrders existe"
+        );
+
+    }
+
+
+    if (activeProducts) {
+
+        console.log(
+            "✅ activeProducts existe"
+        );
+
+    }
+
+
+    if (verifiedMerchants) {
+
+        console.log(
+            "✅ verifiedMerchants existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       VARIABLES
+    ====================================================== */
+
+    let monthSales =
+        0;
+
+    let monthOrders =
+        0;
+
+    let activeProductsTotal =
+        0;
+
+    let verifiedMerchantsTotal =
+        0;
+
+
+    /* ======================================================
+       DATE ACTUELLE
+    ====================================================== */
+
+    const now =
+        new Date();
+
+    const currentMonth =
+        now.getMonth();
+
+    const currentYear =
+        now.getFullYear();
+
+
+    /* ======================================================
+       COMMANDES FIREBASE
+    ====================================================== */
+
+    try {
+
+        const ordersSnapshot =
+            await firestoreGetDocs34(
+                firestoreCollection34(
+                    db,
+                    "orders"
+                )
+            );
+
+
+        ordersSnapshot.forEach(
+            function (documentSnapshot) {
+
+                const order =
+                    documentSnapshot.data();
+
+
+                const amount =
+                    Number(
+                        order.total ||
+                        order.totalAmount ||
+                        order.amount ||
+                        order.price ||
+                        0
+                    );
+
+
+                const orderDate =
+                    getDate34(
+                        order.createdAt ||
+                        order.date ||
+                        order.timestamp
+                    );
+
+
+                if (!orderDate) {
+
+                    return;
+
+                }
+
+
+                if (
+                    orderDate.getMonth() ===
+                    currentMonth &&
+
+                    orderDate.getFullYear() ===
+                    currentYear
+                ) {
+
+                    monthSales +=
+                        Number.isFinite(
+                            amount
+                        )
+                            ? amount
+                            : 0;
+
+                    monthOrders++;
+
+                }
+
+            }
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.warn(
+            "⚠️ Impossible de charger orders :",
+            error
+        );
+
+    }
+
+
+    /* ======================================================
+       PRODUITS FIREBASE
+    ====================================================== */
+
+    try {
+
+        const productsSnapshot =
+            await firestoreGetDocs34(
+                firestoreCollection34(
+                    db,
+                    "products"
+                )
+            );
+
+
+        productsSnapshot.forEach(
+            function (documentSnapshot) {
+
+                const product =
+                    documentSnapshot.data();
+
+
+                /*
+                 * Un produit est considéré actif
+                 * sauf si son champ active est explicitement false.
+                 */
+
+                if (
+                    product.active !==
+                    false
+                ) {
+
+                    activeProductsTotal++;
+
+                }
+
+            }
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.warn(
+            "⚠️ Impossible de charger products :",
+            error
+        );
+
+    }
+
+
+    /* ======================================================
+       COMMERÇANTS FIREBASE
+    ====================================================== */
+
+    try {
+
+        const merchantsSnapshot =
+            await firestoreGetDocs34(
+                firestoreCollection34(
+                    db,
+                    "merchants"
+                )
+            );
+
+
+        merchantsSnapshot.forEach(
+            function (documentSnapshot) {
+
+                const merchant =
+                    documentSnapshot.data();
+
+
+                /*
+                 * Plusieurs noms possibles pour
+                 * le statut de vérification.
+                 */
+
+                if (
+                    merchant.verified === true ||
+                    merchant.isVerified === true ||
+                    merchant.verificationStatus ===
+                        "verified"
+                ) {
+
+                    verifiedMerchantsTotal++;
+
+                }
+
+            }
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.warn(
+            "⚠️ Impossible de charger merchants :",
+            error
+        );
+
+    }
+
+
+    /* ======================================================
+       AFFICHAGE
+    ====================================================== */
+
+    if (monthlySales) {
+
+        monthlySales.textContent =
+            formatKz34(
+                monthSales
+            );
+
+    }
+
+
+    if (monthlyOrders) {
+
+        monthlyOrders.textContent =
+            monthOrders.toLocaleString(
+                "pt-PT"
+            );
+
+    }
+
+
+    if (activeProducts) {
+
+        activeProducts.textContent =
+            activeProductsTotal.toLocaleString(
+                "pt-PT"
+            );
+
+    }
+
+
+    if (verifiedMerchants) {
+
+        verifiedMerchants.textContent =
+            verifiedMerchantsTotal.toLocaleString(
+                "pt-PT"
+            );
+
+    }
+
+
+    /* ======================================================
+       STRUCTURE TOMA
+    ====================================================== */
+
+    if (!window.tomaAdmin.data) {
+
+        window.tomaAdmin.data = {};
+
+    }
+
+
+    window.tomaAdmin.data.quickReports = {
+
+        monthlySales:
+            monthSales,
+
+        monthlyOrders:
+            monthOrders,
+
+        activeProducts:
+            activeProductsTotal,
+
+        verifiedMerchants:
+            verifiedMerchantsTotal
+
+    };
+
+
+    /* ======================================================
+       LOG
+    ====================================================== */
+
+    console.log(
+        "📊 Rapports rapides TOMA :",
+        window.tomaAdmin.data.quickReports
+    );
+
+}
+
+
+/* ==========================================================
+   FORMATAGE KZ
+========================================================== */
+
+function formatKz34(value) {
+
+    return Number(
+        value || 0
+    ).toLocaleString(
+        "pt-PT"
+    ) + " Kz";
+
+}
+
+
+/* ==========================================================
+   CONVERSION DATE FIREBASE
+========================================================== */
+
+function getDate34(value) {
+
+    if (!value) {
+
+        return null;
+
+    }
+
+
+    try {
+
+        if (
+            typeof value.toDate ===
+            "function"
+        ) {
+
+            return value.toDate();
+
+        }
+
+
+        const date =
+            new Date(value);
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return null;
+
+        }
+
+
+        return date;
+
+    }
+
+    catch (error) {
+
+        return null;
+
+    }
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 34
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        async function () {
+
+            await initializeBlock34();
+
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 34 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Relatórios rápidos sincronizados com Firebase."
+            );
+
+        }
+    );
+
+}
+
+else {
+
+    initializeBlock34()
+        .then(
+            function () {
+
+                alert(
+                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                    "✅ BLOC JS 34 TERMINÉ\n" +
+                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                    "Relatórios rápidos sincronizados com Firebase."
+                );
+
+            }
+        )
+        .catch(
+            function (error) {
+
+                console.error(
+                    "❌ Erreur Bloc 34 :",
+                    error
+                );
+
+
+                alert(
+                    "⚠️ BLOC JS 34\n\n" +
+                    "Une erreur est survenue.\n" +
+                    "Regarde la console."
+                );
+
+            }
+        );
+
+}
