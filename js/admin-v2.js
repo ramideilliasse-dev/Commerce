@@ -9857,3 +9857,543 @@ else {
         );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 30 — RAPPORTS RAPIDES FIREBASE
+========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 30
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 30 chargé."
+);
+
+
+/* ==========================================================
+   IMPORT FIRESTORE
+========================================================== */
+
+import {
+    collection as firestoreCollection30,
+    getDocs as firestoreGetDocs30
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 30
+========================================================== */
+
+async function initializeBlock30() {
+
+
+    /* ======================================================
+       VÉRIFICATION FIREBASE
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin ||
+        !window.tomaAdmin.firebase ||
+        !window.tomaAdmin.firebase.db
+    ) {
+
+        console.error(
+            "❌ Firestore TOMA Admin indisponible."
+        );
+
+        return;
+
+    }
+
+
+    const db =
+        window.tomaAdmin.firebase.db;
+
+
+    /* ======================================================
+       IDs HTML DU BLOC
+    ====================================================== */
+
+    const monthlySales =
+        document.getElementById(
+            "monthlySales"
+        );
+
+    const monthlyOrders =
+        document.getElementById(
+            "monthlyOrders"
+        );
+
+    const activeProducts =
+        document.getElementById(
+            "activeProducts"
+        );
+
+    const verifiedMerchants =
+        document.getElementById(
+            "verifiedMerchants"
+        );
+
+
+    if (monthlySales) {
+
+        console.log(
+            "✅ monthlySales existe"
+        );
+
+    }
+
+
+    if (monthlyOrders) {
+
+        console.log(
+            "✅ monthlyOrders existe"
+        );
+
+    }
+
+
+    if (activeProducts) {
+
+        console.log(
+            "✅ activeProducts existe"
+        );
+
+    }
+
+
+    if (verifiedMerchants) {
+
+        console.log(
+            "✅ verifiedMerchants existe"
+        );
+
+    }
+
+
+    /* ======================================================
+       VALEURS PAR DÉFAUT
+    ====================================================== */
+
+    let totalMonthlySales =
+        0;
+
+    let totalMonthlyOrders =
+        0;
+
+    let totalActiveProducts =
+        0;
+
+    let totalVerifiedMerchants =
+        0;
+
+
+    /* ======================================================
+       PRODUITS ACTIFS
+    ====================================================== */
+
+    try {
+
+        const productsSnapshot =
+            await firestoreGetDocs30(
+                firestoreCollection30(
+                    db,
+                    "products"
+                )
+            );
+
+
+        productsSnapshot.forEach(
+            function (documentSnapshot) {
+
+                const product =
+                    documentSnapshot.data();
+
+
+                const isActive =
+                    product.active === true ||
+                    product.status === "active" ||
+                    product.status === "Ativo";
+
+
+                if (isActive) {
+
+                    totalActiveProducts++;
+
+                }
+
+            }
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.warn(
+            "⚠️ Impossible de charger products :",
+            error
+        );
+
+    }
+
+
+    /* ======================================================
+       COMMERÇANTS VÉRIFIÉS
+    ====================================================== */
+
+    try {
+
+        const merchantsSnapshot =
+            await firestoreGetDocs30(
+                firestoreCollection30(
+                    db,
+                    "merchants"
+                )
+            );
+
+
+        merchantsSnapshot.forEach(
+            function (documentSnapshot) {
+
+                const merchant =
+                    documentSnapshot.data();
+
+
+                const isVerified =
+                    merchant.verified === true ||
+                    merchant.isVerified === true ||
+                    merchant.status === "verified" ||
+                    merchant.status === "Verificado";
+
+
+                if (isVerified) {
+
+                    totalVerifiedMerchants++;
+
+                }
+
+            }
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.warn(
+            "⚠️ Impossible de charger merchants :",
+            error
+        );
+
+    }
+
+
+    /* ======================================================
+       COMMANDES
+    ====================================================== */
+
+    try {
+
+        const ordersSnapshot =
+            await firestoreGetDocs30(
+                firestoreCollection30(
+                    db,
+                    "orders"
+                )
+            );
+
+
+        const now =
+            new Date();
+
+
+        const currentMonth =
+            now.getMonth();
+
+
+        const currentYear =
+            now.getFullYear();
+
+
+        ordersSnapshot.forEach(
+            function (documentSnapshot) {
+
+                const order =
+                    documentSnapshot.data();
+
+
+                const orderDate =
+                    getDate30(
+                        order.createdAt ||
+                        order.date ||
+                        order.timestamp
+                    );
+
+
+                if (!orderDate) {
+
+                    return;
+
+                }
+
+
+                if (
+                    orderDate.getMonth() ===
+                    currentMonth &&
+                    orderDate.getFullYear() ===
+                    currentYear
+                ) {
+
+                    totalMonthlyOrders++;
+
+
+                    const orderTotal =
+                        Number(
+                            order.total ||
+                            order.totalAmount ||
+                            order.amount ||
+                            0
+                        );
+
+
+                    totalMonthlySales +=
+                        orderTotal;
+
+                }
+
+            }
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.warn(
+            "⚠️ Impossible de charger orders :",
+            error
+        );
+
+    }
+
+
+    /* ======================================================
+       AFFICHAGE
+    ====================================================== */
+
+    if (monthlySales) {
+
+        monthlySales.textContent =
+            formatKz30(
+                totalMonthlySales
+            );
+
+    }
+
+
+    if (monthlyOrders) {
+
+        monthlyOrders.textContent =
+            totalMonthlyOrders.toLocaleString(
+                "pt-PT"
+            );
+
+    }
+
+
+    if (activeProducts) {
+
+        activeProducts.textContent =
+            totalActiveProducts.toLocaleString(
+                "pt-PT"
+            );
+
+    }
+
+
+    if (verifiedMerchants) {
+
+        verifiedMerchants.textContent =
+            totalVerifiedMerchants.toLocaleString(
+                "pt-PT"
+            );
+
+    }
+
+
+    /* ======================================================
+       STRUCTURE TOMA
+    ====================================================== */
+
+    if (!window.tomaAdmin.data) {
+
+        window.tomaAdmin.data = {};
+
+    }
+
+
+    window.tomaAdmin.data.quickReports = {
+
+        monthlySales:
+            totalMonthlySales,
+
+        monthlyOrders:
+            totalMonthlyOrders,
+
+        activeProducts:
+            totalActiveProducts,
+
+        verifiedMerchants:
+            totalVerifiedMerchants
+
+    };
+
+
+    /* ======================================================
+       LOG
+    ====================================================== */
+
+    console.log(
+        "📊 Rapports rapides TOMA :",
+        window.tomaAdmin.data.quickReports
+    );
+
+}
+
+
+/* ==========================================================
+   FORMATAGE KZ
+========================================================== */
+
+function formatKz30(value) {
+
+    return Number(
+        value || 0
+    ).toLocaleString(
+        "pt-PT"
+    ) + " Kz";
+
+}
+
+
+/* ==========================================================
+   CONVERSION DATE
+========================================================== */
+
+function getDate30(value) {
+
+    if (!value) {
+
+        return null;
+
+    }
+
+
+    try {
+
+        if (
+            typeof value.toDate ===
+            "function"
+        ) {
+
+            return value.toDate();
+
+        }
+
+
+        const date =
+            new Date(value);
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return null;
+
+        }
+
+
+        return date;
+
+    }
+
+    catch (error) {
+
+        return null;
+
+    }
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 30
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        async function () {
+
+            await initializeBlock30();
+
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 30 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Relatórios rápidos carregados desde Firebase."
+            );
+
+        }
+    );
+
+}
+
+
+else {
+
+    initializeBlock30()
+        .then(
+            function () {
+
+                alert(
+                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                    "✅ BLOC JS 30 TERMINÉ\n" +
+                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                    "Relatórios rápidos carregados desde Firebase."
+                );
+
+            }
+        )
+        .catch(
+            function (error) {
+
+                console.error(
+                    "❌ Erreur Bloc 30 :",
+                    error
+                );
+
+
+                alert(
+                    "⚠️ BLOC JS 30\n\n" +
+                    "Une erreur est survenue.\n" +
+                    "Regarde la console."
+                );
+
+            }
+        );
+
+}
