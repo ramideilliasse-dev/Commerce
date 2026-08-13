@@ -7687,3 +7687,481 @@ else {
         );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 26 — DERNIÈRES COMMANDES FIREBASE
+========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 26
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 26 chargé."
+);
+
+
+/* ==========================================================
+   IMPORT FIRESTORE
+   ALIAS UNIQUES DU BLOC 26
+========================================================== */
+
+import {
+    collection as firestoreCollection26,
+    getDocs as firestoreGetDocs26
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ==========================================================
+   INITIALISATION
+========================================================== */
+
+async function initializeBlock26() {
+
+
+    /* ======================================================
+       VÉRIFICATION FIREBASE
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin ||
+        !window.tomaAdmin.firebase ||
+        !window.tomaAdmin.firebase.db
+    ) {
+
+        console.error(
+            "❌ Firestore TOMA Admin indisponible."
+        );
+
+        return;
+
+    }
+
+
+    const db =
+        window.tomaAdmin.firebase.db;
+
+
+    /* ======================================================
+       ÉLÉMENTS HTML
+    ====================================================== */
+
+    const lastOrdersPanel =
+        document.getElementById(
+            "lastOrdersPanel"
+        );
+
+    const lastOrdersTableContainer =
+        document.getElementById(
+            "lastOrdersTableContainer"
+        );
+
+    const lastOrdersTable =
+        document.getElementById(
+            "lastOrdersTable"
+        );
+
+
+    if (lastOrdersPanel) {
+
+        console.log(
+            "✅ lastOrdersPanel existe"
+        );
+
+    }
+
+
+    if (lastOrdersTableContainer) {
+
+        console.log(
+            "✅ lastOrdersTableContainer existe"
+        );
+
+    }
+
+
+    if (!lastOrdersTable) {
+
+        console.warn(
+            "⚠️ lastOrdersTable introuvable."
+        );
+
+        return;
+
+    }
+
+
+    /* ======================================================
+       LECTURE FIRESTORE
+    ====================================================== */
+
+    try {
+
+        const ordersSnapshot =
+            await firestoreGetDocs26(
+                firestoreCollection26(
+                    db,
+                    "orders"
+                )
+            );
+
+
+        /* ==================================================
+           TRANSFORMATION DES COMMANDES
+        ================================================== */
+
+        const orders = [];
+
+
+        ordersSnapshot.forEach(
+            function (documentSnapshot) {
+
+                const data =
+                    documentSnapshot.data();
+
+
+                orders.push({
+
+                    id:
+                        documentSnapshot.id,
+
+                    client:
+                        data.clientName ||
+                        data.customerName ||
+                        data.userName ||
+                        data.client ||
+                        "Cliente",
+
+                    product:
+                        data.productName ||
+                        data.product ||
+                        "Produto",
+
+                    total:
+                        Number(
+                            data.total ||
+                            data.totalAmount ||
+                            data.amount ||
+                            data.price ||
+                            0
+                        ),
+
+                    status:
+                        data.status ||
+                        data.state ||
+                        "Pendente",
+
+                    createdAt:
+                        data.createdAt ||
+                        data.date ||
+                        null
+
+                });
+
+            }
+        );
+
+
+        /* ==================================================
+           ORDRE DU PLUS RÉCENT AU PLUS ANCIEN
+        ================================================== */
+
+        orders.reverse();
+
+
+        /* ==================================================
+           LIMITER AUX 5 DERNIÈRES COMMANDES
+        ================================================== */
+
+        const latestOrders =
+            orders.slice(
+                0,
+                5
+            );
+
+
+        /* ==================================================
+           TABLEAU VIDE
+        ================================================== */
+
+        if (
+            latestOrders.length ===
+            0
+        ) {
+
+            lastOrdersTable.innerHTML =
+
+                `
+                <tr>
+                    <td colspan="5">
+                        Nenhum pedido encontrado.
+                    </td>
+                </tr>
+                `;
+
+        }
+
+
+        /* ==================================================
+           AFFICHAGE DES COMMANDES
+        ================================================== */
+
+        else {
+
+            lastOrdersTable.innerHTML = "";
+
+
+            latestOrders.forEach(
+                function (order) {
+
+
+                    const row =
+                        document.createElement(
+                            "tr"
+                        );
+
+
+                    row.innerHTML =
+
+                        `
+                        <td>
+                            ${escapeHtml26(
+                                order.client
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml26(
+                                order.product
+                            )}
+                        </td>
+
+                        <td>
+                            ${Number(
+                                order.total || 0
+                            ).toLocaleString(
+                                "pt-PT"
+                            )} Kz
+                        </td>
+
+                        <td>
+                            ${escapeHtml26(
+                                order.status
+                            )}
+                        </td>
+
+                        <td>
+                            ${formatDate26(
+                                order.createdAt
+                            )}
+                        </td>
+                        `;
+
+
+                    lastOrdersTable.appendChild(
+                        row
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* ==================================================
+           STRUCTURE TOMA
+        ================================================== */
+
+        if (!window.tomaAdmin.data) {
+
+            window.tomaAdmin.data = {};
+
+        }
+
+
+        window.tomaAdmin.data.latestOrders =
+            latestOrders;
+
+
+        console.log(
+            "🛒 Dernières commandes Firebase :",
+            latestOrders
+        );
+
+    }
+
+
+    catch (error) {
+
+        console.error(
+            "❌ Erreur lecture orders :",
+            error
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   PROTECTION TEXTE HTML
+========================================================== */
+
+function escapeHtml26(value) {
+
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* ==========================================================
+   FORMAT DATE
+========================================================== */
+
+function formatDate26(value) {
+
+    if (!value) {
+
+        return "-";
+
+    }
+
+
+    try {
+
+        let date;
+
+
+        if (
+            value &&
+            typeof value.toDate ===
+            "function"
+        ) {
+
+            date =
+                value.toDate();
+
+        }
+
+        else {
+
+            date =
+                new Date(value);
+
+        }
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return "-";
+
+        }
+
+
+        return date.toLocaleDateString(
+            "pt-PT"
+        );
+
+    }
+
+    catch (error) {
+
+        return "-";
+
+    }
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 26
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        async function () {
+
+            await initializeBlock26();
+
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 26 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Últimos pedidos carregados desde Firebase."
+            );
+
+        }
+    );
+
+}
+
+
+else {
+
+    initializeBlock26()
+        .then(
+            function () {
+
+                alert(
+                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                    "✅ BLOC JS 26 TERMINÉ\n" +
+                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                    "Últimos pedidos carregados desde Firebase."
+                );
+
+            }
+        )
+        .catch(
+            function (error) {
+
+                console.error(
+                    "❌ Erreur Bloc 26 :",
+                    error
+                );
+
+
+                alert(
+                    "⚠️ BLOC JS 26\n\n" +
+                    "Une erreur est survenue.\n" +
+                    "Regarde la console."
+                );
+
+            }
+        );
+
+}
