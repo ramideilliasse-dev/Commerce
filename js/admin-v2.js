@@ -14094,3 +14094,228 @@ else {
         );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 38 — PRODUITS FIREBASE
+========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 38
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 38 chargé."
+);
+
+
+/* ==========================================================
+   IMPORT FIRESTORE
+========================================================== */
+
+import {
+    collection as firestoreCollection38,
+    getDocs as firestoreGetDocs38
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 38
+========================================================== */
+
+async function initializeBlock38() {
+
+
+    /* ======================================================
+       VÉRIFICATION FIREBASE
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin ||
+        !window.tomaAdmin.firebase ||
+        !window.tomaAdmin.firebase.db
+    ) {
+
+        console.error(
+            "❌ Firestore TOMA Admin indisponible."
+        );
+
+        return;
+
+    }
+
+
+    const db =
+        window.tomaAdmin.firebase.db;
+
+
+    /* ======================================================
+       ÉLÉMENT HTML EXISTANT
+    ====================================================== */
+
+    const productsCount =
+        document.getElementById(
+            "productsCount"
+        );
+
+
+    if (!productsCount) {
+
+        console.warn(
+            "⚠️ productsCount introuvable."
+        );
+
+        return;
+
+    }
+
+
+    console.log(
+        "✅ productsCount existe"
+    );
+
+
+    /* ======================================================
+       LECTURE FIRESTORE
+       
+       Collection :
+       products
+    ====================================================== */
+
+    let totalProducts =
+        0;
+
+
+    try {
+
+        const productsSnapshot =
+            await firestoreGetDocs38(
+                firestoreCollection38(
+                    db,
+                    "products"
+                )
+            );
+
+
+        totalProducts =
+            productsSnapshot.size;
+
+
+    }
+
+    catch (error) {
+
+        console.warn(
+            "⚠️ Impossible de charger products :",
+            error
+        );
+
+        totalProducts =
+            0;
+
+    }
+
+
+    /* ======================================================
+       AFFICHAGE
+    ====================================================== */
+
+    productsCount.textContent =
+        totalProducts.toLocaleString(
+            "pt-PT"
+        );
+
+
+    /* ======================================================
+       STRUCTURE TOMA ADMIN
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin.data
+    ) {
+
+        window.tomaAdmin.data = {};
+
+    }
+
+
+    window.tomaAdmin.data.products =
+        totalProducts;
+
+
+    /* ======================================================
+       LOG
+    ====================================================== */
+
+    console.log(
+        "📦 Produits Firebase :",
+        totalProducts
+    );
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 38
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        async function () {
+
+            await initializeBlock38();
+
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 38 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Produtos carregados desde Firebase."
+            );
+
+        }
+    );
+
+}
+
+else {
+
+    initializeBlock38()
+        .then(
+            function () {
+
+                alert(
+                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                    "✅ BLOC JS 38 TERMINÉ\n" +
+                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                    "Produtos carregados desde Firebase."
+                );
+
+            }
+        )
+        .catch(
+            function (error) {
+
+                console.error(
+                    "❌ Erreur Bloc 38 :",
+                    error
+                );
+
+
+                alert(
+                    "⚠️ BLOC JS 38\n\n" +
+                    "Une erreur est survenue.\n" +
+                    "Regarde la console."
+                );
+
+            }
+        );
+
+}
