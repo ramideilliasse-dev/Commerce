@@ -12487,3 +12487,537 @@ else {
         );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 35 — ACTIVITÉ RÉCENTE FIREBASE
+========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 35
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 35 chargé."
+);
+
+
+/* ==========================================================
+   IMPORT FIRESTORE
+========================================================== */
+
+import {
+    collection as firestoreCollection35,
+    getDocs as firestoreGetDocs35,
+    query as firestoreQuery35,
+    orderBy as firestoreOrderBy35,
+    limit as firestoreLimit35
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 35
+========================================================== */
+
+async function initializeBlock35() {
+
+
+    /* ======================================================
+       VÉRIFICATION FIREBASE
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin ||
+        !window.tomaAdmin.firebase ||
+        !window.tomaAdmin.firebase.db
+    ) {
+
+        console.error(
+            "❌ Firestore TOMA Admin indisponible."
+        );
+
+        return;
+
+    }
+
+
+    const db =
+        window.tomaAdmin.firebase.db;
+
+
+    /* ======================================================
+       ÉLÉMENT HTML EXISTANT
+    ====================================================== */
+
+    const activityList =
+        document.getElementById(
+            "activityList"
+        );
+
+
+    if (!activityList) {
+
+        console.warn(
+            "⚠️ activityList introuvable."
+        );
+
+        return;
+
+    }
+
+
+    console.log(
+        "✅ activityList existe"
+    );
+
+
+    /* ======================================================
+       LECTURE DES COMMANDES RÉCENTES
+    ====================================================== */
+
+    let activities = [];
+
+
+    try {
+
+        const ordersQuery =
+            firestoreQuery35(
+                firestoreCollection35(
+                    db,
+                    "orders"
+                ),
+                firestoreOrderBy35(
+                    "createdAt",
+                    "desc"
+                ),
+                firestoreLimit35(
+                    10
+                )
+            );
+
+
+        const ordersSnapshot =
+            await firestoreGetDocs35(
+                ordersQuery
+            );
+
+
+        ordersSnapshot.forEach(
+            function (documentSnapshot) {
+
+                const order =
+                    documentSnapshot.data();
+
+
+                const amount =
+                    Number(
+                        order.total ||
+                        order.totalAmount ||
+                        order.amount ||
+                        order.price ||
+                        0
+                    );
+
+
+                const customer =
+                    order.customerName ||
+                    order.clientName ||
+                    order.userName ||
+                    "Cliente";
+
+
+                activities.push({
+
+                    type:
+                        "order",
+
+                    icon:
+                        "🛒",
+
+                    title:
+                        "Novo pedido",
+
+                    description:
+                        customer +
+                        " realizou um pedido de " +
+                        formatKz35(amount),
+
+                    date:
+                        getDate35(
+                            order.createdAt ||
+                            order.date ||
+                            order.timestamp
+                        )
+
+                });
+
+            }
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.warn(
+            "⚠️ Impossible de charger les commandes récentes :",
+            error
+        );
+
+    }
+
+
+    /* ======================================================
+       TRI DES ACTIVITÉS
+    ====================================================== */
+
+    activities.sort(
+        function (a, b) {
+
+            const dateA =
+                a.date
+                ? a.date.getTime()
+                : 0;
+
+            const dateB =
+                b.date
+                ? b.date.getTime()
+                : 0;
+
+
+            return dateB - dateA;
+
+        }
+    );
+
+
+    /* ======================================================
+       LIMITATION
+    ====================================================== */
+
+    activities =
+        activities.slice(
+            0,
+            10
+        );
+
+
+    /* ======================================================
+       AFFICHAGE
+    ====================================================== */
+
+    if (
+        activities.length ===
+        0
+    ) {
+
+        activityList.innerHTML =
+
+            '<div class="activityItem">' +
+
+                '<div class="activityIcon">' +
+                    '🛒' +
+                '</div>' +
+
+                '<div class="activityContent">' +
+
+                    '<h4>' +
+                        'Nenhuma atividade' +
+                    '</h4>' +
+
+                    '<p>' +
+                        'As atividades recentes aparecerão aqui.' +
+                    '</p>' +
+
+                    '<div class="activityTime">' +
+                        '-' +
+                    '</div>' +
+
+                '</div>' +
+
+            '</div>';
+
+    }
+
+    else {
+
+        activityList.innerHTML = "";
+
+
+        activities.forEach(
+            function (activity) {
+
+                const item =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                item.className =
+                    "activityItem";
+
+
+                item.innerHTML =
+
+                    '<div class="activityIcon">' +
+                        escapeHtml35(
+                            activity.icon
+                        ) +
+                    '</div>' +
+
+                    '<div class="activityContent">' +
+
+                        '<h4>' +
+                            escapeHtml35(
+                                activity.title
+                            ) +
+                        '</h4>' +
+
+                        '<p>' +
+                            escapeHtml35(
+                                activity.description
+                            ) +
+                        '</p>' +
+
+                        '<div class="activityTime">' +
+                            formatDate35(
+                                activity.date
+                            ) +
+                        '</div>' +
+
+                    '</div>';
+
+
+                activityList.appendChild(
+                    item
+                );
+
+            }
+        );
+
+    }
+
+
+    /* ======================================================
+       STOCKAGE DANS TOMA ADMIN
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin.data
+    ) {
+
+        window.tomaAdmin.data = {};
+
+    }
+
+
+    window.tomaAdmin.data.recentActivity =
+        activities;
+
+
+    /* ======================================================
+       LOG
+    ====================================================== */
+
+    console.log(
+        "🕒 Activité récente Firebase :",
+        activities
+    );
+
+}
+
+
+/* ==========================================================
+   FORMATAGE KZ
+========================================================== */
+
+function formatKz35(value) {
+
+    return Number(
+        value || 0
+    ).toLocaleString(
+        "pt-PT"
+    ) + " Kz";
+
+}
+
+
+/* ==========================================================
+   CONVERSION DATE FIREBASE
+========================================================== */
+
+function getDate35(value) {
+
+    if (!value) {
+
+        return null;
+
+    }
+
+
+    try {
+
+        if (
+            typeof value.toDate ===
+            "function"
+        ) {
+
+            return value.toDate();
+
+        }
+
+
+        const date =
+            new Date(
+                value
+            );
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return null;
+
+        }
+
+
+        return date;
+
+    }
+
+    catch (error) {
+
+        return null;
+
+    }
+
+}
+
+
+/* ==========================================================
+   FORMATAGE DATE
+========================================================== */
+
+function formatDate35(date) {
+
+    if (!date) {
+
+        return "-";
+
+    }
+
+
+    return date.toLocaleString(
+        "pt-PT",
+        {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   PROTECTION TEXTE HTML
+========================================================== */
+
+function escapeHtml35(value) {
+
+    return String(
+        value || ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 35
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        async function () {
+
+            await initializeBlock35();
+
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 35 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Atividade recente carregada desde Firebase."
+            );
+
+        }
+    );
+
+}
+
+else {
+
+    initializeBlock35()
+        .then(
+            function () {
+
+                alert(
+                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                    "✅ BLOC JS 35 TERMINÉ\n" +
+                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                    "Atividade recente carregada desde Firebase."
+                );
+
+            }
+        )
+        .catch(
+            function (error) {
+
+                console.error(
+                    "❌ Erreur Bloc 35 :",
+                    error
+                );
+
+
+                alert(
+                    "⚠️ BLOC JS 35\n\n" +
+                    "Une erreur est survenue.\n" +
+                    "Regarde la console."
+                );
+
+            }
+        );
+
+}
