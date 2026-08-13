@@ -7261,3 +7261,429 @@ else {
         );
 
 }
+/* ==========================================================
+   TOMA ADMIN V2
+   ADMIN-V2.JS
+   BLOC JS 25 — FINANCES FIREBASE
+========================================================== */
+
+
+/* ==========================================================
+   DÉBUT DU BLOC 25
+========================================================== */
+
+alert(
+    "▶️ TOMA ADMIN V2\n\n" +
+    "BLOC JS 25 chargé."
+);
+
+
+/* ==========================================================
+   IMPORT FIRESTORE
+   ALIAS UNIQUES DU BLOC 25
+========================================================== */
+
+import {
+    collection as firestoreCollection25,
+    getDocs as firestoreGetDocs25
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ==========================================================
+   INITIALISATION DU BLOC 25
+========================================================== */
+
+async function initializeBlock25() {
+
+
+    /* ======================================================
+       VÉRIFICATION FIREBASE
+    ====================================================== */
+
+    if (
+        !window.tomaAdmin ||
+        !window.tomaAdmin.firebase ||
+        !window.tomaAdmin.firebase.db
+    ) {
+
+        console.error(
+            "❌ Firestore TOMA Admin indisponible."
+        );
+
+        return;
+
+    }
+
+
+    const db =
+        window.tomaAdmin.firebase.db;
+
+
+    /* ======================================================
+       IDS FINANCIERS DU DASHBOARD
+    ====================================================== */
+
+    const financeSales =
+        document.getElementById(
+            "financeSales"
+        );
+
+    const financeCommission =
+        document.getElementById(
+            "financeCommission"
+        );
+
+    const averageOrder =
+        document.getElementById(
+            "averageOrder"
+        );
+
+    const todayProfit =
+        document.getElementById(
+            "todayProfit"
+        );
+
+
+    if (!financeSales) {
+
+        console.warn(
+            "⚠️ financeSales introuvable."
+        );
+
+    }
+
+
+    if (!financeCommission) {
+
+        console.warn(
+            "⚠️ financeCommission introuvable."
+        );
+
+    }
+
+
+    if (!averageOrder) {
+
+        console.warn(
+            "⚠️ averageOrder introuvable."
+        );
+
+    }
+
+
+    if (!todayProfit) {
+
+        console.warn(
+            "⚠️ todayProfit introuvable."
+        );
+
+    }
+
+
+    /* ======================================================
+       LECTURE DES COMMANDES
+    ====================================================== */
+
+    try {
+
+        const ordersSnapshot =
+            await firestoreGetDocs25(
+                firestoreCollection25(
+                    db,
+                    "orders"
+                )
+            );
+
+
+        /* ==================================================
+           CALCULS
+        ================================================== */
+
+        let totalSales = 0;
+
+        let totalOrders = 0;
+
+        let todaySales = 0;
+
+
+        const today =
+            new Date()
+                .toISOString()
+                .split("T")[0];
+
+
+        ordersSnapshot.forEach(
+            function (documentSnapshot) {
+
+                const data =
+                    documentSnapshot.data();
+
+
+                const amount =
+                    Number(
+                        data.total ||
+                        data.totalAmount ||
+                        data.amount ||
+                        data.price ||
+                        0
+                    );
+
+
+                totalSales += amount;
+
+                totalOrders++;
+
+
+                /* ==========================================
+                   DATE DE LA COMMANDE
+                ========================================== */
+
+                let orderDate = null;
+
+
+                if (
+                    typeof data.date ===
+                    "string"
+                ) {
+
+                    orderDate =
+                        data.date.substring(
+                            0,
+                            10
+                        );
+
+                }
+
+
+                if (
+                    typeof data.createdAt ===
+                    "string"
+                ) {
+
+                    orderDate =
+                        data.createdAt.substring(
+                            0,
+                            10
+                        );
+
+                }
+
+
+                if (
+                    orderDate ===
+                    today
+                ) {
+
+                    todaySales +=
+                        amount;
+
+                }
+
+            }
+        );
+
+
+        /* ==================================================
+           COMMISSION TOMA
+           
+           Commission actuelle :
+           5 %
+        ================================================== */
+
+        const commissionRate =
+            0.05;
+
+
+        const commission =
+            totalSales *
+            commissionRate;
+
+
+        const average =
+            totalOrders > 0
+                ? totalSales / totalOrders
+                : 0;
+
+
+        const todayCommission =
+            todaySales *
+            commissionRate;
+
+
+        /* ==================================================
+           FORMATAGE
+        ================================================== */
+
+        function formatKz(value) {
+
+            return Number(
+                value || 0
+            ).toLocaleString(
+                "pt-PT"
+            ) + " Kz";
+
+        }
+
+
+        /* ==================================================
+           AFFICHAGE
+        ================================================== */
+
+        if (financeSales) {
+
+            financeSales.textContent =
+                formatKz(
+                    totalSales
+                );
+
+        }
+
+
+        if (financeCommission) {
+
+            financeCommission.textContent =
+                formatKz(
+                    commission
+                );
+
+        }
+
+
+        if (averageOrder) {
+
+            averageOrder.textContent =
+                formatKz(
+                    average
+                );
+
+        }
+
+
+        if (todayProfit) {
+
+            todayProfit.textContent =
+                formatKz(
+                    todayCommission
+                );
+
+        }
+
+
+        /* ==================================================
+           STRUCTURE TOMA
+        ================================================== */
+
+        if (!window.tomaAdmin.data) {
+
+            window.tomaAdmin.data = {};
+
+        }
+
+
+        window.tomaAdmin.data.finance = {
+
+            sales:
+                totalSales,
+
+            commission:
+                commission,
+
+            averageOrder:
+                average,
+
+            todayCommission:
+                todayCommission,
+
+            orders:
+                totalOrders
+
+        };
+
+
+        /* ==================================================
+           LOG
+        ================================================== */
+
+        console.log(
+            "💰 Finances TOMA :",
+            window.tomaAdmin.data.finance
+        );
+
+    }
+
+
+    catch (error) {
+
+        console.error(
+            "❌ Erreur lecture finances :",
+            error
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   DÉMARRAGE DU BLOC 25
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        async function () {
+
+            await initializeBlock25();
+
+
+            alert(
+                "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "✅ BLOC JS 25 TERMINÉ\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Resumo financeiro carregado desde Firebase."
+            );
+
+        }
+    );
+
+}
+
+
+else {
+
+    initializeBlock25()
+        .then(
+            function () {
+
+                alert(
+                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
+                    "✅ BLOC JS 25 TERMINÉ\n" +
+                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                    "Resumo financeiro carregado desde Firebase."
+                );
+
+            }
+        )
+        .catch(
+            function (error) {
+
+                console.error(
+                    "❌ Erreur Bloc 25 :",
+                    error
+                );
+
+
+                alert(
+                    "⚠️ BLOC JS 25\n\n" +
+                    "Une erreur est survenue.\n" +
+                    "Regarde la console."
+                );
+
+            }
+        );
+
+}
