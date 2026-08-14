@@ -463,14 +463,7 @@ document.addEventListener("DOMContentLoaded", () => {
        FIN DU BLOC JS 1
     ====================================================== */
 
-    alert(
-        "━━━━━━━━━━━━━━━━━━━━━━\n" +
-        "✅ BLOC JS 1 TERMINÉ\n" +
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-        "Tous les IDs du bloc 1 ont été vérifiés.\n\n" +
-        "Aucune donnée Firebase n'est encore chargée.\n" +
-        "Le prochain bloc pourra être ajouté sans modifier celui-ci."
-    );
+  
 
 
 });
@@ -484,11 +477,6 @@ document.addEventListener("DOMContentLoaded", () => {
 /* ==========================================================
    ALERTE — DÉBUT DU BLOC 2
 ========================================================== */
-
-alert(
-    "▶️ BLOC JS 2\n\n" +
-    "Le bloc 2 est bien démarré."
-);
 
 
 /* ==========================================================
@@ -645,14 +633,7 @@ document.addEventListener(
            ALERTE — FIN DU BLOC 2
         ================================================== */
 
-        alert(
-            "━━━━━━━━━━━━━━━━━━━━━━━━\n" +
-            "✅ BLOC JS 2 TERMINÉ\n" +
-            "━━━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-            "Le bloc 2 a été exécuté.\n" +
-            "Les statistiques ont été traitées.\n\n" +
-            "Le bloc 1 reste inchangé."
-        );
+        
 
     }
 );
@@ -667,10 +648,7 @@ document.addEventListener(
    ALERTE — DÉBUT DU BLOC 3
 ========================================================== */
 
-alert(
-    "▶️ BLOC JS 3\n\n" +
-    "Graphiques et données financières..."
-);
+
 
 
 /* ==========================================================
@@ -1181,14 +1159,7 @@ document.addEventListener(
            ALERTE — FIN DU BLOC 3
         ================================================== */
 
-        alert(
-            "━━━━━━━━━━━━━━━━━━━━━━━━\n" +
-            "✅ BLOC JS 3 TERMINÉ\n" +
-            "━━━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-            "Graphiques et données financières\n" +
-            "ont été initialisés.\n\n" +
-            "Les blocs 1 et 2 restent inchangés."
-        );
+        
 
 
     }
@@ -1204,10 +1175,6 @@ document.addEventListener(
    ALERTE — DÉBUT DU BLOC 4
 ========================================================== */
 
-alert(
-    "▶️ BLOC JS 4\n\n" +
-    "Activité, notifications et demandes commerçants..."
-);
 
 
 /* ==========================================================
@@ -1968,14 +1935,7 @@ document.addEventListener(
            ALERTE — FIN DU BLOC 4
         ================================================== */
 
-        alert(
-            "━━━━━━━━━━━━━━━━━━━━━━━━\n" +
-            "✅ BLOC JS 4 TERMINÉ\n" +
-            "━━━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-            "Activité, notifications et demandes\n" +
-            "de commerçants initialisées.\n\n" +
-            "Les blocs 1, 2 et 3 restent inchangés."
-        );
+        
 
 
     }
@@ -1991,10 +1951,6 @@ document.addEventListener(
    TEST IMMÉDIAT DU BLOC 5
 ========================================================== */
 
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 5 chargé."
-);
 
 
 /* ==========================================================
@@ -2228,12 +2184,7 @@ if (
 
             initializeBlock5();
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 5 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Les actions du dashboard sont initialisées."
-            );
+            
 
         }
     );
@@ -2242,12 +2193,7 @@ if (
 
     initializeBlock5();
 
-    alert(
-        "━━━━━━━━━━━━━━━━━━━━━━\n" +
-        "✅ BLOC JS 5 TERMINÉ\n" +
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-        "Les actions du dashboard sont initialisées."
-    );
+    
 
 }
 /* ==========================================================
@@ -2261,10 +2207,7 @@ if (
    DÉBUT DU BLOC 6
 ========================================================== */
 
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 6 chargé."
-);
+
 
 
 /* ==========================================================
@@ -2547,12 +2490,7 @@ if (
 
             initializeBlock6();
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 6 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Les cartes d'accès et leur navigation sont initialisées."
-            );
+            
 
         }
     );
@@ -2561,12 +2499,7 @@ if (
 
     initializeBlock6();
 
-    alert(
-        "━━━━━━━━━━━━━━━━━━━━━━\n" +
-        "✅ BLOC JS 6 TERMINÉ\n" +
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-        "Les cartes d'accès et leur navigation sont initialisées."
-    );
+    
 
 }
 /* ==========================================================
@@ -2580,10 +2513,7 @@ if (
    DÉBUT DU BLOC 7
 ========================================================== */
 
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 7 chargé."
-);
+
 
 
 /* ==========================================================
@@ -2840,12 +2770,7 @@ if (
 
             initializeBlock7();
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 7 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Header, pesquisa, notificações e atualização inicializados."
-            );
+           
 
         }
     );
@@ -2854,12 +2779,7 @@ if (
 
     initializeBlock7();
 
-    alert(
-        "━━━━━━━━━━━━━━━━━━━━━━\n" +
-        "✅ BLOC JS 7 TERMINÉ\n" +
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-        "Header, pesquisa, notificações e atualização inicializados."
-    );
+    
 
 }
 /* ==========================================================
@@ -2873,10 +2793,6 @@ if (
    DÉBUT DU BLOC 8
 ========================================================== */
 
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 8 chargé."
-);
 
 
 /* ==========================================================
