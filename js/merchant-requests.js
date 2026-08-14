@@ -1,10 +1,14 @@
- // ======================================================
+ // ============================================================
 // TOMA ADMIN V2
-// MERCHANT REQUESTS
-// VERSION CORRIGÉE ET NETTOYÉE
-// ======================================================
+// MERCHANT-REQUESTS.JS
+// VERSION CORRIGÉE ET STABLE
+// ============================================================
 
 "use strict";
+
+// ============================================================
+// IMPORT FIREBASE
+// ============================================================
 
 import { db } from "../firebase.js";
 
@@ -12,26 +16,29 @@ import {
     collection,
     doc,
     getDocs,
+    updateDoc,
     onSnapshot,
     setDoc,
-    updateDoc,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 
-// ======================================================
+// ============================================================
 // VARIABLES
-// ======================================================
+// ============================================================
 
 let requests = [];
+let filteredRequests = [];
+
 let currentRequest = null;
 let currentFilter = "all";
+
 let unsubscribeRequests = null;
 
 
-// ======================================================
+// ============================================================
 // ÉLÉMENTS HTML
-// ======================================================
+// ============================================================
 
 const merchantRequestsList =
     document.getElementById("merchantRequestsList");
@@ -49,9 +56,9 @@ const searchInput =
     document.getElementById("searchInput");
 
 
-// ======================================================
+// ============================================================
 // STATISTIQUES
-// ======================================================
+// ============================================================
 
 const pendingCount =
     document.getElementById("pendingCount");
@@ -66,14 +73,14 @@ const totalRequests =
     document.getElementById("totalRequests");
 
 
-// ======================================================
+// ============================================================
 // MODAL
-// ======================================================
+// ============================================================
 
 const requestModal =
     document.getElementById("requestModal");
 
-const closeModalButton =
+const closeModal =
     document.getElementById("closeModal");
 
 const approveMerchantButton =
@@ -82,13 +89,13 @@ const approveMerchantButton =
 const rejectMerchantButton =
     document.getElementById("rejectMerchant");
 
-const contactMerchantButton =
+const contactMerchant =
     document.getElementById("contactMerchant");
 
 
-// ======================================================
+// ============================================================
 // TOAST
-// ======================================================
+// ============================================================
 
 const toast =
     document.getElementById("toast");
@@ -97,9 +104,9 @@ const toastMessage =
     document.getElementById("toastMessage");
 
 
-// ======================================================
+// ============================================================
 // CONFIRMATION
-// ======================================================
+// ============================================================
 
 const confirmModal =
     document.getElementById("confirmModal");
@@ -111,33 +118,79 @@ const confirmNo =
     document.getElementById("confirmNo");
 
 
-// ======================================================
-// HEADER
-// ======================================================
+// ============================================================
+// BOUTON RETOUR
+// ============================================================
 
 const backButton =
     document.getElementById("backButton");
+
+
+// ============================================================
+// BOUTON ACTUALISER
+// ============================================================
 
 const refreshButton =
     document.getElementById("refreshButton");
 
 
-// ======================================================
+// ============================================================
 // INITIALISATION
-// ======================================================
+// ============================================================
 
-init();
+document.addEventListener(
+    "DOMContentLoaded",
+    init
+);
 
 
-// ======================================================
+// ============================================================
 // INIT
-// ======================================================
+// ============================================================
 
 function init() {
 
     console.log(
-        "🚀 Merchant Requests — initialisation..."
+        "🚀 Merchant Requests démarré"
     );
+
+
+    // Vérification Firebase
+
+    if (!db) {
+
+        showLoaderError(
+            "Firebase n'est pas correctement initialisé."
+        );
+
+        return;
+
+    }
+
+
+    // Vérification HTML
+
+    if (!merchantRequestsList) {
+
+        showLoaderError(
+            "#merchantRequestsList est introuvable."
+        );
+
+        return;
+
+    }
+
+
+    if (!template) {
+
+        showLoaderError(
+            "#merchantRequestTemplate est introuvable."
+        );
+
+        return;
+
+    }
+
 
     initializeFilters();
 
@@ -147,29 +200,26 @@ function init() {
 
     initializeActions();
 
-    initializeHeader();
+    initializeBackButton();
+
+    initializeRefreshButton();
 
     listenMerchantRequests();
 
 }
 
 
-// ======================================================
-// LOADER
-// ======================================================
+// ============================================================
+// AFFICHER UNE ERREUR DE CHARGEMENT
+// ============================================================
 
-function showLoader() {
+function showLoaderError(message) {
 
-    if (loader) {
+    console.error(
+        "❌ MERCHANT REQUESTS:",
+        message
+    );
 
-        loader.style.display = "flex";
-
-    }
-
-}
-
-
-function hideLoader() {
 
     if (loader) {
 
@@ -177,163 +227,191 @@ function hideLoader() {
 
     }
 
-}
+
+    if (merchantRequestsList) {
+
+        merchantRequestsList.innerHTML = `
+
+            <div class="emptyState">
+
+                <div class="emptyIcon">
+                    ⚠️
+                </div>
+
+                <h2>
+                    Erro ao carregar
+                </h2>
+
+                <p>
+                    ${escapeHTML(message)}
+                </p>
+
+                <button
+                    id="retryMerchantRequests"
+                    class="approveButton"
+                    style="margin-top:15px;"
+                >
+                    🔄 Tentar novamente
+                </button>
+
+            </div>
+
+        `;
 
 
-// ======================================================
-// TOAST
-// ======================================================
+        const retry =
+            document.getElementById(
+                "retryMerchantRequests"
+            );
 
-function showToast(message) {
 
-    if (!toast || !toastMessage) {
+        if (retry) {
 
-        return;
+            retry.addEventListener(
+                "click",
+                () => {
+
+                    listenMerchantRequests();
+
+                }
+            );
+
+        }
 
     }
 
-    toastMessage.textContent = message;
-
-    toast.classList.add("show");
-
-    setTimeout(() => {
-
-        toast.classList.remove("show");
-
-    }, 3000);
-
 }
 
 
-// ======================================================
-// CHARGEMENT TEMPS RÉEL
-// ======================================================
+// ============================================================
+// CHARGEMENT TEMPS RÉEL FIRESTORE
+// ============================================================
 
 function listenMerchantRequests() {
 
-    showLoader();
+    if (loader) {
 
-    if (!merchantRequestsList) {
+        loader.style.display = "flex";
 
-        console.error(
-            "❌ #merchantRequestsList introuvable."
-        );
+    }
 
-        hideLoader();
 
-        return;
+    if (merchantRequestsList) {
+
+        merchantRequestsList.innerHTML = "";
+
+    }
+
+
+    // Si un ancien listener existe,
+    // on le ferme avant d'en créer un nouveau.
+
+    if (unsubscribeRequests) {
+
+        unsubscribeRequests();
+
+        unsubscribeRequests = null;
 
     }
 
 
     try {
 
-        if (unsubscribeRequests) {
-
-            unsubscribeRequests();
-
-        }
-
-
-        unsubscribeRequests = onSnapshot(
-
-            collection(db, "merchantRequests"),
-
-            (snapshot) => {
-
-                console.log(
-                    "✅ merchantRequests chargé :",
-                    snapshot.size
-                );
+        const requestsCollection =
+            collection(
+                db,
+                "merchantRequests"
+            );
 
 
-                requests = [];
+        unsubscribeRequests =
+            onSnapshot(
+
+                requestsCollection,
+
+                (snapshot) => {
+
+                    console.log(
+                        "📥 Demandes reçues:",
+                        snapshot.size
+                    );
 
 
-                snapshot.forEach((docSnap) => {
-
-                    requests.push({
-
-                        id: docSnap.id,
-
-                        ...docSnap.data()
-
-                    });
-
-                });
+                    requests = [];
 
 
-                hideLoader();
+                    snapshot.forEach(
+                        (docSnap) => {
+
+                            requests.push({
+
+                                id:
+                                    docSnap.id,
+
+                                ...docSnap.data()
+
+                            });
+
+                        }
+                    );
 
 
-                updateStatistics();
+                    // Trier du plus récent au plus ancien
 
-                applyFilters();
+                    requests.sort(
+                        (a, b) => {
 
-            },
+                            return (
+                                getTimestamp(b.createdAt) -
+                                getTimestamp(a.createdAt)
+                            );
 
-
-            (error) => {
-
-                console.error(
-                    "❌ Erreur Firestore merchantRequests :",
-                    error
-                );
-
-
-                hideLoader();
+                        }
+                    );
 
 
-                requests = [];
+                    if (loader) {
 
-                updateStatistics();
+                        loader.style.display =
+                            "none";
+
+                    }
 
 
-                if (merchantRequestsList) {
+                    updateStatistics();
 
-                    merchantRequestsList.innerHTML = `
+                    applyFilters();
 
-                        <div class="emptyState">
+                },
 
-                            <div class="emptyIcon">
-                                ⚠️
-                            </div>
+                (error) => {
 
-                            <h2>
-                                Erro ao carregar pedidos
-                            </h2>
+                    console.error(
+                        "❌ Erreur Firestore merchantRequests:",
+                        error
+                    );
 
-                            <p>
-                                Não foi possível carregar
-                                os pedidos de comerciantes.
-                            </p>
 
-                        </div>
-
-                    `;
+                    showLoaderError(
+                        getFirebaseErrorMessage(error)
+                    );
 
                 }
 
+            );
 
-                showToast(
-                    "Erro ao carregar pedidos."
-                );
+    }
 
-            }
-
-        );
-
-    } catch (error) {
+    catch (error) {
 
         console.error(
-            "❌ Erreur initialisation Firestore :",
+            "❌ Erreur listener:",
             error
         );
 
-        hideLoader();
 
-        showToast(
-            "Erro ao iniciar os pedidos."
+        showLoaderError(
+            getFirebaseErrorMessage(error)
         );
 
     }
@@ -341,9 +419,9 @@ function listenMerchantRequests() {
 }
 
 
-// ======================================================
+// ============================================================
 // STATISTIQUES
-// ======================================================
+// ============================================================
 
 function updateStatistics() {
 
@@ -354,47 +432,28 @@ function updateStatistics() {
     const pending =
         requests.filter(
             request =>
-                normalizeStatus(request.status)
-                === "pending"
+                normalizeStatus(
+                    request.status
+                ) === "pending"
         ).length;
 
 
     const approved =
         requests.filter(
             request =>
-                normalizeStatus(request.status)
-                === "approved"
+                normalizeStatus(
+                    request.status
+                ) === "approved"
         );
 
 
     const rejected =
         requests.filter(
             request =>
-                normalizeStatus(request.status)
-                === "rejected"
+                normalizeStatus(
+                    request.status
+                ) === "rejected"
         );
-
-
-    const approvedTodayCount =
-        approved.filter(
-            request =>
-                isToday(
-                    request.approvedAt ||
-                    request.updatedAt ||
-                    request.createdAt
-                )
-        ).length;
-
-
-    const rejectedTodayCount =
-        rejected.filter(
-            request =>
-                isToday(
-                    request.rejectedAt ||
-                    request.updatedAt ||
-                    request.createdAt
-                )
-        ).length;
 
 
     if (totalRequests) {
@@ -413,12 +472,36 @@ function updateStatistics() {
     }
 
 
+    // Seulement les approbations du jour
+
+    const approvedTodayCount =
+        approved.filter(
+            request =>
+                isToday(
+                    request.approvedAt ||
+                    request.updatedAt
+                )
+        ).length;
+
+
     if (approvedToday) {
 
         approvedToday.textContent =
             approvedTodayCount;
 
     }
+
+
+    // Seulement les refus du jour
+
+    const rejectedTodayCount =
+        rejected.filter(
+            request =>
+                isToday(
+                    request.rejectedAt ||
+                    request.updatedAt
+                )
+        ).length;
 
 
     if (rejectedToday) {
@@ -431,246 +514,57 @@ function updateStatistics() {
 }
 
 
-// ======================================================
-// NORMALISER LE STATUT
-// ======================================================
-
-function normalizeStatus(status) {
-
-    const value =
-        String(status || "")
-            .trim()
-            .toLowerCase();
-
-
-    if (
-        value === "approved" ||
-        value === "aprovado" ||
-        value === "active" ||
-        value === "ativo"
-    ) {
-
-        return "approved";
-
-    }
-
-
-    if (
-        value === "rejected" ||
-        value === "recusado" ||
-        value === "rejected_review"
-    ) {
-
-        return "rejected";
-
-    }
-
-
-    return "pending";
-
-}
-
-
-// ======================================================
-// DATE FIRESTORE
-// ======================================================
-
-function getDateValue(value) {
-
-    if (!value) {
-
-        return null;
-
-    }
-
-
-    try {
-
-        if (
-            typeof value.toDate ===
-            "function"
-        ) {
-
-            return value.toDate();
-
-        }
-
-
-        if (
-            typeof value.seconds ===
-            "number"
-        ) {
-
-            return new Date(
-                value.seconds * 1000
-            );
-
-        }
-
-
-        if (
-            typeof value ===
-            "string" ||
-            typeof value ===
-            "number"
-        ) {
-
-            const date =
-                new Date(value);
-
-
-            if (
-                !Number.isNaN(
-                    date.getTime()
-                )
-            ) {
-
-                return date;
-
-            }
-
-        }
-
-    } catch (error) {
-
-        console.warn(
-            "⚠️ Date invalide :",
-            value
-        );
-
-    }
-
-
-    return null;
-
-}
-
-
-// ======================================================
-// VÉRIFIER SI UNE DATE EST AUJOURD'HUI
-// ======================================================
-
-function isToday(value) {
-
-    const date =
-        getDateValue(value);
-
-
-    if (!date) {
-
-        return false;
-
-    }
-
-
-    const today =
-        new Date();
-
-
-    return (
-        date.getFullYear()
-        ===
-        today.getFullYear()
-        &&
-        date.getMonth()
-        ===
-        today.getMonth()
-        &&
-        date.getDate()
-        ===
-        today.getDate()
-    );
-
-}
-
-
-// ======================================================
-// FORMAT DATE
-// ======================================================
-
-function formatDate(value) {
-
-    const date =
-        getDateValue(value);
-
-
-    if (!date) {
-
-        return "-";
-
-    }
-
-
-    try {
-
-        return date.toLocaleString(
-            "pt-PT",
-            {
-                dateStyle: "short",
-                timeStyle: "short"
-            }
-        );
-
-    } catch {
-
-        return date.toLocaleDateString(
-            "pt-PT"
-        );
-
-    }
-
-}
-
-
-// ======================================================
+// ============================================================
 // FILTRES
-// ======================================================
+// ============================================================
 
 function initializeFilters() {
 
-    const buttons =
+    const filterButtons =
         document.querySelectorAll(
             ".filterButton"
         );
 
 
-    buttons.forEach((button) => {
+    filterButtons.forEach(
+        button => {
 
-        button.addEventListener(
-            "click",
-            () => {
+            button.addEventListener(
+                "click",
+                () => {
 
-                buttons.forEach(
-                    item =>
-                        item.classList.remove(
-                            "active"
-                        )
-                );
-
-
-                button.classList.add(
-                    "active"
-                );
+                    filterButtons.forEach(
+                        item =>
+                            item.classList.remove(
+                                "active"
+                            )
+                    );
 
 
-                currentFilter =
-                    button.dataset.filter
-                    || "all";
+                    button.classList.add(
+                        "active"
+                    );
 
 
-                applyFilters();
+                    currentFilter =
+                        button.dataset.filter ||
+                        "all";
 
-            }
-        );
 
-    });
+                    applyFilters();
+
+                }
+            );
+
+        }
+    );
 
 }
 
 
-// ======================================================
+// ============================================================
 // RECHERCHE
-// ======================================================
+// ============================================================
 
 function initializeSearch() {
 
@@ -693,15 +587,17 @@ function initializeSearch() {
 }
 
 
-// ======================================================
-// APPLICATION DES FILTRES
-// ======================================================
+// ============================================================
+// APPLIQUER FILTRES
+// ============================================================
 
 function applyFilters() {
 
     let filtered =
         [...requests];
 
+
+    // Filtre statut
 
     if (
         currentFilter !==
@@ -710,22 +606,28 @@ function applyFilters() {
 
         filtered =
             filtered.filter(
-                request =>
-                    normalizeStatus(
-                        request.status
-                    )
-                    ===
-                    currentFilter
+                request => {
+
+                    return (
+                        normalizeStatus(
+                            request.status
+                        ) ===
+                        currentFilter
+                    );
+
+                }
             );
 
     }
 
 
+    // Recherche
+
     const search =
         searchInput?.value
             ?.trim()
-            .toLowerCase()
-            || "";
+            .toLowerCase() ||
+        "";
 
 
     if (search) {
@@ -735,76 +637,58 @@ function applyFilters() {
                 request => {
 
                     const fullName =
-                        `${request.firstName || ""}
-                        ${request.lastName || ""}`
-                        .toLowerCase();
+                        `${request.firstName || ""} ${request.lastName || ""}`
+                            .toLowerCase();
 
 
-                    const shop =
+                    const shopName =
                         String(
-                            request.shopName || ""
+                            request.shopName ||
+                            ""
                         ).toLowerCase();
 
 
                     const phone =
                         String(
-                            request.phone || ""
+                            request.phone ||
+                            ""
                         ).toLowerCase();
 
 
                     const province =
                         String(
-                            request.province || ""
+                            request.province ||
+                            ""
                         ).toLowerCase();
 
 
                     const city =
                         String(
-                            request.city || ""
+                            request.city ||
+                            ""
                         ).toLowerCase();
 
 
                     const email =
                         String(
-                            request.email || ""
+                            request.email ||
+                            ""
                         ).toLowerCase();
 
 
                     return (
 
-                        fullName.includes(
-                            search
-                        )
+                        fullName.includes(search) ||
 
-                        ||
+                        shopName.includes(search) ||
 
-                        shop.includes(
-                            search
-                        )
+                        phone.includes(search) ||
 
-                        ||
+                        province.includes(search) ||
 
-                        phone.includes(
-                            search
-                        )
+                        city.includes(search) ||
 
-                        ||
-
-                        province.includes(
-                            search
-                        )
-
-                        ||
-
-                        city.includes(
-                            search
-                        )
-
-                        ||
-
-                        email.includes(
-                            search
-                        )
+                        email.includes(search)
 
                     );
 
@@ -814,16 +698,20 @@ function applyFilters() {
     }
 
 
+    filteredRequests =
+        filtered;
+
+
     renderMerchantRequests(
-        filtered
+        filteredRequests
     );
 
 }
 
 
-// ======================================================
-// AFFICHAGE
-// ======================================================
+// ============================================================
+// AFFICHAGE DES DEMANDES
+// ============================================================
 
 function renderMerchantRequests(list) {
 
@@ -838,7 +726,12 @@ function renderMerchantRequests(list) {
         "";
 
 
-    if (!list.length) {
+    // Aucun résultat
+
+    if (
+        !list ||
+        list.length === 0
+    ) {
 
         if (emptyState) {
 
@@ -854,7 +747,7 @@ function renderMerchantRequests(list) {
             <div class="emptyState">
 
                 <div class="emptyIcon">
-                    📭
+                    📋
                 </div>
 
                 <h2>
@@ -862,8 +755,7 @@ function renderMerchantRequests(list) {
                 </h2>
 
                 <p>
-                    Não existem pedidos
-                    correspondentes.
+                    Não existem pedidos de comerciantes neste momento.
                 </p>
 
             </div>
@@ -884,275 +776,286 @@ function renderMerchantRequests(list) {
     }
 
 
-    if (!template) {
+    list.forEach(
+        request => {
 
-        console.error(
-            "❌ #merchantRequestTemplate introuvable."
-        );
-
-        return;
-
-    }
-
-
-    list.forEach((request) => {
-
-        const clone =
-            template.content.cloneNode(
-                true
-            );
-
-
-        const nameElement =
-            clone.querySelector(
-                ".requestName"
-            );
-
-
-        const shopElement =
-            clone.querySelector(
-                ".requestShop"
-            );
-
-
-        const provinceElement =
-            clone.querySelector(
-                ".requestProvince"
-            );
-
-
-        const phoneElement =
-            clone.querySelector(
-                ".requestPhone"
-            );
-
-
-        const avatar =
-            clone.querySelector(
-                ".requestAvatar"
-            );
-
-
-        const statusElement =
-            clone.querySelector(
-                ".requestStatus"
-            );
-
-
-        const detailsButton =
-            clone.querySelector(
-                ".detailsButton"
-            );
-
-
-        const approveButton =
-            clone.querySelector(
-                ".approveSmallButton"
-            );
-
-
-        const rejectButton =
-            clone.querySelector(
-                ".rejectSmallButton"
-            );
-
-
-        if (nameElement) {
-
-            nameElement.textContent =
-                `${request.firstName || ""}
-                ${request.lastName || ""}`
-                .trim()
-                ||
-                "Comerciante";
-
-        }
-
-
-        if (shopElement) {
-
-            shopElement.textContent =
-                request.shopName
-                ||
-                "Loja";
-
-        }
-
-
-        if (provinceElement) {
-
-            provinceElement.textContent =
-                "📍 " +
-                (
-                    request.province
-                    ||
-                    "-"
+            const clone =
+                template.content.cloneNode(
+                    true
                 );
 
-        }
 
-
-        if (phoneElement) {
-
-            phoneElement.textContent =
-                "📞 " +
-                (
-                    request.phone
-                    ||
-                    "-"
+            const name =
+                clone.querySelector(
+                    ".requestName"
                 );
 
-        }
+
+            if (name) {
+
+                name.textContent =
+                    `${request.firstName || ""} ${request.lastName || ""}`
+                        .trim() ||
+                    "Comerciante";
+
+            }
 
 
-        if (avatar) {
-
-            avatar.src =
-                request.photo
-                ||
-                "images/avatar.png";
+            const shop =
+                clone.querySelector(
+                    ".requestShop"
+                );
 
 
-            avatar.onerror =
-                () => {
+            if (shop) {
 
-                    avatar.src =
-                        "images/avatar.png";
+                shop.textContent =
+                    request.shopName ||
+                    "Loja";
 
-                };
-
-        }
+            }
 
 
-        if (statusElement) {
+            const province =
+                clone.querySelector(
+                    ".requestProvince"
+                );
 
-            const status =
-                normalizeStatus(
+
+            if (province) {
+
+                province.textContent =
+                    "📍 " +
+                    (
+                        request.province ||
+                        "-"
+                    );
+
+            }
+
+
+            const phone =
+                clone.querySelector(
+                    ".requestPhone"
+                );
+
+
+            if (phone) {
+
+                phone.textContent =
+                    "📞 " +
+                    (
+                        request.phone ||
+                        "-"
+                    );
+
+            }
+
+
+            // Avatar
+
+            const avatar =
+                clone.querySelector(
+                    ".requestAvatar"
+                );
+
+
+            if (avatar) {
+
+                avatar.src =
+                    request.photo ||
+                    "images/avatar.png";
+
+
+                avatar.onerror =
+                    () => {
+
+                        avatar.src =
+                            "images/avatar.png";
+
+                    };
+
+            }
+
+
+            // Statut
+
+            const statusElement =
+                clone.querySelector(
+                    ".requestStatus"
+                );
+
+
+            if (statusElement) {
+
+                setStatusElement(
+                    statusElement,
                     request.status
                 );
 
-
-            statusElement.className =
-                "requestStatus";
+            }
 
 
-            if (
-                status ===
-                "approved"
-            ) {
+            // Bouton détails
 
-                statusElement.classList.add(
-                    "statusApproved"
+            const detailsButton =
+                clone.querySelector(
+                    ".detailsButton"
                 );
 
-                statusElement.textContent =
-                    "Aprovado";
+
+            if (detailsButton) {
+
+                detailsButton.addEventListener(
+                    "click",
+                    () => {
+
+                        openRequest(
+                            request
+                        );
+
+                    }
+                );
 
             }
 
-            else if (
-                status ===
-                "rejected"
-            ) {
 
-                statusElement.classList.add(
-                    "statusRejected"
+            // Bouton approuver
+
+            const approveButton =
+                clone.querySelector(
+                    ".approveSmallButton"
                 );
 
-                statusElement.textContent =
-                    "Recusado";
+
+            if (approveButton) {
+
+                approveButton.dataset.id =
+                    request.id;
+
+
+                approveButton.addEventListener(
+                    "click",
+                    event => {
+
+                        event.stopPropagation();
+
+                        approveRequest(
+                            request
+                        );
+
+                    }
+                );
 
             }
 
-            else {
 
-                statusElement.classList.add(
-                    "statusPending"
+            // Bouton refuser
+
+            const rejectButton =
+                clone.querySelector(
+                    ".rejectSmallButton"
                 );
 
-                statusElement.textContent =
-                    "Pendente"; 
+
+            if (rejectButton) {
+
+                rejectButton.dataset.id =
+                    request.id;
+
+
+                rejectButton.addEventListener(
+                    "click",
+                    event => {
+
+                        event.stopPropagation();
+
+                        rejectRequest(
+                            request
+                        );
+
+                    }
+                );
 
             }
 
-        }
 
-
-        if (detailsButton) {
-
-            detailsButton.addEventListener(
-                "click",
-                () => {
-
-                    openRequest(
-                        request
-                    );
-
-                }
+            merchantRequestsList.appendChild(
+                clone
             );
 
         }
-
-
-        if (approveButton) {
-
-            approveButton.addEventListener(
-                "click",
-                () => {
-
-                    openRequest(
-                        request,
-                        true
-                    );
-
-                }
-            );
-
-        }
-
-
-        if (rejectButton) {
-
-            rejectButton.addEventListener(
-                "click",
-                () => {
-
-                    openRequest(
-                        request,
-                        true
-                    );
-
-                    setTimeout(() => {
-
-                        rejectCurrentRequest();
-
-                    }, 100);
-
-                }
-            );
-
-        }
-
-
-        merchantRequestsList.appendChild(
-            clone
-        );
-
-    });
+    );
 
 }
 
 
-// ======================================================
-// OUVRIR LE POPUP
-// ======================================================
+// ============================================================
+// STATUT
+// ============================================================
 
-function openRequest(
-    request,
-    actionMode = false
+function setStatusElement(
+    element,
+    status
 ) {
 
-    if (!request) {
+    const normalized =
+        normalizeStatus(status);
+
+
+    element.className =
+        "requestStatus";
+
+
+    if (
+        normalized ===
+        "approved"
+    ) {
+
+        element.classList.add(
+            "statusApproved"
+        );
+
+        element.textContent =
+            "Aprovado";
+
+    }
+
+    else if (
+        normalized ===
+        "rejected"
+    ) {
+
+        element.classList.add(
+            "statusRejected"
+        );
+
+        element.textContent =
+            "Recusado";
+
+    }
+
+    else {
+
+        element.classList.add(
+            "statusPending"
+        );
+
+        element.textContent =
+            "Pendente";
+
+    }
+
+}
+
+
+// ============================================================
+// OUVRIR MODAL
+// ============================================================
+
+function openRequest(request) {
+
+    if (!requestModal) {
 
         return;
 
@@ -1163,18 +1066,20 @@ function openRequest(
         request;
 
 
-    if (!requestModal) {
+    requestModal.classList.add(
+        "show"
+    );
 
-        return;
 
-    }
+    requestModal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
 
 
     setText(
         "merchantFullName",
-        `${request.firstName || ""}
-        ${request.lastName || ""}`.trim()
-        ||
+        `${request.firstName || ""} ${request.lastName || ""}`.trim() ||
         "Comerciante"
     );
 
@@ -1238,8 +1143,7 @@ function openRequest(
     if (photo) {
 
         photo.src =
-            request.photo
-            ||
+            request.photo ||
             "images/avatar.png";
 
     }
@@ -1254,8 +1158,7 @@ function openRequest(
     if (idCard) {
 
         idCard.src =
-            request.idCard
-            ||
+            request.idCard ||
             "images/document.png";
 
     }
@@ -1270,178 +1173,23 @@ function openRequest(
     if (alvara) {
 
         alvara.src =
-            request.alvara
-            ||
+            request.alvara ||
             "images/document.png";
 
     }
 
 
-    updateModalStatus(
-        request.status
-    );
-
-
-    requestModal.classList.add(
-        "show"
-    );
-
-
-    requestModal.setAttribute(
-        "aria-hidden",
-        "false"
-    );
-
-
-    if (actionMode) {
-
-        // Le bouton reste disponible dans le popup.
-
-    }
-
-}
-
-
-// ======================================================
-// TEXTE
-// ======================================================
-
-function setText(
-    id,
-    value
-) {
-
-    const element =
-        document.getElementById(
-            id
-        );
-
-
-    if (element) {
-
-        element.textContent =
-            value;
-
-    }
-
-}
-
-
-// ======================================================
-// STATUT DU MODAL
-// ======================================================
-
-function updateModalStatus(
-    status
-) {
-
-    const element =
+    const status =
         document.getElementById(
             "merchantStatus"
         );
 
 
-    if (!element) {
+    if (status) {
 
-        return;
-
-    }
-
-
-    const normalized =
-        normalizeStatus(
-            status
-        );
-
-
-    element.className =
-        "";
-
-
-    if (
-        normalized ===
-        "approved"
-    ) {
-
-        element.classList.add(
-            "statusApproved"
-        );
-
-        element.textContent =
-            "Aprovado";
-
-    }
-
-    else if (
-        normalized ===
-        "rejected"
-    ) {
-
-        element.classList.add(
-            "statusRejected"
-        );
-
-        element.textContent =
-            "Recusado";
-
-    }
-
-    else {
-
-        element.classList.add(
-            "statusPending"
-        );
-
-        element.textContent =
-            "Pendente";
-
-    }
-
-}
-
-
-// ======================================================
-// MODAL
-// ======================================================
-
-function initializeModal() {
-
-    if (closeModalButton) {
-
-        closeModalButton.addEventListener(
-            "click",
-            closeRequestModal
-        );
-
-    }
-
-
-    if (requestModal) {
-
-        requestModal.addEventListener(
-            "click",
-            (event) => {
-
-                if (
-                    event.target ===
-                    requestModal
-                ) {
-
-                    closeRequestModal();
-
-                }
-
-            }
-        );
-
-    }
-
-
-    if (confirmNo) {
-
-        confirmNo.addEventListener(
-            "click",
-            closeConfirmModal
+        setStatusElement(
+            status,
+            request.status
         );
 
     }
@@ -1449,9 +1197,9 @@ function initializeModal() {
 }
 
 
-// ======================================================
+// ============================================================
 // FERMER MODAL
-// ======================================================
+// ============================================================
 
 function closeRequestModal() {
 
@@ -1472,12 +1220,72 @@ function closeRequestModal() {
         "true"
     );
 
+
+    currentRequest =
+        null;
+
 }
 
 
-// ======================================================
-// ACTIONS
-// ======================================================
+// ============================================================
+// INITIALISATION MODAL
+// ============================================================
+
+function initializeModal() {
+
+    if (closeModal) {
+
+        closeModal.addEventListener(
+            "click",
+            closeRequestModal
+        );
+
+    }
+
+
+    if (requestModal) {
+
+        requestModal.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    event.target ===
+                    requestModal
+                ) {
+
+                    closeRequestModal();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key ===
+                "Escape"
+            ) {
+
+                closeRequestModal();
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// ACTIONS MODAL
+// ============================================================
 
 function initializeActions() {
 
@@ -1485,7 +1293,19 @@ function initializeActions() {
 
         approveMerchantButton.addEventListener(
             "click",
-            approveCurrentRequest
+            () => {
+
+                if (
+                    currentRequest
+                ) {
+
+                    approveRequest(
+                        currentRequest
+                    );
+
+                }
+
+            }
         );
 
     }
@@ -1495,15 +1315,27 @@ function initializeActions() {
 
         rejectMerchantButton.addEventListener(
             "click",
-            rejectCurrentRequest
+            () => {
+
+                if (
+                    currentRequest
+                ) {
+
+                    rejectRequest(
+                        currentRequest
+                    );
+
+                }
+
+            }
         );
 
     }
 
 
-    if (contactMerchantButton) {
+    if (contactMerchant) {
 
-        contactMerchantButton.addEventListener(
+        contactMerchant.addEventListener(
             "click",
             contactCurrentMerchant
         );
@@ -1513,147 +1345,121 @@ function initializeActions() {
 }
 
 
-// ======================================================
-// APPROUVER DEMANDE COURANTE
-// ======================================================
+// ============================================================
+// APPROUVER
+// ============================================================
 
-async function approveCurrentRequest() {
+async function approveRequest(
+    request
+) {
 
-    if (!currentRequest) {
-
-        showToast(
-            "Nenhum pedido selecionado."
-        );
+    if (!request) {
 
         return;
 
     }
 
 
-    if (
-        normalizeStatus(
-            currentRequest.status
-        )
-        ===
-        "approved"
-    ) {
-
-        showToast(
-            "Este comerciante já foi aprovado."
+    const confirmed =
+        window.confirm(
+            "Deseja realmente aprovar este comerciante?"
         );
+
+
+    if (!confirmed) {
 
         return;
 
     }
-
-
-    if (
-        !currentRequest.userId
-    ) {
-
-        alert(
-            "❌ Erro: esta solicitação não possui userId."
-        );
-
-        console.error(
-            "Demande sans userId:",
-            currentRequest
-        );
-
-        return;
-
-    }
-
-
-    setActionButtonsDisabled(
-        true
-    );
 
 
     try {
 
-        // ==============================================
+        // ----------------------------------------------------
         // 1. CRÉER / METTRE À JOUR LE COMMERÇANT
-        // ==============================================
+        // ----------------------------------------------------
+
+        const merchantId =
+            request.userId ||
+            request.uid ||
+            request.id;
+
+
+        if (!merchantId) {
+
+            throw new Error(
+                "ID do comerciante não encontrado."
+            );
+
+        }
+
 
         await setDoc(
 
             doc(
                 db,
                 "merchants",
-                currentRequest.userId
+                merchantId
             ),
 
             {
 
                 uid:
-                    currentRequest.userId,
+                    merchantId,
 
-                shopName:
-                    currentRequest.shopName
-                    ||
-                    "",
-
-                ownerName:
-                    `${currentRequest.firstName || ""}
-                    ${currentRequest.lastName || ""}`
-                    .trim(),
+                userId:
+                    merchantId,
 
                 firstName:
-                    currentRequest.firstName
-                    ||
+                    request.firstName ||
                     "",
 
                 lastName:
-                    currentRequest.lastName
-                    ||
+                    request.lastName ||
                     "",
 
+                ownerName:
+                    `${request.firstName || ""} ${request.lastName || ""}`.trim(),
+
+                shopName:
+                    request.shopName ||
+                    "Loja",
+
                 phone:
-                    currentRequest.phone
-                    ||
+                    request.phone ||
                     "",
 
                 email:
-                    currentRequest.email
-                    ||
+                    request.email ||
                     "",
 
                 province:
-                    currentRequest.province
-                    ||
+                    request.province ||
                     "",
 
                 city:
-                    currentRequest.city
-                    ||
+                    request.city ||
                     "",
 
                 address:
-                    currentRequest.address
-                    ||
+                    request.address ||
                     "",
 
                 photo:
-                    currentRequest.photo
-                    ||
+                    request.photo ||
                     "",
 
                 logo:
-                    currentRequest.logo
-                    ||
-                    currentRequest.photo
-                    ||
+                    request.logo ||
+                    request.photo ||
                     "",
 
                 idCard:
-                    currentRequest.idCard
-                    ||
+                    request.idCard ||
                     "",
 
                 alvara:
-                    currentRequest.alvara
-                    ||
+                    request.alvara ||
                     "",
 
                 verified:
@@ -1671,7 +1477,7 @@ async function approveCurrentRequest() {
                 createdAt:
                     serverTimestamp(),
 
-                approvedAt:
+                updatedAt:
                     serverTimestamp()
 
             },
@@ -1683,16 +1489,16 @@ async function approveCurrentRequest() {
         );
 
 
-        // ==============================================
-        // 2. APPROUVER LA DEMANDE
-        // ==============================================
+        // ----------------------------------------------------
+        // 2. METTRE LA DEMANDE À APPROVED
+        // ----------------------------------------------------
 
         await updateDoc(
 
             doc(
                 db,
                 "merchantRequests",
-                currentRequest.id
+                request.id
             ),
 
             {
@@ -1704,19 +1510,13 @@ async function approveCurrentRequest() {
                     serverTimestamp(),
 
                 approvedBy:
-                    "SuperAdmin"
+                    "SuperAdmin",
+
+                updatedAt:
+                    serverTimestamp()
 
             }
 
-        );
-
-
-        currentRequest.status =
-            "approved";
-
-
-        updateModalStatus(
-            "approved"
         );
 
 
@@ -1727,9 +1527,6 @@ async function approveCurrentRequest() {
 
         closeRequestModal();
 
-
-        // Le onSnapshot actualisera automatiquement
-        // la liste et les statistiques.
 
     }
 
@@ -1742,20 +1539,8 @@ async function approveCurrentRequest() {
 
 
         alert(
-            "❌ Erro ao aprovar o comerciante.\n\n" +
-            (
-                error.message
-                ||
-                "Erro desconhecido."
-            )
-        );
-
-    }
-
-    finally {
-
-        setActionButtonsDisabled(
-            false
+            "Erro ao aprovar comerciante.\n\n" +
+            getFirebaseErrorMessage(error)
         );
 
     }
@@ -1763,34 +1548,15 @@ async function approveCurrentRequest() {
 }
 
 
-// ======================================================
-// REFUSER DEMANDE COURANTE
-// ======================================================
+// ============================================================
+// REFUSER
+// ============================================================
 
-async function rejectCurrentRequest() {
+async function rejectRequest(
+    request
+) {
 
-    if (!currentRequest) {
-
-        showToast(
-            "Nenhum pedido selecionado."
-        );
-
-        return;
-
-    }
-
-
-    if (
-        normalizeStatus(
-            currentRequest.status
-        )
-        ===
-        "rejected"
-    ) {
-
-        showToast(
-            "Este pedido já foi recusado."
-        );
+    if (!request) {
 
         return;
 
@@ -1798,7 +1564,7 @@ async function rejectCurrentRequest() {
 
 
     const reason =
-        prompt(
+        window.prompt(
             "Motivo da recusa:"
         );
 
@@ -1813,26 +1579,6 @@ async function rejectCurrentRequest() {
     }
 
 
-    const cleanReason =
-        reason.trim();
-
-
-    if (!cleanReason) {
-
-        alert(
-            "Informe o motivo da recusa."
-        );
-
-        return;
-
-    }
-
-
-    setActionButtonsDisabled(
-        true
-    );
-
-
     try {
 
         await updateDoc(
@@ -1840,7 +1586,7 @@ async function rejectCurrentRequest() {
             doc(
                 db,
                 "merchantRequests",
-                currentRequest.id
+                request.id
             ),
 
             {
@@ -1849,25 +1595,19 @@ async function rejectCurrentRequest() {
                     "rejected",
 
                 rejectedReason:
-                    cleanReason,
+                    reason.trim(),
 
                 rejectedAt:
                     serverTimestamp(),
 
                 rejectedBy:
-                    "SuperAdmin"
+                    "SuperAdmin",
+
+                updatedAt:
+                    serverTimestamp()
 
             }
 
-        );
-
-
-        currentRequest.status =
-            "rejected";
-
-
-        updateModalStatus(
-            "rejected"
         );
 
 
@@ -1889,20 +1629,8 @@ async function rejectCurrentRequest() {
 
 
         alert(
-            "❌ Erro ao recusar o pedido.\n\n" +
-            (
-                error.message
-                ||
-                "Erro desconhecido."
-            )
-        );
-
-    }
-
-    finally {
-
-        setActionButtonsDisabled(
-            false
+            "Erro ao recusar comerciante.\n\n" +
+            getFirebaseErrorMessage(error)
         );
 
     }
@@ -1910,17 +1638,13 @@ async function rejectCurrentRequest() {
 }
 
 
-// ======================================================
-// CONTACTER VIA WHATSAPP
-// ======================================================
+// ============================================================
+// CONTACTER WHATSAPP
+// ============================================================
 
 function contactCurrentMerchant() {
 
     if (!currentRequest) {
-
-        showToast(
-            "Nenhum comerciante selecionado."
-        );
 
         return;
 
@@ -1929,8 +1653,7 @@ function contactCurrentMerchant() {
 
     let phone =
         String(
-            currentRequest.phone
-            ||
+            currentRequest.phone ||
             ""
         ).replace(
             /\D/g,
@@ -1950,10 +1673,12 @@ function contactCurrentMerchant() {
 
 
     // Angola
+    // Si le numéro commence par 9 et contient 9 chiffres,
+    // on ajoute automatiquement +244.
+
     if (
+        phone.length === 9 &&
         phone.startsWith("9")
-        &&
-        phone.length === 9
     ) {
 
         phone =
@@ -1966,238 +1691,434 @@ function contactCurrentMerchant() {
     window.open(
         "https://wa.me/" +
         phone,
-        "_blank",
-        "noopener"
+        "_blank"
     );
 
 }
 
 
-// ======================================================
-// DÉSACTIVER BOUTONS PENDANT ACTION
-// ======================================================
+// ============================================================
+// BOUTON RETOUR
+// ============================================================
 
-function setActionButtonsDisabled(
-    disabled
-) {
+function initializeBackButton() {
 
-    if (approveMerchantButton) {
-
-        approveMerchantButton.disabled =
-            disabled;
-
-    }
-
-
-    if (rejectMerchantButton) {
-
-        rejectMerchantButton.disabled =
-            disabled;
-
-    }
-
-
-    if (contactMerchantButton) {
-
-        contactMerchantButton.disabled =
-            disabled;
-
-    }
-
-}
-
-
-// ======================================================
-// CONFIRMATION
-// ======================================================
-
-function closeConfirmModal() {
-
-    if (!confirmModal) {
+    if (!backButton) {
 
         return;
 
     }
 
 
-    confirmModal.classList.add(
-        "hidden"
+    backButton.addEventListener(
+        "click",
+        () => {
+
+            if (
+                document.referrer
+            ) {
+
+                window.history.back();
+
+            }
+
+            else {
+
+                window.location.href =
+                    "admin-v2.html";
+
+            }
+
+        }
     );
 
 }
 
 
-// ======================================================
-// HEADER
-// ======================================================
+// ============================================================
+// ACTUALISER
+// ============================================================
 
-function initializeHeader() {
-
-    if (backButton) {
-
-        backButton.addEventListener(
-            "click",
-            () => {
-
-                if (
-                    window.history.length >
-                    1
-                ) {
-
-                    window.history.back();
-
-                } else {
-
-                    window.location.href =
-                        "admin-v2.html";
-
-                }
-
-            }
-        );
-
-    }
-
-
-    if (refreshButton) {
-
-        refreshButton.addEventListener(
-            "click",
-            () => {
-
-                refreshRequests();
-
-            }
-        );
-
-    }
-
-}
-
-
-// ======================================================
-// ACTUALISER MANUELLEMENT
-// ======================================================
-
-async function refreshRequests() {
+function initializeRefreshButton() {
 
     if (!refreshButton) {
 
-        listenMerchantRequests();
+        return;
+
+    }
+
+
+    refreshButton.addEventListener(
+        "click",
+        () => {
+
+            refreshButton.disabled =
+                true;
+
+
+            setTimeout(
+                () => {
+
+                    refreshButton.disabled =
+                        false;
+
+                },
+                500
+            );
+
+
+            listenMerchantRequests();
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// TEXTE
+// ============================================================
+
+function setText(
+    id,
+    value
+) {
+
+    const element =
+        document.getElementById(id);
+
+
+    if (element) {
+
+        element.textContent =
+            value;
+
+    }
+
+}
+
+
+// ============================================================
+// TOAST
+// ============================================================
+
+function showToast(
+    message
+) {
+
+    if (
+        !toast ||
+        !toastMessage
+    ) {
 
         return;
 
     }
 
 
-    refreshButton.disabled =
-        true;
+    toastMessage.textContent =
+        message;
 
 
-    refreshButton.style.opacity =
-        "0.6";
+    toast.classList.add(
+        "show"
+    );
+
+
+    setTimeout(
+        () => {
+
+            toast.classList.remove(
+                "show"
+            );
+
+        },
+        3000
+    );
+
+}
+
+
+// ============================================================
+// NORMALISER LE STATUT
+// ============================================================
+
+function normalizeStatus(
+    status
+) {
+
+    const value =
+        String(
+            status ||
+            "pending"
+        )
+            .trim()
+            .toLowerCase();
+
+
+    if (
+        value === "approved" ||
+        value === "aprovado"
+    ) {
+
+        return "approved";
+
+    }
+
+
+    if (
+        value === "rejected" ||
+        value === "recusado" ||
+        value === "rejeitado"
+    ) {
+
+        return "rejected";
+
+    }
+
+
+    return "pending";
+
+}
+
+
+// ============================================================
+// DATE FIREBASE / JAVASCRIPT
+// ============================================================
+
+function getTimestamp(
+    value
+) {
+
+    if (!value) {
+
+        return 0;
+
+    }
+
+
+    if (
+        typeof value.toMillis ===
+        "function"
+    ) {
+
+        return value.toMillis();
+
+    }
+
+
+    if (
+        value.seconds !==
+        undefined
+    ) {
+
+        return (
+            Number(value.seconds) *
+            1000
+        );
+
+    }
+
+
+    const date =
+        new Date(value);
+
+
+    return Number.isNaN(
+        date.getTime()
+    )
+        ? 0
+        : date.getTime();
+
+}
+
+
+// ============================================================
+// FORMATER DATE
+// ============================================================
+
+function formatDate(
+    value
+) {
+
+    const timestamp =
+        getTimestamp(value);
+
+
+    if (!timestamp) {
+
+        return "-";
+
+    }
 
 
     try {
 
-        showLoader();
-
-
-        const snapshot =
-            await getDocs(
-                collection(
-                    db,
-                    "merchantRequests"
-                )
-            );
-
-
-        requests = [];
-
-
-        snapshot.forEach(
-            (docSnap) => {
-
-                requests.push({
-
-                    id:
-                        docSnap.id,
-
-                    ...docSnap.data()
-
-                });
-
+        return new Date(
+            timestamp
+        ).toLocaleDateString(
+            "pt-PT",
+            {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric"
             }
         );
 
-
-        updateStatistics();
-
-        applyFilters();
-
-        hideLoader();
-
-
-        showToast(
-            "✅ Pedidos atualizados."
-        );
-
     }
 
-    catch (error) {
+    catch {
 
-        console.error(
-            "❌ Erreur actualisation:",
-            error
-        );
-
-
-        hideLoader();
-
-
-        showToast(
-            "❌ Erro ao atualizar."
-
-        );
-
-    }
-
-    finally {
-
-        refreshButton.disabled =
-            false;
-
-
-        refreshButton.style.opacity =
-            "1";
+        return "-";
 
     }
 
 }
 
 
-// ======================================================
-// NETTOYAGE À LA FERMETURE
-// ======================================================
+// ============================================================
+// VÉRIFIER SI DATE = AUJOURD'HUI
+// ============================================================
 
-window.addEventListener(
-    "beforeunload",
-    () => {
+function isToday(
+    value
+) {
 
-        if (unsubscribeRequests) {
+    const timestamp =
+        getTimestamp(value);
 
-            unsubscribeRequests();
 
-        }
+    if (!timestamp) {
+
+        return false;
 
     }
-);
 
 
-// ======================================================
-// FIN
-// ======================================================
+    const date =
+        new Date(
+            timestamp
+        );
 
-console.log(
-    "✅ merchant-requests.js chargé correctement."
-);
+
+    const today =
+        new Date();
+
+
+    return (
+
+        date.getDate() ===
+        today.getDate()
+
+        &&
+
+        date.getMonth() ===
+        today.getMonth()
+
+        &&
+
+        date.getFullYear() ===
+        today.getFullYear()
+
+    );
+
+}
+
+
+// ============================================================
+// ÉCHAPPER HTML
+// ============================================================
+
+function escapeHTML(
+    value
+) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.textContent =
+        String(
+            value ??
+            ""
+        );
+
+
+    return div.innerHTML;
+
+}
+
+
+// ============================================================
+// ERREURS FIREBASE
+// ============================================================
+
+function getFirebaseErrorMessage(
+    error
+) {
+
+    if (!error) {
+
+        return "Erro desconhecido.";
+
+    }
+
+
+    if (
+        error.code ===
+        "permission-denied"
+    ) {
+
+        return (
+            "Permissão negada pelo Firebase Firestore. " +
+            "Verifique as Firestore Rules."
+        );
+
+    }
+
+
+    if (
+        error.code ===
+        "failed-precondition"
+    ) {
+
+        return (
+            "Firebase exige uma configuração adicional."
+        );
+
+    }
+
+
+    if (
+        error.code ===
+        "unavailable"
+    ) {
+
+        return (
+            "Firebase temporariamente indisponível. " +
+            "Verifique sua conexão."
+        );
+
+    }
+
+
+    if (
+        error.code ===
+        "not-found"
+    ) {
+
+        return (
+            "A coleção ou documento solicitado não foi encontrado."
+        );
+
+    }
+
+
+    return (
+        error.message ||
+        "Erro desconhecido ao carregar os pedidos."
+    );
+
+}
