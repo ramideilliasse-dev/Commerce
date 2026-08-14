@@ -14591,3 +14591,46 @@ else {
         );
 
 }
+// ==================================================
+// NAVIGATION DES CARTES UTILIZADORES / COMERCIANTES
+// ==================================================
+
+function setupDashboardNavigationCards() {
+
+    const cards = document.querySelectorAll(
+        ".dashboardNavigationCard"
+    );
+
+    cards.forEach(card => {
+
+        const page = card.dataset.page;
+
+        if (!page) return;
+
+        card.addEventListener("click", () => {
+
+            window.location.href = page;
+
+        });
+
+        // Permet aussi d'utiliser la carte avec le clavier
+        card.addEventListener("keydown", event => {
+
+            if (
+                event.key === "Enter" ||
+                event.key === " "
+            ) {
+
+                event.preventDefault();
+
+                window.location.href = page;
+
+            }
+
+        });
+
+    });
+
+}
+
+setupDashboardNavigationCards();
