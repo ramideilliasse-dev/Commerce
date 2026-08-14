@@ -1,6 +1,7 @@
-/* =========================================================
+ /* =========================================================
    TOMA ADMIN — UTILIZADORES
    utilizadores.css
+   VERSION MOBILE / IPHONE + DESKTOP
 ========================================================= */
 
 * {
@@ -10,14 +11,19 @@
 }
 
 :root {
+
     --bg: #f4f6f8;
     --card: #ffffff;
+
     --text: #111827;
+    --text-soft: #374151;
     --muted: #6b7280;
+
     --border: #e5e7eb;
 
     --green: #20c463;
     --green-dark: #159447;
+    --green-light: #ecfdf3;
 
     --blue: #3b82f6;
     --blue-light: #eff6ff;
@@ -34,64 +40,132 @@
     --shadow:
         0 8px 30px rgba(15, 23, 42, 0.06);
 
+    --shadow-small:
+        0 5px 18px rgba(15, 23, 42, 0.05);
+
     --radius: 24px;
 }
 
+
+/* =========================================================
+   BASE
+========================================================= */
+
 html {
     scroll-behavior: smooth;
+    background: var(--bg);
 }
 
 body {
-    font-family: Inter, -apple-system, BlinkMacSystemFont,
-        "Segoe UI", sans-serif;
+
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
 
     background: var(--bg);
+
     color: var(--text);
 
     min-height: 100vh;
 
     -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+
+    overflow-x: hidden;
 }
+
+
+/* =========================================================
+   BUTTON RESET
+========================================================= */
+
+button,
+input,
+select {
+
+    font-family: inherit;
+}
+
+button {
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+a {
+
+    color: inherit;
+
+    text-decoration: none;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
 
 /* =========================================================
    HEADER
 ========================================================= */
 
 .pageHeader {
+
     position: sticky;
+
     top: 0;
+
     z-index: 100;
 
+    width: 100%;
+
     display: flex;
+
     align-items: center;
-    gap: 18px;
+
+    gap: 14px;
 
     padding:
-        max(18px, env(safe-area-inset-top))
-        20px
-        18px;
+        max(16px, env(safe-area-inset-top))
+        16px
+        16px;
 
-    background: rgba(255, 255, 255, 0.94);
+    background:
+        rgba(255, 255, 255, 0.96);
 
     backdrop-filter: blur(18px);
+
     -webkit-backdrop-filter: blur(18px);
 
-    border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+    border-bottom:
+        1px solid rgba(229, 231, 235, 0.8);
 }
 
+
+/* =========================================================
+   HEADER BUTTON
+========================================================= */
+
 .headerButton {
+
     width: 58px;
+
     height: 58px;
 
     flex-shrink: 0;
 
     border: 0;
+
     border-radius: 20px;
 
     background: #ffffff;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     color: #111111;
@@ -107,71 +181,111 @@ body {
 }
 
 .headerButton:active {
+
     transform: scale(0.93);
+
     background: #f3f4f6;
 }
 
 .headerButton .material-symbols-rounded {
+
     font-size: 30px;
 }
 
+
+/* =========================================================
+   HEADER TITLE
+========================================================= */
+
 .headerTitle {
+
     flex: 1;
+
     min-width: 0;
 }
 
 .headerTitle h1 {
-    font-size: clamp(21px, 5vw, 32px);
+
+    font-size:
+        clamp(23px, 6vw, 34px);
+
     line-height: 1.1;
 
-    font-weight: 800;
+    font-weight: 850;
 
-    letter-spacing: -0.8px;
+    letter-spacing: -1px;
 
     white-space: nowrap;
+
     overflow: hidden;
+
     text-overflow: ellipsis;
 }
 
 .headerTitle p {
-    margin-top: 5px;
+
+    margin-top: 6px;
 
     font-size: 14px;
 
+    line-height: 1.4;
+
     color: var(--muted);
 
-    font-weight: 500;
+    font-weight: 600;
+
+    max-width: 100%;
 }
 
+
 /* =========================================================
-   SEARCH
+   SEARCH SECTION
 ========================================================= */
 
 .searchSection {
-    padding: 20px 20px 10px;
+
+    padding:
+        18px
+        16px
+        12px;
 }
 
+
+/* =========================================================
+   SEARCH INPUT
+========================================================= */
+
 #searchInput {
+
     width: 100%;
 
-    height: 58px;
+    height: 60px;
 
-    padding: 0 20px 0 50px;
+    padding:
+        0
+        18px
+        0
+        52px;
 
-    border: 1px solid var(--border);
+    border:
+        1px solid var(--border);
 
-    border-radius: 18px;
+    border-radius: 20px;
 
     background:
+
         #ffffff
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E")
-        no-repeat 18px center;
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='23' height='23' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E")
+
+        no-repeat
+        18px
+        center;
 
     outline: none;
 
-    font-family: inherit;
     font-size: 16px;
-    font-weight: 500;
+
+    font-weight: 600;
 
     color: var(--text);
 
@@ -184,72 +298,103 @@ body {
 }
 
 #searchInput::placeholder {
+
     color: #9ca3af;
+
+    font-weight: 500;
 }
 
 #searchInput:focus {
-    border-color: rgba(32, 196, 99, 0.7);
+
+    border-color:
+        rgba(32, 196, 99, 0.7);
 
     box-shadow:
         0 0 0 4px rgba(32, 196, 99, 0.10);
 }
 
+
 /* =========================================================
-   STATS
+   STATS SECTION
 ========================================================= */
 
 .statsSection {
+
     display: grid;
 
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
 
-    gap: 14px;
+    gap: 12px;
 
-    padding: 12px 20px 20px;
+    padding:
+        10px
+        16px
+        18px;
 }
 
+
+/* =========================================================
+   STAT CARD
+========================================================= */
+
 .statCard {
+
     position: relative;
 
-    min-height: 125px;
+    min-height: 132px;
 
-    padding: 18px;
+    padding: 17px;
 
     background: var(--card);
 
-    border: 1px solid rgba(229, 231, 235, 0.9);
+    border:
+        1px solid rgba(229, 231, 235, 0.95);
 
-    border-radius: 24px;
+    border-radius: 23px;
 
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-small);
 
     overflow: hidden;
 }
 
 .statCard::after {
+
     content: "";
 
     position: absolute;
 
-    width: 90px;
-    height: 90px;
+    width: 95px;
 
-    right: -30px;
-    bottom: -40px;
+    height: 95px;
+
+    right: -35px;
+
+    bottom: -42px;
 
     border-radius: 50%;
 
-    background: rgba(0, 0, 0, 0.025);
+    background:
+        rgba(0, 0, 0, 0.025);
 
     pointer-events: none;
 }
 
+
+/* =========================================================
+   STAT ICON
+========================================================= */
+
 .statIcon {
+
     width: 48px;
+
     height: 48px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     border-radius: 16px;
@@ -257,54 +402,77 @@ body {
     font-size: 24px;
 
     margin-bottom: 12px;
+
+    background: #f3f4f6;
 }
 
 .statCard.blue .statIcon {
+
     background: var(--blue-light);
 }
 
 .statCard.green .statIcon {
-    background: #ecfdf3;
+
+    background: var(--green-light);
 }
 
 .statCard.red .statIcon {
+
     background: var(--red-light);
 }
 
 .statCard.purple .statIcon {
+
     background: var(--purple-light);
 }
 
+.statCard.orange .statIcon {
+
+    background: var(--orange-light);
+}
+
+
+/* =========================================================
+   STAT INFO
+========================================================= */
+
 .statInfo h2 {
+
     font-size: 30px;
 
     line-height: 1;
 
-    font-weight: 800;
+    font-weight: 850;
 
     letter-spacing: -1px;
 }
 
 .statInfo p {
+
     margin-top: 7px;
 
     font-size: 13px;
 
     color: var(--muted);
 
-    font-weight: 600;
+    font-weight: 650;
 }
 
+
 /* =========================================================
-   FILTERS
+   FILTER SECTION
 ========================================================= */
 
 .filterSection {
+
     display: flex;
 
-    gap: 10px;
+    gap: 9px;
 
-    padding: 5px 20px 20px;
+    padding:
+        4px
+        16px
+        18px;
 
     overflow-x: auto;
 
@@ -314,29 +482,37 @@ body {
 }
 
 .filterSection::-webkit-scrollbar {
+
     display: none;
 }
 
+
+/* =========================================================
+   FILTER BUTTON
+========================================================= */
+
 .filterButton {
+
     flex-shrink: 0;
 
-    min-height: 48px;
+    min-height: 50px;
 
-    padding: 0 20px;
+    padding:
+        0
+        20px;
 
-    border: 1px solid var(--border);
+    border:
+        1px solid var(--border);
 
-    border-radius: 16px;
+    border-radius: 17px;
 
     background: #ffffff;
 
     color: #4b5563;
 
-    font-family: inherit;
-
     font-size: 14px;
 
-    font-weight: 700;
+    font-weight: 800;
 
     cursor: pointer;
 
@@ -345,13 +521,17 @@ body {
         background 0.18s ease,
         color 0.18s ease,
         border-color 0.18s ease;
+
+    white-space: nowrap;
 }
 
 .filterButton:active {
+
     transform: scale(0.95);
 }
 
 .filterButton.active {
+
     background: var(--green);
 
     border-color: var(--green);
@@ -362,44 +542,64 @@ body {
         0 7px 18px rgba(32, 196, 99, 0.20);
 }
 
+
 /* =========================================================
    USERS SECTION
 ========================================================= */
 
 .usersSection {
-    padding: 0 20px 30px;
+
+    width: 100%;
+
+    padding:
+        0
+        16px
+        35px;
 }
 
+
+/* =========================================================
+   USERS HEADER
+========================================================= */
+
 .usersHeader {
+
     display: flex;
 
     align-items: center;
+
     justify-content: space-between;
 
-    margin-bottom: 14px;
+    gap: 10px;
+
+    margin-bottom: 13px;
 }
 
 .usersHeader h2 {
+
     font-size: 21px;
 
-    font-weight: 800;
+    font-weight: 850;
 
     letter-spacing: -0.4px;
 }
 
 .usersHeader span {
+
     font-size: 13px;
 
     color: var(--muted);
 
-    font-weight: 600;
+    font-weight: 650;
 }
+
 
 /* =========================================================
    USERS LIST
 ========================================================= */
 
 .usersList {
+
     display: flex;
 
     flex-direction: column;
@@ -407,26 +607,31 @@ body {
     gap: 12px;
 }
 
+
 /* =========================================================
    USER CARD
 ========================================================= */
 
 .userCard {
+
     position: relative;
+
+    width: 100%;
 
     display: flex;
 
     align-items: center;
 
-    gap: 14px;
+    gap: 13px;
 
-    padding: 16px;
+    padding: 15px;
 
     background: #ffffff;
 
-    border: 1px solid rgba(229, 231, 235, 0.9);
+    border:
+        1px solid rgba(229, 231, 235, 0.95);
 
-    border-radius: 22px;
+    border-radius: 23px;
 
     box-shadow:
         0 6px 22px rgba(15, 23, 42, 0.05);
@@ -436,42 +641,62 @@ body {
     transition:
         transform 0.18s ease,
         box-shadow 0.18s ease;
+
+    overflow: hidden;
 }
 
 .userCard:active {
+
     transform: scale(0.985);
 
     box-shadow:
         0 3px 12px rgba(15, 23, 42, 0.06);
 }
 
+
+/* =========================================================
+   USER AVATAR
+========================================================= */
+
 .userAvatar {
-    width: 58px;
-    height: 58px;
+
+    width: 62px;
+
+    height: 62px;
 
     flex-shrink: 0;
 
-    border-radius: 18px;
+    border-radius: 19px;
 
     object-fit: cover;
 
     background: #f3f4f6;
 
-    border: 1px solid #e5e7eb;
+    border:
+        1px solid #e5e7eb;
 }
 
+
+/* =========================================================
+   USER INFO
+========================================================= */
+
 .userInfo {
+
     flex: 1;
 
     min-width: 0;
 }
 
 .userName {
-    font-size: 16px;
 
-    font-weight: 800;
+    font-size: 17px;
+
+    font-weight: 850;
 
     line-height: 1.25;
+
+    color: var(--text);
 
     white-space: nowrap;
 
@@ -481,11 +706,14 @@ body {
 }
 
 .userEmail {
+
     margin-top: 4px;
 
     font-size: 13px;
 
     color: var(--muted);
+
+    font-weight: 550;
 
     white-space: nowrap;
 
@@ -494,91 +722,118 @@ body {
     text-overflow: ellipsis;
 }
 
+
+/* =========================================================
+   USER META
+========================================================= */
+
 .userMeta {
+
     display: flex;
 
     flex-wrap: wrap;
 
-    gap: 7px;
+    gap: 6px;
 
     margin-top: 8px;
 }
 
 .userMeta span {
+
     font-size: 11px;
 
-    font-weight: 700;
+    font-weight: 750;
 
     color: #6b7280;
 
     background: #f3f4f6;
 
-    padding: 5px 8px;
+    padding:
+        6px
+        9px;
 
-    border-radius: 8px;
+    border-radius: 9px;
+
+    line-height: 1;
 }
+
 
 /* =========================================================
    USER STATUS
 ========================================================= */
 
 .userStatus {
+
     flex-shrink: 0;
 
     align-self: flex-start;
 
-    padding: 6px 9px;
+    padding:
+        7px
+        10px;
 
-    border-radius: 9px;
+    border-radius: 10px;
 
     font-size: 11px;
 
-    font-weight: 800;
+    font-weight: 850;
+
+    white-space: nowrap;
 }
 
 .statusActive {
+
     color: #15803d;
 
     background: #dcfce7;
 }
 
 .statusBlocked {
+
     color: #b91c1c;
 
     background: #fee2e2;
 }
 
 .statusPending {
+
     color: #b45309;
 
     background: #fef3c7;
 }
 
 .statusUnknown {
+
     color: #4b5563;
 
     background: #f3f4f6;
 }
+
 
 /* =========================================================
    USER ACTIONS
 ========================================================= */
 
 .userActions {
+
     display: flex;
 
     flex-direction: column;
 
     gap: 7px;
+
+    flex-shrink: 0;
 }
 
 .userActionButton {
-    width: 40px;
-    height: 40px;
+
+    width: 42px;
+
+    height: 42px;
 
     border: 0;
 
-    border-radius: 12px;
+    border-radius: 13px;
 
     background: #f3f4f6;
 
@@ -588,7 +843,7 @@ body {
 
     justify-content: center;
 
-    font-size: 18px;
+    font-size: 19px;
 
     cursor: pointer;
 
@@ -598,47 +853,63 @@ body {
 }
 
 .userActionButton:active {
-    transform: scale(0.9);
+
+    transform: scale(0.90);
 }
 
 .userActionButton.view {
-    background: #eff6ff;
+
+    background: var(--blue-light);
 }
 
 .userActionButton.block {
-    background: #fef2f2;
+
+    background: var(--red-light);
 }
 
 .userActionButton.unblock {
-    background: #ecfdf5;
+
+    background: var(--green-light);
 }
+
 
 /* =========================================================
    EMPTY STATE
 ========================================================= */
 
 .emptyState {
-    padding: 70px 25px;
+
+    padding:
+        70px
+        25px;
 
     text-align: center;
 }
 
 .emptyState.hidden {
+
     display: none;
 }
 
 .emptyIcon {
+
     width: 82px;
+
     height: 82px;
 
-    margin: 0 auto 20px;
+    margin:
+        0
+        auto
+        20px;
 
     border-radius: 26px;
 
     background: #ffffff;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     font-size: 38px;
@@ -647,15 +918,20 @@ body {
 }
 
 .emptyState h2 {
+
     font-size: 21px;
 
-    font-weight: 800;
+    font-weight: 850;
 }
 
 .emptyState p {
+
     max-width: 320px;
 
-    margin: 10px auto 0;
+    margin:
+        10px
+        auto
+        0;
 
     color: var(--muted);
 
@@ -664,11 +940,13 @@ body {
     line-height: 1.6;
 }
 
+
 /* =========================================================
    LOADER
 ========================================================= */
 
 .loaderScreen {
+
     position: fixed;
 
     inset: 0;
@@ -689,69 +967,91 @@ body {
         rgba(244, 246, 248, 0.96);
 
     backdrop-filter: blur(10px);
+
     -webkit-backdrop-filter: blur(10px);
 }
 
 .loaderScreen.hidden {
+
     display: none;
 }
 
 .loaderCircle {
+
     width: 48px;
+
     height: 48px;
 
-    border: 4px solid #d1d5db;
+    border:
+        4px solid #d1d5db;
 
-    border-top-color: var(--green);
+    border-top-color:
+        var(--green);
 
     border-radius: 50%;
 
     animation:
-        loaderSpin 0.8s linear infinite;
+        loaderSpin
+        0.8s
+        linear
+        infinite;
 }
 
 .loaderScreen p {
+
     color: var(--muted);
 
     font-size: 14px;
 
-    font-weight: 600;
+    font-weight: 650;
 }
 
 @keyframes loaderSpin {
+
     to {
         transform: rotate(360deg);
     }
 }
+
 
 /* =========================================================
    ERROR STATE
 ========================================================= */
 
 .errorState {
-    padding: 70px 25px;
+
+    padding:
+        70px
+        25px;
 
     text-align: center;
 }
 
 .errorState.hidden {
+
     display: none;
 }
 
 .errorIcon {
+
     font-size: 54px;
 
     margin-bottom: 18px;
 }
 
 .errorState h2 {
+
     font-size: 23px;
 
-    font-weight: 800;
+    font-weight: 850;
 }
 
 .errorState p {
-    margin: 10px auto 20px;
+
+    margin:
+        10px
+        auto
+        20px;
 
     max-width: 340px;
 
@@ -761,32 +1061,35 @@ body {
 }
 
 .retryButton {
-    min-height: 48px;
 
-    padding: 0 22px;
+    min-height: 50px;
+
+    padding:
+        0
+        24px;
 
     border: 0;
 
-    border-radius: 14px;
+    border-radius: 15px;
 
     background: var(--green);
 
     color: #ffffff;
 
-    font-family: inherit;
-
     font-size: 14px;
 
-    font-weight: 800;
+    font-weight: 850;
 
     cursor: pointer;
 }
+
 
 /* =========================================================
    MODAL DETAILS
 ========================================================= */
 
 .userModal {
+
     position: fixed;
 
     inset: 0;
@@ -812,6 +1115,7 @@ body {
 }
 
 .userModal.hidden {
+
     opacity: 0;
 
     visibility: hidden;
@@ -819,7 +1123,13 @@ body {
     pointer-events: none;
 }
 
+
+/* =========================================================
+   MODAL CONTENT
+========================================================= */
+
 .modalContent {
+
     width: 100%;
 
     max-width: 600px;
@@ -838,49 +1148,71 @@ body {
 
     padding:
         20px
-        20px
+        18px
         max(25px, env(safe-area-inset-bottom));
 
     transform: translateY(0);
 
-    animation: modalOpen 0.22s ease;
+    animation:
+        modalOpen
+        0.22s
+        ease;
 }
 
 .userModal.hidden .modalContent {
+
     transform: translateY(20px);
 }
 
 @keyframes modalOpen {
+
     from {
+
         transform: translateY(30px);
+
         opacity: 0;
     }
 
     to {
+
         transform: translateY(0);
+
         opacity: 1;
     }
 }
 
+
+/* =========================================================
+   MODAL HEADER
+========================================================= */
+
 .modalHeader {
+
     display: flex;
 
     align-items: center;
 
     justify-content: space-between;
 
-    margin-bottom: 22px;
+    gap: 15px;
+
+    margin-bottom: 20px;
 }
 
 .modalHeader h2 {
+
     font-size: 22px;
 
-    font-weight: 800;
+    font-weight: 850;
 }
 
 .modalClose {
+
     width: 44px;
+
     height: 44px;
+
+    flex-shrink: 0;
 
     border: 0;
 
@@ -893,7 +1225,13 @@ body {
     cursor: pointer;
 }
 
+
+/* =========================================================
+   MODAL USER HEADER
+========================================================= */
+
 .modalUserHeader {
+
     display: flex;
 
     align-items: center;
@@ -910,8 +1248,12 @@ body {
 }
 
 .modalUserAvatar {
+
     width: 68px;
+
     height: 68px;
+
+    flex-shrink: 0;
 
     border-radius: 20px;
 
@@ -921,18 +1263,21 @@ body {
 }
 
 .modalUserInfo {
+
     min-width: 0;
 }
 
 .modalUserInfo h3 {
+
     font-size: 19px;
 
-    font-weight: 800;
+    font-weight: 850;
 
     overflow-wrap: anywhere;
 }
 
 .modalUserInfo p {
+
     margin-top: 4px;
 
     font-size: 13px;
@@ -942,29 +1287,35 @@ body {
     overflow-wrap: anywhere;
 }
 
+
 /* =========================================================
    DETAILS GRID
 ========================================================= */
 
 .detailsGrid {
+
     display: grid;
 
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
 
     gap: 10px;
 }
 
 .detailCard {
+
     padding: 14px;
 
     background: #f8fafc;
 
-    border: 1px solid #eef0f3;
+    border:
+        1px solid #eef0f3;
 
     border-radius: 16px;
 }
 
 .detailCard label {
+
     display: block;
 
     margin-bottom: 6px;
@@ -973,25 +1324,29 @@ body {
 
     font-size: 11px;
 
-    font-weight: 700;
+    font-weight: 750;
 }
 
 .detailCard div {
+
     font-size: 14px;
 
-    font-weight: 700;
+    font-weight: 750;
 
     overflow-wrap: anywhere;
 }
+
 
 /* =========================================================
    MODAL ACTIONS
 ========================================================= */
 
 .modalActions {
+
     display: grid;
 
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
 
     gap: 10px;
 
@@ -999,17 +1354,16 @@ body {
 }
 
 .modalActionButton {
+
     min-height: 50px;
 
     border: 0;
 
     border-radius: 15px;
 
-    font-family: inherit;
-
     font-size: 14px;
 
-    font-weight: 800;
+    font-weight: 850;
 
     cursor: pointer;
 
@@ -1018,38 +1372,45 @@ body {
 }
 
 .modalActionButton:active {
+
     transform: scale(0.96);
 }
 
 .modalActionButton.block {
+
     background: #fee2e2;
 
     color: #b91c1c;
 }
 
 .modalActionButton.unblock {
+
     background: #dcfce7;
 
     color: #15803d;
 }
 
 .modalActionButton.delete {
+
     background: #111827;
 
     color: #ffffff;
 }
 
 .modalActionButton.cancel {
+
     background: #f3f4f6;
 
     color: #374151;
 }
+
 
 /* =========================================================
    CONFIRM MODAL
 ========================================================= */
 
 .confirmModal {
+
     position: fixed;
 
     inset: 0;
@@ -1069,10 +1430,12 @@ body {
 }
 
 .confirmModal.hidden {
+
     display: none;
 }
 
 .confirmCard {
+
     width: 100%;
 
     max-width: 400px;
@@ -1088,12 +1451,14 @@ body {
 }
 
 .confirmCard h3 {
+
     font-size: 20px;
 
-    font-weight: 800;
+    font-weight: 850;
 }
 
 .confirmCard p {
+
     margin-top: 10px;
 
     color: var(--muted);
@@ -1104,9 +1469,11 @@ body {
 }
 
 .confirmButtons {
+
     display: grid;
 
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns:
+        1fr 1fr;
 
     gap: 10px;
 
@@ -1114,40 +1481,44 @@ body {
 }
 
 .confirmButton {
+
     min-height: 48px;
 
     border: 0;
 
     border-radius: 14px;
 
-    font-family: inherit;
-
-    font-weight: 800;
+    font-weight: 850;
 
     cursor: pointer;
 }
 
 .confirmButton.yes {
+
     background: var(--red);
 
     color: #ffffff;
 }
 
 .confirmButton.no {
+
     background: #f3f4f6;
 
     color: #374151;
 }
+
 
 /* =========================================================
    TOAST
 ========================================================= */
 
 .toast {
+
     position: fixed;
 
-    left: 20px;
-    right: 20px;
+    left: 16px;
+
+    right: 16px;
 
     bottom:
         max(20px, env(safe-area-inset-bottom));
@@ -1170,15 +1541,19 @@ body {
 }
 
 .toast.show {
+
     opacity: 1;
 
     transform: translateY(0);
 }
 
 #toastMessage {
+
     max-width: 420px;
 
-    padding: 13px 18px;
+    padding:
+        13px
+        18px;
 
     border-radius: 15px;
 
@@ -1191,10 +1566,183 @@ body {
 
     font-size: 14px;
 
-    font-weight: 700;
+    font-weight: 750;
 
     text-align: center;
 }
+
+
+/* =========================================================
+   IPHONE — 390px À 430px
+========================================================= */
+
+@media (min-width: 381px) and (max-width: 699px) {
+
+    .pageHeader {
+
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .statsSection {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 14px;
+    }
+
+    .statCard {
+
+        min-height: 140px;
+
+        padding: 18px;
+    }
+
+    .userCard {
+
+        padding: 17px;
+    }
+
+    .userAvatar {
+
+        width: 64px;
+        height: 64px;
+    }
+}
+
+
+/* =========================================================
+   PETITS IPHONE
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .pageHeader {
+
+        gap: 9px;
+
+        padding-left: 12px;
+
+        padding-right: 12px;
+    }
+
+    .headerButton {
+
+        width: 50px;
+
+        height: 50px;
+
+        border-radius: 17px;
+    }
+
+    .headerTitle h1 {
+
+        font-size: 20px;
+    }
+
+    .headerTitle p {
+
+        font-size: 12px;
+    }
+
+    .searchSection,
+    .statsSection,
+    .filterSection,
+    .usersSection {
+
+        padding-left: 12px;
+
+        padding-right: 12px;
+    }
+
+    .statsSection {
+
+        gap: 9px;
+    }
+
+    .statCard {
+
+        padding: 14px;
+
+        min-height: 120px;
+
+        border-radius: 20px;
+    }
+
+    .statIcon {
+
+        width: 43px;
+
+        height: 43px;
+
+        border-radius: 14px;
+
+        font-size: 21px;
+    }
+
+    .statInfo h2 {
+
+        font-size: 27px;
+    }
+
+    .filterButton {
+
+        padding-left: 16px;
+
+        padding-right: 16px;
+    }
+
+    .userCard {
+
+        padding: 13px;
+
+        gap: 9px;
+
+        border-radius: 20px;
+    }
+
+    .userAvatar {
+
+        width: 51px;
+
+        height: 51px;
+
+        border-radius: 15px;
+    }
+
+    .userName {
+
+        font-size: 14px;
+    }
+
+    .userEmail {
+
+        font-size: 12px;
+    }
+
+    .userMeta span {
+
+        font-size: 10px;
+
+        padding: 5px 7px;
+    }
+
+    .userStatus {
+
+        font-size: 10px;
+
+        padding: 5px 7px;
+    }
+
+    .userActionButton {
+
+        width: 37px;
+
+        height: 37px;
+    }
+}
+
 
 /* =========================================================
    DESKTOP
@@ -1203,7 +1751,9 @@ body {
 @media (min-width: 700px) {
 
     .pageHeader {
+
         padding-left: 30px;
+
         padding-right: 30px;
     }
 
@@ -1211,99 +1761,179 @@ body {
     .statsSection,
     .filterSection,
     .usersSection {
+
         max-width: 1100px;
 
         margin-left: auto;
+
         margin-right: auto;
     }
 
     .statsSection {
+
         grid-template-columns:
             repeat(4, minmax(0, 1fr));
+
+        gap: 16px;
     }
 
     .usersList {
+
         display: grid;
 
         grid-template-columns:
             repeat(2, minmax(0, 1fr));
+
+        gap: 14px;
     }
 
     .modalContent {
+
         border-radius: 30px;
 
         margin: 20px;
 
         max-height: 85vh;
     }
-
 }
 
+
 /* =========================================================
-   SMALL IPHONE
+   LARGE DESKTOP
 ========================================================= */
 
-@media (max-width: 380px) {
+@media (min-width: 1100px) {
 
     .pageHeader {
-        gap: 10px;
 
-        padding-left: 12px;
-        padding-right: 12px;
-    }
+        padding-left: 40px;
 
-    .headerButton {
-        width: 50px;
-        height: 50px;
-
-        border-radius: 17px;
-    }
-
-    .headerTitle h1 {
-        font-size: 19px;
-    }
-
-    .headerTitle p {
-        font-size: 12px;
+        padding-right: 40px;
     }
 
     .searchSection,
     .statsSection,
     .filterSection,
     .usersSection {
-        padding-left: 12px;
-        padding-right: 12px;
+
+        max-width: 1200px;
     }
 
-    .statCard {
-        padding: 14px;
+    .usersList {
 
-        min-height: 115px;
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+}
+
+
+/* =========================================================
+   ACCESSIBILITÉ / TOUCH
+========================================================= */
+
+@media (hover: hover) {
+
+    .headerButton:hover {
+
+        background: #f9fafb;
+
+        transform: translateY(-1px);
     }
 
-    .statInfo h2 {
-        font-size: 27px;
+    .filterButton:hover {
+
+        border-color:
+            rgba(32, 196, 99, 0.45);
+
+        color: var(--green-dark);
     }
 
-    .userCard {
-        padding: 13px;
+    .filterButton.active:hover {
 
-        gap: 10px;
+        color: #ffffff;
+
+        background: var(--green-dark);
+
+        border-color: var(--green-dark);
     }
 
-    .userAvatar {
-        width: 50px;
-        height: 50px;
+    .userCard:hover {
 
-        border-radius: 15px;
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 12px 30px rgba(15, 23, 42, 0.08);
     }
 
-    .userName {
-        font-size: 14px;
+    .userActionButton:hover {
+
+        transform: translateY(-1px);
+    }
+}
+
+
+/* =========================================================
+   SAFE AREA IPHONE
+========================================================= */
+
+@supports (padding: max(0px)) {
+
+    .pageHeader {
+
+        padding-top:
+            max(
+                16px,
+                env(safe-area-inset-top)
+            );
     }
 
-    .userEmail {
-        font-size: 12px;
+    .toast {
+
+        bottom:
+            max(
+                20px,
+                env(safe-area-inset-bottom)
+            );
     }
 
-} 
+    .modalContent {
+
+        padding-bottom:
+            max(
+                25px,
+                env(safe-area-inset-bottom)
+            );
+    }
+}
+
+
+/* =========================================================
+   PREVENT TEXT SELECTION ON UI BUTTONS
+========================================================= */
+
+.headerButton,
+.filterButton,
+.userActionButton,
+.modalClose,
+.modalActionButton,
+.confirmButton,
+.retryButton {
+
+    user-select: none;
+
+    -webkit-user-select: none;
+}
+
+
+/* =========================================================
+   FOCUS
+========================================================= */
+
+button:focus-visible,
+input:focus-visible {
+
+    outline:
+        3px solid rgba(32, 196, 99, 0.25);
+
+    outline-offset: 2px;
+}
