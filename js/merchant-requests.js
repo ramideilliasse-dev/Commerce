@@ -1,8 +1,10 @@
- //====================================================
+ // ======================================================
+// TOMA ADMIN V2
 // MERCHANT REQUESTS
-// BLOC 1
-// IMPORTS FIREBASE
-//====================================================
+// VERSION CORRIGÉE ET NETTOYÉE
+// ======================================================
+
+"use strict";
 
 import { db } from "../firebase.js";
 
@@ -10,281 +12,861 @@ import {
     collection,
     doc,
     getDocs,
-    getDoc,
-    updateDoc,
     onSnapshot,
-    query,
-    where,
+    setDoc,
+    updateDoc,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-//====================================================
+
+// ======================================================
 // VARIABLES
-//====================================================
+// ======================================================
 
 let requests = [];
-
-let filteredRequests = [];
-
 let currentRequest = null;
-
 let currentFilter = "all";
+let unsubscribeRequests = null;
 
-//====================================================
+
+// ======================================================
 // ÉLÉMENTS HTML
-//====================================================
+// ======================================================
 
 const merchantRequestsList =
-document.getElementById("merchantRequestsList");
+    document.getElementById("merchantRequestsList");
 
 const template =
-document.getElementById("merchantRequestTemplate");
+    document.getElementById("merchantRequestTemplate");
 
 const loader =
-document.getElementById("loader");
+    document.getElementById("loader");
 
 const emptyState =
-document.getElementById("emptyState");
+    document.getElementById("emptyState");
 
 const searchInput =
-document.getElementById("searchInput");
+    document.getElementById("searchInput");
 
-// Statistiques
+
+// ======================================================
+// STATISTIQUES
+// ======================================================
 
 const pendingCount =
-document.getElementById("pendingCount");
+    document.getElementById("pendingCount");
 
 const approvedToday =
-document.getElementById("approvedToday");
+    document.getElementById("approvedToday");
 
 const rejectedToday =
-document.getElementById("rejectedToday");
+    document.getElementById("rejectedToday");
 
 const totalRequests =
-document.getElementById("totalRequests");
+    document.getElementById("totalRequests");
 
-// Modal
+
+// ======================================================
+// MODAL
+// ======================================================
 
 const requestModal =
-document.getElementById("requestModal");
+    document.getElementById("requestModal");
 
-const closeModal =
-document.getElementById("closeModal");
+const closeModalButton =
+    document.getElementById("closeModal");
 
-const approveMerchant =
-document.getElementById("approveMerchant");
+const approveMerchantButton =
+    document.getElementById("approveMerchant");
 
-const rejectMerchant =
-document.getElementById("rejectMerchant");
+const rejectMerchantButton =
+    document.getElementById("rejectMerchant");
 
-const contactMerchant =
-document.getElementById("contactMerchant");
+const contactMerchantButton =
+    document.getElementById("contactMerchant");
 
-// Toast
+
+// ======================================================
+// TOAST
+// ======================================================
 
 const toast =
-document.getElementById("toast");
+    document.getElementById("toast");
 
 const toastMessage =
-document.getElementById("toastMessage");
+    document.getElementById("toastMessage");
 
-// Confirmation
+
+// ======================================================
+// CONFIRMATION
+// ======================================================
 
 const confirmModal =
-document.getElementById("confirmModal");
+    document.getElementById("confirmModal");
 
 const confirmYes =
-document.getElementById("confirmYes");
+    document.getElementById("confirmYes");
 
 const confirmNo =
-document.getElementById("confirmNo");
+    document.getElementById("confirmNo");
 
-//====================================================
-// DÉMARRAGE
-//====================================================
+
+// ======================================================
+// HEADER
+// ======================================================
+
+const backButton =
+    document.getElementById("backButton");
+
+const refreshButton =
+    document.getElementById("refreshButton");
+
+
+// ======================================================
+// INITIALISATION
+// ======================================================
 
 init();
 
-function init(){
+
+// ======================================================
+// INIT
+// ======================================================
+
+function init() {
+
+    console.log(
+        "🚀 Merchant Requests — initialisation..."
+    );
+
+    initializeFilters();
+
+    initializeSearch();
+
+    initializeModal();
+
+    initializeActions();
+
+    initializeHeader();
 
     listenMerchantRequests();
 
 }
-//====================================================
-// BLOC 2
-// CHARGEMENT TEMPS RÉEL DES DEMANDES
-//====================================================
 
-function listenMerchantRequests(){
 
-    if(loader){
+// ======================================================
+// LOADER
+// ======================================================
+
+function showLoader() {
+
+    if (loader) {
 
         loader.style.display = "flex";
 
     }
 
-    onSnapshot(
+}
 
-        collection(db,"merchantRequests"),
 
-        (snapshot)=>{
+function hideLoader() {
 
-            requests = [];
+    if (loader) {
 
-            snapshot.forEach(docSnap=>{
+        loader.style.display = "none";
 
-                requests.push({
+    }
 
-                    id:docSnap.id,
+}
 
-                    ...docSnap.data()
+
+// ======================================================
+// TOAST
+// ======================================================
+
+function showToast(message) {
+
+    if (!toast || !toastMessage) {
+
+        return;
+
+    }
+
+    toastMessage.textContent = message;
+
+    toast.classList.add("show");
+
+    setTimeout(() => {
+
+        toast.classList.remove("show");
+
+    }, 3000);
+
+}
+
+
+// ======================================================
+// CHARGEMENT TEMPS RÉEL
+// ======================================================
+
+function listenMerchantRequests() {
+
+    showLoader();
+
+    if (!merchantRequestsList) {
+
+        console.error(
+            "❌ #merchantRequestsList introuvable."
+        );
+
+        hideLoader();
+
+        return;
+
+    }
+
+
+    try {
+
+        if (unsubscribeRequests) {
+
+            unsubscribeRequests();
+
+        }
+
+
+        unsubscribeRequests = onSnapshot(
+
+            collection(db, "merchantRequests"),
+
+            (snapshot) => {
+
+                console.log(
+                    "✅ merchantRequests chargé :",
+                    snapshot.size
+                );
+
+
+                requests = [];
+
+
+                snapshot.forEach((docSnap) => {
+
+                    requests.push({
+
+                        id: docSnap.id,
+
+                        ...docSnap.data()
+
+                    });
 
                 });
 
-            });
 
-            if(loader){
+                hideLoader();
 
-                loader.style.display = "none";
+
+                updateStatistics();
+
+                applyFilters();
+
+            },
+
+
+            (error) => {
+
+                console.error(
+                    "❌ Erreur Firestore merchantRequests :",
+                    error
+                );
+
+
+                hideLoader();
+
+
+                requests = [];
+
+                updateStatistics();
+
+
+                if (merchantRequestsList) {
+
+                    merchantRequestsList.innerHTML = `
+
+                        <div class="emptyState">
+
+                            <div class="emptyIcon">
+                                ⚠️
+                            </div>
+
+                            <h2>
+                                Erro ao carregar pedidos
+                            </h2>
+
+                            <p>
+                                Não foi possível carregar
+                                os pedidos de comerciantes.
+                            </p>
+
+                        </div>
+
+                    `;
+
+                }
+
+
+                showToast(
+                    "Erro ao carregar pedidos."
+                );
 
             }
 
-            updateStatistics();
+        );
 
-            applyFilters();
+    } catch (error) {
 
-        },
+        console.error(
+            "❌ Erreur initialisation Firestore :",
+            error
+        );
 
-        (error)=>{
+        hideLoader();
 
-            console.error(error);
+        showToast(
+            "Erro ao iniciar os pedidos."
+        );
 
-            if(loader){
+    }
 
-                loader.style.display = "none";
+}
+
+
+// ======================================================
+// STATISTIQUES
+// ======================================================
+
+function updateStatistics() {
+
+    const total =
+        requests.length;
+
+
+    const pending =
+        requests.filter(
+            request =>
+                normalizeStatus(request.status)
+                === "pending"
+        ).length;
+
+
+    const approved =
+        requests.filter(
+            request =>
+                normalizeStatus(request.status)
+                === "approved"
+        );
+
+
+    const rejected =
+        requests.filter(
+            request =>
+                normalizeStatus(request.status)
+                === "rejected"
+        );
+
+
+    const approvedTodayCount =
+        approved.filter(
+            request =>
+                isToday(
+                    request.approvedAt ||
+                    request.updatedAt ||
+                    request.createdAt
+                )
+        ).length;
+
+
+    const rejectedTodayCount =
+        rejected.filter(
+            request =>
+                isToday(
+                    request.rejectedAt ||
+                    request.updatedAt ||
+                    request.createdAt
+                )
+        ).length;
+
+
+    if (totalRequests) {
+
+        totalRequests.textContent =
+            total;
+
+    }
+
+
+    if (pendingCount) {
+
+        pendingCount.textContent =
+            pending;
+
+    }
+
+
+    if (approvedToday) {
+
+        approvedToday.textContent =
+            approvedTodayCount;
+
+    }
+
+
+    if (rejectedToday) {
+
+        rejectedToday.textContent =
+            rejectedTodayCount;
+
+    }
+
+}
+
+
+// ======================================================
+// NORMALISER LE STATUT
+// ======================================================
+
+function normalizeStatus(status) {
+
+    const value =
+        String(status || "")
+            .trim()
+            .toLowerCase();
+
+
+    if (
+        value === "approved" ||
+        value === "aprovado" ||
+        value === "active" ||
+        value === "ativo"
+    ) {
+
+        return "approved";
+
+    }
+
+
+    if (
+        value === "rejected" ||
+        value === "recusado" ||
+        value === "rejected_review"
+    ) {
+
+        return "rejected";
+
+    }
+
+
+    return "pending";
+
+}
+
+
+// ======================================================
+// DATE FIRESTORE
+// ======================================================
+
+function getDateValue(value) {
+
+    if (!value) {
+
+        return null;
+
+    }
+
+
+    try {
+
+        if (
+            typeof value.toDate ===
+            "function"
+        ) {
+
+            return value.toDate();
+
+        }
+
+
+        if (
+            typeof value.seconds ===
+            "number"
+        ) {
+
+            return new Date(
+                value.seconds * 1000
+            );
+
+        }
+
+
+        if (
+            typeof value ===
+            "string" ||
+            typeof value ===
+            "number"
+        ) {
+
+            const date =
+                new Date(value);
+
+
+            if (
+                !Number.isNaN(
+                    date.getTime()
+                )
+            ) {
+
+                return date;
 
             }
 
         }
 
-    );
+    } catch (error) {
 
-}
-
-//====================================================
-// STATISTIQUES
-//====================================================
-
-function updateStatistics(){
-
-    if(totalRequests){
-
-        totalRequests.textContent = requests.length;
-
-    }
-
-    const pending =
-    requests.filter(r=>r.status==="pending").length;
-
-    if(pendingCount){
-
-        pendingCount.textContent = pending;
-
-    }
-
-    const approved =
-    requests.filter(r=>r.status==="approved").length;
-
-    if(approvedToday){
-
-        approvedToday.textContent = approved;
-
-    }
-
-    const rejected =
-    requests.filter(r=>r.status==="rejected").length;
-
-    if(rejectedToday){
-
-        rejectedToday.textContent = rejected;
-
-    }
-
-}
-//====================================================
-// BLOC 3
-// FILTRES + RECHERCHE + AFFICHAGE
-//====================================================
-
-function applyFilters(){
-
-    let filtered = [...requests];
-
-    // Filtre par statut
-    if(currentFilter !== "all"){
-
-        filtered = filtered.filter(item =>
-            (item.status || "pending") === currentFilter
+        console.warn(
+            "⚠️ Date invalide :",
+            value
         );
 
     }
 
-    // Recherche
-    const search =
-        searchInput?.value?.trim().toLowerCase() || "";
 
-    if(search){
-
-        filtered = filtered.filter(item=>{
-
-            const fullName =
-                `${item.firstName || ""} ${item.lastName || ""}`.toLowerCase();
-
-            const shop =
-                (item.shopName || "").toLowerCase();
-
-            const phone =
-                (item.phone || "").toLowerCase();
-
-            const province =
-                (item.province || "").toLowerCase();
-
-            return (
-                fullName.includes(search) ||
-                shop.includes(search) ||
-                phone.includes(search) ||
-                province.includes(search)
-            );
-
-        });
-
-    }
-
-    renderMerchantRequests(filtered);
+    return null;
 
 }
 
-//====================================================
-// AFFICHAGE DES CARTES
-//====================================================
 
-function renderMerchantRequests(list){
+// ======================================================
+// VÉRIFIER SI UNE DATE EST AUJOURD'HUI
+// ======================================================
 
-    merchantRequestsList.innerHTML = "";
+function isToday(value) {
 
-    if(list.length === 0){
+    const date =
+        getDateValue(value);
+
+
+    if (!date) {
+
+        return false;
+
+    }
+
+
+    const today =
+        new Date();
+
+
+    return (
+        date.getFullYear()
+        ===
+        today.getFullYear()
+        &&
+        date.getMonth()
+        ===
+        today.getMonth()
+        &&
+        date.getDate()
+        ===
+        today.getDate()
+    );
+
+}
+
+
+// ======================================================
+// FORMAT DATE
+// ======================================================
+
+function formatDate(value) {
+
+    const date =
+        getDateValue(value);
+
+
+    if (!date) {
+
+        return "-";
+
+    }
+
+
+    try {
+
+        return date.toLocaleString(
+            "pt-PT",
+            {
+                dateStyle: "short",
+                timeStyle: "short"
+            }
+        );
+
+    } catch {
+
+        return date.toLocaleDateString(
+            "pt-PT"
+        );
+
+    }
+
+}
+
+
+// ======================================================
+// FILTRES
+// ======================================================
+
+function initializeFilters() {
+
+    const buttons =
+        document.querySelectorAll(
+            ".filterButton"
+        );
+
+
+    buttons.forEach((button) => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                buttons.forEach(
+                    item =>
+                        item.classList.remove(
+                            "active"
+                        )
+                );
+
+
+                button.classList.add(
+                    "active"
+                );
+
+
+                currentFilter =
+                    button.dataset.filter
+                    || "all";
+
+
+                applyFilters();
+
+            }
+        );
+
+    });
+
+}
+
+
+// ======================================================
+// RECHERCHE
+// ======================================================
+
+function initializeSearch() {
+
+    if (!searchInput) {
+
+        return;
+
+    }
+
+
+    searchInput.addEventListener(
+        "input",
+        () => {
+
+            applyFilters();
+
+        }
+    );
+
+}
+
+
+// ======================================================
+// APPLICATION DES FILTRES
+// ======================================================
+
+function applyFilters() {
+
+    let filtered =
+        [...requests];
+
+
+    if (
+        currentFilter !==
+        "all"
+    ) {
+
+        filtered =
+            filtered.filter(
+                request =>
+                    normalizeStatus(
+                        request.status
+                    )
+                    ===
+                    currentFilter
+            );
+
+    }
+
+
+    const search =
+        searchInput?.value
+            ?.trim()
+            .toLowerCase()
+            || "";
+
+
+    if (search) {
+
+        filtered =
+            filtered.filter(
+                request => {
+
+                    const fullName =
+                        `${request.firstName || ""}
+                        ${request.lastName || ""}`
+                        .toLowerCase();
+
+
+                    const shop =
+                        String(
+                            request.shopName || ""
+                        ).toLowerCase();
+
+
+                    const phone =
+                        String(
+                            request.phone || ""
+                        ).toLowerCase();
+
+
+                    const province =
+                        String(
+                            request.province || ""
+                        ).toLowerCase();
+
+
+                    const city =
+                        String(
+                            request.city || ""
+                        ).toLowerCase();
+
+
+                    const email =
+                        String(
+                            request.email || ""
+                        ).toLowerCase();
+
+
+                    return (
+
+                        fullName.includes(
+                            search
+                        )
+
+                        ||
+
+                        shop.includes(
+                            search
+                        )
+
+                        ||
+
+                        phone.includes(
+                            search
+                        )
+
+                        ||
+
+                        province.includes(
+                            search
+                        )
+
+                        ||
+
+                        city.includes(
+                            search
+                        )
+
+                        ||
+
+                        email.includes(
+                            search
+                        )
+
+                    );
+
+                }
+            );
+
+    }
+
+
+    renderMerchantRequests(
+        filtered
+    );
+
+}
+
+
+// ======================================================
+// AFFICHAGE
+// ======================================================
+
+function renderMerchantRequests(list) {
+
+    if (!merchantRequestsList) {
+
+        return;
+
+    }
+
+
+    merchantRequestsList.innerHTML =
+        "";
+
+
+    if (!list.length) {
+
+        if (emptyState) {
+
+            emptyState.classList.remove(
+                "hidden"
+            );
+
+        }
+
 
         merchantRequestsList.innerHTML = `
 
-        <div class="emptyState">
+            <div class="emptyState">
 
-            <span style="font-size:50px;">📭</span>
+                <div class="emptyIcon">
+                    📭
+                </div>
 
-            <h3>Nenhum pedido encontrado</h3>
+                <h2>
+                    Nenhum pedido encontrado
+                </h2>
 
-            <p>Não existe nenhum comerciante para mostrar.</p>
+                <p>
+                    Não existem pedidos
+                    correspondentes.
+                </p>
 
-        </div>
+            </div>
 
         `;
 
@@ -292,430 +874,1330 @@ function renderMerchantRequests(list){
 
     }
 
-    list.forEach(item=>{
 
-        const template =
-            document.getElementById("merchantRequestTemplate");
+    if (emptyState) {
 
-        const clone =
-            template.content.cloneNode(true);
-
-        clone.querySelector(".requestName").textContent =
-            `${item.firstName || ""} ${item.lastName || ""}`;
-
-        clone.querySelector(".requestShop").textContent =
-            item.shopName || "Loja";
-
-        clone.querySelector(".requestProvince").textContent =
-            "📍 " + (item.province || "-");
-
-        clone.querySelector(".requestPhone").textContent =
-            "📞 " + (item.phone || "-");
-
-        const avatar =
-            clone.querySelector(".requestAvatar");
-
-        avatar.src =
-            item.photo ||
-            "images/avatar.png";
-
-        const status =
-            clone.querySelector(".requestStatus");
-
-        const currentStatus =
-            item.status || "pending";
-
-        status.className =
-            "requestStatus";
-
-        if(currentStatus === "approved"){
-
-            status.classList.add("statusApproved");
-            status.textContent = "Aprovado";
-
-        }else if(currentStatus === "rejected"){
-
-            status.classList.add("statusRejected");
-            status.textContent = "Recusado";
-
-        }else{
-
-            status.classList.add("statusPending");
-            status.textContent = "Pendente";
-
-        }
-
-        clone.querySelector(".detailsButton").onclick = ()=>{
-
-            openRequest(item);
-
-        };
-
-        clone.querySelector(".approveSmallButton").onclick = ()=>{
-
-            approveMerchant(item);
-
-        };
-
-        clone.querySelector(".rejectSmallButton").onclick = ()=>{
-
-            rejectMerchant(item);
-
-        };
-
-        merchantRequestsList.appendChild(clone);
-
-    });
-
-}
-//====================================================
-// BLOC 4
-// OUVRIR LE POPUP DE LA DEMANDE
-//====================================================
-
-function openRequest(request){
-
-    selectedRequest = request;
-
-    requestModal.classList.add("show");
-
-    document.getElementById("merchantPhoto").src =
-        request.photo || "images/avatar.png";
-
-    document.getElementById("merchantFullName").textContent =
-        `${request.firstName || ""} ${request.lastName || ""}`;
-
-    document.getElementById("merchantShopName").textContent =
-        request.shopName || "Loja";
-
-    document.getElementById("merchantPhone").textContent =
-        request.phone || "-";
-
-    document.getElementById("merchantEmail").textContent =
-        request.email || "-";
-
-    document.getElementById("merchantProvince").textContent =
-        request.province || "-";
-
-    document.getElementById("merchantCity").textContent =
-        request.city || "-";
-
-    document.getElementById("merchantAddress").textContent =
-        request.address || "-";
-
-    document.getElementById("merchantDate").textContent =
-        request.createdAt
-        ? new Date(request.createdAt.seconds * 1000).toLocaleDateString()
-        : "-";
-
-    document.getElementById("merchantIdCard").src =
-        request.idCard || "images/document.png";
-
-    document.getElementById("merchantAlvara").src =
-        request.alvara || "images/document.png";
-
-    const status =
-        document.getElementById("merchantStatus");
-
-    status.className = "";
-
-    if(request.status === "approved"){
-
-        status.classList.add("statusApproved");
-        status.textContent = "Aprovado";
-
-    }else if(request.status === "rejected"){
-
-        status.classList.add("statusRejected");
-        status.textContent = "Recusado";
-
-    }else{
-
-        status.classList.add("statusPending");
-        status.textContent = "Pendente";
-
-    }
-
-}
-
-//====================================================
-// FERMER LE POPUP
-//====================================================
-
-closeModal.onclick = ()=>{
-
-    requestModal.classList.remove("show");
-
-};
-
-requestModal.onclick = (e)=>{
-
-    if(e.target === requestModal){
-
-        requestModal.classList.remove("show");
-
-    }
-
-};
-//====================================================
-// BLOC 5
-// APPROUVER / REFUSER UN COMMERÇANT
-//====================================================
-
-import {
-    doc,
-    updateDoc,
-    setDoc,
-    serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-//==================================
-// APPROUVER
-//==================================
-
-approveMerchant.onclick = async ()=>{
-
-    if(!selectedRequest) return;
-
-    try{
-
-        // 1. Créer le compte commerçant officiel
-        await setDoc(
-
-            doc(db,"merchants",selectedRequest.userId),
-
-            {
-
-                uid:selectedRequest.userId,
-
-                shopName:selectedRequest.shopName,
-
-                ownerName:
-                    `${selectedRequest.firstName} ${selectedRequest.lastName}`,
-
-                phone:selectedRequest.phone,
-
-                email:selectedRequest.email,
-
-                province:selectedRequest.province,
-
-                city:selectedRequest.city,
-
-                address:selectedRequest.address,
-
-                photo:selectedRequest.photo || "",
-
-                logo:selectedRequest.photo || "",
-
-                alvara:selectedRequest.alvara || "",
-
-                verified:true,
-
-                status:"active",
-
-                followers:0,
-
-                rating:5,
-
-                createdAt:serverTimestamp()
-
-            }
-
+        emptyState.classList.add(
+            "hidden"
         );
 
-        // 2. Mettre la demande comme approuvée
-        await updateDoc(
+    }
 
-            doc(db,"merchantRequests",selectedRequest.id),
 
-            {
+    if (!template) {
 
-                status:"approved",
-
-                approvedAt:serverTimestamp()
-
-            }
-
+        console.error(
+            "❌ #merchantRequestTemplate introuvable."
         );
-
-        alert("✅ Comerciante aprovado com sucesso.");
-
-        requestModal.classList.remove("show");
-
-    }
-
-    catch(error){
-
-        alert(error.message);
-
-    }
-
-};
-
-//==================================
-// REFUSER
-//==================================
-
-rejectMerchant.onclick = async ()=>{
-
-    if(!selectedRequest) return;
-
-    if(!confirm("Recusar este comerciante?")) return;
-
-    try{
-
-        await updateDoc(
-
-            doc(db,"merchantRequests",selectedRequest.id),
-
-            {
-
-                status:"rejected",
-
-                rejectedAt:serverTimestamp()
-
-            }
-
-        );
-
-        alert("❌ Pedido recusado.");
-
-        requestModal.classList.remove("show");
-
-    }
-
-    catch(error){
-
-        alert(error.message);
-
-    }
-
-};
-
-//==================================
-// CONTACTER
-//==================================
-
-contactMerchant.onclick = ()=>{
-
-    if(!selectedRequest) return;
-
-    const phone =
-        (selectedRequest.phone || "").replace(/\D/g,"");
-
-    if(phone===""){
-
-        alert("Telefone indisponível.");
 
         return;
 
     }
 
-    window.open(
 
-        "https://wa.me/"+phone,
+    list.forEach((request) => {
 
-        "_blank"
+        const clone =
+            template.content.cloneNode(
+                true
+            );
 
+
+        const nameElement =
+            clone.querySelector(
+                ".requestName"
+            );
+
+
+        const shopElement =
+            clone.querySelector(
+                ".requestShop"
+            );
+
+
+        const provinceElement =
+            clone.querySelector(
+                ".requestProvince"
+            );
+
+
+        const phoneElement =
+            clone.querySelector(
+                ".requestPhone"
+            );
+
+
+        const avatar =
+            clone.querySelector(
+                ".requestAvatar"
+            );
+
+
+        const statusElement =
+            clone.querySelector(
+                ".requestStatus"
+            );
+
+
+        const detailsButton =
+            clone.querySelector(
+                ".detailsButton"
+            );
+
+
+        const approveButton =
+            clone.querySelector(
+                ".approveSmallButton"
+            );
+
+
+        const rejectButton =
+            clone.querySelector(
+                ".rejectSmallButton"
+            );
+
+
+        if (nameElement) {
+
+            nameElement.textContent =
+                `${request.firstName || ""}
+                ${request.lastName || ""}`
+                .trim()
+                ||
+                "Comerciante";
+
+        }
+
+
+        if (shopElement) {
+
+            shopElement.textContent =
+                request.shopName
+                ||
+                "Loja";
+
+        }
+
+
+        if (provinceElement) {
+
+            provinceElement.textContent =
+                "📍 " +
+                (
+                    request.province
+                    ||
+                    "-"
+                );
+
+        }
+
+
+        if (phoneElement) {
+
+            phoneElement.textContent =
+                "📞 " +
+                (
+                    request.phone
+                    ||
+                    "-"
+                );
+
+        }
+
+
+        if (avatar) {
+
+            avatar.src =
+                request.photo
+                ||
+                "images/avatar.png";
+
+
+            avatar.onerror =
+                () => {
+
+                    avatar.src =
+                        "images/avatar.png";
+
+                };
+
+        }
+
+
+        if (statusElement) {
+
+            const status =
+                normalizeStatus(
+                    request.status
+                );
+
+
+            statusElement.className =
+                "requestStatus";
+
+
+            if (
+                status ===
+                "approved"
+            ) {
+
+                statusElement.classList.add(
+                    "statusApproved"
+                );
+
+                statusElement.textContent =
+                    "Aprovado";
+
+            }
+
+            else if (
+                status ===
+                "rejected"
+            ) {
+
+                statusElement.classList.add(
+                    "statusRejected"
+                );
+
+                statusElement.textContent =
+                    "Recusado";
+
+            }
+
+            else {
+
+                statusElement.classList.add(
+                    "statusPending"
+                );
+
+                statusElement.textContent =
+                    "Pendente"; 
+
+            }
+
+        }
+
+
+        if (detailsButton) {
+
+            detailsButton.addEventListener(
+                "click",
+                () => {
+
+                    openRequest(
+                        request
+                    );
+
+                }
+            );
+
+        }
+
+
+        if (approveButton) {
+
+            approveButton.addEventListener(
+                "click",
+                () => {
+
+                    openRequest(
+                        request,
+                        true
+                    );
+
+                }
+            );
+
+        }
+
+
+        if (rejectButton) {
+
+            rejectButton.addEventListener(
+                "click",
+                () => {
+
+                    openRequest(
+                        request,
+                        true
+                    );
+
+                    setTimeout(() => {
+
+                        rejectCurrentRequest();
+
+                    }, 100);
+
+                }
+            );
+
+        }
+
+
+        merchantRequestsList.appendChild(
+            clone
+        );
+
+    });
+
+}
+
+
+// ======================================================
+// OUVRIR LE POPUP
+// ======================================================
+
+function openRequest(
+    request,
+    actionMode = false
+) {
+
+    if (!request) {
+
+        return;
+
+    }
+
+
+    currentRequest =
+        request;
+
+
+    if (!requestModal) {
+
+        return;
+
+    }
+
+
+    setText(
+        "merchantFullName",
+        `${request.firstName || ""}
+        ${request.lastName || ""}`.trim()
+        ||
+        "Comerciante"
     );
 
-};
-//======================================================
-// APPROUVER / REFUSER UN COMMERÇANT
-//======================================================
 
-import {
-doc,
-updateDoc,
-serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    setText(
+        "merchantShopName",
+        request.shopName ||
+        "Loja"
+    );
 
-async function approveMerchant(id){
 
-    try{
+    setText(
+        "merchantPhone",
+        request.phone ||
+        "-"
+    );
 
-        await updateDoc(doc(db,"merchantRequests",id),{
 
-            status:"approved",
+    setText(
+        "merchantEmail",
+        request.email ||
+        "-"
+    );
 
-            approvedAt:serverTimestamp(),
 
-            approvedBy:"SuperAdmin"
+    setText(
+        "merchantProvince",
+        request.province ||
+        "-"
+    );
 
-        });
 
-        alert("✅ Comerciante aprovado.");
+    setText(
+        "merchantCity",
+        request.city ||
+        "-"
+    );
 
-    }catch(e){
 
-        console.error(e);
+    setText(
+        "merchantAddress",
+        request.address ||
+        "-"
+    );
 
-        alert("Erro ao aprovar.");
+
+    setText(
+        "merchantDate",
+        formatDate(
+            request.createdAt
+        )
+    );
+
+
+    const photo =
+        document.getElementById(
+            "merchantPhoto"
+        );
+
+
+    if (photo) {
+
+        photo.src =
+            request.photo
+            ||
+            "images/avatar.png";
+
+    }
+
+
+    const idCard =
+        document.getElementById(
+            "merchantIdCard"
+        );
+
+
+    if (idCard) {
+
+        idCard.src =
+            request.idCard
+            ||
+            "images/document.png";
+
+    }
+
+
+    const alvara =
+        document.getElementById(
+            "merchantAlvara"
+        );
+
+
+    if (alvara) {
+
+        alvara.src =
+            request.alvara
+            ||
+            "images/document.png";
+
+    }
+
+
+    updateModalStatus(
+        request.status
+    );
+
+
+    requestModal.classList.add(
+        "show"
+    );
+
+
+    requestModal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
+    if (actionMode) {
+
+        // Le bouton reste disponible dans le popup.
 
     }
 
 }
 
-async function rejectMerchant(id){
 
-    const reason = prompt("Motivo da recusa:");
+// ======================================================
+// TEXTE
+// ======================================================
 
-    if(reason===null) return;
+function setText(
+    id,
+    value
+) {
 
-    try{
+    const element =
+        document.getElementById(
+            id
+        );
 
-        await updateDoc(doc(db,"merchantRequests",id),{
 
-            status:"rejected",
+    if (element) {
 
-            rejectedReason:reason,
-
-            rejectedAt:serverTimestamp(),
-
-            rejectedBy:"SuperAdmin"
-
-        });
-
-        alert("❌ Pedido recusado.");
-
-    }catch(e){
-
-        console.error(e);
-
-        alert("Erro ao recusar.");
+        element.textContent =
+            value;
 
     }
 
 }
 
-//======================================================
-// ACTIONS DES BOUTONS
-//======================================================
 
-document.addEventListener("click",e=>{
+// ======================================================
+// STATUT DU MODAL
+// ======================================================
 
-    const approveBtn =
-    e.target.closest(".approveSmallButton");
+function updateModalStatus(
+    status
+) {
 
-    const rejectBtn =
-    e.target.closest(".rejectSmallButton");
+    const element =
+        document.getElementById(
+            "merchantStatus"
+        );
 
-    if(approveBtn){
 
-        const id =
-        approveBtn.dataset.id;
+    if (!element) {
 
-        approveMerchant(id);
-
-    }
-
-    if(rejectBtn){
-
-        const id =
-        rejectBtn.dataset.id;
-
-        rejectMerchant(id);
+        return;
 
     }
 
-});
+
+    const normalized =
+        normalizeStatus(
+            status
+        );
+
+
+    element.className =
+        "";
+
+
+    if (
+        normalized ===
+        "approved"
+    ) {
+
+        element.classList.add(
+            "statusApproved"
+        );
+
+        element.textContent =
+            "Aprovado";
+
+    }
+
+    else if (
+        normalized ===
+        "rejected"
+    ) {
+
+        element.classList.add(
+            "statusRejected"
+        );
+
+        element.textContent =
+            "Recusado";
+
+    }
+
+    else {
+
+        element.classList.add(
+            "statusPending"
+        );
+
+        element.textContent =
+            "Pendente";
+
+    }
+
+}
+
+
+// ======================================================
+// MODAL
+// ======================================================
+
+function initializeModal() {
+
+    if (closeModalButton) {
+
+        closeModalButton.addEventListener(
+            "click",
+            closeRequestModal
+        );
+
+    }
+
+
+    if (requestModal) {
+
+        requestModal.addEventListener(
+            "click",
+            (event) => {
+
+                if (
+                    event.target ===
+                    requestModal
+                ) {
+
+                    closeRequestModal();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    if (confirmNo) {
+
+        confirmNo.addEventListener(
+            "click",
+            closeConfirmModal
+        );
+
+    }
+
+}
+
+
+// ======================================================
+// FERMER MODAL
+// ======================================================
+
+function closeRequestModal() {
+
+    if (!requestModal) {
+
+        return;
+
+    }
+
+
+    requestModal.classList.remove(
+        "show"
+    );
+
+
+    requestModal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+}
+
+
+// ======================================================
+// ACTIONS
+// ======================================================
+
+function initializeActions() {
+
+    if (approveMerchantButton) {
+
+        approveMerchantButton.addEventListener(
+            "click",
+            approveCurrentRequest
+        );
+
+    }
+
+
+    if (rejectMerchantButton) {
+
+        rejectMerchantButton.addEventListener(
+            "click",
+            rejectCurrentRequest
+        );
+
+    }
+
+
+    if (contactMerchantButton) {
+
+        contactMerchantButton.addEventListener(
+            "click",
+            contactCurrentMerchant
+        );
+
+    }
+
+}
+
+
+// ======================================================
+// APPROUVER DEMANDE COURANTE
+// ======================================================
+
+async function approveCurrentRequest() {
+
+    if (!currentRequest) {
+
+        showToast(
+            "Nenhum pedido selecionado."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        normalizeStatus(
+            currentRequest.status
+        )
+        ===
+        "approved"
+    ) {
+
+        showToast(
+            "Este comerciante já foi aprovado."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !currentRequest.userId
+    ) {
+
+        alert(
+            "❌ Erro: esta solicitação não possui userId."
+        );
+
+        console.error(
+            "Demande sans userId:",
+            currentRequest
+        );
+
+        return;
+
+    }
+
+
+    setActionButtonsDisabled(
+        true
+    );
+
+
+    try {
+
+        // ==============================================
+        // 1. CRÉER / METTRE À JOUR LE COMMERÇANT
+        // ==============================================
+
+        await setDoc(
+
+            doc(
+                db,
+                "merchants",
+                currentRequest.userId
+            ),
+
+            {
+
+                uid:
+                    currentRequest.userId,
+
+                shopName:
+                    currentRequest.shopName
+                    ||
+                    "",
+
+                ownerName:
+                    `${currentRequest.firstName || ""}
+                    ${currentRequest.lastName || ""}`
+                    .trim(),
+
+                firstName:
+                    currentRequest.firstName
+                    ||
+                    "",
+
+                lastName:
+                    currentRequest.lastName
+                    ||
+                    "",
+
+                phone:
+                    currentRequest.phone
+                    ||
+                    "",
+
+                email:
+                    currentRequest.email
+                    ||
+                    "",
+
+                province:
+                    currentRequest.province
+                    ||
+                    "",
+
+                city:
+                    currentRequest.city
+                    ||
+                    "",
+
+                address:
+                    currentRequest.address
+                    ||
+                    "",
+
+                photo:
+                    currentRequest.photo
+                    ||
+                    "",
+
+                logo:
+                    currentRequest.logo
+                    ||
+                    currentRequest.photo
+                    ||
+                    "",
+
+                idCard:
+                    currentRequest.idCard
+                    ||
+                    "",
+
+                alvara:
+                    currentRequest.alvara
+                    ||
+                    "",
+
+                verified:
+                    true,
+
+                status:
+                    "active",
+
+                followers:
+                    0,
+
+                rating:
+                    5,
+
+                createdAt:
+                    serverTimestamp(),
+
+                approvedAt:
+                    serverTimestamp()
+
+            },
+
+            {
+                merge: true
+            }
+
+        );
+
+
+        // ==============================================
+        // 2. APPROUVER LA DEMANDE
+        // ==============================================
+
+        await updateDoc(
+
+            doc(
+                db,
+                "merchantRequests",
+                currentRequest.id
+            ),
+
+            {
+
+                status:
+                    "approved",
+
+                approvedAt:
+                    serverTimestamp(),
+
+                approvedBy:
+                    "SuperAdmin"
+
+            }
+
+        );
+
+
+        currentRequest.status =
+            "approved";
+
+
+        updateModalStatus(
+            "approved"
+        );
+
+
+        showToast(
+            "✅ Comerciante aprovado com sucesso."
+        );
+
+
+        closeRequestModal();
+
+
+        // Le onSnapshot actualisera automatiquement
+        // la liste et les statistiques.
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "❌ Erreur approbation:",
+            error
+        );
+
+
+        alert(
+            "❌ Erro ao aprovar o comerciante.\n\n" +
+            (
+                error.message
+                ||
+                "Erro desconhecido."
+            )
+        );
+
+    }
+
+    finally {
+
+        setActionButtonsDisabled(
+            false
+        );
+
+    }
+
+}
+
+
+// ======================================================
+// REFUSER DEMANDE COURANTE
+// ======================================================
+
+async function rejectCurrentRequest() {
+
+    if (!currentRequest) {
+
+        showToast(
+            "Nenhum pedido selecionado."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        normalizeStatus(
+            currentRequest.status
+        )
+        ===
+        "rejected"
+    ) {
+
+        showToast(
+            "Este pedido já foi recusado."
+        );
+
+        return;
+
+    }
+
+
+    const reason =
+        prompt(
+            "Motivo da recusa:"
+        );
+
+
+    if (
+        reason ===
+        null
+    ) {
+
+        return;
+
+    }
+
+
+    const cleanReason =
+        reason.trim();
+
+
+    if (!cleanReason) {
+
+        alert(
+            "Informe o motivo da recusa."
+        );
+
+        return;
+
+    }
+
+
+    setActionButtonsDisabled(
+        true
+    );
+
+
+    try {
+
+        await updateDoc(
+
+            doc(
+                db,
+                "merchantRequests",
+                currentRequest.id
+            ),
+
+            {
+
+                status:
+                    "rejected",
+
+                rejectedReason:
+                    cleanReason,
+
+                rejectedAt:
+                    serverTimestamp(),
+
+                rejectedBy:
+                    "SuperAdmin"
+
+            }
+
+        );
+
+
+        currentRequest.status =
+            "rejected";
+
+
+        updateModalStatus(
+            "rejected"
+        );
+
+
+        showToast(
+            "❌ Pedido recusado."
+        );
+
+
+        closeRequestModal();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "❌ Erreur refus:",
+            error
+        );
+
+
+        alert(
+            "❌ Erro ao recusar o pedido.\n\n" +
+            (
+                error.message
+                ||
+                "Erro desconhecido."
+            )
+        );
+
+    }
+
+    finally {
+
+        setActionButtonsDisabled(
+            false
+        );
+
+    }
+
+}
+
+
+// ======================================================
+// CONTACTER VIA WHATSAPP
+// ======================================================
+
+function contactCurrentMerchant() {
+
+    if (!currentRequest) {
+
+        showToast(
+            "Nenhum comerciante selecionado."
+        );
+
+        return;
+
+    }
+
+
+    let phone =
+        String(
+            currentRequest.phone
+            ||
+            ""
+        ).replace(
+            /\D/g,
+            ""
+        );
+
+
+    if (!phone) {
+
+        alert(
+            "Telefone indisponível."
+        );
+
+        return;
+
+    }
+
+
+    // Angola
+    if (
+        phone.startsWith("9")
+        &&
+        phone.length === 9
+    ) {
+
+        phone =
+            "244" +
+            phone;
+
+    }
+
+
+    window.open(
+        "https://wa.me/" +
+        phone,
+        "_blank",
+        "noopener"
+    );
+
+}
+
+
+// ======================================================
+// DÉSACTIVER BOUTONS PENDANT ACTION
+// ======================================================
+
+function setActionButtonsDisabled(
+    disabled
+) {
+
+    if (approveMerchantButton) {
+
+        approveMerchantButton.disabled =
+            disabled;
+
+    }
+
+
+    if (rejectMerchantButton) {
+
+        rejectMerchantButton.disabled =
+            disabled;
+
+    }
+
+
+    if (contactMerchantButton) {
+
+        contactMerchantButton.disabled =
+            disabled;
+
+    }
+
+}
+
+
+// ======================================================
+// CONFIRMATION
+// ======================================================
+
+function closeConfirmModal() {
+
+    if (!confirmModal) {
+
+        return;
+
+    }
+
+
+    confirmModal.classList.add(
+        "hidden"
+    );
+
+}
+
+
+// ======================================================
+// HEADER
+// ======================================================
+
+function initializeHeader() {
+
+    if (backButton) {
+
+        backButton.addEventListener(
+            "click",
+            () => {
+
+                if (
+                    window.history.length >
+                    1
+                ) {
+
+                    window.history.back();
+
+                } else {
+
+                    window.location.href =
+                        "admin-v2.html";
+
+                }
+
+            }
+        );
+
+    }
+
+
+    if (refreshButton) {
+
+        refreshButton.addEventListener(
+            "click",
+            () => {
+
+                refreshRequests();
+
+            }
+        );
+
+    }
+
+}
+
+
+// ======================================================
+// ACTUALISER MANUELLEMENT
+// ======================================================
+
+async function refreshRequests() {
+
+    if (!refreshButton) {
+
+        listenMerchantRequests();
+
+        return;
+
+    }
+
+
+    refreshButton.disabled =
+        true;
+
+
+    refreshButton.style.opacity =
+        "0.6";
+
+
+    try {
+
+        showLoader();
+
+
+        const snapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "merchantRequests"
+                )
+            );
+
+
+        requests = [];
+
+
+        snapshot.forEach(
+            (docSnap) => {
+
+                requests.push({
+
+                    id:
+                        docSnap.id,
+
+                    ...docSnap.data()
+
+                });
+
+            }
+        );
+
+
+        updateStatistics();
+
+        applyFilters();
+
+        hideLoader();
+
+
+        showToast(
+            "✅ Pedidos atualizados."
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "❌ Erreur actualisation:",
+            error
+        );
+
+
+        hideLoader();
+
+
+        showToast(
+            "❌ Erro ao atualizar."
+
+        );
+
+    }
+
+    finally {
+
+        refreshButton.disabled =
+            false;
+
+
+        refreshButton.style.opacity =
+            "1";
+
+    }
+
+}
+
+
+// ======================================================
+// NETTOYAGE À LA FERMETURE
+// ======================================================
+
+window.addEventListener(
+    "beforeunload",
+    () => {
+
+        if (unsubscribeRequests) {
+
+            unsubscribeRequests();
+
+        }
+
+    }
+);
+
+
+// ======================================================
+// FIN
+// ======================================================
+
+console.log(
+    "✅ merchant-requests.js chargé correctement."
+);
