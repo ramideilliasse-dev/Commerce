@@ -1,0 +1,574 @@
+ <!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+<meta
+    name="theme-color"
+    content="#111111"
+>
+<title>TOMA Admin — Utilizadores</title>
+<link
+    rel="stylesheet"
+    href="utilizadores.css"
+>
+</head>
+<body>
+<!-- ==================================================
+     TOMA ADMIN
+     PÁGINA DE UTILIZADORES
+================================================== -->
+<div
+    id="usersApp"
+    class="usersApp"
+>
+<!-- ==================================================
+     HEADER
+================================================== -->
+<header
+    id="usersHeader"
+    class="usersHeader"
+>
+    <button
+        id="backButton"
+        type="button"
+        class="headerButton"
+        aria-label="Voltar"
+    >
+        ←
+    </button>
+    <div class="headerTitle">
+        <h1>
+            Utilizadores
+        </h1>
+        <p>
+            Gestão e controlo dos utilizadores da plataforma
+        </p>
+    </div>
+    <button
+        id="refreshButton"
+        type="button"
+        class="headerButton"
+        aria-label="Atualizar"
+    >
+        ↻
+    </button>
+</header>
+<!-- ==================================================
+     ESTATÍSTICAS
+================================================== -->
+<section
+    id="usersStats"
+    class="usersStats"
+>
+    <!-- TOTAL -->
+    <article
+        id="totalUsersCard"
+        class="userStatCard"
+    >
+        <div class="userStatIcon">
+            👥
+        </div>
+        <div class="userStatInfo">
+            <strong id="totalUsers">
+                0
+            </strong>
+            <span>
+                Total
+            </span>
+        </div>
+    </article>
+    <!-- ATIVOS -->
+    <article
+        id="activeUsersCard"
+        class="userStatCard"
+    >
+        <div class="userStatIcon">
+            🟢
+        </div>
+        <div class="userStatInfo">
+            <strong id="activeUsers">
+                0
+            </strong>
+            <span>
+                Ativos
+            </span>
+        </div>
+    </article>
+    <!-- BLOQUEADOS -->
+    <article
+        id="blockedUsersCard"
+        class="userStatCard"
+    >
+        <div class="userStatIcon">
+            🔴
+        </div>
+        <div class="userStatInfo">
+            <strong id="blockedUsers">
+                0
+            </strong>
+            <span>
+                Bloqueados
+            </span>
+        </div>
+    </article>
+    <!-- NOVOS -->
+    <article
+        id="newUsersCard"
+        class="userStatCard"
+    >
+        <div class="userStatIcon">
+            🆕
+        </div>
+        <div class="userStatInfo">
+            <strong id="newUsers">
+                0
+            </strong>
+            <span>
+                Novos
+            </span>
+        </div>
+    </article>
+</section>
+<!-- ==================================================
+     PESQUISA
+================================================== -->
+<section
+    id="usersSearchSection"
+    class="usersSearchSection"
+>
+    <div class="searchBox">
+        <span class="searchIcon">
+            🔎
+        </span>
+        <input
+            id="searchInput"
+            type="search"
+            placeholder="Pesquisar utilizador..."
+            autocomplete="off"
+        >
+        <button
+            id="clearSearch"
+            type="button"
+            class="clearSearch"
+            aria-label="Limpar pesquisa"
+        >
+            ×
+        </button>
+    </div>
+</section>
+<!-- ==================================================
+     FILTROS
+================================================== -->
+<section
+    id="usersFilters"
+    class="usersFilters"
+>
+    <button
+        type="button"
+        class="filterButton active"
+        data-filter="all"
+    >
+        Todos
+    </button>
+    <button
+        type="button"
+        class="filterButton"
+        data-filter="active"
+    >
+        Ativos
+    </button>
+    <button
+        type="button"
+        class="filterButton"
+        data-filter="blocked"
+    >
+        Bloqueados
+    </button>
+    <button
+        type="button"
+        class="filterButton"
+        data-filter="admin"
+    >
+        Admin
+    </button>
+    <button
+        type="button"
+        class="filterButton"
+        data-filter="superadmin"
+    >
+        Super Admin
+    </button>
+</section>
+<!-- ==================================================
+     LISTA DE UTILIZADORES
+================================================== -->
+<main
+    id="usersMain"
+    class="usersMain"
+>
+    <section
+        id="usersListSection"
+        class="usersListSection"
+    >
+        <div
+            id="usersList"
+            class="usersList"
+        >
+            <!--
+                Os utilizadores serão
+                carregados pelo JavaScript.
+            -->
+        </div>
+    </section>
+</main>
+<!-- ==================================================
+     ESTADO VAZIO
+================================================== -->
+<section
+    id="emptyState"
+    class="emptyState hidden"
+>
+    <div class="emptyIcon">
+        👥
+    </div>
+    <h2>
+        Nenhum utilizador encontrado
+    </h2>
+    <p>
+        Não existem utilizadores correspondentes à pesquisa ou ao filtro selecionado.
+    </p>
+</section>
+<!-- ==================================================
+     LOADER
+================================================== -->
+<div
+    id="loader"
+    class="loader hidden"
+    aria-hidden="true"
+>
+    <div class="loaderCard">
+        <div class="loaderSpinner"></div>
+        <p>
+            Carregando utilizadores...
+        </p>
+    </div>
+</div>
+<!-- ==================================================
+     MODAL — DETALHES DO UTILIZADOR
+================================================== -->
+<div
+    id="userModal"
+    class="modal hidden"
+    aria-hidden="true"
+>
+    <div
+        class="modalContent"
+    >
+        <!-- HEADER MODAL -->
+        <div class="modalHeader">
+            <div>
+                <h2>
+                    Detalhes do utilizador
+                </h2>
+                <p>
+                    Informações e controlo administrativo
+                </p>
+            </div>
+            <button
+                id="closeUserModal"
+                type="button"
+                class="modalClose"
+                aria-label="Fechar"
+            >
+                ×
+            </button>
+        </div>
+        <!-- PERFIL -->
+        <section
+            class="userProfile"
+        >
+            <img
+                id="userPhoto"
+                class="userPhoto"
+                src="images/avatar.png"
+                alt="Utilizador"
+            >
+            <div class="userProfileInfo">
+                <h3 id="userFullName">
+                    Nome do utilizador
+                </h3>
+                <p id="userEmail">
+                    -
+                </p>
+                <span
+                    id="userStatus"
+                    class="userStatus active"
+                >
+                    Ativo
+                </span>
+            </div>
+        </section>
+        <!-- INFORMAÇÕES -->
+        <section
+            class="userDetailsGrid"
+        >
+            <div class="detailCard">
+                <span>
+                    🆔 UID
+                </span>
+                <strong id="userUid">
+                    -
+                </strong>
+            </div>
+            <div class="detailCard">
+                <span>
+                    📞 Telefone
+                </span>
+                <strong id="userPhone">
+                    -
+                </strong>
+            </div>
+            <div class="detailCard">
+                <span>
+                    📍 Cidade
+                </span>
+                <strong id="userCity">
+                    -
+                </strong>
+            </div>
+            <div class="detailCard">
+                <span>
+                    🏠 Endereço
+                </span>
+                <strong id="userAddress">
+                    -
+                </strong>
+            </div>
+            <div class="detailCard">
+                <span>
+                    🛡 Função
+                </span>
+                <strong id="userRole">
+                    user
+                </strong>
+            </div>
+            <div class="detailCard">
+                <span>
+                    📅 Registado em
+                </span>
+                <strong id="userCreatedAt">
+                    -
+                </strong>
+            </div>
+            <div class="detailCard">
+                <span>
+                    🛒 Pedidos
+                </span>
+                <strong id="userOrders">
+                    0
+                </strong>
+            </div>
+            <div class="detailCard">
+                <span>
+                    ⭐ Estado da conta
+                </span>
+                <strong id="userAccountState">
+                    Ativa
+                </strong>
+            </div>
+        </section>
+        <!-- AÇÕES ADMIN -->
+        <section
+            class="userAdminActions"
+        >
+            <h3>
+                Ações administrativas
+            </h3>
+            <button
+                id="toggleUserBlock"
+                type="button"
+                class="actionButton blockButton"
+            >
+                🔒 Bloquear utilizador
+            </button>
+            <button
+                id="changeUserRole"
+                type="button"
+                class="actionButton roleButton"
+            >
+                🛡 Alterar função
+            </button>
+            <button
+                id="deleteUser"
+                type="button"
+                class="actionButton deleteButton"
+            >
+                🗑 Eliminar utilizador
+            </button>
+        </section>
+    </div>
+</div>
+<!-- ==================================================
+     MODAL — ALTERAR FUNÇÃO
+================================================== -->
+<div
+    id="roleModal"
+    class="modal hidden"
+    aria-hidden="true"
+>
+    <div class="smallModalContent">
+        <div class="modalHeader">
+            <h2>
+                Alterar função
+            </h2>
+            <button
+                id="closeRoleModal"
+                type="button"
+                class="modalClose"
+            >
+                ×
+            </button>
+        </div>
+        <p>
+            Selecione a nova função deste utilizador.
+        </p>
+        <select
+            id="roleSelect"
+            class="roleSelect"
+        >
+            <option value="user">
+                Utilizador
+            </option>
+            <option value="admin">
+                Administrador
+            </option>
+            <option value="superadmin">
+                Super Admin
+            </option>
+        </select>
+        <div class="modalActions">
+            <button
+                id="saveUserRole"
+                type="button"
+                class="primaryButton"
+            >
+                Guardar
+            </button>
+            <button
+                id="cancelRoleChange"
+                type="button"
+                class="secondaryButton"
+            >
+                Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+<!-- ==================================================
+     MODAL — CONFIRMAÇÃO
+================================================== -->
+<div
+    id="confirmModal"
+    class="modal hidden"
+    aria-hidden="true"
+>
+    <div class="confirmCard">
+        <div class="confirmIcon">
+            ⚠️
+        </div>
+        <h2 id="confirmTitle">
+            Confirmar ação
+        </h2>
+        <p id="confirmText">
+            Tem certeza de que deseja continuar?
+        </p>
+        <div class="confirmActions">
+            <button
+                id="confirmYes"
+                type="button"
+                class="dangerButton"
+            >
+                Confirmar
+            </button>
+            <button
+                id="confirmNo"
+                type="button"
+                class="secondaryButton"
+            >
+                Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+<!-- ==================================================
+     TOAST
+================================================== -->
+<div
+    id="toast"
+    class="toast"
+    role="status"
+    aria-live="polite"
+>
+    <span id="toastMessage">
+        Operação realizada.
+    </span>
+</div>
+<!-- ==================================================
+     TEMPLATE — UTILIZADOR
+================================================== -->
+<template id="userTemplate">
+    <article
+        class="userCard"
+    >
+        <div class="userCardLeft">
+            <img
+                class="userAvatar"
+                src="images/avatar.png"
+                alt="Utilizador"
+            >
+            <div class="userCardInfo">
+                <h3 class="userName">
+                    Nome do utilizador
+                </h3>
+                <p class="userEmail">
+                    email@exemplo.com
+                </p>
+                <div class="userMeta">
+                    <span class="userCity">
+                        📍 Luanda
+                    </span>
+                    <span class="userRole">
+                        👤 Utilizador
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="userCardRight">
+            <span
+                class="userCardStatus active"
+            >
+                Ativo
+            </span>
+            <button
+                type="button"
+                class="viewUserButton"
+            >
+                Ver detalhes →
+            </button>
+        </div>
+    </article>
+</template>
+<!-- ==================================================
+     SCRIPTS
+================================================== -->
+<script
+    type="module"
+    src="js/utilizadores.js"
+></script>
+</div>
+</body>
+</html>
