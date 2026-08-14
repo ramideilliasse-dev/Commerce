@@ -24,19 +24,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!adminApp) {
 
-        alert(
-            "❌ ERREUR BLOC 1\n\n" +
-            "L'ID #adminApp n'existe pas dans le HTML."
-        );
+        
 
         return;
     }
 
 
-    alert(
-        "✅ ID TROUVÉ\n\n" +
-        "#adminApp existe correctement."
-    );
+    
 
 
 
@@ -49,17 +43,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!adminSidebar) {
 
-        alert(
-            "❌ ID MANQUANT\n\n" +
-            "#adminSidebar n'existe pas."
-        );
+        
 
     } else {
 
-        alert(
-            "✅ ID TROUVÉ\n\n" +
-            "#adminSidebar existe."
-        );
+        
 
     }
 
@@ -76,11 +64,6 @@ document.addEventListener("DOMContentLoaded", () => {
         !!adminBrand;
 
 
-    alert(
-        adminBrandOK
-            ? "✅ #adminBrand existe."
-            : "❌ #adminBrand est introuvable."
-    );
 
 
 
@@ -94,12 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    alert(
-        dashboardNavigation
-            ? "✅ #dashboardNavigation existe."
-            : "❌ #dashboardNavigation est introuvable."
-    );
-
+    
 
 
     /* ======================================================
@@ -110,12 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("navDashboard");
 
 
-    alert(
-        navDashboard
-            ? "✅ #navDashboard existe."
-            : "❌ #navDashboard est introuvable."
-    );
-
+    
 
 
     /* ======================================================
@@ -126,11 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("navProducts");
 
 
-    alert(
-        navProducts
-            ? "✅ #navProducts existe."
-            : "❌ #navProducts est introuvable."
-    );
+    
 
 
 
@@ -142,13 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("navOrders");
 
 
-    alert(
-        navOrders
-            ? "✅ #navOrders existe."
-            : "❌ #navOrders est introuvable."
-    );
-
-
+    
 
     /* ======================================================
        FINANCES
@@ -158,12 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("navFinances");
 
 
-    alert(
-        navFinances
-            ? "✅ #navFinances existe."
-            : "❌ #navFinances est introuvable."
-    );
-
+    
 
 
     /* ======================================================
@@ -182,18 +140,9 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    alert(
-        navNotifications
-            ? "✅ #navNotifications existe."
-            : "❌ #navNotifications est introuvable."
-    );
+    
 
-
-    alert(
-        notificationsBadge
-            ? "✅ #notificationsBadge existe."
-            : "❌ #notificationsBadge est introuvable."
-    );
+    
 
 
 
@@ -205,13 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("navReports");
 
 
-    alert(
-        navReports
-            ? "✅ #navReports existe."
-            : "❌ #navReports est introuvable."
-    );
-
-
+    
 
     /* ======================================================
        LOJAS OFICIAIS
@@ -223,12 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    alert(
-        navOfficialStores
-            ? "✅ #navOfficialStores existe."
-            : "❌ #navOfficialStores est introuvable."
-    );
-
+    
 
 
     /* ======================================================
@@ -241,12 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    alert(
-        navSettings
-            ? "✅ #navSettings existe."
-            : "❌ #navSettings est introuvable."
-    );
-
+    
 
 
     /* ======================================================
@@ -274,33 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    alert(
-        adminProfile
-            ? "✅ #adminProfile existe."
-            : "❌ #adminProfile est introuvable."
-    );
-
-
-    alert(
-        adminAvatar
-            ? "✅ #adminAvatar existe."
-            : "❌ #adminAvatar est introuvable."
-    );
-
-
-    alert(
-        adminName
-            ? "✅ #adminName existe."
-            : "❌ #adminName est introuvable."
-    );
-
-
-    alert(
-        logoutButton
-            ? "✅ #logoutButton existe."
-            : "❌ #logoutButton est introuvable."
-    );
-
+    
 
 
     /* ======================================================
@@ -313,12 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    alert(
-        adminMain
-            ? "✅ #adminMain existe."
-            : "❌ #adminMain est introuvable."
-    );
-
+ 
 
 
     /* ======================================================
@@ -356,48 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    alert(
-        adminHeader
-            ? "✅ #adminHeader existe."
-            : "❌ #adminHeader est introuvable."
-    );
-
-
-    alert(
-        dashboardTitle
-            ? "✅ #dashboardTitle existe."
-            : "❌ #dashboardTitle est introuvable."
-    );
-
-
-    alert(
-        dashboardSubtitle
-            ? "✅ #dashboardSubtitle existe."
-            : "❌ #dashboardSubtitle est introuvable."
-    );
-
-
-    alert(
-        globalSearch
-            ? "✅ #globalSearch existe."
-            : "❌ #globalSearch est introuvable."
-    );
-
-
-    alert(
-        notificationsButton
-            ? "✅ #notificationsButton existe."
-            : "❌ #notificationsButton est introuvable."
-    );
-
-
-    alert(
-        refreshDashboard
-            ? "✅ #refreshDashboard existe."
-            : "❌ #refreshDashboard est introuvable."
-    );
-
-
+    
 
     /* ======================================================
        CONTENU DASHBOARD
@@ -414,19 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    alert(
-        dashboardContent
-            ? "✅ #dashboardContent existe."
-            : "❌ #dashboardContent est introuvable."
-    );
-
-
-    alert(
-        statisticsCards
-            ? "✅ #statisticsCards existe."
-            : "❌ #statisticsCards est introuvable."
-    );
-
+   
 
 
     /* ======================================================
@@ -454,33 +303,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    alert(
-        usersCard
-            ? "✅ #usersCard existe."
-            : "❌ #usersCard est introuvable."
-    );
-
-
-    alert(
-        usersCount
-            ? "✅ #usersCount existe."
-            : "❌ #usersCount est introuvable."
-    );
-
-
-    alert(
-        usersGrowth
-            ? "✅ #usersGrowth existe."
-            : "❌ #usersGrowth est introuvable."
-    );
-
-
-    alert(
-        viewUsers
-            ? "✅ #viewUsers existe."
-            : "❌ #viewUsers est introuvable."
-    );
-
+    
 
 
     /* ======================================================
@@ -508,34 +331,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    alert(
-        merchantsCard
-            ? "✅ #merchantsCard existe."
-            : "❌ #merchantsCard est introuvable."
-    );
-
-
-    alert(
-        merchantsCount
-            ? "✅ #merchantsCount existe."
-            : "❌ #merchantsCount est introuvable."
-    );
-
-
-    alert(
-        merchantsGrowth
-            ? "✅ #merchantsGrowth existe."
-            : "❌ #merchantsGrowth est introuvable."
-    );
-
-
-    alert(
-        viewMerchants
-            ? "✅ #viewMerchants existe."
-            : "❌ #viewMerchants est introuvable."
-    );
-
-
+    
 
     /* ======================================================
        CARTE PRODUITS
@@ -552,19 +348,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    alert(
-        productsCard
-            ? "✅ #productsCard existe."
-            : "❌ #productsCard est introuvable."
-    );
-
-
-    alert(
-        productsCount
-            ? "✅ #productsCount existe."
-            : "❌ #productsCount est introuvable."
-    );
-
+   
 
 
     /* ======================================================
@@ -582,19 +366,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    alert(
-        salesCard
-            ? "✅ #salesCard existe."
-            : "❌ #salesCard est introuvable."
-    );
-
-
-    alert(
-        salesCount
-            ? "✅ #salesCount existe."
-            : "❌ #salesCount est introuvable."
-    );
-
+   
 
 
     /* ======================================================
@@ -617,25 +389,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    alert(
-        officialStoresCard
-            ? "✅ #officialStoresCard existe."
-            : "❌ #officialStoresCard est introuvable."
-    );
-
-
-    alert(
-        officialStoresCount
-            ? "✅ #officialStoresCount existe."
-            : "❌ #officialStoresCount est introuvable."
-    );
-
-
-    alert(
-        officialStoresDashboardLink
-            ? "✅ #officialStoresDashboardLink existe."
-            : "❌ #officialStoresDashboardLink est introuvable."
-    );
+    
 
 
 
@@ -659,27 +413,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    alert(
-        merchantRequestsCard
-            ? "✅ #merchantRequestsCard existe."
-            : "❌ #merchantRequestsCard est introuvable."
-    );
-
-
-    alert(
-        merchantRequestsDashboardCount
-            ? "✅ #merchantRequestsDashboardCount existe."
-            : "❌ #merchantRequestsDashboardCount est introuvable."
-    );
-
-
-    alert(
-        merchantRequestsDashboardLink
-            ? "✅ #merchantRequestsDashboardLink existe."
-            : "❌ #merchantRequestsDashboardLink est introuvable."
-    );
-
-
+    
 
     /* ======================================================
        CARTE RAPPORTS
@@ -701,27 +435,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    alert(
-        reportsCard
-            ? "✅ #reportsCard existe."
-            : "❌ #reportsCard est introuvable."
-    );
-
-
-    alert(
-        reportsCount
-            ? "✅ #reportsCount existe."
-            : "❌ #reportsCount est introuvable."
-    );
-
-
-    alert(
-        reportsDashboardLink
-            ? "✅ #reportsDashboardLink existe."
-            : "❌ #reportsDashboardLink est introuvable."
-    );
-
-
+    
 
     /* ======================================================
        CARTE CONFIGURATIONS
@@ -743,27 +457,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    alert(
-        settingsCard
-            ? "✅ #settingsCard existe."
-            : "❌ #settingsCard est introuvable."
-    );
-
-
-    alert(
-        settingsStatus
-            ? "✅ #settingsStatus existe."
-            : "❌ #settingsStatus est introuvable."
-    );
-
-
-    alert(
-        settingsDashboardLink
-            ? "✅ #settingsDashboardLink existe."
-            : "❌ #settingsDashboardLink est introuvable."
-    );
-
-
+    
 
     /* ======================================================
        FIN DU BLOC JS 1
