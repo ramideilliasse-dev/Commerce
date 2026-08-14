@@ -3175,13 +3175,7 @@ if (
 
             initializeBlock8();
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 8 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Sidebar, navegação, perfil e saída inicializados."
-            );
-
+            
         }
     );
 
@@ -3189,12 +3183,7 @@ if (
 
     initializeBlock8();
 
-    alert(
-        "━━━━━━━━━━━━━━━━━━━━━━\n" +
-        "✅ BLOC JS 8 TERMINÉ\n" +
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-        "Sidebar, navegação, perfil e saída inicializados."
-    );
+    
 
 }
 /* ==========================================================
@@ -3208,10 +3197,6 @@ if (
    DÉBUT DU BLOC 9
 ========================================================== */
 
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 9 chargé."
-);
 
 
 /* ==========================================================
@@ -3518,13 +3503,7 @@ if (
 
             initializeBlock9();
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 9 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "As estatísticas principais foram inicializadas."
-            );
-
+            
         }
     );
 
@@ -3532,12 +3511,7 @@ if (
 
     initializeBlock9();
 
-    alert(
-        "━━━━━━━━━━━━━━━━━━━━━━\n" +
-        "✅ BLOC JS 9 TERMINÉ\n" +
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-        "As estatísticas principais foram inicializadas."
-    );
+    
 
 }
 /* ==========================================================
@@ -3551,10 +3525,6 @@ if (
    DÉBUT DU BLOC 10
 ========================================================== */
 
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 10 chargé."
-);
 
 
 /* ==========================================================
@@ -3790,12 +3760,7 @@ if (
 
             initializeBlock10();
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 10 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Lojas oficiais, pedidos de comerciantes, relatórios e configurações foram inicializados."
-            );
+            
 
         }
     );
@@ -3804,12 +3769,7 @@ if (
 
     initializeBlock10();
 
-    alert(
-        "━━━━━━━━━━━━━━━━━━━━━━\n" +
-        "✅ BLOC JS 10 TERMINÉ\n" +
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-        "Lojas oficiais, pedidos de comerciantes, relatórios e configurações foram inicializados."
-    );
+    
 
 }
 /* ==========================================================
@@ -3993,12 +3953,7 @@ if (
 
             initializeBlock11();
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 11 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Gráficos de vendas e pedidos inicializados."
-            );
+            
 
         }
     );
@@ -4007,12 +3962,7 @@ if (
 
     initializeBlock11();
 
-    alert(
-        "━━━━━━━━━━━━━━━━━━━━━━\n" +
-        "✅ BLOC JS 11 TERMINÉ\n" +
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-        "Gráficos de vendas e pedidos inicializados."
-    );
+    
 
 }
 /* ==========================================================
@@ -4191,13 +4141,7 @@ if (
 
             initializeBlock12();
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 12 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "A zona financeira do Dashboard foi inicializada."
-            );
-
+            
         }
     );
 
@@ -4205,12 +4149,7 @@ if (
 
     initializeBlock12();
 
-    alert(
-        "━━━━━━━━━━━━━━━━━━━━━━\n" +
-        "✅ BLOC JS 12 TERMINÉ\n" +
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-        "A zona financeira do Dashboard foi inicializada."
-    );
+    
 
 }
 /* ==========================================================
@@ -4463,12 +4402,7 @@ if (
 
             initializeBlock13();
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 13 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Os três quadros do Dashboard foram inicializados."
-            );
+            
 
         }
     );
@@ -4477,12 +4411,6 @@ if (
 
     initializeBlock13();
 
-    alert(
-        "━━━━━━━━━━━━━━━━━━━━━━\n" +
-        "✅ BLOC JS 13 TERMINÉ\n" +
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-        "Os três quadros do Dashboard foram inicializados."
-    );
 
 }
 /* ==========================================================
@@ -4601,12 +4529,7 @@ if (
 
             initializeBlock14();
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 14 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "A atividade recente do Dashboard foi inicializada."
-            );
+            
 
         }
     );
@@ -4615,12 +4538,7 @@ if (
 
     initializeBlock14();
 
-    alert(
-        "━━━━━━━━━━━━━━━━━━━━━━\n" +
-        "✅ BLOC JS 14 TERMINÉ\n" +
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-        "A atividade recente do Dashboard foi inicializada."
-    );
+    
 
 }
 /* ==========================================================
@@ -4839,13 +4757,7 @@ if (
 
             initializeBlock15();
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 15 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Os relatórios rápidos do Dashboard foram inicializados."
-            );
-
+            
         }
     );
 
@@ -4853,12 +4765,7 @@ if (
 
     initializeBlock15();
 
-    alert(
-        "━━━━━━━━━━━━━━━━━━━━━━\n" +
-        "✅ BLOC JS 15 TERMINÉ\n" +
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-        "Os relatórios rápidos do Dashboard foram inicializados."
-    );
+    
 
 }
 /* ==========================================================
@@ -5063,12 +4970,7 @@ if (
 
             initializeBlock16();
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 16 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Notificações e pedidos de comerciantes foram inicializados."
-            );
+            
 
         }
     );
@@ -5077,12 +4979,7 @@ if (
 
     initializeBlock16();
 
-    alert(
-        "━━━━━━━━━━━━━━━━━━━━━━\n" +
-        "✅ BLOC JS 16 TERMINÉ\n" +
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-        "Notificações e pedidos de comerciantes foram inicializados."
-    );
+    
 
 }
 /* ==========================================================
@@ -5423,12 +5320,7 @@ if (
 
             initializeBlock17();
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 17 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Loader, toast e modal de notificações inicializados."
-            );
+            
 
         }
     );
@@ -5437,12 +5329,7 @@ if (
 
     initializeBlock17();
 
-    alert(
-        "━━━━━━━━━━━━━━━━━━━━━━\n" +
-        "✅ BLOC JS 17 TERMINÉ\n" +
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-        "Loader, toast e modal de notificações inicializados."
-    );
+    
 
 }
 /* ==========================================================
@@ -5663,13 +5550,7 @@ if (
 
             initializeBlock18();
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 18 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Dashboard TOMA preparado para a próxima etapa."
-            );
-
+            
         }
     );
 
@@ -5677,12 +5558,7 @@ if (
 
     initializeBlock18();
 
-    alert(
-        "━━━━━━━━━━━━━━━━━━━━━━\n" +
-        "✅ BLOC JS 18 TERMINÉ\n" +
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-        "Dashboard TOMA preparado para a próxima etapa."
-    );
+    
 
 }
 /* ==========================================================
@@ -5811,14 +5687,7 @@ if (
 
             initializeBlock19();
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 19 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Estrutura Firebase preparada.\n" +
-                "Nenhum dado Firebase foi carregado."
-            );
-
+            
         }
     );
 
@@ -5826,13 +5695,7 @@ if (
 
     initializeBlock19();
 
-    alert(
-        "━━━━━━━━━━━━━━━━━━━━━━\n" +
-        "✅ BLOC JS 19 TERMINÉ\n" +
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-        "Estrutura Firebase preparada.\n" +
-        "Nenhum dado Firebase foi carregado."
-    );
+    
 
 }
 /* ==========================================================
@@ -6011,14 +5874,7 @@ if (
 
             initializeBlock20();
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 20 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Firebase conectado ao TOMA Admin V2.\n" +
-                "Nenhum dado Firestore foi modificado."
-            );
-
+            
         }
     );
 
@@ -6026,13 +5882,7 @@ if (
 
     initializeBlock20();
 
-    alert(
-        "━━━━━━━━━━━━━━━━━━━━━━\n" +
-        "✅ BLOC JS 20 TERMINÉ\n" +
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-        "Firebase conectado ao TOMA Admin V2.\n" +
-        "Nenhum dado Firestore foi modificado."
-    );
+    
 
 }
 /* ==========================================================
@@ -6178,13 +6028,7 @@ if (
             await initializeBlock21();
 
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 21 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Utilizadores carregados desde Firebase."
-            );
-
+            
         }
     );
 
@@ -6193,13 +6037,7 @@ if (
     await initializeBlock21();
 
 
-    alert(
-        "━━━━━━━━━━━━━━━━━━━━━━\n" +
-        "✅ BLOC JS 21 TERMINÉ\n" +
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-        "Utilizadores carregados desde Firebase."
-    );
-
+    
 }
 /* ==========================================================
    TOMA ADMIN V2
@@ -6212,10 +6050,6 @@ if (
    DÉBUT DU BLOC 22
 ========================================================== */
 
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 22 chargé."
-);
 
 
 /* ==========================================================
@@ -6368,12 +6202,7 @@ if (
             await initializeBlock22();
 
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 22 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Comerciantes carregados desde Firebase."
-            );
+            
 
         }
     );
@@ -6387,13 +6216,7 @@ else {
         .then(
             function () {
 
-                alert(
-                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                    "✅ BLOC JS 22 TERMINÉ\n" +
-                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                    "Comerciantes carregados desde Firebase."
-                );
-
+                
             }
         )
         .catch(
@@ -6426,10 +6249,6 @@ else {
    DÉBUT DU BLOC 23
 ========================================================== */
 
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 23 chargé."
-);
 
 
 /* ==========================================================
@@ -6582,12 +6401,7 @@ if (
             await initializeBlock23();
 
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 23 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Produtos carregados desde Firebase."
-            );
+            
 
         }
     );
@@ -6601,13 +6415,7 @@ else {
         .then(
             function () {
 
-                alert(
-                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                    "✅ BLOC JS 23 TERMINÉ\n" +
-                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                    "Produtos carregados desde Firebase."
-                );
-
+                
             }
         )
         .catch(
@@ -6619,11 +6427,7 @@ else {
                 );
 
 
-                alert(
-                    "⚠️ BLOC JS 23\n\n" +
-                    "Une erreur est survenue.\n" +
-                    "Regarde la console."
-                );
+                
 
             }
         );
@@ -6640,10 +6444,7 @@ else {
    DÉBUT DU BLOC 24
 ========================================================== */
 
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 24 chargé."
-);
+
 
 
 /* ==========================================================
@@ -6824,13 +6625,7 @@ if (
             await initializeBlock24();
 
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 24 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Vendas carregadas desde Firebase."
-            );
-
+            
         }
     );
 
@@ -6843,12 +6638,7 @@ else {
         .then(
             function () {
 
-                alert(
-                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                    "✅ BLOC JS 24 TERMINÉ\n" +
-                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                    "Vendas carregadas desde Firebase."
-                );
+                
 
             }
         )
@@ -6861,12 +6651,7 @@ else {
                 );
 
 
-                alert(
-                    "⚠️ BLOC JS 24\n\n" +
-                    "Une erreur est survenue.\n" +
-                    "Regarde la console."
-                );
-
+                
             }
         );
 
@@ -6882,10 +6667,6 @@ else {
    DÉBUT DU BLOC 25
 ========================================================== */
 
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 25 chargé."
-);
 
 
 /* ==========================================================
@@ -7250,12 +7031,7 @@ if (
             await initializeBlock25();
 
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 25 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Resumo financeiro carregado desde Firebase."
-            );
+            
 
         }
     );
@@ -7269,12 +7045,7 @@ else {
         .then(
             function () {
 
-                alert(
-                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                    "✅ BLOC JS 25 TERMINÉ\n" +
-                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                    "Resumo financeiro carregado desde Firebase."
-                );
+                
 
             }
         )
@@ -7287,12 +7058,7 @@ else {
                 );
 
 
-                alert(
-                    "⚠️ BLOC JS 25\n\n" +
-                    "Une erreur est survenue.\n" +
-                    "Regarde la console."
-                );
-
+                
             }
         );
 
@@ -7308,10 +7074,6 @@ else {
    DÉBUT DU BLOC 26
 ========================================================== */
 
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 26 chargé."
-);
 
 
 /* ==========================================================
@@ -7728,12 +7490,7 @@ if (
             await initializeBlock26();
 
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 26 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Últimos pedidos carregados desde Firebase."
-            );
+            
 
         }
     );
@@ -7747,12 +7504,7 @@ else {
         .then(
             function () {
 
-                alert(
-                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                    "✅ BLOC JS 26 TERMINÉ\n" +
-                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                    "Últimos pedidos carregados desde Firebase."
-                );
+                
 
             }
         )
@@ -7765,11 +7517,7 @@ else {
                 );
 
 
-                alert(
-                    "⚠️ BLOC JS 26\n\n" +
-                    "Une erreur est survenue.\n" +
-                    "Regarde la console."
-                );
+                
 
             }
         );
@@ -7786,10 +7534,7 @@ else {
    DÉBUT DU BLOC 27
 ========================================================== */
 
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 27 chargé."
-);
+
 
 
 /* ==========================================================
@@ -8242,12 +7987,7 @@ if (
             await initializeBlock27();
 
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 27 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Comerciantes recentes carregados desde Firebase."
-            );
+            
 
         }
     );
@@ -8261,12 +8001,7 @@ else {
         .then(
             function () {
 
-                alert(
-                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                    "✅ BLOC JS 27 TERMINÉ\n" +
-                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                    "Comerciantes recentes carregados desde Firebase."
-                );
+                
 
             }
         )
@@ -8279,12 +8014,7 @@ else {
                 );
 
 
-                alert(
-                    "⚠️ BLOC JS 27\n\n" +
-                    "Une erreur est survenue.\n" +
-                    "Regarde la console."
-                );
-
+                
             }
         );
 
@@ -8300,10 +8030,6 @@ else {
    DÉBUT DU BLOC 28
 ========================================================== */
 
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 28 chargé."
-);
 
 
 /* ==========================================================
@@ -8793,12 +8519,7 @@ if (
             await initializeBlock28();
 
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 28 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Produtos recentes carregados desde Firebase."
-            );
+            
 
         }
     );
@@ -8812,13 +8533,7 @@ else {
         .then(
             function () {
 
-                alert(
-                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                    "✅ BLOC JS 28 TERMINÉ\n" +
-                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                    "Produtos recentes carregados desde Firebase."
-                );
-
+                
             }
         )
         .catch(
@@ -8830,11 +8545,7 @@ else {
                 );
 
 
-                alert(
-                    "⚠️ BLOC JS 28\n\n" +
-                    "Une erreur est survenue.\n" +
-                    "Regarde la console."
-                );
+                
 
             }
         );
@@ -8850,11 +8561,6 @@ else {
 /* ==========================================================
    DÉBUT DU BLOC 29
 ========================================================== */
-
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 29 chargé."
-);
 
 
 /* ==========================================================
@@ -9420,12 +9126,7 @@ if (
             await initializeBlock29();
 
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 29 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Atividade recente preparada para Firebase."
-            );
+            
 
         }
     );
@@ -9439,12 +9140,7 @@ else {
         .then(
             function () {
 
-                alert(
-                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                    "✅ BLOC JS 29 TERMINÉ\n" +
-                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                    "Atividade recente preparada para Firebase."
-                );
+                
 
             }
         )
@@ -9457,11 +9153,7 @@ else {
                 );
 
 
-                alert(
-                    "⚠️ BLOC JS 29\n\n" +
-                    "Une erreur est survenue.\n" +
-                    "Regarde la console."
-                );
+                
 
             }
         );
@@ -9478,10 +9170,6 @@ else {
    DÉBUT DU BLOC 30
 ========================================================== */
 
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 30 chargé."
-);
 
 
 /* ==========================================================
@@ -9960,12 +9648,7 @@ if (
             await initializeBlock30();
 
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 30 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Relatórios rápidos carregados desde Firebase."
-            );
+            
 
         }
     );
@@ -9979,12 +9662,7 @@ else {
         .then(
             function () {
 
-                alert(
-                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                    "✅ BLOC JS 30 TERMINÉ\n" +
-                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                    "Relatórios rápidos carregados desde Firebase."
-                );
+                
 
             }
         )
@@ -9997,12 +9675,7 @@ else {
                 );
 
 
-                alert(
-                    "⚠️ BLOC JS 30\n\n" +
-                    "Une erreur est survenue.\n" +
-                    "Regarde la console."
-                );
-
+                
             }
         );
 
@@ -10018,10 +9691,6 @@ else {
    DÉBUT DU BLOC 31
 ========================================================== */
 
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 31 chargé."
-);
 
 
 /* ==========================================================
@@ -10604,12 +10273,7 @@ if (
             await initializeBlock31();
 
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 31 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Notificações carregadas desde Firebase."
-            );
+            
 
         }
     );
@@ -10623,12 +10287,7 @@ else {
         .then(
             function () {
 
-                alert(
-                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                    "✅ BLOC JS 31 TERMINÉ\n" +
-                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                    "Notificações carregadas desde Firebase."
-                );
+                
 
             }
         )
@@ -10641,12 +10300,7 @@ else {
                 );
 
 
-                alert(
-                    "⚠️ BLOC JS 31\n\n" +
-                    "Une erreur est survenue.\n" +
-                    "Regarde la console."
-                );
-
+                
             }
         );
 
@@ -10662,10 +10316,6 @@ else {
    DÉBUT DU BLOC 32
 ========================================================== */
 
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 32 chargé."
-);
 
 
 /* ==========================================================
@@ -10931,13 +10581,7 @@ if (
             await initializeBlock32();
 
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 32 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Pedidos de comerciantes carregados desde Firebase."
-            );
-
+            
         }
     );
 
@@ -10950,12 +10594,7 @@ else {
         .then(
             function () {
 
-                alert(
-                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                    "✅ BLOC JS 32 TERMINÉ\n" +
-                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                    "Pedidos de comerciantes carregados desde Firebase."
-                );
+                
 
             }
         )
@@ -10968,11 +10607,7 @@ else {
                 );
 
 
-                alert(
-                    "⚠️ BLOC JS 32\n\n" +
-                    "Une erreur est survenue.\n" +
-                    "Regarde la console."
-                );
+                
 
             }
         );
@@ -10989,10 +10624,7 @@ else {
    DÉBUT DU BLOC 33
 ========================================================== */
 
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 33 chargé."
-);
+
 
 
 /* ==========================================================
@@ -11492,12 +11124,6 @@ if (
             await initializeBlock33();
 
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 33 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Dados financeiros sincronizados com Firebase."
-            );
 
         }
     );
@@ -11511,12 +11137,7 @@ else {
         .then(
             function () {
 
-                alert(
-                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                    "✅ BLOC JS 33 TERMINÉ\n" +
-                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                    "Dados financeiros sincronizados com Firebase."
-                );
+                
 
             }
         )
@@ -11529,11 +11150,7 @@ else {
                 );
 
 
-                alert(
-                    "⚠️ BLOC JS 33\n\n" +
-                    "Une erreur est survenue.\n" +
-                    "Regarde la console."
-                );
+                
 
             }
         );
@@ -11550,10 +11167,6 @@ else {
    DÉBUT DU BLOC 34
 ========================================================== */
 
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 34 chargé."
-);
 
 
 /* ==========================================================
@@ -12051,12 +11664,7 @@ if (
             await initializeBlock34();
 
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 34 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Relatórios rápidos sincronizados com Firebase."
-            );
+            
 
         }
     );
@@ -12069,12 +11677,7 @@ else {
         .then(
             function () {
 
-                alert(
-                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                    "✅ BLOC JS 34 TERMINÉ\n" +
-                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                    "Relatórios rápidos sincronizados com Firebase."
-                );
+                
 
             }
         )
@@ -12087,11 +11690,7 @@ else {
                 );
 
 
-                alert(
-                    "⚠️ BLOC JS 34\n\n" +
-                    "Une erreur est survenue.\n" +
-                    "Regarde la console."
-                );
+                
 
             }
         );
@@ -12108,10 +11707,6 @@ else {
    DÉBUT DU BLOC 35
 ========================================================== */
 
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 35 chargé."
-);
 
 
 /* ==========================================================
@@ -12585,12 +12180,7 @@ if (
             await initializeBlock35();
 
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 35 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Atividade recente carregada desde Firebase."
-            );
+            
 
         }
     );
@@ -12603,12 +12193,7 @@ else {
         .then(
             function () {
 
-                alert(
-                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                    "✅ BLOC JS 35 TERMINÉ\n" +
-                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                    "Atividade recente carregada desde Firebase."
-                );
+                
 
             }
         )
@@ -12621,12 +12206,7 @@ else {
                 );
 
 
-                alert(
-                    "⚠️ BLOC JS 35\n\n" +
-                    "Une erreur est survenue.\n" +
-                    "Regarde la console."
-                );
-
+                
             }
         );
 
@@ -12642,10 +12222,6 @@ else {
    DÉBUT DU BLOC 36
 ========================================================== */
 
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 36 chargé."
-);
 
 
 /* ==========================================================
@@ -13279,13 +12855,7 @@ if (
             await initializeBlock36();
 
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 36 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Notificações carregadas desde Firebase."
-            );
-
+            
         }
     );
 
@@ -13297,12 +12867,7 @@ else {
         .then(
             function () {
 
-                alert(
-                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                    "✅ BLOC JS 36 TERMINÉ\n" +
-                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                    "Notificações carregadas desde Firebase."
-                );
+                
 
             }
         )
@@ -13315,11 +12880,7 @@ else {
                 );
 
 
-                alert(
-                    "⚠️ BLOC JS 36\n\n" +
-                    "Une erreur est survenue.\n" +
-                    "Regarde la console."
-                );
+                
 
             }
         );
@@ -13336,10 +12897,6 @@ else {
    DÉBUT DU BLOC 37
 ========================================================== */
 
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 37 chargé."
-);
 
 
 /* ==========================================================
@@ -13658,12 +13215,7 @@ if (
             await initializeBlock37();
 
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 37 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Pedidos de comerciantes carregados desde Firebase."
-            );
+            
 
         }
     );
@@ -13676,12 +13228,7 @@ else {
         .then(
             function () {
 
-                alert(
-                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                    "✅ BLOC JS 37 TERMINÉ\n" +
-                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                    "Pedidos de comerciantes carregados desde Firebase."
-                );
+                
 
             }
         )
@@ -13694,12 +13241,7 @@ else {
                 );
 
 
-                alert(
-                    "⚠️ BLOC JS 37\n\n" +
-                    "Une erreur est survenue.\n" +
-                    "Regarde la console."
-                );
-
+                
             }
         );
 
@@ -13714,11 +13256,6 @@ else {
 /* ==========================================================
    DÉBUT DU BLOC 38
 ========================================================== */
-
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 38 chargé."
-);
 
 
 /* ==========================================================
@@ -13883,13 +13420,7 @@ if (
             await initializeBlock38();
 
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 38 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Produtos carregados desde Firebase."
-            );
-
+            
         }
     );
 
@@ -13901,12 +13432,7 @@ else {
         .then(
             function () {
 
-                alert(
-                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                    "✅ BLOC JS 38 TERMINÉ\n" +
-                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                    "Produtos carregados desde Firebase."
-                );
+                
 
             }
         )
@@ -13919,11 +13445,7 @@ else {
                 );
 
 
-                alert(
-                    "⚠️ BLOC JS 38\n\n" +
-                    "Une erreur est survenue.\n" +
-                    "Regarde la console."
-                );
+                
 
             }
         );
@@ -13940,10 +13462,6 @@ else {
    DÉBUT DU BLOC 39
 ========================================================== */
 
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 39 chargé."
-);
 
 
 /* ==========================================================
@@ -14544,13 +14062,7 @@ if (
             await initializeBlock39();
 
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 39 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Pedidos carregados desde Firebase."
-            );
-
+            
         }
     );
 
@@ -14562,12 +14074,7 @@ else {
         .then(
             function () {
 
-                alert(
-                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                    "✅ BLOC JS 39 TERMINÉ\n" +
-                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                    "Pedidos carregados desde Firebase."
-                );
+                
 
             }
         )
@@ -14601,10 +14108,6 @@ else {
    DÉBUT DU BLOC 40
 ========================================================== */
 
-alert(
-    "▶️ TOMA ADMIN V2\n\n" +
-    "BLOC JS 40 chargé."
-);
 
 
 /* ==========================================================
@@ -15056,12 +14559,7 @@ if (
             await initializeBlock40();
 
 
-            alert(
-                "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "✅ BLOC JS 40 TERMINÉ\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Comerciantes recentes carregados desde Firebase."
-            );
+            
 
         }
     );
@@ -15074,12 +14572,7 @@ else {
         .then(
             function () {
 
-                alert(
-                    "━━━━━━━━━━━━━━━━━━━━━━\n" +
-                    "✅ BLOC JS 40 TERMINÉ\n" +
-                    "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-                    "Comerciantes recentes carregados desde Firebase."
-                );
+                
 
             }
         )
@@ -15092,11 +14585,7 @@ else {
                 );
 
 
-                alert(
-                    "⚠️ BLOC JS 40\n\n" +
-                    "Une erreur est survenue.\n" +
-                    "Regarde la console."
-                );
+                
 
             }
         );
