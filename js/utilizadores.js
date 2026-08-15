@@ -2,6 +2,7 @@
 // TOMA ADMIN
 // UTILIZADORES.JS
 // Gestion avancée des utilisateurs
+// Compatible avec le HTML actuel
 // ============================================================
 
 import { db, auth } from "../firebase.js";
@@ -9,7 +10,6 @@ import { db, auth } from "../firebase.js";
 import {
     collection,
     query,
-    orderBy,
     onSnapshot,
     doc,
     updateDoc,
@@ -28,41 +28,51 @@ import {
 // ============================================================
 
 let users = [];
-
 let filteredUsers = [];
 
 let currentFilter = "all";
-
 let currentUser = null;
 
 let unsubscribeUsers = null;
+let authListenerStarted = false;
+
+let toastTimer = null;
 
 
 // ============================================================
 // ÉLÉMENTS HTML
 // ============================================================
 
-const usersList =
-    document.getElementById("usersList");
+// HEADER
+const backButton =
+    document.getElementById("backButton");
 
+const refreshButton =
+    document.getElementById("refreshButton");
+
+
+// SEARCH
 const searchInput =
     document.getElementById("searchInput");
 
-const loader =
-    document.getElementById("loader");
+const clearSearch =
+    document.getElementById("clearSearch");
+
+
+// LIST
+const usersList =
+    document.getElementById("usersList");
 
 const emptyState =
     document.getElementById("emptyState");
 
-const errorState =
-    document.getElementById("errorState");
 
-const retryButton =
-    document.getElementById("retryButton");
+// LOADER
+const loader =
+    document.getElementById("loader");
 
 
-// STATISTIQUES
-
+// STATS
 const totalUsers =
     document.getElementById("totalUsers");
 
@@ -72,11 +82,13 @@ const activeUsers =
 const blockedUsers =
     document.getElementById("blockedUsers");
 
-const adminUsers =
-    document.getElementById("adminUsers");
+const newUsers =
+    document.getElementById("newUsers");
 
 
-// MODAL
+// ============================================================
+// MODAL UTILISATEUR
+// ============================================================
 
 const userModal =
     document.getElementById("userModal");
@@ -84,44 +96,103 @@ const userModal =
 const closeUserModal =
     document.getElementById("closeUserModal");
 
-const modalUserAvatar =
-    document.getElementById("modalUserAvatar");
 
-const modalUserName =
-    document.getElementById("modalUserName");
+// PROFIL
+const userPhoto =
+    document.getElementById("userPhoto");
 
-const modalUserEmail =
-    document.getElementById("modalUserEmail");
+const userFullName =
+    document.getElementById("userFullName");
 
-const modalUserPhone =
-    document.getElementById("modalUserPhone");
+const userEmail =
+    document.getElementById("userEmail");
 
-const modalUserCity =
-    document.getElementById("modalUserCity");
-
-const modalUserRole =
-    document.getElementById("modalUserRole");
-
-const modalUserStatus =
-    document.getElementById("modalUserStatus");
-
-const modalUserDate =
-    document.getElementById("modalUserDate");
+const userStatus =
+    document.getElementById("userStatus");
 
 
-// ACTIONS MODAL
+// DETAILS
+const userUid =
+    document.getElementById("userUid");
 
-const blockUserButton =
-    document.getElementById("blockUserButton");
+const userPhone =
+    document.getElementById("userPhone");
 
-const unblockUserButton =
-    document.getElementById("unblockUserButton");
+const userCity =
+    document.getElementById("userCity");
+
+const userAddress =
+    document.getElementById("userAddress");
+
+const userRole =
+    document.getElementById("userRole");
+
+const userCreatedAt =
+    document.getElementById("userCreatedAt");
+
+const userOrders =
+    document.getElementById("userOrders");
+
+const userAccountState =
+    document.getElementById("userAccountState");
+
+
+// ACTIONS
+const toggleUserBlock =
+    document.getElementById("toggleUserBlock");
+
+const changeUserRole =
+    document.getElementById("changeUserRole");
 
 const deleteUserButton =
-    document.getElementById("deleteUserButton");
+    document.getElementById("deleteUser");
 
 
+// ============================================================
+// MODAL ROLE
+// ============================================================
+
+const roleModal =
+    document.getElementById("roleModal");
+
+const closeRoleModal =
+    document.getElementById("closeRoleModal");
+
+const roleSelect =
+    document.getElementById("roleSelect");
+
+const saveUserRole =
+    document.getElementById("saveUserRole");
+
+const cancelRoleChange =
+    document.getElementById("cancelRoleChange");
+
+
+// ============================================================
+// CONFIRMATION
+// ============================================================
+
+const confirmModal =
+    document.getElementById("confirmModal");
+
+const confirmTitle =
+    document.getElementById("confirmTitle");
+
+const confirmText =
+    document.getElementById("confirmText");
+
+const confirmYes =
+    document.getElementById("confirmYes");
+
+const confirmNo =
+    document.getElementById("confirmNo");
+
+let pendingConfirmAction = null;
+
+
+// ============================================================
 // TOAST
+// ============================================================
 
 const toast =
     document.getElementById("toast");
@@ -143,45 +214,110 @@ init();
 
 function init() {
 
-    showLoader();
+    setupHeader();
 
-    if (retryButton) {
-
-        retryButton.addEventListener(
-            "click",
-            () => {
-
-                hideError();
-
-                showLoader();
-
-                checkAuthentication();
-
-            }
-        );
-
-    }
-
-
-    if (searchInput) {
-
-        searchInput.addEventListener(
-            "input",
-            () => {
-
-                applyFilters();
-
-            }
-        );
-
-    }
-
+    setupSearch();
 
     setupFilters();
 
-    setupModal();
+    setupUserModal();
+
+    setupRoleModal();
+
+    setupConfirmModal();
 
     checkAuthentication();
+
+}
+
+
+// ============================================================
+// HEADER
+// ============================================================
+
+function setupHeader() {
+
+    // --------------------------------------------------------
+    // RETOUR
+    // --------------------------------------------------------
+
+    if (backButton) {
+
+        backButton.addEventListener(
+            "click",
+            () => {
+
+                /*
+                 * Retour à la page précédente.
+                 */
+
+                if (
+                    window.history.length > 1
+                ) {
+
+                    window.history.back();
+
+                } else {
+
+                    /*
+                     * Si aucune page précédente
+                     * n'existe, on revient à
+                     * l'accueil admin.
+                     */
+
+                    window.location.href =
+                        "../admin-dashboard.html";
+
+                }
+
+            }
+        );
+
+    }
+
+
+    // --------------------------------------------------------
+    // ACTUALISER
+    // --------------------------------------------------------
+
+    if (refreshButton) {
+
+        refreshButton.addEventListener(
+            "click",
+            () => {
+
+                refreshButton.disabled =
+                    true;
+
+                refreshButton.style.transform =
+                    "rotate(180deg)";
+
+
+                showToast(
+                    "Atualizando utilizadores..."
+                );
+
+
+                listenUsers();
+
+
+                setTimeout(
+                    () => {
+
+                        refreshButton.disabled =
+                            false;
+
+                        refreshButton.style.transform =
+                            "";
+
+                    },
+                    700
+                );
+
+            }
+        );
+
+    }
 
 }
 
@@ -192,6 +328,21 @@ function init() {
 
 function checkAuthentication() {
 
+    showLoader();
+
+
+    if (authListenerStarted) {
+
+        listenUsers();
+
+        return;
+
+    }
+
+
+    authListenerStarted = true;
+
+
     onAuthStateChanged(
         auth,
         async (user) => {
@@ -200,8 +351,8 @@ function checkAuthentication() {
 
                 hideLoader();
 
-                showError(
-                    "Você precisa estar conectado como administrador."
+                showToast(
+                    "Sessão expirada. Entre novamente."
                 );
 
                 return;
@@ -210,29 +361,34 @@ function checkAuthentication() {
 
 
             console.log(
-                "Utilisateur connecté :",
+                "Utilizador conectado:",
                 user.uid
             );
 
 
             try {
 
-                const userRef =
+                const adminRef =
                     doc(
                         db,
                         "users",
                         user.uid
                     );
 
-                const userSnap =
-                    await getDoc(userRef);
+
+                const adminSnap =
+                    await getDoc(
+                        adminRef
+                    );
 
 
-                if (!userSnap.exists()) {
+                if (
+                    !adminSnap.exists()
+                ) {
 
                     hideLoader();
 
-                    showError(
+                    showToast(
                         "Perfil administrativo não encontrado."
                     );
 
@@ -241,14 +397,17 @@ function checkAuthentication() {
                 }
 
 
-                const userData =
-                    userSnap.data();
+                const adminData =
+                    adminSnap.data();
 
 
                 const role =
                     String(
-                        userData.role || ""
-                    ).toLowerCase();
+                        adminData.role ||
+                        ""
+                    )
+                        .trim()
+                        .toLowerCase();
 
 
                 if (
@@ -258,8 +417,8 @@ function checkAuthentication() {
 
                     hideLoader();
 
-                    showError(
-                        "Acesso recusado. Esta página é reservada ao administrador."
+                    showToast(
+                        "Acesso recusado."
                     );
 
                     return;
@@ -268,7 +427,8 @@ function checkAuthentication() {
 
 
                 console.log(
-                    "Acesso administrativo confirmado."
+                    "Acesso administrativo confirmado:",
+                    role
                 );
 
 
@@ -279,14 +439,17 @@ function checkAuthentication() {
             catch (error) {
 
                 console.error(
-                    "Erro ao verificar administrador:",
+                    "Erro autenticação:",
                     error
                 );
 
+
                 hideLoader();
 
-                showError(
-                    getFirebaseErrorMessage(error)
+                showToast(
+                    getFirebaseErrorMessage(
+                        error
+                    )
                 );
 
             }
@@ -298,12 +461,10 @@ function checkAuthentication() {
 
 
 // ============================================================
-// CHARGEMENT TEMPS RÉEL DES UTILISATEURS
+// CHARGEMENT UTILISATEURS
 // ============================================================
 
 function listenUsers() {
-
-    hideError();
 
     showLoader();
 
@@ -312,7 +473,8 @@ function listenUsers() {
 
         unsubscribeUsers();
 
-        unsubscribeUsers = null;
+        unsubscribeUsers =
+            null;
 
     }
 
@@ -326,15 +488,10 @@ function listenUsers() {
             );
 
 
-        /*
-         * On évite orderBy() ici.
-         *
-         * Cela permet d'éviter une erreur si certains
-         * utilisateurs anciens n'ont pas de createdAt.
-         */
-
         const usersQuery =
-            query(usersRef);
+            query(
+                usersRef
+            );
 
 
         unsubscribeUsers =
@@ -363,22 +520,22 @@ function listenUsers() {
                     );
 
 
-                    /*
-                     * Tri côté navigateur.
-                     */
-
                     users.sort(
                         sortUsersByDate
                     );
 
 
-                    hideLoader();
-
-                    hideError();
-
                     updateStatistics();
 
                     applyFilters();
+
+                    hideLoader();
+
+
+                    console.log(
+                        "Utilisateurs chargés:",
+                        users.length
+                    );
 
                 },
 
@@ -386,7 +543,7 @@ function listenUsers() {
                 (error) => {
 
                     console.error(
-                        "Erreur Firestore users:",
+                        "Erreur Firestore:",
                         error
                     );
 
@@ -394,8 +551,10 @@ function listenUsers() {
                     hideLoader();
 
 
-                    showError(
-                        getFirebaseErrorMessage(error)
+                    showToast(
+                        getFirebaseErrorMessage(
+                            error
+                        )
                     );
 
                 }
@@ -407,7 +566,7 @@ function listenUsers() {
     catch (error) {
 
         console.error(
-            "Erreur chargement utilisateurs:",
+            "Erreur chargement:",
             error
         );
 
@@ -415,8 +574,10 @@ function listenUsers() {
         hideLoader();
 
 
-        showError(
-            getFirebaseErrorMessage(error)
+        showToast(
+            getFirebaseErrorMessage(
+                error
+            )
         );
 
     }
@@ -435,6 +596,7 @@ function sortUsersByDate(a, b) {
             a.createdAt
         );
 
+
     const dateB =
         getTimestampMillis(
             b.createdAt
@@ -447,7 +609,7 @@ function sortUsersByDate(a, b) {
 
 
 // ============================================================
-// TIMESTAMP FIREBASE
+// TIMESTAMP
 // ============================================================
 
 function getTimestampMillis(timestamp) {
@@ -490,6 +652,15 @@ function getTimestampMillis(timestamp) {
     }
 
 
+    if (
+        typeof timestamp === "number"
+    ) {
+
+        return timestamp;
+
+    }
+
+
     return 0;
 
 }
@@ -521,19 +692,37 @@ function updateStatistics() {
         ).length;
 
 
-    const admins =
+    /*
+     * "Novos" = utilisateurs créés
+     * durant les 30 derniers jours.
+     */
+
+    const now =
+        Date.now();
+
+
+    const thirtyDays =
+        30 *
+        24 *
+        60 *
+        60 *
+        1000;
+
+
+    const recent =
         users.filter(
             user => {
 
-                const role =
-                    String(
-                        user.role || ""
-                    ).toLowerCase();
+                const date =
+                    getTimestampMillis(
+                        user.createdAt
+                    );
 
 
                 return (
-                    role === "admin" ||
-                    role === "superadmin"
+                    date > 0 &&
+                    now - date <=
+                    thirtyDays
                 );
 
             }
@@ -559,9 +748,55 @@ function updateStatistics() {
 
 
     setText(
-        adminUsers,
-        admins
+        newUsers,
+        recent
     );
+
+}
+
+
+// ============================================================
+// RECHERCHE
+// ============================================================
+
+function setupSearch() {
+
+    if (searchInput) {
+
+        searchInput.addEventListener(
+            "input",
+            () => {
+
+                applyFilters();
+
+            }
+        );
+
+    }
+
+
+    if (clearSearch) {
+
+        clearSearch.addEventListener(
+            "click",
+            () => {
+
+                if (searchInput) {
+
+                    searchInput.value =
+                        "";
+
+                    searchInput.focus();
+
+                }
+
+
+                applyFilters();
+
+            }
+        );
+
+    }
 
 }
 
@@ -572,24 +807,27 @@ function updateStatistics() {
 
 function setupFilters() {
 
-    const filterButtons =
+    const buttons =
         document.querySelectorAll(
             ".filterButton"
         );
 
 
-    filterButtons.forEach(
+    buttons.forEach(
         button => {
 
             button.addEventListener(
                 "click",
                 () => {
 
-                    filterButtons.forEach(
-                        btn =>
+                    buttons.forEach(
+                        btn => {
+
                             btn.classList.remove(
                                 "active"
-                            )
+                            );
+
+                        }
                     );
 
 
@@ -601,6 +839,12 @@ function setupFilters() {
                     currentFilter =
                         button.dataset.filter ||
                         "all";
+
+
+                    console.log(
+                        "Filtre:",
+                        currentFilter
+                    );
 
 
                     applyFilters();
@@ -615,7 +859,7 @@ function setupFilters() {
 
 
 // ============================================================
-// RECHERCHE + FILTRES
+// FILTRES + RECHERCHE
 // ============================================================
 
 function applyFilters() {
@@ -625,20 +869,88 @@ function applyFilters() {
 
 
     // --------------------------------------------------------
-    // FILTRE STATUT
+    // FILTRE
     // --------------------------------------------------------
 
-    if (
-        currentFilter !==
-        "all"
+    switch (
+        currentFilter
     ) {
 
-        result =
-            result.filter(
-                user =>
-                    getUserStatus(user) ===
-                    currentFilter
-            );
+        case "active":
+
+            result =
+                result.filter(
+                    user =>
+                        getUserStatus(user) ===
+                        "active"
+                );
+
+            break;
+
+
+        case "blocked":
+
+            result =
+                result.filter(
+                    user =>
+                        getUserStatus(user) ===
+                        "blocked"
+                );
+
+            break;
+
+
+        case "admin":
+
+            result =
+                result.filter(
+                    user => {
+
+                        const role =
+                            getRawRole(
+                                user
+                            );
+
+
+                        return (
+                            role ===
+                            "admin"
+                        );
+
+                    }
+                );
+
+            break;
+
+
+        case "superadmin":
+
+            result =
+                result.filter(
+                    user => {
+
+                        const role =
+                            getRawRole(
+                                user
+                            );
+
+
+                        return (
+                            role ===
+                            "superadmin"
+                        );
+
+                    }
+                );
+
+            break;
+
+
+        case "all":
+
+        default:
+
+            break;
 
     }
 
@@ -661,57 +973,79 @@ function applyFilters() {
             result.filter(
                 user => {
 
+                    const firstName =
+                        user.firstName ||
+                        "";
+
+
+                    const lastName =
+                        user.lastName ||
+                        "";
+
+
                     const name =
-                        `${user.firstName || ""} ${user.lastName || ""}`
-                            .toLowerCase();
+                        user.name ||
+                        "";
 
 
-                    const fullName =
-                        (
-                            user.name ||
-                            user.displayName ||
-                            ""
-                        )
-                            .toLowerCase();
+                    const displayName =
+                        user.displayName ||
+                        "";
 
 
                     const email =
-                        (
-                            user.email ||
-                            ""
-                        )
-                            .toLowerCase();
+                        user.email ||
+                        "";
 
 
                     const phone =
-                        (
-                            user.phone ||
-                            user.telephone ||
-                            ""
-                        )
-                            .toLowerCase();
+                        user.phone ||
+                        user.telephone ||
+                        "";
 
 
                     const city =
-                        (
-                            user.city ||
-                            ""
-                        )
+                        user.city ||
+                        "";
+
+
+                    const uid =
+                        user.id ||
+                        "";
+
+
+                    const searchable =
+                        [
+
+                            firstName,
+
+                            lastName,
+
+                            `${firstName} ${lastName}`,
+
+                            name,
+
+                            displayName,
+
+                            email,
+
+                            phone,
+
+                            city,
+
+                            uid,
+
+                            getRawRole(user),
+
+                            getUserRole(user)
+
+                        ]
+                            .join(" ")
                             .toLowerCase();
 
 
-                    return (
-
-                        name.includes(search) ||
-
-                        fullName.includes(search) ||
-
-                        email.includes(search) ||
-
-                        phone.includes(search) ||
-
-                        city.includes(search)
-
+                    return searchable.includes(
+                        search
                     );
 
                 }
@@ -725,30 +1059,27 @@ function applyFilters() {
 
 
     renderUsers(
-        filteredUsers
+        result
     );
 
 }
 
 
 // ============================================================
-// AFFICHAGE DES UTILISATEURS
+// AFFICHAGE
 // ============================================================
 
 function renderUsers(list) {
 
     if (!usersList) {
 
-        console.error(
-            "usersList introuvable dans le HTML."
-        );
-
         return;
 
     }
 
 
-    usersList.innerHTML = "";
+    usersList.innerHTML =
+        "";
 
 
     if (
@@ -769,14 +1100,10 @@ function renderUsers(list) {
     list.forEach(
         user => {
 
-            const card =
+            usersList.appendChild(
                 createUserCard(
                     user
-                );
-
-
-            usersList.appendChild(
-                card
+                )
             );
 
         }
@@ -786,7 +1113,7 @@ function renderUsers(list) {
 
 
 // ============================================================
-// CRÉATION CARTE UTILISATEUR
+// CARTE UTILISATEUR
 // ============================================================
 
 function createUserCard(user) {
@@ -813,7 +1140,9 @@ function createUserCard(user) {
 
 
     const name =
-        getUserName(user);
+        getUserName(
+            user
+        );
 
 
     const email =
@@ -846,69 +1175,59 @@ function createUserCard(user) {
 
     card.innerHTML = `
 
-        <img
-            class="userAvatar"
-            src="${escapeHtml(avatar)}"
-            alt="Utilizador"
-            onerror="this.src='images/avatar.png'"
-        >
+        <div class="userCardLeft">
 
-        <div class="userInfo">
+            <img
+                class="userAvatar"
+                src="${escapeHtml(avatar)}"
+                alt="Utilizador"
+            >
 
-            <h3 class="userName">
-                ${escapeHtml(name)}
-            </h3>
+            <div class="userCardInfo">
 
-            <p class="userEmail">
-                ${escapeHtml(email)}
-            </p>
+                <h3 class="userName">
+                    ${escapeHtml(name)}
+                </h3>
 
-            <div class="userMeta">
+                <p class="userEmail">
+                    ${escapeHtml(email)}
+                </p>
 
-                ${
-                    phone
-                        ? `
-                        <span>
-                            📞 ${escapeHtml(phone)}
-                        </span>
-                        `
-                        : ""
-                }
+                <div class="userMeta">
 
-                ${
-                    city
-                        ? `
-                        <span>
-                            📍 ${escapeHtml(city)}
-                        </span>
-                        `
-                        : ""
-                }
+                    ${
+                        city
+                            ? `
+                            <span class="userCity">
+                                📍 ${escapeHtml(city)}
+                            </span>
+                            `
+                            : ""
+                    }
 
-                <span>
-                    ${escapeHtml(role)}
-                </span>
+                    <span class="userRole">
+                        👤 ${escapeHtml(role)}
+                    </span>
+
+                </div>
 
             </div>
 
         </div>
 
-
-        <div class="userActions">
+        <div class="userCardRight">
 
             <span
-                class="userStatus ${getStatusClass(status)}"
+                class="userCardStatus ${getStatusClass(status)}"
             >
                 ${getStatusLabel(status)}
             </span>
 
             <button
                 type="button"
-                class="userActionButton view"
-                data-action="view"
-                aria-label="Ver detalhes"
+                class="viewUserButton"
             >
-                👁️
+                Ver detalhes →
             </button>
 
         </div>
@@ -916,20 +1235,34 @@ function createUserCard(user) {
     `;
 
 
-    card.addEventListener(
-        "click",
-        (event) => {
+    const image =
+        card.querySelector(
+            ".userAvatar"
+        );
 
-            if (
-                event.target.closest(
-                    "button"
-                )
-            ) {
 
-                return;
+    if (image) {
+
+        image.addEventListener(
+            "error",
+            () => {
+
+                image.src =
+                    "images/avatar.png";
 
             }
+        );
 
+    }
+
+
+    /*
+     * Toute la carte est cliquable.
+     */
+
+    card.addEventListener(
+        "click",
+        () => {
 
             openUserModal(
                 user
@@ -939,9 +1272,13 @@ function createUserCard(user) {
     );
 
 
+    /*
+     * Bouton "Ver detalhes".
+     */
+
     const viewButton =
         card.querySelector(
-            '[data-action="view"]'
+            ".viewUserButton"
         );
 
 
@@ -949,7 +1286,7 @@ function createUserCard(user) {
 
         viewButton.addEventListener(
             "click",
-            (event) => {
+            event => {
 
                 event.stopPropagation();
 
@@ -969,7 +1306,7 @@ function createUserCard(user) {
 
 
 // ============================================================
-// NOM UTILISATEUR
+// NOM
 // ============================================================
 
 function getUserName(user) {
@@ -1006,16 +1343,31 @@ function getUserName(user) {
 
 
 // ============================================================
-// ROLE
+// ROLE BRUT
+// ============================================================
+
+function getRawRole(user) {
+
+    return String(
+        user.role ||
+        "user"
+    )
+        .trim()
+        .toLowerCase();
+
+}
+
+
+// ============================================================
+// ROLE AFFICHÉ
 // ============================================================
 
 function getUserRole(user) {
 
     const role =
-        String(
-            user.role ||
-            "user"
-        ).toLowerCase();
+        getRawRole(
+            user
+        );
 
 
     if (
@@ -1040,7 +1392,9 @@ function getUserRole(user) {
 
     if (
         role ===
-        "merchant"
+        "merchant" ||
+        role ===
+        "comerciante"
     ) {
 
         return "Comerciante";
@@ -1054,7 +1408,7 @@ function getUserRole(user) {
 
 
 // ============================================================
-// STATUT UTILISATEUR
+// STATUT
 // ============================================================
 
 function getUserStatus(user) {
@@ -1063,13 +1417,25 @@ function getUserStatus(user) {
         String(
             user.status ||
             ""
-        ).toLowerCase();
+        )
+            .trim()
+            .toLowerCase();
 
 
     if (
-        status === "blocked" ||
-        status === "disabled" ||
-        status === "suspended"
+
+        status ===
+        "blocked" ||
+
+        status ===
+        "bloqueado" ||
+
+        status ===
+        "disabled" ||
+
+        status ===
+        "suspended"
+
     ) {
 
         return "blocked";
@@ -1088,17 +1454,10 @@ function getUserStatus(user) {
 
 function getStatusLabel(status) {
 
-    if (
-        status ===
+    return status ===
         "blocked"
-    ) {
-
-        return "Bloqueado";
-
-    }
-
-
-    return "Ativo";
+            ? "Bloqueado"
+            : "Ativo";
 
 }
 
@@ -1109,32 +1468,25 @@ function getStatusLabel(status) {
 
 function getStatusClass(status) {
 
-    if (
-        status ===
+    return status ===
         "blocked"
-    ) {
-
-        return "statusBlocked";
-
-    }
-
-
-    return "statusActive";
+            ? "statusBlocked"
+            : "statusActive";
 
 }
 
 
 // ============================================================
-// MODAL
+// MODAL UTILISATEUR
 // ============================================================
 
-function setupModal() {
+function setupUserModal() {
 
     if (closeUserModal) {
 
         closeUserModal.addEventListener(
             "click",
-            closeModal
+            closeUserDetailsModal
         );
 
     }
@@ -1151,7 +1503,7 @@ function setupModal() {
                     userModal
                 ) {
 
-                    closeModal();
+                    closeUserDetailsModal();
 
                 }
 
@@ -1161,18 +1513,45 @@ function setupModal() {
     }
 
 
-    if (blockUserButton) {
+    // BLOQUER / DÉBLOQUER
 
-        blockUserButton.addEventListener(
+    if (toggleUserBlock) {
+
+        toggleUserBlock.addEventListener(
             "click",
             () => {
 
-                if (!currentUser) return;
+                if (!currentUser) {
 
-                changeUserStatus(
-                    currentUser,
+                    return;
+
+                }
+
+
+                const status =
+                    getUserStatus(
+                        currentUser
+                    );
+
+
+                if (
+                    status ===
                     "blocked"
-                );
+                ) {
+
+                    changeUserStatus(
+                        currentUser,
+                        "active"
+                    );
+
+                } else {
+
+                    changeUserStatus(
+                        currentUser,
+                        "blocked"
+                    );
+
+                }
 
             }
         );
@@ -1180,17 +1559,23 @@ function setupModal() {
     }
 
 
-    if (unblockUserButton) {
+    // CHANGER ROLE
 
-        unblockUserButton.addEventListener(
+    if (changeUserRole) {
+
+        changeUserRole.addEventListener(
             "click",
             () => {
 
-                if (!currentUser) return;
+                if (!currentUser) {
 
-                changeUserStatus(
-                    currentUser,
-                    "active"
+                    return;
+
+                }
+
+
+                openRoleModal(
+                    currentUser
                 );
 
             }
@@ -1198,6 +1583,8 @@ function setupModal() {
 
     }
 
+
+    // SUPPRIMER
 
     if (deleteUserButton) {
 
@@ -1205,11 +1592,14 @@ function setupModal() {
             "click",
             () => {
 
-                if (!currentUser) return;
+                if (!currentUser) {
 
-                deleteUser(
-                    currentUser
-                );
+                    return;
+
+                }
+
+
+                deleteCurrentUser();
 
             }
         );
@@ -1220,7 +1610,7 @@ function setupModal() {
 
 
 // ============================================================
-// OUVRIR MODAL
+// OUVRIR DETAILS
 // ============================================================
 
 function openUserModal(user) {
@@ -1250,27 +1640,34 @@ function openUserModal(user) {
 
 
     setImage(
-        modalUserAvatar,
+        userPhoto,
         avatar,
         "images/avatar.png"
     );
 
 
     setText(
-        modalUserName,
+        userFullName,
         getUserName(user)
     );
 
 
     setText(
-        modalUserEmail,
+        userEmail,
         user.email ||
         "-"
     );
 
 
     setText(
-        modalUserPhone,
+        userUid,
+        user.id ||
+        "-"
+    );
+
+
+    setText(
+        userPhone,
         user.phone ||
         user.telephone ||
         "-"
@@ -1278,42 +1675,69 @@ function openUserModal(user) {
 
 
     setText(
-        modalUserCity,
+        userCity,
         user.city ||
         "-"
     );
 
 
     setText(
-        modalUserRole,
+        userAddress,
+        user.address ||
+        user.street ||
+        user.rua ||
+        "-"
+    );
+
+
+    setText(
+        userRole,
         getUserRole(user)
     );
 
 
     setText(
-        modalUserStatus,
-        getStatusLabel(status)
-    );
-
-
-    if (modalUserStatus) {
-
-        modalUserStatus.className =
-            `userStatus ${getStatusClass(status)}`;
-
-    }
-
-
-    setText(
-        modalUserDate,
+        userCreatedAt,
         formatDate(
             user.createdAt
         )
     );
 
 
-    updateModalButtons(
-        status,
+    setText(
+        userOrders,
+        user.ordersCount ??
+        user.totalOrders ??
+        0
+    );
+
+
+    setText(
+        userAccountState,
+        status ===
+            "blocked"
+                ? "Bloqueada"
+                : "Ativa"
+    );
+
+
+    setText(
+        userStatus,
+        getStatusLabel(
+            status
+        )
+    );
+
+
+    if (userStatus) {
+
+        userStatus.className =
+            `userStatus ${getStatusClass(status)}`;
+
+    }
+
+
+    updateUserModalActions(
         user
     );
 
@@ -1332,63 +1756,105 @@ function openUserModal(user) {
 
 
 // ============================================================
-// BOUTONS DU MODAL
+// ACTIONS MODAL
 // ============================================================
 
-function updateModalButtons(
-    status,
-    user
-) {
+function updateUserModalActions(user) {
 
-    if (blockUserButton) {
+    if (!toggleUserBlock) {
 
-        blockUserButton.style.display =
-            status === "blocked"
+        return;
+
+    }
+
+
+    const status =
+        getUserStatus(
+            user
+        );
+
+
+    const role =
+        getRawRole(
+            user
+        );
+
+
+    if (
+        role ===
+        "superadmin"
+    ) {
+
+        toggleUserBlock.style.display =
+            "none";
+
+    } else {
+
+        toggleUserBlock.style.display =
+            "";
+
+
+        if (
+            status ===
+            "blocked"
+        ) {
+
+            toggleUserBlock.textContent =
+                "🔓 Desbloquear utilizador";
+
+            toggleUserBlock.classList.remove(
+                "blockButton"
+            );
+
+            toggleUserBlock.classList.add(
+                "unblockButton"
+            );
+
+        } else {
+
+            toggleUserBlock.textContent =
+                "🔒 Bloquear utilizador";
+
+            toggleUserBlock.classList.remove(
+                "unblockButton"
+            );
+
+            toggleUserBlock.classList.add(
+                "blockButton"
+            );
+
+        }
+
+    }
+
+
+    /*
+     * Protection Super Admin.
+     */
+
+    if (deleteUserButton) {
+
+        deleteUserButton.style.display =
+            role ===
+                "superadmin"
                 ? "none"
                 : "";
 
     }
 
 
-    if (unblockUserButton) {
-
-        unblockUserButton.style.display =
-            status === "blocked"
-                ? ""
-                : "none";
-
-    }
-
-
     /*
-     * Protection supplémentaire :
-     * on ne permet pas à l'admin de supprimer
-     * un superadmin depuis cette interface.
+     * On ne permet pas de modifier
+     * le rôle du Super Admin.
      */
 
-    if (deleteUserButton) {
+    if (changeUserRole) {
 
-        const role =
-            String(
-                user.role ||
-                ""
-            ).toLowerCase();
-
-
-        if (
+        changeUserRole.style.display =
             role ===
-            "superadmin"
-        ) {
-
-            deleteUserButton.style.display =
-                "none";
-
-        } else {
-
-            deleteUserButton.style.display =
-                "";
-
-        }
+                "superadmin"
+                ? "none"
+                : "";
 
     }
 
@@ -1396,10 +1862,10 @@ function updateModalButtons(
 
 
 // ============================================================
-// FERMER MODAL
+// FERMER DETAILS
 // ============================================================
 
-function closeModal() {
+function closeUserDetailsModal() {
 
     if (!userModal) {
 
@@ -1426,7 +1892,7 @@ function closeModal() {
 
 
 // ============================================================
-// BLOQUER / DÉBLOQUER
+// CHANGER STATUT
 // ============================================================
 
 async function changeUserStatus(
@@ -1442,10 +1908,9 @@ async function changeUserStatus(
 
 
     const role =
-        String(
-            user.role ||
-            ""
-        ).toLowerCase();
+        getRawRole(
+            user
+        );
 
 
     if (
@@ -1454,7 +1919,7 @@ async function changeUserStatus(
     ) {
 
         showToast(
-            "Não é possível bloquear o Super Admin."
+            "O Super Admin não pode ser bloqueado."
         );
 
         return;
@@ -1462,15 +1927,16 @@ async function changeUserStatus(
     }
 
 
-    const actionText =
-        newStatus === "blocked"
+    const action =
+        newStatus ===
+            "blocked"
             ? "bloquear"
             : "desbloquear";
 
 
     const confirmed =
         window.confirm(
-            `Tem certeza que deseja ${actionText} este utilizador?`
+            `Tem certeza que deseja ${action} "${getUserName(user)}"?`
         );
 
 
@@ -1505,7 +1971,8 @@ async function changeUserStatus(
                     serverTimestamp(),
 
                 statusUpdatedBy:
-                    auth.currentUser.uid
+                    auth.currentUser?.uid ||
+                    null
 
             }
 
@@ -1513,20 +1980,284 @@ async function changeUserStatus(
 
 
         showToast(
-            newStatus === "blocked"
+            newStatus ===
+                "blocked"
                 ? "Utilizador bloqueado."
                 : "Utilizador desbloqueado."
         );
 
 
-        closeModal();
+        /*
+         * Firestore atualise automatiquement
+         * la liste grâce à onSnapshot.
+         */
+
+        closeUserDetailsModal();
 
     }
 
     catch (error) {
 
         console.error(
-            "Erro alteração status:",
+            "Erro status:",
+            error
+        );
+
+
+        showToast(
+            getFirebaseErrorMessage(
+                error
+            )
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// MODAL ROLE
+// ============================================================
+
+function setupRoleModal() {
+
+    if (closeRoleModal) {
+
+        closeRoleModal.addEventListener(
+            "click",
+            closeRoleChangeModal
+        );
+
+    }
+
+
+    if (cancelRoleChange) {
+
+        cancelRoleChange.addEventListener(
+            "click",
+            closeRoleChangeModal
+        );
+
+    }
+
+
+    if (roleModal) {
+
+        roleModal.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    event.target ===
+                    roleModal
+                ) {
+
+                    closeRoleChangeModal();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    if (saveUserRole) {
+
+        saveUserRole.addEventListener(
+            "click",
+            saveRole
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// OUVRIR MODAL ROLE
+// ============================================================
+
+function openRoleModal(user) {
+
+    if (!roleModal) {
+
+        return;
+
+    }
+
+
+    currentUser =
+        user;
+
+
+    if (roleSelect) {
+
+        roleSelect.value =
+            getRawRole(
+                user
+            );
+
+    }
+
+
+    roleModal.classList.remove(
+        "hidden"
+    );
+
+
+    roleModal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+}
+
+
+// ============================================================
+// FERMER MODAL ROLE
+// ============================================================
+
+function closeRoleChangeModal() {
+
+    if (!roleModal) {
+
+        return;
+
+    }
+
+
+    roleModal.classList.add(
+        "hidden"
+    );
+
+
+    roleModal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+}
+
+
+// ============================================================
+// SAUVEGARDER ROLE
+// ============================================================
+
+async function saveRole() {
+
+    if (
+        !currentUser ||
+        !roleSelect
+    ) {
+
+        return;
+
+    }
+
+
+    const newRole =
+        String(
+            roleSelect.value ||
+            "user"
+        )
+            .toLowerCase();
+
+
+    const oldRole =
+        getRawRole(
+            currentUser
+        );
+
+
+    if (
+        oldRole ===
+        "superadmin"
+    ) {
+
+        showToast(
+            "O Super Admin não pode ser alterado."
+        );
+
+        closeRoleChangeModal();
+
+        return;
+
+    }
+
+
+    if (
+        newRole ===
+        oldRole
+    ) {
+
+        closeRoleChangeModal();
+
+        return;
+
+    }
+
+
+    const confirmed =
+        window.confirm(
+            `Alterar a função de "${getUserName(currentUser)}" para "${getUserRole({ role: newRole })}"?`
+        );
+
+
+    if (!confirmed) {
+
+        return;
+
+    }
+
+
+    try {
+
+        showToast(
+            "Alterando função..."
+        );
+
+
+        await updateDoc(
+
+            doc(
+                db,
+                "users",
+                currentUser.id
+            ),
+
+            {
+
+                role:
+                    newRole,
+
+                roleUpdatedAt:
+                    serverTimestamp(),
+
+                roleUpdatedBy:
+                    auth.currentUser?.uid ||
+                    null
+
+            }
+
+        );
+
+
+        showToast(
+            "Função alterada com sucesso."
+        );
+
+
+        closeRoleChangeModal();
+
+        closeUserDetailsModal();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Erro role:",
             error
         );
 
@@ -1546,11 +2277,9 @@ async function changeUserStatus(
 // SUPPRIMER UTILISATEUR
 // ============================================================
 
-async function deleteUser(
-    user
-) {
+async function deleteCurrentUser() {
 
-    if (!user) {
+    if (!currentUser) {
 
         return;
 
@@ -1558,10 +2287,9 @@ async function deleteUser(
 
 
     const role =
-        String(
-            user.role ||
-            ""
-        ).toLowerCase();
+        getRawRole(
+            currentUser
+        );
 
 
     if (
@@ -1570,7 +2298,7 @@ async function deleteUser(
     ) {
 
         showToast(
-            "Não é possível eliminar o Super Admin."
+            "O Super Admin não pode ser eliminado."
         );
 
         return;
@@ -1582,8 +2310,10 @@ async function deleteUser(
         window.confirm(
 
             `ATENÇÃO!\n\n` +
-            `Deseja realmente eliminar o utilizador "${getUserName(user)}"?\n\n` +
-            `Esta ação elimina o perfil Firestore e não pode ser desfeita.`
+
+            `Deseja realmente eliminar o utilizador "${getUserName(currentUser)}"?\n\n` +
+
+            `O perfil Firestore será eliminado.`
 
         );
 
@@ -1607,7 +2337,7 @@ async function deleteUser(
             doc(
                 db,
                 "users",
-                user.id
+                currentUser.id
             )
 
         );
@@ -1618,14 +2348,14 @@ async function deleteUser(
         );
 
 
-        closeModal();
+        closeUserDetailsModal();
 
     }
 
     catch (error) {
 
         console.error(
-            "Erro ao eliminar:",
+            "Erro eliminação:",
             error
         );
 
@@ -1642,35 +2372,116 @@ async function deleteUser(
 
 
 // ============================================================
-// LOADER
+// CONFIRM MODAL
 // ============================================================
 
-function showLoader() {
+function setupConfirmModal() {
 
-    if (loader) {
+    if (confirmNo) {
 
-        loader.classList.remove(
-            "hidden"
+        confirmNo.addEventListener(
+            "click",
+            closeConfirmModal
         );
 
-        loader.style.display =
-            "flex";
+    }
+
+
+    if (confirmYes) {
+
+        confirmYes.addEventListener(
+            "click",
+            async () => {
+
+                if (
+                    typeof pendingConfirmAction ===
+                    "function"
+                ) {
+
+                    const action =
+                        pendingConfirmAction;
+
+
+                    pendingConfirmAction =
+                        null;
+
+
+                    closeConfirmModal();
+
+
+                    await action();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    if (confirmModal) {
+
+        confirmModal.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    event.target ===
+                    confirmModal
+                ) {
+
+                    closeConfirmModal();
+
+                }
+
+            }
+        );
 
     }
 
 }
 
 
-function hideLoader() {
+// ============================================================
+// CONFIRM OPEN
+// ============================================================
 
-    if (loader) {
+function openConfirmModal(
+    title,
+    text,
+    action
+) {
 
-        loader.classList.add(
+    pendingConfirmAction =
+        action;
+
+
+    if (confirmTitle) {
+
+        confirmTitle.textContent =
+            title;
+
+    }
+
+
+    if (confirmText) {
+
+        confirmText.textContent =
+            text;
+
+    }
+
+
+    if (confirmModal) {
+
+        confirmModal.classList.remove(
             "hidden"
         );
 
-        loader.style.display =
-            "none";
+        confirmModal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
 
     }
 
@@ -1678,7 +2489,33 @@ function hideLoader() {
 
 
 // ============================================================
-// EMPTY STATE
+// CONFIRM CLOSE
+// ============================================================
+
+function closeConfirmModal() {
+
+    pendingConfirmAction =
+        null;
+
+
+    if (confirmModal) {
+
+        confirmModal.classList.add(
+            "hidden"
+        );
+
+        confirmModal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// EMPTY
 // ============================================================
 
 function showEmpty() {
@@ -1708,53 +2545,49 @@ function hideEmpty() {
 
 
 // ============================================================
-// ERROR
+// LOADER
 // ============================================================
 
-function showError(message) {
+function showLoader() {
 
-    if (errorState) {
+    if (!loader) {
 
-        errorState.classList.remove(
-            "hidden"
-        );
-
-
-        const text =
-            errorState.querySelector(
-                "p"
-            );
-
-
-        if (text) {
-
-            text.textContent =
-                message;
-
-        }
+        return;
 
     }
 
-    else {
 
-        showToast(
-            message
-        );
+    loader.classList.remove(
+        "hidden"
+    );
 
-    }
+
+    loader.setAttribute(
+        "aria-hidden",
+        "false"
+    );
 
 }
 
 
-function hideError() {
+function hideLoader() {
 
-    if (errorState) {
+    if (!loader) {
 
-        errorState.classList.add(
-            "hidden"
-        );
+        return;
 
     }
+
+
+    loader.classList.add(
+        "hidden"
+    );
+
+
+    loader.setAttribute(
+        "aria-hidden",
+        "true"
+    );
 
 }
 
@@ -1762,10 +2595,6 @@ function hideError() {
 // ============================================================
 // TOAST
 // ============================================================
-
-let toastTimer =
-    null;
-
 
 function showToast(message) {
 
@@ -1813,7 +2642,7 @@ function showToast(message) {
 
 
 // ============================================================
-// UTILITAIRES DOM
+// DOM UTILITIES
 // ============================================================
 
 function setText(
@@ -1821,10 +2650,16 @@ function setText(
     value
 ) {
 
-    if (!element) return;
+    if (!element) {
+
+        return;
+
+    }
+
 
     element.textContent =
-        value ?? "-";
+        value ??
+        "-";
 
 }
 
@@ -1835,11 +2670,16 @@ function setImage(
     fallback
 ) {
 
-    if (!element) return;
+    if (!element) {
+
+        return;
+
+    }
 
 
     element.src =
-        src || fallback;
+        src ||
+        fallback;
 
 
     element.onerror =
@@ -1883,9 +2723,14 @@ function formatDate(timestamp) {
             "pt-PT",
             {
 
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric"
+                day:
+                    "2-digit",
+
+                month:
+                    "2-digit",
+
+                year:
+                    "numeric"
 
             }
         );
@@ -1902,13 +2747,14 @@ function formatDate(timestamp) {
 
 
 // ============================================================
-// SÉCURITÉ HTML
+// ESCAPE HTML
 // ============================================================
 
 function escapeHtml(value) {
 
     return String(
-        value ?? ""
+        value ??
+        ""
     )
         .replaceAll(
             "&",
@@ -1935,12 +2781,10 @@ function escapeHtml(value) {
 
 
 // ============================================================
-// ERREURS FIREBASE
+// FIREBASE ERRORS
 // ============================================================
 
-function getFirebaseErrorMessage(
-    error
-) {
+function getFirebaseErrorMessage(error) {
 
     if (!error) {
 
@@ -1964,7 +2808,7 @@ function getFirebaseErrorMessage(
 
             return (
                 "Acesso negado pelo Firebase. " +
-                "Verifique as regras Firestore e a conta de administrador."
+                "Verifique as regras do Firestore."
             );
 
 
@@ -1972,22 +2816,7 @@ function getFirebaseErrorMessage(
 
             return (
                 "Sessão expirada. " +
-                "Entre novamente como administrador."
-            );
-
-
-        case "failed-precondition":
-
-            return (
-                "Firebase requer uma configuração adicional."
-            );
-
-
-        case "unavailable":
-
-            return (
-                "Firebase indisponível. " +
-                "Verifique a sua conexão à Internet."
+                "Entre novamente."
             );
 
 
@@ -1998,14 +2827,19 @@ function getFirebaseErrorMessage(
             );
 
 
+        case "unavailable":
+
+            return (
+                "Firebase indisponível. " +
+                "Verifique a conexão."
+            );
+
+
         default:
 
             return (
-                "Erro ao carregar os dados. " +
-                (
-                    error.message ||
-                    "Tente novamente."
-                )
+                error.message ||
+                "Erro ao executar a operação."
             );
 
     }
@@ -2024,6 +2858,9 @@ window.addEventListener(
         if (unsubscribeUsers) {
 
             unsubscribeUsers();
+
+            unsubscribeUsers =
+                null;
 
         }
 
