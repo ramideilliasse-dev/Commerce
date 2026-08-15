@@ -1,0 +1,968 @@
+ <!DOCTYPE html>
+<html lang="pt">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#111111"
+    >
+
+    <title>TOMA Admin — Comerciantes</title>
+
+    <link
+        rel="stylesheet"
+        href="comerciantes.css"
+    >
+
+</head>
+
+<body>
+
+<!-- ==================================================
+     TOMA ADMIN
+     PÁGINA DE COMERCIANTES
+================================================== -->
+
+<div
+    id="merchantsApp"
+    class="merchantsApp"
+>
+
+<!-- ==================================================
+     HEADER
+================================================== -->
+
+<header
+    id="merchantsHeader"
+    class="merchantsHeader"
+>
+
+    <button
+        id="backButton"
+        type="button"
+        class="headerButton"
+        aria-label="Voltar"
+    >
+        ←
+    </button>
+
+
+    <div class="headerTitle">
+
+        <h1>
+            Comerciantes
+        </h1>
+
+        <p>
+            Gestão e controlo dos comerciantes da plataforma
+        </p>
+
+    </div>
+
+
+    <button
+        id="refreshButton"
+        type="button"
+        class="headerButton"
+        aria-label="Atualizar"
+    >
+        ↻
+    </button>
+
+</header>
+
+
+<!-- ==================================================
+     ESTATÍSTICAS
+================================================== -->
+
+<section
+    id="merchantStats"
+    class="merchantStats"
+>
+
+    <!-- TOTAL -->
+
+    <article
+        id="totalMerchantsCard"
+        class="merchantStatCard"
+    >
+
+        <div class="merchantStatIcon">
+            🏪
+        </div>
+
+        <div class="merchantStatInfo">
+
+            <strong id="totalMerchants">
+                0
+            </strong>
+
+            <span>
+                Total
+            </span>
+
+        </div>
+
+    </article>
+
+
+    <!-- ATIVOS -->
+
+    <article
+        id="activeMerchantsCard"
+        class="merchantStatCard"
+    >
+
+        <div class="merchantStatIcon">
+            🟢
+        </div>
+
+        <div class="merchantStatInfo">
+
+            <strong id="activeMerchants">
+                0
+            </strong>
+
+            <span>
+                Ativos
+            </span>
+
+        </div>
+
+    </article>
+
+
+    <!-- BLOQUEADOS -->
+
+    <article
+        id="blockedMerchantsCard"
+        class="merchantStatCard"
+    >
+
+        <div class="merchantStatIcon">
+            🔴
+        </div>
+
+        <div class="merchantStatInfo">
+
+            <strong id="blockedMerchants">
+                0
+            </strong>
+
+            <span>
+                Bloqueados
+            </span>
+
+        </div>
+
+    </article>
+
+
+    <!-- PENDENTES -->
+
+    <article
+        id="pendingMerchantsCard"
+        class="merchantStatCard"
+    >
+
+        <div class="merchantStatIcon">
+            ⏳
+        </div>
+
+        <div class="merchantStatInfo">
+
+            <strong id="pendingMerchants">
+                0
+            </strong>
+
+            <span>
+                Pendentes
+            </span>
+
+        </div>
+
+    </article>
+
+
+    <!-- VERIFICADOS -->
+
+    <article
+        id="verifiedMerchantsCard"
+        class="merchantStatCard"
+    >
+
+        <div class="merchantStatIcon">
+            ✅
+        </div>
+
+        <div class="merchantStatInfo">
+
+            <strong id="verifiedMerchants">
+                0
+            </strong>
+
+            <span>
+                Verificados
+            </span>
+
+        </div>
+
+    </article>
+
+
+    <!-- PRODUITS -->
+
+    <article
+        id="merchantProductsCard"
+        class="merchantStatCard"
+    >
+
+        <div class="merchantStatIcon">
+            📦
+        </div>
+
+        <div class="merchantStatInfo">
+
+            <strong id="merchantProducts">
+                0
+            </strong>
+
+            <span>
+                Produtos
+            </span>
+
+        </div>
+
+    </article>
+
+</section>
+
+
+<!-- ==================================================
+     PESQUISA
+================================================== -->
+
+<section
+    id="merchantSearchSection"
+    class="merchantSearchSection"
+>
+
+    <div class="searchBox">
+
+        <span class="searchIcon">
+            🔎
+        </span>
+
+
+        <input
+            id="searchInput"
+            type="search"
+            placeholder="Pesquisar comerciante ou loja..."
+            autocomplete="off"
+        >
+
+
+        <button
+            id="clearSearch"
+            type="button"
+            class="clearSearch"
+            aria-label="Limpar pesquisa"
+        >
+            ×
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ==================================================
+     FILTROS
+================================================== -->
+
+<section
+    id="merchantFilters"
+    class="merchantFilters"
+>
+
+    <button
+        type="button"
+        class="filterButton active"
+        data-filter="all"
+    >
+        Todos
+    </button>
+
+
+    <button
+        type="button"
+        class="filterButton"
+        data-filter="active"
+    >
+        Ativos
+    </button>
+
+
+    <button
+        type="button"
+        class="filterButton"
+        data-filter="blocked"
+    >
+        Bloqueados
+    </button>
+
+
+    <button
+        type="button"
+        class="filterButton"
+        data-filter="pending"
+    >
+        Pendentes
+    </button>
+
+
+    <button
+        type="button"
+        class="filterButton"
+        data-filter="verified"
+    >
+        Verificados
+    </button>
+
+
+    <button
+        type="button"
+        class="filterButton"
+        data-filter="unverified"
+    >
+        Não verificados
+    </button>
+
+</section>
+
+
+<!-- ==================================================
+     LISTA DE COMERCIANTES
+================================================== -->
+
+<main
+    id="merchantsMain"
+    class="merchantsMain"
+>
+
+    <section
+        id="merchantsListSection"
+        class="merchantsListSection"
+    >
+
+        <div
+            id="merchantsList"
+            class="merchantsList"
+        >
+
+            <!--
+                Os comerciantes serão
+                carregados pelo JavaScript.
+            -->
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- ==================================================
+     ESTADO VAZIO
+================================================== -->
+
+<section
+    id="emptyState"
+    class="emptyState hidden"
+>
+
+    <div class="emptyIcon">
+        🏪
+    </div>
+
+
+    <h2>
+        Nenhum comerciante encontrado
+    </h2>
+
+
+    <p>
+        Não existem comerciantes correspondentes à pesquisa ou ao filtro selecionado.
+    </p>
+
+</section>
+
+
+<!-- ==================================================
+     LOADER
+================================================== -->
+
+<div
+    id="loader"
+    class="loader hidden"
+    aria-hidden="true"
+>
+
+    <div class="loaderCard">
+
+        <div class="loaderSpinner"></div>
+
+        <p>
+            Carregando comerciantes...
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     MODAL — DETALHES DO COMERCIANTE
+================================================== -->
+
+<div
+    id="merchantModal"
+    class="modal hidden"
+    aria-hidden="true"
+>
+
+    <div class="modalContent">
+
+
+        <!-- HEADER MODAL -->
+
+        <div class="modalHeader">
+
+            <div>
+
+                <h2>
+                    Detalhes do comerciante
+                </h2>
+
+                <p>
+                    Informações e controlo administrativo
+                </p>
+
+            </div>
+
+
+            <button
+                id="closeMerchantModal"
+                type="button"
+                class="modalClose"
+                aria-label="Fechar"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <!-- PERFIL COMERCIANTE -->
+
+        <section
+            class="merchantProfile"
+        >
+
+            <img
+                id="merchantPhoto"
+                class="merchantPhoto"
+                src="images/avatar.png"
+                alt="Comerciante"
+            >
+
+
+            <div class="merchantProfileInfo">
+
+                <h3 id="merchantName">
+                    Nome do comerciante
+                </h3>
+
+                <p id="merchantEmail">
+                    -
+                </p>
+
+
+                <span
+                    id="merchantStatus"
+                    class="merchantStatus active"
+                >
+                    Ativo
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==================================================
+             INFORMAÇÕES DA LOJA
+        ================================================== -->
+
+        <section
+            class="merchantShopSection"
+        >
+
+            <h3>
+                🏪 Informações da loja
+            </h3>
+
+
+            <div class="merchantDetailsGrid">
+
+
+                <div class="detailCard">
+
+                    <span>
+                        🏪 Nome da loja
+                    </span>
+
+                    <strong id="merchantShopName">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="detailCard">
+
+                    <span>
+                        📞 Telefone
+                    </span>
+
+                    <strong id="merchantPhone">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="detailCard">
+
+                    <span>
+                        📍 Cidade
+                    </span>
+
+                    <strong id="merchantCity">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="detailCard">
+
+                    <span>
+                        🏠 Endereço
+                    </span>
+
+                    <strong id="merchantAddress">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="detailCard">
+
+                    <span>
+                        📜 Alvará Comercial
+                    </span>
+
+                    <strong id="merchantLicense">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="detailCard">
+
+                    <span>
+                        🛡 Estado da verificação
+                    </span>
+
+                    <strong id="merchantVerification">
+                        Não verificado
+                    </strong>
+
+                </div>
+
+
+                <div class="detailCard">
+
+                    <span>
+                        📅 Registado em
+                    </span>
+
+                    <strong id="merchantCreatedAt">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="detailCard">
+
+                    <span>
+                        🆔 Merchant ID
+                    </span>
+
+                    <strong id="merchantUid">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="detailCard">
+
+                    <span>
+                        📦 Produtos
+                    </span>
+
+                    <strong id="merchantProductCount">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="detailCard">
+
+                    <span>
+                        🛒 Vendas
+                    </span>
+
+                    <strong id="merchantSales">
+                        0
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- ==================================================
+             AÇÕES ADMINISTRATIVAS
+        ================================================== -->
+
+        <section
+            class="merchantAdminActions"
+        >
+
+            <h3>
+                Ações administrativas
+            </h3>
+
+
+            <button
+                id="toggleMerchantBlock"
+                type="button"
+                class="actionButton blockButton"
+            >
+                🔒 Bloquear comerciante
+            </button>
+
+
+            <button
+                id="verifyMerchant"
+                type="button"
+                class="actionButton verifyButton"
+            >
+                ✅ Verificar comerciante
+            </button>
+
+
+            <button
+                id="changeMerchantStatus"
+                type="button"
+                class="actionButton statusButton"
+            >
+                ⚙️ Alterar estado
+            </button>
+
+
+            <button
+                id="deleteMerchant"
+                type="button"
+                class="actionButton deleteButton"
+            >
+                🗑️ Eliminar comerciante
+            </button>
+
+        </section>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     MODAL — ESTADO DO COMERCIANTE
+================================================== -->
+
+<div
+    id="statusModal"
+    class="modal hidden"
+    aria-hidden="true"
+>
+
+    <div class="smallModalContent">
+
+        <div class="modalHeader">
+
+            <div>
+
+                <h2>
+                    Alterar estado
+                </h2>
+
+                <p>
+                    Selecione o novo estado do comerciante.
+                </p>
+
+            </div>
+
+
+            <button
+                id="closeStatusModal"
+                type="button"
+                class="modalClose"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <select
+            id="statusSelect"
+            class="statusSelect"
+        >
+
+            <option value="active">
+                Ativo
+            </option>
+
+            <option value="pending">
+                Pendente
+            </option>
+
+            <option value="blocked">
+                Bloqueado
+            </option>
+
+        </select>
+
+
+        <div class="modalActions">
+
+            <button
+                id="saveMerchantStatus"
+                type="button"
+                class="primaryButton"
+            >
+                Guardar
+            </button>
+
+
+            <button
+                id="cancelStatusChange"
+                type="button"
+                class="secondaryButton"
+            >
+                Cancelar
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     MODAL — CONFIRMAÇÃO
+================================================== -->
+
+<div
+    id="confirmModal"
+    class="modal hidden"
+    aria-hidden="true"
+>
+
+    <div class="confirmCard">
+
+        <div class="confirmIcon">
+            ⚠️
+        </div>
+
+
+        <h2 id="confirmTitle">
+            Confirmar ação
+        </h2>
+
+
+        <p id="confirmText">
+            Tem certeza de que deseja continuar?
+        </p>
+
+
+        <div class="confirmActions">
+
+            <button
+                id="confirmYes"
+                type="button"
+                class="dangerButton"
+            >
+                Confirmar
+            </button>
+
+
+            <button
+                id="confirmNo"
+                type="button"
+                class="secondaryButton"
+            >
+                Cancelar
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     TOAST
+================================================== -->
+
+<div
+    id="toast"
+    class="toast"
+    role="status"
+    aria-live="polite"
+>
+
+    <span id="toastMessage">
+        Operação realizada.
+    </span>
+
+</div>
+
+
+<!-- ==================================================
+     TEMPLATE — COMERCIANTE
+================================================== -->
+
+<template id="merchantTemplate">
+
+    <article
+        class="merchantCard"
+    >
+
+        <div class="merchantCardLeft">
+
+            <img
+                class="merchantAvatar"
+                src="images/avatar.png"
+                alt="Comerciante"
+            >
+
+
+            <div class="merchantCardInfo">
+
+                <h3 class="merchantName">
+                    Nome do comerciante
+                </h3>
+
+
+                <p class="merchantShopName">
+                    Nome da loja
+                </p>
+
+
+                <div class="merchantMeta">
+
+                    <span class="merchantCity">
+                        📍 Luanda
+                    </span>
+
+
+                    <span class="merchantPhone">
+                        📞 +244
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="merchantCardRight">
+
+            <div class="merchantBadges">
+
+                <span
+                    class="merchantCardStatus active"
+                >
+                    Ativo
+                </span>
+
+
+                <span
+                    class="merchantVerifiedBadge"
+                >
+                    ✓ Verificado
+                </span>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="viewMerchantButton"
+            >
+                Ver detalhes →
+            </button>
+
+        </div>
+
+    </article>
+
+</template>
+
+
+<!-- ==================================================
+     JAVASCRIPT
+================================================== -->
+
+<script
+    type="module"
+    src="js/comerciantes.js"
+></script>
+
+
+</div>
+
+</body>
+</html>
