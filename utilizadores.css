@@ -758,3 +758,1052 @@ body {
 
     background: #dbeafe;
 }
+/* =========================================================
+   BLOCC 2 — TOMA ADMIN / UTILIZADORES
+   MODALS + ACTIONS + TOAST + TEMPLATE + RESPONSIVE
+========================================================= */
+
+/* =========================================================
+   USER CARD — SUITE
+========================================================= */
+
+.userCardLeft {
+    min-width: 0;
+    flex: 1;
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.userCardInfo {
+    min-width: 0;
+    flex: 1;
+}
+
+.userCardInfo .userName {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text);
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.userCardInfo .userEmail {
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: 13px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.userCardRight {
+    flex-shrink: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 9px;
+}
+
+.userCardStatus {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 27px;
+    padding: 5px 10px;
+
+    border-radius: 10px;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.userCardStatus.active {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.userCardStatus.blocked {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.userCardStatus.pending {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.viewUserButton {
+    min-height: 38px;
+
+    padding: 0 13px;
+
+    border: 0;
+    border-radius: 11px;
+
+    background: #eff6ff;
+    color: #2563eb;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        transform .15s ease,
+        background .15s ease;
+}
+
+.viewUserButton:active {
+    transform: scale(.94);
+    background: #dbeafe;
+}
+
+
+/* =========================================================
+   MODAL GLOBAL
+========================================================= */
+
+.modal {
+    position: fixed;
+    inset: 0;
+
+    z-index: 1000;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    padding: 0;
+
+    background: rgba(15, 23, 42, .55);
+
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+
+    opacity: 1;
+    visibility: visible;
+
+    transition:
+        opacity .2s ease,
+        visibility .2s ease;
+}
+
+.modal.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   USER DETAILS MODAL
+========================================================= */
+
+.modalContent {
+    width: 100%;
+    max-width: 680px;
+
+    max-height: 92vh;
+
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    padding:
+        22px
+        20px
+        max(28px, env(safe-area-inset-bottom));
+
+    background: #ffffff;
+
+    border-radius: 30px 30px 0 0;
+
+    box-shadow:
+        0 -15px 50px rgba(0, 0, 0, .16);
+
+    transform: translateY(0);
+
+    animation: modalSlideUp .25s ease;
+}
+
+.modal.hidden .modalContent {
+    transform: translateY(30px);
+}
+
+@keyframes modalSlideUp {
+
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* =========================================================
+   MODAL HEADER
+========================================================= */
+
+.modalHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 22px;
+}
+
+.modalHeader h2 {
+    margin: 0;
+
+    font-size: 21px;
+    font-weight: 850;
+
+    letter-spacing: -.5px;
+}
+
+.modalHeader p {
+    margin-top: 5px;
+
+    color: var(--muted);
+
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.modalClose {
+    width: 44px;
+    height: 44px;
+
+    flex-shrink: 0;
+
+    border: 0;
+    border-radius: 14px;
+
+    background: #f3f4f6;
+
+    color: #111827;
+
+    font-size: 27px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        transform .15s ease,
+        background .15s ease;
+}
+
+.modalClose:active {
+    transform: scale(.9);
+    background: #e5e7eb;
+}
+
+
+/* =========================================================
+   USER PROFILE
+========================================================= */
+
+.userProfile {
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+
+    padding: 18px;
+
+    margin-bottom: 18px;
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8fafc,
+            #f1f5f9
+        );
+
+    border: 1px solid #e5e7eb;
+}
+
+.userPhoto {
+    width: 76px;
+    height: 76px;
+
+    flex-shrink: 0;
+
+    border-radius: 22px;
+
+    object-fit: cover;
+
+    background: #e5e7eb;
+
+    border: 2px solid #ffffff;
+
+    box-shadow:
+        0 6px 18px rgba(15, 23, 42, .10);
+}
+
+.userProfileInfo {
+    min-width: 0;
+    flex: 1;
+}
+
+.userProfileInfo h3 {
+    margin: 0;
+
+    font-size: 20px;
+    font-weight: 850;
+
+    line-height: 1.25;
+
+    overflow-wrap: anywhere;
+}
+
+.userProfileInfo p {
+    margin-top: 5px;
+
+    color: var(--muted);
+
+    font-size: 13px;
+
+    overflow-wrap: anywhere;
+}
+
+.userStatus {
+    display: inline-flex;
+
+    margin-top: 9px;
+
+    padding: 6px 10px;
+
+    border-radius: 10px;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.userStatus.active {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.userStatus.blocked {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.userStatus.pending {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+
+/* =========================================================
+   DETAILS GRID
+========================================================= */
+
+.userDetailsGrid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+}
+
+.detailCard {
+    min-width: 0;
+
+    padding: 15px;
+
+    background: #f8fafc;
+
+    border: 1px solid #eef0f3;
+
+    border-radius: 17px;
+}
+
+.detailCard span {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.detailCard strong {
+    display: block;
+
+    color: var(--text);
+
+    font-size: 14px;
+    font-weight: 800;
+
+    line-height: 1.35;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   ADMIN ACTIONS
+========================================================= */
+
+.userAdminActions {
+    margin-top: 24px;
+
+    padding-top: 20px;
+
+    border-top: 1px solid var(--border);
+}
+
+.userAdminActions h3 {
+    margin-bottom: 12px;
+
+    font-size: 17px;
+    font-weight: 850;
+}
+
+.actionButton {
+    width: 100%;
+
+    min-height: 52px;
+
+    margin-top: 9px;
+
+    padding: 0 16px;
+
+    border: 0;
+
+    border-radius: 15px;
+
+    font-family: inherit;
+
+    font-size: 14px;
+    font-weight: 800;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        transform .15s ease,
+        filter .15s ease;
+}
+
+.actionButton:active {
+    transform: scale(.98);
+}
+
+.actionButton:hover {
+    filter: brightness(.97);
+}
+
+.blockButton {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.roleButton {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.deleteButton {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+
+/* =========================================================
+   SMALL MODAL — ROLE
+========================================================= */
+
+.smallModalContent {
+    width: calc(100% - 30px);
+
+    max-width: 440px;
+
+    padding: 22px;
+
+    margin-bottom: 20px;
+
+    background: #ffffff;
+
+    border-radius: 25px;
+
+    box-shadow:
+        0 20px 70px rgba(0, 0, 0, .20);
+
+    animation: smallModalOpen .2s ease;
+}
+
+@keyframes smallModalOpen {
+
+    from {
+        opacity: 0;
+        transform: scale(.96) translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+
+}
+
+.smallModalContent > p {
+    color: var(--muted);
+
+    font-size: 14px;
+
+    line-height: 1.55;
+
+    margin-bottom: 16px;
+}
+
+
+/* =========================================================
+   ROLE SELECT
+========================================================= */
+
+.roleSelect {
+    width: 100%;
+
+    height: 52px;
+
+    padding: 0 14px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
+
+    background: #ffffff;
+
+    color: var(--text);
+
+    font-family: inherit;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    outline: none;
+}
+
+.roleSelect:focus {
+    border-color: var(--green);
+
+    box-shadow:
+        0 0 0 4px rgba(32, 196, 99, .10);
+}
+
+
+/* =========================================================
+   MODAL ACTIONS
+========================================================= */
+
+.modalActions {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+
+    margin-top: 18px;
+}
+
+.primaryButton,
+.secondaryButton,
+.dangerButton {
+    min-height: 50px;
+
+    border: 0;
+
+    border-radius: 14px;
+
+    padding: 0 15px;
+
+    font-family: inherit;
+
+    font-size: 14px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition: transform .15s ease;
+}
+
+.primaryButton:active,
+.secondaryButton:active,
+.dangerButton:active {
+    transform: scale(.96);
+}
+
+.primaryButton {
+    background: var(--green);
+    color: #ffffff;
+}
+
+.secondaryButton {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.dangerButton {
+    background: var(--red);
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   CONFIRMATION MODAL
+========================================================= */
+
+.confirmCard {
+    width: calc(100% - 30px);
+
+    max-width: 410px;
+
+    padding: 26px;
+
+    background: #ffffff;
+
+    border-radius: 26px;
+
+    text-align: center;
+
+    box-shadow:
+        0 20px 70px rgba(0, 0, 0, .20);
+
+    animation: confirmOpen .2s ease;
+}
+
+@keyframes confirmOpen {
+
+    from {
+        opacity: 0;
+        transform: scale(.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+}
+
+.confirmIcon {
+    width: 64px;
+    height: 64px;
+
+    margin: 0 auto 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 20px;
+
+    background: #fff7ed;
+
+    font-size: 30px;
+}
+
+.confirmCard h2 {
+    font-size: 20px;
+    font-weight: 850;
+}
+
+.confirmCard p {
+    margin-top: 10px;
+
+    color: var(--muted);
+
+    font-size: 14px;
+
+    line-height: 1.55;
+}
+
+.confirmActions {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 10px;
+
+    margin-top: 20px;
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast {
+    position: fixed;
+
+    left: 20px;
+    right: 20px;
+
+    bottom:
+        max(20px, env(safe-area-inset-bottom));
+
+    z-index: 2000;
+
+    display: flex;
+
+    justify-content: center;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+    transform: translateY(25px);
+
+    transition:
+        opacity .22s ease,
+        transform .22s ease;
+}
+
+.toast.show {
+    opacity: 1;
+
+    transform: translateY(0);
+}
+
+#toastMessage {
+    max-width: 430px;
+
+    padding: 14px 18px;
+
+    border-radius: 16px;
+
+    background: #111827;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 750;
+
+    text-align: center;
+
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, .20);
+}
+
+
+/* =========================================================
+   LOADER
+========================================================= */
+
+.loader {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 1900;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(244, 246, 248, .88);
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.loader.hidden {
+    display: none;
+}
+
+.loaderCard {
+    width: min(330px, 100%);
+
+    padding: 28px;
+
+    border-radius: 24px;
+
+    background: #ffffff;
+
+    text-align: center;
+
+    box-shadow:
+        0 15px 50px rgba(15, 23, 42, .12);
+}
+
+.loaderSpinner {
+    width: 44px;
+    height: 44px;
+
+    margin: 0 auto 14px;
+
+    border: 4px solid #e5e7eb;
+
+    border-top-color: var(--green);
+
+    border-radius: 50%;
+
+    animation:
+        loaderRotate .8s linear infinite;
+}
+
+.loaderCard p {
+    color: var(--muted);
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+@keyframes loaderRotate {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+/* =========================================================
+   BODY SCROLL LOCK
+========================================================= */
+
+body.modalOpen {
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (min-width: 700px) {
+
+    .modal {
+        align-items: center;
+
+        padding: 20px;
+    }
+
+    .modalContent {
+        border-radius: 30px;
+
+        max-height: 88vh;
+
+        margin: 0;
+
+        box-shadow:
+            0 25px 80px rgba(0, 0, 0, .20);
+    }
+
+    .smallModalContent {
+        margin-bottom: 0;
+    }
+
+}
+
+
+/* =========================================================
+   DESKTOP
+========================================================= */
+
+@media (min-width: 1000px) {
+
+    .usersApp {
+        max-width: 1400px;
+
+        margin: 0 auto;
+    }
+
+    .usersStats {
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+    }
+
+    .usersList {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 15px;
+    }
+
+    .userCard {
+        min-height: 120px;
+    }
+
+}
+
+
+/* =========================================================
+   IPHONE PETIT
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .usersStats {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 9px;
+
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .userStatCard {
+        min-height: 92px;
+
+        padding: 13px;
+    }
+
+    .userStatIcon {
+        width: 38px;
+        height: 38px;
+
+        border-radius: 12px;
+
+        font-size: 18px;
+    }
+
+    .userStatInfo strong {
+        font-size: 22px;
+    }
+
+    .usersSearchSection {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .usersFilters {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .usersMain {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .userCard {
+        padding: 12px;
+
+        gap: 9px;
+
+        border-radius: 18px;
+    }
+
+    .userCardLeft {
+        gap: 9px;
+    }
+
+    .userAvatar {
+        width: 48px;
+        height: 48px;
+
+        border-radius: 14px;
+    }
+
+    .userCardInfo .userName {
+        font-size: 14px;
+    }
+
+    .userCardInfo .userEmail {
+        font-size: 11px;
+    }
+
+    .userCardRight {
+        gap: 6px;
+    }
+
+    .viewUserButton {
+        padding: 0 9px;
+
+        font-size: 10px;
+    }
+
+    .userDetailsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .userProfile {
+        padding: 14px;
+    }
+
+    .userPhoto {
+        width: 62px;
+        height: 62px;
+
+        border-radius: 17px;
+    }
+
+    .userProfileInfo h3 {
+        font-size: 17px;
+    }
+
+}
+
+
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
+
+button,
+input,
+select {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 3px solid rgba(32, 196, 99, .25);
+
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+
+        scroll-behavior: auto !important;
+
+        transition-duration: .01ms !important;
+    }
+
+}
