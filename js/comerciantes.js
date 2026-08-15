@@ -417,3 +417,577 @@ onAuthStateChanged(
 alert(
     "TOMA ADMIN — Comerciantes JS : Bloc 2 terminado"
 );
+// ============================================================
+// TOMA ADMIN
+// COMERCIANTES.JS — BLOC 3
+// Affichage des commerçants
+// ============================================================
+
+alert("BLOC 3 — Début");
+
+// ============================================================
+// ÉLÉMENTS HTML
+// ============================================================
+
+const comerciantesList =
+    document.getElementById("comerciantesList");
+
+const emptyState =
+    document.getElementById("emptyState");
+
+const searchInput =
+    document.getElementById("searchInput");
+
+
+// ============================================================
+// FILTRER LES COMERCIANTES
+// ============================================================
+
+function applyMerchantFilters() {
+
+    let result = [...comerciantes];
+
+    const search =
+        searchInput?.value
+            ?.trim()
+            ?.toLowerCase() || "";
+
+
+    // --------------------------------------------------------
+    // RECHERCHE
+    // --------------------------------------------------------
+
+    if (search) {
+
+        result = result.filter(
+            merchant => {
+
+                const shopName =
+                    String(
+                        merchant.shopName ||
+                        merchant.storeName ||
+                        merchant.shop ||
+                        ""
+                    ).toLowerCase();
+
+
+                const firstName =
+                    String(
+                        merchant.firstName ||
+                        ""
+                    ).toLowerCase();
+
+
+                const lastName =
+                    String(
+                        merchant.lastName ||
+                        ""
+                    ).toLowerCase();
+
+
+                const email =
+                    String(
+                        merchant.email ||
+                        ""
+                    ).toLowerCase();
+
+
+                const phone =
+                    String(
+                        merchant.phone ||
+                        merchant.telephone ||
+                        ""
+                    ).toLowerCase();
+
+
+                const city =
+                    String(
+                        merchant.city ||
+                        ""
+                    ).toLowerCase();
+
+
+                return (
+                    shopName.includes(search) ||
+                    firstName.includes(search) ||
+                    lastName.includes(search) ||
+                    email.includes(search) ||
+                    phone.includes(search) ||
+                    city.includes(search)
+                );
+
+            }
+        );
+
+    }
+
+
+    filteredComerciantes =
+        result;
+
+
+    renderComerciantes(
+        filteredComerciantes
+    );
+
+}
+
+
+// ============================================================
+// AFFICHER LES COMERÇANTS
+// ============================================================
+
+function renderComerciantes(list) {
+
+    if (!comerciantesList) {
+
+        console.error(
+            "comerciantesList introuvable dans le HTML."
+        );
+
+        return;
+
+    }
+
+
+    comerciantesList.innerHTML = "";
+
+
+    if (!list || list.length === 0) {
+
+        if (emptyState) {
+
+            emptyState.classList.remove(
+                "hidden"
+            );
+
+        }
+
+        return;
+
+    }
+
+
+    if (emptyState) {
+
+        emptyState.classList.add(
+            "hidden"
+        );
+
+    }
+
+
+    list.forEach(
+        merchant => {
+
+            const card =
+                createMerchantCard(
+                    merchant
+                );
+
+
+            if (card) {
+
+                comerciantesList.appendChild(
+                    card
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// CRÉER UNE CARTE COMMERÇANT
+// ============================================================
+
+function createMerchantCard(merchant) {
+
+    const card =
+        document.createElement(
+            "article"
+        );
+
+
+    card.className =
+        "merchantCard";
+
+
+    card.dataset.id =
+        merchant.id;
+
+
+    // --------------------------------------------------------
+    // INFORMATIONS
+    // --------------------------------------------------------
+
+    const shopName =
+        merchant.shopName ||
+        merchant.storeName ||
+        merchant.shop ||
+        "Boutique sans nom";
+
+
+    const firstName =
+        merchant.firstName ||
+        "";
+
+
+    const lastName =
+        merchant.lastName ||
+        "";
+
+
+    const ownerName =
+        `${firstName} ${lastName}`
+            .trim() ||
+        merchant.name ||
+        merchant.displayName ||
+        "Commerçant";
+
+
+    const email =
+        merchant.email ||
+        "Email indisponível";
+
+
+    const phone =
+        merchant.phone ||
+        merchant.telephone ||
+        "";
+
+
+    const city =
+        merchant.city ||
+        "";
+
+
+    const logo =
+        merchant.shopLogo ||
+        merchant.logo ||
+        merchant.photo ||
+        merchant.photoURL ||
+        merchant.avatar ||
+        "images/avatar.png";
+
+
+    const status =
+        getMerchantStatus(
+            merchant
+        );
+
+
+    const statusLabel =
+        getMerchantStatusLabel(
+            status
+        );
+
+
+    const statusClass =
+        getMerchantStatusClass(
+            status
+        );
+
+
+    // --------------------------------------------------------
+    // CARTE
+    // --------------------------------------------------------
+
+    card.innerHTML = `
+
+        <div class="merchantCardLeft">
+
+            <img
+                class="merchantAvatar"
+                src="${escapeHtml(logo)}"
+                alt="Comerciante"
+                onerror="this.src='images/avatar.png'"
+            >
+
+            <div class="merchantInfo">
+
+                <h3 class="merchantName">
+                    ${escapeHtml(shopName)}
+                </h3>
+
+                <p class="merchantOwner">
+                    ${escapeHtml(ownerName)}
+                </p>
+
+                <p class="merchantEmail">
+                    ${escapeHtml(email)}
+                </p>
+
+                <div class="merchantMeta">
+
+                    ${
+                        phone
+                        ? `
+                            <span>
+                                📞 ${escapeHtml(phone)}
+                            </span>
+                        `
+                        : ""
+                    }
+
+                    ${
+                        city
+                        ? `
+                            <span>
+                                📍 ${escapeHtml(city)}
+                            </span>
+                        `
+                        : ""
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="merchantCardRight">
+
+            <span
+                class="merchantStatus ${statusClass}"
+            >
+                ${statusLabel}
+            </span>
+
+            <button
+                type="button"
+                class="merchantViewButton"
+                data-action="view"
+            >
+                Ver detalhes →
+            </button>
+
+        </div>
+
+    `;
+
+
+    // --------------------------------------------------------
+    // CLIQUE SUR LA CARTE
+    // --------------------------------------------------------
+
+    card.addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target.closest(
+                    "button"
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            openMerchantModal(
+                merchant
+            );
+
+        }
+    );
+
+
+    // --------------------------------------------------------
+    // BOUTON VOIR DÉTAILS
+    // --------------------------------------------------------
+
+    const viewButton =
+        card.querySelector(
+            '[data-action="view"]'
+        );
+
+
+    if (viewButton) {
+
+        viewButton.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+
+                openMerchantModal(
+                    merchant
+                );
+
+            }
+        );
+
+    }
+
+
+    return card;
+
+}
+
+
+// ============================================================
+// STATUT COMMERÇANT
+// ============================================================
+
+function getMerchantStatus(
+    merchant
+) {
+
+    const status =
+        String(
+            merchant.status ||
+            ""
+        ).toLowerCase();
+
+
+    if (
+        status === "blocked" ||
+        status === "disabled" ||
+        status === "suspended"
+    ) {
+
+        return "blocked";
+
+    }
+
+
+    if (
+        status === "pending" ||
+        status === "pending_verification"
+    ) {
+
+        return "pending";
+
+    }
+
+
+    return "active";
+
+}
+
+
+// ============================================================
+// LABEL STATUT
+// ============================================================
+
+function getMerchantStatusLabel(
+    status
+) {
+
+    if (
+        status === "blocked"
+    ) {
+
+        return "Bloqueado";
+
+    }
+
+
+    if (
+        status === "pending"
+    ) {
+
+        return "Pendente";
+
+    }
+
+
+    return "Ativo";
+
+}
+
+
+// ============================================================
+// CLASSE CSS STATUT
+// ============================================================
+
+function getMerchantStatusClass(
+    status
+) {
+
+    if (
+        status === "blocked"
+    ) {
+
+        return "statusBlocked";
+
+    }
+
+
+    if (
+        status === "pending"
+    ) {
+
+        return "statusPending";
+
+    }
+
+
+    return "statusActive";
+
+}
+
+
+// ============================================================
+// NOM DU COMMERÇANT
+// ============================================================
+
+function getMerchantName(
+    merchant
+) {
+
+    return (
+        merchant.shopName ||
+        merchant.storeName ||
+        merchant.shop ||
+        "Boutique sem nome"
+    );
+
+}
+
+
+// ============================================================
+// NOM DU PROPRIÉTAIRE
+// ============================================================
+
+function getMerchantOwnerName(
+    merchant
+) {
+
+    const firstName =
+        merchant.firstName ||
+        "";
+
+
+    const lastName =
+        merchant.lastName ||
+        "";
+
+
+    const fullName =
+        `${firstName} ${lastName}`
+            .trim();
+
+
+    return (
+        fullName ||
+        merchant.name ||
+        merchant.displayName ||
+        "Comerciante"
+    );
+
+}
+
+
+// ============================================================
+// FIN DU BLOC 3
+// ============================================================
+
+alert("BLOC 3 — Fin");
