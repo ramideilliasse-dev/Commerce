@@ -109,82 +109,62 @@ const closeComercianteModal =
 
 alert("TOMA ADMIN — Comerciantes JS : Bloc 1 terminé");
 // ============================================================
+// TOMA ADMIN
+// COMERCIANTES.JS
+// BLOC 2
+// ============================================================
+
+
+// ============================================================
 // ALERTE — DÉBUT BLOC 2
 // ============================================================
 
-alert("TOMA ADMIN — Comerciantes JS : Bloc 2 démarré");
-
-
-// ============================================================
-// DÉMARRAGE
-// ============================================================
-
-init();
-
-
-// ============================================================
-// INITIALISATION
-// ============================================================
-
-function init() {
-
-    console.log(
-        "TOMA ADMIN — Página de comerciantes iniciada."
-    );
-
-    showLoader();
-
-    setupSearch();
-
-    setupFilters();
-
-    setupNavigation();
-
-    setupRefresh();
-
-    setupRetry();
-
-    checkAuthentication();
-
-}
+alert(
+    "TOMA ADMIN — Comerciantes JS : Bloc 2 démarrado"
+);
 
 
 // ============================================================
 // RECHERCHE
 // ============================================================
 
-function setupSearch() {
-
-    if (!searchInput) {
-        return;
-    }
+if (searchInput) {
 
     searchInput.addEventListener(
         "input",
-        () => {
+        function () {
 
-            applyFilters();
+            console.log(
+                "Pesquisa:",
+                searchInput.value
+            );
 
         }
     );
 
+}
 
-    if (clearSearch) {
 
-        clearSearch.addEventListener(
-            "click",
-            () => {
+// ============================================================
+// BOUTON EFFACER LA RECHERCHE
+// ============================================================
+
+if (clearSearch) {
+
+    clearSearch.addEventListener(
+        "click",
+        function () {
+
+            if (searchInput) {
 
                 searchInput.value = "";
-
-                applyFilters();
 
                 searchInput.focus();
 
             }
-        );
 
-    }
+        }
+    );
 
 }
 
@@ -193,144 +173,117 @@ function setupSearch() {
 // FILTRES
 // ============================================================
 
-function setupFilters() {
-
-    const filterButtons =
-        document.querySelectorAll(
-            ".filterButton"
-        );
-
-
-    filterButtons.forEach(
-        button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    filterButtons.forEach(
-                        item => {
-
-                            item.classList.remove(
-                                "active"
-                            );
-
-                        }
-                    );
-
-
-                    button.classList.add(
-                        "active"
-                    );
-
-
-                    currentFilter =
-                        button.dataset.filter ||
-                        "all";
-
-
-                    applyFilters();
-
-                }
-            );
-
-        }
+const filterButtons =
+    document.querySelectorAll(
+        ".filterButton"
     );
 
-}
 
+filterButtons.forEach(
+    function (button) {
 
-// ============================================================
-// NAVIGATION
-// ============================================================
-
-function setupNavigation() {
-
-    const backButton =
-        document.getElementById(
-            "backButton"
-        );
-
-
-    if (backButton) {
-
-        backButton.addEventListener(
+        button.addEventListener(
             "click",
-            () => {
+            function () {
 
-                if (
-                    window.history.length >
-                    1
-                ) {
+                filterButtons.forEach(
+                    function (item) {
 
-                    window.history.back();
+                        item.classList.remove(
+                            "active"
+                        );
 
-                } else {
+                    }
+                );
 
-                    window.location.href =
-                        "admin-dashboard.html";
 
-                }
+                button.classList.add(
+                    "active"
+                );
+
+
+                currentFilter =
+                    button.dataset.filter ||
+                    "all";
+
+
+                console.log(
+                    "Filtro selecionado:",
+                    currentFilter
+                );
 
             }
         );
 
     }
+);
+
+
+// ============================================================
+// BOUTON RETOUR
+// ============================================================
+
+const backButton =
+    document.getElementById(
+        "backButton"
+    );
+
+
+if (backButton) {
+
+    backButton.addEventListener(
+        "click",
+        function () {
+
+            console.log(
+                "Botão voltar clicado."
+            );
+
+
+            if (
+                window.history.length > 1
+            ) {
+
+                window.history.back();
+
+            } else {
+
+                window.location.href =
+                    "admin-dashboard.html";
+
+            }
+
+        }
+    );
 
 }
 
 
 // ============================================================
-// ACTUALISER
+// BOUTON ACTUALISER
 // ============================================================
 
-function setupRefresh() {
-
-    const refreshButton =
-        document.getElementById(
-            "refreshButton"
-        );
+const refreshButton =
+    document.getElementById(
+        "refreshButton"
+    );
 
 
-    if (!refreshButton) {
-        return;
-    }
-
+if (refreshButton) {
 
     refreshButton.addEventListener(
         "click",
-        () => {
+        function () {
 
-            showLoader();
-
-            listenComerciantes();
-
-        }
-    );
-
-}
+            console.log(
+                "Botão atualizar clicado."
+            );
 
 
-// ============================================================
-// RETRY
-// ============================================================
-
-function setupRetry() {
-
-    if (!retryButton) {
-        return;
-    }
-
-
-    retryButton.addEventListener(
-        "click",
-        () => {
-
-            hideError();
-
-            showLoader();
-
-            checkAuthentication();
+            /*
+             * O carregamento Firestore será
+             * conectado no próximo bloco.
+             */
 
         }
     );
@@ -339,21 +292,87 @@ function setupRetry() {
 
 
 // ============================================================
-// VÉRIFICATION AUTHENTIFICATION
+// VÉRIFICATION ADMIN
 // ============================================================
 
-function checkAuthentication() {
+onAuthStateChanged(
+    auth,
+    async function (user) {
 
-    onAuthStateChanged(
-        auth,
-        async (user) => {
+        console.log(
+            "Verificação da sessão iniciada."
+        );
 
-            if (!user) {
 
-                hideLoader();
+        if (!user) {
 
-                showError(
-                    "Você precisa estar conectado como administrador."
+            console.log(
+                "Nenhum utilizador autenticado."
+            );
+
+            return;
+
+        }
+
+
+        console.log(
+            "Utilizador autenticado:",
+            user.uid
+        );
+
+
+        try {
+
+            const userRef =
+                doc(
+                    db,
+                    "users",
+                    user.uid
+                );
+
+
+            const userSnap =
+                await getDoc(
+                    userRef
+                );
+
+
+            if (!userSnap.exists()) {
+
+                console.log(
+                    "Perfil do administrador não encontrado."
+                );
+
+                return;
+
+            }
+
+
+            const userData =
+                userSnap.data();
+
+
+            const role =
+                String(
+                    userData.role || ""
+                )
+                .trim()
+                .toLowerCase();
+
+
+            console.log(
+                "Função do utilizador:",
+                role
+            );
+
+
+            if (
+                role !== "admin" &&
+                role !== "superadmin"
+            ) {
+
+                console.log(
+                    "Acesso administrativo recusado."
                 );
 
                 return;
@@ -362,105 +381,39 @@ function checkAuthentication() {
 
 
             console.log(
-                "Administrador conectado:",
-                user.uid
+                "Acesso administrativo confirmado."
             );
 
 
-            try {
-
-                const userRef =
-                    doc(
-                        db,
-                        "users",
-                        user.uid
-                    );
-
-
-                const userSnap =
-                    await getDoc(
-                        userRef
-                    );
-
-
-                if (!userSnap.exists()) {
-
-                    hideLoader();
-
-                    showError(
-                        "Perfil administrativo não encontrado."
-                    );
-
-                    return;
-
-                }
-
-
-                const userData =
-                    userSnap.data();
-
-
-                const role =
-                    String(
-                        userData.role || ""
-                    )
-                    .trim()
-                    .toLowerCase();
-
-
-                if (
-                    role !== "admin" &&
-                    role !== "superadmin"
-                ) {
-
-                    hideLoader();
-
-                    showError(
-                        "Acesso recusado. Esta página é reservada ao administrador."
-                    );
-
-                    return;
-
-                }
-
-
-                console.log(
-                    "Acesso administrativo confirmado:",
-                    role
-                );
-
-
-                console.log(
-    "Admin verificado. O carregamento dos comerciantes será ativado no próximo bloco."
-);
-            }
-
-            catch (error) {
-
-                console.error(
-                    "Erro ao verificar administrador:",
-                    error
-                );
-
-
-                hideLoader();
-
-                showError(
-                    getFirebaseErrorMessage(
-                        error
-                    )
-                );
-
-            }
+            /*
+             * IMPORTANTE:
+             *
+             * Nenhuma função do próximo bloco
+             * é chamada aqui.
+             *
+             * Isso evita que o JavaScript pare
+             * porque uma função ainda não existe.
+             */
 
         }
-    );
 
-}
+        catch (error) {
+
+            console.error(
+                "Erro na verificação administrativa:",
+                error
+            );
+
+        }
+
+    }
+);
 
 
 // ============================================================
 // ALERTE — FIN BLOC 2
 // ============================================================
 
-alert("TOMA ADMIN — Comerciantes JS : Bloc 2 terminé");
+alert(
+    "TOMA ADMIN — Comerciantes JS : Bloc 2 terminado"
+);
