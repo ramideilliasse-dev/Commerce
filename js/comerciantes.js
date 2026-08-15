@@ -423,29 +423,42 @@ alert(
 // Affichage des commerçants
 // ============================================================
 
-alert("BLOC 3 — Début");
 
 // ============================================================
-// ÉLÉMENTS HTML
+// ALERTE — DÉBUT BLOC 3
 // ============================================================
 
-const comerciantesList =
-    document.getElementById("comerciantesList");
-
-const emptyState =
-    document.getElementById("emptyState");
-
-const searchInput =
-    document.getElementById("searchInput");
+alert("TOMA ADMIN — Comerciantes JS : Bloc 3 démarrado");
 
 
 // ============================================================
-// FILTRER LES COMERCIANTES
+// FILTRER LES COMERÇANTS
 // ============================================================
 
 function applyMerchantFilters() {
 
     let result = [...comerciantes];
+
+
+    // --------------------------------------------------------
+    // FILTRE
+    // --------------------------------------------------------
+
+    if (currentFilter !== "all") {
+
+        result =
+            result.filter(
+                merchant =>
+                    getMerchantStatus(merchant) ===
+                    currentFilter
+            );
+
+    }
+
+
+    // --------------------------------------------------------
+    // RECHERCHE
+    // --------------------------------------------------------
 
     const search =
         searchInput?.value
@@ -453,71 +466,68 @@ function applyMerchantFilters() {
             ?.toLowerCase() || "";
 
 
-    // --------------------------------------------------------
-    // RECHERCHE
-    // --------------------------------------------------------
-
     if (search) {
 
-        result = result.filter(
-            merchant => {
+        result =
+            result.filter(
+                merchant => {
 
-                const shopName =
-                    String(
-                        merchant.shopName ||
-                        merchant.storeName ||
-                        merchant.shop ||
-                        ""
-                    ).toLowerCase();
-
-
-                const firstName =
-                    String(
-                        merchant.firstName ||
-                        ""
-                    ).toLowerCase();
+                    const shopName =
+                        String(
+                            merchant.shopName ||
+                            merchant.storeName ||
+                            merchant.shop ||
+                            ""
+                        ).toLowerCase();
 
 
-                const lastName =
-                    String(
-                        merchant.lastName ||
-                        ""
-                    ).toLowerCase();
+                    const firstName =
+                        String(
+                            merchant.firstName ||
+                            ""
+                        ).toLowerCase();
 
 
-                const email =
-                    String(
-                        merchant.email ||
-                        ""
-                    ).toLowerCase();
+                    const lastName =
+                        String(
+                            merchant.lastName ||
+                            ""
+                        ).toLowerCase();
 
 
-                const phone =
-                    String(
-                        merchant.phone ||
-                        merchant.telephone ||
-                        ""
-                    ).toLowerCase();
+                    const email =
+                        String(
+                            merchant.email ||
+                            ""
+                        ).toLowerCase();
 
 
-                const city =
-                    String(
-                        merchant.city ||
-                        ""
-                    ).toLowerCase();
+                    const phone =
+                        String(
+                            merchant.phone ||
+                            merchant.telephone ||
+                            ""
+                        ).toLowerCase();
 
 
-                return (
-                    shopName.includes(search) ||
-                    firstName.includes(search) ||
-                    lastName.includes(search) ||
-                    email.includes(search) ||
-                    phone.includes(search) ||
-                    city.includes(search)
-                );
+                    const city =
+                        String(
+                            merchant.city ||
+                            ""
+                        ).toLowerCase();
 
-            }
-        );
+
+                    return (
+                        shopName.includes(search) ||
+                        firstName.includes(search) ||
+                        lastName.includes(search) ||
+                        email.includes(search) ||
+                        phone.includes(search) ||
+                        city.includes(search)
+                    );
+
+                }
+            );
 
     }
 
@@ -553,7 +563,10 @@ function renderComerciantes(list) {
     comerciantesList.innerHTML = "";
 
 
-    if (!list || list.length === 0) {
+    if (
+        !list ||
+        list.length === 0
+    ) {
 
         if (emptyState) {
 
@@ -604,7 +617,9 @@ function renderComerciantes(list) {
 // CRÉER UNE CARTE COMMERÇANT
 // ============================================================
 
-function createMerchantCard(merchant) {
+function createMerchantCard(
+    merchant
+) {
 
     const card =
         document.createElement(
@@ -628,7 +643,7 @@ function createMerchantCard(merchant) {
         merchant.shopName ||
         merchant.storeName ||
         merchant.shop ||
-        "Boutique sans nom";
+        "Boutique sem nome";
 
 
     const firstName =
@@ -646,7 +661,7 @@ function createMerchantCard(merchant) {
             .trim() ||
         merchant.name ||
         merchant.displayName ||
-        "Commerçant";
+        "Comerciante";
 
 
     const email =
@@ -725,22 +740,22 @@ function createMerchantCard(merchant) {
 
                     ${
                         phone
-                        ? `
-                            <span>
-                                📞 ${escapeHtml(phone)}
-                            </span>
-                        `
-                        : ""
+                            ? `
+                                <span>
+                                    📞 ${escapeHtml(phone)}
+                                </span>
+                            `
+                            : ""
                     }
 
                     ${
                         city
-                        ? `
-                            <span>
-                                📍 ${escapeHtml(city)}
-                            </span>
-                        `
-                        : ""
+                            ? `
+                                <span>
+                                    📍 ${escapeHtml(city)}
+                                </span>
+                            `
+                            : ""
                     }
 
                 </div>
@@ -790,9 +805,16 @@ function createMerchantCard(merchant) {
             }
 
 
-            openMerchantModal(
-                merchant
-            );
+            if (
+                typeof openMerchantModal ===
+                "function"
+            ) {
+
+                openMerchantModal(
+                    merchant
+                );
+
+            }
 
         }
     );
@@ -817,9 +839,16 @@ function createMerchantCard(merchant) {
                 event.stopPropagation();
 
 
-                openMerchantModal(
-                    merchant
-                );
+                if (
+                    typeof openMerchantModal ===
+                    "function"
+                ) {
+
+                    openMerchantModal(
+                        merchant
+                    );
+
+                }
 
             }
         );
@@ -844,7 +873,9 @@ function getMerchantStatus(
         String(
             merchant.status ||
             ""
-        ).toLowerCase();
+        )
+        .trim()
+        .toLowerCase();
 
 
     if (
@@ -987,7 +1018,9 @@ function getMerchantOwnerName(
 
 
 // ============================================================
-// FIN DU BLOC 3
+// ALERTE — FIN BLOC 3
 // ============================================================
 
-alert("BLOC 3 — Fin");
+alert(
+    "TOMA ADMIN — Comerciantes JS : Bloc 3 terminado"
+);
