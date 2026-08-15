@@ -430,8 +430,9 @@ function checkAuthentication() {
                 );
 
 
-                listenComerciantes();
-
+                console.log(
+    "Admin verificado. O carregamento dos comerciantes será ativado no próximo bloco."
+);
             }
 
             catch (error) {
