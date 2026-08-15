@@ -883,3 +883,1349 @@ body {
 
     background: #dbeafe;
 }
+/* =========================================================
+   TOMA ADMIN — COMERCIANTES
+   comerciantes.css
+   BLOC 2/2 — DERNIER
+========================================================= */
+
+
+/* =========================================================
+   ÉTATS — VIDE
+========================================================= */
+
+.emptyState {
+
+    padding:
+        70px
+        25px;
+
+    text-align: center;
+
+    width: 100%;
+}
+
+.emptyState.hidden {
+
+    display: none;
+}
+
+.emptyIcon {
+
+    width: 82px;
+    height: 82px;
+
+    margin:
+        0
+        auto
+        20px;
+
+    border-radius: 26px;
+
+    background: #ffffff;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 38px;
+
+    box-shadow: var(--shadow);
+}
+
+.emptyState h2 {
+
+    font-size: 21px;
+
+    font-weight: 800;
+
+    color: var(--text);
+}
+
+.emptyState p {
+
+    max-width: 340px;
+
+    margin:
+        10px
+        auto
+        0;
+
+    color: var(--muted);
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   LOADER
+========================================================= */
+
+.loader {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 500;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(244, 246, 248, 0.94);
+
+    backdrop-filter: blur(10px);
+
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.loader.hidden {
+
+    display: none;
+}
+
+.loaderCard {
+
+    width: 100%;
+
+    max-width: 280px;
+
+    padding: 28px 20px;
+
+    border-radius: 24px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 20px 60px
+        rgba(15, 23, 42, 0.12);
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 16px;
+
+    text-align: center;
+}
+
+.loaderSpinner {
+
+    width: 48px;
+    height: 48px;
+
+    border:
+        4px solid #e5e7eb;
+
+    border-top-color:
+        var(--green);
+
+    border-radius: 50%;
+
+    animation:
+        loaderSpin
+        0.8s
+        linear
+        infinite;
+}
+
+.loaderCard p {
+
+    color: var(--muted);
+
+    font-size: 14px;
+
+    font-weight: 700;
+}
+
+@keyframes loaderSpin {
+
+    to {
+
+        transform:
+            rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.errorState {
+
+    padding:
+        70px
+        25px;
+
+    text-align: center;
+}
+
+.errorState.hidden {
+
+    display: none;
+}
+
+.errorIcon {
+
+    width: 82px;
+    height: 82px;
+
+    margin:
+        0
+        auto
+        20px;
+
+    border-radius: 26px;
+
+    background:
+        var(--red-light);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 38px;
+}
+
+.errorState h2 {
+
+    font-size: 22px;
+
+    font-weight: 800;
+}
+
+.errorState p {
+
+    max-width: 340px;
+
+    margin:
+        10px
+        auto
+        20px;
+
+    color: var(--muted);
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+.retryButton {
+
+    min-height: 48px;
+
+    padding:
+        0
+        22px;
+
+    border: 0;
+
+    border-radius: 14px;
+
+    background:
+        var(--green);
+
+    color: #ffffff;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease;
+}
+
+.retryButton:active {
+
+    transform:
+        scale(0.95);
+}
+
+
+/* =========================================================
+   MODAL PRINCIPAL
+========================================================= */
+
+.modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 400;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: center;
+
+    background:
+        rgba(0, 0, 0, 0.48);
+
+    opacity: 1;
+
+    visibility: visible;
+
+    transition:
+        opacity 0.2s ease,
+        visibility 0.2s ease;
+}
+
+.modal.hidden {
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+}
+
+.modalContent {
+
+    width: 100%;
+
+    max-width: 620px;
+
+    max-height: 92vh;
+
+    overflow-y: auto;
+
+    background:
+        #ffffff;
+
+    border-radius:
+        30px
+        30px
+        0
+        0;
+
+    padding:
+        20px
+        20px
+        max(
+            25px,
+            env(safe-area-inset-bottom)
+        );
+
+    animation:
+        modalOpen
+        0.22s
+        ease;
+}
+
+.modal.hidden .modalContent {
+
+    transform:
+        translateY(30px);
+}
+
+@keyframes modalOpen {
+
+    from {
+
+        transform:
+            translateY(30px);
+
+        opacity: 0;
+    }
+
+    to {
+
+        transform:
+            translateY(0);
+
+        opacity: 1;
+    }
+}
+
+
+/* =========================================================
+   MODAL HEADER
+========================================================= */
+
+.modalHeader {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 20px;
+}
+
+.modalHeader h2 {
+
+    font-size: 22px;
+
+    font-weight: 800;
+
+    letter-spacing:
+        -0.4px;
+}
+
+.modalHeader p {
+
+    margin-top: 5px;
+
+    color: var(--muted);
+
+    font-size: 13px;
+
+    line-height: 1.4;
+}
+
+.modalClose {
+
+    width: 44px;
+    height: 44px;
+
+    flex-shrink: 0;
+
+    border: 0;
+
+    border-radius: 14px;
+
+    background:
+        #f3f4f6;
+
+    color:
+        #374151;
+
+    font-size: 25px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        background 0.15s ease;
+}
+
+.modalClose:active {
+
+    transform:
+        scale(0.9);
+
+    background:
+        #e5e7eb;
+}
+
+
+/* =========================================================
+   PROFIL COMMERÇANT
+========================================================= */
+
+.merchantProfile {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 18px;
+
+    margin-bottom: 18px;
+
+    background:
+        #f8fafc;
+
+    border-radius: 22px;
+
+    border:
+        1px solid #eef0f3;
+}
+
+.merchantPhoto {
+
+    width: 76px;
+    height: 76px;
+
+    flex-shrink: 0;
+
+    border-radius: 22px;
+
+    object-fit: cover;
+
+    background:
+        #e5e7eb;
+
+    border:
+        1px solid #e5e7eb;
+}
+
+.merchantProfileInfo {
+
+    min-width: 0;
+
+    flex: 1;
+}
+
+.merchantProfileInfo h3 {
+
+    font-size: 19px;
+
+    font-weight: 800;
+
+    line-height: 1.25;
+
+    overflow-wrap: anywhere;
+}
+
+.merchantProfileInfo p {
+
+    margin-top: 5px;
+
+    color: var(--muted);
+
+    font-size: 13px;
+
+    overflow-wrap: anywhere;
+}
+
+.merchantStatus {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    margin-top: 9px;
+
+    padding:
+        6px
+        10px;
+
+    border-radius: 9px;
+
+    font-size: 11px;
+
+    font-weight: 800;
+}
+
+.merchantStatus.active {
+
+    color:
+        #15803d;
+
+    background:
+        #dcfce7;
+}
+
+.merchantStatus.blocked {
+
+    color:
+        #b91c1c;
+
+    background:
+        #fee2e2;
+}
+
+.merchantStatus.pending {
+
+    color:
+        #b45309;
+
+    background:
+        #fef3c7;
+}
+
+
+/* =========================================================
+   VERIFICATION
+========================================================= */
+
+.merchantVerification {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 12px;
+
+    margin-bottom: 18px;
+
+    padding: 15px 16px;
+
+    border-radius: 18px;
+
+    background:
+        #f5f3ff;
+
+    border:
+        1px solid #ede9fe;
+}
+
+.merchantVerificationInfo {
+
+    min-width: 0;
+}
+
+.merchantVerificationInfo strong {
+
+    display: block;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    color:
+        #5b21b6;
+}
+
+.merchantVerificationInfo span {
+
+    display: block;
+
+    margin-top: 4px;
+
+    color:
+        #7c3aed;
+
+    font-size: 12px;
+
+    line-height: 1.4;
+}
+
+.verificationBadge {
+
+    flex-shrink: 0;
+
+    padding:
+        7px
+        10px;
+
+    border-radius: 10px;
+
+    background:
+        #7c3aed;
+
+    color: #ffffff;
+
+    font-size: 11px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   DETAILS
+========================================================= */
+
+.merchantDetailsGrid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+}
+
+.detailCard {
+
+    padding: 14px;
+
+    background:
+        #f8fafc;
+
+    border:
+        1px solid #eef0f3;
+
+    border-radius: 16px;
+
+    min-width: 0;
+}
+
+.detailCard span {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+    font-weight: 700;
+}
+
+.detailCard strong {
+
+    display: block;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    overflow-wrap: anywhere;
+
+    line-height: 1.35;
+}
+
+
+/* =========================================================
+   ACTIONS ADMINISTRATIVES
+========================================================= */
+
+.merchantAdminActions {
+
+    margin-top: 22px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+.merchantAdminActions h3 {
+
+    margin-bottom: 3px;
+
+    font-size: 17px;
+
+    font-weight: 800;
+}
+
+.actionButton {
+
+    width: 100%;
+
+    min-height: 52px;
+
+    border: 0;
+
+    border-radius: 15px;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        opacity 0.15s ease;
+}
+
+.actionButton:active {
+
+    transform:
+        scale(0.97);
+}
+
+.blockButton {
+
+    background:
+        #fee2e2;
+
+    color:
+        #b91c1c;
+}
+
+.unblockButton {
+
+    background:
+        #dcfce7;
+
+    color:
+        #15803d;
+}
+
+.verifyButton {
+
+    background:
+        #ede9fe;
+
+    color:
+        #6d28d9;
+}
+
+.unverifyButton {
+
+    background:
+        #f3f4f6;
+
+    color:
+        #374151;
+}
+
+.deleteButton {
+
+    background:
+        #111827;
+
+    color:
+        #ffffff;
+}
+
+
+/* =========================================================
+   PETIT MODAL
+========================================================= */
+
+.smallModalContent {
+
+    width: calc(100% - 40px);
+
+    max-width: 420px;
+
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    padding: 22px;
+
+    background:
+        #ffffff;
+
+    border-radius: 25px;
+
+    box-shadow:
+        0 20px 60px
+        rgba(0, 0, 0, 0.18);
+}
+
+.smallModalContent > p {
+
+    margin-top: 4px;
+
+    color: var(--muted);
+
+    font-size: 14px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   SELECT
+========================================================= */
+
+.statusSelect {
+
+    width: 100%;
+
+    min-height: 52px;
+
+    margin-top: 16px;
+
+    padding:
+        0
+        15px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 15px;
+
+    background:
+        #ffffff;
+
+    color:
+        var(--text);
+
+    font-family: inherit;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    outline: none;
+}
+
+.statusSelect:focus {
+
+    border-color:
+        var(--green);
+
+    box-shadow:
+        0 0 0 4px
+        rgba(32, 196, 99, 0.10);
+}
+
+
+/* =========================================================
+   MODAL ACTIONS
+========================================================= */
+
+.modalActions {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+
+    margin-top: 20px;
+}
+
+.primaryButton,
+.secondaryButton,
+.dangerButton {
+
+    min-height: 50px;
+
+    border: 0;
+
+    border-radius: 15px;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease;
+}
+
+.primaryButton {
+
+    background:
+        var(--green);
+
+    color:
+        #ffffff;
+}
+
+.secondaryButton {
+
+    background:
+        #f3f4f6;
+
+    color:
+        #374151;
+}
+
+.dangerButton {
+
+    background:
+        var(--red);
+
+    color:
+        #ffffff;
+}
+
+.primaryButton:active,
+.secondaryButton:active,
+.dangerButton:active {
+
+    transform:
+        scale(0.96);
+}
+
+
+/* =========================================================
+   CONFIRMATION
+========================================================= */
+
+.confirmCard {
+
+    width: calc(100% - 40px);
+
+    max-width: 400px;
+
+    padding: 25px;
+
+    background:
+        #ffffff;
+
+    border-radius: 25px;
+
+    box-shadow:
+        0 20px 60px
+        rgba(0, 0, 0, 0.18);
+
+    text-align: center;
+}
+
+.confirmIcon {
+
+    width: 65px;
+    height: 65px;
+
+    margin:
+        0
+        auto
+        18px;
+
+    border-radius: 20px;
+
+    background:
+        #fef2f2;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 30px;
+}
+
+.confirmCard h2 {
+
+    font-size: 21px;
+
+    font-weight: 800;
+}
+
+.confirmCard p {
+
+    margin-top: 10px;
+
+    color: var(--muted);
+
+    font-size: 14px;
+
+    line-height: 1.55;
+}
+
+.confirmActions {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 10px;
+
+    margin-top: 20px;
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast {
+
+    position: fixed;
+
+    left: 20px;
+
+    right: 20px;
+
+    bottom:
+        max(
+            20px,
+            env(safe-area-inset-bottom)
+        );
+
+    z-index: 1000;
+
+    display: flex;
+
+    justify-content: center;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+    transform:
+        translateY(20px);
+
+    transition:
+        opacity 0.22s ease,
+        transform 0.22s ease;
+}
+
+.toast.show {
+
+    opacity: 1;
+
+    transform:
+        translateY(0);
+}
+
+#toastMessage {
+
+    max-width: 430px;
+
+    padding:
+        13px
+        18px;
+
+    border-radius: 15px;
+
+    background:
+        #111827;
+
+    color:
+        #ffffff;
+
+    box-shadow:
+        0 10px 30px
+        rgba(0, 0, 0, 0.18);
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   DESKTOP
+========================================================= */
+
+@media (min-width: 700px) {
+
+    .merchantsHeader {
+
+        padding-left: 30px;
+
+        padding-right: 30px;
+    }
+
+    .merchantStats,
+    .merchantSearchSection,
+    .merchantFilters,
+    .merchantsListSection {
+
+        max-width: 1100px;
+
+        margin-left: auto;
+
+        margin-right: auto;
+    }
+
+    .merchantStats {
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+
+    .merchantsList {
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .modalContent {
+
+        margin: 20px;
+
+        border-radius: 30px;
+
+        max-height: 85vh;
+    }
+
+}
+
+
+/* =========================================================
+   IPHONE PETIT ÉCRAN
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .merchantsHeader {
+
+        gap: 10px;
+
+        padding-left: 12px;
+
+        padding-right: 12px;
+    }
+
+    .headerButton {
+
+        width: 50px;
+
+        height: 50px;
+
+        border-radius: 17px;
+
+        font-size: 24px;
+    }
+
+    .headerTitle h1 {
+
+        font-size: 19px;
+    }
+
+    .headerTitle p {
+
+        font-size: 12px;
+    }
+
+    .merchantStats {
+
+        padding-left: 12px;
+
+        padding-right: 12px;
+    }
+
+    .merchantSearchSection {
+
+        padding-left: 12px;
+
+        padding-right: 12px;
+    }
+
+    .merchantFilters {
+
+        padding-left: 12px;
+
+        padding-right: 12px;
+    }
+
+    .merchantsListSection {
+
+        padding-left: 12px;
+
+        padding-right: 12px;
+    }
+
+    .merchantStatCard {
+
+        padding: 14px;
+
+        min-height: 115px;
+    }
+
+    .merchantStatInfo strong {
+
+        font-size: 27px;
+    }
+
+    .merchantCard {
+
+        padding: 13px;
+
+        gap: 10px;
+    }
+
+    .merchantAvatar {
+
+        width: 50px;
+
+        height: 50px;
+
+        border-radius: 15px;
+    }
+
+    .merchantName {
+
+        font-size: 14px;
+    }
+
+    .merchantCardInfo .merchantShopName {
+
+        font-size: 12px;
+    }
+
+    .merchantMeta span {
+
+        font-size: 10px;
+
+        padding: 4px 7px;
+    }
+
+    .merchantCardRight {
+
+        gap: 5px;
+    }
+
+    .viewMerchantButton {
+
+        padding:
+            0
+            9px;
+
+        font-size: 10px;
+
+        min-height: 35px;
+    }
+
+    .merchantProfile {
+
+        padding: 14px;
+    }
+
+    .merchantPhoto {
+
+        width: 62px;
+
+        height: 62px;
+
+        border-radius: 18px;
+    }
+
+    .merchantProfileInfo h3 {
+
+        font-size: 17px;
+    }
+
+}
+
+
+/* =========================================================
+   ACCESSIBILITÉ
+========================================================= */
+
+button,
+input,
+select {
+
+    -webkit-tap-highlight-color:
+        transparent;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+
+    outline:
+        3px solid
+        rgba(32, 196, 99, 0.25);
+
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   FIN — COMERCIANTES.CSS
+========================================================= */
