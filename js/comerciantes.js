@@ -1024,3 +1024,875 @@ function getMerchantOwnerName(
 alert(
     "TOMA ADMIN — Comerciantes JS : Bloc 3 terminado"
 );
+// ============================================================
+// TOMA ADMIN
+// COMERCIANTES.JS — BLOC 4
+// Firestore + chargement réel + statistiques + actualisation
+// ============================================================
+
+
+// ============================================================
+// ALERTE — DÉBUT BLOC 4
+// ============================================================
+
+alert(
+    "TOMA ADMIN — Comerciantes JS : Bloc 4 démarrado"
+);
+
+
+// ============================================================
+// CHARGEMENT DES COMERÇANTS DEPUIS FIRESTORE
+// ============================================================
+
+function listenComerciantes() {
+
+    console.log(
+        "Iniciando carregamento dos comerciantes..."
+    );
+
+
+    // --------------------------------------------------------
+    // AFFICHER LE LOADER
+    // --------------------------------------------------------
+
+    if (loader) {
+
+        loader.classList.remove(
+            "hidden"
+        );
+
+        loader.style.display =
+            "flex";
+
+    }
+
+
+    // --------------------------------------------------------
+    // ARRÊTER L'ANCIEN LISTENER
+    // --------------------------------------------------------
+
+    if (unsubscribeComerciantes) {
+
+        unsubscribeComerciantes();
+
+        unsubscribeComerciantes =
+            null;
+
+    }
+
+
+    // --------------------------------------------------------
+    // COLLECTION FIRESTORE
+    // --------------------------------------------------------
+
+    try {
+
+        const comerciantesRef =
+            collection(
+                db,
+                "comerciantes"
+            );
+
+
+        // ----------------------------------------------------
+        // ÉCOUTE TEMPS RÉEL
+        // ----------------------------------------------------
+
+        unsubscribeComerciantes =
+            onSnapshot(
+
+                comerciantesRef,
+
+                snapshot => {
+
+                    console.log(
+                        "Firestore comerciantes:",
+                        snapshot.size
+                    );
+
+
+                    comerciantes = [];
+
+
+                    // ----------------------------------------
+                    // RÉCUPÉRER LES DOCUMENTS
+                    // ----------------------------------------
+
+                    snapshot.forEach(
+                        docSnap => {
+
+                            comerciantes.push({
+
+                                id:
+                                    docSnap.id,
+
+                                ...docSnap.data()
+
+                            });
+
+                        }
+                    );
+
+
+                    // ----------------------------------------
+                    // TRI
+                    // ----------------------------------------
+
+                    comerciantes.sort(
+                        sortComerciantes
+                    );
+
+
+                    // ----------------------------------------
+                    // STATISTIQUES
+                    // ----------------------------------------
+
+                    updateComercianteStatistics();
+
+
+                    // ----------------------------------------
+                    // FILTRES
+                    // ----------------------------------------
+
+                    applyMerchantFilters();
+
+
+                    // ----------------------------------------
+                    // CACHER LOADER
+                    // ----------------------------------------
+
+                    hideComercianteLoader();
+
+
+                    // ----------------------------------------
+                    // CACHER ERREUR
+                    // ----------------------------------------
+
+                    hideComercianteError();
+
+                },
+
+                error => {
+
+                    console.error(
+                        "Erro Firestore comerciantes:",
+                        error
+                    );
+
+
+                    hideComercianteLoader();
+
+
+                    showComercianteError(
+                        getComercianteFirebaseError(
+                            error
+                        )
+                    );
+
+                }
+
+            );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Erro ao iniciar Firestore:",
+            error
+        );
+
+
+        hideComercianteLoader();
+
+
+        showComercianteError(
+            getComercianteFirebaseError(
+                error
+            )
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// TRI DES COMMERÇANTS
+// ============================================================
+
+function sortComerciantes(
+    a,
+    b
+) {
+
+    const dateA =
+        getComercianteTimestamp(
+            a.createdAt
+        );
+
+
+    const dateB =
+        getComercianteTimestamp(
+            b.createdAt
+        );
+
+
+    return (
+        dateB -
+        dateA
+    );
+
+}
+
+
+// ============================================================
+// CONVERTIR TIMESTAMP FIREBASE
+// ============================================================
+
+function getComercianteTimestamp(
+    timestamp
+) {
+
+    if (!timestamp) {
+
+        return 0;
+
+    }
+
+
+    // Firebase Timestamp
+
+    if (
+        typeof timestamp.toMillis ===
+        "function"
+    ) {
+
+        return timestamp.toMillis();
+
+    }
+
+
+    // Objet avec seconds
+
+    if (
+        timestamp.seconds !==
+        undefined
+    ) {
+
+        return (
+            Number(
+                timestamp.seconds
+            ) *
+            1000
+        );
+
+    }
+
+
+    // Date JavaScript
+
+    if (
+        timestamp instanceof Date
+    ) {
+
+        return timestamp.getTime();
+
+    }
+
+
+    // Nombre
+
+    if (
+        typeof timestamp ===
+        "number"
+    ) {
+
+        return timestamp;
+
+    }
+
+
+    return 0;
+
+}
+
+
+// ============================================================
+// STATISTIQUES COMMERÇANTS
+// ============================================================
+
+function updateComercianteStatistics() {
+
+    const total =
+        comerciantes.length;
+
+
+    const active =
+        comerciantes.filter(
+            merchant =>
+                getMerchantStatus(
+                    merchant
+                ) ===
+                "active"
+        ).length;
+
+
+    const blocked =
+        comerciantes.filter(
+            merchant =>
+                getMerchantStatus(
+                    merchant
+                ) ===
+                "blocked"
+        ).length;
+
+
+    const pending =
+        comerciantes.filter(
+            merchant =>
+                getMerchantStatus(
+                    merchant
+                ) ===
+                "pending"
+        ).length;
+
+
+    // --------------------------------------------------------
+    // TOTAL
+    // --------------------------------------------------------
+
+    setComercianteText(
+        totalComerciantes,
+        total
+    );
+
+
+    // --------------------------------------------------------
+    // ATIVOS
+    // --------------------------------------------------------
+
+    setComercianteText(
+        activeComerciantes,
+        active
+    );
+
+
+    // --------------------------------------------------------
+    // BLOQUEADOS
+    // --------------------------------------------------------
+
+    setComercianteText(
+        blockedComerciantes,
+        blocked
+    );
+
+
+    // --------------------------------------------------------
+    // PENDENTES
+    // --------------------------------------------------------
+
+    setComercianteText(
+        pendingComerciantes,
+        pending
+    );
+
+
+    console.log(
+        "Estatísticas:",
+        {
+            total,
+            active,
+            blocked,
+            pending
+        }
+    );
+
+}
+
+
+// ============================================================
+// ACTUALISATION MANUELLE
+// ============================================================
+
+function refreshComerciantes() {
+
+    console.log(
+        "Atualização manual solicitada."
+    );
+
+
+    // Avec onSnapshot, Firestore actualise
+    // déjà automatiquement.
+    //
+    // On force simplement un nouveau rendu.
+
+    updateComercianteStatistics();
+
+    applyMerchantFilters();
+
+
+    showComercianteToast(
+        "Lista de comerciantes atualizada."
+    );
+
+}
+
+
+// ============================================================
+// CONNECTER LE BOUTON ACTUALISER
+// ============================================================
+
+if (refreshButton) {
+
+    refreshButton.addEventListener(
+        "click",
+        function () {
+
+            refreshComerciantes();
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// RECHERCHE — RENDRE LE FILTRE DYNAMIQUE
+// ============================================================
+
+if (searchInput) {
+
+    searchInput.addEventListener(
+        "input",
+        function () {
+
+            applyMerchantFilters();
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// FILTRES — RENDRE LE FILTRE DYNAMIQUE
+// ============================================================
+
+filterButtons.forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                currentFilter =
+                    button.dataset.filter ||
+                    "all";
+
+
+                applyMerchantFilters();
+
+            }
+        );
+
+    }
+);
+
+
+// ============================================================
+// BOUTON EFFACER RECHERCHE
+// ============================================================
+
+if (clearSearch) {
+
+    clearSearch.addEventListener(
+        "click",
+        function () {
+
+            if (searchInput) {
+
+                searchInput.value = "";
+
+                applyMerchantFilters();
+
+                searchInput.focus();
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// LOADER
+// ============================================================
+
+function hideComercianteLoader() {
+
+    if (!loader) {
+
+        return;
+
+    }
+
+
+    loader.classList.add(
+        "hidden"
+    );
+
+
+    loader.style.display =
+        "none";
+
+}
+
+
+// ============================================================
+// ERREUR
+// ============================================================
+
+function showComercianteError(
+    message
+) {
+
+    console.error(
+        message
+    );
+
+
+    if (errorState) {
+
+        errorState.classList.remove(
+            "hidden"
+        );
+
+
+        const errorText =
+            errorState.querySelector(
+                "p"
+            );
+
+
+        if (errorText) {
+
+            errorText.textContent =
+                message;
+
+        }
+
+    }
+
+    else {
+
+        showComercianteToast(
+            message
+        );
+
+    }
+
+}
+
+
+function hideComercianteError() {
+
+    if (errorState) {
+
+        errorState.classList.add(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// EMPTY STATE
+// ============================================================
+
+function updateComercianteEmptyState() {
+
+    if (!emptyState) {
+
+        return;
+
+    }
+
+
+    if (
+        filteredComerciantes.length ===
+        0
+    ) {
+
+        emptyState.classList.remove(
+            "hidden"
+        );
+
+    }
+
+    else {
+
+        emptyState.classList.add(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// TOAST
+// ============================================================
+
+let comercianteToastTimer =
+    null;
+
+
+function showComercianteToast(
+    message
+) {
+
+    if (
+        !toast ||
+        !toastMessage
+    ) {
+
+        console.log(
+            message
+        );
+
+        return;
+
+    }
+
+
+    toastMessage.textContent =
+        message;
+
+
+    toast.classList.add(
+        "show"
+    );
+
+
+    clearTimeout(
+        comercianteToastTimer
+    );
+
+
+    comercianteToastTimer =
+        setTimeout(
+            function () {
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+            3000
+        );
+
+}
+
+
+// ============================================================
+// TEXTE DOM
+// ============================================================
+
+function setComercianteText(
+    element,
+    value
+) {
+
+    if (!element) {
+
+        return;
+
+    }
+
+
+    element.textContent =
+        value ?? "0";
+
+}
+
+
+// ============================================================
+// ERREURS FIREBASE
+// ============================================================
+
+function getComercianteFirebaseError(
+    error
+) {
+
+    if (!error) {
+
+        return "Erro desconhecido.";
+
+    }
+
+
+    console.error(
+        "Firebase:",
+        error.code,
+        error.message
+    );
+
+
+    switch (
+        error.code
+    ) {
+
+        case "permission-denied":
+
+            return (
+                "Acesso negado pelo Firebase. " +
+                "Verifique as regras Firestore."
+            );
+
+
+        case "unauthenticated":
+
+            return (
+                "Sessão expirada. " +
+                "Entre novamente como administrador."
+            );
+
+
+        case "unavailable":
+
+            return (
+                "Firebase indisponível. " +
+                "Verifique a ligação à Internet."
+            );
+
+
+        case "failed-precondition":
+
+            return (
+                "Firebase requer uma configuração adicional."
+            );
+
+
+        default:
+
+            return (
+                error.message ||
+                "Erro ao carregar comerciantes."
+            );
+
+    }
+
+}
+
+
+// ============================================================
+// ESCAPE HTML
+// ============================================================
+
+function escapeHtml(
+    value
+) {
+
+    return String(
+        value ?? ""
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
+}
+
+
+// ============================================================
+// DÉMARRAGE DU CHARGEMENT
+// ============================================================
+//
+// Important : on ne lance Firestore qu'après
+// confirmation de l'administrateur.
+//
+// Le bloc 2 vérifie déjà l'utilisateur.
+// Ici on vérifie simplement que la session existe
+// avant de démarrer le listener.
+//
+
+onAuthStateChanged(
+    auth,
+    function (user) {
+
+        if (!user) {
+
+            console.log(
+                "Nenhum administrador autenticado."
+            );
+
+            hideComercianteLoader();
+
+            return;
+
+        }
+
+
+        console.log(
+            "Administrador autenticado. " +
+            "Iniciando comerciantes..."
+        );
+
+
+        listenComerciantes();
+
+    }
+);
+
+
+// ============================================================
+// NETTOYAGE
+// ============================================================
+
+window.addEventListener(
+    "beforeunload",
+    function () {
+
+        if (
+            unsubscribeComerciantes
+        ) {
+
+            unsubscribeComerciantes();
+
+            unsubscribeComerciantes =
+                null;
+
+        }
+
+    }
+);
+
+
+// ============================================================
+// ALERTE — FIN BLOC 4
+// ============================================================
+
+alert(
+    "TOMA ADMIN — Comerciantes JS : Bloc 4 terminado"
+);
