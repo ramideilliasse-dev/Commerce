@@ -79,20 +79,95 @@ alert(
     document.getElementById("totalMerchants")
 );
 // ============================================================
-// STATISTIQUES
+// TOMA ADMIN
+// COMERCIANTES.JS
+// BLOC 5
+// RÉFÉRENCES EXACTES DES STATISTIQUES HTML
 // ============================================================
 
-const totalComerciantes =
+alert("BLOC 5 — Début");
+
+
+// ============================================================
+// ÉLÉMENTS HTML — STATISTIQUES
+// ============================================================
+
+const totalMerchants =
     document.getElementById("totalMerchants");
 
-const activeComerciantes =
+const activeMerchants =
     document.getElementById("activeMerchants");
 
-const blockedComerciantes =
+const blockedMerchants =
     document.getElementById("blockedMerchants");
 
-const pendingComerciantes =
+const pendingMerchants =
     document.getElementById("pendingMerchants");
+
+
+// ============================================================
+// TEST DES ÉLÉMENTS
+// ============================================================
+
+alert(
+    "BLOC 5 — Éléments statistiques\n\n" +
+
+    "Total : " +
+    (totalMerchants
+        ? "TROUVÉ"
+        : "INTROUVABLE") +
+
+    "\n\nActifs : " +
+    (activeMerchants
+        ? "TROUVÉ"
+        : "INTROUVABLE") +
+
+    "\n\nBloqués : " +
+    (blockedMerchants
+        ? "TROUVÉ"
+        : "INTROUVABLE") +
+
+    "\n\nPendents : " +
+    (pendingMerchants
+        ? "TROUVÉ"
+        : "INTROUVABLE")
+);
+
+
+// ============================================================
+// TEST D'AFFICHAGE DIRECT
+// ============================================================
+
+if (totalMerchants) {
+
+    totalMerchants.textContent = "15";
+
+}
+
+if (activeMerchants) {
+
+    activeMerchants.textContent = "14";
+
+}
+
+if (blockedMerchants) {
+
+    blockedMerchants.textContent = "0";
+
+}
+
+if (pendingMerchants) {
+
+    pendingMerchants.textContent = "0";
+
+}
+
+
+// ============================================================
+// FIN BLOC 5
+// ============================================================
+
+alert("BLOC 5 — Fin");
 // ============================================================
 // MODAL — DÉTAILS COMMERÇANT
 // ============================================================
