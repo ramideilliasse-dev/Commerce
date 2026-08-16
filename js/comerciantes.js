@@ -1185,6 +1185,7 @@ alert(
     "APRÈS FIRESTORE — comerciantes = " +
     comerciantes.length
 );
+             afficherComerciantesBloc7();
                 // ------------------------------------------------
                 // STATISTIQUES
                 // ------------------------------------------------
