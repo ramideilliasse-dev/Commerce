@@ -1028,23 +1028,32 @@ alert(
 // TOMA ADMIN
 // COMERCIANTES.JS
 // BLOC 4
-// FIRESTORE — COLLECTION merchants
+// FIRESTORE — COLLECTION MERCHANTS
 // ============================================================
 
-alert("BLOC 4 — Début : connexion à Firestore");
 
 // ============================================================
-// CHARGEMENT DES COMERÇANTES
+// ALERTE — DÉBUT BLOC 4
+// ============================================================
+
+alert(
+    "TOMA ADMIN — Comerciantes JS : Bloc 4 démarrado"
+);
+
+
+// ============================================================
+// FIRESTORE — CHARGER LES COMMERÇANTS
 // ============================================================
 
 function listenComerciantes() {
 
     console.log(
-        "TOMA — Démarrage écoute collection merchants"
+        "Démarrage écoute Firestore merchants..."
     );
 
+
     // --------------------------------------------------------
-    // ARRÊTER L'ANCIEN LISTENER
+    // Si une ancienne écoute existe
     // --------------------------------------------------------
 
     if (unsubscribeComerciantes) {
@@ -1057,156 +1066,199 @@ function listenComerciantes() {
 
 
     // --------------------------------------------------------
-    // AFFICHER LOADER
+    // Collection MERCHANTS
     // --------------------------------------------------------
 
-    if (loader) {
-
-        loader.classList.remove("hidden");
-
-        loader.style.display = "flex";
-
-    }
+    const merchantsRef =
+        collection(
+            db,
+            "merchants"
+        );
 
 
-    try {
+    // --------------------------------------------------------
+    // ÉCOUTE TEMPS RÉEL
+    // --------------------------------------------------------
 
-        // ====================================================
-        // COLLECTION FIRESTORE
-        // ====================================================
+    unsubscribeComerciantes =
+        onSnapshot(
 
-        const merchantsRef =
-            collection(
-                db,
-                "merchants"
-            );
+            merchantsRef,
+
+            function(snapshot) {
+
+                console.log(
+                    "Firestore merchants reçu :",
+                    snapshot.size,
+                    "commerçant(s)"
+                );
 
 
-        // ====================================================
-        // ÉCOUTE TEMPS RÉEL
-        // ====================================================
+                // ------------------------------------------------
+                // VIDER LE TABLEAU
+                // ------------------------------------------------
 
-        unsubscribeComerciantes =
-            onSnapshot(
+                comerciantes = [];
 
-                merchantsRef,
 
-                function(snapshot) {
+                // ------------------------------------------------
+                // RÉCUPÉRER LES DOCUMENTS
+                // ------------------------------------------------
 
-                    console.log(
-                        "TOMA — merchants reçus :",
-                        snapshot.size
+                snapshot.forEach(
+                    function(docSnap) {
+
+                        const data =
+                            docSnap.data();
+
+
+                        comerciantes.push({
+
+                            id:
+                                docSnap.id,
+
+                            ...data
+
+                        });
+
+                    }
+                );
+
+
+                // ------------------------------------------------
+                // TRI
+                // Les plus récents en premier
+                // ------------------------------------------------
+
+                comerciantes.sort(
+                    function(a, b) {
+
+                        const dateA =
+                            getMerchantDateMillis(
+                                a.createdAt
+                            );
+
+
+                        const dateB =
+                            getMerchantDateMillis(
+                                b.createdAt
+                            );
+
+
+                        return dateB - dateA;
+
+                    }
+                );
+
+
+                // ------------------------------------------------
+                // STATISTIQUES
+                // ------------------------------------------------
+
+                updateMerchantStatistics();
+
+
+                // ------------------------------------------------
+                // FILTRES + AFFICHAGE
+                // ------------------------------------------------
+
+                applyMerchantFilters();
+
+
+                // ------------------------------------------------
+                // CACHER LE LOADER
+                // ------------------------------------------------
+
+                if (loader) {
+
+                    loader.classList.add(
+                        "hidden"
                     );
 
+                    loader.style.display =
+                        "none";
 
-                    // ------------------------------------------------
-                    // VIDER LE TABLEAU
-                    // ------------------------------------------------
-
-                    comerciantes = [];
+                }
 
 
-                    // ------------------------------------------------
-                    // RÉCUPÉRER LES DOCUMENTS
-                    // ------------------------------------------------
+                // ------------------------------------------------
+                // ÉTAT VIDE
+                // ------------------------------------------------
 
-                    snapshot.forEach(
-                        function(docSnap) {
+                if (
+                    comerciantes.length === 0
+                ) {
 
-                            comerciantes.push({
+                    if (emptyState) {
 
-                                id:
-                                    docSnap.id,
-
-                                ...docSnap.data()
-
-                            });
-
-                        }
-                    );
-
-
-                    // ------------------------------------------------
-                    // TRI
-                    // ------------------------------------------------
-
-                    comerciantes.sort(
-                        function(a, b) {
-
-                            const dateA =
-                                getMerchantDate(
-                                    a
-                                );
-
-                            const dateB =
-                                getMerchantDate(
-                                    b
-                                );
-
-                            return dateB - dateA;
-
-                        }
-                    );
-
-
-                    // ------------------------------------------------
-                    // STATISTIQUES
-                    // ------------------------------------------------
-
-                    updateMerchantStatistics();
-
-
-                    // ------------------------------------------------
-                    // FILTRES + RECHERCHE
-                    // ------------------------------------------------
-
-                    applyMerchantFilters();
-
-
-                    // ------------------------------------------------
-                    // CACHER LOADER
-                    // ------------------------------------------------
-
-                    if (loader) {
-
-                        loader.classList.add(
+                        emptyState.classList.remove(
                             "hidden"
                         );
 
-                        loader.style.display =
-                            "none";
-
                     }
 
+                }
 
-                    console.log(
-                        "TOMA — Commerçantes affichés :",
-                        comerciantes.length
+
+                console.log(
+                    "Commerçants affichés :",
+                    comerciantes.length
+                );
+
+            },
+
+
+            // ----------------------------------------------------
+            // ERREUR FIRESTORE
+            // ----------------------------------------------------
+
+            function(error) {
+
+                console.error(
+                    "ERREUR FIRESTORE MERCHANTS :",
+                    error
+                );
+
+
+                if (loader) {
+
+                    loader.classList.add(
+                        "hidden"
                     );
 
-                },
+                    loader.style.display =
+                        "none";
 
-                function(error) {
+                }
 
-                    console.error(
-                        "TOMA — Erreur collection merchants:",
-                        error
+
+                if (errorState) {
+
+                    errorState.classList.remove(
+                        "hidden"
                     );
 
 
-                    if (loader) {
-
-                        loader.classList.add(
-                            "hidden"
+                    const errorText =
+                        errorState.querySelector(
+                            "p"
                         );
 
-                        loader.style.display =
-                            "none";
+
+                    if (errorText) {
+
+                        errorText.textContent =
+                            getMerchantFirebaseError(
+                                error
+                            );
 
                     }
 
+                }
 
-                    showMerchantError(
+                else {
+
+                    showMerchantToast(
                         getMerchantFirebaseError(
                             error
                         )
@@ -1214,37 +1266,9 @@ function listenComerciantes() {
 
                 }
 
-            );
+            }
 
-    }
-
-    catch (error) {
-
-        console.error(
-            "TOMA — Erreur démarrage merchants:",
-            error
         );
-
-
-        if (loader) {
-
-            loader.classList.add(
-                "hidden"
-            );
-
-            loader.style.display =
-                "none";
-
-        }
-
-
-        showMerchantError(
-            getMerchantFirebaseError(
-                error
-            )
-        );
-
-    }
 
 }
 
@@ -1301,9 +1325,9 @@ function updateMerchantStatistics() {
         ).length;
 
 
-    // ========================================================
-    // AFFICHER LES CHIFFRES
-    // ========================================================
+    // --------------------------------------------------------
+    // TOTAL
+    // --------------------------------------------------------
 
     setMerchantText(
         totalComerciantes,
@@ -1311,11 +1335,19 @@ function updateMerchantStatistics() {
     );
 
 
+    // --------------------------------------------------------
+    // ATIVOS
+    // --------------------------------------------------------
+
     setMerchantText(
         activeComerciantes,
         active
     );
 
+
+    // --------------------------------------------------------
+    // BLOQUEADOS
+    // --------------------------------------------------------
 
     setMerchantText(
         blockedComerciantes,
@@ -1323,255 +1355,314 @@ function updateMerchantStatistics() {
     );
 
 
+    // --------------------------------------------------------
+    // PENDENTES
+    // --------------------------------------------------------
+
     setMerchantText(
         pendingComerciantes,
         pending
     );
 
 
-    console.log(
-        "TOMA STATS:",
-        {
-            total,
-            active,
-            blocked,
-            pending
-        }
-    );
+    // --------------------------------------------------------
+    // AUTRES STATISTIQUES SI PRÉSENTES DANS LE HTML
+    // --------------------------------------------------------
 
-}
+    const verifiedElement =
+        document.getElementById(
+            "verifiedComerciantes"
+        );
 
 
-// ============================================================
-// FILTRE COMPLET
-// ============================================================
+    if (verifiedElement) {
 
-function applyMerchantFilters() {
-
-    let result =
-        [...comerciantes];
-
-
-    // ========================================================
-    // FILTRE
-    // ========================================================
-
-    if (
-        currentFilter !== "all"
-    ) {
-
-        result =
-            result.filter(
+        const verified =
+            comerciantes.filter(
                 function(merchant) {
 
                     return (
-                        getMerchantStatus(
-                            merchant
-                        ) ===
-                        currentFilter
+                        merchant.verified === true ||
+                        merchant.isVerified === true ||
+                        merchant.verificado === true
                     );
 
                 }
-            );
+            ).length;
+
+
+        verifiedElement.textContent =
+            verified;
 
     }
 
 
-    // ========================================================
-    // RECHERCHE
-    // ========================================================
-
-    const search =
-        searchInput &&
-        searchInput.value
-            ? searchInput.value
-                .trim()
-                .toLowerCase()
-            : "";
+    const productsElement =
+        document.getElementById(
+            "merchantProducts"
+        );
 
 
-    if (search) {
+    if (productsElement) {
 
-        result =
-            result.filter(
-                function(merchant) {
-
-                    const shopName =
-                        String(
-                            merchant.shopName ||
-                            merchant.storeName ||
-                            merchant.shop ||
-                            ""
-                        )
-                        .toLowerCase();
+        let productsTotal = 0;
 
 
-                    const firstName =
-                        String(
-                            merchant.firstName ||
-                            ""
-                        )
-                        .toLowerCase();
+        comerciantes.forEach(
+            function(merchant) {
 
-
-                    const lastName =
-                        String(
-                            merchant.lastName ||
-                            ""
-                        )
-                        .toLowerCase();
-
-
-                    const ownerName =
-                        String(
-                            merchant.name ||
-                            merchant.displayName ||
-                            ""
-                        )
-                        .toLowerCase();
-
-
-                    const email =
-                        String(
-                            merchant.email ||
-                            ""
-                        )
-                        .toLowerCase();
-
-
-                    const phone =
-                        String(
-                            merchant.phone ||
-                            merchant.telephone ||
-                            ""
-                        )
-                        .toLowerCase();
-
-
-                    const city =
-                        String(
-                            merchant.city ||
-                            ""
-                        )
-                        .toLowerCase();
-
-
-                    return (
-
-                        shopName.includes(
-                            search
-                        )
-
-                        ||
-
-                        firstName.includes(
-                            search
-                        )
-
-                        ||
-
-                        lastName.includes(
-                            search
-                        )
-
-                        ||
-
-                        ownerName.includes(
-                            search
-                        )
-
-                        ||
-
-                        email.includes(
-                            search
-                        )
-
-                        ||
-
-                        phone.includes(
-                            search
-                        )
-
-                        ||
-
-                        city.includes(
-                            search
-                        )
-
+                productsTotal +=
+                    Number(
+                        merchant.productsCount ||
+                        merchant.productCount ||
+                        0
                     );
-
-                }
-            );
-
-    }
-
-
-    // ========================================================
-    // STOCKER LE RÉSULTAT
-    // ========================================================
-
-    filteredComerciantes =
-        result;
-
-
-    // ========================================================
-    // AFFICHER
-    // ========================================================
-
-    renderComerciantes(
-        filteredComerciantes
-    );
-
-}
-
-
-// ============================================================
-// REBRANCHER LA RECHERCHE
-// ============================================================
-
-if (searchInput) {
-
-    searchInput.addEventListener(
-        "input",
-        function() {
-
-            applyMerchantFilters();
-
-        }
-    );
-
-}
-
-
-// ============================================================
-// REBRANCHER LE BOUTON EFFACER
-// ============================================================
-
-if (clearSearch) {
-
-    clearSearch.addEventListener(
-        "click",
-        function() {
-
-            if (searchInput) {
-
-                searchInput.value = "";
-
-                applyMerchantFilters();
-
-                searchInput.focus();
 
             }
+        );
 
-        }
+
+        productsElement.textContent =
+            productsTotal;
+
+    }
+
+}
+
+
+// ============================================================
+// DATE FIREBASE
+// ============================================================
+
+function getMerchantDateMillis(
+    timestamp
+) {
+
+    if (!timestamp) {
+
+        return 0;
+
+    }
+
+
+    // Timestamp Firebase
+
+    if (
+        typeof timestamp.toMillis ===
+        "function"
+    ) {
+
+        return timestamp.toMillis();
+
+    }
+
+
+    // Objet avec seconds
+
+    if (
+        timestamp.seconds !== undefined
+    ) {
+
+        return (
+            Number(
+                timestamp.seconds
+            ) * 1000
+        );
+
+    }
+
+
+    // Date JavaScript
+
+    if (
+        timestamp instanceof Date
+    ) {
+
+        return timestamp.getTime();
+
+    }
+
+
+    // String date
+
+    if (
+        typeof timestamp ===
+        "string"
+    ) {
+
+        const time =
+            new Date(
+                timestamp
+            ).getTime();
+
+
+        return isNaN(time)
+            ? 0
+            : time;
+
+    }
+
+
+    return 0;
+
+}
+
+
+// ============================================================
+// PETITE FONCTION TEXTE
+// ============================================================
+
+function setMerchantText(
+    element,
+    value
+) {
+
+    if (!element) {
+
+        return;
+
+    }
+
+
+    element.textContent =
+        value ?? 0;
+
+}
+
+
+// ============================================================
+// ERREUR FIREBASE
+// ============================================================
+
+function getMerchantFirebaseError(
+    error
+) {
+
+    if (!error) {
+
+        return (
+            "Erro desconhecido."
+        );
+
+    }
+
+
+    console.error(
+        "Firebase:",
+        error.code,
+        error.message
+    );
+
+
+    switch (
+        error.code
+    ) {
+
+        case "permission-denied":
+
+            return (
+                "Acesso negado pelo Firebase. " +
+                "Verifique as regras Firestore."
+            );
+
+
+        case "unauthenticated":
+
+            return (
+                "Sessão expirada. " +
+                "Entre novamente como administrador."
+            );
+
+
+        case "unavailable":
+
+            return (
+                "Firebase indisponível. " +
+                "Verifique a conexão à Internet."
+            );
+
+
+        case "failed-precondition":
+
+            return (
+                "Configuração Firebase incompleta."
+            );
+
+
+        case "not-found":
+
+            return (
+                "Coleção ou documento não encontrado."
+            );
+
+
+        default:
+
+            return (
+                "Erro Firestore: " +
+                (
+                    error.message ||
+                    "Tente novamente."
+                )
+            );
+
+    }
+
+}
+
+
+// ============================================================
+// TOAST SIMPLE
+// ============================================================
+
+function showMerchantToast(
+    message
+) {
+
+    if (
+        !toast ||
+        !toastMessage
+    ) {
+
+        console.log(
+            message
+        );
+
+        return;
+
+    }
+
+
+    toastMessage.textContent =
+        message;
+
+
+    toast.classList.add(
+        "show"
+    );
+
+
+    setTimeout(
+        function() {
+
+            toast.classList.remove(
+                "show"
+            );
+
+        },
+        4000
     );
 
 }
 
 
 // ============================================================
-// REBRANCHER LES FILTRES
+// ACTUALISER LES FILTRES
 // ============================================================
+//
+// Le bloc 2 change déjà currentFilter.
+// Ici on ajoute simplement l'affichage réel.
+//
 
 document
     .querySelectorAll(
@@ -1609,12 +1700,6 @@ document
                     );
 
 
-                    console.log(
-                        "TOMA — filtre:",
-                        currentFilter
-                    );
-
-
                     applyMerchantFilters();
 
                 }
@@ -1625,274 +1710,141 @@ document
 
 
 // ============================================================
-// OUTILS
+// RECHERCHE — ACTUALISER L'AFFICHAGE
 // ============================================================
 
-function setMerchantText(
-    element,
-    value
-) {
+if (searchInput) {
 
-    if (!element) {
+    searchInput.addEventListener(
+        "input",
+        function() {
+
+            applyMerchantFilters();
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// BOUTON CLEAR SEARCH
+// ============================================================
+
+if (clearSearch) {
+
+    clearSearch.addEventListener(
+        "click",
+        function() {
+
+            if (searchInput) {
+
+                searchInput.value = "";
+
+            }
+
+
+            applyMerchantFilters();
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// BOUTON ACTUALISER
+// ============================================================
+
+if (refreshButton) {
+
+    refreshButton.addEventListener(
+        "click",
+        function() {
+
+            console.log(
+                "Actualisation des commerçants..."
+            );
+
+
+            if (loader) {
+
+                loader.classList.remove(
+                    "hidden"
+                );
+
+                loader.style.display =
+                    "flex";
+
+            }
+
+
+            /*
+             * onSnapshot est déjà en temps réel.
+             * On force simplement un nouveau rendu.
+             */
+
+            applyMerchantFilters();
+
+
+            updateMerchantStatistics();
+
+
+            setTimeout(
+                function() {
+
+                    if (loader) {
+
+                        loader.classList.add(
+                            "hidden"
+                        );
+
+                        loader.style.display =
+                            "none";
+
+                    }
+
+                },
+                500
+            );
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// DÉMARRAGE FIRESTORE
+// ============================================================
+//
+// On utilise auth.currentUser si disponible.
+// Sinon on attend Firebase Authentication.
+//
+
+function startMerchantSystem() {
+
+    const connectedUser =
+        auth.currentUser;
+
+
+    if (connectedUser) {
+
+        listenComerciantes();
 
         return;
 
     }
 
 
-    element.textContent =
-        String(
-            value ?? 0
-        );
-
-}
-
-
-// ============================================================
-// DATE COMMERÇANT
-// ============================================================
-
-function getMerchantDate(
-    merchant
-) {
-
-    const timestamp =
-        merchant.createdAt ||
-        merchant.created_at ||
-        merchant.registeredAt ||
-        merchant.created;
-
-
-    if (!timestamp) {
-
-        return 0;
-
-    }
-
-
-    if (
-        typeof timestamp.toMillis ===
-        "function"
-    ) {
-
-        return timestamp.toMillis();
-
-    }
-
-
-    if (
-        timestamp.seconds !==
-        undefined
-    ) {
-
-        return (
-            Number(
-                timestamp.seconds
-            ) * 1000
-        );
-
-    }
-
-
-    if (
-        timestamp instanceof Date
-    ) {
-
-        return timestamp.getTime();
-
-    }
-
-
-    return 0;
-
-}
-
-
-// ============================================================
-// ERREUR FIRESTORE
-// ============================================================
-
-function getMerchantFirebaseError(
-    error
-) {
-
-    if (!error) {
-
-        return "Erro desconhecido.";
-
-    }
-
-
-    if (
-        error.code ===
-        "permission-denied"
-    ) {
-
-        return (
-            "Acesso negado pelo Firebase. " +
-            "Verifique as regras Firestore."
-        );
-
-    }
-
-
-    if (
-        error.code ===
-        "unauthenticated"
-    ) {
-
-        return (
-            "Sessão expirada. " +
-            "Entre novamente."
-        );
-
-    }
-
-
-    if (
-        error.code ===
-        "unavailable"
-    ) {
-
-        return (
-            "Firebase indisponível. " +
-            "Verifique a conexão."
-        );
-
-    }
-
-
-    return (
-        "Erro ao carregar comerciantes: " +
-        (
-            error.message ||
-            "Erro desconhecido."
-        )
-    );
-
-}
-
-
-// ============================================================
-// ERRO VISUAL
-// ============================================================
-
-function showMerchantError(
-    message
-) {
-
-    console.error(
-        message
-    );
-
-
-    if (errorState) {
-
-        errorState.classList.remove(
-            "hidden"
-        );
-
-
-        const errorText =
-            errorState.querySelector(
-                "p"
-            );
-
-
-        if (errorText) {
-
-            errorText.textContent =
-                message;
-
-        }
-
-    }
-
-    else if (
-        typeof showToast ===
-        "function"
-    ) {
-
-        showToast(
-            message
-        );
-
-    }
-
-}
-
-
-// ============================================================
-// DÉMARRER FIRESTORE
-// ============================================================
-//
-// On vérifie à nouveau la session ici.
-// Le bloc 2 vérifie déjà l'administrateur,
-// mais il ne lançait volontairement pas le listener.
-// ============================================================
-
-onAuthStateChanged(
-    auth,
-    async function(user) {
-
-        if (!user) {
-
-            console.log(
-                "TOMA — aucun utilisateur connecté."
-            );
-
-            return;
-
-        }
-
-
-        try {
-
-            const adminRef =
-                doc(
-                    db,
-                    "users",
-                    user.uid
-                );
-
-
-            const adminSnap =
-                await getDoc(
-                    adminRef
-                );
-
-
-            if (!adminSnap.exists()) {
+    onAuthStateChanged(
+        auth,
+        function(user) {
+
+            if (!user) {
 
                 console.log(
-                    "TOMA — profil admin introuvable."
-                );
-
-                return;
-
-            }
-
-
-            const adminData =
-                adminSnap.data();
-
-
-            const role =
-                String(
-                    adminData.role ||
-                    ""
-                )
-                .trim()
-                .toLowerCase();
-
-
-            if (
-                role !== "admin" &&
-                role !== "superadmin"
-            ) {
-
-                console.log(
-                    "TOMA — accès refusé."
+                    "Aucun utilisateur connecté."
                 );
 
                 return;
@@ -1901,32 +1853,40 @@ onAuthStateChanged(
 
 
             console.log(
-                "TOMA — administrateur confirmé."
+                "Utilisateur connecté pour merchants :",
+                user.uid
             );
 
-
-            // ==================================================
-            // IMPORTANT :
-            // LA COLLECTION EST "merchants"
-            // ==================================================
 
             listenComerciantes();
 
         }
+    );
 
-        catch (error) {
-
-            console.error(
-                "TOMA — erreur vérification admin:",
-                error
-            );
+}
 
 
-            showMerchantError(
-                getMerchantFirebaseError(
-                    error
-                )
-            );
+// ============================================================
+// DÉMARRER
+// ============================================================
+
+startMerchantSystem();
+
+
+// ============================================================
+// NETTOYAGE
+// ============================================================
+
+window.addEventListener(
+    "beforeunload",
+    function() {
+
+        if (unsubscribeComerciantes) {
+
+            unsubscribeComerciantes();
+
+            unsubscribeComerciantes =
+                null;
 
         }
 
@@ -1939,5 +1899,5 @@ onAuthStateChanged(
 // ============================================================
 
 alert(
-    "BLOC 4 — Fin : collection merchants connectée"
+    "TOMA ADMIN — Comerciantes JS : Bloc 4 terminado"
 );
