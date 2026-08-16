@@ -82,92 +82,73 @@ alert(
 // TOMA ADMIN
 // COMERCIANTES.JS
 // BLOC 5
-// RÉFÉRENCES EXACTES DES STATISTIQUES HTML
+// ÉLÉMENTS STATISTIQUES — CORRECTION
 // ============================================================
 
-alert("BLOC 5 — Début");
+alert("BLOC 5 — Recherche des éléments statistiques");
 
 
 // ============================================================
-// ÉLÉMENTS HTML — STATISTIQUES
+// TOTAL
 // ============================================================
 
-const totalMerchants =
+const totalComerciantes =
     document.getElementById("totalMerchants");
 
-const activeMerchants =
+
+// ============================================================
+// ACTIFS
+// ============================================================
+
+const activeComerciantes =
     document.getElementById("activeMerchants");
 
-const blockedMerchants =
+
+// ============================================================
+// BLOQUÉS
+// ============================================================
+
+const blockedComerciantes =
     document.getElementById("blockedMerchants");
 
-const pendingMerchants =
+
+// ============================================================
+// PENDANTS
+// ============================================================
+
+const pendingComerciantes =
     document.getElementById("pendingMerchants");
 
 
 // ============================================================
-// TEST DES ÉLÉMENTS
+// VÉRIFICATION
 // ============================================================
 
 alert(
     "BLOC 5 — Éléments statistiques\n\n" +
 
     "Total : " +
-    (totalMerchants
-        ? "TROUVÉ"
-        : "INTROUVABLE") +
+    (totalComerciantes ? "TROUVÉ" : "NON TROUVÉ") +
+    "\n" +
 
-    "\n\nActifs : " +
-    (activeMerchants
-        ? "TROUVÉ"
-        : "INTROUVABLE") +
+    "Actifs : " +
+    (activeComerciantes ? "TROUVÉ" : "NON TROUVÉ") +
+    "\n" +
 
-    "\n\nBloqués : " +
-    (blockedMerchants
-        ? "TROUVÉ"
-        : "INTROUVABLE") +
+    "Bloqués : " +
+    (blockedComerciantes ? "TROUVÉ" : "NON TROUVÉ") +
+    "\n" +
 
-    "\n\nPendents : " +
-    (pendingMerchants
-        ? "TROUVÉ"
-        : "INTROUVABLE")
+    "Pendents : " +
+    (pendingComerciantes ? "TROUVÉ" : "NON TROUVÉ")
 );
-
-
-// ============================================================
-// TEST D'AFFICHAGE DIRECT
-// ============================================================
-
-if (totalMerchants) {
-
-    totalMerchants.textContent = "15";
-
-}
-
-if (activeMerchants) {
-
-    activeMerchants.textContent = "14";
-
-}
-
-if (blockedMerchants) {
-
-    blockedMerchants.textContent = "0";
-
-}
-
-if (pendingMerchants) {
-
-    pendingMerchants.textContent = "0";
-
-}
 
 
 // ============================================================
 // FIN BLOC 5
 // ============================================================
 
-alert("BLOC 5 — Fin");
+alert("BLOC 5 — Terminé");
 // ============================================================
 // MODAL — DÉTAILS COMMERÇANT
 // ============================================================
