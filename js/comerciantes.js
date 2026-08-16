@@ -74,7 +74,10 @@ const errorState =
 const retryButton =
     document.getElementById("retryButton");
 
-
+alert(
+    "TEST HTML — totalMerchants = " +
+    document.getElementById("totalMerchants")
+);
 // ============================================================
 // STATISTIQUES
 // ============================================================
