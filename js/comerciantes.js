@@ -1081,18 +1081,33 @@ function listenComerciantes() {
     // --------------------------------------------------------
 
     unsubscribeComerciantes =
-        onSnapshot(
+    onSnapshot(
 
-            merchantsRef,
+        merchantsRef,
 
-            function(snapshot) {
+        function(snapshot) {
 
-                console.log(
-                    "Firestore merchants reçu :",
-                    snapshot.size,
-                    "commerçant(s)"
-                );
+            alert(
+                "FIRESTORE MERCHANTS : " +
+                snapshot.size +
+                " document(s) reçu(s)"
+            );
 
+            console.log(
+                "Firestore merchants reçu :",
+                snapshot.size,
+                "commerçant(s)"
+            );
+
+            console.log(
+                "Documents merchants :",
+                snapshot.docs.map(
+                    docSnap => ({
+                        id: docSnap.id,
+                        data: docSnap.data()
+                    })
+                )
+            );
 
                 // ------------------------------------------------
                 // VIDER LE TABLEAU
