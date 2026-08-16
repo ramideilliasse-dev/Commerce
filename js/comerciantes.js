@@ -1437,3 +1437,519 @@ listenComerciantes();
 // ============================================================
 
 alert("BLOC 4 — Fin");
+// ============================================================
+// TOMA ADMIN
+// COMERCIANTES.JS
+// BLOC 6
+// AFFICHAGE RÉEL DES COMERÇANTS
+// ============================================================
+
+alert("BLOC 6 — Début");
+
+
+// ============================================================
+// RÉCUPÉRER LE BON ÉLÉMENT HTML
+// ============================================================
+
+const merchantsListHTML =
+    document.getElementById("merchantsList");
+
+
+// ============================================================
+// VÉRIFICATION
+// ============================================================
+
+alert(
+    "BLOC 6 — merchantsList = " +
+    (merchantsListHTML
+        ? "TROUVÉ"
+        : "INTROUVABLE")
+);
+
+
+// ============================================================
+// AFFICHER LES COMMERÇANTS
+// ============================================================
+
+function renderComerciantesBloc6(list) {
+
+    if (!merchantsListHTML) {
+
+        alert(
+            "BLOC 6 — ERREUR : merchantsList introuvable"
+        );
+
+        return;
+    }
+
+
+    // --------------------------------------------------------
+    // VIDER LA LISTE
+    // --------------------------------------------------------
+
+    merchantsListHTML.innerHTML = "";
+
+
+    // --------------------------------------------------------
+    // AUCUN COMMERÇANT
+    // --------------------------------------------------------
+
+    if (
+        !list ||
+        list.length === 0
+    ) {
+
+        if (emptyState) {
+
+            emptyState.classList.remove(
+                "hidden"
+            );
+
+        }
+
+        return;
+    }
+
+
+    // --------------------------------------------------------
+    // MASQUER EMPTY STATE
+    // --------------------------------------------------------
+
+    if (emptyState) {
+
+        emptyState.classList.add(
+            "hidden"
+        );
+
+    }
+
+
+    // --------------------------------------------------------
+    // CRÉER LES CARTES
+    // --------------------------------------------------------
+
+    list.forEach(
+        function(merchant) {
+
+            const card =
+                createMerchantCardBloc6(
+                    merchant
+                );
+
+
+            merchantsListHTML.appendChild(
+                card
+            );
+
+        }
+    );
+
+
+    // --------------------------------------------------------
+    // VÉRIFICATION
+    // --------------------------------------------------------
+
+    alert(
+        "BLOC 6 — " +
+        list.length +
+        " commerçant(s) affiché(s)"
+    );
+
+}
+
+
+// ============================================================
+// CRÉER UNE CARTE
+// ============================================================
+
+function createMerchantCardBloc6(
+    merchant
+) {
+
+    const card =
+        document.createElement(
+            "article"
+        );
+
+
+    card.className =
+        "merchantCard";
+
+
+    card.dataset.id =
+        merchant.id || "";
+
+
+    // --------------------------------------------------------
+    // NOM DE LA BOUTIQUE
+    // --------------------------------------------------------
+
+    const shopName =
+        merchant.shopName ||
+        merchant.storeName ||
+        merchant.shop ||
+        merchant.name ||
+        "Boutique sem nome";
+
+
+    // --------------------------------------------------------
+    // NOM DU COMMERÇANT
+    // --------------------------------------------------------
+
+    const firstName =
+        merchant.firstName ||
+        "";
+
+
+    const lastName =
+        merchant.lastName ||
+        "";
+
+
+    const ownerName =
+        `${firstName} ${lastName}`
+            .trim() ||
+        merchant.ownerName ||
+        merchant.name ||
+        merchant.displayName ||
+        "Comerciante";
+
+
+    // --------------------------------------------------------
+    // EMAIL
+    // --------------------------------------------------------
+
+    const email =
+        merchant.email ||
+        "Email indisponível";
+
+
+    // --------------------------------------------------------
+    // TÉLÉPHONE
+    // --------------------------------------------------------
+
+    const phone =
+        merchant.phone ||
+        merchant.telephone ||
+        "";
+
+
+    // --------------------------------------------------------
+    // VILLE
+    // --------------------------------------------------------
+
+    const city =
+        merchant.city ||
+        "";
+
+
+    // --------------------------------------------------------
+    // PHOTO
+    // --------------------------------------------------------
+
+    const photo =
+        merchant.shopLogo ||
+        merchant.logo ||
+        merchant.photo ||
+        merchant.photoURL ||
+        merchant.avatar ||
+        "images/avatar.png";
+
+
+    // --------------------------------------------------------
+    // STATUT
+    // --------------------------------------------------------
+
+    const status =
+        getMerchantStatus(
+            merchant
+        );
+
+
+    let statusLabel =
+        "Ativo";
+
+
+    if (
+        status === "blocked"
+    ) {
+
+        statusLabel =
+            "Bloqueado";
+
+    }
+
+
+    if (
+        status === "pending"
+    ) {
+
+        statusLabel =
+            "Pendente";
+
+    }
+
+
+    let statusClass =
+        "statusActive";
+
+
+    if (
+        status === "blocked"
+    ) {
+
+        statusClass =
+            "statusBlocked";
+
+    }
+
+
+    if (
+        status === "pending"
+    ) {
+
+        statusClass =
+            "statusPending";
+
+    }
+
+
+    // ========================================================
+    // HTML DE LA CARTE
+    // ========================================================
+
+    card.innerHTML = `
+
+        <div class="merchantCardLeft">
+
+            <img
+                class="merchantAvatar"
+                src="${escapeHtmlBloc6(photo)}"
+                alt="Comerciante"
+                onerror="this.src='images/avatar.png'"
+            >
+
+            <div class="merchantCardInfo">
+
+                <h3 class="merchantName">
+                    ${escapeHtmlBloc6(shopName)}
+                </h3>
+
+                <p class="merchantShopName">
+                    ${escapeHtmlBloc6(ownerName)}
+                </p>
+
+                <div class="merchantMeta">
+
+                    ${
+                        city
+                        ? `
+                            <span>
+                                📍
+                                ${escapeHtmlBloc6(city)}
+                            </span>
+                        `
+                        : ""
+                    }
+
+                    ${
+                        phone
+                        ? `
+                            <span>
+                                📞
+                                ${escapeHtmlBloc6(phone)}
+                            </span>
+                        `
+                        : ""
+                    }
+
+                </div>
+
+                <p class="merchantEmail">
+                    ${escapeHtmlBloc6(email)}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="merchantCardRight">
+
+            <div class="merchantBadges">
+
+                <span
+                    class="merchantCardStatus ${statusClass}"
+                >
+                    ${statusLabel}
+                </span>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="viewMerchantButton"
+                data-action="view"
+            >
+                Ver detalhes →
+            </button>
+
+        </div>
+
+    `;
+
+
+    // ========================================================
+    // CLIQUE SUR LA CARTE
+    // ========================================================
+
+    card.addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                event.target.closest("button")
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                typeof openMerchantModal ===
+                "function"
+            ) {
+
+                openMerchantModal(
+                    merchant
+                );
+
+            }
+
+        }
+    );
+
+
+    // ========================================================
+    // BOUTON DÉTAILS
+    // ========================================================
+
+    const viewButton =
+        card.querySelector(
+            '[data-action="view"]'
+        );
+
+
+    if (viewButton) {
+
+        viewButton.addEventListener(
+            "click",
+            function(event) {
+
+                event.stopPropagation();
+
+
+                if (
+                    typeof openMerchantModal ===
+                    "function"
+                ) {
+
+                    openMerchantModal(
+                        merchant
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    return card;
+
+}
+
+
+// ============================================================
+// PROTECTION HTML
+// ============================================================
+
+function escapeHtmlBloc6(
+    value
+) {
+
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+// ============================================================
+// REMPLACER L'AFFICHAGE DU BLOC 3
+// ============================================================
+
+function refreshMerchantListBloc6() {
+
+    renderComerciantesBloc6(
+        filteredComerciantes.length
+            ? filteredComerciantes
+            : comerciantes
+    );
+
+}
+
+
+// ============================================================
+// SURVEILLER LES DONNÉES FIRESTORE
+// ============================================================
+
+setTimeout(
+    function() {
+
+        if (
+            comerciantes &&
+            comerciantes.length > 0
+        ) {
+
+            filteredComerciantes =
+                [...comerciantes];
+
+
+            refreshMerchantListBloc6();
+
+        }
+
+    },
+    500
+);
+
+
+// ============================================================
+// FIN BLOC 6
+// ============================================================
+
+alert("BLOC 6 — Fin");
