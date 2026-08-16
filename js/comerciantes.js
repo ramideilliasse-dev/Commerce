@@ -1092,7 +1092,14 @@ function listenComerciantes() {
                 snapshot.size +
                 " document(s) reçu(s)"
             );
-
+alert(
+    "Premier commerçant :\n" +
+    JSON.stringify(
+        snapshot.docs[0].data(),
+        null,
+        2
+    )
+);
             console.log(
                 "Firestore merchants reçu :",
                 snapshot.size,
