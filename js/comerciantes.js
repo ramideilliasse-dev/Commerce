@@ -1240,7 +1240,13 @@ function listenComerciantes() {
                         pending;
 
                 }
-
+alert(
+    "ÉLÉMENTS HTML\n\n" +
+    "Total trouvé : " + !!totalElement + "\n" +
+    "Actifs trouvé : " + !!activeElement + "\n" +
+    "Bloqués trouvé : " + !!blockedElement + "\n" +
+    "Pendants trouvé : " + !!pendingElement
+);
 
                 // ------------------------------------------------
                 // DEBUG
