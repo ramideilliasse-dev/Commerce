@@ -80,18 +80,16 @@ const retryButton =
 // ============================================================
 
 const totalComerciantes =
-    document.getElementById("totalComerciantes");
+    document.getElementById("totalMerchants");
 
 const activeComerciantes =
-    document.getElementById("activeComerciantes");
+    document.getElementById("activeMerchants");
 
 const blockedComerciantes =
-    document.getElementById("blockedComerciantes");
+    document.getElementById("blockedMerchants");
 
 const pendingComerciantes =
-    document.getElementById("pendingComerciantes");
-
-
+    document.getElementById("pendingMerchants");
 // ============================================================
 // MODAL — DÉTAILS COMMERÇANT
 // ============================================================
