@@ -1694,11 +1694,18 @@ if (
 // ============================================================
 
 alert("BLOC 6 — Fin");
-alert("BLOC 7 — Début");
+// ============================================================
+// TOMA ADMIN
+// COMERCIANTES.JS
+// BLOC 7 — ÉTAPE 2
+// TEST AFFICHAGE DES COMMERÇANTS
+// ============================================================
+
+alert("BLOC 7 — Étape 2 début");
 
 
 // ============================================================
-// VÉRIFICATION DE LA LISTE HTML
+// LISTE HTML
 // ============================================================
 
 const merchantsListBloc7 =
@@ -1706,17 +1713,135 @@ const merchantsListBloc7 =
 
 
 alert(
-    "BLOC 7 — merchantsList : " +
+    "LISTE HTML : " +
     (
         merchantsListBloc7
-            ? "TROUVÉ"
+            ? "TROUVÉE"
             : "INTROUVABLE"
     )
 );
 
 
 // ============================================================
-// FIN TEST
+// VÉRIFIER FIRESTORE
 // ============================================================
 
-alert("BLOC 7 — Étape 1 terminée");
+alert(
+    "COMMERÇANTS DISPONIBLES : " +
+    (
+        Array.isArray(comerciantes)
+            ? comerciantes.length
+            : "VARIABLE NON DISPONIBLE"
+    )
+);
+
+
+// ============================================================
+// AFFICHAGE SIMPLE
+// ============================================================
+
+if (
+    merchantsListBloc7 &&
+    Array.isArray(comerciantes)
+) {
+
+    merchantsListBloc7.innerHTML = "";
+
+
+    comerciantes.forEach(
+        function(merchant) {
+
+            const card =
+                document.createElement("article");
+
+
+            card.className =
+                "merchantCard";
+
+
+            const shopName =
+                merchant.shopName ||
+                merchant.storeName ||
+                merchant.shop ||
+                merchant.name ||
+                "Boutique sans nom";
+
+
+            const email =
+                merchant.email ||
+                "Email indisponível";
+
+
+            const phone =
+                merchant.phone ||
+                merchant.telephone ||
+                "";
+
+
+            const status =
+                getMerchantStatus(
+                    merchant
+                );
+
+
+            card.innerHTML = `
+
+                <div class="merchantCardLeft">
+
+                    <div class="merchantInfo">
+
+                        <h3 class="merchantName">
+                            ${shopName}
+                        </h3>
+
+                        <p class="merchantEmail">
+                            ${email}
+                        </p>
+
+                        ${
+                            phone
+                            ? `
+                                <p>
+                                    📞 ${phone}
+                                </p>
+                            `
+                            : ""
+                        }
+
+                    </div>
+
+                </div>
+
+
+                <div class="merchantCardRight">
+
+                    <span class="merchantStatus">
+                        ${status}
+                    </span>
+
+                </div>
+
+            `;
+
+
+            merchantsListBloc7.appendChild(
+                card
+            );
+
+        }
+    );
+
+
+    alert(
+        "CARTES CRÉÉES : " +
+        merchantsListBloc7.children.length
+    );
+
+}
+
+
+// ============================================================
+// FIN
+// ============================================================
+
+alert("BLOC 7 — Étape 2 terminée");
