@@ -1027,18 +1027,35 @@ alert(
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
-// BLOC 4
-// CHARGEMENT FIRESTORE + STATISTIQUES + FILTRES
+// BLOC 4 — FIRESTORE + STATISTIQUES
 // ============================================================
 
 alert("BLOC 4 — Début");
 
 
 // ============================================================
-// FIRESTORE — COLLECTION MERCHANTS
+// CHARGER LES COMMERÇANTS
 // ============================================================
 
 function listenComerciantes() {
+
+    alert("BLOC 4 — Firestore démarrage");
+
+
+    // --------------------------------------------------------
+    // COLLECTION
+    // --------------------------------------------------------
+
+    var merchantsRef =
+        collection(
+            db,
+            "merchants"
+        );
+
+
+    // --------------------------------------------------------
+    // ANCIEN LISTENER
+    // --------------------------------------------------------
 
     if (unsubscribeComerciantes) {
 
@@ -1049,674 +1066,274 @@ function listenComerciantes() {
     }
 
 
-    try {
+    // --------------------------------------------------------
+    // FIRESTORE
+    // --------------------------------------------------------
 
-        const merchantsRef =
-            collection(
-                db,
-                "merchants"
-            );
+    unsubscribeComerciantes =
+        onSnapshot(
 
+            merchantsRef,
 
-        unsubscribeComerciantes =
-            onSnapshot(
+            function(snapshot) {
 
-                merchantsRef,
-
-                function(snapshot) {
-
-                    // ------------------------------------------------
-                    // VÉRIFICATION
-                    // ------------------------------------------------
-
-                    console.log(
-                        "MERCHANTS FIRESTORE :",
-                        snapshot.size
-                    );
+                alert(
+                    "FIRESTORE : " +
+                    snapshot.size +
+                    " commerçant(s)"
+                );
 
 
-                    // ------------------------------------------------
-                    // RÉCUPÉRER LES DOCUMENTS
-                    // ------------------------------------------------
+                // ------------------------------------------------
+                // RÉCUPÉRER LES COMMERÇANTS
+                // ------------------------------------------------
 
-                    comerciantes = [];
-
-
-                    snapshot.forEach(
-                        function(docSnap) {
-
-                            comerciantes.push({
-
-                                id:
-                                    docSnap.id,
-
-                                ...docSnap.data()
-
-                            });
-
-                        }
-                    );
+                comerciantes = [];
 
 
-                    // ------------------------------------------------
-                    // TRI PAR DATE DE CRÉATION
-                    // ------------------------------------------------
+                snapshot.forEach(
+                    function(docSnap) {
 
-                    comerciantes.sort(
-                        function(a, b) {
+                        comerciantes.push({
+
+                            id:
+                                docSnap.id,
+
+                            ...docSnap.data()
+
+                        });
+
+                    }
+                );
+
+
+                // ------------------------------------------------
+                // STATISTIQUES
+                // ------------------------------------------------
+
+                var total =
+                    comerciantes.length;
+
+
+                var active =
+                    comerciantes.filter(
+                        function(merchant) {
+
+                            var status =
+                                String(
+                                    merchant.status ||
+                                    ""
+                                )
+                                .trim()
+                                .toLowerCase();
+
 
                             return (
-                                getMerchantCreatedMillis(b) -
-                                getMerchantCreatedMillis(a)
+                                status === "approved" ||
+                                status === "active"
                             );
 
                         }
+                    ).length;
+
+
+                var blocked =
+                    comerciantes.filter(
+                        function(merchant) {
+
+                            var status =
+                                String(
+                                    merchant.status ||
+                                    ""
+                                )
+                                .trim()
+                                .toLowerCase();
+
+
+                            return (
+                                status === "blocked" ||
+                                status === "disabled" ||
+                                status === "suspended"
+                            );
+
+                        }
+                    ).length;
+
+
+                var pending =
+                    comerciantes.filter(
+                        function(merchant) {
+
+                            var status =
+                                String(
+                                    merchant.status ||
+                                    ""
+                                )
+                                .trim()
+                                .toLowerCase();
+
+
+                            return (
+                                status === "pending" ||
+                                status === "pending_verification"
+                            );
+
+                        }
+                    ).length;
+
+
+                // ------------------------------------------------
+                // AFFICHER LES STATS
+                // ------------------------------------------------
+
+                var totalElement =
+                    document.getElementById(
+                        "totalComerciantes"
                     );
 
 
-                    // ------------------------------------------------
-                    // STATISTIQUES
-                    // ------------------------------------------------
+                var activeElement =
+                    document.getElementById(
+                        "activeComerciantes"
+                    );
 
-                    updateMerchantStatistics();
+
+                var blockedElement =
+                    document.getElementById(
+                        "blockedComerciantes"
+                    );
 
 
-                    // ------------------------------------------------
-                    // FILTRES
-                    // ------------------------------------------------
+                var pendingElement =
+                    document.getElementById(
+                        "pendingComerciantes"
+                    );
+
+
+                if (totalElement) {
+
+                    totalElement.textContent =
+                        total;
+
+                }
+
+
+                if (activeElement) {
+
+                    activeElement.textContent =
+                        active;
+
+                }
+
+
+                if (blockedElement) {
+
+                    blockedElement.textContent =
+                        blocked;
+
+                }
+
+
+                if (pendingElement) {
+
+                    pendingElement.textContent =
+                        pending;
+
+                }
+
+
+                // ------------------------------------------------
+                // DEBUG
+                // ------------------------------------------------
+
+                alert(
+                    "STATS\n\n" +
+                    "Total : " + total + "\n" +
+                    "Ativos : " + active + "\n" +
+                    "Bloqueados : " + blocked + "\n" +
+                    "Pendentes : " + pending
+                );
+
+
+                // ------------------------------------------------
+                // AFFICHAGE
+                // ------------------------------------------------
+
+                if (
+                    typeof applyMerchantFilters ===
+                    "function"
+                ) {
 
                     applyMerchantFilters();
 
-
-                    // ------------------------------------------------
-                    // MASQUER LOADER
-                    // ------------------------------------------------
-
-                    if (loader) {
-
-                        loader.classList.add(
-                            "hidden"
-                        );
-
-                        loader.style.display =
-                            "none";
-
-                    }
+                }
 
 
-                    console.log(
-                        "Comerciantes carregados:",
-                        comerciantes.length
-                    );
+                // ------------------------------------------------
+                // LOADER
+                // ------------------------------------------------
 
-                },
-
-                function(error) {
-
-                    console.error(
-                        "Erro Firestore merchants:",
-                        error
+                var pageLoader =
+                    document.getElementById(
+                        "loader"
                     );
 
 
-                    if (loader) {
+                if (pageLoader) {
 
-                        loader.classList.add(
-                            "hidden"
-                        );
+                    pageLoader.classList.add(
+                        "hidden"
+                    );
 
-                        loader.style.display =
-                            "none";
-
-                    }
-
-
-                    if (errorState) {
-
-                        errorState.classList.remove(
-                            "hidden"
-                        );
-
-
-                        const errorText =
-                            errorState.querySelector(
-                                "p"
-                            );
-
-
-                        if (errorText) {
-
-                            errorText.textContent =
-                                getMerchantFirebaseError(
-                                    error
-                                );
-
-                        }
-
-                    }
+                    pageLoader.style.display =
+                        "none";
 
                 }
 
-            );
+            },
 
-    }
+            function(error) {
 
-    catch (error) {
+                alert(
+                    "ERREUR FIRESTORE\n\n" +
+                    (
+                        error.message ||
+                        "Erreur inconnue"
+                    )
+                );
 
-        console.error(
-            "Erro ao iniciar merchants:",
-            error
+
+                console.error(
+                    "Erreur merchants:",
+                    error
+                );
+
+            }
+
         );
 
-    }
-
 }
 
 
 // ============================================================
-// STATISTIQUES
+// BOUTON ACTUALISER
 // ============================================================
 
-function updateMerchantStatistics() {
-
-    const total =
-        comerciantes.length;
-
-
-    const active =
-        comerciantes.filter(
-            function(merchant) {
-
-                return (
-                    getMerchantStatus(
-                        merchant
-                    ) === "active"
-                );
-
-            }
-        ).length;
-
-
-    const blocked =
-        comerciantes.filter(
-            function(merchant) {
-
-                return (
-                    getMerchantStatus(
-                        merchant
-                    ) === "blocked"
-                );
-
-            }
-        ).length;
-
-
-    const pending =
-        comerciantes.filter(
-            function(merchant) {
-
-                return (
-                    getMerchantStatus(
-                        merchant
-                    ) === "pending"
-                );
-
-            }
-        ).length;
-
-
-    // ----------------------------------------------------------
-    // AFFICHER LES STATISTIQUES
-    // ----------------------------------------------------------
-
-    if (totalComerciantes) {
-
-        totalComerciantes.textContent =
-            total;
-
-    }
-
-
-    if (activeComerciantes) {
-
-        activeComerciantes.textContent =
-            active;
-
-    }
-
-
-    if (blockedComerciantes) {
-
-        blockedComerciantes.textContent =
-            blocked;
-
-    }
-
-
-    if (pendingComerciantes) {
-
-        pendingComerciantes.textContent =
-            pending;
-
-    }
-
-
-    console.log(
-        "STATISTIQUES:",
-        {
-            total: total,
-            active: active,
-            blocked: blocked,
-            pending: pending
-        }
+var merchantRefreshButton =
+    document.getElementById(
+        "refreshButton"
     );
 
-}
 
+if (merchantRefreshButton) {
 
-// ============================================================
-// STATUT RÉEL DES COMMERÇANTS
-// ============================================================
-
-function getMerchantStatus(merchant) {
-
-    const status =
-        String(
-            merchant.status ||
-            ""
-        )
-        .trim()
-        .toLowerCase();
-
-
-    // ----------------------------------------------------------
-    // BLOQUÉ
-    // ----------------------------------------------------------
-
-    if (
-
-        status === "blocked" ||
-
-        status === "disabled" ||
-
-        status === "suspended"
-
-    ) {
-
-        return "blocked";
-
-    }
-
-
-    // ----------------------------------------------------------
-    // EN ATTENTE
-    // ----------------------------------------------------------
-
-    if (
-
-        status === "pending" ||
-
-        status === "pending_verification" ||
-
-        status === "waiting"
-
-    ) {
-
-        return "pending";
-
-    }
-
-
-    // ----------------------------------------------------------
-    // APPROUVÉ = ACTIF
-    // ----------------------------------------------------------
-
-    if (
-
-        status === "approved" ||
-
-        status === "active" ||
-
-        status === "enabled"
-
-    ) {
-
-        return "active";
-
-    }
-
-
-    // ----------------------------------------------------------
-    // PAR DÉFAUT
-    // ----------------------------------------------------------
-
-    return "active";
-
-}
-
-
-// ============================================================
-// DATE DE CRÉATION
-// ============================================================
-
-function getMerchantCreatedMillis(
-    merchant
-) {
-
-    if (!merchant) {
-
-        return 0;
-
-    }
-
-
-    // ----------------------------------------------------------
-    // FORMAT ACTUEL DE TA COLLECTION
-    // created = 1774354288274
-    // ----------------------------------------------------------
-
-    if (
-        typeof merchant.created ===
-        "number"
-    ) {
-
-        return merchant.created;
-
-    }
-
-
-    // ----------------------------------------------------------
-    // AUTRES FORMATS POSSIBLES
-    // ----------------------------------------------------------
-
-    if (
-        merchant.created &&
-        typeof merchant.created.toMillis ===
-        "function"
-    ) {
-
-        return merchant.created.toMillis();
-
-    }
-
-
-    if (
-        merchant.createdAt &&
-        typeof merchant.createdAt.toMillis ===
-        "function"
-    ) {
-
-        return merchant.createdAt.toMillis();
-
-    }
-
-
-    if (
-        typeof merchant.createdAt ===
-        "number"
-    ) {
-
-        return merchant.createdAt;
-
-    }
-
-
-    return 0;
-
-}
-
-
-// ============================================================
-// NOUVEAUX COMMERÇANTS
-// ============================================================
-
-function isNewMerchant(merchant) {
-
-    const created =
-        getMerchantCreatedMillis(
-            merchant
-        );
-
-
-    if (!created) {
-
-        return false;
-
-    }
-
-
-    const now =
-        Date.now();
-
-
-    // 30 derniers jours
-
-    const thirtyDays =
-        30 *
-        24 *
-        60 *
-        60 *
-        1000;
-
-
-    return (
-        now - created <=
-        thirtyDays
-    );
-
-}
-
-
-// ============================================================
-// RECHERCHE + FILTRES
-// ============================================================
-
-function applyMerchantFilters() {
-
-    let result =
-        [...comerciantes];
-
-
-    // ----------------------------------------------------------
-    // FILTRE
-    // ----------------------------------------------------------
-
-    if (
-        currentFilter !==
-        "all"
-    ) {
-
-        if (
-            currentFilter ===
-            "active"
-        ) {
-
-            result =
-                result.filter(
-                    function(merchant) {
-
-                        return (
-                            getMerchantStatus(
-                                merchant
-                            ) ===
-                            "active"
-                        );
-
-                    }
-                );
-
-        }
-
-
-        if (
-            currentFilter ===
-            "blocked"
-        ) {
-
-            result =
-                result.filter(
-                    function(merchant) {
-
-                        return (
-                            getMerchantStatus(
-                                merchant
-                            ) ===
-                            "blocked"
-                        );
-
-                    }
-                );
-
-        }
-
-
-        if (
-            currentFilter ===
-            "pending"
-        ) {
-
-            result =
-                result.filter(
-                    function(merchant) {
-
-                        return (
-                            getMerchantStatus(
-                                merchant
-                            ) ===
-                            "pending"
-                        );
-
-                    }
-                );
-
-        }
-
-    }
-
-
-    // ----------------------------------------------------------
-    // RECHERCHE
-    // ----------------------------------------------------------
-
-    const search =
-        searchInput?.value
-            ?.trim()
-            ?.toLowerCase() ||
-        "";
-
-
-    if (search) {
-
-        result =
-            result.filter(
-                function(merchant) {
-
-                    const shopName =
-                        String(
-                            merchant.shopName ||
-                            merchant.storeName ||
-                            merchant.shop ||
-                            merchant.name ||
-                            ""
-                        )
-                        .toLowerCase();
-
-
-                    const owner =
-                        String(
-                            merchant.ownerName ||
-                            merchant.firstName ||
-                            ""
-                        )
-                        .toLowerCase();
-
-
-                    const email =
-                        String(
-                            merchant.email ||
-                            ""
-                        )
-                        .toLowerCase();
-
-
-                    const phone =
-                        String(
-                            merchant.phone ||
-                            merchant.telephone ||
-                            ""
-                        )
-                        .toLowerCase();
-
-
-                    const city =
-                        String(
-                            merchant.city ||
-                            ""
-                        )
-                        .toLowerCase();
-
-
-                    return (
-
-                        shopName.includes(
-                            search
-                        ) ||
-
-                        owner.includes(
-                            search
-                        ) ||
-
-                        email.includes(
-                            search
-                        ) ||
-
-                        phone.includes(
-                            search
-                        ) ||
-
-                        city.includes(
-                            search
-                        )
-
-                    );
-
-                }
-            );
-
-    }
-
-
-    filteredComerciantes =
-        result;
-
-
-    renderComerciantes(
-        filteredComerciantes
-    );
-
-}
-
-
-// ============================================================
-// ACTUALISER
-// ============================================================
-
-if (refreshButton) {
-
-    refreshButton.addEventListener(
+    merchantRefreshButton.addEventListener(
         "click",
         function() {
 
-            if (loader) {
-
-                loader.classList.remove(
-                    "hidden"
-                );
-
-                loader.style.display =
-                    "flex";
-
-            }
+            alert(
+                "Actualisation des commerçants..."
+            );
 
 
             listenComerciantes();
@@ -1728,154 +1345,14 @@ if (refreshButton) {
 
 
 // ============================================================
-// RECHERCHE EN DIRECT
-// ============================================================
-
-if (searchInput) {
-
-    searchInput.addEventListener(
-        "input",
-        function() {
-
-            applyMerchantFilters();
-
-        }
-    );
-
-}
-
-
-// ============================================================
-// EFFACER RECHERCHE
-// ============================================================
-
-if (clearSearch) {
-
-    clearSearch.addEventListener(
-        "click",
-        function() {
-
-            if (searchInput) {
-
-                searchInput.value = "";
-
-                applyMerchantFilters();
-
-                searchInput.focus();
-
-            }
-
-        }
-    );
-
-}
-
-
-// ============================================================
-// FILTRES
-// ============================================================
-
-const merchantFilterButtons =
-    document.querySelectorAll(
-        ".filterButton"
-    );
-
-
-merchantFilterButtons.forEach(
-    function(button) {
-
-        button.addEventListener(
-            "click",
-            function() {
-
-                merchantFilterButtons.forEach(
-                    function(item) {
-
-                        item.classList.remove(
-                            "active"
-                        );
-
-                    }
-                );
-
-
-                button.classList.add(
-                    "active"
-                );
-
-
-                currentFilter =
-                    button.dataset.filter ||
-                    "all";
-
-
-                applyMerchantFilters();
-
-            }
-        );
-
-    }
-);
-
-
-// ============================================================
-// DÉMARRER FIRESTORE
+// DÉMARRER
 // ============================================================
 
 listenComerciantes();
 
 
 // ============================================================
-// ERREUR FIREBASE
-// ============================================================
-
-function getMerchantFirebaseError(
-    error
-) {
-
-    if (!error) {
-
-        return "Erro desconhecido.";
-
-    }
-
-
-    if (
-        error.code ===
-        "permission-denied"
-    ) {
-
-        return (
-            "Acesso negado pelo Firebase. " +
-            "Verifique as regras Firestore."
-        );
-
-    }
-
-
-    if (
-        error.code ===
-        "unauthenticated"
-    ) {
-
-        return (
-            "Sessão expirada. " +
-            "Entre novamente."
-        );
-
-    }
-
-
-    return (
-        error.message ||
-        "Erro ao carregar comerciantes."
-    );
-
-}
-
-
-// ============================================================
-// ALERTE FIN BLOC 4
+// ALERTE FIN
 // ============================================================
 
 alert("BLOC 4 — Fin");
