@@ -1028,33 +1028,17 @@ alert(
 // TOMA ADMIN
 // COMERCIANTES.JS
 // BLOC 4
+// CHARGEMENT FIRESTORE + STATISTIQUES + FILTRES
+// ============================================================
+
+alert("BLOC 4 — Début");
+
+
+// ============================================================
 // FIRESTORE — COLLECTION MERCHANTS
 // ============================================================
 
-
-// ============================================================
-// ALERTE — DÉBUT BLOC 4
-// ============================================================
-
-alert(
-    "TOMA ADMIN — Comerciantes JS : Bloc 4 démarrado"
-);
-
-
-// ============================================================
-// FIRESTORE — CHARGER LES COMMERÇANTS
-// ============================================================
-
 function listenComerciantes() {
-
-    console.log(
-        "Démarrage écoute Firestore merchants..."
-    );
-
-
-    // --------------------------------------------------------
-    // Si une ancienne écoute existe
-    // --------------------------------------------------------
 
     if (unsubscribeComerciantes) {
 
@@ -1065,232 +1049,166 @@ function listenComerciantes() {
     }
 
 
-    // --------------------------------------------------------
-    // Collection MERCHANTS
-    // --------------------------------------------------------
+    try {
 
-    const merchantsRef =
-        collection(
-            db,
-            "merchants"
-        );
-
-
-    // --------------------------------------------------------
-    // ÉCOUTE TEMPS RÉEL
-    // --------------------------------------------------------
-
-    unsubscribeComerciantes =
-    onSnapshot(
-
-        merchantsRef,
-
-        function(snapshot) {
-
-            alert(
-                "FIRESTORE MERCHANTS : " +
-                snapshot.size +
-                " document(s) reçu(s)"
-            );
-alert(
-    "Premier commerçant :\n" +
-    JSON.stringify(
-        snapshot.docs[0].data(),
-        null,
-        2
-    )
-);
-            console.log(
-                "Firestore merchants reçu :",
-                snapshot.size,
-                "commerçant(s)"
+        const merchantsRef =
+            collection(
+                db,
+                "merchants"
             );
 
-            console.log(
-                "Documents merchants :",
-                snapshot.docs.map(
-                    docSnap => ({
-                        id: docSnap.id,
-                        data: docSnap.data()
-                    })
-                )
-            );
 
-                // ------------------------------------------------
-                // VIDER LE TABLEAU
-                // ------------------------------------------------
+        unsubscribeComerciantes =
+            onSnapshot(
 
-                comerciantes = [];
+                merchantsRef,
 
+                function(snapshot) {
 
-                // ------------------------------------------------
-                // RÉCUPÉRER LES DOCUMENTS
-                // ------------------------------------------------
+                    // ------------------------------------------------
+                    // VÉRIFICATION
+                    // ------------------------------------------------
 
-                snapshot.forEach(
-                    function(docSnap) {
-
-                        const data =
-                            docSnap.data();
-
-
-                        comerciantes.push({
-
-                            id:
-                                docSnap.id,
-
-                            ...data
-
-                        });
-
-                    }
-                );
-
-
-                // ------------------------------------------------
-                // TRI
-                // Les plus récents en premier
-                // ------------------------------------------------
-
-                comerciantes.sort(
-                    function(a, b) {
-
-                        const dateA =
-                            getMerchantDateMillis(
-                                a.createdAt
-                            );
-
-
-                        const dateB =
-                            getMerchantDateMillis(
-                                b.createdAt
-                            );
-
-
-                        return dateB - dateA;
-
-                    }
-                );
-
-
-                // ------------------------------------------------
-                // STATISTIQUES
-                // ------------------------------------------------
-
-                updateMerchantStatistics();
-
-
-                // ------------------------------------------------
-                // FILTRES + AFFICHAGE
-                // ------------------------------------------------
-
-                applyMerchantFilters();
-
-
-                // ------------------------------------------------
-                // CACHER LE LOADER
-                // ------------------------------------------------
-
-                if (loader) {
-
-                    loader.classList.add(
-                        "hidden"
+                    console.log(
+                        "MERCHANTS FIRESTORE :",
+                        snapshot.size
                     );
 
-                    loader.style.display =
-                        "none";
 
-                }
+                    // ------------------------------------------------
+                    // RÉCUPÉRER LES DOCUMENTS
+                    // ------------------------------------------------
+
+                    comerciantes = [];
 
 
-                // ------------------------------------------------
-                // ÉTAT VIDE
-                // ------------------------------------------------
+                    snapshot.forEach(
+                        function(docSnap) {
 
-                if (
-                    comerciantes.length === 0
-                ) {
+                            comerciantes.push({
 
-                    if (emptyState) {
+                                id:
+                                    docSnap.id,
 
-                        emptyState.classList.remove(
+                                ...docSnap.data()
+
+                            });
+
+                        }
+                    );
+
+
+                    // ------------------------------------------------
+                    // TRI PAR DATE DE CRÉATION
+                    // ------------------------------------------------
+
+                    comerciantes.sort(
+                        function(a, b) {
+
+                            return (
+                                getMerchantCreatedMillis(b) -
+                                getMerchantCreatedMillis(a)
+                            );
+
+                        }
+                    );
+
+
+                    // ------------------------------------------------
+                    // STATISTIQUES
+                    // ------------------------------------------------
+
+                    updateMerchantStatistics();
+
+
+                    // ------------------------------------------------
+                    // FILTRES
+                    // ------------------------------------------------
+
+                    applyMerchantFilters();
+
+
+                    // ------------------------------------------------
+                    // MASQUER LOADER
+                    // ------------------------------------------------
+
+                    if (loader) {
+
+                        loader.classList.add(
                             "hidden"
                         );
 
+                        loader.style.display =
+                            "none";
+
                     }
 
-                }
 
-
-                console.log(
-                    "Commerçants affichés :",
-                    comerciantes.length
-                );
-
-            },
-
-
-            // ----------------------------------------------------
-            // ERREUR FIRESTORE
-            // ----------------------------------------------------
-
-            function(error) {
-
-                console.error(
-                    "ERREUR FIRESTORE MERCHANTS :",
-                    error
-                );
-
-
-                if (loader) {
-
-                    loader.classList.add(
-                        "hidden"
+                    console.log(
+                        "Comerciantes carregados:",
+                        comerciantes.length
                     );
 
-                    loader.style.display =
-                        "none";
+                },
 
-                }
+                function(error) {
 
-
-                if (errorState) {
-
-                    errorState.classList.remove(
-                        "hidden"
+                    console.error(
+                        "Erro Firestore merchants:",
+                        error
                     );
 
 
-                    const errorText =
-                        errorState.querySelector(
-                            "p"
+                    if (loader) {
+
+                        loader.classList.add(
+                            "hidden"
+                        );
+
+                        loader.style.display =
+                            "none";
+
+                    }
+
+
+                    if (errorState) {
+
+                        errorState.classList.remove(
+                            "hidden"
                         );
 
 
-                    if (errorText) {
-
-                        errorText.textContent =
-                            getMerchantFirebaseError(
-                                error
+                        const errorText =
+                            errorState.querySelector(
+                                "p"
                             );
+
+
+                        if (errorText) {
+
+                            errorText.textContent =
+                                getMerchantFirebaseError(
+                                    error
+                                );
+
+                        }
 
                     }
 
                 }
 
-                else {
+            );
 
-                    showMerchantToast(
-                        getMerchantFirebaseError(
-                            error
-                        )
-                    );
+    }
 
-                }
+    catch (error) {
 
-            }
-
+        console.error(
+            "Erro ao iniciar merchants:",
+            error
         );
+
+    }
 
 }
 
@@ -1347,180 +1265,198 @@ function updateMerchantStatistics() {
         ).length;
 
 
-    // --------------------------------------------------------
-    // TOTAL
-    // --------------------------------------------------------
+    // ----------------------------------------------------------
+    // AFFICHER LES STATISTIQUES
+    // ----------------------------------------------------------
 
-    setMerchantText(
-        totalComerciantes,
-        total
-    );
+    if (totalComerciantes) {
 
-
-    // --------------------------------------------------------
-    // ATIVOS
-    // --------------------------------------------------------
-
-    setMerchantText(
-        activeComerciantes,
-        active
-    );
-
-
-    // --------------------------------------------------------
-    // BLOQUEADOS
-    // --------------------------------------------------------
-
-    setMerchantText(
-        blockedComerciantes,
-        blocked
-    );
-
-
-    // --------------------------------------------------------
-    // PENDENTES
-    // --------------------------------------------------------
-
-    setMerchantText(
-        pendingComerciantes,
-        pending
-    );
-
-
-    // --------------------------------------------------------
-    // AUTRES STATISTIQUES SI PRÉSENTES DANS LE HTML
-    // --------------------------------------------------------
-
-    const verifiedElement =
-        document.getElementById(
-            "verifiedComerciantes"
-        );
-
-
-    if (verifiedElement) {
-
-        const verified =
-            comerciantes.filter(
-                function(merchant) {
-
-                    return (
-                        merchant.verified === true ||
-                        merchant.isVerified === true ||
-                        merchant.verificado === true
-                    );
-
-                }
-            ).length;
-
-
-        verifiedElement.textContent =
-            verified;
+        totalComerciantes.textContent =
+            total;
 
     }
 
 
-    const productsElement =
-        document.getElementById(
-            "merchantProducts"
-        );
+    if (activeComerciantes) {
 
-
-    if (productsElement) {
-
-        let productsTotal = 0;
-
-
-        comerciantes.forEach(
-            function(merchant) {
-
-                productsTotal +=
-                    Number(
-                        merchant.productsCount ||
-                        merchant.productCount ||
-                        0
-                    );
-
-            }
-        );
-
-
-        productsElement.textContent =
-            productsTotal;
+        activeComerciantes.textContent =
+            active;
 
     }
+
+
+    if (blockedComerciantes) {
+
+        blockedComerciantes.textContent =
+            blocked;
+
+    }
+
+
+    if (pendingComerciantes) {
+
+        pendingComerciantes.textContent =
+            pending;
+
+    }
+
+
+    console.log(
+        "STATISTIQUES:",
+        {
+            total: total,
+            active: active,
+            blocked: blocked,
+            pending: pending
+        }
+    );
 
 }
 
 
 // ============================================================
-// DATE FIREBASE
+// STATUT RÉEL DES COMMERÇANTS
 // ============================================================
 
-function getMerchantDateMillis(
-    timestamp
+function getMerchantStatus(merchant) {
+
+    const status =
+        String(
+            merchant.status ||
+            ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+    // ----------------------------------------------------------
+    // BLOQUÉ
+    // ----------------------------------------------------------
+
+    if (
+
+        status === "blocked" ||
+
+        status === "disabled" ||
+
+        status === "suspended"
+
+    ) {
+
+        return "blocked";
+
+    }
+
+
+    // ----------------------------------------------------------
+    // EN ATTENTE
+    // ----------------------------------------------------------
+
+    if (
+
+        status === "pending" ||
+
+        status === "pending_verification" ||
+
+        status === "waiting"
+
+    ) {
+
+        return "pending";
+
+    }
+
+
+    // ----------------------------------------------------------
+    // APPROUVÉ = ACTIF
+    // ----------------------------------------------------------
+
+    if (
+
+        status === "approved" ||
+
+        status === "active" ||
+
+        status === "enabled"
+
+    ) {
+
+        return "active";
+
+    }
+
+
+    // ----------------------------------------------------------
+    // PAR DÉFAUT
+    // ----------------------------------------------------------
+
+    return "active";
+
+}
+
+
+// ============================================================
+// DATE DE CRÉATION
+// ============================================================
+
+function getMerchantCreatedMillis(
+    merchant
 ) {
 
-    if (!timestamp) {
+    if (!merchant) {
 
         return 0;
 
     }
 
 
-    // Timestamp Firebase
+    // ----------------------------------------------------------
+    // FORMAT ACTUEL DE TA COLLECTION
+    // created = 1774354288274
+    // ----------------------------------------------------------
 
     if (
-        typeof timestamp.toMillis ===
+        typeof merchant.created ===
+        "number"
+    ) {
+
+        return merchant.created;
+
+    }
+
+
+    // ----------------------------------------------------------
+    // AUTRES FORMATS POSSIBLES
+    // ----------------------------------------------------------
+
+    if (
+        merchant.created &&
+        typeof merchant.created.toMillis ===
         "function"
     ) {
 
-        return timestamp.toMillis();
+        return merchant.created.toMillis();
 
     }
 
 
-    // Objet avec seconds
-
     if (
-        timestamp.seconds !== undefined
+        merchant.createdAt &&
+        typeof merchant.createdAt.toMillis ===
+        "function"
     ) {
 
-        return (
-            Number(
-                timestamp.seconds
-            ) * 1000
-        );
+        return merchant.createdAt.toMillis();
 
     }
 
 
-    // Date JavaScript
-
     if (
-        timestamp instanceof Date
+        typeof merchant.createdAt ===
+        "number"
     ) {
 
-        return timestamp.getTime();
-
-    }
-
-
-    // String date
-
-    if (
-        typeof timestamp ===
-        "string"
-    ) {
-
-        const time =
-            new Date(
-                timestamp
-            ).getTime();
-
-
-        return isNaN(time)
-            ? 0
-            : time;
+        return merchant.createdAt;
 
     }
 
@@ -1531,208 +1467,268 @@ function getMerchantDateMillis(
 
 
 // ============================================================
-// PETITE FONCTION TEXTE
+// NOUVEAUX COMMERÇANTS
 // ============================================================
 
-function setMerchantText(
-    element,
-    value
-) {
+function isNewMerchant(merchant) {
 
-    if (!element) {
-
-        return;
-
-    }
-
-
-    element.textContent =
-        value ?? 0;
-
-}
-
-
-// ============================================================
-// ERREUR FIREBASE
-// ============================================================
-
-function getMerchantFirebaseError(
-    error
-) {
-
-    if (!error) {
-
-        return (
-            "Erro desconhecido."
+    const created =
+        getMerchantCreatedMillis(
+            merchant
         );
 
+
+    if (!created) {
+
+        return false;
+
     }
 
 
-    console.error(
-        "Firebase:",
-        error.code,
-        error.message
+    const now =
+        Date.now();
+
+
+    // 30 derniers jours
+
+    const thirtyDays =
+        30 *
+        24 *
+        60 *
+        60 *
+        1000;
+
+
+    return (
+        now - created <=
+        thirtyDays
     );
-
-
-    switch (
-        error.code
-    ) {
-
-        case "permission-denied":
-
-            return (
-                "Acesso negado pelo Firebase. " +
-                "Verifique as regras Firestore."
-            );
-
-
-        case "unauthenticated":
-
-            return (
-                "Sessão expirada. " +
-                "Entre novamente como administrador."
-            );
-
-
-        case "unavailable":
-
-            return (
-                "Firebase indisponível. " +
-                "Verifique a conexão à Internet."
-            );
-
-
-        case "failed-precondition":
-
-            return (
-                "Configuração Firebase incompleta."
-            );
-
-
-        case "not-found":
-
-            return (
-                "Coleção ou documento não encontrado."
-            );
-
-
-        default:
-
-            return (
-                "Erro Firestore: " +
-                (
-                    error.message ||
-                    "Tente novamente."
-                )
-            );
-
-    }
 
 }
 
 
 // ============================================================
-// TOAST SIMPLE
+// RECHERCHE + FILTRES
 // ============================================================
 
-function showMerchantToast(
-    message
-) {
+function applyMerchantFilters() {
+
+    let result =
+        [...comerciantes];
+
+
+    // ----------------------------------------------------------
+    // FILTRE
+    // ----------------------------------------------------------
 
     if (
-        !toast ||
-        !toastMessage
+        currentFilter !==
+        "all"
     ) {
 
-        console.log(
-            message
-        );
+        if (
+            currentFilter ===
+            "active"
+        ) {
 
-        return;
+            result =
+                result.filter(
+                    function(merchant) {
+
+                        return (
+                            getMerchantStatus(
+                                merchant
+                            ) ===
+                            "active"
+                        );
+
+                    }
+                );
+
+        }
+
+
+        if (
+            currentFilter ===
+            "blocked"
+        ) {
+
+            result =
+                result.filter(
+                    function(merchant) {
+
+                        return (
+                            getMerchantStatus(
+                                merchant
+                            ) ===
+                            "blocked"
+                        );
+
+                    }
+                );
+
+        }
+
+
+        if (
+            currentFilter ===
+            "pending"
+        ) {
+
+            result =
+                result.filter(
+                    function(merchant) {
+
+                        return (
+                            getMerchantStatus(
+                                merchant
+                            ) ===
+                            "pending"
+                        );
+
+                    }
+                );
+
+        }
 
     }
 
 
-    toastMessage.textContent =
-        message;
+    // ----------------------------------------------------------
+    // RECHERCHE
+    // ----------------------------------------------------------
+
+    const search =
+        searchInput?.value
+            ?.trim()
+            ?.toLowerCase() ||
+        "";
 
 
-    toast.classList.add(
-        "show"
-    );
+    if (search) {
 
+        result =
+            result.filter(
+                function(merchant) {
 
-    setTimeout(
-        function() {
-
-            toast.classList.remove(
-                "show"
-            );
-
-        },
-        4000
-    );
-
-}
-
-
-// ============================================================
-// ACTUALISER LES FILTRES
-// ============================================================
-//
-// Le bloc 2 change déjà currentFilter.
-// Ici on ajoute simplement l'affichage réel.
-//
-
-document
-    .querySelectorAll(
-        ".filterButton"
-    )
-    .forEach(
-        function(button) {
-
-            button.addEventListener(
-                "click",
-                function() {
-
-                    currentFilter =
-                        button.dataset.filter ||
-                        "all";
-
-
-                    document
-                        .querySelectorAll(
-                            ".filterButton"
+                    const shopName =
+                        String(
+                            merchant.shopName ||
+                            merchant.storeName ||
+                            merchant.shop ||
+                            merchant.name ||
+                            ""
                         )
-                        .forEach(
-                            function(item) {
-
-                                item.classList.remove(
-                                    "active"
-                                );
-
-                            }
-                        );
+                        .toLowerCase();
 
 
-                    button.classList.add(
-                        "active"
+                    const owner =
+                        String(
+                            merchant.ownerName ||
+                            merchant.firstName ||
+                            ""
+                        )
+                        .toLowerCase();
+
+
+                    const email =
+                        String(
+                            merchant.email ||
+                            ""
+                        )
+                        .toLowerCase();
+
+
+                    const phone =
+                        String(
+                            merchant.phone ||
+                            merchant.telephone ||
+                            ""
+                        )
+                        .toLowerCase();
+
+
+                    const city =
+                        String(
+                            merchant.city ||
+                            ""
+                        )
+                        .toLowerCase();
+
+
+                    return (
+
+                        shopName.includes(
+                            search
+                        ) ||
+
+                        owner.includes(
+                            search
+                        ) ||
+
+                        email.includes(
+                            search
+                        ) ||
+
+                        phone.includes(
+                            search
+                        ) ||
+
+                        city.includes(
+                            search
+                        )
+
                     );
-
-
-                    applyMerchantFilters();
 
                 }
             );
 
-        }
+    }
+
+
+    filteredComerciantes =
+        result;
+
+
+    renderComerciantes(
+        filteredComerciantes
     );
+
+}
 
 
 // ============================================================
-// RECHERCHE — ACTUALISER L'AFFICHAGE
+// ACTUALISER
+// ============================================================
+
+if (refreshButton) {
+
+    refreshButton.addEventListener(
+        "click",
+        function() {
+
+            if (loader) {
+
+                loader.classList.remove(
+                    "hidden"
+                );
+
+                loader.style.display =
+                    "flex";
+
+            }
+
+
+            listenComerciantes();
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// RECHERCHE EN DIRECT
 // ============================================================
 
 if (searchInput) {
@@ -1750,7 +1746,7 @@ if (searchInput) {
 
 
 // ============================================================
-// BOUTON CLEAR SEARCH
+// EFFACER RECHERCHE
 // ============================================================
 
 if (clearSearch) {
@@ -1763,10 +1759,11 @@ if (clearSearch) {
 
                 searchInput.value = "";
 
+                applyMerchantFilters();
+
+                searchInput.focus();
+
             }
-
-
-            applyMerchantFilters();
 
         }
     );
@@ -1775,151 +1772,110 @@ if (clearSearch) {
 
 
 // ============================================================
-// BOUTON ACTUALISER
+// FILTRES
 // ============================================================
 
-if (refreshButton) {
-
-    refreshButton.addEventListener(
-        "click",
-        function() {
-
-            console.log(
-                "Actualisation des commerçants..."
-            );
+const merchantFilterButtons =
+    document.querySelectorAll(
+        ".filterButton"
+    );
 
 
-            if (loader) {
+merchantFilterButtons.forEach(
+    function(button) {
 
-                loader.classList.remove(
-                    "hidden"
-                );
+        button.addEventListener(
+            "click",
+            function() {
 
-                loader.style.display =
-                    "flex";
+                merchantFilterButtons.forEach(
+                    function(item) {
 
-            }
-
-
-            /*
-             * onSnapshot est déjà en temps réel.
-             * On force simplement un nouveau rendu.
-             */
-
-            applyMerchantFilters();
-
-
-            updateMerchantStatistics();
-
-
-            setTimeout(
-                function() {
-
-                    if (loader) {
-
-                        loader.classList.add(
-                            "hidden"
+                        item.classList.remove(
+                            "active"
                         );
 
-                        loader.style.display =
-                            "none";
-
                     }
-
-                },
-                500
-            );
-
-        }
-    );
-
-}
-
-
-// ============================================================
-// DÉMARRAGE FIRESTORE
-// ============================================================
-//
-// On utilise auth.currentUser si disponible.
-// Sinon on attend Firebase Authentication.
-//
-
-function startMerchantSystem() {
-
-    const connectedUser =
-        auth.currentUser;
-
-
-    if (connectedUser) {
-
-        listenComerciantes();
-
-        return;
-
-    }
-
-
-    onAuthStateChanged(
-        auth,
-        function(user) {
-
-            if (!user) {
-
-                console.log(
-                    "Aucun utilisateur connecté."
                 );
 
-                return;
+
+                button.classList.add(
+                    "active"
+                );
+
+
+                currentFilter =
+                    button.dataset.filter ||
+                    "all";
+
+
+                applyMerchantFilters();
 
             }
-
-
-            console.log(
-                "Utilisateur connecté pour merchants :",
-                user.uid
-            );
-
-
-            listenComerciantes();
-
-        }
-    );
-
-}
-
-
-// ============================================================
-// DÉMARRER
-// ============================================================
-
-startMerchantSystem();
-
-
-// ============================================================
-// NETTOYAGE
-// ============================================================
-
-window.addEventListener(
-    "beforeunload",
-    function() {
-
-        if (unsubscribeComerciantes) {
-
-            unsubscribeComerciantes();
-
-            unsubscribeComerciantes =
-                null;
-
-        }
+        );
 
     }
 );
 
 
 // ============================================================
-// ALERTE — FIN BLOC 4
+// DÉMARRER FIRESTORE
 // ============================================================
 
-alert(
-    "TOMA ADMIN — Comerciantes JS : Bloc 4 terminado"
-);
+listenComerciantes();
+
+
+// ============================================================
+// ERREUR FIREBASE
+// ============================================================
+
+function getMerchantFirebaseError(
+    error
+) {
+
+    if (!error) {
+
+        return "Erro desconhecido.";
+
+    }
+
+
+    if (
+        error.code ===
+        "permission-denied"
+    ) {
+
+        return (
+            "Acesso negado pelo Firebase. " +
+            "Verifique as regras Firestore."
+        );
+
+    }
+
+
+    if (
+        error.code ===
+        "unauthenticated"
+    ) {
+
+        return (
+            "Sessão expirada. " +
+            "Entre novamente."
+        );
+
+    }
+
+
+    return (
+        error.message ||
+        "Erro ao carregar comerciantes."
+    );
+
+}
+
+
+// ============================================================
+// ALERTE FIN BLOC 4
+// ============================================================
+
+alert("BLOC 4 — Fin");
