@@ -1875,3 +1875,420 @@ function afficherComerciantesBloc7() {
 // ============================================================
 
 alert("BLOC 7 — Étape 3 terminé");
+// ============================================================
+// TOMA ADMIN
+// COMERCIANTES.JS
+// BLOC 8 — FILTRES CORRIGÉS
+// ============================================================
+
+alert("BLOC 8 — Début");
+
+
+// ============================================================
+// FONCTION FILTRAGE
+// ============================================================
+
+function appliquerFiltreBloc8(filter) {
+
+    alert(
+        "BLOC 8 — Filtre sélectionné : " +
+        filter
+    );
+
+
+    let result =
+        Array.isArray(comerciantes)
+            ? [...comerciantes]
+            : [];
+
+
+    // ========================================================
+    // TOUS
+    // ========================================================
+
+    if (filter === "all") {
+
+        // Aucun filtrage
+
+    }
+
+
+    // ========================================================
+    // ACTIFS
+    // ========================================================
+
+    else if (filter === "active") {
+
+        result =
+            result.filter(
+                function(merchant) {
+
+                    return (
+                        getMerchantStatus(
+                            merchant
+                        ) === "active"
+                    );
+
+                }
+            );
+
+    }
+
+
+    // ========================================================
+    // BLOQUÉS
+    // ========================================================
+
+    else if (filter === "blocked") {
+
+        result =
+            result.filter(
+                function(merchant) {
+
+                    return (
+                        getMerchantStatus(
+                            merchant
+                        ) === "blocked"
+                    );
+
+                }
+            );
+
+    }
+
+
+    // ========================================================
+    // PENDANTS
+    // ========================================================
+
+    else if (filter === "pending") {
+
+        result =
+            result.filter(
+                function(merchant) {
+
+                    return (
+                        getMerchantStatus(
+                            merchant
+                        ) === "pending"
+                    );
+
+                }
+            );
+
+    }
+
+
+    // ========================================================
+    // VÉRIFIÉS
+    // ========================================================
+
+    else if (filter === "verified") {
+
+        result =
+            result.filter(
+                function(merchant) {
+
+                    return (
+                        merchant.verified === true ||
+                        merchant.isVerified === true ||
+                        String(
+                            merchant.verificationStatus ||
+                            ""
+                        ).toLowerCase() === "verified"
+                    );
+
+                }
+            );
+
+    }
+
+
+    // ========================================================
+    // NON VÉRIFIÉS
+    // ========================================================
+
+    else if (filter === "unverified") {
+
+        result =
+            result.filter(
+                function(merchant) {
+
+                    return !(
+                        merchant.verified === true ||
+                        merchant.isVerified === true ||
+                        String(
+                            merchant.verificationStatus ||
+                            ""
+                        ).toLowerCase() === "verified"
+                    );
+
+                }
+            );
+
+    }
+
+
+    // ========================================================
+    // RECHERCHE
+    // ========================================================
+
+    const searchValue =
+        searchInput?.value
+            ?.trim()
+            ?.toLowerCase() || "";
+
+
+    if (searchValue) {
+
+        result =
+            result.filter(
+                function(merchant) {
+
+                    const shopName =
+                        String(
+                            merchant.shopName ||
+                            merchant.storeName ||
+                            merchant.shop ||
+                            merchant.name ||
+                            ""
+                        ).toLowerCase();
+
+
+                    const email =
+                        String(
+                            merchant.email ||
+                            ""
+                        ).toLowerCase();
+
+
+                    const phone =
+                        String(
+                            merchant.phone ||
+                            merchant.telephone ||
+                            ""
+                        ).toLowerCase();
+
+
+                    const city =
+                        String(
+                            merchant.city ||
+                            ""
+                        ).toLowerCase();
+
+
+                    return (
+                        shopName.includes(searchValue) ||
+                        email.includes(searchValue) ||
+                        phone.includes(searchValue) ||
+                        city.includes(searchValue)
+                    );
+
+                }
+            );
+
+    }
+
+
+    // ========================================================
+    // MÉMORISER LE FILTRE
+    // ========================================================
+
+    currentFilter =
+        filter;
+
+
+    filteredComerciantes =
+        result;
+
+
+    // ========================================================
+    // AFFICHER
+    // ========================================================
+
+    afficherComerciantesBloc7();
+
+
+    // ========================================================
+    // IMPORTANT :
+    // afficherComerciantesBloc7() affiche actuellement
+    // tout le tableau comerciantes.
+    //
+    // On remplace temporairement son comportement
+    // avec la liste filtrée.
+    // ========================================================
+
+    if (
+        merchantsListBloc7
+    ) {
+
+        merchantsListBloc7.innerHTML = "";
+
+
+        result.forEach(
+            function(merchant) {
+
+                const card =
+                    document.createElement(
+                        "article"
+                    );
+
+
+                card.className =
+                    "merchantCard";
+
+
+                const shopName =
+                    merchant.shopName ||
+                    merchant.storeName ||
+                    merchant.shop ||
+                    merchant.name ||
+                    "Boutique sans nom";
+
+
+                const email =
+                    merchant.email ||
+                    "Email indisponível";
+
+
+                const phone =
+                    merchant.phone ||
+                    merchant.telephone ||
+                    "";
+
+
+                const status =
+                    getMerchantStatus(
+                        merchant
+                    );
+
+
+                card.innerHTML = `
+
+                    <div class="merchantCardLeft">
+
+                        <div class="merchantInfo">
+
+                            <h3 class="merchantName">
+                                ${shopName}
+                            </h3>
+
+                            <p class="merchantEmail">
+                                ${email}
+                            </p>
+
+                            ${
+                                phone
+                                ? `
+                                    <p>
+                                        📞 ${phone}
+                                    </p>
+                                `
+                                : ""
+                            }
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="merchantCardRight">
+
+                        <span class="merchantStatus">
+                            ${status}
+                        </span>
+
+                    </div>
+
+                `;
+
+
+                merchantsListBloc7.appendChild(
+                    card
+                );
+
+            }
+        );
+
+    }
+
+
+    alert(
+        "BLOC 8 — Commerçants affichés : " +
+        result.length
+    );
+
+}
+
+
+// ============================================================
+// BOUTONS FILTRES
+// ============================================================
+
+const filterButtonsBloc8 =
+    document.querySelectorAll(
+        ".filterButton"
+    );
+
+
+filterButtonsBloc8.forEach(
+    function(button) {
+
+        // ----------------------------------------------------
+        // SUPPRIMER LES ANCIENS ÉVÉNEMENTS
+        // ----------------------------------------------------
+
+        const newButton =
+            button.cloneNode(true);
+
+
+        button.replaceWith(
+            newButton
+        );
+
+
+        // ----------------------------------------------------
+        // NOUVEL ÉVÉNEMENT
+        // ----------------------------------------------------
+
+        newButton.addEventListener(
+            "click",
+            function() {
+
+                filterButtonsBloc8.forEach(
+                    function(item) {
+
+                        item.classList.remove(
+                            "active"
+                        );
+
+                    }
+                );
+
+
+                newButton.classList.add(
+                    "active"
+                );
+
+
+                const selectedFilter =
+                    newButton.dataset.filter ||
+                    "all";
+
+
+                appliquerFiltreBloc8(
+                    selectedFilter
+                );
+
+            }
+        );
+
+    }
+);
+
+
+// ============================================================
+// FIN
+// ============================================================
+
+alert("BLOC 8 — Fin");
