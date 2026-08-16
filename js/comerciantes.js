@@ -1700,11 +1700,10 @@ alert("BLOC 6 — Fin");
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
-// BLOC 7 — ÉTAPE 2
-// TEST AFFICHAGE DES COMMERÇANTS
+// BLOC 7 — AFFICHAGE APRÈS FIRESTORE
 // ============================================================
 
-alert("BLOC 7 — Étape 2 début");
+alert("BLOC 7 — Étape 3 début");
 
 
 // ============================================================
@@ -1726,27 +1725,41 @@ alert(
 
 
 // ============================================================
-// VÉRIFIER FIRESTORE
+// FONCTION D'AFFICHAGE
 // ============================================================
 
-alert(
-    "COMMERÇANTS DISPONIBLES : " +
-    (
-        Array.isArray(comerciantes)
-            ? comerciantes.length
-            : "VARIABLE NON DISPONIBLE"
-    )
-);
+function afficherComerciantesBloc7() {
+
+    if (!merchantsListBloc7) {
+
+        alert(
+            "ERREUR — merchantsList introuvable"
+        );
+
+        return;
+
+    }
 
 
-// ============================================================
-// AFFICHAGE SIMPLE
-// ============================================================
+    if (
+        !Array.isArray(comerciantes)
+    ) {
 
-if (
-    merchantsListBloc7 &&
-    Array.isArray(comerciantes)
-) {
+        alert(
+            "ERREUR — comerciantes n'est pas un tableau"
+        );
+
+        return;
+
+    }
+
+
+    alert(
+        "AFFICHAGE — " +
+        comerciantes.length +
+        " commerçant(s)"
+    );
+
 
     merchantsListBloc7.innerHTML = "";
 
@@ -1755,7 +1768,9 @@ if (
         function(merchant) {
 
             const card =
-                document.createElement("article");
+                document.createElement(
+                    "article"
+                );
 
 
             card.className =
@@ -1836,7 +1851,7 @@ if (
 
 
     alert(
-        "CARTES CRÉÉES : " +
+        "CARTES AFFICHÉES — " +
         merchantsListBloc7.children.length
     );
 
@@ -1844,7 +1859,18 @@ if (
 
 
 // ============================================================
+// IMPORTANT
+// ============================================================
+//
+// On NE lance PAS afficherComerciantesBloc7()
+// immédiatement ici.
+//
+// Firestore doit d'abord charger les commerçants.
+// ============================================================
+
+
+// ============================================================
 // FIN
 // ============================================================
 
-alert("BLOC 7 — Étape 2 terminée");
+alert("BLOC 7 — Étape 3 terminé");
