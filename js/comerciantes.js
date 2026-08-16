@@ -1181,7 +1181,10 @@ function listenComerciantes() {
                     }
                 );
 
-
+alert(
+    "APRÈS FIRESTORE — comerciantes = " +
+    comerciantes.length
+);
                 // ------------------------------------------------
                 // STATISTIQUES
                 // ------------------------------------------------
