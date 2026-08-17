@@ -3277,25 +3277,21 @@ alert("BLOC 10 — Fin");
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
-// BLOC 11 — MODAL DÉTAILS
+// BLOC 11 — MODAL RÉEL DU COMERCIANTE
 // ============================================================
 
 alert("BLOC 11 — Début");
 
 
 // ============================================================
-// ÉLÉMENTS HTML DU MODAL
+// ÉLÉMENTS DU MODAL
 // ============================================================
 
 const merchantModalBlock11 =
-    document.getElementById(
-        "merchantModal"
-    );
+    document.getElementById("merchantModal");
 
 const closeMerchantModalBlock11 =
-    document.getElementById(
-        "closeMerchantModal"
-    );
+    document.getElementById("closeMerchantModal");
 
 
 // ============================================================
@@ -3308,32 +3304,22 @@ alert(
         merchantModalBlock11
             ? "TROUVÉ"
             : "INTROUVABLE"
-    ) +
-    "\n" +
-    "Bouton fermeture : " +
-    (
-        closeMerchantModalBlock11
-            ? "TROUVÉ"
-            : "INTROUVABLE"
     )
 );
 
 
 // ============================================================
-// COMMERÇANT ACTUEL
+// COMMERÇANT SÉLECTIONNÉ
 // ============================================================
 
-let merchantSelectedBlock11 =
-    null;
+let selectedMerchantBlock11 = null;
 
 
 // ============================================================
-// OUVRIR LE MODAL
+// FONCTION — REMPLIR LE MODAL
 // ============================================================
 
-function ouvrirModalComercianteBlock11(
-    merchant
-) {
+function openMerchantModalBlock11(merchant) {
 
     if (!merchant) {
 
@@ -3342,37 +3328,12 @@ function ouvrirModalComercianteBlock11(
     }
 
 
-    merchantSelectedBlock11 =
+    selectedMerchantBlock11 =
         merchant;
 
 
     // --------------------------------------------------------
-    // ÉLÉMENTS DU PROFIL
-    // --------------------------------------------------------
-
-    const merchantName =
-        document.getElementById(
-            "merchantName"
-        );
-
-    const merchantEmail =
-        document.getElementById(
-            "merchantEmail"
-        );
-
-    const merchantPhoto =
-        document.getElementById(
-            "merchantPhoto"
-        );
-
-    const merchantStatus =
-        document.getElementById(
-            "merchantStatus"
-        );
-
-
-    // --------------------------------------------------------
-    // INFORMATIONS
+    // NOM
     // --------------------------------------------------------
 
     const name =
@@ -3392,10 +3353,18 @@ function ouvrirModalComercianteBlock11(
         "Comerciante";
 
 
+    // --------------------------------------------------------
+    // EMAIL
+    // --------------------------------------------------------
+
     const email =
         merchant.email ||
         "-";
 
+
+    // --------------------------------------------------------
+    // PHOTO
+    // --------------------------------------------------------
 
     const photo =
         merchant.photoURL ||
@@ -3405,43 +3374,72 @@ function ouvrirModalComercianteBlock11(
         "images/avatar.png";
 
 
+    // --------------------------------------------------------
+    // STATUT
+    // --------------------------------------------------------
+
     const status =
-        getMerchantStatus(
-            merchant
+        typeof getMerchantStatus === "function"
+            ? getMerchantStatus(merchant)
+            : "active";
+
+
+    // --------------------------------------------------------
+    // ÉLÉMENTS HTML
+    // --------------------------------------------------------
+
+    const nameElement =
+        document.getElementById(
+            "merchantName"
+        );
+
+    const emailElement =
+        document.getElementById(
+            "merchantEmail"
+        );
+
+    const photoElement =
+        document.getElementById(
+            "merchantPhoto"
+        );
+
+    const statusElement =
+        document.getElementById(
+            "merchantStatus"
         );
 
 
     // --------------------------------------------------------
-    // REMPLIR LE MODAL
+    // REMPLIR
     // --------------------------------------------------------
 
-    if (merchantName) {
+    if (nameElement) {
 
-        merchantName.textContent =
+        nameElement.textContent =
             name;
 
     }
 
 
-    if (merchantEmail) {
+    if (emailElement) {
 
-        merchantEmail.textContent =
+        emailElement.textContent =
             email;
 
     }
 
 
-    if (merchantPhoto) {
+    if (photoElement) {
 
-        merchantPhoto.src =
+        photoElement.src =
             photo;
 
     }
 
 
-    if (merchantStatus) {
+    if (statusElement) {
 
-        merchantStatus.textContent =
+        statusElement.textContent =
             status === "blocked"
                 ? "Bloqueado"
                 : status === "pending"
@@ -3449,7 +3447,7 @@ function ouvrirModalComercianteBlock11(
                     : "Ativo";
 
 
-        merchantStatus.className =
+        statusElement.className =
             "merchantStatus " +
             status;
 
@@ -3457,7 +3455,156 @@ function ouvrirModalComercianteBlock11(
 
 
     // --------------------------------------------------------
-    // OUVRIR
+    // AUTRES INFORMATIONS
+    // --------------------------------------------------------
+
+    const shopNameElement =
+        document.getElementById(
+            "merchantShopName"
+        );
+
+    const phoneElement =
+        document.getElementById(
+            "merchantPhone"
+        );
+
+    const cityElement =
+        document.getElementById(
+            "merchantCity"
+        );
+
+    const addressElement =
+        document.getElementById(
+            "merchantAddress"
+        );
+
+    const licenseElement =
+        document.getElementById(
+            "merchantLicense"
+        );
+
+    const verificationElement =
+        document.getElementById(
+            "merchantVerification"
+        );
+
+    const createdElement =
+        document.getElementById(
+            "merchantCreatedAt"
+        );
+
+    const uidElement =
+        document.getElementById(
+            "merchantUid"
+        );
+
+
+    if (shopNameElement) {
+
+        shopNameElement.textContent =
+            merchant.shopName ||
+            merchant.storeName ||
+            merchant.shop ||
+            merchant.name ||
+            "Boutique sans nom";
+
+    }
+
+
+    if (phoneElement) {
+
+        phoneElement.textContent =
+            merchant.phone ||
+            merchant.telephone ||
+            "-";
+
+    }
+
+
+    if (cityElement) {
+
+        cityElement.textContent =
+            merchant.city ||
+            "-";
+
+    }
+
+
+    if (addressElement) {
+
+        addressElement.textContent =
+            merchant.address ||
+            merchant.street ||
+            "-";
+
+    }
+
+
+    if (licenseElement) {
+
+        licenseElement.textContent =
+            merchant.alvara ||
+            merchant.alvaraCommercial ||
+            merchant.license ||
+            "-";
+
+    }
+
+
+    if (verificationElement) {
+
+        verificationElement.textContent =
+            (
+                merchant.verified === true ||
+                merchant.isVerified === true ||
+                merchant.verificationStatus === "verified"
+            )
+                ? "Verificado"
+                : "Não verificado";
+
+    }
+
+
+    if (createdElement) {
+
+        const created =
+            typeof getMerchantCreatedMillis === "function"
+                ? getMerchantCreatedMillis(merchant)
+                : 0;
+
+
+        if (created) {
+
+            createdElement.textContent =
+                new Date(
+                    created
+                ).toLocaleDateString(
+                    "pt-PT"
+                );
+
+        }
+        else {
+
+            createdElement.textContent =
+                "-";
+
+        }
+
+    }
+
+
+    if (uidElement) {
+
+        uidElement.textContent =
+            merchant.id ||
+            merchant.uid ||
+            "-";
+
+    }
+
+
+    // --------------------------------------------------------
+    // OUVRIR LE VRAI MODAL HTML
     // --------------------------------------------------------
 
     if (merchantModalBlock11) {
@@ -3476,26 +3623,122 @@ function ouvrirModalComercianteBlock11(
 
 
     alert(
-        "BLOC 11 — Commerçant ouvert\n\n" +
-        "Nom : " +
-        name +
-        "\n" +
-        "Email : " +
-        email
+        "BLOC 11 — Modal ouvert\n\n" +
+        "Commerçant : " +
+        name
     );
 
 }
 
 
 // ============================================================
-// FERMER LE MODAL
+// INTERCEPTION DU BOUTON « VER DETALHES »
+// ============================================================
+//
+// Capture = true permet d'intercepter le clic AVANT
+// l'ancien gestionnaire qui affichait l'alerte.
+// ============================================================
+
+document.addEventListener(
+    "click",
+    function(event) {
+
+        const button =
+            event.target.closest(
+                ".viewMerchantButton"
+            );
+
+
+        if (!button) {
+
+            return;
+
+        }
+
+
+        // Empêcher l'ancien système
+        event.preventDefault();
+
+        event.stopPropagation();
+
+        event.stopImmediatePropagation();
+
+
+        // ----------------------------------------------------
+        // RÉCUPÉRER LA CARTE
+        // ----------------------------------------------------
+
+        const card =
+            button.closest(
+                ".merchantCard"
+            );
+
+
+        if (!card) {
+
+            return;
+
+        }
+
+
+        // ----------------------------------------------------
+        // TROUVER L'INDEX DU COMMERÇANT
+        // ----------------------------------------------------
+
+        const cards =
+            Array.from(
+                document.querySelectorAll(
+                    ".merchantCard"
+                )
+            );
+
+
+        const index =
+            cards.indexOf(card);
+
+
+        if (
+            index < 0 ||
+            !filteredComerciantes ||
+            !filteredComerciantes[index]
+        ) {
+
+            alert(
+                "BLOC 11 — Commerçant introuvable"
+            );
+
+            return;
+
+        }
+
+
+        const merchant =
+            filteredComerciantes[index];
+
+
+        openMerchantModalBlock11(
+            merchant
+        );
+
+    },
+    true
+);
+
+
+// ============================================================
+// FERMER AVEC LE X
 // ============================================================
 
 if (closeMerchantModalBlock11) {
 
     closeMerchantModalBlock11.addEventListener(
         "click",
-        function() {
+        function(event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
 
             if (merchantModalBlock11) {
 
