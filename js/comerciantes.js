@@ -6692,3 +6692,322 @@ if (saveMerchantStatus16) {
 // ============================================================
 
 alert("BLOC 16 — Fin");
+// ============================================================
+// TOMA ADMIN
+// COMERCIANTES.JS
+// BLOC 17 — SUPPRESSION SÉCURISÉE DU COMMERÇANT
+// ============================================================
+
+alert("BLOC 17 — Début");
+
+
+// ============================================================
+// BOUTON SUPPRIMER
+// ============================================================
+
+const deleteMerchantBlock17 =
+    document.getElementById("deleteMerchant");
+
+
+// ============================================================
+// VÉRIFICATION
+// ============================================================
+
+alert(
+    "BLOC 17 — Bouton supprimer : " +
+    (
+        deleteMerchantBlock17
+            ? "TROUVÉ"
+            : "INTROUVABLE"
+    )
+);
+
+
+// ============================================================
+// FONCTION — RÉCUPÉRER LE COMMERÇANT
+// ============================================================
+
+function getSelectedMerchantBlock17() {
+
+    if (
+        typeof selectedMerchantBlock11 !==
+        "undefined"
+        &&
+        selectedMerchantBlock11
+    ) {
+
+        return selectedMerchantBlock11;
+
+    }
+
+    return null;
+
+}
+
+
+// ============================================================
+// FONCTION — RÉCUPÉRER L'ID
+// ============================================================
+
+function getSelectedMerchantIdBlock17() {
+
+    const merchant =
+        getSelectedMerchantBlock17();
+
+
+    if (!merchant) {
+
+        return null;
+
+    }
+
+
+    return (
+        merchant.id ||
+        merchant.uid ||
+        merchant.userId ||
+        null
+    );
+
+}
+
+
+// ============================================================
+// SUPPRESSION
+// ============================================================
+
+if (deleteMerchantBlock17) {
+
+    deleteMerchantBlock17.addEventListener(
+        "click",
+        async function(event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+
+            const merchant =
+                getSelectedMerchantBlock17();
+
+
+            if (!merchant) {
+
+                alert(
+                    "BLOC 17 — Aucun commerçant sélectionné."
+                );
+
+                return;
+
+            }
+
+
+            const merchantId =
+                getSelectedMerchantIdBlock17();
+
+
+            if (!merchantId) {
+
+                alert(
+                    "BLOC 17 — ID du commerçant introuvable."
+                );
+
+                return;
+
+            }
+
+
+            const merchantName =
+                merchant.shopName ||
+                merchant.storeName ||
+                merchant.name ||
+                "ce commerçant";
+
+
+            // ====================================================
+            // PREMIÈRE CONFIRMATION
+            // ====================================================
+
+            const firstConfirmation =
+                window.confirm(
+                    "⚠️ ATTENTION\n\n" +
+                    "Vous êtes sur le point de supprimer :\n\n" +
+                    merchantName +
+                    "\n\n" +
+                    "Cette action est irréversible.\n\n" +
+                    "Voulez-vous continuer ?"
+                );
+
+
+            if (!firstConfirmation) {
+
+                return;
+
+            }
+
+
+            // ====================================================
+            // DEUXIÈME CONFIRMATION
+            // ====================================================
+
+            const secondConfirmation =
+                window.confirm(
+                    "🚨 DERNIÈRE CONFIRMATION\n\n" +
+                    "SUPPRIMER DÉFINITIVEMENT :\n\n" +
+                    merchantName +
+                    "\n\n" +
+                    "Cliquez sur OK uniquement si vous êtes certain."
+                );
+
+
+            if (!secondConfirmation) {
+
+                return;
+
+            }
+
+
+            // ====================================================
+            // SUPPRESSION FIRESTORE
+            // ====================================================
+
+            try {
+
+                alert(
+                    "BLOC 17 — Suppression en cours..."
+                );
+
+
+                const merchantRef =
+                    doc(
+                        db,
+                        "merchants",
+                        merchantId
+                    );
+
+
+                await deleteDoc(
+                    merchantRef
+                );
+
+
+                // =================================================
+                // RETIRER DU TABLEAU LOCAL
+                // =================================================
+
+                comerciantes =
+                    comerciantes.filter(
+                        function(item) {
+
+                            return (
+                                String(item.id) !==
+                                String(merchantId)
+                            );
+
+                        }
+                    );
+
+
+                filteredComerciantes =
+                    filteredComerciantes.filter(
+                        function(item) {
+
+                            return (
+                                String(item.id) !==
+                                String(merchantId)
+                            );
+
+                        }
+                    );
+
+
+                // =================================================
+                // ACTUALISER L'AFFICHAGE
+                // =================================================
+
+                if (
+                    typeof renderMerchantListCorrect ===
+                    "function"
+                ) {
+
+                    renderMerchantListCorrect(
+                        filteredComerciantes
+                    );
+
+                }
+                else if (
+                    typeof renderComerciantes ===
+                    "function"
+                ) {
+
+                    renderComerciantes(
+                        filteredComerciantes
+                    );
+
+                }
+
+
+                // =================================================
+                // FERMER LE MODAL
+                // =================================================
+
+                const merchantModal =
+                    document.getElementById(
+                        "merchantModal"
+                    );
+
+
+                if (merchantModal) {
+
+                    merchantModal.classList.add(
+                        "hidden"
+                    );
+
+                    merchantModal.setAttribute(
+                        "aria-hidden",
+                        "true"
+                    );
+
+                }
+
+
+                // =================================================
+                // FIN
+                // =================================================
+
+                alert(
+                    "BLOC 17 — Commerçant supprimé avec succès.\n\n" +
+                    merchantName
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Erreur suppression commerçant :",
+                    error
+                );
+
+
+                alert(
+                    "BLOC 17 — ERREUR FIRESTORE\n\n" +
+                    (
+                        error.message ||
+                        "Impossible de supprimer le commerçant."
+                    )
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// FIN BLOC 17
+// ============================================================
+
+alert("BLOC 17 — Fin");
