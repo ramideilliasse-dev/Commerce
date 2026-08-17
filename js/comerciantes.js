@@ -8012,3 +8012,282 @@ document.addEventListener(
 // ============================================================
 
 alert("BLOC 21 — Fin");
+// ============================================================
+// TOMA ADMIN
+// COMERCIANTES.JS
+// BLOC 22 — GESTION DES ERREURS ET MESSAGES ADMIN
+// ============================================================
+
+alert("BLOC 22 — Début");
+
+
+// ============================================================
+// TOAST
+// ============================================================
+
+function showMerchantToastBlock22(
+    message,
+    type = "success"
+) {
+
+    const toast =
+        document.getElementById("toast");
+
+    const toastMessage =
+        document.getElementById("toastMessage");
+
+
+    if (!toast || !toastMessage) {
+
+        alert(
+            "TOMA ADMIN\n\n" +
+            message
+        );
+
+        return;
+
+    }
+
+
+    toastMessage.textContent =
+        message;
+
+
+    toast.classList.remove(
+        "success",
+        "error",
+        "warning",
+        "show"
+    );
+
+
+    toast.classList.add(
+        type
+    );
+
+
+    // Petit délai pour permettre
+    // l'animation CSS.
+
+    setTimeout(
+        function() {
+
+            toast.classList.add(
+                "show"
+            );
+
+        },
+        10
+    );
+
+
+    setTimeout(
+        function() {
+
+            toast.classList.remove(
+                "show"
+            );
+
+        },
+        3000
+    );
+
+}
+
+
+// ============================================================
+// MESSAGE ERREUR FIRESTORE
+// ============================================================
+
+function showMerchantErrorBlock22(
+    error
+) {
+
+    console.error(
+        "TOMA ADMIN — Erreur :",
+        error
+    );
+
+
+    if (!error) {
+
+        showMerchantToastBlock22(
+            "Ocorreu um erro desconhecido.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const code =
+        String(
+            error.code ||
+            ""
+        );
+
+
+    if (
+        code ===
+        "permission-denied"
+    ) {
+
+        showMerchantToastBlock22(
+            "Acesso negado pelo Firebase.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (
+        code ===
+        "unauthenticated"
+    ) {
+
+        showMerchantToastBlock22(
+            "A sessão expirou. Entre novamente.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (
+        code ===
+        "not-found"
+    ) {
+
+        showMerchantToastBlock22(
+            "Comerciante não encontrado.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    showMerchantToastBlock22(
+        error.message ||
+        "Erro ao executar a operação.",
+        "error"
+    );
+
+}
+
+
+// ============================================================
+// VÉRIFICATION DU COMMERÇANT SÉLECTIONNÉ
+// ============================================================
+
+function validateSelectedMerchantBlock22() {
+
+    if (
+        typeof selectedMerchantBlock11 ===
+        "undefined" ||
+        !selectedMerchantBlock11
+    ) {
+
+        showMerchantToastBlock22(
+            "Nenhum comerciante selecionado.",
+            "warning"
+        );
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
+
+
+// ============================================================
+// FONCTION — OBTENIR L'ID DU COMMERÇANT
+// ============================================================
+
+function getSelectedMerchantIdBlock22() {
+
+    if (
+        !validateSelectedMerchantBlock22()
+    ) {
+
+        return null;
+
+    }
+
+
+    const merchant =
+        selectedMerchantBlock11;
+
+
+    return (
+        merchant.id ||
+        merchant.uid ||
+        null
+    );
+
+}
+
+
+// ============================================================
+// TEST DES ÉLÉMENTS
+// ============================================================
+
+const toastBlock22 =
+    document.getElementById(
+        "toast"
+    );
+
+
+const toastMessageBlock22 =
+    document.getElementById(
+        "toastMessage"
+    );
+
+
+alert(
+    "BLOC 22 — Toast : " +
+    (
+        toastBlock22
+            ? "TROUVÉ"
+            : "INTROUVABLE"
+    ) +
+    "\n\nMessage : " +
+    (
+        toastMessageBlock22
+            ? "TROUVÉ"
+            : "INTROUVABLE"
+    )
+);
+
+
+// ============================================================
+// GESTIONNAIRE D'ERREUR GLOBAL
+// ============================================================
+
+window.addEventListener(
+    "unhandledrejection",
+    function(event) {
+
+        console.error(
+            "TOMA ADMIN — Promise non gérée :",
+            event.reason
+        );
+
+    }
+);
+
+
+// ============================================================
+// FIN BLOC 22
+// ============================================================
+
+alert("BLOC 22 — Fin");
