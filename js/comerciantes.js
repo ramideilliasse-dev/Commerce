@@ -5637,3 +5637,371 @@ setInterval(
 // ============================================================
 
 alert("BLOC 14 — Fin");
+// ============================================================
+// TOMA ADMIN
+// COMERCIANTES.JS
+// BLOC 15 — STATISTIQUES RÉELLES DU COMMERÇANT
+// ============================================================
+
+alert("BLOC 15 — Début");
+
+
+// ============================================================
+// FONCTION — OBTENIR L'ID DU COMMERÇANT
+// ============================================================
+
+function getMerchantIdBlock15(merchant) {
+
+    if (!merchant) {
+        return null;
+    }
+
+    return (
+        merchant.id ||
+        merchant.uid ||
+        merchant.userId ||
+        null
+    );
+}
+
+
+// ============================================================
+// FONCTION — CHARGER LES PRODUITS
+// ============================================================
+
+async function getMerchantProductCountBlock15(merchant) {
+
+    const merchantId =
+        getMerchantIdBlock15(merchant);
+
+    if (!merchantId) {
+        return 0;
+    }
+
+    try {
+
+        const productsSnapshot =
+            await new Promise(
+                function(resolve, reject) {
+
+                    const unsubscribe =
+                        onSnapshot(
+                            collection(
+                                db,
+                                "products"
+                            ),
+
+                            function(snapshot) {
+
+                                unsubscribe();
+
+                                resolve(snapshot);
+
+                            },
+
+                            function(error) {
+
+                                unsubscribe();
+
+                                reject(error);
+
+                            }
+                        );
+
+                }
+            );
+
+
+        let count = 0;
+
+
+        productsSnapshot.forEach(
+            function(productDoc) {
+
+                const product =
+                    productDoc.data();
+
+
+                const productMerchantId =
+                    product.merchantId ||
+                    product.merchantUid ||
+                    product.ownerId ||
+                    product.userId ||
+                    "";
+
+
+                if (
+                    String(productMerchantId) ===
+                    String(merchantId)
+                ) {
+
+                    count++;
+
+                }
+
+            }
+        );
+
+
+        return count;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "BLOC 15 — Erreur produits :",
+            error
+        );
+
+        return 0;
+
+    }
+
+}
+
+
+// ============================================================
+// FONCTION — CHARGER LES COMMANDES
+// ============================================================
+
+async function getMerchantOrderCountBlock15(merchant) {
+
+    const merchantId =
+        getMerchantIdBlock15(merchant);
+
+    if (!merchantId) {
+        return 0;
+    }
+
+    try {
+
+        const ordersSnapshot =
+            await new Promise(
+                function(resolve, reject) {
+
+                    const unsubscribe =
+                        onSnapshot(
+                            collection(
+                                db,
+                                "orders"
+                            ),
+
+                            function(snapshot) {
+
+                                unsubscribe();
+
+                                resolve(snapshot);
+
+                            },
+
+                            function(error) {
+
+                                unsubscribe();
+
+                                reject(error);
+
+                            }
+
+                        );
+
+                }
+            );
+
+
+        let count = 0;
+
+
+        ordersSnapshot.forEach(
+            function(orderDoc) {
+
+                const order =
+                    orderDoc.data();
+
+
+                const orderMerchantId =
+                    order.merchantId ||
+                    order.merchantUid ||
+                    order.shopOwnerId ||
+                    "";
+
+
+                if (
+                    String(orderMerchantId) ===
+                    String(merchantId)
+                ) {
+
+                    count++;
+
+                }
+
+            }
+        );
+
+
+        return count;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "BLOC 15 — Erreur commandes :",
+            error
+        );
+
+        return 0;
+
+    }
+
+}
+
+
+// ============================================================
+// FONCTION — METTRE À JOUR LE MODAL
+// ============================================================
+
+async function updateMerchantRealStatsBlock15(
+    merchant
+) {
+
+    if (!merchant) {
+        return;
+    }
+
+
+    alert(
+        "BLOC 15 — Chargement statistiques\n\n" +
+        "Commerçant : " +
+        (
+            merchant.name ||
+            merchant.shopName ||
+            merchant.id ||
+            "-"
+        )
+    );
+
+
+    const productCount =
+        await getMerchantProductCountBlock15(
+            merchant
+        );
+
+
+    const orderCount =
+        await getMerchantOrderCountBlock15(
+            merchant
+        );
+
+
+    const productElement =
+        document.getElementById(
+            "merchantProductCount"
+        );
+
+
+    const salesElement =
+        document.getElementById(
+            "merchantSales"
+        );
+
+
+    if (productElement) {
+
+        productElement.textContent =
+            productCount;
+
+    }
+
+
+    if (salesElement) {
+
+        salesElement.textContent =
+            orderCount;
+
+    }
+
+
+    alert(
+        "BLOC 15 — Statistiques terminées\n\n" +
+        "Produtos : " +
+        productCount +
+        "\n" +
+        "Vendas : " +
+        orderCount
+    );
+
+}
+
+
+// ============================================================
+// SURVEILLER L'OUVERTURE DU MODAL
+// ============================================================
+
+let lastMerchantStatsBlock15 =
+    null;
+
+
+setInterval(
+    function() {
+
+        if (
+            typeof selectedMerchantBlock11 ===
+            "undefined"
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            !selectedMerchantBlock11
+        ) {
+
+            return;
+
+        }
+
+
+        const merchantId =
+            getMerchantIdBlock15(
+                selectedMerchantBlock11
+            );
+
+
+        if (!merchantId) {
+
+            return;
+
+        }
+
+
+        if (
+            merchantId ===
+            lastMerchantStatsBlock15
+        ) {
+
+            return;
+
+        }
+
+
+        lastMerchantStatsBlock15 =
+            merchantId;
+
+
+        updateMerchantRealStatsBlock15(
+            selectedMerchantBlock11
+        );
+
+    },
+    500
+);
+
+
+// ============================================================
+// FIN BLOC 15
+// ============================================================
+
+alert("BLOC 15 — Fin");
