@@ -6005,3 +6005,690 @@ setInterval(
 // ============================================================
 
 alert("BLOC 15 — Fin");
+// ============================================================
+// TOMA ADMIN
+// COMERCIANTES.JS
+// BLOC 16 — ACTIONS ADMINISTRATIVES
+// BLOQUER / VÉRIFIER / CHANGER LE STATUT
+// ============================================================
+
+alert("BLOC 16 — Début");
+
+
+// ============================================================
+// ÉLÉMENTS HTML
+// ============================================================
+
+const toggleMerchantBlock16 =
+    document.getElementById("toggleMerchantBlock");
+
+const verifyMerchant16 =
+    document.getElementById("verifyMerchant");
+
+const changeMerchantStatus16 =
+    document.getElementById("changeMerchantStatus");
+
+const statusModal16 =
+    document.getElementById("statusModal");
+
+const closeStatusModal16 =
+    document.getElementById("closeStatusModal");
+
+const statusSelect16 =
+    document.getElementById("statusSelect");
+
+const saveMerchantStatus16 =
+    document.getElementById("saveMerchantStatus");
+
+const cancelStatusChange16 =
+    document.getElementById("cancelStatusChange");
+
+
+// ============================================================
+// VÉRIFICATION
+// ============================================================
+
+alert(
+    "BLOC 16 — Boutons\n\n" +
+
+    "Bloquer : " +
+    (
+        toggleMerchantBlock16
+            ? "TROUVÉ"
+            : "INTROUVABLE"
+    ) +
+
+    "\nVerificar : " +
+    (
+        verifyMerchant16
+            ? "TROUVÉ"
+            : "INTROUVABLE"
+    ) +
+
+    "\nAlterar estado : " +
+    (
+        changeMerchantStatus16
+            ? "TROUVÉ"
+            : "INTROUVABLE"
+    )
+);
+
+
+// ============================================================
+// OBTENIR LE COMMERÇANT ACTUEL
+// ============================================================
+
+function getSelectedMerchantBlock16() {
+
+    if (
+        typeof selectedMerchantBlock11 !==
+        "undefined"
+        &&
+        selectedMerchantBlock11
+    ) {
+
+        return selectedMerchantBlock11;
+
+    }
+
+    return null;
+
+}
+
+
+// ============================================================
+// OBTENIR L'ID
+// ============================================================
+
+function getSelectedMerchantIdBlock16() {
+
+    const merchant =
+        getSelectedMerchantBlock16();
+
+
+    if (!merchant) {
+
+        return null;
+
+    }
+
+
+    return (
+        merchant.id ||
+        merchant.uid ||
+        merchant.userId ||
+        null
+    );
+
+}
+
+
+// ============================================================
+// MESSAGE — COMMERÇANT NON SÉLECTIONNÉ
+// ============================================================
+
+function merchantNotSelectedBlock16() {
+
+    alert(
+        "BLOC 16 — Aucun commerçant sélectionné."
+    );
+
+}
+
+
+// ============================================================
+// BLOQUER / DÉBLOQUER
+// ============================================================
+
+if (toggleMerchantBlock16) {
+
+    toggleMerchantBlock16.addEventListener(
+        "click",
+        async function(event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+
+            const merchant =
+                getSelectedMerchantBlock16();
+
+
+            if (!merchant) {
+
+                merchantNotSelectedBlock16();
+
+                return;
+
+            }
+
+
+            const merchantId =
+                getSelectedMerchantIdBlock16();
+
+
+            if (!merchantId) {
+
+                alert(
+                    "BLOC 16 — ID du commerçant introuvable."
+                );
+
+                return;
+
+            }
+
+
+            const currentStatus =
+                typeof getMerchantStatus ===
+                "function"
+                    ? getMerchantStatus(
+                        merchant
+                    )
+                    : "active";
+
+
+            const newStatus =
+                currentStatus === "blocked"
+                    ? "approved"
+                    : "blocked";
+
+
+            const actionText =
+                newStatus === "blocked"
+                    ? "bloquer"
+                    : "débloquer";
+
+
+            const confirmed =
+                window.confirm(
+                    "Voulez-vous " +
+                    actionText +
+                    " ce commerçant ?"
+                );
+
+
+            if (!confirmed) {
+
+                return;
+
+            }
+
+
+            try {
+
+                const merchantRef =
+                    doc(
+                        db,
+                        "merchants",
+                        merchantId
+                    );
+
+
+                await updateDoc(
+                    merchantRef,
+                    {
+                        status:
+                            newStatus
+                    }
+                );
+
+
+                merchant.status =
+                    newStatus;
+
+
+                alert(
+                    "BLOC 16 — Statut modifié\n\n" +
+                    "Nouveau statut : " +
+                    newStatus
+                );
+
+
+                if (
+                    typeof openMerchantModalBlock11 ===
+                    "function"
+                ) {
+
+                    openMerchantModalBlock11(
+                        merchant
+                    );
+
+                }
+
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Erreur blocage commerçant :",
+                    error
+                );
+
+
+                alert(
+                    "BLOC 16 — Erreur Firestore\n\n" +
+                    (
+                        error.message ||
+                        "Impossible de modifier le statut."
+                    )
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// VÉRIFIER LE COMMERÇANT
+// ============================================================
+
+if (verifyMerchant16) {
+
+    verifyMerchant16.addEventListener(
+        "click",
+        async function(event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+
+            const merchant =
+                getSelectedMerchantBlock16();
+
+
+            if (!merchant) {
+
+                merchantNotSelectedBlock16();
+
+                return;
+
+            }
+
+
+            const merchantId =
+                getSelectedMerchantIdBlock16();
+
+
+            if (!merchantId) {
+
+                alert(
+                    "BLOC 16 — ID du commerçant introuvable."
+                );
+
+                return;
+
+            }
+
+
+            const alreadyVerified =
+                merchant.verified === true ||
+                merchant.isVerified === true ||
+                String(
+                    merchant.verificationStatus ||
+                    ""
+                ).toLowerCase() === "verified";
+
+
+            if (alreadyVerified) {
+
+                alert(
+                    "Ce commerçant est déjà vérifié."
+                );
+
+                return;
+
+            }
+
+
+            const confirmed =
+                window.confirm(
+                    "Voulez-vous vérifier ce commerçant ?"
+                );
+
+
+            if (!confirmed) {
+
+                return;
+
+            }
+
+
+            try {
+
+                const merchantRef =
+                    doc(
+                        db,
+                        "merchants",
+                        merchantId
+                    );
+
+
+                await updateDoc(
+                    merchantRef,
+                    {
+                        verified: true,
+                        verificationStatus:
+                            "verified"
+                    }
+                );
+
+
+                merchant.verified =
+                    true;
+
+                merchant.verificationStatus =
+                    "verified";
+
+
+                const verificationElement =
+                    document.getElementById(
+                        "merchantVerification"
+                    );
+
+
+                if (verificationElement) {
+
+                    verificationElement.textContent =
+                        "Verificado";
+
+                }
+
+
+                alert(
+                    "BLOC 16 — Commerçant vérifié avec succès."
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Erreur vérification :",
+                    error
+                );
+
+
+                alert(
+                    "BLOC 16 — Erreur Firestore\n\n" +
+                    (
+                        error.message ||
+                        "Impossible de vérifier le commerçant."
+                    )
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// OUVRIR LE MODAL — CHANGER ÉTAT
+// ============================================================
+
+if (changeMerchantStatus16) {
+
+    changeMerchantStatus16.addEventListener(
+        "click",
+        function(event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+
+            const merchant =
+                getSelectedMerchantBlock16();
+
+
+            if (!merchant) {
+
+                merchantNotSelectedBlock16();
+
+                return;
+
+            }
+
+
+            const currentStatus =
+                typeof getMerchantStatus ===
+                "function"
+                    ? getMerchantStatus(
+                        merchant
+                    )
+                    : "active";
+
+
+            if (statusSelect16) {
+
+                statusSelect16.value =
+                    currentStatus;
+
+            }
+
+
+            if (statusModal16) {
+
+                statusModal16.classList.remove(
+                    "hidden"
+                );
+
+                statusModal16.setAttribute(
+                    "aria-hidden",
+                    "false"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// FERMER MODAL ÉTAT
+// ============================================================
+
+function closeStatusModalBlock16() {
+
+    if (statusModal16) {
+
+        statusModal16.classList.add(
+            "hidden"
+        );
+
+        statusModal16.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+    }
+
+}
+
+
+if (closeStatusModal16) {
+
+    closeStatusModal16.addEventListener(
+        "click",
+        closeStatusModalBlock16
+    );
+
+}
+
+
+if (cancelStatusChange16) {
+
+    cancelStatusChange16.addEventListener(
+        "click",
+        closeStatusModalBlock16
+    );
+
+}
+
+
+// ============================================================
+// SAUVEGARDER NOUVEAU STATUT
+// ============================================================
+
+if (saveMerchantStatus16) {
+
+    saveMerchantStatus16.addEventListener(
+        "click",
+        async function(event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+
+            const merchant =
+                getSelectedMerchantBlock16();
+
+
+            if (!merchant) {
+
+                merchantNotSelectedBlock16();
+
+                return;
+
+            }
+
+
+            const merchantId =
+                getSelectedMerchantIdBlock16();
+
+
+            if (!merchantId) {
+
+                alert(
+                    "BLOC 16 — ID du commerçant introuvable."
+                );
+
+                return;
+
+            }
+
+
+            const newStatus =
+                statusSelect16
+                    ? statusSelect16.value
+                    : "active";
+
+
+            if (
+                newStatus !== "active" &&
+                newStatus !== "pending" &&
+                newStatus !== "blocked"
+            ) {
+
+                alert(
+                    "BLOC 16 — Statut invalide."
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                const merchantRef =
+                    doc(
+                        db,
+                        "merchants",
+                        merchantId
+                    );
+
+
+                const firestoreStatus =
+                    newStatus === "active"
+                        ? "approved"
+                        : newStatus;
+
+
+                await updateDoc(
+                    merchantRef,
+                    {
+                        status:
+                            firestoreStatus
+                    }
+                );
+
+
+                merchant.status =
+                    firestoreStatus;
+
+
+                closeStatusModalBlock16();
+
+
+                const statusElement =
+                    document.getElementById(
+                        "merchantStatus"
+                    );
+
+
+                if (statusElement) {
+
+                    statusElement.textContent =
+                        newStatus === "blocked"
+                            ? "Bloqueado"
+                            : newStatus === "pending"
+                                ? "Pendente"
+                                : "Ativo";
+
+
+                    statusElement.className =
+                        "merchantStatus " +
+                        newStatus;
+
+                }
+
+
+                alert(
+                    "BLOC 16 — Estado guardado\n\n" +
+                    "Novo estado : " +
+                    newStatus
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Erreur changement statut :",
+                    error
+                );
+
+
+                alert(
+                    "BLOC 16 — Erreur Firestore\n\n" +
+                    (
+                        error.message ||
+                        "Impossible de changer le statut."
+                    )
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// FIN BLOC 16
+// ============================================================
+
+alert("BLOC 16 — Fin");
