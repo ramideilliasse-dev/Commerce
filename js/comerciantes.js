@@ -9,7 +9,7 @@
 // ALERTE — DÉBUT BLOC 1
 // ============================================================
 
-alert("TOMA ADMIN — Comerciantes JS : Bloc 1 démarré");
+
 
 
 // ============================================================
@@ -74,10 +74,7 @@ const errorState =
 const retryButton =
     document.getElementById("retryButton");
 
-alert(
-    "TEST HTML — totalMerchants = " +
-    document.getElementById("totalMerchants")
-);
+
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
@@ -85,7 +82,7 @@ alert(
 // RÉFÉRENCES EXACTES DES STATISTIQUES HTML
 // ============================================================
 
-alert("BLOC 5 — Début");
+
 
 
 // ============================================================
@@ -107,30 +104,6 @@ const pendingComerciantes =
 // ============================================================
 // TEST DES ÉLÉMENTS
 // ============================================================
-
-alert(
-    "BLOC 5 — Éléments statistiques\n\n" +
-
-    "Total : " +
-    (totalMerchants
-        ? "TROUVÉ"
-        : "INTROUVABLE") +
-
-    "\n\nActifs : " +
-    (activeMerchants
-        ? "TROUVÉ"
-        : "INTROUVABLE") +
-
-    "\n\nBloqués : " +
-    (blockedMerchants
-        ? "TROUVÉ"
-        : "INTROUVABLE") +
-
-    "\n\nPendents : " +
-    (pendingMerchants
-        ? "TROUVÉ"
-        : "INTROUVABLE")
-);
 
 
 // ============================================================
@@ -166,7 +139,7 @@ if (pendingMerchants) {
 // FIN BLOC 5
 // ============================================================
 
-alert("BLOC 5 — Fin");
+
 // ============================================================
 // MODAL — DÉTAILS COMMERÇANT
 // ============================================================
@@ -182,7 +155,7 @@ const closeComercianteModal =
 // ALERTE — FIN BLOC 1
 // ============================================================
 
-alert("TOMA ADMIN — Comerciantes JS : Bloc 1 terminé");
+
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
@@ -194,9 +167,7 @@ alert("TOMA ADMIN — Comerciantes JS : Bloc 1 terminé");
 // ALERTE — DÉBUT BLOC 2
 // ============================================================
 
-alert(
-    "TOMA ADMIN — Comerciantes JS : Bloc 2 démarrado"
-);
+
 
 
 // ============================================================
@@ -489,9 +460,7 @@ onAuthStateChanged(
 // ALERTE — FIN BLOC 2
 // ============================================================
 
-alert(
-    "TOMA ADMIN — Comerciantes JS : Bloc 2 terminado"
-);
+
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS — BLOC 3
@@ -503,7 +472,7 @@ alert(
 // ALERTE — DÉBUT BLOC 3
 // ============================================================
 
-alert("TOMA ADMIN — Comerciantes JS : Bloc 3 démarrado");
+
 
 
 // ============================================================
@@ -1096,16 +1065,14 @@ function getMerchantOwnerName(
 // ALERTE — FIN BLOC 3
 // ============================================================
 
-alert(
-    "TOMA ADMIN — Comerciantes JS : Bloc 3 terminado"
-);
+
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
 // BLOC 4 — FIRESTORE + STATISTIQUES
 // ============================================================
 
-alert("BLOC 4 — Début");
+
 
 
 // ============================================================
@@ -1114,7 +1081,7 @@ alert("BLOC 4 — Début");
 
 function listenComerciantes() {
 
-    alert("BLOC 4 — Firestore démarrage");
+    
 
 
     // --------------------------------------------------------
@@ -1152,11 +1119,7 @@ function listenComerciantes() {
 
             function(snapshot) {
 
-                alert(
-                    "FIRESTORE : " +
-                    snapshot.size +
-                    " commerçant(s)"
-                );
+                
 
 
                 // ------------------------------------------------
@@ -1181,10 +1144,7 @@ function listenComerciantes() {
                     }
                 );
 
-alert(
-    "APRÈS FIRESTORE — comerciantes = " +
-    comerciantes.length
-);
+
              afficherComerciantesBloc7();
                 // ------------------------------------------------
                 // STATISTIQUES
@@ -1319,25 +1279,13 @@ alert(
                         pending;
 
                 }
-alert(
-    "ÉLÉMENTS HTML\n\n" +
-    "Total trouvé : " + !!totalElement + "\n" +
-    "Actifs trouvé : " + !!activeElement + "\n" +
-    "Bloqués trouvé : " + !!blockedElement + "\n" +
-    "Pendants trouvé : " + !!pendingElement
-);
+
 
                 // ------------------------------------------------
                 // DEBUG
                 // ------------------------------------------------
 
-                alert(
-                    "STATS\n\n" +
-                    "Total : " + total + "\n" +
-                    "Ativos : " + active + "\n" +
-                    "Bloqueados : " + blocked + "\n" +
-                    "Pendentes : " + pending
-                );
+                
 
 
                 // ------------------------------------------------
@@ -1379,15 +1327,7 @@ alert(
 
             function(error) {
 
-                alert(
-                    "ERREUR FIRESTORE\n\n" +
-                    (
-                        error.message ||
-                        "Erreur inconnue"
-                    )
-                );
-
-
+                
                 console.error(
                     "Erreur merchants:",
                     error
@@ -1416,9 +1356,7 @@ if (merchantRefreshButton) {
         "click",
         function() {
 
-            alert(
-                "Actualisation des commerçants..."
-            );
+            
 
 
             listenComerciantes();
@@ -1440,7 +1378,7 @@ listenComerciantes();
 // ALERTE FIN
 // ============================================================
 
-alert("BLOC 4 — Fin");
+
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
@@ -1448,7 +1386,6 @@ alert("BLOC 4 — Fin");
 // FILTRES — TODOS / ATIVOS / BLOQUEADOS / PENDENTES
 // ============================================================
 
-alert("BLOC 6 — Début");
 
 
 // ============================================================
@@ -1650,14 +1587,7 @@ document.querySelectorAll(".filterButton").forEach(
                 // DEBUG
                 // ------------------------------------------------
 
-                alert(
-                    "FILTRO SELECIONADO : " +
-                    currentFilter +
-                    "\n\n" +
-                    "Comerciantes encontrados : " +
-                    filteredComerciantes.length
-                );
-
+                
             }
         );
 
@@ -1697,14 +1627,14 @@ if (
 // FIN BLOC 6
 // ============================================================
 
-alert("BLOC 6 — Fin");
+
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
 // BLOC 7 — AFFICHAGE APRÈS FIRESTORE
 // ============================================================
 
-alert("BLOC 7 — Étape 3 début");
+
 
 
 // ============================================================
@@ -1715,14 +1645,6 @@ const merchantsListBloc7 =
     document.getElementById("merchantsList");
 
 
-alert(
-    "LISTE HTML : " +
-    (
-        merchantsListBloc7
-            ? "TROUVÉE"
-            : "INTROUVABLE"
-    )
-);
 
 
 // ============================================================
@@ -1733,9 +1655,7 @@ function afficherComerciantesBloc7() {
 
     if (!merchantsListBloc7) {
 
-        alert(
-            "ERREUR — merchantsList introuvable"
-        );
+        
 
         return;
 
@@ -1746,22 +1666,14 @@ function afficherComerciantesBloc7() {
         !Array.isArray(comerciantes)
     ) {
 
-        alert(
-            "ERREUR — comerciantes n'est pas un tableau"
-        );
+        
 
         return;
 
     }
 
 
-    alert(
-        "AFFICHAGE — " +
-        comerciantes.length +
-        " commerçant(s)"
-    );
-
-
+    
     merchantsListBloc7.innerHTML = "";
 
 
@@ -1851,10 +1763,7 @@ function afficherComerciantesBloc7() {
     );
 
 
-    alert(
-        "CARTES AFFICHÉES — " +
-        merchantsListBloc7.children.length
-    );
+    
 
 }
 
@@ -1874,14 +1783,14 @@ function afficherComerciantesBloc7() {
 // FIN
 // ============================================================
 
-alert("BLOC 7 — Étape 3 terminé");
+
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
 // BLOC 8 — FILTRES PROPRES ET DÉFINITIFS
 // ============================================================
 
-alert("BLOC 8 — Début");
+
 
 
 // ============================================================
@@ -2089,10 +1998,7 @@ function appliquerFiltreBloc8(filter) {
 
     if (!merchantsListBloc7) {
 
-        alert(
-            "BLOC 8 — ERREUR : liste HTML introuvable"
-        );
-
+        
         return;
 
     }
@@ -2173,13 +2079,7 @@ function appliquerFiltreBloc8(filter) {
     // CONFIRMATION
     // --------------------------------------------------------
 
-    alert(
-        "BLOC 8 — " +
-        filter +
-        "\n" +
-        "Commerçants affichés : " +
-        result.length
-    );
+    
 
 }
 
@@ -2258,14 +2158,13 @@ filterButtonsClean.forEach(
 // FIN BLOC 8
 // ============================================================
 
-alert("BLOC 8 — Fin");
+
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
 // BLOC 9 — FILTRES + AFFICHAGE DÉFINITIF
 // ============================================================
 
-alert("BLOC 9 — Début");
 
 
 // ============================================================
@@ -2278,14 +2177,7 @@ const merchantsListBloc9 =
     );
 
 
-alert(
-    "BLOC 9 — Liste HTML : " +
-    (
-        merchantsListBloc9
-            ? "TROUVÉE"
-            : "INTROUVABLE"
-    )
-);
+
 
 
 // ============================================================
@@ -2861,24 +2753,7 @@ function afficherFiltreBloc9(
     // DEBUG
     // --------------------------------------------------------
 
-    alert(
-        "BLOC 9\n" +
-        "Filtre : " +
-        filter +
-        "\n" +
-        "Firestore : " +
-        comerciantes.length +
-        "\n" +
-        "Résultat : " +
-        result.length +
-        "\n" +
-        "Cartes : " +
-        (
-            merchantsListBloc9
-                ? merchantsListBloc9.children.length
-                : 0
-        )
-    );
+    
 
 }
 
@@ -2967,7 +2842,7 @@ if (
 // FIN
 // ============================================================
 
-alert("BLOC 9 — Fin");
+
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
