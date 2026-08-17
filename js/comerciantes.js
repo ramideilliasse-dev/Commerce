@@ -2259,3 +2259,712 @@ filterButtonsClean.forEach(
 // ============================================================
 
 alert("BLOC 8 — Fin");
+// ============================================================
+// TOMA ADMIN
+// COMERCIANTES.JS
+// BLOC 9 — FILTRES + AFFICHAGE DÉFINITIF
+// ============================================================
+
+alert("BLOC 9 — Début");
+
+
+// ============================================================
+// ÉLÉMENT LISTE
+// ============================================================
+
+const merchantsListBloc9 =
+    document.getElementById(
+        "merchantsList"
+    );
+
+
+alert(
+    "BLOC 9 — Liste HTML : " +
+    (
+        merchantsListBloc9
+            ? "TROUVÉE"
+            : "INTROUVABLE"
+    )
+);
+
+
+// ============================================================
+// CRÉER UNE CARTE
+// ============================================================
+
+function creerCarteMerchantBloc9(
+    merchant
+) {
+
+    const card =
+        document.createElement(
+            "article"
+        );
+
+
+    card.className =
+        "merchantCard";
+
+
+    // --------------------------------------------------------
+    // DONNÉES
+    // --------------------------------------------------------
+
+    const name =
+        merchant.name ||
+        merchant.ownerName ||
+        (
+            String(
+                (
+                    merchant.firstName ||
+                    ""
+                )
+            ) +
+            " " +
+            String(
+                (
+                    merchant.lastName ||
+                    ""
+                )
+            )
+        ).trim() ||
+        "Comerciante";
+
+
+    const shopName =
+        merchant.shopName ||
+        merchant.storeName ||
+        merchant.shop ||
+        merchant.name ||
+        "Boutique sans nom";
+
+
+    const email =
+        merchant.email ||
+        "Email indisponível";
+
+
+    const phone =
+        merchant.phone ||
+        merchant.telephone ||
+        "";
+
+
+    const city =
+        merchant.city ||
+        "";
+
+
+    const status =
+        getMerchantStatus(
+            merchant
+        );
+
+
+    // --------------------------------------------------------
+    // HTML
+    // --------------------------------------------------------
+
+    card.innerHTML = `
+
+        <div class="merchantCardLeft">
+
+            <div class="merchantCardInfo">
+
+                <h3 class="merchantName">
+                    ${escapeMerchantHtmlBloc9(name)}
+                </h3>
+
+
+                <p class="merchantShopName">
+                    ${escapeMerchantHtmlBloc9(shopName)}
+                </p>
+
+
+                <p class="merchantEmail">
+                    ${escapeMerchantHtmlBloc9(email)}
+                </p>
+
+
+                ${
+                    city
+                    ? `
+                        <p class="merchantCity">
+                            📍 ${escapeMerchantHtmlBloc9(city)}
+                        </p>
+                    `
+                    : ""
+                }
+
+
+                ${
+                    phone
+                    ? `
+                        <p class="merchantPhone">
+                            📞 ${escapeMerchantHtmlBloc9(phone)}
+                        </p>
+                    `
+                    : ""
+                }
+
+            </div>
+
+        </div>
+
+
+        <div class="merchantCardRight">
+
+            <span class="merchantCardStatus ${status}">
+                ${status}
+            </span>
+
+
+            <button
+                type="button"
+                class="viewMerchantButton"
+            >
+                Ver detalhes →
+            </button>
+
+        </div>
+
+    `;
+
+
+    // --------------------------------------------------------
+    // BOUTON DÉTAILS
+    // --------------------------------------------------------
+
+    const detailsButton =
+        card.querySelector(
+            ".viewMerchantButton"
+        );
+
+
+    if (detailsButton) {
+
+        detailsButton.addEventListener(
+            "click",
+            function() {
+
+                // Si ton ancien système possède
+                // une fonction de détails, on l'utilise.
+
+                if (
+                    typeof openMerchantDetails ===
+                    "function"
+                ) {
+
+                    openMerchantDetails(
+                        merchant
+                    );
+
+                    return;
+
+                }
+
+
+                if (
+                    typeof showMerchantDetails ===
+                    "function"
+                ) {
+
+                    showMerchantDetails(
+                        merchant
+                    );
+
+                    return;
+
+                }
+
+
+                if (
+                    typeof openMerchantModal ===
+                    "function"
+                ) {
+
+                    openMerchantModal(
+                        merchant
+                    );
+
+                    return;
+
+                }
+
+
+                alert(
+                    "Comerciante:\n\n" +
+                    (
+                        merchant.name ||
+                        "Sem nome"
+                    ) +
+                    "\n" +
+                    (
+                        merchant.email ||
+                        ""
+                    )
+                );
+
+            }
+        );
+
+    }
+
+
+    return card;
+
+}
+
+
+// ============================================================
+// PROTECTION HTML
+// ============================================================
+
+function escapeMerchantHtmlBloc9(
+    value
+) {
+
+    return String(
+        value === undefined ||
+        value === null
+            ? ""
+            : value
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+// ============================================================
+// FILTRAGE + AFFICHAGE
+// ============================================================
+
+function afficherFiltreBloc9(
+    filter
+) {
+
+    currentFilter =
+        filter;
+
+
+    // --------------------------------------------------------
+    // TOUJOURS PARTIR DE LA LISTE FIRESTORE ORIGINALE
+    // --------------------------------------------------------
+
+    let result =
+        Array.isArray(comerciantes)
+            ? [...comerciantes]
+            : [];
+
+
+    // --------------------------------------------------------
+    // ACTIVE
+    // --------------------------------------------------------
+
+    if (
+        filter === "active"
+    ) {
+
+        result =
+            result.filter(
+                function(merchant) {
+
+                    return (
+                        getMerchantStatus(
+                            merchant
+                        ) ===
+                        "active"
+                    );
+
+                }
+            );
+
+    }
+
+
+    // --------------------------------------------------------
+    // BLOCKED
+    // --------------------------------------------------------
+
+    else if (
+        filter === "blocked"
+    ) {
+
+        result =
+            result.filter(
+                function(merchant) {
+
+                    return (
+                        getMerchantStatus(
+                            merchant
+                        ) ===
+                        "blocked"
+                    );
+
+                }
+            );
+
+    }
+
+
+    // --------------------------------------------------------
+    // PENDING
+    // --------------------------------------------------------
+
+    else if (
+        filter === "pending"
+    ) {
+
+        result =
+            result.filter(
+                function(merchant) {
+
+                    return (
+                        getMerchantStatus(
+                            merchant
+                        ) ===
+                        "pending"
+                    );
+
+                }
+            );
+
+    }
+
+
+    // --------------------------------------------------------
+    // VERIFIED
+    // --------------------------------------------------------
+
+    else if (
+        filter === "verified"
+    ) {
+
+        result =
+            result.filter(
+                function(merchant) {
+
+                    return (
+                        merchant.verified === true ||
+                        merchant.isVerified === true ||
+                        String(
+                            merchant.verificationStatus ||
+                            ""
+                        )
+                        .toLowerCase() ===
+                        "verified"
+                    );
+
+                }
+            );
+
+    }
+
+
+    // --------------------------------------------------------
+    // UNVERIFIED
+    // --------------------------------------------------------
+
+    else if (
+        filter === "unverified"
+    ) {
+
+        result =
+            result.filter(
+                function(merchant) {
+
+                    return !(
+                        merchant.verified === true ||
+                        merchant.isVerified === true ||
+                        String(
+                            merchant.verificationStatus ||
+                            ""
+                        )
+                        .toLowerCase() ===
+                        "verified"
+                    );
+
+                }
+            );
+
+    }
+
+
+    // --------------------------------------------------------
+    // RECHERCHE
+    // --------------------------------------------------------
+
+    const searchValue =
+        searchInput?.value
+            ?.trim()
+            ?.toLowerCase() ||
+        "";
+
+
+    if (
+        searchValue
+    ) {
+
+        result =
+            result.filter(
+                function(merchant) {
+
+                    const text =
+                        (
+                            String(
+                                merchant.name ||
+                                ""
+                            ) +
+                            " " +
+                            String(
+                                merchant.shopName ||
+                                merchant.storeName ||
+                                merchant.shop ||
+                                ""
+                            ) +
+                            " " +
+                            String(
+                                merchant.email ||
+                                ""
+                            ) +
+                            " " +
+                            String(
+                                merchant.phone ||
+                                merchant.telephone ||
+                                ""
+                            ) +
+                            " " +
+                            String(
+                                merchant.city ||
+                                ""
+                            )
+                        )
+                        .toLowerCase();
+
+
+                    return text.includes(
+                        searchValue
+                    );
+
+                }
+            );
+
+    }
+
+
+    // --------------------------------------------------------
+    // MÉMORISER
+    // --------------------------------------------------------
+
+    filteredComerciantes =
+        result;
+
+
+    // --------------------------------------------------------
+    // VIDER
+    // --------------------------------------------------------
+
+    if (
+        merchantsListBloc9
+    ) {
+
+        merchantsListBloc9.innerHTML =
+            "";
+
+    }
+
+
+    // --------------------------------------------------------
+    // ÉTAT VIDE
+    // --------------------------------------------------------
+
+    if (
+        result.length === 0
+    ) {
+
+        if (
+            emptyState
+        ) {
+
+            emptyState.classList.remove(
+                "hidden"
+            );
+
+        }
+
+    }
+
+
+    // --------------------------------------------------------
+    // AFFICHER
+    // --------------------------------------------------------
+
+    else {
+
+        if (
+            emptyState
+        ) {
+
+            emptyState.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+        result.forEach(
+            function(merchant) {
+
+                const card =
+                    creerCarteMerchantBloc9(
+                        merchant
+                    );
+
+
+                if (
+                    card &&
+                    merchantsListBloc9
+                ) {
+
+                    merchantsListBloc9.appendChild(
+                        card
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    // --------------------------------------------------------
+    // DEBUG
+    // --------------------------------------------------------
+
+    alert(
+        "BLOC 9\n" +
+        "Filtre : " +
+        filter +
+        "\n" +
+        "Firestore : " +
+        comerciantes.length +
+        "\n" +
+        "Résultat : " +
+        result.length +
+        "\n" +
+        "Cartes : " +
+        (
+            merchantsListBloc9
+                ? merchantsListBloc9.children.length
+                : 0
+        )
+    );
+
+}
+
+
+// ============================================================
+// BOUTONS FILTRES
+// ============================================================
+//
+// On récupère les boutons ACTUELS après les blocs précédents.
+// ============================================================
+
+const buttonsBloc9 =
+    document.querySelectorAll(
+        ".filterButton"
+    );
+
+
+buttonsBloc9.forEach(
+    function(button) {
+
+        button.addEventListener(
+            "click",
+            function() {
+
+                // --------------------------------------------
+                // RETIRER L'ANCIEN ACTIVE
+                // --------------------------------------------
+
+                buttonsBloc9.forEach(
+                    function(item) {
+
+                        item.classList.remove(
+                            "active"
+                        );
+
+                    }
+                );
+
+
+                // --------------------------------------------
+                // ACTIVER LE BOUTON
+                // --------------------------------------------
+
+                button.classList.add(
+                    "active"
+                );
+
+
+                // --------------------------------------------
+                // FILTRE
+                // --------------------------------------------
+
+                const filter =
+                    button.dataset.filter ||
+                    "all";
+
+
+                afficherFiltreBloc9(
+                    filter
+                );
+
+            }
+        );
+
+    }
+);
+
+
+// ============================================================
+// AFFICHAGE INITIAL
+// ============================================================
+
+if (
+    Array.isArray(comerciantes)
+) {
+
+    afficherFiltreBloc9(
+        currentFilter ||
+        "all"
+    );
+
+}
+
+
+// ============================================================
+// FIN
+// ============================================================
+
+alert("BLOC 9 — Fin");
