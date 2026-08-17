@@ -3798,3 +3798,1123 @@ if (merchantModalBlock11) {
 // ============================================================
 
 alert("BLOC 11 — Fin");
+// ============================================================
+// TOMA ADMIN
+// COMERCIANTES.JS
+// BLOC 12 — AÇÕES ADMINISTRATIVAS
+// ============================================================
+
+alert("BLOC 12 — Début");
+
+
+// ============================================================
+// VÉRIFICATION DES ÉLÉMENTS HTML
+// ============================================================
+
+const toggleMerchantBlockBlock12 =
+    document.getElementById(
+        "toggleMerchantBlock"
+    );
+
+const verifyMerchantBlock12 =
+    document.getElementById(
+        "verifyMerchant"
+    );
+
+const changeMerchantStatusBlock12 =
+    document.getElementById(
+        "changeMerchantStatus"
+    );
+
+const deleteMerchantBlock12 =
+    document.getElementById(
+        "deleteMerchant"
+    );
+
+const statusModalBlock12 =
+    document.getElementById(
+        "statusModal"
+    );
+
+const closeStatusModalBlock12 =
+    document.getElementById(
+        "closeStatusModal"
+    );
+
+const statusSelectBlock12 =
+    document.getElementById(
+        "statusSelect"
+    );
+
+const saveMerchantStatusBlock12 =
+    document.getElementById(
+        "saveMerchantStatus"
+    );
+
+const cancelStatusChangeBlock12 =
+    document.getElementById(
+        "cancelStatusChange"
+    );
+
+const confirmModalBlock12 =
+    document.getElementById(
+        "confirmModal"
+    );
+
+const confirmTitleBlock12 =
+    document.getElementById(
+        "confirmTitle"
+    );
+
+const confirmTextBlock12 =
+    document.getElementById(
+        "confirmText"
+    );
+
+const confirmYesBlock12 =
+    document.getElementById(
+        "confirmYes"
+    );
+
+const confirmNoBlock12 =
+    document.getElementById(
+        "confirmNo"
+    );
+
+
+// ============================================================
+// FONCTION — OBTENIR LE COMMERÇANT SÉLECTIONNÉ
+// ============================================================
+
+function getSelectedMerchantBlock12() {
+
+    if (
+        typeof selectedMerchantBlock11 !==
+        "undefined" &&
+        selectedMerchantBlock11
+    ) {
+
+        return selectedMerchantBlock11;
+
+    }
+
+
+    alert(
+        "Nenhum comerciante selecionado."
+    );
+
+    return null;
+
+}
+
+
+// ============================================================
+// FONCTION — OBTENIR L'ID FIRESTORE
+// ============================================================
+
+function getSelectedMerchantIdBlock12() {
+
+    const merchant =
+        getSelectedMerchantBlock12();
+
+
+    if (!merchant) {
+
+        return null;
+
+    }
+
+
+    const id =
+        merchant.id ||
+        merchant.uid ||
+        null;
+
+
+    if (!id) {
+
+        alert(
+            "ERRO — ID do comerciante não encontrado."
+        );
+
+        return null;
+
+    }
+
+
+    return id;
+
+}
+
+
+// ============================================================
+// FONCTION — ATUALISER LE BOUTON BLOQUER
+// ============================================================
+
+function updateBlockButtonBlock12() {
+
+    if (!toggleMerchantBlockBlock12) {
+
+        return;
+
+    }
+
+
+    const merchant =
+        getSelectedMerchantBlock12();
+
+
+    if (!merchant) {
+
+        return;
+
+    }
+
+
+    const status =
+        typeof getMerchantStatus ===
+        "function"
+            ? getMerchantStatus(
+                merchant
+            )
+            : String(
+                merchant.status ||
+                "active"
+            ).toLowerCase();
+
+
+    if (
+        status ===
+        "blocked"
+    ) {
+
+        toggleMerchantBlockBlock12.textContent =
+            "🔓 Desbloquear comerciante";
+
+    }
+    else {
+
+        toggleMerchantBlockBlock12.textContent =
+            "🔒 Bloquear comerciante";
+
+    }
+
+}
+
+
+// ============================================================
+// FONCTION — METTRE À JOUR LE BOUTON VÉRIFICATION
+// ============================================================
+
+function updateVerifyButtonBlock12() {
+
+    if (!verifyMerchantBlock12) {
+
+        return;
+
+    }
+
+
+    const merchant =
+        getSelectedMerchantBlock12();
+
+
+    if (!merchant) {
+
+        return;
+
+    }
+
+
+    const verified =
+        merchant.verified === true ||
+        merchant.isVerified === true ||
+        merchant.verificationStatus ===
+        "verified";
+
+
+    if (verified) {
+
+        verifyMerchantBlock12.textContent =
+            "❌ Retirer verificação";
+
+    }
+    else {
+
+        verifyMerchantBlock12.textContent =
+            "✅ Verificar comerciante";
+
+    }
+
+}
+
+
+// ============================================================
+// FONCTION — RAFRAÎCHIR LES DONNÉES LOCALES
+// ============================================================
+
+function refreshSelectedMerchantBlock12(
+    merchantId,
+    newData
+) {
+
+    if (
+        !merchantId
+    ) {
+
+        return;
+
+    }
+
+
+    // --------------------------------------------------------
+    // COMERCIANTES
+    // --------------------------------------------------------
+
+    if (
+        Array.isArray(
+            comerciantes
+        )
+    ) {
+
+        const index =
+            comerciantes.findIndex(
+                function(merchant) {
+
+                    return (
+                        merchant.id ===
+                        merchantId
+                    );
+
+                }
+            );
+
+
+        if (
+            index !==
+            -1
+        ) {
+
+            comerciantes[index] = {
+
+                ...comerciantes[index],
+
+                ...newData
+
+            };
+
+        }
+
+    }
+
+
+    // --------------------------------------------------------
+    // COMMERÇANT SÉLECTIONNÉ
+    // --------------------------------------------------------
+
+    if (
+        typeof selectedMerchantBlock11 !==
+        "undefined" &&
+        selectedMerchantBlock11 &&
+        (
+            selectedMerchantBlock11.id ===
+            merchantId
+        )
+    ) {
+
+        selectedMerchantBlock11 = {
+
+            ...selectedMerchantBlock11,
+
+            ...newData
+
+        };
+
+    }
+
+
+    // --------------------------------------------------------
+    // REFAIRE LES STATS
+    // --------------------------------------------------------
+
+    if (
+        typeof updateMerchantStatistics ===
+        "function"
+    ) {
+
+        updateMerchantStatistics();
+
+    }
+
+
+    // --------------------------------------------------------
+    // REFAIRE LES FILTRES
+    // --------------------------------------------------------
+
+    if (
+        typeof applyMerchantFilters ===
+        "function"
+    ) {
+
+        applyMerchantFilters();
+
+    }
+    else if (
+        typeof applySearchBlock9 ===
+        "function"
+    ) {
+
+        applySearchBlock9();
+
+    }
+
+
+    // --------------------------------------------------------
+    // METTRE À JOUR LE MODAL
+    // --------------------------------------------------------
+
+    if (
+        typeof openMerchantModalBlock11 ===
+        "function" &&
+        selectedMerchantBlock11
+    ) {
+
+        openMerchantModalBlock11(
+            selectedMerchantBlock11
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// 🔒 BLOQUER / DÉBLOQUER
+// ============================================================
+
+if (
+    toggleMerchantBlockBlock12
+) {
+
+    toggleMerchantBlockBlock12.addEventListener(
+        "click",
+        async function(event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+
+            const merchant =
+                getSelectedMerchantBlock12();
+
+
+            if (!merchant) {
+
+                return;
+
+            }
+
+
+            const merchantId =
+                getSelectedMerchantIdBlock12();
+
+
+            if (!merchantId) {
+
+                return;
+
+            }
+
+
+            const currentStatus =
+                typeof getMerchantStatus ===
+                "function"
+                    ? getMerchantStatus(
+                        merchant
+                    )
+                    : String(
+                        merchant.status ||
+                        "active"
+                    ).toLowerCase();
+
+
+            const newStatus =
+                currentStatus ===
+                "blocked"
+                    ? "active"
+                    : "blocked";
+
+
+            const question =
+                newStatus ===
+                "blocked"
+                    ? "Bloquear este comerciante?"
+                    : "Desbloquear este comerciante?";
+
+
+            const confirmed =
+                window.confirm(
+                    question
+                );
+
+
+            if (!confirmed) {
+
+                return;
+
+            }
+
+
+            try {
+
+                alert(
+                    "Atualizando comerciante..."
+                );
+
+
+                await updateDoc(
+                    doc(
+                        db,
+                        "merchants",
+                        merchantId
+                    ),
+                    {
+                        status:
+                            newStatus
+                    }
+                );
+
+
+                refreshSelectedMerchantBlock12(
+                    merchantId,
+                    {
+                        status:
+                            newStatus
+                    }
+                );
+
+
+                alert(
+                    newStatus ===
+                    "blocked"
+                        ? "Comerciante bloqueado."
+                        : "Comerciante desbloqueado."
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Erro bloquear comerciante:",
+                    error
+                );
+
+
+                alert(
+                    "Erro ao alterar o estado:\n\n" +
+                    (
+                        error.message ||
+                        "Erro desconhecido."
+                    )
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// ✅ VERIFICAR / RETIRAR VERIFICAÇÃO
+// ============================================================
+
+if (
+    verifyMerchantBlock12
+) {
+
+    verifyMerchantBlock12.addEventListener(
+        "click",
+        async function(event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+
+            const merchant =
+                getSelectedMerchantBlock12();
+
+
+            if (!merchant) {
+
+                return;
+
+            }
+
+
+            const merchantId =
+                getSelectedMerchantIdBlock12();
+
+
+            if (!merchantId) {
+
+                return;
+
+            }
+
+
+            const verified =
+                merchant.verified === true ||
+                merchant.isVerified === true ||
+                merchant.verificationStatus ===
+                "verified";
+
+
+            const newVerified =
+                !verified;
+
+
+            const confirmed =
+                window.confirm(
+                    newVerified
+                        ? "Verificar este comerciante?"
+                        : "Retirar a verificação deste comerciante?"
+                );
+
+
+            if (!confirmed) {
+
+                return;
+
+            }
+
+
+            try {
+
+                await updateDoc(
+                    doc(
+                        db,
+                        "merchants",
+                        merchantId
+                    ),
+                    {
+                        verified:
+                            newVerified,
+
+                        verificationStatus:
+                            newVerified
+                                ? "verified"
+                                : "unverified"
+                    }
+                );
+
+
+                refreshSelectedMerchantBlock12(
+                    merchantId,
+                    {
+                        verified:
+                            newVerified,
+
+                        verificationStatus:
+                            newVerified
+                                ? "verified"
+                                : "unverified"
+                    }
+                );
+
+
+                alert(
+                    newVerified
+                        ? "Comerciante verificado."
+                        : "Verificação removida."
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Erro verificação:",
+                    error
+                );
+
+
+                alert(
+                    "Erro ao verificar comerciante:\n\n" +
+                    (
+                        error.message ||
+                        "Erro desconhecido."
+                    )
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// ⚙️ ABRIR ALTERAÇÃO DE ESTADO
+// ============================================================
+
+if (
+    changeMerchantStatusBlock12
+) {
+
+    changeMerchantStatusBlock12.addEventListener(
+        "click",
+        function(event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+
+            const merchant =
+                getSelectedMerchantBlock12();
+
+
+            if (!merchant) {
+
+                return;
+
+            }
+
+
+            const currentStatus =
+                typeof getMerchantStatus ===
+                "function"
+                    ? getMerchantStatus(
+                        merchant
+                    )
+                    : String(
+                        merchant.status ||
+                        "active"
+                    ).toLowerCase();
+
+
+            if (
+                statusSelectBlock12
+            ) {
+
+                statusSelectBlock12.value =
+                    currentStatus;
+
+            }
+
+
+            if (
+                statusModalBlock12
+            ) {
+
+                statusModalBlock12.classList.remove(
+                    "hidden"
+                );
+
+
+                statusModalBlock12.setAttribute(
+                    "aria-hidden",
+                    "false"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// 💾 GUARDAR NOVO ESTADO
+// ============================================================
+
+if (
+    saveMerchantStatusBlock12
+) {
+
+    saveMerchantStatusBlock12.addEventListener(
+        "click",
+        async function(event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+
+            const merchant =
+                getSelectedMerchantBlock12();
+
+
+            if (!merchant) {
+
+                return;
+
+            }
+
+
+            const merchantId =
+                getSelectedMerchantIdBlock12();
+
+
+            if (!merchantId) {
+
+                return;
+
+            }
+
+
+            const newStatus =
+                statusSelectBlock12
+                    ? statusSelectBlock12.value
+                    : "active";
+
+
+            if (
+                ![
+                    "active",
+                    "pending",
+                    "blocked"
+                ].includes(
+                    newStatus
+                )
+            ) {
+
+                alert(
+                    "Estado inválido."
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                await updateDoc(
+                    doc(
+                        db,
+                        "merchants",
+                        merchantId
+                    ),
+                    {
+                        status:
+                            newStatus
+                    }
+                );
+
+
+                refreshSelectedMerchantBlock12(
+                    merchantId,
+                    {
+                        status:
+                            newStatus
+                    }
+                );
+
+
+                if (
+                    statusModalBlock12
+                ) {
+
+                    statusModalBlock12.classList.add(
+                        "hidden"
+                    );
+
+
+                    statusModalBlock12.setAttribute(
+                        "aria-hidden",
+                        "true"
+                    );
+
+                }
+
+
+                alert(
+                    "Estado alterado para: " +
+                    newStatus
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Erro alterar estado:",
+                    error
+                );
+
+
+                alert(
+                    "Erro ao alterar estado:\n\n" +
+                    (
+                        error.message ||
+                        "Erro desconhecido."
+                    )
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// FERMER MODAL ÉTAT
+// ============================================================
+
+if (
+    closeStatusModalBlock12
+) {
+
+    closeStatusModalBlock12.addEventListener(
+        "click",
+        function(event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+
+            if (
+                statusModalBlock12
+            ) {
+
+                statusModalBlock12.classList.add(
+                    "hidden"
+                );
+
+
+                statusModalBlock12.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+if (
+    cancelStatusChangeBlock12
+) {
+
+    cancelStatusChangeBlock12.addEventListener(
+        "click",
+        function(event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+
+            if (
+                statusModalBlock12
+            ) {
+
+                statusModalBlock12.classList.add(
+                    "hidden"
+                );
+
+
+                statusModalBlock12.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// 🗑️ SUPPRIMER COMMERÇANT
+// ============================================================
+
+if (
+    deleteMerchantBlock12
+) {
+
+    deleteMerchantBlock12.addEventListener(
+        "click",
+        async function(event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+
+            const merchant =
+                getSelectedMerchantBlock12();
+
+
+            if (!merchant) {
+
+                return;
+
+            }
+
+
+            const merchantId =
+                getSelectedMerchantIdBlock12();
+
+
+            if (!merchantId) {
+
+                return;
+
+            }
+
+
+            const merchantName =
+                merchant.name ||
+                merchant.shopName ||
+                merchant.email ||
+                "ce commerçant";
+
+
+            const confirmed =
+                window.confirm(
+                    "Supprimer définitivement " +
+                    merchantName +
+                    " ?"
+                );
+
+
+            if (!confirmed) {
+
+                return;
+
+            }
+
+
+            try {
+
+                await deleteDoc(
+                    doc(
+                        db,
+                        "merchants",
+                        merchantId
+                    )
+                );
+
+
+                // ------------------------------------------------
+                // FERMER LE MODAL
+                // ------------------------------------------------
+
+                if (
+                    merchantModalBlock11
+                ) {
+
+                    merchantModalBlock11.classList.add(
+                        "hidden"
+                    );
+
+
+                    merchantModalBlock11.setAttribute(
+                        "aria-hidden",
+                        "true"
+                    );
+
+                }
+
+
+                // ------------------------------------------------
+                // RETIRER LOCALEMENT
+                // ------------------------------------------------
+
+                if (
+                    Array.isArray(
+                        comerciantes
+                    )
+                ) {
+
+                    comerciantes =
+                        comerciantes.filter(
+                            function(item) {
+
+                                return (
+                                    item.id !==
+                                    merchantId
+                                );
+
+                            }
+                        );
+
+                }
+
+
+                if (
+                    typeof updateMerchantStatistics ===
+                    "function"
+                ) {
+
+                    updateMerchantStatistics();
+
+                }
+
+
+                if (
+                    typeof applyMerchantFilters ===
+                    "function"
+                ) {
+
+                    applyMerchantFilters();
+
+                }
+
+
+                alert(
+                    "Comerciante eliminado com sucesso."
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Erro eliminar comerciante:",
+                    error
+                );
+
+
+                alert(
+                    "Erro ao eliminar comerciante:\n\n" +
+                    (
+                        error.message ||
+                        "Erro desconhecido."
+                    )
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// FIN
+// ============================================================
+
+updateBlockButtonBlock12();
+
+updateVerifyButtonBlock12();
+
+alert("BLOC 12 — Fin");
