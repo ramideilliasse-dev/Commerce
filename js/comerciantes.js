@@ -5357,3 +5357,283 @@ setInterval(
 // ============================================================
 
 alert("BLOC 13 — Fin");
+// ============================================================
+// TOMA ADMIN
+// COMERCIANTES.JS
+// BLOC 14 — SYNCHRONISATION DU MODAL
+// ============================================================
+
+alert("BLOC 14 — Début");
+
+
+// ============================================================
+// ÉLÉMENTS HTML
+// ============================================================
+
+const merchantProductCountBlock14 =
+    document.getElementById("merchantProductCount");
+
+const merchantSalesBlock14 =
+    document.getElementById("merchantSales");
+
+const merchantVerificationBlock14 =
+    document.getElementById("merchantVerification");
+
+const merchantCreatedAtBlock14 =
+    document.getElementById("merchantCreatedAt");
+
+const merchantUidBlock14 =
+    document.getElementById("merchantUid");
+
+
+// ============================================================
+// VÉRIFICATION
+// ============================================================
+
+alert(
+    "BLOC 14 — Éléments du modal\n\n" +
+    "Produtos : " +
+    (
+        merchantProductCountBlock14
+            ? "TROUVÉ"
+            : "INTROUVABLE"
+    ) +
+    "\n" +
+    "Vendas : " +
+    (
+        merchantSalesBlock14
+            ? "TROUVÉ"
+            : "INTROUVABLE"
+    ) +
+    "\n" +
+    "Verificação : " +
+    (
+        merchantVerificationBlock14
+            ? "TROUVÉ"
+            : "INTROUVABLE"
+    ) +
+    "\n" +
+    "Data : " +
+    (
+        merchantCreatedAtBlock14
+            ? "TROUVÉ"
+            : "INTROUVABLE"
+    ) +
+    "\n" +
+    "ID : " +
+    (
+        merchantUidBlock14
+            ? "TROUVÉ"
+            : "INTROUVABLE"
+    )
+);
+
+
+// ============================================================
+// FONCTION — ACTUALISER LES INFORMATIONS
+// ============================================================
+
+function refreshMerchantModalBlock14(
+    merchant
+) {
+
+    if (!merchant) {
+
+        return;
+
+    }
+
+
+    // --------------------------------------------------------
+    // ID
+    // --------------------------------------------------------
+
+    const merchantId =
+        merchant.id ||
+        merchant.uid ||
+        "-";
+
+
+    if (merchantUidBlock14) {
+
+        merchantUidBlock14.textContent =
+            merchantId;
+
+    }
+
+
+    // --------------------------------------------------------
+    // VÉRIFICATION
+    // --------------------------------------------------------
+
+    const verified =
+        merchant.verified === true ||
+        merchant.isVerified === true ||
+        String(
+            merchant.verificationStatus ||
+            ""
+        ).toLowerCase() === "verified";
+
+
+    if (merchantVerificationBlock14) {
+
+        merchantVerificationBlock14.textContent =
+            verified
+                ? "Verificado"
+                : "Não verificado";
+
+    }
+
+
+    // --------------------------------------------------------
+    // DATE
+    // --------------------------------------------------------
+
+    let created = 0;
+
+
+    if (
+        typeof getMerchantCreatedMillis ===
+        "function"
+    ) {
+
+        created =
+            getMerchantCreatedMillis(
+                merchant
+            );
+
+    }
+
+
+    if (merchantCreatedAtBlock14) {
+
+        if (created) {
+
+            merchantCreatedAtBlock14.textContent =
+                new Date(
+                    created
+                ).toLocaleDateString(
+                    "pt-PT",
+                    {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric"
+                    }
+                );
+
+        }
+        else {
+
+            merchantCreatedAtBlock14.textContent =
+                "-";
+
+        }
+
+    }
+
+
+    // --------------------------------------------------------
+    // PRODUITS
+    // --------------------------------------------------------
+
+    if (
+        merchantProductCountBlock14 &&
+        merchant.productCount !==
+        undefined
+    ) {
+
+        merchantProductCountBlock14.textContent =
+            merchant.productCount;
+
+    }
+
+
+    // --------------------------------------------------------
+    // VENTES
+    // --------------------------------------------------------
+
+    if (
+        merchantSalesBlock14 &&
+        merchant.salesCount !==
+        undefined
+    ) {
+
+        merchantSalesBlock14.textContent =
+            merchant.salesCount;
+
+    }
+
+}
+
+
+// ============================================================
+// SURVEILLANCE DU COMMERÇANT SÉLECTIONNÉ
+// ============================================================
+
+let lastMerchantIdBlock14 =
+    null;
+
+
+setInterval(
+    function() {
+
+        if (
+            typeof selectedMerchantBlock11 ===
+            "undefined"
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            !selectedMerchantBlock11
+        ) {
+
+            return;
+
+        }
+
+
+        const merchantId =
+            selectedMerchantBlock11.id ||
+            selectedMerchantBlock11.uid ||
+            null;
+
+
+        if (!merchantId) {
+
+            return;
+
+        }
+
+
+        if (
+            merchantId ===
+            lastMerchantIdBlock14
+        ) {
+
+            return;
+
+        }
+
+
+        lastMerchantIdBlock14 =
+            merchantId;
+
+
+        refreshMerchantModalBlock14(
+            selectedMerchantBlock11
+        );
+
+    },
+    500
+);
+
+
+// ============================================================
+// FIN
+// ============================================================
+
+alert("BLOC 14 — Fin");
