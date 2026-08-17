@@ -1878,23 +1878,24 @@ alert("BLOC 7 — Étape 3 terminé");
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
-// BLOC 8 — FILTRES CORRIGÉS
+// BLOC 8 — FILTRES PROPRES ET DÉFINITIFS
 // ============================================================
 
 alert("BLOC 8 — Début");
 
 
 // ============================================================
-// FONCTION FILTRAGE
+// FONCTION UNIQUE DE FILTRAGE + AFFICHAGE
 // ============================================================
 
 function appliquerFiltreBloc8(filter) {
 
-    alert(
-        "BLOC 8 — Filtre sélectionné : " +
-        filter
-    );
+    currentFilter = filter;
 
+
+    // --------------------------------------------------------
+    // COPIE DE LA LISTE FIRESTORE
+    // --------------------------------------------------------
 
     let result =
         Array.isArray(comerciantes)
@@ -1902,136 +1903,119 @@ function appliquerFiltreBloc8(filter) {
             : [];
 
 
-    // ========================================================
-    // TOUS
-    // ========================================================
+    // --------------------------------------------------------
+    // FILTRE ACTIFS
+    // --------------------------------------------------------
 
-    if (filter === "all") {
+    if (filter === "active") {
 
-        // Aucun filtrage
+        result = result.filter(
+            function(merchant) {
 
-    }
+                return (
+                    getMerchantStatus(merchant) ===
+                    "active"
+                );
 
-
-    // ========================================================
-    // ACTIFS
-    // ========================================================
-
-    else if (filter === "active") {
-
-        result =
-            result.filter(
-                function(merchant) {
-
-                    return (
-                        getMerchantStatus(
-                            merchant
-                        ) === "active"
-                    );
-
-                }
-            );
+            }
+        );
 
     }
 
 
-    // ========================================================
-    // BLOQUÉS
-    // ========================================================
+    // --------------------------------------------------------
+    // FILTRE BLOQUÉS
+    // --------------------------------------------------------
 
     else if (filter === "blocked") {
 
-        result =
-            result.filter(
-                function(merchant) {
+        result = result.filter(
+            function(merchant) {
 
-                    return (
-                        getMerchantStatus(
-                            merchant
-                        ) === "blocked"
-                    );
+                return (
+                    getMerchantStatus(merchant) ===
+                    "blocked"
+                );
 
-                }
-            );
+            }
+        );
 
     }
 
 
-    // ========================================================
-    // PENDANTS
-    // ========================================================
+    // --------------------------------------------------------
+    // FILTRE PENDANTS
+    // --------------------------------------------------------
 
     else if (filter === "pending") {
 
-        result =
-            result.filter(
-                function(merchant) {
+        result = result.filter(
+            function(merchant) {
 
-                    return (
-                        getMerchantStatus(
-                            merchant
-                        ) === "pending"
-                    );
+                return (
+                    getMerchantStatus(merchant) ===
+                    "pending"
+                );
 
-                }
-            );
+            }
+        );
 
     }
 
 
-    // ========================================================
-    // VÉRIFIÉS
-    // ========================================================
+    // --------------------------------------------------------
+    // FILTRE VÉRIFIÉS
+    // --------------------------------------------------------
 
     else if (filter === "verified") {
 
-        result =
-            result.filter(
-                function(merchant) {
+        result = result.filter(
+            function(merchant) {
 
-                    return (
-                        merchant.verified === true ||
-                        merchant.isVerified === true ||
-                        String(
-                            merchant.verificationStatus ||
-                            ""
-                        ).toLowerCase() === "verified"
-                    );
+                return (
+                    merchant.verified === true ||
+                    merchant.isVerified === true ||
+                    String(
+                        merchant.verificationStatus || ""
+                    )
+                    .trim()
+                    .toLowerCase() === "verified"
+                );
 
-                }
-            );
+            }
+        );
 
     }
 
 
-    // ========================================================
-    // NON VÉRIFIÉS
-    // ========================================================
+    // --------------------------------------------------------
+    // FILTRE NON VÉRIFIÉS
+    // --------------------------------------------------------
 
     else if (filter === "unverified") {
 
-        result =
-            result.filter(
-                function(merchant) {
+        result = result.filter(
+            function(merchant) {
 
-                    return !(
-                        merchant.verified === true ||
-                        merchant.isVerified === true ||
-                        String(
-                            merchant.verificationStatus ||
-                            ""
-                        ).toLowerCase() === "verified"
-                    );
+                return !(
+                    merchant.verified === true ||
+                    merchant.isVerified === true ||
+                    String(
+                        merchant.verificationStatus || ""
+                    )
+                    .trim()
+                    .toLowerCase() === "verified"
+                );
 
-                }
-            );
+            }
+        );
 
     }
 
 
-    // ========================================================
+    // --------------------------------------------------------
     // RECHERCHE
-    // ========================================================
+    // --------------------------------------------------------
 
     const searchValue =
         searchInput?.value
@@ -2041,170 +2025,44 @@ function appliquerFiltreBloc8(filter) {
 
     if (searchValue) {
 
-        result =
-            result.filter(
-                function(merchant) {
-
-                    const shopName =
-                        String(
-                            merchant.shopName ||
-                            merchant.storeName ||
-                            merchant.shop ||
-                            merchant.name ||
-                            ""
-                        ).toLowerCase();
-
-
-                    const email =
-                        String(
-                            merchant.email ||
-                            ""
-                        ).toLowerCase();
-
-
-                    const phone =
-                        String(
-                            merchant.phone ||
-                            merchant.telephone ||
-                            ""
-                        ).toLowerCase();
-
-
-                    const city =
-                        String(
-                            merchant.city ||
-                            ""
-                        ).toLowerCase();
-
-
-                    return (
-                        shopName.includes(searchValue) ||
-                        email.includes(searchValue) ||
-                        phone.includes(searchValue) ||
-                        city.includes(searchValue)
-                    );
-
-                }
-            );
-
-    }
-
-
-    // ========================================================
-    // MÉMORISER LE FILTRE
-    // ========================================================
-
-    currentFilter =
-        filter;
-
-
-    filteredComerciantes =
-        result;
-
-
-    // ========================================================
-    // AFFICHER
-    // ========================================================
-
-    afficherComerciantesBloc7();
-
-
-    // ========================================================
-    // IMPORTANT :
-    // afficherComerciantesBloc7() affiche actuellement
-    // tout le tableau comerciantes.
-    //
-    // On remplace temporairement son comportement
-    // avec la liste filtrée.
-    // ========================================================
-
-    if (
-        merchantsListBloc7
-    ) {
-
-        merchantsListBloc7.innerHTML = "";
-
-
-        result.forEach(
+        result = result.filter(
             function(merchant) {
 
-                const card =
-                    document.createElement(
-                        "article"
-                    );
-
-
-                card.className =
-                    "merchantCard";
-
-
                 const shopName =
-                    merchant.shopName ||
-                    merchant.storeName ||
-                    merchant.shop ||
-                    merchant.name ||
-                    "Boutique sans nom";
+                    String(
+                        merchant.shopName ||
+                        merchant.storeName ||
+                        merchant.shop ||
+                        merchant.name ||
+                        ""
+                    ).toLowerCase();
 
 
                 const email =
-                    merchant.email ||
-                    "Email indisponível";
+                    String(
+                        merchant.email || ""
+                    ).toLowerCase();
 
 
                 const phone =
-                    merchant.phone ||
-                    merchant.telephone ||
-                    "";
+                    String(
+                        merchant.phone ||
+                        merchant.telephone ||
+                        ""
+                    ).toLowerCase();
 
 
-                const status =
-                    getMerchantStatus(
-                        merchant
-                    );
+                const city =
+                    String(
+                        merchant.city || ""
+                    ).toLowerCase();
 
 
-                card.innerHTML = `
-
-                    <div class="merchantCardLeft">
-
-                        <div class="merchantInfo">
-
-                            <h3 class="merchantName">
-                                ${shopName}
-                            </h3>
-
-                            <p class="merchantEmail">
-                                ${email}
-                            </p>
-
-                            ${
-                                phone
-                                ? `
-                                    <p>
-                                        📞 ${phone}
-                                    </p>
-                                `
-                                : ""
-                            }
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="merchantCardRight">
-
-                        <span class="merchantStatus">
-                            ${status}
-                        </span>
-
-                    </div>
-
-                `;
-
-
-                merchantsListBloc7.appendChild(
-                    card
+                return (
+                    shopName.includes(searchValue) ||
+                    email.includes(searchValue) ||
+                    phone.includes(searchValue) ||
+                    city.includes(searchValue)
                 );
 
             }
@@ -2213,8 +2071,113 @@ function appliquerFiltreBloc8(filter) {
     }
 
 
+    // --------------------------------------------------------
+    // SAUVEGARDER LE RÉSULTAT
+    // --------------------------------------------------------
+
+    filteredComerciantes =
+        result;
+
+
+    // --------------------------------------------------------
+    // AFFICHAGE DIRECT
+    //
+    // IMPORTANT :
+    // On n'appelle PLUS afficherComerciantesBloc7()
+    // pour éviter d'afficher d'abord les 15 commerçants.
+    // --------------------------------------------------------
+
+    if (!merchantsListBloc7) {
+
+        alert(
+            "BLOC 8 — ERREUR : liste HTML introuvable"
+        );
+
+        return;
+
+    }
+
+
+    merchantsListBloc7.innerHTML = "";
+
+
+    // --------------------------------------------------------
+    // AUCUN RÉSULTAT
+    // --------------------------------------------------------
+
+    if (result.length === 0) {
+
+        if (emptyState) {
+
+            emptyState.classList.remove(
+                "hidden"
+            );
+
+        }
+
+    }
+
+
+    // --------------------------------------------------------
+    // RÉSULTATS DISPONIBLES
+    // --------------------------------------------------------
+
+    else {
+
+        if (emptyState) {
+
+            emptyState.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+        result.forEach(
+            function(merchant) {
+
+                try {
+
+                    const card =
+                        createMerchantCard(
+                            merchant
+                        );
+
+
+                    if (card) {
+
+                        merchantsListBloc7.appendChild(
+                            card
+                        );
+
+                    }
+
+                }
+
+                catch (error) {
+
+                    console.error(
+                        "Erreur création carte :",
+                        error
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    // --------------------------------------------------------
+    // CONFIRMATION
+    // --------------------------------------------------------
+
     alert(
-        "BLOC 8 — Commerçants affichés : " +
+        "BLOC 8 — " +
+        filter +
+        "\n" +
+        "Commerçants affichés : " +
         result.length
     );
 
@@ -2222,40 +2185,40 @@ function appliquerFiltreBloc8(filter) {
 
 
 // ============================================================
-// BOUTONS FILTRES
+// BOUTONS DES FILTRES
+// ============================================================
+//
+// On clone les boutons pour supprimer les anciens
+// événements des Blocs précédents.
 // ============================================================
 
-const filterButtonsBloc8 =
+const filterButtonsClean =
     document.querySelectorAll(
         ".filterButton"
     );
 
 
-filterButtonsBloc8.forEach(
+filterButtonsClean.forEach(
     function(button) {
 
-        // ----------------------------------------------------
-        // SUPPRIMER LES ANCIENS ÉVÉNEMENTS
-        // ----------------------------------------------------
-
-        const newButton =
+        const cleanButton =
             button.cloneNode(true);
 
 
         button.replaceWith(
-            newButton
+            cleanButton
         );
 
 
-        // ----------------------------------------------------
-        // NOUVEL ÉVÉNEMENT
-        // ----------------------------------------------------
-
-        newButton.addEventListener(
+        cleanButton.addEventListener(
             "click",
             function() {
 
-                filterButtonsBloc8.forEach(
+                // --------------------------------------------
+                // ACTIVE VISUELLEMENT LE BOUTON
+                // --------------------------------------------
+
+                filterButtonsClean.forEach(
                     function(item) {
 
                         item.classList.remove(
@@ -2266,13 +2229,17 @@ filterButtonsBloc8.forEach(
                 );
 
 
-                newButton.classList.add(
+                cleanButton.classList.add(
                     "active"
                 );
 
 
+                // --------------------------------------------
+                // FILTRE
+                // --------------------------------------------
+
                 const selectedFilter =
-                    newButton.dataset.filter ||
+                    cleanButton.dataset.filter ||
                     "all";
 
 
@@ -2288,7 +2255,7 @@ filterButtonsBloc8.forEach(
 
 
 // ============================================================
-// FIN
+// FIN BLOC 8
 // ============================================================
 
 alert("BLOC 8 — Fin");
