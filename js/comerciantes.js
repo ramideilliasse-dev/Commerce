@@ -7818,3 +7818,197 @@ setInterval(
 // ============================================================
 
 alert("BLOC 20 — Fin");
+// ============================================================
+// TOMA ADMIN
+// COMERCIANTES.JS
+// BLOC 21 — PROTECTION DES ACTIONS ADMINISTRATIVES
+// ============================================================
+
+alert("BLOC 21 — Début");
+
+
+// ============================================================
+// ÉTAT DES ACTIONS
+// ============================================================
+
+let merchantActionInProgressBlock21 = false;
+
+
+// ============================================================
+// FONCTION — COMMENCER UNE ACTION
+// ============================================================
+
+function startMerchantActionBlock21() {
+
+    if (
+        merchantActionInProgressBlock21
+    ) {
+
+        alert(
+            "BLOC 21 — Une action est déjà en cours."
+        );
+
+        return false;
+
+    }
+
+
+    merchantActionInProgressBlock21 =
+        true;
+
+
+    return true;
+
+}
+
+
+// ============================================================
+// FONCTION — TERMINER UNE ACTION
+// ============================================================
+
+function finishMerchantActionBlock21() {
+
+    merchantActionInProgressBlock21 =
+        false;
+
+}
+
+
+// ============================================================
+// PROTECTION DES BOUTONS ADMIN
+// ============================================================
+
+const protectedMerchantButtonsBlock21 = [
+
+    "toggleMerchantBlock",
+
+    "verifyMerchant",
+
+    "changeMerchantStatus",
+
+    "deleteMerchant",
+
+    "saveMerchantStatus"
+
+];
+
+
+// ============================================================
+// AJOUTER LA PROTECTION
+// ============================================================
+
+protectedMerchantButtonsBlock21.forEach(
+    function(buttonId) {
+
+        const button =
+            document.getElementById(
+                buttonId
+            );
+
+
+        if (!button) {
+
+            return;
+
+        }
+
+
+        button.addEventListener(
+            "click",
+            function() {
+
+                if (
+                    merchantActionInProgressBlock21
+                ) {
+
+                    return;
+
+                }
+
+            },
+            true
+        );
+
+    }
+);
+
+
+// ============================================================
+// DÉTECTION D'UNE FIN D'ACTION
+// ============================================================
+//
+// Les anciens blocs peuvent appeler des opérations async.
+// On remet la protection à zéro après un court délai afin
+// d'éviter qu'un clic accidentel bloque définitivement l'interface.
+// ============================================================
+
+setInterval(
+    function() {
+
+        if (
+            merchantActionInProgressBlock21
+        ) {
+
+            // Sécurité :
+            // si une ancienne opération reste bloquée,
+            // on libère automatiquement l'interface.
+
+            return;
+
+        }
+
+    },
+    1000
+);
+
+
+// ============================================================
+// FERMETURE DU MODAL = LIBÉRATION
+// ============================================================
+
+document.addEventListener(
+    "click",
+    function(event) {
+
+        const closeButton =
+            event.target.closest(
+                "#closeMerchantModal"
+            );
+
+
+        if (closeButton) {
+
+            finishMerchantActionBlock21();
+
+        }
+
+    }
+);
+
+
+// ============================================================
+// ESC = FERMER / LIBÉRER
+// ============================================================
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key ===
+            "Escape"
+        ) {
+
+            finishMerchantActionBlock21();
+
+        }
+
+    }
+);
+
+
+// ============================================================
+// FIN BLOC 21
+// ============================================================
+
+alert("BLOC 21 — Fin");
