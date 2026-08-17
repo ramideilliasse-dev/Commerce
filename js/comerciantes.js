@@ -2968,3 +2968,309 @@ if (
 // ============================================================
 
 alert("BLOC 9 — Fin");
+// ============================================================
+// TOMA ADMIN
+// COMERCIANTES.JS
+// BLOC 10 — RECHERCHE EN DIRECT
+// ============================================================
+
+alert("BLOC 10 — Début");
+
+
+// ============================================================
+// ÉLÉMENTS HTML
+// ============================================================
+
+const searchInputBlock10 =
+    document.getElementById("searchInput");
+
+const clearSearchBlock10 =
+    document.getElementById("clearSearch");
+
+const merchantsListBlock10 =
+    document.getElementById("merchantsList");
+
+
+// ============================================================
+// RECHERCHE
+// ============================================================
+
+function rechercherComerciantesBloc10() {
+
+    if (!searchInputBlock10) {
+
+        return;
+
+    }
+
+
+    const search =
+        searchInputBlock10.value
+            .trim()
+            .toLowerCase();
+
+
+    // --------------------------------------------------------
+    // TOUJOURS PARTIR DES DONNÉES FIRESTORE
+    // --------------------------------------------------------
+
+    let result =
+        Array.isArray(comerciantes)
+            ? [...comerciantes]
+            : [];
+
+
+    // --------------------------------------------------------
+    // RECHERCHE
+    // --------------------------------------------------------
+
+    if (search) {
+
+        result =
+            result.filter(
+                function(merchant) {
+
+                    const name =
+                        String(
+                            merchant.name ||
+                            ""
+                        )
+                        .toLowerCase();
+
+
+                    const shopName =
+                        String(
+                            merchant.shopName ||
+                            merchant.storeName ||
+                            merchant.shop ||
+                            ""
+                        )
+                        .toLowerCase();
+
+
+                    const email =
+                        String(
+                            merchant.email ||
+                            ""
+                        )
+                        .toLowerCase();
+
+
+                    const phone =
+                        String(
+                            merchant.phone ||
+                            merchant.telephone ||
+                            ""
+                        )
+                        .toLowerCase();
+
+
+                    const city =
+                        String(
+                            merchant.city ||
+                            ""
+                        )
+                        .toLowerCase();
+
+
+                    const firstName =
+                        String(
+                            merchant.firstName ||
+                            ""
+                        )
+                        .toLowerCase();
+
+
+                    const lastName =
+                        String(
+                            merchant.lastName ||
+                            ""
+                        )
+                        .toLowerCase();
+
+
+                    return (
+
+                        name.includes(search) ||
+
+                        shopName.includes(search) ||
+
+                        email.includes(search) ||
+
+                        phone.includes(search) ||
+
+                        city.includes(search) ||
+
+                        firstName.includes(search) ||
+
+                        lastName.includes(search)
+
+                    );
+
+                }
+            );
+
+    }
+
+
+    // --------------------------------------------------------
+    // MÉMORISER
+    // --------------------------------------------------------
+
+    filteredComerciantes =
+        result;
+
+
+    // --------------------------------------------------------
+    // VIDER LA LISTE
+    // --------------------------------------------------------
+
+    if (merchantsListBlock10) {
+
+        merchantsListBlock10.innerHTML =
+            "";
+
+    }
+
+
+    // --------------------------------------------------------
+    // AUCUN RÉSULTAT
+    // --------------------------------------------------------
+
+    if (
+        result.length === 0
+    ) {
+
+        if (emptyState) {
+
+            emptyState.classList.remove(
+                "hidden"
+            );
+
+        }
+
+    }
+
+
+    // --------------------------------------------------------
+    // AFFICHER LES RÉSULTATS
+    // --------------------------------------------------------
+
+    else {
+
+        if (emptyState) {
+
+            emptyState.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+        result.forEach(
+            function(merchant) {
+
+                try {
+
+                    const card =
+                        creerCarteMerchantBloc9(
+                            merchant
+                        );
+
+
+                    if (
+                        card &&
+                        merchantsListBlock10
+                    ) {
+
+                        merchantsListBlock10.appendChild(
+                            card
+                        );
+
+                    }
+
+                }
+
+                catch (error) {
+
+                    console.error(
+                        "Erreur recherche carte :",
+                        error
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    // --------------------------------------------------------
+    // ALERTE DE RÉSULTAT
+    // --------------------------------------------------------
+
+    alert(
+        "RECHERCHE : " +
+        (
+            search ||
+            "vide"
+        ) +
+        "\n" +
+        "Commerçants trouvés : " +
+        result.length
+    );
+
+}
+
+
+// ============================================================
+// BARRE DE RECHERCHE
+// ============================================================
+
+if (searchInputBlock10) {
+
+    searchInputBlock10.addEventListener(
+        "input",
+        function() {
+
+            rechercherComerciantesBloc10();
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// BOUTON EFFACER
+// ============================================================
+
+if (clearSearchBlock10) {
+
+    clearSearchBlock10.addEventListener(
+        "click",
+        function() {
+
+            if (searchInputBlock10) {
+
+                searchInputBlock10.value =
+                    "";
+
+                rechercherComerciantesBloc10();
+
+                searchInputBlock10.focus();
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// FIN
+// ============================================================
+
+alert("BLOC 10 — Fin");
