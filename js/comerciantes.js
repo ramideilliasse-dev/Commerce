@@ -3274,3 +3274,284 @@ if (clearSearchBlock10) {
 // ============================================================
 
 alert("BLOC 10 — Fin");
+// ============================================================
+// TOMA ADMIN
+// COMERCIANTES.JS
+// BLOC 11 — MODAL DÉTAILS
+// ============================================================
+
+alert("BLOC 11 — Début");
+
+
+// ============================================================
+// ÉLÉMENTS HTML DU MODAL
+// ============================================================
+
+const merchantModalBlock11 =
+    document.getElementById(
+        "merchantModal"
+    );
+
+const closeMerchantModalBlock11 =
+    document.getElementById(
+        "closeMerchantModal"
+    );
+
+
+// ============================================================
+// VÉRIFICATION
+// ============================================================
+
+alert(
+    "BLOC 11 — Modal : " +
+    (
+        merchantModalBlock11
+            ? "TROUVÉ"
+            : "INTROUVABLE"
+    ) +
+    "\n" +
+    "Bouton fermeture : " +
+    (
+        closeMerchantModalBlock11
+            ? "TROUVÉ"
+            : "INTROUVABLE"
+    )
+);
+
+
+// ============================================================
+// COMMERÇANT ACTUEL
+// ============================================================
+
+let merchantSelectedBlock11 =
+    null;
+
+
+// ============================================================
+// OUVRIR LE MODAL
+// ============================================================
+
+function ouvrirModalComercianteBlock11(
+    merchant
+) {
+
+    if (!merchant) {
+
+        return;
+
+    }
+
+
+    merchantSelectedBlock11 =
+        merchant;
+
+
+    // --------------------------------------------------------
+    // ÉLÉMENTS DU PROFIL
+    // --------------------------------------------------------
+
+    const merchantName =
+        document.getElementById(
+            "merchantName"
+        );
+
+    const merchantEmail =
+        document.getElementById(
+            "merchantEmail"
+        );
+
+    const merchantPhoto =
+        document.getElementById(
+            "merchantPhoto"
+        );
+
+    const merchantStatus =
+        document.getElementById(
+            "merchantStatus"
+        );
+
+
+    // --------------------------------------------------------
+    // INFORMATIONS
+    // --------------------------------------------------------
+
+    const name =
+        merchant.name ||
+        merchant.ownerName ||
+        (
+            String(
+                merchant.firstName ||
+                ""
+            ) +
+            " " +
+            String(
+                merchant.lastName ||
+                ""
+            )
+        ).trim() ||
+        "Comerciante";
+
+
+    const email =
+        merchant.email ||
+        "-";
+
+
+    const photo =
+        merchant.photoURL ||
+        merchant.photo ||
+        merchant.avatar ||
+        merchant.shopLogo ||
+        "images/avatar.png";
+
+
+    const status =
+        getMerchantStatus(
+            merchant
+        );
+
+
+    // --------------------------------------------------------
+    // REMPLIR LE MODAL
+    // --------------------------------------------------------
+
+    if (merchantName) {
+
+        merchantName.textContent =
+            name;
+
+    }
+
+
+    if (merchantEmail) {
+
+        merchantEmail.textContent =
+            email;
+
+    }
+
+
+    if (merchantPhoto) {
+
+        merchantPhoto.src =
+            photo;
+
+    }
+
+
+    if (merchantStatus) {
+
+        merchantStatus.textContent =
+            status === "blocked"
+                ? "Bloqueado"
+                : status === "pending"
+                    ? "Pendente"
+                    : "Ativo";
+
+
+        merchantStatus.className =
+            "merchantStatus " +
+            status;
+
+    }
+
+
+    // --------------------------------------------------------
+    // OUVRIR
+    // --------------------------------------------------------
+
+    if (merchantModalBlock11) {
+
+        merchantModalBlock11.classList.remove(
+            "hidden"
+        );
+
+
+        merchantModalBlock11.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+    }
+
+
+    alert(
+        "BLOC 11 — Commerçant ouvert\n\n" +
+        "Nom : " +
+        name +
+        "\n" +
+        "Email : " +
+        email
+    );
+
+}
+
+
+// ============================================================
+// FERMER LE MODAL
+// ============================================================
+
+if (closeMerchantModalBlock11) {
+
+    closeMerchantModalBlock11.addEventListener(
+        "click",
+        function() {
+
+            if (merchantModalBlock11) {
+
+                merchantModalBlock11.classList.add(
+                    "hidden"
+                );
+
+
+                merchantModalBlock11.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// FERMER EN CLIQUANT SUR LE FOND
+// ============================================================
+
+if (merchantModalBlock11) {
+
+    merchantModalBlock11.addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                event.target ===
+                merchantModalBlock11
+            ) {
+
+                merchantModalBlock11.classList.add(
+                    "hidden"
+                );
+
+
+                merchantModalBlock11.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// FIN
+// ============================================================
+
+alert("BLOC 11 — Fin");
