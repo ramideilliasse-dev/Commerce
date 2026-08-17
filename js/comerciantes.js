@@ -4918,3 +4918,442 @@ updateBlockButtonBlock12();
 updateVerifyButtonBlock12();
 
 alert("BLOC 12 — Fin");
+// ============================================================
+// TOMA ADMIN
+// COMERCIANTES.JS
+// BLOC 13 — PRODUITS ET VENTES DU COMERCIANTE
+// ============================================================
+
+alert("BLOC 13 — Début");
+
+
+// ============================================================
+// ÉLÉMENTS HTML
+// ============================================================
+
+const merchantProductCountBlock13 =
+    document.getElementById(
+        "merchantProductCount"
+    );
+
+const merchantSalesBlock13 =
+    document.getElementById(
+        "merchantSales"
+    );
+
+
+alert(
+    "BLOC 13 — Éléments HTML\n\n" +
+    "Produtos : " +
+    (
+        merchantProductCountBlock13
+            ? "TROUVÉ"
+            : "INTROUVABLE"
+    ) +
+    "\n" +
+    "Vendas : " +
+    (
+        merchantSalesBlock13
+            ? "TROUVÉ"
+            : "INTROUVABLE"
+    )
+);
+
+
+// ============================================================
+// FONCTION — COMPTER LES PRODUITS
+// ============================================================
+
+async function loadMerchantProductsBlock13(
+    merchant
+) {
+
+    if (!merchant) {
+
+        return 0;
+
+    }
+
+
+    const merchantId =
+        merchant.id ||
+        merchant.uid ||
+        null;
+
+
+    if (!merchantId) {
+
+        return 0;
+
+    }
+
+
+    try {
+
+        const productsRef =
+            collection(
+                db,
+                "products"
+            );
+
+
+        const productsQuery =
+            query(
+                productsRef
+            );
+
+
+        const snapshot =
+            await new Promise(
+                function(resolve, reject) {
+
+                    const unsubscribe =
+                        onSnapshot(
+                            productsQuery,
+
+                            function(snap) {
+
+                                unsubscribe();
+
+                                resolve(snap);
+
+                            },
+
+                            function(error) {
+
+                                unsubscribe();
+
+                                reject(error);
+
+                            }
+                        );
+
+                }
+            );
+
+
+        let count = 0;
+
+
+        snapshot.forEach(
+            function(productDoc) {
+
+                const product =
+                    productDoc.data();
+
+
+                const productMerchantId =
+                    product.merchantId ||
+                    product.merchantUid ||
+                    product.ownerId ||
+                    product.userId ||
+                    "";
+
+
+                if (
+                    String(
+                        productMerchantId
+                    ) ===
+                    String(
+                        merchantId
+                    )
+                ) {
+
+                    count++;
+
+                }
+
+            }
+        );
+
+
+        return count;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Erro produtos comerciante:",
+            error
+        );
+
+
+        return 0;
+
+    }
+
+}
+
+
+// ============================================================
+// FONCTION — COMPTER LES VENTES
+// ============================================================
+
+async function loadMerchantSalesBlock13(
+    merchant
+) {
+
+    if (!merchant) {
+
+        return 0;
+
+    }
+
+
+    const merchantId =
+        merchant.id ||
+        merchant.uid ||
+        null;
+
+
+    if (!merchantId) {
+
+        return 0;
+
+    }
+
+
+    try {
+
+        const ordersRef =
+            collection(
+                db,
+                "orders"
+            );
+
+
+        const ordersQuery =
+            query(
+                ordersRef
+            );
+
+
+        const snapshot =
+            await new Promise(
+                function(resolve, reject) {
+
+                    const unsubscribe =
+                        onSnapshot(
+                            ordersQuery,
+
+                            function(snap) {
+
+                                unsubscribe();
+
+                                resolve(snap);
+
+                            },
+
+                            function(error) {
+
+                                unsubscribe();
+
+                                reject(error);
+
+                            }
+                        );
+
+                }
+            );
+
+
+        let count = 0;
+
+
+        snapshot.forEach(
+            function(orderDoc) {
+
+                const order =
+                    orderDoc.data();
+
+
+                const orderMerchantId =
+                    order.merchantId ||
+                    order.merchantUid ||
+                    order.shopOwnerId ||
+                    "";
+
+
+                if (
+                    String(
+                        orderMerchantId
+                    ) ===
+                    String(
+                        merchantId
+                    )
+                ) {
+
+                    count++;
+
+                }
+
+            }
+        );
+
+
+        return count;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Erro vendas comerciante:",
+            error
+        );
+
+
+        return 0;
+
+    }
+
+}
+
+
+// ============================================================
+// FONCTION — CHARGER LES STATISTIQUES DU MODAL
+// ============================================================
+
+async function loadMerchantStatsBlock13(
+    merchant
+) {
+
+    if (!merchant) {
+
+        return;
+
+    }
+
+
+    if (merchantProductCountBlock13) {
+
+        merchantProductCountBlock13.textContent =
+            "...";
+
+    }
+
+
+    if (merchantSalesBlock13) {
+
+        merchantSalesBlock13.textContent =
+            "...";
+
+    }
+
+
+    const products =
+        await loadMerchantProductsBlock13(
+            merchant
+        );
+
+
+    const sales =
+        await loadMerchantSalesBlock13(
+            merchant
+        );
+
+
+    if (merchantProductCountBlock13) {
+
+        merchantProductCountBlock13.textContent =
+            products;
+
+    }
+
+
+    if (merchantSalesBlock13) {
+
+        merchantSalesBlock13.textContent =
+            sales;
+
+    }
+
+
+    alert(
+        "BLOC 13 — Estatísticas carregadas\n\n" +
+        "Produtos : " +
+        products +
+        "\n" +
+        "Vendas : " +
+        sales
+    );
+
+}
+
+
+// ============================================================
+// SURVEILLER L'OUVERTURE DU MODAL
+// ============================================================
+//
+// On vérifie régulièrement si un commerçant vient d'être
+// sélectionné par le Bloc 11.
+// ============================================================
+
+let lastMerchantStatsIdBlock13 =
+    null;
+
+
+setInterval(
+    function() {
+
+        if (
+            typeof selectedMerchantBlock11 ===
+            "undefined"
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            !selectedMerchantBlock11
+        ) {
+
+            return;
+
+        }
+
+
+        const merchantId =
+            selectedMerchantBlock11.id ||
+            selectedMerchantBlock11.uid ||
+            null;
+
+
+        if (!merchantId) {
+
+            return;
+
+        }
+
+
+        if (
+            merchantId ===
+            lastMerchantStatsIdBlock13
+        ) {
+
+            return;
+
+        }
+
+
+        lastMerchantStatsIdBlock13 =
+            merchantId;
+
+
+        loadMerchantStatsBlock13(
+            selectedMerchantBlock11
+        );
+
+    },
+    300
+);
+
+
+// ============================================================
+// FIN BLOC 13
+// ============================================================
+
+alert("BLOC 13 — Fin");
