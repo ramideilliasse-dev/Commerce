@@ -7585,3 +7585,236 @@ document.addEventListener(
 // ============================================================
 
 alert("BLOC 19 — Fin");
+// ============================================================
+// TOMA ADMIN
+// COMERCIANTES.JS
+// BLOC 20 — MISE À JOUR APRÈS ACTION ADMINISTRATIVE
+// ============================================================
+
+alert("BLOC 20 — Début");
+
+
+// ============================================================
+// FONCTION — ACTUALISER LES STATISTIQUES
+// ============================================================
+
+function refreshMerchantStatisticsBlock20() {
+
+    if (
+        typeof updateMerchantStatistics ===
+        "function"
+    ) {
+
+        updateMerchantStatistics();
+
+    }
+
+}
+
+
+// ============================================================
+// FONCTION — ACTUALISER LES CARTES
+// ============================================================
+
+function refreshMerchantCardsBlock20() {
+
+    if (
+        typeof applyMerchantFilters ===
+        "function"
+    ) {
+
+        applyMerchantFilters();
+
+        return;
+
+    }
+
+
+    if (
+        typeof renderMerchantListCorrect ===
+        "function"
+    ) {
+
+        renderMerchantListCorrect(
+            filteredComerciantes
+        );
+
+        return;
+
+    }
+
+
+    if (
+        typeof renderComerciantes ===
+        "function"
+    ) {
+
+        renderComerciantes(
+            filteredComerciantes
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// FONCTION PRINCIPALE
+// ============================================================
+
+function refreshMerchantInterfaceBlock20() {
+
+    refreshMerchantStatisticsBlock20();
+
+    refreshMerchantCardsBlock20();
+
+
+    // --------------------------------------------------------
+    // RESYNCHRONISER LE MODAL
+    // --------------------------------------------------------
+
+    if (
+        typeof refreshMerchantModalBlock19 ===
+        "function"
+    ) {
+
+        refreshMerchantModalBlock19();
+
+    }
+
+}
+
+
+// ============================================================
+// OBSERVER LES MODIFICATIONS DE LA COLLECTION
+// ============================================================
+//
+// Firestore met déjà à jour "comerciantes" via onSnapshot.
+// On attend donc un court instant afin de laisser les données
+// locales se mettre à jour avant de rafraîchir l'interface.
+// ============================================================
+
+let lastMerchantStateBlock20 = "";
+
+
+// ============================================================
+// SURVEILLANCE
+// ============================================================
+
+setInterval(
+    function() {
+
+        if (
+            !Array.isArray(comerciantes)
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            comerciantes.length === 0
+        ) {
+
+            return;
+
+        }
+
+
+        // ----------------------------------------------------
+        // CRÉER UNE SIGNATURE SIMPLE
+        // ----------------------------------------------------
+
+        const state =
+            comerciantes
+                .map(
+                    function(merchant) {
+
+                        return (
+                            String(
+                                merchant.id ||
+                                merchant.uid ||
+                                ""
+                            ) +
+                            ":" +
+                            String(
+                                merchant.status ||
+                                ""
+                            ) +
+                            ":" +
+                            String(
+                                merchant.verified ||
+                                false
+                            ) +
+                            ":" +
+                            String(
+                                merchant.verificationStatus ||
+                                ""
+                            )
+                        );
+
+                    }
+                )
+                .sort()
+                .join("|");
+
+
+        // ----------------------------------------------------
+        // RIEN N'A CHANGÉ
+        // ----------------------------------------------------
+
+        if (
+            state ===
+            lastMerchantStateBlock20
+        ) {
+
+            return;
+
+        }
+
+
+        // ----------------------------------------------------
+        // PREMIER ÉTAT
+        // ----------------------------------------------------
+
+        if (
+            lastMerchantStateBlock20 === ""
+        ) {
+
+            lastMerchantStateBlock20 =
+                state;
+
+            return;
+
+        }
+
+
+        // ----------------------------------------------------
+        // MODIFICATION DÉTECTÉE
+        // ----------------------------------------------------
+
+        lastMerchantStateBlock20 =
+            state;
+
+
+        refreshMerchantInterfaceBlock20();
+
+
+        alert(
+            "BLOC 20 — Interface actualisée\n\n" +
+            "Commerçants : " +
+            comerciantes.length
+        );
+
+
+    },
+    800
+);
+
+
+// ============================================================
+// FIN BLOC 20
+// ============================================================
+
+alert("BLOC 20 — Fin");
