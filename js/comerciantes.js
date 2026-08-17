@@ -7011,3 +7011,280 @@ if (deleteMerchantBlock17) {
 // ============================================================
 
 alert("BLOC 17 — Fin");
+// ============================================================
+// TOMA ADMIN
+// COMERCIANTES.JS
+// BLOC 18 — PRODUITS DU COMMERÇANT
+// ============================================================
+
+alert("BLOC 18 — Début");
+
+
+// ============================================================
+// FONCTION — ID DU COMMERÇANT
+// ============================================================
+
+function getMerchantIdBlock18(merchant) {
+
+    if (!merchant) {
+        return null;
+    }
+
+    return (
+        merchant.id ||
+        merchant.uid ||
+        merchant.userId ||
+        null
+    );
+}
+
+
+// ============================================================
+// CHARGER LES PRODUITS DU COMMERÇANT
+// ============================================================
+
+async function loadMerchantProductsBlock18(
+    merchant
+) {
+
+    const merchantId =
+        getMerchantIdBlock18(merchant);
+
+
+    if (!merchantId) {
+
+        alert(
+            "BLOC 18 — ID commerçant introuvable."
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        alert(
+            "BLOC 18 — Recherche des produits\n\n" +
+            "Merchant ID : " +
+            merchantId
+        );
+
+
+        const productsRef =
+            collection(
+                db,
+                "products"
+            );
+
+
+        const snapshot =
+            await new Promise(
+                function(resolve, reject) {
+
+                    const unsubscribe =
+                        onSnapshot(
+                            productsRef,
+
+                            function(data) {
+
+                                unsubscribe();
+
+                                resolve(data);
+
+                            },
+
+                            function(error) {
+
+                                unsubscribe();
+
+                                reject(error);
+
+                            }
+                        );
+
+                }
+            );
+
+
+        let products = [];
+
+
+        snapshot.forEach(
+            function(productDoc) {
+
+                const product =
+                    productDoc.data();
+
+
+                const productMerchantId =
+                    product.merchantId ||
+                    product.merchantUid ||
+                    product.ownerId ||
+                    product.userId ||
+                    "";
+
+
+                if (
+                    String(productMerchantId) ===
+                    String(merchantId)
+                ) {
+
+                    products.push({
+
+                        id:
+                            productDoc.id,
+
+                        ...product
+
+                    });
+
+                }
+
+            }
+        );
+
+
+        // ====================================================
+        // COMPTEUR
+        // ====================================================
+
+        const productCount =
+            products.length;
+
+
+        const productCountElement =
+            document.getElementById(
+                "merchantProductCount"
+            );
+
+
+        if (productCountElement) {
+
+            productCountElement.textContent =
+                productCount;
+
+        }
+
+
+        alert(
+            "BLOC 18 — Produits trouvés : " +
+            productCount
+        );
+
+
+        // ====================================================
+        // STOCKER POUR LES PROCHAINS BLOCS
+        // ====================================================
+
+        merchant._products =
+            products;
+
+
+        if (
+            typeof selectedMerchantBlock11 !==
+            "undefined"
+            &&
+            selectedMerchantBlock11
+        ) {
+
+            selectedMerchantBlock11._products =
+                products;
+
+        }
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "BLOC 18 — Erreur produits :",
+            error
+        );
+
+
+        alert(
+            "BLOC 18 — Erreur Firestore produits\n\n" +
+            (
+                error.message ||
+                "Impossible de charger les produits."
+            )
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// DÉTECTER LE COMMERÇANT SÉLECTIONNÉ
+// ============================================================
+
+let lastMerchantProductsBlock18 =
+    null;
+
+
+setInterval(
+    function() {
+
+        if (
+            typeof selectedMerchantBlock11 ===
+            "undefined"
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            !selectedMerchantBlock11
+        ) {
+
+            return;
+
+        }
+
+
+        const merchantId =
+            getMerchantIdBlock18(
+                selectedMerchantBlock11
+            );
+
+
+        if (!merchantId) {
+
+            return;
+
+        }
+
+
+        if (
+            merchantId ===
+            lastMerchantProductsBlock18
+        ) {
+
+            return;
+
+        }
+
+
+        lastMerchantProductsBlock18 =
+            merchantId;
+
+
+        loadMerchantProductsBlock18(
+            selectedMerchantBlock11
+        );
+
+    },
+    500
+);
+
+
+// ============================================================
+// FIN BLOC 18
+// ============================================================
+
+alert("BLOC 18 — Fin");
