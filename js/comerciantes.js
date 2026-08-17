@@ -7288,3 +7288,300 @@ setInterval(
 // ============================================================
 
 alert("BLOC 18 — Fin");
+// ============================================================
+// TOMA ADMIN
+// COMERCIANTES.JS
+// BLOC 19 — SYNCHRONISATION DU MODAL
+// ============================================================
+
+alert("BLOC 19 — Début");
+
+
+// ============================================================
+// FONCTION — ACTUALISER LE MODAL
+// ============================================================
+
+function refreshMerchantModalBlock19() {
+
+    if (
+        typeof selectedMerchantBlock11 === "undefined" ||
+        !selectedMerchantBlock11
+    ) {
+
+        alert(
+            "BLOC 19 — Aucun commerçant sélectionné."
+        );
+
+        return;
+
+    }
+
+
+    const merchant =
+        selectedMerchantBlock11;
+
+
+    // ========================================================
+    // STATUT
+    // ========================================================
+
+    const status =
+        typeof getMerchantStatus === "function"
+            ? getMerchantStatus(merchant)
+            : "active";
+
+
+    const statusElement =
+        document.getElementById(
+            "merchantStatus"
+        );
+
+
+    if (statusElement) {
+
+        statusElement.className =
+            "merchantStatus " +
+            status;
+
+
+        if (status === "blocked") {
+
+            statusElement.textContent =
+                "Bloqueado";
+
+        }
+        else if (status === "pending") {
+
+            statusElement.textContent =
+                "Pendente";
+
+        }
+        else {
+
+            statusElement.textContent =
+                "Ativo";
+
+        }
+
+    }
+
+
+    // ========================================================
+    // VÉRIFICATION
+    // ========================================================
+
+    const verificationElement =
+        document.getElementById(
+            "merchantVerification"
+        );
+
+
+    const verified =
+        merchant.verified === true ||
+        merchant.isVerified === true ||
+        String(
+            merchant.verificationStatus ||
+            ""
+        ).toLowerCase() === "verified";
+
+
+    if (verificationElement) {
+
+        verificationElement.textContent =
+            verified
+                ? "Verificado"
+                : "Não verificado";
+
+    }
+
+
+    // ========================================================
+    // PRODUITS
+    // ========================================================
+
+    const productCountElement =
+        document.getElementById(
+            "merchantProductCount"
+        );
+
+
+    if (productCountElement) {
+
+        const products =
+            Array.isArray(
+                merchant._products
+            )
+                ? merchant._products
+                : [];
+
+
+        productCountElement.textContent =
+            products.length;
+
+    }
+
+
+    // ========================================================
+    // INFORMATIONS PRINCIPALES
+    // ========================================================
+
+    const shopNameElement =
+        document.getElementById(
+            "merchantShopName"
+        );
+
+
+    if (shopNameElement) {
+
+        shopNameElement.textContent =
+            merchant.shopName ||
+            merchant.storeName ||
+            merchant.shop ||
+            merchant.name ||
+            "Boutique sans nome";
+
+    }
+
+
+    const phoneElement =
+        document.getElementById(
+            "merchantPhone"
+        );
+
+
+    if (phoneElement) {
+
+        phoneElement.textContent =
+            merchant.phone ||
+            merchant.telephone ||
+            "-";
+
+    }
+
+
+    const cityElement =
+        document.getElementById(
+            "merchantCity"
+        );
+
+
+    if (cityElement) {
+
+        cityElement.textContent =
+            merchant.city ||
+            "-";
+
+    }
+
+
+    const addressElement =
+        document.getElementById(
+            "merchantAddress"
+        );
+
+
+    if (addressElement) {
+
+        addressElement.textContent =
+            merchant.address ||
+            merchant.street ||
+            "-";
+
+    }
+
+
+    const licenseElement =
+        document.getElementById(
+            "merchantLicense"
+        );
+
+
+    if (licenseElement) {
+
+        licenseElement.textContent =
+            merchant.alvara ||
+            merchant.alvaraCommercial ||
+            merchant.license ||
+            "-";
+
+    }
+
+
+    const uidElement =
+        document.getElementById(
+            "merchantUid"
+        );
+
+
+    if (uidElement) {
+
+        uidElement.textContent =
+            merchant.id ||
+            merchant.uid ||
+            "-";
+
+    }
+
+
+    alert(
+        "BLOC 19 — Modal synchronisé\n\n" +
+        "Statut : " +
+        status +
+        "\n" +
+        "Vérifié : " +
+        (
+            verified
+                ? "Oui"
+                : "Non"
+        ) +
+        "\n" +
+        "Produits : " +
+        (
+            Array.isArray(merchant._products)
+                ? merchant._products.length
+                : 0
+        )
+    );
+
+}
+
+
+// ============================================================
+// SURVEILLER L'OUVERTURE DU MODAL
+// ============================================================
+
+document.addEventListener(
+    "click",
+    function(event) {
+
+        const button =
+            event.target.closest(
+                ".viewMerchantButton"
+            );
+
+
+        if (!button) {
+
+            return;
+
+        }
+
+
+        setTimeout(
+            function() {
+
+                refreshMerchantModalBlock19();
+
+            },
+            100
+        );
+
+    }
+);
+
+
+// ============================================================
+// FIN BLOC 19
+// ============================================================
+
+alert("BLOC 19 — Fin");
