@@ -5,219 +5,2161 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-<title>Brand Store Admin</title>
+<meta
+    name="theme-color"
+    content="#f5f7fa"
+>
 
-<link rel="stylesheet" href="brand-store-admin.css">
+<title>Brand Store Admin — TOMA</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link
+    rel="stylesheet"
+    href="brand-store-admin.css"
+>
 
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
+    rel="stylesheet"
+>
 
 </head>
 
+
 <body>
 
-<!--====================================-->
+
+<!-- ========================================================= -->
+<!-- TOMA — BRAND STORE ADMIN -->
+<!-- ========================================================= -->
+
+
+<div id="app">
+
+
+<!-- ========================================================= -->
 <!-- HEADER -->
-<!--====================================-->
+<!-- ========================================================= -->
 
 <header class="pageHeader">
 
-<button id="backButton" class="headerButton">
+    <button
+        id="backButton"
+        class="headerButton"
+        type="button"
+        aria-label="Voltar"
+    >
 
-<span class="material-symbols-rounded">
+        <span class="material-symbols-rounded">
+            arrow_back
+        </span>
 
-arrow_back
+    </button>
 
-</span>
 
-</button>
+    <div class="headerTitle">
 
-<div class="headerTitle">
+        <h1 id="storeName">
+            Apple Store
+        </h1>
 
-<h1 id="storeName">
+        <p>
+            Gestão completa da Loja Oficial
+        </p>
 
-Apple Store
+    </div>
 
-</h1>
 
-<p>
+    <button
+        id="refreshButton"
+        class="headerButton"
+        type="button"
+        aria-label="Atualizar"
+    >
 
-Gestão completa da Loja Oficial
+        <span class="material-symbols-rounded">
+            refresh
+        </span>
 
-</p>
-
-</div>
-
-<button id="refreshButton" class="headerButton">
-
-<span class="material-symbols-rounded">
-
-refresh
-
-</span>
-
-</button>
+    </button>
 
 </header>
 
-<!--====================================-->
-<!-- BANNIÈRE -->
-<!--====================================-->
 
-<section class="storeHero">
 
-<img
+<!-- ========================================================= -->
+<!-- CONTENU PRINCIPAL -->
+<!-- ========================================================= -->
 
-id="storeBanner"
+<main class="adminContainer">
 
-class="storeBanner"
 
-src="images/default-banner.jpg">
 
-<div class="storeOverlay">
+<!-- ========================================================= -->
+<!-- HERO / INFORMATIONS DE LA LOJA -->
+<!-- ========================================================= -->
 
-<img
+<section
+    class="storeHero"
+    id="storeHero"
+>
 
-id="storeLogo"
+    <img
+        id="storeBanner"
+        class="storeBanner"
+        src="images/default-banner.jpg"
+        alt="Banner da Loja Oficial"
+    >
 
-class="storeLogo"
 
-src="images/default-store.png">
+    <div class="storeOverlay">
 
-<div>
+        <img
+            id="storeLogo"
+            class="storeLogo"
+            src="images/default-store.png"
+            alt="Logo da Loja"
+        >
 
-<h2 id="storeTitle">
 
-Apple
+        <div class="storeIdentity">
 
-</h2>
+            <div class="storeTitleRow">
 
-<p>
+                <h2 id="storeTitle">
+                    Apple
+                </h2>
 
-Loja Oficial Toma
 
-</p>
+                <span
+                    id="storeVerificationBadge"
+                    class="verificationBadge hidden"
+                >
 
-</div>
+                    <span class="material-symbols-rounded">
+                        verified
+                    </span>
 
-</div>
+                    Verificada
+
+                </span>
+
+            </div>
+
+
+            <p id="storeSubtitle">
+                Loja Oficial TOMA
+            </p>
+
+
+            <div class="storeStatusRow">
+
+                <span
+                    id="storeStatusBadge"
+                    class="storeStatus active"
+                >
+                    Ativa
+                </span>
+
+
+                <span
+                    id="storeCreatedAt"
+                    class="storeCreatedAt"
+                >
+                    —
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </section>
 
-<!--====================================-->
-<!-- STATISTIQUES -->
-<!--====================================-->
+
+
+<!-- ========================================================= -->
+<!-- ACTIONS RAPIDES DE LA LOJA -->
+<!-- ========================================================= -->
+
+<section class="storeQuickActions">
+
+    <button
+        id="editStoreButton"
+        class="quickActionButton"
+        type="button"
+    >
+
+        <span class="material-symbols-rounded">
+            edit
+        </span>
+
+        <span>
+            Editar Loja
+        </span>
+
+    </button>
+
+
+    <button
+        id="verifyStoreButton"
+        class="quickActionButton"
+        type="button"
+    >
+
+        <span class="material-symbols-rounded">
+            verified
+        </span>
+
+        <span>
+            Verificar
+        </span>
+
+    </button>
+
+
+    <button
+        id="toggleStoreStatusButton"
+        class="quickActionButton"
+        type="button"
+    >
+
+        <span class="material-symbols-rounded">
+            block
+        </span>
+
+        <span>
+            Suspender
+        </span>
+
+    </button>
+
+
+    <button
+        id="storeSettingsButton"
+        class="quickActionButton"
+        type="button"
+    >
+
+        <span class="material-symbols-rounded">
+            settings
+        </span>
+
+        <span>
+            Configurações
+        </span>
+
+    </button>
+
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- STATISTIQUES PRINCIPALES -->
+<!-- ========================================================= -->
 
 <section class="statsGrid">
 
-<div class="statCard">
 
-<h2 id="merchantCount">
+    <!-- COMMERÇANTS -->
 
-0
+    <article
+        class="statCard"
+        id="merchantStatCard"
+    >
 
-</h2>
+        <div class="statIcon">
 
-<p>Comerciantes</p>
+            <span class="material-symbols-rounded">
+                group
+            </span>
 
-</div>
+        </div>
 
-<div class="statCard">
 
-<h2 id="productCount">
+        <div class="statContent">
 
-0
+            <h2 id="merchantCount">
+                0
+            </h2>
 
-</h2>
+            <p>
+                Comerciantes
+            </p>
 
-<p>Produtos</p>
+        </div>
 
-</div>
+    </article>
 
-<div class="statCard">
 
-<h2 id="orderCount">
 
-0
+    <!-- PRODUITS -->
 
-</h2>
+    <article
+        class="statCard"
+        id="productStatCard"
+    >
 
-<p>Pedidos</p>
+        <div class="statIcon">
 
-</div>
+            <span class="material-symbols-rounded">
+                inventory_2
+            </span>
 
-<div class="statCard">
+        </div>
 
-<h2 id="salesCount">
 
-0 Kz
+        <div class="statContent">
 
-</h2>
+            <h2 id="productCount">
+                0
+            </h2>
 
-<p>Vendas</p>
+            <p>
+                Produtos
+            </p>
 
-</div>
+        </div>
+
+    </article>
+
+
+
+    <!-- COMMANDES -->
+
+    <article
+        class="statCard"
+        id="orderStatCard"
+    >
+
+        <div class="statIcon">
+
+            <span class="material-symbols-rounded">
+                shopping_bag
+            </span>
+
+        </div>
+
+
+        <div class="statContent">
+
+            <h2 id="orderCount">
+                0
+            </h2>
+
+            <p>
+                Pedidos
+            </p>
+
+        </div>
+
+    </article>
+
+
+
+    <!-- VENTES -->
+
+    <article
+        class="statCard"
+        id="salesStatCard"
+    >
+
+        <div class="statIcon">
+
+            <span class="material-symbols-rounded">
+                payments
+            </span>
+
+        </div>
+
+
+        <div class="statContent">
+
+            <h2 id="salesCount">
+                0 Kz
+            </h2>
+
+            <p>
+                Vendas
+            </p>
+
+        </div>
+
+    </article>
 
 </section>
 
-<!--====================================-->
-<!-- ACTIONS -->
-<!--====================================-->
+
+
+<!-- ========================================================= -->
+<!-- INDICATEURS FINANCIERS -->
+<!-- ========================================================= -->
+
+<section
+    class="financialGrid"
+    id="financialSection"
+>
+
+
+    <article class="financialCard">
+
+        <span class="material-symbols-rounded">
+            trending_up
+        </span>
+
+        <div>
+
+            <p>
+                Vendas hoje
+            </p>
+
+            <strong id="salesToday">
+                0 Kz
+            </strong>
+
+        </div>
+
+    </article>
+
+
+
+    <article class="financialCard">
+
+        <span class="material-symbols-rounded">
+            calendar_month
+        </span>
+
+        <div>
+
+            <p>
+                Vendas este mês
+            </p>
+
+            <strong id="salesMonth">
+                0 Kz
+            </strong>
+
+        </div>
+
+    </article>
+
+
+
+    <article class="financialCard">
+
+        <span class="material-symbols-rounded">
+            receipt_long
+        </span>
+
+        <div>
+
+            <p>
+                Ticket médio
+            </p>
+
+            <strong id="averageOrder">
+                0 Kz
+            </strong>
+
+        </div>
+
+    </article>
+
+
+
+    <article class="financialCard">
+
+        <span class="material-symbols-rounded">
+            account_balance
+        </span>
+
+        <div>
+
+            <p>
+                Comissão TOMA
+            </p>
+
+            <strong id="storeCommission">
+                0 Kz
+            </strong>
+
+        </div>
+
+    </article>
+
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- MENU PRINCIPAL -->
+<!-- ========================================================= -->
 
 <section class="actionBar">
 
-<button id="addMerchant">
 
-➕ Adicionar Comerciante
+    <button
+        id="addMerchant"
+        class="primaryAction"
+        type="button"
+    >
 
-</button>
+        <span class="material-symbols-rounded">
+            person_add
+        </span>
 
-<button id="manageProducts">
+        Adicionar Comerciante
 
-📦 Produtos
+    </button>
 
-</button>
 
-<button id="manageOrders">
+    <button
+        id="manageProducts"
+        type="button"
+    >
 
-🛒 Pedidos
+        <span class="material-symbols-rounded">
+            inventory_2
+        </span>
 
-</button>
+        Produtos
 
-<button id="analyticsButton">
+    </button>
 
-📊 Estatísticas
 
-</button>
+    <button
+        id="manageOrders"
+        type="button"
+    >
+
+        <span class="material-symbols-rounded">
+            shopping_cart
+        </span>
+
+        Pedidos
+
+    </button>
+
+
+    <button
+        id="analyticsButton"
+        type="button"
+    >
+
+        <span class="material-symbols-rounded">
+            monitoring
+        </span>
+
+        Estatísticas
+
+    </button>
+
+
+    <button
+        id="notificationsButton"
+        type="button"
+    >
+
+        <span class="material-symbols-rounded">
+            notifications
+        </span>
+
+        Notificações
+
+        <span
+            id="notificationCount"
+            class="notificationCount hidden"
+        >
+            0
+        </span>
+
+    </button>
 
 </section>
 
-<!--====================================-->
+
+
+<!-- ========================================================= -->
+<!-- NAVIGATION / ONGLETS -->
+<!-- ========================================================= -->
+
+<nav
+    class="dashboardTabs"
+    id="dashboardTabs"
+    aria-label="Gestão da Loja"
+>
+
+
+    <button
+        class="dashboardTab active"
+        data-tab="overview"
+        type="button"
+    >
+
+        <span class="material-symbols-rounded">
+            dashboard
+        </span>
+
+        Visão geral
+
+    </button>
+
+
+    <button
+        class="dashboardTab"
+        data-tab="merchants"
+        type="button"
+    >
+
+        <span class="material-symbols-rounded">
+            group
+        </span>
+
+        Comerciantes
+
+    </button>
+
+
+    <button
+        class="dashboardTab"
+        data-tab="products"
+        type="button"
+    >
+
+        <span class="material-symbols-rounded">
+            inventory_2
+        </span>
+
+        Produtos
+
+    </button>
+
+
+    <button
+        class="dashboardTab"
+        data-tab="orders"
+        type="button"
+    >
+
+        <span class="material-symbols-rounded">
+            receipt_long
+        </span>
+
+        Pedidos
+
+    </button>
+
+
+    <button
+        class="dashboardTab"
+        data-tab="sales"
+        type="button"
+    >
+
+        <span class="material-symbols-rounded">
+            bar_chart
+        </span>
+
+        Vendas
+
+    </button>
+
+
+    <button
+        class="dashboardTab"
+        data-tab="activity"
+        type="button"
+    >
+
+        <span class="material-symbols-rounded">
+            history
+        </span>
+
+        Atividade
+
+    </button>
+
+</nav>
+
+
+
+<!-- ========================================================= -->
+<!-- VUE D'ENSEMBLE -->
+<!-- ========================================================= -->
+
+<section
+    id="overviewPanel"
+    class="dashboardPanel active"
+>
+
+
+    <!-- DESCRIPTION -->
+
+    <article class="dashboardCard storeDescriptionCard">
+
+        <div class="sectionHeader">
+
+            <div>
+
+                <h2>
+                    Sobre esta Loja
+                </h2>
+
+                <p>
+                    Informações da Loja Oficial
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <p
+            id="storeDescription"
+            class="storeDescription"
+        >
+            Nenhuma descrição disponível.
+        </p>
+
+    </article>
+
+
+
+    <!-- PERFORMANCE -->
+
+    <article class="dashboardCard">
+
+        <div class="sectionHeader">
+
+            <div>
+
+                <h2>
+                    Desempenho
+                </h2>
+
+                <p>
+                    Atividade recente da Loja
+                </p>
+
+            </div>
+
+
+            <select
+                id="performancePeriod"
+                class="periodSelect"
+            >
+
+                <option value="7">
+                    7 dias
+                </option>
+
+                <option value="30" selected>
+                    30 dias
+                </option>
+
+                <option value="90">
+                    3 meses
+                </option>
+
+                <option value="365">
+                    12 meses
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div
+            id="performanceChart"
+            class="chartContainer"
+        >
+
+            <div class="chartEmptyState">
+
+                <span class="material-symbols-rounded">
+                    monitoring
+                </span>
+
+                <p>
+                    Carregando estatísticas...
+                </p>
+
+            </div>
+
+        </div>
+
+    </article>
+
+
+
+    <!-- RESUMÉ -->
+
+    <article class="dashboardCard">
+
+        <div class="sectionHeader">
+
+            <div>
+
+                <h2>
+                    Resumo
+                </h2>
+
+                <p>
+                    Estado atual da Loja
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="summaryGrid">
+
+
+            <div class="summaryItem">
+
+                <span>
+                    Comerciantes ativos
+                </span>
+
+                <strong id="activeMerchantCount">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="summaryItem">
+
+                <span>
+                    Produtos ativos
+                </span>
+
+                <strong id="activeProductCount">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="summaryItem">
+
+                <span>
+                    Pedidos pendentes
+                </span>
+
+                <strong id="pendingOrderCount">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="summaryItem">
+
+                <span>
+                    Produtos sem stock
+                </span>
+
+                <strong id="outOfStockCount">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+    </article>
+
+</section>
+
+
+
+<!-- ========================================================= -->
 <!-- COMMERÇANTS -->
-<!--====================================-->
+<!-- ========================================================= -->
 
-<section class="merchantSection">
+<section
+    id="merchantsPanel"
+    class="dashboardPanel"
+>
 
-<div class="sectionHeader">
 
-<h2>
+    <article class="dashboardCard">
 
-Comerciantes desta Loja
 
-</h2>
+        <div class="sectionHeader">
 
-</div>
+            <div>
 
-<div id="merchantList">
+                <h2>
+                    Comerciantes desta Loja
+                </h2>
 
-</div>
+                <p>
+                    Gestão dos comerciantes associados
+                </p>
+
+            </div>
+
+
+            <button
+                id="addMerchantSecondary"
+                class="smallPrimaryButton"
+                type="button"
+            >
+
+                <span class="material-symbols-rounded">
+                    person_add
+                </span>
+
+                Adicionar
+
+            </button>
+
+        </div>
+
+
+
+        <!-- RECHERCHE -->
+
+        <div class="searchFilterBar">
+
+
+            <div class="searchBox">
+
+                <span class="material-symbols-rounded">
+                    search
+                </span>
+
+                <input
+                    id="merchantSearch"
+                    type="search"
+                    placeholder="Pesquisar comerciante..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <select
+                id="merchantStatusFilter"
+                class="filterSelect"
+            >
+
+                <option value="all">
+                    Todos os estados
+                </option>
+
+                <option value="active">
+                    Ativos
+                </option>
+
+                <option value="pending">
+                    Pendentes
+                </option>
+
+                <option value="blocked">
+                    Bloqueados
+                </option>
+
+                <option value="verified">
+                    Verificados
+                </option>
+
+            </select>
+
+        </div>
+
+
+
+        <div
+            id="merchantList"
+            class="merchantList"
+        >
+
+            <div class="loadingState">
+
+                <span class="material-symbols-rounded">
+                    progress_activity
+                </span>
+
+                <p>
+                    Carregando comerciantes...
+                </p>
+
+            </div>
+
+        </div>
+
+
+    </article>
 
 </section>
 
-<script type="module" src="js/brand-store-admin.js"></script>
+
+
+<!-- ========================================================= -->
+<!-- PRODUITS -->
+<!-- ========================================================= -->
+
+<section
+    id="productsPanel"
+    class="dashboardPanel"
+>
+
+
+    <article class="dashboardCard">
+
+
+        <div class="sectionHeader">
+
+            <div>
+
+                <h2>
+                    Produtos da Loja
+                </h2>
+
+                <p>
+                    Gestão completa dos produtos
+                </p>
+
+            </div>
+
+
+            <button
+                id="addProductButton"
+                class="smallPrimaryButton"
+                type="button"
+            >
+
+                <span class="material-symbols-rounded">
+                    add
+                </span>
+
+                Produto
+
+            </button>
+
+        </div>
+
+
+
+        <div class="productStatsRow">
+
+
+            <div class="miniStat">
+
+                <strong id="activeProductCount2">
+                    0
+                </strong>
+
+                <span>
+                    Ativos
+                </span>
+
+            </div>
+
+
+            <div class="miniStat">
+
+                <strong id="hiddenProductCount">
+                    0
+                </strong>
+
+                <span>
+                    Ocultos
+                </span>
+
+            </div>
+
+
+            <div class="miniStat">
+
+                <strong id="outOfStockCount2">
+                    0
+                </strong>
+
+                <span>
+                    Sem stock
+                </span>
+
+            </div>
+
+
+            <div class="miniStat">
+
+                <strong id="topProductCount">
+                    0
+                </strong>
+
+                <span>
+                    Mais vendidos
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="searchFilterBar">
+
+
+            <div class="searchBox">
+
+                <span class="material-symbols-rounded">
+                    search
+                </span>
+
+                <input
+                    id="productSearch"
+                    type="search"
+                    placeholder="Pesquisar produto..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <select
+                id="productMerchantFilter"
+                class="filterSelect"
+            >
+
+                <option value="all">
+                    Todos os comerciantes
+                </option>
+
+            </select>
+
+
+            <select
+                id="productStatusFilter"
+                class="filterSelect"
+            >
+
+                <option value="all">
+                    Todos
+                </option>
+
+                <option value="active">
+                    Ativos
+                </option>
+
+                <option value="hidden">
+                    Ocultos
+                </option>
+
+                <option value="outOfStock">
+                    Sem stock
+                </option>
+
+            </select>
+
+        </div>
+
+
+
+        <div
+            id="productList"
+            class="productList"
+        >
+
+            <div class="loadingState">
+
+                <span class="material-symbols-rounded">
+                    progress_activity
+                </span>
+
+                <p>
+                    Carregando produtos...
+                </p>
+
+            </div>
+
+        </div>
+
+
+    </article>
+
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- COMMANDES -->
+<!-- ========================================================= -->
+
+<section
+    id="ordersPanel"
+    class="dashboardPanel"
+>
+
+
+    <article class="dashboardCard">
+
+
+        <div class="sectionHeader">
+
+            <div>
+
+                <h2>
+                    Pedidos da Loja
+                </h2>
+
+                <p>
+                    Controle de todas as encomendas
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="orderStatsRow">
+
+
+            <div class="miniStat">
+
+                <strong id="newOrderCount">
+                    0
+                </strong>
+
+                <span>
+                    Novos
+                </span>
+
+            </div>
+
+
+            <div class="miniStat">
+
+                <strong id="processingOrderCount">
+                    0
+                </strong>
+
+                <span>
+                    Em preparação
+                </span>
+
+            </div>
+
+
+            <div class="miniStat">
+
+                <strong id="deliveredOrderCount">
+                    0
+                </strong>
+
+                <span>
+                    Entregues
+                </span>
+
+            </div>
+
+
+            <div class="miniStat">
+
+                <strong id="cancelledOrderCount">
+                    0
+                </strong>
+
+                <span>
+                    Cancelados
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="searchFilterBar">
+
+
+            <div class="searchBox">
+
+                <span class="material-symbols-rounded">
+                    search
+                </span>
+
+                <input
+                    id="orderSearch"
+                    type="search"
+                    placeholder="Pesquisar pedido..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <select
+                id="orderStatusFilter"
+                class="filterSelect"
+            >
+
+                <option value="all">
+                    Todos os estados
+                </option>
+
+                <option value="pending">
+                    Pendente
+                </option>
+
+                <option value="processing">
+                    Em preparação
+                </option>
+
+                <option value="delivered">
+                    Entregue
+                </option>
+
+                <option value="cancelled">
+                    Cancelado
+                </option>
+
+            </select>
+
+        </div>
+
+
+
+        <div
+            id="orderList"
+            class="orderList"
+        >
+
+            <div class="loadingState">
+
+                <span class="material-symbols-rounded">
+                    progress_activity
+                </span>
+
+                <p>
+                    Carregando pedidos...
+                </p>
+
+            </div>
+
+        </div>
+
+
+    </article>
+
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- VENTES -->
+<!-- ========================================================= -->
+
+<section
+    id="salesPanel"
+    class="dashboardPanel"
+>
+
+
+    <article class="dashboardCard">
+
+
+        <div class="sectionHeader">
+
+            <div>
+
+                <h2>
+                    Vendas
+                </h2>
+
+                <p>
+                    Desempenho financeiro da Loja
+                </p>
+
+            </div>
+
+
+            <select
+                id="salesPeriod"
+                class="periodSelect"
+            >
+
+                <option value="7">
+                    7 dias
+                </option>
+
+                <option value="30" selected>
+                    30 dias
+                </option>
+
+                <option value="90">
+                    3 meses
+                </option>
+
+                <option value="365">
+                    12 meses
+                </option>
+
+            </select>
+
+        </div>
+
+
+
+        <div
+            id="salesChart"
+            class="chartContainer"
+        >
+
+            <div class="chartEmptyState">
+
+                <span class="material-symbols-rounded">
+                    bar_chart
+                </span>
+
+                <p>
+                    Carregando vendas...
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="salesSummaryGrid">
+
+
+            <div>
+
+                <span>
+                    Vendas brutas
+                </span>
+
+                <strong id="grossSales">
+                    0 Kz
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Comissão TOMA
+                </span>
+
+                <strong id="tomacommission">
+                    0 Kz
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Vendas líquidas
+                </span>
+
+                <strong id="netSales">
+                    0 Kz
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Ticket médio
+                </span>
+
+                <strong id="averageOrderSales">
+                    0 Kz
+                </strong>
+
+            </div>
+
+        </div>
+
+
+    </article>
+
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- ACTIVITÉ / JOURNAL ADMIN -->
+<!-- ========================================================= -->
+
+<section
+    id="activityPanel"
+    class="dashboardPanel"
+>
+
+
+    <article class="dashboardCard">
+
+
+        <div class="sectionHeader">
+
+            <div>
+
+                <h2>
+                    Atividade administrativa
+                </h2>
+
+                <p>
+                    Histórico das ações realizadas nesta Loja
+                </p>
+
+            </div>
+
+
+            <button
+                id="clearActivityButton"
+                class="smallActionButton"
+                type="button"
+            >
+
+                <span class="material-symbols-rounded">
+                    delete_sweep
+                </span>
+
+                Limpar
+
+            </button>
+
+        </div>
+
+
+
+        <div
+            id="activityList"
+            class="activityList"
+        >
+
+            <div class="emptyState">
+
+                <span class="material-symbols-rounded">
+                    history
+                </span>
+
+                <h3>
+                    Nenhuma atividade
+                </h3>
+
+                <p>
+                    As ações administrativas aparecerão aqui.
+                </p>
+
+            </div>
+
+        </div>
+
+
+    </article>
+
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- NOTIFICATIONS -->
+<!-- ========================================================= -->
+
+<section
+    id="notificationsPanel"
+    class="dashboardPanel"
+>
+
+
+    <article class="dashboardCard">
+
+
+        <div class="sectionHeader">
+
+            <div>
+
+                <h2>
+                    Notificações
+                </h2>
+
+                <p>
+                    Alertas importantes da Loja
+                </p>
+
+            </div>
+
+
+            <button
+                id="markNotificationsRead"
+                class="smallActionButton"
+                type="button"
+            >
+
+                <span class="material-symbols-rounded">
+                    done_all
+                </span>
+
+                Marcar como lidas
+
+            </button>
+
+        </div>
+
+
+
+        <div
+            id="notificationList"
+            class="notificationList"
+        >
+
+            <div class="emptyState">
+
+                <span class="material-symbols-rounded">
+                    notifications_none
+                </span>
+
+                <h3>
+                    Nenhuma notificação
+                </h3>
+
+                <p>
+                    Não existem alertas no momento.
+                </p>
+
+            </div>
+
+        </div>
+
+
+    </article>
+
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- INFORMATIONS TECHNIQUES -->
+<!-- ========================================================= -->
+
+<section class="dashboardCard technicalInfoCard">
+
+
+    <div class="sectionHeader">
+
+        <div>
+
+            <h2>
+                Informações da Loja
+            </h2>
+
+            <p>
+                Dados técnicos e administrativos
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="technicalGrid">
+
+
+        <div class="technicalItem">
+
+            <span>
+                ID da Loja
+            </span>
+
+            <strong id="storeUid">
+                —
+            </strong>
+
+        </div>
+
+
+        <div class="technicalItem">
+
+            <span>
+                Data de criação
+            </span>
+
+            <strong id="storeCreatedDate">
+                —
+            </strong>
+
+        </div>
+
+
+        <div class="technicalItem">
+
+            <span>
+                Estado
+            </span>
+
+            <strong id="storeTechnicalStatus">
+                Ativa
+            </strong>
+
+        </div>
+
+
+        <div class="technicalItem">
+
+            <span>
+                Verificação
+            </span>
+
+            <strong id="storeTechnicalVerification">
+                Não verificada
+            </strong>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+</main>
+
+
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- MODAL — EDITAR LOJA -->
+<!-- ========================================================= -->
+
+<div
+    id="editStoreModal"
+    class="modal hidden"
+    aria-hidden="true"
+>
+
+    <div class="modalOverlay"></div>
+
+
+    <div
+        class="modalContent"
+        role="dialog"
+        aria-modal="true"
+    >
+
+        <div class="modalHeader">
+
+            <h2>
+                Editar Loja Oficial
+            </h2>
+
+            <button
+                id="closeEditStoreModal"
+                class="modalClose"
+                type="button"
+            >
+
+                <span class="material-symbols-rounded">
+                    close
+                </span>
+
+            </button>
+
+        </div>
+
+
+        <div class="modalBody">
+
+
+            <label>
+                Nome da Loja
+
+                <input
+                    id="editStoreName"
+                    type="text"
+                >
+
+            </label>
+
+
+            <label>
+                Descrição
+
+                <textarea
+                    id="editStoreDescription"
+                    rows="4"
+                ></textarea>
+
+            </label>
+
+
+            <label>
+                Logo
+
+                <input
+                    id="editStoreLogo"
+                    type="url"
+                    placeholder="URL da logo"
+                >
+
+            </label>
+
+
+            <label>
+                Banner
+
+                <input
+                    id="editStoreBanner"
+                    type="url"
+                    placeholder="URL do banner"
+                >
+
+            </label>
+
+        </div>
+
+
+        <div class="modalActions">
+
+            <button
+                id="cancelEditStore"
+                type="button"
+            >
+                Cancelar
+            </button>
+
+
+            <button
+                id="saveStoreChanges"
+                class="primaryAction"
+                type="button"
+            >
+                Guardar alterações
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- MODAL — CONFIRMATION ACTION -->
+<!-- ========================================================= -->
+
+<div
+    id="storeActionModal"
+    class="modal hidden"
+    aria-hidden="true"
+>
+
+    <div class="modalOverlay"></div>
+
+
+    <div
+        class="modalContent confirmationModal"
+        role="dialog"
+        aria-modal="true"
+    >
+
+        <div class="confirmationIcon">
+
+            <span
+                id="confirmationIcon"
+                class="material-symbols-rounded"
+            >
+                warning
+            </span>
+
+        </div>
+
+
+        <h2 id="confirmationTitle">
+            Confirmar ação
+        </h2>
+
+
+        <p id="confirmationText">
+            Tem certeza que deseja continuar?
+        </p>
+
+
+        <div class="modalActions">
+
+            <button
+                id="confirmationNo"
+                type="button"
+            >
+                Cancelar
+            </button>
+
+
+            <button
+                id="confirmationYes"
+                class="dangerButton"
+                type="button"
+            >
+                Confirmar
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- MODAL — DÉTAIL COMMERÇANT -->
+<!-- ========================================================= -->
+
+<div
+    id="merchantDetailsModal"
+    class="modal hidden"
+    aria-hidden="true"
+>
+
+    <div class="modalOverlay"></div>
+
+
+    <div
+        class="modalContent largeModal"
+        role="dialog"
+        aria-modal="true"
+    >
+
+        <div class="modalHeader">
+
+            <h2>
+                Comerciante
+            </h2>
+
+
+            <button
+                id="closeMerchantDetails"
+                class="modalClose"
+                type="button"
+            >
+
+                <span class="material-symbols-rounded">
+                    close
+                </span>
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="merchantDetailsContent"
+            class="modalBody"
+        >
+
+            <!-- JS -->
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- MODAL — DÉTAIL PRODUIT -->
+<!-- ========================================================= -->
+
+<div
+    id="productDetailsModal"
+    class="modal hidden"
+    aria-hidden="true"
+>
+
+    <div class="modalOverlay"></div>
+
+
+    <div
+        class="modalContent largeModal"
+        role="dialog"
+        aria-modal="true"
+    >
+
+        <div class="modalHeader">
+
+            <h2>
+                Produto
+            </h2>
+
+
+            <button
+                id="closeProductDetails"
+                class="modalClose"
+                type="button"
+            >
+
+                <span class="material-symbols-rounded">
+                    close
+                </span>
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="productDetailsContent"
+            class="modalBody"
+        >
+
+            <!-- JS -->
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- MODAL — DÉTAIL COMMANDE -->
+<!-- ========================================================= -->
+
+<div
+    id="orderDetailsModal"
+    class="modal hidden"
+    aria-hidden="true"
+>
+
+    <div class="modalOverlay"></div>
+
+
+    <div
+        class="modalContent largeModal"
+        role="dialog"
+        aria-modal="true"
+    >
+
+        <div class="modalHeader">
+
+            <h2>
+                Pedido
+            </h2>
+
+
+            <button
+                id="closeOrderDetails"
+                class="modalClose"
+                type="button"
+            >
+
+                <span class="material-symbols-rounded">
+                    close
+                </span>
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="orderDetailsContent"
+            class="modalBody"
+        >
+
+            <!-- JS -->
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- TOAST -->
+<!-- ========================================================= -->
+
+<div
+    id="toast"
+    class="toast"
+    role="status"
+    aria-live="polite"
+>
+
+    <span
+        id="toastIcon"
+        class="material-symbols-rounded"
+    >
+        check_circle
+    </span>
+
+
+    <span id="toastMessage">
+        Operação concluída.
+    </span>
+
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- LOADING GLOBAL -->
+<!-- ========================================================= -->
+
+<div
+    id="globalLoading"
+    class="globalLoading hidden"
+    aria-hidden="true"
+>
+
+    <div class="loadingSpinner">
+
+        <span class="material-symbols-rounded">
+            progress_activity
+        </span>
+
+        <p>
+            Carregando...
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- JAVASCRIPT PRINCIPAL -->
+<!-- ========================================================= -->
+
+<script
+    type="module"
+    src="js/brand-store-admin.js"
+></script>
+
 
 </body>
 
