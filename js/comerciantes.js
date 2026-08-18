@@ -6769,9 +6769,7 @@ async function loadMerchantProductsBlock18(
 
     if (!merchantId) {
 
-        alert(
-            "BLOC 18 — ID commerçant introuvable."
-        );
+        
 
         return;
 
@@ -6883,11 +6881,7 @@ async function loadMerchantProductsBlock18(
         }
 
 
-        alert(
-            "BLOC 18 — Produits trouvés : " +
-            productCount
-        );
-
+        
 
         // ====================================================
         // STOCKER POUR LES PROCHAINS BLOCS
