@@ -2849,7 +2849,7 @@ if (
 // BLOC 10 — RECHERCHE EN DIRECT
 // ============================================================
 
-alert("BLOC 10 — Début");
+
 
 
 // ============================================================
@@ -3085,17 +3085,7 @@ function rechercherComerciantesBloc10() {
     // ALERTE DE RÉSULTAT
     // --------------------------------------------------------
 
-    alert(
-        "RECHERCHE : " +
-        (
-            search ||
-            "vide"
-        ) +
-        "\n" +
-        "Commerçants trouvés : " +
-        result.length
-    );
-
+    
 }
 
 
@@ -3148,14 +3138,14 @@ if (clearSearchBlock10) {
 // FIN
 // ============================================================
 
-alert("BLOC 10 — Fin");
+
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
 // BLOC 11 — MODAL RÉEL DU COMERCIANTE
 // ============================================================
 
-alert("BLOC 11 — Début");
+
 
 
 // ============================================================
@@ -3173,14 +3163,6 @@ const closeMerchantModalBlock11 =
 // VÉRIFICATION
 // ============================================================
 
-alert(
-    "BLOC 11 — Modal : " +
-    (
-        merchantModalBlock11
-            ? "TROUVÉ"
-            : "INTROUVABLE"
-    )
-);
 
 
 // ============================================================
@@ -3497,11 +3479,7 @@ function openMerchantModalBlock11(merchant) {
     }
 
 
-    alert(
-        "BLOC 11 — Modal ouvert\n\n" +
-        "Commerçant : " +
-        name
-    );
+    
 
 }
 
@@ -3672,14 +3650,14 @@ if (merchantModalBlock11) {
 // FIN
 // ============================================================
 
-alert("BLOC 11 — Fin");
+
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
 // BLOC 12 — AÇÕES ADMINISTRATIVAS
 // ============================================================
 
-alert("BLOC 12 — Début");
+
 
 
 // ============================================================
@@ -3774,10 +3752,7 @@ function getSelectedMerchantBlock12() {
     }
 
 
-    alert(
-        "Nenhum comerciante selecionado."
-    );
-
+    
     return null;
 
 }
@@ -3808,9 +3783,7 @@ function getSelectedMerchantIdBlock12() {
 
     if (!id) {
 
-        alert(
-            "ERRO — ID do comerciante não encontrado."
-        );
+        
 
         return null;
 
@@ -4302,11 +4275,7 @@ if (
                 );
 
 
-                alert(
-                    newVerified
-                        ? "Comerciante verificado."
-                        : "Verificação removida."
-                );
+                
 
             }
 
@@ -4318,13 +4287,7 @@ if (
                 );
 
 
-                alert(
-                    "Erro ao verificar comerciante:\n\n" +
-                    (
-                        error.message ||
-                        "Erro desconhecido."
-                    )
-                );
+                
 
             }
 
@@ -4511,10 +4474,7 @@ if (
                 }
 
 
-                alert(
-                    "Estado alterado para: " +
-                    newStatus
-                );
+                
 
             }
 
@@ -4792,14 +4752,14 @@ updateBlockButtonBlock12();
 
 updateVerifyButtonBlock12();
 
-alert("BLOC 12 — Fin");
+
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
 // BLOC 13 — PRODUITS ET VENTES DU COMERCIANTE
 // ============================================================
 
-alert("BLOC 13 — Début");
+
 
 
 // ============================================================
@@ -4817,22 +4777,6 @@ const merchantSalesBlock13 =
     );
 
 
-alert(
-    "BLOC 13 — Éléments HTML\n\n" +
-    "Produtos : " +
-    (
-        merchantProductCountBlock13
-            ? "TROUVÉ"
-            : "INTROUVABLE"
-    ) +
-    "\n" +
-    "Vendas : " +
-    (
-        merchantSalesBlock13
-            ? "TROUVÉ"
-            : "INTROUVABLE"
-    )
-);
 
 
 // ============================================================
@@ -5145,15 +5089,7 @@ async function loadMerchantStatsBlock13(
     }
 
 
-    alert(
-        "BLOC 13 — Estatísticas carregadas\n\n" +
-        "Produtos : " +
-        products +
-        "\n" +
-        "Vendas : " +
-        sales
-    );
-
+    
 }
 
 
@@ -5231,14 +5167,13 @@ setInterval(
 // FIN BLOC 13
 // ============================================================
 
-alert("BLOC 13 — Fin");
+
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
 // BLOC 14 — SYNCHRONISATION DU MODAL
 // ============================================================
 
-alert("BLOC 14 — Début");
 
 
 // ============================================================
@@ -5265,43 +5200,7 @@ const merchantUidBlock14 =
 // VÉRIFICATION
 // ============================================================
 
-alert(
-    "BLOC 14 — Éléments du modal\n\n" +
-    "Produtos : " +
-    (
-        merchantProductCountBlock14
-            ? "TROUVÉ"
-            : "INTROUVABLE"
-    ) +
-    "\n" +
-    "Vendas : " +
-    (
-        merchantSalesBlock14
-            ? "TROUVÉ"
-            : "INTROUVABLE"
-    ) +
-    "\n" +
-    "Verificação : " +
-    (
-        merchantVerificationBlock14
-            ? "TROUVÉ"
-            : "INTROUVABLE"
-    ) +
-    "\n" +
-    "Data : " +
-    (
-        merchantCreatedAtBlock14
-            ? "TROUVÉ"
-            : "INTROUVABLE"
-    ) +
-    "\n" +
-    "ID : " +
-    (
-        merchantUidBlock14
-            ? "TROUVÉ"
-            : "INTROUVABLE"
-    )
-);
+
 
 
 // ============================================================
@@ -5511,14 +5410,13 @@ setInterval(
 // FIN
 // ============================================================
 
-alert("BLOC 14 — Fin");
+
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
 // BLOC 15 — STATISTIQUES RÉELLES DU COMMERÇANT
 // ============================================================
 
-alert("BLOC 15 — Début");
 
 
 // ============================================================
@@ -5745,18 +5643,7 @@ async function updateMerchantRealStatsBlock15(
     }
 
 
-    alert(
-        "BLOC 15 — Chargement statistiques\n\n" +
-        "Commerçant : " +
-        (
-            merchant.name ||
-            merchant.shopName ||
-            merchant.id ||
-            "-"
-        )
-    );
-
-
+    
     const productCount =
         await getMerchantProductCountBlock15(
             merchant
@@ -5797,14 +5684,7 @@ async function updateMerchantRealStatsBlock15(
     }
 
 
-    alert(
-        "BLOC 15 — Statistiques terminées\n\n" +
-        "Produtos : " +
-        productCount +
-        "\n" +
-        "Vendas : " +
-        orderCount
-    );
+    
 
 }
 
@@ -5879,7 +5759,7 @@ setInterval(
 // FIN BLOC 15
 // ============================================================
 
-alert("BLOC 15 — Fin");
+
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
@@ -5887,7 +5767,7 @@ alert("BLOC 15 — Fin");
 // BLOQUER / VÉRIFIER / CHANGER LE STATUT
 // ============================================================
 
-alert("BLOC 16 — Début");
+
 
 
 // ============================================================
@@ -5923,30 +5803,6 @@ const cancelStatusChange16 =
 // VÉRIFICATION
 // ============================================================
 
-alert(
-    "BLOC 16 — Boutons\n\n" +
-
-    "Bloquer : " +
-    (
-        toggleMerchantBlock16
-            ? "TROUVÉ"
-            : "INTROUVABLE"
-    ) +
-
-    "\nVerificar : " +
-    (
-        verifyMerchant16
-            ? "TROUVÉ"
-            : "INTROUVABLE"
-    ) +
-
-    "\nAlterar estado : " +
-    (
-        changeMerchantStatus16
-            ? "TROUVÉ"
-            : "INTROUVABLE"
-    )
-);
 
 
 // ============================================================
@@ -6142,14 +5998,7 @@ if (toggleMerchantBlock16) {
                 );
 
 
-                alert(
-                    "BLOC 16 — Erreur Firestore\n\n" +
-                    (
-                        error.message ||
-                        "Impossible de modifier le statut."
-                    )
-                );
-
+                
             }
 
         }
@@ -6566,14 +6415,14 @@ if (saveMerchantStatus16) {
 // FIN BLOC 16
 // ============================================================
 
-alert("BLOC 16 — Fin");
+;
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
 // BLOC 17 — SUPPRESSION SÉCURISÉE DU COMMERÇANT
 // ============================================================
 
-alert("BLOC 17 — Début");
+
 
 
 // ============================================================
@@ -6588,14 +6437,6 @@ const deleteMerchantBlock17 =
 // VÉRIFICATION
 // ============================================================
 
-alert(
-    "BLOC 17 — Bouton supprimer : " +
-    (
-        deleteMerchantBlock17
-            ? "TROUVÉ"
-            : "INTROUVABLE"
-    )
-);
 
 
 // ============================================================
@@ -6885,14 +6726,14 @@ if (deleteMerchantBlock17) {
 // FIN BLOC 17
 // ============================================================
 
-alert("BLOC 17 — Fin");
+
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
 // BLOC 18 — PRODUITS DU COMMERÇANT
 // ============================================================
 
-alert("BLOC 18 — Début");
+
 
 
 // ============================================================
@@ -7162,14 +7003,14 @@ setInterval(
 // FIN BLOC 18
 // ============================================================
 
-alert("BLOC 18 — Fin");
+
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
 // BLOC 19 — SYNCHRONISATION DU MODAL
 // ============================================================
 
-alert("BLOC 19 — Début");
+
 
 
 // ============================================================
@@ -7459,14 +7300,14 @@ document.addEventListener(
 // FIN BLOC 19
 // ============================================================
 
-alert("BLOC 19 — Fin");
+
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
 // BLOC 20 — MISE À JOUR APRÈS ACTION ADMINISTRATIVE
 // ============================================================
 
-alert("BLOC 20 — Début");
+
 
 
 // ============================================================
@@ -7692,14 +7533,14 @@ setInterval(
 // FIN BLOC 20
 // ============================================================
 
-alert("BLOC 20 — Fin");
+
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
 // BLOC 21 — PROTECTION DES ACTIONS ADMINISTRATIVES
 // ============================================================
 
-alert("BLOC 21 — Début");
+
 
 
 // ============================================================
@@ -7886,14 +7727,14 @@ document.addEventListener(
 // FIN BLOC 21
 // ============================================================
 
-alert("BLOC 21 — Fin");
+
 // ============================================================
 // TOMA ADMIN
 // COMERCIANTES.JS
 // BLOC 22 — GESTION DES ERREURS ET MESSAGES ADMIN
 // ============================================================
 
-alert("BLOC 22 — Début");
+
 
 
 // ============================================================
@@ -8128,20 +7969,6 @@ const toastMessageBlock22 =
     );
 
 
-alert(
-    "BLOC 22 — Toast : " +
-    (
-        toastBlock22
-            ? "TROUVÉ"
-            : "INTROUVABLE"
-    ) +
-    "\n\nMessage : " +
-    (
-        toastMessageBlock22
-            ? "TROUVÉ"
-            : "INTROUVABLE"
-    )
-);
 
 
 // ============================================================
@@ -8165,4 +7992,4 @@ window.addEventListener(
 // FIN BLOC 22
 // ============================================================
 
-alert("BLOC 22 — Fin");
+
