@@ -1,850 +1,1089 @@
- /*==================================================
-TOMA
-BRAND STORE ADMIN
-PREMIUM UI
-BLOC 1
-==================================================*/
+ /* ============================================================
+   TOMA — BRAND STORE ADMIN
+   DESIGN SYSTEM
+   ============================================================ */
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:"Inter",sans-serif;
-}
-
-body{
-
-background:#f5f7fb;
+:root {
+    --primary: #111111;
+    --primary-soft: #f4f4f4;
 
-color:#111;
+    --accent: #f5c400;
+    --accent-dark: #d9aa00;
 
-min-height:100vh;
+    --success: #16a34a;
+    --success-bg: #ecfdf3;
 
-}
+    --warning: #d97706;
+    --warning-bg: #fff7ed;
 
-/*==========================
-HEADER
-==========================*/
+    --danger: #dc2626;
+    --danger-bg: #fef2f2;
 
-.pageHeader{
+    --info: #2563eb;
+    --info-bg: #eff6ff;
 
-position:sticky;
+    --text: #111827;
+    --text-soft: #6b7280;
 
-top:0;
+    --border: #e5e7eb;
+    --background: #f6f7f9;
+    --card: #ffffff;
 
-z-index:1000;
+    --radius-small: 10px;
+    --radius: 16px;
+    --radius-large: 22px;
 
-display:flex;
+    --shadow:
+        0 8px 25px rgba(0, 0, 0, 0.06);
 
-align-items:center;
+    --shadow-large:
+        0 15px 45px rgba(0, 0, 0, 0.10);
 
-justify-content:space-between;
+    --header-height: 68px;
+}
 
-padding:18px;
 
-background:rgba(255,255,255,.92);
+/* ============================================================
+   RESET
+   ============================================================ */
 
-backdrop-filter:blur(18px);
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-border-bottom:1px solid rgba(0,0,0,.06);
 
+html {
+    scroll-behavior: smooth;
 }
 
-.headerTitle{
 
-flex:1;
+body {
+    font-family: "Inter", sans-serif;
+    background: var(--background);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+}
 
-margin:0 16px;
 
+button,
+input,
+select,
+textarea {
+    font: inherit;
 }
 
-.headerTitle h1{
 
-font-size:28px;
+button {
+    border: 0;
+    cursor: pointer;
+}
 
-font-weight:800;
 
+img {
+    max-width: 100%;
+    display: block;
 }
 
-.headerTitle p{
 
-margin-top:4px;
+/* ============================================================
+   HEADER
+   ============================================================ */
 
-font-size:14px;
+.pageHeader {
+    position: sticky;
+    top: 0;
+    z-index: 100;
 
-color:#777;
+    height: var(--header-height);
 
-}
+    display: flex;
+    align-items: center;
+    gap: 12px;
 
-.headerButton{
+    padding: 0 16px;
 
-width:50px;
+    background: rgba(255, 255, 255, 0.94);
 
-height:50px;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
 
-border:none;
+    border-bottom: 1px solid var(--border);
+}
 
-border-radius:16px;
 
-background:#fff;
+.headerButton {
+    width: 42px;
+    height: 42px;
 
-display:flex;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-align-items:center;
+    border-radius: 12px;
 
-justify-content:center;
+    background: var(--primary-soft);
+    color: var(--text);
+
+    transition:
+        transform .2s ease,
+        background .2s ease;
+}
 
-cursor:pointer;
 
-box-shadow:0 8px 20px rgba(0,0,0,.08);
+.headerButton:hover {
+    background: #e9e9e9;
+}
 
-transition:.25s;
 
+.headerButton:active {
+    transform: scale(.94);
 }
 
-.headerButton:hover{
+
+.headerButton .material-symbols-rounded {
+    font-size: 22px;
+}
 
-transform:translateY(-2px);
 
+.headerTitle {
+    flex: 1;
+    min-width: 0;
 }
 
-.material-symbols-rounded{
 
-font-size:28px;
+.headerTitle h1 {
+    font-size: 17px;
+    font-weight: 800;
 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/*==========================
-BANNIÈRE
-==========================*/
 
-.storeHero{
+.headerTitle p {
+    margin-top: 2px;
 
-position:relative;
+    font-size: 11px;
+    color: var(--text-soft);
+}
 
-margin:20px;
 
-border-radius:30px;
+/* ============================================================
+   HERO
+   ============================================================ */
 
-overflow:hidden;
+.storeHero {
+    position: relative;
 
-box-shadow:0 20px 40px rgba(0,0,0,.12);
+    width: 100%;
+    height: 250px;
 
+    overflow: hidden;
+
+    background: #111;
 }
 
-.storeBanner{
 
-width:100%;
+.storeBanner {
+    width: 100%;
+    height: 100%;
 
-height:260px;
+    object-fit: cover;
 
-object-fit:cover;
+    opacity: .88;
+}
 
-display:block;
 
-}
+.storeHero::after {
+    content: "";
 
-.storeOverlay{
+    position: absolute;
+    inset: 0;
 
-position:absolute;
+    background:
+        linear-gradient(
+            to top,
+            rgba(0,0,0,.82),
+            rgba(0,0,0,.10)
+        );
+}
 
-left:0;
-right:0;
-bottom:0;
 
-padding:25px;
+.storeOverlay {
+    position: absolute;
 
-display:flex;
+    z-index: 2;
 
-align-items:center;
+    left: 18px;
+    right: 18px;
+    bottom: 18px;
 
-gap:20px;
+    display: flex;
+    align-items: center;
 
-background:linear-gradient(
-to top,
-rgba(0,0,0,.75),
-transparent
-);
+    gap: 14px;
 
+    color: white;
 }
 
-.storeLogo{
 
-width:110px;
+.storeLogo {
+    width: 72px;
+    height: 72px;
 
-height:110px;
+    object-fit: cover;
 
-border-radius:24px;
+    border-radius: 18px;
 
-background:#fff;
+    background: white;
 
-padding:8px;
+    border: 3px solid white;
 
-object-fit:contain;
+    box-shadow:
+        0 8px 25px rgba(0,0,0,.25);
+}
 
-box-shadow:0 12px 30px rgba(0,0,0,.25);
 
+.storeOverlay h2 {
+    font-size: 22px;
+    font-weight: 800;
 }
 
-.storeOverlay h2{
 
-font-size:34px;
+.storeOverlay p {
+    margin-top: 4px;
 
-font-weight:800;
+    font-size: 12px;
 
-color:#fff;
-
+    opacity: .85;
 }
+
+
+/* ============================================================
+   STATUS BADGES
+   ============================================================ */
+
+.storeStatus,
+.merchantBadge {
+    display: inline-flex;
 
-.storeOverlay p{
+    align-items: center;
+    justify-content: center;
 
-margin-top:6px;
+    width: fit-content;
 
-font-size:15px;
+    padding: 5px 9px;
 
-color:#eee;
+    border-radius: 999px;
 
+    font-size: 11px;
+    font-weight: 700;
 }
 
-/*==========================
-STATISTIQUES
-==========================*/
 
-.statsGrid{
+.storeStatus.active,
+.merchantBadge.active {
+    color: var(--success);
+    background: var(--success-bg);
+}
 
-display:grid;
+
+.storeStatus.blocked,
+.merchantBadge.blocked {
+    color: var(--danger);
+    background: var(--danger-bg);
+}
 
-grid-template-columns:repeat(4,1fr);
 
-gap:18px;
+.storeStatus.pending,
+.merchantBadge.pending {
+    color: var(--warning);
+    background: var(--warning-bg);
+}
 
-padding:0 20px 20px;
 
+.storeStatus.suspended,
+.merchantBadge.suspended {
+    color: var(--danger);
+    background: var(--danger-bg);
 }
+
+
+/* ============================================================
+   VERIFICATION
+   ============================================================ */
 
-.statCard{
+.verificationBadge {
+    display: inline-flex;
 
-background:#fff;
+    align-items: center;
+    gap: 5px;
 
-border-radius:22px;
+    margin-top: 8px;
 
-padding:22px;
+    padding: 5px 9px;
 
-text-align:center;
+    border-radius: 999px;
 
-box-shadow:0 10px 28px rgba(0,0,0,.08);
+    background: #eff6ff;
 
-transition:.25s;
+    color: #2563eb;
 
+    font-size: 11px;
+    font-weight: 700;
 }
 
-.statCard:hover{
 
-transform:translateY(-4px);
+.verificationBadge::before {
+    content: "✓";
 
-}
+    width: 15px;
+    height: 15px;
 
-.statCard h2{
+    display: inline-flex;
 
-font-size:30px;
+    align-items: center;
+    justify-content: center;
 
-font-weight:800;
+    border-radius: 50%;
 
-margin-bottom:8px;
+    background: #2563eb;
+    color: white;
 
+    font-size: 9px;
 }
 
-.statCard p{
 
-font-size:14px;
+/* ============================================================
+   MAIN CONTAINER
+   ============================================================ */
 
-color:#777;
+main,
+.dashboardContainer {
+    width: 100%;
+    max-width: 1200px;
 
-font-weight:600;
+    margin: auto;
 
+    padding: 18px;
 }
-/*==================================================
-BLOC 2
-ACTIONS + LISTE DES COMMERÇANTS
-==================================================*/
 
-/*==========================
-ACTION BAR
-==========================*/
 
-.actionBar{
+/* ============================================================
+   STATISTICS
+   ============================================================ */
 
-display:grid;
+.statsGrid {
+    display: grid;
 
-grid-template-columns:repeat(4,1fr);
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
 
-gap:16px;
+    gap: 12px;
 
-padding:0 20px 25px;
-
+    padding: 18px;
 }
-
-.actionBar button{
 
-height:58px;
 
-border:none;
+.statCard {
+    position: relative;
 
-border-radius:18px;
+    min-height: 105px;
 
-font-size:15px;
+    padding: 18px;
 
-font-weight:700;
+    background: var(--card);
 
-cursor:pointer;
+    border: 1px solid var(--border);
 
-transition:.25s;
+    border-radius: var(--radius);
 
-box-shadow:0 10px 24px rgba(0,0,0,.08);
+    box-shadow: var(--shadow);
 
+    overflow: hidden;
 }
+
+
+.statCard::after {
+    content: "";
+
+    position: absolute;
 
-#addMerchant{
+    right: -25px;
+    bottom: -25px;
 
-background:linear-gradient(135deg,#22c55e,#16a34a);
+    width: 80px;
+    height: 80px;
 
-color:#fff;
+    border-radius: 50%;
 
+    background: rgba(245,196,0,.10);
 }
 
-#manageProducts{
 
-background:#2563eb;
+.statCard h2 {
+    position: relative;
+    z-index: 1;
 
-color:#fff;
+    font-size: 24px;
+    font-weight: 800;
 
+    color: var(--text);
 }
 
-#manageOrders{
 
-background:#f59e0b;
+.statCard p {
+    position: relative;
+    z-index: 1;
 
-color:#fff;
+    margin-top: 7px;
 
+    font-size: 12px;
+
+    color: var(--text-soft);
 }
+
+
+/* ============================================================
+   ACTION BAR
+   ============================================================ */
 
-#analyticsButton{
+.actionBar {
+    display: flex;
 
-background:#7c3aed;
+    flex-wrap: wrap;
 
-color:#fff;
+    gap: 10px;
 
+    padding: 0 18px 18px;
 }
 
-.actionBar button:hover{
 
-transform:translateY(-3px);
+.actionBar button {
+    min-height: 44px;
 
-box-shadow:0 16px 35px rgba(0,0,0,.18);
+    padding: 0 16px;
 
-}
+    border-radius: 12px;
 
-/*==========================
-SECTION
-==========================*/
+    background: var(--primary);
 
-.merchantSection{
+    color: white;
 
-padding:0 20px 35px;
+    font-size: 12px;
+    font-weight: 700;
 
+    transition:
+        transform .2s ease,
+        background .2s ease;
 }
 
-.sectionHeader{
 
-display:flex;
+.actionBar button:hover {
+    background: #292929;
+}
 
-align-items:center;
 
-justify-content:space-between;
+.actionBar button:active {
+    transform: scale(.97);
+}
 
-margin-bottom:20px;
 
+#addMerchant {
+    background: var(--accent);
+    color: #111;
 }
 
-.sectionHeader h2{
 
-font-size:28px;
+#addMerchant:hover {
+    background: var(--accent-dark);
+}
 
-font-weight:800;
 
-}
+/* ============================================================
+   SECTIONS
+   ============================================================ */
 
-/*==========================
-LISTE
-==========================*/
+.merchantSection,
+.productsSection,
+.ordersSection,
+.analyticsSection {
+    margin: 0 18px 18px;
 
-#merchantList{
+    background: var(--card);
 
-display:flex;
+    border: 1px solid var(--border);
 
-flex-direction:column;
+    border-radius: var(--radius-large);
 
-gap:18px;
+    box-shadow: var(--shadow);
 
+    overflow: hidden;
 }
 
-/*==========================
-CARTE COMMERÇANT
-==========================*/
 
-.merchantCard{
+.sectionHeader {
+    display: flex;
 
-background:#fff;
+    align-items: center;
+    justify-content: space-between;
 
-border-radius:24px;
+    gap: 12px;
 
-padding:20px;
+    padding: 18px;
 
-display:flex;
+    border-bottom: 1px solid var(--border);
+}
 
-align-items:center;
 
-justify-content:space-between;
+.sectionHeader h2 {
+    font-size: 16px;
+    font-weight: 800;
+}
 
-box-shadow:0 12px 30px rgba(0,0,0,.08);
 
-transition:.25s;
+/* ============================================================
+   MERCHANT LIST
+   ============================================================ */
 
+#merchantList {
+    display: flex;
+    flex-direction: column;
 }
 
-.merchantCard:hover{
 
-transform:translateY(-4px);
+.merchantCard {
+    display: flex;
 
-}
+    align-items: center;
+    justify-content: space-between;
 
-.merchantLeft{
+    gap: 14px;
 
-display:flex;
+    padding: 15px 18px;
 
-align-items:center;
+    border-bottom: 1px solid var(--border);
+
+    transition:
+        background .2s ease;
+}
 
-gap:18px;
 
+.merchantCard:last-child {
+    border-bottom: 0;
 }
 
-.merchantAvatar{
 
-width:70px;
+.merchantCard:hover {
+    background: #fafafa;
+}
 
-height:70px;
 
-border-radius:20px;
+.merchantLeft {
+    min-width: 0;
 
-object-fit:cover;
+    display: flex;
 
-background:#eee;
+    align-items: center;
 
+    gap: 12px;
 }
+
+
+.merchantAvatar {
+    flex: 0 0 auto;
 
-.merchantInfo h3{
+    width: 48px;
+    height: 48px;
 
-font-size:20px;
+    border-radius: 14px;
 
-font-weight:800;
+    object-fit: cover;
 
-margin-bottom:5px;
+    background: #eee;
+}
 
+
+.merchantInfo {
+    min-width: 0;
 }
 
-.merchantInfo p{
 
-font-size:14px;
+.merchantInfo h3 {
+    font-size: 14px;
+    font-weight: 750;
 
-color:#777;
+    white-space: nowrap;
 
-margin-bottom:8px;
+    overflow: hidden;
 
+    text-overflow: ellipsis;
 }
+
 
-.merchantBadge{
+.merchantInfo p {
+    margin-top: 3px;
 
-display:inline-flex;
+    font-size: 11px;
 
-align-items:center;
+    color: var(--text-soft);
+}
 
-padding:6px 14px;
 
-border-radius:999px;
+.merchantBadge {
+    margin-top: 5px;
+}
 
-background:#dcfce7;
 
-color:#15803d;
+.merchantActions {
+    display: flex;
 
-font-size:12px;
+    align-items: center;
 
-font-weight:700;
+    gap: 6px;
 
+    flex-shrink: 0;
 }
+
 
-/*==========================
-BOUTONS
-==========================*/
+.merchantActions button {
+    min-height: 36px;
 
-.merchantActions{
+    padding: 0 10px;
 
-display:flex;
+    border-radius: 10px;
 
-gap:12px;
+    font-size: 11px;
 
+    font-weight: 700;
 }
 
-.merchantActions button{
 
-height:46px;
+.viewMerchant {
+    background: var(--info-bg);
+    color: var(--info);
+}
 
-padding:0 18px;
 
-border:none;
+.chatMerchant {
+    background: var(--success-bg);
+    color: var(--success);
+}
 
-border-radius:14px;
 
-font-size:14px;
+.removeMerchant {
+    background: var(--danger-bg);
+    color: var(--danger);
+}
 
-font-weight:700;
 
-cursor:pointer;
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
 
-transition:.25s;
+.emptyState {
+    padding: 45px 20px;
 
+    text-align: center;
 }
 
-.removeMerchant{
 
-background:#ef4444;
+.emptyState .icon {
+    width: 55px;
+    height: 55px;
 
-color:#fff;
+    margin: 0 auto 12px;
 
-}
+    display: flex;
 
-.viewMerchant{
+    align-items: center;
+    justify-content: center;
 
-background:#2563eb;
+    border-radius: 50%;
 
-color:#fff;
+    background: var(--primary-soft);
 
+    font-size: 25px;
 }
-
-.chatMerchant{
-
-background:#22c55e;
 
-color:#fff;
 
+.emptyState h2 {
+    font-size: 16px;
+    font-weight: 800;
 }
 
-.merchantActions button:hover{
 
-transform:translateY(-2px);
+.emptyState p {
+    margin-top: 6px;
 
+    font-size: 12px;
+
+    color: var(--text-soft);
 }
-/*==================================================
-BLOC 3
-RESPONSIVE • ANIMATIONS • ETAT VIDE
-==================================================*/
 
-/*==============================
-EMPTY STATE
-==============================*/
 
-.emptyState{
+/* ============================================================
+   LOADING
+   ============================================================ */
 
-padding:90px 20px;
+.globalLoading {
+    position: fixed;
 
-display:flex;
+    inset: 0;
 
-flex-direction:column;
+    z-index: 9999;
 
-align-items:center;
+    display: flex;
 
-justify-content:center;
+    align-items: center;
+    justify-content: center;
 
-text-align:center;
+    background: rgba(255,255,255,.85);
 
+    backdrop-filter: blur(8px);
 }
 
-.emptyState.hidden{
 
-display:none;
-
+.globalLoading.hidden {
+    display: none;
 }
+
 
-.emptyState .icon{
+.loadingBox {
+    display: flex;
 
-font-size:80px;
+    flex-direction: column;
 
-margin-bottom:20px;
+    align-items: center;
 
+    gap: 12px;
 }
 
-.emptyState h2{
 
-font-size:28px;
+.spinner {
+    width: 38px;
+    height: 38px;
 
-font-weight:800;
+    border: 4px solid #e5e7eb;
 
-margin-bottom:10px;
+    border-top-color: var(--accent);
 
-color:#222;
+    border-radius: 50%;
 
+    animation:
+        spin .8s linear infinite;
 }
 
-.emptyState p{
 
-max-width:450px;
+.loadingBox p {
+    font-size: 12px;
 
-font-size:16px;
+    font-weight: 700;
+}
 
-line-height:1.7;
 
-color:#777;
+@keyframes spin {
 
+    to {
+        transform: rotate(360deg);
+    }
+
 }
 
-/*==============================
-LOADER
-==============================*/
 
-.loader{
+/* ============================================================
+   TOAST
+   ============================================================ */
 
-display:flex;
+.toast {
+    position: fixed;
 
-align-items:center;
+    left: 50%;
 
-justify-content:center;
+    bottom: 25px;
 
-padding:60px;
+    z-index: 10000;
 
-}
+    width: calc(100% - 30px);
 
-.loaderCircle{
+    max-width: 420px;
 
-width:55px;
+    padding: 13px 16px;
 
-height:55px;
+    display: flex;
 
-border:5px solid #e5e7eb;
+    align-items: center;
 
-border-top:5px solid #22c55e;
+    gap: 10px;
 
-border-radius:50%;
+    background: #111;
 
-animation:spin 1s linear infinite;
+    color: white;
 
-}
+    border-radius: 14px;
 
-@keyframes spin{
+    box-shadow: var(--shadow-large);
 
-100%{
+    transform:
+        translate(-50%, 120px);
 
-transform:rotate(360deg);
+    opacity: 0;
 
-}
+    pointer-events: none;
 
+    transition:
+        transform .3s ease,
+        opacity .3s ease;
 }
 
-/*==============================
-ANIMATIONS
-==============================*/
 
-.merchantCard{
+.toast.show {
+    transform:
+        translate(-50%, 0);
 
-animation:fadeCard .35s ease;
-
+    opacity: 1;
 }
 
-@keyframes fadeCard{
 
-from{
+.toastIcon {
+    font-size: 20px;
+}
 
-opacity:0;
 
-transform:translateY(15px);
+.toastMessage {
+    font-size: 12px;
 
+    font-weight: 600;
 }
 
-to{
 
-opacity:1;
+/* ============================================================
+   STORE INFORMATION
+   ============================================================ */
 
-transform:translateY(0);
+.storeInfo {
+    display: grid;
 
-}
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
 
+    gap: 12px;
+
+    margin: 0 18px 18px;
 }
+
 
-.statCard,
-.actionBar button{
+.infoCard {
+    padding: 15px;
 
-transition:all .25s ease;
+    background: var(--card);
 
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    box-shadow: var(--shadow);
 }
+
 
-/*==============================
-SCROLLBAR
-==============================*/
+.infoCard label {
+    display: block;
 
-::-webkit-scrollbar{
+    margin-bottom: 5px;
 
-width:8px;
+    font-size: 10px;
 
-height:8px;
+    color: var(--text-soft);
 
+    text-transform: uppercase;
+
+    letter-spacing: .05em;
 }
 
-::-webkit-scrollbar-track{
 
-background:#ececec;
+.infoCard strong {
+    font-size: 13px;
 
-border-radius:20px;
+    font-weight: 750;
 
+    word-break: break-word;
 }
 
-::-webkit-scrollbar-thumb{
 
-background:#22c55e;
+/* ============================================================
+   RESPONSIVE — TABLETTE
+   ============================================================ */
 
-border-radius:20px;
+@media (max-width: 850px) {
 
-}
+    .statsGrid {
 
-::-webkit-scrollbar-thumb:hover{
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
 
-background:#16a34a;
+    }
 
 }
 
-/*==============================
-RESPONSIVE TABLET
-==============================*/
 
-@media(max-width:1000px){
+/* ============================================================
+   RESPONSIVE — MOBILE
+   ============================================================ */
 
-.statsGrid{
+@media (max-width: 600px) {
 
-grid-template-columns:repeat(2,1fr);
+    .pageHeader {
+        padding: 0 12px;
+    }
 
-}
 
-.actionBar{
+    .headerTitle h1 {
+        font-size: 15px;
+    }
 
-grid-template-columns:repeat(2,1fr);
 
-}
+    .storeHero {
+        height: 215px;
+    }
 
-}
 
-/*==============================
-RESPONSIVE MOBILE
-==============================*/
+    .storeLogo {
+        width: 62px;
+        height: 62px;
 
-@media(max-width:600px){
+        border-radius: 15px;
+    }
 
-.storeHero{
 
-margin:15px;
+    .storeOverlay h2 {
+        font-size: 19px;
+    }
 
-}
 
-.storeBanner{
+    .statsGrid {
+        gap: 9px;
 
-height:200px;
+        padding: 12px;
+    }
 
-}
 
-.storeOverlay{
+    .statCard {
+        min-height: 95px;
 
-flex-direction:column;
+        padding: 14px;
+    }
 
-align-items:flex-start;
 
-}
+    .statCard h2 {
+        font-size: 20px;
+    }
 
-.storeLogo{
 
-width:90px;
+    .actionBar {
+        display: grid;
 
-height:90px;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
 
-}
+        padding:
+            0 12px 12px;
+    }
 
-.storeOverlay h2{
 
-font-size:26px;
+    .actionBar button {
+        width: 100%;
 
-}
+        padding: 0 8px;
 
-.statsGrid{
+        font-size: 11px;
+    }
 
-grid-template-columns:1fr;
 
-padding:15px;
+    .merchantSection,
+    .productsSection,
+    .ordersSection,
+    .analyticsSection {
+        margin:
+            0 12px 12px;
 
-}
+        border-radius: 18px;
+    }
 
-.actionBar{
 
-grid-template-columns:1fr;
+    .merchantCard {
+        align-items: flex-start;
 
-padding:15px;
+        flex-direction: column;
+    }
 
-}
 
-.merchantCard{
+    .merchantActions {
+        width: 100%;
+    }
 
-flex-direction:column;
 
-align-items:flex-start;
+    .merchantActions button {
+        flex: 1;
 
-gap:20px;
+        min-height: 40px;
+    }
 
-}
 
-.merchantLeft{
+    .storeInfo {
+        grid-template-columns: 1fr;
 
-width:100%;
+        margin:
+            0 12px 12px;
+    }
 
 }
-
-.merchantActions{
-
-width:100%;
 
-display:grid;
 
-grid-template-columns:1fr;
+/* ============================================================
+   ACCESSIBILITÉ
+   ============================================================ */
 
-gap:10px;
+button:focus-visible {
+    outline: 3px solid rgba(245,196,0,.45);
 
+    outline-offset: 2px;
 }
 
-.merchantActions button{
 
-width:100%;
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
 
+::-webkit-scrollbar {
+    width: 6px;
 }
 
-.sectionHeader h2{
 
-font-size:22px;
-
+::-webkit-scrollbar-track {
+    background: transparent;
 }
 
-.emptyState .icon{
 
-font-size:60px;
+::-webkit-scrollbar-thumb {
+    background: #cfcfcf;
 
+    border-radius: 999px;
 }
-
-.emptyState h2{
 
-font-size:22px;
 
+::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
 }
+
+
+/* ============================================================
+   UTILITAIRE
+   ============================================================ */
 
+.hidden {
+    display: none !important;
 }
