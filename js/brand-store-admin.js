@@ -945,430 +945,225 @@ alert(
 // ==========================================================
 
 alert(
-    "BLOC 2 — Chargement de la Loja Oficial démarré."
+    "BLOC 2 — Chargement de la Loja Oficial..."
 );
 
 
 // ==========================================================
-// FONCTION — AFFICHER LES INFORMATIONS DE LA LOJA
+// DONNÉES DES BOUTIQUES PAR DÉFAUT
+// ==========================================================
+// IMPORTANT
+// Ces données correspondent aux IDs utilisés dans
+// brand-stores.js.
+//
+// Elles permettent au panneau Admin de fonctionner même
+// si le document officialStores/{storeId} n'existe pas
+// encore dans Firestore.
+//
+// Les images sont dans :
+// images/stores/
 // ==========================================================
 
-function renderStore(storeData) {
+const defaultOfficialStores = {
 
-    if (!storeData) {
+    apple: {
+        id: "apple",
+        name: "Apple",
+        logo: "images/stores/apple.png",
+        banner: "images/stores/apple-banner.jpg"
+    },
 
-        throw new Error(
-            "Données de la Loja Oficial introuvables."
-        );
+    samsung: {
+        id: "samsung",
+        name: "Samsung",
+        logo: "images/stores/samsung.png",
+        banner: "images/stores/samsung-banner.jpg"
+    },
 
+    xiaomi: {
+        id: "xiaomi",
+        name: "Xiaomi",
+        logo: "images/stores/xiaomi.png",
+        banner: "images/stores/xiaomi-banner.jpg"
+    },
+
+    huawei: {
+        id: "huawei",
+        name: "Huawei",
+        logo: "images/stores/huawei.png",
+        banner: "images/stores/huawei-banner.jpg"
+    },
+
+    sony: {
+        id: "sony",
+        name: "Sony",
+        logo: "images/stores/sony.png",
+        banner: "images/stores/sony-banner.jpg"
+    },
+
+    nike: {
+        id: "nike",
+        name: "Nike",
+        logo: "images/stores/nike.png",
+        banner: "images/stores/nike-banner.jpg"
+    },
+
+    adidas: {
+        id: "adidas",
+        name: "Adidas",
+        logo: "images/stores/adidas.png",
+        banner: "images/stores/adidas-banner.jpg"
+    },
+
+    puma: {
+        id: "puma",
+        name: "Puma",
+        logo: "images/stores/puma.png",
+        banner: "images/stores/puma-banner.jpg"
+    },
+
+    realmadrid: {
+        id: "realmadrid",
+        name: "Real Madrid",
+        logo: "images/stores/realmadrid.png",
+        banner: "images/stores/realmadrid-banner.jpg"
+    },
+
+    barcelona: {
+        id: "barcelona",
+        name: "FC Barcelona",
+        logo: "images/stores/barcelona.png",
+        banner: "images/stores/barcelona-banner.jpg"
+    },
+
+    psg: {
+        id: "psg",
+        name: "PSG",
+        logo: "images/stores/psg.png",
+        banner: "images/stores/psg-banner.jpg"
+    },
+
+    rolex: {
+        id: "rolex",
+        name: "Rolex",
+        logo: "images/stores/rolex.png",
+        banner: "images/stores/rolex-banner.jpg"
+    },
+
+    gucci: {
+        id: "gucci",
+        name: "Gucci",
+        logo: "images/stores/gucci.png",
+        banner: "images/stores/gucci-banner.jpg"
+    },
+
+    "louis-vuitton": {
+        id: "louis-vuitton",
+        name: "Louis Vuitton",
+        logo: "images/stores/louis-vuitton.png",
+        banner: "images/stores/louis-vuitton-banner.jpg"
     }
 
-
-    // ======================================================
-    // NOM DE LA LOJA
-    // ======================================================
-
-    if (storeName) {
-
-        storeName.textContent =
-            storeData.name ||
-            "Loja Oficial";
-
-    }
-
-
-    if (storeTitle) {
-
-        storeTitle.textContent =
-            storeData.name ||
-            "Loja Oficial";
-
-    }
-
-
-    // ======================================================
-    // SOUS-TITRE
-    // ======================================================
-
-    if (storeSubtitle) {
-
-        storeSubtitle.textContent =
-            storeData.subtitle ||
-            "Loja Oficial TOMA";
-
-    }
-
-
-    // ======================================================
-    // DESCRIPTION
-    // ======================================================
-
-    if (storeDescription) {
-
-        storeDescription.textContent =
-            storeData.description ||
-            "Nenhuma descrição disponível.";
-
-    }
-
-
-    // ======================================================
-    // LOGO
-    // ======================================================
-    //
-    // Les logos sont stockés localement dans :
-    //
-    // images/stores/
-    //
-    // Exemple Firestore :
-    //
-    // logo: "apple.png"
-    //
-    // devient :
-    //
-    // images/stores/apple.png
-    //
-    // ======================================================
-
-    if (storeLogo) {
-
-        let logoPath =
-            "images/stores/default-store.png";
-
-
-        if (
-            storeData.logo &&
-            typeof storeData.logo === "string"
-        ) {
-
-            const logoValue =
-                storeData.logo.trim();
-
-
-            if (logoValue) {
-
-                // Si Firestore contient déjà
-                // un chemin complet.
-
-                if (
-                    logoValue.startsWith(
-                        "http://"
-                    ) ||
-                    logoValue.startsWith(
-                        "https://"
-                    ) ||
-                    logoValue.startsWith(
-                        "images/"
-                    )
-                ) {
-
-                    logoPath =
-                        logoValue;
-
-                }
-
-                // Sinon on considère que
-                // c'est simplement le nom
-                // du fichier.
-
-                else {
-
-                    logoPath =
-                        "images/stores/" +
-                        logoValue;
-
-                }
-
-            }
-
-        }
-
-
-        storeLogo.src =
-            logoPath;
-
-
-        storeLogo.onerror =
-            () => {
-
-                storeLogo.onerror =
-                    null;
-
-                storeLogo.src =
-                    "images/stores/default-store.png";
-
-            };
-
-    }
-
-
-    // ======================================================
-    // BANNIÈRE
-    // ======================================================
-    //
-    // Tu n'as pas de collection bannière.
-    //
-    // On utilise donc :
-    //
-    // 1. une URL si Firestore possède banner
-    // 2. un chemin local si banner contient un chemin
-    // 3. sinon l'image par défaut
-    //
-    // ======================================================
-
-    if (storeBanner) {
-
-        let bannerPath =
-            "images/default-banner.jpg";
-
-
-        if (
-            storeData.banner &&
-            typeof storeData.banner === "string"
-        ) {
-
-            const bannerValue =
-                storeData.banner.trim();
-
-
-            if (bannerValue) {
-
-                if (
-                    bannerValue.startsWith(
-                        "http://"
-                    ) ||
-                    bannerValue.startsWith(
-                        "https://"
-                    ) ||
-                    bannerValue.startsWith(
-                        "images/"
-                    )
-                ) {
-
-                    bannerPath =
-                        bannerValue;
-
-                }
-
-                else {
-
-                    bannerPath =
-                        "images/" +
-                        bannerValue;
-
-                }
-
-            }
-
-        }
-
-
-        storeBanner.src =
-            bannerPath;
-
-
-        storeBanner.onerror =
-            () => {
-
-                storeBanner.onerror =
-                    null;
-
-                storeBanner.src =
-                    "images/default-banner.jpg";
-
-            };
-
-    }
-
-
-    // ======================================================
-    // VÉRIFICATION
-    // ======================================================
-
-    const isVerified =
-        storeData.verified === true ||
-        storeData.isVerified === true ||
-        storeData.verification === true;
-
-
-    if (storeVerificationBadge) {
-
-        storeVerificationBadge.classList.toggle(
-            "hidden",
-            !isVerified
-        );
-
-    }
-
-
-    if (storeTechnicalVerification) {
-
-        storeTechnicalVerification.textContent =
-            isVerified
-                ? "Verificada"
-                : "Não verificada";
-
-    }
-
-
-    // ======================================================
-    // ÉTAT DE LA LOJA
-    // ======================================================
-
-    const isActive =
-        storeData.active !== false &&
-        storeData.status !== "blocked" &&
-        storeData.status !== "suspended";
-
-
-    if (storeStatusBadge) {
-
-        storeStatusBadge.classList.remove(
-            "active",
-            "blocked",
-            "suspended",
-            "pending"
-        );
-
-
-        if (isActive) {
-
-            storeStatusBadge.classList.add(
-                "active"
-            );
-
-            storeStatusBadge.textContent =
-                "Ativa";
-
-        }
-
-        else {
-
-            storeStatusBadge.classList.add(
-                "blocked"
-            );
-
-            storeStatusBadge.textContent =
-                storeData.status === "suspended"
-                    ? "Suspensa"
-                    : "Bloqueada";
-
-        }
-
-    }
-
-
-    if (storeTechnicalStatus) {
-
-        storeTechnicalStatus.textContent =
-            isActive
-                ? "Ativa"
-                : (
-                    storeData.status === "suspended"
-                        ? "Suspensa"
-                        : "Bloqueada"
-                );
-
-    }
-
-
-    // ======================================================
-    // DATE DE CRÉATION
-    // ======================================================
-
-    const createdValue =
-        storeData.createdAt ||
-        storeData.createdDate ||
-        storeData.created_at;
-
-
-    if (storeCreatedAt) {
-
-        storeCreatedAt.textContent =
-            createdValue
-                ? "Criada em " +
-                  formatDate(createdValue)
-                : "—";
-
-    }
-
-
-    if (storeCreatedDate) {
-
-        storeCreatedDate.textContent =
-            createdValue
-                ? formatDate(createdValue)
-                : "—";
-
-    }
-
-
-    // ======================================================
-    // ID DE LA LOJA
-    // ======================================================
-
-    if (storeUid) {
-
-        storeUid.textContent =
-            store.id ||
-            storeId ||
-            "—";
-
-    }
-
-
-    // ======================================================
-    // LOG DE CONTRÔLE
-    // ======================================================
-
-    console.log(
-        "TOMA — Loja carregada:",
-        store
-    );
-
-}
+};
 
 
 // ==========================================================
-// FONCTION — CHARGER LA LOJA DEPUIS FIRESTORE
+// FONCTION — CHARGER LA LOJA
 // ==========================================================
 
-async function loadStoreData() {
+async function loadOfficialStore() {
 
     try {
 
         // --------------------------------------------------
-        // LOADING
+        // VÉRIFICATION
         // --------------------------------------------------
 
-        showLoading(
-            "Carregando Loja Oficial..."
-        );
+        if (!storeId) {
 
+            throw new Error(
+                "ID da Loja Oficial não encontrado."
+            );
 
-        // --------------------------------------------------
-        // RÉCUPÉRATION
-        // --------------------------------------------------
-
-        const loadedStore =
-            await getStore();
+        }
 
 
         // --------------------------------------------------
-        // AFFICHAGE
+        // CHARGEMENT FIRESTORE
         // --------------------------------------------------
 
-        renderStore(
-            loadedStore
-        );
+        const snapshot =
+            await getDoc(storeRef);
 
 
         // --------------------------------------------------
-        // FIN
+        // SI LA LOJA EXISTE DANS FIRESTORE
         // --------------------------------------------------
 
-        hideLoading();
+        if (snapshot.exists()) {
 
+            store = {
+
+                id: snapshot.id,
+
+                ...snapshot.data()
+
+            };
+
+        }
+
+        // --------------------------------------------------
+        // SI ELLE N'EXISTE PAS ENCORE
+        // --------------------------------------------------
+        // On utilise les informations définies dans
+        // brand-stores.js.
+        // --------------------------------------------------
+
+        else {
+
+            const defaultStore =
+                defaultOfficialStores[storeId];
+
+
+            if (!defaultStore) {
+
+                throw new Error(
+                    "Loja Oficial inexistente e sem configuração padrão."
+                );
+
+            }
+
+
+            store = {
+
+                ...defaultStore,
+
+                officialStore: true,
+
+                verified: false,
+
+                status: "active",
+
+                description:
+                    "Loja Oficial TOMA",
+
+                createdAt: null
+
+            };
+
+        }
+
+
+        // ==================================================
+        // AFFICHER LES INFORMATIONS
+        // ==================================================
+
+        renderOfficialStore();
+
+
+        // ==================================================
+        // ALERTE — SUCCÈS
+        // ==================================================
 
         alert(
             "BLOC 2 — Loja Oficial carregada com sucesso."
@@ -1378,12 +1173,9 @@ async function loadStoreData() {
     } catch (error) {
 
         console.error(
-            "BLOC 2 — Erro ao carregar Loja:",
+            "BLOC 2 — Erro:",
             error
         );
-
-
-        hideLoading();
 
 
         alert(
@@ -1397,28 +1189,296 @@ async function loadStoreData() {
 
 
 // ==========================================================
-// EXPOSER LA FONCTION PARA OS BLOCOS SEGUINTES
+// FONCTION — AFFICHER LA LOJA
 // ==========================================================
 
-window.brandStoreAdmin =
-    window.brandStoreAdmin || {};
+function renderOfficialStore() {
+
+    if (!store) return;
 
 
-window.brandStoreAdmin.loadStoreData =
-    loadStoreData;
+    // ======================================================
+    // NOM
+    // ======================================================
+
+    if (storeName) {
+
+        storeName.textContent =
+            store.name || "Loja Oficial";
+
+    }
 
 
-window.brandStoreAdmin.renderStore =
-    renderStore;
+    if (storeTitle) {
+
+        storeTitle.textContent =
+            store.name || "Loja Oficial";
+
+    }
+
+
+    // ======================================================
+    // SOUS-TITRE
+    // ======================================================
+
+    if (storeSubtitle) {
+
+        storeSubtitle.textContent =
+            store.subtitle ||
+            "Loja Oficial TOMA";
+
+    }
+
+
+    // ======================================================
+    // LOGO
+    // ======================================================
+
+    if (storeLogo) {
+
+        storeLogo.src =
+            store.logo ||
+            defaultOfficialStores[storeId]?.logo ||
+            "images/default-store.png";
+
+        storeLogo.alt =
+            store.name ||
+            "Logo da Loja Oficial";
+
+    }
+
+
+    // ======================================================
+    // BANNIÈRE
+    // ======================================================
+
+    if (storeBanner) {
+
+        storeBanner.src =
+            store.banner ||
+            defaultOfficialStores[storeId]?.banner ||
+            "images/default-banner.jpg";
+
+        storeBanner.alt =
+            "Banner da Loja Oficial " +
+            (store.name || "");
+
+    }
+
+
+    // ======================================================
+    // DESCRIPTION
+    // ======================================================
+
+    if (storeDescription) {
+
+        storeDescription.textContent =
+            store.description ||
+            "Loja Oficial TOMA.";
+
+    }
+
+
+    // ======================================================
+    // BADGE DE VÉRIFICATION
+    // ======================================================
+
+    const isVerified =
+        store.verified === true ||
+        store.verification === true ||
+        store.isVerified === true;
+
+
+    if (storeVerificationBadge) {
+
+        storeVerificationBadge.classList.toggle(
+            "hidden",
+            !isVerified
+        );
+
+    }
+
+
+    // ======================================================
+    // STATUT
+    // ======================================================
+
+    const status =
+        store.status ||
+        "active";
+
+
+    if (storeStatusBadge) {
+
+        storeStatusBadge.classList.remove(
+            "active",
+            "inactive",
+            "suspended",
+            "blocked"
+        );
+
+
+        storeStatusBadge.classList.add(
+            status
+        );
+
+
+        if (status === "active") {
+
+            storeStatusBadge.textContent =
+                "Ativa";
+
+        }
+
+        else if (status === "inactive") {
+
+            storeStatusBadge.textContent =
+                "Inativa";
+
+        }
+
+        else if (status === "suspended") {
+
+            storeStatusBadge.textContent =
+                "Suspensa";
+
+        }
+
+        else if (status === "blocked") {
+
+            storeStatusBadge.textContent =
+                "Bloqueada";
+
+        }
+
+        else {
+
+            storeStatusBadge.textContent =
+                status;
+
+        }
+
+    }
+
+
+    // ======================================================
+    // DATE DE CRÉATION
+    // ======================================================
+
+    if (storeCreatedAt) {
+
+        storeCreatedAt.textContent =
+            store.createdAt
+                ? formatDate(store.createdAt)
+                : "Loja Oficial";
+
+    }
+
+
+    if (storeCreatedDate) {
+
+        storeCreatedDate.textContent =
+            store.createdAt
+                ? formatDate(store.createdAt)
+                : "—";
+
+    }
+
+
+    // ======================================================
+    // ID
+    // ======================================================
+
+    if (storeUid) {
+
+        storeUid.textContent =
+            store.id ||
+            storeId;
+
+    }
+
+
+    // ======================================================
+    // STATUT TECHNIQUE
+    // ======================================================
+
+    if (storeTechnicalStatus) {
+
+        storeTechnicalStatus.textContent =
+            status === "active"
+                ? "Ativa"
+                : status;
+
+    }
+
+
+    // ======================================================
+    // VÉRIFICATION TECHNIQUE
+    // ======================================================
+
+    if (storeTechnicalVerification) {
+
+        storeTechnicalVerification.textContent =
+            isVerified
+                ? "Verificada"
+                : "Não verificada";
+
+    }
+
+
+    // ======================================================
+    // REMPLIR LE MODAL D'ÉDITION
+    // ======================================================
+
+    if (editStoreName) {
+
+        editStoreName.value =
+            store.name || "";
+
+    }
+
+
+    if (editStoreDescription) {
+
+        editStoreDescription.value =
+            store.description || "";
+
+    }
+
+
+    if (editStoreLogo) {
+
+        editStoreLogo.value =
+            store.logo || "";
+
+    }
+
+
+    if (editStoreBanner) {
+
+        editStoreBanner.value =
+            store.banner || "";
+
+    }
+
+}
 
 
 // ==========================================================
-// DÉMARRAGE DU BLOC 2
+// EXPOSER LES DONNÉES POUR LES BLOCS SUIVANTS
 // ==========================================================
 
-loadStoreData();
+window.brandStoreAdmin.store =
+    store;
 
 
 // ==========================================================
-// FIN BLOC 2
+// LANCER LE CHARGEMENT
+// ==========================================================
+
+loadOfficialStore();
+
+
+// ==========================================================
+// FIN DU BLOC 2
 // ==========================================================
