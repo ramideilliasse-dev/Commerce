@@ -1,462 +1,588 @@
- //==================================================
+ // ==================================================
 // TOMA
 // BRAND STORE ADMIN
-// BLOC 1
-//==================================================
+// CORE / INITIALISATION
+// ==================================================
 
-import { db } from "../firebase.js";
+import { db } from “../firebase.js”;
 
 import {
-
-collection,
 doc,
-getDoc,
-getDocs,
-updateDoc,
-deleteDoc,
-query,
-where,
-onSnapshot
+getDoc
+} from “https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js”;
 
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-//==================================================
-// PARAMÈTRES
-//==================================================
+// ==================================================
+// PARAMÈTRES URL
+// ==================================================
 
 const params = new URLSearchParams(window.location.search);
 
-const storeId = params.get("store");
+const storeId = params.get(“store”);
 
-//==================================================
+// ==================================================
 // ELEMENTS HTML
-//==================================================
+// ==================================================
 
 const storeTitle =
-document.getElementById("storeTitle");
+document.getElementById(“storeTitle”);
 
 const storeName =
-document.getElementById("storeName");
+document.getElementById(“storeName”);
 
 const storeLogo =
-document.getElementById("storeLogo");
+document.getElementById(“storeLogo”);
 
 const storeBanner =
-document.getElementById("storeBanner");
+document.getElementById(“storeBanner”);
 
-const merchantCount =
-document.getElementById("merchantCount");
+const storeDescription =
+document.getElementById(“storeDescription”);
 
-const productsCount =
-document.getElementById("productCount");
+const storeStatusBadge =
+document.getElementById(“storeStatusBadge”);
 
-const ordersCount =
-document.getElementById("orderCount");
+const storeVerificationBadge =
+document.getElementById(“storeVerificationBadge”);
 
-const salesCount =
-document.getElementById("salesCount");
+const storeCreatedAt =
+document.getElementById(“storeCreatedAt”);
 
-const merchantList =
-document.getElementById("merchantList");
+const storeUid =
+document.getElementById(“storeUid”);
 
-const addMerchantButton =
-document.getElementById("addMerchant");
+const storeCreatedDate =
+document.getElementById(“storeCreatedDate”);
 
-const refreshButton =
-document.getElementById("refreshButton");
+const storeTechnicalStatus =
+document.getElementById(“storeTechnicalStatus”);
+
+const storeTechnicalVerification =
+document.getElementById(“storeTechnicalVerification”);
+
+const globalLoading =
+document.getElementById(“globalLoading”);
+
+const toast =
+document.getElementById(“toast”);
+
+const toastMessage =
+document.getElementById(“toastMessage”);
+
+const toastIcon =
+document.getElementById(“toastIcon”);
 
 const backButton =
-document.getElementById("backButton");
+document.getElementById(“backButton”);
 
-//==================================================
-// VARIABLES
-//==================================================
+const refreshButton =
+document.getElementById(“refreshButton”);
+
+// ==================================================
+// VARIABLES GLOBALES
+// ==================================================
 
 let store = null;
 
-let merchants = [];
+// ==================================================
+// UTILITAIRE — LOADING
+// ==================================================
 
-let products = [];
+function showLoading(){
 
-let orders = [];
+globalLoading?.classList.remove("hidden");
 
-//==================================================
-// BOUTONS
-//==================================================
+}
 
-backButton?.addEventListener("click",()=>{
+function hideLoading(){
 
-history.back();
+globalLoading?.classList.add("hidden");
 
-});
+}
 
-refreshButton?.addEventListener("click",()=>{
+// ==================================================
+// UTILITAIRE — TOAST
+// ==================================================
 
-location.reload();
+function showToast(
+message,
+icon = “check_circle”
+){
 
-});
+if(!toast || !toastMessage) return;
+toastMessage.textContent = message;
+if(toastIcon){
+    toastIcon.textContent = icon;
+}
+toast.classList.add("show");
+setTimeout(()=>{
+    toast.classList.remove("show");
+},3000);
 
-console.log("Brand Store Admin iniciado :",storeId);
-//==================================================
+}
+
+// ==================================================
+// UTILITAIRE — DATE FIREBASE
+// ==================================================
+
+function formatDate(value){
+
+if(!value) return "—";
+try{
+    let date;
+    // Firebase Timestamp
+    if(
+        typeof value === "object" &&
+        typeof value.toDate === "function"
+    ){
+        date = value.toDate();
+    }
+    // JS Date
+    else if(value instanceof Date){
+        date = value;
+    }
+    // Timestamp numérique
+    else if(typeof value === "number"){
+        date = new Date(value);
+    }
+    // String
+    else{
+        date = new Date(value);
+    }
+    if(isNaN(date.getTime())){
+        return "—";
+    }
+    return date.toLocaleDateString(
+        "pt-PT",
+        {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric"
+        }
+    );
+}catch(error){
+    console.error(
+        "Erro ao formatar data:",
+        error
+    );
+    return "—";
+}
+
+}
+
+// ==================================================
+// UTILITAIRE — STATUT
+// ==================================================
+
+function normalizeStatus(value){
+
+if(!value) return "active";
+const status =
+    String(value)
+    .toLowerCase()
+    .trim();
+if(
+    status === "active" ||
+    status === "ativo" ||
+    status === "ativa"
+){
+    return "active";
+}
+if(
+    status === "blocked" ||
+    status === "bloqueado" ||
+    status === "bloqueada"
+){
+    return "blocked";
+}
+if(
+    status === "suspended" ||
+    status === "suspenso" ||
+    status === "suspensa"
+){
+    return "suspended";
+}
+if(
+    status === "pending" ||
+    status === "pendente"
+){
+    return "pending";
+}
+return status;
+
+}
+
+// ==================================================
+// AFFICHER LE STATUT
+// ==================================================
+
+function renderStoreStatus(){
+
+if(!store) return;
+const status =
+    normalizeStatus(
+        store.status
+    );
+if(!storeStatusBadge) return;
+storeStatusBadge.className =
+    "storeStatus";
+if(status === "active"){
+    storeStatusBadge.classList.add(
+        "active"
+    );
+    storeStatusBadge.textContent =
+        "Ativa";
+}
+else if(status === "blocked"){
+    storeStatusBadge.classList.add(
+        "blocked"
+    );
+    storeStatusBadge.textContent =
+        "Bloqueada";
+}
+else if(status === "suspended"){
+    storeStatusBadge.classList.add(
+        "suspended"
+    );
+    storeStatusBadge.textContent =
+        "Suspensa";
+}
+else if(status === "pending"){
+    storeStatusBadge.classList.add(
+        "pending"
+    );
+    storeStatusBadge.textContent =
+        "Pendente";
+}
+else{
+    storeStatusBadge.classList.add(
+        "active"
+    );
+    storeStatusBadge.textContent =
+        store.status || "Ativa";
+}
+if(storeTechnicalStatus){
+    storeTechnicalStatus.textContent =
+        storeStatusBadge.textContent;
+}
+
+}
+
+// ==================================================
+// AFFICHER LA VÉRIFICATION
+// ==================================================
+
+function renderVerification(){
+
+if(!store) return;
+const verified =
+    store.verified === true ||
+    store.isVerified === true ||
+    store.verification === true;
+if(
+    storeVerificationBadge
+){
+    if(verified){
+        storeVerificationBadge
+            .classList.remove("hidden");
+    }else{
+        storeVerificationBadge
+            .classList.add("hidden");
+    }
+}
+if(storeTechnicalVerification){
+    storeTechnicalVerification.textContent =
+        verified
+            ? "Verificada"
+            : "Não verificada";
+}
+
+}
+
+// ==================================================
+// AFFICHER LES INFORMATIONS DE LA LOJA
+// ==================================================
+
+function renderStore(){
+
+if(!store) return;
+// ==================================================
+// NOM
+// ==================================================
+const name =
+    store.name ||
+    store.storeName ||
+    "Loja Oficial";
+if(storeTitle){
+    storeTitle.textContent =
+        name;
+}
+if(storeName){
+    storeName.textContent =
+        name;
+}
+// ==================================================
+// LOGO
+// ==================================================
+if(storeLogo){
+    storeLogo.src =
+        store.logo ||
+        store.logoUrl ||
+        "images/default-store.png";
+    storeLogo.onerror = ()=>{
+        storeLogo.onerror = null;
+        storeLogo.src =
+            "images/default-store.png";
+    };
+}
+// ==================================================
+// BANNIÈRE
+// ==================================================
+if(storeBanner){
+    storeBanner.src =
+        store.banner ||
+        store.bannerUrl ||
+        "images/default-banner.jpg";
+    storeBanner.onerror = ()=>{
+        storeBanner.onerror = null;
+        storeBanner.src =
+            "images/default-banner.jpg";
+    };
+}
+// ==================================================
+// DESCRIPTION
+// ==================================================
+if(storeDescription){
+    storeDescription.textContent =
+        store.description ||
+        "Nenhuma descrição disponível.";
+}
+// ==================================================
+// ID
+// ==================================================
+if(storeUid){
+    storeUid.textContent =
+        storeId || "—";
+}
+// ==================================================
+// DATE CRÉATION
+// ==================================================
+const created =
+    store.createdAt ||
+    store.createdDate ||
+    store.created;
+const formattedDate =
+    formatDate(created);
+if(storeCreatedAt){
+    storeCreatedAt.textContent =
+        formattedDate;
+}
+if(storeCreatedDate){
+    storeCreatedDate.textContent =
+        formattedDate;
+}
+// ==================================================
+// STATUT
+// ==================================================
+renderStoreStatus();
+// ==================================================
+// VÉRIFICATION
+// ==================================================
+renderVerification();
+
+}
+
+// ==================================================
 // CHARGER LA LOJA
-//==================================================
+// ==================================================
 
 async function loadStore(){
 
 if(!storeId){
-
-alert("Loja não encontrada.");
-
-return;
-
+    hideLoading();
+    alert(
+        "Loja não encontrada. O ID da Loja não foi informado."
+    );
+    return;
 }
-
-const storeRef =
-doc(db,"officialStores",storeId);
-
-const snap =
-await getDoc(storeRef);
-
-if(!snap.exists()){
-
-alert("Loja inexistente.");
-
-return;
-
-}
-
-store = snap.data();
-
-//========================
-// TITRES
-//========================
-
-storeTitle.textContent =
-store.name;
-
-storeName.textContent =
-store.name;
-
-//========================
-// LOGO
-//========================
-
-storeLogo.src =
-store.logo || "images/default-store.png";
-
-//========================
-// BANNIÈRE
-//========================
-
-storeBanner.src =
-store.banner || "images/default-banner.jpg";
-
-//========================
-// CARREGAR DADOS
-//========================
-
-loadStatistics();
-
-loadMerchants();
-
-}
-
-//==================================================
-// ESTATÍSTICAS
-//==================================================
-
-async function loadStatistics(){
-
-//====================
-// COMERCIANTES
-//====================
-
-const merchantsQuery = query(
-
-collection(db,"merchants"),
-
-where("storeId","==",storeId)
-
-);
-
-const merchantsSnap =
-await getDocs(merchantsQuery);
-
-merchantCount.textContent =
-merchantsSnap.size;
-
-//====================
-// PRODUTOS
-//====================
-
-const productsQuery = query(
-
-collection(db,"products"),
-
-where("storeId","==",storeId)
-
-);
-
-const productsSnap =
-await getDocs(productsQuery);
-
-productsCount.textContent =
-productsSnap.size;
-
-//====================
-// PEDIDOS
-//====================
-
-const ordersQuery = query(
-
-collection(db,"orders"),
-
-where("storeId","==",storeId)
-
-);
-
-const ordersSnap =
-await getDocs(ordersQuery);
-
-ordersCount.textContent =
-ordersSnap.size;
-
-//====================
-// VENDAS
-//====================
-
-let total = 0;
-
-ordersSnap.forEach(doc=>{
-
-const order = doc.data();
-
-total += Number(order.total || 0);
-
-});
-
-salesCount.textContent =
-
-total.toLocaleString()+" Kz";
-
-}
-
-loadStore();
-//==================================================
-// CHARGER LES COMMERÇANTS
-//==================================================
-
-async function loadMerchants(){
-
-merchantList.innerHTML="";
-
-const merchantsQuery = query(
-
-collection(db,"merchants"),
-
-where("storeId","==",storeId)
-
-);
-
-onSnapshot(merchantsQuery,(snapshot)=>{
-
-merchantList.innerHTML="";
-
-if(snapshot.empty){
-
-merchantList.innerHTML=`
-
-<div class="emptyState">
-
-<div class="icon">👤</div>
-
-<h2>
-
-Nenhum comerciante
-
-</h2>
-
-<p>
-
-Esta loja ainda não possui comerciantes.
-
-</p>
-
-</div>
-
-`;
-
-return;
-
-}
-
-snapshot.forEach(document=>{
-
-const merchant=document.data();
-
-const id=document.id;
-
-merchantList.innerHTML += `
-
-<div class="merchantCard">
-
-<div class="merchantLeft">
-
-<img
-
-class="merchantAvatar"
-
-src="${merchant.photo || "images/avatar.png"}">
-
-<div class="merchantInfo">
-
-<h3>
-
-${merchant.name || "Sem Nome"}
-
-</h3>
-
-<p>
-
-${merchant.phone || "-"}
-
-</p>
-
-<span class="merchantBadge">
-
-${merchant.status || "Ativo"}
-
-</span>
-
-</div>
-
-</div>
-
-<div class="merchantActions">
-
-<button
-
-class="viewMerchant"
-
-onclick="openMerchant('${id}')">
-
-👁 Ver
-
-</button>
-
-<button
-
-class="chatMerchant"
-
-onclick="contactMerchant('${merchant.phone}')">
-
-💬 Chat
-
-</button>
-
-<button
-
-class="removeMerchant"
-
-onclick="removeMerchant('${id}')">
-
-❌ Remover
-
-</button>
-
-</div>
-
-</div>
-
-`;
-
-});
-
-});
-
-}
-//==================================================
-// CONTACTER
-//==================================================
-
-window.contactMerchant=function(phone){
-
-if(!phone) return;
-
-window.open(
-
-"https://wa.me/"+phone.replace(/\D/g,""),
-
-"_blank"
-
-);
-
-}
-
-//==================================================
-// OUVRIR FICHE
-//==================================================
-
-window.openMerchant=function(id){
-
-window.location.href=
-
-"merchant-profile.html?id="+id;
-
-}
-//==================================================
-// RETIRER UN COMMERÇANT DE LA LOJA
-//==================================================
-
-window.removeMerchant = async function(id){
-
-const confirmRemove = confirm(
-
-"Remover este comerciante desta Loja Oficial ?"
-
-);
-
-if(!confirmRemove) return;
-
 try{
+    showLoading();
+    // ==================================================
+    // FIRESTORE
+    // ==================================================
+    const storeRef =
+        doc(
+            db,
+            "officialStores",
+            storeId
+        );
+    const snap =
+        await getDoc(storeRef);
+    // ==================================================
+    // LOJA INEXISTANTE
+    // ==================================================
+    if(!snap.exists()){
+        hideLoading();
+        alert(
+            "Esta Loja Oficial não existe."
+        );
+        return;
+    }
+    // ==================================================
+    // DONNÉES
+    // ==================================================
+    store = {
+        id: snap.id,
+        ...snap.data()
+    };
+    // ==================================================
+    // AFFICHAGE
+    // ==================================================
+    renderStore();
+    hideLoading();
+    showToast(
+        "Loja carregada com sucesso."
+    );
+    // ==================================================
+    // INITIALISER LES MODULES
+    // ==================================================
+    initializeModules();
+}catch(error){
+    console.error(
+        "Erro ao carregar Loja Oficial:",
+        error
+    );
+    hideLoading();
+    alert(
+        "Erro ao carregar a Loja Oficial."
+    );
+}
 
-await updateDoc(
+}
 
-doc(db,"merchants",id),
+// ==================================================
+// INITIALISER LES MODULES
+// ==================================================
 
-{
+function initializeModules(){
 
-storeId:null,
+/*
+Os módulos seguintes serão adicionados
+progressivamente.
+Eles serão responsáveis por:
+- Estatísticas
+- Comerciantes
+- Produtos
+- Pedidos
+- Vendas
+- Ações administrativas
+- Notificações
+- Atividade
+- Modais
+*/
+if(
+    typeof window.initBrandStoreStats ===
+    "function"
+){
+    window.initBrandStoreStats(
+        storeId,
+        store
+    );
+}
+if(
+    typeof window.initBrandStoreMerchants ===
+    "function"
+){
+    window.initBrandStoreMerchants(
+        storeId,
+        store
+    );
+}
+if(
+    typeof window.initBrandStoreProducts ===
+    "function"
+){
+    window.initBrandStoreProducts(
+        storeId,
+        store
+    );
+}
+if(
+    typeof window.initBrandStoreOrders ===
+    "function"
+){
+    window.initBrandStoreOrders(
+        storeId,
+        store
+    );
+}
+if(
+    typeof window.initBrandStoreActions ===
+    "function"
+){
+    window.initBrandStoreActions(
+        storeId,
+        store
+    );
+}
+if(
+    typeof window.initBrandStoreNotifications ===
+    "function"
+){
+    window.initBrandStoreNotifications(
+        storeId,
+        store
+    );
+}
 
-storeName:null,
+}
 
-officialStore:false,
+// ==================================================
+// RETOUR
+// ==================================================
 
-updatedAt:new Date()
+backButton?.addEventListener(
+“click”,
+()=>{
 
+    history.back();
 }
 
 );
 
-alert("Comerciante removido da Loja Oficial.");
+// ==================================================
+// ACTUALISER
+// ==================================================
 
-}catch(error){
+refreshButton?.addEventListener(
+“click”,
+()=>{
 
-console.error(error);
-
-alert("Erro ao remover comerciante.");
-
+    location.reload();
 }
+
+);
+
+// ==================================================
+// EXPOSER LES INFORMATIONS
+// ==================================================
+
+window.brandStoreAdmin = {
+
+getStoreId(){
+    return storeId;
+},
+getStore(){
+    return store;
+},
+reload(){
+    loadStore();
+},
+showToast
 
 };
-//==================================================
-// AJOUTER UN COMMERÇANT
-//==================================================
 
-addMerchantButton?.addEventListener("click",()=>{
+// ==================================================
+// DÉMARRAGE
+// ==================================================
 
-window.location.href=
-
-"assign-merchant.html?store="+storeId;
-
-});
+loadStore();
