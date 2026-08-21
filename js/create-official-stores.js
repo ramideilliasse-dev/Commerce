@@ -1,8 +1,7 @@
  // ==========================================================
 // TOMA
 // CREATE OFFICIAL STORES
-// CRÉATION DES 33 LOJA RESTANTES
-// store_068 → store_100
+// FINALISATION — store_073 → store_100
 // ==========================================================
 
 import { db } from "../firebase.js";
@@ -19,152 +18,200 @@ import {
 // ==========================================================
 
 alert(
-    "CRÉATION — Vérification et création de store_068 → store_100."
+    "FINALISATION — Création de store_073 → store_100."
 );
 
 
 // ==========================================================
-// VARIABLES
+// CRÉER UNE LOJA
 // ==========================================================
 
-let created = 0;
-let alreadyExists = 0;
-let errors = [];
+async function createStore(number) {
+
+    const storeId =
+        `store_${String(number).padStart(3, "0")}`;
+
+    const storeRef =
+        doc(
+            db,
+            "officialStores",
+            storeId
+        );
+
+
+    const snapshot =
+        await getDoc(storeRef);
+
+
+    if (snapshot.exists()) {
+
+        return {
+            id: storeId,
+            created: false
+        };
+
+    }
+
+
+    await setDoc(
+        storeRef,
+        {
+            id: storeId,
+
+            name: "",
+
+            slug: "",
+
+            logo: "",
+
+            banner: "",
+
+            category: "",
+
+            description: "",
+
+            status: "empty",
+
+            verified: false,
+
+            createdAt: new Date(),
+
+            updatedAt: new Date()
+        }
+    );
+
+
+    return {
+        id: storeId,
+        created: true
+    };
+
+}
 
 
 // ==========================================================
-// CRÉATION DES DOCUMENTS MANQUANTS
+// TRAITER UN LOT
 // ==========================================================
 
-async function createRemainingStores() {
+async function processBatch(
+    start,
+    end
+) {
 
-    try {
+    let created = 0;
 
-        for (
-            let number = 68;
-            number <= 100;
-            number++
-        ) {
-
-            const storeId =
-                `store_${String(number).padStart(3, "0")}`;
+    let existing = 0;
 
 
-            // ==============================================
-            // RÉFÉRENCE
-            // ==============================================
+    for (
+        let number = start;
+        number <= end;
+        number++
+    ) {
 
-            const storeRef =
-                doc(
-                    db,
-                    "officialStores",
-                    storeId
-                );
-
-
-            // ==============================================
-            // VÉRIFICATION
-            // ==============================================
-
-            const snapshot =
-                await getDoc(storeRef);
-
-
-            // ==============================================
-            // SI EXISTE DÉJÀ
-            // ==============================================
-
-            if (snapshot.exists()) {
-
-                alreadyExists++;
-
-                console.log(
-                    "Déjà existante :",
-                    storeId
-                );
-
-                continue;
-
-            }
-
-
-            // ==============================================
-            // CRÉATION
-            // ==============================================
-
-            await setDoc(
-                storeRef,
-                {
-                    id: storeId,
-
-                    name: "",
-
-                    slug: "",
-
-                    logo: "",
-
-                    banner: "",
-
-                    category: "",
-
-                    description: "",
-
-                    status: "empty",
-
-                    verified: false,
-
-                    createdAt: new Date(),
-
-                    updatedAt: new Date()
-                }
+        const result =
+            await createStore(
+                number
             );
 
+
+        if (
+            result.created
+        ) {
 
             created++;
 
-            console.log(
-                "Créée :",
-                storeId
-            );
+        } else {
+
+            existing++;
 
         }
 
+    }
 
-        // ==================================================
-        // FIN
-        // ==================================================
 
-        alert(
+    alert(
 
-            "CRÉATION TERMINÉE.\n\n" +
+        "LOT TERMINÉ\n\n" +
 
-            "Nouvelles Loja créées : " +
-            created +
+        `store_${String(start).padStart(3, "0")}` +
 
-            "\n\n" +
+        " → " +
 
-            "Déjà existantes : " +
-            alreadyExists +
+        `store_${String(end).padStart(3, "0")}` +
 
-            "\n\n" +
+        "\n\n" +
 
-            "Erreurs : " +
-            errors.length +
+        "Créées : " +
+        created +
 
-            "\n\n" +
+        "\n" +
 
-            "Plage : store_068 → store_100"
+        "Déjà existantes : " +
+        existing
 
+    );
+
+}
+
+
+// ==========================================================
+// LANCEMENT PAR LOTS
+// ==========================================================
+
+async function startCreation() {
+
+    try {
+
+        // LOT 1
+        await processBatch(
+            73,
+            77
+        );
+
+
+        // LOT 2
+        await processBatch(
+            78,
+            82
+        );
+
+
+        // LOT 3
+        await processBatch(
+            83,
+            87
+        );
+
+
+        // LOT 4
+        await processBatch(
+            88,
+            92
+        );
+
+
+        // LOT 5
+        await processBatch(
+            93,
+            97
+        );
+
+
+        // LOT 6
+        await processBatch(
+            98,
+            100
         );
 
 
         // ==================================================
-        // VÉRIFICATION AUTOMATIQUE
+        // VÉRIFICATION FINALE
         // ==================================================
 
-        let finalExisting = 0;
+        let existingTotal = 0;
 
-        let finalMissing = [];
+        let missing = [];
 
 
         for (
@@ -189,13 +236,15 @@ async function createRemainingStores() {
                 await getDoc(ref);
 
 
-            if (snap.exists()) {
+            if (
+                snap.exists()
+            ) {
 
-                finalExisting++;
+                existingTotal++;
 
             } else {
 
-                finalMissing.push(
+                missing.push(
                     storeId
                 );
 
@@ -205,22 +254,22 @@ async function createRemainingStores() {
 
 
         // ==================================================
-        // RÉSULTAT FINAL
+        // RÉSULTAT
         // ==================================================
 
         if (
-            finalMissing.length === 0
+            missing.length === 0
         ) {
 
             alert(
 
-                "✅ STRUCTURE TERMINÉE.\n\n" +
+                "🎉 TERMINÉ\n\n" +
 
                 "86 emplacements existent.\n\n" +
 
                 "store_015 → store_100\n\n" +
 
-                "Total : 86 Loja."
+                "86 / 86"
 
             );
 
@@ -228,23 +277,19 @@ async function createRemainingStores() {
 
             alert(
 
-                "VÉRIFICATION FINALE.\n\n" +
+                "VÉRIFICATION FINALE\n\n" +
 
                 "Existants : " +
-                finalExisting +
+                existingTotal +
 
                 "\n\n" +
 
                 "Manquants : " +
-                finalMissing.length +
+                missing.length +
 
                 "\n\n" +
 
-                "Premiers manquants :\n" +
-
-                finalMissing
-                    .slice(0, 10)
-                    .join("\n")
+                missing.join("\n")
 
             );
 
@@ -254,27 +299,20 @@ async function createRemainingStores() {
 
     catch (error) {
 
-        console.error(
-            "Erreur :",
-            error
-        );
-
-
         alert(
 
-            "❌ ERREUR.\n\n" +
+            "❌ ERREUR\n\n" +
 
             error.code +
 
             "\n\n" +
 
-            error.message +
+            error.message
 
-            "\n\n" +
+        );
 
-            "Créées avant erreur : " +
-            created
-
+        console.error(
+            error
         );
 
     }
@@ -283,7 +321,7 @@ async function createRemainingStores() {
 
 
 // ==========================================================
-// LANCEMENT
+// DÉMARRER
 // ==========================================================
 
-createRemainingStores();
+startCreation();
