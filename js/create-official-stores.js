@@ -1,12 +1,11 @@
  // ==========================================================
 // TOMA
-// VERIFICATION DES LOJA OFFICIAIS
+// TEST OFFICIAL STORES
 // ==========================================================
 
 import { db } from "../firebase.js";
 
 import {
-    collection,
     doc,
     getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -17,128 +16,115 @@ import {
 // ==========================================================
 
 alert(
-    "VÉRIFICATION — Recherche des emplacements store_015 → store_100."
+    "TEST — Vérification de officialStores démarrée."
 );
 
 
 // ==========================================================
-// VARIABLES
+// TEST 1
 // ==========================================================
 
-let existing = [];
-let missing = [];
-
-
-// ==========================================================
-// VÉRIFICATION
-// ==========================================================
-
-async function verifyStores() {
+async function testStores() {
 
     try {
 
-        for (
-            let number = 15;
-            number <= 100;
-            number++
-        ) {
+        alert(
+            "TEST 1 — Lecture de store_015..."
+        );
 
-            const storeId =
-                `store_${String(number).padStart(3, "0")}`;
+        const ref015 =
+            doc(
+                db,
+                "officialStores",
+                "store_015"
+            );
 
-
-            const storeRef =
-                doc(
-                    db,
-                    "officialStores",
-                    storeId
-                );
-
-
-            const snapshot =
-                await getDoc(storeRef);
-
-
-            if (snapshot.exists()) {
-
-                existing.push(storeId);
-
-            } else {
-
-                missing.push(storeId);
-
-            }
-
-        }
-
-
-        // ==================================================
-        // RÉSULTAT
-        // ==================================================
+        const snap015 =
+            await getDoc(ref015);
 
         alert(
-
-            "VÉRIFICATION TERMINÉE.\n\n" +
-
-            "Emplacements existants : " +
-            existing.length +
-
-            "\n\n" +
-
-            "Emplacements manquants : " +
-            missing.length +
-
-            "\n\n" +
-
-            "Total attendu : 86"
-
+            "TEST 2 — store_015 terminé.\n\n" +
+            "Existe : " +
+            snap015.exists()
         );
 
 
         // ==================================================
-        // AFFICHER LES MANQUANTS
+        // TEST 2
         // ==================================================
 
-        if (missing.length > 0) {
+        alert(
+            "TEST 3 — Lecture de store_016..."
+        );
 
-            alert(
-
-                "LOJA MANQUANTES :\n\n" +
-
-                missing.join("\n")
-
+        const ref016 =
+            doc(
+                db,
+                "officialStores",
+                "store_016"
             );
 
-        } else {
+        const snap016 =
+            await getDoc(ref016);
 
-            alert(
+        alert(
+            "TEST 4 — store_016 terminé.\n\n" +
+            "Existe : " +
+            snap016.exists()
+        );
 
-                "PARFAIT.\n\n" +
 
-                "Les 86 emplacements " +
-                "store_015 → store_100 existent."
+        // ==================================================
+        // TEST 3
+        // ==================================================
 
+        alert(
+            "TEST 5 — Lecture de store_017..."
+        );
+
+        const ref017 =
+            doc(
+                db,
+                "officialStores",
+                "store_017"
             );
 
-        }
+        const snap017 =
+            await getDoc(ref017);
+
+        alert(
+            "TEST 6 — store_017 terminé.\n\n" +
+            "Existe : " +
+            snap017.exists()
+        );
+
+
+        // ==================================================
+        // FIN
+        // ==================================================
+
+        alert(
+            "TEST TERMINÉ.\n\n" +
+            "Les trois premiers emplacements ont été vérifiés."
+        );
 
     }
 
     catch (error) {
 
         alert(
-
-            "ERREUR DE VÉRIFICATION.\n\n" +
-
+            "ERREUR EXACTE.\n\n" +
+            "Code : " +
             error.code +
-
             "\n\n" +
-
+            "Message : " +
             error.message
-
         );
 
-        console.error(error);
+        console.error(
+            "Erreur test officialStores :",
+            error
+        );
 
     }
 
@@ -149,4 +135,4 @@ async function verifyStores() {
 // LANCEMENT
 // ==========================================================
 
-verifyStores();
+testStores();
