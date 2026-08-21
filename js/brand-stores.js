@@ -293,123 +293,45 @@ alert(
 // ==========================================================
 // TOMA
 // BRAND STORES
-// BLOC 2 — TEST DE CHARGEMENT
+// BLOC 2 — AFFICHAGE DES LOJA
 // ==========================================================
 
 alert(
-    "BLOC 2 — Début du bloc 2."
+    "BLOC 2 — Affichage des Loja Oficiais démarré."
 );
 
 
 // ==========================================================
-// TEST 1 — DONNÉES DU BLOC 1
+// RÉCUPÉRER LES DONNÉES DU BLOC 1
 // ==========================================================
 
-if (!window.brandStoresData) {
-
-    alert(
-        "BLOC 2 — ERRO : window.brandStoresData n'existe pas."
-    );
-
-    throw new Error(
-        "window.brandStoresData introuvable."
-    );
-
-}
+const officialStores =
+    window.brandStoresData.stores;
 
 
 alert(
-    "BLOC 2 — Test 1 OK : données du Bloc 1 trouvées."
+    "BLOC 2 — " +
+    officialStores.length +
+    " Loja récupérées."
 );
 
 
 // ==========================================================
-// TEST 2 — TABLEAU DES LOJA
+// RÉCUPÉRER LES ÉLÉMENTS HTML
 // ==========================================================
 
-if (
-    !Array.isArray(
-        window.brandStoresData.stores
-    )
-) {
-
-    alert(
-        "BLOC 2 — ERRO : stores n'est pas un tableau."
-    );
-
-    throw new Error(
-        "window.brandStoresData.stores n'est pas un tableau."
-    );
-
-}
-
-
-alert(
-    "BLOC 2 — Test 2 OK : " +
-    window.brandStoresData.stores.length +
-    " Loja trouvées."
-);
-
-
-// ==========================================================
-// TEST 3 — PREMIÈRE LOJA
-// ==========================================================
-
-const firstStore =
-    window.brandStoresData.stores[0];
-
-
-if (!firstStore) {
-
-    alert(
-        "BLOC 2 — ERRO : aucune Loja trouvée."
-    );
-
-    throw new Error(
-        "Aucune Loja dans stores."
-    );
-
-}
-
-
-alert(
-    "BLOC 2 — Test 3 OK.\n\n" +
-    "ID : " +
-    firstStore.id
-);
-
-
-// ==========================================================
-// TEST 4 — DERNIÈRE LOJA
-// ==========================================================
-
-const lastStore =
-    window.brandStoresData.stores[
-        window.brandStoresData.stores.length - 1
-    ];
-
-
-alert(
-    "BLOC 2 — Test 4 OK.\n\n" +
-    "Première : " +
-    firstStore.id +
-    "\n" +
-    "Dernière : " +
-    lastStore.id
-);
-
-
-// ==========================================================
-// TEST 5 — GRILLE HTML
-// ==========================================================
-
-const brandStoresGrid =
+const storesGrid =
     document.getElementById(
         "brandStoresGrid"
     );
 
+const storesTemplate =
+    document.getElementById(
+        "brandStoreTemplate"
+    );
 
-if (!brandStoresGrid) {
+
+if (!storesGrid) {
 
     alert(
         "BLOC 2 — ERRO : #brandStoresGrid introuvable."
@@ -422,22 +344,7 @@ if (!brandStoresGrid) {
 }
 
 
-alert(
-    "BLOC 2 — Test 5 OK : brandStoresGrid trouvée."
-);
-
-
-// ==========================================================
-// TEST 6 — TEMPLATE HTML
-// ==========================================================
-
-const brandStoreTemplate =
-    document.getElementById(
-        "brandStoreTemplate"
-    );
-
-
-if (!brandStoreTemplate) {
+if (!storesTemplate) {
 
     alert(
         "BLOC 2 — ERRO : #brandStoreTemplate introuvable."
@@ -451,60 +358,388 @@ if (!brandStoreTemplate) {
 
 
 alert(
-    "BLOC 2 — Test 6 OK : template trouvé."
+    "BLOC 2 — Structure HTML trouvée."
 );
 
 
 // ==========================================================
-// TEST 7 — CLONAGE
+// NETTOYER LA GRILLE
 // ==========================================================
 
-const testClone =
-    brandStoreTemplate.content.cloneNode(
-        true
-    );
+storesGrid.innerHTML = "";
 
 
-alert(
-    "BLOC 2 — Test 7 OK : template cloné."
+// ==========================================================
+// COMPTEUR
+// ==========================================================
+
+let displayedCount = 0;
+
+let emptyCount = 0;
+
+let namedCount = 0;
+
+
+// ==========================================================
+// AFFICHER CHAQUE LOJA
+// ==========================================================
+
+officialStores.forEach(
+    store => {
+
+        try {
+
+            const clone =
+                storesTemplate.content.cloneNode(
+                    true
+                );
+
+
+            const card =
+                clone.querySelector(
+                    ".brandCard"
+                );
+
+
+            if (!card) {
+
+                console.error(
+                    "Carte introuvable pour",
+                    store.id
+                );
+
+                return;
+
+            }
+
+
+            // ==================================================
+            // ID DE LA LOJA
+            // ==================================================
+
+            card.dataset.storeId =
+                store.id;
+
+
+            // ==================================================
+            // DÉTERMINER SI LA LOJA EST VIDE
+            // ==================================================
+
+            const hasName =
+                Boolean(
+                    store.name &&
+                    String(store.name).trim()
+                );
+
+
+            const hasLogo =
+                Boolean(
+                    store.logo &&
+                    String(store.logo).trim()
+                );
+
+
+            const isEmpty =
+                !hasName &&
+                !hasLogo;
+
+
+            if (isEmpty) {
+
+                emptyCount++;
+
+            } else {
+
+                namedCount++;
+
+            }
+
+
+            // ==================================================
+            // LOGO
+            // ==================================================
+
+            const logo =
+                clone.querySelector(
+                    ".brandLogo"
+                );
+
+
+            if (logo) {
+
+                if (hasLogo) {
+
+                    logo.src =
+                        store.logo;
+
+                    logo.alt =
+                        store.name ||
+                        store.id;
+
+                } else {
+
+                    /*
+                     * Pour une Loja vide,
+                     * on utilise une image neutre.
+                     */
+
+                    logo.src =
+                        "images/default-store.png";
+
+                    logo.alt =
+                        "Loja disponível";
+
+                }
+
+            }
+
+
+            // ==================================================
+            // NOM
+            // ==================================================
+
+            const name =
+                clone.querySelector(
+                    ".brandName"
+                );
+
+
+            if (name) {
+
+                name.textContent =
+                    hasName
+                        ? store.name
+                        : "Loja disponível";
+
+            }
+
+
+            // ==================================================
+            // CATÉGORIE
+            // ==================================================
+
+            const category =
+                clone.querySelector(
+                    ".brandCategory"
+                );
+
+
+            if (category) {
+
+                category.textContent =
+                    isEmpty
+                        ? "Espaço disponível"
+                        : "Loja Oficial";
+
+            }
+
+
+            // ==================================================
+            // COMMERÇANTS
+            // ==================================================
+
+            const merchantCount =
+                clone.querySelector(
+                    ".merchantCount"
+                );
+
+
+            if (merchantCount) {
+
+                merchantCount.textContent =
+                    "0";
+
+            }
+
+
+            // ==================================================
+            // PRODUITS
+            // ==================================================
+
+            const productCount =
+                clone.querySelector(
+                    ".productCount"
+                );
+
+
+            if (productCount) {
+
+                productCount.textContent =
+                    "0";
+
+            }
+
+
+            // ==================================================
+            // VENTES
+            // ==================================================
+
+            const salesCount =
+                clone.querySelector(
+                    ".salesCount"
+                );
+
+
+            if (salesCount) {
+
+                salesCount.textContent =
+                    "0 Kz";
+
+            }
+
+
+            // ==================================================
+            // ÉTAT VISUEL LOJA VIDE
+            // ==================================================
+
+            if (isEmpty) {
+
+                card.classList.add(
+                    "emptyStore"
+                );
+
+            }
+
+
+            // ==================================================
+            // BOUTON GÉRER
+            // ==================================================
+
+            const manageButton =
+                clone.querySelector(
+                    ".manageButton"
+                );
+
+
+            if (manageButton) {
+
+                manageButton.addEventListener(
+                    "click",
+                    () => {
+
+                        window.location.href =
+                            "brand-store-admin.html?store=" +
+                            encodeURIComponent(
+                                store.id
+                            );
+
+                    }
+                );
+
+            }
+
+
+            // ==================================================
+            // BOUTON VOIR
+            // ==================================================
+
+            const viewButton =
+                clone.querySelector(
+                    ".viewButton"
+                );
+
+
+            if (viewButton) {
+
+                viewButton.addEventListener(
+                    "click",
+                    () => {
+
+                        window.location.href =
+                            "official-store.html?store=" +
+                            encodeURIComponent(
+                                store.id
+                            );
+
+                    }
+                );
+
+            }
+
+
+            // ==================================================
+            // AJOUTER À LA GRILLE
+            // ==================================================
+
+            storesGrid.appendChild(
+                clone
+            );
+
+
+            displayedCount++;
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Erreur affichage",
+                store.id,
+                error
+            );
+
+        }
+
+    }
 );
 
 
 // ==========================================================
-// TEST 8 — CARTE
+// METTRE À JOUR LE COMPTEUR GLOBAL
 // ==========================================================
 
-const testCard =
-    testClone.querySelector(
-        ".brandCard"
-    );
+if (storesCount) {
 
-
-if (!testCard) {
-
-    alert(
-        "BLOC 2 — ERRO : .brandCard introuvable dans le template."
-    );
-
-    throw new Error(
-        ".brandCard introuvable."
-    );
+    storesCount.textContent =
+        displayedCount;
 
 }
 
 
-alert(
-    "BLOC 2 — Test 8 OK : .brandCard trouvée."
-);
+// ==========================================================
+// CONSERVER LES INFORMATIONS
+// POUR LES BLOCS SUIVANTS
+// ==========================================================
+
+window.brandStoresData = {
+
+    ...window.brandStoresData,
+
+    displayedCount,
+
+    emptyCount,
+
+    namedCount
+
+};
 
 
 // ==========================================================
-// FIN DU TEST
+// RÉSULTAT
 // ==========================================================
 
 alert(
-    "BLOC 2 — TEST TERMINÉ AVEC SUCCÈS.\n\n" +
-    "Le Bloc 1 communique correctement avec le Bloc 2."
+
+    "BLOC 2 — Affichage terminé.\n\n" +
+
+    "Loja Firestore : " +
+    officialStores.length +
+
+    "\n\n" +
+
+    "Loja affichées : " +
+    displayedCount +
+
+    "\n\n" +
+
+    "Loja vides : " +
+    emptyCount +
+
+    "\n\n" +
+
+    "Loja avec informations : " +
+    namedCount
+
 );
 
 
