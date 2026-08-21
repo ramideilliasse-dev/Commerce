@@ -1,156 +1,106 @@
- //==================================================
+ // ==========================================================
 // TOMA
 // BRAND STORES
-//==================================================
+// BLOC 1 — INITIALISATION + CHARGEMENT FIRESTORE
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT
+// ==========================================================
+
+alert(
+    "BLOC 1 — Initialisation de Brand Stores démarrée."
+);
+
+
+// ==========================================================
+// FIREBASE
+// ==========================================================
 
 import { db } from "../firebase.js";
 
 import {
-collection,
-getDocs,
-doc,
-getDoc,
-setDoc,
-updateDoc,
-deleteDoc,
-onSnapshot,
-query,
-where
-}
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    collection,
+    getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-//==================================================
-// ELEMENTS HTML
-//==================================================
 
-const grid = document.getElementById("brandStoresGrid");
+// ==========================================================
+// RÉFÉRENCES HTML
+// ==========================================================
 
-const storesCount = document.getElementById("storesCount");
+const grid =
+    document.getElementById(
+        "brandStoresGrid"
+    );
+
+const storesCount =
+    document.getElementById(
+        "storesCount"
+    );
 
 const assignedMerchants =
-document.getElementById("assignedMerchants");
+    document.getElementById(
+        "assignedMerchants"
+    );
 
 const storeProducts =
-document.getElementById("storeProducts");
+    document.getElementById(
+        "storeProducts"
+    );
 
 const storeSales =
-document.getElementById("storeSales");
+    document.getElementById(
+        "storeSales"
+    );
 
 const searchStore =
-document.getElementById("searchStore");
+    document.getElementById(
+        "searchStore"
+    );
 
 const template =
-document.getElementById("brandStoreTemplate");
+    document.getElementById(
+        "brandStoreTemplate"
+    );
 
-//==================================================
-// BOUTIQUES OFFICIELLES
-//==================================================
 
-const stores = {
+// ==========================================================
+// VÉRIFICATION DES ÉLÉMENTS HTML
+// ==========================================================
 
-apple:{
-id:"apple",
-name:"Apple",
-logo:"images/stores/apple.png",
-banner:"images/stores/apple-banner.jpg"
-},
+if (!grid) {
 
-samsung:{
-id:"samsung",
-name:"Samsung",
-logo:"images/stores/samsung.png",
-banner:"images/stores/samsung-banner.jpg"
-},
+    alert(
+        "BLOC 1 — ERREUR : brandStoresGrid introuvable."
+    );
 
-xiaomi:{
-id:"xiaomi",
-name:"Xiaomi",
-logo:"images/stores/xiaomi.png",
-banner:"images/stores/xiaomi-banner.jpg"
-},
+    throw new Error(
+        "brandStoresGrid introuvable."
+    );
 
-huawei:{
-id:"huawei",
-name:"Huawei",
-logo:"images/stores/huawei.png",
-banner:"images/stores/huawei-banner.jpg"
-},
-
-sony:{
-id:"sony",
-name:"Sony",
-logo:"images/stores/sony.png",
-banner:"images/stores/sony-banner.jpg"
-},
-
-nike:{
-id:"nike",
-name:"Nike",
-logo:"images/stores/nike.png",
-banner:"images/stores/nike-banner.jpg"
-},
-
-adidas:{
-id:"adidas",
-name:"Adidas",
-logo:"images/stores/adidas.png",
-banner:"images/stores/adidas-banner.jpg"
-},
-
-puma:{
-id:"puma",
-name:"Puma",
-logo:"images/stores/puma.png",
-banner:"images/stores/puma-banner.jpg"
-},
-
-realmadrid:{
-id:"realmadrid",
-name:"Real Madrid",
-logo:"images/stores/realmadrid.png",
-banner:"images/stores/realmadrid-banner.jpg"
-},
-
-barcelona:{
-id:"barcelona",
-name:"FC Barcelona",
-logo:"images/stores/barcelona.png",
-banner:"images/stores/barcelona-banner.jpg"
-},
-
-psg:{
-id:"psg",
-name:"PSG",
-logo:"images/stores/psg.png",
-banner:"images/stores/psg-banner.jpg"
-},
-
-rolex:{
-id:"rolex",
-name:"Rolex",
-logo:"images/stores/rolex.png",
-banner:"images/stores/rolex-banner.jpg"
-},
-
-gucci:{
-id:"gucci",
-name:"Gucci",
-logo:"images/stores/gucci.png",
-banner:"images/stores/gucci-banner.jpg"
-},
-
-"louis-vuitton":{
-id:"louis-vuitton",
-name:"Louis Vuitton",
-logo:"images/stores/louis-vuitton.png",
-banner:"images/stores/louis-vuitton-banner.jpg"
 }
 
-};
 
-//==================================================
-// VARIABLES
-//==================================================
+if (!template) {
+
+    alert(
+        "BLOC 1 — ERREUR : brandStoreTemplate introuvable."
+    );
+
+    throw new Error(
+        "brandStoreTemplate introuvable."
+    );
+
+}
+
+
+// ==========================================================
+// VARIABLES GLOBALES
+// ==========================================================
+
+let stores = [];
 
 let merchants = [];
 
@@ -158,201 +108,185 @@ let products = [];
 
 let orders = [];
 
-console.log("Brand Stores carregado.");
-//==================================================
-// AFFICHER LES BOUTIQUES
-//==================================================
 
-function renderStores(){
+// ==========================================================
+// RÉFÉRENCE FIRESTORE
+// ==========================================================
 
-if(!grid) return;
+const officialStoresRef =
+    collection(
+        db,
+        "officialStores"
+    );
 
-grid.innerHTML="";
 
-Object.values(stores).forEach(store=>{
+// ==========================================================
+// CHARGER LES 86 LOJA
+// ==========================================================
 
-const clone =
-template.content.cloneNode(true);
+async function loadOfficialStores() {
 
-clone.querySelector(".brandLogo").src =
-store.logo;
+    alert(
+        "BLOC 1 — Lecture de officialStores démarrée."
+    );
 
-clone.querySelector(".brandLogo").alt =
-store.name;
 
-clone.querySelector(".brandName").textContent =
-store.name;
+    try {
 
-clone.querySelector(".brandCategory").textContent =
-"Loja Oficial";
+        const snapshot =
+            await getDocs(
+                officialStoresRef
+            );
 
-clone.querySelector(".merchantCount").textContent="0";
 
-clone.querySelector(".productCount").textContent="0";
+        stores =
+            snapshot.docs.map(
+                document => ({
 
-clone.querySelector(".salesCount").textContent="0 Kz";
-//==================================
-// GERIR LOJA
-//==================================
+                    id: document.id,
 
-clone.querySelector(".manageButton")
+                    ...document.data()
 
-.addEventListener("click",()=>{
+                })
+            );
 
-window.location.href=
 
-`brand-store-admin.html?store=${store.id}`;
+        // ==============================================
+        // TRI PAR ID
+        // ==============================================
 
-});
+        stores.sort(
+            (a, b) => {
 
-//==================================
-// VER LOJA
-//==================================
+                const numberA =
+                    parseInt(
+                        a.id.replace(
+                            "store_",
+                            ""
+                        )
+                    );
 
-clone.querySelector(".viewButton")
+                const numberB =
+                    parseInt(
+                        b.id.replace(
+                            "store_",
+                            ""
+                        )
+                    );
 
-.addEventListener("click",()=>{
+                return numberA - numberB;
 
-window.location.href=
+            }
+        );
 
-`official-store.html?store=${store.id}`;
 
-});
-//==============================
-// AJOUTER LA CARTE
-//==============================
+        // ==============================================
+        // COMPTE
+        // ==============================================
 
-grid.appendChild(clone);
+        if (storesCount) {
 
-}); // ferme le forEach
+            storesCount.textContent =
+                stores.length;
 
-//==============================
-// TOTAL DE LOJAS
-//==============================
+        }
 
-storesCount.textContent =
-Object.keys(stores).length;
 
-} // ferme renderStores()
+        alert(
 
-renderStores();
-//==================================================
-// STATISTIQUES DES BOUTIQUES
-//==================================================
+            "BLOC 1 — Lecture Firestore terminée.\n\n" +
 
-async function loadStoreStatistics(){
+            "Loja trouvées : " +
+            stores.length +
 
-//======================
-// COMMERÇANTS
-//======================
+            "\n\n" +
 
-const merchantsSnap =
-await getDocs(collection(db,"merchants"));
+            "Première : " +
+            (
+                stores[0]?.id ||
+                "—"
+            ) +
 
-merchants = merchantsSnap.docs.map(doc=>({
+            "\n" +
 
-id:doc.id,
+            "Dernière : " +
+            (
+                stores[stores.length - 1]?.id ||
+                "—"
+            )
 
-...doc.data()
+        );
 
-}));
 
-//======================
-// PRODUITS
-//======================
+        // ==============================================
+        // EXPOSER POUR LES BLOCS SUIVANTS
+        // ==============================================
 
-const productsSnap =
-await getDocs(collection(db,"products"));
+        window.brandStoresData = {
 
-products = productsSnap.docs.map(doc=>({
+            stores,
 
-id:doc.id,
+            merchants,
 
-...doc.data()
+            products,
 
-}));
+            orders
 
-//======================
-// COMMANDES
-//======================
+        };
 
-const ordersSnap =
-await getDocs(collection(db,"orders"));
 
-orders = ordersSnap.docs.map(doc=>({
+        console.log(
+            "TOMA — officialStores carregadas:",
+            stores
+        );
 
-id:doc.id,
 
-...doc.data()
+    }
 
-}));
+    catch (error) {
 
-//======================
-// TOTALS
-//======================
+        console.error(
+            "Erro ao carregar officialStores:",
+            error
+        );
 
-assignedMerchants.textContent =
-merchants.length;
 
-storeProducts.textContent =
-products.length;
+        alert(
 
-let totalSales = 0;
+            "BLOC 1 — ERRO ao carregar officialStores:\n\n" +
 
-orders.forEach(order=>{
+            error.code +
 
-totalSales += Number(order.total || 0);
+            "\n\n" +
 
-});
+            error.message
 
-storeSales.textContent =
-totalSales.toLocaleString()+" Kz";
+        );
 
-//======================
-// CARTES
-//======================
 
-document.querySelectorAll(".brandCard")
+        throw error;
 
-.forEach(card=>{
-
-const name =
-
-card.querySelector(".brandName")
-
-.textContent;
-
-const merchantNumber =
-
-merchants.filter(m=>m.storeName===name).length;
-
-const productNumber =
-
-products.filter(p=>p.storeName===name).length;
-
-let sales = 0;
-
-orders.forEach(order=>{
-
-if(order.storeName===name){
-
-sales += Number(order.total || 0);
+    }
 
 }
 
-});
 
-card.querySelector(".merchantCount").textContent =
-merchantNumber;
+// ==========================================================
+// INITIALISATION
+// ==========================================================
 
-card.querySelector(".productCount").textContent =
-productNumber;
+await loadOfficialStores();
 
-card.querySelector(".salesCount").textContent =
-sales.toLocaleString()+" Kz";
 
-});
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
 
-}
+alert(
+    "BLOC 1 — Inicialização de Brand Stores terminado com sucesso."
+);
 
-loadStoreStatistics();
+
+// ==========================================================
+// FIN BLOC 1
+// ==========================================================
