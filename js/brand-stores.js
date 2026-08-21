@@ -2911,3 +2911,524 @@ alert(
 // ==========================================================
 // FIN BLOC 6
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORES
+// BLOC 7 — CONTEXTE ADMINISTRATIF DE LA LOJA
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT DU BLOC
+// ==========================================================
+
+alert(
+    "BLOC 7 — Contexte administratif des Loja démarré."
+);
+
+
+// ==========================================================
+// VÉRIFICATION DES BLOCS PRÉCÉDENTS
+// ==========================================================
+
+if (!window.brandStoresData) {
+
+    alert(
+        "BLOC 7 — ERRO : Brand Stores não inicializado."
+    );
+
+    throw new Error(
+        "BLOC 7 : brandStoresData introuvable."
+    );
+
+}
+
+
+if (
+    !Array.isArray(
+        window.brandStoresData.stores
+    )
+) {
+
+    alert(
+        "BLOC 7 — ERRO : lista de Loja introuvável."
+    );
+
+    throw new Error(
+        "BLOC 7 : stores introuvable."
+    );
+
+}
+
+
+alert(
+    "BLOC 7 — Comunicação com os Blocos 1 à 6 confirmada."
+);
+
+
+// ==========================================================
+// DONNÉES DISPONIBLES
+// ==========================================================
+
+const storesForAdmin =
+    window.brandStoresData.stores;
+
+
+// ==========================================================
+// RÉCUPÉRER LES STATISTIQUES
+// ==========================================================
+
+const statisticsData =
+    window.brandStoresData.statistics ||
+    {};
+
+
+// ==========================================================
+// RÉCUPÉRER LES ÉTATS
+// ==========================================================
+
+const statusesData =
+    window.brandStoresData.storeStatuses ||
+    [];
+
+
+// ==========================================================
+// FONCTION — TROUVER L'ÉTAT D'UNE LOJA
+// ==========================================================
+
+function getAdminStoreStatus(
+    storeId
+) {
+
+    const statusItem =
+        statusesData.find(
+            item =>
+                String(item.id) ===
+                String(storeId)
+        );
+
+
+    if (
+        statusItem &&
+        statusItem.status
+    ) {
+
+        return statusItem.status;
+
+    }
+
+
+    const store =
+        storesForAdmin.find(
+            item =>
+                String(item.id) ===
+                String(storeId)
+        );
+
+
+    if (
+        store &&
+        store.status
+    ) {
+
+        return store.status;
+
+    }
+
+
+    return "empty";
+
+}
+
+
+// ==========================================================
+// FONCTION — TROUVER UNE LOJA
+// ==========================================================
+
+function findAdminStore(
+    storeId
+) {
+
+    if (!storeId) {
+
+        return null;
+
+    }
+
+
+    return storesForAdmin.find(
+        store =>
+            String(store.id) ===
+            String(storeId)
+    ) || null;
+
+}
+
+
+// ==========================================================
+// FONCTION — SÉLECTION ADMINISTRATIVE
+// ==========================================================
+
+function selectAdminStore(
+    storeId
+) {
+
+    const store =
+        findAdminStore(
+            storeId
+        );
+
+
+    if (!store) {
+
+        alert(
+
+            "BLOC 7 — ERRO : Loja não encontrada.\n\n" +
+
+            "ID : " +
+            storeId
+
+        );
+
+        return null;
+
+    }
+
+
+    const status =
+        getAdminStoreStatus(
+            storeId
+        );
+
+
+    // ------------------------------------------------------
+    // RÉCUPÉRER STATISTIQUES DE LA LOJA
+    // ------------------------------------------------------
+
+    let storeStats = {
+
+        merchants: 0,
+
+        products: 0,
+
+        orders: 0,
+
+        sales: 0
+
+    };
+
+
+    if (
+        statisticsData &&
+        statisticsData[storeId]
+    ) {
+
+        storeStats = {
+
+            ...storeStats,
+
+            ...statisticsData[
+                storeId
+            ]
+
+        };
+
+    }
+
+
+    // ------------------------------------------------------
+    // CRÉER LE CONTEXTE ADMIN
+    // ------------------------------------------------------
+
+    const adminContext = {
+
+        id:
+            store.id,
+
+        name:
+            store.name ||
+            "",
+
+        logo:
+            store.logo ||
+            "",
+
+        banner:
+            store.banner ||
+            "",
+
+        status,
+
+        statistics:
+            storeStats,
+
+        selectedAt:
+            new Date().toISOString()
+
+    };
+
+
+    // ------------------------------------------------------
+    // CONSERVER LE CONTEXTE
+    // ------------------------------------------------------
+
+    window.brandStoresData = {
+
+        ...window.brandStoresData,
+
+        selectedStore:
+            adminContext
+
+    };
+
+
+    // ------------------------------------------------------
+    // INFORMATIONS POUR LES BLOCS SUIVANTS
+    // ------------------------------------------------------
+
+    window.brandStoreAdminContext =
+        adminContext;
+
+
+    return adminContext;
+
+}
+
+
+// ==========================================================
+// FONCTION — VÉRIFIER UNE LOJA
+// ==========================================================
+
+function inspectAdminStore(
+    storeId
+) {
+
+    const context =
+        selectAdminStore(
+            storeId
+        );
+
+
+    if (!context) {
+
+        return null;
+
+    }
+
+
+    return {
+
+        id:
+            context.id,
+
+        name:
+            context.name,
+
+        status:
+            context.status,
+
+        merchants:
+            context.statistics.merchants,
+
+        products:
+            context.statistics.products,
+
+        orders:
+            context.statistics.orders,
+
+        sales:
+            context.statistics.sales
+
+    };
+
+}
+
+
+// ==========================================================
+// CONNECTER LES CARTES
+// ==========================================================
+
+const adminCards =
+    document.querySelectorAll(
+        ".brandCard"
+    );
+
+
+adminCards.forEach(
+    card => {
+
+        const storeId =
+            card.dataset.storeId;
+
+
+        if (!storeId) {
+
+            return;
+
+        }
+
+
+        // --------------------------------------------------
+        // CLIQUER SUR LA CARTE
+        // --------------------------------------------------
+
+        card.addEventListener(
+            "click",
+            event => {
+
+                /*
+                 * Ne pas intercepter les boutons.
+                 * Les boutons Gérer / Voir gardent
+                 * leurs fonctions du Bloc 5.
+                 */
+
+                if (
+                    event.target.closest(
+                        ".manageButton"
+                    ) ||
+                    event.target.closest(
+                        ".viewButton"
+                    )
+                ) {
+
+                    return;
+
+                }
+
+
+                const context =
+                    selectAdminStore(
+                        storeId
+                    );
+
+
+                if (!context) {
+
+                    return;
+
+                }
+
+
+                // ------------------------------------------
+                // RETIRER L'ANCIENNE SÉLECTION
+                // ------------------------------------------
+
+                adminCards.forEach(
+                    item => {
+
+                        item.classList.remove(
+                            "adminStoreSelected"
+                        );
+
+                    }
+                );
+
+
+                // ------------------------------------------
+                // MARQUER LA CARTE
+                // ------------------------------------------
+
+                card.classList.add(
+                    "adminStoreSelected"
+                );
+
+
+                // ------------------------------------------
+                // ATTRIBUT HTML
+                // ------------------------------------------
+
+                card.dataset.adminSelected =
+                    "true";
+
+
+                // ------------------------------------------
+                // ALERTE DE CONTRÔLE
+                // ------------------------------------------
+
+                alert(
+
+                    "BLOC 7 — Loja selecionada para administração.\n\n" +
+
+                    "ID : " +
+                    context.id +
+
+                    "\n\n" +
+
+                    "Nome : " +
+                    (
+                        context.name ||
+                        "Loja disponível"
+                    ) +
+
+                    "\n\n" +
+
+                    "Estado : " +
+                    context.status
+
+                );
+
+            }
+        );
+
+    }
+);
+
+
+// ==========================================================
+// EXPOSER LES FONCTIONS
+// ==========================================================
+
+window.brandStoresAdmin = {
+
+    findAdminStore,
+
+    selectAdminStore,
+
+    inspectAdminStore
+
+};
+
+
+// ==========================================================
+// INFORMATIONS GLOBALES
+// ==========================================================
+
+window.brandStoresData = {
+
+    ...window.brandStoresData,
+
+    adminReady:
+        true,
+
+    adminStoreCount:
+        storesForAdmin.length
+
+};
+
+
+// ==========================================================
+// ALERTE — TEST DU BLOC
+// ==========================================================
+
+alert(
+
+    "BLOC 7 — Test de préparation terminé.\n\n" +
+
+    "Loja disponibles : " +
+    storesForAdmin.length
+
+);
+
+
+// ==========================================================
+// ALERTE — FIN DU BLOC
+// ==========================================================
+
+alert(
+    "BLOC 7 — Contexto administrativo das Loja terminado com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 7
+// ==========================================================
