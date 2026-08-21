@@ -1853,3 +1853,499 @@ alert(
 // ==========================================================
 // FIN BLOC 4
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORES
+// BLOC 5 — SÉLECTION ET NAVIGATION DES LOJA
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT DU BLOC
+// ==========================================================
+
+alert(
+    "BLOC 5 — Navigation des Loja démarrée."
+);
+
+
+// ==========================================================
+// VÉRIFICATION DES BLOCS PRÉCÉDENTS
+// ==========================================================
+
+if (!window.brandStoresData) {
+
+    alert(
+        "BLOC 5 — ERRO : données Brand Stores introuvables."
+    );
+
+    throw new Error(
+        "BLOC 5 : brandStoresData introuvable."
+    );
+
+}
+
+
+if (
+    !Array.isArray(
+        window.brandStoresData.stores
+    )
+) {
+
+    alert(
+        "BLOC 5 — ERRO : liste des Loja introuvable."
+    );
+
+    throw new Error(
+        "BLOC 5 : stores introuvable."
+    );
+
+}
+
+
+alert(
+    "BLOC 5 — Données des Blocs 1 à 4 trouvées."
+);
+
+
+// ==========================================================
+// RÉCUPÉRER LES DONNÉES
+// ==========================================================
+
+const storesForNavigation =
+    window.brandStoresData.stores;
+
+
+// ==========================================================
+// FONCTION — TROUVER UNE LOJA
+// ==========================================================
+
+function findBrandStore(
+    storeId
+) {
+
+    if (!storeId) {
+
+        return null;
+
+    }
+
+
+    return storesForNavigation.find(
+        store => {
+
+            return String(
+                store.id || ""
+            ) === String(
+                storeId
+            );
+
+        }
+    ) || null;
+
+}
+
+
+// ==========================================================
+// FONCTION — PRÉPARER LA LOJA SÉLECTIONNÉE
+// ==========================================================
+
+function selectBrandStore(
+    storeId
+) {
+
+    const selectedStore =
+        findBrandStore(
+            storeId
+        );
+
+
+    if (!selectedStore) {
+
+        alert(
+
+            "BLOC 5 — ERRO : Loja não encontrada.\n\n" +
+
+            "ID : " +
+            storeId
+
+        );
+
+        return null;
+
+    }
+
+
+    // ------------------------------------------------------
+    // STATISTIQUES DÉJÀ CALCULÉES PAR LE BLOC 3
+    // ------------------------------------------------------
+
+    let storeStatistics = {
+
+        merchants: 0,
+
+        products: 0,
+
+        orders: 0,
+
+        sales: 0
+
+    };
+
+
+    // ------------------------------------------------------
+    // RECHERCHER LA CARTE
+    // ------------------------------------------------------
+
+    const card =
+        document.querySelector(
+            `.brandCard[data-store-id="${CSS.escape(
+                String(storeId)
+            )}"]`
+        );
+
+
+    if (card) {
+
+        const merchantElement =
+            card.querySelector(
+                ".merchantCount"
+            );
+
+        const productElement =
+            card.querySelector(
+                ".productCount"
+            );
+
+        const salesElement =
+            card.querySelector(
+                ".salesCount"
+            );
+
+
+        storeStatistics.merchants =
+            Number(
+                merchantElement?.textContent
+                    ?.replace(
+                        /\D/g,
+                        ""
+                    ) ||
+                0
+            );
+
+
+        storeStatistics.products =
+            Number(
+                productElement?.textContent
+                    ?.replace(
+                        /\D/g,
+                        ""
+                    ) ||
+                0
+            );
+
+
+        const salesText =
+            salesElement?.textContent
+                ?.replace(
+                    /[^\d]/g,
+                    ""
+                );
+
+
+        storeStatistics.sales =
+            Number(
+                salesText ||
+                0
+            );
+
+    }
+
+
+    // ------------------------------------------------------
+    // OBJET SÉLECTIONNÉ
+    // ------------------------------------------------------
+
+    const selectedStoreData = {
+
+        id:
+            selectedStore.id,
+
+        name:
+            selectedStore.name ||
+            "",
+
+        logo:
+            selectedStore.logo ||
+            "",
+
+        banner:
+            selectedStore.banner ||
+            "",
+
+        statistics:
+            storeStatistics
+
+    };
+
+
+    // ------------------------------------------------------
+    // CONSERVER LA SÉLECTION
+    // ------------------------------------------------------
+
+    window.brandStoresData = {
+
+        ...window.brandStoresData,
+
+        selectedStore:
+            selectedStoreData
+
+    };
+
+
+    return selectedStoreData;
+
+}
+
+
+// ==========================================================
+// FONCTION — ALLER AU DASHBOARD ADMIN
+// ==========================================================
+
+function openBrandStoreAdmin(
+    storeId
+) {
+
+    const selectedStore =
+        selectBrandStore(
+            storeId
+        );
+
+
+    if (!selectedStore) {
+
+        return;
+
+    }
+
+
+    alert(
+
+        "BLOC 5 — Loja selecionada.\n\n" +
+
+        "ID : " +
+        selectedStore.id +
+
+        "\n\n" +
+
+        "Nome : " +
+        (
+            selectedStore.name ||
+            "Loja disponível"
+        )
+
+    );
+
+
+    const url =
+        "brand-store-admin.html?store=" +
+        encodeURIComponent(
+            selectedStore.id
+        );
+
+
+    window.location.href =
+        url;
+
+}
+
+
+// ==========================================================
+// FONCTION — VOIR LA LOJA
+// ==========================================================
+
+function openOfficialStore(
+    storeId
+) {
+
+    const selectedStore =
+        selectBrandStore(
+            storeId
+        );
+
+
+    if (!selectedStore) {
+
+        return;
+
+    }
+
+
+    alert(
+
+        "BLOC 5 — Visualização da Loja.\n\n" +
+
+        "ID : " +
+        selectedStore.id
+
+    );
+
+
+    const url =
+        "official-store.html?store=" +
+        encodeURIComponent(
+            selectedStore.id
+        );
+
+
+    window.location.href =
+        url;
+
+}
+
+
+// ==========================================================
+// CONNECTER LES BOUTONS DES CARTES
+// ==========================================================
+
+const navigationCards =
+    document.querySelectorAll(
+        ".brandCard"
+    );
+
+
+navigationCards.forEach(
+    card => {
+
+        const storeId =
+            card.dataset.storeId;
+
+
+        if (!storeId) {
+
+            return;
+
+        }
+
+
+        // ==================================================
+        // BOUTON GÉRER
+        // ==================================================
+
+        const manageButton =
+            card.querySelector(
+                ".manageButton"
+            );
+
+
+        if (manageButton) {
+
+            /*
+             * Évite de créer plusieurs
+             * écouteurs si le script est
+             * exécuté une nouvelle fois.
+             */
+
+            manageButton.dataset.block5Connected =
+                "true";
+
+
+            manageButton.addEventListener(
+                "click",
+                event => {
+
+                    event.preventDefault();
+
+                    openBrandStoreAdmin(
+                        storeId
+                    );
+
+                }
+            );
+
+        }
+
+
+        // ==================================================
+        // BOUTON VOIR
+        // ==================================================
+
+        const viewButton =
+            card.querySelector(
+                ".viewButton"
+            );
+
+
+        if (viewButton) {
+
+            viewButton.dataset.block5Connected =
+                "true";
+
+
+            viewButton.addEventListener(
+                "click",
+                event => {
+
+                    event.preventDefault();
+
+                    openOfficialStore(
+                        storeId
+                    );
+
+                }
+            );
+
+        }
+
+    }
+);
+
+
+// ==========================================================
+// EXPOSER LES FONCTIONS POUR LES BLOCS SUIVANTS
+// ==========================================================
+
+window.brandStoresNavigation = {
+
+    findBrandStore,
+
+    selectBrandStore,
+
+    openBrandStoreAdmin,
+
+    openOfficialStore
+
+};
+
+
+// ==========================================================
+// ALERTE — RÉSULTAT
+// ==========================================================
+
+alert(
+
+    "BLOC 5 — Navigation configurée.\n\n" +
+
+    "Loja disponíveis : " +
+    storesForNavigation.length +
+
+    "\n\n" +
+
+    "Cartes détectées : " +
+    navigationCards.length
+
+);
+
+
+// ==========================================================
+// ALERTE — FIN DU BLOC
+// ==========================================================
+
+alert(
+    "BLOC 5 — Navigation des Loja terminé avec succès."
+);
+
+
+// ==========================================================
+// FIN BLOC 5
+// ==========================================================
