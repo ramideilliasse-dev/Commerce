@@ -1,7 +1,6 @@
  // ==========================================================
 // TOMA
-// CREATE OFFICIAL STORES
-// DIAGNOSTIC
+// VERIFICATION DES LOJA OFFICIAIS
 // ==========================================================
 
 import { db } from "../firebase.js";
@@ -9,141 +8,137 @@ import { db } from "../firebase.js";
 import {
     collection,
     doc,
-    getDoc,
-    setDoc
+    getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 
 // ==========================================================
-// BLOC 1
+// DÉBUT
 // ==========================================================
 
 alert(
-    "ÉTAPE 1 — create-official-stores.js chargé."
+    "VÉRIFICATION — Recherche des emplacements store_015 → store_100."
 );
 
 
 // ==========================================================
-// RÉFÉRENCE
+// VARIABLES
 // ==========================================================
 
-const storesCollection =
-    collection(db, "officialStores");
-
-alert(
-    "ÉTAPE 2 — Collection officialStores préparée."
-);
+let existing = [];
+let missing = [];
 
 
 // ==========================================================
-// TEST D'ACCÈS À FIRESTORE
+// VÉRIFICATION
 // ==========================================================
 
-async function testFirestore() {
+async function verifyStores() {
 
     try {
 
-        alert(
-            "ÉTAPE 3 — Test de lecture de store_015..."
-        );
+        for (
+            let number = 15;
+            number <= 100;
+            number++
+        ) {
+
+            const storeId =
+                `store_${String(number).padStart(3, "0")}`;
 
 
-        const storeRef =
-            doc(
-                storesCollection,
-                "store_015"
-            );
+            const storeRef =
+                doc(
+                    db,
+                    "officialStores",
+                    storeId
+                );
 
 
-        alert(
-            "ÉTAPE 4 — Référence store_015 créée."
-        );
+            const snapshot =
+                await getDoc(storeRef);
 
 
-        const snapshot =
-            await getDoc(storeRef);
+            if (snapshot.exists()) {
 
+                existing.push(storeId);
 
-        alert(
-            "ÉTAPE 5 — Lecture Firestore terminée.\n\n" +
-            "Document existe : " +
-            snapshot.exists()
-        );
+            } else {
 
+                missing.push(storeId);
 
-        if (snapshot.exists()) {
-
-            alert(
-                "ÉTAPE 6 — store_015 existe déjà.\n\n" +
-                "Aucune création nécessaire pour ce document."
-            );
-
-            return;
+            }
 
         }
 
 
-        alert(
-            "ÉTAPE 7 — store_015 n'existe pas.\n\n" +
-            "Tentative de création..."
-        );
-
-
-        await setDoc(
-            storeRef,
-            {
-
-                id: "store_015",
-
-                name: "",
-
-                slug: "",
-
-                logo: "",
-
-                banner: "",
-
-                category: "",
-
-                description: "",
-
-                status: "empty",
-
-                verified: false,
-
-                createdAt: new Date(),
-
-                updatedAt: new Date()
-
-            }
-        );
-
+        // ==================================================
+        // RÉSULTAT
+        // ==================================================
 
         alert(
-            "ÉTAPE 8 — store_015 créé avec succès."
+
+            "VÉRIFICATION TERMINÉE.\n\n" +
+
+            "Emplacements existants : " +
+            existing.length +
+
+            "\n\n" +
+
+            "Emplacements manquants : " +
+            missing.length +
+
+            "\n\n" +
+
+            "Total attendu : 86"
+
         );
 
 
-        alert(
-            "TEST TERMINÉ AVEC SUCCÈS.\n\n" +
-            "Firestore fonctionne correctement."
-        );
+        // ==================================================
+        // AFFICHER LES MANQUANTS
+        // ==================================================
+
+        if (missing.length > 0) {
+
+            alert(
+
+                "LOJA MANQUANTES :\n\n" +
+
+                missing.join("\n")
+
+            );
+
+        } else {
+
+            alert(
+
+                "PARFAIT.\n\n" +
+
+                "Les 86 emplacements " +
+                "store_015 → store_100 existent."
+
+            );
+
+        }
 
     }
 
     catch (error) {
 
         alert(
-            "ERREUR DÉTECTÉE.\n\n" +
+
+            "ERREUR DE VÉRIFICATION.\n\n" +
+
             error.code +
+
             "\n\n" +
+
             error.message
+
         );
 
-        console.error(
-            "Erreur create-official-stores :",
-            error
-        );
+        console.error(error);
 
     }
 
@@ -151,7 +146,7 @@ async function testFirestore() {
 
 
 // ==========================================================
-// EXÉCUTION
+// LANCEMENT
 // ==========================================================
 
-testFirestore();
+verifyStores();
