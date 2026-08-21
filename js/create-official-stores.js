@@ -1,60 +1,83 @@
  // ==========================================================
 // TOMA
-// CREATE OFFICIAL STORES
-// CRÉATION DES 75 LOJA MANQUANTES
-// store_026 → store_100
+// VERIFICATION — 86 EMPLACEMENTS OFFICIAL STORES
 // ==========================================================
 
 import { db } from "../firebase.js";
 
 import {
     doc,
-    getDoc,
-    setDoc
+    getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 
 // ==========================================================
-// ALERTE — DÉBUT
+// ALERTE DÉBUT
 // ==========================================================
 
 alert(
-    "BLOC — Création des 75 Loja Oficiais manquantes démarrée."
+    "VÉRIFICATION — Les 86 emplacements vont être vérifiés."
 );
 
 
 // ==========================================================
-// PARAMÈTRES
+// CONTENEUR HTML
 // ==========================================================
 
-const START = 26;
-const END = 100;
+const resultBox =
+    document.createElement("div");
+
+resultBox.style.fontFamily =
+    "Arial, sans-serif";
+
+resultBox.style.padding =
+    "20px";
+
+resultBox.style.whiteSpace =
+    "pre-wrap";
+
+document.body.appendChild(
+    resultBox
+);
 
 
 // ==========================================================
 // VARIABLES
 // ==========================================================
 
-let created = 0;
-let alreadyExists = 0;
-let errors = [];
+const existing = [];
+
+const missing = [];
 
 
 // ==========================================================
-// CRÉATION
+// AFFICHAGE PROGRESSION
 // ==========================================================
 
-async function createMissingStores() {
+function showProgress(message) {
+
+    resultBox.textContent =
+        message;
+
+}
+
+
+// ==========================================================
+// VÉRIFICATION
+// ==========================================================
+
+async function verifyStores() {
 
     try {
 
-        // ==================================================
-        // BOUCLE
-        // ==================================================
+        showProgress(
+            "Vérification en cours...\n\n"
+        );
+
 
         for (
-            let number = START;
-            number <= END;
+            let number = 15;
+            number <= 100;
             number++
         ) {
 
@@ -62,9 +85,21 @@ async function createMissingStores() {
                 `store_${String(number).padStart(3, "0")}`;
 
 
-            // ==============================================
-            // RÉFÉRENCE FIRESTORE
-            // ==============================================
+            showProgress(
+
+                "Vérification : " +
+                storeId +
+                "\n\n" +
+
+                "Existants : " +
+                existing.length +
+                "\n" +
+
+                "Manquants : " +
+                missing.length
+
+            );
+
 
             const storeRef =
                 doc(
@@ -74,165 +109,108 @@ async function createMissingStores() {
                 );
 
 
-            // ==============================================
-            // VÉRIFIER SI ELLE EXISTE
-            // ==============================================
-
             const snapshot =
                 await getDoc(
                     storeRef
                 );
 
 
-            // ==============================================
-            // SI ELLE EXISTE DÉJÀ
-            // ==============================================
-
             if (
                 snapshot.exists()
             ) {
 
-                alreadyExists++;
-
-                console.log(
-                    "Déjà existante :",
+                existing.push(
                     storeId
                 );
 
-                continue;
+            } else {
+
+                missing.push(
+                    storeId
+                );
 
             }
 
-
-            // ==============================================
-            // CRÉER LA LOJA VIDE
-            // ==============================================
-
-            await setDoc(
-                storeRef,
-                {
-
-                    id: storeId,
-
-                    name: "",
-
-                    slug: "",
-
-                    logo: "",
-
-                    banner: "",
-
-                    category: "",
-
-                    description: "",
-
-                    status: "empty",
-
-                    verified: false,
-
-                    createdAt: new Date(),
-
-                    updatedAt: new Date()
-
-                }
-            );
-
-
-            // ==============================================
-            // COMPTEUR
-            // ==============================================
-
-            created++;
-
-
-            console.log(
-                "Loja créée :",
-                storeId
-            );
-
         }
 
 
         // ==================================================
-        // FIN
+        // RÉSULTAT
+        // ==================================================
+
+        let result =
+
+            "VÉRIFICATION TERMINÉE\n\n" +
+
+            "Existants : " +
+            existing.length +
+            "\n\n" +
+
+            "Manquants : " +
+            missing.length +
+            "\n\n" +
+
+            "Total vérifié : 86";
+
+
+        if (
+            missing.length > 0
+        ) {
+
+            result +=
+
+                "\n\nLOJA MANQUANTES :\n" +
+
+                missing.join("\n");
+
+        } else {
+
+            result +=
+
+                "\n\n✅ LES 86 EMPLACEMENTS EXISTENT.";
+
+        }
+
+
+        resultBox.textContent =
+            result;
+
+
+        // ==================================================
+        // ALERTE FINALE
         // ==================================================
 
         alert(
-
-            "CRÉATION TERMINÉE AVEC SUCCÈS.\n\n" +
-
-            "Loja créées : " +
-            created +
-
-            "\n\n" +
-
-            "Loja déjà existantes : " +
-            alreadyExists +
-
-            "\n\n" +
-
-            "Erreurs : " +
-            errors.length +
-
-            "\n\n" +
-
-            "Plage traitée :\n" +
-            "store_026 → store_100"
-
+            result
         );
-
-
-        // ==================================================
-        // MESSAGE FINAL
-        // ==================================================
-
-        if (
-            errors.length === 0
-        ) {
-
-            alert(
-
-                "PARFAIT.\n\n" +
-
-                "Les emplacements manquants ont été créés.\n\n" +
-
-                "TOMA peut maintenant utiliser " +
-                "les 100 emplacements de Loja Oficiais."
-
-            );
-
-        }
 
     }
 
     catch (error) {
 
-        console.error(
-            "Erreur création Loja Oficiais :",
-            error
-        );
+        resultBox.textContent =
 
+            "ERREUR\n\n" +
 
-        errors.push(
-            error.message
-        );
+            error.code +
+            "\n\n" +
+
+            error.message;
 
 
         alert(
 
-            "ERREUR PENDANT LA CRÉATION.\n\n" +
+            "ERREUR DE VÉRIFICATION\n\n" +
 
             error.code +
-
             "\n\n" +
 
-            error.message +
+            error.message
 
-            "\n\n" +
+        );
 
-            "Loja créées avant l'erreur : " +
-            created
-
+        console.error(
+            error
         );
 
     }
@@ -244,4 +222,4 @@ async function createMissingStores() {
 // LANCEMENT
 // ==========================================================
 
-createMissingStores();
+verifyStores();
