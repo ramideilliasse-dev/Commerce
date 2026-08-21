@@ -1,7 +1,7 @@
  // ==========================================================
 // TOMA
 // CREATE OFFICIAL STORES
-// INITIALISATION DES 86 EMPLACEMENTS VIDES
+// DIAGNOSTIC
 // ==========================================================
 
 import { db } from "../firebase.js";
@@ -15,73 +15,85 @@ import {
 
 
 // ==========================================================
-// ALERTE — DÉBUT
+// BLOC 1
 // ==========================================================
 
 alert(
-    "INITIALISATION — Création des emplacements Loja Oficiais démarrée."
+    "ÉTAPE 1 — create-official-stores.js chargé."
 );
 
 
 // ==========================================================
-// PARAMÈTRES
+// RÉFÉRENCE
 // ==========================================================
-
-const START = 15;
-const END = 100;
 
 const storesCollection =
     collection(db, "officialStores");
 
+alert(
+    "ÉTAPE 2 — Collection officialStores préparée."
+);
+
 
 // ==========================================================
-// CRÉER LES EMPLACEMENTS
+// TEST D'ACCÈS À FIRESTORE
 // ==========================================================
 
-async function createEmptyStores() {
+async function testFirestore() {
 
-    let created = 0;
-    let existing = 0;
+    try {
 
-    for (let number = START; number <= END; number++) {
+        alert(
+            "ÉTAPE 3 — Test de lecture de store_015..."
+        );
 
-        const storeId =
-            `store_${String(number).padStart(3, "0")}`;
 
         const storeRef =
-            doc(storesCollection, storeId);
+            doc(
+                storesCollection,
+                "store_015"
+            );
 
 
-        // ==================================================
-        // VÉRIFIER SI LE DOCUMENT EXISTE DÉJÀ
-        // ==================================================
+        alert(
+            "ÉTAPE 4 — Référence store_015 créée."
+        );
+
 
         const snapshot =
             await getDoc(storeRef);
 
 
+        alert(
+            "ÉTAPE 5 — Lecture Firestore terminée.\n\n" +
+            "Document existe : " +
+            snapshot.exists()
+        );
+
+
         if (snapshot.exists()) {
 
-            console.log(
-                `Existe déjà : ${storeId}`
+            alert(
+                "ÉTAPE 6 — store_015 existe déjà.\n\n" +
+                "Aucune création nécessaire pour ce document."
             );
 
-            existing++;
-
-            continue;
+            return;
 
         }
 
 
-        // ==================================================
-        // CRÉER LA LOJA VIDE
-        // ==================================================
+        alert(
+            "ÉTAPE 7 — store_015 n'existe pas.\n\n" +
+            "Tentative de création..."
+        );
+
 
         await setDoc(
             storeRef,
             {
 
-                id: storeId,
+                id: "store_015",
 
                 name: "",
 
@@ -107,58 +119,39 @@ async function createEmptyStores() {
         );
 
 
-        console.log(
-            `Créée : ${storeId}`
+        alert(
+            "ÉTAPE 8 — store_015 créé avec succès."
         );
 
-        created++;
+
+        alert(
+            "TEST TERMINÉ AVEC SUCCÈS.\n\n" +
+            "Firestore fonctionne correctement."
+        );
 
     }
 
+    catch (error) {
 
-    // ======================================================
-    // RÉSULTAT
-    // ======================================================
+        alert(
+            "ERREUR DÉTECTÉE.\n\n" +
+            error.code +
+            "\n\n" +
+            error.message
+        );
 
-    alert(
+        console.error(
+            "Erreur create-official-stores :",
+            error
+        );
 
-        "INITIALISATION TERMINÉE.\n\n" +
-
-        "Emplacements créés : " +
-        created +
-
-        "\nEmplacements déjà existants : " +
-        existing +
-
-        "\n\n" +
-
-        "Plage vérifiée : store_015 → store_100"
-
-    );
+    }
 
 }
 
 
 // ==========================================================
-// EXÉCUTER
+// EXÉCUTION
 // ==========================================================
 
-createEmptyStores()
-
-    .catch(error => {
-
-        console.error(
-            "Erreur création officialStores :",
-            error
-        );
-
-
-        alert(
-
-            "ERREUR lors de la création des Loja Oficiais :\n\n" +
-
-            error.message
-
-        );
-
-    });
+testFirestore();
