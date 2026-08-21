@@ -1,217 +1,78 @@
  // ==========================================================
 // TOMA
-// CREATE OFFICIAL STORES
-// FINALISATION — store_073 → store_100
+// VERIFICATION — 86 EMPLACEMENTS OFFICIAL STORES
 // ==========================================================
 
 import { db } from "../firebase.js";
 
 import {
     doc,
-    getDoc,
-    setDoc
+    getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 
 // ==========================================================
-// DÉBUT
+// ALERTE DÉBUT
 // ==========================================================
 
 alert(
-    "FINALISATION — Création de store_073 → store_100."
+    "VÉRIFICATION — Les 86 emplacements vont être vérifiés."
 );
 
 
 // ==========================================================
-// CRÉER UNE LOJA
+// CONTENEUR HTML
 // ==========================================================
 
-async function createStore(number) {
+const resultBox =
+    document.createElement("div");
 
-    const storeId =
-        `store_${String(number).padStart(3, "0")}`;
+resultBox.style.fontFamily =
+    "Arial, sans-serif";
 
-    const storeRef =
-        doc(
-            db,
-            "officialStores",
-            storeId
-        );
+resultBox.style.padding =
+    "20px";
 
+resultBox.style.whiteSpace =
+    "pre-wrap";
 
-    const snapshot =
-        await getDoc(storeRef);
-
-
-    if (snapshot.exists()) {
-
-        return {
-            id: storeId,
-            created: false
-        };
-
-    }
+document.body.appendChild(
+    resultBox
+);
 
 
-    await setDoc(
-        storeRef,
-        {
-            id: storeId,
+// ==========================================================
+// VARIABLES
+// ==========================================================
 
-            name: "",
+const existing = [];
 
-            slug: "",
-
-            logo: "",
-
-            banner: "",
-
-            category: "",
-
-            description: "",
-
-            status: "empty",
-
-            verified: false,
-
-            createdAt: new Date(),
-
-            updatedAt: new Date()
-        }
-    );
+const missing = [];
 
 
-    return {
-        id: storeId,
-        created: true
-    };
+// ==========================================================
+// AFFICHAGE PROGRESSION
+// ==========================================================
+
+function showProgress(message) {
+
+    resultBox.textContent =
+        message;
 
 }
 
 
 // ==========================================================
-// TRAITER UN LOT
+// VÉRIFICATION
 // ==========================================================
 
-async function processBatch(
-    start,
-    end
-) {
-
-    let created = 0;
-
-    let existing = 0;
-
-
-    for (
-        let number = start;
-        number <= end;
-        number++
-    ) {
-
-        const result =
-            await createStore(
-                number
-            );
-
-
-        if (
-            result.created
-        ) {
-
-            created++;
-
-        } else {
-
-            existing++;
-
-        }
-
-    }
-
-
-    alert(
-
-        "LOT TERMINÉ\n\n" +
-
-        `store_${String(start).padStart(3, "0")}` +
-
-        " → " +
-
-        `store_${String(end).padStart(3, "0")}` +
-
-        "\n\n" +
-
-        "Créées : " +
-        created +
-
-        "\n" +
-
-        "Déjà existantes : " +
-        existing
-
-    );
-
-}
-
-
-// ==========================================================
-// LANCEMENT PAR LOTS
-// ==========================================================
-
-async function startCreation() {
+async function verifyStores() {
 
     try {
 
-        // LOT 1
-        await processBatch(
-            73,
-            77
+        showProgress(
+            "Vérification en cours...\n\n"
         );
-
-
-        // LOT 2
-        await processBatch(
-            78,
-            82
-        );
-
-
-        // LOT 3
-        await processBatch(
-            83,
-            87
-        );
-
-
-        // LOT 4
-        await processBatch(
-            88,
-            92
-        );
-
-
-        // LOT 5
-        await processBatch(
-            93,
-            97
-        );
-
-
-        // LOT 6
-        await processBatch(
-            98,
-            100
-        );
-
-
-        // ==================================================
-        // VÉRIFICATION FINALE
-        // ==================================================
-
-        let existingTotal = 0;
-
-        let missing = [];
 
 
         for (
@@ -224,7 +85,23 @@ async function startCreation() {
                 `store_${String(number).padStart(3, "0")}`;
 
 
-            const ref =
+            showProgress(
+
+                "Vérification : " +
+                storeId +
+                "\n\n" +
+
+                "Existants : " +
+                existing.length +
+                "\n" +
+
+                "Manquants : " +
+                missing.length
+
+            );
+
+
+            const storeRef =
                 doc(
                     db,
                     "officialStores",
@@ -232,15 +109,19 @@ async function startCreation() {
                 );
 
 
-            const snap =
-                await getDoc(ref);
+            const snapshot =
+                await getDoc(
+                    storeRef
+                );
 
 
             if (
-                snap.exists()
+                snapshot.exists()
             ) {
 
-                existingTotal++;
+                existing.push(
+                    storeId
+                );
 
             } else {
 
@@ -257,54 +138,71 @@ async function startCreation() {
         // RÉSULTAT
         // ==================================================
 
+        let result =
+
+            "VÉRIFICATION TERMINÉE\n\n" +
+
+            "Existants : " +
+            existing.length +
+            "\n\n" +
+
+            "Manquants : " +
+            missing.length +
+            "\n\n" +
+
+            "Total vérifié : 86";
+
+
         if (
-            missing.length === 0
+            missing.length > 0
         ) {
 
-            alert(
+            result +=
 
-                "🎉 TERMINÉ\n\n" +
+                "\n\nLOJA MANQUANTES :\n" +
 
-                "86 emplacements existent.\n\n" +
-
-                "store_015 → store_100\n\n" +
-
-                "86 / 86"
-
-            );
+                missing.join("\n");
 
         } else {
 
-            alert(
+            result +=
 
-                "VÉRIFICATION FINALE\n\n" +
-
-                "Existants : " +
-                existingTotal +
-
-                "\n\n" +
-
-                "Manquants : " +
-                missing.length +
-
-                "\n\n" +
-
-                missing.join("\n")
-
-            );
+                "\n\n✅ LES 86 EMPLACEMENTS EXISTENT.";
 
         }
+
+
+        resultBox.textContent =
+            result;
+
+
+        // ==================================================
+        // ALERTE FINALE
+        // ==================================================
+
+        alert(
+            result
+        );
 
     }
 
     catch (error) {
 
-        alert(
+        resultBox.textContent =
 
-            "❌ ERREUR\n\n" +
+            "ERREUR\n\n" +
 
             error.code +
+            "\n\n" +
 
+            error.message;
+
+
+        alert(
+
+            "ERREUR DE VÉRIFICATION\n\n" +
+
+            error.code +
             "\n\n" +
 
             error.message
@@ -321,7 +219,7 @@ async function startCreation() {
 
 
 // ==========================================================
-// DÉMARRER
+// LANCEMENT
 // ==========================================================
 
-startCreation();
+verifyStores();
