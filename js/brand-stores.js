@@ -3432,3 +3432,410 @@ alert(
 // ==========================================================
 // FIN BLOC 7
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORES
+// BLOC 8 — ACTIONS ADMINISTRATIVES PRÉPARATOIRES
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT DU BLOC
+// ==========================================================
+
+alert(
+    "BLOC 8 — Actions administrativas das Loja démarrées."
+);
+
+
+// ==========================================================
+// VÉRIFICATION DES BLOCS PRÉCÉDENTS
+// ==========================================================
+
+if (!window.brandStoresData) {
+
+    alert(
+        "BLOC 8 — ERRO : dados Brand Stores inexistentes."
+    );
+
+    throw new Error(
+        "BLOC 8 : brandStoresData introuvable."
+    );
+
+}
+
+
+if (!window.brandStoresAdmin) {
+
+    alert(
+        "BLOC 8 — ERRO : contexto administrativo introuvable."
+    );
+
+    throw new Error(
+        "BLOC 8 : brandStoresAdmin introuvable."
+    );
+
+}
+
+
+alert(
+    "BLOC 8 — Comunicação com os Blocos 1 à 7 confirmada."
+);
+
+
+// ==========================================================
+// ÉTATS AUTORISÉS
+// ==========================================================
+
+const ADMIN_STORE_STATES = {
+
+    EMPTY: "empty",
+
+    ACTIVE: "active",
+
+    VERIFIED: "verified",
+
+    SUSPENDED: "suspended"
+
+};
+
+
+// ==========================================================
+// FONCTION — RÉCUPÉRER LA LOJA SÉLECTIONNÉE
+// ==========================================================
+
+function getSelectedAdminStore() {
+
+    const selected =
+        window.brandStoresData
+            ?.selectedStore;
+
+
+    if (!selected) {
+
+        return null;
+
+    }
+
+
+    return selected;
+
+}
+
+
+// ==========================================================
+// FONCTION — VÉRIFIER SI UNE ACTION EST POSSIBLE
+// ==========================================================
+
+function canPerformStoreAction(
+    action,
+    store
+) {
+
+    if (!store) {
+
+        return false;
+
+    }
+
+
+    const status =
+        store.status ||
+        ADMIN_STORE_STATES.EMPTY;
+
+
+    // ------------------------------------------------------
+    // VÉRIFICATION
+    // ------------------------------------------------------
+
+    if (action === "verify") {
+
+        return (
+            status ===
+            ADMIN_STORE_STATES.ACTIVE
+            ||
+            status ===
+            ADMIN_STORE_STATES.EMPTY
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // ACTIVATION
+    // ------------------------------------------------------
+
+    if (action === "activate") {
+
+        return (
+            status ===
+            ADMIN_STORE_STATES.EMPTY
+            ||
+            status ===
+            ADMIN_STORE_STATES.SUSPENDED
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // SUSPENSION
+    // ------------------------------------------------------
+
+    if (action === "suspend") {
+
+        return (
+            status ===
+            ADMIN_STORE_STATES.ACTIVE
+            ||
+            status ===
+            ADMIN_STORE_STATES.VERIFIED
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // ANNULATION DE VÉRIFICATION
+    // ------------------------------------------------------
+
+    if (action === "unverify") {
+
+        return (
+            status ===
+            ADMIN_STORE_STATES.VERIFIED
+        );
+
+    }
+
+
+    return false;
+
+}
+
+
+// ==========================================================
+// FONCTION — PRÉPARER UNE ACTION
+// ==========================================================
+
+function prepareStoreAction(
+    action
+) {
+
+    const store =
+        getSelectedAdminStore();
+
+
+    if (!store) {
+
+        alert(
+
+            "BLOC 8 — Nenhuma Loja selecionada.\n\n" +
+
+            "Selecione uma Loja antes de executar uma ação."
+
+        );
+
+        return null;
+
+    }
+
+
+    const allowed =
+        canPerformStoreAction(
+            action,
+            store
+        );
+
+
+    if (!allowed) {
+
+        alert(
+
+            "BLOC 8 — Ação não permitida.\n\n" +
+
+            "Loja : " +
+            (
+                store.name ||
+                store.id
+            ) +
+
+            "\n\n" +
+
+            "Estado atual : " +
+            store.status +
+
+            "\n\n" +
+
+            "Ação : " +
+            action
+
+        );
+
+        return null;
+
+    }
+
+
+    const actionContext = {
+
+        storeId:
+            store.id,
+
+        storeName:
+            store.name ||
+            "",
+
+        currentStatus:
+            store.status,
+
+        action,
+
+        preparedAt:
+            new Date().toISOString()
+
+    };
+
+
+    // ------------------------------------------------------
+    // CONSERVER L'ACTION PRÉPARÉE
+    // ------------------------------------------------------
+
+    window.brandStoresData = {
+
+        ...window.brandStoresData,
+
+        pendingAdminAction:
+            actionContext
+
+    };
+
+
+    return actionContext;
+
+}
+
+
+// ==========================================================
+// FONCTION — VÉRIFIER LA LOJA
+// ==========================================================
+
+function prepareVerifyStore() {
+
+    return prepareStoreAction(
+        "verify"
+    );
+
+}
+
+
+// ==========================================================
+// FONCTION — ACTIVER LA LOJA
+// ==========================================================
+
+function prepareActivateStore() {
+
+    return prepareStoreAction(
+        "activate"
+    );
+
+}
+
+
+// ==========================================================
+// FONCTION — SUSPENDRE LA LOJA
+// ==========================================================
+
+function prepareSuspendStore() {
+
+    return prepareStoreAction(
+        "suspend"
+    );
+
+}
+
+
+// ==========================================================
+// FONCTION — RETIRER LA VÉRIFICATION
+// ==========================================================
+
+function prepareUnverifyStore() {
+
+    return prepareStoreAction(
+        "unverify"
+    );
+
+}
+
+
+// ==========================================================
+// EXPOSER LES ACTIONS
+// ==========================================================
+
+window.brandStoresAdminActions = {
+
+    getSelectedAdminStore,
+
+    canPerformStoreAction,
+
+    prepareStoreAction,
+
+    prepareVerifyStore,
+
+    prepareActivateStore,
+
+    prepareSuspendStore,
+
+    prepareUnverifyStore
+
+};
+
+
+// ==========================================================
+// VÉRIFICATION DU CONTEXTE
+// ==========================================================
+
+const selectedStore =
+    getSelectedAdminStore();
+
+
+if (selectedStore) {
+
+    alert(
+
+        "BLOC 8 — Loja selecionada encontrada.\n\n" +
+
+        "ID : " +
+        selectedStore.id +
+
+        "\n\n" +
+
+        "Estado : " +
+        (
+            selectedStore.status ||
+            ADMIN_STORE_STATES.EMPTY
+        )
+
+    );
+
+} else {
+
+    alert(
+        "BLOC 8 — Nenhuma Loja selecionada ainda. Sistema pronto."
+    );
+
+}
+
+
+// ==========================================================
+// ALERTE — FIN DU BLOC
+// ==========================================================
+
+alert(
+    "BLOC 8 — Ações administrativas preparatórias terminado com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 8
+// ==========================================================
