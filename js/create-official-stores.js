@@ -1,6 +1,6 @@
  // ==========================================================
 // TOMA
-// TEST OFFICIAL STORES
+// VERIFICATION — 86 EMPLACEMENTS OFFICIAL STORES
 // ==========================================================
 
 import { db } from "../firebase.js";
@@ -12,117 +12,204 @@ import {
 
 
 // ==========================================================
-// DÉBUT
+// ALERTE DÉBUT
 // ==========================================================
 
 alert(
-    "TEST — Vérification de officialStores démarrée."
+    "VÉRIFICATION — Les 86 emplacements vont être vérifiés."
 );
 
 
 // ==========================================================
-// TEST 1
+// CONTENEUR HTML
 // ==========================================================
 
-async function testStores() {
+const resultBox =
+    document.createElement("div");
+
+resultBox.style.fontFamily =
+    "Arial, sans-serif";
+
+resultBox.style.padding =
+    "20px";
+
+resultBox.style.whiteSpace =
+    "pre-wrap";
+
+document.body.appendChild(
+    resultBox
+);
+
+
+// ==========================================================
+// VARIABLES
+// ==========================================================
+
+const existing = [];
+
+const missing = [];
+
+
+// ==========================================================
+// AFFICHAGE PROGRESSION
+// ==========================================================
+
+function showProgress(message) {
+
+    resultBox.textContent =
+        message;
+
+}
+
+
+// ==========================================================
+// VÉRIFICATION
+// ==========================================================
+
+async function verifyStores() {
 
     try {
 
-        alert(
-            "TEST 1 — Lecture de store_015..."
+        showProgress(
+            "Vérification en cours...\n\n"
         );
 
-        const ref015 =
-            doc(
-                db,
-                "officialStores",
-                "store_015"
+
+        for (
+            let number = 15;
+            number <= 100;
+            number++
+        ) {
+
+            const storeId =
+                `store_${String(number).padStart(3, "0")}`;
+
+
+            showProgress(
+
+                "Vérification : " +
+                storeId +
+                "\n\n" +
+
+                "Existants : " +
+                existing.length +
+                "\n" +
+
+                "Manquants : " +
+                missing.length
+
             );
 
-        const snap015 =
-            await getDoc(ref015);
 
-        alert(
-            "TEST 2 — store_015 terminé.\n\n" +
-            "Existe : " +
-            snap015.exists()
-        );
-
-
-        // ==================================================
-        // TEST 2
-        // ==================================================
-
-        alert(
-            "TEST 3 — Lecture de store_016..."
-        );
-
-        const ref016 =
-            doc(
-                db,
-                "officialStores",
-                "store_016"
-            );
-
-        const snap016 =
-            await getDoc(ref016);
-
-        alert(
-            "TEST 4 — store_016 terminé.\n\n" +
-            "Existe : " +
-            snap016.exists()
-        );
+            const storeRef =
+                doc(
+                    db,
+                    "officialStores",
+                    storeId
+                );
 
 
-        // ==================================================
-        // TEST 3
-        // ==================================================
+            const snapshot =
+                await getDoc(
+                    storeRef
+                );
 
-        alert(
-            "TEST 5 — Lecture de store_017..."
-        );
 
-        const ref017 =
-            doc(
-                db,
-                "officialStores",
-                "store_017"
-            );
+            if (
+                snapshot.exists()
+            ) {
 
-        const snap017 =
-            await getDoc(ref017);
+                existing.push(
+                    storeId
+                );
 
-        alert(
-            "TEST 6 — store_017 terminé.\n\n" +
-            "Existe : " +
-            snap017.exists()
-        );
+            } else {
+
+                missing.push(
+                    storeId
+                );
+
+            }
+
+        }
 
 
         // ==================================================
-        // FIN
+        // RÉSULTAT
+        // ==================================================
+
+        let result =
+
+            "VÉRIFICATION TERMINÉE\n\n" +
+
+            "Existants : " +
+            existing.length +
+            "\n\n" +
+
+            "Manquants : " +
+            missing.length +
+            "\n\n" +
+
+            "Total vérifié : 86";
+
+
+        if (
+            missing.length > 0
+        ) {
+
+            result +=
+
+                "\n\nLOJA MANQUANTES :\n" +
+
+                missing.join("\n");
+
+        } else {
+
+            result +=
+
+                "\n\n✅ LES 86 EMPLACEMENTS EXISTENT.";
+
+        }
+
+
+        resultBox.textContent =
+            result;
+
+
+        // ==================================================
+        // ALERTE FINALE
         // ==================================================
 
         alert(
-            "TEST TERMINÉ.\n\n" +
-            "Les trois premiers emplacements ont été vérifiés."
+            result
         );
 
     }
 
     catch (error) {
 
-        alert(
-            "ERREUR EXACTE.\n\n" +
-            "Code : " +
+        resultBox.textContent =
+
+            "ERREUR\n\n" +
+
             error.code +
             "\n\n" +
-            "Message : " +
+
+            error.message;
+
+
+        alert(
+
+            "ERREUR DE VÉRIFICATION\n\n" +
+
+            error.code +
+            "\n\n" +
+
             error.message
+
         );
 
         console.error(
-            "Erreur test officialStores :",
             error
         );
 
@@ -135,4 +222,4 @@ async function testStores() {
 // LANCEMENT
 // ==========================================================
 
-testStores();
+verifyStores();
