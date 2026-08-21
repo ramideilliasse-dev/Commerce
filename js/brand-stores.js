@@ -2349,3 +2349,565 @@ alert(
 // ==========================================================
 // FIN BLOC 5
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORES
+// BLOC 6 — ÉTAT DES LOJA
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT
+// ==========================================================
+
+alert(
+    "BLOC 6 — Gestion des états des Loja démarrée."
+);
+
+
+// ==========================================================
+// VÉRIFICATION DES BLOCS PRÉCÉDENTS
+// ==========================================================
+
+if (!window.brandStoresData) {
+
+    alert(
+        "BLOC 6 — ERRO : données Brand Stores introuvables."
+    );
+
+    throw new Error(
+        "BLOC 6 : brandStoresData introuvable."
+    );
+
+}
+
+
+if (
+    !Array.isArray(
+        window.brandStoresData.stores
+    )
+) {
+
+    alert(
+        "BLOC 6 — ERRO : liste des Loja introuvable."
+    );
+
+    throw new Error(
+        "BLOC 6 : stores introuvable."
+    );
+
+}
+
+
+alert(
+    "BLOC 6 — Données des Blocs 1 à 5 trouvées."
+);
+
+
+// ==========================================================
+// RÉCUPÉRER LES LOJA
+// ==========================================================
+
+const storesForStatus =
+    window.brandStoresData.stores;
+
+
+// ==========================================================
+// ÉTATS AUTORISÉS
+// ==========================================================
+
+const OFFICIAL_STORE_STATUS = {
+
+    EMPTY: "empty",
+
+    ACTIVE: "active",
+
+    SUSPENDED: "suspended",
+
+    VERIFIED: "verified"
+
+};
+
+
+// ==========================================================
+// FONCTION — DÉTERMINER L'ÉTAT D'UNE LOJA
+// ==========================================================
+
+function getStoreStatus(store) {
+
+    if (!store) {
+
+        return OFFICIAL_STORE_STATUS.EMPTY;
+
+    }
+
+
+    // ------------------------------------------------------
+    // ÉTAT FIRESTORE SI DISPONIBLE
+    // ------------------------------------------------------
+
+    if (
+        store.status ===
+        OFFICIAL_STORE_STATUS.SUSPENDED
+    ) {
+
+        return OFFICIAL_STORE_STATUS.SUSPENDED;
+
+    }
+
+
+    if (
+        store.status ===
+        OFFICIAL_STORE_STATUS.VERIFIED
+    ) {
+
+        return OFFICIAL_STORE_STATUS.VERIFIED;
+
+    }
+
+
+    if (
+        store.status ===
+        OFFICIAL_STORE_STATUS.ACTIVE
+    ) {
+
+        return OFFICIAL_STORE_STATUS.ACTIVE;
+
+    }
+
+
+    // ------------------------------------------------------
+    // VÉRIFICATION
+    // ------------------------------------------------------
+
+    if (
+        store.verified === true ||
+        store.isVerified === true ||
+        store.verification === true
+    ) {
+
+        return OFFICIAL_STORE_STATUS.VERIFIED;
+
+    }
+
+
+    // ------------------------------------------------------
+    // LOJA VIDE
+    // ------------------------------------------------------
+
+    const hasName =
+        Boolean(
+            String(
+                store.name ||
+                ""
+            ).trim()
+        );
+
+
+    const hasLogo =
+        Boolean(
+            String(
+                store.logo ||
+                ""
+            ).trim()
+        );
+
+
+    /*
+     * Une Loja sans nom et sans logo
+     * reste un emplacement disponible.
+     */
+
+    if (
+        !hasName &&
+        !hasLogo
+    ) {
+
+        return OFFICIAL_STORE_STATUS.EMPTY;
+
+    }
+
+
+    // ------------------------------------------------------
+    // PAR DÉFAUT
+    // ------------------------------------------------------
+
+    return OFFICIAL_STORE_STATUS.ACTIVE;
+
+}
+
+
+// ==========================================================
+// FONCTION — TEXTE DE L'ÉTAT
+// ==========================================================
+
+function getStoreStatusLabel(
+    status
+) {
+
+    switch (status) {
+
+        case OFFICIAL_STORE_STATUS.ACTIVE:
+
+            return "Ativa";
+
+
+        case OFFICIAL_STORE_STATUS.SUSPENDED:
+
+            return "Suspensa";
+
+
+        case OFFICIAL_STORE_STATUS.VERIFIED:
+
+            return "Verificada";
+
+
+        case OFFICIAL_STORE_STATUS.EMPTY:
+
+        default:
+
+            return "Disponível";
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — ICÔNE DE L'ÉTAT
+// ==========================================================
+
+function getStoreStatusIcon(
+    status
+) {
+
+    switch (status) {
+
+        case OFFICIAL_STORE_STATUS.ACTIVE:
+
+            return "check_circle";
+
+
+        case OFFICIAL_STORE_STATUS.SUSPENDED:
+
+            return "block";
+
+
+        case OFFICIAL_STORE_STATUS.VERIFIED:
+
+            return "verified";
+
+
+        case OFFICIAL_STORE_STATUS.EMPTY:
+
+        default:
+
+            return "store";
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — CLASSE CSS DE L'ÉTAT
+// ==========================================================
+
+function getStoreStatusClass(
+    status
+) {
+
+    switch (status) {
+
+        case OFFICIAL_STORE_STATUS.ACTIVE:
+
+            return "store-status-active";
+
+
+        case OFFICIAL_STORE_STATUS.SUSPENDED:
+
+            return "store-status-suspended";
+
+
+        case OFFICIAL_STORE_STATUS.VERIFIED:
+
+            return "store-status-verified";
+
+
+        case OFFICIAL_STORE_STATUS.EMPTY:
+
+        default:
+
+            return "store-status-empty";
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — APPLIQUER L'ÉTAT À UNE CARTE
+// ==========================================================
+
+function applyStoreStatusToCard(
+    store
+) {
+
+    if (!store) {
+
+        return;
+
+    }
+
+
+    const storeId =
+        String(
+            store.id ||
+            ""
+        );
+
+
+    if (!storeId) {
+
+        return;
+
+    }
+
+
+    const card =
+        document.querySelector(
+            `.brandCard[data-store-id="${CSS.escape(storeId)}"]`
+        );
+
+
+    if (!card) {
+
+        return;
+
+    }
+
+
+    const status =
+        getStoreStatus(
+            store
+        );
+
+
+    const label =
+        getStoreStatusLabel(
+            status
+        );
+
+
+    const icon =
+        getStoreStatusIcon(
+            status
+        );
+
+
+    const statusClass =
+        getStoreStatusClass(
+            status
+        );
+
+
+    // ------------------------------------------------------
+    // RETIRER LES ANCIENNES CLASSES
+    // ------------------------------------------------------
+
+    card.classList.remove(
+
+        "store-status-active",
+
+        "store-status-suspended",
+
+        "store-status-verified",
+
+        "store-status-empty"
+
+    );
+
+
+    // ------------------------------------------------------
+    // AJOUTER LA NOUVELLE CLASSE
+    // ------------------------------------------------------
+
+    card.classList.add(
+        statusClass
+    );
+
+
+    // ------------------------------------------------------
+    // CHERCHER UN BADGE EXISTANT
+    // ------------------------------------------------------
+
+    let statusBadge =
+        card.querySelector(
+            ".storeStatusBadge"
+        );
+
+
+    // ------------------------------------------------------
+    // CRÉER LE BADGE SI NÉCESSAIRE
+    // ------------------------------------------------------
+
+    if (!statusBadge) {
+
+        statusBadge =
+            document.createElement(
+                "div"
+            );
+
+        statusBadge.className =
+            "storeStatusBadge";
+
+
+        card.prepend(
+            statusBadge
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // CONTENU DU BADGE
+    // ------------------------------------------------------
+
+    statusBadge.innerHTML = `
+
+        <span class="material-symbols-rounded">
+            ${icon}
+        </span>
+
+        <span>
+            ${label}
+        </span>
+
+    `;
+
+
+    // ------------------------------------------------------
+    // ATTRIBUT DATA
+    // ------------------------------------------------------
+
+    card.dataset.storeStatus =
+        status;
+
+}
+
+
+// ==========================================================
+// ANALYSER TOUTES LES LOJA
+// ==========================================================
+
+const statusSummary = {
+
+    empty: 0,
+
+    active: 0,
+
+    suspended: 0,
+
+    verified: 0
+
+};
+
+
+storesForStatus.forEach(
+    store => {
+
+        const status =
+            getStoreStatus(
+                store
+            );
+
+
+        statusSummary[
+            status
+        ]++;
+
+
+        applyStoreStatusToCard(
+            store
+        );
+
+    }
+);
+
+
+// ==========================================================
+// EXPOSER LES ÉTATS
+// ==========================================================
+
+window.brandStoresData = {
+
+    ...window.brandStoresData,
+
+    statusSummary,
+
+    storeStatuses:
+        storesForStatus.map(
+            store => ({
+
+                id:
+                    store.id,
+
+                status:
+                    getStoreStatus(
+                        store
+                    ),
+
+                label:
+                    getStoreStatusLabel(
+                        getStoreStatus(
+                            store
+                        )
+                    )
+
+            })
+        )
+
+};
+
+
+// ==========================================================
+// ALERTE — RÉSULTAT
+// ==========================================================
+
+alert(
+
+    "BLOC 6 — États des Loja analysés.\n\n" +
+
+    "Disponíveis : " +
+    statusSummary.empty +
+
+    "\n\n" +
+
+    "Ativas : " +
+    statusSummary.active +
+
+    "\n\n" +
+
+    "Suspensas : " +
+    statusSummary.suspended +
+
+    "\n\n" +
+
+    "Verificadas : " +
+    statusSummary.verified
+
+);
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 6 — Gestão dos estados das Loja terminado com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 6
+// ==========================================================
