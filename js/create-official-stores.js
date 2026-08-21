@@ -1,25 +1,43 @@
  // ==========================================================
 // TOMA
-// CREATE OFFICIAL STORES
-// CRÉATION DES 33 LOJA RESTANTES
-// store_068 → store_100
+// VERIFICATION — 86 EMPLACEMENTS OFFICIAL STORES
 // ==========================================================
 
 import { db } from "../firebase.js";
 
 import {
     doc,
-    getDoc,
-    setDoc
+    getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 
 // ==========================================================
-// DÉBUT
+// ALERTE DÉBUT
 // ==========================================================
 
 alert(
-    "CRÉATION — Vérification et création de store_068 → store_100."
+    "VÉRIFICATION — Les 86 emplacements vont être vérifiés."
+);
+
+
+// ==========================================================
+// CONTENEUR HTML
+// ==========================================================
+
+const resultBox =
+    document.createElement("div");
+
+resultBox.style.fontFamily =
+    "Arial, sans-serif";
+
+resultBox.style.padding =
+    "20px";
+
+resultBox.style.whiteSpace =
+    "pre-wrap";
+
+document.body.appendChild(
+    resultBox
 );
 
 
@@ -27,144 +45,34 @@ alert(
 // VARIABLES
 // ==========================================================
 
-let created = 0;
-let alreadyExists = 0;
-let errors = [];
+const existing = [];
+
+const missing = [];
 
 
 // ==========================================================
-// CRÉATION DES DOCUMENTS MANQUANTS
+// AFFICHAGE PROGRESSION
 // ==========================================================
 
-async function createRemainingStores() {
+function showProgress(message) {
+
+    resultBox.textContent =
+        message;
+
+}
+
+
+// ==========================================================
+// VÉRIFICATION
+// ==========================================================
+
+async function verifyStores() {
 
     try {
 
-        for (
-            let number = 68;
-            number <= 100;
-            number++
-        ) {
-
-            const storeId =
-                `store_${String(number).padStart(3, "0")}`;
-
-
-            // ==============================================
-            // RÉFÉRENCE
-            // ==============================================
-
-            const storeRef =
-                doc(
-                    db,
-                    "officialStores",
-                    storeId
-                );
-
-
-            // ==============================================
-            // VÉRIFICATION
-            // ==============================================
-
-            const snapshot =
-                await getDoc(storeRef);
-
-
-            // ==============================================
-            // SI EXISTE DÉJÀ
-            // ==============================================
-
-            if (snapshot.exists()) {
-
-                alreadyExists++;
-
-                console.log(
-                    "Déjà existante :",
-                    storeId
-                );
-
-                continue;
-
-            }
-
-
-            // ==============================================
-            // CRÉATION
-            // ==============================================
-
-            await setDoc(
-                storeRef,
-                {
-                    id: storeId,
-
-                    name: "",
-
-                    slug: "",
-
-                    logo: "",
-
-                    banner: "",
-
-                    category: "",
-
-                    description: "",
-
-                    status: "empty",
-
-                    verified: false,
-
-                    createdAt: new Date(),
-
-                    updatedAt: new Date()
-                }
-            );
-
-
-            created++;
-
-            console.log(
-                "Créée :",
-                storeId
-            );
-
-        }
-
-
-        // ==================================================
-        // FIN
-        // ==================================================
-
-        alert(
-
-            "CRÉATION TERMINÉE.\n\n" +
-
-            "Nouvelles Loja créées : " +
-            created +
-
-            "\n\n" +
-
-            "Déjà existantes : " +
-            alreadyExists +
-
-            "\n\n" +
-
-            "Erreurs : " +
-            errors.length +
-
-            "\n\n" +
-
-            "Plage : store_068 → store_100"
-
+        showProgress(
+            "Vérification en cours...\n\n"
         );
-
-
-        // ==================================================
-        // VÉRIFICATION AUTOMATIQUE
-        // ==================================================
-
-        let finalExisting = 0;
-
-        let finalMissing = [];
 
 
         for (
@@ -177,7 +85,23 @@ async function createRemainingStores() {
                 `store_${String(number).padStart(3, "0")}`;
 
 
-            const ref =
+            showProgress(
+
+                "Vérification : " +
+                storeId +
+                "\n\n" +
+
+                "Existants : " +
+                existing.length +
+                "\n" +
+
+                "Manquants : " +
+                missing.length
+
+            );
+
+
+            const storeRef =
                 doc(
                     db,
                     "officialStores",
@@ -185,17 +109,23 @@ async function createRemainingStores() {
                 );
 
 
-            const snap =
-                await getDoc(ref);
+            const snapshot =
+                await getDoc(
+                    storeRef
+                );
 
 
-            if (snap.exists()) {
+            if (
+                snapshot.exists()
+            ) {
 
-                finalExisting++;
+                existing.push(
+                    storeId
+                );
 
             } else {
 
-                finalMissing.push(
+                missing.push(
                     storeId
                 );
 
@@ -205,76 +135,82 @@ async function createRemainingStores() {
 
 
         // ==================================================
-        // RÉSULTAT FINAL
+        // RÉSULTAT
         // ==================================================
 
+        let result =
+
+            "VÉRIFICATION TERMINÉE\n\n" +
+
+            "Existants : " +
+            existing.length +
+            "\n\n" +
+
+            "Manquants : " +
+            missing.length +
+            "\n\n" +
+
+            "Total vérifié : 86";
+
+
         if (
-            finalMissing.length === 0
+            missing.length > 0
         ) {
 
-            alert(
+            result +=
 
-                "✅ STRUCTURE TERMINÉE.\n\n" +
+                "\n\nLOJA MANQUANTES :\n" +
 
-                "86 emplacements existent.\n\n" +
-
-                "store_015 → store_100\n\n" +
-
-                "Total : 86 Loja."
-
-            );
+                missing.join("\n");
 
         } else {
 
-            alert(
+            result +=
 
-                "VÉRIFICATION FINALE.\n\n" +
-
-                "Existants : " +
-                finalExisting +
-
-                "\n\n" +
-
-                "Manquants : " +
-                finalMissing.length +
-
-                "\n\n" +
-
-                "Premiers manquants :\n" +
-
-                finalMissing
-                    .slice(0, 10)
-                    .join("\n")
-
-            );
+                "\n\n✅ LES 86 EMPLACEMENTS EXISTENT.";
 
         }
+
+
+        resultBox.textContent =
+            result;
+
+
+        // ==================================================
+        // ALERTE FINALE
+        // ==================================================
+
+        alert(
+            result
+        );
 
     }
 
     catch (error) {
 
-        console.error(
-            "Erreur :",
-            error
-        );
+        resultBox.textContent =
+
+            "ERREUR\n\n" +
+
+            error.code +
+            "\n\n" +
+
+            error.message;
 
 
         alert(
 
-            "❌ ERREUR.\n\n" +
+            "ERREUR DE VÉRIFICATION\n\n" +
 
             error.code +
-
             "\n\n" +
 
-            error.message +
+            error.message
 
-            "\n\n" +
+        );
 
-            "Créées avant erreur : " +
-            created
-
+        console.error(
+            error
         );
 
     }
@@ -286,4 +222,4 @@ async function createRemainingStores() {
 // LANCEMENT
 // ==========================================================
 
-createRemainingStores();
+verifyStores();
