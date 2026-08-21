@@ -1453,3 +1453,403 @@ alert(
 // ==========================================================
 // FIN BLOC 3
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORES
+// BLOC 4 — RECHERCHE ET FILTRAGE DES LOJA
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT DU BLOC
+// ==========================================================
+
+alert(
+    "BLOC 4 — Recherche et filtrage des Loja démarré."
+);
+
+
+// ==========================================================
+// VÉRIFICATION DES DONNÉES DES BLOCS PRÉCÉDENTS
+// ==========================================================
+
+if (!window.brandStoresData) {
+
+    alert(
+        "BLOC 4 — ERRO : données Brand Stores introuvables."
+    );
+
+    throw new Error(
+        "BLOC 4 : brandStoresData introuvable."
+    );
+
+}
+
+
+if (
+    !Array.isArray(
+        window.brandStoresData.stores
+    )
+) {
+
+    alert(
+        "BLOC 4 — ERRO : liste des Loja introuvable."
+    );
+
+    throw new Error(
+        "BLOC 4 : stores introuvable."
+    );
+
+}
+
+
+alert(
+    "BLOC 4 — Données des blocs précédents trouvées."
+);
+
+
+// ==========================================================
+// RÉCUPÉRER LES LOJA
+// ==========================================================
+
+const storesForSearch =
+    window.brandStoresData.stores;
+
+
+// ==========================================================
+// RÉCUPÉRER LES ÉLÉMENTS HTML
+// ==========================================================
+
+const searchStoreInput =
+    document.getElementById(
+        "searchStore"
+    );
+
+
+const storesGridForSearch =
+    document.getElementById(
+        "brandStoresGrid"
+    );
+
+
+if (!searchStoreInput) {
+
+    alert(
+        "BLOC 4 — ERRO : #searchStore introuvable."
+    );
+
+    throw new Error(
+        "#searchStore introuvable."
+    );
+
+}
+
+
+if (!storesGridForSearch) {
+
+    alert(
+        "BLOC 4 — ERRO : #brandStoresGrid introuvable."
+    );
+
+    throw new Error(
+        "#brandStoresGrid introuvable."
+    );
+
+}
+
+
+alert(
+    "BLOC 4 — Éléments de recherche trouvés."
+);
+
+
+// ==========================================================
+// ÉTAT DE RECHERCHE
+// ==========================================================
+
+let currentStoreSearch = "";
+
+
+// ==========================================================
+// FONCTION — NORMALISER UN TEXTE
+// ==========================================================
+
+function normalizeStoreSearchText(
+    value
+) {
+
+    return String(
+        value || ""
+    )
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .trim();
+
+}
+
+
+// ==========================================================
+// FONCTION — FILTRER LES LOJA
+// ==========================================================
+
+function filterOfficialStores(
+    searchValue
+) {
+
+    currentStoreSearch =
+        normalizeStoreSearchText(
+            searchValue
+        );
+
+
+    // ------------------------------------------------------
+    // RÉCUPÉRER TOUTES LES CARTES
+    // ------------------------------------------------------
+
+    const cards =
+        storesGridForSearch.querySelectorAll(
+            ".brandCard"
+        );
+
+
+    let visibleCount = 0;
+
+
+    // ------------------------------------------------------
+    // PARCOURIR LES LOJA
+    // ------------------------------------------------------
+
+    storesForSearch.forEach(
+        store => {
+
+            const storeId =
+                String(
+                    store.id || ""
+                );
+
+
+            const storeName =
+                String(
+                    store.name ||
+                    store.storeName ||
+                    ""
+                );
+
+
+            const searchableText =
+                normalizeStoreSearchText(
+                    storeId +
+                    " " +
+                    storeName
+                );
+
+
+            const matches =
+                currentStoreSearch === "" ||
+                searchableText.includes(
+                    currentStoreSearch
+                );
+
+
+            // ------------------------------------------------
+            // TROUVER LA CARTE
+            // ------------------------------------------------
+
+            const card =
+                storesGridForSearch.querySelector(
+                    `.brandCard[data-store-id="${CSS.escape(storeId)}"]`
+                );
+
+
+            if (!card) {
+
+                return;
+
+            }
+
+
+            // ------------------------------------------------
+            // AFFICHER / CACHER
+            // ------------------------------------------------
+
+            if (matches) {
+
+                card.style.display = "";
+
+                visibleCount++;
+
+            } else {
+
+                card.style.display =
+                    "none";
+
+            }
+
+        }
+    );
+
+
+    // ======================================================
+    // ÉTAT VIDE
+    // ======================================================
+
+    let noResult =
+        storesGridForSearch.querySelector(
+            ".brandStoreSearchEmpty"
+        );
+
+
+    if (
+        visibleCount === 0 &&
+        currentStoreSearch !== ""
+    ) {
+
+        if (!noResult) {
+
+            noResult =
+                document.createElement(
+                    "div"
+                );
+
+            noResult.className =
+                "brandStoreSearchEmpty";
+
+
+            noResult.innerHTML = `
+
+                <span class="material-symbols-rounded">
+                    search_off
+                </span>
+
+                <h3>
+                    Nenhuma Loja encontrada
+                </h3>
+
+                <p>
+                    Nenhuma Loja corresponde à sua pesquisa.
+                </p>
+
+            `;
+
+
+            storesGridForSearch.appendChild(
+                noResult
+            );
+
+        }
+
+    } else {
+
+        if (noResult) {
+
+            noResult.remove();
+
+        }
+
+    }
+
+
+    // ======================================================
+    // EXPOSER L'ÉTAT DE RECHERCHE
+    // ======================================================
+
+    window.brandStoresData = {
+
+        ...window.brandStoresData,
+
+        search: {
+
+            value: currentStoreSearch,
+
+            visibleCount,
+
+            totalCount:
+                storesForSearch.length
+
+        }
+
+    };
+
+
+    return visibleCount;
+
+}
+
+
+// ==========================================================
+// RECHERCHE EN TEMPS RÉEL
+// ==========================================================
+
+searchStoreInput.addEventListener(
+    "input",
+    event => {
+
+        filterOfficialStores(
+            event.target.value
+        );
+
+    }
+);
+
+
+// ==========================================================
+// SUPPORT — TOUCHE ESC
+// ==========================================================
+
+searchStoreInput.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Escape"
+        ) {
+
+            searchStoreInput.value =
+                "";
+
+            filterOfficialStores(
+                ""
+            );
+
+        }
+
+    }
+);
+
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
+
+const initialVisibleCount =
+    filterOfficialStores(
+        searchStoreInput.value
+    );
+
+
+// ==========================================================
+// ALERTE — INITIALISATION TERMINÉE
+// ==========================================================
+
+alert(
+
+    "BLOC 4 — Recherche initialisée.\n\n" +
+
+    "Loja disponíveis : " +
+    storesForSearch.length +
+
+    "\n\n" +
+
+    "Loja visíveis : " +
+    initialVisibleCount
+
+);
+
+
+// ==========================================================
+// FIN BLOC 4
+// ==========================================================
