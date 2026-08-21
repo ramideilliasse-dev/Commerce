@@ -746,3 +746,710 @@ alert(
 // ==========================================================
 // FIN BLOC 2
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORES
+// BLOC 3 — STATISTIQUES RÉELLES DES LOJA
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT
+// ==========================================================
+
+alert(
+    "BLOC 3 — Chargement des statistiques des Loja démarré."
+);
+
+
+// ==========================================================
+// VÉRIFICATION DES DONNÉES DES BLOCS PRÉCÉDENTS
+// ==========================================================
+
+if (
+    !window.brandStoresData ||
+    !Array.isArray(
+        window.brandStoresData.stores
+    )
+) {
+
+    alert(
+        "BLOC 3 — ERRO : données des blocs précédents introuvables."
+    );
+
+    throw new Error(
+        "BLOC 3 : brandStoresData.stores introuvable."
+    );
+
+}
+
+
+// ==========================================================
+// RÉFÉRENCE DES LOJA
+// ==========================================================
+
+const storesForStats =
+    window.brandStoresData.stores;
+
+
+// ==========================================================
+// IMPORT FIRESTORE
+// ==========================================================
+
+const {
+    collection: statsCollection,
+    getDocs: statsGetDocs
+} = await import(
+    "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+);
+
+
+// ==========================================================
+// VARIABLES
+// ==========================================================
+
+let merchantsStats = [];
+
+let productsStats = [];
+
+let ordersStats = [];
+
+
+// ==========================================================
+// CHARGEMENT — COMMERÇANTS
+// ==========================================================
+
+alert(
+    "BLOC 3 — Lecture de merchants démarrée."
+);
+
+
+try {
+
+    const merchantsSnapshot =
+        await statsGetDocs(
+            statsCollection(
+                db,
+                "merchants"
+            )
+        );
+
+
+    merchantsStats =
+        merchantsSnapshot.docs.map(
+            document => ({
+
+                id: document.id,
+
+                ...document.data()
+
+            })
+        );
+
+
+    alert(
+
+        "BLOC 3 — merchants chargé.\n\n" +
+
+        "Commerçants trouvés : " +
+        merchantsStats.length
+
+    );
+
+}
+
+catch (error) {
+
+    alert(
+
+        "BLOC 3 — ERRO merchants :\n\n" +
+
+        error.message
+
+    );
+
+    throw error;
+
+}
+
+
+// ==========================================================
+// CHARGEMENT — PRODUITS
+// ==========================================================
+
+alert(
+    "BLOC 3 — Lecture de products démarrée."
+);
+
+
+try {
+
+    const productsSnapshot =
+        await statsGetDocs(
+            statsCollection(
+                db,
+                "products"
+            )
+        );
+
+
+    productsStats =
+        productsSnapshot.docs.map(
+            document => ({
+
+                id: document.id,
+
+                ...document.data()
+
+            })
+        );
+
+
+    alert(
+
+        "BLOC 3 — products chargé.\n\n" +
+
+        "Produits trouvés : " +
+        productsStats.length
+
+    );
+
+}
+
+catch (error) {
+
+    alert(
+
+        "BLOC 3 — ERRO products :\n\n" +
+
+        error.message
+
+    );
+
+    throw error;
+
+}
+
+
+// ==========================================================
+// CHARGEMENT — COMMANDES
+// ==========================================================
+
+alert(
+    "BLOC 3 — Lecture de orders démarrée."
+);
+
+
+try {
+
+    const ordersSnapshot =
+        await statsGetDocs(
+            statsCollection(
+                db,
+                "orders"
+            )
+        );
+
+
+    ordersStats =
+        ordersSnapshot.docs.map(
+            document => ({
+
+                id: document.id,
+
+                ...document.data()
+
+            })
+        );
+
+
+    alert(
+
+        "BLOC 3 — orders chargé.\n\n" +
+
+        "Commandes trouvées : " +
+        ordersStats.length
+
+    );
+
+}
+
+catch (error) {
+
+    alert(
+
+        "BLOC 3 — ERRO orders :\n\n" +
+
+        error.message
+
+    );
+
+    throw error;
+
+}
+
+
+// ==========================================================
+// FONCTION — IDENTIFIER UNE LOJA D'UN COMMERÇANT
+// ==========================================================
+
+function merchantBelongsToStore(
+    merchant,
+    store
+) {
+
+    const storeId =
+        store.id;
+
+
+    const possibleValues = [
+
+        merchant.storeId,
+
+        merchant.officialStoreId,
+
+        merchant.brandStoreId,
+
+        merchant.lojaId
+
+    ];
+
+
+    if (
+        possibleValues.includes(
+            storeId
+        )
+    ) {
+
+        return true;
+
+    }
+
+
+    // ------------------------------------------------------
+    // Compatibilité avec storeName
+    // ------------------------------------------------------
+
+    const storeName =
+        store.name ||
+        store.storeName ||
+        store.brandName;
+
+
+    if (
+        storeName &&
+        merchant.storeName === storeName
+    ) {
+
+        return true;
+
+    }
+
+
+    return false;
+
+}
+
+
+// ==========================================================
+// FONCTION — IDENTIFIER UN PRODUIT D'UNE LOJA
+// ==========================================================
+
+function productBelongsToStore(
+    product,
+    store
+) {
+
+    const storeId =
+        store.id;
+
+
+    const possibleValues = [
+
+        product.storeId,
+
+        product.officialStoreId,
+
+        product.brandStoreId,
+
+        product.lojaId
+
+    ];
+
+
+    if (
+        possibleValues.includes(
+            storeId
+        )
+    ) {
+
+        return true;
+
+    }
+
+
+    const storeName =
+        store.name ||
+        store.storeName ||
+        store.brandName;
+
+
+    if (
+        storeName &&
+        product.storeName === storeName
+    ) {
+
+        return true;
+
+    }
+
+
+    return false;
+
+}
+
+
+// ==========================================================
+// FONCTION — IDENTIFIER UNE COMMANDE D'UNE LOJA
+// ==========================================================
+
+function orderBelongsToStore(
+    order,
+    store
+) {
+
+    const storeId =
+        store.id;
+
+
+    const possibleValues = [
+
+        order.storeId,
+
+        order.officialStoreId,
+
+        order.brandStoreId,
+
+        order.lojaId
+
+    ];
+
+
+    if (
+        possibleValues.includes(
+            storeId
+        )
+    ) {
+
+        return true;
+
+    }
+
+
+    const storeName =
+        store.name ||
+        store.storeName ||
+        store.brandName;
+
+
+    if (
+        storeName &&
+        order.storeName === storeName
+    ) {
+
+        return true;
+
+    }
+
+
+    return false;
+
+}
+
+
+// ==========================================================
+// CALCUL DES STATISTIQUES
+// ==========================================================
+
+let totalMerchants = 0;
+
+let totalProducts = 0;
+
+let totalOrders = 0;
+
+let totalSales = 0;
+
+
+// ==========================================================
+// PARCOURIR LES LOJA
+// ==========================================================
+
+storesForStats.forEach(
+    store => {
+
+        // ==================================================
+        // COMMERÇANTS
+        // ==================================================
+
+        const storeMerchants =
+            merchantsStats.filter(
+                merchant =>
+                    merchantBelongsToStore(
+                        merchant,
+                        store
+                    )
+            );
+
+
+        // ==================================================
+        // PRODUITS
+        // ==================================================
+
+        const storeProducts =
+            productsStats.filter(
+                product =>
+                    productBelongsToStore(
+                        product,
+                        store
+                    )
+            );
+
+
+        // ==================================================
+        // COMMANDES
+        // ==================================================
+
+        const storeOrders =
+            ordersStats.filter(
+                order =>
+                    orderBelongsToStore(
+                        order,
+                        store
+                    )
+            );
+
+
+        // ==================================================
+        // VENTES
+        // ==================================================
+
+        let storeSalesValue = 0;
+
+
+        storeOrders.forEach(
+            order => {
+
+                storeSalesValue +=
+                    Number(
+                        order.total ||
+                        order.totalAmount ||
+                        order.amount ||
+                        0
+                    );
+
+            }
+        );
+
+
+        // ==================================================
+        // TOTALS
+        // ==================================================
+
+        totalMerchants +=
+            storeMerchants.length;
+
+
+        totalProducts +=
+            storeProducts.length;
+
+
+        totalOrders +=
+            storeOrders.length;
+
+
+        totalSales +=
+            storeSalesValue;
+
+
+        // ==================================================
+        // TROUVER LA CARTE
+        // ==================================================
+
+        const card =
+            document.querySelector(
+                `.brandCard[data-store-id="${store.id}"]`
+            );
+
+
+        if (!card) {
+
+            return;
+
+        }
+
+
+        // ==================================================
+        // COMMERÇANTS
+        // ==================================================
+
+        const merchantElement =
+            card.querySelector(
+                ".merchantCount"
+            );
+
+
+        if (merchantElement) {
+
+            merchantElement.textContent =
+                storeMerchants.length;
+
+        }
+
+
+        // ==================================================
+        // PRODUITS
+        // ==================================================
+
+        const productElement =
+            card.querySelector(
+                ".productCount"
+            );
+
+
+        if (productElement) {
+
+            productElement.textContent =
+                storeProducts.length;
+
+        }
+
+
+        // ==================================================
+        // VENTES
+        // ==================================================
+
+        const salesElement =
+            card.querySelector(
+                ".salesCount"
+            );
+
+
+        if (salesElement) {
+
+            salesElement.textContent =
+                storeSalesValue.toLocaleString(
+                    "pt-AO"
+                ) +
+                " Kz";
+
+        }
+
+    }
+);
+
+
+// ==========================================================
+// STATISTIQUES GLOBALES
+// ==========================================================
+
+if (assignedMerchants) {
+
+    assignedMerchants.textContent =
+        totalMerchants;
+
+}
+
+
+if (storeProducts) {
+
+    storeProducts.textContent =
+        totalProducts;
+
+}
+
+
+if (storeSales) {
+
+    storeSales.textContent =
+        totalSales.toLocaleString(
+            "pt-AO"
+        ) +
+        " Kz";
+
+}
+
+
+// ==========================================================
+// EXPOSER LES DONNÉES
+// POUR LES BLOCS SUIVANTS
+// ==========================================================
+
+window.brandStoresData = {
+
+    ...window.brandStoresData,
+
+    merchants: merchantsStats,
+
+    products: productsStats,
+
+    orders: ordersStats,
+
+    statistics: {
+
+        totalMerchants,
+
+        totalProducts,
+
+        totalOrders,
+
+        totalSales
+
+    }
+
+};
+
+
+// ==========================================================
+// ALERTE — RÉSULTAT
+// ==========================================================
+
+alert(
+
+    "BLOC 3 — Statistiques terminées.\n\n" +
+
+    "Commerçants : " +
+    totalMerchants +
+
+    "\n\n" +
+
+    "Produits : " +
+    totalProducts +
+
+    "\n\n" +
+
+    "Commandes : " +
+    totalOrders +
+
+    "\n\n" +
+
+    "Ventes : " +
+    totalSales.toLocaleString(
+        "pt-AO"
+    ) +
+    " Kz"
+
+);
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 3 — Statistiques des Loja terminé avec succès."
+);
+
+
+// ==========================================================
+// FIN BLOC 3
+// ==========================================================
