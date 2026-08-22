@@ -9610,3 +9610,1585 @@ alert(
 // ==========================================================
 // FIN BLOC 9
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 10 — PARAMÈTRES AVANCÉS + SÉCURITÉ ADMINISTRATIVE
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT DU BLOC
+// ==========================================================
+
+alert(
+    "BLOC 10 — Carregamento das configurações avançadas da Loja Oficial..."
+);
+
+
+// ==========================================================
+// ÉTAT DU BLOC
+// ==========================================================
+
+let advancedStoreSettings = null;
+
+let advancedSettingsModal = null;
+
+let advancedSettingsForm = null;
+
+
+// ==========================================================
+// PARAMÈTRES PAR DÉFAUT
+// ==========================================================
+
+const defaultAdvancedStoreSettings = {
+
+    visible: true,
+
+    maintenanceMode: false,
+
+    allowMerchantRegistration: true,
+
+    allowMerchantPublishing: true,
+
+    allowProductPublishing: true,
+
+    allowOrders: true,
+
+    allowNewOrders: true,
+
+    commissionRate: 5,
+
+    requireMerchantApproval: true,
+
+    requireProductApproval: false,
+
+    showOfficialBadge: true,
+
+    allowStoreSharing: true,
+
+    notificationsEnabled: true
+
+};
+
+
+// ==========================================================
+// UTILITAIRE — CONVERTIR EN BOOLEAN
+// ==========================================================
+
+function toBoolean(
+    value,
+    defaultValue = false
+) {
+
+    if (
+        value === true ||
+        value === false
+    ) {
+
+        return value;
+
+    }
+
+
+    return defaultValue;
+
+}
+
+
+// ==========================================================
+// UTILITAIRE — COMMISSION
+// ==========================================================
+
+function normalizeCommission(
+    value
+) {
+
+    const number =
+        Number(value);
+
+
+    if (
+        !Number.isFinite(number)
+    ) {
+
+        return 5;
+
+    }
+
+
+    return Math.min(
+        100,
+        Math.max(
+            0,
+            number
+        )
+    );
+
+}
+
+
+// ==========================================================
+// FONCTION — RÉCUPÉRER LES PARAMÈTRES
+// ==========================================================
+
+function getAdvancedStoreSettings() {
+
+    if (!store) {
+
+        return {
+            ...defaultAdvancedStoreSettings
+        };
+
+    }
+
+
+    return {
+
+        ...defaultAdvancedStoreSettings,
+
+        ...(store.settings || {}),
+
+        visible:
+            toBoolean(
+                store.settings?.visible,
+                true
+            ),
+
+        maintenanceMode:
+            toBoolean(
+                store.settings?.maintenanceMode,
+                false
+            ),
+
+        allowMerchantRegistration:
+            toBoolean(
+                store.settings?.allowMerchantRegistration,
+                true
+            ),
+
+        allowMerchantPublishing:
+            toBoolean(
+                store.settings?.allowMerchantPublishing,
+                true
+            ),
+
+        allowProductPublishing:
+            toBoolean(
+                store.settings?.allowProductPublishing,
+                true
+            ),
+
+        allowOrders:
+            toBoolean(
+                store.settings?.allowOrders,
+                true
+            ),
+
+        allowNewOrders:
+            toBoolean(
+                store.settings?.allowNewOrders,
+                true
+            ),
+
+        commissionRate:
+            normalizeCommission(
+                store.settings?.commissionRate
+            ),
+
+        requireMerchantApproval:
+            toBoolean(
+                store.settings?.requireMerchantApproval,
+                true
+            ),
+
+        requireProductApproval:
+            toBoolean(
+                store.settings?.requireProductApproval,
+                false
+            ),
+
+        showOfficialBadge:
+            toBoolean(
+                store.settings?.showOfficialBadge,
+                true
+            ),
+
+        allowStoreSharing:
+            toBoolean(
+                store.settings?.allowStoreSharing,
+                true
+            ),
+
+        notificationsEnabled:
+            toBoolean(
+                store.settings?.notificationsEnabled,
+                true
+            )
+
+    };
+
+}
+
+
+// ==========================================================
+// FONCTION — CRÉER LE MODAL DYNAMIQUEMENT
+// ==========================================================
+
+function createAdvancedSettingsModal() {
+
+    if (
+        document.getElementById(
+            "advancedStoreSettingsModal"
+        )
+    ) {
+
+        advancedSettingsModal =
+            document.getElementById(
+                "advancedStoreSettingsModal"
+            );
+
+        advancedSettingsForm =
+            document.getElementById(
+                "advancedStoreSettingsForm"
+            );
+
+        return;
+
+    }
+
+
+    const modal =
+        document.createElement(
+            "div"
+        );
+
+
+    modal.id =
+        "advancedStoreSettingsModal";
+
+
+    modal.className =
+        "modal hidden";
+
+
+    modal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+
+    modal.innerHTML = `
+
+        <div
+            class="modalContent"
+            style="
+                max-width:650px;
+                width:92%;
+                max-height:90vh;
+                overflow-y:auto;
+            "
+        >
+
+            <div
+                style="
+                    display:flex;
+                    align-items:center;
+                    justify-content:space-between;
+                    gap:15px;
+                    margin-bottom:20px;
+                "
+            >
+
+                <div>
+
+                    <h2>
+                        Configurações avançadas
+                    </h2>
+
+                    <p
+                        style="
+                            margin:5px 0 0;
+                            opacity:.7;
+                        "
+                    >
+                        Controle administrativo da Loja Oficial
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    id="closeAdvancedSettingsModal"
+                    aria-label="Fechar"
+                >
+
+                    <span class="material-symbols-rounded">
+                        close
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <form
+                id="advancedStoreSettingsForm"
+            >
+
+
+                <!-- VISIBILIDADE -->
+
+                <div
+                    style="
+                        padding:15px;
+                        border:1px solid #ddd;
+                        border-radius:12px;
+                        margin-bottom:12px;
+                    "
+                >
+
+                    <label
+                        style="
+                            display:flex;
+                            align-items:center;
+                            justify-content:space-between;
+                            gap:15px;
+                        "
+                    >
+
+                        <span>
+
+                            <strong>
+                                Loja visível
+                            </strong>
+
+                            <small
+                                style="
+                                    display:block;
+                                    opacity:.65;
+                                    margin-top:4px;
+                                "
+                            >
+                                Permite que os clientes encontrem a Brand Store.
+                            </small>
+
+                        </span>
+
+                        <input
+                            type="checkbox"
+                            id="advancedStoreVisible"
+                        >
+
+                    </label>
+
+                </div>
+
+
+                <!-- MAINTENANCE -->
+
+                <div
+                    style="
+                        padding:15px;
+                        border:1px solid #ddd;
+                        border-radius:12px;
+                        margin-bottom:12px;
+                    "
+                >
+
+                    <label
+                        style="
+                            display:flex;
+                            align-items:center;
+                            justify-content:space-between;
+                            gap:15px;
+                        "
+                    >
+
+                        <span>
+
+                            <strong>
+                                Modo manutenção
+                            </strong>
+
+                            <small
+                                style="
+                                    display:block;
+                                    opacity:.65;
+                                    margin-top:4px;
+                                "
+                            >
+                                Bloqueia temporairement certaines opérations de la loja.
+                            </small>
+
+                        </span>
+
+                        <input
+                            type="checkbox"
+                            id="advancedMaintenanceMode"
+                        >
+
+                    </label>
+
+                </div>
+
+
+                <!-- COMMERÇANTS -->
+
+                <div
+                    style="
+                        padding:15px;
+                        border:1px solid #ddd;
+                        border-radius:12px;
+                        margin-bottom:12px;
+                    "
+                >
+
+                    <h3>
+                        Comerciantes
+                    </h3>
+
+
+                    <label
+                        style="
+                            display:flex;
+                            justify-content:space-between;
+                            gap:15px;
+                            margin:12px 0;
+                        "
+                    >
+
+                        <span>
+                            Permitir novos comerciantes
+                        </span>
+
+                        <input
+                            type="checkbox"
+                            id="advancedAllowMerchantRegistration"
+                        >
+
+                    </label>
+
+
+                    <label
+                        style="
+                            display:flex;
+                            justify-content:space-between;
+                            gap:15px;
+                            margin:12px 0;
+                        "
+                    >
+
+                        <span>
+                            Permitir publicação dos comerciantes
+                        </span>
+
+                        <input
+                            type="checkbox"
+                            id="advancedAllowMerchantPublishing"
+                        >
+
+                    </label>
+
+
+                    <label
+                        style="
+                            display:flex;
+                            justify-content:space-between;
+                            gap:15px;
+                            margin:12px 0;
+                        "
+                    >
+
+                        <span>
+                            Aprovação obrigatória do comerciante
+                        </span>
+
+                        <input
+                            type="checkbox"
+                            id="advancedRequireMerchantApproval"
+                        >
+
+                    </label>
+
+                </div>
+
+
+                <!-- PRODUITS -->
+
+                <div
+                    style="
+                        padding:15px;
+                        border:1px solid #ddd;
+                        border-radius:12px;
+                        margin-bottom:12px;
+                    "
+                >
+
+                    <h3>
+                        Produtos
+                    </h3>
+
+
+                    <label
+                        style="
+                            display:flex;
+                            justify-content:space-between;
+                            gap:15px;
+                            margin:12px 0;
+                        "
+                    >
+
+                        <span>
+                            Permitir publicação de produtos
+                        </span>
+
+                        <input
+                            type="checkbox"
+                            id="advancedAllowProductPublishing"
+                        >
+
+                    </label>
+
+
+                    <label
+                        style="
+                            display:flex;
+                            justify-content:space-between;
+                            gap:15px;
+                            margin:12px 0;
+                        "
+                    >
+
+                        <span>
+                            Aprovação obrigatória dos produtos
+                        </span>
+
+                        <input
+                            type="checkbox"
+                            id="advancedRequireProductApproval"
+                        >
+
+                    </label>
+
+                </div>
+
+
+                <!-- COMMANDES -->
+
+                <div
+                    style="
+                        padding:15px;
+                        border:1px solid #ddd;
+                        border-radius:12px;
+                        margin-bottom:12px;
+                    "
+                >
+
+                    <h3>
+                        Pedidos
+                    </h3>
+
+
+                    <label
+                        style="
+                            display:flex;
+                            justify-content:space-between;
+                            gap:15px;
+                            margin:12px 0;
+                        "
+                    >
+
+                        <span>
+                            Permitir pedidos
+                        </span>
+
+                        <input
+                            type="checkbox"
+                            id="advancedAllowOrders"
+                        >
+
+                    </label>
+
+
+                    <label
+                        style="
+                            display:flex;
+                            justify-content:space-between;
+                            gap:15px;
+                            margin:12px 0;
+                        "
+                    >
+
+                        <span>
+                            Aceitar novos pedidos
+                        </span>
+
+                        <input
+                            type="checkbox"
+                            id="advancedAllowNewOrders"
+                        >
+
+                    </label>
+
+                </div>
+
+
+                <!-- COMMISSION -->
+
+                <div
+                    style="
+                        padding:15px;
+                        border:1px solid #ddd;
+                        border-radius:12px;
+                        margin-bottom:12px;
+                    "
+                >
+
+                    <h3>
+                        Comissão TOMA
+                    </h3>
+
+
+                    <label
+                        style="
+                            display:block;
+                        "
+                    >
+
+                        <span
+                            style="
+                                display:block;
+                                margin-bottom:8px;
+                            "
+                        >
+                            Taux de commission (%)
+                        </span>
+
+
+                        <input
+                            type="number"
+                            id="advancedCommissionRate"
+                            min="0"
+                            max="100"
+                            step="0.1"
+                            style="
+                                width:100%;
+                                padding:10px;
+                            "
+                        >
+
+                    </label>
+
+                </div>
+
+
+                <!-- BADGE -->
+
+                <div
+                    style="
+                        padding:15px;
+                        border:1px solid #ddd;
+                        border-radius:12px;
+                        margin-bottom:12px;
+                    "
+                >
+
+                    <h3>
+                        Présence de la marque
+                    </h3>
+
+
+                    <label
+                        style="
+                            display:flex;
+                            justify-content:space-between;
+                            gap:15px;
+                            margin:12px 0;
+                        "
+                    >
+
+                        <span>
+                            Afficher le badge officiel
+                        </span>
+
+                        <input
+                            type="checkbox"
+                            id="advancedShowOfficialBadge"
+                        >
+
+                    </label>
+
+
+                    <label
+                        style="
+                            display:flex;
+                            justify-content:space-between;
+                            gap:15px;
+                            margin:12px 0;
+                        "
+                    >
+
+                        <span>
+                            Autoriser le partage de la loja
+                        </span>
+
+                        <input
+                            type="checkbox"
+                            id="advancedAllowStoreSharing"
+                        >
+
+                    </label>
+
+
+                    <label
+                        style="
+                            display:flex;
+                            justify-content:space-between;
+                            gap:15px;
+                            margin:12px 0;
+                        "
+                    >
+
+                        <span>
+                            Notifications activées
+                        </span>
+
+                        <input
+                            type="checkbox"
+                            id="advancedNotificationsEnabled"
+                        >
+
+                    </label>
+
+                </div>
+
+
+                <!-- ACTIONS -->
+
+                <div
+                    style="
+                        display:flex;
+                        gap:10px;
+                        justify-content:flex-end;
+                        margin-top:20px;
+                    "
+                >
+
+                    <button
+                        type="button"
+                        id="cancelAdvancedStoreSettings"
+                    >
+                        Cancelar
+                    </button>
+
+
+                    <button
+                        type="submit"
+                    >
+
+                        <span class="material-symbols-rounded">
+                            save
+                        </span>
+
+                        Salvar configurações
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    `;
+
+
+    document.body.appendChild(
+        modal
+    );
+
+
+    advancedSettingsModal =
+        modal;
+
+
+    advancedSettingsForm =
+        document.getElementById(
+            "advancedStoreSettingsForm"
+        );
+
+
+    document
+        .getElementById(
+            "closeAdvancedSettingsModal"
+        )
+        ?.addEventListener(
+            "click",
+            closeAdvancedSettings
+        );
+
+
+    document
+        .getElementById(
+            "cancelAdvancedStoreSettings"
+        )
+        ?.addEventListener(
+            "click",
+            closeAdvancedSettings
+        );
+
+
+    modal.addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target === modal
+            ) {
+
+                closeAdvancedSettings();
+
+            }
+
+        }
+    );
+
+
+    advancedSettingsForm?.addEventListener(
+        "submit",
+        event => {
+
+            event.preventDefault();
+
+            saveAdvancedStoreSettings();
+
+        }
+    );
+
+}
+
+
+// ==========================================================
+// FONCTION — REMPLIR LE FORMULAIRE
+// ==========================================================
+
+function fillAdvancedSettingsForm() {
+
+    const settings =
+        getAdvancedStoreSettings();
+
+
+    const visible =
+        document.getElementById(
+            "advancedStoreVisible"
+        );
+
+
+    const maintenance =
+        document.getElementById(
+            "advancedMaintenanceMode"
+        );
+
+
+    const merchantRegistration =
+        document.getElementById(
+            "advancedAllowMerchantRegistration"
+        );
+
+
+    const merchantPublishing =
+        document.getElementById(
+            "advancedAllowMerchantPublishing"
+        );
+
+
+    const merchantApproval =
+        document.getElementById(
+            "advancedRequireMerchantApproval"
+        );
+
+
+    const productPublishing =
+        document.getElementById(
+            "advancedAllowProductPublishing"
+        );
+
+
+    const productApproval =
+        document.getElementById(
+            "advancedRequireProductApproval"
+        );
+
+
+    const orders =
+        document.getElementById(
+            "advancedAllowOrders"
+        );
+
+
+    const newOrders =
+        document.getElementById(
+            "advancedAllowNewOrders"
+        );
+
+
+    const commission =
+        document.getElementById(
+            "advancedCommissionRate"
+        );
+
+
+    const badge =
+        document.getElementById(
+            "advancedShowOfficialBadge"
+        );
+
+
+    const sharing =
+        document.getElementById(
+            "advancedAllowStoreSharing"
+        );
+
+
+    const notifications =
+        document.getElementById(
+            "advancedNotificationsEnabled"
+        );
+
+
+    if (visible) {
+
+        visible.checked =
+            settings.visible;
+
+    }
+
+
+    if (maintenance) {
+
+        maintenance.checked =
+            settings.maintenanceMode;
+
+    }
+
+
+    if (merchantRegistration) {
+
+        merchantRegistration.checked =
+            settings.allowMerchantRegistration;
+
+    }
+
+
+    if (merchantPublishing) {
+
+        merchantPublishing.checked =
+            settings.allowMerchantPublishing;
+
+    }
+
+
+    if (merchantApproval) {
+
+        merchantApproval.checked =
+            settings.requireMerchantApproval;
+
+    }
+
+
+    if (productPublishing) {
+
+        productPublishing.checked =
+            settings.allowProductPublishing;
+
+    }
+
+
+    if (productApproval) {
+
+        productApproval.checked =
+            settings.requireProductApproval;
+
+    }
+
+
+    if (orders) {
+
+        orders.checked =
+            settings.allowOrders;
+
+    }
+
+
+    if (newOrders) {
+
+        newOrders.checked =
+            settings.allowNewOrders;
+
+    }
+
+
+    if (commission) {
+
+        commission.value =
+            settings.commissionRate;
+
+    }
+
+
+    if (badge) {
+
+        badge.checked =
+            settings.showOfficialBadge;
+
+    }
+
+
+    if (sharing) {
+
+        sharing.checked =
+            settings.allowStoreSharing;
+
+    }
+
+
+    if (notifications) {
+
+        notifications.checked =
+            settings.notificationsEnabled;
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — OUVRIR PARAMÈTRES
+// ==========================================================
+
+function openAdvancedSettings() {
+
+    if (!store) {
+
+        showToast(
+            "Dados da Loja Oficial não carregados.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    createAdvancedSettingsModal();
+
+
+    fillAdvancedSettingsForm();
+
+
+    openModal(
+        advancedSettingsModal
+    );
+
+}
+
+
+// ==========================================================
+// FONCTION — FERMER PARAMÈTRES
+// ==========================================================
+
+function closeAdvancedSettings() {
+
+    closeModal(
+        advancedSettingsModal
+    );
+
+}
+
+
+// ==========================================================
+// FONCTION — SAUVEGARDER
+// ==========================================================
+
+async function saveAdvancedStoreSettings() {
+
+    try {
+
+        if (!store) {
+
+            throw new Error(
+                "Dados da Loja Oficial não carregados."
+            );
+
+        }
+
+
+        const commissionInput =
+            document.getElementById(
+                "advancedCommissionRate"
+            );
+
+
+        const commissionRate =
+            normalizeCommission(
+                commissionInput?.value
+            );
+
+
+        const settings = {
+
+            visible:
+                document.getElementById(
+                    "advancedStoreVisible"
+                )?.checked === true,
+
+
+            maintenanceMode:
+                document.getElementById(
+                    "advancedMaintenanceMode"
+                )?.checked === true,
+
+
+            allowMerchantRegistration:
+                document.getElementById(
+                    "advancedAllowMerchantRegistration"
+                )?.checked === true,
+
+
+            allowMerchantPublishing:
+                document.getElementById(
+                    "advancedAllowMerchantPublishing"
+                )?.checked === true,
+
+
+            requireMerchantApproval:
+                document.getElementById(
+                    "advancedRequireMerchantApproval"
+                )?.checked === true,
+
+
+            allowProductPublishing:
+                document.getElementById(
+                    "advancedAllowProductPublishing"
+                )?.checked === true,
+
+
+            requireProductApproval:
+                document.getElementById(
+                    "advancedRequireProductApproval"
+                )?.checked === true,
+
+
+            allowOrders:
+                document.getElementById(
+                    "advancedAllowOrders"
+                )?.checked === true,
+
+
+            allowNewOrders:
+                document.getElementById(
+                    "advancedAllowNewOrders"
+                )?.checked === true,
+
+
+            commissionRate,
+
+
+            showOfficialBadge:
+                document.getElementById(
+                    "advancedShowOfficialBadge"
+                )?.checked === true,
+
+
+            allowStoreSharing:
+                document.getElementById(
+                    "advancedAllowStoreSharing"
+                )?.checked === true,
+
+
+            notificationsEnabled:
+                document.getElementById(
+                    "advancedNotificationsEnabled"
+                )?.checked === true
+
+        };
+
+
+        // ==================================================
+        // VALIDATION SÉCURITÉ
+        // ==================================================
+
+        if (
+            settings.maintenanceMode
+        ) {
+
+            settings.allowNewOrders =
+                false;
+
+        }
+
+
+        if (
+            !settings.allowOrders
+        ) {
+
+            settings.allowNewOrders =
+                false;
+
+        }
+
+
+        if (
+            !settings.allowProductPublishing
+        ) {
+
+            settings.allowMerchantPublishing =
+                false;
+
+        }
+
+
+        // ==================================================
+        // CONFIRMATION
+        // ==================================================
+
+        const confirmation =
+            confirm(
+                "Deseja salvar estas configurações administrativas?"
+            );
+
+
+        if (!confirmation) {
+
+            return;
+
+        }
+
+
+        showLoading(
+            "Salvando configurações avançadas..."
+        );
+
+
+        // ==================================================
+        // FIRESTORE
+        // ==================================================
+
+        await updateDoc(
+            storeRef,
+            {
+
+                settings,
+
+                updatedAt:
+                    serverTimestamp(),
+
+                adminSettingsUpdatedAt:
+                    serverTimestamp()
+
+            }
+        );
+
+
+        // ==================================================
+        // ÉTAT LOCAL
+        // ==================================================
+
+        store.settings =
+            settings;
+
+
+        advancedStoreSettings =
+            settings;
+
+
+        window.brandStoreAdmin.store =
+            store;
+
+
+        window.brandStoreAdmin
+            .advancedSettings =
+            settings;
+
+
+        // ==================================================
+        // FERMER
+        // ==================================================
+
+        closeAdvancedSettings();
+
+
+        hideLoading();
+
+
+        showToast(
+            "Configurações avançadas salvas com sucesso.",
+            "check_circle"
+        );
+
+
+        // ==================================================
+        // ACTIVITÉ
+        // ==================================================
+
+        if (
+            window.brandStoreAdmin
+                .saveStoreActivity
+        ) {
+
+            await window.brandStoreAdmin
+                .saveStoreActivity(
+                    "settings",
+                    "Configurações avançadas atualizadas",
+                    "O administrador atualizou as configurações avançadas da Loja Oficial."
+                );
+
+        }
+
+
+    } catch (error) {
+
+        hideLoading();
+
+
+        console.error(
+            "BLOC 10 — Erro ao salvar configurações:",
+            error
+        );
+
+
+        alert(
+            "BLOC 10 — ERRO ao salvar configurações:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// BOUTON PARAMÈTRES EXISTANT
+// ==========================================================
+
+storeSettingsButton?.addEventListener(
+    "click",
+    openAdvancedSettings
+);
+
+
+// ==========================================================
+// FONCTION — CHARGER LES PARAMÈTRES
+// ==========================================================
+
+function loadAdvancedStoreSettings() {
+
+    try {
+
+        advancedStoreSettings =
+            getAdvancedStoreSettings();
+
+
+        window.brandStoreAdmin
+            .advancedSettings =
+            advancedStoreSettings;
+
+
+        // ==================================================
+        // CONTRÔLE DE COHÉRENCE DU STATUT
+        // ==================================================
+
+        if (
+            store &&
+            advancedStoreSettings
+                .maintenanceMode
+        ) {
+
+            store.maintenanceMode =
+                true;
+
+        }
+
+
+        // ==================================================
+        // LOG DE CONTRÔLE
+        // ==================================================
+
+        console.log(
+            "TOMA — Advanced Store Settings:",
+            advancedStoreSettings
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 10 — Erro ao carregar configurações:",
+            error
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — VÉRIFIER SI LES COMMANDES SONT AUTORISÉES
+// ==========================================================
+
+function isStoreAcceptingOrders() {
+
+    if (!store) {
+
+        return false;
+
+    }
+
+
+    const settings =
+        getAdvancedStoreSettings();
+
+
+    if (
+        settings.maintenanceMode
+    ) {
+
+        return false;
+
+    }
+
+
+    if (
+        !settings.allowOrders
+    ) {
+
+        return false;
+
+    }
+
+
+    if (
+        !settings.allowNewOrders
+    ) {
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
+
+
+// ==========================================================
+// FONCTION — VÉRIFIER SI LES PRODUITS PEUVENT ÊTRE PUBLIÉS
+// ==========================================================
+
+function canPublishStoreProducts() {
+
+    if (!store) {
+
+        return false;
+
+    }
+
+
+    const settings =
+        getAdvancedStoreSettings();
+
+
+    return (
+        settings.allowProductPublishing &&
+        settings.allowMerchantPublishing &&
+        !settings.maintenanceMode
+    );
+
+}
+
+
+// ==========================================================
+// FONCTION — VÉRIFIER SI LES COMMERÇANTS PEUVENT ÊTRE AJOUTÉS
+// ==========================================================
+
+function canRegisterStoreMerchants() {
+
+    if (!store) {
+
+        return false;
+
+    }
+
+
+    const settings =
+        getAdvancedStoreSettings();
+
+
+    return (
+        settings.allowMerchantRegistration &&
+        !settings.maintenanceMode
+    );
+
+}
+
+
+// ==========================================================
+// EXPOSER LES FONCTIONS
+// ==========================================================
+
+window.brandStoreAdmin
+    .openAdvancedSettings =
+    openAdvancedSettings;
+
+
+window.brandStoreAdmin
+    .closeAdvancedSettings =
+    closeAdvancedSettings;
+
+
+window.brandStoreAdmin
+    .saveAdvancedStoreSettings =
+    saveAdvancedStoreSettings;
+
+
+window.brandStoreAdmin
+    .getAdvancedStoreSettings =
+    getAdvancedStoreSettings;
+
+
+window.brandStoreAdmin
+    .isStoreAcceptingOrders =
+    isStoreAcceptingOrders;
+
+
+window.brandStoreAdmin
+    .canPublishStoreProducts =
+    canPublishStoreProducts;
+
+
+window.brandStoreAdmin
+    .canRegisterStoreMerchants =
+    canRegisterStoreMerchants;
+
+
+// ==========================================================
+// CHARGEMENT INITIAL
+// ==========================================================
+
+loadAdvancedStoreSettings();
+
+
+// ==========================================================
+// ALERTE — SUCCÈS
+// ==========================================================
+
+alert(
+    "BLOC 10 — Configurações avançadas e controle administrativo carregados com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 10
+// ==========================================================
