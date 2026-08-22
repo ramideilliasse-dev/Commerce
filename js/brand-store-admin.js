@@ -1482,3 +1482,519 @@ loadOfficialStore();
 // ==========================================================
 // FIN DU BLOC 2
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 3 — STATISTIQUES DE LA LOJA OFFICIAL
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT DU BLOC
+// ==========================================================
+
+alert(
+    "BLOC 3 — Chargement des statistiques da Loja Oficial..."
+);
+
+
+// ==========================================================
+// FONCTION — CHARGER LES STATISTIQUES
+// ==========================================================
+
+async function loadStoreStatistics() {
+
+    try {
+
+        // --------------------------------------------------
+        // VÉRIFICATION DE LA LOJA
+        // --------------------------------------------------
+
+        if (!store) {
+
+            throw new Error(
+                "Dados da Loja Oficial não carregados."
+            );
+
+        }
+
+
+        // --------------------------------------------------
+        // COLLECTIONS FIRESTORE
+        // --------------------------------------------------
+
+        const merchantsRef =
+            collection(
+                db,
+                "merchants"
+            );
+
+        const productsRef =
+            collection(
+                db,
+                "products"
+            );
+
+        const ordersRef =
+            collection(
+                db,
+                "orders"
+            );
+
+
+        // ==================================================
+        // RÉCUPÉRER LES COMMERÇANTS
+        // ==================================================
+
+        let merchantSnapshot;
+
+        try {
+
+            const merchantQuery =
+                query(
+                    merchantsRef,
+                    where(
+                        "storeId",
+                        "==",
+                        storeId
+                    )
+                );
+
+            merchantSnapshot =
+                await getDocs(
+                    merchantQuery
+                );
+
+        } catch (error) {
+
+            console.warn(
+                "BLOC 3 — Erro ao buscar merchants por storeId:",
+                error
+            );
+
+            merchantSnapshot = {
+                docs: []
+            };
+
+        }
+
+
+        merchants =
+            merchantSnapshot.docs.map(
+                merchantDoc => ({
+
+                    id: merchantDoc.id,
+
+                    ...merchantDoc.data()
+
+                })
+            );
+
+
+        // ==================================================
+        // RÉCUPÉRER LES PRODUITS
+        // ==================================================
+
+        let productSnapshot;
+
+        try {
+
+            const productQuery =
+                query(
+                    productsRef,
+                    where(
+                        "storeId",
+                        "==",
+                        storeId
+                    )
+                );
+
+            productSnapshot =
+                await getDocs(
+                    productQuery
+                );
+
+        } catch (error) {
+
+            console.warn(
+                "BLOC 3 — Erro ao buscar products por storeId:",
+                error
+            );
+
+            productSnapshot = {
+                docs: []
+            };
+
+        }
+
+
+        products =
+            productSnapshot.docs.map(
+                productDoc => ({
+
+                    id: productDoc.id,
+
+                    ...productDoc.data()
+
+                })
+            );
+
+
+        // ==================================================
+        // RÉCUPÉRER LES COMMANDES
+        // ==================================================
+
+        let orderSnapshot;
+
+        try {
+
+            const orderQuery =
+                query(
+                    ordersRef,
+                    where(
+                        "storeId",
+                        "==",
+                        storeId
+                    )
+                );
+
+            orderSnapshot =
+                await getDocs(
+                    orderQuery
+                );
+
+        } catch (error) {
+
+            console.warn(
+                "BLOC 3 — Erro ao buscar orders por storeId:",
+                error
+            );
+
+            orderSnapshot = {
+                docs: []
+            };
+
+        }
+
+
+        orders =
+            orderSnapshot.docs.map(
+                orderDoc => ({
+
+                    id: orderDoc.id,
+
+                    ...orderDoc.data()
+
+                })
+            );
+
+
+        // ==================================================
+        // CALCUL DES STATISTIQUES
+        // ==================================================
+
+        const merchantTotal =
+            merchants.length;
+
+
+        const productTotal =
+            products.length;
+
+
+        const orderTotal =
+            orders.length;
+
+
+        // --------------------------------------------------
+        // COMMERÇANTS ACTIFS
+        // --------------------------------------------------
+
+        const activeMerchants =
+            merchants.filter(
+                merchant => {
+
+                    const status =
+                        merchant.status ||
+                        "active";
+
+                    return (
+                        status === "active" ||
+                        status === "approved" ||
+                        merchant.active === true
+                    );
+
+                }
+            );
+
+
+        // --------------------------------------------------
+        // PRODUITS ACTIFS
+        // --------------------------------------------------
+
+        const activeProducts =
+            products.filter(
+                product => {
+
+                    const status =
+                        product.status ||
+                        "active";
+
+                    return (
+                        status === "active" ||
+                        status === "published" ||
+                        product.active === true
+                    );
+
+                }
+            );
+
+
+        // --------------------------------------------------
+        // COMMANDES EN ATTENTE
+        // --------------------------------------------------
+
+        const pendingOrders =
+            orders.filter(
+                order => {
+
+                    const status =
+                        String(
+                            order.status ||
+                            "pending"
+                        ).toLowerCase();
+
+                    return (
+                        status === "pending" ||
+                        status === "new" ||
+                        status === "novo" ||
+                        status === "pending_confirmation"
+                    );
+
+                }
+            );
+
+
+        // --------------------------------------------------
+        // PRODUITS EN RUPTURE
+        // --------------------------------------------------
+
+        const outOfStockProducts =
+            products.filter(
+                product => {
+
+                    const stock =
+                        Number(
+                            product.stock ??
+                            product.quantity ??
+                            0
+                        );
+
+                    const status =
+                        String(
+                            product.status ||
+                            ""
+                        ).toLowerCase();
+
+                    return (
+                        stock <= 0 ||
+                        status === "out_of_stock" ||
+                        status === "outofstock" ||
+                        status === "sold_out"
+                    );
+
+                }
+            );
+
+
+        // ==================================================
+        // CALCUL DES VENTES
+        // ==================================================
+
+        const completedOrders =
+            orders.filter(
+                order => {
+
+                    const status =
+                        String(
+                            order.status ||
+                            ""
+                        ).toLowerCase();
+
+                    return (
+                        status === "delivered" ||
+                        status === "completed" ||
+                        status === "paid" ||
+                        status === "concluída" ||
+                        status === "entregue"
+                    );
+
+                }
+            );
+
+
+        const totalSales =
+            completedOrders.reduce(
+                (
+                    total,
+                    order
+                ) => {
+
+                    const amount =
+                        Number(
+                            order.total ??
+                            order.totalAmount ??
+                            order.amount ??
+                            order.price ??
+                            0
+                        );
+
+                    return total + amount;
+
+                },
+                0
+            );
+
+
+        // ==================================================
+        // AFFICHAGE — STATISTIQUES PRINCIPALES
+        // ==================================================
+
+        if (merchantCount) {
+
+            merchantCount.textContent =
+                merchantTotal;
+
+        }
+
+
+        if (productCount) {
+
+            productCount.textContent =
+                productTotal;
+
+        }
+
+
+        if (orderCount) {
+
+            orderCount.textContent =
+                orderTotal;
+
+        }
+
+
+        if (salesCount) {
+
+            salesCount.textContent =
+                formatKz(
+                    totalSales
+                );
+
+        }
+
+
+        // ==================================================
+        // AFFICHAGE — RÉSUMÉ
+        // ==================================================
+
+        if (activeMerchantCount) {
+
+            activeMerchantCount.textContent =
+                activeMerchants.length;
+
+        }
+
+
+        if (activeProductCount) {
+
+            activeProductCount.textContent =
+                activeProducts.length;
+
+        }
+
+
+        if (pendingOrderCount) {
+
+            pendingOrderCount.textContent =
+                pendingOrders.length;
+
+        }
+
+
+        if (outOfStockCount) {
+
+            outOfStockCount.textContent =
+                outOfStockProducts.length;
+
+        }
+
+
+        // ==================================================
+        // VARIABLES POUR LES BLOCS SUIVANTS
+        // ==================================================
+
+        window.brandStoreAdmin.statistics = {
+
+            merchantTotal,
+
+            productTotal,
+
+            orderTotal,
+
+            activeMerchantTotal:
+                activeMerchants.length,
+
+            activeProductTotal:
+                activeProducts.length,
+
+            pendingOrderTotal:
+                pendingOrders.length,
+
+            outOfStockTotal:
+                outOfStockProducts.length,
+
+            completedOrderTotal:
+                completedOrders.length,
+
+            totalSales
+
+        };
+
+
+        // ==================================================
+        // ALERTE — SUCCÈS
+        // ==================================================
+
+        alert(
+            "BLOC 3 — Estatísticas da Loja carregadas com sucesso."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 3 — Erro ao carregar estatísticas:",
+            error
+        );
+
+
+        alert(
+            "BLOC 3 — ERRO ao carregar estatísticas:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// LANCER LE CHARGEMENT
+// ==========================================================
+
+loadStoreStatistics();
+
+
+// ==========================================================
+// FIN BLOC 3
+// ==========================================================
