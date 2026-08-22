@@ -2001,3 +2001,1335 @@ async function loadStoreStatistics() {
 // ==========================================================
 // FIN BLOC 3
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 4 — GESTION DES COMMERÇANTS
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT DU BLOC
+// ==========================================================
+
+alert(
+    "BLOC 4 — Carregamento da gestão de comerciantes..."
+);
+
+
+// ==========================================================
+// ÉTAT DU BLOC
+// ==========================================================
+
+let filteredMerchants = [];
+
+let selectedMerchant = null;
+
+
+// ==========================================================
+// COLLECTION FIRESTORE
+// ==========================================================
+
+const merchantsCollectionRef =
+    collection(
+        db,
+        "merchants"
+    );
+
+
+// ==========================================================
+// UTILITAIRE — STATUT COMMERÇANT
+// ==========================================================
+
+function getMerchantStatus(merchant) {
+
+    if (!merchant) {
+
+        return "inactive";
+
+    }
+
+    if (
+        merchant.status
+    ) {
+
+        return String(
+            merchant.status
+        ).toLowerCase();
+
+    }
+
+    if (
+        merchant.active === true
+    ) {
+
+        return "active";
+
+    }
+
+    return "inactive";
+
+}
+
+
+// ==========================================================
+// UTILITAIRE — NOM DU COMMERÇANT
+// ==========================================================
+
+function getMerchantName(merchant) {
+
+    if (!merchant) {
+
+        return "Commerçant";
+
+    }
+
+    return (
+        merchant.shopName ||
+        merchant.storeName ||
+        merchant.businessName ||
+        merchant.name ||
+        (
+            [
+                merchant.firstName,
+                merchant.lastName
+            ]
+            .filter(Boolean)
+            .join(" ")
+        ) ||
+        "Commerçant"
+    );
+
+}
+
+
+// ==========================================================
+// UTILITAIRE — TÉLÉPHONE
+// ==========================================================
+
+function getMerchantPhone(merchant) {
+
+    if (!merchant) {
+
+        return "—";
+
+    }
+
+    return (
+        merchant.phone ||
+        merchant.phoneNumber ||
+        merchant.whatsapp ||
+        merchant.whatsappNumber ||
+        "—"
+    );
+
+}
+
+
+// ==========================================================
+// UTILITAIRE — NORMALISER LE TEXTE
+// ==========================================================
+
+function normalizeMerchantText(value) {
+
+    return String(
+        value || ""
+    )
+    .toLowerCase()
+    .normalize(
+        "NFD"
+    )
+    .replace(
+        /[\u0300-\u036f]/g,
+        ""
+    )
+    .trim();
+
+}
+
+
+// ==========================================================
+// FONCTION — CHARGER LES COMMERÇANTS
+// ==========================================================
+
+async function loadStoreMerchants() {
+
+    try {
+
+        if (!storeId) {
+
+            throw new Error(
+                "ID da Loja Oficial não encontrado."
+            );
+
+        }
+
+
+        // ==================================================
+        // REQUÊTE FIRESTORE
+        // ==================================================
+
+        let snapshot;
+
+
+        try {
+
+            const merchantQuery =
+                query(
+                    merchantsCollectionRef,
+                    where(
+                        "storeId",
+                        "==",
+                        storeId
+                    )
+                );
+
+
+            snapshot =
+                await getDocs(
+                    merchantQuery
+                );
+
+        } catch (error) {
+
+            console.warn(
+                "BLOC 4 — Busca por storeId falhou:",
+                error
+            );
+
+
+            // ------------------------------------------------
+            // FALLBACK — COLLECTION VIDE
+            // ------------------------------------------------
+
+            snapshot = {
+                docs: []
+            };
+
+        }
+
+
+        // ==================================================
+        // TRANSFORMER LES DONNÉES
+        // ==================================================
+
+        merchants =
+            snapshot.docs.map(
+                merchantDoc => ({
+
+                    id:
+                        merchantDoc.id,
+
+                    ...merchantDoc.data()
+
+                })
+            );
+
+
+        // ==================================================
+        // INITIALISER LA LISTE FILTRÉE
+        // ==================================================
+
+        filteredMerchants =
+            [
+                ...merchants
+            ];
+
+
+        // ==================================================
+        // AFFICHER
+        // ==================================================
+
+        renderMerchantList();
+
+
+        // ==================================================
+        // METTRE À JOUR LE COMPTEUR
+        // ==================================================
+
+        updateMerchantCounters();
+
+
+        // ==================================================
+        // EXPOSER LES DONNÉES
+        // ==================================================
+
+        window.brandStoreAdmin.merchants =
+            merchants;
+
+
+        // ==================================================
+        // ALERTE SUCCÈS
+        // ==================================================
+
+        alert(
+            "BLOC 4 — Comerciantes carregados com sucesso."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 4 — Erro:",
+            error
+        );
+
+
+        alert(
+            "BLOC 4 — ERRO ao carregar comerciantes:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — FILTRER LES COMMERÇANTS
+// ==========================================================
+
+function filterMerchants() {
+
+    const search =
+        normalizeMerchantText(
+            currentMerchantSearch
+        );
+
+
+    const statusFilter =
+        normalizeMerchantText(
+            merchantStatusFilter?.value ||
+            "all"
+        );
+
+
+    filteredMerchants =
+        merchants.filter(
+            merchant => {
+
+                // ------------------------------------------
+                // RECHERCHE
+                // ------------------------------------------
+
+                const searchText =
+                    normalizeMerchantText(
+                        [
+                            getMerchantName(
+                                merchant
+                            ),
+
+                            getMerchantPhone(
+                                merchant
+                            ),
+
+                            merchant.email,
+
+                            merchant.city,
+
+                            merchant.province,
+
+                            merchant.shopName,
+
+                            merchant.storeName
+                        ]
+                        .filter(Boolean)
+                        .join(" ")
+                    );
+
+
+                const matchesSearch =
+                    !search ||
+                    searchText.includes(
+                        search
+                    );
+
+
+                // ------------------------------------------
+                // STATUT
+                // ------------------------------------------
+
+                const merchantStatus =
+                    getMerchantStatus(
+                        merchant
+                    );
+
+
+                let matchesStatus =
+                    true;
+
+
+                if (
+                    statusFilter &&
+                    statusFilter !== "all"
+                ) {
+
+                    matchesStatus =
+                        merchantStatus ===
+                        statusFilter;
+
+                }
+
+
+                return (
+                    matchesSearch &&
+                    matchesStatus
+                );
+
+            }
+        );
+
+
+    renderMerchantList();
+
+}
+
+
+// ==========================================================
+// ÉVÉNEMENT — RECHERCHE
+// ==========================================================
+
+merchantSearch?.addEventListener(
+    "input",
+    event => {
+
+        currentMerchantSearch =
+            event.target.value || "";
+
+
+        filterMerchants();
+
+    }
+);
+
+
+// ==========================================================
+// ÉVÉNEMENT — FILTRE STATUT
+// ==========================================================
+
+merchantStatusFilter?.addEventListener(
+    "change",
+    () => {
+
+        filterMerchants();
+
+    }
+);
+
+
+// ==========================================================
+// FONCTION — AFFICHER LA LISTE
+// ==========================================================
+
+function renderMerchantList() {
+
+    if (!merchantList) {
+
+        return;
+
+    }
+
+
+    if (
+        filteredMerchants.length === 0
+    ) {
+
+        renderEmptyState(
+            merchantList,
+            "storefront",
+            "Nenhum comerciante encontrado",
+            "Ainda não existem comerciantes associados a esta Loja Oficial."
+        );
+
+        return;
+
+    }
+
+
+    merchantList.innerHTML =
+        filteredMerchants
+        .map(
+            merchant => {
+
+                const name =
+                    getMerchantName(
+                        merchant
+                    );
+
+
+                const phone =
+                    getMerchantPhone(
+                        merchant
+                    );
+
+
+                const status =
+                    getMerchantStatus(
+                        merchant
+                    );
+
+
+                const statusLabel =
+                    getMerchantStatusLabel(
+                        status
+                    );
+
+
+                const verified =
+                    merchant.verified === true ||
+                    merchant.isVerified === true ||
+                    merchant.verification === true;
+
+
+                const avatar =
+                    merchant.logo ||
+                    merchant.photo ||
+                    merchant.avatar ||
+                    merchant.profileImage ||
+                    "images/default-store.png";
+
+
+                return `
+
+                    <div
+                        class="merchantCard"
+                        data-merchant-id="${merchant.id}"
+                    >
+
+                        <div class="merchantCardMain">
+
+                            <img
+                                class="merchantAvatar"
+                                src="${avatar}"
+                                alt="${name}"
+                                onerror="
+                                    this.src='images/default-store.png'
+                                "
+                            >
+
+
+                            <div class="merchantInfo">
+
+                                <h3>
+
+                                    ${name}
+
+                                    ${
+                                        verified
+                                            ? `
+                                                <span
+                                                    class="material-symbols-rounded"
+                                                    title="Verificado"
+                                                >
+                                                    verified
+                                                </span>
+                                              `
+                                            : ""
+                                    }
+
+                                </h3>
+
+
+                                <p>
+                                    ${phone}
+                                </p>
+
+
+                                <span
+                                    class="merchantStatus ${status}"
+                                >
+                                    ${statusLabel}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="merchantCardActions">
+
+                            <button
+                                type="button"
+                                class="merchantViewButton"
+                                data-action="view"
+                                data-merchant-id="${merchant.id}"
+                            >
+
+                                <span class="material-symbols-rounded">
+                                    visibility
+                                </span>
+
+                                Ver
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="merchantStatusButton"
+                                data-action="toggle"
+                                data-merchant-id="${merchant.id}"
+                            >
+
+                                <span class="material-symbols-rounded">
+                                    ${
+                                        status === "active"
+                                            ? "block"
+                                            : "check_circle"
+                                    }
+                                </span>
+
+                                ${
+                                    status === "active"
+                                        ? "Desativar"
+                                        : "Ativar"
+                                }
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="merchantDeleteButton"
+                                data-action="delete"
+                                data-merchant-id="${merchant.id}"
+                            >
+
+                                <span class="material-symbols-rounded">
+                                    delete
+                                </span>
+
+                                Excluir
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+        )
+        .join("");
+
+
+    // ======================================================
+    // ACTIONS
+    // ======================================================
+
+    merchantList
+        .querySelectorAll(
+            "[data-action]"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    handleMerchantAction
+                );
+
+            }
+        );
+
+}
+
+
+// ==========================================================
+// UTILITAIRE — LABEL STATUT
+// ==========================================================
+
+function getMerchantStatusLabel(
+    status
+) {
+
+    switch (
+        status
+    ) {
+
+        case "active":
+            return "Ativo";
+
+        case "approved":
+            return "Aprovado";
+
+        case "pending":
+            return "Pendente";
+
+        case "suspended":
+            return "Suspenso";
+
+        case "blocked":
+            return "Bloqueado";
+
+        case "inactive":
+            return "Inativo";
+
+        default:
+            return status || "Inativo";
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — COMPTEURS
+// ==========================================================
+
+function updateMerchantCounters() {
+
+    const total =
+        merchants.length;
+
+
+    const active =
+        merchants.filter(
+            merchant => {
+
+                const status =
+                    getMerchantStatus(
+                        merchant
+                    );
+
+                return (
+                    status === "active" ||
+                    status === "approved"
+                );
+
+            }
+        ).length;
+
+
+    if (merchantCount) {
+
+        merchantCount.textContent =
+            total;
+
+    }
+
+
+    if (activeMerchantCount) {
+
+        activeMerchantCount.textContent =
+            active;
+
+    }
+
+
+    // ------------------------------------------------------
+    // STATISTIQUES DU BLOC 3
+    // ------------------------------------------------------
+
+    if (
+        window.brandStoreAdmin.statistics
+    ) {
+
+        window.brandStoreAdmin.statistics
+            .merchantTotal =
+            total;
+
+
+        window.brandStoreAdmin.statistics
+            .activeMerchantTotal =
+            active;
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — ACTION COMMERÇANT
+// ==========================================================
+
+async function handleMerchantAction(
+    event
+) {
+
+    const button =
+        event.currentTarget;
+
+
+    const merchantId =
+        button.dataset.merchantId;
+
+
+    const action =
+        button.dataset.action;
+
+
+    if (!merchantId) {
+
+        return;
+
+    }
+
+
+    const merchant =
+        merchants.find(
+            item =>
+                item.id ===
+                merchantId
+        );
+
+
+    if (!merchant) {
+
+        showToast(
+            "Comerciante não encontrado.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    // ======================================================
+    // VOIR
+    // ======================================================
+
+    if (
+        action === "view"
+    ) {
+
+        openMerchantDetails(
+            merchant
+        );
+
+        return;
+
+    }
+
+
+    // ======================================================
+    // ACTIVER / DÉSACTIVER
+    // ======================================================
+
+    if (
+        action === "toggle"
+    ) {
+
+        await toggleMerchantStatus(
+            merchant
+        );
+
+        return;
+
+    }
+
+
+    // ======================================================
+    // SUPPRIMER
+    // ======================================================
+
+    if (
+        action === "delete"
+    ) {
+
+        await deleteMerchant(
+            merchant
+        );
+
+        return;
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — OUVRIR DÉTAILS
+// ==========================================================
+
+function openMerchantDetails(
+    merchant
+) {
+
+    selectedMerchant =
+        merchant;
+
+
+    if (
+        !merchantDetailsContent
+    ) {
+
+        return;
+
+    }
+
+
+    const name =
+        getMerchantName(
+            merchant
+        );
+
+
+    const status =
+        getMerchantStatus(
+            merchant
+        );
+
+
+    const verified =
+        merchant.verified === true ||
+        merchant.isVerified === true ||
+        merchant.verification === true;
+
+
+    merchantDetailsContent.innerHTML = `
+
+        <div class="merchantDetails">
+
+            <div class="merchantDetailsHeader">
+
+                <h2>
+                    ${name}
+                </h2>
+
+                ${
+                    verified
+                        ? `
+                            <span
+                                class="material-symbols-rounded"
+                            >
+                                verified
+                            </span>
+                          `
+                        : ""
+                }
+
+            </div>
+
+
+            <div class="merchantDetailsGrid">
+
+                <div>
+                    <strong>
+                        ID
+                    </strong>
+
+                    <span>
+                        ${merchant.id}
+                    </span>
+                </div>
+
+
+                <div>
+                    <strong>
+                        Estado
+                    </strong>
+
+                    <span>
+                        ${getMerchantStatusLabel(status)}
+                    </span>
+                </div>
+
+
+                <div>
+                    <strong>
+                        Telefone
+                    </strong>
+
+                    <span>
+                        ${getMerchantPhone(merchant)}
+                    </span>
+                </div>
+
+
+                <div>
+                    <strong>
+                        E-mail
+                    </strong>
+
+                    <span>
+                        ${merchant.email || "—"}
+                    </span>
+                </div>
+
+
+                <div>
+                    <strong>
+                        Cidade
+                    </strong>
+
+                    <span>
+                        ${merchant.city || "—"}
+                    </span>
+                </div>
+
+
+                <div>
+                    <strong>
+                        Província
+                    </strong>
+
+                    <span>
+                        ${merchant.province || "—"}
+                    </span>
+                </div>
+
+
+                <div>
+                    <strong>
+                        Loja
+                    </strong>
+
+                    <span>
+                        ${
+                            merchant.shopName ||
+                            merchant.storeName ||
+                            "—"
+                        }
+                    </span>
+                </div>
+
+
+                <div>
+                    <strong>
+                        Data de criação
+                    </strong>
+
+                    <span>
+                        ${
+                            merchant.createdAt
+                                ? formatDateTime(
+                                    merchant.createdAt
+                                )
+                                : "—"
+                        }
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    openModal(
+        merchantDetailsModal
+    );
+
+}
+
+
+// ==========================================================
+// FERMER MODAL COMMERÇANT
+// ==========================================================
+
+closeMerchantDetails?.addEventListener(
+    "click",
+    () => {
+
+        closeModal(
+            merchantDetailsModal
+        );
+
+        selectedMerchant =
+            null;
+
+    }
+);
+
+
+// ==========================================================
+// FERMER MODAL EN CLIQUANT À L'EXTÉRIEUR
+// ==========================================================
+
+merchantDetailsModal?.addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target ===
+            merchantDetailsModal
+        ) {
+
+            closeModal(
+                merchantDetailsModal
+            );
+
+            selectedMerchant =
+                null;
+
+        }
+
+    }
+);
+
+
+// ==========================================================
+// FONCTION — ACTIVER / DÉSACTIVER
+// ==========================================================
+
+async function toggleMerchantStatus(
+    merchant
+) {
+
+    try {
+
+        const currentStatus =
+            getMerchantStatus(
+                merchant
+            );
+
+
+        const newStatus =
+            currentStatus === "active"
+                ? "inactive"
+                : "active";
+
+
+        const confirmation =
+            confirm(
+                newStatus === "active"
+                    ? "Deseja ativar este comerciante?"
+                    : "Deseja desativar este comerciante?"
+            );
+
+
+        if (!confirmation) {
+
+            return;
+
+        }
+
+
+        showLoading(
+            "Atualizando comerciante..."
+        );
+
+
+        const merchantRef =
+            doc(
+                db,
+                "merchants",
+                merchant.id
+            );
+
+
+        await updateDoc(
+            merchantRef,
+            {
+
+                status:
+                    newStatus,
+
+                active:
+                    newStatus === "active",
+
+                updatedAt:
+                    serverTimestamp()
+
+            }
+        );
+
+
+        merchant.status =
+            newStatus;
+
+
+        merchant.active =
+            newStatus === "active";
+
+
+        filterMerchants();
+
+        updateMerchantCounters();
+
+
+        hideLoading();
+
+
+        showToast(
+            newStatus === "active"
+                ? "Comerciante ativado com sucesso."
+                : "Comerciante desativado com sucesso.",
+            "check_circle"
+        );
+
+
+    } catch (error) {
+
+        hideLoading();
+
+
+        console.error(
+            "BLOC 4 — Erro ao atualizar comerciante:",
+            error
+        );
+
+
+        alert(
+            "BLOC 4 — ERRO ao atualizar comerciante:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — SUPPRIMER COMMERÇANT
+// ==========================================================
+
+async function deleteMerchant(
+    merchant
+) {
+
+    try {
+
+        const name =
+            getMerchantName(
+                merchant
+            );
+
+
+        const confirmation =
+            confirm(
+                "Tem certeza que deseja excluir o comerciante:\n\n" +
+                name +
+                "?"
+            );
+
+
+        if (!confirmation) {
+
+            return;
+
+        }
+
+
+        showLoading(
+            "Excluindo comerciante..."
+        );
+
+
+        const merchantRef =
+            doc(
+                db,
+                "merchants",
+                merchant.id
+            );
+
+
+        await deleteDoc(
+            merchantRef
+        );
+
+
+        merchants =
+            merchants.filter(
+                item =>
+                    item.id !==
+                    merchant.id
+            );
+
+
+        filteredMerchants =
+            filteredMerchants.filter(
+                item =>
+                    item.id !==
+                    merchant.id
+            );
+
+
+        renderMerchantList();
+
+        updateMerchantCounters();
+
+
+        if (
+            selectedMerchant &&
+            selectedMerchant.id ===
+            merchant.id
+        ) {
+
+            closeModal(
+                merchantDetailsModal
+            );
+
+            selectedMerchant =
+                null;
+
+        }
+
+
+        hideLoading();
+
+
+        showToast(
+            "Comerciante excluído com sucesso.",
+            "delete"
+        );
+
+
+    } catch (error) {
+
+        hideLoading();
+
+
+        console.error(
+            "BLOC 4 — Erro ao excluir comerciante:",
+            error
+        );
+
+
+        alert(
+            "BLOC 4 — ERRO ao excluir comerciante:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// EXPOSER LES FONCTIONS DU BLOC
+// ==========================================================
+
+window.brandStoreAdmin.loadStoreMerchants =
+    loadStoreMerchants;
+
+
+window.brandStoreAdmin.filterMerchants =
+    filterMerchants;
+
+
+window.brandStoreAdmin.openMerchantDetails =
+    openMerchantDetails;
+
+
+window.brandStoreAdmin.toggleMerchantStatus =
+    toggleMerchantStatus;
+
+
+window.brandStoreAdmin.deleteMerchant =
+    deleteMerchant;
+
+
+// ==========================================================
+// LANCER LE CHARGEMENT
+// ==========================================================
+
+loadStoreMerchants();
+
+
+// ==========================================================
+// ALERTE — FIN DU BLOC
+// ==========================================================
+
+alert(
+    "BLOC 4 — Gestão de comerciantes inicializada com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 4
+// ==========================================================
