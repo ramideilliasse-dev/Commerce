@@ -9,9 +9,7 @@
 // ALERTE — DÉBUT
 // ==========================================================
 
-alert(
-    "BLOC 1 — Initialisation de Brand Stores démarrée."
-);
+
 
 
 // ==========================================================
@@ -126,10 +124,7 @@ const officialStoresRef =
 
 async function loadOfficialStores() {
 
-    alert(
-        "BLOC 1 — Lecture de officialStores démarrée."
-    );
-
+    
 
     try {
 
@@ -192,30 +187,7 @@ async function loadOfficialStores() {
         }
 
 
-        alert(
-
-            "BLOC 1 — Lecture Firestore terminée.\n\n" +
-
-            "Loja trouvées : " +
-            stores.length +
-
-            "\n\n" +
-
-            "Première : " +
-            (
-                stores[0]?.id ||
-                "—"
-            ) +
-
-            "\n" +
-
-            "Dernière : " +
-            (
-                stores[stores.length - 1]?.id ||
-                "—"
-            )
-
-        );
+        
 
 
         // ==============================================
@@ -282,9 +254,7 @@ await loadOfficialStores();
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 1 — Inicialização de Brand Stores terminado com sucesso."
-);
+
 
 
 // ==========================================================
@@ -296,9 +266,6 @@ alert(
 // BLOC 2 — AFFICHAGE DES LOJA
 // ==========================================================
 
-alert(
-    "BLOC 2 — Affichage des Loja Oficiais démarré."
-);
 
 
 // ==========================================================
@@ -309,11 +276,6 @@ const officialStores =
     window.brandStoresData.stores;
 
 
-alert(
-    "BLOC 2 — " +
-    officialStores.length +
-    " Loja récupérées."
-);
 
 
 // ==========================================================
@@ -357,9 +319,6 @@ if (!storesTemplate) {
 }
 
 
-alert(
-    "BLOC 2 — Structure HTML trouvée."
-);
 
 
 // ==========================================================
@@ -718,29 +677,6 @@ window.brandStoresData = {
 // RÉSULTAT
 // ==========================================================
 
-alert(
-
-    "BLOC 2 — Affichage terminé.\n\n" +
-
-    "Loja Firestore : " +
-    officialStores.length +
-
-    "\n\n" +
-
-    "Loja affichées : " +
-    displayedCount +
-
-    "\n\n" +
-
-    "Loja vides : " +
-    emptyCount +
-
-    "\n\n" +
-
-    "Loja avec informations : " +
-    namedCount
-
-);
 
 
 // ==========================================================
@@ -757,9 +693,7 @@ alert(
 // ALERTE — DÉBUT
 // ==========================================================
 
-alert(
-    "BLOC 3 — Chargement des statistiques des Loja démarré."
-);
+
 
 
 // ==========================================================
@@ -819,9 +753,6 @@ let ordersStats = [];
 // CHARGEMENT — COMMERÇANTS
 // ==========================================================
 
-alert(
-    "BLOC 3 — Lecture de merchants démarrée."
-);
 
 
 try {
@@ -847,14 +778,7 @@ try {
         );
 
 
-    alert(
-
-        "BLOC 3 — merchants chargé.\n\n" +
-
-        "Commerçants trouvés : " +
-        merchantsStats.length
-
-    );
+    
 
 }
 
@@ -877,9 +801,7 @@ catch (error) {
 // CHARGEMENT — PRODUITS
 // ==========================================================
 
-alert(
-    "BLOC 3 — Lecture de products démarrée."
-);
+
 
 
 try {
@@ -905,14 +827,7 @@ try {
         );
 
 
-    alert(
-
-        "BLOC 3 — products chargé.\n\n" +
-
-        "Produits trouvés : " +
-        productsStats.length
-
-    );
+    
 
 }
 
@@ -935,9 +850,7 @@ catch (error) {
 // CHARGEMENT — COMMANDES
 // ==========================================================
 
-alert(
-    "BLOC 3 — Lecture de orders démarrée."
-);
+
 
 
 try {
@@ -963,15 +876,7 @@ try {
         );
 
 
-    alert(
-
-        "BLOC 3 — orders chargé.\n\n" +
-
-        "Commandes trouvées : " +
-        ordersStats.length
-
-    );
-
+    
 }
 
 catch (error) {
@@ -1413,41 +1318,12 @@ window.brandStoresData = {
 // ALERTE — RÉSULTAT
 // ==========================================================
 
-alert(
-
-    "BLOC 3 — Statistiques terminées.\n\n" +
-
-    "Commerçants : " +
-    totalMerchants +
-
-    "\n\n" +
-
-    "Produits : " +
-    totalProducts +
-
-    "\n\n" +
-
-    "Commandes : " +
-    totalOrders +
-
-    "\n\n" +
-
-    "Ventes : " +
-    totalSales.toLocaleString(
-        "pt-AO"
-    ) +
-    " Kz"
-
-);
 
 
 // ==========================================================
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 3 — Statistiques des Loja terminé avec succès."
-);
 
 
 // ==========================================================
@@ -1464,9 +1340,7 @@ alert(
 // ALERTE — DÉBUT DU BLOC
 // ==========================================================
 
-alert(
-    "BLOC 4 — Recherche et filtrage des Loja démarré."
-);
+
 
 
 // ==========================================================
@@ -1503,9 +1377,6 @@ if (
 }
 
 
-alert(
-    "BLOC 4 — Données des blocs précédents trouvées."
-);
 
 
 // ==========================================================
@@ -1558,9 +1429,7 @@ if (!storesGridForSearch) {
 }
 
 
-alert(
-    "BLOC 4 — Éléments de recherche trouvés."
-);
+
 
 
 // ==========================================================
@@ -1835,19 +1704,7 @@ const initialVisibleCount =
 // ALERTE — INITIALISATION TERMINÉE
 // ==========================================================
 
-alert(
 
-    "BLOC 4 — Recherche initialisée.\n\n" +
-
-    "Loja disponíveis : " +
-    storesForSearch.length +
-
-    "\n\n" +
-
-    "Loja visíveis : " +
-    initialVisibleCount
-
-);
 
 
 // ==========================================================
@@ -1864,9 +1721,6 @@ alert(
 // ALERTE — DÉBUT DU BLOC
 // ==========================================================
 
-alert(
-    "BLOC 5 — Navigation des Loja démarrée."
-);
 
 
 // ==========================================================
@@ -1902,10 +1756,6 @@ if (
 
 }
 
-
-alert(
-    "BLOC 5 — Données des Blocs 1 à 4 trouvées."
-);
 
 
 // ==========================================================
@@ -2129,22 +1979,7 @@ function openBrandStoreAdmin(
     }
 
 
-    alert(
-
-        "BLOC 5 — Loja selecionada.\n\n" +
-
-        "ID : " +
-        selectedStore.id +
-
-        "\n\n" +
-
-        "Nome : " +
-        (
-            selectedStore.name ||
-            "Loja disponível"
-        )
-
-    );
+    
 
 
     const url =
@@ -2181,16 +2016,7 @@ function openOfficialStore(
     }
 
 
-    alert(
-
-        "BLOC 5 — Visualização da Loja.\n\n" +
-
-        "ID : " +
-        selectedStore.id
-
-    );
-
-
+    
     const url =
         "official-store.html?store=" +
         encodeURIComponent(
@@ -2322,29 +2148,11 @@ window.brandStoresNavigation = {
 // ALERTE — RÉSULTAT
 // ==========================================================
 
-alert(
-
-    "BLOC 5 — Navigation configurée.\n\n" +
-
-    "Loja disponíveis : " +
-    storesForNavigation.length +
-
-    "\n\n" +
-
-    "Cartes détectées : " +
-    navigationCards.length
-
-);
 
 
 // ==========================================================
 // ALERTE — FIN DU BLOC
 // ==========================================================
-
-alert(
-    "BLOC 5 — Navigation des Loja terminé avec succès."
-);
-
 
 // ==========================================================
 // FIN BLOC 5
@@ -2360,9 +2168,6 @@ alert(
 // ALERTE — DÉBUT
 // ==========================================================
 
-alert(
-    "BLOC 6 — Gestion des états des Loja démarrée."
-);
 
 
 // ==========================================================
@@ -2398,10 +2203,6 @@ if (
 
 }
 
-
-alert(
-    "BLOC 6 — Données des Blocs 1 à 5 trouvées."
-);
 
 
 // ==========================================================
@@ -2874,38 +2675,13 @@ window.brandStoresData = {
 // ALERTE — RÉSULTAT
 // ==========================================================
 
-alert(
 
-    "BLOC 6 — États des Loja analysés.\n\n" +
-
-    "Disponíveis : " +
-    statusSummary.empty +
-
-    "\n\n" +
-
-    "Ativas : " +
-    statusSummary.active +
-
-    "\n\n" +
-
-    "Suspensas : " +
-    statusSummary.suspended +
-
-    "\n\n" +
-
-    "Verificadas : " +
-    statusSummary.verified
-
-);
 
 
 // ==========================================================
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 6 — Gestão dos estados das Loja terminado com sucesso."
-);
 
 
 // ==========================================================
@@ -2922,9 +2698,6 @@ alert(
 // ALERTE — DÉBUT DU BLOC
 // ==========================================================
 
-alert(
-    "BLOC 7 — Contexte administratif des Loja démarré."
-);
 
 
 // ==========================================================
@@ -2961,9 +2734,7 @@ if (
 }
 
 
-alert(
-    "BLOC 7 — Comunicação com os Blocos 1 à 6 confirmada."
-);
+
 
 
 // ==========================================================
@@ -3345,27 +3116,7 @@ adminCards.forEach(
                 // ALERTE DE CONTRÔLE
                 // ------------------------------------------
 
-                alert(
-
-                    "BLOC 7 — Loja selecionada para administração.\n\n" +
-
-                    "ID : " +
-                    context.id +
-
-                    "\n\n" +
-
-                    "Nome : " +
-                    (
-                        context.name ||
-                        "Loja disponível"
-                    ) +
-
-                    "\n\n" +
-
-                    "Estado : " +
-                    context.status
-
-                );
+                
 
             }
         );
@@ -3410,23 +3161,13 @@ window.brandStoresData = {
 // ALERTE — TEST DU BLOC
 // ==========================================================
 
-alert(
-
-    "BLOC 7 — Test de préparation terminé.\n\n" +
-
-    "Loja disponibles : " +
-    storesForAdmin.length
-
-);
 
 
 // ==========================================================
 // ALERTE — FIN DU BLOC
 // ==========================================================
 
-alert(
-    "BLOC 7 — Contexto administrativo das Loja terminado com sucesso."
-);
+
 
 
 // ==========================================================
@@ -3443,9 +3184,6 @@ alert(
 // ALERTE — DÉBUT DU BLOC
 // ==========================================================
 
-alert(
-    "BLOC 8 — Actions administrativas das Loja démarrées."
-);
 
 
 // ==========================================================
@@ -3478,9 +3216,7 @@ if (!window.brandStoresAdmin) {
 }
 
 
-alert(
-    "BLOC 8 — Comunicação com os Blocos 1 à 7 confirmada."
-);
+
 
 
 // ==========================================================
@@ -3650,28 +3386,7 @@ function prepareStoreAction(
 
     if (!allowed) {
 
-        alert(
-
-            "BLOC 8 — Ação não permitida.\n\n" +
-
-            "Loja : " +
-            (
-                store.name ||
-                store.id
-            ) +
-
-            "\n\n" +
-
-            "Estado atual : " +
-            store.status +
-
-            "\n\n" +
-
-            "Ação : " +
-            action
-
-        );
-
+        
         return null;
 
     }
@@ -3801,28 +3516,11 @@ const selectedStore =
 
 if (selectedStore) {
 
-    alert(
-
-        "BLOC 8 — Loja selecionada encontrada.\n\n" +
-
-        "ID : " +
-        selectedStore.id +
-
-        "\n\n" +
-
-        "Estado : " +
-        (
-            selectedStore.status ||
-            ADMIN_STORE_STATES.EMPTY
-        )
-
-    );
+    
 
 } else {
 
-    alert(
-        "BLOC 8 — Nenhuma Loja selecionada ainda. Sistema pronto."
-    );
+    
 
 }
 
@@ -3831,9 +3529,7 @@ if (selectedStore) {
 // ALERTE — FIN DU BLOC
 // ==========================================================
 
-alert(
-    "BLOC 8 — Ações administrativas preparatórias terminado com sucesso."
-);
+
 
 
 // ==========================================================
