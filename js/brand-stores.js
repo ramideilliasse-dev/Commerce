@@ -3529,9 +3529,6 @@ if (selectedStore) {
 // ALERTE — FIN DU BLOC
 // ==========================================================
 
-
-
-
 // ==========================================================
 // TOMA
 // BRAND STORES
@@ -3558,19 +3555,11 @@ if (backButton) {
 
     backButton.addEventListener(
         "click",
-        function (event) {
+        (event) => {
 
             event.preventDefault();
 
-            /*
-             * Retour à la page précédente.
-             * Si aucune page précédente n'existe,
-             * retour vers index.html.
-             */
-
-            if (
-                window.history.length > 1
-            ) {
+            if (window.history.length > 1) {
 
                 window.history.back();
 
@@ -3595,16 +3584,11 @@ if (refreshButton) {
 
     refreshButton.addEventListener(
         "click",
-        async function (event) {
+        (event) => {
 
             event.preventDefault();
 
-
-            /*
-             * Empêcher plusieurs clics
-             * pendant le rechargement.
-             */
-
+            // Empêcher plusieurs clics
             if (
                 refreshButton.dataset.refreshing ===
                 "true"
@@ -3614,22 +3598,15 @@ if (refreshButton) {
 
             }
 
-
             refreshButton.dataset.refreshing =
                 "true";
 
-
-            refreshButton.disabled =
-                true;
+            refreshButton.disabled = true;
 
 
-            // ----------------------------------------------
-            // INDICATION VISUELLE
-            // ----------------------------------------------
-
-            const originalHTML =
-                refreshButton.innerHTML;
-
+            // ------------------------------------------------
+            // ANIMATION DU BOUTON
+            // ------------------------------------------------
 
             refreshButton.innerHTML = `
 
@@ -3642,56 +3619,15 @@ if (refreshButton) {
             `;
 
 
-            try {
+            // ------------------------------------------------
+            // RECHARGER LA PAGE
+            // ------------------------------------------------
 
-                /*
-                 * Recharger complètement la page.
-                 *
-                 * Cela relance automatiquement :
-                 *
-                 * BLOC 1
-                 * BLOC 2
-                 * BLOC 3
-                 * BLOC 4
-                 * BLOC 5
-                 * BLOC 6
-                 * BLOC 7
-                 * BLOC 8
-                 *
-                 * et récupère les nouvelles données
-                 * depuis Firestore.
-                 */
+            setTimeout(() => {
 
                 window.location.reload();
 
-            }
-
-            catch (error) {
-
-                console.error(
-                    "TOMA — Erreur actualisation :",
-                    error
-                );
-
-
-                refreshButton.dataset.refreshing =
-                    "false";
-
-
-                refreshButton.disabled =
-                    false;
-
-
-                refreshButton.innerHTML =
-                    originalHTML;
-
-
-                alert(
-                    "ERRO ao atualizar as Lojas.\n\n" +
-                    error.message
-                );
-
-            }
+            }, 150);
 
         }
     );
@@ -3700,7 +3636,7 @@ if (refreshButton) {
 
 
 // ==========================================================
-// EXPOSER L'ÉTAT DU BLOC
+// ÉTAT DES CONTRÔLES
 // ==========================================================
 
 window.brandStoresControls = {
@@ -3717,3 +3653,5 @@ window.brandStoresControls = {
 // ==========================================================
 // FIN BLOC 9
 // ==========================================================
+
+
