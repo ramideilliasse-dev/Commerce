@@ -1168,7 +1168,7 @@ async function loadOfficialStore() {
         alert(
             "BLOC 2 — Loja Oficial carregada com sucesso."
         );
-
+return store;
 
     } catch (error) {
 
@@ -1476,7 +1476,11 @@ window.brandStoreAdmin.store =
 // LANCER LE CHARGEMENT
 // ==========================================================
 
-loadOfficialStore();
+loadOfficialStore().then(() => {
+
+    loadStoreStatistics();
+
+});
 
 
 // ==========================================================
@@ -1992,7 +1996,6 @@ async function loadStoreStatistics() {
 // LANCER LE CHARGEMENT
 // ==========================================================
 
-loadStoreStatistics();
 
 
 // ==========================================================
