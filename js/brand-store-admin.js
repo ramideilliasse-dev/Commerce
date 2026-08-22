@@ -5048,3 +5048,1526 @@ alert(
 // ==========================================================
 // FIN BLOC 5
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 6 — GESTION DES COMMANDES
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT DU BLOC
+// ==========================================================
+
+alert(
+    "BLOC 6 — Carregamento da gestão de pedidos..."
+);
+
+
+// ==========================================================
+// ÉTAT DU BLOC
+// ==========================================================
+
+let filteredOrders = [];
+
+let selectedOrder = null;
+
+
+// ==========================================================
+// COLLECTION FIRESTORE
+// ==========================================================
+
+const ordersCollectionRef =
+    collection(
+        db,
+        "orders"
+    );
+
+
+// ==========================================================
+// UTILITAIRE — STATUT COMMANDE
+// ==========================================================
+
+function getOrderStatus(order) {
+
+    if (!order) {
+
+        return "pending";
+
+    }
+
+
+    return String(
+        order.status ||
+        order.orderStatus ||
+        "pending"
+    )
+    .toLowerCase()
+    .trim();
+
+}
+
+
+// ==========================================================
+// UTILITAIRE — LABEL STATUT
+// ==========================================================
+
+function getOrderStatusLabel(status) {
+
+    switch (status) {
+
+        case "pending":
+        case "new":
+        case "novo":
+        case "pending_confirmation":
+
+            return "Pendente";
+
+
+        case "confirmed":
+        case "approved":
+        case "confirmado":
+
+            return "Confirmado";
+
+
+        case "processing":
+        case "preparing":
+        case "preparando":
+
+            return "Em preparação";
+
+
+        case "shipped":
+        case "shipping":
+        case "en_route":
+
+            return "Em entrega";
+
+
+        case "delivered":
+        case "entregue":
+        case "completed":
+        case "paid":
+
+            return "Entregue";
+
+
+        case "cancelled":
+        case "canceled":
+        case "cancelado":
+
+            return "Cancelado";
+
+
+        default:
+
+            return status || "Pendente";
+
+    }
+
+}
+
+
+// ==========================================================
+// UTILITAIRE — NOM CLIENT
+// ==========================================================
+
+function getOrderCustomerName(order) {
+
+    if (!order) {
+
+        return "Cliente";
+
+    }
+
+
+    return (
+        order.customerName ||
+        order.clientName ||
+        order.name ||
+        order.customer?.name ||
+        (
+            [
+                order.customer?.firstName,
+                order.customer?.lastName
+            ]
+            .filter(Boolean)
+            .join(" ")
+        ) ||
+        "Cliente"
+    );
+
+}
+
+
+// ==========================================================
+// UTILITAIRE — TÉLÉPHONE CLIENT
+// ==========================================================
+
+function getOrderCustomerPhone(order) {
+
+    if (!order) {
+
+        return "—";
+
+    }
+
+
+    return (
+        order.customerPhone ||
+        order.clientPhone ||
+        order.phone ||
+        order.phoneNumber ||
+        order.customer?.phone ||
+        "—"
+    );
+
+}
+
+
+// ==========================================================
+// UTILITAIRE — TOTAL COMMANDE
+// ==========================================================
+
+function getOrderTotal(order) {
+
+    if (!order) {
+
+        return 0;
+
+    }
+
+
+    return Number(
+        order.total ??
+        order.totalAmount ??
+        order.amount ??
+        order.grandTotal ??
+        0
+    );
+
+}
+
+
+// ==========================================================
+// UTILITAIRE — NOMBRE DE PRODUITS
+// ==========================================================
+
+function getOrderItemsCount(order) {
+
+    if (!order) {
+
+        return 0;
+
+    }
+
+
+    if (
+        Array.isArray(order.items)
+    ) {
+
+        return order.items.reduce(
+            (
+                total,
+                item
+            ) => {
+
+                return total +
+                    Number(
+                        item.quantity ||
+                        1
+                    );
+
+            },
+            0
+        );
+
+    }
+
+
+    return Number(
+        order.itemCount ??
+        order.quantity ??
+        0
+    );
+
+}
+
+
+// ==========================================================
+// UTILITAIRE — NORMALISER LE TEXTE
+// ==========================================================
+
+function normalizeOrderText(value) {
+
+    return String(
+        value || ""
+    )
+    .toLowerCase()
+    .normalize(
+        "NFD"
+    )
+    .replace(
+        /[\u0300-\u036f]/g,
+        ""
+    )
+    .trim();
+
+}
+
+
+// ==========================================================
+// FONCTION — CHARGER LES COMMANDES
+// ==========================================================
+
+async function loadStoreOrders() {
+
+    try {
+
+        if (!storeId) {
+
+            throw new Error(
+                "ID da Loja Oficial não encontrado."
+            );
+
+        }
+
+
+        // ==================================================
+        // REQUÊTE FIRESTORE
+        // ==================================================
+
+        let snapshot;
+
+
+        try {
+
+            const orderQuery =
+                query(
+                    ordersCollectionRef,
+                    where(
+                        "storeId",
+                        "==",
+                        storeId
+                    )
+                );
+
+
+            snapshot =
+                await getDocs(
+                    orderQuery
+                );
+
+        } catch (error) {
+
+            console.warn(
+                "BLOC 6 — Busca por storeId falhou:",
+                error
+            );
+
+
+            snapshot = {
+                docs: []
+            };
+
+        }
+
+
+        // ==================================================
+        // TRANSFORMER LES DONNÉES
+        // ==================================================
+
+        orders =
+            snapshot.docs.map(
+                orderDoc => ({
+
+                    id:
+                        orderDoc.id,
+
+                    ...orderDoc.data()
+
+                })
+            );
+
+
+        // ==================================================
+        // INITIALISER LA LISTE
+        // ==================================================
+
+        filteredOrders =
+            [
+                ...orders
+            ];
+
+
+        // ==================================================
+        // AFFICHER
+        // ==================================================
+
+        renderOrderList();
+
+
+        // ==================================================
+        // COMPTEURS
+        // ==================================================
+
+        updateOrderCounters();
+
+
+        // ==================================================
+        // EXPOSER LES DONNÉES
+        // ==================================================
+
+        window.brandStoreAdmin.orders =
+            orders;
+
+
+        // ==================================================
+        // ALERTE SUCCÈS
+        // ==================================================
+
+        alert(
+            "BLOC 6 — Pedidos carregados com sucesso."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 6 — Erro:",
+            error
+        );
+
+
+        alert(
+            "BLOC 6 — ERRO ao carregar pedidos:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — FILTRER LES COMMANDES
+// ==========================================================
+
+function filterOrders() {
+
+    const search =
+        normalizeOrderText(
+            currentOrderSearch
+        );
+
+
+    const statusFilter =
+        normalizeOrderText(
+            orderStatusFilter?.value ||
+            "all"
+        );
+
+
+    filteredOrders =
+        orders.filter(
+            order => {
+
+                // ------------------------------------------
+                // RECHERCHE
+                // ------------------------------------------
+
+                const searchText =
+                    normalizeOrderText(
+                        [
+                            order.id,
+
+                            getOrderCustomerName(
+                                order
+                            ),
+
+                            getOrderCustomerPhone(
+                                order
+                            ),
+
+                            order.customerEmail,
+
+                            order.city,
+
+                            order.address,
+
+                            order.reference,
+
+                            order.orderNumber
+                        ]
+                        .filter(Boolean)
+                        .join(" ")
+                    );
+
+
+                const matchesSearch =
+                    !search ||
+                    searchText.includes(
+                        search
+                    );
+
+
+                // ------------------------------------------
+                // STATUT
+                // ------------------------------------------
+
+                const status =
+                    getOrderStatus(
+                        order
+                    );
+
+
+                let matchesStatus =
+                    true;
+
+
+                if (
+                    statusFilter &&
+                    statusFilter !== "all"
+                ) {
+
+                    matchesStatus =
+                        status ===
+                        statusFilter;
+
+                }
+
+
+                return (
+                    matchesSearch &&
+                    matchesStatus
+                );
+
+            }
+        );
+
+
+    renderOrderList();
+
+}
+
+
+// ==========================================================
+// ÉVÉNEMENT — RECHERCHE
+// ==========================================================
+
+orderSearch?.addEventListener(
+    "input",
+    event => {
+
+        currentOrderSearch =
+            event.target.value || "";
+
+
+        filterOrders();
+
+    }
+);
+
+
+// ==========================================================
+// ÉVÉNEMENT — FILTRE STATUT
+// ==========================================================
+
+orderStatusFilter?.addEventListener(
+    "change",
+    () => {
+
+        filterOrders();
+
+    }
+);
+
+
+// ==========================================================
+// FONCTION — AFFICHER LES COMMANDES
+// ==========================================================
+
+function renderOrderList() {
+
+    if (!orderList) {
+
+        return;
+
+    }
+
+
+    if (
+        filteredOrders.length === 0
+    ) {
+
+        renderEmptyState(
+            orderList,
+            "receipt_long",
+            "Nenhum pedido encontrado",
+            "Ainda não existem pedidos associados a esta Loja Oficial."
+        );
+
+        return;
+
+    }
+
+
+    orderList.innerHTML =
+        filteredOrders
+        .map(
+            order => {
+
+                const status =
+                    getOrderStatus(
+                        order
+                    );
+
+
+                const statusLabel =
+                    getOrderStatusLabel(
+                        status
+                    );
+
+
+                const customerName =
+                    getOrderCustomerName(
+                        order
+                    );
+
+
+                const customerPhone =
+                    getOrderCustomerPhone(
+                        order
+                    );
+
+
+                const total =
+                    getOrderTotal(
+                        order
+                    );
+
+
+                const itemsCount =
+                    getOrderItemsCount(
+                        order
+                    );
+
+
+                const orderDate =
+                    order.createdAt
+                        ? formatDateTime(
+                            order.createdAt
+                        )
+                        : "—";
+
+
+                return `
+
+                    <div
+                        class="orderCard"
+                        data-order-id="${order.id}"
+                    >
+
+                        <div class="orderCardMain">
+
+                            <div class="orderIcon">
+
+                                <span class="material-symbols-rounded">
+                                    receipt_long
+                                </span>
+
+                            </div>
+
+
+                            <div class="orderInfo">
+
+                                <h3>
+                                    Pedido #${order.orderNumber || order.id}
+                                </h3>
+
+
+                                <p>
+                                    ${customerName}
+                                </p>
+
+
+                                <p>
+                                    ${customerPhone}
+                                </p>
+
+
+                                <p>
+                                    ${itemsCount} item(ns)
+                                </p>
+
+
+                                <strong>
+                                    ${formatKz(total)}
+                                </strong>
+
+
+                                <span
+                                    class="orderStatus ${status}"
+                                >
+                                    ${statusLabel}
+                                </span>
+
+
+                                <small>
+                                    ${orderDate}
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="orderCardActions">
+
+                            <button
+                                type="button"
+                                data-action="view"
+                                data-order-id="${order.id}"
+                            >
+
+                                <span class="material-symbols-rounded">
+                                    visibility
+                                </span>
+
+                                Ver
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                data-action="status"
+                                data-order-id="${order.id}"
+                            >
+
+                                <span class="material-symbols-rounded">
+                                    sync
+                                </span>
+
+                                Estado
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+        )
+        .join("");
+
+
+    // ======================================================
+    // ACTIONS
+    // ======================================================
+
+    orderList
+        .querySelectorAll(
+            "[data-action]"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    handleOrderAction
+                );
+
+            }
+        );
+
+}
+
+
+// ==========================================================
+// FONCTION — COMPTEURS COMMANDES
+// ==========================================================
+
+function updateOrderCounters() {
+
+    const total =
+        orders.length;
+
+
+    const newOrders =
+        orders.filter(
+            order => {
+
+                const status =
+                    getOrderStatus(
+                        order
+                    );
+
+
+                return (
+                    status === "pending" ||
+                    status === "new" ||
+                    status === "novo" ||
+                    status === "pending_confirmation"
+                );
+
+            }
+        ).length;
+
+
+    const processing =
+        orders.filter(
+            order => {
+
+                const status =
+                    getOrderStatus(
+                        order
+                    );
+
+
+                return (
+                    status === "processing" ||
+                    status === "preparing" ||
+                    status === "confirmed"
+                );
+
+            }
+        ).length;
+
+
+    const delivered =
+        orders.filter(
+            order => {
+
+                const status =
+                    getOrderStatus(
+                        order
+                    );
+
+
+                return (
+                    status === "delivered" ||
+                    status === "entregue" ||
+                    status === "completed" ||
+                    status === "paid"
+                );
+
+            }
+        ).length;
+
+
+    const cancelled =
+        orders.filter(
+            order => {
+
+                const status =
+                    getOrderStatus(
+                        order
+                    );
+
+
+                return (
+                    status === "cancelled" ||
+                    status === "canceled" ||
+                    status === "cancelado"
+                );
+
+            }
+        ).length;
+
+
+    const pending =
+        newOrders;
+
+
+    if (orderCount) {
+
+        orderCount.textContent =
+            total;
+
+    }
+
+
+    if (newOrderCount) {
+
+        newOrderCount.textContent =
+            newOrders;
+
+    }
+
+
+    if (processingOrderCount) {
+
+        processingOrderCount.textContent =
+            processing;
+
+    }
+
+
+    if (deliveredOrderCount) {
+
+        deliveredOrderCount.textContent =
+            delivered;
+
+    }
+
+
+    if (cancelledOrderCount) {
+
+        cancelledOrderCount.textContent =
+            cancelled;
+
+    }
+
+
+    if (pendingOrderCount) {
+
+        pendingOrderCount.textContent =
+            pending;
+
+    }
+
+
+    // ------------------------------------------------------
+    // STATISTIQUES DU BLOC 3
+    // ------------------------------------------------------
+
+    if (
+        window.brandStoreAdmin.statistics
+    ) {
+
+        window.brandStoreAdmin.statistics
+            .orderTotal =
+            total;
+
+
+        window.brandStoreAdmin.statistics
+            .pendingOrderTotal =
+            pending;
+
+
+        window.brandStoreAdmin.statistics
+            .completedOrderTotal =
+            delivered;
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — ACTION COMMANDE
+// ==========================================================
+
+async function handleOrderAction(
+    event
+) {
+
+    const button =
+        event.currentTarget;
+
+
+    const orderId =
+        button.dataset.orderId;
+
+
+    const action =
+        button.dataset.action;
+
+
+    if (!orderId) {
+
+        return;
+
+    }
+
+
+    const order =
+        orders.find(
+            item =>
+                item.id ===
+                orderId
+        );
+
+
+    if (!order) {
+
+        showToast(
+            "Pedido não encontrado.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (
+        action === "view"
+    ) {
+
+        openOrderDetails(
+            order
+        );
+
+        return;
+
+    }
+
+
+    if (
+        action === "status"
+    ) {
+
+        await changeOrderStatus(
+            order
+        );
+
+        return;
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — DÉTAILS COMMANDE
+// ==========================================================
+
+function openOrderDetails(
+    order
+) {
+
+    selectedOrder =
+        order;
+
+
+    if (
+        !orderDetailsContent
+    ) {
+
+        return;
+
+    }
+
+
+    const status =
+        getOrderStatus(
+            order
+        );
+
+
+    const items =
+        Array.isArray(
+            order.items
+        )
+            ? order.items
+            : [];
+
+
+    orderDetailsContent.innerHTML = `
+
+        <div class="orderDetails">
+
+            <div class="orderDetailsHeader">
+
+                <h2>
+                    Pedido #${order.orderNumber || order.id}
+                </h2>
+
+                <span
+                    class="orderStatus ${status}"
+                >
+                    ${getOrderStatusLabel(status)}
+                </span>
+
+            </div>
+
+
+            <div class="orderDetailsGrid">
+
+                <div>
+
+                    <strong>
+                        Cliente
+                    </strong>
+
+                    <span>
+                        ${getOrderCustomerName(order)}
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        Telefone
+                    </strong>
+
+                    <span>
+                        ${getOrderCustomerPhone(order)}
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        E-mail
+                    </strong>
+
+                    <span>
+                        ${
+                            order.customerEmail ||
+                            order.email ||
+                            "—"
+                        }
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        Total
+                    </strong>
+
+                    <span>
+                        ${formatKz(
+                            getOrderTotal(order)
+                        )}
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        Endereço
+                    </strong>
+
+                    <span>
+                        ${
+                            order.address ||
+                            order.deliveryAddress ||
+                            "—"
+                        }
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        Cidade
+                    </strong>
+
+                    <span>
+                        ${
+                            order.city ||
+                            order.deliveryCity ||
+                            "—"
+                        }
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        Método de pagamento
+                    </strong>
+
+                    <span>
+                        ${
+                            order.paymentMethod ||
+                            "Pagamento na entrega"
+                        }
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        Data
+                    </strong>
+
+                    <span>
+                        ${
+                            order.createdAt
+                                ? formatDateTime(
+                                    order.createdAt
+                                )
+                                : "—"
+                        }
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="orderItems">
+
+                <h3>
+                    Produtos
+                </h3>
+
+                ${
+                    items.length > 0
+
+                        ? items.map(
+                            item => `
+
+                                <div
+                                    class="orderItem"
+                                >
+
+                                    <span>
+                                        ${
+                                            item.name ||
+                                            item.productName ||
+                                            "Produto"
+                                        }
+                                    </span>
+
+                                    <span>
+                                        x${Number(
+                                            item.quantity || 1
+                                        )}
+                                    </span>
+
+                                    <strong>
+                                        ${formatKz(
+                                            Number(
+                                                item.price ||
+                                                item.total ||
+                                                0
+                                            ) *
+                                            Number(
+                                                item.quantity || 1
+                                            )
+                                        )}
+                                    </strong>
+
+                                </div>
+
+                            `
+                        ).join("")
+
+                        : `
+
+                            <p>
+                                Nenhum detalhe dos produtos disponível.
+                            </p>
+
+                          `
+                }
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    openModal(
+        orderDetailsModal
+    );
+
+}
+
+
+// ==========================================================
+// FERMER MODAL COMMANDE
+// ==========================================================
+
+closeOrderDetails?.addEventListener(
+    "click",
+    () => {
+
+        closeModal(
+            orderDetailsModal
+        );
+
+        selectedOrder =
+            null;
+
+    }
+);
+
+
+// ==========================================================
+// FERMER MODAL EN CLIQUANT À L'EXTÉRIEUR
+// ==========================================================
+
+orderDetailsModal?.addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target ===
+            orderDetailsModal
+        ) {
+
+            closeModal(
+                orderDetailsModal
+            );
+
+            selectedOrder =
+                null;
+
+        }
+
+    }
+);
+
+
+// ==========================================================
+// FONCTION — CHANGER STATUT
+// ==========================================================
+
+async function changeOrderStatus(
+    order
+) {
+
+    try {
+
+        const currentStatus =
+            getOrderStatus(
+                order
+            );
+
+
+        const statusSequence = [
+
+            "pending",
+
+            "confirmed",
+
+            "processing",
+
+            "shipped",
+
+            "delivered"
+
+        ];
+
+
+        const currentIndex =
+            statusSequence.indexOf(
+                currentStatus
+            );
+
+
+        let newStatus;
+
+
+        if (
+            currentStatus ===
+            "cancelled" ||
+            currentStatus ===
+            "canceled"
+        ) {
+
+            showToast(
+                "Este pedido já foi cancelado.",
+                "info"
+            );
+
+            return;
+
+        }
+
+
+        if (
+            currentIndex === -1
+        ) {
+
+            newStatus =
+                "confirmed";
+
+        }
+
+        else if (
+            currentIndex <
+            statusSequence.length - 1
+        ) {
+
+            newStatus =
+                statusSequence[
+                    currentIndex + 1
+                ];
+
+        }
+
+        else {
+
+            showToast(
+                "Este pedido já foi entregue.",
+                "info"
+            );
+
+            return;
+
+        }
+
+
+        const confirmation =
+            confirm(
+                "Alterar o estado deste pedido para:\n\n" +
+                getOrderStatusLabel(
+                    newStatus
+                ) +
+                "?"
+            );
+
+
+        if (!confirmation) {
+
+            return;
+
+        }
+
+
+        showLoading(
+            "Atualizando pedido..."
+        );
+
+
+        const orderRef =
+            doc(
+                db,
+                "orders",
+                order.id
+            );
+
+
+        await updateDoc(
+            orderRef,
+            {
+
+                status:
+                    newStatus,
+
+                updatedAt:
+                    serverTimestamp()
+
+            }
+        );
+
+
+        order.status =
+            newStatus;
+
+
+        order.updatedAt =
+            new Date();
+
+
+        filterOrders();
+
+        updateOrderCounters();
+
+
+        // --------------------------------------------------
+        // SI LE MODAL EST OUVERT, ACTUALISER SON CONTENU
+        // --------------------------------------------------
+
+        if (
+            selectedOrder &&
+            selectedOrder.id ===
+            order.id
+        ) {
+
+            openOrderDetails(
+                order
+            );
+
+        }
+
+
+        hideLoading();
+
+
+        showToast(
+            "Estado do pedido atualizado com sucesso.",
+            "check_circle"
+        );
+
+
+    } catch (error) {
+
+        hideLoading();
+
+
+        console.error(
+            "BLOC 6 — Erro ao atualizar pedido:",
+            error
+        );
+
+
+        alert(
+            "BLOC 6 — ERRO ao atualizar pedido:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// EXPOSER LES FONCTIONS
+// ==========================================================
+
+window.brandStoreAdmin.loadStoreOrders =
+    loadStoreOrders;
+
+
+window.brandStoreAdmin.filterOrders =
+    filterOrders;
+
+
+window.brandStoreAdmin.openOrderDetails =
+    openOrderDetails;
+
+
+window.brandStoreAdmin.changeOrderStatus =
+    changeOrderStatus;
+
+
+window.brandStoreAdmin.updateOrderCounters =
+    updateOrderCounters;
+
+
+// ==========================================================
+// LANCER LE CHARGEMENT
+// ==========================================================
+
+loadStoreOrders();
+
+
+// ==========================================================
+// ALERTE — FIN DU BLOC
+// ==========================================================
+
+alert(
+    "BLOC 6 — Gestão de pedidos inicializada com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 6
+// ==========================================================
