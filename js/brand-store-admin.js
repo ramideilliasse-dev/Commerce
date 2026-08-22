@@ -3333,3 +3333,1718 @@ alert(
 // ==========================================================
 // FIN BLOC 4
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 5 — GESTION DES PRODUITS
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT DU BLOC
+// ==========================================================
+
+alert(
+    "BLOC 5 — Carregamento da gestão de produtos..."
+);
+
+
+// ==========================================================
+// ÉTAT DU BLOC
+// ==========================================================
+
+let filteredProducts = [];
+
+let selectedProduct = null;
+
+
+// ==========================================================
+// COLLECTION FIRESTORE
+// ==========================================================
+
+const productsCollectionRef =
+    collection(
+        db,
+        "products"
+    );
+
+
+// ==========================================================
+// UTILITAIRE — NOM DU PRODUIT
+// ==========================================================
+
+function getProductName(product) {
+
+    if (!product) {
+
+        return "Produto";
+
+    }
+
+    return (
+        product.name ||
+        product.productName ||
+        product.title ||
+        "Produto"
+    );
+
+}
+
+
+// ==========================================================
+// UTILITAIRE — PRIX
+// ==========================================================
+
+function getProductPrice(product) {
+
+    if (!product) {
+
+        return 0;
+
+    }
+
+    return Number(
+        product.price ??
+        product.salePrice ??
+        product.amount ??
+        0
+    );
+
+}
+
+
+// ==========================================================
+// UTILITAIRE — STOCK
+// ==========================================================
+
+function getProductStock(product) {
+
+    if (!product) {
+
+        return 0;
+
+    }
+
+    return Number(
+        product.stock ??
+        product.quantity ??
+        0
+    );
+
+}
+
+
+// ==========================================================
+// UTILITAIRE — STATUT
+// ==========================================================
+
+function getProductStatus(product) {
+
+    if (!product) {
+
+        return "inactive";
+
+    }
+
+    if (product.status) {
+
+        return String(
+            product.status
+        ).toLowerCase();
+
+    }
+
+    if (product.active === true) {
+
+        return "active";
+
+    }
+
+    if (product.published === true) {
+
+        return "published";
+
+    }
+
+    return "inactive";
+
+}
+
+
+// ==========================================================
+// UTILITAIRE — NOM DU COMMERÇANT
+// ==========================================================
+
+function getProductMerchantName(product) {
+
+    if (!product) {
+
+        return "Comerciante";
+
+    }
+
+    const merchantId =
+        product.merchantId ||
+        product.merchantUID ||
+        product.merchantUid ||
+        product.ownerId ||
+        product.sellerId ||
+        "";
+
+
+    const merchant =
+        merchants.find(
+            item =>
+                item.id === merchantId
+        );
+
+
+    if (merchant) {
+
+        return getMerchantName(
+            merchant
+        );
+
+    }
+
+
+    return (
+        product.shopName ||
+        product.storeName ||
+        product.merchantName ||
+        product.sellerName ||
+        "Comerciante"
+    );
+
+}
+
+
+// ==========================================================
+// UTILITAIRE — IMAGE PRODUIT
+// ==========================================================
+
+function getProductImage(product) {
+
+    if (!product) {
+
+        return "images/default-product.png";
+
+    }
+
+
+    if (
+        product.image
+    ) {
+
+        return product.image;
+
+    }
+
+
+    if (
+        product.imageUrl
+    ) {
+
+        return product.imageUrl;
+
+    }
+
+
+    if (
+        Array.isArray(
+            product.images
+        ) &&
+        product.images.length > 0
+    ) {
+
+        return product.images[0];
+
+    }
+
+
+    if (
+        Array.isArray(
+            product.gallery
+        ) &&
+        product.gallery.length > 0
+    ) {
+
+        return product.gallery[0];
+
+    }
+
+
+    return "images/default-product.png";
+
+}
+
+
+// ==========================================================
+// UTILITAIRE — LABEL STATUT
+// ==========================================================
+
+function getProductStatusLabel(
+    status
+) {
+
+    switch (
+        status
+    ) {
+
+        case "active":
+            return "Ativo";
+
+        case "published":
+            return "Publicado";
+
+        case "pending":
+            return "Pendente";
+
+        case "inactive":
+            return "Inativo";
+
+        case "hidden":
+            return "Oculto";
+
+        case "out_of_stock":
+            return "Sem stock";
+
+        case "sold_out":
+            return "Esgotado";
+
+        case "blocked":
+            return "Bloqueado";
+
+        default:
+            return status || "Inativo";
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — CHARGER LES PRODUITS
+// ==========================================================
+
+async function loadStoreProducts() {
+
+    try {
+
+        if (!storeId) {
+
+            throw new Error(
+                "ID da Loja Oficial não encontrado."
+            );
+
+        }
+
+
+        // ==================================================
+        // REQUÊTE
+        // ==================================================
+
+        let snapshot;
+
+
+        try {
+
+            const productQuery =
+                query(
+                    productsCollectionRef,
+                    where(
+                        "storeId",
+                        "==",
+                        storeId
+                    )
+                );
+
+
+            snapshot =
+                await getDocs(
+                    productQuery
+                );
+
+        } catch (error) {
+
+            console.warn(
+                "BLOC 5 — Busca por storeId falhou:",
+                error
+            );
+
+
+            snapshot = {
+                docs: []
+            };
+
+        }
+
+
+        // ==================================================
+        // TRANSFORMER
+        // ==================================================
+
+        products =
+            snapshot.docs.map(
+                productDoc => ({
+
+                    id:
+                        productDoc.id,
+
+                    ...productDoc.data()
+
+                })
+            );
+
+
+        // ==================================================
+        // INITIALISER FILTRE
+        // ==================================================
+
+        filteredProducts =
+            [
+                ...products
+            ];
+
+
+        // ==================================================
+        // REMPLIR FILTRE COMMERÇANTS
+        // ==================================================
+
+        populateProductMerchantFilter();
+
+
+        // ==================================================
+        // AFFICHER
+        // ==================================================
+
+        renderProductList();
+
+
+        // ==================================================
+        // COMPTEURS
+        // ==================================================
+
+        updateProductCounters();
+
+
+        // ==================================================
+        // EXPOSER
+        // ==================================================
+
+        window.brandStoreAdmin.products =
+            products;
+
+
+        alert(
+            "BLOC 5 — Produtos carregados com sucesso."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 5 — Erro ao carregar produtos:",
+            error
+        );
+
+
+        alert(
+            "BLOC 5 — ERRO ao carregar produtos:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — REMPLIR FILTRE COMMERÇANTS
+// ==========================================================
+
+function populateProductMerchantFilter() {
+
+    if (!productMerchantFilter) {
+
+        return;
+
+    }
+
+
+    const currentValue =
+        productMerchantFilter.value;
+
+
+    const merchantMap =
+        new Map();
+
+
+    products.forEach(
+        product => {
+
+            const merchantId =
+                product.merchantId ||
+                product.merchantUID ||
+                product.merchantUid ||
+                product.ownerId ||
+                product.sellerId ||
+                "";
+
+
+            if (!merchantId) {
+
+                return;
+
+            }
+
+
+            const merchant =
+                merchants.find(
+                    item =>
+                        item.id ===
+                        merchantId
+                );
+
+
+            const merchantName =
+                merchant
+                    ? getMerchantName(
+                        merchant
+                    )
+                    : (
+                        product.merchantName ||
+                        product.shopName ||
+                        "Comerciante"
+                    );
+
+
+            merchantMap.set(
+                merchantId,
+                merchantName
+            );
+
+        }
+    );
+
+
+    productMerchantFilter.innerHTML =
+        `
+            <option value="all">
+                Todos os comerciantes
+            </option>
+        `;
+
+
+    merchantMap.forEach(
+        (
+            name,
+            id
+        ) => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                id;
+
+
+            option.textContent =
+                name;
+
+
+            productMerchantFilter.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    if (
+        currentValue &&
+        [
+            ...productMerchantFilter.options
+        ]
+        .some(
+            option =>
+                option.value ===
+                currentValue
+        )
+    ) {
+
+        productMerchantFilter.value =
+            currentValue;
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — FILTRER LES PRODUITS
+// ==========================================================
+
+function filterProducts() {
+
+    const search =
+        String(
+            currentProductSearch ||
+            ""
+        )
+        .toLowerCase()
+        .normalize(
+            "NFD"
+        )
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .trim();
+
+
+    const merchantFilter =
+        String(
+            productMerchantFilter?.value ||
+            "all"
+        );
+
+
+    const statusFilter =
+        String(
+            productStatusFilter?.value ||
+            "all"
+        )
+        .toLowerCase();
+
+
+    filteredProducts =
+        products.filter(
+            product => {
+
+                const searchText =
+                    [
+                        getProductName(
+                            product
+                        ),
+
+                        product.description,
+
+                        product.category,
+
+                        product.brand,
+
+                        product.shopName,
+
+                        product.merchantName,
+
+                        getProductMerchantName(
+                            product
+                        )
+                    ]
+                    .filter(Boolean)
+                    .join(" ")
+                    .toLowerCase()
+                    .normalize(
+                        "NFD"
+                    )
+                    .replace(
+                        /[\u0300-\u036f]/g,
+                        ""
+                    );
+
+
+                const matchesSearch =
+                    !search ||
+                    searchText.includes(
+                        search
+                    );
+
+
+                const merchantId =
+                    product.merchantId ||
+                    product.merchantUID ||
+                    product.merchantUid ||
+                    product.ownerId ||
+                    product.sellerId ||
+                    "";
+
+
+                const matchesMerchant =
+                    merchantFilter === "all" ||
+                    merchantId ===
+                    merchantFilter;
+
+
+                const productStatus =
+                    getProductStatus(
+                        product
+                    );
+
+
+                const matchesStatus =
+                    statusFilter === "all" ||
+                    productStatus ===
+                    statusFilter;
+
+
+                return (
+                    matchesSearch &&
+                    matchesMerchant &&
+                    matchesStatus
+                );
+
+            }
+        );
+
+
+    renderProductList();
+
+}
+
+
+// ==========================================================
+// RECHERCHE PRODUIT
+// ==========================================================
+
+productSearch?.addEventListener(
+    "input",
+    event => {
+
+        currentProductSearch =
+            event.target.value || "";
+
+
+        filterProducts();
+
+    }
+);
+
+
+// ==========================================================
+// FILTRE COMMERÇANT
+// ==========================================================
+
+productMerchantFilter?.addEventListener(
+    "change",
+    () => {
+
+        filterProducts();
+
+    }
+);
+
+
+// ==========================================================
+// FILTRE STATUT
+// ==========================================================
+
+productStatusFilter?.addEventListener(
+    "change",
+    () => {
+
+        filterProducts();
+
+    }
+);
+
+
+// ==========================================================
+// FONCTION — AFFICHER LES PRODUITS
+// ==========================================================
+
+function renderProductList() {
+
+    if (!productList) {
+
+        return;
+
+    }
+
+
+    if (
+        filteredProducts.length === 0
+    ) {
+
+        renderEmptyState(
+            productList,
+            "inventory_2",
+            "Nenhum produto encontrado",
+            "Ainda não existem produtos associados a esta Loja Oficial."
+        );
+
+        return;
+
+    }
+
+
+    productList.innerHTML =
+        filteredProducts
+        .map(
+            product => {
+
+                const name =
+                    getProductName(
+                        product
+                    );
+
+
+                const price =
+                    getProductPrice(
+                        product
+                    );
+
+
+                const stock =
+                    getProductStock(
+                        product
+                    );
+
+
+                const status =
+                    getProductStatus(
+                        product
+                    );
+
+
+                const image =
+                    getProductImage(
+                        product
+                    );
+
+
+                const merchantName =
+                    getProductMerchantName(
+                        product
+                    );
+
+
+                const statusLabel =
+                    getProductStatusLabel(
+                        status
+                    );
+
+
+                return `
+
+                    <div
+                        class="productCard"
+                        data-product-id="${product.id}"
+                    >
+
+                        <div class="productCardMain">
+
+                            <img
+                                class="productImage"
+                                src="${image}"
+                                alt="${name}"
+                                onerror="
+                                    this.src='images/default-product.png'
+                                "
+                            >
+
+
+                            <div class="productInfo">
+
+                                <h3>
+                                    ${name}
+                                </h3>
+
+
+                                <p>
+                                    ${merchantName}
+                                </p>
+
+
+                                <strong>
+                                    ${formatKz(price)}
+                                </strong>
+
+
+                                <p>
+                                    Stock:
+                                    ${stock}
+                                </p>
+
+
+                                <span
+                                    class="productStatus ${status}"
+                                >
+                                    ${statusLabel}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="productCardActions">
+
+                            <button
+                                type="button"
+                                data-action="view"
+                                data-product-id="${product.id}"
+                            >
+
+                                <span class="material-symbols-rounded">
+                                    visibility
+                                </span>
+
+                                Ver
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                data-action="toggle"
+                                data-product-id="${product.id}"
+                            >
+
+                                <span class="material-symbols-rounded">
+                                    ${
+                                        status === "active" ||
+                                        status === "published"
+                                            ? "visibility_off"
+                                            : "visibility"
+                                    }
+                                </span>
+
+                                ${
+                                    status === "active" ||
+                                    status === "published"
+                                        ? "Ocultar"
+                                        : "Publicar"
+                                }
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                data-action="delete"
+                                data-product-id="${product.id}"
+                            >
+
+                                <span class="material-symbols-rounded">
+                                    delete
+                                </span>
+
+                                Excluir
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+        )
+        .join("");
+
+
+    // ======================================================
+    // ACTIONS
+    // ======================================================
+
+    productList
+        .querySelectorAll(
+            "[data-action]"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    handleProductAction
+                );
+
+            }
+        );
+
+}
+
+
+// ==========================================================
+// FONCTION — COMPTEURS PRODUITS
+// ==========================================================
+
+function updateProductCounters() {
+
+    const total =
+        products.length;
+
+
+    const active =
+        products.filter(
+            product => {
+
+                const status =
+                    getProductStatus(
+                        product
+                    );
+
+                return (
+                    status === "active" ||
+                    status === "published"
+                );
+
+            }
+        ).length;
+
+
+    const hidden =
+        products.filter(
+            product => {
+
+                const status =
+                    getProductStatus(
+                        product
+                    );
+
+                return (
+                    status === "hidden" ||
+                    status === "inactive"
+                );
+
+            }
+        ).length;
+
+
+    const outOfStock =
+        products.filter(
+            product => {
+
+                return (
+                    getProductStock(
+                        product
+                    ) <= 0
+                );
+
+            }
+        ).length;
+
+
+    if (productCount) {
+
+        productCount.textContent =
+            total;
+
+    }
+
+
+    if (activeProductCount) {
+
+        activeProductCount.textContent =
+            active;
+
+    }
+
+
+    if (activeProductCount2) {
+
+        activeProductCount2.textContent =
+            active;
+
+    }
+
+
+    if (hiddenProductCount) {
+
+        hiddenProductCount.textContent =
+            hidden;
+
+    }
+
+
+    if (outOfStockCount) {
+
+        outOfStockCount.textContent =
+            outOfStock;
+
+    }
+
+
+    if (outOfStockCount2) {
+
+        outOfStockCount2.textContent =
+            outOfStock;
+
+    }
+
+
+    if (
+        window.brandStoreAdmin.statistics
+    ) {
+
+        window.brandStoreAdmin.statistics
+            .productTotal =
+            total;
+
+
+        window.brandStoreAdmin.statistics
+            .activeProductTotal =
+            active;
+
+
+        window.brandStoreAdmin.statistics
+            .outOfStockTotal =
+            outOfStock;
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — ACTION PRODUIT
+// ==========================================================
+
+async function handleProductAction(
+    event
+) {
+
+    const button =
+        event.currentTarget;
+
+
+    const productId =
+        button.dataset.productId;
+
+
+    const action =
+        button.dataset.action;
+
+
+    if (!productId) {
+
+        return;
+
+    }
+
+
+    const product =
+        products.find(
+            item =>
+                item.id ===
+                productId
+        );
+
+
+    if (!product) {
+
+        showToast(
+            "Produto não encontrado.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (
+        action === "view"
+    ) {
+
+        openProductDetails(
+            product
+        );
+
+        return;
+
+    }
+
+
+    if (
+        action === "toggle"
+    ) {
+
+        await toggleProductStatus(
+            product
+        );
+
+        return;
+
+    }
+
+
+    if (
+        action === "delete"
+    ) {
+
+        await deleteProduct(
+            product
+        );
+
+        return;
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — DÉTAILS PRODUIT
+// ==========================================================
+
+function openProductDetails(
+    product
+) {
+
+    selectedProduct =
+        product;
+
+
+    if (!productDetailsContent) {
+
+        return;
+
+    }
+
+
+    const name =
+        getProductName(
+            product
+        );
+
+
+    const status =
+        getProductStatus(
+            product
+        );
+
+
+    const image =
+        getProductImage(
+            product
+        );
+
+
+    const merchantName =
+        getProductMerchantName(
+            product
+        );
+
+
+    productDetailsContent.innerHTML = `
+
+        <div class="productDetails">
+
+            <div class="productDetailsHeader">
+
+                <img
+                    src="${image}"
+                    alt="${name}"
+                    class="productDetailsImage"
+                    onerror="
+                        this.src='images/default-product.png'
+                    "
+                >
+
+
+                <div>
+
+                    <h2>
+                        ${name}
+                    </h2>
+
+                    <p>
+                        ${merchantName}
+                    </p>
+
+                    <strong>
+                        ${formatKz(
+                            getProductPrice(
+                                product
+                            )
+                        )}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="productDetailsGrid">
+
+                <div>
+                    <strong>
+                        ID
+                    </strong>
+
+                    <span>
+                        ${product.id}
+                    </span>
+                </div>
+
+
+                <div>
+                    <strong>
+                        Estado
+                    </strong>
+
+                    <span>
+                        ${
+                            getProductStatusLabel(
+                                status
+                            )
+                        }
+                    </span>
+                </div>
+
+
+                <div>
+                    <strong>
+                        Stock
+                    </strong>
+
+                    <span>
+                        ${
+                            getProductStock(
+                                product
+                            )
+                        }
+                    </span>
+                </div>
+
+
+                <div>
+                    <strong>
+                        Categoria
+                    </strong>
+
+                    <span>
+                        ${
+                            product.category ||
+                            "—"
+                        }
+                    </span>
+                </div>
+
+
+                <div>
+                    <strong>
+                        Marca
+                    </strong>
+
+                    <span>
+                        ${
+                            product.brand ||
+                            "—"
+                        }
+                    </span>
+                </div>
+
+
+                <div>
+                    <strong>
+                        Comerciante
+                    </strong>
+
+                    <span>
+                        ${merchantName}
+                    </span>
+                </div>
+
+
+                <div>
+                    <strong>
+                        Data de criação
+                    </strong>
+
+                    <span>
+                        ${
+                            product.createdAt
+                                ? formatDateTime(
+                                    product.createdAt
+                                )
+                                : "—"
+                        }
+                    </span>
+                </div>
+
+            </div>
+
+
+            <div class="productDescription">
+
+                <strong>
+                    Descrição
+                </strong>
+
+                <p>
+                    ${
+                        product.description ||
+                        "Sem descrição."
+                    }
+                </p>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    openModal(
+        productDetailsModal
+    );
+
+}
+
+
+// ==========================================================
+// FERMER MODAL PRODUIT
+// ==========================================================
+
+closeProductDetails?.addEventListener(
+    "click",
+    () => {
+
+        closeModal(
+            productDetailsModal
+        );
+
+        selectedProduct =
+            null;
+
+    }
+);
+
+
+// ==========================================================
+// FERMER MODAL EN CLIQUANT À L'EXTÉRIEUR
+// ==========================================================
+
+productDetailsModal?.addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target ===
+            productDetailsModal
+        ) {
+
+            closeModal(
+                productDetailsModal
+            );
+
+            selectedProduct =
+                null;
+
+        }
+
+    }
+);
+
+
+// ==========================================================
+// FONCTION — ACTIVER / MASQUER PRODUIT
+// ==========================================================
+
+async function toggleProductStatus(
+    product
+) {
+
+    try {
+
+        const currentStatus =
+            getProductStatus(
+                product
+            );
+
+
+        const isCurrentlyVisible =
+            currentStatus === "active" ||
+            currentStatus === "published";
+
+
+        const newStatus =
+            isCurrentlyVisible
+                ? "hidden"
+                : "active";
+
+
+        const confirmation =
+            confirm(
+                isCurrentlyVisible
+                    ? "Deseja ocultar este produto?"
+                    : "Deseja publicar este produto?"
+            );
+
+
+        if (!confirmation) {
+
+            return;
+
+        }
+
+
+        showLoading(
+            isCurrentlyVisible
+                ? "Ocultando produto..."
+                : "Publicando produto..."
+        );
+
+
+        const productRef =
+            doc(
+                db,
+                "products",
+                product.id
+            );
+
+
+        await updateDoc(
+            productRef,
+            {
+
+                status:
+                    newStatus,
+
+                active:
+                    newStatus === "active",
+
+                published:
+                    newStatus === "active",
+
+                updatedAt:
+                    serverTimestamp()
+
+            }
+        );
+
+
+        product.status =
+            newStatus;
+
+
+        product.active =
+            newStatus === "active";
+
+
+        product.published =
+            newStatus === "active";
+
+
+        filterProducts();
+
+        updateProductCounters();
+
+
+        hideLoading();
+
+
+        showToast(
+            newStatus === "active"
+                ? "Produto publicado com sucesso."
+                : "Produto ocultado com sucesso.",
+            newStatus === "active"
+                ? "visibility"
+                : "visibility_off"
+        );
+
+
+    } catch (error) {
+
+        hideLoading();
+
+
+        console.error(
+            "BLOC 5 — Erro ao alterar produto:",
+            error
+        );
+
+
+        alert(
+            "BLOC 5 — ERRO ao alterar produto:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — SUPPRIMER PRODUIT
+// ==========================================================
+
+async function deleteProduct(
+    product
+) {
+
+    try {
+
+        const name =
+            getProductName(
+                product
+            );
+
+
+        const confirmation =
+            confirm(
+                "Tem certeza que deseja excluir o produto:\n\n" +
+                name +
+                "?"
+            );
+
+
+        if (!confirmation) {
+
+            return;
+
+        }
+
+
+        showLoading(
+            "Excluindo produto..."
+        );
+
+
+        const productRef =
+            doc(
+                db,
+                "products",
+                product.id
+            );
+
+
+        await deleteDoc(
+            productRef
+        );
+
+
+        products =
+            products.filter(
+                item =>
+                    item.id !==
+                    product.id
+            );
+
+
+        filteredProducts =
+            filteredProducts.filter(
+                item =>
+                    item.id !==
+                    product.id
+            );
+
+
+        renderProductList();
+
+        updateProductCounters();
+
+
+        if (
+            selectedProduct &&
+            selectedProduct.id ===
+            product.id
+        ) {
+
+            closeModal(
+                productDetailsModal
+            );
+
+            selectedProduct =
+                null;
+
+        }
+
+
+        hideLoading();
+
+
+        showToast(
+            "Produto excluído com sucesso.",
+            "delete"
+        );
+
+
+    } catch (error) {
+
+        hideLoading();
+
+
+        console.error(
+            "BLOC 5 — Erro ao excluir produto:",
+            error
+        );
+
+
+        alert(
+            "BLOC 5 — ERRO ao excluir produto:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// BOUTON — AJOUTER PRODUIT
+// ==========================================================
+
+addProductButton?.addEventListener(
+    "click",
+    () => {
+
+        showToast(
+            "A função de adicionar produtos será ativada no próximo bloco.",
+            "add"
+        );
+
+    }
+);
+
+
+// ==========================================================
+// EXPOSER LES FONCTIONS
+// ==========================================================
+
+window.brandStoreAdmin.loadStoreProducts =
+    loadStoreProducts;
+
+
+window.brandStoreAdmin.filterProducts =
+    filterProducts;
+
+
+window.brandStoreAdmin.openProductDetails =
+    openProductDetails;
+
+
+window.brandStoreAdmin.toggleProductStatus =
+    toggleProductStatus;
+
+
+window.brandStoreAdmin.deleteProduct =
+    deleteProduct;
+
+
+// ==========================================================
+// LANCER LE CHARGEMENT
+// ==========================================================
+
+loadStoreProducts();
+
+
+// ==========================================================
+// ALERTE — FIN DU BLOC
+// ==========================================================
+
+alert(
+    "BLOC 5 — Gestão de produtos inicializada com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 5
+// ==========================================================
