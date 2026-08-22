@@ -3836,3 +3836,188 @@ alert(
 );
 
 
+// ==========================================================
+// TOMA
+// BRAND STORES
+// BLOC 9 — BOUTONS RETOUR + ACTUALISER
+// ==========================================================
+
+
+// ==========================================================
+// RÉCUPÉRER LES BOUTONS
+// ==========================================================
+
+const backButton =
+    document.getElementById("backButton");
+
+const refreshButton =
+    document.getElementById("refreshButton");
+
+
+// ==========================================================
+// BOUTON RETOUR
+// ==========================================================
+
+if (backButton) {
+
+    backButton.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+
+            /*
+             * Retour à la page précédente.
+             * Si aucune page précédente n'existe,
+             * retour vers index.html.
+             */
+
+            if (
+                window.history.length > 1
+            ) {
+
+                window.history.back();
+
+            } else {
+
+                window.location.href =
+                    "index.html";
+
+            }
+
+        }
+    );
+
+}
+
+
+// ==========================================================
+// BOUTON ACTUALISER
+// ==========================================================
+
+if (refreshButton) {
+
+    refreshButton.addEventListener(
+        "click",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            /*
+             * Empêcher plusieurs clics
+             * pendant le rechargement.
+             */
+
+            if (
+                refreshButton.dataset.refreshing ===
+                "true"
+            ) {
+
+                return;
+
+            }
+
+
+            refreshButton.dataset.refreshing =
+                "true";
+
+
+            refreshButton.disabled =
+                true;
+
+
+            // ----------------------------------------------
+            // INDICATION VISUELLE
+            // ----------------------------------------------
+
+            const originalHTML =
+                refreshButton.innerHTML;
+
+
+            refreshButton.innerHTML = `
+
+                <span class="material-symbols-rounded">
+                    sync
+                </span>
+
+                Atualizando...
+
+            `;
+
+
+            try {
+
+                /*
+                 * Recharger complètement la page.
+                 *
+                 * Cela relance automatiquement :
+                 *
+                 * BLOC 1
+                 * BLOC 2
+                 * BLOC 3
+                 * BLOC 4
+                 * BLOC 5
+                 * BLOC 6
+                 * BLOC 7
+                 * BLOC 8
+                 *
+                 * et récupère les nouvelles données
+                 * depuis Firestore.
+                 */
+
+                window.location.reload();
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "TOMA — Erreur actualisation :",
+                    error
+                );
+
+
+                refreshButton.dataset.refreshing =
+                    "false";
+
+
+                refreshButton.disabled =
+                    false;
+
+
+                refreshButton.innerHTML =
+                    originalHTML;
+
+
+                alert(
+                    "ERRO ao atualizar as Lojas.\n\n" +
+                    error.message
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+// ==========================================================
+// EXPOSER L'ÉTAT DU BLOC
+// ==========================================================
+
+window.brandStoresControls = {
+
+    backButtonConnected:
+        Boolean(backButton),
+
+    refreshButtonConnected:
+        Boolean(refreshButton)
+
+};
+
+
+// ==========================================================
+// FIN BLOC 9
+// ==========================================================
