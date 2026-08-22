@@ -8629,3 +8629,984 @@ window.brandStoreAdmin.markAllNotificationsRead =
 // ==========================================================
 // FIN BLOC 8
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 9 — ACTIONS ADMINISTRATIVES DE LA LOJA OFFICIAL
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT DU BLOC
+// ==========================================================
+
+alert(
+    "BLOC 9 — Carregamento das ações administrativas da Loja Oficial..."
+);
+
+
+// ==========================================================
+// ÉTAT DU BLOC
+// ==========================================================
+
+let pendingStoreAction = null;
+
+
+// ==========================================================
+// UTILITAIRE — STATUT DE LA LOJA
+// ==========================================================
+
+function getStoreStatus() {
+
+    if (!store) {
+
+        return "inactive";
+
+    }
+
+
+    return String(
+        store.status ||
+        "active"
+    ).toLowerCase();
+
+}
+
+
+// ==========================================================
+// UTILITAIRE — VÉRIFICATION
+// ==========================================================
+
+function isStoreVerified() {
+
+    if (!store) {
+
+        return false;
+
+    }
+
+
+    return (
+        store.verified === true ||
+        store.verification === true ||
+        store.isVerified === true
+    );
+
+}
+
+
+// ==========================================================
+// FONCTION — ACTUALISER L'AFFICHAGE
+// ==========================================================
+
+function refreshStoreDisplay() {
+
+    if (
+        typeof renderOfficialStore ===
+        "function"
+    ) {
+
+        renderOfficialStore();
+
+    }
+
+
+    window.brandStoreAdmin.store =
+        store;
+
+}
+
+
+// ==========================================================
+// FONCTION — OUVRIR MODAL D'ÉDITION
+// ==========================================================
+
+function openEditStoreModal() {
+
+    if (!store) {
+
+        showToast(
+            "Dados da Loja Oficial não carregados.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (editStoreName) {
+
+        editStoreName.value =
+            store.name || "";
+
+    }
+
+
+    if (editStoreDescription) {
+
+        editStoreDescription.value =
+            store.description || "";
+
+    }
+
+
+    if (editStoreLogo) {
+
+        editStoreLogo.value =
+            store.logo || "";
+
+    }
+
+
+    if (editStoreBanner) {
+
+        editStoreBanner.value =
+            store.banner || "";
+
+    }
+
+
+    openModal(
+        editStoreModal
+    );
+
+}
+
+
+// ==========================================================
+// FERMER MODAL ÉDITION
+// ==========================================================
+
+function closeEditStore() {
+
+    closeModal(
+        editStoreModal
+    );
+
+}
+
+
+// ==========================================================
+// ÉVÉNEMENTS — MODAL ÉDITION
+// ==========================================================
+
+editStoreButton?.addEventListener(
+    "click",
+    openEditStoreModal
+);
+
+
+closeEditStoreModal?.addEventListener(
+    "click",
+    closeEditStore
+);
+
+
+cancelEditStore?.addEventListener(
+    "click",
+    closeEditStore
+);
+
+
+// ==========================================================
+// FERMER EN CLIQUANT À L'EXTÉRIEUR
+// ==========================================================
+
+editStoreModal?.addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target ===
+            editStoreModal
+        ) {
+
+            closeEditStore();
+
+        }
+
+    }
+);
+
+
+// ==========================================================
+// FONCTION — SAUVEGARDER LES MODIFICATIONS
+// ==========================================================
+
+async function saveStoreInformation() {
+
+    try {
+
+        if (!store) {
+
+            throw new Error(
+                "Dados da Loja Oficial não carregados."
+            );
+
+        }
+
+
+        const name =
+            editStoreName?.value.trim() ||
+            store.name ||
+            "Loja Oficial";
+
+
+        const description =
+            editStoreDescription?.value.trim() ||
+            "";
+
+
+        const logo =
+            editStoreLogo?.value.trim() ||
+            "";
+
+
+        const banner =
+            editStoreBanner?.value.trim() ||
+            "";
+
+
+        if (!name) {
+
+            showToast(
+                "O nome da Loja Oficial é obrigatório.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        showLoading(
+            "Salvando informações da Loja..."
+        );
+
+
+        await updateDoc(
+            storeRef,
+            {
+
+                name,
+
+                description,
+
+                logo,
+
+                banner,
+
+                updatedAt:
+                    serverTimestamp()
+
+            }
+        );
+
+
+        // ==================================================
+        // METTRE À JOUR L'ÉTAT LOCAL
+        // ==================================================
+
+        store.name =
+            name;
+
+
+        store.description =
+            description;
+
+
+        store.logo =
+            logo;
+
+
+        store.banner =
+            banner;
+
+
+        refreshStoreDisplay();
+
+
+        closeEditStore();
+
+
+        hideLoading();
+
+
+        showToast(
+            "Loja Oficial atualizada com sucesso.",
+            "check_circle"
+        );
+
+
+        // ==================================================
+        // ENREGISTRER ACTIVITÉ
+        // ==================================================
+
+        if (
+            window.brandStoreAdmin
+                .saveStoreActivity
+        ) {
+
+            await window.brandStoreAdmin
+                .saveStoreActivity(
+                    "update",
+                    "Loja Oficial atualizada",
+                    "As informações da Loja Oficial foram modificadas pelo administrador."
+                );
+
+        }
+
+
+    } catch (error) {
+
+        hideLoading();
+
+
+        console.error(
+            "BLOC 9 — Erro ao salvar Loja:",
+            error
+        );
+
+
+        alert(
+            "BLOC 9 — ERRO ao salvar informações da Loja:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// ÉVÉNEMENT — SAUVEGARDER
+// ==========================================================
+
+saveStoreChanges?.addEventListener(
+    "click",
+    saveStoreInformation
+);
+
+
+// ==========================================================
+// FONCTION — CONFIRMATION D'ACTION
+// ==========================================================
+
+function openStoreConfirmation(
+    action
+) {
+
+    if (!storeActionModal) {
+
+        return false;
+
+    }
+
+
+    pendingStoreAction =
+        action;
+
+
+    let title =
+        "Confirmar ação";
+
+
+    let text =
+        "Tem certeza que deseja continuar?";
+
+
+    let icon =
+        "help";
+
+
+    // ======================================================
+    // VÉRIFIER
+    // ======================================================
+
+    if (
+        action === "verify"
+    ) {
+
+        title =
+            "Verificar Loja Oficial";
+
+        text =
+            "Deseja confirmar esta Loja Oficial como verificada?";
+
+        icon =
+            "verified";
+
+    }
+
+
+    // ======================================================
+    // RETIRER VÉRIFICATION
+    // ======================================================
+
+    else if (
+        action === "unverify"
+    ) {
+
+        title =
+            "Remover verificação";
+
+        text =
+            "Deseja remover o selo de verificação desta Loja Oficial?";
+
+        icon =
+            "verified_off";
+
+    }
+
+
+    // ======================================================
+    // DÉSACTIVER
+    // ======================================================
+
+    else if (
+        action === "deactivate"
+    ) {
+
+        title =
+            "Desativar Loja Oficial";
+
+        text =
+            "A Loja Oficial ficará temporariamente inativa. Deseja continuar?";
+
+        icon =
+            "block";
+
+    }
+
+
+    // ======================================================
+    // ACTIVER
+    // ======================================================
+
+    else if (
+        action === "activate"
+    ) {
+
+        title =
+            "Ativar Loja Oficial";
+
+        text =
+            "Deseja ativar novamente esta Loja Oficial?";
+
+        icon =
+            "check_circle";
+
+    }
+
+
+    if (confirmationTitle) {
+
+        confirmationTitle.textContent =
+            title;
+
+    }
+
+
+    if (confirmationText) {
+
+        confirmationText.textContent =
+            text;
+
+    }
+
+
+    if (confirmationIcon) {
+
+        confirmationIcon.textContent =
+            icon;
+
+    }
+
+
+    openModal(
+        storeActionModal
+    );
+
+
+    return true;
+
+}
+
+
+// ==========================================================
+// FERMER MODAL CONFIRMATION
+// ==========================================================
+
+function closeStoreConfirmation() {
+
+    pendingStoreAction =
+        null;
+
+
+    closeModal(
+        storeActionModal
+    );
+
+}
+
+
+confirmationNo?.addEventListener(
+    "click",
+    closeStoreConfirmation
+);
+
+
+// ==========================================================
+// FONCTION — VÉRIFIER LA LOJA
+// ==========================================================
+
+async function verifyStore() {
+
+    try {
+
+        if (!store) {
+
+            throw new Error(
+                "Dados da Loja Oficial não carregados."
+            );
+
+        }
+
+
+        showLoading(
+            "Verificando Loja Oficial..."
+        );
+
+
+        await updateDoc(
+            storeRef,
+            {
+
+                verified:
+                    true,
+
+                verification:
+                    true,
+
+                isVerified:
+                    true,
+
+                verifiedAt:
+                    serverTimestamp(),
+
+                updatedAt:
+                    serverTimestamp()
+
+            }
+        );
+
+
+        store.verified =
+            true;
+
+
+        store.verification =
+            true;
+
+
+        store.isVerified =
+            true;
+
+
+        refreshStoreDisplay();
+
+
+        hideLoading();
+
+
+        showToast(
+            "Loja Oficial verificada com sucesso.",
+            "verified"
+        );
+
+
+        if (
+            window.brandStoreAdmin
+                .saveStoreActivity
+        ) {
+
+            await window.brandStoreAdmin
+                .saveStoreActivity(
+                    "verification",
+                    "Loja Oficial verificada",
+                    "A Loja Oficial recebeu o selo de verificação."
+                );
+
+        }
+
+
+    } catch (error) {
+
+        hideLoading();
+
+
+        alert(
+            "BLOC 9 — ERRO ao verificar Loja Oficial:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — RETIRER VÉRIFICATION
+// ==========================================================
+
+async function unverifyStore() {
+
+    try {
+
+        showLoading(
+            "Removendo verificação..."
+        );
+
+
+        await updateDoc(
+            storeRef,
+            {
+
+                verified:
+                    false,
+
+                verification:
+                    false,
+
+                isVerified:
+                    false,
+
+                verifiedAt:
+                    null,
+
+                updatedAt:
+                    serverTimestamp()
+
+            }
+        );
+
+
+        store.verified =
+            false;
+
+
+        store.verification =
+            false;
+
+
+        store.isVerified =
+            false;
+
+
+        refreshStoreDisplay();
+
+
+        hideLoading();
+
+
+        showToast(
+            "Verificação removida.",
+            "verified_off"
+        );
+
+
+        if (
+            window.brandStoreAdmin
+                .saveStoreActivity
+        ) {
+
+            await window.brandStoreAdmin
+                .saveStoreActivity(
+                    "verification",
+                    "Verificação removida",
+                    "O selo de verificação da Loja Oficial foi removido."
+                );
+
+        }
+
+
+    } catch (error) {
+
+        hideLoading();
+
+
+        alert(
+            "BLOC 9 — ERRO ao remover verificação:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — CHANGER STATUT
+// ==========================================================
+
+async function changeStoreStatus(
+    newStatus
+) {
+
+    try {
+
+        showLoading(
+            "Atualizando status da Loja..."
+        );
+
+
+        await updateDoc(
+            storeRef,
+            {
+
+                status:
+                    newStatus,
+
+                active:
+                    newStatus === "active",
+
+                updatedAt:
+                    serverTimestamp()
+
+            }
+        );
+
+
+        store.status =
+            newStatus;
+
+
+        store.active =
+            newStatus === "active";
+
+
+        refreshStoreDisplay();
+
+
+        hideLoading();
+
+
+        showToast(
+            newStatus === "active"
+                ? "Loja Oficial ativada com sucesso."
+                : "Loja Oficial desativada com sucesso.",
+            newStatus === "active"
+                ? "check_circle"
+                : "block"
+        );
+
+
+        if (
+            window.brandStoreAdmin
+                .saveStoreActivity
+        ) {
+
+            await window.brandStoreAdmin
+                .saveStoreActivity(
+                    "update",
+                    newStatus === "active"
+                        ? "Loja Oficial ativada"
+                        : "Loja Oficial desativada",
+                    newStatus === "active"
+                        ? "A Loja Oficial foi ativada pelo administrador."
+                        : "A Loja Oficial foi desativada pelo administrador."
+                );
+
+        }
+
+
+    } catch (error) {
+
+        hideLoading();
+
+
+        alert(
+            "BLOC 9 — ERRO ao atualizar status da Loja:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// BOUTON VÉRIFICATION
+// ==========================================================
+
+verifyStoreButton?.addEventListener(
+    "click",
+    () => {
+
+        if (
+            isStoreVerified()
+        ) {
+
+            openStoreConfirmation(
+                "unverify"
+            );
+
+        } else {
+
+            openStoreConfirmation(
+                "verify"
+            );
+
+        }
+
+    }
+);
+
+
+// ==========================================================
+// BOUTON STATUT
+// ==========================================================
+
+toggleStoreStatusButton?.addEventListener(
+    "click",
+    () => {
+
+        const status =
+            getStoreStatus();
+
+
+        if (
+            status === "active"
+        ) {
+
+            openStoreConfirmation(
+                "deactivate"
+            );
+
+        } else {
+
+            openStoreConfirmation(
+                "activate"
+            );
+
+        }
+
+    }
+);
+
+
+// ==========================================================
+// CONFIRMER ACTION
+// ==========================================================
+
+confirmationYes?.addEventListener(
+    "click",
+    async () => {
+
+        const action =
+            pendingStoreAction;
+
+
+        closeStoreConfirmation();
+
+
+        if (!action) {
+
+            return;
+
+        }
+
+
+        if (
+            action === "verify"
+        ) {
+
+            await verifyStore();
+
+        }
+
+        else if (
+            action === "unverify"
+        ) {
+
+            await unverifyStore();
+
+        }
+
+        else if (
+            action === "activate"
+        ) {
+
+            await changeStoreStatus(
+                "active"
+            );
+
+        }
+
+        else if (
+            action === "deactivate"
+        ) {
+
+            await changeStoreStatus(
+                "inactive"
+            );
+
+        }
+
+    }
+);
+
+
+// ==========================================================
+// BOUTON PARAMÈTRES
+// ==========================================================
+
+storeSettingsButton?.addEventListener(
+    "click",
+    () => {
+
+        showToast(
+            "Configurações da Loja Oficial disponíveis em breve.",
+            "settings"
+        );
+
+    }
+);
+
+
+// ==========================================================
+// EXPOSER LES FONCTIONS
+// ==========================================================
+
+window.brandStoreAdmin.openEditStoreModal =
+    openEditStoreModal;
+
+window.brandStoreAdmin.saveStoreInformation =
+    saveStoreInformation;
+
+window.brandStoreAdmin.verifyStore =
+    verifyStore;
+
+window.brandStoreAdmin.unverifyStore =
+    unverifyStore;
+
+window.brandStoreAdmin.changeStoreStatus =
+    changeStoreStatus;
+
+window.brandStoreAdmin.openStoreConfirmation =
+    openStoreConfirmation;
+
+
+// ==========================================================
+// ALERTE — SUCCÈS
+// ==========================================================
+
+alert(
+    "BLOC 9 — Ações administrativas carregadas com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 9
+// ==========================================================
