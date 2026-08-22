@@ -6571,3 +6571,941 @@ alert(
 // ==========================================================
 // FIN BLOC 6
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 7 — VENTES, PERFORMANCE ET INDICATEURS FINANCIERS
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT DU BLOC
+// ==========================================================
+
+alert(
+    "BLOC 7 — Carregamento das vendas e desempenho da Loja Oficial..."
+);
+
+
+// ==========================================================
+// ÉTAT DU BLOC
+// ==========================================================
+
+let storeSalesData = [];
+
+let currentPerformancePeriod =
+    performancePeriod?.value ||
+    "30";
+
+let currentSalesPeriod =
+    salesPeriod?.value ||
+    "30";
+
+
+// ==========================================================
+// UTILITAIRE — RÉCUPÉRER LE MONTANT D'UNE COMMANDE
+// ==========================================================
+
+function getOrderAmount(order) {
+
+    if (!order) {
+
+        return 0;
+
+    }
+
+    return Number(
+        order.total ??
+        order.totalAmount ??
+        order.amount ??
+        order.orderTotal ??
+        order.price ??
+        0
+    );
+
+}
+
+
+// ==========================================================
+// UTILITAIRE — VÉRIFIER SI UNE COMMANDE EST TERMINÉE
+// ==========================================================
+
+function isCompletedOrder(order) {
+
+    if (!order) {
+
+        return false;
+
+    }
+
+    const status =
+        String(
+            order.status ||
+            ""
+        )
+        .toLowerCase()
+        .trim();
+
+
+    return (
+        status === "delivered" ||
+        status === "completed" ||
+        status === "paid" ||
+        status === "entregue" ||
+        status === "concluida" ||
+        status === "concluída" ||
+        status === "finalized" ||
+        status === "finalizado"
+    );
+
+}
+
+
+// ==========================================================
+// UTILITAIRE — RÉCUPÉRER LA DATE D'UNE COMMANDE
+// ==========================================================
+
+function getOrderDate(order) {
+
+    if (!order) {
+
+        return null;
+
+    }
+
+
+    const value =
+        order.createdAt ??
+        order.date ??
+        order.orderDate ??
+        order.updatedAt;
+
+
+    if (!value) {
+
+        return null;
+
+    }
+
+
+    try {
+
+        if (
+            value &&
+            typeof value.toDate === "function"
+        ) {
+
+            return value.toDate();
+
+        }
+
+
+        const date =
+            new Date(value);
+
+
+        if (
+            isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return null;
+
+        }
+
+
+        return date;
+
+    } catch (error) {
+
+        return null;
+
+    }
+
+}
+
+
+// ==========================================================
+// UTILITAIRE — FILTRER PAR PÉRIODE
+// ==========================================================
+
+function getOrdersForPeriod(
+    period
+) {
+
+    const days =
+        Number(period || 30);
+
+
+    const now =
+        new Date();
+
+
+    const startDate =
+        new Date(now);
+
+
+    startDate.setDate(
+        now.getDate() -
+        days
+    );
+
+
+    return orders.filter(
+        order => {
+
+            if (
+                !isCompletedOrder(
+                    order
+                )
+            ) {
+
+                return false;
+
+            }
+
+
+            const orderDate =
+                getOrderDate(
+                    order
+                );
+
+
+            if (!orderDate) {
+
+                return false;
+
+            }
+
+
+            return (
+                orderDate >=
+                startDate
+            );
+
+        }
+    );
+
+}
+
+
+// ==========================================================
+// FONCTION — CALCULER LES VENTES
+// ==========================================================
+
+function calculateSalesData() {
+
+    const completedOrders =
+        orders.filter(
+            isCompletedOrder
+        );
+
+
+    const today =
+        new Date();
+
+
+    const startToday =
+        new Date(
+            today
+        );
+
+    startToday.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+
+    const startMonth =
+        new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            1
+        );
+
+
+    // ======================================================
+    // VENTES DU JOUR
+    // ======================================================
+
+    const todayOrders =
+        completedOrders.filter(
+            order => {
+
+                const date =
+                    getOrderDate(
+                        order
+                    );
+
+
+                return (
+                    date &&
+                    date >=
+                    startToday
+                );
+
+            }
+        );
+
+
+    const todaySales =
+        todayOrders.reduce(
+            (
+                total,
+                order
+            ) => {
+
+                return (
+                    total +
+                    getOrderAmount(
+                        order
+                    )
+                );
+
+            },
+            0
+        );
+
+
+    // ======================================================
+    // VENTES DU MOIS
+    // ======================================================
+
+    const monthOrders =
+        completedOrders.filter(
+            order => {
+
+                const date =
+                    getOrderDate(
+                        order
+                    );
+
+
+                return (
+                    date &&
+                    date >=
+                    startMonth
+                );
+
+            }
+        );
+
+
+    const monthSales =
+        monthOrders.reduce(
+            (
+                total,
+                order
+            ) => {
+
+                return (
+                    total +
+                    getOrderAmount(
+                        order
+                    )
+                );
+
+            },
+            0
+        );
+
+
+    // ======================================================
+    // VENTES TOTALES
+    // ======================================================
+
+    const totalSales =
+        completedOrders.reduce(
+            (
+                total,
+                order
+            ) => {
+
+                return (
+                    total +
+                    getOrderAmount(
+                        order
+                    )
+                );
+
+            },
+            0
+        );
+
+
+    // ======================================================
+    // PANIER MOYEN
+    // ======================================================
+
+    const average =
+        completedOrders.length > 0
+            ? totalSales /
+              completedOrders.length
+            : 0;
+
+
+    // ======================================================
+    // COMMISSION TOMA
+    // ======================================================
+
+    const commissionRate =
+        Number(
+            store?.commissionRate ??
+            store?.commission ??
+            5
+        );
+
+
+    const commission =
+        totalSales *
+        (
+            commissionRate /
+            100
+        );
+
+
+    // ======================================================
+    // VENTES NETTES
+    // ======================================================
+
+    const netSales =
+        totalSales -
+        commission;
+
+
+    return {
+
+        todaySales,
+
+        monthSales,
+
+        totalSales,
+
+        average,
+
+        commissionRate,
+
+        commission,
+
+        netSales,
+
+        todayOrderCount:
+            todayOrders.length,
+
+        monthOrderCount:
+            monthOrders.length,
+
+        completedOrderCount:
+            completedOrders.length
+
+    };
+
+}
+
+
+// ==========================================================
+// FONCTION — AFFICHER LES INDICATEURS FINANCIERS
+// ==========================================================
+
+function renderFinancialIndicators() {
+
+    const data =
+        calculateSalesData();
+
+
+    // ======================================================
+    // VENTES AUJOURD'HUI
+    // ======================================================
+
+    if (salesToday) {
+
+        salesToday.textContent =
+            formatKz(
+                data.todaySales
+            );
+
+    }
+
+
+    // ======================================================
+    // VENTES DU MOIS
+    // ======================================================
+
+    if (salesMonth) {
+
+        salesMonth.textContent =
+            formatKz(
+                data.monthSales
+            );
+
+    }
+
+
+    // ======================================================
+    // PANIER MOYEN
+    // ======================================================
+
+    if (averageOrder) {
+
+        averageOrder.textContent =
+            formatKz(
+                data.average
+            );
+
+    }
+
+
+    // ======================================================
+    // COMMISSION
+    // ======================================================
+
+    if (storeCommission) {
+
+        storeCommission.textContent =
+            formatKz(
+                data.commission
+            );
+
+    }
+
+
+    // ======================================================
+    // SECTION PERFORMANCE
+    // ======================================================
+
+    if (grossSales) {
+
+        grossSales.textContent =
+            formatKz(
+                data.totalSales
+            );
+
+    }
+
+
+    if (tomacommission) {
+
+        tomacommission.textContent =
+            formatKz(
+                data.commission
+            );
+
+    }
+
+
+    if (netSales) {
+
+        netSales.textContent =
+            formatKz(
+                data.netSales
+            );
+
+    }
+
+
+    if (averageOrderSales) {
+
+        averageOrderSales.textContent =
+            formatKz(
+                data.average
+            );
+
+    }
+
+
+    // ======================================================
+    // EXPOSER LES DONNÉES
+    // ======================================================
+
+    window.brandStoreAdmin.sales =
+        data;
+
+}
+
+
+// ==========================================================
+// FONCTION — PRÉPARER LES DONNÉES DU GRAPHIQUE
+// ==========================================================
+
+function prepareSalesChartData(
+    period = 30
+) {
+
+    const periodOrders =
+        getOrdersForPeriod(
+            period
+        );
+
+
+    const days =
+        Number(period);
+
+
+    const result = {};
+
+
+    for (
+        let i = 0;
+        i < days;
+        i++
+    ) {
+
+        const date =
+            new Date();
+
+
+        date.setDate(
+            date.getDate() -
+            (
+                days -
+                1 -
+                i
+            )
+        );
+
+
+        date.setHours(
+            0,
+            0,
+            0,
+            0
+        );
+
+
+        const key =
+            date.toISOString()
+                .slice(
+                    0,
+                    10
+                );
+
+
+        result[key] = 0;
+
+    }
+
+
+    periodOrders.forEach(
+        order => {
+
+            const date =
+                getOrderDate(
+                    order
+                );
+
+
+            if (!date) {
+
+                return;
+
+            }
+
+
+            const key =
+                date.toISOString()
+                    .slice(
+                        0,
+                        10
+                    );
+
+
+            if (
+                result[key] !==
+                undefined
+            ) {
+
+                result[key] +=
+                    getOrderAmount(
+                        order
+                    );
+
+            }
+
+        }
+    );
+
+
+    return result;
+
+}
+
+
+// ==========================================================
+// FONCTION — AFFICHER UN GRAPHIQUE SIMPLE
+// ==========================================================
+
+function renderSimpleSalesChart(
+    container,
+    data
+) {
+
+    if (!container) {
+
+        return;
+
+    }
+
+
+    const entries =
+        Object.entries(
+            data
+        );
+
+
+    if (
+        entries.length === 0
+    ) {
+
+        renderEmptyState(
+            container,
+            "bar_chart",
+            "Nenhuma venda encontrada",
+            "Ainda não existem vendas concluídas neste período."
+        );
+
+        return;
+
+    }
+
+
+    const max =
+        Math.max(
+            ...entries.map(
+                item =>
+                    Number(
+                        item[1] || 0
+                    )
+            ),
+            1
+        );
+
+
+    container.innerHTML = `
+
+        <div class="salesChartInner">
+
+            ${
+                entries.map(
+                    ([date, value]) => {
+
+                        const amount =
+                            Number(
+                                value || 0
+                            );
+
+
+                        const height =
+                            Math.max(
+                                4,
+                                (
+                                    amount /
+                                    max
+                                ) *
+                                100
+                            );
+
+
+                        const label =
+                            date.slice(
+                                8,
+                                10
+                            );
+
+
+                        return `
+
+                            <div
+                                class="salesChartColumn"
+                                title="${date} — ${formatKz(amount)}"
+                            >
+
+                                <div
+                                    class="salesChartBar"
+                                    style="height:${height}%"
+                                ></div>
+
+                                <span>
+                                    ${label}
+                                </span>
+
+                            </div>
+
+                        `;
+
+                    }
+                ).join("")
+
+            }
+
+        </div>
+
+    `;
+
+}
+
+
+// ==========================================================
+// FONCTION — CHARGER LES GRAPHIQUES
+// ==========================================================
+
+function loadSalesCharts() {
+
+    const performanceData =
+        prepareSalesChartData(
+            currentPerformancePeriod
+        );
+
+
+    const salesData =
+        prepareSalesChartData(
+            currentSalesPeriod
+        );
+
+
+    renderSimpleSalesChart(
+        performanceChart,
+        performanceData
+    );
+
+
+    renderSimpleSalesChart(
+        salesChart,
+        salesData
+    );
+
+
+    window.brandStoreAdmin.salesCharts = {
+
+        performanceData,
+
+        salesData
+
+    };
+
+}
+
+
+// ==========================================================
+// ÉVÉNEMENT — PÉRIODE PERFORMANCE
+// ==========================================================
+
+performancePeriod?.addEventListener(
+    "change",
+    event => {
+
+        currentPerformancePeriod =
+            event.target.value ||
+            "30";
+
+
+        loadSalesCharts();
+
+    }
+);
+
+
+// ==========================================================
+// ÉVÉNEMENT — PÉRIODE VENTES
+// ==========================================================
+
+salesPeriod?.addEventListener(
+    "change",
+    event => {
+
+        currentSalesPeriod =
+            event.target.value ||
+            "30";
+
+
+        loadSalesCharts();
+
+    }
+);
+
+
+// ==========================================================
+// FONCTION — RAFRAÎCHIR TOUTES LES DONNÉES
+// ==========================================================
+
+function refreshSalesPerformance() {
+
+    renderFinancialIndicators();
+
+    loadSalesCharts();
+
+}
+
+
+// ==========================================================
+// EXPOSER LES FONCTIONS
+// ==========================================================
+
+window.brandStoreAdmin.calculateSalesData =
+    calculateSalesData;
+
+
+window.brandStoreAdmin.renderFinancialIndicators =
+    renderFinancialIndicators;
+
+
+window.brandStoreAdmin.loadSalesCharts =
+    loadSalesCharts;
+
+
+window.brandStoreAdmin.refreshSalesPerformance =
+    refreshSalesPerformance;
+
+
+// ==========================================================
+// CHARGEMENT INITIAL
+// ==========================================================
+
+try {
+
+    if (
+        !window.brandStoreAdmin
+    ) {
+
+        throw new Error(
+            "Brand Store Admin não inicializado."
+        );
+
+    }
+
+
+    renderFinancialIndicators();
+
+    loadSalesCharts();
+
+
+    // ======================================================
+    // ALERTE SUCCÈS
+    // ======================================================
+
+    alert(
+        "BLOC 7 — Vendas e desempenho carregados com sucesso."
+    );
+
+
+} catch (error) {
+
+    console.error(
+        "BLOC 7 — Erro:",
+        error
+    );
+
+
+    alert(
+        "BLOC 7 — ERRO ao carregar vendas e desempenho:\n\n" +
+        error.message
+    );
+
+}
+
+
+// ==========================================================
+// FIN BLOC 7
+// ==========================================================
