@@ -7509,3 +7509,1123 @@ try {
 // ==========================================================
 // FIN BLOC 7
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 8 — ACTIVITÉ ET NOTIFICATIONS
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT DU BLOC
+// ==========================================================
+
+alert(
+    "BLOC 8 — Carregamento de atividades e notificações..."
+);
+
+
+// ==========================================================
+// COLLECTIONS FIRESTORE
+// ==========================================================
+
+const activitiesCollectionRef =
+    collection(
+        db,
+        "storeActivities"
+    );
+
+
+const notificationsCollectionRef =
+    collection(
+        db,
+        "storeNotifications"
+    );
+
+
+// ==========================================================
+// ÉTAT LOCAL
+// ==========================================================
+
+let filteredActivities = [];
+
+let unreadNotifications = 0;
+
+
+// ==========================================================
+// UTILITAIRE — TEXTE NORMALISÉ
+// ==========================================================
+
+function normalizeActivityText(value) {
+
+    return String(
+        value || ""
+    )
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(
+        /[\u0300-\u036f]/g,
+        ""
+    )
+    .trim();
+
+}
+
+
+// ==========================================================
+// UTILITAIRE — TYPE D'ACTIVITÉ
+// ==========================================================
+
+function getActivityIcon(type) {
+
+    switch (
+        normalizeActivityText(type)
+    ) {
+
+        case "merchant":
+        case "comerciante":
+            return "storefront";
+
+        case "product":
+        case "produto":
+            return "inventory_2";
+
+        case "order":
+        case "pedido":
+        case "commande":
+            return "shopping_bag";
+
+        case "sale":
+        case "venda":
+            return "payments";
+
+        case "delete":
+        case "excluir":
+        case "deleted":
+            return "delete";
+
+        case "update":
+        case "updated":
+        case "atualizacao":
+            return "edit";
+
+        case "verification":
+        case "verified":
+        case "verificacao":
+            return "verified";
+
+        case "warning":
+        case "aviso":
+            return "warning";
+
+        case "error":
+            return "error";
+
+        default:
+            return "notifications";
+
+    }
+
+}
+
+
+// ==========================================================
+// UTILITAIRE — COULEUR / CLASSE ACTIVITÉ
+// ==========================================================
+
+function getActivityClass(type) {
+
+    const normalized =
+        normalizeActivityText(
+            type
+        );
+
+
+    if (
+        normalized.includes("delete") ||
+        normalized.includes("excluir")
+    ) {
+
+        return "danger";
+
+    }
+
+
+    if (
+        normalized.includes("warning") ||
+        normalized.includes("aviso")
+    ) {
+
+        return "warning";
+
+    }
+
+
+    if (
+        normalized.includes("sale") ||
+        normalized.includes("venda") ||
+        normalized.includes("order") ||
+        normalized.includes("pedido")
+    ) {
+
+        return "success";
+
+    }
+
+
+    return "info";
+
+}
+
+
+// ==========================================================
+// FONCTION — AJOUTER UNE ACTIVITÉ
+// ==========================================================
+
+async function addStoreActivity(
+    type,
+    title,
+    description
+) {
+
+    try {
+
+        if (!storeId) {
+
+            return;
+
+        }
+
+
+        const activity = {
+
+            storeId,
+
+            type:
+                type ||
+                "general",
+
+            title:
+                title ||
+                "Atividade",
+
+            description:
+                description ||
+                "",
+
+            createdAt:
+                serverTimestamp(),
+
+            read:
+                false
+
+        };
+
+
+        const activityRef =
+            doc(
+                activitiesCollectionRef
+            );
+
+
+        await updateDoc(
+            activityRef,
+            activity
+        );
+
+
+    } catch (error) {
+
+        console.warn(
+            "BLOC 8 — Erro ao registrar atividade:",
+            error
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// NOTE IMPORTANTE
+// ==========================================================
+// Firestore exige setDoc() para criar um document.
+// Comme le BLOC 1 n'importe pas setDoc, nous utilisons
+// une fonction alternative avec addDoc si disponible.
+// ==========================================================
+
+
+// ==========================================================
+// FONCTION — ENREGISTRER ACTIVITÉ CORRECTEMENT
+// ==========================================================
+
+async function saveStoreActivity(
+    type,
+    title,
+    description
+) {
+
+    try {
+
+        const activity = {
+
+            storeId,
+
+            type:
+                type ||
+                "general",
+
+            title:
+                title ||
+                "Atividade",
+
+            description:
+                description ||
+                "",
+
+            createdAt:
+                serverTimestamp(),
+
+            read:
+                false
+
+        };
+
+
+        // addDoc est chargé dynamiquement
+        const firestoreModule =
+            await import(
+                "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+            );
+
+
+        await firestoreModule.addDoc(
+            activitiesCollectionRef,
+            activity
+        );
+
+
+    } catch (error) {
+
+        console.warn(
+            "BLOC 8 — Não foi possível salvar atividade:",
+            error
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — CHARGER LES ACTIVITÉS
+// ==========================================================
+
+async function loadStoreActivities() {
+
+    try {
+
+        if (!storeId) {
+
+            throw new Error(
+                "ID da Loja Oficial não encontrado."
+            );
+
+        }
+
+
+        const snapshot =
+            await getDocs(
+                query(
+                    activitiesCollectionRef,
+                    where(
+                        "storeId",
+                        "==",
+                        storeId
+                    ),
+                    orderBy(
+                        "createdAt",
+                        "desc"
+                    ),
+                    limit(50)
+                )
+            );
+
+
+        activities =
+            snapshot.docs.map(
+                activityDoc => ({
+
+                    id:
+                        activityDoc.id,
+
+                    ...activityDoc.data()
+
+                })
+            );
+
+
+        filteredActivities =
+            [
+                ...activities
+            ];
+
+
+        renderActivityList();
+
+
+        window.brandStoreAdmin.activities =
+            activities;
+
+
+    } catch (error) {
+
+        console.warn(
+            "BLOC 8 — Erro ao carregar atividades:",
+            error
+        );
+
+
+        // --------------------------------------------------
+        // FALLBACK
+        // --------------------------------------------------
+
+        activities = [];
+
+        filteredActivities = [];
+
+        renderActivityList();
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — AFFICHER LES ACTIVITÉS
+// ==========================================================
+
+function renderActivityList() {
+
+    if (!activityList) {
+
+        return;
+
+    }
+
+
+    if (
+        filteredActivities.length === 0
+    ) {
+
+        renderEmptyState(
+            activityList,
+            "history",
+            "Nenhuma atividade",
+            "As atividades da Loja Oficial aparecerão aqui."
+        );
+
+        return;
+
+    }
+
+
+    activityList.innerHTML =
+        filteredActivities
+        .map(
+            activity => {
+
+                const icon =
+                    getActivityIcon(
+                        activity.type
+                    );
+
+
+                const activityClass =
+                    getActivityClass(
+                        activity.type
+                    );
+
+
+                return `
+
+                    <div
+                        class="activityItem ${activityClass}"
+                        data-activity-id="${activity.id}"
+                    >
+
+                        <div class="activityIcon">
+
+                            <span class="material-symbols-rounded">
+                                ${icon}
+                            </span>
+
+                        </div>
+
+
+                        <div class="activityContent">
+
+                            <strong>
+                                ${
+                                    activity.title ||
+                                    "Atividade"
+                                }
+                            </strong>
+
+
+                            <p>
+                                ${
+                                    activity.description ||
+                                    ""
+                                }
+                            </p>
+
+
+                            <small>
+                                ${
+                                    activity.createdAt
+                                        ? formatDateTime(
+                                            activity.createdAt
+                                        )
+                                        : "Agora"
+                                }
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+        )
+        .join("");
+
+}
+
+
+// ==========================================================
+// FONCTION — SUPPRIMER LES ACTIVITÉS
+// ==========================================================
+
+async function clearStoreActivities() {
+
+    try {
+
+        if (
+            activities.length === 0
+        ) {
+
+            showToast(
+                "Nenhuma atividade para excluir.",
+                "info"
+            );
+
+            return;
+
+        }
+
+
+        const confirmation =
+            confirm(
+                "Deseja excluir todas as atividades desta Loja Oficial?"
+            );
+
+
+        if (!confirmation) {
+
+            return;
+
+        }
+
+
+        showLoading(
+            "Excluindo atividades..."
+        );
+
+
+        for (
+            const activity
+            of activities
+        ) {
+
+            try {
+
+                await deleteDoc(
+                    doc(
+                        db,
+                        "storeActivities",
+                        activity.id
+                    )
+                );
+
+            } catch (error) {
+
+                console.warn(
+                    "Erro ao excluir atividade:",
+                    activity.id,
+                    error
+                );
+
+            }
+
+        }
+
+
+        activities = [];
+
+        filteredActivities = [];
+
+
+        renderActivityList();
+
+
+        hideLoading();
+
+
+        showToast(
+            "Atividades excluídas com sucesso.",
+            "delete"
+        );
+
+
+    } catch (error) {
+
+        hideLoading();
+
+
+        alert(
+            "BLOC 8 — ERRO ao excluir atividades:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// ÉVÉNEMENT — EFFACER ACTIVITÉS
+// ==========================================================
+
+clearActivityButton?.addEventListener(
+    "click",
+    clearStoreActivities
+);
+
+
+// ==========================================================
+// FONCTION — CHARGER LES NOTIFICATIONS
+// ==========================================================
+
+async function loadStoreNotifications() {
+
+    try {
+
+        if (!storeId) {
+
+            throw new Error(
+                "ID da Loja Oficial não encontrado."
+            );
+
+        }
+
+
+        const snapshot =
+            await getDocs(
+                query(
+                    notificationsCollectionRef,
+                    where(
+                        "storeId",
+                        "==",
+                        storeId
+                    ),
+                    orderBy(
+                        "createdAt",
+                        "desc"
+                    ),
+                    limit(50)
+                )
+            );
+
+
+        notifications =
+            snapshot.docs.map(
+                notificationDoc => ({
+
+                    id:
+                        notificationDoc.id,
+
+                    ...notificationDoc.data()
+
+                })
+            );
+
+
+        unreadNotifications =
+            notifications.filter(
+                notification =>
+                    notification.read !== true
+            ).length;
+
+
+        renderNotificationList();
+
+
+        updateNotificationCount();
+
+
+        window.brandStoreAdmin.notifications =
+            notifications;
+
+
+    } catch (error) {
+
+        console.warn(
+            "BLOC 8 — Erro ao carregar notificações:",
+            error
+        );
+
+
+        notifications = [];
+
+        unreadNotifications = 0;
+
+
+        renderNotificationList();
+
+        updateNotificationCount();
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — AFFICHER LES NOTIFICATIONS
+// ==========================================================
+
+function renderNotificationList() {
+
+    if (!notificationList) {
+
+        return;
+
+    }
+
+
+    if (
+        notifications.length === 0
+    ) {
+
+        renderEmptyState(
+            notificationList,
+            "notifications_none",
+            "Nenhuma notificação",
+            "As notificações importantes aparecerão aqui."
+        );
+
+        return;
+
+    }
+
+
+    notificationList.innerHTML =
+        notifications
+        .map(
+            notification => {
+
+                const isUnread =
+                    notification.read !== true;
+
+
+                const type =
+                    normalizeActivityText(
+                        notification.type
+                    );
+
+
+                let icon =
+                    "notifications";
+
+
+                if (
+                    type === "order" ||
+                    type === "pedido"
+                ) {
+
+                    icon =
+                        "shopping_bag";
+
+                }
+
+                else if (
+                    type === "merchant" ||
+                    type === "comerciante"
+                ) {
+
+                    icon =
+                        "storefront";
+
+                }
+
+                else if (
+                    type === "product" ||
+                    type === "produto"
+                ) {
+
+                    icon =
+                        "inventory_2";
+
+                }
+
+                else if (
+                    type === "warning" ||
+                    type === "aviso"
+                ) {
+
+                    icon =
+                        "warning";
+
+                }
+
+
+                return `
+
+                    <div
+                        class="
+                            notificationItem
+                            ${
+                                isUnread
+                                    ? "unread"
+                                    : ""
+                            }
+                        "
+                        data-notification-id="${notification.id}"
+                    >
+
+                        <div class="notificationIcon">
+
+                            <span class="material-symbols-rounded">
+                                ${icon}
+                            </span>
+
+                        </div>
+
+
+                        <div class="notificationContent">
+
+                            <strong>
+                                ${
+                                    notification.title ||
+                                    "Notificação"
+                                }
+                            </strong>
+
+
+                            <p>
+                                ${
+                                    notification.message ||
+                                    notification.description ||
+                                    ""
+                                }
+                            </p>
+
+
+                            <small>
+                                ${
+                                    notification.createdAt
+                                        ? formatDateTime(
+                                            notification.createdAt
+                                        )
+                                        : "Agora"
+                                }
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+        )
+        .join("");
+
+}
+
+
+// ==========================================================
+// FONCTION — COMPTEUR NOTIFICATIONS
+// ==========================================================
+
+function updateNotificationCount() {
+
+    if (!notificationCount) {
+
+        return;
+
+    }
+
+
+    notificationCount.textContent =
+        unreadNotifications;
+
+
+    notificationCount.classList.toggle(
+        "hidden",
+        unreadNotifications === 0
+    );
+
+}
+
+
+// ==========================================================
+// FONCTION — MARQUER COMME LUES
+// ==========================================================
+
+async function markAllNotificationsRead() {
+
+    try {
+
+        const unread =
+            notifications.filter(
+                notification =>
+                    notification.read !== true
+            );
+
+
+        if (
+            unread.length === 0
+        ) {
+
+            showToast(
+                "Todas as notificações já foram lidas.",
+                "done_all"
+            );
+
+            return;
+
+        }
+
+
+        showLoading(
+            "Marcando notificações como lidas..."
+        );
+
+
+        for (
+            const notification
+            of unread
+        ) {
+
+            try {
+
+                await updateDoc(
+                    doc(
+                        db,
+                        "storeNotifications",
+                        notification.id
+                    ),
+                    {
+
+                        read:
+                            true,
+
+                        readAt:
+                            serverTimestamp()
+
+                    }
+                );
+
+
+                notification.read =
+                    true;
+
+            } catch (error) {
+
+                console.warn(
+                    "Erro ao marcar notificação:",
+                    notification.id,
+                    error
+                );
+
+            }
+
+        }
+
+
+        unreadNotifications = 0;
+
+
+        renderNotificationList();
+
+        updateNotificationCount();
+
+
+        hideLoading();
+
+
+        showToast(
+            "Notificações marcadas como lidas.",
+            "done_all"
+        );
+
+
+    } catch (error) {
+
+        hideLoading();
+
+
+        alert(
+            "BLOC 8 — ERRO ao atualizar notificações:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// ÉVÉNEMENT — MARQUER NOTIFICATIONS LUES
+// ==========================================================
+
+markNotificationsRead?.addEventListener(
+    "click",
+    markAllNotificationsRead
+);
+
+
+// ==========================================================
+// FONCTION — CRÉER UNE NOTIFICATION
+// ==========================================================
+
+async function createStoreNotification(
+    type,
+    title,
+    message
+) {
+
+    try {
+
+        const firestoreModule =
+            await import(
+                "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+            );
+
+
+        await firestoreModule.addDoc(
+            notificationsCollectionRef,
+            {
+
+                storeId,
+
+                type:
+                    type ||
+                    "general",
+
+                title:
+                    title ||
+                    "Notificação",
+
+                message:
+                    message ||
+                    "",
+
+                read:
+                    false,
+
+                createdAt:
+                    serverTimestamp()
+
+            }
+        );
+
+
+        await loadStoreNotifications();
+
+
+    } catch (error) {
+
+        console.warn(
+            "BLOC 8 — Erro ao criar notificação:",
+            error
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// EXPOSER LES FONCTIONS
+// ==========================================================
+
+window.brandStoreAdmin.loadStoreActivities =
+    loadStoreActivities;
+
+
+window.brandStoreAdmin.loadStoreNotifications =
+    loadStoreNotifications;
+
+
+window.brandStoreAdmin.saveStoreActivity =
+    saveStoreActivity;
+
+
+window.brandStoreAdmin.createStoreNotification =
+    createStoreNotification;
+
+
+window.brandStoreAdmin.clearStoreActivities =
+    clearStoreActivities;
+
+
+window.brandStoreAdmin.markAllNotificationsRead =
+    markAllNotificationsRead;
+
+
+// ==========================================================
+// CHARGEMENT INITIAL
+// ==========================================================
+
+(async function initializeBlock8() {
+
+    try {
+
+        await loadStoreActivities();
+
+        await loadStoreNotifications();
+
+
+        // ==================================================
+        // ALERTE SUCCÈS
+        // ==================================================
+
+        alert(
+            "BLOC 8 — Atividades e notificações carregadas com sucesso."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 8 — Erro de inicialização:",
+            error
+        );
+
+
+        alert(
+            "BLOC 8 — ERRO ao inicializar atividades e notificações:\n\n" +
+            error.message
+        );
+
+    }
+
+})();
+
+
+// ==========================================================
+// FIN BLOC 8
+// ==========================================================
