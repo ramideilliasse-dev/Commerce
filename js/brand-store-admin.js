@@ -13507,3 +13507,124 @@ alert(
 // ==========================================================
 // FIN BLOC 21
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 22 — IDENTIFICATION DES NOTIFICATIONS
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+alert(
+    "BLOC 22 — Identificação das notificações carregando..."
+);
+
+
+// ==========================================================
+// FONCTION — AJOUTER LES IDS AUX NOTIFICATIONS
+// ==========================================================
+
+function prepareNotificationItems() {
+
+    try {
+
+        if (!notificationList) {
+
+            return;
+
+        }
+
+
+        const items =
+            notificationList.querySelectorAll(
+                ".notificationItem"
+            );
+
+
+        items.forEach(
+            (item, index) => {
+
+                const notification =
+                    notifications[index];
+
+
+                if (!notification) {
+
+                    return;
+
+                }
+
+
+                if (
+                    notification.id
+                ) {
+
+                    item.dataset.notificationId =
+                        notification.id;
+
+                }
+
+            }
+        );
+
+
+        // --------------------------------------------------
+        // ACTIVER LES CLICS DU BLOC 21
+        // --------------------------------------------------
+
+        if (
+            window.brandStoreAdmin
+                .enableNotificationActions
+        ) {
+
+            window.brandStoreAdmin
+                .enableNotificationActions();
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 22 — Erro:",
+            error
+        );
+
+
+        alert(
+            "BLOC 22 — ERRO ao preparar notificações:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// EXPOSER
+// ==========================================================
+
+window.brandStoreAdmin
+    .prepareNotificationItems =
+    prepareNotificationItems;
+
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
+
+prepareNotificationItems();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 22 — Identificação das notificações carregada com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 22
+// ==========================================================
