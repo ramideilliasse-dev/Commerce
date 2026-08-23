@@ -12192,3 +12192,311 @@ alert(
 // ==========================================================
 // FIN BLOC 15
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 16 — CENTRE DE NOTIFICATIONS ADMIN
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT
+// ==========================================================
+
+alert(
+    "BLOC 16 — Centro de notificações carregando..."
+);
+
+
+// ==========================================================
+// ÉTAT DU BLOC
+// ==========================================================
+
+let notificationCenter = {
+
+    initialized: true,
+
+    total: 0,
+
+    unread: 0
+
+};
+
+
+// ==========================================================
+// FONCTION — AFFICHER LES NOTIFICATIONS
+// ==========================================================
+
+function renderAdminNotifications() {
+
+    try {
+
+        if (!notificationList) {
+
+            return;
+
+        }
+
+
+        const list =
+            Array.isArray(
+                notifications
+            )
+                ? notifications
+                : [];
+
+
+        notificationCenter.total =
+            list.length;
+
+
+        notificationCenter.unread =
+            list.filter(
+                notification =>
+                    notification.read !== true
+            ).length;
+
+
+        // --------------------------------------------------
+        // COMPTEUR
+        // --------------------------------------------------
+
+        if (notificationCount) {
+
+            notificationCount.textContent =
+                notificationCenter.unread;
+
+        }
+
+
+        // --------------------------------------------------
+        // AUCUNE NOTIFICATION
+        // --------------------------------------------------
+
+        if (
+            list.length === 0
+        ) {
+
+            renderEmptyState(
+                notificationList,
+                "notifications",
+                "Nenhuma notificação",
+                "Não existem novas notificações administrativas."
+            );
+
+            return;
+
+        }
+
+
+        // --------------------------------------------------
+        // AFFICHAGE
+        // --------------------------------------------------
+
+        notificationList.innerHTML = "";
+
+
+        list.forEach(
+            notification => {
+
+                const item =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                item.className =
+                    "notificationItem";
+
+
+                if (
+                    notification.read !== true
+                ) {
+
+                    item.classList.add(
+                        "unread"
+                    );
+
+                }
+
+
+                const title =
+                    notification.title ||
+                    "Notificação";
+
+
+                const message =
+                    notification.message ||
+                    notification.description ||
+                    "";
+
+
+                const date =
+                    notification.createdAt
+                        ? formatDateTime(
+                            notification.createdAt
+                        )
+                        : "—";
+
+
+                item.innerHTML = `
+
+                    <div class="notificationContent">
+
+                        <strong>
+                            ${title}
+                        </strong>
+
+                        <p>
+                            ${message}
+                        </p>
+
+                        <small>
+                            ${date}
+                        </small>
+
+                    </div>
+
+                `;
+
+
+                notificationList.appendChild(
+                    item
+                );
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 16 — Erro ao mostrar notificações:",
+            error
+        );
+
+
+        alert(
+            "BLOC 16 — ERRO ao mostrar notificações:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — MARQUER COMME LUES
+// ==========================================================
+
+function markAllAdminNotificationsRead() {
+
+    try {
+
+        if (
+            !Array.isArray(
+                notifications
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        notifications =
+            notifications.map(
+                notification => ({
+
+                    ...notification,
+
+                    read:
+                        true
+
+                })
+            );
+
+
+        notificationCenter.unread =
+            0;
+
+
+        if (notificationCount) {
+
+            notificationCount.textContent =
+                "0";
+
+        }
+
+
+        renderAdminNotifications();
+
+
+        showToast(
+            "Notificações marcadas como lidas.",
+            "done_all"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 16 — Erro ao marcar notificações:",
+            error
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// ÉVÉNEMENT — BOUTON LUES
+// ==========================================================
+
+markNotificationsRead?.addEventListener(
+    "click",
+    markAllAdminNotificationsRead
+);
+
+
+// ==========================================================
+// EXPOSER LES FONCTIONS
+// ==========================================================
+
+window.brandStoreAdmin
+    .notificationCenter =
+    notificationCenter;
+
+
+window.brandStoreAdmin
+    .renderAdminNotifications =
+    renderAdminNotifications;
+
+
+window.brandStoreAdmin
+    .markAllAdminNotificationsRead =
+    markAllAdminNotificationsRead;
+
+
+// ==========================================================
+// AFFICHAGE INITIAL
+// ==========================================================
+
+renderAdminNotifications();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 16 — Centro de notificações carregado com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 16
+// ==========================================================
