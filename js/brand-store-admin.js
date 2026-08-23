@@ -13348,3 +13348,162 @@ alert(
 // ==========================================================
 // FIN BLOC 20
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 21 — INTERACTION DES NOTIFICATIONS
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+alert(
+    "BLOC 21 — Interação das notificações carregando..."
+);
+
+
+// ==========================================================
+// FONCTION — ACTIVER LES CLICS
+// ==========================================================
+
+function enableNotificationActions() {
+
+    try {
+
+        if (!notificationList) {
+
+            return;
+
+        }
+
+
+        const items =
+            notificationList.querySelectorAll(
+                ".notificationItem"
+            );
+
+
+        items.forEach(
+            item => {
+
+                item.style.cursor =
+                    "pointer";
+
+
+                item.addEventListener(
+                    "click",
+                    async () => {
+
+                        const notificationId =
+                            item.dataset.notificationId;
+
+
+                        if (!notificationId) {
+
+                            return;
+
+                        }
+
+
+                        if (
+                            window.brandStoreAdmin
+                                .openAdminNotification
+                        ) {
+
+                            await window.brandStoreAdmin
+                                .openAdminNotification(
+                                    notificationId
+                                );
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 21 — Erro nas ações:",
+            error
+        );
+
+
+        alert(
+            "BLOC 21 — ERRO nas ações das notificações:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — RENDU COMPATIBLE
+// ==========================================================
+
+function renderNotificationsWithActions() {
+
+    try {
+
+        if (
+            window.brandStoreAdmin
+                .renderAdminNotifications
+        ) {
+
+            window.brandStoreAdmin
+                .renderAdminNotifications();
+
+        }
+
+
+        enableNotificationActions();
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 21 — Erro ao renderizar:",
+            error
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// EXPOSER
+// ==========================================================
+
+window.brandStoreAdmin
+    .enableNotificationActions =
+    enableNotificationActions;
+
+
+window.brandStoreAdmin
+    .renderNotificationsWithActions =
+    renderNotificationsWithActions;
+
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
+
+renderNotificationsWithActions();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 21 — Interação das notificações carregada com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 21
+// ==========================================================
