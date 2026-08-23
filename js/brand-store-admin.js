@@ -11969,3 +11969,366 @@ alert(
 // ==========================================================
 // FIN BLOC 14
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 15 — JOURNAL ADMINISTRATIF VISIBLE
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT
+// ==========================================================
+
+alert(
+    "BLOC 15 — Journal administrativo carregando..."
+);
+
+
+// ==========================================================
+// FONCTION — LABEL DU TYPE
+// ==========================================================
+
+function getActivityTypeLabel(
+    type
+) {
+
+    const labels = {
+
+        security:
+            "Segurança",
+
+        verification:
+            "Verificação",
+
+        update:
+            "Atualização",
+
+        admin_operation:
+            "Operação administrativa",
+
+        system:
+            "Sistema",
+
+        create:
+            "Criação",
+
+        delete:
+            "Exclusão",
+
+        admin:
+            "Administração"
+
+    };
+
+
+    return (
+        labels[type] ||
+        type ||
+        "Administração"
+    );
+
+}
+
+
+// ==========================================================
+// FONCTION — ICÔNE DU TYPE
+// ==========================================================
+
+function getActivityIcon(
+    type
+) {
+
+    const icons = {
+
+        security:
+            "security",
+
+        verification:
+            "verified",
+
+        update:
+            "edit",
+
+        admin_operation:
+            "admin_panel_settings",
+
+        system:
+            "settings",
+
+        create:
+            "add_circle",
+
+        delete:
+            "delete",
+
+        admin:
+            "shield"
+
+    };
+
+
+    return (
+        icons[type] ||
+        "history"
+    );
+
+}
+
+
+// ==========================================================
+// FONCTION — AFFICHER LE JOURNAL
+// ==========================================================
+
+function renderAdminActivityList() {
+
+    if (!activityList) {
+
+        return;
+
+    }
+
+
+    const list =
+        Array.isArray(
+            activities
+        )
+            ? activities
+            : [];
+
+
+    // ------------------------------------------------------
+    // AUCUNE ACTIVITÉ
+    // ------------------------------------------------------
+
+    if (
+        list.length === 0
+    ) {
+
+        renderEmptyState(
+
+            activityList,
+
+            "history",
+
+            "Nenhuma atividade administrativa",
+
+            "Ainda não existem ações registradas para esta Loja Oficial."
+
+        );
+
+        return;
+
+    }
+
+
+    // ------------------------------------------------------
+    // AFFICHAGE
+    // ------------------------------------------------------
+
+    activityList.innerHTML =
+        list
+        .map(
+            activity => {
+
+                const type =
+                    String(
+                        activity.type ||
+                        "admin"
+                    )
+                    .toLowerCase();
+
+
+                const title =
+                    activity.title ||
+                    "Ação administrativa";
+
+
+                const description =
+                    activity.description ||
+                    "";
+
+
+                const date =
+                    activity.createdAt
+                        ? formatDateTime(
+                            activity.createdAt
+                        )
+                        : "—";
+
+
+                return `
+
+                    <div
+                        class="activityItem"
+                        data-activity-id="${activity.id || ""}"
+                    >
+
+                        <div class="activityIcon">
+
+                            <span class="material-symbols-rounded">
+
+                                ${getActivityIcon(type)}
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="activityContent">
+
+                            <div class="activityHeader">
+
+                                <strong>
+                                    ${title}
+                                </strong>
+
+                                <span class="activityType">
+
+                                    ${getActivityTypeLabel(type)}
+
+                                </span>
+
+                            </div>
+
+
+                            <p>
+                                ${description}
+                            </p>
+
+
+                            <small>
+                                ${date}
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+        )
+        .join("");
+
+}
+
+
+// ==========================================================
+// FONCTION — RAFRAÎCHIR LE JOURNAL
+// ==========================================================
+
+async function refreshAdminActivityList() {
+
+    try {
+
+        if (
+            window.brandStoreAdmin &&
+            window.brandStoreAdmin
+                .refreshAdminMonitoring
+        ) {
+
+            await window.brandStoreAdmin
+                .refreshAdminMonitoring();
+
+        }
+
+
+        renderAdminActivityList();
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 15 — Erro ao atualizar journal:",
+            error
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// BOUTON — EFFACER L'AFFICHAGE
+// ==========================================================
+//
+// IMPORTANT :
+// Cette fonction efface uniquement l'affichage local.
+// Elle ne supprime PAS les documents Firestore.
+//
+
+clearActivityButton?.addEventListener(
+    "click",
+    () => {
+
+        if (!activityList) {
+
+            return;
+
+        }
+
+
+        const confirmation =
+            confirm(
+                "Deseja limpar a visualização do journal administrativo?"
+            );
+
+
+        if (!confirmation) {
+
+            return;
+
+        }
+
+
+        renderEmptyState(
+
+            activityList,
+
+            "history",
+
+            "Journal limpo",
+
+            "As atividades continuam armazenadas no Firestore."
+
+        );
+
+    }
+);
+
+
+// ==========================================================
+// EXPOSER LES FONCTIONS
+// ==========================================================
+
+window.brandStoreAdmin
+    .renderAdminActivityList =
+    renderAdminActivityList;
+
+
+window.brandStoreAdmin
+    .refreshAdminActivityList =
+    refreshAdminActivityList;
+
+
+// ==========================================================
+// CHARGEMENT INITIAL
+// ==========================================================
+
+renderAdminActivityList();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 15 — Journal administrativo carregado com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 15
+// ==========================================================
