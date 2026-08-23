@@ -12500,3 +12500,215 @@ alert(
 // ==========================================================
 // FIN BLOC 16
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 17 — PERSISTANCE DES NOTIFICATIONS
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT
+// ==========================================================
+
+alert(
+    "BLOC 17 — Persistência das notificações carregando..."
+);
+
+
+// ==========================================================
+// COLLECTION FIRESTORE
+// ==========================================================
+
+const adminNotificationsRef =
+    collection(
+        db,
+        "adminNotifications"
+    );
+
+
+// ==========================================================
+// FONCTION — MARQUER UNE NOTIFICATION COMME LUE
+// ==========================================================
+
+async function markNotificationAsRead(
+    notificationId
+) {
+
+    try {
+
+        if (!notificationId) {
+
+            return false;
+
+        }
+
+
+        const notificationRef =
+            doc(
+                db,
+                "adminNotifications",
+                notificationId
+            );
+
+
+        await updateDoc(
+            notificationRef,
+            {
+
+                read:
+                    true,
+
+                readAt:
+                    serverTimestamp()
+
+            }
+        );
+
+
+        const notification =
+            notifications.find(
+                item =>
+                    item.id ===
+                    notificationId
+            );
+
+
+        if (notification) {
+
+            notification.read =
+                true;
+
+        }
+
+
+        renderAdminNotifications();
+
+
+        return true;
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 17 — Erro ao marcar notificação:",
+            error
+        );
+
+
+        return false;
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — MARQUER TOUTES LES NOTIFICATIONS COMME LUES
+// ==========================================================
+
+async function markAllNotificationsAsReadFirestore() {
+
+    try {
+
+        const list =
+            Array.isArray(
+                notifications
+            )
+                ? notifications
+                : [];
+
+
+        for (
+            const notification
+            of list
+        ) {
+
+            if (
+                notification.read === true
+            ) {
+
+                continue;
+
+            }
+
+
+            if (
+                notification.id
+            ) {
+
+                await markNotificationAsRead(
+                    notification.id
+                );
+
+            }
+
+        }
+
+
+        showToast(
+            "Todas as notificações foram marcadas como lidas.",
+            "done_all"
+        );
+
+
+        return true;
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 17 — Erro ao marcar notificações:",
+            error
+        );
+
+
+        alert(
+            "BLOC 17 — ERRO ao atualizar notificações:\n\n" +
+            error.message
+        );
+
+
+        return false;
+
+    }
+
+}
+
+
+// ==========================================================
+// EXPOSER LES FONCTIONS
+// ==========================================================
+
+window.brandStoreAdmin
+    .markNotificationAsRead =
+    markNotificationAsRead;
+
+
+window.brandStoreAdmin
+    .markAllNotificationsAsReadFirestore =
+    markAllNotificationsAsReadFirestore;
+
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
+
+window.brandStoreAdmin
+    .adminNotificationsRef =
+    adminNotificationsRef;
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 17 — Persistência das notificações carregada com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 17
+// ==========================================================
