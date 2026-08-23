@@ -11544,3 +11544,215 @@ alert(
 // ==========================================================
 // FIN BLOC 12
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 13 — CONTRÔLE DES OPÉRATIONS ADMINISTRATIVES
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT
+// ==========================================================
+
+alert(
+    "BLOC 13 — Controle das operações administrativas carregando..."
+);
+
+
+// ==========================================================
+// ÉTAT DU CONTRÔLE
+// ==========================================================
+
+let adminOperationControl = {
+
+    initialized: false,
+
+    adminAuthorized: true,
+
+    sensitiveActions: [
+
+        "update_store",
+        "verify_store",
+        "unverify_store",
+        "activate_store",
+        "deactivate_store",
+        "delete_merchant",
+        "delete_product",
+        "update_order"
+
+    ],
+
+    lastAction: null,
+
+    lastActionAt: null
+
+};
+
+
+// ==========================================================
+// FONCTION — VÉRIFIER L'AUTORISATION
+// ==========================================================
+
+function isAdminOperationAllowed(
+    action
+) {
+
+    if (!action) {
+
+        return false;
+
+    }
+
+
+    return (
+        adminOperationControl
+            .sensitiveActions
+            .includes(action)
+    );
+
+}
+
+
+// ==========================================================
+// FONCTION — ENREGISTRER UNE OPÉRATION
+// ==========================================================
+
+async function registerAdminOperation(
+    action,
+    title,
+    description
+) {
+
+    try {
+
+        if (
+            !isAdminOperationAllowed(
+                action
+            )
+        ) {
+
+            console.warn(
+                "BLOC 13 — Operação não reconhecida:",
+                action
+            );
+
+            return false;
+
+        }
+
+
+        adminOperationControl
+            .lastAction =
+            action;
+
+
+        adminOperationControl
+            .lastActionAt =
+            new Date();
+
+
+        if (
+            window.brandStoreAdmin &&
+            window.brandStoreAdmin
+                .saveStoreActivity
+        ) {
+
+            await window.brandStoreAdmin
+                .saveStoreActivity(
+
+                    "admin_operation",
+
+                    title ||
+                    "Operação administrativa",
+
+                    description ||
+                    "Operação administrativa executada."
+
+                );
+
+        }
+
+
+        return true;
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 13 — Erro ao registrar operação:",
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+
+// ==========================================================
+// EXPOSER LES FONCTIONS
+// ==========================================================
+
+window.brandStoreAdmin
+    .adminOperationControl =
+    adminOperationControl;
+
+
+window.brandStoreAdmin
+    .isAdminOperationAllowed =
+    isAdminOperationAllowed;
+
+
+window.brandStoreAdmin
+    .registerAdminOperation =
+    registerAdminOperation;
+
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
+
+adminOperationControl
+    .initialized =
+    true;
+
+
+// ==========================================================
+// ENREGISTRER L'INITIALISATION
+// ==========================================================
+
+if (
+    window.brandStoreAdmin &&
+    window.brandStoreAdmin
+        .saveStoreActivity
+) {
+
+    window.brandStoreAdmin
+        .saveStoreActivity(
+
+            "security",
+
+            "Controle administrativo inicializado",
+
+            "O sistema de controle das operações administrativas foi inicializado."
+
+        );
+
+}
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 13 — Controle das operações administrativas carregado com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 13
+// ==========================================================
