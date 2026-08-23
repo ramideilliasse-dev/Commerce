@@ -13197,3 +13197,154 @@ alert(
 // ==========================================================
 // FIN BLOC 19
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 20 — LECTURE INDIVIDUELLE DES NOTIFICATIONS
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+alert(
+    "BLOC 20 — Leitura individual das notificações carregando..."
+);
+
+
+// ==========================================================
+// FONCTION — OUVRIR UNE NOTIFICATION
+// ==========================================================
+
+async function openAdminNotification(
+    notificationId
+) {
+
+    try {
+
+        if (!notificationId) {
+
+            return;
+
+        }
+
+
+        const notification =
+            notifications.find(
+                item =>
+                    item.id ===
+                    notificationId
+            );
+
+
+        if (!notification) {
+
+            showToast(
+                "Notificação não encontrada.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        // --------------------------------------------------
+        // MARCAR COMO LIDA
+        // --------------------------------------------------
+
+        if (
+            notification.read !== true
+        ) {
+
+            if (
+                window.brandStoreAdmin
+                    .markNotificationAsRead
+            ) {
+
+                await window.brandStoreAdmin
+                    .markNotificationAsRead(
+                        notificationId
+                    );
+
+            }
+
+        }
+
+
+        // --------------------------------------------------
+        // EXPOSER LA NOTIFICATION SÉLECTIONNÉE
+        // --------------------------------------------------
+
+        window.brandStoreAdmin
+            .selectedNotification =
+            notification;
+
+
+        // --------------------------------------------------
+        // AFFICHAGE SIMPLE
+        // --------------------------------------------------
+
+        const title =
+            notification.title ||
+            "Notificação";
+
+
+        const message =
+            notification.message ||
+            notification.description ||
+            "";
+
+
+        alert(
+            title +
+            "\n\n" +
+            message
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 20 — Erro ao abrir notificação:",
+            error
+        );
+
+
+        alert(
+            "BLOC 20 — ERRO ao abrir notificação:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// EXPOSER LA FONCTION
+// ==========================================================
+
+window.brandStoreAdmin
+    .openAdminNotification =
+    openAdminNotification;
+
+
+// ==========================================================
+// ÉTAT INITIAL
+// ==========================================================
+
+window.brandStoreAdmin
+    .selectedNotification =
+    null;
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 20 — Leitura individual das notificações carregada com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 20
+// ==========================================================
