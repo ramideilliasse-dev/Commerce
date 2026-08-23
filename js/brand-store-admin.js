@@ -11972,13 +11972,8 @@ alert(
 // ==========================================================
 // TOMA
 // BRAND STORE ADMIN
-// BLOC 15 — JOURNAL ADMINISTRATIF VISIBLE
-// VERSION STABLE ET LÉGÈRE
-// ==========================================================
-
-
-// ==========================================================
-// ALERTE — DÉBUT
+// BLOC 15 — JOURNAL ADMINISTRATIF
+// VERSION SÉCURISÉE
 // ==========================================================
 
 alert(
@@ -11987,91 +11982,19 @@ alert(
 
 
 // ==========================================================
-// FONCTION — LABEL DU TYPE
+// VÉRIFICATION DE L'ENVIRONNEMENT
 // ==========================================================
 
-function getActivityTypeLabel(
-    type
+if (
+    !window.brandStoreAdmin
 ) {
 
-    const labels = {
-
-        security:
-            "Segurança",
-
-        verification:
-            "Verificação",
-
-        update:
-            "Atualização",
-
-        admin_operation:
-            "Operação administrativa",
-
-        system:
-            "Sistema",
-
-        create:
-            "Criação",
-
-        delete:
-            "Exclusão",
-
-        admin:
-            "Administração"
-
-    };
-
-
-    return (
-        labels[type] ||
-        type ||
-        "Administração"
+    alert(
+        "BLOC 15 — ERRO: Brand Store Admin não inicializado."
     );
 
-}
-
-
-// ==========================================================
-// FONCTION — ICÔNE DU TYPE
-// ==========================================================
-
-function getActivityIcon(
-    type
-) {
-
-    const icons = {
-
-        security:
-            "security",
-
-        verification:
-            "verified",
-
-        update:
-            "edit",
-
-        admin_operation:
-            "admin_panel_settings",
-
-        system:
-            "settings",
-
-        create:
-            "add_circle",
-
-        delete:
-            "delete",
-
-        admin:
-            "shield"
-
-    };
-
-
-    return (
-        icons[type] ||
-        "history"
+    throw new Error(
+        "brandStoreAdmin não encontrado."
     );
 
 }
@@ -12083,61 +12006,53 @@ function getActivityIcon(
 
 function renderAdminActivityList() {
 
-    if (!activityList) {
+    try {
 
-        return;
+        if (!activityList) {
 
-    }
+            return;
 
-
-    const list =
-        Array.isArray(
-            activities
-        )
-            ? activities
-            : [];
+        }
 
 
-    // ------------------------------------------------------
-    // AUCUNE ACTIVITÉ
-    // ------------------------------------------------------
-
-    if (
-        list.length === 0
-    ) {
-
-        renderEmptyState(
-
-            activityList,
-
-            "history",
-
-            "Nenhuma atividade administrativa",
-
-            "Ainda não existem ações registradas para esta Loja Oficial."
-
-        );
-
-        return;
-
-    }
+        const list =
+            Array.isArray(
+                activities
+            )
+                ? activities
+                : [];
 
 
-    // ------------------------------------------------------
-    // AFFICHAGE
-    // ------------------------------------------------------
+        if (
+            list.length === 0
+        ) {
 
-    activityList.innerHTML =
-        list
-        .map(
+            renderEmptyState(
+                activityList,
+                "history",
+                "Nenhuma atividade administrativa",
+                "Ainda não existem atividades registradas."
+            );
+
+            return;
+
+        }
+
+
+        activityList.innerHTML = "";
+
+
+        list.forEach(
             activity => {
 
-                const type =
-                    String(
-                        activity.type ||
-                        "admin"
-                    )
-                    .toLowerCase();
+                const item =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                item.className =
+                    "activityItem";
 
 
                 const title =
@@ -12150,6 +12065,11 @@ function renderAdminActivityList() {
                     "";
 
 
+                const type =
+                    activity.type ||
+                    "admin";
+
+
                 const date =
                     activity.createdAt
                         ? formatDateTime(
@@ -12158,65 +12078,55 @@ function renderAdminActivityList() {
                         : "—";
 
 
-                return `
+                item.innerHTML = `
 
-                    <div
-                        class="activityItem"
-                        data-activity-id="${activity.id || ""}"
-                    >
+                    <div class="activityContent">
 
-                        <div class="activityIcon">
+                        <strong>
+                            ${title}
+                        </strong>
 
-                            <span class="material-symbols-rounded">
+                        <p>
+                            ${description}
+                        </p>
 
-                                ${getActivityIcon(type)}
-
-                            </span>
-
-                        </div>
-
-
-                        <div class="activityContent">
-
-                            <div class="activityHeader">
-
-                                <strong>
-                                    ${title}
-                                </strong>
-
-                                <span class="activityType">
-
-                                    ${getActivityTypeLabel(type)}
-
-                                </span>
-
-                            </div>
-
-
-                            <p>
-                                ${description}
-                            </p>
-
-
-                            <small>
-                                ${date}
-                            </small>
-
-                        </div>
+                        <small>
+                            ${type} — ${date}
+                        </small>
 
                     </div>
 
                 `;
 
+
+                activityList.appendChild(
+                    item
+                );
+
             }
-        )
-        .join("");
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 15 — Erro ao mostrar journal:",
+            error
+        );
+
+
+        alert(
+            "BLOC 15 — ERRO ao mostrar journal:\n\n" +
+            error.message
+        );
+
+    }
 
 }
 
 
 // ==========================================================
-// FONCTION — RAFRAÎCHIR LE JOURNAL
+// FONCTION — ACTUALISER LE JOURNAL
 // ==========================================================
 
 async function refreshAdminActivityList() {
@@ -12224,7 +12134,6 @@ async function refreshAdminActivityList() {
     try {
 
         if (
-            window.brandStoreAdmin &&
             window.brandStoreAdmin
                 .refreshAdminMonitoring
         ) {
@@ -12251,55 +12160,6 @@ async function refreshAdminActivityList() {
 
 
 // ==========================================================
-// BOUTON — EFFACER L'AFFICHAGE
-// ==========================================================
-//
-// IMPORTANT :
-// Cette fonction efface uniquement l'affichage local.
-// Elle ne supprime PAS les documents Firestore.
-//
-
-clearActivityButton?.addEventListener(
-    "click",
-    () => {
-
-        if (!activityList) {
-
-            return;
-
-        }
-
-
-        const confirmation =
-            confirm(
-                "Deseja limpar a visualização do journal administrativo?"
-            );
-
-
-        if (!confirmation) {
-
-            return;
-
-        }
-
-
-        renderEmptyState(
-
-            activityList,
-
-            "history",
-
-            "Journal limpo",
-
-            "As atividades continuam armazenadas no Firestore."
-
-        );
-
-    }
-);
-
-
-// ==========================================================
 // EXPOSER LES FONCTIONS
 // ==========================================================
 
@@ -12314,7 +12174,7 @@ window.brandStoreAdmin
 
 
 // ==========================================================
-// CHARGEMENT INITIAL
+// AFFICHAGE INITIAL
 // ==========================================================
 
 renderAdminActivityList();
