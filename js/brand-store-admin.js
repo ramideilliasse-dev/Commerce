@@ -13628,3 +13628,160 @@ alert(
 // ==========================================================
 // FIN BLOC 22
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 23 — ÉTAT VISUEL DES NOTIFICATIONS
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+alert(
+    "BLOC 23 — Estado visual das notificações carregando..."
+);
+
+
+// ==========================================================
+// FONCTION — ACTUALISER L'ÉTAT VISUEL
+// ==========================================================
+
+function updateNotificationVisualState() {
+
+    try {
+
+        if (!notificationList) {
+
+            return;
+
+        }
+
+
+        const items =
+            notificationList.querySelectorAll(
+                ".notificationItem"
+            );
+
+
+        items.forEach(
+            item => {
+
+                const notificationId =
+                    item.dataset.notificationId;
+
+
+                if (!notificationId) {
+
+                    return;
+
+                }
+
+
+                const notification =
+                    notifications.find(
+                        item =>
+                            item.id ===
+                            notificationId
+                    );
+
+
+                if (!notification) {
+
+                    return;
+
+                }
+
+
+                // ------------------------------------------
+                // NON LUE
+                // ------------------------------------------
+
+                if (
+                    notification.read !== true
+                ) {
+
+                    item.classList.add(
+                        "unread"
+                    );
+
+                    item.classList.remove(
+                        "read"
+                    );
+
+                    item.setAttribute(
+                        "aria-label",
+                        "Notificação não lida"
+                    );
+
+                }
+
+
+                // ------------------------------------------
+                // LUE
+                // ------------------------------------------
+
+                else {
+
+                    item.classList.remove(
+                        "unread"
+                    );
+
+                    item.classList.add(
+                        "read"
+                    );
+
+                    item.setAttribute(
+                        "aria-label",
+                        "Notificação lida"
+                    );
+
+                }
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 23 — Erro visual:",
+            error
+        );
+
+
+        alert(
+            "BLOC 23 — ERRO no estado visual:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// EXPOSER
+// ==========================================================
+
+window.brandStoreAdmin
+    .updateNotificationVisualState =
+    updateNotificationVisualState;
+
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
+
+updateNotificationVisualState();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 23 — Estado visual das notificações carregado com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 23
+// ==========================================================
