@@ -13785,3 +13785,135 @@ alert(
 // ==========================================================
 // FIN BLOC 23
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 24 — COMPTEUR DES NOTIFICATIONS
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+alert(
+    "BLOC 24 — Contadores das notificações carregando..."
+);
+
+
+// ==========================================================
+// FONCTION — CALCULER LES COMPTEURS
+// ==========================================================
+
+function updateNotificationCounters() {
+
+    try {
+
+        const list =
+            Array.isArray(
+                notifications
+            )
+                ? notifications
+                : [];
+
+
+        const total =
+            list.length;
+
+
+        const unread =
+            list.filter(
+                notification =>
+                    notification.read !== true
+            ).length;
+
+
+        const read =
+            list.filter(
+                notification =>
+                    notification.read === true
+            ).length;
+
+
+        // --------------------------------------------------
+        // COMPTEUR PRINCIPAL
+        // --------------------------------------------------
+
+        if (
+            notificationCount
+        ) {
+
+            notificationCount.textContent =
+                unread;
+
+        }
+
+
+        // --------------------------------------------------
+        // EXPOSER LES STATISTIQUES
+        // --------------------------------------------------
+
+        window.brandStoreAdmin
+            .notificationStatistics = {
+
+                total,
+
+                unread,
+
+                read
+
+            };
+
+
+        return {
+            total,
+            unread,
+            read
+        };
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 24 — Erro nos contadores:",
+            error
+        );
+
+
+        alert(
+            "BLOC 24 — ERRO nos contadores:\n\n" +
+            error.message
+        );
+
+
+        return null;
+
+    }
+
+}
+
+
+// ==========================================================
+// EXPOSER
+// ==========================================================
+
+window.brandStoreAdmin
+    .updateNotificationCounters =
+    updateNotificationCounters;
+
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
+
+updateNotificationCounters();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 24 — Contadores das notificações carregados com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 24
+// ==========================================================
