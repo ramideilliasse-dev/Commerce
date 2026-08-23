@@ -11197,10 +11197,34 @@ alert(
 // TOMA
 // BRAND STORE ADMIN
 // BLOC 11 — JOURNAL ADMINISTRATIF
-// VERSION LÉGÈRE
+// VERSION INTERMÉDIAIRE
 // ==========================================================
 
-alert("BLOC 11 — Journal administrativo carregando...");
+
+// ==========================================================
+// ALERTE — DÉBUT DU BLOC
+// ==========================================================
+
+alert(
+    "BLOC 11 — Journal administrativo carregando..."
+);
+
+
+// ==========================================================
+// VÉRIFICATION DU SYSTÈME
+// ==========================================================
+
+if (!window.brandStoreAdmin) {
+
+    alert(
+        "BLOC 11 — ERRO: sistema Brand Store Admin não inicializado."
+    );
+
+    throw new Error(
+        "brandStoreAdmin não disponível."
+    );
+
+}
 
 
 // ==========================================================
@@ -11215,57 +11239,64 @@ const adminActivityRef =
 
 
 // ==========================================================
-// ENREGISTRER UNE ACTION ADMIN
+// FONCTION — ENREGISTRER UNE ACTION ADMIN
 // ==========================================================
 
 async function saveStoreActivity(
-    type,
-    title,
-    description
+    type = "admin",
+    title = "Ação administrativa",
+    description = ""
 ) {
 
     try {
 
-        await import(
-            "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-        )
-        .then(async ({
-            addDoc
-        }) => {
+        // --------------------------------------------------
+        // VÉRIFICATION DE LA LOJA
+        // --------------------------------------------------
 
-            await addDoc(
-                adminActivityRef,
-                {
+        if (!storeId) {
 
-                    storeId:
-                        storeId,
-
-                    storeName:
-                        store?.name ||
-                        "Loja Oficial",
-
-                    type:
-                        type ||
-                        "admin",
-
-                    title:
-                        title ||
-                        "Ação administrativa",
-
-                    description:
-                        description ||
-                        "",
-
-                    createdAt:
-                        serverTimestamp(),
-
-                    source:
-                        "brand-store-admin"
-
-                }
+            console.warn(
+                "BLOC 11 — storeId não encontrado."
             );
 
-        });
+            return false;
+
+        }
+
+
+        // --------------------------------------------------
+        // ENREGISTREMENT FIRESTORE
+        // --------------------------------------------------
+
+        await addDoc(
+            adminActivityRef,
+            {
+
+                storeId:
+                    storeId,
+
+                storeName:
+                    store?.name ||
+                    "Loja Oficial",
+
+                type:
+                    type,
+
+                title:
+                    title,
+
+                description:
+                    description,
+
+                source:
+                    "brand-store-admin",
+
+                createdAt:
+                    serverTimestamp()
+
+            }
+        );
 
 
         return true;
@@ -11285,7 +11316,7 @@ async function saveStoreActivity(
 
 
 // ==========================================================
-// EXPOR PARA OS OUTROS BLOCOS
+// EXPOSER LA FONCTION AUX AUTRES BLOCS
 // ==========================================================
 
 window.brandStoreAdmin.saveStoreActivity =
@@ -11293,20 +11324,25 @@ window.brandStoreAdmin.saveStoreActivity =
 
 
 // ==========================================================
-// TESTE
+// TEST AUTOMATIQUE DU JOURNAL
 // ==========================================================
 
 saveStoreActivity(
     "system",
-    "Journal administratif inicialisé",
+    "Journal administrativo inicializado",
     "O sistema de registro administrativo da Loja Oficial foi inicializado."
 );
 
 
 // ==========================================================
-// FIN
+// ALERTE — FIN DU BLOC
 // ==========================================================
 
 alert(
     "BLOC 11 — Journal administrativo carregado com sucesso."
 );
+
+
+// ==========================================================
+// FIN BLOC 11
+// ==========================================================
