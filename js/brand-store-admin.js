@@ -12918,3 +12918,282 @@ alert(
 // ==========================================================
 // FIN BLOC 18
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 19 — FILTRE DES NOTIFICATIONS
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+alert(
+    "BLOC 19 — Filtro de notificações carregando..."
+);
+
+
+// ==========================================================
+// ÉTAT DU FILTRE
+// ==========================================================
+
+let currentNotificationFilter =
+    "all";
+
+
+// ==========================================================
+// FONCTION — FILTRER LES NOTIFICATIONS
+// ==========================================================
+
+function filterAdminNotifications(
+    filter = "all"
+) {
+
+    try {
+
+        currentNotificationFilter =
+            String(
+                filter || "all"
+            ).toLowerCase();
+
+
+        const list =
+            Array.isArray(
+                notifications
+            )
+                ? notifications
+                : [];
+
+
+        let filtered =
+            list;
+
+
+        // --------------------------------------------------
+        // FILTRE
+        // --------------------------------------------------
+
+        if (
+            currentNotificationFilter ===
+            "unread"
+        ) {
+
+            filtered =
+                list.filter(
+                    notification =>
+                        notification.read !== true
+                );
+
+        }
+
+
+        else if (
+            currentNotificationFilter ===
+            "read"
+        ) {
+
+            filtered =
+                list.filter(
+                    notification =>
+                        notification.read === true
+                );
+
+        }
+
+
+        else if (
+            currentNotificationFilter !==
+            "all"
+        ) {
+
+            filtered =
+                list.filter(
+                    notification =>
+                        String(
+                            notification.type ||
+                            ""
+                        ).toLowerCase() ===
+                        currentNotificationFilter
+                );
+
+        }
+
+
+        // --------------------------------------------------
+        // COMPTEUR
+        // --------------------------------------------------
+
+        if (
+            notificationCount
+        ) {
+
+            notificationCount.textContent =
+                list.filter(
+                    notification =>
+                        notification.read !== true
+                ).length;
+
+        }
+
+
+        // --------------------------------------------------
+        // AFFICHAGE
+        // --------------------------------------------------
+
+        if (
+            !notificationList
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            filtered.length === 0
+        ) {
+
+            renderEmptyState(
+                notificationList,
+                "notifications",
+                "Nenhuma notificação encontrada",
+                "Não existem notificações para este filtro."
+            );
+
+            return;
+
+        }
+
+
+        notificationList.innerHTML =
+            "";
+
+
+        filtered.forEach(
+            notification => {
+
+                const item =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                item.className =
+                    "notificationItem";
+
+
+                if (
+                    notification.read !== true
+                ) {
+
+                    item.classList.add(
+                        "unread"
+                    );
+
+                }
+
+
+                const title =
+                    notification.title ||
+                    "Notificação";
+
+
+                const message =
+                    notification.message ||
+                    notification.description ||
+                    "";
+
+
+                const type =
+                    notification.type ||
+                    "admin";
+
+
+                const date =
+                    notification.createdAt
+                        ? formatDateTime(
+                            notification.createdAt
+                        )
+                        : "—";
+
+
+                item.innerHTML = `
+
+                    <div class="notificationContent">
+
+                        <strong>
+                            ${title}
+                        </strong>
+
+                        <p>
+                            ${message}
+                        </p>
+
+                        <small>
+                            ${type} — ${date}
+                        </small>
+
+                    </div>
+
+                `;
+
+
+                notificationList.appendChild(
+                    item
+                );
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 19 — Erro no filtro:",
+            error
+        );
+
+
+        alert(
+            "BLOC 19 — ERRO ao filtrar notificações:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// EXPOSER
+// ==========================================================
+
+window.brandStoreAdmin
+    .filterAdminNotifications =
+    filterAdminNotifications;
+
+
+window.brandStoreAdmin
+    .getNotificationFilter =
+    () =>
+        currentNotificationFilter;
+
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
+
+filterAdminNotifications(
+    "all"
+);
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 19 — Filtro de notificações carregado com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 19
+// ==========================================================
