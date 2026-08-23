@@ -11756,3 +11756,216 @@ alert(
 // ==========================================================
 // FIN BLOC 13
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 14 — SURVEILLANCE ADMINISTRATIVE
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT
+// ==========================================================
+
+alert(
+    "BLOC 14 — Monitoramento administrativo carregando..."
+);
+
+
+// ==========================================================
+// ÉTAT DU BLOC
+// ==========================================================
+
+let adminMonitoring = {
+
+    initialized: false,
+
+    totalActivities: 0,
+
+    recentActivities: [],
+
+    lastActivity: null
+
+};
+
+
+// ==========================================================
+// COLLECTION FIRESTORE
+// ==========================================================
+
+const adminMonitoringCollection =
+    collection(
+        db,
+        "adminActivities"
+    );
+
+
+// ==========================================================
+// FONCTION — CHARGER LES ACTIVITÉS
+// ==========================================================
+
+async function loadAdminMonitoring() {
+
+    try {
+
+        if (!storeId) {
+
+            throw new Error(
+                "ID da Loja Oficial não encontrado."
+            );
+
+        }
+
+
+        // --------------------------------------------------
+        // REQUÊTE
+        // --------------------------------------------------
+
+        const activityQuery =
+            query(
+                adminMonitoringCollection,
+
+                where(
+                    "storeId",
+                    "==",
+                    storeId
+                ),
+
+                orderBy(
+                    "createdAt",
+                    "desc"
+                ),
+
+                limit(20)
+            );
+
+
+        const snapshot =
+            await getDocs(
+                activityQuery
+            );
+
+
+        // --------------------------------------------------
+        // TRANSFORMER LES DONNÉES
+        // --------------------------------------------------
+
+        const recentActivities =
+            snapshot.docs.map(
+                activityDoc => ({
+
+                    id:
+                        activityDoc.id,
+
+                    ...activityDoc.data()
+
+                })
+            );
+
+
+        // --------------------------------------------------
+        // METTRE À JOUR L'ÉTAT
+        // --------------------------------------------------
+
+        adminMonitoring
+            .recentActivities =
+            recentActivities;
+
+
+        adminMonitoring
+            .totalActivities =
+            recentActivities.length;
+
+
+        adminMonitoring
+            .lastActivity =
+            recentActivities.length > 0
+                ? recentActivities[0]
+                : null;
+
+
+        activities =
+            recentActivities;
+
+
+        // --------------------------------------------------
+        // EXPOSER LES DONNÉES
+        // --------------------------------------------------
+
+        window.brandStoreAdmin
+            .adminMonitoring =
+            adminMonitoring;
+
+
+        return recentActivities;
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 14 — Erro ao carregar atividades:",
+            error
+        );
+
+
+        return [];
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — RAFRAÎCHIR LE MONITORING
+// ==========================================================
+
+async function refreshAdminMonitoring() {
+
+    return await loadAdminMonitoring();
+
+}
+
+
+// ==========================================================
+// EXPOSER LES FONCTIONS
+// ==========================================================
+
+window.brandStoreAdmin
+    .loadAdminMonitoring =
+    loadAdminMonitoring;
+
+
+window.brandStoreAdmin
+    .refreshAdminMonitoring =
+    refreshAdminMonitoring;
+
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
+
+adminMonitoring
+    .initialized =
+    true;
+
+
+// ==========================================================
+// CHARGEMENT INITIAL
+// ==========================================================
+
+loadAdminMonitoring();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 14 — Monitoramento administrativo carregado com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 14
+// ==========================================================
