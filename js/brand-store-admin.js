@@ -11319,3 +11319,228 @@ saveBrandStoreAdminActivity(
 alert(
     "BLOC 11 — Journal administrativo carregado com sucesso."
 );
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 12 — CENTRE DE SÉCURITÉ
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT
+// ==========================================================
+
+alert(
+    "BLOC 12 — Centro de segurança carregando..."
+);
+
+
+// ==========================================================
+// ÉTAT DE SÉCURITÉ
+// ==========================================================
+
+let storeSecurityStatus = {
+    secure: true,
+    warnings: [],
+    checkedAt: null
+};
+
+
+// ==========================================================
+// FONCTION — VÉRIFIER LA SÉCURITÉ
+// ==========================================================
+
+function checkStoreSecurity() {
+
+    const warnings = [];
+
+    
+    // ------------------------------------------------------
+    // LOJA
+    // ------------------------------------------------------
+
+    if (!store) {
+
+        warnings.push(
+            "Dados da Loja Oficial não carregados."
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // ID LOJA
+    // ------------------------------------------------------
+
+    if (!storeId) {
+
+        warnings.push(
+            "ID da Loja Oficial não encontrado."
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // NOM
+    // ------------------------------------------------------
+
+    if (
+        store &&
+        !store.name
+    ) {
+
+        warnings.push(
+            "Nome da Loja Oficial não definido."
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // STATUT
+    // ------------------------------------------------------
+
+    if (
+        store &&
+        store.status === "inactive"
+    ) {
+
+        warnings.push(
+            "A Loja Oficial está inativa."
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // VÉRIFICATION
+    // ------------------------------------------------------
+
+    if (
+        store &&
+        !(
+            store.verified === true ||
+            store.verification === true ||
+            store.isVerified === true
+        )
+    ) {
+
+        warnings.push(
+            "A Loja Oficial ainda não está verificada."
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // RÉSULTAT
+    // ------------------------------------------------------
+
+    storeSecurityStatus = {
+
+        secure:
+            warnings.length === 0,
+
+        warnings:
+
+            warnings,
+
+        checkedAt:
+            new Date()
+
+    };
+
+
+    return storeSecurityStatus;
+
+}
+
+
+// ==========================================================
+// FONCTION — ENREGISTRER LE CONTRÔLE
+// ==========================================================
+
+async function registerSecurityCheck() {
+
+    try {
+
+        const result =
+            checkStoreSecurity();
+
+
+        if (
+            window.brandStoreAdmin &&
+            window.brandStoreAdmin
+                .saveStoreActivity
+        ) {
+
+            await window.brandStoreAdmin
+                .saveStoreActivity(
+                    "security",
+                    "Controle de segurança",
+                    result.secure
+                        ? "Nenhum problema crítico encontrado."
+                        : "Foram encontrados " +
+                          result.warnings.length +
+                          " aviso(s) de segurança."
+                );
+
+        }
+
+
+        return result;
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 12 — Erro de segurança:",
+            error
+        );
+
+        return storeSecurityStatus;
+
+    }
+
+}
+
+
+// ==========================================================
+// EXPOSER L'ÉTAT
+// ==========================================================
+
+window.brandStoreAdmin
+    .storeSecurityStatus =
+    storeSecurityStatus;
+
+
+window.brandStoreAdmin
+    .checkStoreSecurity =
+    checkStoreSecurity;
+
+
+window.brandStoreAdmin
+    .registerSecurityCheck =
+    registerSecurityCheck;
+
+
+// ==========================================================
+// LANCER LE CONTRÔLE
+// ==========================================================
+
+registerSecurityCheck();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 12 — Centro de segurança carregado com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 12
+// ==========================================================
