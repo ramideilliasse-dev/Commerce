@@ -12712,3 +12712,209 @@ alert(
 // ==========================================================
 // FIN BLOC 17
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 18 — NOTIFICATIONS EN TEMPS RÉEL
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+alert(
+    "BLOC 18 — Notificações em tempo real carregando..."
+);
+
+
+// ==========================================================
+// ÉTAT
+// ==========================================================
+
+let notificationsUnsubscribe =
+    null;
+
+
+// ==========================================================
+// FONCTION — DÉMARRER LA SURVEILLANCE
+// ==========================================================
+
+function startNotificationListener() {
+
+    try {
+
+        if (!storeId) {
+
+            throw new Error(
+                "ID da Loja Oficial não encontrado."
+            );
+
+        }
+
+
+        // --------------------------------------------------
+        // ARRÊTER L'ANCIEN LISTENER
+        // --------------------------------------------------
+
+        if (
+            notificationsUnsubscribe
+        ) {
+
+            notificationsUnsubscribe();
+
+            notificationsUnsubscribe =
+                null;
+
+        }
+
+
+        // --------------------------------------------------
+        // REQUÊTE
+        // --------------------------------------------------
+
+        const notificationQuery =
+            query(
+
+                adminNotificationsRef,
+
+                where(
+                    "storeId",
+                    "==",
+                    storeId
+                ),
+
+                orderBy(
+                    "createdAt",
+                    "desc"
+                ),
+
+                limit(30)
+
+            );
+
+
+        // --------------------------------------------------
+        // ÉCOUTE TEMPS RÉEL
+        // --------------------------------------------------
+
+        notificationsUnsubscribe =
+            onSnapshot(
+
+                notificationQuery,
+
+                snapshot => {
+
+                    notifications =
+                        snapshot.docs.map(
+                            notificationDoc => ({
+
+                                id:
+                                    notificationDoc.id,
+
+                                ...notificationDoc.data()
+
+                            })
+                        );
+
+
+                    // --------------------------------------
+                    // AFFICHER
+                    // --------------------------------------
+
+                    if (
+                        typeof renderAdminNotifications ===
+                        "function"
+                    ) {
+
+                        renderAdminNotifications();
+
+                    }
+
+                },
+
+                error => {
+
+                    console.error(
+                        "BLOC 18 — Erro no listener:",
+                        error
+                    );
+
+                }
+
+            );
+
+
+        return true;
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 18 — Erro ao iniciar notificações:",
+            error
+        );
+
+
+        alert(
+            "BLOC 18 — ERRO nas notificações:\n\n" +
+            error.message
+        );
+
+
+        return false;
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — ARRÊTER LA SURVEILLANCE
+// ==========================================================
+
+function stopNotificationListener() {
+
+    if (
+        notificationsUnsubscribe
+    ) {
+
+        notificationsUnsubscribe();
+
+        notificationsUnsubscribe =
+            null;
+
+    }
+
+}
+
+
+// ==========================================================
+// EXPOSER LES FONCTIONS
+// ==========================================================
+
+window.brandStoreAdmin
+    .startNotificationListener =
+    startNotificationListener;
+
+
+window.brandStoreAdmin
+    .stopNotificationListener =
+    stopNotificationListener;
+
+
+// ==========================================================
+// DÉMARRER
+// ==========================================================
+
+startNotificationListener();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 18 — Notificações em tempo real carregadas com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 18
+// ==========================================================
