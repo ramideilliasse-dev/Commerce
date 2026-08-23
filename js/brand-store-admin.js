@@ -11193,3 +11193,120 @@ alert(
 // ==========================================================
 // FIN BLOC 10
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 11 — JOURNAL ADMINISTRATIF
+// VERSION LÉGÈRE
+// ==========================================================
+
+alert("BLOC 11 — Journal administrativo carregando...");
+
+
+// ==========================================================
+// COLLECTION FIRESTORE
+// ==========================================================
+
+const adminActivityRef =
+    collection(
+        db,
+        "adminActivities"
+    );
+
+
+// ==========================================================
+// ENREGISTRER UNE ACTION ADMIN
+// ==========================================================
+
+async function saveStoreActivity(
+    type,
+    title,
+    description
+) {
+
+    try {
+
+        await import(
+            "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+        )
+        .then(async ({
+            addDoc
+        }) => {
+
+            await addDoc(
+                adminActivityRef,
+                {
+
+                    storeId:
+                        storeId,
+
+                    storeName:
+                        store?.name ||
+                        "Loja Oficial",
+
+                    type:
+                        type ||
+                        "admin",
+
+                    title:
+                        title ||
+                        "Ação administrativa",
+
+                    description:
+                        description ||
+                        "",
+
+                    createdAt:
+                        serverTimestamp(),
+
+                    source:
+                        "brand-store-admin"
+
+                }
+            );
+
+        });
+
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 11 — Erro ao registrar ação:",
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+
+// ==========================================================
+// EXPOR PARA OS OUTROS BLOCOS
+// ==========================================================
+
+window.brandStoreAdmin.saveStoreActivity =
+    saveStoreActivity;
+
+
+// ==========================================================
+// TESTE
+// ==========================================================
+
+saveStoreActivity(
+    "system",
+    "Journal administratif inicialisé",
+    "O sistema de registro administrativo da Loja Oficial foi inicializado."
+);
+
+
+// ==========================================================
+// FIN
+// ==========================================================
+
+alert(
+    "BLOC 11 — Journal administrativo carregado com sucesso."
+);
