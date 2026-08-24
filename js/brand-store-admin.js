@@ -14163,3 +14163,173 @@ alert(
 // ==========================================================
 // FIN BLOC 25
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 26 — FILTRAGEM DAS NOTIFICAÇÕES
+// VERSION ISOLÉE ET STABLE
+// ==========================================================
+
+alert(
+    "BLOC 26 — Filtro das notificações carregando..."
+);
+
+
+(() => {
+
+    // ======================================================
+    // VÉRIFICATION DE L'OBJET PRINCIPAL
+    // ======================================================
+
+    if (
+        !window.brandStoreAdmin
+    ) {
+
+        alert(
+            "BLOC 26 — ERRO: brandStoreAdmin não encontrado."
+        );
+
+        return;
+
+    }
+
+
+    // ======================================================
+    // ÉTAT DU FILTRE
+    // ======================================================
+
+    window.brandStoreAdmin
+        .notificationFilter =
+        window.brandStoreAdmin
+            .notificationFilter ||
+        "all";
+
+
+    // ======================================================
+    // FILTRER LES NOTIFICATIONS
+    // ======================================================
+
+    const applyNotificationFilter =
+        filter => {
+
+            if (
+                filter !== "all" &&
+                filter !== "read" &&
+                filter !== "unread"
+            ) {
+
+                filter =
+                    "all";
+
+            }
+
+
+            window.brandStoreAdmin
+                .notificationFilter =
+                filter;
+
+
+            const list =
+                Array.isArray(
+                    notifications
+                )
+                    ? notifications
+                    : [];
+
+
+            let result =
+                list;
+
+
+            if (
+                filter === "unread"
+            ) {
+
+                result =
+                    list.filter(
+                        item =>
+                            item &&
+                            item.read !== true
+                    );
+
+            }
+
+
+            if (
+                filter === "read"
+            ) {
+
+                result =
+                    list.filter(
+                        item =>
+                            item &&
+                            item.read === true
+                    );
+
+            }
+
+
+            window.brandStoreAdmin
+                .filteredNotifications =
+                result;
+
+
+            return result;
+
+        };
+
+
+    // ======================================================
+    // RÉCUPÉRER LES NOTIFICATIONS FILTRÉES
+    // ======================================================
+
+    const getNotificationFilterResult =
+        () => {
+
+            return applyNotificationFilter(
+                window.brandStoreAdmin
+                    .notificationFilter ||
+                "all"
+            );
+
+        };
+
+
+    // ======================================================
+    // EXPOSER AU RESTE DU DASHBOARD
+    // ======================================================
+
+    window.brandStoreAdmin
+        .applyNotificationFilter =
+        applyNotificationFilter;
+
+
+    window.brandStoreAdmin
+        .getNotificationFilterResult =
+        getNotificationFilterResult;
+
+
+    // ======================================================
+    // INITIALISATION
+    // ======================================================
+
+    window.brandStoreAdmin
+        .filteredNotifications =
+        getNotificationFilterResult();
+
+
+})();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 26 — Filtro das notificações carregado com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 26
+// ==========================================================
