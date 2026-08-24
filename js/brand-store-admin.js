@@ -15007,3 +15007,309 @@ alert(
 // ==========================================================
 // FIN BLOC 28
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 29 — ORDENAÇÃO DAS NOTIFICAÇÕES
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+alert(
+    "BLOC 29 — Ordenação das notificações carregando..."
+);
+
+
+// ==========================================================
+// FONCTION — CONVERTIR UNE DATE FIRESTORE
+// ==========================================================
+
+function getNotificationTimestamp(
+    notification
+) {
+
+    if (
+        !notification ||
+        !notification.createdAt
+    ) {
+
+        return 0;
+
+    }
+
+
+    try {
+
+        if (
+            typeof notification.createdAt
+                .toMillis ===
+            "function"
+        ) {
+
+            return notification.createdAt
+                .toMillis();
+
+        }
+
+
+        if (
+            typeof notification.createdAt
+                .toDate ===
+            "function"
+        ) {
+
+            return notification.createdAt
+                .toDate()
+                .getTime();
+
+        }
+
+
+        const date =
+            new Date(
+                notification.createdAt
+            );
+
+
+        const time =
+            date.getTime();
+
+
+        return isNaN(time)
+            ? 0
+            : time;
+
+    } catch (error) {
+
+        return 0;
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — TRIER LES NOTIFICATIONS
+// ==========================================================
+
+function sortAdminNotifications(
+    order = "newest"
+) {
+
+    const list =
+        Array.isArray(
+            notifications
+        )
+            ? notifications
+            : [];
+
+
+    const sorted =
+        [
+            ...list
+        ];
+
+
+    // ------------------------------------------------------
+    // PLUS RÉCENTES
+    // ------------------------------------------------------
+
+    if (
+        order === "newest"
+    ) {
+
+        sorted.sort(
+            (
+                a,
+                b
+            ) => {
+
+                return (
+                    getNotificationTimestamp(b) -
+                    getNotificationTimestamp(a)
+                );
+
+            }
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // PLUS ANCIENNES
+    // ------------------------------------------------------
+
+    else if (
+        order === "oldest"
+    ) {
+
+        sorted.sort(
+            (
+                a,
+                b
+            ) => {
+
+                return (
+                    getNotificationTimestamp(a) -
+                    getNotificationTimestamp(b)
+                );
+
+            }
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // NON LUES EN PREMIER
+    // ------------------------------------------------------
+
+    else if (
+        order === "unread"
+    ) {
+
+        sorted.sort(
+            (
+                a,
+                b
+            ) => {
+
+                const aUnread =
+                    a &&
+                    a.read !== true
+                        ? 1
+                        : 0;
+
+
+                const bUnread =
+                    b &&
+                    b.read !== true
+                        ? 1
+                        : 0;
+
+
+                return (
+                    bUnread -
+                    aUnread
+                );
+
+            }
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // LUES EN PREMIER
+    // ------------------------------------------------------
+
+    else if (
+        order === "read"
+    ) {
+
+        sorted.sort(
+            (
+                a,
+                b
+            ) => {
+
+                const aRead =
+                    a &&
+                    a.read === true
+                        ? 1
+                        : 0;
+
+
+                const bRead =
+                    b &&
+                    b.read === true
+                        ? 1
+                        : 0;
+
+
+                return (
+                    bRead -
+                    aRead
+                );
+
+            }
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // ÉTAT GLOBAL
+    // ------------------------------------------------------
+
+    window.brandStoreAdmin
+        .notificationSortOrder =
+        order;
+
+
+    window.brandStoreAdmin
+        .sortedAdminNotifications =
+        sorted;
+
+
+    return sorted;
+
+}
+
+
+// ==========================================================
+// FONCTION — OBTENIR LE TRI ACTUEL
+// ==========================================================
+
+function getSortedAdminNotifications() {
+
+    return sortAdminNotifications(
+
+        window.brandStoreAdmin
+            .notificationSortOrder ||
+        "newest"
+
+    );
+
+}
+
+
+// ==========================================================
+// EXPOSER LES FONCTIONS
+// ==========================================================
+
+window.brandStoreAdmin
+    .sortAdminNotifications =
+    sortAdminNotifications;
+
+
+window.brandStoreAdmin
+    .getSortedAdminNotifications =
+    getSortedAdminNotifications;
+
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
+
+window.brandStoreAdmin
+    .notificationSortOrder =
+    "newest";
+
+
+window.brandStoreAdmin
+    .sortedAdminNotifications =
+    getSortedAdminNotifications();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 29 — Ordenação das notificações carregada com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 29
+// ==========================================================
