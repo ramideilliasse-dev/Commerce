@@ -16131,3 +16131,361 @@ alert(
 // ==========================================================
 // FIN BLOC 32
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 33 — GESTÃO DOS PRODUTOS
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+alert(
+    "BLOC 33 — Gestão dos produtos carregando..."
+);
+
+
+// ==========================================================
+// ÉTAT DE GESTION
+// ==========================================================
+
+let productManagementState = {
+
+    total: 0,
+
+    active: 0,
+
+    inactive: 0,
+
+    outOfStock: 0,
+
+    filtered: 0
+
+};
+
+
+// ==========================================================
+// FONCTION — STATISTIQUES PRODUITS
+// ==========================================================
+
+function updateProductManagementState() {
+
+    const list =
+        Array.isArray(products)
+            ? products
+            : [];
+
+
+    let active = 0;
+
+    let inactive = 0;
+
+    let outOfStock = 0;
+
+
+    list.forEach(
+        product => {
+
+            const status =
+                String(
+                    product?.status ||
+                    "active"
+                ).toLowerCase();
+
+
+            const stock =
+                Number(
+                    product?.stock ??
+                    product?.quantity ??
+                    0
+                );
+
+
+            if (
+                status === "active"
+            ) {
+
+                active++;
+
+            } else {
+
+                inactive++;
+
+            }
+
+
+            if (
+                stock <= 0
+            ) {
+
+                outOfStock++;
+
+            }
+
+        }
+    );
+
+
+    productManagementState = {
+
+        total:
+            list.length,
+
+        active,
+
+        inactive,
+
+        outOfStock,
+
+        filtered:
+            list.length
+
+    };
+
+
+    window.brandStoreAdmin
+        .productManagementState =
+        productManagementState;
+
+
+    // ------------------------------------------------------
+    // COMPTEURS HTML
+    // ------------------------------------------------------
+
+    if (
+        productCount
+    ) {
+
+        productCount.textContent =
+            String(
+                list.length
+            );
+
+    }
+
+
+    if (
+        activeProductCount
+    ) {
+
+        activeProductCount.textContent =
+            String(active);
+
+    }
+
+
+    if (
+        activeProductCount2
+    ) {
+
+        activeProductCount2.textContent =
+            String(active);
+
+    }
+
+
+    if (
+        outOfStockCount
+    ) {
+
+        outOfStockCount.textContent =
+            String(outOfStock);
+
+    }
+
+
+    if (
+        outOfStockCount2
+    ) {
+
+        outOfStockCount2.textContent =
+            String(outOfStock);
+
+    }
+
+
+    if (
+        hiddenProductCount
+    ) {
+
+        hiddenProductCount.textContent =
+            String(inactive);
+
+    }
+
+
+    return productManagementState;
+
+}
+
+
+// ==========================================================
+// FONCTION — RECHERCHER UN PRODUIT
+// ==========================================================
+
+function searchAdminProducts(
+    search = ""
+) {
+
+    const list =
+        Array.isArray(products)
+            ? products
+            : [];
+
+
+    const text =
+        String(search)
+            .trim()
+            .toLowerCase();
+
+
+    if (!text) {
+
+        productManagementState.filtered =
+            list.length;
+
+        return list;
+
+    }
+
+
+    const result =
+        list.filter(
+            product => {
+
+                const name =
+                    String(
+                        product?.name ||
+                        product?.title ||
+                        ""
+                    ).toLowerCase();
+
+
+                const category =
+                    String(
+                        product?.category ||
+                        ""
+                    ).toLowerCase();
+
+
+                const merchant =
+                    String(
+                        product?.merchantName ||
+                        product?.shopName ||
+                        ""
+                    ).toLowerCase();
+
+
+                return (
+                    name.includes(text) ||
+                    category.includes(text) ||
+                    merchant.includes(text)
+                );
+
+            }
+        );
+
+
+    productManagementState.filtered =
+        result.length;
+
+
+    return result;
+
+}
+
+
+// ==========================================================
+// FONCTION — FILTRER PAR STATUT
+// ==========================================================
+
+function filterAdminProducts(
+    status = "all"
+) {
+
+    const list =
+        Array.isArray(products)
+            ? products
+            : [];
+
+
+    if (
+        status === "all"
+    ) {
+
+        return list;
+
+    }
+
+
+    if (
+        status === "outOfStock"
+    ) {
+
+        return list.filter(
+            product => {
+
+                const stock =
+                    Number(
+                        product?.stock ??
+                        product?.quantity ??
+                        0
+                    );
+
+
+                return stock <= 0;
+
+            }
+        );
+
+    }
+
+
+    return list.filter(
+        product =>
+            String(
+                product?.status ||
+                "active"
+            ).toLowerCase() ===
+            String(status).toLowerCase()
+    );
+
+}
+
+
+// ==========================================================
+// EXPOSER
+// ==========================================================
+
+window.brandStoreAdmin
+    .updateProductManagementState =
+    updateProductManagementState;
+
+
+window.brandStoreAdmin
+    .searchAdminProducts =
+    searchAdminProducts;
+
+
+window.brandStoreAdmin
+    .filterAdminProducts =
+    filterAdminProducts;
+
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
+
+updateProductManagementState();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 33 — Gestão dos produtos carregada com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 33
+// ==========================================================
