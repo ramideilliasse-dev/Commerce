@@ -14167,12 +14167,7 @@ alert(
 // TOMA
 // BRAND STORE ADMIN
 // BLOC 26 — FILTRAGEM DAS NOTIFICAÇÕES
-// VERSION ULTRA STABLE
-// ==========================================================
-
-
-// ==========================================================
-// ALERTE — DÉBUT
+// VERSION STABLE
 // ==========================================================
 
 alert(
@@ -14181,62 +14176,38 @@ alert(
 
 
 // ==========================================================
-// INITIALISER L'ÉTAT SANS CRÉER DE NOUVEAU let
+// ÉTAT DU FILTRE
 // ==========================================================
 
-if (
-    !window.brandStoreAdmin
-) {
-
-    throw new Error(
-        "Brand Store Admin não inicializado."
-    );
-
-}
+let currentNotificationFilter = "all";
 
 
-if (
-    !window.brandStoreAdmin
-        .notificationFilter
-) {
+// ==========================================================
+// FONCTION — OBTENIR LA LISTE
+// ==========================================================
 
-    window.brandStoreAdmin
-        .notificationFilter =
-        "all";
+function getAdminNotificationList() {
+
+    return Array.isArray(notifications)
+        ? notifications
+        : [];
 
 }
 
 
 // ==========================================================
-// FONCTION — FILTRER LES NOTIFICATIONS
+// FONCTION — FILTRER
 // ==========================================================
 
-function filterAdminNotifications(
-    filter
+function getFilteredAdminNotifications(
+    filter = currentNotificationFilter
 ) {
-
-    const selectedFilter =
-        filter ||
-        "all";
-
-
-    window.brandStoreAdmin
-        .notificationFilter =
-        selectedFilter;
-
 
     const list =
-        Array.isArray(
-            notifications
-        )
-            ? notifications
-            : [];
+        getAdminNotificationList();
 
 
-    if (
-        selectedFilter ===
-        "unread"
-    ) {
+    if (filter === "unread") {
 
         return list.filter(
             notification =>
@@ -14246,10 +14217,7 @@ function filterAdminNotifications(
     }
 
 
-    if (
-        selectedFilter ===
-        "read"
-    ) {
+    if (filter === "read") {
 
         return list.filter(
             notification =>
@@ -14267,29 +14235,51 @@ function filterAdminNotifications(
 
 
 // ==========================================================
-// FONCTION — OBTENIR LE FILTRE ACTUEL
+// FONCTION — CHANGER LE FILTRE
 // ==========================================================
 
-function getNotificationFilter() {
+function filterAdminNotifications(
+    filter = "all"
+) {
 
-    return (
+    currentNotificationFilter =
+        filter;
+
+
+    const filtered =
+        getFilteredAdminNotifications(
+            filter
+        );
+
+
+    // ------------------------------------------------------
+    // EXPOSER L'ÉTAT
+    // ------------------------------------------------------
+
+    if (window.brandStoreAdmin) {
+
         window.brandStoreAdmin
-            .notificationFilter ||
-        "all"
-    );
+            .currentNotificationFilter =
+            currentNotificationFilter;
 
-}
+    }
 
 
-// ==========================================================
-// FONCTION — OBTENIR LES NOTIFICATIONS FILTRÉES
-// ==========================================================
+    // ------------------------------------------------------
+    // RAFRAÎCHIR L'AFFICHAGE
+    // ------------------------------------------------------
 
-function getFilteredAdminNotifications() {
+    if (
+        typeof renderNotifications ===
+        "function"
+    ) {
 
-    return filterAdminNotifications(
-        getNotificationFilter()
-    );
+        renderNotifications();
+
+    }
+
+
+    return filtered;
 
 }
 
@@ -14298,27 +14288,31 @@ function getFilteredAdminNotifications() {
 // EXPOSER LES FONCTIONS
 // ==========================================================
 
-window.brandStoreAdmin
-    .filterAdminNotifications =
-    filterAdminNotifications;
+if (window.brandStoreAdmin) {
+
+    window.brandStoreAdmin
+        .filterAdminNotifications =
+        filterAdminNotifications;
 
 
-window.brandStoreAdmin
-    .getNotificationFilter =
-    getNotificationFilter;
+    window.brandStoreAdmin
+        .getFilteredAdminNotifications =
+        getFilteredAdminNotifications;
 
 
-window.brandStoreAdmin
-    .getFilteredAdminNotifications =
-    getFilteredAdminNotifications;
+    window.brandStoreAdmin
+        .currentNotificationFilter =
+        currentNotificationFilter;
+
+}
 
 
 // ==========================================================
-// ALERTE — FONCTIONS PRÊTES
+// ALERTE — FIN
 // ==========================================================
 
 alert(
-    "BLOC 26 — Filtro das notificações preparado com sucesso."
+    "BLOC 26 — Filtro das notificações carregado com sucesso."
 );
 
 
