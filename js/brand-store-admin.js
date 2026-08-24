@@ -17374,3 +17374,440 @@ alert(
 // ==========================================================
 // FIN BLOC 35
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 36 — ANÁLISE DE PERFORMANCE DAS VENDAS
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT
+// ==========================================================
+
+alert(
+    "BLOC 36 — Análise de performance das vendas carregando..."
+);
+
+
+// ==========================================================
+// ANALYSER LES PERFORMANCES
+// ==========================================================
+
+function calculateBrandStoreSalesPerformance() {
+
+    const list =
+        Array.isArray(orders)
+            ? orders
+            : [];
+
+
+    const dailySales = {};
+
+
+    let totalSales = 0;
+
+    let completedOrders = 0;
+
+
+    list.forEach(
+        order => {
+
+            if (
+                typeof brandStoreIsCompletedSale ===
+                "function"
+            ) {
+
+                if (
+                    !brandStoreIsCompletedSale(
+                        order
+                    )
+                ) {
+
+                    return;
+
+                }
+
+            } else {
+
+                const status =
+                    String(
+                        order?.status ||
+                        ""
+                    ).toLowerCase();
+
+
+                if (
+                    status !== "delivered" &&
+                    status !== "completed" &&
+                    status !== "paid"
+                ) {
+
+                    return;
+
+                }
+
+            }
+
+
+            const amount =
+                typeof brandStoreGetOrderAmount ===
+                "function"
+
+                    ? brandStoreGetOrderAmount(
+                        order
+                    )
+
+                    : Number(
+                        order?.total ||
+                        order?.totalAmount ||
+                        order?.amount ||
+                        0
+                    );
+
+
+            if (
+                !Number.isFinite(amount) ||
+                amount <= 0
+            ) {
+
+                return;
+
+            }
+
+
+            totalSales +=
+                amount;
+
+
+            completedOrders++;
+
+
+            let date = null;
+
+
+            if (
+                typeof brandStoreGetOrderDate ===
+                "function"
+            ) {
+
+                date =
+                    brandStoreGetOrderDate(
+                        order
+                    );
+
+            }
+
+
+            if (!date) {
+
+                return;
+
+            }
+
+
+            const dayKey =
+                date.toISOString()
+                    .slice(
+                        0,
+                        10
+                    );
+
+
+            if (
+                !dailySales[dayKey]
+            ) {
+
+                dailySales[dayKey] =
+                    0;
+
+            }
+
+
+            dailySales[dayKey] +=
+                amount;
+
+        }
+    );
+
+
+    let bestDay =
+        null;
+
+    let bestDaySales =
+        0;
+
+
+    Object.entries(
+        dailySales
+    ).forEach(
+        ([day, amount]) => {
+
+            if (
+                amount >
+                bestDaySales
+            ) {
+
+                bestDay =
+                    day;
+
+                bestDaySales =
+                    amount;
+
+            }
+
+        }
+    );
+
+
+    const averageOrder =
+        completedOrders > 0
+
+            ? totalSales /
+              completedOrders
+
+            : 0;
+
+
+    const performance = {
+
+        totalSales,
+
+        completedOrders,
+
+        averageOrder,
+
+        bestDay,
+
+        bestDaySales,
+
+        dailySales
+
+    };
+
+
+    window.brandStoreAdmin
+        .salesPerformance =
+        performance;
+
+
+    return performance;
+
+}
+
+
+// ==========================================================
+// AFFICHER LA PERFORMANCE
+// ==========================================================
+
+function renderBrandStoreSalesPerformance() {
+
+    const performance =
+        calculateBrandStoreSalesPerformance();
+
+
+    const format =
+        typeof formatKz ===
+        "function"
+
+            ? formatKz
+
+            : value =>
+                Number(
+                    value || 0
+                ).toLocaleString(
+                    "pt-AO"
+                ) + " Kz";
+
+
+    // ------------------------------------------------------
+    // TOTAL DES VENTES
+    // ------------------------------------------------------
+
+    if (grossSales) {
+
+        grossSales.textContent =
+            format(
+                performance.totalSales
+            );
+
+    }
+
+
+    // ------------------------------------------------------
+    // PANIER MOYEN
+    // ------------------------------------------------------
+
+    if (averageOrderSales) {
+
+        averageOrderSales.textContent =
+            format(
+                performance.averageOrder
+            );
+
+    }
+
+
+    // ------------------------------------------------------
+    // NOMBRE DE VENTES
+    // ------------------------------------------------------
+
+    if (salesCount) {
+
+        salesCount.textContent =
+            String(
+                performance.completedOrders
+            );
+
+    }
+
+
+    // ------------------------------------------------------
+    // GRAPHIQUE SIMPLE
+    // ------------------------------------------------------
+
+    if (
+        salesChart
+    ) {
+
+        const entries =
+            Object.entries(
+                performance.dailySales
+            )
+            .sort(
+                ([a], [b]) =>
+                    a.localeCompare(b)
+            )
+            .slice(-7);
+
+
+        if (
+            entries.length === 0
+        ) {
+
+            salesChart.innerHTML = `
+
+                <div class="emptyState">
+
+                    <span class="material-symbols-rounded">
+                        monitoring
+                    </span>
+
+                    <h3>
+                        Nenhuma venda registrada
+                    </h3>
+
+                    <p>
+                        Os dados aparecerão quando houver vendas concluídas.
+                    </p>
+
+                </div>
+
+            `;
+
+        } else {
+
+            salesChart.innerHTML =
+
+                entries
+                .map(
+                    ([day, amount]) => `
+
+                        <div
+                            style="
+                                display:flex;
+                                justify-content:space-between;
+                                align-items:center;
+                                padding:8px 0;
+                                border-bottom:1px solid rgba(0,0,0,.08);
+                            "
+                        >
+
+                            <span>
+                                ${day}
+                            </span>
+
+                            <strong>
+                                ${format(amount)}
+                            </strong>
+
+                        </div>
+
+                    `
+                )
+                .join("");
+
+        }
+
+    }
+
+
+    return performance;
+
+}
+
+
+// ==========================================================
+// OBTENIR LE MEILLEUR JOUR
+// ==========================================================
+
+function getBrandStoreBestSalesDay() {
+
+    const performance =
+        window.brandStoreAdmin
+            .salesPerformance ||
+        calculateBrandStoreSalesPerformance();
+
+
+    return {
+
+        date:
+            performance.bestDay,
+
+        amount:
+            performance.bestDaySales
+
+    };
+
+}
+
+
+// ==========================================================
+// EXPOSER
+// ==========================================================
+
+window.brandStoreAdmin
+    .calculateBrandStoreSalesPerformance =
+    calculateBrandStoreSalesPerformance;
+
+
+window.brandStoreAdmin
+    .renderBrandStoreSalesPerformance =
+    renderBrandStoreSalesPerformance;
+
+
+window.brandStoreAdmin
+    .getBrandStoreBestSalesDay =
+    getBrandStoreBestSalesDay;
+
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
+
+renderBrandStoreSalesPerformance();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 36 — Análise de performance das vendas carregada com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 36
+// ==========================================================
