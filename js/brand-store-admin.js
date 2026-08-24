@@ -13917,3 +13917,249 @@ alert(
 // ==========================================================
 // FIN BLOC 24
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 25 — MARQUER LES NOTIFICATIONS COMME LUES
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+alert(
+    "BLOC 25 — Leitura das notificações carregando..."
+);
+
+
+// ==========================================================
+// FONCTION — MARQUER TOUTES LES NOTIFICATIONS COMME LUES
+// ==========================================================
+
+async function markAllNotificationsAsRead() {
+
+    try {
+
+        const list =
+            Array.isArray(
+                notifications
+            )
+                ? notifications
+                : [];
+
+
+        // --------------------------------------------------
+        // AUCUNE NOTIFICATION
+        // --------------------------------------------------
+
+        if (
+            list.length === 0
+        ) {
+
+            showToast(
+                "Não existem notificações para marcar como lidas.",
+                "notifications"
+            );
+
+            return;
+
+        }
+
+
+        // --------------------------------------------------
+        // NOTIFICATIONS NON LUES
+        // --------------------------------------------------
+
+        const unreadNotifications =
+            list.filter(
+                notification =>
+                    notification.read !== true &&
+                    notification.id
+            );
+
+
+        if (
+            unreadNotifications.length === 0
+        ) {
+
+            showToast(
+                "Todas as notificações já foram lidas.",
+                "done_all"
+            );
+
+            return;
+
+        }
+
+
+        showLoading(
+            "Marcando notificações como lidas..."
+        );
+
+
+        // --------------------------------------------------
+        // MISE À JOUR FIRESTORE
+        // --------------------------------------------------
+
+        for (
+            const notification
+            of unreadNotifications
+        ) {
+
+            const notificationRef =
+                doc(
+                    db,
+                    "notifications",
+                    notification.id
+                );
+
+
+            await updateDoc(
+                notificationRef,
+                {
+
+                    read:
+                        true,
+
+                    readAt:
+                        serverTimestamp()
+
+                }
+            );
+
+
+            // ------------------------------------------------
+            // ÉTAT LOCAL
+            // ------------------------------------------------
+
+            notification.read =
+                true;
+
+        }
+
+
+        // --------------------------------------------------
+        // ACTUALISER L'AFFICHAGE
+        // --------------------------------------------------
+
+        if (
+            typeof renderNotifications ===
+            "function"
+        ) {
+
+            renderNotifications();
+
+        }
+
+
+        if (
+            window.brandStoreAdmin
+                .prepareNotificationItems
+        ) {
+
+            window.brandStoreAdmin
+                .prepareNotificationItems();
+
+        }
+
+
+        if (
+            window.brandStoreAdmin
+                .updateNotificationVisualState
+        ) {
+
+            window.brandStoreAdmin
+                .updateNotificationVisualState();
+
+        }
+
+
+        if (
+            window.brandStoreAdmin
+                .updateNotificationCounters
+        ) {
+
+            window.brandStoreAdmin
+                .updateNotificationCounters();
+
+        }
+
+
+        hideLoading();
+
+
+        showToast(
+            unreadNotifications.length +
+            " notificação(ões) marcada(s) como lida(s).",
+            "done_all"
+        );
+
+
+    } catch (error) {
+
+        hideLoading();
+
+
+        console.error(
+            "BLOC 25 — Erro:",
+            error
+        );
+
+
+        alert(
+            "BLOC 25 — ERRO ao marcar notificações:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// BOUTON — MARQUER COMME LUES
+// ==========================================================
+
+markNotificationsRead?.addEventListener(
+    "click",
+    async () => {
+
+        await markAllNotificationsAsRead();
+
+    }
+);
+
+
+// ==========================================================
+// EXPOSER
+// ==========================================================
+
+window.brandStoreAdmin
+    .markAllNotificationsAsRead =
+    markAllNotificationsAsRead;
+
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
+
+if (
+    window.brandStoreAdmin
+        .updateNotificationCounters
+) {
+
+    window.brandStoreAdmin
+        .updateNotificationCounters();
+
+}
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 25 — Leitura das notificações carregada com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 25
+// ==========================================================
