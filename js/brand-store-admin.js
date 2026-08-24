@@ -16899,6 +16899,11 @@ alert(
 // VERSION STABLE ET LÉGÈRE
 // ==========================================================
 
+
+// ==========================================================
+// ALERTE — DÉBUT
+// ==========================================================
+
 alert(
     "BLOC 35 — Estatísticas financeiras carregando..."
 );
@@ -16908,14 +16913,15 @@ alert(
 // COMMISSION TOMA
 // ==========================================================
 
-const TOMA_COMMISSION_RATE = 0.05;
+const brandStoreFinancialCommissionRate =
+    0.05;
 
 
 // ==========================================================
-// FONCTION — OBTENIR LE MONTANT D'UNE COMMANDE
+// OBTENIR LE MONTANT DE LA COMMANDE
 // ==========================================================
 
-function getOrderAmount(order) {
+function brandStoreGetOrderAmount(order) {
 
     if (!order) {
 
@@ -16924,7 +16930,7 @@ function getOrderAmount(order) {
     }
 
 
-    const possibleValues = [
+    const values = [
 
         order.total,
 
@@ -16942,8 +16948,7 @@ function getOrderAmount(order) {
 
 
     for (
-        const value
-        of possibleValues
+        const value of values
     ) {
 
         const number =
@@ -16968,10 +16973,10 @@ function getOrderAmount(order) {
 
 
 // ==========================================================
-// FONCTION — VÉRIFIER SI LA COMMANDE EST UNE VENTE
+// VÉRIFIER SI LA COMMANDE EST UNE VENTE
 // ==========================================================
 
-function isCompletedSale(order) {
+function brandStoreIsCompletedSale(order) {
 
     if (!order) {
 
@@ -17001,10 +17006,10 @@ function isCompletedSale(order) {
 
 
 // ==========================================================
-// FONCTION — VÉRIFIER LA DATE
+// OBTENIR LA DATE DE LA COMMANDE
 // ==========================================================
 
-function getOrderDate(order) {
+function brandStoreGetOrderDate(order) {
 
     if (!order) {
 
@@ -17039,25 +17044,22 @@ function getOrderDate(order) {
         }
 
 
-        if (
-            typeof value.toDate ===
-            "function"
-        ) {
-
-            return value.toDate();
-
-        }
-
-
         const date =
             new Date(value);
 
 
-        return isNaN(
-            date.getTime()
-        )
-            ? null
-            : date;
+        if (
+            isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return null;
+
+        }
+
+
+        return date;
 
     } catch (error) {
 
@@ -17069,10 +17071,10 @@ function getOrderDate(order) {
 
 
 // ==========================================================
-// FONCTION — CALCULER LES STATISTIQUES
+// CALCULER LES STATISTIQUES FINANCIÈRES
 // ==========================================================
 
-function calculateStoreFinancialStats() {
+function calculateBrandStoreFinancialStats() {
 
     const list =
         Array.isArray(orders)
@@ -17102,9 +17104,9 @@ function calculateStoreFinancialStats() {
 
     let totalSales = 0;
 
-    let salesTodayValue = 0;
+    let salesToday = 0;
 
-    let salesMonthValue = 0;
+    let salesMonth = 0;
 
     let completedOrders = 0;
 
@@ -17113,7 +17115,9 @@ function calculateStoreFinancialStats() {
         order => {
 
             if (
-                !isCompletedSale(order)
+                !brandStoreIsCompletedSale(
+                    order
+                )
             ) {
 
                 return;
@@ -17122,7 +17126,9 @@ function calculateStoreFinancialStats() {
 
 
             const amount =
-                getOrderAmount(order);
+                brandStoreGetOrderAmount(
+                    order
+                );
 
 
             if (
@@ -17142,7 +17148,9 @@ function calculateStoreFinancialStats() {
 
 
             const date =
-                getOrderDate(order);
+                brandStoreGetOrderDate(
+                    order
+                );
 
 
             if (!date) {
@@ -17156,7 +17164,7 @@ function calculateStoreFinancialStats() {
                 date >= todayStart
             ) {
 
-                salesTodayValue +=
+                salesToday +=
                     amount;
 
             }
@@ -17166,7 +17174,7 @@ function calculateStoreFinancialStats() {
                 date >= monthStart
             ) {
 
-                salesMonthValue +=
+                salesMonth +=
                     amount;
 
             }
@@ -17184,7 +17192,7 @@ function calculateStoreFinancialStats() {
 
     const commission =
         totalSales *
-        TOMA_COMMISSION_RATE;
+        brandStoreFinancialCommissionRate;
 
 
     const netSales =
@@ -17196,11 +17204,9 @@ function calculateStoreFinancialStats() {
 
         totalSales,
 
-        salesToday:
-            salesTodayValue,
+        salesToday,
 
-        salesMonth:
-            salesMonthValue,
+        salesMonth,
 
         completedOrders,
 
@@ -17211,7 +17217,7 @@ function calculateStoreFinancialStats() {
         netSales,
 
         commissionRate:
-            TOMA_COMMISSION_RATE
+            brandStoreFinancialCommissionRate
 
     };
 
@@ -17227,19 +17233,21 @@ function calculateStoreFinancialStats() {
 
 
 // ==========================================================
-// FONCTION — AFFICHER LES STATISTIQUES
+// AFFICHER LES STATISTIQUES
 // ==========================================================
 
-function renderStoreFinancialStats() {
+function renderBrandStoreFinancialStats() {
 
     const stats =
-        calculateStoreFinancialStats();
+        calculateBrandStoreFinancialStats();
 
 
     const format =
         typeof formatKz ===
         "function"
+
             ? formatKz
+
             : value =>
                 Number(
                     value || 0
@@ -17248,9 +17256,7 @@ function renderStoreFinancialStats() {
                 ) + " Kz";
 
 
-    if (
-        salesToday
-    ) {
+    if (salesToday) {
 
         salesToday.textContent =
             format(
@@ -17260,9 +17266,7 @@ function renderStoreFinancialStats() {
     }
 
 
-    if (
-        salesMonth
-    ) {
+    if (salesMonth) {
 
         salesMonth.textContent =
             format(
@@ -17272,9 +17276,7 @@ function renderStoreFinancialStats() {
     }
 
 
-    if (
-        averageOrder
-    ) {
+    if (averageOrder) {
 
         averageOrder.textContent =
             format(
@@ -17284,9 +17286,7 @@ function renderStoreFinancialStats() {
     }
 
 
-    if (
-        storeCommission
-    ) {
+    if (storeCommission) {
 
         storeCommission.textContent =
             format(
@@ -17296,9 +17296,7 @@ function renderStoreFinancialStats() {
     }
 
 
-    if (
-        grossSales
-    ) {
+    if (grossSales) {
 
         grossSales.textContent =
             format(
@@ -17308,9 +17306,7 @@ function renderStoreFinancialStats() {
     }
 
 
-    if (
-        tomacommission
-    ) {
+    if (tomacommission) {
 
         tomacommission.textContent =
             format(
@@ -17320,9 +17316,7 @@ function renderStoreFinancialStats() {
     }
 
 
-    if (
-        netSales
-    ) {
+    if (netSales) {
 
         netSales.textContent =
             format(
@@ -17332,9 +17326,7 @@ function renderStoreFinancialStats() {
     }
 
 
-    if (
-        averageOrderSales
-    ) {
+    if (averageOrderSales) {
 
         averageOrderSales.textContent =
             format(
@@ -17350,24 +17342,24 @@ function renderStoreFinancialStats() {
 
 
 // ==========================================================
-// EXPOSER
+// EXPOSER LES FONCTIONS
 // ==========================================================
 
 window.brandStoreAdmin
-    .calculateStoreFinancialStats =
-    calculateStoreFinancialStats;
+    .calculateBrandStoreFinancialStats =
+    calculateBrandStoreFinancialStats;
 
 
 window.brandStoreAdmin
-    .renderStoreFinancialStats =
-    renderStoreFinancialStats;
+    .renderBrandStoreFinancialStats =
+    renderBrandStoreFinancialStats;
 
 
 // ==========================================================
 // INITIALISATION
 // ==========================================================
 
-renderStoreFinancialStats();
+renderBrandStoreFinancialStats();
 
 
 // ==========================================================
