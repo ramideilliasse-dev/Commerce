@@ -16489,3 +16489,406 @@ alert(
 // ==========================================================
 // FIN BLOC 33
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 34 — GESTÃO DAS ENCOMENDAS
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+alert(
+    "BLOC 34 — Gestão das encomendas carregando..."
+);
+
+
+// ==========================================================
+// ÉTAT DE GESTION
+// ==========================================================
+
+let orderManagementState = {
+
+    total: 0,
+
+    newOrders: 0,
+
+    processing: 0,
+
+    delivered: 0,
+
+    cancelled: 0,
+
+    pending: 0,
+
+    filtered: 0
+
+};
+
+
+// ==========================================================
+// FONCTION — STATISTIQUES COMMANDES
+// ==========================================================
+
+function updateOrderManagementState() {
+
+    const list =
+        Array.isArray(orders)
+            ? orders
+            : [];
+
+
+    let newOrders = 0;
+
+    let processing = 0;
+
+    let delivered = 0;
+
+    let cancelled = 0;
+
+    let pending = 0;
+
+
+    list.forEach(
+        order => {
+
+            const status =
+                String(
+                    order?.status ||
+                    "new"
+                ).toLowerCase();
+
+
+            if (
+                status === "new" ||
+                status === "pending"
+            ) {
+
+                newOrders++;
+
+                pending++;
+
+            }
+
+            else if (
+                status === "processing" ||
+                status === "confirmed"
+            ) {
+
+                processing++;
+
+                pending++;
+
+            }
+
+            else if (
+                status === "delivered" ||
+                status === "completed"
+            ) {
+
+                delivered++;
+
+            }
+
+            else if (
+                status === "cancelled" ||
+                status === "canceled"
+            ) {
+
+                cancelled++;
+
+            }
+
+            else {
+
+                pending++;
+
+            }
+
+        }
+    );
+
+
+    orderManagementState = {
+
+        total:
+            list.length,
+
+        newOrders,
+
+        processing,
+
+        delivered,
+
+        cancelled,
+
+        pending,
+
+        filtered:
+            list.length
+
+    };
+
+
+    window.brandStoreAdmin
+        .orderManagementState =
+        orderManagementState;
+
+
+    // ------------------------------------------------------
+    // COMPTEURS HTML
+    // ------------------------------------------------------
+
+    if (
+        orderCount
+    ) {
+
+        orderCount.textContent =
+            String(
+                list.length
+            );
+
+    }
+
+
+    if (
+        newOrderCount
+    ) {
+
+        newOrderCount.textContent =
+            String(newOrders);
+
+    }
+
+
+    if (
+        processingOrderCount
+    ) {
+
+        processingOrderCount.textContent =
+            String(processing);
+
+    }
+
+
+    if (
+        deliveredOrderCount
+    ) {
+
+        deliveredOrderCount.textContent =
+            String(delivered);
+
+    }
+
+
+    if (
+        cancelledOrderCount
+    ) {
+
+        cancelledOrderCount.textContent =
+            String(cancelled);
+
+    }
+
+
+    if (
+        pendingOrderCount
+    ) {
+
+        pendingOrderCount.textContent =
+            String(pending);
+
+    }
+
+
+    return orderManagementState;
+
+}
+
+
+// ==========================================================
+// FONCTION — RECHERCHER UNE COMMANDE
+// ==========================================================
+
+function searchAdminOrders(
+    search = ""
+) {
+
+    const list =
+        Array.isArray(orders)
+            ? orders
+            : [];
+
+
+    const text =
+        String(search)
+            .trim()
+            .toLowerCase();
+
+
+    if (!text) {
+
+        orderManagementState.filtered =
+            list.length;
+
+        return list;
+
+    }
+
+
+    const result =
+        list.filter(
+            order => {
+
+                const id =
+                    String(
+                        order?.id ||
+                        order?.orderId ||
+                        ""
+                    ).toLowerCase();
+
+
+                const customer =
+                    String(
+                        order?.customerName ||
+                        order?.name ||
+                        order?.customer?.name ||
+                        ""
+                    ).toLowerCase();
+
+
+                const phone =
+                    String(
+                        order?.phone ||
+                        order?.customerPhone ||
+                        order?.customer?.phone ||
+                        ""
+                    ).toLowerCase();
+
+
+                const merchant =
+                    String(
+                        order?.merchantName ||
+                        order?.shopName ||
+                        ""
+                    ).toLowerCase();
+
+
+                return (
+                    id.includes(text) ||
+                    customer.includes(text) ||
+                    phone.includes(text) ||
+                    merchant.includes(text)
+                );
+
+            }
+        );
+
+
+    orderManagementState.filtered =
+        result.length;
+
+
+    return result;
+
+}
+
+
+// ==========================================================
+// FONCTION — FILTRER PAR STATUT
+// ==========================================================
+
+function filterAdminOrders(
+    status = "all"
+) {
+
+    const list =
+        Array.isArray(orders)
+            ? orders
+            : [];
+
+
+    if (
+        status === "all"
+    ) {
+
+        return list;
+
+    }
+
+
+    if (
+        status === "pending"
+    ) {
+
+        return list.filter(
+            order => {
+
+                const value =
+                    String(
+                        order?.status ||
+                        "new"
+                    ).toLowerCase();
+
+
+                return (
+                    value === "new" ||
+                    value === "pending" ||
+                    value === "processing" ||
+                    value === "confirmed"
+                );
+
+            }
+        );
+
+    }
+
+
+    return list.filter(
+        order =>
+            String(
+                order?.status ||
+                "new"
+            ).toLowerCase() ===
+            String(status).toLowerCase()
+    );
+
+}
+
+
+// ==========================================================
+// EXPOSER
+// ==========================================================
+
+window.brandStoreAdmin
+    .updateOrderManagementState =
+    updateOrderManagementState;
+
+
+window.brandStoreAdmin
+    .searchAdminOrders =
+    searchAdminOrders;
+
+
+window.brandStoreAdmin
+    .filterAdminOrders =
+    filterAdminOrders;
+
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
+
+updateOrderManagementState();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 34 — Gestão das encomendas carregada com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 34
+// ==========================================================
