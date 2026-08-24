@@ -18191,3 +18191,221 @@ alert(
 // ==========================================================
 // FIN BLOC 37
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 38 — NAVEGAÇÃO DAS AÇÕES PRINCIPAIS
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT
+// ==========================================================
+
+alert(
+    "BLOC 38 — Navegação das ações principais carregando..."
+);
+
+
+// ==========================================================
+// FONCTION — OUVRIR UN ONGLET DU DASHBOARD
+// ==========================================================
+
+function openBrandStoreAdminTab(
+    tabName
+) {
+
+    if (!tabName) {
+
+        return;
+
+    }
+
+
+    // ------------------------------------------------------
+    // RECHERCHER L'ONGLET
+    // ------------------------------------------------------
+
+    const targetTab =
+        Array.from(
+            dashboardTabs || []
+        ).find(
+            tab =>
+                tab.dataset &&
+                tab.dataset.tab === tabName
+        );
+
+
+    // ------------------------------------------------------
+    // ONGLET INTROUVABLE
+    // ------------------------------------------------------
+
+    if (!targetTab) {
+
+        alert(
+            "BLOC 38 — Aba não encontrada: " +
+            tabName
+        );
+
+        return;
+
+    }
+
+
+    // ------------------------------------------------------
+    // ACTIVER L'ONGLET
+    // ------------------------------------------------------
+
+    targetTab.click();
+
+
+    // ------------------------------------------------------
+    // MÉMORISER L'ONGLET ACTUEL
+    // ------------------------------------------------------
+
+    currentTab =
+        tabName;
+
+
+    window.brandStoreAdmin
+        .currentTab =
+        currentTab;
+
+}
+
+
+// ==========================================================
+// ACTION — ADICIONAR COMERCIANTE
+// ==========================================================
+
+addMerchant?.addEventListener(
+    "click",
+    () => {
+
+        openBrandStoreAdminTab(
+            "merchants"
+        );
+
+    }
+);
+
+
+addMerchantSecondary?.addEventListener(
+    "click",
+    () => {
+
+        openBrandStoreAdminTab(
+            "merchants"
+        );
+
+    }
+);
+
+
+// ==========================================================
+// ACTION — PRODUTOS
+// ==========================================================
+
+manageProducts?.addEventListener(
+    "click",
+    () => {
+
+        openBrandStoreAdminTab(
+            "products"
+        );
+
+    }
+);
+
+
+addProductButton?.addEventListener(
+    "click",
+    () => {
+
+        openBrandStoreAdminTab(
+            "products"
+        );
+
+    }
+);
+
+
+// ==========================================================
+// ACTION — PEDIDOS
+// ==========================================================
+
+manageOrders?.addEventListener(
+    "click",
+    () => {
+
+        openBrandStoreAdminTab(
+            "orders"
+        );
+
+    }
+);
+
+
+// ==========================================================
+// ACTION — ESTATÍSTICAS
+// ==========================================================
+
+analyticsButton?.addEventListener(
+    "click",
+    () => {
+
+        openBrandStoreAdminTab(
+            "sales"
+        );
+
+    }
+);
+
+
+// ==========================================================
+// ACTION — NOTIFICAÇÕES
+// ==========================================================
+
+notificationsButton?.addEventListener(
+    "click",
+    () => {
+
+        openBrandStoreAdminTab(
+            "notifications"
+        );
+
+    }
+);
+
+
+// ==========================================================
+// EXPOSER
+// ==========================================================
+
+window.brandStoreAdmin
+    .openBrandStoreAdminTab =
+    openBrandStoreAdminTab;
+
+
+// ==========================================================
+// ÉTAT INITIAL
+// ==========================================================
+
+window.brandStoreAdmin
+    .currentTab =
+    currentTab;
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 38 — Navegação das ações principais carregada com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 38
+// ==========================================================
