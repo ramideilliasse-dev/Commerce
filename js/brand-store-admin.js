@@ -14167,9 +14167,13 @@ alert(
 // TOMA
 // BRAND STORE ADMIN
 // BLOC 26 — FILTRAGEM DAS NOTIFICAÇÕES
-// VERSION STABLE ET LÉGÈRE
+// VERSION ULTRA STABLE
 // ==========================================================
 
+
+// ==========================================================
+// ALERTE — DÉBUT
+// ==========================================================
 
 alert(
     "BLOC 26 — Filtro das notificações carregando..."
@@ -14177,11 +14181,30 @@ alert(
 
 
 // ==========================================================
-// ÉTAT DU FILTRE
+// INITIALISER L'ÉTAT SANS CRÉER DE NOUVEAU let
 // ==========================================================
 
-let currentNotificationFilter =
-    "all";
+if (
+    !window.brandStoreAdmin
+) {
+
+    throw new Error(
+        "Brand Store Admin não inicializado."
+    );
+
+}
+
+
+if (
+    !window.brandStoreAdmin
+        .notificationFilter
+) {
+
+    window.brandStoreAdmin
+        .notificationFilter =
+        "all";
+
+}
 
 
 // ==========================================================
@@ -14189,131 +14212,18 @@ let currentNotificationFilter =
 // ==========================================================
 
 function filterAdminNotifications(
-    filter = "all"
+    filter
 ) {
 
-    currentNotificationFilter =
-        filter;
+    const selectedFilter =
+        filter ||
+        "all";
 
-
-    const list =
-        Array.isArray(
-            notifications
-        )
-            ? notifications
-            : [];
-
-
-    let filtered =
-        list;
-
-
-    // ------------------------------------------------------
-    // TOUTES
-    // ------------------------------------------------------
-
-    if (
-        filter === "all"
-    ) {
-
-        filtered =
-            list;
-
-    }
-
-
-    // ------------------------------------------------------
-    // NON LUES
-    // ------------------------------------------------------
-
-    else if (
-        filter === "unread"
-    ) {
-
-        filtered =
-            list.filter(
-                notification =>
-                    notification.read !== true
-            );
-
-    }
-
-
-    // ------------------------------------------------------
-    // LUES
-    // ------------------------------------------------------
-
-    else if (
-        filter === "read"
-    ) {
-
-        filtered =
-            list.filter(
-                notification =>
-                    notification.read === true
-            );
-
-    }
-
-
-    // ------------------------------------------------------
-    // AFFICHAGE TEMPORAIRE
-    // ------------------------------------------------------
-
-    if (
-        notificationList
-    ) {
-
-        if (
-            filtered.length === 0
-        ) {
-
-            renderEmptyState(
-
-                notificationList,
-
-                "notifications_off",
-
-                "Nenhuma notificação encontrada",
-
-                "Não existem notificações neste filtro."
-
-            );
-
-        }
-
-        else if (
-            typeof renderNotifications ===
-            "function"
-        ) {
-
-            // Restaurer la liste normale
-            renderNotifications();
-
-        }
-
-    }
-
-
-    // ------------------------------------------------------
-    // EXPOSER LE FILTRE
-    // ------------------------------------------------------
 
     window.brandStoreAdmin
-        .currentNotificationFilter =
-        currentNotificationFilter;
+        .notificationFilter =
+        selectedFilter;
 
-
-    return filtered;
-
-}
-
-
-// ==========================================================
-// FONCTION — OBTENIR LES NOTIFICATIONS FILTRÉES
-// ==========================================================
-
-function getFilteredAdminNotifications() {
 
     const list =
         Array.isArray(
@@ -14324,7 +14234,7 @@ function getFilteredAdminNotifications() {
 
 
     if (
-        currentNotificationFilter ===
+        selectedFilter ===
         "unread"
     ) {
 
@@ -14337,7 +14247,7 @@ function getFilteredAdminNotifications() {
 
 
     if (
-        currentNotificationFilter ===
+        selectedFilter ===
         "read"
     ) {
 
@@ -14357,6 +14267,34 @@ function getFilteredAdminNotifications() {
 
 
 // ==========================================================
+// FONCTION — OBTENIR LE FILTRE ACTUEL
+// ==========================================================
+
+function getNotificationFilter() {
+
+    return (
+        window.brandStoreAdmin
+            .notificationFilter ||
+        "all"
+    );
+
+}
+
+
+// ==========================================================
+// FONCTION — OBTENIR LES NOTIFICATIONS FILTRÉES
+// ==========================================================
+
+function getFilteredAdminNotifications() {
+
+    return filterAdminNotifications(
+        getNotificationFilter()
+    );
+
+}
+
+
+// ==========================================================
 // EXPOSER LES FONCTIONS
 // ==========================================================
 
@@ -14366,25 +14304,21 @@ window.brandStoreAdmin
 
 
 window.brandStoreAdmin
+    .getNotificationFilter =
+    getNotificationFilter;
+
+
+window.brandStoreAdmin
     .getFilteredAdminNotifications =
     getFilteredAdminNotifications;
 
 
 // ==========================================================
-// INITIALISATION
-// ==========================================================
-
-window.brandStoreAdmin
-    .currentNotificationFilter =
-    currentNotificationFilter;
-
-
-// ==========================================================
-// ALERTE — FIN
+// ALERTE — FONCTIONS PRÊTES
 // ==========================================================
 
 alert(
-    "BLOC 26 — Filtro das notificações carregado com sucesso."
+    "BLOC 26 — Filtro das notificações preparado com sucesso."
 );
 
 
