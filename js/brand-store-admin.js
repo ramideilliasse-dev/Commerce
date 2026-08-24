@@ -15868,3 +15868,266 @@ alert(
 // ==========================================================
 // FIN BLOC 31
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 32 — GESTION DES COMMERÇANTS
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+alert(
+    "BLOC 32 — Gestão dos comerciantes carregando..."
+);
+
+
+// ==========================================================
+// ÉTAT DE LA GESTION
+// ==========================================================
+
+let merchantManagementState = {
+    total: 0,
+    active: 0,
+    inactive: 0,
+    filtered: 0
+};
+
+
+// ==========================================================
+// FONCTION — CALCULER LES STATISTIQUES
+// ==========================================================
+
+function updateMerchantManagementState() {
+
+    const list =
+        Array.isArray(merchants)
+            ? merchants
+            : [];
+
+
+    let active = 0;
+    let inactive = 0;
+
+
+    list.forEach(
+        merchant => {
+
+            const status =
+                String(
+                    merchant?.status ||
+                    "active"
+                ).toLowerCase();
+
+
+            if (
+                status === "active"
+            ) {
+
+                active++;
+
+            } else {
+
+                inactive++;
+
+            }
+
+        }
+    );
+
+
+    merchantManagementState = {
+
+        total:
+            list.length,
+
+        active,
+
+        inactive,
+
+        filtered:
+            list.length
+
+    };
+
+
+    window.brandStoreAdmin
+        .merchantManagementState =
+        merchantManagementState;
+
+
+    // ------------------------------------------------------
+    // COMPTEURS HTML
+    // ------------------------------------------------------
+
+    if (
+        merchantCount
+    ) {
+
+        merchantCount.textContent =
+            active + inactive;
+
+    }
+
+
+    if (
+        activeMerchantCount
+    ) {
+
+        activeMerchantCount.textContent =
+            active;
+
+    }
+
+
+    return merchantManagementState;
+
+}
+
+
+// ==========================================================
+// FONCTION — RECHERCHER LES COMMERÇANTS
+// ==========================================================
+
+function searchAdminMerchants(
+    search = ""
+) {
+
+    const list =
+        Array.isArray(merchants)
+            ? merchants
+            : [];
+
+
+    const text =
+        String(search)
+            .trim()
+            .toLowerCase();
+
+
+    if (!text) {
+
+        merchantManagementState.filtered =
+            list.length;
+
+        return list;
+
+    }
+
+
+    const result =
+        list.filter(
+            merchant => {
+
+                const name =
+                    String(
+                        merchant?.name ||
+                        merchant?.shopName ||
+                        ""
+                    ).toLowerCase();
+
+
+                const phone =
+                    String(
+                        merchant?.phone ||
+                        ""
+                    ).toLowerCase();
+
+
+                const city =
+                    String(
+                        merchant?.city ||
+                        ""
+                    ).toLowerCase();
+
+
+                return (
+                    name.includes(text) ||
+                    phone.includes(text) ||
+                    city.includes(text)
+                );
+
+            }
+        );
+
+
+    merchantManagementState.filtered =
+        result.length;
+
+
+    return result;
+
+}
+
+
+// ==========================================================
+// FONCTION — FILTRER PAR STATUT
+// ==========================================================
+
+function filterAdminMerchants(
+    status = "all"
+) {
+
+    const list =
+        Array.isArray(merchants)
+            ? merchants
+            : [];
+
+
+    if (
+        status === "all"
+    ) {
+
+        return list;
+
+    }
+
+
+    return list.filter(
+        merchant =>
+            String(
+                merchant?.status ||
+                "active"
+            ).toLowerCase() ===
+            String(status).toLowerCase()
+    );
+
+}
+
+
+// ==========================================================
+// EXPOSER LES FONCTIONS
+// ==========================================================
+
+window.brandStoreAdmin
+    .updateMerchantManagementState =
+    updateMerchantManagementState;
+
+
+window.brandStoreAdmin
+    .searchAdminMerchants =
+    searchAdminMerchants;
+
+
+window.brandStoreAdmin
+    .filterAdminMerchants =
+    filterAdminMerchants;
+
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
+
+updateMerchantManagementState();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 32 — Gestão dos comerciantes carregada com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 32
+// ==========================================================
