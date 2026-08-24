@@ -14333,3 +14333,426 @@ alert(
 // ==========================================================
 // FIN BLOC 26
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 27 — ACTIONS SUR NOTIFICATION INDIVIDUELLE
+// VERSION ISOLÉE ET STABLE
+// ==========================================================
+
+alert(
+    "BLOC 27 — Ações individuais das notificações carregando..."
+);
+
+
+(() => {
+
+    // ======================================================
+    // VÉRIFICATION
+    // ======================================================
+
+    if (
+        !window.brandStoreAdmin
+    ) {
+
+        alert(
+            "BLOC 27 — ERRO: brandStoreAdmin não encontrado."
+        );
+
+        return;
+
+    }
+
+
+    // ======================================================
+    // MARCAR UMA NOTIFICAÇÃO COMO LIDA
+    // ======================================================
+
+    const markNotificationAsRead =
+        async notificationId => {
+
+            try {
+
+                if (!notificationId) {
+
+                    return false;
+
+                }
+
+
+                const notificationRef =
+                    doc(
+                        db,
+                        "notifications",
+                        notificationId
+                    );
+
+
+                await updateDoc(
+                    notificationRef,
+                    {
+
+                        read:
+                            true,
+
+                        readAt:
+                            serverTimestamp()
+
+                    }
+                );
+
+
+                const list =
+                    Array.isArray(
+                        notifications
+                    )
+                        ? notifications
+                        : [];
+
+
+                const item =
+                    list.find(
+                        notification =>
+                            notification &&
+                            notification.id ===
+                            notificationId
+                    );
+
+
+                if (item) {
+
+                    item.read =
+                        true;
+
+                }
+
+
+                if (
+                    typeof renderNotifications ===
+                    "function"
+                ) {
+
+                    renderNotifications();
+
+                }
+
+
+                if (
+                    window.brandStoreAdmin
+                        .updateNotificationCounters
+                ) {
+
+                    window.brandStoreAdmin
+                        .updateNotificationCounters();
+
+                }
+
+
+                showToast(
+                    "Notificação marcada como lida.",
+                    "done"
+                );
+
+
+                return true;
+
+            } catch (error) {
+
+                console.error(
+                    "BLOC 27 — Erro ao marcar notificação:",
+                    error
+                );
+
+
+                alert(
+                    "BLOC 27 — ERRO ao marcar notificação:\n\n" +
+                    error.message
+                );
+
+
+                return false;
+
+            }
+
+        };
+
+
+    // ======================================================
+    // MARCAR COMO NÃO LIDA
+    // ======================================================
+
+    const markNotificationAsUnread =
+        async notificationId => {
+
+            try {
+
+                if (!notificationId) {
+
+                    return false;
+
+                }
+
+
+                const notificationRef =
+                    doc(
+                        db,
+                        "notifications",
+                        notificationId
+                    );
+
+
+                await updateDoc(
+                    notificationRef,
+                    {
+
+                        read:
+                            false,
+
+                        readAt:
+                            null
+
+                    }
+                );
+
+
+                const list =
+                    Array.isArray(
+                        notifications
+                    )
+                        ? notifications
+                        : [];
+
+
+                const item =
+                    list.find(
+                        notification =>
+                            notification &&
+                            notification.id ===
+                            notificationId
+                    );
+
+
+                if (item) {
+
+                    item.read =
+                        false;
+
+                }
+
+
+                if (
+                    typeof renderNotifications ===
+                    "function"
+                ) {
+
+                    renderNotifications();
+
+                }
+
+
+                if (
+                    window.brandStoreAdmin
+                        .updateNotificationCounters
+                ) {
+
+                    window.brandStoreAdmin
+                        .updateNotificationCounters();
+
+                }
+
+
+                showToast(
+                    "Notificação marcada como não lida.",
+                    "mark_email_unread"
+                );
+
+
+                return true;
+
+            } catch (error) {
+
+                console.error(
+                    "BLOC 27 — Erro ao marcar não lida:",
+                    error
+                );
+
+
+                alert(
+                    "BLOC 27 — ERRO ao marcar como não lida:\n\n" +
+                    error.message
+                );
+
+
+                return false;
+
+            }
+
+        };
+
+
+    // ======================================================
+    // SUPRIMER UNE NOTIFICATION
+    // ======================================================
+
+    const deleteNotification =
+        async notificationId => {
+
+            try {
+
+                if (!notificationId) {
+
+                    return false;
+
+                }
+
+
+                const confirmation =
+                    confirm(
+                        "Deseja realmente excluir esta notificação?"
+                    );
+
+
+                if (!confirmation) {
+
+                    return false;
+
+                }
+
+
+                showLoading(
+                    "Excluindo notificação..."
+                );
+
+
+                const notificationRef =
+                    doc(
+                        db,
+                        "notifications",
+                        notificationId
+                    );
+
+
+                await deleteDoc(
+                    notificationRef
+                );
+
+
+                const list =
+                    Array.isArray(
+                        notifications
+                    )
+                        ? notifications
+                        : [];
+
+
+                const index =
+                    list.findIndex(
+                        notification =>
+                            notification &&
+                            notification.id ===
+                            notificationId
+                    );
+
+
+                if (
+                    index !== -1
+                ) {
+
+                    list.splice(
+                        index,
+                        1
+                    );
+
+                }
+
+
+                if (
+                    typeof renderNotifications ===
+                    "function"
+                ) {
+
+                    renderNotifications();
+
+                }
+
+
+                if (
+                    window.brandStoreAdmin
+                        .updateNotificationCounters
+                ) {
+
+                    window.brandStoreAdmin
+                        .updateNotificationCounters();
+
+                }
+
+
+                hideLoading();
+
+
+                showToast(
+                    "Notificação excluída com sucesso.",
+                    "delete"
+                );
+
+
+                return true;
+
+            } catch (error) {
+
+                hideLoading();
+
+
+                console.error(
+                    "BLOC 27 — Erro ao excluir:",
+                    error
+                );
+
+
+                alert(
+                    "BLOC 27 — ERRO ao excluir notificação:\n\n" +
+                    error.message
+                );
+
+
+                return false;
+
+            }
+
+        };
+
+
+    // ======================================================
+    // EXPOSER LES FONCTIONS
+    // ======================================================
+
+    window.brandStoreAdmin
+        .markNotificationAsRead =
+        markNotificationAsRead;
+
+
+    window.brandStoreAdmin
+        .markNotificationAsUnread =
+        markNotificationAsUnread;
+
+
+    window.brandStoreAdmin
+        .deleteNotification =
+        deleteNotification;
+
+
+})();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 27 — Ações individuais das notificações carregadas com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 27
+// ==========================================================
