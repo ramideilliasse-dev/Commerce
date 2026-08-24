@@ -16892,3 +16892,493 @@ alert(
 // ==========================================================
 // FIN BLOC 34
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 35 — VENDAS E ESTATÍSTICAS FINANCEIRAS
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+alert(
+    "BLOC 35 — Estatísticas financeiras carregando..."
+);
+
+
+// ==========================================================
+// COMMISSION TOMA
+// ==========================================================
+
+const TOMA_COMMISSION_RATE = 0.05;
+
+
+// ==========================================================
+// FONCTION — OBTENIR LE MONTANT D'UNE COMMANDE
+// ==========================================================
+
+function getOrderAmount(order) {
+
+    if (!order) {
+
+        return 0;
+
+    }
+
+
+    const possibleValues = [
+
+        order.total,
+
+        order.totalAmount,
+
+        order.amount,
+
+        order.finalTotal,
+
+        order.orderTotal,
+
+        order.price
+
+    ];
+
+
+    for (
+        const value
+        of possibleValues
+    ) {
+
+        const number =
+            Number(value);
+
+
+        if (
+            Number.isFinite(number) &&
+            number > 0
+        ) {
+
+            return number;
+
+        }
+
+    }
+
+
+    return 0;
+
+}
+
+
+// ==========================================================
+// FONCTION — VÉRIFIER SI LA COMMANDE EST UNE VENTE
+// ==========================================================
+
+function isCompletedSale(order) {
+
+    if (!order) {
+
+        return false;
+
+    }
+
+
+    const status =
+        String(
+            order.status ||
+            ""
+        ).toLowerCase();
+
+
+    return (
+
+        status === "delivered" ||
+
+        status === "completed" ||
+
+        status === "paid"
+
+    );
+
+}
+
+
+// ==========================================================
+// FONCTION — VÉRIFIER LA DATE
+// ==========================================================
+
+function getOrderDate(order) {
+
+    if (!order) {
+
+        return null;
+
+    }
+
+
+    const value =
+        order.createdAt ||
+        order.date ||
+        order.orderDate ||
+        order.created;
+
+
+    if (!value) {
+
+        return null;
+
+    }
+
+
+    try {
+
+        if (
+            typeof value.toDate ===
+            "function"
+        ) {
+
+            return value.toDate();
+
+        }
+
+
+        if (
+            typeof value.toDate ===
+            "function"
+        ) {
+
+            return value.toDate();
+
+        }
+
+
+        const date =
+            new Date(value);
+
+
+        return isNaN(
+            date.getTime()
+        )
+            ? null
+            : date;
+
+    } catch (error) {
+
+        return null;
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — CALCULER LES STATISTIQUES
+// ==========================================================
+
+function calculateStoreFinancialStats() {
+
+    const list =
+        Array.isArray(orders)
+            ? orders
+            : [];
+
+
+    const now =
+        new Date();
+
+
+    const todayStart =
+        new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate()
+        );
+
+
+    const monthStart =
+        new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            1
+        );
+
+
+    let totalSales = 0;
+
+    let salesTodayValue = 0;
+
+    let salesMonthValue = 0;
+
+    let completedOrders = 0;
+
+
+    list.forEach(
+        order => {
+
+            if (
+                !isCompletedSale(order)
+            ) {
+
+                return;
+
+            }
+
+
+            const amount =
+                getOrderAmount(order);
+
+
+            if (
+                amount <= 0
+            ) {
+
+                return;
+
+            }
+
+
+            totalSales +=
+                amount;
+
+
+            completedOrders++;
+
+
+            const date =
+                getOrderDate(order);
+
+
+            if (!date) {
+
+                return;
+
+            }
+
+
+            if (
+                date >= todayStart
+            ) {
+
+                salesTodayValue +=
+                    amount;
+
+            }
+
+
+            if (
+                date >= monthStart
+            ) {
+
+                salesMonthValue +=
+                    amount;
+
+            }
+
+        }
+    );
+
+
+    const averageOrder =
+        completedOrders > 0
+            ? totalSales /
+              completedOrders
+            : 0;
+
+
+    const commission =
+        totalSales *
+        TOMA_COMMISSION_RATE;
+
+
+    const netSales =
+        totalSales -
+        commission;
+
+
+    const stats = {
+
+        totalSales,
+
+        salesToday:
+            salesTodayValue,
+
+        salesMonth:
+            salesMonthValue,
+
+        completedOrders,
+
+        averageOrder,
+
+        commission,
+
+        netSales,
+
+        commissionRate:
+            TOMA_COMMISSION_RATE
+
+    };
+
+
+    window.brandStoreAdmin
+        .financialStats =
+        stats;
+
+
+    return stats;
+
+}
+
+
+// ==========================================================
+// FONCTION — AFFICHER LES STATISTIQUES
+// ==========================================================
+
+function renderStoreFinancialStats() {
+
+    const stats =
+        calculateStoreFinancialStats();
+
+
+    const format =
+        typeof formatKz ===
+        "function"
+            ? formatKz
+            : value =>
+                Number(
+                    value || 0
+                ).toLocaleString(
+                    "pt-AO"
+                ) + " Kz";
+
+
+    if (
+        salesToday
+    ) {
+
+        salesToday.textContent =
+            format(
+                stats.salesToday
+            );
+
+    }
+
+
+    if (
+        salesMonth
+    ) {
+
+        salesMonth.textContent =
+            format(
+                stats.salesMonth
+            );
+
+    }
+
+
+    if (
+        averageOrder
+    ) {
+
+        averageOrder.textContent =
+            format(
+                stats.averageOrder
+            );
+
+    }
+
+
+    if (
+        storeCommission
+    ) {
+
+        storeCommission.textContent =
+            format(
+                stats.commission
+            );
+
+    }
+
+
+    if (
+        grossSales
+    ) {
+
+        grossSales.textContent =
+            format(
+                stats.totalSales
+            );
+
+    }
+
+
+    if (
+        tomacommission
+    ) {
+
+        tomacommission.textContent =
+            format(
+                stats.commission
+            );
+
+    }
+
+
+    if (
+        netSales
+    ) {
+
+        netSales.textContent =
+            format(
+                stats.netSales
+            );
+
+    }
+
+
+    if (
+        averageOrderSales
+    ) {
+
+        averageOrderSales.textContent =
+            format(
+                stats.averageOrder
+            );
+
+    }
+
+
+    return stats;
+
+}
+
+
+// ==========================================================
+// EXPOSER
+// ==========================================================
+
+window.brandStoreAdmin
+    .calculateStoreFinancialStats =
+    calculateStoreFinancialStats;
+
+
+window.brandStoreAdmin
+    .renderStoreFinancialStats =
+    renderStoreFinancialStats;
+
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
+
+renderStoreFinancialStats();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 35 — Estatísticas financeiras carregadas com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 35
+// ==========================================================
