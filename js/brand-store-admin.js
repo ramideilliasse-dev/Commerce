@@ -18409,3 +18409,571 @@ alert(
 // ==========================================================
 // FIN BLOC 38
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 39 — ESTADO E NAVEGAÇÃO DAS ABAS
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT
+// ==========================================================
+
+alert(
+    "BLOC 39 — Estado das abas carregando..."
+);
+
+
+// ==========================================================
+// FONCTION — DÉFINIR L'ONGLET ACTIF
+// ==========================================================
+
+function setBrandStoreAdminActiveTab(
+    tabName
+) {
+
+    if (!tabName) {
+
+        return;
+
+    }
+
+
+    const tabs =
+        Array.from(
+            dashboardTabs || []
+        );
+
+
+    const panels =
+        Array.from(
+            dashboardPanels || []
+        );
+
+
+    // ------------------------------------------------------
+    // RECHERCHER L'ONGLET
+    // ------------------------------------------------------
+
+    const targetTab =
+        tabs.find(
+            tab =>
+                tab.dataset &&
+                tab.dataset.tab ===
+                tabName
+        );
+
+
+    if (!targetTab) {
+
+        alert(
+            "BLOC 39 — Aba não encontrada: " +
+            tabName
+        );
+
+        return;
+
+    }
+
+
+    // ------------------------------------------------------
+    // ACTIVER L'ONGLET
+    // ------------------------------------------------------
+
+    tabs.forEach(
+        tab => {
+
+            tab.classList.toggle(
+                "active",
+                tab === targetTab
+            );
+
+        }
+    );
+
+
+    // ------------------------------------------------------
+    // ACTIVER LE PANNEAU CORRESPONDANT
+    // ------------------------------------------------------
+
+    panels.forEach(
+        panel => {
+
+            const panelName =
+                panel.id.replace(
+                    "Panel",
+                    ""
+                );
+
+
+            panel.classList.toggle(
+                "active",
+                panelName ===
+                tabName
+            );
+
+        }
+    );
+
+
+    // ------------------------------------------------------
+    // MÉMORISER L'ÉTAT
+    // ------------------------------------------------------
+
+    currentTab =
+        tabName;
+
+
+    window.brandStoreAdmin
+        .currentTab =
+        currentTab;
+
+}
+
+
+// ==========================================================
+// FONCTION — OUVRIR UNE SECTION ET REMONTER À SA POSITION
+// ==========================================================
+
+function navigateBrandStoreAdmin(
+    tabName
+) {
+
+    if (!tabName) {
+
+        return;
+
+    }
+
+
+    setBrandStoreAdminActiveTab(
+        tabName
+    );
+
+
+    // ------------------------------------------------------
+    // PETIT DÉLAI POUR LA MISE À JOUR VISUELLE
+    // ------------------------------------------------------
+
+    setTimeout(
+        () => {
+
+            const activePanel =
+                document.getElementById(
+                    tabName + "Panel"
+                );
+
+
+            if (
+                activePanel
+            ) {
+
+                activePanel.scrollIntoView({
+
+                    behavior:
+                        "smooth",
+
+                    block:
+                        "start"
+
+                });
+
+            }
+
+        },
+        50
+    );
+
+}
+
+
+// ==========================================================
+// EXPOSER LES FONCTIONS
+// ==========================================================
+
+window.brandStoreAdmin
+    .setBrandStoreAdminActiveTab =
+    setBrandStoreAdminActiveTab;
+
+
+window.brandStoreAdmin
+    .navigateBrandStoreAdmin =
+    navigateBrandStoreAdmin;
+
+
+// ==========================================================
+// SYNCHRONISER L'ÉTAT INITIAL
+// ==========================================================
+
+if (
+    currentTab
+) {
+
+    setBrandStoreAdminActiveTab(
+        currentTab
+    );
+
+}
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 39 — Estado e navegação das abas carregados com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 39
+// ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 40 — CARREGAR COMERCIANTES DO FIRESTORE
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT
+// ==========================================================
+
+alert(
+    "BLOC 40 — Carregamento dos comerciantes carregando..."
+);
+
+
+// ==========================================================
+// FONCTION — CHARGER LES COMMERÇANTS
+// ==========================================================
+
+async function loadStoreMerchants() {
+
+    try {
+
+        // --------------------------------------------------
+        // VÉRIFICATION STORE ID
+        // --------------------------------------------------
+
+        if (!storeId) {
+
+            throw new Error(
+                "storeId não encontrado."
+            );
+
+        }
+
+
+        // --------------------------------------------------
+        // AFFICHER LE LOADING
+        // --------------------------------------------------
+
+        if (
+            typeof showLoading ===
+            "function"
+        ) {
+
+            showLoading(
+                "Carregando comerciantes..."
+            );
+
+        }
+
+
+        // --------------------------------------------------
+        // RÉFÉRENCE COLLECTION
+        // --------------------------------------------------
+
+        const merchantsCollection =
+            collection(
+                db,
+                "merchants"
+            );
+
+
+        // --------------------------------------------------
+        // REQUÊTE — COMMERÇANTS DE CETTE LOJA
+        // --------------------------------------------------
+
+        const merchantsQuery =
+            query(
+                merchantsCollection,
+
+                where(
+                    "storeId",
+                    "==",
+                    storeId
+                )
+            );
+
+
+        // --------------------------------------------------
+        // RÉCUPÉRER LES DOCUMENTS
+        // --------------------------------------------------
+
+        const snapshot =
+            await getDocs(
+                merchantsQuery
+            );
+
+
+        // --------------------------------------------------
+        // RECONSTRUIRE LE TABLEAU
+        // --------------------------------------------------
+
+        merchants = [];
+
+
+        snapshot.forEach(
+            merchantDoc => {
+
+                merchants.push({
+
+                    id:
+                        merchantDoc.id,
+
+                    ...merchantDoc.data()
+
+                });
+
+            }
+        );
+
+
+        // --------------------------------------------------
+        // TRI SIMPLE
+        // --------------------------------------------------
+
+        merchants.sort(
+            (a, b) => {
+
+                const dateA =
+                    a.createdAt &&
+                    typeof a.createdAt.toDate ===
+                    "function"
+                        ? a.createdAt.toDate()
+                        : new Date(
+                            a.createdAt || 0
+                        );
+
+
+                const dateB =
+                    b.createdAt &&
+                    typeof b.createdAt.toDate ===
+                    "function"
+                        ? b.createdAt.toDate()
+                        : new Date(
+                            b.createdAt || 0
+                        );
+
+
+                return (
+                    dateB.getTime() -
+                    dateA.getTime()
+                );
+
+            }
+        );
+
+
+        // --------------------------------------------------
+        // EXPOSER L'ÉTAT
+        // --------------------------------------------------
+
+        window.brandStoreAdmin
+            .merchants =
+            merchants;
+
+
+        // --------------------------------------------------
+        // AFFICHER LA LISTE
+        // --------------------------------------------------
+
+        if (
+            typeof renderAdminMerchantsList ===
+            "function"
+        ) {
+
+            renderAdminMerchantsList();
+
+        }
+
+
+        // --------------------------------------------------
+        // METTRE À JOUR LE COMPTEUR
+        // --------------------------------------------------
+
+        if (
+            merchantCount
+        ) {
+
+            merchantCount.textContent =
+                merchants.length;
+
+        }
+
+
+        if (
+            activeMerchantCount
+        ) {
+
+            activeMerchantCount.textContent =
+                merchants.filter(
+                    merchant =>
+                        String(
+                            merchant.status ||
+                            ""
+                        ).toLowerCase() ===
+                        "active"
+                ).length;
+
+        }
+
+
+        // --------------------------------------------------
+        // FIN LOADING
+        // --------------------------------------------------
+
+        if (
+            typeof hideLoading ===
+            "function"
+        ) {
+
+            hideLoading();
+
+        }
+
+
+        // --------------------------------------------------
+        // TOAST
+        // --------------------------------------------------
+
+        if (
+            typeof showToast ===
+            "function"
+        ) {
+
+            showToast(
+
+                merchants.length +
+                " comerciante(s) carregado(s).",
+
+                "group"
+
+            );
+
+        }
+
+
+        return merchants;
+
+
+    } catch (error) {
+
+
+        // --------------------------------------------------
+        // FIN LOADING EN CAS D'ERREUR
+        // --------------------------------------------------
+
+        if (
+            typeof hideLoading ===
+            "function"
+        ) {
+
+            hideLoading();
+
+        }
+
+
+        // --------------------------------------------------
+        // VIDER L'ÉTAT
+        // --------------------------------------------------
+
+        merchants = [];
+
+
+        window.brandStoreAdmin
+            .merchants =
+            merchants;
+
+
+        // --------------------------------------------------
+        // AFFICHER UNE ERREUR
+        // --------------------------------------------------
+
+        console.error(
+            "BLOC 40 — Erro ao carregar comerciantes:",
+            error
+        );
+
+
+        alert(
+            "BLOC 40 — ERRO ao carregar comerciantes:\n\n" +
+            error.message
+        );
+
+
+        return [];
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — ACTUALISER LES COMERÇANTS
+// ==========================================================
+
+async function refreshStoreMerchants() {
+
+    return await loadStoreMerchants();
+
+}
+
+
+// ==========================================================
+// EXPOSER LES FONCTIONS
+// ==========================================================
+
+window.brandStoreAdmin
+    .loadStoreMerchants =
+    loadStoreMerchants;
+
+
+window.brandStoreAdmin
+    .refreshStoreMerchants =
+    refreshStoreMerchants;
+
+
+// ==========================================================
+// ÉTAT INITIAL
+// ==========================================================
+
+window.brandStoreAdmin
+    .merchants =
+    merchants;
+
+
+// ==========================================================
+// CHARGEMENT INITIAL
+// ==========================================================
+
+loadStoreMerchants();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 40 — Comerciantes carregados do Firestore com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 40
+// ==========================================================
