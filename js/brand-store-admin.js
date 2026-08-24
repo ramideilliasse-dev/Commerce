@@ -15686,3 +15686,185 @@ alert(
 // ==========================================================
 // FIN BLOC 30
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 31 — SINCRONIZAÇÃO DO ESTADO DAS NOTIFICAÇÕES
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+alert(
+    "BLOC 31 — Sincronização das notificações carregando..."
+);
+
+
+// ==========================================================
+// FONCTION — SYNCHRONISER L'ÉTAT LOCAL
+// ==========================================================
+
+function synchronizeNotificationState() {
+
+    const list =
+        Array.isArray(
+            notifications
+        )
+            ? notifications
+            : [];
+
+
+    let unread =
+        0;
+
+
+    let read =
+        0;
+
+
+    list.forEach(
+        notification => {
+
+            if (
+                notification &&
+                notification.read === true
+            ) {
+
+                read++;
+
+            } else {
+
+                unread++;
+
+            }
+
+        }
+    );
+
+
+    // ------------------------------------------------------
+    // COMPTEUR
+    // ------------------------------------------------------
+
+    if (
+        notificationCount
+    ) {
+
+        notificationCount.textContent =
+            String(unread);
+
+        notificationCount.classList.toggle(
+            "hidden",
+            unread === 0
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // ÉTAT GLOBAL
+    // ------------------------------------------------------
+
+    window.brandStoreAdmin
+        .notificationState =
+        {
+
+            total:
+                list.length,
+
+            unread,
+
+            read
+
+        };
+
+
+    return (
+        window.brandStoreAdmin
+            .notificationState
+    );
+
+}
+
+
+// ==========================================================
+// FONCTION — ACTUALISER L'AFFICHAGE
+// ==========================================================
+
+function refreshNotificationInterface() {
+
+    try {
+
+        synchronizeNotificationState();
+
+
+        if (
+            typeof renderNotifications ===
+            "function"
+        ) {
+
+            renderNotifications();
+
+        }
+
+
+        if (
+            window.brandStoreAdmin &&
+            typeof window.brandStoreAdmin
+                .updateNotificationCounters ===
+            "function"
+        ) {
+
+            window.brandStoreAdmin
+                .updateNotificationCounters();
+
+        }
+
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 31 — Erro:",
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+
+// ==========================================================
+// EXPOSER LES FONCTIONS
+// ==========================================================
+
+window.brandStoreAdmin
+    .synchronizeNotificationState =
+    synchronizeNotificationState;
+
+
+window.brandStoreAdmin
+    .refreshNotificationInterface =
+    refreshNotificationInterface;
+
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
+
+synchronizeNotificationState();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 31 — Sincronização das notificações carregada com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 31
+// ==========================================================
