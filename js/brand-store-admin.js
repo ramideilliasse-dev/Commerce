@@ -17811,3 +17811,383 @@ alert(
 // ==========================================================
 // FIN BLOC 36
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 37 — COMPARAÇÃO DE DESEMPENHO DAS VENDAS
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT
+// ==========================================================
+
+alert(
+    "BLOC 37 — Comparação de vendas carregando..."
+);
+
+
+// ==========================================================
+// CALCULER LES PÉRIODES
+// ==========================================================
+
+function calculateBrandStoreSalesComparison() {
+
+    const list =
+        Array.isArray(orders)
+            ? orders
+            : [];
+
+
+    const now =
+        new Date();
+
+
+    const todayStart =
+        new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate()
+        );
+
+
+    const yesterdayStart =
+        new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate() - 1
+        );
+
+
+    const monthStart =
+        new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            1
+        );
+
+
+    const previousMonthStart =
+        new Date(
+            now.getFullYear(),
+            now.getMonth() - 1,
+            1
+        );
+
+
+    let todaySales = 0;
+
+    let yesterdaySales = 0;
+
+    let currentMonthSales = 0;
+
+    let previousMonthSales = 0;
+
+
+    list.forEach(
+        order => {
+
+            const completed =
+                typeof brandStoreIsCompletedSale ===
+                "function"
+
+                    ? brandStoreIsCompletedSale(
+                        order
+                    )
+
+                    : [
+
+                        "delivered",
+                        "completed",
+                        "paid"
+
+                    ].includes(
+                        String(
+                            order?.status ||
+                            ""
+                        ).toLowerCase()
+                    );
+
+
+            if (!completed) {
+
+                return;
+
+            }
+
+
+            const amount =
+                typeof brandStoreGetOrderAmount ===
+                "function"
+
+                    ? brandStoreGetOrderAmount(
+                        order
+                    )
+
+                    : Number(
+                        order?.total ||
+                        order?.totalAmount ||
+                        order?.amount ||
+                        0
+                    );
+
+
+            if (
+                !Number.isFinite(amount) ||
+                amount <= 0
+            ) {
+
+                return;
+
+            }
+
+
+            const date =
+                typeof brandStoreGetOrderDate ===
+                "function"
+
+                    ? brandStoreGetOrderDate(
+                        order
+                    )
+
+                    : null;
+
+
+            if (!date) {
+
+                return;
+
+            }
+
+
+            if (
+                date >= todayStart
+            ) {
+
+                todaySales +=
+                    amount;
+
+            }
+
+            else if (
+                date >= yesterdayStart
+            ) {
+
+                yesterdaySales +=
+                    amount;
+
+            }
+
+
+            if (
+                date >= monthStart
+            ) {
+
+                currentMonthSales +=
+                    amount;
+
+            }
+
+            else if (
+                date >= previousMonthStart
+            ) {
+
+                previousMonthSales +=
+                    amount;
+
+            }
+
+        }
+    );
+
+
+    const todayChange =
+        yesterdaySales > 0
+
+            ? (
+                (
+                    todaySales -
+                    yesterdaySales
+                ) /
+                yesterdaySales
+            ) * 100
+
+            : 0;
+
+
+    const monthChange =
+        previousMonthSales > 0
+
+            ? (
+                (
+                    currentMonthSales -
+                    previousMonthSales
+                ) /
+                previousMonthSales
+            ) * 100
+
+            : 0;
+
+
+    const comparison = {
+
+        todaySales,
+
+        yesterdaySales,
+
+        currentMonthSales,
+
+        previousMonthSales,
+
+        todayChange,
+
+        monthChange
+
+    };
+
+
+    window.brandStoreAdmin
+        .salesComparison =
+        comparison;
+
+
+    return comparison;
+
+}
+
+
+// ==========================================================
+// AFFICHER LA COMPARAISON
+// ==========================================================
+
+function renderBrandStoreSalesComparison() {
+
+    const data =
+        calculateBrandStoreSalesComparison();
+
+
+    const format =
+        typeof formatKz ===
+        "function"
+
+            ? formatKz
+
+            : value =>
+                Number(
+                    value || 0
+                ).toLocaleString(
+                    "pt-AO"
+                ) + " Kz";
+
+
+    // ------------------------------------------------------
+    // VENTES DU JOUR
+    // ------------------------------------------------------
+
+    if (
+        salesToday
+    ) {
+
+        salesToday.textContent =
+            format(
+                data.todaySales
+            );
+
+    }
+
+
+    // ------------------------------------------------------
+    // VENTES DU MOIS
+    // ------------------------------------------------------
+
+    if (
+        salesMonth
+    ) {
+
+        salesMonth.textContent =
+            format(
+                data.currentMonthSales
+            );
+
+    }
+
+
+    return data;
+
+}
+
+
+// ==========================================================
+// OBTENIR LE STATUT DE L'ÉVOLUTION
+// ==========================================================
+
+function getBrandStoreSalesTrend() {
+
+    const data =
+        window.brandStoreAdmin
+            .salesComparison ||
+        calculateBrandStoreSalesComparison();
+
+
+    if (
+        data.monthChange > 0
+    ) {
+
+        return "up";
+
+    }
+
+
+    if (
+        data.monthChange < 0
+    ) {
+
+        return "down";
+
+    }
+
+
+    return "stable";
+
+}
+
+
+// ==========================================================
+// EXPOSER
+// ==========================================================
+
+window.brandStoreAdmin
+    .calculateBrandStoreSalesComparison =
+    calculateBrandStoreSalesComparison;
+
+
+window.brandStoreAdmin
+    .renderBrandStoreSalesComparison =
+    renderBrandStoreSalesComparison;
+
+
+window.brandStoreAdmin
+    .getBrandStoreSalesTrend =
+    getBrandStoreSalesTrend;
+
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
+
+renderBrandStoreSalesComparison();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 37 — Comparação de vendas carregada com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 37
+// ==========================================================
