@@ -14176,51 +14176,232 @@ alert(
 
 
 // ==========================================================
-// ÉTAT DU FILTRE
+// ÉTAT INITIAL DU FILTRE
 // ==========================================================
 
-let currentNotificationFilter = "all";
+if (
+    !window.brandStoreAdmin
+) {
+
+    window.brandStoreAdmin = {};
+
+}
 
 
-// ==========================================================
-// FONCTION — OBTENIR LA LISTE
-// ==========================================================
+if (
+    !window.brandStoreAdmin
+        .currentNotificationFilter
+) {
 
-function getAdminNotificationList() {
-
-    return Array.isArray(notifications)
-        ? notifications
-        : [];
+    window.brandStoreAdmin
+        .currentNotificationFilter =
+        "all";
 
 }
 
 
 // ==========================================================
-// FONCTION — FILTRER
+// FONCTION — FILTRER LES NOTIFICATIONS
 // ==========================================================
 
-function getFilteredAdminNotifications(
-    filter = currentNotificationFilter
+function filterAdminNotifications(
+    filter = "all"
 ) {
 
+    // ------------------------------------------------------
+    // FILTRES AUTORISÉS
+    // ------------------------------------------------------
+
+    if (
+        filter !== "all" &&
+        filter !== "unread" &&
+        filter !== "read"
+    ) {
+
+        filter =
+            "all";
+
+    }
+
+
+    // ------------------------------------------------------
+    // ENREGISTRER LE FILTRE
+    // ------------------------------------------------------
+
+    window.brandStoreAdmin
+        .currentNotificationFilter =
+        filter;
+
+
+    // ------------------------------------------------------
+    // RÉCUPÉRER LES NOTIFICATIONS
+    // ------------------------------------------------------
+
     const list =
-        getAdminNotificationList();
+        Array.isArray(
+            notifications
+        )
+            ? notifications
+            : [];
 
 
-    if (filter === "unread") {
+    let filtered =
+        [...list];
+
+
+    // ------------------------------------------------------
+    // NON LUES
+    // ------------------------------------------------------
+
+    if (
+        filter === "unread"
+    ) {
+
+        filtered =
+            list.filter(
+                notification =>
+                    notification &&
+                    notification.read !== true
+            );
+
+    }
+
+
+    // ------------------------------------------------------
+    // LUES
+    // ------------------------------------------------------
+
+    else if (
+        filter === "read"
+    ) {
+
+        filtered =
+            list.filter(
+                notification =>
+                    notification &&
+                    notification.read === true
+            );
+
+    }
+
+
+    // ------------------------------------------------------
+    // EXPOSER LE RÉSULTAT
+    // ------------------------------------------------------
+
+    window.brandStoreAdmin
+        .filteredAdminNotifications =
+        filtered;
+
+
+    // ------------------------------------------------------
+    // AFFICHAGE
+    // ------------------------------------------------------
+
+    if (
+        notificationList
+    ) {
+
+        if (
+            filtered.length === 0
+        ) {
+
+            renderEmptyState(
+
+                notificationList,
+
+                "notifications_off",
+
+                "Nenhuma notificação encontrada",
+
+                "Não existem notificações neste filtro."
+
+            );
+
+        }
+
+        else {
+
+            /*
+             * On ne modifie pas directement
+             * la fonction principale de rendu.
+             *
+             * Les blocs précédents peuvent
+             * continuer à gérer l'affichage.
+             */
+
+            if (
+                typeof renderNotifications ===
+                "function"
+            ) {
+
+                renderNotifications();
+
+            }
+
+        }
+
+    }
+
+
+    return filtered;
+
+}
+
+
+// ==========================================================
+// FONCTION — OBTENIR LE FILTRE ACTUEL
+// ==========================================================
+
+function getCurrentNotificationFilter() {
+
+    return (
+        window.brandStoreAdmin
+            .currentNotificationFilter ||
+        "all"
+    );
+
+}
+
+
+// ==========================================================
+// FONCTION — OBTENIR LES NOTIFICATIONS FILTRÉES
+// ==========================================================
+
+function getFilteredAdminNotifications() {
+
+    const list =
+        Array.isArray(
+            notifications
+        )
+            ? notifications
+            : [];
+
+
+    const filter =
+        getCurrentNotificationFilter();
+
+
+    if (
+        filter === "unread"
+    ) {
 
         return list.filter(
             notification =>
+                notification &&
                 notification.read !== true
         );
 
     }
 
 
-    if (filter === "read") {
+    if (
+        filter === "read"
+    ) {
 
         return list.filter(
             notification =>
+                notification &&
                 notification.read === true
         );
 
@@ -14235,76 +14416,36 @@ function getFilteredAdminNotifications(
 
 
 // ==========================================================
-// FONCTION — CHANGER LE FILTRE
-// ==========================================================
-
-function filterAdminNotifications(
-    filter = "all"
-) {
-
-    currentNotificationFilter =
-        filter;
-
-
-    const filtered =
-        getFilteredAdminNotifications(
-            filter
-        );
-
-
-    // ------------------------------------------------------
-    // EXPOSER L'ÉTAT
-    // ------------------------------------------------------
-
-    if (window.brandStoreAdmin) {
-
-        window.brandStoreAdmin
-            .currentNotificationFilter =
-            currentNotificationFilter;
-
-    }
-
-
-    // ------------------------------------------------------
-    // RAFRAÎCHIR L'AFFICHAGE
-    // ------------------------------------------------------
-
-    if (
-        typeof renderNotifications ===
-        "function"
-    ) {
-
-        renderNotifications();
-
-    }
-
-
-    return filtered;
-
-}
-
-
-// ==========================================================
 // EXPOSER LES FONCTIONS
 // ==========================================================
 
-if (window.brandStoreAdmin) {
-
-    window.brandStoreAdmin
-        .filterAdminNotifications =
-        filterAdminNotifications;
+window.brandStoreAdmin
+    .filterAdminNotifications =
+    filterAdminNotifications;
 
 
-    window.brandStoreAdmin
-        .getFilteredAdminNotifications =
-        getFilteredAdminNotifications;
+window.brandStoreAdmin
+    .getFilteredAdminNotifications =
+    getFilteredAdminNotifications;
 
 
-    window.brandStoreAdmin
-        .currentNotificationFilter =
-        currentNotificationFilter;
+window.brandStoreAdmin
+    .getCurrentNotificationFilter =
+    getCurrentNotificationFilter;
 
-}
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
+
+window.brandStoreAdmin
+    .currentNotificationFilter =
+    getCurrentNotificationFilter();
+
+
+window.brandStoreAdmin
+    .filteredAdminNotifications =
+    getFilteredAdminNotifications();
 
 
 // ==========================================================
