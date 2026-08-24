@@ -14756,3 +14756,254 @@ alert(
 // ==========================================================
 // FIN BLOC 27
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 28 — GESTÃO AVANÇADA DAS NOTIFICAÇÕES
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT
+// ==========================================================
+
+alert(
+    "BLOC 28 — Gestão avançada das notificações carregando..."
+);
+
+
+// ==========================================================
+// FONCTION — CONTAR NOTIFICAÇÕES NÃO LIDAS
+// ==========================================================
+
+function getUnreadNotificationCount() {
+
+    const list =
+        Array.isArray(
+            notifications
+        )
+            ? notifications
+            : [];
+
+
+    return list.filter(
+        notification =>
+            notification &&
+            notification.read !== true
+    ).length;
+
+}
+
+
+// ==========================================================
+// FONCTION — ATUALIZAR CONTADOR
+// ==========================================================
+
+function updateAdminNotificationCount() {
+
+    const count =
+        getUnreadNotificationCount();
+
+
+    if (
+        notificationCount
+    ) {
+
+        notificationCount.textContent =
+            String(count);
+
+        notificationCount.classList.toggle(
+            "hidden",
+            count === 0
+        );
+
+    }
+
+
+    window.brandStoreAdmin
+        .unreadNotificationCount =
+        count;
+
+
+    return count;
+
+}
+
+
+// ==========================================================
+// FONCTION — ATUALIZAR ESTADO VISUAL
+// ==========================================================
+
+function refreshNotificationState() {
+
+    try {
+
+        updateAdminNotificationCount();
+
+
+        if (
+            typeof renderNotifications ===
+            "function"
+        ) {
+
+            renderNotifications();
+
+        }
+
+
+        if (
+            window.brandStoreAdmin &&
+            typeof window.brandStoreAdmin
+                .updateNotificationCounters ===
+                "function"
+        ) {
+
+            window.brandStoreAdmin
+                .updateNotificationCounters();
+
+        }
+
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 28 — Erro ao atualizar notificações:",
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+
+// ==========================================================
+// FUNÇÃO — OBTER RESUMO DAS NOTIFICAÇÕES
+// ==========================================================
+
+function getNotificationSummary() {
+
+    const list =
+        Array.isArray(
+            notifications
+        )
+            ? notifications
+            : [];
+
+
+    const total =
+        list.length;
+
+
+    const unread =
+        list.filter(
+            notification =>
+                notification &&
+                notification.read !== true
+        ).length;
+
+
+    const read =
+        list.filter(
+            notification =>
+                notification &&
+                notification.read === true
+        ).length;
+
+
+    const summary = {
+
+        total,
+
+        unread,
+
+        read
+
+    };
+
+
+    window.brandStoreAdmin
+        .notificationSummary =
+        summary;
+
+
+    return summary;
+
+}
+
+
+// ==========================================================
+// FONCTION — ACTUALISER TOUT LE SYSTÈME
+// ==========================================================
+
+function syncNotificationAdministration() {
+
+    const summary =
+        getNotificationSummary();
+
+
+    updateAdminNotificationCount();
+
+
+    window.brandStoreAdmin
+        .notificationSummary =
+        summary;
+
+
+    return summary;
+
+}
+
+
+// ==========================================================
+// EXPOSER LES FONCTIONS
+// ==========================================================
+
+window.brandStoreAdmin
+    .getUnreadNotificationCount =
+    getUnreadNotificationCount;
+
+
+window.brandStoreAdmin
+    .updateAdminNotificationCount =
+    updateAdminNotificationCount;
+
+
+window.brandStoreAdmin
+    .refreshNotificationState =
+    refreshNotificationState;
+
+
+window.brandStoreAdmin
+    .getNotificationSummary =
+    getNotificationSummary;
+
+
+window.brandStoreAdmin
+    .syncNotificationAdministration =
+    syncNotificationAdministration;
+
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
+
+syncNotificationAdministration();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 28 — Gestão avançada das notificações carregada com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 28
+// ==========================================================
