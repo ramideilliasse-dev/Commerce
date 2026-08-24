@@ -15313,3 +15313,376 @@ alert(
 // ==========================================================
 // FIN BLOC 29
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 30 — COMBINAÇÃO FILTRO + PESQUISA + ORDENAÇÃO
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+alert(
+    "BLOC 30 — Organização avançada das notificações carregando..."
+);
+
+
+// ==========================================================
+// FONCTION — OBTENIR LA LISTE DE BASE
+// ==========================================================
+
+function getNotificationBaseList() {
+
+    return Array.isArray(
+        notifications
+    )
+        ? [...notifications]
+        : [];
+
+}
+
+
+// ==========================================================
+// FONCTION — APPLIQUER LE FILTRE
+// ==========================================================
+
+function applyNotificationReadFilter(
+    list,
+    filter
+) {
+
+    if (
+        filter === "unread"
+    ) {
+
+        return list.filter(
+            notification =>
+                notification &&
+                notification.read !== true
+        );
+
+    }
+
+
+    if (
+        filter === "read"
+    ) {
+
+        return list.filter(
+            notification =>
+                notification &&
+                notification.read === true
+        );
+
+    }
+
+
+    return list;
+
+}
+
+
+// ==========================================================
+// FONCTION — APPLIQUER LA RECHERCHE
+// ==========================================================
+
+function applyNotificationSearch(
+    list,
+    search
+) {
+
+    const text =
+        String(
+            search || ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+    if (!text) {
+
+        return list;
+
+    }
+
+
+    return list.filter(
+        notification => {
+
+            if (!notification) {
+
+                return false;
+
+            }
+
+
+            const title =
+                String(
+                    notification.title ||
+                    ""
+                )
+                .toLowerCase();
+
+
+            const description =
+                String(
+                    notification.description ||
+                    notification.message ||
+                    ""
+                )
+                .toLowerCase();
+
+
+            const type =
+                String(
+                    notification.type ||
+                    ""
+                )
+                .toLowerCase();
+
+
+            return (
+                title.includes(text) ||
+                description.includes(text) ||
+                type.includes(text)
+            );
+
+        }
+    );
+
+}
+
+
+// ==========================================================
+// FONCTION — APPLIQUER LE TRI
+// ==========================================================
+
+function applyNotificationOrder(
+    list,
+    order
+) {
+
+    const result =
+        [...list];
+
+
+    if (
+        typeof getNotificationTimestamp !==
+        "function"
+    ) {
+
+        return result;
+
+    }
+
+
+    if (
+        order === "oldest"
+    ) {
+
+        result.sort(
+            (
+                a,
+                b
+            ) =>
+                getNotificationTimestamp(a) -
+                getNotificationTimestamp(b)
+        );
+
+    }
+
+
+    else if (
+        order === "unread"
+    ) {
+
+        result.sort(
+            (
+                a,
+                b
+            ) => {
+
+                const aValue =
+                    a &&
+                    a.read !== true
+                        ? 1
+                        : 0;
+
+
+                const bValue =
+                    b &&
+                    b.read !== true
+                        ? 1
+                        : 0;
+
+
+                return bValue - aValue;
+
+            }
+        );
+
+    }
+
+
+    else if (
+        order === "read"
+    ) {
+
+        result.sort(
+            (
+                a,
+                b
+            ) => {
+
+                const aValue =
+                    a &&
+                    a.read === true
+                        ? 1
+                        : 0;
+
+
+                const bValue =
+                    b &&
+                    b.read === true
+                        ? 1
+                        : 0;
+
+
+                return bValue - aValue;
+
+            }
+        );
+
+    }
+
+
+    else {
+
+        result.sort(
+            (
+                a,
+                b
+            ) =>
+                getNotificationTimestamp(b) -
+                getNotificationTimestamp(a)
+        );
+
+    }
+
+
+    return result;
+
+}
+
+
+// ==========================================================
+// FONCTION PRINCIPALE
+// ==========================================================
+
+function organizeAdminNotifications(
+    options = {}
+) {
+
+    const base =
+        getNotificationBaseList();
+
+
+    const filter =
+        options.filter ||
+        window.brandStoreAdmin
+            .currentNotificationFilter ||
+        "all";
+
+
+    const search =
+        options.search !== undefined
+            ? options.search
+            : window.brandStoreAdmin
+                .currentNotificationSearch ||
+              "";
+
+
+    const order =
+        options.order ||
+        window.brandStoreAdmin
+            .notificationSortOrder ||
+        "newest";
+
+
+    let result =
+        applyNotificationReadFilter(
+            base,
+            filter
+        );
+
+
+    result =
+        applyNotificationSearch(
+            result,
+            search
+        );
+
+
+    result =
+        applyNotificationOrder(
+            result,
+            order
+        );
+
+
+    // ------------------------------------------------------
+    // SAUVEGARDER LE RÉSULTAT
+    // ------------------------------------------------------
+
+    window.brandStoreAdmin
+        .organizedNotifications =
+        result;
+
+
+    window.brandStoreAdmin
+        .notificationOrganization =
+        {
+
+            filter,
+
+            search,
+
+            order,
+
+            total:
+                result.length
+
+        };
+
+
+    return result;
+
+}
+
+
+// ==========================================================
+// EXPOSER LA FONCTION
+// ==========================================================
+
+window.brandStoreAdmin
+    .organizeAdminNotifications =
+    organizeAdminNotifications;
+
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
+
+organizeAdminNotifications();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 30 — Organização avançada das notificações carregada com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 30
+// ==========================================================
