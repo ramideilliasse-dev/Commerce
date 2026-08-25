@@ -19201,3 +19201,305 @@ loadTomaApprovedMerchants()
 // ==========================================================
 // FIN BLOC 42
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 43 — EXIBIÇÃO DOS COMERCIANTES TOMA APROVADOS
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT
+// ==========================================================
+
+alert(
+    "BLOC 43 — Comerciantes TOMA aprovados sendo exibidos..."
+);
+
+
+// ==========================================================
+// FONCTION — CRÉER UNE CARTE COMMERÇANT
+// ==========================================================
+
+function createApprovedMerchantCard(
+    merchant
+) {
+
+    if (!merchant) {
+
+        return "";
+
+    }
+
+
+    const name =
+        merchant.shopName ||
+        merchant.storeName ||
+        merchant.name ||
+        "Comerciante";
+
+
+    const owner =
+        merchant.ownerName ||
+        merchant.fullName ||
+        "";
+
+
+    const city =
+        merchant.city ||
+        "—";
+
+
+    const phone =
+        merchant.phone ||
+        merchant.whatsapp ||
+        "—";
+
+
+    return `
+
+        <div
+            class="merchantItem"
+            data-approved-merchant-id="${merchant.id || ""}"
+        >
+
+            <div class="merchantItemInfo">
+
+                <strong>
+                    ${name}
+                </strong>
+
+                ${
+                    owner
+                        ? `
+                            <small>
+                                ${owner}
+                            </small>
+                          `
+                        : ""
+                }
+
+                <small>
+                    ${city}
+                </small>
+
+                <small>
+                    ${phone}
+                </small>
+
+                <span class="merchantStatus active">
+                    Aprovado TOMA
+                </span>
+
+            </div>
+
+
+            <div class="merchantItemActions">
+
+                <button
+                    type="button"
+                    class="authorizeMerchantButton"
+                    data-merchant-id="${merchant.id || ""}"
+                >
+
+                    Autorizar
+
+                </button>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+// ==========================================================
+// FONCTION — AFFICHER LES COMMERÇANTS APPROUVÉS
+// ==========================================================
+
+function renderApprovedTomaMerchants() {
+
+    /*
+     * Le Bloc 42 a déjà chargé les commerçants
+     * dans approvedTomaMerchants.
+     */
+
+    const list =
+        Array.isArray(
+            approvedTomaMerchants
+        )
+            ? approvedTomaMerchants
+            : [];
+
+
+    /*
+     * On cherche une zone dédiée.
+     *
+     * Si elle n'existe pas encore dans le HTML,
+     * on ne bloque pas le dashboard.
+     */
+
+    const container =
+        document.getElementById(
+            "approvedTomaMerchantList"
+        );
+
+
+    if (!container) {
+
+        console.warn(
+            "BLOC 43 — approvedTomaMerchantList absent du HTML."
+        );
+
+        return;
+
+    }
+
+
+    // ------------------------------------------------------
+    // AUCUN COMMERÇANT
+    // ------------------------------------------------------
+
+    if (
+        list.length === 0
+    ) {
+
+        renderEmptyState(
+
+            container,
+
+            "group_off",
+
+            "Nenhum comerciante aprovado",
+
+            "Não existem comerciantes TOMA aprovados disponíveis."
+
+        );
+
+        return;
+
+    }
+
+
+    // ------------------------------------------------------
+    // AFFICHAGE
+    // ------------------------------------------------------
+
+    container.innerHTML =
+        list
+            .map(
+                merchant =>
+                    createApprovedMerchantCard(
+                        merchant
+                    )
+            )
+            .join("");
+
+}
+
+
+// ==========================================================
+// FONCTION — ACTUALISER L'AFFICHAGE
+// ==========================================================
+
+function refreshApprovedTomaMerchants() {
+
+    renderApprovedTomaMerchants();
+
+}
+
+
+// ==========================================================
+// BOUTONS — AUTORISER
+// ==========================================================
+
+function prepareMerchantAuthorizationButtons() {
+
+    const buttons =
+        document.querySelectorAll(
+            ".authorizeMerchantButton"
+        );
+
+
+    buttons.forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const merchantId =
+                        button.dataset
+                            .merchantId;
+
+
+                    if (!merchantId) {
+
+                        return;
+
+                    }
+
+
+                    /*
+                     * IMPORTANT :
+                     * Ici on ne modifie PAS Firestore.
+                     * Le Bloc 44 fera l'autorisation réelle.
+                     */
+
+                    alert(
+                        "Comerciante selecionado para autorização.\n\nID: " +
+                        merchantId
+                    );
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+// ==========================================================
+// EXPOSER
+// ==========================================================
+
+window.brandStoreAdmin
+    .renderApprovedTomaMerchants =
+    renderApprovedTomaMerchants;
+
+
+window.brandStoreAdmin
+    .refreshApprovedTomaMerchants =
+    refreshApprovedTomaMerchants;
+
+
+window.brandStoreAdmin
+    .prepareMerchantAuthorizationButtons =
+    prepareMerchantAuthorizationButtons;
+
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
+
+renderApprovedTomaMerchants();
+
+prepareMerchantAuthorizationButtons();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 43 — Comerciantes TOMA aprovados exibidos com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 43
+// ==========================================================
