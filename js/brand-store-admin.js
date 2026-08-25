@@ -18630,3 +18630,207 @@ alert(
 // ==========================================================
 // FIN BLOC 39
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 40 — CARREGAMENTO DOS COMERCIANTES
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT
+// ==========================================================
+
+alert(
+    "BLOC 40 — Carregamento dos comerciantes carregando..."
+);
+
+
+// ==========================================================
+// CHARGER LES COMMERÇANTS
+// ==========================================================
+
+async function loadStoreMerchants() {
+
+    try {
+
+        if (!storeId) {
+
+            throw new Error(
+                "ID da Loja Oficial não encontrado."
+            );
+
+        }
+
+
+        const merchantsRef =
+            collection(
+                db,
+                "merchants"
+            );
+
+
+        const merchantsQuery =
+            query(
+                merchantsRef,
+                where(
+                    "storeId",
+                    "==",
+                    storeId
+                )
+            );
+
+
+        const snapshot =
+            await getDocs(
+                merchantsQuery
+            );
+
+
+        merchants =
+            snapshot.docs.map(
+                item => ({
+
+                    id:
+                        item.id,
+
+                    ...item.data()
+
+                })
+            );
+
+
+        // --------------------------------------------------
+        // EXPOSER L'ÉTAT
+        // --------------------------------------------------
+
+        if (
+            window.brandStoreAdmin
+        ) {
+
+            window.brandStoreAdmin
+                .merchants =
+                merchants;
+
+        }
+
+
+        // --------------------------------------------------
+        // COMPTEUR
+        // --------------------------------------------------
+
+        if (
+            merchantCount
+        ) {
+
+            merchantCount.textContent =
+                merchants.length;
+
+        }
+
+
+        if (
+            activeMerchantCount
+        ) {
+
+            activeMerchantCount.textContent =
+                merchants.filter(
+                    merchant =>
+                        String(
+                            merchant.status ||
+                            ""
+                        ).toLowerCase()
+                        === "active"
+                ).length;
+
+        }
+
+
+        // --------------------------------------------------
+        // AFFICHAGE
+        // --------------------------------------------------
+
+        if (
+            typeof renderMerchants ===
+            "function"
+        ) {
+
+            renderMerchants();
+
+        }
+
+
+        return merchants;
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 40 — Erro ao carregar comerciantes:",
+            error
+        );
+
+
+        alert(
+            "BLOC 40 — ERRO ao carregar comerciantes:\n\n" +
+            error.message
+        );
+
+
+        return [];
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — RAFRAÎCHIR LES COMMERÇANTS
+// ==========================================================
+
+async function refreshStoreMerchants() {
+
+    return await loadStoreMerchants();
+
+}
+
+
+// ==========================================================
+// EXPOSER LES FONCTIONS
+// ==========================================================
+
+window.brandStoreAdmin
+    .loadStoreMerchants =
+    loadStoreMerchants;
+
+
+window.brandStoreAdmin
+    .refreshStoreMerchants =
+    refreshStoreMerchants;
+
+
+window.brandStoreAdmin
+    .merchants =
+    merchants;
+
+
+// ==========================================================
+// CHARGEMENT INITIAL
+// ==========================================================
+
+loadStoreMerchants();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 40 — Comerciantes carregados com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 40
+// ==========================================================
