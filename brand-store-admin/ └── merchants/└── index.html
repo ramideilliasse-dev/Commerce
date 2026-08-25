@@ -1,0 +1,218 @@
+ <!DOCTYPE html>
+<html lang="pt">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<meta
+    name="theme-color"
+    content="#f5f7fa"
+>
+
+<title>Comerciantes Aprovados — TOMA</title>
+
+<link
+    rel="stylesheet"
+    href="../brand-store-admin.css"
+>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
+    rel="stylesheet"
+>
+
+</head>
+
+
+<body>
+
+
+<div id="app">
+
+
+<!-- ========================================================= -->
+<!-- HEADER -->
+<!-- ========================================================= -->
+
+<header class="pageHeader">
+
+    <button
+        id="backButton"
+        class="headerButton"
+        type="button"
+        aria-label="Voltar"
+    >
+
+        <span class="material-symbols-rounded">
+            arrow_back
+        </span>
+
+    </button>
+
+
+    <div class="headerTitle">
+
+        <h1>
+            Comerciantes
+        </h1>
+
+        <p>
+            Comerciantes aprovados da TOMA
+        </p>
+
+    </div>
+
+
+    <button
+        id="refreshButton"
+        class="headerButton"
+        type="button"
+        aria-label="Atualizar"
+    >
+
+        <span class="material-symbols-rounded">
+            refresh
+        </span>
+
+    </button>
+
+</header>
+
+
+
+<!-- ========================================================= -->
+<!-- CONTENU -->
+<!-- ========================================================= -->
+
+<main class="adminContainer">
+
+
+<!-- ========================================================= -->
+<!-- TITRE -->
+<!-- ========================================================= -->
+
+<section class="dashboardCard">
+
+    <div class="sectionHeader">
+
+        <div>
+
+            <h2>
+                Comerciantes aprovados
+            </h2>
+
+            <p>
+                Selecione os comerciantes que poderão vender nesta Loja Oficial.
+            </p>
+
+        </div>
+
+    </div>
+
+
+<!-- ========================================================= -->
+<!-- RECHERCHE -->
+<!-- ========================================================= -->
+
+<div class="searchFilterBar">
+
+    <div class="searchBox">
+
+        <span class="material-symbols-rounded">
+            search
+        </span>
+
+        <input
+            id="merchantSearch"
+            type="search"
+            placeholder="Pesquisar comerciante..."
+            autocomplete="off"
+        >
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- COMPTEUR -->
+<!-- ========================================================= -->
+
+<div
+    id="merchantResultCount"
+    class="productStatsRow"
+>
+
+    <div class="miniStat">
+
+        <strong id="approvedMerchantCount">
+            0
+        </strong>
+
+        <span>
+            Aprovados
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- LISTE -->
+<!-- ========================================================= -->
+
+<div
+    id="merchantList"
+    class="merchantList"
+>
+
+    <div class="loadingState">
+
+        <span class="material-symbols-rounded">
+            progress_activity
+        </span>
+
+        <p>
+            Carregando comerciantes aprovados...
+        </p>
+
+    </div>
+
+</div>
+
+
+</section>
+
+
+</main>
+
+
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- JAVASCRIPT -->
+<!-- ========================================================= -->
+
+<script
+    type="module"
+    src="merchants.js"
+></script>
+
+
+</body>
+
+</html>
