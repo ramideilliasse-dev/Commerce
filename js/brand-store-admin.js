@@ -926,9 +926,7 @@ console.log(
 // ALERTE — FIN DU BLOC
 // ==========================================================
 
-alert(
-    "BLOC 1 — Initialisation terminé avec succès."
-);
+
 
 
 // ==========================================================
@@ -945,9 +943,7 @@ alert(
 // ALERTE — DÉBUT DU BLOC
 // ==========================================================
 
-alert(
-    "BLOC 2 — Chargement de la Loja Oficial..."
-);
+
 
 
 // ==========================================================
@@ -1498,9 +1494,7 @@ loadOfficialStore().then(() => {
 // ALERTE — DÉBUT DU BLOC
 // ==========================================================
 
-alert(
-    "BLOC 3 — Chargement des statistiques da Loja Oficial..."
-);
+
 
 
 // ==========================================================
@@ -1970,9 +1964,7 @@ async function loadStoreStatistics() {
         // ALERTE — SUCCÈS
         // ==================================================
 
-        alert(
-            "BLOC 3 — Estatísticas da Loja carregadas com sucesso."
-        );
+        
 
 
     } catch (error) {
@@ -2013,9 +2005,6 @@ async function loadStoreStatistics() {
 // ALERTE — DÉBUT DU BLOC
 // ==========================================================
 
-alert(
-    "BLOC 4 — Carregamento da gestão de comerciantes..."
-);
 
 
 // ==========================================================
@@ -3326,9 +3315,7 @@ loadStoreMerchants();
 // ALERTE — FIN DU BLOC
 // ==========================================================
 
-alert(
-    "BLOC 4 — Gestão de comerciantes inicializada com sucesso."
-);
+
 
 
 // ==========================================================
@@ -3345,9 +3332,7 @@ alert(
 // ALERTE — DÉBUT DU BLOC
 // ==========================================================
 
-alert(
-    "BLOC 5 — Carregamento da gestão de produtos..."
-);
+
 
 
 // ==========================================================
@@ -5041,9 +5026,6 @@ loadStoreProducts();
 // ALERTE — FIN DU BLOC
 // ==========================================================
 
-alert(
-    "BLOC 5 — Gestão de produtos inicializada com sucesso."
-);
 
 
 // ==========================================================
@@ -5060,9 +5042,7 @@ alert(
 // ALERTE — DÉBUT DU BLOC
 // ==========================================================
 
-alert(
-    "BLOC 6 — Carregamento da gestão de pedidos..."
-);
+
 
 
 // ==========================================================
@@ -5428,9 +5408,7 @@ async function loadStoreOrders() {
         // ALERTE SUCCÈS
         // ==================================================
 
-        alert(
-            "BLOC 6 — Pedidos carregados com sucesso."
-        );
+        
 
 
     } catch (error) {
@@ -6564,9 +6542,7 @@ loadStoreOrders();
 // ALERTE — FIN DU BLOC
 // ==========================================================
 
-alert(
-    "BLOC 6 — Gestão de pedidos inicializada com sucesso."
-);
+
 
 
 // ==========================================================
@@ -6583,9 +6559,6 @@ alert(
 // ALERTE — DÉBUT DU BLOC
 // ==========================================================
 
-alert(
-    "BLOC 7 — Carregamento das vendas e desempenho da Loja Oficial..."
-);
 
 
 // ==========================================================
@@ -7520,10 +7493,6 @@ try {
 // ==========================================================
 // ALERTE — DÉBUT DU BLOC
 // ==========================================================
-
-alert(
-    "BLOC 8 — Carregamento de atividades e notificações..."
-);
 
 
 // ==========================================================
@@ -8604,9 +8573,7 @@ window.brandStoreAdmin.markAllNotificationsRead =
         // ALERTE SUCCÈS
         // ==================================================
 
-        alert(
-            "BLOC 8 — Atividades e notificações carregadas com sucesso."
-        );
+        
 
 
     } catch (error) {
@@ -8641,9 +8608,6 @@ window.brandStoreAdmin.markAllNotificationsRead =
 // ALERTE — DÉBUT DU BLOC
 // ==========================================================
 
-alert(
-    "BLOC 9 — Carregamento das ações administrativas da Loja Oficial..."
-);
 
 
 // ==========================================================
@@ -9603,9 +9567,7 @@ window.brandStoreAdmin.openStoreConfirmation =
 // ALERTE — SUCCÈS
 // ==========================================================
 
-alert(
-    "BLOC 9 — Ações administrativas carregadas com sucesso."
-);
+
 
 
 // ==========================================================
@@ -9622,9 +9584,7 @@ alert(
 // ALERTE — DÉBUT DU BLOC
 // ==========================================================
 
-alert(
-    "BLOC 10 — Carregamento das configurações avançadas da Loja Oficial..."
-);
+
 
 
 // ==========================================================
@@ -11185,9 +11145,6 @@ loadAdvancedStoreSettings();
 // ALERTE — SUCCÈS
 // ==========================================================
 
-alert(
-    "BLOC 10 — Configurações avançadas e controle administrativo carregados com sucesso."
-);
 
 
 // ==========================================================
@@ -11205,9 +11162,7 @@ alert(
 // ALERTE — DÉBUT
 // ==========================================================
 
-alert(
-    "BLOC 11 — Journal administrativo carregando..."
-);
+
 
 
 // ==========================================================
@@ -11316,9 +11271,7 @@ saveBrandStoreAdminActivity(
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 11 — Journal administrativo carregado com sucesso."
-);
+
 // ==========================================================
 // TOMA
 // BRAND STORE ADMIN
@@ -11331,9 +11284,6 @@ alert(
 // ALERTE — DÉBUT
 // ==========================================================
 
-alert(
-    "BLOC 12 — Centro de segurança carregando..."
-);
 
 
 // ==========================================================
@@ -11536,9 +11486,7 @@ registerSecurityCheck();
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 12 — Centro de segurança carregado com sucesso."
-);
+
 
 
 // ==========================================================
@@ -11556,9 +11504,7 @@ alert(
 // ALERTE — DÉBUT
 // ==========================================================
 
-alert(
-    "BLOC 13 — Controle das operações administrativas carregando..."
-);
+
 
 
 // ==========================================================
@@ -11748,9 +11694,7 @@ if (
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 13 — Controle das operações administrativas carregado com sucesso."
-);
+
 
 
 // ==========================================================
@@ -11768,9 +11712,7 @@ alert(
 // ALERTE — DÉBUT
 // ==========================================================
 
-alert(
-    "BLOC 14 — Monitoramento administrativo carregando..."
-);
+
 
 
 // ==========================================================
@@ -11961,9 +11903,7 @@ loadAdminMonitoring();
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 14 — Monitoramento administrativo carregado com sucesso."
-);
+
 
 
 // ==========================================================
@@ -11976,9 +11916,7 @@ alert(
 // VERSION SÉCURISÉE
 // ==========================================================
 
-alert(
-    "BLOC 15 — Journal administrativo carregando..."
-);
+
 
 
 // ==========================================================
@@ -12184,9 +12122,6 @@ renderAdminActivityList();
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 15 — Journal administrativo carregado com sucesso."
-);
 
 
 // ==========================================================
@@ -12204,9 +12139,6 @@ alert(
 // ALERTE — DÉBUT
 // ==========================================================
 
-alert(
-    "BLOC 16 — Centro de notificações carregando..."
-);
 
 
 // ==========================================================
@@ -12492,10 +12424,6 @@ renderAdminNotifications();
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 16 — Centro de notificações carregado com sucesso."
-);
-
 
 // ==========================================================
 // FIN BLOC 16
@@ -12512,9 +12440,6 @@ alert(
 // ALERTE — DÉBUT
 // ==========================================================
 
-alert(
-    "BLOC 17 — Persistência das notificações carregando..."
-);
 
 
 // ==========================================================
@@ -12704,9 +12629,6 @@ window.brandStoreAdmin
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 17 — Persistência das notificações carregada com sucesso."
-);
 
 
 // ==========================================================
@@ -12719,9 +12641,6 @@ alert(
 // VERSION STABLE ET LÉGÈRE
 // ==========================================================
 
-alert(
-    "BLOC 18 — Notificações em tempo real carregando..."
-);
 
 
 // ==========================================================
@@ -12910,9 +12829,6 @@ startNotificationListener();
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 18 — Notificações em tempo real carregadas com sucesso."
-);
 
 
 // ==========================================================
@@ -12925,9 +12841,6 @@ alert(
 // VERSION STABLE ET LÉGÈRE
 // ==========================================================
 
-alert(
-    "BLOC 19 — Filtro de notificações carregando..."
-);
 
 
 // ==========================================================
@@ -13189,9 +13102,6 @@ filterAdminNotifications(
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 19 — Filtro de notificações carregado com sucesso."
-);
 
 
 // ==========================================================
@@ -13204,9 +13114,6 @@ alert(
 // VERSION STABLE ET LÉGÈRE
 // ==========================================================
 
-alert(
-    "BLOC 20 — Leitura individual das notificações carregando..."
-);
 
 
 // ==========================================================
@@ -13293,12 +13200,7 @@ async function openAdminNotification(
             "";
 
 
-        alert(
-            title +
-            "\n\n" +
-            message
-        );
-
+        
 
     } catch (error) {
 
@@ -13340,9 +13242,6 @@ window.brandStoreAdmin
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 20 — Leitura individual das notificações carregada com sucesso."
-);
 
 
 // ==========================================================
@@ -13355,9 +13254,6 @@ alert(
 // VERSION STABLE ET LÉGÈRE
 // ==========================================================
 
-alert(
-    "BLOC 21 — Interação das notificações carregando..."
-);
 
 
 // ==========================================================
@@ -13499,9 +13395,6 @@ renderNotificationsWithActions();
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 21 — Interação das notificações carregada com sucesso."
-);
 
 
 // ==========================================================
@@ -13514,9 +13407,7 @@ alert(
 // VERSION STABLE ET LÉGÈRE
 // ==========================================================
 
-alert(
-    "BLOC 22 — Identificação das notificações carregando..."
-);
+
 
 
 // ==========================================================
@@ -13620,9 +13511,7 @@ prepareNotificationItems();
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 22 — Identificação das notificações carregada com sucesso."
-);
+
 
 
 // ==========================================================
@@ -13634,10 +13523,6 @@ alert(
 // BLOC 23 — ÉTAT VISUEL DES NOTIFICATIONS
 // VERSION STABLE ET LÉGÈRE
 // ==========================================================
-
-alert(
-    "BLOC 23 — Estado visual das notificações carregando..."
-);
 
 
 // ==========================================================
@@ -13777,9 +13662,7 @@ updateNotificationVisualState();
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 23 — Estado visual das notificações carregado com sucesso."
-);
+
 
 
 // ==========================================================
@@ -13792,9 +13675,6 @@ alert(
 // VERSION STABLE ET LÉGÈRE
 // ==========================================================
 
-alert(
-    "BLOC 24 — Contadores das notificações carregando..."
-);
 
 
 // ==========================================================
@@ -13909,9 +13789,6 @@ updateNotificationCounters();
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 24 — Contadores das notificações carregados com sucesso."
-);
 
 
 // ==========================================================
@@ -13924,9 +13801,6 @@ alert(
 // VERSION STABLE ET LÉGÈRE
 // ==========================================================
 
-alert(
-    "BLOC 25 — Leitura das notificações carregando..."
-);
 
 
 // ==========================================================
@@ -14155,9 +14029,6 @@ if (
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 25 — Leitura das notificações carregada com sucesso."
-);
 
 
 // ==========================================================
@@ -14170,9 +14041,6 @@ alert(
 // VERSION ISOLÉE ET STABLE
 // ==========================================================
 
-alert(
-    "BLOC 26 — Filtro das notificações carregando..."
-);
 
 
 (() => {
@@ -14325,9 +14193,6 @@ alert(
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 26 — Filtro das notificações carregado com sucesso."
-);
 
 
 // ==========================================================
@@ -14340,9 +14205,6 @@ alert(
 // VERSION ISOLÉE ET STABLE
 // ==========================================================
 
-alert(
-    "BLOC 27 — Ações individuais das notificações carregando..."
-);
 
 
 (() => {
@@ -14748,9 +14610,6 @@ alert(
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 27 — Ações individuais das notificações carregadas com sucesso."
-);
 
 
 // ==========================================================
@@ -14768,9 +14627,6 @@ alert(
 // ALERTE — DÉBUT
 // ==========================================================
 
-alert(
-    "BLOC 28 — Gestão avançada das notificações carregando..."
-);
 
 
 // ==========================================================
@@ -14999,9 +14855,6 @@ syncNotificationAdministration();
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 28 — Gestão avançada das notificações carregada com sucesso."
-);
 
 
 // ==========================================================
@@ -15013,10 +14866,6 @@ alert(
 // BLOC 29 — ORDENAÇÃO DAS NOTIFICAÇÕES
 // VERSION STABLE ET LÉGÈRE
 // ==========================================================
-
-alert(
-    "BLOC 29 — Ordenação das notificações carregando..."
-);
 
 
 // ==========================================================
@@ -15305,9 +15154,6 @@ window.brandStoreAdmin
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 29 — Ordenação das notificações carregada com sucesso."
-);
 
 
 // ==========================================================
@@ -15320,9 +15166,6 @@ alert(
 // VERSION STABLE ET LÉGÈRE
 // ==========================================================
 
-alert(
-    "BLOC 30 — Organização avançada das notificações carregando..."
-);
 
 
 // ==========================================================
@@ -15678,9 +15521,7 @@ organizeAdminNotifications();
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 30 — Organização avançada das notificações carregada com sucesso."
-);
+
 
 
 // ==========================================================
@@ -15692,10 +15533,6 @@ alert(
 // BLOC 31 — SINCRONIZAÇÃO DO ESTADO DAS NOTIFICAÇÕES
 // VERSION STABLE ET LÉGÈRE
 // ==========================================================
-
-alert(
-    "BLOC 31 — Sincronização das notificações carregando..."
-);
 
 
 // ==========================================================
@@ -15860,10 +15697,6 @@ synchronizeNotificationState();
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 31 — Sincronização das notificações carregada com sucesso."
-);
-
 
 // ==========================================================
 // FIN BLOC 31
@@ -15874,10 +15707,6 @@ alert(
 // BLOC 32 — GESTION DES COMMERÇANTS
 // VERSION STABLE ET LÉGÈRE
 // ==========================================================
-
-alert(
-    "BLOC 32 — Gestão dos comerciantes carregando..."
-);
 
 
 // ==========================================================
@@ -16123,9 +15952,6 @@ updateMerchantManagementState();
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 32 — Gestão dos comerciantes carregada com sucesso."
-);
 
 
 // ==========================================================
@@ -16137,10 +15963,6 @@ alert(
 // BLOC 33 — GESTÃO DOS PRODUTOS
 // VERSION STABLE ET LÉGÈRE
 // ==========================================================
-
-alert(
-    "BLOC 33 — Gestão dos produtos carregando..."
-);
 
 
 // ==========================================================
@@ -16481,9 +16303,6 @@ updateProductManagementState();
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 33 — Gestão dos produtos carregada com sucesso."
-);
 
 
 // ==========================================================
@@ -16496,9 +16315,6 @@ alert(
 // VERSION STABLE ET LÉGÈRE
 // ==========================================================
 
-alert(
-    "BLOC 34 — Gestão das encomendas carregando..."
-);
 
 
 // ==========================================================
@@ -16884,9 +16700,7 @@ updateOrderManagementState();
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 34 — Gestão das encomendas carregada com sucesso."
-);
+
 
 
 // ==========================================================
@@ -16904,9 +16718,6 @@ alert(
 // ALERTE — DÉBUT
 // ==========================================================
 
-alert(
-    "BLOC 35 — Estatísticas financeiras carregando..."
-);
 
 
 // ==========================================================
@@ -17366,9 +17177,6 @@ renderBrandStoreFinancialStats();
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 35 — Estatísticas financeiras carregadas com sucesso."
-);
 
 
 // ==========================================================
@@ -17386,9 +17194,7 @@ alert(
 // ALERTE — DÉBUT
 // ==========================================================
 
-alert(
-    "BLOC 36 — Análise de performance das vendas carregando..."
-);
+
 
 
 // ==========================================================
@@ -17803,10 +17609,6 @@ renderBrandStoreSalesPerformance();
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 36 — Análise de performance das vendas carregada com sucesso."
-);
-
 
 // ==========================================================
 // FIN BLOC 36
@@ -17823,9 +17625,7 @@ alert(
 // ALERTE — DÉBUT
 // ==========================================================
 
-alert(
-    "BLOC 37 — Comparação de vendas carregando..."
-);
+
 
 
 // ==========================================================
@@ -18183,10 +17983,6 @@ renderBrandStoreSalesComparison();
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 37 — Comparação de vendas carregada com sucesso."
-);
-
 
 // ==========================================================
 // FIN BLOC 37
@@ -18203,9 +17999,6 @@ alert(
 // ALERTE — DÉBUT
 // ==========================================================
 
-alert(
-    "BLOC 38 — Navegação das ações principais carregando..."
-);
 
 
 // ==========================================================
@@ -18274,30 +18067,76 @@ function openBrandStoreAdminTab(
 
 }
 
-
 // ==========================================================
 // ACTION — ADICIONAR COMERCIANTE
+// VERSION SIMPLE — merchants.html
 // ==========================================================
 
 addMerchant?.addEventListener(
     "click",
     () => {
 
-        openBrandStoreAdminTab(
-            "merchants"
-        );
+        // --------------------------------------------------
+        // VÉRIFIER L'ID DE LA LOJA
+        // --------------------------------------------------
+
+        if (!storeId) {
+
+            alert(
+                "BLOC 38 — ERRO: ID da Loja não encontrado."
+            );
+
+            return;
+
+        }
+
+
+        // --------------------------------------------------
+        // CONSTRUIRE LE LIEN
+        // --------------------------------------------------
+
+        const merchantsUrl =
+            "./merchants.html?store=" +
+            encodeURIComponent(storeId);
+
+
+        // --------------------------------------------------
+        // OUVRIR LA PAGE DES COMMERÇANTS
+        // --------------------------------------------------
+
+        window.location.href =
+            merchantsUrl;
 
     }
 );
 
 
+// ==========================================================
+// BOUTON SECONDAIRE — ADICIONAR
+// ==========================================================
+
 addMerchantSecondary?.addEventListener(
     "click",
     () => {
 
-        openBrandStoreAdminTab(
-            "merchants"
-        );
+        if (!storeId) {
+
+            alert(
+                "BLOC 38 — ERRO: ID da Loja não encontrado."
+            );
+
+            return;
+
+        }
+
+
+        const merchantsUrl =
+            "./merchants.html?store=" +
+            encodeURIComponent(storeId);
+
+
+        window.location.href =
+            merchantsUrl;
 
     }
 );
