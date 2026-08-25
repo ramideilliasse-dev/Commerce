@@ -18077,6 +18077,28 @@ function openBrandStoreAdminTab(
 
 function openBrandStoreMerchantsPage() {
 
+    if (!storeId) {
+
+        alert(
+            "BLOC 38 — ERRO: ID da Loja não encontrado."
+        );
+
+        return;
+
+    }
+
+    const merchantsUrl =
+        "/brand-store-admin/merchants.html?store=" +
+        encodeURIComponent(storeId);
+
+    alert(
+        "BLOC 38 — URL dos comerciantes:\n\n" +
+        merchantsUrl
+    );
+
+    window.location.href = merchantsUrl;
+}
+
     // ------------------------------------------------------
     // VÉRIFIER L'ID DE LA LOJA
     // ------------------------------------------------------
