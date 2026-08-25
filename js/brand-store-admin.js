@@ -17999,6 +17999,9 @@ renderBrandStoreSalesComparison();
 // ALERTE — DÉBUT
 // ==========================================================
 
+alert(
+    "BLOC 38 — Navegação das ações principais carregando..."
+);
 
 
 // ==========================================================
@@ -18067,76 +18070,87 @@ function openBrandStoreAdminTab(
 
 }
 
+
+// ==========================================================
+// FONCTION — OUVRIR LA PAGE DES COMMERÇANTS
+// ==========================================================
+
+function openBrandStoreMerchantsPage() {
+
+    // ------------------------------------------------------
+    // VÉRIFIER L'ID DE LA LOJA
+    // ------------------------------------------------------
+
+    if (!storeId) {
+
+        alert(
+            "BLOC 38 — ERRO: ID da Loja não encontrado."
+        );
+
+        return;
+
+    }
+
+
+    // ------------------------------------------------------
+    // URL OFFICIELLE DE LA PAGE
+    // ------------------------------------------------------
+
+    const merchantsUrl =
+        "/brand-store-admin/merchants.html?store=" +
+        encodeURIComponent(
+            storeId
+        );
+
+
+    // ------------------------------------------------------
+    // ALERTE DE CONTRÔLE
+    // ------------------------------------------------------
+
+    alert(
+        "BLOC 38 — Abrindo página dos comerciantes.\n\n" +
+        "Loja ID: " +
+        storeId +
+        "\n\n" +
+        "URL:\n" +
+        merchantsUrl
+    );
+
+
+    // ------------------------------------------------------
+    // NAVIGATION
+    // ------------------------------------------------------
+
+    window.location.assign(
+        merchantsUrl
+    );
+
+}
+
+
 // ==========================================================
 // ACTION — ADICIONAR COMERCIANTE
-// VERSION SIMPLE — merchants.html
 // ==========================================================
 
 addMerchant?.addEventListener(
     "click",
     () => {
 
-        // --------------------------------------------------
-        // VÉRIFIER L'ID DE LA LOJA
-        // --------------------------------------------------
-
-        if (!storeId) {
-
-            alert(
-                "BLOC 38 — ERRO: ID da Loja não encontrado."
-            );
-
-            return;
-
-        }
-
-
-        // --------------------------------------------------
-        // CONSTRUIRE LE LIEN
-        // --------------------------------------------------
-
-        const merchantsUrl =
-            "./merchants.html?store=" +
-            encodeURIComponent(storeId);
-
-
-        // --------------------------------------------------
-        // OUVRIR LA PAGE DES COMMERÇANTS
-        // --------------------------------------------------
-
-        window.location.href =
-            merchantsUrl;
+        openBrandStoreMerchantsPage();
 
     }
 );
 
 
 // ==========================================================
-// BOUTON SECONDAIRE — ADICIONAR
+// ACTION — ADICIONAR COMERCIANTE — BOUTON SECONDAIRE
 // ==========================================================
 
 addMerchantSecondary?.addEventListener(
     "click",
     () => {
 
-        if (!storeId) {
-
-            alert(
-                "BLOC 38 — ERRO: ID da Loja não encontrado."
-            );
-
-            return;
-
-        }
-
-
-        const merchantsUrl =
-            "./merchants.html?store=" +
-            encodeURIComponent(storeId);
-
-
-        window.location.href =
-            merchantsUrl;
+        openBrandStoreMerchantsPage();
 
     }
 );
@@ -18225,6 +18239,11 @@ notificationsButton?.addEventListener(
 window.brandStoreAdmin
     .openBrandStoreAdminTab =
     openBrandStoreAdminTab;
+
+
+window.brandStoreAdmin
+    .openBrandStoreMerchantsPage =
+    openBrandStoreMerchantsPage;
 
 
 // ==========================================================
