@@ -18794,3 +18794,244 @@ window.brandStoreAdmin
 // ==========================================================
 // FIN
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 41 — LISTA DOS COMERCIANTES
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT
+// ==========================================================
+
+alert(
+    "BLOC 41 — Lista dos comerciantes carregando..."
+);
+
+
+// ==========================================================
+// FONCTION — AFFICHER UN COMMERÇANT
+// ==========================================================
+
+function renderStoreMerchantItem(
+    merchant
+) {
+
+    if (!merchant) {
+
+        return "";
+
+    }
+
+
+    const name =
+        merchant.name ||
+        merchant.shopName ||
+        merchant.storeName ||
+        "Comerciante";
+
+
+    const phone =
+        merchant.phone ||
+        merchant.whatsapp ||
+        "—";
+
+
+    const city =
+        merchant.city ||
+        "—";
+
+
+    const status =
+        String(
+            merchant.status ||
+            "inactive"
+        ).toLowerCase();
+
+
+    const isActive =
+        status === "active";
+
+
+    return `
+
+        <div
+            class="merchantItem"
+            data-merchant-id="${merchant.id || ""}"
+        >
+
+            <div class="merchantItemInfo">
+
+                <strong>
+                    ${name}
+                </strong>
+
+                <small>
+                    ${city}
+                </small>
+
+                <small>
+                    ${phone}
+                </small>
+
+            </div>
+
+
+            <div class="merchantItemStatus">
+
+                <span class="merchantStatus ${
+                    isActive
+                        ? "active"
+                        : "inactive"
+                }">
+
+                    ${
+                        isActive
+                            ? "Ativo"
+                            : "Inativo"
+                    }
+
+                </span>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+// ==========================================================
+// FONCTION — AFFICHER LA LISTE
+// ==========================================================
+
+function renderStoreMerchantsList() {
+
+    if (!merchantList) {
+
+        return;
+
+    }
+
+
+    const list =
+        Array.isArray(
+            merchants
+        )
+            ? merchants
+            : [];
+
+
+    // ------------------------------------------------------
+    // AUCUN COMMERÇANT
+    // ------------------------------------------------------
+
+    if (
+        list.length === 0
+    ) {
+
+        renderEmptyState(
+
+            merchantList,
+
+            "group_off",
+
+            "Nenhum comerciante encontrado",
+
+            "Ainda não existem comerciantes associados a esta Loja Oficial."
+
+        );
+
+        return;
+
+    }
+
+
+    // ------------------------------------------------------
+    // AFFICHAGE
+    // ------------------------------------------------------
+
+    merchantList.innerHTML =
+        list
+            .map(
+                merchant =>
+                    renderStoreMerchantItem(
+                        merchant
+                    )
+            )
+            .join("");
+
+}
+
+
+// ==========================================================
+// FONCTION — RAFRAÎCHIR
+// ==========================================================
+
+async function refreshStoreMerchantsList() {
+
+    try {
+
+        if (
+            window.brandStoreAdmin &&
+            window.brandStoreAdmin
+                .loadStoreMerchants
+        ) {
+
+            await window.brandStoreAdmin
+                .loadStoreMerchants();
+
+        }
+
+
+        renderStoreMerchantsList();
+
+
+    } catch (error) {
+
+        alert(
+            "BLOC 41 — ERRO ao atualizar comerciantes:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// EXPOSER
+// ==========================================================
+
+window.brandStoreAdmin
+    .renderStoreMerchantsList =
+    renderStoreMerchantsList;
+
+
+window.brandStoreAdmin
+    .refreshStoreMerchantsList =
+    refreshStoreMerchantsList;
+
+
+// ==========================================================
+// AFFICHAGE INITIAL
+// ==========================================================
+
+renderStoreMerchantsList();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 41 — Lista dos comerciantes carregada com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 41
+// ==========================================================
