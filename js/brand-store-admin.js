@@ -18633,204 +18633,164 @@ alert(
 // ==========================================================
 // TOMA
 // BRAND STORE ADMIN
-// BLOC 40 — CARREGAMENTO DOS COMERCIANTES
-// VERSION STABLE ET LÉGÈRE
-// ==========================================================
-
-
-// ==========================================================
-// ALERTE — DÉBUT
+// BLOC 40.1 — CARREGAR COMERCIANTES
+// VERSION STABLE
 // ==========================================================
 
 alert(
-    "BLOC 40 — Carregamento dos comerciantes carregando..."
+    "BLOC 40.1 — Carregamento dos comerciantes iniciando..."
 );
 
 
 // ==========================================================
-// CHARGER LES COMMERÇANTS
+// CHARGEMENT DES COMMERÇANTS
 // ==========================================================
 
-async function loadStoreMerchants() {
+window.brandStoreAdmin.loadStoreMerchants =
+    async function () {
 
-    try {
+        try {
 
-        if (!storeId) {
-
-            throw new Error(
-                "ID da Loja Oficial não encontrado."
-            );
-
-        }
+            const id =
+                window.brandStoreAdmin.storeId;
 
 
-        const merchantsRef =
-            collection(
-                db,
-                "merchants"
-            );
+            if (!id) {
+
+                throw new Error(
+                    "storeId não encontrado."
+                );
+
+            }
 
 
-        const merchantsQuery =
-            query(
-                merchantsRef,
-                where(
-                    "storeId",
-                    "==",
-                    storeId
-                )
-            );
+            const merchantsRef =
+                collection(
+                    db,
+                    "merchants"
+                );
 
 
-        const snapshot =
-            await getDocs(
-                merchantsQuery
-            );
+            const merchantsQuery =
+                query(
+                    merchantsRef,
+                    where(
+                        "storeId",
+                        "==",
+                        id
+                    )
+                );
 
 
-        merchants =
-            snapshot.docs.map(
-                item => ({
-
-                    id:
-                        item.id,
-
-                    ...item.data()
-
-                })
-            );
+            const snapshot =
+                await getDocs(
+                    merchantsQuery
+                );
 
 
-        // --------------------------------------------------
-        // EXPOSER L'ÉTAT
-        // --------------------------------------------------
+            merchants =
+                snapshot.docs.map(
+                    item => ({
 
-        if (
-            window.brandStoreAdmin
-        ) {
+                        id:
+                            item.id,
 
-            window.brandStoreAdmin
-                .merchants =
+                        ...item.data()
+
+                    })
+                );
+
+
+            window.brandStoreAdmin.merchants =
                 merchants;
 
+
+            if (merchantCount) {
+
+                merchantCount.textContent =
+                    merchants.length;
+
+            }
+
+
+            if (activeMerchantCount) {
+
+                activeMerchantCount.textContent =
+                    merchants.filter(
+                        merchant =>
+                            String(
+                                merchant.status ||
+                                ""
+                            ).toLowerCase()
+                            === "active"
+                    ).length;
+
+            }
+
+
+            if (
+                typeof showToast ===
+                "function"
+            ) {
+
+                showToast(
+                    merchants.length +
+                    " comerciante(s) carregado(s).",
+                    "group"
+                );
+
+            }
+
+
+            return merchants;
+
+
+        } catch (error) {
+
+            console.error(
+                "BLOC 40.1 — Erro:",
+                error
+            );
+
+
+            alert(
+                "BLOC 40.1 — ERRO ao carregar comerciantes:\n\n" +
+                error.message
+            );
+
+
+            return [];
+
         }
 
-
-        // --------------------------------------------------
-        // COMPTEUR
-        // --------------------------------------------------
-
-        if (
-            merchantCount
-        ) {
-
-            merchantCount.textContent =
-                merchants.length;
-
-        }
-
-
-        if (
-            activeMerchantCount
-        ) {
-
-            activeMerchantCount.textContent =
-                merchants.filter(
-                    merchant =>
-                        String(
-                            merchant.status ||
-                            ""
-                        ).toLowerCase()
-                        === "active"
-                ).length;
-
-        }
-
-
-        // --------------------------------------------------
-        // AFFICHAGE
-        // --------------------------------------------------
-
-        if (
-            typeof renderMerchants ===
-            "function"
-        ) {
-
-            renderMerchants();
-
-        }
-
-
-        return merchants;
-
-
-    } catch (error) {
-
-        console.error(
-            "BLOC 40 — Erro ao carregar comerciantes:",
-            error
-        );
-
-
-        alert(
-            "BLOC 40 — ERRO ao carregar comerciantes:\n\n" +
-            error.message
-        );
-
-
-        return [];
-
-    }
-
-}
+    };
 
 
 // ==========================================================
-// FONCTION — RAFRAÎCHIR LES COMMERÇANTS
+// RAFRAÎCHIR
 // ==========================================================
 
-async function refreshStoreMerchants() {
-
-    return await loadStoreMerchants();
-
-}
+window.brandStoreAdmin.refreshStoreMerchants =
+    window.brandStoreAdmin.loadStoreMerchants;
 
 
 // ==========================================================
-// EXPOSER LES FONCTIONS
+// CHARGEMENT
 // ==========================================================
 
 window.brandStoreAdmin
-    .loadStoreMerchants =
-    loadStoreMerchants;
+    .loadStoreMerchants()
+    .then(
+        () => {
 
+            alert(
+                "BLOC 40.1 — Comerciantes carregados com sucesso."
+            );
 
-window.brandStoreAdmin
-    .refreshStoreMerchants =
-    refreshStoreMerchants;
-
-
-window.brandStoreAdmin
-    .merchants =
-    merchants;
-
-
-// ==========================================================
-// CHARGEMENT INITIAL
-// ==========================================================
-
-loadStoreMerchants();
+        }
+    );
 
 
 // ==========================================================
-// ALERTE — FIN
-// ==========================================================
-
-alert(
-    "BLOC 40 — Comerciantes carregados com sucesso."
-);
-
-
-// ==========================================================
-// FIN BLOC 40
+// FIN
 // ==========================================================
