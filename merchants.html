@@ -1,0 +1,2000 @@
+ <!DOCTYPE html>
+<html lang="pt">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#f5f7fa"
+    >
+
+    <title>Comerciantes — Brand Store Admin — TOMA</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f5f7fa;
+            color: #17202a;
+            font-family: Inter, Arial, sans-serif;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .pageHeader {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 12px;
+
+            padding: 14px 18px;
+
+            background: rgba(255,255,255,.96);
+
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .headerButton {
+            width: 44px;
+            height: 44px;
+
+            border: 0;
+            border-radius: 12px;
+
+            background: #f1f3f5;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .headerTitle {
+            flex: 1;
+        }
+
+        .headerTitle h1 {
+            margin: 0;
+
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .headerTitle p {
+            margin: 3px 0 0;
+
+            color: #6b7280;
+
+            font-size: 12px;
+        }
+
+        .container {
+            width: min(1100px, 100%);
+
+            margin: auto;
+
+            padding: 20px 16px 50px;
+        }
+
+        .hero {
+            padding: 22px;
+
+            border-radius: 20px;
+
+            background: #111827;
+
+            color: white;
+
+            margin-bottom: 18px;
+        }
+
+        .hero h2 {
+            margin: 0 0 7px;
+
+            font-size: 22px;
+        }
+
+        .hero p {
+            margin: 0;
+
+            color: #d1d5db;
+
+            line-height: 1.5;
+
+            font-size: 14px;
+        }
+
+        .storeBadge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+
+            margin-top: 14px;
+
+            padding: 7px 10px;
+
+            border-radius: 999px;
+
+            background: rgba(255,255,255,.1);
+
+            font-size: 12px;
+        }
+
+        .searchBox {
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+
+            padding: 12px 14px;
+
+            margin-bottom: 18px;
+
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 14px;
+        }
+
+        .searchBox span {
+            color: #6b7280;
+        }
+
+        .searchBox input {
+            width: 100%;
+
+            border: 0;
+            outline: 0;
+
+            background: transparent;
+
+            font-size: 14px;
+        }
+
+        .sectionHeader {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 12px;
+
+            margin-bottom: 14px;
+        }
+
+        .sectionHeader h2 {
+            margin: 0;
+
+            font-size: 18px;
+        }
+
+        .sectionHeader p {
+            margin: 4px 0 0;
+
+            color: #6b7280;
+
+            font-size: 12px;
+        }
+
+        .countBadge {
+            min-width: 32px;
+
+            padding: 6px 9px;
+
+            text-align: center;
+
+            border-radius: 999px;
+
+            background: #e8f5ee;
+
+            color: #16834d;
+
+            font-size: 12px;
+
+            font-weight: 800;
+        }
+
+        .merchantGrid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fill,
+                    minmax(280px, 1fr)
+                );
+
+            gap: 14px;
+        }
+
+        .merchantCard {
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 18px;
+
+            padding: 16px;
+
+            box-shadow:
+                0 4px 15px rgba(0,0,0,.04);
+        }
+
+        .merchantTop {
+            display: flex;
+            align-items: center;
+
+            gap: 12px;
+        }
+
+        .merchantAvatar {
+            width: 54px;
+            height: 54px;
+
+            flex-shrink: 0;
+
+            border-radius: 50%;
+
+            object-fit: cover;
+
+            background: #eef2f7;
+        }
+
+        .merchantIdentity {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .merchantIdentity h3 {
+            margin: 0;
+
+            font-size: 15px;
+
+            font-weight: 800;
+        }
+
+        .merchantIdentity p {
+            margin: 4px 0 0;
+
+            color: #6b7280;
+
+            font-size: 12px;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+        }
+
+        .approvedBadge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+
+            margin-top: 8px;
+
+            padding: 4px 7px;
+
+            border-radius: 999px;
+
+            background: #e8f7ef;
+
+            color: #16834d;
+
+            font-size: 10px;
+
+            font-weight: 800;
+        }
+
+        .merchantInfo {
+            display: grid;
+
+            gap: 7px;
+
+            margin-top: 14px;
+
+            padding-top: 13px;
+
+            border-top: 1px solid #eef0f2;
+        }
+
+        .infoRow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 10px;
+
+            font-size: 12px;
+        }
+
+        .infoRow span:first-child {
+            color: #6b7280;
+        }
+
+        .infoRow strong {
+            text-align: right;
+
+            font-weight: 700;
+        }
+
+        .merchantActions {
+            margin-top: 15px;
+        }
+
+        .actionButton {
+            width: 100%;
+
+            min-height: 42px;
+
+            border: 0;
+
+            border-radius: 11px;
+
+            background: #111827;
+
+            color: white;
+
+            font-weight: 700;
+
+            font-size: 13px;
+        }
+
+        .actionButton.remove {
+            background: #fff0f0;
+
+            color: #c62828;
+
+            border: 1px solid #ffd4d4;
+        }
+
+        .actionButton:disabled {
+            opacity: .6;
+
+            cursor: not-allowed;
+        }
+
+        .emptyState,
+        .loadingState {
+            padding: 45px 20px;
+
+            text-align: center;
+
+            background: white;
+
+            border-radius: 18px;
+
+            border: 1px solid #e5e7eb;
+        }
+
+        .emptyState .material-symbols-rounded,
+        .loadingState .material-symbols-rounded {
+            font-size: 42px;
+
+            color: #9ca3af;
+        }
+
+        .emptyState h3,
+        .loadingState h3 {
+            margin: 10px 0 5px;
+
+            font-size: 16px;
+        }
+
+        .emptyState p,
+        .loadingState p {
+            margin: 0;
+
+            color: #6b7280;
+
+            font-size: 13px;
+        }
+
+        .loadingSpinner {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+
+        }
+
+        .toast {
+            position: fixed;
+
+            left: 16px;
+            right: 16px;
+            bottom: 20px;
+
+            z-index: 100;
+
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+
+            padding: 13px 15px;
+
+            background: #111827;
+
+            color: white;
+
+            border-radius: 13px;
+
+            box-shadow:
+                0 10px 30px rgba(0,0,0,.2);
+
+            transform:
+                translateY(120px);
+
+            opacity: 0;
+
+            pointer-events: none;
+
+            transition:
+                .25s ease;
+        }
+
+        .toast.show {
+            transform:
+                translateY(0);
+
+            opacity: 1;
+        }
+
+        @media (max-width: 600px) {
+
+            .merchantGrid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h2 {
+                font-size: 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ========================================================= -->
+<!-- HEADER -->
+<!-- ========================================================= -->
+
+<header class="pageHeader">
+
+    <button
+        id="backButton"
+        class="headerButton"
+        type="button"
+        aria-label="Voltar"
+    >
+
+        <span class="material-symbols-rounded">
+            arrow_back
+        </span>
+
+    </button>
+
+
+    <div class="headerTitle">
+
+        <h1>
+            Comerciantes
+        </h1>
+
+        <p>
+            Gestão da Loja Oficial
+        </p>
+
+    </div>
+
+
+    <button
+        id="refreshButton"
+        class="headerButton"
+        type="button"
+        aria-label="Atualizar"
+    >
+
+        <span class="material-symbols-rounded">
+            refresh
+        </span>
+
+    </button>
+
+</header>
+
+
+
+<!-- ========================================================= -->
+<!-- CONTENU -->
+<!-- ========================================================= -->
+
+<main class="container">
+
+
+    <!-- ===================================================== -->
+    <!-- HERO -->
+    <!-- ===================================================== -->
+
+    <section class="hero">
+
+        <h2>
+            Comerciantes aprovados
+        </h2>
+
+        <p>
+            Escolha os comerciantes aprovados
+            do TOMA que poderão vender nesta
+            Loja Oficial.
+        </p>
+
+
+        <div class="storeBadge">
+
+            <span class="material-symbols-rounded">
+                store
+            </span>
+
+            <span id="storeName">
+                Carregando Loja...
+            </span>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ===================================================== -->
+    <!-- RECHERCHE -->
+    <!-- ===================================================== -->
+
+    <div class="searchBox">
+
+        <span class="material-symbols-rounded">
+            search
+        </span>
+
+        <input
+            id="merchantSearch"
+            type="search"
+            placeholder="Pesquisar comerciante..."
+            autocomplete="off"
+        >
+
+    </div>
+
+
+
+    <!-- ===================================================== -->
+    <!-- COMMERÇANTS ASSOCIÉS -->
+    <!-- ===================================================== -->
+
+    <section>
+
+        <div class="sectionHeader">
+
+            <div>
+
+                <h2>
+                    Comerciantes desta Loja
+                </h2>
+
+                <p>
+                    Comerciantes atualmente autorizados
+                    a vender nesta Loja.
+                </p>
+
+            </div>
+
+
+            <span
+                id="associatedCount"
+                class="countBadge"
+            >
+                0
+            </span>
+
+        </div>
+
+
+        <div
+            id="associatedMerchantList"
+            class="merchantGrid"
+        >
+
+            <div class="loadingState">
+
+                <span class="material-symbols-rounded loadingSpinner">
+                    progress_activity
+                </span>
+
+                <p>
+                    Carregando comerciantes associados...
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ===================================================== -->
+    <!-- COMMERÇANTS APPROUVÉS -->
+    <!-- ===================================================== -->
+
+    <section
+        style="
+            margin-top:32px;
+        "
+    >
+
+        <div class="sectionHeader">
+
+            <div>
+
+                <h2>
+                    Comerciantes aprovados no TOMA
+                </h2>
+
+                <p>
+                    Apenas comerciantes com status
+                    aprovado podem ser adicionados.
+                </p>
+
+            </div>
+
+
+            <span
+                id="approvedCount"
+                class="countBadge"
+            >
+                0
+            </span>
+
+        </div>
+
+
+        <div
+            id="approvedMerchantList"
+            class="merchantGrid"
+        >
+
+            <div class="loadingState">
+
+                <span class="material-symbols-rounded loadingSpinner">
+                    progress_activity
+                </span>
+
+                <p>
+                    Carregando comerciantes aprovados...
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+
+<!-- ========================================================= -->
+<!-- TOAST -->
+<!-- ========================================================= -->
+
+<div
+    id="toast"
+    class="toast"
+    role="status"
+    aria-live="polite"
+>
+
+    <span
+        id="toastIcon"
+        class="material-symbols-rounded"
+    >
+        check_circle
+    </span>
+
+
+    <span id="toastMessage">
+        Operação concluída.
+    </span>
+
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- JAVASCRIPT -->
+<!-- ========================================================= -->
+
+<script type="module">
+
+    import { db } from "../firebase.js";
+
+    import {
+
+        collection,
+
+        doc,
+
+        getDoc,
+
+        getDocs,
+
+        query,
+
+        where,
+
+        updateDoc,
+
+        arrayUnion,
+
+        arrayRemove,
+
+        serverTimestamp
+
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+    // =========================================================
+    // ALERTE — DÉBUT
+    // =========================================================
+
+    alert(
+        "MERCHANTS PAGE — Inicialização carregando..."
+    );
+
+
+    // =========================================================
+    // PARAMÈTRE STORE
+    // =========================================================
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const storeId =
+        params.get("store");
+
+
+    if (!storeId) {
+
+        alert(
+            "MERCHANTS PAGE — ERRO: ID da Loja não encontrado."
+        );
+
+        throw new Error(
+            "storeId não encontrado na URL."
+        );
+
+    }
+
+
+    // =========================================================
+    // ÉLÉMENTS HTML
+    // =========================================================
+
+    const storeNameElement =
+        document.getElementById(
+            "storeName"
+        );
+
+
+    const merchantSearch =
+        document.getElementById(
+            "merchantSearch"
+        );
+
+
+    const approvedMerchantList =
+        document.getElementById(
+            "approvedMerchantList"
+        );
+
+
+    const associatedMerchantList =
+        document.getElementById(
+            "associatedMerchantList"
+        );
+
+
+    const approvedCount =
+        document.getElementById(
+            "approvedCount"
+        );
+
+
+    const associatedCount =
+        document.getElementById(
+            "associatedCount"
+        );
+
+
+    const toast =
+        document.getElementById(
+            "toast"
+        );
+
+
+    const toastIcon =
+        document.getElementById(
+            "toastIcon"
+        );
+
+
+    const toastMessage =
+        document.getElementById(
+            "toastMessage"
+        );
+
+
+    // =========================================================
+    // ÉTAT
+    // =========================================================
+
+    let store = null;
+
+    let approvedMerchants = [];
+
+    let associatedMerchantIds = [];
+
+    let currentSearch = "";
+
+
+    // =========================================================
+    // TOAST
+    // =========================================================
+
+    function showToast(
+        message,
+        icon = "check_circle"
+    ) {
+
+        if (!toast) return;
+
+
+        if (toastMessage) {
+
+            toastMessage.textContent =
+                message;
+
+        }
+
+
+        if (toastIcon) {
+
+            toastIcon.textContent =
+                icon;
+
+        }
+
+
+        toast.classList.add(
+            "show"
+        );
+
+
+        clearTimeout(
+            showToast.timer
+        );
+
+
+        showToast.timer =
+            setTimeout(
+                () => {
+
+                    toast.classList.remove(
+                        "show"
+                    );
+
+                },
+                3000
+            );
+
+    }
+
+
+    // =========================================================
+    // DATE
+    // =========================================================
+
+    function formatDate(value) {
+
+        if (!value) {
+
+            return "—";
+
+        }
+
+
+        try {
+
+            if (
+                value &&
+                typeof value.toDate ===
+                "function"
+            ) {
+
+                value =
+                    value.toDate();
+
+            }
+
+
+            const date =
+                new Date(value);
+
+
+            if (
+                isNaN(
+                    date.getTime()
+                )
+            ) {
+
+                return "—";
+
+            }
+
+
+            return date.toLocaleDateString(
+                "pt-AO",
+                {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric"
+                }
+            );
+
+        } catch {
+
+            return "—";
+
+        }
+
+    }
+
+
+    // =========================================================
+    // NOM DU COMMERÇANT
+    // =========================================================
+
+    function getMerchantName(
+        merchant
+    ) {
+
+        if (!merchant) {
+
+            return "Comerciante";
+
+        }
+
+
+        return (
+
+            merchant.name ||
+
+            merchant.shopName ||
+
+            merchant.storeName ||
+
+            [
+                merchant.firstName,
+                merchant.lastName
+            ]
+                .filter(Boolean)
+                .join(" ")
+
+        ) || "Comerciante";
+
+    }
+
+
+    // =========================================================
+    // IMAGE
+    // =========================================================
+
+    function getMerchantImage(
+        merchant
+    ) {
+
+        return (
+
+            merchant.photoURL ||
+
+            merchant.photoUrl ||
+
+            merchant.avatar ||
+
+            merchant.profileImage ||
+
+            merchant.image ||
+
+            merchant.logo ||
+
+            "images/default-store.png"
+
+        );
+
+    }
+
+
+    // =========================================================
+    // CHARGER LA LOJA
+    // =========================================================
+
+    async function loadStore() {
+
+        const storeRef =
+            doc(
+                db,
+                "officialStores",
+                storeId
+            );
+
+
+        const snapshot =
+            await getDoc(
+                storeRef
+            );
+
+
+        if (
+            !snapshot.exists()
+        ) {
+
+            throw new Error(
+                "Loja Oficial inexistente."
+            );
+
+        }
+
+
+        store = {
+
+            id: snapshot.id,
+
+            ...snapshot.data()
+
+        };
+
+
+        storeNameElement.textContent =
+            store.name ||
+            store.storeName ||
+            "Loja Oficial";
+
+
+        // -----------------------------------------------------
+        // ASSOCIATIONS
+        // -----------------------------------------------------
+
+        associatedMerchantIds = [];
+
+
+        if (
+            Array.isArray(
+                store.merchantIds
+            )
+        ) {
+
+            associatedMerchantIds =
+                [
+                    ...store.merchantIds
+                ];
+
+        }
+
+
+        else if (
+            Array.isArray(
+                store.merchants
+            )
+        ) {
+
+            associatedMerchantIds =
+                store.merchants
+                    .map(
+                        merchant => {
+
+                            if (
+                                typeof merchant ===
+                                "string"
+                            ) {
+
+                                return merchant;
+
+                            }
+
+                            return merchant?.id;
+
+                        }
+                    )
+                    .filter(Boolean);
+
+        }
+
+
+        else if (
+            Array.isArray(
+                store.merchantIdsApproved
+            )
+        ) {
+
+            associatedMerchantIds =
+                [
+                    ...store.merchantIdsApproved
+                ];
+
+        }
+
+
+        associatedCount.textContent =
+            associatedMerchantIds.length;
+
+    }
+
+
+    // =========================================================
+    // CHARGER LES COMMERÇANTS APPROUVÉS
+    // =========================================================
+
+    async function loadApprovedMerchants() {
+
+        approvedMerchantList.innerHTML = `
+
+            <div class="loadingState">
+
+                <span class="material-symbols-rounded loadingSpinner">
+                    progress_activity
+                </span>
+
+                <p>
+                    Carregando comerciantes aprovados...
+                </p>
+
+            </div>
+
+        `;
+
+
+        const merchantsRef =
+            collection(
+                db,
+                "merchants"
+            );
+
+
+        const merchantsQuery =
+            query(
+                merchantsRef,
+                where(
+                    "status",
+                    "==",
+                    "approved"
+                )
+            );
+
+
+        const snapshot =
+            await getDocs(
+                merchantsQuery
+            );
+
+
+        approvedMerchants =
+            snapshot.docs.map(
+                merchantDoc => ({
+
+                    id:
+                        merchantDoc.id,
+
+                    ...merchantDoc.data()
+
+                })
+            );
+
+
+        approvedCount.textContent =
+            approvedMerchants.length;
+
+
+        renderApprovedMerchants();
+
+
+        renderAssociatedMerchants();
+
+
+        alert(
+            "MERCHANTS PAGE — " +
+            approvedMerchants.length +
+            " comerciantes aprovados carregados com sucesso."
+        );
+
+    }
+
+
+    // =========================================================
+    // FILTRER
+    // =========================================================
+
+    function getFilteredMerchants() {
+
+        const search =
+            currentSearch
+                .trim()
+                .toLowerCase();
+
+
+        if (!search) {
+
+            return [
+                ...approvedMerchants
+            ];
+
+        }
+
+
+        return approvedMerchants.filter(
+            merchant => {
+
+                const name =
+                    getMerchantName(
+                        merchant
+                    )
+                        .toLowerCase();
+
+
+                const shop =
+                    String(
+                        merchant.shopName ||
+                        merchant.storeName ||
+                        ""
+                    )
+                        .toLowerCase();
+
+
+                const city =
+                    String(
+                        merchant.city ||
+                        ""
+                    )
+                        .toLowerCase();
+
+
+                const phone =
+                    String(
+                        merchant.phone ||
+                        merchant.phoneNumber ||
+                        ""
+                    )
+                        .toLowerCase();
+
+
+                return (
+
+                    name.includes(
+                        search
+                    ) ||
+
+                    shop.includes(
+                        search
+                    ) ||
+
+                    city.includes(
+                        search
+                    ) ||
+
+                    phone.includes(
+                        search
+                    )
+
+                );
+
+            }
+        );
+
+    }
+
+
+    // =========================================================
+    // CARTE COMMERÇANT
+    // =========================================================
+
+    function merchantCard(
+        merchant,
+        associated = false
+    ) {
+
+        const name =
+            getMerchantName(
+                merchant
+            );
+
+
+        const image =
+            getMerchantImage(
+                merchant
+            );
+
+
+        const shop =
+            merchant.shopName ||
+            merchant.storeName ||
+            "Sem loja definida";
+
+
+        const city =
+            merchant.city ||
+            "—";
+
+
+        const phone =
+            merchant.phone ||
+            merchant.phoneNumber ||
+            "—";
+
+
+        const createdAt =
+            formatDate(
+                merchant.createdAt
+            );
+
+
+        const buttonText =
+            associated
+                ? "Remover desta Loja"
+                : "Adicionar a esta Loja";
+
+
+        const buttonClass =
+            associated
+                ? "actionButton remove"
+                : "actionButton";
+
+
+        return `
+
+            <article
+                class="merchantCard"
+            >
+
+                <div class="merchantTop">
+
+                    <img
+                        class="merchantAvatar"
+                        src="${escapeHtml(image)}"
+                        alt="Comerciante"
+                        onerror="
+                            this.src='images/default-store.png'
+                        "
+                    >
+
+                    <div
+                        class="merchantIdentity"
+                    >
+
+                        <h3>
+                            ${escapeHtml(name)}
+                        </h3>
+
+                        <p>
+                            ${escapeHtml(shop)}
+                        </p>
+
+                        <span
+                            class="approvedBadge"
+                        >
+
+                            <span class="material-symbols-rounded">
+                                verified
+                            </span>
+
+                            Aprovado
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="merchantInfo">
+
+                    <div class="infoRow">
+
+                        <span>
+                            Cidade
+                        </span>
+
+                        <strong>
+                            ${escapeHtml(city)}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="infoRow">
+
+                        <span>
+                            Telefone
+                        </span>
+
+                        <strong>
+                            ${escapeHtml(phone)}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="infoRow">
+
+                        <span>
+                            Registado
+                        </span>
+
+                        <strong>
+                            ${createdAt}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="merchantActions">
+
+                    <button
+                        class="${buttonClass}"
+                        type="button"
+                        data-merchant-id="${escapeHtml(merchant.id)}"
+                    >
+
+                        <span class="material-symbols-rounded">
+                            ${associated
+                                ? "person_remove"
+                                : "person_add"
+                            }
+                        </span>
+
+                        ${buttonText}
+
+                    </button>
+
+                </div>
+
+            </article>
+
+        `;
+
+    }
+
+
+    // =========================================================
+    // ESCAPE HTML
+    // =========================================================
+
+    function escapeHtml(
+        value
+    ) {
+
+        return String(
+            value ?? ""
+        )
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    // =========================================================
+    // AFFICHER APPROUVÉS
+    // =========================================================
+
+    function renderApprovedMerchants() {
+
+        const list =
+            getFilteredMerchants()
+                .filter(
+                    merchant =>
+                        !associatedMerchantIds.includes(
+                            merchant.id
+                        )
+                );
+
+
+        if (
+            list.length === 0
+        ) {
+
+            approvedMerchantList.innerHTML = `
+
+                <div class="emptyState">
+
+                    <span class="material-symbols-rounded">
+                        person_off
+                    </span>
+
+                    <h3>
+                        Nenhum comerciante encontrado
+                    </h3>
+
+                    <p>
+                        Não existem comerciantes aprovados
+                        disponíveis para adicionar.
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        approvedMerchantList.innerHTML =
+            list
+                .map(
+                    merchant =>
+                        merchantCard(
+                            merchant,
+                            false
+                        )
+                )
+                .join("");
+
+
+        approvedMerchantList
+            .querySelectorAll(
+                "[data-merchant-id]"
+            )
+            .forEach(
+                button => {
+
+                    button.addEventListener(
+                        "click",
+                        () => {
+
+                            const merchantId =
+                                button.dataset.merchantId;
+
+                            addMerchantToStore(
+                                merchantId
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+    }
+
+
+    // =========================================================
+    // AFFICHER ASSOCIÉS
+    // =========================================================
+
+    function renderAssociatedMerchants() {
+
+        const associated =
+            approvedMerchants.filter(
+                merchant =>
+                    associatedMerchantIds.includes(
+                        merchant.id
+                    )
+            );
+
+
+        associatedCount.textContent =
+            associated.length;
+
+
+        if (
+            associated.length === 0
+        ) {
+
+            associatedMerchantList.innerHTML = `
+
+                <div class="emptyState">
+
+                    <span class="material-symbols-rounded">
+                        group_off
+                    </span>
+
+                    <h3>
+                        Ainda não existe comerciante associado
+                    </h3>
+
+                    <p>
+                        Adicione um comerciante aprovado
+                        abaixo para começar a vender nesta Loja.
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        associatedMerchantList.innerHTML =
+            associated
+                .map(
+                    merchant =>
+                        merchantCard(
+                            merchant,
+                            true
+                        )
+                )
+                .join("");
+
+
+        associatedMerchantList
+            .querySelectorAll(
+                "[data-merchant-id]"
+            )
+            .forEach(
+                button => {
+
+                    button.addEventListener(
+                        "click",
+                        () => {
+
+                            const merchantId =
+                                button.dataset.merchantId;
+
+                            removeMerchantFromStore(
+                                merchantId
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+    }
+
+
+    // =========================================================
+    // AJOUTER COMMERÇANT
+    // =========================================================
+
+    async function addMerchantToStore(
+        merchantId
+    ) {
+
+        if (!merchantId) return;
+
+
+        if (
+            associatedMerchantIds.includes(
+                merchantId
+            )
+        ) {
+
+            showToast(
+                "Este comerciante já está associado.",
+                "info"
+            );
+
+            return;
+
+        }
+
+
+        try {
+
+            showToast(
+                "Adicionando comerciante...",
+                "progress_activity"
+            );
+
+
+            const storeRef =
+                doc(
+                    db,
+                    "officialStores",
+                    storeId
+                );
+
+
+            await updateDoc(
+                storeRef,
+                {
+
+                    merchantIds:
+                        arrayUnion(
+                            merchantId
+                        ),
+
+                    updatedAt:
+                        serverTimestamp()
+
+                }
+            );
+
+
+            associatedMerchantIds.push(
+                merchantId
+            );
+
+
+            renderApprovedMerchants();
+
+            renderAssociatedMerchants();
+
+
+            showToast(
+                "Comerciante adicionado a esta Loja.",
+                "check_circle"
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Erro ao adicionar comerciante:",
+                error
+            );
+
+
+            alert(
+                "ERRO ao adicionar comerciante:\n\n" +
+                error.message
+            );
+
+        }
+
+    }
+
+
+    // =========================================================
+    // RETIRAR COMMERÇANT
+    // =========================================================
+
+    async function removeMerchantFromStore(
+        merchantId
+    ) {
+
+        if (!merchantId) return;
+
+
+        const confirmed =
+            confirm(
+                "Deseja remover este comerciante desta Loja Oficial?"
+            );
+
+
+        if (!confirmed) {
+
+            return;
+
+        }
+
+
+        try {
+
+            const storeRef =
+                doc(
+                    db,
+                    "officialStores",
+                    storeId
+                );
+
+
+            await updateDoc(
+                storeRef,
+                {
+
+                    merchantIds:
+                        arrayRemove(
+                            merchantId
+                        ),
+
+                    updatedAt:
+                        serverTimestamp()
+
+                }
+            );
+
+
+            associatedMerchantIds =
+                associatedMerchantIds.filter(
+                    id =>
+                        id !== merchantId
+                );
+
+
+            renderApprovedMerchants();
+
+            renderAssociatedMerchants();
+
+
+            showToast(
+                "Comerciante removido desta Loja.",
+                "person_remove"
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Erro ao remover comerciante:",
+                error
+            );
+
+
+            alert(
+                "ERRO ao remover comerciante:\n\n" +
+                error.message
+            );
+
+        }
+
+    }
+
+
+    // =========================================================
+    // RECHERCHE
+    // =========================================================
+
+    merchantSearch?.addEventListener(
+        "input",
+        event => {
+
+            currentSearch =
+                event.target.value || "";
+
+
+            renderApprovedMerchants();
+
+        }
+    );
+
+
+    // =========================================================
+    // RETOUR
+    // =========================================================
+
+    document
+        .getElementById("backButton")
+        ?.addEventListener(
+            "click",
+            () => {
+
+                history.back();
+
+            }
+        );
+
+
+    // =========================================================
+    // ACTUALISER
+    // =========================================================
+
+    document
+        .getElementById("refreshButton")
+        ?.addEventListener(
+            "click",
+            () => {
+
+                location.reload();
+
+            }
+        );
+
+
+    // =========================================================
+    // INITIALISATION
+    // =========================================================
+
+    try {
+
+        await loadStore();
+
+        await loadApprovedMerchants();
+
+
+        alert(
+            "MERCHANTS PAGE — Página carregada com sucesso."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "MERCHANTS PAGE — Erro:",
+            error
+        );
+
+
+        alert(
+            "MERCHANTS PAGE — ERRO:\n\n" +
+            error.message
+        );
+
+    }
+
+</script>
+
+
+</body>
+
+</html>
