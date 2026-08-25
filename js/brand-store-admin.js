@@ -19503,3 +19503,408 @@ alert(
 // ==========================================================
 // FIN BLOC 43
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 44 — AUTORIZAR COMERCIANTE NA LOJA
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT
+// ==========================================================
+
+alert(
+    "BLOC 44 — Autorização de comerciantes carregando..."
+);
+
+
+// ==========================================================
+// FONCTION — AUTORIZAR UM COMERCIANTE
+// ==========================================================
+
+async function authorizeMerchantForStore(
+    merchantId
+) {
+
+    try {
+
+        if (!merchantId) {
+
+            alert(
+                "BLOC 44 — ID do comerciante não encontrado."
+            );
+
+            return false;
+
+        }
+
+
+        if (!storeId) {
+
+            alert(
+                "BLOC 44 — ID da Loja Oficial não encontrado."
+            );
+
+            return false;
+
+        }
+
+
+        showLoading(
+            "Autorizando comerciante..."
+        );
+
+
+        // --------------------------------------------------
+        // VERIFICAR COMERCIANTE TOMA
+        // --------------------------------------------------
+
+        const merchantRef =
+            doc(
+                db,
+                "merchants",
+                merchantId
+            );
+
+
+        const merchantSnapshot =
+            await getDoc(
+                merchantRef
+            );
+
+
+        if (
+            !merchantSnapshot.exists()
+        ) {
+
+            hideLoading();
+
+            alert(
+                "BLOC 44 — Comerciante não encontrado."
+            );
+
+            return false;
+
+        }
+
+
+        const merchantData =
+            merchantSnapshot.data();
+
+
+        // --------------------------------------------------
+        // SEGURANÇA — APENAS APROVADOS
+        // --------------------------------------------------
+
+        if (
+            merchantData.status !==
+            "approved"
+        ) {
+
+            hideLoading();
+
+            alert(
+                "BLOC 44 — Este comerciante não está aprovado no TOMA."
+            );
+
+            return false;
+
+        }
+
+
+        // --------------------------------------------------
+        // REFERÊNCIA DO COMERCIANTE NA LOJA
+        // --------------------------------------------------
+
+        const storeMerchantRef =
+            doc(
+                db,
+                "officialStores",
+                storeId,
+                "merchants",
+                merchantId
+            );
+
+
+        // --------------------------------------------------
+        // VERIFICAR SE JÁ ESTÁ AUTORIZADO
+        // --------------------------------------------------
+
+        const existing =
+            await getDoc(
+                storeMerchantRef
+            );
+
+
+        if (
+            existing.exists()
+        ) {
+
+            hideLoading();
+
+            showToast(
+                "Este comerciante já está autorizado nesta Loja.",
+                "info"
+            );
+
+            return true;
+
+        }
+
+
+        // --------------------------------------------------
+        // REGISTRAR AUTORIZAÇÃO
+        // --------------------------------------------------
+
+        await setDoc(
+            storeMerchantRef,
+            {
+
+                merchantId:
+                    merchantId,
+
+                merchantName:
+                    merchantData.shopName ||
+                    merchantData.storeName ||
+                    merchantData.name ||
+                    "Comerciante",
+
+                merchantStatus:
+                    "approved",
+
+                storeId:
+                    storeId,
+
+                active:
+                    true,
+
+                authorizedAt:
+                    serverTimestamp(),
+
+                source:
+                    "brand-store-admin"
+
+            }
+        );
+
+
+        // --------------------------------------------------
+        // ATUALIZAR LISTA DA LOJA
+        // --------------------------------------------------
+
+        if (
+            typeof window
+                .brandStoreAdmin
+                .loadStoreMerchants ===
+            "function"
+        ) {
+
+            await window
+                .brandStoreAdmin
+                .loadStoreMerchants();
+
+        }
+
+
+        if (
+            typeof window
+                .brandStoreAdmin
+                .renderStoreMerchants ===
+            "function"
+        ) {
+
+            window
+                .brandStoreAdmin
+                .renderStoreMerchants();
+
+        }
+
+
+        hideLoading();
+
+
+        // --------------------------------------------------
+        // JOURNAL ADMINISTRATIVO
+        // --------------------------------------------------
+
+        if (
+            typeof window
+                .brandStoreAdmin
+                .saveStoreActivity ===
+            "function"
+        ) {
+
+            await window
+                .brandStoreAdmin
+                .saveStoreActivity(
+
+                    "admin_operation",
+
+                    "Comerciante autorizado",
+
+                    "Um comerciante aprovado pelo TOMA foi autorizado a vender nesta Loja Oficial."
+
+                );
+
+        }
+
+
+        showToast(
+            "Comerciante autorizado com sucesso.",
+            "verified"
+        );
+
+
+        return true;
+
+
+    } catch (error) {
+
+        hideLoading();
+
+
+        console.error(
+            "BLOC 44 — Erro:",
+            error
+        );
+
+
+        alert(
+            "BLOC 44 — ERRO ao autorizar comerciante:\n\n" +
+            error.message
+        );
+
+
+        return false;
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — PRÉPARER LES BOUTONS
+// ==========================================================
+
+function setupMerchantAuthorizationButtons() {
+
+    const buttons =
+        document.querySelectorAll(
+            ".authorizeMerchantButton"
+        );
+
+
+    buttons.forEach(
+        button => {
+
+            // Éviter de brancher deux fois
+            if (
+                button.dataset
+                    .authorizationReady ===
+                "true"
+            ) {
+
+                return;
+
+            }
+
+
+            button.dataset
+                .authorizationReady =
+                "true";
+
+
+            button.addEventListener(
+                "click",
+                async () => {
+
+                    const merchantId =
+                        button.dataset
+                            .merchantId;
+
+
+                    if (!merchantId) {
+
+                        alert(
+                            "BLOC 44 — ID do comerciante ausente."
+                        );
+
+                        return;
+
+                    }
+
+
+                    const confirmation =
+                        confirm(
+                            "Autorizar este comerciante a vender nesta Loja Oficial?"
+                        );
+
+
+                    if (!confirmation) {
+
+                        return;
+
+                    }
+
+
+                    button.disabled =
+                        true;
+
+
+                    try {
+
+                        await authorizeMerchantForStore(
+                            merchantId
+                        );
+
+                    } finally {
+
+                        button.disabled =
+                            false;
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+// ==========================================================
+// EXPOSER
+// ==========================================================
+
+window.brandStoreAdmin
+    .authorizeMerchantForStore =
+    authorizeMerchantForStore;
+
+
+window.brandStoreAdmin
+    .setupMerchantAuthorizationButtons =
+    setupMerchantAuthorizationButtons;
+
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
+
+setupMerchantAuthorizationButtons();
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 44 — Autorização de comerciantes carregada com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 44
+// ==========================================================
