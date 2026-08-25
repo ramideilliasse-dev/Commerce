@@ -19908,3 +19908,138 @@ alert(
 // ==========================================================
 // FIN BLOC 44
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 45 — SELEÇÃO DE COMERCIANTES PARA A LOJA
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT
+// ==========================================================
+
+alert(
+    "BLOC 45 — Seleção de comerciantes carregando..."
+);
+
+
+// ==========================================================
+// FONCTION — OBTENIR L'ID DE LA LOJA
+// ==========================================================
+
+function getCurrentBrandStoreId() {
+
+    if (
+        typeof storeId !== "undefined" &&
+        storeId
+    ) {
+
+        return storeId;
+
+    }
+
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    return params.get("store");
+
+}
+
+
+// ==========================================================
+// FONCTION — OUVRIR LA PAGE DES COMMERÇANTS APPROUVÉS
+// ==========================================================
+
+function openApprovedMerchantsPage() {
+
+    const currentStoreId =
+        getCurrentBrandStoreId();
+
+
+    if (!currentStoreId) {
+
+        alert(
+            "BLOC 45 — ERRO: ID da Loja não encontrado."
+        );
+
+        return;
+
+    }
+
+
+    const url =
+        "merchants/index.html?store=" +
+        encodeURIComponent(
+            currentStoreId
+        );
+
+
+    window.location.href =
+        url;
+
+}
+
+
+// ==========================================================
+// BOUTON PRINCIPAL
+// ==========================================================
+
+if (addMerchant) {
+
+    addMerchant.addEventListener(
+        "click",
+        () => {
+
+            openApprovedMerchantsPage();
+
+        }
+    );
+
+}
+
+
+// ==========================================================
+// BOUTON SECONDAIRE
+// ==========================================================
+
+if (addMerchantSecondary) {
+
+    addMerchantSecondary.addEventListener(
+        "click",
+        () => {
+
+            openApprovedMerchantsPage();
+
+        }
+    );
+
+}
+
+
+// ==========================================================
+// EXPOSER
+// ==========================================================
+
+window.brandStoreAdmin
+    .openApprovedMerchantsPage =
+    openApprovedMerchantsPage;
+
+
+// ==========================================================
+// ALERTE — FIN
+// ==========================================================
+
+alert(
+    "BLOC 45 — Seleção de comerciantes carregada com sucesso."
+);
+
+
+// ==========================================================
+// FIN BLOC 45
+// ==========================================================
