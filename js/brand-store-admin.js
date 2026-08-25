@@ -19035,3 +19035,169 @@ alert(
 // ==========================================================
 // FIN BLOC 41
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 42 — COMERCIANTES TOMA APROVADOS
+// VERSION STABLE ET LÉGÈRE
+// ==========================================================
+
+
+// ==========================================================
+// ALERTE — DÉBUT
+// ==========================================================
+
+alert(
+    "BLOC 42 — Comerciantes TOMA aprovados carregando..."
+);
+
+
+// ==========================================================
+// ÉTAT — COMERCIANTES TOMA DISPONIBLES
+// ==========================================================
+
+let approvedTomaMerchants = [];
+
+
+// ==========================================================
+// FONCTION — CHARGER LES COMMERÇANTS APPROUVÉS
+// ==========================================================
+
+async function loadTomaApprovedMerchants() {
+
+    try {
+
+        const merchantsRef =
+            collection(
+                db,
+                "merchants"
+            );
+
+
+        const approvedQuery =
+            query(
+                merchantsRef,
+                where(
+                    "status",
+                    "==",
+                    "approved"
+                )
+            );
+
+
+        const snapshot =
+            await getDocs(
+                approvedQuery
+            );
+
+
+        approvedTomaMerchants =
+            snapshot.docs.map(
+                item => ({
+
+                    id:
+                        item.id,
+
+                    ...item.data()
+
+                })
+            );
+
+
+        // ==================================================
+        // EXPOSER
+        // ==================================================
+
+        window.brandStoreAdmin
+            .approvedTomaMerchants =
+            approvedTomaMerchants;
+
+
+        // ==================================================
+        // MESSAGE
+        // ==================================================
+
+        if (
+            typeof showToast ===
+            "function"
+        ) {
+
+            showToast(
+                approvedTomaMerchants.length +
+                " comerciante(s) TOMA aprovados encontrados.",
+                "verified"
+            );
+
+        }
+
+
+        return approvedTomaMerchants;
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 42 — Erro:",
+            error
+        );
+
+
+        alert(
+            "BLOC 42 — ERRO ao carregar comerciantes TOMA aprovados:\n\n" +
+            error.message
+        );
+
+
+        return [];
+
+    }
+
+}
+
+
+// ==========================================================
+// FONCTION — OBTENIR LA LISTE
+// ==========================================================
+
+function getTomaApprovedMerchants() {
+
+    return [
+        ...approvedTomaMerchants
+    ];
+
+}
+
+
+// ==========================================================
+// EXPOSER
+// ==========================================================
+
+window.brandStoreAdmin
+    .loadTomaApprovedMerchants =
+    loadTomaApprovedMerchants;
+
+
+window.brandStoreAdmin
+    .getTomaApprovedMerchants =
+    getTomaApprovedMerchants;
+
+
+// ==========================================================
+// CHARGEMENT INITIAL
+// ==========================================================
+
+loadTomaApprovedMerchants()
+    .then(
+        () => {
+
+            alert(
+                "BLOC 42 — Comerciantes TOMA aprovados carregados com sucesso."
+            );
+
+        }
+    );
+
+
+// ==========================================================
+// FIN BLOC 42
+// ==========================================================
