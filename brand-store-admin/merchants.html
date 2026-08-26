@@ -2264,18 +2264,22 @@ function renderAssociatedMerchants() {
 
 
 // =========================================================
-// AJOUTER COMMERÇANT
+// AJOUTAR COMERCIANTE À LA LOJA OFICIAL
+// ASSOCIATION RÉELLE FIRESTORE
 // =========================================================
 
 async function addMerchantToStore(
     merchantId
 ) {
 
-    if (!selectedStoreId) {
+    // -----------------------------------------------------
+    // VÉRIFICATION
+    // -----------------------------------------------------
 
-        showToast(
-            "Escolha primeiro uma Loja Oficial.",
-            "store"
+    if (!merchantId) {
+
+        alert(
+            "ERRO: ID do comerciante não encontrado."
         );
 
         return;
@@ -2283,12 +2287,20 @@ async function addMerchantToStore(
     }
 
 
-    if (!merchantId) {
+    if (!storeId) {
+
+        alert(
+            "ERRO: ID da Loja não encontrado."
+        );
 
         return;
 
     }
 
+
+    // -----------------------------------------------------
+    // ÉVITER UN DOUBLE AJOUT
+    // -----------------------------------------------------
 
     if (
         associatedMerchantIds.includes(
@@ -2297,7 +2309,7 @@ async function addMerchantToStore(
     ) {
 
         showToast(
-            "Este comerciante já está associado.",
+            "Este comerciante já está associado a esta Loja.",
             "info"
         );
 
@@ -2308,19 +2320,52 @@ async function addMerchantToStore(
 
     try {
 
+        // -------------------------------------------------
+        // MESSAGE
+        // -------------------------------------------------
+
         showToast(
             "Adicionando comerciante...",
             "progress_activity"
         );
 
 
+        // -------------------------------------------------
+        // DOCUMENT DE LA LOJA
+        // -------------------------------------------------
+
         const storeRef =
             doc(
                 db,
                 "officialStores",
-                selectedStoreId
+                storeId
             );
 
+
+        // -------------------------------------------------
+        // VÉRIFIER QUE LA LOJA EXISTE
+        // -------------------------------------------------
+
+        const storeSnapshot =
+            await getDoc(
+                storeRef
+            );
+
+
+        if (
+            !storeSnapshot.exists()
+        ) {
+
+            throw new Error(
+                "A Loja Oficial não existe no Firestore."
+            );
+
+        }
+
+
+        // -------------------------------------------------
+        // AJOUTER L'ID DU COMMERÇANT
+        // -------------------------------------------------
 
         await updateDoc(
             storeRef,
@@ -2338,39 +2383,114 @@ async function addMerchantToStore(
         );
 
 
-        associatedMerchantIds.push(
-            merchantId
-        );
+        // -------------------------------------------------
+        // VÉRIFICATION APRÈS ÉCRITURE
+        // -------------------------------------------------
 
+        const verificationSnapshot =
+            await getDoc(
+                storeRef
+            );
+
+
+        if (
+            !verificationSnapshot.exists()
+        ) {
+
+            throw new Error(
+                "Não foi possível verificar a Loja após a atualização."
+            );
+
+        }
+
+
+        const updatedStore =
+            verificationSnapshot.data();
+
+
+        const updatedMerchantIds =
+            Array.isArray(
+                updatedStore.merchantIds
+            )
+                ? updatedStore.merchantIds
+                : [];
+
+
+        if (
+            !updatedMerchantIds.includes(
+                merchantId
+            )
+        ) {
+
+            throw new Error(
+                "O comerciante não foi encontrado na lista merchantIds da Loja."
+            );
+
+        }
+
+
+        // -------------------------------------------------
+        // METTRE À JOUR L'ÉTAT LOCAL
+        // -------------------------------------------------
+
+        associatedMerchantIds =
+            [
+                ...updatedMerchantIds
+            ];
+
+
+        // -------------------------------------------------
+        // RAFRAÎCHIR LES DEUX LISTES
+        // -------------------------------------------------
 
         renderApprovedMerchants();
 
         renderAssociatedMerchants();
 
 
+        // -------------------------------------------------
+        // CONFIRMATION
+        // -------------------------------------------------
+
         showToast(
-            "Comerciante adicionado a esta Loja.",
+            "Comerciante associado à Loja com sucesso.",
             "check_circle"
+        );
+
+
+        alert(
+            "SUCESSO!\n\n" +
+            "Comerciante associado à Loja Oficial.\n\n" +
+            "ID do comerciante:\n" +
+            merchantId +
+            "\n\n" +
+            "ID da Loja:\n" +
+            storeId
         );
 
 
     } catch (error) {
 
-        showToast(
-            "Erro ao adicionar comerciante.",
-            "error"
+        console.error(
+            "Erro ao associar comerciante à Loja:",
+            error
         );
 
 
-        showGlobalError(
+        alert(
+            "ERRO AO ASSOCIAR COMERCIANTE:\n\n" +
             error.message
+        );
+
+
+        showToast(
+            "Não foi possível adicionar o comerciante.",
+            "error"
         );
 
     }
 
 }
-
-
 // =========================================================
 // RETIRAR COMMERÇANT
 // =========================================================
