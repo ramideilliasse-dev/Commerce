@@ -19631,7 +19631,567 @@ window.brandStoreAdmin
 
 initStoreMerchantsList();
 
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 41.5 — ACTIONS COMMERÇANT
+// ==========================================================
 
+alert(
+    "BLOC 41.5 — Ações dos comerciantes iniciando..."
+);
+
+
+// ==========================================================
+// RÉFÉRENCE À LA LISTE
+// ==========================================================
+
+const merchantActionsContainer =
+    document.getElementById("merchantList");
+
+
+if (!merchantActionsContainer) {
+
+    alert(
+        "BLOC 41.5 — ERRO: #merchantList não encontrado."
+    );
+
+} else {
+
+
+    // ======================================================
+    // ÉVITER LES DOUBLONS
+    // ======================================================
+
+    if (
+        !merchantActionsContainer.dataset.actionsConnected
+    ) {
+
+
+        merchantActionsContainer.dataset.actionsConnected =
+            "true";
+
+
+        // ==================================================
+        // ÉCOUTEUR UNIQUE
+        // ==================================================
+
+        merchantActionsContainer.addEventListener(
+            "click",
+            async function (event) {
+
+
+                // ==================================================
+                // VER PERFIL
+                // ==================================================
+
+                const viewButton =
+                    event.target.closest(
+                        ".viewMerchantButton"
+                    );
+
+
+                if (viewButton) {
+
+                    event.preventDefault();
+                    event.stopPropagation();
+
+
+                    const merchantId =
+                        viewButton.dataset.viewMerchantId;
+
+
+                    if (!merchantId) {
+
+                        alert(
+                            "ERRO: ID do comerciante não encontrado."
+                        );
+
+                        return;
+
+                    }
+
+
+                    try {
+
+                        const merchantRef =
+                            doc(
+                                db,
+                                "merchants",
+                                merchantId
+                            );
+
+
+                        const merchantSnapshot =
+                            await getDoc(
+                                merchantRef
+                            );
+
+
+                        if (
+                            !merchantSnapshot.exists()
+                        ) {
+
+                            alert(
+                                "Comerciante não encontrado no Firestore."
+                            );
+
+                            return;
+
+                        }
+
+
+                        const merchant =
+                            merchantSnapshot.data();
+
+
+                        const merchantName =
+                            merchant.name ||
+                            [
+                                merchant.firstName,
+                                merchant.lastName
+                            ]
+                                .filter(Boolean)
+                                .join(" ") ||
+                            merchant.shopName ||
+                            "Comerciante";
+
+
+                        alert(
+
+                            "PERFIL DO COMERCIANTE\n\n" +
+
+                            "Nome: " +
+                            merchantName +
+                            "\n\n" +
+
+                            "ID: " +
+                            merchantId +
+                            "\n\n" +
+
+                            "E-mail: " +
+                            (
+                                merchant.email ||
+                                "—"
+                            ) +
+                            "\n\n" +
+
+                            "Telefone: " +
+                            (
+                                merchant.phone ||
+                                merchant.whatsapp ||
+                                "—"
+                            ) +
+                            "\n\n" +
+
+                            "Cidade: " +
+                            (
+                                merchant.city ||
+                                "—"
+                            ) +
+                            "\n\n" +
+
+                            "Status: " +
+                            (
+                                merchant.status ||
+                                "—"
+                            )
+
+                        );
+
+
+                    } catch (error) {
+
+                        alert(
+                            "ERRO ao abrir o perfil:\n\n" +
+                            error.message
+                        );
+
+                    }
+
+
+                    return;
+
+                }
+
+
+                // ==================================================
+                // ATIVAR / DESATIVAR
+                // ==================================================
+
+                const toggleButton =
+                    event.target.closest(
+                        ".activateMerchantButton, .deactivateMerchantButton"
+                    );
+
+
+                if (toggleButton) {
+
+                    event.preventDefault();
+                    event.stopPropagation();
+
+
+                    const merchantId =
+                        toggleButton.dataset.toggleMerchantId;
+
+
+                    if (!merchantId) {
+
+                        alert(
+                            "ERRO: ID do comerciante não encontrado."
+                        );
+
+                        return;
+
+                    }
+
+
+                    try {
+
+
+                        // ------------------------------------------
+                        // RÉCUPÉRER LE COMMERÇANT
+                        // ------------------------------------------
+
+                        const merchantRef =
+                            doc(
+                                db,
+                                "merchants",
+                                merchantId
+                            );
+
+
+                        const merchantSnapshot =
+                            await getDoc(
+                                merchantRef
+                            );
+
+
+                        if (
+                            !merchantSnapshot.exists()
+                        ) {
+
+                            alert(
+                                "Comerciante não encontrado."
+                            );
+
+                            return;
+
+                        }
+
+
+                        const merchant =
+                            merchantSnapshot.data();
+
+
+                        const currentStatus =
+                            String(
+                                merchant.status ||
+                                ""
+                            ).toLowerCase();
+
+
+                        const newStatus =
+                            currentStatus === "active"
+                                ? "inactive"
+                                : "active";
+
+
+                        const actionText =
+                            newStatus === "active"
+                                ? "ativar"
+                                : "desativar";
+
+
+                        const confirmed =
+                            confirm(
+
+                                "Deseja " +
+                                actionText +
+                                " este comerciante?\n\n" +
+
+                                "ID: " +
+                                merchantId
+
+                            );
+
+
+                        if (!confirmed) {
+
+                            return;
+
+                        }
+
+
+                        // ------------------------------------------
+                        // ATUALIZAR FIRESTORE
+                        // ------------------------------------------
+
+                        await updateDoc(
+                            merchantRef,
+                            {
+
+                                status:
+                                    newStatus,
+
+                                updatedAt:
+                                    serverTimestamp()
+
+                            }
+                        );
+
+
+                        alert(
+
+                            newStatus === "active"
+
+                                ? "Comerciante ativado com sucesso. ✅"
+
+                                : "Comerciante desativado com sucesso. ✅"
+
+                        );
+
+
+                        // ------------------------------------------
+                        // RECHARGER LA LISTE
+                        // ------------------------------------------
+
+                        if (
+                            window.brandStoreAdmin &&
+                            typeof window.brandStoreAdmin
+                                .loadStoreMerchants ===
+                                "function"
+                        ) {
+
+                            await window.brandStoreAdmin
+                                .loadStoreMerchants();
+
+                        }
+
+
+                        if (
+                            typeof renderStoreMerchantsList ===
+                            "function"
+                        ) {
+
+                            renderStoreMerchantsList();
+
+                        }
+
+
+                    } catch (error) {
+
+                        console.error(
+                            "BLOC 41.5 — Toggle:",
+                            error
+                        );
+
+
+                        alert(
+
+                            "ERRO ao alterar o estado do comerciante:\n\n" +
+                            error.message
+
+                        );
+
+                    }
+
+
+                    return;
+
+                }
+
+
+                // ==================================================
+                // EXCLUIR
+                // ==================================================
+
+                const deleteButton =
+                    event.target.closest(
+                        ".deleteMerchantButton"
+                    );
+
+
+                if (deleteButton) {
+
+                    event.preventDefault();
+                    event.stopPropagation();
+
+
+                    const merchantId =
+                        deleteButton.dataset.deleteMerchantId;
+
+
+                    if (!merchantId) {
+
+                        alert(
+                            "ERRO: ID do comerciante não encontrado."
+                        );
+
+                        return;
+
+                    }
+
+
+                    try {
+
+
+                        // ------------------------------------------
+                        // RÉCUPÉRER LE COMMERÇANT
+                        // ------------------------------------------
+
+                        const merchantRef =
+                            doc(
+                                db,
+                                "merchants",
+                                merchantId
+                            );
+
+
+                        const merchantSnapshot =
+                            await getDoc(
+                                merchantRef
+                            );
+
+
+                        if (
+                            !merchantSnapshot.exists()
+                        ) {
+
+                            alert(
+                                "Comerciante não encontrado."
+                            );
+
+                            return;
+
+                        }
+
+
+                        const merchant =
+                            merchantSnapshot.data();
+
+
+                        const merchantName =
+                            merchant.name ||
+                            [
+                                merchant.firstName,
+                                merchant.lastName
+                            ]
+                                .filter(Boolean)
+                                .join(" ") ||
+                            merchant.shopName ||
+                            "Comerciante";
+
+
+                        // ------------------------------------------
+                        // CONFIRMATION
+                        // ------------------------------------------
+
+                        const confirmed =
+                            confirm(
+
+                                "⚠️ EXCLUIR COMERCIANTE\n\n" +
+
+                                "Comerciante: " +
+                                merchantName +
+                                "\n\n" +
+
+                                "ID: " +
+                                merchantId +
+                                "\n\n" +
+
+                                "Esta ação remove o comerciante desta base de dados.\n\n" +
+
+                                "Deseja realmente continuar?"
+
+                            );
+
+
+                        if (!confirmed) {
+
+                            return;
+
+                        }
+
+
+                        // ------------------------------------------
+                        // SUPPRESSION FIRESTORE
+                        // ------------------------------------------
+
+                        await deleteDoc(
+                            merchantRef
+                        );
+
+
+                        alert(
+                            "Comerciante excluído com sucesso. ✅"
+                        );
+
+
+                        // ------------------------------------------
+                        // RECHARGER
+                        // ------------------------------------------
+
+                        if (
+                            window.brandStoreAdmin &&
+                            typeof window.brandStoreAdmin
+                                .loadStoreMerchants ===
+                            "function"
+                        ) {
+
+                            await window.brandStoreAdmin
+                                .loadStoreMerchants();
+
+                        }
+
+
+                        if (
+                            typeof renderStoreMerchantsList ===
+                            "function"
+                        ) {
+
+                            renderStoreMerchantsList();
+
+                        }
+
+
+                    } catch (error) {
+
+                        console.error(
+                            "BLOC 41.5 — Delete:",
+                            error
+                        );
+
+
+                        alert(
+
+                            "ERRO ao excluir comerciante:\n\n" +
+                            error.message
+
+                        );
+
+                    }
+
+
+                    return;
+
+                }
+
+            }
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// FIN
+// ==========================================================
+
+alert(
+    "BLOC 41.5 — Ações dos comerciantes prontas. ✅"
+);
 // ==========================================================
 // FIN BLOC 41
 // ==========================================================
