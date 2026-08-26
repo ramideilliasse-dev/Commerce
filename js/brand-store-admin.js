@@ -27,7 +27,7 @@ import {
 // ALERTE — DÉBUT DU BLOC
 // ==========================================================
 
-alert("BLOC 1 — Initialisation du Brand Store Admin chargé.");
+
 
 
 // ==========================================================
@@ -1162,9 +1162,7 @@ async function loadOfficialStore() {
         // ALERTE — SUCCÈS
         // ==================================================
 
-        alert(
-            "BLOC 2 — Loja Oficial carregada com sucesso."
-        );
+        
 return store;
 
     } catch (error) {
@@ -2252,10 +2250,7 @@ async function loadStoreMerchants() {
         // ALERTE SUCCÈS
         // ==================================================
 
-        alert(
-            "BLOC 4 — Comerciantes carregados com sucesso."
-        );
-
+        
 
     } catch (error) {
 
@@ -7459,10 +7454,7 @@ try {
     // ALERTE SUCCÈS
     // ======================================================
 
-    alert(
-        "BLOC 7 — Vendas e desempenho carregados com sucesso."
-    );
-
+    
 
 } catch (error) {
 
@@ -20302,9 +20294,7 @@ loadTomaApprovedMerchants()
     .then(
         () => {
 
-            alert(
-                "BLOC 42 — Comerciantes TOMA aprovados carregados com sucesso."
-            );
+            
 
         }
     );
