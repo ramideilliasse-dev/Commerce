@@ -19400,7 +19400,199 @@ function renderStoreMerchantItem(
     `;
 
 }
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// BLOC 41 — AFFICHAGE DE LA LISTE
+// ATTENDRE FIRESTORE AVANT AFFICHAGE
+// ==========================================================
 
+function renderStoreMerchantsList() {
+
+    const listElement =
+        document.getElementById("merchantList");
+
+    if (!listElement) {
+
+        alert(
+            "BLOC 41 — ERRO : elemento #merchantList não encontrado."
+        );
+
+        return;
+
+    }
+
+
+    // ------------------------------------------------------
+    // RÉCUPÉRER LES COMMERÇANTS CHARGÉS PAR BLOC 40.1
+    // ------------------------------------------------------
+
+    const list =
+        Array.isArray(window.brandStoreAdmin?.merchants)
+            ? window.brandStoreAdmin.merchants
+            : [];
+
+
+    // ------------------------------------------------------
+    // AUCUN COMMERÇANT
+    // ------------------------------------------------------
+
+    if (list.length === 0) {
+
+        listElement.innerHTML = `
+
+            <div class="merchantEmptyState">
+
+                <span class="material-symbols-rounded">
+                    store
+                </span>
+
+                <h3>
+                    Nenhum comerciante encontrado
+                </h3>
+
+                <p>
+                    Ainda não existem comerciantes associados
+                    a esta Loja Oficial.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    // ------------------------------------------------------
+    // AFFICHER LES CARTES PREMIUM
+    // ------------------------------------------------------
+
+    listElement.innerHTML =
+        list
+            .map(
+                merchant =>
+                    renderStoreMerchantItem(
+                        merchant
+                    )
+            )
+            .join("");
+
+
+    // ------------------------------------------------------
+    // SYNCHRONISER LA VARIABLE GLOBALE
+    // ------------------------------------------------------
+
+    merchants =
+        list;
+
+}
+
+
+// ==========================================================
+// INITIALISATION
+// ATTENDRE BLOC 40.1
+// ==========================================================
+
+async function initStoreMerchantsList() {
+
+    try {
+
+        alert(
+            "BLOC 41 — Aguardando carregamento dos comerciantes..."
+        );
+
+
+        // --------------------------------------------------
+        // ATTENDRE LE CHARGEMENT FIRESTORE
+        // --------------------------------------------------
+
+        if (
+            window.brandStoreAdmin &&
+            typeof window.brandStoreAdmin
+                .loadStoreMerchants ===
+                "function"
+        ) {
+
+            await window.brandStoreAdmin
+                .loadStoreMerchants();
+
+        }
+
+
+        // --------------------------------------------------
+        // AFFICHER APRÈS FIRESTORE
+        // --------------------------------------------------
+
+        renderStoreMerchantsList();
+
+
+        // --------------------------------------------------
+        // CONFIRMATION
+        // --------------------------------------------------
+
+        const total =
+            Array.isArray(
+                window.brandStoreAdmin?.merchants
+            )
+                ? window.brandStoreAdmin.merchants.length
+                : 0;
+
+
+        alert(
+            "BLOC 41 — Lista dos comerciantes carregada com sucesso.\n\n" +
+            "Comerciantes encontrados: " +
+            total
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 41 — Erro:",
+            error
+        );
+
+
+        alert(
+            "BLOC 41 — ERRO ao mostrar comerciantes:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// EXPOSER LES FONCTIONS
+// ==========================================================
+
+window.brandStoreAdmin =
+    window.brandStoreAdmin || {};
+
+
+window.brandStoreAdmin
+    .renderStoreMerchantsList =
+    renderStoreMerchantsList;
+
+
+window.brandStoreAdmin
+    .initStoreMerchantsList =
+    initStoreMerchantsList;
+
+
+// ==========================================================
+// DÉMARRER
+// ==========================================================
+
+initStoreMerchantsList();
+
+
+// ==========================================================
+// FIN BLOC 41
+// ==========================================================
 // ==========================================================
 // TOMA
 // BRAND STORE ADMIN
