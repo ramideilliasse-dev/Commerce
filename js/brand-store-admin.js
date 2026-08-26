@@ -18496,7 +18496,7 @@ window.brandStoreAdmin.loadStoreMerchants =
 
 
             alert(
-                "BLOC 40.1 — Loja:\n\n" +
+                "— Loja:\n\n" +
                 storeId
             );
 
