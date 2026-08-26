@@ -18491,29 +18491,30 @@ alert(
 // FIN BLOC 39
 // ==========================================================
 // =========================================================
+// ==========================================================
 // TOMA
 // BRAND STORE ADMIN
 // BLOC 40.1 — CARREGAR COMERCIANTES DA LOJA
-// VERSION CORRIGIDA — USA officialStores.merchantIds
-// =========================================================
+// VERSION CORRETA — officialStores.merchantIds
+// ==========================================================
 
 alert(
     "BLOC 40.1 — Carregamento dos comerciantes iniciando..."
 );
 
 
-// =========================================================
+// ==========================================================
 // CHARGEMENT DES COMMERÇANTS ASSOCIÉS
-// =========================================================
+// ==========================================================
 
 window.brandStoreAdmin.loadStoreMerchants =
     async function () {
 
         try {
 
-            // -------------------------------------------------
+            // =================================================
             // 1. RÉCUPÉRER L'ID DE LA LOJA
-            // -------------------------------------------------
+            // =================================================
 
             const storeId =
                 window.brandStoreAdmin.storeId;
@@ -18534,9 +18535,9 @@ window.brandStoreAdmin.loadStoreMerchants =
             );
 
 
-            // -------------------------------------------------
+            // =================================================
             // 2. RÉFÉRENCE DE LA LOJA
-            // -------------------------------------------------
+            // =================================================
 
             const storeRef =
                 doc(
@@ -18546,9 +18547,9 @@ window.brandStoreAdmin.loadStoreMerchants =
                 );
 
 
-            // -------------------------------------------------
+            // =================================================
             // 3. CHARGER LA LOJA
-            // -------------------------------------------------
+            // =================================================
 
             const storeSnapshot =
                 await getDoc(
@@ -18561,7 +18562,7 @@ window.brandStoreAdmin.loadStoreMerchants =
             ) {
 
                 throw new Error(
-                    "A Loja Oficial não existe:\n\n" +
+                    "A Loja Oficial não existe:\n" +
                     "officialStores/" +
                     storeId
                 );
@@ -18573,9 +18574,9 @@ window.brandStoreAdmin.loadStoreMerchants =
                 storeSnapshot.data();
 
 
-            // -------------------------------------------------
+            // =================================================
             // 4. RÉCUPÉRER merchantIds
-            // -------------------------------------------------
+            // =================================================
 
             const merchantIds =
                 Array.isArray(
@@ -18586,18 +18587,18 @@ window.brandStoreAdmin.loadStoreMerchants =
 
 
             alert(
-                "BLOC 40.1 — IDs encontrados:\n\n" +
-                (
-                    merchantIds.length
-                        ? merchantIds.join("\n")
-                        : "Nenhum comerciante associado."
+                "BLOC 40.1 — Comerciantes associados:\n\n" +
+                JSON.stringify(
+                    merchantIds,
+                    null,
+                    2
                 )
             );
 
 
-            // -------------------------------------------------
+            // =================================================
             // 5. AUCUN COMMERÇANT
-            // -------------------------------------------------
+            // =================================================
 
             if (
                 merchantIds.length === 0
@@ -18627,109 +18628,127 @@ window.brandStoreAdmin.loadStoreMerchants =
             }
 
 
-            // -------------------------------------------------
-            // 6. CHARGER LES DOCUMENTS DES COMMERÇANTS
-            // -------------------------------------------------
+            // =================================================
+            // 6. CHARGER LES DOCUMENTS MERCHANTS
+            // =================================================
 
-            const loadedMerchants = [];
+            const merchantPromises =
+                merchantIds.map(
+                    async merchantId => {
 
+                        try {
 
-            for (
-                const merchantId
-                of merchantIds
-            ) {
-
-                if (!merchantId) {
-
-                    continue;
-
-                }
-
-
-                try {
-
-                    const merchantRef =
-                        doc(
-                            db,
-                            "merchants",
-                            merchantId
-                        );
+                            const merchantRef =
+                                doc(
+                                    db,
+                                    "merchants",
+                                    merchantId
+                                );
 
 
-                    const merchantSnapshot =
-                        await getDoc(
-                            merchantRef
-                        );
+                            const merchantSnapshot =
+                                await getDoc(
+                                    merchantRef
+                                );
 
 
-                    if (
-                        merchantSnapshot.exists()
-                    ) {
+                            if (
+                                !merchantSnapshot.exists()
+                            ) {
 
-                        loadedMerchants.push({
+                                console.warn(
+                                    "Commerçant introuvable:",
+                                    merchantId
+                                );
 
-                            id:
-                                merchantSnapshot.id,
+                                return null;
 
-                            ...merchantSnapshot.data()
+                            }
 
-                        });
+
+                            return {
+
+                                id:
+                                    merchantSnapshot.id,
+
+                                ...merchantSnapshot.data()
+
+                            };
+
+                        } catch (error) {
+
+                            console.error(
+                                "Erreur commerçant:",
+                                merchantId,
+                                error
+                            );
+
+                            return null;
+
+                        }
 
                     }
-
-                } catch (merchantError) {
-
-                    console.error(
-                        "Erro ao carregar comerciante:",
-                        merchantId,
-                        merchantError
-                    );
-
-                }
-
-            }
+                );
 
 
-            // -------------------------------------------------
-            // 7. METTRE À JOUR L'ÉTAT
-            // -------------------------------------------------
+            const merchantResults =
+                await Promise.all(
+                    merchantPromises
+                );
+
+
+            // =================================================
+            // 7. NETTOYER LES DOCUMENTS INTROUVABLES
+            // =================================================
 
             merchants =
-                loadedMerchants;
+                merchantResults.filter(
+                    merchant =>
+                        merchant !== null
+                );
 
+
+            // =================================================
+            // 8. EXPOSER LES COMMERÇANTS
+            // =================================================
 
             window.brandStoreAdmin.merchants =
-                loadedMerchants;
+                merchants;
 
 
-            // -------------------------------------------------
-            // 8. COMPTEUR TOTAL
-            // -------------------------------------------------
+            // =================================================
+            // 9. COMPTEUR TOTAL
+            // =================================================
 
             if (merchantCount) {
 
                 merchantCount.textContent =
-                    loadedMerchants.length;
+                    merchants.length;
 
             }
 
 
-            // -------------------------------------------------
-            // 9. COMMERÇANTS ACTIFS
-            // -------------------------------------------------
+            // =================================================
+            // 10. COMPTEUR ACTIFS
+            // =================================================
 
             if (activeMerchantCount) {
 
                 activeMerchantCount.textContent =
-                    loadedMerchants.filter(
+                    merchants.filter(
                         merchant => {
 
-                            return String(
-                                merchant.status ||
-                                ""
-                            )
-                                .toLowerCase()
-                                === "active";
+                            const status =
+                                String(
+                                    merchant.status ||
+                                    ""
+                                )
+                                    .toLowerCase();
+
+                            return (
+                                status ===
+                                "active"
+                            );
 
                         }
                     ).length;
@@ -18737,9 +18756,25 @@ window.brandStoreAdmin.loadStoreMerchants =
             }
 
 
-            // -------------------------------------------------
-            // 10. MESSAGE
-            // -------------------------------------------------
+            // =================================================
+            // 11. RAFRAÎCHIR L'AFFICHAGE
+            // =================================================
+
+            if (
+                typeof window.brandStoreAdmin
+                    .renderStoreMerchantsList ===
+                "function"
+            ) {
+
+                window.brandStoreAdmin
+                    .renderStoreMerchantsList();
+
+            }
+
+
+            // =================================================
+            // 12. CONFIRMATION
+            // =================================================
 
             if (
                 typeof showToast ===
@@ -18747,7 +18782,7 @@ window.brandStoreAdmin.loadStoreMerchants =
             ) {
 
                 showToast(
-                    loadedMerchants.length +
+                    merchants.length +
                     " comerciante(s) carregado(s).",
                     "group"
                 );
@@ -18755,19 +18790,43 @@ window.brandStoreAdmin.loadStoreMerchants =
             }
 
 
-            return loadedMerchants;
+            alert(
+                "BLOC 40.1 — SUCESSO!\n\n" +
+                merchants.length +
+                " comerciante(s) carregado(s) da Loja.\n\n" +
+                "Loja:\n" +
+                storeId
+            );
+
+
+            return merchants;
 
 
         } catch (error) {
 
+            // =================================================
+            // ERREUR
+            // =================================================
+
             console.error(
-                "BLOC 40.1 — Erro:",
+                "BLOC 40.1 — ERRO:",
                 error
             );
 
 
-            merchants = [];
+            alert(
+                "BLOC 40.1 — ERRO AO CARREGAR COMERCIANTES:\n\n" +
+                error.message +
+                "\n\n" +
+                "Loja:\n" +
+                (
+                    window.brandStoreAdmin?.storeId ||
+                    "não encontrada"
+                )
+            );
 
+
+            merchants = [];
 
             window.brandStoreAdmin.merchants =
                 [];
@@ -18789,12 +18848,6 @@ window.brandStoreAdmin.loadStoreMerchants =
             }
 
 
-            alert(
-                "BLOC 40.1 — ERRO ao carregar comerciantes:\n\n" +
-                error.message
-            );
-
-
             return [];
 
         }
@@ -18802,17 +18855,17 @@ window.brandStoreAdmin.loadStoreMerchants =
     };
 
 
-// =========================================================
+// ==========================================================
 // RAFRAÎCHIR
-// =========================================================
+// ==========================================================
 
 window.brandStoreAdmin.refreshStoreMerchants =
     window.brandStoreAdmin.loadStoreMerchants;
 
 
-// =========================================================
+// ==========================================================
 // CHARGEMENT INITIAL
-// =========================================================
+// ==========================================================
 
 window.brandStoreAdmin
     .loadStoreMerchants()
@@ -18820,16 +18873,16 @@ window.brandStoreAdmin
         () => {
 
             alert(
-                "BLOC 40.1 — Comerciantes da Loja carregados."
+                "BLOC 40.1 — Finalizado."
             );
 
         }
     );
 
 
-// =========================================================
+// ==========================================================
 // FIN BLOC 40.1
-// =========================================================
+// ==========================================================
 // ==========================================================
 // TOMA
 // BRAND STORE ADMIN
