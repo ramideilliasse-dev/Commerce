@@ -945,6 +945,7 @@ import {
 
     collection,
     doc,
+    getDoc,
     getDocs,
     query,
     where,
@@ -961,64 +962,40 @@ import {
 // =========================================================
 
 const storeSelector =
-    document.getElementById(
-        "storeSelector"
-    );
+    document.getElementById("storeSelector");
 
 const selectedStoreInfo =
-    document.getElementById(
-        "selectedStoreInfo"
-    );
+    document.getElementById("selectedStoreInfo");
 
 const selectedStoreName =
-    document.getElementById(
-        "selectedStoreName"
-    );
+    document.getElementById("selectedStoreName");
 
 const merchantSearch =
-    document.getElementById(
-        "merchantSearch"
-    );
+    document.getElementById("merchantSearch");
 
 const approvedMerchantList =
-    document.getElementById(
-        "approvedMerchantList"
-    );
+    document.getElementById("approvedMerchantList");
 
 const associatedMerchantList =
-    document.getElementById(
-        "associatedMerchantList"
-    );
+    document.getElementById("associatedMerchantList");
 
 const approvedCount =
-    document.getElementById(
-        "approvedCount"
-    );
+    document.getElementById("approvedCount");
 
 const associatedCount =
-    document.getElementById(
-        "associatedCount"
-    );
+    document.getElementById("associatedCount");
 
 const globalError =
-    document.getElementById(
-        "globalError"
-    );
+    document.getElementById("globalError");
 
 const toast =
-    document.getElementById(
-        "toast"
-    );
+    document.getElementById("toast");
 
 const toastIcon =
-    document.getElementById(
-        "toastIcon"
-    );
+    document.getElementById("toastIcon");
 
 const toastMessage =
-    document.getElementById(
-        "toastMessage"
-    );
+    document.getElementById("toastMessage");
 
 
 // =========================================================
@@ -1037,6 +1014,19 @@ let currentSearch = "";
 
 
 // =========================================================
+// RÉCUPÉRER STORE DE L'URL
+// =========================================================
+
+const urlParams =
+    new URLSearchParams(
+        window.location.search
+    );
+
+const storeIdFromUrl =
+    urlParams.get("store");
+
+
+// =========================================================
 // TOAST
 // =========================================================
 
@@ -1048,34 +1038,22 @@ function showToast(
     if (!toast) return;
 
     if (toastMessage) {
-
-        toastMessage.textContent =
-            message;
-
+        toastMessage.textContent = message;
     }
 
     if (toastIcon) {
-
-        toastIcon.textContent =
-            icon;
-
+        toastIcon.textContent = icon;
     }
 
-    toast.classList.add(
-        "show"
-    );
+    toast.classList.add("show");
 
-    clearTimeout(
-        showToast.timer
-    );
+    clearTimeout(showToast.timer);
 
     showToast.timer =
         setTimeout(
             () => {
 
-                toast.classList.remove(
-                    "show"
-                );
+                toast.classList.remove("show");
 
             },
             3000
@@ -1094,9 +1072,7 @@ function showGlobalError(
 
     if (!globalError) return;
 
-    globalError.classList.remove(
-        "hidden"
-    );
+    globalError.classList.remove("hidden");
 
     globalError.innerHTML = `
 
@@ -1122,7 +1098,7 @@ function showGlobalError(
 
 
 // =========================================================
-// ÉCHAPPEMENT HTML
+// ESCAPE HTML
 // =========================================================
 
 function escapeHtml(
@@ -1132,26 +1108,11 @@ function escapeHtml(
     return String(
         value ?? ""
     )
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 
 }
 
@@ -1165,9 +1126,7 @@ function getMerchantName(
 ) {
 
     if (!merchant) {
-
         return "Comerciante";
-
     }
 
     return (
@@ -1212,7 +1171,7 @@ function getMerchantImage(
 
         merchant.logo ||
 
-        "images/default-store.png"
+        "../images/default-store.png"
 
     );
 
@@ -1228,21 +1187,17 @@ function formatDate(
 ) {
 
     if (!value) {
-
         return "—";
-
     }
 
     try {
 
         if (
             value &&
-            typeof value.toDate ===
-            "function"
+            typeof value.toDate === "function"
         ) {
 
-            value =
-                value.toDate();
+            value = value.toDate();
 
         }
 
@@ -1283,6 +1238,15 @@ function formatDate(
 
 async function loadOfficialStores() {
 
+    if (!storeSelector) {
+
+        throw new Error(
+            "Elemento storeSelector não encontrado."
+        );
+
+    }
+
+
     storeSelector.innerHTML = `
 
         <option value="">
@@ -1291,30 +1255,34 @@ async function loadOfficialStores() {
 
     `;
 
+
     const storesRef =
         collection(
             db,
             "officialStores"
         );
 
+
     const snapshot =
         await getDocs(
             storesRef
         );
 
+
     officialStores =
         snapshot.docs.map(
             storeDoc => ({
 
-                id:
-                    storeDoc.id,
+                id: storeDoc.id,
 
                 ...storeDoc.data()
 
             })
         );
 
+
     storeSelector.innerHTML = "";
+
 
     if (
         officialStores.length === 0
@@ -1332,29 +1300,34 @@ async function loadOfficialStores() {
 
         associatedMerchantIds = [];
 
-        associatedCount.textContent =
-            "0";
+        if (associatedCount) {
+            associatedCount.textContent = "0";
+        }
 
-        associatedMerchantList.innerHTML = `
+        if (associatedMerchantList) {
 
-            <div class="emptyState">
+            associatedMerchantList.innerHTML = `
 
-                <span class="material-symbols-rounded">
-                    store_off
-                </span>
+                <div class="emptyState">
 
-                <h3>
-                    Nenhuma Loja Oficial
-                </h3>
+                    <span class="material-symbols-rounded">
+                        store_off
+                    </span>
 
-                <p>
-                    Crie uma Loja Oficial antes
-                    de adicionar comerciantes.
-                </p>
+                    <h3>
+                        Nenhuma Loja Oficial
+                    </h3>
 
-            </div>
+                    <p>
+                        Crie uma Loja Oficial antes
+                        de adicionar comerciantes.
+                    </p>
 
-        `;
+                </div>
+
+            `;
+
+        }
 
         return;
 
@@ -1362,14 +1335,14 @@ async function loadOfficialStores() {
 
 
     const emptyOption =
-        document.createElement(
-            "option"
-        );
+        document.createElement("option");
+
 
     emptyOption.value = "";
 
     emptyOption.textContent =
         "Escolha uma Loja Oficial";
+
 
     storeSelector.appendChild(
         emptyOption
@@ -1380,18 +1353,19 @@ async function loadOfficialStores() {
         store => {
 
             const option =
-                document.createElement(
-                    "option"
-                );
+                document.createElement("option");
+
 
             option.value =
                 store.id;
+
 
             option.textContent =
                 store.name ||
                 store.storeName ||
                 "Loja Oficial — " +
                 store.id;
+
 
             storeSelector.appendChild(
                 option
@@ -1400,11 +1374,36 @@ async function loadOfficialStores() {
         }
     );
 
+
+    // =====================================================
+    // IMPORTANT :
+    // SI LA PAGE A ÉTÉ OUVERTE AVEC ?store=ID
+    // SÉLECTIONNER AUTOMATIQUEMENT LA LOJA
+    // =====================================================
+
+    if (
+        storeIdFromUrl &&
+        officialStores.some(
+            store =>
+                store.id === storeIdFromUrl
+        )
+    ) {
+
+        storeSelector.value =
+            storeIdFromUrl;
+
+
+        await selectStore(
+            storeIdFromUrl
+        );
+
+    }
+
 }
 
 
 // =========================================================
-// CHANGER DE LOJA
+// SÉLECTIONNER UNE LOJA
 // =========================================================
 
 async function selectStore(
@@ -1414,8 +1413,10 @@ async function selectStore(
     selectedStoreId =
         storeId || "";
 
+
     associatedMerchantIds =
         [];
+
 
     if (!selectedStoreId) {
 
@@ -1423,32 +1424,42 @@ async function selectStore(
             ?.classList
             .add("hidden");
 
-        selectedStoreName.textContent =
-            "—";
 
-        associatedCount.textContent =
-            "0";
+        if (selectedStoreName) {
+            selectedStoreName.textContent = "—";
+        }
 
-        associatedMerchantList.innerHTML = `
 
-            <div class="emptyState">
+        if (associatedCount) {
+            associatedCount.textContent = "0";
+        }
 
-                <span class="material-symbols-rounded">
-                    store
-                </span>
 
-                <h3>
-                    Escolha uma Loja Oficial
-                </h3>
+        if (associatedMerchantList) {
 
-                <p>
-                    Selecione uma Loja acima
-                    para ver os comerciantes associados.
-                </p>
+            associatedMerchantList.innerHTML = `
 
-            </div>
+                <div class="emptyState">
 
-        `;
+                    <span class="material-symbols-rounded">
+                        store
+                    </span>
+
+                    <h3>
+                        Escolha uma Loja Oficial
+                    </h3>
+
+                    <p>
+                        Selecione uma Loja acima
+                        para ver os comerciantes associados.
+                    </p>
+
+                </div>
+
+            `;
+
+        }
+
 
         renderApprovedMerchants();
 
@@ -1460,14 +1471,16 @@ async function selectStore(
     const store =
         officialStores.find(
             item =>
-                item.id ===
-                selectedStoreId
+                item.id === selectedStoreId
         );
 
 
     if (!store) {
 
-        return;
+        throw new Error(
+            "Loja Oficial não encontrada: " +
+            selectedStoreId
+        );
 
     }
 
@@ -1477,11 +1490,19 @@ async function selectStore(
         .remove("hidden");
 
 
-    selectedStoreName.textContent =
-        store.name ||
-        store.storeName ||
-        "Loja Oficial";
+    if (selectedStoreName) {
 
+        selectedStoreName.textContent =
+            store.name ||
+            store.storeName ||
+            "Loja Oficial";
+
+    }
+
+
+    // =====================================================
+    // RÉCUPÉRER LES COMMERÇANTS ASSOCIÉS
+    // =====================================================
 
     if (
         Array.isArray(
@@ -1551,6 +1572,15 @@ async function selectStore(
 
 async function loadApprovedMerchants() {
 
+    if (!approvedMerchantList) {
+
+        throw new Error(
+            "Elemento approvedMerchantList não encontrado."
+        );
+
+    }
+
+
     approvedMerchantList.innerHTML = `
 
         <div class="loadingState">
@@ -1607,8 +1637,12 @@ async function loadApprovedMerchants() {
             );
 
 
-        approvedCount.textContent =
-            approvedMerchants.length;
+        if (approvedCount) {
+
+            approvedCount.textContent =
+                approvedMerchants.length;
+
+        }
 
 
         renderApprovedMerchants();
@@ -1627,8 +1661,9 @@ async function loadApprovedMerchants() {
 
     } catch (error) {
 
-        approvedCount.textContent =
-            "0";
+        if (approvedCount) {
+            approvedCount.textContent = "0";
+        }
 
 
         approvedMerchantList.innerHTML = `
@@ -1656,13 +1691,16 @@ async function loadApprovedMerchants() {
             error.message
         );
 
+
+        throw error;
+
     }
 
 }
 
 
 // =========================================================
-// FILTRER COMMERÇANTS
+// RECHERCHE
 // =========================================================
 
 function getFilteredMerchants() {
@@ -1718,23 +1756,36 @@ function getFilteredMerchants() {
                     .toLowerCase();
 
 
+            const email =
+                String(
+                    merchant.email ||
+                    merchant.emailAddress ||
+                    ""
+                )
+                    .toLowerCase();
+
+
+            const id =
+                String(
+                    merchant.id ||
+                    ""
+                )
+                    .toLowerCase();
+
+
             return (
 
-                name.includes(
-                    search
-                ) ||
+                name.includes(search) ||
 
-                shop.includes(
-                    search
-                ) ||
+                shop.includes(search) ||
 
-                city.includes(
-                    search
-                ) ||
+                city.includes(search) ||
 
-                phone.includes(
-                    search
-                )
+                phone.includes(search) ||
+
+                email.includes(search) ||
+
+                id.includes(search)
 
             );
 
@@ -1746,7 +1797,6 @@ function getFilteredMerchants() {
 
 // =========================================================
 // CARTE COMMERÇANT
-// VERSION — ID + EMAIL
 // =========================================================
 
 function merchantCard(
@@ -1783,10 +1833,6 @@ function merchantCard(
         "—";
 
 
-    // -----------------------------------------------------
-    // EMAIL DO COMERCIANTE
-    // -----------------------------------------------------
-
     const email =
         merchant.email ||
         merchant.emailAddress ||
@@ -1794,28 +1840,16 @@ function merchantCard(
         "—";
 
 
-    // -----------------------------------------------------
-    // ID DO COMERCIANTE
-    // -----------------------------------------------------
-
     const merchantId =
         merchant.id ||
         "—";
 
-
-    // -----------------------------------------------------
-    // DATA DE REGISTRO
-    // -----------------------------------------------------
 
     const createdAt =
         formatDate(
             merchant.createdAt
         );
 
-
-    // -----------------------------------------------------
-    // BOTÃO
-    // -----------------------------------------------------
 
     const buttonText =
         associated
@@ -1831,13 +1865,7 @@ function merchantCard(
 
     return `
 
-        <article
-            class="merchantCard"
-        >
-
-            <!-- ========================================= -->
-            <!-- IDENTIDADE -->
-            <!-- ========================================= -->
+        <article class="merchantCard">
 
             <div class="merchantTop">
 
@@ -1851,9 +1879,7 @@ function merchantCard(
                 >
 
 
-                <div
-                    class="merchantIdentity"
-                >
+                <div class="merchantIdentity">
 
                     <h3>
                         ${escapeHtml(name)}
@@ -1865,9 +1891,7 @@ function merchantCard(
                     </p>
 
 
-                    <span
-                        class="approvedBadge"
-                    >
+                    <span class="approvedBadge">
 
                         <span class="material-symbols-rounded">
                             verified
@@ -1882,14 +1906,8 @@ function merchantCard(
             </div>
 
 
-            <!-- ========================================= -->
-            <!-- INFORMATIONS IMPORTANTES -->
-            <!-- ========================================= -->
-
             <div class="merchantInfo">
 
-
-                <!-- ID -->
                 <div class="infoRow">
 
                     <span>
@@ -1898,10 +1916,10 @@ function merchantCard(
 
                     <strong
                         style="
-                            max-width: 65%;
-                            overflow-wrap: anywhere;
-                            word-break: break-all;
-                            font-size: 11px;
+                            max-width:65%;
+                            overflow-wrap:anywhere;
+                            word-break:break-all;
+                            font-size:11px;
                         "
                     >
                         ${escapeHtml(merchantId)}
@@ -1910,7 +1928,6 @@ function merchantCard(
                 </div>
 
 
-                <!-- EMAIL -->
                 <div class="infoRow">
 
                     <span>
@@ -1919,10 +1936,10 @@ function merchantCard(
 
                     <strong
                         style="
-                            max-width: 65%;
-                            overflow-wrap: anywhere;
-                            word-break: break-word;
-                            font-size: 12px;
+                            max-width:65%;
+                            overflow-wrap:anywhere;
+                            word-break:break-word;
+                            font-size:12px;
                         "
                     >
                         ${escapeHtml(email)}
@@ -1931,7 +1948,6 @@ function merchantCard(
                 </div>
 
 
-                <!-- CIDADE -->
                 <div class="infoRow">
 
                     <span>
@@ -1945,7 +1961,6 @@ function merchantCard(
                 </div>
 
 
-                <!-- TELEFONE -->
                 <div class="infoRow">
 
                     <span>
@@ -1959,7 +1974,6 @@ function merchantCard(
                 </div>
 
 
-                <!-- DATA -->
                 <div class="infoRow">
 
                     <span>
@@ -1975,10 +1989,6 @@ function merchantCard(
             </div>
 
 
-            <!-- ========================================= -->
-            <!-- ACTION -->
-            <!-- ========================================= -->
-
             <div class="merchantActions">
 
                 <button
@@ -1989,9 +1999,10 @@ function merchantCard(
 
                     <span class="material-symbols-rounded">
 
-                        ${associated
-                            ? "person_remove"
-                            : "person_add"
+                        ${
+                            associated
+                                ? "person_remove"
+                                : "person_add"
                         }
 
                     </span>
@@ -2015,12 +2026,8 @@ function merchantCard(
 
 function renderApprovedMerchants() {
 
-    if (
-        !approvedMerchantList
-    ) {
-
+    if (!approvedMerchantList) {
         return;
-
     }
 
 
@@ -2041,8 +2048,8 @@ function renderApprovedMerchants() {
                 </h3>
 
                 <p>
-                    Não existem comerciantes com
-                    status "approved".
+                    Não existem comerciantes
+                    com status "approved".
                 </p>
 
             </div>
@@ -2110,8 +2117,7 @@ function renderApprovedMerchants() {
 
                 <p>
                     Todos os comerciantes aprovados
-                    correspondentes à pesquisa já estão
-                    associados a esta Loja.
+                    já estão associados a esta Loja.
                 </p>
 
             </div>
@@ -2165,19 +2171,16 @@ function renderApprovedMerchants() {
 
 function renderAssociatedMerchants() {
 
-    if (
-        !associatedMerchantList
-    ) {
-
+    if (!associatedMerchantList) {
         return;
-
     }
 
 
     if (!selectedStoreId) {
 
-        associatedCount.textContent =
-            "0";
+        if (associatedCount) {
+            associatedCount.textContent = "0";
+        }
 
         return;
 
@@ -2193,8 +2196,12 @@ function renderAssociatedMerchants() {
         );
 
 
-    associatedCount.textContent =
-        associated.length;
+    if (associatedCount) {
+
+        associatedCount.textContent =
+            associated.length;
+
+    }
 
 
     if (
@@ -2264,18 +2271,13 @@ function renderAssociatedMerchants() {
 
 
 // =========================================================
-// TOMA
-// AJOUTAR COMERCIANTE À LA LOJA OFICIAL
-// VERSION STABLE — RÉCUPÈRE STORE ID DIRECTEMENT DE L'URL
+// AJOUTER COMMERÇANT À LA LOJA
+// ASSOCIATION RÉELLE FIRESTORE
 // =========================================================
 
 async function addMerchantToStore(
     merchantId
 ) {
-
-    // =====================================================
-    // ÉTAPE 1 — FONCTION APPELÉE
-    // =====================================================
 
     alert(
         "ÉTAPE 1\n\n" +
@@ -2284,10 +2286,6 @@ async function addMerchantToStore(
         merchantId
     );
 
-
-    // =====================================================
-    // ÉTAPE 2 — VÉRIFIER MERCHANT ID
-    // =====================================================
 
     if (!merchantId) {
 
@@ -2301,45 +2299,31 @@ async function addMerchantToStore(
     }
 
 
-    // =====================================================
-    // ÉTAPE 3 — RÉCUPÉRER L'ID DE LA LOJA DIRECTEMENT
-    // DE L'URL
-    // =====================================================
-
     const currentStoreId =
         new URLSearchParams(
             window.location.search
-        ).get("store");
+        ).get("store") ||
+        selectedStoreId;
 
 
     alert(
         "ÉTAPE 3\n\n" +
-        "ID da Loja recebido da URL:\n\n" +
+        "ID da Loja:\n\n" +
         currentStoreId
     );
 
-
-    // =====================================================
-    // ÉTAPE 4 — VÉRIFIER STORE ID
-    // =====================================================
 
     if (!currentStoreId) {
 
         alert(
             "ÉTAPE 4 — ERRO\n\n" +
-            "O ID da Loja não foi encontrado na URL.\n\n" +
-            A página deve ser aberta assim:\n\n" +
-            "merchants.html?store=ID_DA_LOJA"
+            "ID da Loja não encontrado."
         );
 
         return;
 
     }
 
-
-    // =====================================================
-    // ÉTAPE 5 — VÉRIFIER ASSOCIATION EXISTANTE
-    // =====================================================
 
     if (
         Array.isArray(
@@ -2350,9 +2334,9 @@ async function addMerchantToStore(
         )
     ) {
 
-        alert(
-            "ÉTAPE 5\n\n" +
-            "Este comerciante já está associado a esta Loja."
+        showToast(
+            "Este comerciante já está associado a esta Loja.",
+            "info"
         );
 
         return;
@@ -2360,20 +2344,16 @@ async function addMerchantToStore(
     }
 
 
-    // =====================================================
-    // ÉTAPE 6 — DÉBUT FIRESTORE
-    // =====================================================
-
     try {
 
-        alert(
-            "ÉTAPE 6\n\n" +
-            "Criando referência da Loja..."
+        showToast(
+            "Adicionando comerciante...",
+            "progress_activity"
         );
 
 
         // =================================================
-        // RÉFÉRENCE OFFICIAL STORE
+        // DOCUMENT DE LA LOJA
         // =================================================
 
         const storeRef =
@@ -2385,22 +2365,16 @@ async function addMerchantToStore(
 
 
         alert(
-            "ÉTAPE 7\n\n" +
-            "Referência criada:\n\n" +
+            "ÉTAPE 5\n\n" +
+            "Buscando a Loja:\n\n" +
             "officialStores/" +
             currentStoreId
         );
 
 
         // =================================================
-        // CHARGER LA LOJA
+        // GET DOC
         // =================================================
-
-        alert(
-            "ÉTAPE 8\n\n" +
-            "Buscando a Loja no Firestore..."
-        );
-
 
         const storeSnapshot =
             await getDoc(
@@ -2409,54 +2383,33 @@ async function addMerchantToStore(
 
 
         alert(
-            "ÉTAPE 9\n\n" +
+            "ÉTAPE 6\n\n" +
             "getDoc() terminou."
         );
 
-
-        // =================================================
-        // LOJA INEXISTANTE
-        // =================================================
 
         if (
             !storeSnapshot.exists()
         ) {
 
-            alert(
-                "ÉTAPE 9 — ERRO\n\n" +
-                "A Loja Oficial não existe.\n\n" +
-                "Caminho pesquisado:\n" +
+            throw new Error(
+                "A Loja Oficial não existe no Firestore.\n\n" +
+                "Caminho:\n" +
                 "officialStores/" +
                 currentStoreId
             );
-
-            return;
 
         }
 
 
         // =================================================
-        // LOJA EXISTE
+        // UPDATE
         // =================================================
 
         alert(
-            "ÉTAPE 10\n\n" +
-            "A Loja Oficial existe.\n\n" +
-            "ID:\n" +
-            currentStoreId
-        );
-
-
-        // =================================================
-        // UPDATE FIRESTORE
-        // =================================================
-
-        alert(
-            "ÉTAPE 11\n\n" +
-            "Adicionando o comerciante ao campo:\n\n" +
-            "merchantIds\n\n" +
-            "Merchant ID:\n" +
-            merchantId
+            "ÉTAPE 7\n\n" +
+            "A Loja existe.\n\n" +
+            "Agora vamos adicionar o ID do comerciante."
         );
 
 
@@ -2476,13 +2429,9 @@ async function addMerchantToStore(
         );
 
 
-        // =================================================
-        // UPDATE TERMINOU
-        // =================================================
-
         alert(
-            "ÉTAPE 12 — UPDATE OK\n\n" +
-            "O Firestore aceitou a atualização."
+            "ÉTAPE 8 — FIRESTORE OK\n\n" +
+            "O comerciante foi adicionado."
         );
 
 
@@ -2496,54 +2445,17 @@ async function addMerchantToStore(
             );
 
 
-        if (
-            !verificationSnapshot.exists()
-        ) {
-
-            alert(
-                "ÉTAPE 13 — ERRO\n\n" +
-                "Não foi possível verificar a Loja."
-            );
-
-            return;
-
-        }
-
-
-        // =================================================
-        // RÉCUPÉRER LES DONNÉES
-        // =================================================
-
         const updatedStore =
             verificationSnapshot.data();
 
 
         const updatedMerchantIds =
             Array.isArray(
-                updatedStore.merchantIds
+                updatedStore?.merchantIds
             )
                 ? updatedStore.merchantIds
                 : [];
 
-
-        // =================================================
-        // AFFICHER LA LISTE
-        // =================================================
-
-        alert(
-            "ÉTAPE 14\n\n" +
-            "merchantIds atuais:\n\n" +
-            JSON.stringify(
-                updatedMerchantIds,
-                null,
-                2
-            )
-        );
-
-
-        // =================================================
-        // CONFIRMER L'ASSOCIATION
-        // =================================================
 
         if (
             !updatedMerchantIds.includes(
@@ -2551,19 +2463,15 @@ async function addMerchantToStore(
             )
         ) {
 
-            alert(
-                "ÉTAPE 15 — ERRO\n\n" +
-                "O ID do comerciante não foi encontrado\n" +
-                "em merchantIds."
+            throw new Error(
+                "O Firestore foi atualizado, mas o ID não aparece em merchantIds."
             );
-
-            return;
 
         }
 
 
         // =================================================
-        // METTRE À JOUR LA PAGE
+        // ÉTAT LOCAL
         // =================================================
 
         associatedMerchantIds =
@@ -2571,6 +2479,14 @@ async function addMerchantToStore(
                 ...updatedMerchantIds
             ];
 
+
+        selectedStoreId =
+            currentStoreId;
+
+
+        // =================================================
+        // RAFRAÎCHIR
+        // =================================================
 
         renderApprovedMerchants();
 
@@ -2581,9 +2497,15 @@ async function addMerchantToStore(
         // SUCCÈS
         // =================================================
 
+        showToast(
+            "Comerciante associado à Loja com sucesso.",
+            "check_circle"
+        );
+
+
         alert(
             "SUCESSO! ✅\n\n" +
-            "Comerciante associado corretamente à Loja Oficial.\n\n" +
+            "Comerciante associado corretamente.\n\n" +
             "ID do comerciante:\n" +
             merchantId +
             "\n\n" +
@@ -2592,17 +2514,13 @@ async function addMerchantToStore(
         );
 
 
-        showToast(
-            "Comerciante associado à Loja com sucesso.",
-            "check_circle"
-        );
-
-
     } catch (error) {
 
-        // =================================================
-        // ERRO FIREBASE
-        // =================================================
+        console.error(
+            "ERRO AO ASSOCIAR COMERCIANTE:",
+            error
+        );
+
 
         alert(
             "ERRO FIREBASE ❌\n\n" +
@@ -2617,12 +2535,6 @@ async function addMerchantToStore(
         );
 
 
-        console.error(
-            "ERRO AO ASSOCIAR COMERCIANTE:",
-            error
-        );
-
-
         showToast(
             "Erro ao adicionar comerciante.",
             "error"
@@ -2631,6 +2543,8 @@ async function addMerchantToStore(
     }
 
 }
+
+
 // =========================================================
 // RETIRAR COMMERÇANT
 // =========================================================
@@ -2640,6 +2554,11 @@ async function removeMerchantFromStore(
 ) {
 
     if (!selectedStoreId) {
+
+        showToast(
+            "Nenhuma Loja selecionada.",
+            "error"
+        );
 
         return;
 
@@ -2660,9 +2579,7 @@ async function removeMerchantFromStore(
 
 
     if (!confirmed) {
-
         return;
-
     }
 
 
@@ -2718,6 +2635,11 @@ async function removeMerchantFromStore(
 
     } catch (error) {
 
+        console.error(
+            error
+        );
+
+
         showToast(
             "Erro ao remover comerciante.",
             "error"
@@ -2751,7 +2673,7 @@ merchantSearch?.addEventListener(
 
 
 // =========================================================
-// SÉLECTION DE LA LOJA
+// SÉLECTION LOJA
 // =========================================================
 
 storeSelector?.addEventListener(
@@ -2781,9 +2703,7 @@ storeSelector?.addEventListener(
 // =========================================================
 
 document
-    .getElementById(
-        "backButton"
-    )
+    .getElementById("backButton")
     ?.addEventListener(
         "click",
         () => {
@@ -2799,9 +2719,7 @@ document
 // =========================================================
 
 document
-    .getElementById(
-        "refreshButton"
-    )
+    .getElementById("refreshButton")
     ?.addEventListener(
         "click",
         () => {
@@ -2820,9 +2738,43 @@ async function init() {
 
     try {
 
+        // -----------------------------------------------
+        // 1. CHARGER LES LOJAS
+        // -----------------------------------------------
+
         await loadOfficialStores();
 
+
+        // -----------------------------------------------
+        // 2. CHARGER LES COMMERÇANTS
+        // -----------------------------------------------
+
         await loadApprovedMerchants();
+
+
+        // -----------------------------------------------
+        // 3. SI UNE LOJA VIENT DE L'URL
+        //    ON LA SÉLECTIONNE APRÈS CHARGEMENT
+        // -----------------------------------------------
+
+        if (
+            storeIdFromUrl &&
+            officialStores.some(
+                store =>
+                    store.id === storeIdFromUrl
+            )
+        ) {
+
+            storeSelector.value =
+                storeIdFromUrl;
+
+
+            await selectStore(
+                storeIdFromUrl
+            );
+
+        }
+
 
     } catch (error) {
 
@@ -2837,25 +2789,29 @@ async function init() {
         );
 
 
-        approvedMerchantList.innerHTML = `
+        if (approvedMerchantList) {
 
-            <div class="errorState">
+            approvedMerchantList.innerHTML = `
 
-                <span class="material-symbols-rounded">
-                    error
-                </span>
+                <div class="errorState">
 
-                <h3>
-                    Erro ao carregar
-                </h3>
+                    <span class="material-symbols-rounded">
+                        error
+                    </span>
 
-                <p>
-                    ${escapeHtml(error.message)}
-                </p>
+                    <h3>
+                        Erro ao carregar
+                    </h3>
 
-            </div>
+                    <p>
+                        ${escapeHtml(error.message)}
+                    </p>
 
-        `;
+                </div>
+
+            `;
+
+        }
 
     }
 
@@ -2865,7 +2821,6 @@ async function init() {
 init();
 
 </script>
-
 
 </body>
 
