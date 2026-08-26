@@ -2265,8 +2265,8 @@ function renderAssociatedMerchants() {
 
 // =========================================================
 // TOMA
-// AJOUTER COMMERÇANT À LA LOJA
-// VERSION DEBUG — ÉTAPES FIREBASE
+// AJOUTAR COMERCIANTE À LA LOJA OFICIAL
+// VERSION STABLE — RÉCUPÈRE STORE ID DIRECTEMENT DE L'URL
 // =========================================================
 
 async function addMerchantToStore(
@@ -2302,21 +2302,34 @@ async function addMerchantToStore(
 
 
     // =====================================================
-    // ÉTAPE 3 — VÉRIFIER STORE ID
+    // ÉTAPE 3 — RÉCUPÉRER L'ID DE LA LOJA DIRECTEMENT
+    // DE L'URL
     // =====================================================
+
+    const currentStoreId =
+        new URLSearchParams(
+            window.location.search
+        ).get("store");
+
 
     alert(
         "ÉTAPE 3\n\n" +
-        "ID da Loja:\n" +
-        storeId
+        "ID da Loja recebido da URL:\n\n" +
+        currentStoreId
     );
 
 
-    if (!storeId) {
+    // =====================================================
+    // ÉTAPE 4 — VÉRIFIER STORE ID
+    // =====================================================
+
+    if (!currentStoreId) {
 
         alert(
-            "ÉTAPE 3 — ERRO\n\n" +
-            "ID da Loja não encontrado."
+            "ÉTAPE 4 — ERRO\n\n" +
+            "O ID da Loja não foi encontrado na URL.\n\n" +
+            A página deve ser aberta assim:\n\n" +
+            "merchants.html?store=ID_DA_LOJA"
         );
 
         return;
@@ -2325,7 +2338,7 @@ async function addMerchantToStore(
 
 
     // =====================================================
-    // ÉTAPE 4 — VÉRIFIER ASSOCIATION EXISTANTE
+    // ÉTAPE 5 — VÉRIFIER ASSOCIATION EXISTANTE
     // =====================================================
 
     if (
@@ -2338,8 +2351,8 @@ async function addMerchantToStore(
     ) {
 
         alert(
-            "ÉTAPE 4\n\n" +
-            "Este comerciante já está associado à Loja."
+            "ÉTAPE 5\n\n" +
+            "Este comerciante já está associado a esta Loja."
         );
 
         return;
@@ -2347,43 +2360,45 @@ async function addMerchantToStore(
     }
 
 
+    // =====================================================
+    // ÉTAPE 6 — DÉBUT FIRESTORE
+    // =====================================================
+
     try {
 
-        // =================================================
-        // ÉTAPE 5 — CRÉER LA RÉFÉRENCE
-        // =================================================
-
         alert(
-            "ÉTAPE 5\n\n" +
-            "Criando referência da Loja Oficial..."
+            "ÉTAPE 6\n\n" +
+            "Criando referência da Loja..."
         );
 
+
+        // =================================================
+        // RÉFÉRENCE OFFICIAL STORE
+        // =================================================
 
         const storeRef =
             doc(
                 db,
                 "officialStores",
-                storeId
+                currentStoreId
             );
 
 
         alert(
-            "ÉTAPE 5 OK\n\n" +
-            "Referência criada:\n" +
+            "ÉTAPE 7\n\n" +
+            "Referência criada:\n\n" +
             "officialStores/" +
-            storeId
+            currentStoreId
         );
 
 
         // =================================================
-        // ÉTAPE 6 — LIRE LA LOJA
+        // CHARGER LA LOJA
         // =================================================
 
         alert(
-            "ÉTAPE 6\n\n" +
-            "Agora vamos buscar a Loja no Firestore.\n\n" +
-            "Se esta for a última alerta que aparece,\n" +
-            "o problema está no getDoc()."
+            "ÉTAPE 8\n\n" +
+            "Buscando a Loja no Firestore..."
         );
 
 
@@ -2393,26 +2408,26 @@ async function addMerchantToStore(
             );
 
 
-        // =================================================
-        // ÉTAPE 7 — RÉSULTAT GETDOC
-        // =================================================
-
         alert(
-            "ÉTAPE 7\n\n" +
+            "ÉTAPE 9\n\n" +
             "getDoc() terminou."
         );
 
+
+        // =================================================
+        // LOJA INEXISTANTE
+        // =================================================
 
         if (
             !storeSnapshot.exists()
         ) {
 
             alert(
-                "ÉTAPE 7 — ERRO\n\n" +
-                "A Loja Oficial NÃO existe.\n\n" +
-                "Caminho:\n" +
+                "ÉTAPE 9 — ERRO\n\n" +
+                "A Loja Oficial não existe.\n\n" +
+                "Caminho pesquisado:\n" +
                 "officialStores/" +
-                storeId
+                currentStoreId
             );
 
             return;
@@ -2421,30 +2436,27 @@ async function addMerchantToStore(
 
 
         // =================================================
-        // ÉTAPE 8 — LOJA EXISTE
+        // LOJA EXISTE
         // =================================================
 
         alert(
-            "ÉTAPE 8\n\n" +
+            "ÉTAPE 10\n\n" +
             "A Loja Oficial existe.\n\n" +
             "ID:\n" +
-            storeId
+            currentStoreId
         );
 
 
         // =================================================
-        // ÉTAPE 9 — ATUALIZAR FIRESTORE
+        // UPDATE FIRESTORE
         // =================================================
 
         alert(
-            "ÉTAPE 9\n\n" +
-            "Vamos adicionar o comerciante ao campo:\n\n" +
+            "ÉTAPE 11\n\n" +
+            "Adicionando o comerciante ao campo:\n\n" +
             "merchantIds\n\n" +
             "Merchant ID:\n" +
-            merchantId +
-            "\n\n" +
-            "Se esta for a última alerta,\n" +
-            "o problema está no updateDoc()."
+            merchantId
         );
 
 
@@ -2465,17 +2477,17 @@ async function addMerchantToStore(
 
 
         // =================================================
-        // ÉTAPE 10 — UPDATE TERMINOU
+        // UPDATE TERMINOU
         // =================================================
 
         alert(
-            "ÉTAPE 10\n\n" +
-            "updateDoc() terminou com sucesso!"
+            "ÉTAPE 12 — UPDATE OK\n\n" +
+            "O Firestore aceitou a atualização."
         );
 
 
         // =================================================
-        // ÉTAPE 11 — LER NOVAMENTE
+        // VÉRIFICATION
         // =================================================
 
         const verificationSnapshot =
@@ -2489,8 +2501,8 @@ async function addMerchantToStore(
         ) {
 
             alert(
-                "ÉTAPE 11 — ERRO\n\n" +
-                "A Loja não foi encontrada durante a verificação."
+                "ÉTAPE 13 — ERRO\n\n" +
+                "Não foi possível verificar a Loja."
             );
 
             return;
@@ -2499,7 +2511,7 @@ async function addMerchantToStore(
 
 
         // =================================================
-        // ÉTAPE 12 — VERIFICAR MERCHANT IDS
+        // RÉCUPÉRER LES DONNÉES
         // =================================================
 
         const updatedStore =
@@ -2514,8 +2526,12 @@ async function addMerchantToStore(
                 : [];
 
 
+        // =================================================
+        // AFFICHER LA LISTE
+        // =================================================
+
         alert(
-            "ÉTAPE 12\n\n" +
+            "ÉTAPE 14\n\n" +
             "merchantIds atuais:\n\n" +
             JSON.stringify(
                 updatedMerchantIds,
@@ -2526,7 +2542,7 @@ async function addMerchantToStore(
 
 
         // =================================================
-        // ÉTAPE 13 — CONFIRMAR ASSOCIAÇÃO
+        // CONFIRMER L'ASSOCIATION
         // =================================================
 
         if (
@@ -2536,7 +2552,7 @@ async function addMerchantToStore(
         ) {
 
             alert(
-                "ÉTAPE 13 — ERRO\n\n" +
+                "ÉTAPE 15 — ERRO\n\n" +
                 "O ID do comerciante não foi encontrado\n" +
                 "em merchantIds."
             );
@@ -2547,7 +2563,7 @@ async function addMerchantToStore(
 
 
         // =================================================
-        // ÉTAPE 14 — ATUALIZAR ESTADO DA PÁGINA
+        // METTRE À JOUR LA PAGE
         // =================================================
 
         associatedMerchantIds =
@@ -2556,27 +2572,23 @@ async function addMerchantToStore(
             ];
 
 
-        // =================================================
-        // ÉTAPE 15 — ATUALIZAR INTERFACE
-        // =================================================
-
         renderApprovedMerchants();
 
         renderAssociatedMerchants();
 
 
         // =================================================
-        // ÉTAPE 16 — SUCESSO
+        // SUCCÈS
         // =================================================
 
         alert(
-            "ÉTAPE 16 — SUCESSO! ✅\n\n" +
+            "SUCESSO! ✅\n\n" +
             "Comerciante associado corretamente à Loja Oficial.\n\n" +
             "ID do comerciante:\n" +
             merchantId +
             "\n\n" +
             "ID da Loja:\n" +
-            storeId
+            currentStoreId
         );
 
 
@@ -2589,7 +2601,7 @@ async function addMerchantToStore(
     } catch (error) {
 
         // =================================================
-        // ERRO REAL
+        // ERRO FIREBASE
         // =================================================
 
         alert(
@@ -2598,7 +2610,10 @@ async function addMerchantToStore(
             error.message +
             "\n\n" +
             "Código:\n" +
-            (error.code || "sem código")
+            (
+                error.code ||
+                "sem código"
+            )
         );
 
 
