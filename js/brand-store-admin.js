@@ -3717,10 +3717,7 @@ async function loadStoreProducts() {
             products;
 
 
-        alert(
-            "BLOC 5 — Produtos carregados com sucesso."
-        );
-
+        
 
     } catch (error) {
 
