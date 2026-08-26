@@ -18862,7 +18862,49 @@ window.brandStoreAdmin
 // BRAND STORE ADMIN
 // BLOC 41 — CARTE COMMERÇANT PREMIUM
 // ==========================================================
+// ==========================================================
+// TOMA
+// BRAND STORE ADMIN
+// OUTIL — PROTECTION HTML
+// ==========================================================
 
+function escapeHtml(value) {
+
+    if (value === null || value === undefined) {
+
+        return "";
+
+    }
+
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
 function renderStoreMerchantItem(
     merchant
 ) {
@@ -19403,7 +19445,7 @@ function renderStoreMerchantItem(
 // ==========================================================
 // TOMA
 // BRAND STORE ADMIN
-// BLOC 41 — AFFICHAGE DE LA LISTE
+// AFFICHAGE DE LA LISTE
 // ATTENDRE FIRESTORE AVANT AFFICHAGE
 // ==========================================================
 
