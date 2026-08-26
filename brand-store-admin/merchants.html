@@ -1746,6 +1746,7 @@ function getFilteredMerchants() {
 
 // =========================================================
 // CARTE COMMERÇANT
+// VERSION — ID + EMAIL
 // =========================================================
 
 function merchantCard(
@@ -1782,11 +1783,39 @@ function merchantCard(
         "—";
 
 
+    // -----------------------------------------------------
+    // EMAIL DO COMERCIANTE
+    // -----------------------------------------------------
+
+    const email =
+        merchant.email ||
+        merchant.emailAddress ||
+        merchant.mail ||
+        "—";
+
+
+    // -----------------------------------------------------
+    // ID DO COMERCIANTE
+    // -----------------------------------------------------
+
+    const merchantId =
+        merchant.id ||
+        "—";
+
+
+    // -----------------------------------------------------
+    // DATA DE REGISTRO
+    // -----------------------------------------------------
+
     const createdAt =
         formatDate(
             merchant.createdAt
         );
 
+
+    // -----------------------------------------------------
+    // BOTÃO
+    // -----------------------------------------------------
 
     const buttonText =
         associated
@@ -1800,17 +1829,15 @@ function merchantCard(
             : "actionButton";
 
 
-    const icon =
-        associated
-            ? "person_remove"
-            : "person_add";
-
-
     return `
 
         <article
             class="merchantCard"
         >
+
+            <!-- ========================================= -->
+            <!-- IDENTIDADE -->
+            <!-- ========================================= -->
 
             <div class="merchantTop">
 
@@ -1819,9 +1846,10 @@ function merchantCard(
                     src="${escapeHtml(image)}"
                     alt="Comerciante"
                     onerror="
-                        this.src='images/default-store.png'
+                        this.src='../images/default-store.png'
                     "
                 >
+
 
                 <div
                     class="merchantIdentity"
@@ -1831,9 +1859,11 @@ function merchantCard(
                         ${escapeHtml(name)}
                     </h3>
 
+
                     <p>
                         ${escapeHtml(shop)}
                     </p>
+
 
                     <span
                         class="approvedBadge"
@@ -1852,8 +1882,56 @@ function merchantCard(
             </div>
 
 
+            <!-- ========================================= -->
+            <!-- INFORMATIONS IMPORTANTES -->
+            <!-- ========================================= -->
+
             <div class="merchantInfo">
 
+
+                <!-- ID -->
+                <div class="infoRow">
+
+                    <span>
+                        ID do Comerciante
+                    </span>
+
+                    <strong
+                        style="
+                            max-width: 65%;
+                            overflow-wrap: anywhere;
+                            word-break: break-all;
+                            font-size: 11px;
+                        "
+                    >
+                        ${escapeHtml(merchantId)}
+                    </strong>
+
+                </div>
+
+
+                <!-- EMAIL -->
+                <div class="infoRow">
+
+                    <span>
+                        E-mail
+                    </span>
+
+                    <strong
+                        style="
+                            max-width: 65%;
+                            overflow-wrap: anywhere;
+                            word-break: break-word;
+                            font-size: 12px;
+                        "
+                    >
+                        ${escapeHtml(email)}
+                    </strong>
+
+                </div>
+
+
+                <!-- CIDADE -->
                 <div class="infoRow">
 
                     <span>
@@ -1867,6 +1945,7 @@ function merchantCard(
                 </div>
 
 
+                <!-- TELEFONE -->
                 <div class="infoRow">
 
                     <span>
@@ -1880,6 +1959,7 @@ function merchantCard(
                 </div>
 
 
+                <!-- DATA -->
                 <div class="infoRow">
 
                     <span>
@@ -1895,17 +1975,25 @@ function merchantCard(
             </div>
 
 
+            <!-- ========================================= -->
+            <!-- ACTION -->
+            <!-- ========================================= -->
+
             <div class="merchantActions">
 
                 <button
                     class="${buttonClass}"
                     type="button"
-                    data-merchant-id="${escapeHtml(merchant.id)}"
-                    ${!selectedStoreId ? "disabled" : ""}
+                    data-merchant-id="${escapeHtml(merchantId)}"
                 >
 
                     <span class="material-symbols-rounded">
-                        ${icon}
+
+                        ${associated
+                            ? "person_remove"
+                            : "person_add"
+                        }
+
                     </span>
 
                     ${buttonText}
