@@ -18833,22 +18833,7 @@ window.brandStoreAdmin
 // ==========================================================
 // TOMA
 // BRAND STORE ADMIN
-// BLOC 41 — LISTA DOS COMERCIANTES
-// VERSION STABLE ET LÉGÈRE
-// ==========================================================
-
-
-// ==========================================================
-// ALERTE — DÉBUT
-// ==========================================================
-
-alert(
-    "BLOC 41 — Lista dos comerciantes carregando..."
-);
-
-
-// ==========================================================
-// FONCTION — AFFICHER UN COMMERÇANT
+// BLOC 41 — CARTE COMMERÇANT PREMIUM
 // ==========================================================
 
 function renderStoreMerchantItem(
@@ -18856,277 +18841,538 @@ function renderStoreMerchantItem(
 ) {
 
     if (!merchant) {
-
         return "";
-
     }
 
 
+    // ======================================================
+    // IDENTITÉ
+    // ======================================================
+
     const name =
         merchant.name ||
+        [
+            merchant.firstName,
+            merchant.lastName
+        ]
+            .filter(Boolean)
+            .join(" ") ||
         merchant.shopName ||
         merchant.storeName ||
         "Comerciante";
 
 
+    const shopName =
+        merchant.shopName ||
+        merchant.storeName ||
+        "Sem loja definida";
+
+
+    // ======================================================
+    // IMPORTANT :
+    // L'ID DO COMERCIANTE EST LE DOCUMENT ID FIRESTORE
+    // ======================================================
+
+    const merchantId =
+        merchant.id ||
+        "—";
+
+
+    // ======================================================
+    // CONTACT
+    // ======================================================
+
+    const email =
+        merchant.email ||
+        merchant.emailAddress ||
+        merchant.mail ||
+        "—";
+
+
     const phone =
         merchant.phone ||
+        merchant.phoneNumber ||
         merchant.whatsapp ||
         "—";
 
 
     const city =
         merchant.city ||
+        merchant.municipality ||
         "—";
 
+
+    // ======================================================
+    // IMAGE
+    // ======================================================
+
+    const image =
+        merchant.photoURL ||
+        merchant.photoUrl ||
+        merchant.avatar ||
+        merchant.profileImage ||
+        merchant.image ||
+        merchant.logo ||
+        "../images/default-store.png";
+
+
+    // ======================================================
+    // STATUS
+    // ======================================================
 
     const status =
         String(
             merchant.status ||
-            "inactive"
-        ).toLowerCase();
+            "approved"
+        )
+            .toLowerCase();
 
 
     const isActive =
         status === "active";
 
 
+    const statusText =
+        isActive
+            ? "Ativo"
+            : "Inativo";
+
+
+    // ======================================================
+    // DATE
+    // ======================================================
+
+    const registeredAt =
+        formatDate(
+            merchant.createdAt
+        );
+
+
+    // ======================================================
+    // ESCAPE
+    // ======================================================
+
+    const safeName =
+        escapeHtml(name);
+
+
+    const safeShopName =
+        escapeHtml(shopName);
+
+
+    const safeMerchantId =
+        escapeHtml(merchantId);
+
+
+    const safeEmail =
+        escapeHtml(email);
+
+
+    const safePhone =
+        escapeHtml(phone);
+
+
+    const safeCity =
+        escapeHtml(city);
+
+
+    const safeImage =
+        escapeHtml(image);
+
+
+    const safeRegisteredAt =
+        escapeHtml(registeredAt);
+
+
+    // ======================================================
+    // CARTE
+    // ======================================================
+
     return `
 
-        <div
-            class="merchantItem"
-            data-merchant-id="${merchant.id || ""}"
+        <article
+            class="merchantItem merchantPremiumCard"
+            data-merchant-id="${safeMerchantId}"
         >
 
-            <div class="merchantItemInfo">
 
-                <strong>
-                    ${name}
-                </strong>
+            <!-- ========================================== -->
+            <!-- HEADER -->
+            <!-- ========================================== -->
 
-                <small>
-                    ${city}
-                </small>
+            <div class="merchantPremiumHeader">
 
-                <small>
-                    ${phone}
-                </small>
+
+                <!-- AVATAR -->
+
+                <div class="merchantAvatarWrapper">
+
+                    <img
+                        class="merchantPremiumAvatar"
+                        src="${safeImage}"
+                        alt="${safeName}"
+                        onerror="
+                            this.onerror=null;
+                            this.src='../images/default-store.png';
+                        "
+                    >
+
+
+                    <div
+                        class="merchantVerificationIcon"
+                        title="Comerciante verificado"
+                    >
+
+                        <span class="material-symbols-rounded">
+                            verified
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- IDENTIDADE -->
+
+                <div class="merchantPremiumIdentity">
+
+                    <h3>
+                        ${safeName}
+                    </h3>
+
+
+                    <p class="merchantShopName">
+                        ${safeShopName}
+                    </p>
+
+
+                    <div class="merchantBadges">
+
+
+                        <!-- APROVADO -->
+
+                        <span
+                            class="merchantBadge approved"
+                        >
+
+                            <span class="material-symbols-rounded">
+                                check_circle
+                            </span>
+
+                            Aprovado
+
+                        </span>
+
+
+                        <!-- STATUS -->
+
+                        <span
+                            class="
+                                merchantBadge
+                                ${isActive
+                                    ? "active"
+                                    : "inactive"
+                                }
+                            "
+                        >
+
+                            <span class="merchantStatusDot"></span>
+
+                            ${statusText}
+
+                        </span>
+
+
+                    </div>
+
+                </div>
 
             </div>
 
 
-            <div class="merchantItemStatus">
+            <!-- ========================================== -->
+            <!-- ID -->
+            <!-- ========================================== -->
 
-                <span class="merchantStatus ${
-                    isActive
-                        ? "active"
-                        : "inactive"
-                }">
+            <div class="merchantIdBox">
 
-                    ${
-                        isActive
-                            ? "Ativo"
-                            : "Inativo"
-                    }
+                <div>
 
-                </span>
+                    <span class="merchantInfoLabel">
+                        ID do Comerciante
+                    </span>
+
+
+                    <strong
+                        class="merchantFirestoreId"
+                    >
+                        ${safeMerchantId}
+                    </strong>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="copyMerchantIdButton"
+                    data-copy-merchant-id="${safeMerchantId}"
+                    title="Copiar ID"
+                >
+
+                    <span class="material-symbols-rounded">
+                        content_copy
+                    </span>
+
+                </button>
 
             </div>
 
-        </div>
+
+            <!-- ========================================== -->
+            <!-- INFORMATIONS -->
+            <!-- ========================================== -->
+
+            <div class="merchantPremiumInfo">
+
+
+                <!-- EMAIL -->
+
+                <div class="merchantInfoBlock">
+
+                    <div class="merchantInfoIcon">
+
+                        <span class="material-symbols-rounded">
+                            mail
+                        </span>
+
+                    </div>
+
+
+                    <div>
+
+                        <span class="merchantInfoLabel">
+                            E-mail
+                        </span>
+
+                        <strong>
+                            ${safeEmail}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TELEPHONE -->
+
+                <div class="merchantInfoBlock">
+
+                    <div class="merchantInfoIcon">
+
+                        <span class="material-symbols-rounded">
+                            phone
+                        </span>
+
+                    </div>
+
+
+                    <div>
+
+                        <span class="merchantInfoLabel">
+                            Telefone
+                        </span>
+
+                        <strong>
+                            ${safePhone}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CIDADE -->
+
+                <div class="merchantInfoBlock">
+
+                    <div class="merchantInfoIcon">
+
+                        <span class="material-symbols-rounded">
+                            location_on
+                        </span>
+
+                    </div>
+
+
+                    <div>
+
+                        <span class="merchantInfoLabel">
+                            Cidade
+                        </span>
+
+                        <strong>
+                            ${safeCity}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DATA -->
+
+                <div class="merchantInfoBlock">
+
+                    <div class="merchantInfoIcon">
+
+                        <span class="material-symbols-rounded">
+                            calendar_month
+                        </span>
+
+                    </div>
+
+
+                    <div>
+
+                        <span class="merchantInfoLabel">
+                            Registado em
+                        </span>
+
+                        <strong>
+                            ${safeRegisteredAt}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ========================================== -->
+            <!-- AUTHORIZATION -->
+            <!-- ========================================== -->
+
+            <div class="merchantAuthorization">
+
+                <div class="merchantAuthorizationIcon">
+
+                    <span class="material-symbols-rounded">
+                        verified_user
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        Comerciante Aprovado
+                    </strong>
+
+
+                    <p>
+                        Este comerciante está autorizado
+                        a vender nesta Loja Oficial.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ========================================== -->
+            <!-- ACTIONS -->
+            <!-- ========================================== -->
+
+            <div class="merchantPremiumActions">
+
+
+                <!-- VER -->
+
+                <button
+                    type="button"
+                    class="merchantActionButton viewMerchantButton"
+                    data-view-merchant-id="${safeMerchantId}"
+                >
+
+                    <span class="material-symbols-rounded">
+                        visibility
+                    </span>
+
+                    <span>
+                        Ver perfil
+                    </span>
+
+                </button>
+
+
+                <!-- ATIVAR / DESATIVAR -->
+
+                <button
+                    type="button"
+                    class="
+                        merchantActionButton
+                        ${isActive
+                            ? "deactivateMerchantButton"
+                            : "activateMerchantButton"
+                        }
+                    "
+                    data-toggle-merchant-id="${safeMerchantId}"
+                >
+
+                    <span class="material-symbols-rounded">
+
+                        ${isActive
+                            ? "pause_circle"
+                            : "check_circle"
+                        }
+
+                    </span>
+
+
+                    <span>
+
+                        ${isActive
+                            ? "Desativar"
+                            : "Ativar"
+                        }
+
+                    </span>
+
+                </button>
+
+
+                <!-- EXCLUIR -->
+
+                <button
+                    type="button"
+                    class="
+                        merchantActionButton
+                        deleteMerchantButton
+                    "
+                    data-delete-merchant-id="${safeMerchantId}"
+                >
+
+                    <span class="material-symbols-rounded">
+                        delete
+                    </span>
+
+                    <span>
+                        Excluir
+                    </span>
+
+                </button>
+
+
+            </div>
+
+
+        </article>
 
     `;
 
 }
-
-
-// ==========================================================
-// FONCTION — AFFICHER LA LISTE
-// ==========================================================
-
-function renderStoreMerchantsList() {
-
-    if (!merchantList) {
-
-        return;
-
-    }
-
-
-    const list =
-        Array.isArray(
-            merchants
-        )
-            ? merchants
-            : [];
-
-
-    // ------------------------------------------------------
-    // AUCUN COMMERÇANT
-    // ------------------------------------------------------
-
-    if (
-        list.length === 0
-    ) {
-
-        renderEmptyState(
-
-            merchantList,
-
-            "group_off",
-
-            "Nenhum comerciante encontrado",
-
-            "Ainda não existem comerciantes associados a esta Loja Oficial."
-
-        );
-
-        return;
-
-    }
-
-
-    // ------------------------------------------------------
-    // AFFICHAGE
-    // ------------------------------------------------------
-
-    merchantList.innerHTML =
-        list
-            .map(
-                merchant =>
-                    renderStoreMerchantItem(
-                        merchant
-                    )
-            )
-            .join("");
-
-}
-
-
-// ==========================================================
-// FONCTION — RAFRAÎCHIR
-// ==========================================================
-
-async function refreshStoreMerchantsList() {
-
-    try {
-
-        if (
-            window.brandStoreAdmin &&
-            window.brandStoreAdmin
-                .loadStoreMerchants
-        ) {
-
-            await window.brandStoreAdmin
-                .loadStoreMerchants();
-
-        }
-
-
-        renderStoreMerchantsList();
-
-
-    } catch (error) {
-
-        alert(
-            "BLOC 41 — ERRO ao atualizar comerciantes:\n\n" +
-            error.message
-        );
-
-    }
-
-}
-
-
-// ==========================================================
-// EXPOSER
-// ==========================================================
-
-window.brandStoreAdmin
-    .renderStoreMerchantsList =
-    renderStoreMerchantsList;
-
-
-window.brandStoreAdmin
-    .refreshStoreMerchantsList =
-    refreshStoreMerchantsList;
-
-// ==========================================================
-// AFFICHAGE INITIAL
-// ATTENDRE LE CHARGEMENT FIRESTORE
-// ==========================================================
-
-async function initStoreMerchantsList() {
-
-    try {
-
-        // --------------------------------------------------
-        // ATTENDRE BLOC 40.1
-        // --------------------------------------------------
-
-        if (
-            window.brandStoreAdmin &&
-            typeof window.brandStoreAdmin
-                .loadStoreMerchants ===
-                "function"
-        ) {
-
-            await window.brandStoreAdmin
-                .loadStoreMerchants();
-
-        }
-
-
-        // --------------------------------------------------
-        // AFFICHER APRÈS LE CHARGEMENT
-        // --------------------------------------------------
-
-        renderStoreMerchantsList();
-
-
-        // --------------------------------------------------
-        // CONFIRMATION
-        // --------------------------------------------------
-
-        alert(
-            "BLOC 41 — Lista dos comerciantes carregada com sucesso.\n\n" +
-            "Comerciantes encontrados: " +
-            (
-                Array.isArray(merchants)
-                    ? merchants.length
-                    : 0
-            )
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "BLOC 41 — Erro:",
-            error
-        );
-
-
-        alert(
-            "BLOC 41 — ERRO ao carregar comerciantes:\n\n" +
-            error.message
-        );
-
-    }
-
-}
-
-
-// ==========================================================
-// DÉMARRER
-// ==========================================================
-
-initStoreMerchantsList();
-
-
-// ==========================================================
-// FIN BLOC 41
-// ==========================================================
 
 // ==========================================================
 // TOMA
