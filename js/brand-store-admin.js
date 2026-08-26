@@ -19051,26 +19051,83 @@ window.brandStoreAdmin
     .refreshStoreMerchantsList =
     refreshStoreMerchantsList;
 
-
 // ==========================================================
 // AFFICHAGE INITIAL
+// ATTENDRE LE CHARGEMENT FIRESTORE
 // ==========================================================
 
-renderStoreMerchantsList();
+async function initStoreMerchantsList() {
+
+    try {
+
+        // --------------------------------------------------
+        // ATTENDRE BLOC 40.1
+        // --------------------------------------------------
+
+        if (
+            window.brandStoreAdmin &&
+            typeof window.brandStoreAdmin
+                .loadStoreMerchants ===
+                "function"
+        ) {
+
+            await window.brandStoreAdmin
+                .loadStoreMerchants();
+
+        }
+
+
+        // --------------------------------------------------
+        // AFFICHER APRÈS LE CHARGEMENT
+        // --------------------------------------------------
+
+        renderStoreMerchantsList();
+
+
+        // --------------------------------------------------
+        // CONFIRMATION
+        // --------------------------------------------------
+
+        alert(
+            "BLOC 41 — Lista dos comerciantes carregada com sucesso.\n\n" +
+            "Comerciantes encontrados: " +
+            (
+                Array.isArray(merchants)
+                    ? merchants.length
+                    : 0
+            )
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 41 — Erro:",
+            error
+        );
+
+
+        alert(
+            "BLOC 41 — ERRO ao carregar comerciantes:\n\n" +
+            error.message
+        );
+
+    }
+
+}
 
 
 // ==========================================================
-// ALERTE — FIN
+// DÉMARRER
 // ==========================================================
 
-alert(
-    "BLOC 41 — Lista dos comerciantes carregada com sucesso."
-);
+initStoreMerchantsList();
 
 
 // ==========================================================
 // FIN BLOC 41
 // ==========================================================
+
 // ==========================================================
 // TOMA
 // BRAND STORE ADMIN
