@@ -17999,9 +17999,7 @@ renderBrandStoreSalesComparison();
 // ALERTE — DÉBUT
 // ==========================================================
 
-alert(
-    "BLOC 38 — Navegação das ações principais carregando..."
-);
+
 
 
 // ==========================================================
@@ -18039,10 +18037,7 @@ function openBrandStoreAdminTab(
 
     if (!targetTab) {
 
-        alert(
-            "BLOC 38 — Aba não encontrada: " +
-            tabName
-        );
+        
 
         return;
 
@@ -18108,15 +18103,7 @@ function openBrandStoreMerchantsPage() {
     // ALERTE DE CONTRÔLE
     // ------------------------------------------------------
 
-    alert(
-        "BLOC 38 — Abrindo página dos comerciantes.\n\n" +
-        "Loja ID: " +
-        storeId +
-        "\n\n" +
-        "URL:\n" +
-        merchantsUrl
-    );
-
+    
 
     // ------------------------------------------------------
     // NAVIGATION
@@ -18261,9 +18248,7 @@ window.brandStoreAdmin
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 38 — Navegação das ações principais carregada com sucesso."
-);
+
 
 
 // ==========================================================
@@ -18281,9 +18266,7 @@ alert(
 // ALERTE — DÉBUT
 // ==========================================================
 
-alert(
-    "BLOC 39 — Estado das abas carregando..."
-);
+
 
 
 // ==========================================================
@@ -18482,9 +18465,6 @@ if (
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 39 — Estado e navegação das abas carregados com sucesso."
-);
 
 
 // ==========================================================
@@ -18498,9 +18478,6 @@ alert(
 // SOURCE : officialStores/{storeId}.merchantIds
 // ==========================================================
 
-alert(
-    "BLOC 40.1 — Carregamento dos comerciantes iniciando..."
-);
 
 
 // ==========================================================
@@ -18586,14 +18563,7 @@ window.brandStoreAdmin.loadStoreMerchants =
                     : [];
 
 
-            alert(
-                "BLOC 40.1 — merchantIds encontrados:\n\n" +
-                (
-                    merchantIds.length
-                        ? merchantIds.join("\n")
-                        : "Nenhum comerciante associado."
-                )
-            );
+            
 
 
             // ==================================================
@@ -19541,10 +19511,7 @@ async function initStoreMerchantsList() {
 
     try {
 
-        alert(
-            "BLOC 41 — Aguardando carregamento dos comerciantes..."
-        );
-
+        
 
         // --------------------------------------------------
         // ATTENDRE LE CHARGEMENT FIRESTORE
@@ -19582,12 +19549,7 @@ async function initStoreMerchantsList() {
                 : 0;
 
 
-        alert(
-            "BLOC 41 — Lista dos comerciantes carregada com sucesso.\n\n" +
-            "Comerciantes encontrados: " +
-            total
-        );
-
+        
 
     } catch (error) {
 
@@ -19637,9 +19599,6 @@ initStoreMerchantsList();
 // BLOC 41.5 — ACTIONS COMMERÇANT
 // ==========================================================
 
-alert(
-    "BLOC 41.5 — Ações dos comerciantes iniciando..."
-);
 
 
 // ==========================================================
@@ -19871,10 +19830,7 @@ if (!merchantActionsContainer) {
                             !merchantSnapshot.exists()
                         ) {
 
-                            alert(
-                                "Comerciante não encontrado."
-                            );
-
+                            
                             return;
 
                         }
@@ -20189,9 +20145,7 @@ if (!merchantActionsContainer) {
 // FIN
 // ==========================================================
 
-alert(
-    "BLOC 41.5 — Ações dos comerciantes prontas. ✅"
-);
+
 // ==========================================================
 // FIN BLOC 41
 // ==========================================================
@@ -20207,9 +20161,7 @@ alert(
 // ALERTE — DÉBUT
 // ==========================================================
 
-alert(
-    "BLOC 42 — Comerciantes TOMA aprovados carregando..."
-);
+
 
 
 // ==========================================================
@@ -20372,10 +20324,6 @@ loadTomaApprovedMerchants()
 // ==========================================================
 // ALERTE — DÉBUT
 // ==========================================================
-
-alert(
-    "BLOC 43 — Comerciantes TOMA aprovados sendo exibidos..."
-);
 
 
 // ==========================================================
@@ -20655,9 +20603,7 @@ prepareMerchantAuthorizationButtons();
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 43 — Comerciantes TOMA aprovados exibidos com sucesso."
-);
+
 
 
 // ==========================================================
@@ -20675,9 +20621,6 @@ alert(
 // ALERTE — DÉBUT
 // ==========================================================
 
-alert(
-    "BLOC 44 — Autorização de comerciantes carregando..."
-);
 
 
 // ==========================================================
@@ -21060,9 +21003,6 @@ setupMerchantAuthorizationButtons();
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 44 — Autorização de comerciantes carregada com sucesso."
-);
 
 
 // ==========================================================
@@ -21080,9 +21020,7 @@ alert(
 // ALERTE — DÉBUT
 // ==========================================================
 
-alert(
-    "BLOC 45 — Seleção de comerciantes carregando..."
-);
+
 
 
 // ==========================================================
@@ -21124,10 +21062,7 @@ function openApprovedMerchantsPage() {
 
     if (!currentStoreId) {
 
-        alert(
-            "BLOC 45 — ERRO: ID da Loja não encontrado."
-        );
-
+        
         return;
 
     }
@@ -21195,9 +21130,7 @@ window.brandStoreAdmin
 // ALERTE — FIN
 // ==========================================================
 
-alert(
-    "BLOC 45 — Seleção de comerciantes carregada com sucesso."
-);
+
 
 
 // ==========================================================
