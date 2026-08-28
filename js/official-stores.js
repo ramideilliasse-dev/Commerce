@@ -1,9 +1,42 @@
- import { db } from "./firebase.js";
+ alert("OFFICIAL 1 : début du fichier");
 
-alert("TEST FIREBASE 1 : import firebase.js réussi ✅");
+import("./firebase.js")
+    .then((module) => {
 
-if (!db) {
-    alert("TEST FIREBASE 2 : db est introuvable ❌");
-} else {
-    alert("TEST FIREBASE 2 : db Firebase est disponible ✅");
-}
+        alert(
+            "OFFICIAL 2 : firebase.js chargé ✅\n\n" +
+            "Exports trouvés :\n" +
+            Object.keys(module).join(", ")
+        );
+
+        if (module.db) {
+
+            alert(
+                "OFFICIAL 3 : db trouvé ✅"
+            );
+
+        } else {
+
+            alert(
+                "OFFICIAL 3 : db INTROUVABLE ❌"
+            );
+
+        }
+
+    })
+    .catch((error) => {
+
+        alert(
+            "ERREUR FIREBASE ❌\n\n" +
+            "Message :\n" +
+            error.message +
+            "\n\nNom :\n" +
+            error.name
+        );
+
+        console.error(
+            "Erreur import firebase.js :",
+            error
+        );
+
+    });
