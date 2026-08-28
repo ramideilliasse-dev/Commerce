@@ -1,180 +1,255 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt">
 
 <head>
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
 <title>Toma</title>
 
-<link rel="manifest" href="/manifest.json">
+<link
+    rel="manifest"
+    href="/manifest.json"
+>
 
-<meta name="theme-color" content="#ff6a00">
+<meta
+    name="theme-color"
+    content="#ff6a00"
+>
 
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta
+    name="apple-mobile-web-app-capable"
+    content="yes"
+>
 
-<meta name="apple-mobile-web-app-status-bar-style"
-content="black-translucent">
+<meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="black-translucent"
+>
 
-<meta name="apple-mobile-web-app-title"
-content="Toma">
-
-<link rel="apple-touch-icon"
-href="/icon-192.png">
+<meta
+    name="apple-mobile-web-app-title"
+    content="Toma"
+>
 
 <link
-href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
-rel="stylesheet">
+    rel="apple-touch-icon"
+    href="/icon-192.png"
+>
 
-<link rel="stylesheet" href="./homes.css">
+<link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
+    rel="stylesheet"
+>
+
+<link
+    rel="stylesheet"
+    href="./homes.css"
+>
+
 </head>
 
 
 <body>
+
+
+<!-- ========================================================= -->
+<!-- HEADER -->
+<!-- ========================================================= -->
+
 <header class="header">
 
-<div class="logo">
+    <div class="logo">
 
-T<span>oma</span>
+        T<span>oma</span>
 
-</div>
+    </div>
 
-<div class="headerActions">
 
-<button
-id="searchBtn"
-class="headerBtn">
-
-<span class="material-symbols-rounded">
-
-search
-
-</span>
-
-</button>
-
-<button
-id="supportBtn"
-class="headerBtn">
-
-<span class="material-symbols-rounded">
-
-support_agent
-
-</span>
-
-</button>
-
-<button
-id="merchantBtn"
-class="merchantBtn">
-
-<span class="material-symbols-rounded">
-
-storefront
-
-</span>
-
-<span>
-
-Loja
-
-</span>
-
-</button>
-
-</div>
-
-</header>
-<div class="searchContainer">
-
-<input
-id="searchInput"
-data-i18n-placeholder="search"
-placeholder="Pesquisar produtos..."
-
-readonly
-
->
-
-</div>
-<section
-id="promoSlider"
-class="promoSlider">
-
-</section>
-<div id="promoDots" class="promoDots"></div>
-<section
-id="categories"
-class="categories">
-
-</section>
-<section>
-
-<div class="sectionHeader">
-
-<h2 data-i18n="recommended">
-Recomendados
-</h2>
-
-<a href="products.html"
-   class="seeAllBtn"
-   data-i18n="seeAll">
-
-    <span class="translate-text">
-        Ver tudo
-    </span>
-
-    <span class="material-symbols-rounded">
-        arrow_forward
-    </span>
-
-</a>
-
-</div>
-
-<div
-id="recommendedProducts"
-class="productsRow">
-
-</div>
-
-</section>
-<section>
-
-<div class="sectionHeader">
-
-<h2 data-i18n="officialStores">
-Lojas Oficiais
-</h2>
-
-<a href="stores.html"
-   class="seeAllBtn"
-   data-i18n="seeAll">
-
-    <span class="translate-text">
-        Ver tudo
-    </span>
-<section class="officialStoresSection">
-
-    <div class="officialStoresHeader">
-
-        <div>
-            <h2>Lojas Oficiais</h2>
-        </div>
+    <div class="headerActions">
 
         <button
-            id="viewAllOfficialStores"
+            id="searchBtn"
+            class="headerBtn"
             type="button"
         >
-            Ver tudo →
+
+            <span class="material-symbols-rounded">
+                search
+            </span>
+
+        </button>
+
+
+        <button
+            id="supportBtn"
+            class="headerBtn"
+            type="button"
+        >
+
+            <span class="material-symbols-rounded">
+                support_agent
+            </span>
+
+        </button>
+
+
+        <button
+            id="merchantBtn"
+            class="merchantBtn"
+            type="button"
+        >
+
+            <span class="material-symbols-rounded">
+                storefront
+            </span>
+
+            <span>
+                Loja
+            </span>
+
         </button>
 
     </div>
 
+</header>
+
+
+
+<!-- ========================================================= -->
+<!-- RECHERCHE -->
+<!-- ========================================================= -->
+
+<div class="searchContainer">
+
+    <input
+        id="searchInput"
+        data-i18n-placeholder="search"
+        placeholder="Pesquisar produtos..."
+        readonly
+    >
+
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- PROMOTIONS -->
+<!-- ========================================================= -->
+
+<section
+    id="promoSlider"
+    class="promoSlider"
+>
+
+</section>
+
+
+<div
+    id="promoDots"
+    class="promoDots"
+></div>
+
+
+
+<!-- ========================================================= -->
+<!-- CATEGORIES -->
+<!-- ========================================================= -->
+
+<section
+    id="categories"
+    class="categories"
+>
+
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- PRODUITS RECOMMANDÉS -->
+<!-- ========================================================= -->
+
+<section>
+
+    <div class="sectionHeader">
+
+        <h2 data-i18n="recommended">
+            Recomendados
+        </h2>
+
+
+        <a
+            href="products.html"
+            class="seeAllBtn"
+            data-i18n="seeAll"
+        >
+
+            <span class="translate-text">
+                Ver tudo
+            </span>
+
+            <span class="material-symbols-rounded">
+                arrow_forward
+            </span>
+
+        </a>
+
+    </div>
+
+
+    <div
+        id="recommendedProducts"
+        class="productsRow"
+    >
+
+    </div>
+
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- LOJAS OFICIAIS -->
+<!-- ========================================================= -->
+
+<section>
+
+    <div class="sectionHeader">
+
+        <h2 data-i18n="officialStores">
+            Lojas Oficiais
+        </h2>
+
+
+        <!-- UN SEUL BOUTON VER TUDO -->
+
+        <a
+            href="stores.html"
+            class="seeAllBtn"
+            data-i18n="seeAll"
+        >
+
+            <span class="translate-text">
+                Ver tudo
+            </span>
+
+            <span class="material-symbols-rounded">
+                arrow_forward
+            </span>
+
+        </a>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- CONTENEUR AUTOMATIQUE DES LOJAS FIRESTORE -->
+    <!-- ===================================================== -->
 
     <div
         id="officialStoresContainer"
@@ -188,98 +263,192 @@ Lojas Oficiais
     </div>
 
 </section>
-    <span class="material-symbols-rounded">
-        arrow_forward
-    </span>
 
-</a>
 
-</div>
+
+<!-- ========================================================= -->
+<!-- AUTRES SECTIONS -->
+<!-- ========================================================= -->
 
 <div
-id="officialStores"
-class="storesRow">
+    id="sectionsContainer"
+>
 
 </div>
 
-</section>
-<div id="sectionsContainer">
 
-</div>
-<nav
-class="bottomNav">
 
-</nav>
+<!-- ========================================================= -->
+<!-- TOAST -->
+<!-- ========================================================= -->
+
 <div
-id="toastBox">
+    id="toastBox"
+>
 
 </div>
+
+
+
+<!-- ========================================================= -->
+<!-- NAVIGATION BAS -->
+<!-- ========================================================= -->
+
 <nav class="bottomNav">
 
-<div class="navItem active" onclick="location.href='homes.html'">
-<div class="navIcon">
-<span class="material-symbols-rounded">home</span>
-</div>
-<span data-i18n="home">
-Início
-</span>
-</div>
+    <div
+        class="navItem active"
+        onclick="location.href='homes.html'"
+    >
 
-<div class="navItem" onclick="location.href='categories.html'">
-<div class="navIcon">
-<span class="material-symbols-rounded">grid_view</span>
-</div>
-<span data-i18n="categories">
-Categorias
-</span>
-</div>
+        <div class="navIcon">
 
-<div class="navItem" onclick="location.href='cart.html'">
-<div class="navIcon">
-<span class="material-symbols-rounded">shopping_cart</span>
-</div>
-<span data-i18n="cart">
-Carrinho
-</span>
+            <span class="material-symbols-rounded">
+                home
+            </span>
 
-<div id="bottomCartCount" class="bottomBadge">
-0
-</div>
+        </div>
 
-</div>
+        <span data-i18n="home">
+            Início
+        </span>
 
-<div class="navItem" onclick="location.href='favorites.html'">
-<div class="navIcon">
-<span class="material-symbols-rounded">favorite</span>
-</div>
-<span data-i18n="favorites">
-Favoritos
-</span>
+    </div>
 
-</div>
 
-<div class="navItem" onclick="location.href='settings.html'">
-<div class="navIcon">
-<span class="material-symbols-rounded">person</span>
-</div>
-<span data-i18n="account">
-Conta
-</span>
-</div>
+
+    <div
+        class="navItem"
+        onclick="location.href='categories.html'"
+    >
+
+        <div class="navIcon">
+
+            <span class="material-symbols-rounded">
+                grid_view
+            </span>
+
+        </div>
+
+        <span data-i18n="categories">
+            Categorias
+        </span>
+
+    </div>
+
+
+
+    <div
+        class="navItem"
+        onclick="location.href='cart.html'"
+    >
+
+        <div class="navIcon">
+
+            <span class="material-symbols-rounded">
+                shopping_cart
+            </span>
+
+        </div>
+
+        <span data-i18n="cart">
+            Carrinho
+        </span>
+
+
+        <div
+            id="bottomCartCount"
+            class="bottomBadge"
+        >
+            0
+        </div>
+
+    </div>
+
+
+
+    <div
+        class="navItem"
+        onclick="location.href='favorites.html'"
+    >
+
+        <div class="navIcon">
+
+            <span class="material-symbols-rounded">
+                favorite
+            </span>
+
+        </div>
+
+        <span data-i18n="favorites">
+            Favoritos
+        </span>
+
+    </div>
+
+
+
+    <div
+        class="navItem"
+        onclick="location.href='settings.html'"
+    >
+
+        <div class="navIcon">
+
+            <span class="material-symbols-rounded">
+                person
+            </span>
+
+        </div>
+
+        <span data-i18n="account">
+            Conta
+        </span>
+
+    </div>
 
 </nav>
-<!-- Préchargement Product Detail -->
 
-<div id="productDetailPreload" hidden>
 
-<a id="productDetailLink"></a>
+
+<!-- ========================================================= -->
+<!-- PRÉCHARGEMENT PRODUCT DETAIL -->
+<!-- ========================================================= -->
+
+<div
+    id="productDetailPreload"
+    hidden
+>
+
+    <a
+        id="productDetailLink"
+    ></a>
 
 </div>
-<script type="module" src="./js/homes.js"></script>
- <script
+
+
+
+<!-- ========================================================= -->
+<!-- JAVASCRIPT HOME -->
+<!-- ========================================================= -->
+
+<script
     type="module"
-    src="js/official-stores.js"
+    src="./js/homes.js"
 ></script>
+
+
+
+<!-- ========================================================= -->
+<!-- JAVASCRIPT LOJAS OFICIAIS -->
+<!-- ========================================================= -->
+
+<script
+    type="module"
+    src="./js/official-stores.js"
+></script>
+
+
 </body>
 
-</html>
+</html> 
