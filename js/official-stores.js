@@ -1,42 +1,27 @@
- alert("OFFICIAL 1 : début du fichier");
+alert("OFFICIAL 1 : fichier chargé");
 
 import("./firebase.js")
     .then((module) => {
 
         alert(
-            "OFFICIAL 2 : firebase.js chargé ✅\n\n" +
-            "Exports trouvés :\n" +
+            "OFFICIAL 2 : firebase.js chargé\n\n" +
+            "db existe : " +
+            String(!!module.db) +
+            "\n\n" +
+            "auth existe : " +
+            String(!!module.auth) +
+            "\n\nExports :\n" +
             Object.keys(module).join(", ")
         );
-
-        if (module.db) {
-
-            alert(
-                "OFFICIAL 3 : db trouvé ✅"
-            );
-
-        } else {
-
-            alert(
-                "OFFICIAL 3 : db INTROUVABLE ❌"
-            );
-
-        }
 
     })
     .catch((error) => {
 
         alert(
-            "ERREUR FIREBASE ❌\n\n" +
-            "Message :\n" +
-            error.message +
-            "\n\nNom :\n" +
-            error.name
+            "ERREUR IMPORT FIREBASE\n\n" +
+            error.name +
+            "\n\n" +
+            error.message
         );
 
-        console.error(
-            "Erreur import firebase.js :",
-            error
-        );
-
-    });
+    }); 
