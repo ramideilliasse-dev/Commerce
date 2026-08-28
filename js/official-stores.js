@@ -1,30 +1,9 @@
-alert("TEST OFFICIAL : official-stores.js est chargé");
+ import { db } from "./firebase.js";
 
-const container = document.getElementById(
-    "officialStoresContainer"
-);
+alert("TEST FIREBASE 1 : import firebase.js réussi ✅");
 
-if (container) {
-
-    alert(
-        "TEST OFFICIAL : container trouvé ✅"
-    );
-
-    container.innerHTML = `
-        <div style="
-            padding:20px;
-            background:#e8f5e9;
-            color:#1b5e20;
-            font-size:20px;
-        ">
-            TEST OFFICIAL STORES OK
-        </div>
-    `;
-
+if (!db) {
+    alert("TEST FIREBASE 2 : db est introuvable ❌");
 } else {
-
-    alert(
-        "TEST OFFICIAL : container INTROUVABLE ❌"
-    );
-
-} 
+    alert("TEST FIREBASE 2 : db Firebase est disponible ✅");
+}
