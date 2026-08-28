@@ -4,7 +4,7 @@ let firebaseModule;
 
 try {
 
-    firebaseModule = await import("./firebase.js");
+    firebaseModule = await import("../firebase.js");
 
     alert("OFFICIAL 2 : firebase.js chargé");
 
