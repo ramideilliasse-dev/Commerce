@@ -1,6 +1,4 @@
- 
-
-import { db } from "./firebase.js";
+ import { db } from "./firebase.js";
 
 import {
     collection,
@@ -15,36 +13,39 @@ import {
 ========================================================= */
 
 const STORES_COLLECTION = "stores";
-
-/*
- * Nom de la collection des produits.
- *
- * Si votre collection s'appelle "products",
- * laissez cette valeur.
- */
 const PRODUCTS_COLLECTION = "products";
 
 
-/*
- * Conteneur présent dans home.html
- */
+/* =========================================================
+   CONTAINER HOME
+========================================================= */
+
 const container = document.getElementById(
     "officialStoresContainer"
 );
 
 
 /* =========================================================
-   INITIALISATION
+   DÉMARRAGE
 ========================================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
+/*
+ * IMPORTANT :
+ * Le script est déjà placé à la fin de homes.html.
+ * Il n'est donc pas nécessaire d'attendre DOMContentLoaded.
+ */
 
-        loadOfficialStores();
+if (container) {
 
-    }
-);
+    loadOfficialStores();
+
+} else {
+
+    console.error(
+        "officialStoresContainer não encontrado."
+    );
+
+}
 
 
 /* =========================================================
@@ -52,20 +53,6 @@ document.addEventListener(
 ========================================================= */
 
 async function loadOfficialStores() {
-
-    if (!container) {
-
-        console.error(
-            "officialStoresContainer não encontrado."
-        );
-
-        return;
-    }
-
-
-    /* -----------------------------------------------------
-       LOADING
-    ----------------------------------------------------- */
 
     container.innerHTML = `
         <div class="officialStoresLoading">
@@ -77,7 +64,7 @@ async function loadOfficialStores() {
     try {
 
         /* -------------------------------------------------
-           RÉFÉRENCE STORES
+           RÉFÉRENCE FIRESTORE
         ------------------------------------------------- */
 
         const storesRef = collection(
@@ -87,14 +74,10 @@ async function loadOfficialStores() {
 
 
         /* -------------------------------------------------
-           ON RÉCUPÈRE LES LOJAS VISIBLES
+           ON CHARGE UNIQUEMENT LES LOJAS VISIBLES
            
-           IMPORTANT :
-           On filtre seulement "visible" dans Firestore.
-
-           Ensuite "showOfficial" est vérifié en JavaScript.
-           
-           Cela évite les problèmes d'index composite Firestore.
+           PAS DE DEUXIÈME WHERE
+           pour éviter un problème d'index Firestore.
         ------------------------------------------------- */
 
         const storesQuery = query(
@@ -113,26 +96,7 @@ async function loadOfficialStores() {
 
 
         /* -------------------------------------------------
-           NETTOYER LE CONTENEUR
-        ------------------------------------------------- */
-
-        container.innerHTML = "";
-
-
-        /* -------------------------------------------------
-           AUCUNE LOJA
-        ------------------------------------------------- */
-
-        if (snapshot.empty) {
-
-            showEmptyMessage();
-
-            return;
-        }
-
-
-        /* -------------------------------------------------
-           TRANSFORMER LES DOCUMENTS
+           TABLEAU DES LOJAS
         ------------------------------------------------- */
 
         const stores = [];
@@ -146,27 +110,35 @@ async function loadOfficialStores() {
 
 
                 /*
-                 * Seulement les lojas officielles.
+                 * Une Loja officielle doit avoir :
+                 *
+                 * visible = true
+                 * showOfficial = true
                  */
 
                 if (
-                    data.showOfficial !== true
+                    data.showOfficial === true
                 ) {
 
-                    return;
+                    stores.push({
+
+                        id: docSnapshot.id,
+
+                        ...data
+
+                    });
+
                 }
-
-
-                stores.push({
-
-                    id: docSnapshot.id,
-
-                    ...data
-
-                });
 
             }
         );
+
+
+        /* -------------------------------------------------
+           NETTOYER
+        ------------------------------------------------- */
+
+        container.innerHTML = "";
 
 
         /* -------------------------------------------------
@@ -175,7 +147,11 @@ async function loadOfficialStores() {
 
         if (stores.length === 0) {
 
-            showEmptyMessage();
+            container.innerHTML = `
+                <div class="officialStoresEmpty">
+                    Nenhuma loja oficial disponível.
+                </div>
+            `;
 
             return;
         }
@@ -184,10 +160,8 @@ async function loadOfficialStores() {
         /* -------------------------------------------------
            CHARGER LES PRODUITS
            
-           On essaie de récupérer les produits une seule fois.
-           
-           Cela évite de faire une requête Firestore
-           pour chaque loja.
+           Cette partie ne doit JAMAIS empêcher
+           les lojas de s'afficher.
         ------------------------------------------------- */
 
         let products = [];
@@ -222,17 +196,12 @@ async function loadOfficialStores() {
                 }
             );
 
+
         } catch (productError) {
 
-            console.warn(
-                "Não foi possível carregar produtos:",
-                productError
-            );
-
             /*
-             * Ce n'est pas bloquant.
-             *
-             * Les lojas seront quand même affichées.
+             * Si les produits ne peuvent pas être chargés,
+             * les lojas doivent quand même apparaître.
              */
 
             products = [];
@@ -271,9 +240,43 @@ async function loadOfficialStores() {
         );
 
 
-        showErrorMessage(
-            error
-        );
+        container.innerHTML = `
+
+            <div class="officialStoresError">
+
+                Não foi possível carregar as lojas.
+
+                <button
+                    type="button"
+                    class="officialStoresRetry"
+                    id="retryOfficialStores"
+                >
+                    Tentar novamente
+                </button>
+
+            </div>
+
+        `;
+
+
+        const retryButton =
+            document.getElementById(
+                "retryOfficialStores"
+            );
+
+
+        if (retryButton) {
+
+            retryButton.addEventListener(
+                "click",
+                () => {
+
+                    loadOfficialStores();
+
+                }
+            );
+
+        }
 
     }
 
@@ -281,7 +284,7 @@ async function loadOfficialStores() {
 
 
 /* =========================================================
-   COMPTER LES PRODUITS D'UNE LOJA
+   COMPTER LES PRODUITS
 ========================================================= */
 
 function countStoreProducts(
@@ -305,18 +308,18 @@ function countStoreProducts(
         );
 
 
-    /*
-     * On accepte plusieurs noms possibles
-     * pour faciliter la compatibilité avec
-     * votre architecture actuelle.
-     */
-
     const possibleStoreFields = [
+
         "storeId",
+
         "storeID",
+
         "shopId",
+
         "shopID",
+
         "officialStoreId"
+
     ];
 
 
@@ -352,16 +355,6 @@ function countStoreProducts(
 
             }
 
-
-            /*
-             * Certains systèmes utilisent
-             * merchantId + storeId.
-             *
-             * On ne compte pas ici un produit
-             * simplement parce qu'il appartient
-             * à un commerçant.
-             */
-
         }
     );
 
@@ -372,7 +365,7 @@ function countStoreProducts(
 
 
 /* =========================================================
-   CRÉER LA CARTE D'UNE LOJA
+   CRÉER LA CARTE
 ========================================================= */
 
 function renderOfficialStore(
@@ -390,9 +383,9 @@ function renderOfficialStore(
         "officialStoreCard";
 
 
-    /*
-     * ID de la loja
-     */
+    /* -----------------------------------------------------
+       ID
+    ----------------------------------------------------- */
 
     const storeId =
         String(
@@ -400,44 +393,35 @@ function renderOfficialStore(
         );
 
 
-    /*
-     * Nom
-     */
+    /* -----------------------------------------------------
+       NOM
+    ----------------------------------------------------- */
 
     const name =
         store.name ||
         "Loja Oficial";
 
 
-    /*
-     * Catégorie
-     */
-
-    const category =
-        store.category ||
-        "Loja Oficial";
-
-
-    /*
-     * Logo
-     */
+    /* -----------------------------------------------------
+       LOGO
+    ----------------------------------------------------- */
 
     const logo =
         store.logo ||
-        "images/default-store.png";
+        "/images/default-store.png";
 
 
-    /*
-     * Vérification
-     */
+    /* -----------------------------------------------------
+       VÉRIFICATION
+    ----------------------------------------------------- */
 
     const verified =
         store.verified === true;
 
 
-    /* =====================================================
+    /* -----------------------------------------------------
        HTML
-    ===================================================== */
+    ----------------------------------------------------- */
 
     card.innerHTML = `
 
@@ -449,8 +433,8 @@ function renderOfficialStore(
                 alt="${escapeHtml(name)}"
                 loading="lazy"
                 onerror="
-                    this.onerror=null;
-                    this.src='images/default-store.png';
+                    this.onerror = null;
+                    this.src = '/images/default-store.png';
                 "
             >
 
@@ -502,9 +486,9 @@ function renderOfficialStore(
     `;
 
 
-    /* =====================================================
+    /* -----------------------------------------------------
        ACCESSIBILITÉ
-    ===================================================== */
+    ----------------------------------------------------- */
 
     card.setAttribute(
         "role",
@@ -524,9 +508,9 @@ function renderOfficialStore(
     );
 
 
-    /* =====================================================
-       CLIQUER SUR LA LOJA
-    ===================================================== */
+    /* -----------------------------------------------------
+       OUVRIR
+    ----------------------------------------------------- */
 
     card.addEventListener(
         "click",
@@ -540,9 +524,9 @@ function renderOfficialStore(
     );
 
 
-    /* =====================================================
-       OUVRIR AVEC ENTER
-    ===================================================== */
+    /* -----------------------------------------------------
+       ENTER / ESPACE
+    ----------------------------------------------------- */
 
     card.addEventListener(
         "keydown",
@@ -565,9 +549,9 @@ function renderOfficialStore(
     );
 
 
-    /* =====================================================
-       AJOUTER AU CONTENEUR
-    ===================================================== */
+    /* -----------------------------------------------------
+       AJOUTER
+    ----------------------------------------------------- */
 
     container.appendChild(
         card
@@ -577,7 +561,7 @@ function renderOfficialStore(
 
 
 /* =========================================================
-   OUVRIR UNE LOJA
+   OUVRIR LA LOJA
 ========================================================= */
 
 function openOfficialStore(
@@ -586,11 +570,8 @@ function openOfficialStore(
 
     if (!storeId) {
 
-        console.error(
-            "ID da loja não encontrado."
-        );
-
         return;
+
     }
 
 
@@ -603,91 +584,7 @@ function openOfficialStore(
 
 
 /* =========================================================
-   MESSAGE : AUCUNE LOJA
-========================================================= */
-
-function showEmptyMessage() {
-
-    if (!container) {
-        return;
-    }
-
-
-    container.innerHTML = `
-
-        <div class="officialStoresEmpty">
-
-            Nenhuma loja oficial disponível.
-
-        </div>
-
-    `;
-
-}
-
-
-/* =========================================================
-   MESSAGE : ERREUR
-========================================================= */
-
-function showErrorMessage(
-    error
-) {
-
-    if (!container) {
-        return;
-    }
-
-
-    container.innerHTML = `
-
-        <div class="officialStoresError">
-
-            Não foi possível carregar as lojas.
-
-            <button
-                type="button"
-                class="officialStoresRetry"
-                id="retryOfficialStores"
-            >
-                Tentar novamente
-            </button>
-
-        </div>
-
-    `;
-
-
-    const retryButton =
-        document.getElementById(
-            "retryOfficialStores"
-        );
-
-
-    if (retryButton) {
-
-        retryButton.addEventListener(
-            "click",
-            () => {
-
-                loadOfficialStores();
-
-            }
-        );
-
-    }
-
-
-    console.error(
-        "Detalhes do erro:",
-        error
-    );
-
-}
-
-
-/* =========================================================
-   PROTECTION XSS
+   PROTECTION HTML
 ========================================================= */
 
 function escapeHtml(
