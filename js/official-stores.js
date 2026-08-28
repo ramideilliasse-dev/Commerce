@@ -59,27 +59,12 @@ async function loadOfficialStores() {
 
 
         const storesQuery = query(
+    storesRef,
+    where("visible", "==", true)
+);
 
-            storesRef,
-
-            where(
-                "visible",
-                "==",
-                true
-            ),
-
-            where(
-                "showOfficial",
-                "==",
-                true
-            )
-
-        );
-
-
-        const snapshot =
-            await getDocs(storesQuery);
-
+const snapshot =
+    await getDocs(storesQuery);
 
         container.innerHTML = "";
 
@@ -105,24 +90,24 @@ async function loadOfficialStores() {
         ===================================================== */
 
         snapshot.forEach(
-            (docSnapshot) => {
+    (docSnapshot) => {
 
-                const store = {
-
-                    id:
-                        docSnapshot.id,
-
-                    ...docSnapshot.data()
-
-                };
+        const store = {
+            id: docSnapshot.id,
+            ...docSnapshot.data()
+        };
 
 
-                renderOfficialStore(
-                    store
-                );
+        // Ne garder que les lojas officielles
+        if (store.showOfficial !== true) {
+            return;
+        }
 
-            }
-        );
+
+        renderOfficialStore(store);
+
+    }
+);
 
 
     } catch (error) {
