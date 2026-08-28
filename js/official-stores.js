@@ -9,15 +9,14 @@ import {
 
 
 /* =========================================================
-   CONFIGURATION
+   ÉTAPE 1
 ========================================================= */
 
-const STORES_COLLECTION = "stores";
-const PRODUCTS_COLLECTION = "products";
+alert("ÉTAPE 1 : official-stores.js est chargé");
 
 
 /* =========================================================
-   CONTAINER HOME
+   CONTAINER
 ========================================================= */
 
 const container = document.getElementById(
@@ -25,59 +24,93 @@ const container = document.getElementById(
 );
 
 
-/* =========================================================
-   DÉMARRAGE
-========================================================= */
+if (!container) {
 
-/*
- * IMPORTANT :
- * Le script est déjà placé à la fin de homes.html.
- * Il n'est donc pas nécessaire d'attendre DOMContentLoaded.
- */
+    alert(
+        "ÉTAPE 2 : ERREUR ❌\n\n" +
+        "officialStoresContainer est INTROUVABLE dans Home."
+    );
 
-if (container) {
-
-    loadOfficialStores();
-
-} else {
-
-    console.error(
-        "officialStoresContainer não encontrado."
+    throw new Error(
+        "officialStoresContainer introuvable"
     );
 
 }
 
 
+alert(
+    "ÉTAPE 2 : OK ✅\n\n" +
+    "officialStoresContainer a été trouvé."
+);
+
+
 /* =========================================================
-   CHARGER LES LOJAS OFFICIAIS
+   FIREBASE
 ========================================================= */
 
-async function loadOfficialStores() {
+if (!db) {
 
-    container.innerHTML = `
-        <div class="officialStoresLoading">
-            Carregando lojas...
-        </div>
-    `;
+    alert(
+        "ÉTAPE 3 : ERREUR ❌\n\n" +
+        "db Firebase est introuvable."
+    );
 
+    throw new Error(
+        "Firebase db introuvable"
+    );
+
+}
+
+
+alert(
+    "ÉTAPE 3 : OK ✅\n\n" +
+    "Firebase db est disponible."
+);
+
+
+/* =========================================================
+   TEST COLLECTION
+========================================================= */
+
+alert(
+    "ÉTAPE 4 :\n\n" +
+    "Je vais maintenant accéder à la collection stores..."
+);
+
+
+/* =========================================================
+   CHARGEMENT
+========================================================= */
+
+container.innerHTML = `
+    <div class="officialStoresLoading">
+        Carregando lojas...
+    </div>
+`;
+
+
+async function diagnosticStores() {
 
     try {
 
         /* -------------------------------------------------
-           RÉFÉRENCE FIRESTORE
+           COLLECTION
         ------------------------------------------------- */
 
         const storesRef = collection(
             db,
-            STORES_COLLECTION
+            "stores"
+        );
+
+
+        alert(
+            "ÉTAPE 5 : OK ✅\n\n" +
+            "La collection 'stores' a été créée."
         );
 
 
         /* -------------------------------------------------
-           ON CHARGE UNIQUEMENT LES LOJAS VISIBLES
-           
-           PAS DE DEUXIÈME WHERE
-           pour éviter un problème d'index Firestore.
+           QUERY
         ------------------------------------------------- */
 
         const storesQuery = query(
@@ -90,16 +123,60 @@ async function loadOfficialStores() {
         );
 
 
-        const snapshot = await getDocs(
-            storesQuery
+        alert(
+            "ÉTAPE 6 : OK ✅\n\n" +
+            "La requête visible == true est prête.\n\n" +
+            "Je vais interroger Firestore..."
         );
 
 
         /* -------------------------------------------------
-           TABLEAU DES LOJAS
+           FIRESTORE
         ------------------------------------------------- */
 
-        const stores = [];
+        const snapshot =
+            await getDocs(
+                storesQuery
+            );
+
+
+        alert(
+            "ÉTAPE 7 : FIRESTORE RÉPOND ✅\n\n" +
+            "Nombre de documents trouvés : " +
+            snapshot.size
+        );
+
+
+        /* -------------------------------------------------
+           AUCUN DOCUMENT
+        ------------------------------------------------- */
+
+        if (snapshot.empty) {
+
+            alert(
+                "ÉTAPE 8 : PROBLÈME ❌\n\n" +
+                "Firestore ne retourne aucune Loja avec :\n\n" +
+                "visible == true\n\n" +
+                "Vérifiez store_015."
+            );
+
+
+            container.innerHTML = `
+                <div>
+                    Nenhuma loja encontrada.
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        /* -------------------------------------------------
+           PARCOURIR LES LOJAS
+        ------------------------------------------------- */
+
+        let officialCount = 0;
 
 
         snapshot.forEach(
@@ -109,43 +186,194 @@ async function loadOfficialStores() {
                     docSnapshot.data();
 
 
-                /*
-                 * Une Loja officielle doit avoir :
-                 *
-                 * visible = true
-                 * showOfficial = true
-                 */
+                const id =
+                    docSnapshot.id;
+
+
+                alert(
+                    "ÉTAPE 8 : LOJA TROUVÉE ✅\n\n" +
+
+                    "ID : " +
+                    id +
+
+                    "\n\nNAME : " +
+                    String(
+                        data.name
+                    ) +
+
+                    "\n\nvisible : " +
+                    String(
+                        data.visible
+                    ) +
+
+                    "\n\nshowOfficial : " +
+                    String(
+                        data.showOfficial
+                    ) +
+
+                    "\n\nverified : " +
+                    String(
+                        data.verified
+                    ) +
+
+                    "\n\nstatus : " +
+                    String(
+                        data.status
+                    )
+                );
+
+
+                /* -------------------------------------------------
+                   OFFICIAL
+                ------------------------------------------------- */
 
                 if (
-                    data.showOfficial === true
+                    data.showOfficial !== true
                 ) {
 
-                    stores.push({
-
-                        id: docSnapshot.id,
-
-                        ...data
-
-                    });
+                    return;
 
                 }
+
+
+                officialCount++;
+
+
+                /* -------------------------------------------------
+                   CRÉER CARD
+                ------------------------------------------------- */
+
+                const card =
+                    document.createElement(
+                        "article"
+                    );
+
+
+                card.className =
+                    "officialStoreCard";
+
+
+                const name =
+                    data.name ||
+                    "Loja Oficial";
+
+
+                const logo =
+                    data.logo ||
+                    "/images/default-store.png";
+
+
+                const verified =
+                    data.verified === true;
+
+
+                card.innerHTML = `
+
+                    <div
+                        class="officialStoreLogoWrapper"
+                    >
+
+                        <img
+                            class="officialStoreLogo"
+                            src="${escapeHtml(logo)}"
+                            alt="${escapeHtml(name)}"
+                            loading="lazy"
+                            onerror="
+                                this.onerror = null;
+                                this.src = '/images/default-store.png';
+                            "
+                        >
+
+                    </div>
+
+
+                    <h3
+                        class="officialStoreName"
+                    >
+
+                        ${escapeHtml(name)}
+
+                        ${
+                            verified
+                                ? `
+                                    <span
+                                        class="officialVerifiedBadge"
+                                        title="Loja verificada"
+                                    >
+                                        ✓
+                                    </span>
+                                `
+                                : ""
+                        }
+
+                    </h3>
+
+
+                    <span
+                        class="officialStoreVerified"
+                    >
+
+                        ${
+                            verified
+                                ? "Verificado"
+                                : "Loja Oficial"
+                        }
+
+                    </span>
+
+
+                    <p
+                        class="officialStoreProductCount"
+                    >
+
+                        0 produtos
+
+                    </p>
+
+                `;
+
+
+                card.addEventListener(
+                    "click",
+                    () => {
+
+                        window.location.href =
+                            `/brand-store.html?id=${encodeURIComponent(id)}`;
+
+                    }
+                );
+
+
+                container.appendChild(
+                    card
+                );
+
+
+                alert(
+                    "ÉTAPE 9 : CARD CRÉÉE ✅\n\n" +
+                    "La Loja suivante a été ajoutée à Home :\n\n" +
+                    name
+                );
 
             }
         );
 
 
         /* -------------------------------------------------
-           NETTOYER
+           RÉSULTAT FINAL
         ------------------------------------------------- */
 
-        container.innerHTML = "";
+        if (
+            officialCount === 0
+        ) {
 
+            alert(
+                "ÉTAPE 10 : PROBLÈME ❌\n\n" +
+                "Des lojas visibles existent,\n" +
+                "mais aucune n'a :\n\n" +
+                "showOfficial == true"
+            );
 
-        /* -------------------------------------------------
-           AUCUNE LOJA OFFICIELLE
-        ------------------------------------------------- */
-
-        if (stores.length === 0) {
 
             container.innerHTML = `
                 <div class="officialStoresEmpty">
@@ -153,438 +381,53 @@ async function loadOfficialStores() {
                 </div>
             `;
 
+
             return;
-        }
-
-
-        /* -------------------------------------------------
-           CHARGER LES PRODUITS
-           
-           Cette partie ne doit JAMAIS empêcher
-           les lojas de s'afficher.
-        ------------------------------------------------- */
-
-        let products = [];
-
-
-        try {
-
-            const productsRef =
-                collection(
-                    db,
-                    PRODUCTS_COLLECTION
-                );
-
-
-            const productsSnapshot =
-                await getDocs(
-                    productsRef
-                );
-
-
-            productsSnapshot.forEach(
-                (productDoc) => {
-
-                    products.push({
-
-                        id: productDoc.id,
-
-                        ...productDoc.data()
-
-                    });
-
-                }
-            );
-
-
-        } catch (productError) {
-
-            /*
-             * Si les produits ne peuvent pas être chargés,
-             * les lojas doivent quand même apparaître.
-             */
-
-            products = [];
 
         }
 
 
-        /* -------------------------------------------------
-           AFFICHER LES LOJAS
-        ------------------------------------------------- */
-
-        stores.forEach(
-            (store) => {
-
-                const productCount =
-                    countStoreProducts(
-                        store,
-                        products
-                    );
-
-
-                renderOfficialStore(
-                    store,
-                    productCount
-                );
-
-            }
+        alert(
+            "ÉTAPE 10 : SUCCÈS TOTAL ✅\n\n" +
+            "Lojas oficiais affichées : " +
+            officialCount
         );
 
 
     } catch (error) {
 
+        alert(
+            "ERREUR FIRESTORE ❌\n\n" +
+
+            "Message :\n" +
+
+            error.message +
+
+            "\n\nCode :\n" +
+
+            error.code
+        );
+
+
         console.error(
-            "Erro ao carregar lojas oficiais:",
+            "Erreur diagnostic stores :",
             error
         );
 
 
         container.innerHTML = `
-
             <div class="officialStoresError">
-
-                Não foi possível carregar as lojas.
-
-                <button
-                    type="button"
-                    class="officialStoresRetry"
-                    id="retryOfficialStores"
-                >
-                    Tentar novamente
-                </button>
-
+                Erro ao carregar lojas.
             </div>
-
         `;
 
-
-        const retryButton =
-            document.getElementById(
-                "retryOfficialStores"
-            );
-
-
-        if (retryButton) {
-
-            retryButton.addEventListener(
-                "click",
-                () => {
-
-                    loadOfficialStores();
-
-                }
-            );
-
-        }
-
     }
 
 }
 
 
 /* =========================================================
-   COMPTER LES PRODUITS
-========================================================= */
-
-function countStoreProducts(
-    store,
-    products
-) {
-
-    if (
-        !Array.isArray(products) ||
-        products.length === 0
-    ) {
-
-        return 0;
-
-    }
-
-
-    const storeId =
-        String(
-            store.id || ""
-        );
-
-
-    const possibleStoreFields = [
-
-        "storeId",
-
-        "storeID",
-
-        "shopId",
-
-        "shopID",
-
-        "officialStoreId"
-
-    ];
-
-
-    let count = 0;
-
-
-    products.forEach(
-        (product) => {
-
-            for (
-                const field
-                of possibleStoreFields
-            ) {
-
-                if (
-                    product[field] !== undefined &&
-                    product[field] !== null
-                ) {
-
-                    if (
-                        String(
-                            product[field]
-                        ) === storeId
-                    ) {
-
-                        count++;
-
-                        return;
-
-                    }
-
-                }
-
-            }
-
-        }
-    );
-
-
-    return count;
-
-}
-
-
-/* =========================================================
-   CRÉER LA CARTE
-========================================================= */
-
-function renderOfficialStore(
-    store,
-    productCount
-) {
-
-    const card =
-        document.createElement(
-            "article"
-        );
-
-
-    card.className =
-        "officialStoreCard";
-
-
-    /* -----------------------------------------------------
-       ID
-    ----------------------------------------------------- */
-
-    const storeId =
-        String(
-            store.id || ""
-        );
-
-
-    /* -----------------------------------------------------
-       NOM
-    ----------------------------------------------------- */
-
-    const name =
-        store.name ||
-        "Loja Oficial";
-
-
-    /* -----------------------------------------------------
-       LOGO
-    ----------------------------------------------------- */
-
-    const logo =
-        store.logo ||
-        "/images/default-store.png";
-
-
-    /* -----------------------------------------------------
-       VÉRIFICATION
-    ----------------------------------------------------- */
-
-    const verified =
-        store.verified === true;
-
-
-    /* -----------------------------------------------------
-       HTML
-    ----------------------------------------------------- */
-
-    card.innerHTML = `
-
-        <div class="officialStoreLogoWrapper">
-
-            <img
-                class="officialStoreLogo"
-                src="${escapeHtml(logo)}"
-                alt="${escapeHtml(name)}"
-                loading="lazy"
-                onerror="
-                    this.onerror = null;
-                    this.src = '/images/default-store.png';
-                "
-            >
-
-        </div>
-
-
-        <h3 class="officialStoreName">
-
-            ${escapeHtml(name)}
-
-            ${
-                verified
-                    ? `
-                        <span
-                            class="officialVerifiedBadge"
-                            title="Loja verificada"
-                            aria-label="Loja verificada"
-                        >
-                            ✓
-                        </span>
-                    `
-                    : ""
-            }
-
-        </h3>
-
-
-        <span
-            class="officialStoreVerified"
-        >
-
-            ${
-                verified
-                    ? "Verificado"
-                    : "Loja Oficial"
-            }
-
-        </span>
-
-
-        <p
-            class="officialStoreProductCount"
-        >
-
-            ${productCount} produtos
-
-        </p>
-
-    `;
-
-
-    /* -----------------------------------------------------
-       ACCESSIBILITÉ
-    ----------------------------------------------------- */
-
-    card.setAttribute(
-        "role",
-        "button"
-    );
-
-
-    card.setAttribute(
-        "tabindex",
-        "0"
-    );
-
-
-    card.setAttribute(
-        "aria-label",
-        `Abrir ${name}`
-    );
-
-
-    /* -----------------------------------------------------
-       OUVRIR
-    ----------------------------------------------------- */
-
-    card.addEventListener(
-        "click",
-        () => {
-
-            openOfficialStore(
-                storeId
-            );
-
-        }
-    );
-
-
-    /* -----------------------------------------------------
-       ENTER / ESPACE
-    ----------------------------------------------------- */
-
-    card.addEventListener(
-        "keydown",
-        (event) => {
-
-            if (
-                event.key === "Enter" ||
-                event.key === " "
-            ) {
-
-                event.preventDefault();
-
-                openOfficialStore(
-                    storeId
-                );
-
-            }
-
-        }
-    );
-
-
-    /* -----------------------------------------------------
-       AJOUTER
-    ----------------------------------------------------- */
-
-    container.appendChild(
-        card
-    );
-
-}
-
-
-/* =========================================================
-   OUVRIR LA LOJA
-========================================================= */
-
-function openOfficialStore(
-    storeId
-) {
-
-    if (!storeId) {
-
-        return;
-
-    }
-
-
-    window.location.href =
-        `/brand-store.html?id=${encodeURIComponent(
-            storeId
-        )}`;
-
-}
-
-
-/* =========================================================
-   PROTECTION HTML
+   ESCAPE HTML
 ========================================================= */
 
 function escapeHtml(
@@ -619,3 +462,10 @@ function escapeHtml(
         );
 
 }
+
+
+/* =========================================================
+   LANCER
+========================================================= */
+
+diagnosticStores();
