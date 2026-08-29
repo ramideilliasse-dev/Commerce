@@ -1,10 +1,9 @@
  import { db } from "../firebase.js";
 
 import {
-    collection,
-    query,
-    where,
-    getDocs
+
+     doc,
+    getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 
@@ -51,162 +50,91 @@ if (container) {
 /* =========================================================
    CHARGER LES LOJAS OFFICIAIS
 ========================================================= */
-
 async function loadOfficialStores() {
 
-    alert("OFFICIAL TEST 1 : loadOfficialStores() démarré");
-
-    if (!container) {
-        alert("OFFICIAL TEST 2 : container INTROUVABLE ❌");
-        return;
-    }
-
-    alert("OFFICIAL TEST 2 : container trouvé ✅");
-
-    container.innerHTML = `
-        <div class="officialStoresLoading">
-            Carregando lojas...
-        </div>
-    `;
+    alert("DIRECT TEST 1 : démarrage");
 
     try {
 
-        alert("OFFICIAL TEST 3 : accès à collection stores");
-
-        const storesRef = collection(
-            db,
-            STORES_COLLECTION
+        alert(
+            "DIRECT TEST 2\n\n" +
+            "Recherche directe de :\n" +
+            "stores / store_015"
         );
 
-       const storesQuery = query(
-    storesRef,
-    where("visible", "==", true)
-);
+        const storeRef = doc(
+            db,
+            "stores",
+            "store_015"
+        );
 
-const snapshot = await getDocs(
-    storesQuery
-);
-
-alert(
-    "OFFICIAL TEST 5\n\n" +
-    "Firestore répondu ✅\n\n" +
-    "Documents avec visible = true : " +
-    snapshot.size
-);
-
-snapshot.forEach((docSnapshot) => {
-
-    const data = docSnapshot.data();
-
-    alert(
-        "DOCUMENT TROUVÉ\n\n" +
-        "ID : " + docSnapshot.id +
-        "\n\n" +
-        "Nom : " + (data.name || "VIDE") +
-        "\n\n" +
-        "visible : " + data.visible +
-        "\n\n" +
-        "showOfficial : " + data.showOfficial +
-        "\n\n" +
-        "verified : " + data.verified
-    );
-
-});
+        const storeSnapshot = await getDoc(
+            storeRef
+        );
 
         alert(
-            "OFFICIAL TEST 5 : Firestore répondu\n\n" +
-            "Nombre de documents trouvés : " +
-            snapshot.size
+            "DIRECT TEST 3\n\n" +
+            "Firestore répondu ✅\n\n" +
+            "Existe : " +
+            storeSnapshot.exists()
         );
 
-        const stores = [];
-
-        snapshot.forEach((docSnapshot) => {
-
-            const data = docSnapshot.data();
+        if (!storeSnapshot.exists()) {
 
             alert(
-                "OFFICIAL DOCUMENT :\n\n" +
-                "ID : " + docSnapshot.id +
-                "\n\n" +
-                "name : " + data.name +
-                "\n\n" +
-                "visible : " +
-                data.visible +
-                "\n\n" +
-                "showOfficial : " +
-                data.showOfficial +
-                "\n\n" +
-                "verified : " +
-                data.verified
+                "DIRECT TEST 4\n\n" +
+                "store_015 N'EXISTE PAS dans stores ❌"
             );
-
-            if (data.showOfficial === true) {
-
-                stores.push({
-                    id: docSnapshot.id,
-                    ...data
-                });
-
-            }
-
-        });
-
-        alert(
-            "OFFICIAL TEST 6 :\n\n" +
-            "Lojas oficiais trouvées : " +
-            stores.length
-        );
-
-        container.innerHTML = "";
-
-        if (stores.length === 0) {
-
-            container.innerHTML = `
-                <div class="officialStoresEmpty">
-                    Nenhuma loja oficial disponível.
-                </div>
-            `;
 
             return;
         }
 
-        stores.forEach((store) => {
-
-            renderOfficialStore(
-                store,
-                0
-            );
-
-        });
+        const data =
+            storeSnapshot.data();
 
         alert(
-            "OFFICIAL TEST 7 : loja(s) affichée(s) ✅"
+            "DIRECT TEST 4\n\n" +
+            "DOCUMENT TROUVÉ ✅\n\n" +
+
+            "ID : store_015\n\n" +
+
+            "name : " +
+            data.name +
+            "\n\n" +
+
+            "visible : " +
+            data.visible +
+            "\n\n" +
+
+            "showOfficial : " +
+            data.showOfficial +
+            "\n\n" +
+
+            "verified : " +
+            data.verified +
+            "\n\n" +
+
+            "logo : " +
+            data.logo
         );
 
     } catch (error) {
 
         alert(
-            "OFFICIAL ERROR\n\n" +
-            "name: " + error.name +
+            "DIRECT ERROR\n\n" +
+            "name : " +
+            error.name +
             "\n\n" +
-            "code: " + error.code +
+            "code : " +
+            error.code +
             "\n\n" +
-            "message: " + error.message
+            "message : " +
+            error.message
         );
 
-        console.error(
-            "Erro ao carregar lojas oficiais:",
-            error
-        );
-
-        container.innerHTML = `
-            <div class="officialStoresError">
-                Não foi possível carregar as lojas.
-            </div>
-        `;
     }
 }
+
 /* =========================================================
    COMPTER LES PRODUITS
 ========================================================= */
