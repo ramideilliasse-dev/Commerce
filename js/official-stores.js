@@ -5,7 +5,7 @@ import {
     query,
     where,
     getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 
 /* =========================================================
@@ -232,31 +232,38 @@ async function loadOfficialStores() {
         );
 
 
-    } catch (error) {
+} catch (error) {
 
-        console.error(
-            "Erro ao carregar lojas oficiais:",
-            error
-        );
+    alert(
+        "OFFICIAL ERROR\n\n" +
+        "name: " + error.name + "\n\n" +
+        "code: " + error.code + "\n\n" +
+        "message: " + error.message
+    );
+
+    console.error(
+        "Erro ao carregar lojas oficiais:",
+        error
+    );
 
 
-        container.innerHTML = `
+    container.innerHTML = `
 
-            <div class="officialStoresError">
+        <div class="officialStoresError">
 
-                Não foi possível carregar as lojas.
+            Não foi possível carregar as lojas.
 
-                <button
-                    type="button"
-                    class="officialStoresRetry"
-                    id="retryOfficialStores"
-                >
-                    Tentar novamente
-                </button>
+            <button
+                type="button"
+                class="officialStoresRetry"
+                id="retryOfficialStores"
+            >
+                Tentar novamente
+            </button>
 
-            </div>
+        </div>
 
-        `;
+    `;
 
 
         const retryButton =
