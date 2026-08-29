@@ -1,88 +1,529 @@
-import { db } from "../firebase.js";
+ import { db } from "../firebase.js";
 
 import {
-    doc,
-    getDoc
+    collection,
+    getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-alert("DIRECT TEST 1\nFirebase chargé");
 
-const collectionsToTest = [
-    "stores",
-    "officialStores",
-    "store"
-];
+/* =========================================================
+   CONFIGURATION
+========================================================= */
 
-for (const collectionName of collectionsToTest) {
+const OFFICIAL_STORES_COLLECTION = "officialStores";
+
+
+/* =========================================================
+   CONTAINER HOME
+========================================================= */
+
+const container = document.getElementById(
+    "officialStoresContainer"
+);
+
+
+/* =========================================================
+   CHARGER LES LOJAS OFFICIAIS
+========================================================= */
+
+async function loadOfficialStores() {
+
+    alert("OFFICIAL TEST 1\nloadOfficialStores() démarré");
+
+
+    if (!container) {
+
+        alert(
+            "OFFICIAL ERROR\n\n" +
+            "officialStoresContainer introuvable."
+        );
+
+        return;
+    }
+
 
     alert(
-        "DIRECT TEST 2\nRecherche : " +
-        collectionName +
-        "/store_015"
+        "OFFICIAL TEST 2\n" +
+        "Container trouvé ✅"
     );
+
+
+    container.innerHTML = `
+        <div class="officialStoresLoading">
+            Carregando lojas...
+        </div>
+    `;
+
 
     try {
 
-        const ref = doc(
-            db,
-            collectionName,
-            "store_015"
-        );
-
-        const snap = await getDoc(ref);
+        /* -------------------------------------------------
+           COLLECTION
+        ------------------------------------------------- */
 
         alert(
-            "DIRECT TEST 3\n" +
-            collectionName +
-            "/store_015\n\n" +
-            "Existe : " +
-            snap.exists()
+            "OFFICIAL TEST 3\n" +
+            "Lecture de : officialStores"
         );
 
-        if (snap.exists()) {
 
-            const data = snap.data();
+        const storesRef = collection(
+            db,
+            OFFICIAL_STORES_COLLECTION
+        );
 
-            alert(
-                "DIRECT TEST 4\n" +
-                "COLLECTION TROUVÉE : " +
-                collectionName +
-                "\n\n" +
-                "Nom : " +
-                (data.name || "absent") +
-                "\n\n" +
-                "visible : " +
-                data.visible +
-                "\n\n" +
-                "showOfficial : " +
-                data.showOfficial +
-                "\n\n" +
-                "showOfficialBadge : " +
-                data.showOfficialBadge +
-                "\n\n" +
-                "verified : " +
-                data.verified
-            );
 
+        /* -------------------------------------------------
+           RÉCUPÉRER LES DOCUMENTS
+           
+           IMPORTANT :
+           On ne met PAS de where ici.
+
+           Les 86 lojas peuvent avoir des structures
+           légèrement différentes.
+        ------------------------------------------------- */
+
+        const snapshot = await getDocs(
+            storesRef
+        );
+
+
+        alert(
+            "OFFICIAL TEST 4\n" +
+            "Firestore répondu ✅\n\n" +
+            "Documents trouvés : " +
+            snapshot.size
+        );
+
+
+        /* -------------------------------------------------
+           TABLEAU DES LOJAS
+        ------------------------------------------------- */
+
+        const stores = [];
+
+
+        snapshot.forEach(
+            (docSnapshot) => {
+
+                const data =
+                    docSnapshot.data();
+
+
+                /*
+                 * Une Loja apparaît dans Home si :
+                 *
+                 * visible === true
+                 *
+                 * ET
+                 *
+                 * showOfficialBadge === true
+                 *
+                 * OU si le document est configuré
+                 * comme Loja officielle.
+                 */
+
+
+                if (
+                    data.visible === true &&
+                    data.showOfficialBadge === true
+                ) {
+
+                    stores.push({
+
+                        id: docSnapshot.id,
+
+                        ...data
+
+                    });
+
+                }
+
+            }
+        );
+
+
+        alert(
+            "OFFICIAL TEST 5\n" +
+            "Lojas oficiais trouvées : " +
+            stores.length
+        );
+
+
+        /* -------------------------------------------------
+           NETTOYER
+        ------------------------------------------------- */
+
+        container.innerHTML = "";
+
+
+        /* -------------------------------------------------
+           AUCUNE LOJA
+        ------------------------------------------------- */
+
+        if (stores.length === 0) {
+
+            container.innerHTML = `
+                <div class="officialStoresEmpty">
+                    Nenhuma loja oficial disponível.
+                </div>
+            `;
+
+            return;
         }
+
+
+        /* -------------------------------------------------
+           AFFICHER LES LOJAS
+        ------------------------------------------------- */
+
+        stores.forEach(
+            (store) => {
+
+                renderOfficialStore(
+                    store
+                );
+
+            }
+        );
+
 
     } catch (error) {
 
         alert(
-            "DIRECT ERROR\n\n" +
-            "Collection : " +
-            collectionName +
-            "\n\n" +
+            "OFFICIAL ERROR\n\n" +
+
             "name : " +
             error.name +
-            "\n\n" +
-            "code : " +
+
+            "\n\ncode : " +
             error.code +
-            "\n\n" +
-            "message : " +
+
+            "\n\nmessage : " +
             error.message
         );
 
+
+        console.error(
+            "Erro ao carregar lojas oficiais:",
+            error
+        );
+
+
+        container.innerHTML = `
+
+            <div class="officialStoresError">
+
+                Não foi possível carregar as lojas.
+
+                <button
+                    type="button"
+                    class="officialStoresRetry"
+                    id="retryOfficialStores"
+                >
+                    Tentar novamente
+                </button>
+
+            </div>
+
+        `;
+
+
+        const retryButton =
+            document.getElementById(
+                "retryOfficialStores"
+            );
+
+
+        if (retryButton) {
+
+            retryButton.addEventListener(
+                "click",
+                () => {
+
+                    loadOfficialStores();
+
+                }
+            );
+
+        }
+
     }
 
-} 
+}
+
+
+/* =========================================================
+   CRÉER LA CARTE D'UNE LOJA
+========================================================= */
+
+function renderOfficialStore(
+    store
+) {
+
+    const card =
+        document.createElement(
+            "article"
+        );
+
+
+    card.className =
+        "officialStoreCard";
+
+
+    /* -----------------------------------------------------
+       ID
+    ----------------------------------------------------- */
+
+    const storeId =
+        String(
+            store.id || ""
+        );
+
+
+    /* -----------------------------------------------------
+       NOM
+    ----------------------------------------------------- */
+
+    const name =
+        store.name ||
+        "Loja Oficial";
+
+
+    /* -----------------------------------------------------
+       CATÉGORIE
+    ----------------------------------------------------- */
+
+    const category =
+        store.category ||
+        "Loja Oficial";
+
+
+    /* -----------------------------------------------------
+       LOGO
+    ----------------------------------------------------- */
+
+    const logo =
+        store.logo ||
+        "/images/default-store.png";
+
+
+    /* -----------------------------------------------------
+       VÉRIFICATION
+    ----------------------------------------------------- */
+
+    const verified =
+        store.verified === true;
+
+
+    /* =====================================================
+       HTML
+    ===================================================== */
+
+    card.innerHTML = `
+
+        <div class="officialStoreLogoWrapper">
+
+            <img
+                class="officialStoreLogo"
+                src="${escapeHtml(logo)}"
+                alt="${escapeHtml(name)}"
+                loading="lazy"
+                onerror="
+                    this.onerror = null;
+                    this.src = '/images/default-store.png';
+                "
+            >
+
+        </div>
+
+
+        <h3 class="officialStoreName">
+
+            ${escapeHtml(name)}
+
+            ${
+                verified
+                    ? `
+                        <span
+                            class="officialVerifiedBadge"
+                            title="Loja verificada"
+                            aria-label="Loja verificada"
+                        >
+                            ✓
+                        </span>
+                    `
+                    : ""
+            }
+
+        </h3>
+
+
+        <span
+            class="officialStoreVerified"
+        >
+
+            ${
+                verified
+                    ? "Verificado"
+                    : "Loja Oficial"
+            }
+
+        </span>
+
+
+        <p
+            class="officialStoreCategory"
+        >
+
+            ${escapeHtml(category)}
+
+        </p>
+
+    `;
+
+
+    /* =====================================================
+       ACCESSIBILITÉ
+    ===================================================== */
+
+    card.setAttribute(
+        "role",
+        "button"
+    );
+
+
+    card.setAttribute(
+        "tabindex",
+        "0"
+    );
+
+
+    card.setAttribute(
+        "aria-label",
+        `Abrir ${name}`
+    );
+
+
+    /* =====================================================
+       CLIQUER
+    ===================================================== */
+
+    card.addEventListener(
+        "click",
+        () => {
+
+            openOfficialStore(
+                storeId
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       ENTER / ESPACE
+    ===================================================== */
+
+    card.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (
+                event.key === "Enter" ||
+                event.key === " "
+            ) {
+
+                event.preventDefault();
+
+                openOfficialStore(
+                    storeId
+                );
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       AJOUTER AU HOME
+    ===================================================== */
+
+    container.appendChild(
+        card
+    );
+
+}
+
+
+/* =========================================================
+   OUVRIR LA LOJA
+========================================================= */
+
+function openOfficialStore(
+    storeId
+) {
+
+    if (!storeId) {
+
+        alert(
+            "OFFICIAL ERROR\n\n" +
+            "ID da loja não encontrado."
+        );
+
+        return;
+    }
+
+
+    window.location.href =
+        `/brand-store.html?id=${encodeURIComponent(
+            storeId
+        )}`;
+
+}
+
+
+/* =========================================================
+   PROTECTION HTML
+========================================================= */
+
+function escapeHtml(
+    value
+) {
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================================
+   DÉMARRAGE
+========================================================= */
+
+loadOfficialStores();
