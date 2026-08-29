@@ -110,30 +110,14 @@ snapshot.forEach((docSnapshot) => {
 
     if (docSnapshot.id === "store_015") {
 
-        diagnostic =
-            "ID : " + docSnapshot.id +
+    diagnostic =
+        "ID : " +
+        docSnapshot.id +
 
-            "\n\nname : " +
-            data.name +
+        "\n\nCHAMPS DU DOCUMENT :\n\n" +
 
-            "\n\nvisible : " +
-            data.visible +
-
-            "\nType visible : " +
-            typeof data.visible +
-
-            "\n\nshowOfficialBadge : " +
-            data.showOfficialBadge +
-
-            "\nType showOfficialBadge : " +
-            typeof data.showOfficialBadge +
-
-            "\n\nverified : " +
-            data.verified +
-
-            "\nType verified : " +
-            typeof data.verified;
-    }
+        Object.keys(data).join("\n");
+}
 
 
     if (
