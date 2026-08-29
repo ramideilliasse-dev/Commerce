@@ -12,7 +12,7 @@ import {
    CONFIGURATION
 ========================================================= */
 
-const STORES_COLLECTION = "stores";
+const STORES_COLLECTION = "officialStores";
 const PRODUCTS_COLLECTION = "products";
 
 
