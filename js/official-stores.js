@@ -12,7 +12,7 @@ import {
    CONFIGURATION
 ========================================================= */
 
-const STORES_COLLECTION = "officialStores";
+const STORES_COLLECTION = "stores";
 const PRODUCTS_COLLECTION = "products";
 
 
@@ -78,16 +78,35 @@ async function loadOfficialStores() {
             STORES_COLLECTION
         );
 
-        const storesQuery = query(
-            storesRef,
-            where("visible", "==", true)
-        );
+       const snapshot = await getDocs(
+    storesRef
+);
 
-        alert("OFFICIAL TEST 4 : requête Firestore prête");
+alert(
+    "DIAGNOSTIC STORES\n\n" +
+    "Collection : stores\n\n" +
+    "Nombre total de documents : " +
+    snapshot.size
+);
 
-        const snapshot = await getDocs(
-            storesQuery
-        );
+snapshot.forEach((docSnapshot) => {
+
+    const data = docSnapshot.data();
+
+    alert(
+        "DOCUMENT TROUVÉ\n\n" +
+        "ID : " + docSnapshot.id +
+        "\n\n" +
+        "name : " + data.name +
+        "\n\n" +
+        "visible : " + data.visible +
+        "\n\n" +
+        "showOfficial : " + data.showOfficial +
+        "\n\n" +
+        "verified : " + data.verified
+    );
+
+});
 
         alert(
             "OFFICIAL TEST 5 : Firestore répondu\n\n" +
