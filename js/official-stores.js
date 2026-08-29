@@ -102,53 +102,66 @@ async function loadOfficialStores() {
 
         const stores = [];
 
+let diagnostic = "";
 
-        snapshot.forEach(
-            (docSnapshot) => {
+snapshot.forEach((docSnapshot) => {
 
-                const data =
-                    docSnapshot.data();
+    const data = docSnapshot.data();
 
+    if (docSnapshot.id === "store_015") {
 
-                /*
-                 * Une Loja apparaît dans Home si :
-                 *
-                 * visible === true
-                 *
-                 * ET
-                 *
-                 * showOfficialBadge === true
-                 *
-                 * OU si le document est configuré
-                 * comme Loja officielle.
-                 */
+        diagnostic =
+            "ID : " + docSnapshot.id +
 
+            "\n\nname : " +
+            data.name +
 
-                if (
-                    data.visible === true &&
-                    data.showOfficialBadge === true
-                ) {
+            "\n\nvisible : " +
+            data.visible +
 
-                    stores.push({
+            "\nType visible : " +
+            typeof data.visible +
 
-                        id: docSnapshot.id,
+            "\n\nshowOfficialBadge : " +
+            data.showOfficialBadge +
 
-                        ...data
+            "\nType showOfficialBadge : " +
+            typeof data.showOfficialBadge +
 
-                    });
+            "\n\nverified : " +
+            data.verified +
 
-                }
-
-            }
-        );
+            "\nType verified : " +
+            typeof data.verified;
+    }
 
 
-        alert(
-            "OFFICIAL TEST 5\n" +
-            "Lojas oficiais trouvées : " +
-            stores.length
-        );
+    if (
+        data.visible === true &&
+        data.showOfficialBadge === true
+    ) {
 
+        stores.push({
+            id: docSnapshot.id,
+            ...data
+        });
+
+    }
+
+});
+
+
+alert(
+    "STORE_015 DIAGNOSTIC\n\n" +
+    diagnostic
+);
+
+
+alert(
+    "OFFICIAL TEST 5\n" +
+    "Lojas oficiais trouvées : " +
+    stores.length
+);
 
         /* -------------------------------------------------
            NETTOYER
