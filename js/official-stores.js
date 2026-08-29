@@ -247,11 +247,11 @@ function renderOfficialStore(
        LOGO
     ----------------------------------------------------- */
 
-    const logo =
-        store.logo ||
-        "/images/default-store.png";
-
-
+ const logo =
+    typeof store.logo === "string" &&
+    store.logo.trim() !== ""
+        ? store.logo.trim()
+        : "/images/default-store.png";
     /* -----------------------------------------------------
        VÉRIFICATION
     ----------------------------------------------------- */
