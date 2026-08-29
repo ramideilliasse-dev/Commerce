@@ -78,14 +78,19 @@ async function loadOfficialStores() {
             STORES_COLLECTION
         );
 
-       const snapshot = await getDocs(
-    storesRef
+       const storesQuery = query(
+    storesRef,
+    where("visible", "==", true)
+);
+
+const snapshot = await getDocs(
+    storesQuery
 );
 
 alert(
-    "DIAGNOSTIC STORES\n\n" +
-    "Collection : stores\n\n" +
-    "Nombre total de documents : " +
+    "OFFICIAL TEST 5\n\n" +
+    "Firestore répondu ✅\n\n" +
+    "Documents avec visible = true : " +
     snapshot.size
 );
 
@@ -97,7 +102,7 @@ snapshot.forEach((docSnapshot) => {
         "DOCUMENT TROUVÉ\n\n" +
         "ID : " + docSnapshot.id +
         "\n\n" +
-        "name : " + data.name +
+        "Nom : " + (data.name || "VIDE") +
         "\n\n" +
         "visible : " + data.visible +
         "\n\n" +
