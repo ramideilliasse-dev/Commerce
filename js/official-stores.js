@@ -118,7 +118,13 @@ snapshot.forEach((docSnapshot) => {
 
         Object.keys(data).join("\n");
 }
-
+alert(
+    "STATUS STORE_015\n\n" +
+    "status : " +
+    data.status +
+    "\n\nType : " +
+    typeof data.status
+);
 
     if (
         data.visible === true &&
