@@ -28,24 +28,14 @@ const container = document.getElementById(
 
 async function loadOfficialStores() {
 
-    alert("OFFICIAL TEST 1\nloadOfficialStores() démarré");
-
-
     if (!container) {
 
-        alert(
-            "OFFICIAL ERROR\n\n" +
-            "officialStoresContainer introuvable."
+        console.error(
+            "officialStoresContainer não encontrado."
         );
 
         return;
     }
-
-
-    alert(
-        "OFFICIAL TEST 2\n" +
-        "Container trouvé ✅"
-    );
 
 
     container.innerHTML = `
@@ -58,14 +48,8 @@ async function loadOfficialStores() {
     try {
 
         /* -------------------------------------------------
-           COLLECTION
+           COLLECTION FIRESTORE
         ------------------------------------------------- */
-
-        alert(
-            "OFFICIAL TEST 3\n" +
-            "Lecture de : officialStores"
-        );
-
 
         const storesRef = collection(
             db,
@@ -74,13 +58,10 @@ async function loadOfficialStores() {
 
 
         /* -------------------------------------------------
-           RÉCUPÉRER LES DOCUMENTS
+           CHARGER LES 86 LOJAS
            
-           IMPORTANT :
-           On ne met PAS de where ici.
-
-           Les 86 lojas peuvent avoir des structures
-           légèrement différentes.
+           AUCUN WHERE :
+           on filtre ensuite en JavaScript.
         ------------------------------------------------- */
 
         const snapshot = await getDocs(
@@ -88,70 +69,44 @@ async function loadOfficialStores() {
         );
 
 
-        alert(
-            "OFFICIAL TEST 4\n" +
-            "Firestore répondu ✅\n\n" +
-            "Documents trouvés : " +
-            snapshot.size
-        );
-
-
         /* -------------------------------------------------
-           TABLEAU DES LOJAS
+           LOJAS ACTIVES
         ------------------------------------------------- */
 
         const stores = [];
 
-let diagnostic = "";
 
-snapshot.forEach((docSnapshot) => {
+        snapshot.forEach(
+            (docSnapshot) => {
 
-    const data = docSnapshot.data();
-
-    if (docSnapshot.id === "store_015") {
-
-    diagnostic =
-        "ID : " +
-        docSnapshot.id +
-
-        "\n\nCHAMPS DU DOCUMENT :\n\n" +
-
-        Object.keys(data).join("\n");
-}
-alert(
-    "STATUS STORE_015\n\n" +
-    "status : " +
-    data.status +
-    "\n\nType : " +
-    typeof data.status
-);
-
-    if (
-        data.visible === true &&
-        data.showOfficialBadge === true
-    ) {
-
-        stores.push({
-            id: docSnapshot.id,
-            ...data
-        });
-
-    }
-
-});
+                const data =
+                    docSnapshot.data();
 
 
-alert(
-    "STORE_015 DIAGNOSTIC\n\n" +
-    diagnostic
-);
+                /*
+                 * Une loja apparaît dans Home
+                 * si son status est "Active".
+                 *
+                 * Le "A" majuscule est important.
+                 */
 
+                if (
+                    data.status === "Active"
+                ) {
 
-alert(
-    "OFFICIAL TEST 5\n" +
-    "Lojas oficiais trouvées : " +
-    stores.length
-);
+                    stores.push({
+
+                        id: docSnapshot.id,
+
+                        ...data
+
+                    });
+
+                }
+
+            }
+        );
+
 
         /* -------------------------------------------------
            NETTOYER
@@ -161,7 +116,7 @@ alert(
 
 
         /* -------------------------------------------------
-           AUCUNE LOJA
+           AUCUNE LOJA ACTIVE
         ------------------------------------------------- */
 
         if (stores.length === 0) {
@@ -177,7 +132,7 @@ alert(
 
 
         /* -------------------------------------------------
-           AFFICHER LES LOJAS
+           AFFICHER
         ------------------------------------------------- */
 
         stores.forEach(
@@ -192,20 +147,6 @@ alert(
 
 
     } catch (error) {
-
-        alert(
-            "OFFICIAL ERROR\n\n" +
-
-            "name : " +
-            error.name +
-
-            "\n\ncode : " +
-            error.code +
-
-            "\n\nmessage : " +
-            error.message
-        );
-
 
         console.error(
             "Erro ao carregar lojas oficiais:",
@@ -257,7 +198,7 @@ alert(
 
 
 /* =========================================================
-   CRÉER LA CARTE D'UNE LOJA
+   CRÉER LA CARTE
 ========================================================= */
 
 function renderOfficialStore(
@@ -409,7 +350,7 @@ function renderOfficialStore(
 
 
     /* =====================================================
-       CLIQUER
+       CLICK
     ===================================================== */
 
     card.addEventListener(
@@ -469,11 +410,6 @@ function openOfficialStore(
 ) {
 
     if (!storeId) {
-
-        alert(
-            "OFFICIAL ERROR\n\n" +
-            "ID da loja não encontrado."
-        );
 
         return;
     }
