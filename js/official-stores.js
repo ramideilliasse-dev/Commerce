@@ -23,17 +23,15 @@ const container = document.getElementById(
 
 
 /* =========================================================
-   CHARGER LES LOJAS OFICIAIS
+   CHARGER LES LOJAS OFFICIAIS VALIDÉES
 ========================================================= */
 
 async function loadOfficialStores() {
 
     if (!container) {
-
         console.error(
             "officialStoresContainer não encontrado."
         );
-
         return;
     }
 
@@ -47,19 +45,11 @@ async function loadOfficialStores() {
 
     try {
 
-        /* -------------------------------------------------
-           COLLECTION FIRESTORE
-        ------------------------------------------------- */
-
         const storesRef = collection(
             db,
             OFFICIAL_STORES_COLLECTION
         );
 
-
-        /* -------------------------------------------------
-           CHARGER TOUS LES DOCUMENTS
-        ------------------------------------------------- */
 
         const snapshot = await getDocs(
             storesRef
@@ -67,14 +57,10 @@ async function loadOfficialStores() {
 
 
         console.log(
-            "Lojas oficiais encontradas:",
+            "Total de documentos:",
             snapshot.size
         );
 
-
-        /* -------------------------------------------------
-           TABLEAU DES LOJAS
-        ------------------------------------------------- */
 
         const stores = [];
 
@@ -86,28 +72,54 @@ async function loadOfficialStores() {
                     docSnapshot.data();
 
 
-                stores.push({
+                /*
+                 * =================================================
+                 * IMPORTANT :
+                 *
+                 * SEULE UNE LOJA AVEC status === "Active"
+                 * EST AFFICHÉE DANS HOME.
+                 *
+                 * Pending  = cachée
+                 * Blocked  = cachée
+                 * Rejected = cachée
+                 * Active   = affichée
+                 * =================================================
+                 */
 
-                    id: docSnapshot.id,
+                if (
+                    data.status === "Active"
+                ) {
 
-                    ...data
+                    stores.push({
 
-                });
+                        id: docSnapshot.id,
+
+                        ...data
+
+                    });
+
+                }
 
             }
         );
 
 
-        /* -------------------------------------------------
+        console.log(
+            "Lojas aprovadas:",
+            stores.length
+        );
+
+
+        /* =====================================================
            NETTOYER
-        ------------------------------------------------- */
+        ===================================================== */
 
         container.innerHTML = "";
 
 
-        /* -------------------------------------------------
-           AUCUNE LOJA
-        ------------------------------------------------- */
+        /* =====================================================
+           AUCUNE LOJA VALIDÉE
+        ===================================================== */
 
         if (stores.length === 0) {
 
@@ -121,9 +133,9 @@ async function loadOfficialStores() {
         }
 
 
-        /* -------------------------------------------------
-           AFFICHER TOUTES LES LOJAS
-        ------------------------------------------------- */
+        /* =====================================================
+           AFFICHER UNIQUEMENT LES LOJAS VALIDÉES
+        ===================================================== */
 
         stores.forEach(
             (store) => {
@@ -173,11 +185,7 @@ async function loadOfficialStores() {
 
             retryButton.addEventListener(
                 "click",
-                () => {
-
-                    loadOfficialStores();
-
-                }
+                loadOfficialStores
             );
 
         }
@@ -191,9 +199,7 @@ async function loadOfficialStores() {
    CRÉER LA CARTE
 ========================================================= */
 
-function renderOfficialStore(
-    store
-) {
+function renderOfficialStore(store) {
 
     const card =
         document.createElement(
@@ -205,37 +211,21 @@ function renderOfficialStore(
         "officialStoreCard";
 
 
-    /* -----------------------------------------------------
-       ID
-    ----------------------------------------------------- */
-
     const storeId =
         String(
             store.id || ""
         );
 
 
-    /* -----------------------------------------------------
-       NOM
-    ----------------------------------------------------- */
-
     const name =
         store.name ||
         "Loja Oficial";
 
 
-    /* -----------------------------------------------------
-       CATÉGORIE
-    ----------------------------------------------------- */
-
     const category =
         store.category ||
         "Loja Oficial";
 
-
-    /* -----------------------------------------------------
-       LOGO
-    ----------------------------------------------------- */
 
     const logo =
         typeof store.logo === "string" &&
@@ -244,17 +234,9 @@ function renderOfficialStore(
             : "/images/default-store.png";
 
 
-    /* -----------------------------------------------------
-       VÉRIFICATION
-    ----------------------------------------------------- */
-
     const verified =
         store.verified === true;
 
-
-    /* =====================================================
-       HTML
-    ===================================================== */
 
     card.innerHTML = `
 
@@ -295,9 +277,7 @@ function renderOfficialStore(
         </h3>
 
 
-        <span
-            class="officialStoreVerified"
-        >
+        <span class="officialStoreVerified">
 
             ${
                 verified
@@ -308,9 +288,7 @@ function renderOfficialStore(
         </span>
 
 
-        <p
-            class="officialStoreCategory"
-        >
+        <p class="officialStoreCategory">
 
             ${escapeHtml(category)}
 
@@ -318,10 +296,6 @@ function renderOfficialStore(
 
     `;
 
-
-    /* =====================================================
-       ACCESSIBILITÉ
-    ===================================================== */
 
     card.setAttribute(
         "role",
@@ -341,10 +315,6 @@ function renderOfficialStore(
     );
 
 
-    /* =====================================================
-       CLICK
-    ===================================================== */
-
     card.addEventListener(
         "click",
         () => {
@@ -356,10 +326,6 @@ function renderOfficialStore(
         }
     );
 
-
-    /* =====================================================
-       ENTER / ESPACE
-    ===================================================== */
 
     card.addEventListener(
         "keydown",
@@ -382,10 +348,6 @@ function renderOfficialStore(
     );
 
 
-    /* =====================================================
-       AJOUTER AU HOME
-    ===================================================== */
-
     container.appendChild(
         card
     );
@@ -397,12 +359,9 @@ function renderOfficialStore(
    OUVRIR LA LOJA
 ========================================================= */
 
-function openOfficialStore(
-    storeId
-) {
+function openOfficialStore(storeId) {
 
     if (!storeId) {
-
         return;
     }
 
@@ -419,9 +378,7 @@ function openOfficialStore(
    PROTECTION HTML
 ========================================================= */
 
-function escapeHtml(
-    value
-) {
+function escapeHtml(value) {
 
     return String(value)
 
