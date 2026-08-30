@@ -1,0 +1,1127 @@
+ /* =========================================================
+   TOMA ADMIN — OFFICIAL STORES
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #f5f6f8;
+    color: #111;
+}
+
+
+/* =========================================================
+   APP
+========================================================= */
+
+.officialStoresAdminApp {
+    min-height: 100vh;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.officialStoresHeader {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 18px 24px;
+
+    background: #111;
+    color: #fff;
+
+    box-shadow:
+        0 4px 20px rgba(0,0,0,.12);
+}
+
+.officialStoresHeaderLeft {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.officialStoresHeaderLeft h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.officialStoresHeaderLeft p {
+    margin: 4px 0 0;
+    color: #aaa;
+    font-size: 13px;
+}
+
+.backButton {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #222;
+    color: #fff;
+
+    text-decoration: none;
+
+    font-size: 22px;
+}
+
+.backButton:hover {
+    background: #333;
+}
+
+.headerActionButton {
+    border: 1px solid #444;
+
+    background: #222;
+    color: #fff;
+
+    padding: 10px 15px;
+
+    border-radius: 9px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+}
+
+.headerActionButton:hover {
+    background: #333;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.officialStoresMain {
+    width: min(1400px, calc(100% - 30px));
+
+    margin: 0 auto;
+
+    padding: 25px 0 60px;
+}
+
+
+/* =========================================================
+   STATS
+========================================================= */
+
+.officialStoresStats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 15px;
+
+    margin-bottom: 22px;
+}
+
+.officialStoreStatCard {
+    background: #fff;
+
+    border: 1px solid #e7e7e7;
+
+    border-radius: 14px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 3px 15px rgba(0,0,0,.04);
+}
+
+.officialStoreStatCard span {
+    display: block;
+
+    color: #777;
+
+    font-size: 13px;
+
+    margin-bottom: 8px;
+}
+
+.officialStoreStatCard strong {
+    display: block;
+
+    font-size: 28px;
+}
+
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.officialStoresToolbar {
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    margin-bottom: 20px;
+}
+
+.officialStoresSearchBox {
+    flex: 1;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    background: #fff;
+
+    border: 1px solid #ddd;
+
+    border-radius: 11px;
+
+    padding: 0 14px;
+}
+
+.officialStoresSearchBox span {
+    color: #777;
+}
+
+.officialStoresSearchBox input {
+    width: 100%;
+
+    border: 0;
+    outline: 0;
+
+    padding: 13px 0;
+
+    background: transparent;
+
+    font-size: 14px;
+}
+
+.officialStoresFilterBox {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    background: #fff;
+
+    border: 1px solid #ddd;
+
+    border-radius: 11px;
+
+    padding: 8px 12px;
+}
+
+.officialStoresFilterBox label {
+    color: #777;
+
+    font-size: 13px;
+}
+
+.officialStoresFilterBox select {
+    border: 0;
+    outline: 0;
+
+    background: transparent;
+
+    font-weight: 600;
+
+    padding: 5px;
+}
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+.officialStoresMessage {
+    padding: 13px 15px;
+
+    margin-bottom: 18px;
+
+    background: #fff3cd;
+
+    border: 1px solid #ffe69c;
+
+    border-radius: 10px;
+
+    color: #664d03;
+}
+
+.hidden {
+    display: none !important;
+}
+
+
+/* =========================================================
+   LOADER
+========================================================= */
+
+.officialStoresLoader {
+    min-height: 250px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #777;
+}
+
+.loaderSpinner {
+    width: 40px;
+    height: 40px;
+
+    border: 4px solid #ddd;
+
+    border-top-color: #111;
+
+    border-radius: 50%;
+
+    animation:
+        officialStoreSpin
+        .8s linear infinite;
+}
+
+@keyframes officialStoreSpin {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+/* =========================================================
+   LISTE
+========================================================= */
+
+.officialStoresList {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 18px;
+}
+
+
+/* =========================================================
+   STORE CARD
+========================================================= */
+
+.officialStoreAdminCard {
+    background: #fff;
+
+    border: 1px solid #e5e5e5;
+
+    border-radius: 16px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 4px 18px rgba(0,0,0,.05);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+.officialStoreAdminCard:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,.08);
+}
+
+
+/* =========================================================
+   CARD IMAGE
+========================================================= */
+
+.officialStoreAdminCardImage {
+    height: 150px;
+
+    background: #eee;
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+.officialStoreAdminCardImage img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+}
+
+.officialStoreAdminCardImageFallback {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 45px;
+
+    color: #999;
+}
+
+
+/* =========================================================
+   STATUS BADGE
+========================================================= */
+
+.storeStatusBadge {
+    position: absolute;
+
+    top: 12px;
+    right: 12px;
+
+    padding: 6px 10px;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    background: #fff;
+
+    box-shadow:
+        0 2px 8px rgba(0,0,0,.12);
+}
+
+.storeStatusBadge.active {
+    color: #146c43;
+    background: #d1e7dd;
+}
+
+.storeStatusBadge.pending {
+    color: #664d03;
+    background: #fff3cd;
+}
+
+.storeStatusBadge.blocked {
+    color: #842029;
+    background: #f8d7da;
+}
+
+.storeStatusBadge.rejected {
+    color: #842029;
+    background: #f8d7da;
+}
+
+
+/* =========================================================
+   CARD BODY
+========================================================= */
+
+.officialStoreAdminCardBody {
+    padding: 16px;
+}
+
+.officialStoreAdminCardBody h3 {
+    margin: 0 0 6px;
+
+    font-size: 17px;
+}
+
+.officialStoreAdminCardBody p {
+    margin: 4px 0;
+
+    color: #777;
+
+    font-size: 13px;
+}
+
+.storeIdText {
+    color: #999 !important;
+
+    font-family: monospace;
+
+    font-size: 11px !important;
+}
+
+
+/* =========================================================
+   VERIFIED
+========================================================= */
+
+.storeVerified {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    margin-top: 9px;
+
+    padding: 5px 9px;
+
+    border-radius: 7px;
+
+    background: #f0f0f0;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+.storeVerified.yes {
+    background: #e7f1ff;
+}
+
+
+/* =========================================================
+   CARD FOOTER
+========================================================= */
+
+.officialStoreAdminCardFooter {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    padding: 13px 16px;
+
+    border-top: 1px solid #eee;
+}
+
+.editStoreButton {
+    flex: 1;
+
+    border: 0;
+
+    border-radius: 9px;
+
+    padding: 11px 14px;
+
+    background: #111;
+    color: #fff;
+
+    cursor: pointer;
+
+    font-weight: 700;
+}
+
+.editStoreButton:hover {
+    background: #292929;
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.officialStoresEmpty {
+    min-height: 300px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    color: #777;
+}
+
+.emptyIcon {
+    font-size: 50px;
+
+    margin-bottom: 10px;
+}
+
+.officialStoresEmpty h2 {
+    margin: 0 0 5px;
+
+    color: #222;
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.officialStoreModal {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 1000;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+}
+
+.officialStoreModalOverlay {
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        rgba(0,0,0,.65);
+}
+
+.officialStoreModalContent {
+    position: relative;
+
+    width: min(850px, 100%);
+
+    max-height: 92vh;
+
+    overflow-y: auto;
+
+    background: #fff;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 20px 70px rgba(0,0,0,.3);
+}
+
+
+/* =========================================================
+   MODAL HEADER
+========================================================= */
+
+.officialStoreModalHeader {
+    position: sticky;
+
+    top: 0;
+
+    z-index: 5;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 20px 22px;
+
+    background: #fff;
+
+    border-bottom: 1px solid #eee;
+}
+
+.modalEyebrow {
+    display: block;
+
+    color: #888;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 4px;
+}
+
+.officialStoreModalHeader h2 {
+    margin: 0;
+
+    font-size: 21px;
+}
+
+.modalCloseButton {
+    width: 40px;
+    height: 40px;
+
+    border: 0;
+
+    border-radius: 9px;
+
+    background: #f1f1f1;
+
+    font-size: 25px;
+
+    cursor: pointer;
+}
+
+.modalCloseButton:hover {
+    background: #e5e5e5;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.officialStoreForm {
+    padding: 0 22px 22px;
+}
+
+.formSection {
+    padding: 24px 0;
+
+    border-bottom: 1px solid #eee;
+}
+
+.formSectionHeader {
+    margin-bottom: 18px;
+}
+
+.formSectionHeader h3 {
+    margin: 0 0 5px;
+
+    font-size: 16px;
+}
+
+.formSectionHeader p {
+    margin: 0;
+
+    color: #777;
+
+    font-size: 12px;
+}
+
+.formGroup {
+    margin-bottom: 16px;
+}
+
+.formGroup:last-child {
+    margin-bottom: 0;
+}
+
+.formGroup label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    color: #444;
+}
+
+.formGroup input,
+.formGroup textarea,
+.formGroup select {
+    width: 100%;
+
+    border: 1px solid #dcdcdc;
+
+    border-radius: 9px;
+
+    background: #fff;
+
+    padding: 12px;
+
+    outline: none;
+
+    font: inherit;
+
+    font-size: 14px;
+}
+
+.formGroup textarea {
+    resize: vertical;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus,
+.formGroup select:focus {
+    border-color: #111;
+
+    box-shadow:
+        0 0 0 3px rgba(0,0,0,.06);
+}
+
+.formGroup input[readonly] {
+    background: #f5f5f5;
+
+    color: #777;
+}
+
+.formGrid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0,1fr));
+
+    gap: 15px;
+}
+
+
+/* =========================================================
+   IMAGE FIELDS
+========================================================= */
+
+.imageField {
+    display: grid;
+
+    grid-template-columns: 120px 1fr;
+
+    gap: 15px;
+
+    align-items: center;
+
+    margin-bottom: 18px;
+}
+
+.imageField:last-child {
+    margin-bottom: 0;
+}
+
+.storeImagePreview {
+    width: 120px;
+    height: 120px;
+
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    background: #f1f1f1;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #999;
+
+    font-size: 12px;
+}
+
+.storeImagePreview img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+}
+
+.storeBannerPreview {
+    width: 120px;
+    height: 75px;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+    background: #f1f1f1;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #999;
+
+    font-size: 12px;
+}
+
+.storeBannerPreview img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.imageFieldControls {
+    min-width: 0;
+}
+
+.imageFieldControls label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   VALIDATION NOTICE
+========================================================= */
+
+.validationNotice {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 10px;
+
+    padding: 12px;
+
+    border-radius: 9px;
+
+    background: #f5f5f5;
+}
+
+.validationNotice span {
+    font-size: 18px;
+}
+
+.validationNotice p {
+    margin: 0;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+
+    color: #555;
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.fieldError {
+    margin-top: 7px;
+
+    color: #b02a37;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   FORM ACTIONS
+========================================================= */
+
+.officialStoreFormActions {
+    position: sticky;
+
+    bottom: 0;
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    padding-top: 18px;
+
+    background: #fff;
+}
+
+.secondaryButton,
+.primaryButton {
+    border: 0;
+
+    border-radius: 9px;
+
+    padding: 12px 18px;
+
+    cursor: pointer;
+
+    font-weight: 700;
+}
+
+.secondaryButton {
+    background: #eee;
+
+    color: #222;
+}
+
+.secondaryButton:hover {
+    background: #ddd;
+}
+
+.primaryButton {
+    background: #111;
+
+    color: #fff;
+}
+
+.primaryButton:hover {
+    background: #292929;
+}
+
+.primaryButton:disabled {
+    opacity: .6;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.officialStoreToast {
+    position: fixed;
+
+    left: 50%;
+    bottom: 25px;
+
+    z-index: 2000;
+
+    transform:
+        translate(-50%, 20px);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    padding: 13px 18px;
+
+    border-radius: 10px;
+
+    background: #111;
+
+    color: #fff;
+
+    box-shadow:
+        0 8px 30px rgba(0,0,0,.2);
+
+    transition:
+        opacity .2s ease,
+        transform .2s ease;
+}
+
+.officialStoreToast.show {
+    opacity: 1;
+
+    transform:
+        translate(-50%, 0);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1000px) {
+
+    .officialStoresList {
+        grid-template-columns:
+            repeat(2, minmax(0,1fr));
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .officialStoresHeader {
+        padding: 15px;
+    }
+
+    .officialStoresHeaderLeft h1 {
+        font-size: 18px;
+    }
+
+    .officialStoresHeaderLeft p {
+        font-size: 11px;
+    }
+
+    .officialStoresMain {
+        width: min(100% - 20px, 1400px);
+
+        padding-top: 15px;
+    }
+
+    .officialStoresStats {
+        grid-template-columns:
+            repeat(2, minmax(0,1fr));
+    }
+
+    .officialStoresToolbar {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+    .officialStoresFilterBox {
+        justify-content: space-between;
+    }
+
+    .officialStoresList {
+        grid-template-columns: 1fr;
+    }
+
+    .formGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .imageField {
+        grid-template-columns: 90px 1fr;
+    }
+
+    .storeImagePreview {
+        width: 90px;
+        height: 90px;
+    }
+
+    .storeBannerPreview {
+        width: 90px;
+        height: 60px;
+    }
+
+    .officialStoreModal {
+        padding: 8px;
+    }
+
+    .officialStoreModalContent {
+        max-height: 96vh;
+
+        border-radius: 13px;
+    }
+
+    .officialStoreForm {
+        padding:
+            0 15px 15px;
+    }
+
+    .officialStoreModalHeader {
+        padding: 16px;
+    }
+
+    .officialStoreFormActions {
+        flex-direction: column;
+    }
+
+    .secondaryButton,
+    .primaryButton {
+        width: 100%;
+    }
+
+}
