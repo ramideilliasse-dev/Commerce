@@ -23,7 +23,7 @@ const container = document.getElementById(
 
 
 /* =========================================================
-   CHARGER LES LOJAS OFFICIAIS
+   CHARGER LES LOJAS OFICIAIS
 ========================================================= */
 
 async function loadOfficialStores() {
@@ -58,10 +58,7 @@ async function loadOfficialStores() {
 
 
         /* -------------------------------------------------
-           CHARGER LES 86 LOJAS
-           
-           AUCUN WHERE :
-           on filtre ensuite en JavaScript.
+           CHARGER TOUS LES DOCUMENTS
         ------------------------------------------------- */
 
         const snapshot = await getDocs(
@@ -69,8 +66,14 @@ async function loadOfficialStores() {
         );
 
 
+        console.log(
+            "Lojas oficiais encontradas:",
+            snapshot.size
+        );
+
+
         /* -------------------------------------------------
-           LOJAS ACTIVES
+           TABLEAU DES LOJAS
         ------------------------------------------------- */
 
         const stores = [];
@@ -83,26 +86,13 @@ async function loadOfficialStores() {
                     docSnapshot.data();
 
 
-                /*
-                 * Une loja apparaît dans Home
-                 * si son status est "Active".
-                 *
-                 * Le "A" majuscule est important.
-                 */
+                stores.push({
 
-                if (
-                    data.status === "Active"
-                ) {
+                    id: docSnapshot.id,
 
-                    stores.push({
+                    ...data
 
-                        id: docSnapshot.id,
-
-                        ...data
-
-                    });
-
-                }
+                });
 
             }
         );
@@ -116,7 +106,7 @@ async function loadOfficialStores() {
 
 
         /* -------------------------------------------------
-           AUCUNE LOJA ACTIVE
+           AUCUNE LOJA
         ------------------------------------------------- */
 
         if (stores.length === 0) {
@@ -132,7 +122,7 @@ async function loadOfficialStores() {
 
 
         /* -------------------------------------------------
-           AFFICHER
+           AFFICHER TOUTES LES LOJAS
         ------------------------------------------------- */
 
         stores.forEach(
@@ -247,11 +237,13 @@ function renderOfficialStore(
        LOGO
     ----------------------------------------------------- */
 
- const logo =
-    typeof store.logo === "string" &&
-    store.logo.trim() !== ""
-        ? store.logo.trim()
-        : "/images/default-store.png";
+    const logo =
+        typeof store.logo === "string" &&
+        store.logo.trim() !== ""
+            ? store.logo.trim()
+            : "/images/default-store.png";
+
+
     /* -----------------------------------------------------
        VÉRIFICATION
     ----------------------------------------------------- */
