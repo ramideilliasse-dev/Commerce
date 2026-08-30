@@ -502,3 +502,666 @@ function normalizeStore(
     };
 
 }
+/* =========================================================
+   VÉRIFICATION DU COMPTE ADMIN
+========================================================= */
+
+async function verifyAdminAccess() {
+
+    try {
+
+        /*
+         * Attendre que Firebase Auth soit prêt.
+         */
+        if (
+            authReady &&
+            typeof authReady.then === "function"
+        ) {
+
+            await authReady;
+
+        }
+
+
+        /*
+         * Vérifier l'utilisateur connecté.
+         */
+        const currentUser =
+            auth.currentUser;
+
+
+        if (!currentUser) {
+
+            alert(
+                "ACCES REFUSÉ\n\n" +
+                "Aucun administrateur connecté."
+            );
+
+            window.location.href =
+                "login.html";
+
+            return false;
+
+        }
+
+
+        /*
+         * Charger le document utilisateur.
+         */
+        const userRef =
+            doc(
+                db,
+                USERS_COLLECTION,
+                currentUser.uid
+            );
+
+
+        const userSnapshot =
+            await getDoc(
+                userRef
+            );
+
+
+        if (!userSnapshot.exists()) {
+
+            alert(
+                "ACCES REFUSÉ\n\n" +
+                "Profil administrateur introuvable."
+            );
+
+            window.location.href =
+                "login.html";
+
+            return false;
+
+        }
+
+
+        const userData =
+            userSnapshot.data();
+
+
+        const role =
+            userData.role;
+
+
+        /*
+         * Seuls ces deux rôles peuvent modifier
+         * les Lojas Oficiais.
+         */
+        if (
+            role !== "admin" &&
+            role !== "superadmin"
+        ) {
+
+            alert(
+                "ACCES REFUSÉ\n\n" +
+                "Cette page est réservée aux administrateurs."
+            );
+
+            window.location.href =
+                "index.html";
+
+            return false;
+
+        }
+
+
+        console.log(
+            "ADMIN ACCESS OK :",
+            role
+        );
+
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "Erreur vérification admin :",
+            error
+        );
+
+
+        alert(
+            "ERREUR ADMIN\n\n" +
+            "Code : " +
+            (error.code || "inconnu") +
+            "\n\n" +
+            error.message
+        );
+
+
+        return false;
+
+    }
+
+}
+
+
+/* =========================================================
+   CHARGER TOUTES LES LOJAS OFFICIELLES
+========================================================= */
+
+async function loadOfficialStoresAdmin() {
+
+    if (!storesContainer) {
+
+        console.error(
+            "storesContainer introuvable."
+        );
+
+        return;
+
+    }
+
+
+    showLoading(true);
+
+
+    if (emptyMessage) {
+
+        emptyMessage.style.display =
+            "none";
+
+    }
+
+
+    storesContainer.innerHTML = "";
+
+
+    try {
+
+        console.log(
+            "OFFICIAL ADMIN : chargement des lojas..."
+        );
+
+
+        /*
+         * Référence Firestore.
+         */
+        const storesRef =
+            collection(
+                db,
+                OFFICIAL_STORES_COLLECTION
+            );
+
+
+        /*
+         * IMPORTANT :
+         *
+         * Aucun WHERE ici.
+         *
+         * On veut récupérer les 86 documents.
+         *
+         * Le statut sera affiché dans
+         * l'administration.
+         */
+        const snapshot =
+            await getDocs(
+                storesRef
+            );
+
+
+        console.log(
+            "OFFICIAL ADMIN : documents trouvés =",
+            snapshot.size
+        );
+
+
+        /*
+         * Tableau global.
+         */
+        allStores = [];
+
+
+        snapshot.forEach(
+            (documentSnapshot) => {
+
+                const store =
+                    normalizeStore(
+                        documentSnapshot
+                    );
+
+
+                allStores.push(
+                    store
+                );
+
+            }
+        );
+
+
+        /*
+         * Trier par nom.
+         */
+        allStores.sort(
+            (a, b) => {
+
+                return String(
+                    a.name
+                ).localeCompare(
+                    String(b.name),
+                    "pt"
+                );
+
+            }
+        );
+
+
+        /*
+         * Copier dans le tableau filtré.
+         */
+        filteredStores =
+            [...allStores];
+
+
+        /*
+         * Afficher le nombre.
+         */
+        updateStoresCount();
+
+
+        /*
+         * Afficher les lojas.
+         */
+        renderStores();
+
+
+    } catch (error) {
+
+        console.error(
+            "Erreur chargement lojas:",
+            error
+        );
+
+
+        storesContainer.innerHTML = `
+
+            <div class="officialStoresError">
+
+                <strong>
+                    Não foi possível carregar as lojas.
+                </strong>
+
+                <p>
+                    ${
+                        escapeHtml(
+                            error.message ||
+                            "Erro desconhecido"
+                        )
+                    }
+                </p>
+
+                <button
+                    type="button"
+                    id="retryStoresButton"
+                    class="retryButton"
+                >
+                    Tentar novamente
+                </button>
+
+            </div>
+
+        `;
+
+
+        const retryButton =
+            document.getElementById(
+                "retryStoresButton"
+            );
+
+
+        if (retryButton) {
+
+            retryButton.addEventListener(
+                "click",
+                loadOfficialStoresAdmin
+            );
+
+        }
+
+    }
+
+
+    showLoading(false);
+
+}
+
+
+/* =========================================================
+   METTRE À JOUR LE COMPTEUR
+========================================================= */
+
+function updateStoresCount() {
+
+    if (!storesCount) {
+
+        return;
+
+    }
+
+
+    storesCount.textContent =
+        filteredStores.length +
+        " / " +
+        allStores.length +
+        " lojas";
+
+}
+
+
+/* =========================================================
+   AFFICHER LES LOJAS
+========================================================= */
+
+function renderStores() {
+
+    if (!storesContainer) {
+
+        return;
+
+    }
+
+
+    storesContainer.innerHTML = "";
+
+
+    if (
+        !filteredStores ||
+        filteredStores.length === 0
+    ) {
+
+        if (emptyMessage) {
+
+            emptyMessage.style.display =
+                "block";
+
+        }
+
+        return;
+
+    }
+
+
+    if (emptyMessage) {
+
+        emptyMessage.style.display =
+            "none";
+
+    }
+
+
+    /*
+     * Créer chaque ligne.
+     */
+    filteredStores.forEach(
+        (store) => {
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+
+            row.className =
+                "officialStoreAdminRow";
+
+
+            const logo =
+                store.logo ||
+                "/images/default-store.png";
+
+
+            const status =
+                store.status ||
+                "Pending";
+
+
+            const verified =
+                store.verified === true;
+
+
+            row.innerHTML = `
+
+                <div class="storeAdminLogo">
+
+                    <img
+                        src="${escapeHtml(logo)}"
+                        alt="${escapeHtml(store.name)}"
+                        loading="lazy"
+                        onerror="
+                            this.onerror = null;
+                            this.src = '/images/default-store.png';
+                        "
+                    >
+
+                </div>
+
+
+                <div class="storeAdminMain">
+
+                    <strong class="storeAdminName">
+
+                        ${escapeHtml(
+                            store.name
+                        )}
+
+                        ${
+                            verified
+                                ? `
+                                    <span
+                                        class="storeVerifiedBadge"
+                                        title="Verificado"
+                                    >
+                                        ✓
+                                    </span>
+                                `
+                                : ""
+                        }
+
+                    </strong>
+
+
+                    <span class="storeAdminCategory">
+
+                        ${
+                            escapeHtml(
+                                store.category ||
+                                "Sem categoria"
+                            )
+                        }
+
+                    </span>
+
+
+                    <span class="storeAdminId">
+
+                        ID:
+                        ${escapeHtml(
+                            store.id
+                        )}
+
+                    </span>
+
+                </div>
+
+
+                <div class="storeAdminStatus">
+
+                    <span
+                        class="statusBadge ${getStatusClass(status)}"
+                    >
+
+                        ${escapeHtml(
+                            getStatusLabel(status)
+                        )}
+
+                    </span>
+
+                </div>
+
+
+                <div class="storeAdminActions">
+
+                    <button
+                        type="button"
+                        class="editStoreButton"
+                        data-store-id="${escapeHtml(
+                            store.id
+                        )}"
+                    >
+
+                        ✏️ Editar
+
+                    </button>
+
+                </div>
+
+            `;
+
+
+            storesContainer.appendChild(
+                row
+            );
+
+        }
+    );
+
+
+    /*
+     * Ajouter les événements après création.
+     */
+    const editButtons =
+        storesContainer.querySelectorAll(
+            ".editStoreButton"
+        );
+
+
+    editButtons.forEach(
+        (button) => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const storeId =
+                        button.dataset.storeId;
+
+
+                    openStoreEditor(
+                        storeId
+                    );
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   RECHERCHE DES LOJAS
+========================================================= */
+
+function filterStores() {
+
+    const search =
+        searchInput
+            ? searchInput.value
+                .trim()
+                .toLowerCase()
+            : "";
+
+
+    const selectedStatus =
+        statusFilter
+            ? statusFilter.value
+            : "all";
+
+
+    filteredStores =
+        allStores.filter(
+            (store) => {
+
+                /*
+                 * Recherche par :
+                 *
+                 * nom
+                 * catégorie
+                 * slug
+                 * ID
+                 */
+                const searchableText =
+                    [
+
+                        store.name,
+
+                        store.category,
+
+                        store.slug,
+
+                        store.id
+
+                    ]
+
+                    .join(" ")
+                    .toLowerCase();
+
+
+                const matchesSearch =
+                    !search ||
+                    searchableText.includes(
+                        search
+                    );
+
+
+                /*
+                 * Filtre statut.
+                 */
+                const matchesStatus =
+                    selectedStatus === "all" ||
+                    store.status ===
+                        selectedStatus;
+
+
+                return (
+                    matchesSearch &&
+                    matchesStatus
+                );
+
+            }
+        );
+
+
+    updateStoresCount();
+
+    renderStores();
+
+}
+
+
+/* =========================================================
+   ÉVÉNEMENTS RECHERCHE
+========================================================= */
+
+if (searchInput) {
+
+    searchInput.addEventListener(
+        "input",
+        filterStores
+    );
+
+}
+
+
+if (statusFilter) {
+
+    statusFilter.addEventListener(
+        "change",
+        filterStores
+    );
+
+}
