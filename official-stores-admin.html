@@ -1,0 +1,930 @@
+ <!DOCTYPE html>
+<html lang="pt">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#111111"
+    >
+
+    <title>TOMA Admin — Lojas Oficiais</title>
+
+    <link
+        rel="stylesheet"
+        href="official-stores-admin.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- ==================================================
+     APPLICATION
+================================================== -->
+
+<div
+    id="officialStoresAdminApp"
+    class="officialStoresAdminApp"
+>
+
+
+    <!-- ==================================================
+         HEADER
+    ================================================== -->
+
+    <header
+        class="officialStoresHeader"
+    >
+
+        <div class="officialStoresHeaderLeft">
+
+            <a
+                href="admin-v2.html"
+                class="backButton"
+            >
+                ←
+            </a>
+
+            <div>
+
+                <h1>
+                    Lojas oficiais
+                </h1>
+
+                <p>
+                    Gerir e validar as lojas oficiais
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="officialStoresHeaderRight">
+
+            <button
+                id="refreshOfficialStores"
+                type="button"
+                class="headerActionButton"
+            >
+                ↻ Atualizar
+            </button>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ==================================================
+         CONTENU
+    ================================================== -->
+
+    <main
+        class="officialStoresMain"
+    >
+
+
+        <!-- ==================================================
+             STATISTIQUES
+        ================================================== -->
+
+        <section
+            class="officialStoresStats"
+        >
+
+
+            <article
+                class="officialStoreStatCard"
+            >
+
+                <span>
+                    Total
+                </span>
+
+                <strong
+                    id="totalStoresCount"
+                >
+                    0
+                </strong>
+
+            </article>
+
+
+            <article
+                class="officialStoreStatCard"
+            >
+
+                <span>
+                    Ativas
+                </span>
+
+                <strong
+                    id="activeStoresCount"
+                >
+                    0
+                </strong>
+
+            </article>
+
+
+            <article
+                class="officialStoreStatCard"
+            >
+
+                <span>
+                    Pendentes
+                </span>
+
+                <strong
+                    id="pendingStoresCount"
+                >
+                    0
+                </strong>
+
+            </article>
+
+
+            <article
+                class="officialStoreStatCard"
+            >
+
+                <span>
+                    Bloqueadas
+                </span>
+
+                <strong
+                    id="blockedStoresCount"
+                >
+                    0
+                </strong>
+
+            </article>
+
+
+        </section>
+
+
+
+        <!-- ==================================================
+             OUTILS
+        ================================================== -->
+
+        <section
+            class="officialStoresToolbar"
+        >
+
+
+            <div
+                class="officialStoresSearchBox"
+            >
+
+                <span>
+                    🔎
+                </span>
+
+                <input
+                    id="officialStoresSearch"
+                    type="search"
+                    placeholder="Pesquisar loja por nome, categoria ou ID..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <div
+                class="officialStoresFilterBox"
+            >
+
+                <label
+                    for="officialStoresStatusFilter"
+                >
+                    Estado
+                </label>
+
+                <select
+                    id="officialStoresStatusFilter"
+                >
+
+                    <option value="all">
+                        Todos
+                    </option>
+
+                    <option value="Active">
+                        Active
+                    </option>
+
+                    <option value="Pending">
+                        Pending
+                    </option>
+
+                    <option value="Blocked">
+                        Blocked
+                    </option>
+
+                    <option value="Rejected">
+                        Rejected
+                    </option>
+
+                </select>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- ==================================================
+             MESSAGE
+        ================================================== -->
+
+        <div
+            id="officialStoresMessage"
+            class="officialStoresMessage hidden"
+        >
+        </div>
+
+
+
+        <!-- ==================================================
+             LOADER
+        ================================================== -->
+
+        <div
+            id="officialStoresLoader"
+            class="officialStoresLoader"
+        >
+
+            <div
+                class="loaderSpinner"
+            ></div>
+
+            <p>
+                Carregando lojas oficiais...
+            </p>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             LISTE DES LOJAS
+        ================================================== -->
+
+        <section
+            id="officialStoresList"
+            class="officialStoresList"
+        >
+        </section>
+
+
+
+        <!-- ==================================================
+             AUCUNE LOJA
+        ================================================== -->
+
+        <div
+            id="officialStoresEmpty"
+            class="officialStoresEmpty hidden"
+        >
+
+            <div class="emptyIcon">
+                🏬
+            </div>
+
+            <h2>
+                Nenhuma loja encontrada
+            </h2>
+
+            <p>
+                Não existem lojas correspondentes à pesquisa.
+            </p>
+
+        </div>
+
+
+    </main>
+
+
+
+    <!-- ==================================================
+         MODAL D'ÉDITION
+    ================================================== -->
+
+    <div
+        id="officialStoreModal"
+        class="officialStoreModal hidden"
+        aria-hidden="true"
+    >
+
+
+        <div
+            class="officialStoreModalOverlay"
+            id="officialStoreModalOverlay"
+        ></div>
+
+
+        <div
+            class="officialStoreModalContent"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="officialStoreModalTitle"
+        >
+
+
+            <!-- ==========================================
+                 MODAL HEADER
+            ========================================== -->
+
+            <div
+                class="officialStoreModalHeader"
+            >
+
+                <div>
+
+                    <span
+                        class="modalEyebrow"
+                    >
+                        LOJA OFICIAL
+                    </span>
+
+                    <h2
+                        id="officialStoreModalTitle"
+                    >
+                        Editar loja
+                    </h2>
+
+                </div>
+
+
+                <button
+                    id="closeOfficialStoreModal"
+                    type="button"
+                    class="modalCloseButton"
+                    aria-label="Fechar"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+
+            <!-- ==========================================
+                 FORMULAIRE
+            ========================================== -->
+
+            <form
+                id="officialStoreForm"
+                class="officialStoreForm"
+            >
+
+
+                <!-- ==================================================
+                     INFORMATIONS DE BASE
+                ================================================== -->
+
+                <section
+                    class="formSection"
+                >
+
+                    <div class="formSectionHeader">
+
+                        <h3>
+                            Informações principais
+                        </h3>
+
+                        <p>
+                            Dados básicos da loja oficial.
+                        </p>
+
+                    </div>
+
+
+                    <!-- ID -->
+
+                    <div class="formGroup">
+
+                        <label for="storeId">
+                            ID
+                        </label>
+
+                        <input
+                            id="storeId"
+                            type="text"
+                            readonly
+                        >
+
+                    </div>
+
+
+                    <!-- NOM -->
+
+                    <div class="formGroup">
+
+                        <label for="storeName">
+                            Nome da loja
+                        </label>
+
+                        <input
+                            id="storeName"
+                            type="text"
+                            placeholder="Nome da loja"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- CATÉGORIE -->
+
+                    <div class="formGroup">
+
+                        <label for="storeCategory">
+                            Categoria
+                        </label>
+
+                        <input
+                            id="storeCategory"
+                            type="text"
+                            placeholder="Categoria"
+                        >
+
+                    </div>
+
+
+                    <!-- SLUG -->
+
+                    <div class="formGroup">
+
+                        <label for="storeSlug">
+                            Slug
+                        </label>
+
+                        <input
+                            id="storeSlug"
+                            type="text"
+                            placeholder="slug-da-loja"
+                        >
+
+                    </div>
+
+
+                    <!-- DESCRIPTION -->
+
+                    <div class="formGroup">
+
+                        <label for="storeDescription">
+                            Descrição
+                        </label>
+
+                        <textarea
+                            id="storeDescription"
+                            rows="5"
+                            placeholder="Descrição da loja..."
+                        ></textarea>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- ==================================================
+                     IMAGES
+                ================================================== -->
+
+                <section
+                    class="formSection"
+                >
+
+                    <div class="formSectionHeader">
+
+                        <h3>
+                            Imagens
+                        </h3>
+
+                        <p>
+                            Logo e banner da loja.
+                        </p>
+
+                    </div>
+
+
+                    <!-- LOGO -->
+
+                    <div class="imageField">
+
+                        <div
+                            id="storeLogoPreview"
+                            class="storeImagePreview"
+                        >
+
+                            <span>
+                                Logo
+                            </span>
+
+                        </div>
+
+                        <div class="imageFieldControls">
+
+                            <label for="storeLogo">
+                                URL do logo
+                            </label>
+
+                            <input
+                                id="storeLogo"
+                                type="url"
+                                placeholder="https://..."
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- BANNER -->
+
+                    <div class="imageField">
+
+                        <div
+                            id="storeBannerPreview"
+                            class="storeBannerPreview"
+                        >
+
+                            <span>
+                                Banner
+                            </span>
+
+                        </div>
+
+                        <div class="imageFieldControls">
+
+                            <label for="storeBanner">
+                                URL do banner
+                            </label>
+
+                            <input
+                                id="storeBanner"
+                                type="url"
+                                placeholder="https://..."
+                            >
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- ==================================================
+                     VALIDATION / STATUT
+                ================================================== -->
+
+                <section
+                    class="formSection"
+                >
+
+                    <div class="formSectionHeader">
+
+                        <h3>
+                            Validação
+                        </h3>
+
+                        <p>
+                            Controla se a loja pode aparecer no marketplace.
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="formGrid"
+                    >
+
+
+                        <!-- STATUS -->
+
+                        <div class="formGroup">
+
+                            <label for="storeStatus">
+                                Estado da loja
+                            </label>
+
+                            <select
+                                id="storeStatus"
+                            >
+
+                                <option value="Pending">
+                                    Pending — Pendente
+                                </option>
+
+                                <option value="Active">
+                                    Active — Ativa
+                                </option>
+
+                                <option value="Blocked">
+                                    Blocked — Bloqueada
+                                </option>
+
+                                <option value="Rejected">
+                                    Rejected — Rejeitada
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- VERIFIED -->
+
+                        <div class="formGroup">
+
+                            <label for="storeVerified">
+                                Verificada
+                            </label>
+
+                            <select
+                                id="storeVerified"
+                            >
+
+                                <option value="false">
+                                    Não
+                                </option>
+
+                                <option value="true">
+                                    Sim
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- EXPLICATION -->
+
+                    <div
+                        class="validationNotice"
+                    >
+
+                        <span>
+                            ℹ️
+                        </span>
+
+                        <p>
+                            Apenas uma loja com o estado
+                            <strong>Active</strong>
+                            será exibida no Home.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- ==================================================
+                     MERCHANT IDS
+                ================================================== -->
+
+                <section
+                    class="formSection"
+                >
+
+                    <div class="formSectionHeader">
+
+                        <h3>
+                            Comerciantes associados
+                        </h3>
+
+                        <p>
+                            IDs atualmente associados a esta loja.
+                            Esta página não adiciona comerciantes.
+                        </p>
+
+                    </div>
+
+
+                    <div class="formGroup">
+
+                        <label for="storeMerchantIds">
+                            merchantIds
+                        </label>
+
+                        <textarea
+                            id="storeMerchantIds"
+                            rows="5"
+                            placeholder="Um ID por linha"
+                        ></textarea>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- ==================================================
+                     SETTINGS
+                ================================================== -->
+
+                <section
+                    class="formSection"
+                >
+
+                    <div class="formSectionHeader">
+
+                        <h3>
+                            Configurações
+                        </h3>
+
+                        <p>
+                            Configurações internas da loja em formato JSON.
+                        </p>
+
+                    </div>
+
+
+                    <div class="formGroup">
+
+                        <label for="storeSettings">
+                            settings
+                        </label>
+
+                        <textarea
+                            id="storeSettings"
+                            rows="8"
+                            placeholder='{"featured": true}'
+                        ></textarea>
+
+                    </div>
+
+
+                    <div
+                        id="settingsJsonError"
+                        class="fieldError hidden"
+                    >
+                        JSON inválido.
+                    </div>
+
+                </section>
+
+
+
+                <!-- ==================================================
+                     DATES
+                ================================================== -->
+
+                <section
+                    class="formSection"
+                >
+
+                    <div class="formSectionHeader">
+
+                        <h3>
+                            Informations système
+                        </h3>
+
+                    </div>
+
+
+                    <div
+                        class="formGrid"
+                    >
+
+                        <div class="formGroup">
+
+                            <label for="storeCreatedAt">
+                                createdAt
+                            </label>
+
+                            <input
+                                id="storeCreatedAt"
+                                type="text"
+                                readonly
+                            >
+
+                        </div>
+
+
+                        <div class="formGroup">
+
+                            <label for="storeUpdatedAt">
+                                updatedAt
+                            </label>
+
+                            <input
+                                id="storeUpdatedAt"
+                                type="text"
+                                readonly
+                            >
+
+                        </div>
+
+
+                        <div class="formGroup">
+
+                            <label for="storeAdminSettingsUpdatedAt">
+                                adminSettingsUpdatedAt
+                            </label>
+
+                            <input
+                                id="storeAdminSettingsUpdatedAt"
+                                type="text"
+                                readonly
+                            >
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- ==================================================
+                     ACTIONS
+                ================================================== -->
+
+                <div
+                    class="officialStoreFormActions"
+                >
+
+                    <button
+                        id="cancelOfficialStoreEdit"
+                        type="button"
+                        class="secondaryButton"
+                    >
+                        Cancelar
+                    </button>
+
+
+                    <button
+                        id="saveOfficialStore"
+                        type="submit"
+                        class="primaryButton"
+                    >
+                        Guardar alterações
+                    </button>
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ==================================================
+         TOAST
+    ================================================== -->
+
+    <div
+        id="officialStoreToast"
+        class="officialStoreToast"
+        role="status"
+        aria-live="polite"
+    >
+
+        <span
+            id="officialStoreToastMessage"
+        ></span>
+
+    </div>
+
+
+</div>
+
+
+
+<!-- ==================================================
+     JAVASCRIPT
+================================================== -->
+
+<script
+    type="module"
+    src="js/official-stores-admin.js"
+></script>
+
+
+</body>
+
+</html>
