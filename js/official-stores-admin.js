@@ -1036,6 +1036,919 @@ alert(
     "Les boutons Editar loja sont prêts."
 );
 /* =========================================================
+   OFFICIAL ADMIN — BLOC 5
+   OUVERTURE ET REMPLISSAGE DE LA MODAL
+========================================================= */
+
+alert(
+    "OFFICIAL ADMIN — BLOC 5 DÉBUT\n\n" +
+    "Connexion des boutons « Editar loja » à la modal..."
+);
+
+
+/* =========================================================
+   RÉCUPÉRER LES ÉLÉMENTS HTML
+========================================================= */
+
+const editModal =
+    document.getElementById(
+        "officialStoreModal"
+    );
+
+
+const editForm =
+    document.getElementById(
+        "officialStoreForm"
+    );
+
+
+const editStoreId =
+    document.getElementById(
+        "storeId"
+    );
+
+
+const editStoreName =
+    document.getElementById(
+        "storeName"
+    );
+
+
+const editStoreCategory =
+    document.getElementById(
+        "storeCategory"
+    );
+
+
+const editStoreSlug =
+    document.getElementById(
+        "storeSlug"
+    );
+
+
+const editStoreDescription =
+    document.getElementById(
+        "storeDescription"
+    );
+
+
+const editStoreLogo =
+    document.getElementById(
+        "storeLogo"
+    );
+
+
+const editStoreBanner =
+    document.getElementById(
+        "storeBanner"
+    );
+
+
+const editStoreStatus =
+    document.getElementById(
+        "storeStatus"
+    );
+
+
+const editStoreVerified =
+    document.getElementById(
+        "storeVerified"
+    );
+
+
+const editStoreMerchantIds =
+    document.getElementById(
+        "storeMerchantIds"
+    );
+
+
+const editStoreSettings =
+    document.getElementById(
+        "storeSettings"
+    );
+
+
+const editStoreCreatedAt =
+    document.getElementById(
+        "storeCreatedAt"
+    );
+
+
+const editStoreUpdatedAt =
+    document.getElementById(
+        "storeUpdatedAt"
+    );
+
+
+const editStoreAdminSettingsUpdatedAt =
+    document.getElementById(
+        "storeAdminSettingsUpdatedAt"
+    );
+
+
+const closeModalButton =
+    document.getElementById(
+        "closeOfficialStoreModal"
+    );
+
+
+const cancelModalButton =
+    document.getElementById(
+        "cancelOfficialStoreEdit"
+    );
+
+
+const modalOverlay =
+    document.getElementById(
+        "officialStoreModalOverlay"
+    );
+
+
+/* =========================================================
+   VÉRIFICATION
+========================================================= */
+
+alert(
+    "OFFICIAL ADMIN — BLOC 5.1\n\n" +
+
+    "Éléments de la modal détectés :\n\n" +
+
+    "Modal : " +
+    (editModal ? "OK ✅" : "MANQUANTE ❌") +
+
+    "\nFormulaire : " +
+    (editForm ? "OK ✅" : "MANQUANT ❌") +
+
+    "\nID : " +
+    (editStoreId ? "OK ✅" : "MANQUANT ❌") +
+
+    "\nNom : " +
+    (editStoreName ? "OK ✅" : "MANQUANT ❌") +
+
+    "\nStatus : " +
+    (editStoreStatus ? "OK ✅" : "MANQUANT ❌") +
+
+    "\nVerified : " +
+    (editStoreVerified ? "OK ✅" : "MANQUANT ❌")
+);
+
+
+/* =========================================================
+   FONCTION OUVRIR LA MODAL
+========================================================= */
+
+function openOfficialStoreModal(
+    store
+) {
+
+    if (!store) {
+
+        alert(
+            "OFFICIAL ADMIN — ERREUR\n\n" +
+            "La loja sélectionnée est introuvable."
+        );
+
+        return;
+
+    }
+
+
+    if (!editModal) {
+
+        alert(
+            "OFFICIAL ADMIN — ERREUR\n\n" +
+            "officialStoreModal est introuvable."
+        );
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       ID
+    ===================================================== */
+
+    if (editStoreId) {
+
+        editStoreId.value =
+            String(
+                store.id || ""
+            );
+
+    }
+
+
+    /* =====================================================
+       NOM
+    ===================================================== */
+
+    if (editStoreName) {
+
+        editStoreName.value =
+            store.name || "";
+
+    }
+
+
+    /* =====================================================
+       CATÉGORIE
+    ===================================================== */
+
+    if (editStoreCategory) {
+
+        editStoreCategory.value =
+            store.category || "";
+
+    }
+
+
+    /* =====================================================
+       SLUG
+    ===================================================== */
+
+    if (editStoreSlug) {
+
+        editStoreSlug.value =
+            store.slug || "";
+
+    }
+
+
+    /* =====================================================
+       DESCRIPTION
+    ===================================================== */
+
+    if (editStoreDescription) {
+
+        editStoreDescription.value =
+            store.description || "";
+
+    }
+
+
+    /* =====================================================
+       LOGO
+    ===================================================== */
+
+    if (editStoreLogo) {
+
+        editStoreLogo.value =
+            store.logo || "";
+
+    }
+
+
+    /* =====================================================
+       BANNER
+    ===================================================== */
+
+    if (editStoreBanner) {
+
+        editStoreBanner.value =
+            store.banner || "";
+
+    }
+
+
+    /* =====================================================
+       STATUS
+    ===================================================== */
+
+    if (editStoreStatus) {
+
+        editStoreStatus.value =
+            store.status || "Pending";
+
+    }
+
+
+    /* =====================================================
+       VERIFIED
+    ===================================================== */
+
+    if (editStoreVerified) {
+
+        editStoreVerified.value =
+            store.verified === true
+                ? "true"
+                : "false";
+
+    }
+
+
+    /* =====================================================
+       MERCHANT IDS
+       
+       IMPORTANT :
+       On affiche seulement les IDs existants.
+       Aucun marchand n'est ajouté.
+    ===================================================== */
+
+    if (editStoreMerchantIds) {
+
+        const merchantIds =
+            Array.isArray(
+                store.merchantIds
+            )
+                ? store.merchantIds
+                : [];
+
+
+        editStoreMerchantIds.value =
+            merchantIds.join("\n");
+
+    }
+
+
+    /* =====================================================
+       SETTINGS
+    ===================================================== */
+
+    if (editStoreSettings) {
+
+        try {
+
+            editStoreSettings.value =
+                JSON.stringify(
+                    store.settings || {},
+                    null,
+                    2
+                );
+
+        } catch (error) {
+
+            editStoreSettings.value =
+                "{}";
+
+        }
+
+    }
+
+
+    /* =====================================================
+       CREATED AT
+    ===================================================== */
+
+    if (editStoreCreatedAt) {
+
+        editStoreCreatedAt.value =
+            formatOfficialStoreDate(
+                store.createdAt
+            );
+
+    }
+
+
+    /* =====================================================
+       UPDATED AT
+    ===================================================== */
+
+    if (editStoreUpdatedAt) {
+
+        editStoreUpdatedAt.value =
+            formatOfficialStoreDate(
+                store.updatedAt
+            );
+
+    }
+
+
+    /* =====================================================
+       ADMIN SETTINGS UPDATED AT
+    ===================================================== */
+
+    if (
+        editStoreAdminSettingsUpdatedAt
+    ) {
+
+        editStoreAdminSettingsUpdatedAt.value =
+            formatOfficialStoreDate(
+                store.adminSettingsUpdatedAt
+            );
+
+    }
+
+
+    /* =====================================================
+       PRÉVISUALISATION LOGO
+    ===================================================== */
+
+    updateOfficialStoreImagePreview(
+        "storeLogoPreview",
+        store.logo,
+        "Logo"
+    );
+
+
+    /* =====================================================
+       PRÉVISUALISATION BANNER
+    ===================================================== */
+
+    updateOfficialStoreImagePreview(
+        "storeBannerPreview",
+        store.banner,
+        "Banner"
+    );
+
+
+    /* =====================================================
+       TITRE MODAL
+    ===================================================== */
+
+    const modalTitle =
+        document.getElementById(
+            "officialStoreModalTitle"
+        );
+
+
+    if (modalTitle) {
+
+        modalTitle.textContent =
+            "Editar loja — " +
+            (
+                store.name ||
+                store.id ||
+                "Loja oficial"
+            );
+
+    }
+
+
+    /* =====================================================
+       OUVRIR LA MODAL
+    ===================================================== */
+
+    editModal.classList.remove(
+        "hidden"
+    );
+
+
+    editModal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
+    document.body.classList.add(
+        "modalOpen"
+    );
+
+
+    /* =====================================================
+       FOCUS SUR LE NOM
+    ===================================================== */
+
+    setTimeout(
+        () => {
+
+            if (editStoreName) {
+
+                editStoreName.focus();
+
+            }
+
+        },
+        100
+    );
+
+
+    alert(
+        "OFFICIAL ADMIN — BLOC 5.2\n\n" +
+
+        "Modal ouverte avec succès ✅\n\n" +
+
+        "Loja : " +
+        (
+            store.name ||
+            store.id
+        ) +
+
+        "\nID : " +
+        store.id
+    );
+
+}
+
+
+/* =========================================================
+   FORMAT DATE FIRESTORE
+========================================================= */
+
+function formatOfficialStoreDate(
+    value
+) {
+
+    if (!value) {
+
+        return "";
+
+    }
+
+
+    try {
+
+        if (
+            value &&
+            typeof value.toDate === "function"
+        ) {
+
+            return value
+                .toDate()
+                .toLocaleString(
+                    "pt-PT"
+                );
+
+        }
+
+
+        if (
+            value instanceof Date
+        ) {
+
+            return value.toLocaleString(
+                "pt-PT"
+            );
+
+        }
+
+
+        return String(
+            value
+        );
+
+    } catch (error) {
+
+        return "";
+
+    }
+
+}
+
+
+/* =========================================================
+   PRÉVISUALISATION DES IMAGES
+========================================================= */
+
+function updateOfficialStoreImagePreview(
+    elementId,
+    url,
+    fallbackText
+) {
+
+    const preview =
+        document.getElementById(
+            elementId
+        );
+
+
+    if (!preview) {
+
+        return;
+
+    }
+
+
+    if (
+        typeof url === "string" &&
+        url.trim() !== ""
+    ) {
+
+        preview.innerHTML = `
+
+            <img
+                src="${escapeOfficialStoreHtml(
+                    url.trim()
+                )}"
+                alt="${escapeOfficialStoreHtml(
+                    fallbackText
+                )}"
+                style="
+                    width:100%;
+                    height:100%;
+                    object-fit:cover;
+                    border-radius:inherit;
+                "
+                onerror="
+                    this.onerror=null;
+                    this.parentElement.innerHTML='<span>${escapeOfficialStoreHtml(
+                        fallbackText
+                    )}</span>';
+                "
+            >
+
+        `;
+
+    } else {
+
+        preview.innerHTML = `
+
+            <span>
+                ${escapeOfficialStoreHtml(
+                    fallbackText
+                )}
+            </span>
+
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   PROTECTION HTML
+========================================================= */
+
+function escapeOfficialStoreHtml(
+    value
+) {
+
+    return String(
+        value || ""
+    )
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================================
+   FERMER LA MODAL
+========================================================= */
+
+function closeOfficialStoreModal() {
+
+    if (!editModal) {
+
+        return;
+
+    }
+
+
+    editModal.classList.add(
+        "hidden"
+    );
+
+
+    editModal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+
+    document.body.classList.remove(
+        "modalOpen"
+    );
+
+}
+
+
+/* =========================================================
+   BOUTON X
+========================================================= */
+
+if (
+    closeModalButton
+) {
+
+    closeModalButton.addEventListener(
+        "click",
+        () => {
+
+            closeOfficialStoreModal();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   BOUTON CANCELAR
+========================================================= */
+
+if (
+    cancelModalButton
+) {
+
+    cancelModalButton.addEventListener(
+        "click",
+        () => {
+
+            closeOfficialStoreModal();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CLIQUER SUR L'OVERLAY
+========================================================= */
+
+if (
+    modalOverlay
+) {
+
+    modalOverlay.addEventListener(
+        "click",
+        () => {
+
+            closeOfficialStoreModal();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ESCAPE
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    (event) => {
+
+        if (
+            event.key === "Escape" &&
+            editModal &&
+            !editModal.classList.contains(
+                "hidden"
+            )
+        ) {
+
+            closeOfficialStoreModal();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   CONNEXION DES BOUTONS EDITAR LOJA
+========================================================= */
+
+if (
+    officialStoresList
+) {
+
+    officialStoresList.addEventListener(
+        "click",
+        (event) => {
+
+            const button =
+                event.target.closest(
+                    "button"
+                );
+
+
+            if (!button) {
+
+                return;
+
+            }
+
+
+            const buttonText =
+                button.textContent
+                    .trim()
+                    .toLowerCase();
+
+
+            /*
+             * On reconnaît le bouton
+             * même si sa classe change.
+             */
+
+            if (
+                !buttonText.includes(
+                    "editar"
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            event.preventDefault();
+
+
+            const storeId =
+                button.dataset.storeId ||
+                button.dataset.id;
+
+
+            alert(
+                "OFFICIAL ADMIN — BLOC 5.3\n\n" +
+
+                "Bouton « Editar loja » détecté ✅\n\n" +
+
+                "ID reçu : " +
+                (
+                    storeId ||
+                    "AUCUN"
+                )
+            );
+
+
+            if (!storeId) {
+
+                alert(
+                    "OFFICIAL ADMIN — ERREUR\n\n" +
+
+                    "Le bouton Editar loja ne possède pas de storeId."
+                );
+
+                return;
+
+            }
+
+
+            const store =
+                officialStores.find(
+                    (item) =>
+                        String(
+                            item.id
+                        ) === String(
+                            storeId
+                        )
+                );
+
+
+            if (!store) {
+
+                alert(
+                    "OFFICIAL ADMIN — ERREUR\n\n" +
+
+                    "La loja " +
+                    storeId +
+                    " n'existe pas dans officialStores."
+                );
+
+                return;
+
+            }
+
+
+            openOfficialStoreModal(
+                store
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   BLOC TERMINÉ
+========================================================= */
+
+alert(
+    "OFFICIAL ADMIN — BLOC 5 TERMINÉ ✅\n\n" +
+
+    "Le système d'édition est connecté.\n\n" +
+
+    "✓ Boutons Editar loja détectés\n" +
+    "✓ Recherche de la loja dans officialStores\n" +
+    "✓ Remplissage du formulaire\n" +
+    "✓ Ouverture de la modal\n" +
+    "✓ Fermeture avec X\n" +
+    "✓ Fermeture avec Cancelar\n" +
+    "✓ Fermeture avec ESC\n" +
+    "✓ Prévisualisation logo/banner\n\n" +
+
+    "Le BLOC 6 pourra maintenant sauvegarder les modifications."
+);
+/* =========================================================
    OFFICIAL ADMIN — BLOC 6
    SAUVEGARDE DES MODIFICATIONS FIRESTORE
 ========================================================= */
