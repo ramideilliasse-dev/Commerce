@@ -365,3 +365,508 @@ alert(
             : "MANQUANT ❌"
     )
 );
+/* =========================================================
+   OFFICIAL ADMIN — BLOC 3
+   CHARGEMENT FIRESTORE DES LOJAS OFFICIAIS
+========================================================= */
+
+alert(
+    "OFFICIAL ADMIN — BLOC 3 DÉBUT\n\n" +
+    "Connexion à Firestore et chargement des lojas officielles..."
+);
+
+
+/* =========================================================
+   CONFIGURATION
+========================================================= */
+
+const OFFICIAL_STORES_COLLECTION =
+    "officialStores";
+
+
+/* =========================================================
+   CHARGER LES STORES
+========================================================= */
+
+async function loadOfficialStoresAdmin() {
+
+    /* -----------------------------------------------------
+       LOADER
+    ----------------------------------------------------- */
+
+    if (officialStoresLoader) {
+
+        officialStoresLoader.classList.remove(
+            "hidden"
+        );
+
+    }
+
+
+    if (officialStoresEmpty) {
+
+        officialStoresEmpty.classList.add(
+            "hidden"
+        );
+
+    }
+
+
+    try {
+
+        /* -------------------------------------------------
+           RÉFÉRENCE FIRESTORE
+        ------------------------------------------------- */
+
+        const storesRef =
+            collection(
+                db,
+                OFFICIAL_STORES_COLLECTION
+            );
+
+
+        /* -------------------------------------------------
+           RÉCUPÉRER LES DOCUMENTS
+        ------------------------------------------------- */
+
+        const snapshot =
+            await getDocs(
+                storesRef
+            );
+
+
+        /* -------------------------------------------------
+           TABLEAU GLOBAL
+        ------------------------------------------------- */
+
+        allOfficialStores = [];
+
+
+        snapshot.forEach(
+            (docSnapshot) => {
+
+                const data =
+                    docSnapshot.data();
+
+
+                allOfficialStores.push({
+
+                    id: docSnapshot.id,
+
+                    ...data
+
+                });
+
+            }
+        );
+
+
+        /* -------------------------------------------------
+           TRI PAR NOM
+        ------------------------------------------------- */
+
+        allOfficialStores.sort(
+            (a, b) => {
+
+                const nameA =
+                    String(
+                        a.name || ""
+                    ).toLowerCase();
+
+                const nameB =
+                    String(
+                        b.name || ""
+                    ).toLowerCase();
+
+                return nameA.localeCompare(
+                    nameB
+                );
+
+            }
+        );
+
+
+        /* -------------------------------------------------
+           STATISTIQUES
+        ------------------------------------------------- */
+
+        updateOfficialStoresStats();
+
+
+        /* -------------------------------------------------
+           AFFICHER LA LISTE
+        ------------------------------------------------- */
+
+        renderOfficialStoresList(
+            allOfficialStores
+        );
+
+
+        /* -------------------------------------------------
+           MESSAGE
+        ------------------------------------------------- */
+
+        if (officialStoresMessage) {
+
+            officialStoresMessage.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+        /* -------------------------------------------------
+           LOADER
+        ------------------------------------------------- */
+
+        if (officialStoresLoader) {
+
+            officialStoresLoader.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+        /* -------------------------------------------------
+           EMPTY
+        ------------------------------------------------- */
+
+        if (
+            allOfficialStores.length === 0 &&
+            officialStoresEmpty
+        ) {
+
+            officialStoresEmpty.classList.remove(
+                "hidden"
+            );
+
+        }
+
+
+        alert(
+            "OFFICIAL ADMIN — BLOC 3 TERMINÉ ✅\n\n" +
+
+            "Firestore connecté avec succès.\n\n" +
+
+            "Collection : officialStores\n" +
+
+            "Documents trouvés : " +
+            allOfficialStores.length +
+
+            "\n\n" +
+
+            "Les lojas sont maintenant chargées " +
+            "dans allOfficialStores."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erreur chargement officialStores :",
+            error
+        );
+
+
+        if (officialStoresLoader) {
+
+            officialStoresLoader.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+        if (officialStoresMessage) {
+
+            officialStoresMessage.textContent =
+                "Erro ao carregar as lojas oficiais.";
+
+            officialStoresMessage.classList.remove(
+                "hidden"
+            );
+
+        }
+
+
+        alert(
+            "OFFICIAL ADMIN — BLOC 3 ERREUR ❌\n\n" +
+
+            "Impossible de charger officialStores.\n\n" +
+
+            "Code : " +
+            (
+                error.code ||
+                "inconnu"
+            ) +
+
+            "\n\n" +
+
+            "Message : " +
+            (
+                error.message ||
+                "Erreur inconnue"
+            )
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   STATISTIQUES
+========================================================= */
+
+function updateOfficialStoresStats() {
+
+    let active = 0;
+
+    let pending = 0;
+
+    let blocked = 0;
+
+
+    allOfficialStores.forEach(
+        (store) => {
+
+            const status =
+                String(
+                    store.status || ""
+                );
+
+
+            if (status === "Active") {
+
+                active++;
+
+            }
+
+
+            if (status === "Pending") {
+
+                pending++;
+
+            }
+
+
+            if (status === "Blocked") {
+
+                blocked++;
+
+            }
+
+        }
+    );
+
+
+    if (totalStoresCount) {
+
+        totalStoresCount.textContent =
+            allOfficialStores.length;
+
+    }
+
+
+    if (activeStoresCount) {
+
+        activeStoresCount.textContent =
+            active;
+
+    }
+
+
+    if (pendingStoresCount) {
+
+        pendingStoresCount.textContent =
+            pending;
+
+    }
+
+
+    if (blockedStoresCount) {
+
+        blockedStoresCount.textContent =
+            blocked;
+
+    }
+
+}
+
+
+/* =========================================================
+   AFFICHAGE TEMPORAIRE DE LA LISTE
+========================================================= */
+
+function renderOfficialStoresList(
+    stores
+) {
+
+    if (!storesContainer) {
+
+        return;
+
+    }
+
+
+    storesContainer.innerHTML = "";
+
+
+    stores.forEach(
+        (store) => {
+
+            const card =
+                document.createElement(
+                    "article"
+                );
+
+
+            card.className =
+                "officialStoreAdminCard";
+
+
+            const name =
+                String(
+                    store.name ||
+                    "Loja sem nome"
+                );
+
+
+            const category =
+                String(
+                    store.category ||
+                    "Sem categoria"
+                );
+
+
+            const status =
+                String(
+                    store.status ||
+                    "Sem estado"
+                );
+
+
+            const verified =
+                store.verified === true;
+
+
+            card.innerHTML = `
+
+                <div class="officialStoreAdminCardMain">
+
+                    <div class="officialStoreAdminLogo">
+
+                        ${
+                            store.logo
+                                ? `
+                                    <img
+                                        src="${escapeHtmlAdmin(store.logo)}"
+                                        alt="${escapeHtmlAdmin(name)}"
+                                    >
+                                  `
+                                : `
+                                    <span>🏬</span>
+                                  `
+                        }
+
+                    </div>
+
+
+                    <div class="officialStoreAdminInfo">
+
+                        <h3>
+                            ${escapeHtmlAdmin(name)}
+                        </h3>
+
+                        <p>
+                            ${escapeHtmlAdmin(category)}
+                        </p>
+
+                        <small>
+                            ID: ${escapeHtmlAdmin(store.id)}
+                        </small>
+
+                    </div>
+
+
+                    <div class="officialStoreAdminStatus">
+
+                        <span>
+                            ${escapeHtmlAdmin(status)}
+                        </span>
+
+                        ${
+                            verified
+                                ? `
+                                    <span>
+                                        ✓ Verificada
+                                    </span>
+                                  `
+                                : ""
+                        }
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="officialStoreEditButton"
+                        data-store-id="${escapeHtmlAdmin(store.id)}"
+                    >
+                        Editar
+                    </button>
+
+                </div>
+
+            `;
+
+
+            storesContainer.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   PROTECTION HTML
+========================================================= */
+
+function escapeHtmlAdmin(
+    value
+) {
+
+    return String(
+        value ?? ""
+    )
+
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+
+    .replace(
+        /</g,
+        "&lt;"
+    )
+
+    .replace(
+        />/g,
+        "&gt;"
+    )
+
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
