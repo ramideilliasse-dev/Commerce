@@ -477,3 +477,561 @@ alert(
 
     "dans le tableau officialStores."
 );
+/* =========================================================
+   OFFICIAL ADMIN — BLOC 4
+   AFFICHAGE DES 86 LOJAS
+========================================================= */
+
+alert(
+    "OFFICIAL ADMIN — BLOC 4 DÉBUT\n\n" +
+    "Préparation de l'affichage des lojas..."
+);
+
+
+/* =========================================================
+   VÉRIFICATION DU TABLEAU
+========================================================= */
+
+if (
+    !Array.isArray(officialStores)
+) {
+
+    alert(
+        "OFFICIAL ADMIN — BLOC 4 ERREUR\n\n" +
+        "Le tableau officialStores n'existe pas."
+    );
+
+    throw new Error(
+        "officialStores doit être un tableau."
+    );
+}
+
+
+/* =========================================================
+   VÉRIFICATION DU CONTENEUR
+========================================================= */
+
+if (
+    !officialStoresList
+) {
+
+    alert(
+        "OFFICIAL ADMIN — BLOC 4 ERREUR\n\n" +
+        "officialStoresList est introuvable."
+    );
+
+    throw new Error(
+        "officialStoresList introuvable."
+    );
+}
+
+
+/* =========================================================
+   FONCTION DE PROTECTION HTML
+========================================================= */
+
+function escapeHTML(value) {
+
+    return String(
+        value ?? ""
+    )
+
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+
+    .replace(
+        /</g,
+        "&lt;"
+    )
+
+    .replace(
+        />/g,
+        "&gt;"
+    )
+
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* =========================================================
+   NORMALISER LE STATUT
+========================================================= */
+
+function getStoreStatus(store) {
+
+    const status =
+        String(
+            store.status ?? "Pending"
+        ).trim();
+
+    return status || "Pending";
+
+}
+
+
+/* =========================================================
+   TEXTE DU STATUT
+========================================================= */
+
+function getStatusLabel(status) {
+
+    switch (status) {
+
+        case "Active":
+            return "Ativa";
+
+        case "Pending":
+            return "Pendente";
+
+        case "Blocked":
+            return "Bloqueada";
+
+        case "Rejected":
+            return "Rejeitada";
+
+        default:
+            return status;
+
+    }
+
+}
+
+
+/* =========================================================
+   CLASSE DU STATUT
+========================================================= */
+
+function getStatusClass(status) {
+
+    switch (status) {
+
+        case "Active":
+            return "statusActive";
+
+        case "Pending":
+            return "statusPending";
+
+        case "Blocked":
+            return "statusBlocked";
+
+        case "Rejected":
+            return "statusRejected";
+
+        default:
+            return "statusUnknown";
+
+    }
+
+}
+
+
+/* =========================================================
+   AFFICHER LES LOJAS
+========================================================= */
+
+function renderOfficialStoresList() {
+
+    /* -----------------------------------------------------
+       NETTOYAGE
+    ----------------------------------------------------- */
+
+    officialStoresList.innerHTML = "";
+
+
+    /* -----------------------------------------------------
+       AUCUNE LOJA
+    ----------------------------------------------------- */
+
+    if (
+        officialStores.length === 0
+    ) {
+
+        if (
+            typeof officialStoresEmpty !== "undefined" &&
+            officialStoresEmpty
+        ) {
+
+            officialStoresEmpty.classList.remove(
+                "hidden"
+            );
+
+        }
+
+        return;
+
+    }
+
+
+    /* -----------------------------------------------------
+       CACHER LE MESSAGE VIDE
+    ----------------------------------------------------- */
+
+    if (
+        typeof officialStoresEmpty !== "undefined" &&
+        officialStoresEmpty
+    ) {
+
+        officialStoresEmpty.classList.add(
+            "hidden"
+        );
+
+    }
+
+
+    /* =====================================================
+       CRÉER CHAQUE CARTE
+    ===================================================== */
+
+    officialStores.forEach(
+        (store) => {
+
+            const storeId =
+                String(
+                    store.id ?? ""
+                );
+
+
+            const name =
+                String(
+                    store.name ??
+                    "Loja Oficial"
+                );
+
+
+            const category =
+                String(
+                    store.category ??
+                    "Sem categoria"
+                );
+
+
+            const slug =
+                String(
+                    store.slug ??
+                    ""
+                );
+
+
+            const status =
+                getStoreStatus(
+                    store
+                );
+
+
+            const statusLabel =
+                getStatusLabel(
+                    status
+                );
+
+
+            const statusClass =
+                getStatusClass(
+                    status
+                );
+
+
+            const verified =
+                store.verified === true;
+
+
+            const logo =
+                typeof store.logo === "string" &&
+                store.logo.trim() !== ""
+                    ? store.logo.trim()
+                    : "images/default-store.png";
+
+
+            /* ==============================================
+               CARTE
+            ============================================== */
+
+            const card =
+                document.createElement(
+                    "article"
+                );
+
+
+            card.className =
+                "officialStoreAdminCard";
+
+
+            card.dataset.storeId =
+                storeId;
+
+
+            /* ==============================================
+               HTML
+            ============================================== */
+
+            card.innerHTML = `
+
+                <div class="officialStoreAdminCardTop">
+
+
+                    <!-- LOGO -->
+
+                    <div class="officialStoreAdminLogoWrapper">
+
+                        <img
+                            class="officialStoreAdminLogo"
+                            src="${escapeHTML(logo)}"
+                            alt="${escapeHTML(name)}"
+                            loading="lazy"
+                        >
+
+                    </div>
+
+
+                    <!-- INFORMATIONS -->
+
+                    <div class="officialStoreAdminInfo">
+
+                        <h3
+                            class="officialStoreAdminName"
+                        >
+
+                            ${escapeHTML(name)}
+
+                            ${
+                                verified
+                                    ? `
+                                        <span
+                                            class="officialStoreAdminVerified"
+                                            title="Loja verificada"
+                                        >
+                                            ✓
+                                        </span>
+                                    `
+                                    : ""
+                            }
+
+                        </h3>
+
+
+                        <p
+                            class="officialStoreAdminCategory"
+                        >
+                            ${escapeHTML(category)}
+                        </p>
+
+
+                        <p
+                            class="officialStoreAdminId"
+                        >
+                            ID:
+                            ${escapeHTML(storeId)}
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- ========================================
+                     INFORMATIONS SUPPLÉMENTAIRES
+                ========================================= -->
+
+                <div
+                    class="officialStoreAdminMeta"
+                >
+
+
+                    <span
+                        class="officialStoreAdminStatus ${statusClass}"
+                    >
+
+                        ${escapeHTML(statusLabel)}
+
+                    </span>
+
+
+                    ${
+                        verified
+                            ? `
+                                <span
+                                    class="officialStoreAdminBadge"
+                                >
+                                    ✓ Verificada
+                                </span>
+                            `
+                            : `
+                                <span
+                                    class="officialStoreAdminBadge notVerified"
+                                >
+                                    Não verificada
+                                </span>
+                            `
+                    }
+
+
+                </div>
+
+
+                <!-- ========================================
+                     SLUG
+                ========================================= -->
+
+                <div
+                    class="officialStoreAdminSlug"
+                >
+
+                    ${
+                        slug
+                            ? `
+                                <span>
+                                    Slug:
+                                </span>
+
+                                <strong>
+                                    ${escapeHTML(slug)}
+                                </strong>
+                            `
+                            : `
+                                <span>
+                                    Slug não definido
+                                </span>
+                            `
+                    }
+
+                </div>
+
+
+                <!-- ========================================
+                     ACTIONS
+                ========================================= -->
+
+                <div
+                    class="officialStoreAdminActions"
+                >
+
+                    <button
+                        type="button"
+                        class="officialStoreEditButton"
+                        data-edit-store-id="${escapeHTML(storeId)}"
+                    >
+
+                        ✏️ Editar loja
+
+                    </button>
+
+                </div>
+
+            `;
+
+
+            /* ==============================================
+               IMAGE ERROR
+            ============================================== */
+
+            const image =
+                card.querySelector(
+                    ".officialStoreAdminLogo"
+                );
+
+
+            if (image) {
+
+                image.addEventListener(
+                    "error",
+                    () => {
+
+                        image.onerror = null;
+
+                        image.src =
+                            "images/default-store.png";
+
+                    }
+                );
+
+            }
+
+
+            /* ==============================================
+               BOUTON EDITER
+            ============================================== */
+
+            const editButton =
+                card.querySelector(
+                    ".officialStoreEditButton"
+                );
+
+
+            if (editButton) {
+
+                editButton.addEventListener(
+                    "click",
+                    () => {
+
+                        const id =
+                            editButton.dataset.editStoreId;
+
+
+                        alert(
+                            "OFFICIAL ADMIN — BLOC 4\n\n" +
+                            "Loja selecionada :\n\n" +
+                            id
+                        );
+
+
+                        /*
+                         * La fonction d'ouverture
+                         * de la modal sera connectée
+                         * dans le prochain bloc.
+                         */
+
+                    }
+                );
+
+            }
+
+
+            /* ==============================================
+               AJOUTER LA CARTE
+            ============================================== */
+
+            officialStoresList.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   LANCER L'AFFICHAGE
+========================================================= */
+
+renderOfficialStoresList();
+
+
+/* =========================================================
+   BLOC 4 TERMINÉ
+========================================================= */
+
+alert(
+    "OFFICIAL ADMIN — BLOC 4 TERMINÉ ✅\n\n" +
+
+    "Affichage des lojas terminé.\n\n" +
+
+    "Lojas affichées : " +
+    officialStores.length +
+    "\n\n" +
+
+    "officialStoresList : OK ✅\n" +
+
+    "Les boutons Editar loja sont prêts."
+);
