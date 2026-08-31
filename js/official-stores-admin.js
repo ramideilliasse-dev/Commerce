@@ -1219,8 +1219,12 @@ alert(
     "les boutons Editar loja."
 );
 /* =========================================================
-   OFFICIAL ADMIN — BLOC 5 COMPLET
+   OFFICIAL ADMIN — BLOC 5
    OUVERTURE + REMPLISSAGE DE LA MODAL
+
+   IMPORTANT :
+   Ce bloc ne redéclare aucune variable du BLOC 2.
+   Toutes les variables commencent par adminBloc5.
 ========================================================= */
 
 alert(
@@ -1233,191 +1237,176 @@ alert(
    1. RÉCUPÉRER LES ÉLÉMENTS HTML
 ========================================================= */
 
-const officialStoreModal =
+const adminBloc5Modal =
     document.getElementById(
         "officialStoreModal"
     );
 
-
-const officialStoreForm =
+const adminBloc5Form =
     document.getElementById(
         "officialStoreForm"
     );
 
-
-const storeIdInput =
+const adminBloc5Id =
     document.getElementById(
         "storeId"
     );
 
-
-const storeNameInput =
+const adminBloc5Name =
     document.getElementById(
         "storeName"
     );
 
-
-const storeCategoryInput =
+const adminBloc5Category =
     document.getElementById(
         "storeCategory"
     );
 
-
-const storeSlugInput =
+const adminBloc5Slug =
     document.getElementById(
         "storeSlug"
     );
 
-
-const storeDescriptionInput =
+const adminBloc5Description =
     document.getElementById(
         "storeDescription"
     );
 
-
-const storeLogoInput =
+const adminBloc5Logo =
     document.getElementById(
         "storeLogo"
     );
 
-
-const storeBannerInput =
+const adminBloc5Banner =
     document.getElementById(
         "storeBanner"
     );
 
-
-const storeStatusInput =
+const adminBloc5Status =
     document.getElementById(
         "storeStatus"
     );
 
-
-const storeVerifiedInput =
+const adminBloc5Verified =
     document.getElementById(
         "storeVerified"
     );
 
-
-const storeMerchantIdsInput =
+const adminBloc5MerchantIds =
     document.getElementById(
         "storeMerchantIds"
     );
 
-
-const storeSettingsInput =
+const adminBloc5Settings =
     document.getElementById(
         "storeSettings"
     );
 
-
-const storeCreatedAtInput =
+const adminBloc5CreatedAt =
     document.getElementById(
         "storeCreatedAt"
     );
 
-
-const storeUpdatedAtInput =
+const adminBloc5UpdatedAt =
     document.getElementById(
         "storeUpdatedAt"
     );
 
-
-const storeAdminSettingsUpdatedAtInput =
+const adminBloc5AdminUpdatedAt =
     document.getElementById(
         "storeAdminSettingsUpdatedAt"
     );
 
-
-const storeLogoPreview =
+const adminBloc5LogoPreview =
     document.getElementById(
         "storeLogoPreview"
     );
 
-
-const storeBannerPreview =
+const adminBloc5BannerPreview =
     document.getElementById(
         "storeBannerPreview"
     );
 
-
-const officialStoreModalTitle =
+const adminBloc5Title =
     document.getElementById(
         "officialStoreModalTitle"
     );
 
-
-const closeOfficialStoreModalButton =
+const adminBloc5CloseButton =
     document.getElementById(
         "closeOfficialStoreModal"
     );
 
-
-const cancelOfficialStoreEditButton =
+const adminBloc5CancelButton =
     document.getElementById(
         "cancelOfficialStoreEdit"
     );
 
-
-const officialStoreModalOverlay =
+const adminBloc5Overlay =
     document.getElementById(
         "officialStoreModalOverlay"
     );
 
-
-const settingsJsonError =
+const adminBloc5JsonError =
     document.getElementById(
         "settingsJsonError"
     );
 
 
 /* =========================================================
-   2. VÉRIFICATION DES ÉLÉMENTS
+   2. VÉRIFICATION
 ========================================================= */
 
 alert(
     "OFFICIAL ADMIN — BLOC 5.1\n\n" +
 
-    "Vérification de la modal...\n\n" +
+    "Éléments de la modal :\n\n" +
 
-    "officialStoreModal : " +
+    "Modal : " +
     (
-        officialStoreModal
+        adminBloc5Modal
             ? "OK ✅"
             : "MANQUANTE ❌"
     ) +
 
-    "\nofficialStoreForm : " +
+    "\nFormulaire : " +
     (
-        officialStoreForm
+        adminBloc5Form
             ? "OK ✅"
             : "MANQUANT ❌"
     ) +
 
-    "\nstoreId : " +
+    "\nID : " +
     (
-        storeIdInput
+        adminBloc5Id
             ? "OK ✅"
             : "MANQUANT ❌"
     ) +
 
-    "\nstoreName : " +
+    "\nNom : " +
     (
-        storeNameInput
+        adminBloc5Name
             ? "OK ✅"
             : "MANQUANT ❌"
     ) +
 
-    "\nstoreStatus : " +
+    "\nCatégorie : " +
     (
-        storeStatusInput
+        adminBloc5Category
+            ? "OK ✅"
+            : "MANQUANTE ❌"
+    ) +
+
+    "\nStatus : " +
+    (
+        adminBloc5Status
             ? "OK ✅"
             : "MANQUANT ❌"
     ) +
 
-    "\nstoreVerified : " +
+    "\nVerified : " +
     (
-        storeVerifiedInput
+        adminBloc5Verified
             ? "OK ✅"
             : "MANQUANT ❌"
     )
@@ -1428,7 +1417,7 @@ alert(
    3. PROTECTION HTML
 ========================================================= */
 
-function escapeOfficialAdminHTML(
+function adminBloc5EscapeHTML(
     value
 ) {
 
@@ -1465,10 +1454,10 @@ function escapeOfficialAdminHTML(
 
 
 /* =========================================================
-   4. FORMATTER LES DATES FIRESTORE
+   4. FORMAT DATE
 ========================================================= */
 
-function formatOfficialAdminDate(
+function adminBloc5FormatDate(
     value
 ) {
 
@@ -1477,7 +1466,6 @@ function formatOfficialAdminDate(
         return "";
 
     }
-
 
     try {
 
@@ -1493,7 +1481,6 @@ function formatOfficialAdminDate(
 
         }
 
-
         if (
             value instanceof Date
         ) {
@@ -1503,7 +1490,6 @@ function formatOfficialAdminDate(
             );
 
         }
-
 
         return String(
             value
@@ -1522,7 +1508,7 @@ function formatOfficialAdminDate(
    5. PRÉVISUALISATION IMAGE
 ========================================================= */
 
-function updateOfficialAdminPreview(
+function adminBloc5UpdatePreview(
     previewElement,
     url,
     label
@@ -1534,18 +1520,16 @@ function updateOfficialAdminPreview(
 
     }
 
-
     const cleanUrl =
         typeof url === "string"
             ? url.trim()
             : "";
 
-
     if (!cleanUrl) {
 
         previewElement.innerHTML = `
             <span>
-                ${escapeOfficialAdminHTML(label)}
+                ${adminBloc5EscapeHTML(label)}
             </span>
         `;
 
@@ -1553,12 +1537,11 @@ function updateOfficialAdminPreview(
 
     }
 
-
     previewElement.innerHTML = `
 
         <img
-            src="${escapeOfficialAdminHTML(cleanUrl)}"
-            alt="${escapeOfficialAdminHTML(label)}"
+            src="${adminBloc5EscapeHTML(cleanUrl)}"
+            alt="${adminBloc5EscapeHTML(label)}"
             style="
                 width:100%;
                 height:100%;
@@ -1570,12 +1553,10 @@ function updateOfficialAdminPreview(
 
     `;
 
-
     const image =
         previewElement.querySelector(
             "img"
         );
-
 
     if (image) {
 
@@ -1586,7 +1567,7 @@ function updateOfficialAdminPreview(
                 previewElement.innerHTML = `
 
                     <span>
-                        ${escapeOfficialAdminHTML(label)}
+                        ${adminBloc5EscapeHTML(label)}
                     </span>
 
                 `;
@@ -1603,14 +1584,14 @@ function updateOfficialAdminPreview(
    6. OUVRIR LA MODAL
 ========================================================= */
 
-function openOfficialStoreModal(
+function adminBloc5OpenModal(
     store
 ) {
 
     alert(
-        "OFFICIAL ADMIN — BLOC 5.2 DÉBUT\n\n" +
+        "OFFICIAL ADMIN — BLOC 5.2\n\n" +
 
-        "Préparation de la modal...\n\n" +
+        "Ouverture de la modal...\n\n" +
 
         "Loja : " +
         (
@@ -1627,14 +1608,13 @@ function openOfficialStoreModal(
 
 
     /* -----------------------------------------------------
-       VÉRIFIER LA LOJA
+       VÉRIFICATION LOJA
     ----------------------------------------------------- */
 
     if (!store) {
 
         alert(
-            "OFFICIAL ADMIN — ERREUR\n\n" +
-
+            "OFFICIAL ADMIN — BLOC 5 ERREUR\n\n" +
             "La loja sélectionnée est introuvable."
         );
 
@@ -1644,15 +1624,16 @@ function openOfficialStoreModal(
 
 
     /* -----------------------------------------------------
-       VÉRIFIER LA MODAL
+       VÉRIFICATION MODAL
     ----------------------------------------------------- */
 
-    if (!officialStoreModal) {
+    if (!adminBloc5Modal) {
 
         alert(
-            "OFFICIAL ADMIN — ERREUR\n\n" +
+            "OFFICIAL ADMIN — BLOC 5 ERREUR\n\n" +
 
-            "officialStoreModal est introuvable."
+            "L'élément #officialStoreModal " +
+            "est introuvable."
         );
 
         return;
@@ -1661,12 +1642,12 @@ function openOfficialStoreModal(
 
 
     /* =====================================================
-       REMPLIR ID
+       REMPLIR LES CHAMPS
     ===================================================== */
 
-    if (storeIdInput) {
+    if (adminBloc5Id) {
 
-        storeIdInput.value =
+        adminBloc5Id.value =
             String(
                 store.id ?? ""
             );
@@ -1674,13 +1655,9 @@ function openOfficialStoreModal(
     }
 
 
-    /* =====================================================
-       REMPLIR NOM
-    ===================================================== */
+    if (adminBloc5Name) {
 
-    if (storeNameInput) {
-
-        storeNameInput.value =
+        adminBloc5Name.value =
             String(
                 store.name ?? ""
             );
@@ -1688,13 +1665,9 @@ function openOfficialStoreModal(
     }
 
 
-    /* =====================================================
-       REMPLIR CATÉGORIE
-    ===================================================== */
+    if (adminBloc5Category) {
 
-    if (storeCategoryInput) {
-
-        storeCategoryInput.value =
+        adminBloc5Category.value =
             String(
                 store.category ?? ""
             );
@@ -1702,13 +1675,9 @@ function openOfficialStoreModal(
     }
 
 
-    /* =====================================================
-       REMPLIR SLUG
-    ===================================================== */
+    if (adminBloc5Slug) {
 
-    if (storeSlugInput) {
-
-        storeSlugInput.value =
+        adminBloc5Slug.value =
             String(
                 store.slug ?? ""
             );
@@ -1716,13 +1685,9 @@ function openOfficialStoreModal(
     }
 
 
-    /* =====================================================
-       REMPLIR DESCRIPTION
-    ===================================================== */
+    if (adminBloc5Description) {
 
-    if (storeDescriptionInput) {
-
-        storeDescriptionInput.value =
+        adminBloc5Description.value =
             String(
                 store.description ?? ""
             );
@@ -1730,13 +1695,9 @@ function openOfficialStoreModal(
     }
 
 
-    /* =====================================================
-       REMPLIR LOGO
-    ===================================================== */
+    if (adminBloc5Logo) {
 
-    if (storeLogoInput) {
-
-        storeLogoInput.value =
+        adminBloc5Logo.value =
             String(
                 store.logo ?? ""
             );
@@ -1744,13 +1705,9 @@ function openOfficialStoreModal(
     }
 
 
-    /* =====================================================
-       REMPLIR BANNER
-    ===================================================== */
+    if (adminBloc5Banner) {
 
-    if (storeBannerInput) {
-
-        storeBannerInput.value =
+        adminBloc5Banner.value =
             String(
                 store.banner ?? ""
             );
@@ -1758,35 +1715,42 @@ function openOfficialStoreModal(
     }
 
 
-    /* =====================================================
-       REMPLIR STATUS
-    ===================================================== */
+    if (adminBloc5Status) {
 
-    if (storeStatusInput) {
-
-        const status =
+        adminBloc5Status.value =
             String(
                 store.status ??
                 "Pending"
             );
 
-
-        storeStatusInput.value =
-            status;
-
     }
 
 
-    /* =====================================================
-       REMPLIR VERIFIED
-    ===================================================== */
+    if (adminBloc5Verified) {
 
-    if (storeVerifiedInput) {
+        /*
+         * Compatible avec :
+         * select
+         * input
+         * checkbox
+         */
 
-        storeVerifiedInput.value =
-            store.verified === true
-                ? "true"
-                : "false";
+        if (
+            adminBloc5Verified.type ===
+            "checkbox"
+        ) {
+
+            adminBloc5Verified.checked =
+                store.verified === true;
+
+        } else {
+
+            adminBloc5Verified.value =
+                store.verified === true
+                    ? "true"
+                    : "false";
+
+        }
 
     }
 
@@ -1795,7 +1759,7 @@ function openOfficialStoreModal(
        MERCHANT IDS
     ===================================================== */
 
-    if (storeMerchantIdsInput) {
+    if (adminBloc5MerchantIds) {
 
         const merchantIds =
             Array.isArray(
@@ -1804,8 +1768,7 @@ function openOfficialStoreModal(
                 ? store.merchantIds
                 : [];
 
-
-        storeMerchantIdsInput.value =
+        adminBloc5MerchantIds.value =
             merchantIds.join(
                 "\n"
             );
@@ -1817,11 +1780,11 @@ function openOfficialStoreModal(
        SETTINGS
     ===================================================== */
 
-    if (storeSettingsInput) {
+    if (adminBloc5Settings) {
 
         try {
 
-            storeSettingsInput.value =
+            adminBloc5Settings.value =
                 JSON.stringify(
                     store.settings ?? {},
                     null,
@@ -1830,7 +1793,7 @@ function openOfficialStoreModal(
 
         } catch (error) {
 
-            storeSettingsInput.value =
+            adminBloc5Settings.value =
                 "{}";
 
         }
@@ -1842,32 +1805,30 @@ function openOfficialStoreModal(
        DATES
     ===================================================== */
 
-    if (storeCreatedAtInput) {
+    if (adminBloc5CreatedAt) {
 
-        storeCreatedAtInput.value =
-            formatOfficialAdminDate(
+        adminBloc5CreatedAt.value =
+            adminBloc5FormatDate(
                 store.createdAt
             );
 
     }
 
 
-    if (storeUpdatedAtInput) {
+    if (adminBloc5UpdatedAt) {
 
-        storeUpdatedAtInput.value =
-            formatOfficialAdminDate(
+        adminBloc5UpdatedAt.value =
+            adminBloc5FormatDate(
                 store.updatedAt
             );
 
     }
 
 
-    if (
-        storeAdminSettingsUpdatedAtInput
-    ) {
+    if (adminBloc5AdminUpdatedAt) {
 
-        storeAdminSettingsUpdatedAtInput.value =
-            formatOfficialAdminDate(
+        adminBloc5AdminUpdatedAt.value =
+            adminBloc5FormatDate(
                 store.adminSettingsUpdatedAt
             );
 
@@ -1878,8 +1839,8 @@ function openOfficialStoreModal(
        PRÉVISUALISATION LOGO
     ===================================================== */
 
-    updateOfficialAdminPreview(
-        storeLogoPreview,
+    adminBloc5UpdatePreview(
+        adminBloc5LogoPreview,
         store.logo,
         "Logo"
     );
@@ -1889,8 +1850,8 @@ function openOfficialStoreModal(
        PRÉVISUALISATION BANNER
     ===================================================== */
 
-    updateOfficialAdminPreview(
-        storeBannerPreview,
+    adminBloc5UpdatePreview(
+        adminBloc5BannerPreview,
         store.banner,
         "Banner"
     );
@@ -1900,9 +1861,9 @@ function openOfficialStoreModal(
        TITRE
     ===================================================== */
 
-    if (officialStoreModalTitle) {
+    if (adminBloc5Title) {
 
-        officialStoreModalTitle.textContent =
+        adminBloc5Title.textContent =
             "Editar loja — " +
             (
                 store.name ||
@@ -1914,12 +1875,12 @@ function openOfficialStoreModal(
 
 
     /* =====================================================
-       MASQUER ERREUR JSON
+       CACHER ERREUR JSON
     ===================================================== */
 
-    if (settingsJsonError) {
+    if (adminBloc5JsonError) {
 
-        settingsJsonError.classList.add(
+        adminBloc5JsonError.classList.add(
             "hidden"
         );
 
@@ -1930,25 +1891,26 @@ function openOfficialStoreModal(
        OUVERTURE RÉELLE
     ===================================================== */
 
-    officialStoreModal.classList.remove(
+    adminBloc5Modal.classList.remove(
         "hidden"
     );
 
-
-    officialStoreModal.setAttribute(
+    adminBloc5Modal.setAttribute(
         "aria-hidden",
         "false"
     );
 
+    adminBloc5Modal.style.display =
+        "block";
+
+
+    /* =====================================================
+       BLOQUER SCROLL
+    ===================================================== */
 
     document.body.classList.add(
         "modalOpen"
     );
-
-
-    /* =====================================================
-       EMPÊCHER LE SCROLL DERRIÈRE
-    ===================================================== */
 
     document.body.style.overflow =
         "hidden";
@@ -1961,9 +1923,9 @@ function openOfficialStoreModal(
     setTimeout(
         () => {
 
-            if (storeNameInput) {
+            if (adminBloc5Name) {
 
-                storeNameInput.focus();
+                adminBloc5Name.focus();
 
             }
 
@@ -1998,30 +1960,29 @@ function openOfficialStoreModal(
    7. FERMER LA MODAL
 ========================================================= */
 
-function closeOfficialStoreModal() {
+function adminBloc5CloseModal() {
 
-    if (!officialStoreModal) {
+    if (!adminBloc5Modal) {
 
         return;
 
     }
 
-
-    officialStoreModal.classList.add(
+    adminBloc5Modal.classList.add(
         "hidden"
     );
 
-
-    officialStoreModal.setAttribute(
+    adminBloc5Modal.setAttribute(
         "aria-hidden",
         "true"
     );
 
+    adminBloc5Modal.style.display =
+        "none";
 
     document.body.classList.remove(
         "modalOpen"
     );
-
 
     document.body.style.overflow =
         "";
@@ -2034,10 +1995,10 @@ function closeOfficialStoreModal() {
 ========================================================= */
 
 if (
-    closeOfficialStoreModalButton
+    adminBloc5CloseButton
 ) {
 
-    closeOfficialStoreModalButton.addEventListener(
+    adminBloc5CloseButton.addEventListener(
         "click",
         (event) => {
 
@@ -2045,7 +2006,7 @@ if (
 
             event.stopPropagation();
 
-            closeOfficialStoreModal();
+            adminBloc5CloseModal();
 
         }
     );
@@ -2058,10 +2019,10 @@ if (
 ========================================================= */
 
 if (
-    cancelOfficialStoreEditButton
+    adminBloc5CancelButton
 ) {
 
-    cancelOfficialStoreEditButton.addEventListener(
+    adminBloc5CancelButton.addEventListener(
         "click",
         (event) => {
 
@@ -2069,7 +2030,7 @@ if (
 
             event.stopPropagation();
 
-            closeOfficialStoreModal();
+            adminBloc5CloseModal();
 
         }
     );
@@ -2082,18 +2043,30 @@ if (
 ========================================================= */
 
 if (
-    officialStoreModalOverlay
+    adminBloc5Overlay
 ) {
 
-    officialStoreModalOverlay.addEventListener(
+    adminBloc5Overlay.addEventListener(
         "click",
         (event) => {
 
-            event.preventDefault();
+            /*
+             * Fermer seulement si on clique
+             * directement sur l'overlay.
+             */
 
-            event.stopPropagation();
+            if (
+                event.target ===
+                adminBloc5Overlay
+            ) {
 
-            closeOfficialStoreModal();
+                event.preventDefault();
+
+                event.stopPropagation();
+
+                adminBloc5CloseModal();
+
+            }
 
         }
     );
@@ -2111,13 +2084,13 @@ document.addEventListener(
 
         if (
             event.key === "Escape" &&
-            officialStoreModal &&
-            !officialStoreModal.classList.contains(
+            adminBloc5Modal &&
+            !adminBloc5Modal.classList.contains(
                 "hidden"
             )
         ) {
 
-            closeOfficialStoreModal();
+            adminBloc5CloseModal();
 
         }
 
@@ -2127,8 +2100,6 @@ document.addEventListener(
 
 /* =========================================================
    12. CONNEXION DES BOUTONS EDITAR LOJA
-   IMPORTANT :
-   CAPTURE = true
 ========================================================= */
 
 if (
@@ -2138,10 +2109,6 @@ if (
     officialStoresList.addEventListener(
         "click",
         (event) => {
-
-            /* =================================================
-               TROUVER LE BOUTON
-            ================================================= */
 
             const button =
                 event.target.closest(
@@ -2157,23 +2124,18 @@ if (
 
 
             /* =================================================
-               IMPORTANT
-
-               On bloque immédiatement les autres listeners
-               du Bloc 4.
+               BLOQUER L'ACTION DU BOUTON
             ================================================= */
 
             event.preventDefault();
 
             event.stopPropagation();
 
-            event.stopImmediatePropagation();
-
 
             /* =================================================
                RÉCUPÉRER L'ID
 
-               Le Bloc 4 utilise :
+               TON BLOC 4 UTILISE :
                data-edit-store-id
             ================================================= */
 
@@ -2186,7 +2148,7 @@ if (
             alert(
                 "OFFICIAL ADMIN — BLOC 5.3\n\n" +
 
-                "Bouton « Editar loja » intercepté ✅\n\n" +
+                "Bouton « Editar loja » détecté ✅\n\n" +
 
                 "ID reçu : " +
                 (
@@ -2203,9 +2165,10 @@ if (
             if (!storeId) {
 
                 alert(
-                    "OFFICIAL ADMIN — ERREUR\n\n" +
+                    "OFFICIAL ADMIN — BLOC 5 ERREUR\n\n" +
 
-                    "data-edit-store-id est absent."
+                    "Le bouton ne possède pas " +
+                    "de data-edit-store-id."
                 );
 
                 return;
@@ -2223,7 +2186,8 @@ if (
 
                         return String(
                             item.id
-                        ) === String(
+                        ) ===
+                        String(
                             storeId
                         );
 
@@ -2232,15 +2196,15 @@ if (
 
 
             /* =================================================
-               LOJA INTROUVABLE
+               VÉRIFIER LOJA
             ================================================= */
 
             if (!store) {
 
                 alert(
-                    "OFFICIAL ADMIN — ERREUR\n\n" +
+                    "OFFICIAL ADMIN — BLOC 5 ERREUR\n\n" +
 
-                    "La loja n'a pas été trouvée.\n\n" +
+                    "Loja introuvable.\n\n" +
 
                     "ID : " +
                     storeId
@@ -2252,40 +2216,39 @@ if (
 
 
             /* =================================================
-               OUVRIR
+               OUVRIR LA MODAL
             ================================================= */
 
-            openOfficialStoreModal(
+            adminBloc5OpenModal(
                 store
             );
 
-        },
-        true
+        }
     );
 
 }
 
 
 /* =========================================================
-   13. FIN DU BLOC
+   13. RÉSULTAT FINAL
 ========================================================= */
 
 alert(
     "OFFICIAL ADMIN — BLOC 5 TERMINÉ ✅\n\n" +
 
-    "Système d'édition chargé.\n\n" +
+    "Système d'édition chargé avec succès.\n\n" +
 
     "✓ Modal détectée\n" +
     "✓ Formulaire détecté\n" +
-    "✓ Champs connectés\n" +
-    "✓ Boutons Editar interceptés\n" +
+    "✓ Champs détectés\n" +
+    "✓ Prévisualisations détectées\n" +
+    "✓ Boutons Editar loja connectés\n" +
     "✓ Recherche dans officialStores\n" +
     "✓ Remplissage automatique\n" +
     "✓ Ouverture de la modal\n" +
     "✓ Fermeture X\n" +
     "✓ Fermeture Cancelar\n" +
-    "✓ Fermeture ESC\n" +
-    "✓ Prévisualisation logo/banner\n\n" +
+    "✓ Fermeture ESC\n\n" +
 
     "BLOC 5 TERMINÉ."
 );
