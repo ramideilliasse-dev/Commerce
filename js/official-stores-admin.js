@@ -20,8 +20,8 @@ const OFFICIAL_STORES_COLLECTION = "officialStores";
  */
 const USERS_COLLECTION = "users";
 /* =========================================================
-   OFFICIAL STORES ADMIN
-   BLOC 2 — ÉTAT + ÉLÉMENTS HTML + UTILITAIRES
+   OFFICIAL ADMIN — BLOC 2
+   VARIABLES ET ÉLÉMENTS HTML
 ========================================================= */
 
 alert(
@@ -31,169 +31,247 @@ alert(
 
 
 /* =========================================================
-   ÉTAT DE L'APPLICATION
-========================================================= */
-
-let allStores = [];
-
-let filteredStores = [];
-
-let selectedStoreId = null;
-
-
-/* =========================================================
-   ÉLÉMENTS HTML PRINCIPAUX
+   CONTAINER PRINCIPAL
 ========================================================= */
 
 const storesContainer =
     document.getElementById(
-        "storesContainer"
-    );
-
-
-const searchInput =
-    document.getElementById(
-        "storeSearch"
-    );
-
-
-const statusFilter =
-    document.getElementById(
-        "statusFilter"
-    );
-
-
-const storesCount =
-    document.getElementById(
-        "storesCount"
-    );
-
-
-const loadingMessage =
-    document.getElementById(
-        "loadingMessage"
-    );
-
-
-const emptyMessage =
-    document.getElementById(
-        "emptyMessage"
+        "officialStoresList"
     );
 
 
 /* =========================================================
-   ÉLÉMENTS MODAL
+   MODAL
 ========================================================= */
 
 const storeModal =
     document.getElementById(
-        "storeModal"
-    );
-
-
-const closeModalButton =
-    document.getElementById(
-        "closeStoreModal"
-    );
-
-
-const cancelButton =
-    document.getElementById(
-        "cancelStoreEdit"
-    );
-
-
-const saveButton =
-    document.getElementById(
-        "saveStoreButton"
+        "officialStoreModal"
     );
 
 
 /* =========================================================
-   CHAMPS DE LA MODAL
+   OVERLAY MODAL
 ========================================================= */
 
-const editId =
+const storeModalOverlay =
     document.getElementById(
-        "editStoreId"
+        "officialStoreModalOverlay"
     );
 
 
-const editName =
+/* =========================================================
+   FORMULAIRE
+========================================================= */
+
+const officialStoreForm =
     document.getElementById(
-        "editStoreName"
+        "officialStoreForm"
     );
 
 
-const editCategory =
+/* =========================================================
+   CHAMPS PRINCIPAUX
+========================================================= */
+
+const storeId =
     document.getElementById(
-        "editStoreCategory"
+        "storeId"
+    );
+
+const storeName =
+    document.getElementById(
+        "storeName"
+    );
+
+const storeCategory =
+    document.getElementById(
+        "storeCategory"
+    );
+
+const storeSlug =
+    document.getElementById(
+        "storeSlug"
+    );
+
+const storeDescription =
+    document.getElementById(
+        "storeDescription"
     );
 
 
-const editSlug =
+/* =========================================================
+   IMAGES
+========================================================= */
+
+const storeLogo =
     document.getElementById(
-        "editStoreSlug"
+        "storeLogo"
+    );
+
+const storeBanner =
+    document.getElementById(
+        "storeBanner"
+    );
+
+const storeLogoPreview =
+    document.getElementById(
+        "storeLogoPreview"
+    );
+
+const storeBannerPreview =
+    document.getElementById(
+        "storeBannerPreview"
     );
 
 
-const editLogo =
+/* =========================================================
+   VALIDATION / STATUS
+========================================================= */
+
+const storeStatus =
     document.getElementById(
-        "editStoreLogo"
+        "storeStatus"
+    );
+
+const storeVerified =
+    document.getElementById(
+        "storeVerified"
     );
 
 
-const editBanner =
+/* =========================================================
+   MERCHANT IDS
+========================================================= */
+
+const storeMerchantIds =
     document.getElementById(
-        "editStoreBanner"
+        "storeMerchantIds"
     );
 
 
-const editDescription =
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+const storeSettings =
     document.getElementById(
-        "editStoreDescription"
+        "storeSettings"
+    );
+
+const settingsJsonError =
+    document.getElementById(
+        "settingsJsonError"
     );
 
 
-const editStatus =
+/* =========================================================
+   DATES
+========================================================= */
+
+const storeCreatedAt =
     document.getElementById(
-        "editStoreStatus"
+        "storeCreatedAt"
+    );
+
+const storeUpdatedAt =
+    document.getElementById(
+        "storeUpdatedAt"
+    );
+
+const storeAdminSettingsUpdatedAt =
+    document.getElementById(
+        "storeAdminSettingsUpdatedAt"
     );
 
 
-const editVerified =
+/* =========================================================
+   BOUTONS MODAL
+========================================================= */
+
+const closeOfficialStoreModal =
     document.getElementById(
-        "editStoreVerified"
+        "closeOfficialStoreModal"
+    );
+
+const cancelOfficialStoreEdit =
+    document.getElementById(
+        "cancelOfficialStoreEdit"
+    );
+
+const saveOfficialStore =
+    document.getElementById(
+        "saveOfficialStore"
     );
 
 
-const editMerchantIds =
+/* =========================================================
+   RECHERCHE / FILTRE
+========================================================= */
+
+const officialStoresSearch =
     document.getElementById(
-        "editMerchantIds"
+        "officialStoresSearch"
+    );
+
+const officialStoresStatusFilter =
+    document.getElementById(
+        "officialStoresStatusFilter"
     );
 
 
-const editSettings =
+/* =========================================================
+   REFRESH
+========================================================= */
+
+const refreshOfficialStores =
     document.getElementById(
-        "editStoreSettings"
+        "refreshOfficialStores"
     );
 
 
-const editCreatedAt =
+/* =========================================================
+   STATISTIQUES
+========================================================= */
+
+const totalStoresCount =
     document.getElementById(
-        "editCreatedAt"
+        "totalStoresCount"
+    );
+
+const activeStoresCount =
+    document.getElementById(
+        "activeStoresCount"
+    );
+
+const pendingStoresCount =
+    document.getElementById(
+        "pendingStoresCount"
+    );
+
+const blockedStoresCount =
+    document.getElementById(
+        "blockedStoresCount"
     );
 
 
-const editUpdatedAt =
+/* =========================================================
+   MESSAGE / LOADER / EMPTY
+========================================================= */
+
+const officialStoresMessage =
     document.getElementById(
-        "editUpdatedAt"
+        "officialStoresMessage"
     );
 
-
-const editAdminSettingsUpdatedAt =
+const officialStoresLoader =
     document.getElementById(
-        "editAdminSettingsUpdatedAt"
+        "officialStoresLoader"
+    );
+
+const officialStoresEmpty =
+    document.getElementById(
+        "officialStoresEmpty"
     );
 
 
@@ -201,546 +279,89 @@ const editAdminSettingsUpdatedAt =
    TOAST
 ========================================================= */
 
-const toast =
+const officialStoreToast =
     document.getElementById(
-        "toast"
+        "officialStoreToast"
     );
 
-
-const toastMessage =
+const officialStoreToastMessage =
     document.getElementById(
-        "toastMessage"
+        "officialStoreToastMessage"
     );
 
 
 /* =========================================================
-   TOAST
+   VARIABLES DE TRAVAIL
 ========================================================= */
 
-function showToast(
-    message,
-    type = "success"
-) {
+let allOfficialStores = [];
 
-    if (
-        !toast ||
-        !toastMessage
-    ) {
-
-        alert(
-            message
-        );
-
-        return;
-
-    }
-
-
-    toastMessage.textContent =
-        message;
-
-
-    toast.classList.remove(
-        "success",
-        "error"
-    );
-
-
-    toast.classList.add(
-        type
-    );
-
-
-    toast.classList.add(
-        "show"
-    );
-
-
-    setTimeout(
-        () => {
-
-            toast.classList.remove(
-                "show"
-            );
-
-        },
-        3000
-    );
-
-}
+let currentOfficialStore = null;
 
 
 /* =========================================================
-   LOADER
-========================================================= */
-
-function showLoading(
-    show = true
-) {
-
-    if (!loadingMessage) {
-
-        return;
-
-    }
-
-
-    loadingMessage.style.display =
-        show
-            ? "block"
-            : "none";
-
-}
-
-
-/* =========================================================
-   PROTECTION HTML
-========================================================= */
-
-function escapeHtml(
-    value
-) {
-
-    return String(
-        value ?? ""
-    )
-
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-
-        .replace(
-            /</g,
-            "&lt;"
-        )
-
-        .replace(
-            />/g,
-            "&gt;"
-        )
-
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
-}
-
-
-/* =========================================================
-   VALEUR SÛRE
-========================================================= */
-
-function safeValue(
-    value,
-    fallback = ""
-) {
-
-    if (
-        value === undefined ||
-        value === null
-    ) {
-
-        return fallback;
-
-    }
-
-
-    return value;
-
-}
-
-
-/* =========================================================
-   CONVERTIR VALEUR EN TEXTE
-========================================================= */
-
-function valueToText(
-    value
-) {
-
-    if (
-        value === undefined ||
-        value === null
-    ) {
-
-        return "";
-
-    }
-
-
-    if (
-        typeof value === "object"
-    ) {
-
-        try {
-
-            return JSON.stringify(
-                value,
-                null,
-                2
-            );
-
-        } catch (error) {
-
-            return "";
-
-        }
-
-    }
-
-
-    return String(
-        value
-    );
-
-}
-
-
-/* =========================================================
-   LABEL DU STATUT
-========================================================= */
-
-function getStatusLabel(
-    status
-) {
-
-    switch (status) {
-
-        case "Active":
-
-            return "Active";
-
-
-        case "Pending":
-
-            return "Pending";
-
-
-        case "Blocked":
-
-            return "Blocked";
-
-
-        case "Rejected":
-
-            return "Rejected";
-
-
-        default:
-
-            return (
-                status ||
-                "Sans statut"
-            );
-
-    }
-
-}
-
-
-/* =========================================================
-   CLASSE CSS DU STATUT
-========================================================= */
-
-function getStatusClass(
-    status
-) {
-
-    switch (status) {
-
-        case "Active":
-
-            return "status-active";
-
-
-        case "Pending":
-
-            return "status-pending";
-
-
-        case "Blocked":
-
-            return "status-blocked";
-
-
-        case "Rejected":
-
-            return "status-rejected";
-
-
-        default:
-
-            return "status-unknown";
-
-    }
-
-}
-
-
-/* =========================================================
-   FORMATER UNE DATE FIREBASE
-========================================================= */
-
-function formatDate(
-    value
-) {
-
-    if (!value) {
-
-        return "—";
-
-    }
-
-
-    try {
-
-        if (
-            typeof value.toDate ===
-            "function"
-        ) {
-
-            return value
-                .toDate()
-                .toLocaleString(
-                    "fr-FR"
-                );
-
-        }
-
-
-        if (
-            value.seconds !==
-            undefined
-        ) {
-
-            return new Date(
-                value.seconds * 1000
-            ).toLocaleString(
-                "fr-FR"
-            );
-
-        }
-
-
-        if (
-            value instanceof Date
-        ) {
-
-            return value.toLocaleString(
-                "fr-FR"
-            );
-
-        }
-
-
-        return new Date(
-            value
-        ).toLocaleString(
-            "fr-FR"
-        );
-
-    } catch (error) {
-
-        return "—";
-
-    }
-
-}
-
-
-/* =========================================================
-   NORMALISER UNE LOJA
-========================================================= */
-
-function normalizeStore(
-    documentSnapshot
-) {
-
-    const data =
-        documentSnapshot.data();
-
-
-    return {
-
-        id:
-            documentSnapshot.id,
-
-
-        name:
-            safeValue(
-                data.name,
-                "Loja Oficial"
-            ),
-
-
-        category:
-            safeValue(
-                data.category,
-                ""
-            ),
-
-
-        slug:
-            safeValue(
-                data.slug,
-                ""
-            ),
-
-
-        logo:
-            safeValue(
-                data.logo,
-                ""
-            ),
-
-
-        banner:
-            safeValue(
-                data.banner,
-                ""
-            ),
-
-
-        description:
-            safeValue(
-                data.description,
-                ""
-            ),
-
-
-        status:
-            safeValue(
-                data.status,
-                "Pending"
-            ),
-
-
-        verified:
-            data.verified === true,
-
-
-        merchantIds:
-            Array.isArray(
-                data.merchantIds
-            )
-                ? data.merchantIds
-                : [],
-
-
-        settings:
-            data.settings &&
-            typeof data.settings === "object"
-                ? data.settings
-                : {},
-
-
-        createdAt:
-            data.createdAt ||
-            null,
-
-
-        updatedAt:
-            data.updatedAt ||
-            null,
-
-
-        adminSettingsUpdatedAt:
-            data.adminSettingsUpdatedAt ||
-            null
-
-    };
-
-}
-
-
-/* =========================================================
-   DIAGNOSTIC DES ÉLÉMENTS HTML
-========================================================= */
-
-console.log(
-    "OFFICIAL ADMIN — BLOC 2 :",
-    {
-        storesContainer:
-            !!storesContainer,
-
-        searchInput:
-            !!searchInput,
-
-        statusFilter:
-            !!statusFilter,
-
-        storesCount:
-            !!storesCount,
-
-        storeModal:
-            !!storeModal,
-
-        editName:
-            !!editName,
-
-        editCategory:
-            !!editCategory,
-
-        editSlug:
-            !!editSlug,
-
-        editLogo:
-            !!editLogo,
-
-        editBanner:
-            !!editBanner,
-
-        editDescription:
-            !!editDescription,
-
-        editStatus:
-            !!editStatus,
-
-        editVerified:
-            !!editVerified,
-
-        editMerchantIds:
-            !!editMerchantIds,
-
-        editSettings:
-            !!editSettings,
-
-        saveButton:
-            !!saveButton
-
-    }
-);
-
-
-/* =========================================================
-   FIN DU BLOC 2
+   DIAGNOSTIC DES ÉLÉMENTS
 ========================================================= */
 
 alert(
     "OFFICIAL ADMIN — BLOC 2 TERMINÉ ✅\n\n" +
 
     "Variables chargées.\n" +
+    "Éléments HTML détectés :\n\n" +
 
-    "Fonctions utilitaires chargées.\n\n" +
+    "officialStoresList : " +
+    (
+        storesContainer
+            ? "OK ✅"
+            : "MANQUANT ❌"
+    ) +
 
-    "storesContainer : " +
-    (!!storesContainer ? "OK" : "MANQUANT") +
+    "\n\nofficialStoreModal : " +
+    (
+        storeModal
+            ? "OK ✅"
+            : "MANQUANT ❌"
+    ) +
 
-    "\nstoreModal : " +
-    (!!storeModal ? "OK" : "MANQUANT") +
+    "\n\nofficialStoreForm : " +
+    (
+        officialStoreForm
+            ? "OK ✅"
+            : "MANQUANT ❌"
+    ) +
 
-    "\neditName : " +
-    (!!editName ? "OK" : "MANQUANT") +
+    "\n\nstoreName : " +
+    (
+        storeName
+            ? "OK ✅"
+            : "MANQUANT ❌"
+    ) +
 
-    "\neditStatus : " +
-    (!!editStatus ? "OK" : "MANQUANT") +
+    "\n\nstoreStatus : " +
+    (
+        storeStatus
+            ? "OK ✅"
+            : "MANQUANT ❌"
+    ) +
 
-    "\n\nLe bloc 2 est correctement exécuté."
+    "\n\nstoreVerified : " +
+    (
+        storeVerified
+            ? "OK ✅"
+            : "MANQUANT ❌"
+    ) +
+
+    "\n\nstoreLogo : " +
+    (
+        storeLogo
+            ? "OK ✅"
+            : "MANQUANT ❌"
+    ) +
+
+    "\n\nstoreBanner : " +
+    (
+        storeBanner
+            ? "OK ✅"
+            : "MANQUANT ❌"
+    )
 );
