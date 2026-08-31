@@ -367,7 +367,7 @@ alert(
 );
 /* =========================================================
    OFFICIAL ADMIN — BLOC 3
-   CHARGEMENT DES 86 LOJAS
+   CHARGEMENT DES LOJAS
 ========================================================= */
 
 alert(
@@ -380,479 +380,100 @@ alert(
    RÉFÉRENCE FIRESTORE
 ========================================================= */
 
-const officialStoresRef = Collection(
-    db,
-    "officialStores"
+let officialStoresSnapshot;
+
+try {
+
+    const officialStoresRef = collection(
+        db,
+        "officialStores"
+    );
+
+
+    alert(
+        "OFFICIAL ADMIN — BLOC 3.1\n\n" +
+        "Collection officialStores trouvée ✅"
+    );
+
+
+    officialStoresSnapshot = await getDocs(
+        officialStoresRef
+    );
+
+
+    alert(
+        "OFFICIAL ADMIN — BLOC 3.2\n\n" +
+        "Firestore répondu ✅\n\n" +
+        "Nombre de documents : " +
+        officialStoresSnapshot.size
+    );
+
+
+} catch (error) {
+
+    alert(
+        "OFFICIAL ADMIN — BLOC 3 ERREUR ❌\n\n" +
+
+        "name : " +
+        error.name +
+
+        "\n\ncode : " +
+        error.code +
+
+        "\n\nmessage : " +
+        error.message
+    );
+
+    throw error;
+
+}
+
+
+/* =========================================================
+   TRANSFORMER LES DOCUMENTS EN TABLEAU
+========================================================= */
+
+const officialStores = [];
+
+
+officialStoresSnapshot.forEach(
+    (docSnapshot) => {
+
+        const data = docSnapshot.data();
+
+
+        officialStores.push({
+
+            id: docSnapshot.id,
+
+            ...data
+
+        });
+
+    }
+);
+
+
+alert(
+    "OFFICIAL ADMIN — BLOC 3.3\n\n" +
+
+    "Documents transformés ✅\n\n" +
+
+    "Lojas chargées : " +
+    officialStores.length
 );
 
 
 /* =========================================================
-   CHARGER LES DOCUMENTS
+   FIN DU BLOC 3
 ========================================================= */
 
-async function loadOfficialStoresAdmin() {
-
-    try {
-
-        const snapshot = await getDocs(
-            officialStoresRef
-        );
-
-
-        /* =================================================
-           STOCKAGE LOCAL DES LOJAS
-        ================================================= */
-
-        let officialStores = [];
-
-
-        snapshot.forEach(
-            (docSnapshot) => {
-
-                officialStores.push({
-
-                    id: docSnapshot.id,
-
-                    ...docSnapshot.data()
-
-                });
-
-            }
-        );
-
-
-        /* =================================================
-           VARIABLES GLOBALES
-        ================================================= */
-
-        window.officialStores =
-            officialStores;
-
-
-        /* =================================================
-           STATISTIQUES
-        ================================================= */
-
-        const totalCount =
-            document.getElementById(
-                "totalStoresCount"
-            );
-
-        const activeCount =
-            document.getElementById(
-                "activeStoresCount"
-            );
-
-        const pendingCount =
-            document.getElementById(
-                "pendingStoresCount"
-            );
-
-        const blockedCount =
-            document.getElementById(
-                "blockedStoresCount"
-            );
-
-
-        if (totalCount) {
-
-            totalCount.textContent =
-                officialStores.length;
-
-        }
-
-
-        if (activeCount) {
-
-            activeCount.textContent =
-                officialStores.filter(
-                    store =>
-                        store.status === "Active"
-                ).length;
-
-        }
-
-
-        if (pendingCount) {
-
-            pendingCount.textContent =
-                officialStores.filter(
-                    store =>
-                        store.status === "Pending"
-                ).length;
-
-        }
-
-
-        if (blockedCount) {
-
-            blockedCount.textContent =
-                officialStores.filter(
-                    store =>
-                        store.status === "Blocked"
-                ).length;
-
-        }
-
-
-        /* =================================================
-           AFFICHER LA LISTE
-        ================================================= */
-
-        renderOfficialStoresAdmin(
-            officialStores
-        );
-
-
-        /* =================================================
-           ALERTE FIN
-        ================================================= */
-
-        alert(
-            "OFFICIAL ADMIN — BLOC 3 TERMINÉ ✅\n\n" +
-
-            "Firestore connecté.\n" +
-
-            "Documents trouvés : " +
-            officialStores.length +
-            "\n\n" +
-
-            "La liste des lojas a été chargée."
-        );
-
-
-    } catch (error) {
-
-        alert(
-            "OFFICIAL ADMIN — BLOC 3 ERREUR ❌\n\n" +
-
-            "name : " +
-            error.name +
-            "\n\n" +
-
-            "code : " +
-            error.code +
-            "\n\n" +
-
-            "message : " +
-            error.message
-        );
-
-        console.error(
-            "Erreur officialStores :",
-            error
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   AFFICHER LES LOJAS
-========================================================= */
-
-function renderOfficialStoresAdmin(
-    stores
-) {
-
-    const list =
-        document.getElementById(
-            "officialStoresList"
-        );
-
-
-    if (!list) {
-
-        alert(
-            "OFFICIAL ADMIN — ERREUR\n\n" +
-            "officialStoresList est introuvable."
-        );
-
-        return;
-
-    }
-
-
-    list.innerHTML = "";
-
-
-    if (stores.length === 0) {
-
-        const empty =
-            document.getElementById(
-                "officialStoresEmpty"
-            );
-
-
-        if (empty) {
-
-            empty.classList.remove(
-                "hidden"
-            );
-
-        }
-
-        return;
-
-    }
-
-
-    const empty =
-        document.getElementById(
-            "officialStoresEmpty"
-        );
-
-
-    if (empty) {
-
-        empty.classList.add(
-            "hidden"
-        );
-
-    }
-
-
-    stores.forEach(
-        (store) => {
-
-            const card =
-                document.createElement(
-                    "article"
-                );
-
-
-            card.className =
-                "officialStoreAdminCard";
-
-
-            const logo =
-                typeof store.logo === "string" &&
-                store.logo.trim() !== ""
-                    ? store.logo.trim()
-                    : "";
-
-
-            const name =
-                store.name ||
-                "Loja sem nome";
-
-
-            const category =
-                store.category ||
-                "Sem categoria";
-
-
-            const status =
-                store.status ||
-                "Pending";
-
-
-            const verified =
-                store.verified === true;
-
-
-            card.innerHTML = `
-
-                <div class="officialStoreAdminCardLogo">
-
-                    ${
-                        logo
-                            ? `
-                                <img
-                                    src="${escapeHtmlAdmin(logo)}"
-                                    alt="${escapeHtmlAdmin(name)}"
-                                    onerror="
-                                        this.style.display='none';
-                                    "
-                                >
-                              `
-                            : `
-                                <span>
-                                    🏬
-                                </span>
-                              `
-                    }
-
-                </div>
-
-
-                <div class="officialStoreAdminCardInfo">
-
-                    <h3>
-                        ${escapeHtmlAdmin(name)}
-
-                        ${
-                            verified
-                                ? `
-                                    <span
-                                        class="officialVerifiedBadge"
-                                    >
-                                        ✓
-                                    </span>
-                                  `
-                                : ""
-                        }
-                    </h3>
-
-
-                    <p>
-                        ${escapeHtmlAdmin(category)}
-                    </p>
-
-
-                    <small>
-                        ID: ${escapeHtmlAdmin(store.id)}
-                    </small>
-
-                </div>
-
-
-                <div class="officialStoreAdminCardStatus">
-
-                    <span
-                        class="statusBadge status-${escapeHtmlAdmin(status)}"
-                    >
-                        ${escapeHtmlAdmin(status)}
-                    </span>
-
-                </div>
-
-
-                <div class="officialStoreAdminCardAction">
-
-                    <button
-                        type="button"
-                        class="editOfficialStoreButton"
-                        data-store-id="${escapeHtmlAdmin(store.id)}"
-                    >
-                        Editar
-                    </button>
-
-                </div>
-
-            `;
-
-
-            list.appendChild(
-                card
-            );
-
-        }
-    );
-
-
-    /* =====================================================
-       BOUTONS MODIFICATION
-    ===================================================== */
-
-    const editButtons =
-        list.querySelectorAll(
-            ".editOfficialStoreButton"
-        );
-
-
-    editButtons.forEach(
-        (button) => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    const storeId =
-                        button.dataset.storeId;
-
-
-                    const store =
-                        stores.find(
-                            item =>
-                                item.id === storeId
-                        );
-
-
-                    if (!store) {
-
-                        alert(
-                            "ERREUR\n\n" +
-                            "Loja introuvable : " +
-                            storeId
-                        );
-
-                        return;
-
-                    }
-
-
-                    /*
-                     * Pour l'instant on vérifie
-                     * seulement que le bouton fonctionne.
-                     *
-                     * Le bloc suivant servira à
-                     * remplir la modal.
-                     */
-
-                    alert(
-                        "EDIT TEST ✅\n\n" +
-
-                        "Loja sélectionnée :\n" +
-                        store.name +
-                        "\n\n" +
-
-                        "ID : " +
-                        store.id
-                    );
-
-                }
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   PROTECTION HTML
-========================================================= */
-
-function escapeHtmlAdmin(
-    value
-) {
-
-    return String(
-        value ?? ""
-    )
-
-    .replace(
-        /&/g,
-        "&amp;"
-    )
-
-    .replace(
-        /</g,
-        "&lt;"
-    )
-
-    .replace(
-        />/g,
-        "&gt;"
-    )
-
-    .replace(
-        /"/g,
-        "&quot;"
-    )
-
-    .replace(
-        /'/g,
-        "&#039;"
-    );
-
-}
-
-
-/* =========================================================
-   DÉMARRAGE
-========================================================= */
-
-loadOfficialStoresAdmin();
+alert(
+    "OFFICIAL ADMIN — BLOC 3 TERMINÉ ✅\n\n" +
+
+    "Les " +
+    officialStores.length +
+    " lojas sont maintenant disponibles\n" +
+
+    "dans le tableau officialStores."
+);
