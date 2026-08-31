@@ -480,6 +480,17 @@ alert(
 /* =========================================================
    OFFICIAL ADMIN — BLOC 4
    AFFICHAGE DES 86 LOJAS
+
+   IMPORTANT :
+   Ce bloc s'occupe UNIQUEMENT de l'affichage.
+
+   Il NE gère PAS :
+   - l'ouverture de la modal
+   - la modification
+   - la sauvegarde
+   - les clics sur Editar loja
+
+   Ces fonctions seront gérées par le BLOC 5.
 ========================================================= */
 
 alert(
@@ -489,7 +500,7 @@ alert(
 
 
 /* =========================================================
-   VÉRIFICATION DU TABLEAU
+   1. VÉRIFICATION DU TABLEAU
 ========================================================= */
 
 if (
@@ -504,11 +515,12 @@ if (
     throw new Error(
         "officialStores doit être un tableau."
     );
+
 }
 
 
 /* =========================================================
-   VÉRIFICATION DU CONTENEUR
+   2. VÉRIFICATION DU CONTENEUR
 ========================================================= */
 
 if (
@@ -523,84 +535,127 @@ if (
     throw new Error(
         "officialStoresList introuvable."
     );
+
 }
 
 
 /* =========================================================
-   FONCTION DE PROTECTION HTML
+   3. VÉRIFICATION DES LOJAS
 ========================================================= */
 
-function escapeHTML(value) {
+alert(
+    "OFFICIAL ADMIN — BLOC 4.1\n\n" +
+
+    "Tableau officialStores : OK ✅\n" +
+
+    "Nombre de lojas : " +
+    officialStores.length +
+    "\n\n" +
+
+    "Conteneur officialStoresList : OK ✅"
+);
+
+
+/* =========================================================
+   4. PROTECTION HTML
+========================================================= */
+
+function escapeOfficialStoreAdminHTML(
+    value
+) {
 
     return String(
         value ?? ""
     )
 
-    .replace(
-        /&/g,
-        "&amp;"
-    )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
 
-    .replace(
-        /</g,
-        "&lt;"
-    )
+        .replace(
+            /</g,
+            "&lt;"
+        )
 
-    .replace(
-        />/g,
-        "&gt;"
-    )
+        .replace(
+            />/g,
+            "&gt;"
+        )
 
-    .replace(
-        /"/g,
-        "&quot;"
-    )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
 
-    .replace(
-        /'/g,
-        "&#039;"
-    );
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
 
 
 /* =========================================================
-   NORMALISER LE STATUT
+   5. NORMALISER LE STATUS
 ========================================================= */
 
-function getStoreStatus(store) {
+function getOfficialStoreAdminStatus(
+    store
+) {
 
     const status =
         String(
-            store.status ?? "Pending"
+            store?.status ?? "Pending"
         ).trim();
 
-    return status || "Pending";
+
+    if (!status) {
+
+        return "Pending";
+
+    }
+
+
+    return status;
 
 }
 
 
 /* =========================================================
-   TEXTE DU STATUT
+   6. LABEL DU STATUS
 ========================================================= */
 
-function getStatusLabel(status) {
+function getOfficialStoreAdminStatusLabel(
+    status
+) {
 
-    switch (status) {
+    switch (
+        status
+    ) {
 
         case "Active":
+
             return "Ativa";
 
+
         case "Pending":
+
             return "Pendente";
 
+
         case "Blocked":
+
             return "Bloqueada";
 
+
         case "Rejected":
+
             return "Rejeitada";
 
+
         default:
+
             return status;
 
     }
@@ -609,26 +664,39 @@ function getStatusLabel(status) {
 
 
 /* =========================================================
-   CLASSE DU STATUT
+   7. CLASSE DU STATUS
 ========================================================= */
 
-function getStatusClass(status) {
+function getOfficialStoreAdminStatusClass(
+    status
+) {
 
-    switch (status) {
+    switch (
+        status
+    ) {
 
         case "Active":
+
             return "statusActive";
 
+
         case "Pending":
+
             return "statusPending";
 
+
         case "Blocked":
+
             return "statusBlocked";
 
+
         case "Rejected":
+
             return "statusRejected";
 
+
         default:
+
             return "statusUnknown";
 
     }
@@ -637,28 +705,33 @@ function getStatusClass(status) {
 
 
 /* =========================================================
-   AFFICHER LES LOJAS
+   8. AFFICHER LES LOJAS
 ========================================================= */
 
 function renderOfficialStoresList() {
 
-    /* -----------------------------------------------------
-       NETTOYAGE
-    ----------------------------------------------------- */
+    alert(
+        "OFFICIAL ADMIN — BLOC 4.2\n\n" +
+        "Création des cartes des lojas..."
+    );
+
+
+    /* =====================================================
+       NETTOYER LE CONTENEUR
+    ===================================================== */
 
     officialStoresList.innerHTML = "";
 
 
-    /* -----------------------------------------------------
-       AUCUNE LOJA
-    ----------------------------------------------------- */
+    /* =====================================================
+       MESSAGE AUCUNE LOJA
+    ===================================================== */
 
     if (
         officialStores.length === 0
     ) {
 
         if (
-            typeof officialStoresEmpty !== "undefined" &&
             officialStoresEmpty
         ) {
 
@@ -668,17 +741,23 @@ function renderOfficialStoresList() {
 
         }
 
+
+        alert(
+            "OFFICIAL ADMIN — BLOC 4.2\n\n" +
+            "Aucune loja à afficher."
+        );
+
+
         return;
 
     }
 
 
-    /* -----------------------------------------------------
-       CACHER LE MESSAGE VIDE
-    ----------------------------------------------------- */
+    /* =====================================================
+       CACHER MESSAGE VIDE
+    ===================================================== */
 
     if (
-        typeof officialStoresEmpty !== "undefined" &&
         officialStoresEmpty
     ) {
 
@@ -690,71 +769,76 @@ function renderOfficialStoresList() {
 
 
     /* =====================================================
-       CRÉER CHAQUE CARTE
+       PARCOURIR LES 86 LOJAS
     ===================================================== */
 
     officialStores.forEach(
-        (store) => {
+        (
+            store,
+            index
+        ) => {
 
             const storeId =
                 String(
-                    store.id ?? ""
+                    store?.id ?? ""
                 );
 
 
             const name =
                 String(
-                    store.name ??
+                    store?.name ??
                     "Loja Oficial"
                 );
 
 
             const category =
                 String(
-                    store.category ??
+                    store?.category ??
                     "Sem categoria"
                 );
 
 
             const slug =
                 String(
-                    store.slug ??
+                    store?.slug ??
                     ""
                 );
 
 
             const status =
-                getStoreStatus(
+                getOfficialStoreAdminStatus(
                     store
                 );
 
 
             const statusLabel =
-                getStatusLabel(
+                getOfficialStoreAdminStatusLabel(
                     status
                 );
 
 
             const statusClass =
-                getStatusClass(
+                getOfficialStoreAdminStatusClass(
                     status
                 );
 
 
             const verified =
-                store.verified === true;
+                store?.verified === true;
 
 
             const logo =
-                typeof store.logo === "string" &&
+                typeof store?.logo === "string" &&
                 store.logo.trim() !== ""
+
                     ? store.logo.trim()
+
                     : "images/default-store.png";
 
 
-            /* ==============================================
-               CARTE
-            ============================================== */
+            /* =================================================
+               CRÉER LA CARTE
+            ================================================= */
 
             const card =
                 document.createElement(
@@ -770,38 +854,59 @@ function renderOfficialStoresList() {
                 storeId;
 
 
-            /* ==============================================
-               HTML
-            ============================================== */
+            /* =================================================
+               HTML DE LA CARTE
+
+               IMPORTANT :
+               Le bouton contient seulement
+               data-edit-store-id.
+
+               AUCUN click listener ici.
+            ================================================= */
 
             card.innerHTML = `
 
-                <div class="officialStoreAdminCardTop">
+                <div
+                    class="officialStoreAdminCardTop"
+                >
 
+                    <!-- =====================================
+                         LOGO
+                    ====================================== -->
 
-                    <!-- LOGO -->
-
-                    <div class="officialStoreAdminLogoWrapper">
+                    <div
+                        class="officialStoreAdminLogoWrapper"
+                    >
 
                         <img
                             class="officialStoreAdminLogo"
-                            src="${escapeHTML(logo)}"
-                            alt="${escapeHTML(name)}"
+                            src="${escapeOfficialStoreAdminHTML(
+                                logo
+                            )}"
+                            alt="${escapeOfficialStoreAdminHTML(
+                                name
+                            )}"
                             loading="lazy"
                         >
 
                     </div>
 
 
-                    <!-- INFORMATIONS -->
+                    <!-- =====================================
+                         INFORMATIONS
+                    ====================================== -->
 
-                    <div class="officialStoreAdminInfo">
+                    <div
+                        class="officialStoreAdminInfo"
+                    >
 
                         <h3
                             class="officialStoreAdminName"
                         >
 
-                            ${escapeHTML(name)}
+                            ${escapeOfficialStoreAdminHTML(
+                                name
+                            )}
 
                             ${
                                 verified
@@ -809,6 +914,7 @@ function renderOfficialStoresList() {
                                         <span
                                             class="officialStoreAdminVerified"
                                             title="Loja verificada"
+                                            aria-label="Loja verificada"
                                         >
                                             ✓
                                         </span>
@@ -822,37 +928,48 @@ function renderOfficialStoresList() {
                         <p
                             class="officialStoreAdminCategory"
                         >
-                            ${escapeHTML(category)}
+
+                            ${escapeOfficialStoreAdminHTML(
+                                category
+                            )}
+
                         </p>
 
 
                         <p
                             class="officialStoreAdminId"
                         >
+
                             ID:
-                            ${escapeHTML(storeId)}
+                            ${escapeOfficialStoreAdminHTML(
+                                storeId
+                            )}
+
                         </p>
 
                     </div>
 
-
                 </div>
 
 
-                <!-- ========================================
-                     INFORMATIONS SUPPLÉMENTAIRES
-                ========================================= -->
+                <!-- =========================================
+                     META
+                ========================================== -->
 
                 <div
                     class="officialStoreAdminMeta"
                 >
 
-
                     <span
-                        class="officialStoreAdminStatus ${statusClass}"
+                        class="
+                            officialStoreAdminStatus
+                            ${statusClass}
+                        "
                     >
 
-                        ${escapeHTML(statusLabel)}
+                        ${escapeOfficialStoreAdminHTML(
+                            statusLabel
+                        )}
 
                     </span>
 
@@ -868,20 +985,22 @@ function renderOfficialStoresList() {
                             `
                             : `
                                 <span
-                                    class="officialStoreAdminBadge notVerified"
+                                    class="
+                                        officialStoreAdminBadge
+                                        notVerified
+                                    "
                                 >
                                     Não verificada
                                 </span>
                             `
                     }
 
-
                 </div>
 
 
-                <!-- ========================================
+                <!-- =========================================
                      SLUG
-                ========================================= -->
+                ========================================== -->
 
                 <div
                     class="officialStoreAdminSlug"
@@ -895,7 +1014,9 @@ function renderOfficialStoresList() {
                                 </span>
 
                                 <strong>
-                                    ${escapeHTML(slug)}
+                                    ${escapeOfficialStoreAdminHTML(
+                                        slug
+                                    )}
                                 </strong>
                             `
                             : `
@@ -908,9 +1029,9 @@ function renderOfficialStoresList() {
                 </div>
 
 
-                <!-- ========================================
+                <!-- =========================================
                      ACTIONS
-                ========================================= -->
+                ========================================== -->
 
                 <div
                     class="officialStoreAdminActions"
@@ -919,7 +1040,9 @@ function renderOfficialStoresList() {
                     <button
                         type="button"
                         class="officialStoreEditButton"
-                        data-edit-store-id="${escapeHTML(storeId)}"
+                        data-edit-store-id="${escapeOfficialStoreAdminHTML(
+                            storeId
+                        )}"
                     >
 
                         ✏️ Editar loja
@@ -931,9 +1054,9 @@ function renderOfficialStoresList() {
             `;
 
 
-            /* ==============================================
+            /* =================================================
                IMAGE ERROR
-            ============================================== */
+            ================================================= */
 
             const image =
                 card.querySelector(
@@ -941,13 +1064,13 @@ function renderOfficialStoresList() {
                 );
 
 
-            if (image) {
+            if (
+                image
+            ) {
 
                 image.addEventListener(
                     "error",
                     () => {
-
-                        image.onerror = null;
 
                         image.src =
                             "images/default-store.png";
@@ -958,10 +1081,9 @@ function renderOfficialStoresList() {
             }
 
 
-
-            /* ==============================================
+            /* =================================================
                AJOUTER LA CARTE
-            ============================================== */
+            ================================================= */
 
             officialStoresList.appendChild(
                 card
@@ -970,14 +1092,101 @@ function renderOfficialStoresList() {
         }
     );
 
+
+    /* =====================================================
+       COMPTER LES CARTES
+    ===================================================== */
+
+    const renderedCards =
+        officialStoresList.querySelectorAll(
+            ".officialStoreAdminCard"
+        );
+
+
+    alert(
+        "OFFICIAL ADMIN — BLOC 4.3\n\n" +
+
+        "Cartes créées avec succès ✅\n\n" +
+
+        "Lojas dans officialStores : " +
+        officialStores.length +
+
+        "\nCartes affichées : " +
+        renderedCards.length
+    );
+
 }
 
 
 /* =========================================================
-   LANCER L'AFFICHAGE
+   9. LANCER L'AFFICHAGE
 ========================================================= */
 
 renderOfficialStoresList();
+
+
+/* =========================================================
+   10. VÉRIFICATION DES BOUTONS
+========================================================= */
+
+const editButtons =
+    officialStoresList.querySelectorAll(
+        ".officialStoreEditButton"
+    );
+
+
+/* =========================================================
+   11. VÉRIFICATION DATA-EDIT-STORE-ID
+========================================================= */
+
+let buttonsWithId = 0;
+
+let buttonsWithoutId = 0;
+
+
+editButtons.forEach(
+    (button) => {
+
+        const id =
+            button.getAttribute(
+                "data-edit-store-id"
+            );
+
+
+        if (
+            id
+        ) {
+
+            buttonsWithId++;
+
+        } else {
+
+            buttonsWithoutId++;
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   12. RÉSULTAT
+========================================================= */
+
+alert(
+    "OFFICIAL ADMIN — BLOC 4.4\n\n" +
+
+    "Vérification des boutons terminée ✅\n\n" +
+
+    "Boutons Editar loja : " +
+    editButtons.length +
+
+    "\nAvec ID : " +
+    buttonsWithId +
+
+    "\nSans ID : " +
+    buttonsWithoutId
+);
 
 
 /* =========================================================
@@ -991,11 +1200,23 @@ alert(
 
     "Lojas affichées : " +
     officialStores.length +
+
     "\n\n" +
 
     "officialStoresList : OK ✅\n" +
 
-    "Les boutons Editar loja sont prêts."
+    "Boutons Editar loja : " +
+    editButtons.length +
+
+    "\n\n" +
+
+    "IMPORTANT :\n" +
+
+    "Le Bloc 4 ne contient aucun système " +
+    "d'ouverture de modal.\n\n" +
+
+    "Le Bloc 5 peut maintenant gérer " +
+    "les boutons Editar loja."
 );
 /* =========================================================
    OFFICIAL ADMIN — BLOC 5 COMPLET
