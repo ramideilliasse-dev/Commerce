@@ -958,44 +958,6 @@ function renderOfficialStoresList() {
             }
 
 
-            /* ==============================================
-               BOUTON EDITER
-            ============================================== */
-
-            const editButton =
-                card.querySelector(
-                    ".officialStoreEditButton"
-                );
-
-
-            if (editButton) {
-
-                editButton.addEventListener(
-                    "click",
-                    () => {
-
-                        const id =
-                            editButton.dataset.editStoreId;
-
-
-                        alert(
-                            "OFFICIAL ADMIN — BLOC 4\n\n" +
-                            "Loja selecionada :\n\n" +
-                            id
-                        );
-
-
-                        /*
-                         * La fonction d'ouverture
-                         * de la modal sera connectée
-                         * dans le prochain bloc.
-                         */
-
-                    }
-                );
-
-            }
-
 
             /* ==============================================
                AJOUTER LA CARTE
@@ -1812,122 +1774,186 @@ document.addEventListener(
 
 
 /* =========================================================
+   OFFICIAL ADMIN — BLOC 5.3
    CONNEXION DES BOUTONS EDITAR LOJA
 ========================================================= */
 
-if (
-    officialStoresList
-) {
-
-    officialStoresList.addEventListener(
-        "click",
-        (event) => {
-
-            const button =
-                event.target.closest(
-                    "button"
-                );
+alert(
+    "OFFICIAL ADMIN — BLOC 5.3 DÉBUT\n\n" +
+    "Connexion des boutons « Editar loja »..."
+);
 
 
-            if (!button) {
+/* =========================================================
+   VÉRIFICATION
+========================================================= */
 
-                return;
+if (!officialStoresList) {
 
-            }
+    alert(
+        "OFFICIAL ADMIN — BLOC 5.3 ERREUR\n\n" +
+        "officialStoresList est introuvable."
+    );
 
-
-            const buttonText =
-                button.textContent
-                    .trim()
-                    .toLowerCase();
-
-
-            /*
-             * On reconnaît le bouton
-             * même si sa classe change.
-             */
-
-            if (
-                !buttonText.includes(
-                    "editar"
-                )
-            ) {
-
-                return;
-
-            }
-
-
-            event.preventDefault();
-
-
-            const storeId =
-                button.dataset.storeId ||
-                button.dataset.id;
-
-
-            alert(
-                "OFFICIAL ADMIN — BLOC 5.3\n\n" +
-
-                "Bouton « Editar loja » détecté ✅\n\n" +
-
-                "ID reçu : " +
-                (
-                    storeId ||
-                    "AUCUN"
-                )
-            );
-
-
-            if (!storeId) {
-
-                alert(
-                    "OFFICIAL ADMIN — ERREUR\n\n" +
-
-                    "Le bouton Editar loja ne possède pas de storeId."
-                );
-
-                return;
-
-            }
-
-
-            const store =
-                officialStores.find(
-                    (item) =>
-                        String(
-                            item.id
-                        ) === String(
-                            storeId
-                        )
-                );
-
-
-            if (!store) {
-
-                alert(
-                    "OFFICIAL ADMIN — ERREUR\n\n" +
-
-                    "La loja " +
-                    storeId +
-                    " n'existe pas dans officialStores."
-                );
-
-                return;
-
-            }
-
-
-            openOfficialStoreModal(
-                store
-            );
-
-        }
+    throw new Error(
+        "officialStoresList introuvable."
     );
 
 }
 
 
+/* =========================================================
+   UN SEUL LISTENER POUR TOUS LES BOUTONS
+========================================================= */
+
+officialStoresList.addEventListener(
+    "click",
+    (event) => {
+
+        const button =
+            event.target.closest(
+                ".officialStoreEditButton"
+            );
+
+
+        /* -------------------------------------------------
+           Ce n'est pas un bouton Editar loja
+        ------------------------------------------------- */
+
+        if (!button) {
+
+            return;
+
+        }
+
+
+        event.preventDefault();
+
+
+        /* =================================================
+           RÉCUPÉRER LE BON ID
+        ================================================= */
+
+        const storeId =
+            button.dataset.editStoreId;
+
+
+        alert(
+            "OFFICIAL ADMIN — BLOC 5.3.1\n\n" +
+
+            "Bouton Editar loja détecté ✅\n\n" +
+
+            "ID reçu : " +
+
+            (
+                storeId ||
+                "AUCUN"
+            )
+        );
+
+
+        /* =================================================
+           VÉRIFIER L'ID
+        ================================================= */
+
+        if (!storeId) {
+
+            alert(
+                "OFFICIAL ADMIN — BLOC 5.3 ERREUR\n\n" +
+
+                "Le bouton ne possède pas " +
+                "data-edit-store-id."
+            );
+
+            return;
+
+        }
+
+
+        /* =================================================
+           RECHERCHER LA LOJA
+        ================================================= */
+
+        const store =
+            officialStores.find(
+                (item) => {
+
+                    return String(
+                        item.id
+                    ) === String(
+                        storeId
+                    );
+
+                }
+            );
+
+
+        /* =================================================
+           LOJA INTROUVABLE
+        ================================================= */
+
+        if (!store) {
+
+            alert(
+                "OFFICIAL ADMIN — BLOC 5.3 ERREUR\n\n" +
+
+                "La loja suivante est introuvable :\n\n" +
+
+                storeId
+            );
+
+            return;
+
+        }
+
+
+        /* =================================================
+           LOJA TROUVÉE
+        ================================================= */
+
+        alert(
+            "OFFICIAL ADMIN — BLOC 5.3.2 ✅\n\n" +
+
+            "Loja trouvée dans officialStores.\n\n" +
+
+            "Nom : " +
+            (
+                store.name ||
+                "Sans nom"
+            ) +
+
+            "\n\nID : " +
+            store.id +
+
+            "\n\nOuverture de la modal..."
+        );
+
+
+        /* =================================================
+           OUVRIR LA MODAL
+        ================================================= */
+
+        openOfficialStoreModal(
+            store
+        );
+
+    }
+);
+
+
+/* =========================================================
+   BLOC 5.3 TERMINÉ
+========================================================= */
+
+alert(
+    "OFFICIAL ADMIN — BLOC 5.3 TERMINÉ ✅\n\n" +
+
+    "Les boutons Editar loja sont maintenant connectés.\n\n" +
+
+    "✓ data-edit-store-id reconnu\n" +
+    "✓ Loja recherchée dans officialStores\n" +
+    "✓ Modal appelée avec la bonne loja"
+);
 /* =========================================================
    BLOC TERMINÉ
 ========================================================= */
