@@ -2257,32 +2257,106 @@ alert(
    SAUVEGARDE DES MODIFICATIONS FIRESTORE
 
    IMPORTANT :
-   Ce bloc gère UNIQUEMENT :
-   - le submit du formulaire
-   - la récupération des données
-   - updateDoc()
-   - la mise à jour de officialStores
-   - la fermeture de la modal
-   - le rafraîchissement de la liste
-
-   Il NE recrée PAS :
-   - les boutons Editar loja
-   - la modal
-   - les listeners du Bloc 5
+   - Ce bloc gère uniquement la sauvegarde.
+   - Il utilise db, doc, updateDoc et serverTimestamp
+     déjà importés dans le fichier.
 ========================================================= */
-
 
 alert(
     "OFFICIAL ADMIN — BLOC 6 DÉBUT\n\n" +
-    "Système de sauvegarde chargé..."
+    "Initialisation du système de sauvegarde..."
 );
 
 
 /* =========================================================
-   1. VÉRIFICATION DES VARIABLES PRINCIPALES
+   1. VÉRIFICATION FIREBASE
+========================================================= */
+
+alert(
+    "OFFICIAL ADMIN — BLOC 6.0\n\n" +
+    "Vérification des fonctions Firebase..."
+);
+
+
+if (
+    typeof db === "undefined" ||
+    !db
+) {
+
+    alert(
+        "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
+        "db est introuvable.\n\n" +
+        "Vérifie l'import :\n" +
+        "import { db, auth, authReady } from '../firebase.js';"
+    );
+
+    throw new Error(
+        "db introuvable."
+    );
+
+}
+
+
+if (
+    typeof doc !== "function"
+) {
+
+    alert(
+        "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
+        "doc() n'est pas disponible."
+    );
+
+    throw new Error(
+        "doc indisponible."
+    );
+
+}
+
+
+if (
+    typeof updateDoc !== "function"
+) {
+
+    alert(
+        "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
+        "updateDoc() n'est pas disponible."
+    );
+
+    throw new Error(
+        "updateDoc indisponible."
+    );
+
+}
+
+
+if (
+    typeof serverTimestamp !== "function"
+) {
+
+    alert(
+        "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
+        "serverTimestamp() n'est pas disponible."
+    );
+
+    throw new Error(
+        "serverTimestamp indisponible."
+    );
+
+}
+
+
+alert(
+    "OFFICIAL ADMIN — BLOC 6.0 TERMINÉ ✅\n\n" +
+    "Firebase est disponible."
+);
+
+
+/* =========================================================
+   2. VÉRIFICATION DU FORMULAIRE
 ========================================================= */
 
 if (
+    typeof officialStoreForm === "undefined" ||
     !officialStoreForm
 ) {
 
@@ -2298,98 +2372,247 @@ if (
 }
 
 
-if (
-    !db
+alert(
+    "OFFICIAL ADMIN — BLOC 6.0.1\n\n" +
+    "Formulaire trouvé ✅"
+);
+
+
+/* =========================================================
+   3. FONCTION POUR RÉCUPÉRER UN ÉLÉMENT
+========================================================= */
+
+function getOfficialStoreField(
+    id
 ) {
 
-    alert(
-        "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
-        "db Firebase est introuvable."
-    );
+    const element =
+        document.getElementById(
+            id
+        );
 
-    throw new Error(
-        "db Firebase introuvable."
-    );
-
-}
-
-
-if (
-    typeof updateDoc !== "function"
-) {
-
-    alert(
-        "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
-        "updateDoc n'est pas disponible.\n\n" +
-        "Vérifie l'import Firebase."
-    );
-
-    throw new Error(
-        "updateDoc indisponible."
-    );
-
-}
-
-
-if (
-    typeof doc !== "function"
-) {
-
-    alert(
-        "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
-        "doc() n'est pas disponible.\n\n" +
-        "Vérifie l'import Firebase."
-    );
-
-    throw new Error(
-        "doc indisponible."
-    );
-
-}
-
-
-if (
-    typeof serverTimestamp !== "function"
-) {
-
-    alert(
-        "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
-        "serverTimestamp() n'est pas disponible.\n\n" +
-        "Vérifie l'import Firebase."
-    );
-
-    throw new Error(
-        "serverTimestamp indisponible."
-    );
+    return element || null;
 
 }
 
 
 /* =========================================================
-   2. COLLECTION FIRESTORE
+   4. RÉCUPÉRER LES CHAMPS
 ========================================================= */
 
-const officialStoresCollectionName =
-    typeof OFFICIAL_STORES_COLLECTION !== "undefined"
-        ? OFFICIAL_STORES_COLLECTION
-        : "officialStores";
+const saveStoreIdInput =
+    getOfficialStoreField(
+        "storeId"
+    );
+
+
+const saveStoreNameInput =
+    getOfficialStoreField(
+        "storeName"
+    );
+
+
+const saveStoreCategoryInput =
+    getOfficialStoreField(
+        "storeCategory"
+    );
+
+
+const saveStoreSlugInput =
+    getOfficialStoreField(
+        "storeSlug"
+    );
+
+
+const saveStoreDescriptionInput =
+    getOfficialStoreField(
+        "storeDescription"
+    );
+
+
+const saveStoreLogoInput =
+    getOfficialStoreField(
+        "storeLogo"
+    );
+
+
+const saveStoreBannerInput =
+    getOfficialStoreField(
+        "storeBanner"
+    );
+
+
+const saveStoreStatusInput =
+    getOfficialStoreField(
+        "storeStatus"
+    );
+
+
+const saveStoreVerifiedInput =
+    getOfficialStoreField(
+        "storeVerified"
+    );
+
+
+const saveStoreMerchantIdsInput =
+    getOfficialStoreField(
+        "storeMerchantIds"
+    );
+
+
+const saveStoreSettingsInput =
+    getOfficialStoreField(
+        "storeSettings"
+    );
+
+
+const saveOfficialStoreButton =
+    getOfficialStoreField(
+        "saveOfficialStore"
+    );
 
 
 alert(
-    "OFFICIAL ADMIN — BLOC 6.1\n\n" +
+    "OFFICIAL ADMIN — BLOC 6.0.2\n\n" +
 
-    "Variables de sauvegarde prêtes ✅\n\n" +
+    "Champs détectés :\n\n" +
 
-    "Collection Firestore : " +
+    "storeId : " +
+    (
+        saveStoreIdInput
+            ? "OK ✅"
+            : "MANQUANT ❌"
+    ) +
+
+    "\nstoreName : " +
+    (
+        saveStoreNameInput
+            ? "OK ✅"
+            : "MANQUANT ❌"
+    ) +
+
+    "\nstoreCategory : " +
+    (
+        saveStoreCategoryInput
+            ? "OK ✅"
+            : "MANQUANT ❌"
+    ) +
+
+    "\nstoreSlug : " +
+    (
+        saveStoreSlugInput
+            ? "OK ✅"
+            : "MANQUANT ❌"
+    ) +
+
+    "\nstoreDescription : " +
+    (
+        saveStoreDescriptionInput
+            ? "OK ✅"
+            : "MANQUANT ❌"
+    ) +
+
+    "\nstoreLogo : " +
+    (
+        saveStoreLogoInput
+            ? "OK ✅"
+            : "MANQUANT ❌"
+    ) +
+
+    "\nstoreBanner : " +
+    (
+        saveStoreBannerInput
+            ? "OK ✅"
+            : "MANQUANT ❌"
+    ) +
+
+    "\nstoreStatus : " +
+    (
+        saveStoreStatusInput
+            ? "OK ✅"
+            : "MANQUANT ❌"
+    ) +
+
+    "\nstoreVerified : " +
+    (
+        saveStoreVerifiedInput
+            ? "OK ✅"
+            : "MANQUANT ❌"
+    ) +
+
+    "\nstoreMerchantIds : " +
+    (
+        saveStoreMerchantIdsInput
+            ? "OK ✅"
+            : "MANQUANT"
+    ) +
+
+    "\nstoreSettings : " +
+    (
+        saveStoreSettingsInput
+            ? "OK ✅"
+            : "MANQUANT"
+    ) +
+
+    "\n\nBouton sauvegarde : " +
+    (
+        saveOfficialStoreButton
+            ? "OK ✅"
+            : "MANQUANT ❌"
+    )
+);
+
+
+/* =========================================================
+   5. COLLECTION FIRESTORE
+========================================================= */
+
+let officialStoresCollectionName = "officialStores";
+
+
+/*
+ * Si ton BLOC 3 utilise déjà
+ * OFFICIAL_STORES_COLLECTION,
+ * on l'utilise.
+ */
+
+try {
+
+    if (
+        typeof OFFICIAL_STORES_COLLECTION !==
+        "undefined" &&
+        OFFICIAL_STORES_COLLECTION
+    ) {
+
+        officialStoresCollectionName =
+            String(
+                OFFICIAL_STORES_COLLECTION
+            );
+
+    }
+
+} catch (error) {
+
+    officialStoresCollectionName =
+        "officialStores";
+
+}
+
+
+alert(
+    "OFFICIAL ADMIN — BLOC 6.0.3\n\n" +
+
+    "Collection Firestore :\n\n" +
+
     officialStoresCollectionName
 );
 
 
 /* =========================================================
-   3. NETTOYER LES MERCHANT IDS
+   6. NETTOYER LES MERCHANT IDS
 ========================================================= */
 
-function parseOfficialStoreMerchantIds(
+function parseOfficialMerchantIds(
     value
 ) {
 
@@ -2418,14 +2641,14 @@ function parseOfficialStoreMerchantIds(
 
         .filter(
             (id) =>
-                id !== ""
+                id.length > 0
         );
 
 }
 
 
 /* =========================================================
-   4. FERMER LA MODAL
+   7. FERMER LA MODAL
 ========================================================= */
 
 function closeOfficialStoreEditorAfterSave() {
@@ -2443,7 +2666,6 @@ function closeOfficialStoreEditorAfterSave() {
         modal.classList.add(
             "hidden"
         );
-
 
         modal.setAttribute(
             "aria-hidden",
@@ -2465,665 +2687,621 @@ function closeOfficialStoreEditorAfterSave() {
 
 
 /* =========================================================
-   5. FORMULAIRE SUBMIT
+   8. ÉVITER LES DOUBLONS DU SUBMIT
 ========================================================= */
 
-officialStoreForm.addEventListener(
-    "submit",
-    async (
-        event
-    ) => {
+if (
+    officialStoreForm.dataset.officialSaveListener ===
+    "true"
+) {
 
-        event.preventDefault();
+    alert(
+        "OFFICIAL ADMIN — BLOC 6 ATTENTION\n\n" +
+        "Le système de sauvegarde était déjà connecté.\n\n" +
+        "Aucun deuxième listener ne sera ajouté."
+    );
 
+} else {
 
-        event.stopPropagation();
-
-
-        alert(
-            "OFFICIAL ADMIN — BLOC 6.2\n\n" +
-
-            "Tentative de sauvegarde de la loja..."
-        );
+    officialStoreForm.dataset.officialSaveListener =
+        "true";
 
 
-        /* =================================================
-           ID
-        ================================================= */
+    /* =====================================================
+       9. SUBMIT
+    ===================================================== */
 
-        const storeId =
-            document
-                .getElementById(
-                    "storeId"
-                )?.value
-                ?.trim() || "";
-
-
-        if (
-            !storeId
+    officialStoreForm.addEventListener(
+        "submit",
+        async function (
+            event
         ) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
 
             alert(
-                "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
-
-                "ID da loja não encontrado."
-            );
-
-            return;
-
-        }
-
-
-        /* =================================================
-           NOM
-        ================================================= */
-
-        const name =
-            document
-                .getElementById(
-                    "storeName"
-                )?.value
-                ?.trim() || "";
-
-
-        if (
-            !name
-        ) {
-
-            alert(
-                "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
-
-                "O nome da loja é obrigatório."
-            );
-
-            return;
-
-        }
-
-
-        /* =================================================
-           AUTRES CHAMPS
-        ================================================= */
-
-        const category =
-            document
-                .getElementById(
-                    "storeCategory"
-                )?.value
-                ?.trim() || "";
-
-
-        const slug =
-            document
-                .getElementById(
-                    "storeSlug"
-                )?.value
-                ?.trim() || "";
-
-
-        const description =
-            document
-                .getElementById(
-                    "storeDescription"
-                )?.value
-                ?.trim() || "";
-
-
-        const logo =
-            document
-                .getElementById(
-                    "storeLogo"
-                )?.value
-                ?.trim() || "";
-
-
-        const banner =
-            document
-                .getElementById(
-                    "storeBanner"
-                )?.value
-                ?.trim() || "";
-
-
-        const status =
-            document
-                .getElementById(
-                    "storeStatus"
-                )?.value
-                ?.trim() ||
-            "Pending";
-
-
-        const verifiedElement =
-            document.getElementById(
-                "storeVerified"
+                "OFFICIAL ADMIN — BLOC 6.1\n\n" +
+                "Tentative de sauvegarde de la loja..."
             );
 
 
-        let verified =
-            false;
-
-
-        if (
-            verifiedElement
-        ) {
-
-            if (
-                verifiedElement.type === "checkbox"
-            ) {
-
-                verified =
-                    verifiedElement.checked;
-
-            } else {
-
-                verified =
-                    verifiedElement.value === "true";
-
-            }
-
-        }
-
-
-        /* =================================================
-           MERCHANT IDS
-        ================================================= */
-
-        const merchantIdsElement =
-            document.getElementById(
-                "storeMerchantIds"
-            );
-
-
-        const merchantIds =
-            parseOfficialStoreMerchantIds(
-                merchantIdsElement
-                    ? merchantIdsElement.value
-                    : ""
-            );
-
-
-        /* =================================================
-           SETTINGS
-        ================================================= */
-
-        const settingsElement =
-            document.getElementById(
-                "storeSettings"
-            );
-
-
-        const settingsText =
-            settingsElement
-                ? settingsElement.value.trim()
-                : "";
-
-
-        let settings = {};
-
-
-        if (
-            settingsText !== ""
-        ) {
+            /* =================================================
+               TOUT LE TRAITEMENT EST MAINTENANT PROTÉGÉ
+            ================================================= */
 
             try {
 
-                settings =
-                    JSON.parse(
-                        settingsText
+                /* =============================================
+                   ID
+                ============================================= */
+
+                alert(
+                    "OFFICIAL ADMIN — BLOC 6.1.1\n\n" +
+                    "Lecture de l'ID de la loja..."
+                );
+
+
+                if (
+                    !saveStoreIdInput
+                ) {
+
+                    throw new Error(
+                        "Le champ #storeId est introuvable."
                     );
+
+                }
+
+
+                const storeId =
+                    String(
+                        saveStoreIdInput.value ?? ""
+                    ).trim();
+
+
+                if (
+                    !storeId
+                ) {
+
+                    throw new Error(
+                        "L'ID de la loja est vide."
+                    );
+
+                }
+
+
+                alert(
+                    "OFFICIAL ADMIN — BLOC 6.1.2\n\n" +
+
+                    "ID reçu ✅\n\n" +
+
+                    storeId
+                );
+
+
+                /* =============================================
+                   NOM
+                ============================================= */
+
+                if (
+                    !saveStoreNameInput
+                ) {
+
+                    throw new Error(
+                        "Le champ #storeName est introuvable."
+                    );
+
+                }
+
+
+                const name =
+                    String(
+                        saveStoreNameInput.value ?? ""
+                    ).trim();
+
+
+                if (
+                    !name
+                ) {
+
+                    saveStoreNameInput.focus();
+
+                    throw new Error(
+                        "Le nom de la loja est obligatoire."
+                    );
+
+                }
+
+
+                /* =============================================
+                   AUTRES CHAMPS
+                ============================================= */
+
+                const category =
+                    saveStoreCategoryInput
+                        ? String(
+                            saveStoreCategoryInput.value ?? ""
+                        ).trim()
+                        : "";
+
+
+                const slug =
+                    saveStoreSlugInput
+                        ? String(
+                            saveStoreSlugInput.value ?? ""
+                        ).trim()
+                        : "";
+
+
+                const description =
+                    saveStoreDescriptionInput
+                        ? String(
+                            saveStoreDescriptionInput.value ?? ""
+                        ).trim()
+                        : "";
+
+
+                const logo =
+                    saveStoreLogoInput
+                        ? String(
+                            saveStoreLogoInput.value ?? ""
+                        ).trim()
+                        : "";
+
+
+                const banner =
+                    saveStoreBannerInput
+                        ? String(
+                            saveStoreBannerInput.value ?? ""
+                        ).trim()
+                        : "";
+
+
+                const status =
+                    saveStoreStatusInput
+                        ? String(
+                            saveStoreStatusInput.value ?? "Pending"
+                        ).trim() || "Pending"
+                        : "Pending";
+
+
+                const verified =
+                    saveStoreVerifiedInput
+                        ? (
+                            saveStoreVerifiedInput.value ===
+                            "true"
+                        )
+                        : false;
+
+
+                alert(
+                    "OFFICIAL ADMIN — BLOC 6.1.3\n\n" +
+
+                    "Champs principaux lus ✅\n\n" +
+
+                    "Nom : " +
+                    name +
+
+                    "\nCategoria : " +
+                    category +
+
+                    "\nStatus : " +
+                    status +
+
+                    "\nVerificada : " +
+                    (
+                        verified
+                            ? "Sim"
+                            : "Não"
+                    )
+                );
+
+
+                /* =============================================
+                   MERCHANT IDS
+                ============================================= */
+
+                const merchantIds =
+                    parseOfficialMerchantIds(
+                        saveStoreMerchantIdsInput
+                            ? saveStoreMerchantIdsInput.value
+                            : ""
+                    );
+
+
+                /* =============================================
+                   SETTINGS
+                ============================================= */
+
+                let settings = {};
+
+
+                const settingsText =
+                    saveStoreSettingsInput
+                        ? String(
+                            saveStoreSettingsInput.value ?? ""
+                        ).trim()
+                        : "";
+
+
+                if (
+                    settingsText
+                ) {
+
+                    try {
+
+                        settings =
+                            JSON.parse(
+                                settingsText
+                            );
+
+                    } catch (
+                        jsonError
+                    ) {
+
+                        throw new Error(
+                            "Le champ settings contient un JSON invalide."
+                        );
+
+                    }
+
+                }
+
+
+                if (
+                    settings === null ||
+                    typeof settings !== "object" ||
+                    Array.isArray(settings)
+                ) {
+
+                    throw new Error(
+                        "settings doit être un objet JSON."
+                    );
+
+                }
+
+
+                alert(
+                    "OFFICIAL ADMIN — BLOC 6.1.4\n\n" +
+
+                    "Merchant IDs : " +
+                    merchantIds.length +
+
+                    "\n\n" +
+
+                    "Settings JSON : VALIDE ✅"
+                );
+
+
+                /* =============================================
+                   RÉFÉRENCE FIRESTORE
+                ============================================= */
+
+                alert(
+                    "OFFICIAL ADMIN — BLOC 6.1.5\n\n" +
+
+                    "Préparation de la référence Firestore..."
+                );
+
+
+                const storeRef =
+                    doc(
+                        db,
+                        officialStoresCollectionName,
+                        storeId
+                    );
+
+
+                alert(
+                    "OFFICIAL ADMIN — BLOC 6.1.6\n\n" +
+
+                    "Référence Firestore créée ✅\n\n" +
+
+                    "Collection : " +
+                    officialStoresCollectionName +
+
+                    "\n\nID : " +
+                    storeId
+                );
+
+
+                /* =============================================
+                   DONNÉES
+                ============================================= */
+
+                const updateData = {
+
+                    name:
+                        name,
+
+                    category:
+                        category,
+
+                    slug:
+                        slug,
+
+                    description:
+                        description,
+
+                    logo:
+                        logo,
+
+                    banner:
+                        banner,
+
+                    status:
+                        status,
+
+                    verified:
+                        verified,
+
+                    merchantIds:
+                        merchantIds,
+
+                    settings:
+                        settings,
+
+                    updatedAt:
+                        serverTimestamp(),
+
+                    adminSettingsUpdatedAt:
+                        serverTimestamp()
+
+                };
+
+
+                alert(
+                    "OFFICIAL ADMIN — BLOC 6.2\n\n" +
+
+                    "Données prêtes pour Firestore ✅\n\n" +
+
+                    "ID : " +
+                    storeId +
+
+                    "\n\nNom : " +
+                    name +
+
+                    "\n\nCollection : " +
+                    officialStoresCollectionName +
+
+                    "\n\nCliquez OK pour lancer updateDoc()."
+                );
+
+
+                /* =============================================
+                   DÉSACTIVER LE BOUTON
+                ============================================= */
+
+                if (
+                    saveOfficialStoreButton
+                ) {
+
+                    saveOfficialStoreButton.disabled =
+                        true;
+
+                    saveOfficialStoreButton.textContent =
+                        "A guardar...";
+
+                }
+
+
+                /* =============================================
+                   UPDATE FIRESTORE
+                ============================================= */
+
+                alert(
+                    "OFFICIAL ADMIN — BLOC 6.2.1\n\n" +
+
+                    "Appel de updateDoc() maintenant..."
+                );
+
+
+                await updateDoc(
+                    storeRef,
+                    updateData
+                );
+
+
+                /* =============================================
+                   SUCCÈS
+                ============================================= */
+
+                alert(
+                    "OFFICIAL ADMIN — BLOC 6.3 SUCCÈS ✅\n\n" +
+
+                    "LOJA SAUVEGARDÉE DANS FIRESTORE.\n\n" +
+
+                    "ID : " +
+                    storeId +
+
+                    "\n\n" +
+
+                    "Nom : " +
+                    name +
+
+                    "\n\n" +
+
+                    "Les modifications ont été enregistrées."
+                );
+
+
+                /* =============================================
+                   METTRE À JOUR officialStores
+                ============================================= */
+
+                if (
+                    Array.isArray(
+                        officialStores
+                    )
+                ) {
+
+                    const index =
+                        officialStores.findIndex(
+                            (store) =>
+                                String(
+                                    store?.id
+                                ) === String(
+                                    storeId
+                                )
+                        );
+
+
+                    if (
+                        index !== -1
+                    ) {
+
+                        officialStores[index] = {
+
+                            ...officialStores[index],
+
+                            name:
+                                name,
+
+                            category:
+                                category,
+
+                            slug:
+                                slug,
+
+                            description:
+                                description,
+
+                            logo:
+                                logo,
+
+                            banner:
+                                banner,
+
+                            status:
+                                status,
+
+                            verified:
+                                verified,
+
+                            merchantIds:
+                                merchantIds,
+
+                            settings:
+                                settings
+
+                        };
+
+                    }
+
+                }
+
+
+                /* =============================================
+                   FERMER MODAL
+                ============================================= */
+
+                closeOfficialStoreEditorAfterSave();
+
+
+                /* =============================================
+                   RAFRAÎCHIR L'AFFICHAGE
+                ============================================= */
+
+                if (
+                    typeof renderOfficialStoresList ===
+                    "function"
+                ) {
+
+                    renderOfficialStoresList();
+
+                }
+
+
+                /* =============================================
+                   MESSAGE FINAL
+                ============================================= */
+
+                alert(
+                    "OFFICIAL ADMIN — BLOC 6 TERMINÉ ✅\n\n" +
+
+                    "Modification enregistrée avec succès.\n\n" +
+
+                    "La loja a été mise à jour dans Firestore.\n\n" +
+
+                    "ID : " +
+                    storeId
+                );
 
             } catch (
                 error
             ) {
 
+                console.error(
+                    "OFFICIAL ADMIN — Erreur sauvegarde :",
+                    error
+                );
+
+
+                /* =============================================
+                   RÉACTIVER BOUTON
+                ============================================= */
+
+                if (
+                    saveOfficialStoreButton
+                ) {
+
+                    saveOfficialStoreButton.disabled =
+                        false;
+
+                    saveOfficialStoreButton.textContent =
+                        "Guardar alterações";
+
+                }
+
+
+                /* =============================================
+                   ALERTE ERREUR
+                ============================================= */
+
                 alert(
-                    "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
+                    "OFFICIAL ADMIN — BLOC 6 ERREUR ❌\n\n" +
 
-                    "O campo settings contém JSON inválido.\n\n" +
+                    "La sauvegarde a échoué.\n\n" +
 
-                    "Corrija o JSON antes de guardar."
-                );
+                    "Message :\n" +
 
-
-                if (
-                    settingsElement
-                ) {
-
-                    settingsElement.focus();
-
-                }
-
-
-                return;
-
-            }
-
-        }
-
-
-        /* =================================================
-           VÉRIFIER SETTINGS
-        ================================================= */
-
-        if (
-            settings === null ||
-            typeof settings !== "object" ||
-            Array.isArray(settings)
-        ) {
-
-            alert(
-                "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
-
-                "settings deve ser um objeto JSON."
-            );
-
-            return;
-
-        }
-
-
-        /* =================================================
-           RÉSUMÉ
-        ================================================= */
-
-        alert(
-            "OFFICIAL ADMIN — BLOC 6.3\n\n" +
-
-            "Dados preparados para Firestore ✅\n\n" +
-
-            "ID : " +
-            storeId +
-
-            "\n\nNome : " +
-            name +
-
-            "\n\nCategoria : " +
-            category +
-
-            "\n\nSlug : " +
-            slug +
-
-            "\n\nStatus : " +
-            status +
-
-            "\n\nVerificada : " +
-            (
-                verified
-                    ? "Sim"
-                    : "Não"
-            ) +
-
-            "\n\nMerchant IDs : " +
-            merchantIds.length +
-
-            "\n\nSettings : JSON válido ✅"
-        );
-
-
-        /* =================================================
-           RÉFÉRENCE FIRESTORE
-        ================================================= */
-
-        let storeRef;
-
-
-        try {
-
-            storeRef =
-                doc(
-                    db,
-                    officialStoresCollectionName,
-                    storeId
-                );
-
-        } catch (
-            error
-        ) {
-
-            alert(
-                "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
-
-                "Impossible de créer la référence Firestore.\n\n" +
-
-                "Collection : " +
-                officialStoresCollectionName +
-
-                "\n\nID : " +
-                storeId +
-
-                "\n\nErro : " +
-                (
-                    error?.message ||
-                    String(error)
-                )
-            );
-
-            return;
-
-        }
-
-
-        /* =================================================
-           DONNÉES À SAUVEGARDER
-        ================================================= */
-
-        const updateData = {
-
-            name:
-                name,
-
-            category:
-                category,
-
-            slug:
-                slug,
-
-            description:
-                description,
-
-            logo:
-                logo,
-
-            banner:
-                banner,
-
-            status:
-                status,
-
-            verified:
-                verified,
-
-            merchantIds:
-                merchantIds,
-
-            settings:
-                settings,
-
-            updatedAt:
-                serverTimestamp(),
-
-            adminSettingsUpdatedAt:
-                serverTimestamp()
-
-        };
-
-
-        /* =================================================
-           BOUTON SAUVEGARDE
-        ================================================= */
-
-        const saveButton =
-            document.getElementById(
-                "saveOfficialStore"
-            );
-
-
-        let originalButtonText =
-            "Guardar alterações";
-
-
-        if (
-            saveButton
-        ) {
-
-            originalButtonText =
-                saveButton.textContent;
-
-
-            saveButton.disabled =
-                true;
-
-
-            saveButton.textContent =
-                "A guardar...";
-
-        }
-
-
-        /* =================================================
-           FIRESTORE
-        ================================================= */
-
-        try {
-
-            alert(
-                "OFFICIAL ADMIN — BLOC 6.4\n\n" +
-
-                "Envoi des modifications vers Firestore...\n\n" +
-
-                "ID : " +
-                storeId
-            );
-
-
-            await updateDoc(
-                storeRef,
-                updateData
-            );
-
-
-            /* =============================================
-               SUCCÈS FIRESTORE
-            ============================================= */
-
-            alert(
-                "OFFICIAL ADMIN — BLOC 6.5\n\n" +
-
-                "Loja sauvegardée avec succès dans Firestore ✅\n\n" +
-
-                "ID : " +
-                storeId +
-
-                "\n\n" +
-
-                "Les modifications sont maintenant enregistrées."
-            );
-
-
-            /* =============================================
-               METTRE À JOUR officialStores
-            ============================================= */
-
-            if (
-                Array.isArray(
-                    officialStores
-                )
-            ) {
-
-                const index =
-                    officialStores.findIndex(
-                        (
-                            store
-                        ) =>
-                            String(
-                                store?.id
-                            ) ===
-                            String(
-                                storeId
+                    (
+                        error &&
+                        error.message
+                            ? error.message
+                            : String(
+                                error
                             )
-                    );
-
-
-                if (
-                    index !== -1
-                ) {
-
-                    officialStores[index] = {
-
-                        ...officialStores[index],
-
-                        name:
-                            name,
-
-                        category:
-                            category,
-
-                        slug:
-                            slug,
-
-                        description:
-                            description,
-
-                        logo:
-                            logo,
-
-                        banner:
-                            banner,
-
-                        status:
-                            status,
-
-                        verified:
-                            verified,
-
-                        merchantIds:
-                            merchantIds,
-
-                        settings:
-                            settings
-
-                    };
-
-                }
-
-            }
-
-
-            /* =============================================
-               FERMER MODAL
-            ============================================= */
-
-            closeOfficialStoreEditorAfterSave();
-
-
-            /* =============================================
-               RAFRAÎCHIR LA LISTE
-            ============================================= */
-
-            if (
-                typeof renderOfficialStoresList ===
-                "function"
-            ) {
-
-                renderOfficialStoresList();
-
-            }
-
-
-            /* =============================================
-               TOAST
-            ============================================= */
-
-            const toast =
-                document.getElementById(
-                    "officialStoreToast"
+                    )
                 );
-
-
-            const toastMessage =
-                document.getElementById(
-                    "officialStoreToastMessage"
-                );
-
-
-            if (
-                toast &&
-                toastMessage
-            ) {
-
-                toastMessage.textContent =
-                    "Loja atualizada com sucesso ✅";
-
-
-                toast.classList.add(
-                    "show"
-                );
-
-
-                setTimeout(
-                    () => {
-
-                        toast.classList.remove(
-                            "show"
-                        );
-
-                    },
-                    3000
-                );
-
-            }
-
-
-        } catch (
-            error
-        ) {
-
-            console.error(
-                "OFFICIAL ADMIN — Erro Firestore:",
-                error
-            );
-
-
-            alert(
-                "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
-
-                "Não foi possível guardar a loja.\n\n" +
-
-                "ID : " +
-                storeId +
-
-                "\n\nCollection : " +
-                officialStoresCollectionName +
-
-                "\n\nErro : " +
-                (
-                    error?.message ||
-                    String(error)
-                )
-            );
-
-
-        } finally {
-
-            if (
-                saveButton
-            ) {
-
-                saveButton.disabled =
-                    false;
-
-
-                saveButton.textContent =
-                    originalButtonText ||
-                    "Guardar alterações";
 
             }
 
         }
+    );
 
-    }
-);
+}
 
 
 /* =========================================================
-   BLOC 6 TERMINÉ
+   BLOC 6 CHARGÉ
 ========================================================= */
 
 alert(
-    "OFFICIAL ADMIN — BLOC 6 TERMINÉ ✅\n\n" +
+    "OFFICIAL ADMIN — BLOC 6 CHARGÉ ✅\n\n" +
 
-    "Système de sauvegarde Firestore connecté.\n\n" +
+    "Le système de sauvegarde est maintenant prêt.\n\n" +
 
-    "✓ Formulaire détecté\n" +
-    "✓ db détecté\n" +
-    "✓ doc() détecté\n" +
-    "✓ updateDoc() détecté\n" +
-    "✓ serverTimestamp() détecté\n" +
-    "✓ Sauvegarde des données\n" +
-    "✓ Mise à jour de officialStores\n" +
-    "✓ Rafraîchissement de la liste\n" +
-    "✓ Fermeture de la modal\n\n" +
+    "✓ Firebase vérifié\n" +
+    "✓ Formulaire vérifié\n" +
+    "✓ Champs détectés\n" +
+    "✓ Collection officialStores\n" +
+    "✓ Submit connecté\n" +
+    "✓ updateDoc préparé\n" +
+    "✓ Gestion complète des erreurs\n\n" +
 
-    "BLOC 6 PRÊT."
+    "Tu peux maintenant modifier une loja et appuyer sur :\n" +
+    "Guardar alterações"
 );
