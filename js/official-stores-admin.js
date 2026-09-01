@@ -2255,19 +2255,36 @@ alert(
 /* =========================================================
    OFFICIAL ADMIN — BLOC 6
    SAUVEGARDE DES MODIFICATIONS FIRESTORE
+
+   IMPORTANT :
+   Ce bloc gère UNIQUEMENT :
+   - le submit du formulaire
+   - la récupération des données
+   - updateDoc()
+   - la mise à jour de officialStores
+   - la fermeture de la modal
+   - le rafraîchissement de la liste
+
+   Il NE recrée PAS :
+   - les boutons Editar loja
+   - la modal
+   - les listeners du Bloc 5
 ========================================================= */
+
 
 alert(
     "OFFICIAL ADMIN — BLOC 6 DÉBUT\n\n" +
-    "Préparation de la sauvegarde des lojas..."
+    "Système de sauvegarde chargé..."
 );
 
 
 /* =========================================================
-   VÉRIFICATION DU FORMULAIRE
+   1. VÉRIFICATION DES VARIABLES PRINCIPALES
 ========================================================= */
 
-if (!officialStoreForm) {
+if (
+    !officialStoreForm
+) {
 
     alert(
         "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
@@ -2281,9 +2298,21 @@ if (!officialStoreForm) {
 }
 
 
-/* =========================================================
-   VÉRIFICATION DE updateDoc
-========================================================= */
+if (
+    !db
+) {
+
+    alert(
+        "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
+        "db Firebase est introuvable."
+    );
+
+    throw new Error(
+        "db Firebase introuvable."
+    );
+
+}
+
 
 if (
     typeof updateDoc !== "function"
@@ -2302,40 +2331,65 @@ if (
 }
 
 
-/* =========================================================
-   FONCTION FERMER LA MODAL
-========================================================= */
+if (
+    typeof doc !== "function"
+) {
 
-function closeOfficialStoreEditor() {
+    alert(
+        "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
+        "doc() n'est pas disponible.\n\n" +
+        "Vérifie l'import Firebase."
+    );
 
-    if (
-        officialStoreModal
-    ) {
+    throw new Error(
+        "doc indisponible."
+    );
 
-        officialStoreModal.classList.add(
-            "hidden"
-        );
-
-        officialStoreModal.setAttribute(
-            "aria-hidden",
-            "true"
-        );
-
-    }
+}
 
 
-    document.body.classList.remove(
-        "modalOpen"
+if (
+    typeof serverTimestamp !== "function"
+) {
+
+    alert(
+        "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
+        "serverTimestamp() n'est pas disponible.\n\n" +
+        "Vérifie l'import Firebase."
+    );
+
+    throw new Error(
+        "serverTimestamp indisponible."
     );
 
 }
 
 
 /* =========================================================
-   NETTOYER LES MERCHANT IDS
+   2. COLLECTION FIRESTORE
 ========================================================= */
 
-function parseMerchantIds(
+const officialStoresCollectionName =
+    typeof OFFICIAL_STORES_COLLECTION !== "undefined"
+        ? OFFICIAL_STORES_COLLECTION
+        : "officialStores";
+
+
+alert(
+    "OFFICIAL ADMIN — BLOC 6.1\n\n" +
+
+    "Variables de sauvegarde prêtes ✅\n\n" +
+
+    "Collection Firestore : " +
+    officialStoresCollectionName
+);
+
+
+/* =========================================================
+   3. NETTOYER LES MERCHANT IDS
+========================================================= */
+
+function parseOfficialStoreMerchantIds(
     value
 ) {
 
@@ -2349,55 +2403,110 @@ function parseMerchantIds(
     }
 
 
-    return String(value)
+    return String(
+        value
+    )
 
-        .split("\n")
+        .split(
+            /[\n,]+/
+        )
 
         .map(
-            (merchantId) =>
-                merchantId.trim()
+            (id) =>
+                id.trim()
         )
 
         .filter(
-            (merchantId) =>
-                merchantId !== ""
+            (id) =>
+                id !== ""
         );
 
 }
 
 
 /* =========================================================
-   SAUVEGARDE
+   4. FERMER LA MODAL
+========================================================= */
+
+function closeOfficialStoreEditorAfterSave() {
+
+    const modal =
+        document.getElementById(
+            "officialStoreModal"
+        );
+
+
+    if (
+        modal
+    ) {
+
+        modal.classList.add(
+            "hidden"
+        );
+
+
+        modal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+    }
+
+
+    document.body.classList.remove(
+        "modalOpen"
+    );
+
+
+    document.body.style.overflow =
+        "";
+
+}
+
+
+/* =========================================================
+   5. FORMULAIRE SUBMIT
 ========================================================= */
 
 officialStoreForm.addEventListener(
     "submit",
-    async (event) => {
+    async (
+        event
+    ) => {
 
         event.preventDefault();
 
 
+        event.stopPropagation();
+
+
         alert(
-            "OFFICIAL ADMIN — BLOC 6.1\n\n" +
+            "OFFICIAL ADMIN — BLOC 6.2\n\n" +
+
             "Tentative de sauvegarde de la loja..."
         );
 
 
         /* =================================================
-           RÉCUPÉRER L'ID
+           ID
         ================================================= */
 
         const storeId =
-            storeIdInput
-                ? storeIdInput.value.trim()
-                : "";
+            document
+                .getElementById(
+                    "storeId"
+                )?.value
+                ?.trim() || "";
 
 
-        if (!storeId) {
+        if (
+            !storeId
+        ) {
 
             alert(
                 "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
-                "L'ID de la loja est manquant."
+
+                "ID da loja não encontrado."
             );
 
             return;
@@ -2406,27 +2515,26 @@ officialStoreForm.addEventListener(
 
 
         /* =================================================
-           RÉCUPÉRER LE NOM
+           NOM
         ================================================= */
 
         const name =
-            storeNameInput
-                ? storeNameInput.value.trim()
-                : "";
+            document
+                .getElementById(
+                    "storeName"
+                )?.value
+                ?.trim() || "";
 
 
-        if (!name) {
+        if (
+            !name
+        ) {
 
             alert(
                 "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
-                "Le nom de la loja est obligatoire."
+
+                "O nome da loja é obrigatório."
             );
-
-            if (storeNameInput) {
-
-                storeNameInput.focus();
-
-            }
 
             return;
 
@@ -2434,63 +2542,103 @@ officialStoreForm.addEventListener(
 
 
         /* =================================================
-           RÉCUPÉRER LES AUTRES CHAMPS
+           AUTRES CHAMPS
         ================================================= */
 
         const category =
-            storeCategoryInput
-                ? storeCategoryInput.value.trim()
-                : "";
+            document
+                .getElementById(
+                    "storeCategory"
+                )?.value
+                ?.trim() || "";
 
 
         const slug =
-            storeSlugInput
-                ? storeSlugInput.value.trim()
-                : "";
+            document
+                .getElementById(
+                    "storeSlug"
+                )?.value
+                ?.trim() || "";
 
 
         const description =
-            storeDescriptionInput
-                ? storeDescriptionInput.value.trim()
-                : "";
+            document
+                .getElementById(
+                    "storeDescription"
+                )?.value
+                ?.trim() || "";
 
 
         const logo =
-            storeLogoInput
-                ? storeLogoInput.value.trim()
-                : "";
+            document
+                .getElementById(
+                    "storeLogo"
+                )?.value
+                ?.trim() || "";
 
 
         const banner =
-            storeBannerInput
-                ? storeBannerInput.value.trim()
-                : "";
+            document
+                .getElementById(
+                    "storeBanner"
+                )?.value
+                ?.trim() || "";
 
 
         const status =
-            storeStatusInput
-                ? storeStatusInput.value
-                : "Pending";
+            document
+                .getElementById(
+                    "storeStatus"
+                )?.value
+                ?.trim() ||
+            "Pending";
 
 
-        const verified =
-            storeVerifiedInput
-                ? storeVerifiedInput.value === "true"
-                : false;
+        const verifiedElement =
+            document.getElementById(
+                "storeVerified"
+            );
+
+
+        let verified =
+            false;
+
+
+        if (
+            verifiedElement
+        ) {
+
+            if (
+                verifiedElement.type === "checkbox"
+            ) {
+
+                verified =
+                    verifiedElement.checked;
+
+            } else {
+
+                verified =
+                    verifiedElement.value === "true";
+
+            }
+
+        }
 
 
         /* =================================================
            MERCHANT IDS
-           
-           IMPORTANT :
-           On ne crée aucun marchand.
-           On conserve uniquement les IDs présents.
         ================================================= */
 
+        const merchantIdsElement =
+            document.getElementById(
+                "storeMerchantIds"
+            );
+
+
         const merchantIds =
-            parseMerchantIds(
-                storeMerchantIdsInput
-                    ? storeMerchantIdsInput.value
+            parseOfficialStoreMerchantIds(
+                merchantIdsElement
+                    ? merchantIdsElement.value
                     : ""
             );
 
@@ -2499,89 +2647,63 @@ officialStoreForm.addEventListener(
            SETTINGS
         ================================================= */
 
+        const settingsElement =
+            document.getElementById(
+                "storeSettings"
+            );
+
+
         const settingsText =
-            storeSettingsInput
-                ? storeSettingsInput.value.trim()
-                : "{}";
+            settingsElement
+                ? settingsElement.value.trim()
+                : "";
 
 
         let settings = {};
 
 
-        try {
+        if (
+            settingsText !== ""
+        ) {
 
-            settings =
-                settingsText === ""
-                    ? {}
-                    : JSON.parse(
+            try {
+
+                settings =
+                    JSON.parse(
                         settingsText
                     );
 
-        } catch (error) {
-
-            alert(
-                "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
-
-                "Le champ settings contient un JSON invalide.\n\n" +
-
-                "Corrige le JSON avant de sauvegarder."
-            );
-
-
-            if (
-                storeSettingsInput
+            } catch (
+                error
             ) {
 
-                storeSettingsInput.focus();
+                alert(
+                    "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
 
-            }
+                    "O campo settings contém JSON inválido.\n\n" +
 
-
-            const settingsError =
-                document.getElementById(
-                    "settingsJsonError"
+                    "Corrija o JSON antes de guardar."
                 );
 
 
-            if (
-                settingsError
-            ) {
+                if (
+                    settingsElement
+                ) {
 
-                settingsError.classList.remove(
-                    "hidden"
-                );
+                    settingsElement.focus();
+
+                }
+
+
+                return;
 
             }
-
-
-            return;
 
         }
 
 
         /* =================================================
-           CACHER L'ERREUR JSON
-        ================================================= */
-
-        const settingsError =
-            document.getElementById(
-                "settingsJsonError"
-            );
-
-
-        if (
-            settingsError
-        ) {
-
-            settingsError.classList.add(
-                "hidden"
-            );
-
-        }
-
-
-        /* =================================================
-           VÉRIFIER LE TYPE SETTINGS
+           VÉRIFIER SETTINGS
         ================================================= */
 
         if (
@@ -2593,11 +2715,7 @@ officialStoreForm.addEventListener(
             alert(
                 "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
 
-                "settings doit être un objet JSON.\n\n" +
-
-                "Exemple :\n" +
-
-                '{"featured":true}'
+                "settings deve ser um objeto JSON."
             );
 
             return;
@@ -2606,15 +2724,84 @@ officialStoreForm.addEventListener(
 
 
         /* =================================================
-           DOCUMENT FIRESTORE
+           RÉSUMÉ
         ================================================= */
 
-        const storeRef =
-            doc(
-                db,
-                OFFICIAL_STORES_COLLECTION,
-                storeId
+        alert(
+            "OFFICIAL ADMIN — BLOC 6.3\n\n" +
+
+            "Dados preparados para Firestore ✅\n\n" +
+
+            "ID : " +
+            storeId +
+
+            "\n\nNome : " +
+            name +
+
+            "\n\nCategoria : " +
+            category +
+
+            "\n\nSlug : " +
+            slug +
+
+            "\n\nStatus : " +
+            status +
+
+            "\n\nVerificada : " +
+            (
+                verified
+                    ? "Sim"
+                    : "Não"
+            ) +
+
+            "\n\nMerchant IDs : " +
+            merchantIds.length +
+
+            "\n\nSettings : JSON válido ✅"
+        );
+
+
+        /* =================================================
+           RÉFÉRENCE FIRESTORE
+        ================================================= */
+
+        let storeRef;
+
+
+        try {
+
+            storeRef =
+                doc(
+                    db,
+                    officialStoresCollectionName,
+                    storeId
+                );
+
+        } catch (
+            error
+        ) {
+
+            alert(
+                "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
+
+                "Impossible de créer la référence Firestore.\n\n" +
+
+                "Collection : " +
+                officialStoresCollectionName +
+
+                "\n\nID : " +
+                storeId +
+
+                "\n\nErro : " +
+                (
+                    error?.message ||
+                    String(error)
+                )
             );
+
+            return;
+
+        }
 
 
         /* =================================================
@@ -2663,42 +2850,7 @@ officialStoreForm.addEventListener(
 
 
         /* =================================================
-           AFFICHER UN RÉSUMÉ AVANT FIRESTORE
-        ================================================= */
-
-        alert(
-            "OFFICIAL ADMIN — BLOC 6.2\n\n" +
-
-            "Données prêtes pour Firestore ✅\n\n" +
-
-            "ID : " +
-            storeId +
-
-            "\n\nNom : " +
-            name +
-
-            "\n\nCategoria : " +
-            category +
-
-            "\n\nStatus : " +
-            status +
-
-            "\n\nVerificada : " +
-            (
-                verified
-                    ? "Sim"
-                    : "Não"
-            ) +
-
-            "\n\nmerchantIds : " +
-            merchantIds.length +
-
-            "\n\nsettings : JSON válido ✅"
-        );
-
-
-        /* =================================================
-           DÉSACTIVER LE BOUTON
+           BOUTON SAUVEGARDE
         ================================================= */
 
         const saveButton =
@@ -2707,15 +2859,21 @@ officialStoreForm.addEventListener(
             );
 
 
+        let originalButtonText =
+            "Guardar alterações";
+
+
         if (
             saveButton
         ) {
 
+            originalButtonText =
+                saveButton.textContent;
+
+
             saveButton.disabled =
                 true;
 
-            saveButton.dataset.originalText =
-                saveButton.textContent;
 
             saveButton.textContent =
                 "A guardar...";
@@ -2724,10 +2882,20 @@ officialStoreForm.addEventListener(
 
 
         /* =================================================
-           FIRESTORE UPDATE
+           FIRESTORE
         ================================================= */
 
         try {
+
+            alert(
+                "OFFICIAL ADMIN — BLOC 6.4\n\n" +
+
+                "Envoi des modifications vers Firestore...\n\n" +
+
+                "ID : " +
+                storeId
+            );
+
 
             await updateDoc(
                 storeRef,
@@ -2736,77 +2904,88 @@ officialStoreForm.addEventListener(
 
 
             /* =============================================
-               SUCCÈS
+               SUCCÈS FIRESTORE
             ============================================= */
 
             alert(
-                "OFFICIAL ADMIN — BLOC 6.3\n\n" +
+                "OFFICIAL ADMIN — BLOC 6.5\n\n" +
 
-                "Loja sauvegardée dans Firestore ✅\n\n" +
+                "Loja sauvegardée avec succès dans Firestore ✅\n\n" +
 
                 "ID : " +
                 storeId +
 
                 "\n\n" +
 
-                "Les modifications ont été enregistrées."
+                "Les modifications sont maintenant enregistrées."
             );
 
 
             /* =============================================
-               METTRE À JOUR LE TABLEAU LOCAL
+               METTRE À JOUR officialStores
             ============================================= */
 
-            const index =
-                officialStores.findIndex(
-                    (store) =>
-                        String(
-                            store.id
-                        ) === String(
-                            storeId
-                        )
-                );
-
-
             if (
-                index !== -1
+                Array.isArray(
+                    officialStores
+                )
             ) {
 
-                officialStores[index] = {
+                const index =
+                    officialStores.findIndex(
+                        (
+                            store
+                        ) =>
+                            String(
+                                store?.id
+                            ) ===
+                            String(
+                                storeId
+                            )
+                    );
 
-                    ...officialStores[index],
 
-                    name:
-                        name,
+                if (
+                    index !== -1
+                ) {
 
-                    category:
-                        category,
+                    officialStores[index] = {
 
-                    slug:
-                        slug,
+                        ...officialStores[index],
 
-                    description:
-                        description,
+                        name:
+                            name,
 
-                    logo:
-                        logo,
+                        category:
+                            category,
 
-                    banner:
-                        banner,
+                        slug:
+                            slug,
 
-                    status:
-                        status,
+                        description:
+                            description,
 
-                    verified:
-                        verified,
+                        logo:
+                            logo,
 
-                    merchantIds:
-                        merchantIds,
+                        banner:
+                            banner,
 
-                    settings:
-                        settings
+                        status:
+                            status,
 
-                };
+                        verified:
+                            verified,
+
+                        merchantIds:
+                            merchantIds,
+
+                        settings:
+                            settings
+
+                    };
+
+                }
 
             }
 
@@ -2815,18 +2994,19 @@ officialStoreForm.addEventListener(
                FERMER MODAL
             ============================================= */
 
-            closeOfficialStoreEditor();
+            closeOfficialStoreEditorAfterSave();
 
 
             /* =============================================
-               RECHARGER L'AFFICHAGE
+               RAFRAÎCHIR LA LISTE
             ============================================= */
 
             if (
-                typeof renderOfficialStores === "function"
+                typeof renderOfficialStoresList ===
+                "function"
             ) {
 
-                renderOfficialStores();
+                renderOfficialStoresList();
 
             }
 
@@ -2839,6 +3019,7 @@ officialStoreForm.addEventListener(
                 document.getElementById(
                     "officialStoreToast"
                 );
+
 
             const toastMessage =
                 document.getElementById(
@@ -2853,6 +3034,7 @@ officialStoreForm.addEventListener(
 
                 toastMessage.textContent =
                     "Loja atualizada com sucesso ✅";
+
 
                 toast.classList.add(
                     "show"
@@ -2873,10 +3055,12 @@ officialStoreForm.addEventListener(
             }
 
 
-        } catch (error) {
+        } catch (
+            error
+        ) {
 
             console.error(
-                "Erro ao atualizar loja:",
+                "OFFICIAL ADMIN — Erro Firestore:",
                 error
             );
 
@@ -2889,23 +3073,18 @@ officialStoreForm.addEventListener(
                 "ID : " +
                 storeId +
 
-                "\n\n" +
+                "\n\nCollection : " +
+                officialStoresCollectionName +
 
-                "Erro : " +
+                "\n\nErro : " +
                 (
-                    error &&
-                    error.message
-                        ? error.message
-                        : String(error)
+                    error?.message ||
+                    String(error)
                 )
             );
 
+
         } finally {
-
-
-            /* =============================================
-               REACTIVER LE BOUTON
-            ============================================= */
 
             if (
                 saveButton
@@ -2916,7 +3095,7 @@ officialStoreForm.addEventListener(
 
 
                 saveButton.textContent =
-                    saveButton.dataset.originalText ||
+                    originalButtonText ||
                     "Guardar alterações";
 
             }
@@ -2934,24 +3113,17 @@ officialStoreForm.addEventListener(
 alert(
     "OFFICIAL ADMIN — BLOC 6 TERMINÉ ✅\n\n" +
 
-    "Sauvegarde Firestore connectée.\n\n" +
+    "Système de sauvegarde Firestore connecté.\n\n" +
 
-    "Champs sauvegardés :\n" +
+    "✓ Formulaire détecté\n" +
+    "✓ db détecté\n" +
+    "✓ doc() détecté\n" +
+    "✓ updateDoc() détecté\n" +
+    "✓ serverTimestamp() détecté\n" +
+    "✓ Sauvegarde des données\n" +
+    "✓ Mise à jour de officialStores\n" +
+    "✓ Rafraîchissement de la liste\n" +
+    "✓ Fermeture de la modal\n\n" +
 
-    "✓ name\n" +
-    "✓ category\n" +
-    "✓ slug\n" +
-    "✓ description\n" +
-    "✓ logo\n" +
-    "✓ banner\n" +
-    "✓ status\n" +
-    "✓ verified\n" +
-    "✓ merchantIds\n" +
-    "✓ settings\n" +
-    "✓ updatedAt\n" +
-    "✓ adminSettingsUpdatedAt\n\n" +
-
-    "createdAt reste inchangé.\n\n" +
-
-    "Aucun marchand ajouté automatiquement."
+    "BLOC 6 PRÊT."
 );
