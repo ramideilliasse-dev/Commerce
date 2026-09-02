@@ -1,34 +1,85 @@
  /* =========================================================
-   TOMA ADMIN — OFFICIAL STORES
+   TOMA ADMIN — LOJAS OFICIAIS
+   PREMIUM ADMIN UI
+========================================================= */
+
+
+/* =========================================================
+   RESET
 ========================================================= */
 
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
+
 html {
+    scroll-behavior: smooth;
+}
+
+
+body {
+    min-height: 100vh;
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(255, 193, 7, 0.08),
+            transparent 32%
+        ),
+        #f5f6f8;
+
+    color: #151515;
+
     font-family:
         -apple-system,
         BlinkMacSystemFont,
+        "SF Pro Display",
+        "SF Pro Text",
         "Segoe UI",
         Roboto,
+        Helvetica,
         Arial,
         sans-serif;
+
+    -webkit-font-smoothing: antialiased;
+
+    overflow-x: hidden;
 }
 
-body {
-    margin: 0;
-    background: #f5f6f8;
-    color: #111;
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+
+button {
+    cursor: pointer;
+}
+
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+
+.hidden {
+    display: none !important;
 }
 
 
 /* =========================================================
-   APP
+   APPLICATION
 ========================================================= */
 
 .officialStoresAdminApp {
     min-height: 100vh;
+    width: 100%;
 }
 
 
@@ -39,80 +90,136 @@ body {
 .officialStoresHeader {
     position: sticky;
     top: 0;
-    z-index: 50;
+    z-index: 100;
+
+    min-height: 76px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    gap: 20px;
+    padding:
+        14px
+        max(18px, env(safe-area-inset-right))
+        14px
+        max(18px, env(safe-area-inset-left));
 
-    padding: 18px 24px;
+    background: rgba(255, 255, 255, 0.92);
 
-    background: #111;
-    color: #fff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
 
     box-shadow:
-        0 4px 20px rgba(0,0,0,.12);
+        0 4px 20px rgba(0, 0, 0, 0.04);
 }
+
 
 .officialStoresHeaderLeft {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 14px;
+
+    min-width: 0;
 }
+
+
+.officialStoresHeaderLeft > div {
+    min-width: 0;
+}
+
 
 .officialStoresHeaderLeft h1 {
-    margin: 0;
-    font-size: 22px;
-    font-weight: 700;
+    font-size: 21px;
+    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
+
 .officialStoresHeaderLeft p {
-    margin: 4px 0 0;
-    color: #aaa;
-    font-size: 13px;
+    margin-top: 4px;
+
+    color: #777;
+
+    font-size: 12px;
+    font-weight: 500;
 }
+
 
 .backButton {
     width: 42px;
     height: 42px;
 
+    flex: 0 0 42px;
+
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border-radius: 10px;
-
-    background: #222;
+    background: #111;
     color: #fff;
 
-    text-decoration: none;
+    border-radius: 13px;
 
-    font-size: 22px;
+    font-size: 23px;
+    font-weight: 500;
+
+    box-shadow:
+        0 7px 18px rgba(0, 0, 0, 0.15);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
-.backButton:hover {
-    background: #333;
+
+.backButton:active {
+    transform: scale(0.94);
+
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.12);
 }
+
+
+.officialStoresHeaderRight {
+    display: flex;
+    align-items: center;
+}
+
 
 .headerActionButton {
-    border: 1px solid #444;
+    min-height: 42px;
 
-    background: #222;
-    color: #fff;
+    padding: 0 15px;
 
-    padding: 10px 15px;
+    border: 1px solid #e4e4e4;
 
-    border-radius: 9px;
+    border-radius: 13px;
 
-    cursor: pointer;
+    background: #fff;
+    color: #111;
 
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 700;
+
+    box-shadow:
+        0 5px 16px rgba(0, 0, 0, 0.05);
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
 }
 
-.headerActionButton:hover {
-    background: #333;
+
+.headerActionButton:active {
+    transform: scale(0.96);
+    background: #f3f3f3;
 }
 
 
@@ -121,16 +228,19 @@ body {
 ========================================================= */
 
 .officialStoresMain {
-    width: min(1400px, calc(100% - 30px));
+    width: min(1180px, calc(100% - 32px));
 
     margin: 0 auto;
 
-    padding: 25px 0 60px;
+    padding:
+        24px
+        0
+        calc(40px + env(safe-area-inset-bottom));
 }
 
 
 /* =========================================================
-   STATS
+   STATISTICS
 ========================================================= */
 
 .officialStoresStats {
@@ -139,38 +249,76 @@ body {
     grid-template-columns:
         repeat(4, minmax(0, 1fr));
 
-    gap: 15px;
+    gap: 14px;
 
     margin-bottom: 22px;
 }
 
+
 .officialStoreStatCard {
-    background: #fff;
+    position: relative;
 
-    border: 1px solid #e7e7e7;
+    min-height: 110px;
 
-    border-radius: 14px;
+    padding: 19px;
 
-    padding: 20px;
+    background: rgba(255, 255, 255, 0.96);
+
+    border: 1px solid rgba(0, 0, 0, 0.06);
+
+    border-radius: 20px;
+
+    overflow: hidden;
 
     box-shadow:
-        0 3px 15px rgba(0,0,0,.04);
+        0 8px 30px rgba(0, 0, 0, 0.055);
 }
+
+
+.officialStoreStatCard::after {
+    content: "";
+
+    position: absolute;
+
+    width: 70px;
+    height: 70px;
+
+    right: -24px;
+    bottom: -25px;
+
+    background: rgba(0, 0, 0, 0.035);
+
+    border-radius: 50%;
+}
+
 
 .officialStoreStatCard span {
     display: block;
 
     color: #777;
 
-    font-size: 13px;
+    font-size: 12px;
+    font-weight: 700;
 
-    margin-bottom: 8px;
+    text-transform: uppercase;
+
+    letter-spacing: 0.5px;
 }
+
 
 .officialStoreStatCard strong {
     display: block;
 
-    font-size: 28px;
+    margin-top: 10px;
+
+    color: #111;
+
+    font-size: 30px;
+    line-height: 1;
+
+    font-weight: 850;
+
+    letter-spacing: -1px;
 }
 
 
@@ -180,79 +328,101 @@ body {
 
 .officialStoresToolbar {
     display: flex;
-
-    align-items: center;
-
-    gap: 15px;
+    align-items: stretch;
+    gap: 12px;
 
     margin-bottom: 20px;
 }
 
+
 .officialStoresSearchBox {
     flex: 1;
 
+    min-height: 50px;
+
     display: flex;
     align-items: center;
-
     gap: 10px;
+
+    padding: 0 15px;
 
     background: #fff;
 
-    border: 1px solid #ddd;
+    border: 1px solid #e5e5e5;
 
-    border-radius: 11px;
+    border-radius: 15px;
 
-    padding: 0 14px;
+    box-shadow:
+        0 5px 20px rgba(0, 0, 0, 0.04);
 }
+
 
 .officialStoresSearchBox span {
-    color: #777;
+    font-size: 17px;
 }
+
 
 .officialStoresSearchBox input {
     width: 100%;
 
-    border: 0;
-    outline: 0;
-
-    padding: 13px 0;
+    border: none;
+    outline: none;
 
     background: transparent;
+
+    color: #111;
 
     font-size: 14px;
 }
 
+
+.officialStoresSearchBox input::placeholder {
+    color: #999;
+}
+
+
 .officialStoresFilterBox {
+    min-width: 180px;
+
     display: flex;
-
     align-items: center;
-
     gap: 8px;
+
+    padding: 0 12px;
 
     background: #fff;
 
-    border: 1px solid #ddd;
+    border: 1px solid #e5e5e5;
 
-    border-radius: 11px;
+    border-radius: 15px;
 
-    padding: 8px 12px;
+    box-shadow:
+        0 5px 20px rgba(0, 0, 0, 0.04);
 }
+
 
 .officialStoresFilterBox label {
     color: #777;
 
-    font-size: 13px;
+    font-size: 12px;
+    font-weight: 700;
 }
 
+
 .officialStoresFilterBox select {
-    border: 0;
-    outline: 0;
+    flex: 1;
+
+    min-width: 0;
+
+    border: none;
+    outline: none;
 
     background: transparent;
 
-    font-weight: 600;
+    color: #111;
 
-    padding: 5px;
+    font-size: 13px;
+    font-weight: 700;
 }
 
 
@@ -261,21 +431,20 @@ body {
 ========================================================= */
 
 .officialStoresMessage {
-    padding: 13px 15px;
-
     margin-bottom: 18px;
 
-    background: #fff3cd;
+    padding: 14px 16px;
 
-    border: 1px solid #ffe69c;
+    background: #fff;
 
-    border-radius: 10px;
+    border: 1px solid #e5e5e5;
 
-    color: #664d03;
-}
+    border-radius: 14px;
 
-.hidden {
-    display: none !important;
+    color: #444;
+
+    font-size: 13px;
+    line-height: 1.5;
 }
 
 
@@ -284,39 +453,39 @@ body {
 ========================================================= */
 
 .officialStoresLoader {
-    min-height: 250px;
+    min-height: 180px;
 
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
     justify-content: center;
 
+    gap: 13px;
+
     color: #777;
+
+    font-size: 13px;
 }
 
+
 .loaderSpinner {
-    width: 40px;
-    height: 40px;
-
-    border: 4px solid #ddd;
-
-    border-top-color: #111;
+    width: 34px;
+    height: 34px;
 
     border-radius: 50%;
 
+    border: 3px solid #e5e5e5;
+    border-top-color: #111;
+
     animation:
-        officialStoreSpin
-        .8s linear infinite;
+        officialStoreSpin 0.8s linear infinite;
 }
 
-@keyframes officialStoreSpin {
 
+@keyframes officialStoreSpin {
     to {
         transform: rotate(360deg);
     }
-
 }
 
 
@@ -328,252 +497,242 @@ body {
     display: grid;
 
     grid-template-columns:
-        repeat(3, minmax(0, 1fr));
+        repeat(2, minmax(0, 1fr));
 
-    gap: 18px;
+    gap: 16px;
 }
 
 
 /* =========================================================
    STORE CARD
+   Compatible avec les cartes générées par JS
 ========================================================= */
 
 .officialStoreAdminCard {
-    background: #fff;
-
-    border: 1px solid #e5e5e5;
-
-    border-radius: 16px;
-
-    overflow: hidden;
-
-    box-shadow:
-        0 4px 18px rgba(0,0,0,.05);
-
-    transition:
-        transform .2s ease,
-        box-shadow .2s ease;
-}
-
-.officialStoreAdminCard:hover {
-    transform: translateY(-2px);
-
-    box-shadow:
-        0 8px 25px rgba(0,0,0,.08);
-}
-
-
-/* =========================================================
-   CARD IMAGE
-========================================================= */
-
-.officialStoreAdminCardImage {
-    height: 150px;
-
-    background: #eee;
-
     position: relative;
 
-    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    padding: 15px;
+
+    background: #fff;
+
+    border: 1px solid rgba(0, 0, 0, 0.065);
+
+    border-radius: 21px;
+
+    box-shadow:
+        0 8px 28px rgba(0, 0, 0, 0.055);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
-.officialStoreAdminCardImage img {
-    width: 100%;
-    height: 100%;
+
+.officialStoreAdminCard:active {
+    transform: scale(0.985);
+}
+
+
+.officialStoreAdminLogo {
+    width: 72px;
+    height: 72px;
+
+    flex: 0 0 72px;
 
     object-fit: cover;
 
-    display: block;
-}
+    background: #f2f2f2;
 
-.officialStoreAdminCardImageFallback {
-    width: 100%;
-    height: 100%;
+    border-radius: 18px;
 
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    font-size: 45px;
-
-    color: #999;
+    border: 1px solid #eee;
 }
 
 
-/* =========================================================
-   STATUS BADGE
-========================================================= */
-
-.storeStatusBadge {
-    position: absolute;
-
-    top: 12px;
-    right: 12px;
-
-    padding: 6px 10px;
-
-    border-radius: 999px;
-
-    font-size: 11px;
-
-    font-weight: 700;
-
-    background: #fff;
-
-    box-shadow:
-        0 2px 8px rgba(0,0,0,.12);
-}
-
-.storeStatusBadge.active {
-    color: #146c43;
-    background: #d1e7dd;
-}
-
-.storeStatusBadge.pending {
-    color: #664d03;
-    background: #fff3cd;
-}
-
-.storeStatusBadge.blocked {
-    color: #842029;
-    background: #f8d7da;
-}
-
-.storeStatusBadge.rejected {
-    color: #842029;
-    background: #f8d7da;
-}
-
-
-/* =========================================================
-   CARD BODY
-========================================================= */
-
-.officialStoreAdminCardBody {
-    padding: 16px;
-}
-
-.officialStoreAdminCardBody h3 {
-    margin: 0 0 6px;
-
-    font-size: 17px;
-}
-
-.officialStoreAdminCardBody p {
-    margin: 4px 0;
-
-    color: #777;
-
-    font-size: 13px;
-}
-
-.storeIdText {
-    color: #999 !important;
-
-    font-family: monospace;
-
-    font-size: 11px !important;
-}
-
-
-/* =========================================================
-   VERIFIED
-========================================================= */
-
-.storeVerified {
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 5px;
-
-    margin-top: 9px;
-
-    padding: 5px 9px;
-
-    border-radius: 7px;
-
-    background: #f0f0f0;
-
-    font-size: 11px;
-
-    font-weight: 600;
-}
-
-.storeVerified.yes {
-    background: #e7f1ff;
-}
-
-
-/* =========================================================
-   CARD FOOTER
-========================================================= */
-
-.officialStoreAdminCardFooter {
-    display: flex;
-
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 10px;
-
-    padding: 13px 16px;
-
-    border-top: 1px solid #eee;
-}
-
-.editStoreButton {
+.officialStoreAdminInfo {
     flex: 1;
 
-    border: 0;
+    min-width: 0;
+}
 
-    border-radius: 9px;
 
-    padding: 11px 14px;
+.officialStoreAdminInfo h3 {
+    margin-bottom: 5px;
+
+    color: #111;
+
+    font-size: 16px;
+    font-weight: 800;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.officialStoreAdminInfo p {
+    color: #777;
+
+    font-size: 12px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.officialStoreAdminMeta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+    margin-top: 8px;
+}
+
+
+.officialStoreEditButton {
+    min-height: 38px;
+
+    padding: 0 12px;
+
+    border: none;
+
+    border-radius: 11px;
 
     background: #111;
     color: #fff;
 
-    cursor: pointer;
+    font-size: 12px;
+    font-weight: 750;
 
-    font-weight: 700;
+    white-space: nowrap;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
 }
 
-.editStoreButton:hover {
-    background: #292929;
+
+.officialStoreEditButton:active {
+    transform: scale(0.95);
+    opacity: 0.85;
 }
 
 
 /* =========================================================
-   EMPTY
+   STATUS BADGES
+========================================================= */
+
+.officialStoreStatusBadge,
+.officialStoreVerifiedBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 25px;
+
+    padding: 0 9px;
+
+    border-radius: 999px;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+
+.officialStoreStatusBadge {
+    background: #f1f1f1;
+    color: #555;
+}
+
+
+.officialStoreStatusBadge.active {
+    background: #e8f8ee;
+    color: #18753c;
+}
+
+
+.officialStoreStatusBadge.pending {
+    background: #fff6dc;
+    color: #946b00;
+}
+
+
+.officialStoreStatusBadge.blocked,
+.officialStoreStatusBadge.rejected {
+    background: #fdeaea;
+    color: #a52828;
+}
+
+
+.officialStoreVerifiedBadge {
+    background: #eef4ff;
+    color: #2c62b7;
+}
+
+
+/* =========================================================
+   EMPTY STATE
 ========================================================= */
 
 .officialStoresEmpty {
     min-height: 300px;
 
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
     justify-content: center;
 
-    text-align: center;
+    padding: 30px;
 
-    color: #777;
+    text-align: center;
 }
+
 
 .emptyIcon {
-    font-size: 50px;
+    width: 72px;
+    height: 72px;
 
-    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 16px;
+
+    background: #fff;
+
+    border-radius: 22px;
+
+    font-size: 32px;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.06);
 }
 
-.officialStoresEmpty h2 {
-    margin: 0 0 5px;
 
-    color: #222;
+.officialStoresEmpty h2 {
+    margin-bottom: 7px;
+
+    font-size: 18px;
+    font-weight: 800;
+}
+
+
+.officialStoresEmpty p {
+    max-width: 320px;
+
+    color: #888;
+
+    font-size: 13px;
+    line-height: 1.5;
 }
 
 
@@ -589,100 +748,137 @@ body {
     z-index: 1000;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
-    padding: 20px;
+    padding:
+        20px
+        max(20px, env(safe-area-inset-right))
+        max(20px, env(safe-area-inset-bottom))
+        max(20px, env(safe-area-inset-left));
 }
+
+
+.officialStoreModal.hidden {
+    display: none !important;
+}
+
 
 .officialStoreModalOverlay {
     position: absolute;
 
     inset: 0;
 
-    background:
-        rgba(0,0,0,.65);
+    background: rgba(10, 10, 10, 0.58);
+
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
 }
+
 
 .officialStoreModalContent {
     position: relative;
 
-    width: min(850px, 100%);
+    z-index: 2;
 
-    max-height: 92vh;
+    width: min(720px, 100%);
+
+    max-height:
+        calc(100vh - 40px);
+
+    max-height:
+        calc(
+            100dvh - 40px
+        );
 
     overflow-y: auto;
 
-    background: #fff;
+    background: #f8f8f8;
 
-    border-radius: 18px;
+    border-radius: 25px;
+
+    border: 1px solid rgba(255, 255, 255, 0.55);
 
     box-shadow:
-        0 20px 70px rgba(0,0,0,.3);
+        0 25px 80px rgba(0, 0, 0, 0.28);
+
+    overscroll-behavior: contain;
+
+    -webkit-overflow-scrolling: touch;
 }
 
-
-/* =========================================================
-   MODAL HEADER
-========================================================= */
 
 .officialStoreModalHeader {
     position: sticky;
 
     top: 0;
 
-    z-index: 5;
+    z-index: 10;
 
     display: flex;
-
     align-items: center;
     justify-content: space-between;
 
-    padding: 20px 22px;
+    padding: 18px 20px;
 
-    background: #fff;
+    background: rgba(248, 248, 248, 0.94);
 
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
 }
+
 
 .modalEyebrow {
     display: block;
 
-    color: #888;
-
-    font-size: 10px;
-
-    font-weight: 800;
-
-    letter-spacing: 1px;
-
     margin-bottom: 4px;
+
+    color: #999;
+
+    font-size: 9px;
+    font-weight: 850;
+
+    letter-spacing: 1.5px;
 }
+
 
 .officialStoreModalHeader h2 {
-    margin: 0;
+    font-size: 20px;
+    font-weight: 850;
 
-    font-size: 21px;
+    letter-spacing: -0.4px;
 }
+
 
 .modalCloseButton {
     width: 40px;
     height: 40px;
 
-    border: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    border-radius: 9px;
+    border: none;
 
-    background: #f1f1f1;
+    border-radius: 13px;
+
+    background: #eaeaea;
+    color: #222;
 
     font-size: 25px;
+    line-height: 1;
 
-    cursor: pointer;
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
 }
 
-.modalCloseButton:hover {
-    background: #e5e5e5;
+
+.modalCloseButton:active {
+    transform: scale(0.92);
+    background: #ddd;
 }
 
 
@@ -691,99 +887,140 @@ body {
 ========================================================= */
 
 .officialStoreForm {
-    padding: 0 22px 22px;
+    padding: 18px;
 }
+
 
 .formSection {
-    padding: 24px 0;
+    margin-bottom: 18px;
 
-    border-bottom: 1px solid #eee;
+    padding: 19px;
+
+    background: #fff;
+
+    border: 1px solid rgba(0, 0, 0, 0.055);
+
+    border-radius: 19px;
+
+    box-shadow:
+        0 5px 18px rgba(0, 0, 0, 0.035);
 }
+
 
 .formSectionHeader {
     margin-bottom: 18px;
 }
 
-.formSectionHeader h3 {
-    margin: 0 0 5px;
 
-    font-size: 16px;
+.formSectionHeader h3 {
+    margin-bottom: 5px;
+
+    font-size: 15px;
+    font-weight: 850;
+
+    letter-spacing: -0.2px;
 }
+
 
 .formSectionHeader p {
-    margin: 0;
+    color: #888;
 
-    color: #777;
-
-    font-size: 12px;
+    font-size: 11px;
+    line-height: 1.5;
 }
+
 
 .formGroup {
-    margin-bottom: 16px;
+    margin-bottom: 15px;
 }
+
 
 .formGroup:last-child {
     margin-bottom: 0;
 }
+
 
 .formGroup label {
     display: block;
 
     margin-bottom: 7px;
 
-    font-size: 12px;
-
-    font-weight: 700;
-
     color: #444;
+
+    font-size: 11px;
+    font-weight: 750;
 }
+
 
 .formGroup input,
 .formGroup textarea,
 .formGroup select {
     width: 100%;
 
-    border: 1px solid #dcdcdc;
-
-    border-radius: 9px;
-
-    background: #fff;
-
-    padding: 12px;
+    border: 1px solid #dedede;
 
     outline: none;
 
-    font: inherit;
+    background: #fafafa;
 
-    font-size: 14px;
+    color: #111;
+
+    border-radius: 12px;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
 }
+
+
+.formGroup input,
+.formGroup select {
+    min-height: 45px;
+
+    padding: 0 13px;
+}
+
 
 .formGroup textarea {
+    min-height: 100px;
+
+    padding: 12px 13px;
+
     resize: vertical;
+
+    line-height: 1.5;
 }
+
 
 .formGroup input:focus,
 .formGroup textarea:focus,
 .formGroup select:focus {
     border-color: #111;
 
+    background: #fff;
+
     box-shadow:
-        0 0 0 3px rgba(0,0,0,.06);
+        0 0 0 3px rgba(0, 0, 0, 0.06);
 }
+
 
 .formGroup input[readonly] {
-    background: #f5f5f5;
+    background: #f1f1f1;
 
     color: #777;
+
+    cursor: not-allowed;
 }
+
 
 .formGrid {
     display: grid;
 
     grid-template-columns:
-        repeat(2, minmax(0,1fr));
+        repeat(2, minmax(0, 1fr));
 
-    gap: 15px;
+    gap: 14px;
 }
 
 
@@ -794,85 +1031,144 @@ body {
 .imageField {
     display: grid;
 
-    grid-template-columns: 120px 1fr;
+    grid-template-columns:
+        135px minmax(0, 1fr);
 
-    gap: 15px;
+    gap: 16px;
 
     align-items: center;
 
     margin-bottom: 18px;
+
+    padding: 13px;
+
+    background: #fafafa;
+
+    border: 1px solid #ededed;
+
+    border-radius: 17px;
 }
+
 
 .imageField:last-child {
     margin-bottom: 0;
 }
 
-.storeImagePreview {
-    width: 120px;
-    height: 120px;
 
-    border-radius: 12px;
+.storeImagePreview,
+.storeBannerPreview {
+    position: relative;
+
+    width: 100%;
 
     overflow: hidden;
 
-    background: #f1f1f1;
-
     display: flex;
-
     align-items: center;
     justify-content: center;
 
+    background:
+        linear-gradient(
+            135deg,
+            #ededed,
+            #f8f8f8
+        );
+
+    border: 1px solid #e1e1e1;
+
     color: #999;
 
-    font-size: 12px;
+    font-size: 11px;
+    font-weight: 700;
+
+    text-align: center;
 }
 
-.storeImagePreview img {
-    width: 100%;
-    height: 100%;
 
-    object-fit: contain;
+.storeImagePreview {
+    height: 110px;
+
+    border-radius: 16px;
 }
+
 
 .storeBannerPreview {
-    width: 120px;
-    height: 75px;
+    height: 95px;
 
-    border-radius: 10px;
-
-    overflow: hidden;
-
-    background: #f1f1f1;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    color: #999;
-
-    font-size: 12px;
+    border-radius: 14px;
 }
 
+
+.storeImagePreview img,
 .storeBannerPreview img {
     width: 100%;
     height: 100%;
 
     object-fit: cover;
+
+    display: block;
 }
+
 
 .imageFieldControls {
     min-width: 0;
 }
 
+
 .imageFieldControls label {
     display: block;
 
-    margin-bottom: 7px;
+    margin-bottom: 8px;
 
-    font-size: 12px;
+    color: #444;
 
-    font-weight: 700;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+
+.imageFieldControls input[type="file"] {
+    width: 100%;
+
+    padding: 8px;
+
+    background: #fff;
+
+    border: 1px dashed #cfcfcf;
+
+    border-radius: 12px;
+
+    color: #555;
+
+    font-size: 11px;
+}
+
+
+.imageFieldControls input[type="file"]::file-selector-button {
+    margin-right: 9px;
+
+    padding: 8px 11px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: #111;
+    color: #fff;
+
+    font-size: 11px;
+    font-weight: 750;
+
+    cursor: pointer;
+}
+
+
+.imageFieldControls small {
+    color: #888;
+
+    font-size: 10px;
+
+    line-height: 1.4;
 }
 
 
@@ -882,43 +1178,60 @@ body {
 
 .validationNotice {
     display: flex;
-
     align-items: flex-start;
-
     gap: 10px;
 
-    padding: 12px;
+    margin-top: 15px;
 
-    border-radius: 9px;
+    padding: 12px 13px;
 
-    background: #f5f5f5;
+    background: #f5f7fa;
+
+    border: 1px solid #e6e9ed;
+
+    border-radius: 13px;
 }
 
-.validationNotice span {
-    font-size: 18px;
+
+.validationNotice > span {
+    flex: 0 0 auto;
+
+    font-size: 15px;
 }
+
 
 .validationNotice p {
-    margin: 0;
+    color: #666;
 
-    font-size: 12px;
+    font-size: 11px;
+    line-height: 1.55;
+}
 
-    line-height: 1.5;
 
-    color: #555;
+.validationNotice strong {
+    color: #111;
 }
 
 
 /* =========================================================
-   ERROR
+   JSON ERROR
 ========================================================= */
 
 .fieldError {
-    margin-top: 7px;
+    margin-top: 8px;
 
-    color: #b02a37;
+    padding: 9px 11px;
 
-    font-size: 12px;
+    background: #fff0f0;
+
+    border: 1px solid #ffd3d3;
+
+    border-radius: 10px;
+
+    color: #a32323;
+
+    font-size: 11px;
+    font-weight: 700;
 }
 
 
@@ -931,54 +1244,78 @@ body {
 
     bottom: 0;
 
-    display: flex;
+    z-index: 20;
 
-    justify-content: flex-end;
+    display: flex;
 
     gap: 10px;
 
-    padding-top: 18px;
+    padding:
+        13px
+        0
+        max(2px, env(safe-area-inset-bottom));
 
-    background: #fff;
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(248, 248, 248, 0),
+            #f8f8f8 20%
+        );
 }
+
 
 .secondaryButton,
 .primaryButton {
-    border: 0;
+    min-height: 48px;
 
-    border-radius: 9px;
+    border-radius: 14px;
 
-    padding: 12px 18px;
+    font-size: 13px;
+    font-weight: 800;
 
-    cursor: pointer;
-
-    font-weight: 700;
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
-.secondaryButton {
-    background: #eee;
 
+.secondaryButton {
+    flex: 0 0 35%;
+
+    border: 1px solid #ddd;
+
+    background: #fff;
     color: #222;
 }
 
-.secondaryButton:hover {
-    background: #ddd;
-}
 
 .primaryButton {
+    flex: 1;
+
+    border: none;
+
     background: #111;
-
     color: #fff;
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.primaryButton:hover {
-    background: #292929;
+
+.secondaryButton:active,
+.primaryButton:active {
+    transform: scale(0.97);
 }
 
-.primaryButton:disabled {
-    opacity: .6;
+
+.primaryButton:disabled,
+.secondaryButton:disabled {
+    opacity: 0.5;
 
     cursor: not-allowed;
+
+    box-shadow: none;
 }
 
 
@@ -990,32 +1327,46 @@ body {
     position: fixed;
 
     left: 50%;
-    bottom: 25px;
+
+    bottom:
+        calc(
+            22px + env(safe-area-inset-bottom)
+        );
 
     z-index: 2000;
 
-    transform:
-        translate(-50%, 20px);
+    min-width: min(320px, calc(100vw - 36px));
 
-    opacity: 0;
+    max-width: calc(100vw - 36px);
 
-    pointer-events: none;
+    padding: 13px 16px;
 
-    padding: 13px 18px;
-
-    border-radius: 10px;
-
-    background: #111;
+    background: rgba(20, 20, 20, 0.94);
 
     color: #fff;
 
+    border-radius: 14px;
+
     box-shadow:
-        0 8px 30px rgba(0,0,0,.2);
+        0 12px 35px rgba(0, 0, 0, 0.25);
+
+    text-align: center;
+
+    font-size: 12px;
+    font-weight: 650;
+
+    opacity: 0;
+
+    transform:
+        translate(-50%, 15px);
+
+    pointer-events: none;
 
     transition:
-        opacity .2s ease,
-        transform .2s ease;
+        opacity 0.25s ease,
+        transform 0.25s ease;
 }
+
 
 .officialStoreToast.show {
     opacity: 1;
@@ -1026,102 +1377,360 @@ body {
 
 
 /* =========================================================
-   RESPONSIVE
+   TABLET
 ========================================================= */
 
-@media (max-width: 1000px) {
+@media (max-width: 850px) {
+
+    .officialStoresStats {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
 
     .officialStoresList {
-        grid-template-columns:
-            repeat(2, minmax(0,1fr));
+        grid-template-columns: 1fr;
     }
 
 }
 
 
-@media (max-width: 700px) {
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 620px) {
 
     .officialStoresHeader {
-        padding: 15px;
+        min-height: 68px;
+
+        padding:
+            11px
+            max(13px, env(safe-area-inset-right))
+            11px
+            max(13px, env(safe-area-inset-left));
     }
+
+
+    .officialStoresHeaderLeft {
+        gap: 10px;
+    }
+
+
+    .backButton {
+        width: 39px;
+        height: 39px;
+
+        flex-basis: 39px;
+
+        border-radius: 12px;
+
+        font-size: 21px;
+    }
+
 
     .officialStoresHeaderLeft h1 {
-        font-size: 18px;
+        font-size: 17px;
     }
 
+
     .officialStoresHeaderLeft p {
+        font-size: 10px;
+    }
+
+
+    .headerActionButton {
+        min-height: 39px;
+
+        padding: 0 11px;
+
+        border-radius: 11px;
+
         font-size: 11px;
     }
 
-    .officialStoresMain {
-        width: min(100% - 20px, 1400px);
 
-        padding-top: 15px;
+    .officialStoresMain {
+        width: min(100% - 22px, 1180px);
+
+        padding-top: 16px;
     }
+
 
     .officialStoresStats {
-        grid-template-columns:
-            repeat(2, minmax(0,1fr));
+        gap: 9px;
+
+        margin-bottom: 14px;
     }
+
+
+    .officialStoreStatCard {
+        min-height: 90px;
+
+        padding: 14px;
+
+        border-radius: 16px;
+    }
+
+
+    .officialStoreStatCard span {
+        font-size: 9px;
+    }
+
+
+    .officialStoreStatCard strong {
+        margin-top: 8px;
+
+        font-size: 25px;
+    }
+
 
     .officialStoresToolbar {
         flex-direction: column;
 
-        align-items: stretch;
+        gap: 9px;
     }
 
+
+    .officialStoresSearchBox,
     .officialStoresFilterBox {
-        justify-content: space-between;
-    }
-
-    .officialStoresList {
-        grid-template-columns: 1fr;
-    }
-
-    .formGrid {
-        grid-template-columns: 1fr;
-    }
-
-    .imageField {
-        grid-template-columns: 90px 1fr;
-    }
-
-    .storeImagePreview {
-        width: 90px;
-        height: 90px;
-    }
-
-    .storeBannerPreview {
-        width: 90px;
-        height: 60px;
-    }
-
-    .officialStoreModal {
-        padding: 8px;
-    }
-
-    .officialStoreModalContent {
-        max-height: 96vh;
+        min-height: 46px;
 
         border-radius: 13px;
     }
 
-    .officialStoreForm {
-        padding:
-            0 15px 15px;
+
+    .officialStoresFilterBox {
+        width: 100%;
     }
+
+
+    .officialStoresList {
+        gap: 11px;
+    }
+
+
+    .officialStoreAdminCard {
+        padding: 12px;
+
+        border-radius: 17px;
+    }
+
+
+    .officialStoreAdminLogo {
+        width: 62px;
+        height: 62px;
+
+        flex-basis: 62px;
+
+        border-radius: 15px;
+    }
+
+
+    .officialStoreAdminInfo h3 {
+        font-size: 14px;
+    }
+
+
+    .officialStoreEditButton {
+        min-height: 35px;
+
+        padding: 0 10px;
+
+        font-size: 10px;
+    }
+
+
+    .officialStoreModal {
+        align-items: flex-end;
+
+        padding: 0;
+    }
+
+
+    .officialStoreModalContent {
+        width: 100%;
+
+        max-height: 94dvh;
+
+        border-radius:
+            24px
+            24px
+            0
+            0;
+
+        animation:
+            officialStoreModalUp 0.25s ease;
+    }
+
+
+    @keyframes officialStoreModalUp {
+
+        from {
+            transform: translateY(100%);
+        }
+
+        to {
+            transform: translateY(0);
+        }
+
+    }
+
 
     .officialStoreModalHeader {
         padding: 16px;
+
+        border-radius:
+            24px
+            24px
+            0
+            0;
     }
 
-    .officialStoreFormActions {
-        flex-direction: column;
+
+    .officialStoreModalHeader h2 {
+        font-size: 18px;
     }
+
+
+    .officialStoreForm {
+        padding: 12px;
+    }
+
+
+    .formSection {
+        padding: 15px;
+
+        margin-bottom: 12px;
+
+        border-radius: 16px;
+    }
+
+
+    .formSectionHeader {
+        margin-bottom: 14px;
+    }
+
+
+    .formSectionHeader h3 {
+        font-size: 14px;
+    }
+
+
+    .formSectionHeader p {
+        font-size: 10px;
+    }
+
+
+    .formGrid {
+        grid-template-columns: 1fr;
+
+        gap: 0;
+    }
+
+
+    .imageField {
+        grid-template-columns: 1fr;
+
+        gap: 11px;
+
+        padding: 11px;
+
+        border-radius: 14px;
+    }
+
+
+    .storeImagePreview {
+        height: 145px;
+    }
+
+
+    .storeBannerPreview {
+        height: 125px;
+    }
+
+
+    .imageFieldControls input[type="file"] {
+        padding: 7px;
+    }
+
+
+    .officialStoreFormActions {
+        padding-top: 12px;
+    }
+
 
     .secondaryButton,
     .primaryButton {
-        width: 100%;
+        min-height: 46px;
+
+        border-radius: 13px;
+
+        font-size: 12px;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL IPHONE
+========================================================= */
+
+@media (max-width: 390px) {
+
+    .officialStoresHeaderLeft p {
+        display: none;
+    }
+
+
+    .officialStoresHeaderLeft h1 {
+        font-size: 16px;
+    }
+
+
+    .headerActionButton {
+        padding: 0 9px;
+
+        font-size: 10px;
+    }
+
+
+    .officialStoreStatCard {
+        min-height: 84px;
+
+        padding: 12px;
+    }
+
+
+    .officialStoreStatCard strong {
+        font-size: 23px;
+    }
+
+
+    .officialStoreAdminCard {
+        gap: 10px;
+    }
+
+
+    .officialStoreAdminLogo {
+        width: 56px;
+        height: 56px;
+
+        flex-basis: 56px;
+    }
+
+}
+
+
+/* =========================================================
+   DARK MODE — PRÉPARÉ POUR PLUS TARD
+========================================================= */
+
+@media (prefers-color-scheme: dark) {
+
+    body {
+        background: #101010;
+        color: #f5f5f5;
     }
 
 }
