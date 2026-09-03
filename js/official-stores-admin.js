@@ -2286,41 +2286,46 @@ alert(
 /* =========================================================
    CLOUDINARY — UPLOAD IMAGE
 ========================================================= */
-
 async function uploadOfficialStoreImageToCloudinary(file) {
 
     if (!file) {
         throw new Error("Aucune image sélectionnée.");
     }
 
-    alert(
-        "TEST CLOUDINARY 1 🔎\n\n" +
-        "Cloud Name : [" + CLOUDINARY_CLOUD_NAME + "]\n\n" +
-        "Upload Preset : [" + CLOUDINARY_UPLOAD_PRESET + "]\n\n" +
-        "Fichier : " + file.name
-    );
+    const cloudName = "xnak6z6m";
+    const uploadPreset = "toma-images";
+
+    const uploadUrl =
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
 
     const formData = new FormData();
 
     formData.append("file", file);
-
-    formData.append(
-    "upload_preset",
-    "angcomerce-upload"
-);
-    const uploadUrl =
-        "https://api.cloudinary.com/v1_1/" +
-        CLOUDINARY_CLOUD_NAME +
-        "/image/upload";
+    formData.append("upload_preset", uploadPreset);
 
     alert(
-        "TEST CLOUDINARY 2 🚀\n\n" +
-        "URL :\n" +
-        uploadUrl +
-        "\n\n" +
-        "Preset envoyé : [" +
-        CLOUDINARY_UPLOAD_PRESET +
-        "]"
+        "TEST FINAL CLOUDINARY 🔎\n\n" +
+        "Cloud Name : [" + cloudName + "]\n\n" +
+        "Preset : [" + uploadPreset + "]\n\n" +
+        "URL :\n" + uploadUrl
+    );
+
+    // Vérification de ce qui est réellement présent dans FormData
+    let contenuFormData = "";
+
+    for (const [key, value] of formData.entries()) {
+        if (key === "file") {
+            contenuFormData +=
+                "file = " + value.name + "\n";
+        } else {
+            contenuFormData +=
+                key + " = [" + value + "]\n";
+        }
+    }
+
+    alert(
+        "FORMDATA ENVOYÉE 📦\n\n" +
+        contenuFormData
     );
 
     const response = await fetch(
@@ -2331,21 +2336,29 @@ async function uploadOfficialStoreImageToCloudinary(file) {
         }
     );
 
-    const data = await response.json();
+    const text = await response.text();
 
     alert(
-        "TEST CLOUDINARY 3 📡\n\n" +
-        "HTTP : " +
-        response.status +
-        "\n\nRéponse Cloudinary :\n\n" +
-        JSON.stringify(data, null, 2)
+        "RÉPONSE CLOUDINARY 📡\n\n" +
+        "HTTP : " + response.status +
+        "\n\n" +
+        text
     );
 
-    if (!response.ok || !data.secure_url) {
+    let data;
 
+    try {
+        data = JSON.parse(text);
+    } catch {
+        throw new Error(
+            "Cloudinary a renvoyé une réponse invalide."
+        );
+    }
+
+    if (!response.ok || !data.secure_url) {
         throw new Error(
             data?.error?.message ||
-            "Cloudinary a refusé l'upload."
+            "Cloudinary a refusé l'image."
         );
     }
 
