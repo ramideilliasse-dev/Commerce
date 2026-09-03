@@ -2281,6 +2281,12 @@ alert(
    CLOUDINARY — UPLOAD IMAGE
 ========================================================= */
 
+
+
+/* =========================================================
+   CLOUDINARY — UPLOAD IMAGE
+========================================================= */
+
 async function uploadOfficialStoreImageToCloudinary(file) {
 
     if (!file) {
@@ -2289,22 +2295,31 @@ async function uploadOfficialStoreImageToCloudinary(file) {
         );
     }
 
-    alert(
-        "CLOUDINARY TEST 🔎\n\n" +
-        "Cloud Name : " +
-        CLOUDINARY_CLOUD_NAME +
-        "\n\n" +
-        "Upload Preset : [" +
-        CLOUDINARY_UPLOAD_PRESET +
-        "]" +
-        "\n\n" +
-        "Fichier : " +
-        file.name
+    if (
+        !file.type ||
+        !file.type.startsWith("image/")
+    ) {
+        throw new Error(
+            "Le fichier sélectionné n'est pas une image."
+        );
+    }
+
+    const maxSize =
+        10 * 1024 * 1024;
+
+    if (file.size > maxSize) {
+        throw new Error(
+            "L'image doit avoir une taille maximale de 10 MB."
+        );
+    }
+
+    const formData =
+        new FormData();
+
+    formData.append(
+        "file",
+        file
     );
-
-    const formData = new FormData();
-
-    formData.append("file", file);
 
     formData.append(
         "upload_preset",
@@ -2312,85 +2327,66 @@ async function uploadOfficialStoreImageToCloudinary(file) {
     );
 
     const uploadUrl =
-        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+        "https://api.cloudinary.com/v1_1/" +
+        CLOUDINARY_CLOUD_NAME +
+        "/image/upload";
 
-    alert(
-        "CLOUDINARY TEST 2 🚀\n\n" +
-        "URL utilisée :\n\n" +
-        uploadUrl +
-        "\n\n" +
-        "upload_preset envoyé :\n" +
-        CLOUDINARY_UPLOAD_PRESET
-    );
+    const response =
+        await fetch(
+            uploadUrl,
+            {
+                method: "POST",
+                body: formData
+            }
+        );
 
-    const response = await fetch(
-        uploadUrl,
-        {
-            method: "POST",
-            body: formData
-        }
-    );
-
-    const data = await response.json();
-
-    alert(
-        "CLOUDINARY RÉPONSE 📡\n\n" +
-        "HTTP : " +
-        response.status +
-        "\n\n" +
-        "Réponse :\n" +
-        JSON.stringify(
-            data,
-            null,
-            2
-        )
-    );
+    const data =
+        await response.json();
 
     if (
         !response.ok ||
         !data.secure_url
     ) {
 
+        console.error(
+            "Cloudinary error:",
+            data
+        );
+
         throw new Error(
             data?.error?.message ||
             "Cloudinary a refusé l'upload."
         );
-
     }
 
     return data.secure_url;
-}/* =========================================================
+}
+
+
+/* =========================================================
    OFFICIAL STORES — SÉLECTION LOGO
 ========================================================= */
 
-if (
-    storeLogoFile
-) {
+if (storeLogoFile) {
 
     storeLogoFile.addEventListener(
         "change",
-        () => {
+        function () {
 
             const file =
-                storeLogoFile.files?.[0];
-
+                storeLogoFile.files &&
+                storeLogoFile.files[0];
 
             if (!file) {
-
                 return;
-
             }
 
-
-            /* =============================================
-               APERÇU IMMÉDIAT
-            ============================================= */
+            /* ---------------------------------------------
+               APERÇU LOCAL IMMÉDIAT
+            --------------------------------------------- */
 
             const localUrl =
-                URL.createObjectURL(
-                    file
-                );
-
+                URL.createObjectURL(file);
 
             adminBloc5UpdatePreview(
                 storeLogoPreview,
@@ -2398,10 +2394,11 @@ if (
                 "Logo"
             );
 
+            /* ---------------------------------------------
+               MESSAGE
+            --------------------------------------------- */
 
-            if (
-                storeLogoStatus
-            ) {
+            if (storeLogoStatus) {
 
                 storeLogoStatus.textContent =
                     "Logo selecionado: " +
@@ -2411,7 +2408,6 @@ if (
 
         }
     );
-
 }
 
 
@@ -2419,34 +2415,26 @@ if (
    OFFICIAL STORES — SÉLECTION BANNER
 ========================================================= */
 
-if (
-    storeBannerFile
-) {
+if (storeBannerFile) {
 
     storeBannerFile.addEventListener(
         "change",
-        () => {
+        function () {
 
             const file =
-                storeBannerFile.files?.[0];
-
+                storeBannerFile.files &&
+                storeBannerFile.files[0];
 
             if (!file) {
-
                 return;
-
             }
 
-
-            /* =============================================
-               APERÇU IMMÉDIAT
-            ============================================= */
+            /* ---------------------------------------------
+               APERÇU LOCAL IMMÉDIAT
+            --------------------------------------------- */
 
             const localUrl =
-                URL.createObjectURL(
-                    file
-                );
-
+                URL.createObjectURL(file);
 
             adminBloc5UpdatePreview(
                 storeBannerPreview,
@@ -2454,10 +2442,11 @@ if (
                 "Banner"
             );
 
+            /* ---------------------------------------------
+               MESSAGE
+            --------------------------------------------- */
 
-            if (
-                storeBannerStatus
-            ) {
+            if (storeBannerStatus) {
 
                 storeBannerStatus.textContent =
                     "Banner selecionado: " +
@@ -2467,8 +2456,38 @@ if (
 
         }
     );
-
 }
+
+
+/* =========================================================
+   DIAGNOSTIC
+========================================================= */
+
+alert(
+    "CLOUDINARY + IMAGES ✅\n\n" +
+
+    "Système chargé correctement.\n\n" +
+
+    "Logo File : " +
+    (
+        storeLogoFile
+            ? "OK ✅"
+            : "MANQUANT ❌"
+    ) +
+
+    "\n\nBanner File : " +
+    (
+        storeBannerFile
+            ? "OK ✅"
+            : "MANQUANT ❌"
+    ) +
+
+    "\n\nCloud Name : " +
+    CLOUDINARY_CLOUD_NAME +
+
+    "\n\nUpload Preset : " +
+    CLOUDINARY_UPLOAD_PRESET
+);
 /* =========================================================
    OFFICIAL ADMIN — BLOC 6
    SAUVEGARDE DES MODIFICATIONS FIRESTORE
