@@ -2281,103 +2281,85 @@ alert(
    CLOUDINARY — UPLOAD IMAGE
 ========================================================= */
 
-async function uploadOfficialStoreImageToCloudinary(
-    file
-) {
+async function uploadOfficialStoreImageToCloudinary(file) {
 
     if (!file) {
-
         throw new Error(
             "Aucune image sélectionnée."
         );
-
     }
 
-
-    if (
-        !file.type ||
-        !file.type.startsWith("image/")
-    ) {
-
-        throw new Error(
-            "Le fichier sélectionné n'est pas une image."
-        );
-
-    }
-
-
-    const maxSize =
-        10 * 1024 * 1024;
-
-
-    if (
-        file.size > maxSize
-    ) {
-
-        throw new Error(
-            "L'image doit avoir une taille maximale de 10 MB."
-        );
-
-    }
-
-
-    const formData =
-        new FormData();
-
-
-    formData.append(
-        "file",
-        file
+    alert(
+        "CLOUDINARY TEST 🔎\n\n" +
+        "Cloud Name : " +
+        CLOUDINARY_CLOUD_NAME +
+        "\n\n" +
+        "Upload Preset : [" +
+        CLOUDINARY_UPLOAD_PRESET +
+        "]" +
+        "\n\n" +
+        "Fichier : " +
+        file.name
     );
 
+    const formData = new FormData();
+
+    formData.append("file", file);
 
     formData.append(
         "upload_preset",
         CLOUDINARY_UPLOAD_PRESET
     );
 
-
     const uploadUrl =
         `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
 
+    alert(
+        "CLOUDINARY TEST 2 🚀\n\n" +
+        "URL utilisée :\n\n" +
+        uploadUrl +
+        "\n\n" +
+        "upload_preset envoyé :\n" +
+        CLOUDINARY_UPLOAD_PRESET
+    );
 
-    const response =
-        await fetch(
-            uploadUrl,
-            {
-                method: "POST",
-                body: formData
-            }
-        );
+    const response = await fetch(
+        uploadUrl,
+        {
+            method: "POST",
+            body: formData
+        }
+    );
 
+    const data = await response.json();
 
-    const data =
-        await response.json();
-
+    alert(
+        "CLOUDINARY RÉPONSE 📡\n\n" +
+        "HTTP : " +
+        response.status +
+        "\n\n" +
+        "Réponse :\n" +
+        JSON.stringify(
+            data,
+            null,
+            2
+        )
+    );
 
     if (
         !response.ok ||
         !data.secure_url
     ) {
 
-        console.error(
-            "Cloudinary error:",
-            data
-        );
-
-
         throw new Error(
             data?.error?.message ||
-            "Impossible d'envoyer l'image vers Cloudinary."
+            "Cloudinary a refusé l'upload."
         );
 
     }
 
-
     return data.secure_url;
-
-}
-/* =========================================================
+}/* =========================================================
    OFFICIAL STORES — SÉLECTION LOGO
 ========================================================= */
 
