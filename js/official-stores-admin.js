@@ -25,7 +25,7 @@ const USERS_COLLECTION = "users";
 
 const CLOUDINARY_CLOUD_NAME = "xnak6z6m";
 
-const CLOUDINARY_UPLOAD_PRESET = "angcomerce-upload";
+const CLOUDINARY_UPLOAD_PRESET = "toma-images";
 /* =========================================================
    OFFICIAL ADMIN — BLOC 2
    VARIABLES ET ÉLÉMENTS HTML
