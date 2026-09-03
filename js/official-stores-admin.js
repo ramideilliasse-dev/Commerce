@@ -20,6 +20,13 @@ const OFFICIAL_STORES_COLLECTION = "officialStores";
  */
 const USERS_COLLECTION = "users";
 /* =========================================================
+   CLOUDINARY — OFFICIAL STORES
+========================================================= */
+
+const CLOUDINARY_CLOUD_NAME = "dy9qnhimc";
+
+const CLOUDINARY_UPLOAD_PRESET = "angcomerce-upload";
+/* =========================================================
    OFFICIAL ADMIN — BLOC 2
    VARIABLES ET ÉLÉMENTS HTML
 ========================================================= */
@@ -113,7 +120,25 @@ const storeBanner =
     document.getElementById(
         "storeBanner"
     );
+const storeLogoFile =
+    document.getElementById(
+        "storeLogoFile"
+    );
 
+const storeBannerFile =
+    document.getElementById(
+        "storeBannerFile"
+    );
+
+const storeLogoStatus =
+    document.getElementById(
+        "storeLogoStatus"
+    );
+
+const storeBannerStatus =
+    document.getElementById(
+        "storeBannerStatus"
+    );
 const storeLogoPreview =
     document.getElementById(
         "storeLogoPreview"
@@ -2253,6 +2278,216 @@ alert(
     "BLOC 5 TERMINÉ."
 );
 /* =========================================================
+   CLOUDINARY — UPLOAD IMAGE
+========================================================= */
+
+async function uploadOfficialStoreImageToCloudinary(
+    file
+) {
+
+    if (!file) {
+
+        throw new Error(
+            "Aucune image sélectionnée."
+        );
+
+    }
+
+
+    if (
+        !file.type ||
+        !file.type.startsWith("image/")
+    ) {
+
+        throw new Error(
+            "Le fichier sélectionné n'est pas une image."
+        );
+
+    }
+
+
+    const maxSize =
+        10 * 1024 * 1024;
+
+
+    if (
+        file.size > maxSize
+    ) {
+
+        throw new Error(
+            "L'image doit avoir une taille maximale de 10 MB."
+        );
+
+    }
+
+
+    const formData =
+        new FormData();
+
+
+    formData.append(
+        "file",
+        file
+    );
+
+
+    formData.append(
+        "upload_preset",
+        CLOUDINARY_UPLOAD_PRESET
+    );
+
+
+    const uploadUrl =
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+
+
+    const response =
+        await fetch(
+            uploadUrl,
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+
+    const data =
+        await response.json();
+
+
+    if (
+        !response.ok ||
+        !data.secure_url
+    ) {
+
+        console.error(
+            "Cloudinary error:",
+            data
+        );
+
+
+        throw new Error(
+            data?.error?.message ||
+            "Impossible d'envoyer l'image vers Cloudinary."
+        );
+
+    }
+
+
+    return data.secure_url;
+
+}
+/* =========================================================
+   OFFICIAL STORES — SÉLECTION LOGO
+========================================================= */
+
+if (
+    storeLogoFile
+) {
+
+    storeLogoFile.addEventListener(
+        "change",
+        () => {
+
+            const file =
+                storeLogoFile.files?.[0];
+
+
+            if (!file) {
+
+                return;
+
+            }
+
+
+            /* =============================================
+               APERÇU IMMÉDIAT
+            ============================================= */
+
+            const localUrl =
+                URL.createObjectURL(
+                    file
+                );
+
+
+            adminBloc5UpdatePreview(
+                storeLogoPreview,
+                localUrl,
+                "Logo"
+            );
+
+
+            if (
+                storeLogoStatus
+            ) {
+
+                storeLogoStatus.textContent =
+                    "Logo selecionado: " +
+                    file.name;
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   OFFICIAL STORES — SÉLECTION BANNER
+========================================================= */
+
+if (
+    storeBannerFile
+) {
+
+    storeBannerFile.addEventListener(
+        "change",
+        () => {
+
+            const file =
+                storeBannerFile.files?.[0];
+
+
+            if (!file) {
+
+                return;
+
+            }
+
+
+            /* =============================================
+               APERÇU IMMÉDIAT
+            ============================================= */
+
+            const localUrl =
+                URL.createObjectURL(
+                    file
+                );
+
+
+            adminBloc5UpdatePreview(
+                storeBannerPreview,
+                localUrl,
+                "Banner"
+            );
+
+
+            if (
+                storeBannerStatus
+            ) {
+
+                storeBannerStatus.textContent =
+                    "Banner selecionado: " +
+                    file.name;
+
+            }
+
+        }
+    );
+
+}
+/* =========================================================
    OFFICIAL ADMIN — BLOC 6
    SAUVEGARDE DES MODIFICATIONS FIRESTORE
 
@@ -2843,20 +3078,134 @@ if (
                         : "";
 
 
-                const logo =
-                    saveStoreLogoInput
-                        ? String(
-                            saveStoreLogoInput.value ?? ""
-                        ).trim()
-                        : "";
+                /* =============================================
+   LOGO
+============================================= */
+
+let logo =
+    saveStoreLogoInput
+        ? String(
+            saveStoreLogoInput.value ?? ""
+        ).trim()
+        : "";
 
 
-                const banner =
-                    saveStoreBannerInput
-                        ? String(
-                            saveStoreBannerInput.value ?? ""
-                        ).trim()
-                        : "";
+/* =============================================
+   BANNER
+============================================= */
+
+let banner =
+    saveStoreBannerInput
+        ? String(
+            saveStoreBannerInput.value ?? ""
+        ).trim()
+        : "";
+             /* =====================================================
+   UPLOAD LOGO SI UNE NOUVELLE IMAGE A ÉTÉ CHOISIE
+===================================================== */
+
+if (
+    storeLogoFile &&
+    storeLogoFile.files &&
+    storeLogoFile.files.length > 0
+) {
+
+    const logoFile =
+        storeLogoFile.files[0];
+
+
+    alert(
+        "OFFICIAL ADMIN — IMAGE LOGO\n\n" +
+        "Nouvelle image détectée ✅\n\n" +
+        "Fichier : " +
+        logoFile.name +
+        "\n\n" +
+        "Envoi vers Cloudinary..."
+    );
+
+
+    logo =
+        await uploadOfficialStoreImageToCloudinary(
+            logoFile
+        );
+
+
+    alert(
+        "OFFICIAL ADMIN — LOGO CLOUDINARY ✅\n\n" +
+        "Logo envoyé avec succès.\n\n" +
+        "URL reçue :\n" +
+        logo
+    );
+
+
+    /* =============================================
+       METTRE L'URL DANS LE CHAMP CACHÉ
+    ============================================= */
+
+    if (
+        saveStoreLogoInput
+    ) {
+
+        saveStoreLogoInput.value =
+            logo;
+
+    }
+
+}
+
+
+/* =====================================================
+   UPLOAD BANNER SI UNE NOUVELLE IMAGE A ÉTÉ CHOISIE
+===================================================== */
+
+if (
+    storeBannerFile &&
+    storeBannerFile.files &&
+    storeBannerFile.files.length > 0
+) {
+
+    const bannerFile =
+        storeBannerFile.files[0];
+
+
+    alert(
+        "OFFICIAL ADMIN — IMAGE BANNER\n\n" +
+        "Nouvelle image détectée ✅\n\n" +
+        "Fichier : " +
+        bannerFile.name +
+        "\n\n" +
+        "Envoi vers Cloudinary..."
+    );
+
+
+    banner =
+        await uploadOfficialStoreImageToCloudinary(
+            bannerFile
+        );
+
+
+    alert(
+        "OFFICIAL ADMIN — BANNER CLOUDINARY ✅\n\n" +
+        "Banner envoyé avec succès.\n\n" +
+        "URL reçue :\n" +
+        banner
+    );
+
+
+    /* =============================================
+       METTRE L'URL DANS LE CHAMP CACHÉ
+    ============================================= */
+
+    if (
+        saveStoreBannerInput
+    ) {
+
+        saveStoreBannerInput.value =
+            banner;
+
+    }
+
+}
 
 
                 const status =
