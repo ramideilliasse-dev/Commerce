@@ -2305,10 +2305,9 @@ async function uploadOfficialStoreImageToCloudinary(file) {
     formData.append("file", file);
 
     formData.append(
-        "upload_preset",
-        CLOUDINARY_UPLOAD_PRESET
-    );
-
+    "upload_preset",
+    "angcomerce-upload"
+);
     const uploadUrl =
         "https://api.cloudinary.com/v1_1/" +
         CLOUDINARY_CLOUD_NAME +
