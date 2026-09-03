@@ -2492,11 +2492,7 @@ alert(
 /* =========================================================
    OFFICIAL ADMIN — BLOC 6
    SAUVEGARDE DES MODIFICATIONS FIRESTORE
-
-   IMPORTANT :
-   - Ce bloc gère uniquement la sauvegarde.
-   - Il utilise db, doc, updateDoc et serverTimestamp
-     déjà importés dans le fichier.
+   + UPLOAD IMGBB
 ========================================================= */
 
 alert(
@@ -2506,100 +2502,97 @@ alert(
 
 
 /* =========================================================
-   1. VÉRIFICATION FIREBASE
+   1. RÉCUPÉRER LE FORMULAIRE DIRECTEMENT
 ========================================================= */
+
+const adminBloc6Form =
+    document.getElementById(
+        "officialStoreForm"
+    );
+
+
+const adminBloc6SaveButton =
+    document.getElementById(
+        "saveOfficialStore"
+    );
+
 
 alert(
     "OFFICIAL ADMIN — BLOC 6.0\n\n" +
-    "Vérification des fonctions Firebase..."
-);
 
+    "Formulaire : " +
+    (
+        adminBloc6Form
+            ? "OK ✅"
+            : "MANQUANT ❌"
+    ) +
 
-if (
-    typeof db === "undefined" ||
-    !db
-) {
+    "\n\nBouton Guardar alterações : " +
 
-    alert(
-        "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
-        "db est introuvable.\n\n" +
-        "Vérifie l'import :\n" +
-        "import { db, auth, authReady } from '../firebase.js';"
-    );
-
-    throw new Error(
-        "db introuvable."
-    );
-
-}
-
-
-if (
-    typeof doc !== "function"
-) {
-
-    alert(
-        "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
-        "doc() n'est pas disponible."
-    );
-
-    throw new Error(
-        "doc indisponible."
-    );
-
-}
-
-
-if (
-    typeof updateDoc !== "function"
-) {
-
-    alert(
-        "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
-        "updateDoc() n'est pas disponible."
-    );
-
-    throw new Error(
-        "updateDoc indisponible."
-    );
-
-}
-
-
-if (
-    typeof serverTimestamp !== "function"
-) {
-
-    alert(
-        "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
-        "serverTimestamp() n'est pas disponible."
-    );
-
-    throw new Error(
-        "serverTimestamp indisponible."
-    );
-
-}
-
-
-alert(
-    "OFFICIAL ADMIN — BLOC 6.0 TERMINÉ ✅\n\n" +
-    "Firebase est disponible."
+    (
+        adminBloc6SaveButton
+            ? "OK ✅"
+            : "MANQUANT ❌"
+    )
 );
 
 
 /* =========================================================
-   2. VÉRIFICATION DU FORMULAIRE
+   2. VÉRIFIER FIREBASE
 ========================================================= */
 
-if (
-    typeof officialStoreForm === "undefined" ||
-    !officialStoreForm
-) {
+if (!db) {
 
     alert(
-        "OFFICIAL ADMIN — BLOC 6 ERREUR\n\n" +
-        "officialStoreForm est introuvable."
+        "OFFICIAL ADMIN — BLOC 6 ERREUR ❌\n\n" +
+        "Firebase db est introuvable."
+    );
+
+    throw new Error(
+        "Firebase db introuvable."
+    );
+
+}
+
+
+if (typeof doc !== "function") {
+
+    throw new Error(
+        "Firebase doc() indisponible."
+    );
+
+}
+
+
+if (typeof updateDoc !== "function") {
+
+    throw new Error(
+        "Firebase updateDoc() indisponible."
+    );
+
+}
+
+
+if (typeof serverTimestamp !== "function") {
+
+    throw new Error(
+        "Firebase serverTimestamp() indisponible."
+    );
+
+}
+
+
+/* =========================================================
+   3. VÉRIFIER FORMULAIRE
+========================================================= */
+
+if (!adminBloc6Form) {
+
+    alert(
+        "OFFICIAL ADMIN — BLOC 6 ERREUR ❌\n\n" +
+
+        "Le formulaire #officialStoreForm " +
+        "est introuvable."
     );
 
     throw new Error(
@@ -2609,247 +2602,126 @@ if (
 }
 
 
-alert(
-    "OFFICIAL ADMIN — BLOC 6.0.1\n\n" +
-    "Formulaire trouvé ✅"
-);
-
-
-/* =========================================================
-   3. FONCTION POUR RÉCUPÉRER UN ÉLÉMENT
-========================================================= */
-
-function getOfficialStoreField(
-    id
-) {
-
-    const element =
-        document.getElementById(
-            id
-        );
-
-    return element || null;
-
-}
-
-
 /* =========================================================
    4. RÉCUPÉRER LES CHAMPS
 ========================================================= */
 
-const saveStoreIdInput =
-    getOfficialStoreField(
+const adminBloc6Id =
+    document.getElementById(
         "storeId"
     );
 
 
-const saveStoreNameInput =
-    getOfficialStoreField(
+const adminBloc6Name =
+    document.getElementById(
         "storeName"
     );
 
 
-const saveStoreCategoryInput =
-    getOfficialStoreField(
+const adminBloc6Category =
+    document.getElementById(
         "storeCategory"
     );
 
 
-const saveStoreSlugInput =
-    getOfficialStoreField(
+const adminBloc6Slug =
+    document.getElementById(
         "storeSlug"
     );
 
 
-const saveStoreDescriptionInput =
-    getOfficialStoreField(
+const adminBloc6Description =
+    document.getElementById(
         "storeDescription"
     );
 
 
-const saveStoreLogoInput =
-    getOfficialStoreField(
+const adminBloc6Logo =
+    document.getElementById(
         "storeLogo"
     );
 
 
-const saveStoreBannerInput =
-    getOfficialStoreField(
+const adminBloc6Banner =
+    document.getElementById(
         "storeBanner"
     );
 
 
-const saveStoreStatusInput =
-    getOfficialStoreField(
+const adminBloc6Status =
+    document.getElementById(
         "storeStatus"
     );
 
 
-const saveStoreVerifiedInput =
-    getOfficialStoreField(
+const adminBloc6Verified =
+    document.getElementById(
         "storeVerified"
     );
 
 
-const saveStoreMerchantIdsInput =
-    getOfficialStoreField(
+const adminBloc6MerchantIds =
+    document.getElementById(
         "storeMerchantIds"
     );
 
 
-const saveStoreSettingsInput =
-    getOfficialStoreField(
+const adminBloc6Settings =
+    document.getElementById(
         "storeSettings"
     );
 
 
-const saveOfficialStoreButton =
-    getOfficialStoreField(
-        "saveOfficialStore"
+const adminBloc6LogoFile =
+    document.getElementById(
+        "storeLogoFile"
+    );
+
+
+const adminBloc6BannerFile =
+    document.getElementById(
+        "storeBannerFile"
     );
 
 
 alert(
-    "OFFICIAL ADMIN — BLOC 6.0.2\n\n" +
+    "OFFICIAL ADMIN — BLOC 6.1\n\n" +
 
     "Champs détectés :\n\n" +
 
-    "storeId : " +
-    (
-        saveStoreIdInput
-            ? "OK ✅"
-            : "MANQUANT ❌"
-    ) +
+    "ID : " +
+    (adminBloc6Id ? "OK ✅" : "MANQUANT ❌") +
 
-    "\nstoreName : " +
-    (
-        saveStoreNameInput
-            ? "OK ✅"
-            : "MANQUANT ❌"
-    ) +
+    "\nNom : " +
+    (adminBloc6Name ? "OK ✅" : "MANQUANT ❌") +
 
-    "\nstoreCategory : " +
-    (
-        saveStoreCategoryInput
-            ? "OK ✅"
-            : "MANQUANT ❌"
-    ) +
+    "\nLogo : " +
+    (adminBloc6Logo ? "OK ✅" : "MANQUANT ❌") +
 
-    "\nstoreSlug : " +
-    (
-        saveStoreSlugInput
-            ? "OK ✅"
-            : "MANQUANT ❌"
-    ) +
+    "\nBanner : " +
+    (adminBloc6Banner ? "OK ✅" : "MANQUANT ❌") +
 
-    "\nstoreDescription : " +
-    (
-        saveStoreDescriptionInput
-            ? "OK ✅"
-            : "MANQUANT ❌"
-    ) +
+    "\nLogo File : " +
+    (adminBloc6LogoFile ? "OK ✅" : "MANQUANT ❌") +
 
-    "\nstoreLogo : " +
-    (
-        saveStoreLogoInput
-            ? "OK ✅"
-            : "MANQUANT ❌"
-    ) +
-
-    "\nstoreBanner : " +
-    (
-        saveStoreBannerInput
-            ? "OK ✅"
-            : "MANQUANT ❌"
-    ) +
-
-    "\nstoreStatus : " +
-    (
-        saveStoreStatusInput
-            ? "OK ✅"
-            : "MANQUANT ❌"
-    ) +
-
-    "\nstoreVerified : " +
-    (
-        saveStoreVerifiedInput
-            ? "OK ✅"
-            : "MANQUANT ❌"
-    ) +
-
-    "\nstoreMerchantIds : " +
-    (
-        saveStoreMerchantIdsInput
-            ? "OK ✅"
-            : "MANQUANT"
-    ) +
-
-    "\nstoreSettings : " +
-    (
-        saveStoreSettingsInput
-            ? "OK ✅"
-            : "MANQUANT"
-    ) +
-
-    "\n\nBouton sauvegarde : " +
-    (
-        saveOfficialStoreButton
-            ? "OK ✅"
-            : "MANQUANT ❌"
-    )
+    "\nBanner File : " +
+    (adminBloc6BannerFile ? "OK ✅" : "MANQUANT ❌")
 );
 
 
 /* =========================================================
-   5. COLLECTION FIRESTORE
+   5. COLLECTION
 ========================================================= */
 
-let officialStoresCollectionName = "officialStores";
-
-
-/*
- * Si ton BLOC 3 utilise déjà
- * OFFICIAL_STORES_COLLECTION,
- * on l'utilise.
- */
-
-try {
-
-    if (
-        typeof OFFICIAL_STORES_COLLECTION !==
-        "undefined" &&
-        OFFICIAL_STORES_COLLECTION
-    ) {
-
-        officialStoresCollectionName =
-            String(
-                OFFICIAL_STORES_COLLECTION
-            );
-
-    }
-
-} catch (error) {
-
-    officialStoresCollectionName =
-        "officialStores";
-
-}
-
-
-alert(
-    "OFFICIAL ADMIN — BLOC 6.0.3\n\n" +
-
-    "Collection Firestore :\n\n" +
-
-    officialStoresCollectionName
-);
+const adminBloc6Collection =
+    "officialStores";
 
 
 /* =========================================================
-   6. NETTOYER LES MERCHANT IDS
+   6. MERCHANT IDS
 ========================================================= */
 
-function parseOfficialMerchantIds(
+function adminBloc6ParseMerchantIds(
     value
 ) {
 
@@ -2862,766 +2734,643 @@ function parseOfficialMerchantIds(
 
     }
 
-
-    return String(
-        value
-    )
-
-        .split(
-            /[\n,]+/
-        )
-
+    return String(value)
+        .split(/[\n,]+/)
         .map(
-            (id) =>
-                id.trim()
+            id => id.trim()
         )
-
         .filter(
-            (id) =>
-                id.length > 0
+            id => id.length > 0
         );
 
 }
 
 
 /* =========================================================
-   7. FERMER LA MODAL
+   7. SUBMIT DU FORMULAIRE
 ========================================================= */
 
-function closeOfficialStoreEditorAfterSave() {
+adminBloc6Form.addEventListener(
+    "submit",
+    async function(event) {
 
-    const modal =
-        document.getElementById(
-            "officialStoreModal"
+        /*
+         * TRÈS IMPORTANT :
+         * empêche Safari de recharger la page.
+         */
+
+        event.preventDefault();
+        event.stopPropagation();
+
+
+        alert(
+            "OFFICIAL ADMIN — BLOC 6.2\n\n" +
+            "SUBMIT DÉTECTÉ ✅\n\n" +
+            "La page ne doit plus se recharger.\n\n" +
+            "Début de la sauvegarde..."
         );
 
 
-    if (
-        modal
-    ) {
+        try {
 
-        modal.classList.add(
-            "hidden"
-        );
+            /* =================================================
+               ID
+            ================================================= */
 
-        modal.setAttribute(
-            "aria-hidden",
-            "true"
-        );
-
-    }
+            const storeId =
+                adminBloc6Id
+                    ? String(
+                        adminBloc6Id.value ?? ""
+                    ).trim()
+                    : "";
 
 
-    document.body.classList.remove(
-        "modalOpen"
-    );
+            if (!storeId) {
+
+                throw new Error(
+                    "L'ID de la loja est vide."
+                );
+
+            }
 
 
-    document.body.style.overflow =
-        "";
+            /* =================================================
+               NOM
+            ================================================= */
 
-}
-
-
-/* =========================================================
-   8. ÉVITER LES DOUBLONS DU SUBMIT
-========================================================= */
-
-if (
-    officialStoreForm.dataset.officialSaveListener ===
-    "true"
-) {
-
-    alert(
-        "OFFICIAL ADMIN — BLOC 6 ATTENTION\n\n" +
-        "Le système de sauvegarde était déjà connecté.\n\n" +
-        "Aucun deuxième listener ne sera ajouté."
-    );
-
-} else {
-
-    officialStoreForm.dataset.officialSaveListener =
-        "true";
+            const name =
+                adminBloc6Name
+                    ? String(
+                        adminBloc6Name.value ?? ""
+                    ).trim()
+                    : "";
 
 
-    /* =====================================================
-       9. SUBMIT
-    ===================================================== */
+            if (!name) {
 
-    officialStoreForm.addEventListener(
-        "submit",
-        async function (
-            event
-        ) {
+                throw new Error(
+                    "Le nom de la loja est obligatoire."
+                );
 
-            event.preventDefault();
+            }
 
-            event.stopPropagation();
 
+            /* =================================================
+               AUTRES CHAMPS
+            ================================================= */
+
+            const category =
+                adminBloc6Category
+                    ? String(
+                        adminBloc6Category.value ?? ""
+                    ).trim()
+                    : "";
+
+
+            const slug =
+                adminBloc6Slug
+                    ? String(
+                        adminBloc6Slug.value ?? ""
+                    ).trim()
+                    : "";
+
+
+            const description =
+                adminBloc6Description
+                    ? String(
+                        adminBloc6Description.value ?? ""
+                    ).trim()
+                    : "";
+
+
+            let logo =
+                adminBloc6Logo
+                    ? String(
+                        adminBloc6Logo.value ?? ""
+                    ).trim()
+                    : "";
+
+
+            let banner =
+                adminBloc6Banner
+                    ? String(
+                        adminBloc6Banner.value ?? ""
+                    ).trim()
+                    : "";
+
+
+            /* =================================================
+               STATUS
+            ================================================= */
+
+            const status =
+                adminBloc6Status
+                    ? String(
+                        adminBloc6Status.value ??
+                        "Pending"
+                    ).trim() || "Pending"
+                    : "Pending";
+
+
+            /* =================================================
+               VERIFIED
+            ================================================= */
+
+            let verified = false;
+
+
+            if (adminBloc6Verified) {
+
+                if (
+                    adminBloc6Verified.type ===
+                    "checkbox"
+                ) {
+
+                    verified =
+                        adminBloc6Verified.checked;
+
+                } else {
+
+                    verified =
+                        adminBloc6Verified.value ===
+                        "true";
+
+                }
+
+            }
+
+
+            /* =================================================
+               MERCHANT IDS
+            ================================================= */
+
+            const merchantIds =
+                adminBloc6ParseMerchantIds(
+                    adminBloc6MerchantIds
+                        ? adminBloc6MerchantIds.value
+                        : ""
+                );
+
+
+            /* =================================================
+               SETTINGS
+            ================================================= */
+
+            let settings = {};
+
+
+            const settingsText =
+                adminBloc6Settings
+                    ? String(
+                        adminBloc6Settings.value ?? ""
+                    ).trim()
+                    : "";
+
+
+            if (settingsText) {
+
+                try {
+
+                    settings =
+                        JSON.parse(
+                            settingsText
+                        );
+
+                } catch (error) {
+
+                    throw new Error(
+                        "Le champ settings contient un JSON invalide."
+                    );
+
+                }
+
+            }
+
+
+            if (
+                !settings ||
+                typeof settings !== "object" ||
+                Array.isArray(settings)
+            ) {
+
+                throw new Error(
+                    "settings doit être un objet JSON."
+                );
+
+            }
+
+
+            /* =================================================
+               UPLOAD LOGO IMGBB
+            ================================================= */
+
+            if (
+                adminBloc6LogoFile &&
+                adminBloc6LogoFile.files &&
+                adminBloc6LogoFile.files.length > 0
+            ) {
+
+                const logoFile =
+                    adminBloc6LogoFile.files[0];
+
+
+                alert(
+                    "OFFICIAL ADMIN — LOGO 📤\n\n" +
+
+                    "Nouvelle image détectée.\n\n" +
+
+                    "Fichier : " +
+                    logoFile.name +
+
+                    "\n\n" +
+
+                    "Envoi vers ImgBB..."
+                );
+
+
+                logo =
+                    await uploadOfficialStoreImageToImgBB(
+                        logoFile
+                    );
+
+
+                if (adminBloc6Logo) {
+
+                    adminBloc6Logo.value =
+                        logo;
+
+                }
+
+
+                alert(
+                    "OFFICIAL ADMIN — LOGO ✅\n\n" +
+
+                    "Logo envoyé avec succès.\n\n" +
+
+                    "URL :\n" +
+                    logo
+                );
+
+            }
+
+
+            /* =================================================
+               UPLOAD BANNER IMGBB
+            ================================================= */
+
+            if (
+                adminBloc6BannerFile &&
+                adminBloc6BannerFile.files &&
+                adminBloc6BannerFile.files.length > 0
+            ) {
+
+                const bannerFile =
+                    adminBloc6BannerFile.files[0];
+
+
+                alert(
+                    "OFFICIAL ADMIN — BANNER 📤\n\n" +
+
+                    "Nouvelle image détectée.\n\n" +
+
+                    "Fichier : " +
+                    bannerFile.name +
+
+                    "\n\n" +
+
+                    "Envoi vers ImgBB..."
+                );
+
+
+                banner =
+                    await uploadOfficialStoreImageToImgBB(
+                        bannerFile
+                    );
+
+
+                if (adminBloc6Banner) {
+
+                    adminBloc6Banner.value =
+                        banner;
+
+                }
+
+
+                alert(
+                    "OFFICIAL ADMIN — BANNER ✅\n\n" +
+
+                    "Banner envoyé avec succès.\n\n" +
+
+                    "URL :\n" +
+                    banner
+                );
+
+            }
+
+
+            /* =================================================
+               PRÉPARATION FIRESTORE
+            ================================================= */
 
             alert(
-                "OFFICIAL ADMIN — BLOC 6.1\n\n" +
-                "Tentative de sauvegarde de la loja..."
+                "OFFICIAL ADMIN — BLOC 6.3\n\n" +
+
+                "Préparation de Firestore...\n\n" +
+
+                "ID : " +
+                storeId +
+
+                "\n\nNom : " +
+                name
+            );
+
+
+            const storeRef =
+                doc(
+                    db,
+                    adminBloc6Collection,
+                    storeId
+                );
+
+
+            const updateData = {
+
+                name:
+                    name,
+
+                category:
+                    category,
+
+                slug:
+                    slug,
+
+                description:
+                    description,
+
+                logo:
+                    logo,
+
+                banner:
+                    banner,
+
+                status:
+                    status,
+
+                verified:
+                    verified,
+
+                merchantIds:
+                    merchantIds,
+
+                settings:
+                    settings,
+
+                updatedAt:
+                    serverTimestamp(),
+
+                adminSettingsUpdatedAt:
+                    serverTimestamp()
+
+            };
+
+
+            /* =================================================
+               BOUTON
+            ================================================= */
+
+            if (adminBloc6SaveButton) {
+
+                adminBloc6SaveButton.disabled =
+                    true;
+
+                adminBloc6SaveButton.textContent =
+                    "A guardar...";
+
+            }
+
+
+            /* =================================================
+               FIRESTORE
+            ================================================= */
+
+            alert(
+                "OFFICIAL ADMIN — BLOC 6.4\n\n" +
+
+                "Enregistrement dans Firestore..."
+            );
+
+
+            await updateDoc(
+                storeRef,
+                updateData
             );
 
 
             /* =================================================
-               TOUT LE TRAITEMENT EST MAINTENANT PROTÉGÉ
+               SUCCÈS
             ================================================= */
 
-            try {
-
-                /* =============================================
-                   ID
-                ============================================= */
-
-                alert(
-                    "OFFICIAL ADMIN — BLOC 6.1.1\n\n" +
-                    "Lecture de l'ID de la loja..."
-                );
-
-
-                if (
-                    !saveStoreIdInput
-                ) {
-
-                    throw new Error(
-                        "Le champ #storeId est introuvable."
-                    );
-
-                }
-
-
-                const storeId =
-                    String(
-                        saveStoreIdInput.value ?? ""
-                    ).trim();
-
-
-                if (
-                    !storeId
-                ) {
-
-                    throw new Error(
-                        "L'ID de la loja est vide."
-                    );
-
-                }
-
-
-                alert(
-                    "OFFICIAL ADMIN — BLOC 6.1.2\n\n" +
-
-                    "ID reçu ✅\n\n" +
-
-                    storeId
-                );
-
-
-                /* =============================================
-                   NOM
-                ============================================= */
-
-                if (
-                    !saveStoreNameInput
-                ) {
-
-                    throw new Error(
-                        "Le champ #storeName est introuvable."
-                    );
-
-                }
-
-
-                const name =
-                    String(
-                        saveStoreNameInput.value ?? ""
-                    ).trim();
-
-
-                if (
-                    !name
-                ) {
-
-                    saveStoreNameInput.focus();
-
-                    throw new Error(
-                        "Le nom de la loja est obligatoire."
-                    );
-
-                }
-
-
-                /* =============================================
-                   AUTRES CHAMPS
-                ============================================= */
-
-                const category =
-                    saveStoreCategoryInput
-                        ? String(
-                            saveStoreCategoryInput.value ?? ""
-                        ).trim()
-                        : "";
-
-
-                const slug =
-                    saveStoreSlugInput
-                        ? String(
-                            saveStoreSlugInput.value ?? ""
-                        ).trim()
-                        : "";
-
-
-                const description =
-                    saveStoreDescriptionInput
-                        ? String(
-                            saveStoreDescriptionInput.value ?? ""
-                        ).trim()
-                        : "";
-
-
-                /* =============================================
-   LOGO
-============================================= */
-
-let logo =
-    saveStoreLogoInput
-        ? String(
-            saveStoreLogoInput.value ?? ""
-        ).trim()
-        : "";
-
-
-/* =============================================
-   BANNER
-============================================= */
-
-let banner =
-    saveStoreBannerInput
-        ? String(
-            saveStoreBannerInput.value ?? ""
-        ).trim()
-        : "";
-             /* =====================================================
-   UPLOAD LOGO SI UNE NOUVELLE IMAGE A ÉTÉ CHOISIE
-===================================================== */
-
-if (
-    storeLogoFile &&
-    storeLogoFile.files &&
-    storeLogoFile.files.length > 0
-) {
-
-    const logoFile =
-        storeLogoFile.files[0];
-
-
-    alert(
-        "OFFICIAL ADMIN — IMAGE LOGO\n\n" +
-        "Nouvelle image détectée ✅\n\n" +
-        "Fichier : " +
-        logoFile.name +
-        "\n\n" +
-        "Envoi vers Cloudinary..."
-    );
-
-
-  logo = await uploadOfficialStoreImageToImgBB(logoFile);
-
-    alert(
-        "OFFICIAL ADMIN — LOGO CLOUDINARY ✅\n\n" +
-        "Logo envoyé avec succès.\n\n" +
-        "URL reçue :\n" +
-        logo
-    );
-
-
-    /* =============================================
-       METTRE L'URL DANS LE CHAMP CACHÉ
-    ============================================= */
-
-    if (
-        saveStoreLogoInput
-    ) {
-
-        saveStoreLogoInput.value =
-            logo;
-
-    }
-
-}
-
-
-/* =====================================================
-   UPLOAD BANNER SI UNE NOUVELLE IMAGE A ÉTÉ CHOISIE
-===================================================== */
-
-if (
-    storeBannerFile &&
-    storeBannerFile.files &&
-    storeBannerFile.files.length > 0
-) {
-
-    const bannerFile =
-        storeBannerFile.files[0];
-
-
-    alert(
-        "OFFICIAL ADMIN — IMAGE BANNER\n\n" +
-        "Nouvelle image détectée ✅\n\n" +
-        "Fichier : " +
-        bannerFile.name +
-        "\n\n" +
-        "Envoi vers Cloudinary..."
-    );
-
-
-    banner = await uploadOfficialStoreImageToImgBB(bannerFile);
-
-
-    alert(
-        "OFFICIAL ADMIN — BANNER CLOUDINARY ✅\n\n" +
-        "Banner envoyé avec succès.\n\n" +
-        "URL reçue :\n" +
-        banner
-    );
-
-
-    /* =============================================
-       METTRE L'URL DANS LE CHAMP CACHÉ
-    ============================================= */
-
-    if (
-        saveStoreBannerInput
-    ) {
-
-        saveStoreBannerInput.value =
-            banner;
-
-    }
-
-}
-
-
-                const status =
-                    saveStoreStatusInput
-                        ? String(
-                            saveStoreStatusInput.value ?? "Pending"
-                        ).trim() || "Pending"
-                        : "Pending";
-
-
-                const verified =
-                    saveStoreVerifiedInput
-                        ? (
-                            saveStoreVerifiedInput.value ===
-                            "true"
-                        )
-                        : false;
-
-
-                alert(
-                    "OFFICIAL ADMIN — BLOC 6.1.3\n\n" +
-
-                    "Champs principaux lus ✅\n\n" +
-
-                    "Nom : " +
-                    name +
-
-                    "\nCategoria : " +
-                    category +
-
-                    "\nStatus : " +
-                    status +
-
-                    "\nVerificada : " +
-                    (
-                        verified
-                            ? "Sim"
-                            : "Não"
-                    )
-                );
-
-
-                /* =============================================
-                   MERCHANT IDS
-                ============================================= */
-
-                const merchantIds =
-                    parseOfficialMerchantIds(
-                        saveStoreMerchantIdsInput
-                            ? saveStoreMerchantIdsInput.value
-                            : ""
-                    );
-
-
-                /* =============================================
-                   SETTINGS
-                ============================================= */
-
-                let settings = {};
-
-
-                const settingsText =
-                    saveStoreSettingsInput
-                        ? String(
-                            saveStoreSettingsInput.value ?? ""
-                        ).trim()
-                        : "";
-
-
-                if (
-                    settingsText
-                ) {
-
-                    try {
-
-                        settings =
-                            JSON.parse(
-                                settingsText
-                            );
-
-                    } catch (
-                        jsonError
-                    ) {
-
-                        throw new Error(
-                            "Le champ settings contient un JSON invalide."
-                        );
-
-                    }
-
-                }
-
-
-                if (
-                    settings === null ||
-                    typeof settings !== "object" ||
-                    Array.isArray(settings)
-                ) {
-
-                    throw new Error(
-                        "settings doit être un objet JSON."
-                    );
-
-                }
-
-
-                alert(
-                    "OFFICIAL ADMIN — BLOC 6.1.4\n\n" +
-
-                    "Merchant IDs : " +
-                    merchantIds.length +
-
-                    "\n\n" +
-
-                    "Settings JSON : VALIDE ✅"
-                );
-
-
-                /* =============================================
-                   RÉFÉRENCE FIRESTORE
-                ============================================= */
-
-                alert(
-                    "OFFICIAL ADMIN — BLOC 6.1.5\n\n" +
-
-                    "Préparation de la référence Firestore..."
-                );
-
-
-                const storeRef =
-                    doc(
-                        db,
-                        officialStoresCollectionName,
-                        storeId
-                    );
-
-
-                alert(
-                    "OFFICIAL ADMIN — BLOC 6.1.6\n\n" +
-
-                    "Référence Firestore créée ✅\n\n" +
-
-                    "Collection : " +
-                    officialStoresCollectionName +
-
-                    "\n\nID : " +
-                    storeId
-                );
-
-
-                /* =============================================
-                   DONNÉES
-                ============================================= */
-
-                const updateData = {
-
-                    name:
-                        name,
-
-                    category:
-                        category,
-
-                    slug:
-                        slug,
-
-                    description:
-                        description,
-
-                    logo:
-                        logo,
-
-                    banner:
-                        banner,
-
-                    status:
-                        status,
-
-                    verified:
-                        verified,
-
-                    merchantIds:
-                        merchantIds,
-
-                    settings:
-                        settings,
-
-                    updatedAt:
-                        serverTimestamp(),
-
-                    adminSettingsUpdatedAt:
-                        serverTimestamp()
-
-                };
-
-
-                alert(
-                    "OFFICIAL ADMIN — BLOC 6.2\n\n" +
-
-                    "Données prêtes pour Firestore ✅\n\n" +
-
-                    "ID : " +
-                    storeId +
-
-                    "\n\nNom : " +
-                    name +
-
-                    "\n\nCollection : " +
-                    officialStoresCollectionName +
-
-                    "\n\nCliquez OK pour lancer updateDoc()."
-                );
-
-
-                /* =============================================
-                   DÉSACTIVER LE BOUTON
-                ============================================= */
-
-                if (
-                    saveOfficialStoreButton
-                ) {
-
-                    saveOfficialStoreButton.disabled =
-                        true;
-
-                    saveOfficialStoreButton.textContent =
-                        "A guardar...";
-
-                }
-
-
-                /* =============================================
-                   UPDATE FIRESTORE
-                ============================================= */
-
-                alert(
-                    "OFFICIAL ADMIN — BLOC 6.2.1\n\n" +
-
-                    "Appel de updateDoc() maintenant..."
-                );
-
-
-                await updateDoc(
-                    storeRef,
-                    updateData
-                );
-
-
-                /* =============================================
-                   SUCCÈS
-                ============================================= */
-
-                alert(
-                    "OFFICIAL ADMIN — BLOC 6.3 SUCCÈS ✅\n\n" +
-
-                    "LOJA SAUVEGARDÉE DANS FIRESTORE.\n\n" +
-
-                    "ID : " +
-                    storeId +
-
-                    "\n\n" +
-
-                    "Nom : " +
-                    name +
-
-                    "\n\n" +
-
-                    "Les modifications ont été enregistrées."
-                );
-
-
-                /* =============================================
-                   METTRE À JOUR officialStores
-                ============================================= */
-
-                if (
-                    Array.isArray(
-                        officialStores
-                    )
-                ) {
-
-                    const index =
-                        officialStores.findIndex(
-                            (store) =>
-                                String(
-                                    store?.id
-                                ) === String(
-                                    storeId
-                                )
-                        );
-
-
-                    if (
-                        index !== -1
-                    ) {
-
-                        officialStores[index] = {
-
-                            ...officialStores[index],
-
-                            name:
-                                name,
-
-                            category:
-                                category,
-
-                            slug:
-                                slug,
-
-                            description:
-                                description,
-
-                            logo:
-                                logo,
-
-                            banner:
-                                banner,
-
-                            status:
-                                status,
-
-                            verified:
-                                verified,
-
-                            merchantIds:
-                                merchantIds,
-
-                            settings:
-                                settings
-
-                        };
-
-                    }
-
-                }
-
-
-                /* =============================================
-                   FERMER MODAL
-                ============================================= */
-
-                closeOfficialStoreEditorAfterSave();
-
-
-                /* =============================================
-                   RAFRAÎCHIR L'AFFICHAGE
-                ============================================= */
-
-                if (
-                    typeof renderOfficialStoresList ===
-                    "function"
-                ) {
-
-                    renderOfficialStoresList();
-
-                }
-
-
-                /* =============================================
-                   MESSAGE FINAL
-                ============================================= */
-
-                alert(
-                    "OFFICIAL ADMIN — BLOC 6 TERMINÉ ✅\n\n" +
-
-                    "Modification enregistrée avec succès.\n\n" +
-
-                    "La loja a été mise à jour dans Firestore.\n\n" +
-
-                    "ID : " +
-                    storeId
-                );
-
-            } catch (
-                error
+            alert(
+                "OFFICIAL ADMIN — BLOC 6 SUCCÈS ✅\n\n" +
+
+                "LOJA SAUVEGARDÉE AVEC SUCCÈS !\n\n" +
+
+                "Nom : " +
+                name +
+
+                "\n\nLogo : " +
+                (
+                    logo
+                        ? "URL enregistrée ✅"
+                        : "Aucun logo"
+                ) +
+
+                "\n\nBanner : " +
+                (
+                    banner
+                        ? "URL enregistrée ✅"
+                        : "Aucun banner"
+                )
+            );
+
+
+            /* =================================================
+               METTRE À JOUR LE TABLEAU LOCAL
+            ================================================= */
+
+            if (
+                typeof officialStores !==
+                "undefined" &&
+                Array.isArray(
+                    officialStores
+                )
             ) {
 
-                console.error(
-                    "OFFICIAL ADMIN — Erreur sauvegarde :",
-                    error
-                );
+                const index =
+                    officialStores.findIndex(
+                        store =>
+                            String(
+                                store?.id
+                            ) ===
+                            String(
+                                storeId
+                            )
+                    );
 
-
-                /* =============================================
-                   RÉACTIVER BOUTON
-                ============================================= */
 
                 if (
-                    saveOfficialStoreButton
+                    index !== -1
                 ) {
 
-                    saveOfficialStoreButton.disabled =
-                        false;
+                    officialStores[index] = {
 
-                    saveOfficialStoreButton.textContent =
-                        "Guardar alterações";
+                        ...officialStores[index],
+
+                        name:
+                            name,
+
+                        category:
+                            category,
+
+                        slug:
+                            slug,
+
+                        description:
+                            description,
+
+                        logo:
+                            logo,
+
+                        banner:
+                            banner,
+
+                        status:
+                            status,
+
+                        verified:
+                            verified,
+
+                        merchantIds:
+                            merchantIds,
+
+                        settings:
+                            settings
+
+                    };
 
                 }
 
+            }
 
-                /* =============================================
-                   ALERTE ERREUR
-                ============================================= */
 
-                alert(
-                    "OFFICIAL ADMIN — BLOC 6 ERREUR ❌\n\n" +
+            /* =================================================
+               FERMER MODAL
+            ================================================= */
 
-                    "La sauvegarde a échoué.\n\n" +
-
-                    "Message :\n" +
-
-                    (
-                        error &&
-                        error.message
-                            ? error.message
-                            : String(
-                                error
-                            )
-                    )
+            const modal =
+                document.getElementById(
+                    "officialStoreModal"
                 );
 
+
+            if (modal) {
+
+                modal.classList.add(
+                    "hidden"
+                );
+
+                modal.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
+
+                modal.style.display =
+                    "none";
+
             }
+
+
+            document.body.classList.remove(
+                "modalOpen"
+            );
+
+            document.body.style.overflow =
+                "";
+
+
+            /* =================================================
+               RÉACTIVER BOUTON
+            ================================================= */
+
+            if (adminBloc6SaveButton) {
+
+                adminBloc6SaveButton.disabled =
+                    false;
+
+                adminBloc6SaveButton.textContent =
+                    "Guardar alterações";
+
+            }
+
+
+        } catch (error) {
+
+            console.error(
+                "OFFICIAL ADMIN — BLOC 6 ERREUR :",
+                error
+            );
+
+
+            if (adminBloc6SaveButton) {
+
+                adminBloc6SaveButton.disabled =
+                    false;
+
+                adminBloc6SaveButton.textContent =
+                    "Guardar alterações";
+
+            }
+
+
+            alert(
+                "OFFICIAL ADMIN — BLOC 6 ERREUR ❌\n\n" +
+
+                "La sauvegarde a échoué.\n\n" +
+
+                "Message :\n\n" +
+
+                (
+                    error &&
+                    error.message
+                        ? error.message
+                        : String(
+                            error
+                        )
+                )
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   8. PROTECTION SUPPLÉMENTAIRE DU BOUTON
+========================================================= */
+
+if (adminBloc6SaveButton) {
+
+    adminBloc6SaveButton.addEventListener(
+        "click",
+        function(event) {
+
+            /*
+             * Le bouton doit rester dans le formulaire,
+             * mais on empêche toute navigation/rechargement.
+             */
+
+            event.stopPropagation();
 
         }
     );
@@ -3630,22 +3379,22 @@ if (
 
 
 /* =========================================================
-   BLOC 6 CHARGÉ
+   9. FIN
 ========================================================= */
 
 alert(
     "OFFICIAL ADMIN — BLOC 6 CHARGÉ ✅\n\n" +
 
-    "Le système de sauvegarde est maintenant prêt.\n\n" +
+    "Système de sauvegarde connecté.\n\n" +
 
-    "✓ Firebase vérifié\n" +
-    "✓ Formulaire vérifié\n" +
-    "✓ Champs détectés\n" +
-    "✓ Collection officialStores\n" +
-    "✓ Submit connecté\n" +
-    "✓ updateDoc préparé\n" +
-    "✓ Gestion complète des erreurs\n\n" +
+    "✓ Formulaire connecté\n" +
+    "✓ Submit protégé contre le rechargement\n" +
+    "✓ ImgBB connecté\n" +
+    "✓ Logo\n" +
+    "✓ Banner\n" +
+    "✓ Firestore\n" +
+    "✓ updateDoc\n\n" +
 
-    "Tu peux maintenant modifier une loja et appuyer sur :\n" +
+    "Tu peux maintenant appuyer sur :\n" +
     "Guardar alterações"
 );
