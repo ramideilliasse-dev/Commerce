@@ -23,7 +23,7 @@ const USERS_COLLECTION = "users";
    CLOUDINARY — OFFICIAL STORES
 ========================================================= */
 
-const CLOUDINARY_CLOUD_NAME = "df2oxw2qp";
+const CLOUDINARY_CLOUD_NAME = "dy9qnhimc";
 
 const CLOUDINARY_UPLOAD_PRESET = "angcomerce-upload";
 /* =========================================================
