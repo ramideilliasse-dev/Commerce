@@ -23,9 +23,7 @@ const USERS_COLLECTION = "users";
    CLOUDINARY — OFFICIAL STORES
 ========================================================= */
 
-const CLOUDINARY_CLOUD_NAME = "xnak6z6m";
 
-const CLOUDINARY_UPLOAD_PRESET = "toma-images";
 /* =========================================================
    OFFICIAL ADMIN — BLOC 2
    VARIABLES ET ÉLÉMENTS HTML
@@ -2286,50 +2284,39 @@ alert(
 /* =========================================================
    CLOUDINARY — UPLOAD IMAGE
 ========================================================= */
-async function uploadOfficialStoreImageToCloudinary(file) {
+async function uploadOfficialStoreImageToImgBB(file) {
 
     if (!file) {
         throw new Error("Aucune image sélectionnée.");
     }
 
-    const cloudName = "xnak6z6m";
-    const uploadPreset = "toma-images";
+    if (!file.type || !file.type.startsWith("image/")) {
+        throw new Error("Le fichier sélectionné n'est pas une image.");
+    }
 
-    const uploadUrl =
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+    const maxSize = 32 * 1024 * 1024;
+
+    if (file.size > maxSize) {
+        throw new Error("L'image doit faire moins de 32 MB.");
+    }
+
+    const API_KEY = "ba51854ee84cfa7eb88af864a04ac02f";
 
     const formData = new FormData();
 
-    formData.append("file", file);
-    formData.append("upload_preset", uploadPreset);
+    formData.append("key", API_KEY);
+    formData.append("image", file);
 
     alert(
-        "TEST FINAL CLOUDINARY 🔎\n\n" +
-        "Cloud Name : [" + cloudName + "]\n\n" +
-        "Preset : [" + uploadPreset + "]\n\n" +
-        "URL :\n" + uploadUrl
-    );
-
-    // Vérification de ce qui est réellement présent dans FormData
-    let contenuFormData = "";
-
-    for (const [key, value] of formData.entries()) {
-        if (key === "file") {
-            contenuFormData +=
-                "file = " + value.name + "\n";
-        } else {
-            contenuFormData +=
-                key + " = [" + value + "]\n";
-        }
-    }
-
-    alert(
-        "FORMDATA ENVOYÉE 📦\n\n" +
-        contenuFormData
+        "IMGBB 1 📤\n\n" +
+        "Fichier : " + file.name +
+        "\n\nTaille : " +
+        Math.round(file.size / 1024) +
+        " KB"
     );
 
     const response = await fetch(
-        uploadUrl,
+        "https://api.imgbb.com/1/upload",
         {
             method: "POST",
             body: formData
@@ -2339,9 +2326,9 @@ async function uploadOfficialStoreImageToCloudinary(file) {
     const text = await response.text();
 
     alert(
-        "RÉPONSE CLOUDINARY 📡\n\n" +
+        "IMGBB 2 📡\n\n" +
         "HTTP : " + response.status +
-        "\n\n" +
+        "\n\nRéponse :\n" +
         text
     );
 
@@ -2351,18 +2338,30 @@ async function uploadOfficialStoreImageToCloudinary(file) {
         data = JSON.parse(text);
     } catch {
         throw new Error(
-            "Cloudinary a renvoyé une réponse invalide."
+            "ImgBB a renvoyé une réponse invalide."
         );
     }
 
-    if (!response.ok || !data.secure_url) {
+    if (
+        !response.ok ||
+        !data.success ||
+        !data.data ||
+        !data.data.url
+    ) {
         throw new Error(
             data?.error?.message ||
-            "Cloudinary a refusé l'image."
+            "ImgBB a refusé l'image."
         );
     }
 
-    return data.secure_url;
+    alert(
+        "IMGBB 3 ✅\n\n" +
+        "Image envoyée avec succès !\n\n" +
+        "URL :\n" +
+        data.data.url
+    );
+
+    return data.data.url;
 }
 
 /* =========================================================
@@ -3127,11 +3126,7 @@ if (
     );
 
 
-    logo =
-        await uploadOfficialStoreImageToCloudinary(
-            logoFile
-        );
-
+  logo = await uploadOfficialStoreImageToImgBB(logoFile);
 
     alert(
         "OFFICIAL ADMIN — LOGO CLOUDINARY ✅\n\n" +
@@ -3181,10 +3176,7 @@ if (
     );
 
 
-    banner =
-        await uploadOfficialStoreImageToCloudinary(
-            bannerFile
-        );
+    banner = await uploadOfficialStoreImageToImgBB(bannerFile);
 
 
     alert(
