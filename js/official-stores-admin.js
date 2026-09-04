@@ -620,7 +620,7 @@ async function loadOfficialStores() {
 
             "A ligação com Firestore está funcionando."
         );
-
+renderOfficialStores(officialStores);
 
     } catch (error) {
 
@@ -1097,21 +1097,3 @@ function renderOfficialStores(storesToRender = []) {
     );
 }
 
-
-// ----------------------------------------------------------
-// PRIMEIRO RENDER
-// ----------------------------------------------------------
-
-// Depois que o BLOC 3 terminou de carregar
-// as lojas, podemos renderizá-las.
-
-if (
-    Array.isArray(officialStores) &&
-    officialStores.length > 0
-) {
-
-    renderOfficialStores(
-        officialStores
-    );
-
-}
