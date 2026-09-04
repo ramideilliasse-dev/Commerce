@@ -457,3 +457,312 @@ alert(
 
     "O BLOC 2 está pronto."
 );
+// ==========================================================
+// TOMA ADMIN — LOJAS OFICIAIS
+// BLOC 3 — CHARGEMENT FIRESTORE
+// ==========================================================
+
+
+// ==========================================================
+// VARIABLES PRINCIPALES
+// ==========================================================
+
+// Tous les magasins récupérés depuis Firestore
+let officialStores = [];
+
+// Magasins actuellement affichés
+let filteredOfficialStores = [];
+
+
+// ==========================================================
+// FONCTION : CHARGER LES LOJAS OFICIAIS
+// ==========================================================
+
+async function loadOfficialStores() {
+
+    try {
+
+        // --------------------------------------------------
+        // Début du chargement
+        // --------------------------------------------------
+
+        alert(
+            "BLOC 3.1 📡\n\n" +
+            "A carregar as lojas oficiais..."
+        );
+
+
+        // --------------------------------------------------
+        // Afficher le loader
+        // --------------------------------------------------
+
+        officialStoresLoader.classList.remove(
+            "hidden"
+        );
+
+        officialStoresEmpty.classList.add(
+            "hidden"
+        );
+
+
+        officialStoresList.innerHTML = "";
+
+
+        // --------------------------------------------------
+        // Référence Firestore
+        // --------------------------------------------------
+
+        const storesRef =
+            collection(
+                db,
+                "officialStores"
+            );
+
+
+        // --------------------------------------------------
+        // Récupération des documents
+        // --------------------------------------------------
+
+        const snapshot =
+            await getDocs(
+                storesRef
+            );
+
+
+        // --------------------------------------------------
+        // Tableau temporaire
+        // --------------------------------------------------
+
+        const stores = [];
+
+
+        // --------------------------------------------------
+        // Parcours des documents
+        // --------------------------------------------------
+
+        snapshot.forEach(function (documentSnapshot) {
+
+            const data =
+                documentSnapshot.data();
+
+
+            stores.push({
+
+                id: documentSnapshot.id,
+
+                ...data
+
+            });
+
+        });
+
+
+        // --------------------------------------------------
+        // Sauvegarde dans la variable principale
+        // --------------------------------------------------
+
+        officialStores = stores;
+
+
+        filteredOfficialStores =
+            [...officialStores];
+
+
+        // --------------------------------------------------
+        // Fin du loader
+        // --------------------------------------------------
+
+        officialStoresLoader.classList.add(
+            "hidden"
+        );
+
+
+        // --------------------------------------------------
+        // Statistiques
+        // --------------------------------------------------
+
+        updateOfficialStoresStats();
+
+
+        // --------------------------------------------------
+        // Résultat
+        // --------------------------------------------------
+
+        if (
+            officialStores.length === 0
+        ) {
+
+            officialStoresEmpty.classList.remove(
+                "hidden"
+            );
+
+            alert(
+                "BLOC 3.2 ℹ️\n\n" +
+                "Nenhuma loja oficial foi encontrada\n" +
+                "na coleção officialStores."
+            );
+
+            return;
+
+        }
+
+
+        // --------------------------------------------------
+        // Affichage temporaire du résultat
+        // --------------------------------------------------
+
+        alert(
+            "BLOC 3 CONCLUÍDO ✅\n\n" +
+
+            "Lojas encontradas: " +
+            officialStores.length +
+            "\n\n" +
+
+            "A ligação com Firestore está funcionando."
+        );
+
+
+    } catch (error) {
+
+        // --------------------------------------------------
+        // Arrêt du loader
+        // --------------------------------------------------
+
+        officialStoresLoader.classList.add(
+            "hidden"
+        );
+
+
+        // --------------------------------------------------
+        // Message d'erreur
+        // --------------------------------------------------
+
+        officialStoresMessage.classList.remove(
+            "hidden"
+        );
+
+
+        officialStoresMessage.textContent =
+            "Erro ao carregar lojas oficiais.";
+
+
+        // --------------------------------------------------
+        // Alert de diagnostic
+        // --------------------------------------------------
+
+        alert(
+            "ERRO BLOC 3 ❌\n\n" +
+
+            "Não foi possível carregar\n" +
+            "a coleção officialStores.\n\n" +
+
+            "Mensagem:\n" +
+
+            (
+                error &&
+                error.message
+                    ? error.message
+                    : error
+            )
+        );
+
+
+        console.error(
+            "Erro loadOfficialStores:",
+            error
+        );
+
+    }
+
+}
+
+
+
+// ==========================================================
+// FONCTION : CALCULER LES STATISTIQUES
+// ==========================================================
+
+function updateOfficialStoresStats() {
+
+
+    // ------------------------------------------------------
+    // TOTAL
+    // ------------------------------------------------------
+
+    const total =
+        officialStores.length;
+
+
+    // ------------------------------------------------------
+    // ACTIVE
+    // ------------------------------------------------------
+
+    const active =
+        officialStores.filter(
+            function (store) {
+
+                return store.status === "Active";
+
+            }
+        ).length;
+
+
+    // ------------------------------------------------------
+    // PENDING
+    // ------------------------------------------------------
+
+    const pending =
+        officialStores.filter(
+            function (store) {
+
+                return store.status === "Pending";
+
+            }
+        ).length;
+
+
+    // ------------------------------------------------------
+    // BLOCKED
+    // ------------------------------------------------------
+
+    const blocked =
+        officialStores.filter(
+            function (store) {
+
+                return store.status === "Blocked";
+
+            }
+        ).length;
+
+
+    // ------------------------------------------------------
+    // AFFICHAGE
+    // ------------------------------------------------------
+
+    totalStoresCount.textContent =
+        total;
+
+
+    activeStoresCount.textContent =
+        active;
+
+
+    pendingStoresCount.textContent =
+        pending;
+
+
+    blockedStoresCount.textContent =
+        blocked;
+
+}
+
+
+
+// ==========================================================
+// TEST FIRESTORE AUTOMATIQUE
+// ==========================================================
+
+// On charge les magasins une seule fois
+// après l'installation des blocs précédents.
+
+loadOfficialStores();
