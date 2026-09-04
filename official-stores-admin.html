@@ -83,7 +83,7 @@
 
 
     <!-- ==================================================
-         CONTENU
+         CONTEÚDO
     ================================================== -->
 
     <main
@@ -92,7 +92,7 @@
 
 
         <!-- ==================================================
-             STATISTIQUES
+             ESTATÍSTICAS
         ================================================== -->
 
         <section
@@ -171,7 +171,7 @@
 
 
         <!-- ==================================================
-             OUTILS
+             FERRAMENTAS
         ================================================== -->
 
         <section
@@ -239,7 +239,7 @@
 
 
         <!-- ==================================================
-             MESSAGE
+             MENSAGEM
         ================================================== -->
 
         <div
@@ -271,7 +271,7 @@
 
 
         <!-- ==================================================
-             LISTE DES LOJAS
+             LISTA DAS LOJAS
         ================================================== -->
 
         <section
@@ -282,7 +282,7 @@
 
 
         <!-- ==================================================
-             AUCUNE LOJA
+             NENHUMA LOJA
         ================================================== -->
 
         <div
@@ -310,7 +310,7 @@
 
 
     <!-- ==================================================
-         MODAL D'ÉDITION
+         MODAL DE EDIÇÃO
     ================================================== -->
 
     <div
@@ -333,7 +333,9 @@
         >
 
 
-            <!-- HEADER -->
+            <!-- ==================================================
+                 HEADER DO MODAL
+            ================================================== -->
 
             <div
                 class="officialStoreModalHeader"
@@ -369,7 +371,9 @@
 
 
 
-            <!-- FORM -->
+            <!-- ==================================================
+                 FORMULÁRIO
+            ================================================== -->
 
             <form
                 id="officialStoreForm"
@@ -378,14 +382,16 @@
 
 
                 <!-- ==================================================
-                     INFORMATIONS DE BASE
+                     INFORMAÇÕES PRINCIPAIS
                 ================================================== -->
 
                 <section
                     class="formSection"
                 >
 
-                    <div class="formSectionHeader">
+                    <div
+                        class="formSectionHeader"
+                    >
 
                         <h3>
                             Informações principais
@@ -398,7 +404,9 @@
                     </div>
 
 
-                    <div class="formGroup">
+                    <div
+                        class="formGroup"
+                    >
 
                         <label for="storeId">
                             ID
@@ -413,7 +421,9 @@
                     </div>
 
 
-                    <div class="formGroup">
+                    <div
+                        class="formGroup"
+                    >
 
                         <label for="storeName">
                             Nome da loja
@@ -429,7 +439,9 @@
                     </div>
 
 
-                    <div class="formGroup">
+                    <div
+                        class="formGroup"
+                    >
 
                         <label for="storeCategory">
                             Categoria
@@ -444,7 +456,9 @@
                     </div>
 
 
-                    <div class="formGroup">
+                    <div
+                        class="formGroup"
+                    >
 
                         <label for="storeSlug">
                             Slug
@@ -459,7 +473,9 @@
                     </div>
 
 
-                    <div class="formGroup">
+                    <div
+                        class="formGroup"
+                    >
 
                         <label for="storeDescription">
                             Descrição
@@ -478,21 +494,23 @@
 
 
                 <!-- ==================================================
-                     IMAGENS
+                     IMAGENS — URL
                 ================================================== -->
 
                 <section
                     class="formSection"
                 >
 
-                    <div class="formSectionHeader">
+                    <div
+                        class="formSectionHeader"
+                    >
 
                         <h3>
                             Imagens
                         </h3>
 
                         <p>
-                            Escolha diretamente as imagens no seu iPhone.
+                            Introduza os links diretos das imagens da loja.
                         </p>
 
                     </div>
@@ -503,7 +521,9 @@
                          LOGO
                     ================================================== -->
 
-                    <div class="imageField">
+                    <div
+                        class="imageField"
+                    >
 
                         <div
                             id="storeLogoPreview"
@@ -517,29 +537,20 @@
                         </div>
 
 
-                        <div class="imageFieldControls">
+                        <div
+                            class="imageFieldControls"
+                        >
 
-                            <label>
-                                Logo da loja
+                            <label for="storeLogo">
+                                Link do logo
                             </label>
 
 
                             <input
-                                id="storeLogoFile"
-                                type="file"
-                                accept="image/*"
-                            >
-
-
-                            <!--
-                                Champ interne.
-                                Il contient l'URL Cloudinary.
-                            -->
-
-                            <input
                                 id="storeLogo"
-                                type="hidden"
-                                value=""
+                                type="url"
+                                placeholder="https://exemplo.com/logo.png"
+                                autocomplete="off"
                             >
 
 
@@ -547,7 +558,7 @@
                                 id="storeLogoStatus"
                                 style="display:block;margin-top:8px;"
                             >
-                                Nenhum logo novo selecionado.
+                                Introduza o link direto do logo.
                             </small>
 
                         </div>
@@ -560,7 +571,9 @@
                          BANNER
                     ================================================== -->
 
-                    <div class="imageField">
+                    <div
+                        class="imageField"
+                    >
 
                         <div
                             id="storeBannerPreview"
@@ -574,29 +587,20 @@
                         </div>
 
 
-                        <div class="imageFieldControls">
+                        <div
+                            class="imageFieldControls"
+                        >
 
-                            <label>
-                                Banner da loja
+                            <label for="storeBanner">
+                                Link do banner
                             </label>
 
 
                             <input
-                                id="storeBannerFile"
-                                type="file"
-                                accept="image/*"
-                            >
-
-
-                            <!--
-                                Champ interne.
-                                Il contient l'URL Cloudinary.
-                            -->
-
-                            <input
                                 id="storeBanner"
-                                type="hidden"
-                                value=""
+                                type="url"
+                                placeholder="https://exemplo.com/banner.jpg"
+                                autocomplete="off"
                             >
 
 
@@ -604,7 +608,7 @@
                                 id="storeBannerStatus"
                                 style="display:block;margin-top:8px;"
                             >
-                                Nenhum banner novo selecionado.
+                                Introduza o link direto do banner.
                             </small>
 
                         </div>
@@ -616,14 +620,16 @@
 
 
                 <!-- ==================================================
-                     VALIDATION / STATUT
+                     VALIDAÇÃO / ESTADO
                 ================================================== -->
 
                 <section
                     class="formSection"
                 >
 
-                    <div class="formSectionHeader">
+                    <div
+                        class="formSectionHeader"
+                    >
 
                         <h3>
                             Validação
@@ -640,7 +646,9 @@
                         class="formGrid"
                     >
 
-                        <div class="formGroup">
+                        <div
+                            class="formGroup"
+                        >
 
                             <label for="storeStatus">
                                 Estado da loja
@@ -671,7 +679,9 @@
                         </div>
 
 
-                        <div class="formGroup">
+                        <div
+                            class="formGroup"
+                        >
 
                             <label for="storeVerified">
                                 Verificada
@@ -724,7 +734,9 @@
                     class="formSection"
                 >
 
-                    <div class="formSectionHeader">
+                    <div
+                        class="formSectionHeader"
+                    >
 
                         <h3>
                             Comerciantes associados
@@ -738,7 +750,9 @@
                     </div>
 
 
-                    <div class="formGroup">
+                    <div
+                        class="formGroup"
+                    >
 
                         <label for="storeMerchantIds">
                             merchantIds
@@ -764,7 +778,9 @@
                     class="formSection"
                 >
 
-                    <div class="formSectionHeader">
+                    <div
+                        class="formSectionHeader"
+                    >
 
                         <h3>
                             Configurações
@@ -777,7 +793,9 @@
                     </div>
 
 
-                    <div class="formGroup">
+                    <div
+                        class="formGroup"
+                    >
 
                         <label for="storeSettings">
                             settings
@@ -804,17 +822,19 @@
 
 
                 <!-- ==================================================
-                     DATES
+                     DATAS
                 ================================================== -->
 
                 <section
                     class="formSection"
                 >
 
-                    <div class="formSectionHeader">
+                    <div
+                        class="formSectionHeader"
+                    >
 
                         <h3>
-                            Informations système
+                            Informações do sistema
                         </h3>
 
                     </div>
@@ -824,7 +844,9 @@
                         class="formGrid"
                     >
 
-                        <div class="formGroup">
+                        <div
+                            class="formGroup"
+                        >
 
                             <label for="storeCreatedAt">
                                 createdAt
@@ -839,7 +861,9 @@
                         </div>
 
 
-                        <div class="formGroup">
+                        <div
+                            class="formGroup"
+                        >
 
                             <label for="storeUpdatedAt">
                                 updatedAt
@@ -854,7 +878,9 @@
                         </div>
 
 
-                        <div class="formGroup">
+                        <div
+                            class="formGroup"
+                        >
 
                             <label for="storeAdminSettingsUpdatedAt">
                                 adminSettingsUpdatedAt
@@ -931,6 +957,10 @@
 </div>
 
 
+
+<!-- ==================================================
+     JAVASCRIPT PRINCIPAL
+================================================== -->
 
 <script
     type="module"
