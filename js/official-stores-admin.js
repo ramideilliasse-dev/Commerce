@@ -77,3 +77,383 @@ alert(
     "HTML principal: OK\n\n" +
     "Podemos passar ao BLOC 2."
 );
+// ==========================================================
+// TOMA ADMIN — LOJAS OFICIAIS
+// BLOC 2 — RÉCUPÉRATION DES ÉLÉMENTS HTML
+// ==========================================================
+
+
+// ==========================================================
+// LISTE PRINCIPALE
+// ==========================================================
+
+const officialStoresList =
+    document.getElementById(
+        "officialStoresList"
+    );
+
+const officialStoresLoader =
+    document.getElementById(
+        "officialStoresLoader"
+    );
+
+const officialStoresEmpty =
+    document.getElementById(
+        "officialStoresEmpty"
+    );
+
+const officialStoresMessage =
+    document.getElementById(
+        "officialStoresMessage"
+    );
+
+
+// ==========================================================
+// RECHERCHE ET FILTRE
+// ==========================================================
+
+const officialStoresSearch =
+    document.getElementById(
+        "officialStoresSearch"
+    );
+
+const officialStoresStatusFilter =
+    document.getElementById(
+        "officialStoresStatusFilter"
+    );
+
+const refreshOfficialStores =
+    document.getElementById(
+        "refreshOfficialStores"
+    );
+
+
+// ==========================================================
+// STATISTIQUES
+// ==========================================================
+
+const totalStoresCount =
+    document.getElementById(
+        "totalStoresCount"
+    );
+
+const activeStoresCount =
+    document.getElementById(
+        "activeStoresCount"
+    );
+
+const pendingStoresCount =
+    document.getElementById(
+        "pendingStoresCount"
+    );
+
+const blockedStoresCount =
+    document.getElementById(
+        "blockedStoresCount"
+    );
+
+
+// ==========================================================
+// MODAL
+// ==========================================================
+
+const officialStoreModal =
+    document.getElementById(
+        "officialStoreModal"
+    );
+
+const officialStoreModalOverlay =
+    document.getElementById(
+        "officialStoreModalOverlay"
+    );
+
+const closeOfficialStoreModal =
+    document.getElementById(
+        "closeOfficialStoreModal"
+    );
+
+const cancelOfficialStoreEdit =
+    document.getElementById(
+        "cancelOfficialStoreEdit"
+    );
+
+const officialStoreModalTitle =
+    document.getElementById(
+        "officialStoreModalTitle"
+    );
+
+
+// ==========================================================
+// FORMULAIRE
+// ==========================================================
+
+const officialStoreForm =
+    document.getElementById(
+        "officialStoreForm"
+    );
+
+const saveOfficialStore =
+    document.getElementById(
+        "saveOfficialStore"
+    );
+
+
+// ==========================================================
+// INFORMATIONS PRINCIPALES
+// ==========================================================
+
+const storeId =
+    document.getElementById(
+        "storeId"
+    );
+
+const storeName =
+    document.getElementById(
+        "storeName"
+    );
+
+const storeCategory =
+    document.getElementById(
+        "storeCategory"
+    );
+
+const storeSlug =
+    document.getElementById(
+        "storeSlug"
+    );
+
+const storeDescription =
+    document.getElementById(
+        "storeDescription"
+    );
+
+
+// ==========================================================
+// IMAGES — URL UNIQUEMENT
+// ==========================================================
+
+const storeLogo =
+    document.getElementById(
+        "storeLogo"
+    );
+
+const storeLogoPreview =
+    document.getElementById(
+        "storeLogoPreview"
+    );
+
+const storeLogoStatus =
+    document.getElementById(
+        "storeLogoStatus"
+    );
+
+
+const storeBanner =
+    document.getElementById(
+        "storeBanner"
+    );
+
+const storeBannerPreview =
+    document.getElementById(
+        "storeBannerPreview"
+    );
+
+const storeBannerStatus =
+    document.getElementById(
+        "storeBannerStatus"
+    );
+
+
+// ==========================================================
+// VALIDATION
+// ==========================================================
+
+const storeStatus =
+    document.getElementById(
+        "storeStatus"
+    );
+
+const storeVerified =
+    document.getElementById(
+        "storeVerified"
+    );
+
+
+// ==========================================================
+// MERCHANTS
+// ==========================================================
+
+const storeMerchantIds =
+    document.getElementById(
+        "storeMerchantIds"
+    );
+
+
+// ==========================================================
+// SETTINGS
+// ==========================================================
+
+const storeSettings =
+    document.getElementById(
+        "storeSettings"
+    );
+
+const settingsJsonError =
+    document.getElementById(
+        "settingsJsonError"
+    );
+
+
+// ==========================================================
+// DATES
+// ==========================================================
+
+const storeCreatedAt =
+    document.getElementById(
+        "storeCreatedAt"
+    );
+
+const storeUpdatedAt =
+    document.getElementById(
+        "storeUpdatedAt"
+    );
+
+const storeAdminSettingsUpdatedAt =
+    document.getElementById(
+        "storeAdminSettingsUpdatedAt"
+    );
+
+
+// ==========================================================
+// TOAST
+// ==========================================================
+
+const officialStoreToast =
+    document.getElementById(
+        "officialStoreToast"
+    );
+
+const officialStoreToastMessage =
+    document.getElementById(
+        "officialStoreToastMessage"
+    );
+
+
+// ==========================================================
+// VÉRIFICATION DES ÉLÉMENTS ESSENTIELS
+// ==========================================================
+
+const requiredElements = {
+
+    officialStoresList,
+    officialStoresLoader,
+    officialStoresSearch,
+    officialStoresStatusFilter,
+
+    totalStoresCount,
+    activeStoresCount,
+    pendingStoresCount,
+    blockedStoresCount,
+
+    officialStoreModal,
+    officialStoreModalOverlay,
+    closeOfficialStoreModal,
+    cancelOfficialStoreEdit,
+
+    officialStoreForm,
+    saveOfficialStore,
+
+    storeId,
+    storeName,
+    storeCategory,
+    storeSlug,
+    storeDescription,
+
+    storeLogo,
+    storeLogoPreview,
+
+    storeBanner,
+    storeBannerPreview,
+
+    storeStatus,
+    storeVerified,
+
+    storeMerchantIds,
+
+    storeSettings,
+    settingsJsonError,
+
+    storeCreatedAt,
+    storeUpdatedAt,
+    storeAdminSettingsUpdatedAt
+
+};
+
+
+// ==========================================================
+// RECHERCHE DES ÉLÉMENTS MANQUANTS
+// ==========================================================
+
+const missingElements = Object.entries(
+    requiredElements
+)
+    .filter(function ([name, element]) {
+
+        return !element;
+
+    })
+    .map(function ([name]) {
+
+        return name;
+
+    });
+
+
+// ==========================================================
+// SI UN ÉLÉMENT EST MANQUANT
+// ==========================================================
+
+if (missingElements.length > 0) {
+
+    alert(
+        "ERREUR BLOC 2 ❌\n\n" +
+
+        "Alguns elementos HTML não foram encontrados.\n\n" +
+
+        "Elementos em falta:\n" +
+
+        missingElements.join("\n")
+    );
+
+    throw new Error(
+        "Elementos HTML em falta: " +
+        missingElements.join(", ")
+    );
+
+}
+
+
+// ==========================================================
+// BLOC 2 TERMINÉ
+// ==========================================================
+
+alert(
+    "BLOC 2 CONCLUÍDO ✅\n\n" +
+
+    "Todos os elementos principais do HTML\n" +
+    "foram encontrados corretamente.\n\n" +
+
+    "Lista: OK\n" +
+    "Pesquisa: OK\n" +
+    "Filtros: OK\n" +
+    "Estatísticas: OK\n" +
+    "Modal: OK\n" +
+    "Formulário: OK\n" +
+    "Logo URL: OK\n" +
+    "Banner URL: OK\n" +
+    "Validação: OK\n" +
+    "Settings: OK\n" +
+    "Datas: OK\n\n" +
+
+    "O BLOC 2 está pronto."
+);
