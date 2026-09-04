@@ -1755,3 +1755,626 @@ alert(
     "✓ Abrir/fechar modal\n\n" +
     "Ainda NÃO há gravação no Firestore."
 );
+// ==========================================================
+// TOMA ADMIN — LOJAS OFICIAIS
+// BLOC 6 — SALVAR ALTERAÇÕES NO FIRESTORE
+// ==========================================================
+
+
+// ----------------------------------------------------------
+// VALIDAR SETTINGS JSON
+// ----------------------------------------------------------
+
+function parseStoreSettings() {
+
+    const rawValue =
+        storeSettings.value.trim();
+
+
+    // Settings vazio = objeto vazio
+
+    if (!rawValue) {
+
+        if (settingsJsonError) {
+
+            settingsJsonError.textContent =
+                "";
+
+            settingsJsonError.style.display =
+                "none";
+        }
+
+        return {};
+    }
+
+
+    try {
+
+        const parsed =
+            JSON.parse(rawValue);
+
+
+        if (
+            parsed === null ||
+            typeof parsed !== "object" ||
+            Array.isArray(parsed)
+        ) {
+
+            throw new Error(
+                "Settings deve ser um objeto JSON."
+            );
+        }
+
+
+        if (settingsJsonError) {
+
+            settingsJsonError.textContent =
+                "";
+
+            settingsJsonError.style.display =
+                "none";
+        }
+
+
+        return parsed;
+
+    } catch (error) {
+
+        if (settingsJsonError) {
+
+            settingsJsonError.textContent =
+                "JSON inválido: " +
+                error.message;
+
+            settingsJsonError.style.display =
+                "block";
+        }
+
+
+        alert(
+            "ERRO SETTINGS ❌\n\n" +
+            "O campo Settings contém\n" +
+            "um JSON inválido.\n\n" +
+            error.message
+        );
+
+
+        return null;
+    }
+}
+
+
+// ----------------------------------------------------------
+// TRANSFORMAR MERCHANT IDS EM ARRAY
+// ----------------------------------------------------------
+
+function parseMerchantIds() {
+
+    const rawValue =
+        storeMerchantIds.value.trim();
+
+
+    if (!rawValue) {
+        return [];
+    }
+
+
+    return rawValue
+        .split(/[\n,]+/)
+        .map(
+            (item) =>
+                item.trim()
+        )
+        .filter(
+            (item) =>
+                item.length > 0
+        );
+
+}
+
+
+// ----------------------------------------------------------
+// MOSTRAR TOAST
+// ----------------------------------------------------------
+
+function showOfficialStoreToast(
+    message
+) {
+
+    if (
+        !officialStoreToast ||
+        !officialStoreToastMessage
+    ) {
+        return;
+    }
+
+
+    officialStoreToastMessage.textContent =
+        message;
+
+
+    officialStoreToast.style.display =
+        "block";
+
+
+    setTimeout(
+        () => {
+
+            officialStoreToast.style.display =
+                "none";
+
+        },
+        3000
+    );
+
+}
+
+
+// ----------------------------------------------------------
+// SALVAR LOJA
+// ----------------------------------------------------------
+
+async function saveOfficialStoreData() {
+
+    // ------------------------------------------------------
+    // EVITAR CLIQUE DUPLO
+    // ------------------------------------------------------
+
+    if (
+        saveOfficialStore.dataset.saving ===
+        "true"
+    ) {
+
+        return;
+    }
+
+
+    // ------------------------------------------------------
+    // ID
+    // ------------------------------------------------------
+
+    const id =
+        storeId.value.trim();
+
+
+    if (!id) {
+
+        alert(
+            "ERRO ❌\n\n" +
+            "O ID da loja não foi encontrado."
+        );
+
+        return;
+    }
+
+
+    // ------------------------------------------------------
+    // VALIDAR NOME
+    // ------------------------------------------------------
+
+    const name =
+        storeName.value.trim();
+
+
+    if (!name) {
+
+        alert(
+            "ERRO ❌\n\n" +
+            "Introduza o nome da loja."
+        );
+
+        storeName.focus();
+
+        return;
+    }
+
+
+    // ------------------------------------------------------
+    // OUTROS CAMPOS
+    // ------------------------------------------------------
+
+    const category =
+        storeCategory.value.trim();
+
+
+    const slug =
+        storeSlug.value.trim();
+
+
+    const description =
+        storeDescription.value.trim();
+
+
+    const logo =
+        storeLogo.value.trim();
+
+
+    const banner =
+        storeBanner.value.trim();
+
+
+    const status =
+        storeStatus.value;
+
+
+    const verified =
+        Boolean(
+            storeVerified.checked
+        );
+
+
+    // ------------------------------------------------------
+    // MERCHANT IDS
+    // ------------------------------------------------------
+
+    const merchantIds =
+        parseMerchantIds();
+
+
+    // ------------------------------------------------------
+    // SETTINGS
+    // ------------------------------------------------------
+
+    const settings =
+        parseStoreSettings();
+
+
+    if (settings === null) {
+
+        return;
+    }
+
+
+    // ------------------------------------------------------
+    // CONFIRMAÇÃO
+    // ------------------------------------------------------
+
+    const confirmation =
+        confirm(
+            "Salvar alterações?\n\n" +
+            "Loja: " +
+            name +
+            "\n" +
+            "ID: " +
+            id +
+            "\n\n" +
+            "As alterações serão gravadas\n" +
+            "no Firestore."
+        );
+
+
+    if (!confirmation) {
+
+        return;
+    }
+
+
+    // ------------------------------------------------------
+    // BLOQUEAR BOTÃO
+    // ------------------------------------------------------
+
+    saveOfficialStore.dataset.saving =
+        "true";
+
+
+    const originalButtonText =
+        saveOfficialStore.textContent;
+
+
+    saveOfficialStore.disabled =
+        true;
+
+
+    saveOfficialStore.textContent =
+        "A guardar...";
+
+
+    try {
+
+        // --------------------------------------------------
+        // REFERÊNCIA DA LOJA
+        // --------------------------------------------------
+
+        const storeReference =
+            doc(
+                db,
+                "officialStores",
+                id
+            );
+
+
+        // --------------------------------------------------
+        // VERIFICAR SE EXISTE
+        // --------------------------------------------------
+
+        const storeSnapshot =
+            await getDoc(
+                storeReference
+            );
+
+
+        if (
+            !storeSnapshot.exists()
+        ) {
+
+            throw new Error(
+                "A loja não existe mais no Firestore."
+            );
+        }
+
+
+        // --------------------------------------------------
+        // DADOS PARA SALVAR
+        // --------------------------------------------------
+
+        const updateData = {
+
+            name:
+                name,
+
+            category:
+                category,
+
+            slug:
+                slug,
+
+            description:
+                description,
+
+            logo:
+                logo,
+
+            banner:
+                banner,
+
+            status:
+                status,
+
+            verified:
+                verified,
+
+            merchantIds:
+                merchantIds,
+
+            settings:
+                settings,
+
+            updatedAt:
+                serverTimestamp()
+
+        };
+
+
+        // --------------------------------------------------
+        // SALVAR SETTINGS / ADMIN
+        // --------------------------------------------------
+
+        updateData.adminSettingsUpdatedAt =
+            serverTimestamp();
+
+
+        // --------------------------------------------------
+        // UPDATE FIRESTORE
+        // --------------------------------------------------
+
+        await updateDoc(
+            storeReference,
+            updateData
+        );
+
+
+        // --------------------------------------------------
+        // ATUALIZAR ARRAY LOCAL
+        // --------------------------------------------------
+
+        const index =
+            officialStores.findIndex(
+                (store) =>
+                    String(store.id) ===
+                    String(id)
+            );
+
+
+        if (index !== -1) {
+
+            officialStores[index] = {
+
+                ...officialStores[index],
+
+                name:
+                    name,
+
+                category:
+                    category,
+
+                slug:
+                    slug,
+
+                description:
+                    description,
+
+                logo:
+                    logo,
+
+                banner:
+                    banner,
+
+                status:
+                    status,
+
+                verified:
+                    verified,
+
+                merchantIds:
+                    merchantIds,
+
+                settings:
+                    settings
+
+            };
+
+        }
+
+
+        // --------------------------------------------------
+        // ATUALIZAR FILTRO LOCAL
+        // --------------------------------------------------
+
+        filteredOfficialStores =
+            [...officialStores];
+
+
+        // --------------------------------------------------
+        // ATUALIZAR ESTATÍSTICAS
+        // --------------------------------------------------
+
+        updateOfficialStoresStats();
+
+
+        // --------------------------------------------------
+        // ATUALIZAR LISTA
+        // --------------------------------------------------
+
+        renderOfficialStores(
+            filteredOfficialStores
+        );
+
+
+        // --------------------------------------------------
+        // FECHAR MODAL
+        // --------------------------------------------------
+
+        closeOfficialStoreEditModal();
+
+
+        // --------------------------------------------------
+        // MENSAGEM
+        // --------------------------------------------------
+
+        showOfficialStoreToast(
+            "Loja atualizada com sucesso."
+        );
+
+
+        // --------------------------------------------------
+        // ALERTA FINAL
+        // --------------------------------------------------
+
+        alert(
+            "BLOC 6 CONCLUÍDO ✅\n\n" +
+            "Loja atualizada com sucesso.\n\n" +
+            "Nome: " +
+            name +
+            "\n" +
+            "ID: " +
+            id +
+            "\n\n" +
+            "✓ Dados salvos\n" +
+            "✓ Firestore atualizado\n" +
+            "✓ Lista atualizada\n" +
+            "✓ Estatísticas atualizadas"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "ERRO AO SALVAR LOJA:",
+            error
+        );
+
+
+        alert(
+            "ERRO BLOC 6 ❌\n\n" +
+            "Não foi possível salvar a loja.\n\n" +
+            "Mensagem:\n" +
+            error.message
+        );
+
+
+    } finally {
+
+        // --------------------------------------------------
+        // LIBERAR BOTÃO
+        // --------------------------------------------------
+
+        saveOfficialStore.dataset.saving =
+            "false";
+
+
+        saveOfficialStore.disabled =
+            false;
+
+
+        saveOfficialStore.textContent =
+            originalButtonText;
+
+    }
+
+}
+
+
+// ----------------------------------------------------------
+// SUBMIT DO FORMULÁRIO
+// ----------------------------------------------------------
+
+officialStoreForm.addEventListener(
+    "submit",
+    async (event) => {
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+
+        await saveOfficialStoreData();
+
+    }
+);
+
+
+// ----------------------------------------------------------
+// VALIDAR SETTINGS ENQUANTO ESCREVE
+// ----------------------------------------------------------
+
+storeSettings.addEventListener(
+    "input",
+    () => {
+
+        if (!settingsJsonError) {
+            return;
+        }
+
+
+        settingsJsonError.textContent =
+            "";
+
+        settingsJsonError.style.display =
+            "none";
+
+    }
+);
+
+
+// ----------------------------------------------------------
+// BLOC 6 PRONTO
+// ----------------------------------------------------------
+
+alert(
+    "BLOC 6 PRONTO ✅\n\n" +
+    "Sistema de gravação preparado.\n\n" +
+    "✓ Nome\n" +
+    "✓ Categoria\n" +
+    "✓ Slug\n" +
+    "✓ Descrição\n" +
+    "✓ Logo URL\n" +
+    "✓ Banner URL\n" +
+    "✓ Status\n" +
+    "✓ Verificação\n" +
+    "✓ Merchant IDs\n" +
+    "✓ Settings JSON\n" +
+    "✓ updatedAt\n" +
+    "✓ Firestore\n\n" +
+    "O formulário pode agora salvar\n" +
+    "as alterações da loja."
+);
