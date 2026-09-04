@@ -1351,21 +1351,82 @@ function openOfficialStoreEdit(storeIdValue) {
         "Editar loja";
 
 
-    // ------------------------------------------------------
-    // ABRIR MODAL
-    // ------------------------------------------------------
+// ------------------------------------------------------
+// ABRIR MODAL — CORREÇÃO
+// ------------------------------------------------------
 
-    officialStoreModal.style.display =
-        "block";
-
-
-    officialStoreModalOverlay.style.display =
-        "block";
+officialStoreModal.hidden = false;
+officialStoreModalOverlay.hidden = false;
 
 
-    document.body.style.overflow =
-        "hidden";
+// Remover classes que poderiam esconder o modal
 
+officialStoreModal.classList.remove(
+    "hidden",
+    "hide",
+    "is-hidden",
+    "closed"
+);
+
+officialStoreModalOverlay.classList.remove(
+    "hidden",
+    "hide",
+    "is-hidden",
+    "closed"
+);
+
+
+// Forçar visualização do modal
+
+officialStoreModal.style.display =
+    "flex";
+
+officialStoreModal.style.visibility =
+    "visible";
+
+officialStoreModal.style.opacity =
+    "1";
+
+officialStoreModal.style.pointerEvents =
+    "auto";
+
+officialStoreModal.style.zIndex =
+    "9999";
+
+
+// Forçar visualização do overlay
+
+officialStoreModalOverlay.style.display =
+    "block";
+
+officialStoreModalOverlay.style.visibility =
+    "visible";
+
+officialStoreModalOverlay.style.opacity =
+    "1";
+
+officialStoreModalOverlay.style.pointerEvents =
+    "auto";
+
+officialStoreModalOverlay.style.zIndex =
+    "9998";
+
+
+// Bloquear scroll da página
+
+document.body.style.overflow =
+    "hidden";
+
+
+alert(
+    "MODAL ABERTO ✅\n\n" +
+    "O JavaScript abriu o modal.\n\n" +
+    "Loja: " +
+    (store.name || "Sem nome") +
+    "\n" +
+    "ID: " +
+    store.id
+);
 
     // ------------------------------------------------------
     // ALERTA DE SUCESSO
@@ -1620,11 +1681,33 @@ officialStoresList.addEventListener(
 
 function closeOfficialStoreEditModal() {
 
+    officialStoreModal.hidden = true;
+    officialStoreModalOverlay.hidden = true;
+
+
     officialStoreModal.style.display =
+        "none";
+
+    officialStoreModal.style.visibility =
+        "hidden";
+
+    officialStoreModal.style.opacity =
+        "0";
+
+    officialStoreModal.style.pointerEvents =
         "none";
 
 
     officialStoreModalOverlay.style.display =
+        "none";
+
+    officialStoreModalOverlay.style.visibility =
+        "hidden";
+
+    officialStoreModalOverlay.style.opacity =
+        "0";
+
+    officialStoreModalOverlay.style.pointerEvents =
         "none";
 
 
@@ -1632,7 +1715,6 @@ function closeOfficialStoreEditModal() {
         "";
 
 }
-
 
 // ----------------------------------------------------------
 // BOTÃO X / FECHAR
