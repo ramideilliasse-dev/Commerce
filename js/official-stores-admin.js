@@ -766,3 +766,352 @@ function updateOfficialStoresStats() {
 // après l'installation des blocs précédents.
 
 loadOfficialStores();
+// ==========================================================
+// TOMA ADMIN — LOJAS OFICIAIS
+// BLOC 4 — RENDERIZAÇÃO DAS LOJAS
+// ==========================================================
+
+function escapeHTML(value) {
+
+    if (value === null || value === undefined) {
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+// ----------------------------------------------------------
+// STATUS DA LOJA
+// ----------------------------------------------------------
+
+function getStoreStatusLabel(status) {
+
+    const normalizedStatus =
+        String(status || "")
+            .trim()
+            .toLowerCase();
+
+    if (normalizedStatus === "active") {
+        return "Ativa";
+    }
+
+    if (normalizedStatus === "pending") {
+        return "Pendente";
+    }
+
+    if (normalizedStatus === "blocked") {
+        return "Bloqueada";
+    }
+
+    return status || "Sem estado";
+}
+
+
+// ----------------------------------------------------------
+// CLASSE VISUAL DO STATUS
+// ----------------------------------------------------------
+
+function getStoreStatusClass(status) {
+
+    const normalizedStatus =
+        String(status || "")
+            .trim()
+            .toLowerCase();
+
+    if (normalizedStatus === "active") {
+        return "active";
+    }
+
+    if (normalizedStatus === "pending") {
+        return "pending";
+    }
+
+    if (normalizedStatus === "blocked") {
+        return "blocked";
+    }
+
+    return "unknown";
+}
+
+
+// ----------------------------------------------------------
+// VERIFICAÇÃO DA LOJA
+// ----------------------------------------------------------
+
+function getStoreVerifiedLabel(verified) {
+
+    if (
+        verified === true ||
+        verified === "true" ||
+        verified === 1
+    ) {
+        return "✓ Verificada";
+    }
+
+    return "Não verificada";
+}
+
+
+// ----------------------------------------------------------
+// RENDERIZAR LOJAS
+// ----------------------------------------------------------
+
+function renderOfficialStores(storesToRender = []) {
+
+    if (!officialStoresList) {
+        alert(
+            "ERRO BLOC 4 ❌\n\n" +
+            "officialStoresList não foi encontrado."
+        );
+
+        return;
+    }
+
+
+    // Limpar lista atual
+
+    officialStoresList.innerHTML = "";
+
+
+    // Nenhuma loja
+
+    if (
+        !Array.isArray(storesToRender) ||
+        storesToRender.length === 0
+    ) {
+
+        if (officialStoresEmpty) {
+            officialStoresEmpty.style.display = "block";
+        }
+
+        officialStoresList.style.display = "none";
+
+        return;
+    }
+
+
+    // Mostrar lista
+
+    if (officialStoresEmpty) {
+        officialStoresEmpty.style.display = "none";
+    }
+
+    officialStoresList.style.display = "grid";
+
+
+    // Criar cada loja
+
+    storesToRender.forEach((store) => {
+
+        const storeIdValue =
+            store.id || "";
+
+        const name =
+            store.name ||
+            "Loja sem nome";
+
+        const category =
+            store.category ||
+            "Sem categoria";
+
+        const description =
+            store.description ||
+            "Sem descrição disponível.";
+
+        const status =
+            store.status ||
+            "Unknown";
+
+        const statusLabel =
+            getStoreStatusLabel(status);
+
+        const statusClass =
+            getStoreStatusClass(status);
+
+        const verifiedLabel =
+            getStoreVerifiedLabel(
+                store.verified
+            );
+
+        const logo =
+            store.logo ||
+            "";
+
+        const banner =
+            store.banner ||
+            "";
+
+
+        // --------------------------------------------------
+        // LOGO
+        // --------------------------------------------------
+
+        let logoHTML = `
+            <div class="official-store-logo">
+                <span>🏪</span>
+            </div>
+        `;
+
+
+        if (logo) {
+
+            logoHTML = `
+                <div class="official-store-logo">
+                    <img
+                        src="${escapeHTML(logo)}"
+                        alt="${escapeHTML(name)}"
+                        loading="lazy"
+                        onerror="
+                            this.style.display='none';
+                            this.parentElement.innerHTML='<span>🏪</span>';
+                        "
+                    >
+                </div>
+            `;
+        }
+
+
+        // --------------------------------------------------
+        // BANNER
+        // --------------------------------------------------
+
+        let bannerHTML = "";
+
+
+        if (banner) {
+
+            bannerHTML = `
+                <div class="official-store-banner">
+                    <img
+                        src="${escapeHTML(banner)}"
+                        alt=""
+                        loading="lazy"
+                        onerror="
+                            this.parentElement.style.display='none';
+                        "
+                    >
+                </div>
+            `;
+        }
+
+
+        // --------------------------------------------------
+        // CARD
+        // --------------------------------------------------
+
+        const card =
+            document.createElement("article");
+
+        card.className =
+            "official-store-card";
+
+        card.dataset.storeId =
+            storeIdValue;
+
+
+        card.innerHTML = `
+
+            ${bannerHTML}
+
+            <div class="official-store-card-content">
+
+                <div class="official-store-card-top">
+
+                    ${logoHTML}
+
+                    <div class="official-store-card-info">
+
+                        <h3>
+                            ${escapeHTML(name)}
+                        </h3>
+
+                        <p class="official-store-category">
+                            ${escapeHTML(category)}
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="official-store-badges">
+
+                    <span
+                        class="official-store-status ${statusClass}"
+                    >
+                        ${escapeHTML(statusLabel)}
+                    </span>
+
+                    <span
+                        class="official-store-verified"
+                    >
+                        ${escapeHTML(verifiedLabel)}
+                    </span>
+
+                </div>
+
+
+                <p class="official-store-description">
+                    ${escapeHTML(description)}
+                </p>
+
+
+                <div class="official-store-card-footer">
+
+                    <span class="official-store-id">
+                        ID: ${escapeHTML(storeIdValue)}
+                    </span>
+
+                    <button
+                        type="button"
+                        class="official-store-edit-button"
+                        data-store-id="${escapeHTML(storeIdValue)}"
+                    >
+                        ✏️ Editar
+                    </button>
+
+                </div>
+
+            </div>
+        `;
+
+
+        officialStoresList.appendChild(card);
+
+    });
+
+
+    alert(
+        "BLOC 4 CONCLUÍDO ✅\n\n" +
+        "Lojas renderizadas: " +
+        storesToRender.length +
+        "\n\n" +
+        "A lista de lojas foi criada\n" +
+        "corretamente no Dashboard."
+    );
+}
+
+
+// ----------------------------------------------------------
+// PRIMEIRO RENDER
+// ----------------------------------------------------------
+
+// Depois que o BLOC 3 terminou de carregar
+// as lojas, podemos renderizá-las.
+
+if (
+    Array.isArray(officialStores) &&
+    officialStores.length > 0
+) {
+
+    renderOfficialStores(
+        officialStores
+    );
+
+}
