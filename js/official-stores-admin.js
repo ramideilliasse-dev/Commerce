@@ -43,7 +43,7 @@ const storesContainer =
     document.getElementById(
         "officialStoresList"
     );
-
+const officialStoresList = storesContainer;
 
 /* =========================================================
    MODAL
