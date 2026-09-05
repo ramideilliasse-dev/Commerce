@@ -21,10 +21,7 @@ import {
 // TESTE DE DÉMARRAGE
 // ==========================================================
 
-alert(
-    "BLOC 1 ✅\n\n" +
-    "official-stores-admin.js foi carregado."
-);
+
 
 
 // ==========================================================
@@ -71,12 +68,7 @@ if (!app) {
 // BLOC 1 TERMINÉ
 // ==========================================================
 
-alert(
-    "BLOC 1 CONCLUÍDO ✅\n\n" +
-    "Firebase: OK\n" +
-    "HTML principal: OK\n\n" +
-    "Podemos passar ao BLOC 2."
-);
+
 // ==========================================================
 // TOMA ADMIN — LOJAS OFICIAIS
 // BLOC 2 — RÉCUPÉRATION DES ÉLÉMENTS HTML
@@ -437,26 +429,7 @@ if (missingElements.length > 0) {
 // BLOC 2 TERMINÉ
 // ==========================================================
 
-alert(
-    "BLOC 2 CONCLUÍDO ✅\n\n" +
 
-    "Todos os elementos principais do HTML\n" +
-    "foram encontrados corretamente.\n\n" +
-
-    "Lista: OK\n" +
-    "Pesquisa: OK\n" +
-    "Filtros: OK\n" +
-    "Estatísticas: OK\n" +
-    "Modal: OK\n" +
-    "Formulário: OK\n" +
-    "Logo URL: OK\n" +
-    "Banner URL: OK\n" +
-    "Validação: OK\n" +
-    "Settings: OK\n" +
-    "Datas: OK\n\n" +
-
-    "O BLOC 2 está pronto."
-);
 // ==========================================================
 // TOMA ADMIN — LOJAS OFICIAIS
 // BLOC 3 — CHARGEMENT FIRESTORE
@@ -486,10 +459,7 @@ async function loadOfficialStores() {
         // Début du chargement
         // --------------------------------------------------
 
-        alert(
-            "BLOC 3.1 📡\n\n" +
-            "A carregar as lojas oficiais..."
-        );
+        
 
 
         // --------------------------------------------------
@@ -611,15 +581,7 @@ async function loadOfficialStores() {
         // Affichage temporaire du résultat
         // --------------------------------------------------
 
-        alert(
-            "BLOC 3 CONCLUÍDO ✅\n\n" +
-
-            "Lojas encontradas: " +
-            officialStores.length +
-            "\n\n" +
-
-            "A ligação com Firestore está funcionando."
-        );
+        
 renderOfficialStores(officialStores);
 
     } catch (error) {
@@ -1087,14 +1049,7 @@ function renderOfficialStores(storesToRender = []) {
     });
 
 
-    alert(
-        "BLOC 4 CONCLUÍDO ✅\n\n" +
-        "Lojas renderizadas: " +
-        storesToRender.length +
-        "\n\n" +
-        "A lista de lojas foi criada\n" +
-        "corretamente no Dashboard."
-    );
+    
 }
 // ==========================================================
 // TOMA ADMIN — LOJAS OFICIAIS
@@ -1556,13 +1511,7 @@ function closeOfficialStoreEditModal() {
 
 function openOfficialStoreEdit(storeIdValue) {
 
-    alert(
-        "BLOC 5 🔎\n\n" +
-        "Pedido para editar a loja:\n" +
-        storeIdValue
-    );
-
-
+   
     // ------------------------------------------------------
     // Buscar loja
     // ------------------------------------------------------
@@ -1666,13 +1615,15 @@ function openOfficialStoreEdit(storeIdValue) {
     // ======================================================
     // VERIFICAÇÃO
     // ======================================================
-
-    storeVerified.checked =
-        (
-            store.verified === true ||
-            store.verified === "true" ||
-            store.verified === 1
-        );
+storeVerified.value =
+    (
+        store.verified === true ||
+        store.verified === "true" ||
+        store.verified === 1
+    )
+        ? "true"
+        : "false";
+    
 
 
     // ======================================================
@@ -1787,18 +1738,7 @@ function openOfficialStoreEdit(storeIdValue) {
     // SUCESSO
     // ======================================================
 
-    alert(
-        "BLOC 5 CONCLUÍDO ✅\n\n" +
-        "Loja carregada corretamente.\n\n" +
-        "Nome: " +
-        (store.name || "Sem nome") +
-        "\n" +
-        "ID: " +
-        store.id +
-        "\n\n" +
-        "O formulário foi preenchido.\n" +
-        "O modal foi aberto."
-    );
+    
 }
 
 
@@ -1973,24 +1913,7 @@ storeBanner.addEventListener(
 // 15. BLOC 5 PRONTO
 // ==========================================================
 
-alert(
-    "BLOC 5 PRONTO ✅\n\n" +
-    "Sistema de edição preparado.\n\n" +
-    "✓ Encontrar loja\n" +
-    "✓ Carregar dados\n" +
-    "✓ Preencher formulário\n" +
-    "✓ Logo\n" +
-    "✓ Banner\n" +
-    "✓ Preview\n" +
-    "✓ Status\n" +
-    "✓ Verificação\n" +
-    "✓ Merchant IDs\n" +
-    "✓ Settings\n" +
-    "✓ Datas\n" +
-    "✓ Modal\n" +
-    "✓ Fechar modal\n\n" +
-    "Ainda NÃO há gravação no Firestore."
-);
+
 // ==========================================================
 // TOMA ADMIN — LOJAS OFICIAIS
 // BLOC 6 — SALVAR ALTERAÇÕES NO FIRESTORE
@@ -2465,21 +2388,7 @@ async function saveOfficialStoreData() {
         // ALERTA FINAL
         // --------------------------------------------------
 
-        alert(
-            "BLOC 6 CONCLUÍDO ✅\n\n" +
-            "Loja atualizada com sucesso.\n\n" +
-            "Nome: " +
-            name +
-            "\n" +
-            "ID: " +
-            id +
-            "\n\n" +
-            "✓ Dados salvos\n" +
-            "✓ Firestore atualizado\n" +
-            "✓ Lista atualizada\n" +
-            "✓ Estatísticas atualizadas"
-        );
-
+        
 
     } catch (error) {
 
@@ -2560,22 +2469,5 @@ storeSettings.addEventListener(
 // BLOC 6 PRONTO
 // ----------------------------------------------------------
 
-alert(
-    "BLOC 6 PRONTO ✅\n\n" +
-    "Sistema de gravação preparado.\n\n" +
-    "✓ Nome\n" +
-    "✓ Categoria\n" +
-    "✓ Slug\n" +
-    "✓ Descrição\n" +
-    "✓ Logo URL\n" +
-    "✓ Banner URL\n" +
-    "✓ Status\n" +
-    "✓ Verificação\n" +
-    "✓ Merchant IDs\n" +
-    "✓ Settings JSON\n" +
-    "✓ updatedAt\n" +
-    "✓ Firestore\n\n" +
-    "O formulário pode agora salvar\n" +
-    "as alterações da loja."
-);
+
  
