@@ -2798,3 +2798,526 @@ alert(
     "✓ Lista filtrada\n" +
     "✓ Estado vazio"
 );
+ // ==========================================================
+// TOMA ADMIN — LOJAS OFICIAIS
+// BLOC 8 — ABRIR + PREENCHER MODAL
+// ==========================================================
+
+
+// ----------------------------------------------------------
+// FORMATAR DATA
+// ----------------------------------------------------------
+
+function formatOfficialStoreDate(value) {
+
+    if (!value) {
+        return "";
+    }
+
+    try {
+
+        if (
+            typeof value.toDate ===
+            "function"
+        ) {
+
+            return value
+                .toDate()
+                .toLocaleString(
+                    "pt-PT"
+                );
+        }
+
+
+        if (
+            value instanceof Date
+        ) {
+
+            return value.toLocaleString(
+                "pt-PT"
+            );
+        }
+
+
+        if (
+            typeof value ===
+            "number"
+        ) {
+
+            return new Date(value)
+                .toLocaleString(
+                    "pt-PT"
+                );
+        }
+
+
+        return String(value);
+
+    } catch (error) {
+
+        return String(value);
+
+    }
+
+}
+
+
+// ----------------------------------------------------------
+// PREVIEW DO LOGO
+// ----------------------------------------------------------
+
+function updateStoreLogoPreview(url) {
+
+    if (!storeLogoPreview) {
+        return;
+    }
+
+
+    if (!url) {
+
+        storeLogoPreview.innerHTML =
+            "<span>Logo</span>";
+
+        if (storeLogoStatus) {
+
+            storeLogoStatus.textContent =
+                "Introduza o link direto do logo.";
+
+        }
+
+        return;
+    }
+
+
+    storeLogoPreview.innerHTML =
+        `
+        <img
+            src="${escapeHTML(url)}"
+            alt="Logo da loja"
+            onerror="
+                this.style.display='none';
+                this.parentElement.innerHTML='<span>Logo inválido</span>';
+            "
+        >
+        `;
+
+
+    if (storeLogoStatus) {
+
+        storeLogoStatus.textContent =
+            "Logo carregado.";
+
+    }
+
+}
+
+
+// ----------------------------------------------------------
+// PREVIEW DO BANNER
+// ----------------------------------------------------------
+
+function updateStoreBannerPreview(url) {
+
+    if (!storeBannerPreview) {
+        return;
+    }
+
+
+    if (!url) {
+
+        storeBannerPreview.innerHTML =
+            "<span>Banner</span>";
+
+        if (storeBannerStatus) {
+
+            storeBannerStatus.textContent =
+                "Introduza o link direto do banner.";
+
+        }
+
+        return;
+    }
+
+
+    storeBannerPreview.innerHTML =
+        `
+        <img
+            src="${escapeHTML(url)}"
+            alt="Banner da loja"
+            onerror="
+                this.style.display='none';
+                this.parentElement.innerHTML='<span>Banner inválido</span>';
+            "
+        >
+        `;
+
+
+    if (storeBannerStatus) {
+
+        storeBannerStatus.textContent =
+            "Banner carregado.";
+
+    }
+
+}
+
+
+// ----------------------------------------------------------
+// PREENCHER MODAL
+// ----------------------------------------------------------
+
+function fillOfficialStoreModal(store) {
+
+    if (!store) {
+
+        alert(
+            "ERRO ❌\n\n" +
+            "A loja não foi encontrada."
+        );
+
+        return;
+    }
+
+
+    // ------------------------------------------------------
+    // DADOS PRINCIPAIS
+    // ------------------------------------------------------
+
+    storeId.value =
+        store.id || "";
+
+    storeName.value =
+        store.name || "";
+
+    storeCategory.value =
+        store.category || "";
+
+    storeSlug.value =
+        store.slug || "";
+
+    storeDescription.value =
+        store.description || "";
+
+
+    // ------------------------------------------------------
+    // LOGO
+    // ------------------------------------------------------
+
+    storeLogo.value =
+        store.logo || "";
+
+    updateStoreLogoPreview(
+        store.logo || ""
+    );
+
+
+    // ------------------------------------------------------
+    // BANNER
+    // ------------------------------------------------------
+
+    storeBanner.value =
+        store.banner || "";
+
+    updateStoreBannerPreview(
+        store.banner || ""
+    );
+
+
+    // ------------------------------------------------------
+    // STATUS
+    // ------------------------------------------------------
+
+    storeStatus.value =
+        store.status || "Pending";
+
+
+    // ------------------------------------------------------
+    // VERIFICADO
+    // IMPORTANTE:
+    // storeVerified é um SELECT
+    // ------------------------------------------------------
+
+    storeVerified.value =
+        (
+            store.verified === true ||
+            store.verified === "true" ||
+            store.verified === 1
+        )
+            ? "true"
+            : "false";
+
+
+    // ------------------------------------------------------
+    // MERCHANT IDS
+    // ------------------------------------------------------
+
+    if (
+        Array.isArray(
+            store.merchantIds
+        )
+    ) {
+
+        storeMerchantIds.value =
+            store.merchantIds.join(
+                "\n"
+            );
+
+    } else {
+
+        storeMerchantIds.value =
+            "";
+
+    }
+
+
+    // ------------------------------------------------------
+    // SETTINGS
+    // ------------------------------------------------------
+
+    if (
+        store.settings &&
+        typeof store.settings ===
+        "object"
+    ) {
+
+        try {
+
+            storeSettings.value =
+                JSON.stringify(
+                    store.settings,
+                    null,
+                    2
+                );
+
+        } catch (error) {
+
+            storeSettings.value =
+                "{}";
+
+        }
+
+    } else {
+
+        storeSettings.value =
+            "{}";
+
+    }
+
+
+    // ------------------------------------------------------
+    // LIMPAR ERRO JSON
+    // ------------------------------------------------------
+
+    if (settingsJsonError) {
+
+        settingsJsonError.textContent =
+            "";
+
+        settingsJsonError.style.display =
+            "none";
+
+    }
+
+
+    // ------------------------------------------------------
+    // DATAS
+    // ------------------------------------------------------
+
+    storeCreatedAt.value =
+        formatOfficialStoreDate(
+            store.createdAt
+        );
+
+    storeUpdatedAt.value =
+        formatOfficialStoreDate(
+            store.updatedAt
+        );
+
+    storeAdminSettingsUpdatedAt.value =
+        formatOfficialStoreDate(
+            store.adminSettingsUpdatedAt
+        );
+
+
+    // ------------------------------------------------------
+    // TÍTULO
+    // ------------------------------------------------------
+
+    officialStoreModalTitle.textContent =
+        "Editar loja — " +
+        (
+            store.name ||
+            store.id ||
+            "Loja"
+        );
+
+
+    // ------------------------------------------------------
+    // ABRIR MODAL
+    // ------------------------------------------------------
+
+    officialStoreModal.classList.remove(
+        "hidden"
+    );
+
+    officialStoreModal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
+    // ------------------------------------------------------
+    // BLOQUEAR SCROLL DA PÁGINA
+    // ------------------------------------------------------
+
+    document.body.style.overflow =
+        "hidden";
+
+
+    // ------------------------------------------------------
+    // FOCO
+    // ------------------------------------------------------
+
+    setTimeout(
+        () => {
+
+            storeName.focus();
+
+        },
+        100
+    );
+
+}
+
+
+// ----------------------------------------------------------
+// ABRIR LOJA PELO ID
+// ----------------------------------------------------------
+
+function openOfficialStoreEditModal(
+    storeIdValue
+) {
+
+    const store =
+        officialStores.find(
+            (item) =>
+                String(item.id) ===
+                String(storeIdValue)
+        );
+
+
+    if (!store) {
+
+        alert(
+            "ERRO ❌\n\n" +
+            "Não foi possível encontrar\n" +
+            "a loja selecionada.\n\n" +
+            "ID: " +
+            storeIdValue
+        );
+
+        return;
+    }
+
+
+    fillOfficialStoreModal(
+        store
+    );
+
+}
+
+
+// ----------------------------------------------------------
+// CLIQUE NO BOTÃO EDITAR
+// ----------------------------------------------------------
+
+officialStoresList.addEventListener(
+    "click",
+    (event) => {
+
+        const editButton =
+            event.target.closest(
+                ".official-store-edit-button"
+            );
+
+
+        if (!editButton) {
+            return;
+        }
+
+
+        const selectedStoreId =
+            editButton.dataset.storeId;
+
+
+        if (!selectedStoreId) {
+
+            alert(
+                "ERRO ❌\n\n" +
+                "O ID da loja não foi encontrado."
+            );
+
+            return;
+        }
+
+
+        openOfficialStoreEditModal(
+            selectedStoreId
+        );
+
+    }
+);
+
+
+// ----------------------------------------------------------
+// PREVIEW LOGO AO ALTERAR URL
+// ----------------------------------------------------------
+
+storeLogo.addEventListener(
+    "input",
+    () => {
+
+        updateStoreLogoPreview(
+            storeLogo.value.trim()
+        );
+
+    }
+);
+
+
+// ----------------------------------------------------------
+// PREVIEW BANNER AO ALTERAR URL
+// ----------------------------------------------------------
+
+storeBanner.addEventListener(
+    "input",
+    () => {
+
+        updateStoreBannerPreview(
+            storeBanner.value.trim()
+        );
+
+    }
+);
+
+
+// ----------------------------------------------------------
+// BLOC 8 PRONTO
+// ----------------------------------------------------------
+
+alert(
+    "BLOC 8 PRONTO ✅\n\n" +
+    "Sistema de edição do modal ativado.\n\n" +
+    "✓ Abrir loja\n" +
+    "✓ Preencher dados\n" +
+    "✓ Logo URL\n" +
+    "✓ Banner URL\n" +
+    "✓ Preview das imagens\n" +
+    "✓ Status\n" +
+    "✓ Verificação\n" +
+    "✓ Merchant IDs\n" +
+    "✓ Settings JSON\n" +
+    "✓ Datas\n" +
+    "✓ Foco automático\n\n" +
+    "O modal de edição está pronto."
+);
