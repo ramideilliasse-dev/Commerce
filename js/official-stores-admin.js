@@ -2578,3 +2578,223 @@ alert(
     "O formulário pode agora salvar\n" +
     "as alterações da loja."
 );
+ // ==========================================================
+// TOMA ADMIN — LOJAS OFICIAIS
+// BLOC 7 — PESQUISA + FILTROS
+// ==========================================================
+
+
+// ----------------------------------------------------------
+// FILTRAR LOJAS
+// ----------------------------------------------------------
+
+function filterOfficialStores() {
+
+    // ------------------------------------------------------
+    // TEXTO DA PESQUISA
+    // ------------------------------------------------------
+
+    const searchValue =
+        officialStoresSearch.value
+            .trim()
+            .toLowerCase();
+
+
+    // ------------------------------------------------------
+    // STATUS SELECIONADO
+    // ------------------------------------------------------
+
+    const statusValue =
+        officialStoresStatusFilter.value;
+
+
+    // ------------------------------------------------------
+    // FILTRAR
+    // ------------------------------------------------------
+
+    filteredOfficialStores =
+        officialStores.filter(
+            (store) => {
+
+                // ------------------------------------------
+                // PESQUISA
+                // ------------------------------------------
+
+                const name =
+                    String(
+                        store.name || ""
+                    ).toLowerCase();
+
+                const category =
+                    String(
+                        store.category || ""
+                    ).toLowerCase();
+
+                const id =
+                    String(
+                        store.id || ""
+                    ).toLowerCase();
+
+
+                const matchesSearch =
+                    !searchValue ||
+                    name.includes(searchValue) ||
+                    category.includes(searchValue) ||
+                    id.includes(searchValue);
+
+
+                // ------------------------------------------
+                // STATUS
+                // ------------------------------------------
+
+                const matchesStatus =
+                    statusValue === "all" ||
+                    String(
+                        store.status || ""
+                    ) === statusValue;
+
+
+                return (
+                    matchesSearch &&
+                    matchesStatus
+                );
+
+            }
+        );
+
+
+    // ------------------------------------------------------
+    // ATUALIZAR LISTA
+    // ------------------------------------------------------
+
+    renderOfficialStores(
+        filteredOfficialStores
+    );
+
+
+    // ------------------------------------------------------
+    // MOSTRAR / ESCONDER EMPTY
+    // ------------------------------------------------------
+
+    if (officialStoresEmpty) {
+
+        if (
+            filteredOfficialStores.length === 0
+        ) {
+
+            officialStoresEmpty.classList.remove(
+                "hidden"
+            );
+
+        } else {
+
+            officialStoresEmpty.classList.add(
+                "hidden"
+            );
+
+        }
+
+    }
+
+}
+
+
+// ----------------------------------------------------------
+// PESQUISA EM TEMPO REAL
+// ----------------------------------------------------------
+
+officialStoresSearch.addEventListener(
+    "input",
+    () => {
+
+        filterOfficialStores();
+
+    }
+);
+
+
+// ----------------------------------------------------------
+// FILTRO POR STATUS
+// ----------------------------------------------------------
+
+officialStoresStatusFilter.addEventListener(
+    "change",
+    () => {
+
+        filterOfficialStores();
+
+    }
+);
+
+
+// ----------------------------------------------------------
+// BOTÃO ATUALIZAR
+// ----------------------------------------------------------
+
+refreshOfficialStores.addEventListener(
+    "click",
+    async () => {
+
+        // ----------------------------------------------
+        // FEEDBACK
+        // ----------------------------------------------
+
+        refreshOfficialStores.disabled =
+            true;
+
+        const originalText =
+            refreshOfficialStores.textContent;
+
+        refreshOfficialStores.textContent =
+            "A atualizar...";
+
+
+        try {
+
+            await loadOfficialStores();
+
+
+            // ------------------------------------------
+            // REAPLICAR FILTROS
+            // ------------------------------------------
+
+            filterOfficialStores();
+
+
+        } catch (error) {
+
+            console.error(
+                "ERRO AO ATUALIZAR LOJAS:",
+                error
+            );
+
+        } finally {
+
+            refreshOfficialStores.disabled =
+                false;
+
+            refreshOfficialStores.textContent =
+                originalText;
+
+        }
+
+    }
+);
+
+
+// ----------------------------------------------------------
+// BLOC 7 PRONTO
+// ----------------------------------------------------------
+
+alert(
+    "BLOC 7 PRONTO ✅\n\n" +
+    "Pesquisa e filtros ativados.\n\n" +
+    "✓ Pesquisa por nome\n" +
+    "✓ Pesquisa por categoria\n" +
+    "✓ Pesquisa por ID\n" +
+    "✓ Filtro por status\n" +
+    "✓ Pesquisa em tempo real\n" +
+    "✓ Botão atualizar\n" +
+    "✓ Lista filtrada\n" +
+    "✓ Estado vazio"
+);
