@@ -2016,3 +2016,560 @@ a {
     */
 
 }
+/* ==========================================================
+   TOMA ADMIN — LOJAS OFICIAIS
+   PREMIUM STORE CARDS
+   ========================================================== */
+
+
+/* ----------------------------------------------------------
+   LISTA
+   ---------------------------------------------------------- */
+
+.officialStoresList {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+    width: 100%;
+}
+
+
+/* ----------------------------------------------------------
+   CARD PRINCIPAL
+   ---------------------------------------------------------- */
+
+.official-store-card {
+    position: relative;
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border: 1px solid #e9e9e9;
+    border-radius: 20px;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.06);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+
+    min-width: 0;
+}
+
+
+.official-store-card:hover {
+    transform: translateY(-4px);
+
+    border-color: #dddddd;
+
+    box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.10);
+}
+
+
+/* ----------------------------------------------------------
+   BANNER
+   ---------------------------------------------------------- */
+
+.official-store-banner {
+    position: relative;
+
+    width: 100%;
+    height: 180px;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f1f1f1,
+            #e7e7e7
+        );
+}
+
+
+.official-store-banner::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.02),
+            rgba(0, 0, 0, 0.12)
+        );
+
+    pointer-events: none;
+}
+
+
+.official-store-banner img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    transition:
+        transform 0.4s ease;
+}
+
+
+.official-store-card:hover
+.official-store-banner img {
+    transform: scale(1.04);
+}
+
+
+/* ----------------------------------------------------------
+   ESPAÇO QUANDO NÃO EXISTE BANNER
+   ---------------------------------------------------------- */
+
+.official-store-card:not(:has(.official-store-banner)) {
+    padding-top: 0;
+}
+
+
+/* ----------------------------------------------------------
+   CONTEÚDO
+   ---------------------------------------------------------- */
+
+.official-store-card-content {
+    position: relative;
+
+    padding: 0 20px 20px;
+}
+
+
+/* ----------------------------------------------------------
+   PARTE SUPERIOR
+   ---------------------------------------------------------- */
+
+.official-store-card-top {
+    display: flex;
+
+    align-items: flex-end;
+
+    gap: 14px;
+
+    min-height: 92px;
+
+    margin-bottom: 15px;
+}
+
+
+/* ----------------------------------------------------------
+   LOGO
+   ---------------------------------------------------------- */
+
+.official-store-logo {
+    position: relative;
+
+    flex-shrink: 0;
+
+    width: 78px;
+    height: 78px;
+
+    margin-top: -38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border: 4px solid #ffffff;
+    border-radius: 18px;
+
+    box-shadow:
+        0 7px 20px rgba(0, 0, 0, 0.14);
+
+    z-index: 2;
+
+    font-size: 28px;
+}
+
+
+.official-store-logo img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+/* ----------------------------------------------------------
+   INFORMATIONS
+   ---------------------------------------------------------- */
+
+.official-store-card-info {
+    flex: 1;
+
+    min-width: 0;
+
+    padding-bottom: 3px;
+}
+
+
+.official-store-card-info h3 {
+    margin: 0;
+
+    color: #111111;
+
+    font-size: 19px;
+    font-weight: 750;
+
+    line-height: 1.2;
+
+    letter-spacing: -0.3px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+.official-store-category {
+    margin: 6px 0 0;
+
+    color: #777777;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    line-height: 1.3;
+}
+
+
+/* ----------------------------------------------------------
+   BADGES
+   ---------------------------------------------------------- */
+
+.official-store-badges {
+    display: flex;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    margin-bottom: 14px;
+}
+
+
+.official-store-status,
+.official-store-verified {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 29px;
+
+    padding: 5px 10px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* ----------------------------------------------------------
+   STATUS — ATIVA
+   ---------------------------------------------------------- */
+
+.official-store-status.active {
+    background: #e9f8ef;
+    color: #16803d;
+}
+
+
+/* ----------------------------------------------------------
+   STATUS — PENDENTE
+   ---------------------------------------------------------- */
+
+.official-store-status.pending {
+    background: #fff5dc;
+    color: #9a6800;
+}
+
+
+/* ----------------------------------------------------------
+   STATUS — BLOQUEADA
+   ---------------------------------------------------------- */
+
+.official-store-status.blocked {
+    background: #ffebeb;
+    color: #c62828;
+}
+
+
+/* ----------------------------------------------------------
+   STATUS — DESCONHECIDO
+   ---------------------------------------------------------- */
+
+.official-store-status.unknown {
+    background: #eeeeee;
+    color: #666666;
+}
+
+
+/* ----------------------------------------------------------
+   VERIFICADA
+   ---------------------------------------------------------- */
+
+.official-store-verified {
+    background: #f0f0f0;
+
+    color: #333333;
+}
+
+
+/* ----------------------------------------------------------
+   DESCRIÇÃO
+   ---------------------------------------------------------- */
+
+.official-store-description {
+    margin: 0 0 18px;
+
+    color: #666666;
+
+    font-size: 14px;
+
+    line-height: 1.55;
+
+    display: -webkit-box;
+
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    overflow: hidden;
+
+    min-height: 43px;
+}
+
+
+/* ----------------------------------------------------------
+   FOOTER
+   ---------------------------------------------------------- */
+
+.official-store-card-footer {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    padding-top: 15px;
+
+    border-top: 1px solid #eeeeee;
+}
+
+
+/* ----------------------------------------------------------
+   ID
+   ---------------------------------------------------------- */
+
+.official-store-id {
+    min-width: 0;
+
+    color: #999999;
+
+    font-size: 11px;
+    font-weight: 500;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+/* ----------------------------------------------------------
+   BOTÃO EDITAR
+   ---------------------------------------------------------- */
+
+.official-store-edit-button {
+    flex-shrink: 0;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 38px;
+
+    padding: 0 16px;
+
+    border: 0;
+    border-radius: 11px;
+
+    background: #111111;
+
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.official-store-edit-button:hover {
+    background: #000000;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 7px 16px rgba(0, 0, 0, 0.18);
+}
+
+
+.official-store-edit-button:active {
+    transform: translateY(0);
+
+    box-shadow: none;
+}
+
+
+/* ----------------------------------------------------------
+   MOBILE / IPHONE
+   ---------------------------------------------------------- */
+
+@media (max-width: 800px) {
+
+    .officialStoresList {
+        grid-template-columns: 1fr;
+
+        gap: 16px;
+    }
+
+
+    .official-store-card {
+        border-radius: 18px;
+    }
+
+
+    .official-store-banner {
+        height: 155px;
+    }
+
+
+    .official-store-card-content {
+        padding: 0 16px 17px;
+    }
+
+
+    .official-store-card-top {
+        gap: 12px;
+
+        min-height: 78px;
+    }
+
+
+    .official-store-logo {
+        width: 68px;
+        height: 68px;
+
+        margin-top: -32px;
+
+        border-width: 3px;
+
+        border-radius: 16px;
+
+        font-size: 24px;
+    }
+
+
+    .official-store-card-info h3 {
+        font-size: 17px;
+    }
+
+
+    .official-store-category {
+        font-size: 12px;
+    }
+
+
+    .official-store-description {
+        font-size: 13px;
+
+        line-height: 1.5;
+
+        margin-bottom: 16px;
+    }
+
+
+    .official-store-edit-button {
+        min-height: 36px;
+
+        padding: 0 13px;
+
+        font-size: 12px;
+    }
+}
+
+
+/* ----------------------------------------------------------
+   PETIT IPHONE
+   ---------------------------------------------------------- */
+
+@media (max-width: 390px) {
+
+    .official-store-banner {
+        height: 135px;
+    }
+
+
+    .official-store-card-content {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+
+    .official-store-logo {
+        width: 62px;
+        height: 62px;
+
+        margin-top: -29px;
+    }
+
+
+    .official-store-card-info h3 {
+        font-size: 16px;
+    }
+
+
+    .official-store-card-footer {
+        align-items: flex-end;
+    }
+
+
+    .official-store-id {
+        font-size: 10px;
+    }
+}
