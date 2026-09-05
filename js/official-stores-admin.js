@@ -2006,15 +2006,11 @@ function parseStoreSettings() {
     const rawValue =
         storeSettings.value.trim();
 
-
-    // Settings vazio = objeto vazio
-
     if (!rawValue) {
 
         if (settingsJsonError) {
 
-            settingsJsonError.textContent =
-                "";
+            settingsJsonError.textContent = "";
 
             settingsJsonError.style.display =
                 "none";
@@ -2023,12 +2019,10 @@ function parseStoreSettings() {
         return {};
     }
 
-
     try {
 
         const parsed =
             JSON.parse(rawValue);
-
 
         if (
             parsed === null ||
@@ -2041,16 +2035,13 @@ function parseStoreSettings() {
             );
         }
 
-
         if (settingsJsonError) {
 
-            settingsJsonError.textContent =
-                "";
+            settingsJsonError.textContent = "";
 
             settingsJsonError.style.display =
                 "none";
         }
-
 
         return parsed;
 
@@ -2066,14 +2057,12 @@ function parseStoreSettings() {
                 "block";
         }
 
-
         alert(
             "ERRO SETTINGS ❌\n\n" +
             "O campo Settings contém\n" +
             "um JSON inválido.\n\n" +
             error.message
         );
-
 
         return null;
     }
@@ -2089,11 +2078,9 @@ function parseMerchantIds() {
     const rawValue =
         storeMerchantIds.value.trim();
 
-
     if (!rawValue) {
         return [];
     }
-
 
     return rawValue
         .split(/[\n,]+/)
@@ -2124,14 +2111,11 @@ function showOfficialStoreToast(
         return;
     }
 
-
     officialStoreToastMessage.textContent =
         message;
 
-
     officialStoreToast.style.display =
         "block";
-
 
     setTimeout(
         () => {
@@ -2172,7 +2156,6 @@ async function saveOfficialStoreData() {
     const id =
         storeId.value.trim();
 
-
     if (!id) {
 
         alert(
@@ -2190,7 +2173,6 @@ async function saveOfficialStoreData() {
 
     const name =
         storeName.value.trim();
-
 
     if (!name) {
 
@@ -2212,31 +2194,29 @@ async function saveOfficialStoreData() {
     const category =
         storeCategory.value.trim();
 
-
     const slug =
         storeSlug.value.trim();
-
 
     const description =
         storeDescription.value.trim();
 
-
     const logo =
         storeLogo.value.trim();
 
-
     const banner =
         storeBanner.value.trim();
-
 
     const status =
         storeStatus.value;
 
 
+    // ------------------------------------------------------
+    // VERIFICAÇÃO
+    // storeVerified é um SELECT
+    // ------------------------------------------------------
+
     const verified =
-        Boolean(
-            storeVerified.checked
-        );
+        storeVerified.value === "true";
 
 
     // ------------------------------------------------------
@@ -2253,7 +2233,6 @@ async function saveOfficialStoreData() {
 
     const settings =
         parseStoreSettings();
-
 
     if (settings === null) {
 
@@ -2278,7 +2257,6 @@ async function saveOfficialStoreData() {
             "no Firestore."
         );
 
-
     if (!confirmation) {
 
         return;
@@ -2292,14 +2270,11 @@ async function saveOfficialStoreData() {
     saveOfficialStore.dataset.saving =
         "true";
 
-
     const originalButtonText =
         saveOfficialStore.textContent;
 
-
     saveOfficialStore.disabled =
         true;
-
 
     saveOfficialStore.textContent =
         "A guardar...";
@@ -2308,7 +2283,7 @@ async function saveOfficialStoreData() {
     try {
 
         // --------------------------------------------------
-        // REFERÊNCIA DA LOJA
+        // REFERÊNCIA FIRESTORE
         // --------------------------------------------------
 
         const storeReference =
@@ -2327,7 +2302,6 @@ async function saveOfficialStoreData() {
             await getDoc(
                 storeReference
             );
-
 
         if (
             !storeSnapshot.exists()
@@ -2376,17 +2350,12 @@ async function saveOfficialStoreData() {
                 settings,
 
             updatedAt:
+                serverTimestamp(),
+
+            adminSettingsUpdatedAt:
                 serverTimestamp()
 
         };
-
-
-        // --------------------------------------------------
-        // SALVAR SETTINGS / ADMIN
-        // --------------------------------------------------
-
-        updateData.adminSettingsUpdatedAt =
-            serverTimestamp();
 
 
         // --------------------------------------------------
@@ -2484,7 +2453,7 @@ async function saveOfficialStoreData() {
 
 
         // --------------------------------------------------
-        // MENSAGEM
+        // TOAST
         // --------------------------------------------------
 
         showOfficialStoreToast(
@@ -2519,7 +2488,6 @@ async function saveOfficialStoreData() {
             error
         );
 
-
         alert(
             "ERRO BLOC 6 ❌\n\n" +
             "Não foi possível salvar a loja.\n\n" +
@@ -2537,10 +2505,8 @@ async function saveOfficialStoreData() {
         saveOfficialStore.dataset.saving =
             "false";
 
-
         saveOfficialStore.disabled =
             false;
-
 
         saveOfficialStore.textContent =
             originalButtonText;
@@ -2562,7 +2528,6 @@ officialStoreForm.addEventListener(
 
         event.stopPropagation();
 
-
         await saveOfficialStoreData();
 
     }
@@ -2580,7 +2545,6 @@ storeSettings.addEventListener(
         if (!settingsJsonError) {
             return;
         }
-
 
         settingsJsonError.textContent =
             "";
