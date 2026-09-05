@@ -1,6 +1,7 @@
  /* =========================================================
    TOMA ADMIN — LOJAS OFICIAIS
    PREMIUM ADMIN UI
+   VERSION PRO
 ========================================================= */
 
 
@@ -14,19 +15,24 @@
     padding: 0;
 }
 
-
 html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
 }
-
 
 body {
     min-height: 100vh;
+
     background:
         radial-gradient(
-            circle at top right,
-            rgba(255, 193, 7, 0.08),
-            transparent 32%
+            circle at 100% 0%,
+            rgba(255, 193, 7, 0.09),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 0% 100%,
+            rgba(0, 0, 0, 0.025),
+            transparent 30%
         ),
         #f5f6f8;
 
@@ -44,10 +50,10 @@ body {
         sans-serif;
 
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 
     overflow-x: hidden;
 }
-
 
 button,
 input,
@@ -56,17 +62,21 @@ select {
     font: inherit;
 }
 
-
 button {
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
 }
 
+input,
+textarea,
+select {
+    -webkit-tap-highlight-color: transparent;
+}
 
 a {
     color: inherit;
     text-decoration: none;
 }
-
 
 .hidden {
     display: none !important;
@@ -78,8 +88,8 @@ a {
 ========================================================= */
 
 .officialStoresAdminApp {
-    min-height: 100vh;
     width: 100%;
+    min-height: 100vh;
 }
 
 
@@ -92,7 +102,7 @@ a {
     top: 0;
     z-index: 100;
 
-    min-height: 76px;
+    min-height: 78px;
 
     display: flex;
     align-items: center;
@@ -100,126 +110,132 @@ a {
 
     padding:
         14px
-        max(18px, env(safe-area-inset-right))
+        max(20px, env(safe-area-inset-right))
         14px
-        max(18px, env(safe-area-inset-left));
+        max(20px, env(safe-area-inset-left));
 
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 255, 255, 0.88);
 
-    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.055);
 
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
 
     box-shadow:
-        0 4px 20px rgba(0, 0, 0, 0.04);
+        0 8px 30px rgba(0, 0, 0, 0.035);
 }
-
 
 .officialStoresHeaderLeft {
+    min-width: 0;
+
     display: flex;
     align-items: center;
-    gap: 14px;
 
-    min-width: 0;
+    gap: 13px;
 }
-
 
 .officialStoresHeaderLeft > div {
     min-width: 0;
 }
 
-
 .officialStoresHeaderLeft h1 {
+    color: #101010;
+
     font-size: 21px;
     line-height: 1.15;
-    font-weight: 800;
-    letter-spacing: -0.5px;
+    font-weight: 850;
+
+    letter-spacing: -0.65px;
 
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-
 .officialStoresHeaderLeft p {
     margin-top: 4px;
 
-    color: #777;
+    color: #8a8a8a;
 
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 11px;
+    font-weight: 600;
+
+    letter-spacing: 0.05px;
 }
 
-
 .backButton {
-    width: 42px;
-    height: 42px;
+    width: 43px;
+    height: 43px;
 
-    flex: 0 0 42px;
+    flex: 0 0 43px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    background: #111;
+    border: 0;
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #1a1a1a,
+            #050505
+        );
+
     color: #fff;
 
-    border-radius: 13px;
-
-    font-size: 23px;
+    font-size: 22px;
     font-weight: 500;
 
     box-shadow:
-        0 7px 18px rgba(0, 0, 0, 0.15);
+        0 8px 20px rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
     transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
+        transform 0.18s ease,
+        box-shadow 0.18s ease;
 }
-
 
 .backButton:active {
-    transform: scale(0.94);
+    transform: scale(0.93);
 
     box-shadow:
-        0 3px 10px rgba(0, 0, 0, 0.12);
+        0 4px 12px rgba(0, 0, 0, 0.14);
 }
-
 
 .officialStoresHeaderRight {
     display: flex;
     align-items: center;
+    gap: 8px;
 }
-
 
 .headerActionButton {
-    min-height: 42px;
+    min-height: 43px;
 
-    padding: 0 15px;
+    padding: 0 16px;
 
-    border: 1px solid #e4e4e4;
-
+    border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 13px;
 
-    background: #fff;
+    background: rgba(255, 255, 255, 0.92);
     color: #111;
 
-    font-size: 13px;
-    font-weight: 700;
+    font-size: 12px;
+    font-weight: 750;
 
     box-shadow:
-        0 5px 16px rgba(0, 0, 0, 0.05);
+        0 6px 18px rgba(0, 0, 0, 0.045);
 
     transition:
-        transform 0.2s ease,
-        background 0.2s ease;
+        transform 0.18s ease,
+        background 0.18s ease,
+        border-color 0.18s ease;
 }
-
 
 .headerActionButton:active {
     transform: scale(0.96);
-    background: #f3f3f3;
+    background: #f2f2f2;
 }
 
 
@@ -228,14 +244,14 @@ a {
 ========================================================= */
 
 .officialStoresMain {
-    width: min(1180px, calc(100% - 32px));
+    width: min(1180px, calc(100% - 34px));
 
     margin: 0 auto;
 
     padding:
-        24px
+        26px
         0
-        calc(40px + env(safe-area-inset-bottom));
+        calc(48px + env(safe-area-inset-bottom));
 }
 
 
@@ -254,26 +270,53 @@ a {
     margin-bottom: 22px;
 }
 
-
 .officialStoreStatCard {
     position: relative;
 
-    min-height: 110px;
+    min-height: 116px;
 
-    padding: 19px;
-
-    background: rgba(255, 255, 255, 0.96);
-
-    border: 1px solid rgba(0, 0, 0, 0.06);
-
-    border-radius: 20px;
+    padding: 20px;
 
     overflow: hidden;
 
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.98),
+            rgba(250, 250, 250, 0.98)
+        );
+
+    border: 1px solid rgba(0, 0, 0, 0.055);
+
+    border-radius: 20px;
+
     box-shadow:
-        0 8px 30px rgba(0, 0, 0, 0.055);
+        0 10px 32px rgba(0, 0, 0, 0.055),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
+.officialStoreStatCard::before {
+    content: "";
+
+    position: absolute;
+
+    width: 90px;
+    height: 90px;
+
+    right: -34px;
+    top: -34px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255, 193, 7, 0.10),
+            transparent 68%
+        );
+
+    pointer-events: none;
+}
 
 .officialStoreStatCard::after {
     content: "";
@@ -283,42 +326,48 @@ a {
     width: 70px;
     height: 70px;
 
-    right: -24px;
-    bottom: -25px;
-
-    background: rgba(0, 0, 0, 0.035);
+    right: -25px;
+    bottom: -28px;
 
     border-radius: 50%;
+
+    background: rgba(0, 0, 0, 0.028);
+
+    pointer-events: none;
 }
 
-
 .officialStoreStatCard span {
+    position: relative;
+    z-index: 1;
+
     display: block;
 
-    color: #777;
+    color: #858585;
 
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 10px;
+    font-weight: 800;
 
     text-transform: uppercase;
 
-    letter-spacing: 0.5px;
+    letter-spacing: 0.75px;
 }
 
-
 .officialStoreStatCard strong {
+    position: relative;
+    z-index: 1;
+
     display: block;
 
-    margin-top: 10px;
+    margin-top: 11px;
 
     color: #111;
 
-    font-size: 30px;
+    font-size: 31px;
     line-height: 1;
 
     font-weight: 850;
 
-    letter-spacing: -1px;
+    letter-spacing: -1.3px;
 }
 
 
@@ -329,38 +378,53 @@ a {
 .officialStoresToolbar {
     display: flex;
     align-items: stretch;
+
     gap: 12px;
 
-    margin-bottom: 20px;
+    margin-bottom: 21px;
 }
-
 
 .officialStoresSearchBox {
     flex: 1;
 
-    min-height: 50px;
+    min-height: 51px;
 
     display: flex;
     align-items: center;
+
     gap: 10px;
 
-    padding: 0 15px;
+    padding: 0 16px;
 
-    background: #fff;
+    background: rgba(255, 255, 255, 0.96);
 
-    border: 1px solid #e5e5e5;
+    border: 1px solid rgba(0, 0, 0, 0.075);
 
     border-radius: 15px;
 
     box-shadow:
-        0 5px 20px rgba(0, 0, 0, 0.04);
+        0 7px 22px rgba(0, 0, 0, 0.045);
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
+.officialStoresSearchBox:focus-within {
+    border-color: rgba(0, 0, 0, 0.18);
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.06),
+        0 0 0 3px rgba(0, 0, 0, 0.035);
+}
 
 .officialStoresSearchBox span {
+    flex: 0 0 auto;
+
+    color: #777;
+
     font-size: 17px;
 }
-
 
 .officialStoresSearchBox input {
     width: 100%;
@@ -373,41 +437,39 @@ a {
     color: #111;
 
     font-size: 14px;
+    font-weight: 500;
 }
-
 
 .officialStoresSearchBox input::placeholder {
-    color: #999;
+    color: #a0a0a0;
 }
 
-
 .officialStoresFilterBox {
-    min-width: 180px;
+    min-width: 190px;
 
     display: flex;
     align-items: center;
-    gap: 8px;
 
-    padding: 0 12px;
+    gap: 9px;
 
-    background: #fff;
+    padding: 0 14px;
 
-    border: 1px solid #e5e5e5;
+    background: rgba(255, 255, 255, 0.96);
+
+    border: 1px solid rgba(0, 0, 0, 0.075);
 
     border-radius: 15px;
 
     box-shadow:
-        0 5px 20px rgba(0, 0, 0, 0.04);
+        0 7px 22px rgba(0, 0, 0, 0.045);
 }
-
 
 .officialStoresFilterBox label {
-    color: #777;
+    color: #858585;
 
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 11px;
+    font-weight: 750;
 }
-
 
 .officialStoresFilterBox select {
     flex: 1;
@@ -421,8 +483,8 @@ a {
 
     color: #111;
 
-    font-size: 13px;
-    font-weight: 700;
+    font-size: 12px;
+    font-weight: 750;
 }
 
 
@@ -435,16 +497,19 @@ a {
 
     padding: 14px 16px;
 
-    background: #fff;
+    background: rgba(255, 255, 255, 0.96);
 
-    border: 1px solid #e5e5e5;
+    border: 1px solid rgba(0, 0, 0, 0.065);
 
     border-radius: 14px;
 
-    color: #444;
+    color: #505050;
 
-    font-size: 13px;
-    line-height: 1.5;
+    font-size: 12px;
+    line-height: 1.55;
+
+    box-shadow:
+        0 5px 18px rgba(0, 0, 0, 0.035);
 }
 
 
@@ -453,7 +518,7 @@ a {
 ========================================================= */
 
 .officialStoresLoader {
-    min-height: 180px;
+    min-height: 190px;
 
     display: flex;
     flex-direction: column;
@@ -462,35 +527,36 @@ a {
 
     gap: 13px;
 
-    color: #777;
+    color: #858585;
 
-    font-size: 13px;
+    font-size: 12px;
+    font-weight: 600;
 }
 
-
 .loaderSpinner {
-    width: 34px;
-    height: 34px;
+    width: 35px;
+    height: 35px;
 
     border-radius: 50%;
 
-    border: 3px solid #e5e5e5;
+    border: 3px solid #e8e8e8;
     border-top-color: #111;
 
     animation:
-        officialStoreSpin 0.8s linear infinite;
+        officialStoreSpin 0.75s linear infinite;
 }
 
-
 @keyframes officialStoreSpin {
+
     to {
         transform: rotate(360deg);
     }
+
 }
 
 
 /* =========================================================
-   LISTE
+   LIST
 ========================================================= */
 
 .officialStoresList {
@@ -499,59 +565,101 @@ a {
     grid-template-columns:
         repeat(2, minmax(0, 1fr));
 
-    gap: 16px;
+    gap: 17px;
 }
 
 
 /* =========================================================
-   STORE CARD
-   Compatible avec les cartes générées par JS
+   STORE CARD — PREMIUM
 ========================================================= */
 
 .officialStoreAdminCard {
     position: relative;
 
+    min-width: 0;
+
     display: flex;
     align-items: center;
-    gap: 15px;
 
-    padding: 15px;
+    gap: 16px;
 
-    background: #fff;
+    padding: 16px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff,
+            #fbfbfb
+        );
 
     border: 1px solid rgba(0, 0, 0, 0.065);
 
     border-radius: 21px;
 
     box-shadow:
-        0 8px 28px rgba(0, 0, 0, 0.055);
+        0 10px 30px rgba(0, 0, 0, 0.055),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+
+    overflow: hidden;
 
     transition:
         transform 0.2s ease,
-        box-shadow 0.2s ease;
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
 }
 
+.officialStoreAdminCard::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 193, 7, 0),
+            rgba(255, 193, 7, 0.55),
+            rgba(255, 193, 7, 0)
+        );
+
+    opacity: 0;
+
+    transition: opacity 0.2s ease;
+}
 
 .officialStoreAdminCard:active {
     transform: scale(0.985);
 }
 
-
 .officialStoreAdminLogo {
-    width: 72px;
-    height: 72px;
+    width: 74px;
+    height: 74px;
 
-    flex: 0 0 72px;
+    flex: 0 0 74px;
 
     object-fit: cover;
 
-    background: #f2f2f2;
+    background:
+        linear-gradient(
+            145deg,
+            #f0f0f0,
+            #fafafa
+        );
 
     border-radius: 18px;
 
-    border: 1px solid #eee;
-}
+    border: 1px solid rgba(0, 0, 0, 0.075);
 
+    box-shadow:
+        0 5px 15px rgba(0, 0, 0, 0.07);
+
+    display: block;
+}
 
 .officialStoreAdminInfo {
     flex: 1;
@@ -559,69 +667,88 @@ a {
     min-width: 0;
 }
 
-
 .officialStoreAdminInfo h3 {
     margin-bottom: 5px;
 
     color: #111;
 
     font-size: 16px;
-    font-weight: 800;
+    line-height: 1.2;
+
+    font-weight: 850;
+
+    letter-spacing: -0.25px;
 
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
 
 .officialStoreAdminInfo p {
-    color: #777;
+    color: #858585;
 
-    font-size: 12px;
+    font-size: 11px;
+    line-height: 1.4;
 
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
 
 .officialStoreAdminMeta {
     display: flex;
     align-items: center;
+
     flex-wrap: wrap;
 
     gap: 6px;
 
-    margin-top: 8px;
+    margin-top: 9px;
 }
 
-
 .officialStoreEditButton {
-    min-height: 38px;
+    flex: 0 0 auto;
 
-    padding: 0 12px;
+    min-height: 39px;
+
+    padding: 0 13px;
 
     border: none;
 
-    border-radius: 11px;
+    border-radius: 12px;
 
-    background: #111;
+    background:
+        linear-gradient(
+            145deg,
+            #191919,
+            #050505
+        );
+
     color: #fff;
 
-    font-size: 12px;
-    font-weight: 750;
+    font-size: 11px;
+    font-weight: 800;
+
+    letter-spacing: 0.05px;
 
     white-space: nowrap;
 
+    box-shadow:
+        0 7px 16px rgba(0, 0, 0, 0.16),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07);
+
     transition:
-        transform 0.2s ease,
-        opacity 0.2s ease;
+        transform 0.18s ease,
+        opacity 0.18s ease,
+        box-shadow 0.18s ease;
 }
 
-
 .officialStoreEditButton:active {
-    transform: scale(0.95);
-    opacity: 0.85;
+    transform: scale(0.94);
+    opacity: 0.86;
+
+    box-shadow:
+        0 3px 9px rgba(0, 0, 0, 0.12);
 }
 
 
@@ -641,41 +768,38 @@ a {
 
     border-radius: 999px;
 
-    font-size: 10px;
-    font-weight: 800;
+    font-size: 9px;
+    font-weight: 850;
+
+    letter-spacing: 0.1px;
 
     white-space: nowrap;
 }
 
-
 .officialStoreStatusBadge {
-    background: #f1f1f1;
+    background: #f1f2f3;
     color: #555;
 }
 
-
 .officialStoreStatusBadge.active {
-    background: #e8f8ee;
-    color: #18753c;
+    background: #e7f8ed;
+    color: #19733b;
 }
-
 
 .officialStoreStatusBadge.pending {
-    background: #fff6dc;
-    color: #946b00;
+    background: #fff5d8;
+    color: #8d6700;
 }
-
 
 .officialStoreStatusBadge.blocked,
 .officialStoreStatusBadge.rejected {
     background: #fdeaea;
-    color: #a52828;
+    color: #a62b2b;
 }
 
-
 .officialStoreVerifiedBadge {
-    background: #eef4ff;
-    color: #2c62b7;
+    background: #edf3ff;
+    color: #2b61b6;
 }
 
 
@@ -684,55 +808,63 @@ a {
 ========================================================= */
 
 .officialStoresEmpty {
-    min-height: 300px;
+    min-height: 320px;
 
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 
-    padding: 30px;
+    padding: 34px;
 
     text-align: center;
 }
 
-
 .emptyIcon {
-    width: 72px;
-    height: 72px;
+    width: 76px;
+    height: 76px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    margin-bottom: 16px;
+    margin-bottom: 17px;
 
-    background: #fff;
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff,
+            #f1f1f1
+        );
 
-    border-radius: 22px;
+    border: 1px solid rgba(0, 0, 0, 0.055);
+
+    border-radius: 23px;
 
     font-size: 32px;
 
     box-shadow:
-        0 8px 25px rgba(0, 0, 0, 0.06);
+        0 12px 30px rgba(0, 0, 0, 0.07);
 }
-
 
 .officialStoresEmpty h2 {
     margin-bottom: 7px;
 
+    color: #111;
+
     font-size: 18px;
-    font-weight: 800;
+    font-weight: 850;
+
+    letter-spacing: -0.3px;
 }
 
-
 .officialStoresEmpty p {
-    max-width: 320px;
+    max-width: 330px;
 
     color: #888;
 
-    font-size: 13px;
-    line-height: 1.5;
+    font-size: 12px;
+    line-height: 1.55;
 }
 
 
@@ -758,23 +890,21 @@ a {
         max(20px, env(safe-area-inset-left));
 }
 
-
 .officialStoreModal.hidden {
     display: none !important;
 }
-
 
 .officialStoreModalOverlay {
     position: absolute;
 
     inset: 0;
 
-    background: rgba(10, 10, 10, 0.58);
+    background:
+        rgba(8, 8, 8, 0.62);
 
-    backdrop-filter: blur(7px);
-    -webkit-backdrop-filter: blur(7px);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
-
 
 .officialStoreModalContent {
     position: relative;
@@ -787,26 +917,46 @@ a {
         calc(100vh - 40px);
 
     max-height:
-        calc(
-            100dvh - 40px
-        );
+        calc(100dvh - 40px);
 
     overflow-y: auto;
 
-    background: #f8f8f8;
+    background:
+        linear-gradient(
+            180deg,
+            #fafafa,
+            #f5f5f5
+        );
 
-    border-radius: 25px;
+    border-radius: 26px;
 
-    border: 1px solid rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.65);
 
     box-shadow:
-        0 25px 80px rgba(0, 0, 0, 0.28);
+        0 30px 90px rgba(0, 0, 0, 0.30),
+        0 5px 25px rgba(0, 0, 0, 0.10);
 
     overscroll-behavior: contain;
 
     -webkit-overflow-scrolling: touch;
+
+    animation:
+        officialStoreModalIn 0.22s ease;
 }
 
+@keyframes officialStoreModalIn {
+
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.985);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+}
 
 .officialStoreModalHeader {
     position: sticky;
@@ -819,66 +969,67 @@ a {
     align-items: center;
     justify-content: space-between;
 
-    padding: 18px 20px;
+    padding: 19px 21px;
 
-    background: rgba(248, 248, 248, 0.94);
+    background:
+        rgba(250, 250, 250, 0.93);
 
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.055);
 
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
 }
-
 
 .modalEyebrow {
     display: block;
 
     margin-bottom: 4px;
 
-    color: #999;
+    color: #9a9a9a;
 
-    font-size: 9px;
+    font-size: 8px;
     font-weight: 850;
 
-    letter-spacing: 1.5px;
+    letter-spacing: 1.7px;
+
+    text-transform: uppercase;
 }
 
-
 .officialStoreModalHeader h2 {
+    color: #111;
+
     font-size: 20px;
     font-weight: 850;
 
-    letter-spacing: -0.4px;
+    letter-spacing: -0.5px;
 }
 
-
 .modalCloseButton {
-    width: 40px;
-    height: 40px;
+    width: 41px;
+    height: 41px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border: none;
+    border: 1px solid rgba(0, 0, 0, 0.055);
 
     border-radius: 13px;
 
-    background: #eaeaea;
+    background: #ededed;
     color: #222;
 
-    font-size: 25px;
+    font-size: 24px;
     line-height: 1;
 
     transition:
-        transform 0.2s ease,
-        background 0.2s ease;
+        transform 0.18s ease,
+        background 0.18s ease;
 }
 
-
 .modalCloseButton:active {
-    transform: scale(0.92);
-    background: #ddd;
+    transform: scale(0.91);
+    background: #dedede;
 }
 
 
@@ -887,70 +1038,71 @@ a {
 ========================================================= */
 
 .officialStoreForm {
-    padding: 18px;
+    padding: 19px;
 }
 
-
 .formSection {
-    margin-bottom: 18px;
+    margin-bottom: 17px;
 
     padding: 19px;
 
-    background: #fff;
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff,
+            #fcfcfc
+        );
 
     border: 1px solid rgba(0, 0, 0, 0.055);
 
     border-radius: 19px;
 
     box-shadow:
-        0 5px 18px rgba(0, 0, 0, 0.035);
+        0 7px 22px rgba(0, 0, 0, 0.035);
 }
-
 
 .formSectionHeader {
     margin-bottom: 18px;
 }
 
-
 .formSectionHeader h3 {
     margin-bottom: 5px;
+
+    color: #111;
 
     font-size: 15px;
     font-weight: 850;
 
-    letter-spacing: -0.2px;
+    letter-spacing: -0.25px;
 }
-
 
 .formSectionHeader p {
-    color: #888;
+    color: #8a8a8a;
 
-    font-size: 11px;
-    line-height: 1.5;
+    font-size: 10px;
+    line-height: 1.55;
 }
-
 
 .formGroup {
     margin-bottom: 15px;
 }
 
-
 .formGroup:last-child {
     margin-bottom: 0;
 }
-
 
 .formGroup label {
     display: block;
 
     margin-bottom: 7px;
 
-    color: #444;
+    color: #404040;
 
-    font-size: 11px;
-    font-weight: 750;
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 0.05px;
 }
-
 
 .formGroup input,
 .formGroup textarea,
@@ -970,20 +1122,19 @@ a {
     transition:
         border-color 0.2s ease,
         background 0.2s ease,
-        box-shadow 0.2s ease;
+        box-shadow 0.2s ease,
+        transform 0.15s ease;
 }
-
 
 .formGroup input,
 .formGroup select {
-    min-height: 45px;
+    min-height: 46px;
 
     padding: 0 13px;
 }
 
-
 .formGroup textarea {
-    min-height: 100px;
+    min-height: 105px;
 
     padding: 12px 13px;
 
@@ -992,27 +1143,29 @@ a {
     line-height: 1.5;
 }
 
+.formGroup input::placeholder,
+.formGroup textarea::placeholder {
+    color: #a2a2a2;
+}
 
 .formGroup input:focus,
 .formGroup textarea:focus,
 .formGroup select:focus {
-    border-color: #111;
+    border-color: #161616;
 
     background: #fff;
 
     box-shadow:
-        0 0 0 3px rgba(0, 0, 0, 0.06);
+        0 0 0 3px rgba(0, 0, 0, 0.055);
 }
 
-
 .formGroup input[readonly] {
-    background: #f1f1f1;
+    background: #f0f0f0;
 
     color: #777;
 
     cursor: not-allowed;
 }
-
 
 .formGrid {
     display: grid;
@@ -1026,34 +1179,38 @@ a {
 
 /* =========================================================
    IMAGE FIELDS
+   URL MODE — LOGO / BANNER
 ========================================================= */
 
 .imageField {
     display: grid;
 
     grid-template-columns:
-        135px minmax(0, 1fr);
+        145px minmax(0, 1fr);
 
-    gap: 16px;
+    gap: 17px;
 
     align-items: center;
 
-    margin-bottom: 18px;
+    margin-bottom: 17px;
 
     padding: 13px;
 
-    background: #fafafa;
+    background:
+        linear-gradient(
+            145deg,
+            #fafafa,
+            #f5f5f5
+        );
 
-    border: 1px solid #ededed;
+    border: 1px solid #e8e8e8;
 
     border-radius: 17px;
 }
 
-
 .imageField:last-child {
     margin-bottom: 0;
 }
-
 
 .storeImagePreview,
 .storeBannerPreview {
@@ -1070,34 +1227,34 @@ a {
     background:
         linear-gradient(
             135deg,
-            #ededed,
-            #f8f8f8
+            #eeeeee,
+            #fafafa
         );
 
-    border: 1px solid #e1e1e1;
+    border: 1px solid #e0e0e0;
 
     color: #999;
 
-    font-size: 11px;
-    font-weight: 700;
+    font-size: 10px;
+    font-weight: 750;
 
     text-align: center;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
-
 .storeImagePreview {
-    height: 110px;
+    height: 112px;
 
     border-radius: 16px;
 }
 
-
 .storeBannerPreview {
-    height: 95px;
+    height: 96px;
 
     border-radius: 14px;
 }
-
 
 .storeImagePreview img,
 .storeBannerPreview img {
@@ -1109,66 +1266,68 @@ a {
     display: block;
 }
 
-
 .imageFieldControls {
     min-width: 0;
 }
-
 
 .imageFieldControls label {
     display: block;
 
     margin-bottom: 8px;
 
-    color: #444;
+    color: #404040;
 
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 800;
 }
 
-
-.imageFieldControls input[type="file"] {
+.imageFieldControls input[type="url"],
+.imageFieldControls input[type="text"] {
     width: 100%;
 
-    padding: 8px;
+    min-height: 44px;
+
+    padding: 0 12px;
+
+    border: 1px solid #dedede;
+
+    border-radius: 11px;
+
+    outline: none;
 
     background: #fff;
 
-    border: 1px dashed #cfcfcf;
-
-    border-radius: 12px;
-
-    color: #555;
+    color: #111;
 
     font-size: 11px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
+.imageFieldControls input[type="url"]:focus,
+.imageFieldControls input[type="text"]:focus {
+    border-color: #111;
 
-.imageFieldControls input[type="file"]::file-selector-button {
-    margin-right: 9px;
-
-    padding: 8px 11px;
-
-    border: none;
-
-    border-radius: 9px;
-
-    background: #111;
-    color: #fff;
-
-    font-size: 11px;
-    font-weight: 750;
-
-    cursor: pointer;
+    box-shadow:
+        0 0 0 3px rgba(0, 0, 0, 0.05);
 }
 
+.imageFieldControls input::placeholder {
+    color: #a0a0a0;
+}
 
 .imageFieldControls small {
-    color: #888;
+    display: block;
 
-    font-size: 10px;
+    margin-top: 7px;
 
-    line-height: 1.4;
+    color: #8b8b8b;
+
+    font-size: 9px;
+
+    line-height: 1.45;
 }
 
 
@@ -1179,19 +1338,24 @@ a {
 .validationNotice {
     display: flex;
     align-items: flex-start;
+
     gap: 10px;
 
     margin-top: 15px;
 
-    padding: 12px 13px;
+    padding: 13px;
 
-    background: #f5f7fa;
+    background:
+        linear-gradient(
+            145deg,
+            #f7f8fa,
+            #f3f4f6
+        );
 
-    border: 1px solid #e6e9ed;
+    border: 1px solid #e5e8ec;
 
     border-radius: 13px;
 }
-
 
 .validationNotice > span {
     flex: 0 0 auto;
@@ -1199,14 +1363,12 @@ a {
     font-size: 15px;
 }
 
-
 .validationNotice p {
-    color: #666;
+    color: #686868;
 
-    font-size: 11px;
+    font-size: 10px;
     line-height: 1.55;
 }
-
 
 .validationNotice strong {
     color: #111;
@@ -1224,14 +1386,16 @@ a {
 
     background: #fff0f0;
 
-    border: 1px solid #ffd3d3;
+    border: 1px solid #ffd2d2;
 
     border-radius: 10px;
 
     color: #a32323;
 
-    font-size: 11px;
-    font-weight: 700;
+    font-size: 10px;
+    font-weight: 750;
+
+    line-height: 1.45;
 }
 
 
@@ -1253,61 +1417,69 @@ a {
     padding:
         13px
         0
-        max(2px, env(safe-area-inset-bottom));
+        max(3px, env(safe-area-inset-bottom));
 
     background:
         linear-gradient(
             to bottom,
             rgba(248, 248, 248, 0),
-            #f8f8f8 20%
+            rgba(248, 248, 248, 0.96) 22%
         );
-}
 
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
 
 .secondaryButton,
 .primaryButton {
-    min-height: 48px;
+    min-height: 49px;
 
     border-radius: 14px;
 
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 800;
 
     transition:
-        transform 0.2s ease,
-        opacity 0.2s ease,
-        box-shadow 0.2s ease;
+        transform 0.18s ease,
+        opacity 0.18s ease,
+        box-shadow 0.18s ease;
 }
-
 
 .secondaryButton {
     flex: 0 0 35%;
 
-    border: 1px solid #ddd;
+    border: 1px solid #dcdcdc;
 
-    background: #fff;
+    background: rgba(255, 255, 255, 0.96);
     color: #222;
-}
 
+    box-shadow:
+        0 5px 15px rgba(0, 0, 0, 0.035);
+}
 
 .primaryButton {
     flex: 1;
 
     border: none;
 
-    background: #111;
+    background:
+        linear-gradient(
+            145deg,
+            #191919,
+            #050505
+        );
+
     color: #fff;
 
     box-shadow:
-        0 8px 20px rgba(0, 0, 0, 0.15);
+        0 9px 22px rgba(0, 0, 0, 0.17),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07);
 }
-
 
 .secondaryButton:active,
 .primaryButton:active {
     transform: scale(0.97);
 }
-
 
 .primaryButton:disabled,
 .secondaryButton:disabled {
@@ -1335,30 +1507,38 @@ a {
 
     z-index: 2000;
 
-    min-width: min(320px, calc(100vw - 36px));
+    min-width:
+        min(
+            320px,
+            calc(100vw - 36px)
+        );
 
-    max-width: calc(100vw - 36px);
+    max-width:
+        calc(100vw - 36px);
 
     padding: 13px 16px;
 
-    background: rgba(20, 20, 20, 0.94);
+    background:
+        rgba(20, 20, 20, 0.95);
 
     color: #fff;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
 
     border-radius: 14px;
 
     box-shadow:
-        0 12px 35px rgba(0, 0, 0, 0.25);
+        0 15px 40px rgba(0, 0, 0, 0.27);
 
     text-align: center;
 
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 650;
 
     opacity: 0;
 
     transform:
-        translate(-50%, 15px);
+        translate(-50%, 16px);
 
     pointer-events: none;
 
@@ -1367,12 +1547,45 @@ a {
         transform 0.25s ease;
 }
 
-
 .officialStoreToast.show {
     opacity: 1;
 
     transform:
         translate(-50%, 0);
+}
+
+
+/* =========================================================
+   HOVER — DESKTOP / TABLET
+========================================================= */
+
+@media (hover: hover) and (pointer: fine) {
+
+    .officialStoreAdminCard:hover {
+        transform: translateY(-2px);
+
+        border-color: rgba(0, 0, 0, 0.09);
+
+        box-shadow:
+            0 16px 38px rgba(0, 0, 0, 0.075),
+            inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+
+    .officialStoreAdminCard:hover::before {
+        opacity: 1;
+    }
+
+    .officialStoreEditButton:hover {
+        box-shadow:
+            0 10px 20px rgba(0, 0, 0, 0.20);
+    }
+
+    .headerActionButton:hover {
+        background: #fafafa;
+
+        border-color: rgba(0, 0, 0, 0.12);
+    }
+
 }
 
 
@@ -1386,7 +1599,6 @@ a {
         grid-template-columns:
             repeat(2, minmax(0, 1fr));
     }
-
 
     .officialStoresList {
         grid-template-columns: 1fr;
@@ -1411,11 +1623,9 @@ a {
             max(13px, env(safe-area-inset-left));
     }
 
-
     .officialStoresHeaderLeft {
         gap: 10px;
     }
-
 
     .backButton {
         width: 39px;
@@ -1428,16 +1638,19 @@ a {
         font-size: 21px;
     }
 
-
     .officialStoresHeaderLeft h1 {
         font-size: 17px;
-    }
 
+        letter-spacing: -0.45px;
+    }
 
     .officialStoresHeaderLeft p {
-        font-size: 10px;
+        font-size: 9px;
     }
 
+    .officialStoresHeaderRight {
+        gap: 5px;
+    }
 
     .headerActionButton {
         min-height: 39px;
@@ -1446,16 +1659,23 @@ a {
 
         border-radius: 11px;
 
-        font-size: 11px;
+        font-size: 10px;
     }
-
 
     .officialStoresMain {
-        width: min(100% - 22px, 1180px);
+        width:
+            min(
+                calc(100% - 22px),
+                1180px
+            );
 
         padding-top: 16px;
-    }
 
+        padding-bottom:
+            calc(
+                40px + env(safe-area-inset-bottom)
+            );
+    }
 
     .officialStoresStats {
         gap: 9px;
@@ -1463,20 +1683,19 @@ a {
         margin-bottom: 14px;
     }
 
-
     .officialStoreStatCard {
-        min-height: 90px;
+        min-height: 92px;
 
         padding: 14px;
 
         border-radius: 16px;
     }
 
-
     .officialStoreStatCard span {
-        font-size: 9px;
-    }
+        font-size: 8px;
 
+        letter-spacing: 0.55px;
+    }
 
     .officialStoreStatCard strong {
         margin-top: 8px;
@@ -1484,13 +1703,11 @@ a {
         font-size: 25px;
     }
 
-
     .officialStoresToolbar {
         flex-direction: column;
 
         gap: 9px;
     }
-
 
     .officialStoresSearchBox,
     .officialStoresFilterBox {
@@ -1499,23 +1716,29 @@ a {
         border-radius: 13px;
     }
 
+    .officialStoresSearchBox {
+        padding: 0 13px;
+    }
+
+    .officialStoresSearchBox input {
+        font-size: 13px;
+    }
 
     .officialStoresFilterBox {
         width: 100%;
     }
 
-
     .officialStoresList {
         gap: 11px;
     }
 
-
     .officialStoreAdminCard {
+        gap: 11px;
+
         padding: 12px;
 
         border-radius: 17px;
     }
-
 
     .officialStoreAdminLogo {
         width: 62px;
@@ -1526,20 +1749,40 @@ a {
         border-radius: 15px;
     }
 
-
     .officialStoreAdminInfo h3 {
         font-size: 14px;
     }
 
+    .officialStoreAdminInfo p {
+        font-size: 10px;
+    }
+
+    .officialStoreAdminMeta {
+        gap: 5px;
+
+        margin-top: 7px;
+    }
+
+    .officialStoreStatusBadge,
+    .officialStoreVerifiedBadge {
+        min-height: 23px;
+
+        padding: 0 8px;
+
+        font-size: 8px;
+    }
 
     .officialStoreEditButton {
         min-height: 35px;
 
         padding: 0 10px;
 
-        font-size: 10px;
+        border-radius: 10px;
+
+        font-size: 9px;
     }
 
+    /* MODAL */
 
     .officialStoreModal {
         align-items: flex-end;
@@ -1547,22 +1790,20 @@ a {
         padding: 0;
     }
 
-
     .officialStoreModalContent {
         width: 100%;
 
-        max-height: 94dvh;
+        max-height: 95dvh;
 
         border-radius:
-            24px
-            24px
+            25px
+            25px
             0
             0;
 
         animation:
             officialStoreModalUp 0.25s ease;
     }
-
 
     @keyframes officialStoreModalUp {
 
@@ -1576,27 +1817,30 @@ a {
 
     }
 
-
     .officialStoreModalHeader {
         padding: 16px;
 
         border-radius:
-            24px
-            24px
+            25px
+            25px
             0
             0;
     }
-
 
     .officialStoreModalHeader h2 {
         font-size: 18px;
     }
 
+    .modalCloseButton {
+        width: 39px;
+        height: 39px;
+
+        border-radius: 12px;
+    }
 
     .officialStoreForm {
         padding: 12px;
     }
-
 
     .formSection {
         padding: 15px;
@@ -1606,21 +1850,17 @@ a {
         border-radius: 16px;
     }
 
-
     .formSectionHeader {
         margin-bottom: 14px;
     }
-
 
     .formSectionHeader h3 {
         font-size: 14px;
     }
 
-
     .formSectionHeader p {
-        font-size: 10px;
+        font-size: 9px;
     }
-
 
     .formGrid {
         grid-template-columns: 1fr;
@@ -1628,6 +1868,14 @@ a {
         gap: 0;
     }
 
+    .formGroup input,
+    .formGroup select {
+        min-height: 45px;
+    }
+
+    .formGroup textarea {
+        min-height: 95px;
+    }
 
     .imageField {
         grid-template-columns: 1fr;
@@ -1639,26 +1887,24 @@ a {
         border-radius: 14px;
     }
 
-
     .storeImagePreview {
         height: 145px;
     }
-
 
     .storeBannerPreview {
         height: 125px;
     }
 
+    .imageFieldControls input[type="url"],
+    .imageFieldControls input[type="text"] {
+        min-height: 44px;
 
-    .imageFieldControls input[type="file"] {
-        padding: 7px;
+        font-size: 11px;
     }
-
 
     .officialStoreFormActions {
         padding-top: 12px;
     }
-
 
     .secondaryButton,
     .primaryButton {
@@ -1666,7 +1912,14 @@ a {
 
         border-radius: 13px;
 
-        font-size: 12px;
+        font-size: 11px;
+    }
+
+    .officialStoreToast {
+        bottom:
+            calc(
+                18px + env(safe-area-inset-bottom)
+            );
     }
 
 }
@@ -1682,55 +1935,84 @@ a {
         display: none;
     }
 
-
     .officialStoresHeaderLeft h1 {
         font-size: 16px;
     }
 
-
     .headerActionButton {
         padding: 0 9px;
 
-        font-size: 10px;
+        font-size: 9px;
     }
-
 
     .officialStoreStatCard {
         min-height: 84px;
 
         padding: 12px;
-    }
 
+        border-radius: 15px;
+    }
 
     .officialStoreStatCard strong {
         font-size: 23px;
     }
 
-
     .officialStoreAdminCard {
-        gap: 10px;
+        gap: 9px;
     }
-
 
     .officialStoreAdminLogo {
         width: 56px;
         height: 56px;
 
         flex-basis: 56px;
+
+        border-radius: 14px;
+    }
+
+    .officialStoreAdminInfo h3 {
+        font-size: 13px;
+    }
+
+    .officialStoreEditButton {
+        padding: 0 9px;
+
+        font-size: 8px;
     }
 
 }
 
 
 /* =========================================================
-   DARK MODE — PRÉPARÉ POUR PLUS TARD
+   ACCESSIBILITY
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+
+        transition-duration: 0.01ms !important;
+    }
+
+}
+
+
+/* =========================================================
+   DARK MODE
+   DÉSACTIVÉ POUR LE MOMENT
 ========================================================= */
 
 @media (prefers-color-scheme: dark) {
 
-    body {
-        background: #101010;
-        color: #f5f5f5;
-    }
+    /*
+       Toma Admin reste volontairement en mode clair
+       pour conserver l'identité premium actuelle.
+    */
 
 }
