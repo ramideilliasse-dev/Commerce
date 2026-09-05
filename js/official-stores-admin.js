@@ -2469,5 +2469,181 @@ storeSettings.addEventListener(
 // BLOC 6 PRONTO
 // ----------------------------------------------------------
 
+// ==========================================================
+// TOMA ADMIN — LOJAS OFICIAIS
+// BLOC 7 — PESQUISA E FILTRAGEM
+// ==========================================================
 
+
+// ==========================================================
+// 1. FILTRAR LOJAS
+// ==========================================================
+
+function filterOfficialStores() {
+
+    // ------------------------------------------------------
+    // TEXTO DA PESQUISA
+    // ------------------------------------------------------
+
+    const searchTerm =
+        officialStoresSearch.value
+            .trim()
+            .toLowerCase();
+
+
+    // ------------------------------------------------------
+    // STATUS SELECIONADO
+    // ------------------------------------------------------
+
+    const selectedStatus =
+        officialStoresStatusFilter.value
+            .trim()
+            .toLowerCase();
+
+
+    // ------------------------------------------------------
+    // FILTRAR
+    // ------------------------------------------------------
+
+    filteredOfficialStores =
+        officialStores.filter(
+            function (store) {
+
+                // ------------------------------------------
+                // TEXTO PESQUISÁVEL
+                // ------------------------------------------
+
+                const name =
+                    String(
+                        store.name || ""
+                    ).toLowerCase();
+
+                const category =
+                    String(
+                        store.category || ""
+                    ).toLowerCase();
+
+                const id =
+                    String(
+                        store.id || ""
+                    ).toLowerCase();
+
+                const description =
+                    String(
+                        store.description || ""
+                    ).toLowerCase();
+
+                const slug =
+                    String(
+                        store.slug || ""
+                    ).toLowerCase();
+
+
+                // ------------------------------------------
+                // PESQUISA
+                // ------------------------------------------
+
+                const matchesSearch =
+                    !searchTerm ||
+                    name.includes(searchTerm) ||
+                    category.includes(searchTerm) ||
+                    id.includes(searchTerm) ||
+                    description.includes(searchTerm) ||
+                    slug.includes(searchTerm);
+
+
+                // ------------------------------------------
+                // STATUS
+                // ------------------------------------------
+
+                const storeStatus =
+                    String(
+                        store.status || ""
+                    )
+                    .trim()
+                    .toLowerCase();
+
+
+                const matchesStatus =
+                    !selectedStatus ||
+                    selectedStatus === "all" ||
+                    storeStatus === selectedStatus;
+
+
+                // ------------------------------------------
+                // RESULTADO
+                // ------------------------------------------
+
+                return (
+                    matchesSearch &&
+                    matchesStatus
+                );
+
+            }
+        );
+
+
+    // ------------------------------------------------------
+    // MOSTRAR RESULTADO
+    // ------------------------------------------------------
+
+    renderOfficialStores(
+        filteredOfficialStores
+    );
+
+}
+
+
+// ==========================================================
+// 2. PESQUISA EM TEMPO REAL
+// ==========================================================
+
+if (officialStoresSearch) {
+
+    officialStoresSearch.addEventListener(
+        "input",
+        filterOfficialStores
+    );
+
+}
+
+
+// ==========================================================
+// 3. FILTRO DE STATUS
+// ==========================================================
+
+if (officialStoresStatusFilter) {
+
+    officialStoresStatusFilter.addEventListener(
+        "change",
+        filterOfficialStores
+    );
+
+}
+
+
+// ==========================================================
+// 4. BOTÃO ATUALIZAR
+// ==========================================================
+
+if (refreshOfficialStores) {
+
+    refreshOfficialStores.addEventListener(
+        "click",
+        async function () {
+
+            await loadOfficialStores();
+
+            // Reaplicar pesquisa/filtro atuais
+            filterOfficialStores();
+
+        }
+    );
+
+}
+
+
+// ==========================================================
+// 5. BLOC 7 TERMINADO
+// ==========================================================
  
