@@ -1138,51 +1138,28 @@ function formatStoreDate(value) {
         let date = null;
 
 
-        // Firebase Timestamp
-
         if (
             value &&
             typeof value.toDate === "function"
         ) {
 
-            date =
-                value.toDate();
+            date = value.toDate();
 
-        }
-
-
-        // Date
-
-        else if (
+        } else if (
             value instanceof Date
         ) {
 
-            date =
-                value;
+            date = value;
 
-        }
-
-
-        // Número / timestamp
-
-        else if (
+        } else if (
             typeof value === "number"
         ) {
 
-            date =
-                new Date(value);
+            date = new Date(value);
 
-        }
+        } else {
 
-
-        // String
-
-        else if (
-            typeof value === "string"
-        ) {
-
-            date =
-                new Date(value);
+            date = new Date(value);
 
         }
 
@@ -1215,7 +1192,7 @@ function formatStoreDate(value) {
 
 
 // ==========================================================
-// 3. PREVIEW DO LOGO
+// 3. PREVIEW LOGO
 // ==========================================================
 
 function updateStoreLogoPreview(logoUrl) {
@@ -1232,9 +1209,7 @@ function updateStoreLogoPreview(logoUrl) {
     if (!url) {
 
         storeLogoPreview.innerHTML = `
-            <span>
-                Logo
-            </span>
+            <span>Logo</span>
         `;
 
         return;
@@ -1264,7 +1239,7 @@ function updateStoreLogoPreview(logoUrl) {
 
 
 // ==========================================================
-// 4. PREVIEW DO BANNER
+// 4. PREVIEW BANNER
 // ==========================================================
 
 function updateStoreBannerPreview(bannerUrl) {
@@ -1281,9 +1256,7 @@ function updateStoreBannerPreview(bannerUrl) {
     if (!url) {
 
         storeBannerPreview.innerHTML = `
-            <span>
-                Banner
-            </span>
+            <span>Banner</span>
         `;
 
         return;
@@ -1319,10 +1292,30 @@ function updateStoreBannerPreview(bannerUrl) {
 function openOfficialStoreModal() {
 
     // ------------------------------------------------------
-    // Garantir que os elementos existem
+    // Buscar diretamente os elementos HTML
     // ------------------------------------------------------
 
-    if (!officialStoreModal) {
+    const modal =
+        document.getElementById(
+            "officialStoreModal"
+        );
+
+    const overlay =
+        document.getElementById(
+            "officialStoreModalOverlay"
+        );
+
+    const content =
+        document.getElementById(
+            "officialStoreModalContent"
+        );
+
+
+    // ------------------------------------------------------
+    // Verificação
+    // ------------------------------------------------------
+
+    if (!modal) {
 
         alert(
             "ERRO MODAL ❌\n\n" +
@@ -1333,18 +1326,7 @@ function openOfficialStoreModal() {
     }
 
 
-    if (!officialStoreModalContent) {
-
-        alert(
-            "ERRO MODAL ❌\n\n" +
-            "officialStoreModalContent não foi encontrado."
-        );
-
-        return false;
-    }
-
-
-    if (!officialStoreModalOverlay) {
+    if (!overlay) {
 
         alert(
             "ERRO MODAL ❌\n\n" +
@@ -1355,35 +1337,46 @@ function openOfficialStoreModal() {
     }
 
 
+    if (!content) {
+
+        alert(
+            "ERRO MODAL ❌\n\n" +
+            "officialStoreModalContent não foi encontrado.\n\n" +
+            "Verifique o HTML do modal."
+        );
+
+        return false;
+    }
+
+
     // ------------------------------------------------------
-    // Remover estados que podem esconder o modal
+    // Remover hidden
     // ------------------------------------------------------
 
-    officialStoreModal.hidden =
-        false;
-
-    officialStoreModalContent.hidden =
-        false;
-
-    officialStoreModalOverlay.hidden =
-        false;
+    modal.hidden = false;
+    overlay.hidden = false;
+    content.hidden = false;
 
 
-    officialStoreModal.classList.remove(
+    // ------------------------------------------------------
+    // Remover classes que podem esconder
+    // ------------------------------------------------------
+
+    modal.classList.remove(
         "hidden",
         "hide",
         "is-hidden",
         "closed"
     );
 
-    officialStoreModalContent.classList.remove(
+    overlay.classList.remove(
         "hidden",
         "hide",
         "is-hidden",
         "closed"
     );
 
-    officialStoreModalOverlay.classList.remove(
+    content.classList.remove(
         "hidden",
         "hide",
         "is-hidden",
@@ -1392,41 +1385,26 @@ function openOfficialStoreModal() {
 
 
     // ======================================================
-    // MODAL PRINCIPAL
+    // MODAL
     // ======================================================
 
     Object.assign(
-        officialStoreModal.style,
+        modal.style,
         {
-
             display: "flex",
-
             visibility: "visible",
-
             opacity: "1",
-
             pointerEvents: "auto",
-
             position: "fixed",
-
             top: "0",
-
             left: "0",
-
             right: "0",
-
             bottom: "0",
-
             width: "100%",
-
             height: "100%",
-
             zIndex: "10000",
-
             alignItems: "center",
-
             justifyContent: "center"
-
         }
     );
 
@@ -1436,33 +1414,20 @@ function openOfficialStoreModal() {
     // ======================================================
 
     Object.assign(
-        officialStoreModalOverlay.style,
+        overlay.style,
         {
-
             display: "block",
-
             visibility: "visible",
-
             opacity: "1",
-
             pointerEvents: "auto",
-
             position: "fixed",
-
             top: "0",
-
             left: "0",
-
             right: "0",
-
             bottom: "0",
-
             width: "100%",
-
             height: "100%",
-
             zIndex: "9999"
-
         }
     );
 
@@ -1472,44 +1437,29 @@ function openOfficialStoreModal() {
     // ======================================================
 
     Object.assign(
-        officialStoreModalContent.style,
+        content.style,
         {
-
             display: "block",
-
             visibility: "visible",
-
             opacity: "1",
-
             pointerEvents: "auto",
-
             position: "relative",
-
             zIndex: "10001",
-
             background: "#ffffff",
-
             color: "#111111",
-
             width: "min(92vw, 700px)",
-
             maxWidth: "700px",
-
             maxHeight: "90vh",
-
             overflowY: "auto",
-
             borderRadius: "20px",
-
             margin: "auto"
-
         }
     );
 
 
-    // ======================================================
-    // SCROLL DA PÁGINA
-    // ======================================================
+    // ------------------------------------------------------
+    // Bloquear scroll
+    // ------------------------------------------------------
 
     document.body.style.overflow =
         "hidden";
@@ -1525,70 +1475,78 @@ function openOfficialStoreModal() {
 
 function closeOfficialStoreEditModal() {
 
-    if (officialStoreModal) {
+    const modal =
+        document.getElementById(
+            "officialStoreModal"
+        );
 
-        officialStoreModal.hidden =
-            true;
+    const overlay =
+        document.getElementById(
+            "officialStoreModalOverlay"
+        );
 
-        officialStoreModal.style.display =
+    const content =
+        document.getElementById(
+            "officialStoreModalContent"
+        );
+
+
+    if (modal) {
+
+        modal.hidden = true;
+
+        modal.style.display =
             "none";
 
-        officialStoreModal.style.visibility =
+        modal.style.visibility =
             "hidden";
 
-        officialStoreModal.style.opacity =
+        modal.style.opacity =
             "0";
 
-        officialStoreModal.style.pointerEvents =
+        modal.style.pointerEvents =
             "none";
     }
 
 
-    if (officialStoreModalContent) {
+    if (content) {
 
-        officialStoreModalContent.hidden =
-            true;
+        content.hidden = true;
 
-        officialStoreModalContent.style.display =
+        content.style.display =
             "none";
 
-        officialStoreModalContent.style.visibility =
+        content.style.visibility =
             "hidden";
 
-        officialStoreModalContent.style.opacity =
+        content.style.opacity =
             "0";
 
-        officialStoreModalContent.style.pointerEvents =
+        content.style.pointerEvents =
             "none";
     }
 
 
-    if (officialStoreModalOverlay) {
+    if (overlay) {
 
-        officialStoreModalOverlay.hidden =
-            true;
+        overlay.hidden = true;
 
-        officialStoreModalOverlay.style.display =
+        overlay.style.display =
             "none";
 
-        officialStoreModalOverlay.style.visibility =
+        overlay.style.visibility =
             "hidden";
 
-        officialStoreModalOverlay.style.opacity =
+        overlay.style.opacity =
             "0";
 
-        officialStoreModalOverlay.style.pointerEvents =
+        overlay.style.pointerEvents =
             "none";
     }
 
 
     document.body.style.overflow =
         "";
-
-
-    console.log(
-        "Modal fechado."
-    );
 }
 
 
@@ -1606,7 +1564,7 @@ function openOfficialStoreEdit(storeIdValue) {
 
 
     // ------------------------------------------------------
-    // Procurar loja
+    // Buscar loja
     // ------------------------------------------------------
 
     const store =
@@ -1629,7 +1587,7 @@ function openOfficialStoreEdit(storeIdValue) {
 
 
     // ======================================================
-    // PREENCHER ID
+    // ID
     // ======================================================
 
     storeId.value =
@@ -1685,17 +1643,12 @@ function openOfficialStoreEdit(storeIdValue) {
 
 
     // ======================================================
-    // PREVIEW LOGO
+    // PREVIEWS
     // ======================================================
 
     updateStoreLogoPreview(
         store.logo || ""
     );
-
-
-    // ======================================================
-    // PREVIEW BANNER
-    // ======================================================
 
     updateStoreBannerPreview(
         store.banner || ""
@@ -1776,7 +1729,7 @@ function openOfficialStoreEdit(storeIdValue) {
 
 
     // ======================================================
-    // ERRO SETTINGS
+    // RESET ERRO SETTINGS
     // ======================================================
 
     if (settingsJsonError) {
@@ -1798,12 +1751,10 @@ function openOfficialStoreEdit(storeIdValue) {
             store.createdAt
         );
 
-
     storeUpdatedAt.value =
         formatStoreDate(
             store.updatedAt
         );
-
 
     storeAdminSettingsUpdatedAt.value =
         formatStoreDate(
@@ -1820,20 +1771,20 @@ function openOfficialStoreEdit(storeIdValue) {
 
 
     // ======================================================
-    // ABRIR MODAL
+    // ABRIR
     // ======================================================
 
-    const modalOpened =
+    const opened =
         openOfficialStoreModal();
 
 
-    if (!modalOpened) {
+    if (!opened) {
         return;
     }
 
 
     // ======================================================
-    // ALERTA FINAL
+    // SUCESSO
     // ======================================================
 
     alert(
@@ -1852,7 +1803,7 @@ function openOfficialStoreEdit(storeIdValue) {
 
 
 // ==========================================================
-// 8. CLIQUE NO BOTÃO EDITAR
+// 8. BOTÃO EDITAR
 // ==========================================================
 
 officialStoresList.addEventListener(
@@ -1953,7 +1904,7 @@ if (officialStoreModalOverlay) {
 
 
 // ==========================================================
-// 12. TECLA ESC
+// 12. ESC
 // ==========================================================
 
 document.addEventListener(
@@ -1967,9 +1918,15 @@ document.addEventListener(
         }
 
 
+        const modal =
+            document.getElementById(
+                "officialStoreModal"
+            );
+
+
         if (
-            officialStoreModal &&
-            officialStoreModal.hidden === false
+            modal &&
+            modal.hidden === false
         ) {
 
             closeOfficialStoreEditModal();
@@ -1981,7 +1938,7 @@ document.addEventListener(
 
 
 // ==========================================================
-// 13. PREVIEW LOGO AO DIGITAR
+// 13. PREVIEW LOGO
 // ==========================================================
 
 storeLogo.addEventListener(
@@ -1997,7 +1954,7 @@ storeLogo.addEventListener(
 
 
 // ==========================================================
-// 14. PREVIEW BANNER AO DIGITAR
+// 14. PREVIEW BANNER
 // ==========================================================
 
 storeBanner.addEventListener(
@@ -2020,18 +1977,17 @@ alert(
     "BLOC 5 PRONTO ✅\n\n" +
     "Sistema de edição preparado.\n\n" +
     "✓ Encontrar loja\n" +
-    "✓ Abrir loja\n" +
+    "✓ Carregar dados\n" +
     "✓ Preencher formulário\n" +
-    "✓ Logo URL\n" +
-    "✓ Banner URL\n" +
-    "✓ Preview logo\n" +
-    "✓ Preview banner\n" +
+    "✓ Logo\n" +
+    "✓ Banner\n" +
+    "✓ Preview\n" +
     "✓ Status\n" +
     "✓ Verificação\n" +
     "✓ Merchant IDs\n" +
     "✓ Settings\n" +
     "✓ Datas\n" +
-    "✓ Abrir modal\n" +
+    "✓ Modal\n" +
     "✓ Fechar modal\n\n" +
     "Ainda NÃO há gravação no Firestore."
 );
