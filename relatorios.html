@@ -523,6 +523,189 @@
 
 
 </section>
+             <!-- ==========================================
+     BLOC 4 — DESEMPENHO DE VENDAS
+=========================================== -->
+
+<section
+    id="salesPerformanceSection"
+    class="reportSection"
+    aria-label="Desempenho de vendas"
+>
+
+
+    <!-- ======================================
+         HEADER DA SEÇÃO
+    ======================================= -->
+
+    <div class="reportSectionHeader">
+
+        <div class="reportSectionTitleBlock">
+
+            <div class="reportSectionIcon">
+
+                <span class="material-symbols-rounded">
+                    trending_up
+                </span>
+
+            </div>
+
+            <div>
+
+                <h2 class="reportSectionTitle">
+                    Desempenho de vendas
+                </h2>
+
+                <p class="reportSectionSubtitle">
+                    Evolução das vendas durante o período selecionado
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="reportSectionActions">
+
+            <select
+                id="salesChartPeriod"
+                class="reportChartSelect"
+                aria-label="Período do gráfico"
+            >
+
+                <option value="daily">
+                    Diário
+                </option>
+
+                <option value="weekly">
+                    Semanal
+                </option>
+
+                <option value="monthly">
+                    Mensal
+                </option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================
+         RESUMO DO GRÁFICO
+    ======================================= -->
+
+    <div class="salesChartSummary">
+
+
+        <div class="salesChartSummaryItem">
+
+            <span class="salesChartSummaryLabel">
+                Vendas
+            </span>
+
+            <strong
+                id="salesChartTotal"
+                class="salesChartSummaryValue"
+            >
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="salesChartSummaryDivider"></div>
+
+
+        <div class="salesChartSummaryItem">
+
+            <span class="salesChartSummaryLabel">
+                Média
+            </span>
+
+            <strong
+                id="salesChartAverage"
+                class="salesChartSummaryValue"
+            >
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="salesChartSummaryDivider"></div>
+
+
+        <div class="salesChartSummaryItem">
+
+            <span class="salesChartSummaryLabel">
+                Melhor dia
+            </span>
+
+            <strong
+                id="salesChartBestDay"
+                class="salesChartSummaryValue"
+            >
+                —
+            </strong>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================
+         ÁREA DO GRÁFICO
+    ======================================= -->
+
+    <div
+        id="salesChartContainer"
+        class="salesChartContainer"
+    >
+
+        <div
+            id="salesChart"
+            class="salesChart"
+        >
+
+            <!--
+                O gráfico será criado
+                posteriormente pelo relatorios.js.
+            -->
+
+
+            <div
+                id="salesChartEmpty"
+                class="salesChartEmpty"
+            >
+
+                <div class="salesChartEmptyIcon">
+
+                    <span class="material-symbols-rounded">
+                        show_chart
+                    </span>
+
+                </div>
+
+                <strong>
+                    Dados de vendas
+                </strong>
+
+                <span>
+                    O gráfico será carregado aqui.
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</section>
                 <!--
                     Os blocos de relatórios
                     serão adicionados aqui
