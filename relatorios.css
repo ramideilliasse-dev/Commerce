@@ -916,3 +916,391 @@ a {
     }
 
 }
+/* =========================================================
+   BLOC 3 — INDICADORES PRINCIPAIS
+========================================================= */
+
+.reportsStats {
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 16px;
+
+    margin-bottom: 24px;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.reportStatCard {
+
+    position: relative;
+
+    min-width: 0;
+
+    padding: 20px;
+
+    background: #ffffff;
+
+    border: 1px solid #e7e7e7;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 5px 20px rgba(0, 0, 0, 0.035);
+
+    overflow: hidden;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
+}
+
+
+.reportStatCard:hover {
+
+    transform: translateY(-2px);
+
+    border-color: #dddddd;
+
+    box-shadow:
+        0 10px 28px rgba(0, 0, 0, 0.06);
+}
+
+
+/* =========================================================
+   CARD HEADER
+========================================================= */
+
+.reportStatHeader {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+}
+
+
+.reportStatIcon {
+
+    width: 44px;
+
+    height: 44px;
+
+    flex: 0 0 44px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 13px;
+
+    background: #f2f2f2;
+}
+
+
+.reportStatIcon .material-symbols-rounded {
+
+    font-size: 22px;
+
+    color: #111111;
+}
+
+
+.reportStatTag {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    min-height: 25px;
+
+    padding: 0 9px;
+
+    border-radius: 20px;
+
+    background: #f5f5f5;
+
+    color: #686868;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    letter-spacing: .15px;
+}
+
+
+/* =========================================================
+   CARD BODY
+========================================================= */
+
+.reportStatBody {
+
+    min-width: 0;
+}
+
+
+.reportStatLabel {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #777777;
+
+    font-size: 12px;
+
+    font-weight: 550;
+}
+
+
+.reportStatValue {
+
+    display: block;
+
+    max-width: 100%;
+
+    color: #111111;
+
+    font-size: 28px;
+
+    line-height: 1.15;
+
+    font-weight: 780;
+
+    letter-spacing: -.8px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   CARD BOTTOM
+========================================================= */
+
+.reportStatBottom {
+
+    display: flex;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+    margin-top: 17px;
+}
+
+
+.reportStatGrowth {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    min-height: 23px;
+
+    padding: 0 7px;
+
+    border-radius: 7px;
+
+    background: #f1f1f1;
+
+    color: #222222;
+
+    font-size: 10px;
+
+    font-weight: 750;
+}
+
+
+.reportStatComparison {
+
+    color: #8a8a8a;
+
+    font-size: 10px;
+
+    line-height: 1.3;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1050px) {
+
+    .reportsStats {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 13px;
+    }
+
+}
+
+
+/* =========================================================
+   IPHONE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .reportsStats {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 10px;
+
+        margin-bottom: 18px;
+    }
+
+
+    .reportStatCard {
+
+        padding: 15px;
+
+        border-radius: 15px;
+    }
+
+
+    .reportStatHeader {
+
+        margin-bottom: 15px;
+    }
+
+
+    .reportStatIcon {
+
+        width: 37px;
+
+        height: 37px;
+
+        flex-basis: 37px;
+
+        border-radius: 10px;
+    }
+
+
+    .reportStatIcon .material-symbols-rounded {
+
+        font-size: 19px;
+    }
+
+
+    .reportStatTag {
+
+        min-height: 21px;
+
+        padding: 0 7px;
+
+        font-size: 8px;
+    }
+
+
+    .reportStatLabel {
+
+        font-size: 10px;
+
+        margin-bottom: 4px;
+    }
+
+
+    .reportStatValue {
+
+        font-size: 21px;
+
+        letter-spacing: -.5px;
+    }
+
+
+    .reportStatBottom {
+
+        margin-top: 12px;
+
+        gap: 4px;
+    }
+
+
+    .reportStatGrowth {
+
+        min-height: 20px;
+
+        padding: 0 6px;
+
+        font-size: 9px;
+    }
+
+
+    .reportStatComparison {
+
+        width: 100%;
+
+        font-size: 8px;
+    }
+
+}
+
+
+/* =========================================================
+   TRÈS PETIT IPHONE
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .reportsStats {
+
+        gap: 8px;
+    }
+
+
+    .reportStatCard {
+
+        padding: 12px;
+
+        border-radius: 13px;
+    }
+
+
+    .reportStatHeader {
+
+        margin-bottom: 13px;
+    }
+
+
+    .reportStatValue {
+
+        font-size: 19px;
+    }
+
+
+    .reportStatComparison {
+
+        font-size: 7.5px;
+    }
+
+}
