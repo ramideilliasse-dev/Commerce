@@ -3119,3 +3119,772 @@ a {
     }
 
 }
+/* =========================================================
+   BLOC 7 — PRODUTOS E LOJAS OFICIAIS
+========================================================= */
+
+.productsStoresSection {
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 16px;
+
+    margin-bottom: 24px;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.productsReportCard {
+
+    min-width: 0;
+
+    padding: 20px;
+
+    background: #ffffff;
+
+    border: 1px solid #e6e6e6;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 5px 20px rgba(0, 0, 0, .035);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.productsReportHeader {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+}
+
+
+.productsReportTitleBlock {
+
+    min-width: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+}
+
+
+.productsReportIcon {
+
+    width: 43px;
+
+    height: 43px;
+
+    flex: 0 0 43px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #f1f1f1;
+}
+
+
+.productsReportIcon .material-symbols-rounded {
+
+    font-size: 21px;
+
+    color: #111111;
+}
+
+
+.productsReportTitle {
+
+    color: #111111;
+
+    font-size: 15px;
+
+    line-height: 1.3;
+
+    font-weight: 740;
+
+    letter-spacing: -.2px;
+}
+
+
+.productsReportSubtitle {
+
+    margin-top: 3px;
+
+    color: #7d7d7d;
+
+    font-size: 10px;
+
+    line-height: 1.4;
+}
+
+
+.productsReportHeaderBadge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 25px;
+
+    padding: 0 9px;
+
+    border-radius: 20px;
+
+    background: #f4f4f4;
+
+    color: #666666;
+
+    font-size: 9px;
+
+    font-weight: 750;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   TOP PRODUCTS
+========================================================= */
+
+.topProductsList {
+
+    display: flex;
+
+    flex-direction: column;
+}
+
+
+.topProductItem {
+
+    min-width: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 11px 0;
+
+    border-bottom: 1px solid #eeeeee;
+}
+
+
+.topProductItem:last-child {
+
+    border-bottom: none;
+
+    padding-bottom: 0;
+}
+
+
+.topProductItem:first-child {
+
+    padding-top: 0;
+}
+
+
+.topProductRank {
+
+    width: 24px;
+
+    flex: 0 0 24px;
+
+    color: #999999;
+
+    font-size: 9px;
+
+    font-weight: 750;
+
+    text-align: center;
+}
+
+
+.topProductImage {
+
+    width: 40px;
+
+    height: 40px;
+
+    flex: 0 0 40px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #f3f3f3;
+
+    overflow: hidden;
+}
+
+
+.topProductImage .material-symbols-rounded {
+
+    font-size: 19px;
+
+    color: #999999;
+}
+
+
+.topProductInfo {
+
+    min-width: 0;
+
+    flex: 1;
+}
+
+
+.topProductInfo strong {
+
+    display: block;
+
+    color: #222222;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.topProductInfo span {
+
+    display: block;
+
+    margin-top: 2px;
+
+    color: #8a8a8a;
+
+    font-size: 8px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.topProductValue {
+
+    flex: 0 0 auto;
+
+    text-align: right;
+}
+
+
+.topProductValue strong {
+
+    display: block;
+
+    color: #222222;
+
+    font-size: 12px;
+
+    font-weight: 750;
+}
+
+
+.topProductValue span {
+
+    display: block;
+
+    margin-top: 2px;
+
+    color: #999999;
+
+    font-size: 8px;
+}
+
+
+/* =========================================================
+   OFFICIAL STORES
+========================================================= */
+
+.officialStoreMainMetric {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding-bottom: 17px;
+
+    border-bottom: 1px solid #eeeeee;
+}
+
+
+.officialStoreMainMetric span {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #777777;
+
+    font-size: 10px;
+}
+
+
+.officialStoreMainMetric strong {
+
+    display: block;
+
+    color: #111111;
+
+    font-size: 27px;
+
+    line-height: 1;
+
+    font-weight: 780;
+
+    white-space: nowrap;
+}
+
+
+.officialStoreMetricIcon {
+
+    width: 47px;
+
+    height: 47px;
+
+    flex: 0 0 47px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 13px;
+
+    background: #f1f1f1;
+}
+
+
+.officialStoreMetricIcon .material-symbols-rounded {
+
+    font-size: 23px;
+
+    color: #111111;
+}
+
+
+/* =========================================================
+   OFFICIAL STORE MINI STATS
+========================================================= */
+
+.officialStoreMiniStats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 9px;
+
+    padding: 16px 0;
+}
+
+
+.officialStoreMiniStat {
+
+    min-width: 0;
+
+    padding: 12px;
+
+    border-radius: 10px;
+
+    background: #f8f8f8;
+
+    border: 1px solid #eeeeee;
+}
+
+
+.officialStoreMiniStat span {
+
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #858585;
+
+    font-size: 9px;
+}
+
+
+.officialStoreMiniStat strong {
+
+    display: block;
+
+    color: #222222;
+
+    font-size: 15px;
+
+    font-weight: 740;
+}
+
+
+/* =========================================================
+   OFFICIAL STORE SHARE
+========================================================= */
+
+.officialStoreShare {
+
+    padding-top: 1px;
+}
+
+
+.officialStoreShareHeader {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 10px;
+
+    margin-bottom: 7px;
+}
+
+
+.officialStoreShareHeader span {
+
+    color: #777777;
+
+    font-size: 9px;
+}
+
+
+.officialStoreShareHeader strong {
+
+    color: #222222;
+
+    font-size: 10px;
+
+    font-weight: 750;
+}
+
+
+.officialStoreShareTrack {
+
+    width: 100%;
+
+    height: 7px;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    background: #eeeeee;
+}
+
+
+.officialStoreShareBar {
+
+    height: 100%;
+
+    background: #111111;
+
+    border-radius: inherit;
+
+    transition:
+        width .4s ease;
+}
+
+
+/* =========================================================
+   IPHONE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .productsStoresSection {
+
+        grid-template-columns:
+            1fr;
+
+        gap: 10px;
+
+        margin-bottom: 18px;
+    }
+
+
+    .productsReportCard {
+
+        padding: 15px;
+
+        border-radius: 15px;
+    }
+
+
+    .productsReportHeader {
+
+        margin-bottom: 17px;
+    }
+
+
+    .productsReportTitleBlock {
+
+        gap: 9px;
+    }
+
+
+    .productsReportIcon {
+
+        width: 37px;
+
+        height: 37px;
+
+        flex-basis: 37px;
+
+        border-radius: 10px;
+    }
+
+
+    .productsReportIcon .material-symbols-rounded {
+
+        font-size: 19px;
+    }
+
+
+    .productsReportTitle {
+
+        font-size: 13px;
+    }
+
+
+    .productsReportSubtitle {
+
+        margin-top: 2px;
+
+        font-size: 8px;
+    }
+
+
+    .productsReportHeaderBadge {
+
+        min-height: 21px;
+
+        padding: 0 7px;
+
+        font-size: 8px;
+    }
+
+
+    .topProductItem {
+
+        gap: 8px;
+
+        padding: 9px 0;
+    }
+
+
+    .topProductRank {
+
+        width: 20px;
+
+        flex-basis: 20px;
+
+        font-size: 8px;
+    }
+
+
+    .topProductImage {
+
+        width: 35px;
+
+        height: 35px;
+
+        flex-basis: 35px;
+
+        border-radius: 9px;
+    }
+
+
+    .topProductImage .material-symbols-rounded {
+
+        font-size: 17px;
+    }
+
+
+    .topProductInfo strong {
+
+        font-size: 10px;
+    }
+
+
+    .topProductInfo span {
+
+        font-size: 7px;
+    }
+
+
+    .topProductValue strong {
+
+        font-size: 11px;
+    }
+
+
+    .topProductValue span {
+
+        font-size: 7px;
+    }
+
+
+    .officialStoreMainMetric {
+
+        padding-bottom: 14px;
+    }
+
+
+    .officialStoreMainMetric span {
+
+        font-size: 8px;
+
+        margin-bottom: 4px;
+    }
+
+
+    .officialStoreMainMetric strong {
+
+        font-size: 23px;
+    }
+
+
+    .officialStoreMetricIcon {
+
+        width: 40px;
+
+        height: 40px;
+
+        flex-basis: 40px;
+
+        border-radius: 11px;
+    }
+
+
+    .officialStoreMetricIcon .material-symbols-rounded {
+
+        font-size: 20px;
+    }
+
+
+    .officialStoreMiniStats {
+
+        gap: 7px;
+
+        padding: 12px 0;
+    }
+
+
+    .officialStoreMiniStat {
+
+        padding: 9px;
+
+        border-radius: 9px;
+    }
+
+
+    .officialStoreMiniStat span {
+
+        font-size: 8px;
+    }
+
+
+    .officialStoreMiniStat strong {
+
+        font-size: 12px;
+    }
+
+
+    .officialStoreShareHeader span {
+
+        font-size: 8px;
+    }
+
+
+    .officialStoreShareHeader strong {
+
+        font-size: 9px;
+    }
+
+
+    .officialStoreShareTrack {
+
+        height: 6px;
+    }
+
+}
+
+
+/* =========================================================
+   TRÈS PETIT IPHONE
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .productsReportCard {
+
+        padding: 13px;
+    }
+
+
+    .topProductImage {
+
+        width: 33px;
+
+        height: 33px;
+
+        flex-basis: 33px;
+    }
+
+
+    .officialStoreMainMetric strong {
+
+        font-size: 21px;
+    }
+
+}
