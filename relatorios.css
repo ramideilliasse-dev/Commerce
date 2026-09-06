@@ -2372,3 +2372,750 @@ a {
     }
 
 }
+/* =========================================================
+   BLOC 6 — ANÁLISE DE PEDIDOS E COMERCIANTES
+========================================================= */
+
+.ordersMerchantsSection {
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 16px;
+
+    margin-bottom: 24px;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.analysisReportCard {
+
+    min-width: 0;
+
+    padding: 20px;
+
+    background: #ffffff;
+
+    border: 1px solid #e6e6e6;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 5px 20px rgba(0, 0, 0, .035);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.analysisReportHeader {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 20px;
+}
+
+
+.analysisReportTitleBlock {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    min-width: 0;
+}
+
+
+.analysisReportIcon {
+
+    width: 43px;
+
+    height: 43px;
+
+    flex: 0 0 43px;
+
+    border-radius: 12px;
+
+    background: #f1f1f1;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+.analysisReportIcon .material-symbols-rounded {
+
+    font-size: 21px;
+
+    color: #111111;
+}
+
+
+.analysisReportTitle {
+
+    color: #111111;
+
+    font-size: 15px;
+
+    line-height: 1.3;
+
+    font-weight: 740;
+
+    letter-spacing: -.2px;
+}
+
+
+.analysisReportSubtitle {
+
+    margin-top: 3px;
+
+    color: #7d7d7d;
+
+    font-size: 10px;
+
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   ORDERS TOTAL
+========================================================= */
+
+.ordersTotalBlock {
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: space-between;
+
+    padding-bottom: 16px;
+
+    border-bottom: 1px solid #eeeeee;
+}
+
+
+.ordersTotalBlock span {
+
+    color: #777777;
+
+    font-size: 11px;
+}
+
+
+.ordersTotalBlock strong {
+
+    color: #111111;
+
+    font-size: 26px;
+
+    line-height: 1;
+
+    font-weight: 780;
+}
+
+
+/* =========================================================
+   ORDER STATUS LIST
+========================================================= */
+
+.orderStatusList {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+    padding: 17px 0;
+}
+
+
+.orderStatusItem {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 10px;
+}
+
+
+.orderStatusInfo {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: #555555;
+
+    font-size: 11px;
+}
+
+
+.orderStatusItem strong {
+
+    color: #222222;
+
+    font-size: 11px;
+
+    font-weight: 730;
+}
+
+
+.orderStatusDot {
+
+    width: 8px;
+
+    height: 8px;
+
+    flex: 0 0 8px;
+
+    border-radius: 50%;
+
+    background: #cfcfcf;
+}
+
+
+/*
+   Les couleurs des états restent
+   volontairement discrètes.
+*/
+
+.orderStatusDot.completed {
+
+    background: #111111;
+}
+
+
+.orderStatusDot.pending {
+
+    background: #8a8a8a;
+}
+
+
+.orderStatusDot.processing {
+
+    background: #b5b5b5;
+}
+
+
+.orderStatusDot.cancelled {
+
+    background: #d5d5d5;
+}
+
+
+/* =========================================================
+   ORDER DISTRIBUTION
+========================================================= */
+
+.orderDistributionBar {
+
+    width: 100%;
+
+    height: 8px;
+
+    display: flex;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    background: #eeeeee;
+}
+
+
+.orderDistributionSegment {
+
+    height: 100%;
+
+    min-width: 0;
+
+    transition:
+        width .4s ease;
+}
+
+
+.orderDistributionSegment.completed {
+
+    background: #111111;
+}
+
+
+.orderDistributionSegment.pending {
+
+    background: #8a8a8a;
+}
+
+
+.orderDistributionSegment.processing {
+
+    background: #b5b5b5;
+}
+
+
+.orderDistributionSegment.cancelled {
+
+    background: #d5d5d5;
+}
+
+
+/* =========================================================
+   MERCHANT MAIN METRIC
+========================================================= */
+
+.merchantMainMetric {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding-bottom: 16px;
+
+    border-bottom: 1px solid #eeeeee;
+}
+
+
+.merchantMainMetric span {
+
+    display: block;
+
+    color: #777777;
+
+    font-size: 11px;
+
+    margin-bottom: 5px;
+}
+
+
+.merchantMainMetric strong {
+
+    display: block;
+
+    color: #111111;
+
+    font-size: 27px;
+
+    line-height: 1;
+
+    font-weight: 780;
+}
+
+
+.merchantMetricIcon {
+
+    width: 46px;
+
+    height: 46px;
+
+    flex: 0 0 46px;
+
+    border-radius: 13px;
+
+    background: #f1f1f1;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+.merchantMetricIcon .material-symbols-rounded {
+
+    font-size: 23px;
+
+    color: #111111;
+}
+
+
+/* =========================================================
+   MERCHANT MINI STATS
+========================================================= */
+
+.merchantMiniStats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 8px;
+
+    padding: 16px 0;
+}
+
+
+.merchantMiniStat {
+
+    min-width: 0;
+
+    padding: 11px;
+
+    background: #f8f8f8;
+
+    border: 1px solid #eeeeee;
+
+    border-radius: 10px;
+}
+
+
+.merchantMiniStat span {
+
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #858585;
+
+    font-size: 9px;
+}
+
+
+.merchantMiniStat strong {
+
+    display: block;
+
+    color: #222222;
+
+    font-size: 14px;
+
+    font-weight: 740;
+}
+
+
+/* =========================================================
+   MERCHANT PROGRESS
+========================================================= */
+
+.merchantPerformanceFooter {
+
+    padding-top: 2px;
+}
+
+
+.merchantPerformanceHeader {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 7px;
+}
+
+
+.merchantPerformanceHeader span {
+
+    color: #777777;
+
+    font-size: 9px;
+}
+
+
+.merchantPerformanceHeader strong {
+
+    color: #222222;
+
+    font-size: 10px;
+
+    font-weight: 750;
+}
+
+
+.merchantProgressTrack {
+
+    width: 100%;
+
+    height: 7px;
+
+    background: #eeeeee;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+
+.merchantProgressBar {
+
+    height: 100%;
+
+    background: #111111;
+
+    border-radius: inherit;
+
+    transition:
+        width .4s ease;
+}
+
+
+/* =========================================================
+   IPHONE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .ordersMerchantsSection {
+
+        grid-template-columns:
+            1fr;
+
+        gap: 10px;
+
+        margin-bottom: 18px;
+    }
+
+
+    .analysisReportCard {
+
+        padding: 15px;
+
+        border-radius: 15px;
+    }
+
+
+    .analysisReportHeader {
+
+        margin-bottom: 17px;
+    }
+
+
+    .analysisReportTitleBlock {
+
+        gap: 9px;
+    }
+
+
+    .analysisReportIcon {
+
+        width: 37px;
+
+        height: 37px;
+
+        flex-basis: 37px;
+
+        border-radius: 10px;
+    }
+
+
+    .analysisReportIcon .material-symbols-rounded {
+
+        font-size: 19px;
+    }
+
+
+    .analysisReportTitle {
+
+        font-size: 13px;
+    }
+
+
+    .analysisReportSubtitle {
+
+        margin-top: 2px;
+
+        font-size: 8px;
+    }
+
+
+    .ordersTotalBlock {
+
+        padding-bottom: 13px;
+    }
+
+
+    .ordersTotalBlock span {
+
+        font-size: 9px;
+    }
+
+
+    .ordersTotalBlock strong {
+
+        font-size: 23px;
+    }
+
+
+    .orderStatusList {
+
+        gap: 10px;
+
+        padding: 14px 0;
+    }
+
+
+    .orderStatusInfo {
+
+        font-size: 9px;
+    }
+
+
+    .orderStatusItem strong {
+
+        font-size: 10px;
+    }
+
+
+    .orderStatusDot {
+
+        width: 7px;
+
+        height: 7px;
+
+        flex-basis: 7px;
+    }
+
+
+    .orderDistributionBar {
+
+        height: 6px;
+    }
+
+
+    .merchantMainMetric {
+
+        padding-bottom: 13px;
+    }
+
+
+    .merchantMainMetric span {
+
+        font-size: 9px;
+
+        margin-bottom: 4px;
+    }
+
+
+    .merchantMainMetric strong {
+
+        font-size: 23px;
+    }
+
+
+    .merchantMetricIcon {
+
+        width: 40px;
+
+        height: 40px;
+
+        flex-basis: 40px;
+
+        border-radius: 11px;
+    }
+
+
+    .merchantMetricIcon .material-symbols-rounded {
+
+        font-size: 20px;
+    }
+
+
+    .merchantMiniStats {
+
+        gap: 6px;
+
+        padding: 12px 0;
+    }
+
+
+    .merchantMiniStat {
+
+        padding: 9px;
+
+        border-radius: 9px;
+    }
+
+
+    .merchantMiniStat span {
+
+        font-size: 7px;
+
+        margin-bottom: 3px;
+    }
+
+
+    .merchantMiniStat strong {
+
+        font-size: 12px;
+    }
+
+
+    .merchantPerformanceHeader {
+
+        margin-bottom: 6px;
+    }
+
+
+    .merchantPerformanceHeader span {
+
+        font-size: 8px;
+    }
+
+
+    .merchantPerformanceHeader strong {
+
+        font-size: 9px;
+    }
+
+
+    .merchantProgressTrack {
+
+        height: 6px;
+    }
+
+}
+
+
+/* =========================================================
+   TRÈS PETIT IPHONE
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .analysisReportCard {
+
+        padding: 13px;
+    }
+
+
+    .merchantMiniStat {
+
+        padding: 8px;
+    }
+
+
+    .merchantMiniStat strong {
+
+        font-size: 11px;
+    }
+
+}
