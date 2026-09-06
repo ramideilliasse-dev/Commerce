@@ -1304,3 +1304,540 @@ a {
     }
 
 }
+/* =========================================================
+   BLOCO 4 — DESEMPENHO DE VENDAS
+========================================================= */
+
+.reportSection {
+
+    width: 100%;
+
+    margin-bottom: 24px;
+
+    padding: 20px;
+
+    background: #ffffff;
+
+    border: 1px solid #e6e6e6;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 5px 20px rgba(0, 0, 0, .035);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   SECTION HEADER
+========================================================= */
+
+.reportSectionHeader {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 16px;
+
+    margin-bottom: 18px;
+}
+
+
+.reportSectionTitleBlock {
+
+    min-width: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+}
+
+
+.reportSectionIcon {
+
+    width: 42px;
+
+    height: 42px;
+
+    flex: 0 0 42px;
+
+    border-radius: 12px;
+
+    background: #f1f1f1;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+.reportSectionIcon .material-symbols-rounded {
+
+    font-size: 21px;
+
+    color: #111111;
+}
+
+
+.reportSectionTitle {
+
+    color: #111111;
+
+    font-size: 16px;
+
+    line-height: 1.3;
+
+    font-weight: 740;
+
+    letter-spacing: -.25px;
+}
+
+
+.reportSectionSubtitle {
+
+    margin-top: 3px;
+
+    color: #7a7a7a;
+
+    font-size: 11px;
+
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   CHART SELECT
+========================================================= */
+
+.reportSectionActions {
+
+    flex-shrink: 0;
+}
+
+
+.reportChartSelect {
+
+    height: 38px;
+
+    min-width: 110px;
+
+    padding:
+        0
+        30px
+        0
+        10px;
+
+    border: 1px solid #dddddd;
+
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #222222;
+
+    font-size: 11px;
+
+    font-weight: 650;
+
+    outline: none;
+
+    cursor: pointer;
+}
+
+
+.reportChartSelect:focus {
+
+    border-color: #111111;
+}
+
+
+/* =========================================================
+   CHART SUMMARY
+========================================================= */
+
+.salesChartSummary {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 22px;
+
+    padding: 13px 15px;
+
+    margin-bottom: 17px;
+
+    border-radius: 12px;
+
+    background: #f8f8f8;
+
+    border: 1px solid #eeeeee;
+}
+
+
+.salesChartSummaryItem {
+
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.salesChartSummaryLabel {
+
+    color: #808080;
+
+    font-size: 10px;
+
+    font-weight: 550;
+}
+
+
+.salesChartSummaryValue {
+
+    color: #171717;
+
+    font-size: 15px;
+
+    line-height: 1.2;
+
+    font-weight: 750;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.salesChartSummaryDivider {
+
+    width: 1px;
+
+    height: 30px;
+
+    flex: 0 0 1px;
+
+    background: #dedede;
+}
+
+
+/* =========================================================
+   CHART CONTAINER
+========================================================= */
+
+.salesChartContainer {
+
+    width: 100%;
+
+    min-height: 300px;
+
+    padding: 4px 0 0;
+
+    overflow: hidden;
+}
+
+
+.salesChart {
+
+    position: relative;
+
+    width: 100%;
+
+    min-height: 290px;
+}
+
+
+/* =========================================================
+   EMPTY CHART
+========================================================= */
+
+.salesChartEmpty {
+
+    width: 100%;
+
+    min-height: 285px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    border: 1px dashed #dcdcdc;
+
+    border-radius: 14px;
+
+    background: #fafafa;
+}
+
+
+.salesChartEmptyIcon {
+
+    width: 52px;
+
+    height: 52px;
+
+    margin-bottom: 11px;
+
+    border-radius: 14px;
+
+    background: #eeeeee;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+.salesChartEmptyIcon .material-symbols-rounded {
+
+    font-size: 25px;
+
+    color: #444444;
+}
+
+
+.salesChartEmpty strong {
+
+    color: #333333;
+
+    font-size: 13px;
+
+    font-weight: 700;
+}
+
+
+.salesChartEmpty span {
+
+    margin-top: 3px;
+
+    color: #888888;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   IPHONE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .reportSection {
+
+        margin-bottom: 18px;
+
+        padding: 15px;
+
+        border-radius: 15px;
+    }
+
+
+    .reportSectionHeader {
+
+        align-items: flex-start;
+
+        gap: 10px;
+
+        margin-bottom: 14px;
+    }
+
+
+    .reportSectionTitleBlock {
+
+        gap: 9px;
+    }
+
+
+    .reportSectionIcon {
+
+        width: 37px;
+
+        height: 37px;
+
+        flex-basis: 37px;
+
+        border-radius: 10px;
+    }
+
+
+    .reportSectionIcon .material-symbols-rounded {
+
+        font-size: 19px;
+    }
+
+
+    .reportSectionTitle {
+
+        font-size: 14px;
+    }
+
+
+    .reportSectionSubtitle {
+
+        margin-top: 2px;
+
+        font-size: 9px;
+    }
+
+
+    .reportChartSelect {
+
+        height: 35px;
+
+        min-width: 88px;
+
+        font-size: 9px;
+
+        padding-left: 8px;
+
+        padding-right: 25px;
+
+        border-radius: 8px;
+    }
+
+
+    .salesChartSummary {
+
+        gap: 12px;
+
+        padding: 11px;
+
+        margin-bottom: 13px;
+
+        border-radius: 10px;
+    }
+
+
+    .salesChartSummaryLabel {
+
+        font-size: 8px;
+    }
+
+
+    .salesChartSummaryValue {
+
+        font-size: 12px;
+    }
+
+
+    .salesChartSummaryDivider {
+
+        height: 25px;
+    }
+
+
+    .salesChartContainer {
+
+        min-height: 245px;
+    }
+
+
+    .salesChart {
+
+        min-height: 235px;
+    }
+
+
+    .salesChartEmpty {
+
+        min-height: 230px;
+
+        border-radius: 11px;
+    }
+
+
+    .salesChartEmptyIcon {
+
+        width: 45px;
+
+        height: 45px;
+
+        border-radius: 12px;
+    }
+
+
+    .salesChartEmptyIcon .material-symbols-rounded {
+
+        font-size: 22px;
+    }
+
+
+    .salesChartEmpty strong {
+
+        font-size: 11px;
+    }
+
+
+    .salesChartEmpty span {
+
+        font-size: 9px;
+    }
+
+}
+
+
+/* =========================================================
+   IPHONE TRÈS PETIT
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .reportSection {
+
+        padding: 12px;
+    }
+
+
+    .reportSectionHeader {
+
+        flex-direction: column;
+    }
+
+
+    .reportSectionActions {
+
+        width: 100%;
+    }
+
+
+    .reportChartSelect {
+
+        width: 100%;
+    }
+
+
+    .salesChartSummary {
+
+        gap: 8px;
+
+        padding: 9px;
+    }
+
+
+    .salesChartSummaryValue {
+
+        font-size: 11px;
+    }
+
+}
