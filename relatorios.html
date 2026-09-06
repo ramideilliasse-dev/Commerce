@@ -967,6 +967,346 @@
 
 
 </section>
+             <!-- ==========================================
+     BLOC 6 — ANÁLISE DE PEDIDOS E COMERCIANTES
+=========================================== -->
+
+<section
+    id="ordersMerchantsSection"
+    class="ordersMerchantsSection"
+    aria-label="Análise de pedidos e comerciantes"
+>
+
+
+    <!-- ======================================
+         STATUS DOS PEDIDOS
+    ======================================= -->
+
+    <article
+        id="ordersStatusCard"
+        class="analysisReportCard"
+    >
+
+
+        <div class="analysisReportHeader">
+
+            <div class="analysisReportTitleBlock">
+
+                <div class="analysisReportIcon">
+
+                    <span class="material-symbols-rounded">
+                        receipt_long
+                    </span>
+
+                </div>
+
+                <div>
+
+                    <h2 class="analysisReportTitle">
+                        Status dos pedidos
+                    </h2>
+
+                    <p class="analysisReportSubtitle">
+                        Distribuição dos pedidos no período
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TOTAL -->
+
+        <div class="ordersTotalBlock">
+
+            <span>
+                Total de pedidos
+            </span>
+
+            <strong id="ordersAnalysisTotal">
+                0
+            </strong>
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div class="orderStatusList">
+
+
+            <!-- CONCLUÍDOS -->
+
+            <div class="orderStatusItem">
+
+                <div class="orderStatusInfo">
+
+                    <span class="orderStatusDot completed"></span>
+
+                    <span>
+                        Concluídos
+                    </span>
+
+                </div>
+
+                <strong id="completedOrdersCount">
+                    0
+                </strong>
+
+            </div>
+
+
+            <!-- PENDENTES -->
+
+            <div class="orderStatusItem">
+
+                <div class="orderStatusInfo">
+
+                    <span class="orderStatusDot pending"></span>
+
+                    <span>
+                        Pendentes
+                    </span>
+
+                </div>
+
+                <strong id="pendingOrdersCount">
+                    0
+                </strong>
+
+            </div>
+
+
+            <!-- CANCELADOS -->
+
+            <div class="orderStatusItem">
+
+                <div class="orderStatusInfo">
+
+                    <span class="orderStatusDot cancelled"></span>
+
+                    <span>
+                        Cancelados
+                    </span>
+
+                </div>
+
+                <strong id="cancelledOrdersCount">
+                    0
+                </strong>
+
+            </div>
+
+
+            <!-- EM PROCESSAMENTO -->
+
+            <div class="orderStatusItem">
+
+                <div class="orderStatusInfo">
+
+                    <span class="orderStatusDot processing"></span>
+
+                    <span>
+                        Em processamento
+                    </span>
+
+                </div>
+
+                <strong id="processingOrdersCount">
+                    0
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- BAR -->
+
+        <div class="orderDistributionBar">
+
+            <div
+                id="completedOrdersBar"
+                class="orderDistributionSegment completed"
+                style="width: 0%;"
+            ></div>
+
+            <div
+                id="pendingOrdersBar"
+                class="orderDistributionSegment pending"
+                style="width: 0%;"
+            ></div>
+
+            <div
+                id="processingOrdersBar"
+                class="orderDistributionSegment processing"
+                style="width: 0%;"
+            ></div>
+
+            <div
+                id="cancelledOrdersBar"
+                class="orderDistributionSegment cancelled"
+                style="width: 0%;"
+            ></div>
+
+        </div>
+
+
+    </article>
+
+
+
+    <!-- ======================================
+         COMERCIANTES
+    ======================================= -->
+
+    <article
+        id="merchantsPerformanceCard"
+        class="analysisReportCard"
+    >
+
+
+        <div class="analysisReportHeader">
+
+            <div class="analysisReportTitleBlock">
+
+                <div class="analysisReportIcon">
+
+                    <span class="material-symbols-rounded">
+                        store
+                    </span>
+
+                </div>
+
+                <div>
+
+                    <h2 class="analysisReportTitle">
+                        Comerciantes
+                    </h2>
+
+                    <p class="analysisReportSubtitle">
+                        Desempenho da rede de comerciantes
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TOTAL COMERCIANTES -->
+
+        <div class="merchantMainMetric">
+
+            <div>
+
+                <span>
+                    Comerciantes ativos
+                </span>
+
+                <strong id="activeMerchantsAnalysis">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="merchantMetricIcon">
+
+                <span class="material-symbols-rounded">
+                    groups
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- MINI METRICS -->
+
+        <div class="merchantMiniStats">
+
+
+            <div class="merchantMiniStat">
+
+                <span>
+                    Novos
+                </span>
+
+                <strong id="newMerchantsCount">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="merchantMiniStat">
+
+                <span>
+                    Ativos
+                </span>
+
+                <strong id="activeMerchantsCount">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="merchantMiniStat">
+
+                <span>
+                    Bloqueados
+                </span>
+
+                <strong id="blockedMerchantsCount">
+                    0
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- TAXA -->
+
+        <div class="merchantPerformanceFooter">
+
+            <div class="merchantPerformanceHeader">
+
+                <span>
+                    Taxa de atividade
+                </span>
+
+                <strong id="merchantActivityRate">
+                    0%
+                </strong>
+
+            </div>
+
+
+            <div class="merchantProgressTrack">
+
+                <div
+                    id="merchantActivityProgress"
+                    class="merchantProgressBar"
+                    style="width: 0%;"
+                ></div>
+
+            </div>
+
+        </div>
+
+
+    </article>
+
+
+</section>
                 <!--
                     Os blocos de relatórios
                     serão adicionados aqui
