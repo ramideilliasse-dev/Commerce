@@ -1,0 +1,918 @@
+ /* =========================================================
+   TOMA — RELATÓRIOS
+   BLOCO 2 — BASE VISUAL E RESPONSIVE
+========================================================= */
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+html {
+    width: 100%;
+    min-height: 100%;
+
+    scroll-behavior: smooth;
+
+    -webkit-text-size-adjust: 100%;
+}
+
+
+body {
+
+    width: 100%;
+    min-height: 100vh;
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Display",
+        "SF Pro Text",
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+    background: #f5f6f8;
+
+    color: #111111;
+
+    line-height: 1.5;
+
+    -webkit-font-smoothing: antialiased;
+
+    text-rendering: optimizeLegibility;
+
+    overflow-x: hidden;
+}
+
+
+button,
+input,
+select,
+textarea {
+
+    font: inherit;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+button {
+
+    border: 0;
+
+    cursor: pointer;
+
+    -webkit-appearance: none;
+
+    appearance: none;
+}
+
+
+a {
+
+    color: inherit;
+
+    text-decoration: none;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+img {
+
+    max-width: 100%;
+
+    display: block;
+}
+
+
+/* =========================================================
+   MATERIAL SYMBOLS
+========================================================= */
+
+.material-symbols-rounded {
+
+    font-family: "Material Symbols Rounded";
+
+    font-weight: normal;
+
+    font-style: normal;
+
+    font-size: 24px;
+
+    line-height: 1;
+
+    letter-spacing: normal;
+
+    text-transform: none;
+
+    display: inline-block;
+
+    white-space: nowrap;
+
+    word-wrap: normal;
+
+    direction: ltr;
+
+    -webkit-font-feature-settings:
+        "liga";
+
+    -webkit-font-smoothing: antialiased;
+}
+
+
+/* =========================================================
+   APP
+========================================================= */
+
+#relatoriosApp {
+
+    width: 100%;
+
+    min-height: 100vh;
+
+    min-height: 100dvh;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.reportsHeader {
+
+    width: 100%;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #e7e7e7;
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 100;
+
+    padding-top: env(safe-area-inset-top);
+}
+
+
+.reportsHeaderInner {
+
+    width: 100%;
+
+    max-width: 1400px;
+
+    min-height: 76px;
+
+    margin: 0 auto;
+
+    padding:
+        14px
+        24px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 18px;
+}
+
+
+/* =========================================================
+   HEADER LEFT
+========================================================= */
+
+.reportsHeaderLeft {
+
+    min-width: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+}
+
+
+.backReportsButton {
+
+    width: 44px;
+
+    height: 44px;
+
+    flex: 0 0 44px;
+
+    border: 1px solid #e0e0e0;
+
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    color: #111111;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        transform .18s ease;
+}
+
+
+.backReportsButton:active {
+
+    transform: scale(.96);
+
+    background: #f3f3f3;
+}
+
+
+.backReportsButton .material-symbols-rounded {
+
+    font-size: 22px;
+}
+
+
+/* =========================================================
+   HEADER TITLE
+========================================================= */
+
+.reportsTitleBlock {
+
+    min-width: 0;
+}
+
+
+.reportsTitle {
+
+    color: #111111;
+
+    font-size: 24px;
+
+    line-height: 1.2;
+
+    font-weight: 780;
+
+    letter-spacing: -.5px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.reportsSubtitle {
+
+    margin-top: 3px;
+
+    color: #737373;
+
+    font-size: 13px;
+
+    line-height: 1.4;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   HEADER ACTIONS
+========================================================= */
+
+.reportsHeaderActions {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    flex-shrink: 0;
+}
+
+
+.headerActionButton {
+
+    min-height: 44px;
+
+    padding:
+        0
+        15px;
+
+    border: 1px solid #dedede;
+
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    color: #111111;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    font-size: 13px;
+
+    font-weight: 680;
+
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        transform .18s ease;
+}
+
+
+.headerActionButton:active {
+
+    transform: scale(.97);
+
+    background: #f3f3f3;
+}
+
+
+.headerActionButton .material-symbols-rounded {
+
+    font-size: 20px;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.reportsMain {
+
+    width: 100%;
+
+    max-width: 1400px;
+
+    margin: 0 auto;
+
+    padding:
+        28px
+        24px
+        60px;
+}
+
+
+/* =========================================================
+   INTRO
+========================================================= */
+
+.reportsIntro {
+
+    margin-bottom: 22px;
+}
+
+
+.reportsIntro h2 {
+
+    color: #111111;
+
+    font-size: 19px;
+
+    line-height: 1.3;
+
+    font-weight: 740;
+
+    letter-spacing: -.25px;
+}
+
+
+.reportsIntro p {
+
+    margin-top: 5px;
+
+    color: #747474;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
+    max-width: 680px;
+}
+
+
+/* =========================================================
+   PERIOD BAR
+========================================================= */
+
+.reportsPeriodBar {
+
+    width: 100%;
+
+    margin-bottom: 22px;
+
+    padding: 16px;
+
+    background: #ffffff;
+
+    border: 1px solid #e6e6e6;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 4px 18px rgba(0, 0, 0, .035);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 18px;
+}
+
+
+.reportsPeriodInfo {
+
+    min-width: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+}
+
+
+.reportsPeriodIcon {
+
+    width: 43px;
+
+    height: 43px;
+
+    flex: 0 0 43px;
+
+    border-radius: 12px;
+
+    background: #f1f1f1;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+.reportsPeriodIcon .material-symbols-rounded {
+
+    font-size: 21px;
+
+    color: #111111;
+}
+
+
+.reportsPeriodText {
+
+    min-width: 0;
+}
+
+
+.reportsPeriodText strong {
+
+    display: block;
+
+    color: #171717;
+
+    font-size: 13px;
+
+    font-weight: 720;
+}
+
+
+.reportsPeriodText span {
+
+    display: block;
+
+    margin-top: 2px;
+
+    color: #777777;
+
+    font-size: 12px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   PERIOD CONTROLS
+========================================================= */
+
+.reportsPeriodControls {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    flex-shrink: 0;
+}
+
+
+.reportsPeriodSelect {
+
+    height: 43px;
+
+    min-width: 175px;
+
+    padding:
+        0
+        36px
+        0
+        12px;
+
+    border: 1px solid #dddddd;
+
+    border-radius: 11px;
+
+    background: #ffffff;
+
+    color: #222222;
+
+    outline: none;
+
+    font-size: 13px;
+
+    font-weight: 620;
+
+    cursor: pointer;
+
+    -webkit-appearance: auto;
+
+    appearance: auto;
+}
+
+
+.reportsPeriodSelect:focus {
+
+    border-color: #111111;
+}
+
+
+.reportsRefreshButton {
+
+    width: 43px;
+
+    height: 43px;
+
+    flex: 0 0 43px;
+
+    border: 1px solid #dddddd;
+
+    border-radius: 11px;
+
+    background: #ffffff;
+
+    color: #222222;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transition:
+        background .18s ease,
+        transform .18s ease;
+}
+
+
+.reportsRefreshButton:active {
+
+    transform: scale(.94);
+
+    background: #f1f1f1;
+}
+
+
+.reportsRefreshButton .material-symbols-rounded {
+
+    font-size: 21px;
+}
+
+
+/* =========================================================
+   REPORTS CONTENT
+========================================================= */
+
+.reportsContent {
+
+    width: 100%;
+
+    min-width: 0;
+}
+
+
+/* =========================================================
+   ACCESSIBILITY / TOUCH
+========================================================= */
+
+button,
+select,
+a {
+
+    touch-action: manipulation;
+}
+
+
+/* =========================================================
+   IPHONE / SMALL SCREEN
+========================================================= */
+
+@media (max-width: 700px) {
+
+
+    .reportsHeaderInner {
+
+        min-height: 66px;
+
+        padding:
+            11px
+            16px;
+
+        gap: 10px;
+    }
+
+
+    .reportsHeaderLeft {
+
+        gap: 9px;
+    }
+
+
+    .backReportsButton {
+
+        width: 40px;
+
+        height: 40px;
+
+        flex-basis: 40px;
+
+        border-radius: 11px;
+    }
+
+
+    .backReportsButton .material-symbols-rounded {
+
+        font-size: 21px;
+    }
+
+
+    .reportsTitle {
+
+        font-size: 20px;
+
+        letter-spacing: -.35px;
+    }
+
+
+    .reportsSubtitle {
+
+        font-size: 11px;
+
+        margin-top: 2px;
+    }
+
+
+    .headerActionButton {
+
+        width: 40px;
+
+        min-width: 40px;
+
+        height: 40px;
+
+        min-height: 40px;
+
+        padding: 0;
+
+        border-radius: 11px;
+    }
+
+
+    .headerActionButton .material-symbols-rounded {
+
+        font-size: 20px;
+    }
+
+
+    .headerActionText {
+
+        display: none;
+    }
+
+
+    .reportsMain {
+
+        padding:
+            21px
+            16px
+            50px;
+    }
+
+
+    .reportsIntro {
+
+        margin-bottom: 18px;
+    }
+
+
+    .reportsIntro h2 {
+
+        font-size: 17px;
+    }
+
+
+    .reportsIntro p {
+
+        margin-top: 4px;
+
+        font-size: 12px;
+    }
+
+
+    .reportsPeriodBar {
+
+        padding: 13px;
+
+        border-radius: 14px;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 13px;
+
+        margin-bottom: 18px;
+    }
+
+
+    .reportsPeriodInfo {
+
+        width: 100%;
+    }
+
+
+    .reportsPeriodIcon {
+
+        width: 39px;
+
+        height: 39px;
+
+        flex-basis: 39px;
+
+        border-radius: 10px;
+    }
+
+
+    .reportsPeriodIcon .material-symbols-rounded {
+
+        font-size: 20px;
+    }
+
+
+    .reportsPeriodText strong {
+
+        font-size: 12px;
+    }
+
+
+    .reportsPeriodText span {
+
+        font-size: 11px;
+    }
+
+
+    .reportsPeriodControls {
+
+        width: 100%;
+
+        display: grid;
+
+        grid-template-columns: 1fr 43px;
+
+        gap: 7px;
+    }
+
+
+    .reportsPeriodSelect {
+
+        width: 100%;
+
+        min-width: 0;
+
+        height: 43px;
+
+        font-size: 12px;
+    }
+
+
+    .reportsRefreshButton {
+
+        width: 43px;
+
+        height: 43px;
+    }
+
+}
+
+
+/* =========================================================
+   IPHONE TRÈS PETIT ÉCRAN
+========================================================= */
+
+@media (max-width: 380px) {
+
+
+    .reportsHeaderInner {
+
+        padding-left: 12px;
+
+        padding-right: 12px;
+    }
+
+
+    .reportsMain {
+
+        padding-left: 12px;
+
+        padding-right: 12px;
+    }
+
+
+    .reportsTitle {
+
+        font-size: 18px;
+    }
+
+
+    .reportsSubtitle {
+
+        display: none;
+    }
+
+
+    .reportsPeriodBar {
+
+        padding: 11px;
+    }
+
+
+    .reportsPeriodSelect {
+
+        font-size: 11px;
+    }
+
+}
+
+
+/* =========================================================
+   SAFE AREA — IPHONE
+========================================================= */
+
+@supports (padding: max(0px)) {
+
+    .reportsMain {
+
+        padding-bottom:
+            max(
+                50px,
+                env(safe-area-inset-bottom)
+            );
+    }
+
+}
