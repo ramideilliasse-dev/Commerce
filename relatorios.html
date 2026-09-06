@@ -1,0 +1,983 @@
+ <!DOCTYPE html>
+<html lang="pt">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#111111"
+    >
+
+    <meta
+        name="description"
+        content="Relatórios administrativos da plataforma Toma"
+    >
+
+    <title>Relatórios — Toma</title>
+
+
+    <!-- ==========================================
+         POLICE / ICÔNES
+    =========================================== -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- ==========================================
+         STYLE
+    =========================================== -->
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+
+            background: #f5f6f8;
+
+            color: #111111;
+
+            min-height: 100vh;
+
+            line-height: 1.5;
+        }
+
+
+        button,
+        input,
+        select {
+
+            font: inherit;
+        }
+
+
+        button {
+
+            cursor: pointer;
+        }
+
+
+        a {
+
+            color: inherit;
+
+            text-decoration: none;
+        }
+
+
+        /* ==========================================
+           APP
+        =========================================== */
+
+        #relatoriosApp {
+
+            width: 100%;
+
+            min-height: 100vh;
+        }
+
+
+        /* ==========================================
+           HEADER
+        =========================================== */
+
+        .reportsHeader {
+
+            width: 100%;
+
+            background: #ffffff;
+
+            border-bottom: 1px solid #e8e8e8;
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 100;
+        }
+
+
+        .reportsHeaderInner {
+
+            width: 100%;
+
+            max-width: 1400px;
+
+            margin: 0 auto;
+
+            min-height: 76px;
+
+            padding: 16px 24px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 20px;
+        }
+
+
+        /* ==========================================
+           HEADER LEFT
+        =========================================== */
+
+        .reportsHeaderLeft {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+
+            min-width: 0;
+        }
+
+
+        .backReportsButton {
+
+            width: 44px;
+
+            height: 44px;
+
+            border: 1px solid #e3e3e3;
+
+            background: #ffffff;
+
+            border-radius: 12px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: #111111;
+
+            transition:
+                background .2s ease,
+                transform .2s ease;
+        }
+
+
+        .backReportsButton:hover {
+
+            background: #f3f3f3;
+
+            transform: translateY(-1px);
+        }
+
+
+        .backReportsButton .material-symbols-rounded {
+
+            font-size: 22px;
+        }
+
+
+        .reportsTitleBlock {
+
+            min-width: 0;
+        }
+
+
+        .reportsTitle {
+
+            font-size: 24px;
+
+            font-weight: 750;
+
+            letter-spacing: -0.4px;
+
+            color: #111111;
+        }
+
+
+        .reportsSubtitle {
+
+            margin-top: 2px;
+
+            font-size: 13px;
+
+            color: #737373;
+        }
+
+
+        /* ==========================================
+           HEADER RIGHT
+        =========================================== */
+
+        .reportsHeaderActions {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            flex-shrink: 0;
+        }
+
+
+        .headerActionButton {
+
+            min-height: 44px;
+
+            padding: 0 15px;
+
+            border: 1px solid #e2e2e2;
+
+            background: #ffffff;
+
+            border-radius: 12px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 8px;
+
+            color: #222222;
+
+            font-size: 13px;
+
+            font-weight: 650;
+
+            transition:
+                background .2s ease,
+                border-color .2s ease,
+                transform .2s ease;
+        }
+
+
+        .headerActionButton:hover {
+
+            background: #f5f5f5;
+
+            border-color: #d5d5d5;
+
+            transform: translateY(-1px);
+        }
+
+
+        .headerActionButton .material-symbols-rounded {
+
+            font-size: 20px;
+        }
+
+
+        /* ==========================================
+           MAIN
+        =========================================== */
+
+        .reportsMain {
+
+            width: 100%;
+
+            max-width: 1400px;
+
+            margin: 0 auto;
+
+            padding: 28px 24px 50px;
+        }
+
+
+        /* ==========================================
+           PAGE INTRO
+        =========================================== */
+
+        .reportsIntro {
+
+            margin-bottom: 24px;
+        }
+
+
+        .reportsIntro h2 {
+
+            font-size: 18px;
+
+            font-weight: 720;
+
+            color: #111111;
+        }
+
+
+        .reportsIntro p {
+
+            margin-top: 5px;
+
+            font-size: 14px;
+
+            color: #737373;
+        }
+
+
+        /* ==========================================
+           PERIOD BAR
+        =========================================== */
+
+        .reportsPeriodBar {
+
+            background: #ffffff;
+
+            border: 1px solid #e8e8e8;
+
+            border-radius: 16px;
+
+            padding: 16px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 16px;
+
+            margin-bottom: 24px;
+
+            box-shadow:
+                0 3px 14px rgba(0, 0, 0, 0.03);
+        }
+
+
+        .reportsPeriodInfo {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 11px;
+        }
+
+
+        .reportsPeriodIcon {
+
+            width: 42px;
+
+            height: 42px;
+
+            border-radius: 11px;
+
+            background: #f1f1f1;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+        }
+
+
+        .reportsPeriodIcon .material-symbols-rounded {
+
+            font-size: 21px;
+
+            color: #111111;
+        }
+
+
+        .reportsPeriodText strong {
+
+            display: block;
+
+            font-size: 14px;
+
+            font-weight: 700;
+        }
+
+
+        .reportsPeriodText span {
+
+            display: block;
+
+            margin-top: 2px;
+
+            font-size: 12px;
+
+            color: #777777;
+        }
+
+
+        .reportsPeriodControls {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            flex-wrap: wrap;
+        }
+
+
+        .reportsPeriodSelect {
+
+            height: 42px;
+
+            min-width: 170px;
+
+            padding: 0 38px 0 12px;
+
+            border: 1px solid #dddddd;
+
+            border-radius: 10px;
+
+            background: #ffffff;
+
+            color: #222222;
+
+            outline: none;
+
+            cursor: pointer;
+
+            font-size: 13px;
+
+            font-weight: 600;
+        }
+
+
+        .reportsPeriodSelect:focus {
+
+            border-color: #111111;
+        }
+
+
+        .reportsRefreshButton {
+
+            width: 42px;
+
+            height: 42px;
+
+            border: 1px solid #dddddd;
+
+            border-radius: 10px;
+
+            background: #ffffff;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: #222222;
+
+            transition:
+                background .2s ease,
+                transform .2s ease;
+        }
+
+
+        .reportsRefreshButton:hover {
+
+            background: #f3f3f3;
+
+            transform: rotate(5deg);
+        }
+
+
+        .reportsRefreshButton .material-symbols-rounded {
+
+            font-size: 21px;
+        }
+
+
+        /* ==========================================
+           REPORTS CONTENT PLACEHOLDER
+        =========================================== */
+
+        .reportsContent {
+
+            width: 100%;
+        }
+
+
+        .reportsEmptyState {
+
+            background: #ffffff;
+
+            border: 1px solid #e8e8e8;
+
+            border-radius: 18px;
+
+            min-height: 280px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            text-align: center;
+
+            padding: 30px;
+
+            box-shadow:
+                0 4px 18px rgba(0, 0, 0, 0.03);
+        }
+
+
+        .reportsEmptyIcon {
+
+            width: 62px;
+
+            height: 62px;
+
+            border-radius: 17px;
+
+            background: #f1f1f1;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            margin-bottom: 14px;
+        }
+
+
+        .reportsEmptyIcon .material-symbols-rounded {
+
+            font-size: 30px;
+
+            color: #333333;
+        }
+
+
+        .reportsEmptyState h3 {
+
+            font-size: 17px;
+
+            font-weight: 720;
+
+            color: #171717;
+        }
+
+
+        .reportsEmptyState p {
+
+            max-width: 520px;
+
+            margin-top: 6px;
+
+            font-size: 13px;
+
+            color: #777777;
+        }
+
+
+        /* ==========================================
+           RESPONSIVE
+        =========================================== */
+
+        @media (max-width: 800px) {
+
+            .reportsHeaderInner {
+
+                padding: 14px 16px;
+
+                min-height: 68px;
+            }
+
+
+            .reportsTitle {
+
+                font-size: 20px;
+            }
+
+
+            .reportsSubtitle {
+
+                font-size: 12px;
+            }
+
+
+            .headerActionText {
+
+                display: none;
+            }
+
+
+            .headerActionButton {
+
+                width: 44px;
+
+                padding: 0;
+            }
+
+
+            .reportsMain {
+
+                padding: 22px 16px 40px;
+            }
+
+
+            .reportsPeriodBar {
+
+                align-items: stretch;
+
+                flex-direction: column;
+            }
+
+
+            .reportsPeriodControls {
+
+                width: 100%;
+            }
+
+
+            .reportsPeriodSelect {
+
+                flex: 1;
+
+                width: 100%;
+            }
+
+        }
+
+
+        @media (max-width: 480px) {
+
+            .reportsHeaderLeft {
+
+                gap: 10px;
+            }
+
+
+            .backReportsButton {
+
+                width: 40px;
+
+                height: 40px;
+            }
+
+
+            .reportsTitle {
+
+                font-size: 18px;
+            }
+
+
+            .reportsSubtitle {
+
+                display: none;
+            }
+
+
+            .reportsHeaderActions {
+
+                gap: 6px;
+            }
+
+
+            .headerActionButton {
+
+                width: 40px;
+
+                height: 40px;
+
+                min-height: 40px;
+            }
+
+
+            .reportsPeriodInfo {
+
+                align-items: flex-start;
+            }
+
+
+            .reportsPeriodIcon {
+
+                width: 38px;
+
+                height: 38px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div id="relatoriosApp">
+
+
+    <!-- ==========================================
+         HEADER
+    =========================================== -->
+
+    <header class="reportsHeader">
+
+        <div class="reportsHeaderInner">
+
+
+            <!-- LEFT -->
+
+            <div class="reportsHeaderLeft">
+
+                <button
+                    id="backReportsButton"
+                    class="backReportsButton"
+                    type="button"
+                    aria-label="Voltar"
+                >
+
+                    <span class="material-symbols-rounded">
+                        arrow_back
+                    </span>
+
+                </button>
+
+
+                <div class="reportsTitleBlock">
+
+                    <h1 class="reportsTitle">
+                        Relatórios
+                    </h1>
+
+                    <p class="reportsSubtitle">
+                        Análise e desempenho da plataforma Toma
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT -->
+
+            <div class="reportsHeaderActions">
+
+                <button
+                    id="exportReportsButton"
+                    class="headerActionButton"
+                    type="button"
+                >
+
+                    <span class="material-symbols-rounded">
+                        download
+                    </span>
+
+                    <span class="headerActionText">
+                        Exportar
+                    </span>
+
+                </button>
+
+            </div>
+
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ==========================================
+         MAIN
+    =========================================== -->
+
+    <main class="reportsMain">
+
+
+        <!-- INTRO -->
+
+        <section class="reportsIntro">
+
+            <h2>
+                Visão geral dos relatórios
+            </h2>
+
+            <p>
+                Consulte o desempenho das vendas,
+                comerciantes, produtos e finanças.
+            </p>
+
+        </section>
+
+
+
+        <!-- ======================================
+             PERIOD BAR
+        ======================================= -->
+
+        <section
+            class="reportsPeriodBar"
+            aria-label="Período do relatório"
+        >
+
+
+            <div class="reportsPeriodInfo">
+
+                <div class="reportsPeriodIcon">
+
+                    <span class="material-symbols-rounded">
+                        calendar_month
+                    </span>
+
+                </div>
+
+
+                <div class="reportsPeriodText">
+
+                    <strong>
+                        Período do relatório
+                    </strong>
+
+                    <span id="reportsPeriodLabel">
+                        Selecione o período para analisar
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="reportsPeriodControls">
+
+
+                <select
+                    id="reportsPeriodSelect"
+                    class="reportsPeriodSelect"
+                    aria-label="Selecionar período"
+                >
+
+                    <option value="today">
+                        Hoje
+                    </option>
+
+                    <option value="7days">
+                        Últimos 7 dias
+                    </option>
+
+                    <option
+                        value="30days"
+                        selected
+                    >
+                        Últimos 30 dias
+                    </option>
+
+                    <option value="year">
+                        Este ano
+                    </option>
+
+                    <option value="custom">
+                        Período personalizado
+                    </option>
+
+                </select>
+
+
+                <button
+                    id="refreshReportsButton"
+                    class="reportsRefreshButton"
+                    type="button"
+                    aria-label="Atualizar relatórios"
+                >
+
+                    <span class="material-symbols-rounded">
+                        refresh
+                    </span>
+
+                </button>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- ======================================
+             REPORTS CONTENT
+        ======================================= -->
+
+        <section
+            id="reportsContent"
+            class="reportsContent"
+        >
+
+
+            <div
+                id="reportsEmptyState"
+                class="reportsEmptyState"
+            >
+
+                <div class="reportsEmptyIcon">
+
+                    <span class="material-symbols-rounded">
+                        analytics
+                    </span>
+
+                </div>
+
+
+                <h3>
+                    Relatórios em preparação
+                </h3>
+
+
+                <p>
+                    Os indicadores, gráficos e análises
+                    serão carregados nesta área.
+                </p>
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+</div>
+
+
+</body>
+</html>
