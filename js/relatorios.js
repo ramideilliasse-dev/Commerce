@@ -769,3 +769,118 @@ function handleSalesChartPeriodChange(event) {
     );
 
 }
+initializeFinancialPerformance();
+/* =========================================================
+   BLOC 5 — PERFORMANCE FINANCIÈRE
+========================================================= */
+
+function initializeFinancialPerformance() {
+
+    alert(
+        "RELATÓRIOS — BLOC 5.1\n\n" +
+        "Initialisation de la performance financière..."
+    );
+
+
+    /* ================================
+       RÉCUPÉRATION DES ID EXACTS
+    ================================= */
+
+    const financialPerformanceSection =
+        document.getElementById("financialPerformanceSection");
+
+    const revenueValue =
+        document.getElementById("financialRevenueValue");
+
+    const revenueAverage =
+        document.getElementById("financialRevenueAverage");
+
+    const revenueHighest =
+        document.getElementById("financialRevenueHighest");
+
+    const revenueGrowth =
+        document.getElementById("financialRevenueGrowth");
+
+    const revenueProgress =
+        document.getElementById("financialRevenueProgress");
+
+    const commissionValue =
+        document.getElementById("financialCommissionValue");
+
+    const commissionAverage =
+        document.getElementById("financialCommissionAverage");
+
+    const commissionRate =
+        document.getElementById("financialCommissionRate");
+
+    const commissionShare =
+        document.getElementById("financialCommissionShare");
+
+    const commissionProgress =
+        document.getElementById("financialCommissionProgress");
+
+
+    if (
+        !financialPerformanceSection ||
+        !revenueValue ||
+        !revenueAverage ||
+        !revenueHighest ||
+        !revenueGrowth ||
+        !revenueProgress ||
+        !commissionValue ||
+        !commissionAverage ||
+        !commissionRate ||
+        !commissionShare ||
+        !commissionProgress
+    ) {
+
+        alert(
+            "RELATÓRIOS — BLOC 5 ERREUR ❌\n\n" +
+            "Un ou plusieurs éléments de la performance financière sont introuvables."
+        );
+
+        return;
+    }
+
+
+    alert(
+        "RELATÓRIOS — BLOC 5.2\n\n" +
+        "Tous les éléments financiers sont détectés.\n\n" +
+        "Aucun nouvel ID n'a été créé."
+    );
+
+
+    /* ================================
+       VALEURS INITIALES
+    ================================= */
+
+    revenueValue.textContent = "0 Kz";
+
+    revenueAverage.textContent = "0 Kz";
+
+    revenueHighest.textContent = "0 Kz";
+
+    revenueGrowth.textContent = "0%";
+
+    revenueProgress.style.width = "0%";
+
+
+    commissionValue.textContent = "0 Kz";
+
+    commissionAverage.textContent = "0 Kz";
+
+    commissionRate.textContent = "5%";
+
+    commissionShare.textContent = "0%";
+
+    commissionProgress.style.width = "0%";
+
+
+    alert(
+        "RELATÓRIOS — BLOC 5 TERMINÉ ✅\n\n" +
+        "La performance financière est maintenant connectée.\n\n" +
+        "Receita : OK\n" +
+        "Comissão Toma : OK"
+    );
+
+}
