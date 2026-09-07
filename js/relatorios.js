@@ -628,3 +628,144 @@ function initializeReportIndicators() {
     );
 
 }
+initializeSalesPerformance();
+/* =========================================================
+   BLOC 4 — DESEMPENHO DE VENDAS
+========================================================= */
+
+function initializeSalesPerformance() {
+
+    alert(
+        "RELATÓRIOS — BLOC 4.1\n\n" +
+        "Initialisation du module de performance des ventes..."
+    );
+
+    const salesPerformanceSection =
+        document.getElementById("salesPerformanceSection");
+
+    const salesChartPeriod =
+        document.getElementById("salesChartPeriod");
+
+    const salesChartTotal =
+        document.getElementById("salesChartTotal");
+
+    const salesChartAverage =
+        document.getElementById("salesChartAverage");
+
+    const salesChartBestDay =
+        document.getElementById("salesChartBestDay");
+
+    const salesChartContainer =
+        document.getElementById("salesChartContainer");
+
+    const salesChart =
+        document.getElementById("salesChart");
+
+    const salesChartEmpty =
+        document.getElementById("salesChartEmpty");
+
+
+    if (
+        !salesPerformanceSection ||
+        !salesChartPeriod ||
+        !salesChartTotal ||
+        !salesChartAverage ||
+        !salesChartBestDay ||
+        !salesChartContainer ||
+        !salesChart ||
+        !salesChartEmpty
+    ) {
+
+        alert(
+            "RELATÓRIOS — BLOC 4 ERREUR ❌\n\n" +
+            "Un ou plusieurs éléments du graphique sont introuvables."
+        );
+
+        return;
+    }
+
+
+    alert(
+        "RELATÓRIOS — BLOC 4.2\n\n" +
+        "Tous les éléments de performance des ventes sont détectés.\n\n" +
+        "Aucun nouvel ID n'a été créé."
+    );
+
+
+    /* ================================
+       VALEURS INITIALES
+    ================================= */
+
+    salesChartTotal.textContent = "0";
+
+    salesChartAverage.textContent = "0 Kz";
+
+    salesChartBestDay.textContent = "—";
+
+
+    /* ================================
+       ÉTAT INITIAL DU GRAPHIQUE
+    ================================= */
+
+    salesChartEmpty.style.display = "block";
+
+    salesChart.textContent = "";
+
+
+    /* ================================
+       CHANGEMENT DE PÉRIODE DU GRAPHIQUE
+    ================================= */
+
+    salesChartPeriod.addEventListener(
+        "change",
+        handleSalesChartPeriodChange
+    );
+
+
+    alert(
+        "RELATÓRIOS — BLOC 4 TERMINÉ ✅\n\n" +
+        "Le module de performance des ventes est connecté.\n\n" +
+        "Le graphique sera alimenté avec les données réelles dans les prochains blocs."
+    );
+
+}
+
+
+/* =========================================================
+   BLOC 4.1 — PÉRIODE DU GRAPHIQUE
+========================================================= */
+
+function handleSalesChartPeriodChange(event) {
+
+    const selectedPeriod =
+        event.target.value;
+
+
+    const periodNames = {
+
+        daily:
+            "Diário",
+
+        weekly:
+            "Semanal",
+
+        monthly:
+            "Mensal"
+
+    };
+
+
+    alert(
+        "RELATÓRIOS — BLOC 4.3\n\n" +
+        "Période du graphique modifiée.\n\n" +
+        "Valeur : " +
+        selectedPeriod +
+        "\n" +
+        "Mode : " +
+        (
+            periodNames[selectedPeriod] ||
+            "Période sélectionnée"
+        )
+    );
+
+}
