@@ -1167,3 +1167,114 @@ function initializeProductsStoresAnalysis() {
     );
 
 }
+initializeRecentActivity();
+/* =========================================================
+   BLOC 8 — ACTIVITÉ RÉCENTE
+========================================================= */
+
+function initializeRecentActivity() {
+
+    alert(
+        "RELATÓRIOS — BLOC 8.1\n\n" +
+        "Initialisation de l'activité récente..."
+    );
+
+
+    /* ================================
+       RÉCUPÉRATION DES ID EXACTS
+    ================================= */
+
+    const recentActivitySection =
+        document.getElementById("recentActivitySection");
+
+    const recentActivityList =
+        document.getElementById("recentActivityList");
+
+    const viewAllActivityButton =
+        document.getElementById("viewAllActivityButton");
+
+
+    if (
+        !recentActivitySection ||
+        !recentActivityList ||
+        !viewAllActivityButton
+    ) {
+
+        alert(
+            "RELATÓRIOS — BLOC 8 ERREUR ❌\n\n" +
+            "Un ou plusieurs éléments de l'activité récente sont introuvables."
+        );
+
+        return;
+    }
+
+
+    alert(
+        "RELATÓRIOS — BLOC 8.2\n\n" +
+        "Tous les éléments de l'activité récente sont détectés.\n\n" +
+        "Aucun nouvel ID n'a été créé."
+    );
+
+
+    /* ================================
+       VÉRIFICATION DE LA LISTE
+    ================================= */
+
+    const activityItems =
+        recentActivityList.children.length;
+
+
+    if (activityItems > 0) {
+
+        alert(
+            "RELATÓRIOS — BLOC 8.3\n\n" +
+            "La liste d'activité contient déjà " +
+            activityItems +
+            " élément(s).\n\n" +
+            "Les éléments existants sont conservés."
+        );
+
+    } else {
+
+        alert(
+            "RELATÓRIOS — BLOC 8.3\n\n" +
+            "La liste d'activité est actuellement vide.\n\n" +
+            "Elle sera alimentée avec les activités réelles plus tard."
+        );
+
+    }
+
+
+    /* ================================
+       BOUTON — VOIR TOUT
+    ================================= */
+
+    viewAllActivityButton.addEventListener(
+        "click",
+        handleViewAllActivity
+    );
+
+
+    alert(
+        "RELATÓRIOS — BLOC 8 TERMINÉ ✅\n\n" +
+        "Le module d'activité récente est connecté.\n\n" +
+        "Activité récente : OK\n" +
+        "Bouton Ver tudo : OK"
+    );
+
+}
+
+
+/* =========================================================
+   BLOC 8.1 — VOIR TOUTE L'ACTIVITÉ
+========================================================= */
+
+function handleViewAllActivity() {
+
+    alert(
+        "RELATÓRIOS — BLOC 8.4\n\n" +
+        "Bouton « Ver tudo » activé.\n\n" +
+        "La liste complète des activités sera connectée plus tard."
+    );
+
+}
