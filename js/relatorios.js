@@ -528,3 +528,103 @@ function handleReportsRefresh() {
     );
 
 }
+initializeReportIndicators();
+/* =========================================================
+   BLOC 3 — INDICADORES PRINCIPAIS
+========================================================= */
+
+function initializeReportIndicators() {
+
+    alert(
+        "RELATÓRIOS — BLOC 3.1\n\n" +
+        "Initialisation des indicateurs principaux..."
+    );
+
+
+    /* ================================
+       RÉCUPÉRATION DES ID EXACTS
+    ================================= */
+
+    const totalSales =
+        document.getElementById("reportTotalSales");
+
+    const salesGrowth =
+        document.getElementById("reportSalesGrowth");
+
+    const totalRevenue =
+        document.getElementById("reportTotalRevenue");
+
+    const revenueGrowth =
+        document.getElementById("reportRevenueGrowth");
+
+    const totalCommission =
+        document.getElementById("reportTotalCommission");
+
+    const commissionRate =
+        document.getElementById("reportCommissionRate");
+
+    const totalOrders =
+        document.getElementById("reportTotalOrders");
+
+    const ordersGrowth =
+        document.getElementById("reportOrdersGrowth");
+
+
+    if (
+        !totalSales ||
+        !salesGrowth ||
+        !totalRevenue ||
+        !revenueGrowth ||
+        !totalCommission ||
+        !commissionRate ||
+        !totalOrders ||
+        !ordersGrowth
+    ) {
+
+        alert(
+            "RELATÓRIOS — BLOC 3 ERREUR ❌\n\n" +
+            "Un ou plusieurs indicateurs sont introuvables."
+        );
+
+        return;
+    }
+
+
+    alert(
+        "RELATÓRIOS — BLOC 3.2\n\n" +
+        "Tous les indicateurs principaux sont détectés.\n\n" +
+        "Aucun nouvel ID n'a été créé."
+    );
+
+
+    /* ================================
+       VALEURS DE TEST
+    ================================= */
+
+    totalSales.textContent = "0";
+
+    salesGrowth.textContent = "0%";
+
+    totalRevenue.textContent = "0 Kz";
+
+    revenueGrowth.textContent = "0%";
+
+    totalCommission.textContent = "0 Kz";
+
+    commissionRate.textContent = "5%";
+
+    totalOrders.textContent = "0";
+
+    ordersGrowth.textContent = "0%";
+
+
+    alert(
+        "RELATÓRIOS — BLOC 3 TERMINÉ ✅\n\n" +
+        "Les 4 indicateurs principaux sont connectés.\n\n" +
+        "Vendas : OK\n" +
+        "Receita : OK\n" +
+        "Comissão : OK\n" +
+        "Pedidos : OK"
+    );
+
+}
