@@ -1044,3 +1044,126 @@ function initializeOrdersMerchantsAnalysis() {
     );
 
 }
+initializeProductsStoresAnalysis();
+/* =========================================================
+   BLOC 7 — PRODUTOS E LOJAS OFICIAIS
+========================================================= */
+
+function initializeProductsStoresAnalysis() {
+
+    alert(
+        "RELATÓRIOS — BLOC 7.1\n\n" +
+        "Initialisation de l'analyse des produits et lojas oficiais..."
+    );
+
+
+    /* ================================
+       RÉCUPÉRATION DES ID EXACTS
+    ================================= */
+
+    const productsStoresSection =
+        document.getElementById("productsStoresSection");
+
+    const topProductsCard =
+        document.getElementById("topProductsCard");
+
+    const topProductsList =
+        document.getElementById("topProductsList");
+
+    const officialStoresPerformanceCard =
+        document.getElementById("officialStoresPerformanceCard");
+
+    const officialStoresSalesValue =
+        document.getElementById("officialStoresSalesValue");
+
+    const officialStoresActiveCount =
+        document.getElementById("officialStoresActiveCount");
+
+    const officialStoresOrdersCount =
+        document.getElementById("officialStoresOrdersCount");
+
+    const officialStoresSalesShare =
+        document.getElementById("officialStoresSalesShare");
+
+    const officialStoresSalesProgress =
+        document.getElementById("officialStoresSalesProgress");
+
+
+    if (
+        !productsStoresSection ||
+        !topProductsCard ||
+        !topProductsList ||
+        !officialStoresPerformanceCard ||
+        !officialStoresSalesValue ||
+        !officialStoresActiveCount ||
+        !officialStoresOrdersCount ||
+        !officialStoresSalesShare ||
+        !officialStoresSalesProgress
+    ) {
+
+        alert(
+            "RELATÓRIOS — BLOC 7 ERREUR ❌\n\n" +
+            "Un ou plusieurs éléments des produits/lojas oficiais sont introuvables."
+        );
+
+        return;
+    }
+
+
+    alert(
+        "RELATÓRIOS — BLOC 7.2\n\n" +
+        "Tous les éléments du Bloc 7 sont détectés.\n\n" +
+        "Aucun nouvel ID n'a été créé."
+    );
+
+
+    /* ================================
+       LOJAS OFFICIAIS
+    ================================= */
+
+    officialStoresSalesValue.textContent =
+        "0 Kz";
+
+    officialStoresActiveCount.textContent =
+        "0";
+
+    officialStoresOrdersCount.textContent =
+        "0";
+
+    officialStoresSalesShare.textContent =
+        "0%";
+
+    officialStoresSalesProgress.style.width =
+        "0%";
+
+
+    /* ================================
+       TOP PRODUITS
+    ================================= */
+
+    if (topProductsList.children.length === 0) {
+
+        alert(
+            "RELATÓRIOS — BLOC 7.3\n\n" +
+            "La liste des produits est actuellement vide.\n\n" +
+            "Elle sera alimentée avec les vraies données plus tard."
+        );
+
+    } else {
+
+        alert(
+            "RELATÓRIOS — BLOC 7.3\n\n" +
+            "La liste Top Produtos est déjà présente dans le HTML."
+        );
+
+    }
+
+
+    alert(
+        "RELATÓRIOS — BLOC 7 TERMINÉ ✅\n\n" +
+        "L'analyse des produits et lojas oficiais est connectée.\n\n" +
+        "Top Produtos : OK\n" +
+        "Lojas Oficiais : OK"
+    );
+
+}
