@@ -1278,3 +1278,165 @@ function handleViewAllActivity() {
     );
 
 }
+initializeReportSummary();
+/* =========================================================
+   BLOC 9 — RÉSUMÉ DU RAPPORT
+========================================================= */
+
+function initializeReportSummary() {
+
+    alert(
+        "RELATÓRIOS — BLOC 9.1\n\n" +
+        "Initialisation du résumé du rapport..."
+    );
+
+
+    /* ================================
+       RÉCUPÉRATION DES ID EXACTS
+    ================================= */
+
+    const reportSummarySection =
+        document.getElementById("reportSummarySection");
+
+    const reportSummarySales =
+        document.getElementById("reportSummarySales");
+
+    const reportSummaryRevenue =
+        document.getElementById("reportSummaryRevenue");
+
+    const reportSummaryCommission =
+        document.getElementById("reportSummaryCommission");
+
+    const reportSummaryGrowth =
+        document.getElementById("reportSummaryGrowth");
+
+    const reportSummaryActiveMerchants =
+        document.getElementById("reportSummaryActiveMerchants");
+
+    const reportSummaryProductsSold =
+        document.getElementById("reportSummaryProductsSold");
+
+    const reportSummaryOfficialStores =
+        document.getElementById("reportSummaryOfficialStores");
+
+    const exportReportButton =
+        document.getElementById("exportReportButton");
+
+    const printReportButton =
+        document.getElementById("printReportButton");
+
+
+    if (
+        !reportSummarySection ||
+        !reportSummarySales ||
+        !reportSummaryRevenue ||
+        !reportSummaryCommission ||
+        !reportSummaryGrowth ||
+        !reportSummaryActiveMerchants ||
+        !reportSummaryProductsSold ||
+        !reportSummaryOfficialStores ||
+        !exportReportButton ||
+        !printReportButton
+    ) {
+
+        alert(
+            "RELATÓRIOS — BLOC 9 ERREUR ❌\n\n" +
+            "Un ou plusieurs éléments du résumé sont introuvables."
+        );
+
+        return;
+    }
+
+
+    alert(
+        "RELATÓRIOS — BLOC 9.2\n\n" +
+        "Tous les éléments du résumé sont détectés.\n\n" +
+        "Aucun nouvel ID n'a été créé."
+    );
+
+
+    /* ================================
+       VALEURS INITIALES
+    ================================= */
+
+    reportSummarySales.textContent =
+        "0";
+
+    reportSummaryRevenue.textContent =
+        "0 Kz";
+
+    reportSummaryCommission.textContent =
+        "0 Kz";
+
+    reportSummaryGrowth.textContent =
+        "0%";
+
+    reportSummaryActiveMerchants.textContent =
+        "0";
+
+    reportSummaryProductsSold.textContent =
+        "0";
+
+    reportSummaryOfficialStores.textContent =
+        "0";
+
+
+    /* ================================
+       EXPORTER
+    ================================= */
+
+    exportReportButton.addEventListener(
+        "click",
+        handleExportReport
+    );
+
+
+    /* ================================
+       IMPRIMER
+    ================================= */
+
+    printReportButton.addEventListener(
+        "click",
+        handlePrintReport
+    );
+
+
+    alert(
+        "RELATÓRIOS — BLOC 9 TERMINÉ ✅\n\n" +
+        "Le résumé du rapport est connecté.\n\n" +
+        "Résumé : OK\n" +
+        "Exporter : OK\n" +
+        "Imprimer : OK"
+    );
+
+}
+
+
+/* =========================================================
+   BLOC 9.1 — EXPORTER LE RAPPORT
+========================================================= */
+
+function handleExportReport() {
+
+    alert(
+        "RELATÓRIOS — BLOC 9.3\n\n" +
+        "Export du rapport demandé.\n\n" +
+        "La génération du fichier sera ajoutée après la connexion aux données réelles."
+    );
+
+}
+
+
+/* =========================================================
+   BLOC 9.2 — IMPRIMER LE RAPPORT
+========================================================= */
+
+function handlePrintReport() {
+
+    alert(
+        "RELATÓRIOS — BLOC 9.4\n\n" +
+        "Impression du rapport demandée.\n\n" +
+        "La fonction d'impression sera finalisée après la connexion aux données réelles."
+    );
+
+}
