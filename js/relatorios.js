@@ -884,3 +884,163 @@ function initializeFinancialPerformance() {
     );
 
 }
+initializeOrdersMerchantsAnalysis();
+/* =========================================================
+   BLOC 6 — PEDIDOS E COMERCIANTES
+========================================================= */
+
+function initializeOrdersMerchantsAnalysis() {
+
+    alert(
+        "RELATÓRIOS — BLOC 6.1\n\n" +
+        "Initialisation de l'analyse des commandes et commerçants..."
+    );
+
+
+    /* ================================
+       RÉCUPÉRATION DES ID EXACTS
+    ================================= */
+
+    const ordersMerchantsSection =
+        document.getElementById("ordersMerchantsSection");
+
+    const ordersStatusCard =
+        document.getElementById("ordersStatusCard");
+
+    const ordersAnalysisTotal =
+        document.getElementById("ordersAnalysisTotal");
+
+    const completedOrdersCount =
+        document.getElementById("completedOrdersCount");
+
+    const pendingOrdersCount =
+        document.getElementById("pendingOrdersCount");
+
+    const cancelledOrdersCount =
+        document.getElementById("cancelledOrdersCount");
+
+    const processingOrdersCount =
+        document.getElementById("processingOrdersCount");
+
+    const completedOrdersBar =
+        document.getElementById("completedOrdersBar");
+
+    const pendingOrdersBar =
+        document.getElementById("pendingOrdersBar");
+
+    const processingOrdersBar =
+        document.getElementById("processingOrdersBar");
+
+    const cancelledOrdersBar =
+        document.getElementById("cancelledOrdersBar");
+
+    const merchantsPerformanceCard =
+        document.getElementById("merchantsPerformanceCard");
+
+    const activeMerchantsAnalysis =
+        document.getElementById("activeMerchantsAnalysis");
+
+    const newMerchantsCount =
+        document.getElementById("newMerchantsCount");
+
+    const activeMerchantsCount =
+        document.getElementById("activeMerchantsCount");
+
+    const blockedMerchantsCount =
+        document.getElementById("blockedMerchantsCount");
+
+    const merchantActivityRate =
+        document.getElementById("merchantActivityRate");
+
+    const merchantActivityProgress =
+        document.getElementById("merchantActivityProgress");
+
+
+    if (
+        !ordersMerchantsSection ||
+        !ordersStatusCard ||
+        !ordersAnalysisTotal ||
+        !completedOrdersCount ||
+        !pendingOrdersCount ||
+        !cancelledOrdersCount ||
+        !processingOrdersCount ||
+        !completedOrdersBar ||
+        !pendingOrdersBar ||
+        !processingOrdersBar ||
+        !cancelledOrdersBar ||
+        !merchantsPerformanceCard ||
+        !activeMerchantsAnalysis ||
+        !newMerchantsCount ||
+        !activeMerchantsCount ||
+        !blockedMerchantsCount ||
+        !merchantActivityRate ||
+        !merchantActivityProgress
+    ) {
+
+        alert(
+            "RELATÓRIOS — BLOC 6 ERREUR ❌\n\n" +
+            "Un ou plusieurs éléments des commandes/commerçants sont introuvables."
+        );
+
+        return;
+    }
+
+
+    alert(
+        "RELATÓRIOS — BLOC 6.2\n\n" +
+        "Tous les éléments du Bloc 6 sont détectés.\n\n" +
+        "Aucun nouvel ID n'a été créé."
+    );
+
+
+    /* ================================
+       COMMANDES — VALEURS INITIALES
+    ================================= */
+
+    ordersAnalysisTotal.textContent = "0";
+
+    completedOrdersCount.textContent = "0";
+
+    pendingOrdersCount.textContent = "0";
+
+    cancelledOrdersCount.textContent = "0";
+
+    processingOrdersCount.textContent = "0";
+
+
+    /* ================================
+       BARRES — VALEURS INITIALES
+    ================================= */
+
+    completedOrdersBar.style.width = "0%";
+
+    pendingOrdersBar.style.width = "0%";
+
+    processingOrdersBar.style.width = "0%";
+
+    cancelledOrdersBar.style.width = "0%";
+
+
+    /* ================================
+       COMMERÇANTS — VALEURS INITIALES
+    ================================= */
+
+    newMerchantsCount.textContent = "0";
+
+    activeMerchantsCount.textContent = "0";
+
+    blockedMerchantsCount.textContent = "0";
+
+    merchantActivityRate.textContent = "0%";
+
+    merchantActivityProgress.style.width = "0%";
+
+
+    alert(
+        "RELATÓRIOS — BLOC 6 TERMINÉ ✅\n\n" +
+        "L'analyse des commandes et commerçants est connectée.\n\n" +
+        "Pedidos : OK\n" +
+        "Comerciantes : OK"
+    );
+
+}
