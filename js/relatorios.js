@@ -252,3 +252,153 @@ function checkReportsElements() {
     );
 
 }
+/* =========================================================
+   BLOC 2 — GESTION DE LA PÉRIODE DU RAPPORT
+========================================================= */
+
+function initializeReportPeriod() {
+
+    alert(
+        "RELATÓRIOS — BLOC 2\n\n" +
+        "Initialisation du système de période..."
+    );
+
+
+    /*
+     * IMPORTANT :
+     * On recherche ici les contrôles de période
+     * déjà présents dans ton HTML.
+     *
+     * Aucun nouvel ID n'est créé.
+     */
+
+    const periodControls = {
+
+        period:
+            document.getElementById("reportPeriod"),
+
+        startDate:
+            document.getElementById("reportStartDate"),
+
+        endDate:
+            document.getElementById("reportEndDate")
+
+    };
+
+
+    /*
+     * Certains contrôles peuvent ne pas encore exister
+     * dans la version actuelle du HTML.
+     *
+     * Pour cette raison, on vérifie d'abord.
+     */
+
+    if (
+        !periodControls.period &&
+        !periodControls.startDate &&
+        !periodControls.endDate
+    ) {
+
+        alert(
+            "RELATÓRIOS — BLOC 2\n\n" +
+            "Les contrôles de période ne sont pas encore détectés.\n\n" +
+            "Aucune modification du HTML n'a été effectuée.\n\n" +
+            "Le système reste sécurisé."
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Si un sélecteur de période existe,
+     * on écoute ses changements.
+     */
+
+    if (periodControls.period) {
+
+        periodControls.period.addEventListener(
+            "change",
+            handleReportPeriodChange
+        );
+
+    }
+
+
+    /*
+     * Si les dates existent,
+     * on écoute également leurs modifications.
+     */
+
+    if (periodControls.startDate) {
+
+        periodControls.startDate.addEventListener(
+            "change",
+            handleReportPeriodChange
+        );
+
+    }
+
+
+    if (periodControls.endDate) {
+
+        periodControls.endDate.addEventListener(
+            "change",
+            handleReportPeriodChange
+        );
+
+    }
+
+
+    alert(
+        "RELATÓRIOS — BLOC 2 TERMINÉ ✅\n\n" +
+        "Le système de période est initialisé.\n\n" +
+        "Aucun nouvel ID n'a été créé."
+    );
+
+}
+
+
+/* =========================================================
+   BLOC 2.1 — CHANGEMENT DE PÉRIODE
+========================================================= */
+
+function handleReportPeriodChange(event) {
+
+    alert(
+        "RELATÓRIOS — BLOC 2.1\n\n" +
+        "Changement de période détecté."
+    );
+
+
+    const selectedPeriod = event?.target?.value || "";
+
+
+    /*
+     * Pour le moment, nous ne lançons encore aucun
+     * calcul Firebase.
+     *
+     * Le prochain bloc utilisera cette information.
+     */
+
+    console.log(
+        "Période sélectionnée :",
+        selectedPeriod
+    );
+
+
+    alert(
+        "RELATÓRIOS — BLOC 2.1 TERMINÉ ✅\n\n" +
+        "La nouvelle période a été détectée.\n\n" +
+        "Les calculs seront connectés dans les blocs suivants."
+    );
+
+}
+
+
+/* =========================================================
+   BLOC 2.2 — LANCEMENT DU BLOC 2
+========================================================= */
+
+initializeReportPeriod();
