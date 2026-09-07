@@ -1,19 +1,24 @@
  /* =========================================================
    TOMA — RELATÓRIOS
    relatorios.js
+
    BLOC 1 — INITIALISATION
+   BLOC 2 — GESTION DE LA PÉRIODE
 ========================================================= */
 
 "use strict";
 
 
 /* =========================================================
-   BLOC 1.1 — DÉMARRAGE
+   DÉMARRAGE UNIQUE
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    alert("RELATÓRIOS — BLOC 1\n\nInitialisation du module...");
+    alert(
+        "RELATÓRIOS — BLOC 1\n\n" +
+        "Initialisation du module..."
+    );
 
     initializeReports();
 
@@ -21,12 +26,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 /* =========================================================
-   BLOC 1.2 — INITIALISATION PRINCIPALE
+   BLOC 1.1 — INITIALISATION PRINCIPALE
 ========================================================= */
 
 function initializeReports() {
 
-    alert("RELATÓRIOS — BLOC 1.2\n\nLa page relatorios.html est détectée.\n\nVérification des éléments...");
+    alert(
+        "RELATÓRIOS — BLOC 1.2\n\n" +
+        "La page relatorios.html est détectée.\n\n" +
+        "Vérification des éléments..."
+    );
 
     checkReportsElements();
 
@@ -34,14 +43,104 @@ function initializeReports() {
 
 
 /* =========================================================
-   BLOC 1.3 — VÉRIFICATION DES ID EXISTANTS
+   BLOC 1.2 — VÉRIFICATION DES ID EXISTANTS
 ========================================================= */
 
 function checkReportsElements() {
 
     const elements = {
 
-        // Bloc 4 — Desempenho de vendas
+        /* ================================
+           HEADER
+        ================================= */
+
+        relatoriosApp:
+            document.getElementById("relatoriosApp"),
+
+        reportsHeader:
+            document.getElementById("reportsHeader"),
+
+        backReportsButton:
+            document.getElementById("backReportsButton"),
+
+        exportReportsButton:
+            document.getElementById("exportReportsButton"),
+
+
+        /* ================================
+           CONTENU
+        ================================= */
+
+        reportsMain:
+            document.getElementById("reportsMain"),
+
+        reportsIntro:
+            document.getElementById("reportsIntro"),
+
+        reportsPeriodBar:
+            document.getElementById("reportsPeriodBar"),
+
+        reportsPeriodLabel:
+            document.getElementById("reportsPeriodLabel"),
+
+        reportsPeriodSelect:
+            document.getElementById("reportsPeriodSelect"),
+
+        refreshReportsButton:
+            document.getElementById("refreshReportsButton"),
+
+        reportsContent:
+            document.getElementById("reportsContent"),
+
+
+        /* ================================
+           BLOC 3
+        ================================= */
+
+        reportsStats:
+            document.getElementById("reportsStats"),
+
+        salesStatCard:
+            document.getElementById("salesStatCard"),
+
+        reportTotalSales:
+            document.getElementById("reportTotalSales"),
+
+        reportSalesGrowth:
+            document.getElementById("reportSalesGrowth"),
+
+        revenueStatCard:
+            document.getElementById("revenueStatCard"),
+
+        reportTotalRevenue:
+            document.getElementById("reportTotalRevenue"),
+
+        reportRevenueGrowth:
+            document.getElementById("reportRevenueGrowth"),
+
+        commissionStatCard:
+            document.getElementById("commissionStatCard"),
+
+        reportTotalCommission:
+            document.getElementById("reportTotalCommission"),
+
+        reportCommissionRate:
+            document.getElementById("reportCommissionRate"),
+
+        ordersStatCard:
+            document.getElementById("ordersStatCard"),
+
+        reportTotalOrders:
+            document.getElementById("reportTotalOrders"),
+
+        reportOrdersGrowth:
+            document.getElementById("reportOrdersGrowth"),
+
+
+        /* ================================
+           BLOC 4
+        ================================= */
+
         salesPerformanceSection:
             document.getElementById("salesPerformanceSection"),
 
@@ -67,7 +166,10 @@ function checkReportsElements() {
             document.getElementById("salesChartEmpty"),
 
 
-        // Bloc 5 — Finance
+        /* ================================
+           BLOC 5
+        ================================= */
+
         financialPerformanceSection:
             document.getElementById("financialPerformanceSection"),
 
@@ -102,9 +204,15 @@ function checkReportsElements() {
             document.getElementById("financialCommissionProgress"),
 
 
-        // Bloc 6 — Pedidos + Comerciantes
+        /* ================================
+           BLOC 6
+        ================================= */
+
         ordersMerchantsSection:
             document.getElementById("ordersMerchantsSection"),
+
+        ordersStatusCard:
+            document.getElementById("ordersStatusCard"),
 
         ordersAnalysisTotal:
             document.getElementById("ordersAnalysisTotal"),
@@ -133,6 +241,9 @@ function checkReportsElements() {
         cancelledOrdersBar:
             document.getElementById("cancelledOrdersBar"),
 
+        merchantsPerformanceCard:
+            document.getElementById("merchantsPerformanceCard"),
+
         activeMerchantsAnalysis:
             document.getElementById("activeMerchantsAnalysis"),
 
@@ -152,7 +263,10 @@ function checkReportsElements() {
             document.getElementById("merchantActivityProgress"),
 
 
-        // Bloc 7 — Produits + Lojas oficiais
+        /* ================================
+           BLOC 7
+        ================================= */
+
         productsStoresSection:
             document.getElementById("productsStoresSection"),
 
@@ -181,7 +295,10 @@ function checkReportsElements() {
             document.getElementById("officialStoresSalesProgress"),
 
 
-        // Bloc 8 — Atividade recente
+        /* ================================
+           BLOC 8
+        ================================= */
+
         recentActivitySection:
             document.getElementById("recentActivitySection"),
 
@@ -192,7 +309,10 @@ function checkReportsElements() {
             document.getElementById("viewAllActivityButton"),
 
 
-        // Bloc 9 — Resumo
+        /* ================================
+           BLOC 9
+        ================================= */
+
         reportSummarySection:
             document.getElementById("reportSummarySection"),
 
@@ -235,9 +355,8 @@ function checkReportsElements() {
 
         alert(
             "RELATÓRIOS — ERREUR\n\n" +
-            "Certains IDs HTML sont introuvables :\n\n" +
-            missingElements.join("\n") +
-            "\n\nNous arrêtons le test pour ne rien casser."
+            "IDs HTML introuvables :\n\n" +
+            missingElements.join("\n")
         );
 
         return;
@@ -246,114 +365,99 @@ function checkReportsElements() {
 
     alert(
         "RELATÓRIOS — BLOC 1 TERMINÉ ✅\n\n" +
-        "Tous les IDs actuellement utilisés par relatorios.js sont présents.\n\n" +
-        "Aucun nouvel ID n'a été créé.\n\n" +
-        "La structure HTML est prête pour le Bloc 2."
+        "Tous les IDs HTML nécessaires sont présents.\n\n" +
+        "Aucun nouvel ID n'a été créé."
     );
 
+
+    /* ================================
+       PASSAGE AU BLOC 2
+    ================================= */
+
+    initializeReportPeriod();
+
 }
+
+
 /* =========================================================
-   BLOC 2 — GESTION DE LA PÉRIODE DU RAPPORT
+   BLOC 2 — GESTION DE LA PÉRIODE
 ========================================================= */
 
 function initializeReportPeriod() {
 
     alert(
-        "RELATÓRIOS — BLOC 2\n\n" +
+        "RELATÓRIOS — BLOC 2.1\n\n" +
         "Initialisation du système de période..."
     );
 
 
-    /*
-     * IMPORTANT :
-     * On recherche ici les contrôles de période
-     * déjà présents dans ton HTML.
-     *
-     * Aucun nouvel ID n'est créé.
-     */
+    /* ================================
+       RÉCUPÉRATION DES ID EXACTS
+    ================================= */
 
-    const periodControls = {
+    const periodBar =
+        document.getElementById("reportsPeriodBar");
 
-        period:
-            document.getElementById("reportPeriod"),
+    const periodLabel =
+        document.getElementById("reportsPeriodLabel");
 
-        startDate:
-            document.getElementById("reportStartDate"),
+    const periodSelect =
+        document.getElementById("reportsPeriodSelect");
 
-        endDate:
-            document.getElementById("reportEndDate")
+    const refreshButton =
+        document.getElementById("refreshReportsButton");
 
-    };
-
-
-    /*
-     * Certains contrôles peuvent ne pas encore exister
-     * dans la version actuelle du HTML.
-     *
-     * Pour cette raison, on vérifie d'abord.
-     */
 
     if (
-        !periodControls.period &&
-        !periodControls.startDate &&
-        !periodControls.endDate
+        !periodBar ||
+        !periodLabel ||
+        !periodSelect ||
+        !refreshButton
     ) {
 
         alert(
-            "RELATÓRIOS — BLOC 2\n\n" +
-            "Les contrôles de période ne sont pas encore détectés.\n\n" +
-            "Aucune modification du HTML n'a été effectuée.\n\n" +
-            "Le système reste sécurisé."
+            "RELATÓRIOS — BLOC 2 ERREUR ❌\n\n" +
+            "Un ou plusieurs contrôles de période sont introuvables."
         );
 
         return;
-
-    }
-
-
-    /*
-     * Si un sélecteur de période existe,
-     * on écoute ses changements.
-     */
-
-    if (periodControls.period) {
-
-        periodControls.period.addEventListener(
-            "change",
-            handleReportPeriodChange
-        );
-
-    }
-
-
-    /*
-     * Si les dates existent,
-     * on écoute également leurs modifications.
-     */
-
-    if (periodControls.startDate) {
-
-        periodControls.startDate.addEventListener(
-            "change",
-            handleReportPeriodChange
-        );
-
-    }
-
-
-    if (periodControls.endDate) {
-
-        periodControls.endDate.addEventListener(
-            "change",
-            handleReportPeriodChange
-        );
-
     }
 
 
     alert(
+        "RELATÓRIOS — BLOC 2.2\n\n" +
+        "Les contrôles de période sont correctement détectés.\n\n" +
+        "ID utilisés :\n" +
+        "reportsPeriodBar\n" +
+        "reportsPeriodLabel\n" +
+        "reportsPeriodSelect\n" +
+        "refreshReportsButton"
+    );
+
+
+    /* ================================
+       CHANGEMENT DE PÉRIODE
+    ================================= */
+
+    periodSelect.addEventListener(
+        "change",
+        handleReportPeriodChange
+    );
+
+
+    /* ================================
+       ACTUALISATION
+    ================================= */
+
+    refreshButton.addEventListener(
+        "click",
+        handleReportsRefresh
+    );
+
+
+    alert(
         "RELATÓRIOS — BLOC 2 TERMINÉ ✅\n\n" +
-        "Le système de période est initialisé.\n\n" +
+        "Le système de période est maintenant connecté.\n\n" +
         "Aucun nouvel ID n'a été créé."
     );
 
@@ -366,39 +470,61 @@ function initializeReportPeriod() {
 
 function handleReportPeriodChange(event) {
 
+    const selectedPeriod = event.target.value;
+
+    const periodLabel =
+        document.getElementById("reportsPeriodLabel");
+
+
+    const labels = {
+
+        today:
+            "Hoje",
+
+        "7days":
+            "Últimos 7 dias",
+
+        "30days":
+            "Últimos 30 dias",
+
+        year:
+            "Este ano",
+
+        custom:
+            "Período personalizado"
+
+    };
+
+
+    if (periodLabel) {
+
+        periodLabel.textContent =
+            labels[selectedPeriod] || "Período selecionado";
+
+    }
+
+
     alert(
-        "RELATÓRIOS — BLOC 2.1\n\n" +
-        "Changement de période détecté."
-    );
-
-
-    const selectedPeriod = event?.target?.value || "";
-
-
-    /*
-     * Pour le moment, nous ne lançons encore aucun
-     * calcul Firebase.
-     *
-     * Le prochain bloc utilisera cette information.
-     */
-
-    console.log(
-        "Période sélectionnée :",
-        selectedPeriod
-    );
-
-
-    alert(
-        "RELATÓRIOS — BLOC 2.1 TERMINÉ ✅\n\n" +
-        "La nouvelle période a été détectée.\n\n" +
-        "Les calculs seront connectés dans les blocs suivants."
+        "RELATÓRIOS — BLOC 2.3\n\n" +
+        "Período alterado.\n\n" +
+        "Valor: " + selectedPeriod + "\n" +
+        "Label: " +
+        (labels[selectedPeriod] || "Período selecionado")
     );
 
 }
 
 
 /* =========================================================
-   BLOC 2.2 — LANCEMENT DU BLOC 2
+   BLOC 2.2 — ATUALIZAR RELATÓRIOS
 ========================================================= */
 
-initializeReportPeriod();
+function handleReportsRefresh() {
+
+    alert(
+        "RELATÓRIOS — BLOC 2.4\n\n" +
+        "Atualização dos relatórios solicitada.\n\n" +
+        "A ligação com Firebase será feita nos próximos blocos."
+    );
+
+}
