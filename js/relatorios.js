@@ -7,7 +7,16 @@
 ========================================================= */
 
 "use strict";
+/* =========================================================
+   BLOC 10 — CONNEXION FIRESTORE ET CHARGEMENT DES COMMANDES
+========================================================= */
 
+import { db } from "../firebase.js";
+
+import {
+    collection,
+    getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 /* =========================================================
    DÉMARRAGE UNIQUE
@@ -1438,5 +1447,74 @@ function handlePrintReport() {
         "Impression du rapport demandée.\n\n" +
         "La fonction d'impression sera finalisée après la connexion aux données réelles."
     );
+
+}
+loadReportsOrders();
+/* =========================================================
+   BLOC 10 — DONNÉES DES COMMANDES
+========================================================= */
+
+let reportsOrders = [];
+
+
+/* =========================================================
+   BLOC 10.1 — CHARGEMENT DES COMMANDES
+========================================================= */
+
+async function loadReportsOrders() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 10.1\n\n" +
+            "Connexion à Firestore...\n\n" +
+            "Chargement de la collection orders."
+        );
+
+        const ordersSnapshot = await getDocs(
+            collection(db, "orders")
+        );
+
+        reportsOrders = [];
+
+        ordersSnapshot.forEach((orderDoc) => {
+
+            reportsOrders.push({
+                id: orderDoc.id,
+                ...orderDoc.data()
+            });
+
+        });
+
+
+        /* =========================================
+           VÉRIFICATION
+        ========================================= */
+
+        alert(
+            "RELATÓRIOS — BLOC 10 TERMINÉ ✅\n\n" +
+            "Commandes récupérées : " +
+            reportsOrders.length +
+            "\n\n" +
+            "Collection utilisée : orders\n\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erreur chargement commandes rapports :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 10 ERREUR ❌\n\n" +
+            "Impossible de charger les commandes.\n\n" +
+            "Erreur : " +
+            error.message
+        );
+
+    }
 
 }
