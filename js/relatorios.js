@@ -4,11 +4,21 @@
 
    BLOC 1 — INITIALISATION
    BLOC 2 — GESTION DE LA PÉRIODE
+   BLOC 3 — INDICATEURS PRINCIPAUX
+   BLOC 4 — DESEMPENHO DE VENDAS
+   BLOC 5 — PERFORMANCE FINANCIÈRE
+   BLOC 6 — PEDIDOS E COMERCIANTES
+   BLOC 7 — PRODUTOS E LOJAS OFICIAIS
+   BLOC 8 — ACTIVITÉ RÉCENTE
+   BLOC 9 — RÉSUMÉ DU RAPPORT
+   BLOC 10 — DONNÉES DES COMMANDES
 ========================================================= */
 
 "use strict";
+
+
 /* =========================================================
-   BLOC 10 — CONNEXION FIRESTORE ET CHARGEMENT DES COMMANDES
+   BLOC 10 — CONNEXION FIRESTORE
 ========================================================= */
 
 import { db } from "../firebase.js";
@@ -17,6 +27,7 @@ import {
     collection,
     getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
 
 /* =========================================================
    DÉMARRAGE UNIQUE
@@ -400,10 +411,6 @@ function initializeReportPeriod() {
     );
 
 
-    /* ================================
-       RÉCUPÉRATION DES ID EXACTS
-    ================================= */
-
     const periodBar =
         document.getElementById("reportsPeriodBar");
 
@@ -444,19 +451,11 @@ function initializeReportPeriod() {
     );
 
 
-    /* ================================
-       CHANGEMENT DE PÉRIODE
-    ================================= */
-
     periodSelect.addEventListener(
         "change",
         handleReportPeriodChange
     );
 
-
-    /* ================================
-       ACTUALISATION
-    ================================= */
 
     refreshButton.addEventListener(
         "click",
@@ -470,6 +469,13 @@ function initializeReportPeriod() {
         "Aucun nouvel ID n'a été créé."
     );
 
+
+    /* ================================
+       PASSAGE AU BLOC 3
+    ================================= */
+
+    initializeReportIndicators();
+
 }
 
 
@@ -479,7 +485,8 @@ function initializeReportPeriod() {
 
 function handleReportPeriodChange(event) {
 
-    const selectedPeriod = event.target.value;
+    const selectedPeriod =
+        event.target.value;
 
     const periodLabel =
         document.getElementById("reportsPeriodLabel");
@@ -508,7 +515,8 @@ function handleReportPeriodChange(event) {
     if (periodLabel) {
 
         periodLabel.textContent =
-            labels[selectedPeriod] || "Período selecionado";
+            labels[selectedPeriod] ||
+            "Período selecionado";
 
     }
 
@@ -518,7 +526,10 @@ function handleReportPeriodChange(event) {
         "Período alterado.\n\n" +
         "Valor: " + selectedPeriod + "\n" +
         "Label: " +
-        (labels[selectedPeriod] || "Período selecionado")
+        (
+            labels[selectedPeriod] ||
+            "Período selecionado"
+        )
     );
 
 }
@@ -537,7 +548,8 @@ function handleReportsRefresh() {
     );
 
 }
-initializeReportIndicators();
+
+
 /* =========================================================
    BLOC 3 — INDICADORES PRINCIPAIS
 ========================================================= */
@@ -549,10 +561,6 @@ function initializeReportIndicators() {
         "Initialisation des indicateurs principaux..."
     );
 
-
-    /* ================================
-       RÉCUPÉRATION DES ID EXACTS
-    ================================= */
 
     const totalSales =
         document.getElementById("reportTotalSales");
@@ -606,10 +614,6 @@ function initializeReportIndicators() {
     );
 
 
-    /* ================================
-       VALEURS DE TEST
-    ================================= */
-
     totalSales.textContent = "0";
 
     salesGrowth.textContent = "0%";
@@ -636,8 +640,16 @@ function initializeReportIndicators() {
         "Pedidos : OK"
     );
 
+
+    /* ================================
+       PASSAGE AU BLOC 4
+    ================================= */
+
+    initializeSalesPerformance();
+
 }
-initializeSalesPerformance();
+
+
 /* =========================================================
    BLOC 4 — DESEMPENHO DE VENDAS
 ========================================================= */
@@ -648,6 +660,7 @@ function initializeSalesPerformance() {
         "RELATÓRIOS — BLOC 4.1\n\n" +
         "Initialisation du module de performance des ventes..."
     );
+
 
     const salesPerformanceSection =
         document.getElementById("salesPerformanceSection");
@@ -701,10 +714,6 @@ function initializeSalesPerformance() {
     );
 
 
-    /* ================================
-       VALEURS INITIALES
-    ================================= */
-
     salesChartTotal.textContent = "0";
 
     salesChartAverage.textContent = "0 Kz";
@@ -714,16 +723,14 @@ function initializeSalesPerformance() {
 
     /* ================================
        ÉTAT INITIAL DU GRAPHIQUE
+       IMPORTANT :
+       On ne vide pas salesChart avec
+       textContent afin de conserver
+       salesChartEmpty dans le DOM.
     ================================= */
 
     salesChartEmpty.style.display = "block";
 
-    salesChart.textContent = "";
-
-
-    /* ================================
-       CHANGEMENT DE PÉRIODE DU GRAPHIQUE
-    ================================= */
 
     salesChartPeriod.addEventListener(
         "change",
@@ -736,6 +743,13 @@ function initializeSalesPerformance() {
         "Le module de performance des ventes est connecté.\n\n" +
         "Le graphique sera alimenté avec les données réelles dans les prochains blocs."
     );
+
+
+    /* ================================
+       PASSAGE AU BLOC 5
+    ================================= */
+
+    initializeFinancialPerformance();
 
 }
 
@@ -778,7 +792,8 @@ function handleSalesChartPeriodChange(event) {
     );
 
 }
-initializeFinancialPerformance();
+
+
 /* =========================================================
    BLOC 5 — PERFORMANCE FINANCIÈRE
 ========================================================= */
@@ -790,10 +805,6 @@ function initializeFinancialPerformance() {
         "Initialisation de la performance financière..."
     );
 
-
-    /* ================================
-       RÉCUPÉRATION DES ID EXACTS
-    ================================= */
 
     const financialPerformanceSection =
         document.getElementById("financialPerformanceSection");
@@ -859,10 +870,6 @@ function initializeFinancialPerformance() {
     );
 
 
-    /* ================================
-       VALEURS INITIALES
-    ================================= */
-
     revenueValue.textContent = "0 Kz";
 
     revenueAverage.textContent = "0 Kz";
@@ -892,8 +899,16 @@ function initializeFinancialPerformance() {
         "Comissão Toma : OK"
     );
 
+
+    /* ================================
+       PASSAGE AU BLOC 6
+    ================================= */
+
+    initializeOrdersMerchantsAnalysis();
+
 }
-initializeOrdersMerchantsAnalysis();
+
+
 /* =========================================================
    BLOC 6 — PEDIDOS E COMERCIANTES
 ========================================================= */
@@ -905,10 +920,6 @@ function initializeOrdersMerchantsAnalysis() {
         "Initialisation de l'analyse des commandes et commerçants..."
     );
 
-
-    /* ================================
-       RÉCUPÉRATION DES ID EXACTS
-    ================================= */
 
     const ordersMerchantsSection =
         document.getElementById("ordersMerchantsSection");
@@ -1002,10 +1013,6 @@ function initializeOrdersMerchantsAnalysis() {
     );
 
 
-    /* ================================
-       COMMANDES — VALEURS INITIALES
-    ================================= */
-
     ordersAnalysisTotal.textContent = "0";
 
     completedOrdersCount.textContent = "0";
@@ -1017,10 +1024,6 @@ function initializeOrdersMerchantsAnalysis() {
     processingOrdersCount.textContent = "0";
 
 
-    /* ================================
-       BARRES — VALEURS INITIALES
-    ================================= */
-
     completedOrdersBar.style.width = "0%";
 
     pendingOrdersBar.style.width = "0%";
@@ -1029,10 +1032,6 @@ function initializeOrdersMerchantsAnalysis() {
 
     cancelledOrdersBar.style.width = "0%";
 
-
-    /* ================================
-       COMMERÇANTS — VALEURS INITIALES
-    ================================= */
 
     newMerchantsCount.textContent = "0";
 
@@ -1052,8 +1051,16 @@ function initializeOrdersMerchantsAnalysis() {
         "Comerciantes : OK"
     );
 
+
+    /* ================================
+       PASSAGE AU BLOC 7
+    ================================= */
+
+    initializeProductsStoresAnalysis();
+
 }
-initializeProductsStoresAnalysis();
+
+
 /* =========================================================
    BLOC 7 — PRODUTOS E LOJAS OFICIAIS
 ========================================================= */
@@ -1065,10 +1072,6 @@ function initializeProductsStoresAnalysis() {
         "Initialisation de l'analyse des produits et lojas oficiais..."
     );
 
-
-    /* ================================
-       RÉCUPÉRATION DES ID EXACTS
-    ================================= */
 
     const productsStoresSection =
         document.getElementById("productsStoresSection");
@@ -1126,10 +1129,6 @@ function initializeProductsStoresAnalysis() {
     );
 
 
-    /* ================================
-       LOJAS OFFICIAIS
-    ================================= */
-
     officialStoresSalesValue.textContent =
         "0 Kz";
 
@@ -1145,10 +1144,6 @@ function initializeProductsStoresAnalysis() {
     officialStoresSalesProgress.style.width =
         "0%";
 
-
-    /* ================================
-       TOP PRODUITS
-    ================================= */
 
     if (topProductsList.children.length === 0) {
 
@@ -1175,8 +1170,16 @@ function initializeProductsStoresAnalysis() {
         "Lojas Oficiais : OK"
     );
 
+
+    /* ================================
+       PASSAGE AU BLOC 8
+    ================================= */
+
+    initializeRecentActivity();
+
 }
-initializeRecentActivity();
+
+
 /* =========================================================
    BLOC 8 — ACTIVITÉ RÉCENTE
 ========================================================= */
@@ -1188,10 +1191,6 @@ function initializeRecentActivity() {
         "Initialisation de l'activité récente..."
     );
 
-
-    /* ================================
-       RÉCUPÉRATION DES ID EXACTS
-    ================================= */
 
     const recentActivitySection =
         document.getElementById("recentActivitySection");
@@ -1225,10 +1224,6 @@ function initializeRecentActivity() {
     );
 
 
-    /* ================================
-       VÉRIFICATION DE LA LISTE
-    ================================= */
-
     const activityItems =
         recentActivityList.children.length;
 
@@ -1254,10 +1249,6 @@ function initializeRecentActivity() {
     }
 
 
-    /* ================================
-       BOUTON — VOIR TOUT
-    ================================= */
-
     viewAllActivityButton.addEventListener(
         "click",
         handleViewAllActivity
@@ -1270,6 +1261,13 @@ function initializeRecentActivity() {
         "Activité récente : OK\n" +
         "Bouton Ver tudo : OK"
     );
+
+
+    /* ================================
+       PASSAGE AU BLOC 9
+    ================================= */
+
+    initializeReportSummary();
 
 }
 
@@ -1287,7 +1285,8 @@ function handleViewAllActivity() {
     );
 
 }
-initializeReportSummary();
+
+
 /* =========================================================
    BLOC 9 — RÉSUMÉ DU RAPPORT
 ========================================================= */
@@ -1299,10 +1298,6 @@ function initializeReportSummary() {
         "Initialisation du résumé du rapport..."
     );
 
-
-    /* ================================
-       RÉCUPÉRATION DES ID EXACTS
-    ================================= */
 
     const reportSummarySection =
         document.getElementById("reportSummarySection");
@@ -1364,10 +1359,6 @@ function initializeReportSummary() {
     );
 
 
-    /* ================================
-       VALEURS INITIALES
-    ================================= */
-
     reportSummarySales.textContent =
         "0";
 
@@ -1390,19 +1381,11 @@ function initializeReportSummary() {
         "0";
 
 
-    /* ================================
-       EXPORTER
-    ================================= */
-
     exportReportButton.addEventListener(
         "click",
         handleExportReport
     );
 
-
-    /* ================================
-       IMPRIMER
-    ================================= */
 
     printReportButton.addEventListener(
         "click",
@@ -1417,6 +1400,13 @@ function initializeReportSummary() {
         "Exporter : OK\n" +
         "Imprimer : OK"
     );
+
+
+    /* ================================
+       PASSAGE AU BLOC 10
+    ================================= */
+
+    loadReportsOrders();
 
 }
 
@@ -1449,7 +1439,8 @@ function handlePrintReport() {
     );
 
 }
-loadReportsOrders();
+
+
 /* =========================================================
    BLOC 10 — DONNÉES DES COMMANDES
 ========================================================= */
@@ -1471,25 +1462,28 @@ async function loadReportsOrders() {
             "Chargement de la collection orders."
         );
 
+
         const ordersSnapshot = await getDocs(
             collection(db, "orders")
         );
 
+
         reportsOrders = [];
+
 
         ordersSnapshot.forEach((orderDoc) => {
 
             reportsOrders.push({
-                id: orderDoc.id,
+
+                id:
+                    orderDoc.id,
+
                 ...orderDoc.data()
+
             });
 
         });
 
-
-        /* =========================================
-           VÉRIFICATION
-        ========================================= */
 
         alert(
             "RELATÓRIOS — BLOC 10 TERMINÉ ✅\n\n" +
@@ -1507,6 +1501,7 @@ async function loadReportsOrders() {
             "Erreur chargement commandes rapports :",
             error
         );
+
 
         alert(
             "RELATÓRIOS — BLOC 10 ERREUR ❌\n\n" +
