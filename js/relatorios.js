@@ -1874,7 +1874,11 @@ function calculateReportsStatistics() {
             "Aucun ID HTML modifié.\n" +
             "Aucune donnée Firestore modifiée."
         );
-
+displayReportsStatistics(
+    totalOrders,
+    totalProductsSold,
+    totalRevenue
+);
 
     }
     catch (error) {
@@ -1887,6 +1891,158 @@ function calculateReportsStatistics() {
 
         alert(
             "RELATÓRIOS — BLOC 11.1 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+/* =========================================================
+   BLOC 11.2 — AFFICHAGE DES STATISTIQUES RÉELLES
+========================================================= */
+
+function displayReportsStatistics(
+    totalOrders,
+    totalProductsSold,
+    totalRevenue
+) {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 11.2.1\n\n" +
+            "Préparation de l'affichage des statistiques..."
+        );
+
+
+        /* ================================================
+           RÉCUPÉRATION DES ID HTML EXISTANTS
+        ================================================= */
+
+        const reportTotalSales =
+            document.getElementById("reportTotalSales");
+
+        const reportTotalRevenue =
+            document.getElementById("reportTotalRevenue");
+
+        const reportTotalOrders =
+            document.getElementById("reportTotalOrders");
+
+        const reportSummarySales =
+            document.getElementById("reportSummarySales");
+
+        const reportSummaryRevenue =
+            document.getElementById("reportSummaryRevenue");
+
+        const reportSummaryProductsSold =
+            document.getElementById("reportSummaryProductsSold");
+
+
+        /* ================================================
+           VÉRIFICATION
+        ================================================= */
+
+        if (
+            !reportTotalSales ||
+            !reportTotalRevenue ||
+            !reportTotalOrders ||
+            !reportSummarySales ||
+            !reportSummaryRevenue ||
+            !reportSummaryProductsSold
+        ) {
+
+            throw new Error(
+                "Un ou plusieurs IDs du résumé/statistiques sont introuvables."
+            );
+
+        }
+
+
+        alert(
+            "RELATÓRIOS — BLOC 11.2.2\n\n" +
+            "Les IDs existants sont correctement détectés.\n\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+
+        /* ================================================
+           FORMATAGE
+        ================================================= */
+
+        const formattedRevenue =
+            totalRevenue.toLocaleString("pt-AO") +
+            " Kz";
+
+
+        /* ================================================
+           CARTES PRINCIPALES
+        ================================================= */
+
+        reportTotalSales.textContent =
+            formattedRevenue;
+
+        reportTotalRevenue.textContent =
+            formattedRevenue;
+
+        reportTotalOrders.textContent =
+            totalOrders;
+
+
+        /* ================================================
+           RÉSUMÉ DU RAPPORT
+        ================================================= */
+
+        reportSummarySales.textContent =
+            formattedRevenue;
+
+        reportSummaryRevenue.textContent =
+            formattedRevenue;
+
+        reportSummaryProductsSold.textContent =
+            totalProductsSold;
+
+
+        /* ================================================
+           TEST FINAL
+        ================================================= */
+
+        alert(
+            "RELATÓRIOS — BLOC 11.2 TERMINÉ ✅\n\n" +
+
+            "Commandes affichées : " +
+            totalOrders +
+
+            "\n\n" +
+
+            "Produits vendus affichés : " +
+            totalProductsSold +
+
+            "\n\n" +
+
+            "Chiffre d'affaires affiché : " +
+            formattedRevenue +
+
+            "\n\n" +
+
+            "Cartes principales : OK\n" +
+            "Résumé du rapport : OK\n\n" +
+
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 11.2 :",
+            error
+        );
+
+
+        alert(
+            "RELATÓRIOS — BLOC 11.2 ERREUR ❌\n\n" +
             error.message
         );
 
