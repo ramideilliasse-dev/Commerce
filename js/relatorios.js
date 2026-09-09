@@ -1513,3 +1513,251 @@ async function loadReportsOrders() {
     }
 
 }
+// ======================================================
+// BLOC 10.2 — NORMALISATION DES COMMANDES
+// ======================================================
+
+async function loadReportsOrders() {
+
+    try {
+
+        const ordersRef = collection(db, "orders");
+        const snapshot = await getDocs(ordersRef);
+
+        // Tableau brut récupéré depuis Firestore
+        const rawOrders = [];
+
+        snapshot.forEach((docSnap) => {
+
+            rawOrders.push({
+                id: docSnap.id,
+                ...docSnap.data()
+            });
+
+        });
+
+        // --------------------------------------------------
+        // NORMALISATION
+        // --------------------------------------------------
+
+        reportsOrders = rawOrders.map(order => {
+
+            // ---------- PRODUITS ----------
+            let items = [];
+
+            if (Array.isArray(order.items)) {
+                items = order.items;
+            }
+            else if (Array.isArray(order.products)) {
+                items = order.products;
+            }
+
+            // ---------- QUANTITÉ DES PRODUITS ----------
+            items = items.map(item => {
+
+                let quantity = Number(
+                    item.quantity ??
+                    item.qty ??
+                    1
+                );
+
+                if (!Number.isFinite(quantity) || quantity < 1) {
+                    quantity = 1;
+                }
+
+                return {
+                    ...item,
+                    quantity
+                };
+
+            });
+
+            // ---------- TOTAL ----------
+            let total = Number(order.total ?? 0);
+
+            if (!Number.isFinite(total)) {
+                total = 0;
+            }
+
+            // ---------- STATUT ----------
+            const originalStatus = String(
+                order.status ?? "pending"
+            ).trim().toLowerCase();
+
+            let status = "pending";
+
+            if (
+                originalStatus === "pending" ||
+                originalStatus === "pendente"
+            ) {
+                status = "pending";
+            }
+            else if (
+                originalStatus === "confirmed" ||
+                originalStatus === "confirmado"
+            ) {
+                status = "confirmed";
+            }
+            else if (
+                originalStatus === "shipped" ||
+                originalStatus === "enviado"
+            ) {
+                status = "shipped";
+            }
+            else if (
+                originalStatus === "delivered" ||
+                originalStatus === "entregue"
+            ) {
+                status = "delivered";
+            }
+            else if (
+                originalStatus === "cancelled" ||
+                originalStatus === "canceled" ||
+                originalStatus === "cancelado"
+            ) {
+                status = "cancelled";
+            }
+
+            // ---------- CLIENT ----------
+            const clientName =
+                order.clientName ??
+                order.customerName ??
+                "";
+
+            const clientPhone =
+                order.clientPhone ??
+                order.phone ??
+                "";
+
+            // ---------- ADRESSE ----------
+            const clientAddress =
+                order.clientAddress ??
+                order.address ??
+                "";
+
+            // ---------- MARCHAND ----------
+            const merchantId =
+                order.merchantId ??
+                "";
+
+            // ---------- BOUTIQUE ----------
+            const shopName =
+                order.shopName ??
+                "";
+
+            // ---------- DATE ----------
+            const createdAt = order.createdAt ?? null;
+
+            // ---------- COMMANDE NORMALISÉE ----------
+            return {
+
+                id: order.id,
+
+                orderNumber:
+                    order.orderNumber ??
+                    order.id,
+
+                merchantId,
+
+                shopName,
+
+                uid:
+                    order.uid ??
+                    "",
+
+                clientName,
+
+                clientPhone,
+
+                clientAddress,
+
+                province:
+                    order.clientProvince ??
+                    "",
+
+                city:
+                    order.clientCity ??
+                    "",
+
+                paymentMethod:
+                    order.paymentMethod ??
+                    "",
+
+                note:
+                    order.note ??
+                    "",
+
+                items,
+
+                total,
+
+                status,
+
+                createdAt
+
+            };
+
+        });
+
+        // --------------------------------------------------
+        // TEST DU BLOC
+        // --------------------------------------------------
+
+        const totalProducts = reportsOrders.reduce(
+            (sum, order) => {
+
+                return sum + order.items.reduce(
+                    (itemSum, item) =>
+                        itemSum + item.quantity,
+                    0
+                );
+
+            },
+            0
+        );
+
+        const statuses = reportsOrders.reduce(
+            (result, order) => {
+
+                result[order.status] =
+                    (result[order.status] || 0) + 1;
+
+                return result;
+
+            },
+            {}
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 10.2 TERMINÉ ✅\n\n" +
+            "Commandes normalisées : " +
+            reportsOrders.length +
+            "\n\n" +
+            "Produits trouvés : " +
+            totalProducts +
+            "\n\n" +
+            "Statuts :\n" +
+            "Pendente : " + (statuses.pending || 0) +
+            "\nConfirmado : " + (statuses.confirmed || 0) +
+            "\nEnviado : " + (statuses.shipped || 0) +
+            "\nEntregue : " + (statuses.delivered || 0) +
+            "\nCancelado : " + (statuses.cancelled || 0)
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 10.2 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 10.2 ❌\n\n" +
+            "Erreur pendant la normalisation.\n\n" +
+            error.message
+        );
+
+    }
+
+}
