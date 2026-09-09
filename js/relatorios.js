@@ -2990,7 +2990,7 @@ async function calculateOfficialStoresStatistics() {
             "Aucun nouvel ID HTML créé.\n" +
             "Aucune donnée Firestore modifiée."
         );
-
+calculateRecentActivity();
     }
     catch (error) {
 
@@ -3001,6 +3001,242 @@ async function calculateOfficialStoresStatistics() {
 
         alert(
             "RELATÓRIOS — BLOC 11.7 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+function calculateRecentActivity() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 11.8.1\n\n" +
+            "Préparation de l'activité récente..."
+        );
+
+        if (!Array.isArray(reportsOrders)) {
+            throw new Error(
+                "reportsOrders n'est pas un tableau."
+            );
+        }
+
+        const recentOrders =
+            [...reportsOrders]
+                .sort((a, b) => {
+
+                    const dateA =
+                        a.createdAt?.toDate
+                            ? a.createdAt.toDate()
+                            : new Date(
+                                a.createdAt || 0
+                            );
+
+                    const dateB =
+                        b.createdAt?.toDate
+                            ? b.createdAt.toDate()
+                            : new Date(
+                                b.createdAt || 0
+                            );
+
+                    return dateB - dateA;
+
+                })
+                .slice(0, 5);
+
+        alert(
+            "RELATÓRIOS — BLOC 11.8.2\n\n" +
+            "Activités trouvées : " +
+            recentOrders.length +
+            "\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+        const recentActivityList =
+            document.getElementById(
+                "recentActivityList"
+            );
+
+        const viewAllActivityButton =
+            document.getElementById(
+                "viewAllActivityButton"
+            );
+
+        if (!recentActivityList) {
+            throw new Error(
+                "L'ID recentActivityList est introuvable."
+            );
+        }
+
+        if (!viewAllActivityButton) {
+            throw new Error(
+                "L'ID viewAllActivityButton est introuvable."
+            );
+        }
+
+        alert(
+            "RELATÓRIOS — BLOC 11.8.3\n\n" +
+            "Les éléments de l'activité récente sont détectés.\n\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        recentActivityList.innerHTML = "";
+
+        if (recentOrders.length === 0) {
+
+            recentActivityList.textContent =
+                "Aucune activité récente.";
+
+        }
+        else {
+
+            recentOrders.forEach((order) => {
+
+                const activity =
+                    document.createElement("div");
+
+                activity.style.padding =
+                    "12px 0";
+
+                activity.style.borderBottom =
+                    "1px solid rgba(0,0,0,0.08)";
+
+                const orderNumber =
+                    order.orderNumber ||
+                    order.id ||
+                    "Commande";
+
+                const total =
+                    Number(order.total) || 0;
+
+                const status =
+                    String(
+                        order.status || "pending"
+                    );
+
+                const title =
+                    document.createElement("strong");
+
+                title.textContent =
+                    orderNumber;
+
+                const details =
+                    document.createElement("div");
+
+                details.style.marginTop =
+                    "5px";
+
+                details.style.fontSize =
+                    "13px";
+
+                details.style.opacity =
+                    "0.75";
+
+                details.textContent =
+                    status +
+                    " • " +
+                    total.toLocaleString("pt-AO") +
+                    " Kz";
+
+                activity.appendChild(title);
+
+                activity.appendChild(details);
+
+                recentActivityList.appendChild(
+                    activity
+                );
+
+            });
+
+        }
+
+        /*
+         * Le bouton existe déjà dans le HTML.
+         * Pour le moment, on ne lui ajoute aucune
+         * nouvelle fonction complexe.
+         */
+
+        viewAllActivityButton.onclick = () => {
+
+            recentActivityList.innerHTML = "";
+
+            reportsOrders.forEach((order) => {
+
+                const activity =
+                    document.createElement("div");
+
+                activity.style.padding =
+                    "12px 0";
+
+                activity.style.borderBottom =
+                    "1px solid rgba(0,0,0,0.08)";
+
+                const title =
+                    document.createElement("strong");
+
+                title.textContent =
+                    order.orderNumber ||
+                    order.id ||
+                    "Commande";
+
+                const details =
+                    document.createElement("div");
+
+                details.style.marginTop =
+                    "5px";
+
+                details.style.fontSize =
+                    "13px";
+
+                details.style.opacity =
+                    "0.75";
+
+                details.textContent =
+                    String(
+                        order.status ||
+                        "pending"
+                    ) +
+                    " • " +
+                    (
+                        Number(order.total) || 0
+                    ).toLocaleString("pt-AO") +
+                    " Kz";
+
+                activity.appendChild(title);
+
+                activity.appendChild(details);
+
+                recentActivityList.appendChild(
+                    activity
+                );
+
+            });
+
+        };
+
+        alert(
+            "RELATÓRIOS — BLOC 11.8 TERMINÉ ✅\n\n" +
+            "Activités récentes affichées : " +
+            recentOrders.length +
+            "\n\n" +
+            "Bouton 'Voir toute l'activité' : OK\n" +
+            "Affichage : OK\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 11.8 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 11.8 ERREUR ❌\n\n" +
             error.message
         );
 
