@@ -1493,7 +1493,7 @@ async function loadReportsOrders() {
             "Collection utilisée : orders\n\n" +
             "Aucun nouvel ID HTML créé."
         );
-
+normalizeReportsOrders();
 
     } catch (error) {
 
@@ -1513,220 +1513,215 @@ async function loadReportsOrders() {
     }
 
 }
-// ======================================================
-// BLOC 10.2 — NORMALISATION DES COMMANDES
-// ======================================================
+/* =========================================================
+   BLOC 10.2 — NORMALISATION DES COMMANDES
+========================================================= */
 
-async function loadReportsOrders() {
+function normalizeReportsOrders() {
 
     try {
 
-        const ordersRef = collection(db, "orders");
-        const snapshot = await getDocs(ordersRef);
+        alert(
+            "RELATÓRIOS — BLOC 10.2.1\n\n" +
+            "Début de la normalisation des commandes..."
+        );
 
-        // Tableau brut récupéré depuis Firestore
-        const rawOrders = [];
 
-        snapshot.forEach((docSnap) => {
+        reportsOrders = reportsOrders.map((order) => {
 
-            rawOrders.push({
-                id: docSnap.id,
-                ...docSnap.data()
-            });
+            /* ================================
+               PRODUITS
+            ================================= */
 
-        });
-
-        // --------------------------------------------------
-        // NORMALISATION
-        // --------------------------------------------------
-
-        reportsOrders = rawOrders.map(order => {
-
-            // ---------- PRODUITS ----------
             let items = [];
 
             if (Array.isArray(order.items)) {
+
                 items = order.items;
+
             }
             else if (Array.isArray(order.products)) {
+
                 items = order.products;
+
             }
 
-            // ---------- QUANTITÉ DES PRODUITS ----------
-            items = items.map(item => {
 
-                let quantity = Number(
+            /* ================================
+               QUANTITÉS
+            ================================= */
+
+            items = items.map((item) => {
+
+                let quantity =
                     item.quantity ??
                     item.qty ??
-                    1
-                );
+                    1;
 
-                if (!Number.isFinite(quantity) || quantity < 1) {
+
+                quantity = Number(quantity);
+
+
+                if (
+                    !Number.isFinite(quantity) ||
+                    quantity < 1
+                ) {
+
                     quantity = 1;
+
                 }
 
+
                 return {
+
                     ...item,
+
                     quantity
+
                 };
 
             });
 
-            // ---------- TOTAL ----------
-            let total = Number(order.total ?? 0);
 
-            if (!Number.isFinite(total)) {
-                total = 0;
-            }
+            /* ================================
+               STATUT
+            ================================= */
 
-            // ---------- STATUT ----------
-            const originalStatus = String(
-                order.status ?? "pending"
-            ).trim().toLowerCase();
+            const originalStatus =
+                String(
+                    order.status ?? "pending"
+                )
+                .trim()
+                .toLowerCase();
+
 
             let status = "pending";
+
 
             if (
                 originalStatus === "pending" ||
                 originalStatus === "pendente"
             ) {
+
                 status = "pending";
+
             }
             else if (
                 originalStatus === "confirmed" ||
                 originalStatus === "confirmado"
             ) {
+
                 status = "confirmed";
+
             }
             else if (
                 originalStatus === "shipped" ||
                 originalStatus === "enviado"
             ) {
+
                 status = "shipped";
+
             }
             else if (
                 originalStatus === "delivered" ||
                 originalStatus === "entregue"
             ) {
+
                 status = "delivered";
+
             }
             else if (
                 originalStatus === "cancelled" ||
                 originalStatus === "canceled" ||
                 originalStatus === "cancelado"
             ) {
+
                 status = "cancelled";
+
             }
 
-            // ---------- CLIENT ----------
-            const clientName =
-                order.clientName ??
-                order.customerName ??
-                "";
 
-            const clientPhone =
-                order.clientPhone ??
-                order.phone ??
-                "";
+            /* ================================
+               TOTAL
+            ================================= */
 
-            // ---------- ADRESSE ----------
-            const clientAddress =
-                order.clientAddress ??
-                order.address ??
-                "";
+            let total =
+                Number(order.total ?? 0);
 
-            // ---------- MARCHAND ----------
-            const merchantId =
-                order.merchantId ??
-                "";
 
-            // ---------- BOUTIQUE ----------
-            const shopName =
-                order.shopName ??
-                "";
+            if (!Number.isFinite(total)) {
 
-            // ---------- DATE ----------
-            const createdAt = order.createdAt ?? null;
+                total = 0;
 
-            // ---------- COMMANDE NORMALISÉE ----------
+            }
+
+
+            /* ================================
+               RETOUR NORMALISÉ
+            ================================= */
+
             return {
 
-                id: order.id,
-
-                orderNumber:
-                    order.orderNumber ??
-                    order.id,
-
-                merchantId,
-
-                shopName,
-
-                uid:
-                    order.uid ??
-                    "",
-
-                clientName,
-
-                clientPhone,
-
-                clientAddress,
-
-                province:
-                    order.clientProvince ??
-                    "",
-
-                city:
-                    order.clientCity ??
-                    "",
-
-                paymentMethod:
-                    order.paymentMethod ??
-                    "",
-
-                note:
-                    order.note ??
-                    "",
+                ...order,
 
                 items,
 
                 total,
 
-                status,
-
-                createdAt
+                status
 
             };
 
         });
 
-        // --------------------------------------------------
-        // TEST DU BLOC
-        // --------------------------------------------------
 
-        const totalProducts = reportsOrders.reduce(
-            (sum, order) => {
+        /* ================================
+           TEST
+        ================================= */
 
-                return sum + order.items.reduce(
-                    (itemSum, item) =>
-                        itemSum + item.quantity,
-                    0
-                );
+        let totalProducts = 0;
 
-            },
-            0
-        );
+        reportsOrders.forEach((order) => {
 
-        const statuses = reportsOrders.reduce(
-            (result, order) => {
+            order.items.forEach((item) => {
 
-                result[order.status] =
-                    (result[order.status] || 0) + 1;
+                totalProducts +=
+                    Number(item.quantity) || 0;
 
-                return result;
+            });
 
-            },
-            {}
-        );
+        });
+
+
+        const statusCounts = {
+
+            pending: 0,
+
+            confirmed: 0,
+
+            shipped: 0,
+
+            delivered: 0,
+
+            cancelled: 0
+
+        };
+
+
+        reportsOrders.forEach((order) => {
+
+            if (
+                statusCounts.hasOwnProperty(
+                    order.status
+                )
+            ) {
+
+                statusCounts[order.status]++;
+
+            }
+
+        });
+
 
         alert(
             "RELATÓRIOS — BLOC 10.2 TERMINÉ ✅\n\n" +
@@ -1736,13 +1731,24 @@ async function loadReportsOrders() {
             "Produits trouvés : " +
             totalProducts +
             "\n\n" +
-            "Statuts :\n" +
-            "Pendente : " + (statuses.pending || 0) +
-            "\nConfirmado : " + (statuses.confirmed || 0) +
-            "\nEnviado : " + (statuses.shipped || 0) +
-            "\nEntregue : " + (statuses.delivered || 0) +
-            "\nCancelado : " + (statuses.cancelled || 0)
+            "Pendente : " +
+            statusCounts.pending +
+            "\n" +
+            "Confirmado : " +
+            statusCounts.confirmed +
+            "\n" +
+            "Enviado : " +
+            statusCounts.shipped +
+            "\n" +
+            "Entregue : " +
+            statusCounts.delivered +
+            "\n" +
+            "Cancelado : " +
+            statusCounts.cancelled +
+            "\n\n" +
+            "Aucun nouvel ID HTML créé."
         );
+
 
     }
     catch (error) {
@@ -1752,8 +1758,9 @@ async function loadReportsOrders() {
             error
         );
 
+
         alert(
-            "RELATÓRIOS — BLOC 10.2 ❌\n\n" +
+            "RELATÓRIOS — BLOC 10.2 ERREUR ❌\n\n" +
             "Erreur pendant la normalisation.\n\n" +
             error.message
         );
