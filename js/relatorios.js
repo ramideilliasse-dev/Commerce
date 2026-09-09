@@ -3435,7 +3435,7 @@ function calculateReportSummary() {
             "Aucun nouvel ID HTML créé.\n" +
             "Aucune donnée Firestore modifiée."
         );
-
+initializeReportsExport();
     }
     catch (error) {
 
@@ -3446,6 +3446,111 @@ function calculateReportSummary() {
 
         alert(
             "RELATÓRIOS — BLOC 11.9 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+function initializeReportsExport() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.1.1\n\n" +
+            "Préparation des fonctions d'exportation..."
+        );
+
+        const exportReportsButton =
+            document.getElementById(
+                "exportReportsButton"
+            );
+
+        const exportReportButton =
+            document.getElementById(
+                "exportReportButton"
+            );
+
+        const printReportButton =
+            document.getElementById(
+                "printReportButton"
+            );
+
+        if (
+            !exportReportsButton ||
+            !exportReportButton ||
+            !printReportButton
+        ) {
+
+            throw new Error(
+                "Un ou plusieurs boutons d'exportation sont introuvables."
+            );
+
+        }
+
+        alert(
+            "RELATÓRIOS — BLOC 12.1.2\n\n" +
+            "Les 3 boutons existants sont détectés.\n\n" +
+            "exportReportsButton : OK\n" +
+            "exportReportButton : OK\n" +
+            "printReportButton : OK\n\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        /*
+         * Nous ne générons encore aucun fichier.
+         * Nous préparons simplement les boutons.
+         */
+
+        exportReportsButton.onclick = () => {
+
+            alert(
+                "RELATÓRIOS — BLOC 12.1\n\n" +
+                "Bouton principal d'export détecté.\n\n" +
+                "La génération du fichier sera ajoutée au Bloc 12.3."
+            );
+
+        };
+
+        exportReportButton.onclick = () => {
+
+            alert(
+                "RELATÓRIOS — BLOC 12.1\n\n" +
+                "Bouton d'export du résumé détecté.\n\n" +
+                "La génération du fichier sera ajoutée au Bloc 12.3."
+            );
+
+        };
+
+        printReportButton.onclick = () => {
+
+            alert(
+                "RELATÓRIOS — BLOC 12.1\n\n" +
+                "Bouton d'impression détecté.\n\n" +
+                "La fonction d'impression sera ajoutée au Bloc 12.4."
+            );
+
+        };
+
+        alert(
+            "RELATÓRIOS — BLOC 12.1 TERMINÉ ✅\n\n" +
+            "Préparation des boutons : OK\n\n" +
+            "3 boutons détectés et initialisés.\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée.\n" +
+            "Aucun fichier généré pour le moment."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.1 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.1 ERREUR ❌\n\n" +
             error.message
         );
 
