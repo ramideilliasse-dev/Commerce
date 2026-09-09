@@ -35,11 +35,7 @@ import {
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    alert(
-        "RELATÓRIOS — BLOC 1\n\n" +
-        "Initialisation du module..."
-    );
-
+    
     initializeReports();
 
 });
@@ -51,11 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function initializeReports() {
 
-    alert(
-        "RELATÓRIOS — BLOC 1.2\n\n" +
-        "La page relatorios.html est détectée.\n\n" +
-        "Vérification des éléments..."
-    );
+    
 
     checkReportsElements();
 
@@ -383,11 +375,7 @@ function checkReportsElements() {
     }
 
 
-    alert(
-        "RELATÓRIOS — BLOC 1 TERMINÉ ✅\n\n" +
-        "Tous les IDs HTML nécessaires sont présents.\n\n" +
-        "Aucun nouvel ID n'a été créé."
-    );
+    
 
 
     /* ================================
@@ -405,10 +393,7 @@ function checkReportsElements() {
 
 function initializeReportPeriod() {
 
-    alert(
-        "RELATÓRIOS — BLOC 2.1\n\n" +
-        "Initialisation du système de période..."
-    );
+    
 
 
     const periodBar =
@@ -431,24 +416,13 @@ function initializeReportPeriod() {
         !refreshButton
     ) {
 
-        alert(
-            "RELATÓRIOS — BLOC 2 ERREUR ❌\n\n" +
-            "Un ou plusieurs contrôles de période sont introuvables."
-        );
+        
 
         return;
     }
 
 
-    alert(
-        "RELATÓRIOS — BLOC 2.2\n\n" +
-        "Les contrôles de période sont correctement détectés.\n\n" +
-        "ID utilisés :\n" +
-        "reportsPeriodBar\n" +
-        "reportsPeriodLabel\n" +
-        "reportsPeriodSelect\n" +
-        "refreshReportsButton"
-    );
+    
 
 
     periodSelect.addEventListener(
@@ -463,12 +437,7 @@ function initializeReportPeriod() {
     );
 
 
-    alert(
-        "RELATÓRIOS — BLOC 2 TERMINÉ ✅\n\n" +
-        "Le système de période est maintenant connecté.\n\n" +
-        "Aucun nouvel ID n'a été créé."
-    );
-
+    
 
     /* ================================
        PASSAGE AU BLOC 3
@@ -521,16 +490,7 @@ function handleReportPeriodChange(event) {
     }
 
 
-    alert(
-        "RELATÓRIOS — BLOC 2.3\n\n" +
-        "Período alterado.\n\n" +
-        "Valor: " + selectedPeriod + "\n" +
-        "Label: " +
-        (
-            labels[selectedPeriod] ||
-            "Período selecionado"
-        )
-    );
+    
 
 }
 
@@ -541,11 +501,7 @@ function handleReportPeriodChange(event) {
 
 function handleReportsRefresh() {
 
-    alert(
-        "RELATÓRIOS — BLOC 2.4\n\n" +
-        "Atualização dos relatórios solicitada.\n\n" +
-        "A ligação com Firebase será feita nos próximos blocos."
-    );
+    
 
 }
 
@@ -556,10 +512,7 @@ function handleReportsRefresh() {
 
 function initializeReportIndicators() {
 
-    alert(
-        "RELATÓRIOS — BLOC 3.1\n\n" +
-        "Initialisation des indicateurs principaux..."
-    );
+    
 
 
     const totalSales =
@@ -607,11 +560,7 @@ function initializeReportIndicators() {
     }
 
 
-    alert(
-        "RELATÓRIOS — BLOC 3.2\n\n" +
-        "Tous les indicateurs principaux sont détectés.\n\n" +
-        "Aucun nouvel ID n'a été créé."
-    );
+    
 
 
     totalSales.textContent = "0";
@@ -631,14 +580,7 @@ function initializeReportIndicators() {
     ordersGrowth.textContent = "0%";
 
 
-    alert(
-        "RELATÓRIOS — BLOC 3 TERMINÉ ✅\n\n" +
-        "Les 4 indicateurs principaux sont connectés.\n\n" +
-        "Vendas : OK\n" +
-        "Receita : OK\n" +
-        "Comissão : OK\n" +
-        "Pedidos : OK"
-    );
+    
 
 
     /* ================================
@@ -656,11 +598,7 @@ function initializeReportIndicators() {
 
 function initializeSalesPerformance() {
 
-    alert(
-        "RELATÓRIOS — BLOC 4.1\n\n" +
-        "Initialisation du module de performance des ventes..."
-    );
-
+   
 
     const salesPerformanceSection =
         document.getElementById("salesPerformanceSection");
@@ -698,21 +636,13 @@ function initializeSalesPerformance() {
         !salesChartEmpty
     ) {
 
-        alert(
-            "RELATÓRIOS — BLOC 4 ERREUR ❌\n\n" +
-            "Un ou plusieurs éléments du graphique sont introuvables."
-        );
+        
 
         return;
     }
 
 
-    alert(
-        "RELATÓRIOS — BLOC 4.2\n\n" +
-        "Tous les éléments de performance des ventes sont détectés.\n\n" +
-        "Aucun nouvel ID n'a été créé."
-    );
-
+    
 
     salesChartTotal.textContent = "0";
 
@@ -738,11 +668,7 @@ function initializeSalesPerformance() {
     );
 
 
-    alert(
-        "RELATÓRIOS — BLOC 4 TERMINÉ ✅\n\n" +
-        "Le module de performance des ventes est connecté.\n\n" +
-        "Le graphique sera alimenté avec les données réelles dans les prochains blocs."
-    );
+    
 
 
     /* ================================
@@ -778,18 +704,7 @@ function handleSalesChartPeriodChange(event) {
     };
 
 
-    alert(
-        "RELATÓRIOS — BLOC 4.3\n\n" +
-        "Période du graphique modifiée.\n\n" +
-        "Valeur : " +
-        selectedPeriod +
-        "\n" +
-        "Mode : " +
-        (
-            periodNames[selectedPeriod] ||
-            "Période sélectionnée"
-        )
-    );
+    
 
 }
 
@@ -800,10 +715,7 @@ function handleSalesChartPeriodChange(event) {
 
 function initializeFinancialPerformance() {
 
-    alert(
-        "RELATÓRIOS — BLOC 5.1\n\n" +
-        "Initialisation de la performance financière..."
-    );
+    
 
 
     const financialPerformanceSection =
@@ -863,11 +775,7 @@ function initializeFinancialPerformance() {
     }
 
 
-    alert(
-        "RELATÓRIOS — BLOC 5.2\n\n" +
-        "Tous les éléments financiers sont détectés.\n\n" +
-        "Aucun nouvel ID n'a été créé."
-    );
+    
 
 
     revenueValue.textContent = "0 Kz";
@@ -892,12 +800,7 @@ function initializeFinancialPerformance() {
     commissionProgress.style.width = "0%";
 
 
-    alert(
-        "RELATÓRIOS — BLOC 5 TERMINÉ ✅\n\n" +
-        "La performance financière est maintenant connectée.\n\n" +
-        "Receita : OK\n" +
-        "Comissão Toma : OK"
-    );
+    
 
 
     /* ================================
@@ -915,10 +818,7 @@ function initializeFinancialPerformance() {
 
 function initializeOrdersMerchantsAnalysis() {
 
-    alert(
-        "RELATÓRIOS — BLOC 6.1\n\n" +
-        "Initialisation de l'analyse des commandes et commerçants..."
-    );
+    
 
 
     const ordersMerchantsSection =
@@ -1006,11 +906,7 @@ function initializeOrdersMerchantsAnalysis() {
     }
 
 
-    alert(
-        "RELATÓRIOS — BLOC 6.2\n\n" +
-        "Tous les éléments du Bloc 6 sont détectés.\n\n" +
-        "Aucun nouvel ID n'a été créé."
-    );
+    
 
 
     ordersAnalysisTotal.textContent = "0";
@@ -1044,13 +940,7 @@ function initializeOrdersMerchantsAnalysis() {
     merchantActivityProgress.style.width = "0%";
 
 
-    alert(
-        "RELATÓRIOS — BLOC 6 TERMINÉ ✅\n\n" +
-        "L'analyse des commandes et commerçants est connectée.\n\n" +
-        "Pedidos : OK\n" +
-        "Comerciantes : OK"
-    );
-
+    
 
     /* ================================
        PASSAGE AU BLOC 7
@@ -1067,10 +957,7 @@ function initializeOrdersMerchantsAnalysis() {
 
 function initializeProductsStoresAnalysis() {
 
-    alert(
-        "RELATÓRIOS — BLOC 7.1\n\n" +
-        "Initialisation de l'analyse des produits et lojas oficiais..."
-    );
+    
 
 
     const productsStoresSection =
@@ -1122,11 +1009,7 @@ function initializeProductsStoresAnalysis() {
     }
 
 
-    alert(
-        "RELATÓRIOS — BLOC 7.2\n\n" +
-        "Tous les éléments du Bloc 7 sont détectés.\n\n" +
-        "Aucun nouvel ID n'a été créé."
-    );
+    
 
 
     officialStoresSalesValue.textContent =
@@ -1147,29 +1030,15 @@ function initializeProductsStoresAnalysis() {
 
     if (topProductsList.children.length === 0) {
 
-        alert(
-            "RELATÓRIOS — BLOC 7.3\n\n" +
-            "La liste des produits est actuellement vide.\n\n" +
-            "Elle sera alimentée avec les vraies données plus tard."
-        );
-
+        
     } else {
 
-        alert(
-            "RELATÓRIOS — BLOC 7.3\n\n" +
-            "La liste Top Produtos est déjà présente dans le HTML."
-        );
+        
 
     }
 
 
-    alert(
-        "RELATÓRIOS — BLOC 7 TERMINÉ ✅\n\n" +
-        "L'analyse des produits et lojas oficiais est connectée.\n\n" +
-        "Top Produtos : OK\n" +
-        "Lojas Oficiais : OK"
-    );
-
+    
 
     /* ================================
        PASSAGE AU BLOC 8
@@ -1186,10 +1055,7 @@ function initializeProductsStoresAnalysis() {
 
 function initializeRecentActivity() {
 
-    alert(
-        "RELATÓRIOS — BLOC 8.1\n\n" +
-        "Initialisation de l'activité récente..."
-    );
+    
 
 
     const recentActivitySection =
@@ -1217,12 +1083,7 @@ function initializeRecentActivity() {
     }
 
 
-    alert(
-        "RELATÓRIOS — BLOC 8.2\n\n" +
-        "Tous les éléments de l'activité récente sont détectés.\n\n" +
-        "Aucun nouvel ID n'a été créé."
-    );
-
+    
 
     const activityItems =
         recentActivityList.children.length;
@@ -1230,21 +1091,11 @@ function initializeRecentActivity() {
 
     if (activityItems > 0) {
 
-        alert(
-            "RELATÓRIOS — BLOC 8.3\n\n" +
-            "La liste d'activité contient déjà " +
-            activityItems +
-            " élément(s).\n\n" +
-            "Les éléments existants sont conservés."
-        );
+        
 
     } else {
 
-        alert(
-            "RELATÓRIOS — BLOC 8.3\n\n" +
-            "La liste d'activité est actuellement vide.\n\n" +
-            "Elle sera alimentée avec les activités réelles plus tard."
-        );
+        
 
     }
 
@@ -1255,13 +1106,7 @@ function initializeRecentActivity() {
     );
 
 
-    alert(
-        "RELATÓRIOS — BLOC 8 TERMINÉ ✅\n\n" +
-        "Le module d'activité récente est connecté.\n\n" +
-        "Activité récente : OK\n" +
-        "Bouton Ver tudo : OK"
-    );
-
+    
 
     /* ================================
        PASSAGE AU BLOC 9
@@ -1278,12 +1123,7 @@ function initializeRecentActivity() {
 
 function handleViewAllActivity() {
 
-    alert(
-        "RELATÓRIOS — BLOC 8.4\n\n" +
-        "Bouton « Ver tudo » activé.\n\n" +
-        "La liste complète des activités sera connectée plus tard."
-    );
-
+    
 }
 
 
@@ -1293,10 +1133,7 @@ function handleViewAllActivity() {
 
 function initializeReportSummary() {
 
-    alert(
-        "RELATÓRIOS — BLOC 9.1\n\n" +
-        "Initialisation du résumé du rapport..."
-    );
+    
 
 
     const reportSummarySection =
@@ -1352,11 +1189,7 @@ function initializeReportSummary() {
     }
 
 
-    alert(
-        "RELATÓRIOS — BLOC 9.2\n\n" +
-        "Tous les éléments du résumé sont détectés.\n\n" +
-        "Aucun nouvel ID n'a été créé."
-    );
+    
 
 
     reportSummarySales.textContent =
@@ -1393,14 +1226,7 @@ function initializeReportSummary() {
     );
 
 
-    alert(
-        "RELATÓRIOS — BLOC 9 TERMINÉ ✅\n\n" +
-        "Le résumé du rapport est connecté.\n\n" +
-        "Résumé : OK\n" +
-        "Exporter : OK\n" +
-        "Imprimer : OK"
-    );
-
+    
 
     /* ================================
        PASSAGE AU BLOC 10
@@ -1417,11 +1243,7 @@ function initializeReportSummary() {
 
 function handleExportReport() {
 
-    alert(
-        "RELATÓRIOS — BLOC 9.3\n\n" +
-        "Export du rapport demandé.\n\n" +
-        "La génération du fichier sera ajoutée après la connexion aux données réelles."
-    );
+    
 
 }
 
@@ -1432,11 +1254,7 @@ function handleExportReport() {
 
 function handlePrintReport() {
 
-    alert(
-        "RELATÓRIOS — BLOC 9.4\n\n" +
-        "Impression du rapport demandée.\n\n" +
-        "La fonction d'impression sera finalisée après la connexion aux données réelles."
-    );
+    
 
 }
 
@@ -1456,11 +1274,7 @@ async function loadReportsOrders() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 10.1\n\n" +
-            "Connexion à Firestore...\n\n" +
-            "Chargement de la collection orders."
-        );
+        
 
 
         const ordersSnapshot = await getDocs(
