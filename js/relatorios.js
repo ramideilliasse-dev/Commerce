@@ -1748,7 +1748,7 @@ function normalizeReportsOrders() {
             "\n\n" +
             "Aucun nouvel ID HTML créé."
         );
-
+calculateReportsStatistics();
 
     }
     catch (error) {
@@ -1768,7 +1768,7 @@ function normalizeReportsOrders() {
     }
 
 }
-calculateReportsStatistics();
+
 /* =========================================================
    BLOC 11.1 — CALCUL DES STATISTIQUES RÉELLES
 ========================================================= */
