@@ -2307,7 +2307,7 @@ function calculateOrdersStatusStatistics() {
             "Aucun nouvel ID HTML créé.\n" +
             "Aucune donnée Firestore modifiée."
         );
-
+calculateFinancialStatistics();
 
     }
     catch (error) {
@@ -2320,6 +2320,212 @@ function calculateOrdersStatusStatistics() {
 
         alert(
             "RELATÓRIOS — BLOC 11.3 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+function calculateFinancialStatistics() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 11.4.1\n\n" +
+            "Calcul des statistiques financières..."
+        );
+
+        if (!Array.isArray(reportsOrders)) {
+            throw new Error(
+                "reportsOrders n'est pas un tableau."
+            );
+        }
+
+        const totalOrders =
+            reportsOrders.length;
+
+        let totalRevenue = 0;
+        let highestOrder = 0;
+
+        reportsOrders.forEach((order) => {
+
+            const total =
+                Number(order.total) || 0;
+
+            totalRevenue += total;
+
+            if (total > highestOrder) {
+                highestOrder = total;
+            }
+
+        });
+
+        const averageRevenue =
+            totalOrders > 0
+                ? totalRevenue / totalOrders
+                : 0;
+
+        const commissionRate = 5;
+
+        const estimatedCommission =
+            totalRevenue * (commissionRate / 100);
+
+        const revenueProgress =
+            totalRevenue > 0 ? 100 : 0;
+
+        const commissionProgress =
+            totalRevenue > 0
+                ? commissionRate
+                : 0;
+
+        const financialRevenueValue =
+            document.getElementById(
+                "financialRevenueValue"
+            );
+
+        const financialRevenueAverage =
+            document.getElementById(
+                "financialRevenueAverage"
+            );
+
+        const financialRevenueHighest =
+            document.getElementById(
+                "financialRevenueHighest"
+            );
+
+        const financialRevenueGrowth =
+            document.getElementById(
+                "financialRevenueGrowth"
+            );
+
+        const financialRevenueProgress =
+            document.getElementById(
+                "financialRevenueProgress"
+            );
+
+        const financialCommissionValue =
+            document.getElementById(
+                "financialCommissionValue"
+            );
+
+        const financialCommissionAverage =
+            document.getElementById(
+                "financialCommissionAverage"
+            );
+
+        const financialCommissionRate =
+            document.getElementById(
+                "financialCommissionRate"
+            );
+
+        const financialCommissionShare =
+            document.getElementById(
+                "financialCommissionShare"
+            );
+
+        const financialCommissionProgress =
+            document.getElementById(
+                "financialCommissionProgress"
+            );
+
+        if (
+            !financialRevenueValue ||
+            !financialRevenueAverage ||
+            !financialRevenueHighest ||
+            !financialRevenueGrowth ||
+            !financialRevenueProgress ||
+            !financialCommissionValue ||
+            !financialCommissionAverage ||
+            !financialCommissionRate ||
+            !financialCommissionShare ||
+            !financialCommissionProgress
+        ) {
+
+            throw new Error(
+                "Un ou plusieurs IDs du Bloc 5 sont introuvables."
+            );
+
+        }
+
+        alert(
+            "RELATÓRIOS — BLOC 11.4.2\n\n" +
+            "Les éléments financiers sont détectés.\n\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        const formatKz = (value) => {
+
+            return (
+                Number(value || 0)
+                    .toLocaleString("pt-AO")
+                + " Kz"
+            );
+
+        };
+
+        financialRevenueValue.textContent =
+            formatKz(totalRevenue);
+
+        financialRevenueAverage.textContent =
+            formatKz(averageRevenue);
+
+        financialRevenueHighest.textContent =
+            formatKz(highestOrder);
+
+        financialRevenueGrowth.textContent =
+            "—";
+
+        financialRevenueProgress.style.width =
+            revenueProgress + "%";
+
+        financialCommissionValue.textContent =
+            formatKz(estimatedCommission);
+
+        financialCommissionAverage.textContent =
+            formatKz(
+                totalOrders > 0
+                    ? estimatedCommission / totalOrders
+                    : 0
+            );
+
+        financialCommissionRate.textContent =
+            commissionRate + "%";
+
+        financialCommissionShare.textContent =
+            commissionRate + "%";
+
+        financialCommissionProgress.style.width =
+            commissionProgress + "%";
+
+        alert(
+            "RELATÓRIOS — BLOC 11.4 TERMINÉ ✅\n\n" +
+            "Chiffre d'affaires : " +
+            formatKz(totalRevenue) +
+            "\n\n" +
+            "Panier moyen : " +
+            formatKz(averageRevenue) +
+            "\n\n" +
+            "Commande la plus élevée : " +
+            formatKz(highestOrder) +
+            "\n\n" +
+            "Commission estimée (5 %) : " +
+            formatKz(estimatedCommission) +
+            "\n\n" +
+            "Analyse financière : OK\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 11.4 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 11.4 ERREUR ❌\n\n" +
             error.message
         );
 
