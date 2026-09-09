@@ -3226,7 +3226,7 @@ function calculateRecentActivity() {
             "Aucun nouvel ID HTML créé.\n" +
             "Aucune donnée Firestore modifiée."
         );
-
+calculateReportSummary();
     }
     catch (error) {
 
@@ -3237,6 +3237,215 @@ function calculateRecentActivity() {
 
         alert(
             "RELATÓRIOS — BLOC 11.8 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+function calculateReportSummary() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 11.9.1\n\n" +
+            "Préparation du résumé final..."
+        );
+
+        if (!Array.isArray(reportsOrders)) {
+            throw new Error(
+                "reportsOrders n'est pas un tableau."
+            );
+        }
+
+        const totalOrders =
+            reportsOrders.length;
+
+        let totalRevenue = 0;
+
+        let totalProductsSold = 0;
+
+        reportsOrders.forEach((order) => {
+
+            totalRevenue +=
+                Number(order.total) || 0;
+
+            if (Array.isArray(order.items)) {
+
+                order.items.forEach((item) => {
+
+                    totalProductsSold +=
+                        Number(
+                            item.quantity
+                        ) || 0;
+
+                });
+
+            }
+
+        });
+
+        const commissionRate = 5;
+
+        const totalCommission =
+            totalRevenue *
+            (commissionRate / 100);
+
+        const activeMerchants =
+            Number(
+                document.getElementById(
+                    "activeMerchantsAnalysis"
+                )?.textContent
+            ) || 0;
+
+        const officialStoresCount =
+            Number(
+                document.getElementById(
+                    "officialStoresActiveCount"
+                )?.textContent
+            ) || 0;
+
+        alert(
+            "RELATÓRIOS — BLOC 11.9.2\n\n" +
+            "Données du résumé calculées.\n\n" +
+            "Ventes : " +
+            totalRevenue.toLocaleString("pt-AO") +
+            " Kz\n\n" +
+            "Produits vendus : " +
+            totalProductsSold +
+            "\n\n" +
+            "Commission estimée : " +
+            totalCommission.toLocaleString("pt-AO") +
+            " Kz\n\n" +
+            "Commerçants actifs : " +
+            activeMerchants +
+            "\n\n" +
+            "Lojas Oficiais actives : " +
+            officialStoresCount +
+            "\n\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        const reportSummarySales =
+            document.getElementById(
+                "reportSummarySales"
+            );
+
+        const reportSummaryRevenue =
+            document.getElementById(
+                "reportSummaryRevenue"
+            );
+
+        const reportSummaryCommission =
+            document.getElementById(
+                "reportSummaryCommission"
+            );
+
+        const reportSummaryGrowth =
+            document.getElementById(
+                "reportSummaryGrowth"
+            );
+
+        const reportSummaryActiveMerchants =
+            document.getElementById(
+                "reportSummaryActiveMerchants"
+            );
+
+        const reportSummaryProductsSold =
+            document.getElementById(
+                "reportSummaryProductsSold"
+            );
+
+        const reportSummaryOfficialStores =
+            document.getElementById(
+                "reportSummaryOfficialStores"
+            );
+
+        if (
+            !reportSummarySales ||
+            !reportSummaryRevenue ||
+            !reportSummaryCommission ||
+            !reportSummaryGrowth ||
+            !reportSummaryActiveMerchants ||
+            !reportSummaryProductsSold ||
+            !reportSummaryOfficialStores
+        ) {
+
+            throw new Error(
+                "Un ou plusieurs IDs du résumé final sont introuvables."
+            );
+
+        }
+
+        alert(
+            "RELATÓRIOS — BLOC 11.9.3\n\n" +
+            "Tous les IDs du résumé final sont détectés.\n\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        const formatKz = (value) => {
+
+            return (
+                Number(value || 0)
+                    .toLocaleString("pt-AO") +
+                " Kz"
+            );
+
+        };
+
+        reportSummarySales.textContent =
+            formatKz(totalRevenue);
+
+        reportSummaryRevenue.textContent =
+            formatKz(totalRevenue);
+
+        reportSummaryCommission.textContent =
+            formatKz(totalCommission);
+
+        reportSummaryGrowth.textContent =
+            "—";
+
+        reportSummaryActiveMerchants.textContent =
+            activeMerchants;
+
+        reportSummaryProductsSold.textContent =
+            totalProductsSold;
+
+        reportSummaryOfficialStores.textContent =
+            officialStoresCount;
+
+        alert(
+            "RELATÓRIOS — BLOC 11.9 TERMINÉ ✅\n\n" +
+            "Résumé final : OK\n\n" +
+            "Chiffre d'affaires : " +
+            formatKz(totalRevenue) +
+            "\n\n" +
+            "Commission estimée (5 %) : " +
+            formatKz(totalCommission) +
+            "\n\n" +
+            "Commerçants actifs : " +
+            activeMerchants +
+            "\n\n" +
+            "Produits vendus : " +
+            totalProductsSold +
+            "\n\n" +
+            "Lojas Oficiais : " +
+            officialStoresCount +
+            "\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 11.9 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 11.9 ERREUR ❌\n\n" +
             error.message
         );
 
