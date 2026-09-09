@@ -2031,7 +2031,7 @@ function displayReportsStatistics(
             "Aucune donnée Firestore modifiée."
         );
 
-
+calculateOrdersStatusStatistics();
     }
     catch (error) {
 
@@ -2043,6 +2043,283 @@ function displayReportsStatistics(
 
         alert(
             "RELATÓRIOS — BLOC 11.2 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+/* =========================================================
+   BLOC 11.3 — ANALYSE DES STATUTS DES COMMANDES
+========================================================= */
+
+function calculateOrdersStatusStatistics() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 11.3.1\n\n" +
+            "Calcul de la répartition des commandes..."
+        );
+
+
+        /* ================================================
+           COMPTEURS
+        ================================================= */
+
+        let pending = 0;
+        let confirmed = 0;
+        let shipped = 0;
+        let delivered = 0;
+        let cancelled = 0;
+
+
+        /* ================================================
+           ANALYSE DES COMMANDES
+        ================================================= */
+
+        reportsOrders.forEach((order) => {
+
+            switch (order.status) {
+
+                case "pending":
+                    pending++;
+                    break;
+
+                case "confirmed":
+                    confirmed++;
+                    break;
+
+                case "shipped":
+                    shipped++;
+                    break;
+
+                case "delivered":
+                    delivered++;
+                    break;
+
+                case "cancelled":
+                    cancelled++;
+                    break;
+
+            }
+
+        });
+
+
+        const totalOrders =
+            reportsOrders.length;
+
+
+        /* ================================================
+           POURCENTAGES
+        ================================================= */
+
+        function percentage(value) {
+
+            if (totalOrders === 0) {
+                return 0;
+            }
+
+            return (value / totalOrders) * 100;
+
+        }
+
+
+        const pendingPercent =
+            percentage(pending);
+
+        const confirmedPercent =
+            percentage(confirmed);
+
+        const shippedPercent =
+            percentage(shipped);
+
+        const deliveredPercent =
+            percentage(delivered);
+
+        const cancelledPercent =
+            percentage(cancelled);
+
+
+        /* ================================================
+           RÉCUPÉRATION DES IDS EXISTANTS
+        ================================================= */
+
+        const ordersAnalysisTotal =
+            document.getElementById("ordersAnalysisTotal");
+
+        const completedOrdersCount =
+            document.getElementById("completedOrdersCount");
+
+        const pendingOrdersCount =
+            document.getElementById("pendingOrdersCount");
+
+        const cancelledOrdersCount =
+            document.getElementById("cancelledOrdersCount");
+
+        const processingOrdersCount =
+            document.getElementById("processingOrdersCount");
+
+        const completedOrdersBar =
+            document.getElementById("completedOrdersBar");
+
+        const pendingOrdersBar =
+            document.getElementById("pendingOrdersBar");
+
+        const processingOrdersBar =
+            document.getElementById("processingOrdersBar");
+
+        const cancelledOrdersBar =
+            document.getElementById("cancelledOrdersBar");
+
+
+        /* ================================================
+           VÉRIFICATION
+        ================================================= */
+
+        if (
+            !ordersAnalysisTotal ||
+            !completedOrdersCount ||
+            !pendingOrdersCount ||
+            !cancelledOrdersCount ||
+            !processingOrdersCount ||
+            !completedOrdersBar ||
+            !pendingOrdersBar ||
+            !processingOrdersBar ||
+            !cancelledOrdersBar
+        ) {
+
+            throw new Error(
+                "Un ou plusieurs IDs du Bloc 6 sont introuvables."
+            );
+
+        }
+
+
+        alert(
+            "RELATÓRIOS — BLOC 11.3.2\n\n" +
+            "Les éléments du Bloc 6 sont détectés.\n\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+
+        /* ================================================
+           AFFICHAGE
+        ================================================= */
+
+        ordersAnalysisTotal.textContent =
+            totalOrders;
+
+
+        /*
+           completed = Entregue
+        */
+
+        completedOrdersCount.textContent =
+            delivered;
+
+
+        /*
+           pending = Pendente
+        */
+
+        pendingOrdersCount.textContent =
+            pending;
+
+
+        /*
+           processing = Confirmado + Enviado
+        */
+
+        processingOrdersCount.textContent =
+            confirmed + shipped;
+
+
+        /*
+           cancelled = Cancelado
+        */
+
+        cancelledOrdersCount.textContent =
+            cancelled;
+
+
+        /* ================================================
+           BARRES
+        ================================================= */
+
+        completedOrdersBar.style.width =
+            deliveredPercent + "%";
+
+        pendingOrdersBar.style.width =
+            pendingPercent + "%";
+
+        processingOrdersBar.style.width =
+            (
+                confirmedPercent +
+                shippedPercent
+            ) + "%";
+
+        cancelledOrdersBar.style.width =
+            cancelledPercent + "%";
+
+
+        /* ================================================
+           TEST FINAL
+        ================================================= */
+
+        alert(
+            "RELATÓRIOS — BLOC 11.3 TERMINÉ ✅\n\n" +
+
+            "Total : " +
+            totalOrders +
+
+            "\n\n" +
+
+            "Pendente : " +
+            pending +
+
+            "\n" +
+
+            "Confirmado : " +
+            confirmed +
+
+            "\n" +
+
+            "Enviado : " +
+            shipped +
+
+            "\n" +
+
+            "Entregue : " +
+            delivered +
+
+            "\n" +
+
+            "Cancelado : " +
+            cancelled +
+
+            "\n\n" +
+
+            "Analyse des statuts : OK\n" +
+            "Barres de progression : OK\n\n" +
+
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 11.3 :",
+            error
+        );
+
+
+        alert(
+            "RELATÓRIOS — BLOC 11.3 ERREUR ❌\n\n" +
             error.message
         );
 
