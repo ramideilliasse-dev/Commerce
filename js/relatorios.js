@@ -3540,7 +3540,7 @@ function initializeReportsExport() {
             "Aucune donnée Firestore modifiée.\n" +
             "Aucun fichier généré pour le moment."
         );
-
+prepareReportExportData();
     }
     catch (error) {
 
@@ -3551,6 +3551,156 @@ function initializeReportsExport() {
 
         alert(
             "RELATÓRIOS — BLOC 12.1 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+function prepareReportExportData() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.2.1\n\n" +
+            "Préparation des données du rapport..."
+        );
+
+        if (!Array.isArray(reportsOrders)) {
+            throw new Error(
+                "reportsOrders n'est pas un tableau."
+            );
+        }
+
+        const totalOrders =
+            reportsOrders.length;
+
+        let totalRevenue = 0;
+        let totalProductsSold = 0;
+
+        reportsOrders.forEach((order) => {
+
+            totalRevenue +=
+                Number(order.total) || 0;
+
+            if (Array.isArray(order.items)) {
+
+                order.items.forEach((item) => {
+
+                    totalProductsSold +=
+                        Number(item.quantity) || 0;
+
+                });
+
+            }
+
+        });
+
+        const averageOrder =
+            totalOrders > 0
+                ? totalRevenue / totalOrders
+                : 0;
+
+        const commissionRate = 5;
+
+        const estimatedCommission =
+            totalRevenue *
+            (commissionRate / 100);
+
+        const activeMerchants =
+            Number(
+                document.getElementById(
+                    "activeMerchantsAnalysis"
+                )?.textContent
+            ) || 0;
+
+        const officialStores =
+            Number(
+                document.getElementById(
+                    "officialStoresActiveCount"
+                )?.textContent
+            ) || 0;
+
+        const reportExportData = {
+
+            title:
+                "Relatório Toma",
+
+            period:
+                document.getElementById(
+                    "reportsPeriodLabel"
+                )?.textContent ||
+                "Período atual",
+
+            totalOrders,
+
+            totalProductsSold,
+
+            totalRevenue,
+
+            averageOrder,
+
+            commissionRate,
+
+            estimatedCommission,
+
+            activeMerchants,
+
+            officialStores
+
+        };
+
+        window.reportExportData =
+            reportExportData;
+
+        alert(
+            "RELATÓRIOS — BLOC 12.2.2\n\n" +
+            "Données préparées avec succès.\n\n" +
+            "Commandes : " +
+            reportExportData.totalOrders +
+            "\n\n" +
+            "Produits vendus : " +
+            reportExportData.totalProductsSold +
+            "\n\n" +
+            "Chiffre d'affaires : " +
+            reportExportData.totalRevenue
+                .toLocaleString("pt-AO") +
+            " Kz\n\n" +
+            "Panier moyen : " +
+            reportExportData.averageOrder
+                .toLocaleString("pt-AO") +
+            " Kz\n\n" +
+            "Commission estimée : " +
+            reportExportData.estimatedCommission
+                .toLocaleString("pt-AO") +
+            " Kz\n\n" +
+            "Commerçants actifs : " +
+            reportExportData.activeMerchants +
+            "\n\n" +
+            "Lojas Oficiais : " +
+            reportExportData.officialStores +
+            "\n\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.2 TERMINÉ ✅\n\n" +
+            "Structure d'export créée en mémoire : OK\n\n" +
+            "Les données sont prêtes pour la génération du fichier.\n\n" +
+            "Aucune donnée Firestore modifiée.\n" +
+            "Aucun fichier généré pour le moment."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.2 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.2 ERREUR ❌\n\n" +
             error.message
         );
 
