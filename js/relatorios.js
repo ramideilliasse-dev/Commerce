@@ -2329,7 +2329,7 @@ function calculateFinancialStatistics() {
             "Aucun nouvel ID HTML créé.\n" +
             "Aucune donnée Firestore modifiée."
         );
-
+calculateMerchantsStatistics();
     }
     catch (error) {
 
@@ -2340,6 +2340,188 @@ function calculateFinancialStatistics() {
 
         alert(
             "RELATÓRIOS — BLOC 11.4 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+async function calculateMerchantsStatistics() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 11.5.1\n\n" +
+            "Préparation de l'analyse des commerçants..."
+        );
+
+        const merchantsSnapshot =
+            await getDocs(
+                collection(db, "merchants")
+            );
+
+        const merchants =
+            merchantsSnapshot.docs.map((docSnap) => ({
+                id: docSnap.id,
+                ...docSnap.data()
+            }));
+
+        alert(
+            "RELATÓRIOS — BLOC 11.5.2\n\n" +
+            "Collection merchants récupérée avec succès.\n\n" +
+            "Commerçants trouvés : " +
+            merchants.length +
+            "\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+        let activeMerchants = 0;
+        let blockedMerchants = 0;
+
+        merchants.forEach((merchant) => {
+
+            const status =
+                String(
+                    merchant.status ?? ""
+                )
+                .trim()
+                .toLowerCase();
+
+            if (
+                status === "active" ||
+                status === "ativo" ||
+                status === "approved" ||
+                status === "aprovado"
+            ) {
+
+                activeMerchants++;
+
+            }
+
+            if (
+                status === "blocked" ||
+                status === "bloqueado" ||
+                status === "disabled" ||
+                status === "suspended"
+            ) {
+
+                blockedMerchants++;
+
+            }
+
+        });
+
+        const totalMerchants =
+            merchants.length;
+
+        const newMerchants =
+            merchants.filter((merchant) => {
+
+                return merchant.createdAt != null;
+
+            }).length;
+
+        const merchantActivityRate =
+            totalMerchants > 0
+                ? (activeMerchants / totalMerchants) * 100
+                : 0;
+
+        const activeMerchantsAnalysis =
+            document.getElementById(
+                "activeMerchantsAnalysis"
+            );
+
+        const newMerchantsCount =
+            document.getElementById(
+                "newMerchantsCount"
+            );
+
+        const activeMerchantsCount =
+            document.getElementById(
+                "activeMerchantsCount"
+            );
+
+        const blockedMerchantsCount =
+            document.getElementById(
+                "blockedMerchantsCount"
+            );
+
+        const merchantActivityProgress =
+            document.getElementById(
+                "merchantActivityProgress"
+            );
+
+        if (
+            !activeMerchantsAnalysis ||
+            !newMerchantsCount ||
+            !activeMerchantsCount ||
+            !blockedMerchantsCount ||
+            !merchantActivityProgress
+        ) {
+
+            throw new Error(
+                "Un ou plusieurs IDs du Bloc 6 commerçants sont introuvables."
+            );
+
+        }
+
+        alert(
+            "RELATÓRIOS — BLOC 11.5.3\n\n" +
+            "Les éléments du Bloc 6 commerçants sont détectés.\n\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        activeMerchantsAnalysis.textContent =
+            activeMerchants;
+
+        newMerchantsCount.textContent =
+            newMerchants;
+
+        activeMerchantsCount.textContent =
+            activeMerchants;
+
+        blockedMerchantsCount.textContent =
+            blockedMerchants;
+
+        merchantActivityProgress.style.width =
+            Math.min(
+                merchantActivityRate,
+                100
+            ) + "%";
+
+        alert(
+            "RELATÓRIOS — BLOC 11.5 TERMINÉ ✅\n\n" +
+            "Commerçants trouvés : " +
+            totalMerchants +
+            "\n\n" +
+            "Nouveaux commerçants : " +
+            newMerchants +
+            "\n\n" +
+            "Commerçants actifs : " +
+            activeMerchants +
+            "\n\n" +
+            "Commerçants bloqués : " +
+            blockedMerchants +
+            "\n\n" +
+            "Taux d'activité : " +
+            merchantActivityRate.toFixed(1) +
+            "%\n\n" +
+            "Analyse des commerçants : OK\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 11.5 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 11.5 ERREUR ❌\n\n" +
             error.message
         );
 
