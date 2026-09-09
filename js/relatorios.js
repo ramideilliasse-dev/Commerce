@@ -2726,7 +2726,7 @@ function calculateTopProductsStatistics() {
             "Aucun nouvel ID HTML créé.\n" +
             "Aucune donnée Firestore modifiée."
         );
-
+calculateOfficialStoresStatistics();
     }
     catch (error) {
 
@@ -2737,6 +2737,270 @@ function calculateTopProductsStatistics() {
 
         alert(
             "RELATÓRIOS — BLOC 11.6 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+async function calculateOfficialStoresStatistics() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 11.7.1\n\n" +
+            "Récupération des Lojas Oficiais..."
+        );
+
+        const officialStoresSnapshot =
+            await getDocs(
+                collection(db, "officialStores")
+            );
+
+        const officialStores =
+            officialStoresSnapshot.docs.map(
+                (docSnap) => ({
+                    id: docSnap.id,
+                    ...docSnap.data()
+                })
+            );
+
+        alert(
+            "RELATÓRIOS — BLOC 11.7.2\n\n" +
+            "Collection officialStores récupérée avec succès.\n\n" +
+            "Lojas Oficiais trouvées : " +
+            officialStores.length +
+            "\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+        /*
+         * Création de la liste des commerçants
+         * appartenant aux Lojas Oficiais.
+         */
+
+        const officialMerchantIds =
+            new Set();
+
+        officialStores.forEach((store) => {
+
+            if (
+                Array.isArray(
+                    store.merchantIds
+                )
+            ) {
+
+                store.merchantIds.forEach(
+                    (merchantId) => {
+
+                        if (merchantId) {
+
+                            officialMerchantIds.add(
+                                String(merchantId)
+                            );
+
+                        }
+
+                    }
+                );
+
+            }
+
+        });
+
+        /*
+         * Recherche des commandes
+         * appartenant à une Loja Oficial.
+         */
+
+        let officialOrders = [];
+
+        reportsOrders.forEach((order) => {
+
+            const merchantId =
+                String(
+                    order.merchantId ?? ""
+                );
+
+            if (
+                merchantId &&
+                officialMerchantIds.has(
+                    merchantId
+                )
+            ) {
+
+                officialOrders.push(order);
+
+            }
+
+        });
+
+        let officialSales = 0;
+
+        officialOrders.forEach((order) => {
+
+            officialSales +=
+                Number(order.total) || 0;
+
+        });
+
+        const totalOrders =
+            reportsOrders.length;
+
+        const officialOrdersCount =
+            officialOrders.length;
+
+        const officialSalesShare =
+            totalOrders > 0
+                ? (
+                    officialOrdersCount /
+                    totalOrders
+                ) * 100
+                : 0;
+
+        const officialStoresActiveCount =
+            officialStores.filter(
+                (store) => {
+
+                    const status =
+                        String(
+                            store.status ?? ""
+                        )
+                        .trim()
+                        .toLowerCase();
+
+                    return (
+                        status === "active" ||
+                        status === "ativo" ||
+                        status === "enabled" ||
+                        status === "enabled"
+                    );
+
+                }
+            ).length;
+
+        alert(
+            "RELATÓRIOS — BLOC 11.7.3\n\n" +
+            "Analyse des commandes officielles terminée.\n\n" +
+            "Commerçants associés : " +
+            officialMerchantIds.size +
+            "\n\n" +
+            "Commandes officielles : " +
+            officialOrdersCount +
+            "\n\n" +
+            "Ventes officielles : " +
+            officialSales.toLocaleString("pt-AO") +
+            " Kz\n\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        const officialStoresSalesValue =
+            document.getElementById(
+                "officialStoresSalesValue"
+            );
+
+        const officialStoresActiveCountElement =
+            document.getElementById(
+                "officialStoresActiveCount"
+            );
+
+        const officialStoresOrdersCount =
+            document.getElementById(
+                "officialStoresOrdersCount"
+            );
+
+        const officialStoresSalesShare =
+            document.getElementById(
+                "officialStoresSalesShare"
+            );
+
+        const officialStoresSalesProgress =
+            document.getElementById(
+                "officialStoresSalesProgress"
+            );
+
+        if (
+            !officialStoresSalesValue ||
+            !officialStoresActiveCountElement ||
+            !officialStoresOrdersCount ||
+            !officialStoresSalesShare ||
+            !officialStoresSalesProgress
+        ) {
+
+            throw new Error(
+                "Un ou plusieurs IDs des Lojas Oficiais sont introuvables."
+            );
+
+        }
+
+        alert(
+            "RELATÓRIOS — BLOC 11.7.4\n\n" +
+            "Les éléments HTML des Lojas Oficiais sont détectés.\n\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        const formatKz = (value) => {
+
+            return (
+                Number(value || 0)
+                    .toLocaleString("pt-AO") +
+                " Kz"
+            );
+
+        };
+
+        officialStoresSalesValue.textContent =
+            formatKz(officialSales);
+
+        officialStoresActiveCountElement.textContent =
+            officialStoresActiveCount;
+
+        officialStoresOrdersCount.textContent =
+            officialOrdersCount;
+
+        officialStoresSalesShare.textContent =
+            officialSalesShare.toFixed(1) + "%";
+
+        officialStoresSalesProgress.style.width =
+            Math.min(
+                officialSalesShare,
+                100
+            ) + "%";
+
+        alert(
+            "RELATÓRIOS — BLOC 11.7 TERMINÉ ✅\n\n" +
+            "Lojas Oficiais : " +
+            officialStores.length +
+            "\n\n" +
+            "Commerçants associés : " +
+            officialMerchantIds.size +
+            "\n\n" +
+            "Commandes officielles : " +
+            officialOrdersCount +
+            "\n\n" +
+            "Ventes officielles : " +
+            formatKz(officialSales) +
+            "\n\n" +
+            "Part des commandes officielles : " +
+            officialSalesShare.toFixed(1) +
+            "%\n\n" +
+            "Analyse des Lojas Oficiais : OK\n" +
+            "Affichage : OK\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 11.7 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 11.7 ERREUR ❌\n\n" +
             error.message
         );
 
