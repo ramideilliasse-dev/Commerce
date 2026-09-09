@@ -1768,3 +1768,128 @@ function normalizeReportsOrders() {
     }
 
 }
+calculateReportsStatistics();
+/* =========================================================
+   BLOC 11.1 — CALCUL DES STATISTIQUES RÉELLES
+========================================================= */
+
+function calculateReportsStatistics() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 11.1.1\n\n" +
+            "Calcul des statistiques réelles..."
+        );
+
+
+        /* ================================================
+           VÉRIFICATION
+        ================================================= */
+
+        if (!Array.isArray(reportsOrders)) {
+
+            throw new Error(
+                "reportsOrders n'est pas un tableau."
+            );
+
+        }
+
+
+        /* ================================================
+           NOMBRE TOTAL DE COMMANDES
+        ================================================= */
+
+        const totalOrders =
+            reportsOrders.length;
+
+
+        /* ================================================
+           CHIFFRE D'AFFAIRES
+        ================================================= */
+
+        let totalRevenue = 0;
+
+
+        reportsOrders.forEach((order) => {
+
+            const total =
+                Number(order.total) || 0;
+
+            totalRevenue += total;
+
+        });
+
+
+        /* ================================================
+           PRODUITS VENDUS
+        ================================================= */
+
+        let totalProductsSold = 0;
+
+
+        reportsOrders.forEach((order) => {
+
+            if (!Array.isArray(order.items)) {
+                return;
+            }
+
+
+            order.items.forEach((item) => {
+
+                const quantity =
+                    Number(item.quantity) || 0;
+
+                totalProductsSold += quantity;
+
+            });
+
+        });
+
+
+        /* ================================================
+           TEST DES RÉSULTATS
+        ================================================= */
+
+        alert(
+            "RELATÓRIOS — BLOC 11.1 TERMINÉ ✅\n\n" +
+
+            "Commandes : " +
+            totalOrders +
+
+            "\n\n" +
+
+            "Produits vendus : " +
+            totalProductsSold +
+
+            "\n\n" +
+
+            "Chiffre d'affaires : " +
+            totalRevenue.toLocaleString("pt-AO") +
+            " Kz" +
+
+            "\n\n" +
+
+            "Les données sont calculées uniquement en mémoire.\n" +
+            "Aucun ID HTML modifié.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 11.1 :",
+            error
+        );
+
+
+        alert(
+            "RELATÓRIOS — BLOC 11.1 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
