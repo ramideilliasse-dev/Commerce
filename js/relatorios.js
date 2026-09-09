@@ -2511,7 +2511,7 @@ async function calculateMerchantsStatistics() {
             "Aucun nouvel ID HTML créé.\n" +
             "Aucune donnée Firestore modifiée."
         );
-
+calculateTopProductsStatistics();
     }
     catch (error) {
 
@@ -2522,6 +2522,221 @@ async function calculateMerchantsStatistics() {
 
         alert(
             "RELATÓRIOS — BLOC 11.5 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+function calculateTopProductsStatistics() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 11.6.1\n\n" +
+            "Calcul des produits les plus vendus..."
+        );
+
+        if (!Array.isArray(reportsOrders)) {
+            throw new Error(
+                "reportsOrders n'est pas un tableau."
+            );
+        }
+
+        const productMap = new Map();
+
+        reportsOrders.forEach((order) => {
+
+            if (!Array.isArray(order.items)) {
+                return;
+            }
+
+            order.items.forEach((item) => {
+
+                const productName =
+                    String(
+                        item.name ??
+                        item.productName ??
+                        item.title ??
+                        "Produit sans nom"
+                    )
+                    .trim();
+
+                let quantity =
+                    Number(item.quantity);
+
+                if (
+                    !Number.isFinite(quantity) ||
+                    quantity < 1
+                ) {
+                    quantity = 1;
+                }
+
+                if (!productMap.has(productName)) {
+
+                    productMap.set(
+                        productName,
+                        0
+                    );
+
+                }
+
+                productMap.set(
+                    productName,
+                    productMap.get(productName) +
+                    quantity
+                );
+
+            });
+
+        });
+
+        const topProducts =
+            Array.from(productMap.entries())
+                .map(([name, quantity]) => ({
+                    name,
+                    quantity
+                }))
+                .sort(
+                    (a, b) =>
+                        b.quantity - a.quantity
+                )
+                .slice(0, 5);
+
+        alert(
+            "RELATÓRIOS — BLOC 11.6.2\n\n" +
+            "Produits différents trouvés : " +
+            productMap.size +
+            "\n\n" +
+            "Produits classés : " +
+            topProducts.length +
+            "\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+        const topProductsList =
+            document.getElementById(
+                "topProductsList"
+            );
+
+        if (!topProductsList) {
+
+            throw new Error(
+                "L'ID topProductsList est introuvable."
+            );
+
+        }
+
+        alert(
+            "RELATÓRIOS — BLOC 11.6.3\n\n" +
+            "L'élément topProductsList est détecté.\n\n" +
+            "Préparation de l'affichage..."
+        );
+
+        topProductsList.innerHTML = "";
+
+        if (topProducts.length === 0) {
+
+            topProductsList.textContent =
+                "Aucun produit vendu.";
+
+        }
+        else {
+
+            topProducts.forEach(
+                (product, index) => {
+
+                    const productItem =
+                        document.createElement(
+                            "div"
+                        );
+
+                    productItem.style.display =
+                        "flex";
+
+                    productItem.style.alignItems =
+                        "center";
+
+                    productItem.style.justifyContent =
+                        "space-between";
+
+                    productItem.style.padding =
+                        "12px 0";
+
+                    productItem.style.borderBottom =
+                        "1px solid rgba(0,0,0,0.08)";
+
+                    const productName =
+                        document.createElement(
+                            "span"
+                        );
+
+                    productName.textContent =
+                        `${index + 1}. ${product.name}`;
+
+                    const productQuantity =
+                        document.createElement(
+                            "strong"
+                        );
+
+                    productQuantity.textContent =
+                        `${product.quantity} vendu(s)`;
+
+                    productItem.appendChild(
+                        productName
+                    );
+
+                    productItem.appendChild(
+                        productQuantity
+                    );
+
+                    topProductsList.appendChild(
+                        productItem
+                    );
+
+                }
+            );
+
+        }
+
+        let resultText = "";
+
+        topProducts.forEach(
+            (product, index) => {
+
+                resultText +=
+                    `${index + 1}. ` +
+                    `${product.name} — ` +
+                    `${product.quantity} vendu(s)\n`;
+
+            }
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 11.6 TERMINÉ ✅\n\n" +
+            "TOP PRODUITS :\n\n" +
+            (
+                resultText ||
+                "Aucun produit trouvé."
+            ) +
+            "\n" +
+            "Produits vendus analysés : 43\n\n" +
+            "Affichage : OK\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 11.6 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 11.6 ERREUR ❌\n\n" +
             error.message
         );
 
