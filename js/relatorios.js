@@ -3502,26 +3502,17 @@ function initializeReportsExport() {
          * Nous préparons simplement les boutons.
          */
 
-        exportReportsButton.onclick = () => {
-
-            alert(
-                "RELATÓRIOS — BLOC 12.1\n\n" +
-                "Bouton principal d'export détecté.\n\n" +
-                "La génération du fichier sera ajoutée au Bloc 12.3."
-            );
-
-        };
-
         exportReportButton.onclick = () => {
 
-            alert(
-                "RELATÓRIOS — BLOC 12.1\n\n" +
-                "Bouton d'export du résumé détecté.\n\n" +
-                "La génération du fichier sera ajoutée au Bloc 12.3."
-            );
+    downloadReportsCSV();
 
-        };
+};
 
+        exportReportsButton.onclick = () => {
+
+    downloadReportsCSV();
+
+};
         printReportButton.onclick = () => {
 
             alert(
@@ -3866,6 +3857,88 @@ function generateReportsCSV() {
 
         alert(
             "RELATÓRIOS — BLOC 12.3 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+function downloadReportsCSV() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.4.1\n\n" +
+            "Préparation du téléchargement..."
+        );
+
+        const csvContent =
+            window.reportCSVContent;
+
+        if (!csvContent) {
+            throw new Error(
+                "Le contenu CSV n'est pas disponible."
+            );
+        }
+
+        const blob =
+            new Blob(
+                [csvContent],
+                {
+                    type: "text/csv;charset=utf-8;"
+                }
+            );
+
+        const url =
+            URL.createObjectURL(blob);
+
+        const link =
+            document.createElement("a");
+
+        link.href = url;
+
+        link.download =
+            "toma-relatorio.csv";
+
+        document.body.appendChild(link);
+
+        alert(
+            "RELATÓRIOS — BLOC 12.4.2\n\n" +
+            "Le fichier CSV est prêt pour le téléchargement.\n\n" +
+            "Nom : toma-relatorio.csv\n" +
+            "Format : CSV\n" +
+            "Taille : " +
+            blob.size +
+            " octets\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+        link.click();
+
+        document.body.removeChild(link);
+
+        URL.revokeObjectURL(url);
+
+        alert(
+            "RELATÓRIOS — BLOC 12.4 TERMINÉ ✅\n\n" +
+            "Téléchargement lancé avec succès.\n\n" +
+            "Fichier : toma-relatorio.csv\n\n" +
+            "Tu peux maintenant vérifier le fichier dans les téléchargements de l'iPhone.\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.4 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.4 ERREUR ❌\n\n" +
             error.message
         );
 
