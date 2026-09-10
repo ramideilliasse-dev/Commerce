@@ -3514,15 +3514,8 @@ function initializeReportsExport() {
 
 };
         printReportButton.onclick = () => {
-
-            alert(
-                "RELATÓRIOS — BLOC 12.1\n\n" +
-                "Bouton d'impression détecté.\n\n" +
-                "La fonction d'impression sera ajoutée au Bloc 12.4."
-            );
-
-        };
-
+    printTomaReport();
+};
         alert(
             "RELATÓRIOS — BLOC 12.1 TERMINÉ ✅\n\n" +
             "Préparation des boutons : OK\n\n" +
@@ -3939,6 +3932,71 @@ function downloadReportsCSV() {
 
         alert(
             "RELATÓRIOS — BLOC 12.4 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+function printTomaReport() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.5.1\n\n" +
+            "Préparation de l'impression du rapport..."
+        );
+
+        const reportsContent =
+            document.getElementById(
+                "reportsContent"
+            );
+
+        if (!reportsContent) {
+            throw new Error(
+                "L'ID reportsContent est introuvable."
+            );
+        }
+
+        const reportSummarySection =
+            document.getElementById(
+                "reportSummarySection"
+            );
+
+        if (!reportSummarySection) {
+            throw new Error(
+                "L'ID reportSummarySection est introuvable."
+            );
+        }
+
+        alert(
+            "RELATÓRIOS — BLOC 12.5.2\n\n" +
+            "Les éléments du rapport sont détectés.\n\n" +
+            "reportsContent : OK\n" +
+            "reportSummarySection : OK\n\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        window.print();
+
+        alert(
+            "RELATÓRIOS — BLOC 12.5 TERMINÉ ✅\n\n" +
+            "La fenêtre d'impression a été appelée avec succès.\n\n" +
+            "Impression : OK\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.5 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.5 ERREUR ❌\n\n" +
             error.message
         );
 
