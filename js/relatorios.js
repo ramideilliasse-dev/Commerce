@@ -3690,7 +3690,7 @@ function prepareReportExportData() {
             "Aucune donnée Firestore modifiée.\n" +
             "Aucun fichier généré pour le moment."
         );
-
+generateReportsCSV();
     }
     catch (error) {
 
@@ -3701,6 +3701,171 @@ function prepareReportExportData() {
 
         alert(
             "RELATÓRIOS — BLOC 12.2 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+function generateReportsCSV() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.3.1\n\n" +
+            "Préparation du fichier CSV..."
+        );
+
+        const data =
+            window.reportExportData;
+
+        if (!data) {
+            throw new Error(
+                "Les données d'export ne sont pas disponibles."
+            );
+        }
+
+        const rows = [
+
+            [
+                "RELATÓRIO TOMA"
+            ],
+
+            [
+                "Período",
+                data.period
+            ],
+
+            [],
+
+            [
+                "INDICADORES"
+            ],
+
+            [
+                "Total de commandes",
+                data.totalOrders
+            ],
+
+            [
+                "Produits vendus",
+                data.totalProductsSold
+            ],
+
+            [
+                "Chiffre d'affaires",
+                data.totalRevenue + " Kz"
+            ],
+
+            [
+                "Panier moyen",
+                data.averageOrder + " Kz"
+            ],
+
+            [],
+
+            [
+                "FINANCES"
+            ],
+
+            [
+                "Commission",
+                data.commissionRate + "%"
+            ],
+
+            [
+                "Commission estimée",
+                data.estimatedCommission + " Kz"
+            ],
+
+            [],
+
+            [
+                "COMMERÇANTS"
+            ],
+
+            [
+                "Commerçants actifs",
+                data.activeMerchants
+            ],
+
+            [],
+
+            [
+                "LOJAS OFICIAIS"
+            ],
+
+            [
+                "Lojas Oficiais actives",
+                data.officialStores
+            ]
+
+        ];
+
+        const csvContent =
+            rows
+                .map((row) => {
+
+                    return row
+                        .map((cell) => {
+
+                            const value =
+                                String(
+                                    cell ?? ""
+                                )
+                                .replace(
+                                    /"/g,
+                                    '""'
+                                );
+
+                            return `"${value}"`;
+
+                        })
+                        .join(",");
+
+                })
+                .join("\n");
+
+        window.reportCSVContent =
+            "\uFEFF" + csvContent;
+
+        alert(
+            "RELATÓRIOS — BLOC 12.3.2\n\n" +
+            "Fichier CSV préparé avec succès.\n\n" +
+            "Lignes préparées : " +
+            rows.length +
+            "\n\n" +
+            "Données incluses :\n" +
+            "• Commandes\n" +
+            "• Produits vendus\n" +
+            "• Chiffre d'affaires\n" +
+            "• Panier moyen\n" +
+            "• Commission\n" +
+            "• Commerçants actifs\n" +
+            "• Lojas Oficiais\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.3 TERMINÉ ✅\n\n" +
+            "Fichier CSV prêt à être téléchargé.\n\n" +
+            "Génération : OK\n" +
+            "Données : OK\n\n" +
+            "Aucun fichier téléchargé automatiquement.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.3 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.3 ERREUR ❌\n\n" +
             error.message
         );
 
