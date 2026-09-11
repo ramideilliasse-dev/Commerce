@@ -5101,3 +5101,81 @@ a {
     }
 
 }
+/* =========================================================
+   RELATÓRIOS — BLOC 12.7 CORRECTION
+   IMPRESSION RÉELLE DU RAPPORT
+   ========================================================= */
+
+@media print {
+
+    /* Le header reste propre mais conserve son contenu réel */
+    #reportsHeader {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        margin: 0 0 16px 0 !important;
+        padding: 10px 0 14px 0 !important;
+        background: #ffffff !important;
+        border-bottom: 2px solid #111111 !important;
+        box-shadow: none !important;
+    }
+
+    /* Ne plus cacher tout le contenu du header */
+    #reportsHeader > * {
+        visibility: visible !important;
+    }
+
+    /* Les boutons restent cachés */
+    #backReportsButton,
+    #exportReportsButton {
+        display: none !important;
+    }
+
+    /* Le rapport prend toute la largeur disponible */
+    #reportsMain,
+    #reportsContent {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Réduction des grands espaces */
+    #reportsIntro {
+        margin-top: 0 !important;
+        margin-bottom: 10px !important;
+    }
+
+    #reportsPeriodBar {
+        margin-top: 0 !important;
+        margin-bottom: 12px !important;
+    }
+
+    #reportsStats {
+        margin-top: 0 !important;
+    }
+
+    /* Les sections doivent rester ensemble autant que possible */
+    #salesPerformanceSection,
+    #financialPerformanceSection,
+    #ordersMerchantsSection,
+    #productsStoresSection,
+    #recentActivitySection,
+    #reportSummarySection {
+        break-before: auto;
+        break-after: auto;
+        break-inside: avoid;
+        page-break-before: auto;
+        page-break-after: auto;
+        page-break-inside: avoid;
+    }
+
+    /* Éviter les énormes espacements causés par le mode mobile */
+    #salesChartContainer {
+        max-height: 260px !important;
+        min-height: 180px !important;
+    }
+
+}
