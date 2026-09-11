@@ -4039,3 +4039,137 @@ alert(
     }
 
 }
+function prepareDetailedReportExport() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.8.1\n\n" +
+            "Préparation de l'export détaillé..."
+        );
+
+        if (!Array.isArray(reportsOrders)) {
+            throw new Error(
+                "reportsOrders n'est pas un tableau."
+            );
+        }
+
+        const detailedOrders =
+            reportsOrders.map((order) => {
+
+                let products = "";
+
+                if (Array.isArray(order.items)) {
+
+                    products =
+                        order.items
+                            .map((item) => {
+
+                                const name =
+                                    item.name ||
+                                    item.productName ||
+                                    item.title ||
+                                    "Produit sans nom";
+
+                                const quantity =
+                                    Number(
+                                        item.quantity ??
+                                        item.qty ??
+                                        1
+                                    );
+
+                                return (
+                                    name +
+                                    " x" +
+                                    quantity
+                                );
+
+                            })
+                            .join(" | ");
+                }
+
+                return {
+
+                    orderNumber:
+                        order.orderNumber ||
+                        order.id ||
+                        "Commande",
+
+                    clientName:
+                        order.clientName ||
+                        "",
+
+                    clientPhone:
+                        order.clientPhone ||
+                        "",
+
+                    merchantId:
+                        order.merchantId ||
+                        "",
+
+                    status:
+                        order.status ||
+                        "pending",
+
+                    paymentMethod:
+                        order.paymentMethod ||
+                        "",
+
+                    total:
+                        Number(order.total) || 0,
+
+                    products
+
+                };
+
+            });
+
+        window.detailedReportExportData =
+            detailedOrders;
+
+        alert(
+            "RELATÓRIOS — BLOC 12.8.2\n\n" +
+            "Export détaillé préparé avec succès.\n\n" +
+            "Commandes préparées : " +
+            detailedOrders.length +
+            "\n\n" +
+            "Informations incluses :\n" +
+            "• Numéro de commande\n" +
+            "• Client\n" +
+            "• Téléphone\n" +
+            "• Commerçant\n" +
+            "• Statut\n" +
+            "• Mode de paiement\n" +
+            "• Total\n" +
+            "• Produits\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.8 TERMINÉ ✅\n\n" +
+            "Structure détaillée du rapport créée en mémoire.\n\n" +
+            "Commandes : " +
+            detailedOrders.length +
+            "\n\n" +
+            "Données prêtes pour la prochaine étape.\n\n" +
+            "Aucun téléchargement automatique.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.8 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.8 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
