@@ -4784,3 +4784,212 @@ a {
         flex: none;
     }
 }
+/* =========================================================
+   RELATÓRIOS — BLOC 12.6
+   OPTIMISATION PROFESSIONNELLE POUR IMPRESSION
+   ========================================================= */
+
+@page {
+    size: A4;
+    margin: 12mm;
+}
+
+@media print {
+
+    /* -----------------------------------------
+       PAGE GÉNÉRALE
+       ----------------------------------------- */
+
+    html,
+    body {
+        width: 100%;
+        min-height: 100%;
+        margin: 0;
+        padding: 0;
+        background: #ffffff !important;
+        color: #111111 !important;
+    }
+
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* -----------------------------------------
+       CONTENEUR PRINCIPAL
+       ----------------------------------------- */
+
+    #relatoriosApp {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+        box-shadow: none !important;
+    }
+
+    #reportsMain {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    #reportsContent {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* -----------------------------------------
+       BOUTONS INUTILES À L'IMPRESSION
+       ----------------------------------------- */
+
+    #backReportsButton,
+    #exportReportsButton,
+    #refreshReportsButton,
+    #exportReportButton,
+    #printReportButton,
+    #viewAllActivityButton {
+        display: none !important;
+    }
+
+    /* -----------------------------------------
+       BARRE DE PÉRIODE
+       ----------------------------------------- */
+
+    #reportsPeriodBar {
+        box-shadow: none !important;
+        border: 1px solid #dddddd !important;
+        background: #ffffff !important;
+    }
+
+    #reportsPeriodSelect,
+    #salesChartPeriod {
+        border: 1px solid #dddddd !important;
+        background: #ffffff !important;
+        color: #111111 !important;
+    }
+
+    /* -----------------------------------------
+       CARTES
+       ----------------------------------------- */
+
+    #reportsStats > *,
+    #financialPerformanceSection > *,
+    #ordersMerchantsSection > *,
+    #productsStoresSection > *,
+    #recentActivitySection > *,
+    #reportSummarySection > * {
+        box-shadow: none !important;
+    }
+
+    /* -----------------------------------------
+       ÉVITER LES COUPURES DANS LES CARTES
+       ----------------------------------------- */
+
+    #salesPerformanceSection,
+    #financialPerformanceSection,
+    #ordersMerchantsSection,
+    #productsStoresSection,
+    #recentActivitySection,
+    #reportSummarySection,
+    #salesPerformanceSection > *,
+    #financialPerformanceSection > *,
+    #ordersMerchantsSection > *,
+    #productsStoresSection > *,
+    #recentActivitySection > *,
+    #reportSummarySection > * {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    /* -----------------------------------------
+       TITRES DE SECTIONS
+       ----------------------------------------- */
+
+    #salesPerformanceSection,
+    #financialPerformanceSection,
+    #ordersMerchantsSection,
+    #productsStoresSection,
+    #recentActivitySection,
+    #reportSummarySection {
+        margin-top: 14px !important;
+    }
+
+    /* -----------------------------------------
+       GRAPHIQUE
+       ----------------------------------------- */
+
+    #salesChartContainer {
+        width: 100% !important;
+        min-height: 220px !important;
+        max-height: 320px !important;
+        overflow: hidden !important;
+        background: #ffffff !important;
+    }
+
+    #salesChart {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    /* -----------------------------------------
+       ACTIVITÉ RÉCENTE
+       ----------------------------------------- */
+
+    #recentActivityList {
+        width: 100% !important;
+    }
+
+    /* -----------------------------------------
+       RÉSUMÉ FINAL
+       ----------------------------------------- */
+
+    #reportSummarySection {
+        margin-bottom: 20px !important;
+    }
+
+    /* -----------------------------------------
+       TEXTE
+       ----------------------------------------- */
+
+    h1,
+    h2,
+    h3,
+    h4,
+    p,
+    span,
+    strong {
+        color: #111111;
+    }
+
+    /* -----------------------------------------
+       LIENS
+       ----------------------------------------- */
+
+    a {
+        color: #111111 !important;
+        text-decoration: none !important;
+    }
+
+    /* -----------------------------------------
+       TABLEAUX / LISTES / BLOCS
+       ----------------------------------------- */
+
+    section,
+    article,
+    div {
+        max-width: 100%;
+    }
+
+    /* -----------------------------------------
+       PIEDS DE PAGE AUTOMATIQUES
+       ----------------------------------------- */
+
+    #reportsHeader {
+        background: #ffffff !important;
+        box-shadow: none !important;
+        border-bottom: 1px solid #dddddd !important;
+    }
+
+}
