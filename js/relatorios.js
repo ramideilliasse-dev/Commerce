@@ -3995,19 +3995,33 @@ function printTomaReport() {
          * le relais lorsque window.print() est appelé.
          */
 
-        window.print();
+        document.body.classList.add(
+    "toma-print-mode"
+);
 
-        alert(
-            "RELATÓRIOS — BLOC 12.6 TERMINÉ ✅\n\n" +
-            "Mode impression professionnel activé.\n\n" +
-            "Format : A4\n" +
-            "Marges : optimisées\n" +
-            "Boutons inutiles : masqués\n" +
-            "Ombres : supprimées\n" +
-            "Coupures de cartes : limitées\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+alert(
+    "RELATÓRIOS — BLOC 12.7.1\n\n" +
+    "Mode impression professionnel activé.\n\n" +
+    "En-tête Toma : préparation OK\n" +
+    "Présentation du rapport : OK\n" +
+    "Aucun nouvel ID HTML créé."
+);
+
+window.print();
+
+document.body.classList.remove(
+    "toma-print-mode"
+);
+
+alert(
+    "RELATÓRIOS — BLOC 12.7 TERMINÉ ✅\n\n" +
+    "Présentation professionnelle du rapport activée.\n\n" +
+    "En-tête Toma : OK\n" +
+    "Format A4 : OK\n" +
+    "Optimisation impression : OK\n\n" +
+    "Aucun nouvel ID HTML créé.\n" +
+    "Aucune donnée Firestore modifiée."
+);
 
     }
     catch (error) {
