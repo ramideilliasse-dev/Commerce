@@ -3943,13 +3943,23 @@ function printTomaReport() {
     try {
 
         alert(
-            "RELATÓRIOS — BLOC 12.5.1\n\n" +
-            "Préparation de l'impression du rapport..."
+            "RELATÓRIOS — BLOC 12.6.1\n\n" +
+            "Préparation de l'impression professionnelle..."
         );
 
         const reportsContent =
             document.getElementById(
                 "reportsContent"
+            );
+
+        const reportSummarySection =
+            document.getElementById(
+                "reportSummarySection"
+            );
+
+        const reportsHeader =
+            document.getElementById(
+                "reportsHeader"
             );
 
         if (!reportsContent) {
@@ -3958,31 +3968,43 @@ function printTomaReport() {
             );
         }
 
-        const reportSummarySection =
-            document.getElementById(
-                "reportSummarySection"
-            );
-
         if (!reportSummarySection) {
             throw new Error(
                 "L'ID reportSummarySection est introuvable."
             );
         }
 
+        if (!reportsHeader) {
+            throw new Error(
+                "L'ID reportsHeader est introuvable."
+            );
+        }
+
         alert(
-            "RELATÓRIOS — BLOC 12.5.2\n\n" +
-            "Les éléments du rapport sont détectés.\n\n" +
+            "RELATÓRIOS — BLOC 12.6.2\n\n" +
+            "Les éléments principaux du rapport sont détectés.\n\n" +
             "reportsContent : OK\n" +
+            "reportsHeader : OK\n" +
             "reportSummarySection : OK\n\n" +
+            "Optimisation CSS impression : active\n\n" +
             "Aucun nouvel ID HTML créé."
         );
+
+        /*
+         * Le CSS @media print prend automatiquement
+         * le relais lorsque window.print() est appelé.
+         */
 
         window.print();
 
         alert(
-            "RELATÓRIOS — BLOC 12.5 TERMINÉ ✅\n\n" +
-            "La fenêtre d'impression a été appelée avec succès.\n\n" +
-            "Impression : OK\n" +
+            "RELATÓRIOS — BLOC 12.6 TERMINÉ ✅\n\n" +
+            "Mode impression professionnel activé.\n\n" +
+            "Format : A4\n" +
+            "Marges : optimisées\n" +
+            "Boutons inutiles : masqués\n" +
+            "Ombres : supprimées\n" +
+            "Coupures de cartes : limitées\n\n" +
             "Aucun nouvel ID HTML créé.\n" +
             "Aucune donnée Firestore modifiée."
         );
@@ -3991,12 +4013,12 @@ function printTomaReport() {
     catch (error) {
 
         console.error(
-            "Erreur Bloc 12.5 :",
+            "Erreur Bloc 12.6 :",
             error
         );
 
         alert(
-            "RELATÓRIOS — BLOC 12.5 ERREUR ❌\n\n" +
+            "RELATÓRIOS — BLOC 12.6 ERREUR ❌\n\n" +
             error.message
         );
 
