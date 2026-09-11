@@ -4993,3 +4993,111 @@ a {
     }
 
 }
+/* =========================================================
+   RELATÓRIOS — BLOC 12.7
+   EN-TÊTE PROFESSIONNEL POUR IMPRESSION
+   ========================================================= */
+
+@media print {
+
+    /* -----------------------------------------
+       EN-TÊTE DU RAPPORT
+       ----------------------------------------- */
+
+    #reportsHeader {
+        display: block !important;
+        position: relative !important;
+        width: 100% !important;
+        padding: 0 0 14px 0 !important;
+        margin: 0 0 18px 0 !important;
+        border-bottom: 2px solid #111111 !important;
+        text-align: center !important;
+    }
+
+    #reportsHeader::before {
+        content: "TOMA";
+        display: block;
+        font-size: 25px;
+        font-weight: 800;
+        letter-spacing: 3px;
+        line-height: 1.2;
+        margin-bottom: 4px;
+        color: #111111;
+    }
+
+    #reportsHeader::after {
+        content: "RELATÓRIO DE DESEMPENHO";
+        display: block;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        margin-top: 4px;
+        color: #555555;
+    }
+
+    /* Masquer le contenu de navigation du header */
+    #reportsHeader > * {
+        visibility: hidden !important;
+    }
+
+    /* Les pseudo-éléments restent visibles */
+    #reportsHeader::before,
+    #reportsHeader::after {
+        visibility: visible !important;
+    }
+
+    /* -----------------------------------------
+       INTRODUCTION
+       ----------------------------------------- */
+
+    #reportsIntro {
+        margin-top: 0 !important;
+        margin-bottom: 16px !important;
+        text-align: center !important;
+    }
+
+    /* -----------------------------------------
+       PÉRIODE DU RAPPORT
+       ----------------------------------------- */
+
+    #reportsPeriodBar {
+        margin-bottom: 18px !important;
+        padding: 10px 14px !important;
+        border: 1px solid #dddddd !important;
+        border-radius: 8px !important;
+        box-shadow: none !important;
+    }
+
+    /* -----------------------------------------
+       STATISTIQUES PRINCIPALES
+       ----------------------------------------- */
+
+    #reportsStats {
+        margin-top: 0 !important;
+    }
+
+    /* -----------------------------------------
+       ÉVITER UNE PAGE VIDE ENTRE LES SECTIONS
+       ----------------------------------------- */
+
+    #reportsIntro,
+    #reportsPeriodBar,
+    #reportsStats {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    /* -----------------------------------------
+       ESPACEMENT PLUS COMPACT
+       ----------------------------------------- */
+
+    #salesPerformanceSection,
+    #financialPerformanceSection,
+    #ordersMerchantsSection,
+    #productsStoresSection,
+    #recentActivitySection,
+    #reportSummarySection {
+        margin-bottom: 14px !important;
+    }
+
+}
