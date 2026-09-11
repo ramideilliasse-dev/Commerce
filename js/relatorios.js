@@ -3525,6 +3525,7 @@ function initializeReportsExport() {
             "Aucun fichier généré pour le moment."
         );
 prepareReportExportData();
+     initializeReportsRealPeriodFilter();
     }
     catch (error) {
 
@@ -4155,6 +4156,99 @@ function prepareDetailedReportExport() {
             "Données prêtes pour la prochaine étape.\n\n" +
             "Aucun téléchargement automatique.\n" +
             "Aucune donnée Firestore modifiée."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.8 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.8 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+function initializeReportsRealPeriodFilter() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.8.1\n\n" +
+            "Initialisation du filtre de période réel..."
+        );
+
+        const reportsPeriodSelect =
+            document.getElementById(
+                "reportsPeriodSelect"
+            );
+
+        const reportsPeriodLabel =
+            document.getElementById(
+                "reportsPeriodLabel"
+            );
+
+        if (!reportsPeriodSelect) {
+            throw new Error(
+                "L'ID reportsPeriodSelect est introuvable."
+            );
+        }
+
+        if (!reportsPeriodLabel) {
+            throw new Error(
+                "L'ID reportsPeriodLabel est introuvable."
+            );
+        }
+
+        alert(
+            "RELATÓRIOS — BLOC 12.8.2\n\n" +
+            "Éléments du filtre détectés.\n\n" +
+            "reportsPeriodSelect : OK\n" +
+            "reportsPeriodLabel : OK\n\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        reportsPeriodSelect.onchange = () => {
+
+            const selectedPeriod =
+                reportsPeriodSelect.value;
+
+            let periodName =
+                reportsPeriodSelect.options[
+                    reportsPeriodSelect.selectedIndex
+                ]?.textContent ||
+                selectedPeriod;
+
+            reportsPeriodLabel.textContent =
+                periodName;
+
+            alert(
+                "RELATÓRIOS — BLOC 12.8.3\n\n" +
+                "Période sélectionnée :\n\n" +
+                periodName +
+                "\n\n" +
+                "Valeur : " +
+                selectedPeriod +
+                "\n\n" +
+                "Le filtre est détecté correctement.\n\n" +
+                "Aucun nouvel ID HTML créé.\n" +
+                "Aucune donnée Firestore modifiée."
+            );
+
+        };
+
+        alert(
+            "RELATÓRIOS — BLOC 12.8 TERMINÉ ✅\n\n" +
+            "Filtre de période initialisé.\n\n" +
+            "Le sélecteur est maintenant prêt à détecter les changements de période.\n\n" +
+            "Aucun recalcul des statistiques pour le moment.\n" +
+            "Aucune donnée Firestore modifiée.\n" +
+            "Aucun nouvel ID HTML créé."
         );
 
     }
