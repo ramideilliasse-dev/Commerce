@@ -3887,6 +3887,7 @@ function filterReportsOrdersByPeriod() {
 calculateFilteredReportsStatistics();
 displayFilteredReportsStatistics();
 prepareReportsGrowthComparison();
+calculateReportsRealGrowth();
     }
     catch (error) {
 
@@ -4516,6 +4517,231 @@ function prepareReportsGrowthComparison() {
 
         alert(
             "RELATÓRIOS — BLOC 12.12 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+// =====================================================
+// BLOC 12.13 — CALCUL DE LA CROISSANCE RÉELLE
+// =====================================================
+
+function calculateReportsRealGrowth() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.13.1\n\n" +
+            "Calcul de la croissance réelle..."
+        );
+
+        const currentStatistics =
+            window.filteredReportsStatistics;
+
+        const previousComparison =
+            window.reportsGrowthComparison;
+
+        if (!currentStatistics) {
+            throw new Error(
+                "Les statistiques de la période actuelle sont introuvables."
+            );
+        }
+
+        if (!previousComparison) {
+            throw new Error(
+                "Les données de comparaison sont introuvables."
+            );
+        }
+
+        // ---------------------------------------------
+        // DONNÉES DE LA PÉRIODE ACTUELLE
+        // ---------------------------------------------
+
+        const currentRevenue =
+            Number(
+                currentStatistics.totalRevenue
+            ) || 0;
+
+        const currentOrders =
+            Number(
+                currentStatistics.totalOrders
+            ) || 0;
+
+        const currentProducts =
+            Number(
+                currentStatistics.totalProductsSold
+            ) || 0;
+
+        // ---------------------------------------------
+        // DONNÉES DE LA PÉRIODE PRÉCÉDENTE
+        // ---------------------------------------------
+
+        const previousRevenue =
+            Number(
+                previousComparison.previousRevenue
+            ) || 0;
+
+        const previousOrders =
+            Number(
+                previousComparison.previousOrdersCount
+            ) || 0;
+
+        const previousProducts =
+            Number(
+                previousComparison.previousProductsSold
+            ) || 0;
+
+        // ---------------------------------------------
+        // FONCTION DE CALCUL DE CROISSANCE
+        // ---------------------------------------------
+
+        function calculateGrowth(
+            currentValue,
+            previousValue
+        ) {
+
+            if (previousValue === 0) {
+
+                if (currentValue === 0) {
+                    return 0;
+                }
+
+                return null;
+            }
+
+            return (
+                (
+                    (currentValue - previousValue) /
+                    previousValue
+                ) * 100
+            );
+
+        }
+
+        const revenueGrowth =
+            calculateGrowth(
+                currentRevenue,
+                previousRevenue
+            );
+
+        const ordersGrowth =
+            calculateGrowth(
+                currentOrders,
+                previousOrders
+            );
+
+        const productsGrowth =
+            calculateGrowth(
+                currentProducts,
+                previousProducts
+            );
+
+        // Les ventes correspondent ici au chiffre d'affaires.
+        const salesGrowth =
+            revenueGrowth;
+
+        // ---------------------------------------------
+        // CONSERVATION EN MÉMOIRE
+        // ---------------------------------------------
+
+        window.reportsRealGrowth = {
+
+            salesGrowth,
+            revenueGrowth,
+            ordersGrowth,
+            productsGrowth,
+
+            currentRevenue,
+            previousRevenue,
+
+            currentOrders,
+            previousOrders,
+
+            currentProducts,
+            previousProducts
+
+        };
+
+        // ---------------------------------------------
+        // FORMATAGE POUR LE TEST
+        // ---------------------------------------------
+
+        function formatGrowth(value) {
+
+            if (value === null) {
+                return "Nouveau";
+            }
+
+            if (value === 0) {
+                return "0%";
+            }
+
+            const rounded =
+                Number(
+                    value.toFixed(1)
+                );
+
+            return (
+                rounded > 0
+                    ? "+" + rounded + "%"
+                    : rounded + "%"
+            );
+
+        }
+
+        alert(
+            "RELATÓRIOS — BLOC 12.13.2\n\n" +
+            "Croissance réelle calculée.\n\n" +
+            "Ventes : " +
+            formatGrowth(salesGrowth) +
+            "\n\n" +
+            "Chiffre d'affaires : " +
+            formatGrowth(revenueGrowth) +
+            "\n\n" +
+            "Commandes : " +
+            formatGrowth(ordersGrowth) +
+            "\n\n" +
+            "Produits : " +
+            formatGrowth(productsGrowth) +
+            "\n\n" +
+            "Période actuelle :\n" +
+            currentRevenue.toLocaleString("pt-AO") +
+            " Kz / " +
+            currentOrders +
+            " commandes / " +
+            currentProducts +
+            " produits\n\n" +
+            "Période précédente :\n" +
+            previousRevenue.toLocaleString("pt-AO") +
+            " Kz / " +
+            previousOrders +
+            " commandes / " +
+            previousProducts +
+            " produits\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.13 TERMINÉ ✅\n\n" +
+            "Le calcul de croissance réelle est prêt.\n\n" +
+            "Les pourcentages sont conservés en mémoire.\n\n" +
+            "Aucune carte HTML n'est encore modifiée.\n" +
+            "Aucune donnée Firestore modifiée.\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.13 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.13 ERREUR ❌\n\n" +
             error.message
         );
 
