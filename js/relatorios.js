@@ -1299,14 +1299,7 @@ async function loadReportsOrders() {
         });
 
 
-        alert(
-            "RELATÓRIOS — BLOC 10 TERMINÉ ✅\n\n" +
-            "Commandes récupérées : " +
-            reportsOrders.length +
-            "\n\n" +
-            "Collection utilisée : orders\n\n" +
-            "Aucun nouvel ID HTML créé."
-        );
+        
 normalizeReportsOrders();
 
     } catch (error) {
@@ -1335,10 +1328,7 @@ function normalizeReportsOrders() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 10.2.1\n\n" +
-            "Début de la normalisation des commandes..."
-        );
+        
 
 
         reportsOrders = reportsOrders.map((order) => {
@@ -1537,31 +1527,7 @@ function normalizeReportsOrders() {
         });
 
 
-        alert(
-            "RELATÓRIOS — BLOC 10.2 TERMINÉ ✅\n\n" +
-            "Commandes normalisées : " +
-            reportsOrders.length +
-            "\n\n" +
-            "Produits trouvés : " +
-            totalProducts +
-            "\n\n" +
-            "Pendente : " +
-            statusCounts.pending +
-            "\n" +
-            "Confirmado : " +
-            statusCounts.confirmed +
-            "\n" +
-            "Enviado : " +
-            statusCounts.shipped +
-            "\n" +
-            "Entregue : " +
-            statusCounts.delivered +
-            "\n" +
-            "Cancelado : " +
-            statusCounts.cancelled +
-            "\n\n" +
-            "Aucun nouvel ID HTML créé."
-        );
+        
 calculateReportsStatistics();
 
     }
@@ -1591,11 +1557,7 @@ function calculateReportsStatistics() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 11.1.1\n\n" +
-            "Calcul des statistiques réelles..."
-        );
-
+        
 
         /* ================================================
            VÉRIFICATION
@@ -1665,29 +1627,7 @@ function calculateReportsStatistics() {
            TEST DES RÉSULTATS
         ================================================= */
 
-        alert(
-            "RELATÓRIOS — BLOC 11.1 TERMINÉ ✅\n\n" +
-
-            "Commandes : " +
-            totalOrders +
-
-            "\n\n" +
-
-            "Produits vendus : " +
-            totalProductsSold +
-
-            "\n\n" +
-
-            "Chiffre d'affaires : " +
-            totalRevenue.toLocaleString("pt-AO") +
-            " Kz" +
-
-            "\n\n" +
-
-            "Les données sont calculées uniquement en mémoire.\n" +
-            "Aucun ID HTML modifié.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
 displayReportsStatistics(
     totalOrders,
     totalProductsSold,
@@ -1723,11 +1663,7 @@ function displayReportsStatistics(
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 11.2.1\n\n" +
-            "Préparation de l'affichage des statistiques..."
-        );
-
+        
 
         /* ================================================
            RÉCUPÉRATION DES ID HTML EXISTANTS
@@ -1772,12 +1708,7 @@ function displayReportsStatistics(
         }
 
 
-        alert(
-            "RELATÓRIOS — BLOC 11.2.2\n\n" +
-            "Les IDs existants sont correctement détectés.\n\n" +
-            "Aucun nouvel ID HTML créé."
-        );
-
+        
 
         /* ================================================
            FORMATAGE
@@ -1820,30 +1751,7 @@ function displayReportsStatistics(
            TEST FINAL
         ================================================= */
 
-        alert(
-            "RELATÓRIOS — BLOC 11.2 TERMINÉ ✅\n\n" +
-
-            "Commandes affichées : " +
-            totalOrders +
-
-            "\n\n" +
-
-            "Produits vendus affichés : " +
-            totalProductsSold +
-
-            "\n\n" +
-
-            "Chiffre d'affaires affiché : " +
-            formattedRevenue +
-
-            "\n\n" +
-
-            "Cartes principales : OK\n" +
-            "Résumé du rapport : OK\n\n" +
-
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
 
 calculateOrdersStatusStatistics();
     }
@@ -1871,11 +1779,7 @@ function calculateOrdersStatusStatistics() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 11.3.1\n\n" +
-            "Calcul de la répartition des commandes..."
-        );
-
+        
 
         /* ================================================
            COMPTEURS
@@ -2011,11 +1915,7 @@ function calculateOrdersStatusStatistics() {
         }
 
 
-        alert(
-            "RELATÓRIOS — BLOC 11.3.2\n\n" +
-            "Les éléments du Bloc 6 sont détectés.\n\n" +
-            "Aucun nouvel ID HTML créé."
-        );
+        
 
 
         /* ================================================
@@ -2082,45 +1982,7 @@ function calculateOrdersStatusStatistics() {
            TEST FINAL
         ================================================= */
 
-        alert(
-            "RELATÓRIOS — BLOC 11.3 TERMINÉ ✅\n\n" +
-
-            "Total : " +
-            totalOrders +
-
-            "\n\n" +
-
-            "Pendente : " +
-            pending +
-
-            "\n" +
-
-            "Confirmado : " +
-            confirmed +
-
-            "\n" +
-
-            "Enviado : " +
-            shipped +
-
-            "\n" +
-
-            "Entregue : " +
-            delivered +
-
-            "\n" +
-
-            "Cancelado : " +
-            cancelled +
-
-            "\n\n" +
-
-            "Analyse des statuts : OK\n" +
-            "Barres de progression : OK\n\n" +
-
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
 calculateFinancialStatistics();
 
     }
@@ -2144,10 +2006,7 @@ function calculateFinancialStatistics() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 11.4.1\n\n" +
-            "Calcul des statistiques financières..."
-        );
+        
 
         if (!Array.isArray(reportsOrders)) {
             throw new Error(
@@ -2261,11 +2120,7 @@ function calculateFinancialStatistics() {
 
         }
 
-        alert(
-            "RELATÓRIOS — BLOC 11.4.2\n\n" +
-            "Les éléments financiers sont détectés.\n\n" +
-            "Aucun nouvel ID HTML créé."
-        );
+        
 
         const formatKz = (value) => {
 
@@ -2311,24 +2166,7 @@ function calculateFinancialStatistics() {
         financialCommissionProgress.style.width =
             commissionProgress + "%";
 
-        alert(
-            "RELATÓRIOS — BLOC 11.4 TERMINÉ ✅\n\n" +
-            "Chiffre d'affaires : " +
-            formatKz(totalRevenue) +
-            "\n\n" +
-            "Panier moyen : " +
-            formatKz(averageRevenue) +
-            "\n\n" +
-            "Commande la plus élevée : " +
-            formatKz(highestOrder) +
-            "\n\n" +
-            "Commission estimée (5 %) : " +
-            formatKz(estimatedCommission) +
-            "\n\n" +
-            "Analyse financière : OK\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
 calculateMerchantsStatistics();
     }
     catch (error) {
@@ -2350,10 +2188,7 @@ async function calculateMerchantsStatistics() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 11.5.1\n\n" +
-            "Préparation de l'analyse des commerçants..."
-        );
+        
 
         const merchantsSnapshot =
             await getDocs(
@@ -2366,16 +2201,7 @@ async function calculateMerchantsStatistics() {
                 ...docSnap.data()
             }));
 
-        alert(
-            "RELATÓRIOS — BLOC 11.5.2\n\n" +
-            "Collection merchants récupérée avec succès.\n\n" +
-            "Commerçants trouvés : " +
-            merchants.length +
-            "\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
-
+        
         let activeMerchants = 0;
         let blockedMerchants = 0;
 
@@ -2490,27 +2316,7 @@ async function calculateMerchantsStatistics() {
                 100
             ) + "%";
 
-        alert(
-            "RELATÓRIOS — BLOC 11.5 TERMINÉ ✅\n\n" +
-            "Commerçants trouvés : " +
-            totalMerchants +
-            "\n\n" +
-            "Nouveaux commerçants : " +
-            newMerchants +
-            "\n\n" +
-            "Commerçants actifs : " +
-            activeMerchants +
-            "\n\n" +
-            "Commerçants bloqués : " +
-            blockedMerchants +
-            "\n\n" +
-            "Taux d'activité : " +
-            merchantActivityRate.toFixed(1) +
-            "%\n\n" +
-            "Analyse des commerçants : OK\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
 calculateTopProductsStatistics();
     }
     catch (error) {
@@ -2532,10 +2338,7 @@ function calculateTopProductsStatistics() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 11.6.1\n\n" +
-            "Calcul des produits les plus vendus..."
-        );
+        
 
         if (!Array.isArray(reportsOrders)) {
             throw new Error(
@@ -2603,18 +2406,7 @@ function calculateTopProductsStatistics() {
                 )
                 .slice(0, 5);
 
-        alert(
-            "RELATÓRIOS — BLOC 11.6.2\n\n" +
-            "Produits différents trouvés : " +
-            productMap.size +
-            "\n\n" +
-            "Produits classés : " +
-            topProducts.length +
-            "\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
-
+        
         const topProductsList =
             document.getElementById(
                 "topProductsList"
@@ -2628,11 +2420,7 @@ function calculateTopProductsStatistics() {
 
         }
 
-        alert(
-            "RELATÓRIOS — BLOC 11.6.3\n\n" +
-            "L'élément topProductsList est détecté.\n\n" +
-            "Préparation de l'affichage..."
-        );
+        
 
         topProductsList.innerHTML = "";
 
@@ -2713,19 +2501,7 @@ function calculateTopProductsStatistics() {
             }
         );
 
-        alert(
-            "RELATÓRIOS — BLOC 11.6 TERMINÉ ✅\n\n" +
-            "TOP PRODUITS :\n\n" +
-            (
-                resultText ||
-                "Aucun produit trouvé."
-            ) +
-            "\n" +
-            "Produits vendus analysés : 43\n\n" +
-            "Affichage : OK\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
 calculateOfficialStoresStatistics();
     }
     catch (error) {
@@ -2747,10 +2523,7 @@ async function calculateOfficialStoresStatistics() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 11.7.1\n\n" +
-            "Récupération des Lojas Oficiais..."
-        );
+        
 
         const officialStoresSnapshot =
             await getDocs(
@@ -2765,16 +2538,7 @@ async function calculateOfficialStoresStatistics() {
                 })
             );
 
-        alert(
-            "RELATÓRIOS — BLOC 11.7.2\n\n" +
-            "Collection officialStores récupérée avec succès.\n\n" +
-            "Lojas Oficiais trouvées : " +
-            officialStores.length +
-            "\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
-
+        
         /*
          * Création de la liste des commerçants
          * appartenant aux Lojas Oficiais.
@@ -2880,20 +2644,7 @@ async function calculateOfficialStoresStatistics() {
                 }
             ).length;
 
-        alert(
-            "RELATÓRIOS — BLOC 11.7.3\n\n" +
-            "Analyse des commandes officielles terminée.\n\n" +
-            "Commerçants associés : " +
-            officialMerchantIds.size +
-            "\n\n" +
-            "Commandes officielles : " +
-            officialOrdersCount +
-            "\n\n" +
-            "Ventes officielles : " +
-            officialSales.toLocaleString("pt-AO") +
-            " Kz\n\n" +
-            "Aucun nouvel ID HTML créé."
-        );
+        
 
         const officialStoresSalesValue =
             document.getElementById(
@@ -2968,28 +2719,7 @@ async function calculateOfficialStoresStatistics() {
                 100
             ) + "%";
 
-        alert(
-            "RELATÓRIOS — BLOC 11.7 TERMINÉ ✅\n\n" +
-            "Lojas Oficiais : " +
-            officialStores.length +
-            "\n\n" +
-            "Commerçants associés : " +
-            officialMerchantIds.size +
-            "\n\n" +
-            "Commandes officielles : " +
-            officialOrdersCount +
-            "\n\n" +
-            "Ventes officielles : " +
-            formatKz(officialSales) +
-            "\n\n" +
-            "Part des commandes officielles : " +
-            officialSalesShare.toFixed(1) +
-            "%\n\n" +
-            "Analyse des Lojas Oficiais : OK\n" +
-            "Affichage : OK\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
 calculateRecentActivity();
     }
     catch (error) {
@@ -3011,10 +2741,7 @@ function calculateRecentActivity() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 11.8.1\n\n" +
-            "Préparation de l'activité récente..."
-        );
+        
 
         if (!Array.isArray(reportsOrders)) {
             throw new Error(
@@ -3045,15 +2772,7 @@ function calculateRecentActivity() {
                 })
                 .slice(0, 5);
 
-        alert(
-            "RELATÓRIOS — BLOC 11.8.2\n\n" +
-            "Activités trouvées : " +
-            recentOrders.length +
-            "\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
-
+        
         const recentActivityList =
             document.getElementById(
                 "recentActivityList"
@@ -3076,12 +2795,7 @@ function calculateRecentActivity() {
             );
         }
 
-        alert(
-            "RELATÓRIOS — BLOC 11.8.3\n\n" +
-            "Les éléments de l'activité récente sont détectés.\n\n" +
-            "Aucun nouvel ID HTML créé."
-        );
-
+        
         recentActivityList.innerHTML = "";
 
         if (recentOrders.length === 0) {
@@ -3216,16 +2930,7 @@ function calculateRecentActivity() {
 
         };
 
-        alert(
-            "RELATÓRIOS — BLOC 11.8 TERMINÉ ✅\n\n" +
-            "Activités récentes affichées : " +
-            recentOrders.length +
-            "\n\n" +
-            "Bouton 'Voir toute l'activité' : OK\n" +
-            "Affichage : OK\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
 calculateReportSummary();
     }
     catch (error) {
@@ -3247,10 +2952,7 @@ function calculateReportSummary() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 11.9.1\n\n" +
-            "Préparation du résumé final..."
-        );
+        
 
         if (!Array.isArray(reportsOrders)) {
             throw new Error(
@@ -3305,27 +3007,7 @@ function calculateReportSummary() {
                 )?.textContent
             ) || 0;
 
-        alert(
-            "RELATÓRIOS — BLOC 11.9.2\n\n" +
-            "Données du résumé calculées.\n\n" +
-            "Ventes : " +
-            totalRevenue.toLocaleString("pt-AO") +
-            " Kz\n\n" +
-            "Produits vendus : " +
-            totalProductsSold +
-            "\n\n" +
-            "Commission estimée : " +
-            totalCommission.toLocaleString("pt-AO") +
-            " Kz\n\n" +
-            "Commerçants actifs : " +
-            activeMerchants +
-            "\n\n" +
-            "Lojas Oficiais actives : " +
-            officialStoresCount +
-            "\n\n" +
-            "Aucun nouvel ID HTML créé."
-        );
-
+        
         const reportSummarySales =
             document.getElementById(
                 "reportSummarySales"
@@ -3377,11 +3059,7 @@ function calculateReportSummary() {
 
         }
 
-        alert(
-            "RELATÓRIOS — BLOC 11.9.3\n\n" +
-            "Tous les IDs du résumé final sont détectés.\n\n" +
-            "Aucun nouvel ID HTML créé."
-        );
+        
 
         const formatKz = (value) => {
 
@@ -3414,27 +3092,7 @@ function calculateReportSummary() {
         reportSummaryOfficialStores.textContent =
             officialStoresCount;
 
-        alert(
-            "RELATÓRIOS — BLOC 11.9 TERMINÉ ✅\n\n" +
-            "Résumé final : OK\n\n" +
-            "Chiffre d'affaires : " +
-            formatKz(totalRevenue) +
-            "\n\n" +
-            "Commission estimée (5 %) : " +
-            formatKz(totalCommission) +
-            "\n\n" +
-            "Commerçants actifs : " +
-            activeMerchants +
-            "\n\n" +
-            "Produits vendus : " +
-            totalProductsSold +
-            "\n\n" +
-            "Lojas Oficiais : " +
-            officialStoresCount +
-            "\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
 initializeReportsExport();
     }
     catch (error) {
@@ -3456,10 +3114,7 @@ function initializeReportsExport() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.1.1\n\n" +
-            "Préparation des fonctions d'exportation..."
-        );
+        
 
         const exportReportsButton =
             document.getElementById(
@@ -3488,15 +3143,7 @@ function initializeReportsExport() {
 
         }
 
-        alert(
-            "RELATÓRIOS — BLOC 12.1.2\n\n" +
-            "Les 3 boutons existants sont détectés.\n\n" +
-            "exportReportsButton : OK\n" +
-            "exportReportButton : OK\n" +
-            "printReportButton : OK\n\n" +
-            "Aucun nouvel ID HTML créé."
-        );
-
+        
         /*
          * Nous ne générons encore aucun fichier.
          * Nous préparons simplement les boutons.
@@ -3516,14 +3163,7 @@ function initializeReportsExport() {
         printReportButton.onclick = () => {
     printTomaReport();
 };
-        alert(
-            "RELATÓRIOS — BLOC 12.1 TERMINÉ ✅\n\n" +
-            "Préparation des boutons : OK\n\n" +
-            "3 boutons détectés et initialisés.\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée.\n" +
-            "Aucun fichier généré pour le moment."
-        );
+        
 prepareReportExportData();
      initializeReportsRealPeriodFilter();
     }
@@ -3546,11 +3186,7 @@ function prepareReportExportData() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.2.1\n\n" +
-            "Préparation des données du rapport..."
-        );
-
+        
         if (!Array.isArray(reportsOrders)) {
             throw new Error(
                 "reportsOrders n'est pas un tableau."
@@ -3638,43 +3274,8 @@ function prepareReportExportData() {
         window.reportExportData =
             reportExportData;
 
-        alert(
-            "RELATÓRIOS — BLOC 12.2.2\n\n" +
-            "Données préparées avec succès.\n\n" +
-            "Commandes : " +
-            reportExportData.totalOrders +
-            "\n\n" +
-            "Produits vendus : " +
-            reportExportData.totalProductsSold +
-            "\n\n" +
-            "Chiffre d'affaires : " +
-            reportExportData.totalRevenue
-                .toLocaleString("pt-AO") +
-            " Kz\n\n" +
-            "Panier moyen : " +
-            reportExportData.averageOrder
-                .toLocaleString("pt-AO") +
-            " Kz\n\n" +
-            "Commission estimée : " +
-            reportExportData.estimatedCommission
-                .toLocaleString("pt-AO") +
-            " Kz\n\n" +
-            "Commerçants actifs : " +
-            reportExportData.activeMerchants +
-            "\n\n" +
-            "Lojas Oficiais : " +
-            reportExportData.officialStores +
-            "\n\n" +
-            "Aucun nouvel ID HTML créé."
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.2 TERMINÉ ✅\n\n" +
-            "Structure d'export créée en mémoire : OK\n\n" +
-            "Les données sont prêtes pour la génération du fichier.\n\n" +
-            "Aucune donnée Firestore modifiée.\n" +
-            "Aucun fichier généré pour le moment."
-        );
+      
+        
 generateReportsCSV();
     }
     catch (error) {
@@ -3696,10 +3297,7 @@ function generateReportsCSV() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.3.1\n\n" +
-            "Préparation du fichier CSV..."
-        );
+        
 
         const data =
             window.reportExportData;
@@ -3814,32 +3412,8 @@ function generateReportsCSV() {
         window.reportCSVContent =
             "\uFEFF" + csvContent;
 
-        alert(
-            "RELATÓRIOS — BLOC 12.3.2\n\n" +
-            "Fichier CSV préparé avec succès.\n\n" +
-            "Lignes préparées : " +
-            rows.length +
-            "\n\n" +
-            "Données incluses :\n" +
-            "• Commandes\n" +
-            "• Produits vendus\n" +
-            "• Chiffre d'affaires\n" +
-            "• Panier moyen\n" +
-            "• Commission\n" +
-            "• Commerçants actifs\n" +
-            "• Lojas Oficiais\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.3 TERMINÉ ✅\n\n" +
-            "Fichier CSV prêt à être téléchargé.\n\n" +
-            "Génération : OK\n" +
-            "Données : OK\n\n" +
-            "Aucun fichier téléchargé automatiquement.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
+        
 
     }
     catch (error) {
@@ -3861,10 +3435,7 @@ function downloadReportsCSV() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.4.1\n\n" +
-            "Préparation du téléchargement..."
-        );
+        
 
         const csvContent =
             window.reportCSVContent;
@@ -3896,32 +3467,14 @@ function downloadReportsCSV() {
 
         document.body.appendChild(link);
 
-        alert(
-            "RELATÓRIOS — BLOC 12.4.2\n\n" +
-            "Le fichier CSV est prêt pour le téléchargement.\n\n" +
-            "Nom : toma-relatorio.csv\n" +
-            "Format : CSV\n" +
-            "Taille : " +
-            blob.size +
-            " octets\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
-
+        
         link.click();
 
         document.body.removeChild(link);
 
         URL.revokeObjectURL(url);
 
-        alert(
-            "RELATÓRIOS — BLOC 12.4 TERMINÉ ✅\n\n" +
-            "Téléchargement lancé avec succès.\n\n" +
-            "Fichier : toma-relatorio.csv\n\n" +
-            "Tu peux maintenant vérifier le fichier dans les téléchargements de l'iPhone.\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
 
     }
     catch (error) {
@@ -3943,10 +3496,7 @@ function printTomaReport() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.6.1\n\n" +
-            "Préparation de l'impression professionnelle..."
-        );
+        
 
         const reportsContent =
             document.getElementById(
@@ -3981,16 +3531,7 @@ function printTomaReport() {
             );
         }
 
-        alert(
-            "RELATÓRIOS — BLOC 12.6.2\n\n" +
-            "Les éléments principaux du rapport sont détectés.\n\n" +
-            "reportsContent : OK\n" +
-            "reportsHeader : OK\n" +
-            "reportSummarySection : OK\n\n" +
-            "Optimisation CSS impression : active\n\n" +
-            "Aucun nouvel ID HTML créé."
-        );
-
+        
         /*
          * Le CSS @media print prend automatiquement
          * le relais lorsque window.print() est appelé.
@@ -4000,13 +3541,6 @@ function printTomaReport() {
     "toma-print-mode"
 );
 
-alert(
-    "RELATÓRIOS — BLOC 12.7.1\n\n" +
-    "Mode impression professionnel activé.\n\n" +
-    "En-tête Toma : préparation OK\n" +
-    "Présentation du rapport : OK\n" +
-    "Aucun nouvel ID HTML créé."
-);
 
 window.print();
 
@@ -4014,15 +3548,7 @@ document.body.classList.remove(
     "toma-print-mode"
 );
 
-alert(
-    "RELATÓRIOS — BLOC 12.7 TERMINÉ ✅\n\n" +
-    "Présentation professionnelle du rapport activée.\n\n" +
-    "En-tête Toma : OK\n" +
-    "Format A4 : OK\n" +
-    "Optimisation impression : OK\n\n" +
-    "Aucun nouvel ID HTML créé.\n" +
-    "Aucune donnée Firestore modifiée."
-);
+
 
     }
     catch (error) {
@@ -4044,11 +3570,7 @@ function prepareDetailedReportExport() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.8.1\n\n" +
-            "Préparation de l'export détaillé..."
-        );
-
+      
         if (!Array.isArray(reportsOrders)) {
             throw new Error(
                 "reportsOrders n'est pas un tableau."
@@ -4128,35 +3650,8 @@ function prepareDetailedReportExport() {
         window.detailedReportExportData =
             detailedOrders;
 
-        alert(
-            "RELATÓRIOS — BLOC 12.8.2\n\n" +
-            "Export détaillé préparé avec succès.\n\n" +
-            "Commandes préparées : " +
-            detailedOrders.length +
-            "\n\n" +
-            "Informations incluses :\n" +
-            "• Numéro de commande\n" +
-            "• Client\n" +
-            "• Téléphone\n" +
-            "• Commerçant\n" +
-            "• Statut\n" +
-            "• Mode de paiement\n" +
-            "• Total\n" +
-            "• Produits\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.8 TERMINÉ ✅\n\n" +
-            "Structure détaillée du rapport créée en mémoire.\n\n" +
-            "Commandes : " +
-            detailedOrders.length +
-            "\n\n" +
-            "Données prêtes pour la prochaine étape.\n\n" +
-            "Aucun téléchargement automatique.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
+        
 
     }
     catch (error) {
@@ -4205,13 +3700,7 @@ function initializeReportsRealPeriodFilter() {
             );
         }
 
-        alert(
-            "RELATÓRIOS — BLOC 12.8.2\n\n" +
-            "Éléments du filtre détectés.\n\n" +
-            "reportsPeriodSelect : OK\n" +
-            "reportsPeriodLabel : OK\n\n" +
-            "Aucun nouvel ID HTML créé."
-        );
+        
 
         reportsPeriodSelect.onchange = () => {
 
@@ -4227,30 +3716,11 @@ function initializeReportsRealPeriodFilter() {
     reportsPeriodLabel.textContent =
         periodName;
 
-    alert(
-        "RELATÓRIOS — BLOC 12.8.3\n\n" +
-        "Période sélectionnée :\n\n" +
-        periodName +
-        "\n\n" +
-        "Valeur : " +
-        selectedPeriod +
-        "\n\n" +
-        "Le filtre est détecté correctement.\n\n" +
-        "Aucun nouvel ID HTML créé.\n" +
-        "Aucune donnée Firestore modifiée."
-    );
-
+    
     filterReportsOrdersByPeriod();
 
 };
-        alert(
-            "RELATÓRIOS — BLOC 12.8 TERMINÉ ✅\n\n" +
-            "Filtre de période initialisé.\n\n" +
-            "Le sélecteur est maintenant prêt à détecter les changements de période.\n\n" +
-            "Aucun recalcul des statistiques pour le moment.\n" +
-            "Aucune donnée Firestore modifiée.\n" +
-            "Aucun nouvel ID HTML créé."
-        );
+        
 
     }
     catch (error) {
@@ -4272,11 +3742,7 @@ function filterReportsOrdersByPeriod() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.9.1\n\n" +
-            "Application du filtre de période réel..."
-        );
-
+        
         if (!Array.isArray(reportsOrders)) {
             throw new Error(
                 "reportsOrders n'est pas un tableau."
@@ -4410,44 +3876,15 @@ function filterReportsOrdersByPeriod() {
             ]?.textContent ||
             selectedPeriod;
 
-        alert(
-            "RELATÓRIOS — BLOC 12.9.2\n\n" +
-            "Filtrage terminé avec succès.\n\n" +
-            "Période : " +
-            periodText +
-            "\n\n" +
-            "Valeur : " +
-            selectedPeriod +
-            "\n\n" +
-            "Commandes totales : " +
-            reportsOrders.length +
-            "\n\n" +
-            "Commandes dans la période : " +
-            filteredOrders.length +
-            "\n\n" +
-            "Les données filtrées sont conservées uniquement en mémoire.\n\n" +
-            "Aucune donnée Firestore modifiée.\n" +
-            "Aucun nouvel ID HTML créé."
-        );
+        
 
         if (reportsPeriodLabel) {
             reportsPeriodLabel.textContent =
                 periodText;
         }
 
-        alert(
-            "RELATÓRIOS — BLOC 12.9 TERMINÉ ✅\n\n" +
-            "Filtre réel des commandes : OK\n\n" +
-            "Commandes analysables : " +
-            filteredOrders.length +
-            "\n\n" +
-            "Commandes originales conservées : " +
-            reportsOrders.length +
-            "\n\n" +
-            "Aucune donnée Firestore modifiée.\n" +
-            "Aucun nouvel ID HTML créé."
-        );
-
+        
+calculateFilteredReportsStatistics();
     }
     catch (error) {
 
@@ -4458,6 +3895,125 @@ function filterReportsOrdersByPeriod() {
 
         alert(
             "RELATÓRIOS — BLOC 12.9 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+function calculateFilteredReportsStatistics() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.10.1\n\n" +
+            "Recalcul des statistiques selon la période..."
+        );
+
+        const filteredOrders =
+            window.filteredReportsOrders;
+
+        if (!Array.isArray(filteredOrders)) {
+            throw new Error(
+                "Les commandes filtrées ne sont pas disponibles."
+            );
+        }
+
+        let totalRevenue = 0;
+        let totalProductsSold = 0;
+
+        filteredOrders.forEach((order) => {
+
+            totalRevenue +=
+                Number(order.total) || 0;
+
+            if (Array.isArray(order.items)) {
+
+                order.items.forEach((item) => {
+
+                    totalProductsSold +=
+                        Number(item.quantity) || 0;
+
+                });
+
+            }
+
+        });
+
+        const totalOrders =
+            filteredOrders.length;
+
+        const averageOrder =
+            totalOrders > 0
+                ? totalRevenue / totalOrders
+                : 0;
+
+        const commissionRate = 5;
+
+        const estimatedCommission =
+            totalRevenue *
+            (commissionRate / 100);
+
+        alert(
+            "RELATÓRIOS — BLOC 12.10.2\n\n" +
+            "Statistiques filtrées calculées.\n\n" +
+            "Commandes : " +
+            totalOrders +
+            "\n\n" +
+            "Produits vendus : " +
+            totalProductsSold +
+            "\n\n" +
+            "Chiffre d'affaires : " +
+            totalRevenue.toLocaleString("pt-AO") +
+            " Kz\n\n" +
+            "Panier moyen : " +
+            averageOrder.toLocaleString("pt-AO") +
+            " Kz\n\n" +
+            "Commission estimée : " +
+            estimatedCommission.toLocaleString("pt-AO") +
+            " Kz\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+        window.filteredReportsStatistics = {
+
+            totalOrders,
+            totalProductsSold,
+            totalRevenue,
+            averageOrder,
+            commissionRate,
+            estimatedCommission
+
+        };
+
+        alert(
+            "RELATÓRIOS — BLOC 12.10 TERMINÉ ✅\n\n" +
+            "Statistiques filtrées prêtes.\n\n" +
+            "Commandes : " +
+            totalOrders +
+            "\n\n" +
+            "Produits vendus : " +
+            totalProductsSold +
+            "\n\n" +
+            "Chiffre d'affaires : " +
+            totalRevenue.toLocaleString("pt-AO") +
+            " Kz\n\n" +
+            "Les données sont conservées en mémoire.\n\n" +
+            "Aucune donnée Firestore modifiée.\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.10 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.10 ERREUR ❌\n\n" +
             error.message
         );
 
