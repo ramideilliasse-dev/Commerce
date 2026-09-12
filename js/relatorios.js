@@ -3888,6 +3888,7 @@ calculateFilteredReportsStatistics();
 displayFilteredReportsStatistics();
 prepareReportsGrowthComparison();
 calculateReportsRealGrowth();
+displayReportsRealGrowth();
     }
     catch (error) {
 
@@ -4742,6 +4743,187 @@ function calculateReportsRealGrowth() {
 
         alert(
             "RELATÓRIOS — BLOC 12.13 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+// =====================================================
+// BLOC 12.14 — AFFICHAGE DE LA CROISSANCE RÉELLE
+// =====================================================
+
+function displayReportsRealGrowth() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.14.1\n\n" +
+            "Début de l'affichage de la croissance réelle..."
+        );
+
+        const growth =
+            window.reportsRealGrowth;
+
+        if (!growth) {
+            throw new Error(
+                "Les données de croissance réelle sont introuvables."
+            );
+        }
+
+        // ---------------------------------------------
+        // IDS EXISTANTS
+        // ---------------------------------------------
+
+        const reportSalesGrowth =
+            document.getElementById(
+                "reportSalesGrowth"
+            );
+
+        const reportRevenueGrowth =
+            document.getElementById(
+                "reportRevenueGrowth"
+            );
+
+        const reportOrdersGrowth =
+            document.getElementById(
+                "reportOrdersGrowth"
+            );
+
+        const financialRevenueGrowth =
+            document.getElementById(
+                "financialRevenueGrowth"
+            );
+
+        if (!reportSalesGrowth) {
+            throw new Error(
+                "L'ID reportSalesGrowth est introuvable."
+            );
+        }
+
+        if (!reportRevenueGrowth) {
+            throw new Error(
+                "L'ID reportRevenueGrowth est introuvable."
+            );
+        }
+
+        if (!reportOrdersGrowth) {
+            throw new Error(
+                "L'ID reportOrdersGrowth est introuvable."
+            );
+        }
+
+        if (!financialRevenueGrowth) {
+            throw new Error(
+                "L'ID financialRevenueGrowth est introuvable."
+            );
+        }
+
+        alert(
+            "RELATÓRIOS — BLOC 12.14.2\n\n" +
+            "Tous les IDs de croissance ont été détectés.\n\n" +
+            "reportSalesGrowth : OK\n" +
+            "reportRevenueGrowth : OK\n" +
+            "reportOrdersGrowth : OK\n" +
+            "financialRevenueGrowth : OK\n\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        // ---------------------------------------------
+        // FORMATAGE
+        // ---------------------------------------------
+
+        function formatGrowth(value) {
+
+            if (value === null) {
+                return "Novo";
+            }
+
+            if (value === 0) {
+                return "0%";
+            }
+
+            const rounded =
+                Number(
+                    value.toFixed(1)
+                );
+
+            return (
+                rounded > 0
+                    ? "+" + rounded + "%"
+                    : rounded + "%"
+            );
+
+        }
+
+        const salesGrowth =
+            formatGrowth(
+                growth.salesGrowth
+            );
+
+        const revenueGrowth =
+            formatGrowth(
+                growth.revenueGrowth
+            );
+
+        const ordersGrowth =
+            formatGrowth(
+                growth.ordersGrowth
+            );
+
+        // ---------------------------------------------
+        // AFFICHAGE
+        // ---------------------------------------------
+
+        reportSalesGrowth.textContent =
+            salesGrowth;
+
+        reportRevenueGrowth.textContent =
+            revenueGrowth;
+
+        reportOrdersGrowth.textContent =
+            ordersGrowth;
+
+        financialRevenueGrowth.textContent =
+            revenueGrowth;
+
+        alert(
+            "RELATÓRIOS — BLOC 12.14.3\n\n" +
+            "Croissance réelle affichée dans les cartes.\n\n" +
+            "Ventes : " +
+            salesGrowth +
+            "\n\n" +
+            "Chiffre d'affaires : " +
+            revenueGrowth +
+            "\n\n" +
+            "Commandes : " +
+            ordersGrowth +
+            "\n\n" +
+            "Croissance financière : " +
+            revenueGrowth +
+            "\n\n" +
+            "Aucune donnée Firestore modifiée.\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.14 TERMINÉ ✅\n\n" +
+            "La croissance réelle est maintenant visible dans le tableau de bord.\n\n" +
+            "Les valeurs sont synchronisées avec la période sélectionnée.\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.14 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.14 ERREUR ❌\n\n" +
             error.message
         );
 
