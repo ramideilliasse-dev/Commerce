@@ -3885,6 +3885,7 @@ function filterReportsOrdersByPeriod() {
 
         
 calculateFilteredReportsStatistics();
+displayFilteredReportsStatistics();
     }
     catch (error) {
 
@@ -4014,6 +4015,185 @@ function calculateFilteredReportsStatistics() {
 
         alert(
             "RELATÓRIOS — BLOC 12.10 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+// =====================================================
+// BLOC 12.11 — AFFICHAGE DES STATISTIQUES FILTRÉES
+// =====================================================
+
+function displayFilteredReportsStatistics() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.11.1\n\n" +
+            "Début de l'affichage des statistiques filtrées..."
+        );
+
+        const statistics =
+            window.filteredReportsStatistics;
+
+        if (!statistics) {
+            throw new Error(
+                "Les statistiques filtrées ne sont pas disponibles."
+            );
+        }
+
+        // ---------------------------------------------
+        // RÉCUPÉRATION DES IDs EXISTANTS
+        // ---------------------------------------------
+
+        const reportTotalSales =
+            document.getElementById(
+                "reportTotalSales"
+            );
+
+        const reportTotalRevenue =
+            document.getElementById(
+                "reportTotalRevenue"
+            );
+
+        const reportTotalCommission =
+            document.getElementById(
+                "reportTotalCommission"
+            );
+
+        const reportTotalOrders =
+            document.getElementById(
+                "reportTotalOrders"
+            );
+
+        if (!reportTotalSales) {
+            throw new Error(
+                "L'ID reportTotalSales est introuvable."
+            );
+        }
+
+        if (!reportTotalRevenue) {
+            throw new Error(
+                "L'ID reportTotalRevenue est introuvable."
+            );
+        }
+
+        if (!reportTotalCommission) {
+            throw new Error(
+                "L'ID reportTotalCommission est introuvable."
+            );
+        }
+
+        if (!reportTotalOrders) {
+            throw new Error(
+                "L'ID reportTotalOrders est introuvable."
+            );
+        }
+
+        alert(
+            "RELATÓRIOS — BLOC 12.11.2\n\n" +
+            "Tous les IDs nécessaires ont été détectés.\n\n" +
+            "reportTotalSales : OK\n" +
+            "reportTotalRevenue : OK\n" +
+            "reportTotalCommission : OK\n" +
+            "reportTotalOrders : OK\n\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        // ---------------------------------------------
+        // FORMATAGE DES VALEURS
+        // ---------------------------------------------
+
+        const totalRevenue =
+            Number(
+                statistics.totalRevenue
+            ) || 0;
+
+        const estimatedCommission =
+            Number(
+                statistics.estimatedCommission
+            ) || 0;
+
+        const totalOrders =
+            Number(
+                statistics.totalOrders
+            ) || 0;
+
+        const formattedRevenue =
+            totalRevenue.toLocaleString(
+                "pt-AO"
+            ) + " Kz";
+
+        const formattedCommission =
+            estimatedCommission.toLocaleString(
+                "pt-AO"
+            ) + " Kz";
+
+        // ---------------------------------------------
+        // MISE À JOUR DES CARTES
+        // ---------------------------------------------
+
+        reportTotalSales.textContent =
+            formattedRevenue;
+
+        reportTotalRevenue.textContent =
+            formattedRevenue;
+
+        reportTotalCommission.textContent =
+            formattedCommission;
+
+        reportTotalOrders.textContent =
+            totalOrders.toLocaleString(
+                "pt-AO"
+            );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.11.3\n\n" +
+            "Les cartes ont été mises à jour.\n\n" +
+            "Ventes : " +
+            formattedRevenue +
+            "\n\n" +
+            "Chiffre d'affaires : " +
+            formattedRevenue +
+            "\n\n" +
+            "Commission estimée : " +
+            formattedCommission +
+            "\n\n" +
+            "Commandes : " +
+            totalOrders +
+            "\n\n" +
+            "Aucune donnée Firestore modifiée.\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.11 TERMINÉ ✅\n\n" +
+            "Les statistiques filtrées sont maintenant affichées dans les cartes du tableau de bord.\n\n" +
+            "Période sélectionnée : synchronisée\n" +
+            "Chiffre d'affaires : " +
+            formattedRevenue +
+            "\n" +
+            "Commandes : " +
+            totalOrders +
+            "\n" +
+            "Commission : " +
+            formattedCommission +
+            "\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.11 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.11 ERREUR ❌\n\n" +
             error.message
         );
 
