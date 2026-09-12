@@ -3889,6 +3889,7 @@ displayFilteredReportsStatistics();
 prepareReportsGrowthComparison();
 calculateReportsRealGrowth();
 displayReportsRealGrowth();
+styleReportsRealGrowth();
     }
     catch (error) {
 
@@ -4924,6 +4925,175 @@ function displayReportsRealGrowth() {
 
         alert(
             "RELATÓRIOS — BLOC 12.14 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+// =====================================================
+// BLOC 12.15 — STYLE DE LA CROISSANCE RÉELLE
+// =====================================================
+
+function styleReportsRealGrowth() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.15.1\n\n" +
+            "Préparation du style des indicateurs de croissance..."
+        );
+
+        const growth =
+            window.reportsRealGrowth;
+
+        if (!growth) {
+            throw new Error(
+                "Les données de croissance réelle sont introuvables."
+            );
+        }
+
+        // ---------------------------------------------
+        // IDS EXISTANTS
+        // ---------------------------------------------
+
+        const reportSalesGrowth =
+            document.getElementById(
+                "reportSalesGrowth"
+            );
+
+        const reportRevenueGrowth =
+            document.getElementById(
+                "reportRevenueGrowth"
+            );
+
+        const reportOrdersGrowth =
+            document.getElementById(
+                "reportOrdersGrowth"
+            );
+
+        const financialRevenueGrowth =
+            document.getElementById(
+                "financialRevenueGrowth"
+            );
+
+        if (
+            !reportSalesGrowth ||
+            !reportRevenueGrowth ||
+            !reportOrdersGrowth ||
+            !financialRevenueGrowth
+        ) {
+            throw new Error(
+                "Un ou plusieurs IDs de croissance sont introuvables."
+            );
+        }
+
+        alert(
+            "RELATÓRIOS — BLOC 12.15.2\n\n" +
+            "Les indicateurs de croissance sont prêts.\n\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        // ---------------------------------------------
+        // APPLICATION DU STYLE
+        // ---------------------------------------------
+
+        function applyGrowthStyle(
+            element,
+            value
+        ) {
+
+            // Réinitialisation
+            element.style.fontWeight = "700";
+            element.style.display = "inline-block";
+
+            // Nouvelle activité
+            if (value === null) {
+
+                element.style.color = "#2563eb";
+
+                return;
+
+            }
+
+            // Stable
+            if (value === 0) {
+
+                element.style.color = "#6b7280";
+
+                return;
+
+            }
+
+            // Hausse
+            if (value > 0) {
+
+                element.style.color = "#16a34a";
+
+                return;
+
+            }
+
+            // Baisse
+            if (value < 0) {
+
+                element.style.color = "#dc2626";
+
+                return;
+
+            }
+
+        }
+
+        applyGrowthStyle(
+            reportSalesGrowth,
+            growth.salesGrowth
+        );
+
+        applyGrowthStyle(
+            reportRevenueGrowth,
+            growth.revenueGrowth
+        );
+
+        applyGrowthStyle(
+            reportOrdersGrowth,
+            growth.ordersGrowth
+        );
+
+        applyGrowthStyle(
+            financialRevenueGrowth,
+            growth.revenueGrowth
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.15.3\n\n" +
+            "Style appliqué avec succès.\n\n" +
+            "Hausse : vert\n" +
+            "Baisse : rouge\n" +
+            "Stable : gris\n" +
+            "Nouveau : bleu\n\n" +
+            "Les valeurs restent synchronisées avec la période sélectionnée.\n\n" +
+            "Aucune donnée Firestore modifiée.\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.15 TERMINÉ ✅\n\n" +
+            "Les indicateurs de croissance disposent maintenant d'un style dynamique.\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.15 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.15 ERREUR ❌\n\n" +
             error.message
         );
 
