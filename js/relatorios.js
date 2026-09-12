@@ -4215,33 +4215,34 @@ function initializeReportsRealPeriodFilter() {
 
         reportsPeriodSelect.onchange = () => {
 
-            const selectedPeriod =
-                reportsPeriodSelect.value;
+    const selectedPeriod =
+        reportsPeriodSelect.value;
 
-            let periodName =
-                reportsPeriodSelect.options[
-                    reportsPeriodSelect.selectedIndex
-                ]?.textContent ||
-                selectedPeriod;
+    let periodName =
+        reportsPeriodSelect.options[
+            reportsPeriodSelect.selectedIndex
+        ]?.textContent ||
+        selectedPeriod;
 
-            reportsPeriodLabel.textContent =
-                periodName;
+    reportsPeriodLabel.textContent =
+        periodName;
 
-            alert(
-                "RELATÓRIOS — BLOC 12.8.3\n\n" +
-                "Période sélectionnée :\n\n" +
-                periodName +
-                "\n\n" +
-                "Valeur : " +
-                selectedPeriod +
-                "\n\n" +
-                "Le filtre est détecté correctement.\n\n" +
-                "Aucun nouvel ID HTML créé.\n" +
-                "Aucune donnée Firestore modifiée."
-            );
+    alert(
+        "RELATÓRIOS — BLOC 12.8.3\n\n" +
+        "Période sélectionnée :\n\n" +
+        periodName +
+        "\n\n" +
+        "Valeur : " +
+        selectedPeriod +
+        "\n\n" +
+        "Le filtre est détecté correctement.\n\n" +
+        "Aucun nouvel ID HTML créé.\n" +
+        "Aucune donnée Firestore modifiée."
+    );
 
-        };
+    filterReportsOrdersByPeriod();
 
+};
         alert(
             "RELATÓRIOS — BLOC 12.8 TERMINÉ ✅\n\n" +
             "Filtre de période initialisé.\n\n" +
@@ -4261,6 +4262,202 @@ function initializeReportsRealPeriodFilter() {
 
         alert(
             "RELATÓRIOS — BLOC 12.8 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+function filterReportsOrdersByPeriod() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.9.1\n\n" +
+            "Application du filtre de période réel..."
+        );
+
+        if (!Array.isArray(reportsOrders)) {
+            throw new Error(
+                "reportsOrders n'est pas un tableau."
+            );
+        }
+
+        const reportsPeriodSelect =
+            document.getElementById(
+                "reportsPeriodSelect"
+            );
+
+        if (!reportsPeriodSelect) {
+            throw new Error(
+                "L'ID reportsPeriodSelect est introuvable."
+            );
+        }
+
+        const selectedPeriod =
+            reportsPeriodSelect.value;
+
+        const now =
+            new Date();
+
+        let startDate = null;
+
+        if (selectedPeriod === "7days") {
+
+            startDate =
+                new Date(now);
+
+            startDate.setDate(
+                startDate.getDate() - 7
+            );
+
+        }
+        else if (selectedPeriod === "30days") {
+
+            startDate =
+                new Date(now);
+
+            startDate.setDate(
+                startDate.getDate() - 30
+            );
+
+        }
+        else if (selectedPeriod === "90days") {
+
+            startDate =
+                new Date(now);
+
+            startDate.setDate(
+                startDate.getDate() - 90
+            );
+
+        }
+        else if (selectedPeriod === "year") {
+
+            startDate =
+                new Date(
+                    now.getFullYear(),
+                    0,
+                    1
+                );
+
+        }
+
+        let filteredOrders;
+
+        if (!startDate) {
+
+            filteredOrders =
+                [...reportsOrders];
+
+        }
+        else {
+
+            filteredOrders =
+                reportsOrders.filter(
+                    (order) => {
+
+                        let orderDate;
+
+                        if (
+                            order.createdAt &&
+                            typeof order.createdAt.toDate ===
+                            "function"
+                        ) {
+
+                            orderDate =
+                                order.createdAt.toDate();
+
+                        }
+                        else {
+
+                            orderDate =
+                                new Date(
+                                    order.createdAt || 0
+                                );
+
+                        }
+
+                        if (
+                            Number.isNaN(
+                                orderDate.getTime()
+                            )
+                        ) {
+                            return false;
+                        }
+
+                        return (
+                            orderDate >= startDate &&
+                            orderDate <= now
+                        );
+
+                    }
+                );
+
+        }
+
+        window.filteredReportsOrders =
+            filteredOrders;
+
+        const reportsPeriodLabel =
+            document.getElementById(
+                "reportsPeriodLabel"
+            );
+
+        const periodText =
+            reportsPeriodSelect.options[
+                reportsPeriodSelect.selectedIndex
+            ]?.textContent ||
+            selectedPeriod;
+
+        alert(
+            "RELATÓRIOS — BLOC 12.9.2\n\n" +
+            "Filtrage terminé avec succès.\n\n" +
+            "Période : " +
+            periodText +
+            "\n\n" +
+            "Valeur : " +
+            selectedPeriod +
+            "\n\n" +
+            "Commandes totales : " +
+            reportsOrders.length +
+            "\n\n" +
+            "Commandes dans la période : " +
+            filteredOrders.length +
+            "\n\n" +
+            "Les données filtrées sont conservées uniquement en mémoire.\n\n" +
+            "Aucune donnée Firestore modifiée.\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        if (reportsPeriodLabel) {
+            reportsPeriodLabel.textContent =
+                periodText;
+        }
+
+        alert(
+            "RELATÓRIOS — BLOC 12.9 TERMINÉ ✅\n\n" +
+            "Filtre réel des commandes : OK\n\n" +
+            "Commandes analysables : " +
+            filteredOrders.length +
+            "\n\n" +
+            "Commandes originales conservées : " +
+            reportsOrders.length +
+            "\n\n" +
+            "Aucune donnée Firestore modifiée.\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.9 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.9 ERREUR ❌\n\n" +
             error.message
         );
 
