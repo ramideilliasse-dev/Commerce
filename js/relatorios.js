@@ -3890,6 +3890,7 @@ prepareReportsGrowthComparison();
 calculateReportsRealGrowth();
 displayReportsRealGrowth();
 styleReportsRealGrowth();
+prepareSalesChartData();
     }
     catch (error) {
 
@@ -5094,6 +5095,341 @@ function styleReportsRealGrowth() {
 
         alert(
             "RELATÓRIOS — BLOC 12.15 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+// =====================================================
+// BLOC 12.16 — PRÉPARATION DES DONNÉES DU GRAPHIQUE
+// =====================================================
+
+function prepareSalesChartData() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.16.1\n\n" +
+            "Préparation des données du graphique..."
+        );
+
+        const filteredOrders =
+            window.filteredReportsOrders;
+
+        if (!Array.isArray(filteredOrders)) {
+            throw new Error(
+                "Les commandes filtrées sont introuvables."
+            );
+        }
+
+        const reportsPeriodSelect =
+            document.getElementById(
+                "reportsPeriodSelect"
+            );
+
+        if (!reportsPeriodSelect) {
+            throw new Error(
+                "L'ID reportsPeriodSelect est introuvable."
+            );
+        }
+
+        const selectedPeriod =
+            reportsPeriodSelect.value;
+
+        // ---------------------------------------------
+        // DÉTERMINATION DU NOMBRE DE JOURS
+        // ---------------------------------------------
+
+        let numberOfDays = 30;
+
+        if (selectedPeriod === "7days") {
+            numberOfDays = 7;
+        }
+        else if (selectedPeriod === "30days") {
+            numberOfDays = 30;
+        }
+        else if (selectedPeriod === "90days") {
+            numberOfDays = 90;
+        }
+        else if (selectedPeriod === "year") {
+
+            const currentYear =
+                new Date().getFullYear();
+
+            const startOfYear =
+                new Date(
+                    currentYear,
+                    0,
+                    1
+                );
+
+            const now =
+                new Date();
+
+            numberOfDays =
+                Math.floor(
+                    (
+                        now - startOfYear
+                    ) /
+                    (
+                        1000 *
+                        60 *
+                        60 *
+                        24
+                    )
+                ) + 1;
+
+        }
+
+        // ---------------------------------------------
+        // CRÉATION DES JOURNÉES
+        // ---------------------------------------------
+
+        const today =
+            new Date();
+
+        const dailySales = {};
+
+        for (
+            let i = numberOfDays - 1;
+            i >= 0;
+            i--
+        ) {
+
+            const date =
+                new Date(today);
+
+            date.setHours(
+                0,
+                0,
+                0,
+                0
+            );
+
+            date.setDate(
+                date.getDate() - i
+            );
+
+            const dateKey =
+                date.toISOString()
+                    .split("T")[0];
+
+            dailySales[dateKey] = 0;
+
+        }
+
+        // ---------------------------------------------
+        // AJOUT DES VENTES DES COMMANDES
+        // ---------------------------------------------
+
+        filteredOrders.forEach(
+            (order) => {
+
+                let orderDate;
+
+                if (
+                    order.createdAt &&
+                    typeof order.createdAt.toDate ===
+                    "function"
+                ) {
+
+                    orderDate =
+                        order.createdAt.toDate();
+
+                }
+                else {
+
+                    orderDate =
+                        new Date(
+                            order.createdAt || 0
+                        );
+
+                }
+
+                if (
+                    Number.isNaN(
+                        orderDate.getTime()
+                    )
+                ) {
+                    return;
+                }
+
+                const dateKey =
+                    orderDate.toISOString()
+                        .split("T")[0];
+
+                if (
+                    Object.prototype.hasOwnProperty.call(
+                        dailySales,
+                        dateKey
+                    )
+                ) {
+
+                    dailySales[dateKey] +=
+                        Number(order.total) || 0;
+
+                }
+
+            }
+        );
+
+        // ---------------------------------------------
+        // TRANSFORMATION EN TABLEAU
+        // ---------------------------------------------
+
+        const chartData =
+            Object.entries(
+                dailySales
+            ).map(
+                ([date, sales]) => {
+
+                    return {
+                        date,
+                        sales
+                    };
+
+                }
+            );
+
+        // ---------------------------------------------
+        // STATISTIQUES DU GRAPHIQUE
+        // ---------------------------------------------
+
+        const totalSales =
+            chartData.reduce(
+                (total, item) =>
+                    total +
+                    item.sales,
+                0
+            );
+
+        const daysWithSales =
+            chartData.filter(
+                (item) =>
+                    item.sales > 0
+            );
+
+        const averageSales =
+            chartData.length > 0
+                ? totalSales /
+                  chartData.length
+                : 0;
+
+        let bestDay = null;
+
+        daysWithSales.forEach(
+            (item) => {
+
+                if (
+                    !bestDay ||
+                    item.sales >
+                    bestDay.sales
+                ) {
+
+                    bestDay = item;
+
+                }
+
+            }
+        );
+
+        // ---------------------------------------------
+        // CONSERVATION EN MÉMOIRE
+        // ---------------------------------------------
+
+        window.salesChartData = {
+
+            period: selectedPeriod,
+
+            numberOfDays,
+
+            data: chartData,
+
+            totalSales,
+
+            averageSales,
+
+            bestDay
+
+        };
+
+        // ---------------------------------------------
+        // ALERTES DE VÉRIFICATION
+        // ---------------------------------------------
+
+        alert(
+            "RELATÓRIOS — BLOC 12.16.2\n\n" +
+            "Données du graphique préparées.\n\n" +
+            "Période : " +
+            selectedPeriod +
+            "\n\n" +
+            "Nombre de jours analysés : " +
+            numberOfDays +
+            "\n\n" +
+            "Commandes filtrées : " +
+            filteredOrders.length +
+            "\n\n" +
+            "Jours contenant des ventes : " +
+            daysWithSales.length +
+            "\n\n" +
+            "Total des ventes : " +
+            totalSales.toLocaleString(
+                "pt-AO"
+            ) +
+            " Kz\n\n" +
+            "Moyenne par jour : " +
+            averageSales.toLocaleString(
+                "pt-AO"
+            ) +
+            " Kz"
+        );
+
+        if (bestDay) {
+
+            alert(
+                "RELATÓRIOS — BLOC 12.16.3\n\n" +
+                "Meilleur jour détecté.\n\n" +
+                "Date : " +
+                bestDay.date +
+                "\n\n" +
+                "Ventes : " +
+                bestDay.sales.toLocaleString(
+                    "pt-AO"
+                ) +
+                " Kz\n\n" +
+                "Les données sont prêtes pour le graphique."
+            );
+
+        }
+        else {
+
+            alert(
+                "RELATÓRIOS — BLOC 12.16.3\n\n" +
+                "Aucun jour avec des ventes détecté.\n\n" +
+                "Le graphique pourra afficher son état vide."
+            );
+
+        }
+
+        alert(
+            "RELATÓRIOS — BLOC 12.16 TERMINÉ ✅\n\n" +
+            "Les données journalières du graphique sont prêtes.\n\n" +
+            "Aucun graphique n'est encore dessiné.\n\n" +
+            "Aucune donnée Firestore modifiée.\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.16 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.16 ERREUR ❌\n\n" +
             error.message
         );
 
