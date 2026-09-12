@@ -3886,6 +3886,7 @@ function filterReportsOrdersByPeriod() {
         
 calculateFilteredReportsStatistics();
 displayFilteredReportsStatistics();
+prepareReportsGrowthComparison();
     }
     catch (error) {
 
@@ -4194,6 +4195,327 @@ function displayFilteredReportsStatistics() {
 
         alert(
             "RELATÓRIOS — BLOC 12.11 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+// =====================================================
+// BLOC 12.12 — PRÉPARATION DE LA CROISSANCE RÉELLE
+// =====================================================
+
+function prepareReportsGrowthComparison() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.12.1\n\n" +
+            "Préparation de la comparaison avec la période précédente..."
+        );
+
+        if (!Array.isArray(reportsOrders)) {
+            throw new Error(
+                "reportsOrders n'est pas disponible."
+            );
+        }
+
+        const reportsPeriodSelect =
+            document.getElementById(
+                "reportsPeriodSelect"
+            );
+
+        if (!reportsPeriodSelect) {
+            throw new Error(
+                "L'ID reportsPeriodSelect est introuvable."
+            );
+        }
+
+        const selectedPeriod =
+            reportsPeriodSelect.value;
+
+        const now =
+            new Date();
+
+        let currentStartDate = null;
+        let previousStartDate = null;
+        let previousEndDate = null;
+
+        // ---------------------------------------------
+        // DÉTERMINATION DES PÉRIODES
+        // ---------------------------------------------
+
+        if (selectedPeriod === "7days") {
+
+            currentStartDate =
+                new Date(now);
+
+            currentStartDate.setDate(
+                currentStartDate.getDate() - 7
+            );
+
+            previousEndDate =
+                new Date(currentStartDate);
+
+            previousStartDate =
+                new Date(previousEndDate);
+
+            previousStartDate.setDate(
+                previousStartDate.getDate() - 7
+            );
+
+        }
+
+        else if (selectedPeriod === "30days") {
+
+            currentStartDate =
+                new Date(now);
+
+            currentStartDate.setDate(
+                currentStartDate.getDate() - 30
+            );
+
+            previousEndDate =
+                new Date(currentStartDate);
+
+            previousStartDate =
+                new Date(previousEndDate);
+
+            previousStartDate.setDate(
+                previousStartDate.getDate() - 30
+            );
+
+        }
+
+        else if (selectedPeriod === "90days") {
+
+            currentStartDate =
+                new Date(now);
+
+            currentStartDate.setDate(
+                currentStartDate.getDate() - 90
+            );
+
+            previousEndDate =
+                new Date(currentStartDate);
+
+            previousStartDate =
+                new Date(previousEndDate);
+
+            previousStartDate.setDate(
+                previousStartDate.getDate() - 90
+            );
+
+        }
+
+        else if (selectedPeriod === "year") {
+
+            currentStartDate =
+                new Date(
+                    now.getFullYear(),
+                    0,
+                    1
+                );
+
+            // Même période de l'année précédente
+            previousStartDate =
+                new Date(
+                    now.getFullYear() - 1,
+                    0,
+                    1
+                );
+
+            previousEndDate =
+                new Date(
+                    now.getFullYear() - 1,
+                    now.getMonth(),
+                    now.getDate(),
+                    now.getHours(),
+                    now.getMinutes(),
+                    now.getSeconds(),
+                    now.getMilliseconds()
+                );
+
+        }
+
+        // ---------------------------------------------
+        // PÉRIODE "TOUT"
+        // ---------------------------------------------
+
+        else {
+
+            alert(
+                "RELATÓRIOS — BLOC 12.12.2\n\n" +
+                "La période sélectionnée ne possède pas encore de comparaison automatique.\n\n" +
+                "Aucune donnée ne sera modifiée.\n" +
+                "Aucun nouvel ID HTML créé."
+            );
+
+            window.reportsGrowthComparison = null;
+
+            return;
+        }
+
+        // ---------------------------------------------
+        // VÉRIFICATION DES DATES
+        // ---------------------------------------------
+
+        if (
+            !currentStartDate ||
+            !previousStartDate ||
+            !previousEndDate
+        ) {
+            throw new Error(
+                "Impossible de déterminer les périodes de comparaison."
+            );
+        }
+
+        // ---------------------------------------------
+        // FILTRAGE DE LA PÉRIODE PRÉCÉDENTE
+        // ---------------------------------------------
+
+        const previousOrders =
+            reportsOrders.filter(
+                (order) => {
+
+                    let orderDate;
+
+                    if (
+                        order.createdAt &&
+                        typeof order.createdAt.toDate ===
+                        "function"
+                    ) {
+                        orderDate =
+                            order.createdAt.toDate();
+                    }
+                    else {
+                        orderDate =
+                            new Date(
+                                order.createdAt || 0
+                            );
+                    }
+
+                    if (
+                        Number.isNaN(
+                            orderDate.getTime()
+                        )
+                    ) {
+                        return false;
+                    }
+
+                    return (
+                        orderDate >= previousStartDate &&
+                        orderDate <= previousEndDate
+                    );
+
+                }
+            );
+
+        // ---------------------------------------------
+        // CALCUL DES DONNÉES PRÉCÉDENTES
+        // ---------------------------------------------
+
+        let previousRevenue = 0;
+        let previousProductsSold = 0;
+
+        previousOrders.forEach(
+            (order) => {
+
+                previousRevenue +=
+                    Number(order.total) || 0;
+
+                if (Array.isArray(order.items)) {
+
+                    order.items.forEach(
+                        (item) => {
+
+                            previousProductsSold +=
+                                Number(item.quantity) || 0;
+
+                        }
+                    );
+
+                }
+
+            }
+        );
+
+        const previousOrdersCount =
+            previousOrders.length;
+
+        // ---------------------------------------------
+        // CONSERVATION EN MÉMOIRE
+        // ---------------------------------------------
+
+        window.reportsGrowthComparison = {
+
+            selectedPeriod,
+
+            currentStartDate,
+            previousStartDate,
+            previousEndDate,
+
+            previousOrdersCount,
+            previousRevenue,
+            previousProductsSold
+
+        };
+
+        alert(
+            "RELATÓRIOS — BLOC 12.12.3\n\n" +
+            "Comparaison préparée avec succès.\n\n" +
+            "Période actuelle : " +
+            currentStartDate.toLocaleDateString(
+                "pt-AO"
+            ) +
+            " → " +
+            now.toLocaleDateString(
+                "pt-AO"
+            ) +
+            "\n\n" +
+            "Période précédente : " +
+            previousStartDate.toLocaleDateString(
+                "pt-AO"
+            ) +
+            " → " +
+            previousEndDate.toLocaleDateString(
+                "pt-AO"
+            ) +
+            "\n\n" +
+            "Commandes précédentes : " +
+            previousOrdersCount +
+            "\n\n" +
+            "Chiffre d'affaires précédent : " +
+            previousRevenue.toLocaleString(
+                "pt-AO"
+            ) +
+            " Kz\n\n" +
+            "Produits précédents : " +
+            previousProductsSold +
+            "\n\n" +
+            "Les données sont conservées uniquement en mémoire.\n\n" +
+            "Aucune donnée Firestore modifiée.\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.12 TERMINÉ ✅\n\n" +
+            "Base de comparaison prête.\n\n" +
+            "La croissance réelle pourra maintenant être calculée à partir de ces données.\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.12 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.12 ERREUR ❌\n\n" +
             error.message
         );
 
