@@ -3893,6 +3893,7 @@ styleReportsRealGrowth();
 prepareSalesChartData();
 displaySalesChartStatistics();
 drawRealSalesChart();
+fixSalesChartDateLabels();
     }
     catch (error) {
 
@@ -6363,6 +6364,211 @@ function drawRealSalesChart() {
 
         alert(
             "RELATÓRIOS — BLOC 12.18 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+function fixSalesChartDateLabels() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.19.1\n\n" +
+            "Correction des dates affichées sur le graphique..."
+        );
+
+        const salesChart =
+            document.getElementById(
+                "salesChart"
+            );
+
+        if (!salesChart) {
+            throw new Error(
+                "L'ID salesChart est introuvable."
+            );
+        }
+
+        const chartData =
+            window.salesChartData;
+
+        if (!chartData) {
+            throw new Error(
+                "Les données du graphique sont introuvables."
+            );
+        }
+
+        alert(
+            "RELATÓRIOS — BLOC 12.19.2\n\n" +
+            "Graphique et données détectés.\n\n" +
+            "La correction utilisera directement les dates YYYY-MM-DD des données.\n\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        /*
+         * On redessine uniquement les
+         * étiquettes de dates sans
+         * modifier les données de ventes.
+         */
+
+        const svg =
+            salesChart.querySelector("svg");
+
+        if (!svg) {
+            throw new Error(
+                "Le SVG du graphique est introuvable."
+            );
+        }
+
+        const texts =
+            svg.querySelectorAll("text");
+
+        /*
+         * Les trois dernières étiquettes
+         * correspondent aux dates de l'axe X.
+         */
+
+        const dataLength =
+            chartData.data.length;
+
+        const labelIndexes = [];
+
+        if (dataLength <= 7) {
+
+            for (
+                let i = 0;
+                i < dataLength;
+                i++
+            ) {
+                labelIndexes.push(i);
+            }
+
+        }
+        else {
+
+            labelIndexes.push(0);
+
+            labelIndexes.push(
+                Math.floor(
+                    dataLength / 2
+                )
+            );
+
+            labelIndexes.push(
+                dataLength - 1
+            );
+
+        }
+
+        /*
+         * Les textes de l'axe X sont
+         * identifiés par leur position.
+         */
+
+        const dateTexts = [];
+
+        texts.forEach(
+            (text) => {
+
+                const y =
+                    Number(
+                        text.getAttribute("y")
+                    );
+
+                if (
+                    Number.isFinite(y) &&
+                    y > 240
+                ) {
+                    dateTexts.push(text);
+                }
+
+            }
+        );
+
+        dateTexts.forEach(
+            (text, index) => {
+
+                const dataIndex =
+                    labelIndexes[index];
+
+                if (
+                    dataIndex === undefined
+                ) {
+                    return;
+                }
+
+                const item =
+                    chartData.data[
+                        dataIndex
+                    ];
+
+                if (!item || !item.date) {
+                    return;
+                }
+
+                /*
+                 * Important :
+                 * on ne fait PAS new Date()
+                 * ici.
+                 *
+                 * On utilise directement
+                 * YYYY-MM-DD pour éviter
+                 * le décalage UTC.
+                 */
+
+                const parts =
+                    String(
+                        item.date
+                    ).split("-");
+
+                if (
+                    parts.length !== 3
+                ) {
+                    return;
+                }
+
+                const day =
+                    parts[2];
+
+                const month =
+                    parts[1];
+
+                text.textContent =
+                    day +
+                    "/" +
+                    month;
+
+            }
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.19.3\n\n" +
+            "Dates corrigées avec succès.\n\n" +
+            "Les dates utilisent maintenant directement les données locales du graphique.\n\n" +
+            "Aucun décalage UTC ne sera appliqué.\n\n" +
+            "Aucune donnée Firestore modifiée.\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.19 TERMINÉ ✅\n\n" +
+            "Les dates de l'axe du graphique sont maintenant corrigées.\n\n" +
+            "Le graphique conserve les mêmes ventes et les mêmes statistiques.\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.19 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.19 ERREUR ❌\n\n" +
             error.message
         );
 
