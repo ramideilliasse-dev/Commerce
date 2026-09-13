@@ -3895,7 +3895,7 @@ displaySalesChartStatistics();
 drawRealSalesChart();
 fixSalesChartDateLabels();
      calculateFilteredFinancialStatistics();
-     
+     displayFilteredFinancialStatistics();
     }
     catch (error) {
 
@@ -6886,6 +6886,247 @@ function calculateFilteredFinancialStatistics() {
 
         alert(
             "RELATÓRIOS — BLOC 12.20 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+function displayFilteredFinancialStatistics() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.21.1\n\n" +
+            "Début de l'affichage des statistiques financières..."
+        );
+
+        const statistics =
+            window.filteredFinancialStatistics;
+
+        if (!statistics) {
+            throw new Error(
+                "Les statistiques financières filtrées sont introuvables."
+            );
+        }
+
+        const financialRevenueValue =
+            document.getElementById(
+                "financialRevenueValue"
+            );
+
+        const financialRevenueAverage =
+            document.getElementById(
+                "financialRevenueAverage"
+            );
+
+        const financialRevenueHighest =
+            document.getElementById(
+                "financialRevenueHighest"
+            );
+
+        const financialCommissionValue =
+            document.getElementById(
+                "financialCommissionValue"
+            );
+
+        const financialCommissionAverage =
+            document.getElementById(
+                "financialCommissionAverage"
+            );
+
+        const financialCommissionRate =
+            document.getElementById(
+                "financialCommissionRate"
+            );
+
+        const financialCommissionShare =
+            document.getElementById(
+                "financialCommissionShare"
+            );
+
+        if (!financialRevenueValue) {
+            throw new Error(
+                "L'ID financialRevenueValue est introuvable."
+            );
+        }
+
+        if (!financialRevenueAverage) {
+            throw new Error(
+                "L'ID financialRevenueAverage est introuvable."
+            );
+        }
+
+        if (!financialRevenueHighest) {
+            throw new Error(
+                "L'ID financialRevenueHighest est introuvable."
+            );
+        }
+
+        if (!financialCommissionValue) {
+            throw new Error(
+                "L'ID financialCommissionValue est introuvable."
+            );
+        }
+
+        if (!financialCommissionAverage) {
+            throw new Error(
+                "L'ID financialCommissionAverage est introuvable."
+            );
+        }
+
+        if (!financialCommissionRate) {
+            throw new Error(
+                "L'ID financialCommissionRate est introuvable."
+            );
+        }
+
+        if (!financialCommissionShare) {
+            throw new Error(
+                "L'ID financialCommissionShare est introuvable."
+            );
+        }
+
+        alert(
+            "RELATÓRIOS — BLOC 12.21.2\n\n" +
+            "Tous les IDs financiers nécessaires sont détectés.\n\n" +
+            "financialRevenueValue : OK\n" +
+            "financialRevenueAverage : OK\n" +
+            "financialRevenueHighest : OK\n" +
+            "financialCommissionValue : OK\n" +
+            "financialCommissionAverage : OK\n" +
+            "financialCommissionRate : OK\n" +
+            "financialCommissionShare : OK\n\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        const totalRevenue =
+            Number(
+                statistics.totalRevenue
+            ) || 0;
+
+        const averageRevenue =
+            Number(
+                statistics.averageRevenue
+            ) || 0;
+
+        const highestOrder =
+            Number(
+                statistics.highestOrder
+            ) || 0;
+
+        const estimatedCommission =
+            Number(
+                statistics.estimatedCommission
+            ) || 0;
+
+        const averageCommission =
+            Number(
+                statistics.averageCommission
+            ) || 0;
+
+        const commissionRate =
+            Number(
+                statistics.commissionRate
+            ) || 0;
+
+        const commissionShare =
+            Number(
+                statistics.commissionShare
+            ) || 0;
+
+        const formattedRevenue =
+            totalRevenue.toLocaleString(
+                "pt-AO"
+            ) + " Kz";
+
+        const formattedAverage =
+            averageRevenue.toLocaleString(
+                "pt-AO"
+            ) + " Kz";
+
+        const formattedHighest =
+            highestOrder.toLocaleString(
+                "pt-AO"
+            ) + " Kz";
+
+        const formattedCommission =
+            estimatedCommission.toLocaleString(
+                "pt-AO"
+            ) + " Kz";
+
+        const formattedAverageCommission =
+            averageCommission.toLocaleString(
+                "pt-AO"
+            ) + " Kz";
+
+        financialRevenueValue.textContent =
+            formattedRevenue;
+
+        financialRevenueAverage.textContent =
+            formattedAverage;
+
+        financialRevenueHighest.textContent =
+            formattedHighest;
+
+        financialCommissionValue.textContent =
+            formattedCommission;
+
+        financialCommissionAverage.textContent =
+            formattedAverageCommission;
+
+        financialCommissionRate.textContent =
+            commissionRate + "%";
+
+        financialCommissionShare.textContent =
+            commissionShare.toFixed(1) + "%";
+
+        alert(
+            "RELATÓRIOS — BLOC 12.21.3\n\n" +
+            "Section Receita mise à jour.\n\n" +
+            "Receita total : " +
+            formattedRevenue +
+            "\n\n" +
+            "Média : " +
+            formattedAverage +
+            "\n\n" +
+            "Maior valor : " +
+            formattedHighest +
+            "\n\n" +
+            "Commission : " +
+            formattedCommission +
+            "\n\n" +
+            "Média commission : " +
+            formattedAverageCommission +
+            "\n\n" +
+            "Taxa : " +
+            commissionRate +
+            "%\n\n" +
+            "Participação : " +
+            commissionShare.toFixed(1) +
+            "%\n\n" +
+            "Aucune donnée Firestore modifiée.\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.21 TERMINÉ ✅\n\n" +
+            "Les statistiques financières filtrées sont maintenant affichées dans la section Receita.\n\n" +
+            "Elles suivront la période sélectionnée.\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.21 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.21 ERREUR ❌\n\n" +
             error.message
         );
 
