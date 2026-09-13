@@ -3894,6 +3894,8 @@ prepareSalesChartData();
 displaySalesChartStatistics();
 drawRealSalesChart();
 fixSalesChartDateLabels();
+     calculateFilteredFinancialStatistics();
+     
     }
     catch (error) {
 
@@ -6569,6 +6571,321 @@ function fixSalesChartDateLabels() {
 
         alert(
             "RELATÓRIOS — BLOC 12.19 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+function calculateFilteredFinancialStatistics() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.20.1\n\n" +
+            "Préparation des statistiques financières filtrées..."
+        );
+
+        const filteredOrders =
+            window.filteredReportsOrders;
+
+        if (!Array.isArray(filteredOrders)) {
+            throw new Error(
+                "Les commandes filtrées sont introuvables."
+            );
+        }
+
+        const financialRevenueValue =
+            document.getElementById(
+                "financialRevenueValue"
+            );
+
+        const financialRevenueAverage =
+            document.getElementById(
+                "financialRevenueAverage"
+            );
+
+        const financialRevenueHighest =
+            document.getElementById(
+                "financialRevenueHighest"
+            );
+
+        const financialRevenueGrowth =
+            document.getElementById(
+                "financialRevenueGrowth"
+            );
+
+        const financialCommissionValue =
+            document.getElementById(
+                "financialCommissionValue"
+            );
+
+        const financialCommissionAverage =
+            document.getElementById(
+                "financialCommissionAverage"
+            );
+
+        const financialCommissionRate =
+            document.getElementById(
+                "financialCommissionRate"
+            );
+
+        const financialCommissionShare =
+            document.getElementById(
+                "financialCommissionShare"
+            );
+
+        const financialCommissionProgress =
+            document.getElementById(
+                "financialCommissionProgress"
+            );
+
+        const financialRevenueProgress =
+            document.getElementById(
+                "financialRevenueProgress"
+            );
+
+        if (!financialRevenueValue) {
+            throw new Error(
+                "L'ID financialRevenueValue est introuvable."
+            );
+        }
+
+        if (!financialRevenueAverage) {
+            throw new Error(
+                "L'ID financialRevenueAverage est introuvable."
+            );
+        }
+
+        if (!financialRevenueHighest) {
+            throw new Error(
+                "L'ID financialRevenueHighest est introuvable."
+            );
+        }
+
+        if (!financialRevenueGrowth) {
+            throw new Error(
+                "L'ID financialRevenueGrowth est introuvable."
+            );
+        }
+
+        if (!financialCommissionValue) {
+            throw new Error(
+                "L'ID financialCommissionValue est introuvable."
+            );
+        }
+
+        if (!financialCommissionAverage) {
+            throw new Error(
+                "L'ID financialCommissionAverage est introuvable."
+            );
+        }
+
+        if (!financialCommissionRate) {
+            throw new Error(
+                "L'ID financialCommissionRate est introuvable."
+            );
+        }
+
+        if (!financialCommissionShare) {
+            throw new Error(
+                "L'ID financialCommissionShare est introuvable."
+            );
+        }
+
+        if (!financialCommissionProgress) {
+            throw new Error(
+                "L'ID financialCommissionProgress est introuvable."
+            );
+        }
+
+        if (!financialRevenueProgress) {
+            throw new Error(
+                "L'ID financialRevenueProgress est introuvable."
+            );
+        }
+
+        alert(
+            "RELATÓRIOS — BLOC 12.20.2\n\n" +
+            "Tous les IDs financiers ont été détectés.\n\n" +
+            "financialRevenueValue : OK\n" +
+            "financialRevenueAverage : OK\n" +
+            "financialRevenueHighest : OK\n" +
+            "financialRevenueGrowth : OK\n" +
+            "financialCommissionValue : OK\n" +
+            "financialCommissionAverage : OK\n" +
+            "financialCommissionRate : OK\n" +
+            "financialCommissionShare : OK\n" +
+            "financialCommissionProgress : OK\n" +
+            "financialRevenueProgress : OK\n\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        let totalRevenue = 0;
+
+        let highestOrder = 0;
+
+        filteredOrders.forEach(
+            (order) => {
+
+                const orderTotal =
+                    Number(
+                        order.total
+                    ) || 0;
+
+                totalRevenue +=
+                    orderTotal;
+
+                if (
+                    orderTotal >
+                    highestOrder
+                ) {
+                    highestOrder =
+                        orderTotal;
+                }
+
+            }
+        );
+
+        const totalOrders =
+            filteredOrders.length;
+
+        const averageRevenue =
+            totalOrders > 0
+                ? totalRevenue / totalOrders
+                : 0;
+
+        /*
+         * Commission Toma estimée à 5%.
+         *
+         * Important :
+         * cette valeur reste une estimation
+         * basée sur le chiffre d'affaires.
+         */
+
+        const commissionRate = 5;
+
+        const estimatedCommission =
+            totalRevenue *
+            (
+                commissionRate / 100
+            );
+
+        const averageCommission =
+            totalOrders > 0
+                ? estimatedCommission /
+                  totalOrders
+                : 0;
+
+        const commissionShare =
+            totalRevenue > 0
+                ? (
+                    estimatedCommission /
+                    totalRevenue
+                ) * 100
+                : 0;
+
+        /*
+         * Progression financière.
+         *
+         * Pour l'instant, on conserve
+         * une valeur de 0 à 100 basée
+         * sur la présence de revenus.
+         */
+
+        const revenueProgress =
+            totalRevenue > 0
+                ? 100
+                : 0;
+
+        const commissionProgress =
+            totalRevenue > 0
+                ? commissionShare
+                : 0;
+
+        window.filteredFinancialStatistics = {
+
+            totalOrders,
+
+            totalRevenue,
+
+            averageRevenue,
+
+            highestOrder,
+
+            commissionRate,
+
+            estimatedCommission,
+
+            averageCommission,
+
+            commissionShare,
+
+            revenueProgress,
+
+            commissionProgress
+
+        };
+
+        alert(
+            "RELATÓRIOS — BLOC 12.20.3\n\n" +
+            "Statistiques financières filtrées calculées.\n\n" +
+            "Commandes : " +
+            totalOrders +
+            "\n\n" +
+            "Receita total : " +
+            totalRevenue.toLocaleString(
+                "pt-AO"
+            ) +
+            " Kz\n\n" +
+            "Média : " +
+            averageRevenue.toLocaleString(
+                "pt-AO"
+            ) +
+            " Kz\n\n" +
+            "Maior valor : " +
+            highestOrder.toLocaleString(
+                "pt-AO"
+            ) +
+            " Kz\n\n" +
+            "Commission estimée : " +
+            estimatedCommission.toLocaleString(
+                "pt-AO"
+            ) +
+            " Kz\n\n" +
+            "Média commission : " +
+            averageCommission.toLocaleString(
+                "pt-AO"
+            ) +
+            " Kz\n\n" +
+            "Taxa : " +
+            commissionRate +
+            "%\n\n" +
+            "Participação : " +
+            commissionShare.toFixed(1) +
+            "%\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.20 TERMINÉ ✅\n\n" +
+            "Les statistiques financières filtrées sont prêtes.\n\n" +
+            "Elles seront affichées dans la section Receita au prochain bloc.\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.20 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.20 ERREUR ❌\n\n" +
             error.message
         );
 
