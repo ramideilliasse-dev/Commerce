@@ -3891,6 +3891,7 @@ calculateReportsRealGrowth();
 displayReportsRealGrowth();
 styleReportsRealGrowth();
 prepareSalesChartData();
+displaySalesChartStatistics();
     }
     catch (error) {
 
@@ -5430,6 +5431,255 @@ function prepareSalesChartData() {
 
         alert(
             "RELATÓRIOS — BLOC 12.16 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+// =====================================================
+// BLOC 12.17 — AFFICHAGE DES STATISTIQUES DU GRAPHIQUE
+// =====================================================
+
+function displaySalesChartStatistics() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.17.1\n\n" +
+            "Début de l'affichage des statistiques du graphique..."
+        );
+
+        const chartData =
+            window.salesChartData;
+
+        if (!chartData) {
+            throw new Error(
+                "Les données du graphique sont introuvables."
+            );
+        }
+
+        // ---------------------------------------------
+        // IDS EXISTANTS
+        // ---------------------------------------------
+
+        const salesChartPeriod =
+            document.getElementById(
+                "salesChartPeriod"
+            );
+
+        const salesChartTotal =
+            document.getElementById(
+                "salesChartTotal"
+            );
+
+        const salesChartAverage =
+            document.getElementById(
+                "salesChartAverage"
+            );
+
+        const salesChartBestDay =
+            document.getElementById(
+                "salesChartBestDay"
+            );
+
+        const salesChartContainer =
+            document.getElementById(
+                "salesChartContainer"
+            );
+
+        const salesChart =
+            document.getElementById(
+                "salesChart"
+            );
+
+        const salesChartEmpty =
+            document.getElementById(
+                "salesChartEmpty"
+            );
+
+        if (!salesChartPeriod) {
+            throw new Error(
+                "L'ID salesChartPeriod est introuvable."
+            );
+        }
+
+        if (!salesChartTotal) {
+            throw new Error(
+                "L'ID salesChartTotal est introuvable."
+            );
+        }
+
+        if (!salesChartAverage) {
+            throw new Error(
+                "L'ID salesChartAverage est introuvable."
+            );
+        }
+
+        if (!salesChartBestDay) {
+            throw new Error(
+                "L'ID salesChartBestDay est introuvable."
+            );
+        }
+
+        if (!salesChartContainer) {
+            throw new Error(
+                "L'ID salesChartContainer est introuvable."
+            );
+        }
+
+        if (!salesChart) {
+            throw new Error(
+                "L'ID salesChart est introuvable."
+            );
+        }
+
+        if (!salesChartEmpty) {
+            throw new Error(
+                "L'ID salesChartEmpty est introuvable."
+            );
+        }
+
+        alert(
+            "RELATÓRIOS — BLOC 12.17.2\n\n" +
+            "Tous les éléments du graphique ont été détectés.\n\n" +
+            "salesChartPeriod : OK\n" +
+            "salesChartTotal : OK\n" +
+            "salesChartAverage : OK\n" +
+            "salesChartBestDay : OK\n" +
+            "salesChartContainer : OK\n" +
+            "salesChart : OK\n" +
+            "salesChartEmpty : OK\n\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        // ---------------------------------------------
+        // AFFICHAGE DU TOTAL
+        // ---------------------------------------------
+
+        salesChartTotal.textContent =
+            chartData.totalSales.toLocaleString(
+                "pt-AO"
+            ) + " Kz";
+
+        // ---------------------------------------------
+        // AFFICHAGE DE LA MOYENNE
+        // ---------------------------------------------
+
+        salesChartAverage.textContent =
+            chartData.averageSales.toLocaleString(
+                "pt-AO"
+            ) + " Kz";
+
+        // ---------------------------------------------
+        // AFFICHAGE DU MEILLEUR JOUR
+        // ---------------------------------------------
+
+        if (chartData.bestDay) {
+
+            const bestDate =
+                new Date(
+                    chartData.bestDay.date +
+                    "T00:00:00"
+                );
+
+            salesChartBestDay.textContent =
+                bestDate.toLocaleDateString(
+                    "pt-AO"
+                ) +
+                " — " +
+                chartData.bestDay.sales.toLocaleString(
+                    "pt-AO"
+                ) +
+                " Kz";
+
+        }
+        else {
+
+            salesChartBestDay.textContent =
+                "—";
+
+        }
+
+        // ---------------------------------------------
+        // PRÉPARATION DE L'ÉTAT DU GRAPHIQUE
+        // ---------------------------------------------
+
+        if (
+            chartData.totalSales === 0 ||
+            chartData.data.length === 0
+        ) {
+
+            salesChart.style.display =
+                "none";
+
+            salesChartEmpty.style.display =
+                "block";
+
+        }
+        else {
+
+            salesChart.style.display =
+                "block";
+
+            salesChartEmpty.style.display =
+                "none";
+
+        }
+
+        // Le conteneur reste visible.
+        salesChartContainer.style.display =
+            "block";
+
+        alert(
+            "RELATÓRIOS — BLOC 12.17.3\n\n" +
+            "Statistiques du graphique affichées.\n\n" +
+            "Total : " +
+            chartData.totalSales.toLocaleString(
+                "pt-AO"
+            ) +
+            " Kz\n\n" +
+            "Moyenne : " +
+            chartData.averageSales.toLocaleString(
+                "pt-AO"
+            ) +
+            " Kz\n\n" +
+            "Meilleur jour : " +
+            (
+                chartData.bestDay
+                    ? chartData.bestDay.date
+                    : "Aucun"
+            ) +
+            "\n\n" +
+            "État du graphique : " +
+            (
+                chartData.totalSales > 0
+                    ? "Données disponibles"
+                    : "Aucune vente"
+            ) +
+            "\n\n" +
+            "Aucune donnée Firestore modifiée.\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.17 TERMINÉ ✅\n\n" +
+            "La section Sales Performance est maintenant synchronisée avec les données réelles.\n\n" +
+            "Le graphique lui-même sera dessiné dans le prochain bloc.\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.17 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.17 ERREUR ❌\n\n" +
             error.message
         );
 
