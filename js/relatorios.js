@@ -3892,6 +3892,7 @@ displayReportsRealGrowth();
 styleReportsRealGrowth();
 prepareSalesChartData();
 displaySalesChartStatistics();
+drawRealSalesChart();
     }
     catch (error) {
 
@@ -5680,6 +5681,563 @@ function displaySalesChartStatistics() {
 
         alert(
             "RELATÓRIOS — BLOC 12.17 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+// =====================================================
+// BLOC 12.18 — DESSIN DU GRAPHIQUE RÉEL DES VENTES
+// =====================================================
+
+function drawRealSalesChart() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.18.1\n\n" +
+            "Préparation du graphique réel des ventes..."
+        );
+
+        const chartData =
+            window.salesChartData;
+
+        if (!chartData) {
+            throw new Error(
+                "Les données du graphique sont introuvables."
+            );
+        }
+
+        const salesChart =
+            document.getElementById(
+                "salesChart"
+            );
+
+        const salesChartContainer =
+            document.getElementById(
+                "salesChartContainer"
+            );
+
+        const salesChartEmpty =
+            document.getElementById(
+                "salesChartEmpty"
+            );
+
+        if (!salesChart) {
+            throw new Error(
+                "L'ID salesChart est introuvable."
+            );
+        }
+
+        if (!salesChartContainer) {
+            throw new Error(
+                "L'ID salesChartContainer est introuvable."
+            );
+        }
+
+        if (!salesChartEmpty) {
+            throw new Error(
+                "L'ID salesChartEmpty est introuvable."
+            );
+        }
+
+        alert(
+            "RELATÓRIOS — BLOC 12.18.2\n\n" +
+            "Éléments du graphique détectés.\n\n" +
+            "Canvas : salesChart\n" +
+            "Conteneur : salesChartContainer\n" +
+            "État vide : salesChartEmpty\n\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        // ---------------------------------------------
+        // ÉTAT VIDE
+        // ---------------------------------------------
+
+        if (
+            !Array.isArray(chartData.data) ||
+            chartData.data.length === 0 ||
+            chartData.totalSales === 0
+        ) {
+
+            salesChart.style.display =
+                "none";
+
+            salesChartEmpty.style.display =
+                "block";
+
+            alert(
+                "RELATÓRIOS — BLOC 12.18.3\n\n" +
+                "Aucune vente disponible pour cette période.\n\n" +
+                "Le graphique reste masqué.\n\n" +
+                "Aucune donnée Firestore modifiée."
+            );
+
+            return;
+
+        }
+
+        salesChart.style.display =
+            "block";
+
+        salesChartEmpty.style.display =
+            "none";
+
+        // ---------------------------------------------
+        // CONTEXTE CANVAS
+        // ---------------------------------------------
+
+        const context =
+            salesChart.getContext("2d");
+
+        if (!context) {
+            throw new Error(
+                "Impossible d'obtenir le contexte du graphique."
+            );
+        }
+
+        // ---------------------------------------------
+        // DIMENSIONS RESPONSIVE
+        // ---------------------------------------------
+
+        const containerWidth =
+            salesChartContainer.clientWidth ||
+            320;
+
+        const width =
+            Math.max(
+                containerWidth,
+                320
+            );
+
+        const height = 260;
+
+        const devicePixelRatio =
+            window.devicePixelRatio || 1;
+
+        salesChart.width =
+            width *
+            devicePixelRatio;
+
+        salesChart.height =
+            height *
+            devicePixelRatio;
+
+        salesChart.style.width =
+            width + "px";
+
+        salesChart.style.height =
+            height + "px";
+
+        context.setTransform(
+            devicePixelRatio,
+            0,
+            0,
+            devicePixelRatio,
+            0,
+            0
+        );
+
+        // ---------------------------------------------
+        // NETTOYAGE
+        // ---------------------------------------------
+
+        context.clearRect(
+            0,
+            0,
+            width,
+            height
+        );
+
+        // ---------------------------------------------
+        // MARGES
+        // ---------------------------------------------
+
+        const paddingLeft = 55;
+        const paddingRight = 15;
+        const paddingTop = 20;
+        const paddingBottom = 45;
+
+        const graphWidth =
+            width -
+            paddingLeft -
+            paddingRight;
+
+        const graphHeight =
+            height -
+            paddingTop -
+            paddingBottom;
+
+        // ---------------------------------------------
+        // VALEUR MAXIMALE
+        // ---------------------------------------------
+
+        const maxSales =
+            Math.max(
+                ...chartData.data.map(
+                    item =>
+                        Number(item.sales) || 0
+                )
+            );
+
+        if (maxSales <= 0) {
+            throw new Error(
+                "La valeur maximale des ventes est invalide."
+            );
+        }
+
+        // ---------------------------------------------
+        // GRILLE HORIZONTALE
+        // ---------------------------------------------
+
+        const gridLines = 4;
+
+        context.font =
+            "11px Arial";
+
+        context.textAlign =
+            "right";
+
+        context.textBaseline =
+            "middle";
+
+        for (
+            let i = 0;
+            i <= gridLines;
+            i++
+        ) {
+
+            const ratio =
+                i / gridLines;
+
+            const y =
+                paddingTop +
+                graphHeight -
+                (
+                    ratio *
+                    graphHeight
+                );
+
+            const value =
+                maxSales *
+                ratio;
+
+            context.beginPath();
+
+            context.moveTo(
+                paddingLeft,
+                y
+            );
+
+            context.lineTo(
+                width -
+                paddingRight,
+                y
+            );
+
+            context.strokeStyle =
+                "#e5e7eb";
+
+            context.lineWidth =
+                1;
+
+            context.stroke();
+
+            context.fillStyle =
+                "#6b7280";
+
+            context.fillText(
+                value.toLocaleString(
+                    "pt-AO",
+                    {
+                        maximumFractionDigits: 0
+                    }
+                ),
+                paddingLeft - 8,
+                y
+            );
+
+        }
+
+        // ---------------------------------------------
+        // AXES
+        // ---------------------------------------------
+
+        context.beginPath();
+
+        context.moveTo(
+            paddingLeft,
+            paddingTop
+        );
+
+        context.lineTo(
+            paddingLeft,
+            paddingTop +
+            graphHeight
+        );
+
+        context.lineTo(
+            width -
+            paddingRight,
+            paddingTop +
+            graphHeight
+        );
+
+        context.strokeStyle =
+            "#9ca3af";
+
+        context.lineWidth =
+            1;
+
+        context.stroke();
+
+        // ---------------------------------------------
+        // POINTS DU GRAPHIQUE
+        // ---------------------------------------------
+
+        const points = [];
+
+        const dataLength =
+            chartData.data.length;
+
+        chartData.data.forEach(
+            (item, index) => {
+
+                const sales =
+                    Number(item.sales) || 0;
+
+                const x =
+                    dataLength === 1
+                        ? paddingLeft +
+                          graphWidth / 2
+                        : paddingLeft +
+                          (
+                              index /
+                              (
+                                  dataLength -
+                                  1
+                              )
+                          ) *
+                          graphWidth;
+
+                const y =
+                    paddingTop +
+                    graphHeight -
+                    (
+                        (
+                            sales /
+                            maxSales
+                        ) *
+                        graphHeight
+                    );
+
+                points.push({
+                    x,
+                    y,
+                    sales,
+                    date: item.date
+                });
+
+            }
+        );
+
+        // ---------------------------------------------
+        // LIGNE
+        // ---------------------------------------------
+
+        context.beginPath();
+
+        points.forEach(
+            (point, index) => {
+
+                if (index === 0) {
+
+                    context.moveTo(
+                        point.x,
+                        point.y
+                    );
+
+                }
+                else {
+
+                    context.lineTo(
+                        point.x,
+                        point.y
+                    );
+
+                }
+
+            }
+        );
+
+        context.strokeStyle =
+            "#2563eb";
+
+        context.lineWidth =
+            3;
+
+        context.lineJoin =
+            "round";
+
+        context.lineCap =
+            "round";
+
+        context.stroke();
+
+        // ---------------------------------------------
+        // POINTS
+        // ---------------------------------------------
+
+        points.forEach(
+            (point) => {
+
+                if (point.sales <= 0) {
+                    return;
+                }
+
+                context.beginPath();
+
+                context.arc(
+                    point.x,
+                    point.y,
+                    4,
+                    0,
+                    Math.PI * 2
+                );
+
+                context.fillStyle =
+                    "#2563eb";
+
+                context.fill();
+
+                context.strokeStyle =
+                    "#ffffff";
+
+                context.lineWidth =
+                    2;
+
+                context.stroke();
+
+            }
+        );
+
+        // ---------------------------------------------
+        // DATES SUR L'AXE X
+        // ---------------------------------------------
+
+        context.fillStyle =
+            "#6b7280";
+
+        context.font =
+            "10px Arial";
+
+        context.textAlign =
+            "center";
+
+        context.textBaseline =
+            "top";
+
+        const labelIndexes = [];
+
+        if (dataLength <= 7) {
+
+            for (
+                let i = 0;
+                i < dataLength;
+                i++
+            ) {
+                labelIndexes.push(i);
+            }
+
+        }
+        else {
+
+            labelIndexes.push(0);
+
+            labelIndexes.push(
+                Math.floor(
+                    dataLength / 2
+                )
+            );
+
+            labelIndexes.push(
+                dataLength - 1
+            );
+
+        }
+
+        labelIndexes.forEach(
+            (index) => {
+
+                const point =
+                    points[index];
+
+                const date =
+                    new Date(
+                        point.date +
+                        "T00:00:00"
+                    );
+
+                const label =
+                    date.toLocaleDateString(
+                        "pt-AO",
+                        {
+                            day: "2-digit",
+                            month: "2-digit"
+                        }
+                    );
+
+                context.fillText(
+                    label,
+                    point.x,
+                    paddingTop +
+                    graphHeight +
+                    8
+                );
+
+            }
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.18.3\n\n" +
+            "Graphique réel dessiné avec succès.\n\n" +
+            "Points analysés : " +
+            points.length +
+            "\n\n" +
+            "Valeur maximale : " +
+            maxSales.toLocaleString(
+                "pt-AO"
+            ) +
+            " Kz\n\n" +
+            "Total des ventes : " +
+            chartData.totalSales.toLocaleString(
+                "pt-AO"
+            ) +
+            " Kz\n\n" +
+            "Le graphique utilise les ventes réelles des commandes.\n\n" +
+            "Aucune donnée Firestore modifiée.\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.18 TERMINÉ ✅\n\n" +
+            "Le graphique réel des ventes est maintenant fonctionnel.\n\n" +
+            "Il est synchronisé avec la période sélectionnée.\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.18 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.18 ERREUR ❌\n\n" +
             error.message
         );
 
