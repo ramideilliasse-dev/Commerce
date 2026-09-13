@@ -5690,7 +5690,6 @@ function displaySalesChartStatistics() {
 // =====================================================
 // BLOC 12.18 — DESSIN DU GRAPHIQUE RÉEL DES VENTES
 // =====================================================
-
 function drawRealSalesChart() {
 
     try {
@@ -5745,37 +5744,24 @@ function drawRealSalesChart() {
         alert(
             "RELATÓRIOS — BLOC 12.18.2\n\n" +
             "Éléments du graphique détectés.\n\n" +
-            "Canvas : salesChart\n" +
-            "Conteneur : salesChartContainer\n" +
-            "État vide : salesChartEmpty\n\n" +
+            "salesChart : DIV\n" +
+            "salesChartContainer : OK\n" +
+            "salesChartEmpty : OK\n\n" +
+            "Le graphique sera dessiné dans le DIV existant.\n\n" +
             "Aucun nouvel ID HTML créé."
         );
-alert(
-    "RELATÓRIOS — DIAGNÓSTICO 12.18\n\n" +
-    "ID : salesChart\n\n" +
-    "Type : " +
-    salesChart.tagName +
-    "\n\n" +
-    "Classe : " +
-    salesChart.className +
-    "\n\n" +
-    "getContext disponible : " +
-    (
-        typeof salesChart.getContext
-    ) +
-    "\n\n" +
-    "Aucun ID HTML créé.\n" +
-    "Aucune donnée Firestore modifiée."
-);
-        // ---------------------------------------------
-        // ÉTAT VIDE
-        // ---------------------------------------------
+
+        /*
+         * État vide
+         */
 
         if (
             !Array.isArray(chartData.data) ||
             chartData.data.length === 0 ||
             chartData.totalSales === 0
         ) {
+
+            salesChart.innerHTML = "";
 
             salesChart.style.display =
                 "none";
@@ -5787,12 +5773,16 @@ alert(
                 "RELATÓRIOS — BLOC 12.18.3\n\n" +
                 "Aucune vente disponible pour cette période.\n\n" +
                 "Le graphique reste masqué.\n\n" +
-                "Aucune donnée Firestore modifiée."
+                "Aucune donnée Firestore modifiée.\n" +
+                "Aucun nouvel ID HTML créé."
             );
 
             return;
-
         }
+
+        /*
+         * Préparation du DIV
+         */
 
         salesChart.style.display =
             "block";
@@ -5800,75 +5790,35 @@ alert(
         salesChartEmpty.style.display =
             "none";
 
-        // ---------------------------------------------
-        // CONTEXTE CANVAS
-        // ---------------------------------------------
+        salesChart.innerHTML = "";
 
-        const context =
-            salesChart.getContext("2d");
+        salesChart.style.position =
+            "relative";
 
-        if (!context) {
-            throw new Error(
-                "Impossible d'obtenir le contexte du graphique."
-            );
-        }
+        salesChart.style.width =
+            "100%";
 
-        // ---------------------------------------------
-        // DIMENSIONS RESPONSIVE
-        // ---------------------------------------------
+        salesChart.style.height =
+            "260px";
 
-        const containerWidth =
+        salesChart.style.minHeight =
+            "260px";
+
+        salesChart.style.overflow =
+            "hidden";
+
+        /*
+         * Création du graphique
+         * dans le DIV existant.
+         */
+
+        const chartWidth =
+            salesChart.clientWidth ||
             salesChartContainer.clientWidth ||
             320;
 
-        const width =
-            Math.max(
-                containerWidth,
-                320
-            );
-
-        const height = 260;
-
-        const devicePixelRatio =
-            window.devicePixelRatio || 1;
-
-        salesChart.width =
-            width *
-            devicePixelRatio;
-
-        salesChart.height =
-            height *
-            devicePixelRatio;
-
-        salesChart.style.width =
-            width + "px";
-
-        salesChart.style.height =
-            height + "px";
-
-        context.setTransform(
-            devicePixelRatio,
-            0,
-            0,
-            devicePixelRatio,
-            0,
-            0
-        );
-
-        // ---------------------------------------------
-        // NETTOYAGE
-        // ---------------------------------------------
-
-        context.clearRect(
-            0,
-            0,
-            width,
-            height
-        );
-
-        // ---------------------------------------------
-        // MARGES
-        // ---------------------------------------------
+        const chartHeight =
+            260;
 
         const paddingLeft = 55;
         const paddingRight = 15;
@@ -5876,18 +5826,17 @@ alert(
         const paddingBottom = 45;
 
         const graphWidth =
-            width -
-            paddingLeft -
-            paddingRight;
+            Math.max(
+                chartWidth -
+                paddingLeft -
+                paddingRight,
+                100
+            );
 
         const graphHeight =
-            height -
+            chartHeight -
             paddingTop -
             paddingBottom;
-
-        // ---------------------------------------------
-        // VALEUR MAXIMALE
-        // ---------------------------------------------
 
         const maxSales =
             Math.max(
@@ -5898,25 +5847,69 @@ alert(
             );
 
         if (maxSales <= 0) {
-            throw new Error(
-                "La valeur maximale des ventes est invalide."
+
+            salesChart.style.display =
+                "none";
+
+            salesChartEmpty.style.display =
+                "block";
+
+            alert(
+                "RELATÓRIOS — BLOC 12.18.3\n\n" +
+                "Les données ne contiennent aucune vente positive.\n\n" +
+                "Le graphique reste masqué."
             );
+
+            return;
         }
 
-        // ---------------------------------------------
-        // GRILLE HORIZONTALE
-        // ---------------------------------------------
+        /*
+         * SVG
+         */
+
+        const svgNS =
+            "http://www.w3.org/2000/svg";
+
+        const svg =
+            document.createElementNS(
+                svgNS,
+                "svg"
+            );
+
+        svg.setAttribute(
+            "width",
+            "100%"
+        );
+
+        svg.setAttribute(
+            "height",
+            String(chartHeight)
+        );
+
+        svg.setAttribute(
+            "viewBox",
+            `0 0 ${chartWidth} ${chartHeight}`
+        );
+
+        svg.setAttribute(
+            "preserveAspectRatio",
+            "none"
+        );
+
+        svg.style.display =
+            "block";
+
+        svg.style.width =
+            "100%";
+
+        svg.style.height =
+            chartHeight + "px";
+
+        /*
+         * Lignes horizontales
+         */
 
         const gridLines = 4;
-
-        context.font =
-            "11px Arial";
-
-        context.textAlign =
-            "right";
-
-        context.textBaseline =
-            "middle";
 
         for (
             let i = 0;
@@ -5935,82 +5928,138 @@ alert(
                     graphHeight
                 );
 
+            const line =
+                document.createElementNS(
+                    svgNS,
+                    "line"
+                );
+
+            line.setAttribute(
+                "x1",
+                String(paddingLeft)
+            );
+
+            line.setAttribute(
+                "y1",
+                String(y)
+            );
+
+            line.setAttribute(
+                "x2",
+                String(
+                    chartWidth -
+                    paddingRight
+                )
+            );
+
+            line.setAttribute(
+                "y2",
+                String(y)
+            );
+
+            line.setAttribute(
+                "stroke",
+                "#e5e7eb"
+            );
+
+            line.setAttribute(
+                "stroke-width",
+                "1"
+            );
+
+            svg.appendChild(line);
+
+            /*
+             * Valeur de l'axe
+             */
+
             const value =
                 maxSales *
                 ratio;
 
-            context.beginPath();
+            const text =
+                document.createElementNS(
+                    svgNS,
+                    "text"
+                );
 
-            context.moveTo(
-                paddingLeft,
-                y
+            text.setAttribute(
+                "x",
+                String(
+                    paddingLeft - 8
+                )
             );
 
-            context.lineTo(
-                width -
-                paddingRight,
-                y
+            text.setAttribute(
+                "y",
+                String(y + 4)
             );
 
-            context.strokeStyle =
-                "#e5e7eb";
+            text.setAttribute(
+                "text-anchor",
+                "end"
+            );
 
-            context.lineWidth =
-                1;
+            text.setAttribute(
+                "font-size",
+                "11"
+            );
 
-            context.stroke();
+            text.setAttribute(
+                "fill",
+                "#6b7280"
+            );
 
-            context.fillStyle =
-                "#6b7280";
-
-            context.fillText(
+            text.textContent =
                 value.toLocaleString(
                     "pt-AO",
                     {
                         maximumFractionDigits: 0
                     }
-                ),
-                paddingLeft - 8,
-                y
-            );
+                );
 
+            svg.appendChild(text);
         }
 
-        // ---------------------------------------------
-        // AXES
-        // ---------------------------------------------
+        /*
+         * Axes
+         */
 
-        context.beginPath();
+        const axis =
+            document.createElementNS(
+                svgNS,
+                "path"
+            );
 
-        context.moveTo(
-            paddingLeft,
-            paddingTop
+        axis.setAttribute(
+            "d",
+            `
+            M ${paddingLeft} ${paddingTop}
+            V ${paddingTop + graphHeight}
+            H ${chartWidth - paddingRight}
+            `
         );
 
-        context.lineTo(
-            paddingLeft,
-            paddingTop +
-            graphHeight
+        axis.setAttribute(
+            "fill",
+            "none"
         );
 
-        context.lineTo(
-            width -
-            paddingRight,
-            paddingTop +
-            graphHeight
+        axis.setAttribute(
+            "stroke",
+            "#9ca3af"
         );
 
-        context.strokeStyle =
-            "#9ca3af";
+        axis.setAttribute(
+            "stroke-width",
+            "1"
+        );
 
-        context.lineWidth =
-            1;
+        svg.appendChild(axis);
 
-        context.stroke();
-
-        // ---------------------------------------------
-        // POINTS DU GRAPHIQUE
-        // ---------------------------------------------
+        /*
+         * Points
+         */
 
         const points = [];
 
@@ -6054,56 +6103,75 @@ alert(
                     sales,
                     date: item.date
                 });
-
             }
         );
 
-        // ---------------------------------------------
-        // LIGNE
-        // ---------------------------------------------
+        /*
+         * Ligne du graphique
+         */
 
-        context.beginPath();
+        let pathData = "";
 
         points.forEach(
             (point, index) => {
 
                 if (index === 0) {
 
-                    context.moveTo(
-                        point.x,
-                        point.y
-                    );
+                    pathData +=
+                        `M ${point.x} ${point.y}`;
 
                 }
                 else {
 
-                    context.lineTo(
-                        point.x,
-                        point.y
-                    );
+                    pathData +=
+                        ` L ${point.x} ${point.y}`;
 
                 }
 
             }
         );
 
-        context.strokeStyle =
-            "#2563eb";
+        const path =
+            document.createElementNS(
+                svgNS,
+                "path"
+            );
 
-        context.lineWidth =
-            3;
+        path.setAttribute(
+            "d",
+            pathData
+        );
 
-        context.lineJoin =
-            "round";
+        path.setAttribute(
+            "fill",
+            "none"
+        );
 
-        context.lineCap =
-            "round";
+        path.setAttribute(
+            "stroke",
+            "#2563eb"
+        );
 
-        context.stroke();
+        path.setAttribute(
+            "stroke-width",
+            "3"
+        );
 
-        // ---------------------------------------------
-        // POINTS
-        // ---------------------------------------------
+        path.setAttribute(
+            "stroke-linejoin",
+            "round"
+        );
+
+        path.setAttribute(
+            "stroke-linecap",
+            "round"
+        );
+
+        svg.appendChild(path);
+
+        /*
+         * Points de vente
+         */
 
         points.forEach(
             (point) => {
@@ -6112,47 +6180,49 @@ alert(
                     return;
                 }
 
-                context.beginPath();
+                const circle =
+                    document.createElementNS(
+                        svgNS,
+                        "circle"
+                    );
 
-                context.arc(
-                    point.x,
-                    point.y,
-                    4,
-                    0,
-                    Math.PI * 2
+                circle.setAttribute(
+                    "cx",
+                    String(point.x)
                 );
 
-                context.fillStyle =
-                    "#2563eb";
+                circle.setAttribute(
+                    "cy",
+                    String(point.y)
+                );
 
-                context.fill();
+                circle.setAttribute(
+                    "r",
+                    "4"
+                );
 
-                context.strokeStyle =
-                    "#ffffff";
+                circle.setAttribute(
+                    "fill",
+                    "#2563eb"
+                );
 
-                context.lineWidth =
-                    2;
+                circle.setAttribute(
+                    "stroke",
+                    "#ffffff"
+                );
 
-                context.stroke();
+                circle.setAttribute(
+                    "stroke-width",
+                    "2"
+                );
 
+                svg.appendChild(circle);
             }
         );
 
-        // ---------------------------------------------
-        // DATES SUR L'AXE X
-        // ---------------------------------------------
-
-        context.fillStyle =
-            "#6b7280";
-
-        context.font =
-            "10px Arial";
-
-        context.textAlign =
-            "center";
-
-        context.textBaseline =
-            "top";
+        /*
+         * Dates sur l'axe X
+         */
 
         const labelIndexes = [];
 
@@ -6163,7 +6233,9 @@ alert(
                 i < dataLength;
                 i++
             ) {
+
                 labelIndexes.push(i);
+
             }
 
         }
@@ -6204,19 +6276,56 @@ alert(
                         }
                     );
 
-                context.fillText(
-                    label,
-                    point.x,
-                    paddingTop +
-                    graphHeight +
-                    8
+                const text =
+                    document.createElementNS(
+                        svgNS,
+                        "text"
+                    );
+
+                text.setAttribute(
+                    "x",
+                    String(point.x)
                 );
 
+                text.setAttribute(
+                    "y",
+                    String(
+                        paddingTop +
+                        graphHeight +
+                        25
+                    )
+                );
+
+                text.setAttribute(
+                    "text-anchor",
+                    "middle"
+                );
+
+                text.setAttribute(
+                    "font-size",
+                    "10"
+                );
+
+                text.setAttribute(
+                    "fill",
+                    "#6b7280"
+                );
+
+                text.textContent =
+                    label;
+
+                svg.appendChild(text);
             }
         );
 
+        /*
+         * Insertion du SVG
+         */
+
+        salesChart.appendChild(svg);
+
         alert(
-            "RELATÓRIOS — BLOC 12.18.3\n\n" +
+            "RELATÓRIOS — BLOC 12.18.4\n\n" +
             "Graphique réel dessiné avec succès.\n\n" +
             "Points analysés : " +
             points.length +
@@ -6232,13 +6341,13 @@ alert(
             ) +
             " Kz\n\n" +
             "Le graphique utilise les ventes réelles des commandes.\n\n" +
-            "Aucune donnée Firestore modifiée.\n" +
-            "Aucun nouvel ID HTML créé."
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
         );
 
         alert(
             "RELATÓRIOS — BLOC 12.18 TERMINÉ ✅\n\n" +
-            "Le graphique réel des ventes est maintenant fonctionnel.\n\n" +
+            "Le graphique réel des ventes fonctionne maintenant avec le DIV salesChart existant.\n\n" +
             "Il est synchronisé avec la période sélectionnée.\n\n" +
             "Aucun nouvel ID HTML créé.\n" +
             "Aucune donnée Firestore modifiée."
