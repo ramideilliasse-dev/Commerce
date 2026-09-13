@@ -5750,7 +5750,23 @@ function drawRealSalesChart() {
             "État vide : salesChartEmpty\n\n" +
             "Aucun nouvel ID HTML créé."
         );
-
+alert(
+    "RELATÓRIOS — DIAGNÓSTICO 12.18\n\n" +
+    "ID : salesChart\n\n" +
+    "Type : " +
+    salesChart.tagName +
+    "\n\n" +
+    "Classe : " +
+    salesChart.className +
+    "\n\n" +
+    "getContext disponible : " +
+    (
+        typeof salesChart.getContext
+    ) +
+    "\n\n" +
+    "Aucun ID HTML créé.\n" +
+    "Aucune donnée Firestore modifiée."
+);
         // ---------------------------------------------
         // ÉTAT VIDE
         // ---------------------------------------------
