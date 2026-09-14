@@ -3898,6 +3898,7 @@ fixSalesChartDateLabels();
 displayFilteredFinancialStatistics();
 calculateFinancialProgress();
 displayFinancialProgress();
+synchronizeFinancialProgressWithPeriod();
  
     }
     catch (error) {
@@ -7439,6 +7440,155 @@ function displayFinancialProgress() {
 
         alert(
             "RELATÓRIOS — BLOC 12.23 ERREUR ❌\n\n" +
+            error.message
+        );
+    }
+}
+// ======================================================
+// BLOC 12.24 — SYNCHRONISATION DES BARRES FINANCIÈRES
+// AVEC LA PÉRIODE SÉLECTIONNÉE
+// ======================================================
+
+function synchronizeFinancialProgressWithPeriod() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.24.1\n\n" +
+            "Vérification de la synchronisation des barres financières..."
+        );
+
+
+        // --------------------------------------------------
+        // RÉCUPÉRATION DES IDs HTML EXISTANTS
+        // --------------------------------------------------
+
+        const revenueProgressElement =
+            document.getElementById("financialRevenueProgress");
+
+        const commissionProgressElement =
+            document.getElementById("financialCommissionProgress");
+
+        const periodSelect =
+            document.getElementById("reportsPeriodSelect");
+
+
+        if (!revenueProgressElement) {
+            throw new Error(
+                "L'ID HTML financialRevenueProgress est introuvable."
+            );
+        }
+
+        if (!commissionProgressElement) {
+            throw new Error(
+                "L'ID HTML financialCommissionProgress est introuvable."
+            );
+        }
+
+        if (!periodSelect) {
+            throw new Error(
+                "L'ID HTML reportsPeriodSelect est introuvable."
+            );
+        }
+
+
+        // --------------------------------------------------
+        // RÉCUPÉRATION DES DONNÉES
+        // --------------------------------------------------
+
+        const progressData =
+            window.financialProgressData;
+
+        if (!progressData) {
+            throw new Error(
+                "Les données financialProgressData sont introuvables."
+            );
+        }
+
+
+        const revenueWidth =
+            Math.min(
+                Math.max(
+                    Number(progressData.revenueBarWidth) || 0,
+                    0
+                ),
+                100
+            );
+
+        const commissionWidth =
+            Math.min(
+                Math.max(
+                    Number(progressData.commissionBarWidth) || 0,
+                    0
+                ),
+                100
+            );
+
+
+        // --------------------------------------------------
+        // APPLICATION DES LARGEURS
+        // --------------------------------------------------
+
+        revenueProgressElement.style.width =
+            revenueWidth + "%";
+
+        commissionProgressElement.style.width =
+            commissionWidth + "%";
+
+
+        // --------------------------------------------------
+        // MÉMORISATION DE LA PÉRIODE
+        // --------------------------------------------------
+
+        window.financialProgressPeriod =
+            periodSelect.value;
+
+
+        alert(
+            "RELATÓRIOS — BLOC 12.24.2\n\n" +
+            "Synchronisation réussie.\n\n" +
+
+            "Période actuelle : " +
+            periodSelect.value +
+            "\n\n" +
+
+            "Barre Receita : " +
+            revenueWidth.toFixed(1) +
+            "%\n\n" +
+
+            "Barre Commission : " +
+            commissionWidth.toFixed(1) +
+            "%\n\n" +
+
+            "Les barres utilisent les données de la période sélectionnée.\n\n" +
+
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+
+        alert(
+            "RELATÓRIOS — BLOC 12.24 TERMINÉ ✅\n\n" +
+            "Les barres financières sont maintenant synchronisées avec la période sélectionnée.\n\n" +
+
+            "ID utilisé : financialRevenueProgress\n" +
+            "ID utilisé : financialCommissionProgress\n" +
+            "ID utilisé : reportsPeriodSelect\n\n" +
+
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.24 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.24 ERREUR ❌\n\n" +
             error.message
         );
     }
