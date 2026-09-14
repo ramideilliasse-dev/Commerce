@@ -3899,6 +3899,7 @@ displayFilteredFinancialStatistics();
 calculateFinancialProgress();
 displayFinancialProgress();
 synchronizeFinancialProgressWithPeriod();
+displayIntelligentFinancialPercentages();
  
     }
     catch (error) {
@@ -7589,6 +7590,154 @@ function synchronizeFinancialProgressWithPeriod() {
 
         alert(
             "RELATÓRIOS — BLOC 12.24 ERREUR ❌\n\n" +
+            error.message
+        );
+    }
+}
+// ======================================================
+// BLOC 12.25 — AFFICHAGE INTELLIGENT DES POURCENTAGES
+// ======================================================
+
+function displayIntelligentFinancialPercentages() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.25.1\n\n" +
+            "Préparation de l'affichage intelligent des pourcentages..."
+        );
+
+
+        // --------------------------------------------------
+        // RÉCUPÉRATION DES DONNÉES
+        // --------------------------------------------------
+
+        const progressData =
+            window.financialProgressData;
+
+        if (!progressData) {
+            throw new Error(
+                "Les données financialProgressData sont introuvables."
+            );
+        }
+
+
+        // --------------------------------------------------
+        // RÉCUPÉRATION DES IDs HTML EXISTANTS
+        // --------------------------------------------------
+
+        const revenueProgress =
+            document.getElementById("financialRevenueProgress");
+
+        const commissionProgress =
+            document.getElementById("financialCommissionProgress");
+
+        if (!revenueProgress) {
+            throw new Error(
+                "L'ID HTML financialRevenueProgress est introuvable."
+            );
+        }
+
+        if (!commissionProgress) {
+            throw new Error(
+                "L'ID HTML financialCommissionProgress est introuvable."
+            );
+        }
+
+
+        // --------------------------------------------------
+        // CALCUL DES POURCENTAGES D'AFFICHAGE
+        // --------------------------------------------------
+
+        const revenueProgressValue =
+            Number(progressData.revenueProgress) || 0;
+
+        const commissionProgressValue =
+            Number(progressData.commissionProgress) || 0;
+
+
+        const revenueDisplayValue =
+            Math.min(
+                Math.max(revenueProgressValue, 0),
+                100
+            );
+
+        const commissionDisplayValue =
+            Math.min(
+                Math.max(commissionProgressValue, 0),
+                100
+            );
+
+
+        // --------------------------------------------------
+        // APPLICATION DES BARRES
+        // --------------------------------------------------
+
+        revenueProgress.style.width =
+            revenueDisplayValue + "%";
+
+        commissionProgress.style.width =
+            commissionDisplayValue + "%";
+
+
+        // --------------------------------------------------
+        // SAUVEGARDE DES VALEURS POUR LA SUITE
+        // --------------------------------------------------
+
+        window.intelligentFinancialPercentages = {
+
+            revenue:
+                revenueDisplayValue,
+
+            commission:
+                commissionDisplayValue
+
+        };
+
+
+        alert(
+            "RELATÓRIOS — BLOC 12.25.2\n\n" +
+            "Affichage intelligent terminé.\n\n" +
+
+            "Progression Receita : " +
+            revenueDisplayValue.toFixed(1) +
+            "%\n\n" +
+
+            "Progression Commission : " +
+            commissionDisplayValue.toFixed(1) +
+            "%\n\n" +
+
+            "Barre Receita : " +
+            revenueDisplayValue.toFixed(1) +
+            "%\n\n" +
+
+            "Barre Commission : " +
+            commissionDisplayValue.toFixed(1) +
+            "%\n\n" +
+
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+
+        alert(
+            "RELATÓRIOS — BLOC 12.25 TERMINÉ ✅\n\n" +
+            "Les pourcentages financiers sont maintenant affichés de manière contrôlée.\n\n" +
+
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.25 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.25 ERREUR ❌\n\n" +
             error.message
         );
     }
