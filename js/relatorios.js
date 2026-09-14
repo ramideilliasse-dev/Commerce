@@ -3900,6 +3900,7 @@ calculateFinancialProgress();
 displayFinancialProgress();
 synchronizeFinancialProgressWithPeriod();
 displayIntelligentFinancialPercentages();
+prepareFinancialSummary();
  
     }
     catch (error) {
@@ -7738,6 +7739,155 @@ function displayIntelligentFinancialPercentages() {
 
         alert(
             "RELATÓRIOS — BLOC 12.25 ERREUR ❌\n\n" +
+            error.message
+        );
+    }
+}
+// ======================================================
+// BLOC 12.26 — PRÉPARATION DU RÉSUMÉ FINANCIER
+// ======================================================
+
+function prepareFinancialSummary() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.26.1\n\n" +
+            "Préparation du résumé financier..."
+        );
+
+
+        // --------------------------------------------------
+        // RÉCUPÉRATION DES DONNÉES EXISTANTES
+        // --------------------------------------------------
+
+        const financialData =
+            window.filteredFinancialStatistics;
+
+        const progressData =
+            window.financialProgressData;
+
+        const periodSelect =
+            document.getElementById("reportsPeriodSelect");
+
+
+        if (!financialData) {
+            throw new Error(
+                "Les statistiques financières sont introuvables."
+            );
+        }
+
+        if (!progressData) {
+            throw new Error(
+                "Les données de progression financière sont introuvables."
+            );
+        }
+
+        if (!periodSelect) {
+            throw new Error(
+                "L'ID HTML reportsPeriodSelect est introuvable."
+            );
+        }
+
+
+        // --------------------------------------------------
+        // PRÉPARATION DU RÉSUMÉ
+        // --------------------------------------------------
+
+        const summary = {
+
+            period:
+                periodSelect.value,
+
+            totalRevenue:
+                Number(financialData.totalRevenue) || 0,
+
+            averageRevenue:
+                Number(financialData.averageRevenue) || 0,
+
+            highestOrder:
+                Number(financialData.highestOrder) || 0,
+
+            estimatedCommission:
+                Number(financialData.estimatedCommission) || 0,
+
+            commissionRate:
+                Number(financialData.commissionRate) || 5,
+
+            revenueProgress:
+                Number(progressData.revenueProgress) || 0,
+
+            commissionProgress:
+                Number(progressData.commissionProgress) || 0
+        };
+
+
+        // --------------------------------------------------
+        // SAUVEGARDE POUR LES BLOCS SUIVANTS
+        // --------------------------------------------------
+
+        window.financialSummaryData = summary;
+
+
+        alert(
+            "RELATÓRIOS — BLOC 12.26.2\n\n" +
+            "Résumé financier préparé avec succès.\n\n" +
+
+            "Période : " +
+            summary.period +
+            "\n\n" +
+
+            "Receita : " +
+            summary.totalRevenue.toLocaleString("pt-AO") +
+            " Kz\n\n" +
+
+            "Moyenne : " +
+            summary.averageRevenue.toLocaleString("pt-AO") +
+            " Kz\n\n" +
+
+            "Plus grosse commande : " +
+            summary.highestOrder.toLocaleString("pt-AO") +
+            " Kz\n\n" +
+
+            "Commission estimée : " +
+            summary.estimatedCommission.toLocaleString("pt-AO") +
+            " Kz\n\n" +
+
+            "Taux de commission : " +
+            summary.commissionRate.toFixed(1) +
+            "%\n\n" +
+
+            "Progression Receita : " +
+            summary.revenueProgress.toFixed(1) +
+            "%\n\n" +
+
+            "Progression Commission : " +
+            summary.commissionProgress.toFixed(1) +
+            "%\n\n" +
+
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+
+        alert(
+            "RELATÓRIOS — BLOC 12.26 TERMINÉ ✅\n\n" +
+            "Le résumé financier est prêt pour les prochaines fonctions.\n\n" +
+
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.26 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.26 ERREUR ❌\n\n" +
             error.message
         );
     }
