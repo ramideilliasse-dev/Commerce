@@ -35,11 +35,11 @@ import {
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    
     initializeReports();
 
-});
+    initializeReportsBackButton();
 
+});
 
 /* =========================================================
    BLOC 1.1 — INITIALISATION PRINCIPALE
@@ -3902,7 +3902,7 @@ synchronizeFinancialProgressWithPeriod();
 displayIntelligentFinancialPercentages();
 prepareFinancialSummary();
 displayFinancialSummary();
- initializeReportsBackButton();
+ 
     }
     catch (error) {
 
