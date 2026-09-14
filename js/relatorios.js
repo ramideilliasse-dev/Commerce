@@ -3895,8 +3895,10 @@ displaySalesChartStatistics();
 drawRealSalesChart();
 fixSalesChartDateLabels();
      calculateFilteredFinancialStatistics();
-     displayFilteredFinancialStatistics();
-     calculateFinancialProgress();
+displayFilteredFinancialStatistics();
+calculateFinancialProgress();
+displayFinancialProgress();
+ 
     }
     catch (error) {
 
@@ -7337,4 +7339,107 @@ function calculateFinancialProgress() {
 
     }
 
+}
+// ======================================================
+// BLOC 12.23 — AFFICHAGE DES BARRES FINANCIÈRES
+// ======================================================
+
+function displayFinancialProgress() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.23.1\n\n" +
+            "Début de l'affichage des progressions financières..."
+        );
+
+        const revenueProgressElement =
+            document.getElementById("financialRevenueProgress");
+
+        const commissionProgressElement =
+            document.getElementById("financialCommissionProgress");
+
+        if (!revenueProgressElement) {
+            throw new Error(
+                "L'ID HTML financialRevenueProgress est introuvable."
+            );
+        }
+
+        if (!commissionProgressElement) {
+            throw new Error(
+                "L'ID HTML financialCommissionProgress est introuvable."
+            );
+        }
+
+        const progressData = window.financialProgressData;
+
+        if (!progressData) {
+            throw new Error(
+                "Les données de progression financière sont introuvables."
+            );
+        }
+
+        const revenueWidth =
+            Number(progressData.revenueBarWidth) || 0;
+
+        const commissionWidth =
+            Number(progressData.commissionBarWidth) || 0;
+
+
+        // --------------------------------------------------
+        // BARRE RECETTE
+        // --------------------------------------------------
+
+        revenueProgressElement.style.width =
+            revenueWidth + "%";
+
+
+        // --------------------------------------------------
+        // BARRE COMMISSION
+        // --------------------------------------------------
+
+        commissionProgressElement.style.width =
+            commissionWidth + "%";
+
+
+        alert(
+            "RELATÓRIOS — BLOC 12.23.2\n\n" +
+            "Barres financières affichées avec succès.\n\n" +
+
+            "Barre Receita : " +
+            revenueWidth.toFixed(1) +
+            "%\n\n" +
+
+            "Barre Commission : " +
+            commissionWidth.toFixed(1) +
+            "%\n\n" +
+
+            "ID Receita détecté : financialRevenueProgress\n" +
+            "ID Commission détecté : financialCommissionProgress\n\n" +
+
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+
+        alert(
+            "RELATÓRIOS — BLOC 12.23 TERMINÉ ✅\n\n" +
+            "Les deux barres de progression financières sont maintenant affichées.\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.23 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.23 ERREUR ❌\n\n" +
+            error.message
+        );
+    }
 }
