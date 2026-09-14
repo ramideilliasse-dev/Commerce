@@ -3901,6 +3901,7 @@ displayFinancialProgress();
 synchronizeFinancialProgressWithPeriod();
 displayIntelligentFinancialPercentages();
 prepareFinancialSummary();
+displayFinancialSummary();
  
     }
     catch (error) {
@@ -7888,6 +7889,141 @@ function prepareFinancialSummary() {
 
         alert(
             "RELATÓRIOS — BLOC 12.26 ERREUR ❌\n\n" +
+            error.message
+        );
+    }
+}
+// ======================================================
+// BLOC 12.27 — AFFICHAGE DU RÉSUMÉ FINANCIER
+// ======================================================
+
+function displayFinancialSummary() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.27.1\n\n" +
+            "Début de l'affichage du résumé financier..."
+        );
+
+
+        // --------------------------------------------------
+        // RÉCUPÉRATION DES DONNÉES
+        // --------------------------------------------------
+
+        const summary =
+            window.financialSummaryData;
+
+        if (!summary) {
+            throw new Error(
+                "Les données financialSummaryData sont introuvables."
+            );
+        }
+
+
+        // --------------------------------------------------
+        // RÉCUPÉRATION DES IDs HTML EXISTANTS
+        // --------------------------------------------------
+
+        const summaryRevenue =
+            document.getElementById("reportSummaryRevenue");
+
+        const summaryCommission =
+            document.getElementById("reportSummaryCommission");
+
+        const summaryGrowth =
+            document.getElementById("reportSummaryGrowth");
+
+
+        if (!summaryRevenue) {
+            throw new Error(
+                "L'ID HTML reportSummaryRevenue est introuvable."
+            );
+        }
+
+        if (!summaryCommission) {
+            throw new Error(
+                "L'ID HTML reportSummaryCommission est introuvable."
+            );
+        }
+
+        if (!summaryGrowth) {
+            throw new Error(
+                "L'ID HTML reportSummaryGrowth est introuvable."
+            );
+        }
+
+
+        // --------------------------------------------------
+        // AFFICHAGE RECETTE
+        // --------------------------------------------------
+
+        summaryRevenue.textContent =
+            summary.totalRevenue.toLocaleString("pt-AO") +
+            " Kz";
+
+
+        // --------------------------------------------------
+        // AFFICHAGE COMMISSION
+        // --------------------------------------------------
+
+        summaryCommission.textContent =
+            summary.estimatedCommission.toLocaleString("pt-AO") +
+            " Kz";
+
+
+        // --------------------------------------------------
+        // AFFICHAGE CROISSANCE
+        // --------------------------------------------------
+
+        summaryGrowth.textContent =
+            summary.revenueProgress.toFixed(1) +
+            "%";
+
+
+        alert(
+            "RELATÓRIOS — BLOC 12.27.2\n\n" +
+            "Résumé financier affiché avec succès.\n\n" +
+
+            "Receita : " +
+            summary.totalRevenue.toLocaleString("pt-AO") +
+            " Kz\n\n" +
+
+            "Commission : " +
+            summary.estimatedCommission.toLocaleString("pt-AO") +
+            " Kz\n\n" +
+
+            "Croissance : " +
+            summary.revenueProgress.toFixed(1) +
+            "%\n\n" +
+
+            "IDs utilisés :\n" +
+            "reportSummaryRevenue\n" +
+            "reportSummaryCommission\n" +
+            "reportSummaryGrowth\n\n" +
+
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+
+        alert(
+            "RELATÓRIOS — BLOC 12.27 TERMINÉ ✅\n\n" +
+            "Le résumé financier est maintenant affiché dans les éléments HTML existants.\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.27 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.27 ERREUR ❌\n\n" +
             error.message
         );
     }
