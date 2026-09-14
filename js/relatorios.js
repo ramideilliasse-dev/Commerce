@@ -3896,6 +3896,7 @@ drawRealSalesChart();
 fixSalesChartDateLabels();
      calculateFilteredFinancialStatistics();
      displayFilteredFinancialStatistics();
+     calculateFinancialProgress();
     }
     catch (error) {
 
@@ -7127,6 +7128,210 @@ function displayFilteredFinancialStatistics() {
 
         alert(
             "RELATÓRIOS — BLOC 12.21 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+function calculateFinancialProgress() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.22.1\n\n" +
+            "Calcul des progressions financières..."
+        );
+
+        const statistics =
+            window.filteredFinancialStatistics;
+
+        const comparison =
+            window.reportsGrowthComparison;
+
+        if (!statistics) {
+            throw new Error(
+                "Les statistiques financières filtrées sont introuvables."
+            );
+        }
+
+        if (!comparison) {
+            throw new Error(
+                "Les données de comparaison sont introuvables."
+            );
+        }
+
+        const currentRevenue =
+            Number(
+                statistics.totalRevenue
+            ) || 0;
+
+        const currentCommission =
+            Number(
+                statistics.estimatedCommission
+            ) || 0;
+
+        const previousRevenue =
+            Number(
+                comparison.previousRevenue
+            ) || 0;
+
+        const previousCommission =
+            previousRevenue *
+            (
+                Number(
+                    statistics.commissionRate
+                ) || 5
+            ) /
+            100;
+
+        let revenueProgress = 0;
+        let commissionProgress = 0;
+
+        /*
+         * Si la période précédente possède
+         * des revenus, on compare les deux.
+         */
+
+        if (previousRevenue > 0) {
+
+            revenueProgress =
+                (
+                    currentRevenue /
+                    previousRevenue
+                ) * 100;
+
+        }
+        else if (currentRevenue > 0) {
+
+            /*
+             * Nouvelle période avec ventes,
+             * mais aucune vente précédente.
+             */
+
+            revenueProgress = 100;
+
+        }
+
+        if (previousCommission > 0) {
+
+            commissionProgress =
+                (
+                    currentCommission /
+                    previousCommission
+                ) * 100;
+
+        }
+        else if (currentCommission > 0) {
+
+            commissionProgress = 100;
+
+        }
+
+        /*
+         * Limitation visuelle à 100%.
+         *
+         * Une croissance supérieure à 100%
+         * sera conservée dans les statistiques,
+         * mais la barre ne dépassera jamais
+         * son conteneur.
+         */
+
+        const revenueBarWidth =
+            Math.min(
+                Math.max(
+                    revenueProgress,
+                    0
+                ),
+                100
+            );
+
+        const commissionBarWidth =
+            Math.min(
+                Math.max(
+                    commissionProgress,
+                    0
+                ),
+                100
+            );
+
+        window.financialProgressData = {
+
+            revenueProgress,
+
+            commissionProgress,
+
+            revenueBarWidth,
+
+            commissionBarWidth,
+
+            currentRevenue,
+
+            previousRevenue,
+
+            currentCommission,
+
+            previousCommission
+
+        };
+
+        alert(
+            "RELATÓRIOS — BLOC 12.22.2\n\n" +
+            "Progressions financières calculées.\n\n" +
+            "Receita actuelle : " +
+            currentRevenue.toLocaleString(
+                "pt-AO"
+            ) +
+            " Kz\n\n" +
+            "Receita précédente : " +
+            previousRevenue.toLocaleString(
+                "pt-AO"
+            ) +
+            " Kz\n\n" +
+            "Progression Receita : " +
+            revenueProgress.toFixed(1) +
+            "%\n\n" +
+            "Commission actuelle : " +
+            currentCommission.toLocaleString(
+                "pt-AO"
+            ) +
+            " Kz\n\n" +
+            "Commission précédente : " +
+            previousCommission.toLocaleString(
+                "pt-AO"
+            ) +
+            " Kz\n\n" +
+            "Progression Commission : " +
+            commissionProgress.toFixed(1) +
+            "%\n\n" +
+            "Largeur barre Receita : " +
+            revenueBarWidth.toFixed(1) +
+            "%\n\n" +
+            "Largeur barre Commission : " +
+            commissionBarWidth.toFixed(1) +
+            "%\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.22 TERMINÉ ✅\n\n" +
+            "Les progressions financières sont prêtes pour l'affichage.\n\n" +
+            "Aucune barre HTML n'est encore modifiée.\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.22 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.22 ERREUR ❌\n\n" +
             error.message
         );
 
