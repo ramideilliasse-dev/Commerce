@@ -3902,7 +3902,7 @@ synchronizeFinancialProgressWithPeriod();
 displayIntelligentFinancialPercentages();
 prepareFinancialSummary();
 displayFinancialSummary();
- 
+ initializeReportsBackButton();
     }
     catch (error) {
 
@@ -8027,4 +8027,84 @@ function displayFinancialSummary() {
             error.message
         );
     }
+}
+// ======================================================
+// BLOC 12.28 — BOUTON RETOUR
+// ======================================================
+
+function initializeReportsBackButton() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.28.1\n\n" +
+            "Initialisation du bouton Retour..."
+        );
+
+
+        // --------------------------------------------------
+        // RÉCUPÉRATION DE L'ID HTML EXISTANT
+        // --------------------------------------------------
+
+        const backButton =
+            document.getElementById("backReportsButton");
+
+
+        if (!backButton) {
+
+            throw new Error(
+                "L'ID HTML backReportsButton est introuvable."
+            );
+
+        }
+
+
+        // --------------------------------------------------
+        // FONCTION DU BOUTON RETOUR
+        // --------------------------------------------------
+
+        backButton.addEventListener("click", function () {
+
+            alert(
+                "RELATÓRIOS — BLOC 12.28.2\n\n" +
+                "Bouton Retour détecté.\n\n" +
+                "Retour vers la page précédente..."
+            );
+
+            window.history.back();
+
+        });
+
+
+        alert(
+            "RELATÓRIOS — BLOC 12.28.3\n\n" +
+            "Bouton Retour configuré avec succès.\n\n" +
+            "ID utilisé : backReportsButton\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+
+        alert(
+            "RELATÓRIOS — BLOC 12.28 TERMINÉ ✅\n\n" +
+            "Le bouton Retour est maintenant fonctionnel.\n\n" +
+            "Aucun nouvel ID HTML créé.\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.28 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.28 ERREUR ❌\n\n" +
+            error.message
+        );
+
+    }
+
 }
