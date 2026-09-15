@@ -4,6 +4,10 @@ import {
     setDoc,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 /* =========================================================
    TOMA — DASHBOARD SETTINGS
    BLOC 2 — EN-TÊTE
@@ -369,13 +373,13 @@ document.addEventListener(
 /* =========================================================
    TOMA — DASHBOARD SETTINGS
    BLOC 4B — COMMISSION FIREBASE
-   VERSION CORRIGÉE
+   CORRECTION AUTHENTIFICATION
    ========================================================= */
 
 
 /* ---------------------------------------------------------
    BLOC 4B.1
-   INITIALISATION FIREBASE
+   INITIALISATION
    --------------------------------------------------------- */
 
 async function initializeCommissionFirebase() {
@@ -429,58 +433,40 @@ async function initializeCommissionFirebase() {
             );
 
 
-        if (!firebaseStatusArea) {
-
+        if (!firebaseStatusArea)
             throw new Error(
                 "ID commissionFirebaseStatusArea introuvable."
             );
 
-        }
 
-
-        if (!firebaseStatusIcon) {
-
+        if (!firebaseStatusIcon)
             throw new Error(
                 "ID commissionFirebaseStatusIcon introuvable."
             );
 
-        }
 
-
-        if (!firebaseStatusText) {
-
+        if (!firebaseStatusText)
             throw new Error(
                 "ID commissionFirebaseStatusText introuvable."
             );
 
-        }
 
-
-        if (!commissionRateInput) {
-
+        if (!commissionRateInput)
             throw new Error(
                 "ID commissionRateInput introuvable."
             );
 
-        }
 
-
-        if (!commissionToggle) {
-
+        if (!commissionToggle)
             throw new Error(
                 "ID commissionEnabledToggle introuvable."
             );
 
-        }
 
-
-        if (!saveButton) {
-
+        if (!saveButton)
             throw new Error(
                 "ID saveCommissionSettingsButton introuvable."
             );
-
-        }
 
 
         alert(
@@ -492,37 +478,31 @@ async function initializeCommissionFirebase() {
 
         /* -------------------------------------------------
            BLOC 4B.3
-           CHARGEMENT DU MODULE FIREBASE
+           CHARGEMENT FIREBASE
            ------------------------------------------------- */
 
         const firebaseModule =
             await import("../firebase.js");
 
 
-        const {
-            db,
-            auth,
-            authReady,
-            currentUser
-        } = firebaseModule;
+        const db =
+            firebaseModule.db;
 
 
-        if (!db) {
+        const auth =
+            firebaseModule.auth;
 
+
+        if (!db)
             throw new Error(
                 "Firestore (db) est introuvable."
             );
 
-        }
 
-
-        if (!auth) {
-
+        if (!auth)
             throw new Error(
                 "Firebase Auth est introuvable."
             );
-
-        }
 
 
         alert(
@@ -534,53 +514,79 @@ async function initializeCommissionFirebase() {
 
         /* -------------------------------------------------
            BLOC 4B.4
-           ATTENDRE QUE FIREBASE AUTH SOIT PRÊT
+           ATTENTE RÉELLE DE FIREBASE AUTH
            ------------------------------------------------- */
 
         alert(
             "TOMA — SETTINGS\n\n" +
             "BLOC 4B.4\n\n" +
-            "Attente de la vérification de la session utilisateur..."
+            "Attente de la vérification de la session..."
         );
 
 
-        let attempts = 0;
-
-        const maxAttempts = 100;
-
-
-        while (
-            !authReady &&
-            attempts < maxAttempts
-        ) {
-
+        const user =
             await new Promise(
-                resolve =>
-                    setTimeout(
-                        resolve,
-                        100
-                    )
+                (resolve, reject) => {
+
+                    let finished = false;
+
+
+                    const timeout =
+                        setTimeout(
+                            () => {
+
+                                if (!finished) {
+
+                                    finished = true;
+
+                                    reject(
+                                        new Error(
+                                            "Firebase Auth n'a pas répondu dans le délai prévu."
+                                        )
+                                    );
+
+                                }
+
+                            },
+                            15000
+                        );
+
+
+                    const unsubscribe =
+                        onAuthStateChanged(
+                            auth,
+                            (firebaseUser) => {
+
+                                if (finished)
+                                    return;
+
+
+                                finished = true;
+
+
+                                clearTimeout(
+                                    timeout
+                                );
+
+
+                                unsubscribe();
+
+
+                                resolve(
+                                    firebaseUser
+                                );
+
+                            }
+                        );
+
+                }
             );
-
-
-            attempts++;
-
-        }
 
 
         /* -------------------------------------------------
            BLOC 4B.5
-           VÉRIFICATION AUTH
+           AUTHENTIFICATION CONFIRMÉE
            ------------------------------------------------- */
-
-        if (!authReady) {
-
-            throw new Error(
-                "Firebase Auth n'a pas terminé son initialisation."
-            );
-
-        }
-
 
         alert(
             "TOMA — SETTINGS\n\n" +
@@ -591,13 +597,8 @@ async function initializeCommissionFirebase() {
 
         /* -------------------------------------------------
            BLOC 4B.6
-           RÉCUPÉRATION DE L'UTILISATEUR
+           VÉRIFICATION UTILISATEUR
            ------------------------------------------------- */
-
-        const user =
-            auth.currentUser ||
-            currentUser;
-
 
         if (!user) {
 
@@ -620,7 +621,7 @@ async function initializeCommissionFirebase() {
 
 
             throw new Error(
-                "Aucun utilisateur connecté. Connectez-vous avec un compte admin ou superadmin."
+                "Aucun utilisateur connecté. Connectez-vous avec votre compte administrateur."
             );
 
         }
@@ -657,9 +658,9 @@ async function initializeCommissionFirebase() {
         if (!userSnapshot.exists()) {
 
             throw new Error(
-                "Le document utilisateur users/" +
+                "Le document users/" +
                 user.uid +
-                " n'existe pas."
+                " n'existe pas dans Firestore."
             );
 
         }
@@ -695,7 +696,7 @@ async function initializeCommissionFirebase() {
 
         /* -------------------------------------------------
            BLOC 4B.8
-           LECTURE DES PARAMÈTRES
+           LECTURE DES SETTINGS
            ------------------------------------------------- */
 
         const settingsReference =
@@ -712,7 +713,9 @@ async function initializeCommissionFirebase() {
             );
 
 
-        if (settingsSnapshot.exists()) {
+        if (
+            settingsSnapshot.exists()
+        ) {
 
             const settingsData =
                 settingsSnapshot.data();
@@ -749,7 +752,7 @@ async function initializeCommissionFirebase() {
             alert(
                 "TOMA — SETTINGS\n\n" +
                 "BLOC 4B.8\n\n" +
-                "Aucun document settings/marketplace n'existe encore.\n\n" +
+                "Le document settings/marketplace n'existe pas encore.\n\n" +
                 "Les valeurs par défaut seront utilisées."
             );
 
@@ -766,7 +769,7 @@ async function initializeCommissionFirebase() {
 
 
         firebaseStatusText.textContent =
-            "Connecté à Firebase — paramètres synchronisés.";
+            "Connecté à Firebase — prêt à synchroniser.";
 
 
         firebaseStatusArea.classList.remove(
@@ -781,7 +784,7 @@ async function initializeCommissionFirebase() {
 
         /* -------------------------------------------------
            BLOC 4B.10
-           ENREGISTREMENT FIRESTORE
+           SAUVEGARDE FIRESTORE
            ------------------------------------------------- */
 
         saveButton.addEventListener(
@@ -819,6 +822,14 @@ async function initializeCommissionFirebase() {
 
                     saveButton.disabled =
                         true;
+
+
+                    firebaseStatusIcon.textContent =
+                        "cloud_upload";
+
+
+                    firebaseStatusText.textContent =
+                        "Enregistrement dans Firestore...";
 
 
                     alert(
@@ -870,7 +881,7 @@ async function initializeCommissionFirebase() {
                     alert(
                         "TOMA — SETTINGS\n\n" +
                         "BLOC 4B.10 TERMINÉ ✅\n\n" +
-                        "Paramètres enregistrés avec succès dans Firestore.\n\n" +
+                        "Paramètres enregistrés avec succès.\n\n" +
                         "Commission : " +
                         rate +
                         "%\n\n" +
@@ -879,7 +890,10 @@ async function initializeCommissionFirebase() {
                             enabled
                                 ? "Active"
                                 : "Désactivée"
-                        )
+                        ) +
+                        "\n\n" +
+                        "Document créé :\n" +
+                        "settings/marketplace"
                     );
 
 
@@ -927,10 +941,15 @@ async function initializeCommissionFirebase() {
         );
 
 
+        /* -------------------------------------------------
+           BLOC 4B TERMINÉ
+           ------------------------------------------------- */
+
         alert(
             "TOMA — SETTINGS\n\n" +
             "BLOC 4B TERMINÉ ✅\n\n" +
-            "Firebase est maintenant connecté à la section Commission."
+            "Firebase Auth et Firestore sont prêts.\n\n" +
+            "Tu peux maintenant enregistrer la commission."
         );
 
 
