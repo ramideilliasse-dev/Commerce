@@ -270,3 +270,594 @@ body {
     }
 
 }
+/* =========================================================
+   TOMA — DASHBOARD SETTINGS
+   BLOC 3 — COMMISSION & MONÉTISATION
+   DESIGN PREMIUM
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   SECTION
+   --------------------------------------------------------- */
+
+#commissionSettingsSection {
+
+    margin-top: 24px;
+
+    width: 100%;
+
+}
+
+
+/* ---------------------------------------------------------
+   HEADER
+   --------------------------------------------------------- */
+
+#commissionSettingsHeader {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    margin-bottom: 14px;
+
+}
+
+
+#commissionSettingsIcon {
+
+    width: 48px;
+
+    height: 48px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff3e8,
+            #ffe3cf
+        );
+
+    color: #ff6a00;
+
+    box-shadow:
+        0 5px 15px rgba(255, 106, 0, 0.10);
+
+}
+
+
+#commissionSettingsIcon .material-symbols-rounded {
+
+    font-size: 26px;
+
+}
+
+
+#commissionSettingsHeaderText {
+
+    min-width: 0;
+
+}
+
+
+#commissionSettingsTitle {
+
+    margin: 0;
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+    color: #171717;
+
+}
+
+
+#commissionSettingsDescription {
+
+    margin: 4px 0 0;
+
+    font-size: 13px;
+
+    line-height: 1.45;
+
+    color: #777;
+
+}
+
+
+/* ---------------------------------------------------------
+   CARD PRINCIPALE
+   --------------------------------------------------------- */
+
+#commissionSettingsCard {
+
+    background: #ffffff;
+
+    border: 1px solid #e9eaed;
+
+    border-radius: 20px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.06);
+
+}
+
+
+/* ---------------------------------------------------------
+   COMMISSION RATE
+   --------------------------------------------------------- */
+
+#commissionRateArea {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding-bottom: 20px;
+
+    border-bottom: 1px solid #eeeeee;
+
+}
+
+
+#commissionRateInfo {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+
+}
+
+
+#commissionRateLabel {
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    color: #202020;
+
+}
+
+
+#commissionRateHint {
+
+    font-size: 12px;
+
+    color: #858585;
+
+}
+
+
+/* ---------------------------------------------------------
+   INPUT COMMISSION
+   --------------------------------------------------------- */
+
+#commissionRateInputWrapper {
+
+    position: relative;
+
+    width: 110px;
+
+    flex-shrink: 0;
+
+}
+
+
+#commissionRateInput {
+
+    width: 100%;
+
+    height: 48px;
+
+    padding: 0 32px 0 12px;
+
+    border: 1px solid #dddddd;
+
+    border-radius: 13px;
+
+    background: #fafafa;
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+    text-align: center;
+
+    color: #222;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+
+}
+
+
+#commissionRateInput:focus {
+
+    background: #ffffff;
+
+    border-color: #ff6a00;
+
+    box-shadow:
+        0 0 0 4px rgba(255, 106, 0, 0.10);
+
+}
+
+
+#commissionRatePercent {
+
+    position: absolute;
+
+    right: 11px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    color: #777;
+
+}
+
+
+/* ---------------------------------------------------------
+   ACTIVATION
+   --------------------------------------------------------- */
+
+#commissionActivationArea {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 20px 0;
+
+}
+
+
+#commissionActivationInfo {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+
+}
+
+
+#commissionActivationLabel {
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    color: #202020;
+
+}
+
+
+#commissionActivationDescription {
+
+    font-size: 12px;
+
+    line-height: 1.4;
+
+    color: #858585;
+
+}
+
+
+/* ---------------------------------------------------------
+   SWITCH PREMIUM
+   --------------------------------------------------------- */
+
+.premiumSwitch {
+
+    position: relative;
+
+    width: 52px;
+
+    height: 30px;
+
+    flex-shrink: 0;
+
+    display: inline-block;
+
+}
+
+
+.premiumSwitch input {
+
+    opacity: 0;
+
+    width: 0;
+
+    height: 0;
+
+}
+
+
+.premiumSwitchSlider {
+
+    position: absolute;
+
+    inset: 0;
+
+    cursor: pointer;
+
+    border-radius: 30px;
+
+    background: #d7d9dd;
+
+    transition:
+        background 0.25s ease,
+        box-shadow 0.25s ease;
+
+}
+
+
+.premiumSwitchSlider::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 22px;
+
+    height: 22px;
+
+    left: 4px;
+
+    top: 4px;
+
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 2px 5px rgba(0, 0, 0, 0.18);
+
+    transition:
+        transform 0.25s ease;
+
+}
+
+
+.premiumSwitch input:checked
++ .premiumSwitchSlider {
+
+    background: #ff6a00;
+
+    box-shadow:
+        0 4px 12px rgba(255, 106, 0, 0.25);
+
+}
+
+
+.premiumSwitch input:checked
++ .premiumSwitchSlider::before {
+
+    transform: translateX(22px);
+
+}
+
+
+/* ---------------------------------------------------------
+   STATUS
+   --------------------------------------------------------- */
+
+#commissionStatusArea {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 11px 13px;
+
+    border-radius: 11px;
+
+    background: #f1fbf5;
+
+    color: #168447;
+
+    margin-bottom: 18px;
+
+}
+
+
+#commissionStatusIcon {
+
+    font-size: 19px;
+
+}
+
+
+#commissionStatusText {
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+}
+
+
+/* ---------------------------------------------------------
+   SAVE BUTTON
+   --------------------------------------------------------- */
+
+#saveCommissionSettingsButton {
+
+    width: 100%;
+
+    min-height: 48px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    border: none;
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff6a00,
+            #ff7d26
+        );
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 7px 18px rgba(255, 106, 0, 0.20);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+
+}
+
+
+#saveCommissionSettingsButton:hover {
+
+    box-shadow:
+        0 9px 22px rgba(255, 106, 0, 0.28);
+
+}
+
+
+#saveCommissionSettingsButton:active {
+
+    transform: scale(0.98);
+
+}
+
+
+#saveCommissionSettingsButton
+.material-symbols-rounded {
+
+    font-size: 20px;
+
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 600px) {
+
+    #commissionSettingsSection {
+
+        margin-top: 20px;
+
+    }
+
+
+    #commissionSettingsCard {
+
+        padding: 16px;
+
+        border-radius: 18px;
+
+    }
+
+
+    #commissionSettingsHeader {
+
+        gap: 11px;
+
+    }
+
+
+    #commissionSettingsIcon {
+
+        width: 44px;
+
+        height: 44px;
+
+        border-radius: 13px;
+
+    }
+
+
+    #commissionSettingsTitle {
+
+        font-size: 17px;
+
+    }
+
+
+    #commissionSettingsDescription {
+
+        font-size: 12px;
+
+    }
+
+
+    #commissionRateArea {
+
+        gap: 12px;
+
+    }
+
+
+    #commissionRateInputWrapper {
+
+        width: 95px;
+
+    }
+
+
+    #commissionActivationArea {
+
+        gap: 12px;
+
+    }
+
+}
