@@ -1533,3 +1533,493 @@ document.addEventListener(
 
     }
 );
+/* =========================================================
+   BLOC 6 — ADMIN & PERMISSIONS
+========================================================= */
+
+async function initializeAdminPermissionsSettings() {
+
+    alert(
+        "TOMA — SETTINGS\n\n" +
+        "BLOC 6.1\n\n" +
+        "Initialisation da seção Administradores e permissões..."
+    );
+
+
+    /* -----------------------------------------------------
+       ELEMENTOS
+    ----------------------------------------------------- */
+
+    const currentAdminEmail =
+        document.getElementById(
+            "currentAdminEmail"
+        );
+
+    const currentAdminRoleBadge =
+        document.getElementById(
+            "currentAdminRoleBadge"
+        );
+
+    const userRegistrationToggle =
+        document.getElementById(
+            "userRegistrationToggle"
+        );
+
+    const merchantRegistrationToggle =
+        document.getElementById(
+            "merchantRegistrationToggle"
+        );
+
+    const adminPermissionsStatusIcon =
+        document.getElementById(
+            "adminPermissionsStatusIcon"
+        );
+
+    const adminPermissionsStatusText =
+        document.getElementById(
+            "adminPermissionsStatusText"
+        );
+
+    const adminPermissionsFirebaseStatusText =
+        document.getElementById(
+            "adminPermissionsFirebaseStatusText"
+        );
+
+    const saveButton =
+        document.getElementById(
+            "saveAdminPermissionsSettingsButton"
+        );
+
+
+    if (
+        !currentAdminEmail ||
+        !currentAdminRoleBadge ||
+        !userRegistrationToggle ||
+        !merchantRegistrationToggle ||
+        !adminPermissionsStatusIcon ||
+        !adminPermissionsStatusText ||
+        !adminPermissionsFirebaseStatusText ||
+        !saveButton
+    ) {
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 6 ERRO ❌\n\n" +
+            "Um ou mais elementos do BLOC 6 não foram encontrados."
+        );
+
+        return;
+    }
+
+
+    alert(
+        "TOMA — SETTINGS\n\n" +
+        "BLOC 6.2\n\n" +
+        "Todos os elementos de Administradores e permissões foram encontrados com sucesso."
+    );
+
+
+    /* -----------------------------------------------------
+       FIREBASE
+    ----------------------------------------------------- */
+
+    let firebase;
+
+    try {
+
+        firebase = await import("../firebase.js");
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 6 ERRO ❌\n\n" +
+            "Não foi possível conectar ao Firebase."
+        );
+
+        return;
+    }
+
+
+    const {
+        auth,
+        db
+    } = firebase;
+
+
+    const firestore =
+        await import(
+            "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+        );
+
+
+    const {
+        doc,
+        getDoc,
+        setDoc,
+        onSnapshot
+    } = firestore;
+
+
+    /* -----------------------------------------------------
+       AUTH
+    ----------------------------------------------------- */
+
+    const {
+    onAuthStateChanged
+} = await import(
+    "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
+);
+
+
+await new Promise((resolve) => {
+
+    if (auth.currentUser) {
+
+        resolve();
+
+        return;
+    }
+
+
+    const unsubscribe =
+        onAuthStateChanged(
+            auth,
+            () => {
+
+                unsubscribe();
+
+                resolve();
+
+            }
+        );
+
+});
+
+    const user = auth.currentUser;
+
+
+    if (!user) {
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 6 ERRO ❌\n\n" +
+            "Nenhum administrador está conectado."
+        );
+
+        return;
+    }
+
+
+    /* -----------------------------------------------------
+       ADMIN USER
+    ----------------------------------------------------- */
+
+    currentAdminEmail.textContent =
+        user.email || "Administrador";
+
+
+    try {
+
+        const userRef =
+            doc(
+                db,
+                "users",
+                user.uid
+            );
+
+
+        const userSnapshot =
+            await getDoc(userRef);
+
+
+        if (!userSnapshot.exists()) {
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 6 ERRO ❌\n\n" +
+                "O perfil do administrador não foi encontrado."
+            );
+
+            return;
+        }
+
+
+        const userData =
+            userSnapshot.data();
+
+
+        const role =
+            userData.role || "user";
+
+
+        if (
+            role !== "admin" &&
+            role !== "superadmin"
+        ) {
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 6 ACESSO NEGADO ❌\n\n" +
+                "Esta página está disponível apenas para administradores."
+            );
+
+            return;
+        }
+
+
+        if (role === "superadmin") {
+
+            currentAdminRoleBadge.textContent =
+                "SUPERADMIN";
+
+        } else {
+
+            currentAdminRoleBadge.textContent =
+                "ADMIN";
+        }
+
+
+        /* -------------------------------------------------
+           SETTINGS
+        ------------------------------------------------- */
+
+        const settingsRef =
+            doc(
+                db,
+                "settings",
+                "marketplace"
+            );
+
+
+        const settingsSnapshot =
+            await getDoc(settingsRef);
+
+
+        if (settingsSnapshot.exists()) {
+
+            const settings =
+                settingsSnapshot.data();
+
+
+            userRegistrationToggle.checked =
+                settings.userRegistrationEnabled !== false;
+
+
+            merchantRegistrationToggle.checked =
+                settings.merchantRegistrationEnabled !== false;
+
+        } else {
+
+            userRegistrationToggle.checked =
+                true;
+
+            merchantRegistrationToggle.checked =
+                true;
+
+        }
+
+
+        updateAdminPermissionsVisualState();
+
+
+        adminPermissionsFirebaseStatusText.textContent =
+            "Configurações carregadas do Firebase.";
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 6.3\n\n" +
+            "Configurações de permissões carregadas do Firebase."
+        );
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        adminPermissionsFirebaseStatusText.textContent =
+            "Erro ao carregar as configurações.";
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 6 ERRO ❌\n\n" +
+            "Erro ao carregar as configurações de permissões."
+        );
+
+        return;
+    }
+
+
+    /* -----------------------------------------------------
+       TOGGLES
+    ----------------------------------------------------- */
+
+    userRegistrationToggle.addEventListener(
+        "change",
+        updateAdminPermissionsVisualState
+    );
+
+
+    merchantRegistrationToggle.addEventListener(
+        "change",
+        updateAdminPermissionsVisualState
+    );
+
+
+    /* -----------------------------------------------------
+       SAVE
+    ----------------------------------------------------- */
+
+    saveButton.addEventListener(
+        "click",
+        async () => {
+
+            try {
+
+                saveButton.disabled = true;
+
+
+                await setDoc(
+                    doc(
+                        db,
+                        "settings",
+                        "marketplace"
+                    ),
+                    {
+
+                        userRegistrationEnabled:
+                            userRegistrationToggle.checked,
+
+                        merchantRegistrationEnabled:
+                            merchantRegistrationToggle.checked,
+
+                        updatedAt:
+                            new Date(),
+
+                        updatedBy:
+                            user.uid
+
+                    },
+                    {
+                        merge: true
+                    }
+                );
+
+
+                adminPermissionsFirebaseStatusText.textContent =
+                    "Configurações salvas com sucesso no Firebase.";
+
+
+                alert(
+                    "TOMA — SETTINGS\n\n" +
+                    "BLOC 6.4 TERMINÉ ✅\n\n" +
+                    "Configurações de administradores e permissões salvas com sucesso.\n\n" +
+                    "Inscrição de usuários: " +
+                    (
+                        userRegistrationToggle.checked
+                            ? "Ativa"
+                            : "Desativada"
+                    ) +
+                    "\n" +
+                    "Inscrição de comerciantes: " +
+                    (
+                        merchantRegistrationToggle.checked
+                            ? "Ativa"
+                            : "Desativada"
+                    )
+                );
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert(
+                    "TOMA — SETTINGS\n\n" +
+                    "BLOC 6 ERRO ❌\n\n" +
+                    "Não foi possível salvar as configurações."
+                );
+
+            } finally {
+
+                saveButton.disabled = false;
+
+            }
+
+        }
+    );
+
+
+    /* -----------------------------------------------------
+       FINAL
+    ----------------------------------------------------- */
+
+    alert(
+        "TOMA — SETTINGS\n\n" +
+        "BLOC 6 TERMINÉ ✅\n\n" +
+        "Administradores e permissões estão conectados ao Firebase."
+    );
+
+
+    /* =====================================================
+       VISUAL STATE
+    ===================================================== */
+
+    function updateAdminPermissionsVisualState() {
+
+        const usersActive =
+            userRegistrationToggle.checked;
+
+        const merchantsActive =
+            merchantRegistrationToggle.checked;
+
+
+        if (
+            usersActive &&
+            merchantsActive
+        ) {
+
+            adminPermissionsStatusIcon.textContent =
+                "check_circle";
+
+            adminPermissionsStatusText.textContent =
+                "Inscrições de usuários e comerciantes ativas";
+
+        } else if (
+            !usersActive &&
+            !merchantsActive
+        ) {
+
+            adminPermissionsStatusIcon.textContent =
+                "block";
+
+            adminPermissionsStatusText.textContent =
+                "Todas as inscrições estão desativadas";
+
+        } else if (
+            usersActive
+        ) {
+
+            adminPermissionsStatusIcon.textContent =
+                "person";
+
+            adminPermissionsStatusText.textContent =
+                "Inscrição de usuários ativa";
+
+        } else {
+
+            adminPermissionsStatusIcon.textContent =
+                "store";
+
+            adminPermissionsStatusText.textContent =
+                "Inscrição de comerciantes ativa";
+
+        }
+
+    }
+
+}
