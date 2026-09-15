@@ -934,3 +934,602 @@ document.addEventListener(
 
     }
 );
+/* =========================================================
+   TOMA — DASHBOARD SETTINGS
+   BLOC 5 — PAGAMENTOS
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   BLOC 5.1
+   INITIALISATION
+   --------------------------------------------------------- */
+
+async function initializePaymentSettings() {
+
+    try {
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 5.1\n\n" +
+            "Initialisation da seção Pagamentos..."
+        );
+
+
+        /* -------------------------------------------------
+           ELEMENTOS
+           ------------------------------------------------- */
+
+        const cashOnDeliveryToggle =
+            document.getElementById(
+                "cashOnDeliveryToggle"
+            );
+
+
+        const onlinePaymentToggle =
+            document.getElementById(
+                "onlinePaymentToggle"
+            );
+
+
+        const paymentStatusText =
+            document.getElementById(
+                "paymentSettingsStatusText"
+            );
+
+
+        const paymentStatusIcon =
+            document.getElementById(
+                "paymentSettingsStatusIcon"
+            );
+
+
+        const onlineNoticeText =
+            document.getElementById(
+                "onlinePaymentNoticeText"
+            );
+
+
+        const firebaseStatusIcon =
+            document.getElementById(
+                "paymentFirebaseStatusIcon"
+            );
+
+
+        const firebaseStatusText =
+            document.getElementById(
+                "paymentFirebaseStatusText"
+            );
+
+
+        const saveButton =
+            document.getElementById(
+                "savePaymentSettingsButton"
+            );
+
+
+        if (!cashOnDeliveryToggle)
+            throw new Error(
+                "ID cashOnDeliveryToggle introuvable."
+            );
+
+
+        if (!onlinePaymentToggle)
+            throw new Error(
+                "ID onlinePaymentToggle introuvable."
+            );
+
+
+        if (!paymentStatusText)
+            throw new Error(
+                "ID paymentSettingsStatusText introuvable."
+            );
+
+
+        if (!paymentStatusIcon)
+            throw new Error(
+                "ID paymentSettingsStatusIcon introuvable."
+            );
+
+
+        if (!onlineNoticeText)
+            throw new Error(
+                "ID onlinePaymentNoticeText introuvable."
+            );
+
+
+        if (!firebaseStatusIcon)
+            throw new Error(
+                "ID paymentFirebaseStatusIcon introuvable."
+            );
+
+
+        if (!firebaseStatusText)
+            throw new Error(
+                "ID paymentFirebaseStatusText introuvable."
+            );
+
+
+        if (!saveButton)
+            throw new Error(
+                "ID savePaymentSettingsButton introuvable."
+            );
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 5.2\n\n" +
+            "Todos os elementos de Pagamentos foram encontrados com sucesso."
+        );
+
+
+        /* -------------------------------------------------
+           FIREBASE
+           ------------------------------------------------- */
+
+        const firebaseModule =
+            await import("../firebase.js");
+
+
+        const db =
+            firebaseModule.db;
+
+
+        const auth =
+            firebaseModule.auth;
+
+
+        if (!db)
+            throw new Error(
+                "Firestore (db) introuvable."
+            );
+
+
+        if (!auth)
+            throw new Error(
+                "Firebase Auth introuvable."
+            );
+
+
+        /* -------------------------------------------------
+           AUTH
+           ------------------------------------------------- */
+
+        const user =
+            await new Promise(
+                (resolve, reject) => {
+
+                    let finished = false;
+
+
+                    const timeout =
+                        setTimeout(
+                            () => {
+
+                                if (!finished) {
+
+                                    finished = true;
+
+                                    reject(
+                                        new Error(
+                                            "Firebase Auth não respondeu no tempo esperado."
+                                        )
+                                    );
+
+                                }
+
+                            },
+                            15000
+                        );
+
+
+                    const unsubscribe =
+                        onAuthStateChanged(
+                            auth,
+                            (firebaseUser) => {
+
+                                if (finished)
+                                    return;
+
+
+                                finished = true;
+
+                                clearTimeout(
+                                    timeout
+                                );
+
+
+                                unsubscribe();
+
+
+                                resolve(
+                                    firebaseUser
+                                );
+
+                            }
+                        );
+
+                }
+            );
+
+
+        if (!user) {
+
+            throw new Error(
+                "Nenhum usuário conectado."
+            );
+
+        }
+
+
+        /* -------------------------------------------------
+           RÔLE
+           ------------------------------------------------- */
+
+        const userReference =
+            doc(
+                db,
+                "users",
+                user.uid
+            );
+
+
+        const userSnapshot =
+            await getDoc(
+                userReference
+            );
+
+
+        if (!userSnapshot.exists()) {
+
+            throw new Error(
+                "Documento do usuário não encontrado."
+            );
+
+        }
+
+
+        const userData =
+            userSnapshot.data();
+
+
+        const role =
+            userData.role || "user";
+
+
+        if (
+            role !== "admin" &&
+            role !== "superadmin"
+        ) {
+
+            throw new Error(
+                "Acesso recusado. Este usuário não é administrador."
+            );
+
+        }
+
+
+        /* -------------------------------------------------
+           DOCUMENT SETTINGS
+           ------------------------------------------------- */
+
+        const settingsReference =
+            doc(
+                db,
+                "settings",
+                "marketplace"
+            );
+
+
+        /* -------------------------------------------------
+           LECTURE DES PARAMÈTRES EXISTANTS
+           ------------------------------------------------- */
+
+        const settingsSnapshot =
+            await getDoc(
+                settingsReference
+            );
+
+
+        if (
+            settingsSnapshot.exists()
+        ) {
+
+            const data =
+                settingsSnapshot.data();
+
+
+            if (
+                data.cashOnDeliveryEnabled
+                !== undefined
+            ) {
+
+                cashOnDeliveryToggle.checked =
+                    data.cashOnDeliveryEnabled;
+
+            }
+
+
+            if (
+                data.onlinePaymentEnabled
+                !== undefined
+            ) {
+
+                onlinePaymentToggle.checked =
+                    data.onlinePaymentEnabled;
+
+            }
+
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 5.3\n\n" +
+                "Configurações de pagamento carregadas do Firebase."
+            );
+
+        } else {
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 5.3\n\n" +
+                "Nenhuma configuração de pagamento foi encontrada.\n\n" +
+                "Pagamento na entrega será usado como padrão."
+            );
+
+        }
+
+
+        /* -------------------------------------------------
+           MISE À JOUR VISUELLE
+           ------------------------------------------------- */
+
+        function updatePaymentStatus() {
+
+            const cashEnabled =
+                cashOnDeliveryToggle.checked;
+
+
+            const onlineEnabled =
+                onlinePaymentToggle.checked;
+
+
+            if (
+                cashEnabled &&
+                onlineEnabled
+            ) {
+
+                paymentStatusIcon.textContent =
+                    "payments";
+
+
+                paymentStatusText.textContent =
+                    "Pagamento na entrega e pagamento online ativos.";
+
+            }
+
+            else if (cashEnabled) {
+
+                paymentStatusIcon.textContent =
+                    "local_shipping";
+
+
+                paymentStatusText.textContent =
+                    "Pagamento na entrega ativo.";
+
+            }
+
+            else if (onlineEnabled) {
+
+                paymentStatusIcon.textContent =
+                    "credit_card";
+
+
+                paymentStatusText.textContent =
+                    "Pagamento online ativo.";
+
+            }
+
+            else {
+
+                paymentStatusIcon.textContent =
+                    "payments";
+
+
+                paymentStatusText.textContent =
+                    "Nenhum método de pagamento ativo.";
+
+            }
+
+
+            if (onlineEnabled) {
+
+                onlineNoticeText.textContent =
+                    "O pagamento online está ativo. O processamento real será conectado quando o provedor de pagamento for configurado.";
+
+            } else {
+
+                onlineNoticeText.textContent =
+                    "Este método está desativado. Nenhum pagamento online será processado pelo Toma.";
+
+            }
+
+        }
+
+
+        cashOnDeliveryToggle.addEventListener(
+            "change",
+            updatePaymentStatus
+        );
+
+
+        onlinePaymentToggle.addEventListener(
+            "change",
+            updatePaymentStatus
+        );
+
+
+        updatePaymentStatus();
+
+
+        /* -------------------------------------------------
+           FIREBASE STATUS
+           ------------------------------------------------- */
+
+        firebaseStatusIcon.textContent =
+            "cloud_done";
+
+
+        firebaseStatusText.textContent =
+            "Conectado — configurações carregadas.";
+
+
+        /* -------------------------------------------------
+           SAVE
+           ------------------------------------------------- */
+
+        saveButton.addEventListener(
+            "click",
+            async () => {
+
+                try {
+
+                    saveButton.disabled =
+                        true;
+
+
+                    firebaseStatusIcon.textContent =
+                        "cloud_upload";
+
+
+                    firebaseStatusText.textContent =
+                        "Salvando configurações...";
+
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 5.4\n\n" +
+                        "Salvando os métodos de pagamento no Firestore..."
+                    );
+
+
+                    await setDoc(
+                        settingsReference,
+                        {
+                            cashOnDeliveryEnabled:
+                                cashOnDeliveryToggle.checked,
+
+                            onlinePaymentEnabled:
+                                onlinePaymentToggle.checked,
+
+                            updatedAt:
+                                serverTimestamp(),
+
+                            updatedBy:
+                                user.uid
+                        },
+                        {
+                            merge: true
+                        }
+                    );
+
+
+                    firebaseStatusIcon.textContent =
+                        "cloud_done";
+
+
+                    firebaseStatusText.textContent =
+                        "Configurações de pagamento sincronizadas com Firebase.";
+
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 5.4 TERMINÉ ✅\n\n" +
+                        "Configurações de pagamento salvas com sucesso.\n\n" +
+                        "Pagamento na entrega: " +
+                        (
+                            cashOnDeliveryToggle.checked
+                                ? "Ativo"
+                                : "Desativado"
+                        ) +
+                        "\n\n" +
+                        "Pagamento online: " +
+                        (
+                            onlinePaymentToggle.checked
+                                ? "Ativo"
+                                : "Desativado"
+                        )
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Erro BLOC 5 Pagamentos:",
+                        error
+                    );
+
+
+                    firebaseStatusIcon.textContent =
+                        "cloud_off";
+
+
+                    firebaseStatusText.textContent =
+                        "Não foi possível sincronizar com Firestore.";
+
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "ERRO BLOC 5.4 ❌\n\n" +
+                        error.message
+                    );
+
+
+                } finally {
+
+                    saveButton.disabled =
+                        false;
+
+                }
+
+            }
+        );
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 5 TERMINÉ ✅\n\n" +
+            "A seção Pagamentos está conectada ao Firebase."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro BLOC 5:",
+            error
+        );
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "ERRO NO BLOC 5 ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* ---------------------------------------------------------
+   LANCEMENT
+   --------------------------------------------------------- */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        initializePaymentSettings();
+
+    }
+);
