@@ -1,4 +1,10 @@
- /* =========================================================
+import {
+    doc,
+    getDoc,
+    setDoc,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+/* =========================================================
    TOMA — DASHBOARD SETTINGS
    BLOC 2 — EN-TÊTE
    ========================================================= */
@@ -362,16 +368,17 @@ document.addEventListener(
 );
 /* =========================================================
    TOMA — DASHBOARD SETTINGS
-   BLOC 4B — CONNEXION FIREBASE
+   BLOC 4B — COMMISSION FIREBASE
+   VERSION CORRIGÉE
    ========================================================= */
 
 
 /* ---------------------------------------------------------
    BLOC 4B.1
-   INITIALISATION
+   INITIALISATION FIREBASE
    --------------------------------------------------------- */
 
-function initializeCommissionFirebase() {
+async function initializeCommissionFirebase() {
 
     try {
 
@@ -383,7 +390,7 @@ function initializeCommissionFirebase() {
 
 
         /* -------------------------------------------------
-           ÉLÉMENTS HTML
+           RÉCUPÉRATION DES ÉLÉMENTS HTML
            ------------------------------------------------- */
 
         const firebaseStatusArea =
@@ -404,10 +411,28 @@ function initializeCommissionFirebase() {
             );
 
 
+        const commissionRateInput =
+            document.getElementById(
+                "commissionRateInput"
+            );
+
+
+        const commissionToggle =
+            document.getElementById(
+                "commissionEnabledToggle"
+            );
+
+
+        const saveButton =
+            document.getElementById(
+                "saveCommissionSettingsButton"
+            );
+
+
         if (!firebaseStatusArea) {
 
             throw new Error(
-                "L'ID commissionFirebaseStatusArea est introuvable."
+                "ID commissionFirebaseStatusArea introuvable."
             );
 
         }
@@ -416,7 +441,7 @@ function initializeCommissionFirebase() {
         if (!firebaseStatusIcon) {
 
             throw new Error(
-                "L'ID commissionFirebaseStatusIcon est introuvable."
+                "ID commissionFirebaseStatusIcon introuvable."
             );
 
         }
@@ -425,7 +450,34 @@ function initializeCommissionFirebase() {
         if (!firebaseStatusText) {
 
             throw new Error(
-                "L'ID commissionFirebaseStatusText est introuvable."
+                "ID commissionFirebaseStatusText introuvable."
+            );
+
+        }
+
+
+        if (!commissionRateInput) {
+
+            throw new Error(
+                "ID commissionRateInput introuvable."
+            );
+
+        }
+
+
+        if (!commissionToggle) {
+
+            throw new Error(
+                "ID commissionEnabledToggle introuvable."
+            );
+
+        }
+
+
+        if (!saveButton) {
+
+            throw new Error(
+                "ID saveCommissionSettingsButton introuvable."
             );
 
         }
@@ -439,190 +491,361 @@ function initializeCommissionFirebase() {
 
 
         /* -------------------------------------------------
-           IMPORT FIREBASE
+           BLOC 4B.3
+           CHARGEMENT DU MODULE FIREBASE
            ------------------------------------------------- */
 
-        import("../firebase.js")
-            .then(async (firebaseModule) => {
-
-                const {
-                    db,
-                    auth,
-                    authReady
-                } = firebaseModule;
+        const firebaseModule =
+            await import("../firebase.js");
 
 
-                const {
-                    doc,
-                    getDoc,
-                    setDoc,
-                    serverTimestamp
-                } = await import(
-                    "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-                );
+        const {
+            db,
+            auth,
+            authReady,
+            currentUser
+        } = firebaseModule;
 
 
-                alert(
-                    "TOMA — SETTINGS\n\n" +
-                    "BLOC 4B.3\n\n" +
-                    "Firebase a été chargé avec succès."
-                );
+        if (!db) {
+
+            throw new Error(
+                "Firestore (db) est introuvable."
+            );
+
+        }
 
 
-                /* -----------------------------------------
-                   ATTENDRE AUTH
-                ----------------------------------------- */
+        if (!auth) {
 
-                await authReady;
+            throw new Error(
+                "Firebase Auth est introuvable."
+            );
 
-
-                if (!auth.currentUser) {
-
-                    throw new Error(
-                        "Aucun utilisateur connecté."
-                    );
-
-                }
+        }
 
 
-                alert(
-                    "TOMA — SETTINGS\n\n" +
-                    "BLOC 4B.4\n\n" +
-                    "Utilisateur connecté détecté."
-                );
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 4B.3\n\n" +
+            "Firebase a été chargé avec succès."
+        );
 
 
-                /* -----------------------------------------
-                   VÉRIFICATION DU PROFIL
-                ----------------------------------------- */
+        /* -------------------------------------------------
+           BLOC 4B.4
+           ATTENDRE QUE FIREBASE AUTH SOIT PRÊT
+           ------------------------------------------------- */
 
-                const userRef =
-                    doc(
-                        db,
-                        "users",
-                        auth.currentUser.uid
-                    );
-
-
-                const userSnapshot =
-                    await getDoc(userRef);
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 4B.4\n\n" +
+            "Attente de la vérification de la session utilisateur..."
+        );
 
 
-                if (!userSnapshot.exists()) {
+        let attempts = 0;
 
-                    throw new Error(
-                        "Le profil utilisateur est introuvable."
-                    );
-
-                }
+        const maxAttempts = 100;
 
 
-                const userData =
-                    userSnapshot.data();
+        while (
+            !authReady &&
+            attempts < maxAttempts
+        ) {
+
+            await new Promise(
+                resolve =>
+                    setTimeout(
+                        resolve,
+                        100
+                    )
+            );
 
 
-                const role =
-                    String(
-                        userData.role || ""
-                    ).toLowerCase();
+            attempts++;
+
+        }
 
 
-                if (
-                    role !== "admin" &&
-                    role !== "superadmin"
-                ) {
+        /* -------------------------------------------------
+           BLOC 4B.5
+           VÉRIFICATION AUTH
+           ------------------------------------------------- */
 
-                    throw new Error(
-                        "Accès refusé : seuls les administrateurs peuvent gérer les paramètres."
-                    );
+        if (!authReady) {
 
-                }
+            throw new Error(
+                "Firebase Auth n'a pas terminé son initialisation."
+            );
 
-
-                alert(
-                    "TOMA — SETTINGS\n\n" +
-                    "BLOC 4B.5\n\n" +
-                    "Autorisation administrateur confirmée.\n\n" +
-                    "Rôle : " +
-                    role
-                );
+        }
 
 
-                /* -----------------------------------------
-                   DOCUMENT SETTINGS
-                ----------------------------------------- */
-
-                const marketplaceSettingsRef =
-                    doc(
-                        db,
-                        "settings",
-                        "marketplace"
-                    );
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 4B.5\n\n" +
+            "Firebase Auth est prêt."
+        );
 
 
-                const settingsSnapshot =
-                    await getDoc(
-                        marketplaceSettingsRef
-                    );
+        /* -------------------------------------------------
+           BLOC 4B.6
+           RÉCUPÉRATION DE L'UTILISATEUR
+           ------------------------------------------------- */
+
+        const user =
+            auth.currentUser ||
+            currentUser;
 
 
-                /* -----------------------------------------
-                   DOCUMENT EXISTANT
-                ----------------------------------------- */
+        if (!user) {
 
-                if (settingsSnapshot.exists()) {
+            firebaseStatusIcon.textContent =
+                "person_off";
 
-                    const settings =
-                        settingsSnapshot.data();
 
+            firebaseStatusText.textContent =
+                "Aucun utilisateur administrateur connecté.";
+
+
+            firebaseStatusArea.classList.remove(
+                "isSynced"
+            );
+
+
+            firebaseStatusArea.classList.add(
+                "isError"
+            );
+
+
+            throw new Error(
+                "Aucun utilisateur connecté. Connectez-vous avec un compte admin ou superadmin."
+            );
+
+        }
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 4B.6\n\n" +
+            "Utilisateur connecté avec succès.\n\n" +
+            "UID : " +
+            user.uid
+        );
+
+
+        /* -------------------------------------------------
+           BLOC 4B.7
+           VÉRIFICATION DU RÔLE
+           ------------------------------------------------- */
+
+        const userReference =
+            doc(
+                db,
+                "users",
+                user.uid
+            );
+
+
+        const userSnapshot =
+            await getDoc(
+                userReference
+            );
+
+
+        if (!userSnapshot.exists()) {
+
+            throw new Error(
+                "Le document utilisateur users/" +
+                user.uid +
+                " n'existe pas."
+            );
+
+        }
+
+
+        const userData =
+            userSnapshot.data();
+
+
+        const userRole =
+            userData.role || "user";
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 4B.7\n\n" +
+            "Rôle utilisateur détecté :\n\n" +
+            userRole
+        );
+
+
+        if (
+            userRole !== "admin" &&
+            userRole !== "superadmin"
+        ) {
+
+            throw new Error(
+                "Accès refusé. Le compte connecté n'est pas administrateur."
+            );
+
+        }
+
+
+        /* -------------------------------------------------
+           BLOC 4B.8
+           LECTURE DES PARAMÈTRES
+           ------------------------------------------------- */
+
+        const settingsReference =
+            doc(
+                db,
+                "settings",
+                "marketplace"
+            );
+
+
+        const settingsSnapshot =
+            await getDoc(
+                settingsReference
+            );
+
+
+        if (settingsSnapshot.exists()) {
+
+            const settingsData =
+                settingsSnapshot.data();
+
+
+            if (
+                settingsData.commissionRate !== undefined
+            ) {
+
+                commissionRateInput.value =
+                    settingsData.commissionRate;
+
+            }
+
+
+            if (
+                settingsData.commissionEnabled !== undefined
+            ) {
+
+                commissionToggle.checked =
+                    settingsData.commissionEnabled;
+
+            }
+
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 4B.8\n\n" +
+                "Les paramètres Commission ont été chargés depuis Firestore."
+            );
+
+        } else {
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 4B.8\n\n" +
+                "Aucun document settings/marketplace n'existe encore.\n\n" +
+                "Les valeurs par défaut seront utilisées."
+            );
+
+        }
+
+
+        /* -------------------------------------------------
+           BLOC 4B.9
+           STATUT FIRESTORE
+           ------------------------------------------------- */
+
+        firebaseStatusIcon.textContent =
+            "cloud_done";
+
+
+        firebaseStatusText.textContent =
+            "Connecté à Firebase — paramètres synchronisés.";
+
+
+        firebaseStatusArea.classList.remove(
+            "isError"
+        );
+
+
+        firebaseStatusArea.classList.add(
+            "isSynced"
+        );
+
+
+        /* -------------------------------------------------
+           BLOC 4B.10
+           ENREGISTREMENT FIRESTORE
+           ------------------------------------------------- */
+
+        saveButton.addEventListener(
+            "click",
+            async () => {
+
+                try {
 
                     const rate =
-                        typeof settings.commissionRate === "number"
-                            ? settings.commissionRate
-                            : 5;
+                        Number(
+                            commissionRateInput.value
+                        );
 
 
                     const enabled =
-                        typeof settings.commissionEnabled === "boolean"
-                            ? settings.commissionEnabled
-                            : true;
+                        commissionToggle.checked;
 
 
-                    const commissionInput =
-                        document.getElementById(
-                            "commissionRateInput"
+                    if (
+                        Number.isNaN(rate) ||
+                        rate < 0 ||
+                        rate > 100
+                    ) {
+
+                        alert(
+                            "TOMA — SETTINGS\n\n" +
+                            "ERREUR ❌\n\n" +
+                            "A comissão deve estar entre 0% e 100%."
                         );
 
-
-                    const commissionToggle =
-                        document.getElementById(
-                            "commissionEnabledToggle"
-                        );
-
-
-                    if (commissionInput) {
-
-                        commissionInput.value =
-                            rate;
+                        return;
 
                     }
 
 
-                    if (commissionToggle) {
-
-                        commissionToggle.checked =
-                            enabled;
-
-                    }
+                    saveButton.disabled =
+                        true;
 
 
-                    firebaseStatusArea.classList.add(
-                        "isSynced"
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 4B.10\n\n" +
+                        "Enregistrement des paramètres dans Firestore..."
                     );
 
 
-                    firebaseStatusArea.classList.remove(
-                        "isError"
+                    await setDoc(
+                        settingsReference,
+                        {
+                            commissionRate:
+                                rate,
+
+                            commissionEnabled:
+                                enabled,
+
+                            updatedAt:
+                                serverTimestamp(),
+
+                            updatedBy:
+                                user.uid
+                        },
+                        {
+                            merge: true
+                        }
                     );
 
 
@@ -631,33 +854,7 @@ function initializeCommissionFirebase() {
 
 
                     firebaseStatusText.textContent =
-                        "Configuração carregada do Firebase.";
-
-
-                    alert(
-                        "TOMA — SETTINGS\n\n" +
-                        "BLOC 4B.6\n\n" +
-                        "✅ Configuração encontrada no Firebase.\n\n" +
-                        "Comissão: " +
-                        rate +
-                        "%\n\n" +
-                        "Estado: " +
-                        (
-                            enabled
-                                ? "Ativa"
-                                : "Desativada"
-                        )
-                    );
-
-                } else {
-
-                    /* -------------------------------------
-                       PREMIÈRE CONFIGURATION
-                    ------------------------------------- */
-
-                    firebaseStatusArea.classList.add(
-                        "isSynced"
-                    );
+                        "Paramètres enregistrés et synchronisés avec Firebase.";
 
 
                     firebaseStatusArea.classList.remove(
@@ -665,247 +862,90 @@ function initializeCommissionFirebase() {
                     );
 
 
-                    firebaseStatusIcon.textContent =
-                        "cloud_upload";
-
-
-                    firebaseStatusText.textContent =
-                        "Nenhuma configuração criada. Valores padrão preparados.";
+                    firebaseStatusArea.classList.add(
+                        "isSynced"
+                    );
 
 
                     alert(
                         "TOMA — SETTINGS\n\n" +
-                        "BLOC 4B.7\n\n" +
-                        "ℹ️ O documento settings/marketplace ainda não existe.\n\n" +
-                        "Valor padrão preparado:\n\n" +
-                        "Comissão: 5%\n" +
-                        "Estado: Ativa"
+                        "BLOC 4B.10 TERMINÉ ✅\n\n" +
+                        "Paramètres enregistrés avec succès dans Firestore.\n\n" +
+                        "Commission : " +
+                        rate +
+                        "%\n\n" +
+                        "État : " +
+                        (
+                            enabled
+                                ? "Active"
+                                : "Désactivée"
+                        )
                     );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Erreur sauvegarde Commission Firebase :",
+                        error
+                    );
+
+
+                    firebaseStatusIcon.textContent =
+                        "cloud_off";
+
+
+                    firebaseStatusText.textContent =
+                        "Impossible d'enregistrer les paramètres dans Firestore.";
+
+
+                    firebaseStatusArea.classList.remove(
+                        "isSynced"
+                    );
+
+
+                    firebaseStatusArea.classList.add(
+                        "isError"
+                    );
+
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "ERREUR BLOC 4B.10 ❌\n\n" +
+                        error.message
+                    );
+
+
+                } finally {
+
+                    saveButton.disabled =
+                        false;
 
                 }
 
-
-                /* -----------------------------------------
-                   SAUVEGARDE
-                ----------------------------------------- */
-
-                const saveButton =
-                    document.getElementById(
-                        "saveCommissionSettingsButton"
-                    );
-
-
-                if (!saveButton) {
-
-                    throw new Error(
-                        "Le bouton saveCommissionSettingsButton est introuvable."
-                    );
-
-                }
-
-
-                saveButton.addEventListener(
-                    "click",
-                    async () => {
-
-                        try {
-
-                            const commissionInput =
-                                document.getElementById(
-                                    "commissionRateInput"
-                                );
-
-
-                            const commissionToggle =
-                                document.getElementById(
-                                    "commissionEnabledToggle"
-                                );
-
-
-                            const rate =
-                                Number(
-                                    commissionInput?.value
-                                );
-
-
-                            const enabled =
-                                commissionToggle?.checked === true;
-
-
-                            /* ---------------------------------
-                               VALIDATION
-                            --------------------------------- */
-
-                            if (
-                                !Number.isFinite(rate) ||
-                                rate < 0 ||
-                                rate > 100
-                            ) {
-
-                                alert(
-                                    "TOMA — SETTINGS\n\n" +
-                                    "BLOC 4B.8\n\n" +
-                                    "❌ Comissão inválida.\n\n" +
-                                    "Utilize um valor entre 0% e 100%."
-                                );
-
-                                return;
-
-                            }
-
-
-                            alert(
-                                "TOMA — SETTINGS\n\n" +
-                                "BLOC 4B.9\n\n" +
-                                "Salvando no Firebase..."
-                            );
-
-
-                            saveButton.disabled = true;
-
-
-                            await setDoc(
-                                marketplaceSettingsRef,
-                                {
-                                    commissionRate: rate,
-                                    commissionEnabled: enabled,
-                                    updatedAt: serverTimestamp(),
-                                    updatedBy:
-                                        auth.currentUser.uid
-                                },
-                                {
-                                    merge: true
-                                }
-                            );
-
-
-                            firebaseStatusArea.classList.add(
-                                "isSynced"
-                            );
-
-
-                            firebaseStatusArea.classList.remove(
-                                "isError"
-                            );
-
-
-                            firebaseStatusIcon.textContent =
-                                "cloud_done";
-
-
-                            firebaseStatusText.textContent =
-                                "Configuração sincronizada com Firebase.";
-
-
-                            alert(
-                                "TOMA — SETTINGS\n\n" +
-                                "BLOC 4B TERMINÉ ✅\n\n" +
-                                "Configuração salva avec succès.\n\n" +
-                                "Comissão: " +
-                                rate +
-                                "%\n\n" +
-                                "Estado: " +
-                                (
-                                    enabled
-                                        ? "Ativa"
-                                        : "Desativada"
-                                )
-                            );
-
-
-                        } catch (saveError) {
-
-                            console.error(
-                                "Erreur sauvegarde Firebase :",
-                                saveError
-                            );
-
-
-                            firebaseStatusArea.classList.remove(
-                                "isSynced"
-                            );
-
-
-                            firebaseStatusArea.classList.add(
-                                "isError"
-                            );
-
-
-                            firebaseStatusIcon.textContent =
-                                "cloud_off";
-
-
-                            firebaseStatusText.textContent =
-                                "Erro ao sincronizar com Firebase.";
-
-
-                            alert(
-                                "TOMA — SETTINGS\n\n" +
-                                "BLOC 4B.10 ❌\n\n" +
-                                "Erreur lors de la sauvegarde.\n\n" +
-                                (
-                                    saveError.message ||
-                                    "Erreur inconnue."
-                                )
-                            );
-
-                        } finally {
-
-                            saveButton.disabled = false;
-
-                        }
-
-                    }
-                );
-
-            })
-            .catch((error) => {
-
-                console.error(
-                    "Erreur Firebase BLOC 4B :",
-                    error
-                );
-
-
-                firebaseStatusArea.classList.remove(
-                    "isSynced"
-                );
-
-
-                firebaseStatusArea.classList.add(
-                    "isError"
-                );
-
-
-                firebaseStatusIcon.textContent =
-                    "cloud_off";
-
-
-                firebaseStatusText.textContent =
-                    "Impossible de se connecter à Firebase.";
-
-
-                alert(
-                    "TOMA — SETTINGS\n\n" +
-                    "BLOC 4B.11 ❌\n\n" +
-                    error.message
-                );
-
-            });
+            }
+        );
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 4B TERMINÉ ✅\n\n" +
+            "Firebase est maintenant connecté à la section Commission."
+        );
 
 
     } catch (error) {
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "ERREUR BLOC 4B ❌\n\n" +
-            error.message
+        console.error(
+            "Erreur BLOC 4B :",
+            error
         );
 
 
-        console.error(
-            "Erreur BLOC 4B Settings :",
-            error
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "ERREUR DANS LE BLOC 4B ❌\n\n" +
+            error.message
         );
 
     }
@@ -914,7 +954,7 @@ function initializeCommissionFirebase() {
 
 
 /* ---------------------------------------------------------
-   LANCEMENT DU BLOC 4B
+   LANCEMENT BLOC 4B
    --------------------------------------------------------- */
 
 document.addEventListener(
