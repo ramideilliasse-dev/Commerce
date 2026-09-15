@@ -267,7 +267,204 @@
         </div>
 
     </section>
+<!-- =====================================================
+     BLOC 5 — PAIEMENTS
+     ===================================================== -->
 
+<section id="paymentSettingsSection">
+
+    <div id="paymentSettingsHeader">
+
+        <div id="paymentSettingsIcon">
+            <span class="material-symbols-rounded">
+                account_balance_wallet
+            </span>
+        </div>
+
+        <div id="paymentSettingsHeaderText">
+
+            <h2 id="paymentSettingsTitle">
+                Pagamentos
+            </h2>
+
+            <p id="paymentSettingsDescription">
+                Configure os métodos de pagamento disponíveis no Toma.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div id="paymentSettingsCard">
+
+
+        <!-- PAGAMENTO NA ENTREGA -->
+
+        <div id="cashOnDeliveryArea">
+
+            <div id="cashOnDeliveryInfo">
+
+                <span id="cashOnDeliveryLabel">
+                    Pagamento na entrega
+                </span>
+
+                <span id="cashOnDeliveryDescription">
+                    Permitir que o cliente pague quando receber o pedido.
+                </span>
+
+            </div>
+
+
+            <label
+                id="cashOnDeliveryToggleContainer"
+                class="premiumSwitch"
+            >
+
+                <input
+                    id="cashOnDeliveryToggle"
+                    type="checkbox"
+                    checked
+                >
+
+                <span
+                    id="cashOnDeliveryToggleSlider"
+                    class="premiumSwitchSlider"
+                ></span>
+
+            </label>
+
+        </div>
+
+
+        <!-- PAGAMENTO ONLINE -->
+
+        <div id="onlinePaymentArea">
+
+            <div id="onlinePaymentInfo">
+
+                <span id="onlinePaymentLabel">
+                    Pagamento online
+                </span>
+
+                <span id="onlinePaymentDescription">
+                    Permitir pagamentos digitais durante a finalização do pedido.
+                </span>
+
+            </div>
+
+
+            <label
+                id="onlinePaymentToggleContainer"
+                class="premiumSwitch"
+            >
+
+                <input
+                    id="onlinePaymentToggle"
+                    type="checkbox"
+                >
+
+                <span
+                    id="onlinePaymentToggleSlider"
+                    class="premiumSwitchSlider"
+                ></span>
+
+            </label>
+
+        </div>
+
+
+        <!-- AVISO PAGAMENTO ONLINE -->
+
+        <div id="onlinePaymentNotice">
+
+            <span
+                id="onlinePaymentNoticeIcon"
+                class="material-symbols-rounded"
+            >
+                info
+            </span>
+
+            <div id="onlinePaymentNoticeContent">
+
+                <strong id="onlinePaymentNoticeTitle">
+                    Pagamento online
+                </strong>
+
+                <span id="onlinePaymentNoticeText">
+                    Este método está desativado. Nenhum pagamento online será processado pelo Toma.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div id="paymentSettingsStatusArea">
+
+            <span
+                id="paymentSettingsStatusIcon"
+                class="material-symbols-rounded"
+            >
+                check_circle
+            </span>
+
+            <span id="paymentSettingsStatusText">
+                Pagamento na entrega ativo
+            </span>
+
+        </div>
+
+
+        <!-- FIREBASE -->
+
+        <div id="paymentFirebaseStatusArea">
+
+            <span
+                id="paymentFirebaseStatusIcon"
+                class="material-symbols-rounded"
+            >
+                cloud_done
+            </span>
+
+            <div id="paymentFirebaseStatusContent">
+
+                <strong id="paymentFirebaseStatusLabel">
+                    Firebase
+                </strong>
+
+                <span id="paymentFirebaseStatusText">
+                    Aguardando sincronização...
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- SAVE -->
+
+        <button
+            id="savePaymentSettingsButton"
+            type="button"
+        >
+
+            <span class="material-symbols-rounded">
+                save
+            </span>
+
+            <span>
+                Guardar alterações
+            </span>
+
+        </button>
+
+
+    </div>
+
+</section>
 </main>
 
     <!-- =====================================================
