@@ -861,3 +861,217 @@ body {
     }
 
 }
+/* =========================================================
+   TOMA — DASHBOARD SETTINGS
+   BLOC 4B — STATUT FIREBASE
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   ZONE PRINCIPALE
+   --------------------------------------------------------- */
+
+#commissionFirebaseStatusArea {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    margin-top: 18px;
+
+    padding: 15px 16px;
+
+    border: 1px solid #e8e8e8;
+
+    border-radius: 16px;
+
+    background: #fafafa;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+
+}
+
+
+/* ---------------------------------------------------------
+   ICÔNE
+   --------------------------------------------------------- */
+
+#commissionFirebaseStatusIcon {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 42px;
+
+    height: 42px;
+
+    flex-shrink: 0;
+
+    border-radius: 12px;
+
+    background: #fff1e8;
+
+    color: #ff6a00;
+
+    font-size: 22px;
+
+}
+
+
+/* ---------------------------------------------------------
+   CONTENU
+   --------------------------------------------------------- */
+
+#commissionFirebaseStatusContent {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+
+    min-width: 0;
+
+}
+
+
+/* ---------------------------------------------------------
+   LABEL
+   --------------------------------------------------------- */
+
+#commissionFirebaseStatusLabel {
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    color: #222;
+
+}
+
+
+/* ---------------------------------------------------------
+   TEXTE
+   --------------------------------------------------------- */
+
+#commissionFirebaseStatusText {
+
+    font-size: 13px;
+
+    line-height: 1.4;
+
+    color: #777;
+
+}
+
+
+/* ---------------------------------------------------------
+   ÉTAT SYNCHRONISÉ
+   --------------------------------------------------------- */
+
+#commissionFirebaseStatusArea.isSynced {
+
+    background: #f4fbf6;
+
+    border-color: #d8efdf;
+
+}
+
+
+#commissionFirebaseStatusArea.isSynced
+#commissionFirebaseStatusIcon {
+
+    background: #e7f7eb;
+
+    color: #1f9d55;
+
+}
+
+
+#commissionFirebaseStatusArea.isSynced
+#commissionFirebaseStatusText {
+
+    color: #25834a;
+
+}
+
+
+/* ---------------------------------------------------------
+   ÉTAT ERREUR
+   --------------------------------------------------------- */
+
+#commissionFirebaseStatusArea.isError {
+
+    background: #fff7f7;
+
+    border-color: #f2d7d7;
+
+}
+
+
+#commissionFirebaseStatusArea.isError
+#commissionFirebaseStatusIcon {
+
+    background: #fdeaea;
+
+    color: #d64545;
+
+}
+
+
+#commissionFirebaseStatusArea.isError
+#commissionFirebaseStatusText {
+
+    color: #b73535;
+
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 600px) {
+
+    #commissionFirebaseStatusArea {
+
+        padding: 14px;
+
+        border-radius: 15px;
+
+    }
+
+
+    #commissionFirebaseStatusIcon {
+
+        width: 40px;
+
+        height: 40px;
+
+        font-size: 21px;
+
+    }
+
+
+    #commissionFirebaseStatusLabel {
+
+        font-size: 13px;
+
+    }
+
+
+    #commissionFirebaseStatusText {
+
+        font-size: 12px;
+
+    }
+
+}
