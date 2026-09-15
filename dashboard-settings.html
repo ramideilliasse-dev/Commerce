@@ -104,10 +104,146 @@
          Les prochains blocs seront ajoutés ici.
          ===================================================== -->
 
-    <main id="dashboardSettingsMain">
+   <main id="dashboardSettingsMain">
 
-    </main>
+    <!-- =====================================================
+         BLOC 3 — COMMISSION & MONÉTISATION
+         ===================================================== -->
 
+    <section id="commissionSettingsSection">
+
+        <div id="commissionSettingsHeader">
+
+            <div id="commissionSettingsIcon">
+                <span class="material-symbols-rounded">
+                    payments
+                </span>
+            </div>
+
+            <div id="commissionSettingsHeaderText">
+
+                <h2 id="commissionSettingsTitle">
+                    Comissão e Monetização
+                </h2>
+
+                <p id="commissionSettingsDescription">
+                    Configure como Toma gera receita através das vendas.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div id="commissionSettingsCard">
+
+            <div id="commissionRateArea">
+
+                <div id="commissionRateInfo">
+
+                    <span id="commissionRateLabel">
+                        Comissão Toma
+                    </span>
+
+                    <span id="commissionRateHint">
+                        Percentual aplicado às vendas elegíveis.
+                    </span>
+
+                </div>
+
+
+                <div id="commissionRateInputWrapper">
+
+                    <input
+                        id="commissionRateInput"
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        value="5"
+                        inputmode="decimal"
+                    >
+
+                    <span id="commissionRatePercent">
+                        %
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div id="commissionActivationArea">
+
+                <div id="commissionActivationInfo">
+
+                    <span id="commissionActivationLabel">
+                        Comissão ativa
+                    </span>
+
+                    <span id="commissionActivationDescription">
+                        Permitir que Toma calcule comissões sobre as vendas.
+                    </span>
+
+                </div>
+
+
+                <label
+                    id="commissionToggleContainer"
+                    class="premiumSwitch"
+                >
+
+                    <input
+                        id="commissionEnabledToggle"
+                        type="checkbox"
+                        checked
+                    >
+
+                    <span
+                        id="commissionToggleSlider"
+                        class="premiumSwitchSlider">
+                    </span>
+
+                </label>
+
+            </div>
+
+
+            <div id="commissionStatusArea">
+
+                <span
+                    id="commissionStatusIcon"
+                    class="material-symbols-rounded">
+                    check_circle
+                </span>
+
+                <span id="commissionStatusText">
+                    Comissão ativa
+                </span>
+
+            </div>
+
+
+            <button
+                id="saveCommissionSettingsButton"
+                type="button"
+            >
+
+                <span class="material-symbols-rounded">
+                    save
+                </span>
+
+                <span>
+                    Guardar alterações
+                </span>
+
+            </button>
+
+        </div>
+
+    </section>
+
+</main>
 
     <!-- =====================================================
          JAVASCRIPT PRINCIPAL
