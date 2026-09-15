@@ -1075,3 +1075,452 @@ body {
     }
 
 }
+/* =========================================================
+   TOMA — DASHBOARD SETTINGS
+   BLOC 5 — PAGAMENTOS
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   SECTION
+   --------------------------------------------------------- */
+
+#paymentSettingsSection {
+
+    margin-top: 28px;
+    margin-bottom: 28px;
+
+}
+
+
+/* ---------------------------------------------------------
+   HEADER
+   --------------------------------------------------------- */
+
+#paymentSettingsHeader {
+
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    margin-bottom: 16px;
+
+}
+
+
+#paymentSettingsIcon {
+
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff7a00,
+            #ff5a00
+        );
+
+    color: white;
+
+    box-shadow:
+        0 8px 22px rgba(255, 106, 0, 0.20);
+
+}
+
+
+#paymentSettingsIcon .material-symbols-rounded {
+
+    font-size: 27px;
+
+}
+
+
+#paymentSettingsTitle {
+
+    margin: 0;
+
+    font-size: 20px;
+    font-weight: 750;
+
+    color: #171717;
+
+}
+
+
+#paymentSettingsDescription {
+
+    margin: 4px 0 0;
+
+    font-size: 14px;
+
+    color: #777;
+
+    line-height: 1.45;
+
+}
+
+
+/* ---------------------------------------------------------
+   CARD
+   --------------------------------------------------------- */
+
+#paymentSettingsCard {
+
+    background: #ffffff;
+
+    border: 1px solid #eeeeee;
+
+    border-radius: 22px;
+
+    padding: 8px 20px 20px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.06);
+
+}
+
+
+/* ---------------------------------------------------------
+   PAYMENT ROWS
+   --------------------------------------------------------- */
+
+#cashOnDeliveryArea,
+#onlinePaymentArea {
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 20px 0;
+
+    border-bottom: 1px solid #eeeeee;
+
+}
+
+
+#cashOnDeliveryInfo,
+#onlinePaymentInfo {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+
+}
+
+
+#cashOnDeliveryLabel,
+#onlinePaymentLabel {
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+    color: #202020;
+
+}
+
+
+#cashOnDeliveryDescription,
+#onlinePaymentDescription {
+
+    font-size: 13px;
+
+    line-height: 1.45;
+
+    color: #777;
+
+}
+
+
+/* ---------------------------------------------------------
+   ONLINE NOTICE
+   --------------------------------------------------------- */
+
+#onlinePaymentNotice {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    margin-top: 18px;
+
+    padding: 14px 15px;
+
+    border-radius: 14px;
+
+    background: #fff8f2;
+
+    border: 1px solid #ffe2cc;
+
+}
+
+
+#onlinePaymentNoticeIcon {
+
+    margin-top: 1px;
+
+    font-size: 21px;
+
+    color: #ff6a00;
+
+}
+
+
+#onlinePaymentNoticeContent {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+
+}
+
+
+#onlinePaymentNoticeTitle {
+
+    font-size: 14px;
+
+    color: #333;
+
+}
+
+
+#onlinePaymentNoticeText {
+
+    font-size: 13px;
+
+    line-height: 1.45;
+
+    color: #777;
+
+}
+
+
+/* ---------------------------------------------------------
+   STATUS
+   --------------------------------------------------------- */
+
+#paymentSettingsStatusArea {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    margin-top: 18px;
+
+    padding: 12px 14px;
+
+    border-radius: 13px;
+
+    background: #f3fbf5;
+
+    color: #16803c;
+
+    font-size: 13px;
+
+    font-weight: 650;
+
+}
+
+
+#paymentSettingsStatusIcon {
+
+    font-size: 20px;
+
+}
+
+
+/* ---------------------------------------------------------
+   FIREBASE STATUS
+   --------------------------------------------------------- */
+
+#paymentFirebaseStatusArea {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-top: 12px;
+
+    padding: 13px 14px;
+
+    border-radius: 13px;
+
+    background: #f7f7f7;
+
+}
+
+
+#paymentFirebaseStatusIcon {
+
+    font-size: 21px;
+
+    color: #777;
+
+}
+
+
+#paymentFirebaseStatusContent {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+
+}
+
+
+#paymentFirebaseStatusLabel {
+
+    font-size: 13px;
+
+    color: #333;
+
+}
+
+
+#paymentFirebaseStatusText {
+
+    font-size: 12px;
+
+    color: #777;
+
+}
+
+
+/* ---------------------------------------------------------
+   SAVE BUTTON
+   --------------------------------------------------------- */
+
+#savePaymentSettingsButton {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    margin-top: 18px;
+
+    padding: 14px 18px;
+
+    border: none;
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff7200,
+            #ff5700
+        );
+
+    color: white;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 20px rgba(255, 106, 0, 0.20);
+
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        opacity 0.18s ease;
+
+}
+
+
+#savePaymentSettingsButton:hover {
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 11px 24px rgba(255, 106, 0, 0.26);
+
+}
+
+
+#savePaymentSettingsButton:disabled {
+
+    opacity: 0.55;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 600px) {
+
+    #paymentSettingsCard {
+
+        padding-left: 16px;
+        padding-right: 16px;
+
+        border-radius: 18px;
+
+    }
+
+
+    #cashOnDeliveryArea,
+    #onlinePaymentArea {
+
+        gap: 12px;
+
+    }
+
+
+    #cashOnDeliveryLabel,
+    #onlinePaymentLabel {
+
+        font-size: 15px;
+
+    }
+
+
+    #cashOnDeliveryDescription,
+    #onlinePaymentDescription {
+
+        font-size: 12px;
+
+    }
+
+
+    #paymentSettingsHeader {
+
+        align-items: flex-start;
+
+    }
+
+}
