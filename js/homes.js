@@ -562,7 +562,7 @@ onAuthStateChanged(auth, async(user)=>{
 
             merchantBtn.onclick=()=>{
 
-                location.href="admin-v2.html";
+                location.href="admin-dashboard.html";
 
             };
 
