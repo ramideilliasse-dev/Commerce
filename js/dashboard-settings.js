@@ -1534,196 +1534,311 @@ document.addEventListener(
     }
 );
 /* =========================================================
+   TOMA — DASHBOARD SETTINGS
    BLOC 6 — ADMIN & PERMISSIONS
-========================================================= */
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   BLOC 6.1
+   INITIALISATION
+   --------------------------------------------------------- */
 
 async function initializeAdminPermissionsSettings() {
 
-    alert(
-        "TOMA — SETTINGS\n\n" +
-        "BLOC 6.1\n\n" +
-        "Initialisation da seção Administradores e permissões..."
-    );
-
-
-    /* -----------------------------------------------------
-       ELEMENTOS
-    ----------------------------------------------------- */
-
-    const currentAdminEmail =
-        document.getElementById(
-            "currentAdminEmail"
-        );
-
-    const currentAdminRoleBadge =
-        document.getElementById(
-            "currentAdminRoleBadge"
-        );
-
-    const userRegistrationToggle =
-        document.getElementById(
-            "userRegistrationToggle"
-        );
-
-    const merchantRegistrationToggle =
-        document.getElementById(
-            "merchantRegistrationToggle"
-        );
-
-    const adminPermissionsStatusIcon =
-        document.getElementById(
-            "adminPermissionsStatusIcon"
-        );
-
-    const adminPermissionsStatusText =
-        document.getElementById(
-            "adminPermissionsStatusText"
-        );
-
-    const adminPermissionsFirebaseStatusText =
-        document.getElementById(
-            "adminPermissionsFirebaseStatusText"
-        );
-
-    const saveButton =
-        document.getElementById(
-            "saveAdminPermissionsSettingsButton"
-        );
-
-
-    if (
-        !currentAdminEmail ||
-        !currentAdminRoleBadge ||
-        !userRegistrationToggle ||
-        !merchantRegistrationToggle ||
-        !adminPermissionsStatusIcon ||
-        !adminPermissionsStatusText ||
-        !adminPermissionsFirebaseStatusText ||
-        !saveButton
-    ) {
-
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 6 ERRO ❌\n\n" +
-            "Um ou mais elementos do BLOC 6 não foram encontrados."
-        );
-
-        return;
-    }
-
-
-    alert(
-        "TOMA — SETTINGS\n\n" +
-        "BLOC 6.2\n\n" +
-        "Todos os elementos de Administradores e permissões foram encontrados com sucesso."
-    );
-
-
-    /* -----------------------------------------------------
-       FIREBASE
-    ----------------------------------------------------- */
-
-    let firebase;
-
     try {
 
-        firebase = await import("../firebase.js");
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 6.1\n\n" +
+            "Initialisation da seção Administradores e permissões..."
+        );
 
-    } catch (error) {
 
-        console.error(error);
+        /* -------------------------------------------------
+           ÉLÉMENTS HTML
+           ------------------------------------------------- */
+
+        const currentAdminEmail =
+            document.getElementById(
+                "currentAdminEmail"
+            );
+
+
+        const currentAdminRoleBadge =
+            document.getElementById(
+                "currentAdminRoleBadge"
+            );
+
+
+        const userRegistrationToggle =
+            document.getElementById(
+                "userRegistrationToggle"
+            );
+
+
+        const merchantRegistrationToggle =
+            document.getElementById(
+                "merchantRegistrationToggle"
+            );
+
+
+        const adminPermissionsStatusIcon =
+            document.getElementById(
+                "adminPermissionsStatusIcon"
+            );
+
+
+        const adminPermissionsStatusText =
+            document.getElementById(
+                "adminPermissionsStatusText"
+            );
+
+
+        const adminPermissionsFirebaseStatusIcon =
+            document.getElementById(
+                "adminPermissionsFirebaseStatusIcon"
+            );
+
+
+        const adminPermissionsFirebaseStatusText =
+            document.getElementById(
+                "adminPermissionsFirebaseStatusText"
+            );
+
+
+        const saveButton =
+            document.getElementById(
+                "saveAdminPermissionsSettingsButton"
+            );
+
+
+        /* -------------------------------------------------
+           VÉRIFICATION DES ÉLÉMENTS
+           ------------------------------------------------- */
+
+        if (!currentAdminEmail) {
+
+            throw new Error(
+                "ID currentAdminEmail introuvable."
+            );
+
+        }
+
+
+        if (!currentAdminRoleBadge) {
+
+            throw new Error(
+                "ID currentAdminRoleBadge introuvable."
+            );
+
+        }
+
+
+        if (!userRegistrationToggle) {
+
+            throw new Error(
+                "ID userRegistrationToggle introuvable."
+            );
+
+        }
+
+
+        if (!merchantRegistrationToggle) {
+
+            throw new Error(
+                "ID merchantRegistrationToggle introuvable."
+            );
+
+        }
+
+
+        if (!adminPermissionsStatusIcon) {
+
+            throw new Error(
+                "ID adminPermissionsStatusIcon introuvable."
+            );
+
+        }
+
+
+        if (!adminPermissionsStatusText) {
+
+            throw new Error(
+                "ID adminPermissionsStatusText introuvable."
+            );
+
+        }
+
+
+        if (!adminPermissionsFirebaseStatusIcon) {
+
+            throw new Error(
+                "ID adminPermissionsFirebaseStatusIcon introuvable."
+            );
+
+        }
+
+
+        if (!adminPermissionsFirebaseStatusText) {
+
+            throw new Error(
+                "ID adminPermissionsFirebaseStatusText introuvable."
+            );
+
+        }
+
+
+        if (!saveButton) {
+
+            throw new Error(
+                "ID saveAdminPermissionsSettingsButton introuvable."
+            );
+
+        }
+
 
         alert(
             "TOMA — SETTINGS\n\n" +
-            "BLOC 6 ERRO ❌\n\n" +
-            "Não foi possível conectar ao Firebase."
-        );
-
-        return;
-    }
-
-
-    const {
-        auth,
-        db
-    } = firebase;
-
-
-    const firestore =
-        await import(
-            "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+            "BLOC 6.2\n\n" +
+            "Todos os elementos de Administradores e permissões foram encontrados com sucesso."
         );
 
 
-    const {
-        doc,
-        getDoc,
-        setDoc,
-        onSnapshot
-    } = firestore;
+        /* -------------------------------------------------
+           FIREBASE AUTH
+           ------------------------------------------------- */
+
+        const firebaseModule =
+            await import(
+                "../firebase.js"
+            );
 
 
-    /* -----------------------------------------------------
-       AUTH
-    ----------------------------------------------------- */
-
-    const {
-    onAuthStateChanged
-} = await import(
-    "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
-);
+        const db =
+            firebaseModule.db;
 
 
-await new Promise((resolve) => {
-
-    if (auth.currentUser) {
-
-        resolve();
-
-        return;
-    }
+        const auth =
+            firebaseModule.auth;
 
 
-    const unsubscribe =
-        onAuthStateChanged(
-            auth,
-            () => {
+        if (!db) {
 
-                unsubscribe();
+            throw new Error(
+                "Firestore (db) introuvable."
+            );
 
-                resolve();
-
-            }
-        );
-
-});
-
-    const user = auth.currentUser;
+        }
 
 
-    if (!user) {
+        if (!auth) {
+
+            throw new Error(
+                "Firebase Auth introuvable."
+            );
+
+        }
+
+
+        /* -------------------------------------------------
+           BLOC 6.3
+           ATTENTE AUTH
+           ------------------------------------------------- */
+
+        const user =
+            await new Promise(
+                (resolve, reject) => {
+
+                    let finished = false;
+
+
+                    const timeout =
+                        setTimeout(
+                            () => {
+
+                                if (!finished) {
+
+                                    finished = true;
+
+                                    reject(
+                                        new Error(
+                                            "Firebase Auth n'a pas répondu dans le délai prévu."
+                                        )
+                                    );
+
+                                }
+
+                            },
+                            15000
+                        );
+
+
+                    const unsubscribe =
+                        onAuthStateChanged(
+                            auth,
+                            (firebaseUser) => {
+
+                                if (finished) {
+
+                                    return;
+
+                                }
+
+
+                                finished = true;
+
+
+                                clearTimeout(
+                                    timeout
+                                );
+
+
+                                unsubscribe();
+
+
+                                resolve(
+                                    firebaseUser
+                                );
+
+                            }
+                        );
+
+                }
+            );
+
+
+        if (!user) {
+
+            adminPermissionsFirebaseStatusIcon.textContent =
+                "person_off";
+
+
+            adminPermissionsFirebaseStatusText.textContent =
+                "Nenhum administrador conectado.";
+
+
+            throw new Error(
+                "Nenhum usuário conectado."
+            );
+
+        }
+
 
         alert(
             "TOMA — SETTINGS\n\n" +
-            "BLOC 6 ERRO ❌\n\n" +
-            "Nenhum administrador está conectado."
+            "BLOC 6.3\n\n" +
+            "Usuário conectado com sucesso.\n\n" +
+            "UID : " +
+            user.uid
         );
 
-        return;
-    }
 
+        /* -------------------------------------------------
+           VÉRIFICATION DU PROFIL
+           ------------------------------------------------- */
 
-    /* -----------------------------------------------------
-       ADMIN USER
-    ----------------------------------------------------- */
-
-    currentAdminEmail.textContent =
-        user.email || "Administrador";
-
-
-    try {
-
-        const userRef =
+        const userReference =
             doc(
                 db,
                 "users",
@@ -1732,18 +1847,19 @@ await new Promise((resolve) => {
 
 
         const userSnapshot =
-            await getDoc(userRef);
+            await getDoc(
+                userReference
+            );
 
 
         if (!userSnapshot.exists()) {
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 6 ERRO ❌\n\n" +
-                "O perfil do administrador não foi encontrado."
+            throw new Error(
+                "O documento users/" +
+                user.uid +
+                " não existe no Firestore."
             );
 
-            return;
         }
 
 
@@ -1755,19 +1871,37 @@ await new Promise((resolve) => {
             userData.role || "user";
 
 
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 6.4\n\n" +
+            "Rôle utilisateur détecté :\n\n" +
+            role
+        );
+
+
+        /* -------------------------------------------------
+           VÉRIFICATION ADMIN
+           ------------------------------------------------- */
+
         if (
             role !== "admin" &&
             role !== "superadmin"
         ) {
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 6 ACESSO NEGADO ❌\n\n" +
-                "Esta página está disponível apenas para administradores."
+            throw new Error(
+                "Acesso recusado. Este usuário não é administrador."
             );
 
-            return;
         }
+
+
+        /* -------------------------------------------------
+           AFFICHAGE DU PROFIL ADMIN
+           ------------------------------------------------- */
+
+        currentAdminEmail.textContent =
+            user.email ||
+            "Administrador";
 
 
         if (role === "superadmin") {
@@ -1779,14 +1913,15 @@ await new Promise((resolve) => {
 
             currentAdminRoleBadge.textContent =
                 "ADMIN";
+
         }
 
 
         /* -------------------------------------------------
-           SETTINGS
-        ------------------------------------------------- */
+           DOCUMENT SETTINGS
+           ------------------------------------------------- */
 
-        const settingsRef =
+        const settingsReference =
             doc(
                 db,
                 "settings",
@@ -1794,185 +1929,270 @@ await new Promise((resolve) => {
             );
 
 
+        /* -------------------------------------------------
+           LECTURE DES SETTINGS
+           ------------------------------------------------- */
+
         const settingsSnapshot =
-            await getDoc(settingsRef);
+            await getDoc(
+                settingsReference
+            );
 
 
-        if (settingsSnapshot.exists()) {
+        if (
+            settingsSnapshot.exists()
+        ) {
 
-            const settings =
+            const settingsData =
                 settingsSnapshot.data();
 
 
-            userRegistrationToggle.checked =
-                settings.userRegistrationEnabled !== false;
+            /* ---------------------------------------------
+               INSCRIPTION UTILISATEURS
+               --------------------------------------------- */
 
+            userRegistrationToggle.checked =
+                settingsData.userRegistrationEnabled
+                !== false;
+
+
+            /* ---------------------------------------------
+               INSCRIPTION COMMERÇANTS
+               --------------------------------------------- */
 
             merchantRegistrationToggle.checked =
-                settings.merchantRegistrationEnabled !== false;
+                settingsData.merchantRegistrationEnabled
+                !== false;
+
+
+            adminPermissionsFirebaseStatusIcon.textContent =
+                "cloud_done";
+
+
+            adminPermissionsFirebaseStatusText.textContent =
+                "Configurações carregadas do Firebase.";
+
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 6.5\n\n" +
+                "Configurações de permissões carregadas do Firebase."
+            );
 
         } else {
 
+            /* ---------------------------------------------
+               VALEURS PAR DÉFAUT
+               --------------------------------------------- */
+
             userRegistrationToggle.checked =
                 true;
 
+
             merchantRegistrationToggle.checked =
                 true;
+
+
+            adminPermissionsFirebaseStatusIcon.textContent =
+                "cloud_done";
+
+
+            adminPermissionsFirebaseStatusText.textContent =
+                "Documento ainda não existe. Valores padrão utilizados.";
+
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 6.5\n\n" +
+                "O documento settings/marketplace não possui configurações de permissões.\n\n" +
+                "Os valores padrão serão utilizados."
+            );
 
         }
 
 
+        /* -------------------------------------------------
+           MISE À JOUR VISUELLE
+           ------------------------------------------------- */
+
         updateAdminPermissionsVisualState();
 
 
-        adminPermissionsFirebaseStatusText.textContent =
-            "Configurações carregadas do Firebase.";
+        /* -------------------------------------------------
+           SWITCH UTILISATEURS
+           ------------------------------------------------- */
 
+        userRegistrationToggle.addEventListener(
+            "change",
+            updateAdminPermissionsVisualState
+        );
+
+
+        /* -------------------------------------------------
+           SWITCH COMMERÇANTS
+           ------------------------------------------------- */
+
+        merchantRegistrationToggle.addEventListener(
+            "change",
+            updateAdminPermissionsVisualState
+        );
+
+
+        /* -------------------------------------------------
+           BLOC 6.6
+           SAUVEGARDE
+           ------------------------------------------------- */
+
+        saveButton.addEventListener(
+            "click",
+            async () => {
+
+                try {
+
+                    saveButton.disabled =
+                        true;
+
+
+                    adminPermissionsFirebaseStatusIcon.textContent =
+                        "cloud_upload";
+
+
+                    adminPermissionsFirebaseStatusText.textContent =
+                        "Salvando configurações...";
+
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 6.6\n\n" +
+                        "Salvando as permissões no Firestore..."
+                    );
+
+
+                    await setDoc(
+                        settingsReference,
+                        {
+
+                            userRegistrationEnabled:
+                                userRegistrationToggle.checked,
+
+
+                            merchantRegistrationEnabled:
+                                merchantRegistrationToggle.checked,
+
+
+                            updatedAt:
+                                serverTimestamp(),
+
+
+                            updatedBy:
+                                user.uid
+
+                        },
+                        {
+                            merge: true
+                        }
+                    );
+
+
+                    adminPermissionsFirebaseStatusIcon.textContent =
+                        "cloud_done";
+
+
+                    adminPermissionsFirebaseStatusText.textContent =
+                        "Configurações sincronizadas com Firebase.";
+
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 6.6 TERMINÉ ✅\n\n" +
+                        "Configurações salvas com sucesso.\n\n" +
+                        "Inscrição de usuários : " +
+                        (
+                            userRegistrationToggle.checked
+                                ? "Ativa"
+                                : "Desativada"
+                        ) +
+                        "\n\n" +
+                        "Inscrição de comerciantes : " +
+                        (
+                            merchantRegistrationToggle.checked
+                                ? "Ativa"
+                                : "Desativada"
+                        )
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Erro BLOC 6.6:",
+                        error
+                    );
+
+
+                    adminPermissionsFirebaseStatusIcon.textContent =
+                        "cloud_off";
+
+
+                    adminPermissionsFirebaseStatusText.textContent =
+                        "Erro ao sincronizar com Firebase.";
+
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "ERRO BLOC 6.6 ❌\n\n" +
+                        error.message
+                    );
+
+
+                } finally {
+
+                    saveButton.disabled =
+                        false;
+
+                }
+
+            }
+        );
+
+
+        /* -------------------------------------------------
+           FINAL BLOC 6
+           ------------------------------------------------- */
 
         alert(
             "TOMA — SETTINGS\n\n" +
-            "BLOC 6.3\n\n" +
-            "Configurações de permissões carregadas do Firebase."
+            "BLOC 6 TERMINÉ ✅\n\n" +
+            "Administradores e permissões estão conectados ao Firebase."
         );
 
 
     } catch (error) {
 
-        console.error(error);
-
-        adminPermissionsFirebaseStatusText.textContent =
-            "Erro ao carregar as configurações.";
+        console.error(
+            "Erreur BLOC 6 :",
+            error
+        );
 
 
         alert(
             "TOMA — SETTINGS\n\n" +
-            "BLOC 6 ERRO ❌\n\n" +
-            "Erro ao carregar as configurações de permissões."
+            "ERREUR DANS LE BLOC 6 ❌\n\n" +
+            error.message
         );
 
-        return;
     }
 
 
-    /* -----------------------------------------------------
-       TOGGLES
-    ----------------------------------------------------- */
-
-    userRegistrationToggle.addEventListener(
-        "change",
-        updateAdminPermissionsVisualState
-    );
-
-
-    merchantRegistrationToggle.addEventListener(
-        "change",
-        updateAdminPermissionsVisualState
-    );
-
-
-    /* -----------------------------------------------------
-       SAVE
-    ----------------------------------------------------- */
-
-    saveButton.addEventListener(
-        "click",
-        async () => {
-
-            try {
-
-                saveButton.disabled = true;
-
-
-                await setDoc(
-                    doc(
-                        db,
-                        "settings",
-                        "marketplace"
-                    ),
-                    {
-
-                        userRegistrationEnabled:
-                            userRegistrationToggle.checked,
-
-                        merchantRegistrationEnabled:
-                            merchantRegistrationToggle.checked,
-
-                        updatedAt:
-                            new Date(),
-
-                        updatedBy:
-                            user.uid
-
-                    },
-                    {
-                        merge: true
-                    }
-                );
-
-
-                adminPermissionsFirebaseStatusText.textContent =
-                    "Configurações salvas com sucesso no Firebase.";
-
-
-                alert(
-                    "TOMA — SETTINGS\n\n" +
-                    "BLOC 6.4 TERMINÉ ✅\n\n" +
-                    "Configurações de administradores e permissões salvas com sucesso.\n\n" +
-                    "Inscrição de usuários: " +
-                    (
-                        userRegistrationToggle.checked
-                            ? "Ativa"
-                            : "Desativada"
-                    ) +
-                    "\n" +
-                    "Inscrição de comerciantes: " +
-                    (
-                        merchantRegistrationToggle.checked
-                            ? "Ativa"
-                            : "Desativada"
-                    )
-                );
-
-
-            } catch (error) {
-
-                console.error(error);
-
-                alert(
-                    "TOMA — SETTINGS\n\n" +
-                    "BLOC 6 ERRO ❌\n\n" +
-                    "Não foi possível salvar as configurações."
-                );
-
-            } finally {
-
-                saveButton.disabled = false;
-
-            }
-
-        }
-    );
-
-
-    /* -----------------------------------------------------
-       FINAL
-    ----------------------------------------------------- */
-
-    alert(
-        "TOMA — SETTINGS\n\n" +
-        "BLOC 6 TERMINÉ ✅\n\n" +
-        "Administradores e permissões estão conectados ao Firebase."
-    );
-
-
     /* =====================================================
-       VISUAL STATE
-    ===================================================== */
+       FONCTION — ÉTAT VISUEL
+       ===================================================== */
 
     function updateAdminPermissionsVisualState() {
 
         const usersActive =
             userRegistrationToggle.checked;
+
 
         const merchantsActive =
             merchantRegistrationToggle.checked;
@@ -1986,10 +2206,13 @@ await new Promise((resolve) => {
             adminPermissionsStatusIcon.textContent =
                 "check_circle";
 
+
             adminPermissionsStatusText.textContent =
                 "Inscrições de usuários e comerciantes ativas";
 
-        } else if (
+        }
+
+        else if (
             !usersActive &&
             !merchantsActive
         ) {
@@ -1997,23 +2220,28 @@ await new Promise((resolve) => {
             adminPermissionsStatusIcon.textContent =
                 "block";
 
+
             adminPermissionsStatusText.textContent =
                 "Todas as inscrições estão desativadas";
 
-        } else if (
-            usersActive
-        ) {
+        }
+
+        else if (usersActive) {
 
             adminPermissionsStatusIcon.textContent =
                 "person";
 
+
             adminPermissionsStatusText.textContent =
                 "Inscrição de usuários ativa";
 
-        } else {
+        }
+
+        else {
 
             adminPermissionsStatusIcon.textContent =
                 "store";
+
 
             adminPermissionsStatusText.textContent =
                 "Inscrição de comerciantes ativa";
@@ -2023,3 +2251,17 @@ await new Promise((resolve) => {
     }
 
 }
+
+
+/* ---------------------------------------------------------
+   LANCEMENT DU BLOC 6
+   --------------------------------------------------------- */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        initializeAdminPermissionsSettings();
+
+    }
+);
