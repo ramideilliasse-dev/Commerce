@@ -277,57 +277,7 @@ function initializeCommissionSettings() {
         );
 
 
-        /* -------------------------------------------------
-           BOUTON ENREGISTRER
-           ------------------------------------------------- */
-
-        saveButton.addEventListener(
-            "click",
-            () => {
-
-                const rate =
-                    Number(
-                        commissionRateInput.value
-                    );
-
-
-                if (
-                    Number.isNaN(rate) ||
-                    rate < 0 ||
-                    rate > 100
-                ) {
-
-                    alert(
-                        "TOMA — SETTINGS\n\n" +
-                        "ERREUR ❌\n\n" +
-                        "A comissão deve estar entre 0% e 100%."
-                    );
-
-                    return;
-
-                }
-
-
-                alert(
-                    "TOMA — SETTINGS\n\n" +
-                    "BLOC 3.3\n\n" +
-                    "Configuração validada com sucesso.\n\n" +
-                    "Comissão: " +
-                    rate +
-                    "%\n\n" +
-                    "Estado: " +
-                    (
-                        commissionToggle.checked
-                            ? "Ativa"
-                            : "Desativada"
-                    ) +
-                    "\n\n" +
-                    "O salvamento no Firebase será conectado em um bloco posterior."
-                );
-
-            }
-        );
-
+       
 
         updateCommissionStatus();
 
