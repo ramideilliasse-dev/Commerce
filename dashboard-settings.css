@@ -2292,3 +2292,457 @@ body {
     }
 
 }
+/* =========================================================
+   BLOC 8.1 — COMMANDES — CSS PREMIUM
+========================================================= */
+
+#orderSettingsSection {
+    margin-top: 24px;
+    margin-bottom: 24px;
+}
+
+
+/* ---------------------------------------------------------
+   HEADER
+--------------------------------------------------------- */
+
+#orderSettingsHeader {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+#orderSettingsIcon {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+
+    background: linear-gradient(
+        135deg,
+        #ff6a00,
+        #ff8a3d
+    );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 8px 20px rgba(255, 106, 0, 0.20);
+}
+
+#orderSettingsIcon .material-symbols-rounded {
+    font-size: 25px;
+}
+
+
+#orderSettingsHeaderText {
+    flex: 1;
+    min-width: 0;
+}
+
+#orderSettingsTitle {
+    margin: 0;
+
+    font-size: 20px;
+    font-weight: 700;
+
+    color: #171717;
+}
+
+#orderSettingsDescription {
+    margin: 4px 0 0;
+
+    font-size: 14px;
+    line-height: 1.45;
+
+    color: #777777;
+}
+
+
+/* ---------------------------------------------------------
+   CARD
+--------------------------------------------------------- */
+
+#orderSettingsCard {
+    background: #ffffff;
+
+    border: 1px solid #eeeeee;
+
+    border-radius: 20px;
+
+    padding: 6px 20px 20px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.06);
+
+    overflow: hidden;
+}
+
+
+/* ---------------------------------------------------------
+   GENERAL ROWS
+--------------------------------------------------------- */
+
+#ordersEnabledArea,
+#customerCancellationArea,
+#merchantConfirmationArea,
+#orderCancellationTimeArea {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 20px 0;
+
+    border-bottom: 1px solid #eeeeee;
+}
+
+
+#ordersEnabledInfo,
+#customerCancellationInfo,
+#merchantConfirmationInfo,
+#orderCancellationTimeInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+
+#ordersEnabledLabel,
+#customerCancellationLabel,
+#merchantConfirmationLabel,
+#orderCancellationTimeLabel {
+    display: block;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    color: #202020;
+}
+
+
+#ordersEnabledDescription,
+#customerCancellationDescription,
+#merchantConfirmationDescription,
+#orderCancellationTimeDescription {
+    display: block;
+
+    margin-top: 5px;
+
+    font-size: 13px;
+    line-height: 1.45;
+
+    color: #777777;
+}
+
+
+/* ---------------------------------------------------------
+   SWITCH
+--------------------------------------------------------- */
+
+#ordersEnabledToggleContainer,
+#customerCancellationToggleContainer,
+#merchantConfirmationToggleContainer {
+    flex-shrink: 0;
+}
+
+
+/* ---------------------------------------------------------
+   CANCELLATION TIME INPUT
+--------------------------------------------------------- */
+
+#orderCancellationTimeInputWrapper {
+    display: flex;
+    align-items: center;
+
+    flex-shrink: 0;
+
+    min-width: 92px;
+
+    padding: 0 12px;
+
+    border: 1px solid #dddddd;
+
+    border-radius: 12px;
+
+    background: #fafafa;
+
+    transition:
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        background 0.18s ease;
+}
+
+
+#orderCancellationTimeInputWrapper:focus-within {
+    border-color: #ff6a00;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 0 0 3px rgba(255, 106, 0, 0.10);
+}
+
+
+#orderCancellationTimeInput {
+    width: 52px;
+
+    padding: 11px 0;
+
+    border: none;
+    outline: none;
+
+    background: transparent;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    color: #202020;
+
+    text-align: center;
+}
+
+
+#orderCancellationTimeInput::-webkit-inner-spin-button,
+#orderCancellationTimeInput::-webkit-outer-spin-button {
+    margin: 0;
+}
+
+
+#orderCancellationTimeUnit {
+    font-size: 13px;
+    font-weight: 600;
+
+    color: #777777;
+}
+
+
+/* ---------------------------------------------------------
+   STATUS
+--------------------------------------------------------- */
+
+#orderSettingsStatusArea {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    margin-top: 18px;
+    padding: 12px 14px;
+
+    border-radius: 13px;
+
+    background: #f3fbf6;
+
+    color: #198754;
+}
+
+
+#orderSettingsStatusIcon {
+    font-size: 21px;
+}
+
+
+#orderSettingsStatusText {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* ---------------------------------------------------------
+   FIREBASE STATUS
+--------------------------------------------------------- */
+
+#orderFirebaseStatusArea {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 10px;
+    padding: 12px 14px;
+
+    border-radius: 13px;
+
+    background: #f7f8fa;
+}
+
+
+#orderFirebaseStatusIcon {
+    font-size: 21px;
+    color: #198754;
+}
+
+
+#orderFirebaseStatusContent {
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+
+    min-width: 0;
+}
+
+
+#orderFirebaseStatusLabel {
+    font-size: 13px;
+    font-weight: 700;
+
+    color: #303030;
+}
+
+
+#orderFirebaseStatusText {
+    font-size: 12px;
+
+    color: #777777;
+}
+
+
+/* ---------------------------------------------------------
+   SAVE BUTTON
+--------------------------------------------------------- */
+
+#saveOrderSettingsButton {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    margin-top: 16px;
+
+    padding: 14px 18px;
+
+    border: none;
+    border-radius: 14px;
+
+    background: linear-gradient(
+        135deg,
+        #ff6a00,
+        #ff7d26
+    );
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 18px rgba(255, 106, 0, 0.18);
+
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        opacity 0.18s ease;
+}
+
+
+#saveOrderSettingsButton:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 10px 22px rgba(255, 106, 0, 0.24);
+}
+
+
+#saveOrderSettingsButton:active {
+    transform: scale(0.98);
+}
+
+
+#saveOrderSettingsButton:disabled {
+    opacity: 0.65;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+
+#saveOrderSettingsButton .material-symbols-rounded {
+    font-size: 19px;
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE
+--------------------------------------------------------- */
+
+@media (max-width: 600px) {
+
+    #orderSettingsHeader {
+        gap: 11px;
+    }
+
+
+    #orderSettingsIcon {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+
+        border-radius: 13px;
+    }
+
+
+    #orderSettingsIcon .material-symbols-rounded {
+        font-size: 23px;
+    }
+
+
+    #orderSettingsTitle {
+        font-size: 18px;
+    }
+
+
+    #orderSettingsDescription {
+        font-size: 13px;
+    }
+
+
+    #orderSettingsCard {
+        padding-left: 16px;
+        padding-right: 16px;
+
+        border-radius: 18px;
+    }
+
+
+    #ordersEnabledArea,
+    #customerCancellationArea,
+    #merchantConfirmationArea,
+    #orderCancellationTimeArea {
+        gap: 14px;
+    }
+
+
+    #ordersEnabledLabel,
+    #customerCancellationLabel,
+    #merchantConfirmationLabel,
+    #orderCancellationTimeLabel {
+        font-size: 14px;
+    }
+
+
+    #ordersEnabledDescription,
+    #customerCancellationDescription,
+    #merchantConfirmationDescription,
+    #orderCancellationTimeDescription {
+        font-size: 12px;
+    }
+
+
+    #orderCancellationTimeInputWrapper {
+        min-width: 88px;
+    }
+
+}
