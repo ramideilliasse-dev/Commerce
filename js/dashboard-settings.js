@@ -2785,3 +2785,640 @@ document.addEventListener(
         initializeMarketplaceSettings();
     }
 );
+/* =========================================================
+   BLOC 8.2 — COMMANDES — JAVASCRIPT + FIREBASE
+========================================================= */
+
+async function initializeOrderSettings() {
+
+    alert(
+        "TOMA — SETTINGS\n\n" +
+        "BLOC 8.2\n\n" +
+        "Inicialização das configurações de pedidos..."
+    );
+
+
+    try {
+
+        /* -------------------------------------------------
+           1. VERIFICAR ELEMENTOS HTML
+        ------------------------------------------------- */
+
+        const ordersEnabledToggle =
+            document.getElementById(
+                "ordersEnabledToggle"
+            );
+
+        const customerCancellationToggle =
+            document.getElementById(
+                "customerCancellationToggle"
+            );
+
+        const merchantConfirmationToggle =
+            document.getElementById(
+                "merchantConfirmationToggle"
+            );
+
+        const cancellationTimeInput =
+            document.getElementById(
+                "orderCancellationTimeInput"
+            );
+
+        const statusIcon =
+            document.getElementById(
+                "orderSettingsStatusIcon"
+            );
+
+        const statusText =
+            document.getElementById(
+                "orderSettingsStatusText"
+            );
+
+        const firebaseStatusIcon =
+            document.getElementById(
+                "orderFirebaseStatusIcon"
+            );
+
+        const firebaseStatusText =
+            document.getElementById(
+                "orderFirebaseStatusText"
+            );
+
+        const saveButton =
+            document.getElementById(
+                "saveOrderSettingsButton"
+            );
+
+
+        if (
+            !ordersEnabledToggle ||
+            !customerCancellationToggle ||
+            !merchantConfirmationToggle ||
+            !cancellationTimeInput ||
+            !statusIcon ||
+            !statusText ||
+            !firebaseStatusIcon ||
+            !firebaseStatusText ||
+            !saveButton
+        ) {
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 8.2 ERRO\n\n" +
+                "Um ou mais elementos das configurações " +
+                "de pedidos não foram encontrados."
+            );
+
+            return;
+        }
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 8.2\n\n" +
+            "Todos os elementos de pedidos " +
+            "foram encontrados com sucesso."
+        );
+
+
+        /* -------------------------------------------------
+           2. FIREBASE
+        ------------------------------------------------- */
+
+        const firebase =
+            await import("../firebase.js");
+
+        const db = firebase.db;
+        const auth = firebase.auth;
+
+
+        if (!db || !auth) {
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 8.2 ERRO\n\n" +
+                "Firebase não foi carregado corretamente."
+            );
+
+            return;
+        }
+
+
+        /* -------------------------------------------------
+           3. AGUARDAR AUTH
+        ------------------------------------------------- */
+
+        const firebaseUser =
+            await new Promise((resolve, reject) => {
+
+                let finished = false;
+                let unsubscribe = null;
+
+                const timeout =
+                    setTimeout(() => {
+
+                        if (finished) return;
+
+                        finished = true;
+
+                        if (unsubscribe) {
+                            unsubscribe();
+                        }
+
+                        reject(
+                            new Error(
+                                "Timeout da autenticação."
+                            )
+                        );
+
+                    }, 10000);
+
+
+                unsubscribe =
+                    onAuthStateChanged(
+                        auth,
+                        (user) => {
+
+                            if (finished) return;
+
+                            finished = true;
+
+                            clearTimeout(timeout);
+
+                            if (unsubscribe) {
+                                unsubscribe();
+                            }
+
+                            resolve(user);
+                        }
+                    );
+
+            });
+
+
+        if (!firebaseUser) {
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 8.2 ERRO\n\n" +
+                "Nenhum usuário está conectado."
+            );
+
+            return;
+        }
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 8.2\n\n" +
+            "Usuário conectado com sucesso.\n\n" +
+            "UID : " +
+            firebaseUser.uid
+        );
+
+
+        /* -------------------------------------------------
+           4. VERIFICAR ROLE
+        ------------------------------------------------- */
+
+        const userDocumentRef =
+            doc(
+                db,
+                "users",
+                firebaseUser.uid
+            );
+
+        const userDocument =
+            await getDoc(
+                userDocumentRef
+            );
+
+
+        if (!userDocument.exists()) {
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 8.2 ERRO\n\n" +
+                "Documento do usuário não foi encontrado."
+            );
+
+            return;
+        }
+
+
+        const userData =
+            userDocument.data();
+
+        const userRole =
+            userData.role || "user";
+
+
+        if (
+            userRole !== "admin" &&
+            userRole !== "superadmin"
+        ) {
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 8.2 ACESSO NEGADO\n\n" +
+                "Rôle détecté : " +
+                userRole
+            );
+
+            return;
+        }
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 8.2\n\n" +
+            "Rôle utilisateur détecté :\n\n" +
+            userRole
+        );
+
+
+        /* -------------------------------------------------
+           5. CARREGAR SETTINGS
+        ------------------------------------------------- */
+
+        const marketplaceRef =
+            doc(
+                db,
+                "settings",
+                "marketplace"
+            );
+
+        const marketplaceSnapshot =
+            await getDoc(
+                marketplaceRef
+            );
+
+
+        let marketplaceData = {};
+
+
+        if (marketplaceSnapshot.exists()) {
+
+            marketplaceData =
+                marketplaceSnapshot.data();
+
+        }
+
+
+        /* -------------------------------------------------
+           6. VALORES PADRÃO
+        ------------------------------------------------- */
+
+        const ordersEnabled =
+            marketplaceData.ordersEnabled
+            !== false;
+
+        const customerCancellationEnabled =
+            marketplaceData.customerCancellationEnabled
+            !== false;
+
+        const merchantConfirmationRequired =
+            marketplaceData.merchantConfirmationRequired
+            !== false;
+
+
+        let cancellationTimeMinutes =
+            Number(
+                marketplaceData.cancellationTimeMinutes
+            );
+
+
+        if (
+            !Number.isFinite(cancellationTimeMinutes) ||
+            cancellationTimeMinutes < 0
+        ) {
+
+            cancellationTimeMinutes = 30;
+
+        }
+
+
+        if (cancellationTimeMinutes > 1440) {
+
+            cancellationTimeMinutes = 1440;
+
+        }
+
+
+        /* -------------------------------------------------
+           7. APLICAR VALORES NA INTERFACE
+        ------------------------------------------------- */
+
+        ordersEnabledToggle.checked =
+            ordersEnabled;
+
+        customerCancellationToggle.checked =
+            customerCancellationEnabled;
+
+        merchantConfirmationToggle.checked =
+            merchantConfirmationRequired;
+
+        cancellationTimeInput.value =
+            cancellationTimeMinutes;
+
+
+        updateOrderSettingsVisualState();
+
+
+        firebaseStatusIcon.textContent =
+            "cloud_done";
+
+        firebaseStatusText.textContent =
+            "Configurações carregadas do Firebase.";
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 8.2\n\n" +
+            "Configurações de pedidos " +
+            "carregadas do Firebase."
+        );
+
+
+        /* -------------------------------------------------
+           8. ATUALIZAR ESTADO VISUAL
+        ------------------------------------------------- */
+
+        function updateOrderSettingsVisualState() {
+
+            if (
+                ordersEnabledToggle.checked
+            ) {
+
+                statusIcon.textContent =
+                    "check_circle";
+
+                statusText.textContent =
+                    "Receção de pedidos ativa.";
+
+            } else {
+
+                statusIcon.textContent =
+                    "block";
+
+                statusText.textContent =
+                    "Receção de pedidos desativada.";
+
+            }
+
+        }
+
+
+        /* -------------------------------------------------
+           9. ATUALIZAÇÃO DA INTERFACE
+        ------------------------------------------------- */
+
+        ordersEnabledToggle.addEventListener(
+            "change",
+            updateOrderSettingsVisualState
+        );
+
+
+        customerCancellationToggle.addEventListener(
+            "change",
+            updateOrderSettingsVisualState
+        );
+
+
+        merchantConfirmationToggle.addEventListener(
+            "change",
+            updateOrderSettingsVisualState
+        );
+
+
+        /* -------------------------------------------------
+           10. VALIDAR TEMPO
+        ------------------------------------------------- */
+
+        cancellationTimeInput.addEventListener(
+            "input",
+            () => {
+
+                let value =
+                    Number(
+                        cancellationTimeInput.value
+                    );
+
+
+                if (!Number.isFinite(value)) {
+                    return;
+                }
+
+
+                if (value < 0) {
+                    cancellationTimeInput.value = 0;
+                }
+
+
+                if (value > 1440) {
+                    cancellationTimeInput.value = 1440;
+                }
+
+            }
+        );
+
+
+        /* -------------------------------------------------
+           11. SALVAR NO FIRESTORE
+        ------------------------------------------------- */
+
+        saveButton.addEventListener(
+            "click",
+            async () => {
+
+                try {
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 8.3\n\n" +
+                        "Salvando as configurações de pedidos..."
+                    );
+
+
+                    saveButton.disabled = true;
+
+
+                    let cancellationMinutes =
+                        Number(
+                            cancellationTimeInput.value
+                        );
+
+
+                    if (
+                        !Number.isFinite(cancellationMinutes)
+                    ) {
+
+                        cancellationMinutes = 30;
+
+                    }
+
+
+                    cancellationMinutes =
+                        Math.round(
+                            cancellationMinutes
+                        );
+
+
+                    if (cancellationMinutes < 0) {
+                        cancellationMinutes = 0;
+                    }
+
+
+                    if (cancellationMinutes > 1440) {
+                        cancellationMinutes = 1440;
+                    }
+
+
+                    cancellationTimeInput.value =
+                        cancellationMinutes;
+
+
+                    await setDoc(
+                        marketplaceRef,
+                        {
+                            ordersEnabled:
+                                ordersEnabledToggle.checked,
+
+                            customerCancellationEnabled:
+                                customerCancellationToggle.checked,
+
+                            merchantConfirmationRequired:
+                                merchantConfirmationToggle.checked,
+
+                            cancellationTimeMinutes:
+                                cancellationMinutes,
+
+                            updatedAt:
+                                serverTimestamp(),
+
+                            updatedBy:
+                                firebaseUser.uid
+                        },
+                        {
+                            merge: true
+                        }
+                    );
+
+
+                    firebaseStatusIcon.textContent =
+                        "cloud_done";
+
+                    firebaseStatusText.textContent =
+                        "Configurações sincronizadas com Firebase.";
+
+
+                    updateOrderSettingsVisualState();
+
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 8.3 TERMINÉ ✅\n\n" +
+                        "Configurações de pedidos " +
+                        "salvas com sucesso.\n\n" +
+
+                        "Receção de pedidos : " +
+                        (
+                            ordersEnabledToggle.checked
+                                ? "Ativa"
+                                : "Desativada"
+                        ) +
+
+                        "\n\n" +
+
+                        "Cancelamento pelo cliente : " +
+                        (
+                            customerCancellationToggle.checked
+                                ? "Ativo"
+                                : "Desativado"
+                        ) +
+
+                        "\n\n" +
+
+                        "Confirmação do comerciante : " +
+                        (
+                            merchantConfirmationToggle.checked
+                                ? "Obrigatória"
+                                : "Não obrigatória"
+                        ) +
+
+                        "\n\n" +
+
+                        "Prazo de cancelamento : " +
+                        cancellationMinutes +
+                        " minutos"
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Erro ao salvar configurações de pedidos:",
+                        error
+                    );
+
+
+                    firebaseStatusIcon.textContent =
+                        "cloud_off";
+
+                    firebaseStatusText.textContent =
+                        "Erro ao sincronizar com Firebase.";
+
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 8.3 ERRO\n\n" +
+                        "Não foi possível salvar as configurações.\n\n" +
+                        error.message
+                    );
+
+                } finally {
+
+                    saveButton.disabled = false;
+
+                }
+
+            }
+        );
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 8 TERMINÉ ✅\n\n" +
+            "Configurações de pedidos conectadas ao Firebase."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro BLOC 8:",
+            error
+        );
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 8 ERRO\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   BLOC 8 — INITIALISATION
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+        initializeOrderSettings();
+    }
+);
