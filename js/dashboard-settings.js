@@ -4457,3 +4457,512 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 });
+/* =========================================================
+   TOMA — SETTINGS
+   BLOC 11 — NOTIFICATIONS & ALERTES
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    alert(
+        "TOMA — SETTINGS\n\n" +
+        "BLOC 11.1\n" +
+        "Inicialização das notificações..."
+    );
+
+
+    /* =====================================================
+       ELEMENTOS
+    ====================================================== */
+
+    const generalNotificationToggle =
+        document.getElementById(
+            "generalNotificationToggle"
+        );
+
+
+    const orderNotificationToggle =
+        document.getElementById(
+            "orderNotificationToggle"
+        );
+
+
+    const merchantNotificationToggle =
+        document.getElementById(
+            "merchantNotificationToggle"
+        );
+
+
+    const userNotificationToggle =
+        document.getElementById(
+            "userNotificationToggle"
+        );
+
+
+    const adminAlertNotificationToggle =
+        document.getElementById(
+            "adminAlertNotificationToggle"
+        );
+
+
+    const statusArea =
+        document.getElementById(
+            "notificationSettingsStatusArea"
+        );
+
+
+    const statusIcon =
+        document.getElementById(
+            "notificationSettingsStatusIcon"
+        );
+
+
+    const statusText =
+        document.getElementById(
+            "notificationSettingsStatusText"
+        );
+
+
+    const firebaseStatusIcon =
+        document.getElementById(
+            "notificationFirebaseStatusIcon"
+        );
+
+
+    const firebaseStatusText =
+        document.getElementById(
+            "notificationFirebaseStatusText"
+        );
+
+
+    const saveButton =
+        document.getElementById(
+            "saveNotificationSettingsButton"
+        );
+
+
+    /* =====================================================
+       VALIDATION DES ELEMENTS
+    ====================================================== */
+
+    if (
+        !generalNotificationToggle ||
+        !orderNotificationToggle ||
+        !merchantNotificationToggle ||
+        !userNotificationToggle ||
+        !adminAlertNotificationToggle ||
+        !statusArea ||
+        !statusIcon ||
+        !statusText ||
+        !firebaseStatusIcon ||
+        !firebaseStatusText ||
+        !saveButton
+    ) {
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 11.2 ❌\n\n" +
+            "Um ou mais elementos das notificações " +
+            "não foram encontrados."
+        );
+
+        return;
+    }
+
+
+    alert(
+        "TOMA — SETTINGS\n\n" +
+        "BLOC 11.2 ✅\n\n" +
+        "Todos os elementos das notificações " +
+        "foram encontrados com sucesso."
+    );
+
+
+    /* =====================================================
+       STATUS VISUAL
+    ====================================================== */
+
+    function updateNotificationStatus() {
+
+        const generalEnabled =
+            generalNotificationToggle.checked;
+
+
+        if (generalEnabled) {
+
+            statusArea.classList.remove(
+                "disabled"
+            );
+
+
+            statusIcon.textContent =
+                "notifications_active";
+
+
+            statusText.textContent =
+                "Notificações ativas";
+
+        } else {
+
+            statusArea.classList.add(
+                "disabled"
+            );
+
+
+            statusIcon.textContent =
+                "notifications_off";
+
+
+            statusText.textContent =
+                "Notificações desativadas";
+        }
+    }
+
+
+    generalNotificationToggle.addEventListener(
+        "change",
+        updateNotificationStatus
+    );
+
+
+    updateNotificationStatus();
+
+
+    /* =====================================================
+       CHARGEMENT FIREBASE
+    ====================================================== */
+
+    async function loadNotificationSettings() {
+
+        try {
+
+            firebaseStatusText.textContent =
+                "Connexion à Firebase...";
+
+
+            const firebaseModule =
+                await import("../firebase.js");
+
+
+            const db = firebaseModule.db;
+            const auth = firebaseModule.auth;
+
+
+            if (!db || !auth) {
+
+                throw new Error(
+                    "Firebase db/auth indisponível."
+                );
+            }
+
+
+            const user = await new Promise(
+                (resolve) => {
+
+                    const unsubscribe =
+                        onAuthStateChanged(
+                            auth,
+                            (currentUser) => {
+
+                                unsubscribe();
+
+                                resolve(
+                                    currentUser
+                                );
+                            }
+                        );
+                }
+            );
+
+
+            if (!user) {
+
+                throw new Error(
+                    "Administrador não autenticado."
+                );
+            }
+
+
+            const settingsRef =
+                doc(
+                    db,
+                    "settings",
+                    "marketplace"
+                );
+
+
+            const settingsSnapshot =
+                await getDoc(settingsRef);
+
+
+            if (
+                settingsSnapshot.exists()
+            ) {
+
+                const data =
+                    settingsSnapshot.data();
+
+
+                generalNotificationToggle.checked =
+                    data.notificationsEnabled !== false;
+
+
+                orderNotificationToggle.checked =
+                    data.orderNotificationsEnabled !== false;
+
+
+                merchantNotificationToggle.checked =
+                    data.merchantNotificationsEnabled !== false;
+
+
+                userNotificationToggle.checked =
+                    data.userNotificationsEnabled !== false;
+
+
+                adminAlertNotificationToggle.checked =
+                    data.adminAlertNotificationsEnabled !== false;
+            }
+
+
+            updateNotificationStatus();
+
+
+            firebaseStatusIcon.textContent =
+                "cloud_done";
+
+
+            firebaseStatusText.textContent =
+                "Configurações carregadas com sucesso.";
+
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 11.3 ✅\n\n" +
+                "Configurações de notificações " +
+                "carregadas do Firebase."
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "BLOC 11 — LOAD ERROR:",
+                error
+            );
+
+
+            firebaseStatusIcon.textContent =
+                "cloud_off";
+
+
+            firebaseStatusText.textContent =
+                "Erro ao carregar as configurações.";
+
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 11.3 ❌\n\n" +
+                "Não foi possível carregar as notificações.\n\n" +
+                error.message
+            );
+        }
+    }
+
+
+    /* =====================================================
+       SAUVEGAR CONFIGURAÇÕES
+    ====================================================== */
+
+    saveButton.addEventListener(
+        "click",
+        async () => {
+
+            try {
+
+                saveButton.disabled = true;
+
+                saveButton.style.opacity = "0.65";
+
+
+                firebaseStatusText.textContent =
+                    "A guardar alterações...";
+
+
+                const firebaseModule =
+                    await import("../firebase.js");
+
+
+                const db = firebaseModule.db;
+                const auth = firebaseModule.auth;
+
+
+                const user = await new Promise(
+                    (resolve) => {
+
+                        const unsubscribe =
+                            onAuthStateChanged(
+                                auth,
+                                (currentUser) => {
+
+                                    unsubscribe();
+
+                                    resolve(
+                                        currentUser
+                                    );
+                                }
+                            );
+                    }
+                );
+
+
+                if (!user) {
+
+                    throw new Error(
+                        "Administrador não autenticado."
+                    );
+                }
+
+
+                const settingsRef =
+                    doc(
+                        db,
+                        "settings",
+                        "marketplace"
+                    );
+
+
+                await setDoc(
+                    settingsRef,
+                    {
+
+                        notificationsEnabled:
+                            generalNotificationToggle.checked,
+
+                        orderNotificationsEnabled:
+                            orderNotificationToggle.checked,
+
+                        merchantNotificationsEnabled:
+                            merchantNotificationToggle.checked,
+
+                        userNotificationsEnabled:
+                            userNotificationToggle.checked,
+
+                        adminAlertNotificationsEnabled:
+                            adminAlertNotificationToggle.checked,
+
+                        updatedAt:
+                            serverTimestamp(),
+
+                        updatedBy:
+                            user.uid
+
+                    },
+                    {
+                        merge: true
+                    }
+                );
+
+
+                updateNotificationStatus();
+
+
+                firebaseStatusIcon.textContent =
+                    "cloud_done";
+
+
+                firebaseStatusText.textContent =
+                    "Configurações sincronizadas com Firebase.";
+
+
+                alert(
+                    "TOMA — SETTINGS\n\n" +
+                    "BLOC 11.4 TERMINÉ ✅\n\n" +
+                    "Configurações de notificações " +
+                    "salvas com sucesso.\n\n" +
+
+                    "Notificações gerais : " +
+                    (
+                        generalNotificationToggle.checked
+                            ? "Ativas"
+                            : "Desativadas"
+                    ) +
+
+                    "\nNovos pedidos : " +
+                    (
+                        orderNotificationToggle.checked
+                            ? "Ativos"
+                            : "Desativados"
+                    ) +
+
+                    "\nNovos comerciantes : " +
+                    (
+                        merchantNotificationToggle.checked
+                            ? "Ativos"
+                            : "Desativados"
+                    ) +
+
+                    "\nNovos usuários : " +
+                    (
+                        userNotificationToggle.checked
+                            ? "Ativos"
+                            : "Desativados"
+                    ) +
+
+                    "\nAlertas administrativos : " +
+                    (
+                        adminAlertNotificationToggle.checked
+                            ? "Ativos"
+                            : "Desativados"
+                    )
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "BLOC 11 — SAVE ERROR:",
+                    error
+                );
+
+
+                firebaseStatusIcon.textContent =
+                    "cloud_off";
+
+
+                firebaseStatusText.textContent =
+                    "Erro ao sincronizar com Firebase.";
+
+
+                alert(
+                    "TOMA — SETTINGS\n\n" +
+                    "BLOC 11.4 ❌\n\n" +
+                    "Erro ao guardar as configurações.\n\n" +
+                    error.message
+                );
+
+
+            } finally {
+
+                saveButton.disabled = false;
+
+                saveButton.style.opacity = "1";
+            }
+        }
+    );
+
+
+    /* =====================================================
+       START
+    ====================================================== */
+
+    loadNotificationSettings();
+
+
+    alert(
+        "TOMA — SETTINGS\n\n" +
+        "BLOC 11 TERMINÉ ✅\n\n" +
+        "O sistema de configuração de notificações " +
+        "está pronto para teste."
+    );
+
+});
