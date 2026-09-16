@@ -3243,3 +3243,419 @@ body {
     }
 
 }
+/* =========================================================
+   TOMA — SETTINGS
+   BLOC 10 — IDENTIDADE DO TOMA
+========================================================= */
+
+#tomaIdentitySettingsSection {
+    width: 100%;
+    margin-top: 24px;
+    margin-bottom: 30px;
+}
+
+
+#tomaIdentitySettingsHeader {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+
+#tomaIdentitySettingsIcon {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+
+    background: rgba(255, 106, 0, 0.10);
+    color: #ff6a00;
+}
+
+
+#tomaIdentitySettingsIcon .material-symbols-rounded {
+    font-size: 25px;
+}
+
+
+#tomaIdentitySettingsHeaderText {
+    min-width: 0;
+}
+
+
+#tomaIdentitySettingsTitle {
+    margin: 0;
+
+    font-size: 20px;
+    font-weight: 700;
+
+    color: #171717;
+}
+
+
+#tomaIdentitySettingsDescription {
+    margin: 4px 0 0;
+
+    font-size: 13px;
+    line-height: 1.5;
+
+    color: #777;
+}
+
+
+#tomaIdentitySettingsCard {
+    width: 100%;
+    box-sizing: border-box;
+
+    background: #ffffff;
+
+    border: 1px solid rgba(0, 0, 0, 0.06);
+
+    border-radius: 22px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.045);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   INPUT AREAS
+========================================================= */
+
+#tomaAppNameArea,
+#tomaSloganArea,
+#tomaVersionArea,
+#tomaMaintenanceArea,
+#tomaMaintenanceMessageArea {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 18px 0;
+
+    border-bottom: 1px solid #eeeeee;
+}
+
+
+#tomaAppNameInfo,
+#tomaSloganInfo,
+#tomaVersionInfo,
+#tomaMaintenanceInfo,
+#tomaMaintenanceMessageInfo {
+    flex: 1;
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+
+#tomaAppNameLabel,
+#tomaSloganLabel,
+#tomaVersionLabel,
+#tomaMaintenanceLabel,
+#tomaMaintenanceMessageLabel {
+    font-size: 15px;
+    font-weight: 650;
+
+    color: #202020;
+}
+
+
+#tomaAppNameDescription,
+#tomaSloganDescription,
+#tomaVersionDescription,
+#tomaMaintenanceDescription,
+#tomaMaintenanceMessageDescription {
+    font-size: 12px;
+    line-height: 1.45;
+
+    color: #888;
+}
+
+
+/* =========================================================
+   TEXT INPUTS
+========================================================= */
+
+#tomaAppNameInputWrapper,
+#tomaVersionInputWrapper {
+    width: 220px;
+    max-width: 42%;
+}
+
+
+#tomaAppNameInput,
+#tomaVersionInput,
+#tomaSloganInput,
+#tomaMaintenanceMessageInput {
+    width: 100%;
+    box-sizing: border-box;
+
+    border: 1px solid #dedede;
+
+    background: #fafafa;
+
+    border-radius: 13px;
+
+    padding: 12px 14px;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    color: #222;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+#tomaAppNameInput:focus,
+#tomaVersionInput:focus,
+#tomaSloganInput:focus,
+#tomaMaintenanceMessageInput:focus {
+    background: #ffffff;
+
+    border-color: #ff6a00;
+
+    box-shadow:
+        0 0 0 4px rgba(255, 106, 0, 0.08);
+}
+
+
+#tomaSloganInputWrapper,
+#tomaMaintenanceMessageInputWrapper {
+    width: 360px;
+    max-width: 48%;
+}
+
+
+#tomaSloganInput,
+#tomaMaintenanceMessageInput {
+    min-height: 85px;
+
+    resize: vertical;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   PREMIUM SWITCH
+========================================================= */
+
+#tomaMaintenanceToggleContainer {
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+#tomaIdentityStatusArea {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    margin-top: 18px;
+
+    padding: 12px 14px;
+
+    border-radius: 13px;
+
+    background: #f7f7f7;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    color: #555;
+}
+
+
+#tomaIdentityStatusIcon {
+    font-size: 20px;
+}
+
+
+#tomaIdentityStatusArea.maintenance {
+    background: rgba(255, 106, 0, 0.08);
+    color: #d95b00;
+}
+
+
+/* =========================================================
+   FIREBASE STATUS
+========================================================= */
+
+#tomaIdentityFirebaseStatusArea {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    margin-top: 10px;
+
+    padding: 13px 14px;
+
+    border-radius: 13px;
+
+    background: #fafafa;
+
+    border: 1px solid #eeeeee;
+}
+
+
+#tomaIdentityFirebaseStatusIcon {
+    font-size: 21px;
+
+    color: #777;
+}
+
+
+#tomaIdentityFirebaseStatusContent {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+
+#tomaIdentityFirebaseStatusLabel {
+    font-size: 12px;
+
+    color: #444;
+}
+
+
+#tomaIdentityFirebaseStatusText {
+    font-size: 12px;
+
+    color: #888;
+}
+
+
+/* =========================================================
+   SAVE BUTTON
+========================================================= */
+
+#saveTomaIdentitySettingsButton {
+    width: 100%;
+
+    margin-top: 16px;
+
+    min-height: 50px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    border: none;
+    border-radius: 14px;
+
+    background: #171717;
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 650;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.18s ease,
+        opacity 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+
+#saveTomaIdentitySettingsButton:hover {
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.14);
+}
+
+
+#saveTomaIdentitySettingsButton:active {
+    transform: scale(0.98);
+}
+
+
+#saveTomaIdentitySettingsButton .material-symbols-rounded {
+    font-size: 20px;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    #tomaIdentitySettingsCard {
+        padding: 16px;
+        border-radius: 19px;
+    }
+
+
+    #tomaAppNameArea,
+    #tomaSloganArea,
+    #tomaVersionArea,
+    #tomaMaintenanceArea,
+    #tomaMaintenanceMessageArea {
+        align-items: flex-start;
+        flex-direction: column;
+
+        gap: 12px;
+    }
+
+
+    #tomaAppNameInputWrapper,
+    #tomaVersionInputWrapper,
+    #tomaSloganInputWrapper,
+    #tomaMaintenanceMessageInputWrapper {
+        width: 100%;
+        max-width: 100%;
+    }
+
+
+    #tomaMaintenanceArea {
+        flex-direction: row;
+        align-items: center;
+    }
+
+
+    #tomaMaintenanceInfo {
+        padding-right: 10px;
+    }
+
+
+    #tomaIdentitySettingsTitle {
+        font-size: 18px;
+    }
+
+
+    #tomaIdentitySettingsDescription {
+        font-size: 12px;
+    }
+}
