@@ -3948,3 +3948,512 @@ document.addEventListener(
         initializeWhatsappSettings();
     }
 );
+/* =========================================================
+   TOMA — SETTINGS
+   BLOC 10 — IDENTIDADE DO TOMA
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    alert(
+        "TOMA — SETTINGS\n\n" +
+        "BLOC 10.1\n" +
+        "Inicialização da identidade do Toma..."
+    );
+
+
+    const tomaAppNameInput =
+        document.getElementById("tomaAppNameInput");
+
+    const tomaSloganInput =
+        document.getElementById("tomaSloganInput");
+
+    const tomaVersionInput =
+        document.getElementById("tomaVersionInput");
+
+    const tomaMaintenanceToggle =
+        document.getElementById("tomaMaintenanceToggle");
+
+    const tomaMaintenanceMessageInput =
+        document.getElementById("tomaMaintenanceMessageInput");
+
+    const tomaIdentityStatusArea =
+        document.getElementById("tomaIdentityStatusArea");
+
+    const tomaIdentityStatusIcon =
+        document.getElementById("tomaIdentityStatusIcon");
+
+    const tomaIdentityStatusText =
+        document.getElementById("tomaIdentityStatusText");
+
+    const tomaIdentityFirebaseStatusIcon =
+        document.getElementById(
+            "tomaIdentityFirebaseStatusIcon"
+        );
+
+    const tomaIdentityFirebaseStatusText =
+        document.getElementById(
+            "tomaIdentityFirebaseStatusText"
+        );
+
+    const saveButton =
+        document.getElementById(
+            "saveTomaIdentitySettingsButton"
+        );
+
+
+    if (
+        !tomaAppNameInput ||
+        !tomaSloganInput ||
+        !tomaVersionInput ||
+        !tomaMaintenanceToggle ||
+        !tomaMaintenanceMessageInput ||
+        !tomaIdentityStatusArea ||
+        !tomaIdentityStatusIcon ||
+        !tomaIdentityStatusText ||
+        !tomaIdentityFirebaseStatusIcon ||
+        !tomaIdentityFirebaseStatusText ||
+        !saveButton
+    ) {
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 10.2 ❌\n\n" +
+            "Um ou mais elementos da identidade " +
+            "não foram encontrados."
+        );
+
+        return;
+    }
+
+
+    alert(
+        "TOMA — SETTINGS\n\n" +
+        "BLOC 10.2 ✅\n\n" +
+        "Todos os elementos da identidade " +
+        "foram encontrados com sucesso."
+    );
+
+
+    /* =====================================================
+       STATUS VISUAL
+    ====================================================== */
+
+    function updateTomaIdentityStatus() {
+
+        if (tomaMaintenanceToggle.checked) {
+
+            tomaIdentityStatusArea.classList.add(
+                "maintenance"
+            );
+
+            tomaIdentityStatusIcon.textContent =
+                "build";
+
+            tomaIdentityStatusText.textContent =
+                "Modo de manutenção ativado";
+
+        } else {
+
+            tomaIdentityStatusArea.classList.remove(
+                "maintenance"
+            );
+
+            tomaIdentityStatusIcon.textContent =
+                "check_circle";
+
+            tomaIdentityStatusText.textContent =
+                "Toma operacional";
+        }
+    }
+
+
+    tomaMaintenanceToggle.addEventListener(
+        "change",
+        updateTomaIdentityStatus
+    );
+
+
+    updateTomaIdentityStatus();
+
+
+    /* =====================================================
+       CHARGEMENT FIREBASE
+    ====================================================== */
+
+    async function loadTomaIdentitySettings() {
+
+        try {
+
+            tomaIdentityFirebaseStatusText.textContent =
+                "Connexion à Firebase...";
+
+
+            const firebaseModule =
+                await import("../firebase.js");
+
+
+            const db = firebaseModule.db;
+            const auth = firebaseModule.auth;
+
+
+            if (!db || !auth) {
+
+                throw new Error(
+                    "Firebase db/auth indisponível."
+                );
+            }
+
+
+            const user = await new Promise(
+                (resolve) => {
+
+                    const unsubscribe =
+                        onAuthStateChanged(
+                            auth,
+                            (currentUser) => {
+
+                                unsubscribe();
+
+                                resolve(
+                                    currentUser
+                                );
+                            }
+                        );
+                }
+            );
+
+
+            if (!user) {
+
+                throw new Error(
+                    "Administrador não autenticado."
+                );
+            }
+
+
+            const settingsRef =
+                doc(
+                    db,
+                    "settings",
+                    "marketplace"
+                );
+
+
+            const settingsSnapshot =
+                await getDoc(settingsRef);
+
+
+            if (
+                settingsSnapshot.exists()
+            ) {
+
+                const data =
+                    settingsSnapshot.data();
+
+
+                tomaAppNameInput.value =
+                    data.appName ||
+                    "Toma";
+
+
+                tomaSloganInput.value =
+                    data.appSlogan ||
+                    "";
+
+
+                tomaVersionInput.value =
+                    data.appVersion ||
+                    "1.0.0";
+
+
+                tomaMaintenanceToggle.checked =
+                    data.maintenanceMode === true;
+
+
+                tomaMaintenanceMessageInput.value =
+                    data.maintenanceMessage ||
+                    "O Toma está temporariamente em manutenção. Voltaremos em breve.";
+            }
+
+
+            updateTomaIdentityStatus();
+
+
+            tomaIdentityFirebaseStatusIcon.textContent =
+                "cloud_done";
+
+
+            tomaIdentityFirebaseStatusText.textContent =
+                "Configurações carregadas com sucesso.";
+
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 10.3 ✅\n\n" +
+                "Identidade carregada do Firebase."
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "BLOC 10 — LOAD ERROR:",
+                error
+            );
+
+
+            tomaIdentityFirebaseStatusIcon.textContent =
+                "cloud_off";
+
+
+            tomaIdentityFirebaseStatusText.textContent =
+                "Erro ao carregar as configurações.";
+
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 10.3 ❌\n\n" +
+                "Não foi possível carregar a identidade.\n\n" +
+                error.message
+            );
+        }
+    }
+
+
+    /* =====================================================
+       SAUVEGAR
+    ====================================================== */
+
+    saveButton.addEventListener(
+        "click",
+        async () => {
+
+            try {
+
+                const appName =
+                    tomaAppNameInput.value.trim();
+
+
+                const appSlogan =
+                    tomaSloganInput.value.trim();
+
+
+                const appVersion =
+                    tomaVersionInput.value.trim();
+
+
+                const maintenanceMode =
+                    tomaMaintenanceToggle.checked;
+
+
+                const maintenanceMessage =
+                    tomaMaintenanceMessageInput.value.trim();
+
+
+                if (!appName) {
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 10.4 ❌\n\n" +
+                        "O nome da aplicação é obrigatório."
+                    );
+
+                    tomaAppNameInput.focus();
+
+                    return;
+                }
+
+
+                if (!appVersion) {
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 10.4 ❌\n\n" +
+                        "A versão da aplicação é obrigatória."
+                    );
+
+                    tomaVersionInput.focus();
+
+                    return;
+                }
+
+
+                if (
+                    maintenanceMode &&
+                    !maintenanceMessage
+                ) {
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 10.4 ❌\n\n" +
+                        "Digite uma mensagem para o modo de manutenção."
+                    );
+
+                    tomaMaintenanceMessageInput.focus();
+
+                    return;
+                }
+
+
+                saveButton.disabled = true;
+
+                saveButton.style.opacity = "0.65";
+
+
+                tomaIdentityFirebaseStatusText.textContent =
+                    "A guardar alterações...";
+
+
+                const firebaseModule =
+                    await import("../firebase.js");
+
+
+                const db = firebaseModule.db;
+                const auth = firebaseModule.auth;
+
+
+                const user = await new Promise(
+                    (resolve) => {
+
+                        const unsubscribe =
+                            onAuthStateChanged(
+                                auth,
+                                (currentUser) => {
+
+                                    unsubscribe();
+
+                                    resolve(
+                                        currentUser
+                                    );
+                                }
+                            );
+                    }
+                );
+
+
+                if (!user) {
+
+                    throw new Error(
+                        "Administrador não autenticado."
+                    );
+                }
+
+
+                const settingsRef =
+                    doc(
+                        db,
+                        "settings",
+                        "marketplace"
+                    );
+
+
+                await setDoc(
+                    settingsRef,
+                    {
+
+                        appName: appName,
+
+                        appSlogan: appSlogan,
+
+                        appVersion: appVersion,
+
+                        maintenanceMode:
+                            maintenanceMode,
+
+                        maintenanceMessage:
+                            maintenanceMessage,
+
+                        updatedAt:
+                            serverTimestamp(),
+
+                        updatedBy:
+                            user.uid
+
+                    },
+                    {
+                        merge: true
+                    }
+                );
+
+
+                tomaIdentityFirebaseStatusIcon.textContent =
+                    "cloud_done";
+
+
+                tomaIdentityFirebaseStatusText.textContent =
+                    "Configurações sincronizadas com Firebase.";
+
+
+                updateTomaIdentityStatus();
+
+
+                alert(
+                    "TOMA — SETTINGS\n\n" +
+                    "BLOC 10.5 TERMINÉ ✅\n\n" +
+                    "Identidade do Toma salva com sucesso.\n\n" +
+
+                    "Nome : " +
+                    appName +
+
+                    "\nVersão : " +
+                    appVersion +
+
+                    "\nModo manutenção : " +
+                    (
+                        maintenanceMode
+                            ? "Ativado"
+                            : "Desativado"
+                    )
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "BLOC 10 — SAVE ERROR:",
+                    error
+                );
+
+
+                tomaIdentityFirebaseStatusIcon.textContent =
+                    "cloud_off";
+
+
+                tomaIdentityFirebaseStatusText.textContent =
+                    "Erro ao sincronizar com Firebase.";
+
+
+                alert(
+                    "TOMA — SETTINGS\n\n" +
+                    "BLOC 10.5 ❌\n\n" +
+                    "Erro ao guardar as configurações.\n\n" +
+                    error.message
+                );
+
+
+            } finally {
+
+                saveButton.disabled = false;
+
+                saveButton.style.opacity = "1";
+            }
+        }
+    );
+
+
+    /* =====================================================
+       START
+    ====================================================== */
+
+    loadTomaIdentitySettings();
+
+
+    alert(
+        "TOMA — SETTINGS\n\n" +
+        "BLOC 10 TERMINÉ ✅\n\n" +
+        "A configuração da identidade do Toma " +
+        "está pronta para teste."
+    );
+
+});
