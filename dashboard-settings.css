@@ -3659,3 +3659,389 @@ body {
         font-size: 12px;
     }
 }
+/* =========================================================
+   TOMA — SETTINGS
+   BLOC 11 — NOTIFICATIONS & ALERTES
+========================================================= */
+
+#notificationSettingsSection {
+    width: 100%;
+    margin-top: 24px;
+    margin-bottom: 30px;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+#notificationSettingsHeader {
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    margin-bottom: 14px;
+}
+
+
+#notificationSettingsIcon {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+
+    background: rgba(255, 106, 0, 0.10);
+
+    color: #ff6a00;
+}
+
+
+#notificationSettingsIcon .material-symbols-rounded {
+    font-size: 25px;
+}
+
+
+#notificationSettingsHeaderText {
+    min-width: 0;
+}
+
+
+#notificationSettingsTitle {
+    margin: 0;
+
+    font-size: 20px;
+    font-weight: 700;
+
+    color: #171717;
+}
+
+
+#notificationSettingsDescription {
+    margin: 4px 0 0;
+
+    font-size: 13px;
+    line-height: 1.5;
+
+    color: #777;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+#notificationSettingsCard {
+    width: 100%;
+    box-sizing: border-box;
+
+    background: #ffffff;
+
+    border: 1px solid rgba(0, 0, 0, 0.06);
+
+    border-radius: 22px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.045);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   NOTIFICATION ROWS
+========================================================= */
+
+#generalNotificationArea,
+#orderNotificationArea,
+#merchantNotificationArea,
+#userNotificationArea,
+#adminAlertNotificationArea {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 18px 0;
+
+    border-bottom: 1px solid #eeeeee;
+}
+
+
+#generalNotificationInfo,
+#orderNotificationInfo,
+#merchantNotificationInfo,
+#userNotificationInfo,
+#adminAlertNotificationInfo {
+
+    flex: 1;
+
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+
+#generalNotificationLabel,
+#orderNotificationLabel,
+#merchantNotificationLabel,
+#userNotificationLabel,
+#adminAlertNotificationLabel {
+
+    font-size: 15px;
+
+    font-weight: 650;
+
+    color: #202020;
+}
+
+
+#generalNotificationDescription,
+#orderNotificationDescription,
+#merchantNotificationDescription,
+#userNotificationDescription,
+#adminAlertNotificationDescription {
+
+    font-size: 12px;
+
+    line-height: 1.45;
+
+    color: #888;
+}
+
+
+/* =========================================================
+   SWITCH
+========================================================= */
+
+#generalNotificationToggleContainer,
+#orderNotificationToggleContainer,
+#merchantNotificationToggleContainer,
+#userNotificationToggleContainer,
+#adminAlertNotificationToggleContainer {
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+#notificationSettingsStatusArea {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    margin-top: 18px;
+
+    padding: 12px 14px;
+
+    border-radius: 13px;
+
+    background: #f7f7f7;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    color: #555;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+
+#notificationSettingsStatusIcon {
+    font-size: 20px;
+}
+
+
+#notificationSettingsStatusArea.disabled {
+
+    background: #f4f4f4;
+
+    color: #888;
+}
+
+
+/* =========================================================
+   FIREBASE STATUS
+========================================================= */
+
+#notificationFirebaseStatusArea {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-top: 10px;
+
+    padding: 13px 14px;
+
+    border-radius: 13px;
+
+    background: #fafafa;
+
+    border: 1px solid #eeeeee;
+}
+
+
+#notificationFirebaseStatusIcon {
+    font-size: 21px;
+
+    color: #777;
+}
+
+
+#notificationFirebaseStatusContent {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+
+#notificationFirebaseStatusLabel {
+
+    font-size: 12px;
+
+    color: #444;
+}
+
+
+#notificationFirebaseStatusText {
+
+    font-size: 12px;
+
+    color: #888;
+}
+
+
+/* =========================================================
+   SAVE BUTTON
+========================================================= */
+
+#saveNotificationSettingsButton {
+
+    width: 100%;
+
+    margin-top: 16px;
+
+    min-height: 50px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 9px;
+
+    border: none;
+
+    border-radius: 14px;
+
+    background: #171717;
+
+    color: #ffffff;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 650;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.18s ease,
+        opacity 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+
+#saveNotificationSettingsButton:hover {
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.14);
+}
+
+
+#saveNotificationSettingsButton:active {
+
+    transform: scale(0.98);
+}
+
+
+#saveNotificationSettingsButton .material-symbols-rounded {
+
+    font-size: 20px;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    #notificationSettingsCard {
+        padding: 16px;
+
+        border-radius: 19px;
+    }
+
+
+    #notificationSettingsTitle {
+        font-size: 18px;
+    }
+
+
+    #notificationSettingsDescription {
+        font-size: 12px;
+    }
+
+
+    #generalNotificationArea,
+    #orderNotificationArea,
+    #merchantNotificationArea,
+    #userNotificationArea,
+    #adminAlertNotificationArea {
+
+        gap: 12px;
+    }
+
+
+    #generalNotificationLabel,
+    #orderNotificationLabel,
+    #merchantNotificationLabel,
+    #userNotificationLabel,
+    #adminAlertNotificationLabel {
+
+        font-size: 14px;
+    }
+}
