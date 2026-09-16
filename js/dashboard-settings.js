@@ -2265,3 +2265,523 @@ document.addEventListener(
 
     }
 );
+/* =========================================================
+   BLOC 7.2 — MARKETPLACE — JAVASCRIPT + FIREBASE
+========================================================= */
+
+async function initializeMarketplaceSettings() {
+
+    alert(
+        "TOMA — SETTINGS\n\n" +
+        "BLOC 7.1\n\n" +
+        "Inicialização das configurações do Marketplace..."
+    );
+
+    try {
+
+        /* -------------------------------------------------
+           1. VERIFICAR ELEMENTOS HTML
+        ------------------------------------------------- */
+
+        const userRegistrationToggle =
+            document.getElementById(
+                "marketplaceUserRegistrationToggle"
+            );
+
+        const merchantRegistrationToggle =
+            document.getElementById(
+                "marketplaceMerchantRegistrationToggle"
+            );
+
+        const statusIcon =
+            document.getElementById(
+                "marketplaceSettingsStatusIcon"
+            );
+
+        const statusText =
+            document.getElementById(
+                "marketplaceSettingsStatusText"
+            );
+
+        const firebaseStatusIcon =
+            document.getElementById(
+                "marketplaceFirebaseStatusIcon"
+            );
+
+        const firebaseStatusText =
+            document.getElementById(
+                "marketplaceFirebaseStatusText"
+            );
+
+        const saveButton =
+            document.getElementById(
+                "saveMarketplaceSettingsButton"
+            );
+
+
+        if (
+            !userRegistrationToggle ||
+            !merchantRegistrationToggle ||
+            !statusIcon ||
+            !statusText ||
+            !firebaseStatusIcon ||
+            !firebaseStatusText ||
+            !saveButton
+        ) {
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 7.2 ERRO\n\n" +
+                "Um ou mais elementos do Marketplace " +
+                "não foram encontrados."
+            );
+
+            return;
+        }
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 7.2\n\n" +
+            "Todos os elementos do Marketplace " +
+            "foram encontrados com sucesso."
+        );
+
+
+        /* -------------------------------------------------
+           2. FIREBASE
+        ------------------------------------------------- */
+
+        const firebase =
+            await import("../firebase.js");
+
+        const db = firebase.db;
+        const auth = firebase.auth;
+
+
+        if (!db || !auth) {
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 7.2 ERRO\n\n" +
+                "Firebase não foi carregado corretamente."
+            );
+
+            return;
+        }
+
+
+        /* -------------------------------------------------
+           3. AGUARDAR AUTH
+        ------------------------------------------------- */
+
+        const firebaseUser =
+            await new Promise((resolve, reject) => {
+
+                let finished = false;
+                let unsubscribe = null;
+
+                const timeout =
+                    setTimeout(() => {
+
+                        if (finished) return;
+
+                        finished = true;
+
+                        if (unsubscribe) {
+                            unsubscribe();
+                        }
+
+                        reject(
+                            new Error(
+                                "Timeout da autenticação."
+                            )
+                        );
+
+                    }, 10000);
+
+
+                unsubscribe =
+                    onAuthStateChanged(
+                        auth,
+                        (user) => {
+
+                            if (finished) return;
+
+                            finished = true;
+
+                            clearTimeout(timeout);
+
+                            if (unsubscribe) {
+                                unsubscribe();
+                            }
+
+                            resolve(user);
+                        }
+                    );
+
+            });
+
+
+        if (!firebaseUser) {
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 7.2 ERRO\n\n" +
+                "Nenhum usuário está conectado."
+            );
+
+            return;
+        }
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 7.2\n\n" +
+            "Usuário conectado com sucesso.\n\n" +
+            "UID : " +
+            firebaseUser.uid
+        );
+
+
+        /* -------------------------------------------------
+           4. VERIFICAR ROLE
+        ------------------------------------------------- */
+
+        const userDocumentRef =
+            doc(
+                db,
+                "users",
+                firebaseUser.uid
+            );
+
+        const userDocument =
+            await getDoc(
+                userDocumentRef
+            );
+
+
+        if (!userDocument.exists()) {
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 7.2 ERRO\n\n" +
+                "Documento do usuário não foi encontrado."
+            );
+
+            return;
+        }
+
+
+        const userData =
+            userDocument.data();
+
+        const userRole =
+            userData.role || "user";
+
+
+        if (
+            userRole !== "admin" &&
+            userRole !== "superadmin"
+        ) {
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 7.2 ACESSO NEGADO\n\n" +
+                "Rôle détecté : " +
+                userRole
+            );
+
+            return;
+        }
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 7.2\n\n" +
+            "Rôle utilisateur détecté :\n\n" +
+            userRole
+        );
+
+
+        /* -------------------------------------------------
+           5. CARREGAR SETTINGS
+        ------------------------------------------------- */
+
+        const marketplaceRef =
+            doc(
+                db,
+                "settings",
+                "marketplace"
+            );
+
+        const marketplaceSnapshot =
+            await getDoc(
+                marketplaceRef
+            );
+
+
+        let marketplaceData = {};
+
+
+        if (marketplaceSnapshot.exists()) {
+
+            marketplaceData =
+                marketplaceSnapshot.data();
+
+        }
+
+
+        /* -------------------------------------------------
+           6. VALORES PADRÃO
+        ------------------------------------------------- */
+
+        const userRegistrationEnabled =
+            marketplaceData.userRegistrationEnabled
+            !== false;
+
+        const merchantRegistrationEnabled =
+            marketplaceData.merchantRegistrationEnabled
+            === true;
+
+
+        userRegistrationToggle.checked =
+            userRegistrationEnabled;
+
+        merchantRegistrationToggle.checked =
+            merchantRegistrationEnabled;
+
+
+        updateMarketplaceVisualState();
+
+
+        firebaseStatusText.textContent =
+            "Configurações carregadas do Firebase.";
+
+        firebaseStatusIcon.textContent =
+            "cloud_done";
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 7.2\n\n" +
+            "Configurações do Marketplace " +
+            "carregadas do Firebase."
+        );
+
+
+        /* -------------------------------------------------
+           7. ATUALIZAR ESTADO VISUAL
+        ------------------------------------------------- */
+
+        function updateMarketplaceVisualState() {
+
+            const usersActive =
+                userRegistrationToggle.checked;
+
+            const merchantsActive =
+                merchantRegistrationToggle.checked;
+
+
+            if (
+                usersActive &&
+                merchantsActive
+            ) {
+
+                statusIcon.textContent =
+                    "check_circle";
+
+                statusText.textContent =
+                    "Inscrições de usuários e comerciantes ativas.";
+
+            } else if (
+                usersActive &&
+                !merchantsActive
+            ) {
+
+                statusIcon.textContent =
+                    "check_circle";
+
+                statusText.textContent =
+                    "Usuários ativos • Comerciantes desativados.";
+
+            } else if (
+                !usersActive &&
+                merchantsActive
+            ) {
+
+                statusIcon.textContent =
+                    "warning";
+
+                statusText.textContent =
+                    "Usuários desativados • Comerciantes ativos.";
+
+            } else {
+
+                statusIcon.textContent =
+                    "block";
+
+                statusText.textContent =
+                    "Inscrições de usuários e comerciantes desativadas.";
+
+            }
+
+        }
+
+
+        /* -------------------------------------------------
+           8. ATUALIZAÇÃO EM TEMPO REAL DA INTERFACE
+        ------------------------------------------------- */
+
+        userRegistrationToggle.addEventListener(
+            "change",
+            updateMarketplaceVisualState
+        );
+
+        merchantRegistrationToggle.addEventListener(
+            "change",
+            updateMarketplaceVisualState
+        );
+
+
+        /* -------------------------------------------------
+           9. SALVAR NO FIRESTORE
+        ------------------------------------------------- */
+
+        saveButton.addEventListener(
+            "click",
+            async () => {
+
+                try {
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 7.3\n\n" +
+                        "Salvando as configurações do Marketplace..."
+                    );
+
+
+                    saveButton.disabled = true;
+
+
+                    await setDoc(
+                        marketplaceRef,
+                        {
+                            userRegistrationEnabled:
+                                userRegistrationToggle.checked,
+
+                            merchantRegistrationEnabled:
+                                merchantRegistrationToggle.checked,
+
+                            updatedAt:
+                                serverTimestamp(),
+
+                            updatedBy:
+                                firebaseUser.uid
+                        },
+                        {
+                            merge: true
+                        }
+                    );
+
+
+                    firebaseStatusIcon.textContent =
+                        "cloud_done";
+
+                    firebaseStatusText.textContent =
+                        "Configurações sincronizadas com Firebase.";
+
+
+                    updateMarketplaceVisualState();
+
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 7.3 TERMINÉ ✅\n\n" +
+                        "Configurações do Marketplace " +
+                        "salvas com sucesso.\n\n" +
+                        "Inscrição de usuários : " +
+                        (
+                            userRegistrationToggle.checked
+                                ? "Ativa"
+                                : "Desativada"
+                        ) +
+                        "\n\n" +
+                        "Inscrição de comerciantes : " +
+                        (
+                            merchantRegistrationToggle.checked
+                                ? "Ativa"
+                                : "Desativada"
+                        )
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Erro ao salvar Marketplace:",
+                        error
+                    );
+
+
+                    firebaseStatusIcon.textContent =
+                        "cloud_off";
+
+                    firebaseStatusText.textContent =
+                        "Erro ao sincronizar com Firebase.";
+
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 7.3 ERRO\n\n" +
+                        "Não foi possível salvar as configurações.\n\n" +
+                        error.message
+                    );
+
+                } finally {
+
+                    saveButton.disabled = false;
+
+                }
+
+            }
+        );
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 7 TERMINÉ ✅\n\n" +
+            "Marketplace conectado ao Firebase.\n\n" +
+            "Os parâmetros podem ser alterados e salvos."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro BLOC 7 Marketplace:",
+            error
+        );
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 7 ERRO\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   BLOC 7 — INITIALISATION
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+        initializeMarketplaceSettings();
+    }
+);
