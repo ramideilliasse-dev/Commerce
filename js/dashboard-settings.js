@@ -3422,3 +3422,529 @@ document.addEventListener(
         initializeOrderSettings();
     }
 );
+/* =========================================================
+   BLOC 9 — WHATSAPP & SUPPORT — JAVASCRIPT + FIREBASE
+========================================================= */
+
+async function initializeWhatsappSettings() {
+
+    alert(
+        "TOMA — SETTINGS\n\n" +
+        "BLOC 9.1\n\n" +
+        "Inicialização das configurações do WhatsApp..."
+    );
+
+
+    try {
+
+        /* -------------------------------------------------
+           1. ELEMENTOS HTML
+        ------------------------------------------------- */
+
+        const whatsappSupportToggle =
+            document.getElementById(
+                "whatsappSupportToggle"
+            );
+
+        const whatsappNumberInput =
+            document.getElementById(
+                "whatsappNumberInput"
+            );
+
+        const whatsappOrderNumberInput =
+            document.getElementById(
+                "whatsappOrderNumberInput"
+            );
+
+        const whatsappDefaultMessageInput =
+            document.getElementById(
+                "whatsappDefaultMessageInput"
+            );
+
+        const statusIcon =
+            document.getElementById(
+                "whatsappSettingsStatusIcon"
+            );
+
+        const statusText =
+            document.getElementById(
+                "whatsappSettingsStatusText"
+            );
+
+        const firebaseStatusIcon =
+            document.getElementById(
+                "whatsappFirebaseStatusIcon"
+            );
+
+        const firebaseStatusText =
+            document.getElementById(
+                "whatsappFirebaseStatusText"
+            );
+
+        const saveButton =
+            document.getElementById(
+                "saveWhatsappSettingsButton"
+            );
+
+
+        if (
+            !whatsappSupportToggle ||
+            !whatsappNumberInput ||
+            !whatsappOrderNumberInput ||
+            !whatsappDefaultMessageInput ||
+            !statusIcon ||
+            !statusText ||
+            !firebaseStatusIcon ||
+            !firebaseStatusText ||
+            !saveButton
+        ) {
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 9.1 ERRO\n\n" +
+                "Um ou mais elementos do WhatsApp " +
+                "não foram encontrados."
+            );
+
+            return;
+        }
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 9.1\n\n" +
+            "Todos os elementos do WhatsApp " +
+            "foram encontrados com sucesso."
+        );
+
+
+        /* -------------------------------------------------
+           2. FIREBASE
+        ------------------------------------------------- */
+
+        const firebase =
+            await import("../firebase.js");
+
+        const db = firebase.db;
+        const auth = firebase.auth;
+
+
+        if (!db || !auth) {
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 9.1 ERRO\n\n" +
+                "Firebase não foi carregado corretamente."
+            );
+
+            return;
+        }
+
+
+        /* -------------------------------------------------
+           3. AUTH
+        ------------------------------------------------- */
+
+        const firebaseUser =
+            await new Promise((resolve, reject) => {
+
+                let finished = false;
+                let unsubscribe = null;
+
+                const timeout =
+                    setTimeout(() => {
+
+                        if (finished) return;
+
+                        finished = true;
+
+                        if (unsubscribe) {
+                            unsubscribe();
+                        }
+
+                        reject(
+                            new Error(
+                                "Timeout da autenticação."
+                            )
+                        );
+
+                    }, 10000);
+
+
+                unsubscribe =
+                    onAuthStateChanged(
+                        auth,
+                        (user) => {
+
+                            if (finished) return;
+
+                            finished = true;
+
+                            clearTimeout(timeout);
+
+                            if (unsubscribe) {
+                                unsubscribe();
+                            }
+
+                            resolve(user);
+                        }
+                    );
+
+            });
+
+
+        if (!firebaseUser) {
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 9.1 ERRO\n\n" +
+                "Nenhum usuário está conectado."
+            );
+
+            return;
+        }
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 9.1\n\n" +
+            "Usuário conectado com sucesso.\n\n" +
+            "UID : " +
+            firebaseUser.uid
+        );
+
+
+        /* -------------------------------------------------
+           4. ROLE
+        ------------------------------------------------- */
+
+        const userDocument =
+            await getDoc(
+                doc(
+                    db,
+                    "users",
+                    firebaseUser.uid
+                )
+            );
+
+
+        if (!userDocument.exists()) {
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 9.1 ERRO\n\n" +
+                "Documento do usuário não foi encontrado."
+            );
+
+            return;
+        }
+
+
+        const userData =
+            userDocument.data();
+
+        const userRole =
+            userData.role || "user";
+
+
+        if (
+            userRole !== "admin" &&
+            userRole !== "superadmin"
+        ) {
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 9.1 ACESSO NEGADO\n\n" +
+                "Rôle détecté : " +
+                userRole
+            );
+
+            return;
+        }
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 9.1\n\n" +
+            "Rôle utilisateur détecté :\n\n" +
+            userRole
+        );
+
+
+        /* -------------------------------------------------
+           5. CARREGAR SETTINGS
+        ------------------------------------------------- */
+
+        const marketplaceRef =
+            doc(
+                db,
+                "settings",
+                "marketplace"
+            );
+
+        const marketplaceSnapshot =
+            await getDoc(
+                marketplaceRef
+            );
+
+
+        let marketplaceData = {};
+
+
+        if (marketplaceSnapshot.exists()) {
+
+            marketplaceData =
+                marketplaceSnapshot.data();
+
+        }
+
+
+        /* -------------------------------------------------
+           6. VALORES
+        ------------------------------------------------- */
+
+        whatsappSupportToggle.checked =
+            marketplaceData.whatsappSupportEnabled
+            !== false;
+
+
+        whatsappNumberInput.value =
+            marketplaceData.whatsappNumber || "";
+
+
+        whatsappOrderNumberInput.value =
+            marketplaceData.whatsappOrderNumber || "";
+
+
+        whatsappDefaultMessageInput.value =
+            marketplaceData.whatsappDefaultMessage
+            ||
+            "Olá, preciso de ajuda com o Toma.";
+
+
+        updateWhatsappVisualState();
+
+
+        firebaseStatusIcon.textContent =
+            "cloud_done";
+
+        firebaseStatusText.textContent =
+            "Configurações carregadas do Firebase.";
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 9.1\n\n" +
+            "Configurações do WhatsApp " +
+            "carregadas do Firebase."
+        );
+
+
+        /* -------------------------------------------------
+           7. ESTADO VISUAL
+        ------------------------------------------------- */
+
+        function updateWhatsappVisualState() {
+
+            if (
+                whatsappSupportToggle.checked
+            ) {
+
+                statusIcon.textContent =
+                    "check_circle";
+
+                statusText.textContent =
+                    "Suporte WhatsApp ativo.";
+
+            } else {
+
+                statusIcon.textContent =
+                    "block";
+
+                statusText.textContent =
+                    "Suporte WhatsApp desativado.";
+
+            }
+
+        }
+
+
+        whatsappSupportToggle.addEventListener(
+            "change",
+            updateWhatsappVisualState
+        );
+
+
+        /* -------------------------------------------------
+           8. SALVAR
+        ------------------------------------------------- */
+
+        saveButton.addEventListener(
+            "click",
+            async () => {
+
+                try {
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 9.2\n\n" +
+                        "Salvando as configurações do WhatsApp..."
+                    );
+
+
+                    saveButton.disabled = true;
+
+
+                    const whatsappNumber =
+                        whatsappNumberInput.value
+                            .replace(/\D/g, "");
+
+
+                    const whatsappOrderNumber =
+                        whatsappOrderNumberInput.value
+                            .replace(/\D/g, "");
+
+
+                    const whatsappMessage =
+                        whatsappDefaultMessageInput.value
+                            .trim();
+
+
+                    await setDoc(
+                        marketplaceRef,
+                        {
+                            whatsappSupportEnabled:
+                                whatsappSupportToggle.checked,
+
+                            whatsappNumber:
+                                whatsappNumber,
+
+                            whatsappOrderNumber:
+                                whatsappOrderNumber,
+
+                            whatsappDefaultMessage:
+                                whatsappMessage,
+
+                            updatedAt:
+                                serverTimestamp(),
+
+                            updatedBy:
+                                firebaseUser.uid
+                        },
+                        {
+                            merge: true
+                        }
+                    );
+
+
+                    firebaseStatusIcon.textContent =
+                        "cloud_done";
+
+                    firebaseStatusText.textContent =
+                        "Configurações sincronizadas com Firebase.";
+
+
+                    updateWhatsappVisualState();
+
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 9.2 TERMINÉ ✅\n\n" +
+                        "Configurações do WhatsApp " +
+                        "salvas com sucesso.\n\n" +
+
+                        "Suporte WhatsApp : " +
+                        (
+                            whatsappSupportToggle.checked
+                                ? "Ativo"
+                                : "Desativado"
+                        ) +
+
+                        "\n\n" +
+
+                        "Número de suporte : " +
+                        (
+                            whatsappNumber
+                                ? "+" + whatsappNumber
+                                : "Não configurado"
+                        ) +
+
+                        "\n\n" +
+
+                        "Número para pedidos : " +
+                        (
+                            whatsappOrderNumber
+                                ? "+" + whatsappOrderNumber
+                                : "Não configurado"
+                        )
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Erro ao salvar WhatsApp:",
+                        error
+                    );
+
+
+                    firebaseStatusIcon.textContent =
+                        "cloud_off";
+
+                    firebaseStatusText.textContent =
+                        "Erro ao sincronizar com Firebase.";
+
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 9.2 ERRO\n\n" +
+                        "Não foi possível salvar as configurações.\n\n" +
+                        error.message
+                    );
+
+                } finally {
+
+                    saveButton.disabled = false;
+
+                }
+
+            }
+        );
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 9 TERMINÉ ✅\n\n" +
+            "WhatsApp e suporte conectados ao Firebase."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro BLOC 9:",
+            error
+        );
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 9 ERRO\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   BLOC 9 — INITIALISATION
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+        initializeWhatsappSettings();
+    }
+);
