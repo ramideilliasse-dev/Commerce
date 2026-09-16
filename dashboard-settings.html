@@ -862,6 +862,255 @@
     </div>
 
 </section>
+    <!-- =========================================================
+     BLOC 8 — COMMANDES
+========================================================= -->
+
+<section id="orderSettingsSection">
+
+    <div id="orderSettingsHeader">
+
+        <div id="orderSettingsIcon">
+            <span class="material-symbols-rounded">
+                shopping_bag
+            </span>
+        </div>
+
+        <div id="orderSettingsHeaderText">
+
+            <h2 id="orderSettingsTitle">
+                Commandes
+            </h2>
+
+            <p id="orderSettingsDescription">
+                Configure o funcionamento das encomendas no Toma.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div id="orderSettingsCard">
+
+
+        <!-- COMANDAS ATIVAS -->
+
+        <div id="ordersEnabledArea">
+
+            <div id="ordersEnabledInfo">
+
+                <span id="ordersEnabledLabel">
+                    Receção de pedidos
+                </span>
+
+                <span id="ordersEnabledDescription">
+                    Permitir que os clientes façam novos pedidos no Toma.
+                </span>
+
+            </div>
+
+
+            <label
+                id="ordersEnabledToggleContainer"
+                class="premiumSwitch"
+            >
+
+                <input
+                    id="ordersEnabledToggle"
+                    type="checkbox"
+                    checked
+                >
+
+                <span
+                    id="ordersEnabledToggleSlider"
+                    class="premiumSwitchSlider"
+                ></span>
+
+            </label>
+
+        </div>
+
+
+        <!-- CANCELAMENTO PELO CLIENTE -->
+
+        <div id="customerCancellationArea">
+
+            <div id="customerCancellationInfo">
+
+                <span id="customerCancellationLabel">
+                    Cancelamento pelo cliente
+                </span>
+
+                <span id="customerCancellationDescription">
+                    Permitir que o cliente cancele o pedido antes da confirmação.
+                </span>
+
+            </div>
+
+
+            <label
+                id="customerCancellationToggleContainer"
+                class="premiumSwitch"
+            >
+
+                <input
+                    id="customerCancellationToggle"
+                    type="checkbox"
+                    checked
+                >
+
+                <span
+                    id="customerCancellationToggleSlider"
+                    class="premiumSwitchSlider"
+                ></span>
+
+            </label>
+
+        </div>
+
+
+        <!-- CONFIRMAÇÃO DO COMERCIANTE -->
+
+        <div id="merchantConfirmationArea">
+
+            <div id="merchantConfirmationInfo">
+
+                <span id="merchantConfirmationLabel">
+                    Confirmação pelo comerciante
+                </span>
+
+                <span id="merchantConfirmationDescription">
+                    Exigir que o comerciante confirme o pedido antes do processamento.
+                </span>
+
+            </div>
+
+
+            <label
+                id="merchantConfirmationToggleContainer"
+                class="premiumSwitch"
+            >
+
+                <input
+                    id="merchantConfirmationToggle"
+                    type="checkbox"
+                    checked
+                >
+
+                <span
+                    id="merchantConfirmationToggleSlider"
+                    class="premiumSwitchSlider"
+                ></span>
+
+            </label>
+
+        </div>
+
+
+        <!-- PRAZO DE CANCELAMENTO -->
+
+        <div id="orderCancellationTimeArea">
+
+            <div id="orderCancellationTimeInfo">
+
+                <span id="orderCancellationTimeLabel">
+                    Prazo para cancelamento
+                </span>
+
+                <span id="orderCancellationTimeDescription">
+                    Tempo disponível para o cliente cancelar um pedido não confirmado.
+                </span>
+
+            </div>
+
+
+            <div id="orderCancellationTimeInputWrapper">
+
+                <input
+                    id="orderCancellationTimeInput"
+                    type="number"
+                    min="0"
+                    max="1440"
+                    step="5"
+                    value="30"
+                    inputmode="numeric"
+                >
+
+                <span id="orderCancellationTimeUnit">
+                    min
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div id="orderSettingsStatusArea">
+
+            <span
+                id="orderSettingsStatusIcon"
+                class="material-symbols-rounded"
+            >
+                check_circle
+            </span>
+
+            <span id="orderSettingsStatusText">
+                Receção de pedidos ativa
+            </span>
+
+        </div>
+
+
+        <!-- FIREBASE -->
+
+        <div id="orderFirebaseStatusArea">
+
+            <span
+                id="orderFirebaseStatusIcon"
+                class="material-symbols-rounded"
+            >
+                cloud_done
+            </span>
+
+            <div id="orderFirebaseStatusContent">
+
+                <strong id="orderFirebaseStatusLabel">
+                    Firebase
+                </strong>
+
+                <span id="orderFirebaseStatusText">
+                    Aguardando sincronização...
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- BOTÃO -->
+
+        <button
+            id="saveOrderSettingsButton"
+            type="button"
+        >
+
+            <span class="material-symbols-rounded">
+                save
+            </span>
+
+            <span>
+                Guardar alterações
+            </span>
+
+        </button>
+
+
+    </div>
+
+</section>
 </main>
 
     <!-- =====================================================
