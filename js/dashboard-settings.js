@@ -4966,3 +4966,598 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 });
+/* =========================================================
+   TOMA — SETTINGS
+   BLOC 12 — LIVRAISON & ZONES DE LIVRAISON
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    alert(
+        "TOMA — SETTINGS\n\n" +
+        "BLOC 12.1\n" +
+        "Inicialização da configuração de entrega..."
+    );
+
+
+    /* =====================================================
+       ELEMENTOS
+    ====================================================== */
+
+    const deliveryEnabledToggle =
+        document.getElementById(
+            "deliveryEnabledToggle"
+        );
+
+
+    const deliveryFeeInput =
+        document.getElementById(
+            "deliveryFeeInput"
+        );
+
+
+    const freeDeliveryToggle =
+        document.getElementById(
+            "freeDeliveryToggle"
+        );
+
+
+    const freeDeliveryMinimumInput =
+        document.getElementById(
+            "freeDeliveryMinimumInput"
+        );
+
+
+    const deliveryZoneInput =
+        document.getElementById(
+            "deliveryZoneInput"
+        );
+
+
+    const deliveryMessageInput =
+        document.getElementById(
+            "deliveryMessageInput"
+        );
+
+
+    const statusArea =
+        document.getElementById(
+            "deliverySettingsStatusArea"
+        );
+
+
+    const statusIcon =
+        document.getElementById(
+            "deliverySettingsStatusIcon"
+        );
+
+
+    const statusText =
+        document.getElementById(
+            "deliverySettingsStatusText"
+        );
+
+
+    const firebaseStatusIcon =
+        document.getElementById(
+            "deliveryFirebaseStatusIcon"
+        );
+
+
+    const firebaseStatusText =
+        document.getElementById(
+            "deliveryFirebaseStatusText"
+        );
+
+
+    const saveButton =
+        document.getElementById(
+            "saveDeliverySettingsButton"
+        );
+
+
+    /* =====================================================
+       VALIDATION
+    ====================================================== */
+
+    if (
+        !deliveryEnabledToggle ||
+        !deliveryFeeInput ||
+        !freeDeliveryToggle ||
+        !freeDeliveryMinimumInput ||
+        !deliveryZoneInput ||
+        !deliveryMessageInput ||
+        !statusArea ||
+        !statusIcon ||
+        !statusText ||
+        !firebaseStatusIcon ||
+        !firebaseStatusText ||
+        !saveButton
+    ) {
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 12.2 ❌\n\n" +
+            "Um ou mais elementos da configuração " +
+            "de entrega não foram encontrados."
+        );
+
+        return;
+    }
+
+
+    alert(
+        "TOMA — SETTINGS\n\n" +
+        "BLOC 12.2 ✅\n\n" +
+        "Todos os elementos da configuração " +
+        "de entrega foram encontrados."
+    );
+
+
+    /* =====================================================
+       STATUS VISUAL
+    ====================================================== */
+
+    function updateDeliveryStatus() {
+
+        if (
+            deliveryEnabledToggle.checked
+        ) {
+
+            statusArea.classList.remove(
+                "disabled"
+            );
+
+
+            statusIcon.textContent =
+                "local_shipping";
+
+
+            statusText.textContent =
+                "Serviço de entrega ativo";
+
+        } else {
+
+            statusArea.classList.add(
+                "disabled"
+            );
+
+
+            statusIcon.textContent =
+                "local_shipping";
+
+
+            statusText.textContent =
+                "Serviço de entrega desativado";
+        }
+    }
+
+
+    deliveryEnabledToggle.addEventListener(
+        "change",
+        updateDeliveryStatus
+    );
+
+
+    updateDeliveryStatus();
+
+
+    /* =====================================================
+       CHARGEMENT FIREBASE
+    ====================================================== */
+
+    async function loadDeliverySettings() {
+
+        try {
+
+            firebaseStatusText.textContent =
+                "Connexion à Firebase...";
+
+
+            const firebaseModule =
+                await import("../firebase.js");
+
+
+            const db = firebaseModule.db;
+            const auth = firebaseModule.auth;
+
+
+            if (!db || !auth) {
+
+                throw new Error(
+                    "Firebase db/auth indisponível."
+                );
+            }
+
+
+            const user = await new Promise(
+                (resolve) => {
+
+                    const unsubscribe =
+                        onAuthStateChanged(
+                            auth,
+                            (currentUser) => {
+
+                                unsubscribe();
+
+                                resolve(
+                                    currentUser
+                                );
+                            }
+                        );
+                }
+            );
+
+
+            if (!user) {
+
+                throw new Error(
+                    "Administrador não autenticado."
+                );
+            }
+
+
+            const settingsRef =
+                doc(
+                    db,
+                    "settings",
+                    "marketplace"
+                );
+
+
+            const settingsSnapshot =
+                await getDoc(settingsRef);
+
+
+            if (
+                settingsSnapshot.exists()
+            ) {
+
+                const data =
+                    settingsSnapshot.data();
+
+
+                deliveryEnabledToggle.checked =
+                    data.deliveryEnabled !== false;
+
+
+                deliveryFeeInput.value =
+                    data.deliveryFee ?? 0;
+
+
+                freeDeliveryToggle.checked =
+                    data.freeDeliveryEnabled === true;
+
+
+                freeDeliveryMinimumInput.value =
+                    data.freeDeliveryMinimum ?? 0;
+
+
+                deliveryZoneInput.value =
+                    data.deliveryZone ||
+                    "";
+
+
+                deliveryMessageInput.value =
+                    data.deliveryMessage ||
+                    "";
+            }
+
+
+            updateDeliveryStatus();
+
+
+            firebaseStatusIcon.textContent =
+                "cloud_done";
+
+
+            firebaseStatusText.textContent =
+                "Configurações carregadas com sucesso.";
+
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 12.3 ✅\n\n" +
+                "Configurações de entrega " +
+                "carregadas do Firebase."
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "BLOC 12 — LOAD ERROR:",
+                error
+            );
+
+
+            firebaseStatusIcon.textContent =
+                "cloud_off";
+
+
+            firebaseStatusText.textContent =
+                "Erro ao carregar as configurações.";
+
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 12.3 ❌\n\n" +
+                "Não foi possível carregar as configurações de entrega.\n\n" +
+                error.message
+            );
+        }
+    }
+
+
+    /* =====================================================
+       SAUVEGAR
+    ====================================================== */
+
+    saveButton.addEventListener(
+        "click",
+        async () => {
+
+            try {
+
+                const deliveryFee =
+                    Number(
+                        deliveryFeeInput.value
+                    ) || 0;
+
+
+                const freeDeliveryMinimum =
+                    Number(
+                        freeDeliveryMinimumInput.value
+                    ) || 0;
+
+
+                const deliveryZone =
+                    deliveryZoneInput.value.trim();
+
+
+                const deliveryMessage =
+                    deliveryMessageInput.value.trim();
+
+
+                if (deliveryFee < 0) {
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 12.4 ❌\n\n" +
+                        "A taxa de entrega não pode ser negativa."
+                    );
+
+                    return;
+                }
+
+
+                if (freeDeliveryMinimum < 0) {
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 12.4 ❌\n\n" +
+                        "O valor mínimo para entrega gratuita " +
+                        "não pode ser negativo."
+                    );
+
+                    return;
+                }
+
+
+                if (
+                    freeDeliveryToggle.checked &&
+                    freeDeliveryMinimum <= 0
+                ) {
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 12.4 ❌\n\n" +
+                        "Defina um valor mínimo para ativar " +
+                        "a entrega gratuita."
+                    );
+
+                    freeDeliveryMinimumInput.focus();
+
+                    return;
+                }
+
+
+                if (
+                    deliveryEnabledToggle.checked &&
+                    !deliveryZone
+                ) {
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 12.4 ❌\n\n" +
+                        "Defina pelo menos uma zona principal " +
+                        "de entrega."
+                    );
+
+                    deliveryZoneInput.focus();
+
+                    return;
+                }
+
+
+                saveButton.disabled = true;
+
+                saveButton.style.opacity = "0.65";
+
+
+                firebaseStatusText.textContent =
+                    "A guardar alterações...";
+
+
+                const firebaseModule =
+                    await import("../firebase.js");
+
+
+                const db = firebaseModule.db;
+                const auth = firebaseModule.auth;
+
+
+                const user = await new Promise(
+                    (resolve) => {
+
+                        const unsubscribe =
+                            onAuthStateChanged(
+                                auth,
+                                (currentUser) => {
+
+                                    unsubscribe();
+
+                                    resolve(
+                                        currentUser
+                                    );
+                                }
+                            );
+                    }
+                );
+
+
+                if (!user) {
+
+                    throw new Error(
+                        "Administrador não autenticado."
+                    );
+                }
+
+
+                const settingsRef =
+                    doc(
+                        db,
+                        "settings",
+                        "marketplace"
+                    );
+
+
+                await setDoc(
+                    settingsRef,
+                    {
+
+                        deliveryEnabled:
+                            deliveryEnabledToggle.checked,
+
+                        deliveryFee:
+                            deliveryFee,
+
+                        freeDeliveryEnabled:
+                            freeDeliveryToggle.checked,
+
+                        freeDeliveryMinimum:
+                            freeDeliveryMinimum,
+
+                        deliveryZone:
+                            deliveryZone,
+
+                        deliveryMessage:
+                            deliveryMessage,
+
+                        updatedAt:
+                            serverTimestamp(),
+
+                        updatedBy:
+                            user.uid
+
+                    },
+                    {
+                        merge: true
+                    }
+                );
+
+
+                updateDeliveryStatus();
+
+
+                firebaseStatusIcon.textContent =
+                    "cloud_done";
+
+
+                firebaseStatusText.textContent =
+                    "Configurações sincronizadas com Firebase.";
+
+
+                alert(
+                    "TOMA — SETTINGS\n\n" +
+                    "BLOC 12.5 TERMINÉ ✅\n\n" +
+                    "Configurações de entrega salvas com sucesso.\n\n" +
+
+                    "Entrega : " +
+                    (
+                        deliveryEnabledToggle.checked
+                            ? "Ativa"
+                            : "Desativada"
+                    ) +
+
+                    "\nTaxa : " +
+                    deliveryFee +
+                    " Kz" +
+
+                    "\nEntrega gratuita : " +
+                    (
+                        freeDeliveryToggle.checked
+                            ? "Ativa"
+                            : "Desativada"
+                    ) +
+
+                    "\nValor mínimo : " +
+                    freeDeliveryMinimum +
+                    " Kz" +
+
+                    "\nZona : " +
+                    (
+                        deliveryZone ||
+                        "Não definida"
+                    )
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "BLOC 12 — SAVE ERROR:",
+                    error
+                );
+
+
+                firebaseStatusIcon.textContent =
+                    "cloud_off";
+
+
+                firebaseStatusText.textContent =
+                    "Erro ao sincronizar com Firebase.";
+
+
+                alert(
+                    "TOMA — SETTINGS\n\n" +
+                    "BLOC 12.5 ❌\n\n" +
+                    "Erro ao guardar as configurações de entrega.\n\n" +
+                    error.message
+                );
+
+
+            } finally {
+
+                saveButton.disabled = false;
+
+                saveButton.style.opacity = "1";
+            }
+        }
+    );
+
+
+    /* =====================================================
+       START
+    ====================================================== */
+
+    loadDeliverySettings();
+
+
+    alert(
+        "TOMA — SETTINGS\n\n" +
+        "BLOC 12 TERMINÉ ✅\n\n" +
+        "A configuração de entrega está pronta para teste."
+    );
+
+});
