@@ -1937,6 +1937,340 @@
     </div>
 
 </section>
+    <!-- =========================================================
+     TOMA — SETTINGS
+     BLOC 12 — LIVRAISON & ZONES DE LIVRAISON
+========================================================= -->
+
+<section id="deliverySettingsSection">
+
+    <div id="deliverySettingsHeader">
+
+        <div id="deliverySettingsIcon">
+            <span class="material-symbols-rounded">
+                local_shipping
+            </span>
+        </div>
+
+        <div id="deliverySettingsHeaderText">
+
+            <h2 id="deliverySettingsTitle">
+                Livraison & Zones de livraison
+            </h2>
+
+            <p id="deliverySettingsDescription">
+                Configure as regras de entrega e as zonas atendidas pelo Toma.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div id="deliverySettingsCard">
+
+
+        <!-- =====================================================
+             LIVRAISON ACTIVÉE
+        ====================================================== -->
+
+        <div id="deliveryEnabledArea">
+
+            <div id="deliveryEnabledInfo">
+
+                <span id="deliveryEnabledLabel">
+                    Serviço de entrega
+                </span>
+
+                <span id="deliveryEnabledDescription">
+                    Permitir que os pedidos sejam entregues aos clientes.
+                </span>
+
+            </div>
+
+
+            <label
+                id="deliveryEnabledToggleContainer"
+                class="premiumSwitch"
+            >
+
+                <input
+                    id="deliveryEnabledToggle"
+                    type="checkbox"
+                    checked
+                >
+
+                <span
+                    id="deliveryEnabledToggleSlider"
+                    class="premiumSwitchSlider"
+                ></span>
+
+            </label>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             FRAIS DE LIVRAISON
+        ====================================================== -->
+
+        <div id="deliveryFeeArea">
+
+            <div id="deliveryFeeInfo">
+
+                <span id="deliveryFeeLabel">
+                    Taxa de entrega
+                </span>
+
+                <span id="deliveryFeeDescription">
+                    Valor padrão cobrado pela entrega.
+                </span>
+
+            </div>
+
+
+            <div id="deliveryFeeInputWrapper">
+
+                <input
+                    id="deliveryFeeInput"
+                    type="number"
+                    min="0"
+                    step="100"
+                    inputmode="numeric"
+                    placeholder="0"
+                >
+
+                <span id="deliveryFeeCurrency">
+                    Kz
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             LIVRAISON GRATUITE
+        ====================================================== -->
+
+        <div id="freeDeliveryArea">
+
+            <div id="freeDeliveryInfo">
+
+                <span id="freeDeliveryLabel">
+                    Entrega gratuita
+                </span>
+
+                <span id="freeDeliveryDescription">
+                    Permitir entrega gratuita quando o pedido atingir um determinado valor.
+                </span>
+
+            </div>
+
+
+            <label
+                id="freeDeliveryToggleContainer"
+                class="premiumSwitch"
+            >
+
+                <input
+                    id="freeDeliveryToggle"
+                    type="checkbox"
+                >
+
+                <span
+                    id="freeDeliveryToggleSlider"
+                    class="premiumSwitchSlider"
+                ></span>
+
+            </label>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             SEUIL LIVRAISON GRATUITE
+        ====================================================== -->
+
+        <div id="freeDeliveryMinimumArea">
+
+            <div id="freeDeliveryMinimumInfo">
+
+                <span id="freeDeliveryMinimumLabel">
+                    Valor mínimo para entrega gratuita
+                </span>
+
+                <span id="freeDeliveryMinimumDescription">
+                    O cliente recebe entrega gratuita a partir deste valor.
+                </span>
+
+            </div>
+
+
+            <div id="freeDeliveryMinimumInputWrapper">
+
+                <input
+                    id="freeDeliveryMinimumInput"
+                    type="number"
+                    min="0"
+                    step="1000"
+                    inputmode="numeric"
+                    placeholder="0"
+                >
+
+                <span id="freeDeliveryMinimumCurrency">
+                    Kz
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             ZONA PRINCIPAL
+        ====================================================== -->
+
+        <div id="deliveryZoneArea">
+
+            <div id="deliveryZoneInfo">
+
+                <span id="deliveryZoneLabel">
+                    Zona principal de entrega
+                </span>
+
+                <span id="deliveryZoneDescription">
+                    Defina a principal zona geográfica atendida pelo Toma.
+                </span>
+
+            </div>
+
+
+            <div id="deliveryZoneInputWrapper">
+
+                <input
+                    id="deliveryZoneInput"
+                    type="text"
+                    maxlength="100"
+                    placeholder="Luanda"
+                >
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             INFORMATION LIVRAISON
+        ====================================================== -->
+
+        <div id="deliveryMessageArea">
+
+            <div id="deliveryMessageInfo">
+
+                <span id="deliveryMessageLabel">
+                    Informação sobre entrega
+                </span>
+
+                <span id="deliveryMessageDescription">
+                    Mensagem apresentada aos clientes sobre a entrega.
+                </span>
+
+            </div>
+
+
+            <div id="deliveryMessageInputWrapper">
+
+                <textarea
+                    id="deliveryMessageInput"
+                    maxlength="300"
+                    placeholder="Entregas disponíveis em Luanda. O prazo e a taxa podem variar conforme a zona."
+                ></textarea>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             STATUS
+        ====================================================== -->
+
+        <div id="deliverySettingsStatusArea">
+
+            <span
+                id="deliverySettingsStatusIcon"
+                class="material-symbols-rounded"
+            >
+                local_shipping
+            </span>
+
+            <span id="deliverySettingsStatusText">
+                Serviço de entrega ativo
+            </span>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             FIREBASE STATUS
+        ====================================================== -->
+
+        <div id="deliveryFirebaseStatusArea">
+
+            <span
+                id="deliveryFirebaseStatusIcon"
+                class="material-symbols-rounded"
+            >
+                cloud_done
+            </span>
+
+            <div id="deliveryFirebaseStatusContent">
+
+                <strong id="deliveryFirebaseStatusLabel">
+                    Firebase
+                </strong>
+
+                <span id="deliveryFirebaseStatusText">
+                    Aguardando sincronização...
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             SAVE
+        ====================================================== -->
+
+        <button
+            id="saveDeliverySettingsButton"
+            type="button"
+        >
+
+            <span class="material-symbols-rounded">
+                save
+            </span>
+
+            <span>
+                Guardar alterações
+            </span>
+
+        </button>
+
+
+    </div>
+
+</section>
 </main>
 
     <!-- =====================================================
