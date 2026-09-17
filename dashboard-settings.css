@@ -4577,3 +4577,449 @@ body {
         font-size: 14px;
     }
 }
+/* ========================================================= */
+/* BLOC 13 — SEGURANÇA & MODERAÇÃO                          */
+/* ========================================================= */
+
+#securityModerationSettingsSection {
+    width: 100%;
+    margin-top: 28px;
+    margin-bottom: 28px;
+}
+
+
+/* ========================================================= */
+/* HEADER                                                     */
+/* ========================================================= */
+
+#securityModerationSettingsHeader {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 16px;
+}
+
+#securityModerationSettingsIcon {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+
+    background: linear-gradient(
+        145deg,
+        #fff4ec,
+        #ffe8d8
+    );
+
+    color: #ff6a00;
+
+    box-shadow:
+        0 8px 20px rgba(255, 106, 0, 0.10);
+}
+
+#securityModerationSettingsIcon .material-symbols-rounded {
+    font-size: 25px;
+}
+
+#securityModerationSettingsHeaderText {
+    flex: 1;
+}
+
+#securityModerationSettingsTitle {
+    margin: 0;
+
+    font-size: 20px;
+    font-weight: 700;
+
+    color: #161616;
+}
+
+#securityModerationSettingsDescription {
+    margin: 4px 0 0;
+
+    font-size: 13px;
+    line-height: 1.45;
+
+    color: #777;
+}
+
+
+/* ========================================================= */
+/* CARD                                                       */
+/* ========================================================= */
+
+#securityModerationSettingsCard {
+    background: #ffffff;
+
+    border: 1px solid #eeeeee;
+
+    border-radius: 22px;
+
+    padding: 6px 18px 18px;
+
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.055);
+}
+
+
+/* ========================================================= */
+/* LIGNES                                                     */
+/* ========================================================= */
+
+#merchantVerificationArea,
+#productApprovalArea,
+#reviewsModerationArea,
+#productReportingArea,
+#userAccountsArea,
+#merchantAccountsArea {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    min-height: 82px;
+
+    padding: 18px 0;
+
+    border-bottom: 1px solid #f0f0f0;
+}
+
+
+/* ========================================================= */
+/* INFORMATIONS                                               */
+/* ========================================================= */
+
+#merchantVerificationInfo,
+#productApprovalInfo,
+#reviewsModerationInfo,
+#productReportingInfo,
+#userAccountsInfo,
+#merchantAccountsInfo {
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+
+    flex: 1;
+}
+
+#merchantVerificationLabel,
+#productApprovalLabel,
+#reviewsModerationLabel,
+#productReportingLabel,
+#userAccountsLabel,
+#merchantAccountsLabel {
+    font-size: 15px;
+
+    font-weight: 650;
+
+    color: #202020;
+}
+
+#merchantVerificationDescription,
+#productApprovalDescription,
+#reviewsModerationDescription,
+#productReportingDescription,
+#userAccountsDescription,
+#merchantAccountsDescription {
+    font-size: 12.5px;
+
+    line-height: 1.45;
+
+    color: #858585;
+}
+
+
+/* ========================================================= */
+/* SWITCH PREMIUM                                             */
+/* ========================================================= */
+
+#securityModerationSettingsCard .premiumSwitch {
+    position: relative;
+
+    display: inline-flex;
+
+    width: 50px;
+    min-width: 50px;
+
+    height: 30px;
+
+    cursor: pointer;
+}
+
+#securityModerationSettingsCard .premiumSwitch input {
+    position: absolute;
+
+    opacity: 0;
+
+    width: 0;
+    height: 0;
+}
+
+#securityModerationSettingsCard .premiumSwitchSlider {
+    position: absolute;
+
+    inset: 0;
+
+    border-radius: 30px;
+
+    background: #d7d7d7;
+
+    transition:
+        background 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+#securityModerationSettingsCard .premiumSwitchSlider::before {
+    content: "";
+
+    position: absolute;
+
+    width: 24px;
+    height: 24px;
+
+    left: 3px;
+    top: 3px;
+
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 2px 7px rgba(0, 0, 0, 0.20);
+
+    transition:
+        transform 0.25s ease;
+}
+
+#securityModerationSettingsCard
+.premiumSwitch input:checked
++ .premiumSwitchSlider {
+    background: #ff6a00;
+
+    box-shadow:
+        0 4px 12px rgba(255, 106, 0, 0.25);
+}
+
+#securityModerationSettingsCard
+.premiumSwitch input:checked
++ .premiumSwitchSlider::before {
+    transform: translateX(20px);
+}
+
+
+/* ========================================================= */
+/* STATUS                                                     */
+/* ========================================================= */
+
+#securityModerationSettingsStatusArea {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    margin-top: 18px;
+
+    padding: 12px 14px;
+
+    border-radius: 13px;
+
+    background: #f6faf7;
+
+    color: #248a4a;
+}
+
+#securityModerationSettingsStatusIcon {
+    font-size: 20px;
+}
+
+#securityModerationSettingsStatusText {
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+
+/* ========================================================= */
+/* FIREBASE STATUS                                            */
+/* ========================================================= */
+
+#securityModerationFirebaseStatusArea {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-top: 10px;
+
+    padding: 12px 14px;
+
+    border-radius: 13px;
+
+    background: #f7f8fa;
+}
+
+#securityModerationFirebaseStatusIcon {
+    font-size: 21px;
+
+    color: #5c6673;
+}
+
+#securityModerationFirebaseStatusContent {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+#securityModerationFirebaseStatusLabel {
+    font-size: 12px;
+
+    font-weight: 700;
+
+    color: #444;
+}
+
+#securityModerationFirebaseStatusText {
+    font-size: 12px;
+
+    color: #888;
+}
+
+
+/* ========================================================= */
+/* BOUTON SAVE                                                */
+/* ========================================================= */
+
+#saveSecurityModerationSettingsButton {
+    width: 100%;
+
+    margin-top: 16px;
+
+    min-height: 50px;
+
+    border: none;
+
+    border-radius: 15px;
+
+    background: linear-gradient(
+        135deg,
+        #ff6a00,
+        #ff7d24
+    );
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 20px rgba(255, 106, 0, 0.20);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+}
+
+#saveSecurityModerationSettingsButton:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 11px 25px rgba(255, 106, 0, 0.25);
+}
+
+#saveSecurityModerationSettingsButton:active {
+    transform: scale(0.98);
+}
+
+#saveSecurityModerationSettingsButton .material-symbols-rounded {
+    font-size: 20px;
+}
+
+
+/* ========================================================= */
+/* MOBILE                                                     */
+/* ========================================================= */
+
+@media (max-width: 600px) {
+
+    #securityModerationSettingsSection {
+        margin-top: 22px;
+    }
+
+    #securityModerationSettingsHeader {
+        align-items: flex-start;
+    }
+
+    #securityModerationSettingsIcon {
+        width: 44px;
+        height: 44px;
+
+        min-width: 44px;
+
+        border-radius: 13px;
+    }
+
+    #securityModerationSettingsTitle {
+        font-size: 18px;
+    }
+
+    #securityModerationSettingsDescription {
+        font-size: 12px;
+    }
+
+    #securityModerationSettingsCard {
+        padding-left: 15px;
+        padding-right: 15px;
+
+        border-radius: 19px;
+    }
+
+    #merchantVerificationArea,
+    #productApprovalArea,
+    #reviewsModerationArea,
+    #productReportingArea,
+    #userAccountsArea,
+    #merchantAccountsArea {
+        gap: 12px;
+    }
+
+    #merchantVerificationLabel,
+    #productApprovalLabel,
+    #reviewsModerationLabel,
+    #productReportingLabel,
+    #userAccountsLabel,
+    #merchantAccountsLabel {
+        font-size: 14px;
+    }
+
+    #merchantVerificationDescription,
+    #productApprovalDescription,
+    #reviewsModerationDescription,
+    #productReportingDescription,
+    #userAccountsDescription,
+    #merchantAccountsDescription {
+        font-size: 11.5px;
+    }
+
+}
