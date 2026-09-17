@@ -574,7 +574,12 @@ function initializeReportIndicators() {
 
     totalCommission.textContent = "0 Kz";
 
-    commissionRate.textContent = "5%";
+    commissionRate.textContent =
+    (
+        Number(
+            window.reportsCommissionRate
+        ) || 0
+    ) + "%";
 
     totalOrders.textContent = "0";
 
@@ -794,7 +799,12 @@ function initializeFinancialPerformance() {
 
     commissionAverage.textContent = "0 Kz";
 
-    commissionRate.textContent = "5%";
+    commissionRate.textContent =
+    (
+        Number(
+            window.reportsCommissionRate
+        ) || 0
+    ) + "%";
 
     commissionShare.textContent = "0%";
 
@@ -2205,8 +2215,10 @@ function calculateFinancialStatistics() {
                 ? totalRevenue / totalOrders
                 : 0;
 
-        const commissionRate = 5;
-
+       const commissionRate =
+    Number(
+        window.reportsCommissionRate
+    ) || 0;
         const estimatedCommission =
             totalRevenue * (commissionRate / 100);
 
@@ -3154,7 +3166,10 @@ function calculateReportSummary() {
 
         });
 
-        const commissionRate = 5;
+     const commissionRate =
+    Number(
+        window.reportsCommissionRate
+    ) || 0;
 
         const totalCommission =
             totalRevenue *
@@ -3389,8 +3404,10 @@ function prepareReportExportData() {
                 ? totalRevenue / totalOrders
                 : 0;
 
-        const commissionRate = 5;
-
+      const commissionRate =
+    Number(
+        window.reportsCommissionRate
+    ) || 0;
         const estimatedCommission =
             totalRevenue *
             (commissionRate / 100);
@@ -6937,7 +6954,10 @@ function calculateFilteredFinancialStatistics() {
          * basée sur le chiffre d'affaires.
          */
 
-        const commissionRate = 5;
+      const commissionRate =
+    Number(
+        window.reportsCommissionRate
+    ) || 0;
 
         const estimatedCommission =
             totalRevenue *
@@ -7350,13 +7370,17 @@ function calculateFinancialProgress() {
             ) || 0;
 
         const previousCommission =
-            previousRevenue *
-            (
-                Number(
-                    statistics.commissionRate
-                ) || 5
-            ) /
-            100;
+    previousRevenue *
+    (
+        Number(
+            statistics.commissionRate
+        ) ||
+        Number(
+            window.reportsCommissionRate
+        ) ||
+        0
+    ) /
+    100;
 
         let revenueProgress = 0;
         let commissionProgress = 0;
@@ -7980,7 +8004,9 @@ function prepareFinancialSummary() {
                 Number(financialData.estimatedCommission) || 0,
 
             commissionRate:
-                Number(financialData.commissionRate) || 5,
+    Number(financialData.commissionRate) ||
+    Number(window.reportsCommissionRate) ||
+    0,
 
             revenueProgress:
                 Number(progressData.revenueProgress) || 0,
