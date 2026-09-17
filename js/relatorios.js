@@ -1266,7 +1266,135 @@ function handlePrintReport() {
 
 let reportsOrders = [];
 
+// =========================================================
+// BLOC 12.29 — LECTURE DU TAUX DE COMMISSION
+// DEPUIS settings/marketplace
+// =========================================================
 
+async function loadReportsCommissionRate() {
+
+    try {
+
+        alert(
+            "RELATÓRIOS — BLOC 12.29.1\n\n" +
+            "Lecture du taux de commission depuis Firebase..."
+        );
+
+        // --------------------------------------------------
+        // DOCUMENT SETTINGS
+        // --------------------------------------------------
+
+        const marketplaceSettingsRef =
+            doc(
+                db,
+                "settings",
+                "marketplace"
+            );
+
+        const marketplaceSettingsSnapshot =
+            await getDoc(
+                marketplaceSettingsRef
+            );
+
+        // --------------------------------------------------
+        // VÉRIFICATION
+        // --------------------------------------------------
+
+        if (
+            !marketplaceSettingsSnapshot.exists()
+        ) {
+
+            throw new Error(
+                "Le document settings/marketplace est introuvable."
+            );
+
+        }
+
+        // --------------------------------------------------
+        // DONNÉES
+        // --------------------------------------------------
+
+        const settingsData =
+            marketplaceSettingsSnapshot.data();
+
+        // --------------------------------------------------
+        // TAUX
+        // --------------------------------------------------
+
+        const commissionRate =
+            Number(
+                settingsData.commissionRate
+            );
+
+        if (
+            !Number.isFinite(
+                commissionRate
+            )
+        ) {
+
+            throw new Error(
+                "Le champ commissionRate de settings/marketplace est invalide."
+            );
+
+        }
+
+        if (
+            commissionRate < 0 ||
+            commissionRate > 100
+        ) {
+
+            throw new Error(
+                "Le taux de commission doit être compris entre 0 et 100%."
+            );
+
+        }
+
+        // --------------------------------------------------
+        // MÉMORISATION
+        // --------------------------------------------------
+
+        window.reportsCommissionRate =
+            commissionRate;
+
+        alert(
+            "RELATÓRIOS — BLOC 12.29.2\n\n" +
+            "Taux de commission récupéré avec succès.\n\n" +
+            "Source : settings/marketplace\n\n" +
+            "Commission Toma : " +
+            commissionRate +
+            "%\n\n" +
+            "Aucune donnée Firestore modifiée.\n" +
+            "Aucun nouvel ID HTML créé."
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.29 TERMINÉ ✅\n\n" +
+            "Les rapports utilisent maintenant le taux configuré dans Dashboard Settings.\n\n" +
+            "Taux actuel : " +
+            commissionRate +
+            "%\n\n" +
+            "Aucune donnée Firestore modifiée."
+        );
+
+        return commissionRate;
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur Bloc 12.29 :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 12.29 ERREUR ❌\n\n" +
+            error.message
+        );
+
+        return null;
+    }
+
+}
 /* =========================================================
    BLOC 10.1 — CHARGEMENT DES COMMANDES
 ========================================================= */
