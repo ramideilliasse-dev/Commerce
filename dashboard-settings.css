@@ -4045,3 +4045,535 @@ body {
         font-size: 14px;
     }
 }
+/* =========================================================
+   TOMA — SETTINGS
+   BLOC 12 — LIVRAISON & ZONES DE LIVRAISON
+========================================================= */
+
+#deliverySettingsSection {
+    width: 100%;
+    margin-top: 24px;
+    margin-bottom: 30px;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+#deliverySettingsHeader {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+
+#deliverySettingsIcon {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+
+    background: rgba(255, 106, 0, 0.10);
+
+    color: #ff6a00;
+}
+
+
+#deliverySettingsIcon .material-symbols-rounded {
+    font-size: 25px;
+}
+
+
+#deliverySettingsHeaderText {
+    min-width: 0;
+}
+
+
+#deliverySettingsTitle {
+    margin: 0;
+
+    font-size: 20px;
+    font-weight: 700;
+
+    color: #171717;
+}
+
+
+#deliverySettingsDescription {
+    margin: 4px 0 0;
+
+    font-size: 13px;
+    line-height: 1.5;
+
+    color: #777;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+#deliverySettingsCard {
+    width: 100%;
+    box-sizing: border-box;
+
+    background: #ffffff;
+
+    border: 1px solid rgba(0, 0, 0, 0.06);
+
+    border-radius: 22px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.045);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   ROWS
+========================================================= */
+
+#deliveryEnabledArea,
+#deliveryFeeArea,
+#freeDeliveryArea,
+#freeDeliveryMinimumArea,
+#deliveryZoneArea,
+#deliveryMessageArea {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 18px 0;
+
+    border-bottom: 1px solid #eeeeee;
+}
+
+
+#deliveryEnabledInfo,
+#deliveryFeeInfo,
+#freeDeliveryInfo,
+#freeDeliveryMinimumInfo,
+#deliveryZoneInfo,
+#deliveryMessageInfo {
+
+    flex: 1;
+
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+
+#deliveryEnabledLabel,
+#deliveryFeeLabel,
+#freeDeliveryLabel,
+#freeDeliveryMinimumLabel,
+#deliveryZoneLabel,
+#deliveryMessageLabel {
+
+    font-size: 15px;
+
+    font-weight: 650;
+
+    color: #202020;
+}
+
+
+#deliveryEnabledDescription,
+#deliveryFeeDescription,
+#freeDeliveryDescription,
+#freeDeliveryMinimumDescription,
+#deliveryZoneDescription,
+#deliveryMessageDescription {
+
+    font-size: 12px;
+
+    line-height: 1.45;
+
+    color: #888;
+}
+
+
+/* =========================================================
+   INPUTS
+========================================================= */
+
+#deliveryFeeInputWrapper,
+#freeDeliveryMinimumInputWrapper {
+
+    position: relative;
+
+    width: 220px;
+
+    max-width: 42%;
+}
+
+
+#deliveryZoneInputWrapper {
+
+    width: 260px;
+
+    max-width: 42%;
+}
+
+
+#deliveryMessageInputWrapper {
+
+    width: 360px;
+
+    max-width: 48%;
+}
+
+
+#deliveryFeeInput,
+#freeDeliveryMinimumInput,
+#deliveryZoneInput,
+#deliveryMessageInput {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    border: 1px solid #dedede;
+
+    background: #fafafa;
+
+    border-radius: 13px;
+
+    padding: 12px 14px;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    color: #222;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+#deliveryFeeInput,
+#freeDeliveryMinimumInput {
+
+    padding-right: 45px;
+}
+
+
+#deliveryFeeInput:focus,
+#freeDeliveryMinimumInput:focus,
+#deliveryZoneInput:focus,
+#deliveryMessageInput:focus {
+
+    background: #ffffff;
+
+    border-color: #ff6a00;
+
+    box-shadow:
+        0 0 0 4px rgba(255, 106, 0, 0.08);
+}
+
+
+#deliveryMessageInput {
+
+    min-height: 90px;
+
+    resize: vertical;
+
+    line-height: 1.5;
+}
+
+
+#deliveryFeeCurrency,
+#freeDeliveryMinimumCurrency {
+
+    position: absolute;
+
+    right: 14px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    color: #888;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   SWITCH
+========================================================= */
+
+#deliveryEnabledToggleContainer,
+#freeDeliveryToggleContainer {
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+#deliverySettingsStatusArea {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    margin-top: 18px;
+
+    padding: 12px 14px;
+
+    border-radius: 13px;
+
+    background: #f7f7f7;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    color: #555;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+
+#deliverySettingsStatusIcon {
+
+    font-size: 20px;
+}
+
+
+#deliverySettingsStatusArea.disabled {
+
+    background: #f4f4f4;
+
+    color: #888;
+}
+
+
+/* =========================================================
+   FIREBASE
+========================================================= */
+
+#deliveryFirebaseStatusArea {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-top: 10px;
+
+    padding: 13px 14px;
+
+    border-radius: 13px;
+
+    background: #fafafa;
+
+    border: 1px solid #eeeeee;
+}
+
+
+#deliveryFirebaseStatusIcon {
+
+    font-size: 21px;
+
+    color: #777;
+}
+
+
+#deliveryFirebaseStatusContent {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+
+#deliveryFirebaseStatusLabel {
+
+    font-size: 12px;
+
+    color: #444;
+}
+
+
+#deliveryFirebaseStatusText {
+
+    font-size: 12px;
+
+    color: #888;
+}
+
+
+/* =========================================================
+   SAVE
+========================================================= */
+
+#saveDeliverySettingsButton {
+
+    width: 100%;
+
+    margin-top: 16px;
+
+    min-height: 50px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 9px;
+
+    border: none;
+
+    border-radius: 14px;
+
+    background: #171717;
+
+    color: #ffffff;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 650;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.18s ease,
+        opacity 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+
+#saveDeliverySettingsButton:hover {
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.14);
+}
+
+
+#saveDeliverySettingsButton:active {
+
+    transform: scale(0.98);
+}
+
+
+#saveDeliverySettingsButton .material-symbols-rounded {
+
+    font-size: 20px;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    #deliverySettingsCard {
+
+        padding: 16px;
+
+        border-radius: 19px;
+    }
+
+
+    #deliverySettingsTitle {
+
+        font-size: 18px;
+    }
+
+
+    #deliverySettingsDescription {
+
+        font-size: 12px;
+    }
+
+
+    #deliveryEnabledArea,
+    #deliveryFeeArea,
+    #freeDeliveryArea,
+    #freeDeliveryMinimumArea,
+    #deliveryZoneArea,
+    #deliveryMessageArea {
+
+        gap: 12px;
+    }
+
+
+    #deliveryFeeInputWrapper,
+    #freeDeliveryMinimumInputWrapper,
+    #deliveryZoneInputWrapper,
+    #deliveryMessageInputWrapper {
+
+        width: 100%;
+
+        max-width: 100%;
+    }
+
+
+    #deliveryEnabledArea,
+    #freeDeliveryArea {
+
+        align-items: center;
+    }
+
+
+    #deliveryEnabledInfo,
+    #freeDeliveryInfo {
+
+        padding-right: 10px;
+    }
+
+
+    #deliveryEnabledLabel,
+    #deliveryFeeLabel,
+    #freeDeliveryLabel,
+    #freeDeliveryMinimumLabel,
+    #deliveryZoneLabel,
+    #deliveryMessageLabel {
+
+        font-size: 14px;
+    }
+}
