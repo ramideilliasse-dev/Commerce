@@ -5561,3 +5561,545 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 });
+/* ========================================================= */
+/* BLOC 13 — SEGURANÇA & MODERAÇÃO                          */
+/* ========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    alert("TOMA — SETTINGS\n\nBLOC 13.1\n\nInicialização da segurança e moderação...");
+
+    initializeSecurityModerationSettings();
+
+});
+
+
+/* ========================================================= */
+/* INITIALISATION                                             */
+/* ========================================================= */
+
+async function initializeSecurityModerationSettings() {
+
+    try {
+
+        const merchantVerificationToggle =
+            document.getElementById("merchantVerificationToggle");
+
+        const productApprovalToggle =
+            document.getElementById("productApprovalToggle");
+
+        const reviewsModerationToggle =
+            document.getElementById("reviewsModerationToggle");
+
+        const productReportingToggle =
+            document.getElementById("productReportingToggle");
+
+        const userAccountsToggle =
+            document.getElementById("userAccountsToggle");
+
+        const merchantAccountsToggle =
+            document.getElementById("merchantAccountsToggle");
+
+        const saveButton =
+            document.getElementById(
+                "saveSecurityModerationSettingsButton"
+            );
+
+
+        if (
+            !merchantVerificationToggle ||
+            !productApprovalToggle ||
+            !reviewsModerationToggle ||
+            !productReportingToggle ||
+            !userAccountsToggle ||
+            !merchantAccountsToggle ||
+            !saveButton
+        ) {
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 13.1 ERRO ❌\n\n" +
+                "Um ou mais elementos da segurança e moderação não foram encontrados."
+            );
+
+            return;
+        }
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 13.2\n\n" +
+            "Todos os elementos da segurança e moderação foram encontrados com sucesso."
+        );
+
+
+        /* ================================================= */
+        /* FIREBASE                                           */
+        /* ================================================= */
+
+        const firebaseModule =
+            await import("../firebase.js");
+
+        const db = firebaseModule.db;
+        const auth = firebaseModule.auth;
+
+
+        if (!db || !auth) {
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 13.2 ERRO ❌\n\n" +
+                "Firebase não foi carregado corretamente."
+            );
+
+            return;
+        }
+
+
+        /* ================================================= */
+        /* AGUARDAR AUTENTICAÇÃO                              */
+        /* ================================================= */
+
+        await new Promise((resolve) => {
+
+            onAuthStateChanged(auth, (user) => {
+
+                if (!user) {
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 13.2 ERRO ❌\n\n" +
+                        "Nenhum administrador está autenticado."
+                    );
+
+                    resolve();
+
+                    return;
+                }
+
+
+                resolve();
+
+            });
+
+        });
+
+
+        const user = auth.currentUser;
+
+
+        if (!user) {
+            return;
+        }
+
+
+        /* ================================================= */
+        /* CARREGAR SETTINGS                                  */
+        /* ================================================= */
+
+        const marketplaceSettingsRef =
+            doc(
+                db,
+                "settings",
+                "marketplace"
+            );
+
+
+        const marketplaceSettingsSnapshot =
+            await getDoc(
+                marketplaceSettingsRef
+            );
+
+
+        if (
+            marketplaceSettingsSnapshot.exists()
+        ) {
+
+            const data =
+                marketplaceSettingsSnapshot.data();
+
+
+            merchantVerificationToggle.checked =
+                data.merchantVerificationRequired
+                !== undefined
+                    ? data.merchantVerificationRequired
+                    : true;
+
+
+            productApprovalToggle.checked =
+                data.productApprovalRequired
+                !== undefined
+                    ? data.productApprovalRequired
+                    : true;
+
+
+            reviewsModerationToggle.checked =
+                data.reviewsEnabled
+                !== undefined
+                    ? data.reviewsEnabled
+                    : true;
+
+
+            productReportingToggle.checked =
+                data.productReportingEnabled
+                !== undefined
+                    ? data.productReportingEnabled
+                    : true;
+
+
+            userAccountsToggle.checked =
+                data.userAccountsEnabled
+                !== undefined
+                    ? data.userAccountsEnabled
+                    : true;
+
+
+            merchantAccountsToggle.checked =
+                data.merchantAccountsEnabled
+                !== undefined
+                    ? data.merchantAccountsEnabled
+                    : true;
+
+        }
+
+
+        updateSecurityModerationStatus();
+
+
+        document
+            .getElementById(
+                "securityModerationFirebaseStatusText"
+            )
+            .textContent =
+                "Configurações carregadas do Firebase.";
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 13.3\n\n" +
+            "Configurações de segurança e moderação carregadas com sucesso."
+        );
+
+
+        /* ================================================= */
+        /* EVENTS                                             */
+        /* ================================================= */
+
+        merchantVerificationToggle.addEventListener(
+            "change",
+            updateSecurityModerationStatus
+        );
+
+        productApprovalToggle.addEventListener(
+            "change",
+            updateSecurityModerationStatus
+        );
+
+        reviewsModerationToggle.addEventListener(
+            "change",
+            updateSecurityModerationStatus
+        );
+
+        productReportingToggle.addEventListener(
+            "change",
+            updateSecurityModerationStatus
+        );
+
+        userAccountsToggle.addEventListener(
+            "change",
+            updateSecurityModerationStatus
+        );
+
+        merchantAccountsToggle.addEventListener(
+            "change",
+            updateSecurityModerationStatus
+        );
+
+
+        /* ================================================= */
+        /* SAVE                                               */
+        /* ================================================= */
+
+        saveButton.addEventListener(
+            "click",
+            async () => {
+
+                try {
+
+                    saveButton.disabled = true;
+
+                    saveButton.style.opacity = "0.65";
+
+
+                    document
+                        .getElementById(
+                            "securityModerationFirebaseStatusText"
+                        )
+                        .textContent =
+                        "Sincronizando com Firebase...";
+
+
+                    await setDoc(
+                        marketplaceSettingsRef,
+                        {
+
+                            merchantVerificationRequired:
+                                merchantVerificationToggle.checked,
+
+                            productApprovalRequired:
+                                productApprovalToggle.checked,
+
+                            reviewsEnabled:
+                                reviewsModerationToggle.checked,
+
+                            productReportingEnabled:
+                                productReportingToggle.checked,
+
+                            userAccountsEnabled:
+                                userAccountsToggle.checked,
+
+                            merchantAccountsEnabled:
+                                merchantAccountsToggle.checked,
+
+                            updatedAt:
+                                serverTimestamp(),
+
+                            updatedBy:
+                                user.uid
+
+                        },
+                        {
+                            merge: true
+                        }
+                    );
+
+
+                    document
+                        .getElementById(
+                            "securityModerationFirebaseStatusText"
+                        )
+                        .textContent =
+                        "Configurações sincronizadas com sucesso.";
+
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 13.4 TERMINÉ ✅\n\n" +
+                        "Configurações de segurança e moderação salvas com sucesso.\n\n" +
+
+                        "Verificação dos comerciantes : " +
+                        (
+                            merchantVerificationToggle.checked
+                                ? "Obrigatória"
+                                : "Desativada"
+                        ) +
+                        "\n\n" +
+
+                        "Validação dos produtos : " +
+                        (
+                            productApprovalToggle.checked
+                                ? "Obrigatória"
+                                : "Desativada"
+                        ) +
+                        "\n\n" +
+
+                        "Avaliações dos clientes : " +
+                        (
+                            reviewsModerationToggle.checked
+                                ? "Ativas"
+                                : "Desativadas"
+                        ) +
+                        "\n\n" +
+
+                        "Sinalização de produtos : " +
+                        (
+                            productReportingToggle.checked
+                                ? "Ativa"
+                                : "Desativada"
+                        ) +
+                        "\n\n" +
+
+                        "Contas de usuários : " +
+                        (
+                            userAccountsToggle.checked
+                                ? "Ativas"
+                                : "Desativadas"
+                        ) +
+                        "\n\n" +
+
+                        "Contas de comerciantes : " +
+                        (
+                            merchantAccountsToggle.checked
+                                ? "Ativas"
+                                : "Desativadas"
+                        )
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "BLOC 13 SAVE ERROR:",
+                        error
+                    );
+
+
+                    document
+                        .getElementById(
+                            "securityModerationFirebaseStatusText"
+                        )
+                        .textContent =
+                        "Erro ao sincronizar com Firebase.";
+
+
+                    alert(
+                        "TOMA — SETTINGS\n\n" +
+                        "BLOC 13 ERRO ❌\n\n" +
+                        "Não foi possível guardar as configurações.\n\n" +
+                        "Erro:\n" +
+                        error.message
+                    );
+
+                } finally {
+
+                    saveButton.disabled = false;
+
+                    saveButton.style.opacity = "1";
+
+                }
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "BLOC 13 INITIALIZATION ERROR:",
+            error
+        );
+
+
+        alert(
+            "TOMA — SETTINGS\n\n" +
+            "BLOC 13 ERRO ❌\n\n" +
+            "Erro durante a inicialização.\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* ========================================================= */
+/* ATUALIZAR STATUS                                           */
+/* ========================================================= */
+
+function updateSecurityModerationStatus() {
+
+    const merchantVerification =
+        document.getElementById(
+            "merchantVerificationToggle"
+        );
+
+    const productApproval =
+        document.getElementById(
+            "productApprovalToggle"
+        );
+
+    const reviews =
+        document.getElementById(
+            "reviewsModerationToggle"
+        );
+
+    const reporting =
+        document.getElementById(
+            "productReportingToggle"
+        );
+
+    const userAccounts =
+        document.getElementById(
+            "userAccountsToggle"
+        );
+
+    const merchantAccounts =
+        document.getElementById(
+            "merchantAccountsToggle"
+        );
+
+    const statusIcon =
+        document.getElementById(
+            "securityModerationSettingsStatusIcon"
+        );
+
+    const statusText =
+        document.getElementById(
+            "securityModerationSettingsStatusText"
+        );
+
+
+    if (
+        !merchantVerification ||
+        !productApproval ||
+        !reviews ||
+        !reporting ||
+        !userAccounts ||
+        !merchantAccounts ||
+        !statusIcon ||
+        !statusText
+    ) {
+
+        return;
+    }
+
+
+    const allActive =
+        merchantVerification.checked &&
+        productApproval.checked &&
+        reviews.checked &&
+        reporting.checked &&
+        userAccounts.checked &&
+        merchantAccounts.checked;
+
+
+    if (allActive) {
+
+        statusIcon.textContent =
+            "verified_user";
+
+        statusText.textContent =
+            "Segurança e moderação ativas";
+
+        return;
+    }
+
+
+    const someActive =
+        merchantVerification.checked ||
+        productApproval.checked ||
+        reviews.checked ||
+        reporting.checked ||
+        userAccounts.checked ||
+        merchantAccounts.checked;
+
+
+    if (someActive) {
+
+        statusIcon.textContent =
+            "shield";
+
+        statusText.textContent =
+            "Segurança e moderação parcialmente configuradas";
+
+        return;
+    }
+
+
+    statusIcon.textContent =
+        "warning";
+
+    statusText.textContent =
+        "Atenção: os controles de segurança e moderação estão desativados";
+
+}
