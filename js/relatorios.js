@@ -1403,16 +1403,33 @@ async function loadReportsOrders() {
 
     try {
 
-        
+        // --------------------------------------------------
+        // CHARGEMENT DU TAUX DE COMMISSION
+        // AVANT TOUS LES CALCULS
+        // --------------------------------------------------
 
+        const commissionRate =
+            await loadReportsCommissionRate();
+
+        if (
+            commissionRate === null
+        ) {
+
+            throw new Error(
+                "Impossible de récupérer le taux de commission Toma."
+            );
+
+        }
+
+        // --------------------------------------------------
+        // CHARGEMENT DES COMMANDES
+        // --------------------------------------------------
 
         const ordersSnapshot = await getDocs(
             collection(db, "orders")
         );
 
-
         reportsOrders = [];
-
 
         ordersSnapshot.forEach((orderDoc) => {
 
@@ -1427,9 +1444,30 @@ async function loadReportsOrders() {
 
         });
 
+        // --------------------------------------------------
+        // NORMALISATION
+        // --------------------------------------------------
 
-        
-normalizeReportsOrders();
+        normalizeReportsOrders();
+
+    }
+    catch (error) {
+
+        console.error(
+            "Erreur chargement commandes rapports :",
+            error
+        );
+
+        alert(
+            "RELATÓRIOS — BLOC 10 ERREUR ❌\n\n" +
+            "Impossible de charger les données.\n\n" +
+            "Erreur : " +
+            error.message
+        );
+
+    }
+
+}
 
     } catch (error) {
 
