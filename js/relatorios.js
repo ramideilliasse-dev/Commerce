@@ -1479,24 +1479,7 @@ async function loadReportsOrders() {
 
 }
 
-    } catch (error) {
 
-        console.error(
-            "Erreur chargement commandes rapports :",
-            error
-        );
-
-
-        alert(
-            "RELATÓRIOS — BLOC 10 ERREUR ❌\n\n" +
-            "Impossible de charger les commandes.\n\n" +
-            "Erreur : " +
-            error.message
-        );
-
-    }
-
-}
 /* =========================================================
    BLOC 10.2 — NORMALISATION DES COMMANDES
 ========================================================= */
