@@ -691,7 +691,253 @@ CHECKOUT JS
 ========================= -->
 
 <script type="module" src="./js/checkout.js"></script>
+<!-- =========================================================
+     TOMA — CHECKOUT
+     BLOC 13 — CONNEXION DES PAIEMENTS AUX SETTINGS
+========================================================= -->
 
+<script type="module">
+
+import { db } from "./firebase.js";
+
+import {
+    doc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* =========================================================
+   BLOC 13.1 — INITIALISATION
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    initializeCheckoutPaymentSettings();
+
+});
+
+
+/* =========================================================
+   BLOC 13.2 — LECTURE DES SETTINGS
+========================================================= */
+
+async function initializeCheckoutPaymentSettings() {
+
+    try {
+
+        alert(
+            "CHECKOUT — BLOC 13.1\n\n" +
+            "Connexion aux paramètres de paiement de Toma..."
+        );
+
+
+        const paymentSettingsRef =
+            doc(
+                db,
+                "settings",
+                "marketplace"
+            );
+
+
+        const paymentSettingsSnapshot =
+            await getDoc(
+                paymentSettingsRef
+            );
+
+
+        if (!paymentSettingsSnapshot.exists()) {
+
+            throw new Error(
+                "Le document settings/marketplace est introuvable."
+            );
+
+        }
+
+
+        const settingsData =
+            paymentSettingsSnapshot.data();
+
+
+        const cashOnDeliveryEnabled =
+            settingsData.cashOnDeliveryEnabled === true;
+
+
+        const onlinePaymentEnabled =
+            settingsData.onlinePaymentEnabled === true;
+
+
+        applyCheckoutPaymentSettings(
+            cashOnDeliveryEnabled,
+            onlinePaymentEnabled
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Erreur BLOC 13 :",
+            error
+        );
+
+
+        alert(
+            "CHECKOUT — BLOC 13 ERREUR ❌\n\n" +
+            "Impossible de récupérer les paramètres de paiement.\n\n" +
+            "Erreur : " +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   BLOC 13.3 — APPLICATION DES SETTINGS
+========================================================= */
+
+function applyCheckoutPaymentSettings(
+    cashOnDeliveryEnabled,
+    onlinePaymentEnabled
+) {
+
+    const paymentMethod =
+        document.getElementById(
+            "paymentMethod"
+        );
+
+
+    if (!paymentMethod) {
+
+        throw new Error(
+            "L'ID HTML paymentMethod est introuvable."
+        );
+
+    }
+
+
+    /* =====================================================
+       PAIEMENT À LA LIVRAISON
+    ===================================================== */
+
+    const cashOption =
+        paymentMethod.querySelector(
+            'option[value="cash"]'
+        );
+
+
+    if (cashOption) {
+
+        cashOption.hidden =
+            !cashOnDeliveryEnabled;
+
+        cashOption.disabled =
+            !cashOnDeliveryEnabled;
+
+    }
+
+
+    /* =====================================================
+       PAIEMENTS EN LIGNE
+    ===================================================== */
+
+    const transferOption =
+        paymentMethod.querySelector(
+            'option[value="transfer"]'
+        );
+
+
+    const expressOption =
+        paymentMethod.querySelector(
+            'option[value="express"]'
+        );
+
+
+    if (transferOption) {
+
+        transferOption.hidden =
+            !onlinePaymentEnabled;
+
+        transferOption.disabled =
+            !onlinePaymentEnabled;
+
+    }
+
+
+    if (expressOption) {
+
+        expressOption.hidden =
+            !onlinePaymentEnabled;
+
+        expressOption.disabled =
+            !onlinePaymentEnabled;
+
+    }
+
+
+    /* =====================================================
+       VÉRIFICATION DU MOYEN ACTUELLEMENT SÉLECTIONNÉ
+    ===================================================== */
+
+    if (
+        paymentMethod.value === "cash" &&
+        !cashOnDeliveryEnabled
+    ) {
+
+        paymentMethod.value = "";
+
+    }
+
+
+    if (
+        (
+            paymentMethod.value === "transfer" ||
+            paymentMethod.value === "express"
+        ) &&
+        !onlinePaymentEnabled
+    ) {
+
+        paymentMethod.value = "";
+
+    }
+
+
+    /* =====================================================
+       BLOC 13 TERMINÉ
+    ===================================================== */
+
+    alert(
+        "CHECKOUT — BLOC 13 TERMINÉ ✅\n\n" +
+
+        "Connexion des paiements réussie.\n\n" +
+
+        "Pagamento na Entrega : " +
+        (
+            cashOnDeliveryEnabled
+                ? "ATIVADO"
+                : "DESATIVADO"
+        ) +
+        "\n\n" +
+
+        "Pagamento Online : " +
+        (
+            onlinePaymentEnabled
+                ? "ATIVADO"
+                : "DESATIVADO"
+        ) +
+        "\n\n" +
+
+        "Source : settings/marketplace\n\n" +
+
+        "Aucun nouvel ID HTML créé.\n" +
+        "Aucune donnée Firestore modifiée."
+    );
+
+}
+
+</script>
 <!-- =========================
 SERVICE WORKER
 ========================= -->
