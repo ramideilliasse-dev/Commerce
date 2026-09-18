@@ -4133,12 +4133,22 @@ function calculateFilteredReportsStatistics() {
                 ? totalRevenue / totalOrders
                 : 0;
 
-        const commissionRate = 5;
+    /* =========================================================
+   RELATÓRIOS — BLOC 12.30
+   Commission filtrée dynamique
+========================================================= */
 
-        const estimatedCommission =
-            totalRevenue *
-            (commissionRate / 100);
+const commissionRate =
+    Number(
+        window.reportsCommissionRate
+    ) || 0;
 
+const estimatedCommission =
+    totalRevenue *
+    (
+        commissionRate /
+        100
+    );
         alert(
             "RELATÓRIOS — BLOC 12.10.2\n\n" +
             "Statistiques filtrées calculées.\n\n" +
