@@ -11,9 +11,10 @@ import {
     collection,
     addDoc,
     getDocs,
+    doc,
+    getDoc,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
 import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -199,7 +200,18 @@ function generateOrderNumber(){
 =============================== */
 
 async function placeOrder(){
+    /* =====================================================
+       BLOC 14.3 — VÉRIFICATION DES COMMANDES
+    ===================================================== */
 
+    const canCreateOrder =
+        await verifyOrdersBeforeCreation();
+
+    if (!canCreateOrder) {
+
+        return;
+
+    }
     if(!currentUser){
 
         showToast(
@@ -478,7 +490,7 @@ window.addEventListener("load", () => {
     loadCheckoutCart();
 
     renderCheckout();
-
+    loadOrdersSetting();
     if (confirmBtn) {
 
         confirmBtn.onclick = placeOrder;
@@ -495,3 +507,261 @@ window.addEventListener("load", () => {
     }
 
 });
+/* =========================================================
+   TOMA — CHECKOUT
+   BLOC 14 — CONEXÃO DE COMANDAS
+   Dashboard Settings → ordersEnabled
+========================================================= */
+
+
+/* =========================================================
+   BLOC 14.1 — VARIÁVEL DE CONTROLE
+========================================================= */
+
+let ordersEnabled = true;
+
+
+/* =========================================================
+   BLOC 14.2 — LER CONFIGURAÇÃO DE COMANDAS
+========================================================= */
+
+async function loadOrdersSetting() {
+
+    try {
+
+        alert(
+            "CHECKOUT — BLOC 14.1\n\n" +
+            "Lecture du paramètre des commandes depuis Firebase..."
+        );
+
+
+        const marketplaceSettingsRef =
+            doc(
+                db,
+                "settings",
+                "marketplace"
+            );
+
+
+        const marketplaceSettingsSnapshot =
+            await getDoc(
+                marketplaceSettingsRef
+            );
+
+
+        if (
+            !marketplaceSettingsSnapshot.exists()
+        ) {
+
+            throw new Error(
+                "Le document settings/marketplace est introuvable."
+            );
+
+        }
+
+
+        const settingsData =
+            marketplaceSettingsSnapshot.data();
+
+
+        ordersEnabled =
+            settingsData.ordersEnabled !== false;
+
+
+        applyOrdersSetting();
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Erreur BLOC 14 :",
+            error
+        );
+
+
+        /*
+         * En cas d'erreur de lecture,
+         * on bloque la création de commande.
+         *
+         * Cela évite de permettre une commande
+         * lorsque Toma ne sait pas si les commandes
+         * sont actuellement autorisées.
+         */
+
+        ordersEnabled = false;
+
+        applyOrdersSetting();
+
+
+        alert(
+            "CHECKOUT — BLOC 14 ERREUR ❌\n\n" +
+            "Impossible de vérifier si les commandes sont activées.\n\n" +
+            "Par sécurité, la création de commande est temporairement bloquée.\n\n" +
+            "Erreur : " +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   BLOC 14.3 — APPLIQUER LE PARAMÈTRE AU CHECKOUT
+========================================================= */
+
+function applyOrdersSetting() {
+
+    if (!confirmBtn) {
+
+        throw new Error(
+            "L'ID HTML confirmBtn est introuvable."
+        );
+
+    }
+
+
+    if (ordersEnabled) {
+
+        confirmBtn.disabled = false;
+
+        confirmBtn.textContent =
+            "Confirmar Pedido";
+
+        confirmBtn.style.opacity = "1";
+
+        confirmBtn.style.cursor =
+            "pointer";
+
+        confirmBtn.title = "";
+
+
+        alert(
+            "CHECKOUT — BLOC 14.2\n\n" +
+            "Commandes activées.\n\n" +
+            "Le client peut confirmer son pedido."
+        );
+
+    }
+
+    else {
+
+        confirmBtn.disabled = true;
+
+        confirmBtn.textContent =
+            "Pedidos temporariamente indisponíveis";
+
+        confirmBtn.style.opacity = "0.55";
+
+        confirmBtn.style.cursor =
+            "not-allowed";
+
+        confirmBtn.title =
+            "Os pedidos estão temporariamente desativados.";
+
+
+        alert(
+            "CHECKOUT — BLOC 14.2\n\n" +
+            "Commandes désactivées.\n\n" +
+            "Le bouton de confirmation est maintenant bloqué."
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   BLOC 14.4 — VÉRIFICATION AVANT CRÉATION
+========================================================= */
+
+async function verifyOrdersBeforeCreation() {
+
+    try {
+
+        const marketplaceSettingsRef =
+            doc(
+                db,
+                "settings",
+                "marketplace"
+            );
+
+
+        const marketplaceSettingsSnapshot =
+            await getDoc(
+                marketplaceSettingsRef
+            );
+
+
+        if (
+            !marketplaceSettingsSnapshot.exists()
+        ) {
+
+            throw new Error(
+                "Le document settings/marketplace est introuvable."
+            );
+
+        }
+
+
+        const settingsData =
+            marketplaceSettingsSnapshot.data();
+
+
+        const currentOrdersEnabled =
+            settingsData.ordersEnabled !== false;
+
+
+        if (!currentOrdersEnabled) {
+
+            ordersEnabled = false;
+
+            applyOrdersSetting();
+
+            showToast(
+                "Os pedidos estão temporariamente desativados.",
+                "warning"
+            );
+
+            return false;
+
+        }
+
+
+        ordersEnabled = true;
+
+        return true;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Erreur vérification commandes :",
+            error
+        );
+
+
+        ordersEnabled = false;
+
+        applyOrdersSetting();
+
+
+        showToast(
+            "Não foi possível verificar o estado dos pedidos.",
+            "error"
+        );
+
+
+        return false;
+
+    }
+
+}
+
+
+/* =========================================================
+   BLOC 14.5 — FIN DU BLOC
+========================================================= */
