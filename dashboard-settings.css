@@ -5023,3 +5023,725 @@ body {
     }
 
 }
+/* =========================================================
+   TOMA — SETTINGS
+   BLOC 14A — JOURNAL D'ADMINISTRATION / AUDIT
+========================================================= */
+
+#adminAuditSettingsSection {
+    width: 100%;
+
+    margin-top: 28px;
+    margin-bottom: 30px;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+#adminAuditSettingsHeader {
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    margin-bottom: 16px;
+}
+
+
+#adminAuditSettingsIcon {
+    width: 48px;
+    height: 48px;
+
+    min-width: 48px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+
+    background: linear-gradient(
+        145deg,
+        #fff4ec,
+        #ffe8d8
+    );
+
+    color: #ff6a00;
+
+    box-shadow:
+        0 8px 20px rgba(255, 106, 0, 0.10);
+}
+
+
+#adminAuditSettingsIcon .material-symbols-rounded {
+    font-size: 25px;
+}
+
+
+#adminAuditSettingsHeaderText {
+    flex: 1;
+
+    min-width: 0;
+}
+
+
+#adminAuditSettingsTitle {
+    margin: 0;
+
+    font-size: 20px;
+
+    font-weight: 700;
+
+    color: #161616;
+}
+
+
+#adminAuditSettingsDescription {
+    margin: 4px 0 0;
+
+    font-size: 13px;
+
+    line-height: 1.45;
+
+    color: #777;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+#adminAuditSettingsCard {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    background: #ffffff;
+
+    border: 1px solid #eeeeee;
+
+    border-radius: 22px;
+
+    padding: 18px;
+
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.055);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   INFORMATION AREA
+========================================================= */
+
+#adminAuditInfoArea {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    padding: 14px;
+
+    border-radius: 15px;
+
+    background: #f8f9fa;
+
+    border: 1px solid #eeeeee;
+}
+
+
+#adminAuditInfoIcon {
+    width: 38px;
+    height: 38px;
+
+    min-width: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: rgba(255, 106, 0, 0.10);
+
+    color: #ff6a00;
+}
+
+
+#adminAuditInfoIcon .material-symbols-rounded {
+    font-size: 21px;
+}
+
+
+#adminAuditInfoContent {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+
+    min-width: 0;
+}
+
+
+#adminAuditInfoTitle {
+    font-size: 14px;
+
+    font-weight: 700;
+
+    color: #222;
+}
+
+
+#adminAuditInfoDescription {
+    font-size: 12px;
+
+    line-height: 1.5;
+
+    color: #777;
+}
+
+
+/* =========================================================
+   TEST AREA
+========================================================= */
+
+#adminAuditTestArea {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 20px 0;
+
+    border-bottom: 1px solid #eeeeee;
+}
+
+
+#adminAuditTestInfo {
+    flex: 1;
+
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+
+#adminAuditTestLabel {
+    font-size: 15px;
+
+    font-weight: 650;
+
+    color: #202020;
+}
+
+
+#adminAuditTestDescription {
+    font-size: 12px;
+
+    line-height: 1.45;
+
+    color: #888;
+}
+
+
+/* =========================================================
+   TEST BUTTON
+========================================================= */
+
+#testAdminAuditButton {
+    flex-shrink: 0;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    min-height: 44px;
+
+    padding: 0 16px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: #171717;
+
+    color: #ffffff;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 7px 16px rgba(0, 0, 0, 0.12);
+
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        opacity 0.18s ease;
+}
+
+
+#testAdminAuditButton:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 10px 21px rgba(0, 0, 0, 0.16);
+}
+
+
+#testAdminAuditButton:active {
+    transform: scale(0.97);
+}
+
+
+#testAdminAuditButton:disabled {
+    opacity: 0.60;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+
+#testAdminAuditButton .material-symbols-rounded {
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+#adminAuditSettingsStatusArea {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    margin-top: 18px;
+
+    padding: 12px 14px;
+
+    border-radius: 13px;
+
+    background: #f7f7f7;
+
+    color: #555;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+
+#adminAuditSettingsStatusArea.success {
+    background: #f3fbf6;
+
+    color: #198754;
+}
+
+
+#adminAuditSettingsStatusArea.error {
+    background: #fff4f4;
+
+    color: #c0392b;
+}
+
+
+#adminAuditSettingsStatusArea.warning {
+    background: #fff9ef;
+
+    color: #b86b00;
+}
+
+
+#adminAuditSettingsStatusIcon {
+    font-size: 20px;
+}
+
+
+#adminAuditSettingsStatusText {
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   FIREBASE STATUS
+========================================================= */
+
+#adminAuditFirebaseStatusArea {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-top: 10px;
+
+    padding: 12px 14px;
+
+    border-radius: 13px;
+
+    background: #f7f8fa;
+
+    border: 1px solid #eeeeee;
+}
+
+
+#adminAuditFirebaseStatusIcon {
+    font-size: 21px;
+
+    color: #777;
+}
+
+
+#adminAuditFirebaseStatusContent {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 2px;
+
+    min-width: 0;
+}
+
+
+#adminAuditFirebaseStatusLabel {
+    font-size: 12px;
+
+    font-weight: 700;
+
+    color: #444;
+}
+
+
+#adminAuditFirebaseStatusText {
+    font-size: 12px;
+
+    color: #888;
+}
+
+
+/* =========================================================
+   LOGS AREA
+========================================================= */
+
+#adminAuditLogsArea {
+    margin-top: 20px;
+}
+
+
+#adminAuditLogsHeader {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding-bottom: 12px;
+}
+
+
+#adminAuditLogsTitle {
+    margin: 0;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    color: #202020;
+}
+
+
+#adminAuditLogsDescription {
+    margin: 4px 0 0;
+
+    font-size: 12px;
+
+    color: #888;
+}
+
+
+#adminAuditLogsHeaderIcon {
+    font-size: 22px;
+
+    color: #999;
+}
+
+
+/* =========================================================
+   LOG LIST
+========================================================= */
+
+#adminAuditLogsList {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 9px;
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+#adminAuditLogsEmpty {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 28px 15px;
+
+    border: 1px dashed #dddddd;
+
+    border-radius: 14px;
+
+    color: #999;
+
+    text-align: center;
+
+    font-size: 12px;
+}
+
+
+#adminAuditLogsEmpty .material-symbols-rounded {
+    font-size: 28px;
+
+    color: #bbb;
+}
+
+
+/* =========================================================
+   LOG ITEM
+========================================================= */
+
+.adminAuditLogItem {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    padding: 13px;
+
+    border: 1px solid #eeeeee;
+
+    border-radius: 14px;
+
+    background: #ffffff;
+
+    transition:
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+
+.adminAuditLogItem:hover {
+    border-color: #e2e2e2;
+
+    box-shadow:
+        0 5px 16px rgba(0, 0, 0, 0.04);
+}
+
+
+.adminAuditLogIcon {
+    width: 36px;
+    height: 36px;
+
+    min-width: 36px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: rgba(255, 106, 0, 0.09);
+
+    color: #ff6a00;
+}
+
+
+.adminAuditLogIcon .material-symbols-rounded {
+    font-size: 19px;
+}
+
+
+.adminAuditLogContent {
+    flex: 1;
+
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+
+.adminAuditLogTitle {
+    font-size: 13px;
+
+    font-weight: 700;
+
+    color: #222;
+}
+
+
+.adminAuditLogDescription {
+    font-size: 12px;
+
+    line-height: 1.45;
+
+    color: #777;
+
+    word-break: break-word;
+}
+
+
+.adminAuditLogMeta {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+    margin-top: 3px;
+}
+
+
+.adminAuditLogBadge {
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 4px 7px;
+
+    border-radius: 7px;
+
+    background: #f4f5f6;
+
+    color: #777;
+
+    font-size: 10px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    #adminAuditSettingsSection {
+        margin-top: 22px;
+    }
+
+
+    #adminAuditSettingsHeader {
+        align-items: flex-start;
+
+        gap: 11px;
+    }
+
+
+    #adminAuditSettingsIcon {
+        width: 44px;
+        height: 44px;
+
+        min-width: 44px;
+
+        border-radius: 13px;
+    }
+
+
+    #adminAuditSettingsIcon .material-symbols-rounded {
+        font-size: 23px;
+    }
+
+
+    #adminAuditSettingsTitle {
+        font-size: 18px;
+    }
+
+
+    #adminAuditSettingsDescription {
+        font-size: 12px;
+    }
+
+
+    #adminAuditSettingsCard {
+        padding: 15px;
+
+        border-radius: 19px;
+    }
+
+
+    #adminAuditTestArea {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 13px;
+    }
+
+
+    #testAdminAuditButton {
+        width: 100%;
+    }
+
+
+    #adminAuditInfoArea {
+        padding: 12px;
+    }
+
+
+    #adminAuditTestLabel {
+        font-size: 14px;
+    }
+
+
+    #adminAuditLogItem {
+        padding: 12px;
+    }
+
+}
