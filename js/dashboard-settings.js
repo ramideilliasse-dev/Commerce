@@ -6398,3 +6398,727 @@ function updateSecurityModerationStatus() {
         "Atenção: os controles de segurança e moderação estão desativados";
 
 }
+/* =========================================================
+   BLOC 14A — JOURNAL D'ADMINISTRATION / AUDIT
+========================================================= */
+
+(() => {
+
+    const testButton =
+        document.getElementById("testAdminAuditButton");
+
+    const statusArea =
+        document.getElementById("adminAuditSettingsStatusArea");
+
+    const statusIcon =
+        document.getElementById("adminAuditSettingsStatusIcon");
+
+    const statusText =
+        document.getElementById("adminAuditSettingsStatusText");
+
+    const firebaseIcon =
+        document.getElementById("adminAuditFirebaseStatusIcon");
+
+    const firebaseText =
+        document.getElementById("adminAuditFirebaseStatusText");
+
+    const logsList =
+        document.getElementById("adminAuditLogsList");
+
+
+    /* ---------------------------------------------------------
+       VERIFICATION HTML
+    --------------------------------------------------------- */
+
+    if (
+        !testButton ||
+        !statusArea ||
+        !statusIcon ||
+        !statusText ||
+        !firebaseIcon ||
+        !firebaseText ||
+        !logsList
+    ) {
+
+        console.warn(
+            "BLOC 14A — Éléments HTML du journal introuvables."
+        );
+
+        return;
+    }
+
+
+    /* ---------------------------------------------------------
+       OUTILS
+    --------------------------------------------------------- */
+
+    function setAuditStatus(
+        type,
+        icon,
+        message
+    ) {
+
+        statusArea.classList.remove(
+            "success",
+            "error",
+            "warning"
+        );
+
+        if (type) {
+            statusArea.classList.add(type);
+        }
+
+        statusIcon.textContent = icon;
+
+        statusText.textContent = message;
+    }
+
+
+    function escapeHtml(value) {
+
+        if (value === null || value === undefined) {
+            return "";
+        }
+
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+
+    function formatAuditDate(timestamp) {
+
+        if (!timestamp) {
+            return "Date en attente";
+        }
+
+        try {
+
+            let date = null;
+
+            if (
+                timestamp &&
+                typeof timestamp.toDate === "function"
+            ) {
+
+                date = timestamp.toDate();
+
+            } else if (
+                timestamp instanceof Date
+            ) {
+
+                date = timestamp;
+
+            } else if (
+                typeof timestamp === "number"
+            ) {
+
+                date = new Date(timestamp);
+            }
+
+            if (!date || Number.isNaN(date.getTime())) {
+                return "Date inconnue";
+            }
+
+            return new Intl.DateTimeFormat(
+                "fr-FR",
+                {
+                    dateStyle: "short",
+                    timeStyle: "short"
+                }
+            ).format(date);
+
+        } catch (error) {
+
+            return "Date inconnue";
+        }
+    }
+
+
+    /* ---------------------------------------------------------
+       FIREBASE
+    --------------------------------------------------------- */
+
+    async function loadAuditFirebase() {
+
+        try {
+
+            const firebase =
+                await import("../firebase.js");
+
+            const {
+                db,
+                auth,
+                authReady
+            } = firebase;
+
+
+            /* -------------------------------------------------
+               ATTENTE AUTHENTIFICATION
+            ------------------------------------------------- */
+
+            const authenticatedUser =
+                await new Promise((resolve) => {
+
+                    let resolved = false;
+
+                    const unsubscribe =
+                        onAuthStateChanged(
+                            auth,
+                            (user) => {
+
+                                if (resolved) {
+                                    return;
+                                }
+
+                                resolved = true;
+
+                                unsubscribe();
+
+                                resolve(user);
+                            }
+                        );
+                });
+
+
+            if (!authenticatedUser) {
+
+                firebaseIcon.textContent =
+                    "cloud_off";
+
+                firebaseText.textContent =
+                    "Utilisateur non connecté.";
+
+                setAuditStatus(
+                    "error",
+                    "lock",
+                    "Vous devez être connecté comme administrateur."
+                );
+
+                testButton.disabled = true;
+
+                return null;
+            }
+
+
+            /* -------------------------------------------------
+               VERIFICATION ROLE
+            ------------------------------------------------- */
+
+            const userModule =
+                await import(
+                    "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+                );
+
+            const {
+                doc,
+                getDoc
+            } = userModule;
+
+
+            const userSnapshot =
+                await getDoc(
+                    doc(
+                        db,
+                        "users",
+                        authenticatedUser.uid
+                    )
+                );
+
+
+            if (!userSnapshot.exists()) {
+
+                firebaseIcon.textContent =
+                    "gpp_bad";
+
+                firebaseText.textContent =
+                    "Profil administrateur introuvable.";
+
+                setAuditStatus(
+                    "error",
+                    "lock",
+                    "Profil utilisateur introuvable."
+                );
+
+                testButton.disabled = true;
+
+                return null;
+            }
+
+
+            const userData =
+                userSnapshot.data() || {};
+
+            const role =
+                userData.role || "user";
+
+
+            if (
+                role !== "admin" &&
+                role !== "superadmin"
+            ) {
+
+                firebaseIcon.textContent =
+                    "gpp_bad";
+
+                firebaseText.textContent =
+                    "Accès administrateur refusé.";
+
+                setAuditStatus(
+                    "error",
+                    "block",
+                    "Accès réservé aux administrateurs."
+                );
+
+                testButton.disabled = true;
+
+                return null;
+            }
+
+
+            /* -------------------------------------------------
+               FIREBASE OK
+            ------------------------------------------------- */
+
+            firebaseIcon.textContent =
+                "cloud_done";
+
+            firebaseIcon.style.color =
+                "#198754";
+
+            firebaseText.textContent =
+                "Firebase connecté • accès administrateur confirmé.";
+
+            setAuditStatus(
+                "success",
+                "verified_user",
+                "Journal prêt à être utilisé."
+            );
+
+
+            return {
+                db,
+                auth,
+                user: authenticatedUser,
+                role
+            };
+
+        } catch (error) {
+
+            console.error(
+                "BLOC 14A — Firebase ERROR:",
+                error
+            );
+
+            firebaseIcon.textContent =
+                "cloud_off";
+
+            firebaseIcon.style.color =
+                "#c0392b";
+
+            firebaseText.textContent =
+                "Erreur de connexion à Firebase.";
+
+            setAuditStatus(
+                "error",
+                "error",
+                "Impossible d’initialiser le journal."
+            );
+
+            testButton.disabled = true;
+
+            return null;
+        }
+    }
+
+
+    /* ---------------------------------------------------------
+       CHARGER LES LOGS
+    --------------------------------------------------------- */
+
+    async function loadAuditLogs(firebaseData) {
+
+        try {
+
+            const {
+                db
+            } = firebaseData;
+
+
+            const firestore =
+                await import(
+                    "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+                );
+
+
+            const {
+                collection,
+                getDocs,
+                limit,
+                query
+            } = firestore;
+
+
+            const logsQuery =
+                query(
+                    collection(
+                        db,
+                        "adminLogs"
+                    ),
+                    limit(20)
+                );
+
+
+            const snapshot =
+                await getDocs(logsQuery);
+
+
+            const logs = [];
+
+
+            snapshot.forEach((docSnapshot) => {
+
+                logs.push({
+                    id: docSnapshot.id,
+                    ...docSnapshot.data()
+                });
+
+            });
+
+
+            /* -------------------------------------------------
+               TRI LOCAL
+            ------------------------------------------------- */
+
+            logs.sort((a, b) => {
+
+                const dateA =
+                    a.createdAt &&
+                    typeof a.createdAt.toMillis === "function"
+                        ? a.createdAt.toMillis()
+                        : 0;
+
+                const dateB =
+                    b.createdAt &&
+                    typeof b.createdAt.toMillis === "function"
+                        ? b.createdAt.toMillis()
+                        : 0;
+
+                return dateB - dateA;
+            });
+
+
+            renderAuditLogs(logs);
+
+
+        } catch (error) {
+
+            console.error(
+                "BLOC 14A — LOAD LOGS ERROR:",
+                error
+            );
+
+
+            logsList.innerHTML = `
+                <div id="adminAuditLogsEmpty">
+
+                    <span class="material-symbols-rounded">
+                        error
+                    </span>
+
+                    <span>
+                        Impossible de charger le journal.
+                    </span>
+
+                </div>
+            `;
+        }
+    }
+
+
+    /* ---------------------------------------------------------
+       AFFICHER LES LOGS
+    --------------------------------------------------------- */
+
+    function renderAuditLogs(logs) {
+
+        if (!logs.length) {
+
+            logsList.innerHTML = `
+                <div id="adminAuditLogsEmpty">
+
+                    <span class="material-symbols-rounded">
+                        history
+                    </span>
+
+                    <span>
+                        Aucun événement enregistré pour le moment.
+                    </span>
+
+                </div>
+            `;
+
+            return;
+        }
+
+
+        logsList.innerHTML =
+            logs.map((log) => {
+
+                const title =
+                    escapeHtml(
+                        log.title ||
+                        "Action administrative"
+                    );
+
+
+                const description =
+                    escapeHtml(
+                        log.description ||
+                        "Aucune description."
+                    );
+
+
+                const adminEmail =
+                    escapeHtml(
+                        log.adminEmail ||
+                        "Administrateur"
+                    );
+
+
+                const role =
+                    escapeHtml(
+                        log.adminRole ||
+                        "admin"
+                    );
+
+
+                const date =
+                    escapeHtml(
+                        formatAuditDate(
+                            log.createdAt
+                        )
+                    );
+
+
+                return `
+                    <div class="adminAuditLogItem">
+
+                        <div class="adminAuditLogIcon">
+
+                            <span class="material-symbols-rounded">
+                                history
+                            </span>
+
+                        </div>
+
+
+                        <div class="adminAuditLogContent">
+
+                            <span class="adminAuditLogTitle">
+                                ${title}
+                            </span>
+
+                            <span class="adminAuditLogDescription">
+                                ${description}
+                            </span>
+
+
+                            <div class="adminAuditLogMeta">
+
+                                <span class="adminAuditLogBadge">
+                                    ${adminEmail}
+                                </span>
+
+                                <span class="adminAuditLogBadge">
+                                    ${role}
+                                </span>
+
+                                <span class="adminAuditLogBadge">
+                                    ${date}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                `;
+
+            })
+            .join("");
+    }
+
+
+    /* ---------------------------------------------------------
+       CREER UN LOG DE TEST
+    --------------------------------------------------------- */
+
+    async function createTestAuditLog(firebaseData) {
+
+        if (!firebaseData) {
+            return;
+        }
+
+
+        const {
+            db,
+            user,
+            role
+        } = firebaseData;
+
+
+        try {
+
+            testButton.disabled = true;
+
+
+            setAuditStatus(
+                "warning",
+                "sync",
+                "Enregistrement du test dans Firebase..."
+            );
+
+
+            const firestore =
+                await import(
+                    "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+                );
+
+
+            const {
+                addDoc,
+                collection,
+                serverTimestamp
+            } = firestore;
+
+
+            await addDoc(
+                collection(
+                    db,
+                    "adminLogs"
+                ),
+                {
+
+                    actionType:
+                        "settings_test",
+
+                    section:
+                        "dashboard-settings",
+
+                    title:
+                        "Test du journal d’administration",
+
+                    description:
+                        "Entrée de test créée depuis les paramètres de Toma.",
+
+                    adminUid:
+                        user.uid,
+
+                    adminEmail:
+                        user.email || "Email non disponible",
+
+                    adminRole:
+                        role,
+
+                    createdAt:
+                        serverTimestamp()
+
+                }
+            );
+
+
+            setAuditStatus(
+                "success",
+                "check_circle",
+                "BLOC 14A — Journal testé avec succès."
+            );
+
+
+            alert(
+                "BLOC 14A — Journal d’administration\n\n" +
+                "Test enregistré avec succès dans Firebase."
+            );
+
+
+            await loadAuditLogs(firebaseData);
+
+
+        } catch (error) {
+
+            console.error(
+                "BLOC 14A — CREATE LOG ERROR:",
+                error
+            );
+
+
+            setAuditStatus(
+                "error",
+                "error",
+                "Impossible d’enregistrer le journal."
+            );
+
+
+            alert(
+                "BLOC 14A — ERREUR\n\n" +
+                "Impossible d’enregistrer le journal.\n\n" +
+                error.message
+            );
+
+        } finally {
+
+            testButton.disabled = false;
+        }
+    }
+
+
+    /* ---------------------------------------------------------
+       INITIALISATION
+    --------------------------------------------------------- */
+
+    async function initializeAdminAudit() {
+
+        console.log(
+            "BLOC 14A — Initialisation du journal..."
+        );
+
+
+        const firebaseData =
+            await loadAuditFirebase();
+
+
+        if (!firebaseData) {
+            return;
+        }
+
+
+        await loadAuditLogs(
+            firebaseData
+        );
+
+
+        testButton.addEventListener(
+            "click",
+            async () => {
+
+                await createTestAuditLog(
+                    firebaseData
+                );
+
+            }
+        );
+
+
+        console.log(
+            "BLOC 14A — Journal prêt."
+        );
+
+    }
+
+
+    initializeAdminAudit();
+
+})();
