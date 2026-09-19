@@ -5563,11 +5563,15 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 /* ========================================================= */
 /* BLOC 13 — SEGURANÇA & MODERAÇÃO                          */
-/* ========================================================= */
+/* ================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    alert("TOMA — SETTINGS\n\nBLOC 13.1\n\nInicialização da segurança e moderação...");
+    alert(
+        "TOMA — SETTINGS\n\n" +
+        "BLOC 13.1\n\n" +
+        "Inicialização da segurança e moderação..."
+    );
 
     initializeSecurityModerationSettings();
 
@@ -5575,36 +5579,72 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 /* ========================================================= */
-/* INITIALISATION                                             */
+/* INITIALIZAÇÃO                                             */
 /* ========================================================= */
 
 async function initializeSecurityModerationSettings() {
 
     try {
 
+        /* ================================================= */
+        /* ELEMENTOS                                          */
+        /* ================================================= */
+
         const merchantVerificationToggle =
-            document.getElementById("merchantVerificationToggle");
+            document.getElementById(
+                "merchantVerificationToggle"
+            );
 
         const productApprovalToggle =
-            document.getElementById("productApprovalToggle");
+            document.getElementById(
+                "productApprovalToggle"
+            );
 
         const reviewsModerationToggle =
-            document.getElementById("reviewsModerationToggle");
+            document.getElementById(
+                "reviewsModerationToggle"
+            );
 
         const productReportingToggle =
-            document.getElementById("productReportingToggle");
+            document.getElementById(
+                "productReportingToggle"
+            );
 
         const userAccountsToggle =
-            document.getElementById("userAccountsToggle");
+            document.getElementById(
+                "userAccountsToggle"
+            );
 
         const merchantAccountsToggle =
-            document.getElementById("merchantAccountsToggle");
+            document.getElementById(
+                "merchantAccountsToggle"
+            );
 
         const saveButton =
             document.getElementById(
                 "saveSecurityModerationSettingsButton"
             );
 
+
+        const firebaseStatusIcon =
+            document.getElementById(
+                "securityModerationFirebaseStatusIcon"
+            );
+
+        const firebaseStatusLabel =
+            document.getElementById(
+                "securityModerationFirebaseStatusLabel"
+            );
+
+        const firebaseStatusText =
+            document.getElementById(
+                "securityModerationFirebaseStatusText"
+            );
+
+
+        /* ================================================= */
+        /* VERIFICAÇÃO DOS ELEMENTOS                          */
+        /* ================================================= */
 
         if (
             !merchantVerificationToggle ||
@@ -5640,11 +5680,30 @@ async function initializeSecurityModerationSettings() {
         const firebaseModule =
             await import("../firebase.js");
 
-        const db = firebaseModule.db;
-        const auth = firebaseModule.auth;
+        const db =
+            firebaseModule.db;
+
+        const auth =
+            firebaseModule.auth;
 
 
         if (!db || !auth) {
+
+            if (firebaseStatusIcon) {
+                firebaseStatusIcon.textContent =
+                    "error";
+            }
+
+            if (firebaseStatusLabel) {
+                firebaseStatusLabel.textContent =
+                    "Firebase";
+            }
+
+            if (firebaseStatusText) {
+                firebaseStatusText.textContent =
+                    "Firebase não foi carregado corretamente.";
+            }
+
 
             alert(
                 "TOMA — SETTINGS\n\n" +
@@ -5660,41 +5719,171 @@ async function initializeSecurityModerationSettings() {
         /* AGUARDAR AUTENTICAÇÃO                              */
         /* ================================================= */
 
-        await new Promise((resolve) => {
+        const authenticatedUser =
+            await new Promise((resolve) => {
 
-            onAuthStateChanged(auth, (user) => {
+                let resolved = false;
 
-                if (!user) {
+                const unsubscribe =
+                    onAuthStateChanged(
+                        auth,
+                        (user) => {
 
-                    alert(
-                        "TOMA — SETTINGS\n\n" +
-                        "BLOC 13.2 ERRO ❌\n\n" +
-                        "Nenhum administrador está autenticado."
+                            if (resolved) {
+                                return;
+                            }
+
+                            resolved = true;
+
+                            unsubscribe();
+
+                            resolve(user);
+
+                        }
                     );
-
-                    resolve();
-
-                    return;
-                }
-
-
-                resolve();
 
             });
 
-        });
+
+        if (!authenticatedUser) {
+
+            if (firebaseStatusIcon) {
+                firebaseStatusIcon.textContent =
+                    "lock";
+            }
+
+            if (firebaseStatusLabel) {
+                firebaseStatusLabel.textContent =
+                    "Acesso";
+            }
+
+            if (firebaseStatusText) {
+                firebaseStatusText.textContent =
+                    "Nenhum administrador está autenticado.";
+            }
 
 
-        const user = auth.currentUser;
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 13.2 ERRO ❌\n\n" +
+                "Nenhum administrador está autenticado."
+            );
 
-
-        if (!user) {
             return;
         }
 
 
         /* ================================================= */
-        /* CARREGAR SETTINGS                                  */
+        /* VERIFICAR ROLE DO UTILIZADOR                       */
+        /* ================================================= */
+
+        const currentUserRef =
+            doc(
+                db,
+                "users",
+                authenticatedUser.uid
+            );
+
+
+        const currentUserSnapshot =
+            await getDoc(
+                currentUserRef
+            );
+
+
+        if (!currentUserSnapshot.exists()) {
+
+            if (firebaseStatusIcon) {
+                firebaseStatusIcon.textContent =
+                    "block";
+            }
+
+            if (firebaseStatusLabel) {
+                firebaseStatusLabel.textContent =
+                    "Acesso negado";
+            }
+
+            if (firebaseStatusText) {
+                firebaseStatusText.textContent =
+                    "Perfil administrativo não encontrado.";
+            }
+
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 13.2 ERRO ❌\n\n" +
+                "Perfil do administrador não encontrado."
+            );
+
+            return;
+        }
+
+
+        const currentUserData =
+            currentUserSnapshot.data();
+
+
+        const userRole =
+            currentUserData.role || "user";
+
+
+        const isAdmin =
+            userRole === "admin" ||
+            userRole === "superadmin";
+
+
+        if (!isAdmin) {
+
+            if (firebaseStatusIcon) {
+                firebaseStatusIcon.textContent =
+                    "block";
+            }
+
+            if (firebaseStatusLabel) {
+                firebaseStatusLabel.textContent =
+                    "Acesso negado";
+            }
+
+            if (firebaseStatusText) {
+                firebaseStatusText.textContent =
+                    "Este usuário não possui permissão administrativa.";
+            }
+
+
+            alert(
+                "TOMA — SETTINGS\n\n" +
+                "BLOC 13.2 ERRO ❌\n\n" +
+                "Acesso negado.\n\n" +
+                "Role atual: " +
+                userRole
+            );
+
+            return;
+        }
+
+
+        /* ================================================= */
+        /* STATUS FIREBASE — AUTORIZADO                       */
+        /* ================================================= */
+
+        if (firebaseStatusIcon) {
+            firebaseStatusIcon.textContent =
+                "cloud_done";
+        }
+
+        if (firebaseStatusLabel) {
+            firebaseStatusLabel.textContent =
+                "Firebase";
+        }
+
+        if (firebaseStatusText) {
+            firebaseStatusText.textContent =
+                "Administrador autorizado. Conectado ao Firebase.";
+        }
+
+
+        /* ================================================= */
+        /* REFERÊNCIA SETTINGS                                */
         /* ================================================= */
 
         const marketplaceSettingsRef =
@@ -5705,79 +5894,101 @@ async function initializeSecurityModerationSettings() {
             );
 
 
+        /* ================================================= */
+        /* CARREGAR SETTINGS                                  */
+        /* ================================================= */
+
         const marketplaceSettingsSnapshot =
             await getDoc(
                 marketplaceSettingsRef
             );
 
 
+        let data = {};
+
+
         if (
             marketplaceSettingsSnapshot.exists()
         ) {
 
-            const data =
+            data =
                 marketplaceSettingsSnapshot.data();
-
-
-            merchantVerificationToggle.checked =
-                data.merchantVerificationRequired
-                !== undefined
-                    ? data.merchantVerificationRequired
-                    : true;
-
-
-            productApprovalToggle.checked =
-                data.productApprovalRequired
-                !== undefined
-                    ? data.productApprovalRequired
-                    : true;
-
-
-            reviewsModerationToggle.checked =
-                data.reviewsEnabled
-                !== undefined
-                    ? data.reviewsEnabled
-                    : true;
-
-
-            productReportingToggle.checked =
-                data.productReportingEnabled
-                !== undefined
-                    ? data.productReportingEnabled
-                    : true;
-
-
-            userAccountsToggle.checked =
-                data.userAccountsEnabled
-                !== undefined
-                    ? data.userAccountsEnabled
-                    : true;
-
-
-            merchantAccountsToggle.checked =
-                data.merchantAccountsEnabled
-                !== undefined
-                    ? data.merchantAccountsEnabled
-                    : true;
 
         }
 
 
+        /* ================================================= */
+        /* VALORES PADRÃO SE NÃO EXISTIREM                    */
+        /* ================================================= */
+
+        merchantVerificationToggle.checked =
+            data.merchantVerificationRequired
+            !== undefined
+                ? data.merchantVerificationRequired
+                : true;
+
+
+        productApprovalToggle.checked =
+            data.productApprovalRequired
+            !== undefined
+                ? data.productApprovalRequired
+                : true;
+
+
+        reviewsModerationToggle.checked =
+            data.reviewsEnabled
+            !== undefined
+                ? data.reviewsEnabled
+                : true;
+
+
+        productReportingToggle.checked =
+            data.productReportingEnabled
+            !== undefined
+                ? data.productReportingEnabled
+                : true;
+
+
+        userAccountsToggle.checked =
+            data.userAccountsEnabled
+            !== undefined
+                ? data.userAccountsEnabled
+                : true;
+
+
+        merchantAccountsToggle.checked =
+            data.merchantAccountsEnabled
+            !== undefined
+                ? data.merchantAccountsEnabled
+                : true;
+
+
+        /* ================================================= */
+        /* ATUALIZAR STATUS VISUAL                            */
+        /* ================================================= */
+
         updateSecurityModerationStatus();
 
 
-        document
-            .getElementById(
-                "securityModerationFirebaseStatusText"
-            )
-            .textContent =
-                "Configurações carregadas do Firebase.";
+        if (firebaseStatusText) {
+
+            firebaseStatusText.textContent =
+                marketplaceSettingsSnapshot.exists()
+                    ? "Configurações carregadas do Firebase."
+                    : "Documento ainda não existia. Valores padrão carregados.";
+
+        }
 
 
         alert(
             "TOMA — SETTINGS\n\n" +
             "BLOC 13.3\n\n" +
-            "Configurações de segurança e moderação carregadas com sucesso."
+            "Configurações de segurança e moderação carregadas com sucesso.\n\n" +
+            "Administrador: " +
+            authenticatedUser.email +
+            "\n\n" +
+            "Role: " +
+            userRole
         );
 
 
@@ -5790,25 +6001,30 @@ async function initializeSecurityModerationSettings() {
             updateSecurityModerationStatus
         );
 
+
         productApprovalToggle.addEventListener(
             "change",
             updateSecurityModerationStatus
         );
+
 
         reviewsModerationToggle.addEventListener(
             "change",
             updateSecurityModerationStatus
         );
 
+
         productReportingToggle.addEventListener(
             "change",
             updateSecurityModerationStatus
         );
 
+
         userAccountsToggle.addEventListener(
             "change",
             updateSecurityModerationStatus
         );
+
 
         merchantAccountsToggle.addEventListener(
             "change",
@@ -5828,16 +6044,29 @@ async function initializeSecurityModerationSettings() {
 
                     saveButton.disabled = true;
 
-                    saveButton.style.opacity = "0.65";
+                    saveButton.style.opacity =
+                        "0.65";
 
 
-                    document
-                        .getElementById(
-                            "securityModerationFirebaseStatusText"
-                        )
-                        .textContent =
-                        "Sincronizando com Firebase...";
+                    if (firebaseStatusIcon) {
+                        firebaseStatusIcon.textContent =
+                            "sync";
+                    }
 
+                    if (firebaseStatusLabel) {
+                        firebaseStatusLabel.textContent =
+                            "Firebase";
+                    }
+
+                    if (firebaseStatusText) {
+                        firebaseStatusText.textContent =
+                            "Sincronizando com Firebase...";
+                    }
+
+
+                    /* ===================================== */
+                    /* GUARDAR                                */
+                    /* ===================================== */
 
                     await setDoc(
                         marketplaceSettingsRef,
@@ -5865,7 +6094,7 @@ async function initializeSecurityModerationSettings() {
                                 serverTimestamp(),
 
                             updatedBy:
-                                user.uid
+                                authenticatedUser.uid
 
                         },
                         {
@@ -5874,12 +6103,24 @@ async function initializeSecurityModerationSettings() {
                     );
 
 
-                    document
-                        .getElementById(
-                            "securityModerationFirebaseStatusText"
-                        )
-                        .textContent =
-                        "Configurações sincronizadas com sucesso.";
+                    /* ===================================== */
+                    /* STATUS SUCESSO                         */
+                    /* ===================================== */
+
+                    if (firebaseStatusIcon) {
+                        firebaseStatusIcon.textContent =
+                            "cloud_done";
+                    }
+
+                    if (firebaseStatusLabel) {
+                        firebaseStatusLabel.textContent =
+                            "Firebase";
+                    }
+
+                    if (firebaseStatusText) {
+                        firebaseStatusText.textContent =
+                            "Configurações sincronizadas com sucesso.";
+                    }
 
 
                     alert(
@@ -5887,7 +6128,7 @@ async function initializeSecurityModerationSettings() {
                         "BLOC 13.4 TERMINÉ ✅\n\n" +
                         "Configurações de segurança e moderação salvas com sucesso.\n\n" +
 
-                        "Verificação dos comerciantes : " +
+                        "Verificação dos comerciantes: " +
                         (
                             merchantVerificationToggle.checked
                                 ? "Obrigatória"
@@ -5895,7 +6136,7 @@ async function initializeSecurityModerationSettings() {
                         ) +
                         "\n\n" +
 
-                        "Validação dos produtos : " +
+                        "Validação dos produtos: " +
                         (
                             productApprovalToggle.checked
                                 ? "Obrigatória"
@@ -5903,7 +6144,7 @@ async function initializeSecurityModerationSettings() {
                         ) +
                         "\n\n" +
 
-                        "Avaliações dos clientes : " +
+                        "Avaliações dos clientes: " +
                         (
                             reviewsModerationToggle.checked
                                 ? "Ativas"
@@ -5911,7 +6152,7 @@ async function initializeSecurityModerationSettings() {
                         ) +
                         "\n\n" +
 
-                        "Sinalização de produtos : " +
+                        "Sinalização de produtos: " +
                         (
                             productReportingToggle.checked
                                 ? "Ativa"
@@ -5919,7 +6160,7 @@ async function initializeSecurityModerationSettings() {
                         ) +
                         "\n\n" +
 
-                        "Contas de usuários : " +
+                        "Contas de usuários: " +
                         (
                             userAccountsToggle.checked
                                 ? "Ativas"
@@ -5927,7 +6168,7 @@ async function initializeSecurityModerationSettings() {
                         ) +
                         "\n\n" +
 
-                        "Contas de comerciantes : " +
+                        "Contas de comerciantes: " +
                         (
                             merchantAccountsToggle.checked
                                 ? "Ativas"
@@ -5944,12 +6185,20 @@ async function initializeSecurityModerationSettings() {
                     );
 
 
-                    document
-                        .getElementById(
-                            "securityModerationFirebaseStatusText"
-                        )
-                        .textContent =
-                        "Erro ao sincronizar com Firebase.";
+                    if (firebaseStatusIcon) {
+                        firebaseStatusIcon.textContent =
+                            "error";
+                    }
+
+                    if (firebaseStatusLabel) {
+                        firebaseStatusLabel.textContent =
+                            "Erro Firebase";
+                    }
+
+                    if (firebaseStatusText) {
+                        firebaseStatusText.textContent =
+                            "Erro ao sincronizar com Firebase.";
+                    }
 
 
                     alert(
@@ -5962,9 +6211,11 @@ async function initializeSecurityModerationSettings() {
 
                 } finally {
 
-                    saveButton.disabled = false;
+                    saveButton.disabled =
+                        false;
 
-                    saveButton.style.opacity = "1";
+                    saveButton.style.opacity =
+                        "1";
 
                 }
 
@@ -5978,6 +6229,38 @@ async function initializeSecurityModerationSettings() {
             "BLOC 13 INITIALIZATION ERROR:",
             error
         );
+
+
+        const firebaseStatusIcon =
+            document.getElementById(
+                "securityModerationFirebaseStatusIcon"
+            );
+
+        const firebaseStatusLabel =
+            document.getElementById(
+                "securityModerationFirebaseStatusLabel"
+            );
+
+        const firebaseStatusText =
+            document.getElementById(
+                "securityModerationFirebaseStatusText"
+            );
+
+
+        if (firebaseStatusIcon) {
+            firebaseStatusIcon.textContent =
+                "error";
+        }
+
+        if (firebaseStatusLabel) {
+            firebaseStatusLabel.textContent =
+                "Erro";
+        }
+
+        if (firebaseStatusText) {
+            firebaseStatusText.textContent =
+                "Erro durante a inicialização.";
+        }
 
 
         alert(
@@ -6054,6 +6337,10 @@ function updateSecurityModerationStatus() {
     }
 
 
+    /* ===================================================== */
+    /* TODOS ATIVOS                                           */
+    /* ===================================================== */
+
     const allActive =
         merchantVerification.checked &&
         productApproval.checked &&
@@ -6075,6 +6362,10 @@ function updateSecurityModerationStatus() {
     }
 
 
+    /* ===================================================== */
+    /* PARCIALMENTE ATIVOS                                    */
+    /* ===================================================== */
+
     const someActive =
         merchantVerification.checked ||
         productApproval.checked ||
@@ -6095,6 +6386,10 @@ function updateSecurityModerationStatus() {
         return;
     }
 
+
+    /* ===================================================== */
+    /* TODOS DESATIVADOS                                      */
+    /* ===================================================== */
 
     statusIcon.textContent =
         "warning";
