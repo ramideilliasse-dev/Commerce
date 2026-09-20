@@ -7123,117 +7123,109 @@ function updateSecurityModerationStatus() {
 
 })();
 /* =========================================================
-   BLOC 14B — ENREGISTREMENT DES ACTIONS ADMINISTRATIVES
+   BLOC 14B — JOURNAL AUTOMATIQUE DES ACTIONS ADMINISTRATIVES
    =========================================================
 
    OBJECTIF :
    Enregistrer automatiquement dans "adminLogs"
-   les actions de sauvegarde effectuées depuis
-   Dashboard Settings.
+   les sauvegardes effectuées dans Dashboard Settings.
 
    IMPORTANT :
-   - Ne remplace aucun bloc précédent.
-   - Ne modifie pas le BLOC 14A.
-   - Utilise le même système Firebase.
-   - Fonctionne avec admin et superadmin.
-   - Les paramètres existants restent inchangés.
+   - NE MODIFIE PAS LE BLOC 14A.
+   - NE REMPLACE AUCUN BLOC 3 À 13.
+   - NE DÉPEND PAS DES IDs INDIVIDUELS DES BOUTONS.
+   - Détecte les boutons "Guardar alterações".
+   - Attend que Firebase Auth soit prêt.
 ========================================================= */
 
 (() => {
 
-    console.log("BLOC 14B — Initialisation...");
+    console.log(
+        "BLOC 14B — Démarrage du journal automatique..."
+    );
+
 
     /* =====================================================
-       1. LISTE DES BOUTONS DE SAUVEGARDE
+       1. CONFIGURATION DES SECTIONS
     ===================================================== */
 
-    const auditSaveButtons = [
+    const auditSections = {
 
-        {
-            id: "saveCommissionSettingsButton",
+        commissionSettingsSection: {
             section: "commission",
             title: "Commission modifiée",
             description:
-                "Une action de sauvegarde des paramètres de commission a été effectuée."
+                "Les paramètres de commission ont été sauvegardés."
         },
 
-        {
-            id: "savePaymentSettingsButton",
+        paymentSettingsSection: {
             section: "payments",
             title: "Paramètres de paiement modifiés",
             description:
-                "Une action de sauvegarde des paramètres de paiement a été effectuée."
+                "Les paramètres de paiement ont été sauvegardés."
         },
 
-        {
-            id: "saveAdminPermissionsButton",
+        adminPermissionsSection: {
             section: "admin_permissions",
             title: "Permissions administratives modifiées",
             description:
-                "Une action de sauvegarde des permissions administratives a été effectuée."
+                "Les permissions administratives ont été sauvegardées."
         },
 
-        {
-            id: "saveMarketplaceSettingsButton",
+        marketplaceSettingsSection: {
             section: "marketplace",
             title: "Paramètres marketplace modifiés",
             description:
-                "Une action de sauvegarde des paramètres marketplace a été effectuée."
+                "Les paramètres marketplace ont été sauvegardés."
         },
 
-        {
-            id: "saveOrdersSettingsButton",
+        ordersSettingsSection: {
             section: "orders",
             title: "Paramètres des commandes modifiés",
             description:
-                "Une action de sauvegarde des paramètres des commandes a été effectuée."
+                "Les paramètres des commandes ont été sauvegardés."
         },
 
-        {
-            id: "saveWhatsappSettingsButton",
+        whatsappSettingsSection: {
             section: "whatsapp",
             title: "Paramètres WhatsApp modifiés",
             description:
-                "Une action de sauvegarde des paramètres WhatsApp a été effectuée."
+                "Les paramètres WhatsApp ont été sauvegardés."
         },
 
-        {
-            id: "saveIdentitySettingsButton",
+        identitySettingsSection: {
             section: "identity",
             title: "Identité de Toma modifiée",
             description:
-                "Une action de sauvegarde de l'identité de Toma a été effectuée."
+                "Les paramètres d'identité de Toma ont été sauvegardés."
         },
 
-        {
-            id: "saveNotificationSettingsButton",
+        notificationSettingsSection: {
             section: "notifications",
             title: "Paramètres de notifications modifiés",
             description:
-                "Une action de sauvegarde des notifications a été effectuée."
+                "Les paramètres de notifications ont été sauvegardés."
         },
 
-        {
-            id: "saveDeliverySettingsButton",
+        deliverySettingsSection: {
             section: "delivery",
             title: "Paramètres de livraison modifiés",
             description:
-                "Une action de sauvegarde des paramètres de livraison a été effectuée."
+                "Les paramètres de livraison ont été sauvegardés."
         },
 
-        {
-            id: "saveSecurityModerationSettingsButton",
+        securityModerationSettingsSection: {
             section: "security_moderation",
             title: "Sécurité et modération modifiées",
             description:
-                "Une action de sauvegarde des paramètres de sécurité et de modération a été effectuée."
+                "Les paramètres de sécurité et de modération ont été sauvegardés."
         }
 
-    ];
+    };
 
 
     /* =====================================================
-       2. CHARGEMENT FIREBASE
+       2. FIREBASE
     ===================================================== */
 
     let firebaseData = null;
@@ -7247,31 +7239,49 @@ function updateSecurityModerationStatus() {
 
         try {
 
-            const firebaseModule = await import("../firebase.js");
+            const firebaseModule =
+                await import("../firebase.js");
 
-            const firestoreModule = await import(
-                "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-            );
+
+            const firestoreModule =
+                await import(
+                    "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+                );
+
 
             firebaseData = {
 
-                db: firebaseModule.db,
-                auth: firebaseModule.auth,
+                db:
+                    firebaseModule.db,
 
-                doc: firestoreModule.doc,
-                getDoc: firestoreModule.getDoc,
-                addDoc: firestoreModule.addDoc,
-                collection: firestoreModule.collection,
-                serverTimestamp: firestoreModule.serverTimestamp
+                auth:
+                    firebaseModule.auth,
+
+                doc:
+                    firestoreModule.doc,
+
+                getDoc:
+                    firestoreModule.getDoc,
+
+                addDoc:
+                    firestoreModule.addDoc,
+
+                collection:
+                    firestoreModule.collection,
+
+                serverTimestamp:
+                    firestoreModule.serverTimestamp
 
             };
 
+
             return firebaseData;
+
 
         } catch (error) {
 
             console.error(
-                "BLOC 14B — Erreur Firebase :",
+                "BLOC 14B — Erreur chargement Firebase :",
                 error
             );
 
@@ -7281,14 +7291,97 @@ function updateSecurityModerationStatus() {
 
 
     /* =====================================================
-       3. VÉRIFICATION DE L'ADMINISTRATEUR
+       3. ATTENDRE FIREBASE AUTH
     ===================================================== */
 
-    async function getAdminInformation(firebase) {
+    async function waitForAuthenticatedUser(firebase) {
+
+        return new Promise((resolve) => {
+
+            let finished = false;
+
+
+            const finish = (user) => {
+
+                if (finished) {
+                    return;
+                }
+
+                finished = true;
+
+                resolve(user || null);
+            };
+
+
+            if (
+                firebase.auth &&
+                firebase.auth.currentUser
+            ) {
+
+                finish(
+                    firebase.auth.currentUser
+                );
+
+                return;
+            }
+
+
+            const authListener =
+                import(
+                    "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
+                )
+                .then((authModule) => {
+
+                    authModule.onAuthStateChanged(
+                        firebase.auth,
+                        (user) => {
+
+                            finish(user);
+
+                        }
+                    );
+
+                })
+                .catch((error) => {
+
+                    console.error(
+                        "BLOC 14B — Auth error :",
+                        error
+                    );
+
+                    finish(null);
+                });
+
+
+            /* Sécurité : ne jamais rester bloqué
+               indéfiniment */
+
+            setTimeout(() => {
+
+                if (!finished) {
+
+                    finish(
+                        firebase.auth.currentUser
+                    );
+
+                }
+
+            }, 8000);
+
+        });
+    }
+
+
+    /* =====================================================
+       4. VÉRIFIER LE PROFIL ADMINISTRATEUR
+    ===================================================== */
+
+    async function getAdminInformation(
+        firebase,
+        user
+    ) {
 
         try {
-
-            const user = firebase.auth.currentUser;
 
             if (!user) {
 
@@ -7300,32 +7393,36 @@ function updateSecurityModerationStatus() {
             }
 
 
-            const userRef = firebase.doc(
-                firebase.db,
-                "users",
-                user.uid
-            );
+            const userRef =
+                firebase.doc(
+                    firebase.db,
+                    "users",
+                    user.uid
+                );
 
 
-            const userSnapshot = await firebase.getDoc(
-                userRef
-            );
+            const userSnapshot =
+                await firebase.getDoc(
+                    userRef
+                );
 
 
             if (!userSnapshot.exists()) {
 
                 console.warn(
-                    "BLOC 14B — Profil administrateur introuvable."
+                    "BLOC 14B — Profil utilisateur introuvable."
                 );
 
                 return null;
             }
 
 
-            const userData = userSnapshot.data();
+            const userData =
+                userSnapshot.data();
 
 
-            const role = userData.role;
+            const role =
+                userData.role;
 
 
             if (
@@ -7334,7 +7431,7 @@ function updateSecurityModerationStatus() {
             ) {
 
                 console.warn(
-                    "BLOC 14B — Utilisateur non autorisé."
+                    "BLOC 14B — Utilisateur non administrateur."
                 );
 
                 return null;
@@ -7343,13 +7440,15 @@ function updateSecurityModerationStatus() {
 
             return {
 
-                uid: user.uid,
+                uid:
+                    user.uid,
 
                 email:
                     user.email ||
                     "Email non disponible",
 
-                role: role
+                role:
+                    role
 
             };
 
@@ -7357,7 +7456,7 @@ function updateSecurityModerationStatus() {
         } catch (error) {
 
             console.error(
-                "BLOC 14B — Erreur vérification admin :",
+                "BLOC 14B — Erreur vérification administrateur :",
                 error
             );
 
@@ -7367,7 +7466,7 @@ function updateSecurityModerationStatus() {
 
 
     /* =====================================================
-       4. CRÉATION DU LOG
+       5. CRÉER UNE ENTRÉE DANS adminLogs
     ===================================================== */
 
     async function createAdminAuditLog(
@@ -7417,8 +7516,8 @@ function updateSecurityModerationStatus() {
 
 
             console.log(
-                "BLOC 14B — Action enregistrée :",
-                action.section
+                "BLOC 14B — Log créé :",
+                action.title
             );
 
 
@@ -7428,7 +7527,7 @@ function updateSecurityModerationStatus() {
         } catch (error) {
 
             console.error(
-                "BLOC 14B — Impossible d'enregistrer l'action :",
+                "BLOC 14B — Erreur création du log :",
                 error
             );
 
@@ -7438,63 +7537,179 @@ function updateSecurityModerationStatus() {
 
 
     /* =====================================================
-       5. INITIALISATION
+       6. IDENTIFIER LA SECTION DU BOUTON
     ===================================================== */
 
-    async function initializeAdminAuditActions() {
+    function getSectionFromButton(button) {
 
-        const firebase = await loadFirebase();
-
-
-        if (!firebase) {
-
-            console.warn(
-                "BLOC 14B — Firebase indisponible."
-            );
-
-            return;
+        if (!button) {
+            return null;
         }
 
 
-        const admin =
-            await getAdminInformation(firebase);
+        /*
+         * On cherche la section Dashboard Settings
+         * qui contient le bouton.
+         */
+
+        let element =
+            button.closest("section");
 
 
-        if (!admin) {
+        if (!element) {
+            return null;
+        }
 
-            console.warn(
-                "BLOC 14B — Accès administrateur non confirmé."
+
+        const sectionId =
+            element.id;
+
+
+        if (
+            sectionId &&
+            auditSections[sectionId]
+        ) {
+
+            return auditSections[sectionId];
+        }
+
+
+        /*
+         * Si la section HTML est légèrement différente,
+         * on regarde les éléments parents.
+         */
+
+        element =
+            button.parentElement;
+
+
+        while (
+            element &&
+            element !== document.body
+        ) {
+
+            if (
+                element.id &&
+                auditSections[element.id]
+            ) {
+
+                return auditSections[
+                    element.id
+                ];
+            }
+
+
+            element =
+                element.parentElement;
+        }
+
+
+        return null;
+    }
+
+
+    /* =====================================================
+       7. RECHERCHER LES BOUTONS DE SAUVEGARDE
+    ===================================================== */
+
+    function findSaveButtons() {
+
+        const allButtons =
+            Array.from(
+                document.querySelectorAll(
+                    "button"
+                )
             );
 
-            return;
-        }
+
+        return allButtons.filter(
+            (button) => {
+
+                const text =
+                    (
+                        button.textContent ||
+                        ""
+                    )
+                    .trim()
+                    .toLowerCase();
+
+
+                return (
+                    text.includes(
+                        "guardar alterações"
+                    ) ||
+                    text.includes(
+                        "guardar alteracoes"
+                    )
+                );
+
+            }
+        );
+    }
+
+
+    /* =====================================================
+       8. CONNECTER LE JOURNAL AUX BOUTONS
+    ===================================================== */
+
+    async function connectAuditButtons(
+        firebase,
+        admin
+    ) {
+
+        const buttons =
+            findSaveButtons();
 
 
         console.log(
-            "BLOC 14B — Administrateur confirmé :",
-            admin.role
+            "BLOC 14B — Boutons de sauvegarde trouvés :",
+            buttons.length
         );
 
 
-        /* =================================================
-           6. CONNEXION DES BOUTONS
-        ================================================= */
+        if (buttons.length === 0) {
 
-        auditSaveButtons.forEach(action => {
+            console.warn(
+                "BLOC 14B — Aucun bouton Guardar alterações trouvé."
+            );
 
-            const button =
-                document.getElementById(action.id);
+            return;
+        }
 
 
-            if (!button) {
+        buttons.forEach((button) => {
+
+            /*
+             * Empêche une double connexion
+             * si le script est initialisé plusieurs fois.
+             */
+
+            if (
+                button.dataset
+                    .adminAudit14bBound === "true"
+            ) {
+
+                return;
+            }
+
+
+            const action =
+                getSectionFromButton(button);
+
+
+            if (!action) {
 
                 console.warn(
-                    "BLOC 14B — Bouton introuvable :",
-                    action.id
+                    "BLOC 14B — Section inconnue pour :",
+                    button
                 );
 
                 return;
             }
+
+
+            button.dataset
+                .adminAudit14bBound = "true";
 
 
             button.addEventListener(
@@ -7507,7 +7722,24 @@ function updateSecurityModerationStatus() {
                     );
 
 
-                    const saved =
+                    /*
+                     * On laisse d'abord le système
+                     * existant effectuer sa sauvegarde.
+                     */
+
+                    await new Promise(
+                        (resolve) => {
+
+                            setTimeout(
+                                resolve,
+                                1200
+                            );
+
+                        }
+                    );
+
+
+                    const success =
                         await createAdminAuditLog(
                             firebase,
                             admin,
@@ -7515,16 +7747,29 @@ function updateSecurityModerationStatus() {
                         );
 
 
-                    if (saved) {
+                    if (success) {
 
                         console.log(
-                            "BLOC 14B — Journal enregistré."
+                            "BLOC 14B — Action enregistrée avec succès."
+                        );
+
+
+                        /*
+                         * Alerte uniquement pour le test
+                         * du BLOC 14B.
+                         */
+
+                        alert(
+                            "BLOC 14B — Journal d’administration\n\n" +
+                            action.title +
+                            "\n\nAction enregistrée avec succès dans Firebase."
                         );
 
                     } else {
 
-                        console.warn(
-                            "BLOC 14B — Journal non enregistré."
+                        alert(
+                            "BLOC 14B — Erreur\n\n" +
+                            "L'action n'a pas pu être enregistrée dans le journal."
                         );
 
                     }
@@ -7532,21 +7777,91 @@ function updateSecurityModerationStatus() {
                 }
             );
 
+
+            console.log(
+                "BLOC 14B — Bouton connecté :",
+                action.section
+            );
+
         });
 
 
         console.log(
-            "BLOC 14B — Actions administratives connectées."
+            "BLOC 14B — Connexion terminée."
+        );
+    }
+
+
+    /* =====================================================
+       9. INITIALISATION
+    ===================================================== */
+
+    async function initializeAdminAudit14B() {
+
+        const firebase =
+            await loadFirebase();
+
+
+        if (!firebase) {
+
+            return;
+        }
+
+
+        const user =
+            await waitForAuthenticatedUser(
+                firebase
+            );
+
+
+        if (!user) {
+
+            console.warn(
+                "BLOC 14B — Authentification non disponible."
+            );
+
+            return;
+        }
+
+
+        const admin =
+            await getAdminInformation(
+                firebase,
+                user
+            );
+
+
+        if (!admin) {
+
+            return;
+        }
+
+
+        console.log(
+            "BLOC 14B — Administrateur confirmé :",
+            admin.email,
+            admin.role
+        );
+
+
+        await connectAuditButtons(
+            firebase,
+            admin
+        );
+
+
+        console.log(
+            "BLOC 14B — Journal automatique prêt."
         );
 
     }
 
 
     /* =====================================================
-       7. DÉMARRAGE
+       10. DÉMARRAGE
     ===================================================== */
 
-    initializeAdminAuditActions();
+    initializeAdminAudit14B();
 
 
 })();
