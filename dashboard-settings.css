@@ -5745,3 +5745,393 @@ body {
     }
 
 }
+/* =========================================================
+   BLOC 15 — LIMITE DE PRODUTOS POR COMERCIANTE
+========================================================= */
+
+#productLimitSettingsSection {
+    width: 100%;
+    margin-top: 24px;
+}
+
+
+#productLimitSettingsHeader {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+
+#productLimitSettingsIcon {
+    width: 48px;
+    height: 48px;
+    border-radius: 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #fff3eb;
+    color: #ff6a00;
+}
+
+
+#productLimitSettingsIcon .material-symbols-rounded {
+    font-size: 25px;
+}
+
+
+#productLimitSettingsHeaderText {
+    flex: 1;
+}
+
+
+#productLimitSettingsTitle {
+    margin: 0;
+
+    font-size: 18px;
+    font-weight: 700;
+
+    color: #111;
+}
+
+
+#productLimitSettingsDescription {
+    margin: 5px 0 0;
+
+    font-size: 13px;
+    line-height: 1.5;
+
+    color: #777;
+}
+
+
+#productLimitSettingsCard {
+    background: #fff;
+
+    border: 1px solid #eeeeee;
+    border-radius: 22px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.05);
+}
+
+
+/* =========================================================
+   LIMITE
+========================================================= */
+
+#productLimitArea {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding-bottom: 20px;
+
+    border-bottom: 1px solid #eeeeee;
+}
+
+
+#productLimitInfo {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+
+#productLimitLabel {
+    font-size: 15px;
+    font-weight: 700;
+
+    color: #111;
+}
+
+
+#productLimitDescription {
+    font-size: 13px;
+    line-height: 1.5;
+
+    color: #777;
+}
+
+
+#productLimitInputWrapper {
+    min-width: 150px;
+
+    display: flex;
+    align-items: center;
+
+    border: 1px solid #dddddd;
+    border-radius: 14px;
+
+    background: #fafafa;
+
+    overflow: hidden;
+}
+
+
+#productLimitInput {
+    width: 85px;
+
+    border: none;
+    outline: none;
+
+    background: transparent;
+
+    padding: 13px 10px;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    text-align: center;
+
+    color: #111;
+}
+
+
+#productLimitInput:focus {
+    background: #fff;
+}
+
+
+#productLimitUnit {
+    padding-right: 12px;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    color: #777;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   NOTICE
+========================================================= */
+
+#productLimitInfoNotice {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 12px;
+
+    margin-top: 18px;
+
+    padding: 14px;
+
+    border-radius: 15px;
+
+    background: #fff8f3;
+    border: 1px solid #ffe3d0;
+}
+
+
+#productLimitInfoNoticeIcon {
+    color: #ff6a00;
+    font-size: 22px;
+}
+
+
+#productLimitInfoNoticeContent {
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+
+#productLimitInfoNoticeTitle {
+    font-size: 13px;
+    color: #222;
+}
+
+
+#productLimitInfoNoticeText {
+    font-size: 12px;
+    line-height: 1.5;
+
+    color: #777;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+#productLimitSettingsStatusArea {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: 18px;
+
+    padding: 12px 14px;
+
+    border-radius: 13px;
+
+    background: #f7f7f7;
+}
+
+
+#productLimitSettingsStatusIcon {
+    font-size: 20px;
+    color: #ff6a00;
+}
+
+
+#productLimitSettingsStatusText {
+    font-size: 13px;
+    font-weight: 600;
+
+    color: #333;
+}
+
+
+/* =========================================================
+   FIREBASE
+========================================================= */
+
+#productLimitFirebaseStatusArea {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    margin-top: 12px;
+
+    padding: 13px 14px;
+
+    border-radius: 14px;
+
+    background: #fafafa;
+
+    border: 1px solid #eeeeee;
+}
+
+
+#productLimitFirebaseStatusIcon {
+    font-size: 22px;
+    color: #777;
+}
+
+
+#productLimitFirebaseStatusContent {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+
+#productLimitFirebaseStatusLabel {
+    font-size: 12px;
+    font-weight: 700;
+
+    color: #222;
+}
+
+
+#productLimitFirebaseStatusText {
+    font-size: 12px;
+
+    color: #777;
+}
+
+
+/* =========================================================
+   SAVE
+========================================================= */
+
+#saveProductLimitSettingsButton {
+    width: 100%;
+
+    margin-top: 18px;
+
+    min-height: 50px;
+
+    border: none;
+    border-radius: 15px;
+
+    background: linear-gradient(
+        135deg,
+        #ff6a00,
+        #ff8533
+    );
+
+    color: #fff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 20px rgba(255, 106, 0, 0.20);
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+
+#saveProductLimitSettingsButton:hover {
+    transform: translateY(-1px);
+}
+
+
+#saveProductLimitSettingsButton:active {
+    transform: scale(0.98);
+}
+
+
+#saveProductLimitSettingsButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    #productLimitSettingsCard {
+        padding: 16px;
+    }
+
+
+    #productLimitArea {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+
+    #productLimitInputWrapper {
+        width: 100%;
+        min-width: 0;
+    }
+
+
+    #productLimitInput {
+        flex: 1;
+        width: 100%;
+    }
+
+}
