@@ -7865,3 +7865,638 @@ function updateSecurityModerationStatus() {
 
 
 })();
+/* =========================================================
+   BLOC 15 — LIMITE DE PRODUITS PAR COMERCIANTE
+   =========================================================
+
+   OBJECTIF :
+   Permettre à l'administration de définir le nombre
+   maximum de produits actifs autorisés par commerçant.
+
+   Firebase :
+   settings/marketplace
+
+   Champ :
+   maxProductsPerMerchant
+
+   Valeur par défaut :
+   50
+
+   IMPORTANT :
+   Cette étape configure la limite.
+   La connexion avec la création réelle des produits
+   sera faite dans une étape séparée.
+========================================================= */
+
+(() => {
+
+    console.log(
+        "BLOC 15 — Initialisation de la limite produits..."
+    );
+
+
+    /* =====================================================
+       1. ÉLÉMENTS HTML
+    ===================================================== */
+
+    const input =
+        document.getElementById(
+            "productLimitInput"
+        );
+
+
+    const saveButton =
+        document.getElementById(
+            "saveProductLimitSettingsButton"
+        );
+
+
+    const statusText =
+        document.getElementById(
+            "productLimitSettingsStatusText"
+        );
+
+
+    const firebaseStatusIcon =
+        document.getElementById(
+            "productLimitFirebaseStatusIcon"
+        );
+
+
+    const firebaseStatusText =
+        document.getElementById(
+            "productLimitFirebaseStatusText"
+        );
+
+
+    if (
+        !input ||
+        !saveButton ||
+        !statusText ||
+        !firebaseStatusIcon ||
+        !firebaseStatusText
+    ) {
+
+        console.warn(
+            "BLOC 15 — Éléments HTML introuvables."
+        );
+
+        return;
+    }
+
+
+    /* =====================================================
+       2. CONFIGURATION
+    ===================================================== */
+
+    const DEFAULT_LIMIT = 50;
+
+    const MIN_LIMIT = 1;
+
+    const MAX_LIMIT = 10000;
+
+
+    /* =====================================================
+       3. FIREBASE
+    ===================================================== */
+
+    let firebaseData = null;
+
+
+    async function loadFirebase() {
+
+        if (firebaseData) {
+            return firebaseData;
+        }
+
+
+        try {
+
+            const firebaseModule =
+                await import("../firebase.js");
+
+
+            const firestoreModule =
+                await import(
+                    "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+                );
+
+
+            firebaseData = {
+
+                db:
+                    firebaseModule.db,
+
+                auth:
+                    firebaseModule.auth,
+
+                doc:
+                    firestoreModule.doc,
+
+                getDoc:
+                    firestoreModule.getDoc,
+
+                setDoc:
+                    firestoreModule.setDoc,
+
+                serverTimestamp:
+                    firestoreModule.serverTimestamp
+
+            };
+
+
+            return firebaseData;
+
+
+        } catch (error) {
+
+            console.error(
+                "BLOC 15 — Erreur Firebase :",
+                error
+            );
+
+
+            return null;
+        }
+    }
+
+
+    /* =====================================================
+       4. STATUS FIREBASE
+    ===================================================== */
+
+    function setFirebaseStatus(
+        icon,
+        message
+    ) {
+
+        firebaseStatusIcon.textContent =
+            icon;
+
+        firebaseStatusText.textContent =
+            message;
+    }
+
+
+    /* =====================================================
+       5. STATUS LOCAL
+    ===================================================== */
+
+    function setLocalStatus(
+        message
+    ) {
+
+        statusText.textContent =
+            message;
+    }
+
+
+    /* =====================================================
+       6. VALIDATION
+    ===================================================== */
+
+    function getValidLimit() {
+
+        const value =
+            Number(
+                input.value
+            );
+
+
+        if (
+            !Number.isFinite(value)
+        ) {
+
+            return null;
+        }
+
+
+        if (
+            !Number.isInteger(value)
+        ) {
+
+            return null;
+        }
+
+
+        if (
+            value < MIN_LIMIT ||
+            value > MAX_LIMIT
+        ) {
+
+            return null;
+        }
+
+
+        return value;
+    }
+
+
+    /* =====================================================
+       7. CHARGER LA CONFIGURATION EXISTANTE
+    ===================================================== */
+
+    async function loadProductLimit() {
+
+        setFirebaseStatus(
+            "cloud_sync",
+            "Leitura da configuração..."
+        );
+
+
+        const firebase =
+            await loadFirebase();
+
+
+        if (!firebase) {
+
+            setFirebaseStatus(
+                "cloud_off",
+                "Firebase indisponível."
+            );
+
+            return;
+        }
+
+
+        try {
+
+            const currentUser =
+                firebase.auth.currentUser;
+
+
+            if (!currentUser) {
+
+                setFirebaseStatus(
+                    "cloud_off",
+                    "Administrador não autenticado."
+                );
+
+                return;
+            }
+
+
+            const userRef =
+                firebase.doc(
+                    firebase.db,
+                    "users",
+                    currentUser.uid
+                );
+
+
+            const userSnapshot =
+                await firebase.getDoc(
+                    userRef
+                );
+
+
+            if (
+                !userSnapshot.exists()
+            ) {
+
+                setFirebaseStatus(
+                    "error",
+                    "Perfil do administrador não encontrado."
+                );
+
+                return;
+            }
+
+
+            const userData =
+                userSnapshot.data();
+
+
+            const role =
+                userData.role;
+
+
+            if (
+                role !== "admin" &&
+                role !== "superadmin"
+            ) {
+
+                setFirebaseStatus(
+                    "lock",
+                    "Acesso administrativo recusado."
+                );
+
+                return;
+            }
+
+
+            const settingsRef =
+                firebase.doc(
+                    firebase.db,
+                    "settings",
+                    "marketplace"
+                );
+
+
+            const settingsSnapshot =
+                await firebase.getDoc(
+                    settingsRef
+                );
+
+
+            let limit =
+                DEFAULT_LIMIT;
+
+
+            if (
+                settingsSnapshot.exists()
+            ) {
+
+                const settingsData =
+                    settingsSnapshot.data();
+
+
+                const savedLimit =
+                    Number(
+                        settingsData
+                            .maxProductsPerMerchant
+                    );
+
+
+                if (
+                    Number.isInteger(
+                        savedLimit
+                    ) &&
+                    savedLimit >= MIN_LIMIT &&
+                    savedLimit <= MAX_LIMIT
+                ) {
+
+                    limit =
+                        savedLimit;
+                }
+            }
+
+
+            input.value =
+                limit;
+
+
+            setLocalStatus(
+                `Limite configurada: ${limit} produtos`
+            );
+
+
+            setFirebaseStatus(
+                "cloud_done",
+                `Sincronizado com Firebase — limite atual: ${limit}`
+            );
+
+
+            console.log(
+                "BLOC 15 — Limite carregada :",
+                limit
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "BLOC 15 — Erro ao carregar limite :",
+                error
+            );
+
+
+            setFirebaseStatus(
+                "error",
+                "Erro ao carregar a configuração."
+            );
+        }
+    }
+
+
+    /* =====================================================
+       8. SALVAR CONFIGURAÇÃO
+    ===================================================== */
+
+    async function saveProductLimit() {
+
+        const limit =
+            getValidLimit();
+
+
+        if (limit === null) {
+
+            alert(
+                "BLOC 15 — Limite inválida\n\n" +
+                "Digite um número inteiro entre 1 e 10.000."
+            );
+
+            input.focus();
+
+            return;
+        }
+
+
+        saveButton.disabled =
+            true;
+
+
+        setLocalStatus(
+            "Salvando configuração..."
+        );
+
+
+        setFirebaseStatus(
+            "cloud_sync",
+            "Sincronizando com Firebase..."
+        );
+
+
+        const firebase =
+            await loadFirebase();
+
+
+        if (!firebase) {
+
+            saveButton.disabled =
+                false;
+
+            setFirebaseStatus(
+                "cloud_off",
+                "Firebase indisponível."
+            );
+
+            return;
+        }
+
+
+        try {
+
+            const currentUser =
+                firebase.auth.currentUser;
+
+
+            if (!currentUser) {
+
+                throw new Error(
+                    "Administrador não autenticado."
+                );
+            }
+
+
+            /* =============================================
+               VERIFICAR ROLE
+            ============================================= */
+
+            const userRef =
+                firebase.doc(
+                    firebase.db,
+                    "users",
+                    currentUser.uid
+                );
+
+
+            const userSnapshot =
+                await firebase.getDoc(
+                    userRef
+                );
+
+
+            if (
+                !userSnapshot.exists()
+            ) {
+
+                throw new Error(
+                    "Perfil do administrador não encontrado."
+                );
+            }
+
+
+            const userData =
+                userSnapshot.data();
+
+
+            const role =
+                userData.role;
+
+
+            if (
+                role !== "admin" &&
+                role !== "superadmin"
+            ) {
+
+                throw new Error(
+                    "Acesso administrativo recusado."
+                );
+            }
+
+
+            /* =============================================
+               SALVAR
+            ============================================= */
+
+            const settingsRef =
+                firebase.doc(
+                    firebase.db,
+                    "settings",
+                    "marketplace"
+                );
+
+
+            await firebase.setDoc(
+
+                settingsRef,
+
+                {
+
+                    maxProductsPerMerchant:
+                        limit,
+
+                    updatedAt:
+                        firebase.serverTimestamp(),
+
+                    updatedBy:
+                        currentUser.uid
+
+                },
+
+                {
+                    merge: true
+                }
+
+            );
+
+
+            /* =============================================
+               ATUALIZAR INTERFACE
+            ============================================= */
+
+            setLocalStatus(
+                `Limite configurada: ${limit} produtos`
+            );
+
+
+            setFirebaseStatus(
+                "cloud_done",
+                `Salvo com sucesso no Firebase — ${limit} produtos por comerciante.`
+            );
+
+
+            console.log(
+                "BLOC 15 — Limite salva :",
+                limit
+            );
+
+
+            alert(
+                "BLOC 15 — Limite de produtos\n\n" +
+                `Limite definida com sucesso: ${limit} produtos por comerciante.\n\n` +
+                "Configuração salva no Firebase."
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "BLOC 15 — Erro ao salvar :",
+                error
+            );
+
+
+            setFirebaseStatus(
+                "error",
+                error.message ||
+                "Erro ao salvar a configuração."
+            );
+
+
+            alert(
+                "BLOC 15 — Erro\n\n" +
+                (
+                    error.message ||
+                    "Não foi possível salvar a limite."
+                )
+            );
+
+
+        } finally {
+
+            saveButton.disabled =
+                false;
+        }
+    }
+
+
+    /* =====================================================
+       9. BOTÃO SAVE
+    ===================================================== */
+
+    saveButton.addEventListener(
+        "click",
+        saveProductLimit
+    );
+
+
+    /* =====================================================
+       10. CHARGEMENT INITIAL
+    ===================================================== */
+
+    loadProductLimit();
+
+
+})();
