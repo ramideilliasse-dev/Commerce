@@ -798,52 +798,46 @@ window.editProduct = function(id){
 // BLOC 17B — SUPPRESSION PRODUIT + DÉCRÉMENT COMPTEUR
 // ======================================================
 
+// ============================================================
+// BLOC 17B — SUPPRESSION PRODUIT + COMPTEUR
+// ============================================================
+
 window.deleteProduct = async function(id){
 
+    // TEST IMMÉDIAT
+    alert(
+        "BLOC 17B — DÉBUT\n\n" +
+        "La fonction de suppression sécurisée est bien appelée."
+    );
+
     if(!confirm("Deseja apagar este produto?")){
-
         return;
-
     }
 
     try{
 
-        /* =================================================
-           RÉFÉRENCES FIRESTORE
-        ================================================= */
+        const productRef = doc(
+            db,
+            "products",
+            id
+        );
 
-        const productRef =
-            doc(
-                db,
-                "products",
-                id
-            );
-
-        const merchantUserRef =
-            doc(
-                db,
-                "users",
-                currentUser.uid
-            );
-
-        /* =================================================
-           TRANSACTION
-        ================================================= */
+        const merchantUserRef = doc(
+            db,
+            "users",
+            currentUser.uid
+        );
 
         await runTransaction(
-
             db,
-
             async (transaction) => {
 
-                /* =========================================
-                   RÉCUPÉRER LE PRODUIT
-                ========================================= */
+                // ------------------------------------------------
+                // 1. Récupérer le produit
+                // ------------------------------------------------
 
                 const productSnapshot =
-                    await transaction.get(
-                        productRef
-                    );
+                    await transaction.get(productRef);
 
                 if(!productSnapshot.exists()){
 
@@ -856,11 +850,11 @@ window.deleteProduct = async function(id){
                 const product =
                     productSnapshot.data();
 
-                /* =========================================
-                   SÉCURITÉ :
-                   VÉRIFIER QUE LE PRODUIT APPARTIENT
-                   BIEN AU COMMERÇANT CONNECTÉ
-                ========================================= */
+
+                // ------------------------------------------------
+                // 2. Vérifier que le produit appartient
+                //    bien au commerçant connecté
+                // ------------------------------------------------
 
                 if(
                     product.merchantId !==
@@ -873,9 +867,10 @@ window.deleteProduct = async function(id){
 
                 }
 
-                /* =========================================
-                   RÉCUPÉRER LE COMPTEUR
-                ========================================= */
+
+                // ------------------------------------------------
+                // 3. Récupérer le compte commerçant
+                // ------------------------------------------------
 
                 const merchantSnapshot =
                     await transaction.get(
@@ -890,6 +885,11 @@ window.deleteProduct = async function(id){
 
                 }
 
+
+                // ------------------------------------------------
+                // 4. Lire le compteur actuel
+                // ------------------------------------------------
+
                 const merchantData =
                     merchantSnapshot.data();
 
@@ -898,9 +898,10 @@ window.deleteProduct = async function(id){
                         merchantData.productCount || 0
                     );
 
-                /* =========================================
-                   ÉVITER UN COMPTEUR NÉGATIF
-                ========================================= */
+
+                // ------------------------------------------------
+                // 5. Nouveau compteur
+                // ------------------------------------------------
 
                 const newProductCount =
                     Math.max(
@@ -908,89 +909,83 @@ window.deleteProduct = async function(id){
                         currentProductCount - 1
                     );
 
-                /* =========================================
-                   SUPPRIMER LE PRODUIT
-                ========================================= */
+
+                // ------------------------------------------------
+                // 6. Supprimer le produit
+                // ------------------------------------------------
 
                 transaction.delete(
                     productRef
                 );
 
-                /* =========================================
-                   DÉCRÉMENTER LE COMPTEUR
-                ========================================= */
+
+                // ------------------------------------------------
+                // 7. Mettre à jour le compteur
+                // ------------------------------------------------
 
                 transaction.update(
-
                     merchantUserRef,
-
                     {
                         productCount:
                             newProductCount
                     }
+                );
 
+
+                console.log(
+                    "BLOC 17B — Produit supprimé"
                 );
 
                 console.log(
-                    "🗑 BLOC 17B — Produit supprimé"
-                );
-
-                console.log(
-                    "📦 Ancien compteur:",
+                    "Ancien compteur:",
                     currentProductCount
                 );
 
                 console.log(
-                    "📦 Nouveau compteur:",
+                    "Nouveau compteur:",
                     newProductCount
                 );
 
             }
-
         );
 
-        /* =================================================
-           CONFIRMATION
-        ================================================= */
+
+        // --------------------------------------------------------
+        // 8. CONFIRMATION
+        // --------------------------------------------------------
 
         alert(
-
             "BLOC 17B — Compteur sécurisé\n\n" +
-
             "Produto apagado com sucesso.\n\n" +
-
             "O contador de produtos foi atualizado."
-
         );
+
+
+        // --------------------------------------------------------
+        // 9. Actualiser l'affichage
+        // --------------------------------------------------------
 
         showToast(
             "Produto apagado com sucesso ✅",
             "success"
         );
 
-        /* =================================================
-           ACTUALISER LE DASHBOARD
-        ================================================= */
-
         loadProducts();
 
         loadStats();
 
-    }
 
+    }
     catch(err){
 
         console.error(
-            "❌ BLOC 17B:",
+            "BLOC 17B — ERRO:",
             err
         );
 
         alert(
-
             "BLOC 17B — ERRO\n\n" +
-
             err.message
-
         );
 
         showToast(
