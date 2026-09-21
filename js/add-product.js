@@ -5,6 +5,10 @@
 
 import { db, auth } from "../firebase.js";
 
+/* =====================================================
+   BLOC 16 — IMPORTS POUR LA LIMITE DE PRODUITS
+===================================================== */
+
 import {
 
     collection,
@@ -15,10 +19,15 @@ import {
 
     getDoc,
 
+    getDocs,
+
+    query,
+
+    where,
+
     serverTimestamp
 
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
 import {
 
     onAuthStateChanged
@@ -396,6 +405,225 @@ async function uploadImage(file){
     );
 
 }
+/* =====================================================
+   BLOC 16 — LIMITE DE PRODUITS PAR COMMERÇANTE
+===================================================== */
+
+async function verifyProductLimit(){
+
+    try{
+
+        console.log(
+            "🔎 BLOC 16 — Vérification de la limite..."
+        );
+
+        /* =================================================
+           1. RÉCUPÉRER LES PARAMÈTRES TOMA
+        ================================================= */
+
+        const settingsRef = await getDoc(
+
+            doc(
+                db,
+                "settings",
+                "marketplace"
+            )
+
+        );
+
+        if(!settingsRef.exists()){
+
+            console.warn(
+                "⚠️ Paramètres marketplace inexistants."
+            );
+
+            /*
+             * Aucun paramètre de limite trouvé.
+             * On ne bloque pas la publication.
+             */
+
+            return {
+
+                allowed:true,
+
+                currentCount:0,
+
+                maxProducts:null
+
+            };
+
+        }
+
+        const settings =
+            settingsRef.data();
+
+        const limitEnabled =
+            settings.productLimitEnabled !== false;
+
+        const maxProducts =
+            Number(
+                settings.maxProductsPerMerchant
+            );
+
+        /* =================================================
+           2. SI LA LIMITE EST DÉSACTIVÉE
+        ================================================= */
+
+        if(!limitEnabled){
+
+            console.log(
+                "✅ BLOC 16 — Limite désactivée."
+            );
+
+            return {
+
+                allowed:true,
+
+                currentCount:0,
+
+                maxProducts:null
+
+            };
+
+        }
+
+        /* =================================================
+           3. VÉRIFICATION DE LA VALEUR
+        ================================================= */
+
+        if(
+
+            !Number.isFinite(maxProducts) ||
+
+            maxProducts < 1
+
+        ){
+
+            throw new Error(
+
+                "Limite de produits invalide dans les paramètres Toma."
+
+            );
+
+        }
+
+        /* =================================================
+           4. COMPTER LES PRODUITS DU COMMERÇANT
+        ================================================= */
+
+        const productsQuery = query(
+
+            collection(
+                db,
+                "products"
+            ),
+
+            where(
+                "merchantId",
+                "==",
+                currentUser.uid
+            )
+
+        );
+
+        const productsSnapshot =
+            await getDocs(
+                productsQuery
+            );
+
+        const currentCount =
+            productsSnapshot.size;
+
+        console.log(
+            "📦 Produits actuels :",
+            currentCount
+        );
+
+        console.log(
+            "📌 Limite autorisée :",
+            maxProducts
+        );
+
+        /* =================================================
+           5. TEST DE LA LIMITE
+        ================================================= */
+
+        if(currentCount >= maxProducts){
+
+            alert(
+
+                "BLOC 16 — Limite de produtos\n\n" +
+
+                "Limite atingido.\n\n" +
+
+                "Você já possui " +
+                currentCount +
+                " produtos.\n\n" +
+
+                "Limite atual: " +
+                maxProducts +
+                " produtos por comerciante."
+
+            );
+
+            return {
+
+                allowed:false,
+
+                currentCount,
+
+                maxProducts
+
+            };
+
+        }
+
+        /* =================================================
+           6. LIMITE NON ATTEINTE
+        ================================================= */
+
+        alert(
+
+            "BLOC 16 — Limite de produtos\n\n" +
+
+            "Verificação realizada com sucesso.\n\n" +
+
+            "Produtos atuais: " +
+            currentCount +
+
+            "\nLimite: " +
+            maxProducts +
+
+            "\n\nPublicação autorisée."
+
+        );
+
+        return {
+
+            allowed:true,
+
+            currentCount,
+
+            maxProducts
+
+        };
+
+    }catch(error){
+
+        console.error(
+            "❌ BLOC 16 — Erreur limite produits:",
+            error
+        );
+
+        throw new Error(
+
+            "Não foi possível verificar o limite de produtos."
+
+        );
+
+    }
+
+}
 /* ===============================
    PUBLICATION
 =============================== */
@@ -530,7 +758,31 @@ async function publishProduct(){
             );
 
         }
+        /* =================================================
+           BLOC 16 — VERIFICAÇÃO DA LIMITE
+        ================================================= */
 
+        loadingText.textContent =
+            "Verificando limite de produtos...";
+
+        const productLimit =
+            await verifyProductLimit();
+
+        if(!productLimit.allowed){
+
+            throw new Error(
+
+                "Limite de produtos atingido. " +
+
+                "Não é possível publicar mais produtos."
+
+            );
+
+        }
+
+        /* =================================================
+           LIMITE OK — CONTINUAR PUBLICAÇÃO
+        ================================================= */
         /* ===============================
            UPLOAD IMAGES
         =============================== */
