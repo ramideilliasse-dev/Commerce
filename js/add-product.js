@@ -407,6 +407,7 @@ async function uploadImage(file){
 }
 /* =====================================================
    BLOC 16 — LIMITE DE PRODUITS PAR COMMERÇANTE
+   VERSION DIAGNOSTIC
 ===================================================== */
 
 async function verifyProductLimit(){
@@ -414,12 +415,19 @@ async function verifyProductLimit(){
     try{
 
         console.log(
-            "🔎 BLOC 16 — Vérification de la limite..."
+            "🚀 BLOC 16 — Début vérification limite"
         );
 
         /* =================================================
-           1. RÉCUPÉRER LES PARAMÈTRES TOMA
+           ÉTAPE 1 — LECTURE DES PARAMÈTRES
         ================================================= */
+
+        loadingText.textContent =
+            "Leitura das configurações...";
+
+        console.log(
+            "🔎 BLOC 16 — Lecture settings/marketplace..."
+        );
 
         const settingsRef = await getDoc(
 
@@ -431,16 +439,22 @@ async function verifyProductLimit(){
 
         );
 
+        console.log(
+            "✅ BLOC 16 — Settings récupérés"
+        );
+
         if(!settingsRef.exists()){
 
-            console.warn(
-                "⚠️ Paramètres marketplace inexistants."
-            );
+            alert(
 
-            /*
-             * Aucun paramètre de limite trouvé.
-             * On ne bloque pas la publication.
-             */
+                "BLOC 16 — Diagnóstico\n\n" +
+
+                "O documento settings/marketplace " +
+                "não foi encontrado.\n\n" +
+
+                "A publicação continuará."
+
+            );
 
             return {
 
@@ -465,14 +479,30 @@ async function verifyProductLimit(){
                 settings.maxProductsPerMerchant
             );
 
+        console.log(
+            "⚙️ Limite ativée:",
+            limitEnabled
+        );
+
+        console.log(
+            "📌 Limite:",
+            maxProducts
+        );
+
         /* =================================================
-           2. SI LA LIMITE EST DÉSACTIVÉE
+           ÉTAPE 2 — LIMITE DÉSACTIVÉE
         ================================================= */
 
         if(!limitEnabled){
 
-            console.log(
-                "✅ BLOC 16 — Limite désactivée."
+            alert(
+
+                "BLOC 16 — Diagnóstico\n\n" +
+
+                "A limitação de produtos está DESATIVADA.\n\n" +
+
+                "A publicação continuará."
+
             );
 
             return {
@@ -488,7 +518,7 @@ async function verifyProductLimit(){
         }
 
         /* =================================================
-           3. VÉRIFICATION DE LA VALEUR
+           ÉTAPE 3 — VALIDATION LIMITE
         ================================================= */
 
         if(
@@ -501,15 +531,22 @@ async function verifyProductLimit(){
 
             throw new Error(
 
-                "Limite de produits invalide dans les paramètres Toma."
+                "Limite de produtos inválida."
 
             );
 
         }
 
         /* =================================================
-           4. COMPTER LES PRODUITS DU COMMERÇANT
+           ÉTAPE 4 — RECHERCHE DES PRODUITS
         ================================================= */
+
+        loadingText.textContent =
+            "Contando seus produtos...";
+
+        console.log(
+            "🔎 BLOC 16 — Recherche des produits..."
+        );
 
         const productsQuery = query(
 
@@ -526,26 +563,62 @@ async function verifyProductLimit(){
 
         );
 
+        /*
+         * Timeout de sécurité.
+         * Si Firebase ne répond pas dans les 15 secondes,
+         * nous arrêtons au lieu de laisser l'écran bloqué.
+         */
+
+        const timeoutPromise =
+            new Promise((_,reject)=>{
+
+                setTimeout(()=>{
+
+                    reject(
+
+                        new Error(
+
+                            "Tempo limite atingido ao consultar os produtos."
+
+                        )
+
+                    );
+
+                },15000);
+
+            });
+
+        const productsPromise =
+            getDocs(productsQuery);
+
         const productsSnapshot =
-            await getDocs(
-                productsQuery
-            );
+            await Promise.race([
+
+                productsPromise,
+
+                timeoutPromise
+
+            ]);
+
+        console.log(
+            "✅ BLOC 16 — Produits récupérés"
+        );
 
         const currentCount =
             productsSnapshot.size;
 
         console.log(
-            "📦 Produits actuels :",
+            "📦 Produits actuels:",
             currentCount
         );
 
         console.log(
-            "📌 Limite autorisée :",
+            "📌 Limite:",
             maxProducts
         );
 
         /* =================================================
-           5. TEST DE LA LIMITE
+           ÉTAPE 5 — LIMITE ATTEINTE
         ================================================= */
 
         if(currentCount >= maxProducts){
@@ -556,12 +629,12 @@ async function verifyProductLimit(){
 
                 "Limite atingido.\n\n" +
 
-                "Você já possui " +
+                "Produtos atuais: " +
                 currentCount +
-                " produtos.\n\n" +
 
-                "Limite atual: " +
+                "\n\nLimite atual: " +
                 maxProducts +
+
                 " produtos por comerciante."
 
             );
@@ -579,14 +652,14 @@ async function verifyProductLimit(){
         }
 
         /* =================================================
-           6. LIMITE NON ATTEINTE
+           ÉTAPE 6 — LIMITE DISPONIBLE
         ================================================= */
 
         alert(
 
             "BLOC 16 — Limite de produtos\n\n" +
 
-            "Verificação realizada com sucesso.\n\n" +
+            "Verificação concluída com sucesso.\n\n" +
 
             "Produtos atuais: " +
             currentCount +
@@ -594,7 +667,7 @@ async function verifyProductLimit(){
             "\nLimite: " +
             maxProducts +
 
-            "\n\nPublicação autorisée."
+            "\n\nPublicação autorizada."
 
         );
 
@@ -611,15 +684,21 @@ async function verifyProductLimit(){
     }catch(error){
 
         console.error(
-            "❌ BLOC 16 — Erreur limite produits:",
+            "❌ BLOC 16 — Erreur:",
             error
         );
 
-        throw new Error(
+        alert(
 
-            "Não foi possível verificar o limite de produtos."
+            "BLOC 16 — ERRO\n\n" +
+
+            error.message +
+
+            "\n\nA publicação foi interrompida."
 
         );
+
+        throw error;
 
     }
 
