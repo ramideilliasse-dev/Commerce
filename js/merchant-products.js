@@ -2,9 +2,6 @@
 // MERCHANT PRODUCTS
 // TOMA
 // =====================================
-
-import { db, auth } from "../firebase.js";
-
 import {
 
 collection,
@@ -17,10 +14,11 @@ getDocs,
 
 deleteDoc,
 
-doc
+doc,
+
+runTransaction
 
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
 import {
 
 onAuthStateChanged
@@ -324,70 +322,257 @@ productsGrid.addEventListener("click", async(e)=>{
     }
 
     /* ======================
-       DELETE
-    ====================== */
+   DELETE
+   BLOC 17B
+   ====================== */
 
-    if(deleteBtn){
+if(deleteBtn){
 
-        const id=deleteBtn.dataset.id;
+    const id=deleteBtn.dataset.id;
 
-        const confirmDelete=confirm(
 
-            "Deseja realmente apagar este produto?"
+    // ============================================
+    // BLOC 17B — TEST
+    // ============================================
+
+    alert(
+        "BLOC 17B — DÉBUT\n\n" +
+        "La suppression sécurisée est bien appelée."
+    );
+
+
+    const confirmDelete=confirm(
+
+        "Deseja realmente apagar este produto?"
+
+    );
+
+    if(!confirmDelete) return;
+
+
+    try{
+
+        // ============================================
+        // RÉFÉRENCES FIRESTORE
+        // ============================================
+
+        const productRef =
+        doc(
+            db,
+            "products",
+            id
+        );
+
+
+        const merchantUserRef =
+        doc(
+            db,
+            "users",
+            auth.currentUser.uid
+        );
+
+
+        // ============================================
+        // TRANSACTION SÉCURISÉE
+        // ============================================
+
+        await runTransaction(
+
+            db,
+
+            async(transaction)=>{
+
+
+                // ------------------------------------
+                // 1. Récupérer le produit
+                // ------------------------------------
+
+                const productSnapshot =
+                await transaction.get(
+                    productRef
+                );
+
+
+                if(!productSnapshot.exists()){
+
+                    throw new Error(
+                        "Produto não encontrado."
+                    );
+
+                }
+
+
+                const product =
+                productSnapshot.data();
+
+
+                // ------------------------------------
+                // 2. Vérifier le propriétaire
+                // ------------------------------------
+
+                if(
+                    product.merchantId !==
+                    auth.currentUser.uid
+                ){
+
+                    throw new Error(
+                        "Você não pode apagar este produto."
+                    );
+
+                }
+
+
+                // ------------------------------------
+                // 3. Récupérer le compte utilisateur
+                // ------------------------------------
+
+                const merchantSnapshot =
+                await transaction.get(
+                    merchantUserRef
+                );
+
+
+                if(!merchantSnapshot.exists()){
+
+                    throw new Error(
+                        "Conta do comerciante não encontrada."
+                    );
+
+                }
+
+
+                const merchantData =
+                merchantSnapshot.data();
+
+
+                // ------------------------------------
+                // 4. Lire le compteur
+                // ------------------------------------
+
+                const currentProductCount =
+                Number(
+                    merchantData.productCount || 0
+                );
+
+
+                // ------------------------------------
+                // 5. Nouveau compteur
+                // ------------------------------------
+
+                const newProductCount =
+                Math.max(
+                    0,
+                    currentProductCount - 1
+                );
+
+
+                // ------------------------------------
+                // 6. Supprimer le produit
+                // ------------------------------------
+
+                transaction.delete(
+                    productRef
+                );
+
+
+                // ------------------------------------
+                // 7. Mettre à jour le compteur
+                // ------------------------------------
+
+                transaction.update(
+
+                    merchantUserRef,
+
+                    {
+
+                        productCount:
+                        newProductCount
+
+                    }
+
+                );
+
+
+                console.log(
+                    "BLOC 17B — Produit supprimé"
+                );
+
+                console.log(
+                    "Ancien compteur:",
+                    currentProductCount
+                );
+
+                console.log(
+                    "Nouveau compteur:",
+                    newProductCount
+                );
+
+            }
 
         );
 
-        if(!confirmDelete) return;
 
-        try{
+        // ============================================
+        // MISE À JOUR DE L'INTERFACE
+        // ============================================
 
-            await deleteDoc(
+        products=
 
-                doc(db,"products",id)
+        products.filter(
 
-            );
+            p=>p.id!==id
 
-            products=
+        );
 
-            products.filter(
 
-                p=>p.id!==id
+        filteredProducts=
 
-            );
+        filteredProducts.filter(
 
-            filteredProducts=
+            p=>p.id!==id
 
-            filteredProducts.filter(
+        );
 
-                p=>p.id!==id
 
-            );
+        renderProducts();
 
-            renderProducts();
 
-            alert(
+        // ============================================
+        // CONFIRMATION BLOC 17B
+        // ============================================
 
-                "Produto apagado com sucesso."
+        alert(
 
-            );
+            "BLOC 17B — Compteur sécurisé\n\n" +
 
-        }
+            "Produto apagado com sucesso.\n\n" +
 
-        catch(error){
+            "O contador de produtos foi atualizado."
 
-            console.error(error);
+        );
 
-            alert(
-
-                "Erro ao apagar produto."
-
-            );
-
-        }
 
     }
 
-});
+    catch(error){
+
+        console.error(
+            "BLOC 17B — ERRO:",
+            error
+        );
+
+
+        alert(
+
+            "BLOC 17B — ERRO\n\n" +
+
+            error.message
+
+        );
+
+    }
+
+}
 /* =====================================
 FILTERS
 ===================================== */
