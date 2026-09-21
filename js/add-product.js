@@ -6,14 +6,12 @@
 import { db, auth } from "../firebase.js";
 
 /* =====================================================
-   BLOC 16 — IMPORTS POUR LA LIMITE DE PRODUITS
+   BLOC 17A — IMPORTS COMPTEUR
 ===================================================== */
 
 import {
 
     collection,
-
-    addDoc,
 
     doc,
 
@@ -24,6 +22,8 @@ import {
     query,
 
     where,
+
+    runTransaction,
 
     serverTimestamp
 
@@ -896,15 +896,64 @@ async function publishProduct(){
 
         progressBar.style.width = "90%";
 
-        await addDoc(
+      /* =====================================================
+   BLOC 17A — CRÉATION PRODUIT + COMPTEUR
+===================================================== */
 
-            collection(
+loadingText.textContent =
+    "Registrando produto e contador...";
 
-                db,
+const productRef =
+    doc(
+        collection(
+            db,
+            "products"
+        )
+    );
 
-                "products"
+const merchantUserRef =
+    doc(
+        db,
+        "users",
+        currentUser.uid
+    );
 
-            ),
+await runTransaction(
+    db,
+    async (transaction) => {
+
+        /* =============================================
+           RÉCUPÉRER LE COMMERÇANT
+        ============================================= */
+
+        const merchantSnapshot =
+            await transaction.get(
+                merchantUserRef
+            );
+
+        if(!merchantSnapshot.exists()){
+
+            throw new Error(
+                "Conta do comerciante não encontrada."
+            );
+
+        }
+
+        const merchantData =
+            merchantSnapshot.data();
+
+        const currentProductCount =
+            Number(
+                merchantData.productCount || 0
+            );
+
+        /* =============================================
+           CRÉER LE PRODUIT
+        ============================================= */
+
+        transaction.set(
+
+            productRef,
 
             {
 
@@ -923,19 +972,15 @@ async function publishProduct(){
                 images,
 
                 merchantId:
-
                     currentUser.uid,
 
                 shopName:
-
                     merchant.shopName || "",
 
                 merchantWhatsapp:
-
                     merchant.whatsapp || "",
 
                 merchantDescription:
-
                     merchant.shopDescription || "",
 
                 active:true,
@@ -945,12 +990,59 @@ async function publishProduct(){
                 views:0,
 
                 createdAt:
-
                     serverTimestamp()
 
             }
 
         );
+
+        /* =============================================
+           INCRÉMENTER LE COMPTEUR
+        ============================================= */
+
+        transaction.update(
+
+            merchantUserRef,
+
+            {
+
+                productCount:
+                    currentProductCount + 1
+
+            }
+
+        );
+
+        console.log(
+            "✅ BLOC 17A — Produit créé"
+        );
+
+        console.log(
+            "📦 Ancien compteur:",
+            currentProductCount
+        );
+
+        console.log(
+            "📦 Nouveau compteur:",
+            currentProductCount + 1
+        );
+
+    }
+);
+
+/* =============================================
+   CONFIRMATION
+============================================= */
+
+alert(
+
+    "BLOC 17A — Compteur sécurisé\n\n" +
+
+    "Produto publicado com sucesso.\n\n" +
+
+    "O contador de produtos do comerciante foi atualizado."
+
+);
 
         progressBar.style.width = "100%";
 
