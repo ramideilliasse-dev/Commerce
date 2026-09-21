@@ -15,9 +15,9 @@ import {
     deleteDoc,
     doc,
     getDocs,
-    getDoc
+    getDoc,
+    runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
 import {
     onAuthStateChanged,
     signOut
@@ -794,6 +794,10 @@ window.editProduct = function(id){
 // SUPPRIMER PRODUIT
 // ======================================================
 
+// ======================================================
+// BLOC 17B — SUPPRESSION PRODUIT + DÉCRÉMENT COMPTEUR
+// ======================================================
+
 window.deleteProduct = async function(id){
 
     if(!confirm("Deseja apagar este produto?")){
@@ -804,14 +808,169 @@ window.deleteProduct = async function(id){
 
     try{
 
-        await deleteDoc(
-            doc(db,"products",id)
+        /* =================================================
+           RÉFÉRENCES FIRESTORE
+        ================================================= */
+
+        const productRef =
+            doc(
+                db,
+                "products",
+                id
+            );
+
+        const merchantUserRef =
+            doc(
+                db,
+                "users",
+                currentUser.uid
+            );
+
+        /* =================================================
+           TRANSACTION
+        ================================================= */
+
+        await runTransaction(
+
+            db,
+
+            async (transaction) => {
+
+                /* =========================================
+                   RÉCUPÉRER LE PRODUIT
+                ========================================= */
+
+                const productSnapshot =
+                    await transaction.get(
+                        productRef
+                    );
+
+                if(!productSnapshot.exists()){
+
+                    throw new Error(
+                        "Produto não encontrado."
+                    );
+
+                }
+
+                const product =
+                    productSnapshot.data();
+
+                /* =========================================
+                   SÉCURITÉ :
+                   VÉRIFIER QUE LE PRODUIT APPARTIENT
+                   BIEN AU COMMERÇANT CONNECTÉ
+                ========================================= */
+
+                if(
+                    product.merchantId !==
+                    currentUser.uid
+                ){
+
+                    throw new Error(
+                        "Você não pode apagar este produto."
+                    );
+
+                }
+
+                /* =========================================
+                   RÉCUPÉRER LE COMPTEUR
+                ========================================= */
+
+                const merchantSnapshot =
+                    await transaction.get(
+                        merchantUserRef
+                    );
+
+                if(!merchantSnapshot.exists()){
+
+                    throw new Error(
+                        "Conta do comerciante não encontrada."
+                    );
+
+                }
+
+                const merchantData =
+                    merchantSnapshot.data();
+
+                const currentProductCount =
+                    Number(
+                        merchantData.productCount || 0
+                    );
+
+                /* =========================================
+                   ÉVITER UN COMPTEUR NÉGATIF
+                ========================================= */
+
+                const newProductCount =
+                    Math.max(
+                        0,
+                        currentProductCount - 1
+                    );
+
+                /* =========================================
+                   SUPPRIMER LE PRODUIT
+                ========================================= */
+
+                transaction.delete(
+                    productRef
+                );
+
+                /* =========================================
+                   DÉCRÉMENTER LE COMPTEUR
+                ========================================= */
+
+                transaction.update(
+
+                    merchantUserRef,
+
+                    {
+                        productCount:
+                            newProductCount
+                    }
+
+                );
+
+                console.log(
+                    "🗑 BLOC 17B — Produit supprimé"
+                );
+
+                console.log(
+                    "📦 Ancien compteur:",
+                    currentProductCount
+                );
+
+                console.log(
+                    "📦 Nouveau compteur:",
+                    newProductCount
+                );
+
+            }
+
+        );
+
+        /* =================================================
+           CONFIRMATION
+        ================================================= */
+
+        alert(
+
+            "BLOC 17B — Compteur sécurisé\n\n" +
+
+            "Produto apagado com sucesso.\n\n" +
+
+            "O contador de produtos foi atualizado."
+
         );
 
         showToast(
             "Produto apagado com sucesso ✅",
             "success"
         );
+
+        /* =================================================
+           ACTUALISER LE DASHBOARD
+        ================================================= */
 
         loadProducts();
 
@@ -821,7 +980,18 @@ window.deleteProduct = async function(id){
 
     catch(err){
 
-        console.error(err);
+        console.error(
+            "❌ BLOC 17B:",
+            err
+        );
+
+        alert(
+
+            "BLOC 17B — ERRO\n\n" +
+
+            err.message
+
+        );
 
         showToast(
             "Erro ao apagar produto ❌",
