@@ -2,7 +2,7 @@
 // CHECKOUT.JS
 // TOMA Marketplace
 // Version Premium
-// Partie 1
+// BLOC 18 — LIVRAISON INTÉGRÉE
 // ===============================
 
 import { db, auth } from "../firebase.js";
@@ -15,6 +15,7 @@ import {
     getDoc,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
 import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -24,6 +25,7 @@ import {
     formatPrice
 } from "./ui.js";
 
+
 /* ===============================
    VARIABLES
 =============================== */
@@ -32,25 +34,68 @@ let currentUser = null;
 let cart = [];
 let discount = 0;
 
+
+/* =========================================================
+   BLOC 18.1 — VARIABLES LIVRAISON
+========================================================= */
+
+let deliveryEnabled = false;
+let deliveryFee = 0;
+let freeDeliveryEnabled = false;
+let freeDeliveryMinimum = 0;
+let deliveryZone = "";
+let deliveryMessage = "";
+
+let currentDeliveryFee = 0;
+
+
+/* =========================================================
+   BLOC 14 — VARIABLE COMMANDES
+========================================================= */
+
+let ordersEnabled = true;
+
+
 /* ===============================
    DOM
 =============================== */
 
-const checkoutItems = document.getElementById("checkoutItems");
-const totalPrice = document.getElementById("totalPrice");
-const confirmBtn = document.getElementById("confirmBtn");
+const checkoutItems =
+    document.getElementById("checkoutItems");
 
-const clientName = document.getElementById("clientName");
-const clientPhone = document.getElementById("clientPhone");
-const clientProvince = document.getElementById("clientProvince");
-const clientCity = document.getElementById("clientCity");
-const clientAddress = document.getElementById("clientAddress");
+const totalPrice =
+    document.getElementById("totalPrice");
 
-const paymentMethod = document.getElementById("paymentMethod");
-const orderNote = document.getElementById("orderNote");
+const confirmBtn =
+    document.getElementById("confirmBtn");
 
-const couponCode = document.getElementById("couponCode");
-const couponInfo = document.getElementById("couponInfo");
+const clientName =
+    document.getElementById("clientName");
+
+const clientPhone =
+    document.getElementById("clientPhone");
+
+const clientProvince =
+    document.getElementById("clientProvince");
+
+const clientCity =
+    document.getElementById("clientCity");
+
+const clientAddress =
+    document.getElementById("clientAddress");
+
+const paymentMethod =
+    document.getElementById("paymentMethod");
+
+const orderNote =
+    document.getElementById("orderNote");
+
+const couponCode =
+    document.getElementById("couponCode");
+
+const couponInfo =
+    document.getElementById("couponInfo");
+
 
 /* ===============================
    AUTH
@@ -61,6 +106,7 @@ onAuthStateChanged(auth, (user) => {
     currentUser = user;
 
 });
+
 
 /* ===============================
    CHARGER LE PANIER
@@ -83,6 +129,240 @@ function loadCheckoutCart() {
     console.log("Checkout Cart :", cart);
 
 }
+
+
+/* =========================================================
+   BLOC 18.2 — LECTURE DES PARAMÈTRES DE LIVRAISON
+========================================================= */
+
+async function loadDeliverySettings() {
+
+    try {
+
+        alert(
+            "CHECKOUT — BLOC 18.1\n\n" +
+            "Lecture des paramètres de livraison depuis Firebase..."
+        );
+
+
+        const marketplaceSettingsRef =
+            doc(
+                db,
+                "settings",
+                "marketplace"
+            );
+
+
+        const marketplaceSettingsSnapshot =
+            await getDoc(
+                marketplaceSettingsRef
+            );
+
+
+        if (
+            !marketplaceSettingsSnapshot.exists()
+        ) {
+
+            throw new Error(
+                "Le document settings/marketplace est introuvable."
+            );
+
+        }
+
+
+        const settingsData =
+            marketplaceSettingsSnapshot.data();
+
+
+        deliveryEnabled =
+            settingsData.deliveryEnabled === true;
+
+
+        deliveryFee =
+            Number(
+                settingsData.deliveryFee || 0
+            );
+
+
+        freeDeliveryEnabled =
+            settingsData.freeDeliveryEnabled === true;
+
+
+        freeDeliveryMinimum =
+            Number(
+                settingsData.freeDeliveryMinimum || 0
+            );
+
+
+        deliveryZone =
+            settingsData.deliveryZone || "";
+
+
+        deliveryMessage =
+            settingsData.deliveryMessage || "";
+
+
+        calculateDeliveryFee();
+
+
+        alert(
+            "CHECKOUT — BLOC 18.2 ✅\n\n" +
+            "Paramètres de livraison chargés.\n\n" +
+
+            "Livraison : " +
+            (
+                deliveryEnabled
+                    ? "ACTIVÉE"
+                    : "DÉSACTIVÉE"
+            ) +
+
+            "\n" +
+
+            "Frais : " +
+            formatPrice(deliveryFee) +
+
+            "\n" +
+
+            "Livraison gratuite : " +
+            (
+                freeDeliveryEnabled
+                    ? "OUI"
+                    : "NON"
+            ) +
+
+            "\n" +
+
+            "Minimum gratuit : " +
+            formatPrice(
+                freeDeliveryMinimum
+            ) +
+
+            "\n" +
+
+            "Zone : " +
+            (
+                deliveryZone ||
+                "Non définie"
+            )
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Erreur BLOC 18 :",
+            error
+        );
+
+
+        deliveryEnabled = false;
+
+        deliveryFee = 0;
+
+        freeDeliveryEnabled = false;
+
+        freeDeliveryMinimum = 0;
+
+        deliveryZone = "";
+
+        deliveryMessage = "";
+
+        currentDeliveryFee = 0;
+
+
+        alert(
+            "CHECKOUT — BLOC 18 ERREUR ❌\n\n" +
+            "Impossible de charger les paramètres de livraison.\n\n" +
+            "La livraison sera considérée comme désactivée pour cette session.\n\n" +
+            "Erreur : " +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   BLOC 18.3 — CALCUL DES FRAIS DE LIVRAISON
+========================================================= */
+
+function calculateDeliveryFee() {
+
+    if (!deliveryEnabled) {
+
+        currentDeliveryFee = 0;
+
+        return 0;
+
+    }
+
+
+    const subtotal =
+        cart.reduce(
+
+            (sum, p) =>
+
+                sum +
+
+                (
+                    Number(p.price || 0) *
+                    Number(
+                        p.quantity ||
+                        p.qty ||
+                        1
+                    )
+                ),
+
+            0
+
+        );
+
+
+    const totalAfterDiscount =
+        Math.max(
+            subtotal - discount,
+            0
+        );
+
+
+    /*
+     * Livraison gratuite à partir
+     * du minimum configuré.
+     */
+
+    if (
+
+        freeDeliveryEnabled &&
+
+        freeDeliveryMinimum > 0 &&
+
+        totalAfterDiscount >=
+            freeDeliveryMinimum
+
+    ) {
+
+        currentDeliveryFee = 0;
+
+    }
+
+    else {
+
+        currentDeliveryFee =
+            Math.max(
+                deliveryFee,
+                0
+            );
+
+    }
+
+
+    return currentDeliveryFee;
+
+}
+
+
 /* ===============================
    AFFICHAGE DU PANIER
 =============================== */
@@ -90,6 +370,7 @@ function loadCheckoutCart() {
 function renderCheckout() {
 
     if (!checkoutItems) return;
+
 
     if (cart.length === 0) {
 
@@ -103,22 +384,37 @@ function renderCheckout() {
             </div>
         `;
 
-        totalPrice.textContent = formatPrice(0);
+
+        totalPrice.textContent =
+            formatPrice(0);
+
 
         return;
+
     }
+
 
     let total = 0;
 
+
     checkoutItems.innerHTML = "";
+
 
     cart.forEach(item => {
 
-        const qty = item.quantity || item.qty || 1;
+        const qty =
+            item.quantity ||
+            item.qty ||
+            1;
 
-        const subtotal = Number(item.price || 0) * qty;
+
+        const subtotal =
+            Number(item.price || 0) *
+            qty;
+
 
         total += subtotal;
+
 
         checkoutItems.innerHTML += `
 
@@ -140,7 +436,8 @@ function renderCheckout() {
 
                     <div class="checkoutQty">
 
-                        ${qty} × ${formatPrice(item.price)}
+                        ${qty} ×
+                        ${formatPrice(item.price)}
 
                     </div>
 
@@ -158,48 +455,158 @@ function renderCheckout() {
 
     });
 
-    const finalTotal = Math.max(
-    total - discount,
-    0
-);
 
-totalPrice.textContent =
-    formatPrice(finalTotal);
+    /* =====================================================
+       BLOC 18.4 — TOTAL + LIVRAISON
+    ===================================================== */
+
+    const totalAfterDiscount =
+        Math.max(
+            total - discount,
+            0
+        );
+
+
+    const calculatedDeliveryFee =
+        calculateDeliveryFee();
+
+
+    const finalTotal =
+        totalAfterDiscount +
+        calculatedDeliveryFee;
+
+
+    totalPrice.textContent =
+        formatPrice(finalTotal);
+
+
+    /*
+     * Message de livraison
+     */
+
+    if (
+        deliveryEnabled &&
+        deliveryMessage
+    ) {
+
+        const deliveryMessageElement =
+            document.getElementById(
+                "deliveryMessage"
+            );
+
+
+        if (deliveryMessageElement) {
+
+            deliveryMessageElement.textContent =
+                deliveryMessage;
+
+        }
+
+    }
+
+
+    /*
+     * Zone de livraison
+     */
+
+    const deliveryZoneElement =
+        document.getElementById(
+            "deliveryZone"
+        );
+
+
+    if (deliveryZoneElement) {
+
+        deliveryZoneElement.textContent =
+            deliveryZone
+                ? "Zona de entrega: " +
+                  deliveryZone
+                : "";
+
+    }
+
+
+    /*
+     * Affichage des frais
+     */
+
+    const deliveryFeeElement =
+        document.getElementById(
+            "deliveryFee"
+        );
+
+
+    if (deliveryFeeElement) {
+
+        if (!deliveryEnabled) {
+
+            deliveryFeeElement.textContent =
+                "Entrega: Indisponível";
+
+        }
+
+        else if (
+            calculatedDeliveryFee === 0
+        ) {
+
+            deliveryFeeElement.textContent =
+                "Entrega: Grátis";
+
+        }
+
+        else {
+
+            deliveryFeeElement.textContent =
+                "Entrega: " +
+                formatPrice(
+                    calculatedDeliveryFee
+                );
+
+        }
+
+    }
 
 }
-/* ===============================
-   NUMÉRO DE COMMANDE
-=============================== */
 
-function generateOrderNumber(){
+
+/* =========================================================
+   NUMÉRO DE COMMANDE
+========================================================= */
+
+function generateOrderNumber() {
 
     const now = new Date();
+
 
     return "TOMA-" +
 
         now.getFullYear() +
 
-        String(now.getMonth()+1).padStart(2,"0") +
+        String(
+            now.getMonth() + 1
+        ).padStart(2, "0") +
 
-        String(now.getDate()).padStart(2,"0") +
+        String(
+            now.getDate()
+        ).padStart(2, "0") +
 
         "-" +
 
         Math.floor(
-
             100000 +
-
-            Math.random()*900000
-
+            Math.random() * 900000
         );
 
 }
 
-/* ===============================
-   ENVOYER LA COMMANDE
-=============================== */
 
-async function placeOrder(){
+/* =========================================================
+   ENVOYER LA COMMANDE
+========================================================= */
+
+async function placeOrder() {
+
+
     /* =====================================================
        BLOC 14.3 — VÉRIFICATION DES COMMANDES
     ===================================================== */
@@ -207,12 +614,22 @@ async function placeOrder(){
     const canCreateOrder =
         await verifyOrdersBeforeCreation();
 
+
     if (!canCreateOrder) {
 
         return;
 
     }
-    if(!currentUser){
+
+
+    /* =====================================================
+       BLOC 18.5 — RELECTURE LIVRAISON AVANT COMMANDE
+    ===================================================== */
+
+    await loadDeliverySettings();
+
+
+    if (!currentUser) {
 
         showToast(
             "Faça login primeiro",
@@ -223,7 +640,8 @@ async function placeOrder(){
 
     }
 
-    if(cart.length===0){
+
+    if (cart.length === 0) {
 
         showToast(
             "Carrinho vazio",
@@ -234,7 +652,8 @@ async function placeOrder(){
 
     }
 
-    if(
+
+    if (
 
         !clientName.value ||
 
@@ -246,7 +665,7 @@ async function placeOrder(){
 
         !clientAddress.value
 
-    ){
+    ) {
 
         showToast(
             "Preencha todos os campos",
@@ -257,210 +676,346 @@ async function placeOrder(){
 
     }
 
+
     const loader =
-        document.getElementById("loaderOverlay");
+        document.getElementById(
+            "loaderOverlay"
+        );
 
-    loader.style.display="flex";
 
-    confirmBtn.disabled=true;
+    if (loader) {
 
-    try{
+        loader.style.display = "flex";
 
-        const subtotal = cart.reduce(
+    }
 
-    (sum, p) =>
 
-        sum +
+    confirmBtn.disabled = true;
 
-        (
 
-            Number(p.price || 0)
+    try {
 
-            *
 
-            Number(p.quantity || p.qty || 1)
+        const subtotal =
+            cart.reduce(
 
-        ),
+                (sum, p) =>
 
-    0
+                    sum +
 
-);
+                    (
+                        Number(
+                            p.price || 0
+                        ) *
 
-const total = Math.max(
-    subtotal - discount,
-    0
-);
+                        Number(
+                            p.quantity ||
+                            p.qty ||
+                            1
+                        )
+                    ),
+
+                0
+
+            );
+
+
+        /* =================================================
+           BLOC 18.6 — TOTAL FINAL AVEC LIVRAISON
+        ================================================= */
+
+        const totalAfterDiscount =
+            Math.max(
+                subtotal - discount,
+                0
+            );
+
+
+        const orderDeliveryFee =
+            calculateDeliveryFee();
+
+
+        const total =
+            totalAfterDiscount +
+            orderDeliveryFee;
+
+
         await addDoc(
 
-            collection(db,"orders"),
+            collection(
+                db,
+                "orders"
+            ),
 
             {
-merchantId: cart[0].merchantId,
-shopName: cart[0].shopName || "",
-                uid:currentUser.uid,
+
+                merchantId:
+                    cart[0].merchantId,
+
+                shopName:
+                    cart[0].shopName || "",
+
+                uid:
+                    currentUser.uid,
+
 
                 orderNumber:
-
                     generateOrderNumber(),
 
+
                 clientName:
-    clientName.value,
+                    clientName.value,
 
-clientPhone:
-    clientPhone.value,
 
-clientProvince:
-    clientProvince.value,
+                clientPhone:
+                    clientPhone.value,
 
-clientCity:
-    clientCity.value,
 
-clientAddress:
-    clientProvince.value +
-    ", " +
-    clientCity.value +
-    ", " +
-    clientAddress.value,
+                clientProvince:
+                    clientProvince.value,
+
+
+                clientCity:
+                    clientCity.value,
+
+
+                clientAddress:
+                    clientProvince.value +
+                    ", " +
+                    clientCity.value +
+                    ", " +
+                    clientAddress.value,
+
 
                 paymentMethod:
-
                     paymentMethod.value,
 
-                note:
 
+                note:
                     orderNote.value,
 
-                items: cart,
 
-couponCode:
-    couponCode.value.trim(),
-couponName:
-    couponCode.value.trim(),
-discount:
-    discount,
-commission:
+                items:
+                    cart,
 
-    discount > 0
 
-        ? discount
+                couponCode:
+                    couponCode.value.trim(),
 
-        : 0,
-total:
-    total,
 
-status:
-    "pending",
+                couponName:
+                    couponCode.value.trim(),
+
+
+                discount:
+                    discount,
+
+
+                commission:
+
+                    discount > 0
+                        ? discount
+                        : 0,
+
+
+                /* =========================================
+                   BLOC 18 — DONNÉES DE LIVRAISON
+                ========================================= */
+
+                deliveryEnabled:
+                    deliveryEnabled,
+
+
+                deliveryFee:
+                    orderDeliveryFee,
+
+
+                deliveryZone:
+                    deliveryZone,
+
+
+                deliveryMessage:
+                    deliveryMessage,
+
+
+                freeDelivery:
+
+                    orderDeliveryFee === 0 &&
+                    deliveryEnabled === true,
+
+
+                total:
+                    total,
+
+
+                status:
+                    "pending",
+
+
                 createdAt:
-
                     serverTimestamp()
 
             }
 
         );
 
-        localStorage.removeItem("checkoutCart");
 
-        localStorage.removeItem("cart");
-
-        showToast(
-
-            "✅ Pedido enviado",
-
-            "success"
-
+        localStorage.removeItem(
+            "checkoutCart"
         );
 
-        setTimeout(()=>{
 
-            window.location.href = "my-orders.html";
+        localStorage.removeItem(
+            "cart"
+        );
 
-        },1000);
 
-    }catch(err){
+        showToast(
+            "✅ Pedido enviado",
+            "success"
+        );
+
+
+        setTimeout(() => {
+
+            window.location.href =
+                "my-orders.html";
+
+        }, 1000);
+
+
+    }
+
+    catch (err) {
 
         console.error(err);
 
+
         showToast(
-
             "Erro ao enviar pedido",
-
             "error"
-
         );
 
-    }finally{
+    }
 
-        loader.style.display="none";
+    finally {
 
-        confirmBtn.disabled=false;
+        if (loader) {
+
+            loader.style.display =
+                "none";
+
+        }
+
+
+        confirmBtn.disabled =
+            false;
 
     }
 
 }
-/* ===============================
+
+
+/* =========================================================
    COUPON
-=============================== */
+========================================================= */
 
 async function applyCoupon() {
 
-    const code = couponCode.value.trim().toUpperCase();
+    const code =
+        couponCode.value
+            .trim()
+            .toUpperCase();
 
-    
+
     if (!code) {
 
-        showToast("Introduza um cupão", "warning");
+        showToast(
+            "Introduza um cupão",
+            "warning"
+        );
 
         return;
 
     }
 
+
     try {
 
-        const snapshot = await getDocs(
-    collection(db, "merchantCoupons")
-);
+
+        const snapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "merchantCoupons"
+                )
+            );
+
+
         let found = false;
 
-        snapshot.forEach(docSnap => {
 
-            const data = docSnap.data();
+        snapshot.forEach(
+            docSnap => {
 
-            
-            if (
+                const data =
+                    docSnap.data();
 
-                (data.code || "").toUpperCase() === code &&
-                data.merchantId === cart[0]?.merchantId &&
-                data.active === true
 
-            ) {
+                if (
 
-                
+                    (
+                        data.code || ""
+                    ).toUpperCase() ===
+                        code &&
 
-                found = true;
+                    data.merchantId ===
+                        cart[0]?.merchantId &&
 
-                discount = Number(data.discount || 0);
+                    data.active === true
+
+                ) {
+
+                    found = true;
+
+
+                    discount =
+                        Number(
+                            data.discount || 0
+                        );
+
+                }
 
             }
+        );
 
-        });
 
         if (found) {
 
             couponInfo.innerHTML =
-                `✅ Desconto : ${formatPrice(discount)}`;
+                `✅ Desconto : ${
+                    formatPrice(discount)
+                }`;
+
 
             renderCheckout();
+
 
             showToast(
                 "Cupão aplicado",
                 "success"
             );
 
-        } else {
+        }
+
+        else {
 
             discount = 0;
 
-            couponInfo.innerHTML = "";
+
+            couponInfo.innerHTML =
+                "";
+
 
             showToast(
                 "Cupão inválido",
@@ -469,65 +1024,31 @@ async function applyCoupon() {
 
         }
 
-    } catch (err) {
+    }
 
-    console.error(err);
+    catch (err) {
 
-    showToast(
-        "Erro ao verificar cupão",
-        "error"
-    );
+        console.error(err);
 
-}
 
-}
-/* ===============================
-   INICIAR
-=============================== */
-
-window.addEventListener("load", () => {
-
-    loadCheckoutCart();
-
-    renderCheckout();
-    loadOrdersSetting();
-    if (confirmBtn) {
-
-        confirmBtn.onclick = placeOrder;
+        showToast(
+            "Erro ao verificar cupão",
+            "error"
+        );
 
     }
 
-    const applyBtn =
-        document.getElementById("applyCouponBtn");
-
-    if (applyBtn) {
-
-        applyBtn.onclick = applyCoupon;
-
-    }
-
-});
-/* =========================================================
-   TOMA — CHECKOUT
-   BLOC 14 — CONEXÃO DE COMANDAS
-   Dashboard Settings → ordersEnabled
-========================================================= */
+}
 
 
 /* =========================================================
-   BLOC 14.1 — VARIÁVEL DE CONTROLE
-========================================================= */
-
-let ordersEnabled = true;
-
-
-/* =========================================================
-   BLOC 14.2 — LER CONFIGURAÇÃO DE COMANDAS
+   BLOC 14.2 — LER CONFIGURAÇÃO DE COMMANDES
 ========================================================= */
 
 async function loadOrdersSetting() {
 
     try {
+
 
         alert(
             "CHECKOUT — BLOC 14.1\n\n" +
@@ -584,13 +1105,10 @@ async function loadOrdersSetting() {
         /*
          * En cas d'erreur de lecture,
          * on bloque la création de commande.
-         *
-         * Cela évite de permettre une commande
-         * lorsque Toma ne sait pas si les commandes
-         * sont actuellement autorisées.
          */
 
         ordersEnabled = false;
+
 
         applyOrdersSetting();
 
@@ -625,17 +1143,24 @@ function applyOrdersSetting() {
 
     if (ordersEnabled) {
 
-        confirmBtn.disabled = false;
+        confirmBtn.disabled =
+            false;
+
 
         confirmBtn.textContent =
             "Confirmar Pedido";
 
-        confirmBtn.style.opacity = "1";
+
+        confirmBtn.style.opacity =
+            "1";
+
 
         confirmBtn.style.cursor =
             "pointer";
 
-        confirmBtn.title = "";
+
+        confirmBtn.title =
+            "";
 
 
         alert(
@@ -648,15 +1173,21 @@ function applyOrdersSetting() {
 
     else {
 
-        confirmBtn.disabled = true;
+        confirmBtn.disabled =
+            true;
+
 
         confirmBtn.textContent =
             "Pedidos temporariamente indisponíveis";
 
-        confirmBtn.style.opacity = "0.55";
+
+        confirmBtn.style.opacity =
+            "0.55";
+
 
         confirmBtn.style.cursor =
             "not-allowed";
+
 
         confirmBtn.title =
             "Os pedidos estão temporariamente desativados.";
@@ -680,6 +1211,7 @@ function applyOrdersSetting() {
 async function verifyOrdersBeforeCreation() {
 
     try {
+
 
         const marketplaceSettingsRef =
             doc(
@@ -716,21 +1248,27 @@ async function verifyOrdersBeforeCreation() {
 
         if (!currentOrdersEnabled) {
 
-            ordersEnabled = false;
+            ordersEnabled =
+                false;
+
 
             applyOrdersSetting();
+
 
             showToast(
                 "Os pedidos estão temporariamente desativados.",
                 "warning"
             );
 
+
             return false;
 
         }
 
 
-        ordersEnabled = true;
+        ordersEnabled =
+            true;
+
 
         return true;
 
@@ -744,7 +1282,9 @@ async function verifyOrdersBeforeCreation() {
         );
 
 
-        ordersEnabled = false;
+        ordersEnabled =
+            false;
+
 
         applyOrdersSetting();
 
@@ -763,5 +1303,55 @@ async function verifyOrdersBeforeCreation() {
 
 
 /* =========================================================
-   BLOC 14.5 — FIN DU BLOC
+   INICIAR
+========================================================= */
+
+window.addEventListener(
+    "load",
+    async () => {
+
+
+        loadCheckoutCart();
+
+
+        /* ================================================
+           BLOC 18 — CHARGER LIVRAISON
+        ================================================ */
+
+        await loadDeliverySettings();
+
+
+        renderCheckout();
+
+
+        loadOrdersSetting();
+
+
+        if (confirmBtn) {
+
+            confirmBtn.onclick =
+                placeOrder;
+
+        }
+
+
+        const applyBtn =
+            document.getElementById(
+                "applyCouponBtn"
+            );
+
+
+        if (applyBtn) {
+
+            applyBtn.onclick =
+                applyCoupon;
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   BLOC 18.7 — FIN
 ========================================================= */
