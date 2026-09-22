@@ -4985,75 +4985,40 @@ document.addEventListener("DOMContentLoaded", () => {
     ====================================================== */
 
     const deliveryEnabledToggle =
-        document.getElementById(
-            "deliveryEnabledToggle"
-        );
-
+        document.getElementById("deliveryEnabledToggle");
 
     const deliveryFeeInput =
-        document.getElementById(
-            "deliveryFeeInput"
-        );
-
+        document.getElementById("deliveryFeeInput");
 
     const freeDeliveryToggle =
-        document.getElementById(
-            "freeDeliveryToggle"
-        );
-
+        document.getElementById("freeDeliveryToggle");
 
     const freeDeliveryMinimumInput =
-        document.getElementById(
-            "freeDeliveryMinimumInput"
-        );
-
+        document.getElementById("freeDeliveryMinimumInput");
 
     const deliveryZoneInput =
-        document.getElementById(
-            "deliveryZoneInput"
-        );
-
+        document.getElementById("deliveryZoneInput");
 
     const deliveryMessageInput =
-        document.getElementById(
-            "deliveryMessageInput"
-        );
-
+        document.getElementById("deliveryMessageInput");
 
     const statusArea =
-        document.getElementById(
-            "deliverySettingsStatusArea"
-        );
-
+        document.getElementById("deliverySettingsStatusArea");
 
     const statusIcon =
-        document.getElementById(
-            "deliverySettingsStatusIcon"
-        );
-
+        document.getElementById("deliverySettingsStatusIcon");
 
     const statusText =
-        document.getElementById(
-            "deliverySettingsStatusText"
-        );
-
+        document.getElementById("deliverySettingsStatusText");
 
     const firebaseStatusIcon =
-        document.getElementById(
-            "deliveryFirebaseStatusIcon"
-        );
-
+        document.getElementById("deliveryFirebaseStatusIcon");
 
     const firebaseStatusText =
-        document.getElementById(
-            "deliveryFirebaseStatusText"
-        );
-
+        document.getElementById("deliveryFirebaseStatusText");
 
     const saveButton =
-        document.getElementById(
-            "saveDeliverySettingsButton"
-        );
+        document.getElementById("saveDeliverySettingsButton");
 
 
     /* =====================================================
@@ -5100,32 +5065,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateDeliveryStatus() {
 
-        if (
-            deliveryEnabledToggle.checked
-        ) {
+        if (deliveryEnabledToggle.checked) {
 
-            statusArea.classList.remove(
-                "disabled"
-            );
-
+            statusArea.classList.remove("disabled");
 
             statusIcon.textContent =
                 "local_shipping";
-
 
             statusText.textContent =
                 "Serviço de entrega ativo";
 
         } else {
 
-            statusArea.classList.add(
-                "disabled"
-            );
-
+            statusArea.classList.add("disabled");
 
             statusIcon.textContent =
                 "local_shipping";
-
 
             statusText.textContent =
                 "Serviço de entrega desativado";
@@ -5217,6 +5172,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     settingsSnapshot.data();
 
 
+                /* =========================================
+                   ENTREGA
+                ========================================== */
+
                 deliveryEnabledToggle.checked =
                     data.deliveryEnabled !== false;
 
@@ -5224,6 +5183,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 deliveryFeeInput.value =
                     data.deliveryFee ?? 0;
 
+
+                /* =========================================
+                   ENTREGA GRATUITA
+                ========================================== */
 
                 freeDeliveryToggle.checked =
                     data.freeDeliveryEnabled === true;
@@ -5233,14 +5196,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     data.freeDeliveryMinimum ?? 0;
 
 
-                deliveryZoneInput.value =
-                    data.deliveryZone ||
-                    "";
+                /* =========================================
+                   ZONA
+                ========================================== */
 
+                deliveryZoneInput.value =
+                    data.deliveryZone || "";
+
+
+                /* =========================================
+                   MESSAGE
+                ========================================== */
 
                 deliveryMessageInput.value =
-                    data.deliveryMessage ||
-                    "";
+                    data.deliveryMessage || "";
             }
 
 
@@ -5299,6 +5268,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             try {
 
+                /* =========================================
+                   LER VALORES DO DASHBOARD
+                ========================================== */
+
                 const deliveryFee =
                     Number(
                         deliveryFeeInput.value
@@ -5318,6 +5291,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 const deliveryMessage =
                     deliveryMessageInput.value.trim();
 
+
+                /* =========================================
+                   VALIDATION
+                ========================================== */
 
                 if (deliveryFee < 0) {
 
@@ -5380,6 +5357,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
 
+                /* =========================================
+                   BLOQUEAR BOTÃO
+                ========================================== */
+
                 saveButton.disabled = true;
 
                 saveButton.style.opacity = "0.65";
@@ -5388,6 +5369,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 firebaseStatusText.textContent =
                     "A guardar alterações...";
 
+
+                /* =========================================
+                   FIREBASE
+                ========================================== */
 
                 const firebaseModule =
                     await import("../firebase.js");
@@ -5432,6 +5417,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     );
 
 
+                /* =========================================
+                   SALVAR
+                ========================================== */
+
                 await setDoc(
                     settingsRef,
                     {
@@ -5467,6 +5456,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
+                /* =========================================
+                   ATUALIZAR STATUS VISUAL
+                ========================================== */
+
                 updateDeliveryStatus();
 
 
@@ -5478,38 +5471,115 @@ document.addEventListener("DOMContentLoaded", () => {
                     "Configurações sincronizadas com Firebase.";
 
 
+                /* =========================================
+                   CONFIRMAÇÃO DA ESCRITA
+                ========================================== */
+
+                const verifySnapshot =
+                    await getDoc(settingsRef);
+
+
+                if (!verifySnapshot.exists()) {
+
+                    throw new Error(
+                        "Firebase não encontrou o documento após a gravação."
+                    );
+                }
+
+
+                const verifyData =
+                    verifySnapshot.data();
+
+
+                const savedDeliveryEnabled =
+                    verifyData.deliveryEnabled === true;
+
+
+                const savedDeliveryFee =
+                    Number(
+                        verifyData.deliveryFee
+                    ) || 0;
+
+
+                const savedFreeDelivery =
+                    verifyData.freeDeliveryEnabled === true;
+
+
+                const savedFreeMinimum =
+                    Number(
+                        verifyData.freeDeliveryMinimum
+                    ) || 0;
+
+
+                const savedDeliveryZone =
+                    verifyData.deliveryZone || "";
+
+
+                /* =========================================
+                   VERIFICAÇÃO DES VALEURS
+                ========================================== */
+
+                if (
+                    savedDeliveryEnabled !==
+                    deliveryEnabledToggle.checked ||
+
+                    savedDeliveryFee !==
+                    deliveryFee ||
+
+                    savedFreeDelivery !==
+                    freeDeliveryToggle.checked ||
+
+                    savedFreeMinimum !==
+                    freeDeliveryMinimum ||
+
+                    savedDeliveryZone !==
+                    deliveryZone
+                ) {
+
+                    throw new Error(
+                        "As configurações foram gravadas, " +
+                        "mas a verificação encontrou diferenças."
+                    );
+                }
+
+
+                /* =========================================
+                   SUCESSO FINAL
+                ========================================== */
+
                 alert(
                     "TOMA — SETTINGS\n\n" +
-                    "BLOC 12.5 TERMINÉ ✅\n\n" +
-                    "Configurações de entrega salvas com sucesso.\n\n" +
+                    "BLOC 12.6 — VERIFICAÇÃO FIREBASE ✅\n\n" +
 
                     "Entrega : " +
                     (
-                        deliveryEnabledToggle.checked
+                        savedDeliveryEnabled
                             ? "Ativa"
                             : "Desativada"
                     ) +
 
                     "\nTaxa : " +
-                    deliveryFee +
+                    savedDeliveryFee +
                     " Kz" +
 
                     "\nEntrega gratuita : " +
                     (
-                        freeDeliveryToggle.checked
+                        savedFreeDelivery
                             ? "Ativa"
                             : "Desativada"
                     ) +
 
-                    "\nValor mínimo : " +
-                    freeDeliveryMinimum +
+                    "\nMinimum gratuito : " +
+                    savedFreeMinimum +
                     " Kz" +
 
                     "\nZona : " +
                     (
-                        deliveryZone ||
+                        savedDeliveryZone ||
                         "Não definida"
-                    )
+                    ) +
+
+                    "\n\nFirebase confirmou todas as alterações."
                 );
 
 
@@ -5531,7 +5601,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 alert(
                     "TOMA — SETTINGS\n\n" +
-                    "BLOC 12.5 ❌\n\n" +
+                    "BLOC 12.6 ❌\n\n" +
                     "Erro ao guardar as configurações de entrega.\n\n" +
                     error.message
                 );
