@@ -98,7 +98,199 @@ const langSelect = $("langSelect");
 // Toast
 const toastBox = $("toastBox");
 
+/* =====================================
+   BLOC 20B — IDENTIDADE TOMA
+   Nome + Slogan + Versão
+   Firebase → settings/marketplace
+===================================== */
 
+
+
+async function loadTomaIdentitySettings(){
+
+    try{
+
+        /* ---------------------------------
+           ELEMENTOS DA PÁGINA
+        --------------------------------- */
+
+        const appNameElement =
+        document.getElementById("settingsAppName");
+
+        const sloganElement =
+        document.getElementById("settingsAppSlogan");
+
+        const versionElement =
+        document.getElementById("settingsAppVersion");
+
+
+        /* ---------------------------------
+           FIREBASE
+        --------------------------------- */
+
+        const settingsRef =
+        doc(db,"settings","marketplace");
+
+        const settingsSnap =
+        await getDoc(settingsRef);
+
+
+        if(!settingsSnap.exists()){
+
+            console.warn(
+                "⚠️ BLOC 20B : settings/marketplace introuvable."
+            );
+
+            return;
+
+        }
+
+
+        const settings =
+        settingsSnap.data() || {};
+
+
+        /* ---------------------------------
+           NOM
+        --------------------------------- */
+
+        const appName =
+        String(
+            settings.appName || "Toma Marketplace"
+        ).trim();
+
+
+        /* ---------------------------------
+           SLOGAN
+        --------------------------------- */
+
+        const appSlogan =
+        String(
+            settings.appSlogan ||
+            "Seu marketplace digital"
+        ).trim();
+
+
+        /* ---------------------------------
+           VERSION
+        --------------------------------- */
+
+        const appVersion =
+        String(
+            settings.appVersion || "1.0.0"
+        ).trim();
+
+
+        /* ---------------------------------
+           AFFICHAGE
+        --------------------------------- */
+
+        if(appNameElement){
+
+            appNameElement.textContent =
+            appName;
+
+        }
+
+
+        if(sloganElement){
+
+            sloganElement.textContent =
+            appSlogan;
+
+        }
+
+
+        if(versionElement){
+
+            versionElement.textContent =
+            "Versão " + appVersion;
+
+        }
+
+
+        /* ---------------------------------
+           TITRE PAGE
+        --------------------------------- */
+
+        document.title =
+        "Configurações — " + appName;
+
+
+        /* ---------------------------------
+           TITRE PWA / iOS
+        --------------------------------- */
+
+        const appleTitle =
+        document.querySelector(
+            'meta[name="apple-mobile-web-app-title"]'
+        );
+
+
+        if(appleTitle){
+
+            appleTitle.setAttribute(
+                "content",
+                appName
+            );
+
+        }
+
+
+        /* ---------------------------------
+           DIAGNOSTIC
+        --------------------------------- */
+
+        console.log(
+            "✅ BLOC 20B — Identidade carregada",
+            {
+                appName,
+                appSlogan,
+                appVersion
+            }
+        );
+
+
+        alert(
+            "BLOC 20B — IDENTIDADE TOMA\n\n" +
+
+            "Nome : " +
+            appName +
+
+            "\n\nSlogan : " +
+            appSlogan +
+
+            "\n\nVersão : " +
+            appVersion +
+
+            "\n\nFirebase confirmou os dados."
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "❌ BLOC 20B — Erro:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   BLOC 20B — START
+===================================== */
+
+window.addEventListener(
+    "DOMContentLoaded",
+    ()=>{
+
+        loadTomaIdentitySettings();
+
+    }
+);
 /* ===============================
    TOAST
 =============================== */
