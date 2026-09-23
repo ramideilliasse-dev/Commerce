@@ -100,131 +100,130 @@ const toastBox = $("toastBox");
 
 /* =====================================
    BLOC 20B — IDENTIDADE TOMA
-   Nome + Slogan + Versão
+   Nom + Slogan + Version
    Firebase → settings/marketplace
 ===================================== */
-
-
 
 async function loadTomaIdentitySettings(){
 
     try{
 
-        /* ---------------------------------
-           ELEMENTOS DA PÁGINA
-        --------------------------------- */
+        console.log("🚀 BLOC 20B — DÉBUT");
 
         const appNameElement =
-        document.getElementById("settingsAppName");
+            document.getElementById("settingsAppName");
 
         const sloganElement =
-        document.getElementById("settingsAppSlogan");
+            document.getElementById("settingsAppSlogan");
 
         const versionElement =
-        document.getElementById("settingsAppVersion");
+            document.getElementById("settingsAppVersion");
 
 
-        /* ---------------------------------
-           FIREBASE
-        --------------------------------- */
+        /* Vérification des éléments HTML */
+
+        if(!appNameElement){
+
+            alert(
+                "BLOC 20B — ERREUR\n\n" +
+                "settingsAppName introuvable."
+            );
+
+            return;
+        }
+
+
+        if(!sloganElement){
+
+            alert(
+                "BLOC 20B — ERREUR\n\n" +
+                "settingsAppSlogan introuvable."
+            );
+
+            return;
+        }
+
+
+        if(!versionElement){
+
+            alert(
+                "BLOC 20B — ERREUR\n\n" +
+                "settingsAppVersion introuvable."
+            );
+
+            return;
+        }
+
+
+        /* Lecture Firebase */
 
         const settingsRef =
-        doc(db,"settings","marketplace");
+            doc(db,"settings","marketplace");
 
         const settingsSnap =
-        await getDoc(settingsRef);
+            await getDoc(settingsRef);
 
 
         if(!settingsSnap.exists()){
 
-            console.warn(
-                "⚠️ BLOC 20B : settings/marketplace introuvable."
+            alert(
+                "BLOC 20B — ERREUR\n\n" +
+                "settings/marketplace introuvable dans Firebase."
             );
 
             return;
-
         }
 
 
         const settings =
-        settingsSnap.data() || {};
+            settingsSnap.data() || {};
 
-
-        /* ---------------------------------
-           NOM
-        --------------------------------- */
 
         const appName =
-        String(
-            settings.appName || "Toma Marketplace"
-        ).trim();
+            String(
+                settings.appName ||
+                "Toma Marketplace"
+            ).trim();
 
-
-        /* ---------------------------------
-           SLOGAN
-        --------------------------------- */
 
         const appSlogan =
-        String(
-            settings.appSlogan ||
-            "Seu marketplace digital"
-        ).trim();
+            String(
+                settings.appSlogan ||
+                "Seu marketplace digital"
+            ).trim();
 
-
-        /* ---------------------------------
-           VERSION
-        --------------------------------- */
 
         const appVersion =
-        String(
-            settings.appVersion || "1.0.0"
-        ).trim();
+            String(
+                settings.appVersion ||
+                "1.0.0"
+            ).trim();
 
 
-        /* ---------------------------------
-           AFFICHAGE
-        --------------------------------- */
+        /* Affichage */
 
-        if(appNameElement){
-
-            appNameElement.textContent =
+        appNameElement.textContent =
             appName;
 
-        }
-
-
-        if(sloganElement){
-
-            sloganElement.textContent =
+        sloganElement.textContent =
             appSlogan;
 
-        }
-
-
-        if(versionElement){
-
-            versionElement.textContent =
+        versionElement.textContent =
             "Versão " + appVersion;
 
-        }
 
-
-        /* ---------------------------------
-           TITRE PAGE
-        --------------------------------- */
+        /* Titre de la page */
 
         document.title =
-        "Configurações — " + appName;
+            "Configurações — " + appName;
 
 
-        /* ---------------------------------
-           TITRE PWA / iOS
-        --------------------------------- */
+        /* Nom iPhone/PWA */
 
         const appleTitle =
-        document.querySelector(
-            'meta[name="apple-mobile-web-app-title"]'
-        );
+            document.querySelector(
+                'meta[name="apple-mobile-web-app-title"]'
+            );
 
 
         if(appleTitle){
@@ -237,22 +236,10 @@ async function loadTomaIdentitySettings(){
         }
 
 
-        /* ---------------------------------
-           DIAGNOSTIC
-        --------------------------------- */
-
-        console.log(
-            "✅ BLOC 20B — Identidade carregada",
-            {
-                appName,
-                appSlogan,
-                appVersion
-            }
-        );
-
+        /* Vérification visuelle */
 
         alert(
-            "BLOC 20B — IDENTIDADE TOMA\n\n" +
+            "BLOC 20B — IDENTIDADE TOMA ✅\n\n" +
 
             "Nome : " +
             appName +
@@ -267,11 +254,27 @@ async function loadTomaIdentitySettings(){
         );
 
 
+        console.log(
+            "✅ BLOC 20B — Identidade carregada",
+            {
+                appName,
+                appSlogan,
+                appVersion
+            }
+        );
+
+
     }catch(error){
 
         console.error(
             "❌ BLOC 20B — Erro:",
             error
+        );
+
+
+        alert(
+            "BLOC 20B — ERRO\n\n" +
+            error.message
         );
 
     }
@@ -280,12 +283,12 @@ async function loadTomaIdentitySettings(){
 
 
 /* =====================================
-   BLOC 20B — START
+   BLOC 20B — DÉMARRAGE
 ===================================== */
 
 window.addEventListener(
     "DOMContentLoaded",
-    ()=>{
+    () => {
 
         loadTomaIdentitySettings();
 
