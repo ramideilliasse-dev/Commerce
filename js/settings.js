@@ -999,7 +999,7 @@ console.log("FIN BLOC 9");
    BLOC 10A : ADRESSES
 =============================== */
 
-let editingAddressId = null;
+
 
 alert("Entrée Bloc 10A");
 
