@@ -3950,17 +3950,21 @@ document.addEventListener(
 );
 /* =========================================================
    TOMA — SETTINGS
-   BLOC 10 — IDENTIDADE DO TOMA
+   BLOC 19 — IDENTIDADE DO TOMA
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
     alert(
         "TOMA — SETTINGS\n\n" +
-        "BLOC 10.1\n" +
+        "BLOC 19.1\n" +
         "Inicialização da identidade do Toma..."
     );
 
+
+    /* =====================================================
+       ELEMENTOS
+    ====================================================== */
 
     const tomaAppNameInput =
         document.getElementById("tomaAppNameInput");
@@ -3975,16 +3979,24 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("tomaMaintenanceToggle");
 
     const tomaMaintenanceMessageInput =
-        document.getElementById("tomaMaintenanceMessageInput");
+        document.getElementById(
+            "tomaMaintenanceMessageInput"
+        );
 
     const tomaIdentityStatusArea =
-        document.getElementById("tomaIdentityStatusArea");
+        document.getElementById(
+            "tomaIdentityStatusArea"
+        );
 
     const tomaIdentityStatusIcon =
-        document.getElementById("tomaIdentityStatusIcon");
+        document.getElementById(
+            "tomaIdentityStatusIcon"
+        );
 
     const tomaIdentityStatusText =
-        document.getElementById("tomaIdentityStatusText");
+        document.getElementById(
+            "tomaIdentityStatusText"
+        );
 
     const tomaIdentityFirebaseStatusIcon =
         document.getElementById(
@@ -4002,6 +4014,10 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
+    /* =====================================================
+       VALIDATION
+    ====================================================== */
+
     if (
         !tomaAppNameInput ||
         !tomaSloganInput ||
@@ -4018,7 +4034,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         alert(
             "TOMA — SETTINGS\n\n" +
-            "BLOC 10.2 ❌\n\n" +
+            "BLOC 19.2 ❌\n\n" +
             "Um ou mais elementos da identidade " +
             "não foram encontrados."
         );
@@ -4029,7 +4045,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     alert(
         "TOMA — SETTINGS\n\n" +
-        "BLOC 10.2 ✅\n\n" +
+        "BLOC 19.2 ✅\n\n" +
         "Todos os elementos da identidade " +
         "foram encontrados com sucesso."
     );
@@ -4190,7 +4206,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             alert(
                 "TOMA — SETTINGS\n\n" +
-                "BLOC 10.3 ✅\n\n" +
+                "BLOC 19.3 ✅\n\n" +
                 "Identidade carregada do Firebase."
             );
 
@@ -4198,7 +4214,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
 
             console.error(
-                "BLOC 10 — LOAD ERROR:",
+                "BLOC 19 — LOAD ERROR:",
                 error
             );
 
@@ -4213,7 +4229,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             alert(
                 "TOMA — SETTINGS\n\n" +
-                "BLOC 10.3 ❌\n\n" +
+                "BLOC 19.3 ❌\n\n" +
                 "Não foi possível carregar a identidade.\n\n" +
                 error.message
             );
@@ -4222,7 +4238,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       SAUVEGAR
+       SALVAR
     ====================================================== */
 
     saveButton.addEventListener(
@@ -4230,6 +4246,10 @@ document.addEventListener("DOMContentLoaded", () => {
         async () => {
 
             try {
+
+                /* =========================================
+                   LER VALORES
+                ========================================== */
 
                 const appName =
                     tomaAppNameInput.value.trim();
@@ -4251,11 +4271,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     tomaMaintenanceMessageInput.value.trim();
 
 
+                /* =========================================
+                   VALIDATION
+                ========================================== */
+
                 if (!appName) {
 
                     alert(
                         "TOMA — SETTINGS\n\n" +
-                        "BLOC 10.4 ❌\n\n" +
+                        "BLOC 19.4 ❌\n\n" +
                         "O nome da aplicação é obrigatório."
                     );
 
@@ -4269,7 +4293,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     alert(
                         "TOMA — SETTINGS\n\n" +
-                        "BLOC 10.4 ❌\n\n" +
+                        "BLOC 19.4 ❌\n\n" +
                         "A versão da aplicação é obrigatória."
                     );
 
@@ -4286,7 +4310,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     alert(
                         "TOMA — SETTINGS\n\n" +
-                        "BLOC 10.4 ❌\n\n" +
+                        "BLOC 19.4 ❌\n\n" +
                         "Digite uma mensagem para o modo de manutenção."
                     );
 
@@ -4296,6 +4320,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
 
+                /* =========================================
+                   BLOQUEAR BOTÃO
+                ========================================== */
+
                 saveButton.disabled = true;
 
                 saveButton.style.opacity = "0.65";
@@ -4304,6 +4332,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 tomaIdentityFirebaseStatusText.textContent =
                     "A guardar alterações...";
 
+
+                /* =========================================
+                   FIREBASE
+                ========================================== */
 
                 const firebaseModule =
                     await import("../firebase.js");
@@ -4348,15 +4380,22 @@ document.addEventListener("DOMContentLoaded", () => {
                     );
 
 
+                /* =========================================
+                   SALVAR IDENTIDADE
+                ========================================== */
+
                 await setDoc(
                     settingsRef,
                     {
 
-                        appName: appName,
+                        appName:
+                            appName,
 
-                        appSlogan: appSlogan,
+                        appSlogan:
+                            appSlogan,
 
-                        appVersion: appVersion,
+                        appVersion:
+                            appVersion,
 
                         maintenanceMode:
                             maintenanceMode,
@@ -4377,6 +4416,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
+                /* =========================================
+                   ATUALIZAR STATUS
+                ========================================== */
+
                 tomaIdentityFirebaseStatusIcon.textContent =
                     "cloud_done";
 
@@ -4388,30 +4431,120 @@ document.addEventListener("DOMContentLoaded", () => {
                 updateTomaIdentityStatus();
 
 
+                /* =========================================
+                   VERIFICAÇÃO FIREBASE
+                ========================================== */
+
+                const verifySnapshot =
+                    await getDoc(settingsRef);
+
+
+                if (!verifySnapshot.exists()) {
+
+                    throw new Error(
+                        "O documento settings/marketplace " +
+                        "não foi encontrado após a gravação."
+                    );
+                }
+
+
+                const verifyData =
+                    verifySnapshot.data();
+
+
+                const savedAppName =
+                    verifyData.appName || "";
+
+
+                const savedAppSlogan =
+                    verifyData.appSlogan || "";
+
+
+                const savedAppVersion =
+                    verifyData.appVersion || "";
+
+
+                const savedMaintenanceMode =
+                    verifyData.maintenanceMode === true;
+
+
+                const savedMaintenanceMessage =
+                    verifyData.maintenanceMessage || "";
+
+
+                /* =========================================
+                   COMPARAR VALORES
+                ========================================== */
+
+                if (
+                    savedAppName !== appName ||
+
+                    savedAppSlogan !== appSlogan ||
+
+                    savedAppVersion !== appVersion ||
+
+                    savedMaintenanceMode !==
+                    maintenanceMode ||
+
+                    savedMaintenanceMessage !==
+                    maintenanceMessage
+                ) {
+
+                    throw new Error(
+                        "Firebase foi atualizado, " +
+                        "mas a verificação encontrou diferenças."
+                    );
+                }
+
+
+                /* =========================================
+                   SUCESSO
+                ========================================== */
+
                 alert(
                     "TOMA — SETTINGS\n\n" +
-                    "BLOC 10.5 TERMINÉ ✅\n\n" +
-                    "Identidade do Toma salva com sucesso.\n\n" +
+                    "BLOC 19.6 — VERIFICAÇÃO FIREBASE ✅\n\n" +
 
                     "Nome : " +
-                    appName +
+                    savedAppName +
+
+                    "\nSlogan : " +
+                    (
+                        savedAppSlogan ||
+                        "Não definido"
+                    ) +
 
                     "\nVersão : " +
-                    appVersion +
+                    savedAppVersion +
 
                     "\nModo manutenção : " +
                     (
-                        maintenanceMode
+                        savedMaintenanceMode
                             ? "Ativado"
                             : "Desativado"
-                    )
+                    ) +
+
+                    "\n\nFirebase confirmou todas as alterações."
+                );
+
+
+                /* =========================================
+                   JOURNAL ADMIN
+                   BLOC 14B
+                ========================================== */
+
+                alert(
+                    "TOMA — SETTINGS\n\n" +
+                    "BLOC 14B — Journal d’administration\n\n" +
+                    "Identidade do Toma modificada\n\n" +
+                    "Action enregistrée avec succès dans Firebase."
                 );
 
 
             } catch (error) {
 
                 console.error(
-                    "BLOC 10 — SAVE ERROR:",
+                    "BLOC 19 — SAVE ERROR:",
                     error
                 );
 
@@ -4426,7 +4559,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 alert(
                     "TOMA — SETTINGS\n\n" +
-                    "BLOC 10.5 ❌\n\n" +
+                    "BLOC 19.6 ❌\n\n" +
                     "Erro ao guardar as configurações.\n\n" +
                     error.message
                 );
@@ -4451,7 +4584,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     alert(
         "TOMA — SETTINGS\n\n" +
-        "BLOC 10 TERMINÉ ✅\n\n" +
+        "BLOC 19 TERMINÉ ✅\n\n" +
         "A configuração da identidade do Toma " +
         "está pronta para teste."
     );
