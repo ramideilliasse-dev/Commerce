@@ -729,20 +729,31 @@ function applyTranslations(){
 /* =====================================
    START
 ===================================== */
+/* =====================================
+   START
+===================================== */
+
 window.addEventListener("load", async()=>{
+
+    /* ---------------------------------
+       BLOC 20
+       Identité Toma
+    --------------------------------- */
+
+    await loadTomaIdentity();
 
     updateCartCount();
 
     renderPromoSlider();
 
     renderCategoriesBar();
-// Charge ensuite les produits
+
+    // Charge ensuite les produits
     loadProducts();
 
     // Vérifie toutes les promotions expirées
     await checkExpiredPromotions();
 
-   
 });
 /* =====================================
    SLIDER PROMOTIONNEL
