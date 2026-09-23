@@ -64,6 +64,99 @@ let products = [];
 
 console.log("✅ homes.js chargé");
 /* =====================================
+   BLOC 20 — IDENTITÉ TOMA
+   Nom dynamique depuis Firebase
+===================================== */
+
+async function loadTomaIdentity(){
+
+    try{
+
+        const logoElement =
+        document.querySelector(".logo");
+
+        if(!logoElement){
+
+            console.warn(
+                "⚠️ BLOC 20 : élément .logo introuvable"
+            );
+
+            return;
+        }
+
+        const settingsRef =
+        doc(db,"settings","marketplace");
+
+        const settingsSnap =
+        await getDoc(settingsRef);
+
+        if(!settingsSnap.exists()){
+
+            console.warn(
+                "⚠️ BLOC 20 : settings/marketplace introuvable"
+            );
+
+            return;
+        }
+
+        const settings =
+        settingsSnap.data() || {};
+
+        const appName =
+        String(settings.appName || "Toma").trim();
+
+        /* ---------------------------------
+           NOM AFFICHÉ DANS LE LOGO
+        --------------------------------- */
+
+        logoElement.textContent = appName;
+
+        /* ---------------------------------
+           TITRE DE LA PAGE
+        --------------------------------- */
+
+        document.title = appName;
+
+        /* ---------------------------------
+           TITRE iOS / PWA
+        --------------------------------- */
+
+        const appleTitle =
+        document.querySelector(
+            'meta[name="apple-mobile-web-app-title"]'
+        );
+
+        if(appleTitle){
+
+            appleTitle.setAttribute(
+                "content",
+                appName
+            );
+
+        }
+
+        console.log(
+            "✅ BLOC 20 — Identité Toma chargée :",
+            appName
+        );
+
+        alert(
+            "BLOC 20 — IDENTIDADE TOMA\n\n" +
+            "Nome carregado com sucesso.\n\n" +
+            "Nome : " + appName
+        );
+
+    }catch(error){
+
+        console.error(
+            "❌ BLOC 20 — Erro identidade Toma:",
+            error
+        );
+
+    }
+
+}
+/* =====================================
    CACHE PRODUITS
 ===================================== */
 
