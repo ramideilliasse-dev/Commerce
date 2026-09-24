@@ -15,7 +15,6 @@ import {
     getDoc,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
 import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -738,7 +737,12 @@ async function placeOrder() {
         const total =
             totalAfterDiscount +
             orderDeliveryFee;
+/* =====================================================
+   BLOC 22.3 — GERAR NÚMERO DA ENCOMENDA
+===================================================== */
 
+const orderNumber =
+    generateOrderNumber();
 
         await addDoc(
 
@@ -760,7 +764,7 @@ async function placeOrder() {
 
 
                 orderNumber:
-                    generateOrderNumber(),
+    orderNumber,
 
 
                 clientName:
@@ -859,7 +863,25 @@ async function placeOrder() {
 
         );
 
+/* =====================================================
+   BLOC 22.4 — NOTIFICAÇÃO WHATSAPP
+===================================================== */
 
+await notifyMerchantByWhatsApp({
+
+    orderNumber:
+        orderNumber,
+
+    clientName:
+        clientName.value,
+
+    total:
+        total,
+
+    shopName:
+        cart[0].shopName || ""
+
+});
         localStorage.removeItem(
             "checkoutCart"
         );
@@ -915,7 +937,165 @@ async function placeOrder() {
 
 }
 
+/* =========================================================
+   BLOC 22 — NOTIFICAÇÃO WHATSAPP DO COMERCIANTE
+========================================================= */
 
+async function notifyMerchantByWhatsApp(orderData) {
+
+    try {
+
+        alert(
+            "CHECKOUT — BLOC 22.1\n\n" +
+            "Preparando a notificação WhatsApp do comerciante..."
+        );
+
+
+        /*
+         * O número pertence ao comerciante.
+         * Ele já é armazenado no produto como
+         * merchantWhatsapp.
+         */
+
+        const merchantWhatsapp =
+            String(
+                cart[0]?.merchantWhatsapp || ""
+            ).trim();
+
+
+        if (!merchantWhatsapp) {
+
+            alert(
+                "CHECKOUT — BLOC 22\n\n" +
+                "A encomenda foi registrada com sucesso.\n\n" +
+                "Nenhum número WhatsApp foi encontrado para este comerciante.\n\n" +
+                "O comerciante poderá tratar a encomenda normalmente através do Dashboard Merchant."
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * Limpa o número para o formato internacional.
+         */
+
+        const cleanNumber =
+            merchantWhatsapp.replace(
+                /[^0-9]/g,
+                ""
+            );
+
+
+        if (!cleanNumber) {
+
+            alert(
+                "CHECKOUT — BLOC 22\n\n" +
+                "O número WhatsApp do comerciante é inválido.\n\n" +
+                "A encomenda continua disponível no Dashboard Merchant."
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * Mensagem curta.
+         *
+         * NÃO enviamos todos os detalhes da encomenda.
+         * O comerciante deve consultar o Dashboard Merchant.
+         */
+
+        const whatsappMessage =
+            "🔔 Nova encomenda no Toma!\n\n" +
+
+            "Pedido: " +
+            orderData.orderNumber +
+            "\n" +
+
+            "Cliente: " +
+            orderData.clientName +
+            "\n" +
+
+            "Valor: " +
+            formatPrice(
+                orderData.total
+            ) +
+            "\n\n" +
+
+            "Consulte o seu Dashboard Merchant " +
+            "para ver os detalhes e tratar da encomenda.";
+
+
+        const whatsappUrl =
+            "https://wa.me/" +
+            cleanNumber +
+            "?text=" +
+            encodeURIComponent(
+                whatsappMessage
+            );
+
+
+        alert(
+            "CHECKOUT — BLOC 22.2 ✅\n\n" +
+            "Notificação preparada com sucesso.\n\n" +
+            "Comerciante : " +
+            (
+                orderData.shopName ||
+                "Não definido"
+            ) +
+
+            "\n\n" +
+
+            "Número WhatsApp : " +
+            cleanNumber +
+
+            "\n\n" +
+
+            "A mensagem está em português.\n\n" +
+
+            "A gestão completa da encomenda continuará no Dashboard Merchant."
+        );
+
+
+        /*
+         * Abre o WhatsApp do comerciante.
+         */
+
+        window.open(
+            whatsappUrl,
+            "_blank"
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "❌ BLOC 22 — Erro WhatsApp:",
+            error
+        );
+
+
+        /*
+         * IMPORTANTE:
+         * Um erro no WhatsApp NÃO deve cancelar
+         * uma encomenda que já foi criada no Firebase.
+         */
+
+        alert(
+            "CHECKOUT — BLOC 22 ERRO ❌\n\n" +
+            "A encomenda já foi registrada no Toma.\n\n" +
+            "Não foi possível abrir a notificação WhatsApp.\n\n" +
+            "O comerciante poderá consultar a encomenda no Dashboard Merchant."
+        );
+
+    }
+
+}
 /* =========================================================
    COUPON
 ========================================================= */
