@@ -1,6 +1,7 @@
 
 import "./events.js";
 import "./ui.js";
+import "./identity.js";
 import "./profile.js";
 import "./merchant.js";
 import "./addresses.js";
