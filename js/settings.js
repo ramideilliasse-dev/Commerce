@@ -983,21 +983,191 @@ if (deleteBtn) {
     };
 
 }
+/* ===============================
+   BLOC 21 : WHATSAPP SUPPORT
+=============================== */
 
 if (helpBtn) {
 
-    helpBtn.onclick = () => {
+    helpBtn.onclick = async () => {
 
-        window.open(
-            "https://wa.me/244922623238?text=Olá preciso de ajuda",
-            "_blank"
-        );
+        try {
+
+            /* ===============================
+               LECTURE DES PARAMÈTRES
+               Firebase → settings/marketplace
+            =============================== */
+
+            const settingsRef =
+                doc(db, "settings", "marketplace");
+
+            const settingsSnap =
+                await getDoc(settingsRef);
+
+
+            if (!settingsSnap.exists()) {
+
+                alert(
+                    "BLOC 21 — ERREUR\n\n" +
+                    "Les paramètres WhatsApp de Toma " +
+                    "sont introuvables dans Firebase."
+                );
+
+                return;
+
+            }
+
+
+            const settings =
+                settingsSnap.data() || {};
+
+
+            /* ===============================
+               PARAMÈTRES WHATSAPP
+            =============================== */
+
+            const supportEnabled =
+                settings.whatsappSupportEnabled === true;
+
+
+            const whatsappNumber =
+                String(
+                    settings.whatsappNumber || ""
+                ).trim();
+
+
+            const defaultMessage =
+                String(
+                    settings.whatsappDefaultMessage ||
+                    "Olá, preciso de ajuda."
+                ).trim();
+
+
+            /* ===============================
+               VÉRIFICATION ACTIVATION
+            =============================== */
+
+            if (!supportEnabled) {
+
+                alert(
+                    "BLOC 21 — SUPPORT WHATSAPP\n\n" +
+                    "O suporte WhatsApp está desativado " +
+                    "nas configurações do Toma."
+                );
+
+                return;
+
+            }
+
+
+            /* ===============================
+               VÉRIFICATION NUMÉRO
+            =============================== */
+
+            if (!whatsappNumber) {
+
+                alert(
+                    "BLOC 21 — ERRO\n\n" +
+                    "Nenhum número WhatsApp foi configurado."
+                );
+
+                return;
+
+            }
+
+
+            /* ===============================
+               NETTOYAGE DU NUMÉRO
+            =============================== */
+
+            const cleanNumber =
+                whatsappNumber.replace(
+                    /[^0-9]/g,
+                    ""
+                );
+
+
+            if (!cleanNumber) {
+
+                alert(
+                    "BLOC 21 — ERRO\n\n" +
+                    "O número WhatsApp configurado é inválido."
+                );
+
+                return;
+
+            }
+
+
+            /* ===============================
+               CRÉATION DU MESSAGE
+            =============================== */
+
+            const encodedMessage =
+                encodeURIComponent(
+                    defaultMessage
+                );
+
+
+            const whatsappUrl =
+                "https://wa.me/" +
+                cleanNumber +
+                "?text=" +
+                encodedMessage;
+
+
+            /* ===============================
+               CONFIRMATION TEST
+            =============================== */
+
+            alert(
+                "BLOC 21 — WHATSAPP SUPPORT ✅\n\n" +
+
+                "Suporte : ATIVADO\n\n" +
+
+                "Número : " +
+                cleanNumber +
+
+                "\n\nMensagem :\n" +
+                defaultMessage +
+
+                "\n\nFirebase confirmou os parâmetros."
+            );
+
+
+            /* ===============================
+               OUVERTURE WHATSAPP
+            =============================== */
+
+            window.open(
+                whatsappUrl,
+                "_blank"
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "❌ BLOC 21 — Erro WhatsApp:",
+                error
+            );
+
+
+            alert(
+                "BLOC 21 — ERRO\n\n" +
+                error.message
+            );
+
+        }
 
     };
 
 }
-console.log("FIN BLOC 9");
 
+
+console.log(
+    "✅ BLOC 21 — WhatsApp Support carregado"
+);
 /* ===============================
    BLOC 10A : ADRESSES
 =============================== */
