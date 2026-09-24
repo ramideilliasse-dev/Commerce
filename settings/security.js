@@ -3,14 +3,17 @@
 // Partie 1
 // ===============================
 
-import { auth } from "../firebase.js";
+import { auth, db } from "../firebase.js";
 
 import {
     sendEmailVerification,
     sendPasswordResetEmail,
     deleteUser
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
+import {
+    doc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import {
     settingsEvents
 } from "./events.js";
@@ -31,7 +34,7 @@ const changePasswordBtn = $("changePasswordBtn");
 const verifyEmailBtn = $("verifyEmailBtn");
 
 const deleteBtn = $("deleteBtn");
-
+const helpBtn = $("helpBtn");
 // Attendre profile.js
 
 settingsEvents.addEventListener(
@@ -250,7 +253,188 @@ if (deleteBtn) {
 
 }
 
+// ===============================
+// SECURITY.JS
+// BLOC 21
+// AJUDA / WHATSAPP SUPPORT
+// ===============================
 
+if (helpBtn) {
+
+    helpBtn.onclick = async () => {
+
+        try {
+
+            /* ===============================
+               TEST DU BOUTON
+            =============================== */
+
+            alert(
+                "BLOC 21 — AJUDA\n\n" +
+                "O botão de suporte foi acionado."
+            );
+
+
+            /* ===============================
+               LER CONFIGURAÇÕES TOMA
+            =============================== */
+
+            const settingsRef =
+                doc(
+                    db,
+                    "settings",
+                    "marketplace"
+                );
+
+
+            const settingsSnap =
+                await getDoc(settingsRef);
+
+
+            if (!settingsSnap.exists()) {
+
+                alert(
+                    "BLOC 21 — ERRO\n\n" +
+                    "As configurações do Toma " +
+                    "não foram encontradas."
+                );
+
+                return;
+
+            }
+
+
+            const settings =
+                settingsSnap.data() || {};
+
+
+            /* ===============================
+               WHATSAPP
+            =============================== */
+
+            const supportEnabled =
+                settings.whatsappSupportEnabled === true;
+
+
+            const whatsappNumber =
+                String(
+                    settings.whatsappNumber || ""
+                ).trim();
+
+
+            const defaultMessage =
+                String(
+                    settings.whatsappDefaultMessage ||
+                    "Olá, preciso de ajuda."
+                ).trim();
+
+
+            /* ===============================
+               SUPPORT DÉSACTIVÉ
+            =============================== */
+
+            if (!supportEnabled) {
+
+                alert(
+                    "BLOC 21 — SUPORTE\n\n" +
+                    "O suporte WhatsApp está " +
+                    "desativado nas configurações do Toma."
+                );
+
+                return;
+
+            }
+
+
+            /* ===============================
+               NUMÉRO MANQUANT
+            =============================== */
+
+            if (!whatsappNumber) {
+
+                alert(
+                    "BLOC 21 — ERRO\n\n" +
+                    "Nenhum número WhatsApp foi configurado."
+                );
+
+                return;
+
+            }
+
+
+            /* ===============================
+               NETTOYAGE NUMÉRO
+            =============================== */
+
+            const cleanNumber =
+                whatsappNumber.replace(
+                    /[^0-9]/g,
+                    ""
+                );
+
+
+            /* ===============================
+               URL WHATSAPP
+            =============================== */
+
+            const whatsappUrl =
+                "https://wa.me/" +
+                cleanNumber +
+                "?text=" +
+                encodeURIComponent(
+                    defaultMessage
+                );
+
+
+            /* ===============================
+               CONFIRMATION
+            =============================== */
+
+            alert(
+                "BLOC 21 — WHATSAPP SUPPORT ✅\n\n" +
+
+                "Suporte : ATIVADO\n\n" +
+
+                "Número : " +
+                cleanNumber +
+
+                "\n\nMensagem :\n" +
+                defaultMessage +
+
+                "\n\nFirebase confirmou os parâmetros."
+            );
+
+
+            /* ===============================
+               OUVERTURE WHATSAPP
+            =============================== */
+
+            window.open(
+                whatsappUrl,
+                "_blank"
+            );
+
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "❌ BLOC 21 — Erro:",
+                error
+            );
+
+
+            alert(
+                "BLOC 21 — ERRO\n\n" +
+                error.message
+            );
+
+        }
+
+    };
+
+}
 // ===============================
 // SECURITY.JS
 // Partie 5
