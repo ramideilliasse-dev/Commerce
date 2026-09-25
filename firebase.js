@@ -80,9 +80,11 @@ export const db =
   );
 
 
-export const messaging =
-  getMessaging(app);
+// ============================================================
+// TEST — FCM TEMPORAIREMENT DÉSACTIVÉ
+// ============================================================
 
+// export const messaging = getMessaging(app);
 
 // ============================================================
 // BLOC 23B.3 — PERSISTENCE AUTHENTIFICATION
