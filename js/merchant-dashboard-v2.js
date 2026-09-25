@@ -3,7 +3,11 @@
 // TOMA
 // =====================================
 
-import { db, auth } from "../firebase.js";
+import {
+    db,
+    auth,
+    initializeTomaNotifications
+} from "../firebase.js";
 
 import {
 doc,
@@ -350,7 +354,101 @@ if(notificationBtn){
     };
 
 }
+/* =====================================
+BLOC 23C
+ACTIVATION DES NOTIFICATIONS TOMA
+===================================== */
 
+const activateTomaNotificationsBtn =
+document.getElementById(
+    "activateTomaNotificationsBtn"
+);
+
+if(activateTomaNotificationsBtn){
+
+    activateTomaNotificationsBtn.onclick =
+    async ()=>{
+
+        try{
+
+            alert(
+                "BLOC 23C — Activation des notifications Toma."
+            );
+
+            activateTomaNotificationsBtn.disabled = true;
+
+            const result =
+            await initializeTomaNotifications();
+
+            console.log(
+                "BLOC 23C — Résultat:",
+                result
+            );
+
+            if(result.success){
+
+                alert(
+                    "✅ Notificações Toma ativadas com sucesso!\n\n" +
+                    "Este dispositivo está agora preparado para receber notificações."
+                );
+
+                activateTomaNotificationsBtn.innerHTML = `
+
+                    <span class="material-symbols-rounded">
+                        notifications_active
+                    </span>
+
+                `;
+
+                activateTomaNotificationsBtn.title =
+                    "Notificações Toma ativadas";
+
+            }
+
+            else if(result.reason === "permission-denied"){
+
+                alert(
+                    "⚠️ As notificações foram recusadas.\n\n" +
+                    "Autorize as notificações nas configurações do navegador/dispositivo."
+                );
+
+                activateTomaNotificationsBtn.disabled = false;
+
+            }
+
+            else{
+
+                alert(
+                    "❌ Não foi possível ativar as notificações Toma.\n\n" +
+                    "Motivo: " +
+                    (result.reason || "erro desconhecido")
+                );
+
+                activateTomaNotificationsBtn.disabled = false;
+
+            }
+
+        }
+
+        catch(error){
+
+            console.error(
+                "BLOC 23C — Erro:",
+                error
+            );
+
+            alert(
+                "❌ ERRO BLOC 23C\n\n" +
+                error.message
+            );
+
+            activateTomaNotificationsBtn.disabled = false;
+
+        }
+
+    };
+
+}
 /* =====================================
 QUICK ANIMATIONS
 ===================================== */
