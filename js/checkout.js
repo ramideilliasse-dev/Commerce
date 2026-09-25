@@ -53,7 +53,32 @@ let currentDeliveryFee = 0;
 ========================================================= */
 
 let ordersEnabled = true;
+// ============================================================
+// BLOC 22 — VARIÁVEIS WHATSAPP
+// ============================================================
 
+let pendingMerchantWhatsappUrl = "";
+
+const merchantWhatsappAction =
+    document.getElementById("merchantWhatsappAction");
+
+const notifyMerchantWhatsAppBtn =
+    document.getElementById("notifyMerchantWhatsAppBtn");
+
+const continueToMyOrdersBtn =
+    document.getElementById("continueToMyOrdersBtn");
+
+const merchantWhatsappActionMessage =
+    document.getElementById("merchantWhatsappActionMessage");
+
+console.log(
+    "BLOC 22 — Elementos WhatsApp carregados:",
+    {
+        merchantWhatsappAction,
+        notifyMerchantWhatsAppBtn,
+        continueToMyOrdersBtn
+    }
+);
 
 /* ===============================
    DOM
@@ -867,44 +892,54 @@ const orderNumber =
    BLOC 22.4 — NOTIFICAÇÃO WHATSAPP
 ===================================================== */
 
+// ============================================================
+// BLOC 22 — FINALIZAÇÃO DA ENCOMENDA
+// ============================================================
+
 await notifyMerchantByWhatsApp({
 
-    orderNumber:
-        orderNumber,
+    orderNumber,
 
     clientName:
         clientName.value,
 
-    total:
-        total,
+    total,
 
     shopName:
         cart[0].shopName || ""
 
 });
-        localStorage.removeItem(
-            "checkoutCart"
-        );
 
+// ------------------------------------------------------------
+// Limpar carrinho
+// ------------------------------------------------------------
 
-        localStorage.removeItem(
-            "cart"
-        );
+localStorage.removeItem("cart");
 
+cart = [];
 
-        showToast(
-            "✅ Pedido enviado",
-            "success"
-        );
+// ------------------------------------------------------------
+// Mostrar sucesso
+// ------------------------------------------------------------
 
+showToast(
+    "Pedido realizado com sucesso!"
+);
 
-        setTimeout(() => {
+// ------------------------------------------------------------
+// BLOC 22 — NÃO REDIRECIONAR AUTOMATICAMENTE
+// ------------------------------------------------------------
+//
+// O cliente agora pode:
+// 1. Notificar o comerciante pelo WhatsApp
+// 2. Ir para Meus Pedidos
+//
+// ------------------------------------------------------------
 
-            window.location.href =
-                "my-orders.html";
-
-        }, 1000);
-
+console.log(
+    "BLOC 22 — Pedido finalizado. " +
+    "Aguardando ação do usuário."
+);
 
     }
 
@@ -937,9 +972,10 @@ await notifyMerchantByWhatsApp({
 
 }
 
-/* =========================================================
-   BLOC 22 — NOTIFICAÇÃO WHATSAPP DO COMERCIANTE
-========================================================= */
+
+// ============================================================
+// BLOC 22 — PREPARAR NOTIFICAÇÃO WHATSAPP
+// ============================================================
 
 async function notifyMerchantByWhatsApp(orderData) {
 
@@ -950,63 +986,57 @@ async function notifyMerchantByWhatsApp(orderData) {
             "Preparando a notificação WhatsApp do comerciante..."
         );
 
-
-        /*
-         * O número pertence ao comerciante.
-         * Ele já é armazenado no produto como
-         * merchantWhatsapp.
-         */
-
         const merchantWhatsapp =
-            String(
-                cart[0]?.merchantWhatsapp || ""
-            ).trim();
+            String(cart[0]?.merchantWhatsapp || "").trim();
 
+        // --------------------------------------------------------
+        // Verificar se o comerciante possui WhatsApp
+        // --------------------------------------------------------
 
         if (!merchantWhatsapp) {
+
+            if (merchantWhatsappAction) {
+                merchantWhatsappAction.hidden = true;
+            }
 
             alert(
                 "CHECKOUT — BLOC 22\n\n" +
                 "A encomenda foi registrada com sucesso.\n\n" +
-                "Nenhum número WhatsApp foi encontrado para este comerciante.\n\n" +
-                "O comerciante poderá tratar a encomenda normalmente através do Dashboard Merchant."
+                "Nenhum número WhatsApp foi encontrado " +
+                "para este comerciante.\n\n" +
+                "A encomenda continua disponível no " +
+                "Dashboard Merchant."
             );
 
             return;
-
         }
 
-
-        /*
-         * Limpa o número para o formato internacional.
-         */
+        // --------------------------------------------------------
+        // Limpar número
+        // --------------------------------------------------------
 
         const cleanNumber =
-            merchantWhatsapp.replace(
-                /[^0-9]/g,
-                ""
-            );
-
+            merchantWhatsapp.replace(/[^0-9]/g, "");
 
         if (!cleanNumber) {
+
+            if (merchantWhatsappAction) {
+                merchantWhatsappAction.hidden = true;
+            }
 
             alert(
                 "CHECKOUT — BLOC 22\n\n" +
                 "O número WhatsApp do comerciante é inválido.\n\n" +
-                "A encomenda continua disponível no Dashboard Merchant."
+                "A encomenda continua disponível no " +
+                "Dashboard Merchant."
             );
 
             return;
-
         }
 
-
-        /*
-         * Mensagem curta.
-         *
-         * NÃO enviamos todos os detalhes da encomenda.
-         * O comerciante deve consultar o Dashboard Merchant.
-         */
+        // --------------------------------------------------------
+        // Criar mensagem curta em português
+        // --------------------------------------------------------
 
         const whatsappMessage =
             "🔔 Nova encomenda no Toma!\n\n" +
@@ -1020,80 +1050,113 @@ async function notifyMerchantByWhatsApp(orderData) {
             "\n" +
 
             "Valor: " +
-            formatPrice(
-                orderData.total
-            ) +
+            formatPrice(orderData.total) +
             "\n\n" +
 
             "Consulte o seu Dashboard Merchant " +
             "para ver os detalhes e tratar da encomenda.";
 
+        // --------------------------------------------------------
+        // Criar URL WhatsApp
+        // --------------------------------------------------------
 
-        const whatsappUrl =
+        pendingMerchantWhatsappUrl =
             "https://wa.me/" +
             cleanNumber +
             "?text=" +
-            encodeURIComponent(
-                whatsappMessage
-            );
+            encodeURIComponent(whatsappMessage);
 
+        // --------------------------------------------------------
+        // Preparar botão
+        // --------------------------------------------------------
+
+        if (notifyMerchantWhatsAppBtn) {
+
+            notifyMerchantWhatsAppBtn.href =
+                pendingMerchantWhatsappUrl;
+
+        }
+
+        if (merchantWhatsappActionMessage) {
+
+            merchantWhatsappActionMessage.textContent =
+                "A encomenda foi registrada. " +
+                "Você pode avisar o comerciante pelo WhatsApp. " +
+                "Os detalhes completos estão disponíveis no " +
+                "Dashboard Merchant.";
+
+        }
+
+        if (merchantWhatsappAction) {
+
+            merchantWhatsappAction.hidden = false;
+
+        }
+
+        // --------------------------------------------------------
+        // Diagnóstico
+        // --------------------------------------------------------
 
         alert(
             "CHECKOUT — BLOC 22.2 ✅\n\n" +
-            "Notificação preparada com sucesso.\n\n" +
-            "Comerciante : " +
-            (
-                orderData.shopName ||
-                "Não definido"
-            ) +
 
+            "Notificação WhatsApp preparada com sucesso.\n\n" +
+
+            "Comerciante : " +
+            (orderData.shopName || "Não definido") +
             "\n\n" +
 
             "Número WhatsApp : " +
             cleanNumber +
-
             "\n\n" +
 
-            "A mensagem está em português.\n\n" +
+            "O botão de notificação foi ativado.\n\n" +
 
-            "A gestão completa da encomenda continuará no Dashboard Merchant."
+            "O usuário poderá escolher quando abrir o WhatsApp."
         );
 
-
-        /*
-         * Abre o WhatsApp do comerciante.
-         */
-
-        window.open(
-            whatsappUrl,
-            "_blank"
-        );
-
-
-    }
-
-    catch (error) {
+    } catch(error) {
 
         console.error(
-            "❌ BLOC 22 — Erro WhatsApp:",
+            "❌ BLOC 22 — Erro ao preparar WhatsApp:",
             error
         );
 
-
-        /*
-         * IMPORTANTE:
-         * Um erro no WhatsApp NÃO deve cancelar
-         * uma encomenda que já foi criada no Firebase.
-         */
+        if (merchantWhatsappAction) {
+            merchantWhatsappAction.hidden = true;
+        }
 
         alert(
             "CHECKOUT — BLOC 22 ERRO ❌\n\n" +
-            "A encomenda já foi registrada no Toma.\n\n" +
-            "Não foi possível abrir a notificação WhatsApp.\n\n" +
-            "O comerciante poderá consultar a encomenda no Dashboard Merchant."
-        );
 
+            "A encomenda já foi registrada no Toma.\n\n" +
+
+            "Não foi possível preparar a notificação WhatsApp.\n\n" +
+
+            "A encomenda continua disponível no " +
+            "Dashboard Merchant."
+        );
     }
+}
+// ============================================================
+// BLOC 22 — BOTÃO MEUS PEDIDOS
+// ============================================================
+
+if (continueToMyOrdersBtn) {
+
+    continueToMyOrdersBtn.addEventListener(
+        "click",
+        () => {
+
+            alert(
+                "CHECKOUT — BLOC 22.3\n\n" +
+                "Redirecionando para Meus Pedidos..."
+            );
+
+            window.location.href = "my-orders.html";
+
+        }
+    );
 
 }
 /* =========================================================
