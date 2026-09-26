@@ -3810,11 +3810,7 @@ function initializeReportsRealPeriodFilter() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.8.1\n\n" +
-            "Initialisation du filtre de période réel..."
-        );
-
+        
         const reportsPeriodSelect =
             document.getElementById(
                 "reportsPeriodSelect"
