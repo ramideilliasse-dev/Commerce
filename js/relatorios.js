@@ -1285,10 +1285,7 @@ async function loadReportsCommissionRate() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.29.1\n\n" +
-            "Lecture du taux de commission depuis Firebase..."
-        );
+        
 
         // --------------------------------------------------
         // DOCUMENT SETTINGS
@@ -1366,25 +1363,7 @@ async function loadReportsCommissionRate() {
         window.reportsCommissionRate =
             commissionRate;
 
-        alert(
-            "RELATÓRIOS — BLOC 12.29.2\n\n" +
-            "Taux de commission récupéré avec succès.\n\n" +
-            "Source : settings/marketplace\n\n" +
-            "Commission Toma : " +
-            commissionRate +
-            "%\n\n" +
-            "Aucune donnée Firestore modifiée.\n" +
-            "Aucun nouvel ID HTML créé."
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.29 TERMINÉ ✅\n\n" +
-            "Les rapports utilisent maintenant le taux configuré dans Dashboard Settings.\n\n" +
-            "Taux actuel : " +
-            commissionRate +
-            "%\n\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
 
         return commissionRate;
 
@@ -2454,11 +2433,7 @@ async function calculateMerchantsStatistics() {
 
         }
 
-        alert(
-            "RELATÓRIOS — BLOC 11.5.3\n\n" +
-            "Les éléments du Bloc 6 commerçants sont détectés.\n\n" +
-            "Aucun nouvel ID HTML créé."
-        );
+        
 
         activeMerchantsAnalysis.textContent =
             activeMerchants;
@@ -2847,12 +2822,7 @@ async function calculateOfficialStoresStatistics() {
 
         }
 
-        alert(
-            "RELATÓRIOS — BLOC 11.7.4\n\n" +
-            "Les éléments HTML des Lojas Oficiais sont détectés.\n\n" +
-            "Aucun nouvel ID HTML créé."
-        );
-
+        
         const formatKz = (value) => {
 
             return (
@@ -4090,10 +4060,7 @@ function calculateFilteredReportsStatistics() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.10.1\n\n" +
-            "Recalcul des statistiques selon la période..."
-        );
+        
 
         const filteredOrders =
             window.filteredReportsOrders;
@@ -4149,27 +4116,7 @@ const estimatedCommission =
         commissionRate /
         100
     );
-        alert(
-            "RELATÓRIOS — BLOC 12.10.2\n\n" +
-            "Statistiques filtrées calculées.\n\n" +
-            "Commandes : " +
-            totalOrders +
-            "\n\n" +
-            "Produits vendus : " +
-            totalProductsSold +
-            "\n\n" +
-            "Chiffre d'affaires : " +
-            totalRevenue.toLocaleString("pt-AO") +
-            " Kz\n\n" +
-            "Panier moyen : " +
-            averageOrder.toLocaleString("pt-AO") +
-            " Kz\n\n" +
-            "Commission estimée : " +
-            estimatedCommission.toLocaleString("pt-AO") +
-            " Kz\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
 
         window.filteredReportsStatistics = {
 
@@ -4182,23 +4129,7 @@ const estimatedCommission =
 
         };
 
-        alert(
-            "RELATÓRIOS — BLOC 12.10 TERMINÉ ✅\n\n" +
-            "Statistiques filtrées prêtes.\n\n" +
-            "Commandes : " +
-            totalOrders +
-            "\n\n" +
-            "Produits vendus : " +
-            totalProductsSold +
-            "\n\n" +
-            "Chiffre d'affaires : " +
-            totalRevenue.toLocaleString("pt-AO") +
-            " Kz\n\n" +
-            "Les données sont conservées en mémoire.\n\n" +
-            "Aucune donnée Firestore modifiée.\n" +
-            "Aucun nouvel ID HTML créé."
-        );
-
+        
     }
     catch (error) {
 
@@ -4223,10 +4154,7 @@ function displayFilteredReportsStatistics() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.11.1\n\n" +
-            "Début de l'affichage des statistiques filtrées..."
-        );
+        
 
         const statistics =
             window.filteredReportsStatistics;
@@ -4285,15 +4213,7 @@ function displayFilteredReportsStatistics() {
             );
         }
 
-        alert(
-            "RELATÓRIOS — BLOC 12.11.2\n\n" +
-            "Tous les IDs nécessaires ont été détectés.\n\n" +
-            "reportTotalSales : OK\n" +
-            "reportTotalRevenue : OK\n" +
-            "reportTotalCommission : OK\n" +
-            "reportTotalOrders : OK\n\n" +
-            "Aucun nouvel ID HTML créé."
-        );
+        
 
         // ---------------------------------------------
         // FORMATAGE DES VALEURS
@@ -4342,42 +4262,7 @@ function displayFilteredReportsStatistics() {
                 "pt-AO"
             );
 
-        alert(
-            "RELATÓRIOS — BLOC 12.11.3\n\n" +
-            "Les cartes ont été mises à jour.\n\n" +
-            "Ventes : " +
-            formattedRevenue +
-            "\n\n" +
-            "Chiffre d'affaires : " +
-            formattedRevenue +
-            "\n\n" +
-            "Commission estimée : " +
-            formattedCommission +
-            "\n\n" +
-            "Commandes : " +
-            totalOrders +
-            "\n\n" +
-            "Aucune donnée Firestore modifiée.\n" +
-            "Aucun nouvel ID HTML créé."
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.11 TERMINÉ ✅\n\n" +
-            "Les statistiques filtrées sont maintenant affichées dans les cartes du tableau de bord.\n\n" +
-            "Période sélectionnée : synchronisée\n" +
-            "Chiffre d'affaires : " +
-            formattedRevenue +
-            "\n" +
-            "Commandes : " +
-            totalOrders +
-            "\n" +
-            "Commission : " +
-            formattedCommission +
-            "\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
-
+        
     }
     catch (error) {
 
@@ -4402,10 +4287,7 @@ function prepareReportsGrowthComparison() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.12.1\n\n" +
-            "Préparation de la comparaison avec la période précédente..."
-        );
+        
 
         if (!Array.isArray(reportsOrders)) {
             throw new Error(
@@ -4537,12 +4419,7 @@ function prepareReportsGrowthComparison() {
 
         else {
 
-            alert(
-                "RELATÓRIOS — BLOC 12.12.2\n\n" +
-                "La période sélectionnée ne possède pas encore de comparaison automatique.\n\n" +
-                "Aucune donnée ne sera modifiée.\n" +
-                "Aucun nouvel ID HTML créé."
-            );
+            
 
             window.reportsGrowthComparison = null;
 
@@ -4654,50 +4531,7 @@ function prepareReportsGrowthComparison() {
 
         };
 
-        alert(
-            "RELATÓRIOS — BLOC 12.12.3\n\n" +
-            "Comparaison préparée avec succès.\n\n" +
-            "Période actuelle : " +
-            currentStartDate.toLocaleDateString(
-                "pt-AO"
-            ) +
-            " → " +
-            now.toLocaleDateString(
-                "pt-AO"
-            ) +
-            "\n\n" +
-            "Période précédente : " +
-            previousStartDate.toLocaleDateString(
-                "pt-AO"
-            ) +
-            " → " +
-            previousEndDate.toLocaleDateString(
-                "pt-AO"
-            ) +
-            "\n\n" +
-            "Commandes précédentes : " +
-            previousOrdersCount +
-            "\n\n" +
-            "Chiffre d'affaires précédent : " +
-            previousRevenue.toLocaleString(
-                "pt-AO"
-            ) +
-            " Kz\n\n" +
-            "Produits précédents : " +
-            previousProductsSold +
-            "\n\n" +
-            "Les données sont conservées uniquement en mémoire.\n\n" +
-            "Aucune donnée Firestore modifiée.\n" +
-            "Aucun nouvel ID HTML créé."
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.12 TERMINÉ ✅\n\n" +
-            "Base de comparaison prête.\n\n" +
-            "La croissance réelle pourra maintenant être calculée à partir de ces données.\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
 
     }
     catch (error) {
@@ -4723,10 +4557,7 @@ function calculateReportsRealGrowth() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.13.1\n\n" +
-            "Calcul de la croissance réelle..."
-        );
+        
 
         const currentStatistics =
             window.filteredReportsStatistics;
@@ -4882,48 +4713,7 @@ function calculateReportsRealGrowth() {
 
         }
 
-        alert(
-            "RELATÓRIOS — BLOC 12.13.2\n\n" +
-            "Croissance réelle calculée.\n\n" +
-            "Ventes : " +
-            formatGrowth(salesGrowth) +
-            "\n\n" +
-            "Chiffre d'affaires : " +
-            formatGrowth(revenueGrowth) +
-            "\n\n" +
-            "Commandes : " +
-            formatGrowth(ordersGrowth) +
-            "\n\n" +
-            "Produits : " +
-            formatGrowth(productsGrowth) +
-            "\n\n" +
-            "Période actuelle :\n" +
-            currentRevenue.toLocaleString("pt-AO") +
-            " Kz / " +
-            currentOrders +
-            " commandes / " +
-            currentProducts +
-            " produits\n\n" +
-            "Période précédente :\n" +
-            previousRevenue.toLocaleString("pt-AO") +
-            " Kz / " +
-            previousOrders +
-            " commandes / " +
-            previousProducts +
-            " produits\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.13 TERMINÉ ✅\n\n" +
-            "Le calcul de croissance réelle est prêt.\n\n" +
-            "Les pourcentages sont conservés en mémoire.\n\n" +
-            "Aucune carte HTML n'est encore modifiée.\n" +
-            "Aucune donnée Firestore modifiée.\n" +
-            "Aucun nouvel ID HTML créé."
-        );
-
+        
     }
     catch (error) {
 
@@ -4948,11 +4738,7 @@ function displayReportsRealGrowth() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.14.1\n\n" +
-            "Début de l'affichage de la croissance réelle..."
-        );
-
+        
         const growth =
             window.reportsRealGrowth;
 
@@ -5010,15 +4796,7 @@ function displayReportsRealGrowth() {
             );
         }
 
-        alert(
-            "RELATÓRIOS — BLOC 12.14.2\n\n" +
-            "Tous les IDs de croissance ont été détectés.\n\n" +
-            "reportSalesGrowth : OK\n" +
-            "reportRevenueGrowth : OK\n" +
-            "reportOrdersGrowth : OK\n" +
-            "financialRevenueGrowth : OK\n\n" +
-            "Aucun nouvel ID HTML créé."
-        );
+        
 
         // ---------------------------------------------
         // FORMATAGE
@@ -5078,32 +4856,7 @@ function displayReportsRealGrowth() {
         financialRevenueGrowth.textContent =
             revenueGrowth;
 
-        alert(
-            "RELATÓRIOS — BLOC 12.14.3\n\n" +
-            "Croissance réelle affichée dans les cartes.\n\n" +
-            "Ventes : " +
-            salesGrowth +
-            "\n\n" +
-            "Chiffre d'affaires : " +
-            revenueGrowth +
-            "\n\n" +
-            "Commandes : " +
-            ordersGrowth +
-            "\n\n" +
-            "Croissance financière : " +
-            revenueGrowth +
-            "\n\n" +
-            "Aucune donnée Firestore modifiée.\n" +
-            "Aucun nouvel ID HTML créé."
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.14 TERMINÉ ✅\n\n" +
-            "La croissance réelle est maintenant visible dans le tableau de bord.\n\n" +
-            "Les valeurs sont synchronisées avec la période sélectionnée.\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
 
     }
     catch (error) {
@@ -5129,10 +4882,7 @@ function styleReportsRealGrowth() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.15.1\n\n" +
-            "Préparation du style des indicateurs de croissance..."
-        );
+        
 
         const growth =
             window.reportsRealGrowth;
@@ -5178,11 +4928,7 @@ function styleReportsRealGrowth() {
             );
         }
 
-        alert(
-            "RELATÓRIOS — BLOC 12.15.2\n\n" +
-            "Les indicateurs de croissance sont prêts.\n\n" +
-            "Aucun nouvel ID HTML créé."
-        );
+        
 
         // ---------------------------------------------
         // APPLICATION DU STYLE
@@ -5255,25 +5001,7 @@ function styleReportsRealGrowth() {
             growth.revenueGrowth
         );
 
-        alert(
-            "RELATÓRIOS — BLOC 12.15.3\n\n" +
-            "Style appliqué avec succès.\n\n" +
-            "Hausse : vert\n" +
-            "Baisse : rouge\n" +
-            "Stable : gris\n" +
-            "Nouveau : bleu\n\n" +
-            "Les valeurs restent synchronisées avec la période sélectionnée.\n\n" +
-            "Aucune donnée Firestore modifiée.\n" +
-            "Aucun nouvel ID HTML créé."
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.15 TERMINÉ ✅\n\n" +
-            "Les indicateurs de croissance disposent maintenant d'un style dynamique.\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
-
+        
     }
     catch (error) {
 
@@ -5298,10 +5026,7 @@ function prepareSalesChartData() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.16.1\n\n" +
-            "Préparation des données du graphique..."
-        );
+        
 
         const filteredOrders =
             window.filteredReportsOrders;
@@ -5547,33 +5272,7 @@ function prepareSalesChartData() {
         // ALERTES DE VÉRIFICATION
         // ---------------------------------------------
 
-        alert(
-            "RELATÓRIOS — BLOC 12.16.2\n\n" +
-            "Données du graphique préparées.\n\n" +
-            "Période : " +
-            selectedPeriod +
-            "\n\n" +
-            "Nombre de jours analysés : " +
-            numberOfDays +
-            "\n\n" +
-            "Commandes filtrées : " +
-            filteredOrders.length +
-            "\n\n" +
-            "Jours contenant des ventes : " +
-            daysWithSales.length +
-            "\n\n" +
-            "Total des ventes : " +
-            totalSales.toLocaleString(
-                "pt-AO"
-            ) +
-            " Kz\n\n" +
-            "Moyenne par jour : " +
-            averageSales.toLocaleString(
-                "pt-AO"
-            ) +
-            " Kz"
-        );
-
+        
         if (bestDay) {
 
             alert(
@@ -5593,21 +5292,11 @@ function prepareSalesChartData() {
         }
         else {
 
-            alert(
-                "RELATÓRIOS — BLOC 12.16.3\n\n" +
-                "Aucun jour avec des ventes détecté.\n\n" +
-                "Le graphique pourra afficher son état vide."
-            );
+            
 
         }
 
-        alert(
-            "RELATÓRIOS — BLOC 12.16 TERMINÉ ✅\n\n" +
-            "Les données journalières du graphique sont prêtes.\n\n" +
-            "Aucun graphique n'est encore dessiné.\n\n" +
-            "Aucune donnée Firestore modifiée.\n" +
-            "Aucun nouvel ID HTML créé."
-        );
+        
 
     }
     catch (error) {
@@ -5633,11 +5322,7 @@ function displaySalesChartStatistics() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.17.1\n\n" +
-            "Début de l'affichage des statistiques du graphique..."
-        );
-
+        
         const chartData =
             window.salesChartData;
 
@@ -5728,18 +5413,7 @@ function displaySalesChartStatistics() {
             );
         }
 
-        alert(
-            "RELATÓRIOS — BLOC 12.17.2\n\n" +
-            "Tous les éléments du graphique ont été détectés.\n\n" +
-            "salesChartPeriod : OK\n" +
-            "salesChartTotal : OK\n" +
-            "salesChartAverage : OK\n" +
-            "salesChartBestDay : OK\n" +
-            "salesChartContainer : OK\n" +
-            "salesChart : OK\n" +
-            "salesChartEmpty : OK\n\n" +
-            "Aucun nouvel ID HTML créé."
-        );
+        
 
         // ---------------------------------------------
         // AFFICHAGE DU TOTAL
@@ -5819,45 +5493,7 @@ function displaySalesChartStatistics() {
         salesChartContainer.style.display =
             "block";
 
-        alert(
-            "RELATÓRIOS — BLOC 12.17.3\n\n" +
-            "Statistiques du graphique affichées.\n\n" +
-            "Total : " +
-            chartData.totalSales.toLocaleString(
-                "pt-AO"
-            ) +
-            " Kz\n\n" +
-            "Moyenne : " +
-            chartData.averageSales.toLocaleString(
-                "pt-AO"
-            ) +
-            " Kz\n\n" +
-            "Meilleur jour : " +
-            (
-                chartData.bestDay
-                    ? chartData.bestDay.date
-                    : "Aucun"
-            ) +
-            "\n\n" +
-            "État du graphique : " +
-            (
-                chartData.totalSales > 0
-                    ? "Données disponibles"
-                    : "Aucune vente"
-            ) +
-            "\n\n" +
-            "Aucune donnée Firestore modifiée.\n" +
-            "Aucun nouvel ID HTML créé."
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.17 TERMINÉ ✅\n\n" +
-            "La section Sales Performance est maintenant synchronisée avec les données réelles.\n\n" +
-            "Le graphique lui-même sera dessiné dans le prochain bloc.\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
-
+        
     }
     catch (error) {
 
@@ -5881,10 +5517,7 @@ function drawRealSalesChart() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.18.1\n\n" +
-            "Préparation du graphique réel des ventes..."
-        );
+        
 
         const chartData =
             window.salesChartData;
@@ -5928,15 +5561,7 @@ function drawRealSalesChart() {
             );
         }
 
-        alert(
-            "RELATÓRIOS — BLOC 12.18.2\n\n" +
-            "Éléments du graphique détectés.\n\n" +
-            "salesChart : DIV\n" +
-            "salesChartContainer : OK\n" +
-            "salesChartEmpty : OK\n\n" +
-            "Le graphique sera dessiné dans le DIV existant.\n\n" +
-            "Aucun nouvel ID HTML créé."
-        );
+        
 
         /*
          * État vide
@@ -5956,13 +5581,7 @@ function drawRealSalesChart() {
             salesChartEmpty.style.display =
                 "block";
 
-            alert(
-                "RELATÓRIOS — BLOC 12.18.3\n\n" +
-                "Aucune vente disponible pour cette période.\n\n" +
-                "Le graphique reste masqué.\n\n" +
-                "Aucune donnée Firestore modifiée.\n" +
-                "Aucun nouvel ID HTML créé."
-            );
+            
 
             return;
         }
@@ -6041,12 +5660,7 @@ function drawRealSalesChart() {
             salesChartEmpty.style.display =
                 "block";
 
-            alert(
-                "RELATÓRIOS — BLOC 12.18.3\n\n" +
-                "Les données ne contiennent aucune vente positive.\n\n" +
-                "Le graphique reste masqué."
-            );
-
+            
             return;
         }
 
@@ -6511,34 +6125,7 @@ function drawRealSalesChart() {
 
         salesChart.appendChild(svg);
 
-        alert(
-            "RELATÓRIOS — BLOC 12.18.4\n\n" +
-            "Graphique réel dessiné avec succès.\n\n" +
-            "Points analysés : " +
-            points.length +
-            "\n\n" +
-            "Valeur maximale : " +
-            maxSales.toLocaleString(
-                "pt-AO"
-            ) +
-            " Kz\n\n" +
-            "Total des ventes : " +
-            chartData.totalSales.toLocaleString(
-                "pt-AO"
-            ) +
-            " Kz\n\n" +
-            "Le graphique utilise les ventes réelles des commandes.\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.18 TERMINÉ ✅\n\n" +
-            "Le graphique réel des ventes fonctionne maintenant avec le DIV salesChart existant.\n\n" +
-            "Il est synchronisé avec la période sélectionnée.\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+       
 
     }
     catch (error) {
@@ -6560,10 +6147,7 @@ function fixSalesChartDateLabels() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.19.1\n\n" +
-            "Correction des dates affichées sur le graphique..."
-        );
+        
 
         const salesChart =
             document.getElementById(
@@ -6585,12 +6169,7 @@ function fixSalesChartDateLabels() {
             );
         }
 
-        alert(
-            "RELATÓRIOS — BLOC 12.19.2\n\n" +
-            "Graphique et données détectés.\n\n" +
-            "La correction utilisera directement les dates YYYY-MM-DD des données.\n\n" +
-            "Aucun nouvel ID HTML créé."
-        );
+        
 
         /*
          * On redessine uniquement les
@@ -6728,22 +6307,7 @@ function fixSalesChartDateLabels() {
             }
         );
 
-        alert(
-            "RELATÓRIOS — BLOC 12.19.3\n\n" +
-            "Dates corrigées avec succès.\n\n" +
-            "Les dates utilisent maintenant directement les données locales du graphique.\n\n" +
-            "Aucun décalage UTC ne sera appliqué.\n\n" +
-            "Aucune donnée Firestore modifiée.\n" +
-            "Aucun nouvel ID HTML créé."
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.19 TERMINÉ ✅\n\n" +
-            "Les dates de l'axe du graphique sont maintenant corrigées.\n\n" +
-            "Le graphique conserve les mêmes ventes et les mêmes statistiques.\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
 
     }
     catch (error) {
@@ -6765,11 +6329,7 @@ function calculateFilteredFinancialStatistics() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.20.1\n\n" +
-            "Préparation des statistiques financières filtrées..."
-        );
-
+        
         const filteredOrders =
             window.filteredReportsOrders;
 
@@ -6889,22 +6449,7 @@ function calculateFilteredFinancialStatistics() {
             );
         }
 
-        alert(
-            "RELATÓRIOS — BLOC 12.20.2\n\n" +
-            "Tous les IDs financiers ont été détectés.\n\n" +
-            "financialRevenueValue : OK\n" +
-            "financialRevenueAverage : OK\n" +
-            "financialRevenueHighest : OK\n" +
-            "financialRevenueGrowth : OK\n" +
-            "financialCommissionValue : OK\n" +
-            "financialCommissionAverage : OK\n" +
-            "financialCommissionRate : OK\n" +
-            "financialCommissionShare : OK\n" +
-            "financialCommissionProgress : OK\n" +
-            "financialRevenueProgress : OK\n\n" +
-            "Aucun nouvel ID HTML créé."
-        );
-
+        
         let totalRevenue = 0;
 
         let highestOrder = 0;
@@ -7014,54 +6559,7 @@ function calculateFilteredFinancialStatistics() {
 
         };
 
-        alert(
-            "RELATÓRIOS — BLOC 12.20.3\n\n" +
-            "Statistiques financières filtrées calculées.\n\n" +
-            "Commandes : " +
-            totalOrders +
-            "\n\n" +
-            "Receita total : " +
-            totalRevenue.toLocaleString(
-                "pt-AO"
-            ) +
-            " Kz\n\n" +
-            "Média : " +
-            averageRevenue.toLocaleString(
-                "pt-AO"
-            ) +
-            " Kz\n\n" +
-            "Maior valor : " +
-            highestOrder.toLocaleString(
-                "pt-AO"
-            ) +
-            " Kz\n\n" +
-            "Commission estimée : " +
-            estimatedCommission.toLocaleString(
-                "pt-AO"
-            ) +
-            " Kz\n\n" +
-            "Média commission : " +
-            averageCommission.toLocaleString(
-                "pt-AO"
-            ) +
-            " Kz\n\n" +
-            "Taxa : " +
-            commissionRate +
-            "%\n\n" +
-            "Participação : " +
-            commissionShare.toFixed(1) +
-            "%\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.20 TERMINÉ ✅\n\n" +
-            "Les statistiques financières filtrées sont prêtes.\n\n" +
-            "Elles seront affichées dans la section Receita au prochain bloc.\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
 
     }
     catch (error) {
@@ -7083,11 +6581,7 @@ function displayFilteredFinancialStatistics() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.21.1\n\n" +
-            "Début de l'affichage des statistiques financières..."
-        );
-
+        
         const statistics =
             window.filteredFinancialStatistics;
 
@@ -7174,18 +6668,7 @@ function displayFilteredFinancialStatistics() {
             );
         }
 
-        alert(
-            "RELATÓRIOS — BLOC 12.21.2\n\n" +
-            "Tous les IDs financiers nécessaires sont détectés.\n\n" +
-            "financialRevenueValue : OK\n" +
-            "financialRevenueAverage : OK\n" +
-            "financialRevenueHighest : OK\n" +
-            "financialCommissionValue : OK\n" +
-            "financialCommissionAverage : OK\n" +
-            "financialCommissionRate : OK\n" +
-            "financialCommissionShare : OK\n\n" +
-            "Aucun nouvel ID HTML créé."
-        );
+        
 
         const totalRevenue =
             Number(
@@ -7268,41 +6751,7 @@ function displayFilteredFinancialStatistics() {
         financialCommissionShare.textContent =
             commissionShare.toFixed(1) + "%";
 
-        alert(
-            "RELATÓRIOS — BLOC 12.21.3\n\n" +
-            "Section Receita mise à jour.\n\n" +
-            "Receita total : " +
-            formattedRevenue +
-            "\n\n" +
-            "Média : " +
-            formattedAverage +
-            "\n\n" +
-            "Maior valor : " +
-            formattedHighest +
-            "\n\n" +
-            "Commission : " +
-            formattedCommission +
-            "\n\n" +
-            "Média commission : " +
-            formattedAverageCommission +
-            "\n\n" +
-            "Taxa : " +
-            commissionRate +
-            "%\n\n" +
-            "Participação : " +
-            commissionShare.toFixed(1) +
-            "%\n\n" +
-            "Aucune donnée Firestore modifiée.\n" +
-            "Aucun nouvel ID HTML créé."
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.21 TERMINÉ ✅\n\n" +
-            "Les statistiques financières filtrées sont maintenant affichées dans la section Receita.\n\n" +
-            "Elles suivront la période sélectionnée.\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
 
     }
     catch (error) {
@@ -7324,11 +6773,7 @@ function calculateFinancialProgress() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.22.1\n\n" +
-            "Calcul des progressions financières..."
-        );
-
+        
         const statistics =
             window.filteredFinancialStatistics;
 
@@ -7465,52 +6910,7 @@ function calculateFinancialProgress() {
 
         };
 
-        alert(
-            "RELATÓRIOS — BLOC 12.22.2\n\n" +
-            "Progressions financières calculées.\n\n" +
-            "Receita actuelle : " +
-            currentRevenue.toLocaleString(
-                "pt-AO"
-            ) +
-            " Kz\n\n" +
-            "Receita précédente : " +
-            previousRevenue.toLocaleString(
-                "pt-AO"
-            ) +
-            " Kz\n\n" +
-            "Progression Receita : " +
-            revenueProgress.toFixed(1) +
-            "%\n\n" +
-            "Commission actuelle : " +
-            currentCommission.toLocaleString(
-                "pt-AO"
-            ) +
-            " Kz\n\n" +
-            "Commission précédente : " +
-            previousCommission.toLocaleString(
-                "pt-AO"
-            ) +
-            " Kz\n\n" +
-            "Progression Commission : " +
-            commissionProgress.toFixed(1) +
-            "%\n\n" +
-            "Largeur barre Receita : " +
-            revenueBarWidth.toFixed(1) +
-            "%\n\n" +
-            "Largeur barre Commission : " +
-            commissionBarWidth.toFixed(1) +
-            "%\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.22 TERMINÉ ✅\n\n" +
-            "Les progressions financières sont prêtes pour l'affichage.\n\n" +
-            "Aucune barre HTML n'est encore modifiée.\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
 
     }
     catch (error) {
@@ -7536,10 +6936,7 @@ function displayFinancialProgress() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.23.1\n\n" +
-            "Début de l'affichage des progressions financières..."
-        );
+        
 
         const revenueProgressElement =
             document.getElementById("financialRevenueProgress");
@@ -7590,32 +6987,7 @@ function displayFinancialProgress() {
             commissionWidth + "%";
 
 
-        alert(
-            "RELATÓRIOS — BLOC 12.23.2\n\n" +
-            "Barres financières affichées avec succès.\n\n" +
-
-            "Barre Receita : " +
-            revenueWidth.toFixed(1) +
-            "%\n\n" +
-
-            "Barre Commission : " +
-            commissionWidth.toFixed(1) +
-            "%\n\n" +
-
-            "ID Receita détecté : financialRevenueProgress\n" +
-            "ID Commission détecté : financialCommissionProgress\n\n" +
-
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
-
-
-        alert(
-            "RELATÓRIOS — BLOC 12.23 TERMINÉ ✅\n\n" +
-            "Les deux barres de progression financières sont maintenant affichées.\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
 
 
     } catch (error) {
@@ -7640,11 +7012,7 @@ function synchronizeFinancialProgressWithPeriod() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.24.1\n\n" +
-            "Vérification de la synchronisation des barres financières..."
-        );
-
+        
 
         // --------------------------------------------------
         // RÉCUPÉRATION DES IDs HTML EXISTANTS
@@ -7731,41 +7099,7 @@ function synchronizeFinancialProgressWithPeriod() {
             periodSelect.value;
 
 
-        alert(
-            "RELATÓRIOS — BLOC 12.24.2\n\n" +
-            "Synchronisation réussie.\n\n" +
-
-            "Période actuelle : " +
-            periodSelect.value +
-            "\n\n" +
-
-            "Barre Receita : " +
-            revenueWidth.toFixed(1) +
-            "%\n\n" +
-
-            "Barre Commission : " +
-            commissionWidth.toFixed(1) +
-            "%\n\n" +
-
-            "Les barres utilisent les données de la période sélectionnée.\n\n" +
-
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
-
-
-        alert(
-            "RELATÓRIOS — BLOC 12.24 TERMINÉ ✅\n\n" +
-            "Les barres financières sont maintenant synchronisées avec la période sélectionnée.\n\n" +
-
-            "ID utilisé : financialRevenueProgress\n" +
-            "ID utilisé : financialCommissionProgress\n" +
-            "ID utilisé : reportsPeriodSelect\n\n" +
-
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
-
+        
 
     } catch (error) {
 
@@ -7788,11 +7122,7 @@ function displayIntelligentFinancialPercentages() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.25.1\n\n" +
-            "Préparation de l'affichage intelligent des pourcentages..."
-        );
-
+        
 
         // --------------------------------------------------
         // RÉCUPÉRATION DES DONNÉES
@@ -7881,38 +7211,7 @@ function displayIntelligentFinancialPercentages() {
         };
 
 
-        alert(
-            "RELATÓRIOS — BLOC 12.25.2\n\n" +
-            "Affichage intelligent terminé.\n\n" +
-
-            "Progression Receita : " +
-            revenueDisplayValue.toFixed(1) +
-            "%\n\n" +
-
-            "Progression Commission : " +
-            commissionDisplayValue.toFixed(1) +
-            "%\n\n" +
-
-            "Barre Receita : " +
-            revenueDisplayValue.toFixed(1) +
-            "%\n\n" +
-
-            "Barre Commission : " +
-            commissionDisplayValue.toFixed(1) +
-            "%\n\n" +
-
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
-
-
-        alert(
-            "RELATÓRIOS — BLOC 12.25 TERMINÉ ✅\n\n" +
-            "Les pourcentages financiers sont maintenant affichés de manière contrôlée.\n\n" +
-
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
 
 
     } catch (error) {
@@ -7936,10 +7235,7 @@ function prepareFinancialSummary() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.26.1\n\n" +
-            "Préparation du résumé financier..."
-        );
+        
 
 
         // --------------------------------------------------
@@ -8016,55 +7312,7 @@ function prepareFinancialSummary() {
         window.financialSummaryData = summary;
 
 
-        alert(
-            "RELATÓRIOS — BLOC 12.26.2\n\n" +
-            "Résumé financier préparé avec succès.\n\n" +
-
-            "Période : " +
-            summary.period +
-            "\n\n" +
-
-            "Receita : " +
-            summary.totalRevenue.toLocaleString("pt-AO") +
-            " Kz\n\n" +
-
-            "Moyenne : " +
-            summary.averageRevenue.toLocaleString("pt-AO") +
-            " Kz\n\n" +
-
-            "Plus grosse commande : " +
-            summary.highestOrder.toLocaleString("pt-AO") +
-            " Kz\n\n" +
-
-            "Commission estimée : " +
-            summary.estimatedCommission.toLocaleString("pt-AO") +
-            " Kz\n\n" +
-
-            "Taux de commission : " +
-            summary.commissionRate.toFixed(1) +
-            "%\n\n" +
-
-            "Progression Receita : " +
-            summary.revenueProgress.toFixed(1) +
-            "%\n\n" +
-
-            "Progression Commission : " +
-            summary.commissionProgress.toFixed(1) +
-            "%\n\n" +
-
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
-
-
-        alert(
-            "RELATÓRIOS — BLOC 12.26 TERMINÉ ✅\n\n" +
-            "Le résumé financier est prêt pour les prochaines fonctions.\n\n" +
-
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
-
+        
 
     } catch (error) {
 
@@ -8087,10 +7335,7 @@ function displayFinancialSummary() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.27.1\n\n" +
-            "Début de l'affichage du résumé financier..."
-        );
+        
 
 
         // --------------------------------------------------
@@ -8167,38 +7412,7 @@ function displayFinancialSummary() {
             "%";
 
 
-        alert(
-            "RELATÓRIOS — BLOC 12.27.2\n\n" +
-            "Résumé financier affiché avec succès.\n\n" +
-
-            "Receita : " +
-            summary.totalRevenue.toLocaleString("pt-AO") +
-            " Kz\n\n" +
-
-            "Commission : " +
-            summary.estimatedCommission.toLocaleString("pt-AO") +
-            " Kz\n\n" +
-
-            "Croissance : " +
-            summary.revenueProgress.toFixed(1) +
-            "%\n\n" +
-
-            "IDs utilisés :\n" +
-            "reportSummaryRevenue\n" +
-            "reportSummaryCommission\n" +
-            "reportSummaryGrowth\n\n" +
-
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
-
-
-        alert(
-            "RELATÓRIOS — BLOC 12.27 TERMINÉ ✅\n\n" +
-            "Le résumé financier est maintenant affiché dans les éléments HTML existants.\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
 
 
     } catch (error) {
@@ -8222,11 +7436,7 @@ function initializeReportsBackButton() {
 
     try {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.28.1\n\n" +
-            "Initialisation du bouton Retour..."
-        );
-
+        
 
         // --------------------------------------------------
         // RÉCUPÉRATION DE L'ID HTML EXISTANT
@@ -8251,32 +7461,14 @@ function initializeReportsBackButton() {
 
         backButton.addEventListener("click", function () {
 
-            alert(
-                "RELATÓRIOS — BLOC 12.28.2\n\n" +
-                "Bouton Retour détecté.\n\n" +
-                "Retour vers la page précédente..."
-            );
+            
 
             window.history.back();
 
         });
 
 
-        alert(
-            "RELATÓRIOS — BLOC 12.28.3\n\n" +
-            "Bouton Retour configuré avec succès.\n\n" +
-            "ID utilisé : backReportsButton\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
-
-
-        alert(
-            "RELATÓRIOS — BLOC 12.28 TERMINÉ ✅\n\n" +
-            "Le bouton Retour est maintenant fonctionnel.\n\n" +
-            "Aucun nouvel ID HTML créé.\n" +
-            "Aucune donnée Firestore modifiée."
-        );
+        
 
 
     } catch (error) {
