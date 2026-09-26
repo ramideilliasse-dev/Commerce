@@ -21,11 +21,7 @@ import {
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    alert(
-        "TOMA — SETTINGS\n\n" +
-        "BLOC 2.1\n\n" +
-        "Page Settings chargée avec succès."
-    );
+    
 
 
     initializeDashboardSettingsHeader();
@@ -42,11 +38,7 @@ function initializeDashboardSettingsHeader() {
 
     try {
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 2.2\n\n" +
-            "Initialisation de l'en-tête..."
-        );
+        
 
 
         const backButton =
@@ -94,12 +86,7 @@ function initializeDashboardSettingsHeader() {
         }
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 2.3\n\n" +
-            "Les éléments de l'en-tête ont été trouvés avec succès."
-        );
-
+        
 
         /* -------------------------------------------------
            BOUTON RETOUR
@@ -119,20 +106,12 @@ function initializeDashboardSettingsHeader() {
         });
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 2 TERMINÉ ✅\n\n" +
-            "L'en-tête du Dashboard Settings fonctionne correctement."
-        );
+        
 
 
     } catch (error) {
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "ERREUR DANS LE BLOC 2 ❌\n\n" +
-            error.message
-        );
+        
 
         console.error(
             "Erreur BLOC 2 Settings :",
@@ -157,11 +136,7 @@ function initializeCommissionSettings() {
 
     try {
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 3.1\n\n" +
-            "Initialisation de la section Commission..."
-        );
+        
 
 
         const commissionSection =
@@ -239,12 +214,7 @@ function initializeCommissionSettings() {
         }
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 3.2\n\n" +
-            "Tous les éléments de la Commission ont été trouvés avec succès."
-        );
-
+        
 
         /* -------------------------------------------------
            MISE À JOUR DU STATUT
@@ -282,21 +252,12 @@ function initializeCommissionSettings() {
         updateCommissionStatus();
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 3 TERMINÉ ✅\n\n" +
-            "A seção Commission & Monétisation está funcionando."
-        );
+        
 
 
     } catch (error) {
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "ERREUR DANS LE BLOC 3 ❌\n\n" +
-            error.message
-        );
-
+        
 
         console.error(
             "Erreur BLOC 3 Settings :",
@@ -336,11 +297,7 @@ async function initializeCommissionFirebase() {
 
     try {
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 4B.1\n\n" +
-            "Initialisation de la connexion Firebase..."
-        );
+        
 
 
         /* -------------------------------------------------
@@ -419,11 +376,7 @@ async function initializeCommissionFirebase() {
             );
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 4B.2\n\n" +
-            "Les éléments Firebase ont été trouvés avec succès."
-        );
+        
 
 
         /* -------------------------------------------------
@@ -455,11 +408,7 @@ async function initializeCommissionFirebase() {
             );
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 4B.3\n\n" +
-            "Firebase a été chargé avec succès."
-        );
+        
 
 
         /* -------------------------------------------------
@@ -467,12 +416,7 @@ async function initializeCommissionFirebase() {
            ATTENTE RÉELLE DE FIREBASE AUTH
            ------------------------------------------------- */
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 4B.4\n\n" +
-            "Attente de la vérification de la session..."
-        );
-
+        
 
         const user =
             await new Promise(
@@ -538,12 +482,7 @@ async function initializeCommissionFirebase() {
            AUTHENTIFICATION CONFIRMÉE
            ------------------------------------------------- */
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 4B.5\n\n" +
-            "Firebase Auth est prêt."
-        );
-
+        
 
         /* -------------------------------------------------
            BLOC 4B.6
@@ -577,15 +516,7 @@ async function initializeCommissionFirebase() {
         }
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 4B.6\n\n" +
-            "Utilisateur connecté avec succès.\n\n" +
-            "UID : " +
-            user.uid
-        );
-
-
+       
         /* -------------------------------------------------
            BLOC 4B.7
            VÉRIFICATION DU RÔLE
@@ -624,14 +555,7 @@ async function initializeCommissionFirebase() {
             userData.role || "user";
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 4B.7\n\n" +
-            "Rôle utilisateur détecté :\n\n" +
-            userRole
-        );
-
-
+        
         if (
             userRole !== "admin" &&
             userRole !== "superadmin"
@@ -691,20 +615,10 @@ async function initializeCommissionFirebase() {
             }
 
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 4B.8\n\n" +
-                "Les paramètres Commission ont été chargés depuis Firestore."
-            );
-
+            
         } else {
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 4B.8\n\n" +
-                "Le document settings/marketplace n'existe pas encore.\n\n" +
-                "Les valeurs par défaut seront utilisées."
-            );
+            
 
         }
 
@@ -759,12 +673,7 @@ async function initializeCommissionFirebase() {
                         rate > 100
                     ) {
 
-                        alert(
-                            "TOMA — SETTINGS\n\n" +
-                            "ERREUR ❌\n\n" +
-                            "A comissão deve estar entre 0% e 100%."
-                        );
-
+                        
                         return;
 
                     }
@@ -782,11 +691,7 @@ async function initializeCommissionFirebase() {
                         "Enregistrement dans Firestore...";
 
 
-                    alert(
-                        "TOMA — SETTINGS\n\n" +
-                        "BLOC 4B.10\n\n" +
-                        "Enregistrement des paramètres dans Firestore..."
-                    );
+                    
 
 
                     await setDoc(
@@ -825,25 +730,6 @@ async function initializeCommissionFirebase() {
 
                     firebaseStatusArea.classList.add(
                         "isSynced"
-                    );
-
-
-                    alert(
-                        "TOMA — SETTINGS\n\n" +
-                        "BLOC 4B.10 TERMINÉ ✅\n\n" +
-                        "Paramètres enregistrés avec succès.\n\n" +
-                        "Commission : " +
-                        rate +
-                        "%\n\n" +
-                        "État : " +
-                        (
-                            enabled
-                                ? "Active"
-                                : "Désactivée"
-                        ) +
-                        "\n\n" +
-                        "Document créé :\n" +
-                        "settings/marketplace"
                     );
 
 
@@ -895,12 +781,7 @@ async function initializeCommissionFirebase() {
            BLOC 4B TERMINÉ
            ------------------------------------------------- */
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 4B TERMINÉ ✅\n\n" +
-            "Firebase Auth et Firestore sont prêts.\n\n" +
-            "Tu peux maintenant enregistrer la commission."
-        );
+        
 
 
     } catch (error) {
@@ -949,12 +830,7 @@ async function initializePaymentSettings() {
 
     try {
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 5.1\n\n" +
-            "Initialisation da seção Pagamentos..."
-        );
-
+        
 
         /* -------------------------------------------------
            ELEMENTOS
@@ -1056,11 +932,7 @@ async function initializePaymentSettings() {
             );
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 5.2\n\n" +
-            "Todos os elementos de Pagamentos foram encontrados com sucesso."
-        );
+        
 
 
         /* -------------------------------------------------
@@ -1261,20 +1133,11 @@ async function initializePaymentSettings() {
             }
 
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 5.3\n\n" +
-                "Configurações de pagamento carregadas do Firebase."
-            );
+            
 
         } else {
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 5.3\n\n" +
-                "Nenhuma configuração de pagamento foi encontrada.\n\n" +
-                "Pagamento na entrega será usado como padrão."
-            );
+            
 
         }
 
@@ -1405,12 +1268,7 @@ async function initializePaymentSettings() {
                         "Salvando configurações...";
 
 
-                    alert(
-                        "TOMA — SETTINGS\n\n" +
-                        "BLOC 5.4\n\n" +
-                        "Salvando os métodos de pagamento no Firestore..."
-                    );
-
+                  
 
                     await setDoc(
                         settingsReference,
@@ -1441,24 +1299,7 @@ async function initializePaymentSettings() {
                         "Configurações de pagamento sincronizadas com Firebase.";
 
 
-                    alert(
-                        "TOMA — SETTINGS\n\n" +
-                        "BLOC 5.4 TERMINÉ ✅\n\n" +
-                        "Configurações de pagamento salvas com sucesso.\n\n" +
-                        "Pagamento na entrega: " +
-                        (
-                            cashOnDeliveryToggle.checked
-                                ? "Ativo"
-                                : "Desativado"
-                        ) +
-                        "\n\n" +
-                        "Pagamento online: " +
-                        (
-                            onlinePaymentToggle.checked
-                                ? "Ativo"
-                                : "Desativado"
-                        )
-                    );
+                    
 
 
                 } catch (error) {
@@ -1495,11 +1336,7 @@ async function initializePaymentSettings() {
         );
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 5 TERMINÉ ✅\n\n" +
-            "A seção Pagamentos está conectada ao Firebase."
-        );
+        
 
 
     } catch (error) {
@@ -1548,13 +1385,7 @@ async function initializeAdminPermissionsSettings() {
 
     try {
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 6.1\n\n" +
-            "Initialisation da seção Administradores e permissões..."
-        );
-
-
+        
         /* -------------------------------------------------
            ÉLÉMENTS HTML
            ------------------------------------------------- */
@@ -1698,11 +1529,7 @@ async function initializeAdminPermissionsSettings() {
         }
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 6.2\n\n" +
-            "Todos os elementos de Administradores e permissões foram encontrados com sucesso."
-        );
+        
 
 
         /* -------------------------------------------------
@@ -1825,13 +1652,6 @@ async function initializeAdminPermissionsSettings() {
         }
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 6.3\n\n" +
-            "Usuário conectado com sucesso.\n\n" +
-            "UID : " +
-            user.uid
-        );
 
 
         /* -------------------------------------------------
@@ -1871,13 +1691,7 @@ async function initializeAdminPermissionsSettings() {
             userData.role || "user";
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 6.4\n\n" +
-            "Rôle utilisateur détecté :\n\n" +
-            role
-        );
-
+        
 
         /* -------------------------------------------------
            VÉRIFICATION ADMIN
@@ -1973,11 +1787,7 @@ async function initializeAdminPermissionsSettings() {
                 "Configurações carregadas do Firebase.";
 
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 6.5\n\n" +
-                "Configurações de permissões carregadas do Firebase."
-            );
+            
 
         } else {
 
@@ -2001,13 +1811,7 @@ async function initializeAdminPermissionsSettings() {
                 "Documento ainda não existe. Valores padrão utilizados.";
 
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 6.5\n\n" +
-                "O documento settings/marketplace não possui configurações de permissões.\n\n" +
-                "Os valores padrão serão utilizados."
-            );
-
+           
         }
 
 
@@ -2061,12 +1865,7 @@ async function initializeAdminPermissionsSettings() {
                         "Salvando configurações...";
 
 
-                    alert(
-                        "TOMA — SETTINGS\n\n" +
-                        "BLOC 6.6\n\n" +
-                        "Salvando as permissões no Firestore..."
-                    );
-
+                    
 
                     await setDoc(
                         settingsReference,
@@ -2102,24 +1901,7 @@ async function initializeAdminPermissionsSettings() {
                         "Configurações sincronizadas com Firebase.";
 
 
-                    alert(
-                        "TOMA — SETTINGS\n\n" +
-                        "BLOC 6.6 TERMINÉ ✅\n\n" +
-                        "Configurações salvas com sucesso.\n\n" +
-                        "Inscrição de usuários : " +
-                        (
-                            userRegistrationToggle.checked
-                                ? "Ativa"
-                                : "Desativada"
-                        ) +
-                        "\n\n" +
-                        "Inscrição de comerciantes : " +
-                        (
-                            merchantRegistrationToggle.checked
-                                ? "Ativa"
-                                : "Desativada"
-                        )
-                    );
+                    
 
 
                 } catch (error) {
@@ -2160,12 +1942,7 @@ async function initializeAdminPermissionsSettings() {
            FINAL BLOC 6
            ------------------------------------------------- */
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 6 TERMINÉ ✅\n\n" +
-            "Administradores e permissões estão conectados ao Firebase."
-        );
-
+        
 
     } catch (error) {
 
@@ -2271,11 +2048,7 @@ document.addEventListener(
 
 async function initializeMarketplaceSettings() {
 
-    alert(
-        "TOMA — SETTINGS\n\n" +
-        "BLOC 7.1\n\n" +
-        "Inicialização das configurações do Marketplace..."
-    );
+    
 
     try {
 
@@ -2329,23 +2102,13 @@ async function initializeMarketplaceSettings() {
             !saveButton
         ) {
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 7.2 ERRO\n\n" +
-                "Um ou mais elementos do Marketplace " +
-                "não foram encontrados."
-            );
+            
 
             return;
         }
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 7.2\n\n" +
-            "Todos os elementos do Marketplace " +
-            "foram encontrados com sucesso."
-        );
+        
 
 
         /* -------------------------------------------------
@@ -2361,12 +2124,7 @@ async function initializeMarketplaceSettings() {
 
         if (!db || !auth) {
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 7.2 ERRO\n\n" +
-                "Firebase não foi carregado corretamente."
-            );
-
+            
             return;
         }
 
@@ -2425,23 +2183,12 @@ async function initializeMarketplaceSettings() {
 
         if (!firebaseUser) {
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 7.2 ERRO\n\n" +
-                "Nenhum usuário está conectado."
-            );
-
+            
             return;
         }
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 7.2\n\n" +
-            "Usuário conectado com sucesso.\n\n" +
-            "UID : " +
-            firebaseUser.uid
-        );
+        
 
 
         /* -------------------------------------------------
@@ -2463,12 +2210,7 @@ async function initializeMarketplaceSettings() {
 
         if (!userDocument.exists()) {
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 7.2 ERRO\n\n" +
-                "Documento do usuário não foi encontrado."
-            );
-
+            
             return;
         }
 
@@ -2485,24 +2227,11 @@ async function initializeMarketplaceSettings() {
             userRole !== "superadmin"
         ) {
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 7.2 ACESSO NEGADO\n\n" +
-                "Rôle détecté : " +
-                userRole
-            );
-
             return;
         }
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 7.2\n\n" +
-            "Rôle utilisateur détecté :\n\n" +
-            userRole
-        );
-
+        
 
         /* -------------------------------------------------
            5. CARREGAR SETTINGS
@@ -2562,14 +2291,7 @@ async function initializeMarketplaceSettings() {
             "cloud_done";
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 7.2\n\n" +
-            "Configurações do Marketplace " +
-            "carregadas do Firebase."
-        );
-
-
+        
         /* -------------------------------------------------
            7. ATUALIZAR ESTADO VISUAL
         ------------------------------------------------- */
@@ -2654,12 +2376,7 @@ async function initializeMarketplaceSettings() {
 
                 try {
 
-                    alert(
-                        "TOMA — SETTINGS\n\n" +
-                        "BLOC 7.3\n\n" +
-                        "Salvando as configurações do Marketplace..."
-                    );
-
+                    
 
                     saveButton.disabled = true;
 
@@ -2695,26 +2412,7 @@ async function initializeMarketplaceSettings() {
                     updateMarketplaceVisualState();
 
 
-                    alert(
-                        "TOMA — SETTINGS\n\n" +
-                        "BLOC 7.3 TERMINÉ ✅\n\n" +
-                        "Configurações do Marketplace " +
-                        "salvas com sucesso.\n\n" +
-                        "Inscrição de usuários : " +
-                        (
-                            userRegistrationToggle.checked
-                                ? "Ativa"
-                                : "Desativada"
-                        ) +
-                        "\n\n" +
-                        "Inscrição de comerciantes : " +
-                        (
-                            merchantRegistrationToggle.checked
-                                ? "Ativa"
-                                : "Desativada"
-                        )
-                    );
-
+                 
 
                 } catch (error) {
 
@@ -2731,12 +2429,7 @@ async function initializeMarketplaceSettings() {
                         "Erro ao sincronizar com Firebase.";
 
 
-                    alert(
-                        "TOMA — SETTINGS\n\n" +
-                        "BLOC 7.3 ERRO\n\n" +
-                        "Não foi possível salvar as configurações.\n\n" +
-                        error.message
-                    );
+                    
 
                 } finally {
 
@@ -2748,13 +2441,7 @@ async function initializeMarketplaceSettings() {
         );
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 7 TERMINÉ ✅\n\n" +
-            "Marketplace conectado ao Firebase.\n\n" +
-            "Os parâmetros podem ser alterados e salvos."
-        );
-
+        
 
     } catch (error) {
 
@@ -2764,12 +2451,7 @@ async function initializeMarketplaceSettings() {
         );
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 7 ERRO\n\n" +
-            error.message
-        );
-
+        
     }
 
 }
@@ -2791,11 +2473,7 @@ document.addEventListener(
 
 async function initializeOrderSettings() {
 
-    alert(
-        "TOMA — SETTINGS\n\n" +
-        "BLOC 8.2\n\n" +
-        "Inicialização das configurações de pedidos..."
-    );
+    
 
 
     try {
@@ -2862,24 +2540,13 @@ async function initializeOrderSettings() {
             !saveButton
         ) {
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 8.2 ERRO\n\n" +
-                "Um ou mais elementos das configurações " +
-                "de pedidos não foram encontrados."
-            );
+            
 
             return;
         }
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 8.2\n\n" +
-            "Todos os elementos de pedidos " +
-            "foram encontrados com sucesso."
-        );
-
+        
 
         /* -------------------------------------------------
            2. FIREBASE
@@ -2894,11 +2561,7 @@ async function initializeOrderSettings() {
 
         if (!db || !auth) {
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 8.2 ERRO\n\n" +
-                "Firebase não foi carregado corretamente."
-            );
+            
 
             return;
         }
@@ -2958,24 +2621,13 @@ async function initializeOrderSettings() {
 
         if (!firebaseUser) {
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 8.2 ERRO\n\n" +
-                "Nenhum usuário está conectado."
-            );
+            
 
             return;
         }
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 8.2\n\n" +
-            "Usuário conectado com sucesso.\n\n" +
-            "UID : " +
-            firebaseUser.uid
-        );
-
+        
 
         /* -------------------------------------------------
            4. VERIFICAR ROLE
@@ -2996,12 +2648,7 @@ async function initializeOrderSettings() {
 
         if (!userDocument.exists()) {
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 8.2 ERRO\n\n" +
-                "Documento do usuário não foi encontrado."
-            );
-
+            
             return;
         }
 
@@ -3018,23 +2665,12 @@ async function initializeOrderSettings() {
             userRole !== "superadmin"
         ) {
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 8.2 ACESSO NEGADO\n\n" +
-                "Rôle détecté : " +
-                userRole
-            );
-
+            
             return;
         }
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 8.2\n\n" +
-            "Rôle utilisateur détecté :\n\n" +
-            userRole
-        );
+        
 
 
         /* -------------------------------------------------
@@ -3132,12 +2768,7 @@ async function initializeOrderSettings() {
             "Configurações carregadas do Firebase.";
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 8.2\n\n" +
-            "Configurações de pedidos " +
-            "carregadas do Firebase."
-        );
+        
 
 
         /* -------------------------------------------------
@@ -3233,12 +2864,7 @@ async function initializeOrderSettings() {
 
                 try {
 
-                    alert(
-                        "TOMA — SETTINGS\n\n" +
-                        "BLOC 8.3\n\n" +
-                        "Salvando as configurações de pedidos..."
-                    );
-
+                    
 
                     saveButton.disabled = true;
 
@@ -3315,44 +2941,7 @@ async function initializeOrderSettings() {
                     updateOrderSettingsVisualState();
 
 
-                    alert(
-                        "TOMA — SETTINGS\n\n" +
-                        "BLOC 8.3 TERMINÉ ✅\n\n" +
-                        "Configurações de pedidos " +
-                        "salvas com sucesso.\n\n" +
-
-                        "Receção de pedidos : " +
-                        (
-                            ordersEnabledToggle.checked
-                                ? "Ativa"
-                                : "Desativada"
-                        ) +
-
-                        "\n\n" +
-
-                        "Cancelamento pelo cliente : " +
-                        (
-                            customerCancellationToggle.checked
-                                ? "Ativo"
-                                : "Desativado"
-                        ) +
-
-                        "\n\n" +
-
-                        "Confirmação do comerciante : " +
-                        (
-                            merchantConfirmationToggle.checked
-                                ? "Obrigatória"
-                                : "Não obrigatória"
-                        ) +
-
-                        "\n\n" +
-
-                        "Prazo de cancelamento : " +
-                        cancellationMinutes +
-                        " minutos"
-                    );
-
+                    
 
                 } catch (error) {
 
@@ -3369,13 +2958,7 @@ async function initializeOrderSettings() {
                         "Erro ao sincronizar com Firebase.";
 
 
-                    alert(
-                        "TOMA — SETTINGS\n\n" +
-                        "BLOC 8.3 ERRO\n\n" +
-                        "Não foi possível salvar as configurações.\n\n" +
-                        error.message
-                    );
-
+                    
                 } finally {
 
                     saveButton.disabled = false;
@@ -3386,11 +2969,7 @@ async function initializeOrderSettings() {
         );
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 8 TERMINÉ ✅\n\n" +
-            "Configurações de pedidos conectadas ao Firebase."
-        );
+        
 
 
     } catch (error) {
@@ -3401,12 +2980,7 @@ async function initializeOrderSettings() {
         );
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 8 ERRO\n\n" +
-            error.message
-        );
-
+        
     }
 
 }
@@ -3428,12 +3002,7 @@ document.addEventListener(
 
 async function initializeWhatsappSettings() {
 
-    alert(
-        "TOMA — SETTINGS\n\n" +
-        "BLOC 9.1\n\n" +
-        "Inicialização das configurações do WhatsApp..."
-    );
-
+    
 
     try {
 
@@ -3499,23 +3068,12 @@ async function initializeWhatsappSettings() {
             !saveButton
         ) {
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 9.1 ERRO\n\n" +
-                "Um ou mais elementos do WhatsApp " +
-                "não foram encontrados."
-            );
-
+           
             return;
         }
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 9.1\n\n" +
-            "Todos os elementos do WhatsApp " +
-            "foram encontrados com sucesso."
-        );
+        
 
 
         /* -------------------------------------------------
@@ -3531,12 +3089,7 @@ async function initializeWhatsappSettings() {
 
         if (!db || !auth) {
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 9.1 ERRO\n\n" +
-                "Firebase não foi carregado corretamente."
-            );
-
+            
             return;
         }
 
@@ -3595,24 +3148,13 @@ async function initializeWhatsappSettings() {
 
         if (!firebaseUser) {
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 9.1 ERRO\n\n" +
-                "Nenhum usuário está conectado."
-            );
+            
 
             return;
         }
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 9.1\n\n" +
-            "Usuário conectado com sucesso.\n\n" +
-            "UID : " +
-            firebaseUser.uid
-        );
-
+        
 
         /* -------------------------------------------------
            4. ROLE
@@ -3630,11 +3172,7 @@ async function initializeWhatsappSettings() {
 
         if (!userDocument.exists()) {
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 9.1 ERRO\n\n" +
-                "Documento do usuário não foi encontrado."
-            );
+            
 
             return;
         }
@@ -3652,24 +3190,12 @@ async function initializeWhatsappSettings() {
             userRole !== "superadmin"
         ) {
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 9.1 ACESSO NEGADO\n\n" +
-                "Rôle détecté : " +
-                userRole
-            );
-
+            
             return;
         }
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 9.1\n\n" +
-            "Rôle utilisateur détecté :\n\n" +
-            userRole
-        );
-
+        
 
         /* -------------------------------------------------
            5. CARREGAR SETTINGS
@@ -3732,13 +3258,7 @@ async function initializeWhatsappSettings() {
             "Configurações carregadas do Firebase.";
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 9.1\n\n" +
-            "Configurações do WhatsApp " +
-            "carregadas do Firebase."
-        );
-
+        
 
         /* -------------------------------------------------
            7. ESTADO VISUAL
@@ -3785,12 +3305,7 @@ async function initializeWhatsappSettings() {
 
                 try {
 
-                    alert(
-                        "TOMA — SETTINGS\n\n" +
-                        "BLOC 9.2\n\n" +
-                        "Salvando as configurações do WhatsApp..."
-                    );
-
+                    
 
                     saveButton.disabled = true;
 
@@ -3847,38 +3362,7 @@ async function initializeWhatsappSettings() {
                     updateWhatsappVisualState();
 
 
-                    alert(
-                        "TOMA — SETTINGS\n\n" +
-                        "BLOC 9.2 TERMINÉ ✅\n\n" +
-                        "Configurações do WhatsApp " +
-                        "salvas com sucesso.\n\n" +
-
-                        "Suporte WhatsApp : " +
-                        (
-                            whatsappSupportToggle.checked
-                                ? "Ativo"
-                                : "Desativado"
-                        ) +
-
-                        "\n\n" +
-
-                        "Número de suporte : " +
-                        (
-                            whatsappNumber
-                                ? "+" + whatsappNumber
-                                : "Não configurado"
-                        ) +
-
-                        "\n\n" +
-
-                        "Número para pedidos : " +
-                        (
-                            whatsappOrderNumber
-                                ? "+" + whatsappOrderNumber
-                                : "Não configurado"
-                        )
-                    );
-
+                    
 
                 } catch (error) {
 
@@ -3895,12 +3379,7 @@ async function initializeWhatsappSettings() {
                         "Erro ao sincronizar com Firebase.";
 
 
-                    alert(
-                        "TOMA — SETTINGS\n\n" +
-                        "BLOC 9.2 ERRO\n\n" +
-                        "Não foi possível salvar as configurações.\n\n" +
-                        error.message
-                    );
+                    
 
                 } finally {
 
@@ -3912,12 +3391,7 @@ async function initializeWhatsappSettings() {
         );
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 9 TERMINÉ ✅\n\n" +
-            "WhatsApp e suporte conectados ao Firebase."
-        );
-
+       
 
     } catch (error) {
 
@@ -3927,11 +3401,7 @@ async function initializeWhatsappSettings() {
         );
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 9 ERRO\n\n" +
-            error.message
-        );
+        
 
     }
 
@@ -3955,12 +3425,7 @@ document.addEventListener(
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    alert(
-        "TOMA — SETTINGS\n\n" +
-        "BLOC 19.1\n" +
-        "Inicialização da identidade do Toma..."
-    );
-
+    
 
     /* =====================================================
        ELEMENTOS
@@ -4032,25 +3497,12 @@ document.addEventListener("DOMContentLoaded", () => {
         !saveButton
     ) {
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 19.2 ❌\n\n" +
-            "Um ou mais elementos da identidade " +
-            "não foram encontrados."
-        );
-
+        
         return;
     }
 
 
-    alert(
-        "TOMA — SETTINGS\n\n" +
-        "BLOC 19.2 ✅\n\n" +
-        "Todos os elementos da identidade " +
-        "foram encontrados com sucesso."
-    );
-
-
+    
     /* =====================================================
        STATUS VISUAL
     ====================================================== */
@@ -4204,12 +3656,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 "Configurações carregadas com sucesso.";
 
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 19.3 ✅\n\n" +
-                "Identidade carregada do Firebase."
-            );
-
+            
 
         } catch (error) {
 
@@ -4227,12 +3674,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 "Erro ao carregar as configurações.";
 
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 19.3 ❌\n\n" +
-                "Não foi possível carregar a identidade.\n\n" +
-                error.message
-            );
+            
         }
     }
 
@@ -4501,45 +3943,13 @@ document.addEventListener("DOMContentLoaded", () => {
                    SUCESSO
                 ========================================== */
 
-                alert(
-                    "TOMA — SETTINGS\n\n" +
-                    "BLOC 19.6 — VERIFICAÇÃO FIREBASE ✅\n\n" +
-
-                    "Nome : " +
-                    savedAppName +
-
-                    "\nSlogan : " +
-                    (
-                        savedAppSlogan ||
-                        "Não definido"
-                    ) +
-
-                    "\nVersão : " +
-                    savedAppVersion +
-
-                    "\nModo manutenção : " +
-                    (
-                        savedMaintenanceMode
-                            ? "Ativado"
-                            : "Desativado"
-                    ) +
-
-                    "\n\nFirebase confirmou todas as alterações."
-                );
-
-
+                
                 /* =========================================
                    JOURNAL ADMIN
                    BLOC 14B
                 ========================================== */
 
-                alert(
-                    "TOMA — SETTINGS\n\n" +
-                    "BLOC 14B — Journal d’administration\n\n" +
-                    "Identidade do Toma modificada\n\n" +
-                    "Action enregistrée avec succès dans Firebase."
-                );
-
+                
 
             } catch (error) {
 
@@ -4582,12 +3992,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadTomaIdentitySettings();
 
 
-    alert(
-        "TOMA — SETTINGS\n\n" +
-        "BLOC 19 TERMINÉ ✅\n\n" +
-        "A configuração da identidade do Toma " +
-        "está pronta para teste."
-    );
+    
 
 });
 /* =========================================================
@@ -4597,12 +4002,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    alert(
-        "TOMA — SETTINGS\n\n" +
-        "BLOC 11.1\n" +
-        "Inicialização das notificações..."
-    );
-
+   
 
     /* =====================================================
        ELEMENTOS
@@ -4703,12 +4103,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    alert(
-        "TOMA — SETTINGS\n\n" +
-        "BLOC 11.2 ✅\n\n" +
-        "Todos os elementos das notificações " +
-        "foram encontrados com sucesso."
-    );
+    
 
 
     /* =====================================================
@@ -4868,12 +4263,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 "Configurações carregadas com sucesso.";
 
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 11.3 ✅\n\n" +
-                "Configurações de notificações " +
-                "carregadas do Firebase."
-            );
+            
 
 
         } catch (error) {
@@ -5007,48 +4397,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     "Configurações sincronizadas com Firebase.";
 
 
-                alert(
-                    "TOMA — SETTINGS\n\n" +
-                    "BLOC 11.4 TERMINÉ ✅\n\n" +
-                    "Configurações de notificações " +
-                    "salvas com sucesso.\n\n" +
-
-                    "Notificações gerais : " +
-                    (
-                        generalNotificationToggle.checked
-                            ? "Ativas"
-                            : "Desativadas"
-                    ) +
-
-                    "\nNovos pedidos : " +
-                    (
-                        orderNotificationToggle.checked
-                            ? "Ativos"
-                            : "Desativados"
-                    ) +
-
-                    "\nNovos comerciantes : " +
-                    (
-                        merchantNotificationToggle.checked
-                            ? "Ativos"
-                            : "Desativados"
-                    ) +
-
-                    "\nNovos usuários : " +
-                    (
-                        userNotificationToggle.checked
-                            ? "Ativos"
-                            : "Desativados"
-                    ) +
-
-                    "\nAlertas administrativos : " +
-                    (
-                        adminAlertNotificationToggle.checked
-                            ? "Ativos"
-                            : "Desativados"
-                    )
-                );
-
+                
 
             } catch (error) {
 
@@ -5091,13 +4440,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadNotificationSettings();
 
 
-    alert(
-        "TOMA — SETTINGS\n\n" +
-        "BLOC 11 TERMINÉ ✅\n\n" +
-        "O sistema de configuração de notificações " +
-        "está pronto para teste."
-    );
-
+    
 });
 /* =========================================================
    TOMA — SETTINGS
@@ -5106,12 +4449,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    alert(
-        "TOMA — SETTINGS\n\n" +
-        "BLOC 12.1\n" +
-        "Inicialização da configuração de entrega..."
-    );
-
+    
 
     /* =====================================================
        ELEMENTOS
@@ -5184,13 +4522,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    alert(
-        "TOMA — SETTINGS\n\n" +
-        "BLOC 12.2 ✅\n\n" +
-        "Todos os elementos da configuração " +
-        "de entrega foram encontrados."
-    );
-
+  
 
     /* =====================================================
        STATUS VISUAL
@@ -5357,13 +4689,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 "Configurações carregadas com sucesso.";
 
 
-            alert(
-                "TOMA — SETTINGS\n\n" +
-                "BLOC 12.3 ✅\n\n" +
-                "Configurações de entrega " +
-                "carregadas do Firebase."
-            );
-
+            
 
         } catch (error) {
 
@@ -5680,41 +5006,7 @@ document.addEventListener("DOMContentLoaded", () => {
                    SUCESSO FINAL
                 ========================================== */
 
-                alert(
-                    "TOMA — SETTINGS\n\n" +
-                    "BLOC 12.6 — VERIFICAÇÃO FIREBASE ✅\n\n" +
-
-                    "Entrega : " +
-                    (
-                        savedDeliveryEnabled
-                            ? "Ativa"
-                            : "Desativada"
-                    ) +
-
-                    "\nTaxa : " +
-                    savedDeliveryFee +
-                    " Kz" +
-
-                    "\nEntrega gratuita : " +
-                    (
-                        savedFreeDelivery
-                            ? "Ativa"
-                            : "Desativada"
-                    ) +
-
-                    "\nMinimum gratuito : " +
-                    savedFreeMinimum +
-                    " Kz" +
-
-                    "\nZona : " +
-                    (
-                        savedDeliveryZone ||
-                        "Não definida"
-                    ) +
-
-                    "\n\nFirebase confirmou todas as alterações."
-                );
-
+              
 
             } catch (error) {
 
@@ -5757,11 +5049,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadDeliverySettings();
 
 
-    alert(
-        "TOMA — SETTINGS\n\n" +
-        "BLOC 12 TERMINÉ ✅\n\n" +
-        "A configuração de entrega está pronta para teste."
-    );
+    
 
 });
 /* ========================================================= */
@@ -5770,11 +5058,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    alert(
-        "TOMA — SETTINGS\n\n" +
-        "BLOC 13.1\n\n" +
-        "Inicialização da segurança e moderação..."
-    );
+    
 
     initializeSecurityModerationSettings();
 
@@ -5869,12 +5153,7 @@ async function initializeSecurityModerationSettings() {
         }
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 13.2\n\n" +
-            "Todos os elementos da segurança e moderação foram encontrados com sucesso."
-        );
-
+       
 
         /* ================================================= */
         /* FIREBASE                                           */
@@ -6183,18 +5462,7 @@ async function initializeSecurityModerationSettings() {
         }
 
 
-        alert(
-            "TOMA — SETTINGS\n\n" +
-            "BLOC 13.3\n\n" +
-            "Configurações de segurança e moderação carregadas com sucesso.\n\n" +
-            "Administrador: " +
-            authenticatedUser.email +
-            "\n\n" +
-            "Role: " +
-            userRole
-        );
-
-
+        
         /* ================================================= */
         /* EVENTS                                             */
         /* ================================================= */
@@ -6326,59 +5594,7 @@ async function initializeSecurityModerationSettings() {
                     }
 
 
-                    alert(
-                        "TOMA — SETTINGS\n\n" +
-                        "BLOC 13.4 TERMINÉ ✅\n\n" +
-                        "Configurações de segurança e moderação salvas com sucesso.\n\n" +
-
-                        "Verificação dos comerciantes: " +
-                        (
-                            merchantVerificationToggle.checked
-                                ? "Obrigatória"
-                                : "Desativada"
-                        ) +
-                        "\n\n" +
-
-                        "Validação dos produtos: " +
-                        (
-                            productApprovalToggle.checked
-                                ? "Obrigatória"
-                                : "Desativada"
-                        ) +
-                        "\n\n" +
-
-                        "Avaliações dos clientes: " +
-                        (
-                            reviewsModerationToggle.checked
-                                ? "Ativas"
-                                : "Desativadas"
-                        ) +
-                        "\n\n" +
-
-                        "Sinalização de produtos: " +
-                        (
-                            productReportingToggle.checked
-                                ? "Ativa"
-                                : "Desativada"
-                        ) +
-                        "\n\n" +
-
-                        "Contas de usuários: " +
-                        (
-                            userAccountsToggle.checked
-                                ? "Ativas"
-                                : "Desativadas"
-                        ) +
-                        "\n\n" +
-
-                        "Contas de comerciantes: " +
-                        (
-                            merchantAccountsToggle.checked
-                                ? "Ativas"
-                                : "Desativadas"
-                        )
-                    );
-
+                    
 
                 } catch (error) {
 
@@ -7241,10 +6457,7 @@ function updateSecurityModerationStatus() {
             );
 
 
-            alert(
-                "BLOC 14A — Journal d’administration\n\n" +
-                "Test enregistré avec succès dans Firebase."
-            );
+            
 
 
             await loadAuditLogs(firebaseData);
@@ -7265,11 +6478,7 @@ function updateSecurityModerationStatus() {
             );
 
 
-            alert(
-                "BLOC 14A — ERREUR\n\n" +
-                "Impossible d’enregistrer le journal.\n\n" +
-                error.message
-            );
+            
 
         } finally {
 
@@ -7962,18 +7171,11 @@ function updateSecurityModerationStatus() {
                          * du BLOC 14B.
                          */
 
-                        alert(
-                            "BLOC 14B — Journal d’administration\n\n" +
-                            action.title +
-                            "\n\nAction enregistrée avec succès dans Firebase."
-                        );
+                        
 
                     } else {
 
-                        alert(
-                            "BLOC 14B — Erreur\n\n" +
-                            "L'action n'a pas pu être enregistrée dans le journal."
-                        );
+                        
 
                     }
 
@@ -8484,11 +7686,7 @@ function updateSecurityModerationStatus() {
 
         if (limit === null) {
 
-            alert(
-                "BLOC 15 — Limite inválida\n\n" +
-                "Digite um número inteiro entre 1 e 10.000."
-            );
-
+            
             input.focus();
 
             return;
@@ -8646,11 +7844,7 @@ function updateSecurityModerationStatus() {
             );
 
 
-            alert(
-                "BLOC 15 — Limite de produtos\n\n" +
-                `Limite definida com sucesso: ${limit} produtos por comerciante.\n\n` +
-                "Configuração salva no Firebase."
-            );
+            
 
 
         } catch (error) {
@@ -8668,14 +7862,7 @@ function updateSecurityModerationStatus() {
             );
 
 
-            alert(
-                "BLOC 15 — Erro\n\n" +
-                (
-                    error.message ||
-                    "Não foi possível salvar a limite."
-                )
-            );
-
+            
 
         } finally {
 
