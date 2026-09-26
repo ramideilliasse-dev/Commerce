@@ -140,11 +140,7 @@ async function loadTomaIdentity(){
             appName
         );
 
-        alert(
-            "BLOC 20 — IDENTIDADE TOMA\n\n" +
-            "Nome carregado com sucesso.\n\n" +
-            "Nome : " + appName
-        );
+        
 
     }catch(error){
 
