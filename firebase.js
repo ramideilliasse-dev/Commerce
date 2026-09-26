@@ -452,8 +452,8 @@ initializeTomaNotifications() {
 
                 {
 
-                    vapidKey:
-                        "BAv9JCvzV_TZ3C-rcXv6LwJL9Izp6m-Wf0qWX6uEj33F2OVqGNBTf4E7MV1s6UbSrcyuXbIQXpZQaaduPzCPt8",
+                  vapidKey:
+    "BNFUyc7TFTgqJ67XqXaKaMTm0JLaLPm_2qD1jXc3QaSIjC0Aey83L1tunLizHsyrAAEOdIBnHgrLVFUG5ybP4vA",
 
                     serviceWorkerRegistration:
                         registration
