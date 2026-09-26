@@ -385,25 +385,39 @@ if(activateTomaNotificationsBtn){
                 result
             );
 
-            if(result.success){
+      if(result.success){
 
-                alert(
-                    "✅ Notificações Toma ativadas com sucesso!\n\n" +
-                    "Este dispositivo está agora preparado para receber notificações."
-                );
+    alert(
+        "✅ Notificações Toma ativadas com sucesso!\n\n" +
+        "Este dispositivo está agora preparado para receber notificações."
+    );
 
-                activateTomaNotificationsBtn.innerHTML = `
+    activateTomaNotificationsBtn.innerHTML = `
+        <span class="material-symbols-rounded">
+            notifications_active
+        </span>
+    `;
 
-                    <span class="material-symbols-rounded">
-                        notifications_active
-                    </span>
+    activateTomaNotificationsBtn.title =
+        "Notificações Toma ativadas";
 
-                `;
 
-                activateTomaNotificationsBtn.title =
-                    "Notificações Toma ativadas";
+    // =================================================
+    // BLOC 23D — TEST FCM
+    // TEMPORAIRE
+    // =================================================
 
-            }
+    if(result.token){
+
+        prompt(
+            "BLOC 23D — TOKEN FCM\n\n" +
+            "Copie este token et utilisez-le dans Firebase Console pour tester la notification :",
+            result.token
+        );
+
+    }
+
+}
 
             else if(result.reason === "permission-denied"){
 
