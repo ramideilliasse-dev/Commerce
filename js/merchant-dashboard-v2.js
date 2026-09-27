@@ -391,7 +391,99 @@ if(activateTomaNotificationsBtn){
         "✅ Notificações Toma ativadas com sucesso!\n\n" +
         "Este dispositivo está agora preparado para receber notificações."
     );
+// ============================================================
+// TOMA — BLOC 24B
+// VÉRIFICATION DU TOKEN FCM
+// ============================================================
 
+try {
+
+    const merchantUid = auth.currentUser?.uid;
+
+    if(!merchantUid){
+
+        alert(
+            "❌ BLOC 24B\n\n" +
+            "UID do comerciante não encontrado."
+        );
+
+        return;
+    }
+
+    const merchantRef =
+        doc(
+            db,
+            "users",
+            merchantUid
+        );
+
+    const merchantSnapshot =
+        await getDoc(
+            merchantRef
+        );
+
+    if(!merchantSnapshot.exists()){
+
+        alert(
+            "❌ BLOC 24B\n\n" +
+            "Documento users/" +
+            merchantUid +
+            " não encontrado."
+        );
+
+        return;
+    }
+
+    const merchantData =
+        merchantSnapshot.data();
+
+    const fcmToken =
+        merchantData.fcmToken;
+
+    if(!fcmToken){
+
+        alert(
+            "⚠️ BLOC 24B\n\n" +
+            "O documento do comerciante existe,\n" +
+            "mas nenhum fcmToken foi encontrado."
+        );
+
+        return;
+    }
+
+    alert(
+        "✅ BLOC 24B — VERIFICAÇÃO OK\n\n" +
+        "UID do comerciante:\n" +
+        merchantUid +
+        "\n\n" +
+        "fcmToken encontrado no Firestore.\n\n" +
+        "A ligação está correta:\n" +
+        "merchantId → users/{UID} → fcmToken"
+    );
+
+    console.log(
+        "TOMA 24B — merchantUid:",
+        merchantUid
+    );
+
+    console.log(
+        "TOMA 24B — fcmToken:",
+        fcmToken
+    );
+
+}
+catch(error){
+
+    console.error(
+        "TOMA 24B — ERRO:",
+        error
+    );
+
+    alert(
+        "❌ ERRO BLOC 24B\n\n" +
+        error.message
+    );
+}
     activateTomaNotificationsBtn.innerHTML = `
         <span class="material-symbols-rounded">
             notifications_active
