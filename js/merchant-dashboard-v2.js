@@ -15,9 +15,9 @@ getDoc,
 collection,
 query,
 where,
-getDocs
+getDocs,
+onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
 import {
 onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -144,7 +144,7 @@ async function loadMerchant(){
             }
 
         }
-
+        startTomaNotificationsListener();
         // Depois carregar estatísticas
         await loadStatistics();
 
@@ -153,6 +153,127 @@ async function loadMerchant(){
     catch(error){
 
         console.error("Erro ao carregar loja:",error);
+
+    }
+
+}
+/* =====================================
+BLOC 25A
+CENTRE DE NOTIFICATIONS TOMA
+COMPTEUR DES NOTIFICATIONS NON LUES
+===================================== */
+
+function startTomaNotificationsListener(){
+
+    try{
+
+        if(!currentUid){
+
+            console.log(
+                "BLOC 25A — currentUid não encontrado."
+            );
+
+            return;
+
+        }
+
+        const notificationBadge =
+        document.querySelector(
+            ".notificationBadge"
+        );
+
+        if(!notificationBadge){
+
+            console.log(
+                "BLOC 25A — notificationBadge não encontrado."
+            );
+
+            return;
+
+        }
+
+        const notificationsQuery =
+        query(
+
+            collection(
+                db,
+                "notifications"
+            ),
+
+            where(
+                "userId",
+                "==",
+                currentUid
+            )
+
+        );
+
+        onSnapshot(
+            notificationsQuery,
+
+            (snapshot)=>{
+
+                let unreadCount = 0;
+
+                snapshot.forEach(
+                    (notificationDoc)=>{
+
+                        const notification =
+                        notificationDoc.data();
+
+                        if(
+                            notification.read !== true
+                        ){
+
+                            unreadCount++;
+
+                        }
+
+                    }
+                );
+
+                notificationBadge.textContent =
+                unreadCount;
+
+                if(unreadCount > 0){
+
+                    notificationBadge.style.display =
+                    "flex";
+
+                }
+                else{
+
+                    notificationBadge.style.display =
+                    "none";
+
+                }
+
+                console.log(
+                    "TOMA 25A — Notifications non lues:",
+                    unreadCount
+                );
+
+            },
+
+            (error)=>{
+
+                console.error(
+                    "TOMA 25A — Erreur listener:",
+                    error
+                );
+
+            }
+
+        );
+
+    }
+
+    catch(error){
+
+        console.error(
+            "TOMA 25A — ERREUR:",
+            error
+        );
 
     }
 
