@@ -16,7 +16,8 @@ collection,
 query,
 where,
 getDocs,
-onSnapshot
+onSnapshot,
+updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import {
 onAuthStateChanged
@@ -722,11 +723,31 @@ function startTomaNotificationsCenter(){
 
 
                 notifications.forEach(
-                    (notification)=>{
+    (notification)=>{
 
-                        const item =
-                        document.createElement("div");
+        const item =
+        document.createElement("div");
 
+
+        item.style.cursor = "pointer";
+
+
+        item.addEventListener(
+            "click",
+            async ()=>{
+
+                if(
+                    notification.read !== true
+                ){
+
+                    await markTomaNotificationAsRead(
+                        notification.id
+                    );
+
+                }
+
+            }
+        );
                         item.className =
                             "notificationItem" +
                             (
@@ -894,6 +915,254 @@ function startTomaNotificationsCenter(){
         );
 
     }
+
+}
+/* =====================================
+TOMA — BLOC 25D
+MARQUER LES NOTIFICATIONS COMME LUES
+===================================== */
+
+
+/* =====================================
+MARQUER UNE NOTIFICATION COMME LUE
+===================================== */
+
+async function markTomaNotificationAsRead(
+    notificationId
+){
+
+    try{
+
+        if(!notificationId){
+
+            return;
+
+        }
+
+        await updateDoc(
+
+            doc(
+                db,
+                "notifications",
+                notificationId
+            ),
+
+            {
+                read: true
+            }
+
+        );
+
+        console.log(
+            "TOMA 25D — Notification marquée comme lue:",
+            notificationId
+        );
+
+    }
+
+    catch(error){
+
+        console.error(
+            "TOMA 25D — Erreur notification:",
+            error
+        );
+
+        alert(
+
+            "❌ TOMA — Impossible de marquer la notification comme lue.\n\n" +
+
+            "Code : " +
+            (
+                error.code ||
+                "inconnu"
+            ) +
+
+            "\n\n" +
+
+            "Message : " +
+            (
+                error.message ||
+                "Aucun message disponible"
+            )
+
+        );
+
+    }
+
+}
+
+
+/* =====================================
+MARQUER TOUTES LES NOTIFICATIONS
+COMME LUES
+===================================== */
+
+async function markAllTomaNotificationsAsRead(){
+
+    try{
+
+        if(!currentUid){
+
+            return;
+
+        }
+
+
+        const notificationsQuery =
+        query(
+
+            collection(
+                db,
+                "notifications"
+            ),
+
+            where(
+                "userId",
+                "==",
+                currentUid
+            )
+
+        );
+
+
+        const snapshot =
+        await getDocs(
+            notificationsQuery
+        );
+
+
+        if(snapshot.empty){
+
+            return;
+
+        }
+
+
+        const updates = [];
+
+
+        snapshot.forEach(
+            (notificationDoc)=>{
+
+                const notification =
+                    notificationDoc.data();
+
+
+                if(notification.read !== true){
+
+                    updates.push(
+
+                        updateDoc(
+
+                            doc(
+                                db,
+                                "notifications",
+                                notificationDoc.id
+                            ),
+
+                            {
+                                read: true
+                            }
+
+                        )
+
+                    );
+
+                }
+
+            }
+        );
+
+
+        if(updates.length > 0){
+
+            await Promise.all(
+                updates
+            );
+
+        }
+
+
+        console.log(
+            "TOMA 25D — Toutes les notifications sont lues."
+        );
+
+
+    }
+
+    catch(error){
+
+        console.error(
+            "TOMA 25D — Erreur toutes notifications:",
+            error
+        );
+
+
+        alert(
+
+            "❌ TOMA — Impossible de marquer toutes les notifications comme lues.\n\n" +
+
+            "Code : " +
+            (
+                error.code ||
+                "inconnu"
+            ) +
+
+            "\n\n" +
+
+            "Message : " +
+            (
+                error.message ||
+                "Aucun message disponible"
+            )
+
+        );
+
+    }
+
+}
+
+
+/* =====================================
+BOUTON :
+MARCAR TODAS COMO LIDAS
+===================================== */
+
+if(
+    markAllNotificationsReadBtn
+){
+
+    markAllNotificationsReadBtn.onclick =
+    async ()=>{
+
+        try{
+
+            markAllNotificationsReadBtn.disabled =
+                true;
+
+
+            await markAllTomaNotificationsAsRead();
+
+
+        }
+
+        catch(error){
+
+            console.error(
+                "TOMA 25D — Erreur bouton:",
+                error
+            );
+
+        }
+
+        finally{
+
+            markAllNotificationsReadBtn.disabled =
+                false;
+
+        }
+
+    };
 
 }
 /* =====================================
