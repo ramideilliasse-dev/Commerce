@@ -207,21 +207,88 @@ menu
 
     <div class="headerActions">
 
-        <button class="notificationBtn">
+        <!-- =========================================================
+     TOMA — BLOC 25C
+     CENTRE DE NOTIFICATIONS
+========================================================= -->
 
-            <span class="material-symbols-rounded">
+<div class="notificationWrapper">
 
-                notifications
+    <button
+        id="openNotificationsBtn"
+        type="button"
+        class="notificationBtn tomaNotificationButton"
+        title="Notificações">
 
-            </span>
+        <span class="material-symbols-rounded">
+            notifications
+        </span>
 
-            <span class="notificationBadge">
+        <span
+            class="notificationBadge"
+            style="display:none;">
+            0
+        </span>
 
-                3
+    </button>
 
-            </span>
 
-        </button>
+    <!-- PANNEAU NOTIFICATIONS -->
+
+    <div
+        id="notificationsPanel"
+        class="notificationsPanel">
+
+        <div class="notificationsHeader">
+
+            <div>
+
+                <h3>
+
+                    Notificações
+
+                </h3>
+
+                <span id="notificationsSubtitle">
+
+                    Suas notificações Toma
+
+                </span>
+
+            </div>
+
+            <button
+                id="markAllNotificationsReadBtn"
+                type="button">
+
+                Marcar todas como lidas
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="notificationsList"
+            class="notificationsList">
+
+            <div class="notificationsLoading">
+
+                <span class="material-symbols-rounded">
+                    notifications
+                </span>
+
+                <p>
+                    Carregando notificações...
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 <!-- =========================================================
      BLOC 23C — NOTIFICATIONS TOMA
 ========================================================= -->
