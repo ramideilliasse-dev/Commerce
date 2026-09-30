@@ -94,8 +94,9 @@ onAuthStateChanged(auth, async(user)=>{
 
     currentUid = user.uid;
 
-    await loadMerchant();
+await loadMerchant();
 
+startTomaNotificationsCenter();
 });
 
 /* =====================================
@@ -473,6 +474,397 @@ if(notificationBtn){
         location.href = "merchant-orders.html";
 
     };
+
+}
+/* =====================================
+BLOC 25C
+CENTRE DE NOTIFICATIONS TOMA
+===================================== */
+
+const openNotificationsBtn =
+document.getElementById(
+    "openNotificationsBtn"
+);
+
+const notificationsPanel =
+document.getElementById(
+    "notificationsPanel"
+);
+
+const notificationsList =
+document.getElementById(
+    "notificationsList"
+);
+
+const markAllNotificationsReadBtn =
+document.getElementById(
+    "markAllNotificationsReadBtn"
+);
+
+
+/* =====================================
+OUVRIR / FERMER
+===================================== */
+
+if(openNotificationsBtn){
+
+    openNotificationsBtn.onclick =
+    (event)=>{
+
+        event.stopPropagation();
+
+        if(notificationsPanel){
+
+            notificationsPanel.classList.toggle(
+                "active"
+            );
+
+        }
+
+    };
+
+}
+
+
+/* =====================================
+FERMER EN CLIQUANT À L'EXTÉRIEUR
+===================================== */
+
+document.addEventListener(
+    "click",
+    (event)=>{
+
+        if(
+            notificationsPanel &&
+            !notificationsPanel.contains(event.target) &&
+            !openNotificationsBtn.contains(event.target)
+        ){
+
+            notificationsPanel.classList.remove(
+                "active"
+            );
+
+        }
+
+    }
+);
+
+
+/* =====================================
+ICÔNE SELON LE TYPE
+===================================== */
+
+function getNotificationIcon(type){
+
+    switch(type){
+
+        case "new_order":
+            return "shopping_bag";
+
+        case "order_confirmed":
+            return "check_circle";
+
+        case "order_cancelled":
+            return "cancel";
+
+        case "payment_received":
+            return "payments";
+
+        case "new_review":
+            return "star";
+
+        case "delivery":
+            return "local_shipping";
+
+        default:
+            return "notifications";
+
+    }
+
+}
+
+
+/* =====================================
+DATE
+===================================== */
+
+function formatNotificationDate(timestamp){
+
+    if(!timestamp){
+
+        return "Agora";
+
+    }
+
+    try{
+
+        const date =
+        timestamp.toDate
+            ? timestamp.toDate()
+            : new Date(timestamp);
+
+        return date.toLocaleString(
+            "pt-PT",
+            {
+                day:"2-digit",
+                month:"2-digit",
+                hour:"2-digit",
+                minute:"2-digit"
+            }
+        );
+
+    }
+
+    catch(error){
+
+        return "Agora";
+
+    }
+
+}
+
+
+/* =====================================
+CHARGER LES NOTIFICATIONS
+===================================== */
+
+function startTomaNotificationsCenter(){
+
+    try{
+
+        if(!currentUid){
+
+            return;
+
+        }
+
+        if(!notificationsList){
+
+            return;
+
+        }
+
+        const notificationsQuery =
+        query(
+
+            collection(
+                db,
+                "notifications"
+            ),
+
+            where(
+                "userId",
+                "==",
+                currentUid
+            )
+
+        );
+
+        onSnapshot(
+
+            notificationsQuery,
+
+            (snapshot)=>{
+
+                notificationsList.innerHTML = "";
+
+                if(snapshot.empty){
+
+                    notificationsList.innerHTML = `
+
+                        <div class="notificationsEmpty">
+
+                            <span class="material-symbols-rounded">
+
+                                notifications_none
+
+                            </span>
+
+                            <p>
+
+                                Você ainda não tem notificações.
+
+                            </p>
+
+                        </div>
+
+                    `;
+
+                    return;
+
+                }
+
+
+                const notifications = [];
+
+                snapshot.forEach(
+                    (notificationDoc)=>{
+
+                        notifications.push({
+
+                            id:
+                                notificationDoc.id,
+
+                            ...notificationDoc.data()
+
+                        });
+
+                    }
+                );
+
+
+                notifications.sort(
+                    (a,b)=>{
+
+                        const dateA =
+                        a.createdAt?.toDate
+                            ? a.createdAt.toDate()
+                            : new Date(a.createdAt || 0);
+
+                        const dateB =
+                        b.createdAt?.toDate
+                            ? b.createdAt.toDate()
+                            : new Date(b.createdAt || 0);
+
+                        return dateB - dateA;
+
+                    }
+                );
+
+
+                notifications.forEach(
+                    (notification)=>{
+
+                        const item =
+                        document.createElement("div");
+
+                        item.className =
+                            "notificationItem" +
+                            (
+                                notification.read === true
+                                ? ""
+                                : " unread"
+                            );
+
+
+                        const icon =
+                        getNotificationIcon(
+                            notification.type
+                        );
+
+
+                        item.innerHTML = `
+
+                            <div class="notificationIcon">
+
+                                <span class="material-symbols-rounded">
+
+                                    ${icon}
+
+                                </span>
+
+                            </div>
+
+
+                            <div class="notificationContent">
+
+                                <strong>
+
+                                    ${notification.title || "Toma"}
+
+                                </strong>
+
+                                <p>
+
+                                    ${notification.message || ""}
+
+                                </p>
+
+                                <span class="notificationTime">
+
+                                    ${formatNotificationDate(
+                                        notification.createdAt
+                                    )}
+
+                                </span>
+
+                            </div>
+
+
+                            ${
+                                notification.read === true
+                                ? ""
+                                : `
+                                    <span
+                                        class="notificationUnreadDot">
+                                    </span>
+                                `
+                            }
+
+                        `;
+
+
+                        notificationsList.appendChild(
+                            item
+                        );
+
+                    }
+                );
+
+            },
+
+            (error)=>{
+
+                console.error(
+                    "TOMA 25C — Erreur notifications:",
+                    error
+                );
+
+                notificationsList.innerHTML = `
+
+                    <div class="notificationsEmpty">
+
+                        <span class="material-symbols-rounded">
+
+                            error
+
+                        </span>
+
+                        <p>
+
+                            Não foi possível carregar as notificações.
+
+                        </p>
+
+                    </div>
+
+                `;
+
+            }
+
+        );
+
+    }
+
+    catch(error){
+
+        console.error(
+            "TOMA 25C — ERRO:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================
+DÉMARRAGE
+===================================== */
+
+if(currentUid){
+
+    startTomaNotificationsCenter();
 
 }
 /* =====================================
