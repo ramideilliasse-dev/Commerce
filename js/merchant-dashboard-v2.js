@@ -464,18 +464,7 @@ if(addProductBtn){
 NOTIFICATION
 ===================================== */
 
-const notificationBtn =
-document.querySelector(".notificationBtn");
 
-if(notificationBtn){
-
-    notificationBtn.onclick = ()=>{
-
-        location.href = "merchant-orders.html";
-
-    };
-
-}
 /* =====================================
 BLOC 25C
 CENTRE DE NOTIFICATIONS TOMA
