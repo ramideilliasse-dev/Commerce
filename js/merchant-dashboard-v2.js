@@ -809,6 +809,32 @@ function startTomaNotificationsCenter(){
                     error
                 );
 
+
+                /* =====================================
+                DIAGNOSTIC TOMA
+                ===================================== */
+
+                alert(
+
+                    "❌ TOMA — ERREUR NOTIFICATIONS\n\n" +
+
+                    "Code : " +
+                    (
+                        error.code ||
+                        "inconnu"
+                    ) +
+
+                    "\n\n" +
+
+                    "Message : " +
+                    (
+                        error.message ||
+                        "Aucun message disponible"
+                    )
+
+                );
+
+
                 notificationsList.innerHTML = `
 
                     <div class="notificationsEmpty">
@@ -842,12 +868,34 @@ function startTomaNotificationsCenter(){
             error
         );
 
+
+        /* =====================================
+        DIAGNOSTIC TOMA — ERREUR CRITIQUE
+        ===================================== */
+
+        alert(
+
+            "❌ TOMA — ERREUR CRITIQUE\n\n" +
+
+            "Code : " +
+            (
+                error.code ||
+                "inconnu"
+            ) +
+
+            "\n\n" +
+
+            "Message : " +
+            (
+                error.message ||
+                "Aucun message disponible"
+            )
+
+        );
+
     }
 
 }
-
-
-
 /* =====================================
 BLOC 23C
 ACTIVATION DES NOTIFICATIONS TOMA
