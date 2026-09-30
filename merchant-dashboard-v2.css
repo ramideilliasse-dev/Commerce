@@ -1204,3 +1204,458 @@ padding:8px 14px;
 }
 
 }
+/* =========================================================
+   TOMA — BLOC 25C
+   CENTRE DE NOTIFICATIONS
+========================================================= */
+
+.notificationWrapper{
+
+    position:relative;
+
+}
+
+
+.tomaNotificationButton{
+
+    position:relative;
+
+    width:46px;
+    height:46px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:#ffffff;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    cursor:pointer;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+
+}
+
+
+.tomaNotificationButton:hover{
+
+    transform:translateY(-2px);
+
+    background:#f8f9ff;
+
+    box-shadow:
+        0 8px 22px rgba(0,0,0,.10);
+
+}
+
+
+.tomaNotificationButton:active{
+
+    transform:scale(.94);
+
+}
+
+
+.tomaNotificationButton .material-symbols-rounded{
+
+    font-size:25px;
+
+}
+
+
+.notificationBadge{
+
+    position:absolute;
+
+    top:-4px;
+
+    right:-4px;
+
+    min-width:20px;
+
+    height:20px;
+
+    padding:0 5px;
+
+    border-radius:999px;
+
+    background:#ff3b30;
+
+    color:#ffffff;
+
+    border:2px solid #ffffff;
+
+    font-size:11px;
+
+    font-weight:700;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    line-height:1;
+
+    box-shadow:
+        0 3px 8px rgba(255,59,48,.30);
+
+}
+
+
+/* =========================================================
+   PANNEAU
+========================================================= */
+
+.notificationsPanel{
+
+    position:absolute;
+
+    top:58px;
+
+    right:0;
+
+    width:390px;
+
+    max-width:
+        calc(100vw - 30px);
+
+    background:#ffffff;
+
+    border-radius:18px;
+
+    box-shadow:
+        0 18px 50px rgba(0,0,0,.16);
+
+    border:1px solid rgba(0,0,0,.06);
+
+    overflow:hidden;
+
+    z-index:9999;
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transform:
+        translateY(-8px)
+        scale(.98);
+
+    transform-origin:top right;
+
+    transition:
+        opacity .2s ease,
+        transform .2s ease,
+        visibility .2s ease;
+
+}
+
+
+.notificationsPanel.active{
+
+    opacity:1;
+
+    visibility:visible;
+
+    transform:
+        translateY(0)
+        scale(1);
+
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.notificationsHeader{
+
+    padding:18px;
+
+    display:flex;
+
+    align-items:flex-start;
+
+    justify-content:space-between;
+
+    gap:15px;
+
+    border-bottom:1px solid #eeeeee;
+
+}
+
+
+.notificationsHeader h3{
+
+    margin:0;
+
+    font-size:18px;
+
+    font-weight:700;
+
+}
+
+
+.notificationsHeader span{
+
+    display:block;
+
+    margin-top:4px;
+
+    color:#888888;
+
+    font-size:12px;
+
+}
+
+
+#markAllNotificationsReadBtn{
+
+    border:none;
+
+    background:none;
+
+    color:#4f46e5;
+
+    font-size:11px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    padding:4px;
+
+}
+
+
+#markAllNotificationsReadBtn:hover{
+
+    text-decoration:underline;
+
+}
+
+
+/* =========================================================
+   LISTE
+========================================================= */
+
+.notificationsList{
+
+    max-height:430px;
+
+    overflow-y:auto;
+
+}
+
+
+.notificationItem{
+
+    display:flex;
+
+    gap:12px;
+
+    padding:15px 17px;
+
+    border-bottom:1px solid #f1f1f1;
+
+    cursor:pointer;
+
+    transition:
+        background .2s ease;
+
+}
+
+
+.notificationItem:hover{
+
+    background:#f8f9fc;
+
+}
+
+
+.notificationItem.unread{
+
+    background:#f5f7ff;
+
+}
+
+
+.notificationIcon{
+
+    width:40px;
+
+    height:40px;
+
+    min-width:40px;
+
+    border-radius:12px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:#eef0ff;
+
+}
+
+
+.notificationIcon .material-symbols-rounded{
+
+    font-size:21px;
+
+}
+
+
+.notificationContent{
+
+    flex:1;
+
+    min-width:0;
+
+}
+
+
+.notificationContent strong{
+
+    display:block;
+
+    font-size:14px;
+
+    color:#202124;
+
+}
+
+
+.notificationContent p{
+
+    margin:4px 0;
+
+    font-size:12px;
+
+    line-height:1.45;
+
+    color:#666666;
+
+}
+
+
+.notificationTime{
+
+    font-size:10px;
+
+    color:#999999;
+
+}
+
+
+.notificationUnreadDot{
+
+    width:7px;
+
+    height:7px;
+
+    min-width:7px;
+
+    border-radius:50%;
+
+    background:#4f46e5;
+
+    margin-top:7px;
+
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.notificationsEmpty{
+
+    padding:45px 20px;
+
+    text-align:center;
+
+}
+
+
+.notificationsEmpty .material-symbols-rounded{
+
+    font-size:42px;
+
+    color:#c7c7c7;
+
+}
+
+
+.notificationsEmpty p{
+
+    margin:10px 0 0;
+
+    color:#888888;
+
+    font-size:13px;
+
+}
+
+
+.notificationsLoading{
+
+    padding:45px 20px;
+
+    text-align:center;
+
+}
+
+
+.notificationsLoading .material-symbols-rounded{
+
+    font-size:35px;
+
+    color:#aaa;
+
+}
+
+
+.notificationsLoading p{
+
+    color:#888;
+
+    font-size:13px;
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:600px){
+
+    .notificationsPanel{
+
+        position:fixed;
+
+        top:72px;
+
+        right:12px;
+
+        width:
+            calc(100vw - 24px);
+
+        max-width:none;
+
+        border-radius:18px;
+
+    }
+
+}
