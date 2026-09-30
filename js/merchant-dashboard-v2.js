@@ -858,15 +858,7 @@ function startTomaNotificationsCenter(){
 }
 
 
-/* =====================================
-DÉMARRAGE
-===================================== */
 
-if(currentUid){
-
-    startTomaNotificationsCenter();
-
-}
 /* =====================================
 BLOC 23C
 ACTIVATION DES NOTIFICATIONS TOMA
