@@ -38,7 +38,108 @@ initializeApp();
 const db =
     getFirestore();
 
+// ============================================================
+// TOMA — BLOC 25B
+// CRÉATION D'UNE NOTIFICATION INTERNE
+// ============================================================
 
+async function createTomaNotification({
+
+    userId,
+    type,
+    title,
+    message,
+    orderId,
+    orderNumber,
+    data = {}
+
+}){
+
+    try{
+
+        if(!userId){
+
+            logger.error(
+                "TOMA 25B — userId ausente."
+            );
+
+            return null;
+
+        }
+
+        const notificationRef =
+        db
+            .collection("notifications")
+            .doc();
+
+        await notificationRef.set({
+
+            notificationId:
+                notificationRef.id,
+
+            userId:
+                String(userId),
+
+            type:
+                String(type || "general"),
+
+            title:
+                String(title || "Toma"),
+
+            message:
+                String(message || ""),
+
+            read:
+                false,
+
+            orderId:
+                orderId
+                    ? String(orderId)
+                    : "",
+
+            orderNumber:
+                orderNumber
+                    ? String(orderNumber)
+                    : "",
+
+            data:
+                data || {},
+
+            createdAt:
+                new Date()
+
+        });
+
+        logger.info(
+            "TOMA 25B — Notification créée.",
+            {
+                notificationId:
+                    notificationRef.id,
+
+                userId:
+                    userId,
+
+                orderId:
+                    orderId
+            }
+        );
+
+        return notificationRef.id;
+
+    }
+
+    catch(error){
+
+        logger.error(
+            "TOMA 25B — ERREUR création notification:",
+            error
+        );
+
+        return null;
+
+    }
+
+}
 // ============================================================
 // 3. NOTIFICATION — NOUVELLE COMMANDE
 // ============================================================
@@ -245,7 +346,48 @@ exports.notifyMerchantNewOrder =
                     await getMessaging()
                         .send(message);
 
+// ============================================================
+// TOMA — BLOC 25B
+// NOTIFICATION INTERNE TOMA
+// ============================================================
 
+await createTomaNotification({
+
+    userId:
+        merchantId,
+
+    type:
+        "new_order",
+
+    title:
+        "🔔 Nova encomenda",
+
+    message:
+        "Você recebeu uma nova encomenda.",
+
+    orderId:
+        orderId,
+
+    orderNumber:
+        orderNumber,
+
+    data:{
+
+        total:
+            String(total),
+
+        totalFormatted:
+            formattedTotal,
+
+        clientName:
+            String(clientName),
+
+        url:
+            "/merchant-orders.html"
+
+    }
+
+});
                 // =================================================
                 // G. CONFIRMATION
                 // =================================================
