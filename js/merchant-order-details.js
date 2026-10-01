@@ -1,6 +1,6 @@
  // ============================================================
 // TOMA — MERCHANT ORDER DETAILS
-// BLOC 26 — PROFESSIONAL ORDER DETAILS
+// BLOC 26C — REAL-TIME ORDER TRACKING
 // ============================================================
 
 import {
@@ -11,7 +11,8 @@ import {
 import {
     doc,
     getDoc,
-    updateDoc
+    updateDoc,
+    onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import {
@@ -23,14 +24,18 @@ import {
 // ELEMENTS
 // ============================================================
 
-const params = new URLSearchParams(
-    window.location.search
-);
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
 
-const orderId = params.get("id");
+const orderId =
+    params.get("id");
 
 const container =
-    document.getElementById("orderDetails");
+    document.getElementById(
+        "orderDetails"
+    );
 
 
 // ============================================================
@@ -43,9 +48,11 @@ let currentOrder = null;
 
 let merchantConfirmationRequired = true;
 
+let unsubscribeOrder = null;
+
 
 // ============================================================
-// INITIALISATION
+// AUTH
 // ============================================================
 
 onAuthStateChanged(
@@ -58,20 +65,24 @@ onAuthStateChanged(
                 "login.html";
 
             return;
+
         }
 
-        currentUser = user;
+
+        currentUser =
+            user;
+
 
         try {
 
             await loadMerchantConfirmationSetting();
 
-            await loadOrder();
+            startRealtimeOrderListener();
 
         } catch (error) {
 
             console.error(
-                "TOMA — Erreur initialisation:",
+                "TOMA 26C — Erreur initialisation:",
                 error
             );
 
@@ -86,7 +97,7 @@ onAuthStateChanged(
 
 
 // ============================================================
-// SETTINGS
+// MERCHANT CONFIRMATION SETTING
 // ============================================================
 
 async function loadMerchantConfirmationSetting(){
@@ -100,35 +111,43 @@ async function loadMerchantConfirmationSetting(){
                 "marketplace"
             );
 
+
         const settingsSnap =
-            await getDoc(settingsRef);
+            await getDoc(
+                settingsRef
+            );
 
 
-        if (settingsSnap.exists()) {
+        if(
+            settingsSnap.exists()
+        ){
 
             const settings =
                 settingsSnap.data();
 
+
             merchantConfirmationRequired =
                 settings.merchantConfirmationRequired !== false;
 
-        } else {
+        }else{
 
             merchantConfirmationRequired =
                 true;
 
         }
 
-    } catch (error) {
+    }catch(error){
 
         console.error(
-            "TOMA — Erro settings:",
+            "TOMA 26C — Erro settings:",
             error
         );
 
+
         // Segurança:
-        // se não conseguimos ler a configuração,
-        // a confirmação permanece obrigatória.
+        // se a configuração não puder
+        // ser carregada, a confirmação
+        // continua obrigatória.
 
         merchantConfirmationRequired =
             true;
@@ -139,18 +158,47 @@ async function loadMerchantConfirmationSetting(){
 
 
 // ============================================================
-// LOAD ORDER
+// REAL-TIME ORDER LISTENER
 // ============================================================
 
-async function loadOrder(){
+function startRealtimeOrderListener(){
 
-    if (!orderId) {
+    if(!orderId){
 
         showError(
             "Pedido não encontrado."
         );
 
         return;
+
+    }
+
+
+    if(!currentUser){
+
+        showError(
+            "Utilizador não autenticado."
+        );
+
+        return;
+
+    }
+
+
+    // ========================================================
+    // CLEAN OLD LISTENER
+    // ========================================================
+
+    if(
+        typeof unsubscribeOrder ===
+        "function"
+    ){
+
+        unsubscribeOrder();
+
+        unsubscribeOrder =
+            null;
+
     }
 
 
@@ -162,51 +210,98 @@ async function loadOrder(){
         );
 
 
-    const orderSnap =
-        await getDoc(orderRef);
-
-
-    if (!orderSnap.exists()) {
-
-        showError(
-            "Este pedido não existe."
-        );
-
-        return;
-    }
-
-
-    const order = {
-
-        id: orderSnap.id,
-
-        ...orderSnap.data()
-
-    };
-
-
     // ========================================================
-    // SECURITY CHECK
+    // FIRESTORE REAL-TIME LISTENER
     // ========================================================
 
-    if (
-        order.merchantId &&
-        currentUser &&
-        order.merchantId !== currentUser.uid
-    ) {
+    unsubscribeOrder =
+        onSnapshot(
 
-        showError(
-            "Você não tem autorização para visualizar este pedido."
+            orderRef,
+
+            (snapshot) => {
+
+                if(
+                    !snapshot.exists()
+                ){
+
+                    showError(
+                        "Este pedido não existe mais."
+                    );
+
+                    return;
+
+                }
+
+
+                const order = {
+
+                    id:
+                        snapshot.id,
+
+                    ...snapshot.data()
+
+                };
+
+
+                // =============================================
+                // SECURITY CHECK
+                // =============================================
+
+                if(
+                    order.merchantId &&
+                    order.merchantId !==
+                    currentUser.uid
+                ){
+
+                    showError(
+                        "Você não tem autorização para visualizar este pedido."
+                    );
+
+                    return;
+
+                }
+
+
+                // =============================================
+                // SAVE CURRENT ORDER
+                // =============================================
+
+                currentOrder =
+                    order;
+
+
+                // =============================================
+                // RENDER
+                // =============================================
+
+                renderOrder(
+                    order
+                );
+
+
+                console.log(
+                    "TOMA 26C — Pedido sincronizado em tempo real:",
+                    order.id
+                );
+
+            },
+
+            (error) => {
+
+                console.error(
+                    "TOMA 26C — Erro realtime:",
+                    error
+                );
+
+
+                showError(
+                    "Não foi possível sincronizar este pedido."
+                );
+
+            }
+
         );
-
-        return;
-    }
-
-
-    currentOrder = order;
-
-
-    renderOrder(order);
 
 }
 
@@ -215,7 +310,9 @@ async function loadOrder(){
 // RENDER ORDER
 // ============================================================
 
-function renderOrder(order){
+function renderOrder(
+    order
+){
 
     const status =
         normalizeStatus(
@@ -225,7 +322,12 @@ function renderOrder(order){
 
     const orderNumber =
         order.orderNumber ||
-        order.id.slice(0, 8).toUpperCase();
+        order.id
+            .slice(
+                0,
+                8
+            )
+            .toUpperCase();
 
 
     const clientName =
@@ -269,15 +371,24 @@ function renderOrder(order){
 
 
     const total =
-        Number(order.total || 0);
+        Number(
+            order.total || 0
+        );
 
 
     const deliveryFee =
-        Number(order.orderDeliveryFee || order.deliveryFee || 0);
+        Number(
+            order.orderDeliveryFee ||
+            order.deliveryFee ||
+            0
+        );
 
 
     const discount =
-        Number(order.discount || 0);
+        Number(
+            order.discount ||
+            0
+        );
 
 
     const items =
@@ -309,20 +420,41 @@ function renderOrder(order){
                     PEDIDO
                 </span>
 
+
                 <h2>
-                    #${escapeHtml(orderNumber)}
+                    #${escapeHtml(
+                        orderNumber
+                    )}
                 </h2>
 
-                <span class="
-                    statusBadge
-                    ${getStatusClass(status)}
-                ">
+
+                <span
+                    class="
+                        statusBadge
+                        ${getStatusClass(status)}
+                    "
+                >
                     ${escapeHtml(status)}
                 </span>
 
             </div>
 
         </section>
+
+
+        <!-- =================================================
+        REAL-TIME INDICATOR
+        ================================================= -->
+
+        <div class="realtimeIndicator">
+
+            <span class="realtimeDot"></span>
+
+            <span>
+                Pedido sincronizado em tempo real
+            </span>
+
+        </div>
 
 
         <!-- =================================================
@@ -390,20 +522,33 @@ function renderOrder(order){
                 <div class="clientMain">
 
                     <strong>
-                        ${escapeHtml(clientName)}
+                        ${escapeHtml(
+                            clientName
+                        )}
                     </strong>
+
 
                     ${
                         clientPhone
+
                         ? `
+
                         <span>
-                            ${escapeHtml(clientPhone)}
+                            ${escapeHtml(
+                                clientPhone
+                            )}
                         </span>
+
                         `
-                        : `
+
+                        :
+
+                        `
+
                         <span>
                             Telefone não informado
                         </span>
+
                         `
                     }
 
@@ -412,7 +557,9 @@ function renderOrder(order){
 
                 ${
                     clientPhone
+
                     ? `
+
                     <button
                         id="contactClient"
                         class="iconActionButton"
@@ -425,8 +572,13 @@ function renderOrder(order){
                         </span>
 
                     </button>
+
                     `
-                    : ""
+
+                    :
+
+                    ""
+
                 }
 
             </div>
@@ -444,11 +596,13 @@ function renderOrder(order){
 
                     </span>
 
+
                     <div>
 
                         <small>
                             Localização
                         </small>
+
 
                         <strong>
                             ${escapeHtml(
@@ -474,15 +628,18 @@ function renderOrder(order){
 
                     </span>
 
+
                     <div>
 
                         <small>
                             Endereço
                         </small>
 
+
                         <strong>
                             ${escapeHtml(
-                                address || "Não informado"
+                                address ||
+                                "Não informado"
                             )}
                         </strong>
 
@@ -535,6 +692,7 @@ function renderOrder(order){
                         Método de pagamento
                     </small>
 
+
                     <strong>
                         ${escapeHtml(
                             paymentMethod
@@ -562,11 +720,13 @@ function renderOrder(order){
                         COMPRA
                     </span>
 
+
                     <h3>
                         Produtos
                     </h3>
 
                 </div>
+
 
                 <span class="itemsCount">
 
@@ -585,9 +745,7 @@ function renderOrder(order){
 
             <div class="productsList">
 
-                ${
-                    renderProducts(items)
-                }
+                ${renderProducts(items)}
 
             </div>
 
@@ -608,6 +766,7 @@ function renderOrder(order){
                         RESUMO
                     </span>
 
+
                     <h3>
                         Resumo do pedido
                     </h3>
@@ -625,6 +784,7 @@ function renderOrder(order){
                         Subtotal
                     </span>
 
+
                     <strong>
                         ${formatMoney(
                             calculateSubtotal(
@@ -638,12 +798,15 @@ function renderOrder(order){
 
                 ${
                     deliveryFee > 0
+
                     ? `
+
                     <div class="summaryRow">
 
                         <span>
                             Entrega
                         </span>
+
 
                         <strong>
                             ${formatMoney(
@@ -652,19 +815,26 @@ function renderOrder(order){
                         </strong>
 
                     </div>
+
                     `
-                    : ""
+
+                    :
+
+                    ""
                 }
 
 
                 ${
                     discount > 0
+
                     ? `
+
                     <div class="summaryRow discountRow">
 
                         <span>
                             Desconto
                         </span>
+
 
                         <strong>
                             - ${formatMoney(
@@ -673,8 +843,12 @@ function renderOrder(order){
                         </strong>
 
                     </div>
+
                     `
-                    : ""
+
+                    :
+
+                    ""
                 }
 
 
@@ -687,8 +861,11 @@ function renderOrder(order){
                         Total
                     </span>
 
+
                     <strong>
-                        ${formatMoney(total)}
+                        ${formatMoney(
+                            total
+                        )}
                     </strong>
 
                 </div>
@@ -704,7 +881,9 @@ function renderOrder(order){
 
         ${
             note
+
             ? `
+
             <section class="orderSection">
 
                 <div class="sectionHeader">
@@ -714,6 +893,7 @@ function renderOrder(order){
                         <span class="sectionEyebrow">
                             OBSERVAÇÃO
                         </span>
+
 
                         <h3>
                             Nota do cliente
@@ -730,6 +910,7 @@ function renderOrder(order){
                         sticky_note_2
                     </span>
 
+
                     <p>
                         ${escapeHtml(note)}
                     </p>
@@ -737,13 +918,18 @@ function renderOrder(order){
                 </div>
 
             </section>
+
             `
-            : ""
+
+            :
+
+            ""
+
         }
 
 
         <!-- =================================================
-        STATUS ACTION
+        STATUS CONTROL
         ================================================= -->
 
         <section class="orderSection statusActionSection">
@@ -755,6 +941,7 @@ function renderOrder(order){
                     <span class="sectionEyebrow">
                         GESTÃO
                     </span>
+
 
                     <h3>
                         Atualizar pedido
@@ -779,6 +966,7 @@ function renderOrder(order){
                     <span class="material-symbols-rounded">
                         sync
                     </span>
+
 
                     <select
                         id="changeStatus"
@@ -807,6 +995,7 @@ function renderOrder(order){
 
                     </select>
 
+
                     <span class="material-symbols-rounded selectArrow">
                         expand_more
                     </span>
@@ -819,14 +1008,16 @@ function renderOrder(order){
 
 
         <!-- =================================================
-        FOOTER ACTIONS
+        ACTIONS
         ================================================= -->
 
         <div class="orderActions">
 
             ${
                 clientPhone
+
                 ? `
+
                 <button
                     id="contactClientBottom"
                     class="secondaryOrderButton"
@@ -840,9 +1031,15 @@ function renderOrder(order){
                     WhatsApp
 
                 </button>
+
                 `
-                : ""
+
+                :
+
+                ""
+
             }
+
 
             <button
                 id="backToOrders"
@@ -864,7 +1061,7 @@ function renderOrder(order){
 
 
     // ========================================================
-    // SET STATUS
+    // STATUS SELECT
     // ========================================================
 
     const statusSelect =
@@ -877,6 +1074,7 @@ function renderOrder(order){
 
         statusSelect.value =
             status;
+
 
         statusSelect.addEventListener(
             "change",
@@ -893,13 +1091,14 @@ function renderOrder(order){
 
 
     // ========================================================
-    // WHATSAPP BUTTONS
+    // WHATSAPP
     // ========================================================
 
     const contactClient =
         document.getElementById(
             "contactClient"
         );
+
 
     const contactClientBottom =
         document.getElementById(
@@ -909,32 +1108,34 @@ function renderOrder(order){
 
     if(contactClient){
 
-        contactClient.onclick = () => {
+        contactClient.onclick =
+            () => {
 
-            openWhatsApp(
-                clientPhone
-            );
+                openWhatsApp(
+                    clientPhone
+                );
 
-        };
+            };
 
     }
 
 
     if(contactClientBottom){
 
-        contactClientBottom.onclick = () => {
+        contactClientBottom.onclick =
+            () => {
 
-            openWhatsApp(
-                clientPhone
-            );
+                openWhatsApp(
+                    clientPhone
+                );
 
-        };
+            };
 
     }
 
 
     // ========================================================
-    // BACK BUTTON
+    // BACK
     // ========================================================
 
     const backToOrders =
@@ -945,12 +1146,13 @@ function renderOrder(order){
 
     if(backToOrders){
 
-        backToOrders.onclick = () => {
+        backToOrders.onclick =
+            () => {
 
-            window.location.href =
-                "merchant-orders.html";
+                window.location.href =
+                    "merchant-orders.html";
 
-        };
+            };
 
     }
 
@@ -958,7 +1160,7 @@ function renderOrder(order){
 
 
 // ============================================================
-// CHANGE STATUS
+// CHANGE ORDER STATUS
 // ============================================================
 
 async function changeOrderStatus(
@@ -968,6 +1170,7 @@ async function changeOrderStatus(
     if(!currentOrder){
 
         return;
+
     }
 
 
@@ -983,17 +1186,21 @@ async function changeOrderStatus(
         );
 
 
-    if(newStatus === currentStatus){
+    if(
+        newStatus ===
+        currentStatus
+    ){
 
         statusSelect.value =
             currentStatus;
 
         return;
+
     }
 
 
     // ========================================================
-    // CONFIRMATION REQUIRED
+    // MERCHANT CONFIRMATION
     // ========================================================
 
     if(
@@ -1007,12 +1214,19 @@ async function changeOrderStatus(
             "Este pedido precisa ser confirmado pelo comerciante antes de continuar."
         );
 
+
         statusSelect.value =
             currentStatus;
 
+
         return;
+
     }
 
+
+    // ========================================================
+    // CONFIRM ORDER
+    // ========================================================
 
     if(
         merchantConfirmationRequired === true &&
@@ -1033,16 +1247,20 @@ async function changeOrderStatus(
                 currentStatus;
 
             return;
+
         }
 
     }
 
 
     // ========================================================
-    // CANCEL CONFIRMATION
+    // CANCEL ORDER
     // ========================================================
 
-    if(newStatus === "Cancelado"){
+    if(
+        newStatus ===
+        "Cancelado"
+    ){
 
         const confirmed =
             window.confirm(
@@ -1057,6 +1275,7 @@ async function changeOrderStatus(
                 currentStatus;
 
             return;
+
         }
 
     }
@@ -1064,7 +1283,8 @@ async function changeOrderStatus(
 
     try{
 
-        statusSelect.disabled = true;
+        statusSelect.disabled =
+            true;
 
 
         await updateDoc(
@@ -1076,74 +1296,34 @@ async function changeOrderStatus(
             ),
 
             {
-                status: newStatus
+                status:
+                    newStatus
             }
 
         );
 
 
-        currentOrder.status =
-            newStatus;
+        /*
+         * IMPORTANTE:
+         *
+         * Não fazemos aqui um renderOrder().
+         *
+         * O onSnapshot() vai receber
+         * automaticamente a alteração
+         * feita no Firestore e renderizar
+         * novamente a página.
+         */
 
-
-        statusSelect.value =
-            newStatus;
-
-
-        // ====================================================
-        // SUCCESS
-        // ====================================================
 
         showSuccess(
             "Pedido atualizado com sucesso."
         );
 
 
-        // ====================================================
-        // RE-RENDER TIMELINE
-        // ====================================================
-
-        const timeline =
-            document.querySelector(
-                ".statusTimeline"
-            );
-
-
-        if(timeline){
-
-            timeline.outerHTML =
-                renderStatusTimeline(
-                    newStatus
-                );
-
-        }
-
-
-        // ====================================================
-        // UPDATE HERO BADGE
-        // ====================================================
-
-        const badge =
-            document.querySelector(
-                ".orderHeroInfo .statusBadge"
-            );
-
-
-        if(badge){
-
-            badge.className =
-                `statusBadge ${getStatusClass(newStatus)}`;
-
-            badge.textContent =
-                newStatus;
-
-        }
-
-
     }catch(error){
 
         console.error(
-            "TOMA — Erro atualização:",
+            "TOMA 26C — Erro atualização:",
             error
         );
 
@@ -1155,8 +1335,12 @@ async function changeOrderStatus(
         alert(
             "Não foi possível atualizar o pedido.\n\n" +
             "Código: " +
-            (error.code || "desconhecido")
+            (
+                error.code ||
+                "desconhecido"
+            )
         );
+
 
     }finally{
 
@@ -1179,27 +1363,51 @@ function renderStatusTimeline(
     const statuses = [
 
         {
-            key: "Pendente",
-            label: "Pendente",
-            icon: "schedule"
+            key:
+                "Pendente",
+
+            label:
+                "Pendente",
+
+            icon:
+                "schedule"
+
         },
 
         {
-            key: "Confirmado",
-            label: "Confirmado",
-            icon: "check_circle"
+            key:
+                "Confirmado",
+
+            label:
+                "Confirmado",
+
+            icon:
+                "check_circle"
+
         },
 
         {
-            key: "Enviado",
-            label: "Enviado",
-            icon: "local_shipping"
+            key:
+                "Enviado",
+
+            label:
+                "Enviado",
+
+            icon:
+                "local_shipping"
+
         },
 
         {
-            key: "Entregue",
-            label: "Entregue",
-            icon: "task_alt"
+            key:
+                "Entregue",
+
+            label:
+                "Entregue",
+
+            icon:
+                "task_alt"
+
         }
 
     ];
@@ -1208,7 +1416,8 @@ function renderStatusTimeline(
     const statusIndex =
         statuses.findIndex(
             item =>
-                item.key === currentStatus
+                item.key ===
+                currentStatus
         );
 
 
@@ -1217,72 +1426,117 @@ function renderStatusTimeline(
         <div class="statusTimeline">
 
             ${
-                statuses.map(
-                    (item,index) => {
+                statuses
+                    .map(
+                        (
+                            item,
+                            index
+                        ) => {
 
-                        const active =
-                            index <= statusIndex &&
-                            currentStatus !== "Cancelado";
+                            const active =
+                                index <=
+                                statusIndex &&
+                                currentStatus !==
+                                "Cancelado";
 
 
-                        return `
+                            return `
 
-                            <div class="
-                                timelineStep
-                                ${active ? "active" : ""}
-                            ">
+                                <div
+                                    class="
+                                        timelineStep
+                                        ${
+                                            active
+                                            ? "active"
+                                            : ""
+                                        }
+                                    "
+                                >
 
-                                <div class="timelineIcon">
+                                    <div
+                                        class="timelineIcon"
+                                    >
 
-                                    <span class="material-symbols-rounded">
-                                        ${item.icon}
+                                        <span
+                                            class="material-symbols-rounded"
+                                        >
+                                            ${item.icon}
+                                        </span>
+
+                                    </div>
+
+
+                                    <span>
+                                        ${item.label}
                                     </span>
 
                                 </div>
 
-                                <span>
-                                    ${item.label}
-                                </span>
 
-                            </div>
+                                ${
+                                    index <
+                                    statuses.length - 1
 
-                            ${
-                                index < statuses.length - 1
-                                ? `
-                                <div class="
-                                    timelineLine
-                                    ${
-                                        index < statusIndex &&
-                                        currentStatus !== "Cancelado"
-                                        ? "active"
-                                        : ""
-                                    }
-                                "></div>
-                                `
-                                : ""
-                            }
+                                    ?
 
-                        `;
+                                    `
 
-                    }
-                ).join("")
+                                    <div
+                                        class="
+                                            timelineLine
+                                            ${
+                                                index <
+                                                statusIndex &&
+                                                currentStatus !==
+                                                "Cancelado"
+
+                                                ? "active"
+                                                : ""
+                                            }
+                                        "
+                                    ></div>
+
+                                    `
+
+                                    :
+
+                                    ""
+                                }
+
+                            `;
+
+                        }
+                    )
+                    .join("")
             }
 
 
             ${
-                currentStatus === "Cancelado"
-                ? `
+                currentStatus ===
+                "Cancelado"
+
+                ?
+
+                `
+
                 <div class="cancelledTimeline">
 
-                    <span class="material-symbols-rounded">
+                    <span
+                        class="material-symbols-rounded"
+                    >
                         cancel
                     </span>
 
                     Pedido cancelado
 
                 </div>
+
                 `
-                : ""
+
+                :
+
+                ""
+
             }
 
         </div>
@@ -1301,7 +1555,6 @@ function renderProducts(
 ){
 
     if(
-        !products ||
         !Array.isArray(products) ||
         products.length === 0
     ){
@@ -1310,9 +1563,12 @@ function renderProducts(
 
             <div class="emptyProducts">
 
-                <span class="material-symbols-rounded">
+                <span
+                    class="material-symbols-rounded"
+                >
                     inventory_2
                 </span>
+
 
                 <p>
                     Nenhum produto encontrado.
@@ -1325,91 +1581,116 @@ function renderProducts(
     }
 
 
-    return products.map(
-        (product,index) => {
+    return products
+        .map(
+            (
+                product,
+                index
+            ) => {
 
-            const name =
-                product.name ||
-                `Produto ${index + 1}`;
-
-
-            const quantity =
-                Number(
-                    product.quantity ||
-                    product.qty ||
-                    1
-                );
+                const name =
+                    product.name ||
+                    `Produto ${index + 1}`;
 
 
-            const price =
-                Number(
-                    product.price || 0
-                );
+                const quantity =
+                    Number(
+                        product.quantity ||
+                        product.qty ||
+                        1
+                    );
 
 
-            const image =
-                product.image ||
-                (
-                    Array.isArray(product.images)
-                    ? product.images[0]
-                    : ""
-                ) ||
-                "images/no-image.png";
+                const price =
+                    Number(
+                        product.price ||
+                        0
+                    );
 
 
-            const subtotal =
-                price * quantity;
+                const image =
+                    product.image ||
+
+                    (
+                        Array.isArray(
+                            product.images
+                        )
+                        ? product.images[0]
+                        : ""
+                    ) ||
+
+                    "images/no-image.png";
 
 
-            return `
+                const subtotal =
+                    price *
+                    quantity;
 
-                <div class="productCard">
 
-                    <div class="productImageWrapper">
+                return `
 
-                        <img
-                            src="${escapeHtml(image)}"
-                            alt="${escapeHtml(name)}"
-                            class="productImage"
-                            loading="lazy"
-                            onerror="this.src='images/no-image.png'"
+                    <div class="productCard">
+
+                        <div
+                            class="productImageWrapper"
                         >
 
-                    </div>
+                            <img
+                                src="${escapeHtml(image)}"
+                                alt="${escapeHtml(name)}"
+                                class="productImage"
+                                loading="lazy"
+                                onerror="
+                                    this.src='images/no-image.png'
+                                "
+                            >
+
+                        </div>
 
 
-                    <div class="productInfo">
+                        <div class="productInfo">
 
-                        <strong>
-                            ${escapeHtml(name)}
+                            <strong>
+                                ${escapeHtml(name)}
+                            </strong>
+
+
+                            <span>
+
+                                ${quantity}
+
+                                ×
+
+                                ${formatMoney(price)}
+
+                            </span>
+
+                        </div>
+
+
+                        <strong
+                            class="productSubtotal"
+                        >
+
+                            ${formatMoney(
+                                subtotal
+                            )}
+
                         </strong>
 
-                        <span>
-                            ${quantity} ×
-                            ${formatMoney(price)}
-                        </span>
-
                     </div>
 
+                `;
 
-                    <strong class="productSubtotal">
-
-                        ${formatMoney(subtotal)}
-
-                    </strong>
-
-                </div>
-
-            `;
-
-        }
-    ).join("");
+            }
+        )
+        .join("");
 
 }
 
 
 // ============================================================
-// CALCULATE SUBTOTAL
+// SUBTOTAL
 // ============================================================
 
 function calculateSubtotal(
@@ -1426,11 +1707,15 @@ function calculateSubtotal(
 
 
     return products.reduce(
-        (total,product) => {
+        (
+            total,
+            product
+        ) => {
 
             const price =
                 Number(
-                    product.price || 0
+                    product.price ||
+                    0
                 );
 
 
@@ -1442,8 +1727,13 @@ function calculateSubtotal(
                 );
 
 
-            return total +
-                price * quantity;
+            return (
+                total +
+                (
+                    price *
+                    quantity
+                )
+            );
 
         },
         0
@@ -1468,65 +1758,51 @@ function normalizeStatus(
 
 
     const value =
-        String(status).trim();
+        String(
+            status
+        )
+        .trim()
+        .toLowerCase();
 
 
-    const lower =
-        value.toLowerCase();
+    switch(value){
+
+        case "pending":
+        case "pendente":
+
+            return "Pendente";
 
 
-    if(
-        lower === "pending" ||
-        lower === "pendente"
-    ){
+        case "confirmed":
+        case "confirmado":
 
-        return "Pendente";
-
-    }
+            return "Confirmado";
 
 
-    if(
-        lower === "confirmed" ||
-        lower === "confirmado"
-    ){
+        case "shipped":
+        case "enviado":
 
-        return "Confirmado";
-
-    }
+            return "Enviado";
 
 
-    if(
-        lower === "shipped" ||
-        lower === "enviado"
-    ){
+        case "delivered":
+        case "entregue":
 
-        return "Enviado";
-
-    }
+            return "Entregue";
 
 
-    if(
-        lower === "delivered" ||
-        lower === "entregue"
-    ){
+        case "cancelled":
+        case "canceled":
+        case "cancelado":
 
-        return "Entregue";
-
-    }
+            return "Cancelado";
 
 
-    if(
-        lower === "cancelled" ||
-        lower === "canceled" ||
-        lower === "cancelado"
-    ){
+        default:
 
-        return "Cancelado";
+            return "Pendente";
 
     }
-
-
-    return "Pendente";
 
 }
 
@@ -1544,19 +1820,28 @@ function getStatusClass(
     ){
 
         case "Confirmado":
+
             return "status-confirmado";
 
+
         case "Enviado":
+
             return "status-enviado";
 
+
         case "Entregue":
+
             return "status-entregue";
 
+
         case "Cancelado":
+
             return "status-cancelado";
+
 
         case "Pendente":
         default:
+
             return "status-pendente";
 
     }
@@ -1575,17 +1860,29 @@ function buildLocation(
 
     const parts = [];
 
+
     if(province){
-        parts.push(province);
+
+        parts.push(
+            province
+        );
+
     }
 
+
     if(city){
-        parts.push(city);
+
+        parts.push(
+            city
+        );
+
     }
 
 
     return parts.length
+
         ? parts.join(", ")
+
         : "Não informado";
 
 }
@@ -1600,11 +1897,18 @@ function formatMoney(
 ){
 
     return (
-        Number(value || 0)
+
+        Number(
+            value || 0
+        )
         .toLocaleString(
             "pt-PT"
         )
-        + " Kz"
+
+        +
+
+        " Kz"
+
     );
 
 }
@@ -1625,11 +1929,14 @@ function openWhatsApp(
         );
 
         return;
+
     }
 
 
     const cleanPhone =
-        String(phone)
+        String(
+            phone
+        )
         .replace(
             /[^0-9+]/g,
             ""
@@ -1649,7 +1956,7 @@ function openWhatsApp(
 
 
 // ============================================================
-// SUCCESS MESSAGE
+// SUCCESS TOAST
 // ============================================================
 
 function showSuccess(
@@ -1681,9 +1988,12 @@ function showSuccess(
 
     toast.innerHTML = `
 
-        <span class="material-symbols-rounded">
+        <span
+            class="material-symbols-rounded"
+        >
             check_circle
         </span>
+
 
         <span>
             ${escapeHtml(message)}
@@ -1704,8 +2014,13 @@ function showSuccess(
                 "hide"
             );
 
+
             setTimeout(
-                () => toast.remove(),
+                () => {
+
+                    toast.remove();
+
+                },
                 300
             );
 
@@ -1727,6 +2042,7 @@ function showError(
     if(!container){
 
         return;
+
     }
 
 
@@ -1736,26 +2052,33 @@ function showError(
 
             <div class="errorIcon">
 
-                <span class="material-symbols-rounded">
+                <span
+                    class="material-symbols-rounded"
+                >
                     error
                 </span>
 
             </div>
 
+
             <h2>
                 Ocorreu um problema
             </h2>
 
+
             <p>
                 ${escapeHtml(message)}
             </p>
+
 
             <button
                 type="button"
                 id="backToOrdersError"
             >
 
-                <span class="material-symbols-rounded">
+                <span
+                    class="material-symbols-rounded"
+                >
                     arrow_back
                 </span>
 
@@ -1776,12 +2099,13 @@ function showError(
 
     if(backButton){
 
-        backButton.onclick = () => {
+        backButton.onclick =
+            () => {
 
-            window.location.href =
-                "merchant-orders.html";
+                window.location.href =
+                    "merchant-orders.html";
 
-        };
+            };
 
     }
 
@@ -1834,3 +2158,33 @@ function escapeHtml(
         );
 
 }
+
+
+// ============================================================
+// CLEANUP
+// ============================================================
+
+window.addEventListener(
+    "beforeunload",
+    () => {
+
+        if(
+            typeof unsubscribeOrder ===
+            "function"
+        ){
+
+            unsubscribeOrder();
+
+        }
+
+    }
+);
+
+
+// ============================================================
+// BLOC 26C
+// ============================================================
+
+console.log(
+    "TOMA — BLOC 26C — REAL-TIME ORDER TRACKING OK."
+);
