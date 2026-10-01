@@ -5,83 +5,100 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
 
-<title>Detalhes do Pedido</title>
+<title>Detalhes do Pedido | Toma</title>
 
-<link rel="stylesheet"
-href="merchant-dashboard-v2.css">
-<link rel="stylesheet" href="merchant-order-details.css">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
+<link
+rel="stylesheet"
+href="merchant-dashboard-v2.css"
+>
+
+<link
+rel="stylesheet"
+href="merchant-order-details.css"
+>
+
+<link
+href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+rel="stylesheet"
+>
+
+<link
+href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
+rel="stylesheet"
+>
 
 </head>
+
 
 <body>
 
 <div class="productsPage">
 
-<header class="productsHeader">
+<header class="productsHeader orderDetailsHeader">
 
-<div class="leftHeader">
+    <div class="leftHeader">
 
-<a href="merchant-orders.html"
-class="backButton">
+        <a
+        href="merchant-orders.html"
+        class="backButton"
+        aria-label="Voltar"
+        >
 
-<span class="material-symbols-rounded">
+            <span class="material-symbols-rounded">
+                arrow_back
+            </span>
 
-arrow_back
+        </a>
 
-</span>
+        <div>
 
-</a>
+            <h1>Detalhes do Pedido</h1>
 
-<div>
+            <p>
+                Informações completas do pedido.
+            </p>
 
-<h1>
+        </div>
 
-Detalhes do Pedido
-
-</h1>
-
-<p>
-
-Informações completas do pedido.
-
-</p>
-
-</div>
-
-</div>
+    </div>
 
 </header>
 
-<div id="orderDetails">
 
-<div class="emptyCard">
+<main id="orderDetails">
 
-<span class="material-symbols-rounded">
+    <div class="orderLoadingCard">
 
-shopping_bag
+        <div class="loadingIcon">
 
-</span>
+            <span class="material-symbols-rounded">
+                shopping_bag
+            </span>
 
-<h2>
+        </div>
 
-Carregando...
+        <h2>Carregando pedido...</h2>
 
-</h2>
+        <p>
+            Aguarde enquanto carregamos os detalhes.
+        </p>
+
+    </div>
+
+</main>
 
 </div>
 
-</div>
 
-</div>
-
-<script type="module"
-src="./js/merchant-order-details.js">
-
-</script>
+<script
+type="module"
+src="./js/merchant-order-details.js"
+></script>
 
 </body>
 
