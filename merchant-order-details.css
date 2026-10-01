@@ -1662,3 +1662,103 @@ SMALL PHONES
     }
 
 }
+/* =========================================================
+TOMA — BLOC 26C — REAL-TIME INDICATOR
+========================================================= */
+
+.realtimeIndicator{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    width:max-content;
+
+    max-width:100%;
+
+    margin:
+        -8px
+        0
+        18px;
+
+    padding:
+        7px
+        11px;
+
+    border-radius:999px;
+
+    background:#eefaf2;
+
+    color:#23834a;
+
+    font-size:11px;
+
+    font-weight:600;
+
+}
+
+
+.realtimeDot{
+
+    width:7px;
+
+    height:7px;
+
+    border-radius:50%;
+
+    background:#25b65a;
+
+    box-shadow:
+        0 0 0 4px rgba(37,182,90,.10);
+
+    animation:
+        tomaRealtimePulse 2s infinite;
+
+}
+
+
+@keyframes tomaRealtimePulse{
+
+    0%{
+
+        opacity:1;
+
+        transform:scale(1);
+
+    }
+
+    50%{
+
+        opacity:.45;
+
+        transform:scale(.85);
+
+    }
+
+    100%{
+
+        opacity:1;
+
+        transform:scale(1);
+
+    }
+
+}
+
+
+@media(max-width:768px){
+
+    .realtimeIndicator{
+
+        margin:
+            -4px
+            0
+            14px;
+
+        font-size:10px;
+
+    }
+
+}
