@@ -12,7 +12,10 @@ import {
     doc,
     getDoc,
     updateDoc,
-    onSnapshot
+    onSnapshot,
+    collection,
+    addDoc,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import {
@@ -1158,7 +1161,74 @@ function renderOrder(
 
 }
 
+// ============================================================
+// TOMA — BLOC 26D
+// HISTORIQUE DES CHANGEMENTS DE STATUT
+// ============================================================
 
+async function addOrderStatusHistory(
+    orderId,
+    previousStatus,
+    newStatus
+){
+    try{
+
+        if(!orderId){
+            console.warn(
+                "TOMA 26D — orderId ausente."
+            );
+            return;
+        }
+
+        if(!currentUser){
+            console.warn(
+                "TOMA 26D — Utilisateur non connecté."
+            );
+            return;
+        }
+
+        if(previousStatus === newStatus){
+            return;
+        }
+
+        await addDoc(
+            collection(
+                db,
+                "orders",
+                orderId,
+                "statusHistory"
+            ),
+            {
+                previousStatus:
+                    previousStatus || "",
+
+                newStatus:
+                    newStatus || "",
+
+                changedBy:
+                    currentUser.uid,
+
+                changedByEmail:
+                    currentUser.email || "",
+
+                changedAt:
+                    serverTimestamp()
+            }
+        );
+
+        console.log(
+            "TOMA 26D — Historique du statut enregistré."
+        );
+
+    }catch(error){
+
+        console.error(
+            "TOMA 26D — Erreur historique:",
+            error
+        );
+
+    }
+}
 // ============================================================
 // CHANGE ORDER STATUS
 // ============================================================
@@ -1286,7 +1356,21 @@ async function changeOrderStatus(
         statusSelect.disabled =
             true;
 
+const previousStatus =
+    normalizeStatus(
+        currentOrder.status
+    );
 
+const normalizedNewStatus =
+    normalizeStatus(
+        newStatus
+    );
+
+await addOrderStatusHistory(
+    orderId,
+    previousStatus,
+    normalizedNewStatus
+);
         await updateDoc(
 
             doc(
