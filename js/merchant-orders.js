@@ -1,10 +1,12 @@
- // =====================================
-// MERCHANT ORDERS
-// TOMA
-// BLOC CORRIGÉ
-// =====================================
+ // ============================================================
+// TOMA — MERCHANT ORDERS
+// BLOC 26B — STATUS NORMALIZATION
+// ============================================================
 
-import { db, auth } from "../firebase.js";
+import {
+    db,
+    auth
+} from "../firebase.js";
 
 import {
     collection,
@@ -18,9 +20,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 
-// =====================================
-// ELEMENTS HTML
-// =====================================
+// ============================================================
+// ELEMENTS
+// ============================================================
 
 const ordersContainer =
     document.getElementById("ordersContainer");
@@ -29,9 +31,9 @@ const searchInput =
     document.getElementById("searchOrder");
 
 
-// =====================================
+// ============================================================
 // VARIABLES
-// =====================================
+// ============================================================
 
 let allOrders = [];
 
@@ -42,96 +44,113 @@ let merchantId = null;
 let currentStatusFilter = "all";
 
 
-// =====================================
-// AUTHENTIFICATION
-// =====================================
+// ============================================================
+// AUTH
+// ============================================================
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(
+    auth,
+    (user) => {
 
-    if (!user) {
+        if (!user) {
 
-        location.href = "login.html";
+            location.href =
+                "login.html";
 
-        return;
+            return;
+        }
+
+        merchantId =
+            user.uid;
+
+        loadOrders(
+            merchantId
+        );
 
     }
-
-    merchantId = user.uid;
-
-    loadOrders(merchantId);
-
-});
+);
 
 
-// =====================================
-// CHARGER LES COMMANDES
-// =====================================
+// ============================================================
+// LOAD ORDERS
+// ============================================================
 
-function loadOrders(uid) {
+function loadOrders(uid){
 
-    if (!uid) {
+    if(!uid){
 
         console.error(
-            "MERCHANT ORDERS — UID commerçant manquant."
+            "TOMA — UID commerçant manquant."
         );
 
         return;
-
     }
 
 
-    const q = query(
-
-        collection(db, "orders"),
-
-        where(
-            "merchantId",
-            "==",
-            uid
-        )
-
-    );
+    const ordersQuery =
+        query(
+            collection(
+                db,
+                "orders"
+            ),
+            where(
+                "merchantId",
+                "==",
+                uid
+            )
+        );
 
 
     onSnapshot(
 
-        q,
+        ordersQuery,
 
         (snapshot) => {
 
             allOrders = [];
 
 
-            snapshot.forEach((docSnap) => {
+            snapshot.forEach(
+                (docSnap) => {
 
-                allOrders.push({
+                    allOrders.push({
 
-                    id: docSnap.id,
+                        id:
+                            docSnap.id,
 
-                    ...docSnap.data()
+                        ...docSnap.data()
 
-                });
+                    });
 
-            });
+                }
+            );
 
 
-            // Trier du plus récent au plus ancien
+            // =================================================
+            // SORT
+            // =================================================
 
-            allOrders.sort((a, b) => {
+            allOrders.sort(
+                (a,b) => {
 
-                const dateA =
-                    getTimestampValue(a.createdAt);
+                    const dateA =
+                        getTimestampValue(
+                            a.createdAt
+                        );
 
-                const dateB =
-                    getTimestampValue(b.createdAt);
+                    const dateB =
+                        getTimestampValue(
+                            b.createdAt
+                        );
 
-                return dateB - dateA;
 
-            });
+                    return dateB - dateA;
+
+                }
+            );
 
 
             updateCounters();
-
 
             applyFilters();
 
@@ -141,7 +160,7 @@ function loadOrders(uid) {
         (error) => {
 
             console.error(
-                "Erreur chargement commandes:",
+                "TOMA — Erreur commandes:",
                 error
             );
 
@@ -151,21 +170,15 @@ function loadOrders(uid) {
                 <div class="emptyCard">
 
                     <span class="material-symbols-rounded">
-
                         error
-
                     </span>
 
                     <h2>
-
                         Erro ao carregar os pedidos
-
                     </h2>
 
                     <p>
-
                         Tente novamente mais tarde.
-
                     </p>
 
                 </div>
@@ -179,136 +192,140 @@ function loadOrders(uid) {
 }
 
 
-// =====================================
-// FILTRER + RECHERCHER
-// =====================================
+// ============================================================
+// FILTERS
+// ============================================================
 
-function applyFilters() {
+function applyFilters(){
 
     const text =
-        (searchInput?.value || "")
+        (
+            searchInput?.value ||
+            ""
+        )
         .trim()
         .toLowerCase();
 
 
-    filteredOrders = allOrders.filter((order) => {
+    filteredOrders =
+        allOrders.filter(
+            (order) => {
+
+                const orderStatus =
+                    normalizeStatus(
+                        order.status
+                    );
 
 
-        // -------------------------------
-        // FILTRE DE STATUS
-        // -------------------------------
-
-        const orderStatus =
-            order.status || "Pendente";
+                const statusMatches =
+                    currentStatusFilter === "all" ||
+                    orderStatus === currentStatusFilter;
 
 
-        const statusMatches =
-
-            currentStatusFilter === "all"
-
-            ||
-
-            orderStatus === currentStatusFilter;
-
-
-
-        // -------------------------------
-        // RECHERCHE
-        // -------------------------------
-
-        const customerName =
-            String(
-                order.customerName ||
-                order.clientName ||
-                ""
-            ).toLowerCase();
+                const customerName =
+                    String(
+                        order.customerName ||
+                        order.clientName ||
+                        ""
+                    )
+                    .toLowerCase();
 
 
-        const orderId =
-            String(
-                order.id || ""
-            ).toLowerCase();
+                const orderId =
+                    String(
+                        order.id ||
+                        ""
+                    )
+                    .toLowerCase();
 
 
-        const orderNumber =
-            String(
-                order.orderNumber || ""
-            ).toLowerCase();
+                const orderNumber =
+                    String(
+                        order.orderNumber ||
+                        ""
+                    )
+                    .toLowerCase();
 
 
-        const phone =
-            String(
-                order.phone ||
-                order.clientPhone ||
-                ""
-            ).toLowerCase();
+                const phone =
+                    String(
+                        order.phone ||
+                        order.clientPhone ||
+                        ""
+                    )
+                    .toLowerCase();
 
 
-        const searchMatches =
+                const searchMatches =
+                    text === "" ||
 
-            text === ""
+                    customerName.includes(
+                        text
+                    ) ||
 
-            ||
+                    orderId.includes(
+                        text
+                    ) ||
 
-            customerName.includes(text)
+                    orderNumber.includes(
+                        text
+                    ) ||
 
-            ||
-
-            orderId.includes(text)
-
-            ||
-
-            orderNumber.includes(text)
-
-            ||
-
-            phone.includes(text);
+                    phone.includes(
+                        text
+                    );
 
 
-        return (
-            statusMatches &&
-            searchMatches
+                return (
+                    statusMatches &&
+                    searchMatches
+                );
+
+            }
         );
 
-    });
 
-
-    renderOrders(filteredOrders);
+    renderOrders(
+        filteredOrders
+    );
 
 }
 
 
-// =====================================
-// RENDER COMMANDES
-// =====================================
+// ============================================================
+// RENDER ORDERS
+// ============================================================
 
-function renderOrders(list) {
+function renderOrders(
+    list
+){
 
-
-    if (!list || list.length === 0) {
+    if(
+        !list ||
+        list.length === 0
+    ){
 
         ordersContainer.innerHTML = `
 
             <div class="emptyCard">
 
                 <span class="material-symbols-rounded">
-
                     shopping_bag
-
                 </span>
 
                 <h2>
-
                     Nenhum pedido
-
                 </h2>
 
                 <p>
 
                     ${
                         currentStatusFilter !== "all"
+
                         ? "Nenhum pedido encontrado neste status."
+
                         : "Os pedidos aparecerão aqui."
+
                     }
 
                 </p>
@@ -325,183 +342,208 @@ function renderOrders(list) {
     ordersContainer.innerHTML = "";
 
 
-    list.forEach((order) => {
+    list.forEach(
+        (order) => {
+
+            const firstProduct =
+                order.products?.[0] ||
+                order.items?.[0] ||
+                {};
 
 
-        const firstProduct =
-            order.products?.[0] ||
-            order.items?.[0] ||
-            {};
+            const image =
+                firstProduct.image ||
+
+                firstProduct.images?.[0] ||
+
+                "images/no-image.png";
 
 
-        const image =
-            firstProduct.image ||
-            firstProduct.images?.[0] ||
-            "images/no-image.png";
+            const productName =
+                firstProduct.name ||
+                "Produto";
 
 
-        const productName =
-            firstProduct.name ||
-            "Produto";
+            const customerName =
+                order.customerName ||
+                order.clientName ||
+                "Cliente";
 
 
-        const customerName =
-            order.customerName ||
-            order.clientName ||
-            "Cliente";
+            // =============================================
+            // NORMALIZED STATUS
+            // =============================================
+
+            const status =
+                normalizeStatus(
+                    order.status
+                );
 
 
-        const status =
-            order.status ||
-            "Pendente";
+            const total =
+                Number(
+                    order.total
+                ) || 0;
 
 
-        const total =
-            Number(order.total) || 0;
+            const orderNumber =
+                order.orderNumber ||
+                order.id?.slice(
+                    0,
+                    6
+                ) ||
+                "";
 
 
-        ordersContainer.innerHTML += `
+            ordersContainer.innerHTML += `
 
-            <div class="orderCard">
+                <div
+                    class="orderCard"
+                    data-order-id="${escapeHtml(order.id)}"
+                >
 
+                    <div class="orderImage">
 
-                <div class="orderImage">
-
-                    <img
-                        src="${escapeHtml(image)}"
-                        loading="lazy"
-                        alt="${escapeHtml(productName)}"
-                        onerror="this.src='images/no-image.png'"
-                    >
-
-                </div>
-
-
-                <div class="orderContent">
-
-
-                    <div class="orderTop">
-
-                        <h3>
-
-                            Pedido #${
-                                order.orderNumber
-                                ||
-                                order.id?.slice(0, 6)
-                                ||
-                                ""
-                            }
-
-                        </h3>
-
-
-                        <span
-                            class="statusBadge ${getStatusClass(status)}"
+                        <img
+                            src="${escapeHtml(image)}"
+                            loading="lazy"
+                            alt="${escapeHtml(productName)}"
+                            onerror="
+                                this.src='images/no-image.png'
+                            "
                         >
-
-                            ${escapeHtml(status)}
-
-                        </span>
 
                     </div>
 
 
-                    <p class="customerName">
+                    <div class="orderContent">
 
-                        👤 ${escapeHtml(customerName)}
+                        <div class="orderTop">
 
-                    </p>
-
-
-                    <p class="orderDate">
-
-                        📅 ${formatDate(order.createdAt)}
-
-                    </p>
+                            <h3>
+                                Pedido #${escapeHtml(orderNumber)}
+                            </h3>
 
 
-                    <div class="orderBottom">
+                            <span
+                                class="
+                                    statusBadge
+                                    ${getStatusClass(status)}
+                                "
+                            >
+                                ${escapeHtml(status)}
+                            </span>
+
+                        </div>
 
 
-                        <strong>
+                        <p class="customerName">
 
-                            ${total.toLocaleString(
-                                "pt-PT"
-                            )} Kz
+                            <span>
+                                👤
+                            </span>
 
-                        </strong>
+                            ${escapeHtml(customerName)}
+
+                        </p>
 
 
-                        <button
+                        <p class="orderDate">
 
-                            class="viewOrderBtn"
+                            <span>
+                                📅
+                            </span>
 
-                            data-id="${escapeHtml(order.id)}"
+                            ${formatDate(
+                                order.createdAt
+                            )}
 
-                            type="button"
+                        </p>
 
-                        >
 
-                            Ver detalhes
+                        <div class="orderBottom">
 
-                        </button>
+                            <strong>
 
+                                ${total.toLocaleString(
+                                    "pt-PT"
+                                )}
+
+                                Kz
+
+                            </strong>
+
+
+                            <button
+                                class="viewOrderBtn"
+                                data-id="${escapeHtml(order.id)}"
+                                type="button"
+                            >
+
+                                Ver detalhes
+
+                            </button>
+
+                        </div>
 
                     </div>
 
-
                 </div>
 
+            `;
 
-            </div>
-
-        `;
-
-    });
+        }
+    );
 
 
-    // =================================
-    // BOUTONS "VER DETALHES"
-    // =================================
+    // ========================================================
+    // DETAIL BUTTONS
+    // ========================================================
 
     document
-        .querySelectorAll(".viewOrderBtn")
-        .forEach((button) => {
+        .querySelectorAll(
+            ".viewOrderBtn"
+        )
+        .forEach(
+            (button) => {
 
-            button.addEventListener(
-                "click",
-                () => {
+                button.addEventListener(
+                    "click",
+                    () => {
 
-                    const orderId =
-                        button.dataset.id;
+                        const orderId =
+                            button.dataset.id;
 
 
-                    if (!orderId) {
+                        if(!orderId){
 
-                        alert(
-                            "Pedido não encontrado."
+                            alert(
+                                "Pedido não encontrado."
+                            );
+
+                            return;
+
+                        }
+
+
+                        openOrder(
+                            orderId
                         );
 
-                        return;
-
                     }
+                );
 
-
-                    openOrder(orderId);
-
-                }
-            );
-
-        });
+            }
+        );
 
 }
 
 
-// =====================================
-// RECHERCHE
-// =====================================
+// ============================================================
+// SEARCH
+// ============================================================
 
-if (searchInput) {
+if(searchInput){
 
     searchInput.addEventListener(
         "input",
@@ -515,13 +557,15 @@ if (searchInput) {
 }
 
 
-// =====================================
-// OUVRIR LES DETAILS
-// =====================================
+// ============================================================
+// OPEN ORDER
+// ============================================================
 
-function openOrder(orderId) {
+function openOrder(
+    orderId
+){
 
-    if (!orderId) {
+    if(!orderId){
 
         return;
 
@@ -534,45 +578,36 @@ function openOrder(orderId) {
 }
 
 
-// Garder également la fonction disponible
-// globalement si elle est appelée ailleurs.
-
-window.openOrder = openOrder;
+window.openOrder =
+    openOrder;
 
 
-// =====================================
-// CLASSES DES STATUS
-// =====================================
+// ============================================================
+// STATUS CLASS
+// ============================================================
 
-function getStatusClass(status) {
+function getStatusClass(
+    status
+){
 
-    switch (status) {
-
+    switch(
+        normalizeStatus(status)
+    ){
 
         case "Confirmado":
-
             return "status-confirmado";
 
-
         case "Enviado":
-
             return "status-enviado";
 
-
         case "Entregue":
-
             return "status-entregue";
 
-
         case "Cancelado":
-
             return "status-cancelado";
 
-
         case "Pendente":
-
         default:
-
             return "status-pendente";
 
     }
@@ -580,20 +615,87 @@ function getStatusClass(status) {
 }
 
 
-// =====================================
+// ============================================================
+// NORMALIZE STATUS
+// ============================================================
+
+function normalizeStatus(
+    status
+){
+
+    if(!status){
+
+        return "Pendente";
+
+    }
+
+
+    const value =
+        String(
+            status
+        )
+        .trim()
+        .toLowerCase();
+
+
+    switch(value){
+
+        case "pending":
+        case "pendente":
+
+            return "Pendente";
+
+
+        case "confirmed":
+        case "confirmado":
+
+            return "Confirmado";
+
+
+        case "shipped":
+        case "enviado":
+
+            return "Enviado";
+
+
+        case "delivered":
+        case "entregue":
+
+            return "Entregue";
+
+
+        case "cancelled":
+        case "canceled":
+        case "cancelado":
+
+            return "Cancelado";
+
+
+        default:
+
+            return "Pendente";
+
+    }
+
+}
+
+
+// ============================================================
 // FORMAT DATE
-// =====================================
+// ============================================================
 
-function formatDate(timestamp) {
+function formatDate(
+    timestamp
+){
 
-    if (!timestamp) {
+    if(!timestamp){
 
         return "-";
 
     }
 
 
-    try {
+    try{
 
         const date =
             timestamp.toDate
@@ -601,7 +703,11 @@ function formatDate(timestamp) {
             : new Date(timestamp);
 
 
-        if (isNaN(date.getTime())) {
+        if(
+            isNaN(
+                date.getTime()
+            )
+        ){
 
             return "-";
 
@@ -623,19 +729,20 @@ function formatDate(timestamp) {
             date.toLocaleTimeString(
                 "pt-PT",
                 {
-                    hour: "2-digit",
-                    minute: "2-digit"
+                    hour:
+                        "2-digit",
+
+                    minute:
+                        "2-digit"
                 }
             )
 
         );
 
-    }
-
-    catch (error) {
+    }catch(error){
 
         console.error(
-            "Erreur format date:",
+            "TOMA — Erro data:",
             error
         );
 
@@ -646,52 +753,58 @@ function formatDate(timestamp) {
 }
 
 
-// =====================================
-// CONVERTIR TIMESTAMP EN NOMBRE
-// =====================================
+// ============================================================
+// TIMESTAMP
+// ============================================================
 
-function getTimestampValue(timestamp) {
+function getTimestampValue(
+    timestamp
+){
 
-    if (!timestamp) {
+    if(!timestamp){
 
         return 0;
 
     }
 
 
-    try {
+    try{
 
-        if (
+        if(
             typeof timestamp.toMillis ===
             "function"
-        ) {
+        ){
 
             return timestamp.toMillis();
 
         }
 
 
-        if (
+        if(
             typeof timestamp.toDate ===
             "function"
-        ) {
+        ){
 
-            return timestamp.toDate().getTime();
+            return timestamp
+                .toDate()
+                .getTime();
 
         }
 
 
         const date =
-            new Date(timestamp);
+            new Date(
+                timestamp
+            );
 
 
-        return isNaN(date.getTime())
-            ? 0
-            : date.getTime();
+        return isNaN(
+            date.getTime()
+        )
+        ? 0
+        : date.getTime();
 
-    }
-
-    catch {
+    }catch{
 
         return 0;
 
@@ -700,67 +813,60 @@ function getTimestampValue(timestamp) {
 }
 
 
-// =====================================
-// FILTRES DE COMMANDES
-// =====================================
+// ============================================================
+// STATUS FILTER BUTTONS
+// ============================================================
 
 document
-    .querySelectorAll(".orderChip")
-    .forEach((button) => {
+    .querySelectorAll(
+        ".orderChip"
+    )
+    .forEach(
+        (button) => {
 
+            button.addEventListener(
+                "click",
+                () => {
 
-        button.addEventListener(
-            "click",
-            () => {
+                    document
+                        .querySelectorAll(
+                            ".orderChip"
+                        )
+                        .forEach(
+                            (item) => {
 
+                                item.classList.remove(
+                                    "active"
+                                );
 
-                // -----------------------------
-                // ACTIVE
-                // -----------------------------
-
-                document
-                    .querySelectorAll(".orderChip")
-                    .forEach((item) => {
-
-                        item.classList.remove(
-                            "active"
+                            }
                         );
 
-                    });
+
+                    button.classList.add(
+                        "active"
+                    );
 
 
-                button.classList.add(
-                    "active"
-                );
+                    currentStatusFilter =
+                        button.dataset.status ||
+                        "all";
 
 
-                // -----------------------------
-                // STATUS
-                // -----------------------------
+                    applyFilters();
 
-                currentStatusFilter =
-                    button.dataset.status ||
-                    "all";
+                }
+            );
 
-
-                // -----------------------------
-                // APPLIQUER
-                // -----------------------------
-
-                applyFilters();
-
-            }
-        );
-
-    });
+        }
+    );
 
 
-// =====================================
-// COMPTEURS
-// =====================================
+// ============================================================
+// COUNTERS
+// ============================================================
 
-function updateCounters() {
-
+function updateCounters(){
 
     const countAll =
         document.getElementById(
@@ -798,7 +904,7 @@ function updateCounters() {
         );
 
 
-    if (countAll) {
+    if(countAll){
 
         countAll.textContent =
             allOrders.length;
@@ -806,62 +912,66 @@ function updateCounters() {
     }
 
 
-    if (countPending) {
+    if(countPending){
 
         countPending.textContent =
-
             allOrders.filter(
                 (order) =>
-                    (order.status || "Pendente")
-                    === "Pendente"
+                    normalizeStatus(
+                        order.status
+                    ) === "Pendente"
             ).length;
 
     }
 
 
-    if (countConfirmed) {
+    if(countConfirmed){
 
         countConfirmed.textContent =
-
             allOrders.filter(
                 (order) =>
-                    order.status === "Confirmado"
+                    normalizeStatus(
+                        order.status
+                    ) === "Confirmado"
             ).length;
 
     }
 
 
-    if (countSent) {
+    if(countSent){
 
         countSent.textContent =
-
             allOrders.filter(
                 (order) =>
-                    order.status === "Enviado"
+                    normalizeStatus(
+                        order.status
+                    ) === "Enviado"
             ).length;
 
     }
 
 
-    if (countDelivered) {
+    if(countDelivered){
 
         countDelivered.textContent =
-
             allOrders.filter(
                 (order) =>
-                    order.status === "Entregue"
+                    normalizeStatus(
+                        order.status
+                    ) === "Entregue"
             ).length;
 
     }
 
 
-    if (countCanceled) {
+    if(countCanceled){
 
         countCanceled.textContent =
-
             allOrders.filter(
                 (order) =>
-                    order.status === "Cancelado"
+                    normalizeStatus(
+                        order.status
+                    ) === "Cancelado"
             ).length;
 
     }
@@ -869,13 +979,18 @@ function updateCounters() {
 }
 
 
-// =====================================
-// PROTECTION XSS SIMPLE
-// =====================================
+// ============================================================
+// ESCAPE HTML
+// ============================================================
 
-function escapeHtml(value) {
+function escapeHtml(
+    value
+){
 
-    if (value === null || value === undefined) {
+    if(
+        value === null ||
+        value === undefined
+    ){
 
         return "";
 
@@ -884,19 +999,38 @@ function escapeHtml(value) {
 
     return String(value)
 
-        .replace(/&/g, "&amp;")
+        .replace(
+            /&/g,
+            "&amp;"
+        )
 
-        .replace(/</g, "&lt;")
+        .replace(
+            /</g,
+            "&lt;"
+        )
 
-        .replace(/>/g, "&gt;")
+        .replace(
+            />/g,
+            "&gt;"
+        )
 
-        .replace(/"/g, "&quot;")
+        .replace(
+            /"/g,
+            "&quot;"
+        )
 
-        .replace(/'/g, "&#039;");
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
 
 
-// =====================================
-// FIN DU FICHIER
-// =====================================
+// ============================================================
+// BLOC 26B TERMINÉ
+// ============================================================
+
+console.log(
+    "TOMA — BLOC 26B — STATUS NORMALIZATION OK."
+);
