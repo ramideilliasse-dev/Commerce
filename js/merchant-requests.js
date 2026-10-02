@@ -10,7 +10,14 @@
 // IMPORT FIREBASE
 // ============================================================
 
-import { db } from "../firebase.js";
+import {
+    db,
+    auth
+} from "../firebase.js";
+
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 import {
     collection,
@@ -204,7 +211,29 @@ function init() {
 
     initializeRefreshButton();
 
-    listenMerchantRequests();
+    onAuthStateChanged(
+    auth,
+    (user) => {
+
+        if (!user) {
+
+            showLoaderError(
+                "Você precisa estar conectado como administrador."
+            );
+
+            return;
+
+        }
+
+        console.log(
+            "✅ TOMA — Admin autenticado:",
+            user.uid
+        );
+
+        listenMerchantRequests();
+
+    }
+);
 
 }
 
