@@ -1,4 +1,4 @@
-// =====================================
+ // =====================================
 // MERCHANT AFFILIATES
 // TOMA
 // =====================================
@@ -6,290 +6,563 @@
 import { db, auth } from "../firebase.js";
 
 import {
-
-collection,
-addDoc,
-getDocs,
-deleteDoc,
-doc,
-query,
-where,
-serverTimestamp
-
+    collection,
+    addDoc,
+    getDocs,
+    deleteDoc,
+    doc,
+    query,
+    where,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import {
-
-onAuthStateChanged
-
+    onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-/* ==========================
-DOM
-========================== */
+
+// =====================================
+// DOM
+// =====================================
 
 const affiliateName =
-document.getElementById("affiliateName");
+    document.getElementById("affiliateName");
 
 const affiliatePhone =
-document.getElementById("affiliatePhone");
+    document.getElementById("affiliatePhone");
 
 const affiliateInstagram =
-document.getElementById("affiliateInstagram");
+    document.getElementById("affiliateInstagram");
 
 const affiliateFacebook =
-document.getElementById("affiliateFacebook");
+    document.getElementById("affiliateFacebook");
 
 const affiliateTikTok =
-document.getElementById("affiliateTikTok");
+    document.getElementById("affiliateTikTok");
 
 const affiliateCoupon =
-document.getElementById("affiliateCoupon");
+    document.getElementById("affiliateCoupon");
 
 const saveAffiliateBtn =
-document.getElementById("saveAffiliateBtn");
+    document.getElementById("saveAffiliateBtn");
 
 const affiliateList =
-document.getElementById("affiliateList");
+    document.getElementById("affiliateList");
+
 
 let merchantId = null;
 
-/* ==========================
-AUTH
-========================== */
 
-onAuthStateChanged(auth,(user)=>{
+// =====================================
+// AUTH
+// =====================================
 
-if(!user){
+onAuthStateChanged(auth, async (user) => {
 
-location.href="login.html";
+    if (!user) {
 
-return;
+        location.href = "login.html";
 
-}
+        return;
 
-merchantId = user.uid;
+    }
 
-loadAffiliates();
+    merchantId = user.uid;
+
+    console.log(
+        "TOMA AFFILIATES — merchantId:",
+        merchantId
+    );
+
+    await loadAffiliates();
 
 });
 
-/* ==========================
-SAVE
-========================== */
 
-saveAffiliateBtn.onclick = async()=>{
+// =====================================
+// SAVE
+// =====================================
 
-if(
+saveAffiliateBtn.addEventListener(
+    "click",
+    async () => {
 
-affiliateName.value.trim()==="" ||
+        try {
 
-affiliateCoupon.value.trim()===""
+            // ==============================
+            // VÉRIFICATION AUTH
+            // ==============================
 
-){
+            if (!merchantId) {
 
-alert("Preencha pelo menos o nome e o cupom.");
+                alert(
+                    "TOMA — AFFILIATES ❌\n\n" +
+                    "O comerciante ainda não foi identificado."
+                );
 
-return;
+                return;
 
-}
+            }
 
-await addDoc(
 
-collection(db,"affiliates"),
+            // ==============================
+            // VÉRIFICATION FORMULAIRE
+            // ==============================
 
-{
+            const name =
+                affiliateName.value.trim();
 
-merchantId,
+            const phone =
+                affiliatePhone.value.trim();
 
-name:affiliateName.value.trim(),
+            const instagram =
+                affiliateInstagram.value.trim();
 
-phone:affiliatePhone.value.trim(),
+            const facebook =
+                affiliateFacebook.value.trim();
 
-instagram:affiliateInstagram.value.trim(),
+            const tiktok =
+                affiliateTikTok.value.trim();
 
-facebook:affiliateFacebook.value.trim(),
+            const coupon =
+                affiliateCoupon.value
+                    .trim()
+                    .toUpperCase();
 
-tiktok:affiliateTikTok.value.trim(),
 
-coupon:affiliateCoupon.value.trim().toUpperCase(),
+            if (!name || !coupon) {
 
-createdAt:serverTimestamp()
+                alert(
+                    "Preencha pelo menos o nome e o cupom."
+                );
 
-}
+                return;
 
+            }
+
+
+            // ==============================
+            // BOUTON
+            // ==============================
+
+            const originalText =
+                saveAffiliateBtn.textContent;
+
+            saveAffiliateBtn.disabled = true;
+
+            saveAffiliateBtn.textContent =
+                "A guardar...";
+
+
+            // ==============================
+            // CRÉATION
+            // ==============================
+
+            const affiliateData = {
+
+                merchantId: merchantId,
+
+                name: name,
+
+                phone: phone,
+
+                instagram: instagram,
+
+                facebook: facebook,
+
+                tiktok: tiktok,
+
+                coupon: coupon,
+
+                createdAt:
+                    serverTimestamp()
+
+            };
+
+
+            console.log(
+                "TOMA AFFILIATES — Enregistrement:",
+                affiliateData
+            );
+
+
+            const affiliateRef =
+                await addDoc(
+                    collection(
+                        db,
+                        "affiliates"
+                    ),
+                    affiliateData
+                );
+
+
+            console.log(
+                "TOMA AFFILIATES — Enregistrado:",
+                affiliateRef.id
+            );
+
+
+            // ==============================
+            // NETTOYER
+            // ==============================
+
+            affiliateName.value = "";
+
+            affiliatePhone.value = "";
+
+            affiliateInstagram.value = "";
+
+            affiliateFacebook.value = "";
+
+            affiliateTikTok.value = "";
+
+            affiliateCoupon.value = "";
+
+
+            // ==============================
+            // RECHARGER
+            // ==============================
+
+            await loadAffiliates();
+
+
+            alert(
+                "Influenciador guardado com sucesso! ✅"
+            );
+
+
+            saveAffiliateBtn.disabled = false;
+
+            saveAffiliateBtn.textContent =
+                originalText;
+
+
+        }
+        catch (error) {
+
+            console.error(
+                "TOMA AFFILIATES — ERRO AO GUARDAR:",
+                error
+            );
+
+
+            saveAffiliateBtn.disabled = false;
+
+            saveAffiliateBtn.textContent =
+                "Guardar";
+
+
+            alert(
+                "TOMA — AFFILIATES ❌\n\n" +
+                "Não foi possível guardar o influenciador.\n\n" +
+                "Erro: " +
+                (
+                    error.message ||
+                    "Erro desconhecido"
+                )
+            );
+
+        }
+
+    }
 );
 
-affiliateName.value="";
 
-affiliatePhone.value="";
+// =====================================
+// LOAD
+// =====================================
 
-affiliateInstagram.value="";
+async function loadAffiliates() {
 
-affiliateFacebook.value="";
+    try {
 
-affiliateTikTok.value="";
+        if (!merchantId) {
 
-affiliateCoupon.value="";
+            return;
 
-loadAffiliates();
+        }
 
-};
 
-/* ==========================
-LOAD
-========================== */
+        const q =
+            query(
+                collection(
+                    db,
+                    "affiliates"
+                ),
+                where(
+                    "merchantId",
+                    "==",
+                    merchantId
+                )
+            );
 
-async function loadAffiliates(){
 
-const q = query(
+        const snap =
+            await getDocs(q);
 
-collection(db,"affiliates"),
 
-where("merchantId","==",merchantId)
+        console.log(
+            "TOMA AFFILIATES — Influenciadores encontrados:",
+            snap.size
+        );
 
-);
 
-const snap = await getDocs(q);
+        if (snap.empty) {
 
-if(snap.empty){
+            affiliateList.innerHTML = `
 
-affiliateList.innerHTML = `
+                <div class="emptyCard">
 
-<div class="emptyCard">
+                    <span class="material-symbols-rounded">
+                        groups
+                    </span>
 
-<span class="material-symbols-rounded">
+                    <h2>
+                        Nenhum influenciador
+                    </h2>
 
-groups
+                    <p>
+                        Adicione o primeiro parceiro.
+                    </p>
 
-</span>
+                </div>
 
-<h2>
+            `;
 
-Nenhum influenciador
+            return;
 
-</h2>
+        }
 
-<p>
 
-Adicione o primeiro parceiro.
+        affiliateList.innerHTML = "";
 
-</p>
 
-</div>
+        snap.forEach((documento) => {
 
-`;
+            const affiliate =
+                documento.data();
 
-return;
+
+            const name =
+                affiliate.name ||
+                "Influenciador";
+
+
+            const initial =
+                name
+                    .charAt(0)
+                    .toUpperCase();
+
+
+            affiliateList.innerHTML += `
+
+                <div class="affiliateCard">
+
+                    <div class="affiliateLeft">
+
+                        <div class="affiliateAvatar">
+                            ${initial}
+                        </div>
+
+                        <div class="affiliateInfo">
+
+                            <h3>
+                                ${escapeHtml(name)}
+                            </h3>
+
+                            <p>
+                                📞
+                                ${escapeHtml(
+                                    affiliate.phone || "-"
+                                )}
+                            </p>
+
+                            <p>
+                                📸
+                                ${escapeHtml(
+                                    affiliate.instagram || "-"
+                                )}
+                            </p>
+
+                            <p>
+                                📘
+                                ${escapeHtml(
+                                    affiliate.facebook || "-"
+                                )}
+                            </p>
+
+                            <p>
+                                🎵
+                                ${escapeHtml(
+                                    affiliate.tiktok || "-"
+                                )}
+                            </p>
+
+                            <span class="couponBadge">
+                                ${escapeHtml(
+                                    affiliate.coupon || "-"
+                                )}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="affiliateActions">
+
+                        <button
+                            class="editAffiliate"
+                            data-affiliate-id="${documento.id}">
+                            Editar
+                        </button>
+
+                        <button
+                            class="deleteAffiliate"
+                            onclick="deleteAffiliate('${documento.id}')">
+                            Eliminar
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        });
+
+    }
+    catch (error) {
+
+        console.error(
+            "TOMA AFFILIATES — ERRO AO CARREGAR:",
+            error
+        );
+
+
+        affiliateList.innerHTML = `
+
+            <div class="emptyCard">
+
+                <span class="material-symbols-rounded">
+                    error
+                </span>
+
+                <h2>
+                    Erro ao carregar
+                </h2>
+
+                <p>
+                    ${escapeHtml(
+                        error.message ||
+                        "Não foi possível carregar os influenciadores."
+                    )}
+                </p>
+
+            </div>
+
+        `;
+
+    }
 
 }
 
-affiliateList.innerHTML="";
 
-snap.forEach(documento=>{
+// =====================================
+// DELETE
+// =====================================
 
-const affiliate = documento.data();
+window.deleteAffiliate =
+    async (id) => {
 
-affiliateList.innerHTML += `
+        try {
 
-<div class="affiliateCard">
+            if (!id) {
 
-<div class="affiliateLeft">
+                return;
 
-<div class="affiliateAvatar">
+            }
 
-${affiliate.name.charAt(0).toUpperCase()}
 
-</div>
+            const confirmDelete =
+                confirm(
+                    "Eliminar este influenciador?"
+                );
 
-<div class="affiliateInfo">
 
-<h3>
+            if (!confirmDelete) {
 
-${affiliate.name}
+                return;
 
-</h3>
+            }
 
-<p>
 
-📞 ${affiliate.phone || "-"}
+            await deleteDoc(
+                doc(
+                    db,
+                    "affiliates",
+                    id
+                )
+            );
 
-</p>
 
-<p>
+            await loadAffiliates();
 
-📸 ${affiliate.instagram || "-"}
 
-</p>
+            alert(
+                "Influenciador eliminado com sucesso. ✅"
+            );
 
-<p>
 
-📘 ${affiliate.facebook || "-"}
+        }
+        catch (error) {
 
-</p>
+            console.error(
+                "TOMA AFFILIATES — ERRO AO ELIMINAR:",
+                error
+            );
 
-<p>
 
-🎵 ${affiliate.tiktok || "-"}
+            alert(
+                "TOMA — AFFILIATES ❌\n\n" +
+                "Não foi possível eliminar.\n\n" +
+                "Erro: " +
+                (
+                    error.message ||
+                    "Erro desconhecido"
+                )
+            );
 
-</p>
+        }
 
-<span class="couponBadge">
+    };
 
-${affiliate.coupon}
 
-</span>
+// =====================================
+// ESCAPE HTML
+// =====================================
 
-</div>
+function escapeHtml(value) {
 
-</div>
-
-<div class="affiliateActions">
-
-<button
-
-class="editAffiliate">
-
-Editar
-
-</button>
-
-<button
-
-class="deleteAffiliate"
-
-onclick="deleteAffiliate('${documento.id}')">
-
-Eliminar
-
-</button>
-
-</div>
-
-</div>
-
-`;
-
-});
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
-
-/* ==========================
-DELETE
-========================== */
-
-window.deleteAffiliate = async(id)=>{
-
-if(!confirm("Eliminar este influenciador?"))
-
-return;
-
-await deleteDoc(
-
-doc(db,"affiliates",id)
-
-);
-
-loadAffiliates();
-
-};
