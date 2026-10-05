@@ -3806,1429 +3806,862 @@ function prepareDetailedReportExport() {
     }
 
 }
-function initializeReportsRealPeriodFilter() {
+/* =========================================================
+   BLOC 12.8 — OUTILS DE DATE
+========================================================= */
 
-    try {
+function getReportDate(value) {
 
-        
-        const reportsPeriodSelect =
-            document.getElementById(
-                "reportsPeriodSelect"
-            );
+    if (!value) {
+        return null;
+    }
 
-        const reportsPeriodLabel =
-            document.getElementById(
-                "reportsPeriodLabel"
-            );
+    if (
+        typeof value === "object" &&
+        typeof value.toDate === "function"
+    ) {
+        return value.toDate();
+    }
 
-        if (!reportsPeriodSelect) {
-            throw new Error(
-                "L'ID reportsPeriodSelect est introuvable."
-            );
-        }
+    const date = new Date(value);
 
-        if (!reportsPeriodLabel) {
-            throw new Error(
-                "L'ID reportsPeriodLabel est introuvable."
-            );
-        }
+    if (Number.isNaN(date.getTime())) {
+        return null;
+    }
 
-        
+    return date;
+}
 
-        reportsPeriodSelect.onchange = () => {
+
+function startOfDay(date) {
+
+    const result = new Date(date);
+
+    result.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+    return result;
+}
+
+
+function endOfDay(date) {
+
+    const result = new Date(date);
+
+    result.setHours(
+        23,
+        59,
+        59,
+        999
+    );
+
+    return result;
+}
+
+
+function formatReportDate(date) {
+
+    if (!(date instanceof Date)) {
+        return "—";
+    }
+
+    const day =
+        String(date.getDate()).padStart(2, "0");
+
+    const month =
+        String(date.getMonth() + 1).padStart(2, "0");
+
+    const year =
+        date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+}
+
+
+/* =========================================================
+   BLOC 12.9 — PÉRIODE ACTUELLE
+========================================================= */
+
+function getCurrentReportPeriod() {
+
+    const select =
+        document.getElementById(
+            "reportsPeriodSelect"
+        );
 
     const selectedPeriod =
-        reportsPeriodSelect.value;
+        select?.value || "30days";
 
-    let periodName =
-        reportsPeriodSelect.options[
-            reportsPeriodSelect.selectedIndex
-        ]?.textContent ||
-        selectedPeriod;
+    const today =
+        startOfDay(new Date());
 
-    reportsPeriodLabel.textContent =
-        periodName;
+    let startDate;
+    let endDate;
 
-    
-    filterReportsOrdersByPeriod();
+    /* ================================
+       HOJE
+    ================================= */
 
-};
-        
+    if (selectedPeriod === "today") {
 
-    }
-    catch (error) {
+        startDate =
+            startOfDay(today);
 
-        console.error(
-            "Erreur Bloc 12.8 :",
-            error
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.8 ERREUR ❌\n\n" +
-            error.message
-        );
+        endDate =
+            endOfDay(today);
 
     }
 
-}
-function filterReportsOrdersByPeriod() {
+    /* ================================
+       7 DIAS
+    ================================= */
 
-    try {
+    else if (selectedPeriod === "7days") {
 
-        
-        if (!Array.isArray(reportsOrders)) {
-            throw new Error(
-                "reportsOrders n'est pas un tableau."
+        startDate =
+            new Date(today);
+
+        startDate.setDate(
+            startDate.getDate() - 6
+        );
+
+        startDate =
+            startOfDay(startDate);
+
+        endDate =
+            endOfDay(today);
+
+    }
+
+    /* ================================
+       30 DIAS
+    ================================= */
+
+    else if (selectedPeriod === "30days") {
+
+        startDate =
+            new Date(today);
+
+        startDate.setDate(
+            startDate.getDate() - 29
+        );
+
+        startDate =
+            startOfDay(startDate);
+
+        endDate =
+            endOfDay(today);
+
+    }
+
+    /* ================================
+       ESTE ANO
+    ================================= */
+
+    else if (selectedPeriod === "year") {
+
+        startDate =
+            new Date(
+                today.getFullYear(),
+                0,
+                1
             );
-        }
 
-        const reportsPeriodSelect =
+        startDate =
+            startOfDay(startDate);
+
+        endDate =
+            endOfDay(today);
+
+    }
+
+    /* ================================
+       PERSONALIZADO
+    ================================= */
+
+    else if (selectedPeriod === "custom") {
+
+        const customStart =
             document.getElementById(
-                "reportsPeriodSelect"
+                "reportsCustomStartDate"
             );
 
-        if (!reportsPeriodSelect) {
-            throw new Error(
-                "L'ID reportsPeriodSelect est introuvable."
+        const customEnd =
+            document.getElementById(
+                "reportsCustomEndDate"
             );
-        }
 
-        const selectedPeriod =
-            reportsPeriodSelect.value;
-
-        const now =
-            new Date();
-
-        let startDate = null;
-
-        if (selectedPeriod === "7days") {
+        if (
+            customStart?.value &&
+            customEnd?.value
+        ) {
 
             startDate =
-                new Date(now);
-
-            startDate.setDate(
-                startDate.getDate() - 7
-            );
-
-        }
-        else if (selectedPeriod === "30days") {
-
-            startDate =
-                new Date(now);
-
-            startDate.setDate(
-                startDate.getDate() - 30
-            );
-
-        }
-        else if (selectedPeriod === "90days") {
-
-            startDate =
-                new Date(now);
-
-            startDate.setDate(
-                startDate.getDate() - 90
-            );
-
-        }
-        else if (selectedPeriod === "year") {
-
-            startDate =
-                new Date(
-                    now.getFullYear(),
-                    0,
-                    1
+                startOfDay(
+                    new Date(
+                        customStart.value +
+                        "T00:00:00"
+                    )
                 );
 
-        }
-
-        let filteredOrders;
-
-        if (!startDate) {
-
-            filteredOrders =
-                [...reportsOrders];
+            endDate =
+                endOfDay(
+                    new Date(
+                        customEnd.value +
+                        "T00:00:00"
+                    )
+                );
 
         }
         else {
 
-            filteredOrders =
-                reportsOrders.filter(
-                    (order) => {
+            /*
+             * Si les champs personnalisés
+             * n'existent pas encore ou sont vides,
+             * on utilise les 30 derniers jours.
+             */
 
-                        let orderDate;
+            startDate =
+                new Date(today);
 
-                        if (
-                            order.createdAt &&
-                            typeof order.createdAt.toDate ===
-                            "function"
-                        ) {
-
-                            orderDate =
-                                order.createdAt.toDate();
-
-                        }
-                        else {
-
-                            orderDate =
-                                new Date(
-                                    order.createdAt || 0
-                                );
-
-                        }
-
-                        if (
-                            Number.isNaN(
-                                orderDate.getTime()
-                            )
-                        ) {
-                            return false;
-                        }
-
-                        return (
-                            orderDate >= startDate &&
-                            orderDate <= now
-                        );
-
-                    }
-                );
-
-        }
-
-        window.filteredReportsOrders =
-            filteredOrders;
-
-        const reportsPeriodLabel =
-            document.getElementById(
-                "reportsPeriodLabel"
+            startDate.setDate(
+                startDate.getDate() - 29
             );
 
-        const periodText =
-            reportsPeriodSelect.options[
-                reportsPeriodSelect.selectedIndex
-            ]?.textContent ||
-            selectedPeriod;
+            startDate =
+                startOfDay(startDate);
 
-        
+            endDate =
+                endOfDay(today);
 
-        if (reportsPeriodLabel) {
-            reportsPeriodLabel.textContent =
-                periodText;
         }
 
-        
-calculateFilteredReportsStatistics();
-displayFilteredReportsStatistics();
-prepareReportsGrowthComparison();
-calculateReportsRealGrowth();
-displayReportsRealGrowth();
-styleReportsRealGrowth();
-prepareSalesChartData();
-displaySalesChartStatistics();
-drawRealSalesChart();
-fixSalesChartDateLabels();
-     calculateFilteredFinancialStatistics();
-displayFilteredFinancialStatistics();
-calculateFinancialProgress();
-displayFinancialProgress();
-synchronizeFinancialProgressWithPeriod();
-displayIntelligentFinancialPercentages();
-prepareFinancialSummary();
-displayFinancialSummary();
- 
     }
-    catch (error) {
 
-        console.error(
-            "Erreur Bloc 12.9 :",
-            error
+    /* ================================
+       SÉCURITÉ
+    ================================= */
+
+    else {
+
+        startDate =
+            new Date(today);
+
+        startDate.setDate(
+            startDate.getDate() - 29
         );
 
-        alert(
-            "RELATÓRIOS — BLOC 12.9 ERREUR ❌\n\n" +
-            error.message
-        );
+        startDate =
+            startOfDay(startDate);
+
+        endDate =
+            endOfDay(today);
 
     }
+
+    return {
+        selectedPeriod,
+        startDate,
+        endDate
+    };
 
 }
-function calculateFilteredReportsStatistics() {
 
-    try {
 
-        
-
-        const filteredOrders =
-            window.filteredReportsOrders;
-
-        if (!Array.isArray(filteredOrders)) {
-            throw new Error(
-                "Les commandes filtrées ne sont pas disponibles."
-            );
-        }
-
-        let totalRevenue = 0;
-        let totalProductsSold = 0;
-
-        filteredOrders.forEach((order) => {
-
-            totalRevenue +=
-                Number(order.total) || 0;
-
-            if (Array.isArray(order.items)) {
-
-                order.items.forEach((item) => {
-
-                    totalProductsSold +=
-                        Number(item.quantity) || 0;
-
-                });
-
-            }
-
-        });
-
-        const totalOrders =
-            filteredOrders.length;
-
-        const averageOrder =
-            totalOrders > 0
-                ? totalRevenue / totalOrders
-                : 0;
-
-    /* =========================================================
-   RELATÓRIOS — BLOC 12.30
-   Commission filtrée dynamique
+/* =========================================================
+   BLOC 12.10 — PÉRIODE PRÉCÉDENTE
 ========================================================= */
 
-const commissionRate =
-    Number(
-        window.reportsCommissionRate
-    ) || 0;
+function getPreviousReportPeriod(
+    currentStart,
+    currentEnd
+) {
 
-const estimatedCommission =
-    totalRevenue *
-    (
-        commissionRate /
-        100
-    );
-        
+    const duration =
+        currentEnd.getTime() -
+        currentStart.getTime();
 
-        window.filteredReportsStatistics = {
-
-            totalOrders,
-            totalProductsSold,
-            totalRevenue,
-            averageOrder,
-            commissionRate,
-            estimatedCommission
-
-        };
-
-        
-    }
-    catch (error) {
-
-        console.error(
-            "Erreur Bloc 12.10 :",
-            error
+    const previousEnd =
+        new Date(
+            currentStart.getTime() - 1
         );
 
-        alert(
-            "RELATÓRIOS — BLOC 12.10 ERREUR ❌\n\n" +
-            error.message
+    const previousStart =
+        new Date(
+            previousEnd.getTime() -
+            duration
         );
 
-    }
+    return {
+        startDate:
+            startOfDay(previousStart),
+
+        endDate:
+            endOfDay(previousEnd)
+    };
 
 }
-// =====================================================
-// BLOC 12.11 — AFFICHAGE DES STATISTIQUES FILTRÉES
-// =====================================================
 
-function displayFilteredReportsStatistics() {
 
-    try {
+/* =========================================================
+   BLOC 12.11 — COMMANDES DANS UNE PÉRIODE
+========================================================= */
 
-        
+function getOrdersForReportPeriod(
+    orders,
+    startDate,
+    endDate
+) {
 
-        const statistics =
-            window.filteredReportsStatistics;
-
-        if (!statistics) {
-            throw new Error(
-                "Les statistiques filtrées ne sont pas disponibles."
-            );
-        }
-
-        // ---------------------------------------------
-        // RÉCUPÉRATION DES IDs EXISTANTS
-        // ---------------------------------------------
-
-        const reportTotalSales =
-            document.getElementById(
-                "reportTotalSales"
-            );
-
-        const reportTotalRevenue =
-            document.getElementById(
-                "reportTotalRevenue"
-            );
-
-        const reportTotalCommission =
-            document.getElementById(
-                "reportTotalCommission"
-            );
-
-        const reportTotalOrders =
-            document.getElementById(
-                "reportTotalOrders"
-            );
-
-        if (!reportTotalSales) {
-            throw new Error(
-                "L'ID reportTotalSales est introuvable."
-            );
-        }
-
-        if (!reportTotalRevenue) {
-            throw new Error(
-                "L'ID reportTotalRevenue est introuvable."
-            );
-        }
-
-        if (!reportTotalCommission) {
-            throw new Error(
-                "L'ID reportTotalCommission est introuvable."
-            );
-        }
-
-        if (!reportTotalOrders) {
-            throw new Error(
-                "L'ID reportTotalOrders est introuvable."
-            );
-        }
-
-        
-
-        // ---------------------------------------------
-        // FORMATAGE DES VALEURS
-        // ---------------------------------------------
-
-        const totalRevenue =
-            Number(
-                statistics.totalRevenue
-            ) || 0;
-
-        const estimatedCommission =
-            Number(
-                statistics.estimatedCommission
-            ) || 0;
-
-        const totalOrders =
-            Number(
-                statistics.totalOrders
-            ) || 0;
-
-        const formattedRevenue =
-            totalRevenue.toLocaleString(
-                "pt-AO"
-            ) + " Kz";
-
-        const formattedCommission =
-            estimatedCommission.toLocaleString(
-                "pt-AO"
-            ) + " Kz";
-
-        // ---------------------------------------------
-        // MISE À JOUR DES CARTES
-        // ---------------------------------------------
-
-        reportTotalSales.textContent =
-            formattedRevenue;
-
-        reportTotalRevenue.textContent =
-            formattedRevenue;
-
-        reportTotalCommission.textContent =
-            formattedCommission;
-
-        reportTotalOrders.textContent =
-            totalOrders.toLocaleString(
-                "pt-AO"
-            );
-
-        
+    if (!Array.isArray(orders)) {
+        return [];
     }
-    catch (error) {
 
-        console.error(
-            "Erreur Bloc 12.11 :",
-            error
+    return orders.filter((order) => {
+
+        const orderDate =
+            getReportDate(
+                order.createdAt
+            );
+
+        if (!orderDate) {
+            return false;
+        }
+
+        return (
+            orderDate >= startDate &&
+            orderDate <= endDate
         );
 
-        alert(
-            "RELATÓRIOS — BLOC 12.11 ERREUR ❌\n\n" +
-            error.message
-        );
-
-    }
+    });
 
 }
-// =====================================================
-// BLOC 12.12 — PRÉPARATION DE LA CROISSANCE RÉELLE
-// =====================================================
+
+
+/* =========================================================
+   BLOC 12.12 — STATISTIQUES D'UNE PÉRIODE
+========================================================= */
+
+function calculateReportPeriodStatistics(
+    orders
+) {
+
+    let revenue = 0;
+    let productsSold = 0;
+
+    orders.forEach((order) => {
+
+        revenue +=
+            Number(order.total) || 0;
+
+        if (
+            Array.isArray(
+                order.items
+            )
+        ) {
+
+            order.items.forEach((item) => {
+
+                productsSold +=
+                    Number(
+                        item.quantity
+                    ) || 0;
+
+            });
+
+        }
+
+    });
+
+    return {
+
+        ordersCount:
+            orders.length,
+
+        revenue,
+
+        productsSold
+
+    };
+
+}
+
+
+/* =========================================================
+   BLOC 12.13 — COMPARAISON RÉELLE
+========================================================= */
 
 function prepareReportsGrowthComparison() {
 
     try {
 
-        
+        const period =
+            getCurrentReportPeriod();
 
-        if (!Array.isArray(reportsOrders)) {
-            throw new Error(
-                "reportsOrders n'est pas disponible."
+        const previous =
+            getPreviousReportPeriod(
+                period.startDate,
+                period.endDate
             );
-        }
-
-        const reportsPeriodSelect =
-            document.getElementById(
-                "reportsPeriodSelect"
-            );
-
-        if (!reportsPeriodSelect) {
-            throw new Error(
-                "L'ID reportsPeriodSelect est introuvable."
-            );
-        }
-
-        const selectedPeriod =
-            reportsPeriodSelect.value;
-
-        const now =
-            new Date();
-
-        let currentStartDate = null;
-        let previousStartDate = null;
-        let previousEndDate = null;
-
-        // ---------------------------------------------
-        // DÉTERMINATION DES PÉRIODES
-        // ---------------------------------------------
-
-        if (selectedPeriod === "7days") {
-
-            currentStartDate =
-                new Date(now);
-
-            currentStartDate.setDate(
-                currentStartDate.getDate() - 7
-            );
-
-            previousEndDate =
-                new Date(currentStartDate);
-
-            previousStartDate =
-                new Date(previousEndDate);
-
-            previousStartDate.setDate(
-                previousStartDate.getDate() - 7
-            );
-
-        }
-
-        else if (selectedPeriod === "30days") {
-
-            currentStartDate =
-                new Date(now);
-
-            currentStartDate.setDate(
-                currentStartDate.getDate() - 30
-            );
-
-            previousEndDate =
-                new Date(currentStartDate);
-
-            previousStartDate =
-                new Date(previousEndDate);
-
-            previousStartDate.setDate(
-                previousStartDate.getDate() - 30
-            );
-
-        }
-
-        else if (selectedPeriod === "90days") {
-
-            currentStartDate =
-                new Date(now);
-
-            currentStartDate.setDate(
-                currentStartDate.getDate() - 90
-            );
-
-            previousEndDate =
-                new Date(currentStartDate);
-
-            previousStartDate =
-                new Date(previousEndDate);
-
-            previousStartDate.setDate(
-                previousStartDate.getDate() - 90
-            );
-
-        }
-
-        else if (selectedPeriod === "year") {
-
-            currentStartDate =
-                new Date(
-                    now.getFullYear(),
-                    0,
-                    1
-                );
-
-            // Même période de l'année précédente
-            previousStartDate =
-                new Date(
-                    now.getFullYear() - 1,
-                    0,
-                    1
-                );
-
-            previousEndDate =
-                new Date(
-                    now.getFullYear() - 1,
-                    now.getMonth(),
-                    now.getDate(),
-                    now.getHours(),
-                    now.getMinutes(),
-                    now.getSeconds(),
-                    now.getMilliseconds()
-                );
-
-        }
-
-        // ---------------------------------------------
-        // PÉRIODE "TOUT"
-        // ---------------------------------------------
-
-        else {
-
-            
-
-            window.reportsGrowthComparison = null;
-
-            return;
-        }
-
-        // ---------------------------------------------
-        // VÉRIFICATION DES DATES
-        // ---------------------------------------------
-
-        if (
-            !currentStartDate ||
-            !previousStartDate ||
-            !previousEndDate
-        ) {
-            throw new Error(
-                "Impossible de déterminer les périodes de comparaison."
-            );
-        }
-
-        // ---------------------------------------------
-        // FILTRAGE DE LA PÉRIODE PRÉCÉDENTE
-        // ---------------------------------------------
-
-        const previousOrders =
-            reportsOrders.filter(
-                (order) => {
-
-                    let orderDate;
-
-                    if (
-                        order.createdAt &&
-                        typeof order.createdAt.toDate ===
-                        "function"
-                    ) {
-                        orderDate =
-                            order.createdAt.toDate();
-                    }
-                    else {
-                        orderDate =
-                            new Date(
-                                order.createdAt || 0
-                            );
-                    }
-
-                    if (
-                        Number.isNaN(
-                            orderDate.getTime()
-                        )
-                    ) {
-                        return false;
-                    }
-
-                    return (
-                        orderDate >= previousStartDate &&
-                        orderDate <= previousEndDate
-                    );
-
-                }
-            );
-
-        // ---------------------------------------------
-        // CALCUL DES DONNÉES PRÉCÉDENTES
-        // ---------------------------------------------
-
-        let previousRevenue = 0;
-        let previousProductsSold = 0;
-
-        previousOrders.forEach(
-            (order) => {
-
-                previousRevenue +=
-                    Number(order.total) || 0;
-
-                if (Array.isArray(order.items)) {
-
-                    order.items.forEach(
-                        (item) => {
-
-                            previousProductsSold +=
-                                Number(item.quantity) || 0;
-
-                        }
-                    );
-
-                }
-
-            }
-        );
-
-        const previousOrdersCount =
-            previousOrders.length;
-
-        // ---------------------------------------------
-        // CONSERVATION EN MÉMOIRE
-        // ---------------------------------------------
-
-        window.reportsGrowthComparison = {
-
-            selectedPeriod,
-
-            currentStartDate,
-            previousStartDate,
-            previousEndDate,
-
-            previousOrdersCount,
-            previousRevenue,
-            previousProductsSold
-
-        };
-
-        
-
-    }
-    catch (error) {
-
-        console.error(
-            "Erreur Bloc 12.12 :",
-            error
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.12 ERREUR ❌\n\n" +
-            error.message
-        );
-
-    }
-
-}
-// =====================================================
-// BLOC 12.13 — CALCUL DE LA CROISSANCE RÉELLE
-// =====================================================
-
-function calculateReportsRealGrowth() {
-
-    try {
-
-        
-
-        const currentStatistics =
-            window.filteredReportsStatistics;
-
-        const previousComparison =
-            window.reportsGrowthComparison;
-
-        if (!currentStatistics) {
-            throw new Error(
-                "Les statistiques de la période actuelle sont introuvables."
-            );
-        }
-
-        if (!previousComparison) {
-            throw new Error(
-                "Les données de comparaison sont introuvables."
-            );
-        }
-
-        // ---------------------------------------------
-        // DONNÉES DE LA PÉRIODE ACTUELLE
-        // ---------------------------------------------
-
-        const currentRevenue =
-            Number(
-                currentStatistics.totalRevenue
-            ) || 0;
 
         const currentOrders =
-            Number(
-                currentStatistics.totalOrders
-            ) || 0;
-
-        const currentProducts =
-            Number(
-                currentStatistics.totalProductsSold
-            ) || 0;
-
-        // ---------------------------------------------
-        // DONNÉES DE LA PÉRIODE PRÉCÉDENTE
-        // ---------------------------------------------
-
-        const previousRevenue =
-            Number(
-                previousComparison.previousRevenue
-            ) || 0;
+            getOrdersForReportPeriod(
+                reportsOrders,
+                period.startDate,
+                period.endDate
+            );
 
         const previousOrders =
-            Number(
-                previousComparison.previousOrdersCount
-            ) || 0;
-
-        const previousProducts =
-            Number(
-                previousComparison.previousProductsSold
-            ) || 0;
-
-        // ---------------------------------------------
-        // FONCTION DE CALCUL DE CROISSANCE
-        // ---------------------------------------------
-
-        function calculateGrowth(
-            currentValue,
-            previousValue
-        ) {
-
-            if (previousValue === 0) {
-
-                if (currentValue === 0) {
-                    return 0;
-                }
-
-                return null;
-            }
-
-            return (
-                (
-                    (currentValue - previousValue) /
-                    previousValue
-                ) * 100
+            getOrdersForReportPeriod(
+                reportsOrders,
+                previous.startDate,
+                previous.endDate
             );
 
-        }
-
-        const revenueGrowth =
-            calculateGrowth(
-                currentRevenue,
-                previousRevenue
+        const currentStats =
+            calculateReportPeriodStatistics(
+                currentOrders
             );
 
-        const ordersGrowth =
-            calculateGrowth(
-                currentOrders,
+        const previousStats =
+            calculateReportPeriodStatistics(
                 previousOrders
             );
 
-        const productsGrowth =
-            calculateGrowth(
-                currentProducts,
-                previousProducts
-            );
+        window.reportsGrowthComparison = {
 
-        // Les ventes correspondent ici au chiffre d'affaires.
-        const salesGrowth =
-            revenueGrowth;
+            current:
+                currentStats,
 
-        // ---------------------------------------------
-        // CONSERVATION EN MÉMOIRE
-        // ---------------------------------------------
+            previous:
+                previousStats,
 
-        window.reportsRealGrowth = {
+            currentStart:
+                period.startDate,
 
-            salesGrowth,
-            revenueGrowth,
-            ordersGrowth,
-            productsGrowth,
+            currentEnd:
+                period.endDate,
 
-            currentRevenue,
-            previousRevenue,
+            previousStart:
+                previous.startDate,
 
-            currentOrders,
-            previousOrders,
-
-            currentProducts,
-            previousProducts
+            previousEnd:
+                previous.endDate
 
         };
 
-        // ---------------------------------------------
-        // FORMATAGE POUR LE TEST
-        // ---------------------------------------------
+        return window.reportsGrowthComparison;
 
-        function formatGrowth(value) {
-
-            if (value === null) {
-                return "Nouveau";
-            }
-
-            if (value === 0) {
-                return "0%";
-            }
-
-            const rounded =
-                Number(
-                    value.toFixed(1)
-                );
-
-            return (
-                rounded > 0
-                    ? "+" + rounded + "%"
-                    : rounded + "%"
-            );
-
-        }
-
-        
     }
     catch (error) {
 
         console.error(
-            "Erreur Bloc 12.13 :",
+            "RELATÓRIOS — BLOC 12.13",
             error
         );
 
-        alert(
-            "RELATÓRIOS — BLOC 12.13 ERREUR ❌\n\n" +
-            error.message
-        );
+        window.reportsGrowthComparison =
+            null;
+
+        return null;
 
     }
 
 }
-// =====================================================
-// BLOC 12.14 — AFFICHAGE DE LA CROISSANCE RÉELLE
-// =====================================================
+
+
+/* =========================================================
+   BLOC 12.14 — CALCUL DU TAUX DE CROISSANCE
+========================================================= */
+
+function calculateGrowthPercentage(
+    currentValue,
+    previousValue
+) {
+
+    currentValue =
+        Number(currentValue) || 0;
+
+    previousValue =
+        Number(previousValue) || 0;
+
+    if (
+        previousValue === 0 &&
+        currentValue === 0
+    ) {
+
+        return 0;
+
+    }
+
+    if (
+        previousValue === 0 &&
+        currentValue > 0
+    ) {
+
+        return null;
+
+    }
+
+    return (
+        (
+            currentValue -
+            previousValue
+        ) /
+        previousValue
+    ) * 100;
+
+}
+
+
+/* =========================================================
+   BLOC 12.15 — FORMATAGE CROISSANCE
+========================================================= */
+
+function formatReportGrowth(
+    value
+) {
+
+    if (value === null) {
+        return "Novo";
+    }
+
+    if (!Number.isFinite(value)) {
+        return "0%";
+    }
+
+    const rounded =
+        Number(value).toFixed(1);
+
+    if (value > 0) {
+        return "+" + rounded + "%";
+    }
+
+    return rounded + "%";
+
+}
+
+
+/* =========================================================
+   BLOC 12.16 — CROISSANCE RÉELLE
+========================================================= */
+
+function calculateReportsRealGrowth() {
+
+    const comparison =
+        window.reportsGrowthComparison;
+
+    if (!comparison) {
+
+        window.reportsRealGrowth = {
+
+            sales: 0,
+            revenue: 0,
+            orders: 0
+
+        };
+
+        return window.reportsRealGrowth;
+
+    }
+
+    const current =
+        comparison.current;
+
+    const previous =
+        comparison.previous;
+
+    const salesGrowth =
+        calculateGrowthPercentage(
+            current.revenue,
+            previous.revenue
+        );
+
+    const revenueGrowth =
+        calculateGrowthPercentage(
+            current.revenue,
+            previous.revenue
+        );
+
+    const ordersGrowth =
+        calculateGrowthPercentage(
+            current.ordersCount,
+            previous.ordersCount
+        );
+
+    window.reportsRealGrowth = {
+
+        sales:
+            salesGrowth,
+
+        revenue:
+            revenueGrowth,
+
+        orders:
+            ordersGrowth
+
+    };
+
+    return window.reportsRealGrowth;
+
+}
+
+
+/* =========================================================
+   BLOC 12.16.1 — AFFICHAGE CROISSANCE
+========================================================= */
 
 function displayReportsRealGrowth() {
 
-    try {
+    const growth =
+        window.reportsRealGrowth || {};
 
-        
-        const growth =
-            window.reportsRealGrowth;
+    const reportSalesGrowth =
+        document.getElementById(
+            "reportSalesGrowth"
+        );
 
-        if (!growth) {
-            throw new Error(
-                "Les données de croissance réelle sont introuvables."
-            );
-        }
+    const reportRevenueGrowth =
+        document.getElementById(
+            "reportRevenueGrowth"
+        );
 
-        // ---------------------------------------------
-        // IDS EXISTANTS
-        // ---------------------------------------------
+    const reportOrdersGrowth =
+        document.getElementById(
+            "reportOrdersGrowth"
+        );
 
-        const reportSalesGrowth =
-            document.getElementById(
-                "reportSalesGrowth"
-            );
+    const financialRevenueGrowth =
+        document.getElementById(
+            "financialRevenueGrowth"
+        );
 
-        const reportRevenueGrowth =
-            document.getElementById(
-                "reportRevenueGrowth"
-            );
-
-        const reportOrdersGrowth =
-            document.getElementById(
-                "reportOrdersGrowth"
-            );
-
-        const financialRevenueGrowth =
-            document.getElementById(
-                "financialRevenueGrowth"
-            );
-
-        if (!reportSalesGrowth) {
-            throw new Error(
-                "L'ID reportSalesGrowth est introuvable."
-            );
-        }
-
-        if (!reportRevenueGrowth) {
-            throw new Error(
-                "L'ID reportRevenueGrowth est introuvable."
-            );
-        }
-
-        if (!reportOrdersGrowth) {
-            throw new Error(
-                "L'ID reportOrdersGrowth est introuvable."
-            );
-        }
-
-        if (!financialRevenueGrowth) {
-            throw new Error(
-                "L'ID financialRevenueGrowth est introuvable."
-            );
-        }
-
-        
-
-        // ---------------------------------------------
-        // FORMATAGE
-        // ---------------------------------------------
-
-        function formatGrowth(value) {
-
-            if (value === null) {
-                return "Novo";
-            }
-
-            if (value === 0) {
-                return "0%";
-            }
-
-            const rounded =
-                Number(
-                    value.toFixed(1)
-                );
-
-            return (
-                rounded > 0
-                    ? "+" + rounded + "%"
-                    : rounded + "%"
-            );
-
-        }
-
-        const salesGrowth =
-            formatGrowth(
-                growth.salesGrowth
-            );
-
-        const revenueGrowth =
-            formatGrowth(
-                growth.revenueGrowth
-            );
-
-        const ordersGrowth =
-            formatGrowth(
-                growth.ordersGrowth
-            );
-
-        // ---------------------------------------------
-        // AFFICHAGE
-        // ---------------------------------------------
+    if (reportSalesGrowth) {
 
         reportSalesGrowth.textContent =
-            salesGrowth;
-
-        reportRevenueGrowth.textContent =
-            revenueGrowth;
-
-        reportOrdersGrowth.textContent =
-            ordersGrowth;
-
-        financialRevenueGrowth.textContent =
-            revenueGrowth;
-
-        
+            formatReportGrowth(
+                growth.sales
+            );
 
     }
-    catch (error) {
 
-        console.error(
-            "Erreur Bloc 12.14 :",
-            error
-        );
+    if (reportRevenueGrowth) {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.14 ERREUR ❌\n\n" +
-            error.message
-        );
+        reportRevenueGrowth.textContent =
+            formatReportGrowth(
+                growth.revenue
+            );
+
+    }
+
+    if (reportOrdersGrowth) {
+
+        reportOrdersGrowth.textContent =
+            formatReportGrowth(
+                growth.orders
+            );
+
+    }
+
+    if (financialRevenueGrowth) {
+
+        financialRevenueGrowth.textContent =
+            formatReportGrowth(
+                growth.revenue
+            );
 
     }
 
 }
-// =====================================================
-// BLOC 12.15 — STYLE DE LA CROISSANCE RÉELLE
-// =====================================================
+
+
+/* =========================================================
+   BLOC 12.16.2 — STYLE CROISSANCE
+========================================================= */
 
 function styleReportsRealGrowth() {
 
-    try {
+    const ids = [
 
-        
+        "reportSalesGrowth",
+        "reportRevenueGrowth",
+        "reportOrdersGrowth",
+        "financialRevenueGrowth"
 
-        const growth =
-            window.reportsRealGrowth;
+    ];
 
-        if (!growth) {
-            throw new Error(
-                "Les données de croissance réelle sont introuvables."
-            );
+    ids.forEach((id) => {
+
+        const element =
+            document.getElementById(id);
+
+        if (!element) {
+            return;
         }
 
-        // ---------------------------------------------
-        // IDS EXISTANTS
-        // ---------------------------------------------
+        const text =
+            element.textContent || "";
 
-        const reportSalesGrowth =
-            document.getElementById(
-                "reportSalesGrowth"
-            );
-
-        const reportRevenueGrowth =
-            document.getElementById(
-                "reportRevenueGrowth"
-            );
-
-        const reportOrdersGrowth =
-            document.getElementById(
-                "reportOrdersGrowth"
-            );
-
-        const financialRevenueGrowth =
-            document.getElementById(
-                "financialRevenueGrowth"
-            );
+        element.classList.remove(
+            "positive",
+            "negative",
+            "neutral"
+        );
 
         if (
-            !reportSalesGrowth ||
-            !reportRevenueGrowth ||
-            !reportOrdersGrowth ||
-            !financialRevenueGrowth
+            text === "Novo" ||
+            text === "0%"
         ) {
-            throw new Error(
-                "Un ou plusieurs IDs de croissance sont introuvables."
+
+            element.classList.add(
+                "neutral"
             );
+
         }
-
-        
-
-        // ---------------------------------------------
-        // APPLICATION DU STYLE
-        // ---------------------------------------------
-
-        function applyGrowthStyle(
-            element,
-            value
+        else if (
+            text.startsWith("+")
         ) {
 
-            // Réinitialisation
-            element.style.fontWeight = "700";
-            element.style.display = "inline-block";
+            element.classList.add(
+                "positive"
+            );
 
-            // Nouvelle activité
-            if (value === null) {
+        }
+        else {
 
-                element.style.color = "#2563eb";
-
-                return;
-
-            }
-
-            // Stable
-            if (value === 0) {
-
-                element.style.color = "#6b7280";
-
-                return;
-
-            }
-
-            // Hausse
-            if (value > 0) {
-
-                element.style.color = "#16a34a";
-
-                return;
-
-            }
-
-            // Baisse
-            if (value < 0) {
-
-                element.style.color = "#dc2626";
-
-                return;
-
-            }
+            element.classList.add(
+                "negative"
+            );
 
         }
 
-        applyGrowthStyle(
-            reportSalesGrowth,
-            growth.salesGrowth
-        );
-
-        applyGrowthStyle(
-            reportRevenueGrowth,
-            growth.revenueGrowth
-        );
-
-        applyGrowthStyle(
-            reportOrdersGrowth,
-            growth.ordersGrowth
-        );
-
-        applyGrowthStyle(
-            financialRevenueGrowth,
-            growth.revenueGrowth
-        );
-
-        
-    }
-    catch (error) {
-
-        console.error(
-            "Erreur Bloc 12.15 :",
-            error
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.15 ERREUR ❌\n\n" +
-            error.message
-        );
-
-    }
+    });
 
 }
-// =====================================================
-// BLOC 12.16 — PRÉPARATION DES DONNÉES DU GRAPHIQUE
-// =====================================================
+
+
+/* =========================================================
+   BLOC 12.16.3 — MEILLEUR JOUR
+========================================================= */
 
 function prepareSalesChartData() {
 
     try {
 
-        
+        const period =
+            getCurrentReportPeriod();
 
-        const filteredOrders =
-            window.filteredReportsOrders;
+        const startDate =
+            period.startDate;
 
-        if (!Array.isArray(filteredOrders)) {
-            throw new Error(
-                "Les commandes filtrées sont introuvables."
-            );
-        }
+        const endDate =
+            period.endDate;
 
-        const reportsPeriodSelect =
-            document.getElementById(
-                "reportsPeriodSelect"
-            );
+        const dailyMap =
+            new Map();
 
-        if (!reportsPeriodSelect) {
-            throw new Error(
-                "L'ID reportsPeriodSelect est introuvable."
-            );
-        }
+        let cursor =
+            new Date(startDate);
 
-        const selectedPeriod =
-            reportsPeriodSelect.value;
-
-        // ---------------------------------------------
-        // DÉTERMINATION DU NOMBRE DE JOURS
-        // ---------------------------------------------
-
-        let numberOfDays = 30;
-
-        if (selectedPeriod === "7days") {
-            numberOfDays = 7;
-        }
-        else if (selectedPeriod === "30days") {
-            numberOfDays = 30;
-        }
-        else if (selectedPeriod === "90days") {
-            numberOfDays = 90;
-        }
-        else if (selectedPeriod === "year") {
-
-            const currentYear =
-                new Date().getFullYear();
-
-            const startOfYear =
-                new Date(
-                    currentYear,
-                    0,
-                    1
-                );
-
-            const now =
-                new Date();
-
-            numberOfDays =
-                Math.floor(
-                    (
-                        now - startOfYear
-                    ) /
-                    (
-                        1000 *
-                        60 *
-                        60 *
-                        24
-                    )
-                ) + 1;
-
-        }
-
-        // ---------------------------------------------
-        // CRÉATION DES JOURNÉES
-        // ---------------------------------------------
-
-        const today =
-            new Date();
-
-        const dailySales = {};
-
-        for (
-            let i = numberOfDays - 1;
-            i >= 0;
-            i--
+        while (
+            cursor <= endDate
         ) {
 
-            const date =
-                new Date(today);
+            const key =
+                cursor
+                    .toISOString()
+                    .split("T")[0];
 
-            date.setHours(
-                0,
-                0,
-                0,
+            dailyMap.set(
+                key,
                 0
             );
 
-            date.setDate(
-                date.getDate() - i
+            cursor.setDate(
+                cursor.getDate() + 1
             );
-
-            const dateKey =
-                date.toISOString()
-                    .split("T")[0];
-
-            dailySales[dateKey] = 0;
 
         }
 
-        // ---------------------------------------------
-        // AJOUT DES VENTES DES COMMANDES
-        // ---------------------------------------------
+        const filteredOrders =
+            getOrdersForReportPeriod(
+                reportsOrders,
+                startDate,
+                endDate
+            );
 
         filteredOrders.forEach(
             (order) => {
 
-                let orderDate;
+                const date =
+                    getReportDate(
+                        order.createdAt
+                    );
 
-                if (
-                    order.createdAt &&
-                    typeof order.createdAt.toDate ===
-                    "function"
-                ) {
-
-                    orderDate =
-                        order.createdAt.toDate();
-
-                }
-                else {
-
-                    orderDate =
-                        new Date(
-                            order.createdAt || 0
-                        );
-
-                }
-
-                if (
-                    Number.isNaN(
-                        orderDate.getTime()
-                    )
-                ) {
+                if (!date) {
                     return;
                 }
 
-                const dateKey =
-                    orderDate.toISOString()
+                const key =
+                    date
+                        .toISOString()
                         .split("T")[0];
 
                 if (
-                    Object.prototype.hasOwnProperty.call(
-                        dailySales,
-                        dateKey
-                    )
+                    dailyMap.has(key)
                 ) {
 
-                    dailySales[dateKey] +=
-                        Number(order.total) || 0;
+                    dailyMap.set(
+                        key,
+                        dailyMap.get(key) +
+                        (
+                            Number(
+                                order.total
+                            ) || 0
+                        )
+                    );
 
                 }
 
             }
         );
 
-        // ---------------------------------------------
-        // TRANSFORMATION EN TABLEAU
-        // ---------------------------------------------
-
         const chartData =
-            Object.entries(
-                dailySales
-            ).map(
-                ([date, sales]) => {
-
-                    return {
-                        date,
-                        sales
-                    };
-
-                }
+            Array.from(
+                dailyMap.entries()
+            )
+            .map(
+                ([date, sales]) => ({
+                    date,
+                    sales
+                })
             );
 
-        // ---------------------------------------------
-        // STATISTIQUES DU GRAPHIQUE
-        // ---------------------------------------------
+        let totalSales = 0;
 
-        const totalSales =
-            chartData.reduce(
-                (total, item) =>
-                    total +
-                    item.sales,
-                0
-            );
+        chartData.forEach(
+            (item) => {
 
-        const daysWithSales =
-            chartData.filter(
-                (item) =>
-                    item.sales > 0
-            );
+                totalSales +=
+                    item.sales;
+
+            }
+        );
 
         const averageSales =
             chartData.length > 0
                 ? totalSales /
-                  chartData.length
+                    chartData.length
                 : 0;
 
-        let bestDay = null;
+        let bestDay =
+            null;
 
-        daysWithSales.forEach(
+        chartData.forEach(
             (item) => {
 
                 if (
@@ -5244,17 +4677,10 @@ function prepareSalesChartData() {
             }
         );
 
-        // ---------------------------------------------
-        // CONSERVATION EN MÉMOIRE
-        // ---------------------------------------------
-
         window.salesChartData = {
 
-            period: selectedPeriod,
-
-            numberOfDays,
-
-            data: chartData,
+            data:
+                chartData,
 
             totalSales,
 
@@ -5264,2165 +4690,1253 @@ function prepareSalesChartData() {
 
         };
 
-        // ---------------------------------------------
-        // ALERTES DE VÉRIFICATION
-        // ---------------------------------------------
-
-        
-        if (bestDay) {
-
-            alert(
-                "RELATÓRIOS — BLOC 12.16.3\n\n" +
-                "Meilleur jour détecté.\n\n" +
-                "Date : " +
-                bestDay.date +
-                "\n\n" +
-                "Ventes : " +
-                bestDay.sales.toLocaleString(
-                    "pt-AO"
-                ) +
-                " Kz\n\n" +
-                "Les données sont prêtes pour le graphique."
-            );
-
-        }
-        else {
-
-            
-
-        }
-
-        
-
-    }
-    catch (error) {
-
-        console.error(
-            "Erreur Bloc 12.16 :",
-            error
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.16 ERREUR ❌\n\n" +
-            error.message
-        );
-
-    }
-
-}
-// =====================================================
-// BLOC 12.17 — AFFICHAGE DES STATISTIQUES DU GRAPHIQUE
-// =====================================================
-
-function displaySalesChartStatistics() {
-
-    try {
-
-        
-        const chartData =
-            window.salesChartData;
-
-        if (!chartData) {
-            throw new Error(
-                "Les données du graphique sont introuvables."
-            );
-        }
-
-        // ---------------------------------------------
-        // IDS EXISTANTS
-        // ---------------------------------------------
-
-        const salesChartPeriod =
-            document.getElementById(
-                "salesChartPeriod"
-            );
-
-        const salesChartTotal =
-            document.getElementById(
-                "salesChartTotal"
-            );
-
-        const salesChartAverage =
-            document.getElementById(
-                "salesChartAverage"
-            );
-
         const salesChartBestDay =
             document.getElementById(
                 "salesChartBestDay"
             );
 
-        const salesChartContainer =
-            document.getElementById(
-                "salesChartContainer"
-            );
-
-        const salesChart =
-            document.getElementById(
-                "salesChart"
-            );
-
-        const salesChartEmpty =
-            document.getElementById(
-                "salesChartEmpty"
-            );
-
-        if (!salesChartPeriod) {
-            throw new Error(
-                "L'ID salesChartPeriod est introuvable."
-            );
-        }
-
-        if (!salesChartTotal) {
-            throw new Error(
-                "L'ID salesChartTotal est introuvable."
-            );
-        }
-
-        if (!salesChartAverage) {
-            throw new Error(
-                "L'ID salesChartAverage est introuvable."
-            );
-        }
-
-        if (!salesChartBestDay) {
-            throw new Error(
-                "L'ID salesChartBestDay est introuvable."
-            );
-        }
-
-        if (!salesChartContainer) {
-            throw new Error(
-                "L'ID salesChartContainer est introuvable."
-            );
-        }
-
-        if (!salesChart) {
-            throw new Error(
-                "L'ID salesChart est introuvable."
-            );
-        }
-
-        if (!salesChartEmpty) {
-            throw new Error(
-                "L'ID salesChartEmpty est introuvable."
-            );
-        }
-
-        
-
-        // ---------------------------------------------
-        // AFFICHAGE DU TOTAL
-        // ---------------------------------------------
-
-        salesChartTotal.textContent =
-            chartData.totalSales.toLocaleString(
-                "pt-AO"
-            ) + " Kz";
-
-        // ---------------------------------------------
-        // AFFICHAGE DE LA MOYENNE
-        // ---------------------------------------------
-
-        salesChartAverage.textContent =
-            chartData.averageSales.toLocaleString(
-                "pt-AO"
-            ) + " Kz";
-
-        // ---------------------------------------------
-        // AFFICHAGE DU MEILLEUR JOUR
-        // ---------------------------------------------
-
-        if (chartData.bestDay) {
-
-            const bestDate =
-                new Date(
-                    chartData.bestDay.date +
-                    "T00:00:00"
-                );
-
-            salesChartBestDay.textContent =
-                bestDate.toLocaleDateString(
-                    "pt-AO"
-                ) +
-                " — " +
-                chartData.bestDay.sales.toLocaleString(
-                    "pt-AO"
-                ) +
-                " Kz";
-
-        }
-        else {
-
-            salesChartBestDay.textContent =
-                "—";
-
-        }
-
-        // ---------------------------------------------
-        // PRÉPARATION DE L'ÉTAT DU GRAPHIQUE
-        // ---------------------------------------------
-
         if (
-            chartData.totalSales === 0 ||
-            chartData.data.length === 0
+            salesChartBestDay
         ) {
 
-            salesChart.style.display =
-                "none";
-
-            salesChartEmpty.style.display =
-                "block";
-
-        }
-        else {
-
-            salesChart.style.display =
-                "block";
-
-            salesChartEmpty.style.display =
-                "none";
-
-        }
-
-        // Le conteneur reste visible.
-        salesChartContainer.style.display =
-            "block";
-
-        
-    }
-    catch (error) {
-
-        console.error(
-            "Erreur Bloc 12.17 :",
-            error
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.17 ERREUR ❌\n\n" +
-            error.message
-        );
-
-    }
-
-}
-// =====================================================
-// BLOC 12.18 — DESSIN DU GRAPHIQUE RÉEL DES VENTES
-// =====================================================
-function drawRealSalesChart() {
-
-    try {
-
-        
-
-        const chartData =
-            window.salesChartData;
-
-        if (!chartData) {
-            throw new Error(
-                "Les données du graphique sont introuvables."
-            );
-        }
-
-        const salesChart =
-            document.getElementById(
-                "salesChart"
-            );
-
-        const salesChartContainer =
-            document.getElementById(
-                "salesChartContainer"
-            );
-
-        const salesChartEmpty =
-            document.getElementById(
-                "salesChartEmpty"
-            );
-
-        if (!salesChart) {
-            throw new Error(
-                "L'ID salesChart est introuvable."
-            );
-        }
-
-        if (!salesChartContainer) {
-            throw new Error(
-                "L'ID salesChartContainer est introuvable."
-            );
-        }
-
-        if (!salesChartEmpty) {
-            throw new Error(
-                "L'ID salesChartEmpty est introuvable."
-            );
-        }
-
-        
-
-        /*
-         * État vide
-         */
-
-        if (
-            !Array.isArray(chartData.data) ||
-            chartData.data.length === 0 ||
-            chartData.totalSales === 0
-        ) {
-
-            salesChart.innerHTML = "";
-
-            salesChart.style.display =
-                "none";
-
-            salesChartEmpty.style.display =
-                "block";
-
-            
-
-            return;
-        }
-
-        /*
-         * Préparation du DIV
-         */
-
-        salesChart.style.display =
-            "block";
-
-        salesChartEmpty.style.display =
-            "none";
-
-        salesChart.innerHTML = "";
-
-        salesChart.style.position =
-            "relative";
-
-        salesChart.style.width =
-            "100%";
-
-        salesChart.style.height =
-            "260px";
-
-        salesChart.style.minHeight =
-            "260px";
-
-        salesChart.style.overflow =
-            "hidden";
-
-        /*
-         * Création du graphique
-         * dans le DIV existant.
-         */
-
-        const chartWidth =
-            salesChart.clientWidth ||
-            salesChartContainer.clientWidth ||
-            320;
-
-        const chartHeight =
-            260;
-
-        const paddingLeft = 55;
-        const paddingRight = 15;
-        const paddingTop = 20;
-        const paddingBottom = 45;
-
-        const graphWidth =
-            Math.max(
-                chartWidth -
-                paddingLeft -
-                paddingRight,
-                100
-            );
-
-        const graphHeight =
-            chartHeight -
-            paddingTop -
-            paddingBottom;
-
-        const maxSales =
-            Math.max(
-                ...chartData.data.map(
-                    item =>
-                        Number(item.sales) || 0
-                )
-            );
-
-        if (maxSales <= 0) {
-
-            salesChart.style.display =
-                "none";
-
-            salesChartEmpty.style.display =
-                "block";
-
-            
-            return;
-        }
-
-        /*
-         * SVG
-         */
-
-        const svgNS =
-            "http://www.w3.org/2000/svg";
-
-        const svg =
-            document.createElementNS(
-                svgNS,
-                "svg"
-            );
-
-        svg.setAttribute(
-            "width",
-            "100%"
-        );
-
-        svg.setAttribute(
-            "height",
-            String(chartHeight)
-        );
-
-        svg.setAttribute(
-            "viewBox",
-            `0 0 ${chartWidth} ${chartHeight}`
-        );
-
-        svg.setAttribute(
-            "preserveAspectRatio",
-            "none"
-        );
-
-        svg.style.display =
-            "block";
-
-        svg.style.width =
-            "100%";
-
-        svg.style.height =
-            chartHeight + "px";
-
-        /*
-         * Lignes horizontales
-         */
-
-        const gridLines = 4;
-
-        for (
-            let i = 0;
-            i <= gridLines;
-            i++
-        ) {
-
-            const ratio =
-                i / gridLines;
-
-            const y =
-                paddingTop +
-                graphHeight -
-                (
-                    ratio *
-                    graphHeight
-                );
-
-            const line =
-                document.createElementNS(
-                    svgNS,
-                    "line"
-                );
-
-            line.setAttribute(
-                "x1",
-                String(paddingLeft)
-            );
-
-            line.setAttribute(
-                "y1",
-                String(y)
-            );
-
-            line.setAttribute(
-                "x2",
-                String(
-                    chartWidth -
-                    paddingRight
-                )
-            );
-
-            line.setAttribute(
-                "y2",
-                String(y)
-            );
-
-            line.setAttribute(
-                "stroke",
-                "#e5e7eb"
-            );
-
-            line.setAttribute(
-                "stroke-width",
-                "1"
-            );
-
-            svg.appendChild(line);
-
-            /*
-             * Valeur de l'axe
-             */
-
-            const value =
-                maxSales *
-                ratio;
-
-            const text =
-                document.createElementNS(
-                    svgNS,
-                    "text"
-                );
-
-            text.setAttribute(
-                "x",
-                String(
-                    paddingLeft - 8
-                )
-            );
-
-            text.setAttribute(
-                "y",
-                String(y + 4)
-            );
-
-            text.setAttribute(
-                "text-anchor",
-                "end"
-            );
-
-            text.setAttribute(
-                "font-size",
-                "11"
-            );
-
-            text.setAttribute(
-                "fill",
-                "#6b7280"
-            );
-
-            text.textContent =
-                value.toLocaleString(
-                    "pt-AO",
-                    {
-                        maximumFractionDigits: 0
-                    }
-                );
-
-            svg.appendChild(text);
-        }
-
-        /*
-         * Axes
-         */
-
-        const axis =
-            document.createElementNS(
-                svgNS,
-                "path"
-            );
-
-        axis.setAttribute(
-            "d",
-            `
-            M ${paddingLeft} ${paddingTop}
-            V ${paddingTop + graphHeight}
-            H ${chartWidth - paddingRight}
-            `
-        );
-
-        axis.setAttribute(
-            "fill",
-            "none"
-        );
-
-        axis.setAttribute(
-            "stroke",
-            "#9ca3af"
-        );
-
-        axis.setAttribute(
-            "stroke-width",
-            "1"
-        );
-
-        svg.appendChild(axis);
-
-        /*
-         * Points
-         */
-
-        const points = [];
-
-        const dataLength =
-            chartData.data.length;
-
-        chartData.data.forEach(
-            (item, index) => {
-
-                const sales =
-                    Number(item.sales) || 0;
-
-                const x =
-                    dataLength === 1
-                        ? paddingLeft +
-                          graphWidth / 2
-                        : paddingLeft +
-                          (
-                              index /
-                              (
-                                  dataLength -
-                                  1
-                              )
-                          ) *
-                          graphWidth;
-
-                const y =
-                    paddingTop +
-                    graphHeight -
-                    (
-                        (
-                            sales /
-                            maxSales
-                        ) *
-                        graphHeight
-                    );
-
-                points.push({
-                    x,
-                    y,
-                    sales,
-                    date: item.date
-                });
-            }
-        );
-
-        /*
-         * Ligne du graphique
-         */
-
-        let pathData = "";
-
-        points.forEach(
-            (point, index) => {
-
-                if (index === 0) {
-
-                    pathData +=
-                        `M ${point.x} ${point.y}`;
-
-                }
-                else {
-
-                    pathData +=
-                        ` L ${point.x} ${point.y}`;
-
-                }
-
-            }
-        );
-
-        const path =
-            document.createElementNS(
-                svgNS,
-                "path"
-            );
-
-        path.setAttribute(
-            "d",
-            pathData
-        );
-
-        path.setAttribute(
-            "fill",
-            "none"
-        );
-
-        path.setAttribute(
-            "stroke",
-            "#2563eb"
-        );
-
-        path.setAttribute(
-            "stroke-width",
-            "3"
-        );
-
-        path.setAttribute(
-            "stroke-linejoin",
-            "round"
-        );
-
-        path.setAttribute(
-            "stroke-linecap",
-            "round"
-        );
-
-        svg.appendChild(path);
-
-        /*
-         * Points de vente
-         */
-
-        points.forEach(
-            (point) => {
-
-                if (point.sales <= 0) {
-                    return;
-                }
-
-                const circle =
-                    document.createElementNS(
-                        svgNS,
-                        "circle"
-                    );
-
-                circle.setAttribute(
-                    "cx",
-                    String(point.x)
-                );
-
-                circle.setAttribute(
-                    "cy",
-                    String(point.y)
-                );
-
-                circle.setAttribute(
-                    "r",
-                    "4"
-                );
-
-                circle.setAttribute(
-                    "fill",
-                    "#2563eb"
-                );
-
-                circle.setAttribute(
-                    "stroke",
-                    "#ffffff"
-                );
-
-                circle.setAttribute(
-                    "stroke-width",
-                    "2"
-                );
-
-                svg.appendChild(circle);
-            }
-        );
-
-        /*
-         * Dates sur l'axe X
-         */
-
-        const labelIndexes = [];
-
-        if (dataLength <= 7) {
-
-            for (
-                let i = 0;
-                i < dataLength;
-                i++
+            if (
+                bestDay &&
+                bestDay.sales > 0
             ) {
-
-                labelIndexes.push(i);
-
-            }
-
-        }
-        else {
-
-            labelIndexes.push(0);
-
-            labelIndexes.push(
-                Math.floor(
-                    dataLength / 2
-                )
-            );
-
-            labelIndexes.push(
-                dataLength - 1
-            );
-
-        }
-
-        labelIndexes.forEach(
-            (index) => {
-
-                const point =
-                    points[index];
 
                 const date =
                     new Date(
-                        point.date +
+                        bestDay.date +
                         "T00:00:00"
                     );
 
-                const label =
-                    date.toLocaleDateString(
-                        "pt-AO",
-                        {
-                            day: "2-digit",
-                            month: "2-digit"
-                        }
+                salesChartBestDay.textContent =
+                    formatReportDate(
+                        date
                     );
 
-                const text =
-                    document.createElementNS(
-                        svgNS,
-                        "text"
-                    );
-
-                text.setAttribute(
-                    "x",
-                    String(point.x)
-                );
-
-                text.setAttribute(
-                    "y",
-                    String(
-                        paddingTop +
-                        graphHeight +
-                        25
-                    )
-                );
-
-                text.setAttribute(
-                    "text-anchor",
-                    "middle"
-                );
-
-                text.setAttribute(
-                    "font-size",
-                    "10"
-                );
-
-                text.setAttribute(
-                    "fill",
-                    "#6b7280"
-                );
-
-                text.textContent =
-                    label;
-
-                svg.appendChild(text);
             }
-        );
+            else {
 
-        /*
-         * Insertion du SVG
-         */
+                salesChartBestDay.textContent =
+                    "—";
 
-        salesChart.appendChild(svg);
+            }
 
-       
+        }
+
+        return window.salesChartData;
 
     }
     catch (error) {
 
         console.error(
-            "Erreur Bloc 12.18 :",
+            "RELATÓRIOS — BLOC 12.16.3",
             error
         );
 
-        alert(
-            "RELATÓRIOS — BLOC 12.18 ERREUR ❌\n\n" +
-            error.message
-        );
+        window.salesChartData = {
+
+            data: [],
+            totalSales: 0,
+            averageSales: 0,
+            bestDay: null
+
+        };
+
+        return window.salesChartData;
 
     }
 
 }
-function fixSalesChartDateLabels() {
 
-    try {
 
-        
+/* =========================================================
+   BLOC 12.17 — STATISTIQUES DU GRAPHIQUE
+========================================================= */
 
-        const salesChart =
-            document.getElementById(
-                "salesChart"
+function displaySalesChartStatistics() {
+
+    const chartData =
+        window.salesChartData || {};
+
+    const salesChartTotal =
+        document.getElementById(
+            "salesChartTotal"
+        );
+
+    const salesChartAverage =
+        document.getElementById(
+            "salesChartAverage"
+        );
+
+    const salesChartBestDay =
+        document.getElementById(
+            "salesChartBestDay"
+        );
+
+    const salesChart =
+        document.getElementById(
+            "salesChart"
+        );
+
+    const salesChartEmpty =
+        document.getElementById(
+            "salesChartEmpty"
+        );
+
+    const salesChartContainer =
+        document.getElementById(
+            "salesChartContainer"
+        );
+
+    if (
+        !salesChartTotal ||
+        !salesChartAverage ||
+        !salesChartBestDay ||
+        !salesChart ||
+        !salesChartEmpty ||
+        !salesChartContainer
+    ) {
+
+        console.warn(
+            "RELATÓRIOS — BLOC 12.17 : éléments du graphique indisponibles."
+        );
+
+        return;
+
+    }
+
+    salesChartTotal.textContent =
+        (
+            Number(
+                chartData.totalSales
+            ) || 0
+        )
+        .toLocaleString("pt-AO") +
+        " Kz";
+
+    salesChartAverage.textContent =
+        (
+            Number(
+                chartData.averageSales
+            ) || 0
+        )
+        .toLocaleString("pt-AO") +
+        " Kz";
+
+    if (
+        chartData.bestDay &&
+        chartData.bestDay.sales > 0
+    ) {
+
+        const bestDate =
+            new Date(
+                chartData.bestDay.date +
+                "T00:00:00"
             );
 
-        if (!salesChart) {
-            throw new Error(
-                "L'ID salesChart est introuvable."
-            );
-        }
-
-        const chartData =
-            window.salesChartData;
-
-        if (!chartData) {
-            throw new Error(
-                "Les données du graphique sont introuvables."
-            );
-        }
-
-        
-
-        /*
-         * On redessine uniquement les
-         * étiquettes de dates sans
-         * modifier les données de ventes.
-         */
-
-        const svg =
-            salesChart.querySelector("svg");
-
-        if (!svg) {
-            throw new Error(
-                "Le SVG du graphique est introuvable."
-            );
-        }
-
-        const texts =
-            svg.querySelectorAll("text");
-
-        /*
-         * Les trois dernières étiquettes
-         * correspondent aux dates de l'axe X.
-         */
-
-        const dataLength =
-            chartData.data.length;
-
-        const labelIndexes = [];
-
-        if (dataLength <= 7) {
-
-            for (
-                let i = 0;
-                i < dataLength;
-                i++
-            ) {
-                labelIndexes.push(i);
-            }
-
-        }
-        else {
-
-            labelIndexes.push(0);
-
-            labelIndexes.push(
-                Math.floor(
-                    dataLength / 2
-                )
+        salesChartBestDay.textContent =
+            formatReportDate(
+                bestDate
             );
 
-            labelIndexes.push(
-                dataLength - 1
-            );
+    }
+    else {
 
-        }
+        salesChartBestDay.textContent =
+            "—";
 
-        /*
-         * Les textes de l'axe X sont
-         * identifiés par leur position.
-         */
+    }
 
-        const dateTexts = [];
+    if (
+        !Array.isArray(
+            chartData.data
+        ) ||
+        chartData.data.length === 0 ||
+        Number(chartData.totalSales) === 0
+    ) {
 
-        texts.forEach(
-            (text) => {
+        salesChart.style.display =
+            "none";
+
+        salesChartEmpty.style.display =
+            "block";
+
+        return;
+
+    }
+
+    salesChartEmpty.style.display =
+        "none";
+
+    salesChart.style.display =
+        "block";
+
+}
+
+
+/* =========================================================
+   BLOC 12.18 — DESSIN DU GRAPHIQUE
+========================================================= */
+
+function drawRealSalesChart() {
+
+    const chartData =
+        window.salesChartData;
+
+    const salesChart =
+        document.getElementById(
+            "salesChart"
+        );
+
+    const salesChartContainer =
+        document.getElementById(
+            "salesChartContainer"
+        );
+
+    const salesChartEmpty =
+        document.getElementById(
+            "salesChartEmpty"
+        );
+
+    if (
+        !salesChart ||
+        !salesChartContainer ||
+        !salesChartEmpty
+    ) {
+
+        console.warn(
+            "RELATÓRIOS — BLOC 12.18 : éléments du graphique indisponibles."
+        );
+
+        return;
+
+    }
+
+    if (
+        !chartData ||
+        !Array.isArray(
+            chartData.data
+        ) ||
+        chartData.data.length === 0 ||
+        chartData.totalSales === 0
+    ) {
+
+        salesChart.innerHTML =
+            "";
+
+        salesChart.style.display =
+            "none";
+
+        salesChartEmpty.style.display =
+            "block";
+
+        return;
+
+    }
+
+    salesChartEmpty.style.display =
+        "none";
+
+    salesChart.style.display =
+        "block";
+
+    const width =
+        Math.max(
+            salesChartContainer.clientWidth ||
+            600,
+            320
+        );
+
+    const height =
+        260;
+
+    const paddingLeft =
+        42;
+
+    const paddingRight =
+        18;
+
+    const paddingTop =
+        20;
+
+    const paddingBottom =
+        42;
+
+    const innerWidth =
+        width -
+        paddingLeft -
+        paddingRight;
+
+    const innerHeight =
+        height -
+        paddingTop -
+        paddingBottom;
+
+    const values =
+        chartData.data.map(
+            item =>
+                Number(item.sales) || 0
+        );
+
+    const maxValue =
+        Math.max(
+            ...values,
+            1
+        );
+
+    const points =
+        chartData.data.map(
+            (item, index) => {
+
+                const x =
+                    paddingLeft +
+                    (
+                        index /
+                        Math.max(
+                            chartData.data.length - 1,
+                            1
+                        )
+                    ) *
+                    innerWidth;
 
                 const y =
-                    Number(
-                        text.getAttribute("y")
-                    );
+                    paddingTop +
+                    innerHeight -
+                    (
+                        (
+                            Number(
+                                item.sales
+                            ) || 0
+                        ) /
+                        maxValue
+                    ) *
+                    innerHeight;
 
-                if (
-                    Number.isFinite(y) &&
-                    y > 240
-                ) {
-                    dateTexts.push(text);
-                }
-
-            }
-        );
-
-        dateTexts.forEach(
-            (text, index) => {
-
-                const dataIndex =
-                    labelIndexes[index];
-
-                if (
-                    dataIndex === undefined
-                ) {
-                    return;
-                }
-
-                const item =
-                    chartData.data[
-                        dataIndex
-                    ];
-
-                if (!item || !item.date) {
-                    return;
-                }
-
-                /*
-                 * Important :
-                 * on ne fait PAS new Date()
-                 * ici.
-                 *
-                 * On utilise directement
-                 * YYYY-MM-DD pour éviter
-                 * le décalage UTC.
-                 */
-
-                const parts =
-                    String(
+                return {
+                    x,
+                    y,
+                    sales:
+                        Number(
+                            item.sales
+                        ) || 0,
+                    date:
                         item.date
-                    ).split("-");
-
-                if (
-                    parts.length !== 3
-                ) {
-                    return;
-                }
-
-                const day =
-                    parts[2];
-
-                const month =
-                    parts[1];
-
-                text.textContent =
-                    day +
-                    "/" +
-                    month;
+                };
 
             }
         );
 
-        
+    const path =
+        points
+            .map(
+                (point, index) => {
 
-    }
-    catch (error) {
+                    return (
+                        index === 0
+                            ? "M "
+                            : "L "
+                    ) +
+                    point.x +
+                    " " +
+                    point.y;
 
-        console.error(
-            "Erreur Bloc 12.19 :",
-            error
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.19 ERREUR ❌\n\n" +
-            error.message
-        );
-
-    }
-
-}
-function calculateFilteredFinancialStatistics() {
-
-    try {
-
-        
-        const filteredOrders =
-            window.filteredReportsOrders;
-
-        if (!Array.isArray(filteredOrders)) {
-            throw new Error(
-                "Les commandes filtrées sont introuvables."
-            );
-        }
-
-        const financialRevenueValue =
-            document.getElementById(
-                "financialRevenueValue"
-            );
-
-        const financialRevenueAverage =
-            document.getElementById(
-                "financialRevenueAverage"
-            );
-
-        const financialRevenueHighest =
-            document.getElementById(
-                "financialRevenueHighest"
-            );
-
-        const financialRevenueGrowth =
-            document.getElementById(
-                "financialRevenueGrowth"
-            );
-
-        const financialCommissionValue =
-            document.getElementById(
-                "financialCommissionValue"
-            );
-
-        const financialCommissionAverage =
-            document.getElementById(
-                "financialCommissionAverage"
-            );
-
-        const financialCommissionRate =
-            document.getElementById(
-                "financialCommissionRate"
-            );
-
-        const financialCommissionShare =
-            document.getElementById(
-                "financialCommissionShare"
-            );
-
-        const financialCommissionProgress =
-            document.getElementById(
-                "financialCommissionProgress"
-            );
-
-        const financialRevenueProgress =
-            document.getElementById(
-                "financialRevenueProgress"
-            );
-
-        if (!financialRevenueValue) {
-            throw new Error(
-                "L'ID financialRevenueValue est introuvable."
-            );
-        }
-
-        if (!financialRevenueAverage) {
-            throw new Error(
-                "L'ID financialRevenueAverage est introuvable."
-            );
-        }
-
-        if (!financialRevenueHighest) {
-            throw new Error(
-                "L'ID financialRevenueHighest est introuvable."
-            );
-        }
-
-        if (!financialRevenueGrowth) {
-            throw new Error(
-                "L'ID financialRevenueGrowth est introuvable."
-            );
-        }
-
-        if (!financialCommissionValue) {
-            throw new Error(
-                "L'ID financialCommissionValue est introuvable."
-            );
-        }
-
-        if (!financialCommissionAverage) {
-            throw new Error(
-                "L'ID financialCommissionAverage est introuvable."
-            );
-        }
-
-        if (!financialCommissionRate) {
-            throw new Error(
-                "L'ID financialCommissionRate est introuvable."
-            );
-        }
-
-        if (!financialCommissionShare) {
-            throw new Error(
-                "L'ID financialCommissionShare est introuvable."
-            );
-        }
-
-        if (!financialCommissionProgress) {
-            throw new Error(
-                "L'ID financialCommissionProgress est introuvable."
-            );
-        }
-
-        if (!financialRevenueProgress) {
-            throw new Error(
-                "L'ID financialRevenueProgress est introuvable."
-            );
-        }
-
-        
-        let totalRevenue = 0;
-
-        let highestOrder = 0;
-
-        filteredOrders.forEach(
-            (order) => {
-
-                const orderTotal =
-                    Number(
-                        order.total
-                    ) || 0;
-
-                totalRevenue +=
-                    orderTotal;
-
-                if (
-                    orderTotal >
-                    highestOrder
-                ) {
-                    highestOrder =
-                        orderTotal;
                 }
+            )
+            .join(" ");
 
-            }
-        );
+    let svg =
+        `
+        <svg
+            width="100%"
+            height="${height}"
+            viewBox="0 0 ${width} ${height}"
+            preserveAspectRatio="none"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+        `;
 
-        const totalOrders =
-            filteredOrders.length;
+    /* ================================
+       LIGNES DE GRILLE
+    ================================= */
 
-        const averageRevenue =
-            totalOrders > 0
-                ? totalRevenue / totalOrders
-                : 0;
+    for (
+        let i = 0;
+        i <= 4;
+        i++
+    ) {
 
-        /*
-         * Commission Toma estimée à 5%.
-         *
-         * Important :
-         * cette valeur reste une estimation
-         * basée sur le chiffre d'affaires.
-         */
-
-      const commissionRate =
-    Number(
-        window.reportsCommissionRate
-    ) || 0;
-
-        const estimatedCommission =
-            totalRevenue *
+        const y =
+            paddingTop +
             (
-                commissionRate / 100
+                innerHeight *
+                i /
+                4
             );
 
-        const averageCommission =
-            totalOrders > 0
-                ? estimatedCommission /
-                  totalOrders
-                : 0;
-
-        const commissionShare =
-            totalRevenue > 0
-                ? (
-                    estimatedCommission /
-                    totalRevenue
-                ) * 100
-                : 0;
-
-        /*
-         * Progression financière.
-         *
-         * Pour l'instant, on conserve
-         * une valeur de 0 à 100 basée
-         * sur la présence de revenus.
-         */
-
-        const revenueProgress =
-            totalRevenue > 0
-                ? 100
-                : 0;
-
-        const commissionProgress =
-            totalRevenue > 0
-                ? commissionShare
-                : 0;
-
-        window.filteredFinancialStatistics = {
-
-            totalOrders,
-
-            totalRevenue,
-
-            averageRevenue,
-
-            highestOrder,
-
-            commissionRate,
-
-            estimatedCommission,
-
-            averageCommission,
-
-            commissionShare,
-
-            revenueProgress,
-
-            commissionProgress
-
-        };
-
-        
-
-    }
-    catch (error) {
-
-        console.error(
-            "Erreur Bloc 12.20 :",
-            error
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.20 ERREUR ❌\n\n" +
-            error.message
-        );
+        svg +=
+            `
+            <line
+                x1="${paddingLeft}"
+                y1="${y}"
+                x2="${width - paddingRight}"
+                y2="${y}"
+                stroke="rgba(0,0,0,0.08)"
+                stroke-width="1"
+            />
+            `;
 
     }
 
-}
-function displayFilteredFinancialStatistics() {
+    /* ================================
+       COURBE
+    ================================= */
 
-    try {
+    svg +=
+        `
+        <path
+            d="${path}"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        />
+        `;
 
-        
-        const statistics =
-            window.filteredFinancialStatistics;
+    /* ================================
+       POINTS
+    ================================= */
 
-        if (!statistics) {
-            throw new Error(
-                "Les statistiques financières filtrées sont introuvables."
-            );
-        }
+    points.forEach(
+        (point) => {
 
-        const financialRevenueValue =
-            document.getElementById(
-                "financialRevenueValue"
-            );
-
-        const financialRevenueAverage =
-            document.getElementById(
-                "financialRevenueAverage"
-            );
-
-        const financialRevenueHighest =
-            document.getElementById(
-                "financialRevenueHighest"
-            );
-
-        const financialCommissionValue =
-            document.getElementById(
-                "financialCommissionValue"
-            );
-
-        const financialCommissionAverage =
-            document.getElementById(
-                "financialCommissionAverage"
-            );
-
-        const financialCommissionRate =
-            document.getElementById(
-                "financialCommissionRate"
-            );
-
-        const financialCommissionShare =
-            document.getElementById(
-                "financialCommissionShare"
-            );
-
-        if (!financialRevenueValue) {
-            throw new Error(
-                "L'ID financialRevenueValue est introuvable."
-            );
-        }
-
-        if (!financialRevenueAverage) {
-            throw new Error(
-                "L'ID financialRevenueAverage est introuvable."
-            );
-        }
-
-        if (!financialRevenueHighest) {
-            throw new Error(
-                "L'ID financialRevenueHighest est introuvable."
-            );
-        }
-
-        if (!financialCommissionValue) {
-            throw new Error(
-                "L'ID financialCommissionValue est introuvable."
-            );
-        }
-
-        if (!financialCommissionAverage) {
-            throw new Error(
-                "L'ID financialCommissionAverage est introuvable."
-            );
-        }
-
-        if (!financialCommissionRate) {
-            throw new Error(
-                "L'ID financialCommissionRate est introuvable."
-            );
-        }
-
-        if (!financialCommissionShare) {
-            throw new Error(
-                "L'ID financialCommissionShare est introuvable."
-            );
-        }
-
-        
-
-        const totalRevenue =
-            Number(
-                statistics.totalRevenue
-            ) || 0;
-
-        const averageRevenue =
-            Number(
-                statistics.averageRevenue
-            ) || 0;
-
-        const highestOrder =
-            Number(
-                statistics.highestOrder
-            ) || 0;
-
-        const estimatedCommission =
-            Number(
-                statistics.estimatedCommission
-            ) || 0;
-
-        const averageCommission =
-            Number(
-                statistics.averageCommission
-            ) || 0;
-
-        const commissionRate =
-            Number(
-                statistics.commissionRate
-            ) || 0;
-
-        const commissionShare =
-            Number(
-                statistics.commissionShare
-            ) || 0;
-
-        const formattedRevenue =
-            totalRevenue.toLocaleString(
-                "pt-AO"
-            ) + " Kz";
-
-        const formattedAverage =
-            averageRevenue.toLocaleString(
-                "pt-AO"
-            ) + " Kz";
-
-        const formattedHighest =
-            highestOrder.toLocaleString(
-                "pt-AO"
-            ) + " Kz";
-
-        const formattedCommission =
-            estimatedCommission.toLocaleString(
-                "pt-AO"
-            ) + " Kz";
-
-        const formattedAverageCommission =
-            averageCommission.toLocaleString(
-                "pt-AO"
-            ) + " Kz";
-
-        financialRevenueValue.textContent =
-            formattedRevenue;
-
-        financialRevenueAverage.textContent =
-            formattedAverage;
-
-        financialRevenueHighest.textContent =
-            formattedHighest;
-
-        financialCommissionValue.textContent =
-            formattedCommission;
-
-        financialCommissionAverage.textContent =
-            formattedAverageCommission;
-
-        financialCommissionRate.textContent =
-            commissionRate + "%";
-
-        financialCommissionShare.textContent =
-            commissionShare.toFixed(1) + "%";
-
-        
-
-    }
-    catch (error) {
-
-        console.error(
-            "Erreur Bloc 12.21 :",
-            error
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.21 ERREUR ❌\n\n" +
-            error.message
-        );
-
-    }
-
-}
-function calculateFinancialProgress() {
-
-    try {
-
-        
-        const statistics =
-            window.filteredFinancialStatistics;
-
-        const comparison =
-            window.reportsGrowthComparison;
-
-        if (!statistics) {
-            throw new Error(
-                "Les statistiques financières filtrées sont introuvables."
-            );
-        }
-
-        if (!comparison) {
-            throw new Error(
-                "Les données de comparaison sont introuvables."
-            );
-        }
-
-        const currentRevenue =
-            Number(
-                statistics.totalRevenue
-            ) || 0;
-
-        const currentCommission =
-            Number(
-                statistics.estimatedCommission
-            ) || 0;
-
-        const previousRevenue =
-            Number(
-                comparison.previousRevenue
-            ) || 0;
-
-        const previousCommission =
-    previousRevenue *
-    (
-        Number(
-            statistics.commissionRate
-        ) ||
-        Number(
-            window.reportsCommissionRate
-        ) ||
-        0
-    ) /
-    100;
-
-        let revenueProgress = 0;
-        let commissionProgress = 0;
-
-        /*
-         * Si la période précédente possède
-         * des revenus, on compare les deux.
-         */
-
-        if (previousRevenue > 0) {
-
-            revenueProgress =
-                (
-                    currentRevenue /
-                    previousRevenue
-                ) * 100;
+            svg +=
+                `
+                <circle
+                    cx="${point.x}"
+                    cy="${point.y}"
+                    r="4"
+                    fill="currentColor"
+                />
+                `;
 
         }
-        else if (currentRevenue > 0) {
+    );
+
+    /* ================================
+       LABELS
+    ================================= */
+
+    points.forEach(
+        (point, index) => {
 
             /*
-             * Nouvelle période avec ventes,
-             * mais aucune vente précédente.
+             * Pour éviter une surcharge visuelle,
+             * on affiche environ 7 labels.
              */
 
-            revenueProgress = 100;
-
-        }
-
-        if (previousCommission > 0) {
-
-            commissionProgress =
-                (
-                    currentCommission /
-                    previousCommission
-                ) * 100;
-
-        }
-        else if (currentCommission > 0) {
-
-            commissionProgress = 100;
-
-        }
-
-        /*
-         * Limitation visuelle à 100%.
-         *
-         * Une croissance supérieure à 100%
-         * sera conservée dans les statistiques,
-         * mais la barre ne dépassera jamais
-         * son conteneur.
-         */
-
-        const revenueBarWidth =
-            Math.min(
+            const interval =
                 Math.max(
-                    revenueProgress,
-                    0
-                ),
-                100
+                    Math.ceil(
+                        points.length / 7
+                    ),
+                    1
+                );
+
+            if (
+                index % interval !== 0 &&
+                index !==
+                    points.length - 1
+            ) {
+
+                return;
+
+            }
+
+            const date =
+                new Date(
+                    point.date +
+                    "T00:00:00"
+                );
+
+            const label =
+                String(
+                    date.getDate()
+                ).padStart(2, "0") +
+                "/" +
+                String(
+                    date.getMonth() + 1
+                ).padStart(2, "0");
+
+            svg +=
+                `
+                <text
+                    x="${point.x}"
+                    y="${height - 12}"
+                    text-anchor="middle"
+                    font-size="10"
+                    fill="currentColor"
+                    opacity="0.65"
+                >
+                    ${label}
+                </text>
+                `;
+
+        }
+    );
+
+    svg +=
+        "</svg>";
+
+    salesChart.innerHTML =
+        svg;
+
+}
+
+
+/* =========================================================
+   BLOC 12.19 — CORRECTION LABELS DATE
+========================================================= */
+
+function fixSalesChartDateLabels() {
+
+    /*
+     * Les dates sont déjà générées
+     * en heure locale dans le graphique.
+     *
+     * Cette fonction reste volontairement
+     * légère pour éviter les décalages UTC.
+     */
+
+    return;
+
+}
+
+
+/* =========================================================
+   BLOC 12.20 — STATISTIQUES FINANCIÈRES
+========================================================= */
+
+function calculateFilteredFinancialStatistics() {
+
+    const period =
+        getCurrentReportPeriod();
+
+    const filteredOrders =
+        getOrdersForReportPeriod(
+            reportsOrders,
+            period.startDate,
+            period.endDate
+        );
+
+    let revenue = 0;
+    let highest = 0;
+
+    filteredOrders.forEach(
+        (order) => {
+
+            const total =
+                Number(order.total) || 0;
+
+            revenue += total;
+
+            if (
+                total > highest
+            ) {
+
+                highest = total;
+
+            }
+
+        }
+    );
+
+    const average =
+        filteredOrders.length > 0
+            ? revenue /
+                filteredOrders.length
+            : 0;
+
+    const commissionRate =
+        Number(
+            window.reportsCommissionRate
+        ) || 0;
+
+    const commission =
+        revenue *
+        (
+            commissionRate /
+            100
+        );
+
+    const commissionAverage =
+        filteredOrders.length > 0
+            ? commission /
+                filteredOrders.length
+            : 0;
+
+    const commissionShare =
+        revenue > 0
+            ? (
+                commission /
+                revenue
+            ) * 100
+            : 0;
+
+    window.filteredFinancialStatistics = {
+
+        revenue,
+
+        average,
+
+        highest,
+
+        commission,
+
+        commissionAverage,
+
+        commissionRate,
+
+        commissionShare
+
+    };
+
+    return window.filteredFinancialStatistics;
+
+}
+
+
+/* =========================================================
+   BLOC 12.21 — AFFICHAGE FINANCIER
+========================================================= */
+
+function displayFilteredFinancialStatistics() {
+
+    const data =
+        window.filteredFinancialStatistics;
+
+    if (!data) {
+        return;
+    }
+
+    const formatKz =
+        (value) =>
+            (
+                Number(value) || 0
+            ).toLocaleString("pt-AO") +
+            " Kz";
+
+    const revenueValue =
+        document.getElementById(
+            "financialRevenueValue"
+        );
+
+    const revenueAverage =
+        document.getElementById(
+            "financialRevenueAverage"
+        );
+
+    const revenueHighest =
+        document.getElementById(
+            "financialRevenueHighest"
+        );
+
+    const commissionValue =
+        document.getElementById(
+            "financialCommissionValue"
+        );
+
+    const commissionAverage =
+        document.getElementById(
+            "financialCommissionAverage"
+        );
+
+    const commissionRate =
+        document.getElementById(
+            "financialCommissionRate"
+        );
+
+    const commissionShare =
+        document.getElementById(
+            "financialCommissionShare"
+        );
+
+    if (revenueValue) {
+
+        revenueValue.textContent =
+            formatKz(
+                data.revenue
             );
-
-        const commissionBarWidth =
-            Math.min(
-                Math.max(
-                    commissionProgress,
-                    0
-                ),
-                100
-            );
-
-        window.financialProgressData = {
-
-            revenueProgress,
-
-            commissionProgress,
-
-            revenueBarWidth,
-
-            commissionBarWidth,
-
-            currentRevenue,
-
-            previousRevenue,
-
-            currentCommission,
-
-            previousCommission
-
-        };
-
-        
 
     }
-    catch (error) {
 
-        console.error(
-            "Erreur Bloc 12.22 :",
-            error
-        );
+    if (revenueAverage) {
 
-        alert(
-            "RELATÓRIOS — BLOC 12.22 ERREUR ❌\n\n" +
-            error.message
-        );
+        revenueAverage.textContent =
+            formatKz(
+                data.average
+            );
+
+    }
+
+    if (revenueHighest) {
+
+        revenueHighest.textContent =
+            formatKz(
+                data.highest
+            );
+
+    }
+
+    if (commissionValue) {
+
+        commissionValue.textContent =
+            formatKz(
+                data.commission
+            );
+
+    }
+
+    if (commissionAverage) {
+
+        commissionAverage.textContent =
+            formatKz(
+                data.commissionAverage
+            );
+
+    }
+
+    if (commissionRate) {
+
+        commissionRate.textContent =
+            data.commissionRate +
+            "%";
+
+    }
+
+    if (commissionShare) {
+
+        commissionShare.textContent =
+            data.commissionShare.toFixed(1) +
+            "%";
 
     }
 
 }
-// ======================================================
-// BLOC 12.23 — AFFICHAGE DES BARRES FINANCIÈRES
-// ======================================================
+
+
+/* =========================================================
+   BLOC 12.22 — PROGRESSION FINANCIÈRE
+========================================================= */
+
+function calculateFinancialProgress() {
+
+    const current =
+        window.filteredFinancialStatistics;
+
+    const comparison =
+        window.reportsGrowthComparison;
+
+    if (!current) {
+        return null;
+    }
+
+    const previousRevenue =
+        comparison?.previous?.revenue || 0;
+
+    const revenueGrowth =
+        calculateGrowthPercentage(
+            current.revenue,
+            previousRevenue
+        );
+
+    const revenueProgress =
+        current.revenue > 0
+            ? 100
+            : 0;
+
+    const commissionProgress =
+        current.commissionRate > 0
+            ? Math.min(
+                current.commissionRate,
+                100
+            )
+            : 0;
+
+    window.financialProgressData = {
+
+        revenueProgress,
+
+        commissionProgress,
+
+        revenueGrowth
+
+    };
+
+    return window.financialProgressData;
+
+}
+
+
+/* =========================================================
+   BLOC 12.23 — AFFICHAGE PROGRESSION
+========================================================= */
 
 function displayFinancialProgress() {
 
-    try {
+    const data =
+        window.financialProgressData;
 
-        
-
-        const revenueProgressElement =
-            document.getElementById("financialRevenueProgress");
-
-        const commissionProgressElement =
-            document.getElementById("financialCommissionProgress");
-
-        if (!revenueProgressElement) {
-            throw new Error(
-                "L'ID HTML financialRevenueProgress est introuvable."
-            );
-        }
-
-        if (!commissionProgressElement) {
-            throw new Error(
-                "L'ID HTML financialCommissionProgress est introuvable."
-            );
-        }
-
-        const progressData = window.financialProgressData;
-
-        if (!progressData) {
-            throw new Error(
-                "Les données de progression financière sont introuvables."
-            );
-        }
-
-        const revenueWidth =
-            Number(progressData.revenueBarWidth) || 0;
-
-        const commissionWidth =
-            Number(progressData.commissionBarWidth) || 0;
-
-
-        // --------------------------------------------------
-        // BARRE RECETTE
-        // --------------------------------------------------
-
-        revenueProgressElement.style.width =
-            revenueWidth + "%";
-
-
-        // --------------------------------------------------
-        // BARRE COMMISSION
-        // --------------------------------------------------
-
-        commissionProgressElement.style.width =
-            commissionWidth + "%";
-
-
-        
-
-
-    } catch (error) {
-
-        console.error(
-            "Erreur Bloc 12.23 :",
-            error
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.23 ERREUR ❌\n\n" +
-            error.message
-        );
+    if (!data) {
+        return;
     }
+
+    const revenueProgress =
+        document.getElementById(
+            "financialRevenueProgress"
+        );
+
+    const commissionProgress =
+        document.getElementById(
+            "financialCommissionProgress"
+        );
+
+    if (revenueProgress) {
+
+        revenueProgress.style.width =
+            data.revenueProgress +
+            "%";
+
+    }
+
+    if (commissionProgress) {
+
+        commissionProgress.style.width =
+            data.commissionProgress +
+            "%";
+
+    }
+
 }
-// ======================================================
-// BLOC 12.24 — SYNCHRONISATION DES BARRES FINANCIÈRES
-// AVEC LA PÉRIODE SÉLECTIONNÉE
-// ======================================================
+
+
+/* =========================================================
+   BLOC 12.24 — SYNCHRONISATION DE LA PÉRIODE
+========================================================= */
 
 function synchronizeFinancialProgressWithPeriod() {
 
-    try {
+    const selectedPeriod =
+        document.getElementById(
+            "reportsPeriodSelect"
+        )?.value || "30days";
 
-        
+    document.body.dataset.reportPeriod =
+        selectedPeriod;
 
-        // --------------------------------------------------
-        // RÉCUPÉRATION DES IDs HTML EXISTANTS
-        // --------------------------------------------------
-
-        const revenueProgressElement =
-            document.getElementById("financialRevenueProgress");
-
-        const commissionProgressElement =
-            document.getElementById("financialCommissionProgress");
-
-        const periodSelect =
-            document.getElementById("reportsPeriodSelect");
-
-
-        if (!revenueProgressElement) {
-            throw new Error(
-                "L'ID HTML financialRevenueProgress est introuvable."
-            );
-        }
-
-        if (!commissionProgressElement) {
-            throw new Error(
-                "L'ID HTML financialCommissionProgress est introuvable."
-            );
-        }
-
-        if (!periodSelect) {
-            throw new Error(
-                "L'ID HTML reportsPeriodSelect est introuvable."
-            );
-        }
-
-
-        // --------------------------------------------------
-        // RÉCUPÉRATION DES DONNÉES
-        // --------------------------------------------------
-
-        const progressData =
-            window.financialProgressData;
-
-        if (!progressData) {
-            throw new Error(
-                "Les données financialProgressData sont introuvables."
-            );
-        }
-
-
-        const revenueWidth =
-            Math.min(
-                Math.max(
-                    Number(progressData.revenueBarWidth) || 0,
-                    0
-                ),
-                100
-            );
-
-        const commissionWidth =
-            Math.min(
-                Math.max(
-                    Number(progressData.commissionBarWidth) || 0,
-                    0
-                ),
-                100
-            );
-
-
-        // --------------------------------------------------
-        // APPLICATION DES LARGEURS
-        // --------------------------------------------------
-
-        revenueProgressElement.style.width =
-            revenueWidth + "%";
-
-        commissionProgressElement.style.width =
-            commissionWidth + "%";
-
-
-        // --------------------------------------------------
-        // MÉMORISATION DE LA PÉRIODE
-        // --------------------------------------------------
-
-        window.financialProgressPeriod =
-            periodSelect.value;
-
-
-        
-
-    } catch (error) {
-
-        console.error(
-            "Erreur Bloc 12.24 :",
-            error
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.24 ERREUR ❌\n\n" +
-            error.message
-        );
-    }
 }
-// ======================================================
-// BLOC 12.25 — AFFICHAGE INTELLIGENT DES POURCENTAGES
-// ======================================================
+
+
+/* =========================================================
+   BLOC 12.25 — POURCENTAGES INTELLIGENTS
+========================================================= */
 
 function displayIntelligentFinancialPercentages() {
 
-    try {
+    const data =
+        window.filteredFinancialStatistics;
 
-        
-
-        // --------------------------------------------------
-        // RÉCUPÉRATION DES DONNÉES
-        // --------------------------------------------------
-
-        const progressData =
-            window.financialProgressData;
-
-        if (!progressData) {
-            throw new Error(
-                "Les données financialProgressData sont introuvables."
-            );
-        }
-
-
-        // --------------------------------------------------
-        // RÉCUPÉRATION DES IDs HTML EXISTANTS
-        // --------------------------------------------------
-
-        const revenueProgress =
-            document.getElementById("financialRevenueProgress");
-
-        const commissionProgress =
-            document.getElementById("financialCommissionProgress");
-
-        if (!revenueProgress) {
-            throw new Error(
-                "L'ID HTML financialRevenueProgress est introuvable."
-            );
-        }
-
-        if (!commissionProgress) {
-            throw new Error(
-                "L'ID HTML financialCommissionProgress est introuvable."
-            );
-        }
-
-
-        // --------------------------------------------------
-        // CALCUL DES POURCENTAGES D'AFFICHAGE
-        // --------------------------------------------------
-
-        const revenueProgressValue =
-            Number(progressData.revenueProgress) || 0;
-
-        const commissionProgressValue =
-            Number(progressData.commissionProgress) || 0;
-
-
-        const revenueDisplayValue =
-            Math.min(
-                Math.max(revenueProgressValue, 0),
-                100
-            );
-
-        const commissionDisplayValue =
-            Math.min(
-                Math.max(commissionProgressValue, 0),
-                100
-            );
-
-
-        // --------------------------------------------------
-        // APPLICATION DES BARRES
-        // --------------------------------------------------
-
-        revenueProgress.style.width =
-            revenueDisplayValue + "%";
-
-        commissionProgress.style.width =
-            commissionDisplayValue + "%";
-
-
-        // --------------------------------------------------
-        // SAUVEGARDE DES VALEURS POUR LA SUITE
-        // --------------------------------------------------
-
-        window.intelligentFinancialPercentages = {
-
-            revenue:
-                revenueDisplayValue,
-
-            commission:
-                commissionDisplayValue
-
-        };
-
-
-        
-
-
-    } catch (error) {
-
-        console.error(
-            "Erreur Bloc 12.25 :",
-            error
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.25 ERREUR ❌\n\n" +
-            error.message
-        );
+    if (!data) {
+        return;
     }
+
+    const commissionShare =
+        document.getElementById(
+            "financialCommissionShare"
+        );
+
+    if (commissionShare) {
+
+        commissionShare.textContent =
+            data.commissionShare.toFixed(1) +
+            "%";
+
+    }
+
 }
-// ======================================================
-// BLOC 12.26 — PRÉPARATION DU RÉSUMÉ FINANCIER
-// ======================================================
+
+
+/* =========================================================
+   BLOC 12.26 — RÉSUMÉ FINANCIER
+========================================================= */
 
 function prepareFinancialSummary() {
 
-    try {
+    const data =
+        window.filteredFinancialStatistics;
 
-        
-
-
-        // --------------------------------------------------
-        // RÉCUPÉRATION DES DONNÉES EXISTANTES
-        // --------------------------------------------------
-
-        const financialData =
-            window.filteredFinancialStatistics;
-
-        const progressData =
-            window.financialProgressData;
-
-        const periodSelect =
-            document.getElementById("reportsPeriodSelect");
-
-
-        if (!financialData) {
-            throw new Error(
-                "Les statistiques financières sont introuvables."
-            );
-        }
-
-        if (!progressData) {
-            throw new Error(
-                "Les données de progression financière sont introuvables."
-            );
-        }
-
-        if (!periodSelect) {
-            throw new Error(
-                "L'ID HTML reportsPeriodSelect est introuvable."
-            );
-        }
-
-
-        // --------------------------------------------------
-        // PRÉPARATION DU RÉSUMÉ
-        // --------------------------------------------------
-
-        const summary = {
-
-            period:
-                periodSelect.value,
-
-            totalRevenue:
-                Number(financialData.totalRevenue) || 0,
-
-            averageRevenue:
-                Number(financialData.averageRevenue) || 0,
-
-            highestOrder:
-                Number(financialData.highestOrder) || 0,
-
-            estimatedCommission:
-                Number(financialData.estimatedCommission) || 0,
-
-            commissionRate:
-    Number(financialData.commissionRate) ||
-    Number(window.reportsCommissionRate) ||
-    0,
-
-            revenueProgress:
-                Number(progressData.revenueProgress) || 0,
-
-            commissionProgress:
-                Number(progressData.commissionProgress) || 0
-        };
-
-
-        // --------------------------------------------------
-        // SAUVEGARDE POUR LES BLOCS SUIVANTS
-        // --------------------------------------------------
-
-        window.financialSummaryData = summary;
-
-
-        
-
-    } catch (error) {
-
-        console.error(
-            "Erreur Bloc 12.26 :",
-            error
-        );
-
-        alert(
-            "RELATÓRIOS — BLOC 12.26 ERREUR ❌\n\n" +
-            error.message
-        );
+    if (!data) {
+        return;
     }
-}
-// ======================================================
-// BLOC 12.27 — AFFICHAGE DU RÉSUMÉ FINANCIER
-// ======================================================
 
-function displayFinancialSummary() {
+    const summarySales =
+        document.getElementById(
+            "reportSummarySales"
+        );
 
-    try {
+    const summaryRevenue =
+        document.getElementById(
+            "reportSummaryRevenue"
+        );
 
-        
+    const summaryCommission =
+        document.getElementById(
+            "reportSummaryCommission"
+        );
 
+    if (summarySales) {
 
-        // --------------------------------------------------
-        // RÉCUPÉRATION DES DONNÉES
-        // --------------------------------------------------
+        summarySales.textContent =
+            (
+                Number(data.revenue) || 0
+            ).toLocaleString("pt-AO") +
+            " Kz";
 
-        const summary =
-            window.financialSummaryData;
+    }
 
-        if (!summary) {
-            throw new Error(
-                "Les données financialSummaryData sont introuvables."
-            );
-        }
-
-
-        // --------------------------------------------------
-        // RÉCUPÉRATION DES IDs HTML EXISTANTS
-        // --------------------------------------------------
-
-        const summaryRevenue =
-            document.getElementById("reportSummaryRevenue");
-
-        const summaryCommission =
-            document.getElementById("reportSummaryCommission");
-
-        const summaryGrowth =
-            document.getElementById("reportSummaryGrowth");
-
-
-        if (!summaryRevenue) {
-            throw new Error(
-                "L'ID HTML reportSummaryRevenue est introuvable."
-            );
-        }
-
-        if (!summaryCommission) {
-            throw new Error(
-                "L'ID HTML reportSummaryCommission est introuvable."
-            );
-        }
-
-        if (!summaryGrowth) {
-            throw new Error(
-                "L'ID HTML reportSummaryGrowth est introuvable."
-            );
-        }
-
-
-        // --------------------------------------------------
-        // AFFICHAGE RECETTE
-        // --------------------------------------------------
+    if (summaryRevenue) {
 
         summaryRevenue.textContent =
-            summary.totalRevenue.toLocaleString("pt-AO") +
+            (
+                Number(data.revenue) || 0
+            ).toLocaleString("pt-AO") +
             " Kz";
 
+    }
 
-        // --------------------------------------------------
-        // AFFICHAGE COMMISSION
-        // --------------------------------------------------
+    if (summaryCommission) {
 
         summaryCommission.textContent =
-            summary.estimatedCommission.toLocaleString("pt-AO") +
+            (
+                Number(data.commission) || 0
+            ).toLocaleString("pt-AO") +
             " Kz";
 
+    }
 
-        // --------------------------------------------------
-        // AFFICHAGE CROISSANCE
-        // --------------------------------------------------
-
-        summaryGrowth.textContent =
-            summary.revenueProgress.toFixed(1) +
-            "%";
+}
 
 
-        
+/* =========================================================
+   BLOC 12.27 — STATISTIQUES FILTRÉES
+========================================================= */
+
+function calculateFilteredReportsStatistics() {
+
+    const period =
+        getCurrentReportPeriod();
+
+    const filteredOrders =
+        getOrdersForReportPeriod(
+            reportsOrders,
+            period.startDate,
+            period.endDate
+        );
+
+    let revenue = 0;
+    let productsSold = 0;
+
+    filteredOrders.forEach(
+        (order) => {
+
+            revenue +=
+                Number(order.total) || 0;
+
+            if (
+                Array.isArray(
+                    order.items
+                )
+            ) {
+
+                order.items.forEach(
+                    (item) => {
+
+                        productsSold +=
+                            Number(
+                                item.quantity
+                            ) || 0;
+
+                    }
+                );
+
+            }
+
+        }
+    );
+
+    const commissionRate =
+        Number(
+            window.reportsCommissionRate
+        ) || 0;
+
+    const commission =
+        revenue *
+        (
+            commissionRate /
+            100
+        );
+
+    window.filteredReportsOrders =
+        filteredOrders;
+
+    window.filteredReportsStatistics = {
+
+        totalOrders:
+            filteredOrders.length,
+
+        totalRevenue:
+            revenue,
+
+        totalProductsSold:
+            productsSold,
+
+        averageOrder:
+            filteredOrders.length > 0
+                ? revenue /
+                    filteredOrders.length
+                : 0,
+
+        commission
+
+    };
+
+    return window.filteredReportsStatistics;
+
+}
 
 
-    } catch (error) {
+/* =========================================================
+   BLOC 12.28 — AFFICHAGE STATISTIQUES FILTRÉES
+========================================================= */
+
+function displayFilteredReportsStatistics() {
+
+    const stats =
+        window.filteredReportsStatistics;
+
+    if (!stats) {
+        return;
+    }
+
+    const formatKz =
+        (value) =>
+            (
+                Number(value) || 0
+            ).toLocaleString("pt-AO") +
+            " Kz";
+
+    const totalSales =
+        document.getElementById(
+            "reportTotalSales"
+        );
+
+    const totalRevenue =
+        document.getElementById(
+            "reportTotalRevenue"
+        );
+
+    const totalCommission =
+        document.getElementById(
+            "reportTotalCommission"
+        );
+
+    const totalOrders =
+        document.getElementById(
+            "reportTotalOrders"
+        );
+
+    if (totalSales) {
+
+        totalSales.textContent =
+            formatKz(
+                stats.totalRevenue
+            );
+
+    }
+
+    if (totalRevenue) {
+
+        totalRevenue.textContent =
+            formatKz(
+                stats.totalRevenue
+            );
+
+    }
+
+    if (totalCommission) {
+
+        totalCommission.textContent =
+            formatKz(
+                stats.commission
+            );
+
+    }
+
+    if (totalOrders) {
+
+        totalOrders.textContent =
+            stats.totalOrders;
+
+    }
+
+}
+
+
+/* =========================================================
+   BLOC 12.29 — RECARREGAR LE RAPPORT
+========================================================= */
+
+async function refreshReportsPeriodData() {
+
+    calculateFilteredReportsStatistics();
+
+    displayFilteredReportsStatistics();
+
+    prepareReportsGrowthComparison();
+
+    calculateReportsRealGrowth();
+
+    displayReportsRealGrowth();
+
+    styleReportsRealGrowth();
+
+    prepareSalesChartData();
+
+    displaySalesChartStatistics();
+
+    drawRealSalesChart();
+
+    fixSalesChartDateLabels();
+
+    calculateFilteredFinancialStatistics();
+
+    displayFilteredFinancialStatistics();
+
+    calculateFinancialProgress();
+
+    displayFinancialProgress();
+
+    synchronizeFinancialProgressWithPeriod();
+
+    displayIntelligentFinancialPercentages();
+
+    prepareFinancialSummary();
+
+}
+
+
+/* =========================================================
+   BLOC 12.30 — FILTRAGE PRINCIPAL
+========================================================= */
+
+function filterReportsOrdersByPeriod() {
+
+    try {
+
+        if (
+            !Array.isArray(
+                reportsOrders
+            )
+        ) {
+
+            return;
+
+        }
+
+        refreshReportsPeriodData();
+
+    }
+    catch (error) {
 
         console.error(
-            "Erreur Bloc 12.27 :",
+            "RELATÓRIOS — FILTRAGEM",
             error
         );
 
         alert(
-            "RELATÓRIOS — BLOC 12.27 ERREUR ❌\n\n" +
+            "RELATÓRIOS — ERREUR ❌\n\n" +
             error.message
         );
+
     }
+
+}
+
+
+/* =========================================================
+   BLOC 12.31 — FILTRE RÉEL
+========================================================= */
+
+function initializeReportsRealPeriodFilter() {
+
+    const reportsPeriodSelect =
+        document.getElementById(
+            "reportsPeriodSelect"
+        );
+
+    const reportsPeriodLabel =
+        document.getElementById(
+            "reportsPeriodLabel"
+        );
+
+    if (!reportsPeriodSelect) {
+        return;
+    }
+
+    reportsPeriodSelect.onchange =
+        () => {
+
+            const selectedPeriod =
+                reportsPeriodSelect.value;
+
+            const selectedOption =
+                reportsPeriodSelect.options[
+                    reportsPeriodSelect.selectedIndex
+                ];
+
+            const periodName =
+                selectedOption?.textContent ||
+                selectedPeriod;
+
+            if (reportsPeriodLabel) {
+
+                reportsPeriodLabel.textContent =
+                    periodName;
+
+            }
+
+            filterReportsOrdersByPeriod();
+
+        };
+
+    /*
+     * Premier chargement avec la période
+     * actuellement sélectionnée.
+     */
+
+    if (
+        Array.isArray(
+            reportsOrders
+        ) &&
+        reportsOrders.length >= 0
+    ) {
+
+        filterReportsOrdersByPeriod();
+
+    }
+
 }
 // ======================================================
 // BLOC 12.28 — BOUTON RETOUR
