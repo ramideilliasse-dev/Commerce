@@ -4548,44 +4548,164 @@ function styleReportsRealGrowth() {
    BLOC 12.16.3 — MEILLEUR JOUR
 ========================================================= */
 
+/* =========================================================
+   BLOC 12.16.3 — PRÉPARATION DES DONNÉES DU GRAPHIQUE
+========================================================= */
+
+function getLocalSalesChartDateKey(date) {
+
+    if (!(date instanceof Date) || isNaN(date.getTime())) {
+        return null;
+    }
+
+    return [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, "0"),
+        String(date.getDate()).padStart(2, "0")
+    ].join("-");
+}
+
+
+function getSalesChartDateFromKey(key) {
+
+    if (!key) {
+        return null;
+    }
+
+    const parts = key.split("-");
+
+    if (parts.length !== 3) {
+        return null;
+    }
+
+    return new Date(
+        Number(parts[0]),
+        Number(parts[1]) - 1,
+        Number(parts[2]),
+        0,
+        0,
+        0,
+        0
+    );
+}
+
+
+function getSalesChartWeekKey(date) {
+
+    const localDate =
+        new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate()
+        );
+
+    const day =
+        localDate.getDay();
+
+    const difference =
+        day === 0
+            ? -6
+            : 1 - day;
+
+    localDate.setDate(
+        localDate.getDate() + difference
+    );
+
+    return getLocalSalesChartDateKey(
+        localDate
+    );
+}
+
+
+function getSalesChartMonthKey(date) {
+
+    return [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, "0")
+    ].join("-");
+}
+
+
 function prepareSalesChartData() {
 
     try {
 
+        /*
+         * IMPORTANT :
+         * Le graphique utilise exactement
+         * la même période que le reste
+         * de la page Rapports.
+         */
+
         const period =
             getCurrentReportPeriod();
 
-        const startDate =
-            period.startDate;
-
-        const endDate =
-            period.endDate;
-
-        const dailyMap =
-            new Map();
-
-        let cursor =
-            new Date(startDate);
-
-        while (
-            cursor <= endDate
+        if (
+            !period ||
+            !period.startDate ||
+            !period.endDate
         ) {
 
-            const key =
-                cursor
-                    .toISOString()
-                    .split("T")[0];
-
-            dailyMap.set(
-                key,
-                0
+            console.warn(
+                "RELATÓRIOS — BLOC 12.16.3 : période du graphique indisponible."
             );
 
-            cursor.setDate(
-                cursor.getDate() + 1
-            );
+            window.salesChartData = {
+                data: [],
+                totalSales: 0,
+                averageSales: 0,
+                bestDay: null
+            };
+
+            return window.salesChartData;
 
         }
+
+
+        const startDate =
+            new Date(
+                period.startDate
+            );
+
+        const endDate =
+            new Date(
+                period.endDate
+            );
+
+        startDate.setHours(
+            0,
+            0,
+            0,
+            0
+        );
+
+        endDate.setHours(
+            23,
+            59,
+            59,
+            999
+        );
+
+
+        /*
+         * Période sélectionnée dans
+         * le sélecteur du graphique.
+         */
+
+        const salesChartPeriod =
+            document.getElementById(
+                "salesChartPeriod"
+            );
+
+        const chartMode =
+            salesChartPeriod?.value ||
+            "daily";
+
+
+        /*
+         * Même filtrage que les autres
+         * statistiques de la page.
+         */
 
         const filteredOrders =
             getOrdersForReportPeriod(
@@ -4594,30 +4714,201 @@ function prepareSalesChartData() {
                 endDate
             );
 
-        filteredOrders.forEach(
-            (order) => {
 
-                const date =
-                    getReportDate(
-                        order.createdAt
-                    );
+        /*
+         * Map utilisée pour le graphique.
+         */
 
-                if (!date) {
-                    return;
-                }
+        const salesMap =
+            new Map();
+
+
+        /*
+         * DAILY
+         */
+
+        if (
+            chartMode === "daily"
+        ) {
+
+            let cursor =
+                new Date(
+                    startDate
+                );
+
+            cursor.setHours(
+                0,
+                0,
+                0,
+                0
+            );
+
+
+            while (
+                cursor <= endDate
+            ) {
 
                 const key =
-                    date
-                        .toISOString()
-                        .split("T")[0];
+                    getLocalSalesChartDateKey(
+                        cursor
+                    );
+
+                salesMap.set(
+                    key,
+                    0
+                );
+
+                cursor.setDate(
+                    cursor.getDate() + 1
+                );
+
+            }
+
+
+            filteredOrders.forEach(
+                (order) => {
+
+                    const date =
+                        getReportDate(
+                            order.createdAt
+                        );
+
+                    if (!date) {
+                        return;
+                    }
+
+                    const localDate =
+                        new Date(
+                            date
+                        );
+
+                    localDate.setHours(
+                        0,
+                        0,
+                        0,
+                        0
+                    );
+
+
+                    if (
+                        localDate < startDate ||
+                        localDate > endDate
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const key =
+                        getLocalSalesChartDateKey(
+                            localDate
+                        );
+
+
+                    if (
+                        salesMap.has(key)
+                    ) {
+
+                        salesMap.set(
+                            key,
+                            salesMap.get(key) +
+                            (
+                                Number(
+                                    order.total
+                                ) || 0
+                            )
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /*
+         * WEEKLY
+         */
+
+        else if (
+            chartMode === "weekly"
+        ) {
+
+            let cursor =
+                new Date(
+                    startDate
+                );
+
+            cursor.setHours(
+                0,
+                0,
+                0,
+                0
+            );
+
+
+            while (
+                cursor <= endDate
+            ) {
+
+                const key =
+                    getSalesChartWeekKey(
+                        cursor
+                    );
 
                 if (
-                    dailyMap.has(key)
+                    !salesMap.has(key)
                 ) {
 
-                    dailyMap.set(
+                    salesMap.set(
                         key,
-                        dailyMap.get(key) +
+                        0
+                    );
+
+                }
+
+                cursor.setDate(
+                    cursor.getDate() + 7
+                );
+
+            }
+
+
+            filteredOrders.forEach(
+                (order) => {
+
+                    const date =
+                        getReportDate(
+                            order.createdAt
+                        );
+
+                    if (!date) {
+                        return;
+                    }
+
+                    if (
+                        date < startDate ||
+                        date > endDate
+                    ) {
+
+                        return;
+
+                    }
+
+                    const key =
+                        getSalesChartWeekKey(
+                            date
+                        );
+
+
+                    salesMap.set(
+                        key,
+                        (
+                            salesMap.get(key) ||
+                            0
+                        ) +
                         (
                             Number(
                                 order.total
@@ -4626,20 +4917,122 @@ function prepareSalesChartData() {
                     );
 
                 }
+            );
+
+        }
+
+
+        /*
+         * MONTHLY
+         */
+
+        else if (
+            chartMode === "monthly"
+        ) {
+
+            let cursor =
+                new Date(
+                    startDate
+                );
+
+            cursor.setDate(1);
+            cursor.setHours(
+                0,
+                0,
+                0,
+                0
+            );
+
+
+            while (
+                cursor <= endDate
+            ) {
+
+                const key =
+                    getSalesChartMonthKey(
+                        cursor
+                    );
+
+                salesMap.set(
+                    key,
+                    0
+                );
+
+                cursor.setMonth(
+                    cursor.getMonth() + 1
+                );
 
             }
-        );
+
+
+            filteredOrders.forEach(
+                (order) => {
+
+                    const date =
+                        getReportDate(
+                            order.createdAt
+                        );
+
+                    if (!date) {
+                        return;
+                    }
+
+                    if (
+                        date < startDate ||
+                        date > endDate
+                    ) {
+
+                        return;
+
+                    }
+
+                    const key =
+                        getSalesChartMonthKey(
+                            date
+                        );
+
+
+                    salesMap.set(
+                        key,
+                        (
+                            salesMap.get(key) ||
+                            0
+                        ) +
+                        (
+                            Number(
+                                order.total
+                            ) || 0
+                        )
+                    );
+
+                }
+            );
+
+        }
+
+
+        /*
+         * TRANSFORMATION FINALE
+         */
 
         const chartData =
             Array.from(
-                dailyMap.entries()
+                salesMap.entries()
+            )
+            .sort(
+                ([dateA], [dateB]) =>
+                    dateA.localeCompare(
+                        dateB
+                    )
             )
             .map(
                 ([date, sales]) => ({
                     date,
-                    sales
+                    sales:
+                        Number(sales) || 0
                 })
             );
+
 
         let totalSales = 0;
 
@@ -4647,10 +5040,13 @@ function prepareSalesChartData() {
             (item) => {
 
                 totalSales +=
-                    item.sales;
+                    Number(
+                        item.sales
+                    ) || 0;
 
             }
         );
+
 
         const averageSales =
             chartData.length > 0
@@ -4658,8 +5054,10 @@ function prepareSalesChartData() {
                     chartData.length
                 : 0;
 
+
         let bestDay =
             null;
+
 
         chartData.forEach(
             (item) => {
@@ -4670,12 +5068,16 @@ function prepareSalesChartData() {
                     bestDay.sales
                 ) {
 
-                    bestDay = item;
+                    bestDay = {
+                        date: item.date,
+                        sales: item.sales
+                    };
 
                 }
 
             }
         );
+
 
         window.salesChartData = {
 
@@ -4686,44 +5088,30 @@ function prepareSalesChartData() {
 
             averageSales,
 
-            bestDay
+            bestDay,
+
+            mode:
+                chartMode,
+
+            startDate,
+
+            endDate
 
         };
 
-        const salesChartBestDay =
-            document.getElementById(
-                "salesChartBestDay"
-            );
 
-        if (
-            salesChartBestDay
-        ) {
-
-            if (
-                bestDay &&
-                bestDay.sales > 0
-            ) {
-
-                const date =
-                    new Date(
-                        bestDay.date +
-                        "T00:00:00"
-                    );
-
-                salesChartBestDay.textContent =
-                    formatReportDate(
-                        date
-                    );
-
+        console.log(
+            "RELATÓRIOS — GRÁFICO ACTUALISÉ",
+            {
+                mode: chartMode,
+                startDate,
+                endDate,
+                orders: filteredOrders.length,
+                totalSales,
+                dataPoints: chartData.length
             }
-            else {
+        );
 
-                salesChartBestDay.textContent =
-                    "—";
-
-            }
-
-        }
 
         return window.salesChartData;
 
@@ -4760,6 +5148,7 @@ function displaySalesChartStatistics() {
     const chartData =
         window.salesChartData || {};
 
+
     const salesChartTotal =
         document.getElementById(
             "salesChartTotal"
@@ -4790,6 +5179,7 @@ function displaySalesChartStatistics() {
             "salesChartContainer"
         );
 
+
     if (
         !salesChartTotal ||
         !salesChartAverage ||
@@ -4807,6 +5197,7 @@ function displaySalesChartStatistics() {
 
     }
 
+
     salesChartTotal.textContent =
         (
             Number(
@@ -4815,6 +5206,7 @@ function displaySalesChartStatistics() {
         )
         .toLocaleString("pt-AO") +
         " Kz";
+
 
     salesChartAverage.textContent =
         (
@@ -4825,23 +5217,59 @@ function displaySalesChartStatistics() {
         .toLocaleString("pt-AO") +
         " Kz";
 
+
     if (
         chartData.bestDay &&
         chartData.bestDay.sales > 0
     ) {
 
-        const bestDate =
-            new Date(
-                chartData.bestDay.date +
-                "T00:00:00"
-            );
+        let bestDate;
 
-        salesChartBestDay.textContent =
-            formatReportDate(
-                bestDate
-            );
+
+        if (
+            chartData.mode === "monthly"
+        ) {
+
+            const parts =
+                chartData.bestDay.date.split("-");
+
+            bestDate =
+                new Date(
+                    Number(parts[0]),
+                    Number(parts[1]) - 1,
+                    1
+                );
+
+        }
+
+        else {
+
+            bestDate =
+                getSalesChartDateFromKey(
+                    chartData.bestDay.date
+                );
+
+        }
+
+
+        if (bestDate) {
+
+            salesChartBestDay.textContent =
+                formatReportDate(
+                    bestDate
+                );
+
+        }
+
+        else {
+
+            salesChartBestDay.textContent =
+                "—";
+
+        }
 
     }
+
     else {
 
         salesChartBestDay.textContent =
@@ -4849,12 +5277,15 @@ function displaySalesChartStatistics() {
 
     }
 
+
     if (
         !Array.isArray(
             chartData.data
         ) ||
         chartData.data.length === 0 ||
-        Number(chartData.totalSales) === 0
+        Number(
+            chartData.totalSales
+        ) === 0
     ) {
 
         salesChart.style.display =
@@ -4866,6 +5297,7 @@ function displaySalesChartStatistics() {
         return;
 
     }
+
 
     salesChartEmpty.style.display =
         "none";
@@ -4885,6 +5317,7 @@ function drawRealSalesChart() {
     const chartData =
         window.salesChartData;
 
+
     const salesChart =
         document.getElementById(
             "salesChart"
@@ -4900,6 +5333,7 @@ function drawRealSalesChart() {
             "salesChartEmpty"
         );
 
+
     if (
         !salesChart ||
         !salesChartContainer ||
@@ -4913,6 +5347,7 @@ function drawRealSalesChart() {
         return;
 
     }
+
 
     if (
         !chartData ||
@@ -4936,11 +5371,13 @@ function drawRealSalesChart() {
 
     }
 
+
     salesChartEmpty.style.display =
         "none";
 
     salesChart.style.display =
         "block";
+
 
     const width =
         Math.max(
@@ -4949,8 +5386,10 @@ function drawRealSalesChart() {
             320
         );
 
+
     const height =
         260;
+
 
     const paddingLeft =
         42;
@@ -4964,6 +5403,7 @@ function drawRealSalesChart() {
     const paddingBottom =
         42;
 
+
     const innerWidth =
         width -
         paddingLeft -
@@ -4974,17 +5414,22 @@ function drawRealSalesChart() {
         paddingTop -
         paddingBottom;
 
+
     const values =
         chartData.data.map(
             item =>
-                Number(item.sales) || 0
+                Number(
+                    item.sales
+                ) || 0
         );
+
 
     const maxValue =
         Math.max(
             ...values,
             1
         );
+
 
     const points =
         chartData.data.map(
@@ -5001,6 +5446,7 @@ function drawRealSalesChart() {
                     ) *
                     innerWidth;
 
+
                 const y =
                     paddingTop +
                     innerHeight -
@@ -5014,19 +5460,26 @@ function drawRealSalesChart() {
                     ) *
                     innerHeight;
 
+
                 return {
+
                     x,
+
                     y,
+
                     sales:
                         Number(
                             item.sales
                         ) || 0,
+
                     date:
                         item.date
+
                 };
 
             }
         );
+
 
     const path =
         points
@@ -5046,6 +5499,7 @@ function drawRealSalesChart() {
             )
             .join(" ");
 
+
     let svg =
         `
         <svg
@@ -5056,6 +5510,7 @@ function drawRealSalesChart() {
             xmlns="http://www.w3.org/2000/svg"
         >
         `;
+
 
     /* ================================
        LIGNES DE GRILLE
@@ -5075,6 +5530,7 @@ function drawRealSalesChart() {
                 4
             );
 
+
         svg +=
             `
             <line
@@ -5088,6 +5544,7 @@ function drawRealSalesChart() {
             `;
 
     }
+
 
     /* ================================
        COURBE
@@ -5104,6 +5561,7 @@ function drawRealSalesChart() {
             stroke-linejoin="round"
         />
         `;
+
 
     /* ================================
        POINTS
@@ -5125,17 +5583,13 @@ function drawRealSalesChart() {
         }
     );
 
+
     /* ================================
        LABELS
     ================================= */
 
     points.forEach(
         (point, index) => {
-
-            /*
-             * Pour éviter une surcharge visuelle,
-             * on affiche environ 7 labels.
-             */
 
             const interval =
                 Math.max(
@@ -5144,6 +5598,7 @@ function drawRealSalesChart() {
                     ),
                     1
                 );
+
 
             if (
                 index % interval !== 0 &&
@@ -5155,20 +5610,92 @@ function drawRealSalesChart() {
 
             }
 
-            const date =
-                new Date(
-                    point.date +
-                    "T00:00:00"
-                );
 
-            const label =
-                String(
-                    date.getDate()
-                ).padStart(2, "0") +
-                "/" +
-                String(
-                    date.getMonth() + 1
-                ).padStart(2, "0");
+            let label =
+                "";
+
+
+            /*
+             * DAILY
+             */
+
+            if (
+                chartData.mode ===
+                "daily"
+            ) {
+
+                const date =
+                    getSalesChartDateFromKey(
+                        point.date
+                    );
+
+                if (date) {
+
+                    label =
+                        String(
+                            date.getDate()
+                        ).padStart(2, "0") +
+                        "/" +
+                        String(
+                            date.getMonth() + 1
+                        ).padStart(2, "0");
+
+                }
+
+            }
+
+
+            /*
+             * WEEKLY
+             */
+
+            else if (
+                chartData.mode ===
+                "weekly"
+            ) {
+
+                const date =
+                    getSalesChartDateFromKey(
+                        point.date
+                    );
+
+                if (date) {
+
+                    label =
+                        String(
+                            date.getDate()
+                        ).padStart(2, "0") +
+                        "/" +
+                        String(
+                            date.getMonth() + 1
+                        ).padStart(2, "0");
+
+                }
+
+            }
+
+
+            /*
+             * MONTHLY
+             */
+
+            else if (
+                chartData.mode ===
+                "monthly"
+            ) {
+
+                const parts =
+                    point.date.split("-");
+
+                label =
+                    String(
+                        parts[1]
+                    ).padStart(2, "0") +
+                    "/" +
+                    parts[0].slice(2);
+
+            }
+
 
             svg +=
                 `
@@ -5187,8 +5714,20 @@ function drawRealSalesChart() {
         }
     );
 
+
     svg +=
         "</svg>";
+
+
+    /*
+     * IMPORTANT :
+     * On vide l'ancien graphique avant
+     * d'injecter le nouveau.
+     */
+
+    salesChart.innerHTML =
+        "";
+
 
     salesChart.innerHTML =
         svg;
@@ -5203,17 +5742,16 @@ function drawRealSalesChart() {
 function fixSalesChartDateLabels() {
 
     /*
-     * Les dates sont déjà générées
-     * en heure locale dans le graphique.
+     * Les dates sont maintenant générées
+     * exclusivement avec l'heure locale.
      *
-     * Cette fonction reste volontairement
-     * légère pour éviter les décalages UTC.
+     * Aucun traitement UTC supplémentaire
+     * n'est nécessaire.
      */
 
     return;
 
 }
-
 
 /* =========================================================
    BLOC 12.20 — STATISTIQUES FINANCIÈRES
