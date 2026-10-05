@@ -710,7 +710,7 @@ function drawMonthlySalesChart(
                             <div
                                 class="tomaChartValue"
                             >
-                                ${formatShortCurrency(value)}
+                             ${formatCurrency(value)}
                             </div>
 
                             <div
@@ -750,34 +750,3 @@ function drawMonthlySalesChart(
 // FORMAT COURT
 // =====================================
 
-function formatShortCurrency(value) {
-
-    const number =
-        Number(value) || 0;
-
-
-    if (number >= 1000000) {
-
-        return (
-            (number / 1000000)
-                .toFixed(1)
-                .replace(".0", "")
-        ) + " M";
-
-    }
-
-
-    if (number >= 1000) {
-
-        return (
-            (number / 1000)
-                .toFixed(1)
-                .replace(".0", "")
-        ) + " K";
-
-    }
-
-
-    return String(number);
-
-}
