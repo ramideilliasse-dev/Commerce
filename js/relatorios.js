@@ -4707,12 +4707,12 @@ function prepareSalesChartData() {
          * statistiques de la page.
          */
 
-        const filteredOrders =
-            getOrdersForReportPeriod(
-                reportsOrders,
-                startDate,
-                endDate
-            );
+      const filteredOrders =
+    Array.isArray(
+        window.filteredReportsOrders
+    )
+        ? window.filteredReportsOrders
+        : [];
 
 
         /*
