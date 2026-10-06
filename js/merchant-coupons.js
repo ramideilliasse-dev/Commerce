@@ -6,228 +6,572 @@
 import { db, auth } from "../firebase.js";
 
 import {
-collection,
-addDoc,
-getDocs,
-deleteDoc,
-doc,
-query,
-where,
-serverTimestamp
+    collection,
+    addDoc,
+    getDocs,
+    deleteDoc,
+    doc,
+    query,
+    where,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import {
-onAuthStateChanged
+    onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-/* ==========================
-DOM
-========================== */
+
+// =====================================
+// DOM
+// =====================================
 
 const couponCode =
-document.getElementById("couponCode");
+    document.getElementById("couponCode");
 
 const couponDiscount =
-document.getElementById("couponDiscount");
+    document.getElementById("couponDiscount");
 
 const couponExpiration =
-document.getElementById("couponExpiration");
+    document.getElementById("couponExpiration");
 
 const saveCouponBtn =
-document.getElementById("saveCouponBtn");
+    document.getElementById("saveCouponBtn");
 
 const couponList =
-document.getElementById("couponList");
+    document.getElementById("couponList");
+
+const newCouponBtn =
+    document.getElementById("newCouponBtn");
+
 
 let merchantId = null;
 
-/* ==========================
-AUTH
-========================== */
 
-onAuthStateChanged(auth,(user)=>{
+// =====================================
+// DATE MINIMUM
+// Empêche de choisir une date passée
+// =====================================
 
-if(!user){
+const today = new Date();
 
-location.href="login.html";
+const year = today.getFullYear();
 
-return;
+const month = String(
+    today.getMonth() + 1
+).padStart(2,"0");
 
-}
+const day = String(
+    today.getDate()
+).padStart(2,"0");
 
-merchantId = user.uid;
+couponExpiration.min =
+    `${year}-${month}-${day}`;
 
-loadCoupons();
+
+// =====================================
+// AUTH
+// =====================================
+
+onAuthStateChanged(auth, async(user)=>{
+
+    if(!user){
+
+        location.href = "login.html";
+
+        return;
+
+    }
+
+    merchantId = user.uid;
+
+    console.log(
+        "TOMA COUPONS — Merchant:",
+        merchantId
+    );
+
+    await loadCoupons();
 
 });
 
-/* ==========================
-SAVE
-========================== */
+
+// =====================================
+// NOUVEAU CUPOM
+// =====================================
+
+if(newCouponBtn){
+
+    newCouponBtn.onclick = ()=>{
+
+        couponCode.focus();
+
+        window.scrollTo({
+            top:0,
+            behavior:"smooth"
+        });
+
+    };
+
+}
+
+
+// =====================================
+// SAVE COUPON
+// =====================================
 
 saveCouponBtn.onclick = async()=>{
 
-if(
-couponCode.value.trim()==="" ||
-couponDiscount.value.trim()===""
-){
+    try{
 
-alert("Preencha todos os campos.");
+        if(!merchantId){
 
-return;
+            alert(
+                "TOMA — Utilisateur non connecté."
+            );
 
-}
+            return;
 
-await addDoc(
+        }
 
-collection(db,"coupons"),
 
-{
+        const code =
+            couponCode.value
+            .trim()
+            .toUpperCase();
 
-merchantId,
 
-code:couponCode.value.trim(),
+        const discount =
+            Number(
+                couponDiscount.value
+            );
 
-discount:Number(couponDiscount.value),
 
-expiration:couponExpiration.value,
+        const expiration =
+            couponExpiration.value;
 
-createdAt:serverTimestamp()
 
-}
+        // =================================
+        // VALIDATION CODE
+        // =================================
 
-);
+        if(!code){
 
-couponCode.value="";
+            alert(
+                "Digite o código do cupom."
+            );
 
-couponDiscount.value="";
+            couponCode.focus();
 
-couponExpiration.value="";
+            return;
 
-loadCoupons();
+        }
+
+
+        // =================================
+        // VALIDATION DISCOUNT
+        // =================================
+
+        if(
+            !Number.isFinite(discount) ||
+            discount < 1 ||
+            discount > 100
+        ){
+
+            alert(
+                "O desconto deve estar entre 1% e 100%."
+            );
+
+            couponDiscount.focus();
+
+            return;
+
+        }
+
+
+        // =================================
+        // VALIDATION DATE
+        // =================================
+
+        if(!expiration){
+
+            alert(
+                "Escolha a data limite de utilização do cupom."
+            );
+
+            couponExpiration.focus();
+
+            return;
+
+        }
+
+
+        // =================================
+        // BUTTON LOADING
+        // =================================
+
+        saveCouponBtn.disabled = true;
+
+        saveCouponBtn.innerHTML = `
+
+            <span class="material-symbols-rounded">
+                progress_activity
+            </span>
+
+            A guardar...
+
+        `;
+
+
+        // =================================
+        // FIRESTORE
+        // =================================
+
+        await addDoc(
+
+            collection(
+                db,
+                "coupons"
+            ),
+
+            {
+
+                merchantId:
+
+                    merchantId,
+
+                code:
+
+                    code,
+
+                discount:
+
+                    discount,
+
+                expiration:
+
+                    expiration,
+
+                active:
+
+                    true,
+
+                createdAt:
+
+                    serverTimestamp()
+
+            }
+
+        );
+
+
+        // =================================
+        // SUCCESS
+        // =================================
+
+        couponCode.value = "";
+
+        couponDiscount.value = "";
+
+        couponExpiration.value = "";
+
+
+        alert(
+            "Cupom guardado com sucesso! ✅"
+        );
+
+
+        await loadCoupons();
+
+
+    }catch(error){
+
+        console.error(
+            "TOMA COUPONS — SAVE ERROR:",
+            error
+        );
+
+
+        alert(
+            "TOMA COUPONS — Erro ao guardar o cupom ❌\n\n"
+            + error.message
+        );
+
+
+    }finally{
+
+        saveCouponBtn.disabled = false;
+
+        saveCouponBtn.innerHTML = `
+
+            <span class="material-symbols-rounded">
+                local_offer
+            </span>
+
+            Guardar Cupom
+
+        `;
+
+    }
 
 };
 
-/* ==========================
-LOAD
-========================== */
+
+// =====================================
+// LOAD COUPONS
+// =====================================
 
 async function loadCoupons(){
 
-const q=query(
+    try{
 
-collection(db,"coupons"),
+        if(!merchantId){
 
-where("merchantId","==",merchantId)
+            return;
 
-);
+        }
 
-const snap=await getDocs(q);
 
-if(snap.empty){
+        const q = query(
 
-couponList.innerHTML=`
+            collection(
+                db,
+                "coupons"
+            ),
 
-<div class="emptyCard">
+            where(
+                "merchantId",
+                "==",
+                merchantId
+            )
 
-<span class="material-symbols-rounded">
+        );
 
-sell
 
-</span>
+        const snap =
+            await getDocs(q);
 
-<h2>
 
-Nenhum cupom
+        if(snap.empty){
 
-</h2>
+            couponList.innerHTML = `
 
-<p>
+                <div class="emptyCard">
 
-Crie o primeiro cupom.
+                    <span class="material-symbols-rounded">
+                        sell
+                    </span>
 
-</p>
+                    <h2>
+                        Nenhum cupom
+                    </h2>
 
-</div>
+                    <p>
+                        Crie o primeiro cupom.
+                    </p>
 
-`;
+                </div>
 
-return;
+            `;
+
+            return;
+
+        }
+
+
+        couponList.innerHTML = "";
+
+
+        snap.forEach((documento)=>{
+
+            const coupon =
+                documento.data();
+
+
+            const code =
+                coupon.code || "-";
+
+
+            const discount =
+                Number(
+                    coupon.discount || 0
+                );
+
+
+            const expiration =
+                coupon.expiration || "-";
+
+
+            couponList.innerHTML += `
+
+                <div class="couponCard">
+
+                    <div class="couponInfo">
+
+                        <h3>
+                            ${escapeHtml(code)}
+                        </h3>
+
+                        <p>
+                            Data limite:
+                            ${escapeHtml(expiration)}
+                        </p>
+
+                        <span class="couponDiscountBadge">
+
+                            ${discount}% de desconto
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="couponActions">
+
+                        <button
+                            class="deleteCoupon"
+                            onclick="deleteCoupon('${documento.id}')">
+
+                            Eliminar
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        });
+
+
+    }catch(error){
+
+        console.error(
+            "TOMA COUPONS — LOAD ERROR:",
+            error
+        );
+
+
+        couponList.innerHTML = `
+
+            <div class="emptyCard">
+
+                <span class="material-symbols-rounded">
+                    error
+                </span>
+
+                <h2>
+                    Erro ao carregar
+                </h2>
+
+                <p>
+                    ${escapeHtml(error.message)}
+                </p>
+
+            </div>
+
+        `;
+
+    }
 
 }
 
-couponList.innerHTML="";
 
-snap.forEach(documento=>{
-
-const coupon=documento.data();
-
-couponList.innerHTML += `
-
-<div class="couponCard">
-
-<div class="couponInfo">
-
-<h3>
-
-${coupon.code}
-
-</h3>
-
-<p>
-
-Desconto: ${coupon.discount}%
-
-</p>
-
-<p>
-
-Expira:
-
-${coupon.expiration || "-"}
-
-</p>
-
-</div>
-
-<div class="couponActions">
-
-<button
-
-class="deleteCoupon"
-
-onclick="deleteCoupon('${documento.id}')">
-
-Eliminar
-
-</button>
-
-</div>
-
-</div>
-
-`;
-
-});
-
-}
-
-/* ==========================
-DELETE
-========================== */
+// =====================================
+// DELETE
+// =====================================
 
 window.deleteCoupon = async(id)=>{
 
-if(!confirm("Eliminar este cupom?"))
+    try{
 
-return;
+        if(!id){
 
-await deleteDoc(
+            return;
 
-doc(db,"coupons",id)
+        }
 
-);
 
-loadCoupons();
+        const confirmed =
+            confirm(
+                "Eliminar este cupom?"
+            );
+
+
+        if(!confirmed){
+
+            return;
+
+        }
+
+
+        await deleteDoc(
+
+            doc(
+                db,
+                "coupons",
+                id
+            )
+
+        );
+
+
+        alert(
+            "Cupom eliminado com sucesso. ✅"
+        );
+
+
+        await loadCoupons();
+
+
+    }catch(error){
+
+        console.error(
+            "TOMA COUPONS — DELETE ERROR:",
+            error
+        );
+
+
+        alert(
+            "TOMA COUPONS — Erro ao eliminar ❌\n\n"
+            + error.message
+        );
+
+    }
 
 };
+
+
+// =====================================
+// ESCAPE HTML
+// =====================================
+
+function escapeHtml(value){
+
+    return String(value ?? "")
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
