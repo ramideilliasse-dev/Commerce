@@ -1,44 +1,141 @@
  /* =====================================
 MERCHANT COUPONS
+TOMA
+===================================== */
+
+
+/* =====================================
+FORM
 ===================================== */
 
 .couponForm{
 
 display:grid;
 
-grid-template-columns:2fr 1fr 1fr auto;
+grid-template-columns:
+2fr
+1fr
+1.4fr
+auto;
 
 gap:15px;
 
 margin:30px 0;
 
+padding:22px;
+
+background:#fff;
+
+border-radius:22px;
+
+box-shadow:
+0 8px 30px rgba(0,0,0,.05);
+
 }
 
-.couponForm input{
 
-padding:15px;
+/* =====================================
+CHAMPS
+===================================== */
 
-border:1px solid #ddd;
+.couponField{
 
-border-radius:16px;
+display:flex;
 
-font-size:15px;
+flex-direction:column;
+
+gap:7px;
+
+min-width:0;
+
+}
+
+.couponField label{
+
+font-size:13px;
+
+font-weight:600;
+
+color:#333;
+
+}
+
+.couponField input{
+
+width:100%;
+
+box-sizing:border-box;
+
+padding:14px 15px;
+
+border:1px solid #e2e2e2;
+
+border-radius:14px;
+
+font-size:14px;
+
+font-family:Poppins,sans-serif;
 
 outline:none;
 
 background:#fff;
 
+transition:.2s;
+
 }
 
-.couponForm input:focus{
+.couponField input:focus{
 
 border-color:#ff6a00;
 
+box-shadow:
+0 0 0 3px rgba(255,106,0,.08);
+
 }
+
+
+/* =====================================
+DATE HELP
+===================================== */
+
+.expirationField{
+
+position:relative;
+
+}
+
+.expirationHelp{
+
+font-size:11px;
+
+color:#888;
+
+margin-top:-3px;
+
+line-height:1.3;
+
+}
+
+
+/* =====================================
+SAVE BUTTON
+===================================== */
 
 #saveCouponBtn{
 
-padding:15px 25px;
+align-self:end;
+
+min-height:48px;
+
+padding:0 22px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+gap:7px;
 
 background:#ff6a00;
 
@@ -46,31 +143,60 @@ color:#fff;
 
 border:none;
 
-border-radius:16px;
+border-radius:14px;
 
 cursor:pointer;
 
+font-family:Poppins,sans-serif;
+
 font-weight:600;
 
+font-size:14px;
+
 transition:.25s;
+
+white-space:nowrap;
 
 }
 
 #saveCouponBtn:hover{
 
-transform:translateY(-3px);
+transform:translateY(-2px);
+
+box-shadow:
+0 8px 18px rgba(255,106,0,.22);
 
 }
+
+#saveCouponBtn:disabled{
+
+opacity:.65;
+
+cursor:not-allowed;
+
+transform:none;
+
+}
+
+
+/* =====================================
+COUPON LIST
+===================================== */
 
 .couponList{
 
 display:grid;
 
-gap:20px;
+gap:18px;
 
 margin-top:20px;
 
 }
+
+
+/* =====================================
+COUPON CARD
+===================================== */
 
 .couponCard{
 
@@ -80,7 +206,8 @@ padding:20px;
 
 border-radius:20px;
 
-box-shadow:0 8px 25px rgba(0,0,0,.06);
+box-shadow:
+0 8px 25px rgba(0,0,0,.06);
 
 display:flex;
 
@@ -88,23 +215,45 @@ justify-content:space-between;
 
 align-items:center;
 
+gap:20px;
+
 transition:.25s;
+
+border:1px solid rgba(0,0,0,.03);
 
 }
 
 .couponCard:hover{
 
-transform:translateY(-4px);
+transform:translateY(-3px);
+
+box-shadow:
+0 12px 30px rgba(0,0,0,.08);
+
+}
+
+
+/* =====================================
+COUPON INFO
+===================================== */
+
+.couponInfo{
+
+min-width:0;
 
 }
 
 .couponInfo h3{
 
-font-size:22px;
+font-size:21px;
 
 color:#ff6a00;
 
-margin-bottom:8px;
+margin:0 0 8px;
+
+font-weight:700;
+
+letter-spacing:.4px;
 
 }
 
@@ -112,15 +261,51 @@ margin-bottom:8px;
 
 color:#666;
 
-margin:4px 0;
+margin:5px 0;
+
+font-size:13px;
 
 }
+
+
+/* =====================================
+COUPON BADGE
+===================================== */
+
+.couponDiscountBadge{
+
+display:inline-flex;
+
+align-items:center;
+
+margin-top:8px;
+
+padding:5px 9px;
+
+border-radius:999px;
+
+background:#fff3eb;
+
+color:#ff6a00;
+
+font-size:11px;
+
+font-weight:700;
+
+}
+
+
+/* =====================================
+ACTIONS
+===================================== */
 
 .couponActions{
 
 display:flex;
 
 gap:10px;
+
+flex-shrink:0;
 
 }
 
@@ -134,19 +319,31 @@ border-radius:12px;
 
 cursor:pointer;
 
+font-family:Poppins,sans-serif;
+
 font-weight:600;
+
+font-size:12px;
+
+transition:.2s;
 
 }
 
-.editCoupon{
+.couponActions button:hover{
 
-background:#2563eb;
-
-color:#fff;
+transform:translateY(-2px);
 
 }
 
 .deleteCoupon{
+
+background:#fff0f0;
+
+color:#ef4444;
+
+}
+
+.deleteCoupon:hover{
 
 background:#ef4444;
 
@@ -154,11 +351,39 @@ color:#fff;
 
 }
 
-@media(max-width:900px){
+
+/* =====================================
+RESPONSIVE
+===================================== */
+
+@media(max-width:1100px){
+
+.couponForm{
+
+grid-template-columns:
+1fr
+1fr;
+
+}
+
+#saveCouponBtn{
+
+width:100%;
+
+}
+
+}
+
+
+@media(max-width:650px){
 
 .couponForm{
 
 grid-template-columns:1fr;
+
+padding:18px;
+
+margin:20px 0;
 
 }
 
@@ -168,7 +393,7 @@ flex-direction:column;
 
 align-items:flex-start;
 
-gap:15px;
+padding:18px;
 
 }
 
