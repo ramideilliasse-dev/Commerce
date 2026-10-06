@@ -30,9 +30,7 @@
 <a href="merchant-dashboard-v2.html" class="backButton">
 
 <span class="material-symbols-rounded">
-
 arrow_back
-
 </span>
 
 </a>
@@ -47,12 +45,10 @@ arrow_back
 
 </div>
 
-<button id="newCouponBtn" class="addProductBtn">
+<button id="newCouponBtn" class="addProductBtn" type="button">
 
 <span class="material-symbols-rounded">
-
 add
-
 </span>
 
 Novo Cupom
@@ -61,31 +57,68 @@ Novo Cupom
 
 </header>
 
+
+<!-- =====================================
+FORMULÁRIO DE CUPOM
+===================================== -->
+
 <section class="couponForm">
 
-<input
+<div class="couponField">
 
+<label for="couponCode">
+Código do cupom
+</label>
+
+<input
 type="text"
-
 id="couponCode"
+placeholder="Ex: TOMA10"
+maxlength="30"
+autocomplete="off">
 
-placeholder="Código do cupom">
+</div>
+
+
+<div class="couponField">
+
+<label for="couponDiscount">
+Desconto (%)
+</label>
 
 <input
-
 type="number"
-
 id="couponDiscount"
+placeholder="Ex: 10"
+min="1"
+max="100"
+step="1">
 
-placeholder="Desconto (%)">
+</div>
+
+
+<div class="couponField expirationField">
+
+<label for="couponExpiration">
+Data limite
+</label>
+
+<span class="expirationHelp">
+Data limite de utilização do cupom
+</span>
 
 <input
-
 type="date"
-
 id="couponExpiration">
 
-<button id="saveCouponBtn">
+</div>
+
+
+<button id="saveCouponBtn" type="button">
+
+<span class="material-symbols-rounded">
+local_offer
+</span>
 
 Guardar Cupom
 
@@ -93,30 +126,27 @@ Guardar Cupom
 
 </section>
 
+
+<!-- =====================================
+LISTA DE CUPONS
+===================================== -->
+
 <section
-
 id="couponList"
-
 class="couponList">
 
 <div class="emptyCard">
 
 <span class="material-symbols-rounded">
-
 sell
-
 </span>
 
 <h2>
-
 Nenhum cupom
-
 </h2>
 
 <p>
-
 Os seus cupons aparecerão aqui.
-
 </p>
 
 </div>
@@ -125,10 +155,10 @@ Os seus cupons aparecerão aqui.
 
 </div>
 
-<script type="module"
 
+<script
+type="module"
 src="./js/merchant-coupons.js">
-
 </script>
 
 </body>
