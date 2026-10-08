@@ -229,46 +229,7 @@ async function loadDeliverySettings() {
         calculateDeliveryFee();
 
 
-        alert(
-            "CHECKOUT — BLOC 18.2 ✅\n\n" +
-            "Paramètres de livraison chargés.\n\n" +
-
-            "Livraison : " +
-            (
-                deliveryEnabled
-                    ? "ACTIVÉE"
-                    : "DÉSACTIVÉE"
-            ) +
-
-            "\n" +
-
-            "Frais : " +
-            formatPrice(deliveryFee) +
-
-            "\n" +
-
-            "Livraison gratuite : " +
-            (
-                freeDeliveryEnabled
-                    ? "OUI"
-                    : "NON"
-            ) +
-
-            "\n" +
-
-            "Minimum gratuit : " +
-            formatPrice(
-                freeDeliveryMinimum
-            ) +
-
-            "\n" +
-
-            "Zone : " +
-            (
-                deliveryZone ||
-                "Non définie"
-            )
-        );
+        
 
     }
 
@@ -296,7 +257,7 @@ async function loadDeliverySettings() {
 
 
         alert(
-            "CHECKOUT — BLOC 18 ERREUR ❌\n\n" +
+            "CHECKOUT — ERREUR ❌\n\n" +
             "Impossible de charger les paramètres de livraison.\n\n" +
             "La livraison sera considérée comme désactivée pour cette session.\n\n" +
             "Erreur : " +
@@ -1097,23 +1058,7 @@ async function notifyMerchantByWhatsApp(orderData) {
         // Diagnóstico
         // --------------------------------------------------------
 
-        alert(
-            "CHECKOUT — BLOC 22.2 ✅\n\n" +
-
-            "Notificação WhatsApp preparada com sucesso.\n\n" +
-
-            "Comerciante : " +
-            (orderData.shopName || "Não definido") +
-            "\n\n" +
-
-            "Número WhatsApp : " +
-            cleanNumber +
-            "\n\n" +
-
-            "O botão de notificação foi ativado.\n\n" +
-
-            "O usuário poderá escolher quando abrir o WhatsApp."
-        );
+        
 
     } catch(error) {
 
@@ -1127,7 +1072,7 @@ async function notifyMerchantByWhatsApp(orderData) {
         }
 
         alert(
-            "CHECKOUT — BLOC 22 ERRO ❌\n\n" +
+            "CHECKOUT — ERRO ❌\n\n" +
 
             "A encomenda já foi registrada no Toma.\n\n" +
 
@@ -1148,10 +1093,7 @@ if (continueToMyOrdersBtn) {
         "click",
         () => {
 
-            alert(
-                "CHECKOUT — BLOC 22.3\n\n" +
-                "Redirecionando para Meus Pedidos..."
-            );
+            
 
             window.location.href = "my-orders.html";
 
@@ -1160,7 +1102,12 @@ if (continueToMyOrdersBtn) {
 
 }
 /* =========================================================
-   COUPON
+   COUPON — TOMA PREMIUM
+   Vérification :
+   - code
+   - marchand
+   - statut actif
+   - date limite
 ========================================================= */
 
 async function applyCoupon() {
@@ -1171,12 +1118,63 @@ async function applyCoupon() {
             .toUpperCase();
 
 
+    /* =====================================================
+       VÉRIFICATION DU CODE
+    ===================================================== */
+
     if (!code) {
 
-        showToast(
-            "Introduza um cupão",
-            "warning"
-        );
+        couponInfo.innerHTML = `
+            <div class="couponMessage couponWarning">
+
+                <span class="material-symbols-rounded">
+                    info
+                </span>
+
+                <span>
+                    Introduza o código do cupom para continuar.
+                </span>
+
+            </div>
+        `;
+
+        discount = 0;
+
+        renderCheckout();
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       VÉRIFICATION DU PANIER
+    ===================================================== */
+
+    const merchantId =
+        cart[0]?.merchantId;
+
+
+    if (!merchantId) {
+
+        couponInfo.innerHTML = `
+            <div class="couponMessage couponError">
+
+                <span class="material-symbols-rounded">
+                    error
+                </span>
+
+                <span>
+                    Não foi possível identificar a loja
+                    deste pedido.
+                </span>
+
+            </div>
+        `;
+
+        discount = 0;
+
+        renderCheckout();
 
         return;
 
@@ -1186,16 +1184,49 @@ async function applyCoupon() {
     try {
 
 
+        /* =================================================
+           VÉRIFICATION UTILISATEUR
+        ================================================= */
+
+        if (!currentUser) {
+
+            couponInfo.innerHTML = `
+                <div class="couponMessage couponWarning">
+
+                    <span class="material-symbols-rounded">
+                        login
+                    </span>
+
+                    <span>
+                        Inicie sessão para utilizar um cupom.
+                    </span>
+
+                </div>
+            `;
+
+            discount = 0;
+
+            renderCheckout();
+
+            return;
+
+        }
+
+
+        /* =================================================
+           LIRE LES COUPONS TOMA
+        ================================================= */
+
         const snapshot =
             await getDocs(
                 collection(
                     db,
-                    "merchantCoupons"
+                    "coupons"
                 )
             );
 
 
-        let found = false;
+        let foundCoupon = null;
 
 
         snapshot.forEach(
@@ -1205,27 +1236,46 @@ async function applyCoupon() {
                     docSnap.data();
 
 
+                const couponCodeFromFirebase =
+                    String(
+                        data.code || ""
+                    )
+                    .trim()
+                    .toUpperCase();
+
+
+                const couponMerchantId =
+                    String(
+                        data.merchantId || ""
+                    );
+
+
+                /* =========================================
+                   COMPARER :
+
+                   1. CODE
+                   2. MARCHAND
+                ========================================= */
+
                 if (
 
-                    (
-                        data.code || ""
-                    ).toUpperCase() ===
-                        code &&
+                    couponCodeFromFirebase === code
 
-                    data.merchantId ===
-                        cart[0]?.merchantId &&
+                    &&
 
-                    data.active === true
+                    couponMerchantId ===
+                        String(merchantId)
 
                 ) {
 
-                    found = true;
+                    foundCoupon = {
 
+                        id:
+                            docSnap.id,
 
-                    discount =
-                        Number(
-                            data.discount || 0
-                        );
+                        ...data
+
+                    };
 
                 }
 
@@ -1233,57 +1283,308 @@ async function applyCoupon() {
         );
 
 
-        if (found) {
+        /* =================================================
+           COUPON INTROUVABLE
+        ================================================= */
 
-            couponInfo.innerHTML =
-                `✅ Desconto : ${
-                    formatPrice(discount)
-                }`;
-
-
-            renderCheckout();
-
-
-            showToast(
-                "Cupão aplicado",
-                "success"
-            );
-
-        }
-
-        else {
+        if (!foundCoupon) {
 
             discount = 0;
 
 
-            couponInfo.innerHTML =
-                "";
+            couponInfo.innerHTML = `
+                <div class="couponMessage couponError">
+
+                    <span class="material-symbols-rounded">
+                        sell_off
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Cupom não encontrado
+                        </strong>
+
+                        <small>
+                            Verifique o código e certifique-se
+                            de que o cupom pertence a esta loja.
+                        </small>
+
+                    </div>
+
+                </div>
+            `;
 
 
-            showToast(
-                "Cupão inválido",
-                "error"
-            );
+            renderCheckout();
+
+            return;
 
         }
+
+
+        /* =================================================
+           VÉRIFIER SI LE COUPON EST ACTIF
+        ================================================= */
+
+        if (
+            foundCoupon.active === false
+        ) {
+
+            discount = 0;
+
+
+            couponInfo.innerHTML = `
+                <div class="couponMessage couponError">
+
+                    <span class="material-symbols-rounded">
+                        block
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Cupom indisponível
+                        </strong>
+
+                        <small>
+                            Este cupom não está atualmente
+                            disponível para utilização.
+                        </small>
+
+                    </div>
+
+                </div>
+            `;
+
+
+            renderCheckout();
+
+            return;
+
+        }
+
+
+        /* =================================================
+           VÉRIFIER LA DATE D'EXPIRATION
+        ================================================= */
+
+        const expiration =
+            String(
+                foundCoupon.expiration || ""
+            ).trim();
+
+
+        if (expiration) {
+
+            /*
+             * Format enregistré :
+             * YYYY-MM-DD
+             */
+
+            const today =
+                new Date();
+
+
+            const todayString =
+
+                today.getFullYear() +
+
+                "-" +
+
+                String(
+                    today.getMonth() + 1
+                ).padStart(2, "0") +
+
+                "-" +
+
+                String(
+                    today.getDate()
+                ).padStart(2, "0");
+
+
+            if (
+                expiration < todayString
+            ) {
+
+                discount = 0;
+
+
+                couponInfo.innerHTML = `
+                    <div class="couponMessage couponExpired">
+
+                        <span class="material-symbols-rounded">
+                            event_busy
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Cupom expirado
+                            </strong>
+
+                            <small>
+                                A data limite deste cupom
+                                já foi ultrapassada.
+                            </small>
+
+                        </div>
+
+                    </div>
+                `;
+
+
+                renderCheckout();
+
+                return;
+
+            }
+
+        }
+
+
+        /* =================================================
+           VÉRIFIER LE POURCENTAGE
+        ================================================= */
+
+        const couponDiscount =
+            Number(
+                foundCoupon.discount || 0
+            );
+
+
+        if (
+
+            !Number.isFinite(
+                couponDiscount
+            )
+
+            ||
+
+            couponDiscount <= 0
+
+            ||
+
+            couponDiscount > 100
+
+        ) {
+
+            discount = 0;
+
+
+            couponInfo.innerHTML = `
+                <div class="couponMessage couponError">
+
+                    <span class="material-symbols-rounded">
+                        error
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Cupom inválido
+                        </strong>
+
+                        <small>
+                            O desconto configurado para este
+                            cupom não é válido.
+                        </small>
+
+                    </div>
+
+                </div>
+            `;
+
+
+            renderCheckout();
+
+            return;
+
+        }
+
+
+        /* =================================================
+           COUPON VALIDE
+        ================================================= */
+
+        discount =
+            couponDiscount;
+
+
+        couponInfo.innerHTML = `
+            <div class="couponMessage couponSuccess">
+
+                <span class="material-symbols-rounded">
+                    check_circle
+                </span>
+
+                <div>
+
+                    <strong>
+                        Cupom aplicado com sucesso
+                    </strong>
+
+                    <small>
+                        Você recebeu ${couponDiscount}% de desconto
+                        nesta compra.
+                    </small>
+
+                </div>
+
+            </div>
+        `;
+
+
+        renderCheckout();
+
+
+        showToast(
+            "Cupom aplicado com sucesso",
+            "success"
+        );
+
 
     }
 
     catch (err) {
 
-        console.error(err);
-
-
-        showToast(
-            "Erro ao verificar cupão",
-            "error"
+        console.error(
+            "TOMA — Erro ao verificar cupom:",
+            err
         );
+
+
+        discount = 0;
+
+
+        couponInfo.innerHTML = `
+            <div class="couponMessage couponError">
+
+                <span class="material-symbols-rounded">
+                    cloud_off
+                </span>
+
+                <div>
+
+                    <strong>
+                        Não foi possível verificar o cupom
+                    </strong>
+
+                    <small>
+                        Tente novamente dentro de alguns instantes.
+                    </small>
+
+                </div>
+
+            </div>
+        `;
+
+
+        renderCheckout();
 
     }
 
 }
-
-
 /* =========================================================
    BLOC 14.2 — LER CONFIGURAÇÃO DE COMMANDES
 ========================================================= */
