@@ -2,7 +2,7 @@
 // CHECKOUT.JS
 // TOMA Marketplace
 // Version Premium
-// BLOC 18 — LIVRAISON INTÉGRÉE
+// BLOC 18 — LIVRAISON + COUPONS
 // ===============================
 
 import { db, auth } from "../firebase.js";
@@ -15,6 +15,7 @@ import {
     getDoc,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
 import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -30,7 +31,13 @@ import {
 =============================== */
 
 let currentUser = null;
+
 let cart = [];
+
+
+// IMPORTANT :
+// discount contient le POURCENTAGE.
+// Exemple : 15 = 15%
 let discount = 0;
 
 
@@ -39,10 +46,15 @@ let discount = 0;
 ========================================================= */
 
 let deliveryEnabled = false;
+
 let deliveryFee = 0;
+
 let freeDeliveryEnabled = false;
+
 let freeDeliveryMinimum = 0;
+
 let deliveryZone = "";
+
 let deliveryMessage = "";
 
 let currentDeliveryFee = 0;
@@ -53,32 +65,7 @@ let currentDeliveryFee = 0;
 ========================================================= */
 
 let ordersEnabled = true;
-// ============================================================
-// BLOC 22 — VARIÁVEIS WHATSAPP
-// ============================================================
 
-let pendingMerchantWhatsappUrl = "";
-
-const merchantWhatsappAction =
-    document.getElementById("merchantWhatsappAction");
-
-const notifyMerchantWhatsAppBtn =
-    document.getElementById("notifyMerchantWhatsAppBtn");
-
-const continueToMyOrdersBtn =
-    document.getElementById("continueToMyOrdersBtn");
-
-const merchantWhatsappActionMessage =
-    document.getElementById("merchantWhatsappActionMessage");
-
-console.log(
-    "BLOC 22 — Elementos WhatsApp carregados:",
-    {
-        merchantWhatsappAction,
-        notifyMerchantWhatsAppBtn,
-        continueToMyOrdersBtn
-    }
-);
 
 /* ===============================
    DOM
@@ -121,36 +108,166 @@ const couponInfo =
     document.getElementById("couponInfo");
 
 
-/* ===============================
+/* =========================================================
    AUTH
-=============================== */
+========================================================= */
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(
+    auth,
+    (user) => {
 
-    currentUser = user;
+        currentUser = user;
 
-});
+    }
+);
 
 
-/* ===============================
+/* =========================================================
    CHARGER LE PANIER
-=============================== */
+========================================================= */
 
 function loadCheckoutCart() {
 
     try {
 
         cart = JSON.parse(
-            localStorage.getItem("checkoutCart") || "[]"
+            localStorage.getItem(
+                "checkoutCart"
+            ) || "[]"
         );
 
-    } catch (e) {
+    }
+
+    catch (error) {
+
+        console.error(
+            "TOMA — Erreur panier :",
+            error
+        );
 
         cart = [];
 
     }
 
-    console.log("Checkout Cart :", cart);
+    console.log(
+        "TOMA — Checkout Cart :",
+        cart
+    );
+
+}
+
+
+/* =========================================================
+   CALCULER LE SOUS-TOTAL
+========================================================= */
+
+function calculateSubtotal() {
+
+    if (!Array.isArray(cart)) {
+
+        return 0;
+
+    }
+
+
+    return cart.reduce(
+        (sum, item) => {
+
+            const quantity =
+                Number(
+                    item.quantity ||
+                    item.qty ||
+                    1
+                );
+
+
+            const price =
+                Number(
+                    item.price || 0
+                );
+
+
+            return (
+                sum +
+                (
+                    price *
+                    quantity
+                )
+            );
+
+        },
+        0
+    );
+
+}
+
+
+/* =========================================================
+   CALCULER LE MONTANT RÉEL DE LA RÉDUCTION
+========================================================= */
+
+/*
+ * IMPORTANT
+ *
+ * discount = pourcentage
+ *
+ * Exemple :
+ *
+ * subtotal = 2500
+ * discount = 15
+ *
+ * discountAmount = 375
+ */
+
+function calculateDiscountAmount(
+    subtotal
+) {
+
+    const percentage =
+        Number(discount) || 0;
+
+
+    if (
+        subtotal <= 0 ||
+        percentage <= 0
+    ) {
+
+        return 0;
+
+    }
+
+
+    return Math.min(
+        subtotal *
+        (
+            percentage /
+            100
+        ),
+        subtotal
+    );
+
+}
+
+
+/* =========================================================
+   CALCULER LE TOTAL APRÈS COUPON
+========================================================= */
+
+function calculateSubtotalAfterDiscount(
+    subtotal
+) {
+
+    const discountAmount =
+        calculateDiscountAmount(
+            subtotal
+        );
+
+
+    return Math.max(
+        subtotal -
+        discountAmount,
+        0
+    );
 
 }
 
@@ -162,12 +279,6 @@ function loadCheckoutCart() {
 async function loadDeliverySettings() {
 
     try {
-
-        alert(
-            "CHECKOUT — BLOC 18.1\n\n" +
-            "Lecture des paramètres de livraison depuis Firebase..."
-        );
-
 
         const marketplaceSettingsRef =
             doc(
@@ -188,7 +299,7 @@ async function loadDeliverySettings() {
         ) {
 
             throw new Error(
-                "Le document settings/marketplace est introuvable."
+                "O documento settings/marketplace está indisponível."
             );
 
         }
@@ -228,15 +339,12 @@ async function loadDeliverySettings() {
 
         calculateDeliveryFee();
 
-
-        
-
     }
 
     catch (error) {
 
         console.error(
-            "Erreur BLOC 18 :",
+            "TOMA — Erro BLOC 18:",
             error
         );
 
@@ -256,13 +364,12 @@ async function loadDeliverySettings() {
         currentDeliveryFee = 0;
 
 
-        alert(
-            "CHECKOUT — ERREUR ❌\n\n" +
-            "Impossible de charger les paramètres de livraison.\n\n" +
-            "La livraison sera considérée comme désactivée pour cette session.\n\n" +
-            "Erreur : " +
-            error.message
-        );
+        /*
+         * On ne bloque pas le checkout.
+         * On considère simplement la livraison
+         * comme désactivée si les paramètres
+         * ne peuvent pas être lus.
+         */
 
     }
 
@@ -285,37 +392,21 @@ function calculateDeliveryFee() {
 
 
     const subtotal =
-        cart.reduce(
-
-            (sum, p) =>
-
-                sum +
-
-                (
-                    Number(p.price || 0) *
-                    Number(
-                        p.quantity ||
-                        p.qty ||
-                        1
-                    )
-                ),
-
-            0
-
-        );
-
-
-    const totalAfterDiscount =
-        Math.max(
-            subtotal - discount,
-            0
-        );
+        calculateSubtotal();
 
 
     /*
-     * Livraison gratuite à partir
-     * du minimum configuré.
+     * IMPORTANT :
+     *
+     * Le seuil de livraison gratuite
+     * doit être calculé APRÈS le coupon.
      */
+
+    const subtotalAfterDiscount =
+        calculateSubtotalAfterDiscount(
+            subtotal
+        );
+
 
     if (
 
@@ -323,7 +414,7 @@ function calculateDeliveryFee() {
 
         freeDeliveryMinimum > 0 &&
 
-        totalAfterDiscount >=
+        subtotalAfterDiscount >=
             freeDeliveryMinimum
 
     ) {
@@ -348,13 +439,17 @@ function calculateDeliveryFee() {
 }
 
 
-/* ===============================
+/* =========================================================
    AFFICHAGE DU PANIER
-=============================== */
+========================================================= */
 
 function renderCheckout() {
 
-    if (!checkoutItems) return;
+    if (!checkoutItems) {
+
+        return;
+
+    }
 
 
     if (cart.length === 0) {
@@ -370,8 +465,12 @@ function renderCheckout() {
         `;
 
 
-        totalPrice.textContent =
-            formatPrice(0);
+        if (totalPrice) {
+
+            totalPrice.textContent =
+                formatPrice(0);
+
+        }
 
 
         return;
@@ -379,95 +478,138 @@ function renderCheckout() {
     }
 
 
-    let total = 0;
+    let subtotal = 0;
 
 
     checkoutItems.innerHTML = "";
 
 
-    cart.forEach(item => {
+    cart.forEach(
+        (item) => {
 
-        const qty =
-            item.quantity ||
-            item.qty ||
-            1;
-
-
-        const subtotal =
-            Number(item.price || 0) *
-            qty;
+            const qty =
+                Number(
+                    item.quantity ||
+                    item.qty ||
+                    1
+                );
 
 
-        total += subtotal;
+            const itemPrice =
+                Number(
+                    item.price || 0
+                );
 
 
-        checkoutItems.innerHTML += `
+            const itemSubtotal =
+                itemPrice *
+                qty;
 
-            <div class="checkoutItem">
 
-                <img
-                    class="checkoutImage"
-                    src="${item.image || ""}"
-                    onerror="this.src='https://via.placeholder.com/80'"
-                >
+            subtotal +=
+                itemSubtotal;
 
-                <div class="checkoutInfo">
 
-                    <div class="checkoutName">
+            checkoutItems.innerHTML += `
 
-                        ${item.name || "Produto"}
+                <div class="checkoutItem">
 
-                    </div>
+                    <img
+                        class="checkoutImage"
+                        src="${escapeHtml(
+                            item.image || ""
+                        )}"
+                        onerror="
+                            this.src='https://via.placeholder.com/80'
+                        "
+                    >
 
-                    <div class="checkoutQty">
+                    <div class="checkoutInfo">
 
-                        ${qty} ×
-                        ${formatPrice(item.price)}
+                        <div class="checkoutName">
 
-                    </div>
+                            ${escapeHtml(
+                                item.name ||
+                                "Produto"
+                            )}
 
-                    <div class="checkoutSubtotal">
+                        </div>
 
-                        ${formatPrice(subtotal)}
+                        <div class="checkoutQty">
+
+                            ${qty} ×
+                            ${formatPrice(
+                                itemPrice
+                            )}
+
+                        </div>
+
+                        <div class="checkoutSubtotal">
+
+                            ${formatPrice(
+                                itemSubtotal
+                            )}
+
+                        </div>
 
                     </div>
 
                 </div>
 
-            </div>
+            `;
 
-        `;
-
-    });
+        }
+    );
 
 
     /* =====================================================
-       BLOC 18.4 — TOTAL + LIVRAISON
+       CALCUL DU COUPON
     ===================================================== */
 
-    const totalAfterDiscount =
+    const discountAmount =
+        calculateDiscountAmount(
+            subtotal
+        );
+
+
+    const subtotalAfterDiscount =
         Math.max(
-            total - discount,
+            subtotal -
+            discountAmount,
             0
         );
 
+
+    /* =====================================================
+       CALCUL LIVRAISON
+    ===================================================== */
 
     const calculatedDeliveryFee =
         calculateDeliveryFee();
 
 
+    /* =====================================================
+       TOTAL FINAL
+    ===================================================== */
+
     const finalTotal =
-        totalAfterDiscount +
+        subtotalAfterDiscount +
         calculatedDeliveryFee;
 
 
-    totalPrice.textContent =
-        formatPrice(finalTotal);
+    if (totalPrice) {
+
+        totalPrice.textContent =
+            formatPrice(
+                finalTotal
+            );
+
+    }
 
 
-    /*
-     * Message de livraison
-     */
+    /* =====================================================
+       AFFICHAGE LIVRAISON
+    ===================================================== */
 
     if (
         deliveryEnabled &&
@@ -480,7 +622,9 @@ function renderCheckout() {
             );
 
 
-        if (deliveryMessageElement) {
+        if (
+            deliveryMessageElement
+        ) {
 
             deliveryMessageElement.textContent =
                 deliveryMessage;
@@ -490,17 +634,15 @@ function renderCheckout() {
     }
 
 
-    /*
-     * Zone de livraison
-     */
-
     const deliveryZoneElement =
         document.getElementById(
             "deliveryZone"
         );
 
 
-    if (deliveryZoneElement) {
+    if (
+        deliveryZoneElement
+    ) {
 
         deliveryZoneElement.textContent =
             deliveryZone
@@ -511,17 +653,15 @@ function renderCheckout() {
     }
 
 
-    /*
-     * Affichage des frais
-     */
-
     const deliveryFeeElement =
         document.getElementById(
             "deliveryFee"
         );
 
 
-    if (deliveryFeeElement) {
+    if (
+        deliveryFeeElement
+    ) {
 
         if (!deliveryEnabled) {
 
@@ -560,27 +700,37 @@ function renderCheckout() {
 
 function generateOrderNumber() {
 
-    const now = new Date();
+    const now =
+        new Date();
 
 
-    return "TOMA-" +
+    return (
+        "TOMA-" +
 
         now.getFullYear() +
 
         String(
             now.getMonth() + 1
-        ).padStart(2, "0") +
+        ).padStart(
+            2,
+            "0"
+        ) +
 
         String(
             now.getDate()
-        ).padStart(2, "0") +
+        ).padStart(
+            2,
+            "0"
+        ) +
 
         "-" +
 
         Math.floor(
             100000 +
-            Math.random() * 900000
-        );
+            Math.random() *
+            900000
+        )
+    );
 
 }
 
@@ -591,9 +741,8 @@ function generateOrderNumber() {
 
 async function placeOrder() {
 
-
     /* =====================================================
-       BLOC 14.3 — VÉRIFICATION DES COMMANDES
+       BLOC 14.3 — VÉRIFICATION COMMANDES
     ===================================================== */
 
     const canCreateOrder =
@@ -608,11 +757,15 @@ async function placeOrder() {
 
 
     /* =====================================================
-       BLOC 18.5 — RELECTURE LIVRAISON AVANT COMMANDE
+       RELECTURE LIVRAISON
     ===================================================== */
 
     await loadDeliverySettings();
 
+
+    /* =====================================================
+       UTILISATEUR
+    ===================================================== */
 
     if (!currentUser) {
 
@@ -626,7 +779,13 @@ async function placeOrder() {
     }
 
 
-    if (cart.length === 0) {
+    /* =====================================================
+       PANIER
+    ===================================================== */
+
+    if (
+        cart.length === 0
+    ) {
 
         showToast(
             "Carrinho vazio",
@@ -637,6 +796,10 @@ async function placeOrder() {
 
     }
 
+
+    /* =====================================================
+       DONNÉES CLIENT
+    ===================================================== */
 
     if (
 
@@ -670,65 +833,82 @@ async function placeOrder() {
 
     if (loader) {
 
-        loader.style.display = "flex";
+        loader.style.display =
+            "flex";
 
     }
 
 
-    confirmBtn.disabled = true;
+    confirmBtn.disabled =
+        true;
 
 
     try {
 
+        /* =================================================
+           SOUS-TOTAL
+        ================================================= */
 
         const subtotal =
-            cart.reduce(
+            calculateSubtotal();
 
-                (sum, p) =>
 
-                    sum +
+        /* =================================================
+           RÉDUCTION
+        ================================================= */
 
-                    (
-                        Number(
-                            p.price || 0
-                        ) *
+        const discountPercentage =
+            Number(
+                discount
+            ) || 0;
 
-                        Number(
-                            p.quantity ||
-                            p.qty ||
-                            1
-                        )
-                    ),
 
-                0
-
+        const discountAmount =
+            calculateDiscountAmount(
+                subtotal
             );
 
 
         /* =================================================
-           BLOC 18.6 — TOTAL FINAL AVEC LIVRAISON
+           APRÈS RÉDUCTION
         ================================================= */
 
-        const totalAfterDiscount =
+        const subtotalAfterDiscount =
             Math.max(
-                subtotal - discount,
+                subtotal -
+                discountAmount,
                 0
             );
 
+
+        /* =================================================
+           LIVRAISON
+        ================================================= */
 
         const orderDeliveryFee =
             calculateDeliveryFee();
 
 
-        const total =
-            totalAfterDiscount +
-            orderDeliveryFee;
-/* =====================================================
-   BLOC 22.3 — GERAR NÚMERO DA ENCOMENDA
-===================================================== */
+        /* =================================================
+           TOTAL FINAL
+        ================================================= */
 
-const orderNumber =
-    generateOrderNumber();
+        const total =
+            subtotalAfterDiscount +
+            orderDeliveryFee;
+
+
+        /* =================================================
+           NUMÉRO COMMANDE
+        ================================================= */
+
+        const orderNumber =
+            generateOrderNumber();
+
+
+        /* =================================================
+           CRÉATION COMMANDE
+        ================================================= */
 
         await addDoc(
 
@@ -742,39 +922,41 @@ const orderNumber =
                 merchantId:
                     cart[0].merchantId,
 
+
                 shopName:
                     cart[0].shopName || "",
+
 
                 uid:
                     currentUser.uid,
 
 
                 orderNumber:
-    orderNumber,
+                    orderNumber,
 
 
                 clientName:
-                    clientName.value,
+                    clientName.value.trim(),
 
 
                 clientPhone:
-                    clientPhone.value,
+                    clientPhone.value.trim(),
 
 
                 clientProvince:
-                    clientProvince.value,
+                    clientProvince.value.trim(),
 
 
                 clientCity:
-                    clientCity.value,
+                    clientCity.value.trim(),
 
 
                 clientAddress:
-                    clientProvince.value +
+                    clientProvince.value.trim() +
                     ", " +
-                    clientCity.value +
+                    clientCity.value.trim() +
                     ", " +
-                    clientAddress.value,
+                    clientAddress.value.trim(),
 
 
                 paymentMethod:
@@ -790,27 +972,55 @@ const orderNumber =
 
 
                 couponCode:
-                    couponCode.value.trim(),
+                    couponCode.value
+                        .trim()
+                        .toUpperCase(),
 
 
                 couponName:
-                    couponCode.value.trim(),
+                    couponCode.value
+                        .trim()
+                        .toUpperCase(),
 
+
+                /*
+                 * Compatibilité avec ton système actuel :
+                 *
+                 * discount = POURCENTAGE
+                 */
 
                 discount:
-                    discount,
+                    discountPercentage,
 
 
-                commission:
+                /*
+                 * Nouveau champ :
+                 * montant réellement retiré
+                 */
 
-                    discount > 0
-                        ? discount
-                        : 0,
+                discountAmount:
+                    discountAmount,
 
 
-                /* =========================================
-                   BLOC 18 — DONNÉES DE LIVRAISON
-                ========================================= */
+                /*
+                 * Sous-total avant coupon
+                 */
+
+                subtotal:
+                    subtotal,
+
+
+                /*
+                 * Sous-total après coupon
+                 */
+
+                subtotalAfterDiscount:
+                    subtotalAfterDiscount,
+
+
+                /*
+                 * Livraison
+                 */
 
                 deliveryEnabled:
                     deliveryEnabled,
@@ -829,13 +1039,31 @@ const orderNumber =
 
 
                 freeDelivery:
+                    (
+                        orderDeliveryFee === 0 &&
+                        deliveryEnabled === true
+                    ),
 
-                    orderDeliveryFee === 0 &&
-                    deliveryEnabled === true,
 
+                /*
+                 * Total final
+                 */
 
                 total:
                     total,
+
+
+                /*
+                 * IMPORTANT :
+                 * On garde le champ commission
+                 * existant pour compatibilité.
+                 *
+                 * Il ne sert pas ici à calculer
+                 * la réduction.
+                 */
+
+                commission:
+                    0,
 
 
                 status:
@@ -849,64 +1077,75 @@ const orderNumber =
 
         );
 
-/* =====================================================
-   BLOC 22.4 — NOTIFICAÇÃO WHATSAPP
-===================================================== */
 
-// ============================================================
-// BLOC 22 — FINALIZAÇÃO DA ENCOMENDA
-// ============================================================
+        /* =================================================
+           NETTOYER LE PANIER
+        ================================================= */
 
-await notifyMerchantByWhatsApp({
+        localStorage.removeItem(
+            "checkoutCart"
+        );
 
-    orderNumber,
+        localStorage.removeItem(
+            "cart"
+        );
 
-    clientName:
-        clientName.value,
 
-    total,
+        cart = [];
 
-    shopName:
-        cart[0].shopName || ""
 
-});
+        /* =================================================
+           SUCCÈS
+        ================================================= */
 
-// ------------------------------------------------------------
-// Limpar carrinho
-// ------------------------------------------------------------
+        showToast(
+            "Pedido realizado com sucesso!",
+            "success"
+        );
 
-localStorage.removeItem("cart");
 
-cart = [];
+        console.log(
+            "TOMA — Pedido criado:",
+            {
+                orderNumber,
+                subtotal,
+                discountPercentage,
+                discountAmount,
+                subtotalAfterDiscount,
+                orderDeliveryFee,
+                total
+            }
+        );
 
-// ------------------------------------------------------------
-// Mostrar sucesso
-// ------------------------------------------------------------
 
-showToast(
-    "Pedido realizado com sucesso!"
-);
+        /*
+         * On peut maintenant afficher
+         * l'écran de succès existant
+         * s'il existe dans ton HTML.
+         */
 
-// ------------------------------------------------------------
-// BLOC 22 — NÃO REDIRECIONAR AUTOMATICAMENTE
-// ------------------------------------------------------------
-//
-// O cliente agora pode:
-// 1. Notificar o comerciante pelo WhatsApp
-// 2. Ir para Meus Pedidos
-//
-// ------------------------------------------------------------
+        const successSection =
+            document.getElementById(
+                "orderSuccess"
+            );
 
-console.log(
-    "BLOC 22 — Pedido finalizado. " +
-    "Aguardando ação do usuário."
-);
+
+        if (successSection) {
+
+            successSection.hidden =
+                false;
+
+        }
+
 
     }
 
-    catch (err) {
+    catch (error) {
 
-        console.error(err);
+        console.error(
+            "TOMA — Erreur création commande:",
+            error
+        );
 
 
         showToast(
@@ -934,180 +1173,8 @@ console.log(
 }
 
 
-// ============================================================
-// BLOC 22 — PREPARAR NOTIFICAÇÃO WHATSAPP
-// ============================================================
-
-async function notifyMerchantByWhatsApp(orderData) {
-
-    try {
-
-        alert(
-            "CHECKOUT — BLOC 22.1\n\n" +
-            "Preparando a notificação WhatsApp do comerciante..."
-        );
-
-        const merchantWhatsapp =
-            String(cart[0]?.merchantWhatsapp || "").trim();
-
-        // --------------------------------------------------------
-        // Verificar se o comerciante possui WhatsApp
-        // --------------------------------------------------------
-
-        if (!merchantWhatsapp) {
-
-            if (merchantWhatsappAction) {
-                merchantWhatsappAction.hidden = true;
-            }
-
-            alert(
-                "CHECKOUT — BLOC 22\n\n" +
-                "A encomenda foi registrada com sucesso.\n\n" +
-                "Nenhum número WhatsApp foi encontrado " +
-                "para este comerciante.\n\n" +
-                "A encomenda continua disponível no " +
-                "Dashboard Merchant."
-            );
-
-            return;
-        }
-
-        // --------------------------------------------------------
-        // Limpar número
-        // --------------------------------------------------------
-
-        const cleanNumber =
-            merchantWhatsapp.replace(/[^0-9]/g, "");
-
-        if (!cleanNumber) {
-
-            if (merchantWhatsappAction) {
-                merchantWhatsappAction.hidden = true;
-            }
-
-            alert(
-                "CHECKOUT — BLOC 22\n\n" +
-                "O número WhatsApp do comerciante é inválido.\n\n" +
-                "A encomenda continua disponível no " +
-                "Dashboard Merchant."
-            );
-
-            return;
-        }
-
-        // --------------------------------------------------------
-        // Criar mensagem curta em português
-        // --------------------------------------------------------
-
-        const whatsappMessage =
-            "🔔 Nova encomenda no Toma!\n\n" +
-
-            "Pedido: " +
-            orderData.orderNumber +
-            "\n" +
-
-            "Cliente: " +
-            orderData.clientName +
-            "\n" +
-
-            "Valor: " +
-            formatPrice(orderData.total) +
-            "\n\n" +
-
-            "Consulte o seu Dashboard Merchant " +
-            "para ver os detalhes e tratar da encomenda.";
-
-        // --------------------------------------------------------
-        // Criar URL WhatsApp
-        // --------------------------------------------------------
-
-        pendingMerchantWhatsappUrl =
-            "https://wa.me/" +
-            cleanNumber +
-            "?text=" +
-            encodeURIComponent(whatsappMessage);
-
-        // --------------------------------------------------------
-        // Preparar botão
-        // --------------------------------------------------------
-
-        if (notifyMerchantWhatsAppBtn) {
-
-            notifyMerchantWhatsAppBtn.href =
-                pendingMerchantWhatsappUrl;
-
-        }
-
-        if (merchantWhatsappActionMessage) {
-
-            merchantWhatsappActionMessage.textContent =
-                "A encomenda foi registrada. " +
-                "Você pode avisar o comerciante pelo WhatsApp. " +
-                "Os detalhes completos estão disponíveis no " +
-                "Dashboard Merchant.";
-
-        }
-
-        if (merchantWhatsappAction) {
-
-            merchantWhatsappAction.hidden = false;
-
-        }
-
-        // --------------------------------------------------------
-        // Diagnóstico
-        // --------------------------------------------------------
-
-        
-
-    } catch(error) {
-
-        console.error(
-            "❌ BLOC 22 — Erro ao preparar WhatsApp:",
-            error
-        );
-
-        if (merchantWhatsappAction) {
-            merchantWhatsappAction.hidden = true;
-        }
-
-        alert(
-            "CHECKOUT — ERRO ❌\n\n" +
-
-            "A encomenda já foi registrada no Toma.\n\n" +
-
-            "Não foi possível preparar a notificação WhatsApp.\n\n" +
-
-            "A encomenda continua disponível no " +
-            "Dashboard Merchant."
-        );
-    }
-}
-// ============================================================
-// BLOC 22 — BOTÃO MEUS PEDIDOS
-// ============================================================
-
-if (continueToMyOrdersBtn) {
-
-    continueToMyOrdersBtn.addEventListener(
-        "click",
-        () => {
-
-            
-
-            window.location.href = "my-orders.html";
-
-        }
-    );
-
-}
 /* =========================================================
    COUPON — TOMA PREMIUM
-   Vérification :
-   - code
-   - marchand
-   - statut actif
-   - date limite
 ========================================================= */
 
 async function applyCoupon() {
@@ -1119,28 +1186,24 @@ async function applyCoupon() {
 
 
     /* =====================================================
-       VÉRIFICATION DU CODE
+       CODE VIDE
     ===================================================== */
 
     if (!code) {
 
-        couponInfo.innerHTML = `
-            <div class="couponMessage couponWarning">
+        showCouponMessage(
+            "warning",
+            "Código necessário",
+            "Introduza o código do cupom para continuar.",
+            "confirmation_number"
+        );
 
-                <span class="material-symbols-rounded">
-                    info
-                </span>
-
-                <span>
-                    Introduza o código do cupom para continuar.
-                </span>
-
-            </div>
-        `;
 
         discount = 0;
 
+
         renderCheckout();
+
 
         return;
 
@@ -1148,7 +1211,7 @@ async function applyCoupon() {
 
 
     /* =====================================================
-       VÉRIFICATION DU PANIER
+       MERCHANT
     ===================================================== */
 
     const merchantId =
@@ -1157,24 +1220,19 @@ async function applyCoupon() {
 
     if (!merchantId) {
 
-        couponInfo.innerHTML = `
-            <div class="couponMessage couponError">
+        showCouponMessage(
+            "error",
+            "Loja não identificada",
+            "Não foi possível identificar a loja deste pedido.",
+            "store"
+        );
 
-                <span class="material-symbols-rounded">
-                    error
-                </span>
-
-                <span>
-                    Não foi possível identificar a loja
-                    deste pedido.
-                </span>
-
-            </div>
-        `;
 
         discount = 0;
 
+
         renderCheckout();
+
 
         return;
 
@@ -1183,30 +1241,25 @@ async function applyCoupon() {
 
     try {
 
-
         /* =================================================
-           VÉRIFICATION UTILISATEUR
+           AUTH
         ================================================= */
 
         if (!currentUser) {
 
-            couponInfo.innerHTML = `
-                <div class="couponMessage couponWarning">
+            showCouponMessage(
+                "warning",
+                "Inicie sessão",
+                "Faça login para utilizar um cupom.",
+                "login"
+            );
 
-                    <span class="material-symbols-rounded">
-                        login
-                    </span>
-
-                    <span>
-                        Inicie sessão para utilizar um cupom.
-                    </span>
-
-                </div>
-            `;
 
             discount = 0;
 
+
             renderCheckout();
+
 
             return;
 
@@ -1214,7 +1267,7 @@ async function applyCoupon() {
 
 
         /* =================================================
-           LIRE LES COUPONS TOMA
+           LIRE COUPONS
         ================================================= */
 
         const snapshot =
@@ -1226,17 +1279,18 @@ async function applyCoupon() {
             );
 
 
-        let foundCoupon = null;
+        let foundCoupon =
+            null;
 
 
         snapshot.forEach(
-            docSnap => {
+            (docSnap) => {
 
                 const data =
                     docSnap.data();
 
 
-                const couponCodeFromFirebase =
+                const firebaseCode =
                     String(
                         data.code || ""
                     )
@@ -1244,27 +1298,23 @@ async function applyCoupon() {
                     .toUpperCase();
 
 
-                const couponMerchantId =
+                const firebaseMerchantId =
                     String(
                         data.merchantId || ""
                     );
 
 
-                /* =========================================
-                   COMPARER :
-
-                   1. CODE
-                   2. MARCHAND
-                ========================================= */
-
                 if (
 
-                    couponCodeFromFirebase === code
+                    firebaseCode ===
+                        code
 
                     &&
 
-                    couponMerchantId ===
-                        String(merchantId)
+                    firebaseMerchantId ===
+                        String(
+                            merchantId
+                        )
 
                 ) {
 
@@ -1284,7 +1334,7 @@ async function applyCoupon() {
 
 
         /* =================================================
-           COUPON INTROUVABLE
+           NON TROUVÉ
         ================================================= */
 
         if (!foundCoupon) {
@@ -1292,31 +1342,16 @@ async function applyCoupon() {
             discount = 0;
 
 
-            couponInfo.innerHTML = `
-                <div class="couponMessage couponError">
-
-                    <span class="material-symbols-rounded">
-                        sell_off
-                    </span>
-
-                    <div>
-
-                        <strong>
-                            Cupom não encontrado
-                        </strong>
-
-                        <small>
-                            Verifique o código e certifique-se
-                            de que o cupom pertence a esta loja.
-                        </small>
-
-                    </div>
-
-                </div>
-            `;
+            showCouponMessage(
+                "error",
+                "Cupom não encontrado",
+                "Verifique o código e certifique-se de que o cupom pertence a esta loja.",
+                "sell_off"
+            );
 
 
             renderCheckout();
+
 
             return;
 
@@ -1324,7 +1359,7 @@ async function applyCoupon() {
 
 
         /* =================================================
-           VÉRIFIER SI LE COUPON EST ACTIF
+           INACTIF
         ================================================= */
 
         if (
@@ -1334,31 +1369,16 @@ async function applyCoupon() {
             discount = 0;
 
 
-            couponInfo.innerHTML = `
-                <div class="couponMessage couponError">
-
-                    <span class="material-symbols-rounded">
-                        block
-                    </span>
-
-                    <div>
-
-                        <strong>
-                            Cupom indisponível
-                        </strong>
-
-                        <small>
-                            Este cupom não está atualmente
-                            disponível para utilização.
-                        </small>
-
-                    </div>
-
-                </div>
-            `;
+            showCouponMessage(
+                "error",
+                "Cupom indisponível",
+                "Este cupom não está atualmente disponível para utilização.",
+                "block"
+            );
 
 
             renderCheckout();
+
 
             return;
 
@@ -1366,21 +1386,17 @@ async function applyCoupon() {
 
 
         /* =================================================
-           VÉRIFIER LA DATE D'EXPIRATION
+           EXPIRATION
         ================================================= */
 
         const expiration =
             String(
-                foundCoupon.expiration || ""
+                foundCoupon.expiration ||
+                ""
             ).trim();
 
 
         if (expiration) {
-
-            /*
-             * Format enregistré :
-             * YYYY-MM-DD
-             */
 
             const today =
                 new Date();
@@ -1394,47 +1410,39 @@ async function applyCoupon() {
 
                 String(
                     today.getMonth() + 1
-                ).padStart(2, "0") +
+                ).padStart(
+                    2,
+                    "0"
+                ) +
 
                 "-" +
 
                 String(
                     today.getDate()
-                ).padStart(2, "0");
+                ).padStart(
+                    2,
+                    "0"
+                );
 
 
             if (
-                expiration < todayString
+                expiration <
+                todayString
             ) {
 
                 discount = 0;
 
 
-                couponInfo.innerHTML = `
-                    <div class="couponMessage couponExpired">
-
-                        <span class="material-symbols-rounded">
-                            event_busy
-                        </span>
-
-                        <div>
-
-                            <strong>
-                                Cupom expirado
-                            </strong>
-
-                            <small>
-                                A data limite deste cupom
-                                já foi ultrapassada.
-                            </small>
-
-                        </div>
-
-                    </div>
-                `;
+                showCouponMessage(
+                    "expired",
+                    "Cupom expirado",
+                    "A data limite deste cupom já foi ultrapassada.",
+                    "event_busy"
+                );
 
 
                 renderCheckout();
+
 
                 return;
 
@@ -1444,7 +1452,7 @@ async function applyCoupon() {
 
 
         /* =================================================
-           VÉRIFIER LE POURCENTAGE
+           POURCENTAGE
         ================================================= */
 
         const couponDiscount =
@@ -1472,31 +1480,16 @@ async function applyCoupon() {
             discount = 0;
 
 
-            couponInfo.innerHTML = `
-                <div class="couponMessage couponError">
-
-                    <span class="material-symbols-rounded">
-                        error
-                    </span>
-
-                    <div>
-
-                        <strong>
-                            Cupom inválido
-                        </strong>
-
-                        <small>
-                            O desconto configurado para este
-                            cupom não é válido.
-                        </small>
-
-                    </div>
-
-                </div>
-            `;
+            showCouponMessage(
+                "error",
+                "Cupom inválido",
+                "O desconto configurado para este cupom não é válido.",
+                "error"
+            );
 
 
             renderCheckout();
+
 
             return;
 
@@ -1511,28 +1504,28 @@ async function applyCoupon() {
             couponDiscount;
 
 
-        couponInfo.innerHTML = `
-            <div class="couponMessage couponSuccess">
+        /*
+         * Calculer immédiatement le montant
+         * réel pour afficher un message plus
+         * professionnel.
+         */
 
-                <span class="material-symbols-rounded">
-                    check_circle
-                </span>
+        const subtotal =
+            calculateSubtotal();
 
-                <div>
 
-                    <strong>
-                        Cupom aplicado com sucesso
-                    </strong>
+        const discountAmount =
+            calculateDiscountAmount(
+                subtotal
+            );
 
-                    <small>
-                        Você recebeu ${couponDiscount}% de desconto
-                        nesta compra.
-                    </small>
 
-                </div>
-
-            </div>
-        `;
+        showCouponMessage(
+            "success",
+            "Cupom aplicado com sucesso",
+            `Você recebeu ${couponDiscount}% de desconto nesta compra. Economia de ${formatPrice(discountAmount)}.`,
+            "check_circle"
+        );
 
 
         renderCheckout();
@@ -1543,41 +1536,25 @@ async function applyCoupon() {
             "success"
         );
 
-
     }
 
-    catch (err) {
+    catch (error) {
 
         console.error(
             "TOMA — Erro ao verificar cupom:",
-            err
+            error
         );
 
 
         discount = 0;
 
 
-        couponInfo.innerHTML = `
-            <div class="couponMessage couponError">
-
-                <span class="material-symbols-rounded">
-                    cloud_off
-                </span>
-
-                <div>
-
-                    <strong>
-                        Não foi possível verificar o cupom
-                    </strong>
-
-                    <small>
-                        Tente novamente dentro de alguns instantes.
-                    </small>
-
-                </div>
-
-            </div>
-        `;
+        showCouponMessage(
+            "error",
+            "Não foi possível verificar o cupom",
+            "Tente novamente dentro de alguns instantes.",
+            "cloud_off"
+        );
 
 
         renderCheckout();
@@ -1585,20 +1562,93 @@ async function applyCoupon() {
     }
 
 }
+
+
 /* =========================================================
-   BLOC 14.2 — LER CONFIGURAÇÃO DE COMMANDES
+   MESSAGE COUPON PREMIUM
+========================================================= */
+
+function showCouponMessage(
+    type,
+    title,
+    message,
+    icon
+) {
+
+    if (!couponInfo) {
+
+        return;
+
+    }
+
+
+    couponInfo.innerHTML = `
+
+        <div
+            class="
+                couponMessage
+                coupon${capitalizeFirstLetter(
+                    type
+                )}
+            "
+        >
+
+            <div class="couponMessageIcon">
+
+                <span class="material-symbols-rounded">
+                    ${icon}
+                </span>
+
+            </div>
+
+
+            <div class="couponMessageContent">
+
+                <strong>
+                    ${escapeHtml(
+                        title
+                    )}
+                </strong>
+
+                <small>
+                    ${escapeHtml(
+                        message
+                    )}
+                </small>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   UTILITAIRE
+========================================================= */
+
+function capitalizeFirstLetter(
+    value
+) {
+
+    return String(value)
+        .charAt(0)
+        .toUpperCase() +
+        String(value)
+            .slice(1);
+
+}
+
+
+/* =========================================================
+   BLOC 14.2 — LIRE CONFIGURATION COMMANDES
 ========================================================= */
 
 async function loadOrdersSetting() {
 
     try {
-
-
-        alert(
-            "CHECKOUT — BLOC 14.1\n\n" +
-            "Lecture du paramètre des commandes depuis Firebase..."
-        );
-
 
         const marketplaceSettingsRef =
             doc(
@@ -1619,7 +1669,7 @@ async function loadOrdersSetting() {
         ) {
 
             throw new Error(
-                "Le document settings/marketplace est introuvable."
+                "O documento settings/marketplace está indisponível."
             );
 
         }
@@ -1635,35 +1685,21 @@ async function loadOrdersSetting() {
 
         applyOrdersSetting();
 
-
     }
 
     catch (error) {
 
         console.error(
-            "Erreur BLOC 14 :",
+            "TOMA — Erro BLOC 14:",
             error
         );
 
 
-        /*
-         * En cas d'erreur de lecture,
-         * on bloque la création de commande.
-         */
-
-        ordersEnabled = false;
+        ordersEnabled =
+            false;
 
 
         applyOrdersSetting();
-
-
-        alert(
-            "CHECKOUT — BLOC 14 ERREUR ❌\n\n" +
-            "Impossible de vérifier si les commandes sont activées.\n\n" +
-            "Par sécurité, la création de commande est temporairement bloquée.\n\n" +
-            "Erreur : " +
-            error.message
-        );
 
     }
 
@@ -1671,16 +1707,18 @@ async function loadOrdersSetting() {
 
 
 /* =========================================================
-   BLOC 14.3 — APPLIQUER LE PARAMÈTRE AU CHECKOUT
+   BLOC 14.3 — APPLIQUER CONFIGURATION COMMANDES
 ========================================================= */
 
 function applyOrdersSetting() {
 
     if (!confirmBtn) {
 
-        throw new Error(
-            "L'ID HTML confirmBtn est introuvable."
+        console.error(
+            "TOMA — confirmBtn introuvable."
         );
+
+        return;
 
     }
 
@@ -1706,13 +1744,6 @@ function applyOrdersSetting() {
         confirmBtn.title =
             "";
 
-
-        alert(
-            "CHECKOUT — BLOC 14.2\n\n" +
-            "Commandes activées.\n\n" +
-            "Le client peut confirmer son pedido."
-        );
-
     }
 
     else {
@@ -1736,13 +1767,6 @@ function applyOrdersSetting() {
         confirmBtn.title =
             "Os pedidos estão temporariamente desativados.";
 
-
-        alert(
-            "CHECKOUT — BLOC 14.2\n\n" +
-            "Commandes désactivées.\n\n" +
-            "Le bouton de confirmation est maintenant bloqué."
-        );
-
     }
 
 }
@@ -1755,7 +1779,6 @@ function applyOrdersSetting() {
 async function verifyOrdersBeforeCreation() {
 
     try {
-
 
         const marketplaceSettingsRef =
             doc(
@@ -1776,7 +1799,7 @@ async function verifyOrdersBeforeCreation() {
         ) {
 
             throw new Error(
-                "Le document settings/marketplace est introuvable."
+                "O documento settings/marketplace está indisponível."
             );
 
         }
@@ -1821,7 +1844,7 @@ async function verifyOrdersBeforeCreation() {
     catch (error) {
 
         console.error(
-            "Erreur vérification commandes :",
+            "TOMA — Erro verificação pedidos:",
             error
         );
 
@@ -1847,20 +1870,50 @@ async function verifyOrdersBeforeCreation() {
 
 
 /* =========================================================
-   INICIAR
+   SECURITY — ESCAPE HTML
+========================================================= */
+
+function escapeHtml(
+    value
+) {
+
+    return String(
+        value ?? ""
+    )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================================
+   INICIAR CHECKOUT
 ========================================================= */
 
 window.addEventListener(
     "load",
     async () => {
 
-
         loadCheckoutCart();
 
-
-        /* ================================================
-           BLOC 18 — CHARGER LIVRAISON
-        ================================================ */
 
         await loadDeliverySettings();
 
@@ -1868,7 +1921,7 @@ window.addEventListener(
         renderCheckout();
 
 
-        loadOrdersSetting();
+        await loadOrdersSetting();
 
 
         if (confirmBtn) {
@@ -1897,5 +1950,9 @@ window.addEventListener(
 
 
 /* =========================================================
-   BLOC 18.7 — FIN
+   TOMA CHECKOUT READY
 ========================================================= */
+
+console.log(
+    "TOMA — Checkout carregado corretamente."
+);
