@@ -5,165 +5,602 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
 <title>Influenciadores | Toma</title>
 
-<link rel="stylesheet" href="merchant-dashboard-v2.css">
+<link
+    rel="stylesheet"
+    href="merchant-dashboard-v2.css"
+>
 
-<link rel="stylesheet" href="merchant-affiliates.css">
+<link
+    rel="stylesheet"
+    href="merchant-affiliates.css"
+>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+>
 
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
+<link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
+    rel="stylesheet"
+>
 
 </head>
+
 
 <body>
 
 <div class="productsPage">
 
-<header class="productsHeader">
+    <!-- ========================= -->
+    <!-- HEADER -->
+    <!-- ========================= -->
 
-<div class="leftHeader">
+    <header class="productsHeader">
 
-<a href="merchant-dashboard-v2.html" class="backButton">
+        <div class="leftHeader">
 
-<span class="material-symbols-rounded">
+            <a
+                href="merchant-dashboard-v2.html"
+                class="backButton"
+                title="Voltar"
+            >
 
-arrow_back
+                <span class="material-symbols-rounded">
+                    arrow_back
+                </span>
 
-</span>
+            </a>
 
-</a>
 
-<div>
+            <div>
 
-<h1>Influenciadores</h1>
+                <h1>
+                    Influenciadores
+                </h1>
 
-<p>
+                <p>
+                    Gerencie os seus parceiros e campanhas.
+                </p>
 
-Gerencie os seus parceiros.
+            </div>
 
-</p>
+        </div>
+
+
+        <button
+            id="addAffiliateBtn"
+            class="addProductBtn"
+            type="button"
+        >
+
+            <span class="material-symbols-rounded">
+                person_add
+            </span>
+
+            Novo Influenciador
+
+        </button>
+
+    </header>
+
+
+    <!-- ========================= -->
+    <!-- DASHBOARD -->
+    <!-- ========================= -->
+
+    <section class="affiliateDashboard">
+
+        <div class="affiliateStatCard">
+
+            <div class="affiliateStatIcon">
+                <span class="material-symbols-rounded">
+                    groups
+                </span>
+            </div>
+
+            <div>
+
+                <span>
+                    Influenciadores
+                </span>
+
+                <strong id="affiliateTotal">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="affiliateStatCard">
+
+            <div class="affiliateStatIcon">
+                <span class="material-symbols-rounded">
+                    confirmation_number
+                </span>
+            </div>
+
+            <div>
+
+                <span>
+                    Cupons ativos
+                </span>
+
+                <strong id="affiliateActiveCoupons">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="affiliateStatCard">
+
+            <div class="affiliateStatIcon">
+                <span class="material-symbols-rounded">
+                    percent
+                </span>
+            </div>
+
+            <div>
+
+                <span>
+                    Desconto médio
+                </span>
+
+                <strong id="affiliateAverageDiscount">
+                    0%
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="affiliateStatCard">
+
+            <div class="affiliateStatIcon">
+                <span class="material-symbols-rounded">
+                    campaign
+                </span>
+            </div>
+
+            <div>
+
+                <span>
+                    Campanhas
+                </span>
+
+                <strong id="affiliateCampaigns">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ========================= -->
+    <!-- TOOLBAR -->
+    <!-- ========================= -->
+
+    <section class="affiliateToolbar">
+
+        <div class="affiliateSearchBox">
+
+            <span class="material-symbols-rounded">
+                search
+            </span>
+
+            <input
+                type="search"
+                id="affiliateSearch"
+                placeholder="Pesquisar influenciador ou cupom..."
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        <div class="affiliateFilterBox">
+
+            <span class="material-symbols-rounded">
+                filter_list
+            </span>
+
+            <select id="affiliateStatusFilter">
+
+                <option value="all">
+                    Todos
+                </option>
+
+                <option value="active">
+                    Ativos
+                </option>
+
+                <option value="inactive">
+                    Inativos
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <button
+            id="refreshAffiliateBtn"
+            class="affiliateRefreshBtn"
+            type="button"
+            title="Atualizar"
+        >
+
+            <span class="material-symbols-rounded">
+                refresh
+            </span>
+
+        </button>
+
+    </section>
+
+
+    <!-- ========================= -->
+    <!-- FORMULAIRE -->
+    <!-- ========================= -->
+
+    <section
+        id="affiliateFormSection"
+        class="affiliateFormCard hidden"
+    >
+
+        <div class="affiliateFormHeader">
+
+            <div>
+
+                <span class="affiliateFormEyebrow">
+                    TOMA AFFILIATE
+                </span>
+
+                <h2 id="affiliateFormTitle">
+                    Novo influenciador
+                </h2>
+
+                <p>
+                    Crie o parceiro e o cupom promocional.
+                </p>
+
+            </div>
+
+
+            <button
+                id="closeAffiliateFormBtn"
+                class="affiliateCloseBtn"
+                type="button"
+                title="Fechar"
+            >
+
+                <span class="material-symbols-rounded">
+                    close
+                </span>
+
+            </button>
+
+        </div>
+
+
+        <div class="affiliateFormGrid">
+
+            <!-- NOME -->
+
+            <div class="affiliateField">
+
+                <label for="affiliateName">
+                    Nome do influenciador
+                </label>
+
+                <input
+                    type="text"
+                    id="affiliateName"
+                    placeholder="Ex: Maria Silva"
+                    maxlength="80"
+                >
+
+            </div>
+
+
+            <!-- WHATSAPP -->
+
+            <div class="affiliateField">
+
+                <label for="affiliatePhone">
+                    WhatsApp
+                </label>
+
+                <input
+                    type="tel"
+                    id="affiliatePhone"
+                    placeholder="Ex: +244 9XX XXX XXX"
+                    maxlength="30"
+                >
+
+            </div>
+
+
+            <!-- INSTAGRAM -->
+
+            <div class="affiliateField">
+
+                <label for="affiliateInstagram">
+                    Instagram
+                </label>
+
+                <input
+                    type="text"
+                    id="affiliateInstagram"
+                    placeholder="@utilizador"
+                    maxlength="80"
+                >
+
+            </div>
+
+
+            <!-- FACEBOOK -->
+
+            <div class="affiliateField">
+
+                <label for="affiliateFacebook">
+                    Facebook
+                </label>
+
+                <input
+                    type="text"
+                    id="affiliateFacebook"
+                    placeholder="Perfil ou página"
+                    maxlength="120"
+                >
+
+            </div>
+
+
+            <!-- TIKTOK -->
+
+            <div class="affiliateField">
+
+                <label for="affiliateTikTok">
+                    TikTok
+                </label>
+
+                <input
+                    type="text"
+                    id="affiliateTikTok"
+                    placeholder="@utilizador"
+                    maxlength="80"
+                >
+
+            </div>
+
+
+            <!-- CUPOM -->
+
+            <div class="affiliateField">
+
+                <label for="affiliateCoupon">
+                    Código do cupom
+                </label>
+
+                <input
+                    type="text"
+                    id="affiliateCoupon"
+                    placeholder="Ex: MARIA10"
+                    maxlength="30"
+                    autocomplete="off"
+                >
+
+                <small>
+                    O código será convertido automaticamente para maiúsculas.
+                </small>
+
+            </div>
+
+
+            <!-- DESCONTO -->
+
+            <div class="affiliateField">
+
+                <label for="affiliateDiscount">
+                    Desconto do cupom
+                </label>
+
+                <div class="affiliateInputSuffix">
+
+                    <input
+                        type="number"
+                        id="affiliateDiscount"
+                        min="1"
+                        max="100"
+                        value="10"
+                        placeholder="10"
+                    >
+
+                    <span>
+                        %
+                    </span>
+
+                </div>
+
+                <small>
+                    Percentagem de desconto oferecida ao cliente.
+                </small>
+
+            </div>
+
+
+            <!-- COMMISSION -->
+
+            <div class="affiliateField">
+
+                <label for="affiliateCommission">
+                    Comissão do influenciador
+                </label>
+
+                <div class="affiliateInputSuffix">
+
+                    <input
+                        type="number"
+                        id="affiliateCommission"
+                        min="0"
+                        max="100"
+                        value="0"
+                        placeholder="0"
+                    >
+
+                    <span>
+                        %
+                    </span>
+
+                </div>
+
+                <small>
+                    Preparado para futuras comissões por venda.
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <!-- PREVIEW -->
+
+        <div class="affiliateCouponPreview">
+
+            <div class="affiliatePreviewIcon">
+
+                <span class="material-symbols-rounded">
+                    confirmation_number
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Pré-visualização
+                </span>
+
+                <strong id="affiliateCouponPreviewCode">
+                    SEU CUPOM
+                </strong>
+
+                <p id="affiliateCouponPreviewText">
+                    O cliente receberá 10% de desconto.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- FORM ACTIONS -->
+
+        <div class="affiliateFormActions">
+
+            <button
+                id="cancelAffiliateBtn"
+                class="affiliateSecondaryBtn"
+                type="button"
+            >
+                Cancelar
+            </button>
+
+
+            <button
+                id="saveAffiliateBtn"
+                class="affiliatePrimaryBtn"
+                type="button"
+            >
+
+                <span class="material-symbols-rounded">
+                    save
+                </span>
+
+                Guardar influenciador
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ========================= -->
+    <!-- LISTA -->
+    <!-- ========================= -->
+
+    <section
+        id="affiliateList"
+        class="affiliateList"
+    >
+
+        <div class="emptyCard">
+
+            <span class="material-symbols-rounded">
+                groups
+            </span>
+
+            <h2>
+                Carregando...
+            </h2>
+
+            <p>
+                Aguarde enquanto carregamos os influenciadores.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- ========================= -->
+    <!-- TOAST -->
+    <!-- ========================= -->
+
+    <div
+        id="affiliateToast"
+        class="affiliateToast"
+    >
+
+        <span
+            id="affiliateToastIcon"
+            class="material-symbols-rounded"
+        >
+            check_circle
+        </span>
+
+        <span id="affiliateToastMessage">
+            Operação realizada.
+        </span>
+
+    </div>
 
 </div>
 
-</div>
 
-<button id="addAffiliateBtn" class="addProductBtn">
-
-<span class="material-symbols-rounded">
-
-person_add
-
-</span>
-
-Novo Influenciador
-
-</button>
-
-</header>
-
-<!-- FORMULÁRIO -->
-
-<section class="affiliateForm">
-
-<input
-
-type="text"
-
-id="affiliateName"
-
-placeholder="Nome do influenciador">
-
-<input
-
-type="tel"
-
-id="affiliatePhone"
-
-placeholder="WhatsApp">
-
-<input
-
-type="text"
-
-id="affiliateInstagram"
-
-placeholder="Instagram">
-
-<input
-
-type="text"
-
-id="affiliateFacebook"
-
-placeholder="Facebook">
-
-<input
-
-type="text"
-
-id="affiliateTikTok"
-
-placeholder="TikTok">
-
-<input
-
-type="text"
-
-id="affiliateCoupon"
-
-placeholder="Cupom (Ex: MARIA10)">
-
-<button id="saveAffiliateBtn">
-
-Guardar
-
-</button>
-
-</section>
-
-<!-- LISTA -->
-
-<section
-
-id="affiliateList"
-
-class="affiliateList">
-
-<div class="emptyCard">
-
-<span class="material-symbols-rounded">
-
-groups
-
-</span>
-
-<h2>
-
-Nenhum influenciador
-
-</h2>
-
-<p>
-
-Adicione o primeiro parceiro.
-
-</p>
-
-</div>
-
-</section>
-
-</div>
-
-<script type="module"
-
-src="./js/merchant-affiliates.js">
-
-</script>
+<script
+    type="module"
+    src="./js/merchant-affiliates.js"
+></script>
 
 </body>
 
