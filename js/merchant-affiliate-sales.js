@@ -1,7 +1,7 @@
- // =====================================
-// MERCHANT AFFILIATE SALES
-// TOMA
-// =====================================
+ // ============================================================
+// TOMA — MERCHANT AFFILIATE SALES
+// Fichier : js/merchant-affiliate-sales.js
+// ============================================================
 
 import { db, auth } from "../firebase.js";
 
@@ -17,768 +17,204 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 
-// =====================================
-// DOM
-// =====================================
+// ============================================================
+// 1. CONFIGURATION
+// ============================================================
 
-const totalAffiliateSales =
-    document.getElementById("totalAffiliateSales");
+const AFFILIATE_COLLECTION = "affiliates";
+const ORDER_COLLECTION = "orders";
 
-const totalAffiliateOrders =
-    document.getElementById("totalAffiliateOrders");
+const COMMISSION_RATE = 0.05;
 
-const totalAffiliateCommission =
-    document.getElementById("totalAffiliateCommission");
-
-const totalCouponSales =
-    document.getElementById("totalCouponSales");
-
-const affiliateSalesList =
-    document.getElementById("affiliateSalesList");
+// Seuls ces statuts sont comptabilisés.
+const ELIGIBLE_STATUSES = new Set([
+    "confirmado",
+    "entregue"
+]);
 
 
-// =====================================
-// VARIABLES
-// =====================================
+// ============================================================
+// 2. VARIABLES
+// ============================================================
 
 let merchantId = null;
 
+let affiliates = [];
+let orders = [];
 
-// =====================================
-// AUTH
-// =====================================
+let affiliateCampaigns = [];
+let displayedCampaigns = [];
 
-onAuthStateChanged(auth, async (user) => {
+let campaignById = new Map();
 
-    if (!user) {
+let isLoading = false;
 
-        location.href = "login.html";
+let currentModalCampaign = null;
 
-        return;
+let statusMessageTimer = null;
+let toastTimer = null;
 
-    }
 
-    merchantId = user.uid;
+// ============================================================
+// 3. ÉLÉMENTS HTML
+// ============================================================
 
-    await loadAffiliateSales();
+const totalAffiliateSales = document.getElementById(
+    "totalAffiliateSales"
+);
 
-});
+const totalAffiliateOrders = document.getElementById(
+    "totalAffiliateOrders"
+);
 
+const totalAffiliateCommission = document.getElementById(
+    "totalAffiliateCommission"
+);
 
-// =====================================
-// LOAD SALES
-// =====================================
+const totalCouponSales = document.getElementById(
+    "totalCouponSales"
+);
 
-async function loadAffiliateSales() {
+const totalCouponOrders = document.getElementById(
+    "totalCouponOrders"
+);
 
-    try {
+const totalOtherCouponSales = document.getElementById(
+    "totalOtherCouponSales"
+);
 
-        // =====================================
-        // 1. RÉCUPÉRER LES INFLUENCEURS
-        // =====================================
+const affiliateSalesList = document.getElementById(
+    "affiliateSalesList"
+);
 
-        const affiliatesQuery = query(
-            collection(db, "affiliates"),
-            where("merchantId", "==", merchantId)
-        );
+const affiliateLoading = document.getElementById(
+    "affiliateLoading"
+);
 
-        const affiliatesSnap =
-            await getDocs(affiliatesQuery);
+const refreshAffiliateSales = document.getElementById(
+    "refreshAffiliateSales"
+);
 
+const affiliateSalesSearch = document.getElementById(
+    "affiliateSalesSearch"
+);
 
-        // =====================================
-        // 2. RÉCUPÉRER LES COMMANDES DU COMMERÇANT
-        // =====================================
+const clearAffiliateSearch = document.getElementById(
+    "clearAffiliateSearch"
+);
 
-        const ordersQuery = query(
-            collection(db, "orders"),
-            where("merchantId", "==", merchantId)
-        );
+const affiliateSalesType = document.getElementById(
+    "affiliateSalesType"
+);
 
-        const ordersSnap =
-            await getDocs(ordersQuery);
+const affiliateSalesSort = document.getElementById(
+    "affiliateSalesSort"
+);
 
+const resetAffiliateFilters = document.getElementById(
+    "resetAffiliateFilters"
+);
 
-        // =====================================
-        // 3. CONSTRUIRE LA LISTE DES INFLUENCEURS
-        // =====================================
+const affiliateResultsCount = document.getElementById(
+    "affiliateResultsCount"
+);
 
-        const affiliates = [];
 
-        const affiliateCouponMap = new Map();
+// Messages de statut.
 
+const affiliateStatusMessage = document.getElementById(
+    "affiliateStatusMessage"
+);
 
-        affiliatesSnap.forEach((affiliateDoc) => {
+const affiliateStatusIcon = document.getElementById(
+    "affiliateStatusIcon"
+);
 
-            const affiliate =
-                affiliateDoc.data();
+const affiliateStatusTitle = document.getElementById(
+    "affiliateStatusTitle"
+);
 
-            const coupon =
-                String(
-                    affiliate.coupon || ""
-                )
-                .trim()
-                .toUpperCase();
+const affiliateStatusText = document.getElementById(
+    "affiliateStatusText"
+);
 
+const closeAffiliateStatus = document.getElementById(
+    "closeAffiliateStatus"
+);
 
-            if (!coupon) {
-                return;
-            }
 
+// Fenêtre des détails.
 
-            const affiliateData = {
+const affiliateSalesModal = document.getElementById(
+    "affiliateSalesModal"
+);
 
-                id: affiliateDoc.id,
+const affiliateModalTitle = document.getElementById(
+    "affiliateModalTitle"
+);
 
-                name:
-                    affiliate.name ||
-                    affiliate.affiliateName ||
-                    "Influenciador",
+const affiliateModalSubtitle = document.getElementById(
+    "affiliateModalSubtitle"
+);
 
-                coupon: coupon
+const affiliateModalSales = document.getElementById(
+    "affiliateModalSales"
+);
 
-            };
+const affiliateModalOrders = document.getElementById(
+    "affiliateModalOrders"
+);
 
+const affiliateModalCommission = document.getElementById(
+    "affiliateModalCommission"
+);
 
-            affiliates.push(
-                affiliateData
-            );
+const affiliateOrderSearch = document.getElementById(
+    "affiliateOrderSearch"
+);
 
+const affiliateModalOrdersList = document.getElementById(
+    "affiliateModalOrdersList"
+);
 
-            affiliateCouponMap.set(
-                coupon,
-                affiliateData
-            );
+const closeAffiliateSalesModal = document.getElementById(
+    "closeAffiliateSalesModal"
+);
 
-        });
+const closeAffiliateSalesModalFooter = document.getElementById(
+    "closeAffiliateSalesModalFooter"
+);
 
 
-        // =====================================
-        // 4. PRÉPARER LES VENTES
-        // =====================================
+// Notification temporaire.
 
-        const affiliateSales = new Map();
+const affiliateToast = document.getElementById(
+    "affiliateToast"
+);
 
-        const otherCouponSales = [];
+const affiliateToastIcon = document.getElementById(
+    "affiliateToastIcon"
+);
 
-        let totalAffiliateSalesValue = 0;
+const affiliateToastText = document.getElementById(
+    "affiliateToastText"
+);
 
-        let totalAffiliateOrdersValue = 0;
 
-        let totalAffiliateCommissionValue = 0;
+// ============================================================
+// 4. OUTILS
+// ============================================================
 
-        let totalAllCouponSalesValue = 0;
+function normalizeText(value) {
 
-
-        // Initialiser chaque influenceur
-
-        affiliates.forEach((affiliate) => {
-
-            affiliateSales.set(
-                affiliate.id,
-                {
-                    affiliate,
-                    sales: 0,
-                    orders: 0
-                }
-            );
-
-        });
-
-
-        // =====================================
-        // 5. ANALYSER LES COMMANDES
-        // =====================================
-
-        ordersSnap.forEach((orderDoc) => {
-
-            const order =
-                orderDoc.data();
-
-
-            // ---------------------------------
-            // Récupérer le coupon utilisé
-            // ---------------------------------
-
-            const couponCode = String(
-
-                order.couponCode ||
-
-                order.coupon ||
-
-                order.couponName ||
-
-                ""
-
-            )
-            .trim()
-            .toUpperCase();
-
-
-            // Pas de coupon
-            if (!couponCode) {
-                return;
-            }
-
-
-            const orderTotal =
-                Number(order.total || 0);
-
-
-            // =================================
-            // TOTAL DE TOUTES LES VENTES
-            // PAR COUPON
-            // =================================
-
-            totalAllCouponSalesValue +=
-                orderTotal;
-
-
-            // =================================
-            // VÉRIFIER SI C'EST UN COUPON
-            // D'INFLUENCEUR
-            // =================================
-
-            const affiliate =
-                affiliateCouponMap.get(
-                    couponCode
-                );
-
-
-            if (affiliate) {
-
-                const data =
-                    affiliateSales.get(
-                        affiliate.id
-                    );
-
-
-                if (data) {
-
-                    data.sales +=
-                        orderTotal;
-
-                    data.orders += 1;
-
-                }
-
-
-                totalAffiliateSalesValue +=
-                    orderTotal;
-
-
-                totalAffiliateOrdersValue +=
-                    1;
-
-
-                // Commission Toma / affiliation
-                // actuellement 5 %
-
-                totalAffiliateCommissionValue +=
-                    orderTotal * 0.05;
-
-
-                return;
-
-            }
-
-
-            // =================================
-            // AUTRE COUPON
-            // =================================
-
-            otherCouponSales.push({
-
-                id: orderDoc.id,
-
-                coupon: couponCode,
-
-                total: orderTotal,
-
-                orderNumber:
-                    order.orderNumber ||
-                    orderDoc.id,
-
-                clientName:
-                    order.clientName ||
-                    order.customerName ||
-                    "Cliente",
-
-                createdAt:
-                    order.createdAt || null
-
-            });
-
-        });
-
-
-        // =====================================
-        // 6. AFFICHER LES RÉSUMÉS
-        // =====================================
-
-        if (totalAffiliateSales) {
-
-            totalAffiliateSales.textContent =
-                `${totalAffiliateSalesValue.toLocaleString()} Kz`;
-
-        }
-
-
-        if (totalAffiliateOrders) {
-
-            totalAffiliateOrders.textContent =
-                totalAffiliateOrdersValue;
-
-        }
-
-
-        if (totalAffiliateCommission) {
-
-            totalAffiliateCommission.textContent =
-                `${totalAffiliateCommissionValue.toLocaleString()} Kz`;
-
-        }
-
-
-        if (totalCouponSales) {
-
-            totalCouponSales.textContent =
-                `${totalAllCouponSalesValue.toLocaleString()} Kz`;
-
-        }
-
-
-        // =====================================
-        // 7. AFFICHER LA LISTE
-        // =====================================
-
-        affiliateSalesList.innerHTML = "";
-
-
-        // =====================================
-        // SECTION INFLUENCEURS
-        // =====================================
-
-        if (affiliates.length > 0) {
-
-            const affiliateTitle =
-                document.createElement("div");
-
-            affiliateTitle.innerHTML = `
-
-                <div style="
-                    margin:10px 0 14px;
-                ">
-
-                    <h2 style="
-                        margin:0;
-                        font-size:18px;
-                    ">
-
-                        Vendas dos Influenciadores
-
-                    </h2>
-
-                    <p style="
-                        margin:4px 0 0;
-                        color:#777;
-                        font-size:12px;
-                    ">
-
-                        Vendas realizadas através dos
-                        cupons dos seus influenciadores.
-
-                    </p>
-
-                </div>
-
-            `;
-
-            affiliateSalesList.appendChild(
-                affiliateTitle
-            );
-
-
-            affiliates.forEach((affiliate) => {
-
-                const data =
-                    affiliateSales.get(
-                        affiliate.id
-                    );
-
-
-                const sales =
-                    data?.sales || 0;
-
-                const orders =
-                    data?.orders || 0;
-
-
-                const commission =
-                    sales * 0.05;
-
-
-                const firstLetter =
-                    String(
-                        affiliate.name || "I"
-                    )
-                    .charAt(0)
-                    .toUpperCase();
-
-
-                const card =
-                    document.createElement("div");
-
-                card.className =
-                    "affiliateSaleCard";
-
-
-                card.innerHTML = `
-
-                    <div class="saleLeft">
-
-                        <div class="saleAvatar">
-
-                            ${firstLetter}
-
-                        </div>
-
-                        <div class="saleInfo">
-
-                            <h3>
-
-                                ${escapeHtml(
-                                    affiliate.name
-                                )}
-
-                            </h3>
-
-                            <p>
-
-                                Cupom:
-
-                                <strong>
-
-                                    ${escapeHtml(
-                                        affiliate.coupon
-                                    )}
-
-                                </strong>
-
-                            </p>
-
-                            <p>
-
-                                Pedidos:
-
-                                ${orders}
-
-                            </p>
-
-                            <span class="saleCoupon">
-
-                                ${escapeHtml(
-                                    affiliate.coupon
-                                )}
-
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                    <div class="saleRight">
-
-                        <h2>
-
-                            ${sales.toLocaleString()} Kz
-
-                        </h2>
-
-                        <p>
-
-                            Comissão:
-
-                            ${commission.toLocaleString()} Kz
-
-                        </p>
-
-                    </div>
-
-                `;
-
-
-                affiliateSalesList.appendChild(
-                    card
-                );
-
-            });
-
-        }
-
-
-        // =====================================
-        // SECTION AUTRES COUPONS
-        // =====================================
-
-        if (otherCouponSales.length > 0) {
-
-            const couponTitle =
-                document.createElement("div");
-
-            couponTitle.innerHTML = `
-
-                <div style="
-                    margin:28px 0 14px;
-                ">
-
-                    <h2 style="
-                        margin:0;
-                        font-size:18px;
-                    ">
-
-                        Vendas por Outros Cupons
-
-                    </h2>
-
-                    <p style="
-                        margin:4px 0 0;
-                        color:#777;
-                        font-size:12px;
-                    ">
-
-                        Vendas realizadas através de
-                        cupons que não pertencem a um
-                        influenciador.
-
-                    </p>
-
-                </div>
-
-            `;
-
-            affiliateSalesList.appendChild(
-                couponTitle
-            );
-
-
-            // ---------------------------------
-            // Regrouper les ventes par coupon
-            // ---------------------------------
-
-            const couponGroups =
-                new Map();
-
-
-            otherCouponSales.forEach((sale) => {
-
-                if (!couponGroups.has(
-                    sale.coupon
-                )) {
-
-                    couponGroups.set(
-                        sale.coupon,
-                        {
-                            coupon: sale.coupon,
-                            sales: 0,
-                            orders: 0
-                        }
-                    );
-
-                }
-
-
-                const group =
-                    couponGroups.get(
-                        sale.coupon
-                    );
-
-
-                group.sales +=
-                    sale.total;
-
-                group.orders += 1;
-
-            });
-
-
-            couponGroups.forEach((group) => {
-
-                const card =
-                    document.createElement("div");
-
-                card.className =
-                    "affiliateSaleCard";
-
-
-                card.innerHTML = `
-
-                    <div class="saleLeft">
-
-                        <div class="saleAvatar">
-
-                            <span class="material-symbols-rounded">
-
-                                sell
-
-                            </span>
-
-                        </div>
-
-                        <div class="saleInfo">
-
-                            <h3>
-
-                                Cupom
-
-                            </h3>
-
-                            <p>
-
-                                Código:
-
-                                <strong>
-
-                                    ${escapeHtml(
-                                        group.coupon
-                                    )}
-
-                                </strong>
-
-                            </p>
-
-                            <p>
-
-                                Pedidos:
-
-                                ${group.orders}
-
-                            </p>
-
-                            <span class="saleCoupon">
-
-                                ${escapeHtml(
-                                    group.coupon
-                                )}
-
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                    <div class="saleRight">
-
-                        <h2>
-
-                            ${group.sales.toLocaleString()} Kz
-
-                        </h2>
-
-                        <p>
-
-                            Vendas através deste cupom
-
-                        </p>
-
-                    </div>
-
-                `;
-
-
-                affiliateSalesList.appendChild(
-                    card
-                );
-
-            });
-
-        }
-
-
-        // =====================================
-        // AUCUNE VENTE PAR COUPON
-        // =====================================
-
-        if (
-            affiliates.length === 0 &&
-            otherCouponSales.length === 0
-        ) {
-
-            affiliateSalesList.innerHTML = `
-
-                <div class="emptyCard">
-
-                    <span class="material-symbols-rounded">
-
-                        monitoring
-
-                    </span>
-
-                    <h2>
-
-                        Nenhuma venda por cupom
-
-                    </h2>
-
-                    <p>
-
-                        As vendas realizadas através
-                        de cupons aparecerão aqui.
-
-                    </p>
-
-                </div>
-
-            `;
-
-        }
-
-
-    } catch (error) {
-
-        console.error(
-            "TOMA — ERRO VENDAS AFILIADOS:",
-            error
-        );
-
-
-        affiliateSalesList.innerHTML = `
-
-            <div class="emptyCard">
-
-                <span class="material-symbols-rounded">
-
-                    error
-
-                </span>
-
-                <h2>
-
-                    Erro ao carregar vendas
-
-                </h2>
-
-                <p>
-
-                    ${escapeHtml(
-                        error.message ||
-                        "Não foi possível carregar as vendas."
-                    )}
-
-                </p>
-
-            </div>
-
-        `;
-
-    }
+    return String(value ?? "")
+        .trim()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
 
 }
 
-
-// =====================================
-// ESCAPE HTML
-// =====================================
 
 function escapeHtml(value) {
 
@@ -790,3 +226,1782 @@ function escapeHtml(value) {
         .replace(/'/g, "&#039;");
 
 }
+
+
+function getText(...values) {
+
+    for (const value of values) {
+
+        if (
+            value !== undefined &&
+            value !== null &&
+            String(value).trim() !== ""
+        ) {
+            return String(value).trim();
+        }
+
+    }
+
+    return "";
+
+}
+
+
+function getNumber(value) {
+
+    if (typeof value === "number") {
+
+        return Number.isFinite(value) ? value : 0;
+
+    }
+
+    if (typeof value === "string") {
+
+        const normalized = value
+            .trim()
+            .replace(/\s/g, "")
+            .replace(",", ".");
+
+        const number = Number(normalized);
+
+        return Number.isFinite(number) ? number : 0;
+
+    }
+
+    return 0;
+
+}
+
+
+function formatMoney(value) {
+
+    const amount = getNumber(value);
+
+    try {
+
+        return new Intl.NumberFormat("pt-AO", {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+        }).format(amount) + " Kz";
+
+    } catch (error) {
+
+        return amount.toLocaleString("pt-PT") + " Kz";
+
+    }
+
+}
+
+
+function getOrderDate(value) {
+
+    if (!value) {
+        return null;
+    }
+
+    try {
+
+        if (typeof value.toDate === "function") {
+
+            const date = value.toDate();
+
+            return Number.isNaN(date.getTime()) ? null : date;
+
+        }
+
+        if (value instanceof Date) {
+
+            return Number.isNaN(value.getTime()) ? null : value;
+
+        }
+
+        if (
+            typeof value === "string" ||
+            typeof value === "number"
+        ) {
+
+            const date = new Date(value);
+
+            return Number.isNaN(date.getTime()) ? null : date;
+
+        }
+
+        if (
+            typeof value === "object" &&
+            typeof value.seconds === "number"
+        ) {
+
+            const date = new Date(value.seconds * 1000);
+
+            return Number.isNaN(date.getTime()) ? null : date;
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "Toma: impossible de lire la date de la commande.",
+            error
+        );
+
+    }
+
+    return null;
+
+}
+
+
+function formatDate(value) {
+
+    const date = getOrderDate(value);
+
+    if (!date) {
+        return "Data indisponível";
+    }
+
+    return date.toLocaleDateString("pt-PT", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+    });
+
+}
+
+
+function getEligibleStatus(order) {
+
+    return normalizeText(
+        order.status
+    );
+
+}
+
+
+function isEligibleOrder(order) {
+
+    return ELIGIBLE_STATUSES.has(
+        getEligibleStatus(order)
+    );
+
+}
+
+
+function getOrderCoupon(order) {
+
+    return normalizeText(
+        getText(
+            order.couponCode,
+            order.coupon,
+            order.couponName
+        )
+    );
+
+}
+
+
+function getOrderTotal(order) {
+
+    return Math.max(
+        0,
+        getNumber(order.total)
+    );
+
+}
+
+
+function getOrderNumber(order) {
+
+    return getText(
+        order.orderNumber,
+        order.id
+    );
+
+}
+
+
+function getCustomerName(order) {
+
+    return getText(
+        order.clientName,
+        order.customerName,
+        order.name
+    ) || "Cliente";
+
+
+}
+
+
+function getCommission(amount) {
+
+    return Math.max(0, getNumber(amount)) * COMMISSION_RATE;
+
+}
+
+
+function showElement(element) {
+
+    if (element) {
+
+        element.hidden = false;
+
+    }
+
+}
+
+
+function hideElement(element) {
+
+    if (element) {
+
+        element.hidden = true;
+
+    }
+
+}
+
+
+// ============================================================
+// 5. NOTIFICATIONS
+// ============================================================
+
+function showStatusMessage(
+    title,
+    message,
+    type = "info"
+) {
+
+    if (!affiliateStatusMessage) {
+        return;
+    }
+
+    if (statusMessageTimer) {
+
+        clearTimeout(statusMessageTimer);
+
+    }
+
+    if (affiliateStatusTitle) {
+
+        affiliateStatusTitle.textContent = title;
+
+    }
+
+    if (affiliateStatusText) {
+
+        affiliateStatusText.textContent = message;
+
+    }
+
+    if (affiliateStatusIcon) {
+
+        const icons = {
+            success: "check_circle",
+            error: "error",
+            warning: "warning",
+            info: "info"
+        };
+
+        affiliateStatusIcon.textContent =
+            icons[type] || icons.info;
+
+    }
+
+    affiliateStatusMessage.dataset.type = type;
+
+    showElement(affiliateStatusMessage);
+
+}
+
+
+function closeStatusMessage() {
+
+    hideElement(affiliateStatusMessage);
+
+}
+
+
+function showToast(
+    message,
+    type = "success"
+) {
+
+    if (!affiliateToast) {
+        return;
+    }
+
+    if (toastTimer) {
+
+        clearTimeout(toastTimer);
+
+    }
+
+    if (affiliateToastText) {
+
+        affiliateToastText.textContent = message;
+
+    }
+
+    if (affiliateToastIcon) {
+
+        const icons = {
+            success: "check_circle",
+            error: "error",
+            warning: "warning",
+            info: "info"
+        };
+
+        affiliateToastIcon.textContent =
+            icons[type] || icons.info;
+
+    }
+
+    affiliateToast.dataset.type = type;
+
+    showElement(affiliateToast);
+
+    toastTimer = setTimeout(() => {
+
+        hideElement(affiliateToast);
+
+    }, 3500);
+
+}
+
+
+// ============================================================
+// 6. LOADING
+// ============================================================
+
+function setLoading(value) {
+
+    isLoading = value;
+
+    if (affiliateLoading) {
+
+        if (value) {
+
+            showElement(affiliateLoading);
+
+        } else {
+
+            hideElement(affiliateLoading);
+
+        }
+
+    }
+
+    if (refreshAffiliateSales) {
+
+        refreshAffiliateSales.disabled = value;
+
+        refreshAffiliateSales.setAttribute(
+            "aria-busy",
+            String(value)
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// 7. CHARGEMENT FIREBASE
+// ============================================================
+
+async function loadAffiliateSales() {
+
+    if (!merchantId || isLoading) {
+        return;
+    }
+
+    setLoading(true);
+
+    closeStatusMessage();
+
+    try {
+
+        /*
+         * Charger les affiliés de ce commerçant.
+         */
+
+        const affiliateQuery = query(
+            collection(db, AFFILIATE_COLLECTION),
+            where("merchantId", "==", merchantId)
+        );
+
+        /*
+         * Charger les commandes de ce commerçant.
+         */
+
+        const orderQuery = query(
+            collection(db, ORDER_COLLECTION),
+            where("merchantId", "==", merchantId)
+        );
+
+        const [
+            affiliateSnapshot,
+            orderSnapshot
+        ] = await Promise.all([
+
+            getDocs(affiliateQuery),
+            getDocs(orderQuery)
+
+        ]);
+
+
+        /*
+         * Préparer les affiliés.
+         */
+
+        affiliates = affiliateSnapshot.docs.map(
+            documentSnapshot => {
+
+                const data = documentSnapshot.data();
+
+                return {
+
+                    id: documentSnapshot.id,
+
+                    ...data,
+
+                    name: getText(
+                        data.name,
+                        data.affiliateName
+                    ) || "Afiliado sem nome",
+
+                    coupon: getText(
+                        data.coupon
+                    ).toUpperCase()
+
+                };
+
+            }
+        );
+
+
+        /*
+         * Préparer les commandes.
+         */
+
+        orders = orderSnapshot.docs.map(
+            documentSnapshot => {
+
+                const data = documentSnapshot.data();
+
+                return {
+
+                    id: documentSnapshot.id,
+
+                    ...data
+
+                };
+
+            }
+        );
+
+
+        /*
+         * Construire les groupes de ventes.
+         */
+
+        buildAffiliateCampaigns();
+
+        /*
+         * Actualiser les statistiques.
+         */
+
+        renderStatistics();
+
+        /*
+         * Actualiser les cartes.
+         */
+
+        applyFiltersAndRender();
+
+        showStatusMessage(
+            "Dados atualizados",
+            "As vendas e os pedidos foram atualizados com sucesso.",
+            "success"
+        );
+
+        console.log(
+            "Toma affiliate sales:",
+            {
+                affiliates: affiliates.length,
+                orders: orders.length,
+                eligibleOrders: orders.filter(isEligibleOrder).length,
+                campaigns: affiliateCampaigns.length
+            }
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Toma — erreur de chargement des ventes affiliées :",
+            error
+        );
+
+        showStatusMessage(
+            "Erro ao carregar os dados",
+            "Não foi possível carregar as vendas. Verifique a ligação e tente novamente.",
+            "error"
+        );
+
+        if (affiliateSalesList && affiliateCampaigns.length === 0) {
+
+            affiliateSalesList.innerHTML = `
+                <div class="affiliateEmptyState">
+                    <span class="material-symbols-rounded">
+                        cloud_off
+                    </span>
+
+                    <h3>Não foi possível carregar as vendas</h3>
+
+                    <p>
+                        Verifique a ligação à internet e tente novamente.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="affiliateRetryButton"
+                        data-action="retry"
+                    >
+                        Tentar novamente
+                    </button>
+                </div>
+            `;
+
+        }
+
+    } finally {
+
+        setLoading(false);
+
+    }
+
+}
+
+
+// ============================================================
+// 8. CONSTRUIRE LES GROUPES DE VENTES
+// ============================================================
+
+function buildAffiliateCampaigns() {
+
+    affiliateCampaigns = [];
+
+    campaignById = new Map();
+
+
+    /*
+     * Seuls les statuts Confirmado et Entregue
+     * sont utilisés pour les statistiques.
+     */
+
+    const eligibleOrders = orders.filter(
+        isEligibleOrder
+    );
+
+
+    /*
+     * Index des affiliés par coupon.
+     *
+     * Si plusieurs affiliés utilisent le même coupon,
+     * on conserve le premier pour éviter de compter
+     * une commande plusieurs fois.
+     */
+
+    const affiliateByCoupon = new Map();
+
+    for (const affiliate of affiliates) {
+
+        const coupon = normalizeText(
+            affiliate.coupon
+        );
+
+        if (!coupon) {
+            continue;
+        }
+
+        if (!affiliateByCoupon.has(coupon)) {
+
+            affiliateByCoupon.set(
+                coupon,
+                affiliate
+            );
+
+        }
+
+    }
+
+
+    /*
+     * Initialiser les groupes des affiliés.
+     */
+
+    for (const affiliate of affiliates) {
+
+        const campaignId = "affiliate_" + affiliate.id;
+
+        const campaign = {
+
+            id: campaignId,
+
+            type: "affiliate",
+
+            name: affiliate.name,
+
+            coupon: affiliate.coupon,
+
+            affiliateId: affiliate.id,
+
+            sales: 0,
+
+            orderCount: 0,
+
+            commission: 0,
+
+            orders: []
+
+        };
+
+        affiliateCampaigns.push(campaign);
+
+        campaignById.set(
+            campaignId,
+            campaign
+        );
+
+    }
+
+
+    /*
+     * Groupes des autres coupons.
+     */
+
+    const otherCoupons = new Map();
+
+
+    /*
+     * Répartir les commandes admissibles.
+     */
+
+    for (const order of eligibleOrders) {
+
+        const coupon = getOrderCoupon(order);
+
+        /*
+         * Sans coupon, la commande ne participe
+         * pas aux statistiques des coupons.
+         */
+
+        if (!coupon) {
+            continue;
+        }
+
+        const orderTotal = getOrderTotal(order);
+
+
+        /*
+         * Cas 1 : coupon d'un affilié.
+         */
+
+        const affiliate = affiliateByCoupon.get(
+            coupon
+        );
+
+        if (affiliate) {
+
+            const campaignId =
+                "affiliate_" + affiliate.id;
+
+            const campaign = campaignById.get(
+                campaignId
+            );
+
+            if (!campaign) {
+                continue;
+            }
+
+            campaign.sales += orderTotal;
+
+            campaign.orderCount += 1;
+
+            campaign.commission += getCommission(
+                orderTotal
+            );
+
+            campaign.orders.push(order);
+
+            continue;
+
+        }
+
+
+        /*
+         * Cas 2 : coupon qui n'est associé
+         * à aucun affilié.
+         */
+
+        if (!otherCoupons.has(coupon)) {
+
+            otherCoupons.set(
+                coupon,
+                {
+
+                    id: "coupon_" + coupon,
+
+                    type: "coupon",
+
+                    name: coupon.toUpperCase(),
+
+                    coupon: coupon.toUpperCase(),
+
+                    sales: 0,
+
+                    orderCount: 0,
+
+                    commission: 0,
+
+                    orders: []
+
+                }
+            );
+
+        }
+
+        const couponCampaign = otherCoupons.get(
+            coupon
+        );
+
+        couponCampaign.sales += orderTotal;
+
+        couponCampaign.orderCount += 1;
+
+        couponCampaign.orders.push(order);
+
+    }
+
+
+    /*
+     * Ne pas afficher les affiliés sans ventes.
+     * Les affiliés restent disponibles dans Firebase,
+     * mais cette page se concentre sur les ventes.
+     */
+
+    affiliateCampaigns = affiliateCampaigns.filter(
+        campaign => {
+
+            return campaign.type === "affiliate"
+                ? campaign.orderCount > 0
+                : true;
+
+        }
+    );
+
+
+    /*
+     * Ajouter les autres coupons à la liste.
+     */
+
+    for (const campaign of otherCoupons.values()) {
+
+        affiliateCampaigns.push(campaign);
+
+    }
+
+
+    /*
+     * Recalculer les index après filtrage.
+     */
+
+    campaignById = new Map();
+
+    for (const campaign of affiliateCampaigns) {
+
+        campaignById.set(
+            campaign.id,
+            campaign
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// 9. STATISTIQUES
+// ============================================================
+
+function renderStatistics() {
+
+    const eligibleOrders = orders.filter(
+        isEligibleOrder
+    );
+
+    const couponOrders = eligibleOrders.filter(
+        order => Boolean(getOrderCoupon(order))
+    );
+
+
+    /*
+     * Commandes attribuées à un affilié.
+     */
+
+    const affiliateOrderCount =
+        affiliateCampaigns
+            .filter(campaign => campaign.type === "affiliate")
+            .reduce(
+                (sum, campaign) => sum + campaign.orderCount,
+                0
+            );
+
+
+    const affiliateSales =
+        affiliateCampaigns
+            .filter(campaign => campaign.type === "affiliate")
+            .reduce(
+                (sum, campaign) => sum + campaign.sales,
+                0
+            );
+
+
+    const affiliateCommission =
+        affiliateCampaigns
+            .filter(campaign => campaign.type === "affiliate")
+            .reduce(
+                (sum, campaign) => sum + campaign.commission,
+                0
+            );
+
+
+    /*
+     * Toutes les ventes avec coupon.
+     */
+
+    const allCouponSales = couponOrders.reduce(
+        (sum, order) => sum + getOrderTotal(order),
+        0
+    );
+
+
+    /*
+     * Autres coupons = coupons non attribués
+     * à un affilié.
+     */
+
+    const otherCouponSales =
+        affiliateCampaigns
+            .filter(campaign => campaign.type === "coupon")
+            .reduce(
+                (sum, campaign) => sum + campaign.sales,
+                0
+            );
+
+
+    if (totalAffiliateSales) {
+
+        totalAffiliateSales.textContent =
+            formatMoney(affiliateSales);
+
+    }
+
+    if (totalAffiliateOrders) {
+
+        totalAffiliateOrders.textContent =
+            String(affiliateOrderCount);
+
+    }
+
+    if (totalAffiliateCommission) {
+
+        totalAffiliateCommission.textContent =
+            formatMoney(affiliateCommission);
+
+    }
+
+    if (totalCouponSales) {
+
+        totalCouponSales.textContent =
+            formatMoney(allCouponSales);
+
+    }
+
+    if (totalCouponOrders) {
+
+        totalCouponOrders.textContent =
+            String(couponOrders.length);
+
+    }
+
+    if (totalOtherCouponSales) {
+
+        totalOtherCouponSales.textContent =
+            formatMoney(otherCouponSales);
+
+    }
+
+}
+
+
+// ============================================================
+// 10. RECHERCHE, FILTRES ET TRI
+// ============================================================
+
+function applyFiltersAndRender() {
+
+    const searchTerm = normalizeText(
+        affiliateSalesSearch?.value
+    );
+
+    const selectedType =
+        affiliateSalesType?.value || "all";
+
+    const selectedSort =
+        affiliateSalesSort?.value || "sales-desc";
+
+
+    let result = affiliateCampaigns.filter(
+        campaign => {
+
+            /*
+             * Filtre par type.
+             */
+
+            if (
+                selectedType !== "all" &&
+                campaign.type !== selectedType
+            ) {
+
+                return false;
+
+            }
+
+
+            /*
+             * Recherche par nom ou coupon.
+             */
+
+            if (searchTerm) {
+
+                const searchableText = normalizeText(
+                    [
+                        campaign.name,
+                        campaign.coupon,
+                        campaign.type
+                    ].join(" ")
+                );
+
+                if (!searchableText.includes(searchTerm)) {
+
+                    return false;
+
+                }
+
+            }
+
+            return true;
+
+        }
+    );
+
+
+    /*
+     * Tri des résultats.
+     */
+
+    result.sort((a, b) => {
+
+        switch (selectedSort) {
+
+            case "sales-asc":
+
+                return a.sales - b.sales;
+
+
+            case "orders-desc":
+
+                return b.orderCount - a.orderCount;
+
+
+            case "orders-asc":
+
+                return a.orderCount - b.orderCount;
+
+
+            case "name-asc":
+
+                return a.name.localeCompare(
+                    b.name,
+                    "pt"
+                );
+
+
+            case "sales-desc":
+
+            default:
+
+                return b.sales - a.sales;
+
+        }
+
+    });
+
+
+    displayedCampaigns = result;
+
+    renderCampaigns();
+
+}
+
+
+// ============================================================
+// 11. AFFICHAGE DES CARTES
+// ============================================================
+
+function renderCampaigns() {
+
+    if (!affiliateSalesList) {
+        return;
+    }
+
+
+    if (affiliateResultsCount) {
+
+        affiliateResultsCount.textContent =
+            displayedCampaigns.length === 1
+                ? "1 resultado"
+                : displayedCampaigns.length + " resultados";
+
+    }
+
+
+    if (displayedCampaigns.length === 0) {
+
+        affiliateSalesList.innerHTML = `
+            <div class="affiliateEmptyState">
+
+                <span class="material-symbols-rounded">
+                    search_off
+                </span>
+
+                <h3>Nenhuma venda encontrada</h3>
+
+                <p>
+                    Não existem resultados para os filtros selecionados.
+                </p>
+
+                <button
+                    type="button"
+                    class="affiliateRetryButton"
+                    data-action="reset-filters"
+                >
+                    Limpar filtros
+                </button>
+
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    affiliateSalesList.innerHTML =
+        displayedCampaigns.map(
+            campaign => renderCampaignCard(campaign)
+        ).join("");
+
+}
+
+
+function renderCampaignCard(campaign) {
+
+    const isAffiliate =
+        campaign.type === "affiliate";
+
+    const badgeClass = isAffiliate
+        ? "affiliateCampaignBadge"
+        : "couponCampaignBadge";
+
+    const badgeText = isAffiliate
+        ? "Afiliado"
+        : "Outro cupom";
+
+    const icon = isAffiliate
+        ? "person"
+        : "sell";
+
+    const commissionText = isAffiliate
+        ? `
+            <div class="affiliateCampaignMetric">
+
+                <span>Comissão estimada</span>
+
+                <strong>
+                    ${escapeHtml(formatMoney(campaign.commission))}
+                </strong>
+
+            </div>
+        `
+        : "";
+
+
+    return `
+        <article
+            class="affiliateCampaignCard"
+            data-campaign-id="${escapeHtml(campaign.id)}"
+        >
+
+            <div class="affiliateCampaignCardHeader">
+
+                <div class="affiliateCampaignIcon">
+
+                    <span class="material-symbols-rounded">
+                        ${icon}
+                    </span>
+
+                </div>
+
+                <div class="affiliateCampaignIdentity">
+
+                    <span class="${badgeClass}">
+                        ${badgeText}
+                    </span>
+
+                    <h3>
+                        ${escapeHtml(campaign.name)}
+                    </h3>
+
+                    <p>
+                        Cupom:
+                        <strong>
+                            ${escapeHtml(campaign.coupon || "—")}
+                        </strong>
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="affiliateCampaignMetrics">
+
+                <div class="affiliateCampaignMetric">
+
+                    <span>Vendas</span>
+
+                    <strong>
+                        ${escapeHtml(formatMoney(campaign.sales))}
+                    </strong>
+
+                </div>
+
+
+                <div class="affiliateCampaignMetric">
+
+                    <span>Pedidos</span>
+
+                    <strong>
+                        ${campaign.orderCount}
+                    </strong>
+
+                </div>
+
+                ${commissionText}
+
+            </div>
+
+
+            <button
+                type="button"
+                class="affiliateCampaignDetailsButton"
+                data-action="details"
+                data-campaign-id="${escapeHtml(campaign.id)}"
+            >
+
+                Ver pedidos
+
+                <span class="material-symbols-rounded">
+                    arrow_forward
+                </span>
+
+            </button>
+
+        </article>
+    `;
+
+}
+
+
+// ============================================================
+// 12. FENÊTRE DES DÉTAILS
+// ============================================================
+
+function openCampaignDetails(campaignId) {
+
+    const campaign = campaignById.get(
+        campaignId
+    );
+
+    if (!campaign || !affiliateSalesModal) {
+
+        showToast(
+            "Não foi possível abrir os detalhes.",
+            "error"
+        );
+
+        return;
+
+    }
+
+    currentModalCampaign = campaign;
+
+
+    if (affiliateModalTitle) {
+
+        affiliateModalTitle.textContent =
+            campaign.name;
+
+    }
+
+    if (affiliateModalSubtitle) {
+
+        affiliateModalSubtitle.textContent =
+            "Cupom: " + (campaign.coupon || "—");
+
+    }
+
+    if (affiliateModalSales) {
+
+        affiliateModalSales.textContent =
+            formatMoney(campaign.sales);
+
+    }
+
+    if (affiliateModalOrders) {
+
+        affiliateModalOrders.textContent =
+            String(campaign.orderCount);
+
+    }
+
+    if (affiliateModalCommission) {
+
+        if (campaign.type === "affiliate") {
+
+            affiliateModalCommission.textContent =
+                formatMoney(campaign.commission);
+
+            showElement(affiliateModalCommission);
+
+        } else {
+
+            affiliateModalCommission.textContent = "—";
+
+        }
+
+    }
+
+    if (affiliateOrderSearch) {
+
+        affiliateOrderSearch.value = "";
+
+    }
+
+
+    renderModalOrders(campaign.orders);
+
+    showElement(affiliateSalesModal);
+
+    affiliateSalesModal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+    document.body.classList.add(
+        "affiliateModalOpen"
+    );
+
+}
+
+
+function closeCampaignDetails() {
+
+    if (!affiliateSalesModal) {
+        return;
+    }
+
+    hideElement(affiliateSalesModal);
+
+    affiliateSalesModal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+    document.body.classList.remove(
+        "affiliateModalOpen"
+    );
+
+    currentModalCampaign = null;
+
+}
+
+
+// ============================================================
+// 13. COMMANDES DANS LA FENÊTRE DES DÉTAILS
+// ============================================================
+
+function renderModalOrders(campaignOrders) {
+
+    if (!affiliateModalOrdersList) {
+        return;
+    }
+
+    const searchTerm = normalizeText(
+        affiliateOrderSearch?.value
+    );
+
+
+    const result = campaignOrders.filter(
+        order => {
+
+            if (!searchTerm) {
+                return true;
+            }
+
+            const searchableText = normalizeText(
+                [
+                    getOrderNumber(order),
+                    getCustomerName(order),
+                    order.status,
+                    getText(
+                        order.couponCode,
+                        order.coupon,
+                        order.couponName
+                    )
+                ].join(" ")
+            );
+
+            return searchableText.includes(searchTerm);
+
+        }
+    );
+
+
+    if (result.length === 0) {
+
+        affiliateModalOrdersList.innerHTML = `
+            <div class="affiliateEmptyState">
+
+                <span class="material-symbols-rounded">
+                    search_off
+                </span>
+
+                <h3>Nenhum pedido encontrado</h3>
+
+                <p>
+                    Experimente outra pesquisa.
+                </p>
+
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    /*
+     * Trier les commandes par date, de la plus récente
+     * à la plus ancienne.
+     */
+
+    result.sort((a, b) => {
+
+        const dateA = getOrderDate(
+            a.createdAt
+        );
+
+        const dateB = getOrderDate(
+            b.createdAt
+        );
+
+        return (dateB?.getTime() || 0) -
+               (dateA?.getTime() || 0);
+
+    });
+
+
+    affiliateModalOrdersList.innerHTML =
+        result.map(
+            order => renderOrderRow(order)
+        ).join("");
+
+}
+
+
+function renderOrderRow(order) {
+
+    const status = getText(
+        order.status
+    ) || "Indisponível";
+
+    const normalizedStatus = normalizeText(
+        status
+    );
+
+    let statusClass = "affiliateOrderStatus";
+
+    if (normalizedStatus === "confirmado") {
+
+        statusClass += " confirmed";
+
+    } else if (normalizedStatus === "entregue") {
+
+        statusClass += " delivered";
+
+    }
+
+
+    const coupon = getText(
+        order.couponCode,
+        order.coupon,
+        order.couponName
+    );
+
+
+    return `
+        <article class="affiliateOrderRow">
+
+            <div class="affiliateOrderMain">
+
+                <strong>
+                    #${escapeHtml(getOrderNumber(order))}
+                </strong>
+
+                <span>
+                    ${escapeHtml(getCustomerName(order))}
+                </span>
+
+                <small>
+                    ${escapeHtml(formatDate(order.createdAt))}
+                </small>
+
+            </div>
+
+
+            <div class="affiliateOrderInfo">
+
+                <strong>
+                    ${escapeHtml(formatMoney(getOrderTotal(order)))}
+                </strong>
+
+                <span class="${statusClass}">
+                    ${escapeHtml(status)}
+                </span>
+
+                <small>
+                    Cupom:
+                    ${escapeHtml(coupon || "—")}
+                </small>
+
+            </div>
+
+        </article>
+    `;
+
+}
+
+
+// ============================================================
+// 14. ÉVÉNEMENTS : RECHERCHE ET FILTRES
+// ============================================================
+
+if (affiliateSalesSearch) {
+
+    affiliateSalesSearch.addEventListener(
+        "input",
+        () => {
+
+            applyFiltersAndRender();
+
+        }
+    );
+
+}
+
+
+if (clearAffiliateSearch) {
+
+    clearAffiliateSearch.addEventListener(
+        "click",
+        () => {
+
+            if (affiliateSalesSearch) {
+
+                affiliateSalesSearch.value = "";
+
+                affiliateSalesSearch.focus();
+
+            }
+
+            applyFiltersAndRender();
+
+        }
+    );
+
+}
+
+
+if (affiliateSalesType) {
+
+    affiliateSalesType.addEventListener(
+        "change",
+        applyFiltersAndRender
+    );
+
+}
+
+
+if (affiliateSalesSort) {
+
+    affiliateSalesSort.addEventListener(
+        "change",
+        applyFiltersAndRender
+    );
+
+}
+
+
+function resetFilters() {
+
+    if (affiliateSalesSearch) {
+
+        affiliateSalesSearch.value = "";
+
+    }
+
+    if (affiliateSalesType) {
+
+        affiliateSalesType.value = "all";
+
+    }
+
+    if (affiliateSalesSort) {
+
+        affiliateSalesSort.value = "sales-desc";
+
+    }
+
+    applyFiltersAndRender();
+
+}
+
+
+if (resetAffiliateFilters) {
+
+    resetAffiliateFilters.addEventListener(
+        "click",
+        resetFilters
+    );
+
+}
+
+
+// ============================================================
+// 15. ÉVÉNEMENTS : CARTES ET NOUVELLES ACTIONS
+// ============================================================
+
+if (affiliateSalesList) {
+
+    affiliateSalesList.addEventListener(
+        "click",
+        event => {
+
+            const button = event.target.closest(
+                "button[data-action]"
+            );
+
+            if (!button) {
+                return;
+            }
+
+            const action = button.dataset.action;
+
+
+            if (action === "details") {
+
+                openCampaignDetails(
+                    button.dataset.campaignId
+                );
+
+            }
+
+
+            if (action === "retry") {
+
+                loadAffiliateSales();
+
+            }
+
+
+            if (action === "reset-filters") {
+
+                resetFilters();
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// 16. ÉVÉNEMENTS : ACTUALISATION ET MESSAGES
+// ============================================================
+
+if (refreshAffiliateSales) {
+
+    refreshAffiliateSales.addEventListener(
+        "click",
+        async () => {
+
+            if (isLoading) {
+                return;
+            }
+
+            await loadAffiliateSales();
+
+            showToast(
+                "Atualização concluída.",
+                "success"
+            );
+
+        }
+    );
+
+}
+
+
+if (closeAffiliateStatus) {
+
+    closeAffiliateStatus.addEventListener(
+        "click",
+        closeStatusMessage
+    );
+
+}
+
+
+// ============================================================
+// 17. ÉVÉNEMENTS : FENÊTRE DES DÉTAILS
+// ============================================================
+
+if (closeAffiliateSalesModal) {
+
+    closeAffiliateSalesModal.addEventListener(
+        "click",
+        closeCampaignDetails
+    );
+
+}
+
+
+if (closeAffiliateSalesModalFooter) {
+
+    closeAffiliateSalesModalFooter.addEventListener(
+        "click",
+        closeCampaignDetails
+    );
+
+}
+
+
+if (affiliateSalesModal) {
+
+    affiliateSalesModal.addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target.matches(
+                    "[data-close-affiliate-modal]"
+                )
+            ) {
+
+                closeCampaignDetails();
+
+            }
+
+        }
+    );
+
+}
+
+
+if (affiliateOrderSearch) {
+
+    affiliateOrderSearch.addEventListener(
+        "input",
+        () => {
+
+            if (currentModalCampaign) {
+
+                renderModalOrders(
+                    currentModalCampaign.orders
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Escape" &&
+            currentModalCampaign
+        ) {
+
+            closeCampaignDetails();
+
+        }
+
+    }
+);
+
+
+// ============================================================
+// 18. AUTHENTIFICATION
+// ============================================================
+
+onAuthStateChanged(
+    auth,
+    async user => {
+
+        if (!user) {
+
+            window.location.href = "login.html";
+
+            return;
+
+        }
+
+        merchantId = user.uid;
+
+        await loadAffiliateSales();
+
+    }
+);
+
+
+// ============================================================
+// FIN DU FICHIER
+// ============================================================
