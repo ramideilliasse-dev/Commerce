@@ -525,6 +525,152 @@ height:70px;
     border:1px solid #f1dfb5;
 
 }
+/* =========================================
+   TOMA — ORDER STATUS
+========================================= */
+
+.orderStatusMessage {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    width: 100%;
+    margin: 18px 0;
+    padding: 18px;
+    border: 1px solid transparent;
+    border-radius: 18px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+    animation: tomaStatusIn 0.25s ease;
+}
+
+.orderStatusMessage[hidden] {
+    display: none !important;
+}
+
+.orderStatusIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    border-radius: 14px;
+}
+
+.orderStatusIcon .material-symbols-rounded {
+    font-size: 28px;
+}
+
+.orderStatusContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.orderStatusContent strong {
+    display: block;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.orderStatusContent p {
+    margin-top: 7px;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.orderStatusNumber {
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.orderStatusOrdersBtn {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 11px 16px;
+    border-radius: 12px;
+    background: #15803d;
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.orderStatusOrdersBtn[hidden] {
+    display: none !important;
+}
+
+/* Sucesso */
+
+.orderStatusSuccess {
+    background: #ecfdf3;
+    border-color: #bbf7d0;
+    color: #166534;
+}
+
+.orderStatusSuccess .orderStatusIcon {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+/* Erreur */
+
+.orderStatusError {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #b91c1c;
+}
+
+.orderStatusError .orderStatusIcon {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* Traitement */
+
+.orderStatusProcessing {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1d4ed8;
+}
+
+.orderStatusProcessing .orderStatusIcon {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+@keyframes tomaStatusIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 600px) {
+    .orderStatusMessage {
+        gap: 11px;
+        padding: 14px;
+        border-radius: 15px;
+    }
+
+    .orderStatusIcon {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+    }
+
+    .orderStatusContent strong {
+        font-size: 14px;
+    }
+
+    .orderStatusContent p {
+        font-size: 12px;
+    }
+}
 </style>
 
 </head>
@@ -776,106 +922,51 @@ OBSERVAÇÕES
 
 </button>
 
-
-<!-- =========================================================
-     BLOC 22 — NOTIFICAÇÃO WHATSAPP DO COMERCIANTE
-========================================================= -->
+<!-- =========================================
+     TOMA — ESTADO DA ENCOMENDA
+========================================= -->
 
 <div
-    id="merchantWhatsappAction"
+    id="orderStatusMessage"
+    class="orderStatusMessage"
+    role="status"
+    aria-live="polite"
     hidden
-    style="
-        margin-top:20px;
-        padding:20px;
-        border-radius:18px;
-        background:#ffffff;
-        border:1px solid #e5e7eb;
-        box-shadow:0 8px 30px rgba(0,0,0,0.08);
-        text-align:center;
-    ">
-
-    <div
-        style="
-            font-size:32px;
-            margin-bottom:10px;
-        ">
-
-        📱
-
+>
+    <div class="orderStatusIcon">
+        <span
+            id="orderStatusIcon"
+            class="material-symbols-rounded"
+        >check_circle</span>
     </div>
 
+    <div class="orderStatusContent">
 
-    <h3
-        style="
-            margin:0 0 8px;
-            font-size:18px;
-            color:#111827;
-        ">
+        <strong id="orderStatusTitle">
+            Pedido realizado com sucesso!
+        </strong>
 
-        Pedido registrado com sucesso
+        <p id="orderStatusText">
+            A sua encomenda foi registada no Toma.
+        </p>
 
-    </h3>
+        <p
+            id="orderStatusNumber"
+            class="orderStatusNumber"
+            hidden
+        ></p>
 
+        <a
+            id="orderStatusOrdersBtn"
+            class="orderStatusOrdersBtn"
+            href="my-orders.html"
+            hidden
+        >
+            Ver meus pedidos →
+        </a>
 
-    <p
-        id="merchantWhatsappActionMessage"
-        style="
-            margin:0 0 18px;
-            color:#6b7280;
-            font-size:14px;
-            line-height:1.5;
-        ">
-
-        O comerciante pode ser notificado pelo WhatsApp.
-
-    </p>
-
-
-    <a
-        id="notifyMerchantWhatsAppBtn"
-        href="#"
-        target="_blank"
-        rel="noopener noreferrer"
-        style="
-            display:block;
-            width:100%;
-            box-sizing:border-box;
-            padding:14px 18px;
-            border-radius:12px;
-            background:#25D366;
-            color:#ffffff;
-            text-decoration:none;
-            font-weight:700;
-            font-size:15px;
-            margin-bottom:10px;
-        ">
-
-        📱 Notificar o comerciante pelo WhatsApp
-
-    </a>
-
-
-    <button
-        id="continueToMyOrdersBtn"
-        type="button"
-        style="
-            width:100%;
-            padding:13px 18px;
-            border-radius:12px;
-            border:1px solid #d1d5db;
-            background:#ffffff;
-            color:#374151;
-            font-weight:600;
-            font-size:14px;
-            cursor:pointer;
-        ">
-
-        📦 Ver meus pedidos
-
-    </button>
-
+    </div>
 </div>
-
 
 <!-- =========================
 LOADER
