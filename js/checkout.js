@@ -107,7 +107,109 @@ const couponCode =
 const couponInfo =
     document.getElementById("couponInfo");
 
+/* =====================================================
+   TOMA — MENSAGEM DE RESULTADO DO PEDIDO
+===================================================== */
 
+function showOrderResult(
+    type,
+    title,
+    message,
+    orderNumber = ""
+) {
+    const box = document.getElementById(
+        "orderResultMessage"
+    );
+
+    const icon = document.getElementById(
+        "orderResultIcon"
+    );
+
+    const titleElement = document.getElementById(
+        "orderResultTitle"
+    );
+
+    const textElement = document.getElementById(
+        "orderResultText"
+    );
+
+    const numberElement = document.getElementById(
+        "orderResultNumber"
+    );
+
+    const ordersButton = document.getElementById(
+        "orderResultOrdersButton"
+    );
+
+    if (
+        !box ||
+        !icon ||
+        !titleElement ||
+        !textElement ||
+        !numberElement
+    ) {
+        showToast(message, type === "success" ? "success" : "error");
+        return;
+    }
+
+    box.classList.remove(
+        "orderResultSuccess",
+        "orderResultError",
+        "orderResultWarning"
+    );
+
+    const styles = {
+        success: {
+            className: "orderResultSuccess",
+            icon: "✓"
+        },
+        error: {
+            className: "orderResultError",
+            icon: "!"
+        },
+        warning: {
+            className: "orderResultWarning",
+            icon: "!"
+        }
+    };
+
+    const style = styles[type] || styles.warning;
+
+    box.classList.add(style.className);
+
+    icon.textContent = style.icon;
+    titleElement.textContent = title;
+    textElement.textContent = message;
+
+    numberElement.textContent = orderNumber
+        ? "Número do pedido: " + orderNumber
+        : "";
+
+    if (ordersButton) {
+        ordersButton.hidden = type !== "success";
+    }
+
+    box.hidden = false;
+
+    box.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+}
+
+
+/* =====================================================
+   TOMA — BOTÃO MEUS PEDIDOS
+===================================================== */
+
+const orderResultOrdersButton =
+    document.getElementById("orderResultOrdersButton");
+
+if (orderResultOrdersButton) {
+    orderResultOrdersButton.addEventListener("click", () => {
+        window.location.href = "my-orders.html";
+    });
+}
 /* =========================================================
    AUTH
 ========================================================= */
@@ -1078,34 +1180,30 @@ async function placeOrder() {
         );
 
 
-        /* =================================================
+               /* =================================================
            NETTOYER LE PANIER
         ================================================= */
 
-        localStorage.removeItem(
-            "checkoutCart"
-        );
-
-        localStorage.removeItem(
-            "cart"
-        );
-
+        localStorage.removeItem("checkoutCart");
+        localStorage.removeItem("cart");
 
         cart = [];
 
-
         /* =================================================
-           SUCCÈS
+           SUCCÈS — COMMANDE ENREGISTRÉE
         ================================================= */
 
-        showToast(
+        showOrderResult(
+            "success",
             "Pedido realizado com sucesso!",
-            "success"
+            "A sua encomenda foi registada. Pode acompanhar o estado do pedido na secção Meus Pedidos.",
+            orderNumber
         );
 
+        renderCheckout();
 
         console.log(
-            "TOMA — Pedido criado:",
+            "TOMA — Pedido criado com sucesso:",
             {
                 orderNumber,
                 subtotal,
@@ -1117,43 +1215,22 @@ async function placeOrder() {
             }
         );
 
-
-        /*
-         * On peut maintenant afficher
-         * l'écran de succès existant
-         * s'il existe dans ton HTML.
-         */
-
-        const successSection =
-            document.getElementById(
-                "orderSuccess"
-            );
-
-
-        if (successSection) {
-
-            successSection.hidden =
-                false;
-
-        }
-
-
     }
 
     catch (error) {
 
-        console.error(
-            "TOMA — Erreur création commande:",
-            error
-        );
+    console.error(
+        "TOMA — Erreur création commande:",
+        error
+    );
 
+    showOrderResult(
+        "error",
+        "Não foi possível concluir o pedido",
+        "A encomenda não foi confirmada. Verifique a sua ligação à Internet e tente novamente."
+    );
 
-        showToast(
-            "Erro ao enviar pedido",
-            "error"
-        );
-
-    }
+}
 
     finally {
 
