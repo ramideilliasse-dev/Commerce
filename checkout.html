@@ -525,150 +525,116 @@ height:70px;
     border:1px solid #f1dfb5;
 
 }
-/* =========================================
-   TOMA — ORDER STATUS
-========================================= */
+/* =====================================================
+   TOMA — MENSAGEM DE RESULTADO DO PEDIDO
+===================================================== */
 
-.orderStatusMessage {
+.orderResultMessage {
     display: flex;
     align-items: flex-start;
-    gap: 14px;
+    gap: 13px;
     width: 100%;
-    margin: 18px 0;
+    margin-top: 20px;
     padding: 18px;
-    border: 1px solid transparent;
-    border-radius: 18px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
-    animation: tomaStatusIn 0.25s ease;
+    border-radius: 16px;
+    box-sizing: border-box;
+    animation: orderMessageAppear .3s ease;
 }
 
-.orderStatusMessage[hidden] {
+.orderResultMessage[hidden] {
     display: none !important;
 }
 
-.orderStatusIcon {
+.orderResultIcon {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 46px;
-    height: 46px;
-    min-width: 46px;
-    border-radius: 14px;
+    font-size: 25px;
+    font-weight: bold;
 }
 
-.orderStatusIcon .material-symbols-rounded {
-    font-size: 28px;
-}
-
-.orderStatusContent {
+.orderResultContent {
     flex: 1;
     min-width: 0;
 }
 
-.orderStatusContent strong {
-    display: block;
+.orderResultContent h3 {
+    margin: 2px 0 7px;
     font-size: 16px;
-    font-weight: 700;
     line-height: 1.4;
 }
 
-.orderStatusContent p {
-    margin-top: 7px;
+.orderResultContent p {
+    margin: 0;
     font-size: 13px;
     line-height: 1.6;
+    overflow-wrap: anywhere;
 }
 
-.orderStatusNumber {
+.orderResultNumber {
+    display: block;
+    margin-top: 10px;
+    font-size: 12px;
     font-weight: 700;
     overflow-wrap: anywhere;
 }
 
-.orderStatusOrdersBtn {
-    display: inline-block;
+.orderResultSuccess {
+    background: #edf9f1;
+    border: 1px solid #ccebd7;
+    color: #218447;
+}
+
+.orderResultSuccess .orderResultIcon {
+    background: #d5f3df;
+}
+
+.orderResultError {
+    background: #fff1f1;
+    border: 1px solid #f3d0d0;
+    color: #c93636;
+}
+
+.orderResultError .orderResultIcon {
+    background: #ffe0e0;
+}
+
+.orderResultWarning {
+    background: #fff8eb;
+    border: 1px solid #f1dfb5;
+    color: #9a6500;
+}
+
+.orderResultWarning .orderResultIcon {
+    background: #ffedc8;
+}
+
+.orderResultButton {
+    width: 100%;
     margin-top: 14px;
-    padding: 11px 16px;
+    padding: 13px 16px;
+    border: none;
     border-radius: 12px;
-    background: #15803d;
-    color: white;
-    font-size: 13px;
+    background: #ff6a00;
+    color: #fff;
+    font-size: 14px;
     font-weight: 700;
-    text-decoration: none;
+    cursor: pointer;
 }
 
-.orderStatusOrdersBtn[hidden] {
-    display: none !important;
-}
-
-/* Sucesso */
-
-.orderStatusSuccess {
-    background: #ecfdf3;
-    border-color: #bbf7d0;
-    color: #166534;
-}
-
-.orderStatusSuccess .orderStatusIcon {
-    background: #dcfce7;
-    color: #16a34a;
-}
-
-/* Erreur */
-
-.orderStatusError {
-    background: #fef2f2;
-    border-color: #fecaca;
-    color: #b91c1c;
-}
-
-.orderStatusError .orderStatusIcon {
-    background: #fee2e2;
-    color: #dc2626;
-}
-
-/* Traitement */
-
-.orderStatusProcessing {
-    background: #eff6ff;
-    border-color: #bfdbfe;
-    color: #1d4ed8;
-}
-
-.orderStatusProcessing .orderStatusIcon {
-    background: #dbeafe;
-    color: #2563eb;
-}
-
-@keyframes tomaStatusIn {
+@keyframes orderMessageAppear {
     from {
         opacity: 0;
-        transform: translateY(6px);
+        transform: translateY(8px);
     }
 
     to {
         opacity: 1;
         transform: translateY(0);
-    }
-}
-
-@media (max-width: 600px) {
-    .orderStatusMessage {
-        gap: 11px;
-        padding: 14px;
-        border-radius: 15px;
-    }
-
-    .orderStatusIcon {
-        width: 40px;
-        height: 40px;
-        min-width: 40px;
-    }
-
-    .orderStatusContent strong {
-        font-size: 14px;
-    }
-
-    .orderStatusContent p {
-        font-size: 12px;
     }
 }
 </style>
@@ -922,50 +888,46 @@ OBSERVAÇÕES
 
 </button>
 
-<!-- =========================================
-     TOMA — ESTADO DA ENCOMENDA
-========================================= -->
+<!-- =====================================================
+     TOMA — RESULTADO DA ENCOMENDA
+===================================================== -->
 
 <div
-    id="orderStatusMessage"
-    class="orderStatusMessage"
-    role="status"
-    aria-live="polite"
+    id="orderResultMessage"
+    class="orderResultMessage"
     hidden
->
-    <div class="orderStatusIcon">
+    role="status"
+    aria-live="polite">
+
+    <div
+        id="orderResultIcon"
+        class="orderResultIcon">
+        ✓
+    </div>
+
+    <div class="orderResultContent">
+
+        <h3 id="orderResultTitle">
+            Pedido realizado
+        </h3>
+
+        <p id="orderResultText"></p>
+
         <span
-            id="orderStatusIcon"
-            class="material-symbols-rounded"
-        >check_circle</span>
-    </div>
+            id="orderResultNumber"
+            class="orderResultNumber">
+        </span>
 
-    <div class="orderStatusContent">
-
-        <strong id="orderStatusTitle">
-            Pedido realizado com sucesso!
-        </strong>
-
-        <p id="orderStatusText">
-            A sua encomenda foi registada no Toma.
-        </p>
-
-        <p
-            id="orderStatusNumber"
-            class="orderStatusNumber"
-            hidden
-        ></p>
-
-        <a
-            id="orderStatusOrdersBtn"
-            class="orderStatusOrdersBtn"
-            href="my-orders.html"
-            hidden
-        >
-            Ver meus pedidos →
-        </a>
+        <button
+            id="orderResultOrdersButton"
+            class="orderResultButton"
+            type="button"
+            hidden>
+            Ver meus pedidos
+        </button>
 
     </div>
+
 </div>
 
 <!-- =========================
