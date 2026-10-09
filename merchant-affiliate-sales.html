@@ -2,139 +2,809 @@
 <html lang="pt">
 
 <head>
+    <meta charset="UTF-8">
 
-<meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="theme-color"
+        content="#101828"
+    >
 
-<title>Vendas dos Influenciadores | Toma</title>
+    <meta
+        name="description"
+        content="Painel de vendas de influenciadores e cupons da Toma."
+    >
 
-<link rel="stylesheet" href="merchant-dashboard-v2.css">
+    <title>Vendas de Afiliados | Toma</title>
 
-<link rel="stylesheet" href="merchant-affiliate-sales.css">
+    <!-- CSS DO PAINEL DO COMERCIANTE -->
+    <link
+        rel="stylesheet"
+        href="merchant-dashboard-v2.css"
+    >
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- CSS DESTA PÁGINA -->
+    <link
+        rel="stylesheet"
+        href="merchant-affiliate-sales.css"
+    >
 
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
+    <!-- FONTES -->
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
+        rel="stylesheet"
+    >
 </head>
 
 <body>
 
-<div class="productsPage">
+<div class="productsPage affiliateDashboard">
 
-<header class="productsHeader">
+    <!-- =====================================
+         CABEÇALHO
+    ====================================== -->
 
-<div class="leftHeader">
+    <header class="productsHeader affiliateHeader">
 
-<a href="merchant-dashboard-v2.html" class="backButton">
+        <div class="leftHeader affiliateHeaderLeft">
 
-<span class="material-symbols-rounded">
+            <a
+                href="merchant-dashboard-v2.html"
+                class="backButton"
+                aria-label="Voltar ao painel"
+            >
+                <span class="material-symbols-rounded">
+                    arrow_back
+                </span>
+            </a>
 
-arrow_back
+            <div class="affiliateHeaderText">
 
-</span>
+                <span class="affiliateEyebrow">
+                    PAINEL COMERCIAL
+                </span>
 
-</a>
+                <h1>
+                    Vendas de Afiliados
+                </h1>
 
-<div>
+                <p>
+                    Acompanhe o desempenho dos influenciadores
+                    e das campanhas de cupons da sua loja.
+                </p>
 
-<h1>
+            </div>
 
-Vendas dos Influenciadores
+        </div>
 
-</h1>
+        <div class="affiliateHeaderActions">
 
-<p>
+            <button
+                type="button"
+                id="refreshAffiliateSales"
+                class="affiliateRefreshButton"
+            >
 
-Veja o desempenho dos seus parceiros.
+                <span class="material-symbols-rounded">
+                    refresh
+                </span>
 
-</p>
+                <span>
+                    Atualizar
+                </span>
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================
+         ESTADO DE CARREGAMENTO
+    ====================================== -->
+
+    <div
+        id="affiliateLoading"
+        class="affiliateLoading"
+        role="status"
+        aria-live="polite"
+        hidden
+    >
+
+        <span class="affiliateLoadingSpinner"></span>
+
+        <div>
+            <strong>
+                A carregar as vendas...
+            </strong>
+
+            <p>
+                Estamos a atualizar os dados da sua loja.
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- =====================================
+         MENSAGEM DE ESTADO
+    ====================================== -->
+
+    <div
+        id="affiliateStatusMessage"
+        class="affiliateStatusMessage"
+        role="status"
+        aria-live="polite"
+        hidden
+    >
+
+        <span
+            id="affiliateStatusIcon"
+            class="material-symbols-rounded"
+        >
+            info
+        </span>
+
+        <div class="affiliateStatusContent">
+
+            <strong id="affiliateStatusTitle">
+                Informação
+            </strong>
+
+            <p id="affiliateStatusText"></p>
+
+        </div>
+
+        <button
+            type="button"
+            id="closeAffiliateStatus"
+            class="affiliateStatusClose"
+            aria-label="Fechar mensagem"
+        >
+
+            <span class="material-symbols-rounded">
+                close
+            </span>
+
+        </button>
+
+    </div>
+
+
+    <!-- =====================================
+         INDICADORES PRINCIPAIS
+    ====================================== -->
+
+    <section
+        class="salesSummary affiliateStatsGrid"
+        aria-label="Resumo das vendas"
+    >
+
+        <!-- VENDAS DOS INFLUENCIADORES -->
+
+        <article class="summaryCard affiliateStatCard statAffiliateSales">
+
+            <div class="affiliateStatTop">
+
+                <div class="affiliateStatIcon">
+                    <span class="material-symbols-rounded">
+                        trending_up
+                    </span>
+                </div>
+
+                <span class="affiliateStatLabel">
+                    Influenciadores
+                </span>
+
+            </div>
+
+            <p class="affiliateStatTitle">
+                Vendas dos Influenciadores
+            </p>
+
+            <h2 id="totalAffiliateSales">
+                0 Kz
+            </h2>
+
+            <p class="affiliateStatDescription">
+                Vendas atribuídas aos cupons dos parceiros.
+            </p>
+
+        </article>
+
+
+        <!-- PEDIDOS DOS INFLUENCIADORES -->
+
+        <article class="summaryCard affiliateStatCard statAffiliateOrders">
+
+            <div class="affiliateStatTop">
+
+                <div class="affiliateStatIcon">
+                    <span class="material-symbols-rounded">
+                        shopping_bag
+                    </span>
+                </div>
+
+                <span class="affiliateStatLabel">
+                    Pedidos
+                </span>
+
+            </div>
+
+            <p class="affiliateStatTitle">
+                Pedidos Confirmados
+            </p>
+
+            <h2 id="totalAffiliateOrders">
+                0
+            </h2>
+
+            <p class="affiliateStatDescription">
+                Pedidos confirmados ou entregues.
+            </p>
+
+        </article>
+
+
+        <!-- COMISSÕES -->
+
+        <article class="summaryCard affiliateStatCard statAffiliateCommission">
+
+            <div class="affiliateStatTop">
+
+                <div class="affiliateStatIcon">
+                    <span class="material-symbols-rounded">
+                        account_balance_wallet
+                    </span>
+                </div>
+
+                <span class="affiliateStatLabel">
+                    Comissões
+                </span>
+
+            </div>
+
+            <p class="affiliateStatTitle">
+                Comissão Estimada
+            </p>
+
+            <h2 id="totalAffiliateCommission">
+                0 Kz
+            </h2>
+
+            <p class="affiliateStatDescription">
+                Comissão calculada sobre as vendas elegíveis.
+            </p>
+
+        </article>
+
+
+        <!-- VENDAS POR CUPONS -->
+
+        <article class="summaryCard affiliateStatCard statCouponSales">
+
+            <div class="affiliateStatTop">
+
+                <div class="affiliateStatIcon">
+                    <span class="material-symbols-rounded">
+                        sell
+                    </span>
+                </div>
+
+                <span class="affiliateStatLabel">
+                    Campanhas
+                </span>
+
+            </div>
+
+            <p class="affiliateStatTitle">
+                Vendas por Cupons
+            </p>
+
+            <h2 id="totalCouponSales">
+                0 Kz
+            </h2>
+
+            <p class="affiliateStatDescription">
+                Vendas confirmadas com qualquer cupom.
+            </p>
+
+        </article>
+
+
+        <!-- PEDIDOS COM CUPONS -->
+
+        <article class="summaryCard affiliateStatCard statCouponOrders">
+
+            <div class="affiliateStatTop">
+
+                <div class="affiliateStatIcon">
+                    <span class="material-symbols-rounded">
+                        receipt_long
+                    </span>
+                </div>
+
+                <span class="affiliateStatLabel">
+                    Pedidos com cupom
+                </span>
+
+            </div>
+
+            <p class="affiliateStatTitle">
+                Pedidos por Cupons
+            </p>
+
+            <h2 id="totalCouponOrders">
+                0
+            </h2>
+
+            <p class="affiliateStatDescription">
+                Pedidos confirmados que utilizaram um cupom.
+            </p>
+
+        </article>
+
+
+        <!-- OUTROS CUPONS -->
+
+        <article class="summaryCard affiliateStatCard statOtherCouponSales">
+
+            <div class="affiliateStatTop">
+
+                <div class="affiliateStatIcon">
+                    <span class="material-symbols-rounded">
+                        confirmation_number
+                    </span>
+                </div>
+
+                <span class="affiliateStatLabel">
+                    Outros cupons
+                </span>
+
+            </div>
+
+            <p class="affiliateStatTitle">
+                Vendas de Outros Cupons
+            </p>
+
+            <h2 id="totalOtherCouponSales">
+                0 Kz
+            </h2>
+
+            <p class="affiliateStatDescription">
+                Vendas de cupons não associados a influenciadores.
+            </p>
+
+        </article>
+
+    </section>
+
+
+    <!-- =====================================
+         FILTROS E PESQUISA
+    ====================================== -->
+
+    <section
+        class="affiliateToolbar"
+        aria-label="Pesquisar e filtrar vendas"
+    >
+
+        <div class="affiliateToolbarHeading">
+
+            <div>
+
+                <span class="affiliateEyebrow">
+                    ANÁLISE COMERCIAL
+                </span>
+
+                <h2>
+                    Desempenho das Campanhas
+                </h2>
+
+                <p>
+                    Pesquise, filtre e compare os resultados.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="affiliateFilters">
+
+            <!-- PESQUISA -->
+
+            <div class="affiliateSearchBox">
+
+                <span class="material-symbols-rounded">
+                    search
+                </span>
+
+                <input
+                    type="search"
+                    id="affiliateSalesSearch"
+                    placeholder="Pesquisar influenciador ou cupom..."
+                    autocomplete="off"
+                    aria-label="Pesquisar por influenciador ou cupom"
+                >
+
+                <button
+                    type="button"
+                    id="clearAffiliateSearch"
+                    class="affiliateClearSearch"
+                    aria-label="Limpar pesquisa"
+                    hidden
+                >
+
+                    <span class="material-symbols-rounded">
+                        close
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <!-- FILTRO DE TIPO -->
+
+            <div class="affiliateFilterField">
+
+                <label for="affiliateSalesType">
+                    Tipo de campanha
+                </label>
+
+                <select id="affiliateSalesType">
+
+                    <option value="all">
+                        Todas as campanhas
+                    </option>
+
+                    <option value="affiliate">
+                        Influenciadores
+                    </option>
+
+                    <option value="coupon">
+                        Outros cupons
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- ORDENAÇÃO -->
+
+            <div class="affiliateFilterField">
+
+                <label for="affiliateSalesSort">
+                    Ordenar por
+                </label>
+
+                <select id="affiliateSalesSort">
+
+                    <option value="sales-desc">
+                        Maior volume de vendas
+                    </option>
+
+                    <option value="sales-asc">
+                        Menor volume de vendas
+                    </option>
+
+                    <option value="orders-desc">
+                        Mais pedidos
+                    </option>
+
+                    <option value="orders-asc">
+                        Menos pedidos
+                    </option>
+
+                    <option value="name-asc">
+                        Nome ou código A–Z
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- LIMPAR FILTROS -->
+
+            <button
+                type="button"
+                id="resetAffiliateFilters"
+                class="affiliateResetButton"
+            >
+
+                <span class="material-symbols-rounded">
+                    filter_alt_off
+                </span>
+
+                Limpar filtros
+
+            </button>
+
+        </div>
+
+
+        <!-- RESULTADO DA PESQUISA -->
+
+        <div class="affiliateResultsMeta">
+
+            <p id="affiliateResultsCount">
+                A preparar os resultados...
+            </p>
+
+            <span class="affiliateResultsIndicator">
+
+                <span class="affiliateResultsDot"></span>
+
+                Dados da sua loja
+
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+         LISTA DAS VENDAS
+    ====================================== -->
+
+    <main
+        id="affiliateSalesList"
+        class="affiliateSalesList"
+        aria-label="Resultados das campanhas"
+    >
+
+        <!-- ESTADO INICIAL -->
+
+        <div class="emptyCard affiliateEmptyState">
+
+            <div class="affiliateEmptyIcon">
+
+                <span class="material-symbols-rounded">
+                    monitoring
+                </span>
+
+            </div>
+
+            <h2>
+                A preparar o painel
+            </h2>
+
+            <p>
+                As vendas confirmadas dos influenciadores
+                e dos outros cupons aparecerão aqui.
+            </p>
+
+        </div>
+
+    </main>
+
+
+    <!-- =====================================
+         MODAL: DETALHES DAS VENDAS
+    ====================================== -->
+
+    <div
+        id="affiliateSalesModal"
+        class="affiliateModal"
+        hidden
+        aria-hidden="true"
+    >
+
+        <div
+            class="affiliateModalOverlay"
+            data-close-affiliate-modal
+        ></div>
+
+        <section
+            class="affiliateModalPanel"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="affiliateModalTitle"
+        >
+
+            <header class="affiliateModalHeader">
+
+                <div>
+
+                    <span class="affiliateEyebrow">
+                        DETALHES DA CAMPANHA
+                    </span>
+
+                    <h2 id="affiliateModalTitle">
+                        Detalhes das vendas
+                    </h2>
+
+                    <p id="affiliateModalSubtitle">
+                        Consulte os pedidos desta campanha.
+                    </p>
+
+                </div>
+
+                <button
+                    type="button"
+                    id="closeAffiliateSalesModal"
+                    class="affiliateModalClose"
+                    aria-label="Fechar detalhes"
+                >
+
+                    <span class="material-symbols-rounded">
+                        close
+                    </span>
+
+                </button>
+
+            </header>
+
+
+            <!-- RESUMO DO MODAL -->
+
+            <div
+                id="affiliateModalSummary"
+                class="affiliateModalSummary"
+            >
+
+                <div class="affiliateModalMetric">
+
+                    <span>
+                        Vendas
+                    </span>
+
+                    <strong id="affiliateModalSales">
+                        0 Kz
+                    </strong>
+
+                </div>
+
+                <div class="affiliateModalMetric">
+
+                    <span>
+                        Pedidos
+                    </span>
+
+                    <strong id="affiliateModalOrders">
+                        0
+                    </strong>
+
+                </div>
+
+                <div class="affiliateModalMetric">
+
+                    <span>
+                        Comissão estimada
+                    </span>
+
+                    <strong id="affiliateModalCommission">
+                        0 Kz
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- PESQUISA DOS PEDIDOS -->
+
+            <div class="affiliateModalSearch">
+
+                <span class="material-symbols-rounded">
+                    search
+                </span>
+
+                <input
+                    type="search"
+                    id="affiliateOrderSearch"
+                    placeholder="Pesquisar por número do pedido ou cliente..."
+                    autocomplete="off"
+                    aria-label="Pesquisar pedidos da campanha"
+                >
+
+            </div>
+
+
+            <!-- LISTA DOS PEDIDOS -->
+
+            <div
+                id="affiliateModalOrdersList"
+                class="affiliateModalOrdersList"
+            >
+
+                <div class="affiliateModalEmpty">
+
+                    <span class="material-symbols-rounded">
+                        receipt_long
+                    </span>
+
+                    <p>
+                        Selecione uma campanha para consultar os pedidos.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <footer class="affiliateModalFooter">
+
+                <button
+                    type="button"
+                    id="closeAffiliateSalesModalFooter"
+                    class="affiliateModalFooterButton"
+                >
+
+                    Fechar
+
+                </button>
+
+            </footer>
+
+        </section>
+
+    </div>
+
+
+    <!-- =====================================
+         NOTIFICAÇÃO DISCRETA
+    ====================================== -->
+
+    <div
+        id="affiliateToast"
+        class="affiliateToast"
+        role="status"
+        aria-live="polite"
+        hidden
+    >
+
+        <span
+            id="affiliateToastIcon"
+            class="material-symbols-rounded"
+        >
+            check_circle
+        </span>
+
+        <span id="affiliateToastText">
+            Informação atualizada.
+        </span>
+
+    </div>
+
 
 </div>
 
-</div>
 
-</header>
+<!-- =====================================
+     JAVASCRIPT DA PÁGINA
+====================================== -->
 
-<section class="salesSummary">
+<script
+    type="module"
+    src="./js/merchant-affiliate-sales.js"
+></script>
 
-<div class="summaryCard">
-
-<h3>Vendas dos Influenciadores</h3>
-
-<h2 id="totalAffiliateSales">
-0 Kz
-</h2>
-
-</div>
-
-<div class="summaryCard">
-
-<h3>Pedidos dos Influenciadores</h3>
-
-<h2 id="totalAffiliateOrders">
-0
-</h2>
-
-</div>
-
-<div class="summaryCard">
-
-<h3>Comissões</h3>
-
-<h2 id="totalAffiliateCommission">
-0 Kz
-</h2>
-
-</div>
-
-<div class="summaryCard">
-
-<h3>Vendas por Cupons</h3>
-
-<h2 id="totalCouponSales">
-0 Kz
-</h2>
-
-</div>
-
-</section>
-<section
-id="affiliateSalesList"
-class="affiliateSalesList">
-
-<div class="emptyCard">
-
-<span class="material-symbols-rounded">
-
-monitoring
-
-</span>
-
-<h2>
-
-Nenhuma venda
-
-</h2>
-
-<p>
-
-As vendas dos influenciadores aparecerão aqui.
-
-</p>
-
-</div>
-
-</section>
-
-</div>
-
-<script type="module"
-
-src="./js/merchant-affiliate-sales.js">
-
-</script>
 
 </body>
 
