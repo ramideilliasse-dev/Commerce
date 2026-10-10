@@ -1,7 +1,8 @@
- /* =====================================================
+ /* =========================================================
    TOMA — AFFILIATE SALES DASHBOARD
-   Design premium, responsive et mobile-first
-===================================================== */
+   Version compatible avec merchant-affiliate-sales.js
+   Design premium — Responsive — Mobile-first
+========================================================= */
 
 :root {
     --affiliate-primary: #ff6a00;
@@ -41,9 +42,9 @@
 }
 
 
-/* =====================================================
+/* =========================================================
    BASE
-===================================================== */
+========================================================= */
 
 * {
     box-sizing: border-box;
@@ -84,6 +85,7 @@ select:focus-visible {
 }
 
 .material-symbols-rounded {
+    font-family: "Material Symbols Rounded";
     font-size: 23px;
     line-height: 1;
     font-weight: normal;
@@ -99,9 +101,9 @@ select:focus-visible {
 }
 
 
-/* =====================================================
-   PAGE PRINCIPALE
-===================================================== */
+/* =========================================================
+   PAGE
+========================================================= */
 
 .productsPage.affiliateDashboard {
     width: 100%;
@@ -112,9 +114,9 @@ select:focus-visible {
 }
 
 
-/* =====================================================
+/* =========================================================
    EN-TÊTE
-===================================================== */
+========================================================= */
 
 .affiliateDashboard .productsHeader {
     display: flex;
@@ -136,6 +138,7 @@ select:focus-visible {
     align-items: center;
     gap: 18px;
     min-width: 0;
+    flex: 1;
 }
 
 .affiliateDashboard .backButton {
@@ -155,10 +158,7 @@ select:focus-visible {
 
     text-decoration: none;
 
-    transition:
-        background 0.2s ease,
-        color 0.2s ease,
-        transform 0.2s ease;
+    transition: 0.2s ease;
 }
 
 .affiliateDashboard .backButton:hover {
@@ -173,7 +173,6 @@ select:focus-visible {
 
 .affiliateEyebrow {
     display: inline-block;
-
     margin-bottom: 7px;
 
     color: var(--affiliate-primary);
@@ -193,17 +192,16 @@ select:focus-visible {
     font-weight: 800;
     line-height: 1.3;
     letter-spacing: -0.7px;
+    overflow-wrap: anywhere;
 }
 
 .affiliateDashboard .affiliateHeaderText p {
     max-width: 650px;
-
     margin: 8px 0 0;
 
     color: var(--affiliate-muted);
 
     font-size: 13px;
-    font-weight: 400;
     line-height: 1.8;
 }
 
@@ -233,11 +231,7 @@ select:focus-visible {
     font-weight: 700;
 
     cursor: pointer;
-
-    transition:
-        background 0.2s ease,
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
+    transition: 0.2s ease;
 }
 
 .affiliateRefreshButton:hover {
@@ -264,16 +258,10 @@ select:focus-visible {
     animation: affiliateRotate 1s linear infinite;
 }
 
-@keyframes affiliateRotate {
-    to {
-        transform: rotate(360deg);
-    }
-}
 
-
-/* =====================================================
-   CHARGEMENT
-===================================================== */
+/* =========================================================
+   LOADING
+========================================================= */
 
 .affiliateLoading {
     display: flex;
@@ -305,26 +293,22 @@ select:focus-visible {
 
 .affiliateLoading strong {
     display: block;
-
     color: var(--affiliate-dark);
-
     font-size: 13px;
     font-weight: 700;
 }
 
 .affiliateLoading p {
     margin: 5px 0 0;
-
     color: var(--affiliate-muted);
-
     font-size: 12px;
     line-height: 1.6;
 }
 
 
-/* =====================================================
-   MESSAGE D'ÉTAT
-===================================================== */
+/* =========================================================
+   MESSAGES
+========================================================= */
 
 .affiliateStatusMessage {
     display: flex;
@@ -343,6 +327,24 @@ select:focus-visible {
     animation: affiliateAppear 0.25s ease;
 }
 
+.affiliateStatusMessage[data-type="success"] {
+    background: var(--affiliate-green-light);
+    border-color: #ccebd9;
+    color: #087443;
+}
+
+.affiliateStatusMessage[data-type="error"] {
+    background: var(--affiliate-red-light);
+    border-color: #ffd4d8;
+    color: #b42332;
+}
+
+.affiliateStatusMessage[data-type="warning"] {
+    background: var(--affiliate-yellow-light);
+    border-color: #f5dfac;
+    color: #875700;
+}
+
 .affiliateStatusMessage > .material-symbols-rounded {
     flex-shrink: 0;
     margin-top: 1px;
@@ -355,17 +357,14 @@ select:focus-visible {
 
 .affiliateStatusContent strong {
     display: block;
-
     font-size: 13px;
     font-weight: 700;
 }
 
 .affiliateStatusContent p {
     margin: 5px 0 0;
-
     font-size: 12px;
     line-height: 1.7;
-
     overflow-wrap: anywhere;
 }
 
@@ -376,7 +375,6 @@ select:focus-visible {
 
     width: 30px;
     height: 30px;
-
     flex-shrink: 0;
 
     border: 0;
@@ -392,14 +390,10 @@ select:focus-visible {
     background: rgba(37, 99, 235, 0.15);
 }
 
-.affiliateStatusClose .material-symbols-rounded {
-    font-size: 18px;
-}
 
-
-/* =====================================================
-   CARTES STATISTIQUES
-===================================================== */
+/* =========================================================
+   STATISTIQUES
+========================================================= */
 
 .affiliateDashboard .salesSummary.affiliateStatsGrid {
     display: grid;
@@ -422,7 +416,6 @@ select:focus-visible {
     padding: 23px;
 
     overflow: hidden;
-
     text-align: left;
 
     background: var(--affiliate-white);
@@ -432,17 +425,13 @@ select:focus-visible {
 
     box-shadow: var(--affiliate-shadow);
 
-    transition:
-        transform 0.25s ease,
-        box-shadow 0.25s ease,
-        border-color 0.25s ease;
+    transition: 0.25s ease;
 }
 
 .affiliateDashboard .summaryCard.affiliateStatCard::after {
     content: "";
 
     position: absolute;
-
     top: -43px;
     right: -43px;
 
@@ -450,11 +439,9 @@ select:focus-visible {
     height: 105px;
 
     border-radius: 50%;
-
     background: var(--stat-decoration, #fff1e6);
 
     opacity: 0.7;
-
     pointer-events: none;
 }
 
@@ -481,7 +468,6 @@ select:focus-visible {
 .affiliateStatIcon {
     width: 47px;
     height: 47px;
-
     flex-shrink: 0;
 
     display: flex;
@@ -506,6 +492,7 @@ select:focus-visible {
     align-items: center;
     justify-content: center;
 
+    max-width: 65%;
     padding: 6px 10px;
 
     border-radius: 30px;
@@ -516,8 +503,8 @@ select:focus-visible {
     font-size: 10px;
     font-weight: 700;
     line-height: 1.5;
-
     text-align: center;
+    overflow-wrap: anywhere;
 }
 
 .affiliateDashboard .affiliateStatTitle {
@@ -538,7 +525,6 @@ select:focus-visible {
     z-index: 1;
 
     max-width: 100%;
-
     margin: 0;
 
     color: var(--affiliate-dark);
@@ -546,7 +532,6 @@ select:focus-visible {
     font-size: clamp(23px, 2.1vw, 31px);
     font-weight: 800;
     line-height: 1.35;
-
     letter-spacing: -0.8px;
 
     overflow-wrap: anywhere;
@@ -562,12 +547,8 @@ select:focus-visible {
     color: #98a2b3;
 
     font-size: 10px;
-    font-weight: 400;
     line-height: 1.7;
 }
-
-
-/* Couleurs des statistiques */
 
 .statAffiliateSales {
     --stat-color: #e85f00;
@@ -600,16 +581,15 @@ select:focus-visible {
 }
 
 
-/* =====================================================
+/* =========================================================
    BARRE DE RECHERCHE ET FILTRES
-===================================================== */
+========================================================= */
 
 .affiliateToolbar {
     margin-top: 35px;
     padding: 25px;
 
     background: var(--affiliate-white);
-
     border: 1px solid var(--affiliate-border);
     border-radius: 22px;
 
@@ -627,9 +607,7 @@ select:focus-visible {
 
 .affiliateToolbarHeading h2 {
     margin: 0;
-
     color: var(--affiliate-dark);
-
     font-size: 21px;
     font-weight: 800;
     line-height: 1.5;
@@ -638,9 +616,7 @@ select:focus-visible {
 
 .affiliateToolbarHeading p {
     margin: 5px 0 0;
-
     color: var(--affiliate-muted);
-
     font-size: 12px;
     line-height: 1.7;
 }
@@ -673,9 +649,7 @@ select:focus-visible {
 
     background: #ffffff;
 
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
+    transition: 0.2s ease;
 }
 
 .affiliateSearchBox:focus-within {
@@ -685,9 +659,7 @@ select:focus-visible {
 
 .affiliateSearchBox > .material-symbols-rounded {
     flex-shrink: 0;
-
     color: #98a2b3;
-
     font-size: 21px;
 }
 
@@ -702,7 +674,6 @@ select:focus-visible {
     outline: none;
 
     background: transparent;
-
     color: var(--affiliate-dark);
 
     font-size: 12px;
@@ -719,7 +690,6 @@ select:focus-visible {
 .affiliateClearSearch {
     width: 28px;
     height: 28px;
-
     flex-shrink: 0;
 
     display: flex;
@@ -735,10 +705,6 @@ select:focus-visible {
     cursor: pointer;
 }
 
-.affiliateClearSearch .material-symbols-rounded {
-    font-size: 17px;
-}
-
 .affiliateFilterField {
     min-width: 0;
 
@@ -749,7 +715,6 @@ select:focus-visible {
 
 .affiliateFilterField label {
     color: #475467;
-
     font-size: 11px;
     font-weight: 700;
 }
@@ -770,7 +735,6 @@ select:focus-visible {
     color: var(--affiliate-dark);
 
     font-size: 11px;
-
     cursor: pointer;
 }
 
@@ -799,13 +763,8 @@ select:focus-visible {
     font-weight: 700;
 
     white-space: nowrap;
-
     cursor: pointer;
-
-    transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        color 0.2s ease;
+    transition: 0.2s ease;
 }
 
 .affiliateResetButton:hover {
@@ -819,9 +778,9 @@ select:focus-visible {
 }
 
 
-/* =====================================================
-   NOMBRE DE RÉSULTATS
-===================================================== */
+/* =========================================================
+   RÉSULTATS
+========================================================= */
 
 .affiliateResultsMeta {
     display: flex;
@@ -838,11 +797,8 @@ select:focus-visible {
 
 .affiliateResultsMeta > p {
     margin: 0;
-
     color: var(--affiliate-muted);
-
     font-size: 11px;
-    font-weight: 500;
     line-height: 1.7;
 }
 
@@ -852,7 +808,6 @@ select:focus-visible {
     gap: 8px;
 
     color: #667085;
-
     font-size: 10px;
     font-weight: 600;
 }
@@ -860,432 +815,321 @@ select:focus-visible {
 .affiliateResultsDot {
     width: 7px;
     height: 7px;
-
     border-radius: 50%;
 
     background: var(--affiliate-green);
-
     box-shadow: 0 0 0 4px rgba(22, 163, 106, 0.1);
 }
 
 
-/* =====================================================
+/* =========================================================
    LISTE DES CAMPAGNES
-===================================================== */
+========================================================= */
 
 .affiliateDashboard .affiliateSalesList {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-
     gap: 15px;
 
     margin-top: 22px;
-}
-
-.affiliateSectionHeading {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-
-    margin: 17px 0 4px;
-    padding: 0 2px;
-}
-
-.affiliateSectionHeading h2 {
-    margin: 0;
-
-    color: var(--affiliate-dark);
-
-    font-size: 19px;
-    font-weight: 800;
-    line-height: 1.5;
-}
-
-.affiliateSectionHeading p {
-    margin: 5px 0 0;
-
-    color: var(--affiliate-muted);
-
-    font-size: 11px;
-    line-height: 1.8;
-}
-
-.affiliateSectionCount {
-    flex-shrink: 0;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    min-width: 34px;
-    height: 34px;
-
-    padding: 0 10px;
-
-    border-radius: 11px;
-
-    background: #ffffff;
-    border: 1px solid var(--affiliate-border);
-
-    color: var(--affiliate-dark);
-
-    font-size: 12px;
-    font-weight: 800;
+    min-width: 0;
 }
 
 
-/* =====================================================
-   CARTES INFLUENCEURS ET COUPONS
-===================================================== */
+/* =========================================================
+   CARTES GÉNÉRÉES PAR LE JAVASCRIPT ACTUEL
 
-.affiliateDashboard .affiliateSaleCard {
+   Classes exactes :
+   .affiliateCampaignCard
+   .affiliateCampaignCardHeader
+   .affiliateCampaignIcon
+   .affiliateCampaignIdentity
+   .affiliateCampaignBadge
+   .couponCampaignBadge
+   .affiliateCampaignMetrics
+   .affiliateCampaignMetric
+   .affiliateCampaignDetailsButton
+========================================================= */
+
+.affiliateDashboard .affiliateCampaignCard {
     position: relative;
 
     width: 100%;
     min-width: 0;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 25px;
-
-    padding: 24px;
+    padding: 23px;
 
     background: var(--affiliate-white);
-
     border: 1px solid var(--affiliate-border);
     border-radius: 21px;
 
     box-shadow: var(--affiliate-shadow);
 
     transition:
-        transform 0.25s ease,
-        box-shadow 0.25s ease,
-        border-color 0.25s ease;
+        transform 0.22s ease,
+        box-shadow 0.22s ease,
+        border-color 0.22s ease;
+
+    animation: affiliateAppear 0.25s ease;
 }
 
-.affiliateDashboard .affiliateSaleCard:hover {
+.affiliateDashboard .affiliateCampaignCard:hover {
     transform: translateY(-3px);
-
     box-shadow: var(--affiliate-shadow-hover);
-
     border-color: #ffd5ba;
 }
 
-.affiliateDashboard .saleLeft {
-    min-width: 0;
-    flex: 1;
-
+.affiliateCampaignCardHeader {
     display: flex;
     align-items: center;
-    gap: 17px;
+    gap: 15px;
+
+    min-width: 0;
+    margin-bottom: 23px;
 }
 
-.affiliateDashboard .saleAvatar {
-    width: 62px;
-    height: 62px;
-
+.affiliateCampaignIcon {
+    width: 55px;
+    height: 55px;
     flex-shrink: 0;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    overflow: hidden;
+    border-radius: 17px;
 
-    border: 1px solid rgba(255, 106, 0, 0.12);
-    border-radius: 19px;
-
-    background:
-        linear-gradient(145deg, #ff8a3d, #ff6a00);
-
-    color: #ffffff;
-
-    font-size: 25px;
-    font-weight: 800;
+    background: var(--affiliate-primary-light);
+    color: var(--affiliate-primary);
 }
 
-.affiliateDashboard .saleAvatar .material-symbols-rounded {
+.affiliateCampaignIcon .material-symbols-rounded {
     font-size: 28px;
 }
 
-.affiliateDashboard .saleInfo {
+.affiliateCampaignCard:has(.couponCampaignBadge) .affiliateCampaignIcon {
+    background: var(--affiliate-blue-light);
+    color: var(--affiliate-blue);
+}
+
+.affiliateCampaignIdentity {
     min-width: 0;
     flex: 1;
 }
 
-.affiliateDashboard .saleInfo h3 {
-    margin: 0 0 7px;
+.affiliateCampaignIdentity h3 {
+    margin: 4px 0 5px;
 
     color: var(--affiliate-dark);
-
     font-size: 17px;
     font-weight: 800;
     line-height: 1.5;
 
     overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
-.affiliateDashboard .saleInfo p {
-    margin: 4px 0;
+.affiliateCampaignIdentity p {
+    margin: 0;
 
     color: var(--affiliate-muted);
-
     font-size: 11px;
     line-height: 1.8;
 
     overflow-wrap: anywhere;
 }
 
-.affiliateDashboard .saleInfo strong {
-    color: #344054;
-    font-weight: 700;
-}
-
-.affiliateDashboard .saleCoupon {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-
-    max-width: 100%;
-
-    margin-top: 9px;
-    padding: 7px 12px;
-
-    border: 1px dashed #ffc49e;
-    border-radius: 9px;
-
-    background: var(--affiliate-primary-light);
+.affiliateCampaignIdentity p strong {
     color: var(--affiliate-primary-dark);
-
-    font-size: 10px;
     font-weight: 800;
-    letter-spacing: 0.5px;
-
-    overflow-wrap: anywhere;
-    word-break: break-word;
 }
 
-.affiliateDashboard .saleRight {
-    min-width: 180px;
-    flex-shrink: 0;
-
-    text-align: right;
-}
-
-.affiliateDashboard .saleRight h2 {
-    margin: 0 0 7px;
-
-    color: var(--affiliate-green);
-
-    font-size: clamp(20px, 2vw, 27px);
-    font-weight: 800;
-    line-height: 1.4;
-    letter-spacing: -0.5px;
-
-    overflow-wrap: anywhere;
-}
-
-.affiliateDashboard .saleRight p {
-    margin: 4px 0;
-
-    color: var(--affiliate-muted);
-
-    font-size: 11px;
-    line-height: 1.7;
-}
-
-.affiliateCommissionLabel {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-
-    margin-top: 7px;
-    padding: 6px 9px;
-
-    border-radius: 9px;
-
-    background: var(--affiliate-green-light);
-    color: #087443;
-
-    font-size: 10px;
-    font-weight: 700;
-}
-
-.affiliateCommissionLabel .material-symbols-rounded {
-    font-size: 15px;
-}
-
-.affiliateSaleCardActions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-    gap: 9px;
-
-    margin-top: 12px;
-}
-
-.affiliateDashboard .viewSalesBtn {
+.affiliateCampaignBadge,
+.couponCampaignBadge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 7px;
-
-    min-height: 41px;
-
-    margin-top: 0;
-    padding: 0 14px;
-
-    border: 1px solid var(--affiliate-blue);
-    border-radius: 11px;
-
-    background: var(--affiliate-blue);
-    color: #ffffff;
-
-    font-size: 11px;
-    font-weight: 700;
-
-    cursor: pointer;
-
-    transition:
-        background 0.2s ease,
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-.affiliateDashboard .viewSalesBtn:hover {
-    background: #1d4ed8;
-
-    box-shadow: 0 5px 15px rgba(37, 99, 235, 0.18);
-
-    transform: translateY(-1px);
-}
-
-.affiliateDashboard .viewSalesBtn .material-symbols-rounded {
-    font-size: 18px;
-}
-
-.affiliateDashboard .viewSalesBtn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-}
-
-
-/* =====================================================
-   BADGES DE TYPE
-===================================================== */
-
-.affiliateTypeBadge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
 
     width: fit-content;
     max-width: 100%;
 
-    margin-bottom: 7px;
-    padding: 5px 9px;
+    padding: 5px 10px;
 
     border-radius: 8px;
 
     font-size: 9px;
     font-weight: 800;
-    letter-spacing: 0.35px;
     line-height: 1.5;
 }
 
-.affiliateTypeBadgeInfluencer {
+.affiliateCampaignBadge {
     background: var(--affiliate-purple-light);
     color: var(--affiliate-purple);
 }
 
-.affiliateTypeBadgeCoupon {
+.couponCampaignBadge {
     background: var(--affiliate-blue-light);
     color: var(--affiliate-blue);
 }
 
 
-/* =====================================================
-   ÉTAT VIDE
-===================================================== */
+/* Métriques des cartes */
 
-.affiliateDashboard .emptyCard.affiliateEmptyState,
-.affiliateDashboard .emptyCard {
+.affiliateCampaignMetrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 11px;
+
+    min-width: 0;
+    padding-top: 18px;
+
+    border-top: 1px solid #f0f1f4;
+}
+
+.affiliateCampaignMetric {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 7px;
+}
+
+.affiliateCampaignMetric > span {
+    color: var(--affiliate-muted);
+    font-size: 10px;
+    line-height: 1.6;
+}
+
+.affiliateCampaignMetric > strong {
+    max-width: 100%;
+
+    color: var(--affiliate-dark);
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.5;
+
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.affiliateCampaignMetric:nth-child(1) > strong {
+    color: var(--affiliate-green);
+}
+
+
+/* Bouton détails */
+
+.affiliateCampaignDetailsButton {
     width: 100%;
+    min-height: 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    margin-top: 21px;
+    padding: 11px 15px;
+
+    border: 1px solid var(--affiliate-blue);
+    border-radius: 12px;
+
+    background: var(--affiliate-blue);
+    color: #ffffff;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.affiliateCampaignDetailsButton:hover {
+    background: #1d4ed8;
+    box-shadow: 0 5px 15px rgba(37, 99, 235, 0.18);
+}
+
+.affiliateCampaignDetailsButton:active {
+    transform: scale(0.99);
+}
+
+.affiliateCampaignDetailsButton .material-symbols-rounded {
+    font-size: 19px;
+}
+
+
+/* =========================================================
+   ÉTAT VIDE ET ERREURS
+========================================================= */
+
+.affiliateDashboard .affiliateEmptyState {
+    width: 100%;
+    min-width: 0;
 
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 
-    padding: 45px 25px;
+    padding: 42px 23px;
 
     text-align: center;
 
     background: var(--affiliate-white);
-
     border: 1px dashed #d8dee8;
     border-radius: 22px;
 
     box-shadow: none;
 }
 
-.affiliateEmptyIcon {
-    width: 76px;
-    height: 76px;
+.affiliateEmptyState > .material-symbols-rounded {
+    width: 70px;
+    height: 70px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    margin-bottom: 19px;
+    margin-bottom: 17px;
 
-    border-radius: 24px;
+    border-radius: 22px;
 
     background: var(--affiliate-primary-light);
     color: var(--affiliate-primary);
+
+    font-size: 35px;
 }
 
-.affiliateEmptyIcon .material-symbols-rounded {
-    font-size: 37px;
-}
-
-.affiliateDashboard .emptyCard h2 {
+.affiliateDashboard .affiliateEmptyState h3 {
     margin: 0;
 
     color: var(--affiliate-dark);
-
     font-size: 18px;
     font-weight: 800;
     line-height: 1.5;
 }
 
-.affiliateDashboard .emptyCard p {
+.affiliateDashboard .affiliateEmptyState p {
     max-width: 440px;
-
     margin: 9px 0 0;
 
     color: var(--affiliate-muted);
-
     font-size: 12px;
     line-height: 1.9;
 }
 
-.affiliateEmptyAction {
+.affiliateRetryButton {
+    min-height: 43px;
+
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
 
-    min-height: 42px;
+    margin-top: 19px;
+    padding: 0 18px;
 
-    margin-top: 18px;
-    padding: 0 16px;
-
-    border: 0;
+    border: 1px solid var(--affiliate-primary);
     border-radius: 11px;
 
     background: var(--affiliate-primary);
@@ -1295,64 +1139,21 @@ select:focus-visible {
     font-weight: 700;
 
     cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.affiliateRetryButton:hover {
+    background: var(--affiliate-primary-dark);
 }
 
 
-/* =====================================================
-   RÉSULTATS VIDES APRÈS FILTRAGE
-===================================================== */
-
-.affiliateNoResults {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    padding: 36px 20px;
-
-    text-align: center;
-
-    background: #ffffff;
-
-    border: 1px dashed #d8dee8;
-    border-radius: 18px;
-}
-
-.affiliateNoResults > .material-symbols-rounded {
-    margin-bottom: 12px;
-
-    color: #98a2b3;
-
-    font-size: 36px;
-}
-
-.affiliateNoResults h3 {
-    margin: 0;
-
-    color: var(--affiliate-dark);
-
-    font-size: 15px;
-    font-weight: 800;
-}
-
-.affiliateNoResults p {
-    margin: 8px 0 0;
-
-    color: var(--affiliate-muted);
-
-    font-size: 11px;
-    line-height: 1.8;
-}
-
-
-/* =====================================================
-   MODAL DES COMMANDES
-===================================================== */
+/* =========================================================
+   MODAL
+========================================================= */
 
 .affiliateModal {
     position: fixed;
     z-index: 9999;
-
     inset: 0;
 
     display: flex;
@@ -1360,8 +1161,9 @@ select:focus-visible {
     justify-content: center;
 
     padding: 20px;
-
     overflow-y: auto;
+
+    background: transparent;
 }
 
 .affiliateModalOverlay {
@@ -1390,7 +1192,6 @@ select:focus-visible {
     overflow: hidden;
 
     background: #ffffff;
-
     border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 23px;
 
@@ -1414,17 +1215,17 @@ select:focus-visible {
     margin: 0;
 
     color: var(--affiliate-dark);
-
     font-size: 21px;
     font-weight: 800;
     line-height: 1.5;
+
+    overflow-wrap: anywhere;
 }
 
 .affiliateModalHeader p {
     margin: 6px 0 0;
 
     color: var(--affiliate-muted);
-
     font-size: 11px;
     line-height: 1.8;
 }
@@ -1432,7 +1233,6 @@ select:focus-visible {
 .affiliateModalClose {
     width: 39px;
     height: 39px;
-
     flex-shrink: 0;
 
     display: flex;
@@ -1453,10 +1253,6 @@ select:focus-visible {
     color: var(--affiliate-dark);
 }
 
-.affiliateModalClose .material-symbols-rounded {
-    font-size: 20px;
-}
-
 .affiliateModalSummary {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1465,7 +1261,6 @@ select:focus-visible {
     padding: 20px 24px;
 
     background: #fafbfc;
-
     border-bottom: 1px solid #f0f1f4;
 }
 
@@ -1486,21 +1281,21 @@ select:focus-visible {
 
 .affiliateModalMetric > span {
     color: var(--affiliate-muted);
-
     font-size: 10px;
-    font-weight: 500;
     line-height: 1.7;
 }
 
 .affiliateModalMetric > strong {
     color: var(--affiliate-dark);
-
     font-size: 17px;
     font-weight: 800;
     line-height: 1.5;
 
     overflow-wrap: anywhere;
 }
+
+
+/* Recherche dans le modal */
 
 .affiliateModalSearch {
     display: flex;
@@ -1532,7 +1327,6 @@ select:focus-visible {
     outline: none;
 
     background: transparent;
-
     color: var(--affiliate-dark);
 
     font-size: 11px;
@@ -1542,6 +1336,9 @@ select:focus-visible {
     outline: none;
 }
 
+
+/* Liste des commandes */
+
 .affiliateModalOrdersList {
     min-height: 120px;
     padding: 0 24px 20px;
@@ -1550,106 +1347,87 @@ select:focus-visible {
     overscroll-behavior: contain;
 }
 
-.affiliateModalEmpty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
 
-    padding: 25px 15px;
+/* Classes réellement générées par le JavaScript */
 
-    text-align: center;
-}
-
-.affiliateModalEmpty .material-symbols-rounded {
-    color: #98a2b3;
-    font-size: 34px;
-}
-
-.affiliateModalEmpty p {
-    margin: 10px 0 0;
-
-    color: var(--affiliate-muted);
-
-    font-size: 11px;
-    line-height: 1.8;
-}
-
-
-/* Carte de commande dans le modal */
-
-.affiliateOrderCard {
+.affiliateOrderRow {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: 16px;
 
     margin-top: 10px;
-    padding: 15px;
+    padding: 16px;
 
     border: 1px solid var(--affiliate-border);
     border-radius: 14px;
 
     background: #ffffff;
 
-    transition:
-        background 0.2s ease,
-        border-color 0.2s ease;
+    transition: background 0.2s ease;
 }
 
-.affiliateOrderCard:hover {
+.affiliateOrderRow:hover {
     background: #fafbfc;
-    border-color: #d9dee8;
 }
 
+.affiliateOrderMain,
 .affiliateOrderInfo {
     min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.affiliateOrderMain {
     flex: 1;
 }
 
-.affiliateOrderInfo h3 {
-    margin: 0 0 5px;
-
+.affiliateOrderMain > strong {
     color: var(--affiliate-dark);
-
     font-size: 12px;
     font-weight: 800;
-
     overflow-wrap: anywhere;
 }
 
-.affiliateOrderInfo p {
-    margin: 4px 0;
+.affiliateOrderMain > span {
+    color: #344054;
+    font-size: 11px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
 
+.affiliateOrderMain > small,
+.affiliateOrderInfo > small {
     color: var(--affiliate-muted);
-
     font-size: 10px;
-    line-height: 1.7;
-
+    line-height: 1.6;
     overflow-wrap: anywhere;
 }
 
-.affiliateOrderAmount {
+.affiliateOrderInfo {
     flex-shrink: 0;
+    align-items: flex-end;
+    text-align: right;
+}
 
+.affiliateOrderInfo > strong {
     color: var(--affiliate-green);
-
     font-size: 13px;
     font-weight: 800;
-
-    text-align: right;
-
     overflow-wrap: anywhere;
 }
 
 .affiliateOrderStatus {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
 
-    margin-top: 7px;
-    padding: 5px 8px;
+    padding: 5px 9px;
 
-    border-radius: 7px;
+    border-radius: 8px;
 
     background: var(--affiliate-green-light);
     color: #087443;
@@ -1658,16 +1436,18 @@ select:focus-visible {
     font-weight: 800;
 }
 
-.affiliateOrderStatus.statusCancelled,
-.affiliateOrderStatus.statusPending {
-    background: var(--affiliate-yellow-light);
-    color: var(--affiliate-yellow);
+.affiliateOrderStatus.confirmed {
+    background: var(--affiliate-blue-light);
+    color: var(--affiliate-blue);
 }
 
-.affiliateOrderStatus.statusFailed {
-    background: var(--affiliate-red-light);
-    color: var(--affiliate-red);
+.affiliateOrderStatus.delivered {
+    background: var(--affiliate-green-light);
+    color: #087443;
 }
+
+
+/* Pied du modal */
 
 .affiliateModalFooter {
     display: flex;
@@ -1676,13 +1456,11 @@ select:focus-visible {
     padding: 16px 24px;
 
     border-top: 1px solid #f0f1f4;
-
     background: #ffffff;
 }
 
 .affiliateModalFooterButton {
     min-height: 42px;
-
     padding: 0 19px;
 
     border: 1px solid #e4e7ec;
@@ -1702,9 +1480,9 @@ select:focus-visible {
 }
 
 
-/* =====================================================
+/* =========================================================
    TOAST
-===================================================== */
+========================================================= */
 
 .affiliateToast {
     position: fixed;
@@ -1736,18 +1514,40 @@ select:focus-visible {
     animation: affiliateAppear 0.25s ease;
 }
 
+.affiliateToast[data-type="error"] {
+    border-color: #ffd4d8;
+    color: #b42332;
+}
+
+.affiliateToast[data-type="warning"] {
+    border-color: #f5dfac;
+    color: #875700;
+}
+
 .affiliateToast .material-symbols-rounded {
     flex-shrink: 0;
-
-    color: var(--affiliate-green);
-
     font-size: 22px;
 }
 
 
-/* =====================================================
+/* =========================================================
+   MODAL BODY LOCK
+========================================================= */
+
+body.affiliateModalOpen {
+    overflow: hidden;
+}
+
+
+/* =========================================================
    ANIMATIONS
-===================================================== */
+========================================================= */
+
+@keyframes affiliateRotate {
+    to {
+        transform: rotate(360deg);
+    }
+}
 
 @keyframes affiliateAppear {
     from {
@@ -1784,9 +1584,9 @@ select:focus-visible {
 }
 
 
-/* =====================================================
+/* =========================================================
    TABLETTES
-===================================================== */
+========================================================= */
 
 @media (max-width: 1100px) {
 
@@ -1814,9 +1614,9 @@ select:focus-visible {
 }
 
 
-/* =====================================================
-   MOBILES ET IPHONE
-===================================================== */
+/* =========================================================
+   MOBILES
+========================================================= */
 
 @media (max-width: 650px) {
 
@@ -1824,33 +1624,29 @@ select:focus-visible {
         padding: 13px;
     }
 
+
     /* En-tête */
 
     .affiliateDashboard .productsHeader {
         align-items: flex-start;
-        gap: 14px;
+        gap: 12px;
 
-        padding: 17px;
+        padding: 16px;
 
         border-radius: 19px;
     }
 
     .affiliateDashboard .affiliateHeaderLeft {
         align-items: flex-start;
-        gap: 11px;
+        gap: 10px;
     }
 
     .affiliateDashboard .backButton {
-        width: 39px;
-        height: 39px;
-
+        width: 38px;
+        height: 38px;
         margin-top: 3px;
 
-        border-radius: 12px;
-    }
-
-    .affiliateDashboard .backButton .material-symbols-rounded {
-        font-size: 21px;
+        border-radius: 11px;
     }
 
     .affiliateEyebrow {
@@ -1870,10 +1666,6 @@ select:focus-visible {
         line-height: 1.8;
     }
 
-    .affiliateHeaderActions {
-        flex-shrink: 0;
-    }
-
     .affiliateRefreshButton {
         width: 40px;
         min-width: 40px;
@@ -1889,47 +1681,8 @@ select:focus-visible {
         display: none;
     }
 
-    .affiliateRefreshButton .material-symbols-rounded {
-        font-size: 21px;
-    }
 
-
-    /* Chargement et messages */
-
-    .affiliateLoading {
-        gap: 12px;
-        padding: 15px;
-        border-radius: 15px;
-    }
-
-    .affiliateLoadingSpinner {
-        width: 27px;
-        height: 27px;
-    }
-
-    .affiliateLoading strong {
-        font-size: 11px;
-    }
-
-    .affiliateLoading p {
-        font-size: 10px;
-    }
-
-    .affiliateStatusMessage {
-        gap: 9px;
-        padding: 13px;
-    }
-
-    .affiliateStatusContent strong {
-        font-size: 11px;
-    }
-
-    .affiliateStatusContent p {
-        font-size: 10px;
-    }
-
-
-    /* Cartes statistiques */
+    /* Statistiques : deux colonnes */
 
     .affiliateDashboard .salesSummary.affiliateStatsGrid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1940,23 +1693,19 @@ select:focus-visible {
 
     .affiliateDashboard .summaryCard.affiliateStatCard {
         min-height: 174px;
-
-        padding: 14px;
-
+        padding: 13px;
         border-radius: 16px;
     }
 
     .affiliateStatTop {
         align-items: flex-start;
         gap: 6px;
-
-        margin-bottom: 16px;
+        margin-bottom: 15px;
     }
 
     .affiliateStatIcon {
-        width: 36px;
-        height: 36px;
-
+        width: 35px;
+        height: 35px;
         border-radius: 11px;
     }
 
@@ -1965,23 +1714,19 @@ select:focus-visible {
     }
 
     .affiliateStatLabel {
-        max-width: 95px;
-
+        max-width: 62%;
         padding: 5px 7px;
-
         font-size: 8px;
-        line-height: 1.5;
     }
 
     .affiliateDashboard .affiliateStatTitle {
         margin-bottom: 7px;
-
         font-size: 10px;
         line-height: 1.7;
     }
 
     .affiliateDashboard .summaryCard.affiliateStatCard h2 {
-        font-size: clamp(17px, 4.7vw, 23px);
+        font-size: clamp(16px, 4.4vw, 23px);
         letter-spacing: -0.5px;
         line-height: 1.4;
     }
@@ -1993,12 +1738,11 @@ select:focus-visible {
     }
 
 
-    /* Recherche et filtres */
+    /* Filtres */
 
     .affiliateToolbar {
         margin-top: 23px;
         padding: 16px;
-
         border-radius: 18px;
     }
 
@@ -2008,7 +1752,6 @@ select:focus-visible {
 
     .affiliateToolbarHeading h2 {
         font-size: 17px;
-        line-height: 1.5;
     }
 
     .affiliateToolbarHeading p {
@@ -2053,149 +1796,105 @@ select:focus-visible {
         padding-top: 14px;
     }
 
-    .affiliateResultsMeta > p {
-        font-size: 10px;
-    }
-
+    .affiliateResultsMeta > p,
     .affiliateResultsIndicator {
-        font-size: 9px;
-    }
-
-
-    /* Sections */
-
-    .affiliateDashboard .affiliateSalesList {
-        gap: 12px;
-        margin-top: 17px;
-    }
-
-    .affiliateSectionHeading {
-        gap: 10px;
-        margin-top: 14px;
-    }
-
-    .affiliateSectionHeading h2 {
-        font-size: 16px;
-    }
-
-    .affiliateSectionHeading p {
-        font-size: 10px;
-    }
-
-    .affiliateSectionCount {
-        min-width: 29px;
-        height: 29px;
-
-        padding: 0 8px;
-
         font-size: 10px;
     }
 
 
-    /* Cartes des campagnes */
+    /* Cartes affiliés et coupons */
 
-    .affiliateDashboard .affiliateSaleCard {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 16px;
-
-        padding: 16px;
-
+    .affiliateDashboard .affiliateCampaignCard {
+        padding: 15px;
         border-radius: 17px;
     }
 
-    .affiliateDashboard .saleLeft {
+    .affiliateCampaignCardHeader {
         align-items: flex-start;
-        gap: 12px;
+        gap: 11px;
+        margin-bottom: 18px;
     }
 
-    .affiliateDashboard .saleAvatar {
-        width: 47px;
-        height: 47px;
-
-        border-radius: 14px;
-
-        font-size: 20px;
+    .affiliateCampaignIcon {
+        width: 43px;
+        height: 43px;
+        border-radius: 13px;
     }
 
-    .affiliateDashboard .saleAvatar .material-symbols-rounded {
+    .affiliateCampaignIcon .material-symbols-rounded {
         font-size: 23px;
     }
 
-    .affiliateDashboard .saleInfo h3 {
+    .affiliateCampaignIdentity h3 {
+        margin-top: 5px;
         font-size: 14px;
         line-height: 1.6;
     }
 
-    .affiliateDashboard .saleInfo p {
+    .affiliateCampaignIdentity p {
         font-size: 10px;
-        line-height: 1.8;
     }
 
-    .affiliateDashboard .saleCoupon {
-        margin-top: 7px;
-        padding: 6px 9px;
-
-        font-size: 9px;
+    .affiliateCampaignBadge,
+    .couponCampaignBadge {
+        padding: 4px 8px;
+        font-size: 8px;
     }
 
-    .affiliateDashboard .saleRight {
-        width: 100%;
-        min-width: 0;
-
+    .affiliateCampaignMetrics {
+        gap: 7px;
         padding-top: 14px;
-
-        border-top: 1px solid #f0f1f4;
-
-        text-align: left;
     }
 
-    .affiliateDashboard .saleRight h2 {
-        font-size: 23px;
+    .affiliateCampaignMetric {
+        gap: 6px;
     }
 
-    .affiliateDashboard .saleRight p {
-        font-size: 10px;
+    .affiliateCampaignMetric > span {
+        font-size: 9px;
+        line-height: 1.6;
     }
 
-    .affiliateSaleCardActions {
-        justify-content: stretch;
-        gap: 8px;
+    .affiliateCampaignMetric > strong {
+        font-size: clamp(10px, 3.1vw, 13px);
+        line-height: 1.5;
+        letter-spacing: -0.2px;
     }
 
-    .affiliateDashboard .viewSalesBtn {
-        width: 100%;
-        min-height: 42px;
+    .affiliateCampaignDetailsButton {
+        min-height: 43px;
+        margin-top: 16px;
+        padding: 10px;
         font-size: 11px;
     }
 
 
     /* État vide */
 
-    .affiliateDashboard .emptyCard.affiliateEmptyState,
-    .affiliateDashboard .emptyCard {
-        padding: 30px 18px;
+    .affiliateDashboard .affiliateEmptyState {
+        padding: 30px 16px;
         border-radius: 18px;
     }
 
-    .affiliateEmptyIcon {
-        width: 62px;
-        height: 62px;
-        margin-bottom: 15px;
-
-        border-radius: 19px;
+    .affiliateEmptyState > .material-symbols-rounded {
+        width: 58px;
+        height: 58px;
+        margin-bottom: 14px;
+        border-radius: 18px;
+        font-size: 29px;
     }
 
-    .affiliateEmptyIcon .material-symbols-rounded {
-        font-size: 31px;
-    }
-
-    .affiliateDashboard .emptyCard h2 {
+    .affiliateDashboard .affiliateEmptyState h3 {
         font-size: 16px;
     }
 
-    .affiliateDashboard .emptyCard p {
+    .affiliateDashboard .affiliateEmptyState p {
         font-size: 10px;
+    }
+
+    .affiliateRetryButton {
+        width: 100%;
+        max-width: 240px;
     }
 
 
@@ -2204,10 +1903,6 @@ select:focus-visible {
     .affiliateModal {
         align-items: flex-end;
         padding: 0;
-    }
-
-    .affiliateModalOverlay {
-        background: rgba(16, 24, 40, 0.62);
     }
 
     .affiliateModalPanel {
@@ -2222,11 +1917,11 @@ select:focus-visible {
 
     .affiliateModalHeader {
         gap: 12px;
-        padding: 18px;
+        padding: 17px;
     }
 
     .affiliateModalHeader h2 {
-        font-size: 18px;
+        font-size: 17px;
     }
 
     .affiliateModalHeader p {
@@ -2240,15 +1935,13 @@ select:focus-visible {
     }
 
     .affiliateModalSummary {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 7px;
-
-        padding: 13px;
+        padding: 12px;
     }
 
     .affiliateModalMetric {
         gap: 7px;
-        padding: 10px 8px;
+        padding: 9px 7px;
         border-radius: 10px;
     }
 
@@ -2258,12 +1951,11 @@ select:focus-visible {
     }
 
     .affiliateModalMetric > strong {
-        font-size: 12px;
-        line-height: 1.5;
+        font-size: 11px;
     }
 
     .affiliateModalSearch {
-        margin: 13px 13px 10px;
+        margin: 12px 12px 10px;
         padding: 0 10px;
     }
 
@@ -2273,25 +1965,35 @@ select:focus-visible {
     }
 
     .affiliateModalOrdersList {
-        padding: 0 13px 15px;
+        padding: 0 12px 15px;
     }
 
-    .affiliateOrderCard {
-        gap: 10px;
-        padding: 12px;
+    .affiliateOrderRow {
+        gap: 9px;
+        padding: 11px;
         border-radius: 12px;
     }
 
-    .affiliateOrderInfo h3 {
-        font-size: 11px;
+    .affiliateOrderMain > strong {
+        font-size: 10px;
     }
 
-    .affiliateOrderInfo p {
+    .affiliateOrderMain > span {
+        font-size: 10px;
+    }
+
+    .affiliateOrderMain > small,
+    .affiliateOrderInfo > small {
         font-size: 9px;
     }
 
-    .affiliateOrderAmount {
-        font-size: 11px;
+    .affiliateOrderInfo > strong {
+        font-size: 10px;
+    }
+
+    .affiliateOrderStatus {
+        padding: 4px 6px;
+        font-size: 8px;
     }
 
     .affiliateModalFooter {
@@ -2305,7 +2007,7 @@ select:focus-visible {
     }
 
 
-    /* Notification */
+    /* Notifications */
 
     .affiliateToast {
         right: 12px;
@@ -2314,16 +2016,15 @@ select:focus-visible {
         max-width: calc(100vw - 24px);
 
         padding: 12px 14px;
-
         font-size: 10px;
     }
 
 }
 
 
-/* =====================================================
+/* =========================================================
    TRÈS PETITS ÉCRANS
-===================================================== */
+========================================================= */
 
 @media (max-width: 360px) {
 
@@ -2332,7 +2033,7 @@ select:focus-visible {
     }
 
     .affiliateDashboard .productsHeader {
-        padding: 13px;
+        padding: 12px;
     }
 
     .affiliateDashboard .affiliateHeaderText h1 {
@@ -2344,20 +2045,27 @@ select:focus-visible {
     }
 
     .affiliateDashboard .summaryCard.affiliateStatCard {
-        padding: 11px;
+        padding: 10px;
     }
 
     .affiliateStatLabel {
-        max-width: 82px;
         font-size: 7px;
     }
 
     .affiliateDashboard .summaryCard.affiliateStatCard h2 {
-        font-size: 16px;
+        font-size: 15px;
     }
 
     .affiliateDashboard .affiliateStatDescription {
         font-size: 7px;
+    }
+
+    .affiliateCampaignMetrics {
+        gap: 5px;
+    }
+
+    .affiliateCampaignMetric > strong {
+        font-size: 10px;
     }
 
     .affiliateToolbar {
@@ -2370,19 +2078,19 @@ select:focus-visible {
     }
 
     .affiliateModalMetric {
-        padding: 8px 6px;
+        padding: 7px 5px;
     }
 
     .affiliateModalMetric > strong {
-        font-size: 10px;
+        font-size: 9px;
     }
 
 }
 
 
-/* =====================================================
-   ACCESSIBILITÉ : RÉDUCTION DES ANIMATIONS
-===================================================== */
+/* =========================================================
+   ACCESSIBILITÉ
+========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
 
