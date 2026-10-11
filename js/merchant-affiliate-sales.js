@@ -118,18 +118,23 @@ async function loadAffiliateSales() {
             }
 
             const affiliateData = {
+    id: affiliateDoc.id,
 
-                id: affiliateDoc.id,
+    name:
+        affiliate.name ||
+        affiliate.affiliateName ||
+        "Influenciador",
 
-                name:
-                    affiliate.name ||
-                    affiliate.affiliateName ||
-                    "Influenciador",
+    coupon: coupon,
 
-                coupon: coupon
-
-            };
-
+    commission: Math.max(
+        0,
+        Math.min(
+            100,
+            Number(affiliate.commission ?? 0)
+        )
+    )
+};
             affiliates.push(
                 affiliateData
             );
@@ -251,7 +256,7 @@ async function loadAffiliateSales() {
                 // actuellement 5 %
 
                 totalAffiliateCommissionValue +=
-                    orderTotal * 0.05;
+    orderTotal * (affiliate.commission / 100);
 
                 return;
 
@@ -380,8 +385,7 @@ async function loadAffiliateSales() {
                     data?.orders || 0;
 
                 const commission =
-                    sales * 0.05;
-
+    sales * (affiliate.commission / 100);
                 const firstLetter =
                     String(
                         affiliate.name || "I"
