@@ -1,251 +1,615 @@
- /* =====================================
-AFFILIATE SALES
-===================================== */
+ /* =========================================
+   TOMA — AFFILIATE SALES DASHBOARD
+   Professional responsive design
+========================================= */
 
-.salesSummary{
+:root {
+    --affiliate-primary: #ff6a00;
+    --affiliate-primary-dark: #e85d00;
+    --affiliate-primary-light: #fff3e8;
 
-display:grid;
+    --affiliate-green: #16a34a;
+    --affiliate-green-light: #ecfdf3;
 
-grid-template-columns:repeat(3,1fr);
+    --affiliate-blue: #2563eb;
+    --affiliate-blue-light: #eff6ff;
 
-gap:20px;
+    --affiliate-purple: #7c3aed;
+    --affiliate-purple-light: #f5f3ff;
 
-margin:30px 0;
-
+    --affiliate-text: #172033;
+    --affiliate-muted: #687386;
+    --affiliate-border: #e8edf3;
+    --affiliate-background: #f5f7fb;
+    --affiliate-white: #ffffff;
 }
 
-.summaryCard{
+/* =========================================
+   PAGE
+========================================= */
 
-background:#fff;
-
-padding:25px;
-
-border-radius:20px;
-
-box-shadow:0 8px 25px rgba(0,0,0,.06);
-
-text-align:center;
-
-transition:.25s;
-
+.productsPage {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 28px;
+    box-sizing: border-box;
+    color: var(--affiliate-text);
+    font-family: 'Poppins', sans-serif;
 }
 
-.summaryCard:hover{
+/* =========================================
+   HEADER
+========================================= */
 
-transform:translateY(-4px);
+.productsHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
 
+    padding: 24px 28px;
+    margin-bottom: 28px;
+
+    background: var(--affiliate-white);
+    border: 1px solid var(--affiliate-border);
+    border-radius: 22px;
+
+    box-shadow: 0 6px 24px rgba(23, 32, 51, 0.04);
 }
 
-.summaryCard h3{
-
-font-size:16px;
-
-color:#666;
-
-margin-bottom:10px;
-
+.leftHeader {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    min-width: 0;
 }
 
-.summaryCard h2{
-
-font-size:32px;
-
-font-weight:700;
-
-color:#ff6a00;
-
+.leftHeader > div {
+    min-width: 0;
 }
 
-.affiliateSalesList{
+.backButton {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
 
-display:grid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-gap:20px;
+    background: var(--affiliate-primary-light);
+    color: var(--affiliate-primary);
 
-margin-top:20px;
+    border-radius: 14px;
+    text-decoration: none;
 
+    transition: background 0.2s ease,
+                transform 0.2s ease;
 }
 
-.affiliateSaleCard{
-
-background:#fff;
-
-padding:25px;
-
-border-radius:22px;
-
-box-shadow:0 8px 25px rgba(0,0,0,.06);
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-transition:.25s;
-
+.backButton:hover {
+    background: #ffe4ce;
+    transform: translateX(-3px);
 }
 
-.affiliateSaleCard:hover{
-
-transform:translateY(-4px);
-
+.backButton .material-symbols-rounded {
+    font-size: 25px;
 }
 
-.saleLeft{
-
-display:flex;
-
-gap:18px;
-
-align-items:center;
-
+.productsHeader h1 {
+    margin: 0;
+    font-size: 25px;
+    line-height: 1.35;
+    font-weight: 700;
+    color: var(--affiliate-text);
 }
 
-.saleAvatar{
-
-width:70px;
-
-height:70px;
-
-border-radius:50%;
-
-background:#ff6a00;
-
-color:#fff;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-font-size:30px;
-
-font-weight:700;
-
+.productsHeader p {
+    margin: 7px 0 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--affiliate-muted);
 }
 
-.saleInfo h3{
+/* =========================================
+   SUMMARY CARDS
+========================================= */
 
-font-size:22px;
-
-margin-bottom:6px;
-
-color:#222;
-
+.salesSummary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+    margin: 0 0 34px;
 }
 
-.saleInfo p{
+.summaryCard {
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
 
-margin:4px 0;
+    padding: 25px 22px;
 
-color:#666;
+    background: var(--affiliate-white);
+    border: 1px solid var(--affiliate-border);
+    border-radius: 22px;
 
+    box-shadow: 0 8px 26px rgba(23, 32, 51, 0.045);
+
+    text-align: left;
+
+    transition: transform 0.22s ease,
+                box-shadow 0.22s ease;
 }
 
-.saleCoupon{
-
-display:inline-block;
-
-margin-top:10px;
-
-padding:6px 14px;
-
-background:#fff3e8;
-
-color:#ff6a00;
-
-border-radius:30px;
-
-font-weight:600;
-
-font-size:13px;
-
+.summaryCard::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--affiliate-primary);
 }
 
-.saleRight{
-
-text-align:right;
-
+.summaryCard:nth-child(2)::before {
+    background: var(--affiliate-blue);
 }
 
-.saleRight h2{
-
-font-size:26px;
-
-color:#16a34a;
-
-margin-bottom:8px;
-
+.summaryCard:nth-child(3)::before {
+    background: var(--affiliate-green);
 }
 
-.saleRight p{
-
-color:#666;
-
-margin:3px 0;
-
+.summaryCard:nth-child(4)::before {
+    background: var(--affiliate-purple);
 }
 
-.viewSalesBtn{
-
-margin-top:12px;
-
-padding:10px 18px;
-
-background:#2563eb;
-
-color:white;
-
-border:none;
-
-border-radius:12px;
-
-cursor:pointer;
-
-font-weight:600;
-
-transition:.25s;
-
+.summaryCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 34px rgba(23, 32, 51, 0.09);
 }
 
-.viewSalesBtn:hover{
+.summaryCard h3 {
+    margin: 0 0 16px;
 
-transform:translateY(-2px);
+    color: var(--affiliate-muted);
 
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.6;
 }
 
-@media(max-width:900px){
+.summaryCard h2 {
+    margin: 0;
 
-.salesSummary{
+    color: var(--affiliate-primary);
 
-grid-template-columns:1fr;
+    font-size: clamp(22px, 2vw, 30px);
+    font-weight: 700;
+    line-height: 1.35;
 
+    overflow-wrap: anywhere;
+    font-variant-numeric: tabular-nums;
 }
 
-.affiliateSaleCard{
-
-flex-direction:column;
-
-align-items:flex-start;
-
-gap:20px;
-
+.summaryCard:nth-child(2) h2 {
+    color: var(--affiliate-blue);
 }
 
-.saleRight{
-
-text-align:left;
-
-width:100%;
-
+.summaryCard:nth-child(3) h2 {
+    color: var(--affiliate-green);
 }
 
-.viewSalesBtn{
-
-width:100%;
-
+.summaryCard:nth-child(4) h2 {
+    color: var(--affiliate-purple);
 }
 
+/* =========================================
+   AFFILIATE SALES LIST
+========================================= */
+
+.affiliateSalesList {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    margin-top: 10px;
+    min-width: 0;
+}
+
+/* =========================================
+   SECTION TITLES
+========================================= */
+
+.affiliateSalesList > div:not(.affiliateSaleCard):not(.emptyCard) {
+    min-width: 0;
+}
+
+.affiliateSalesList h2 {
+    color: var(--affiliate-text);
+}
+
+/* =========================================
+   AFFILIATE CARDS
+========================================= */
+
+.affiliateSaleCard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+
+    min-width: 0;
+    padding: 25px;
+
+    background: var(--affiliate-white);
+    border: 1px solid var(--affiliate-border);
+    border-radius: 22px;
+
+    box-shadow: 0 6px 22px rgba(23, 32, 51, 0.04);
+
+    transition: transform 0.22s ease,
+                box-shadow 0.22s ease;
+}
+
+.affiliateSaleCard:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(23, 32, 51, 0.08);
+}
+
+.saleLeft {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+
+    min-width: 0;
+    flex: 1;
+}
+
+.saleAvatar {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(135deg, #ff8a3d, #ff6a00);
+    color: var(--affiliate-white);
+
+    border-radius: 20px;
+
+    font-size: 26px;
+    font-weight: 700;
+
+    box-shadow: 0 5px 14px rgba(255, 106, 0, 0.18);
+}
+
+.saleInfo {
+    min-width: 0;
+}
+
+.saleInfo h3 {
+    margin: 0 0 9px;
+
+    color: var(--affiliate-text);
+
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.5;
+
+    overflow-wrap: anywhere;
+}
+
+.saleInfo p {
+    margin: 5px 0;
+
+    color: var(--affiliate-muted);
+
+    font-size: 13px;
+    line-height: 1.7;
+
+    overflow-wrap: anywhere;
+}
+
+.saleInfo strong {
+    color: var(--affiliate-text);
+    font-weight: 600;
+}
+
+.saleCoupon {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    margin-top: 10px;
+    padding: 7px 13px;
+
+    background: var(--affiliate-primary-light);
+    color: var(--affiliate-primary-dark);
+
+    border: 1px solid #ffe0c7;
+    border-radius: 10px;
+
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+}
+
+/* =========================================
+   SALES AND COMMISSION
+========================================= */
+
+.saleRight {
+    min-width: 180px;
+    flex-shrink: 0;
+    text-align: right;
+}
+
+.saleRight h2 {
+    margin: 0 0 9px;
+
+    color: var(--affiliate-green);
+
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 1.4;
+
+    overflow-wrap: anywhere;
+    font-variant-numeric: tabular-nums;
+}
+
+.saleRight p {
+    margin: 5px 0;
+
+    color: var(--affiliate-muted);
+
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.saleRight p strong {
+    color: var(--affiliate-green);
+}
+
+/* =========================================
+   BUTTONS — IF USED
+========================================= */
+
+.viewSalesBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    margin-top: 12px;
+    padding: 11px 18px;
+
+    background: var(--affiliate-blue);
+    color: var(--affiliate-white);
+
+    border: none;
+    border-radius: 12px;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: background 0.2s ease,
+                transform 0.2s ease;
+}
+
+.viewSalesBtn:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+}
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+
+.emptyCard {
+    padding: 48px 24px;
+
+    background: var(--affiliate-white);
+    border: 1px dashed #d7dee9;
+    border-radius: 22px;
+
+    text-align: center;
+}
+
+.emptyCard > .material-symbols-rounded {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 62px;
+    height: 62px;
+
+    margin-bottom: 15px;
+
+    background: var(--affiliate-primary-light);
+    color: var(--affiliate-primary);
+
+    border-radius: 20px;
+
+    font-size: 32px;
+}
+
+.emptyCard h2 {
+    margin: 0 0 10px;
+
+    color: var(--affiliate-text);
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.emptyCard p {
+    max-width: 420px;
+    margin: 0 auto;
+
+    color: var(--affiliate-muted);
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+/* =========================================
+   TABLETS
+========================================= */
+
+@media (max-width: 1100px) {
+    .salesSummary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .productsPage {
+        padding: 22px;
+    }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 650px) {
+    .productsPage {
+        padding: 14px;
+    }
+
+    .productsHeader {
+        padding: 18px 15px;
+        margin-bottom: 20px;
+        border-radius: 18px;
+    }
+
+    .leftHeader {
+        gap: 12px;
+    }
+
+    .backButton {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+    }
+
+    .productsHeader h1 {
+        font-size: 18px;
+    }
+
+    .productsHeader p {
+        font-size: 12px;
+    }
+
+    .salesSummary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 25px;
+    }
+
+    .summaryCard {
+        padding: 19px 14px;
+        border-radius: 17px;
+    }
+
+    .summaryCard h3 {
+        font-size: 11px;
+        line-height: 1.6;
+        margin-bottom: 12px;
+    }
+
+    .summaryCard h2 {
+        font-size: 21px;
+    }
+
+    .affiliateSalesList {
+        gap: 14px;
+    }
+
+    .affiliateSaleCard {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 18px;
+
+        padding: 18px;
+        border-radius: 18px;
+    }
+
+    .saleLeft {
+        gap: 13px;
+    }
+
+    .saleAvatar {
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+        font-size: 22px;
+    }
+
+    .saleInfo h3 {
+        font-size: 16px;
+    }
+
+    .saleInfo p {
+        font-size: 12px;
+    }
+
+    .saleRight {
+        min-width: 0;
+        width: 100%;
+
+        padding-top: 15px;
+
+        border-top: 1px solid var(--affiliate-border);
+
+        text-align: left;
+    }
+
+    .saleRight h2 {
+        font-size: 23px;
+    }
+
+    .saleRight p {
+        font-size: 12px;
+    }
+
+    .viewSalesBtn {
+        width: 100%;
+    }
+
+    .emptyCard {
+        padding: 35px 18px;
+        border-radius: 18px;
+    }
+
+    .emptyCard h2 {
+        font-size: 18px;
+    }
+}
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 360px) {
+    .productsPage {
+        padding: 10px;
+    }
+
+    .salesSummary {
+        gap: 9px;
+    }
+
+    .summaryCard {
+        padding: 16px 11px;
+    }
+
+    .summaryCard h2 {
+        font-size: 18px;
+    }
+
+    .productsHeader h1 {
+        font-size: 16px;
+    }
 }
