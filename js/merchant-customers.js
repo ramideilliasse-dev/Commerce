@@ -1,371 +1,1360 @@
- // =====================================
-// MERCHANT CUSTOMERS
-// TOMA
-// =====================================
-
-import { db, auth } from "../firebase.js";
+ // ============================================================
+// TOMA — MERCHANT CUSTOMERS
+// BLOC 1 — INITIALISATION
+// ============================================================
 
 import {
-collection,
-query,
-where,
-getDocs
+    db,
+    auth
+} from "../firebase.js";
+
+import {
+    collection,
+    query,
+    where,
+    getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import {
-onAuthStateChanged
+    onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-/* =====================================
-DOM
-===================================== */
 
-const customersGrid=document.getElementById("customersGrid");
-const searchInput=document.getElementById("searchCustomer");
+// ============================================================
+// DOM
+// ============================================================
 
-const countAll=document.getElementById("countAllCustomers");
-const countNew=document.getElementById("countNewCustomers");
-const countBest=document.getElementById("countBestCustomers");
+const customersGrid =
+    document.getElementById("customersGrid");
 
-/* =====================================
-VARIABLES
-===================================== */
+const searchInput =
+    document.getElementById("searchCustomer");
 
-let customers=[];
-let filteredCustomers=[];
-let currentFilter="all";
+const clearSearchButton =
+    document.getElementById("clearCustomerSearch");
 
-/* =====================================
-AUTH
-===================================== */
+const countAll =
+    document.getElementById("countAllCustomers");
 
-onAuthStateChanged(auth,async(user)=>{
+const countNew =
+    document.getElementById("countNewCustomers");
 
-if(!user){
+const countBest =
+    document.getElementById("countBestCustomers");
 
-location.href="login.html";
-return;
+const countAllOverview =
+    document.getElementById("countAllCustomersOverview");
 
-}
+const countNewOverview =
+    document.getElementById("countNewCustomersOverview");
 
-await loadCustomers(user.uid);
+const countBestOverview =
+    document.getElementById("countBestCustomersOverview");
 
-});
+const visibleCustomersCount =
+    document.getElementById("visibleCustomersCount");
 
-/* =====================================
-LOAD CUSTOMERS
-===================================== */
+const filterButtons =
+    document.querySelectorAll(".customerChip");
 
-async function loadCustomers(uid){
 
-try{
+// ============================================================
+// VARIABLES
+// ============================================================
 
-const q=query(
-collection(db,"orders"),
-where("merchantId","==",uid)
+let customers = [];
+
+let filteredCustomers = [];
+
+let currentFilter = "all";
+
+let currentSearch = "";
+
+
+// ============================================================
+// AUTHENTIFICATION
+// ============================================================
+
+onAuthStateChanged(
+    auth,
+    async (user) => {
+
+        if (!user) {
+
+            window.location.href =
+                "login.html";
+
+            return;
+
+        }
+
+        await loadCustomers(
+            user.uid
+        );
+
+    }
 );
 
-const snapshot=await getDocs(q);
 
-const map={};
+// ============================================================
+// CHARGEMENT DES CLIENTS
+// ============================================================
 
-snapshot.forEach(docSnap=>{
+async function loadCustomers(uid) {
 
-const order=docSnap.data();
+    customersGrid.setAttribute(
+        "aria-busy",
+        "true"
+    );
 
-const customerId=
-order.customerId||
-order.phone||
-docSnap.id;
+    customersGrid.innerHTML = `
 
-if(!map[customerId]){
+        <div class="customersLoadingCard">
 
-map[customerId]={
+            <span class="customersLoadingSpinner"></span>
 
-id:customerId,
-name:order.customerName||"Cliente",
-phone:order.phone||"",
-city:order.city||"-",
-orders:0,
-totalSpent:0,
-lastOrder:order.createdAt||null
+            <h3>
+                A carregar clientes...
+            </h3>
 
-};
+            <p>
+                Estamos a preparar a sua lista de clientes.
+            </p>
+
+        </div>
+
+    `;
+
+    try {
+
+        const ordersQuery = query(
+            collection(
+                db,
+                "orders"
+            ),
+            where(
+                "merchantId",
+                "==",
+                uid
+            )
+        );
+
+        const snapshot =
+            await getDocs(
+                ordersQuery
+            );
+
+        const customerMap = new Map();
+
+
+        // ====================================================
+        // AGRÉGER LES COMMANDES PAR CLIENT
+        // ====================================================
+
+        snapshot.forEach(
+            (docSnap) => {
+
+                const order =
+                    docSnap.data();
+
+                const phone =
+                    String(
+                        order.phone ||
+                        order.clientPhone ||
+                        ""
+                    ).trim();
+
+                const customerId =
+                    String(
+                        order.customerId ||
+                        phone ||
+                        order.userId ||
+                        order.customerUid ||
+                        ""
+                    ).trim() ||
+                    `order_${docSnap.id}`;
+
+
+                const customerName =
+                    order.customerName ||
+                    order.clientName ||
+                    "Cliente";
+
+
+                const city =
+                    order.city ||
+                    order.clientCity ||
+                    "-";
+
+
+                const orderTotal =
+                    Number(
+                        order.total ||
+                        order.totalPrice ||
+                        0
+                    );
+
+
+                const orderDate =
+                    getOrderTimestamp(
+                        order.createdAt ||
+                        order.timestamp ||
+                        order.orderDate ||
+                        order.date ||
+                        null
+                    );
+
+
+                if (
+                    !customerMap.has(
+                        customerId
+                    )
+                ) {
+
+                    customerMap.set(
+                        customerId,
+                        {
+
+                            id: customerId,
+
+                            name: customerName,
+
+                            phone: phone,
+
+                            city: city,
+
+                            orders: 0,
+
+                            totalSpent: 0,
+
+                            lastOrder: orderDate
+
+                        }
+                    );
+
+                }
+
+
+                const customer =
+                    customerMap.get(
+                        customerId
+                    );
+
+
+                // Garder les informations les plus complètes.
+
+                if (
+                    customer.name === "Cliente" &&
+                    customerName !== "Cliente"
+                ) {
+
+                    customer.name =
+                        customerName;
+
+                }
+
+
+                if (
+                    !customer.phone &&
+                    phone
+                ) {
+
+                    customer.phone =
+                        phone;
+
+                }
+
+
+                if (
+                    (
+                        !customer.city ||
+                        customer.city === "-"
+                    ) &&
+                    city &&
+                    city !== "-"
+                ) {
+
+                    customer.city =
+                        city;
+
+                }
+
+
+                customer.orders += 1;
+
+
+                customer.totalSpent +=
+                    Number.isFinite(
+                        orderTotal
+                    )
+                    ? orderTotal
+                    : 0;
+
+
+                if (
+                    orderDate > customer.lastOrder
+                ) {
+
+                    customer.lastOrder =
+                        orderDate;
+
+                }
+
+            }
+        );
+
+
+        customers =
+            Array.from(
+                customerMap.values()
+            );
+
+
+        // Les clients ayant commandé le plus récemment
+        // apparaissent en premier.
+
+        customers.sort(
+            (a, b) => {
+
+                return (
+                    b.lastOrder -
+                    a.lastOrder
+                );
+
+            }
+        );
+
+
+        updateCounters();
+
+        applyFilters();
+
+
+        console.log(
+            "TOMA — Clientes carregados:",
+            customers.length
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "TOMA — Erro ao carregar clientes:",
+            error
+        );
+
+
+        showLoadError();
+
+    } finally {
+
+        customersGrid.setAttribute(
+            "aria-busy",
+            "false"
+        );
+
+    }
 
 }
 
-map[customerId].orders++;
 
-map[customerId].totalSpent+=Number(order.total||0);
+// ============================================================
+// CONVERTIR UNE DATE FIRESTORE EN TIMESTAMP
+// ============================================================
 
-});
+function getOrderTimestamp(value) {
 
-customers=Object.values(map);
+    if (!value) {
 
-filteredCustomers=[...customers];
+        return 0;
 
-updateCounters();
+    }
 
-renderCustomers();
 
-}catch(error){
+    if (
+        typeof value.toMillis === "function"
+    ) {
 
-console.error(error);
+        return value.toMillis();
 
-}
+    }
 
-}
 
-/* =====================================
-COUNTERS
-===================================== */
+    if (
+        typeof value.toDate === "function"
+    ) {
 
-function updateCounters(){
+        return value.toDate().getTime();
 
-countAll.textContent=customers.length;
+    }
 
-countNew.textContent=
 
-customers.filter(c=>c.orders===1).length;
+    if (
+        value instanceof Date
+    ) {
 
-countBest.textContent=
+        return value.getTime();
 
-customers.filter(c=>c.orders>=5).length;
+    }
 
-}
 
-/* =====================================
-RENDER
-===================================== */
+    const parsed =
+        new Date(
+            value
+        ).getTime();
 
-function renderCustomers(){
 
-customersGrid.innerHTML="";
-
-if(filteredCustomers.length===0){
-
-customersGrid.innerHTML=`
-
-<div class="emptyCard">
-
-<span class="material-symbols-rounded">
-
-group
-
-</span>
-
-<h2>
-
-Nenhum cliente encontrado
-
-</h2>
-
-<p>
-
-Os clientes aparecerão aqui depois das primeiras vendas.
-
-</p>
-
-</div>
-
-`;
-
-return;
+    return Number.isFinite(
+        parsed
+    )
+    ? parsed
+    : 0;
 
 }
 
-filteredCustomers.forEach(customer=>{
 
-customersGrid.innerHTML+=`
+// ============================================================
+// COMPTEURS
+// ============================================================
 
-<div class="customerCard">
+function updateCounters() {
 
-<div class="customerTop">
+    const allCount =
+        customers.length;
 
-<img
-class="customerAvatar"
-src="images/default-avatar.png">
 
-<div>
+    const newCount =
+        customers.filter(
+            customer =>
+                customer.orders === 1
+        ).length;
 
-<div class="customerName">
 
-${customer.name}
+    const bestCount =
+        customers.filter(
+            customer =>
+                customer.orders >= 5
+        ).length;
 
-</div>
 
-<div class="customerInfo">
+    countAll.textContent =
+        allCount;
 
-${customer.phone}
 
-</div>
+    countNew.textContent =
+        newCount;
 
-</div>
 
-</div>
+    countBest.textContent =
+        bestCount;
 
-<div class="customerStats">
 
-<div>
+    countAllOverview.textContent =
+        allCount;
 
-<h3>
 
-${customer.orders}
+    countNewOverview.textContent =
+        newCount;
 
-</h3>
 
-<p>
-
-Pedidos
-
-</p>
-
-</div>
-
-<div>
-
-<h3>
-
-${customer.totalSpent.toLocaleString()} Kz
-
-</h3>
-
-<p>
-
-Total gasto
-
-</p>
-
-</div>
-
-<div>
-
-<h3>
-
-${customer.city}
-
-</h3>
-
-<p>
-
-Cidade
-
-</p>
-
-</div>
-
-</div>
-
-<div class="customerActions">
-
-<button
-class="contactBtn"
-onclick="window.open('https://wa.me/${customer.phone}','_blank')">
-
-WhatsApp
-
-</button>
-
-<button
-class="profileBtn"
-data-id="${customer.id}">
-
-Perfil
-
-</button>
-
-</div>
-
-</div>
-
-`;
-
-});
+    countBestOverview.textContent =
+        bestCount;
 
 }
 
-/* =====================================
-SEARCH
-===================================== */
 
-searchInput.addEventListener("input",()=>{
+// ============================================================
+// RECHERCHE ET FILTRES
+// ============================================================
 
-const value=searchInput.value.toLowerCase();
+function applyFilters() {
 
-filteredCustomers=customers.filter(customer=>{
+    const search =
+        currentSearch
+            .trim()
+            .toLocaleLowerCase("pt-PT");
 
-return(
 
-customer.name.toLowerCase().includes(value)||
+    filteredCustomers =
+        customers.filter(
+            (customer) => {
 
-customer.phone.includes(value)
+                // --------------------------------------------
+                // FILTRE ACTIF
+                // --------------------------------------------
 
+                let matchesFilter = true;
+
+
+                if (
+                    currentFilter === "new"
+                ) {
+
+                    matchesFilter =
+                        customer.orders === 1;
+
+                }
+
+
+                if (
+                    currentFilter === "best"
+                ) {
+
+                    matchesFilter =
+                        customer.orders >= 5;
+
+                }
+
+
+                if (!matchesFilter) {
+
+                    return false;
+
+                }
+
+
+                // --------------------------------------------
+                // RECHERCHE
+                // --------------------------------------------
+
+                const name =
+                    String(
+                        customer.name || ""
+                    ).toLocaleLowerCase("pt-PT");
+
+
+                const phone =
+                    String(
+                        customer.phone || ""
+                    ).toLowerCase();
+
+
+                const city =
+                    String(
+                        customer.city || ""
+                    ).toLocaleLowerCase("pt-PT");
+
+
+                return (
+                    name.includes(search) ||
+                    phone.includes(search) ||
+                    city.includes(search)
+                );
+
+            }
+        );
+
+
+    renderCustomers();
+
+}
+
+
+// ============================================================
+// AFFICHAGE DES CLIENTS
+// ============================================================
+
+function renderCustomers() {
+
+    customersGrid.innerHTML = "";
+
+
+    if (visibleCustomersCount) {
+
+        visibleCustomersCount.textContent =
+            filteredCustomers.length === 1
+            ? "1 cliente"
+            : `${filteredCustomers.length} clientes`;
+
+    }
+
+
+    // ========================================================
+    // AUCUN CLIENT
+    // ========================================================
+
+    if (
+        customers.length === 0
+    ) {
+
+        customersGrid.innerHTML = `
+
+            <div class="emptyCard">
+
+                <div class="emptyCardIcon">
+
+                    <span class="material-symbols-rounded">
+                        groups
+                    </span>
+
+                </div>
+
+                <h2>
+                    Ainda não tem clientes
+                </h2>
+
+                <p>
+                    Os seus clientes aparecerão aqui
+                    depois das primeiras vendas.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    // ========================================================
+    // AUCUN RÉSULTAT DE RECHERCHE OU DE FILTRE
+    // ========================================================
+
+    if (
+        filteredCustomers.length === 0
+    ) {
+
+        customersGrid.innerHTML = `
+
+            <div class="emptyCard">
+
+                <div class="emptyCardIcon">
+
+                    <span class="material-symbols-rounded">
+                        person_search
+                    </span>
+
+                </div>
+
+                <h2>
+                    Nenhum cliente encontrado
+                </h2>
+
+                <p>
+                    Não encontrámos clientes com estes critérios.
+                    Experimente outra pesquisa ou altere o filtro.
+                </p>
+
+                <button
+                    type="button"
+                    class="emptyResetButton"
+                    id="resetCustomerFilters"
+                >
+
+                    <span class="material-symbols-rounded">
+                        restart_alt
+                    </span>
+
+                    Limpar filtros
+
+                </button>
+
+            </div>
+
+        `;
+
+
+        const resetButton =
+            document.getElementById(
+                "resetCustomerFilters"
+            );
+
+
+        if (resetButton) {
+
+            resetButton.onclick = () => {
+
+                currentFilter = "all";
+
+                currentSearch = "";
+
+                searchInput.value = "";
+
+
+                filterButtons.forEach(
+                    button => {
+
+                        const active =
+                            button.dataset.filter === "all";
+
+                        button.classList.toggle(
+                            "active",
+                            active
+                        );
+
+                        button.setAttribute(
+                            "aria-pressed",
+                            String(active)
+                        );
+
+                    }
+                );
+
+
+                updateSearchClearButton();
+
+                applyFilters();
+
+            };
+
+        }
+
+
+        return;
+
+    }
+
+
+    // ========================================================
+    // CARTES CLIENTS
+    // ========================================================
+
+    const fragment =
+        document.createDocumentFragment();
+
+
+    filteredCustomers.forEach(
+        (customer) => {
+
+            const card =
+                document.createElement("article");
+
+
+            card.className =
+                "customerCard";
+
+
+            card.innerHTML =
+                buildCustomerCard(
+                    customer
+                );
+
+
+            fragment.appendChild(
+                card
+            );
+
+        }
+    );
+
+
+    customersGrid.appendChild(
+        fragment
+    );
+
+}
+
+
+// ============================================================
+// CONSTRUIRE UNE CARTE CLIENT
+// ============================================================
+
+function buildCustomerCard(customer) {
+
+    const name =
+        String(
+            customer.name || "Cliente"
+        );
+
+
+    const phone =
+        String(
+            customer.phone || ""
+        );
+
+
+    const city =
+        String(
+            customer.city || "-"
+        );
+
+
+    const initial =
+        name.trim().charAt(0).toUpperCase() ||
+        "C";
+
+
+    const totalSpent =
+        formatMoney(
+            customer.totalSpent
+        );
+
+
+    const safeName =
+        escapeHtml(name);
+
+
+    const safePhone =
+        escapeHtml(phone);
+
+
+    const safeCity =
+        escapeHtml(city);
+
+
+    const lastOrderText =
+        customer.lastOrder > 0
+        ? formatDate(customer.lastOrder)
+        : "Data não disponível";
+
+
+    const frequentCustomer =
+        customer.orders >= 5;
+
+
+    const whatsappPhone =
+        phone.replace(
+            /[^0-9]/g,
+            ""
+        );
+
+
+    return `
+
+        <div class="customerTop">
+
+            <div class="customerAvatarWrapper">
+
+                <div
+                    class="customerAvatar customerAvatarFallback"
+                    aria-label="Avatar de ${safeName}"
+                >
+                    ${escapeHtml(initial)}
+                </div>
+
+            </div>
+
+
+            <div class="customerTopInfo">
+
+                <strong class="customerName">
+                    ${safeName}
+                </strong>
+
+
+                <div class="customerInfo">
+
+                    <span class="material-symbols-rounded">
+                        call
+                    </span>
+
+                    <span>
+                        ${safePhone || "Telefone não informado"}
+                    </span>
+
+                </div>
+
+
+                ${
+                    frequentCustomer
+
+                    ? `
+
+                    <span class="customerCustomerBadge">
+
+                        <span class="material-symbols-rounded">
+                            workspace_premium
+                        </span>
+
+                        Cliente frequente
+
+                    </span>
+
+                    `
+
+                    : ""
+
+                }
+
+            </div>
+
+        </div>
+
+
+        <div class="customerStats">
+
+            <div>
+
+                <h3>
+                    ${customer.orders}
+                </h3>
+
+                <p>
+                    Pedidos
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <h3 class="customerMoney">
+                    ${escapeHtml(totalSpent)}
+                </h3>
+
+                <p>
+                    Total gasto
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <h3 class="customerCityValue">
+                    ${safeCity}
+                </h3>
+
+                <p>
+                    Cidade
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="customerLastOrder">
+
+            <span class="material-symbols-rounded">
+                schedule
+            </span>
+
+            Último pedido: ${escapeHtml(lastOrderText)}
+
+        </div>
+
+
+        <div class="customerActions">
+
+            <button
+                type="button"
+                class="contactBtn"
+                data-action="whatsapp"
+                data-id="${escapeHtml(customer.id)}"
+                ${whatsappPhone ? "" : "disabled"}
+                ${whatsappPhone ? "" : 'title="Telefone não informado"'}
+            >
+
+                <span class="material-symbols-rounded">
+                    chat
+                </span>
+
+                WhatsApp
+
+            </button>
+
+
+            <button
+                type="button"
+                class="profileBtn"
+                data-action="profile"
+                data-id="${escapeHtml(customer.id)}"
+            >
+
+                <span class="material-symbols-rounded">
+                    person
+                </span>
+
+                Perfil
+
+            </button>
+
+        </div>
+
+    `;
+
+}
+
+
+// ============================================================
+// FORMATTER LE MONTANT
+// ============================================================
+
+function formatMoney(value) {
+
+    return (
+
+        Number(
+            value || 0
+        ).toLocaleString(
+            "pt-PT",
+            {
+                maximumFractionDigits: 2
+            }
+        ) +
+
+        " Kz"
+
+    );
+
+}
+
+
+// ============================================================
+// FORMATTER LA DATE
+// ============================================================
+
+function formatDate(timestamp) {
+
+    try {
+
+        return new Date(
+            timestamp
+        ).toLocaleDateString(
+            "pt-PT",
+            {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            }
+        );
+
+    } catch (error) {
+
+        return "Data não disponível";
+
+    }
+
+}
+
+
+// ============================================================
+// PROTÉGER LES TEXTES INSÉRÉS DANS LE HTML
+// ============================================================
+
+function escapeHtml(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
+        return "";
+
+    }
+
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+// ============================================================
+// RECHERCHE
+// ============================================================
+
+searchInput.addEventListener(
+    "input",
+    () => {
+
+        currentSearch =
+            searchInput.value;
+
+
+        updateSearchClearButton();
+
+        applyFilters();
+
+    }
 );
 
-});
 
-renderCustomers();
+// ============================================================
+// BOUTON POUR EFFACER LA RECHERCHE
+// ============================================================
 
-});
+function updateSearchClearButton() {
 
-/* =====================================
-FILTERS
-===================================== */
+    if (!clearSearchButton) {
 
-document.querySelectorAll(".customerChip").forEach(button=>{
+        return;
 
-button.onclick=()=>{
+    }
 
-document.querySelectorAll(".customerChip")
 
-.forEach(chip=>chip.classList.remove("active"));
-
-button.classList.add("active");
-
-currentFilter=button.dataset.filter;
-
-switch(currentFilter){
-
-case "new":
-
-filteredCustomers=
-
-customers.filter(c=>c.orders===1);
-
-break;
-
-case "best":
-
-filteredCustomers=
-
-customers.filter(c=>c.orders>=5);
-
-break;
-
-default:
-
-filteredCustomers=[...customers];
+    clearSearchButton.hidden =
+        !searchInput.value;
 
 }
 
-renderCustomers();
 
-};
+if (clearSearchButton) {
 
-});
+    clearSearchButton.addEventListener(
+        "click",
+        () => {
 
-/* =====================================
-PROFILE
-===================================== */
+            searchInput.value = "";
 
-customersGrid.addEventListener("click",(e)=>{
+            currentSearch = "";
 
-const profile=e.target.closest(".profileBtn");
+            updateSearchClearButton();
 
-if(!profile)return;
+            applyFilters();
 
-location.href=
+            searchInput.focus();
 
-`merchant-customer-details.html?id=${profile.dataset.id}`;
+        }
+    );
 
-});
+}
+
+
+// ============================================================
+// FILTRES
+// ============================================================
+
+filterButtons.forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                currentFilter =
+                    button.dataset.filter;
+
+
+                filterButtons.forEach(
+                    chip => {
+
+                        const active =
+                            chip === button;
+
+                        chip.classList.toggle(
+                            "active",
+                            active
+                        );
+
+                        chip.setAttribute(
+                            "aria-pressed",
+                            String(active)
+                        );
+
+                    }
+                );
+
+
+                // On conserve la recherche active.
+
+                applyFilters();
+
+            }
+        );
+
+    }
+);
+
+
+// ============================================================
+// ACTIONS DES CARTES
+// ============================================================
+
+customersGrid.addEventListener(
+    "click",
+    (event) => {
+
+        const button =
+            event.target.closest(
+                "button[data-action]"
+            );
+
+
+        if (!button) {
+
+            return;
+
+        }
+
+
+        const customerId =
+            button.dataset.id;
+
+
+        const action =
+            button.dataset.action;
+
+
+        const customer =
+            customers.find(
+                item =>
+                    String(item.id) ===
+                    String(customerId)
+            );
+
+
+        if (!customer) {
+
+            return;
+
+        }
+
+
+        // --------------------------------------------
+        // WHATSAPP
+        // --------------------------------------------
+
+        if (
+            action === "whatsapp"
+        ) {
+
+            const phone =
+                String(
+                    customer.phone || ""
+                ).replace(
+                    /[^0-9]/g,
+                    ""
+                );
+
+
+            if (!phone) {
+
+                alert(
+                    "O número de telefone deste cliente não está disponível."
+                );
+
+                return;
+
+            }
+
+
+            window.open(
+                `https://wa.me/${phone}`,
+                "_blank",
+                "noopener,noreferrer"
+            );
+
+            return;
+
+        }
+
+
+        // --------------------------------------------
+        // PROFIL CLIENT
+        // --------------------------------------------
+
+        if (
+            action === "profile"
+        ) {
+
+            location.href =
+                "merchant-customer-details.html?id=" +
+                encodeURIComponent(
+                    customer.id
+                );
+
+        }
+
+    }
+);
+
+
+// ============================================================
+// ERREUR DE CHARGEMENT
+// ============================================================
+
+function showLoadError() {
+
+    customersGrid.innerHTML = `
+
+        <div class="emptyCard">
+
+            <div class="emptyCardIcon">
+
+                <span class="material-symbols-rounded">
+                    cloud_off
+                </span>
+
+            </div>
+
+            <h2>
+                Não foi possível carregar os clientes
+            </h2>
+
+            <p>
+                Verifique a sua ligação à internet e tente novamente.
+                Se o problema continuar, contacte o suporte.
+            </p>
+
+            <button
+                type="button"
+                class="emptyResetButton"
+                id="retryLoadCustomers"
+            >
+
+                <span class="material-symbols-rounded">
+                    refresh
+                </span>
+
+                Tentar novamente
+
+            </button>
+
+        </div>
+
+    `;
+
+
+    const retryButton =
+        document.getElementById(
+            "retryLoadCustomers"
+        );
+
+
+    if (retryButton) {
+
+        retryButton.onclick = () => {
+
+            const user =
+                auth.currentUser;
+
+
+            if (user) {
+
+                loadCustomers(
+                    user.uid
+                );
+
+            }
+
+        };
+
+    }
+
+}
+
+
+// ============================================================
+// TOMA — MERCHANT CUSTOMERS READY
+// ============================================================
+
+console.log(
+    "TOMA — MERCHANT CUSTOMERS — PREMIUM VERSION READY."
+);
