@@ -2,157 +2,447 @@
 <html lang="pt">
 
 <head>
+    <meta charset="UTF-8">
 
-<meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="theme-color"
+        content="#f5f7fb"
+    >
 
-<title>Clientes | Toma</title>
+    <meta
+        name="description"
+        content="Gerencie os clientes da sua loja na Toma."
+    >
 
-<link rel="stylesheet" href="merchant-dashboard-v2.css">
+    <title>Clientes | Toma</title>
 
-<link rel="stylesheet" href="merchant-customers.css">
+    <link
+        rel="stylesheet"
+        href="merchant-dashboard-v2.css"
+    >
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        rel="stylesheet"
+        href="merchant-customers.css"
+    >
 
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
 
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
+        rel="stylesheet"
+    >
 </head>
 
-<body>
+<body class="customersPageBody">
 
-<div class="productsPage">
+    <main class="customersPage">
 
-<header class="productsHeader">
+        <!-- HEADER -->
 
-<div class="leftHeader">
+        <header class="customersHeader">
 
-<a href="merchant-dashboard-v2.html" class="backButton">
+            <a
+                href="merchant-dashboard-v2.html"
+                class="customersBackButton"
+                aria-label="Voltar ao painel"
+                title="Voltar ao painel"
+            >
+                <span class="material-symbols-rounded">
+                    arrow_back
+                </span>
+            </a>
 
-<span class="material-symbols-rounded">
+            <div class="customersHeaderTitle">
 
-arrow_back
+                <div class="customersEyebrow">
+                    TOMA COMMERCE
+                </div>
 
-</span>
+                <h1>
+                    Clientes
+                </h1>
 
-</a>
+                <p>
+                    Conheça melhor os clientes da sua loja.
+                </p>
 
-<div>
+            </div>
 
-<h1>
+            <div class="customersHeaderIcon">
 
-Clientes
+                <span class="material-symbols-rounded">
+                    groups
+                </span>
 
-</h1>
+            </div>
 
-<p>
+        </header>
 
-Todos os clientes da sua loja.
 
-</p>
+        <!-- INTRODUCTION -->
 
-</div>
+        <section class="customersWelcome">
 
-</div>
+            <div class="customersWelcomeContent">
 
-</header>
+                <span class="customersWelcomeBadge">
+                    <span class="material-symbols-rounded">
+                        insights
+                    </span>
 
-<section class="searchSection">
+                    GESTÃO DE CLIENTES
+                </span>
 
-<div class="searchBox">
+                <h2>
+                    Os seus clientes,
+                    <span>o seu negócio.</span>
+                </h2>
 
-<span class="material-symbols-rounded">
+                <p>
+                    Acompanhe as compras, descubra os seus melhores
+                    clientes e mantenha o contacto.
+                </p>
 
-search
+            </div>
 
-</span>
+            <div class="customersWelcomeVisual">
 
-<input
-type="text"
-id="searchCustomer"
-placeholder="Pesquisar cliente...">
+                <div class="customersWelcomeCircle">
 
-</div>
+                    <span class="material-symbols-rounded">
+                        diversity_3
+                    </span>
 
-</section>
+                </div>
 
-<section class="customersFilters">
+                <span class="customersDecor customersDecorOne"></span>
+                <span class="customersDecor customersDecorTwo"></span>
 
-<button
-class="customerChip active"
-data-filter="all">
+            </div>
 
-Todos
+        </section>
 
-<span id="countAllCustomers">
 
-0
+        <!-- SUMMARY -->
 
-</span>
+        <section
+            class="customersOverview"
+            aria-label="Resumo dos clientes"
+        >
 
-</button>
+            <article class="customersOverviewCard">
 
-<button
-class="customerChip"
-data-filter="new">
+                <div class="overviewCardIcon overviewIconBlue">
 
-Novos
+                    <span class="material-symbols-rounded">
+                        groups
+                    </span>
 
-<span id="countNewCustomers">
+                </div>
 
-0
+                <div class="overviewCardInfo">
 
-</span>
+                    <span>
+                        Total de clientes
+                    </span>
 
-</button>
+                    <strong id="countAllCustomersOverview">
+                        0
+                    </strong>
 
-<button
-class="customerChip"
-data-filter="best">
+                    <small>
+                        Clientes registados
+                    </small>
 
-Mais Compras
+                </div>
 
-<span id="countBestCustomers">
+            </article>
 
-0
 
-</span>
+            <article class="customersOverviewCard">
 
-</button>
+                <div class="overviewCardIcon overviewIconGreen">
 
-</section>
+                    <span class="material-symbols-rounded">
+                        person_add
+                    </span>
 
-<section
-id="customersGrid"
-class="customersGrid">
+                </div>
 
-<div class="emptyCard">
+                <div class="overviewCardInfo">
 
-<span class="material-symbols-rounded">
+                    <span>
+                        Novos clientes
+                    </span>
 
-group
+                    <strong id="countNewCustomersOverview">
+                        0
+                    </strong>
 
-</span>
+                    <small>
+                        Uma compra registada
+                    </small>
 
-<h2>
+                </div>
 
-Nenhum cliente encontrado
+            </article>
 
-</h2>
 
-<p>
+            <article class="customersOverviewCard">
 
-Os clientes aparecerão aqui depois das primeiras vendas.
+                <div class="overviewCardIcon overviewIconOrange">
 
-</p>
+                    <span class="material-symbols-rounded">
+                        workspace_premium
+                    </span>
 
-</div>
+                </div>
 
-</section>
+                <div class="overviewCardInfo">
 
-</div>
+                    <span>
+                        Clientes frequentes
+                    </span>
 
-<script type="module" src="./js/merchant-customers.js"></script>
+                    <strong id="countBestCustomersOverview">
+                        0
+                    </strong>
+
+                    <small>
+                        Cinco ou mais pedidos
+                    </small>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- CUSTOMER LIST -->
+
+        <section class="customersMainSection">
+
+            <div class="customersSectionHeading">
+
+                <div>
+
+                    <span class="customersSectionEyebrow">
+                        RELACIONAMENTO
+                    </span>
+
+                    <h2>
+                        A sua lista de clientes
+                    </h2>
+
+                    <p>
+                        Pesquise, filtre e entre em contacto.
+                    </p>
+
+                </div>
+
+                <div class="customersTotalBadge">
+
+                    <span
+                        class="material-symbols-rounded"
+                    >
+                        person_search
+                    </span>
+
+                    <span id="visibleCustomersCount">
+                        0 clientes
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- SEARCH -->
+
+            <div class="customersToolbar">
+
+                <label
+                    class="customersSearchBox"
+                    for="searchCustomer"
+                >
+
+                    <span class="material-symbols-rounded">
+                        search
+                    </span>
+
+                    <input
+                        type="search"
+                        id="searchCustomer"
+                        placeholder="Pesquisar por nome, telefone ou cidade..."
+                        autocomplete="off"
+                    >
+
+                    <button
+                        type="button"
+                        id="clearCustomerSearch"
+                        class="clearCustomerSearch"
+                        aria-label="Limpar pesquisa"
+                        title="Limpar pesquisa"
+                        hidden
+                    >
+
+                        <span class="material-symbols-rounded">
+                            close
+                        </span>
+
+                    </button>
+
+                </label>
+
+            </div>
+
+
+            <!-- FILTERS -->
+
+            <div class="customersFiltersWrapper">
+
+                <div class="customersFiltersLabel">
+                    FILTRAR POR
+                </div>
+
+                <div
+                    class="customersFilters"
+                    role="group"
+                    aria-label="Filtrar clientes"
+                >
+
+                    <button
+                        type="button"
+                        class="customerChip active"
+                        data-filter="all"
+                        aria-pressed="true"
+                    >
+
+                        <span class="material-symbols-rounded">
+                            groups
+                        </span>
+
+                        Todos
+
+                        <span
+                            class="customerChipCount"
+                            id="countAllCustomers"
+                        >
+                            0
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="customerChip"
+                        data-filter="new"
+                        aria-pressed="false"
+                    >
+
+                        <span class="material-symbols-rounded">
+                            person_add
+                        </span>
+
+                        Novos
+
+                        <span
+                            class="customerChipCount"
+                            id="countNewCustomers"
+                        >
+                            0
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="customerChip"
+                        data-filter="best"
+                        aria-pressed="false"
+                    >
+
+                        <span class="material-symbols-rounded">
+                            star
+                        </span>
+
+                        Mais compras
+
+                        <span
+                            class="customerChipCount"
+                            id="countBestCustomers"
+                        >
+                            0
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- CLIENTS GRID -->
+
+            <div
+                id="customersGrid"
+                class="customersGrid"
+                aria-live="polite"
+                aria-busy="true"
+            >
+
+                <div class="customersLoadingCard">
+
+                    <span class="customersLoadingSpinner"></span>
+
+                    <h3>
+                        A carregar clientes...
+                    </h3>
+
+                    <p>
+                        Estamos a preparar a sua lista de clientes.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- FOOTER -->
+
+        <footer class="customersFooter">
+
+            <span class="material-symbols-rounded">
+                verified_user
+            </span>
+
+            <p>
+                Toma · Gestão de clientes da sua loja
+            </p>
+
+        </footer>
+
+    </main>
+
+
+    <script
+        type="module"
+        src="./js/merchant-customers.js"
+    ></script>
 
 </body>
 
