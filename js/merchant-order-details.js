@@ -388,10 +388,13 @@ function renderOrder(
 
 
     const discount =
-        Number(
-            order.discount ||
-            0
-        );
+    Number(
+        order.discount ||
+        0
+    );
+
+const discountDisplay =
+    `${discount}%`;
 
 
     const items =
@@ -826,34 +829,31 @@ function renderOrder(
                     ""
                 }
 
+${
+    discount > 0
 
-                ${
-                    discount > 0
+    ? `
 
-                    ? `
+    <div class="summaryRow discountRow">
 
-                    <div class="summaryRow discountRow">
+        <span>
+            Desconto
+        </span>
 
-                        <span>
-                            Desconto
-                        </span>
+        <strong>
+            - ${escapeHtml(
+                discountDisplay
+            )}
+        </strong>
 
+    </div>
 
-                        <strong>
-                            - ${formatMoney(
-                                discount
-                            )}
-                        </strong>
+    `
 
-                    </div>
+    :
 
-                    `
-
-                    :
-
-                    ""
-                }
-
+    ""
+}
 
                 <div class="summaryDivider"></div>
 
