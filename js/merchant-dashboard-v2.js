@@ -282,11 +282,18 @@ function startTomaNotificationsListener(){
 }
 /* =====================================
 LOAD STATISTICS
+TOMA — AFFICHER LES 3 DERNIÈRES COMMANDES
 ===================================== */
 
 async function loadStatistics(){
 
     try{
+
+        if(!currentUid){
+
+            return;
+
+        }
 
         // ==========================
         // PRODUTOS
@@ -303,10 +310,11 @@ async function loadStatistics(){
         const productsSnap = await getDocs(productsQuery);
 
         productsCount.textContent =
-        productsSnap.size;
+            productsSnap.size;
+
 
         // ==========================
-        // PEDIDOS
+        // PEDIDOS — TODAS AS COMMANDES
         // ==========================
 
         const ordersQuery = query(
@@ -319,8 +327,11 @@ async function loadStatistics(){
 
         const ordersSnap = await getDocs(ordersQuery);
 
+
+        // Conserver le nombre total de commandes
         ordersCount.textContent =
-        ordersSnap.size;
+            ordersSnap.size;
+
 
         // ==========================
         // CLIENTES
@@ -330,43 +341,18 @@ async function loadStatistics(){
 
         let todayTotal = 0;
 
-        recentOrders.innerHTML = "";
+        const allOrders = [];
 
-        if(ordersSnap.empty){
 
-            recentOrders.innerHTML = `
+        // ==========================
+        // RÉCUPÉRER LES COMMANDES
+        // ==========================
 
-            <div class="emptyCard">
-
-                <span class="material-symbols-rounded">
-
-                    shopping_bag
-
-                </span>
-
-                <p>
-
-                    Ainda não existem pedidos.
-
-                </p>
-
-            </div>
-
-            `;
-
-        }
-
-        ordersSnap.forEach(docSnap=>{
+        ordersSnap.forEach((docSnap)=>{
 
             const order = docSnap.data();
 
-            if(order.userId){
-
-                uniqueCustomers.add(order.userId);
-
-            }
-
-            todayTotal += Number(
+            const orderTotal = Number(
 
                 order.total ||
 
@@ -376,49 +362,218 @@ async function loadStatistics(){
 
             );
 
-            recentOrders.innerHTML += `
+            // Comptabiliser les clients uniques
+            if(order.userId){
 
-            <div class="recentOrderItem">
+                uniqueCustomers.add(order.userId);
 
-                <div>
+            }
 
-                    <strong>
+            // Conserver le calcul existant des ventes
+            todayTotal += orderTotal;
 
-                        ${order.customerName || "Cliente"}
 
-                    </strong>
+            // Préparer la commande pour l'affichage
+            allOrders.push({
 
-                    <br>
+                id: docSnap.id,
 
-                    <small>
+                ...order
 
-                        ${Number(
-                            order.total ||
-                            order.totalPrice ||
-                            0
-                        ).toLocaleString()} Kz
-
-                    </small>
-
-                </div>
-
-                <span class="orderStatus">
-
-                    ${order.status || "Pendente"}
-
-                </span>
-
-            </div>
-
-            `;
+            });
 
         });
 
+
+        // ==========================
+        // TRIER LES COMMANDES
+        // DE LA PLUS RÉCENTE À LA PLUS ANCIENNE
+        // ==========================
+
+        function getOrderDate(order){
+
+            const dateValue =
+
+                order.createdAt ||
+
+                order.timestamp ||
+
+                order.date ||
+
+                order.orderDate ||
+
+                null;
+
+
+            if(!dateValue){
+
+                return 0;
+
+            }
+
+            if(typeof dateValue.toMillis === "function"){
+
+                return dateValue.toMillis();
+
+            }
+
+            if(typeof dateValue.toDate === "function"){
+
+                return dateValue.toDate().getTime();
+
+            }
+
+            const parsedDate = new Date(dateValue).getTime();
+
+            return Number.isFinite(parsedDate)
+                ? parsedDate
+                : 0;
+
+        }
+
+
+        allOrders.sort((a,b)=>{
+
+            return getOrderDate(b) - getOrderDate(a);
+
+        });
+
+
+        // ==========================
+        // AFFICHER SEULEMENT 3 COMMANDES
+        // ==========================
+
+        const latestOrders =
+            allOrders.slice(0,3);
+
+
+        recentOrders.innerHTML = "";
+
+
+        if(latestOrders.length === 0){
+
+            recentOrders.innerHTML = `
+
+                <div class="emptyCard">
+
+                    <span class="material-symbols-rounded">
+
+                        shopping_bag
+
+                    </span>
+
+                    <p>
+
+                        Ainda não existem pedidos.
+
+                    </p>
+
+                </div>
+
+            `;
+
+        }
+        else{
+
+            latestOrders.forEach((order)=>{
+
+                const orderTotal = Number(
+
+                    order.total ||
+
+                    order.totalPrice ||
+
+                    0
+
+                );
+
+
+                // Protéger le contenu affiché dans le HTML
+                function escapeOrderText(value){
+
+                    return String(value ?? "")
+
+                        .replace(/&/g,"&amp;")
+
+                        .replace(/</g,"&lt;")
+
+                        .replace(/>/g,"&gt;")
+
+                        .replace(/"/g,"&quot;")
+
+                        .replace(/'/g,"&#039;");
+
+                }
+
+
+                const customerName = escapeOrderText(
+
+                    order.customerName ||
+
+                    order.name ||
+
+                    "Cliente"
+
+                );
+
+
+                const orderStatus = escapeOrderText(
+
+                    order.status ||
+
+                    "Pendente"
+
+                );
+
+
+                recentOrders.innerHTML += `
+
+                    <div class="recentOrderItem">
+
+                        <div>
+
+                            <strong>
+
+                                ${customerName}
+
+                            </strong>
+
+                            <br>
+
+                            <small>
+
+                                ${orderTotal.toLocaleString("pt-PT")} Kz
+
+                            </small>
+
+                        </div>
+
+                        <span class="orderStatus">
+
+                            ${orderStatus}
+
+                        </span>
+
+                    </div>
+
+                `;
+
+            });
+
+        }
+
+
+        // ==========================
+        // METTRE À JOUR LES STATISTIQUES
+        // ==========================
+
         customersCount.textContent =
-        uniqueCustomers.size;
+            uniqueCustomers.size;
+
 
         todaySales.textContent =
-        todayTotal.toLocaleString() + " Kz";
+            todayTotal.toLocaleString("pt-PT") + " Kz";
+
 
     }
 
@@ -431,6 +586,30 @@ async function loadStatistics(){
             error
 
         );
+
+        if(recentOrders){
+
+            recentOrders.innerHTML = `
+
+                <div class="emptyCard">
+
+                    <span class="material-symbols-rounded">
+
+                        error
+
+                    </span>
+
+                    <p>
+
+                        Não foi possível carregar os pedidos.
+
+                    </p>
+
+                </div>
+
+            `;
+
+        }
 
     }
 
