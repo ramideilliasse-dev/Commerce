@@ -1,140 +1,101 @@
  <!DOCTYPE html>
 <html lang="pt">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width,initial-scale=1.0">
-
-<title>Chat | Toma</title>
-
-<link rel="stylesheet"
-href="chat.css">
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-rel="stylesheet">
-
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
-rel="stylesheet">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2563eb">
+<title>Mensagens | Toma</title>
+<link rel="stylesheet" href="chat.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
 </head>
-
 <body>
-
-<div class="chatPage">
-
-<header class="chatHeader">
-
-<div class="chatHeaderLeft">
-
-<a
-href="javascript:history.back()"
-class="backButton">
-
-<span class="material-symbols-rounded">
-
-arrow_back
-
-</span>
-
-</a>
-
-<img
-id="merchantPhoto"
-class="customerAvatar"
-src="images/default-store.png">
-
-<div>
-
-<h2 id="merchantName">
-
-Loja
-
-</h2>
-
-<p id="productName">
-
-Produto
-
-</p>
-
-</div>
-
-</div>
-
-</header>
-
-<div
-id="messagesContainer"
-class="messagesContainer">
-
-<div class="emptyMessages">
-
-<span class="material-symbols-rounded">
-
-chat
-
-</span>
-
-<h3>
-
-Comece a conversa
-
-</h3>
-
-<p>
-
-Envie uma mensagem para a loja.
-
-</p>
-
-</div>
-
-</div>
-
-<footer class="chatFooter">
-
-<button
-id="sendImage"
-class="iconButton">
-
-<span class="material-symbols-rounded">
-
-image
-
-</span>
-
-</button>
-
-<input
-id="messageInput"
-type="text"
-placeholder="Escreva uma mensagem...">
-
-<button
-id="sendMessage"
-class="sendButton">
-
-<span class="material-symbols-rounded">
-
-send
-
-</span>
-
-</button>
-
-</footer>
-
-</div>
-
-<script
-type="module"
-src="./js/chat.js">
-
-</script>
-
+    <main class="chatPage">
+    <!-- CABEÇALHO -->
+    <header class="chatHeader">
+        <a href="javascript:history.back()" class="backButton" aria-label="Voltar">
+            <span class="material-symbols-rounded">arrow_back</span>
+        </a>
+        <div class="merchantAvatarWrap">
+            <img
+                id="merchantPhoto"
+                src="images/default-store.png"
+                alt="Loja"
+                class="merchantAvatar"
+            >
+            <span class="onlineIndicator"></span>
+        </div>
+        <div class="chatHeaderInfo">
+            <h1 id="merchantName">Loja</h1>
+            <p id="chatStatus">A preparar conversa...</p>
+        </div>
+        <button id="chatOptionsButton" class="headerIconButton" type="button" aria-label="Informações">
+            <span class="material-symbols-rounded">info</span>
+        </button>
+    </header>
+    <!-- PRODUTO DA CONVERSA -->
+    <section class="productChatCard" id="productChatCard">
+        <div class="productChatImageWrap">
+            <img id="chatProductImage" src="images/default-store.png" alt="Produto">
+        </div>
+        <div class="productChatInfo">
+            <span class="productChatLabel">A conversar sobre</span>
+            <h2 id="chatProductName">Produto</h2>
+            <p id="chatProductPrice">Preço indisponível</p>
+        </div>
+        <span class="material-symbols-rounded productChatIcon">shopping_bag</span>
+    </section>
+    <!-- AVISO -->
+    <div class="chatNotice">
+        <span class="material-symbols-rounded">verified_user</span>
+        <p>Converse com o vendedor através da Toma. Nunca partilhe palavras-passe ou códigos de segurança.</p>
+    </div>
+    <!-- MENSAGENS -->
+    <section
+        id="messagesContainer"
+        class="messagesContainer"
+        aria-label="Mensagens da conversa"
+        aria-live="polite"
+    >
+        <div id="chatLoading" class="chatState">
+            <span class="loadingSpinner"></span>
+            <p>A carregar mensagens...</p>
+        </div>
+    </section>
+    <!-- ERREUR -->
+    <div id="chatError" class="chatError" role="alert" hidden></div>
+    <!-- COMPOSER -->
+    <form id="messageForm" class="chatComposer">
+        <button
+            id="sendImage"
+            class="composerIconButton"
+            type="button"
+            aria-label="Enviar imagem"
+            title="Enviar imagem"
+        >
+            <span class="material-symbols-rounded">image</span>
+        </button>
+        <div class="messageInputWrap">
+            <textarea
+                id="messageInput"
+                rows="1"
+                maxlength="3000"
+                placeholder="Escreva uma mensagem..."
+                aria-label="Escreva uma mensagem"
+            ></textarea>
+        </div>
+        <button
+            id="sendMessage"
+            class="sendButton"
+            type="submit"
+            aria-label="Enviar mensagem"
+            disabled
+        >
+            <span class="material-symbols-rounded">send</span>
+        </button>
+    </form>
+    <p class="composerFootnote">Mensagens enviadas através da Toma</p>
+</main>
+<script type="module" src="js/chat.js"></script>
 </body>
-
 </html>
