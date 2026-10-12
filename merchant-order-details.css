@@ -1762,3 +1762,109 @@ TOMA — BLOC 26C — REAL-TIME INDICATOR
     }
 
 }
+/* ==========================================================
+   TOMA — MERCHANT ORDER DETAILS
+   BLOC 26E — BOUTON RETOUR PREMIUM
+   ========================================================== */
+
+#backToOrders {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    width: 100%;
+    min-height: 54px;
+    padding: 14px 20px;
+
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+    );
+
+    color: #ffffff;
+
+    border: none;
+    border-radius: 14px;
+
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow: 0 6px 16px rgba(
+        37,
+        99,
+        235,
+        0.22
+    );
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+#backToOrders .material-symbols-rounded {
+    font-size: 22px;
+    line-height: 1;
+}
+
+#backToOrders:active {
+    transform: scale(0.98);
+
+    box-shadow: 0 3px 8px rgba(
+        37,
+        99,
+        235,
+        0.18
+    );
+}
+
+#backToOrders:focus-visible {
+    outline: 3px solid rgba(
+        37,
+        99,
+        235,
+        0.35
+    );
+
+    outline-offset: 3px;
+}
+
+/* Bouton de retour dans la carte d'erreur */
+
+#backToOrdersError {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    width: 100%;
+    min-height: 52px;
+    padding: 13px 18px;
+
+    background: #2563eb;
+    color: #ffffff;
+
+    border: none;
+    border-radius: 14px;
+
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: transform 0.2s ease;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+#backToOrdersError:active {
+    transform: scale(0.98);
+}
