@@ -2774,3 +2774,300 @@ a:focus-visible {
     }
 
 }
+/* ==================================================
+TOMA DASHBOARD — PREMIUM BUTTONS V2
+Agrandissement général et design professionnel
+================================================== */
+
+/* 1. BOUTONS D’ACCÈS RAPIDE */
+.quickActions {
+display: grid;
+grid-template-columns: repeat(2, minmax(0, 1fr));
+gap: 18px;
+margin-top: 24px;
+}
+
+.quickActionCard {
+position: relative;
+display: flex;
+align-items: center;
+gap: 15px;
+
+min-height: 100px;
+padding: 22px 20px;
+background: linear-gradient(
+    145deg,
+    #ffffff 0%,
+    #f5f8ff 100%
+);
+border: 1px solid #e0e7f3;
+border-radius: 20px;
+box-shadow: 0 5px 16px rgba(16, 26, 48, 0.07);
+text-decoration: none;
+color: #101a30;
+transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+overflow: hidden;
+box-sizing: border-box;
+-webkit-tap-highlight-color: transparent;
+
+}
+
+/* Petit effet lumineux */
+.quickActionCard::before {
+content: “”;
+position: absolute;
+top: 0;
+left: 0;
+width: 4px;
+height: 100%;
+background: linear-gradient(
+180deg,
+#3678ff,
+#6c5ce7
+);
+opacity: 0.9;
+}
+
+/* Effet au passage de la souris */
+.quickActionCard:hover {
+transform: translateY(-4px);
+border-color: #b8ccff;
+box-shadow: 0 12px 28px rgba(16, 26, 48, 0.12);
+}
+
+/* Effet au toucher */
+.quickActionCard:active {
+transform: scale(0.98);
+}
+
+/* 2. ICÔNES PLUS GRANDES */
+.quickActionIcon {
+flex: 0 0 58px;
+width: 58px;
+height: 58px;
+
+display: flex;
+align-items: center;
+justify-content: center;
+background: linear-gradient(
+    145deg,
+    #e8efff,
+    #dce6ff
+);
+color: #2458c7;
+border-radius: 17px;
+font-size: 30px;
+transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease;
+
+}
+
+.quickActionCard:hover .quickActionIcon {
+background: linear-gradient(
+145deg,
+#2458c7,
+#526ff0
+);
+
+color: #ffffff;
+transform: scale(1.05);
+
+}
+
+/* 3. TEXTES PLUS LISIBLES */
+.quickActionText {
+flex: 1;
+min-width: 0;
+
+display: flex;
+flex-direction: column;
+justify-content: center;
+gap: 5px;
+font-size: 15px;
+font-weight: 700;
+line-height: 1.4;
+color: #17233d;
+
+}
+
+/* 4. FLÈCHE DES BOUTONS */
+.quickActionArrow {
+flex: 0 0 auto;
+font-size: 23px;
+color: #8190aa;
+
+transition:
+    transform 0.25s ease,
+    color 0.25s ease;
+
+}
+
+.quickActionCard:hover .quickActionArrow {
+color: #2458c7;
+transform: translateX(4px);
+}
+
+/* 5. BADGE DES MESSAGES NON LUS */
+#merchantMessagesQuickBadge {
+position: absolute;
+top: 10px;
+right: 10px;
+z-index: 2;
+
+min-width: 25px;
+height: 25px;
+padding: 0 7px;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+background: #e53945;
+color: #ffffff;
+border: 2px solid #ffffff;
+border-radius: 999px;
+font-size: 12px;
+font-weight: 800;
+line-height: 1;
+box-shadow: 0 3px 8px rgba(229, 57, 69, 0.25);
+
+}
+
+/* Respecter l’attribut hidden du badge */
+#merchantMessagesQuickBadge[hidden] {
+display: none !important;
+}
+
+/* 6. AGRANDIR LE BOUTON PRINCIPAL D’AJOUT DE PRODUIT */
+#addProductBtn {
+min-height: 52px;
+padding: 14px 24px;
+
+border-radius: 14px;
+font-size: 15px;
+font-weight: 700;
+cursor: pointer;
+transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+}
+
+#addProductBtn:hover {
+transform: translateY(-2px);
+box-shadow: 0 7px 18px rgba(16, 26, 48, 0.14);
+}
+
+/* 7. AGRANDIR LES BOUTONS DES NOTIFICATIONS */
+#openNotificationsBtn,
+#activateTomaNotificationsBtn,
+#markAllNotificationsReadBtn {
+min-height: 46px;
+padding: 12px 18px;
+
+border-radius: 12px;
+font-size: 14px;
+font-weight: 700;
+cursor: pointer;
+transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+}
+
+#openNotificationsBtn:hover,
+#activateTomaNotificationsBtn:hover,
+#markAllNotificationsReadBtn:hover {
+transform: translateY(-2px);
+}
+
+/* 8. AGRANDIR LES LIENS DU MENU LATÉRAL */
+.navLink {
+min-height: 52px;
+padding: 13px 15px;
+box-sizing: border-box;
+
+border-radius: 12px;
+font-size: 14px;
+transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+
+}
+
+.navLink:hover {
+transform: translateX(3px);
+}
+
+/* 9. AGRANDIR LES ZONES CLIQUABLES SUR MOBILE */
+@media (max-width: 768px) {
+.quickActions {
+grid-template-columns: 1fr;
+gap: 14px;
+}
+
+.quickActionCard {
+    min-height: 96px;
+    padding: 20px 18px;
+    border-radius: 18px;
+}
+.quickActionIcon {
+    flex-basis: 54px;
+    width: 54px;
+    height: 54px;
+    font-size: 28px;
+    border-radius: 15px;
+}
+.quickActionText {
+    font-size: 15px;
+}
+.quickActionArrow {
+    font-size: 25px;
+}
+.navLink {
+    min-height: 54px;
+    padding: 14px 16px;
+}
+#addProductBtn {
+    width: 100%;
+    min-height: 54px;
+}
+#openNotificationsBtn,
+#activateTomaNotificationsBtn,
+#markAllNotificationsReadBtn {
+    min-height: 48px;
+    padding: 13px 16px;
+}
+
+}
+
+/* 10. PETITS ÉCRANS */
+@media (max-width: 380px) {
+.quickActionCard {
+gap: 12px;
+padding: 18px 15px;
+}
+
+.quickActionIcon {
+    flex-basis: 48px;
+    width: 48px;
+    height: 48px;
+    font-size: 25px;
+}
+.quickActionText {
+    font-size: 14px;
+}
+
+}
+
+/* 11. ACCESSIBILITÉ : NAVIGATION AU CLAVIER */
+.quickActionCard:focus-visible,
+.navLink:focus-visible,
+#addProductBtn:focus-visible {
+outline: 3px solid #7399ff;
+outline-offset: 3px;
+}
