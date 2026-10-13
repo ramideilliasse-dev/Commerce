@@ -674,17 +674,19 @@ document
 
 
 // =====================================================
-// BLOC 18 — INITIALISATION
+// BLOC 18 — INITIALISATION OPTIMISÉE
 // =====================================================
 
 async function initializeChat(user) {
     showLoading();
-
     hideError();
 
     try {
-        // Un chat existant peut être ouvert par son ID.
         const chatIdFromURL = params.get("id");
+
+        // -------------------------------------------------
+        // CAS 1 — OUVRIR UNE CONVERSATION EXISTANTE
+        // -------------------------------------------------
 
         if (chatIdFromURL) {
             const chatRef = doc(
@@ -703,6 +705,7 @@ async function initializeChat(user) {
 
             const chatData = chatSnapshot.data();
 
+            // Vérifier que la conversation appartient au client.
             if (chatData.customerId !== user.uid) {
                 throw new Error(
                     "Não tem autorização para abrir esta conversa."
@@ -712,54 +715,69 @@ async function initializeChat(user) {
             currentChatId = chatSnapshot.id;
             currentChat = chatData;
 
-            const productId = chatData.productId;
+            // Afficher immédiatement les informations déjà
+            // enregistrées dans le document de conversation.
+            merchantName.textContent = getText(
+                chatData.merchantName,
+                "Vendedor Toma"
+            );
 
-            if (productId) {
-                try {
-                    await loadProduct(productId);
-                } catch {
-                    merchantName.textContent =
-                        getText(
-                            chatData.merchantName,
-                            "Vendedor Toma"
+            chatProductName.textContent = getText(
+                chatData.productName,
+                "Produto"
+            );
+
+            chatProductPrice.textContent = formatPrice(
+                chatData.productPrice
+            );
+
+            chatProductImage.src = getText(
+                chatData.productImage,
+                getDefaultAvatar()
+            );
+
+            // Démarrer l'écoute des messages sans attendre
+            // le chargement complémentaire du produit.
+            chatStatus.textContent = "Conversa Toma";
+
+            listenToMessages();
+
+            // Charger les informations actualisées du produit
+            // en arrière-plan, sans bloquer l'ouverture du chat.
+            if (chatData.productId) {
+                loadProduct(chatData.productId)
+                    .catch((error) => {
+                        console.warn(
+                            "TOMA CHAT: não foi possível atualizar os dados do produto.",
+                            error
                         );
-
-                    chatProductName.textContent =
-                        getText(chatData.productName, "Produto");
-
-                    chatProductPrice.textContent =
-                        formatPrice(chatData.productPrice);
-
-                    chatProductImage.src =
-                        getText(
-                            chatData.productImage,
-                            getDefaultAvatar()
-                        );
-                }
-            } else {
-                merchantName.textContent =
-                    getText(chatData.merchantName, "Vendedor Toma");
-
-                chatProductName.textContent =
-                    getText(chatData.productName, "Produto");
-            }
-        } else {
-            const productId = params.get("product");
-
-            if (!productId) {
-                throw new Error(
-                    "Abra esta página através do botão de chat de um produto."
-                );
+                    });
             }
 
-            const product = await loadProduct(productId);
-
-            await findOrCreateConversation(user, product);
+            return;
         }
+
+        // -------------------------------------------------
+        // CAS 2 — CRÉER OU TROUVER UNE CONVERSATION
+        // À PARTIR D'UN PRODUIT
+        // -------------------------------------------------
+
+        const productId = params.get("product");
+
+        if (!productId) {
+            throw new Error(
+                "Abra esta página através do botão de chat de um produto."
+            );
+        }
+
+        const product = await loadProduct(productId);
+
+        await findOrCreateConversation(user, product);
 
         chatStatus.textContent = "Conversa Toma";
 
         listenToMessages();
+
     } catch (error) {
         console.error(
             "TOMA CHAT: erro na inicialização.",
@@ -774,8 +792,6 @@ async function initializeChat(user) {
         hideLoading();
     }
 }
-
-
 // =====================================================
 // BLOC 19 — AUTHENTIFICATION
 // =====================================================
