@@ -607,24 +607,35 @@ window.openMerchantShop = function () {
         "merchant-shop.html?merchantId=" + encodeURIComponent(merchantId);
 
 };
+// ======================================================
+// TOMA — OUVRIR LE CHAT AVEC LE VENDEUR
+// ======================================================
+
 window.openMerchantChat = function () {
 
     if (!product) {
 
-        alert("Produit non chargé.");
+        alert("Produto indisponível.");
 
         return;
 
     }
 
-    location.href =
-        "chat.html?merchant=" +
-        product.merchantId +
-        "&product=" +
-        product.id;
+    if (!product.id || !product.merchantId) {
+
+        alert("Não foi possível identificar o produto ou o vendedor.");
+
+        return;
+
+    }
+
+    const chatURL =
+        "chat.html?product=" +
+        encodeURIComponent(product.id);
+
+    window.location.href = chatURL;
 
 };
-
 
 // ======================================================
 // BLOC 9
@@ -1639,27 +1650,19 @@ ${url}`;
 // CHAT
 // =====================================
 
-chatButton.onclick=()=>{
+// =====================================
+// CHAT — BOUTON PRINCIPAL
+// =====================================
 
-    if(!product){
+if (chatButton) {
 
-        alert("Produto indisponível.");
+    chatButton.onclick = () => {
 
-        return;
+        window.openMerchantChat();
 
-    }
+    };
 
-    location.href=
-
-"chat.html?merchant="+
-
-product.merchantId+
-
-"&product="+
-
-product.id;
-
-};
+}
 
 // ======================================================
 // BLOC 17
