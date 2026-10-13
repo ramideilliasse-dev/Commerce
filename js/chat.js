@@ -424,8 +424,8 @@ function renderMessage(message) {
 
 
 // =====================================================
-// BLOC 12 — CHARGEMENT OPTIMISÉ DES MESSAGES
-// Affiche d'abord les 4 derniers messages
+// BLOC 12 — CHAT OPTIMISÉ
+// 4 derniers messages + chargement progressif
 // =====================================================
 
 const CHAT_INITIAL_MESSAGES = 4;
@@ -433,7 +433,97 @@ const CHAT_INITIAL_MESSAGES = 4;
 let oldestLoadedMessage = null;
 let loadingOlderMessages = false;
 let hasOlderMessages = false;
-let initialMessageIds = new Set();
+
+let displayedMessageIds = new Set();
+let olderMessagesButton = null;
+
+
+// -----------------------------------------------------
+// CRÉER LE BOUTON POUR LES ANCIENS MESSAGES
+// -----------------------------------------------------
+
+function createOlderMessagesButton() {
+    if (olderMessagesButton) {
+        return;
+    }
+
+    olderMessagesButton = document.createElement("button");
+
+    olderMessagesButton.type = "button";
+    olderMessagesButton.textContent =
+        "Ver mensagens anteriores";
+
+    olderMessagesButton.style.display = "none";
+    olderMessagesButton.style.margin = "12px auto";
+    olderMessagesButton.style.padding = "10px 16px";
+    olderMessagesButton.style.borderRadius = "20px";
+    olderMessagesButton.style.border = "1px solid #ddd";
+    olderMessagesButton.style.background = "#fff";
+    olderMessagesButton.style.cursor = "pointer";
+
+    messagesContainer.parentNode.insertBefore(
+        olderMessagesButton,
+        messagesContainer
+    );
+
+    olderMessagesButton.addEventListener("click", async () => {
+        await loadOlderMessages();
+    });
+}
+
+
+// -----------------------------------------------------
+// AFFICHER UN MESSAGE AU DÉBUT DE LA CONVERSATION
+// -----------------------------------------------------
+
+function renderMessageAtBeginning(message) {
+    const isMine = message.sender === "customer";
+
+    const bubble = document.createElement("div");
+
+    bubble.className = isMine
+        ? "message customer"
+        : "message merchant";
+
+    if (message.text) {
+        const text = document.createElement("div");
+
+        text.textContent = message.text;
+
+        bubble.appendChild(text);
+    }
+
+    if (
+        message.image &&
+        typeof message.image === "string"
+    ) {
+        const image = document.createElement("img");
+
+        image.className = "messageImage";
+        image.src = message.image;
+        image.alt = "Imagem enviada na conversa";
+        image.loading = "lazy";
+
+        bubble.appendChild(image);
+    }
+
+    const time = document.createElement("div");
+
+    time.className = "messageTime";
+    time.textContent = formatTime(message.createdAt);
+
+    bubble.appendChild(time);
+
+    messagesContainer.insertBefore(
+        bubble,
+        messagesContainer.firstChild
+    );
+}
+
+
+// -----------------------------------------------------
+// CHARGER 4 ANCIENS MESSAGES
+// -----------------------------------------------------
 
 async function loadOlderMessages() {
     if (
@@ -446,6 +536,12 @@ async function loadOlderMessages() {
     }
 
     loadingOlderMessages = true;
+
+    const previousButtonText =
+        olderMessagesButton.textContent;
+
+    olderMessagesButton.disabled = true;
+    olderMessagesButton.textContent = "A carregar...";
 
     try {
         const messagesRef = collection(
@@ -466,9 +562,13 @@ async function loadOlderMessages() {
 
         if (snapshot.empty) {
             hasOlderMessages = false;
+            olderMessagesButton.style.display = "none";
             return;
         }
 
+        // La requête est en ordre décroissant.
+        // On inverse le résultat pour afficher les messages
+        // du plus ancien au plus récent.
         const olderMessages = snapshot.docs
             .map((item) => ({
                 id: item.id,
@@ -476,31 +576,33 @@ async function loadOlderMessages() {
             }))
             .reverse();
 
-        const fragment = document.createDocumentFragment();
+        // Préserver la position visuelle pendant le chargement.
+        const previousHeight =
+            messagesContainer.scrollHeight;
 
         olderMessages.forEach((message) => {
-            const previousContainer = messagesContainer;
-            const temporaryMessages = [];
+            if (!displayedMessageIds.has(message.id)) {
+                renderMessageAtBeginning(message);
 
-            // Le rendu reste identique à celui du chat actuel.
-            const temporaryWrapper = document.createElement("div");
-            temporaryWrapper.style.display = "contents";
-
-            previousContainer.appendChild(temporaryWrapper);
-
-            const originalAppendChild =
-                previousContainer.appendChild.bind(previousContainer);
-
-            // Insérer chaque ancien message avant les messages
-            // déjà affichés.
-            renderMessageBefore(message, temporaryWrapper);
+                displayedMessageIds.add(message.id);
+            }
         });
 
-        oldestLoadedMessage = snapshot.docs[snapshot.docs.length - 1];
+        // Le dernier document de la requête descendante
+        // correspond au message le plus ancien de ce lot.
+        oldestLoadedMessage =
+            snapshot.docs[snapshot.docs.length - 1];
 
-        if (snapshot.size < CHAT_INITIAL_MESSAGES) {
-            hasOlderMessages = false;
-        }
+        hasOlderMessages =
+            snapshot.size === CHAT_INITIAL_MESSAGES;
+
+        olderMessagesButton.style.display =
+            hasOlderMessages ? "block" : "none";
+
+        const newHeight = messagesContainer.scrollHeight;
+
+        messagesContainer.scrollTop +=
+            newHeight - previousHeight;
 
     } catch (error) {
         console.error(
@@ -511,65 +613,49 @@ async function loadOlderMessages() {
         showError(
             "Não foi possível carregar as mensagens anteriores."
         );
+
     } finally {
         loadingOlderMessages = false;
+
+        olderMessagesButton.disabled = false;
+
+        olderMessagesButton.textContent =
+            previousButtonText;
+
+        if (hasOlderMessages) {
+            olderMessagesButton.textContent =
+                "Ver mensagens anteriores";
+        }
     }
 }
 
 
-// Affiche un ancien message au début de la conversation.
-function renderMessageBefore(message, referenceElement) {
-    const sender = message.sender;
-    const isMine = sender === "customer";
-
-    const bubble = document.createElement("div");
-
-    bubble.className = isMine
-        ? "message customer"
-        : "message merchant";
-
-    if (message.text) {
-        const text = document.createElement("div");
-        text.textContent = message.text;
-        bubble.appendChild(text);
-    }
-
-    if (message.image && typeof message.image === "string") {
-        const image = document.createElement("img");
-
-        image.className = "messageImage";
-        image.src = message.image;
-        image.alt = "Imagem enviada na conversa";
-        image.loading = "lazy";
-
-        bubble.appendChild(image);
-    }
-
-    const time = document.createElement("div");
-    time.className = "messageTime";
-    time.textContent = formatTime(message.createdAt);
-
-    bubble.appendChild(time);
-
-    messagesContainer.insertBefore(bubble, referenceElement);
-}
-
+// -----------------------------------------------------
+// ÉCOUTER LES 4 MESSAGES LES PLUS RÉCENTS
+// -----------------------------------------------------
 
 function listenToMessages() {
-    if (!currentChatId) return;
+    if (!currentChatId) {
+        return;
+    }
 
     if (unsubscribeMessages) {
         unsubscribeMessages();
         unsubscribeMessages = null;
     }
 
+    createOlderMessagesButton();
+
     oldestLoadedMessage = null;
     loadingOlderMessages = false;
     hasOlderMessages = false;
-    initialMessageIds = new Set();
+
+    displayedMessageIds = new Set();
     messagesLoaded = false;
 
     messagesContainer.innerHTML = "";
+
+    olderMessagesButton.style.display = "none";
 
     showLoading("A carregar as mensagens recentes...");
 
@@ -580,7 +666,6 @@ function listenToMessages() {
         "messages"
     );
 
-    // Charger uniquement les 4 messages les plus récents.
     const recentMessagesQuery = query(
         messagesRef,
         orderBy("createdAt", "desc"),
@@ -591,10 +676,11 @@ function listenToMessages() {
 
     unsubscribeMessages = onSnapshot(
         recentMessagesQuery,
+
         async (snapshot) => {
             hideError();
 
-            const messages = snapshot.docs
+            const recentMessages = snapshot.docs
                 .map((item) => ({
                     id: item.id,
                     ...item.data()
@@ -607,30 +693,42 @@ function listenToMessages() {
                 hideLoading();
                 messagesContainer.innerHTML = "";
 
-                if (messages.length === 0) {
+                if (recentMessages.length === 0) {
                     renderEmptyState();
                     messagesLoaded = true;
                     return;
                 }
 
-                messages.forEach((message) => {
+                recentMessages.forEach((message) => {
                     renderMessage(message);
-                    initialMessageIds.add(message.id);
+
+                    displayedMessageIds.add(message.id);
                 });
 
+                // Dans la requête descendante, le dernier document
+                // est le plus ancien parmi les quatre chargés.
                 oldestLoadedMessage =
                     snapshot.docs[snapshot.docs.length - 1];
 
                 hasOlderMessages =
                     snapshot.size === CHAT_INITIAL_MESSAGES;
 
+                olderMessagesButton.style.display =
+                    hasOlderMessages ? "block" : "none";
+
                 messagesLoaded = true;
+
                 scrollToBottom();
 
             } else {
-                // Ajouter uniquement les nouveaux messages.
-                for (const message of messages) {
-                    if (!initialMessageIds.has(message.id)) {
+                // Ajouter seulement les messages qui ne sont
+                // pas encore présents dans l'interface.
+                let newMessageAdded = false;
+
+                for (const message of recentMessages) {
+                    if (
+                        !displayedMessageIds.has(message.id)
+                    ) {
                         const emptyState =
                             messagesContainer.querySelector(
                                 ".chatEmptyState"
@@ -641,19 +739,25 @@ function listenToMessages() {
                         }
 
                         renderMessage(message);
-                        initialMessageIds.add(message.id);
 
-                        scrollToBottom();
+                        displayedMessageIds.add(message.id);
+
+                        newMessageAdded = true;
                     }
+                }
+
+                if (newMessageAdded) {
+                    scrollToBottom();
                 }
             }
 
-            // Mettre à jour le compteur de messages lus.
-            const unreadFromMerchant = messages.filter(
-                (message) =>
-                    message.sender === "merchant" &&
-                    message.readByCustomer !== true
-            );
+            // Conserver le comportement actuel de lecture.
+            const unreadFromMerchant =
+                recentMessages.filter(
+                    (message) =>
+                        message.sender === "merchant" &&
+                        message.readByCustomer !== true
+                );
 
             if (unreadFromMerchant.length > 0) {
                 await markMerchantMessagesAsRead(
@@ -661,6 +765,7 @@ function listenToMessages() {
                 );
             }
         },
+
         (error) => {
             console.error(
                 "TOMA CHAT: erro ao carregar mensagens.",
@@ -675,7 +780,6 @@ function listenToMessages() {
         }
     );
 }
-
 // =====================================================
 // BLOC 13 — MARQUER LES MESSAGES COMME LUS
 // =====================================================
