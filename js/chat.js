@@ -16,7 +16,11 @@ import {
     updateDoc,
     increment,
     serverTimestamp,
-    onSnapshot
+    onSnapshot,
+    orderBy,
+    limit,
+    startAfter,
+    getDocsFromServer
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import {
@@ -420,8 +424,136 @@ function renderMessage(message) {
 
 
 // =====================================================
-// BLOC 12 — ÉCOUTER LES MESSAGES EN TEMPS RÉEL
+// BLOC 12 — CHARGEMENT OPTIMISÉ DES MESSAGES
+// Affiche d'abord les 4 derniers messages
 // =====================================================
+
+const CHAT_INITIAL_MESSAGES = 4;
+
+let oldestLoadedMessage = null;
+let loadingOlderMessages = false;
+let hasOlderMessages = false;
+let initialMessageIds = new Set();
+
+async function loadOlderMessages() {
+    if (
+        !currentChatId ||
+        !oldestLoadedMessage ||
+        loadingOlderMessages ||
+        !hasOlderMessages
+    ) {
+        return;
+    }
+
+    loadingOlderMessages = true;
+
+    try {
+        const messagesRef = collection(
+            db,
+            "merchantChats",
+            currentChatId,
+            "messages"
+        );
+
+        const olderQuery = query(
+            messagesRef,
+            orderBy("createdAt", "desc"),
+            startAfter(oldestLoadedMessage),
+            limit(CHAT_INITIAL_MESSAGES)
+        );
+
+        const snapshot = await getDocs(olderQuery);
+
+        if (snapshot.empty) {
+            hasOlderMessages = false;
+            return;
+        }
+
+        const olderMessages = snapshot.docs
+            .map((item) => ({
+                id: item.id,
+                ...item.data()
+            }))
+            .reverse();
+
+        const fragment = document.createDocumentFragment();
+
+        olderMessages.forEach((message) => {
+            const previousContainer = messagesContainer;
+            const temporaryMessages = [];
+
+            // Le rendu reste identique à celui du chat actuel.
+            const temporaryWrapper = document.createElement("div");
+            temporaryWrapper.style.display = "contents";
+
+            previousContainer.appendChild(temporaryWrapper);
+
+            const originalAppendChild =
+                previousContainer.appendChild.bind(previousContainer);
+
+            // Insérer chaque ancien message avant les messages
+            // déjà affichés.
+            renderMessageBefore(message, temporaryWrapper);
+        });
+
+        oldestLoadedMessage = snapshot.docs[snapshot.docs.length - 1];
+
+        if (snapshot.size < CHAT_INITIAL_MESSAGES) {
+            hasOlderMessages = false;
+        }
+
+    } catch (error) {
+        console.error(
+            "TOMA CHAT: erro ao carregar mensagens anteriores.",
+            error
+        );
+
+        showError(
+            "Não foi possível carregar as mensagens anteriores."
+        );
+    } finally {
+        loadingOlderMessages = false;
+    }
+}
+
+
+// Affiche un ancien message au début de la conversation.
+function renderMessageBefore(message, referenceElement) {
+    const sender = message.sender;
+    const isMine = sender === "customer";
+
+    const bubble = document.createElement("div");
+
+    bubble.className = isMine
+        ? "message customer"
+        : "message merchant";
+
+    if (message.text) {
+        const text = document.createElement("div");
+        text.textContent = message.text;
+        bubble.appendChild(text);
+    }
+
+    if (message.image && typeof message.image === "string") {
+        const image = document.createElement("img");
+
+        image.className = "messageImage";
+        image.src = message.image;
+        image.alt = "Imagem enviada na conversa";
+        image.loading = "lazy";
+
+        bubble.appendChild(image);
+    }
+
+    const time = document.createElement("div");
+    time.className = "messageTime";
+    time.textContent = formatTime(message.createdAt);
+
+    bubble.appendChild(time);
+
+    messagesContainer.insertBefore(bubble, referenceElement);
+}
+
 
 function listenToMessages() {
     if (!currentChatId) return;
@@ -431,6 +563,16 @@ function listenToMessages() {
         unsubscribeMessages = null;
     }
 
+    oldestLoadedMessage = null;
+    loadingOlderMessages = false;
+    hasOlderMessages = false;
+    initialMessageIds = new Set();
+    messagesLoaded = false;
+
+    messagesContainer.innerHTML = "";
+
+    showLoading("A carregar as mensagens recentes...");
+
     const messagesRef = collection(
         db,
         "merchantChats",
@@ -438,51 +580,83 @@ function listenToMessages() {
         "messages"
     );
 
-    const messagesQuery = query(
-        messagesRef
+    // Charger uniquement les 4 messages les plus récents.
+    const recentMessagesQuery = query(
+        messagesRef,
+        orderBy("createdAt", "desc"),
+        limit(CHAT_INITIAL_MESSAGES)
     );
 
+    let firstSnapshotReceived = false;
+
     unsubscribeMessages = onSnapshot(
-        messagesQuery,
+        recentMessagesQuery,
         async (snapshot) => {
             hideError();
-            hideLoading();
 
-            const allMessages = snapshot.docs.map((item) => ({
-                id: item.id,
-                ...item.data()
-            }));
+            const messages = snapshot.docs
+                .map((item) => ({
+                    id: item.id,
+                    ...item.data()
+                }))
+                .reverse();
 
-            allMessages.sort((a, b) => {
-                const timeA = a.createdAt?.toMillis?.() || 0;
-                const timeB = b.createdAt?.toMillis?.() || 0;
+            if (!firstSnapshotReceived) {
+                firstSnapshotReceived = true;
 
-                return timeA - timeB;
-            });
+                hideLoading();
+                messagesContainer.innerHTML = "";
 
-            messagesContainer.innerHTML = "";
+                if (messages.length === 0) {
+                    renderEmptyState();
+                    messagesLoaded = true;
+                    return;
+                }
 
-            if (allMessages.length === 0) {
-                renderEmptyState();
+                messages.forEach((message) => {
+                    renderMessage(message);
+                    initialMessageIds.add(message.id);
+                });
+
+                oldestLoadedMessage =
+                    snapshot.docs[snapshot.docs.length - 1];
+
+                hasOlderMessages =
+                    snapshot.size === CHAT_INITIAL_MESSAGES;
+
                 messagesLoaded = true;
-                return;
+                scrollToBottom();
+
+            } else {
+                // Ajouter uniquement les nouveaux messages.
+                for (const message of messages) {
+                    if (!initialMessageIds.has(message.id)) {
+                        const emptyState =
+                            messagesContainer.querySelector(
+                                ".chatEmptyState"
+                            );
+
+                        if (emptyState) {
+                            messagesContainer.innerHTML = "";
+                        }
+
+                        renderMessage(message);
+                        initialMessageIds.add(message.id);
+
+                        scrollToBottom();
+                    }
+                }
             }
 
-            allMessages.forEach(renderMessage);
-
-            messagesLoaded = true;
-            scrollToBottom();
-
-            // Les messages du commerçant lus par le client
-            // diminuent le compteur des messages non lus.
-            const unreadFromMerchant = allMessages.filter(
+            // Mettre à jour le compteur de messages lus.
+            const unreadFromMerchant = messages.filter(
                 (message) =>
                     message.sender === "merchant" &&
                     message.readByCustomer !== true
             );
 
             if (unreadFromMerchant.length > 0) {
-                markMerchantMessagesAsRead(
+                await markMerchantMessagesAsRead(
                     unreadFromMerchant
                 );
             }
@@ -493,13 +667,14 @@ function listenToMessages() {
                 error
             );
 
+            hideLoading();
+
             showError(
                 "Não foi possível carregar as mensagens. Verifique as regras do Firestore."
             );
         }
     );
 }
-
 
 // =====================================================
 // BLOC 13 — MARQUER LES MESSAGES COMME LUS
