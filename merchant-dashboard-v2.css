@@ -1,1661 +1,2776 @@
- /* =====================================
-   MERCHANT DASHBOARD V2
-   TOMA
-===================================== */
+ /* =====================================================
+   TOMA MERCHANT DASHBOARD V2
+   PREMIUM DESIGN
+   Navy Blue + White + Orange
+===================================================== */
 
-*{
+/* =====================================================
+   1. VARIABLES
+===================================================== */
 
-margin:0;
+:root {
+    --toma-navy: #101a30;
+    --toma-navy-light: #182642;
+    --toma-navy-hover: #243553;
 
-padding:0;
+    --toma-orange: #ff8a26;
+    --toma-orange-dark: #ed7410;
+    --toma-orange-light: #fff0e1;
 
-box-sizing:border-box;
+    --toma-white: #ffffff;
+    --toma-background: #f4f6fa;
+    --toma-background-soft: #f8f9fc;
 
-font-family:"Poppins",sans-serif;
+    --toma-text: #1c2638;
+    --toma-text-secondary: #748096;
+    --toma-text-light: #a3adbd;
 
-}
-
-body{
-
-background:#f5f7fb;
-
-color:#222;
-
-overflow-x:hidden;
-
-}
-
-a{
-
-text-decoration:none;
-
-color:inherit;
-
-}
-
-.dashboard{
-
-display:flex;
-
-min-height:100vh;
-
-}
-
-/* =====================================
-SIDEBAR
-===================================== */
-
-.sidebar{
-
-width:270px;
-
-background:#ffffff;
-
-border-right:1px solid #ececec;
-
-padding:25px 20px;
-
-display:flex;
-
-flex-direction:column;
-
-position:fixed;
-
-left:0;
-
-top:0;
-
-bottom:0;
-
-overflow-y:auto;
-
-}
-
-.logo{
-
-display:flex;
-
-align-items:center;
-
-gap:12px;
-
-margin-bottom:35px;
-
-}
-
-.logo img{
-
-width:52px;
-
-height:52px;
-
-border-radius:14px;
-
-object-fit:cover;
-
-}
-
-.logo h2{
-
-font-size:24px;
-
-font-weight:700;
-
-color:#ff6a00;
-
-}
-
-.merchantCard{
-
-background:#fff7ef;
-
-border-radius:18px;
-
-padding:18px;
-
-display:flex;
-
-align-items:center;
-
-gap:14px;
-
-margin-bottom:30px;
-
-}
-
-.merchantCard img{
-
-width:62px;
-
-height:62px;
-
-border-radius:50%;
-
-object-fit:cover;
-
-border:3px solid #ff6a00;
-
-}
-
-.merchantCard h3{
-
-font-size:17px;
-
-font-weight:600;
-
-}
-
-.merchantCard p{
-
-font-size:13px;
-
-color:#777;
-
-margin-top:4px;
-
-}
-
-/* =====================================
-MENU
-===================================== */
-
-.menu{
-
-display:flex;
-
-flex-direction:column;
-
-gap:8px;
-
-}
-
-.menu a{
-
-display:flex;
-
-align-items:center;
-
-gap:15px;
-
-padding:14px 16px;
-
-border-radius:14px;
-
-font-size:15px;
-
-font-weight:500;
-
-transition:.25s;
-
-}
-
-.menu a:hover{
-
-background:#fff3e8;
-
-color:#ff6a00;
-
-}
-
-.menu a.active{
-
-background:#ff6a00;
-
-color:#fff;
-
-}
-
-.menu .material-symbols-rounded{
-
-font-size:24px;
-
-}
-/* =====================================
-CONTENT
-===================================== */
-
-.content{
-
-margin-left:270px;
-
-flex:1;
-
-padding:35px;
-
-}
-
-/* =====================================
-HEADER
-===================================== */
-
-.topHeader{
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-margin-bottom:30px;
-
-}
-
-.topHeader h1{
-
-font-size:30px;
-
-font-weight:700;
-
-color:#222;
-
-margin-bottom:8px;
-
-}
-
-.topHeader p{
-
-font-size:15px;
-
-color:#777;
-
-}
-
-.headerActions{
-
-display:flex;
-
-align-items:center;
-
-gap:18px;
-
-}
-
-.notificationBtn{
-
-width:52px;
-
-height:52px;
-
-border:none;
-
-background:#fff;
-
-border-radius:16px;
-
-cursor:pointer;
-
-position:relative;
-
-box-shadow:0 6px 18px rgba(0,0,0,.08);
-
-transition:.25s;
-
-}
-
-.notificationBtn:hover{
-
-transform:translateY(-3px);
-
-}
-
-.notificationBtn .material-symbols-rounded{
-
-font-size:28px;
-
-color:#555;
-
-}
-
-.notificationBadge{
-
-position:absolute;
-
-top:8px;
-
-right:8px;
-
-width:18px;
-
-height:18px;
-
-background:#ff3b30;
-
-color:#fff;
-
-font-size:11px;
-
-border-radius:50%;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-}
-
-.addProductBtn{
-
-display:flex;
-
-align-items:center;
-
-gap:10px;
-
-padding:15px 24px;
-
-border:none;
-
-border-radius:16px;
-
-background:#ff6a00;
-
-color:#fff;
-
-font-size:15px;
-
-font-weight:600;
-
-cursor:pointer;
-
-transition:.25s;
-
-box-shadow:0 10px 25px rgba(255,106,0,.30);
-
-}
-
-.addProductBtn:hover{
-
-transform:translateY(-3px);
-
-background:#ff7d1a;
-
-}
-
-.addProductBtn .material-symbols-rounded{
-
-font-size:24px;
-
-}
-
-/* =====================================
-STATISTICS
-===================================== */
-
-.statsGrid{
-
-display:grid;
-
-grid-template-columns:repeat(5,1fr);
-
-gap:20px;
-
-margin-bottom:30px;
-
-}
-
-.statCard{
-
-background:#fff;
-
-border-radius:22px;
-
-padding:22px;
-
-box-shadow:0 8px 25px rgba(0,0,0,.05);
-
-transition:.25s;
-
-}
-
-.statCard:hover{
-
-transform:translateY(-5px);
-
-}
-
-.statCard h4{
-
-font-size:14px;
-
-font-weight:500;
-
-color:#777;
-
-margin:14px 0 10px;
-
-}
-
-.statCard h2{
-
-font-size:28px;
-
-font-weight:700;
-
-margin-bottom:8px;
-
-}
-
-.statCard p{
-
-font-size:13px;
-
-color:#999;
-
-}
-
-.statIcon{
-
-width:58px;
-
-height:58px;
-
-border-radius:18px;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-font-size:30px;
-
-color:#fff;
-
-}
-
-.orange{
-
-background:#ff6a00;
-
-}
-
-.purple{
-
-background:#7b61ff;
-
-}
-
-.blue{
-
-background:#3b82f6;
-
-}
-
-.green{
-
-background:#22c55e;
-
-}
-
-.pink{
-
-background:#ff4da6;
-
-}
-/* =====================================
-DASHBOARD CONTENT
-===================================== */
-
-.dashboardContent{
-
-display:grid;
-
-grid-template-columns:2fr 1fr;
-
-gap:25px;
-
-margin-bottom:30px;
-
-}
-
-.chartCard,
-.ordersCard{
-
-background:#fff;
-
-border-radius:22px;
-
-padding:24px;
-
-box-shadow:0 8px 25px rgba(0,0,0,.05);
-
-transition:.25s;
-
-}
-
-.chartCard:hover,
-.ordersCard:hover{
-
-transform:translateY(-4px);
-
-}
-
-.cardHeader{
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-margin-bottom:22px;
-
-}
-
-.cardHeader h2{
-
-font-size:21px;
-
-font-weight:700;
-
-color:#222;
-
-}
-
-.cardHeader a,
-.viewMoreBtn{
-
-font-size:14px;
-
-font-weight:600;
-
-color:#ff6a00;
-
-background:none;
-
-border:none;
-
-cursor:pointer;
-
-}
-
-.chartPlaceholder{
-
-height:320px;
-
-border:2px dashed #e8e8e8;
-
-border-radius:18px;
-
-display:flex;
-
-flex-direction:column;
-
-justify-content:center;
-
-align-items:center;
-
-background:#fafafa;
-
-}
-
-.chartPlaceholder .material-symbols-rounded{
-
-font-size:70px;
-
-color:#ff6a00;
-
-margin-bottom:15px;
-
-}
-
-.chartPlaceholder p{
-
-font-size:16px;
-
-color:#888;
-
-}
-
-/* =====================================
-RECENT ORDERS
-===================================== */
-
-.emptyCard{
-
-height:320px;
-
-display:flex;
-
-flex-direction:column;
-
-justify-content:center;
-
-align-items:center;
-
-text-align:center;
-
-}
-
-.emptyCard .material-symbols-rounded{
-
-font-size:60px;
-
-color:#bdbdbd;
-
-margin-bottom:15px;
-
-}
-
-.emptyCard p{
-
-font-size:15px;
-
-color:#888;
-
-}
-
-/* =====================================
-QUICK ACTIONS
-===================================== */
-
-.quickActions{
-
-background:#fff;
-
-border-radius:22px;
-
-padding:25px;
-
-box-shadow:0 8px 25px rgba(0,0,0,.05);
-
-}
-
-.quickActions h2{
-
-font-size:22px;
-
-font-weight:700;
-
-margin-bottom:22px;
-
-}
-
-.quickGrid{
-
-display:grid;
-
-grid-template-columns:repeat(4,1fr);
-
-gap:18px;
-
-}
-
-.quickCard{
-
-background:#fafafa;
-
-border-radius:20px;
-
-padding:28px 18px;
-
-display:flex;
-
-flex-direction:column;
-
-align-items:center;
-
-justify-content:center;
-
-transition:.25s;
-
-cursor:pointer;
+    --toma-border: #e8ecf3;
 
-}
-
-.quickCard:hover{
-
-background:#ff6a00;
-
-transform:translateY(-6px);
-
-color:#fff;
-
-}
-
-.quickCard .material-symbols-rounded{
-
-font-size:42px;
-
-margin-bottom:12px;
-
-}
-
-.quickCard p{
-
-font-size:15px;
-
-font-weight:600;
-
-text-align:center;
-
-}
-/* =====================================
-ANIMATIONS
-===================================== */
-
-@keyframes fadeUp{
-
-0%{
-
-opacity:0;
-
-transform:translateY(30px);
-
-}
-
-100%{
-
-opacity:1;
-
-transform:translateY(0);
-
-}
-
-}
-
-.sidebar{
-
-animation:fadeUp .5s ease;
-
-}
-
-.topHeader{
-
-animation:fadeUp .6s ease;
-
-}
-
-.statCard{
-
-animation:fadeUp .8s ease;
-
-}
-
-.chartCard{
-
-animation:fadeUp 1s ease;
-
-}
-
-.ordersCard{
-
-animation:fadeUp 1.1s ease;
-
-}
-
-.quickActions{
-
-animation:fadeUp 1.2s ease;
-
-}
-
-/* =====================================
-SCROLLBAR PREMIUM
-===================================== */
-
-::-webkit-scrollbar{
-
-width:8px;
-
-}
-
-::-webkit-scrollbar-track{
-
-background:#f2f2f2;
-
-}
-
-::-webkit-scrollbar-thumb{
-
-background:#ff6a00;
-
-border-radius:20px;
-
-}
-
-::-webkit-scrollbar-thumb:hover{
-
-background:#ff7d1a;
-
-}
-
-/* =====================================
-RESPONSIVE TABLET
-===================================== */
-
-@media(max-width:1200px){
-
-.statsGrid{
-
-grid-template-columns:repeat(2,1fr);
-
-}
-
-.dashboardContent{
-
-grid-template-columns:1fr;
-
-}
-
-.quickGrid{
-
-grid-template-columns:repeat(2,1fr);
-
-}
-
-}
-
-/* =====================================
-RESPONSIVE MOBILE
-===================================== */
-
-@media(max-width:768px){
-
-.sidebar{
-
-width:85px;
-
-padding:20px 10px;
-
-}
-
-.logo h2{
-
-display:none;
-
-}
-
-.merchantCard{
-
-justify-content:center;
-
-padding:10px;
-
-}
-
-.merchantCard div{
-
-display:none;
-
-}
-
-.menu a{
-
-justify-content:center;
-
-}
-
-.menu a span:last-child{
-
-display:none;
-
-}
-
-.content{
-
-margin-left:85px;
-
-padding:20px;
-
-}
-
-.topHeader{
-
-flex-direction:column;
-
-align-items:flex-start;
-
-gap:20px;
-
-}
+    --toma-green: #16a675;
+    --toma-green-light: #e5f8f0;
 
-.statsGrid{
+    --toma-red: #e5484d;
+    --toma-red-light: #fff0f0;
 
-grid-template-columns:1fr;
+    --toma-blue: #4578e6;
+    --toma-blue-light: #edf3ff;
 
-}
-
-.quickGrid{
-
-grid-template-columns:1fr;
-
-}
-
-.chartPlaceholder{
-
-height:220px;
-
-}
-
-}
-
-/* =====================================
-FIN
-===================================== */
-/* ===========================
-SIDEBAR COLLAPSE
-=========================== */
-
-.sidebar.collapsed{
-
-width:90px;
-
-}
-
-.sidebar.collapsed .logo h2{
-
-display:none;
-
-}
-
-.sidebar.collapsed .merchantCard div{
-
-display:none;
-
-}
-
-.sidebar.collapsed .menu a{
-
-justify-content:center;
-
-}
-
-.sidebar.collapsed .menu a{
-
-font-size:0;
-
-}
+    --sidebar-width: 270px;
 
-.sidebar.collapsed .menu .material-symbols-rounded{
+    --radius-small: 10px;
+    --radius-medium: 16px;
+    --radius-large: 22px;
 
-font-size:28px;
+    --shadow-card:
+        0 5px 24px rgba(16, 26, 48, 0.045);
 
-}
-
-.content.expanded{
+    --shadow-hover:
+        0 12px 30px rgba(16, 26, 48, 0.09);
 
-margin-left:90px;
-
+    --transition:
+        all 0.25s ease;
 }
-
-/* ===========================
-MENU BUTTON
-=========================== */
 
-.headerLeft{
 
-display:flex;
+/* =====================================================
+   2. RESET GLOBAL
+===================================================== */
 
-align-items:center;
-
-gap:18px;
-
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
-
-.toggleSidebar{
-
-width:52px;
 
-height:52px;
-
-border:none;
-
-background:#ffffff;
-
-border-radius:16px;
-
-cursor:pointer;
-
-box-shadow:0 8px 20px rgba(0,0,0,.08);
-
-transition:.25s;
-
+html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
 }
-
-.toggleSidebar:hover{
 
-background:#ff6a00;
-
-color:white;
-
+body {
+    min-height: 100vh;
+    font-family: "Poppins", sans-serif;
+    color: var(--toma-text);
+    background: var(--toma-background);
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-x: hidden;
 }
-
-.toggleSidebar .material-symbols-rounded{
-
-font-size:28px;
 
+button,
+input,
+textarea,
+select {
+    font: inherit;
 }
-/* =====================================
-HERO DA LOJA
-===================================== */
 
-.merchantHero{
-
-margin-bottom:30px;
-
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
 }
-
-.merchantBanner{
-
-width:100%;
 
-height:220px;
-
-border-radius:28px;
-
-overflow:hidden;
-
-background:#f5f5f5;
-
-box-shadow:0 12px 30px rgba(0,0,0,.08);
-
-position:relative;
-
+button {
+    cursor: pointer;
 }
-
-.merchantBanner img{
-
-width:100%;
 
-height:100%;
-
-object-fit:cover;
-
-display:block;
-
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
 }
-
-.merchantHeroContent{
-
-position:relative;
-
-margin-top:-65px;
-
-display:flex;
-
-align-items:flex-end;
 
-gap:20px;
-
-padding:0 25px;
-
+a {
+    color: inherit;
+    text-decoration: none;
 }
-
-.dashboardLogo{
-
-width:130px;
-
-height:130px;
-
-border-radius:50%;
-
-border:6px solid #fff;
-
-object-fit:cover;
 
-background:#fff;
-
-box-shadow:0 10px 30px rgba(0,0,0,.15);
-
+img {
+    display: block;
+    max-width: 100%;
 }
-
-.merchantHeroInfo{
-
-display:flex;
 
-flex-direction:column;
-
-justify-content:flex-end;
-
-padding-bottom:10px;
-
+.material-symbols-rounded {
+    font-family: "Material Symbols Rounded";
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "liga";
+    font-variation-settings:
+        "FILL" 0,
+        "wght" 400,
+        "GRAD" 0,
+        "opsz" 24;
 }
-
-.merchantHeroInfo h2{
 
-font-size:34px;
 
-font-weight:700;
+/* =====================================================
+   3. DASHBOARD LAYOUT
+===================================================== */
 
-color:#222;
-
-margin:0;
-
+.dashboard {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
 }
-
-.verifiedBadge{
-
-margin-top:10px;
-
-display:inline-flex;
-
-align-items:center;
-
-gap:8px;
-
-padding:10px 18px;
 
-background:#e8f7ed;
-
-color:#1fa750;
-
-font-weight:600;
-
-border-radius:999px;
-
-width:max-content;
-
-box-shadow:0 4px 10px rgba(0,0,0,.05);
-
+.content {
+    flex: 1;
+    min-width: 0;
+    margin-left: var(--sidebar-width);
+    padding: 30px 34px 20px;
+    transition: var(--transition);
 }
-
-.verifiedBadge .material-symbols-rounded{
-
-font-size:20px;
 
+.content.expanded {
+    margin-left: 90px;
 }
 
-/* MOBILE */
 
-@media(max-width:768px){
+/* =====================================================
+   4. SIDEBAR
+===================================================== */
 
-.merchantBanner{
+.sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 1000;
 
-height:170px;
+    display: flex;
+    flex-direction: column;
 
-border-radius:22px;
+    width: var(--sidebar-width);
+    height: 100vh;
 
-}
-
-.merchantHeroContent{
+    padding: 25px 17px 18px;
 
-margin-top:-50px;
+    color: var(--toma-white);
+    background:
+        linear-gradient(
+            180deg,
+            var(--toma-navy) 0%,
+            #0c1426 100%
+        );
 
-padding:0 18px;
+    overflow-x: hidden;
+    overflow-y: auto;
 
-gap:15px;
+    scrollbar-width: thin;
+    scrollbar-color: #34415a transparent;
 
+    transition: var(--transition);
 }
-
-.dashboardLogo{
-
-width:95px;
 
-height:95px;
-
-border-width:5px;
-
+.sidebar::-webkit-scrollbar {
+    width: 4px;
 }
-
-.merchantHeroInfo h2{
-
-font-size:24px;
 
+.sidebar::-webkit-scrollbar-thumb {
+    background: #34415a;
+    border-radius: 10px;
 }
 
-.verifiedBadge{
+.sidebarTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
 
-font-size:13px;
-
-padding:8px 14px;
-
-}
-
+    min-height: 48px;
+    margin-bottom: 28px;
 }
-/* =========================================================
-   TOMA — BLOC 25C
-   CENTRE DE NOTIFICATIONS
-========================================================= */
 
-.notificationWrapper{
-
-    position:relative;
-
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
 }
-
-
-.tomaNotificationButton{
 
-    position:relative;
+.logoIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    width:46px;
-    height:46px;
+    flex-shrink: 0;
 
-    border:none;
-
-    border-radius:14px;
-
-    background:#ffffff;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    cursor:pointer;
-
-    transition:
-        transform .2s ease,
-        box-shadow .2s ease,
-        background .2s ease;
-
-}
+    width: 44px;
+    height: 44px;
 
+    border-radius: 14px;
 
-.tomaNotificationButton:hover{
+    color: var(--toma-white);
 
-    transform:translateY(-2px);
+    background:
+        linear-gradient(
+            135deg,
+            #ffab55,
+            var(--toma-orange-dark)
+        );
 
-    background:#f8f9ff;
+    font-size: 27px;
+    font-weight: 800;
 
     box-shadow:
-        0 8px 22px rgba(0,0,0,.10);
+        0 5px 18px rgba(255, 138, 38, 0.25);
+}
 
+.logoText {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+
+    color: var(--toma-white);
+
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+    line-height: 1.2;
+}
+
+.logoText small {
+    color: #a9b5ca;
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: 1.1px;
+    white-space: nowrap;
+}
+
+.sidebarClose {
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    width: 38px;
+    height: 38px;
+
+    border: 0;
+    border-radius: 10px;
+
+    color: var(--toma-white);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.sidebarClose .material-symbols-rounded {
+    font-size: 21px;
 }
 
 
-.tomaNotificationButton:active{
+/* =====================================================
+   5. MERCHANT PROFILE
+===================================================== */
 
-    transform:scale(.94);
+.merchantCard {
+    display: flex;
+    align-items: center;
+    gap: 11px;
 
+    min-width: 0;
+    padding: 14px 11px;
+
+    margin-bottom: 27px;
+
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 16px;
+
+    background: rgba(255, 255, 255, 0.055);
+}
+
+.merchantAvatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 45px;
+    height: 45px;
+
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 14px;
+
+    overflow: hidden;
+    background: #ffffff;
+}
+
+.merchantAvatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.merchantInfo {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 3px;
+
+    min-width: 0;
+}
+
+.merchantInfo strong {
+    color: var(--toma-white);
+    font-size: 12px;
+    font-weight: 600;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.merchantSubtitle {
+    color: #aab5c9;
+    font-size: 10px;
+}
+
+.merchantAccountStatus {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    color: #c9d4e5;
+    font-size: 10px;
+}
+
+.statusDot {
+    display: inline-block;
+
+    flex-shrink: 0;
+
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+    background: var(--toma-green);
+}
+
+.merchantCardIcon {
+    flex-shrink: 0;
+    color: #8592a9;
+    font-size: 19px;
 }
 
 
-.tomaNotificationButton .material-symbols-rounded{
+/* =====================================================
+   6. SIDEBAR NAVIGATION
+===================================================== */
 
-    font-size:25px;
+.sidebarNav {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
 
+.navSectionTitle {
+    display: block;
+
+    margin: 12px 0 7px;
+    padding: 0 12px;
+
+    color: #8290a8;
+
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+}
+
+.navLink {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    min-height: 46px;
+    padding: 11px 12px;
+
+    border: 1px solid transparent;
+    border-radius: 12px;
+
+    color: #b4bfd1;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    transition: var(--transition);
+}
+
+.navLink > .material-symbols-rounded {
+    flex-shrink: 0;
+
+    color: #9eabc1;
+    font-size: 21px;
+
+    transition: var(--transition);
+}
+
+.navLink:hover {
+    color: var(--toma-white);
+    background: rgba(255, 255, 255, 0.065);
+}
+
+.navLink:hover > .material-symbols-rounded {
+    color: var(--toma-orange);
+}
+
+.navLink.active {
+    color: var(--toma-white);
+
+    border-color: rgba(255, 138, 38, 0.14);
+
+    background:
+        linear-gradient(
+            100deg,
+            rgba(255, 138, 38, 0.19),
+            rgba(255, 138, 38, 0.055)
+        );
+}
+
+.navLink.active::before {
+    content: "";
+
+    position: absolute;
+    top: 9px;
+    bottom: 9px;
+    left: -1px;
+
+    width: 3px;
+
+    border-radius: 0 5px 5px 0;
+    background: var(--toma-orange);
+}
+
+.navLink.active > .material-symbols-rounded {
+    color: var(--toma-orange);
+}
+
+.navLabel {
+    flex: 1;
+    min-width: 0;
+}
+
+.navMenuBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+
+    border-radius: 50px;
+
+    color: var(--toma-white);
+    background: var(--toma-orange);
+
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.navMenuBadge[hidden] {
+    display: none !important;
 }
 
 
-.notificationBadge{
+/* =====================================================
+   7. SIDEBAR FOOTER
+===================================================== */
 
-    position:absolute;
+.sidebarFooter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 
-    top:-4px;
+    margin-top: auto;
+    padding: 16px 8px 3px;
+}
 
-    right:-4px;
+.sidebarFooterIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    min-width:20px;
+    flex-shrink: 0;
 
-    height:20px;
+    width: 39px;
+    height: 39px;
 
-    padding:0 5px;
+    border-radius: 12px;
 
-    border-radius:999px;
+    color: var(--toma-orange);
+    background: rgba(255, 138, 38, 0.12);
+}
 
-    background:#ff3b30;
+.sidebarFooterIcon .material-symbols-rounded {
+    font-size: 21px;
+}
 
-    color:#ffffff;
+.sidebarFooterText {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
 
-    border:2px solid #ffffff;
+.sidebarFooterText strong {
+    color: #e6ebf3;
+    font-size: 10px;
+    font-weight: 600;
+}
 
-    font-size:11px;
+.sidebarFooterText span {
+    color: #929fb5;
+    font-size: 9px;
+}
 
-    font-weight:700;
 
-    display:flex;
+/* =====================================================
+   8. SIDEBAR COLLAPSED — DESKTOP
+===================================================== */
 
-    align-items:center;
+.sidebar.collapsed {
+    width: 90px;
+    padding-right: 12px;
+    padding-left: 12px;
+}
 
-    justify-content:center;
+.sidebar.collapsed .logo {
+    justify-content: center;
+    width: 100%;
+}
 
-    line-height:1;
+.sidebar.collapsed .logoText,
+.sidebar.collapsed .merchantInfo,
+.sidebar.collapsed .merchantCardIcon,
+.sidebar.collapsed .navLabel,
+.sidebar.collapsed .navSectionTitle,
+.sidebar.collapsed .navMenuBadge,
+.sidebar.collapsed .sidebarFooterText {
+    display: none;
+}
+
+.sidebar.collapsed .merchantCard {
+    justify-content: center;
+    padding: 10px 4px;
+}
+
+.sidebar.collapsed .sidebarFooter {
+    justify-content: center;
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.sidebar.collapsed .navLink {
+    justify-content: center;
+    padding: 12px 5px;
+}
+
+.sidebar.collapsed .navLink.active::before {
+    left: -12px;
+}
+
+.sidebar.collapsed .sidebarTop {
+    justify-content: center;
+}
+
+.sidebar.collapsed .logoIcon {
+    width: 42px;
+    height: 42px;
+}
+
+
+/* =====================================================
+   9. TOP HEADER
+===================================================== */
+
+.topHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+
+    margin-bottom: 28px;
+}
+
+.headerLeft {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+
+    min-width: 0;
+}
+
+.menuToggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 45px;
+    height: 45px;
+
+    border: 1px solid var(--toma-border);
+    border-radius: 13px;
+
+    color: var(--toma-navy);
+    background: var(--toma-white);
+
+    box-shadow: var(--shadow-card);
+
+    transition: var(--transition);
+}
+
+.menuToggle:hover {
+    color: var(--toma-orange-dark);
+    border-color: #ffd4ad;
+    transform: translateY(-1px);
+}
+
+.menuToggle .material-symbols-rounded {
+    font-size: 23px;
+}
+
+.headerGreeting {
+    min-width: 0;
+}
+
+.headerEyebrow {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: var(--toma-orange-dark);
+
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+}
+
+.headerGreeting h1 {
+    color: var(--toma-navy);
+
+    font-size: clamp(20px, 2vw, 27px);
+    font-weight: 700;
+    line-height: 1.4;
+
+    overflow-wrap: anywhere;
+}
+
+.greetingEmoji {
+    display: inline-block;
+    margin-left: 3px;
+}
+
+.headerGreeting p {
+    margin-top: 4px;
+
+    color: var(--toma-text-secondary);
+
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.headerActions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+
+    flex-shrink: 0;
+}
+
+
+/* =====================================================
+   10. HEADER BUTTONS
+===================================================== */
+
+.headerIconButton,
+.notificationBtn {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 45px;
+    height: 45px;
+
+    border: 1px solid var(--toma-border);
+    border-radius: 13px;
+
+    color: var(--toma-navy);
+    background: var(--toma-white);
+
+    box-shadow: var(--shadow-card);
+
+    transition: var(--transition);
+}
+
+.headerIconButton:hover,
+.notificationBtn:hover {
+    color: var(--toma-orange-dark);
+    border-color: #ffd4ad;
+    transform: translateY(-1px);
+}
+
+.headerIconButton .material-symbols-rounded,
+.notificationBtn .material-symbols-rounded {
+    font-size: 22px;
+}
+
+.primaryButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 45px;
+    padding: 0 18px;
+
+    border: 0;
+    border-radius: 13px;
+
+    color: var(--toma-white);
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff9c42,
+            var(--toma-orange-dark)
+        );
 
     box-shadow:
-        0 3px 8px rgba(255,59,48,.30);
+        0 5px 15px rgba(255, 138, 38, 0.23);
 
+    font-size: 11px;
+    font-weight: 600;
+
+    transition: var(--transition);
 }
 
-
-/* =========================================================
-   PANNEAU
-========================================================= */
-
-.notificationsPanel{
-
-    position:absolute;
-
-    top:58px;
-
-    right:0;
-
-    width:390px;
-
-    max-width:
-        calc(100vw - 30px);
-
-    background:#ffffff;
-
-    border-radius:18px;
+.primaryButton:hover {
+    background:
+        linear-gradient(
+            135deg,
+            #ffad60,
+            #e96d08
+        );
 
     box-shadow:
-        0 18px 50px rgba(0,0,0,.16);
+        0 8px 20px rgba(255, 138, 38, 0.3);
 
-    border:1px solid rgba(0,0,0,.06);
+    transform: translateY(-2px);
+}
 
-    overflow:hidden;
+.primaryButton .material-symbols-rounded {
+    font-size: 20px;
+}
 
-    z-index:9999;
 
-    opacity:0;
+/* =====================================================
+   11. NOTIFICATION WRAPPER
+===================================================== */
 
-    visibility:hidden;
+.notificationWrapper {
+    position: relative;
+    flex-shrink: 0;
+}
 
-    transform:
-        translateY(-8px)
-        scale(.98);
+.notificationBadge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
 
-    transform-origin:top right;
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 19px;
+    height: 19px;
+    padding: 0 4px;
+
+    border: 2px solid var(--toma-background);
+    border-radius: 50px;
+
+    color: var(--toma-white);
+    background: var(--toma-red);
+
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.notificationBadge[style*="display: none"] {
+    display: none;
+}
+
+
+/* =====================================================
+   12. NOTIFICATION PANEL
+===================================================== */
+
+.notificationsPanel {
+    position: absolute;
+    top: calc(100% + 13px);
+    right: 0;
+
+    z-index: 1500;
+
+    display: none;
+
+    width: min(390px, calc(100vw - 32px));
+    max-height: min(590px, 75vh);
+
+    border: 1px solid var(--toma-border);
+    border-radius: 20px;
+
+    background: var(--toma-white);
+
+    box-shadow:
+        0 20px 60px rgba(16, 26, 48, 0.17);
+
+    overflow: hidden;
+}
+
+.notificationsPanel.active {
+    display: flex;
+    flex-direction: column;
+
+    animation: notificationAppear 0.2s ease;
+}
+
+.notificationsHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding: 20px;
+
+    border-bottom: 1px solid var(--toma-border);
+}
+
+.notificationsHeader h3 {
+    color: var(--toma-navy);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.notificationsHeader p {
+    margin-top: 4px;
+
+    color: var(--toma-text-secondary);
+    font-size: 10px;
+}
+
+.markAllReadBtn {
+    flex-shrink: 0;
+
+    padding: 6px 0;
+
+    border: 0;
+
+    color: var(--toma-orange-dark);
+    background: transparent;
+
+    font-size: 9px;
+    font-weight: 600;
+    text-align: right;
+}
+
+.markAllReadBtn:hover {
+    text-decoration: underline;
+}
+
+.notificationsList {
+    flex: 1;
+    min-height: 0;
+    max-height: 430px;
+
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.notificationsEmpty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    padding: 35px 20px;
+
+    color: var(--toma-text-secondary);
+    text-align: center;
+}
+
+.notificationsEmpty > .material-symbols-rounded {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 52px;
+    height: 52px;
+
+    border-radius: 16px;
+
+    color: var(--toma-orange-dark);
+    background: var(--toma-orange-light);
+
+    font-size: 27px;
+}
+
+.notificationsEmpty p {
+    font-size: 11px;
+}
+
+.notificationItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    padding: 15px 18px;
+
+    border-bottom: 1px solid #f0f2f6;
+
+    transition: background 0.2s ease;
+}
+
+.notificationItem:last-child {
+    border-bottom: 0;
+}
+
+.notificationItem:hover {
+    background: #fafbfe;
+}
+
+.notificationItem.unread {
+    background: #fff9f3;
+}
+
+.notificationIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 38px;
+    height: 38px;
+
+    border-radius: 12px;
+
+    color: var(--toma-orange-dark);
+    background: var(--toma-orange-light);
+}
+
+.notificationIcon .material-symbols-rounded {
+    font-size: 20px;
+}
+
+.notificationContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.notificationContent strong {
+    display: block;
+
+    color: var(--toma-navy);
+
+    font-size: 11px;
+    font-weight: 600;
+
+    overflow-wrap: anywhere;
+}
+
+.notificationContent p {
+    margin-top: 3px;
+
+    color: var(--toma-text-secondary);
+
+    font-size: 10px;
+    line-height: 1.6;
+
+    overflow-wrap: anywhere;
+}
+
+.notificationTime {
+    display: block;
+    margin-top: 7px;
+
+    color: var(--toma-text-light);
+    font-size: 9px;
+}
+
+.notificationUnreadDot {
+    flex-shrink: 0;
+
+    width: 7px;
+    height: 7px;
+
+    margin-top: 6px;
+
+    border-radius: 50%;
+    background: var(--toma-orange);
+}
+
+
+/* =====================================================
+   13. MERCHANT HERO
+===================================================== */
+
+.merchantHero {
+    margin-bottom: 35px;
+}
+
+.merchantHeroBanner {
+    position: relative;
+
+    min-height: 220px;
+
+    border-radius: var(--radius-large);
+
+    background:
+        linear-gradient(
+            120deg,
+            #152746,
+            #273b5b
+        );
+
+    box-shadow: var(--shadow-card);
+
+    overflow: hidden;
+}
+
+.merchantHeroBanner > img {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center;
+
+    opacity: 0.55;
+}
+
+.merchantHeroOverlay {
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(11, 20, 39, 0.96) 0%,
+            rgba(16, 26, 48, 0.76) 55%,
+            rgba(16, 26, 48, 0.24) 100%
+        );
+}
+
+.merchantHeroContent {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    align-items: center;
+    gap: 21px;
+
+    min-height: 220px;
+
+    padding: 30px;
+}
+
+.dashboardLogoWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 94px;
+    height: 94px;
+
+    padding: 4px;
+
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: 24px;
+
+    background: var(--toma-white);
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.2);
+
+    overflow: hidden;
+}
+
+.dashboardLogoWrapper img {
+    width: 100%;
+    height: 100%;
+
+    border-radius: 19px;
+
+    object-fit: cover;
+}
+
+.merchantHeroInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.merchantHeroLabel {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #ffbd82;
+
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+}
+
+.merchantHeroInfo h2 {
+    color: var(--toma-white);
+
+    font-size: clamp(20px, 2.4vw, 29px);
+    font-weight: 700;
+    line-height: 1.4;
+
+    overflow-wrap: anywhere;
+}
+
+.merchantHeroBadges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+
+    margin-top: 13px;
+}
+
+.storeTypeBadge,
+.verifiedBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    min-height: 28px;
+    padding: 5px 10px;
+
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 50px;
+
+    color: #f4f6fb;
+    background: rgba(255, 255, 255, 0.1);
+
+    font-size: 9px;
+    font-weight: 500;
+}
+
+.storeTypeBadge .material-symbols-rounded,
+.verifiedBadge .material-symbols-rounded {
+    font-size: 15px;
+}
+
+.verifiedBadge .material-symbols-rounded {
+    color: #8bd8ff;
+}
+
+.viewStoreButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    flex-shrink: 0;
+
+    min-height: 42px;
+    padding: 0 15px;
+
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+
+    color: var(--toma-white);
+    background: rgba(255, 255, 255, 0.1);
+
+    font-size: 10px;
+    font-weight: 600;
+
+    transition: var(--transition);
+}
+
+.viewStoreButton:hover {
+    color: var(--toma-navy);
+    border-color: var(--toma-white);
+    background: var(--toma-white);
+    transform: translateY(-2px);
+}
+
+.viewStoreButton .material-symbols-rounded {
+    font-size: 18px;
+}
+
+
+/* =====================================================
+   14. SECTION HEADINGS
+===================================================== */
+
+.statsSection {
+    margin-bottom: 34px;
+}
+
+.sectionHeading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 15px;
+
+    margin-bottom: 19px;
+}
+
+.sectionEyebrow {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: var(--toma-orange-dark);
+
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+.sectionHeading h2 {
+    color: var(--toma-navy);
+
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.sectionHeading p {
+    margin-top: 5px;
+
+    color: var(--toma-text-secondary);
+    font-size: 11px;
+}
+
+.liveStatus {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    flex-shrink: 0;
+
+    padding: 8px 11px;
+
+    border: 1px solid #dcefe6;
+    border-radius: 50px;
+
+    color: #287e5c;
+    background: #f0faf5;
+
+    font-size: 9px;
+    font-weight: 600;
+}
+
+
+/* =====================================================
+   15. STATISTICS GRID
+===================================================== */
+
+.statsGrid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 17px;
+}
+
+.statCard {
+    position: relative;
+
+    min-width: 0;
+    min-height: 185px;
+
+    padding: 21px;
+
+    border: 1px solid rgba(232, 236, 243, 0.9);
+    border-radius: 19px;
+
+    background: var(--toma-white);
+
+    box-shadow: var(--shadow-card);
+
+    overflow: hidden;
+
+    transition: var(--transition);
+
+    animation: fadeUp 0.5s ease both;
+}
+
+.statCard:hover {
+    border-color: #e0e6f0;
+
+    box-shadow: var(--shadow-hover);
+
+    transform: translateY(-4px);
+}
+
+.statCard::after {
+    content: "";
+
+    position: absolute;
+    right: -28px;
+    bottom: -36px;
+
+    width: 100px;
+    height: 100px;
+
+    border-radius: 50%;
+
+    background: var(--card-glow, #fff0e1);
+
+    opacity: 0.55;
+
+    pointer-events: none;
+}
+
+.statCardTop {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+
+    margin-bottom: 22px;
+}
+
+.statIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 46px;
+    height: 46px;
+
+    border-radius: 15px;
+}
+
+.statIcon .material-symbols-rounded {
+    font-size: 24px;
+}
+
+.salesIcon {
+    color: #e67b1c;
+    background: #fff0e0;
+}
+
+.ordersIcon {
+    color: #4776df;
+    background: #edf2ff;
+}
+
+.customersIcon {
+    color: #16a675;
+    background: #e6f8f0;
+}
+
+.productsIcon {
+    color: #8a63d2;
+    background: #f2ecff;
+}
+
+.statTag {
+    color: var(--toma-text-light);
+
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.statInfo {
+    position: relative;
+    z-index: 1;
+}
+
+.statLabel {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--toma-text-secondary);
+
+    font-size: 10px;
+    font-weight: 500;
+}
+
+.statInfo h3 {
+    color: var(--toma-navy);
+
+    font-size: clamp(20px, 2vw, 26px);
+    font-weight: 700;
+    line-height: 1.4;
+
+    overflow-wrap: anywhere;
+}
+
+.statDescription {
+    margin-top: 8px;
+
+    color: var(--toma-text-light);
+
+    font-size: 9px;
+    line-height: 1.6;
+}
+
+.salesCard {
+    --card-glow: #fff0e1;
+}
+
+.ordersCard {
+    --card-glow: #edf2ff;
+}
+
+.customersCard {
+    --card-glow: #e6f8f0;
+}
+
+.productsCard {
+    --card-glow: #f2ecff;
+}
+
+
+/* =====================================================
+   16. DASHBOARD CONTENT
+===================================================== */
+
+.dashboardContent {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.5fr)
+        minmax(300px, 1fr);
+
+    align-items: start;
+    gap: 22px;
+
+    margin-bottom: 32px;
+}
+
+.dashboardPanel {
+    min-width: 0;
+
+    border: 1px solid var(--toma-border);
+    border-radius: 20px;
+
+    background: var(--toma-white);
+
+    box-shadow: var(--shadow-card);
+
+    overflow: hidden;
+}
+
+.panelHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding: 22px 22px 19px;
+
+    border-bottom: 1px solid #f0f2f6;
+}
+
+.panelTitleGroup {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    min-width: 0;
+}
+
+.panelTitleIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 42px;
+    height: 42px;
+
+    border-radius: 13px;
+
+    color: var(--toma-orange-dark);
+    background: var(--toma-orange-light);
+}
+
+.panelTitleIcon .material-symbols-rounded {
+    font-size: 22px;
+}
+
+.panelHeader h2 {
+    color: var(--toma-navy);
+
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.panelHeader p {
+    margin-top: 3px;
+
+    color: var(--toma-text-secondary);
+    font-size: 9px;
+    line-height: 1.6;
+}
+
+.panelActionLink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+
+    flex-shrink: 0;
+
+    color: var(--toma-orange-dark);
+
+    font-size: 10px;
+    font-weight: 600;
+
+    transition: var(--transition);
+}
+
+.panelActionLink:hover {
+    color: var(--toma-navy);
+}
+
+.panelActionLink .material-symbols-rounded {
+    font-size: 16px;
+}
+
+
+/* =====================================================
+   17. RECENT ORDERS
+===================================================== */
+
+.recentOrdersHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding: 15px 22px;
+
+    color: var(--toma-text-light);
+    background: #fafbfe;
+
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+}
+
+.recentOrdersList {
+    padding: 0 22px;
+}
+
+.recentOrderItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+
+    padding: 17px 0;
+
+    border-bottom: 1px solid #f0f2f6;
+}
+
+.recentOrderItem:last-child {
+    border-bottom: 0;
+}
+
+.recentOrderItem > div {
+    flex: 1;
+    min-width: 0;
+}
+
+.recentOrderItem strong {
+    display: block;
+
+    color: var(--toma-navy);
+
+    font-size: 11px;
+    font-weight: 600;
+
+    overflow-wrap: anywhere;
+}
+
+.recentOrderItem small {
+    display: block;
+
+    margin-top: 5px;
+
+    color: var(--toma-text-secondary);
+
+    font-size: 10px;
+    font-weight: 500;
+}
+
+.orderStatus {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    max-width: 130px;
+    padding: 6px 10px;
+
+    border-radius: 50px;
+
+    color: #b46c13;
+    background: #fff5e5;
+
+    font-size: 9px;
+    font-weight: 600;
+
+    overflow-wrap: anywhere;
+    text-align: center;
+}
+
+
+/* Statuts courants : les classes seront appliquées
+   automatiquement lorsque le JS les ajoutera. */
+
+.orderStatus.confirmed,
+.orderStatus.confirmado,
+.orderStatus.completed,
+.orderStatus.concluido,
+.orderStatus.delivered,
+.orderStatus.entregue {
+    color: #15815a;
+    background: #e6f8f0;
+}
+
+.orderStatus.cancelled,
+.orderStatus.cancelado,
+.orderStatus.rejected,
+.orderStatus.rejeitado {
+    color: #c43c43;
+    background: #fff0f0;
+}
+
+.orderStatus.processing,
+.orderStatus.processando,
+.orderStatus.shipped,
+.orderStatus.enviado {
+    color: #3769c7;
+    background: #edf3ff;
+}
+
+
+/* =====================================================
+   18. EMPTY STATES
+===================================================== */
+
+.emptyCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 11px;
+
+    min-height: 180px;
+    padding: 25px 15px;
+
+    color: var(--toma-text-secondary);
+    text-align: center;
+}
+
+.emptyCard > .material-symbols-rounded {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 53px;
+    height: 53px;
+
+    border-radius: 17px;
+
+    color: var(--toma-orange-dark);
+    background: var(--toma-orange-light);
+
+    font-size: 28px;
+}
+
+.emptyCard p {
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+
+/* =====================================================
+   19. QUICK ACTIONS
+===================================================== */
+
+.quickActions {
+    display: flex;
+    flex-direction: column;
+}
+
+.quickActionCard {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    min-width: 0;
+    padding: 17px 20px;
+
+    border-bottom: 1px solid #f0f2f6;
+
+    transition: var(--transition);
+}
+
+.quickActionCard:last-child {
+    border-bottom: 0;
+}
+
+.quickActionCard:hover {
+    background: #fafbfe;
+}
+
+.quickActionIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 43px;
+    height: 43px;
+
+    border-radius: 14px;
+}
+
+.quickActionIcon .material-symbols-rounded {
+    font-size: 22px;
+}
+
+.addActionIcon {
+    color: var(--toma-orange-dark);
+    background: var(--toma-orange-light);
+}
+
+.productActionIcon {
+    color: #4776df;
+    background: #edf2ff;
+}
+
+.promotionActionIcon {
+    color: #a05cc8;
+    background: #f7eefe;
+}
+
+.statisticsActionIcon {
+    color: #15976a;
+    background: #e6f8f0;
+}
+
+.quickActionText {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 4px;
+
+    min-width: 0;
+}
+
+.quickActionText strong {
+    color: var(--toma-navy);
+
+    font-size: 10px;
+    font-weight: 600;
+
+    overflow-wrap: anywhere;
+}
+
+.quickActionText span {
+    color: var(--toma-text-secondary);
+
+    font-size: 9px;
+    line-height: 1.5;
+}
+
+.quickActionArrow {
+    flex-shrink: 0;
+
+    color: #a8b1c0;
+
+    font-size: 15px;
+
+    transition: var(--transition);
+}
+
+.quickActionCard:hover .quickActionArrow {
+    color: var(--toma-orange);
+    transform: translateX(3px);
+}
+
+
+/* =====================================================
+   20. FOOTER
+===================================================== */
+
+.dashboardFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    padding: 20px 0 5px;
+
+    border-top: 1px solid #e8ecf3;
+}
+
+.footerBrand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    color: var(--toma-navy);
+
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.footerLogo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 30px;
+    height: 30px;
+
+    border-radius: 10px;
+
+    color: var(--toma-white);
+    background: var(--toma-navy);
+
+    font-size: 17px;
+}
+
+.footerBrand > span:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.footerBrand small {
+    color: var(--toma-text-secondary);
+
+    font-size: 8px;
+    font-weight: 400;
+    letter-spacing: 0;
+}
+
+.dashboardFooter > p {
+    color: var(--toma-text-light);
+    font-size: 9px;
+    text-align: right;
+}
+
+
+/* =====================================================
+   21. MOBILE SIDEBAR OVERLAY
+===================================================== */
+
+.sidebarOverlay {
+    position: fixed;
+    inset: 0;
+
+    z-index: 900;
+
+    background: rgba(8, 15, 29, 0.58);
+
+    opacity: 0;
+    visibility: hidden;
 
     transition:
-        opacity .2s ease,
-        transform .2s ease,
-        visibility .2s ease;
+        opacity 0.25s ease,
+        visibility 0.25s ease;
+}
+
+.sidebarOverlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* =====================================================
+   22. ANIMATIONS
+===================================================== */
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(13px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes notificationAppear {
+    from {
+        opacity: 0;
+        transform: translateY(-7px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =====================================================
+   23. TABLET — MAX 1200px
+===================================================== */
+
+@media (max-width: 1200px) {
+
+    .content {
+        padding: 25px 24px 18px;
+    }
+
+    .statsGrid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .dashboardContent {
+        grid-template-columns:
+            minmax(0, 1fr);
+    }
+
+    .quickActions {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .quickActionCard:nth-child(odd) {
+        border-right: 1px solid #f0f2f6;
+    }
+
+    .quickActionCard:nth-last-child(-n + 2) {
+        border-bottom: 0;
+    }
+
+    .merchantHeroContent {
+        padding: 25px;
+    }
 
 }
 
 
-.notificationsPanel.active{
+/* =====================================================
+   24. SMALL LAPTOP — MAX 1000px
+===================================================== */
 
-    opacity:1;
+@media (max-width: 1000px) {
 
-    visibility:visible;
+    :root {
+        --sidebar-width: 235px;
+    }
 
-    transform:
-        translateY(0)
-        scale(1);
+    .sidebar {
+        padding-right: 13px;
+        padding-left: 13px;
+    }
 
-}
+    .content {
+        padding: 23px 20px 18px;
+    }
 
+    .topHeader {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
 
-/* =========================================================
-   HEADER
-========================================================= */
+    .headerActions {
+        margin-left: auto;
+    }
 
-.notificationsHeader{
+    .merchantHeroBanner,
+    .merchantHeroContent {
+        min-height: 205px;
+    }
 
-    padding:18px;
-
-    display:flex;
-
-    align-items:flex-start;
-
-    justify-content:space-between;
-
-    gap:15px;
-
-    border-bottom:1px solid #eeeeee;
-
-}
-
-
-.notificationsHeader h3{
-
-    margin:0;
-
-    font-size:18px;
-
-    font-weight:700;
+    .dashboardLogoWrapper {
+        width: 78px;
+        height: 78px;
+        border-radius: 20px;
+    }
 
 }
 
 
-.notificationsHeader span{
+/* =====================================================
+   25. MOBILE AND TABLET — MAX 768px
+===================================================== */
 
-    display:block;
+@media (max-width: 768px) {
 
-    margin-top:4px;
+    body {
+        font-size: 13px;
+    }
 
-    color:#888888;
+    .dashboard {
+        display: block;
+    }
 
-    font-size:12px;
+    .content,
+    .content.expanded {
+        width: 100%;
+        min-height: 100vh;
+
+        margin-left: 0;
+
+        padding:
+            20px
+            18px
+            18px;
+    }
+
+
+    /* SIDEBAR DRAWER */
+
+    .sidebar,
+    .sidebar.collapsed {
+        width: min(300px, 86vw);
+        max-width: 300px;
+
+        padding: 23px 16px 18px;
+
+        transform: translateX(-105%);
+
+        box-shadow: none;
+
+        transition:
+            transform 0.28s ease;
+    }
+
+    .sidebar.mobile-open {
+        transform: translateX(0);
+
+        box-shadow:
+            20px 0 60px rgba(0, 0, 0, 0.22);
+    }
+
+    .sidebar.collapsed .logo,
+    .sidebar .logo {
+        justify-content: flex-start;
+        width: auto;
+    }
+
+    .sidebar.collapsed .logoText,
+    .sidebar.collapsed .merchantInfo,
+    .sidebar.collapsed .merchantCardIcon,
+    .sidebar.collapsed .navLabel,
+    .sidebar.collapsed .navSectionTitle,
+    .sidebar.collapsed .navMenuBadge,
+    .sidebar.collapsed .sidebarFooterText,
+    .sidebar .logoText,
+    .sidebar .merchantInfo,
+    .sidebar .merchantCardIcon,
+    .sidebar .navLabel,
+    .sidebar .navSectionTitle,
+    .sidebar .sidebarFooterText {
+        display: flex;
+    }
+
+    .sidebar .logoText,
+    .sidebar.collapsed .logoText {
+        flex-direction: column;
+    }
+
+    .sidebar .navSectionTitle,
+    .sidebar.collapsed .navSectionTitle {
+        display: block;
+    }
+
+    .sidebar .navLabel,
+    .sidebar.collapsed .navLabel {
+        display: inline;
+    }
+
+    .sidebar .merchantCard,
+    .sidebar.collapsed .merchantCard {
+        justify-content: flex-start;
+        padding: 14px 11px;
+    }
+
+    .sidebar .navLink,
+    .sidebar.collapsed .navLink {
+        justify-content: flex-start;
+        padding: 11px 12px;
+    }
+
+    .sidebar .navLink.active::before,
+    .sidebar.collapsed .navLink.active::before {
+        left: -1px;
+    }
+
+    .sidebar .sidebarFooter,
+    .sidebar.collapsed .sidebarFooter {
+        justify-content: flex-start;
+        padding: 16px 8px 3px;
+    }
+
+    .sidebarClose {
+        display: flex;
+    }
+
+
+    /* HEADER */
+
+    .topHeader {
+        align-items: flex-start;
+        gap: 15px;
+
+        margin-bottom: 23px;
+    }
+
+    .headerLeft {
+        flex: 1;
+        gap: 12px;
+    }
+
+    .menuToggle {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+    }
+
+    .headerGreeting {
+        flex: 1;
+    }
+
+    .headerEyebrow {
+        font-size: 8px;
+        letter-spacing: 1px;
+    }
+
+    .headerGreeting h1 {
+        font-size: 20px;
+    }
+
+    .headerGreeting p {
+        max-width: 330px;
+        font-size: 10px;
+    }
+
+    .headerActions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        gap: 8px;
+
+        width: 100%;
+        margin-left: 54px;
+    }
+
+    .headerIconButton,
+    .notificationBtn {
+        width: 41px;
+        height: 41px;
+        border-radius: 12px;
+    }
+
+    .primaryButton {
+        min-height: 41px;
+        padding: 0 13px;
+        border-radius: 12px;
+        font-size: 10px;
+    }
+
+
+    /* NOTIFICATIONS */
+
+    .notificationsPanel {
+        position: fixed;
+
+        top: 80px;
+        right: 12px;
+        left: 12px;
+
+        width: auto;
+        max-width: none;
+
+        max-height: min(75vh, 600px);
+
+        border-radius: 17px;
+    }
+
+    .notificationsHeader {
+        padding: 16px;
+    }
+
+    .notificationsList {
+        max-height: calc(75vh - 100px);
+    }
+
+
+    /* HERO */
+
+    .merchantHero {
+        margin-bottom: 29px;
+    }
+
+    .merchantHeroBanner,
+    .merchantHeroContent {
+        min-height: 0;
+    }
+
+    .merchantHeroContent {
+        flex-wrap: wrap;
+        gap: 16px;
+
+        padding: 24px 20px;
+    }
+
+    .dashboardLogoWrapper {
+        width: 69px;
+        height: 69px;
+        padding: 3px;
+
+        border-radius: 18px;
+    }
+
+    .dashboardLogoWrapper img {
+        border-radius: 14px;
+    }
+
+    .merchantHeroInfo {
+        flex-basis: calc(100% - 90px);
+    }
+
+    .merchantHeroLabel {
+        font-size: 8px;
+        letter-spacing: 1px;
+    }
+
+    .merchantHeroInfo h2 {
+        font-size: 21px;
+    }
+
+    .merchantHeroBadges {
+        gap: 6px;
+        margin-top: 9px;
+    }
+
+    .storeTypeBadge,
+    .verifiedBadge {
+        min-height: 25px;
+        padding: 4px 8px;
+        font-size: 8px;
+    }
+
+    .viewStoreButton {
+        min-height: 39px;
+        padding: 0 12px;
+        font-size: 10px;
+    }
+
+
+    /* SECTION TITLES */
+
+    .sectionHeading {
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .sectionHeading h2 {
+        font-size: 18px;
+    }
+
+    .sectionHeading p {
+        font-size: 10px;
+    }
+
+    .liveStatus {
+        padding: 7px 9px;
+        font-size: 8px;
+    }
+
+
+    /* STATS */
+
+    .statsGrid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 12px;
+    }
+
+    .statCard {
+        min-height: 164px;
+        padding: 16px;
+        border-radius: 16px;
+    }
+
+    .statCardTop {
+        margin-bottom: 18px;
+    }
+
+    .statIcon {
+        width: 39px;
+        height: 39px;
+        border-radius: 12px;
+    }
+
+    .statIcon .material-symbols-rounded {
+        font-size: 21px;
+    }
+
+    .statTag {
+        font-size: 7px;
+        letter-spacing: 0.5px;
+    }
+
+    .statLabel {
+        font-size: 9px;
+    }
+
+    .statInfo h3 {
+        font-size: clamp(17px, 4.8vw, 23px);
+    }
+
+    .statDescription {
+        font-size: 8px;
+    }
+
+
+    /* PANELS */
+
+    .dashboardContent {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 17px;
+    }
+
+    .panelHeader {
+        padding: 18px 16px;
+    }
+
+    .panelTitleGroup {
+        gap: 9px;
+    }
+
+    .panelTitleIcon {
+        width: 37px;
+        height: 37px;
+        border-radius: 11px;
+    }
+
+    .panelTitleIcon .material-symbols-rounded {
+        font-size: 20px;
+    }
+
+    .panelHeader h2 {
+        font-size: 12px;
+    }
+
+    .panelHeader p {
+        font-size: 9px;
+    }
+
+    .panelActionLink {
+        font-size: 9px;
+    }
+
+    .recentOrdersHeader {
+        padding: 13px 16px;
+        font-size: 7px;
+    }
+
+    .recentOrdersList {
+        padding: 0 16px;
+    }
+
+    .recentOrderItem {
+        gap: 10px;
+        padding: 15px 0;
+    }
+
+    .recentOrderItem strong {
+        font-size: 10px;
+    }
+
+    .recentOrderItem small {
+        font-size: 9px;
+    }
+
+    .orderStatus {
+        max-width: 115px;
+        padding: 5px 8px;
+        font-size: 8px;
+    }
+
+
+    /* QUICK ACTIONS */
+
+    .quickActions {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .quickActionCard,
+    .quickActionCard:nth-child(odd),
+    .quickActionCard:nth-last-child(-n + 2) {
+        min-height: 72px;
+        padding: 14px 16px;
+
+        border-right: 0;
+        border-bottom: 1px solid #f0f2f6;
+    }
+
+    .quickActionCard:last-child {
+        border-bottom: 0;
+    }
+
+    .quickActionIcon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+    }
+
+    .quickActionText strong {
+        font-size: 10px;
+    }
+
+    .quickActionText span {
+        font-size: 9px;
+    }
+
+
+    /* FOOTER */
+
+    .dashboardFooter {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+
+        padding-top: 18px;
+    }
+
+    .dashboardFooter > p {
+        text-align: left;
+        font-size: 9px;
+    }
 
 }
 
 
-#markAllNotificationsReadBtn{
+/* =====================================================
+   26. SMALL PHONES — MAX 480px
+===================================================== */
 
-    border:none;
+@media (max-width: 480px) {
 
-    background:none;
+    .content,
+    .content.expanded {
+        padding: 16px 13px 16px;
+    }
 
-    color:#4f46e5;
+    .topHeader {
+        gap: 13px;
+    }
 
-    font-size:11px;
+    .headerLeft {
+        gap: 9px;
+    }
 
-    font-weight:600;
+    .menuToggle {
+        width: 39px;
+        height: 39px;
+    }
 
-    cursor:pointer;
+    .headerGreeting h1 {
+        font-size: 18px;
+    }
 
-    padding:4px;
+    .headerGreeting p {
+        font-size: 9px;
+    }
+
+    .headerActions {
+        gap: 7px;
+        margin-left: 48px;
+    }
+
+    .headerIconButton,
+    .notificationBtn {
+        width: 38px;
+        height: 38px;
+    }
+
+    .primaryButton {
+        min-height: 38px;
+        padding: 0 10px;
+        font-size: 9px;
+    }
+
+    .primaryButton .material-symbols-rounded {
+        font-size: 18px;
+    }
+
+    .merchantHeroContent {
+        padding: 19px 15px;
+        gap: 13px;
+    }
+
+    .dashboardLogoWrapper {
+        width: 61px;
+        height: 61px;
+    }
+
+    .merchantHeroInfo {
+        flex-basis: calc(100% - 78px);
+    }
+
+    .merchantHeroInfo h2 {
+        font-size: 18px;
+    }
+
+    .merchantHeroLabel {
+        font-size: 7px;
+    }
+
+    .storeTypeBadge,
+    .verifiedBadge {
+        font-size: 7px;
+    }
+
+    .viewStoreButton {
+        min-height: 37px;
+        font-size: 9px;
+    }
+
+    .statsGrid {
+        gap: 9px;
+    }
+
+    .statCard {
+        min-height: 157px;
+        padding: 13px;
+        border-radius: 14px;
+    }
+
+    .statCardTop {
+        margin-bottom: 15px;
+    }
+
+    .statIcon {
+        width: 35px;
+        height: 35px;
+    }
+
+    .statIcon .material-symbols-rounded {
+        font-size: 19px;
+    }
+
+    .statTag {
+        font-size: 6px;
+    }
+
+    .statLabel {
+        font-size: 8px;
+    }
+
+    .statInfo h3 {
+        font-size: clamp(15px, 4.5vw, 20px);
+    }
+
+    .statDescription {
+        font-size: 7px;
+    }
+
+    .panelHeader {
+        gap: 8px;
+        padding: 15px 12px;
+    }
+
+    .panelTitleGroup {
+        gap: 8px;
+    }
+
+    .panelTitleIcon {
+        width: 33px;
+        height: 33px;
+    }
+
+    .panelHeader h2 {
+        font-size: 11px;
+    }
+
+    .panelHeader p {
+        font-size: 8px;
+    }
+
+    .panelActionLink {
+        gap: 2px;
+        font-size: 8px;
+    }
+
+    .recentOrdersHeader {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    .recentOrdersList {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    .orderStatus {
+        max-width: 100px;
+        padding: 5px 7px;
+        font-size: 7px;
+    }
+
+    .quickActionCard {
+        gap: 10px;
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    .quickActionIcon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .quickActionText strong {
+        font-size: 9px;
+    }
+
+    .quickActionText span {
+        font-size: 8px;
+    }
 
 }
 
 
-#markAllNotificationsReadBtn:hover{
+/* =====================================================
+   27. EXTRA SMALL PHONES — MAX 360px
+===================================================== */
 
-    text-decoration:underline;
+@media (max-width: 360px) {
 
-}
+    .content,
+    .content.expanded {
+        padding-right: 10px;
+        padding-left: 10px;
+    }
 
+    .headerGreeting h1 {
+        font-size: 16px;
+    }
 
-/* =========================================================
-   LISTE
-========================================================= */
+    .headerGreeting p {
+        max-width: 200px;
+    }
 
-.notificationsList{
+    .headerActions {
+        margin-left: 46px;
+    }
 
-    max-height:430px;
+    .statsGrid {
+        gap: 8px;
+    }
 
-    overflow-y:auto;
+    .statCard {
+        padding: 11px;
+    }
 
-}
+    .statInfo h3 {
+        font-size: 15px;
+    }
 
+    .statTag {
+        display: none;
+    }
 
-.notificationItem{
+    .merchantHeroInfo h2 {
+        font-size: 16px;
+    }
 
-    display:flex;
-
-    gap:12px;
-
-    padding:15px 17px;
-
-    border-bottom:1px solid #f1f1f1;
-
-    cursor:pointer;
-
-    transition:
-        background .2s ease;
-
-}
-
-
-.notificationItem:hover{
-
-    background:#f8f9fc;
-
-}
-
-
-.notificationItem.unread{
-
-    background:#f5f7ff;
-
-}
-
-
-.notificationIcon{
-
-    width:40px;
-
-    height:40px;
-
-    min-width:40px;
-
-    border-radius:12px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    background:#eef0ff;
+    .sectionHeading h2 {
+        font-size: 16px;
+    }
 
 }
 
 
-.notificationIcon .material-symbols-rounded{
+/* =====================================================
+   28. ACCESSIBILITY
+===================================================== */
 
-    font-size:21px;
-
+button:focus-visible,
+a:focus-visible {
+    outline: 3px solid rgba(255, 138, 38, 0.55);
+    outline-offset: 3px;
 }
 
-
-.notificationContent{
-
-    flex:1;
-
-    min-width:0;
-
-}
-
-
-.notificationContent strong{
-
-    display:block;
-
-    font-size:14px;
-
-    color:#202124;
-
-}
-
-
-.notificationContent p{
-
-    margin:4px 0;
-
-    font-size:12px;
-
-    line-height:1.45;
-
-    color:#666666;
-
-}
-
-
-.notificationTime{
-
-    font-size:10px;
-
-    color:#999999;
-
-}
-
-
-.notificationUnreadDot{
-
-    width:7px;
-
-    height:7px;
-
-    min-width:7px;
-
-    border-radius:50%;
-
-    background:#4f46e5;
-
-    margin-top:7px;
-
-}
-
-
-/* =========================================================
-   EMPTY
-========================================================= */
-
-.notificationsEmpty{
-
-    padding:45px 20px;
-
-    text-align:center;
-
-}
-
-
-.notificationsEmpty .material-symbols-rounded{
-
-    font-size:42px;
-
-    color:#c7c7c7;
-
-}
-
-
-.notificationsEmpty p{
-
-    margin:10px 0 0;
-
-    color:#888888;
-
-    font-size:13px;
-
-}
-
-
-.notificationsLoading{
-
-    padding:45px 20px;
-
-    text-align:center;
-
-}
-
-
-.notificationsLoading .material-symbols-rounded{
-
-    font-size:35px;
-
-    color:#aaa;
-
-}
-
-
-.notificationsLoading p{
-
-    color:#888;
-
-    font-size:13px;
-
-}
-
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media(max-width:600px){
-
-    .notificationsPanel{
-
-        position:fixed;
-
-        top:72px;
-
-        right:12px;
-
-        width:
-            calc(100vw - 24px);
-
-        max-width:none;
-
-        border-radius:18px;
-
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
 
 }
