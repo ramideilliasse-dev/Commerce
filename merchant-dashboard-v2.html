@@ -1,619 +1,815 @@
  <!DOCTYPE html>
 <html lang="pt">
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta charset="UTF-8">
+    <meta name="theme-color" content="#101a30">
+    <meta name="description" content="Painel profissional do comerciante Toma.">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Toma</title>
 
-<title>Merchant Dashboard | Toma</title>
+    <link rel="stylesheet" href="./merchant-dashboard-v2.css">
 
-<link rel="stylesheet" href="merchant-dashboard-v2.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
 
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
-
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0"
+        rel="stylesheet"
+    >
 </head>
 
 <body>
 
 <div class="dashboard">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <!-- =====================================
+         SIDEBAR — MENU PRINCIPAL
+    ====================================== -->
 
-        <div class="logo">
+    <aside class="sidebar" id="merchantSidebar">
 
-           <img src="images/logo.png" alt="Toma">
+        <div class="sidebarTop">
 
-            <h2>TOMA</h2>
+            <a href="merchant-dashboard-v2.html" class="logo">
+                <span class="logoIcon">T</span>
+
+                <span class="logoText">
+                    TOMA
+                    <small>PAINEL DO COMERCIANTE</small>
+                </span>
+            </a>
+
+            <button
+                type="button"
+                class="sidebarClose"
+                id="closeSidebarBtn"
+                aria-label="Fechar menu"
+            >
+                <span class="material-symbols-rounded">close</span>
+            </button>
 
         </div>
+
+
+        <!-- PERFIL DA LOJA -->
 
         <div class="merchantCard">
 
-            <img
-id="merchantPhoto"
-src="images/default-avatar.png">
-            <div>
-
-                <h3 id="merchantName">
-
-                    Minha Loja
-
-                </h3>
-
-                <p>Loja Premium</p>
-
+            <div class="merchantAvatar">
+                <img
+                    id="merchantPhoto"
+                    src="images/default-store.png"
+                    alt="Logo da loja"
+                    onerror="this.onerror=null;this.src='images/default-store.png';"
+                >
             </div>
 
-        </div>
+            <div class="merchantInfo">
 
-        <nav class="menu">
+                <strong id="merchantName">Minha Loja</strong>
 
-    <a href="merchant-dashboard-v2.html" class="active">
-        <span class="material-symbols-rounded">dashboard</span>
-        Dashboard
-    </a>
-
-    <a href="merchant-orders.html">
-        <span class="material-symbols-rounded">shopping_bag</span>
-        Pedidos
-    </a>
-
-    <a href="merchant-products.html">
-        <span class="material-symbols-rounded">inventory_2</span>
-        Produtos
-    </a>
-
-   
-
-    <a href="merchant-customers.html">
-        <span class="material-symbols-rounded">group</span>
-        Clientes
-    </a>
-
-    <a href="merchant-messages.html">
-        <span class="material-symbols-rounded">chat</span>
-        Mensagens
-    </a>
-
-    <a href="merchant-statistics.html">
-        <span class="material-symbols-rounded">monitoring</span>
-        Estatísticas
-    </a>
-
-    <a href="merchant-shop.html">
-        <span class="material-symbols-rounded">storefront</span>
-        Minha Loja
-    </a>
-
- 
-
-    <a href="merchant-affiliates.html">
-        <span class="material-symbols-rounded">groups</span>
-        Influenciadores
-    </a>
-
-    <a href="merchant-affiliate-sales.html">
-        <span class="material-symbols-rounded">trending_up</span>
-        Vendas Afiliadas
-    </a>
-
-    <a href="merchant-settings.html">
-        <span class="material-symbols-rounded">settings</span>
-        Configurações
-    </a>
-
-</nav>
-    </aside>
-
-    <!-- CONTENU -->
-    <main class="content">
-<!-- HEADER -->
-
-<header class="topHeader">
-<!-- HERO DA LOJA -->
-
-<section class="merchantHero">
-
-    <div class="merchantBanner">
-
-        <img
-        id="dashboardBanner"
-        src="images/default-banner.jpg"
-        alt="Banner">
-
-    </div>
-
-    <div class="merchantHeroContent">
-
-        <img
-        id="dashboardLogo"
-        class="dashboardLogo"
-        src="images/default-avatar.png"
-        alt="Logo">
-
-        <div class="merchantHeroInfo">
-
-            <h2 id="dashboardShopName">
-
-                Minha Loja
-
-            </h2>
-
-            <div class="verifiedBadge">
-
-                <span class="material-symbols-rounded">
-
-                    verified
-
+                <span class="merchantSubtitle">
+                    Painel da loja
                 </span>
 
-                Loja Verificada
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-<div class="headerLeft">
-
-<button
-id="toggleSidebar"
-class="toggleSidebar">
-
-<span class="material-symbols-rounded">
-
-menu
-
-</span>
-
-</button>
-
-    <div>
-
-        <h1>
-
-            Bom dia,
-
-            <span id="merchantHeaderName">
-
-                Comerciante
-
-            </span>
-
-            👋
-
-        </h1>
-
-        <p>
-
-            Aqui está o desempenho da sua loja hoje.
-
-        </p>
-
-    </div>
-
-    <div class="headerActions">
-
-        <!-- =========================================================
-     TOMA — BLOC 25C
-     CENTRE DE NOTIFICATIONS
-========================================================= -->
-
-<div class="notificationWrapper">
-
-    <button
-        id="openNotificationsBtn"
-        type="button"
-        class="notificationBtn tomaNotificationButton"
-        title="Notificações">
-
-        <span class="material-symbols-rounded">
-            notifications
-        </span>
-
-        <span
-            class="notificationBadge"
-            style="display:none;">
-            0
-        </span>
-
-    </button>
-
-
-    <!-- PANNEAU NOTIFICATIONS -->
-
-    <div
-        id="notificationsPanel"
-        class="notificationsPanel">
-
-        <div class="notificationsHeader">
-
-            <div>
-
-                <h3>
-
-                    Notificações
-
-                </h3>
-
-                <span id="notificationsSubtitle">
-
-                    Suas notificações Toma
-
+                <span class="merchantAccountStatus">
+                    <span class="statusDot"></span>
+                    Comerciante
                 </span>
 
             </div>
 
-            <button
-                id="markAllNotificationsReadBtn"
-                type="button">
-
-                Marcar todas como lidas
-
-            </button>
-
-        </div>
-
-
-        <div
-            id="notificationsList"
-            class="notificationsList">
-
-            <div class="notificationsLoading">
-
-                <span class="material-symbols-rounded">
-                    notifications
-                </span>
-
-                <p>
-                    Carregando notificações...
-                </p>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-<!-- =========================================================
-     BLOC 23C — NOTIFICATIONS TOMA
-========================================================= -->
-
-<button
-    id="activateTomaNotificationsBtn"
-    type="button"
-    class="notificationBtn"
-    title="Ativar notificações Toma">
-
-    <span class="material-symbols-rounded">
-        notifications_active
-    </span>
-
-</button>
-        <button id="addProductBtn"
-
-        class="addProductBtn">
-
-            <span class="material-symbols-rounded">
-
-                add
-
+            <span class="material-symbols-rounded merchantCardIcon">
+                expand_more
             </span>
 
-            Adicionar Produto
-
-        </button>
-
-    </div>
-
-</header>
-
-<!-- STATISTIQUES -->
-
-<section class="statsGrid">
-
-    <div class="statCard">
-
-        <span class="material-symbols-rounded statIcon orange">
-
-            payments
-
-        </span>
-
-        <h4>Vendas Hoje</h4>
-
-        <h2 id="todaySales">
-
-            0 Kz
-
-        </h2>
-
-        <p>
-
-            +0%
-
-        </p>
-
-    </div>
-
-    <div class="statCard">
-
-        <span class="material-symbols-rounded statIcon purple">
-
-            shopping_bag
-
-        </span>
-
-        <h4>Pedidos</h4>
-
-        <h2 id="ordersCount">
-
-            0
-
-        </h2>
-
-        <p>
-
-            Hoje
-
-        </p>
-
-    </div>
-
-    <div class="statCard">
-
-        <span class="material-symbols-rounded statIcon blue">
-
-            group
-
-        </span>
-
-        <h4>Clientes</h4>
-
-        <h2 id="customersCount">
-
-            0
-
-        </h2>
-
-        <p>
-
-            Total
-
-        </p>
-
-    </div>
-
-    <div class="statCard">
-
-        <span class="material-symbols-rounded statIcon green">
-
-            inventory_2
-
-        </span>
-
-        <h4>Produtos</h4>
-
-        <h2 id="productsCount">
-
-            0
-
-        </h2>
-
-        <p>
-
-            Ativos
-
-        </p>
-
-    </div>
-
-    <div class="statCard">
-
-        <span class="material-symbols-rounded statIcon pink">
-
-            star
-
-        </span>
-
-        <h4>Avaliação</h4>
-
-        <h2>
-
-            5.0
-
-        </h2>
-
-        <p>
-
-            Loja Premium
-
-        </p>
-
-    </div>
-
-</section>
-<!-- CONTENU PRINCIPAL -->
-
-<section class="dashboardContent">
-
-    <!-- Graphique -->
-
-    <div class="chartCard">
-
-        <div class="cardHeader">
-
-            <h2>
-
-                Desempenho das Vendas
-
-            </h2>
-
-            <button class="viewMoreBtn">
-
-                Ver relatório
-
-            </button>
-
         </div>
 
-        <div class="chartPlaceholder">
 
-            <span class="material-symbols-rounded">
+        <!-- NAVIGATION -->
 
-                monitoring
+        <nav class="sidebarNav" aria-label="Menu principal">
 
-            </span>
+            <span class="navSectionTitle">PRINCIPAL</span>
 
-            <p>
-
-                O gráfico aparecerá aqui.
-
-            </p>
-
-        </div>
-
-    </div>
-
-    <!-- Dernières commandes -->
-
-    <div class="ordersCard">
-
-        <div class="cardHeader">
-
-            <h2>
-
-                Últimos Pedidos
-
-            </h2>
-
-            <a href="merchant-orders.html">
-
-                Ver todos
-
+            <a
+                href="merchant-dashboard-v2.html"
+                class="navLink active"
+                aria-current="page"
+            >
+                <span class="material-symbols-rounded">space_dashboard</span>
+                <span class="navLabel">Dashboard</span>
             </a>
 
-        </div>
+            <a href="merchant-orders.html" class="navLink">
+                <span class="material-symbols-rounded">shopping_bag</span>
+                <span class="navLabel">Pedidos</span>
+            </a>
 
-        <div id="recentOrders">
+            <a href="merchant-products.html" class="navLink">
+                <span class="material-symbols-rounded">inventory_2</span>
+                <span class="navLabel">Produtos</span>
+            </a>
 
-            <div class="emptyCard">
+            <a href="merchant-customers.html" class="navLink">
+                <span class="material-symbols-rounded">groups</span>
+                <span class="navLabel">Clientes</span>
+            </a>
 
-                <span class="material-symbols-rounded">
+            <a href="merchant-messages.html" class="navLink">
+                <span class="material-symbols-rounded">forum</span>
+                <span class="navLabel">Mensagens</span>
+                <span class="navMenuBadge" id="merchantMessagesBadge" hidden>0</span>
+            </a>
 
-                    shopping_bag
 
-                </span>
+            <span class="navSectionTitle">CRESCIMENTO</span>
 
-                <p>
+            <a href="merchant-statistics.html" class="navLink">
+                <span class="material-symbols-rounded">monitoring</span>
+                <span class="navLabel">Estatísticas</span>
+            </a>
 
-                    Ainda não existem pedidos.
+            <a href="merchant-promotions.html" class="navLink">
+                <span class="material-symbols-rounded">campaign</span>
+                <span class="navLabel">Promoções</span>
+            </a>
 
-                </p>
+            <a href="merchant-affiliates.html" class="navLink">
+                <span class="material-symbols-rounded">handshake</span>
+                <span class="navLabel">Influenciadores</span>
+            </a>
 
+            <a href="merchant-affiliate-sales.html" class="navLink">
+                <span class="material-symbols-rounded">trending_up</span>
+                <span class="navLabel">Vendas Afiliadas</span>
+            </a>
+
+
+            <span class="navSectionTitle">MINHA LOJA</span>
+
+            <a href="merchant-shop.html" class="navLink">
+                <span class="material-symbols-rounded">storefront</span>
+                <span class="navLabel">Ver Minha Loja</span>
+            </a>
+
+            <a href="merchant-settings.html" class="navLink">
+                <span class="material-symbols-rounded">settings</span>
+                <span class="navLabel">Configurações</span>
+            </a>
+
+        </nav>
+
+
+        <!-- SIDEBAR FOOTER -->
+
+        <div class="sidebarFooter">
+
+            <div class="sidebarFooterIcon">
+                <span class="material-symbols-rounded">support_agent</span>
+            </div>
+
+            <div class="sidebarFooterText">
+                <strong>Precisa de ajuda?</strong>
+                <span>Estamos aqui para si.</span>
             </div>
 
         </div>
 
-    </div>
+    </aside>
 
-</section>
 
-<!-- ACTIONS RAPIDES -->
+    <!-- =====================================
+         OVERLAY MOBILE
+    ====================================== -->
 
-<section class="quickActions">
+    <div
+        class="sidebarOverlay"
+        id="sidebarOverlay"
+        aria-hidden="true"
+    ></div>
 
-    <h2>
 
-        Ações rápidas
+    <!-- =====================================
+         CONTEÚDO PRINCIPAL
+    ====================================== -->
 
-    </h2>
+    <main class="content">
 
-    <div class="quickGrid">
 
-        <a href="add-product.html" class="quickCard">
+        <!-- TOP HEADER -->
 
-            <span class="material-symbols-rounded">
+        <header class="topHeader">
 
-                add_box
+            <div class="headerLeft">
 
-            </span>
+                <button
+                    type="button"
+                    id="toggleSidebar"
+                    class="menuToggle"
+                    aria-label="Abrir menu"
+                    aria-controls="merchantSidebar"
+                    aria-expanded="false"
+                >
+                    <span class="material-symbols-rounded">menu</span>
+                </button>
+
+                <div class="headerGreeting">
+
+                    <span class="headerEyebrow">
+                        ESPAÇO DO COMERCIANTE
+                    </span>
+
+                    <h1>
+                        Olá,
+                        <span id="merchantHeaderName">Comerciante</span>
+                        <span class="greetingEmoji">👋</span>
+                    </h1>
+
+                    <p>
+                        Acompanhe a sua loja e faça o seu negócio crescer.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="headerActions">
+
+                <!-- NOTIFICAÇÕES -->
+
+                <div class="notificationWrapper">
+
+                    <button
+                        type="button"
+                        id="openNotificationsBtn"
+                        class="notificationBtn tomaNotificationButton"
+                        aria-label="Abrir notificações"
+                        aria-controls="notificationsPanel"
+                        aria-expanded="false"
+                    >
+                        <span class="material-symbols-rounded">
+                            notifications
+                        </span>
+
+                        <span
+                            class="notificationBadge"
+                            style="display:none"
+                        >0</span>
+                    </button>
+
+
+                    <div
+                        id="notificationsPanel"
+                        class="notificationsPanel"
+                    >
+
+                        <div class="notificationsHeader">
+
+                            <div>
+                                <h3>Notificações</h3>
+
+                                <p id="notificationsSubtitle">
+                                    Acompanhe as novidades da sua loja.
+                                </p>
+                            </div>
+
+                            <button
+                                type="button"
+                                id="markAllNotificationsReadBtn"
+                                class="markAllReadBtn"
+                            >
+                                Marcar todas como lidas
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            id="notificationsList"
+                            class="notificationsList"
+                        >
+                            <div class="notificationsEmpty">
+
+                                <span class="material-symbols-rounded">
+                                    notifications_none
+                                </span>
+
+                                <p>
+                                    A carregar notificações...
+                                </p>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ATIVAR NOTIFICAÇÕES -->
+
+                <button
+                    type="button"
+                    id="activateTomaNotificationsBtn"
+                    class="headerIconButton"
+                    aria-label="Ativar notificações Toma"
+                    title="Ativar notificações Toma"
+                >
+                    <span class="material-symbols-rounded">
+                        notifications_active
+                    </span>
+                </button>
+
+
+                <!-- ADICIONAR PRODUTO -->
+
+                <button
+                    type="button"
+                    id="addProductBtn"
+                    class="primaryButton"
+                >
+                    <span class="material-symbols-rounded">add</span>
+                    <span>Novo Produto</span>
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- =====================================
+             HERO DA LOJA
+        ====================================== -->
+
+        <section class="merchantHero">
+
+            <div class="merchantHeroBanner">
+
+                <img
+                    id="dashboardBanner"
+                    src="images/default-store-banner.png"
+                    alt="Banner da loja"
+                    onerror="this.onerror=null;this.src='images/default-store-banner.png';"
+                >
+
+                <div class="merchantHeroOverlay"></div>
+
+                <div class="merchantHeroContent">
+
+                    <div class="dashboardLogoWrapper">
+
+                        <img
+                            id="dashboardLogo"
+                            src="images/default-store.png"
+                            alt="Logo da loja"
+                            onerror="this.onerror=null;this.src='images/default-store.png';"
+                        >
+
+                    </div>
+
+                    <div class="merchantHeroInfo">
+
+                        <span class="merchantHeroLabel">
+                            A SUA LOJA NO TOMA
+                        </span>
+
+                        <h2 id="dashboardShopName">Minha Loja</h2>
+
+                        <div class="merchantHeroBadges">
+
+                            <span class="storeTypeBadge">
+                                <span class="material-symbols-rounded">
+                                    storefront
+                                </span>
+                                Loja Toma
+                            </span>
+
+                            <span class="verifiedBadge">
+                                <span class="material-symbols-rounded">
+                                    verified
+                                </span>
+                                Comerciante
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <a
+                        href="merchant-shop.html"
+                        class="viewStoreButton"
+                    >
+                        <span class="material-symbols-rounded">
+                            open_in_new
+                        </span>
+
+                        Ver Minha Loja
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             ESTATÍSTICAS
+        ====================================== -->
+
+        <section class="statsSection">
+
+            <div class="sectionHeading">
+
+                <div>
+                    <span class="sectionEyebrow">VISÃO GERAL</span>
+                    <h2>Resumo da sua loja</h2>
+                    <p>Consulte os principais números do seu negócio.</p>
+                </div>
+
+                <div class="liveStatus">
+                    <span class="statusDot"></span>
+                    Painel da loja
+                </div>
+
+            </div>
+
+
+            <div class="statsGrid">
+
+
+                <!-- VENDAS -->
+
+                <article class="statCard salesCard">
+
+                    <div class="statCardTop">
+
+                        <div class="statIcon salesIcon">
+                            <span class="material-symbols-rounded">
+                                payments
+                            </span>
+                        </div>
+
+                        <span class="statTag">
+                            VENDAS
+                        </span>
+
+                    </div>
+
+                    <div class="statInfo">
+
+                        <span class="statLabel">
+                            Vendas de Hoje
+                        </span>
+
+                        <h3 id="todaySales">0 Kz</h3>
+
+                        <p class="statDescription">
+                            Valor total calculado pelas encomendas.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+                <!-- PEDIDOS -->
+
+                <article class="statCard ordersCard">
+
+                    <div class="statCardTop">
+
+                        <div class="statIcon ordersIcon">
+                            <span class="material-symbols-rounded">
+                                shopping_bag
+                            </span>
+                        </div>
+
+                        <span class="statTag">
+                            PEDIDOS
+                        </span>
+
+                    </div>
+
+                    <div class="statInfo">
+
+                        <span class="statLabel">
+                            Total de Pedidos
+                        </span>
+
+                        <h3 id="ordersCount">0</h3>
+
+                        <p class="statDescription">
+                            Pedidos registados na sua loja.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+                <!-- CLIENTES -->
+
+                <article class="statCard customersCard">
+
+                    <div class="statCardTop">
+
+                        <div class="statIcon customersIcon">
+                            <span class="material-symbols-rounded">
+                                groups
+                            </span>
+                        </div>
+
+                        <span class="statTag">
+                            CLIENTES
+                        </span>
+
+                    </div>
+
+                    <div class="statInfo">
+
+                        <span class="statLabel">
+                            Clientes Únicos
+                        </span>
+
+                        <h3 id="customersCount">0</h3>
+
+                        <p class="statDescription">
+                            Clientes identificados pelas encomendas.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+                <!-- PRODUTOS -->
+
+                <article class="statCard productsCard">
+
+                    <div class="statCardTop">
+
+                        <div class="statIcon productsIcon">
+                            <span class="material-symbols-rounded">
+                                inventory_2
+                            </span>
+                        </div>
+
+                        <span class="statTag">
+                            CATÁLOGO
+                        </span>
+
+                    </div>
+
+                    <div class="statInfo">
+
+                        <span class="statLabel">
+                            Os Meus Produtos
+                        </span>
+
+                        <h3 id="productsCount">0</h3>
+
+                        <p class="statDescription">
+                            Produtos associados à sua loja.
+                        </p>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             PAINEL INFERIOR
+        ====================================== -->
+
+        <section class="dashboardContent">
+
+
+            <!-- ÚLTIMOS PEDIDOS -->
+
+            <article class="dashboardPanel recentOrdersPanel">
+
+                <div class="panelHeader">
+
+                    <div class="panelTitleGroup">
+
+                        <div class="panelTitleIcon">
+                            <span class="material-symbols-rounded">
+                                receipt_long
+                            </span>
+                        </div>
+
+                        <div>
+                            <h2>Pedidos Recentes</h2>
+
+                            <p>
+                                Acompanhe as últimas encomendas.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <a
+                        href="merchant-orders.html"
+                        class="panelActionLink"
+                    >
+                        Ver todos
+                        <span class="material-symbols-rounded">
+                            arrow_forward
+                        </span>
+                    </a>
+
+                </div>
+
+
+                <div class="recentOrdersHeader">
+
+                    <span>CLIENTE / VALOR</span>
+
+                    <span>ESTADO</span>
+
+                </div>
+
+
+                <div id="recentOrders" class="recentOrdersList">
+
+                    <div class="emptyCard">
+
+                        <span class="material-symbols-rounded">
+                            shopping_bag
+                        </span>
+
+                        <p>
+                            A carregar pedidos...
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- ATALHOS -->
+
+            <article class="dashboardPanel quickActionsPanel">
+
+                <div class="panelHeader">
+
+                    <div class="panelTitleGroup">
+
+                        <div class="panelTitleIcon">
+                            <span class="material-symbols-rounded">
+                                bolt
+                            </span>
+                        </div>
+
+                        <div>
+                            <h2>Acesso Rápido</h2>
+
+                            <p>
+                                Gerencie a sua loja facilmente.
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="quickActions">
+
+
+                    <a href="add-product.html" class="quickActionCard">
+
+                        <div class="quickActionIcon addActionIcon">
+                            <span class="material-symbols-rounded">
+                                add_box
+                            </span>
+                        </div>
+
+                        <div class="quickActionText">
+                            <strong>Adicionar Produto</strong>
+                            <span>Publicar um novo produto</span>
+                        </div>
+
+                        <span class="material-symbols-rounded quickActionArrow">
+                            arrow_forward_ios
+                        </span>
+
+                    </a>
+
+
+                    <a href="merchant-products.html" class="quickActionCard">
+
+                        <div class="quickActionIcon productActionIcon">
+                            <span class="material-symbols-rounded">
+                                inventory_2
+                            </span>
+                        </div>
+
+                        <div class="quickActionText">
+                            <strong>Os Meus Produtos</strong>
+                            <span>Gerir o seu catálogo</span>
+                        </div>
+
+                        <span class="material-symbols-rounded quickActionArrow">
+                            arrow_forward_ios
+                        </span>
+
+                    </a>
+
+
+                    <a href="merchant-promotions.html" class="quickActionCard">
+
+                        <div class="quickActionIcon promotionActionIcon">
+                            <span class="material-symbols-rounded">
+                                campaign
+                            </span>
+                        </div>
+
+                        <div class="quickActionText">
+                            <strong>Promoções</strong>
+                            <span>Destacar os seus produtos</span>
+                        </div>
+
+                        <span class="material-symbols-rounded quickActionArrow">
+                            arrow_forward_ios
+                        </span>
+
+                    </a>
+
+
+                    <a href="merchant-statistics.html" class="quickActionCard">
+
+                        <div class="quickActionIcon statisticsActionIcon">
+                            <span class="material-symbols-rounded">
+                                monitoring
+                            </span>
+                        </div>
+
+                        <div class="quickActionText">
+                            <strong>Estatísticas</strong>
+                            <span>Analisar o seu negócio</span>
+                        </div>
+
+                        <span class="material-symbols-rounded quickActionArrow">
+                            arrow_forward_ios
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =====================================
+             RODAPÉ
+        ====================================== -->
+
+        <footer class="dashboardFooter">
+
+            <div class="footerBrand">
+                <span class="footerLogo">T</span>
+
+                <span>
+                    TOMA
+                    <small>O seu negócio, mais perto do mundo.</small>
+                </span>
+            </div>
 
             <p>
-
-                Novo Produto
-
+                © Toma — Plataforma de comércio digital.
             </p>
 
-        </a>
+        </footer>
 
-        <a href="merchant-products.html" class="quickCard">
-
-            <span class="material-symbols-rounded">
-
-                inventory_2
-
-            </span>
-
-            <p>
-
-                Meus Produtos
-
-            </p>
-
-        </a>
-
-        <a href="merchant-promotions.html" class="quickCard">
-
-            <span class="material-symbols-rounded">
-
-                local_offer
-
-            </span>
-
-            <p>
-
-                Promoções
-
-            </p>
-
-        </a>
-
-        <a href="merchant-statistics.html" class="quickCard">
-
-            <span class="material-symbols-rounded">
-
-                insights
-
-            </span>
-
-            <p>
-
-                Estatísticas
-
-            </p>
-
-        </a>
-
-    </div>
-
-</section>
-<script type="module"
-src="./js/merchant-dashboard-v2.js">
-</script>
-
-</main>
+    </main>
 
 </div>
 
-</body>
 
+<!-- =====================================
+     JAVASCRIPT EXISTENTE
+====================================== -->
+
+<script type="module" src="./js/merchant-dashboard-v2.js"></script>
+
+</body>
 </html>
