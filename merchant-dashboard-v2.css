@@ -3343,3 +3343,34 @@ font-size: 17px !important;
 line-height: 1.4 !important;
 }
 }
+/* ==========================================
+TOMA — FORCER L’AGRANDISSEMENT DES TEXTES
+========================================== */
+
+.quickActions .quickActionCard .quickActionText,
+.quickActions .quickActionCard .quickActionText span,
+.quickActions .quickActionCard .quickActionText strong {
+font-size: 22px !important;
+font-weight: 800 !important;
+line-height: 1.5 !important;
+}
+
+/* Adaptation mobile */
+@media screen and (max-width: 768px) {
+.quickActions .quickActionCard .quickActionText,
+.quickActions .quickActionCard .quickActionText span,
+.quickActions .quickActionCard .quickActionText strong {
+font-size: 21px !important;
+font-weight: 800 !important;
+line-height: 1.5 !important;
+}
+}
+
+/* Petits écrans */
+@media screen and (max-width: 380px) {
+.quickActions .quickActionCard .quickActionText,
+.quickActions .quickActionCard .quickActionText span,
+.quickActions .quickActionCard .quickActionText strong {
+font-size: 19px !important;
+}
+}
