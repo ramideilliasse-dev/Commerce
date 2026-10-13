@@ -3310,3 +3310,36 @@ body {
 }
 
 }
+/* =========================================
+TOMA — TEXTES PLUS GRANDS
+BOUTONS D’ACTION RAPIDE
+========================================= */
+
+.quickActionText {
+font-size: 19px !important;
+font-weight: 800 !important;
+line-height: 1.45 !important;
+letter-spacing: -0.3px;
+}
+
+/* Icônes légèrement plus visibles */
+.quickActionIcon {
+font-size: 30px;
+}
+
+/* Adaptation pour iPhone */
+@media (max-width: 768px) {
+.quickActionText {
+font-size: 18px !important;
+font-weight: 800 !important;
+line-height: 1.45 !important;
+}
+}
+
+/* Très petits écrans */
+@media (max-width: 380px) {
+.quickActionText {
+font-size: 17px !important;
+line-height: 1.4 !important;
+}
+}
