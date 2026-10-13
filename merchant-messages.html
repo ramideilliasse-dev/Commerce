@@ -2,107 +2,184 @@
 <html lang="pt">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#f5f7fb">
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Mensagens | Toma</title>
 
-<title>Mensagens | Toma</title>
+    <link rel="stylesheet" href="merchant-dashboard-v2.css">
+    <link rel="stylesheet" href="merchant-messages.css">
 
-<link rel="stylesheet" href="merchant-dashboard-v2.css">
-<link rel="stylesheet" href="merchant-messages.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
 
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
-
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
+        rel="stylesheet">
 </head>
 
 <body>
 
-<div class="messagesPage">
+    <main class="messagesPage">
 
-<header class="messagesHeader">
+        <!-- CABEÇALHO -->
+        <header class="messagesHeader">
 
-<div class="leftHeader">
+            <div class="leftHeader">
 
-<a href="merchant-dashboard-v2.html" class="backButton">
+                <a
+                    href="merchant-dashboard-v2.html"
+                    class="backButton"
+                    aria-label="Voltar ao painel">
 
-<span class="material-symbols-rounded">
+                    <span class="material-symbols-rounded">
+                        arrow_back
+                    </span>
 
-arrow_back
+                </a>
 
-</span>
+                <div class="headerText">
 
-</a>
+                    <span class="headerEyebrow">
+                        TOMA BUSINESS
+                    </span>
 
-<div>
+                    <h1>Mensagens</h1>
 
-<h1>Mensagens</h1>
+                    <p>
+                        Converse com os seus clientes.
+                    </p>
 
-<p>
+                </div>
 
-Converse com os seus clientes.
+            </div>
 
-</p>
+            <div class="messagesHeaderIcon" aria-hidden="true">
 
-</div>
+                <span class="material-symbols-rounded">
+                    forum
+                </span>
 
-</div>
+            </div>
 
-</header>
+        </header>
 
-<section class="searchSection">
 
-<div class="searchBox">
+        <!-- RESUMO -->
+        <section class="messagesIntro">
 
-<span class="material-symbols-rounded">
+            <div class="introIcon" aria-hidden="true">
 
-search
+                <span class="material-symbols-rounded">
+                    mark_chat_unread
+                </span>
 
-</span>
+            </div>
 
-<input
-type="text"
-id="searchConversation"
-placeholder="Pesquisar conversa...">
+            <div class="introText">
 
-</div>
+                <h2>As suas conversas</h2>
 
-</section>
+                <p>
+                    Responda aos clientes e acompanhe as suas mensagens.
+                </p>
 
-<section id="conversationsList" class="conversationList">
+            </div>
 
-<div class="emptyMessages">
+        </section>
 
-<span class="material-symbols-rounded">
 
-chat
+        <!-- PESQUISA -->
+        <section class="searchSection">
 
-</span>
+            <label class="searchBox" for="searchConversation">
 
-<h2>
+                <span class="material-symbols-rounded searchIcon" aria-hidden="true">
+                    search
+                </span>
 
-Nenhuma conversa
+                <input
+                    type="search"
+                    id="searchConversation"
+                    placeholder="Pesquisar cliente, produto ou mensagem..."
+                    autocomplete="off"
+                    aria-label="Pesquisar conversas">
 
-</h2>
+                <span class="searchHint" aria-hidden="true">
+                    Buscar
+                </span>
 
-<p>
+            </label>
 
-As mensagens dos clientes aparecerão aqui.
+        </section>
 
-</p>
 
-</div>
+        <!-- LISTA DE CONVERSAS -->
+        <section class="conversationsSection">
 
-</section>
+            <div class="listHeading">
 
-</div>
+                <div>
+                    <h2>Caixa de entrada</h2>
 
-<script
-type="module"
-src="./js/merchant-messages.js">
+                    <p>
+                        As suas mensagens aparecem aqui.
+                    </p>
+                </div>
 
-</script>
+                <span class="listHeadingIcon material-symbols-rounded" aria-hidden="true">
+                    chat
+                </span>
+
+            </div>
+
+
+            <div
+                id="conversationsList"
+                class="conversationList"
+                aria-live="polite"
+                aria-label="Lista de conversas">
+
+                <div class="conversationStatus" role="status">
+
+                    <span class="material-symbols-rounded">
+                        progress_activity
+                    </span>
+
+                    <p>
+                        A carregar as suas conversas...
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- NOTA DE SEGURANÇA -->
+        <footer class="messagesFooter">
+
+            <span class="material-symbols-rounded" aria-hidden="true">
+                verified_user
+            </span>
+
+            <p>
+                Mantenha uma comunicação respeitosa e proteja os dados dos seus clientes.
+            </p>
+
+        </footer>
+
+    </main>
+
+
+    <!-- JAVASCRIPT DA MESSAGERIA -->
+    <script type="module" src="./js/merchant-messages.js"></script>
 
 </body>
 
