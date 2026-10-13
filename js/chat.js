@@ -599,14 +599,20 @@ async function sendMessage(event) {
         messageInput.value = "";
         messageInput.style.height = "auto";
         messageInput.focus();
-    } catch (error) {
+       } catch (error) {
         console.error(
             "TOMA CHAT: erro ao enviar mensagem.",
             error
         );
 
+        const errorCode = error?.code || "erro-desconhecido";
+        const errorMessage = error?.message || "Sem detalhes";
+
         showError(
-            "Não foi possível enviar a mensagem. Verifique a ligação e as regras do Firestore."
+            "ERRO FIRESTORE: " +
+            errorCode +
+            " — " +
+            errorMessage
         );
     } finally {
         sendingMessage = false;
