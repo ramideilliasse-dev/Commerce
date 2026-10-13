@@ -263,21 +263,21 @@ function loadConversations(uid) {
 
         },
 
-        (error) => {
+      (error) => {
 
-            loading = false;
+loading = false;
+console.error(
+    "TOMA MESSAGES — Erro ao carregar conversas:",
+    error
+);
+const errorCode = error?.code || "erro-desconhecido";
+const errorMessage = error?.message || "Sem detalhes";
+showStatus(
+    "ERRO FIRESTORE: " + errorCode + " — " + errorMessage,
+    "error"
+);
 
-            console.error(
-                "TOMA MESSAGES — Erro ao carregar conversas:",
-                error
-            );
-
-            showStatus(
-                "Não foi possível carregar as conversas. Verifique a ligação e as regras do Firestore.",
-                "error"
-            );
-
-        }
+}
 
     );
 
