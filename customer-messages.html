@@ -1,0 +1,774 @@
+ <!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <meta name="theme-color" content="#2563eb">
+
+    <meta
+        name="description"
+        content="Consulte as suas conversas com os vendedores na Toma."
+    >
+
+    <title>Mensagens | Toma</title>
+
+    <!-- ESTILOS -->
+    <link rel="stylesheet" href="customer-messages.css">
+
+    <!-- FONTES -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
+        rel="stylesheet"
+    >
+</head>
+
+<body>
+
+<!-- =====================================================
+     TOMA — ÁREA DE MENSAGENS DO CLIENTE
+====================================================== -->
+
+<div class="customerMessagesPage" id="customerMessagesPage">
+
+    <!-- =================================================
+         CABEÇALHO PRINCIPAL
+    ================================================== -->
+
+    <header class="messagesHeader">
+
+        <div class="messagesHeaderTop">
+
+            <a
+                href="home.html"
+                class="messagesBrand"
+                aria-label="Voltar à página inicial da Toma"
+            >
+                <span class="messagesBrandIcon">T</span>
+
+                <span class="messagesBrandText">
+                    <strong>Toma</strong>
+                    <small>O seu comércio digital</small>
+                </span>
+            </a>
+
+            <div class="messagesHeaderActions">
+
+                <a
+                    href="home.html"
+                    class="messagesHeaderButton"
+                    aria-label="Página inicial"
+                    title="Página inicial"
+                >
+                    <span class="material-symbols-rounded">
+                        home
+                    </span>
+                </a>
+
+                <button
+                    type="button"
+                    id="refreshConversations"
+                    class="messagesHeaderButton"
+                    aria-label="Atualizar conversas"
+                    title="Atualizar conversas"
+                >
+                    <span class="material-symbols-rounded">
+                        refresh
+                    </span>
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="messagesHeaderContent">
+
+            <div class="messagesHeaderTitle">
+
+                <span class="messagesEyebrow">
+                    COMUNICAÇÃO TOMA
+                </span>
+
+                <h1>Mensagens</h1>
+
+                <p>
+                    Fale diretamente com os vendedores e acompanhe
+                    as suas conversas num só lugar.
+                </p>
+
+            </div>
+
+            <div class="messagesHeaderIllustration" aria-hidden="true">
+
+                <div class="messagesIllustrationCircle">
+                    <span class="material-symbols-rounded">
+                        forum
+                    </span>
+                </div>
+
+                <span class="messagesIllustrationDot dotOne"></span>
+                <span class="messagesIllustrationDot dotTwo"></span>
+                <span class="messagesIllustrationDot dotThree"></span>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =================================================
+         CONTEÚDO PRINCIPAL
+    ================================================== -->
+
+    <main class="messagesMain">
+
+        <!-- RESUMO DAS CONVERSAS -->
+
+        <section
+            class="messagesOverview"
+            aria-label="Resumo das mensagens"
+        >
+
+            <div class="messagesOverviewHeading">
+
+                <div>
+                    <h2>As suas conversas</h2>
+
+                    <p>
+                        Todas as suas conversas com os vendedores.
+                    </p>
+                </div>
+
+                <span
+                    class="messagesSecureBadge"
+                    title="A sua conta só pode aceder às conversas autorizadas"
+                >
+                    <span class="material-symbols-rounded">
+                        verified_user
+                    </span>
+
+                    Seguro
+                </span>
+
+            </div>
+
+
+            <div class="messagesStats">
+
+                <!-- TOTAL DE CONVERSAS -->
+
+                <article class="messagesStatCard">
+
+                    <div class="messagesStatIcon totalIcon">
+                        <span class="material-symbols-rounded">
+                            forum
+                        </span>
+                    </div>
+
+                    <div class="messagesStatInfo">
+
+                        <span>Total de conversas</span>
+
+                        <strong id="totalConversations">
+                            —
+                        </strong>
+
+                    </div>
+
+                </article>
+
+
+                <!-- MENSAGENS NÃO LIDAS -->
+
+                <article class="messagesStatCard">
+
+                    <div class="messagesStatIcon unreadIcon">
+                        <span class="material-symbols-rounded">
+                            mark_chat_unread
+                        </span>
+                    </div>
+
+                    <div class="messagesStatInfo">
+
+                        <span>Por ler</span>
+
+                        <strong id="totalUnreadMessages">
+                            —
+                        </strong>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             PESQUISA E FILTROS
+        ================================================== -->
+
+        <section
+            class="messagesToolbar"
+            aria-label="Pesquisar e filtrar conversas"
+        >
+
+            <div class="messagesToolbarHeading">
+
+                <h2>Caixa de entrada</h2>
+
+                <span
+                    id="conversationResultsCount"
+                    class="messagesResultsCount"
+                    aria-live="polite"
+                >
+                    A preparar...
+                </span>
+
+            </div>
+
+
+            <!-- PESQUISA -->
+
+            <div class="messagesSearchBox">
+
+                <span
+                    class="material-symbols-rounded"
+                    aria-hidden="true"
+                >
+                    search
+                </span>
+
+                <input
+                    type="search"
+                    id="conversationSearch"
+                    placeholder="Pesquisar vendedor ou mensagem..."
+                    autocomplete="off"
+                    aria-label="Pesquisar conversas"
+                >
+
+                <button
+                    type="button"
+                    id="clearConversationSearch"
+                    class="messagesClearSearch"
+                    aria-label="Limpar pesquisa"
+                    title="Limpar pesquisa"
+                    hidden
+                >
+                    <span class="material-symbols-rounded">
+                        close
+                    </span>
+                </button>
+
+            </div>
+
+
+            <!-- FILTROS -->
+
+            <div class="messagesFilters">
+
+                <div
+                    class="messagesFilterTabs"
+                    role="group"
+                    aria-label="Filtrar conversas"
+                >
+
+                    <button
+                        type="button"
+                        class="messagesFilterButton active"
+                        data-filter="all"
+                        aria-pressed="true"
+                    >
+                        Todas
+
+                        <span
+                            class="filterCount"
+                            id="allConversationsCount"
+                        >
+                            0
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="messagesFilterButton"
+                        data-filter="unread"
+                        aria-pressed="false"
+                    >
+                        Não lidas
+
+                        <span
+                            class="filterCount"
+                            id="unreadConversationsCount"
+                        >
+                            0
+                        </span>
+                    </button>
+
+                </div>
+
+
+                <!-- ORDENAÇÃO -->
+
+                <div class="messagesSortBox">
+
+                    <label
+                        for="conversationSort"
+                        class="messagesSortLabel"
+                    >
+                        <span class="material-symbols-rounded">
+                            sort
+                        </span>
+
+                        <span class="visuallyHidden">
+                            Ordenar conversas
+                        </span>
+                    </label>
+
+                    <select
+                        id="conversationSort"
+                        aria-label="Ordenar conversas"
+                    >
+                        <option value="recent">
+                            Mais recentes
+                        </option>
+
+                        <option value="oldest">
+                            Mais antigas
+                        </option>
+
+                        <option value="unread">
+                            Não lidas primeiro
+                        </option>
+                    </select>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             ESTADO DE CARREGAMENTO
+        ================================================== -->
+
+        <section
+            id="conversationsLoading"
+            class="messagesLoadingState"
+            role="status"
+            aria-live="polite"
+        >
+
+            <div class="messagesLoadingSpinner"></div>
+
+            <h3>A carregar as suas conversas</h3>
+
+            <p>
+                Estamos a preparar as suas mensagens.
+            </p>
+
+        </section>
+
+
+        <!-- =================================================
+             ESTADO DE ERRO
+        ================================================== -->
+
+        <section
+            id="conversationsError"
+            class="messagesErrorState"
+            role="alert"
+            hidden
+        >
+
+            <div class="messagesStateIcon errorStateIcon">
+
+                <span class="material-symbols-rounded">
+                    error_outline
+                </span>
+
+            </div>
+
+            <h3>Não foi possível carregar as mensagens</h3>
+
+            <p id="conversationsErrorText">
+                Ocorreu um problema ao carregar as conversas.
+                Tente novamente.
+            </p>
+
+            <button
+                type="button"
+                id="retryConversations"
+                class="messagesPrimaryButton"
+            >
+
+                <span class="material-symbols-rounded">
+                    refresh
+                </span>
+
+                Tentar novamente
+
+            </button>
+
+        </section>
+
+
+        <!-- =================================================
+             ESTADO VAZIO
+        ================================================== -->
+
+        <section
+            id="conversationsEmpty"
+            class="messagesEmptyState"
+            hidden
+        >
+
+            <div class="messagesEmptyIllustration">
+
+                <div class="messagesEmptyCircle">
+
+                    <span class="material-symbols-rounded">
+                        forum
+                    </span>
+
+                </div>
+
+                <span class="emptyDecoration emptyDecorationOne"></span>
+                <span class="emptyDecoration emptyDecorationTwo"></span>
+
+            </div>
+
+
+            <div class="messagesEmptyContent">
+
+                <span class="messagesEmptyEyebrow">
+                    A SUA CAIXA DE ENTRADA
+                </span>
+
+                <h3>Ainda não tem conversas</h3>
+
+                <p>
+                    Quando entrar em contacto com um vendedor,
+                    a sua conversa aparecerá aqui. Poderá voltar
+                    a ela sempre que precisar.
+                </p>
+
+                <a
+                    href="home.html"
+                    class="messagesPrimaryButton"
+                >
+
+                    <span class="material-symbols-rounded">
+                        shopping_bag
+                    </span>
+
+                    Explorar produtos
+
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             NENHUM RESULTADO NA PESQUISA
+        ================================================== -->
+
+        <section
+            id="conversationsNoResults"
+            class="messagesNoResultsState"
+            hidden
+        >
+
+            <div class="messagesStateIcon">
+
+                <span class="material-symbols-rounded">
+                    search_off
+                </span>
+
+            </div>
+
+            <h3>Nenhuma conversa encontrada</h3>
+
+            <p>
+                Experimente pesquisar por outro nome ou mensagem,
+                ou altere o filtro selecionado.
+            </p>
+
+            <button
+                type="button"
+                id="resetConversationFilters"
+                class="messagesSecondaryButton"
+            >
+                Limpar pesquisa e filtros
+            </button>
+
+        </section>
+
+
+        <!-- =================================================
+             LISTA DE CONVERSAS
+        ================================================== -->
+
+        <section
+            id="conversationsSection"
+            class="conversationsSection"
+            aria-label="Lista de conversas"
+            hidden
+        >
+
+            <div
+                id="conversationsList"
+                class="conversationsList"
+                aria-live="polite"
+                aria-relevant="additions text"
+            >
+                <!--
+                    O JavaScript irá inserir aqui as conversas
+                    recebidas do Firestore.
+                -->
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             MODELO DE UMA CONVERSA
+             O JAVASCRIPT PODERÁ REUTILIZAR ESTE MODELO
+        ================================================== -->
+
+        <template id="conversationTemplate">
+
+            <a
+                class="conversationCard"
+                href="chat.html"
+                data-role="conversation-link"
+            >
+
+                <!-- AVATAR DO VENDEDOR -->
+
+                <div class="conversationAvatarWrap">
+
+                    <img
+                        class="conversationAvatar"
+                        data-role="merchant-photo"
+                        src="images/default-store.png"
+                        alt=""
+                        loading="lazy"
+                    >
+
+                    <span
+                        class="conversationOnlineIndicator"
+                        hidden
+                    ></span>
+
+                </div>
+
+
+                <!-- INFORMAÇÕES DA CONVERSA -->
+
+                <div class="conversationContent">
+
+                    <div class="conversationTopLine">
+
+                        <h3
+                            class="conversationMerchantName"
+                            data-role="merchant-name"
+                        >
+                            Vendedor
+                        </h3>
+
+                        <time
+                            class="conversationTime"
+                            data-role="conversation-time"
+                        ></time>
+
+                    </div>
+
+
+                    <div class="conversationMessageLine">
+
+                        <p
+                            class="conversationLastMessage"
+                            data-role="last-message"
+                        >
+                            Inicie uma conversa com este vendedor.
+                        </p>
+
+                        <span
+                            class="conversationUnreadBadge"
+                            data-role="unread-badge"
+                            hidden
+                        >
+                            0
+                        </span>
+
+                    </div>
+
+
+                    <!-- PRODUTO RELACIONADO -->
+
+                    <div
+                        class="conversationProduct"
+                        data-role="conversation-product"
+                        hidden
+                    >
+
+                        <span class="material-symbols-rounded">
+                            shopping_bag
+                        </span>
+
+                        <span data-role="product-name">
+                            Produto
+                        </span>
+
+                    </div>
+
+
+                    <!-- ESTADO DA CONVERSA -->
+
+                    <div class="conversationMeta">
+
+                        <span
+                            class="conversationStatus"
+                            data-role="conversation-status"
+                        >
+                            Conversa
+                        </span>
+
+                        <span
+                            class="conversationArrow material-symbols-rounded"
+                            aria-hidden="true"
+                        >
+                            chevron_right
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </template>
+
+
+        <!-- =================================================
+             RODAPÉ INFORMATIVO
+        ================================================== -->
+
+        <footer class="messagesFooter">
+
+            <div class="messagesFooterSecurity">
+
+                <span class="material-symbols-rounded">
+                    shield
+                </span>
+
+                <div>
+
+                    <strong>Comunique-se com confiança</strong>
+
+                    <p>
+                        Nunca partilhe palavras-passe ou códigos
+                        de segurança nas suas conversas.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <p class="messagesFooterCopyright">
+                Toma · O seu comércio digital
+            </p>
+
+        </footer>
+
+    </main>
+
+
+    <!-- =================================================
+         NAVEGAÇÃO INFERIOR PARA TELEMÓVEIS
+    ================================================== -->
+
+    <nav
+        class="messagesBottomNav"
+        aria-label="Navegação principal"
+    >
+
+        <a
+            href="home.html"
+            class="messagesNavItem"
+        >
+
+            <span class="material-symbols-rounded">
+                home
+            </span>
+
+            <span>Início</span>
+
+        </a>
+
+
+        <a
+            href="home.html"
+            class="messagesNavItem"
+        >
+
+            <span class="material-symbols-rounded">
+                shopping_bag
+            </span>
+
+            <span>Produtos</span>
+
+        </a>
+
+
+        <a
+            href="customer-messages.html"
+            class="messagesNavItem active"
+            aria-current="page"
+        >
+
+            <span class="material-symbols-rounded">
+                forum
+            </span>
+
+            <span>Mensagens</span>
+
+            <span
+                id="bottomUnreadBadge"
+                class="messagesNavBadge"
+                hidden
+            >
+                0
+            </span>
+
+        </a>
+
+    </nav>
+
+</div>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+====================================================== -->
+
+<script type="module" src="js/customer-messages.js"></script>
+
+</body>
+</html>
