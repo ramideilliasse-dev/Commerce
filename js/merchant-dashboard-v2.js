@@ -147,12 +147,7 @@ function showUnreadBadge(element, count) {
         `${count} élément(s) non lu(s)`
     );
 }
-const quickBadge = document.getElementById("merchantMessagesQuickBadge");
 
-if (quickBadge) {
-    quickBadge.textContent = count > 99 ? "99+" : String(count);
-    quickBadge.hidden = count <= 0;
-}
 function getTimestamp(value) {
 
     if (!value) {
