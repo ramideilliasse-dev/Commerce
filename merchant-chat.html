@@ -2,135 +2,165 @@
 <html lang="pt">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#2563eb">
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Mensagens | Toma</title>
 
-<title>Chat | Toma</title>
+    <link rel="stylesheet" href="merchant-dashboard-v2.css">
+    <link rel="stylesheet" href="merchant-chat.css">
 
-<link rel="stylesheet" href="merchant-dashboard-v2.css">
-<link rel="stylesheet" href="merchant-chat.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
-
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
+        rel="stylesheet">
 </head>
 
 <body>
 
-<div class="chatPage">
+    <main class="chatPage">
 
-<!-- HEADER -->
+        <!-- =========================================
+             CABEÇALHO DA CONVERSA
+        ========================================== -->
 
-<header class="chatHeader">
+        <header class="chatHeader">
 
-<div class="chatHeaderLeft">
+            <div class="chatHeaderLeft">
 
-<a href="merchant-messages.html" class="backButton">
+                <a
+                    href="merchant-messages.html"
+                    class="backButton"
+                    aria-label="Voltar às mensagens">
 
-<span class="material-symbols-rounded">
+                    <span class="material-symbols-rounded">
+                        arrow_back
+                    </span>
 
-arrow_back
+                </a>
 
-</span>
+                <img
+                    id="customerPhoto"
+                    class="customerAvatar"
+                    src="images/default-avatar.png"
+                    alt="Foto do cliente"
+                    loading="eager">
 
-</a>
+                <div class="chatHeaderInfo">
 
-<img
-id="customerPhoto"
-class="customerAvatar"
-src="images/default-avatar.png">
+                    <h2 id="customerName">
+                        Cliente
+                    </h2>
 
-<div>
+                    <p id="productName">
+                        Produto
+                    </p>
 
-<h2 id="customerName">
+                </div>
 
-Cliente
+            </div>
 
-</h2>
+        </header>
 
-<p id="productName">
 
-Produto
+        <!-- =========================================
+             MENSAGENS DA CONVERSA
+        ========================================== -->
 
-</p>
+        <section
+            id="messagesContainer"
+            class="messagesContainer"
+            aria-label="Mensagens da conversa"
+            aria-live="polite">
 
-</div>
+            <div class="emptyMessages">
 
-</div>
+                <span class="material-symbols-rounded">
+                    chat
+                </span>
 
-</header>
+                <h3>
+                    Nenhuma mensagem
+                </h3>
 
-<!-- MESSAGES -->
+                <p>
+                    As mensagens desta conversa aparecerão aqui.
+                </p>
 
-<div
-id="messagesContainer"
-class="messagesContainer">
+            </div>
 
-<div class="emptyMessages">
+        </section>
 
-<span class="material-symbols-rounded">
 
-chat
+        <!-- =========================================
+             ERROS DA CONVERSA
+             O JavaScript pode criar este elemento.
+        ========================================== -->
 
-</span>
+        <div
+            id="merchantChatError"
+            role="alert"
+            aria-live="assertive"
+            hidden>
+        </div>
 
-<h3>
 
-Nenhuma mensagem
+        <!-- =========================================
+             CAMPO DE ESCRITA
+        ========================================== -->
 
-</h3>
+        <footer class="chatFooter">
 
-<p>
+            <button
+                id="sendImage"
+                class="iconButton"
+                type="button"
+                aria-label="Enviar imagem"
+                title="Enviar imagem">
 
-Inicie a conversa com o cliente.
+                <span class="material-symbols-rounded">
+                    image
+                </span>
 
-</p>
+            </button>
 
-</div>
 
-</div>
+            <textarea
+                id="messageInput"
+                rows="1"
+                maxlength="3000"
+                placeholder="Escreva uma mensagem..."
+                aria-label="Escreva uma mensagem"></textarea>
 
-<!-- INPUT -->
 
-<footer class="chatFooter">
+            <button
+                id="sendMessage"
+                class="sendButton"
+                type="button"
+                aria-label="Enviar mensagem"
+                title="Enviar mensagem">
 
-<button
-id="sendImage"
-class="iconButton">
+                <span class="material-symbols-rounded">
+                    send
+                </span>
 
-<span class="material-symbols-rounded">
+            </button>
 
-image
+        </footer>
 
-</span>
+    </main>
 
-</button>
 
-<input
-type="text"
-id="messageInput"
-placeholder="Escreva uma mensagem...">
+    <!-- JAVASCRIPT DO CHAT -->
 
-<button
-id="sendMessage"
-class="sendButton">
-
-<span class="material-symbols-rounded">
-
-send
-
-</span>
-
-</button>
-
-</footer>
-
-</div>
-
-<script type="module"
-src="./js/merchant-chat.js"></script>
+    <script type="module" src="./js/merchant-chat.js"></script>
 
 </body>
 
