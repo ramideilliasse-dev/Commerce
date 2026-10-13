@@ -1,405 +1,1198 @@
- /* =====================================
-MERCHANT MESSAGES
-===================================== */
+ /* =====================================================
+   TOMA — MERCHANT MESSAGES PRO
+   Design responsive — iPhone, tablette et ordinateur
+===================================================== */
 
-.messagesPage{
+:root {
+    --messages-primary: #2563eb;
+    --messages-primary-dark: #1d4ed8;
+    --messages-primary-soft: #eff6ff;
 
-padding:30px;
+    --messages-background: #f5f7fb;
+    --messages-surface: #ffffff;
 
-max-width:950px;
+    --messages-text: #172033;
+    --messages-text-secondary: #64748b;
+    --messages-text-muted: #94a3b8;
 
-margin:auto;
+    --messages-border: #e8edf5;
 
+    --messages-shadow:
+        0 8px 30px rgba(15, 23, 42, 0.045);
+
+    --messages-radius: 22px;
 }
 
-/* =========================
-HEADER
-========================= */
 
-.messagesHeader{
+/* =====================================================
+   BASE
+===================================================== */
 
-display:flex;
-
-align-items:center;
-
-justify-content:space-between;
-
-margin-bottom:25px;
-
+* {
+    box-sizing: border-box;
 }
 
-.leftHeader{
-
-display:flex;
-
-align-items:center;
-
-gap:18px;
-
+html {
+    min-height: 100%;
+    background: var(--messages-background);
+    -webkit-text-size-adjust: 100%;
 }
 
-.backButton{
+body {
+    min-height: 100vh;
+    margin: 0;
 
-width:64px;
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(37, 99, 235, 0.055),
+            transparent 330px
+        ),
+        var(--messages-background);
 
-height:64px;
+    color: var(--messages-text);
 
-display:flex;
+    font-family: "Poppins", sans-serif;
 
-align-items:center;
-
-justify-content:center;
-
-background:#fff;
-
-border-radius:20px;
-
-text-decoration:none;
-
-box-shadow:0 8px 25px rgba(0,0,0,.06);
-
-transition:.25s;
-
+    -webkit-font-smoothing: antialiased;
 }
 
-.backButton:hover{
-
-transform:translateY(-3px);
-
+button,
+input {
+    font: inherit;
 }
 
-.backButton .material-symbols-rounded{
-
-font-size:38px;
-
-color:#222;
-
+button,
+a,
+input {
+    -webkit-tap-highlight-color: transparent;
 }
 
-.messagesHeader h1{
-
-font-size:54px;
-
-font-weight:700;
-
-margin:0;
-
+a {
+    color: inherit;
 }
 
-.messagesHeader p{
-
-font-size:20px;
-
-color:#666;
-
-margin-top:6px;
-
+.material-symbols-rounded {
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    white-space: nowrap;
+    direction: ltr;
+    display: inline-block;
+    font-feature-settings: "liga";
+    -webkit-font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
 }
 
-/* =========================
-SEARCH
-========================= */
 
-.searchSection{
+/* =====================================================
+   PAGE
+===================================================== */
 
-margin-bottom:28px;
+.messagesPage {
+    width: min(100% - 48px, 1000px);
 
+    margin: 0 auto;
+
+    padding-top: 36px;
+    padding-bottom: 40px;
 }
 
-.searchBox{
 
-display:flex;
+/* =====================================================
+   HEADER
+===================================================== */
 
-align-items:center;
+.messagesHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-gap:15px;
+    gap: 20px;
 
-background:#fff;
-
-padding:18px 22px;
-
-border-radius:20px;
-
-box-shadow:0 6px 18px rgba(0,0,0,.05);
-
+    margin-bottom: 32px;
 }
 
-.searchBox .material-symbols-rounded{
+.leftHeader {
+    display: flex;
+    align-items: center;
 
-font-size:30px;
+    min-width: 0;
 
-color:#777;
-
+    gap: 18px;
 }
 
-.searchBox input{
+.backButton {
+    flex: 0 0 auto;
 
-flex:1;
+    width: 52px;
+    height: 52px;
 
-border:none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-outline:none;
+    border: 1px solid rgba(226, 232, 240, 0.9);
 
-font-size:18px;
+    border-radius: 17px;
 
-font-family:Poppins,sans-serif;
+    background: var(--messages-surface);
 
-background:transparent;
+    color: var(--messages-text);
 
+    text-decoration: none;
+
+    box-shadow: var(--messages-shadow);
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease;
 }
 
-/* =========================
-LIST
-========================= */
-
-.conversationList{
-
-display:flex;
-
-flex-direction:column;
-
-gap:18px;
-
+.backButton .material-symbols-rounded {
+    font-size: 25px;
 }
 
-/* =========================
-CARD
-========================= */
+.backButton:hover {
+    transform: translateY(-2px);
 
-.conversationCard{
+    background: var(--messages-primary-soft);
 
-display:flex;
-
-align-items:center;
-
-gap:18px;
-
-background:#fff;
-
-padding:18px;
-
-border-radius:22px;
-
-cursor:pointer;
-
-transition:.25s;
-
-box-shadow:0 6px 18px rgba(0,0,0,.05);
-
+    border-color: #bfdbfe;
 }
 
-.conversationCard:hover{
-
-transform:translateY(-4px);
-
+.backButton:focus-visible,
+.conversationCard:focus-visible,
+.searchBox:focus-within {
+    outline: 3px solid rgba(37, 99, 235, 0.2);
+    outline-offset: 3px;
 }
 
-.avatar{
-
-width:72px;
-
-height:72px;
-
-border-radius:50%;
-
-object-fit:cover;
-
-background:#eee;
-
+.headerText {
+    min-width: 0;
 }
 
-.conversationContent{
+.headerEyebrow {
+    display: block;
 
-flex:1;
+    margin-bottom: 4px;
 
-display:flex;
+    color: var(--messages-primary);
 
-flex-direction:column;
+    font-size: 10px;
+    font-weight: 700;
 
-gap:6px;
-
+    letter-spacing: 1.7px;
 }
 
-.topRow{
+.messagesHeader h1 {
+    margin: 0;
 
-display:flex;
+    color: var(--messages-text);
 
-justify-content:space-between;
+    font-size: clamp(28px, 4vw, 38px);
+    font-weight: 700;
 
-align-items:center;
+    letter-spacing: -1.2px;
 
+    line-height: 1.2;
 }
 
-.customerName{
+.messagesHeader p {
+    margin: 7px 0 0;
 
-font-size:20px;
+    color: var(--messages-text-secondary);
 
-font-weight:700;
-
+    font-size: 14px;
+    line-height: 1.6;
 }
 
-.time{
+.messagesHeaderIcon {
+    flex: 0 0 auto;
 
-font-size:14px;
+    width: 58px;
+    height: 58px;
 
-color:#888;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
+    border-radius: 20px;
+
+    background: linear-gradient(
+        145deg,
+        #3b82f6,
+        #1d4ed8
+    );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 10px 24px rgba(37, 99, 235, 0.22);
 }
 
-.lastMessage{
-
-font-size:15px;
-
-color:#666;
-
-overflow:hidden;
-
-text-overflow:ellipsis;
-
-white-space:nowrap;
-
+.messagesHeaderIcon .material-symbols-rounded {
+    font-size: 30px;
 }
 
-.unreadBadge{
 
-min-width:28px;
+/* =====================================================
+   INTRODUCTION
+===================================================== */
 
-height:28px;
+.messagesIntro {
+    display: flex;
+    align-items: center;
 
-padding:0 8px;
+    gap: 16px;
 
-border-radius:50px;
+    margin-bottom: 25px;
+    padding: 20px 22px;
 
-background:#ff3b30;
+    border: 1px solid #dbeafe;
 
-color:#fff;
+    border-radius: var(--messages-radius);
 
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-font-size:13px;
-
-font-weight:700;
-
+    background: linear-gradient(
+        110deg,
+        #eff6ff,
+        #ffffff
+    );
 }
 
-/* =========================
-EMPTY
-========================= */
+.introIcon {
+    flex: 0 0 auto;
 
-.emptyMessages{
+    width: 48px;
+    height: 48px;
 
-background:#fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-border-radius:28px;
+    border-radius: 16px;
 
-padding:70px 30px;
+    background: #dbeafe;
 
-text-align:center;
-
-box-shadow:0 8px 22px rgba(0,0,0,.05);
-
+    color: var(--messages-primary);
 }
 
-.emptyMessages .material-symbols-rounded{
-
-font-size:100px;
-
-color:#d4d4d4;
-
-margin-bottom:18px;
-
+.introIcon .material-symbols-rounded {
+    font-size: 25px;
 }
 
-.emptyMessages h2{
-
-font-size:42px;
-
-margin-bottom:12px;
-
+.introText {
+    min-width: 0;
 }
 
-.emptyMessages p{
+.introText h2 {
+    margin: 0;
 
-font-size:20px;
+    color: var(--messages-text);
 
-color:#888;
-
-line-height:1.6;
-
+    font-size: 16px;
+    font-weight: 700;
 }
 
-/* =========================
-RESPONSIVE
-========================= */
+.introText p {
+    margin: 5px 0 0;
 
-@media(max-width:768px){
+    color: var(--messages-text-secondary);
 
-.messagesPage{
-
-padding:20px;
-
+    font-size: 12px;
+    line-height: 1.7;
 }
 
-.messagesHeader h1{
 
-font-size:44px;
+/* =====================================================
+   SEARCH
+===================================================== */
 
+.searchSection {
+    margin-bottom: 32px;
 }
 
-.messagesHeader p{
+.searchBox {
+    min-height: 62px;
 
-font-size:17px;
+    display: flex;
+    align-items: center;
 
+    gap: 13px;
+
+    padding: 0 17px;
+
+    border: 1px solid var(--messages-border);
+
+    border-radius: 18px;
+
+    background: var(--messages-surface);
+
+    box-shadow: var(--messages-shadow);
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
-.backButton{
+.searchBox:focus-within {
+    border-color: #93c5fd;
 
-width:58px;
-
-height:58px;
-
+    box-shadow:
+        0 0 0 4px rgba(37, 99, 235, 0.07);
 }
 
-.avatar{
+.searchIcon {
+    flex: 0 0 auto;
 
-width:60px;
+    color: var(--messages-text-muted);
 
-height:60px;
-
+    font-size: 25px;
 }
 
-.customerName{
+.searchBox input {
+    width: 100%;
+    min-width: 0;
+    min-height: 56px;
 
-font-size:18px;
+    border: 0;
+    outline: none;
 
+    background: transparent;
+
+    color: var(--messages-text);
+
+    font-size: 13px;
+    font-weight: 500;
 }
 
-.lastMessage{
-
-font-size:14px;
-
+.searchBox input::placeholder {
+    color: #94a3b8;
+    opacity: 1;
 }
 
-.emptyMessages{
-
-padding:50px 25px;
-
+.searchBox input::-webkit-search-cancel-button {
+    cursor: pointer;
 }
 
-.emptyMessages h2{
+.searchHint {
+    flex: 0 0 auto;
 
-font-size:32px;
+    padding: 6px 9px;
 
+    border-radius: 9px;
+
+    background: #f1f5f9;
+
+    color: var(--messages-text-secondary);
+
+    font-size: 10px;
+    font-weight: 600;
 }
 
-.emptyMessages p{
 
-font-size:16px;
+/* =====================================================
+   CONVERSATION SECTION
+===================================================== */
 
+.conversationsSection {
+    min-width: 0;
 }
 
+.listHeading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 17px;
+}
+
+.listHeading h2 {
+    margin: 0;
+
+    color: var(--messages-text);
+
+    font-size: 19px;
+    font-weight: 700;
+
+    letter-spacing: -0.4px;
+}
+
+.listHeading p {
+    margin: 5px 0 0;
+
+    color: var(--messages-text-secondary);
+
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.listHeadingIcon {
+    flex: 0 0 auto;
+
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    background: #eaf1ff;
+
+    color: var(--messages-primary);
+
+    font-size: 22px;
+}
+
+
+/* =====================================================
+   CONVERSATION LIST
+===================================================== */
+
+.conversationList {
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+
+    min-width: 0;
+}
+
+
+/* =====================================================
+   CONVERSATION CARD
+===================================================== */
+
+.conversationCard {
+    position: relative;
+
+    width: 100%;
+    min-width: 0;
+    min-height: 100px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 17px;
+
+    overflow: hidden;
+
+    border: 1px solid var(--messages-border);
+
+    border-radius: 20px;
+
+    background: var(--messages-surface);
+
+    color: inherit;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.025);
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.conversationCard:hover {
+    transform: translateY(-2px);
+
+    border-color: #c7d9ff;
+
+    box-shadow:
+        0 12px 28px rgba(15, 23, 42, 0.065);
+}
+
+.conversationCard:active {
+    transform: scale(0.995);
+}
+
+.conversationCard.hasUnread {
+    border-color: #dbeafe;
+
+    background: linear-gradient(
+        105deg,
+        #ffffff,
+        #f8fbff
+    );
+}
+
+.conversationCard.hasUnread::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 20px;
+    bottom: 20px;
+
+    width: 3px;
+
+    border-radius: 0 4px 4px 0;
+
+    background: var(--messages-primary);
+}
+
+
+/* =====================================================
+   AVATAR
+===================================================== */
+
+.avatar {
+    flex: 0 0 auto;
+
+    width: 57px;
+    height: 57px;
+
+    display: block;
+
+    border: 3px solid #f1f5f9;
+
+    border-radius: 50%;
+
+    background: #e2e8f0;
+
+    object-fit: cover;
+}
+
+
+/* =====================================================
+   CONVERSATION CONTENT
+===================================================== */
+
+.conversationContent {
+    flex: 1 1 auto;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+
+    min-width: 0;
+}
+
+.topRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    min-width: 0;
+}
+
+.customerName {
+    min-width: 0;
+
+    overflow: hidden;
+
+    color: var(--messages-text);
+
+    font-size: 14px;
+    font-weight: 700;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.time {
+    flex: 0 0 auto;
+
+    color: var(--messages-text-muted);
+
+    font-size: 10px;
+    font-weight: 500;
+
+    white-space: nowrap;
+}
+
+.lastMessage {
+    min-width: 0;
+
+    overflow: hidden;
+
+    color: var(--messages-text-secondary);
+
+    font-size: 12px;
+    font-weight: 400;
+
+    line-height: 1.6;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.hasUnread .lastMessage {
+    color: #334155;
+    font-weight: 600;
+}
+
+
+/* =====================================================
+   PRODUCT LABEL
+===================================================== */
+
+.conversationProduct {
+    width: fit-content;
+    max-width: 100%;
+
+    overflow: hidden;
+
+    padding: 4px 8px;
+
+    border-radius: 7px;
+
+    background: #f1f5f9;
+
+    color: #64748b;
+
+    font-size: 10px;
+    font-weight: 500;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* =====================================================
+   UNREAD BADGE
+===================================================== */
+
+.unreadBadge {
+    flex: 0 0 auto;
+
+    min-width: 24px;
+    height: 24px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 7px;
+
+    border-radius: 999px;
+
+    background: var(--messages-primary);
+
+    color: #ffffff;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    line-height: 1;
+}
+
+.hasUnread .unreadBadge {
+    box-shadow:
+        0 3px 8px rgba(37, 99, 235, 0.2);
+}
+
+
+/* =====================================================
+   EMPTY STATE
+===================================================== */
+
+.emptyMessages {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 48px 25px;
+
+    border: 1px dashed #dbe3ef;
+
+    border-radius: 24px;
+
+    background: rgba(255, 255, 255, 0.8);
+
+    text-align: center;
+}
+
+.emptyMessages > .material-symbols-rounded {
+    width: 76px;
+    height: 76px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 16px;
+
+    border-radius: 24px;
+
+    background: var(--messages-primary-soft);
+
+    color: #93b4f9;
+
+    font-size: 39px;
+}
+
+.emptyMessages h2 {
+    margin: 0;
+
+    color: var(--messages-text);
+
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.emptyMessages p {
+    max-width: 340px;
+
+    margin: 9px 0 0;
+
+    color: var(--messages-text-secondary);
+
+    font-size: 12px;
+
+    line-height: 1.8;
+}
+
+
+/* =====================================================
+   LOADING / STATUS / ERROR
+===================================================== */
+
+.conversationStatus {
+    min-height: 140px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 12px;
+
+    padding: 25px;
+
+    border: 1px solid var(--messages-border);
+
+    border-radius: 22px;
+
+    background: #ffffff;
+
+    color: var(--messages-text-secondary);
+
+    text-align: center;
+}
+
+.conversationStatus .material-symbols-rounded {
+    color: var(--messages-primary);
+
+    font-size: 30px;
+}
+
+.conversationStatus p {
+    margin: 0;
+
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.conversationStatus .material-symbols-rounded {
+    animation: messagesIconAppear 0.7s ease;
+}
+
+@keyframes messagesIconAppear {
+    from {
+        opacity: 0.4;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.messagesFooter {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 10px;
+
+    margin-top: 26px;
+    padding: 16px 3px 0;
+
+    border-top: 1px solid #e6ebf3;
+}
+
+.messagesFooter > .material-symbols-rounded {
+    flex: 0 0 auto;
+
+    margin-top: 2px;
+
+    color: #16a34a;
+
+    font-size: 19px;
+}
+
+.messagesFooter p {
+    margin: 0;
+
+    color: var(--messages-text-muted);
+
+    font-size: 10px;
+
+    line-height: 1.8;
+}
+
+
+/* =====================================================
+   RESPONSIVE — TABLETTES
+===================================================== */
+
+@media (min-width: 769px) {
+    .messagesPage {
+        padding-top: 42px;
+    }
+
+    .conversationList {
+        gap: 14px;
+    }
+
+    .conversationCard {
+        min-height: 108px;
+
+        padding: 20px;
+    }
+
+    .avatar {
+        width: 62px;
+        height: 62px;
+    }
+
+    .customerName {
+        font-size: 15px;
+    }
+
+    .lastMessage {
+        font-size: 13px;
+    }
+}
+
+
+/* =====================================================
+   RESPONSIVE — IPHONE / MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+    .messagesPage {
+        width: 100%;
+
+        padding:
+            max(22px, env(safe-area-inset-top))
+            17px
+            max(26px, env(safe-area-inset-bottom));
+    }
+
+    .messagesHeader {
+        gap: 12px;
+
+        margin-bottom: 24px;
+    }
+
+    .leftHeader {
+        gap: 12px;
+    }
+
+    .backButton {
+        width: 44px;
+        height: 44px;
+
+        border-radius: 14px;
+    }
+
+    .backButton .material-symbols-rounded {
+        font-size: 23px;
+    }
+
+    .headerEyebrow {
+        font-size: 9px;
+        letter-spacing: 1.2px;
+    }
+
+    .messagesHeader h1 {
+        font-size: 27px;
+        letter-spacing: -0.8px;
+    }
+
+    .messagesHeader p {
+        margin-top: 5px;
+
+        font-size: 11px;
+    }
+
+    .messagesHeaderIcon {
+        width: 44px;
+        height: 44px;
+
+        border-radius: 15px;
+    }
+
+    .messagesHeaderIcon .material-symbols-rounded {
+        font-size: 24px;
+    }
+
+    .messagesIntro {
+        gap: 12px;
+
+        margin-bottom: 20px;
+        padding: 15px;
+
+        border-radius: 18px;
+    }
+
+    .introIcon {
+        width: 41px;
+        height: 41px;
+
+        border-radius: 13px;
+    }
+
+    .introIcon .material-symbols-rounded {
+        font-size: 22px;
+    }
+
+    .introText h2 {
+        font-size: 13px;
+    }
+
+    .introText p {
+        font-size: 10px;
+        line-height: 1.7;
+    }
+
+    .searchSection {
+        margin-bottom: 25px;
+    }
+
+    .searchBox {
+        min-height: 55px;
+
+        gap: 9px;
+
+        padding: 0 12px;
+
+        border-radius: 15px;
+    }
+
+    .searchIcon {
+        font-size: 22px;
+    }
+
+    .searchBox input {
+        min-height: 51px;
+
+        font-size: 11px;
+    }
+
+    .searchHint {
+        display: none;
+    }
+
+    .listHeading {
+        margin-bottom: 13px;
+    }
+
+    .listHeading h2 {
+        font-size: 16px;
+    }
+
+    .listHeading p {
+        font-size: 10px;
+    }
+
+    .listHeadingIcon {
+        width: 36px;
+        height: 36px;
+
+        border-radius: 12px;
+
+        font-size: 20px;
+    }
+
+    .conversationList {
+        gap: 10px;
+    }
+
+    .conversationCard {
+        min-height: 86px;
+
+        gap: 11px;
+
+        padding: 13px 11px;
+
+        border-radius: 17px;
+    }
+
+    .conversationCard.hasUnread::before {
+        top: 17px;
+        bottom: 17px;
+    }
+
+    .avatar {
+        width: 47px;
+        height: 47px;
+
+        border-width: 2px;
+    }
+
+    .conversationContent {
+        gap: 5px;
+    }
+
+    .topRow {
+        gap: 6px;
+    }
+
+    .customerName {
+        font-size: 12px;
+    }
+
+    .time {
+        font-size: 9px;
+    }
+
+    .lastMessage {
+        font-size: 10px;
+        line-height: 1.6;
+    }
+
+    .conversationProduct {
+        padding: 3px 6px;
+
+        font-size: 9px;
+    }
+
+    .unreadBadge {
+        min-width: 21px;
+        height: 21px;
+
+        padding: 0 5px;
+
+        font-size: 9px;
+    }
+
+    .emptyMessages {
+        padding: 37px 19px;
+
+        border-radius: 20px;
+    }
+
+    .emptyMessages > .material-symbols-rounded {
+        width: 62px;
+        height: 62px;
+
+        margin-bottom: 14px;
+
+        border-radius: 20px;
+
+        font-size: 33px;
+    }
+
+    .emptyMessages h2 {
+        font-size: 16px;
+    }
+
+    .emptyMessages p {
+        font-size: 11px;
+    }
+
+    .conversationStatus {
+        min-height: 125px;
+
+        padding: 20px 15px;
+
+        border-radius: 18px;
+    }
+
+    .conversationStatus p {
+        font-size: 11px;
+    }
+
+    .messagesFooter {
+        gap: 8px;
+
+        margin-top: 22px;
+        padding-top: 14px;
+    }
+
+    .messagesFooter p {
+        font-size: 9px;
+    }
+}
+
+
+/* =====================================================
+   PETITS ÉCRANS
+===================================================== */
+
+@media (max-width: 360px) {
+    .messagesPage {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .messagesHeader h1 {
+        font-size: 24px;
+    }
+
+    .messagesHeaderIcon {
+        display: none;
+    }
+
+    .conversationCard {
+        gap: 9px;
+        padding: 11px 9px;
+    }
+
+    .avatar {
+        width: 42px;
+        height: 42px;
+    }
+
+    .customerName {
+        font-size: 11px;
+    }
+
+    .time {
+        font-size: 8px;
+    }
+
+    .lastMessage {
+        font-size: 9px;
+    }
+}
+
+
+/* =====================================================
+   ACCESSIBILITÉ — ANIMATIONS RÉDUITES
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }
