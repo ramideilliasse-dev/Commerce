@@ -1051,3 +1051,80 @@ body {
     }
 
 }
+/* =========================================
+   TOMA — GRÁFICO PROFISSIONAL
+========================================= */
+
+.chartPlaceholder {
+    display: block;
+    min-height: 0;
+    padding: 22px;
+}
+
+.tomaChartSummary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 22px;
+}
+
+.tomaChartSummaryLabel {
+    display: block;
+    margin-bottom: 7px;
+    color: #78849a;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.tomaChartSummary strong {
+    display: block;
+    color: #182238;
+    font-size: clamp(22px, 4vw, 30px);
+    font-weight: 750;
+    letter-spacing: -0.7px;
+    overflow-wrap: anywhere;
+}
+
+.tomaChartSummary > .material-symbols-rounded {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 15px;
+    background: #edf2ff;
+    color: #315cf5;
+    font-size: 27px;
+}
+
+.tomaChartCanvasWrapper {
+    position: relative;
+    width: 100%;
+    height: 300px;
+}
+
+#tomaSalesCanvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+@media (max-width: 600px) {
+
+    .chartPlaceholder {
+        padding: 16px 10px;
+    }
+
+    .tomaChartCanvasWrapper {
+        height: 250px;
+    }
+
+    .tomaChartSummary > .material-symbols-rounded {
+        width: 42px;
+        height: 42px;
+        border-radius: 13px;
+        font-size: 23px;
+    }
+
+}
