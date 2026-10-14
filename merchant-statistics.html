@@ -61,80 +61,98 @@ Acompanhe o desempenho da sua loja.
 
 <section class="statsGrid">
 
-<div class="statCard">
+    <!-- RECEITA TOTAL -->
+    <div class="statCard">
 
-<span class="material-symbols-rounded statIcon orange">
+        <span class="material-symbols-rounded statIcon orange">
+            payments
+        </span>
 
-payments
+        <h4>Receita Total</h4>
 
-</span>
+        <h2 id="totalRevenue">0 Kz</h2>
 
-<h4>Receita Total</h4>
+        <div class="statComparison" id="revenueComparison">
+            <span class="material-symbols-rounded">trending_flat</span>
+            <span>Calculando comparação...</span>
+        </div>
 
-<h2 id="totalRevenue">
+        <p class="statComparisonLabel">
+            Em relação ao período anterior
+        </p>
 
-0 Kz
+    </div>
 
-</h2>
 
-</div>
+    <!-- PEDIDOS -->
+    <div class="statCard">
 
-<div class="statCard">
+        <span class="material-symbols-rounded statIcon blue">
+            shopping_bag
+        </span>
 
-<span class="material-symbols-rounded statIcon blue">
+        <h4>Pedidos</h4>
 
-shopping_bag
+        <h2 id="totalOrders">0</h2>
 
-</span>
+        <div class="statComparison" id="ordersComparison">
+            <span class="material-symbols-rounded">trending_flat</span>
+            <span>Calculando comparação...</span>
+        </div>
 
-<h4>Pedidos</h4>
+        <p class="statComparisonLabel">
+            Em relação ao período anterior
+        </p>
 
-<h2 id="totalOrders">
+    </div>
 
-0
 
-</h2>
+    <!-- PRODUTOS VENDIDOS -->
+    <div class="statCard">
 
-</div>
+        <span class="material-symbols-rounded statIcon green">
+            inventory_2
+        </span>
 
-<div class="statCard">
+        <h4>Produtos Vendidos</h4>
 
-<span class="material-symbols-rounded statIcon green">
+        <h2 id="soldProducts">0</h2>
 
-inventory_2
+        <div class="statComparison" id="productsComparison">
+            <span class="material-symbols-rounded">trending_flat</span>
+            <span>Calculando comparação...</span>
+        </div>
 
-</span>
+        <p class="statComparisonLabel">
+            Em relação ao período anterior
+        </p>
 
-<h4>Produtos Vendidos</h4>
+    </div>
 
-<h2 id="soldProducts">
 
-0
+    <!-- CLIENTES -->
+    <div class="statCard">
 
-</h2>
+        <span class="material-symbols-rounded statIcon purple">
+            group
+        </span>
 
-</div>
+        <h4>Clientes</h4>
 
-<div class="statCard">
+        <h2 id="totalCustomers">0</h2>
 
-<span class="material-symbols-rounded statIcon purple">
+        <div class="statComparison" id="customersComparison">
+            <span class="material-symbols-rounded">trending_flat</span>
+            <span>Calculando comparação...</span>
+        </div>
 
-group
+        <p class="statComparisonLabel">
+            Em relação ao período anterior
+        </p>
 
-</span>
-
-<h4>Clientes</h4>
-
-<h2 id="totalCustomers">
-
-0
-
-</h2>
-
-</div>
+    </div>
 
 </section>
-
 <section class="dashboardContent">
 
 <div class="chartCard">
