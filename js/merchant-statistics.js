@@ -712,17 +712,22 @@ function parseDate(value) {
 
 }
 
+// =====================================================
+// GRÁFICO PROFISSIONAL — TOMA
+// =====================================================
 
-// =====================================================
-// BLOC 16 — CONSTRUIRE LE GRAPHIQUE
-// =====================================================
+let tomaSalesChart = null;
 
 function drawPeriodSalesChart(orders, period) {
 
-    const now = new Date();
-    const buckets = [];
+    if (!salesChartElement) {
+        return;
+    }
 
-    // HOJE : 8 tranches horaires de 3 heures.
+    const buckets = [];
+    const now = new Date();
+
+    // HOJE — vendas por blocos de 3 horas.
     if (period === "today") {
 
         for (let hour = 0; hour < 24; hour += 3) {
@@ -743,9 +748,7 @@ function drawPeriodSalesChart(orders, period) {
 
             const date = getOrderDateFromOrder(order);
 
-            if (!date) {
-                return;
-            }
+            if (!date) return;
 
             const index = Math.floor(date.getHours() / 3);
 
@@ -757,7 +760,7 @@ function drawPeriodSalesChart(orders, period) {
 
     }
 
-    // 7 JOURS : une barre par jour.
+    // ÚLTIMOS 7 DIAS.
     else if (period === "7days") {
 
         const start = getPeriodStart("7days");
@@ -765,7 +768,6 @@ function drawPeriodSalesChart(orders, period) {
         for (let i = 0; i < 7; i++) {
 
             const date = new Date(start);
-
             date.setDate(start.getDate() + i);
 
             buckets.push({
@@ -783,7 +785,7 @@ function drawPeriodSalesChart(orders, period) {
 
     }
 
-    // 30 JOURS : une barre par jour.
+    // ÚLTIMOS 30 DIAS.
     else if (period === "30days") {
 
         const start = getPeriodStart("30days");
@@ -791,12 +793,14 @@ function drawPeriodSalesChart(orders, period) {
         for (let i = 0; i < 30; i++) {
 
             const date = new Date(start);
-
             date.setDate(start.getDate() + i);
 
             buckets.push({
                 key: dateKey(date),
-                label: String(date.getDate()).padStart(2, "0"),
+                label: date.toLocaleDateString("pt-PT", {
+                    day: "2-digit",
+                    month: "short"
+                }),
                 value: 0
             });
 
@@ -806,7 +810,7 @@ function drawPeriodSalesChart(orders, period) {
 
     }
 
-    // 6 MOIS : une barre par mois.
+    // ÚLTIMOS 6 MESES.
     else if (period === "6months") {
 
         const start = getPeriodStart("6months");
@@ -814,12 +818,9 @@ function drawPeriodSalesChart(orders, period) {
         for (let i = 0; i <= 6; i++) {
 
             const date = new Date(start);
-
             date.setMonth(start.getMonth() + i);
 
-            if (date > now) {
-                continue;
-            }
+            if (date > now) continue;
 
             const key = getMonthKey(date);
 
@@ -828,7 +829,8 @@ function drawPeriodSalesChart(orders, period) {
                 buckets.push({
                     key,
                     label: date.toLocaleDateString("pt-PT", {
-                        month: "short"
+                        month: "short",
+                        year: "2-digit"
                     }),
                     value: 0
                 });
@@ -845,13 +847,11 @@ function drawPeriodSalesChart(orders, period) {
 
             const date = getOrderDateFromOrder(order);
 
-            if (!date) {
-                return;
-            }
+            if (!date) return;
 
-            const key = getMonthKey(date);
-
-            const bucket = buckets.find((item) => item.key === key);
+            const bucket = buckets.find(
+                (item) => item.key === getMonthKey(date)
+            );
 
             if (bucket) {
                 bucket.value += Number(order.total) || 0;
@@ -861,10 +861,256 @@ function drawPeriodSalesChart(orders, period) {
 
     }
 
-    drawChart(buckets, period);
+    renderTomaSalesChart(buckets, period);
 
 }
 
+
+// =====================================================
+// RENDERIZAR O GRÁFICO COM CHART.JS
+// =====================================================
+
+function renderTomaSalesChart(buckets, period) {
+
+    if (!salesChartElement) return;
+
+    if (typeof Chart === "undefined") {
+
+        salesChartElement.innerHTML = `
+            <div class="chartEmptyState">
+                <span class="material-symbols-rounded">error</span>
+                <p>Não foi possível carregar o gráfico.</p>
+                <p>Verifique a ligação à Internet.</p>
+            </div>
+        `;
+
+        return;
+
+    }
+
+    // Criar o canvas apenas uma vez.
+    if (!document.getElementById("tomaSalesCanvas")) {
+
+        salesChartElement.innerHTML = `
+            <div class="tomaChartSummary">
+                <div>
+                    <span class="tomaChartSummaryLabel">
+                        Receita no período
+                    </span>
+
+                    <strong id="tomaChartTotal">0 Kz</strong>
+                </div>
+
+                <span class="material-symbols-rounded">
+                    monitoring
+                </span>
+            </div>
+
+            <div class="tomaChartCanvasWrapper">
+                <canvas
+                    id="tomaSalesCanvas"
+                    aria-label="Gráfico de evolução das vendas"
+                    role="img"
+                ></canvas>
+            </div>
+        `;
+
+    }
+
+    const canvas = document.getElementById("tomaSalesCanvas");
+
+    const totalElement = document.getElementById("tomaChartTotal");
+
+    const total = buckets.reduce(
+        (sum, bucket) => sum + bucket.value,
+        0
+    );
+
+    if (totalElement) {
+        totalElement.textContent = formatCurrency(total);
+    }
+
+    if (tomaSalesChart) {
+        tomaSalesChart.destroy();
+        tomaSalesChart = null;
+    }
+
+    const context = canvas.getContext("2d");
+
+    const gradient = context.createLinearGradient(0, 0, 0, 300);
+
+    gradient.addColorStop(0, "rgba(49, 92, 245, 0.28)");
+    gradient.addColorStop(1, "rgba(49, 92, 245, 0.01)");
+
+    const isToday = period === "today";
+
+    tomaSalesChart = new Chart(context, {
+
+        type: "line",
+
+        data: {
+
+            labels: buckets.map((bucket) => bucket.label),
+
+            datasets: [{
+
+                label: "Receita das vendas",
+
+                data: buckets.map((bucket) => bucket.value),
+
+                borderColor: "#315cf5",
+
+                backgroundColor: gradient,
+
+                borderWidth: 3,
+
+                fill: true,
+
+                tension: 0.4,
+
+                pointRadius: isToday ? 3 : 2,
+
+                pointHoverRadius: 7,
+
+                pointBackgroundColor: "#ffffff",
+
+                pointBorderColor: "#315cf5",
+
+                pointBorderWidth: 2,
+
+                pointHoverBackgroundColor: "#315cf5",
+
+                pointHoverBorderColor: "#ffffff",
+
+                pointHoverBorderWidth: 3
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            interaction: {
+                intersect: false,
+                mode: "index"
+            },
+
+            animation: {
+                duration: 700,
+                easing: "easeOutQuart"
+            },
+
+            plugins: {
+
+                legend: {
+                    display: false
+                },
+
+                tooltip: {
+
+                    enabled: true,
+
+                    backgroundColor: "#182238",
+
+                    titleColor: "#ffffff",
+
+                    bodyColor: "#e2e8f0",
+
+                    padding: 12,
+
+                    cornerRadius: 10,
+
+                    displayColors: false,
+
+                    callbacks: {
+
+                        label: function (context) {
+
+                            return "Receita: " +
+                                formatCurrency(context.parsed.y);
+
+                        }
+
+                    }
+
+                }
+
+            },
+
+            scales: {
+
+                x: {
+
+                    grid: {
+                        display: false
+                    },
+
+                    border: {
+                        display: false
+                    },
+
+                    ticks: {
+
+                        color: "#78849a",
+
+                        maxRotation: 0,
+
+                        autoSkip: true,
+
+                        maxTicksLimit: period === "30days" ? 8 : 10,
+
+                        font: {
+                            family: "Poppins",
+                            size: 11
+                        }
+
+                    }
+
+                },
+
+                y: {
+
+                    beginAtZero: true,
+
+                    border: {
+                        display: false,
+                        dash: [4, 4]
+                    },
+
+                    grid: {
+                        color: "rgba(148, 163, 184, 0.15)"
+                    },
+
+                    ticks: {
+
+                        color: "#78849a",
+
+                        maxTicksLimit: 6,
+
+                        font: {
+                            family: "Poppins",
+                            size: 10
+                        },
+
+                        callback: function (value) {
+                            return formatShortCurrency(value);
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+}
 
 // =====================================================
 // BLOC 17 — REMPLIR LES BARRES JOURNALIÈRES
