@@ -315,33 +315,54 @@ close
 
 </div>
 
-<div class="promotionProduct">
+<!-- =====================================
+SELEÇÃO DO PRODUTO
+===================================== -->
 
-<img
-id="modalProductImage"
-src="images/no-image.png">
+<div class="promotionProductSelector">
 
-<div>
+    <label for="promotionProductSelect">
+        Escolher produto
+    </label>
 
-<h3 id="modalProductName">
-
-Produto
-
-</h3>
-
-<p>
-
-Preço atual
-
-</p>
-
-<h2 id="modalOldPrice">
-
-0 Kz
-
-</h2>
+    <select id="promotionProductSelect">
+        <option value="">
+            Selecione um produto
+        </option>
+    </select>
 
 </div>
+
+<!-- =====================================
+PRODUTO SELECIONADO
+===================================== -->
+
+<div class="promotionProduct">
+
+    <img
+        id="modalProductImage"
+        src="images/no-image.png"
+        alt="Imagem do produto">
+
+    <div class="promotionProductInfo">
+
+        <h3 id="modalProductName">
+            Produto
+        </h3>
+
+        <p>
+            Preço original
+        </p>
+
+        <h2 id="modalOldPrice">
+            0 Kz
+        </h2>
+
+        <p id="promotionPricePreview">
+            Selecione um desconto para calcular o novo preço.
+        </p>
+
+    </div>
 
 </div>
 
