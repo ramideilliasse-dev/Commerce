@@ -1225,3 +1225,245 @@ font-size:14px;
 }
 
 }
+/* =========================================
+TOMA PROMOTIONS — AMÉLIORATIONS PREMIUM
+========================================= */
+
+.promotionProductSelector {
+    margin: 20px 0;
+}
+
+.promotionProductSelector label {
+    display: block;
+    margin-bottom: 10px;
+    color: #30394b;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+#promotionProductSelect {
+    width: 100%;
+    min-height: 52px;
+    padding: 14px 16px;
+    border: 1px solid #e1e5ed;
+    border-radius: 15px;
+    background: #f9fafc;
+    color: #202a3c;
+    font-family: inherit;
+    font-size: 15px;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color .2s, box-shadow .2s;
+}
+
+#promotionProductSelect:focus {
+    border-color: #ff6a00;
+    box-shadow: 0 0 0 4px rgba(255, 106, 0, .10);
+}
+
+.promotionProductInfo {
+    min-width: 0;
+    flex: 1;
+}
+
+.promotionProductInfo h3 {
+    overflow-wrap: anywhere;
+}
+
+#promotionPricePreview {
+    margin-top: 8px;
+    color: #168451;
+    font-size: 13px;
+    line-height: 1.5;
+    font-weight: 600;
+}
+
+.promotionModalContent {
+    scrollbar-width: thin;
+    scrollbar-color: #d5d9e2 transparent;
+}
+
+.promotionModalContent input:focus {
+    border-color: #ff6a00;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(255, 106, 0, .09);
+}
+
+.promotionButton:disabled,
+.savePromotion:disabled {
+    opacity: .6;
+    cursor: wait;
+    transform: none;
+}
+
+.promotionCard {
+    border: 1px solid rgba(20, 30, 50, .04);
+}
+
+.promotionCard .promotionBody {
+    display: flex;
+    flex-direction: column;
+}
+
+.promotionTitle {
+    line-height: 1.5;
+}
+
+.promotionActions {
+    margin-top: auto;
+}
+
+.promotionStatus {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 0 12px;
+    padding: 7px 11px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.promotionStatus.active {
+    color: #137b49;
+    background: #e8f8ef;
+}
+
+.promotionStatus.scheduled {
+    color: #8b5b00;
+    background: #fff4d7;
+}
+
+.promotionStatus.expired {
+    color: #b42318;
+    background: #ffebe9;
+}
+
+.promotionStatus.normal {
+    color: #586174;
+    background: #edf0f5;
+}
+
+.promoStat {
+    transition: transform .2s, box-shadow .2s;
+}
+
+.promoStat:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(20, 30, 50, .09);
+}
+
+#promoProductsCount,
+#promoDiscountAverage {
+    overflow-wrap: anywhere;
+}
+
+.floatingPromotionBtn {
+    -webkit-tap-highlight-color: transparent;
+}
+
+#newPromotionBtn,
+.filterChip,
+.promotionButton,
+.floatingPromotionBtn {
+    -webkit-tap-highlight-color: transparent;
+}
+
+.promotionModal {
+    padding: 16px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.promotionModalContent {
+    border-radius: 26px;
+    margin: auto;
+}
+
+@media (min-width: 769px) {
+    .promotionModal {
+        align-items: center;
+    }
+
+    .promotionModalContent {
+        max-height: 88vh;
+    }
+
+    .promotionGrid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .promotionGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .promotionCard {
+        border-radius: 17px;
+    }
+
+    .promotionBody {
+        padding: 11px;
+    }
+
+    .promotionTitle {
+        font-size: 14px;
+    }
+
+    .currentPrice {
+        font-size: 18px;
+        overflow-wrap: anywhere;
+    }
+
+    .oldPrice {
+        font-size: 12px;
+    }
+
+    .promotionActions {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .promotionButton {
+        width: 100%;
+        padding: 11px 8px;
+        font-size: 12px;
+    }
+
+    .promotionModal {
+        padding: 10px;
+    }
+
+    .promotionModalContent {
+        padding: 19px;
+        border-radius: 23px;
+        max-height: 92vh;
+    }
+
+    .promotionModalHeader h2 {
+        font-size: 21px;
+    }
+
+    .discountGrid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .discountOption {
+        padding: 12px 8px;
+    }
+
+    .promotionModalButtons {
+        gap: 9px;
+    }
+
+    .cancelPromotion,
+    .savePromotion {
+        padding: 13px 9px;
+        font-size: 13px;
+    }
+}
