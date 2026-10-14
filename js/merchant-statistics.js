@@ -1,8 +1,3 @@
- // =====================================
-// MERCHANT STATISTICS
-// TOMA
-// =====================================
-
 import { db, auth } from "../firebase.js";
 
 import {
@@ -17,41 +12,65 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 
-// =====================================
-// DOM
-// =====================================
+// =====================================================
+// BLOC 1 — ELEMENTOS HTML
+// =====================================================
 
-const totalRevenue =
-    document.getElementById("totalRevenue");
+const totalRevenueElement = document.getElementById("totalRevenue");
+const totalOrdersElement = document.getElementById("totalOrders");
+const soldProductsElement = document.getElementById("soldProducts");
+const totalCustomersElement = document.getElementById("totalCustomers");
 
-const totalOrders =
-    document.getElementById("totalOrders");
+const salesChartElement = document.getElementById("salesChart");
+const statisticsSummaryElement = document.getElementById("statisticsSummary");
 
-const soldProducts =
-    document.getElementById("soldProducts");
-
-const totalCustomers =
-    document.getElementById("totalCustomers");
-
-const salesChart =
-    document.getElementById("salesChart");
-
-const statisticsSummary =
-    document.getElementById("statisticsSummary");
+const statisticsPeriodElement = document.getElementById("statisticsPeriod");
+const salesChartTitleElement = document.getElementById("salesChartTitle");
+const salesChartSubtitleElement = document.getElementById("salesChartSubtitle");
 
 
-// =====================================
-// AUTH
-// =====================================
+// =====================================================
+// BLOC 2 — DONNEES
+// =====================================================
+
+let allMerchantOrders = [];
+
+
+// =====================================================
+// BLOC 3 — VERIFICATION DES ELEMENTOS
+// =====================================================
+
+if (!totalRevenueElement ||
+    !totalOrdersElement ||
+    !soldProductsElement ||
+    !totalCustomersElement ||
+    !salesChartElement ||
+    !statisticsSummaryElement) {
+
+    alert(
+        "Toma Estatísticas: alguns elementos HTML não foram encontrados. " +
+        "Verifique os IDs da página merchant-statistics.html."
+    );
+
+} else if (!statisticsPeriodElement) {
+
+    alert(
+        "Toma Estatísticas: o seletor de período não foi encontrado. " +
+        "Verifique o elemento #statisticsPeriod no HTML."
+    );
+
+}
+
+
+// =====================================================
+// BLOC 4 — AUTENTICACAO
+// =====================================================
 
 onAuthStateChanged(auth, async (user) => {
 
     if (!user) {
-
-        location.href = "login.html";
-
+        window.location.href = "login.html";
         return;
-
     }
 
     await loadStatistics(user.uid);
@@ -59,694 +78,826 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 
-// =====================================
-// LOAD STATISTICS
-// =====================================
+// =====================================================
+// BLOC 5 — CARREGAR PEDIDOS DA LOJA
+// =====================================================
 
 async function loadStatistics(uid) {
 
     try {
 
-        console.log(
-            "TOMA — STATISTICS — Chargement pour :",
-            uid
+        const ordersQuery = query(
+            collection(db, "orders"),
+            where("merchantId", "==", uid)
         );
 
+        const snapshot = await getDocs(ordersQuery);
 
-        // =====================================
-        // RÉCUPÉRER LES COMMANDES DU COMMERÇANT
-        // =====================================
-
-        const ordersQuery =
-            query(
-                collection(db, "orders"),
-                where("merchantId", "==", uid)
-            );
-
-
-        const snapshot =
-            await getDocs(ordersQuery);
-
-
-        const orders = [];
-
+        allMerchantOrders = [];
 
         snapshot.forEach((docSnapshot) => {
 
-            orders.push({
+            allMerchantOrders.push({
                 id: docSnapshot.id,
                 ...docSnapshot.data()
             });
 
         });
 
+        // Atualizar as estatísticas com o período selecionado.
+        const selectedPeriod = statisticsPeriodElement
+            ? statisticsPeriodElement.value
+            : "today";
+
+        renderStatisticsForPeriod(selectedPeriod);
 
         console.log(
-            "TOMA — STATISTICS — Commandes trouvées :",
-            orders.length
+            "Toma Estatísticas: pedidos carregados =",
+            allMerchantOrders.length
         );
 
+    } catch (error) {
 
-        // =====================================
-        // VARIABLES
-        // =====================================
+        console.error("Erro ao carregar estatísticas:", error);
 
-        let totalRevenueValue = 0;
+        if (statisticsSummaryElement) {
 
-        let productsSoldValue = 0;
+            statisticsSummaryElement.innerHTML = `
+                <p>Não foi possível carregar as estatísticas.</p>
+                <p>Verifique a ligação e tente novamente.</p>
+            `;
 
-        let completedOrders = 0;
+        }
 
-        const customers = new Set();
+        if (salesChartElement) {
 
-        const productSales = new Map();
+            salesChartElement.innerHTML = `
+                <div class="chartEmptyState">
+                    <span class="material-symbols-rounded">error</span>
+                    <p>Não foi possível carregar o gráfico.</p>
+                </div>
+            `;
 
-        const monthlySales = new Map();
+        }
 
+    }
 
-        // =====================================
-        // ANALYSE DES COMMANDES
-        // =====================================
-
-        orders.forEach((order) => {
-
-            const status =
-                normalizeStatus(order.status);
-
-
-            /*
-             * Tous les clients ayant passé
-             * une commande sont comptés.
-             */
-
-            const customerId =
-                order.uid ||
-                order.clientPhone ||
-                order.clientName ||
-                order.id;
+}
 
 
-            if (customerId) {
+// =====================================================
+// BLOC 6 — MUDAR O PERIODO
+// =====================================================
 
-                customers.add(
-                    String(customerId)
-                );
+if (statisticsPeriodElement) {
 
-            }
+    statisticsPeriodElement.addEventListener("change", () => {
+
+        renderStatisticsForPeriod(statisticsPeriodElement.value);
+
+    });
+
+}
 
 
-            /*
-             * PRODUITS
-             */
+// =====================================================
+// BLOC 7 — CALCULAR O INICIO DO PERIODO
+// =====================================================
 
-            if (
-                Array.isArray(order.items)
-            ) {
+function getPeriodStart(period) {
+
+    const now = new Date();
+    const start = new Date(now);
+
+    start.setHours(0, 0, 0, 0);
+
+    if (period === "today") {
+
+        return start;
+
+    }
+
+    if (period === "7days") {
+
+        start.setDate(start.getDate() - 6);
+        return start;
+
+    }
+
+    if (period === "30days") {
+
+        start.setDate(start.getDate() - 29);
+        return start;
+
+    }
+
+    if (period === "6months") {
+
+        start.setMonth(start.getMonth() - 6);
+        return start;
+
+    }
+
+    return start;
+
+}
+
+
+// =====================================================
+// BLOC 8 — TITULOS DO GRAFICO
+// =====================================================
+
+function updateChartTitles(period) {
+
+    if (!salesChartTitleElement || !salesChartSubtitleElement) {
+        return;
+    }
+
+    const titles = {
+
+        today: {
+            title: "Vendas de Hoje",
+            subtitle: "Receita das vendas concluídas por horário."
+        },
+
+        "7days": {
+            title: "Vendas dos Últimos 7 Dias",
+            subtitle: "Receita diária das vendas concluídas."
+        },
+
+        "30days": {
+            title: "Vendas dos Últimos 30 Dias",
+            subtitle: "Receita diária das vendas concluídas."
+        },
+
+        "6months": {
+            title: "Vendas dos Últimos 6 Meses",
+            subtitle: "Receita mensal das vendas concluídas."
+        }
+
+    };
+
+    const selected = titles[period] || titles.today;
+
+    salesChartTitleElement.textContent = selected.title;
+    salesChartSubtitleElement.textContent = selected.subtitle;
+
+}
+
+
+// =====================================================
+// BLOC 9 — ATUALIZAR TODAS AS ESTATISTICAS
+// =====================================================
+
+function renderStatisticsForPeriod(period) {
+
+    const startDate = getPeriodStart(period);
+    const now = new Date();
+
+    // Incluir apenas pedidos com data dentro do período.
+    const filteredOrders = allMerchantOrders.filter((order) => {
+
+        const orderDate = getOrderDateFromOrder(order);
+
+        if (!orderDate) {
+            return false;
+        }
+
+        return orderDate >= startDate && orderDate <= now;
+
+    });
+
+    let totalRevenueValue = 0;
+    let soldProductsValue = 0;
+    let completedOrders = 0;
+
+    const customers = new Set();
+    const productSales = new Map();
+
+    filteredOrders.forEach((order) => {
+
+        const status = normalizeStatus(order.status);
+
+        // Identificar clientes únicos.
+        const customerId =
+            order.uid ||
+            order.clientId ||
+            order.customerId ||
+            order.clientPhone ||
+            order.clientName ||
+            order.id;
+
+        customers.add(String(customerId));
+
+        // Receita e produtos vendidos: apenas pedidos entregues.
+        if (status === "delivered") {
+
+            completedOrders++;
+
+            const orderTotal = Number(order.total) || 0;
+
+            totalRevenueValue += orderTotal;
+
+            if (Array.isArray(order.items)) {
 
                 order.items.forEach((item) => {
 
-                    const quantity =
-                        Number(item.quantity) || 0;
+                    const quantity = Math.max(
+                        0,
+                        Number(item.quantity ?? item.qty) || 0
+                    );
 
-
-                    productsSoldValue +=
-                        quantity;
-
+                    soldProductsValue += quantity;
 
                     const productName =
                         item.name ||
                         item.productName ||
                         "Produto";
 
+                    const previousQuantity =
+                        productSales.get(productName) || 0;
 
                     productSales.set(
                         productName,
-                        (
-                            productSales.get(
-                                productName
-                            ) || 0
-                        ) + quantity
+                        previousQuantity + quantity
                     );
 
                 });
 
             }
 
+        }
 
-            /*
-             * COMMANDES TERMINÉES
-             *
-             * Pour la recette nous considérons
-             * uniquement les commandes livrées.
-             */
-
-            if (
-                status === "delivered"
-            ) {
-
-                completedOrders++;
+    });
 
 
-                const orderTotal =
-                    Number(order.total) || 0;
+    // Atualizar os quatro cartões.
+    totalRevenueElement.textContent =
+        formatCurrency(totalRevenueValue);
+
+    totalOrdersElement.textContent =
+        String(filteredOrders.length);
+
+    soldProductsElement.textContent =
+        String(soldProductsValue);
+
+    totalCustomersElement.textContent =
+        String(customers.size);
 
 
-                totalRevenueValue +=
-                    orderTotal;
+    // Encontrar o produto mais vendido.
+    let bestProduct = "--";
+    let bestQuantity = 0;
 
+    productSales.forEach((quantity, name) => {
 
-                /*
-                 * VENTES MENSUELLES
-                 */
+        if (quantity > bestQuantity) {
 
-                const orderDate =
-                    getOrderDate(
-                        order.createdAt
-                    );
-
-
-                if (orderDate) {
-
-                    const monthKey =
-                        getMonthKey(
-                            orderDate
-                        );
-
-
-                    monthlySales.set(
-                        monthKey,
-                        (
-                            monthlySales.get(
-                                monthKey
-                            ) || 0
-                        ) + orderTotal
-                    );
-
-                }
-
-            }
-
-        });
-
-
-        // =====================================
-        // AFFICHER LES STATISTIQUES PRINCIPALES
-        // =====================================
-
-        if (totalRevenue) {
-
-            totalRevenue.textContent =
-                formatCurrency(
-                    totalRevenueValue
-                );
+            bestQuantity = quantity;
+            bestProduct = name;
 
         }
 
-
-        if (totalOrders) {
-
-            totalOrders.textContent =
-                orders.length
-                .toLocaleString("pt-PT");
-
-        }
+    });
 
 
-        if (soldProducts) {
+    // Atualizar o resumo.
+    statisticsSummaryElement.innerHTML = `
+        <p>
+            Total de vendas:
+            <strong>${formatCurrency(totalRevenueValue)}</strong>
+        </p>
 
-            soldProducts.textContent =
-                productsSoldValue
-                .toLocaleString("pt-PT");
+        <p>
+            Pedidos no período:
+            <strong>${filteredOrders.length}</strong>
+        </p>
 
-        }
+        <p>
+            Pedidos concluídos:
+            <strong>${completedOrders}</strong>
+        </p>
 
+        <p>
+            Produtos vendidos:
+            <strong>${soldProductsValue}</strong>
+        </p>
 
-        if (totalCustomers) {
+        <p>
+            Clientes no período:
+            <strong>${customers.size}</strong>
+        </p>
 
-            totalCustomers.textContent =
-                customers.size
-                .toLocaleString("pt-PT");
-
-        }
-
-
-        // =====================================
-        // PRODUIT LE PLUS VENDU
-        // =====================================
-
-        let bestProduct = "--";
-
-        let bestProductQuantity = 0;
-
-
-        productSales.forEach(
-            (quantity, productName) => {
-
-                if (
-                    quantity >
-                    bestProductQuantity
-                ) {
-
-                    bestProductQuantity =
-                        quantity;
-
-                    bestProduct =
-                        productName;
-
-                }
-
-            }
-        );
+        <p>
+            Produto mais vendido:
+            <strong>${escapeHtml(bestProduct)}</strong>
+        </p>
+    `;
 
 
-        // =====================================
-        // RÉSUMÉ
-        // =====================================
+    // Atualizar o título e o gráfico.
+    updateChartTitles(period);
 
-        if (statisticsSummary) {
+    drawPeriodSalesChart(filteredOrders, period);
 
-            statisticsSummary.innerHTML = `
-
-                <p>
-                    Total de vendas:
-                    <strong>
-                        ${formatCurrency(
-                            totalRevenueValue
-                        )}
-                    </strong>
-                </p>
-
-                <p>
-                    Pedidos concluídos:
-                    <strong>
-                        ${completedOrders}
-                    </strong>
-                </p>
-
-                <p>
-                    Clientes ativos:
-                    <strong>
-                        ${customers.size}
-                    </strong>
-                </p>
-
-                <p>
-                    Produto mais vendido:
-                    <strong>
-                        ${escapeHtml(bestProduct)}
-                    </strong>
-                </p>
-
-            `;
-
-        }
-
-
-        // =====================================
-        // GRÁFICO
-        // =====================================
-
-        drawMonthlySalesChart(
-            monthlySales
-        );
-
-
-        console.log(
-            "TOMA — STATISTICS — Dados calculados",
-            {
-                revenue: totalRevenueValue,
-                orders: orders.length,
-                completedOrders,
-                productsSold: productsSoldValue,
-                customers: customers.size,
-                bestProduct
-            }
-        );
-
-    }
-    catch (error) {
-
-        console.error(
-            "TOMA — STATISTICS — ERRO:",
-            error
-        );
-
-
-        if (statisticsSummary) {
-
-            statisticsSummary.innerHTML = `
-                <p>
-                    Não foi possível carregar as estatísticas.
-                </p>
-            `;
-
-        }
-
-    }
+    console.log("Toma Estatísticas atualizadas:", {
+        period,
+        pedidosNoPeriodo: filteredOrders.length,
+        pedidosConcluidos: completedOrders,
+        receita: totalRevenueValue,
+        produtosVendidos: soldProductsValue,
+        clientes: customers.size
+    });
 
 }
 
 
-// =====================================
-// NORMALIZAR STATUS
-// =====================================
+// =====================================================
+// BLOC 10 — NORMALIZAR ESTADO DO PEDIDO
+// =====================================================
 
 function normalizeStatus(status) {
 
-    if (!status) {
+    const normalized = String(status || "")
+        .trim()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
 
-        return "";
+    const deliveredStatuses = [
+        "delivered",
+        "entregue",
+        "entregue ao cliente",
+        "completed",
+        "concluido",
+        "concluida",
+        "finalizado",
+        "finalizada"
+    ];
 
+    if (deliveredStatuses.includes(normalized)) {
+        return "delivered";
     }
 
+    if (
+        normalized.includes("cancel") ||
+        normalized.includes("anulado")
+    ) {
+        return "cancelled";
+    }
 
-    const value =
-        String(status)
-            .trim()
-            .toLowerCase();
+    if (
+        normalized.includes("pending") ||
+        normalized.includes("pendente")
+    ) {
+        return "pending";
+    }
 
+    if (
+        normalized.includes("confirm") ||
+        normalized.includes("confirmado")
+    ) {
+        return "confirmed";
+    }
 
-    const map = {
+    if (
+        normalized.includes("process") ||
+        normalized.includes("processamento")
+    ) {
+        return "processing";
+    }
 
-        pending:
-            "pending",
+    if (
+        normalized.includes("shipped") ||
+        normalized.includes("enviado") ||
+        normalized.includes("expedido")
+    ) {
+        return "shipped";
+    }
 
-        pendente:
-            "pending",
-
-        confirmed:
-            "confirmed",
-
-        confirmado:
-            "confirmed",
-
-        processing:
-            "processing",
-
-        processando:
-            "processing",
-
-        shipped:
-            "shipped",
-
-        enviado:
-            "shipped",
-
-        delivered:
-            "delivered",
-
-        entregue:
-            "delivered",
-
-        completed:
-            "delivered",
-
-        concluido:
-            "delivered",
-
-        concluído:
-            "delivered",
-
-        cancelled:
-            "cancelled",
-
-        cancelado:
-            "cancelled"
-
-    };
-
-
-    return map[value] || value;
+    return normalized;
 
 }
 
 
-// =====================================
-// DATE
-// =====================================
+// =====================================================
+// BLOC 11 — LER A DATA DO PEDIDO
+// =====================================================
 
-function getOrderDate(createdAt) {
+function getOrderDateFromOrder(order) {
 
-    if (!createdAt) {
+    const possibleDates = [
+        order.createdAt,
+        order.timestamp,
+        order.date,
+        order.orderDate,
+        order.created_at
+    ];
 
-        return null;
+    for (const value of possibleDates) {
 
-    }
+        const parsedDate = parseDate(value);
 
-
-    try {
-
-        if (
-            typeof createdAt.toDate ===
-            "function"
-        ) {
-
-            return createdAt.toDate();
-
-        }
-
-
-        if (
-            createdAt instanceof Date
-        ) {
-
-            return createdAt;
-
-        }
-
-
-        if (
-            typeof createdAt === "number"
-        ) {
-
-            return new Date(createdAt);
-
-        }
-
-
-        if (
-            typeof createdAt === "string"
-        ) {
-
-            const date =
-                new Date(createdAt);
-
-
-            if (
-                !isNaN(date.getTime())
-            ) {
-
-                return date;
-
-            }
-
+        if (parsedDate) {
+            return parsedDate;
         }
 
     }
-    catch (error) {
-
-        console.warn(
-            "TOMA — STATISTICS — Date invalide:",
-            createdAt
-        );
-
-    }
-
 
     return null;
 
 }
 
 
-// =====================================
-// MONTH KEY
-// =====================================
+function parseDate(value) {
 
-function getMonthKey(date) {
+    if (!value) {
+        return null;
+    }
 
-    return [
+    let date = null;
 
-        date.getFullYear(),
+    // Firestore Timestamp.
+    if (typeof value.toDate === "function") {
 
-        String(
-            date.getMonth() + 1
-        ).padStart(2, "0")
+        date = value.toDate();
 
-    ].join("-");
+    } else if (value instanceof Date) {
 
-}
+        date = value;
 
+    } else if (
+        typeof value === "number" &&
+        Number.isFinite(value)
+    ) {
 
-// =====================================
-// FORMAT CURRENCY
-// =====================================
+        date = new Date(value);
 
-function formatCurrency(value) {
+    } else if (typeof value === "string") {
 
-    return (
-        Number(value) || 0
-    ).toLocaleString(
-        "pt-PT"
-    ) + " Kz";
-
-}
-
-
-// =====================================
-// ESCAPE HTML
-// =====================================
-
-function escapeHtml(value) {
-
-    return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-
-}
-
-
-// =====================================
-// GRÁFICO MENSAL
-// =====================================
-
-function drawMonthlySalesChart(
-    monthlySales
-) {
-
-    if (!salesChart) {
-
-        return;
+        date = new Date(value);
 
     }
 
+    if (!date || Number.isNaN(date.getTime())) {
+        return null;
+    }
 
-    if (
-        !monthlySales ||
-        monthlySales.size === 0
-    ) {
+    return date;
 
-        salesChart.innerHTML = `
+}
 
-            <span class="material-symbols-rounded">
-                monitoring
-            </span>
 
-            <p>
-                Ainda não existem vendas concluídas.
-            </p>
+// =====================================================
+// BLOC 12 — CONSTRUIR O GRAFICO CONFORME O PERIODO
+// =====================================================
 
+function drawPeriodSalesChart(orders, period) {
+
+    const now = new Date();
+    const buckets = [];
+
+    // -----------------------------------------------
+    // HOJE — 8 blocos de 3 horas
+    // -----------------------------------------------
+
+    if (period === "today") {
+
+        for (let hour = 0; hour < 24; hour += 3) {
+
+            buckets.push({
+                key: hour,
+                label: String(hour).padStart(2, "0") + "h",
+                value: 0
+            });
+
+        }
+
+        orders.forEach((order) => {
+
+            if (normalizeStatus(order.status) !== "delivered") {
+                return;
+            }
+
+            const date = getOrderDateFromOrder(order);
+
+            if (!date) {
+                return;
+            }
+
+            const bucketIndex = Math.floor(date.getHours() / 3);
+
+            if (buckets[bucketIndex]) {
+                buckets[bucketIndex].value += Number(order.total) || 0;
+            }
+
+        });
+
+    }
+
+    // -----------------------------------------------
+    // ÚLTIMOS 7 DIAS — uma barra por dia
+    // -----------------------------------------------
+
+    else if (period === "7days") {
+
+        const start = getPeriodStart("7days");
+
+        for (let i = 0; i < 7; i++) {
+
+            const date = new Date(start);
+            date.setDate(start.getDate() + i);
+
+            buckets.push({
+                key: dateKey(date),
+                label: date.toLocaleDateString("pt-PT", {
+                    weekday: "short",
+                    day: "2-digit"
+                }),
+                value: 0
+            });
+
+        }
+
+        fillDailyBuckets(buckets, orders);
+
+    }
+
+    // -----------------------------------------------
+    // ÚLTIMOS 30 DIAS — uma barra por dia
+    // -----------------------------------------------
+
+    else if (period === "30days") {
+
+        const start = getPeriodStart("30days");
+
+        for (let i = 0; i < 30; i++) {
+
+            const date = new Date(start);
+            date.setDate(start.getDate() + i);
+
+            buckets.push({
+                key: dateKey(date),
+                label: String(date.getDate()).padStart(2, "0"),
+                value: 0
+            });
+
+        }
+
+        fillDailyBuckets(buckets, orders);
+
+    }
+
+    // -----------------------------------------------
+    // ÚLTIMOS 6 MESES — uma barra por mês
+    // -----------------------------------------------
+
+    else if (period === "6months") {
+
+        const start = getPeriodStart("6months");
+
+        for (let i = 0; i <= 6; i++) {
+
+            const date = new Date(start);
+            date.setMonth(start.getMonth() + i);
+
+            const key = getMonthKey(date);
+
+            // Evitar criar uma barra para um mês futuro.
+            if (date.getTime() > now.getTime()) {
+                continue;
+            }
+
+            if (!buckets.some((bucket) => bucket.key === key)) {
+
+                buckets.push({
+                    key,
+                    label: date.toLocaleDateString("pt-PT", {
+                        month: "short"
+                    }),
+                    value: 0
+                });
+
+            }
+
+        }
+
+        orders.forEach((order) => {
+
+            if (normalizeStatus(order.status) !== "delivered") {
+                return;
+            }
+
+            const date = getOrderDateFromOrder(order);
+
+            if (!date) {
+                return;
+            }
+
+            const key = getMonthKey(date);
+            const bucket = buckets.find((item) => item.key === key);
+
+            if (bucket) {
+                bucket.value += Number(order.total) || 0;
+            }
+
+        });
+
+    }
+
+    drawChart(buckets, period);
+
+}
+
+
+// =====================================================
+// BLOC 13 — PREENCHER GRAFICO DIARIO
+// =====================================================
+
+function fillDailyBuckets(buckets, orders) {
+
+    orders.forEach((order) => {
+
+        if (normalizeStatus(order.status) !== "delivered") {
+            return;
+        }
+
+        const date = getOrderDateFromOrder(order);
+
+        if (!date) {
+            return;
+        }
+
+        const key = dateKey(date);
+
+        const bucket = buckets.find((item) => item.key === key);
+
+        if (bucket) {
+            bucket.value += Number(order.total) || 0;
+        }
+
+    });
+
+}
+
+
+// =====================================================
+// BLOC 14 — DESENHAR O GRAFICO
+// =====================================================
+
+function drawChart(buckets, period) {
+
+    if (!salesChartElement) {
+        return;
+    }
+
+    const hasSales = buckets.some((bucket) => bucket.value > 0);
+
+    if (!buckets.length) {
+
+        salesChartElement.innerHTML = `
+            <div class="chartEmptyState">
+                <span class="material-symbols-rounded">monitoring</span>
+                <p>Não existem dados para este período.</p>
+            </div>
         `;
 
         return;
 
     }
 
+    const maxValue = Math.max(
+        ...buckets.map((bucket) => bucket.value),
+        1
+    );
 
-    const entries =
-        Array.from(
-            monthlySales.entries()
-        )
-        .sort(
-            ([monthA], [monthB]) =>
-                monthA.localeCompare(monthB)
-        )
-        .slice(-6);
+    const chartColumns = buckets.length;
 
+    const columnsClass = period === "30days"
+        ? "tomaChartThirtyDays"
+        : period === "today"
+            ? "tomaChartToday"
+            : "";
 
-    const maxValue =
-        Math.max(
-            ...entries.map(
-                ([, value]) =>
-                    Number(value) || 0
-            ),
-            1
-        );
+    const chartHtml = buckets.map((bucket) => {
 
+        const percentage = bucket.value > 0
+            ? Math.max(5, (bucket.value / maxValue) * 100)
+            : 0;
 
-    salesChart.innerHTML = `
+        return `
+            <div class="tomaChartColumn">
+                <div class="tomaChartValue">
+                    ${bucket.value > 0 ? escapeHtml(formatShortCurrency(bucket.value)) : ""}
+                </div>
 
-        <div class="tomaMonthlyChart">
+                <div class="tomaChartBarArea">
+                    <div
+                        class="tomaChartBar"
+                        style="height:${percentage}%"
+                        title="${escapeHtml(formatCurrency(bucket.value))}"
+                    ></div>
+                </div>
 
-            ${entries.map(
-                ([month, value]) => {
+                <div class="tomaChartLabel">
+                    ${escapeHtml(bucket.label)}
+                </div>
+            </div>
+        `;
 
-                    const percentage =
-                        Math.max(
-                            5,
-                            (
-                                value /
-                                maxValue
-                            ) * 100
-                        );
+    }).join("");
 
-
-                    const [year, monthNumber] =
-                        month.split("-");
-
-
-                    const label =
-                        new Date(
-                            Number(year),
-                            Number(monthNumber) - 1,
-                            1
-                        ).toLocaleDateString(
-                            "pt-PT",
-                            {
-                                month: "short"
-                            }
-                        );
-
-
-                    return `
-
-                        <div
-                            class="tomaChartColumn"
-                            title="${formatCurrency(value)}"
-                        >
-
-                            <div
-                                class="tomaChartValue"
-                            >
-                             ${formatCurrency(value)}
-                            </div>
-
-                            <div
-                                class="tomaChartBarArea"
-                            >
-
-                                <div
-                                    class="tomaChartBar"
-                                    style="
-                                        height:${percentage}%;
-                                    "
-                                ></div>
-
-                            </div>
-
-                            <div
-                                class="tomaChartLabel"
-                            >
-                                ${label}
-                            </div>
-
-                        </div>
-
-                    `;
-
-                }
-            ).join("")}
-
+    salesChartElement.innerHTML = `
+        <div class="tomaChartScrollable">
+            <div
+                class="tomaMonthlyChart ${columnsClass}"
+                style="--chart-columns:${chartColumns}"
+            >
+                ${chartHtml}
+            </div>
         </div>
 
+        ${
+            hasSales
+                ? ""
+                : `<p class="chartNoSalesMessage">Ainda não existem vendas concluídas neste período.</p>`
+        }
     `;
 
 }
 
 
-// =====================================
-// FORMAT COURT
-// =====================================
+// =====================================================
+// BLOC 15 — FUNCOES AUXILIARES
+// =====================================================
 
+function dateKey(date) {
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+
+}
+
+
+function getMonthKey(date) {
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+
+    return `${year}-${month}`;
+
+}
+
+
+function formatCurrency(value) {
+
+    return (Number(value) || 0).toLocaleString("pt-PT") + " Kz";
+
+}
+
+
+function formatShortCurrency(value) {
+
+    const number = Number(value) || 0;
+
+    if (number >= 1000000) {
+        return (number / 1000000).toLocaleString("pt-PT", {
+            maximumFractionDigits: 1
+        }) + " M";
+    }
+
+    if (number >= 1000) {
+        return (number / 1000).toLocaleString("pt-PT", {
+            maximumFractionDigits: 1
+        }) + " mil";
+    }
+
+    return number > 0
+        ? number.toLocaleString("pt-PT", {
+            maximumFractionDigits: 0
+        })
+        : "";
+
+}
+
+
+function escapeHtml(value) {
+
+    return String(value ?? "").replace(/[&<>"']/g, (character) => {
+
+        const entities = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;"
+        };
+
+        return entities[character];
+
+    });
+
+} 
