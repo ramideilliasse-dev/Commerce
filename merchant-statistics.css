@@ -930,3 +930,67 @@ body {
     }
 
 }
+/* Gráfico estatístico com períodos dinâmicos */
+
+.tomaChartScrollable {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 8px;
+    scrollbar-width: thin;
+}
+
+.tomaMonthlyChart {
+    display: grid;
+    grid-template-columns: repeat(var(--chart-columns, 6), minmax(0, 1fr));
+    gap: 12px;
+    min-width: 0;
+}
+
+.tomaMonthlyChart.tomaChartThirtyDays {
+    min-width: 900px;
+}
+
+.tomaMonthlyChart.tomaChartToday {
+    gap: 10px;
+}
+
+.tomaChartColumn {
+    min-width: 0;
+    text-align: center;
+}
+
+.tomaChartValue {
+    min-height: 22px;
+    font-size: 10px;
+    overflow-wrap: anywhere;
+}
+
+.tomaChartBarArea {
+    height: 150px;
+}
+
+.tomaChartLabel {
+    margin-top: 8px;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.chartNoSalesMessage {
+    margin: 18px 0 0;
+    color: #78849a;
+    font-size: 13px;
+    text-align: center;
+}
+
+.chartEmptyState {
+    padding: 30px 15px;
+    text-align: center;
+    color: #78849a;
+}
+
+.chartEmptyState .material-symbols-rounded {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 34px;
+}
