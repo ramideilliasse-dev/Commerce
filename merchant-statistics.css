@@ -837,3 +837,96 @@ body {
         transition: none;
     }
 }
+/* =========================================
+   TOMA — SELECTEUR DE PERIODE
+   ========================================= */
+
+.statisticsChartHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.statisticsChartTitle {
+    flex: 1;
+    min-width: 150px;
+}
+
+.statisticsChartTitle h2 {
+    margin: 0;
+    color: #182238;
+    font-size: 20px;
+    font-weight: 750;
+}
+
+.statisticsChartTitle p {
+    margin: 6px 0 0;
+    color: #78849a;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.statisticsPeriodWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 145px;
+}
+
+.statisticsPeriodWrapper label {
+    color: #78849a;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+#statisticsPeriod {
+    width: 100%;
+    min-height: 46px;
+    padding: 10px 32px 10px 13px;
+
+    color: #315cf5;
+    background-color: #f5f7ff;
+
+    border: 1px solid #dce5ff;
+    border-radius: 12px;
+
+    font-family: "Poppins", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+#statisticsPeriod:focus {
+    border-color: #315cf5;
+    box-shadow: 0 0 0 3px rgba(49, 92, 245, 0.12);
+}
+
+@media (max-width: 480px) {
+
+    .statisticsChartHeader {
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .statisticsChartTitle {
+        flex-basis: 100%;
+    }
+
+    .statisticsPeriodWrapper {
+        width: 100%;
+    }
+
+    #statisticsPeriod {
+        min-height: 48px;
+        font-size: 14px;
+    }
+
+}
