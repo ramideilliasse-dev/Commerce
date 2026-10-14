@@ -1,4 +1,4 @@
-import { db, auth } from "../firebase.js";
+ import { db, auth } from "../firebase.js";
 
 import {
     collection,
@@ -28,6 +28,12 @@ const statisticsPeriodElement = document.getElementById("statisticsPeriod");
 const salesChartTitleElement = document.getElementById("salesChartTitle");
 const salesChartSubtitleElement = document.getElementById("salesChartSubtitle");
 
+// Indicateurs de comparaison.
+const revenueComparisonElement = document.getElementById("revenueComparison");
+const ordersComparisonElement = document.getElementById("ordersComparison");
+const productsComparisonElement = document.getElementById("productsComparison");
+const customersComparisonElement = document.getElementById("customersComparison");
+
 
 // =====================================================
 // BLOC 2 — DONNEES
@@ -37,33 +43,27 @@ let allMerchantOrders = [];
 
 
 // =====================================================
-// BLOC 3 — VERIFICATION DES ELEMENTOS
+// BLOC 3 — VERIFIER LES ELEMENTOS PRINCIPAUX
 // =====================================================
 
-if (!totalRevenueElement ||
+if (
+    !totalRevenueElement ||
     !totalOrdersElement ||
     !soldProductsElement ||
     !totalCustomersElement ||
     !salesChartElement ||
-    !statisticsSummaryElement) {
-
+    !statisticsSummaryElement ||
+    !statisticsPeriodElement
+) {
     alert(
         "Toma Estatísticas: alguns elementos HTML não foram encontrados. " +
         "Verifique os IDs da página merchant-statistics.html."
     );
-
-} else if (!statisticsPeriodElement) {
-
-    alert(
-        "Toma Estatísticas: o seletor de período não foi encontrado. " +
-        "Verifique o elemento #statisticsPeriod no HTML."
-    );
-
 }
 
 
 // =====================================================
-// BLOC 4 — AUTENTICACAO
+// BLOC 4 — AUTHENTICATION
 // =====================================================
 
 onAuthStateChanged(auth, async (user) => {
@@ -79,7 +79,7 @@ onAuthStateChanged(auth, async (user) => {
 
 
 // =====================================================
-// BLOC 5 — CARREGAR PEDIDOS DA LOJA
+// BLOC 5 — CARREGAR OS PEDIDOS
 // =====================================================
 
 async function loadStatistics(uid) {
@@ -104,15 +104,12 @@ async function loadStatistics(uid) {
 
         });
 
-        // Atualizar as estatísticas com o período selecionado.
-        const selectedPeriod = statisticsPeriodElement
-            ? statisticsPeriodElement.value
-            : "today";
-
-        renderStatisticsForPeriod(selectedPeriod);
+        renderStatisticsForPeriod(
+            statisticsPeriodElement?.value || "today"
+        );
 
         console.log(
-            "Toma Estatísticas: pedidos carregados =",
+            "Toma Estatísticas: pedidos carregados:",
             allMerchantOrders.length
         );
 
@@ -120,25 +117,17 @@ async function loadStatistics(uid) {
 
         console.error("Erro ao carregar estatísticas:", error);
 
-        if (statisticsSummaryElement) {
+        statisticsSummaryElement.innerHTML = `
+            <p>Não foi possível carregar as estatísticas.</p>
+            <p>Verifique a ligação e tente novamente.</p>
+        `;
 
-            statisticsSummaryElement.innerHTML = `
-                <p>Não foi possível carregar as estatísticas.</p>
-                <p>Verifique a ligação e tente novamente.</p>
-            `;
-
-        }
-
-        if (salesChartElement) {
-
-            salesChartElement.innerHTML = `
-                <div class="chartEmptyState">
-                    <span class="material-symbols-rounded">error</span>
-                    <p>Não foi possível carregar o gráfico.</p>
-                </div>
-            `;
-
-        }
+        salesChartElement.innerHTML = `
+            <div class="chartEmptyState">
+                <span class="material-symbols-rounded">error</span>
+                <p>Não foi possível carregar o gráfico.</p>
+            </div>
+        `;
 
     }
 
@@ -146,7 +135,7 @@ async function loadStatistics(uid) {
 
 
 // =====================================================
-// BLOC 6 — MUDAR O PERIODO
+// BLOC 6 — MUDAR DE PERIODO
 // =====================================================
 
 if (statisticsPeriodElement) {
@@ -161,41 +150,32 @@ if (statisticsPeriodElement) {
 
 
 // =====================================================
-// BLOC 7 — CALCULAR O INICIO DO PERIODO
+// BLOC 7 — INICIO DO PERIODO ATUAL
 // =====================================================
 
 function getPeriodStart(period) {
 
-    const now = new Date();
-    const start = new Date(now);
+    const start = new Date();
 
     start.setHours(0, 0, 0, 0);
 
     if (period === "today") {
-
         return start;
-
     }
 
     if (period === "7days") {
-
         start.setDate(start.getDate() - 6);
         return start;
-
     }
 
     if (period === "30days") {
-
         start.setDate(start.getDate() - 29);
         return start;
-
     }
 
     if (period === "6months") {
-
         start.setMonth(start.getMonth() - 6);
         return start;
-
     }
 
     return start;
@@ -204,7 +184,360 @@ function getPeriodStart(period) {
 
 
 // =====================================================
-// BLOC 8 — TITULOS DO GRAFICO
+// BLOC 8 — INICIO DO PERIODO ANTERIOR
+// =====================================================
+
+function getPreviousPeriodStart(period, currentStart) {
+
+    const previousStart = new Date(currentStart);
+
+    if (period === "today") {
+
+        previousStart.setDate(previousStart.getDate() - 1);
+
+    } else if (period === "7days") {
+
+        previousStart.setDate(previousStart.getDate() - 7);
+
+    } else if (period === "30days") {
+
+        previousStart.setDate(previousStart.getDate() - 30);
+
+    } else if (period === "6months") {
+
+        previousStart.setMonth(previousStart.getMonth() - 6);
+
+    }
+
+    return previousStart;
+
+}
+
+
+// =====================================================
+// BLOC 9 — FILTRAR OS PEDIDOS PELA DATA
+// =====================================================
+
+function filterOrdersByDate(orders, startDate, endDate) {
+
+    return orders.filter((order) => {
+
+        const orderDate = getOrderDateFromOrder(order);
+
+        if (!orderDate) {
+            return false;
+        }
+
+        return orderDate >= startDate && orderDate < endDate;
+
+    });
+
+}
+
+
+// =====================================================
+// BLOC 10 — CALCULAR AS METRICAS
+// =====================================================
+
+function calculateMetrics(orders) {
+
+    let revenue = 0;
+    let soldProducts = 0;
+    let completedOrders = 0;
+
+    const customers = new Set();
+    const productSales = new Map();
+
+    orders.forEach((order) => {
+
+        const customerId =
+            order.uid ||
+            order.clientId ||
+            order.customerId ||
+            order.clientPhone ||
+            order.clientName ||
+            order.id;
+
+        customers.add(String(customerId));
+
+        if (normalizeStatus(order.status) !== "delivered") {
+            return;
+        }
+
+        completedOrders++;
+
+        revenue += Number(order.total) || 0;
+
+        if (!Array.isArray(order.items)) {
+            return;
+        }
+
+        order.items.forEach((item) => {
+
+            const quantity = Math.max(
+                0,
+                Number(item.quantity ?? item.qty) || 0
+            );
+
+            soldProducts += quantity;
+
+            const productName =
+                item.name ||
+                item.productName ||
+                "Produto";
+
+            const oldQuantity = productSales.get(productName) || 0;
+
+            productSales.set(
+                productName,
+                oldQuantity + quantity
+            );
+
+        });
+
+    });
+
+    let bestProduct = "--";
+    let bestQuantity = 0;
+
+    productSales.forEach((quantity, name) => {
+
+        if (quantity > bestQuantity) {
+            bestQuantity = quantity;
+            bestProduct = name;
+        }
+
+    });
+
+    return {
+        revenue,
+        orders: orders.length,
+        soldProducts,
+        customers: customers.size,
+        completedOrders,
+        bestProduct
+    };
+
+}
+
+
+// =====================================================
+// BLOC 11 — RENDRE LES STATISTIQUES
+// =====================================================
+
+function renderStatisticsForPeriod(period) {
+
+    const now = new Date();
+
+    const currentStart = getPeriodStart(period);
+
+    const previousStart = getPreviousPeriodStart(
+        period,
+        currentStart
+    );
+
+    // Période actuelle : début de la période jusqu'à maintenant.
+    const currentOrders = filterOrdersByDate(
+        allMerchantOrders,
+        currentStart,
+        new Date(now.getTime() + 1)
+    );
+
+    // Période précédente : période équivalente juste avant.
+    const previousOrders = filterOrdersByDate(
+        allMerchantOrders,
+        previousStart,
+        currentStart
+    );
+
+    const current = calculateMetrics(currentOrders);
+    const previous = calculateMetrics(previousOrders);
+
+
+    // -----------------------------------------------
+    // CARTES PRINCIPALES
+    // -----------------------------------------------
+
+    totalRevenueElement.textContent =
+        formatCurrency(current.revenue);
+
+    totalOrdersElement.textContent =
+        String(current.orders);
+
+    soldProductsElement.textContent =
+        String(current.soldProducts);
+
+    totalCustomersElement.textContent =
+        String(current.customers);
+
+
+    // -----------------------------------------------
+    // COMPARAISONS
+    // -----------------------------------------------
+
+    renderComparison(
+        revenueComparisonElement,
+        current.revenue,
+        previous.revenue
+    );
+
+    renderComparison(
+        ordersComparisonElement,
+        current.orders,
+        previous.orders
+    );
+
+    renderComparison(
+        productsComparisonElement,
+        current.soldProducts,
+        previous.soldProducts
+    );
+
+    renderComparison(
+        customersComparisonElement,
+        current.customers,
+        previous.customers
+    );
+
+
+    // -----------------------------------------------
+    // RESUME
+    // -----------------------------------------------
+
+    statisticsSummaryElement.innerHTML = `
+        <p>
+            Total de vendas:
+            <strong>${formatCurrency(current.revenue)}</strong>
+        </p>
+
+        <p>
+            Pedidos no período:
+            <strong>${current.orders}</strong>
+        </p>
+
+        <p>
+            Pedidos concluídos:
+            <strong>${current.completedOrders}</strong>
+        </p>
+
+        <p>
+            Produtos vendidos:
+            <strong>${current.soldProducts}</strong>
+        </p>
+
+        <p>
+            Clientes no período:
+            <strong>${current.customers}</strong>
+        </p>
+
+        <p>
+            Produto mais vendido:
+            <strong>${escapeHtml(current.bestProduct)}</strong>
+        </p>
+    `;
+
+
+    // -----------------------------------------------
+    // GRAFICO
+    // -----------------------------------------------
+
+    updateChartTitles(period);
+
+    drawPeriodSalesChart(currentOrders, period);
+
+
+    console.log("Toma Estatísticas:", {
+        periodo: period,
+        atual: current,
+        anterior: previous
+    });
+
+}
+
+
+// =====================================================
+// BLOC 12 — CALCULER ET AFFICHER LA COMPARAISON
+// =====================================================
+
+function renderComparison(element, currentValue, previousValue) {
+
+    if (!element) {
+        return;
+    }
+
+    const current = Number(currentValue) || 0;
+    const previous = Number(previousValue) || 0;
+
+    let percentage = 0;
+    let text = "0%";
+    let icon = "trending_flat";
+    let className = "statNeutral";
+
+
+    if (previous === 0 && current > 0) {
+
+        // Activité nouvelle : aucun pourcentage trompeur.
+        text = "Novo";
+        icon = "trending_up";
+        className = "statPositive";
+
+    } else if (previous === 0 && current === 0) {
+
+        text = "0%";
+        icon = "trending_flat";
+        className = "statNeutral";
+
+    } else {
+
+        percentage = ((current - previous) / previous) * 100;
+
+        if (percentage > 0.05) {
+
+            text = "+" + formatPercentage(percentage);
+            icon = "trending_up";
+            className = "statPositive";
+
+        } else if (percentage < -0.05) {
+
+            text = "-" + formatPercentage(Math.abs(percentage));
+            icon = "trending_down";
+            className = "statNegative";
+
+        } else {
+
+            text = "0%";
+            icon = "trending_flat";
+            className = "statNeutral";
+
+        }
+
+    }
+
+
+    element.className = "statComparison " + className;
+
+    element.innerHTML = `
+        <span class="material-symbols-rounded">
+            ${icon}
+        </span>
+        <span>${escapeHtml(text)}</span>
+    `;
+
+}
+
+
+function formatPercentage(value) {
+
+    return Number(value).toLocaleString("pt-PT", {
+        maximumFractionDigits: 1,
+        minimumFractionDigits: 0
+    }) + "%";
+
+}
+
+
+// =====================================================
+// BLOC 13 — TITRES DU GRAPHIQUE
 // =====================================================
 
 function updateChartTitles(period) {
@@ -246,174 +579,7 @@ function updateChartTitles(period) {
 
 
 // =====================================================
-// BLOC 9 — ATUALIZAR TODAS AS ESTATISTICAS
-// =====================================================
-
-function renderStatisticsForPeriod(period) {
-
-    const startDate = getPeriodStart(period);
-    const now = new Date();
-
-    // Incluir apenas pedidos com data dentro do período.
-    const filteredOrders = allMerchantOrders.filter((order) => {
-
-        const orderDate = getOrderDateFromOrder(order);
-
-        if (!orderDate) {
-            return false;
-        }
-
-        return orderDate >= startDate && orderDate <= now;
-
-    });
-
-    let totalRevenueValue = 0;
-    let soldProductsValue = 0;
-    let completedOrders = 0;
-
-    const customers = new Set();
-    const productSales = new Map();
-
-    filteredOrders.forEach((order) => {
-
-        const status = normalizeStatus(order.status);
-
-        // Identificar clientes únicos.
-        const customerId =
-            order.uid ||
-            order.clientId ||
-            order.customerId ||
-            order.clientPhone ||
-            order.clientName ||
-            order.id;
-
-        customers.add(String(customerId));
-
-        // Receita e produtos vendidos: apenas pedidos entregues.
-        if (status === "delivered") {
-
-            completedOrders++;
-
-            const orderTotal = Number(order.total) || 0;
-
-            totalRevenueValue += orderTotal;
-
-            if (Array.isArray(order.items)) {
-
-                order.items.forEach((item) => {
-
-                    const quantity = Math.max(
-                        0,
-                        Number(item.quantity ?? item.qty) || 0
-                    );
-
-                    soldProductsValue += quantity;
-
-                    const productName =
-                        item.name ||
-                        item.productName ||
-                        "Produto";
-
-                    const previousQuantity =
-                        productSales.get(productName) || 0;
-
-                    productSales.set(
-                        productName,
-                        previousQuantity + quantity
-                    );
-
-                });
-
-            }
-
-        }
-
-    });
-
-
-    // Atualizar os quatro cartões.
-    totalRevenueElement.textContent =
-        formatCurrency(totalRevenueValue);
-
-    totalOrdersElement.textContent =
-        String(filteredOrders.length);
-
-    soldProductsElement.textContent =
-        String(soldProductsValue);
-
-    totalCustomersElement.textContent =
-        String(customers.size);
-
-
-    // Encontrar o produto mais vendido.
-    let bestProduct = "--";
-    let bestQuantity = 0;
-
-    productSales.forEach((quantity, name) => {
-
-        if (quantity > bestQuantity) {
-
-            bestQuantity = quantity;
-            bestProduct = name;
-
-        }
-
-    });
-
-
-    // Atualizar o resumo.
-    statisticsSummaryElement.innerHTML = `
-        <p>
-            Total de vendas:
-            <strong>${formatCurrency(totalRevenueValue)}</strong>
-        </p>
-
-        <p>
-            Pedidos no período:
-            <strong>${filteredOrders.length}</strong>
-        </p>
-
-        <p>
-            Pedidos concluídos:
-            <strong>${completedOrders}</strong>
-        </p>
-
-        <p>
-            Produtos vendidos:
-            <strong>${soldProductsValue}</strong>
-        </p>
-
-        <p>
-            Clientes no período:
-            <strong>${customers.size}</strong>
-        </p>
-
-        <p>
-            Produto mais vendido:
-            <strong>${escapeHtml(bestProduct)}</strong>
-        </p>
-    `;
-
-
-    // Atualizar o título e o gráfico.
-    updateChartTitles(period);
-
-    drawPeriodSalesChart(filteredOrders, period);
-
-    console.log("Toma Estatísticas atualizadas:", {
-        period,
-        pedidosNoPeriodo: filteredOrders.length,
-        pedidosConcluidos: completedOrders,
-        receita: totalRevenueValue,
-        produtosVendidos: soldProductsValue,
-        clientes: customers.size
-    });
-
-}
-
-
-// =====================================================
-// BLOC 10 — NORMALIZAR ESTADO DO PEDIDO
+// BLOC 14 — NORMALISER LE STATUT
 // =====================================================
 
 function normalizeStatus(status) {
@@ -481,7 +647,7 @@ function normalizeStatus(status) {
 
 
 // =====================================================
-// BLOC 11 — LER A DATA DO PEDIDO
+// BLOC 15 — LIRE LA DATE D'UNE COMMANDE
 // =====================================================
 
 function getOrderDateFromOrder(order) {
@@ -496,10 +662,10 @@ function getOrderDateFromOrder(order) {
 
     for (const value of possibleDates) {
 
-        const parsedDate = parseDate(value);
+        const date = parseDate(value);
 
-        if (parsedDate) {
-            return parsedDate;
+        if (date) {
+            return date;
         }
 
     }
@@ -517,7 +683,6 @@ function parseDate(value) {
 
     let date = null;
 
-    // Firestore Timestamp.
     if (typeof value.toDate === "function") {
 
         date = value.toDate();
@@ -549,7 +714,7 @@ function parseDate(value) {
 
 
 // =====================================================
-// BLOC 12 — CONSTRUIR O GRAFICO CONFORME O PERIODO
+// BLOC 16 — CONSTRUIRE LE GRAPHIQUE
 // =====================================================
 
 function drawPeriodSalesChart(orders, period) {
@@ -557,10 +722,7 @@ function drawPeriodSalesChart(orders, period) {
     const now = new Date();
     const buckets = [];
 
-    // -----------------------------------------------
-    // HOJE — 8 blocos de 3 horas
-    // -----------------------------------------------
-
+    // HOJE : 8 tranches horaires de 3 heures.
     if (period === "today") {
 
         for (let hour = 0; hour < 24; hour += 3) {
@@ -585,20 +747,17 @@ function drawPeriodSalesChart(orders, period) {
                 return;
             }
 
-            const bucketIndex = Math.floor(date.getHours() / 3);
+            const index = Math.floor(date.getHours() / 3);
 
-            if (buckets[bucketIndex]) {
-                buckets[bucketIndex].value += Number(order.total) || 0;
+            if (buckets[index]) {
+                buckets[index].value += Number(order.total) || 0;
             }
 
         });
 
     }
 
-    // -----------------------------------------------
-    // ÚLTIMOS 7 DIAS — uma barra por dia
-    // -----------------------------------------------
-
+    // 7 JOURS : une barre par jour.
     else if (period === "7days") {
 
         const start = getPeriodStart("7days");
@@ -606,6 +765,7 @@ function drawPeriodSalesChart(orders, period) {
         for (let i = 0; i < 7; i++) {
 
             const date = new Date(start);
+
             date.setDate(start.getDate() + i);
 
             buckets.push({
@@ -623,10 +783,7 @@ function drawPeriodSalesChart(orders, period) {
 
     }
 
-    // -----------------------------------------------
-    // ÚLTIMOS 30 DIAS — uma barra por dia
-    // -----------------------------------------------
-
+    // 30 JOURS : une barre par jour.
     else if (period === "30days") {
 
         const start = getPeriodStart("30days");
@@ -634,6 +791,7 @@ function drawPeriodSalesChart(orders, period) {
         for (let i = 0; i < 30; i++) {
 
             const date = new Date(start);
+
             date.setDate(start.getDate() + i);
 
             buckets.push({
@@ -648,10 +806,7 @@ function drawPeriodSalesChart(orders, period) {
 
     }
 
-    // -----------------------------------------------
-    // ÚLTIMOS 6 MESES — uma barra por mês
-    // -----------------------------------------------
-
+    // 6 MOIS : une barre par mois.
     else if (period === "6months") {
 
         const start = getPeriodStart("6months");
@@ -659,14 +814,14 @@ function drawPeriodSalesChart(orders, period) {
         for (let i = 0; i <= 6; i++) {
 
             const date = new Date(start);
+
             date.setMonth(start.getMonth() + i);
 
-            const key = getMonthKey(date);
-
-            // Evitar criar uma barra para um mês futuro.
-            if (date.getTime() > now.getTime()) {
+            if (date > now) {
                 continue;
             }
+
+            const key = getMonthKey(date);
 
             if (!buckets.some((bucket) => bucket.key === key)) {
 
@@ -695,6 +850,7 @@ function drawPeriodSalesChart(orders, period) {
             }
 
             const key = getMonthKey(date);
+
             const bucket = buckets.find((item) => item.key === key);
 
             if (bucket) {
@@ -711,7 +867,7 @@ function drawPeriodSalesChart(orders, period) {
 
 
 // =====================================================
-// BLOC 13 — PREENCHER GRAFICO DIARIO
+// BLOC 17 — REMPLIR LES BARRES JOURNALIÈRES
 // =====================================================
 
 function fillDailyBuckets(buckets, orders) {
@@ -742,7 +898,7 @@ function fillDailyBuckets(buckets, orders) {
 
 
 // =====================================================
-// BLOC 14 — DESENHAR O GRAFICO
+// BLOC 18 — AFFICHER LE GRAPHIQUE
 // =====================================================
 
 function drawChart(buckets, period) {
@@ -750,8 +906,6 @@ function drawChart(buckets, period) {
     if (!salesChartElement) {
         return;
     }
-
-    const hasSales = buckets.some((bucket) => bucket.value > 0);
 
     if (!buckets.length) {
 
@@ -771,7 +925,7 @@ function drawChart(buckets, period) {
         1
     );
 
-    const chartColumns = buckets.length;
+    const hasSales = buckets.some((bucket) => bucket.value > 0);
 
     const columnsClass = period === "30days"
         ? "tomaChartThirtyDays"
@@ -787,21 +941,27 @@ function drawChart(buckets, period) {
 
         return `
             <div class="tomaChartColumn">
+
                 <div class="tomaChartValue">
-                    ${bucket.value > 0 ? escapeHtml(formatShortCurrency(bucket.value)) : ""}
+                    ${bucket.value > 0
+                        ? escapeHtml(formatShortCurrency(bucket.value))
+                        : ""}
                 </div>
 
                 <div class="tomaChartBarArea">
+
                     <div
                         class="tomaChartBar"
                         style="height:${percentage}%"
                         title="${escapeHtml(formatCurrency(bucket.value))}"
                     ></div>
+
                 </div>
 
                 <div class="tomaChartLabel">
                     ${escapeHtml(bucket.label)}
                 </div>
+
             </div>
         `;
 
@@ -809,12 +969,14 @@ function drawChart(buckets, period) {
 
     salesChartElement.innerHTML = `
         <div class="tomaChartScrollable">
+
             <div
                 class="tomaMonthlyChart ${columnsClass}"
-                style="--chart-columns:${chartColumns}"
+                style="--chart-columns:${buckets.length}"
             >
                 ${chartHtml}
             </div>
+
         </div>
 
         ${
@@ -828,13 +990,15 @@ function drawChart(buckets, period) {
 
 
 // =====================================================
-// BLOC 15 — FUNCOES AUXILIARES
+// BLOC 19 — FONCTIONS AUXILIAIRES
 // =====================================================
 
 function dateKey(date) {
 
     const year = date.getFullYear();
+
     const month = String(date.getMonth() + 1).padStart(2, "0");
+
     const day = String(date.getDate()).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
@@ -845,6 +1009,7 @@ function dateKey(date) {
 function getMonthKey(date) {
 
     const year = date.getFullYear();
+
     const month = String(date.getMonth() + 1).padStart(2, "0");
 
     return `${year}-${month}`;
@@ -864,15 +1029,19 @@ function formatShortCurrency(value) {
     const number = Number(value) || 0;
 
     if (number >= 1000000) {
+
         return (number / 1000000).toLocaleString("pt-PT", {
             maximumFractionDigits: 1
         }) + " M";
+
     }
 
     if (number >= 1000) {
+
         return (number / 1000).toLocaleString("pt-PT", {
             maximumFractionDigits: 1
         }) + " mil";
+
     }
 
     return number > 0
@@ -900,4 +1069,4 @@ function escapeHtml(value) {
 
     });
 
-} 
+}
