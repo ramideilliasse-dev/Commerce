@@ -1,115 +1,839 @@
- /* =====================================
-MERCHANT STATISTICS
-===================================== */
+ /* =========================================================
+   TOMA — MERCHANT STATISTICS
+   Premium Analytics Dashboard
+   ========================================================= */
 
-.chartCard{
+/* VARIABLES */
+:root {
+    --stats-primary: #315cf5;
+    --stats-primary-dark: #2146d0;
+    --stats-orange: #ff7a1a;
+    --stats-green: #12a875;
+    --stats-purple: #8055e8;
 
-min-height:420px;
+    --stats-text: #182238;
+    --stats-muted: #78849a;
+    --stats-border: #e8edf5;
+    --stats-background: #f5f7fc;
+    --stats-white: #ffffff;
 
+    --stats-radius: 22px;
+    --stats-shadow: 0 8px 30px rgba(29, 45, 82, 0.055);
+    --stats-shadow-hover: 0 16px 38px rgba(29, 45, 82, 0.11);
 }
 
-#salesChart{
+/* =========================================================
+   PAGE
+   ========================================================= */
 
-height:320px;
-
-display:flex;
-
-flex-direction:column;
-
-justify-content:center;
-
-align-items:center;
-
-background:#fafafa;
-
-border:2px dashed #e5e5e5;
-
-border-radius:20px;
-
+body {
+    background: var(--stats-background);
+    color: var(--stats-text);
+    font-family: "Poppins", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
 }
 
-#salesChart .material-symbols-rounded{
-
-font-size:70px;
-
-color:#ff6a00;
-
-margin-bottom:15px;
-
+.productsPage {
+    width: 100%;
+    min-height: 100vh;
+    padding: 30px;
+    box-sizing: border-box;
 }
 
-#salesChart p{
+/* =========================================================
+   HEADER
+   ========================================================= */
 
-font-size:16px;
+.productsHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
 
-color:#888;
+    width: 100%;
+    margin-bottom: 32px;
+    padding: 0 0 25px;
 
+    background: transparent;
+    border-bottom: 1px solid var(--stats-border);
 }
 
-#statisticsSummary{
-
-display:flex;
-
-flex-direction:column;
-
-gap:18px;
-
-padding-top:10px;
-
+.leftHeader {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    min-width: 0;
 }
 
-#statisticsSummary p{
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-padding:15px;
-
-background:#fafafa;
-
-border-radius:16px;
-
-font-size:15px;
-
-color:#555;
-
+.leftHeader > div {
+    min-width: 0;
 }
 
-#statisticsSummary strong{
+.leftHeader h1 {
+    margin: 0;
+    color: var(--stats-text);
 
-color:#ff6a00;
-
-font-size:17px;
-
+    font-size: clamp(27px, 3vw, 35px);
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: -0.8px;
 }
+
+.leftHeader p {
+    margin: 8px 0 0;
+    color: var(--stats-muted);
+
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+/* BOUTON RETOUR */
+
+.backButton {
+    display: inline-flex;
+    flex: 0 0 54px;
+    align-items: center;
+    justify-content: center;
+
+    width: 54px;
+    height: 54px;
+
+    color: var(--stats-primary);
+    background: #eaf0ff;
+
+    border: 1px solid #dce6ff;
+    border-radius: 17px;
+
+    text-decoration: none;
+    transition:
+        background 0.25s ease,
+        color 0.25s ease,
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.backButton .material-symbols-rounded {
+    font-size: 27px;
+}
+
+.backButton:hover {
+    color: #ffffff;
+    background: var(--stats-primary);
+    transform: translateX(-3px);
+    box-shadow: 0 7px 18px rgba(49, 92, 245, 0.2);
+}
+
+/* =========================================================
+   STATISTICS GRID
+   ========================================================= */
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 22px;
+
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+/* STAT CARD */
+
+.statCard {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    min-width: 0;
+    min-height: 195px;
+
+    padding: 25px;
+    box-sizing: border-box;
+
+    background: var(--stats-white);
+    border: 1px solid var(--stats-border);
+    border-radius: var(--stats-radius);
+
+    box-shadow: var(--stats-shadow);
+
+    overflow: hidden;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+
+    animation: statsCardAppear 0.5s ease both;
+}
+
+.statCard:nth-child(2) {
+    animation-delay: 0.06s;
+}
+
+.statCard:nth-child(3) {
+    animation-delay: 0.12s;
+}
+
+.statCard:nth-child(4) {
+    animation-delay: 0.18s;
+}
+
+.statCard:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--stats-shadow-hover);
+    border-color: #d8e1f5;
+}
+
+/* ICÔNES */
+
+.statIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 57px;
+    height: 57px;
+    margin-bottom: 19px;
+
+    border-radius: 18px;
+    font-size: 30px;
+
+    transition: transform 0.25s ease;
+}
+
+.statCard:hover .statIcon {
+    transform: scale(1.07);
+}
+
+.statIcon.orange {
+    color: var(--stats-orange);
+    background: #fff0e3;
+}
+
+.statIcon.blue {
+    color: var(--stats-primary);
+    background: #eaf0ff;
+}
+
+.statIcon.green {
+    color: var(--stats-green);
+    background: #e1f8ee;
+}
+
+.statIcon.purple {
+    color: var(--stats-purple);
+    background: #f0eaff;
+}
+
+/* TITRES DES CARTES */
+
+.statCard h4 {
+    margin: 0 0 7px;
+
+    color: var(--stats-muted);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+/* VALEURS PRINCIPALES */
+
+.statCard h2 {
+    max-width: 100%;
+    margin: 0;
+
+    color: var(--stats-text);
+    font-size: clamp(24px, 2.2vw, 32px);
+    font-weight: 800;
+    line-height: 1.35;
+    letter-spacing: -0.6px;
+
+    overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   CONTENT LAYOUT
+   ========================================================= */
+
+.dashboardContent {
+    display: grid;
+    grid-template-columns: minmax(0, 1.65fr) minmax(300px, 1fr);
+    align-items: stretch;
+    gap: 24px;
+
+    width: 100%;
+}
+
+/* CARTES PRINCIPALES */
 
 .chartCard,
-.ordersCard{
+.ordersCard {
+    min-width: 0;
+    padding: 27px;
 
-transition:.25s;
+    background: var(--stats-white);
+    border: 1px solid var(--stats-border);
+    border-radius: var(--stats-radius);
 
+    box-shadow: var(--stats-shadow);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
 }
 
 .chartCard:hover,
-.ordersCard:hover{
-
-transform:translateY(-4px);
-
+.ordersCard:hover {
+    box-shadow: var(--stats-shadow-hover);
 }
 
-@media(max-width:768px){
+/* EN-TÊTES DES CARTES */
 
-#statisticsSummary p{
+.cardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
 
-flex-direction:column;
-
-align-items:flex-start;
-
-gap:8px;
-
+    margin-bottom: 24px;
 }
 
+.cardHeader h2 {
+    margin: 0;
+
+    color: var(--stats-text);
+    font-size: 20px;
+    font-weight: 750;
+    line-height: 1.4;
+}
+
+/* =========================================================
+   MONTHLY SALES CHART
+   ========================================================= */
+
+.chartCard {
+    min-height: 420px;
+    box-sizing: border-box;
+}
+
+#salesChart {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    min-height: 315px;
+    height: 315px;
+
+    padding: 15px 10px 5px;
+    box-sizing: border-box;
+
+    background:
+        linear-gradient(
+            180deg,
+            #fbfcff 0%,
+            #f7f9ff 100%
+        );
+
+    border: 1px solid #edf1fa;
+    border-radius: 18px;
+
+    overflow: hidden;
+}
+
+/* ÉTAT SANS DONNÉES */
+
+#salesChart > .material-symbols-rounded {
+    font-size: 66px;
+    color: #b8c8f7;
+    margin-bottom: 12px;
+}
+
+#salesChart > p {
+    margin: 0;
+    padding: 0 15px;
+
+    color: var(--stats-muted);
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* CONTENEUR DU GRAPHIQUE */
+
+.tomaMonthlyChart {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 12px;
+
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+
+    padding: 0 4px;
+    box-sizing: border-box;
+}
+
+/* COLONNE D'UN MOIS */
+
+.tomaChartColumn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+
+    min-width: 0;
+    height: 100%;
+    gap: 8px;
+}
+
+/* VALEUR AU-DESSUS DE LA BARRE */
+
+.tomaChartValue {
+    width: 100%;
+    min-height: 18px;
+
+    color: #52617c;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.35;
+    text-align: center;
+
+    overflow-wrap: anywhere;
+}
+
+/* ZONE DES BARRES */
+
+.tomaChartBarArea {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    max-height: 205px;
+
+    background:
+        repeating-linear-gradient(
+            to top,
+            transparent 0,
+            transparent 49px,
+            rgba(115, 135, 180, 0.10) 50px
+        );
+
+    border-bottom: 1px solid #dfe6f4;
+    border-radius: 8px 8px 0 0;
+
+    overflow: hidden;
+}
+
+/* BARRE DE VENTE */
+
+.tomaChartBar {
+    position: relative;
+
+    width: min(70%, 42px);
+    min-height: 5px;
+
+    background: linear-gradient(
+        180deg,
+        #6385ff 0%,
+        #315cf5 100%
+    );
+
+    border-radius: 9px 9px 3px 3px;
+
+    box-shadow: 0 5px 14px rgba(49, 92, 245, 0.17);
+
+    animation: statsBarGrow 0.8s ease both;
+
+    transition:
+        filter 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.tomaChartColumn:hover .tomaChartBar {
+    filter: brightness(1.08);
+    box-shadow: 0 7px 18px rgba(49, 92, 245, 0.28);
+}
+
+/* NOM DU MOIS */
+
+.tomaChartLabel {
+    flex: 0 0 auto;
+
+    width: 100%;
+    min-height: 24px;
+
+    color: var(--stats-muted);
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.4;
+    text-align: center;
+
+    text-transform: capitalize;
+}
+
+/* =========================================================
+   SUMMARY
+   ========================================================= */
+
+.ordersCard {
+    min-height: 420px;
+    box-sizing: border-box;
+}
+
+#statisticsSummary {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+
+    padding-top: 0;
+}
+
+/* LIGNES DU RÉSUMÉ */
+
+#statisticsSummary p {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    min-width: 0;
+    margin: 0;
+    padding: 18px;
+
+    background: #f8faff;
+    border: 1px solid #edf1fa;
+    border-radius: 15px;
+
+    color: #65718a;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.6;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+#statisticsSummary p:hover {
+    background: #f0f4ff;
+    border-color: #dce5ff;
+    transform: translateX(2px);
+}
+
+/* VALEURS DU RÉSUMÉ */
+
+#statisticsSummary strong {
+    color: var(--stats-text);
+    font-size: 15px;
+    font-weight: 800;
+    text-align: right;
+
+    overflow-wrap: anywhere;
+}
+
+/* MONTANTS ET VALEURS À METTRE EN ÉVIDENCE */
+
+#statisticsSummary p:first-child strong {
+    color: var(--stats-orange);
+}
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes statsCardAppear {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes statsBarGrow {
+    from {
+        transform: scaleY(0.15);
+        transform-origin: bottom;
+        opacity: 0.4;
+    }
+
+    to {
+        transform: scaleY(1);
+        transform-origin: bottom;
+        opacity: 1;
+    }
+}
+
+/* =========================================================
+   TABLETTES
+   ========================================================= */
+
+@media (max-width: 1100px) {
+    .productsPage {
+        padding: 24px;
+    }
+
+    .statsGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .dashboardContent {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .chartCard,
+    .ordersCard {
+        min-height: auto;
+    }
+
+    .statCard h2 {
+        font-size: 29px;
+    }
+}
+
+/* =========================================================
+   IPHONE ET MOBILES
+   ========================================================= */
+
+@media (max-width: 768px) {
+    .productsPage {
+        padding: 19px 15px 30px;
+    }
+
+    .productsHeader {
+        margin-bottom: 24px;
+        padding-bottom: 21px;
+    }
+
+    .leftHeader {
+        gap: 14px;
+    }
+
+    .leftHeader h1 {
+        font-size: 27px;
+        letter-spacing: -0.5px;
+    }
+
+    .leftHeader p {
+        margin-top: 6px;
+        font-size: 14px;
+    }
+
+    .backButton {
+        flex-basis: 48px;
+        width: 48px;
+        height: 48px;
+        border-radius: 15px;
+    }
+
+    .backButton .material-symbols-rounded {
+        font-size: 25px;
+    }
+
+    .statsGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 13px;
+        margin-bottom: 22px;
+    }
+
+    .statCard {
+        min-height: 170px;
+        padding: 17px;
+        border-radius: 18px;
+    }
+
+    .statIcon {
+        width: 47px;
+        height: 47px;
+        margin-bottom: 14px;
+        border-radius: 15px;
+        font-size: 26px;
+    }
+
+    .statCard h4 {
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .statCard h2 {
+        font-size: clamp(21px, 5vw, 27px);
+        letter-spacing: -0.4px;
+    }
+
+    .dashboardContent {
+        gap: 18px;
+    }
+
+    .chartCard,
+    .ordersCard {
+        padding: 19px 15px;
+        border-radius: 19px;
+    }
+
+    .cardHeader {
+        margin-bottom: 18px;
+    }
+
+    .cardHeader h2 {
+        font-size: 19px;
+    }
+
+    #salesChart {
+        height: 290px;
+        min-height: 290px;
+        padding: 12px 5px 5px;
+        border-radius: 15px;
+    }
+
+    .tomaMonthlyChart {
+        gap: 7px;
+        padding: 0 2px;
+    }
+
+    .tomaChartValue {
+        font-size: 9px;
+    }
+
+    .tomaChartBarArea {
+        max-height: 190px;
+    }
+
+    .tomaChartBar {
+        width: 72%;
+    }
+
+    .tomaChartLabel {
+        font-size: 11px;
+    }
+
+    #statisticsSummary {
+        gap: 11px;
+    }
+
+    #statisticsSummary p {
+        padding: 15px 13px;
+        font-size: 13px;
+        border-radius: 13px;
+    }
+
+    #statisticsSummary strong {
+        font-size: 14px;
+    }
+}
+
+/* =========================================================
+   TRÈS PETITS ÉCRANS
+   ========================================================= */
+
+@media (max-width: 380px) {
+    .productsPage {
+        padding: 16px 11px 24px;
+    }
+
+    .leftHeader {
+        gap: 11px;
+    }
+
+    .leftHeader h1 {
+        font-size: 24px;
+    }
+
+    .leftHeader p {
+        font-size: 12px;
+    }
+
+    .backButton {
+        flex-basis: 43px;
+        width: 43px;
+        height: 43px;
+    }
+
+    .statsGrid {
+        gap: 10px;
+    }
+
+    .statCard {
+        min-height: 158px;
+        padding: 13px;
+    }
+
+    .statIcon {
+        width: 42px;
+        height: 42px;
+        font-size: 24px;
+    }
+
+    .statCard h4 {
+        font-size: 11px;
+    }
+
+    .statCard h2 {
+        font-size: 21px;
+    }
+
+    .chartCard,
+    .ordersCard {
+        padding: 15px 11px;
+    }
+
+    .tomaMonthlyChart {
+        gap: 4px;
+    }
+
+    .tomaChartValue {
+        font-size: 8px;
+    }
+
+    .tomaChartLabel {
+        font-size: 10px;
+    }
+
+    #statisticsSummary p {
+        padding: 13px 10px;
+        gap: 10px;
+    }
+
+    #statisticsSummary strong {
+        font-size: 13px;
+    }
+}
+
+/* =========================================================
+   ACCESSIBILITÉ
+   ========================================================= */
+
+.backButton:focus-visible {
+    outline: 3px solid #8aa7ff;
+    outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .statCard,
+    .tomaChartBar {
+        animation: none;
+    }
+
+    .statCard,
+    .chartCard,
+    .ordersCard,
+    .backButton,
+    .quickActionCard {
+        transition: none;
+    }
 }
