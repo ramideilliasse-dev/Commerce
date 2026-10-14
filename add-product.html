@@ -1,808 +1,1076 @@
  <!DOCTYPE html>
 <html lang="pt">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<meta
-name="theme-color"
-content="#ff6a00">
-
-<meta
-name="apple-mobile-web-app-capable"
-content="yes">
-
-<meta
-name="apple-mobile-web-app-status-bar-style"
-content="black-translucent">
-
-<title>Adicionar Produto</title>
-
-<link
-rel="manifest"
-href="/manifest.json">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#ff6a00">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Adicionar Produto | Toma</title>
+<link rel="manifest" href="/manifest.json">
 <style>
-
-*{
-
-margin:0;
-padding:0;
-box-sizing:border-box;
-
+:root {
+    --primary: #ff6a00;
+    --primary-dark: #e85d00;
+    --primary-light: #fff2e8;
+    --background: #f5f6fa;
+    --surface: #ffffff;
+    --text: #202431;
+    --muted: #777f8c;
+    --border: #e7e9ef;
+    --success: #159957;
+    --danger: #dc3545;
+    --radius: 20px;
+    --shadow: 0 8px 28px rgba(24, 32, 48, 0.055);
 }
-
-body{
-
-font-family:Arial,sans-serif;
-
-background:#f5f5f5;
-
-color:#222;
-
-padding-bottom:120px;
-
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
-
-/* ===============================
-HEADER
-=============================== */
-
-.header{
-
-position:sticky;
-
-top:0;
-
-z-index:500;
-
-height:65px;
-
-background:#ff6a00;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-color:white;
-
-font-size:22px;
-
-font-weight:bold;
-
-box-shadow:0 4px 10px rgba(0,0,0,.15);
-
+html {
+    scroll-behavior: smooth;
 }
-
-.backBtn{
-
-position:absolute;
-
-left:15px;
-
-width:42px;
-
-height:42px;
-
-border:none;
-
-border-radius:50%;
-
-background:white;
-
-color:#ff6a00;
-
-font-size:22px;
-
-cursor:pointer;
-
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--background);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: calc(115px + env(safe-area-inset-bottom));
 }
-
-/* ===============================
-CONTAINER
-=============================== */
-
-.container{
-
-max-width:700px;
-
-margin:auto;
-
-padding:15px;
-
-}
-
-/* ===============================
-CARD
-=============================== */
-
-.card{
-
-background:white;
-
-border-radius:18px;
-
-padding:18px;
-
-margin-bottom:18px;
-
-box-shadow:0 6px 18px rgba(0,0,0,.08);
-
-}
-
-.cardTitle{
-
-font-size:18px;
-
-font-weight:bold;
-
-margin-bottom:15px;
-
-color:#ff6a00;
-
-}
-
-/* ===============================
-INPUTS
-=============================== */
-
+button,
 input,
 textarea,
-select{
-
-width:100%;
-
-padding:14px;
-
-margin-bottom:14px;
-
-border:1px solid #ddd;
-
-border-radius:12px;
-
-font-size:15px;
-
-outline:none;
-
-transition:.25s;
-
+select {
+    font: inherit;
 }
-
+button {
+    -webkit-appearance: none;
+    appearance: none;
+}
+/* =========================
+   HEADER
+========================= */
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 500;
+    min-height: 68px;
+    padding: 12px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 106, 0, 0.97);
+    color: white;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    box-shadow: 0 4px 20px rgba(255, 106, 0, 0.17);
+    backdrop-filter: blur(12px);
+}
+.backBtn {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 14px;
+    background: rgba(255,255,255,.17);
+    color: white;
+    font-size: 25px;
+    cursor: pointer;
+    transition: background .2s, transform .2s;
+}
+.backBtn:active {
+    transform: translateY(-50%) scale(.95);
+    background: rgba(255,255,255,.28);
+}
+/* =========================
+   PAGE CONTAINER
+========================= */
+.container {
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 20px 15px 25px;
+}
+/* =========================
+   INTRODUCTION
+========================= */
+.pageIntro {
+    margin-bottom: 22px;
+    padding: 23px 20px;
+    overflow: hidden;
+    position: relative;
+    border-radius: 23px;
+    background: linear-gradient(135deg, #ff6a00 0%, #ff8b38 100%);
+    color: white;
+    box-shadow: 0 12px 28px rgba(255, 106, 0, .18);
+}
+.pageIntro::after {
+    content: "";
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    right: -48px;
+    top: -58px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.12);
+}
+.introLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+    padding: 6px 10px;
+    border-radius: 30px;
+    background: rgba(255,255,255,.18);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+}
+.pageIntro h1 {
+    position: relative;
+    z-index: 1;
+    font-size: clamp(23px, 5vw, 29px);
+    line-height: 1.2;
+    font-weight: 850;
+    letter-spacing: -.7px;
+    margin-bottom: 10px;
+}
+.pageIntro p {
+    position: relative;
+    z-index: 1;
+    max-width: 470px;
+    font-size: 14px;
+    line-height: 1.65;
+    color: rgba(255,255,255,.94);
+}
+/* =========================
+   PROGRESS STEPS
+========================= */
+.steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 9px;
+    margin-bottom: 22px;
+}
+.step {
+    min-width: 0;
+    padding: 13px 8px;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    background: white;
+    text-align: center;
+}
+.stepIcon {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 21px;
+}
+.stepText {
+    display: block;
+    font-size: 11px;
+    font-weight: 750;
+    color: #535b69;
+    line-height: 1.35;
+}
+/* =========================
+   CARDS
+========================= */
+.card {
+    margin-bottom: 18px;
+    padding: 22px 19px;
+    border: 1px solid rgba(231,233,239,.9);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
+.cardHeader {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 22px;
+}
+.cardIcon {
+    flex-shrink: 0;
+    width: 43px;
+    height: 43px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: var(--primary-light);
+    font-size: 22px;
+}
+.cardHeading {
+    flex: 1;
+    min-width: 0;
+}
+.cardTitle {
+    margin-bottom: 5px;
+    color: var(--text);
+    font-size: 17px;
+    line-height: 1.35;
+    font-weight: 850;
+    letter-spacing: -.25px;
+}
+.cardSubtitle {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.55;
+}
+/* =========================
+   FORM FIELDS
+========================= */
+.field {
+    margin-bottom: 19px;
+}
+.field:last-child {
+    margin-bottom: 0;
+}
+.fieldLabel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+    color: #303644;
+    font-size: 13px;
+    font-weight: 750;
+}
+.required {
+    color: var(--danger);
+}
+.optional {
+    color: #9097a3;
+    font-size: 11px;
+    font-weight: 500;
+}
+.inputWrap {
+    position: relative;
+}
+.inputWrap input {
+    padding-right: 15px;
+}
+input,
+textarea,
+select {
+    display: block;
+    width: 100%;
+    min-height: 51px;
+    padding: 14px 15px;
+    border: 1px solid #e0e3e9;
+    border-radius: 13px;
+    background: #fbfcfe;
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s, background .2s;
+}
+input::placeholder,
+textarea::placeholder {
+    color: #a1a7b2;
+    opacity: 1;
+}
 input:focus,
 textarea:focus,
-select:focus{
-
-border-color:#ff6a00;
-
-box-shadow:0 0 0 3px rgba(255,106,0,.15);
-
+select:focus {
+    border-color: var(--primary);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(255,106,0,.09);
 }
-
-textarea{
-
-resize:none;
-
-min-height:130px;
-
+input:disabled,
+textarea:disabled,
+select:disabled {
+    opacity: .65;
+    cursor: not-allowed;
 }
-
-/* ===============================
-DESCRIPTION
-=============================== */
-
-.counter{
-
-text-align:right;
-
-font-size:12px;
-
-color:#666;
-
-margin-top:-8px;
-
-margin-bottom:12px;
-
+select {
+    cursor: pointer;
 }
-
-/* ===============================
-UPLOAD
-=============================== */
-
-.uploadBox{
-
-border:2px dashed #ff6a00;
-
-border-radius:16px;
-
-padding:30px;
-
-text-align:center;
-
-cursor:pointer;
-
-background:#fffaf6;
-
-transition:.3s;
-
+input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
 }
-
-.uploadBox:hover{
-
-background:#fff2e8;
-
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
-
-.uploadIcon{
-
-font-size:45px;
-
-margin-bottom:10px;
-
+.fieldHint {
+    margin-top: 7px;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.5;
 }
-
-.uploadText{
-
-font-size:15px;
-
-color:#666;
-
+.formGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 13px;
 }
-
-/* ===============================
-PREVIEW
-=============================== */
-
-.preview{
-
-display:grid;
-
-grid-template-columns:repeat(3,1fr);
-
-gap:10px;
-
-margin-top:15px;
-
+.formGrid .field {
+    min-width: 0;
 }
-
-.preview img{
-
-width:100%;
-
-aspect-ratio:1;
-
-object-fit:cover;
-
-border-radius:12px;
-
+/* =========================
+   PRICE
+========================= */
+.priceInput {
+    position: relative;
 }
-
-/* ===============================
-LOADER
-=============================== */
-
-.progressBox{
-
-display:none;
-
-margin-top:20px;
-
-height:12px;
-
-background:#eee;
-
-border-radius:20px;
-
-overflow:hidden;
-
+.priceInput input {
+    padding-right: 48px;
 }
-
-.progressBar{
-
-height:100%;
-
-width:0%;
-
-background:#1aa34a;
-
-transition:.25s;
-
+.currency {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 850;
+    pointer-events: none;
 }
-
-.loadingText{
-
-margin-top:10px;
-
-font-size:13px;
-
-text-align:center;
-
-color:#666;
-
+/* =========================
+   DESCRIPTION
+========================= */
+textarea {
+    min-height: 145px;
+    resize: vertical;
+    line-height: 1.65;
 }
-
-/* ===============================
-BUTTON
-=============================== */
-
-.publishBtn{
-
-position:fixed;
-
-left:15px;
-
-right:15px;
-
-bottom:15px;
-
-height:58px;
-
-border:none;
-
-border-radius:16px;
-
-background:#ff6a00;
-
-color:white;
-
-font-size:19px;
-
-font-weight:bold;
-
-cursor:pointer;
-
-box-shadow:0 8px 20px rgba(255,106,0,.35);
-
+.descriptionFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 8px;
 }
-
-/* ===============================
-TOAST
-=============================== */
-
-.toastBox{
-
-position:fixed;
-
-top:20px;
-
-left:50%;
-
-transform:translateX(-50%);
-
-display:flex;
-
-flex-direction:column;
-
-gap:10px;
-
-z-index:99999;
-
+.descriptionTip {
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.5;
 }
-
+.counter {
+    flex-shrink: 0;
+    color: #777f8c;
+    font-size: 11px;
+    font-weight: 750;
+}
+.counter.limitNear {
+    color: #d97706;
+}
+.counter.limitReached {
+    color: var(--danger);
+}
+/* =========================
+   IMAGE UPLOAD
+========================= */
+.uploadBox {
+    min-height: 190px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 23px 15px;
+    border: 2px dashed #ffbd94;
+    border-radius: 18px;
+    background: linear-gradient(180deg, #fffaf6 0%, #fff 100%);
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .2s, background .2s, transform .2s;
+}
+.uploadBox:hover {
+    border-color: var(--primary);
+    background: #fff5ed;
+}
+.uploadBox:active {
+    transform: scale(.99);
+}
+.uploadIcon {
+    width: 58px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    border-radius: 19px;
+    background: var(--primary-light);
+    font-size: 29px;
+}
+.uploadTitle {
+    margin-bottom: 7px;
+    color: #303644;
+    font-size: 14px;
+    font-weight: 800;
+}
+.uploadText {
+    max-width: 260px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+.uploadLimit {
+    margin-top: 12px;
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: #fff0e5;
+    color: #d95700;
+    font-size: 11px;
+    font-weight: 800;
+}
+#productImages {
+    display: none;
+}
+.imageToolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 15px;
+}
+.imageCount {
+    color: #555d6b;
+    font-size: 12px;
+    font-weight: 750;
+}
+.imageFormat {
+    color: #9097a3;
+    font-size: 11px;
+    text-align: right;
+}
+/* Compatible with the existing JS preview */
+.preview {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+}
+.previewItem {
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    background: #f5f6fa;
+    aspect-ratio: 1 / 1;
+}
+.previewItem img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.removeImage {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 29px;
+    height: 29px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+    border-radius: 50%;
+    background: #dc3545;
+    color: white;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(0,0,0,.2);
+}
+.removeImage:active {
+    transform: scale(.92);
+}
+/* =========================
+   PUBLICATION PROGRESS
+========================= */
+.progressCard {
+    display: none;
+}
+.progressBox {
+    display: none;
+    width: 100%;
+    height: 9px;
+    margin-top: 5px;
+    overflow: hidden;
+    border-radius: 20px;
+    background: #edf0f4;
+}
+.progressBar {
+    width: 0%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #ff6a00, #ff9a55);
+    transition: width .3s ease;
+}
+.loadingText {
+    margin-top: 12px;
+    color: #596171;
+    font-size: 12px;
+    line-height: 1.6;
+    text-align: center;
+}
+/* =========================
+   PUBLICATION BUTTON
+========================= */
+.publishBar {
+    position: fixed;
+    z-index: 600;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 13px 15px calc(13px + env(safe-area-inset-bottom));
+    border-top: 1px solid rgba(230,232,238,.9);
+    background: rgba(255,255,255,.94);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+.publishBarInner {
+    width: 100%;
+    max-width: 730px;
+    margin: 0 auto;
+}
+.publishBtn {
+    position: relative;
+    width: 100%;
+    min-height: 57px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #ff7a1a, #ff6000);
+    color: white;
+    font-size: 16px;
+    font-weight: 850;
+    letter-spacing: .1px;
+    cursor: pointer;
+    box-shadow: 0 7px 18px rgba(255,106,0,.24);
+    transition: transform .2s, box-shadow .2s, opacity .2s;
+}
+.publishBtn:active:not(:disabled) {
+    transform: scale(.985);
+    box-shadow: 0 3px 10px rgba(255,106,0,.2);
+}
+.publishBtn:disabled {
+    opacity: .7;
+    cursor: wait;
+    box-shadow: none;
+}
+.publishBtnIcon {
+    font-size: 20px;
+}
+.publishNote {
+    margin-top: 8px;
+    color: #858c98;
+    font-size: 10px;
+    line-height: 1.4;
+    text-align: center;
+}
+/* =========================
+   TOAST
+========================= */
+.toastBox {
+    position: fixed;
+    top: calc(15px + env(safe-area-inset-top));
+    left: 50%;
+    z-index: 1000000;
+    width: calc(100% - 30px);
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+/* =========================
+   LOADER OVERLAY
+========================= */
+#loaderOverlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(20,24,33,.55);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 999999;
+}
+.loaderCard {
+    width: 100%;
+    max-width: 310px;
+    padding: 30px 24px;
+    border: 1px solid rgba(255,255,255,.5);
+    border-radius: 24px;
+    background: white;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,.18);
+}
+.loaderSpinner {
+    width: 49px;
+    height: 49px;
+    margin: 0 auto 19px;
+    border: 4px solid #f1f1f1;
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+}
+.loaderTitle {
+    margin-bottom: 8px;
+    color: #252a35;
+    font-size: 16px;
+    font-weight: 850;
+}
+.loaderDescription {
+    color: #777f8c;
+    font-size: 12px;
+    line-height: 1.6;
+}
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+/* =========================
+   ACCESSIBILITY
+========================= */
+button:focus-visible,
+label:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 3px solid rgba(255,106,0,.35);
+    outline-offset: 3px;
+}
+/* =========================
+   RESPONSIVE
+========================= */
+@media (min-width: 600px) {
+    .container {
+        padding: 28px 22px 35px;
+    }
+    .pageIntro {
+        padding: 29px 27px;
+    }
+    .card {
+        padding: 25px 24px;
+    }
+    .preview {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .publishBar {
+        padding-right: 22px;
+        padding-left: 22px;
+    }
+}
+@media (max-width: 380px) {
+    .header {
+        min-height: 62px;
+        font-size: 18px;
+    }
+    .container {
+        padding: 14px 11px 20px;
+    }
+    .card {
+        padding: 18px 14px;
+        border-radius: 17px;
+    }
+    .pageIntro {
+        padding: 20px 16px;
+        border-radius: 19px;
+    }
+    .formGrid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+    .steps {
+        gap: 6px;
+    }
+    .step {
+        padding: 11px 5px;
+    }
+    .stepText {
+        font-size: 10px;
+    }
+    .preview {
+        gap: 7px;
+    }
+    .publishBtn {
+        min-height: 54px;
+        font-size: 15px;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+    }
+}
 </style>
-
 </head>
 <body>
-
-<!-- ===============================
-HEADER
-=============================== -->
-
-<div class="header">
-
-<button
-class="backBtn"
-onclick="history.back()">
-
-←
-
-</button>
-
+<!-- =========================
+     HEADER
+========================= -->
+<header class="header">
+    <button
+        type="button"
+        class="backBtn"
+        onclick="history.back()"
+        aria-label="Voltar">
+        ←
+    </button>
 Adicionar Produto
-
+</header>
+<main class="container">
+<!-- INTRODUCTION -->
+<section class="pageIntro">
+    <div class="introLabel">🛍️ TOMA MARKETPLACE</div>
+    <h1>Publique o seu produto</h1>
+    <p>
+        Apresente os seus produtos com qualidade, alcance mais clientes
+        e faça crescer o seu negócio no Toma.
+    </p>
+</section>
+<!-- STEPS -->
+<section class="steps" aria-label="Etapas de publicação">
+    <div class="step">
+        <span class="stepIcon">📝</span>
+        <span class="stepText">Informações</span>
+    </div>
+    <div class="step">
+        <span class="stepIcon">📸</span>
+        <span class="stepText">Fotografias</span>
+    </div>
+    <div class="step">
+        <span class="stepIcon">🚀</span>
+        <span class="stepText">Publicação</span>
+    </div>
+</section>
+<!-- PRODUCT INFORMATION -->
+<section class="card">
+    <div class="cardHeader">
+        <div class="cardIcon">📦</div>
+        <div class="cardHeading">
+            <h2 class="cardTitle">Informações do produto</h2>
+            <p class="cardSubtitle">
+                Preencha os dados principais para os clientes
+                conhecerem melhor o seu produto.
+            </p>
+        </div>
+    </div>
+    <div class="field">
+        <label class="fieldLabel" for="productName">
+            Nome do produto
+            <span class="required">*</span>
+        </label>
+        <input
+            id="productName"
+            type="text"
+            placeholder="Ex.: Smartphone Samsung Galaxy"
+            maxlength="120"
+            autocomplete="off"
+            required>
+        <p class="fieldHint">
+            Utilize um nome claro e fácil de identificar.
+        </p>
+    </div>
+    <div class="formGrid">
+        <div class="field">
+            <label class="fieldLabel" for="productPrice">
+                Preço de venda
+                <span class="required">*</span>
+            </label>
+            <div class="priceInput">
+                <input
+                    id="productPrice"
+                    type="number"
+                    placeholder="Ex.: 25000"
+                    min="1"
+                    step="1"
+                    inputmode="numeric"
+                    required>
+                <span class="currency">Kz</span>
+            </div>
+            <p class="fieldHint">
+                Indique o preço em kwanzas.
+            </p>
+        </div>
+        <div class="field">
+            <label class="fieldLabel" for="productStock">
+                Quantidade em stock
+                <span class="required">*</span>
+            </label>
+            <input
+                id="productStock"
+                type="number"
+                placeholder="Ex.: 10"
+                min="0"
+                step="1"
+                inputmode="numeric"
+                required>
+            <p class="fieldHint">
+                Quantidade disponível para venda.
+            </p>
+        </div>
+    </div>
+    <div class="field">
+        <label class="fieldLabel" for="productCategory">
+            Categoria do produto
+            <span class="required">*</span>
+        </label>
+        <select id="productCategory" required>
+            <option value="">Selecione uma categoria</option>
+            <option value="Alimentação">🍚 Alimentação</option>
+            <option value="Eletrónica">📱 Eletrónica</option>
+            <option value="Moda">👕 Moda</option>
+            <option value="Beleza">💄 Beleza</option>
+            <option value="Casa">🏠 Casa</option>
+            <option value="Auto">🚗 Automóveis</option>
+        </select>
+        <p class="fieldHint">
+            Escolha a categoria que melhor corresponde ao produto.
+        </p>
+    </div>
+    <div class="field">
+        <label class="fieldLabel" for="productProvince">
+            Província
+            <span class="required">*</span>
+        </label>
+        <select id="productProvince" required>
+            <option value="">Selecione a província</option>
+            <option value="Luanda">Luanda</option>
+            <option value="Benguela">Benguela</option>
+            <option value="Huambo">Huambo</option>
+            <option value="Huíla">Huíla</option>
+            <option value="Bié">Bié</option>
+            <option value="Malanje">Malanje</option>
+            <option value="Cabinda">Cabinda</option>
+            <option value="Uíge">Uíge</option>
+            <option value="Zaire">Zaire</option>
+            <option value="Namibe">Namibe</option>
+            <option value="Cunene">Cunene</option>
+            <option value="Moxico">Moxico</option>
+            <option value="Lunda Norte">Lunda Norte</option>
+            <option value="Lunda Sul">Lunda Sul</option>
+            <option value="Kwanza Norte">Kwanza Norte</option>
+            <option value="Kwanza Sul">Kwanza Sul</option>
+            <option value="Bengo">Bengo</option>
+        </select>
+        <p class="fieldHint">
+            Indique onde o produto está disponível.
+        </p>
+    </div>
+    <div class="field">
+        <label class="fieldLabel" for="productDescription">
+            Descrição do produto
+            <span class="required">*</span>
+        </label>
+        <textarea
+            id="productDescription"
+            maxlength="1000"
+            placeholder="Descreva as características, o estado, as vantagens e os detalhes importantes do produto..."
+            required></textarea>
+        <div class="descriptionFooter">
+            <span class="descriptionTip">
+                Uma boa descrição inspira confiança.
+            </span>
+            <div class="counter">
+                <span id="descriptionCounter">0</span>/1000
+            </div>
+        </div>
+    </div>
+</section>
+<!-- PRODUCT IMAGES -->
+<section class="card">
+    <div class="cardHeader">
+        <div class="cardIcon">📸</div>
+        <div class="cardHeading">
+            <h2 class="cardTitle">Fotografias do produto</h2>
+            <p class="cardSubtitle">
+                Imagens nítidas ajudam os clientes a conhecer
+                melhor aquilo que está a comprar.
+            </p>
+        </div>
+    </div>
+    <label
+        for="productImages"
+        class="uploadBox">
+        <div class="uploadIcon">📷</div>
+        <div class="uploadTitle">
+            Adicionar fotografias
+        </div>
+        <div class="uploadText">
+            Toque aqui para escolher imagens da galeria
+            do seu telemóvel.
+        </div>
+        <div class="uploadLimit">
+            ATÉ 6 IMAGENS
+        </div>
+    </label>
+    <input
+        id="productImages"
+        type="file"
+        accept="image/*"
+        multiple>
+    <div class="imageToolbar">
+        <span class="imageCount" id="imageCount">
+            Nenhuma imagem selecionada
+        </span>
+        <span class="imageFormat">
+            JPG · PNG · WEBP
+        </span>
+    </div>
+    <div
+        id="previewImages"
+        class="preview"
+        aria-live="polite">
+    </div>
+    <p class="fieldHint" style="margin-top:14px;">
+        Selecione fotografias reais e de boa qualidade.
+        Pode remover qualquer imagem antes de publicar.
+    </p>
+</section>
+<!-- PUBLICATION PROGRESS -->
+<section class="card progressCard" id="publicationProgressCard">
+    <div class="cardHeader" style="margin-bottom:15px;">
+        <div class="cardIcon">⏳</div>
+        <div class="cardHeading">
+            <h2 class="cardTitle">Publicação em andamento</h2>
+            <p class="cardSubtitle">
+                Aguarde enquanto o Toma processa o seu produto.
+            </p>
+        </div>
+    </div>
+    <div id="progressBox" class="progressBox">
+        <div id="progressBar" class="progressBar"></div>
+    </div>
+    <div
+        id="loadingText"
+        class="loadingText"
+        role="status"
+        aria-live="polite">
+    </div>
+</section>
+</main>
+<!-- PUBLISH BUTTON -->
+<div class="publishBar">
+<div class="publishBarInner">
+    <button
+        id="publishBtn"
+        class="publishBtn"
+        type="button">
+        <span class="publishBtnIcon" aria-hidden="true">🚀</span>
+        <span>Publicar Produto</span>
+    </button>
+    <p class="publishNote">
+        Confirme os dados antes de publicar o seu produto.
+    </p>
 </div>
-
-<!-- ===============================
-CONTAINER
-=============================== -->
-
-<div class="container">
-
-<!-- ===============================
-INFORMAÇÕES
-=============================== -->
-
-<div class="card">
-
-<div class="cardTitle">
-
-Informações do Produto
-
 </div>
-
-<input
-
-id="productName"
-
-placeholder="Nome do produto"
-
-maxlength="120">
-
-<input
-
-id="productPrice"
-
-type="number"
-
-placeholder="Preço (Kz)"
-
-min="1">
-
-<input
-
-id="productStock"
-
-type="number"
-
-placeholder="Quantidade em stock"
-
-min="0">
-
-<select id="productCategory">
-
-<option value="">
-
-Selecionar categoria
-
-</option>
-
-<option value="Alimentação">
-
-🍚 Alimentação
-
-</option>
-
-<option value="Eletrónica">
-
-📱 Eletrónica
-
-</option>
-
-<option value="Moda">
-
-👕 Moda
-
-</option>
-
-<option value="Beleza">
-
-💄 Beleza
-
-</option>
-
-<option value="Casa">
-
-🏠 Casa
-
-</option>
-
-<option value="Auto">
-
-🚗 Auto
-
-</option>
-
-</select>
-
-<select id="productProvince">
-
-<option value="">
-
-Selecionar província
-
-</option>
-
-<option>Luanda</option>
-
-<option>Benguela</option>
-
-<option>Huambo</option>
-
-<option>Huíla</option>
-
-<option>Bié</option>
-
-<option>Malanje</option>
-
-<option>Cabinda</option>
-
-<option>Uíge</option>
-
-<option>Zaire</option>
-
-<option>Namibe</option>
-
-<option>Cunene</option>
-
-<option>Moxico</option>
-
-<option>Lunda Norte</option>
-
-<option>Lunda Sul</option>
-
-<option>Kwanza Norte</option>
-
-<option>Kwanza Sul</option>
-
-<option>Bengo</option>
-
-</select>
-
-<textarea
-
-id="productDescription"
-
-maxlength="1000"
-
-placeholder="Descrição completa do produto">
-
-</textarea>
-
-<div class="counter">
-
-<span id="descriptionCounter">
-
-0
-
-</span>
-
-/1000
-
-</div>
-
-</div>
-
-<!-- ===============================
-IMAGENS
-=============================== -->
-
-<div class="card">
-
-<div class="cardTitle">
-
-Fotos do Produto
-
-</div>
-
-<label
-
-for="productImages"
-
-class="uploadBox">
-
-<div class="uploadIcon">
-
-📷
-
-</div>
-
-<div class="uploadText">
-
-Toque para selecionar até 6 imagens
-
-</div>
-
-</label>
-
-<input
-
-id="productImages"
-
-type="file"
-
-accept="image/*"
-
-multiple
-
-hidden>
-
+<!-- TOAST -->
 <div
-
-id="previewImages"
-
-class="preview">
-
+    id="toastBox"
+    class="toastBox"
+    role="status"
+    aria-live="polite">
 </div>
-
-</div>
-
-<!-- ===============================
-PROGRESSO
-=============================== -->
-
-<div class="card">
-
+<!-- LOADER OVERLAY -->
 <div
-
-id="progressBox"
-
-class="progressBox">
-
-<div
-
-id="progressBar"
-
-class="progressBar">
-
+    id="loaderOverlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="loaderTitle">
+<div class="loaderCard">
+    <div class="loaderSpinner" aria-hidden="true"></div>
+    <h2 class="loaderTitle" id="loaderTitle">
+        A publicar o seu produto
+    </h2>
+    <p class="loaderDescription">
+        Estamos a processar as informações e as fotografias.
+        Por favor, não feche esta página.
+    </p>
 </div>
-
 </div>
-
-<div
-
-id="loadingText"
-
-class="loadingText">
-
-</div>
-
-</div>
-
-</div>
-
-<!-- ===============================
-BOTÃO
-=============================== -->
-
-<button
-
-id="publishBtn"
-
-class="publishBtn">
-
-🚀 Publicar Produto
-
-</button>
-
-<!-- ===============================
-TOAST
-=============================== -->
-
-<div
-
-id="toastBox"
-
-class="toastBox">
-
-</div>
-<!-- ===============================
-LOADER OVERLAY
-=============================== -->
-
-<div
-
-id="loaderOverlay"
-
-style="
-display:none;
-position:fixed;
-top:0;
-left:0;
-right:0;
-bottom:0;
-background:rgba(0,0,0,.45);
-backdrop-filter:blur(4px);
-justify-content:center;
-align-items:center;
-z-index:999999;
-">
-
-<div
-
-style="
-width:280px;
-background:white;
-padding:30px;
-border-radius:18px;
-text-align:center;
-">
-
-<div
-
-style="
-width:50px;
-height:50px;
-margin:auto;
-border:5px solid #eee;
-border-top:5px solid #ff6a00;
-border-radius:50%;
-animation:spin 1s linear infinite;
-">
-
-</div>
-
-<p
-
-style="
-margin-top:18px;
-font-size:15px;
-font-weight:bold;
-">
-
-A publicar produto...
-
-</p>
-
-</div>
-
-</div>
-
-<style>
-
-@keyframes spin{
-
-0%{
-
-transform:rotate(0deg);
-
-}
-
-100%{
-
-transform:rotate(360deg);
-
-}
-
-}
-
-</style>
-
-<!-- ===============================
-ADD PRODUCT JS
-=============================== -->
-
-<script
-
-type="module"
-
-src="./js/add-product.js">
-
-</script>
-
-<!-- ===============================
-SERVICE WORKER
-=============================== -->
-
+<!-- ADD PRODUCT JAVASCRIPT -->
+<script type="module" src="./js/add-product.js"></script>
+<!-- SERVICE WORKER -->
 <script>
-
-window.addEventListener("load",()=>{
-
-if("serviceWorker" in navigator){
-
-navigator.serviceWorker
-
-.register("/service-worker.js")
-
-.then(()=>{
-
-console.log("✅ Service Worker OK");
-
-})
-
-.catch(console.error);
-
-}
-
+window.addEventListener("load", () => {
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+            .register("/service-worker.js")
+            .catch(error => {
+                console.error("Service Worker:", error);
+            });
+    }
 });
-
 </script>
-
+<!-- DESCRIPTION COUNTER AND IMAGE COUNT -->
+<script>
+(() => {
+    const description = document.getElementById("productDescription");
+    const counter = document.getElementById("descriptionCounter");
+    const counterContainer = counter?.parentElement;
+    const imagesInput = document.getElementById("productImages");
+    const imageCount = document.getElementById("imageCount");
+    const progressBox = document.getElementById("progressBox");
+    const progressCard = document.getElementById("publicationProgressCard");
+    function updateDescriptionCounter() {
+        if (!description || !counter) return;
+        const length = description.value.length;
+        counter.textContent = length;
+        if (counterContainer) {
+            counterContainer.classList.toggle(
+                "limitNear",
+                length >= 800 && length < 1000
+            );
+            counterContainer.classList.toggle(
+                "limitReached",
+                length >= 1000
+            );
+        }
+    }
+    description?.addEventListener("input", updateDescriptionCounter);
+    imagesInput?.addEventListener("change", () => {
+        const count = imagesInput.files ? imagesInput.files.length : 0;
+        if (imageCount) {
+            imageCount.textContent = count === 0
+                ? "Nenhuma imagem selecionada"
+                : `${count} imagem(ns) selecionada(s)`;
+        }
+    });
+    /*
+      Mantém o cartão de progresso visível quando o JavaScript
+      da publicação mostra a barra de progresso.
+    */
+    if (progressBox && progressCard) {
+        const observer = new MutationObserver(() => {
+            const visible = getComputedStyle(progressBox).display !== "none";
+            progressCard.style.display = visible ? "block" : "none";
+        });
+        observer.observe(progressBox, {
+            attributes: true,
+            attributeFilter: ["style", "class"]
+        });
+    }
+    updateDescriptionCounter();
+})();
+</script>
 </body>
-
 </html>
