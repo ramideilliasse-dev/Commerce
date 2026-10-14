@@ -994,3 +994,60 @@ body {
     margin-bottom: 8px;
     font-size: 34px;
 }
+/* =========================================
+   COMPARAÇÃO DE DESEMPENHO — TOMA
+========================================= */
+
+.statComparison {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 12px;
+    padding: 6px 9px;
+    border-radius: 9px;
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.statComparison .material-symbols-rounded {
+    font-size: 17px;
+}
+
+.statComparison.statPositive {
+    background: #e9f9ef;
+    color: #16834a;
+}
+
+.statComparison.statNegative {
+    background: #fff0f0;
+    color: #d93636;
+}
+
+.statComparison.statNeutral {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.statComparisonLabel {
+    margin: 7px 0 0;
+    color: #8792a5;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+@media (max-width: 480px) {
+
+    .statComparison {
+        gap: 4px;
+        padding: 6px 7px;
+        font-size: 11px;
+    }
+
+    .statComparisonLabel {
+        font-size: 10px;
+    }
+
+}
