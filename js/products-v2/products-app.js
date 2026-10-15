@@ -234,14 +234,24 @@ function escapeHTML(value) {
   });
 }
 
+// ======================================
+// BLOC — LIEN VERS LA PAGE DU PRODUIT
+// ======================================
+
 function getProductUrl(product) {
-  const url = new URL("./product-detail.html", window.location.href);
+    const productId = String(product.id || "").trim();
 
-  url.searchParams.set("id", product.id);
+    if (!productId) {
+        console.error(
+            "TOMA CATALOG V2 : identifiant du produit manquant",
+            product
+        );
 
-  return url.href;
+        return "#";
+    }
+
+    return `./product-détail.html?id=${encodeURIComponent(productId)}`;
 }
-
 /* =========================================================
    4. LOADER ET ÉTATS
    ========================================================= */
