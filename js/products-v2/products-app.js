@@ -326,6 +326,11 @@ function handleFavorite(productId) {
    6. CONTADOR DO CARRINHO
    ========================================================= */
 
+/* =========================================================
+   TOMA V2 — COMPTEUR DU PANIER
+   Utilise quantity, conformément à storage.js
+   ========================================================= */
+
 function updateCartCount() {
   if (!cartCount) {
     return;
@@ -336,21 +341,40 @@ function updateCartCount() {
 
     const total = Array.isArray(cart)
       ? cart.reduce((sum, item) => {
-          return sum + Math.max(
-            0,
-            Number(item.qty ?? item.quantity ?? 1) || 0
+          const quantity = Number(item.quantity ?? 1);
+
+          return sum + (
+            Number.isFinite(quantity) && quantity > 0
+              ? quantity
+              : 0
           );
         }, 0)
       : 0;
 
     cartCount.textContent = String(total);
+
+    cartButton?.setAttribute(
+      "aria-label",
+      `Abrir carrinho, ${total} artigos`
+    );
+
   } catch (error) {
-    console.warn("Toma V2: carrinho indisponível.", error);
+    console.error(
+      "Toma V2 — Erro ao atualizar o carrinho:",
+      error
+    );
+
+    cartCount.textContent = "0";
   }
 }
 
 /* =========================================================
    7. ADICIONAR AO CARRINHO
+   ========================================================= */
+
+/* =========================================================
+   TOMA V2 — AJOUT AU PANIER
+   Compatible avec js/storage.js
    ========================================================= */
 
 function handleAddToCart(product) {
@@ -366,33 +390,44 @@ function handleAddToCart(product) {
     }
 
     const cartProduct = {
-      id: product.id,
+      id: String(product.id),
+
       name: getProductName(product),
+
       price: getProductPrice(product),
-      image: getProductImage(product),
-      qty: 1,
-      merchantId: product.merchantId || product.storeId || null
+
+      image: getProductImage(product) || "images/no-image.png",
+
+      images: Array.isArray(product.images)
+        ? product.images
+        : [],
+
+      merchantId:
+        product.merchantId ||
+        product.storeId ||
+        null
     };
 
-    /*
-      Utilizamos a função existente do Toma.
-      A assinatura e o formato de armazenamento
-      devem corresponder ao ficheiro storage.js.
-    */
-
+    // Utilise le système de panier déjà présent dans Toma.
     addToCart(cartProduct);
 
+    // Actualise le compteur.
     updateCartCount();
 
+    // Confirmation en portugais.
     alert("Produto adicionado ao carrinho!");
 
   } catch (error) {
-    console.error("Erro ao adicionar ao carrinho:", error);
+    console.error(
+      "Toma V2 — Erro ao adicionar ao carrinho:",
+      error
+    );
 
-    alert("Não foi possível adicionar o produto ao carrinho.");
+    alert(
+      "Não foi possível adicionar o produto ao carrinho."
+    );
   }
 }
-
 /* =========================================================
    8. CRIAR CARTÃO DO PRODUTO
    ========================================================= */
