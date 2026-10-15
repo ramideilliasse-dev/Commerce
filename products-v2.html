@@ -1,0 +1,271 @@
+ <!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="theme-color" content="#ff6a00">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Toma">
+
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+
+  <title>Produtos | Toma</title>
+
+  <link rel="stylesheet" href="./css/products-v2.css">
+</head>
+
+<body>
+
+  <header class="catalogHeader">
+    <button
+      id="backButton"
+      class="iconButton"
+      type="button"
+      aria-label="Voltar"
+    >←</button>
+
+    <a class="brand" href="./home.html" aria-label="Toma">
+      <span class="brandMark">T</span>
+      <span>Toma</span>
+    </a>
+
+    <button
+      id="cartButton"
+      class="iconButton cartButton"
+      type="button"
+      aria-label="Abrir carrinho"
+    >
+      🛒
+      <span id="cartCount" class="cartCount">0</span>
+    </button>
+  </header>
+
+  <main class="catalogMain">
+
+    <section class="catalogIntro">
+      <span class="eyebrow">DESCUBRA O TOMA</span>
+
+      <h1>Encontre o que procura.</h1>
+
+      <p>
+        Explore produtos, compare preços e descubra novas lojas.
+      </p>
+    </section>
+
+    <section class="searchSection" aria-label="Pesquisar produtos">
+      <label class="searchBox">
+        <span aria-hidden="true">⌕</span>
+
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Produto, referência ou loja..."
+          autocomplete="off"
+        >
+
+        <button
+          id="clearSearch"
+          type="button"
+          aria-label="Limpar pesquisa"
+          hidden
+        >✕</button>
+      </label>
+    </section>
+
+    <section class="filterSection" aria-label="Filtros de produtos">
+
+      <div class="filterHeading">
+        <div>
+          <h2>Explorar produtos</h2>
+          <p id="catalogInfo">A preparar o catálogo...</p>
+        </div>
+
+        <button
+          id="filterButton"
+          class="secondaryButton"
+          type="button"
+        >
+          ⚙ Filtros
+        </button>
+      </div>
+
+      <div class="quickFilters" id="quickFilters">
+
+        <button
+          class="filterChip active"
+          type="button"
+          data-filter="all"
+        >Todos</button>
+
+        <button
+          class="filterChip"
+          type="button"
+          data-filter="new"
+        >Novidades</button>
+
+        <button
+          class="filterChip"
+          type="button"
+          data-filter="cheap"
+        >Menor preço</button>
+
+        <button
+          class="filterChip"
+          type="button"
+          data-filter="expensive"
+        >Maior preço</button>
+
+        <button
+          class="filterChip"
+          type="button"
+          data-filter="promotion"
+        >Promoções</button>
+
+        <button
+          class="filterChip"
+          type="button"
+          data-filter="available"
+        >Disponíveis</button>
+
+      </div>
+
+      <div id="advancedFilters" class="advancedFilters" hidden>
+
+        <div class="fieldGroup">
+          <label for="categoryFilter">Categoria</label>
+
+          <select id="categoryFilter">
+            <option value="">Todas as categorias</option>
+          </select>
+        </div>
+
+        <div class="priceFields">
+
+          <div class="fieldGroup">
+            <label for="minPrice">Preço mínimo (Kz)</label>
+
+            <input
+              id="minPrice"
+              type="number"
+              min="0"
+              placeholder="0"
+            >
+          </div>
+
+          <div class="fieldGroup">
+            <label for="maxPrice">Preço máximo (Kz)</label>
+
+            <input
+              id="maxPrice"
+              type="number"
+              min="0"
+              placeholder="Sem limite"
+            >
+          </div>
+
+        </div>
+
+        <div class="fieldGroup">
+          <label for="statusFilter">Disponibilidade</label>
+
+          <select id="statusFilter">
+            <option value="">Todos os estados</option>
+            <option value="available">Em stock</option>
+            <option value="unavailable">Esgotados</option>
+          </select>
+        </div>
+
+        <div class="fieldGroup">
+          <label for="sortSelect">Ordenar por</label>
+
+          <select id="sortSelect">
+            <option value="relevance">Relevância</option>
+            <option value="price-asc">Menor preço</option>
+            <option value="price-desc">Maior preço</option>
+            <option value="newest">Mais recentes</option>
+          </select>
+        </div>
+
+        <div class="filterActions">
+          <button
+            id="resetFilters"
+            class="secondaryButton"
+            type="button"
+          >Limpar filtros</button>
+
+          <button
+            id="applyFilters"
+            class="primaryButton"
+            type="button"
+          >Aplicar filtros</button>
+        </div>
+
+      </div>
+
+    </section>
+
+    <section class="productsSection" aria-label="Lista de produtos">
+
+      <div
+        id="loader"
+        class="loadingState"
+        role="status"
+        aria-live="polite"
+      >
+        <span class="loadingSpinner"></span>
+        <p>A carregar produtos...</p>
+      </div>
+
+      <div
+        id="productsGrid"
+        class="productsGrid"
+        aria-live="polite"
+      ></div>
+
+      <div id="emptyState" class="emptyState" hidden>
+        <div class="emptyIcon">⌕</div>
+        <h2>Nenhum produto encontrado</h2>
+        <p>Experimente alterar a pesquisa ou os filtros.</p>
+
+        <button
+          id="emptyResetButton"
+          class="primaryButton"
+          type="button"
+        >Ver todos os produtos</button>
+      </div>
+
+      <div id="errorState" class="errorState" hidden>
+        <h2>Não foi possível carregar os produtos</h2>
+        <p>Verifique a sua ligação e tente novamente.</p>
+
+        <button
+          id="retryButton"
+          class="primaryButton"
+          type="button"
+        >Tentar novamente</button>
+      </div>
+
+      <div
+        id="paginationSentinel"
+        class="paginationSentinel"
+        aria-hidden="true"
+      ></div>
+
+      <p id="loadingMore" class="loadingMore" hidden>
+        A carregar mais produtos...
+      </p>
+
+    </section>
+
+  </main>
+
+  <footer class="catalogFooter">
+    <p>© Toma — O seu mercado digital.</p>
+  </footer>
+
+  <script type="module" src="./js/products-v2/products-app.js"></script>
+
+</body>
+</html>
