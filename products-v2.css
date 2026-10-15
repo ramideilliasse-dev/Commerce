@@ -1,11 +1,11 @@
-/* =========================================================
+ /* =========================================================
    TOMA — CATALOGUE V2
-   Design premium, moderne et responsive
+   Design premium, responsive et mobile-first
    Version indépendante de l'ancien catalogue
    ========================================================= */
 
 /* =========================
-   1. VARIABLES DU DESIGN
+   1. VARIABLES
    ========================= */
 
 :root {
@@ -13,7 +13,7 @@
   --primary-dark: #e95f00;
   --primary-light: #fff0e5;
 
-  --background: #f7f8fa;
+  --background: #f6f7f9;
   --surface: #ffffff;
   --surface-soft: #fbfbfc;
 
@@ -33,14 +33,14 @@
   --warning: #a96300;
   --warning-light: #fff5dc;
 
-  --shadow-soft: 0 4px 20px rgba(22, 27, 37, 0.04);
-  --shadow-card: 0 8px 28px rgba(22, 27, 37, 0.055);
-  --shadow-hover: 0 14px 36px rgba(22, 27, 37, 0.10);
+  --shadow-soft: 0 4px 18px rgba(22, 27, 37, 0.04);
+  --shadow-card: 0 6px 20px rgba(22, 27, 37, 0.06);
+  --shadow-hover: 0 12px 30px rgba(22, 27, 37, 0.10);
 
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 22px;
-  --radius-xl: 28px;
+  --radius-sm: 9px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 26px;
 
   --page-width: 1440px;
 
@@ -48,7 +48,7 @@
 }
 
 /* =========================
-   2. RESET GÉNÉRAL
+   2. RESET
    ========================= */
 
 * {
@@ -65,6 +65,8 @@ html {
 
 body {
   min-height: 100vh;
+  overflow-x: hidden;
+
   font-family:
     Inter,
     -apple-system,
@@ -83,8 +85,6 @@ body {
 
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  overflow-x: hidden;
 }
 
 button,
@@ -134,7 +134,7 @@ select {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
 
   to {
@@ -146,16 +146,6 @@ select {
 @keyframes spin {
   to {
     transform: rotate(360deg);
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -500px 0;
-  }
-
-  100% {
-    background-position: 500px 0;
   }
 }
 
@@ -171,7 +161,7 @@ select {
 }
 
 /* =========================
-   4. EN-TÊTE
+   4. HEADER
    ========================= */
 
 .catalogHeader {
@@ -180,39 +170,39 @@ select {
   z-index: 100;
 
   width: 100%;
-  min-height: 72px;
+  min-height: 62px;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
 
-  padding: 12px clamp(16px, 4vw, 48px);
+  padding: 9px clamp(12px, 4vw, 42px);
 
-  background: rgba(255, 255, 255, 0.94);
-  border-bottom: 1px solid rgba(225, 228, 234, 0.85);
+  background: rgba(255, 255, 255, 0.96);
+  border-bottom: 1px solid rgba(225, 228, 234, 0.9);
 
-  -webkit-backdrop-filter: blur(18px);
-  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
 }
 
 .iconButton {
   position: relative;
 
-  width: 44px;
-  height: 44px;
-  flex: 0 0 44px;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  border-radius: 14px;
+  border-radius: 12px;
 
   color: var(--text-primary);
-  background: #f5f6f8;
+  background: #f4f5f7;
 
-  font-size: 22px;
+  font-size: 21px;
   line-height: 1;
 
   transition:
@@ -232,43 +222,43 @@ select {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
 
   margin-right: auto;
 
-  font-size: 23px;
+  font-size: 21px;
   font-weight: 850;
-  letter-spacing: -1px;
+  letter-spacing: -0.8px;
 }
 
 .brandMark {
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  border-radius: 13px;
+  border-radius: 11px;
 
-  color: white;
+  color: #fff;
   background: linear-gradient(145deg, #ff8b36, #ff6500);
 
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 900;
 
-  box-shadow: 0 5px 14px rgba(255, 106, 0, 0.20);
+  box-shadow: 0 4px 12px rgba(255, 106, 0, 0.2);
 }
 
 .cartButton {
-  width: 48px;
-  height: 44px;
-  flex-basis: 48px;
+  width: 43px;
+  height: 40px;
+  flex: 0 0 43px;
 
   background: var(--primary-light);
   color: var(--primary-dark);
 
-  font-size: 20px;
+  font-size: 19px;
 }
 
 .cartButton:hover {
@@ -280,19 +270,19 @@ select {
   top: -5px;
   right: -5px;
 
-  min-width: 20px;
-  height: 20px;
+  min-width: 19px;
+  height: 19px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  padding: 0 5px;
+  padding: 0 4px;
 
-  color: white;
+  color: #fff;
   background: var(--primary);
 
-  border: 2px solid white;
+  border: 2px solid #fff;
   border-radius: 50px;
 
   font-size: 10px;
@@ -308,7 +298,7 @@ select {
   max-width: var(--page-width);
 
   margin: 0 auto;
-  padding: 0 clamp(16px, 4vw, 48px) 60px;
+  padding: 0 12px 45px;
 }
 
 /* =========================
@@ -319,11 +309,11 @@ select {
   position: relative;
   overflow: hidden;
 
-  margin-top: 30px;
-  padding: clamp(26px, 5vw, 54px);
+  margin-top: 18px;
+  padding: 25px 19px;
 
   border: 1px solid #f0e9e3;
-  border-radius: var(--radius-xl);
+  border-radius: 22px;
 
   background:
     radial-gradient(
@@ -331,30 +321,30 @@ select {
       rgba(255, 106, 0, 0.09),
       transparent 32%
     ),
-    linear-gradient(135deg, #ffffff 0%, #fffaf6 100%);
+    linear-gradient(135deg, #fff 0%, #fffaf6 100%);
 
-  animation: fadeInUp 400ms ease both;
+  animation: fadeInUp 350ms ease both;
 }
 
 .eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
 
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 
   color: var(--primary-dark);
 
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 850;
-  letter-spacing: 1.8px;
+  letter-spacing: 1.4px;
   text-transform: uppercase;
 }
 
 .eyebrow::before {
   content: "";
 
-  width: 22px;
+  width: 18px;
   height: 3px;
 
   border-radius: 10px;
@@ -366,46 +356,46 @@ select {
 
   color: var(--text-primary);
 
-  font-size: clamp(30px, 5vw, 54px);
+  font-size: clamp(28px, 7vw, 48px);
   font-weight: 850;
-  line-height: 1.08;
-  letter-spacing: -2px;
+  line-height: 1.12;
+  letter-spacing: -1.3px;
 }
 
 .catalogIntro p {
   max-width: 580px;
 
-  margin-top: 16px;
+  margin-top: 11px;
 
   color: var(--text-secondary);
 
-  font-size: clamp(14px, 1.5vw, 16px);
-  line-height: 1.8;
+  font-size: 13px;
+  line-height: 1.7;
 }
 
 /* =========================
-   7. BARRE DE RECHERCHE
+   7. RECHERCHE
    ========================= */
 
 .searchSection {
   position: relative;
   z-index: 2;
 
-  margin-top: 24px;
+  margin-top: 16px;
 }
 
 .searchBox {
   width: 100%;
-  min-height: 62px;
+  min-height: 51px;
 
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
 
-  padding: 0 20px;
+  padding: 0 13px;
 
   border: 1px solid var(--border);
-  border-radius: 18px;
+  border-radius: 14px;
 
   background: var(--surface);
   box-shadow: var(--shadow-soft);
@@ -425,14 +415,14 @@ select {
 
   color: var(--text-muted);
 
-  font-size: 30px;
+  font-size: 27px;
   font-weight: 400;
   line-height: 1;
 }
 
 .searchBox input {
   width: 100%;
-  height: 58px;
+  height: 49px;
 
   border: none;
   outline: none;
@@ -440,7 +430,7 @@ select {
   color: var(--text-primary);
   background: transparent;
 
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .searchBox input::placeholder {
@@ -452,64 +442,64 @@ select {
 }
 
 .searchBox button {
-  width: 32px;
-  height: 32px;
-  flex: 0 0 32px;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
 
   border-radius: 50%;
 
   color: var(--text-secondary);
   background: #f1f2f5;
 
-  font-size: 14px;
+  font-size: 13px;
 }
 
 /* =========================
-   8. ZONE DES FILTRES
+   8. FILTRES
    ========================= */
 
 .filterSection {
-  margin-top: 36px;
+  margin-top: 25px;
 }
 
 .filterHeading {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 10px;
 
-  margin-bottom: 20px;
+  margin-bottom: 13px;
 }
 
 .filterHeading h2 {
   color: var(--text-primary);
 
-  font-size: clamp(21px, 3vw, 28px);
+  font-size: clamp(19px, 5vw, 26px);
   font-weight: 800;
-  letter-spacing: -0.8px;
+  letter-spacing: -0.6px;
 }
 
 .filterHeading p {
-  margin-top: 5px;
+  margin-top: 4px;
 
   color: var(--text-secondary);
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .secondaryButton,
 .primaryButton {
-  min-height: 43px;
+  min-height: 39px;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 7px;
 
-  padding: 0 17px;
+  padding: 0 12px;
 
-  border-radius: 12px;
+  border-radius: 10px;
 
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 750;
 
   transition:
@@ -522,7 +512,7 @@ select {
 .secondaryButton {
   border: 1px solid var(--border);
   color: var(--text-primary);
-  background: white;
+  background: #fff;
 }
 
 .secondaryButton:hover {
@@ -531,10 +521,10 @@ select {
 }
 
 .primaryButton {
-  color: white;
+  color: #fff;
   background: var(--primary);
 
-  box-shadow: 0 5px 14px rgba(255, 106, 0, 0.17);
+  box-shadow: 0 4px 12px rgba(255, 106, 0, 0.15);
 }
 
 .primaryButton:hover {
@@ -553,10 +543,10 @@ select {
 .quickFilters {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 8px;
 
   width: 100%;
-  padding: 2px 0 8px;
+  padding: 2px 0 7px;
 
   overflow-x: auto;
   overscroll-behavior-x: contain;
@@ -570,22 +560,22 @@ select {
 }
 
 .filterChip {
-  min-height: 41px;
+  min-height: 35px;
   flex: 0 0 auto;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  padding: 0 17px;
+  padding: 0 13px;
 
   border: 1px solid var(--border);
   border-radius: 50px;
 
   color: #646976;
-  background: white;
+  background: #fff;
 
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   white-space: nowrap;
 
@@ -607,7 +597,7 @@ select {
 
 .filterChip.active {
   border-color: var(--text-primary);
-  color: white;
+  color: #fff;
   background: var(--text-primary);
 }
 
@@ -616,13 +606,13 @@ select {
    ========================= */
 
 .advancedFilters {
-  margin-top: 15px;
-  padding: 22px;
+  margin-top: 13px;
+  padding: 16px;
 
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: 17px;
 
-  background: white;
+  background: #fff;
   box-shadow: var(--shadow-soft);
 
   animation: fadeInUp 220ms ease both;
@@ -635,34 +625,34 @@ select {
 .fieldGroup {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 7px;
 
-  margin-bottom: 18px;
+  margin-bottom: 15px;
 }
 
 .fieldGroup label {
   color: var(--text-primary);
 
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 750;
 }
 
 .fieldGroup input,
 .fieldGroup select {
   width: 100%;
-  min-height: 46px;
+  min-height: 43px;
 
-  padding: 0 13px;
+  padding: 0 11px;
 
   border: 1px solid var(--border);
-  border-radius: 11px;
+  border-radius: 10px;
 
   outline: none;
 
   color: var(--text-primary);
   background: #fff;
 
-  font-size: 13px;
+  font-size: 12px;
 
   transition:
     border-color var(--transition),
@@ -682,54 +672,68 @@ select {
 .priceFields {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: 10px;
 }
 
 .filterActions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
 
-  padding-top: 4px;
+  padding-top: 3px;
 }
 
 /* =========================
-   11. SECTION PRODUITS
+   11. GRILLE DES PRODUITS
+   Deux colonnes par défaut
    ========================= */
 
 .productsSection {
-  margin-top: 28px;
+  width: 100%;
+  min-width: 0;
+  margin-top: 21px;
 }
 
 .productsGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  display: grid !important;
 
+  width: 100%;
+  min-width: 0;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+
+  gap: 10px;
   align-items: stretch;
 }
 
+.productsGrid > .productCard {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
 /* =========================
-   12. CARTE PRODUIT
-   Classes prévues pour le JS
+   12. CARTES PRODUITS
    ========================= */
 
 .productCard {
   position: relative;
   min-width: 0;
+  max-width: 100%;
   overflow: hidden;
 
   display: flex;
   flex-direction: column;
 
   border: 1px solid #eceef2;
-  border-radius: 17px;
+  border-radius: 13px;
 
   background: var(--surface);
 
-  box-shadow: 0 2px 9px rgba(20, 24, 32, 0.025);
+  box-shadow: 0 2px 8px rgba(20, 24, 32, 0.035);
 
-  animation: fadeInUp 300ms ease both;
+  animation: fadeInUp 280ms ease both;
 
   transition:
     box-shadow var(--transition),
@@ -750,7 +754,7 @@ select {
   color: inherit;
 }
 
-/* Image du produit */
+/* Image */
 
 .productImageWrap {
   position: relative;
@@ -758,15 +762,16 @@ select {
 
   width: 100%;
   aspect-ratio: 1 / 1;
+  flex-shrink: 0;
 
   background: #f1f2f4;
 }
 
 .productImage {
+  display: block;
+
   width: 100%;
   height: 100%;
-
-  display: block;
 
   object-fit: cover;
 
@@ -774,19 +779,20 @@ select {
 }
 
 .productCard:hover .productImage {
-  transform: scale(1.045);
+  transform: scale(1.035);
 }
 
-/* Si l'image doit être contenue plutôt que recadrée,
-   ajouter la classe productImageContain depuis le JS. */
+/* Produits dont l'image doit rester entièrement visible */
 
 .productImage.productImageContain {
   object-fit: contain;
-  padding: 10px;
+  padding: 9px;
   background: #fff;
 }
 
-/* Badges */
+/* =========================
+   13. BADGES
+   ========================= */
 
 .productBadge,
 .badgeNew,
@@ -795,25 +801,25 @@ select {
 .badgeDelivery,
 .badgeVerified {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 7px;
+  left: 7px;
   z-index: 2;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  max-width: calc(100% - 54px);
-  min-height: 25px;
+  max-width: calc(100% - 47px);
+  min-height: 21px;
 
-  padding: 4px 9px;
+  padding: 3px 6px;
 
-  border-radius: 7px;
+  border-radius: 6px;
 
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 850;
   line-height: 1.2;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.1px;
 }
 
 .badgeNew {
@@ -841,16 +847,18 @@ select {
   background: #e5efff;
 }
 
-/* Bouton favori */
+/* =========================
+   14. FAVORIS
+   ========================= */
 
 .favoriteButton {
   position: absolute;
-  top: 9px;
-  right: 9px;
+  top: 7px;
+  right: 7px;
   z-index: 3;
 
-  width: 34px;
-  height: 34px;
+  width: 30px;
+  height: 30px;
 
   display: flex;
   align-items: center;
@@ -860,9 +868,9 @@ select {
   border-radius: 50%;
 
   color: #343843;
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.96);
 
-  font-size: 18px;
+  font-size: 16px;
 
   transition:
     color var(--transition),
@@ -885,7 +893,9 @@ select {
   transform: scale(0.9);
 }
 
-/* Informations produit */
+/* =========================
+   15. INFORMATIONS PRODUIT
+   ========================= */
 
 .productCardInfo {
   min-width: 0;
@@ -894,20 +904,29 @@ select {
   flex: 1;
   flex-direction: column;
 
-  padding: 12px;
+  padding: 9px;
+  gap: 0;
+}
+
+.productNameLink {
+  display: block;
+  min-width: 0;
 }
 
 .productName {
   display: -webkit-box;
   overflow: hidden;
 
-  min-height: 40px;
+  min-width: 0;
+  min-height: 34px;
 
   color: var(--text-primary);
 
-  font-size: 12px;
-  font-weight: 650;
-  line-height: 1.55;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
 
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -916,47 +935,55 @@ select {
 .productStoreName,
 .productMerchant,
 .productStore {
+  display: block;
   overflow: hidden;
 
-  margin-top: 5px;
+  margin-top: 4px;
 
   color: var(--text-muted);
 
-  font-size: 10px;
+  font-size: 9px;
   line-height: 1.4;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* Prix */
+/* =========================
+   16. PRIX
+   ========================= */
 
 .productPriceRow {
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 3px 4px;
 
-  margin-top: 12px;
+  min-width: 0;
+  margin-top: 8px;
 }
 
 .productPrice {
   color: var(--primary-dark);
 
-  font-size: clamp(13px, 2vw, 17px);
+  font-size: 14px;
   font-weight: 850;
-  letter-spacing: -0.3px;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
+
+  overflow-wrap: anywhere;
 }
 
 .productCurrency {
   color: var(--text-secondary);
-  font-size: 10px;
-  font-weight: 650;
+
+  font-size: 9px;
+  font-weight: 700;
 }
 
 .productOldPrice {
   color: #a0a4ad;
 
-  font-size: 10px;
+  font-size: 9px;
   text-decoration: line-through;
 }
 
@@ -967,27 +994,30 @@ select {
   font-weight: 800;
 }
 
-/* Stock */
+/* =========================
+   17. STOCK
+   ========================= */
 
 .productStock {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
 
-  margin-top: 9px;
+  margin-top: 7px;
 
   color: var(--success);
 
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 650;
+  line-height: 1.35;
 }
 
 .productStock::before {
   content: "";
 
-  width: 6px;
-  height: 6px;
-  flex: 0 0 6px;
+  width: 5px;
+  height: 5px;
+  flex: 0 0 5px;
 
   border-radius: 50%;
   background: currentColor;
@@ -998,37 +1028,46 @@ select {
   color: var(--danger);
 }
 
-/* Actions produit */
+/* =========================
+   18. ACTIONS DES CARTES
+   ========================= */
 
 .productCardActions {
   display: flex;
-  align-items: center;
-  gap: 7px;
+  align-items: stretch;
+  gap: 5px;
+
+  width: 100%;
+  min-width: 0;
 
   margin-top: auto;
-  padding-top: 13px;
+  padding-top: 10px;
 }
 
 .addToCartButton,
 .productBuyButton {
   min-width: 0;
-  min-height: 37px;
-  flex: 1;
+  min-height: 34px;
+  flex: 1 1 auto;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 4px;
 
-  padding: 0 8px;
+  padding: 5px 4px;
 
-  border-radius: 10px;
+  border-radius: 8px;
 
-  color: white;
+  color: #fff;
   background: var(--primary);
 
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 800;
+  line-height: 1.25;
+  text-align: center;
+
+  overflow-wrap: anywhere;
 
   transition:
     background var(--transition),
@@ -1048,27 +1087,29 @@ select {
 .addToCartButton:disabled,
 .productBuyButton:disabled {
   cursor: not-allowed;
+
   color: #858995;
   background: #eceef2;
+
   box-shadow: none;
 }
 
 .viewProductButton {
-  width: 37px;
-  height: 37px;
-  flex: 0 0 37px;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 8px;
 
   color: var(--text-primary);
-  background: white;
+  background: #fff;
 
-  font-size: 17px;
+  font-size: 16px;
 
   transition:
     background var(--transition),
@@ -1081,17 +1122,17 @@ select {
 }
 
 /* =========================
-   13. CHARGEMENT
+   19. CHARGEMENT
    ========================= */
 
 .loadingState {
-  min-height: 230px;
+  min-height: 190px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 15px;
+  gap: 13px;
 
   color: var(--text-secondary);
   text-align: center;
@@ -1102,8 +1143,8 @@ select {
 }
 
 .loadingSpinner {
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
 
   border: 3px solid #ffe1ce;
   border-top-color: var(--primary);
@@ -1114,7 +1155,7 @@ select {
 }
 
 .loadingMore {
-  padding: 22px 10px;
+  padding: 20px 10px;
 
   color: var(--text-secondary);
   text-align: center;
@@ -1127,7 +1168,7 @@ select {
 }
 
 /* =========================
-   14. ÉTAT VIDE
+   20. ÉTAT VIDE ET ERREUR
    ========================= */
 
 .emptyState,
@@ -1135,49 +1176,49 @@ select {
   width: 100%;
   max-width: 480px;
 
-  margin: 35px auto;
-  padding: 35px 22px;
+  margin: 30px auto;
+  padding: 28px 18px;
 
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
 
-  background: white;
+  background: #fff;
   box-shadow: var(--shadow-soft);
 
   text-align: center;
 }
 
 .emptyIcon {
-  width: 70px;
-  height: 70px;
+  width: 64px;
+  height: 64px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  margin: 0 auto 18px;
+  margin: 0 auto 15px;
 
-  border-radius: 23px;
+  border-radius: 20px;
 
   color: var(--primary);
   background: var(--primary-light);
 
-  font-size: 40px;
+  font-size: 36px;
 }
 
 .emptyState h2,
 .errorState h2 {
   color: var(--text-primary);
 
-  font-size: 19px;
+  font-size: 18px;
   font-weight: 800;
-  letter-spacing: -0.4px;
+  letter-spacing: -0.3px;
 }
 
 .emptyState p,
 .errorState p {
-  margin-top: 9px;
-  margin-bottom: 22px;
+  margin-top: 8px;
+  margin-bottom: 18px;
 
   color: var(--text-secondary);
 
@@ -1190,7 +1231,7 @@ select {
 }
 
 /* =========================
-   15. PAGINATION
+   21. PAGINATION
    ========================= */
 
 .paginationSentinel {
@@ -1200,15 +1241,15 @@ select {
 }
 
 /* =========================
-   16. PIED DE PAGE
+   22. PIED DE PAGE
    ========================= */
 
 .catalogFooter {
-  padding: 26px 16px 35px;
+  padding: 23px 16px 30px;
 
   border-top: 1px solid var(--border);
 
-  background: white;
+  background: #fff;
 
   text-align: center;
 }
@@ -1219,41 +1260,126 @@ select {
 }
 
 /* =========================
-   17. TABLETTES
+   23. TABLETTES
    ========================= */
 
 @media (min-width: 600px) {
-  .productsGrid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 17px;
+  .catalogHeader {
+    min-height: 70px;
   }
 
-  .productCard {
-    border-radius: 19px;
-  }
-
-  .productCardInfo {
-    padding: 15px;
-  }
-
-  .productName {
-    font-size: 13px;
-    min-height: 42px;
-  }
-
-  .productPrice {
-    font-size: 17px;
-  }
-
-  .productImageWrap {
-    aspect-ratio: 1 / 0.92;
+  .catalogMain {
+    padding-right: 24px;
+    padding-left: 24px;
+    padding-bottom: 60px;
   }
 
   .catalogIntro {
-    margin-top: 35px;
+    margin-top: 28px;
+    padding: 36px;
+    border-radius: 24px;
   }
 
-  .advancedFilters {
+  .catalogIntro h1 {
+    font-size: clamp(34px, 4.5vw, 48px);
+  }
+
+  .catalogIntro p {
+    font-size: 14px;
+  }
+
+  .searchSection {
+    max-width: 760px;
+    margin-top: 20px;
+  }
+
+  .searchBox {
+    min-height: 56px;
+  }
+
+  .searchBox input {
+    height: 54px;
+  }
+
+  .filterSection {
+    margin-top: 30px;
+  }
+
+  .filterHeading {
+    margin-bottom: 16px;
+  }
+
+  .filterHeading p {
+    font-size: 12px;
+  }
+
+  .filterChip {
+    min-height: 39px;
+    padding: 0 15px;
+    font-size: 12px;
+  }
+
+  .productsGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 16px;
+  }
+
+  .productCard {
+    border-radius: 16px;
+  }
+
+  .productImageWrap {
+    aspect-ratio: 1 / 0.95;
+  }
+
+  .productCardInfo {
+    padding: 12px;
+  }
+
+  .productName {
+    min-height: 39px;
+    font-size: 12px;
+  }
+
+  .productStoreName,
+  .productMerchant,
+  .productStore {
+    font-size: 10px;
+  }
+
+  .productPrice {
+    font-size: 16px;
+  }
+
+  .productCurrency,
+  .productOldPrice {
+    font-size: 10px;
+  }
+
+  .productStock {
+    font-size: 10px;
+  }
+
+  .addToCartButton,
+  .productBuyButton {
+    min-height: 37px;
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+
+  .viewProductButton {
+    width: 37px;
+    height: 37px;
+    flex-basis: 37px;
+  }
+
+  .favoriteButton {
+    width: 33px;
+    height: 33px;
+    font-size: 18px;
+  }
+
+  .advancedFilters:not([hidden]) {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: 18px;
@@ -1269,41 +1395,50 @@ select {
 }
 
 /* =========================
-   18. ORDINATEURS
+   24. ORDINATEURS
    ========================= */
 
 @media (min-width: 900px) {
   .catalogHeader {
-    min-height: 78px;
+    min-height: 76px;
   }
 
   .catalogMain {
-    padding-bottom: 80px;
+    padding-right: 36px;
+    padding-left: 36px;
+    padding-bottom: 75px;
   }
 
   .catalogIntro {
-    margin-top: 40px;
+    margin-top: 35px;
+    padding: 44px;
   }
 
-  .searchSection {
-    max-width: 760px;
+  .catalogIntro h1 {
+    max-width: 850px;
+    font-size: 48px;
   }
 
   .productsGrid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 19px;
+  }
+
+  .productCard {
+    border-radius: 18px;
   }
 
   .productImageWrap {
-    aspect-ratio: 1 / 0.9;
+    aspect-ratio: 1 / 0.92;
   }
 
   .productCardInfo {
-    padding: 16px;
+    padding: 14px;
   }
 
   .productName {
-    font-size: 14px;
+    min-height: 42px;
+    font-size: 13px;
   }
 
   .productStoreName,
@@ -1313,7 +1448,21 @@ select {
   }
 
   .productPrice {
-    font-size: 18px;
+    font-size: 17px;
+  }
+
+  .productCurrency,
+  .productOldPrice {
+    font-size: 10px;
+  }
+
+  .productStock {
+    font-size: 10px;
+  }
+
+  .productCardActions {
+    gap: 7px;
+    padding-top: 12px;
   }
 
   .addToCartButton,
@@ -1327,162 +1476,10 @@ select {
     height: 40px;
     flex-basis: 40px;
   }
-}
-
-/* =========================
-   19. GRANDS ÉCRANS
-   ========================= */
-
-@media (min-width: 1200px) {
-  .productsGrid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 20px;
-  }
-
-  .catalogIntro h1 {
-    max-width: 850px;
-  }
-}
-
-/* =========================
-   20. PETITS IPHONES
-   ========================= */
-
-@media (max-width: 380px) {
-  .catalogHeader {
-    min-height: 64px;
-    padding: 10px 12px;
-    gap: 10px;
-  }
-
-  .brand {
-    gap: 7px;
-    font-size: 20px;
-  }
-
-  .brandMark {
-    width: 34px;
-    height: 34px;
-    border-radius: 11px;
-    font-size: 19px;
-  }
-
-  .iconButton {
-    width: 40px;
-    height: 40px;
-    flex-basis: 40px;
-  }
-
-  .cartButton {
-    width: 44px;
-    flex-basis: 44px;
-  }
-
-  .catalogMain {
-    padding-right: 11px;
-    padding-left: 11px;
-  }
-
-  .catalogIntro {
-    margin-top: 18px;
-    padding: 23px 18px;
-    border-radius: 21px;
-  }
-
-  .catalogIntro h1 {
-    font-size: 29px;
-    letter-spacing: -1.2px;
-  }
-
-  .catalogIntro p {
-    font-size: 13px;
-  }
-
-  .searchBox {
-    min-height: 54px;
-    padding: 0 13px;
-    gap: 10px;
-    border-radius: 15px;
-  }
-
-  .searchBox input {
-    height: 52px;
-    font-size: 12px;
-  }
-
-  .filterHeading {
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .filterHeading h2 {
-    font-size: 20px;
-  }
-
-  .filterHeading p {
-    font-size: 11px;
-  }
-
-  .secondaryButton {
-    min-height: 39px;
-    padding: 0 11px;
-    font-size: 11px;
-  }
-
-  .productsGrid {
-    gap: 9px;
-  }
-
-  .productCard {
-    border-radius: 14px;
-  }
-
-  .productCardInfo {
-    padding: 9px;
-  }
-
-  .productName {
-    min-height: 37px;
-    font-size: 11px;
-  }
-
-  .productPrice {
-    font-size: 13px;
-  }
-
-  .productPriceRow {
-    gap: 4px;
-    margin-top: 9px;
-  }
-
-  .productOldPrice {
-    font-size: 9px;
-  }
-
-  .productCardActions {
-    gap: 5px;
-    padding-top: 10px;
-  }
-
-  .addToCartButton,
-  .productBuyButton {
-    min-height: 34px;
-    padding: 0 5px;
-    font-size: 9px;
-  }
-
-  .viewProductButton {
-    width: 34px;
-    height: 34px;
-    flex-basis: 34px;
-  }
 
   .favoriteButton {
-    width: 30px;
-    height: 30px;
-    top: 7px;
-    right: 7px;
-    font-size: 16px;
+    width: 35px;
+    height: 35px;
   }
 
   .badgeNew,
@@ -1490,16 +1487,201 @@ select {
   .badgeTop,
   .badgeDelivery,
   .badgeVerified {
-    top: 7px;
-    left: 7px;
-    min-height: 22px;
-    padding: 3px 6px;
-    font-size: 8px;
+    min-height: 24px;
+    padding: 4px 8px;
+    font-size: 9px;
   }
 }
 
 /* =========================
-   21. ACCESSIBILITÉ
+   25. GRANDS ÉCRANS
+   ========================= */
+
+@media (min-width: 1200px) {
+  .productsGrid {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 20px;
+  }
+
+  .catalogIntro h1 {
+    max-width: 900px;
+  }
+}
+
+/* =========================
+   26. PETITS IPHONES
+   ========================= */
+
+@media (max-width: 380px) {
+  .catalogHeader {
+    min-height: 60px;
+    padding: 8px 10px;
+    gap: 9px;
+  }
+
+  .brand {
+    gap: 6px;
+    font-size: 19px;
+  }
+
+  .brandMark {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    font-size: 18px;
+  }
+
+  .iconButton {
+    width: 37px;
+    height: 37px;
+    flex-basis: 37px;
+  }
+
+  .cartButton {
+    width: 41px;
+    flex-basis: 41px;
+  }
+
+  .catalogMain {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .catalogIntro {
+    margin-top: 15px;
+    padding: 21px 15px;
+    border-radius: 19px;
+  }
+
+  .catalogIntro h1 {
+    font-size: 27px;
+    letter-spacing: -1px;
+  }
+
+  .catalogIntro p {
+    font-size: 12px;
+  }
+
+  .searchBox {
+    min-height: 48px;
+    padding: 0 11px;
+    gap: 8px;
+  }
+
+  .searchBox input {
+    height: 46px;
+    font-size: 12px;
+  }
+
+  .filterHeading {
+    align-items: flex-start;
+    gap: 7px;
+  }
+
+  .filterHeading h2 {
+    font-size: 18px;
+  }
+
+  .filterHeading p {
+    font-size: 10px;
+  }
+
+  .secondaryButton {
+    min-height: 36px;
+    padding: 0 9px;
+    font-size: 10px;
+  }
+
+  .productsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px;
+  }
+
+  .productCard {
+    border-radius: 12px;
+  }
+
+  .productImageWrap {
+    aspect-ratio: 1 / 1;
+  }
+
+  .productCardInfo {
+    padding: 8px;
+  }
+
+  .productName {
+    min-height: 33px;
+    font-size: 10px;
+    line-height: 1.5;
+  }
+
+  .productStoreName,
+  .productMerchant,
+  .productStore {
+    font-size: 9px;
+  }
+
+  .productPrice {
+    font-size: 12px;
+  }
+
+  .productPriceRow {
+    gap: 3px;
+    margin-top: 7px;
+  }
+
+  .productCurrency,
+  .productOldPrice {
+    font-size: 8px;
+  }
+
+  .productStock {
+    margin-top: 6px;
+    font-size: 8px;
+  }
+
+  .productCardActions {
+    gap: 4px;
+    padding-top: 9px;
+  }
+
+  .addToCartButton,
+  .productBuyButton {
+    min-height: 32px;
+    padding: 4px 3px;
+    font-size: 8px;
+  }
+
+  .viewProductButton {
+    width: 31px;
+    height: 32px;
+    flex-basis: 31px;
+    font-size: 14px;
+  }
+
+  .favoriteButton {
+    width: 28px;
+    height: 28px;
+    top: 6px;
+    right: 6px;
+    font-size: 15px;
+  }
+
+  .badgeNew,
+  .badgePromo,
+  .badgeTop,
+  .badgeDelivery,
+  .badgeVerified {
+    top: 6px;
+    left: 6px;
+    min-height: 19px;
+    padding: 3px 5px;
+    font-size: 7px;
+  }
+}
+
+/* =========================
+   27. ACCESSIBILITÉ
    ========================= */
 
 @media (prefers-reduced-motion: reduce) {
@@ -1511,4 +1693,4 @@ select {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-} 
+}
