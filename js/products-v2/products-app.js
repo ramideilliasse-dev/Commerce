@@ -250,7 +250,7 @@ function getProductUrl(product) {
         return "#";
     }
 
-    return `./product-détail.html?id=${encodeURIComponent(productId)}`;
+    return `./product-detail.html?id=${encodeURIComponent(productId)}`;
 }
 /* =========================================================
    4. LOADER ET ÉTATS
