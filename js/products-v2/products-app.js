@@ -1,7 +1,8 @@
  /* =========================================================
    TOMA — PRODUCTS V2
    Catalogue indépendant
-   Firebase + recherche + filtros + favoritos + carrinho
+   Firebase + Pesquisa + Filtros + Favoritos + Carrinho
+   Animação do produto para o carrinho
    ========================================================= */
 
 import { db } from "../../firebase.js";
@@ -70,6 +71,7 @@ let isLoadingProducts = false;
 let renderVersion = 0;
 
 let paginationObserver = null;
+let toastTimer = null;
 
 /* =========================================================
    3. UTILITARIOS
@@ -305,6 +307,8 @@ function showError(message = "") {
 
 /* =========================================================
    5. FAVORITOS
+   Atualiza somente o coração clicado.
+   Não reconstrói a grelha.
    ========================================================= */
 
 function productIsFavorite(productId) {
@@ -327,18 +331,139 @@ function productIsFavorite(productId) {
   }
 }
 
-function handleFavorite(productId) {
+function updateFavoriteButton(button, favorite) {
+  if (!button) return;
+
+  button.classList.toggle("active", favorite);
+  button.classList.toggle("isFavorite", favorite);
+
+  button.textContent = favorite ? "♥" : "♡";
+
+  button.setAttribute(
+    "aria-label",
+    favorite
+      ? "Remover dos favoritos"
+      : "Adicionar aos favoritos"
+  );
+
+  button.setAttribute("aria-pressed", String(favorite));
+}
+
+function handleFavorite(productId, button) {
   try {
-    toggleFavorite(String(productId));
-    applyFilters();
+    const favorite = toggleFavorite(String(productId));
+
+    // Atualiza apenas o botão clicado.
+    updateFavoriteButton(button, favorite);
+
+    // Pequena animação visual, sem mexer na grelha.
+    if (button && typeof button.animate === "function") {
+      button.animate(
+        [
+          { transform: "scale(1)" },
+          { transform: "scale(1.22)" },
+          { transform: "scale(1)" }
+        ],
+        {
+          duration: 220,
+          easing: "ease-out"
+        }
+      );
+    }
+
+    showToast(
+      favorite
+        ? "Adicionado aos favoritos"
+        : "Removido dos favoritos",
+      favorite ? "♥" : "♡"
+    );
+
   } catch (error) {
     console.error("Toma V2: erro nos favoritos.", error);
-    alert("Não foi possível atualizar os favoritos.");
+    showToast("Não foi possível atualizar os favoritos", "!");
   }
 }
 
 /* =========================================================
-   6. CARRINHO
+   6. TOAST / CONFIRMAÇÕES VISUAIS
+   ========================================================= */
+
+function showToast(message, icon = "✓", productName = "") {
+  let toast = document.getElementById("tomaV2Toast");
+
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "tomaV2Toast";
+
+    toast.style.cssText = `
+      position: fixed;
+      left: 50%;
+      bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+      z-index: 1000001;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      width: max-content;
+      max-width: calc(100vw - 32px);
+      padding: 13px 16px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 15px;
+      color: #fff;
+      background: #20242d;
+      box-shadow: 0 12px 38px rgba(0,0,0,.23);
+      font: 600 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      opacity: 0;
+      transform: translate(-50%, 15px);
+      pointer-events: none;
+      transition: opacity .22s ease, transform .22s ease;
+    `;
+
+    toast.innerHTML = `
+      <span data-toast-icon style="
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        flex:0 0 30px;
+        width:30px;
+        height:30px;
+        border-radius:10px;
+        color:#fff;
+        background:#ff6a00;
+        font-size:17px;
+      "></span>
+      <span data-toast-message style="
+        min-width:0;
+        overflow-wrap:anywhere;
+      "></span>
+    `;
+
+    document.body.appendChild(toast);
+  }
+
+  const iconElement = toast.querySelector("[data-toast-icon]");
+  const messageElement = toast.querySelector("[data-toast-message]");
+
+  if (iconElement) iconElement.textContent = icon;
+  if (messageElement) {
+    messageElement.textContent = productName
+      ? `${message}: ${productName}`
+      : message;
+  }
+
+  toast.style.opacity = "1";
+  toast.style.transform = "translate(-50%, 0)";
+
+  clearTimeout(toastTimer);
+
+  toastTimer = setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translate(-50%, 15px)";
+  }, 2400);
+}
+
+/* =========================================================
+   7. CARRINHO
+   Usa o sistema existente: toma_cart / getCart()
    ========================================================= */
 
 function updateCartCount() {
@@ -371,20 +496,137 @@ function updateCartCount() {
   }
 }
 
-function handleAddToCart(product) {
+/* =========================================================
+   8. ANIMAÇÃO DA IMAGEM PARA O CARRINHO
+   ========================================================= */
+
+function flyToCart(card) {
+  const imageElement = card?.querySelector("img.productImage");
+  const cartElement = document.getElementById("cartButton");
+
+  if (!imageElement || !cartElement) return;
+
+  // Não anima imagens que ainda não têm dimensões visíveis.
+  const imageRect = imageElement.getBoundingClientRect();
+  const cartRect = cartElement.getBoundingClientRect();
+
+  if (
+    imageRect.width < 2 ||
+    imageRect.height < 2 ||
+    cartRect.width < 2 ||
+    cartRect.height < 2
+  ) {
+    return;
+  }
+
+  const clone = imageElement.cloneNode(true);
+
+  clone.removeAttribute("id");
+  clone.setAttribute("aria-hidden", "true");
+
+  clone.style.cssText = `
+    position: fixed;
+    left: ${imageRect.left}px;
+    top: ${imageRect.top}px;
+    width: ${imageRect.width}px;
+    height: ${imageRect.height}px;
+    max-width: none;
+    object-fit: cover;
+    border-radius: 14px;
+    z-index: 1000000;
+    pointer-events: none;
+    margin: 0;
+    opacity: 1;
+    transform: translate3d(0,0,0) scale(1);
+    box-shadow: 0 8px 24px rgba(0,0,0,.2);
+    will-change: left, top, width, height, opacity, transform;
+  `;
+
+  document.body.appendChild(clone);
+
+  const startX = imageRect.left + imageRect.width / 2;
+  const startY = imageRect.top + imageRect.height / 2;
+
+  const endX = cartRect.left + cartRect.width / 2;
+  const endY = cartRect.top + cartRect.height / 2;
+
+  const deltaX = endX - startX;
+  const deltaY = endY - startY;
+
+  // Utiliza a Web Animations API, compatível com os navegadores modernos.
+  if (typeof clone.animate === "function") {
+    const animation = clone.animate(
+      [
+        {
+          transform: "translate3d(0,0,0) scale(1)",
+          opacity: 1,
+          borderRadius: "14px"
+        },
+        {
+          transform: `translate3d(${deltaX * 0.55}px, ${deltaY * 0.55 - 35}px, 0) scale(.55)`,
+          opacity: 0.9,
+          borderRadius: "50%"
+        },
+        {
+          transform: `translate3d(${deltaX}px, ${deltaY}px, 0) scale(.12)`,
+          opacity: 0.15,
+          borderRadius: "50%"
+        }
+      ],
+      {
+        duration: 650,
+        easing: "cubic-bezier(.2,.8,.2,1)",
+        fill: "forwards"
+      }
+    );
+
+    animation.onfinish = () => {
+      clone.remove();
+      animateCartButton();
+    };
+
+    animation.oncancel = () => clone.remove();
+  } else {
+    clone.remove();
+    animateCartButton();
+  }
+}
+
+function animateCartButton() {
+  if (!cartButton || typeof cartButton.animate !== "function") return;
+
+  cartButton.animate(
+    [
+      { transform: "scale(1)" },
+      { transform: "scale(1.15)" },
+      { transform: "scale(1)" }
+    ],
+    {
+      duration: 280,
+      easing: "ease-out"
+    }
+  );
+}
+
+/* =========================================================
+   9. ADICIONAR AO CARRINHO
+   ========================================================= */
+
+function handleAddToCart(product, card) {
   try {
     if (!isProductAvailable(product)) {
-      alert("Este produto está esgotado.");
+      showToast("Este produto está esgotado", "!");
       return;
     }
 
     const id = String(product.id || "").trim();
 
     if (!id) {
-      alert("Não foi possível identificar este produto.");
+      showToast("Não foi possível identificar o produto", "!");
       return;
     }
 
+    // Primeiro, grava o produto no carrinho.
     addToCart({
       id,
       name: getProductName(product),
@@ -396,29 +638,61 @@ function handleAddToCart(product) {
       merchantId: product.merchantId || product.storeId || null
     });
 
+    // Depois, atualiza o contador.
     updateCartCount();
 
-    alert("Produto adicionado ao carrinho!");
+    // A animação é apenas visual e não controla o registo.
+    flyToCart(card);
+
+    // Confirmação sem bloquear o cliente com alert().
+    showToast(
+      "Produto adicionado",
+      "🛒",
+      getProductName(product)
+    );
+
+    // Feedback discreto no botão de adicionar.
+    const addButton = card?.querySelector('[data-action="cart"]');
+
+    if (addButton && typeof addButton.animate === "function") {
+      addButton.animate(
+        [
+          { transform: "scale(1)" },
+          { transform: "scale(.96)" },
+          { transform: "scale(1)" }
+        ],
+        {
+          duration: 180,
+          easing: "ease-out"
+        }
+      );
+    }
+
   } catch (error) {
     console.error("Toma V2: erro ao adicionar ao carrinho.", error);
-    alert("Não foi possível adicionar o produto ao carrinho.");
+    showToast("Não foi possível adicionar o produto", "!");
   }
 }
 
 /* =========================================================
-   7. CARTAO DO PRODUTO
+   10. CARTÃO DO PRODUTO
    ========================================================= */
 
 function createProductCard(product) {
   const card = document.createElement("article");
   card.className = "productCard";
 
-  const id = String(product.id);
+  const id = String(product.id || "");
   const name = getProductName(product);
   const price = getProductPrice(product);
   const image = getProductImage(product);
   const store = getProductStore(product);
-  const oldPrice = Number(product.oldPrice ?? product.precoAntigo ?? 0);
+
+  const oldPrice = Number(
+    product.oldPrice ??
+    product.precoAntigo ??
+    0
+  );
 
   const favorite = productIsFavorite(id);
   const available = isProductAvailable(product);
@@ -505,19 +779,23 @@ function createProductCard(product) {
     </div>
   `;
 
-  card.querySelector('[data-action="favorite"]')
-    ?.addEventListener("click", event => {
-      event.preventDefault();
-      event.stopPropagation();
-      handleFavorite(id);
-    });
+  const favoriteButton = card.querySelector('[data-action="favorite"]');
 
-  card.querySelector('[data-action="cart"]')
-    ?.addEventListener("click", event => {
-      event.preventDefault();
-      event.stopPropagation();
-      handleAddToCart(product);
-    });
+  favoriteButton?.addEventListener("click", event => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    handleFavorite(id, favoriteButton);
+  });
+
+  const addButton = card.querySelector('[data-action="cart"]');
+
+  addButton?.addEventListener("click", event => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    handleAddToCart(product, card);
+  });
 
   const imageElement = card.querySelector("img.productImage");
 
@@ -526,9 +804,20 @@ function createProductCard(product) {
       const placeholder = document.createElement("div");
 
       placeholder.className = "productImage productImageContain";
+      placeholder.setAttribute("role", "img");
+      placeholder.setAttribute("aria-label", "Imagem indisponível");
+
       placeholder.textContent = "Imagem indisponível";
-      placeholder.style.cssText =
-        "display:flex;align-items:center;justify-content:center;color:#969ba5;font-size:12px;";
+
+      placeholder.style.cssText = `
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        color:#969ba5;
+        font-size:12px;
+        width:100%;
+        height:100%;
+      `;
 
       imageElement.replaceWith(placeholder);
     }, { once: true });
@@ -538,7 +827,7 @@ function createProductCard(product) {
 }
 
 /* =========================================================
-   8. CATEGORIAS
+   11. CATEGORIAS
    ========================================================= */
 
 function populateCategories() {
@@ -559,12 +848,15 @@ function populateCategories() {
   const defaultOption = document.createElement("option");
   defaultOption.value = "";
   defaultOption.textContent = "Todas as categorias";
+
   categoryFilter.appendChild(defaultOption);
 
   categories.forEach(category => {
     const option = document.createElement("option");
+
     option.value = category;
     option.textContent = category;
+
     categoryFilter.appendChild(option);
   });
 
@@ -574,7 +866,7 @@ function populateCategories() {
 }
 
 /* =========================================================
-   9. FILTROS
+   12. FILTROS
    ========================================================= */
 
 function applyFilters() {
@@ -659,11 +951,12 @@ function applyFilters() {
   }
 
   filteredProducts = products;
+
   renderProducts();
 }
 
 /* =========================================================
-   10. RENDU PAR LOTS
+   13. RENDU PAR LOTS
    ========================================================= */
 
 function renderProducts() {
@@ -707,7 +1000,9 @@ function renderMoreProducts(expectedVersion = renderVersion) {
   }
 
   const currentVersion = renderVersion;
+
   const start = displayedCount;
+
   const end = Math.min(
     start + PRODUCTS_PER_BATCH,
     filteredProducts.length
@@ -719,10 +1014,10 @@ function renderMoreProducts(expectedVersion = renderVersion) {
     fragment.appendChild(createProductCard(filteredProducts[index]));
   }
 
-  // Verifica se os filtros mudaram enquanto o lote era preparado.
   if (currentVersion !== renderVersion) return;
 
   productsGrid.appendChild(fragment);
+
   displayedCount = end;
 
   if (displayedCount < filteredProducts.length) {
@@ -733,13 +1028,14 @@ function renderMoreProducts(expectedVersion = renderVersion) {
 }
 
 /* =========================================================
-   11. CARREGAMENTO FIREBASE
+   14. CARREGAMENTO FIREBASE
    ========================================================= */
 
 async function loadProducts() {
   if (isLoadingProducts) return;
 
   isLoadingProducts = true;
+
   showLoader();
 
   if (retryButton) {
@@ -758,17 +1054,20 @@ async function loadProducts() {
     populateCategories();
 
     hideLoader();
+
     applyFilters();
 
     console.log(
       `Toma V2: ${allProducts.length} produtos carregados.`
     );
+
   } catch (error) {
     console.error("Toma V2: erro ao carregar produtos:", error);
 
     showError(
       "Verifique a sua ligação à internet e tente novamente."
     );
+
   } finally {
     isLoadingProducts = false;
 
@@ -780,7 +1079,7 @@ async function loadProducts() {
 }
 
 /* =========================================================
-   12. FILTROS RÁPIDOS
+   15. FILTROS RÁPIDOS
    ========================================================= */
 
 document.querySelectorAll(".filterChip").forEach(chip => {
@@ -790,6 +1089,7 @@ document.querySelectorAll(".filterChip").forEach(chip => {
     });
 
     chip.classList.add("active");
+
     activeQuickFilter = chip.dataset.filter || "all";
 
     applyFilters();
@@ -797,7 +1097,7 @@ document.querySelectorAll(".filterChip").forEach(chip => {
 });
 
 /* =========================================================
-   13. PESQUISA
+   16. PESQUISA
    ========================================================= */
 
 if (searchInput) {
@@ -818,12 +1118,13 @@ if (clearSearch) {
     }
 
     clearSearch.hidden = true;
+
     applyFilters();
   });
 }
 
 /* =========================================================
-   14. FILTROS AVANÇADOS
+   17. FILTROS AVANÇADOS
    ========================================================= */
 
 if (filterButton && advancedFilters) {
@@ -840,15 +1141,22 @@ if (filterButton && advancedFilters) {
 }
 
 applyFiltersButton?.addEventListener("click", applyFilters);
+
 sortSelect?.addEventListener("change", applyFilters);
 
 function resetFilters() {
   if (searchInput) searchInput.value = "";
+
   if (clearSearch) clearSearch.hidden = true;
+
   if (categoryFilter) categoryFilter.value = "";
+
   if (minPriceInput) minPriceInput.value = "";
+
   if (maxPriceInput) maxPriceInput.value = "";
+
   if (statusFilter) statusFilter.value = "";
+
   if (sortSelect) sortSelect.value = "relevance";
 
   activeQuickFilter = "all";
@@ -861,11 +1169,13 @@ function resetFilters() {
 }
 
 resetFiltersButton?.addEventListener("click", resetFilters);
+
 emptyResetButton?.addEventListener("click", resetFilters);
+
 retryButton?.addEventListener("click", loadProducts);
 
 /* =========================================================
-   15. NAVEGAÇÃO
+   18. NAVEGAÇÃO
    ========================================================= */
 
 backButton?.addEventListener("click", () => {
@@ -880,22 +1190,54 @@ cartButton?.addEventListener("click", () => {
   window.location.href = "./cart.html";
 });
 
+/* =========================================================
+   19. SINCRONIZAÇÃO DO CARRINHO E FAVORITOS
+   ========================================================= */
+
 window.addEventListener("storage", event => {
   if (!event.key || event.key === "toma_cart") {
     updateCartCount();
   }
 
+  // Atualiza os corações, sem reconstruir a grelha.
   if (!event.key || event.key === "toma_favorites") {
-    applyFilters();
+    productsGrid?.querySelectorAll('[data-action="favorite"]').forEach(button => {
+      const card = button.closest(".productCard");
+
+      if (!card) return;
+
+      const productLink = card.querySelector(".productNameLink");
+
+      if (!productLink) return;
+
+      const product = filteredProducts.find(item =>
+        getProductUrl(item) === productLink.getAttribute("href")
+      );
+
+      if (!product) return;
+
+      updateFavoriteButton(
+        button,
+        productIsFavorite(product.id)
+      );
+    });
   }
 });
 
 window.addEventListener("pageshow", updateCartCount);
 
+window.addEventListener("focus", updateCartCount);
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) {
+    updateCartCount();
+  }
+});
+
 updateCartCount();
 
 /* =========================================================
-   16. CARREGAMENTO PROGRESSIVO
+   20. CARREGAMENTO PROGRESSIVO
    ========================================================= */
 
 if ("IntersectionObserver" in window && paginationSentinel) {
@@ -908,6 +1250,7 @@ if ("IntersectionObserver" in window && paginationSentinel) {
   });
 
   paginationObserver.observe(paginationSentinel);
+
 } else {
   window.addEventListener("scroll", () => {
     const nearBottom =
@@ -917,11 +1260,13 @@ if ("IntersectionObserver" in window && paginationSentinel) {
     if (nearBottom) {
       renderMoreProducts();
     }
-  }, { passive: true });
+  }, {
+    passive: true
+  });
 }
 
 /* =========================================================
-   17. INICIALIZAÇÃO
+   21. INICIALIZAÇÃO
    ========================================================= */
 
 loadProducts();
