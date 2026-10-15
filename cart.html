@@ -573,12 +573,47 @@ a:focus-visible {
         font-size: 21px;
     }
 }
+.backBtn {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 42px;
+    height: 42px;
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 13px;
+    background: rgba(255,255,255,.15);
+    color: #fff;
+    font-size: 27px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.backBtn:active {
+    background: rgba(255,255,255,.3);
+}
+
+.headerTitle {
+    padding: 0 42px;
+} 
 </style>
 </head>
 
 <body>
 
 <header class="header">
+    <button
+        type="button"
+        class="backBtn"
+        onclick="history.back()"
+        aria-label="Voltar à página anterior"
+    >
+        ←
+    </button>
+
     <div class="headerTitle">
         <span class="headerIcon">🛒</span>
         <span>Meu Carrinho</span>
