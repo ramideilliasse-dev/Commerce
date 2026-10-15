@@ -729,18 +729,25 @@ let refreshScheduled = false;
  * Não altera a lógica interna de js/cart.js.
  */
 function updateCartPresentation() {
-    const hasProducts = cartItems.children.length > 0;
-
-    emptyCartMessage.hidden = hasProducts;
-    cartEncouragement.style.display = hasProducts ? "flex" : "none";
-
-    cartFooter.style.display = hasProducts ? "block" : "none";
+    const hasProducts = cartItems.querySelector(".cartItem") !== null;
 
     if (hasProducts) {
+        emptyCartMessage.hidden = true;
+        emptyCartMessage.style.display = "none";
+
+        cartEncouragement.style.display = "flex";
+        cartFooter.style.display = "block";
+
         checkoutBtn.disabled = false;
+        clearBtn.disabled = false;
+    } else {
+        emptyCartMessage.hidden = false;
+        emptyCartMessage.style.display = "block";
+
+        cartEncouragement.style.display = "none";
+        cartFooter.style.display = "none";
     }
 }
-
 /*
  * Permite que cart.js termine de desenhar os produtos
  * antes de atualizar as mensagens e o resumo visual.
