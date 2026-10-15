@@ -1,7 +1,7 @@
  /* =========================================================
    TOMA — PRODUCTS V2
-   Nouveau moteur indépendant du catalogue
-   Firebase + recherche + filtres + favoris + panier
+   Catalogue indépendant
+   Firebase + recherche + filtros + favoritos + carrinho
    ========================================================= */
 
 import { db } from "../../firebase.js";
@@ -20,7 +20,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 /* =========================================================
-   1. ÉLÉMENTS HTML
+   1. ELEMENTOS HTML
    ========================================================= */
 
 const productsGrid = document.getElementById("productsGrid");
@@ -55,7 +55,7 @@ const loadingMore = document.getElementById("loadingMore");
 const paginationSentinel = document.getElementById("paginationSentinel");
 
 /* =========================================================
-   2. ÉTAT DU CATALOGUE
+   2. ESTADO
    ========================================================= */
 
 let allProducts = [];
@@ -67,23 +67,20 @@ const PRODUCTS_PER_BATCH = 12;
 
 let activeQuickFilter = "all";
 let isLoadingProducts = false;
-let isRenderingMore = false;
 let renderVersion = 0;
 
+let paginationObserver = null;
+
 /* =========================================================
-   3. OUTILS
+   3. UTILITARIOS
    ========================================================= */
 
 function showElement(element) {
-  if (element) {
-    element.hidden = false;
-  }
+  if (element) element.hidden = false;
 }
 
 function hideElement(element) {
-  if (element) {
-    element.hidden = true;
-  }
+  if (element) element.hidden = true;
 }
 
 function normalizeText(value) {
@@ -94,11 +91,17 @@ function normalizeText(value) {
 }
 
 function getProductName(product) {
-  return product.name || product.nome || "Produto sem nome";
+  return String(
+    product.name ||
+    product.nome ||
+    product.title ||
+    "Produto sem nome"
+  );
 }
 
 function getProductPrice(product) {
-  const price = Number(product.price ?? product.preco ?? 0);
+  const value = product.price ?? product.preco ?? 0;
+  const price = Number(value);
 
   return Number.isFinite(price) && price >= 0 ? price : 0;
 }
@@ -106,19 +109,24 @@ function getProductPrice(product) {
 function getProductImage(product) {
   const images = product.images;
 
-  if (Array.isArray(images) && images.length > 0) {
-    return images[0];
+  if (Array.isArray(images) && images.length) {
+    return String(images[0] || "");
   }
 
   if (typeof images === "string" && images.trim()) {
-    return images;
+    return images.trim();
   }
 
-  if (Array.isArray(product.imageUrls) && product.imageUrls.length > 0) {
-    return product.imageUrls[0];
+  if (Array.isArray(product.imageUrls) && product.imageUrls.length) {
+    return String(product.imageUrls[0] || "");
   }
 
-  return product.image || product.imageUrl || product.foto || "";
+  return String(
+    product.image ||
+    product.imageUrl ||
+    product.foto ||
+    ""
+  );
 }
 
 function getProductCategory(product) {
@@ -130,7 +138,7 @@ function getProductCategory(product) {
 }
 
 function getProductStore(product) {
-  return (
+  return String(
     product.storeName ||
     product.merchantName ||
     product.shopName ||
@@ -148,70 +156,15 @@ function getProductReference(product) {
   );
 }
 
-function isProductAvailable(product) {
-  if (
-    product.available === false ||
-    product.isAvailable === false ||
-    product.active === false ||
-    product.status === "inactive"
-  ) {
-    return false;
+function getProductUrl(product) {
+  const id = String(product.id || "").trim();
+
+  if (!id) {
+    console.error("Toma V2: ID do produto em falta.", product);
+    return "#";
   }
 
-  const stock = product.stock ?? product.quantityInStock;
-
-  if (stock !== undefined && stock !== null && stock !== "") {
-    const numericStock = Number(stock);
-
-    if (Number.isFinite(numericStock) && numericStock <= 0) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-function isProductOnPromotion(product) {
-  const oldPrice = Number(product.oldPrice ?? product.precoAntigo ?? 0);
-  const price = getProductPrice(product);
-
-  return oldPrice > price && price > 0;
-}
-
-function isProductNew(product) {
-  if (product.isNew === true || product.novo === true) {
-    return true;
-  }
-
-  const dateValue =
-    product.createdAt ||
-    product.created_at ||
-    product.dataCriacao;
-
-  if (!dateValue) {
-    return false;
-  }
-
-  let date;
-
-  if (typeof dateValue.toDate === "function") {
-    date = dateValue.toDate();
-  } else if (dateValue instanceof Date) {
-    date = dateValue;
-  } else if (typeof dateValue === "number") {
-    date = new Date(dateValue);
-  } else if (typeof dateValue === "string") {
-    date = new Date(dateValue);
-  }
-
-  if (!date || Number.isNaN(date.getTime())) {
-    return false;
-  }
-
-  const daysSinceCreation =
-    (Date.now() - date.getTime()) / (1000 * 60 * 60 * 24);
-
-  return daysSinceCreation >= 0 && daysSinceCreation <= 30;
+  return `./product-detail.html?id=${encodeURIComponent(id)}`;
 }
 
 function formatPrice(price) {
@@ -234,35 +187,93 @@ function escapeHTML(value) {
   });
 }
 
-// ======================================
-// BLOC — LIEN VERS LA PAGE DU PRODUIT
-// ======================================
+function getCreationTime(product) {
+  const value =
+    product.createdAt ||
+    product.created_at ||
+    product.dataCriacao;
 
-function getProductUrl(product) {
-    const productId = String(product.id || "").trim();
+  if (!value) return 0;
 
-    if (!productId) {
-        console.error(
-            "TOMA CATALOG V2 : identifiant du produit manquant",
-            product
-        );
-
-        return "#";
+  try {
+    if (typeof value.toDate === "function") {
+      return value.toDate().getTime();
     }
 
-    return `./product-detail.html?id=${encodeURIComponent(productId)}`;
+    const date = value instanceof Date
+      ? value
+      : new Date(value);
+
+    return Number.isNaN(date.getTime()) ? 0 : date.getTime();
+  } catch {
+    return 0;
+  }
 }
+
+function isProductAvailable(product) {
+  const status = normalizeText(product.status || "");
+
+  if (
+    product.available === false ||
+    product.isAvailable === false ||
+    product.active === false ||
+    product.isActive === false ||
+    ["inactive", "inativo", "blocked", "bloqueado"].includes(status)
+  ) {
+    return false;
+  }
+
+  const stock = product.stock ?? product.quantityInStock;
+
+  if (stock !== undefined && stock !== null && stock !== "") {
+    const numericStock = Number(stock);
+
+    if (Number.isFinite(numericStock) && numericStock <= 0) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function isProductOnPromotion(product) {
+  const oldPrice = Number(
+    product.oldPrice ??
+    product.precoAntigo ??
+    0
+  );
+
+  const price = getProductPrice(product);
+
+  return oldPrice > price && price > 0;
+}
+
+function isProductNew(product) {
+  if (product.isNew === true || product.novo === true) {
+    return true;
+  }
+
+  const created = getCreationTime(product);
+
+  if (!created) return false;
+
+  const days = (Date.now() - created) / 86400000;
+
+  return days >= 0 && days <= 30;
+}
+
 /* =========================================================
-   4. LOADER ET ÉTATS
+   4. ESTADOS DA INTERFACE
    ========================================================= */
 
 function showLoader() {
   showElement(loader);
   hideElement(emptyState);
   hideElement(errorState);
+  hideElement(loadingMore);
 
   if (productsGrid) {
-    productsGrid.innerHTML = "";
+    productsGrid.replaceChildren();
   }
 }
 
@@ -270,81 +281,68 @@ function hideLoader() {
   hideElement(loader);
 }
 
-function showError(message) {
+function showError(message = "") {
   hideLoader();
+  hideElement(emptyState);
+  hideElement(loadingMore);
+  showElement(errorState);
 
   if (productsGrid) {
-    productsGrid.innerHTML = "";
+    productsGrid.replaceChildren();
   }
 
-  hideElement(emptyState);
-  showElement(errorState);
+  if (catalogInfo) {
+    catalogInfo.textContent = "Não foi possível carregar o catálogo";
+  }
 
   const paragraph = errorState?.querySelector("p");
 
-  if (paragraph && message) {
-    paragraph.textContent =
-      "Não foi possível carregar os produtos. " + message;
+  if (paragraph) {
+    paragraph.textContent = message ||
+      "Verifique a sua ligação à internet e tente novamente.";
   }
 }
 
 /* =========================================================
-   5. FAVORIS
+   5. FAVORITOS
    ========================================================= */
 
 function productIsFavorite(productId) {
   try {
-    if (typeof isFavorite === "function") {
-      return Boolean(isFavorite(productId));
-    }
-
-    const favorites = getFavorites();
-
-    if (Array.isArray(favorites)) {
-      return favorites.some(item => {
-        const id = typeof item === "string" ? item : item?.id;
-
-        return String(id) === String(productId);
-      });
-    }
+    return Boolean(isFavorite(String(productId)));
   } catch (error) {
-    console.warn("Toma V2: favoritos indisponíveis.", error);
-  }
+    console.warn("Toma V2: erro ao consultar favoritos.", error);
 
-  return false;
+    try {
+      const favorites = getFavorites();
+
+      return Array.isArray(favorites) &&
+        favorites.some(item =>
+          String(typeof item === "string" ? item : item?.id) ===
+          String(productId)
+        );
+    } catch {
+      return false;
+    }
+  }
 }
 
 function handleFavorite(productId) {
   try {
-    if (typeof toggleFavorite !== "function") {
-      alert("Não foi possível atualizar os favoritos.");
-      return;
-    }
-
-    toggleFavorite(productId);
-
+    toggleFavorite(String(productId));
     applyFilters();
-
   } catch (error) {
-    console.error("Erro ao atualizar favorito:", error);
-
+    console.error("Toma V2: erro nos favoritos.", error);
     alert("Não foi possível atualizar os favoritos.");
   }
 }
 
 /* =========================================================
-   6. CONTADOR DO CARRINHO
-   ========================================================= */
-
-/* =========================================================
-   TOMA V2 — COMPTEUR DU PANIER
-   Utilise quantity, conformément à storage.js
+   6. CARRINHO
    ========================================================= */
 
 function updateCartCount() {
-  if (!cartCount) {
-    return;
-  }
+  if (!cartCount) return;
 
   try {
     const cart = getCart();
@@ -367,96 +365,64 @@ function updateCartCount() {
       "aria-label",
       `Abrir carrinho, ${total} artigos`
     );
-
   } catch (error) {
-    console.error(
-      "Toma V2 — Erro ao atualizar o carrinho:",
-      error
-    );
-
+    console.error("Toma V2: erro no contador do carrinho.", error);
     cartCount.textContent = "0";
   }
 }
 
-/* =========================================================
-   7. ADICIONAR AO CARRINHO
-   ========================================================= */
-
-/* =========================================================
-   TOMA V2 — AJOUT AU PANIER
-   Compatible avec js/storage.js
-   ========================================================= */
-
 function handleAddToCart(product) {
   try {
-    if (typeof addToCart !== "function") {
-      alert("O carrinho não está disponível.");
-      return;
-    }
-
     if (!isProductAvailable(product)) {
       alert("Este produto está esgotado.");
       return;
     }
 
-    const cartProduct = {
-      id: String(product.id),
+    const id = String(product.id || "").trim();
 
+    if (!id) {
+      alert("Não foi possível identificar este produto.");
+      return;
+    }
+
+    addToCart({
+      id,
       name: getProductName(product),
-
       price: getProductPrice(product),
-
       image: getProductImage(product) || "images/no-image.png",
-
       images: Array.isArray(product.images)
         ? product.images
         : [],
+      merchantId: product.merchantId || product.storeId || null
+    });
 
-      merchantId:
-        product.merchantId ||
-        product.storeId ||
-        null
-    };
-
-    // Utilise le système de panier déjà présent dans Toma.
-    addToCart(cartProduct);
-
-    // Actualise le compteur.
     updateCartCount();
 
-    // Confirmation en portugais.
     alert("Produto adicionado ao carrinho!");
-
   } catch (error) {
-    console.error(
-      "Toma V2 — Erro ao adicionar ao carrinho:",
-      error
-    );
-
-    alert(
-      "Não foi possível adicionar o produto ao carrinho."
-    );
+    console.error("Toma V2: erro ao adicionar ao carrinho.", error);
+    alert("Não foi possível adicionar o produto ao carrinho.");
   }
 }
+
 /* =========================================================
-   8. CRIAR CARTÃO DO PRODUTO
+   7. CARTAO DO PRODUTO
    ========================================================= */
 
 function createProductCard(product) {
   const card = document.createElement("article");
-
   card.className = "productCard";
 
-  const productId = String(product.id);
+  const id = String(product.id);
   const name = getProductName(product);
   const price = getProductPrice(product);
   const image = getProductImage(product);
   const store = getProductStore(product);
-
   const oldPrice = Number(product.oldPrice ?? product.precoAntigo ?? 0);
 
-  const favorite = productIsFavorite(productId);
+  const favorite = productIsFavorite(id);
   const available = isProductAvailable(product);
+  const url = getProductUrl(product);
 
   let badgeHTML = "";
 
@@ -470,16 +436,12 @@ function createProductCard(product) {
     badgeHTML = '<span class="badgeDelivery">Entrega rápida</span>';
   }
 
-  const safeImage = escapeHTML(image);
-
   const imageHTML = image
-    ? `<img
-         class="productImage"
-         src="${safeImage}"
-         alt="${escapeHTML(name)}"
-         loading="lazy"
-         decoding="async"
-       >`
+    ? `<img class="productImage"
+             src="${escapeHTML(image)}"
+             alt="${escapeHTML(name)}"
+             loading="lazy"
+             decoding="async">`
     : `<div class="productImage productImageContain"
             role="img"
             aria-label="Imagem não disponível"
@@ -492,41 +454,36 @@ function createProductCard(product) {
     : "";
 
   const priceHTML = isProductOnPromotion(product)
-    ? `
-        <div class="productPriceRow">
-          <span class="productPrice">${formatPrice(price)}</span>
-          <span class="productCurrency">Kz</span>
-          <span class="productOldPrice">${formatPrice(oldPrice)} Kz</span>
-        </div>
-      `
-    : `
-        <div class="productPriceRow">
-          <span class="productPrice">${formatPrice(price)}</span>
-          <span class="productCurrency">Kz</span>
-        </div>
-      `;
+    ? `<div class="productPriceRow">
+         <span class="productPrice">${formatPrice(price)}</span>
+         <span class="productCurrency">Kz</span>
+         <span class="productOldPrice">${formatPrice(oldPrice)} Kz</span>
+       </div>`
+    : `<div class="productPriceRow">
+         <span class="productPrice">${formatPrice(price)}</span>
+         <span class="productCurrency">Kz</span>
+       </div>`;
 
   card.innerHTML = `
     <div class="productImageWrap">
       ${imageHTML}
       ${badgeHTML}
 
-      <button
-        class="favoriteButton ${favorite ? "active" : ""}"
-        type="button"
-        data-action="favorite"
-        aria-label="${favorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}"
-        aria-pressed="${favorite}"
-      >${favorite ? "♥" : "♡"}</button>
+      <button class="favoriteButton ${favorite ? "active" : ""}"
+              type="button"
+              data-action="favorite"
+              aria-label="${favorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}"
+              aria-pressed="${favorite}">
+        ${favorite ? "♥" : "♡"}
+      </button>
     </div>
 
     <div class="productCardInfo">
-      <a class="productNameLink" href="${escapeHTML(getProductUrl(product))}">
+      <a class="productNameLink" href="${escapeHTML(url)}">
         <h3 class="productName">${escapeHTML(name)}</h3>
       </a>
 
       ${storeHTML}
-
       ${priceHTML}
 
       <p class="productStock ${available ? "" : "outOfStock"}">
@@ -534,18 +491,16 @@ function createProductCard(product) {
       </p>
 
       <div class="productCardActions">
-        <button
-          class="addToCartButton"
-          type="button"
-          data-action="cart"
-          ${available ? "" : "disabled"}
-        >${available ? "🛒 Adicionar" : "Esgotado"}</button>
+        <button class="addToCartButton"
+                type="button"
+                data-action="cart"
+                ${available ? "" : "disabled"}>
+          ${available ? "🛒 Adicionar" : "Esgotado"}
+        </button>
 
-        <a
-          class="viewProductButton"
-          href="${escapeHTML(getProductUrl(product))}"
-          aria-label="Ver ${escapeHTML(name)}"
-        >↗</a>
+        <a class="viewProductButton"
+           href="${escapeHTML(url)}"
+           aria-label="Ver ${escapeHTML(name)}">↗</a>
       </div>
     </div>
   `;
@@ -554,31 +509,28 @@ function createProductCard(product) {
     ?.addEventListener("click", event => {
       event.preventDefault();
       event.stopPropagation();
-
-      handleFavorite(productId);
+      handleFavorite(id);
     });
 
   card.querySelector('[data-action="cart"]')
     ?.addEventListener("click", event => {
       event.preventDefault();
       event.stopPropagation();
-
       handleAddToCart(product);
     });
 
-  const imageElement = card.querySelector(".productImage");
+  const imageElement = card.querySelector("img.productImage");
 
-  if (imageElement && image) {
+  if (imageElement) {
     imageElement.addEventListener("error", () => {
-      imageElement.style.display = "none";
-
       const placeholder = document.createElement("div");
 
+      placeholder.className = "productImage productImageContain";
       placeholder.textContent = "Imagem indisponível";
       placeholder.style.cssText =
-        "width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#969ba5;font-size:11px;";
+        "display:flex;align-items:center;justify-content:center;color:#969ba5;font-size:12px;";
 
-      imageElement.parentElement?.appendChild(placeholder);
+      imageElement.replaceWith(placeholder);
     }, { once: true });
   }
 
@@ -586,13 +538,11 @@ function createProductCard(product) {
 }
 
 /* =========================================================
-   9. CATEGORIAS
+   8. CATEGORIAS
    ========================================================= */
 
 function populateCategories() {
-  if (!categoryFilter) {
-    return;
-  }
+  if (!categoryFilter) return;
 
   const previousValue = categoryFilter.value;
 
@@ -604,15 +554,17 @@ function populateCategories() {
     )
   ].sort((a, b) => a.localeCompare(b, "pt"));
 
-  categoryFilter.innerHTML =
-    '<option value="">Todas as categorias</option>';
+  categoryFilter.replaceChildren();
+
+  const defaultOption = document.createElement("option");
+  defaultOption.value = "";
+  defaultOption.textContent = "Todas as categorias";
+  categoryFilter.appendChild(defaultOption);
 
   categories.forEach(category => {
     const option = document.createElement("option");
-
     option.value = category;
     option.textContent = category;
-
     categoryFilter.appendChild(option);
   });
 
@@ -622,24 +574,18 @@ function populateCategories() {
 }
 
 /* =========================================================
-   10. RECHERCHE ET FILTRES
+   9. FILTROS
    ========================================================= */
 
 function applyFilters() {
   const search = normalizeText(searchInput?.value || "");
-
   const category = categoryFilter?.value || "";
 
-  const minPriceValue = minPriceInput?.value;
-  const maxPriceValue = maxPriceInput?.value;
+  const minRaw = minPriceInput?.value ?? "";
+  const maxRaw = maxPriceInput?.value ?? "";
 
-  const minPrice = minPriceValue !== ""
-    ? Number(minPriceValue)
-    : null;
-
-  const maxPrice = maxPriceValue !== ""
-    ? Number(maxPriceValue)
-    : null;
+  const minPrice = minRaw.trim() !== "" ? Number(minRaw) : null;
+  const maxPrice = maxRaw.trim() !== "" ? Number(maxRaw) : null;
 
   const stockStatus = statusFilter?.value || "";
 
@@ -651,9 +597,7 @@ function applyFilters() {
       getProductCategory(product)
     ].join(" "));
 
-    if (search && !searchableText.includes(search)) {
-      return false;
-    }
+    if (search && !searchableText.includes(search)) return false;
 
     if (category && getProductCategory(product) !== category) {
       return false;
@@ -677,10 +621,7 @@ function applyFilters() {
       return false;
     }
 
-    if (
-      activeQuickFilter === "new" &&
-      !isProductNew(product)
-    ) {
+    if (activeQuickFilter === "new" && !isProductNew(product)) {
       return false;
     }
 
@@ -701,14 +642,10 @@ function applyFilters() {
     return true;
   });
 
-  switch (activeQuickFilter) {
-    case "cheap":
-      products.sort((a, b) => getProductPrice(a) - getProductPrice(b));
-      break;
-
-    case "expensive":
-      products.sort((a, b) => getProductPrice(b) - getProductPrice(a));
-      break;
+  if (activeQuickFilter === "cheap") {
+    products.sort((a, b) => getProductPrice(a) - getProductPrice(b));
+  } else if (activeQuickFilter === "expensive") {
+    products.sort((a, b) => getProductPrice(b) - getProductPrice(a));
   }
 
   const sort = sortSelect?.value || "relevance";
@@ -722,46 +659,24 @@ function applyFilters() {
   }
 
   filteredProducts = products;
-
   renderProducts();
 }
 
-function getCreationTime(product) {
-  const value =
-    product.createdAt ||
-    product.created_at ||
-    product.dataCriacao;
-
-  if (!value) {
-    return 0;
-  }
-
-  if (typeof value.toDate === "function") {
-    return value.toDate().getTime();
-  }
-
-  const date = new Date(value);
-
-  return Number.isNaN(date.getTime()) ? 0 : date.getTime();
-}
-
 /* =========================================================
-   11. AFFICHER LES PRODUITS PAR LOTS
+   10. RENDU PAR LOTS
    ========================================================= */
 
 function renderProducts() {
-  if (!productsGrid) {
-    return;
-  }
+  if (!productsGrid) return;
 
   renderVersion++;
-
-  productsGrid.innerHTML = "";
-
   displayedCount = 0;
+
+  productsGrid.replaceChildren();
 
   hideElement(loader);
   hideElement(errorState);
+  hideElement(loadingMore);
 
   if (filteredProducts.length === 0) {
     showElement(emptyState);
@@ -780,39 +695,35 @@ function renderProducts() {
       `${filteredProducts.length} produtos encontrados`;
   }
 
-  renderMoreProducts();
+  renderMoreProducts(renderVersion);
 }
 
-function renderMoreProducts() {
-  if (isRenderingMore) {
-    return;
-  }
+function renderMoreProducts(expectedVersion = renderVersion) {
+  if (!productsGrid || expectedVersion !== renderVersion) return;
 
-  if (!productsGrid || displayedCount >= filteredProducts.length) {
+  if (displayedCount >= filteredProducts.length) {
     hideElement(loadingMore);
     return;
   }
 
-  isRenderingMore = true;
-
   const currentVersion = renderVersion;
-  const fragment = document.createDocumentFragment();
-
+  const start = displayedCount;
   const end = Math.min(
-    displayedCount + PRODUCTS_PER_BATCH,
+    start + PRODUCTS_PER_BATCH,
     filteredProducts.length
   );
 
-  for (let i = displayedCount; i < end; i++) {
-    fragment.appendChild(createProductCard(filteredProducts[i]));
+  const fragment = document.createDocumentFragment();
+
+  for (let index = start; index < end; index++) {
+    fragment.appendChild(createProductCard(filteredProducts[index]));
   }
 
-  if (currentVersion === renderVersion) {
-    productsGrid.appendChild(fragment);
-    displayedCount = end;
-  }
+  // Verifica se os filtros mudaram enquanto o lote era preparado.
+  if (currentVersion !== renderVersion) return;
 
-  isRenderingMore = false;
+  productsGrid.appendChild(fragment);
+  displayedCount = end;
 
   if (displayedCount < filteredProducts.length) {
     showElement(loadingMore);
@@ -822,48 +733,54 @@ function renderMoreProducts() {
 }
 
 /* =========================================================
-   12. CHARGER LES PRODUITS DE FIREBASE
+   11. CARREGAMENTO FIREBASE
    ========================================================= */
 
 async function loadProducts() {
-  if (isLoadingProducts) {
-    return;
-  }
+  if (isLoadingProducts) return;
 
   isLoadingProducts = true;
-
   showLoader();
+
+  if (retryButton) {
+    retryButton.disabled = true;
+    retryButton.textContent = "A carregar...";
+  }
 
   try {
     const snapshot = await getDocs(collection(db, "products"));
 
     allProducts = snapshot.docs.map(productDoc => ({
-      id: productDoc.id,
-      ...productDoc.data()
+      ...productDoc.data(),
+      id: productDoc.id
     }));
 
     populateCategories();
 
     hideLoader();
-
     applyFilters();
 
     console.log(
       `Toma V2: ${allProducts.length} produtos carregados.`
     );
-
   } catch (error) {
     console.error("Toma V2: erro ao carregar produtos:", error);
 
-    showError("");
-
+    showError(
+      "Verifique a sua ligação à internet e tente novamente."
+    );
   } finally {
     isLoadingProducts = false;
+
+    if (retryButton) {
+      retryButton.disabled = false;
+      retryButton.textContent = "Tentar novamente";
+    }
   }
 }
 
 /* =========================================================
-   13. ÉVÉNEMENTS DES FILTRES RAPIDES
+   12. FILTROS RÁPIDOS
    ========================================================= */
 
 document.querySelectorAll(".filterChip").forEach(chip => {
@@ -873,7 +790,6 @@ document.querySelectorAll(".filterChip").forEach(chip => {
     });
 
     chip.classList.add("active");
-
     activeQuickFilter = chip.dataset.filter || "all";
 
     applyFilters();
@@ -881,7 +797,7 @@ document.querySelectorAll(".filterChip").forEach(chip => {
 });
 
 /* =========================================================
-   14. RECHERCHE
+   13. PESQUISA
    ========================================================= */
 
 if (searchInput) {
@@ -902,16 +818,17 @@ if (clearSearch) {
     }
 
     clearSearch.hidden = true;
-
     applyFilters();
   });
 }
 
 /* =========================================================
-   15. FILTRES AVANCÉS
+   14. FILTROS AVANÇADOS
    ========================================================= */
 
 if (filterButton && advancedFilters) {
+  filterButton.setAttribute("aria-expanded", "false");
+
   filterButton.addEventListener("click", () => {
     advancedFilters.hidden = !advancedFilters.hidden;
 
@@ -922,50 +839,17 @@ if (filterButton && advancedFilters) {
   });
 }
 
-if (applyFiltersButton) {
-  applyFiltersButton.addEventListener("click", applyFilters);
-}
-
-if (sortSelect) {
-  sortSelect.addEventListener("change", applyFilters);
-}
-
-if (resetFiltersButton) {
-  resetFiltersButton.addEventListener("click", resetFilters);
-}
-
-if (emptyResetButton) {
-  emptyResetButton.addEventListener("click", resetFilters);
-}
+applyFiltersButton?.addEventListener("click", applyFilters);
+sortSelect?.addEventListener("change", applyFilters);
 
 function resetFilters() {
-  if (searchInput) {
-    searchInput.value = "";
-  }
-
-  if (clearSearch) {
-    clearSearch.hidden = true;
-  }
-
-  if (categoryFilter) {
-    categoryFilter.value = "";
-  }
-
-  if (minPriceInput) {
-    minPriceInput.value = "";
-  }
-
-  if (maxPriceInput) {
-    maxPriceInput.value = "";
-  }
-
-  if (statusFilter) {
-    statusFilter.value = "";
-  }
-
-  if (sortSelect) {
-    sortSelect.value = "relevance";
-  }
+  if (searchInput) searchInput.value = "";
+  if (clearSearch) clearSearch.hidden = true;
+  if (categoryFilter) categoryFilter.value = "";
+  if (minPriceInput) minPriceInput.value = "";
+  if (maxPriceInput) maxPriceInput.value = "";
+  if (statusFilter) statusFilter.value = "";
+  if (sortSelect) sortSelect.value = "relevance";
 
   activeQuickFilter = "all";
 
@@ -976,40 +860,46 @@ function resetFilters() {
   applyFilters();
 }
 
-/* =========================================================
-   16. BOUTON RETOUR
-   ========================================================= */
-
-if (backButton) {
-  backButton.addEventListener("click", () => {
-    if (window.history.length > 1) {
-      window.history.back();
-    } else {
-      window.location.href = "./home.html";
-    }
-  });
-}
+resetFiltersButton?.addEventListener("click", resetFilters);
+emptyResetButton?.addEventListener("click", resetFilters);
+retryButton?.addEventListener("click", loadProducts);
 
 /* =========================================================
-   17. BOUTON PANIER
+   15. NAVEGAÇÃO
    ========================================================= */
 
-if (cartButton) {
-  cartButton.addEventListener("click", () => {
-    window.location.href = "./cart.html";
-  });
-}
+backButton?.addEventListener("click", () => {
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    window.location.href = "./home.html";
+  }
+});
 
-window.addEventListener("storage", updateCartCount);
+cartButton?.addEventListener("click", () => {
+  window.location.href = "./cart.html";
+});
+
+window.addEventListener("storage", event => {
+  if (!event.key || event.key === "toma_cart") {
+    updateCartCount();
+  }
+
+  if (!event.key || event.key === "toma_favorites") {
+    applyFilters();
+  }
+});
+
+window.addEventListener("pageshow", updateCartCount);
 
 updateCartCount();
 
 /* =========================================================
-   18. CHARGEMENT PROGRESSIF
+   16. CARREGAMENTO PROGRESSIVO
    ========================================================= */
 
 if ("IntersectionObserver" in window && paginationSentinel) {
-  const paginationObserver = new IntersectionObserver(entries => {
+  paginationObserver = new IntersectionObserver(entries => {
     if (entries.some(entry => entry.isIntersecting)) {
       renderMoreProducts();
     }
@@ -1018,7 +908,6 @@ if ("IntersectionObserver" in window && paginationSentinel) {
   });
 
   paginationObserver.observe(paginationSentinel);
-
 } else {
   window.addEventListener("scroll", () => {
     const nearBottom =
@@ -1032,7 +921,7 @@ if ("IntersectionObserver" in window && paginationSentinel) {
 }
 
 /* =========================================================
-   19. DÉMARRAGE
+   17. INICIALIZAÇÃO
    ========================================================= */
 
 loadProducts();
