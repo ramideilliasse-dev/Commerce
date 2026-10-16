@@ -166,7 +166,7 @@ function getProductUrl(product) {
     return "#";
   }
 
-  return `./product-detail.html?id=${encodeURIComponent(id)}`;
+  return `./product-detail-v2.html?id=${encodeURIComponent(id)}`;
 }
 
 function formatPrice(price) {
