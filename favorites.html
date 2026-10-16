@@ -4,501 +4,1522 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Favoritos</title>
+<meta name="theme-color" content="#ffffff">
+<meta name="description" content="Encontre e gerencie os seus produtos favoritos na Toma.">
+
+<title>Meus Favoritos | Toma</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link
+  href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+  rel="stylesheet"
+>
 
 <style>
-
-body{
-font-family:Arial;
-margin:0;
-background:#f5f5f5;
+:root {
+  --primary: #ff6a00;
+  --primary-dark: #e85d00;
+  --green: #16a34a;
+  --text: #172033;
+  --muted: #7b8494;
+  --background: #f5f7fb;
+  --white: #ffffff;
+  --border: #edf0f5;
+  --danger: #e11d48;
+  --radius: 20px;
 }
 
-.header{
-
-position:sticky;
-
-top:0;
-
-z-index:1000;
-
-height:72px;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-background:white;
-
-color:#111827;
-
-font-size:24px;
-
-font-weight:800;
-
-box-shadow:0 2px 15px rgba(0,0,0,.08);
-
-border-bottom:1px solid #ECECEC;
-
+* {
+  box-sizing: border-box;
 }
 
-.products{
-padding:10px;
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:10px;
+html {
+  scroll-behavior: smooth;
 }
 
-.product{
-
-background:#fff;
-
-border-radius:22px;
-
-overflow:hidden;
-
-box-shadow:0 8px 20px rgba(0,0,0,.08);
-
-transition:.25s;
-
-cursor:pointer;
-
+body {
+  margin: 0;
+  font-family: "Poppins", Arial, sans-serif;
+  background: var(--background);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
 }
 
-.product:hover{
-
-transform:translateY(-4px);
-
-box-shadow:0 15px 35px rgba(0,0,0,.14);
-
+button,
+a {
+  font: inherit;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.productImageBox{
-
-position:relative;
-
-height:180px;
-
-overflow:hidden;
-
+button {
+  cursor: pointer;
 }
 
-.product img{
-
-width:100%;
-
-height:100%;
-
-object-fit:cover;
-
-transition:.35s;
-
-display:block;
-
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
-.product:hover img{
-
-transform:scale(1.08);
-
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid rgba(255, 106, 0, 0.35);
+  outline-offset: 3px;
 }
 
-.info{
+/* HEADER */
 
-padding:14px;
-
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
 }
 
-.name{
-
-font-size:16px;
-
-font-weight:700;
-
-line-height:20px;
-
-height:40px;
-
-overflow:hidden;
-
-display:-webkit-box;
-
--webkit-line-clamp:2;
-
--webkit-box-orient:vertical;
-
+.headerInner {
+  max-width: 1250px;
+  min-height: 72px;
+  padding: 12px 20px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
 }
 
-.price{
-
-margin-top:8px;
-
-font-size:22px;
-
-font-weight:800;
-
-color:#16A34A;
-
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
 }
 
-.store{
-
-margin-top:8px;
-
-display:flex;
-
-align-items:center;
-
-gap:6px;
-
-font-size:13px;
-
-font-weight:600;
-
-color:#666;
-
-}
-.soldOut{
-background:red;
-color:white;
-padding:4px 8px;
-border-radius:8px;
-font-size:12px;
-font-weight:bold;
-display:inline-block;
-margin-top:5px;
-}
-.empty{
-text-align:center;
-padding:50px 20px;
-color:#666;
+.headerHeart {
+  width: 43px;
+  height: 43px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 15px;
+  background: #fff0f1;
+  font-size: 23px;
 }
 
-.btnHome{
-background:#ff6a00;
-color:white;
-border:none;
-padding:12px 20px;
-border-radius:30px;
-margin-top:15px;
-font-weight:bold;
-}
-.favoriteRemove{
-
-position:absolute;
-
-top:10px;
-
-right:10px;
-
-width:40px;
-
-height:40px;
-
-border-radius:50%;
-
-background:white;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-font-size:20px;
-
-box-shadow:0 5px 15px rgba(0,0,0,.18);
-
-cursor:pointer;
-
-z-index:100;
-
+.headerText {
+  min-width: 0;
 }
 
-.favoriteRemove:hover{
-
-transform:scale(1.08);
-
-}
-.cartAdd{
-
-position:absolute;
-
-bottom:10px;
-
-right:10px;
-
-width:48px;
-
-height:48px;
-
-border-radius:50%;
-
-background:#16A34A;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-font-size:24px;
-
-color:white;
-
-box-shadow:0 8px 18px rgba(22,163,74,.30);
-
-cursor:pointer;
-
-transition:.25s;
-
-z-index:100;
-
+.headerText h1 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.35;
 }
 
-.cartAdd:hover{
-
-transform:scale(1.08);
-
+.headerText p {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 11px;
 }
 
-.product{
-
-background:#fff;
-
-border-radius:18px;
-
-overflow:hidden;
-
-box-shadow:0 6px 18px rgba(0,0,0,.08);
-
-transition:.25s;
-
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
 }
 
-.product:hover{
-
-transform:translateY(-3px);
-
-box-shadow:0 10px 26px rgba(0,0,0,.12);
-
+.headerButton {
+  min-height: 42px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--white);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: 0.2s;
 }
 
-.store{
+.headerButton:hover {
+  border-color: #ffd1b5;
+  color: var(--primary);
+}
 
-margin-top:8px;
+.cartButton {
+  position: relative;
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
 
-font-size:13px;
+.cartButton:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  color: white;
+}
 
-color:#666;
+.cartCount {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 20px;
+  background: white;
+  color: var(--primary-dark);
+  font-size: 10px;
+  font-weight: 800;
+}
 
-font-weight:600;
+/* MAIN */
 
+.container {
+  width: min(1250px, 100%);
+  margin: auto;
+  padding: 26px 20px 55px;
+}
+
+.pageIntro {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 22px;
+}
+
+.pageIntro h2 {
+  margin: 0;
+  font-size: clamp(22px, 4vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.8px;
+}
+
+.pageIntro p {
+  margin: 7px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.favoriteCount {
+  flex-shrink: 0;
+  padding: 9px 13px;
+  border: 1px solid #ffe1d0;
+  border-radius: 12px;
+  background: #fff5ef;
+  color: var(--primary-dark);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* PRODUCT GRID */
+
+.products {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 13px;
+}
+
+.product {
+  min-width: 0;
+  overflow: hidden;
+  position: relative;
+  background: var(--white);
+  border: 1px solid rgba(230, 234, 241, 0.8);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 15px rgba(20, 30, 50, 0.045);
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: cardAppear 0.3s ease both;
+}
+
+.product:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(20, 30, 50, 0.09);
+}
+
+.productImageBox {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #f0f2f6;
+}
+
+.productImageLink {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.productImage {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.35s;
+}
+
+.product:hover .productImage {
+  transform: scale(1.045);
+}
+
+.favoriteRemove {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  z-index: 2;
+  width: 37px;
+  height: 37px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(230, 230, 230, 0.7);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.10);
+  font-size: 18px;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.favoriteRemove:hover {
+  transform: scale(1.08);
+  background: #fff0f1;
+}
+
+.cartAdd {
+  position: absolute;
+  right: 9px;
+  bottom: 9px;
+  z-index: 2;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: none;
+  border-radius: 15px;
+  background: var(--green);
+  color: white;
+  box-shadow: 0 5px 14px rgba(22, 163, 74, 0.25);
+  font-size: 21px;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.cartAdd:hover {
+  transform: scale(1.06);
+  background: #12833c;
+}
+
+.cartAdd:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  box-shadow: none;
+  transform: none;
+}
+
+.soldOutBadge {
+  position: absolute;
+  bottom: 10px;
+  left: 9px;
+  z-index: 1;
+  padding: 5px 8px;
+  border-radius: 8px;
+  background: #fff0f1;
+  color: #be123c;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.info {
+  padding: 13px;
+}
+
+.productName {
+  min-height: 40px;
+  margin: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 20px;
+}
+
+.productName a:hover {
+  color: var(--primary-dark);
+}
+
+.price {
+  margin-top: 9px;
+  color: var(--green);
+  font-size: clamp(15px, 2.8vw, 19px);
+  font-weight: 800;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.store {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 500;
+  overflow: hidden;
+}
+
+.store span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stockText {
+  margin-top: 7px;
+  color: var(--green);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.stockText.outOfStock {
+  color: var(--danger);
+}
+
+/* EMPTY / LOADING / ERROR */
+
+.stateBox {
+  padding: 55px 20px;
+  text-align: center;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+}
+
+.stateIcon {
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 17px;
+  display: grid;
+  place-items: center;
+  border-radius: 25px;
+  background: #fff0f1;
+  font-size: 35px;
+}
+
+.stateBox h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.stateBox p {
+  max-width: 390px;
+  margin: 10px auto 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.primaryButton {
+  min-height: 45px;
+  margin-top: 20px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 14px;
+  background: var(--primary);
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.primaryButton:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.secondaryButton {
+  margin-left: 7px;
+  background: #edf0f5;
+  color: var(--text);
+}
+
+.secondaryButton:hover {
+  background: #e1e6ef;
+}
+
+.spinner {
+  width: 38px;
+  height: 38px;
+  margin: 0 auto 18px;
+  border: 4px solid #ffe2d0;
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* TOAST */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 22px;
+  z-index: 3000;
+  width: min(420px, calc(100% - 28px));
+  padding: 14px 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 17px;
+  background: #172033;
+  color: white;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.22);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, 15px);
+  transition: opacity 0.25s, transform 0.25s, visibility 0.25s;
+}
+
+.toast.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+}
+
+.toastIcon {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: rgba(22, 163, 74, 0.2);
+  font-size: 20px;
+}
+
+.toastContent {
+  min-width: 0;
+  flex: 1;
+}
+
+.toastTitle {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.toastMessage {
+  margin-top: 3px;
+  overflow: hidden;
+  color: #cbd5e1;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.toastAction {
+  padding: 8px 10px;
+  border: none;
+  border-radius: 10px;
+  background: var(--primary);
+  color: white;
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+/* ANIMATIONS */
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes cardAppear {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cartPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+}
+
+.cartPulse {
+  animation: cartPulse 0.35s ease;
+}
+
+/* RESPONSIVE */
+
+@media (min-width: 600px) {
+  .products {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 17px;
+  }
+
+  .info {
+    padding: 15px;
+  }
+
+  .productName {
+    font-size: 13px;
+  }
+}
+
+@media (min-width: 900px) {
+  .products {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .container {
+    padding-top: 32px;
+  }
+
+  .headerInner {
+    padding-left: 25px;
+    padding-right: 25px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .products {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 420px) {
+  .headerInner {
+    min-height: 65px;
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .headerHeart {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    font-size: 19px;
+  }
+
+  .headerText h1 {
+    font-size: 15px;
+  }
+
+  .headerText p {
+    font-size: 9px;
+  }
+
+  .headerActions {
+    gap: 6px;
+  }
+
+  .headerButton {
+    min-height: 38px;
+    padding: 0 9px;
+    border-radius: 11px;
+    font-size: 10px;
+  }
+
+  .headerButton .buttonLabel {
+    display: none;
+  }
+
+  .cartCount {
+    min-width: 17px;
+    height: 17px;
+    font-size: 9px;
+  }
+
+  .container {
+    padding: 20px 11px 40px;
+  }
+
+  .pageIntro {
+    align-items: flex-start;
+  }
+
+  .pageIntro h2 {
+    font-size: 22px;
+  }
+
+  .pageIntro p {
+    font-size: 11px;
+  }
+
+  .favoriteCount {
+    padding: 7px 9px;
+    font-size: 10px;
+  }
+
+  .products {
+    gap: 10px;
+  }
+
+  .product {
+    border-radius: 16px;
+  }
+
+  .favoriteRemove {
+    top: 7px;
+    right: 7px;
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .cartAdd {
+    right: 7px;
+    bottom: 7px;
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    font-size: 18px;
+  }
+
+  .info {
+    padding: 10px;
+  }
+
+  .productName {
+    min-height: 36px;
+    font-size: 11px;
+    line-height: 18px;
+  }
+
+  .store,
+  .stockText {
+    font-size: 9px;
+  }
+
+  .stateBox {
+    padding: 40px 17px;
+  }
+
+  .stateBox h3 {
+    font-size: 18px;
+  }
+
+  .stateBox p {
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">
+<header class="header">
+  <div class="headerInner">
 
-❤️ Meus Favoritos
+    <div class="headerTitle">
+      <div class="headerHeart" aria-hidden="true">❤️</div>
 
+      <div class="headerText">
+        <h1>Meus Favoritos</h1>
+        <p>Os produtos que guardou para si</p>
+      </div>
+    </div>
+
+    <nav class="headerActions" aria-label="Navegação">
+
+      <a class="headerButton" href="./home.html">
+        <span aria-hidden="true">⌂</span>
+        <span class="buttonLabel">Início</span>
+      </a>
+
+      <a class="headerButton cartButton" href="./cart.html">
+        <span aria-hidden="true">🛒</span>
+        <span class="buttonLabel">Carrinho</span>
+        <span id="cartCount" class="cartCount">0</span>
+      </a>
+
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="pageIntro">
+    <div>
+      <h2>Os seus favoritos ❤️</h2>
+      <p>Guarde os produtos de que mais gosta e encontre-os facilmente.</p>
+    </div>
+
+    <div id="favoriteCount" class="favoriteCount">
+      0 produtos
+    </div>
+  </section>
+
+  <section id="loadingState" class="stateBox" aria-live="polite">
+    <div class="spinner"></div>
+    <h3>A carregar favoritos...</h3>
+    <p>Estamos a procurar os seus produtos guardados.</p>
+  </section>
+
+  <section id="errorState" class="stateBox hidden" aria-live="polite">
+    <div class="stateIcon">⚠️</div>
+    <h3>Não foi possível carregar</h3>
+    <p id="errorMessage">
+      Ocorreu um problema ao carregar os favoritos.
+    </p>
+    <button id="retryButton" class="primaryButton" type="button">
+      Tentar novamente
+    </button>
+  </section>
+
+  <section id="emptyState" class="stateBox hidden">
+    <div class="stateIcon">❤️</div>
+    <h3>Ainda não tem favoritos</h3>
+    <p>
+      Explore a Toma e guarde os produtos de que mais gosta.
+      Eles aparecerão aqui.
+    </p>
+
+    <button
+      id="exploreButton"
+      class="primaryButton"
+      type="button"
+    >
+      🛍️ Explorar produtos
+    </button>
+  </section>
+
+  <section
+    id="products"
+    class="products hidden"
+    aria-label="Lista de produtos favoritos"
+  ></section>
+
+</main>
+
+<div
+  id="cartToast"
+  class="toast"
+  role="status"
+  aria-live="polite"
+>
+  <div class="toastIcon">✓</div>
+
+  <div class="toastContent">
+    <div id="toastTitle" class="toastTitle">Produto adicionado</div>
+    <div id="toastMessage" class="toastMessage">
+      Adicionado ao carrinho.
+    </div>
+  </div>
+
+  <button id="toastAction" class="toastAction" type="button">
+    Ver carrinho
+  </button>
 </div>
 
-<div id="content"></div>
-
 <script type="module">
-
 import { db } from "./firebase.js";
 
 import {
-
-doc,
-getDoc
-
+  doc,
+  getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import {
-
-getFavorites,
-removeFavorite as removeFavoriteStorage,
-addToCart
-
+  getFavorites,
+  removeFavorite as removeFavoriteStorage,
+  addToCart,
+  getCart
 } from "./js/storage.js";
-window.removeFavorite = function(id){
 
-    removeFavorite(id); // fonction de storage.js
+/* =====================================================
+   TOMA — FAVORITES PAGE
+   Uses existing storage.js and Firestore products.
+===================================================== */
 
-    loadFavorites();
+const PRODUCT_DETAIL_PAGE = "./product-detail.html";
+const CART_PAGE = "./cart.html";
+const HOME_PAGE = "./home.html";
+const PLACEHOLDER_IMAGE = "./images/no-image.png";
 
+const elements = {
+  loading: document.getElementById("loadingState"),
+  error: document.getElementById("errorState"),
+  errorMessage: document.getElementById("errorMessage"),
+  empty: document.getElementById("emptyState"),
+  products: document.getElementById("products"),
+  favoriteCount: document.getElementById("favoriteCount"),
+  cartCount: document.getElementById("cartCount"),
+  retry: document.getElementById("retryButton"),
+  explore: document.getElementById("exploreButton"),
+  toast: document.getElementById("cartToast"),
+  toastTitle: document.getElementById("toastTitle"),
+  toastMessage: document.getElementById("toastMessage"),
+  toastAction: document.getElementById("toastAction")
 };
 
-window.addToCart = async function(id){
+let toastTimer = null;
+let loadVersion = 0;
 
-try{
+/* ---------- GENERAL HELPERS ---------- */
 
-const snap = await getDoc(doc(db,"products",id));
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, character => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[character]);
+}
 
-if(!snap.exists()) return;
+function safeProductId(id) {
+  return String(id ?? "");
+}
 
-addToCart({
+function getProductName(product) {
+  return product.name || product.title || "Produto sem nome";
+}
 
-id,
+function getProductImage(product) {
+  let image = product.image;
 
-...snap.data()
+  if (!image && Array.isArray(product.images)) {
+    image = product.images[0];
+  }
 
+  if (!image && typeof product.images === "string") {
+    image = product.images;
+  }
+
+  return typeof image === "string" && image.trim()
+    ? image.trim()
+    : PLACEHOLDER_IMAGE;
+}
+
+function getProductPrice(product) {
+  const price = Number(product.price);
+
+  return Number.isFinite(price) && price >= 0
+    ? price
+    : null;
+}
+
+function formatPrice(price) {
+  return new Intl.NumberFormat("pt-AO", {
+    maximumFractionDigits: 2
+  }).format(price) + " Kz";
+}
+
+function getStoreName(product) {
+  return product.storeName ||
+         product.merchantName ||
+         product.shopName ||
+         "Loja Toma";
+}
+
+function getStock(product) {
+  /*
+   * If stock is absent, we do not automatically
+   * assume that the product is out of stock.
+   */
+  if (
+    product.stock === undefined ||
+    product.stock === null ||
+    product.stock === ""
+  ) {
+    return null;
+  }
+
+  const stock = Number(product.stock);
+
+  return Number.isFinite(stock) ? stock : null;
+}
+
+function isSoldOut(product) {
+  const stock = getStock(product);
+  return stock !== null && stock <= 0;
+}
+
+function productUrl(id) {
+  return PRODUCT_DETAIL_PAGE + "?id=" + encodeURIComponent(id);
+}
+
+function showOnlyState(state) {
+  elements.loading.classList.toggle("hidden", state !== "loading");
+  elements.error.classList.toggle("hidden", state !== "error");
+  elements.empty.classList.toggle("hidden", state !== "empty");
+  elements.products.classList.toggle("hidden", state !== "products");
+}
+
+function updateFavoriteCount(count) {
+  elements.favoriteCount.textContent =
+    count + (count === 1 ? " produto" : " produtos");
+}
+
+function updateCartCount() {
+  try {
+    const cart = getCart();
+
+    const count = cart.reduce((total, item) => {
+      const quantity = Number(item.quantity ?? item.qty ?? 1);
+
+      return total + (
+        Number.isFinite(quantity) && quantity > 0
+          ? quantity
+          : 0
+      );
+    }, 0);
+
+    elements.cartCount.textContent = count > 99 ? "99+" : String(count);
+    elements.cartCount.setAttribute(
+      "aria-label",
+      count + " produtos no carrinho"
+    );
+  } catch (error) {
+    console.error("Erro ao atualizar o carrinho:", error);
+    elements.cartCount.textContent = "0";
+  }
+}
+
+/* ---------- TOAST ---------- */
+
+function showToast(title, message, actionLabel = "Ver carrinho", action = null) {
+  clearTimeout(toastTimer);
+
+  elements.toastTitle.textContent = title;
+  elements.toastMessage.textContent = message;
+  elements.toastAction.textContent = actionLabel;
+
+  elements.toastAction.onclick = action || (() => {
+    window.location.href = CART_PAGE;
+  });
+
+  elements.toast.classList.add("show");
+
+  toastTimer = setTimeout(() => {
+    elements.toast.classList.remove("show");
+  }, 3200);
+}
+
+/* ---------- PRODUCT LOADING ---------- */
+
+async function loadFavorites() {
+  const currentVersion = ++loadVersion;
+
+  showOnlyState("loading");
+  elements.products.replaceChildren();
+  updateCartCount();
+
+  try {
+    const favoriteIds = [...new Set(
+      getFavorites()
+        .map(id => String(id))
+        .filter(Boolean)
+    )];
+
+    updateFavoriteCount(favoriteIds.length);
+
+    if (favoriteIds.length === 0) {
+      showOnlyState("empty");
+      return;
+    }
+
+    /*
+     * Load each product independently.
+     * A missing product will not prevent the other
+     * favorites from appearing.
+     */
+    const results = await Promise.all(
+      favoriteIds.map(async id => {
+        try {
+          const snapshot = await getDoc(doc(db, "products", id));
+
+          if (!snapshot.exists()) {
+            return {
+              id,
+              missing: true
+            };
+          }
+
+          return {
+            id,
+            ...snapshot.data()
+          };
+        } catch (error) {
+          console.error("Erro ao carregar produto:", id, error);
+
+          return {
+            id,
+            failed: true
+          };
+        }
+      })
+    );
+
+    if (currentVersion !== loadVersion) return;
+
+    const products = results.filter(product => !product.missing && !product.failed);
+
+    /*
+     * Remove favorite IDs whose products no longer exist.
+     * Failed network reads are kept in favorites.
+     */
+    const missingIds = results
+      .filter(product => product.missing)
+      .map(product => product.id);
+
+    for (const id of missingIds) {
+      removeFavoriteStorage(id);
+    }
+
+    updateFavoriteCount(products.length);
+
+    if (products.length === 0) {
+      const hadLoadErrors = results.some(product => product.failed);
+
+      if (hadLoadErrors) {
+        elements.errorMessage.textContent =
+          "Verifique a sua ligação à Internet e tente novamente.";
+        showOnlyState("error");
+      } else {
+        showOnlyState("empty");
+      }
+
+      return;
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    for (const product of products) {
+      fragment.appendChild(createProductCard(product));
+    }
+
+    elements.products.appendChild(fragment);
+    showOnlyState("products");
+
+  } catch (error) {
+    console.error("Erro ao carregar favoritos:", error);
+
+    if (currentVersion !== loadVersion) return;
+
+    elements.errorMessage.textContent =
+      "Não foi possível carregar os favoritos. Verifique a sua ligação e tente novamente.";
+
+    showOnlyState("error");
+  }
+}
+
+/* ---------- PRODUCT CARD ---------- */
+
+function createProductCard(product) {
+  const id = safeProductId(product.id);
+  const name = getProductName(product);
+  const image = getProductImage(product);
+  const price = getProductPrice(product);
+  const store = getStoreName(product);
+  const soldOut = isSoldOut(product);
+
+  const card = document.createElement("article");
+  card.className = "product";
+  card.dataset.productId = id;
+
+  const imageBox = document.createElement("div");
+  imageBox.className = "productImageBox";
+
+  const imageLink = document.createElement("a");
+  imageLink.className = "productImageLink";
+  imageLink.href = productUrl(id);
+  imageLink.setAttribute("aria-label", "Ver " + name);
+
+  const imageElement = document.createElement("img");
+  imageElement.className = "productImage";
+  imageElement.src = image;
+  imageElement.alt = name;
+  imageElement.loading = "lazy";
+  imageElement.decoding = "async";
+
+  imageElement.addEventListener("error", () => {
+    if (imageElement.dataset.fallbackApplied === "true") return;
+
+    imageElement.dataset.fallbackApplied = "true";
+    imageElement.src = PLACEHOLDER_IMAGE;
+  });
+
+  imageLink.appendChild(imageElement);
+
+  const removeButton = document.createElement("button");
+  removeButton.className = "favoriteRemove";
+  removeButton.type = "button";
+  removeButton.textContent = "❤️";
+  removeButton.title = "Remover dos favoritos";
+  removeButton.setAttribute(
+    "aria-label",
+    "Remover " + name + " dos favoritos"
+  );
+
+  removeButton.addEventListener("click", () => {
+    removeProductFromFavorites(id, card);
+  });
+
+  imageBox.append(imageLink, removeButton);
+
+  if (soldOut) {
+    const badge = document.createElement("div");
+    badge.className = "soldOutBadge";
+    badge.textContent = "ESGOTADO";
+    imageBox.appendChild(badge);
+  } else {
+    const cartButton = document.createElement("button");
+    cartButton.className = "cartAdd";
+    cartButton.type = "button";
+    cartButton.textContent = "🛒";
+    cartButton.title = "Adicionar ao carrinho";
+    cartButton.setAttribute(
+      "aria-label",
+      "Adicionar " + name + " ao carrinho"
+    );
+
+    cartButton.addEventListener("click", () => {
+      addProductToCart(product, cartButton);
+    });
+
+    imageBox.appendChild(cartButton);
+  }
+
+  const info = document.createElement("div");
+  info.className = "info";
+
+  const nameElement = document.createElement("h3");
+  nameElement.className = "productName";
+
+  const nameLink = document.createElement("a");
+  nameLink.href = productUrl(id);
+  nameLink.textContent = name;
+
+  nameElement.appendChild(nameLink);
+  info.appendChild(nameElement);
+
+  if (price !== null) {
+    const priceElement = document.createElement("div");
+    priceElement.className = "price";
+    priceElement.textContent = formatPrice(price);
+    info.appendChild(priceElement);
+  } else {
+    const priceElement = document.createElement("div");
+    priceElement.className = "price";
+    priceElement.textContent = "Preço indisponível";
+    priceElement.style.fontSize = "12px";
+    info.appendChild(priceElement);
+  }
+
+  const storeElement = document.createElement("div");
+  storeElement.className = "store";
+
+  const storeIcon = document.createElement("span");
+  storeIcon.textContent = "🏪";
+
+  const storeNameElement = document.createElement("span");
+  storeNameElement.textContent = store;
+
+  storeElement.append(storeIcon, storeNameElement);
+  info.appendChild(storeElement);
+
+  const stockElement = document.createElement("div");
+  stockElement.className = "stockText";
+
+  const stock = getStock(product);
+
+  if (soldOut) {
+    stockElement.classList.add("outOfStock");
+    stockElement.textContent = "Produto indisponível";
+  } else if (stock !== null) {
+    stockElement.textContent = "✓ Em stock: " + stock;
+  } else {
+    stockElement.textContent = "✓ Consulte a disponibilidade";
+  }
+
+  info.appendChild(stockElement);
+
+  card.append(imageBox, info);
+
+  return card;
+}
+
+/* ---------- REMOVE FAVORITE ---------- */
+
+function removeProductFromFavorites(id, card) {
+  try {
+    removeFavoriteStorage(String(id));
+
+    /*
+     * Remove only the selected card instead of
+     * reloading the entire page.
+     */
+    card.style.transition = "opacity 0.18s, transform 0.18s";
+    card.style.opacity = "0";
+    card.style.transform = "scale(0.96)";
+
+    setTimeout(() => {
+      card.remove();
+
+      const remaining = elements.products.querySelectorAll(".product").length;
+
+      updateFavoriteCount(remaining);
+
+      if (remaining === 0) {
+        showOnlyState("empty");
+      }
+    }, 190);
+
+    showToast(
+      "Favorito removido",
+      "O produto foi removido dos seus favoritos.",
+      "Continuar",
+      () => {
+        elements.toast.classList.remove("show");
+      }
+    );
+
+  } catch (error) {
+    console.error("Erro ao remover favorito:", error);
+
+    showToast(
+      "Não foi possível remover",
+      "Tente novamente.",
+      "Fechar",
+      () => elements.toast.classList.remove("show")
+    );
+  }
+}
+
+/* ---------- ADD TO CART ---------- */
+
+function addProductToCart(product, button) {
+  try {
+    if (isSoldOut(product)) {
+      showToast(
+        "Produto indisponível",
+        "Este produto está esgotado.",
+        "Fechar",
+        () => elements.toast.classList.remove("show")
+      );
+
+      return;
+    }
+
+    const price = getProductPrice(product);
+
+    if (price === null) {
+      showToast(
+        "Preço indisponível",
+        "Não foi possível adicionar este produto.",
+        "Fechar",
+        () => elements.toast.classList.remove("show")
+      );
+
+      return;
+    }
+
+    const productForCart = {
+      id: String(product.id),
+      name: getProductName(product),
+      price,
+      image: getProductImage(product),
+      images: Array.isArray(product.images)
+        ? product.images
+        : [getProductImage(product)],
+      merchantId: product.merchantId || ""
+    };
+
+    /*
+     * Keep using the existing storage.js cart system.
+     */
+    addToCart(productForCart);
+
+    updateCartCount();
+    animateCartButton(button);
+
+    showToast(
+      "Produto adicionado! ✓",
+      getProductName(product),
+      "Ver carrinho",
+      () => {
+        window.location.href = CART_PAGE;
+      }
+    );
+
+  } catch (error) {
+    console.error("Erro ao adicionar ao carrinho:", error);
+
+    showToast(
+      "Erro ao adicionar",
+      "Não foi possível adicionar o produto ao carrinho.",
+      "Tentar novamente",
+      () => addProductToCart(product, button)
+    );
+  }
+}
+
+/* ---------- CART ANIMATION ---------- */
+
+function animateCartButton(sourceButton) {
+  const cartLink = document.querySelector(".cartButton");
+
+  if (!cartLink) return;
+
+  cartLink.classList.remove("cartPulse");
+
+  /*
+   * Force a style calculation so the animation
+   * can run again on consecutive clicks.
+   */
+  void cartLink.offsetWidth;
+  cartLink.classList.add("cartPulse");
+
+  setTimeout(() => {
+    cartLink.classList.remove("cartPulse");
+  }, 400);
+
+  /*
+   * Fly the product image toward the cart.
+   */
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return;
+  }
+
+  const card = sourceButton.closest(".product");
+  const sourceImage = card?.querySelector(".productImage");
+
+  if (!sourceImage) return;
+
+  const sourceRect = sourceImage.getBoundingClientRect();
+  const targetRect = cartLink.getBoundingClientRect();
+
+  if (
+    sourceRect.width <= 0 ||
+    sourceRect.height <= 0 ||
+    targetRect.width <= 0 ||
+    targetRect.height <= 0
+  ) {
+    return;
+  }
+
+  const flyingImage = sourceImage.cloneNode();
+
+  flyingImage.removeAttribute("id");
+  flyingImage.setAttribute("aria-hidden", "true");
+
+  Object.assign(flyingImage.style, {
+    position: "fixed",
+    left: sourceRect.left + "px",
+    top: sourceRect.top + "px",
+    width: sourceRect.width + "px",
+    height: sourceRect.height + "px",
+    objectFit: "cover",
+    borderRadius: "16px",
+    zIndex: "5000",
+    pointerEvents: "none",
+    margin: "0",
+    opacity: "0.95",
+    transition: "all 0.55s cubic-bezier(.2,.8,.2,1)"
+  });
+
+  document.body.appendChild(flyingImage);
+
+  /*
+   * Start the transition on the next animation frame.
+   */
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      flyingImage.style.left =
+        (targetRect.left + targetRect.width / 2 - 14) + "px";
+
+      flyingImage.style.top =
+        (targetRect.top + targetRect.height / 2 - 14) + "px";
+
+      flyingImage.style.width = "28px";
+      flyingImage.style.height = "28px";
+      flyingImage.style.borderRadius = "50%";
+      flyingImage.style.opacity = "0.2";
+    });
+  });
+
+  const cleanup = () => {
+    flyingImage.remove();
+    cartLink.classList.add("cartPulse");
+
+    setTimeout(() => {
+      cartLink.classList.remove("cartPulse");
+    }, 400);
+  };
+
+  flyingImage.addEventListener("transitionend", cleanup, { once: true });
+
+  setTimeout(() => {
+    if (flyingImage.isConnected) cleanup();
+  }, 800);
+}
+
+/* ---------- NAVIGATION ---------- */
+
+elements.explore.addEventListener("click", () => {
+  window.location.href = HOME_PAGE;
 });
 
-alert("Produto adicionado ao carrinho ✅");
+elements.retry.addEventListener("click", () => {
+  loadFavorites();
+});
 
-}catch(e){
+/* ---------- CROSS-TAB UPDATES ---------- */
 
-console.log(e);
+window.addEventListener("storage", event => {
+  if (
+    event.key === "toma_favorites" ||
+    event.key === "toma_cart"
+  ) {
+    loadFavorites();
+  }
+});
 
-}
+window.addEventListener("pageshow", () => {
+  updateCartCount();
+});
 
-}
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) {
+    updateCartCount();
+  }
+});
 
-async function loadFavorites(){
+/* ---------- START ---------- */
 
-const ids = getFavorites()
-
-if(ids.length === 0){
-
-document.getElementById("content").innerHTML = `
-<div class="empty">
-
-<h3>Nenhum favorito ainda ❤️</h3>
-
-<p>
-Guarde os produtos que mais gosta.
-</p>
-
-<button
-class="btnHome"
-onclick="location.href='index.html'"
->
-🛍️ Procurar produtos
-</button>
-
-</div>
-`
-
-return
-
-}
-
-let html = `<div class="products">`;
-
-const products = await Promise.all(
-
-ids.map(async(id)=>{
-
-const snap = await getDoc(doc(db,"products",id));
-
-if(!snap.exists()) return null;
-
-return{
-
-id,
-
-...snap.data()
-
-};
-
-})
-
-);
-
-for(const p of products){
-
-if(!p) continue;
-
-const id = p.id;
-
-const soldOut = Number(p.stock||0)<=0;
-
-html += `
-
-<div class="product">
-<div class="productImageBox">
-
-<img
-src="${p.images?.[0] || ''}"
-onclick="location.href='product.html?id=${id}'">
-
-<div
-class="favoriteRemove"
-onclick="removeFavorite('${id}')">
-
-❤️
-
-</div>
-
-<div
-class="cartAdd"
-onclick="addToCart('${id}')">
-
-🛒
-
-</div>
-
-</div>
-
-<div class="info">
-
-<div
-class="name"
-onclick="location.href='product.html?id=${id}'">
-
-${p.name}
-
-</div>
-
-${
-soldOut
-?
-`
-<div class="soldOut">
-
-ESGOTADO
-
-</div>
-`
-:
-`
-<div class="price">
-
-${p.price} Kz
-
-</div>
-
-<div class="store">
-
-✔ ${p.storeName || "Loja"}
-
-</div>
-`
-}
-
-</div>
-
-</div>
-
-`;
-
-}
-
-html += "</div>"
-
-document.getElementById("content").innerHTML = html
-
-}
-
-loadFavorites()
+updateCartCount();
+loadFavorites();
 
 </script>
 
