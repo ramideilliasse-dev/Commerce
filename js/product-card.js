@@ -183,7 +183,7 @@ card.addEventListener("click", () => {
     setTimeout(() => {
 
         location.href =
-        `product-detail.html?id=${product.id}`;
+        `product-detail-v2.html?id=${product.id}`;
 
     },120);
 
