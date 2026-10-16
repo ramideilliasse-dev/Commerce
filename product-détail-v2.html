@@ -1,0 +1,218 @@
+ <!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#ff6900"
+    >
+
+    <meta
+        name="description"
+        content="Descubra produtos incríveis na Toma, o seu marketplace online."
+    >
+
+    <title>Produto | Toma</title>
+
+    <!-- Icônes -->
+    <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0"
+    >
+
+    <!-- Police -->
+    <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    >
+
+    <!-- Nouveau CSS indépendant -->
+    <link
+        rel="stylesheet"
+        href="./css/product-detail-v2.css"
+    >
+</head>
+
+<body>
+
+    <!-- En-tête -->
+    <header class="productHeader">
+
+        <a href="./home.html" class="brand">
+            <span class="brandIcon">T</span>
+            <span>Toma</span>
+        </a>
+
+        <form class="searchBar" id="productSearchForm">
+
+            <input
+                type="search"
+                id="productSearchInput"
+                placeholder="O que você procura?"
+                aria-label="Pesquisar produtos"
+            >
+
+            <button
+                type="submit"
+                aria-label="Pesquisar"
+            >
+                <span class="material-symbols-rounded">
+                    search
+                </span>
+            </button>
+
+        </form>
+
+        <nav class="headerActions">
+
+            <a
+                href="./favorites.html"
+                class="headerIcon"
+                aria-label="Favoritos"
+            >
+                <span class="material-symbols-rounded">
+                    favorite
+                </span>
+            </a>
+
+            <a
+                href="./cart.html"
+                class="headerIcon cartHeaderIcon"
+                aria-label="Carrinho"
+            >
+                <span class="material-symbols-rounded">
+                    shopping_cart
+                </span>
+
+                <span
+                    id="productCartCount"
+                    class="cartBadge"
+                >0</span>
+            </a>
+
+        </nav>
+
+    </header>
+
+
+    <!-- Fil d'Ariane -->
+    <div class="breadcrumbBar">
+
+        <a href="./home.html">
+            Início
+        </a>
+
+        <span class="material-symbols-rounded">
+            chevron_right
+        </span>
+
+        <a href="./products-v2.html">
+            Produtos
+        </a>
+
+        <span class="material-symbols-rounded">
+            chevron_right
+        </span>
+
+        <span id="breadcrumbProductName">
+            Produto
+        </span>
+
+    </div>
+
+
+    <!-- Contenu principal -->
+    <main class="productPage">
+
+        <!-- Chargement -->
+        <section
+            id="productLoading"
+            class="productState"
+            aria-live="polite"
+        >
+            <span class="loadingSpinner"></span>
+
+            <p>A carregar informações do produto...</p>
+        </section>
+
+
+        <!-- Erreur -->
+        <section
+            id="productError"
+            class="productState errorState"
+            hidden
+        >
+            <span class="material-symbols-rounded">
+                inventory_2
+            </span>
+
+            <h2>Produto não encontrado</h2>
+
+            <p>
+                Não foi possível carregar este produto.
+                Verifique o endereço e tente novamente.
+            </p>
+
+            <a href="./products-v2.html" class="primaryButton">
+                Explorar produtos
+            </a>
+        </section>
+
+
+        <!-- Le JavaScript affichera le produit ici -->
+        <div
+            id="productDetailRoot"
+            hidden
+        ></div>
+
+    </main>
+
+
+    <!-- Navigation mobile -->
+    <nav class="mobileNavigation">
+
+        <a href="./home.html">
+            <span class="material-symbols-rounded">
+                home
+            </span>
+            <span>Início</span>
+        </a>
+
+        <a href="./products-v2.html">
+            <span class="material-symbols-rounded">
+                grid_view
+            </span>
+            <span>Produtos</span>
+        </a>
+
+        <a href="./favorites.html">
+            <span class="material-symbols-rounded">
+                favorite
+            </span>
+            <span>Favoritos</span>
+        </a>
+
+        <a href="./cart.html">
+            <span class="material-symbols-rounded">
+                shopping_cart
+            </span>
+            <span>Carrinho</span>
+        </a>
+
+    </nav>
+
+
+    <!-- Nouveau JavaScript indépendant -->
+    <script
+        type="module"
+        src="./js/product-detail-v2/product-detail-app.js"
+    ></script>
+
+</body>
+</html>
