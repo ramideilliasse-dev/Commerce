@@ -2417,21 +2417,31 @@ try {
 // ============================================================
 
 function initializeProductDetail() {
+    alert("TOMA V2 : JavaScript chargé correctement.");
+
     updateCartBadge();
     bindSearch();
 
     if (!productDetailRoot) {
         console.error(
-            "TOMA V2 — Falta #productDetailRoot no HTML."
+            "TOMA V2 : élément #productDetailRoot introuvable."
         );
 
         showPageError(
-            "A estrutura HTML da página está incompleta. Verifique o ficheiro product-detail-v2.html.",
+            "A estrutura HTML da página está incompleta.",
             false
         );
 
         return;
     }
+
+    const productId = getProductId();
+
+    alert(
+        productId
+            ? "TOMA V2 : ID do produto encontrado: " + productId
+            : "TOMA V2 : ID do produto não encontrado."
+    );
 
     loadProduct();
 }
