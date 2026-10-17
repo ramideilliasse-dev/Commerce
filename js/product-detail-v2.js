@@ -2358,16 +2358,32 @@ async function loadProduct() {
 
         const merchantId = getMerchantId(product);
 
-        const [
-            merchant,
-            reviews,
-            relatedProducts
-        ] = await Promise.all([
-            fetchMerchant(merchantId),
-            fetchReviews(productId),
-            fetchRelatedProducts(product)
-        ]);
+       let merchant = null;
+let reviews = [];
+let relatedProducts = [];
 
+try {
+    const results = await Promise.all([
+        fetchMerchant(merchantId),
+        fetchReviews(productId),
+        fetchRelatedProducts(product)
+    ]);
+
+    merchant = results[0];
+    reviews = results[1];
+    relatedProducts = results[2];
+
+} catch (error) {
+    console.error(
+        "TOMA V2 — Erreur de chargement des informations secondaires :",
+        error
+    );
+
+    showToast(
+        "Algumas informações adicionais não puderam ser carregadas.",
+        "warning"
+    );
+}
         currentMerchant = merchant;
         currentReviews = reviews;
 
