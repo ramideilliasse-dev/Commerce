@@ -1,10 +1,26 @@
- // ============================================================
-// TOMA — PRODUCT DETAIL V2
-// Fichier : js/product-detail-v2/product-detail-app.js
-// Version 2.0 — Chargement sécurisé et diagnostics visibles
-// ============================================================
+ /* ============================================================
+   TOMA — PRODUCT DETAIL V2
+   Version améliorée
+   Fichier : js/product-detail-v2/product-detail-app.js
 
-import { db } from "../../firebase.js";
+   Fonctionnalités :
+   1. Chargement du produit depuis Firestore
+   2. Galerie photo avec visualisation plein écran
+   3. Navigation entre les photos et zoom natif
+   4. Partage du produit
+   5. Contact direct avec le vendeur
+   6. Gestion des favoris
+   7. Gestion des quantités
+   8. Ajout au panier
+   9. Achat immédiat
+   10. Informations du vendeur
+   11. Avis et caractéristiques
+   12. Produits similaires
+   13. Produits récemment consultés
+   14. Recherche et compteur du panier
+   ============================================================ */
+
+import { db, auth } from "../../firebase.js";
 
 import {
     doc,
@@ -23,9 +39,10 @@ import {
     toggleFavorite
 } from "../storage.js";
 
-// ============================================================
-// 1. CONFIGURATION
-// ============================================================
+
+/* ============================================================
+   BLOC 1 — CONFIGURATION
+   ============================================================ */
 
 const CONFIG = {
     products: "products",
@@ -37,1182 +54,1929 @@ const CONFIG = {
     catalog: "./products-v2.html",
     cart: "./cart.html",
     favorites: "./favorites.html",
+    home: "./home.html",
     merchantPage: "./merchant-shop.html",
+    chatPage: "./chat.html",
 
-    // Limite d'attente du chargement principal.
+    recentStorageKey: "toma_recent_products",
+
+    recentLimit: 10,
+    relatedLimit: 8,
     timeout: 15000
 };
 
-// ============================================================
-// 2. ÉLÉMENTS HTML
-// ============================================================
 
-const loading = document.getElementById("productLoading");
-const errorBox = document.getElementById("productError");
-const root = document.getElementById("productDetailRoot");
-
-const breadcrumb = document.getElementById("breadcrumbProductName");
-const cartCount = document.getElementById("productCartCount");
-
-const searchForm = document.getElementById("productSearchForm");
-const searchInput = document.getElementById("productSearchInput");
-
-// ============================================================
-// 3. ÉTAT
-// ============================================================
+/* ============================================================
+   BLOC 2 — VARIABLES PRINCIPALES
+   ============================================================ */
 
 let currentProduct = null;
 let currentMerchant = null;
 let currentReviews = [];
+let currentRelatedProducts = [];
 
 let selectedQuantity = 1;
-let selectedImageIndex = 0;
-let activeTab = "description";
+let currentImages = [];
+let currentImageIndex = 0;
 
-let toastTimer = null;
+let viewerElement = null;
+let mobileBuyBar = null;
 
-// ============================================================
-// 4. OUTILS
-// ============================================================
+let isAddingToCart = false;
+
+
+/* ============================================================
+   BLOC 3 — OUTILS GÉNÉRAUX
+   ============================================================ */
 
 function escapeHTML(value) {
     return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
-function number(value, fallback = 0) {
-    const n = Number(value);
-    return Number.isFinite(n) ? n : fallback;
+
+function toNumber(value, fallback = 0) {
+    const numberValue = Number(value);
+
+    return Number.isFinite(numberValue)
+        ? numberValue
+        : fallback;
 }
 
-function price(value) {
+
+function formatPrice(value) {
+    const amount = toNumber(value);
+
     return new Intl.NumberFormat("pt-AO", {
+        minimumFractionDigits: 0,
         maximumFractionDigits: 2
-    }).format(number(value)) + " Kz";
+    }).format(amount) + " Kz";
 }
 
-function productName(product) {
-    return product.name ||
-        product.title ||
-        product.productName ||
-        "Produto Toma";
+
+function getProductName(product) {
+    return product?.name
+        || product?.nome
+        || product?.title
+        || product?.titulo
+        || "Produto";
 }
 
-function productDescription(product) {
-    return product.description ||
-        product.details ||
-        product.productDescription ||
-        "Este produto ainda não tem uma descrição disponível.";
+
+function getProductDescription(product) {
+    return product?.description
+        || product?.descricao
+        || product?.details
+        || product?.detalhes
+        || "Sem descrição disponível.";
 }
 
-function productPrice(product) {
-    return Math.max(0, number(
-        product.price ??
-        product.preco ??
-        product.salePrice,
-        0
-    ));
+
+function getProductPrice(product) {
+    return toNumber(
+        product?.price
+        ?? product?.preco
+        ?? product?.salePrice
+        ?? product?.sellingPrice
+        ?? 0
+    );
 }
 
-function productStock(product) {
-    const value =
-        product.stock ??
-        product.quantity ??
-        product.inventory;
 
-    if (value === undefined || value === null || value === "") {
+function getProductOldPrice(product) {
+    return toNumber(
+        product?.oldPrice
+        ?? product?.originalPrice
+        ?? product?.precoAntigo
+        ?? product?.previousPrice
+        ?? 0
+    );
+}
+
+
+function getProductStock(product) {
+    const stock = product?.stock
+        ?? product?.quantity
+        ?? product?.inventory;
+
+    // Si aucun stock n'est renseigné, ne pas supposer
+    // automatiquement que le produit est épuisé.
+    if (stock === undefined || stock === null || stock === "") {
         return null;
     }
 
-    return Math.max(0, number(value));
+    return Math.max(0, toNumber(stock, 0));
 }
 
-function productImages(product) {
-    let images = [];
 
-    if (Array.isArray(product.images)) {
-        images = product.images;
-    } else if (Array.isArray(product.gallery)) {
-        images = product.gallery;
-    } else if (Array.isArray(product.photos)) {
-        images = product.photos;
-    }
-
-    if (!images.length) {
-        const image =
-            product.image ||
-            product.imageUrl ||
-            product.photo ||
-            product.thumbnail;
-
-        if (image) images = [image];
-    }
-
-    images = [...new Set(
-        images
-            .filter(value => typeof value === "string")
-            .map(value => value.trim())
-            .filter(Boolean)
-    )];
-
-    return images.length ? images : [CONFIG.placeholder];
+function getProductCategory(product) {
+    return product?.category
+        || product?.categoria
+        || product?.categoryName
+        || "Geral";
 }
 
-function merchantId(product) {
-    return product.merchantId ||
-        product.sellerId ||
-        product.storeId ||
-        "";
+
+function getProductBrand(product) {
+    return product?.brand
+        || product?.marca
+        || "";
 }
 
-function merchantName(merchant) {
-    return merchant?.shopName ||
-        merchant?.storeName ||
-        merchant?.name ||
-        merchant?.businessName ||
-        "Vendedor Toma";
+
+function getMerchantId(product) {
+    return product?.merchantId
+        || product?.sellerId
+        || product?.storeId
+        || product?.merchant
+        || "";
 }
 
-function merchantImage(merchant) {
-    return merchant?.logo ||
-        merchant?.logoUrl ||
-        merchant?.photoURL ||
-        merchant?.image ||
-        CONFIG.placeholder;
+
+function getMerchantName(merchant, product) {
+    return merchant?.storeName
+        || merchant?.name
+        || merchant?.nome
+        || merchant?.businessName
+        || product?.storeName
+        || product?.merchantName
+        || "Vendedor";
 }
 
-function rating(product) {
-    return Math.max(0, Math.min(5, number(
-        product.rating ??
-        product.averageRating ??
-        product.average_rating,
-        0
-    )));
+
+function getMerchantImage(merchant) {
+    return merchant?.photoURL
+        || merchant?.photoUrl
+        || merchant?.image
+        || merchant?.logo
+        || merchant?.logoUrl
+        || "./images/default-avatar.png";
 }
 
-function discount(product) {
-    const oldPrice = number(
-        product.oldPrice ??
-        product.originalPrice ??
-        product.previousPrice,
-        0
+
+function getProductImages(product) {
+    const result = [];
+
+    const possibleImages = [
+        ...(Array.isArray(product?.images) ? product.images : []),
+        ...(Array.isArray(product?.gallery) ? product.gallery : []),
+        ...(Array.isArray(product?.photos) ? product.photos : []),
+
+        product?.image,
+        product?.imageUrl,
+        product?.photo,
+        product?.thumbnail
+    ];
+
+    possibleImages.forEach(item => {
+        let url = "";
+
+        if (typeof item === "string") {
+            url = item;
+        } else if (item && typeof item === "object") {
+            url = item.url
+                || item.src
+                || item.imageUrl
+                || item.downloadURL
+                || "";
+        }
+
+        if (
+            url
+            && typeof url === "string"
+            && !result.includes(url)
+        ) {
+            result.push(url);
+        }
+    });
+
+    return result.length
+        ? result
+        : [CONFIG.placeholder];
+}
+
+
+function getProductId() {
+    const params = new URLSearchParams(window.location.search);
+
+    return params.get("id")
+        || params.get("productId")
+        || "";
+}
+
+
+function getRating(product) {
+    return toNumber(
+        product?.rating
+        ?? product?.averageRating
+        ?? product?.avaliacao
+        ?? 0
+    );
+}
+
+
+function getReviewCount(product) {
+    return toNumber(
+        product?.reviewCount
+        ?? product?.reviewsCount
+        ?? product?.totalReviews
+        ?? 0
+    );
+}
+
+
+function getDiscount(product) {
+    const explicitDiscount = toNumber(
+        product?.discount
+        ?? product?.discountPercentage
+        ?? 0
     );
 
-    const currentPrice = productPrice(product);
-
-    if (oldPrice <= currentPrice || oldPrice <= 0) {
-        return 0;
+    if (explicitDiscount > 0) {
+        return Math.round(explicitDiscount);
     }
 
-    return Math.round(
-        (oldPrice - currentPrice) / oldPrice * 100
-    );
+    const price = getProductPrice(product);
+    const oldPrice = getProductOldPrice(product);
+
+    if (oldPrice > price && oldPrice > 0) {
+        return Math.round(
+            ((oldPrice - price) / oldPrice) * 100
+        );
+    }
+
+    return 0;
 }
 
-function available(product) {
-    if (
-        product.active === false ||
-        product.isActive === false ||
-        product.status === "blocked" ||
-        product.status === "inactive"
-    ) {
-        return false;
-    }
 
-    const stock = productStock(product);
+function getStars(rating) {
+    const rounded = Math.round(
+        Math.max(0, Math.min(5, rating))
+    );
+
+    return "★".repeat(rounded) + "☆".repeat(5 - rounded);
+}
+
+
+function isProductAvailable(product) {
+    if (product?.active === false) return false;
+    if (product?.isActive === false) return false;
+    if (product?.available === false) return false;
+
+    const stock = getProductStock(product);
 
     return stock === null || stock > 0;
 }
 
-function getProductId() {
-    const params = new URLSearchParams(location.search);
 
-    return (
-        params.get("id") ||
-        params.get("productId") ||
-        ""
-    ).trim();
+function getCurrentUrl() {
+    return window.location.href;
 }
 
-function stars(value) {
-    const rounded = Math.round(Math.max(0, Math.min(5, value)));
 
-    return `
-        <span class="ratingStars" aria-label="${value.toFixed(1)} de 5">
-            ${"★".repeat(rounded)}${"☆".repeat(5 - rounded)}
-        </span>
-    `;
+function safeImage(url) {
+    return escapeHTML(url || CONFIG.placeholder);
 }
 
-// ============================================================
-// 5. CHARGEMENT ET ERREURS
-// ============================================================
 
-function showLoading(message = "A carregar informações do produto...") {
-    if (loading) {
-        loading.hidden = false;
-        loading.textContent = message;
-    }
+/* ============================================================
+   BLOC 4 — ÉTAT DE CHARGEMENT ET NOTIFICATIONS
+   ============================================================ */
 
-    if (errorBox) {
-        errorBox.hidden = true;
-        errorBox.replaceChildren();
-    }
+function showLoading() {
+    const loading = document.getElementById("productLoading");
+    const error = document.getElementById("productError");
+    const root = document.getElementById("productDetailRoot");
 
-    if (root) {
-        root.hidden = true;
-    }
+    if (loading) loading.hidden = false;
+    if (error) error.hidden = true;
+    if (root) root.hidden = true;
 }
 
-function showError(message, retry = true) {
+
+function hideLoading() {
+    const loading = document.getElementById("productLoading");
+
     if (loading) loading.hidden = true;
+}
+
+
+function showError(message) {
+    hideLoading();
+
+    const error = document.getElementById("productError");
+    const root = document.getElementById("productDetailRoot");
+
     if (root) root.hidden = true;
 
-    if (!errorBox) {
-        alert("TOMA: " + message);
-        return;
+    if (error) {
+        error.hidden = false;
+
+        const paragraph = error.querySelector("p");
+
+        if (paragraph) {
+            paragraph.textContent = message;
+        }
     }
-
-    errorBox.hidden = false;
-
-    errorBox.innerHTML = `
-        <div style="
-            max-width:520px;
-            margin:24px auto;
-            padding:26px;
-            background:#fff;
-            border:1px solid #f1d4c8;
-            border-radius:18px;
-            text-align:center;
-        ">
-            <div style="font-size:38px;">⚠️</div>
-
-            <h2>Não foi possível abrir o produto</h2>
-
-            <p>${escapeHTML(message)}</p>
-
-            <p style="font-size:12px;color:#777;overflow-wrap:anywhere;">
-                ID: ${escapeHTML(getProductId() || "não encontrado")}
-            </p>
-
-            <a href="${CONFIG.catalog}"
-               class="addToCartButton"
-               style="display:inline-block;text-decoration:none;margin:8px;">
-                Ver produtos
-            </a>
-
-            ${
-                retry
-                    ? `
-                        <button id="retryProductLoad"
-                                class="favoriteButton"
-                                type="button">
-                            Tentar novamente
-                        </button>
-                    `
-                    : ""
-            }
-        </div>
-    `;
-
-    document.getElementById("retryProductLoad")
-        ?.addEventListener("click", loadProduct);
 }
 
+
 function showToast(message, type = "success") {
-    let toast = document.querySelector(".productToast");
+    let toast = document.getElementById("productToast");
 
     if (!toast) {
         toast = document.createElement("div");
+
+        toast.id = "productToast";
         toast.className = "productToast";
 
-        toast.style.cssText = `
-            position:fixed;
-            left:50%;
-            bottom:95px;
-            transform:translate(-50%,20px);
-            z-index:99999;
-            padding:14px 20px;
-            border-radius:14px;
-            background:#17202a;
-            color:#fff;
-            font-size:14px;
-            font-weight:600;
-            box-shadow:0 8px 30px rgba(0,0,0,.18);
-            opacity:0;
-            transition:.25s;
-            text-align:center;
-            max-width:calc(100% - 32px);
-        `;
+        toast.setAttribute("role", "status");
+        toast.setAttribute("aria-live", "polite");
 
         document.body.appendChild(toast);
     }
 
     toast.textContent = message;
 
-    toast.style.background =
-        type === "error" ? "#b42318" :
-        type === "warning" ? "#9a6700" :
-        "#17202a";
+    toast.dataset.type = type;
 
-    toast.style.opacity = "1";
-    toast.style.transform = "translate(-50%,0)";
+    toast.classList.add("isVisible");
 
-    clearTimeout(toastTimer);
+    clearTimeout(toast._timer);
 
-    toastTimer = setTimeout(() => {
-        toast.style.opacity = "0";
-        toast.style.transform = "translate(-50%,20px)";
-    }, 3000);
+    toast._timer = setTimeout(() => {
+        toast.classList.remove("isVisible");
+    }, 2800);
 }
 
-// ============================================================
-// 6. PANIER
-// ============================================================
+
+/* ============================================================
+   BLOC 5 — COMPTEUR DU PANIER
+   ============================================================ */
 
 function updateCartBadge() {
+    const badge = document.getElementById("productCartCount");
+
+    if (!badge) return;
+
     try {
         const cart = getCart();
 
-        const count = cart.reduce((total, item) => {
-            return total + Math.max(
+        const total = cart.reduce((sum, item) => {
+            return sum + Math.max(
                 0,
-                number(item.quantity ?? item.qty, 1)
+                toNumber(item.quantity ?? item.qty ?? 1, 1)
             );
         }, 0);
 
-        if (cartCount) {
-            cartCount.textContent = String(count);
-            cartCount.hidden = count <= 0;
-        }
+        badge.textContent = total > 99 ? "99+" : String(total);
+
+        badge.hidden = total <= 0;
     } catch (error) {
-        console.error("TOMA — Erro no carrinho:", error);
+        console.error("Erro ao atualizar o carrinho:", error);
+
+        badge.textContent = "0";
+        badge.hidden = true;
     }
 }
 
-// ============================================================
-// 7. FAVORIS
-// ============================================================
 
-function isFavorite(id) {
-    return getFavorites().some(item =>
-        typeof item === "string"
-            ? item === id
-            : item?.id === id
-    );
+/* ============================================================
+   BLOC 6 — FAVORIS
+   ============================================================ */
+
+function isFavoriteProduct(productId) {
+    try {
+        return getFavorites().includes(productId);
+    } catch {
+        return false;
+    }
 }
 
-function favoriteButtonHTML(product) {
-    const active = isFavorite(product.id);
+
+function favoriteButtonHTML(productId) {
+    const favorite = isFavoriteProduct(productId);
 
     return `
-        <button type="button"
-                id="productFavoriteButton"
-                class="favoriteButton"
-                aria-pressed="${active}">
-            <span>${active ? "♥" : "♡"}</span>
-            <span class="favoriteButtonText">
-                ${active ? "Guardado" : "Favoritos"}
+        <button
+            type="button"
+            class="productFavoriteButton ${favorite ? "isFavorite" : ""}"
+            id="productFavoriteButton"
+            aria-label="${favorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}"
+            aria-pressed="${favorite}"
+        >
+            <span class="material-symbols-rounded">
+                ${favorite ? "favorite" : "favorite_border"}
             </span>
         </button>
     `;
 }
 
+
 function handleFavorite() {
     if (!currentProduct) return;
 
+    const productId = currentProduct.id;
+
     try {
-        const active = toggleFavorite(currentProduct.id);
-        const button = document.getElementById("productFavoriteButton");
+        const isFavorite = toggleFavorite(productId);
+
+        const button = document.getElementById(
+            "productFavoriteButton"
+        );
 
         if (button) {
-            button.setAttribute("aria-pressed", String(active));
-            button.innerHTML = `
-                <span>${active ? "♥" : "♡"}</span>
-                <span class="favoriteButtonText">
-                    ${active ? "Guardado" : "Favoritos"}
-                </span>
-            `;
+            button.classList.toggle("isFavorite", isFavorite);
+
+            button.setAttribute(
+                "aria-pressed",
+                String(isFavorite)
+            );
+
+            button.setAttribute(
+                "aria-label",
+                isFavorite
+                    ? "Remover dos favoritos"
+                    : "Adicionar aos favoritos"
+            );
+
+            const icon = button.querySelector(
+                ".material-symbols-rounded"
+            );
+
+            if (icon) {
+                icon.textContent = isFavorite
+                    ? "favorite"
+                    : "favorite_border";
+            }
         }
 
         showToast(
-            active
+            isFavorite
                 ? "Produto adicionado aos favoritos."
                 : "Produto removido dos favoritos."
         );
+
     } catch (error) {
-        console.error(error);
-        showToast("Não foi possível atualizar os favoritos.", "error");
+        console.error("Erro nos favoritos:", error);
+
+        showToast(
+            "Não foi possível atualizar os favoritos.",
+            "error"
+        );
     }
 }
 
-// ============================================================
-// 8. FIRESTORE — PRODUIT
-// ============================================================
 
-async function fetchProduct(id) {
-    console.log("TOMA V2 — A consultar Firestore:", id);
+/* ============================================================
+   BLOC 7 — FIRESTORE : CARREGAR O PRODUTO
+   ============================================================ */
 
-    const reference = doc(db, CONFIG.products, id);
-
-    // Un document qui ne répond pas ne doit pas laisser
-    // la page bloquée indéfiniment.
-    const snapshot = await withTimeout(
-        getDoc(reference),
-        CONFIG.timeout,
-        "O Firebase demorou demasiado tempo a responder."
+async function fetchProduct(productId) {
+    const productRef = doc(
+        db,
+        CONFIG.products,
+        productId
     );
+
+    const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => {
+            reject(new Error("Tempo limite ao carregar o produto."));
+        }, CONFIG.timeout);
+    });
+
+    const requestPromise = getDoc(productRef);
+
+    const snapshot = await Promise.race([
+        requestPromise,
+        timeoutPromise
+    ]);
 
     if (!snapshot.exists()) {
         return null;
     }
 
     return {
-        id: snapshot.id,
-        ...snapshot.data()
+        ...snapshot.data(),
+        id: snapshot.id
     };
 }
 
-function withTimeout(promise, milliseconds, message) {
-    let timer;
 
-    const timeout = new Promise((_, reject) => {
-        timer = setTimeout(() => {
-            reject(new Error(message));
-        }, milliseconds);
-    });
+/* ============================================================
+   BLOC 8 — CARREGAR INFORMAÇÕES DO VENDEDOR
+   ============================================================ */
 
-    return Promise.race([promise, timeout])
-        .finally(() => clearTimeout(timer));
-}
+async function fetchMerchant(product) {
+    const merchantId = getMerchantId(product);
 
-// ============================================================
-// 9. COMMERÇANT
-// ============================================================
-
-async function fetchMerchant(id) {
-    if (!id) return null;
+    if (!merchantId) return null;
 
     try {
-        const snapshot = await withTimeout(
-            getDoc(doc(db, CONFIG.merchants, id)),
-            8000,
-            "Tempo limite ao consultar a loja."
+        const merchantRef = doc(
+            db,
+            CONFIG.merchants,
+            merchantId
         );
 
-        if (!snapshot.exists()) return null;
+        const snapshot = await getDoc(merchantRef);
+
+        if (!snapshot.exists()) {
+            return null;
+        }
 
         return {
-            id: snapshot.id,
-            ...snapshot.data()
+            ...snapshot.data(),
+            id: snapshot.id
         };
+
     } catch (error) {
-        console.warn("TOMA — Loja indisponível:", error);
+        console.error(
+            "Erro ao carregar o vendedor:",
+            error
+        );
+
         return null;
     }
 }
 
-// ============================================================
-// 10. AVIS
-// ============================================================
 
-async function fetchReviews(id) {
+/* ============================================================
+   BLOC 9 — CARREGAR AVALIAÇÕES
+   ============================================================ */
+
+async function fetchReviews(productId) {
     try {
-        const reviewQuery = query(
-            collection(db, CONFIG.reviews),
-            where("productId", "==", id),
-            limit(20)
+        const reviewsRef = collection(
+            db,
+            CONFIG.reviews
         );
 
-        const snapshot = await withTimeout(
-            getDocs(reviewQuery),
-            8000,
-            "Tempo limite ao consultar avaliações."
+        const reviewsQuery = query(
+            reviewsRef,
+            where("productId", "==", productId),
+            limit(50)
         );
 
-        return snapshot.docs.map(item => ({
-            id: item.id,
-            ...item.data()
+        const snapshot = await getDocs(reviewsQuery);
+
+        return snapshot.docs.map(reviewDoc => ({
+            ...reviewDoc.data(),
+            id: reviewDoc.id
         }));
+
     } catch (error) {
-        console.warn("TOMA — Avaliações indisponíveis:", error);
+        console.warn(
+            "Não foi possível carregar as avaliações:",
+            error
+        );
+
         return [];
     }
 }
 
-// ============================================================
-// 11. PRODUITS SIMILAIRES
-// ============================================================
 
-async function fetchRelated(product) {
-    const results = [];
-    const seen = new Set([product.id]);
+/* ============================================================
+   BLOC 10 — PRODUTOS SEMELHANTES
+   ============================================================ */
 
-    async function search(field, value) {
-        if (!value || results.length >= 8) return;
+async function fetchRelatedProducts(product) {
+    const productId = product.id;
+
+    const category = getProductCategory(product);
+    const merchantId = getMerchantId(product);
+
+    const collected = new Map();
+
+    async function searchProducts(field, value) {
+        if (!value) return;
 
         try {
-            const q = query(
-                collection(db, CONFIG.products),
+            const productsRef = collection(
+                db,
+                CONFIG.products
+            );
+
+            const productsQuery = query(
+                productsRef,
                 where(field, "==", value),
-                limit(10)
+                limit(CONFIG.relatedLimit + 4)
             );
 
-            const snapshot = await withTimeout(
-                getDocs(q),
-                8000,
-                "Tempo limite ao consultar produtos relacionados."
-            );
+            const snapshot = await getDocs(productsQuery);
 
-            snapshot.docs.forEach(item => {
-                if (results.length >= 8 || seen.has(item.id)) return;
+            snapshot.docs.forEach(productDoc => {
+                if (productDoc.id === productId) return;
 
                 const data = {
-                    id: item.id,
-                    ...item.data()
+                    ...productDoc.data(),
+                    id: productDoc.id
                 };
 
-                if (!available(data)) return;
+                if (!isProductAvailable(data)) return;
 
-                seen.add(item.id);
-                results.push(data);
+                if (!collected.has(data.id)) {
+                    collected.set(data.id, data);
+                }
             });
+
         } catch (error) {
-            console.warn("TOMA — Pesquisa relacionada:", error);
+            console.warn(
+                `Pesquisa de produtos por ${field} indisponível:`,
+                error
+            );
         }
     }
 
-    await search("merchantId", merchantId(product));
+    // La catégorie est prioritaire pour trouver des articles similaires.
+    await searchProducts("category", category);
 
-    if (results.length < 8) {
-        await search(
-            "category",
-            product.category || product.categoria || ""
-        );
+    // Ajouter également quelques produits du même vendeur.
+    if (collected.size < CONFIG.relatedLimit) {
+        await searchProducts("merchantId", merchantId);
     }
 
-    return results;
+    return Array.from(collected.values())
+        .slice(0, CONFIG.relatedLimit);
 }
 
-// ============================================================
-// 12. GALERIE
-// ============================================================
+
+/* ============================================================
+   BLOC 11 — HISTORIQUE DES PRODUITS CONSULTÉS
+   ============================================================ */
+
+function saveRecentlyViewed(product) {
+    if (!product?.id) return;
+
+    try {
+        let recent = JSON.parse(
+            localStorage.getItem(CONFIG.recentStorageKey) || "[]"
+        );
+
+        if (!Array.isArray(recent)) {
+            recent = [];
+        }
+
+        const item = {
+            id: product.id,
+            name: getProductName(product),
+            price: getProductPrice(product),
+            image: getProductImages(product)[0],
+            category: getProductCategory(product),
+            viewedAt: Date.now()
+        };
+
+        recent = recent.filter(entry => entry.id !== product.id);
+
+        recent.unshift(item);
+
+        recent = recent.slice(0, CONFIG.recentLimit);
+
+        localStorage.setItem(
+            CONFIG.recentStorageKey,
+            JSON.stringify(recent)
+        );
+
+    } catch (error) {
+        console.warn(
+            "Não foi possível guardar o histórico:",
+            error
+        );
+    }
+}
+
+
+function getRecentlyViewed() {
+    try {
+        const recent = JSON.parse(
+            localStorage.getItem(CONFIG.recentStorageKey) || "[]"
+        );
+
+        if (!Array.isArray(recent)) return [];
+
+        return recent.filter(item => {
+            return item && item.id && item.id !== currentProduct?.id;
+        });
+
+    } catch {
+        return [];
+    }
+}
+
+
+/* ============================================================
+   BLOC 12 — GALERIE PRINCIPALE
+   ============================================================ */
 
 function galleryHTML(product) {
-    const images = productImages(product);
-    const image = images[selectedImageIndex] || images[0];
+    currentImages = getProductImages(product);
+    currentImageIndex = 0;
 
-    return `
-        <section class="productGallery">
-            <div class="productGalleryMain">
-                <img id="productMainImage"
-                     class="productMainImage"
-                     src="${escapeHTML(image)}"
-                     alt="${escapeHTML(productName(product))}">
-            </div>
+    const mainImage = currentImages[0];
 
-            <div class="productImageThumbnails" id="productImageThumbnails">
-                ${images.map((src, index) => `
-                    <button type="button"
-                            class="productThumbnail ${index === selectedImageIndex ? "active" : ""}"
-                            data-image-index="${index}">
-                        <img src="${escapeHTML(src)}" alt="">
+    const thumbnails = currentImages.length > 1
+        ? `
+            <div
+                class="productImageThumbnails"
+                id="productImageThumbnails"
+                aria-label="Fotografias do produto"
+            >
+                ${currentImages.map((image, index) => `
+                    <button
+                        type="button"
+                        class="productThumbnail ${index === 0 ? "isActive" : ""}"
+                        data-image-index="${index}"
+                        aria-label="Ver fotografia ${index + 1}"
+                        aria-pressed="${index === 0}"
+                    >
+                        <img
+                            src="${safeImage(image)}"
+                            alt=""
+                            loading="lazy"
+                        >
                     </button>
                 `).join("")}
             </div>
+        `
+        : "";
+
+    return `
+        <section class="productGallery">
+
+            <div class="productGalleryMain">
+
+                <button
+                    type="button"
+                    class="productGalleryOpen"
+                    id="openProductImageViewer"
+                    aria-label="Abrir fotografia em ecrã completo"
+                >
+                    <img
+                        id="productMainImage"
+                        class="productMainImage"
+                        src="${safeImage(mainImage)}"
+                        alt="${escapeHTML(getProductName(product))}"
+                        fetchpriority="high"
+                    >
+
+                    <span class="productZoomHint">
+                        <span class="material-symbols-rounded">
+                            zoom_in
+                        </span>
+                        Ampliar
+                    </span>
+                </button>
+
+                ${currentImages.length > 1 ? `
+                    <button
+                        type="button"
+                        class="productGalleryArrow productGalleryPrevious"
+                        id="productGalleryPrevious"
+                        aria-label="Fotografia anterior"
+                    >
+                        <span class="material-symbols-rounded">
+                            chevron_left
+                        </span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="productGalleryArrow productGalleryNext"
+                        id="productGalleryNext"
+                        aria-label="Fotografia seguinte"
+                    >
+                        <span class="material-symbols-rounded">
+                            chevron_right
+                        </span>
+                    </button>
+                ` : ""}
+
+                ${getDiscount(product) > 0 ? `
+                    <span class="productImageDiscount">
+                        -${getDiscount(product)}%
+                    </span>
+                ` : ""}
+
+            </div>
+
+            ${thumbnails}
+
+            ${currentImages.length > 1 ? `
+                <p class="productGalleryCounter" id="productGalleryCounter">
+                    1 / ${currentImages.length}
+                </p>
+            ` : ""}
+
         </section>
     `;
 }
 
-function handleGalleryClick(event) {
-    const button = event.target.closest("[data-image-index]");
-    if (!button || !currentProduct) return;
 
-    selectedImageIndex = Number(button.dataset.imageIndex);
+/* ============================================================
+   BLOC 13 — CHANGEMENT DE PHOTO
+   ============================================================ */
 
-    const images = productImages(currentProduct);
-    const main = document.getElementById("productMainImage");
+function changeProductImage(index) {
+    if (!currentImages.length) return;
 
-    if (main) main.src = images[selectedImageIndex];
+    const length = currentImages.length;
 
-    document.querySelectorAll(".productThumbnail").forEach(item => {
-        item.classList.toggle(
-            "active",
-            Number(item.dataset.imageIndex) === selectedImageIndex
-        );
+    currentImageIndex = (index + length) % length;
+
+    const mainImage = document.getElementById(
+        "productMainImage"
+    );
+
+    if (mainImage) {
+        mainImage.src = currentImages[currentImageIndex];
+        mainImage.alt = getProductName(currentProduct);
+    }
+
+    document.querySelectorAll(".productThumbnail").forEach(
+        (button, buttonIndex) => {
+            const active = buttonIndex === currentImageIndex;
+
+            button.classList.toggle("isActive", active);
+
+            button.setAttribute(
+                "aria-pressed",
+                String(active)
+            );
+        }
+    );
+
+    const counter = document.getElementById(
+        "productGalleryCounter"
+    );
+
+    if (counter) {
+        counter.textContent =
+            `${currentImageIndex + 1} / ${length}`;
+    }
+
+    if (viewerElement) {
+        updateViewerImage();
+    }
+}
+
+
+/* ============================================================
+   BLOC 14 — VISUALISEUR PLEIN ÉCRAN
+   ============================================================ */
+
+function createImageViewer() {
+    if (viewerElement) return;
+
+    viewerElement = document.createElement("div");
+
+    viewerElement.className = "productImageViewer";
+    viewerElement.id = "productImageViewer";
+
+    viewerElement.setAttribute("role", "dialog");
+    viewerElement.setAttribute("aria-modal", "true");
+    viewerElement.setAttribute(
+        "aria-label",
+        "Fotografias do produto"
+    );
+
+    viewerElement.hidden = true;
+
+    viewerElement.innerHTML = `
+        <button
+            type="button"
+            class="imageViewerClose"
+            id="imageViewerClose"
+            aria-label="Fechar"
+        >
+            <span class="material-symbols-rounded">
+                close
+            </span>
+        </button>
+
+        <div class="imageViewerCounter" id="imageViewerCounter">
+            1 / 1
+        </div>
+
+        <button
+            type="button"
+            class="imageViewerArrow imageViewerPrevious"
+            id="imageViewerPrevious"
+            aria-label="Fotografia anterior"
+        >
+            <span class="material-symbols-rounded">
+                chevron_left
+            </span>
+        </button>
+
+        <div class="imageViewerStage" id="imageViewerStage">
+            <img
+                id="imageViewerImage"
+                src=""
+                alt=""
+                draggable="false"
+            >
+        </div>
+
+        <button
+            type="button"
+            class="imageViewerArrow imageViewerNext"
+            id="imageViewerNext"
+            aria-label="Fotografia seguinte"
+        >
+            <span class="material-symbols-rounded">
+                chevron_right
+            </span>
+        </button>
+
+        <p class="imageViewerHint">
+            Deslize para mudar de fotografia. Utilize dois dedos para ampliar.
+        </p>
+    `;
+
+    document.body.appendChild(viewerElement);
+
+    viewerElement.querySelector("#imageViewerClose")
+        .addEventListener("click", closeImageViewer);
+
+    viewerElement.querySelector("#imageViewerPrevious")
+        .addEventListener("click", () => {
+            changeProductImage(currentImageIndex - 1);
+        });
+
+    viewerElement.querySelector("#imageViewerNext")
+        .addEventListener("click", () => {
+            changeProductImage(currentImageIndex + 1);
+        });
+
+    viewerElement.addEventListener("click", event => {
+        if (event.target === viewerElement) {
+            closeImageViewer();
+        }
+    });
+
+    // Le navigateur conserve son zoom tactile naturel.
+    // Le balayage horizontal permet de passer d'une photo à l'autre.
+    const stage = viewerElement.querySelector("#imageViewerStage");
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    stage.addEventListener("touchstart", event => {
+        if (event.touches.length !== 1) return;
+
+        touchStartX = event.touches[0].clientX;
+        touchStartY = event.touches[0].clientY;
+    }, { passive: true });
+
+    stage.addEventListener("touchend", event => {
+        if (event.changedTouches.length !== 1) return;
+
+        const endX = event.changedTouches[0].clientX;
+        const endY = event.changedTouches[0].clientY;
+
+        const deltaX = endX - touchStartX;
+        const deltaY = endY - touchStartY;
+
+        // Éviter de confondre un mouvement vertical avec un balayage.
+        if (
+            Math.abs(deltaX) > 65
+            && Math.abs(deltaX) > Math.abs(deltaY) * 1.25
+        ) {
+            changeProductImage(
+                deltaX < 0
+                    ? currentImageIndex + 1
+                    : currentImageIndex - 1
+            );
+        }
+    }, { passive: true });
+
+    document.addEventListener("keydown", event => {
+        if (!viewerElement || viewerElement.hidden) return;
+
+        if (event.key === "Escape") {
+            closeImageViewer();
+        }
+
+        if (event.key === "ArrowRight") {
+            changeProductImage(currentImageIndex + 1);
+        }
+
+        if (event.key === "ArrowLeft") {
+            changeProductImage(currentImageIndex - 1);
+        }
     });
 }
 
-// ============================================================
-// 13. INFORMATIONS PRINCIPALES
-// ============================================================
 
-function informationHTML(product) {
-    const stock = productStock(product);
-    const canBuy = available(product);
-    const oldPrice = number(
-        product.oldPrice ?? product.originalPrice,
-        0
+function updateViewerImage() {
+    if (!viewerElement) return;
+
+    const image = viewerElement.querySelector(
+        "#imageViewerImage"
     );
 
-    const currentPrice = productPrice(product);
-    const ratingValue = rating(product);
+    const counter = viewerElement.querySelector(
+        "#imageViewerCounter"
+    );
+
+    if (image) {
+        image.src = currentImages[currentImageIndex]
+            || CONFIG.placeholder;
+
+        image.alt = getProductName(currentProduct);
+    }
+
+    if (counter) {
+        counter.textContent =
+            `${currentImageIndex + 1} / ${currentImages.length}`;
+    }
+
+    const previous = viewerElement.querySelector(
+        "#imageViewerPrevious"
+    );
+
+    const next = viewerElement.querySelector(
+        "#imageViewerNext"
+    );
+
+    if (previous) {
+        previous.hidden = currentImages.length <= 1;
+    }
+
+    if (next) {
+        next.hidden = currentImages.length <= 1;
+    }
+}
+
+
+function openImageViewer() {
+    if (!currentProduct) return;
+
+    createImageViewer();
+
+    updateViewerImage();
+
+    viewerElement.hidden = false;
+
+    document.body.classList.add("imageViewerOpen");
+
+    document.getElementById("imageViewerClose")?.focus();
+}
+
+
+function closeImageViewer() {
+    if (!viewerElement) return;
+
+    viewerElement.hidden = true;
+
+    document.body.classList.remove("imageViewerOpen");
+
+    document.getElementById("openProductImageViewer")?.focus();
+}
+
+
+/* ============================================================
+   BLOC 15 — INFORMATIONS ET ACTIONS DU PRODUIT
+   ============================================================ */
+
+function informationHTML(product) {
+    const productName = getProductName(product);
+    const price = getProductPrice(product);
+    const oldPrice = getProductOldPrice(product);
+    const discount = getDiscount(product);
+    const stock = getProductStock(product);
+    const rating = getRating(product);
+    const reviewCount = getReviewCount(product);
+    const category = getProductCategory(product);
+    const brand = getProductBrand(product);
+
+    const available = isProductAvailable(product);
+
+    let stockHTML = "";
+
+    if (!available) {
+        stockHTML = `
+            <div class="productStockStatus isOutOfStock">
+                <span class="material-symbols-rounded">
+                    cancel
+                </span>
+                Produto indisponível
+            </div>
+        `;
+    } else if (stock !== null && stock <= 5) {
+        stockHTML = `
+            <div class="productStockStatus isLowStock">
+                <span class="material-symbols-rounded">
+                    inventory_2
+                </span>
+                Restam apenas ${stock} unidade(s)
+            </div>
+        `;
+    } else {
+        stockHTML = `
+            <div class="productStockStatus isAvailable">
+                <span class="material-symbols-rounded">
+                    check_circle
+                </span>
+                Disponível
+            </div>
+        `;
+    }
 
     return `
         <section class="productInformation">
 
-            <div class="productMeta">
+            <div class="productCategoryLine">
                 <span class="productCategory">
-                    ${escapeHTML(product.category || product.categoria || "Produtos")}
+                    ${escapeHTML(category)}
                 </span>
-                ${
-                    product.brand || product.marca
-                        ? `<span class="productBrand">${escapeHTML(product.brand || product.marca)}</span>`
-                        : ""
-                }
+
+                ${brand ? `
+                    <span class="productBrand">
+                        ${escapeHTML(brand)}
+                    </span>
+                ` : ""}
             </div>
 
             <h1 class="productTitle">
-                ${escapeHTML(productName(product))}
+                ${escapeHTML(productName)}
             </h1>
 
-            <div class="productRating">
-                ${stars(ratingValue)}
-                <span class="ratingValue">${ratingValue.toFixed(1)}</span>
-                <span class="ratingCount">
-                    (${number(product.reviewCount ?? product.ratingsCount)} avaliações)
-                </span>
+            ${rating > 0 ? `
+                <div class="productRatingLine">
+                    <span class="productRatingStars">
+                        ${getStars(rating)}
+                    </span>
+
+                    <span class="productRatingNumber">
+                        ${rating.toFixed(1)}
+                    </span>
+
+                    <span class="productReviewCount">
+                        (${reviewCount} avaliações)
+                    </span>
+                </div>
+            ` : ""}
+
+            <div class="productPriceBlock">
+
+                <div class="productPriceLine">
+                    <strong class="productPrice">
+                        ${formatPrice(price)}
+                    </strong>
+
+                    ${oldPrice > price ? `
+                        <span class="productOldPrice">
+                            ${formatPrice(oldPrice)}
+                        </span>
+                    ` : ""}
+                </div>
+
+                ${discount > 0 ? `
+                    <span class="productDiscountBadge">
+                        -${discount}%
+                    </span>
+                ` : ""}
+
             </div>
 
-            <div class="productPriceArea">
-                <div class="productPrice">${price(currentPrice)}</div>
-
-                ${
-                    oldPrice > currentPrice
-                        ? `<div class="productOldPrice">${price(oldPrice)}</div>`
-                        : ""
-                }
-
-                ${
-                    discount(product)
-                        ? `<span class="productDiscount">-${discount(product)}%</span>`
-                        : ""
-                }
+            <div class="productStockLine">
+                ${stockHTML}
             </div>
 
-            <div class="productStock ${canBuy ? "" : "outOfStock"}">
-                ${canBuy
-                    ? stock === null
-                        ? "Consulte a disponibilidade"
-                        : stock <= 5
-                            ? `Restam ${stock} unidade(s)`
-                            : "Disponível"
-                    : "Produto indisponível"}
+            <div class="productQuickActions">
+
+                <button
+                    type="button"
+                    class="productShareButton"
+                    id="shareProductButton"
+                >
+                    <span class="material-symbols-rounded">
+                        share
+                    </span>
+
+                    <span>Partilhar produto</span>
+                </button>
+
+                <button
+                    type="button"
+                    class="productChatButton"
+                    id="chatWithMerchantButton"
+                >
+                    <span class="material-symbols-rounded">
+                        chat
+                    </span>
+
+                    <span>Conversar com o vendedor</span>
+                </button>
+
             </div>
 
-            <div class="productHighlights">
-                <div class="productHighlight">✓ Compra simples</div>
-                <div class="productHighlight">✓ Contacto direto com o vendedor</div>
-                <div class="productHighlight">✓ Informações do produto</div>
-            </div>
+            <div class="productPurchasePanel">
 
-            <div class="productPurchaseBox">
-                <label for="productQuantityInput" class="productOptionLabel">
+                <label
+                    for="productQuantityInput"
+                    class="productQuantityLabel"
+                >
                     Quantidade
                 </label>
 
                 <div class="quantityControl">
-                    <button id="decreaseQuantity"
-                            type="button"
-                            ${!canBuy ? "disabled" : ""}>−</button>
 
-                    <input id="productQuantityInput"
-                           type="number"
-                           min="1"
-                           ${stock !== null ? `max="${Math.max(1, stock)}"` : ""}
-                           value="${selectedQuantity}"
-                           inputmode="numeric"
-                           ${!canBuy ? "disabled" : ""}>
+                    <button
+                        type="button"
+                        id="decreaseQuantity"
+                        aria-label="Diminuir quantidade"
+                        ${!available ? "disabled" : ""}
+                    >
+                        <span class="material-symbols-rounded">
+                            remove
+                        </span>
+                    </button>
 
-                    <button id="increaseQuantity"
-                            type="button"
-                            ${!canBuy || stock === 0 ? "disabled" : ""}>+</button>
+                    <input
+                        type="number"
+                        id="productQuantityInput"
+                        value="1"
+                        min="1"
+                        ${stock !== null ? `max="${Math.max(1, stock)}"` : ""}
+                        inputmode="numeric"
+                        aria-label="Quantidade"
+                        ${!available ? "disabled" : ""}
+                    >
+
+                    <button
+                        type="button"
+                        id="increaseQuantity"
+                        aria-label="Aumentar quantidade"
+                        ${!available ? "disabled" : ""}
+                    >
+                        <span class="material-symbols-rounded">
+                            add
+                        </span>
+                    </button>
+
                 </div>
+
             </div>
 
             <div class="productActions">
-                <button id="addProductToCart"
-                        class="addToCartButton"
-                        type="button"
-                        ${!canBuy ? "disabled" : ""}>
-                    🛒 Adicionar ao carrinho
+
+                <button
+                    type="button"
+                    class="addToCartButton"
+                    id="addProductToCart"
+                    ${!available ? "disabled" : ""}
+                >
+                    <span class="material-symbols-rounded">
+                        shopping_cart
+                    </span>
+
+                    <span>Adicionar ao carrinho</span>
                 </button>
 
-                <button id="buyProductNow"
-                        class="buyNowButton"
-                        type="button"
-                        ${!canBuy ? "disabled" : ""}>
+                <button
+                    type="button"
+                    class="buyNowButton"
+                    id="buyProductNow"
+                    ${!available ? "disabled" : ""}
+                >
                     Comprar agora
                 </button>
 
-                ${favoriteButtonHTML(product)}
-            </div>
+                ${favoriteButtonHTML(product.id)}
 
-            <div class="productGuarantee">
-                ℹ️ Confirme o preço, a entrega e as condições de pagamento com o vendedor.
             </div>
 
         </section>
     `;
 }
 
-// ============================================================
-// 14. INFORMATIONS COMMERÇANT
-// ============================================================
 
-function merchantHTML(merchant, product) {
-    const id = merchantId(product);
-    const name = merchantName(merchant);
+/* ============================================================
+   BLOC 16 — INFORMATIONS DU VENDEUR
+   ============================================================ */
 
-    const url = id
-        ? `${CONFIG.merchantPage}?merchantId=${encodeURIComponent(id)}`
-        : CONFIG.catalog;
+function merchantHTML(product, merchant) {
+    const merchantId = getMerchantId(product);
 
-    return `
-        <section class="merchantCard">
-            <div class="merchantIdentity">
-                <img class="merchantAvatar"
-                     src="${escapeHTML(merchantImage(merchant))}"
-                     alt="${escapeHTML(name)}">
-
-                <div>
-                    <div class="merchantName">
-                        ${escapeHTML(name)}
-                        ${
-                            merchant?.verified || merchant?.isVerified
-                                ? `<span class="merchantVerified">✓</span>`
-                                : ""
-                        }
-                    </div>
-
-                    <div class="merchantRating">
-                        ${stars(number(merchant?.rating))}
-                    </div>
-
-                    <p>${escapeHTML(
-                        merchant?.description ||
-                        merchant?.bio ||
-                        "Conheça esta loja Toma."
-                    )}</p>
-                </div>
-            </div>
-
-            <a href="${url}" class="merchantShopButton">
-                Visitar loja →
-            </a>
-        </section>
-    `;
-}
-
-// ============================================================
-// 15. DESCRIPTION ET CARACTÉRISTIQUES
-// ============================================================
-
-function specificationHTML(product) {
-    const data =
-        product.specifications ||
-        product.specs ||
-        product.attributes ||
-        {};
-
-    if (!data || typeof data !== "object") {
-        return "<p>Sem características adicionais.</p>";
-    }
-
-    const entries = Object.entries(data).filter(([key, value]) =>
-        key &&
-        value !== null &&
-        value !== undefined &&
-        typeof value !== "object"
+    const merchantName = getMerchantName(
+        merchant,
+        product
     );
 
-    if (!entries.length) {
-        return "<p>Sem características adicionais.</p>";
-    }
+    const merchantImage = getMerchantImage(merchant);
+
+    const location = merchant?.province
+        || merchant?.city
+        || merchant?.location
+        || merchant?.address
+        || "";
 
     return `
-        <div class="productSpecificationList">
-            ${entries.map(([key, value]) => `
-                <div class="productSpecificationRow">
+        <section class="productMerchantCard">
+
+            <div class="productMerchantHeading">
+                <h2>Informações do vendedor</h2>
+            </div>
+
+            <div class="productMerchantContent">
+
+                <img
+                    class="productMerchantAvatar"
+                    src="${safeImage(merchantImage)}"
+                    alt="${escapeHTML(merchantName)}"
+                    loading="lazy"
+                >
+
+                <div class="productMerchantDetails">
+
+                    <h3>
+                        ${escapeHTML(merchantName)}
+                    </h3>
+
+                    ${location ? `
+                        <p class="productMerchantLocation">
+                            <span class="material-symbols-rounded">
+                                location_on
+                            </span>
+
+                            ${escapeHTML(location)}
+                        </p>
+                    ` : ""}
+
+                    <a
+                        class="productMerchantLink"
+                        href="${CONFIG.merchantPage}?id=${encodeURIComponent(merchantId)}"
+                    >
+                        Ver loja
+                        <span class="material-symbols-rounded">
+                            arrow_forward
+                        </span>
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+    `;
+}
+
+
+/* ============================================================
+   BLOC 17 — DESCRIÇÃO E CARACTÉRISTIQUES
+   ============================================================ */
+
+function detailsHTML(product) {
+    const description = getProductDescription(product);
+
+    const specifications = product?.specifications
+        || product?.specs
+        || product?.attributes
+        || null;
+
+    let specificationsHTML = "";
+
+    if (
+        specifications
+        && typeof specifications === "object"
+        && !Array.isArray(specifications)
+    ) {
+        specificationsHTML = Object.entries(specifications)
+            .map(([key, value]) => `
+                <div class="productSpecification">
                     <span>${escapeHTML(key)}</span>
                     <strong>${escapeHTML(value)}</strong>
                 </div>
-            `).join("")}
-        </div>
-    `;
-}
-
-function tabContent(product) {
-    if (activeTab === "specifications") {
-        return `
-            <div class="productDescription">
-                <h3>Características do produto</h3>
-                ${specificationHTML(product)}
-            </div>
-        `;
+            `)
+            .join("");
     }
 
-    if (activeTab === "delivery") {
-        return `
-            <div class="productDescription">
-                <h3>Entrega e pagamento</h3>
-                <p>As condições de entrega e pagamento variam conforme o vendedor e a localização.</p>
-                <p>Contacte o vendedor antes de confirmar o pedido.</p>
-            </div>
-        `;
-    }
+    const reference = product?.reference
+        || product?.sku
+        || product?.productCode
+        || "";
 
-    return `
-        <div class="productDescription">
-            <h3>Sobre este produto</h3>
-            <p>${escapeHTML(productDescription(product))}</p>
-        </div>
-    `;
-}
-
-function detailsHTML(product) {
     return `
         <section class="productDetailsSection">
-            <div class="productTabs" role="tablist">
-                <button type="button"
-                        class="productTab ${activeTab === "description" ? "active" : ""}"
-                        data-tab="description"
-                        aria-selected="${activeTab === "description"}">
+
+            <div class="productDetailsTabs" role="tablist">
+
+                <button
+                    type="button"
+                    class="productDetailsTab isActive"
+                    data-product-tab="description"
+                    role="tab"
+                    aria-selected="true"
+                >
                     Descrição
                 </button>
 
-                <button type="button"
-                        class="productTab ${activeTab === "specifications" ? "active" : ""}"
-                        data-tab="specifications"
-                        aria-selected="${activeTab === "specifications"}">
+                <button
+                    type="button"
+                    class="productDetailsTab"
+                    data-product-tab="specifications"
+                    role="tab"
+                    aria-selected="false"
+                >
                     Características
                 </button>
 
-                <button type="button"
-                        class="productTab ${activeTab === "delivery" ? "active" : ""}"
-                        data-tab="delivery"
-                        aria-selected="${activeTab === "delivery"}">
-                    Entrega e pagamento
-                </button>
             </div>
 
-            <div id="productTabPanel" class="productTabPanel">
-                ${tabContent(product)}
+            <div
+                class="productDetailsPanel"
+                data-product-panel="description"
+            >
+                <p class="productDescription">
+                    ${escapeHTML(description)}
+                </p>
+
+                ${reference ? `
+                    <p class="productReference">
+                        Referência:
+                        <strong>${escapeHTML(reference)}</strong>
+                    </p>
+                ` : ""}
             </div>
+
+            <div
+                class="productDetailsPanel"
+                data-product-panel="specifications"
+                hidden
+            >
+                ${specificationsHTML || `
+                    <p class="productNoSpecifications">
+                        Não existem características adicionais disponíveis.
+                    </p>
+                `}
+            </div>
+
         </section>
     `;
 }
 
-function handleTab(event) {
-    const button = event.target.closest("[data-tab]");
-    if (!button || !currentProduct) return;
 
-    activeTab = button.dataset.tab;
+/* ============================================================
+   BLOC 18 — AVALIAÇÕES
+   ============================================================ */
 
-    document.querySelectorAll("[data-tab]").forEach(item => {
-        const active = item === button;
-        item.classList.toggle("active", active);
-        item.setAttribute("aria-selected", String(active));
-    });
+function reviewsHTML(product, reviews) {
+    const averageRating = getRating(product);
 
-    const panel = document.getElementById("productTabPanel");
-    if (panel) panel.innerHTML = tabContent(currentProduct);
-}
+    if (!reviews.length && averageRating <= 0) {
+        return `
+            <section class="productReviewsSection">
+                <h2>Avaliações dos clientes</h2>
 
-// ============================================================
-// 16. AVIS
-// ============================================================
+                <p class="productNoReviews">
+                    Ainda não existem avaliações para este produto.
+                </p>
+            </section>
+        `;
+    }
 
-function reviewsHTML(reviews, product) {
-    const valid = reviews.filter(item =>
-        number(item.rating ?? item.stars ?? item.score) > 0
-    );
+    const reviewCards = reviews.map(review => {
+        const name = review.userName
+            || review.customerName
+            || review.name
+            || "Cliente";
 
-    const average = valid.length
-        ? valid.reduce((sum, item) =>
-            sum + number(item.rating ?? item.stars ?? item.score), 0
-        ) / valid.length
-        : rating(product);
+        const comment = review.comment
+            || review.text
+            || review.message
+            || review.review
+            || "";
+
+        const rating = Math.max(
+            0,
+            Math.min(
+                5,
+                toNumber(review.rating ?? review.stars ?? 0)
+            )
+        );
+
+        if (!comment) return "";
+
+        return `
+            <article class="productReviewCard">
+
+                <div class="productReviewHeader">
+
+                    <strong>
+                        ${escapeHTML(name)}
+                    </strong>
+
+                    <span class="productRatingStars">
+                        ${getStars(rating)}
+                    </span>
+
+                </div>
+
+                <p>${escapeHTML(comment)}</p>
+
+            </article>
+        `;
+    }).filter(Boolean).join("");
 
     return `
         <section class="productReviewsSection">
-            <div class="sectionHeading">
-                <div>
-                    <span class="sectionEyebrow">OPINIÕES</span>
-                    <h2>Avaliações dos clientes</h2>
+
+            <h2>Avaliações dos clientes</h2>
+
+            ${averageRating > 0 ? `
+                <div class="productReviewsSummary">
+                    <strong>${averageRating.toFixed(1)}</strong>
+
+                    <span class="productRatingStars">
+                        ${getStars(averageRating)}
+                    </span>
                 </div>
-                <span>${valid.length} avaliação(ões)</span>
+            ` : ""}
+
+            <div class="productReviewsList">
+                ${reviewCards || `
+                    <p class="productNoReviews">
+                        Ainda não existem comentários disponíveis.
+                    </p>
+                `}
             </div>
 
-            <div class="reviewsOverview">
-                <div class="reviewScore">
-                    <div class="reviewScoreNumber">${average.toFixed(1)}</div>
-                    <div class="reviewScoreStars">${stars(average)}</div>
-                    <p>Classificação média</p>
-                </div>
-            </div>
-
-            <div class="reviewCards">
-                ${
-                    valid.length
-                        ? valid.slice(0, 8).map(item => {
-                            const name = item.userName ||
-                                item.customerName ||
-                                item.name ||
-                                "Cliente Toma";
-
-                            return `
-                                <article class="reviewCard">
-                                    <div class="reviewAuthor">
-                                        <div class="reviewAuthorAvatar">
-                                            ${escapeHTML(name.charAt(0).toUpperCase())}
-                                        </div>
-                                        <strong>${escapeHTML(name)}</strong>
-                                    </div>
-
-                                    <div class="reviewCardStars">
-                                        ${stars(number(item.rating ?? item.stars ?? item.score))}
-                                    </div>
-
-                                    <p>${escapeHTML(item.comment || item.text || "Sem comentário.")}</p>
-                                </article>
-                            `;
-                        }).join("")
-                        : `
-                            <div class="emptyReviews">
-                                <h3>Ainda sem avaliações</h3>
-                                <p>As opiniões dos clientes aparecerão aqui quando estiverem disponíveis.</p>
-                            </div>
-                        `
-                }
-            </div>
         </section>
     `;
 }
 
-// ============================================================
-// 17. PRODUITS SIMILAIRES
-// ============================================================
 
-function relatedHTML(products) {
+/* ============================================================
+   BLOC 19 — CARTES DE PRODUITS
+   ============================================================ */
+
+function productCardHTML(product) {
+    const name = getProductName(product);
+    const price = getProductPrice(product);
+    const image = getProductImages(product)[0];
+
+    const oldPrice = getProductOldPrice(product);
+    const discount = getDiscount(product);
+
+    return `
+        <article class="relatedProductCard">
+
+            <a
+                class="relatedProductLink"
+                href="./product-detail-v2.html?id=${encodeURIComponent(product.id)}"
+                aria-label="Ver ${escapeHTML(name)}"
+            >
+
+                <div class="relatedProductImage">
+
+                    <img
+                        src="${safeImage(image)}"
+                        alt="${escapeHTML(name)}"
+                        loading="lazy"
+                    >
+
+                    ${discount > 0 ? `
+                        <span class="relatedProductDiscount">
+                            -${discount}%
+                        </span>
+                    ` : ""}
+
+                </div>
+
+                <div class="relatedProductInfo">
+
+                    <h3 class="relatedProductName">
+                        ${escapeHTML(name)}
+                    </h3>
+
+                    <div class="relatedProductPrice">
+                        ${formatPrice(price)}
+                    </div>
+
+                    ${oldPrice > price ? `
+                        <div class="relatedProductOldPrice">
+                            ${formatPrice(oldPrice)}
+                        </div>
+                    ` : ""}
+
+                </div>
+
+            </a>
+
+        </article>
+    `;
+}
+
+
+function productRailHTML(title, products, sectionId) {
+    if (!products.length) return "";
+
     return `
         <section class="relatedProductsSection">
-            <div class="sectionHeading">
-                <div>
-                    <span class="sectionEyebrow">MAIS PARA DESCOBRIR</span>
-                    <h2>Também pode gostar</h2>
+
+            <div class="relatedProductsHeading">
+
+                <h2>${escapeHTML(title)}</h2>
+
+                <div class="relatedProductsControls">
+
+                    <button
+                        type="button"
+                        class="relatedRailArrow"
+                        data-rail-target="${sectionId}"
+                        data-rail-direction="-1"
+                        aria-label="Ver produtos anteriores"
+                    >
+                        <span class="material-symbols-rounded">
+                            chevron_left
+                        </span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="relatedRailArrow"
+                        data-rail-target="${sectionId}"
+                        data-rail-direction="1"
+                        aria-label="Ver mais produtos"
+                    >
+                        <span class="material-symbols-rounded">
+                            chevron_right
+                        </span>
+                    </button>
+
                 </div>
 
-                <a href="${CONFIG.catalog}" class="viewAllProducts">
-                    Ver todos →
-                </a>
             </div>
 
-            ${
-                products.length
-                    ? `
-                        <div class="relatedProductsGrid">
-                            ${products.map(item => `
-                                <a class="relatedProductCard"
-                                   href="./product-detail-v2.html?id=${encodeURIComponent(item.id)}">
+            <div
+                class="relatedProductsGrid"
+                id="${sectionId}"
+            >
+                ${products.map(productCardHTML).join("")}
+            </div>
 
-                                    <div class="relatedProductImage">
-                                        <img src="${escapeHTML(productImages(item)[0])}"
-                                             alt="${escapeHTML(productName(item))}"
-                                             loading="lazy">
-                                    </div>
-
-                                    <div>
-                                        <h3 class="relatedProductName">
-                                            ${escapeHTML(productName(item))}
-                                        </h3>
-
-                                        <div class="relatedProductPrice">
-                                            ${price(productPrice(item))}
-                                        </div>
-                                    </div>
-                                </a>
-                            `).join("")}
-                        </div>
-                    `
-                    : `
-                        <div class="emptyRelatedProducts">
-                            Não existem outros produtos relacionados neste momento.
-                        </div>
-                    `
-            }
         </section>
     `;
 }
 
-// ============================================================
-// 18. RENDU PRINCIPAL
-// ============================================================
 
-function renderPage(product, merchant, reviews, related) {
-    if (!root) {
-        throw new Error("O elemento #productDetailRoot não existe no HTML.");
-    }
+/* ============================================================
+   BLOC 20 — CONSTRUIRE LA PAGE
+   ============================================================ */
 
-    const name = productName(product);
+function renderPage(product, merchant, reviews, relatedProducts) {
+    const root = document.getElementById(
+        "productDetailRoot"
+    );
 
-    if (breadcrumb) breadcrumb.textContent = name;
+    if (!root) return;
 
-    document.title = `${name} | Toma`;
+    const name = getProductName(product);
 
     root.innerHTML = `
         <div class="productLayout">
+
             ${galleryHTML(product)}
+
             ${informationHTML(product)}
+
         </div>
 
         <div class="productSecondaryLayout">
+
             <div class="productSecondaryMain">
+
                 ${detailsHTML(product)}
-                ${reviewsHTML(reviews, product)}
+
+                ${reviewsHTML(product, reviews)}
+
             </div>
 
             <aside class="productSecondaryAside">
-                ${merchantHTML(merchant, product)}
+
+                ${merchantHTML(product, merchant)}
+
             </aside>
+
         </div>
 
-        ${relatedHTML(related)}
+        ${productRailHTML(
+            "Também pode gostar",
+            relatedProducts,
+            "recommendedProductsRail"
+        )}
+
+        <div id="similarProductsContainer"></div>
+
+        <div id="recentProductsContainer"></div>
     `;
 
     root.hidden = false;
 
-    if (loading) loading.hidden = true;
-    if (errorBox) errorBox.hidden = true;
-
-    updateCartBadge();
-    bindProductEvents();
-    handleImageErrors();
-    createMobileBuyBar();
-}
-
-// ============================================================
-// 19. ÉVÉNEMENTS PRODUIT
-// ============================================================
-
-function bindProductEvents() {
-    document.getElementById("productImageThumbnails")
-        ?.addEventListener("click", handleGalleryClick);
-
-    document.getElementById("productFavoriteButton")
-        ?.addEventListener("click", handleFavorite);
-
-    document.getElementById("addProductToCart")
-        ?.addEventListener("click", addCurrentToCart);
-
-    document.getElementById("buyProductNow")
-        ?.addEventListener("click", buyNow);
-
-    document.getElementById("decreaseQuantity")
-        ?.addEventListener("click", () => changeQuantity(-1));
-
-    document.getElementById("increaseQuantity")
-        ?.addEventListener("click", () => changeQuantity(1));
-
-    document.getElementById("productQuantityInput")
-        ?.addEventListener("change", normalizeQuantity);
-
-    document.querySelector(".productTabs")
-        ?.addEventListener("click", handleTab);
-}
-
-function changeQuantity(delta) {
-    if (!currentProduct || !available(currentProduct)) return;
-
-    const stock = productStock(currentProduct);
-    const maximum = stock === null ? 99 : Math.max(1, stock);
-
-    selectedQuantity = Math.max(
-        1,
-        Math.min(maximum, selectedQuantity + delta)
+    const breadcrumb = document.getElementById(
+        "breadcrumbProductName"
     );
 
-    updateQuantityUI();
+    if (breadcrumb) {
+        breadcrumb.textContent = name;
+    }
+
+    document.title = `${name} | Toma`;
+
+    bindGallery();
+    bindProductActions();
+    bindDetailsTabs();
+    bindRelatedProductRails();
+    handleImageErrors(root);
+
+    createImageViewer();
 }
 
-function normalizeQuantity() {
-    if (!currentProduct) return;
 
-    const stock = productStock(currentProduct);
-    const maximum = stock === null ? 99 : Math.max(1, stock);
+/* ============================================================
+   BLOC 21 — GALERIE : ÉVÉNEMENTS
+   ============================================================ */
 
-    const input = document.getElementById("productQuantityInput");
+function bindGallery() {
+    document.getElementById("openProductImageViewer")
+        ?.addEventListener("click", openImageViewer);
 
-    selectedQuantity = Math.max(
-        1,
-        Math.min(maximum, Math.floor(number(input?.value, 1)))
+    document.getElementById("productGalleryPrevious")
+        ?.addEventListener("click", () => {
+            changeProductImage(currentImageIndex - 1);
+        });
+
+    document.getElementById("productGalleryNext")
+        ?.addEventListener("click", () => {
+            changeProductImage(currentImageIndex + 1);
+        });
+
+    document.querySelectorAll(".productThumbnail")
+        .forEach(button => {
+            button.addEventListener("click", () => {
+                const index = Number(
+                    button.dataset.imageIndex
+                );
+
+                changeProductImage(index);
+            });
+        });
+}
+
+
+/* ============================================================
+   BLOC 22 — QUANTITÉ
+   ============================================================ */
+
+function getMaximumQuantity() {
+    const stock = getProductStock(currentProduct);
+
+    return stock === null
+        ? 999
+        : Math.max(0, stock);
+}
+
+
+function updateQuantity(value) {
+    const input = document.getElementById(
+        "productQuantityInput"
     );
 
-    updateQuantityUI();
-}
+    if (!input) return;
 
-function updateQuantityUI() {
-    const input = document.getElementById("productQuantityInput");
-    const stock = productStock(currentProduct);
+    const max = getMaximumQuantity();
 
-    const maximum = stock === null ? 99 : Math.max(1, stock);
+    let quantity = Math.floor(toNumber(value, 1));
 
-    if (input) input.value = String(selectedQuantity);
+    quantity = Math.max(1, quantity);
 
-    const minus = document.getElementById("decreaseQuantity");
-    const plus = document.getElementById("increaseQuantity");
+    if (max > 0) {
+        quantity = Math.min(quantity, max);
+    }
 
-    if (minus) minus.disabled = selectedQuantity <= 1;
-    if (plus) plus.disabled = selectedQuantity >= maximum;
+    selectedQuantity = quantity;
+
+    input.value = String(quantity);
 
     updateMobileBuyBar();
 }
 
-// ============================================================
-// 20. PANIER — AJOUT ET ACHAT
-// ============================================================
 
-function addCurrentToCart() {
-    if (!currentProduct || !available(currentProduct)) {
-        showToast("Este produto está indisponível.", "warning");
-        return;
+function bindQuantityControls() {
+    document.getElementById("decreaseQuantity")
+        ?.addEventListener("click", () => {
+            updateQuantity(selectedQuantity - 1);
+        });
+
+    document.getElementById("increaseQuantity")
+        ?.addEventListener("click", () => {
+            updateQuantity(selectedQuantity + 1);
+        });
+
+    document.getElementById("productQuantityInput")
+        ?.addEventListener("change", event => {
+            updateQuantity(event.target.value);
+        });
+
+    document.getElementById("productQuantityInput")
+        ?.addEventListener("input", event => {
+            const value = Number(event.target.value);
+
+            if (Number.isFinite(value) && value >= 1) {
+                selectedQuantity = Math.floor(value);
+                updateMobileBuyBar();
+            }
+        });
+}
+
+
+/* ============================================================
+   BLOC 23 — AJOUT AU PANIER
+   ============================================================ */
+
+function createCartProduct(product) {
+    const merchantId = getMerchantId(product);
+
+    return {
+        id: product.id,
+
+        name: getProductName(product),
+
+        price: getProductPrice(product),
+
+        image: getProductImages(product)[0]
+            || CONFIG.placeholder,
+
+        merchantId,
+
+        shopName: getMerchantName(
+            currentMerchant,
+            product
+        ),
+
+        quantity: 1
+    };
+}
+
+
+function validatePurchaseQuantity() {
+    if (!currentProduct) {
+        showToast("Produto não encontrado.", "error");
+        return false;
     }
 
-    const stock = productStock(currentProduct);
+    if (!isProductAvailable(currentProduct)) {
+        showToast("Este produto está indisponível.", "error");
+        return false;
+    }
+
+    const stock = getProductStock(currentProduct);
 
     if (stock !== null && selectedQuantity > stock) {
-        showToast(`Só existem ${stock} unidade(s).`, "warning");
-        return;
+        showToast(
+            `Só existem ${stock} unidade(s) disponíveis.`,
+            "error"
+        );
+
+        updateQuantity(stock || 1);
+
+        return false;
     }
 
-    try {
-        const image = productImages(currentProduct)[0];
+    if (selectedQuantity < 1) {
+        showToast("Selecione uma quantidade válida.", "error");
+        return false;
+    }
 
-        // storage.js ajoute une unité par appel.
+    return true;
+}
+
+
+function addCurrentToCart() {
+    if (isAddingToCart) return false;
+
+    if (!validatePurchaseQuantity()) return false;
+
+    isAddingToCart = true;
+
+    try {
+        const cartProduct = createCartProduct(
+            currentProduct
+        );
+
+        /*
+         * storage.js adiciona uma unidade por chamada.
+         * On conserve ce comportement pour ne pas casser
+         * le panier existant de Toma.
+         */
         for (let i = 0; i < selectedQuantity; i++) {
-            addToCart({
-                id: currentProduct.id,
-                name: productName(currentProduct),
-                price: productPrice(currentProduct),
-                image,
-                images: productImages(currentProduct),
-                merchantId: merchantId(currentProduct),
-                shopName: merchantName(currentMerchant)
-            });
+            addToCart(cartProduct);
         }
 
         updateCartBadge();
@@ -1223,334 +1987,637 @@ function addCurrentToCart() {
                 : "Produto adicionado ao carrinho."
         );
 
-        const button = document.getElementById("addProductToCart");
+        return true;
 
-        if (button) {
-            const original = button.innerHTML;
-
-            button.innerHTML = "✓ Adicionado";
-
-            setTimeout(() => {
-                if (button.isConnected) button.innerHTML = original;
-            }, 1200);
-        }
     } catch (error) {
-        console.error("TOMA — Erro ao adicionar ao carrinho:", error);
-        showToast("Não foi possível adicionar ao carrinho.", "error");
+        console.error("Erro ao adicionar ao carrinho:", error);
+
+        showToast(
+            "Não foi possível adicionar o produto ao carrinho.",
+            "error"
+        );
+
+        return false;
+
+    } finally {
+        isAddingToCart = false;
     }
 }
 
-function buyNow() {
-    if (!currentProduct || !available(currentProduct)) {
-        showToast("Este produto está indisponível.", "warning");
-        return;
-    }
 
-    addCurrentToCart();
+/* ============================================================
+   BLOC 24 — ACHETER MAINTENANT
+   ============================================================ */
+
+function buyNow() {
+    const success = addCurrentToCart();
+
+    if (!success) return;
 
     setTimeout(() => {
         window.location.href = CONFIG.cart;
-    }, 250);
+    }, 350);
 }
 
-// ============================================================
-// 21. IMAGES — FALLBACK
-// ============================================================
 
-function handleImageErrors() {
-    root?.querySelectorAll("img").forEach(image => {
+/* ============================================================
+   BLOC 25 — PARTAGE DU PRODUIT
+   ============================================================ */
+
+async function shareProduct() {
+    if (!currentProduct) return;
+
+    const name = getProductName(currentProduct);
+
+    const price = formatPrice(
+        getProductPrice(currentProduct)
+    );
+
+    const url = getCurrentUrl();
+
+    const shareData = {
+        title: `${name} | Toma`,
+        text: `${name} — ${price}. Descubra este produto na Toma.`,
+        url
+    };
+
+    try {
+        if (navigator.share) {
+            await navigator.share(shareData);
+
+            return;
+        }
+
+        if (navigator.clipboard?.writeText) {
+            await navigator.clipboard.writeText(url);
+
+            showToast("Ligação do produto copiada.");
+
+            return;
+        }
+
+        // Solution de secours pour les navigateurs anciens.
+        const temporaryInput = document.createElement("textarea");
+
+        temporaryInput.value = url;
+
+        temporaryInput.style.position = "fixed";
+        temporaryInput.style.opacity = "0";
+
+        document.body.appendChild(temporaryInput);
+
+        temporaryInput.select();
+
+        const copied = document.execCommand("copy");
+
+        temporaryInput.remove();
+
+        if (copied) {
+            showToast("Ligação do produto copiada.");
+        } else {
+            window.prompt(
+                "Copie a ligação do produto:",
+                url
+            );
+        }
+
+    } catch (error) {
+        // L'utilisateur peut fermer la fenêtre native de partage.
+        if (error?.name !== "AbortError") {
+            console.error("Erro ao partilhar:", error);
+
+            showToast(
+                "Não foi possível partilhar o produto.",
+                "error"
+            );
+        }
+    }
+}
+
+
+/* ============================================================
+   BLOC 26 — CONVERSATION AVEC LE VENDEUR
+   ============================================================ */
+
+function openMerchantChat() {
+    if (!currentProduct) return;
+
+    const merchantId = getMerchantId(currentProduct);
+
+    if (!merchantId) {
+        showToast(
+            "Não foi possível identificar o vendedor.",
+            "error"
+        );
+
+        return;
+    }
+
+    const params = new URLSearchParams();
+
+    params.set("merchant", merchantId);
+    params.set("product", currentProduct.id);
+
+    /*
+     * On utilise chat.html, la page de chat existante.
+     * La page chat doit ensuite lire les paramètres
+     * merchant et product pour ouvrir la bonne conversation.
+     */
+    window.location.href =
+        `${CONFIG.chatPage}?${params.toString()}`;
+}
+
+
+/* ============================================================
+   BLOC 27 — ÉVÉNEMENTS DES ACTIONS
+   ============================================================ */
+
+function bindProductActions() {
+    document.getElementById("productFavoriteButton")
+        ?.addEventListener("click", handleFavorite);
+
+    document.getElementById("shareProductButton")
+        ?.addEventListener("click", shareProduct);
+
+    document.getElementById("chatWithMerchantButton")
+        ?.addEventListener("click", openMerchantChat);
+
+    document.getElementById("addProductToCart")
+        ?.addEventListener("click", addCurrentToCart);
+
+    document.getElementById("buyProductNow")
+        ?.addEventListener("click", buyNow);
+
+    bindQuantityControls();
+
+    createMobileBuyBar();
+}
+
+
+/* ============================================================
+   BLOC 28 — ONGLETS DESCRIPTION / CARACTÉRISTIQUES
+   ============================================================ */
+
+function bindDetailsTabs() {
+    const tabs = document.querySelectorAll(
+        "[data-product-tab]"
+    );
+
+    const panels = document.querySelectorAll(
+        "[data-product-panel]"
+    );
+
+    tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+            const target = tab.dataset.productTab;
+
+            tabs.forEach(otherTab => {
+                const active = otherTab === tab;
+
+                otherTab.classList.toggle(
+                    "isActive",
+                    active
+                );
+
+                otherTab.setAttribute(
+                    "aria-selected",
+                    String(active)
+                );
+            });
+
+            panels.forEach(panel => {
+                panel.hidden =
+                    panel.dataset.productPanel !== target;
+            });
+        });
+    });
+}
+
+
+/* ============================================================
+   BLOC 29 — RAILS HORIZONTAUX
+   ============================================================ */
+
+function bindRelatedProductRails() {
+    document.querySelectorAll("[data-rail-target]")
+        .forEach(button => {
+            button.addEventListener("click", () => {
+                const targetId = button.dataset.railTarget;
+
+                const direction = Number(
+                    button.dataset.railDirection || 1
+                );
+
+                const rail = document.getElementById(targetId);
+
+                if (!rail) return;
+
+                const firstCard = rail.querySelector(
+                    ".relatedProductCard"
+                );
+
+                const cardWidth = firstCard
+                    ? firstCard.getBoundingClientRect().width
+                    : 220;
+
+                rail.scrollBy({
+                    left: direction * (cardWidth + 16) * 2,
+                    behavior: "smooth"
+                });
+            });
+        });
+}
+
+
+function renderAdditionalProductRails(relatedProducts) {
+    const similarContainer = document.getElementById(
+        "similarProductsContainer"
+    );
+
+    const recentContainer = document.getElementById(
+        "recentProductsContainer"
+    );
+
+    if (!similarContainer || !recentContainer) return;
+
+    const category = getProductCategory(currentProduct);
+
+    const similar = relatedProducts.filter(product => {
+        return getProductCategory(product) === category;
+    });
+
+    const recent = getRecentlyViewed();
+
+    similarContainer.innerHTML = productRailHTML(
+        "Produtos semelhantes",
+        similar,
+        "similarProductsRail"
+    );
+
+    const recentHTML = recent.length
+        ? `
+            <section class="relatedProductsSection">
+
+                <div class="relatedProductsHeading">
+                    <h2>Produtos vistos recentemente</h2>
+                </div>
+
+                <div
+                    class="relatedProductsGrid"
+                    id="recentProductsRail"
+                >
+                    ${recent.map(productCardHTML).join("")}
+                </div>
+
+            </section>
+        `
+        : "";
+
+    recentContainer.innerHTML = recentHTML;
+
+    bindRelatedProductRails();
+
+    handleImageErrors(similarContainer);
+    handleImageErrors(recentContainer);
+}
+
+
+/* ============================================================
+   BLOC 30 — BARRE D'ACHAT MOBILE
+   ============================================================ */
+
+function createMobileBuyBar() {
+    if (mobileBuyBar) {
+        mobileBuyBar.remove();
+        mobileBuyBar = null;
+    }
+
+    mobileBuyBar = document.createElement("div");
+
+    mobileBuyBar.id = "mobileProductBuyBar";
+    mobileBuyBar.className = "mobileProductBuyBar";
+
+    mobileBuyBar.innerHTML = `
+        <div class="mobileBuyPriceBlock">
+
+            <span class="mobileBuyLabel">
+                Total
+            </span>
+
+            <strong id="mobileBuyTotal">
+                ${formatPrice(getProductPrice(currentProduct))}
+            </strong>
+
+        </div>
+
+        <button
+            type="button"
+            id="mobileBuyButton"
+        >
+            <span class="material-symbols-rounded">
+                shopping_cart
+            </span>
+
+            Adicionar
+        </button>
+    `;
+
+    document.body.appendChild(mobileBuyBar);
+
+    mobileBuyBar.querySelector("#mobileBuyButton")
+        .addEventListener("click", addCurrentToCart);
+
+    updateMobileBuyBar();
+}
+
+
+function updateMobileBuyBar() {
+    const totalElement = document.getElementById(
+        "mobileBuyTotal"
+    );
+
+    if (!totalElement || !currentProduct) return;
+
+    const total =
+        getProductPrice(currentProduct) * selectedQuantity;
+
+    totalElement.textContent = formatPrice(total);
+}
+
+
+/* ============================================================
+   BLOC 31 — ERREURS DES IMAGES
+   ============================================================ */
+
+function handleImageErrors(container = document) {
+    container.querySelectorAll("img").forEach(image => {
         image.addEventListener("error", () => {
-            if (image.dataset.fallbackApplied === "true") return;
+            if (
+                image.dataset.fallbackApplied === "true"
+            ) {
+                return;
+            }
 
             image.dataset.fallbackApplied = "true";
+
             image.src = CONFIG.placeholder;
         });
     });
 }
 
-// ============================================================
-// 22. BARRE D'ACHAT MOBILE
-// ============================================================
 
-function createMobileBuyBar() {
-    document.getElementById("productMobileBuyBar")?.remove();
-
-    if (!currentProduct) return;
-
-    const bar = document.createElement("div");
-
-    bar.id = "productMobileBuyBar";
-
-    bar.style.cssText = `
-        position:fixed;
-        left:0;
-        right:0;
-        bottom:64px;
-        z-index:900;
-        display:none;
-        align-items:center;
-        justify-content:space-between;
-        gap:12px;
-        padding:12px 16px;
-        background:#fff;
-        border-top:1px solid #ececec;
-        box-shadow:0 -5px 24px rgba(0,0,0,.07);
-    `;
-
-    bar.innerHTML = `
-        <div>
-            <div style="color:#777;font-size:11px;">PREÇO</div>
-            <strong id="mobileProductPrice">
-                ${price(productPrice(currentProduct))}
-            </strong>
-        </div>
-
-        <button type="button"
-                id="mobileAddToCart"
-                style="flex:1;max-width:230px;border:0;border-radius:12px;background:#f97316;color:#fff;font-weight:700;padding:13px;">
-            Adicionar ao carrinho
-        </button>
-    `;
-
-    document.body.appendChild(bar);
-
-    document.getElementById("mobileAddToCart")
-        ?.addEventListener("click", addCurrentToCart);
-
-    updateMobileBuyBar();
-
-    configureMobileBar();
-}
-
-function updateMobileBuyBar() {
-    const priceElement = document.getElementById("mobileProductPrice");
-
-    if (priceElement && currentProduct) {
-        priceElement.textContent = price(
-            productPrice(currentProduct) * selectedQuantity
-        );
-    }
-
-    const button = document.getElementById("mobileAddToCart");
-
-    if (button) {
-        button.disabled =
-            !currentProduct || !available(currentProduct);
-    }
-}
-
-function configureMobileBar() {
-    const bar = document.getElementById("productMobileBuyBar");
-
-    if (bar) {
-        bar.style.display =
-            window.matchMedia("(max-width:640px)").matches
-                ? "flex"
-                : "none";
-    }
-}
-
-window.addEventListener("resize", configureMobileBar);
-
-// ============================================================
-// 23. RECHERCHE
-// ============================================================
+/* ============================================================
+   BLOC 32 — RECHERCHE
+   ============================================================ */
 
 function bindSearch() {
-    if (!searchForm) return;
+    const form = document.getElementById(
+        "productSearchForm"
+    );
 
-    searchForm.addEventListener("submit", event => {
+    const input = document.getElementById(
+        "productSearchInput"
+    );
+
+    if (!form || !input) return;
+
+    form.addEventListener("submit", event => {
         event.preventDefault();
 
-        const value = searchInput?.value.trim() || "";
+        const search = input.value.trim();
 
-        window.location.href = value
-            ? `${CONFIG.catalog}?search=${encodeURIComponent(value)}`
+        const destination = search
+            ? `${CONFIG.catalog}?search=${encodeURIComponent(search)}`
             : CONFIG.catalog;
+
+        window.location.href = destination;
     });
 }
 
-// ============================================================
-// 24. CHARGEMENT PRINCIPAL
-// ============================================================
+
+/* ============================================================
+   BLOC 33 — NAVIGATION MOBILE
+   ============================================================ */
+
+function updateMobileNavigation() {
+    const cartLinks = document.querySelectorAll(
+        '.mobileNavigation a[href="./cart.html"]'
+    );
+
+    const favoritesLinks = document.querySelectorAll(
+        '.mobileNavigation a[href="./favorites.html"]'
+    );
+
+    cartLinks.forEach(link => {
+        const icon = link.querySelector(
+            ".material-symbols-rounded"
+        );
+
+        if (icon && !link.querySelector(".cartBadge")) {
+            const badge = document.createElement("span");
+
+            badge.className = "cartBadge mobileCartBadge";
+            badge.id = "mobileCartCount";
+
+            icon.insertAdjacentElement("afterend", badge);
+        }
+    });
+
+    favoritesLinks.forEach(link => {
+        link.setAttribute("aria-label", "Favoritos");
+    });
+
+    const mobileBadge = document.getElementById(
+        "mobileCartCount"
+    );
+
+    if (mobileBadge) {
+        const total = getCart().reduce((sum, item) => {
+            return sum + Math.max(
+                0,
+                toNumber(item.quantity ?? item.qty ?? 1, 1)
+            );
+        }, 0);
+
+        mobileBadge.textContent = total > 99
+            ? "99+"
+            : String(total);
+
+        mobileBadge.hidden = total <= 0;
+    }
+}
+
+
+/* ============================================================
+   BLOC 34 — CHARGEMENT COMPLET DES INFORMATIONS
+   ============================================================ */
 
 async function loadProduct() {
-    showLoading();
+    const productId = getProductId();
 
-    const id = getProductId();
-
-    if (!id) {
+    if (!productId) {
         showError(
-            "O endereço não contém o identificador do produto.",
-            false
+            "O endereço do produto não contém um identificador válido."
         );
+
         return;
     }
 
-    try {
-        console.log("TOMA V2 — A carregar produto:", id);
+    showLoading();
 
-        const product = await fetchProduct(id);
+    try {
+        const product = await fetchProduct(productId);
 
         if (!product) {
             showError(
-                "Este produto não existe na coleção products do Firebase ou já não está disponível.",
-                false
+                "Este produto não existe ou já não está disponível."
             );
+
             return;
         }
 
         currentProduct = product;
-        currentMerchant = null;
-        currentReviews = [];
 
         selectedQuantity = 1;
-        selectedImageIndex = 0;
-        activeTab = "description";
 
-        // Afficher le produit dès que le document principal est reçu.
-        // Les données secondaires ne doivent pas retarder cet affichage.
-        renderPage(product, null, [], []);
+        saveRecentlyViewed(product);
 
-        console.log("TOMA V2 — Produto principal apresentado.");
-
-        const idMerchant = merchantId(product);
-
-        const secondaryResults = await Promise.allSettled([
-            fetchMerchant(idMerchant),
-            fetchReviews(id),
-            fetchRelated(product)
-        ]);
-
-        currentMerchant =
-            secondaryResults[0].status === "fulfilled"
-                ? secondaryResults[0].value
-                : null;
-
-        currentReviews =
-            secondaryResults[1].status === "fulfilled"
-                ? secondaryResults[1].value
-                : [];
-
-        const related =
-            secondaryResults[2].status === "fulfilled"
-                ? secondaryResults[2].value
-                : [];
-
-        // Mettre à jour les sections secondaires une fois disponibles.
-        if (root && currentProduct?.id === id) {
-            const aside = root.querySelector(".productSecondaryAside");
-
-            if (aside) {
-                aside.innerHTML = merchantHTML(currentMerchant, product);
-            }
-
-            const main = root.querySelector(".productSecondaryMain");
-
-            if (main) {
-                main.innerHTML =
-                    detailsHTML(product) +
-                    reviewsHTML(currentReviews, product);
-            }
-
-            const oldRelated = root.querySelector(".relatedProductsSection");
-
-            if (oldRelated) {
-                oldRelated.outerHTML = relatedHTML(related);
-            } else {
-                root.insertAdjacentHTML("beforeend", relatedHTML(related));
-            }
-
-            root.querySelector(".productTabs")
-                ?.addEventListener("click", handleTab);
-        }
-
-        console.log("TOMA V2 — Carregamento concluído.");
-
-    } catch (error) {
-        console.error("TOMA V2 — Erro ao carregar produto:", error);
-
-        let message =
-            error?.message ||
-            "Ocorreu um erro inesperado ao carregar o produto.";
-
-        if (error?.code === "permission-denied") {
-            message =
-                "O Firebase recusou o acesso a este produto. Verifique as regras de leitura da coleção products.";
-        } else if (error?.code === "unavailable") {
-            message =
-                "O Firebase está temporariamente indisponível. Verifique a ligação à internet.";
-        } else if (error?.code === "not-found") {
-            message =
-                "O produto não foi encontrado no Firebase.";
-        }
-
-        showError(message, true);
-    }
-}
-
-// ============================================================
-// 25. INITIALISATION
-// ============================================================
-
-function initialize() {
-    console.log("TOMA V2 — JavaScript iniciado.");
-
-    updateCartBadge();
-    bindSearch();
-
-    if (!root || !loading || !errorBox) {
-        alert(
-            "TOMA V2 : falta um elemento HTML obrigatório. Verifique productLoading, productError e productDetailRoot."
+        const root = document.getElementById(
+            "productDetailRoot"
         );
 
-        console.error("TOMA V2 — Elementos HTML obrigatórios ausentes.");
+        if (root) {
+            root.hidden = false;
+        }
 
-        return;
+        hideLoading();
+
+        // Afficher immédiatement les informations principales.
+        renderPage(
+            currentProduct,
+            null,
+            [],
+            []
+        );
+
+        updateCartBadge();
+
+        updateMobileNavigation();
+
+        /*
+         * Charger ensuite le vendeur, les avis et les
+         * produits associés sans bloquer l'affichage principal.
+         */
+        const [
+            merchant,
+            reviews,
+            relatedProducts
+        ] = await Promise.all([
+            fetchMerchant(product),
+            fetchReviews(productId),
+            fetchRelatedProducts(product)
+        ]);
+
+        currentMerchant = merchant;
+        currentReviews = reviews;
+        currentRelatedProducts = relatedProducts;
+
+        renderPage(
+            currentProduct,
+            currentMerchant,
+            currentReviews,
+            currentRelatedProducts
+        );
+
+        renderAdditionalProductRails(
+            currentRelatedProducts
+        );
+
+        updateCartBadge();
+
+        updateMobileNavigation();
+
+    } catch (error) {
+        console.error(
+            "Erro ao carregar a página do produto:",
+            error
+        );
+
+        showError(
+            "Ocorreu um problema ao carregar o produto. Verifique a sua ligação e tente novamente."
+        );
     }
-
-    loadProduct();
 }
 
-// ============================================================
-// 26. SYNCHRONISATION ENTRE ONGLETS
-// ============================================================
+
+/* ============================================================
+   BLOC 35 — MISE À JOUR ENTRE ONGLETS
+   ============================================================ */
 
 window.addEventListener("storage", event => {
-    if (event.key === "toma_cart") {
+    if (
+        event.key === "toma_cart"
+        || event.key === "toma_favorites"
+    ) {
         updateCartBadge();
-    }
+        updateMobileNavigation();
 
-    if (event.key === "toma_favorites" && currentProduct) {
-        const button = document.getElementById("productFavoriteButton");
+        if (currentProduct) {
+            const button = document.getElementById(
+                "productFavoriteButton"
+            );
 
-        if (button) {
-            const active = isFavorite(currentProduct.id);
+            if (button) {
+                const favorite = isFavoriteProduct(
+                    currentProduct.id
+                );
 
-            button.setAttribute("aria-pressed", String(active));
+                button.classList.toggle(
+                    "isFavorite",
+                    favorite
+                );
 
-            button.innerHTML = `
-                <span>${active ? "♥" : "♡"}</span>
-                <span class="favoriteButtonText">
-                    ${active ? "Guardado" : "Favoritos"}
-                </span>
-            `;
+                button.setAttribute(
+                    "aria-pressed",
+                    String(favorite)
+                );
+
+                const icon = button.querySelector(
+                    ".material-symbols-rounded"
+                );
+
+                if (icon) {
+                    icon.textContent = favorite
+                        ? "favorite"
+                        : "favorite_border";
+                }
+            }
         }
     }
 });
 
-// ============================================================
-// 27. DÉMARRAGE
-// ============================================================
 
-if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initialize, {
-        once: true
-    });
-} else {
-    initialize();
+/* ============================================================
+   BLOC 36 — INITIALISATION
+   ============================================================ */
+
+function initProductDetail() {
+    bindSearch();
+
+    updateCartBadge();
+
+    updateMobileNavigation();
+
+    loadProduct();
 }
 
-// ============================================================
-// FIN — TOMA PRODUCT DETAIL V2
-// ============================================================
+
+if (document.readyState === "loading") {
+    document.addEventListener(
+        "DOMContentLoaded",
+        initProductDetail,
+        { once: true }
+    );
+} else {
+    initProductDetail();
+}
