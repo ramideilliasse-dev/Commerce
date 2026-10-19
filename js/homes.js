@@ -684,7 +684,7 @@ document.getElementById("searchBtn").onclick=()=>{
 
 document.getElementById("supportBtn").onclick=()=>{
 
-    location.href="guide.html";
+    location.href="support.html";
 
 };
 
