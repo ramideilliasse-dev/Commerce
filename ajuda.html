@@ -1194,14 +1194,19 @@ form.addEventListener("submit", async event => {
         });
 
     } catch (error) {
-        console.error("Erro ao criar pedido de assistência:", error);
+    console.error("Erro ao registar pedido:", error);
 
-        showMessage(
-            "Não foi possível registar o pedido. Verifique a ligação, a autenticação e as regras de segurança do Firestore.",
-            "error"
-        );
+    alert(
+        "ERRO FIRESTORE\n\n" +
+        "Código: " + (error.code || "desconhecido") +
+        "\nMensagem: " + (error.message || "Sem detalhes")
+    );
 
-    } finally {
+    showMessage(
+        "Não foi possível registar o pedido. Verifique a ligação, a autenticação e as regras de segurança do Firestore.",
+        "error"
+    );
+} finally {
         isSubmitting = false;
         submitButton.disabled = false;
         submitButton.innerHTML = `
