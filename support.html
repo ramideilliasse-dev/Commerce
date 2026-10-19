@@ -1,0 +1,878 @@
+ <!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="theme-color" content="#f97316">
+<meta name="description" content="Centro de assistência Toma. Obtenha ajuda ou apresente uma reclamação com segurança.">
+
+<title>Centro de Assistência | Toma</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+
+<style>
+:root {
+    --primary: #f97316;
+    --primary-dark: #ea580c;
+    --primary-light: #fff7ed;
+    --danger: #dc2626;
+    --danger-light: #fef2f2;
+    --text: #172033;
+    --muted: #667085;
+    --border: #e8ebf0;
+    --background: #f7f8fc;
+    --white: #ffffff;
+    --radius: 22px;
+    --shadow: 0 12px 35px rgba(23, 32, 51, 0.06);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--background);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 35px;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button {
+    font: inherit;
+}
+
+.material-symbols-rounded {
+    font-size: 24px;
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-flex;
+    white-space: nowrap;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+}
+
+/* HEADER */
+
+.header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+.header-inner {
+    max-width: 1180px;
+    margin: auto;
+    padding: 17px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.brand-logo {
+    width: 43px;
+    height: 43px;
+    background: linear-gradient(135deg, #fb923c, #ea580c);
+    color: white;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    font-size: 25px;
+    font-weight: 800;
+    box-shadow: 0 5px 13px rgba(249, 115, 22, .25);
+}
+
+.brand-name {
+    font-size: 23px;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.brand-name span {
+    color: var(--primary);
+}
+
+.brand-subtitle {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 3px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 11px 14px;
+    background: white;
+    font-size: 13px;
+    font-weight: 600;
+    transition: .2s;
+}
+
+.header-link:hover {
+    background: var(--primary-light);
+    border-color: #fed7aa;
+}
+
+/* HERO */
+
+.main {
+    max-width: 1180px;
+    margin: auto;
+    padding: 36px 24px;
+}
+
+.hero {
+    position: relative;
+    overflow: hidden;
+    border-radius: 28px;
+    padding: 48px 42px;
+    color: white;
+    background:
+        radial-gradient(circle at 88% 20%, rgba(255,255,255,.17), transparent 25%),
+        radial-gradient(circle at 10% 110%, rgba(255,255,255,.13), transparent 35%),
+        linear-gradient(125deg, #c2410c, #f97316 55%, #fb923c);
+    box-shadow: 0 18px 45px rgba(234, 88, 12, .17);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 690px;
+}
+
+.hero-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(255,255,255,.3);
+    background: rgba(255,255,255,.12);
+    padding: 9px 13px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 23px;
+}
+
+.hero h1 {
+    font-size: clamp(30px, 5vw, 48px);
+    line-height: 1.16;
+    letter-spacing: -1.7px;
+    margin-bottom: 17px;
+    font-weight: 800;
+}
+
+.hero p {
+    font-size: 15px;
+    line-height: 1.85;
+    color: rgba(255,255,255,.92);
+    max-width: 600px;
+}
+
+.hero-decoration {
+    position: absolute;
+    right: 35px;
+    bottom: -42px;
+    width: 205px;
+    height: 205px;
+    border: 1px solid rgba(255,255,255,.22);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: rgba(255,255,255,.22);
+}
+
+.hero-decoration .material-symbols-rounded {
+    font-size: 110px;
+}
+
+/* SECTION */
+
+.section-heading {
+    margin: 39px 0 21px;
+}
+
+.section-heading h2 {
+    font-size: 23px;
+    letter-spacing: -.6px;
+    margin-bottom: 8px;
+}
+
+.section-heading p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* SUPPORT CARDS */
+
+.support-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.support-card {
+    position: relative;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 29px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    min-height: 355px;
+    transition: transform .25s, box-shadow .25s, border-color .25s;
+}
+
+.support-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 45px rgba(23, 32, 51, .09);
+    border-color: #fed7aa;
+}
+
+.card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 24px;
+}
+
+.card-icon {
+    width: 61px;
+    height: 61px;
+    display: grid;
+    place-items: center;
+    border-radius: 19px;
+}
+
+.card-icon .material-symbols-rounded {
+    font-size: 31px;
+}
+
+.help-card .card-icon {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+}
+
+.complaint-card .card-icon {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+
+.card-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 10px;
+    background: #f3f4f6;
+    color: #596273;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 50px;
+}
+
+.card-tag .material-symbols-rounded {
+    font-size: 15px;
+}
+
+.support-card h3 {
+    font-size: 23px;
+    letter-spacing: -.6px;
+    margin-bottom: 12px;
+}
+
+.support-card > p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.9;
+    margin-bottom: 23px;
+}
+
+.feature-list {
+    list-style: none;
+    display: grid;
+    gap: 13px;
+    margin-bottom: 27px;
+}
+
+.feature-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: #475467;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.feature-list .material-symbols-rounded {
+    font-size: 18px;
+    color: #16a34a;
+    flex-shrink: 0;
+}
+
+.complaint-card .feature-list .material-symbols-rounded {
+    color: var(--danger);
+}
+
+.card-button {
+    margin-top: auto;
+    min-height: 51px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    border-radius: 13px;
+    font-size: 13px;
+    font-weight: 700;
+    transition: .2s;
+}
+
+.help-card .card-button {
+    color: white;
+    background: var(--primary);
+    box-shadow: 0 7px 16px rgba(249, 115, 22, .18);
+}
+
+.help-card .card-button:hover {
+    background: var(--primary-dark);
+}
+
+.complaint-card .card-button {
+    color: white;
+    background: #dc2626;
+    box-shadow: 0 7px 16px rgba(220, 38, 38, .14);
+}
+
+.complaint-card .card-button:hover {
+    background: #b91c1c;
+}
+
+.card-button .material-symbols-rounded {
+    font-size: 19px;
+}
+
+/* TRUST */
+
+.trust-section {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 17px;
+    margin-top: 29px;
+}
+
+.trust-item {
+    background: white;
+    border: 1px solid var(--border);
+    padding: 21px;
+    border-radius: 17px;
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+}
+
+.trust-icon {
+    width: 43px;
+    height: 43px;
+    flex-shrink: 0;
+    border-radius: 13px;
+    display: grid;
+    place-items: center;
+    color: #475467;
+    background: #f2f4f7;
+}
+
+.trust-icon .material-symbols-rounded {
+    font-size: 22px;
+}
+
+.trust-item h4 {
+    font-size: 12px;
+    margin: 3px 0 7px;
+}
+
+.trust-item p {
+    font-size: 11px;
+    line-height: 1.8;
+    color: var(--muted);
+}
+
+/* FAQ */
+
+.faq-section {
+    margin-top: 43px;
+}
+
+.faq-list {
+    display: grid;
+    gap: 12px;
+}
+
+details {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 17px 19px;
+}
+
+summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+summary::-webkit-details-marker {
+    display: none;
+}
+
+summary .material-symbols-rounded {
+    color: var(--muted);
+    transition: transform .2s;
+}
+
+details[open] summary .material-symbols-rounded {
+    transform: rotate(180deg);
+}
+
+details p {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.9;
+    margin-top: 13px;
+    padding-right: 20px;
+}
+
+/* FOOTER */
+
+.footer {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 25px 24px 10px;
+    color: var(--muted);
+    text-align: center;
+    font-size: 11px;
+    line-height: 1.9;
+}
+
+.footer strong {
+    color: var(--text);
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 760px) {
+    .header-inner {
+        padding: 13px 17px;
+    }
+
+    .brand-logo {
+        width: 39px;
+        height: 39px;
+    }
+
+    .brand-name {
+        font-size: 21px;
+    }
+
+    .brand-subtitle {
+        font-size: 9px;
+    }
+
+    .header-link {
+        width: 42px;
+        height: 42px;
+        padding: 0;
+        border-radius: 12px;
+    }
+
+    .header-link .link-text {
+        display: none;
+    }
+
+    .main {
+        padding: 20px 15px;
+    }
+
+    .hero {
+        padding: 30px 23px;
+        border-radius: 23px;
+    }
+
+    .hero h1 {
+        font-size: 32px;
+        letter-spacing: -1.1px;
+    }
+
+    .hero p {
+        font-size: 13px;
+        line-height: 1.85;
+    }
+
+    .hero-label {
+        font-size: 10px;
+        margin-bottom: 18px;
+    }
+
+    .hero-decoration {
+        right: -80px;
+        bottom: -80px;
+        opacity: .65;
+    }
+
+    .section-heading {
+        margin-top: 31px;
+    }
+
+    .section-heading h2 {
+        font-size: 20px;
+    }
+
+    .support-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .support-card {
+        padding: 23px;
+        min-height: auto;
+    }
+
+    .support-card h3 {
+        font-size: 21px;
+    }
+
+    .support-card > p {
+        font-size: 13px;
+    }
+
+    .feature-list li {
+        font-size: 12px;
+    }
+
+    .trust-section {
+        grid-template-columns: 1fr;
+        gap: 11px;
+        margin-top: 20px;
+    }
+
+    .trust-item {
+        padding: 17px;
+    }
+
+    .faq-section {
+        margin-top: 34px;
+    }
+
+    .footer {
+        padding: 25px 20px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+    <div class="header-inner">
+
+        <a href="./home.html" class="brand" aria-label="Voltar à página inicial da Toma">
+            <div class="brand-logo">T</div>
+            <div>
+                <div class="brand-name">Toma<span>.</span></div>
+                <span class="brand-subtitle">Centro de Assistência</span>
+            </div>
+        </a>
+
+        <div class="header-actions">
+            <a href="./home.html" class="header-link">
+                <span class="material-symbols-rounded">home</span>
+                <span class="link-text">Página inicial</span>
+            </a>
+        </div>
+
+    </div>
+</header>
+
+<main class="main">
+
+    <section class="hero">
+        <div class="hero-content">
+
+            <div class="hero-label">
+                <span class="material-symbols-rounded">support_agent</span>
+                SUPORTE AO CLIENTE TOMA
+            </div>
+
+            <h1>Estamos aqui para ajudar.</h1>
+
+            <p>
+                Precisa de ajuda com uma encomenda ou quer comunicar um problema?
+                Escolha a opção adequada e a nossa equipa poderá analisar a sua
+                solicitação com atenção e confidencialidade.
+            </p>
+
+        </div>
+
+        <div class="hero-decoration" aria-hidden="true">
+            <span class="material-symbols-rounded">support_agent</span>
+        </div>
+    </section>
+
+    <section aria-labelledby="supportHeading">
+
+        <div class="section-heading">
+            <h2 id="supportHeading">Como podemos ajudar?</h2>
+            <p>
+                Selecione uma das opções abaixo para continuar.
+            </p>
+        </div>
+
+        <div class="support-grid">
+
+            <!-- AJUDA -->
+
+            <article class="support-card help-card">
+
+                <div class="card-top">
+                    <div class="card-icon">
+                        <span class="material-symbols-rounded">support_agent</span>
+                    </div>
+
+                    <span class="card-tag">
+                        <span class="material-symbols-rounded">headset_mic</span>
+                        ASSISTÊNCIA
+                    </span>
+                </div>
+
+                <h3>Precisa de ajuda?</h3>
+
+                <p>
+                    Estamos aqui para ajudar com dúvidas e dificuldades
+                    relacionadas com a sua experiência na Toma.
+                </p>
+
+                <ul class="feature-list">
+                    <li>
+                        <span class="material-symbols-rounded">check_circle</span>
+                        Problemas com encomendas e entregas
+                    </li>
+
+                    <li>
+                        <span class="material-symbols-rounded">check_circle</span>
+                        Dúvidas sobre pagamentos e a sua conta
+                    </li>
+
+                    <li>
+                        <span class="material-symbols-rounded">check_circle</span>
+                        Acompanhamento dos seus pedidos de assistência
+                    </li>
+                </ul>
+
+                <a href="./ajuda.html" class="card-button">
+                    Obter ajuda
+                    <span class="material-symbols-rounded">arrow_forward</span>
+                </a>
+
+            </article>
+
+            <!-- RECLAMACAO -->
+
+            <article class="support-card complaint-card">
+
+                <div class="card-top">
+                    <div class="card-icon">
+                        <span class="material-symbols-rounded">report_problem</span>
+                    </div>
+
+                    <span class="card-tag">
+                        <span class="material-symbols-rounded">verified_user</span>
+                        RECLAMAÇÕES
+                    </span>
+                </div>
+
+                <h3>Quer apresentar uma reclamação?</h3>
+
+                <p>
+                    Comunique uma situação que considere inadequada e forneça
+                    os detalhes necessários para uma análise responsável.
+                </p>
+
+                <ul class="feature-list">
+                    <li>
+                        <span class="material-symbols-rounded">check_circle</span>
+                        Reclamações sobre comerciantes e lojas
+                    </li>
+
+                    <li>
+                        <span class="material-symbols-rounded">check_circle</span>
+                        Problemas com estafetas e entregas
+                    </li>
+
+                    <li>
+                        <span class="material-symbols-rounded">check_circle</span>
+                        Comunicação confidencial de incidentes
+                    </li>
+                </ul>
+
+                <a href="./reclamacao.html" class="card-button">
+                    Apresentar reclamação
+                    <span class="material-symbols-rounded">arrow_forward</span>
+                </a>
+
+            </article>
+
+        </div>
+
+    </section>
+
+    <section class="trust-section" aria-label="Os nossos compromissos">
+
+        <article class="trust-item">
+            <div class="trust-icon">
+                <span class="material-symbols-rounded">lock</span>
+            </div>
+            <div>
+                <h4>Privacidade</h4>
+                <p>As informações dos seus pedidos devem ser protegidas e acessíveis apenas a pessoas autorizadas.</p>
+            </div>
+        </article>
+
+        <article class="trust-item">
+            <div class="trust-icon">
+                <span class="material-symbols-rounded">fact_check</span>
+            </div>
+            <div>
+                <h4>Análise responsável</h4>
+                <p>Cada situação deve ser avaliada com atenção, de acordo com as informações disponíveis.</p>
+            </div>
+        </article>
+
+        <article class="trust-item">
+            <div class="trust-icon">
+                <span class="material-symbols-rounded">forum</span>
+            </div>
+            <div>
+                <h4>Acompanhamento</h4>
+                <p>O objetivo é permitir que acompanhe os seus pedidos à medida que o sistema de suporte evolui.</p>
+            </div>
+        </article>
+
+    </section>
+
+    <section class="faq-section">
+
+        <div class="section-heading">
+            <h2>Perguntas frequentes</h2>
+            <p>Informações rápidas para escolher a opção certa.</p>
+        </div>
+
+        <div class="faq-list">
+
+            <details>
+                <summary>
+                    Quando devo pedir ajuda?
+                    <span class="material-symbols-rounded">expand_more</span>
+                </summary>
+                <p>
+                    Utilize a opção Ajuda quando precisar de esclarecimentos
+                    ou quando encontrar dificuldades com a sua conta, encomenda,
+                    pagamento ou entrega.
+                </p>
+            </details>
+
+            <details>
+                <summary>
+                    Quando devo apresentar uma reclamação?
+                    <span class="material-symbols-rounded">expand_more</span>
+                </summary>
+                <p>
+                    Apresente uma reclamação quando quiser comunicar um incidente
+                    ou comportamento que precise de uma análise formal pela equipa Toma.
+                </p>
+            </details>
+
+            <details>
+                <summary>
+                    Posso comunicar um problema com um estafeta?
+                    <span class="material-symbols-rounded">expand_more</span>
+                </summary>
+                <p>
+                    Sim. Utilize a opção Reclamação e descreva o incidente com
+                    os detalhes relevantes, incluindo o número da encomenda, se existir.
+                </p>
+            </details>
+
+            <details>
+                <summary>
+                    As minhas informações serão públicas?
+                    <span class="material-symbols-rounded">expand_more</span>
+                </summary>
+                <p>
+                    As reclamações devem ser tratadas de forma confidencial.
+                    O acesso aos dados deve ser limitado aos utilizadores autorizados
+                    pelas regras de segurança da Toma.
+                </p>
+            </details>
+
+        </div>
+
+    </section>
+
+</main>
+
+<footer class="footer">
+    <strong>Toma.</strong> — Centro de Assistência<br>
+    Estamos empenhados em melhorar a sua experiência de compra.
+</footer>
+
+</body>
+</html>
