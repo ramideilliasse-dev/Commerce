@@ -970,6 +970,11 @@ import {
 import { onAuthStateChanged } from
 "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
+
+/* =====================================================
+   BLOC 1 — ELEMENTOS
+===================================================== */
+
 const form = document.getElementById("supportForm");
 const submitButton = document.getElementById("submitButton");
 const formMessage = document.getElementById("formMessage");
@@ -979,9 +984,15 @@ const refreshButton = document.getElementById("refreshButton");
 let currentUser = null;
 let isSubmitting = false;
 
-function showMessage(text, type) {
+
+/* =====================================================
+   BLOC 2 — MENSAGENS
+===================================================== */
+
+function showMessage(text, type = "error") {
     formMessage.textContent = text;
     formMessage.className = "message " + type;
+    formMessage.style.display = "block";
 }
 
 function escapeHTML(value) {
@@ -994,41 +1005,63 @@ function escapeHTML(value) {
     })[char]);
 }
 
-function getStatus(status) {
-    const normalized = String(status || "Pendente").toLowerCase();
+function makeReference(id) {
+    return "AJ-" + id.slice(-8).toUpperCase();
+}
 
-    if (normalized.includes("resolvido") || normalized.includes("resolvida")) {
+
+/* =====================================================
+   BLOC 3 — ESTADOS
+===================================================== */
+
+function getStatus(status) {
+    const normalized = String(status || "Pendente")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+
+    if (normalized.includes("resolvido")) {
         return { label: "Resolvido", css: "green" };
     }
 
-    if (normalized.includes("análise") || normalized.includes("analise")) {
+    if (normalized.includes("analise")) {
         return { label: "Em análise", css: "blue" };
     }
 
-    if (normalized.includes("encerrado") || normalized.includes("encerrada")) {
+    if (normalized.includes("encerrado")) {
         return { label: "Encerrado", css: "gray" };
     }
 
     return { label: "Pendente", css: "" };
 }
 
+
+/* =====================================================
+   BLOC 4 — DATAS
+===================================================== */
+
 function formatDate(timestamp) {
     if (!timestamp || typeof timestamp.toDate !== "function") {
-        return "Data em processamento";
+        return "Data ainda indisponível";
     }
 
-    return timestamp.toDate().toLocaleString("pt-PT", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-    });
+    try {
+        return timestamp.toDate().toLocaleString("pt-PT", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+    } catch (error) {
+        return "Data ainda indisponível";
+    }
 }
 
-function makeReference(id) {
-    return "AJ-" + id.slice(-8).toUpperCase();
-}
+
+/* =====================================================
+   BLOC 5 — ESTADO VAZIO
+===================================================== */
 
 function renderEmpty(title, description) {
     requestList.innerHTML = `
@@ -1039,6 +1072,11 @@ function renderEmpty(title, description) {
         </div>
     `;
 }
+
+
+/* =====================================================
+   BLOC 6 — RENDERIZAR PEDIDOS
+===================================================== */
 
 function renderRequests(documents) {
     if (!documents.length) {
@@ -1056,9 +1094,15 @@ function renderRequests(documents) {
 
         return `
             <article class="request-card">
+
                 <div class="request-card-top">
                     <div>
-                        <h3>${escapeHTML(data.subject || "Pedido de assistência")}</h3>
+                        <h3>
+                            ${escapeHTML(
+                                data.subject || "Pedido de assistência"
+                            )}
+                        </h3>
+
                         <div class="request-reference">
                             Referência: ${escapeHTML(reference)}
                         </div>
@@ -1070,10 +1114,11 @@ function renderRequests(documents) {
                 </div>
 
                 <p class="request-description">
-                    ${escapeHTML(data.description || "")}
+                    ${escapeHTML(data.description || "Sem descrição disponível.")}
                 </p>
 
                 <div class="request-meta">
+
                     <span>
                         <span class="material-symbols-rounded">category</span>
                         ${escapeHTML(data.category || "Outro")}
@@ -1083,11 +1128,23 @@ function renderRequests(documents) {
                         <span class="material-symbols-rounded">calendar_month</span>
                         ${escapeHTML(formatDate(data.createdAt))}
                     </span>
+
+                    <span>
+                        <span class="material-symbols-rounded">flag</span>
+                        ${escapeHTML(data.priority || "Normal")}
+                    </span>
+
                 </div>
+
             </article>
         `;
     }).join("");
 }
+
+
+/* =====================================================
+   BLOC 7 — CARREGAR HISTÓRICO
+===================================================== */
 
 async function loadRequests() {
     if (!currentUser) {
@@ -1098,9 +1155,14 @@ async function loadRequests() {
         return;
     }
 
-    refreshButton.disabled = true;
+    if (refreshButton) {
+        refreshButton.disabled = true;
+    }
 
-    renderEmpty("A carregar os seus pedidos", "A consultar os dados da sua conta...");
+    renderEmpty(
+        "A carregar os seus pedidos",
+        "Estamos a consultar os dados da sua conta."
+    );
 
     try {
         const requestsQuery = query(
@@ -1111,19 +1173,31 @@ async function loadRequests() {
         );
 
         const snapshot = await getDocs(requestsQuery);
+
         renderRequests(snapshot.docs);
 
     } catch (error) {
-        console.error("Erro ao carregar pedidos de assistência:", error);
+        console.error(
+            "Erro ao carregar pedidos de assistência:",
+            error
+        );
 
         renderEmpty(
             "Não foi possível carregar os pedidos",
-            "Verifique a ligação e as regras do Firestore. Se aparecer um erro de índice, consulte a mensagem técnica no console."
+            "Verifique a ligação à Internet. Pode tentar atualizar novamente."
         );
+
     } finally {
-        refreshButton.disabled = false;
+        if (refreshButton) {
+            refreshButton.disabled = false;
+        }
     }
 }
+
+
+/* =====================================================
+   BLOC 8 — BOTÃO ENVIAR
+===================================================== */
 
 form.addEventListener("submit", async event => {
     event.preventDefault();
@@ -1138,15 +1212,24 @@ form.addEventListener("submit", async event => {
         return;
     }
 
-    const category = document.getElementById("category").value;
-    const subject = document.getElementById("subject").value.trim();
-    const orderNumber = document.getElementById("orderNumber").value.trim();
-    const priority = document.getElementById("priority").value;
-    const description = document.getElementById("description").value.trim();
+    const category =
+        document.getElementById("category").value;
+
+    const subject =
+        document.getElementById("subject").value.trim();
+
+    const orderNumber =
+        document.getElementById("orderNumber").value.trim();
+
+    const priority =
+        document.getElementById("priority").value;
+
+    const description =
+        document.getElementById("description").value.trim();
 
     if (!category || subject.length < 3 || description.length < 10) {
         showMessage(
-            "Preencha a categoria, o assunto e uma descrição com pelo menos 10 caracteres.",
+            "Preencha a categoria, um assunto com pelo menos 3 caracteres e uma descrição com pelo menos 10 caracteres.",
             "error"
         );
         return;
@@ -1154,10 +1237,16 @@ form.addEventListener("submit", async event => {
 
     isSubmitting = true;
     submitButton.disabled = true;
+
     submitButton.innerHTML = `
         <span class="material-symbols-rounded">progress_activity</span>
         A enviar pedido...
     `;
+
+    showMessage(
+        "Estamos a registar o seu pedido. Aguarde, por favor.",
+        "success"
+    );
 
     try {
         const newRequest = {
@@ -1174,41 +1263,63 @@ form.addEventListener("submit", async event => {
             updatedAt: serverTimestamp()
         };
 
+        /*
+         * Esperar apenas pela gravação do pedido.
+         * Não esperar pelo carregamento do histórico.
+         */
+
         const created = await addDoc(
             collection(db, "supportRequests"),
             newRequest
         );
 
+        /*
+         * O Firestore confirmou a gravação.
+         * Mostrar a confirmação imediatamente.
+         */
+
         showMessage(
-            "Pedido registado com sucesso! Referência: " + makeReference(created.id),
+            "Pedido enviado com sucesso! A sua referência é " +
+            makeReference(created.id) +
+            ". Pode acompanhar o estado na secção Os meus pedidos.",
             "success"
         );
 
         form.reset();
-
-        await loadRequests();
 
         formMessage.scrollIntoView({
             behavior: "smooth",
             block: "center"
         });
 
+        /*
+         * Atualizar o histórico em segundo plano.
+         * O botão de envio não espera por esta operação.
+         */
+
+        void loadRequests();
+
     } catch (error) {
-    console.error("Erro ao registar pedido:", error);
+        console.error(
+            "Erro ao registar pedido de assistência:",
+            error
+        );
 
-    alert(
-        "ERRO FIRESTORE\n\n" +
-        "Código: " + (error.code || "desconhecido") +
-        "\nMensagem: " + (error.message || "Sem detalhes")
-    );
+        alert(
+            "ERRO FIRESTORE\n\n" +
+            "Código: " + (error.code || "desconhecido") +
+            "\nMensagem: " + (error.message || "Sem detalhes")
+        );
 
-    showMessage(
-        "Não foi possível registar o pedido. Verifique a ligação, a autenticação e as regras de segurança do Firestore.",
-        "error"
-    );
-} finally {
+        showMessage(
+            "Não foi possível confirmar o envio do pedido. Verifique a ligação e tente novamente.",
+            "error"
+        );
+
+    } finally {
         isSubmitting = false;
         submitButton.disabled = false;
+
         submitButton.innerHTML = `
             <span class="material-symbols-rounded">send</span>
             Enviar pedido de assistência
@@ -1216,13 +1327,25 @@ form.addEventListener("submit", async event => {
     }
 });
 
-refreshButton.addEventListener("click", loadRequests);
+
+/* =====================================================
+   BLOC 9 — ATUALIZAR HISTÓRICO
+===================================================== */
+
+refreshButton.addEventListener("click", () => {
+    void loadRequests();
+});
+
+
+/* =====================================================
+   BLOC 10 — AUTENTICAÇÃO
+===================================================== */
 
 onAuthStateChanged(auth, user => {
     currentUser = user;
-    loadRequests();
+    void loadRequests();
 });
-</script>
 
+</script>
 </body>
 </html>
