@@ -962,13 +962,17 @@ import {
     getDocs,
     query,
     where,
-    orderBy,
-    limit,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-import { onAuthStateChanged } from
-"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+
+/* =====================================================
+   BLOC 1 — ÉLÉMENTS DA PÁGINA
+===================================================== */
 
 const form = document.getElementById("supportForm");
 const submitButton = document.getElementById("submitButton");
@@ -979,187 +983,276 @@ const refreshButton = document.getElementById("refreshButton");
 let currentUser = null;
 let isSubmitting = false;
 
-function showMessage(text, type) {
-    formMessage.textContent = text;
-    formMessage.className = "message " + type;
-}
 
-function escapeHTML(value) {
-    return String(value ?? "").replace(/[&<>"']/g, char => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-    })[char]);
-}
+/* =====================================================
+   BLOC 2 — MENSAGENS VISÍVEIS
+===================================================== */
 
-function getStatus(status) {
-    const normalized = String(status || "Pendente").toLowerCase();
+function showMessage(message, type = "info") {
+    if (!formMessage) return;
 
-    if (normalized.includes("resolvido") || normalized.includes("resolvida")) {
-        return { label: "Resolvido", css: "green" };
-    }
-
-    if (normalized.includes("análise") || normalized.includes("analise")) {
-        return { label: "Em análise", css: "blue" };
-    }
-
-    if (normalized.includes("encerrado") || normalized.includes("encerrada")) {
-        return { label: "Encerrado", css: "gray" };
-    }
-
-    return { label: "Pendente", css: "" };
-}
-
-function formatDate(timestamp) {
-    if (!timestamp || typeof timestamp.toDate !== "function") {
-        return "Data em processamento";
-    }
-
-    return timestamp.toDate().toLocaleString("pt-PT", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-    });
+    formMessage.textContent = message;
+    formMessage.className = "form-message " + type;
+    formMessage.style.display = "block";
 }
 
 function makeReference(id) {
-    return "AJ-" + id.slice(-8).toUpperCase();
+    return "TOMA-" + id.substring(0, 8).toUpperCase();
 }
 
-function renderEmpty(title, description) {
-    requestList.innerHTML = `
-        <div class="empty-state">
-            <span class="material-symbols-rounded">inbox</span>
-            <h3>${escapeHTML(title)}</h3>
-            <p>${escapeHTML(description)}</p>
-        </div>
-    `;
+
+/* =====================================================
+   BLOC 3 — PROTEÇÃO CONTRA OPERAÇÕES DEMORADAS
+===================================================== */
+
+function withTimeout(promise, milliseconds = 25000) {
+    let timer;
+
+    const timeoutPromise = new Promise((resolve, reject) => {
+        timer = setTimeout(() => {
+            const error = new Error(
+                "A operação demorou demasiado tempo. Verifique a ligação."
+            );
+
+            error.code = "timeout";
+            reject(error);
+        }, milliseconds);
+    });
+
+    return Promise.race([
+        promise,
+        timeoutPromise
+    ]).finally(() => {
+        clearTimeout(timer);
+    });
 }
 
-function renderRequests(documents) {
-    if (!documents.length) {
-        renderEmpty(
-            "Ainda não tem pedidos",
-            "Quando enviar um pedido de assistência, poderá acompanhá-lo aqui."
-        );
+
+/* =====================================================
+   BLOC 4 — EXIBIR OS PEDIDOS DO CLIENTE
+===================================================== */
+
+function renderRequests(requests) {
+    if (!requestList) return;
+
+    if (requests.length === 0) {
+        requestList.innerHTML = `
+            <div class="empty-state">
+                <p>Ainda não tem pedidos de apoio.</p>
+            </div>
+        `;
         return;
     }
 
-    requestList.innerHTML = documents.map(item => {
-        const data = item.data();
-        const status = getStatus(data.status);
-        const reference = data.reference || makeReference(item.id);
+    requestList.innerHTML = requests.map(request => {
+        const category = escapeHTML(request.category || "Geral");
+        const subject = escapeHTML(request.subject || "Sem assunto");
+        const status = escapeHTML(request.status || "Pendente");
+        const priority = escapeHTML(request.priority || "Normal");
+        const reference = escapeHTML(
+            makeReference(request.id)
+        );
+
+        let dateText = "Data indisponível";
+
+        if (request.createdAt && request.createdAt.toDate) {
+            dateText = request.createdAt
+                .toDate()
+                .toLocaleString("pt-PT");
+        }
 
         return `
             <article class="request-card">
-                <div class="request-card-top">
-                    <div>
-                        <h3>${escapeHTML(data.subject || "Pedido de assistência")}</h3>
-                        <div class="request-reference">
-                            Referência: ${escapeHTML(reference)}
-                        </div>
-                    </div>
+                <div class="request-card-header">
+                    <span class="request-reference">
+                        ${reference}
+                    </span>
 
-                    <span class="status-badge ${status.css}">
-                        ${escapeHTML(status.label)}
+                    <span class="request-status">
+                        ${status}
                     </span>
                 </div>
 
-                <p class="request-description">
-                    ${escapeHTML(data.description || "")}
-                </p>
+                <h3>${subject}</h3>
 
-                <div class="request-meta">
-                    <span>
-                        <span class="material-symbols-rounded">category</span>
-                        ${escapeHTML(data.category || "Outro")}
-                    </span>
-
-                    <span>
-                        <span class="material-symbols-rounded">calendar_month</span>
-                        ${escapeHTML(formatDate(data.createdAt))}
-                    </span>
-                </div>
+                <p>Categoria: ${category}</p>
+                <p>Prioridade: ${priority}</p>
+                <p>Data: ${escapeHTML(dateText)}</p>
             </article>
         `;
     }).join("");
 }
 
+
+/* =====================================================
+   BLOC 5 — PROTEÇÃO DOS TEXTOS
+===================================================== */
+
+function escapeHTML(value) {
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+/* =====================================================
+   BLOC 6 — CARREGAR OS PEDIDOS
+   Sem orderBy para evitar exigir um índice composto.
+===================================================== */
+
 async function loadRequests() {
+    if (!requestList) return;
+
     if (!currentUser) {
-        renderEmpty(
-            "Inicie sessão para consultar os seus pedidos",
-            "Entre na sua conta Toma para criar e acompanhar os pedidos de assistência."
-        );
+        requestList.innerHTML = `
+            <div class="empty-state">
+                <p>Inicie sessão para consultar os seus pedidos.</p>
+            </div>
+        `;
         return;
     }
 
-    refreshButton.disabled = true;
+    if (refreshButton) {
+        refreshButton.disabled = true;
+    }
 
-    renderEmpty("A carregar os seus pedidos", "A consultar os dados da sua conta...");
+    requestList.innerHTML = `
+        <div class="loading-state">
+            <p>A carregar os seus pedidos...</p>
+        </div>
+    `;
 
     try {
         const requestsQuery = query(
             collection(db, "supportRequests"),
-            where("userId", "==", currentUser.uid),
-            orderBy("createdAt", "desc"),
-            limit(50)
+            where("userId", "==", currentUser.uid)
         );
 
-        const snapshot = await getDocs(requestsQuery);
-        renderRequests(snapshot.docs);
+        const snapshot = await withTimeout(
+            getDocs(requestsQuery)
+        );
+
+        const requests = snapshot.docs.map(documentSnapshot => ({
+            id: documentSnapshot.id,
+            ...documentSnapshot.data()
+        }));
+
+        requests.sort((a, b) => {
+            const dateA = a.createdAt?.toMillis
+                ? a.createdAt.toMillis()
+                : 0;
+
+            const dateB = b.createdAt?.toMillis
+                ? b.createdAt.toMillis()
+                : 0;
+
+            return dateB - dateA;
+        });
+
+        renderRequests(requests);
 
     } catch (error) {
-        console.error("Erro ao carregar pedidos de assistência:", error);
+        console.error("Erro ao carregar pedidos:", error);
 
-        renderEmpty(
-            "Não foi possível carregar os pedidos",
-            "Verifique a ligação e as regras do Firestore. Se aparecer um erro de índice, consulte a mensagem técnica no console."
-        );
+        requestList.innerHTML = `
+            <div class="empty-state">
+                <p>Não foi possível carregar os pedidos.</p>
+                <p>Erro: ${escapeHTML(error.code || error.message || "desconhecido")}</p>
+                <button type="button" id="retryRequestsButton">
+                    Tentar novamente
+                </button>
+            </div>
+        `;
+
+        document
+            .getElementById("retryRequestsButton")
+            ?.addEventListener("click", loadRequests);
+
     } finally {
-        refreshButton.disabled = false;
+        if (refreshButton) {
+            refreshButton.disabled = false;
+        }
     }
 }
 
-form.addEventListener("submit", async event => {
-    event.preventDefault();
 
-    if (isSubmitting) return;
+/* =====================================================
+   BLOC 7 — ENVIAR UM PEDIDO DE APOIO
+===================================================== */
 
-    if (!currentUser) {
+if (form) {
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+
+        if (isSubmitting) return;
+
+        if (!currentUser) {
+            showMessage(
+                "Inicie sessão antes de enviar o pedido.",
+                "error"
+            );
+            return;
+        }
+
+        const category =
+            form.querySelector('[name="category"]')?.value.trim() || "";
+
+        const subject =
+            form.querySelector('[name="subject"]')?.value.trim() || "";
+
+        const orderNumber =
+            form.querySelector('[name="orderNumber"]')?.value.trim() || "";
+
+        const priority =
+            form.querySelector('[name="priority"]')?.value || "Normal";
+
+        const description =
+            form.querySelector('[name="description"]')?.value.trim() || "";
+
+        if (!category || !subject || !description) {
+            showMessage(
+                "Preencha todos os campos obrigatórios.",
+                "error"
+            );
+            return;
+        }
+
+        if (subject.length < 3) {
+            showMessage(
+                "O assunto deve ter pelo menos 3 caracteres.",
+                "error"
+            );
+            return;
+        }
+
+        if (description.length < 10) {
+            showMessage(
+                "A descrição deve ter pelo menos 10 caracteres.",
+                "error"
+            );
+            return;
+        }
+
+        if (!["Normal", "Alta"].includes(priority)) {
+            showMessage(
+                "Selecione uma prioridade válida.",
+                "error"
+            );
+            return;
+        }
+
+        isSubmitting = true;
+        submitButton.disabled = true;
+        submitButton.textContent = "A enviar pedido...";
+
         showMessage(
-            "Inicie sessão na sua conta Toma antes de enviar um pedido.",
-            "error"
+            "A enviar o seu pedido. Aguarde, por favor.",
+            "info"
         );
-        return;
-    }
 
-    const category = document.getElementById("category").value;
-    const subject = document.getElementById("subject").value.trim();
-    const orderNumber = document.getElementById("orderNumber").value.trim();
-    const priority = document.getElementById("priority").value;
-    const description = document.getElementById("description").value.trim();
-
-    if (!category || subject.length < 3 || description.length < 10) {
-        showMessage(
-            "Preencha a categoria, o assunto e uma descrição com pelo menos 10 caracteres.",
-            "error"
-        );
-        return;
-    }
-
-    isSubmitting = true;
-    submitButton.disabled = true;
-    submitButton.innerHTML = `
-        <span class="material-symbols-rounded">progress_activity</span>
-        A enviar pedido...
-    `;
-
-    try {
         const newRequest = {
             userId: currentUser.uid,
             userEmail: currentUser.email || "",
@@ -1174,54 +1267,104 @@ form.addEventListener("submit", async event => {
             updatedAt: serverTimestamp()
         };
 
-        const created = await addDoc(
-            collection(db, "supportRequests"),
-            newRequest
-        );
+        try {
+            /*
+             * Se o pedido for guardado, mostramos o sucesso
+             * imediatamente. Não esperamos pelo carregamento
+             * da lista para desbloquear o botão.
+             */
 
-        showMessage(
-            "Pedido registado com sucesso! Referência: " + makeReference(created.id),
-            "success"
-        );
+            const created = await withTimeout(
+                addDoc(
+                    collection(db, "supportRequests"),
+                    newRequest
+                )
+            );
 
-        form.reset();
+            showMessage(
+                "Pedido registado com sucesso! Referência: " +
+                makeReference(created.id),
+                "success"
+            );
 
-        await loadRequests();
+            form.reset();
 
-        formMessage.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-        });
+            /*
+             * O carregamento da lista é independente do envio.
+             */
+            void loadRequests();
 
-    } catch (error) {
-    console.error("Erro ao registar pedido:", error);
+        } catch (error) {
+            console.error(
+                "Erro ao registar pedido:",
+                error
+            );
 
-    alert(
-        "ERRO FIRESTORE\n\n" +
-        "Código: " + (error.code || "desconhecido") +
-        "\nMensagem: " + (error.message || "Sem detalhes")
-    );
+            if (error.code === "timeout") {
+                showMessage(
+                    "O servidor está a demorar a responder. " +
+                    "Não envie novamente imediatamente. " +
+                    "Atualize a lista dos pedidos para verificar " +
+                    "se o pedido já foi registado.",
+                    "error"
+                );
 
-    showMessage(
-        "Não foi possível registar o pedido. Verifique a ligação, a autenticação e as regras de segurança do Firestore.",
-        "error"
-    );
-} finally {
-        isSubmitting = false;
-        submitButton.disabled = false;
-        submitButton.innerHTML = `
-            <span class="material-symbols-rounded">send</span>
-            Enviar pedido de assistência
-        `;
-    }
-});
+            } else if (
+                error.code === "permission-denied"
+            ) {
+                showMessage(
+                    "O Firestore recusou o pedido. " +
+                    "Verifique as regras de segurança e confirme " +
+                    "que está autenticado.",
+                    "error"
+                );
 
-refreshButton.addEventListener("click", loadRequests);
+            } else if (
+                error.code === "unauthenticated"
+            ) {
+                showMessage(
+                    "A sua sessão expirou. Inicie sessão novamente.",
+                    "error"
+                );
+
+            } else {
+                showMessage(
+                    "Não foi possível confirmar o envio. " +
+                    "Código: " + (error.code || "desconhecido") +
+                    ". Verifique a ligação e a lista dos pedidos.",
+                    "error"
+                );
+            }
+
+        } finally {
+            isSubmitting = false;
+            submitButton.disabled = false;
+            submitButton.textContent = "Enviar pedido";
+        }
+    });
+}
+
+
+/* =====================================================
+   BLOC 8 — ATUALIZAR A LISTA
+===================================================== */
+
+if (refreshButton) {
+    refreshButton.addEventListener("click", () => {
+        void loadRequests();
+    });
+}
+
+
+/* =====================================================
+   BLOC 9 — ESTADO DA AUTENTICAÇÃO
+===================================================== */
 
 onAuthStateChanged(auth, user => {
     currentUser = user;
-    loadRequests();
+    void loadRequests();
 });
+
 </script>
 
 </body>
