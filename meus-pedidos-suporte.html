@@ -1072,7 +1072,384 @@
     .footer strong {
       color: var(--primary-dark);
     }
+/* =====================================
+   MODAL — DETALHES E RESPOSTA DO SUPORTE
+===================================== */
 
+.details-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: none;
+  align-items: center;
+  justify-content: center;
+
+  padding: 18px;
+
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+}
+
+.details-modal.open {
+  display: flex;
+}
+
+.details-dialog {
+  width: min(100%, 650px);
+  max-height: min(88vh, 850px);
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  background: #ffffff;
+  border: 1px solid #e5eaf1;
+  border-radius: 22px;
+
+  box-shadow: 0 25px 80px rgba(15, 23, 42, 0.25);
+
+  animation: detailsModalIn 0.22s ease-out;
+}
+
+@keyframes detailsModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.details-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+
+  padding: 22px 23px;
+
+  border-bottom: 1px solid var(--border);
+
+  background: linear-gradient(120deg, #fff7ed, #ffffff);
+}
+
+.details-modal-heading {
+  min-width: 0;
+}
+
+.details-modal-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  margin-bottom: 7px;
+
+  color: var(--primary-dark);
+
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.details-modal-heading h2 {
+  margin: 0;
+
+  font-size: 20px;
+  line-height: 1.4;
+  letter-spacing: -0.5px;
+
+  overflow-wrap: anywhere;
+}
+
+.details-modal-reference {
+  display: inline-block;
+
+  margin-top: 6px;
+
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+}
+
+.details-close {
+  flex-shrink: 0;
+
+  width: 39px;
+  height: 39px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  color: #475569;
+  background: #ffffff;
+
+  cursor: pointer;
+}
+
+.details-close:hover {
+  color: var(--primary-dark);
+  background: var(--primary-light);
+  border-color: #fdba74;
+}
+
+.details-modal-body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  padding: 22px 23px;
+}
+
+.details-status-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+
+  margin-bottom: 21px;
+}
+
+.details-section {
+  margin-bottom: 22px;
+}
+
+.details-section:last-child {
+  margin-bottom: 0;
+}
+
+.details-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin: 0 0 11px;
+
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.details-section-title .material-symbols-rounded {
+  color: var(--primary-dark);
+}
+
+.details-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.details-info-item {
+  min-width: 0;
+
+  padding: 12px;
+
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  background: #fcfdff;
+}
+
+.details-info-label {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.details-info-value {
+  display: block;
+
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+
+  overflow-wrap: anywhere;
+}
+
+.details-description {
+  padding: 15px;
+
+  border: 1px solid var(--border);
+  border-radius: 13px;
+
+  background: #fcfdff;
+
+  color: #475569;
+  font-size: 12px;
+  line-height: 1.9;
+
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.details-response {
+  padding: 17px;
+
+  border: 1px solid #bbf7d0;
+  border-radius: 15px;
+
+  background: #f0fdf4;
+}
+
+.details-response.pending {
+  border-color: #fde68a;
+  background: #fffbeb;
+}
+
+.details-response-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-bottom: 11px;
+
+  color: #166534;
+
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.details-response.pending .details-response-title {
+  color: #92400e;
+}
+
+.details-response-message {
+  margin: 0;
+
+  color: #166534;
+  font-size: 12px;
+  line-height: 1.9;
+
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.details-response.pending .details-response-message {
+  color: #92400e;
+}
+
+.details-response-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+
+  margin-top: 13px;
+  padding-top: 11px;
+
+  border-top: 1px solid rgba(22, 101, 52, 0.13);
+
+  color: #64748b;
+  font-size: 10px;
+}
+
+.details-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  padding: 16px 23px;
+
+  border-top: 1px solid var(--border);
+  background: #fcfdff;
+}
+
+.details-private-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.details-footer-button {
+  min-height: 42px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  padding: 0 16px;
+
+  border: 1px solid var(--primary);
+  border-radius: 11px;
+
+  color: #ffffff;
+  background: var(--primary);
+
+  cursor: pointer;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.details-footer-button:hover {
+  background: var(--primary-dark);
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+@media (max-width: 560px) {
+  .details-modal {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .details-dialog {
+    width: 100%;
+    max-height: 92vh;
+    max-height: 92dvh;
+
+    border-radius: 22px 22px 0 0;
+  }
+
+  .details-modal-header {
+    padding: 19px 17px;
+  }
+
+  .details-modal-heading h2 {
+    font-size: 18px;
+  }
+
+  .details-modal-body {
+    padding: 18px 17px;
+  }
+
+  .details-info-grid {
+    gap: 8px;
+  }
+
+  .details-info-item {
+    padding: 10px;
+  }
+
+  .details-modal-footer {
+    padding: 14px 17px;
+  }
+
+  .details-footer-button {
+    min-height: 43px;
+  }
+}
     /* =====================================
        RESPONSIVE
     ===================================== */
@@ -1698,7 +2075,102 @@
 
   </footer>
 
+<!-- =====================================
+     MODAL — DETALHES DO PEDIDO
+====================================== -->
 
+<div
+  class="details-modal"
+  id="detailsModal"
+  aria-hidden="true"
+>
+
+  <section
+    class="details-dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="detailsModalTitle"
+  >
+
+    <header class="details-modal-header">
+
+      <div class="details-modal-heading">
+
+        <div class="details-modal-eyebrow">
+
+          <span class="material-symbols-rounded">
+            support_agent
+          </span>
+
+          Acompanhamento Toma
+
+        </div>
+
+        <h2 id="detailsModalTitle">
+          Detalhes do pedido
+        </h2>
+
+        <span
+          class="details-modal-reference"
+          id="detailsModalReference"
+        ></span>
+
+      </div>
+
+      <button
+        type="button"
+        class="details-close"
+        id="closeDetailsModal"
+        aria-label="Fechar detalhes"
+      >
+
+        <span class="material-symbols-rounded">
+          close
+        </span>
+
+      </button>
+
+    </header>
+
+
+    <div class="details-modal-body" id="detailsModalBody">
+
+      <!-- O conteúdo será preenchido pelo JavaScript. -->
+
+    </div>
+
+
+    <footer class="details-modal-footer">
+
+      <span class="details-private-note">
+
+        <span class="material-symbols-rounded">
+          lock
+        </span>
+
+        Informação privada da sua conta
+
+      </span>
+
+      <button
+        type="button"
+        class="details-footer-button"
+        id="closeDetailsModalFooter"
+      >
+
+        <span class="material-symbols-rounded">
+          check
+        </span>
+
+        Fechar detalhes
+
+      </button>
+
+    </footer>
+
+  </section>
+
+</div>
   <!-- =====================================
        BLOCO JAVASCRIPT 1 — IMPORTAÇÕES
   ====================================== -->
@@ -1742,7 +2214,33 @@
 
     const refreshButton = document.getElementById("refreshButton");
 
+/* =====================================
+   BLOCO JS 2.1 — ELEMENTOS DOS DETALHES
+===================================== */
 
+const detailsModal = document.getElementById("detailsModal");
+
+const detailsModalTitle = document.getElementById(
+  "detailsModalTitle"
+);
+
+const detailsModalReference = document.getElementById(
+  "detailsModalReference"
+);
+
+const detailsModalBody = document.getElementById(
+  "detailsModalBody"
+);
+
+const closeDetailsModal = document.getElementById(
+  "closeDetailsModal"
+);
+
+const closeDetailsModalFooter = document.getElementById(
+  "closeDetailsModalFooter"
+);
+
+let previousFocusedElement = null;
     /* =====================================
        BLOCO JS 3 — ESTADO DA APLICAÇÃO
     ===================================== */
@@ -2509,82 +3007,448 @@
     }
 
 
-    /* =====================================
-       BLOCO JS 11 — VER DETALHES
-    ===================================== */
+/* =====================================
+   BLOCO JS 11 — DETALHES E RESPOSTA
+===================================== */
 
-    requestsList.addEventListener("click", function(event) {
+/*
+  Abre uma janela profissional com os detalhes
+  completos e a resposta da equipa Toma.
 
-      const button = event.target.closest(
-        'button[data-action="details"]'
-      );
+  A resposta existente em adminResponse é utilizada
+  sem criar uma nova coleção ou alterar o esquema.
+*/
 
-      if (!button) {
-        return;
+
+function closeDetailsWindow() {
+
+  detailsModal.classList.remove("open");
+
+  detailsModal.setAttribute("aria-hidden", "true");
+
+  document.body.classList.remove("modal-open");
+
+  if (previousFocusedElement) {
+    previousFocusedElement.focus();
+  }
+
+}
+
+
+/*
+  Apresenta os detalhes de um pedido.
+*/
+
+function openRequestDetails(request, button) {
+
+  if (!request) {
+
+    alert(
+      "Não foi possível encontrar os detalhes deste pedido."
+    );
+
+    return;
+
+  }
+
+
+  previousFocusedElement = button || document.activeElement;
+
+
+  const reference = getReference(request);
+
+  const typeInfo = getTypeInfo(request.type);
+
+  const statusInfo = getStatusInfo(request.status);
+
+
+  const subject =
+    request.subject || "Pedido sem assunto";
+
+  const description =
+    request.description || "Sem descrição disponível.";
+
+  const category =
+    request.category || "Geral";
+
+  const orderNumber =
+    request.orderNumber || "Não indicada";
+
+  const priority =
+    request.priority || "Normal";
+
+
+  /*
+    A resposta é guardada pelo admin-support.html
+    no campo adminResponse.
+  */
+
+  const adminResponse = String(
+    request.adminResponse || ""
+  ).trim();
+
+
+  const adminResponseBy = String(
+    request.adminResponseBy || ""
+  ).trim();
+
+
+  const responseTimestamp =
+    request.adminResponseAt || null;
+
+
+  const hasResponse = adminResponse.length > 0;
+
+
+  /*
+    Título e referência.
+  */
+
+  detailsModalTitle.textContent = subject;
+
+  detailsModalReference.textContent = reference;
+
+
+  /*
+    Conteúdo do modal.
+    Todos os dados dinâmicos são escapados para
+    evitar interpretar texto do utilizador como HTML.
+  */
+
+  detailsModalBody.innerHTML = `
+
+    <div class="details-status-row">
+
+      <span class="type-badge ${typeInfo.className}">
+
+        <span
+          class="material-symbols-rounded"
+          style="font-size:16px;"
+        >
+          ${typeInfo.icon}
+        </span>
+
+        ${escapeHTML(typeInfo.label)}
+
+      </span>
+
+
+      <span class="status-badge ${statusInfo.className}">
+
+        <span
+          class="material-symbols-rounded"
+          style="font-size:16px;"
+        >
+          ${statusInfo.icon}
+        </span>
+
+        ${escapeHTML(statusInfo.label)}
+
+      </span>
+
+    </div>
+
+
+    <section class="details-section">
+
+      <h3 class="details-section-title">
+
+        <span class="material-symbols-rounded">
+          receipt_long
+        </span>
+
+        Informações do pedido
+
+      </h3>
+
+
+      <div class="details-info-grid">
+
+        <div class="details-info-item">
+
+          <span class="details-info-label">
+            Categoria
+          </span>
+
+          <span class="details-info-value">
+            ${escapeHTML(category)}
+          </span>
+
+        </div>
+
+
+        <div class="details-info-item">
+
+          <span class="details-info-label">
+            Prioridade
+          </span>
+
+          <span class="details-info-value">
+            ${escapeHTML(priority)}
+          </span>
+
+        </div>
+
+
+        <div class="details-info-item">
+
+          <span class="details-info-label">
+            Número da encomenda
+          </span>
+
+          <span class="details-info-value">
+            ${escapeHTML(orderNumber)}
+          </span>
+
+        </div>
+
+
+        <div class="details-info-item">
+
+          <span class="details-info-label">
+            Data de criação
+          </span>
+
+          <span class="details-info-value">
+            ${escapeHTML(formatDate(request.createdAt))}
+          </span>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <section class="details-section">
+
+      <h3 class="details-section-title">
+
+        <span class="material-symbols-rounded">
+          description
+        </span>
+
+        Descrição completa
+
+      </h3>
+
+
+      <div class="details-description">${escapeHTML(description)}</div>
+
+    </section>
+
+
+    <section class="details-section">
+
+      <h3 class="details-section-title">
+
+        <span class="material-symbols-rounded">
+          mark_email_read
+        </span>
+
+        Resposta da equipa Toma
+
+      </h3>
+
+
+      ${
+        hasResponse
+        ? `
+
+          <div class="details-response">
+
+            <div class="details-response-title">
+
+              <span class="material-symbols-rounded">
+                check_circle
+              </span>
+
+              A equipa Toma respondeu
+
+            </div>
+
+
+            <p class="details-response-message">${escapeHTML(adminResponse)}</p>
+
+
+            <div class="details-response-meta">
+
+              <span class="material-symbols-rounded">
+                schedule
+              </span>
+
+              <span>
+                ${
+                  responseTimestamp
+                  ? "Respondido em " + escapeHTML(
+                      formatDate(responseTimestamp)
+                    )
+                  : "Resposta registada"
+                }
+              </span>
+
+
+              ${
+                adminResponseBy
+                ? `
+                  <span>·</span>
+
+                  <span>
+                    ${escapeHTML(adminResponseBy)}
+                  </span>
+                `
+                : ""
+              }
+
+            </div>
+
+          </div>
+
+        `
+        : `
+
+          <div class="details-response pending">
+
+            <div class="details-response-title">
+
+              <span class="material-symbols-rounded">
+                schedule
+              </span>
+
+              Aguardamos uma resposta
+
+            </div>
+
+
+            <p class="details-response-message">
+              O seu pedido foi registado com sucesso.
+              A equipa Toma ainda não registou uma resposta
+              neste pedido. Pode voltar a consultar esta página
+              mais tarde para verificar as atualizações.
+            </p>
+
+          </div>
+
+        `
       }
 
-      const requestId = button.dataset.id;
+    </section>
 
-      const request = requests.find(function(item) {
-
-        return item.id === requestId;
-
-      });
+  `;
 
 
-      if (!request) {
+  /*
+    Mostrar o modal.
+  */
 
-        alert(
-          "Não foi possível encontrar os detalhes deste pedido."
-        );
+  detailsModal.classList.add("open");
 
-        return;
+  detailsModal.setAttribute("aria-hidden", "false");
 
-      }
+  document.body.classList.add("modal-open");
 
+  closeDetailsModal.focus();
 
-      /*
-        Os detalhes são obtidos da lista carregada
-        após uma consulta limitada ao utilizador autenticado.
-      */
-
-      const reference = getReference(request);
-
-      const typeInfo = getTypeInfo(request.type);
-
-      const statusInfo = getStatusInfo(request.status);
+}
 
 
-      const detailLines = [
+/*
+  Evento delegado para o botão Ver detalhes.
+*/
 
-        "REFERÊNCIA: " + reference,
+requestsList.addEventListener("click", function(event) {
 
-        "TIPO: " + typeInfo.label,
+  const button = event.target.closest(
+    'button[data-action="details"]'
+  );
 
-        "ASSUNTO: " + (request.subject || "Não indicado"),
-
-        "ESTADO: " + statusInfo.label,
-
-        "CATEGORIA: " + (request.category || "Geral"),
-
-        "PRIORIDADE: " + (request.priority || "Normal"),
-
-        "ENCOMENDA: " + (request.orderNumber || "Não indicada"),
-
-        "DATA: " + formatDate(request.createdAt),
-
-        "",
-
-        "DESCRIÇÃO:",
-
-        request.description || "Sem descrição disponível."
-
-      ];
+  if (!button) {
+    return;
+  }
 
 
-      alert(detailLines.join("\n"));
+  const requestId = button.dataset.id;
 
-    });
+
+  /*
+    O pedido tem de existir na lista carregada
+    para o utilizador autenticado.
+  */
+
+  const request = requests.find(function(item) {
+
+    return item.id === requestId;
+
+  });
+
+
+  if (!request) {
+
+    alert(
+      "Não foi possível encontrar os detalhes deste pedido. Atualize a lista e tente novamente."
+    );
+
+    return;
+
+  }
+
+
+  openRequestDetails(request, button);
+
+});
+
+
+/*
+  Fechar através do botão do cabeçalho.
+*/
+
+closeDetailsModal.addEventListener(
+  "click",
+  closeDetailsWindow
+);
+
+
+/*
+  Fechar através do botão do rodapé.
+*/
+
+closeDetailsModalFooter.addEventListener(
+  "click",
+  closeDetailsWindow
+);
+
+
+/*
+  Fechar quando o utilizador toca no fundo escuro.
+*/
+
+detailsModal.addEventListener("click", function(event) {
+
+  if (event.target === detailsModal) {
+
+    closeDetailsWindow();
+
+  }
+
+});
+
+
+/*
+  Fechar com a tecla Escape.
+*/
+
+document.addEventListener("keydown", function(event) {
+
+  if (
+    event.key === "Escape" &&
+    detailsModal.classList.contains("open")
+  ) {
+
+    closeDetailsWindow();
+
+  }
+
+});
 
 
     /* =====================================
