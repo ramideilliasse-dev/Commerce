@@ -1,0 +1,2694 @@
+ <!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="theme-color" content="#f97316">
+  <meta
+    name="description"
+    content="Consulte e acompanhe os seus pedidos de suporte e reclamações na Toma."
+  >
+
+  <title>Os meus pedidos | Toma</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0"
+    rel="stylesheet"
+  >
+
+  <style>
+    :root {
+      --primary: #f97316;
+      --primary-dark: #ea580c;
+      --primary-light: #fff7ed;
+
+      --text: #172033;
+      --muted: #64748b;
+
+      --background: #f5f7fb;
+      --surface: #ffffff;
+      --border: #e5eaf1;
+
+      --green: #15803d;
+      --green-bg: #f0fdf4;
+
+      --blue: #1d4ed8;
+      --blue-bg: #eff6ff;
+
+      --amber: #b45309;
+      --amber-bg: #fffbeb;
+
+      --red: #b91c1c;
+      --red-bg: #fef2f2;
+
+      --shadow: 0 12px 36px rgba(15, 23, 42, 0.055);
+
+      --radius: 19px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+
+      font-family: "Inter", sans-serif;
+      line-height: 1.6;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    a,
+    input,
+    select {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 3px solid rgba(249, 115, 22, 0.25);
+      outline-offset: 3px;
+    }
+
+    .material-symbols-rounded {
+      font-size: 22px;
+      line-height: 1;
+      vertical-align: middle;
+    }
+
+    /* =====================================
+       HEADER
+    ===================================== */
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(16px);
+
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topbar-inner {
+      width: min(1200px, calc(100% - 36px));
+      min-height: 72px;
+
+      margin: auto;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 14px;
+
+      color: white;
+      background: linear-gradient(135deg, #fb923c, #ea580c);
+
+      box-shadow: 0 6px 15px rgba(234, 88, 12, 0.2);
+    }
+
+    .brand-icon .material-symbols-rounded {
+      font-size: 26px;
+    }
+
+    .brand-name span {
+      color: var(--primary);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      min-height: 42px;
+      padding: 0 13px;
+
+      border: 1px solid var(--border);
+      border-radius: 12px;
+
+      color: #475569;
+      background: white;
+
+      font-size: 12px;
+      font-weight: 700;
+
+      transition: 0.2s;
+    }
+
+    .header-link:hover {
+      border-color: #fdba74;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+    }
+
+    /* =====================================
+       PAGE
+    ===================================== */
+
+    .page {
+      width: min(1200px, calc(100% - 36px));
+
+      margin: auto;
+      padding: 34px 0 65px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+
+      margin-bottom: 22px;
+
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .breadcrumb a:hover {
+      color: var(--primary-dark);
+    }
+
+    .breadcrumb .current {
+      color: var(--primary-dark);
+    }
+
+    /* =====================================
+       HERO
+    ===================================== */
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 25px;
+
+      padding: 31px 34px;
+
+      border-radius: 25px;
+
+      color: white;
+
+      background:
+        radial-gradient(
+          circle at 90% 10%,
+          rgba(255,255,255,0.18),
+          transparent 27%
+        ),
+        linear-gradient(125deg, #c2410c, #f97316 65%, #fb923c);
+
+      box-shadow: 0 16px 38px rgba(234, 88, 12, 0.15);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 700px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+
+      padding: 7px 11px;
+      margin-bottom: 13px;
+
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 999px;
+
+      background: rgba(255,255,255,0.12);
+
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .hero h1 {
+      margin: 0 0 9px;
+
+      font-size: clamp(27px, 4vw, 37px);
+      line-height: 1.2;
+      letter-spacing: -1.2px;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 630px;
+
+      color: rgba(255,255,255,0.91);
+
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .hero-decoration {
+      flex-shrink: 0;
+
+      width: 112px;
+      height: 112px;
+
+      display: grid;
+      place-items: center;
+
+      border: 1px solid rgba(255,255,255,0.23);
+      border-radius: 32px;
+
+      background: rgba(255,255,255,0.13);
+    }
+
+    .hero-decoration .material-symbols-rounded {
+      font-size: 59px;
+    }
+
+    /* =====================================
+       ACCOUNT STRIP
+    ===================================== */
+
+    .account-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 15px;
+
+      padding: 18px 21px;
+      margin-top: 21px;
+
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 17px;
+
+      box-shadow: var(--shadow);
+    }
+
+    .account-main {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .account-icon {
+      flex-shrink: 0;
+
+      width: 43px;
+      height: 43px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 14px;
+
+      color: var(--primary-dark);
+      background: var(--primary-light);
+    }
+
+    .account-text {
+      min-width: 0;
+    }
+
+    .account-text strong {
+      display: block;
+      font-size: 12px;
+    }
+
+    .account-text span {
+      display: block;
+
+      max-width: 450px;
+      overflow-wrap: anywhere;
+
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .connection-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+
+      border-radius: 50%;
+      background: #94a3b8;
+    }
+
+    .status-dot.connected {
+      background: #22c55e;
+    }
+
+    .status-dot.error {
+      background: #ef4444;
+    }
+
+    /* =====================================
+       STATISTICS
+    ===================================== */
+
+    .section-title {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 14px;
+
+      margin: 31px 0 15px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+
+      font-size: 19px;
+      letter-spacing: -0.5px;
+    }
+
+    .section-title p {
+      margin: 4px 0 0;
+
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 15px;
+    }
+
+    .stat-card {
+      position: relative;
+      overflow: hidden;
+
+      min-width: 0;
+      padding: 19px;
+
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 17px;
+
+      box-shadow: var(--shadow);
+    }
+
+    .stat-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .stat-icon {
+      width: 38px;
+      height: 38px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 12px;
+
+      color: var(--primary-dark);
+      background: var(--primary-light);
+    }
+
+    .stat-icon.blue {
+      color: var(--blue);
+      background: var(--blue-bg);
+    }
+
+    .stat-icon.green {
+      color: var(--green);
+      background: var(--green-bg);
+    }
+
+    .stat-icon.amber {
+      color: var(--amber);
+      background: var(--amber-bg);
+    }
+
+    .stat-number {
+      display: block;
+
+      margin-top: 13px;
+
+      font-size: 31px;
+      line-height: 1.1;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .stat-caption {
+      display: block;
+
+      margin-top: 7px;
+
+      color: #94a3b8;
+      font-size: 10px;
+    }
+
+    /* =====================================
+       REQUESTS AREA
+    ===================================== */
+
+    .requests-card {
+      margin-top: 27px;
+
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .requests-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 15px;
+
+      padding: 23px 24px;
+
+      border-bottom: 1px solid var(--border);
+    }
+
+    .requests-heading h2 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -0.5px;
+    }
+
+    .requests-heading p {
+      margin: 5px 0 0;
+
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .refresh-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+
+      min-height: 40px;
+      padding: 0 13px;
+
+      border: 1px solid var(--border);
+      border-radius: 11px;
+
+      color: #475569;
+      background: white;
+
+      cursor: pointer;
+
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .refresh-button:hover {
+      border-color: #fdba74;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+    }
+
+    .refresh-button:disabled {
+      opacity: 0.55;
+      cursor: wait;
+    }
+
+    /* FILTERS */
+
+    .filters {
+      display: grid;
+      grid-template-columns: minmax(200px, 1.5fr) repeat(2, minmax(145px, 0.8fr));
+      gap: 12px;
+
+      padding: 19px 24px;
+
+      border-bottom: 1px solid var(--border);
+      background: #fcfdff;
+    }
+
+    .search-wrap {
+      position: relative;
+    }
+
+    .search-wrap .material-symbols-rounded {
+      position: absolute;
+      left: 12px;
+      top: 12px;
+
+      color: #94a3b8;
+      pointer-events: none;
+    }
+
+    .filter-input,
+    .filter-select {
+      width: 100%;
+      min-height: 43px;
+
+      border: 1px solid #dce3ed;
+      border-radius: 11px;
+
+      background: white;
+      color: var(--text);
+
+      font-size: 11px;
+    }
+
+    .filter-input {
+      padding: 0 12px 0 40px;
+    }
+
+    .filter-select {
+      padding: 0 11px;
+      cursor: pointer;
+    }
+
+    .filter-input:focus,
+    .filter-select:focus {
+      outline: none;
+
+      border-color: var(--primary);
+
+      box-shadow: 0 0 0 3px rgba(249,115,22,0.09);
+    }
+
+    /* REQUEST LIST */
+
+    .requests-list {
+      display: grid;
+      gap: 0;
+    }
+
+    .request-item {
+      padding: 22px 24px;
+
+      border-bottom: 1px solid #eef2f7;
+
+      transition: background 0.2s;
+    }
+
+    .request-item:last-child {
+      border-bottom: 0;
+    }
+
+    .request-item:hover {
+      background: #fffdfa;
+    }
+
+    .request-main {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .request-content {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .request-topline {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+
+      margin-bottom: 9px;
+    }
+
+    .type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+
+      padding: 6px 9px;
+
+      border-radius: 8px;
+
+      font-size: 9px;
+      font-weight: 800;
+    }
+
+    .type-badge.help {
+      color: var(--blue);
+      background: var(--blue-bg);
+    }
+
+    .type-badge.complaint {
+      color: var(--primary-dark);
+      background: var(--primary-light);
+    }
+
+    .request-reference {
+      color: #94a3b8;
+
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+    }
+
+    .request-title {
+      margin: 0;
+
+      font-size: 15px;
+      line-height: 1.5;
+      font-weight: 800;
+
+      overflow-wrap: anywhere;
+    }
+
+    .request-description {
+      margin: 9px 0 0;
+
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.8;
+
+      overflow-wrap: anywhere;
+
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .request-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+
+      margin-top: 13px;
+    }
+
+    .meta-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+
+      color: #94a3b8;
+      font-size: 10px;
+    }
+
+    .meta-item .material-symbols-rounded {
+      font-size: 16px;
+    }
+
+    .request-side {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 11px;
+
+      flex-shrink: 0;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+
+      padding: 7px 10px;
+
+      border-radius: 9px;
+
+      font-size: 10px;
+      font-weight: 800;
+
+      white-space: nowrap;
+    }
+
+    .status-badge.pending {
+      color: var(--amber);
+      background: var(--amber-bg);
+    }
+
+    .status-badge.analysis {
+      color: var(--blue);
+      background: var(--blue-bg);
+    }
+
+    .status-badge.answered {
+      color: #6d28d9;
+      background: #f5f3ff;
+    }
+
+    .status-badge.resolved {
+      color: var(--green);
+      background: var(--green-bg);
+    }
+
+    .status-badge.rejected {
+      color: var(--red);
+      background: var(--red-bg);
+    }
+
+    .status-badge.neutral {
+      color: #475569;
+      background: #f1f5f9;
+    }
+
+    .priority-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+
+      color: #94a3b8;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .priority-label.high {
+      color: var(--red);
+    }
+
+    .request-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 9px;
+
+      margin-top: 16px;
+    }
+
+    .request-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+
+      min-height: 37px;
+      padding: 0 12px;
+
+      border: 1px solid var(--border);
+      border-radius: 10px;
+
+      color: #475569;
+      background: white;
+
+      cursor: pointer;
+
+      font-size: 10px;
+      font-weight: 800;
+
+      transition: 0.2s;
+    }
+
+    .request-button:hover {
+      border-color: #fdba74;
+      color: var(--primary-dark);
+      background: var(--primary-light);
+    }
+
+    .request-button.primary {
+      border-color: var(--primary);
+      color: white;
+      background: var(--primary);
+    }
+
+    .request-button.primary:hover {
+      background: var(--primary-dark);
+    }
+
+    /* =====================================
+       EMPTY / LOADING / ERROR
+    ===================================== */
+
+    .state-box {
+      padding: 50px 22px;
+
+      text-align: center;
+    }
+
+    .state-icon {
+      width: 66px;
+      height: 66px;
+
+      display: grid;
+      place-items: center;
+
+      margin: 0 auto 17px;
+
+      color: var(--primary-dark);
+      background: var(--primary-light);
+
+      border-radius: 21px;
+    }
+
+    .state-icon .material-symbols-rounded {
+      font-size: 34px;
+    }
+
+    .state-box h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .state-box p {
+      max-width: 430px;
+
+      margin: 0 auto 19px;
+
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.8;
+    }
+
+    .state-box.error .state-icon {
+      color: var(--red);
+      background: var(--red-bg);
+    }
+
+    .spinner {
+      width: 25px;
+      height: 25px;
+
+      margin: 0 auto;
+
+      border: 3px solid #fed7aa;
+      border-top-color: var(--primary);
+
+      border-radius: 50%;
+
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .results-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+
+      padding: 16px 24px;
+
+      border-top: 1px solid var(--border);
+
+      color: var(--muted);
+      background: #fcfdff;
+
+      font-size: 10px;
+    }
+
+    /* =====================================
+       SUPPORT CTA
+    ===================================== */
+
+    .support-cta {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 22px;
+
+      padding: 24px 27px;
+      margin-top: 24px;
+
+      border: 1px solid #fed7aa;
+      border-radius: 19px;
+
+      background: linear-gradient(110deg, #fff7ed, #ffffff);
+    }
+
+    .support-cta h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+    }
+
+    .support-cta p {
+      margin: 0;
+
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.8;
+    }
+
+    .cta-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .cta-button {
+      min-height: 43px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+
+      padding: 0 13px;
+
+      border: 1px solid var(--border);
+      border-radius: 11px;
+
+      color: #475569;
+      background: white;
+
+      font-size: 10px;
+      font-weight: 800;
+
+      transition: 0.2s;
+    }
+
+    .cta-button:hover {
+      border-color: #fdba74;
+      color: var(--primary-dark);
+    }
+
+    .cta-button.primary {
+      color: white;
+      border-color: var(--primary);
+      background: var(--primary);
+    }
+
+    .cta-button.primary:hover {
+      background: var(--primary-dark);
+    }
+
+    /* =====================================
+       FOOTER
+    ===================================== */
+
+    .footer {
+      padding: 24px 18px;
+
+      border-top: 1px solid var(--border);
+      background: white;
+
+      text-align: center;
+    }
+
+    .footer p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .footer strong {
+      color: var(--primary-dark);
+    }
+
+    /* =====================================
+       RESPONSIVE
+    ===================================== */
+
+    @media (max-width: 900px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .filters {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .search-wrap {
+        grid-column: 1 / -1;
+      }
+
+      .support-cta {
+        grid-template-columns: 1fr;
+      }
+
+      .cta-actions {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .topbar-inner {
+        width: calc(100% - 28px);
+        min-height: 64px;
+      }
+
+      .brand {
+        gap: 8px;
+        font-size: 21px;
+      }
+
+      .brand-icon {
+        width: 37px;
+        height: 37px;
+        border-radius: 12px;
+      }
+
+      .header-link {
+        width: 40px;
+        min-height: 40px;
+        padding: 0;
+
+        font-size: 0;
+      }
+
+      .header-link .material-symbols-rounded {
+        font-size: 21px;
+      }
+
+      .page {
+        width: calc(100% - 26px);
+        padding: 23px 0 42px;
+      }
+
+      .breadcrumb {
+        margin-bottom: 16px;
+      }
+
+      .hero {
+        padding: 24px 20px;
+        border-radius: 21px;
+      }
+
+      .hero h1 {
+        font-size: 27px;
+        letter-spacing: -0.8px;
+      }
+
+      .hero p {
+        font-size: 12px;
+      }
+
+      .hero-decoration {
+        display: none;
+      }
+
+      .account-strip {
+        padding: 15px;
+      }
+
+      .section-title {
+        margin-top: 25px;
+      }
+
+      .section-title h2 {
+        font-size: 17px;
+      }
+
+      .stats-grid {
+        gap: 10px;
+      }
+
+      .stat-card {
+        padding: 14px;
+        border-radius: 15px;
+      }
+
+      .stat-label {
+        font-size: 10px;
+      }
+
+      .stat-icon {
+        width: 33px;
+        height: 33px;
+        border-radius: 10px;
+      }
+
+      .stat-number {
+        font-size: 27px;
+      }
+
+      .stat-caption {
+        font-size: 9px;
+      }
+
+      .requests-card {
+        margin-top: 21px;
+        border-radius: 17px;
+      }
+
+      .requests-header {
+        padding: 18px 15px;
+      }
+
+      .requests-heading h2 {
+        font-size: 16px;
+      }
+
+      .requests-heading p {
+        font-size: 10px;
+      }
+
+      .refresh-button {
+        min-height: 37px;
+        padding: 0 10px;
+      }
+
+      .filters {
+        grid-template-columns: 1fr;
+        padding: 14px;
+        gap: 9px;
+      }
+
+      .search-wrap {
+        grid-column: auto;
+      }
+
+      .filter-input,
+      .filter-select {
+        min-height: 44px;
+      }
+
+      .request-item {
+        padding: 19px 15px;
+      }
+
+      .request-main {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .request-side {
+        width: 100%;
+
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+
+      .request-title {
+        font-size: 14px;
+      }
+
+      .request-description {
+        font-size: 11px;
+      }
+
+      .request-meta {
+        gap: 10px;
+      }
+
+      .request-actions {
+        gap: 8px;
+      }
+
+      .request-button {
+        min-height: 39px;
+      }
+
+      .results-footer {
+        padding: 14px;
+      }
+
+      .support-cta {
+        padding: 20px 17px;
+      }
+
+      .cta-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .cta-button {
+        width: 100%;
+        min-height: 45px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =====================================
+       BLOCO HTML 1 — HEADER
+  ====================================== -->
+
+  <header class="topbar">
+
+    <div class="topbar-inner">
+
+      <a class="brand" href="support.html" aria-label="Toma - Suporte">
+
+        <span class="brand-icon">
+          <span class="material-symbols-rounded">storefront</span>
+        </span>
+
+        <span class="brand-name">to<span>ma</span></span>
+
+      </a>
+
+      <div class="header-actions">
+
+        <a class="header-link" href="support.html">
+          <span class="material-symbols-rounded">arrow_back</span>
+          Centro de suporte
+        </a>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <main class="page">
+
+    <!-- =====================================
+         BLOCO HTML 2 — BREADCRUMB
+    ====================================== -->
+
+    <nav class="breadcrumb" aria-label="Navegação">
+
+      <a href="support.html">Suporte</a>
+
+      <span class="material-symbols-rounded">chevron_right</span>
+
+      <span class="current">Os meus pedidos</span>
+
+    </nav>
+
+
+    <!-- =====================================
+         BLOCO HTML 3 — HERO
+    ====================================== -->
+
+    <section class="hero">
+
+      <div class="hero-content">
+
+        <div class="hero-badge">
+          <span class="material-symbols-rounded">verified_user</span>
+          Área pessoal de suporte
+        </div>
+
+        <h1>Os meus pedidos</h1>
+
+        <p>
+          Consulte os seus pedidos de ajuda e as suas reclamações num só lugar.
+          Acompanhe os estados e mantenha as informações de cada pedido
+          organizadas.
+        </p>
+
+      </div>
+
+      <div class="hero-decoration" aria-hidden="true">
+        <span class="material-symbols-rounded">support_agent</span>
+      </div>
+
+    </section>
+
+
+    <!-- =====================================
+         BLOCO HTML 4 — CONTA
+    ====================================== -->
+
+    <section class="account-strip">
+
+      <div class="account-main">
+
+        <div class="account-icon">
+          <span class="material-symbols-rounded">account_circle</span>
+        </div>
+
+        <div class="account-text">
+
+          <strong>A sua área pessoal</strong>
+
+          <span id="accountEmail">
+            A verificar a sua sessão...
+          </span>
+
+        </div>
+
+      </div>
+
+      <div class="connection-status">
+
+        <span class="status-dot" id="connectionDot"></span>
+
+        <span id="connectionText">A ligar...</span>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================
+         BLOCO HTML 5 — ESTATÍSTICAS
+    ====================================== -->
+
+    <div class="section-title">
+
+      <div>
+        <h2>Resumo dos pedidos</h2>
+
+        <p>
+          Uma visão geral dos seus pedidos de suporte.
+        </p>
+      </div>
+
+    </div>
+
+
+    <section class="stats-grid" aria-label="Resumo dos pedidos">
+
+      <article class="stat-card">
+
+        <div class="stat-top">
+
+          <span class="stat-label">Total de pedidos</span>
+
+          <span class="stat-icon">
+            <span class="material-symbols-rounded">inbox</span>
+          </span>
+
+        </div>
+
+        <strong class="stat-number" id="totalCount">—</strong>
+
+        <span class="stat-caption">Pedidos registados</span>
+
+      </article>
+
+
+      <article class="stat-card">
+
+        <div class="stat-top">
+
+          <span class="stat-label">Em análise</span>
+
+          <span class="stat-icon blue">
+            <span class="material-symbols-rounded">manage_search</span>
+          </span>
+
+        </div>
+
+        <strong class="stat-number" id="pendingCount">—</strong>
+
+        <span class="stat-caption">Aguardam tratamento</span>
+
+      </article>
+
+
+      <article class="stat-card">
+
+        <div class="stat-top">
+
+          <span class="stat-label">Respondidos</span>
+
+          <span class="stat-icon amber">
+            <span class="material-symbols-rounded">mark_email_read</span>
+          </span>
+
+        </div>
+
+        <strong class="stat-number" id="answeredCount">—</strong>
+
+        <span class="stat-caption">Com resposta registada</span>
+
+      </article>
+
+
+      <article class="stat-card">
+
+        <div class="stat-top">
+
+          <span class="stat-label">Resolvidos</span>
+
+          <span class="stat-icon green">
+            <span class="material-symbols-rounded">task_alt</span>
+          </span>
+
+        </div>
+
+        <strong class="stat-number" id="resolvedCount">—</strong>
+
+        <span class="stat-caption">Pedidos concluídos</span>
+
+      </article>
+
+    </section>
+
+
+    <!-- =====================================
+         BLOCO HTML 6 — LISTA DE PEDIDOS
+    ====================================== -->
+
+    <section class="requests-card">
+
+      <div class="requests-header">
+
+        <div class="requests-heading">
+
+          <h2>Histórico dos pedidos</h2>
+
+          <p>
+            Consulte as suas solicitações mais recentes.
+          </p>
+
+        </div>
+
+        <button
+          class="refresh-button"
+          id="refreshButton"
+          type="button"
+        >
+
+          <span class="material-symbols-rounded">refresh</span>
+
+          Atualizar
+
+        </button>
+
+      </div>
+
+
+      <!-- FILTROS -->
+
+      <div class="filters">
+
+        <div class="search-wrap">
+
+          <span class="material-symbols-rounded">search</span>
+
+          <input
+            class="filter-input"
+            id="searchInput"
+            type="search"
+            placeholder="Pesquisar assunto, referência ou encomenda..."
+            autocomplete="off"
+            aria-label="Pesquisar pedidos"
+          >
+
+        </div>
+
+
+        <select
+          class="filter-select"
+          id="typeFilter"
+          aria-label="Filtrar por tipo"
+        >
+
+          <option value="todos">Todos os tipos</option>
+
+          <option value="ajuda">Pedidos de ajuda</option>
+
+          <option value="reclamacao">Reclamações</option>
+
+        </select>
+
+
+        <select
+          class="filter-select"
+          id="statusFilter"
+          aria-label="Filtrar por estado"
+        >
+
+          <option value="todos">Todos os estados</option>
+
+          <option value="pendente">Pendente</option>
+
+          <option value="analise">Em análise</option>
+
+          <option value="respondido">Respondido</option>
+
+          <option value="resolvido">Resolvido</option>
+
+          <option value="rejeitado">Rejeitado</option>
+
+        </select>
+
+      </div>
+
+
+      <!-- CONTEÚDO DINÂMICO -->
+
+      <div class="requests-list" id="requestsList">
+
+        <div class="state-box">
+
+          <div class="spinner"></div>
+
+          <h3 style="margin-top:18px;">A carregar os seus pedidos...</h3>
+
+          <p>
+            Estamos a consultar os pedidos associados à sua conta.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="results-footer">
+
+        <span id="resultsCount">
+          A preparar a lista...
+        </span>
+
+        <span>
+          <span class="material-symbols-rounded"
+                style="font-size:15px;">
+            lock
+          </span>
+
+          Os seus pedidos são privados.
+        </span>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================
+         BLOCO HTML 7 — AÇÕES DE SUPORTE
+    ====================================== -->
+
+    <section class="support-cta">
+
+      <div>
+
+        <h3>Precisa de mais ajuda?</h3>
+
+        <p>
+          Envie um novo pedido de ajuda ou apresente uma reclamação.
+          A equipa Toma poderá analisar as informações que enviar.
+        </p>
+
+      </div>
+
+      <div class="cta-actions">
+
+        <a class="cta-button" href="ajuda.html">
+
+          <span class="material-symbols-rounded">help</span>
+
+          Pedir ajuda
+
+        </a>
+
+        <a class="cta-button primary" href="reclamacao.html">
+
+          <span class="material-symbols-rounded">campaign</span>
+
+          Fazer reclamação
+
+        </a>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =====================================
+       BLOCO HTML 8 — FOOTER
+  ====================================== -->
+
+  <footer class="footer">
+
+    <p>
+      © <span id="currentYear"></span>
+      <strong>Toma</strong> — O comércio mais perto de si.
+    </p>
+
+  </footer>
+
+
+  <!-- =====================================
+       BLOCO JAVASCRIPT 1 — IMPORTAÇÕES
+  ====================================== -->
+
+  <script type="module">
+
+    import { auth, db } from "./firebase.js";
+
+    import {
+      collection,
+      getDocs,
+      query,
+      where
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    import {
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+
+    /* =====================================
+       BLOCO JS 2 — ELEMENTOS
+    ====================================== */
+
+    const accountEmail = document.getElementById("accountEmail");
+
+    const connectionDot = document.getElementById("connectionDot");
+    const connectionText = document.getElementById("connectionText");
+
+    const totalCount = document.getElementById("totalCount");
+    const pendingCount = document.getElementById("pendingCount");
+    const answeredCount = document.getElementById("answeredCount");
+    const resolvedCount = document.getElementById("resolvedCount");
+
+    const requestsList = document.getElementById("requestsList");
+    const resultsCount = document.getElementById("resultsCount");
+
+    const searchInput = document.getElementById("searchInput");
+    const typeFilter = document.getElementById("typeFilter");
+    const statusFilter = document.getElementById("statusFilter");
+
+    const refreshButton = document.getElementById("refreshButton");
+
+
+    /* =====================================
+       BLOCO JS 3 — ESTADO DA APLICAÇÃO
+    ===================================== */
+
+    let currentUser = null;
+
+    let authResolved = false;
+
+    let requests = [];
+
+    let isLoading = false;
+
+    let loadError = false;
+
+    let authMessageShown = false;
+
+
+    /* =====================================
+       BLOCO JS 4 — UTILITÁRIOS
+    ===================================== */
+
+    document.getElementById("currentYear").textContent =
+      new Date().getFullYear();
+
+
+    function escapeHTML(value) {
+
+      return String(value ?? "").replace(/[&<>"']/g, function(character) {
+
+        const entities = {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+        };
+
+        return entities[character];
+
+      });
+
+    }
+
+
+    function normalizeText(value) {
+
+      return String(value ?? "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+
+    }
+
+
+    function getTimestamp(value) {
+
+      if (!value) {
+        return 0;
+      }
+
+      if (typeof value.toMillis === "function") {
+        return value.toMillis();
+      }
+
+      if (value instanceof Date) {
+        return value.getTime();
+      }
+
+      if (typeof value.seconds === "number") {
+        return value.seconds * 1000;
+      }
+
+      if (typeof value === "number") {
+        return value;
+      }
+
+      return 0;
+
+    }
+
+
+    function formatDate(value) {
+
+      const timestamp = getTimestamp(value);
+
+      if (!timestamp) {
+        return "Data não disponível";
+      }
+
+      const date = new Date(timestamp);
+
+      if (Number.isNaN(date.getTime())) {
+        return "Data não disponível";
+      }
+
+      return new Intl.DateTimeFormat("pt-PT", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      }).format(date);
+
+    }
+
+
+    function getReference(request) {
+
+      const prefix =
+        request.type === "reclamacao" ? "REC-" : "AJ-";
+
+      return prefix +
+        String(request.id).slice(-8).toUpperCase();
+
+    }
+
+
+    /* =====================================
+       BLOCO JS 5 — ESTADOS
+    ===================================== */
+
+    function getStatusInfo(statusValue) {
+
+      const status = normalizeText(statusValue);
+
+      if (
+        status === "resolvido" ||
+        status === "resolvida" ||
+        status === "resolved" ||
+        status === "concluido" ||
+        status === "concluida" ||
+        status === "fechado" ||
+        status === "fechada"
+      ) {
+
+        return {
+          label: "Resolvido",
+          className: "resolved",
+          group: "resolvido",
+          icon: "check_circle"
+        };
+
+      }
+
+      if (
+        status === "respondido" ||
+        status === "respondida" ||
+        status === "answered"
+      ) {
+
+        return {
+          label: "Respondido",
+          className: "answered",
+          group: "respondido",
+          icon: "mark_email_read"
+        };
+
+      }
+
+      if (
+        status === "em analise" ||
+        status === "em análise" ||
+        status === "em tratamento" ||
+        status === "in progress" ||
+        status === "em andamento"
+      ) {
+
+        return {
+          label: "Em análise",
+          className: "analysis",
+          group: "analise",
+          icon: "manage_search"
+        };
+
+      }
+
+      if (
+        status === "rejeitado" ||
+        status === "rejeitada" ||
+        status === "rejected"
+      ) {
+
+        return {
+          label: "Rejeitado",
+          className: "rejected",
+          group: "rejeitado",
+          icon: "cancel"
+        };
+
+      }
+
+      if (
+        status === "pendente" ||
+        status === "pending" ||
+        status === ""
+      ) {
+
+        return {
+          label: "Pendente",
+          className: "pending",
+          group: "pendente",
+          icon: "schedule"
+        };
+
+      }
+
+      return {
+        label: String(statusValue || "Em acompanhamento"),
+        className: "neutral",
+        group: "outro",
+        icon: "info"
+      };
+
+    }
+
+
+    function getTypeInfo(type) {
+
+      if (type === "reclamacao") {
+
+        return {
+          label: "Reclamação",
+          className: "complaint",
+          icon: "campaign"
+        };
+
+      }
+
+      return {
+        label: "Pedido de ajuda",
+        className: "help",
+        icon: "help"
+      };
+
+    }
+
+
+    /* =====================================
+       BLOCO JS 6 — INTERFACE DE ESTADO
+    ===================================== */
+
+    function showConnection(connected, text) {
+
+      connectionText.textContent = text;
+
+      connectionDot.className = "status-dot";
+
+      if (connected) {
+
+        connectionDot.classList.add("connected");
+
+      } else if (text === "Erro de ligação") {
+
+        connectionDot.classList.add("error");
+
+      }
+
+    }
+
+
+    function showState(title, description, icon, error = false) {
+
+      requestsList.innerHTML = `
+        <div class="state-box ${error ? "error" : ""}">
+
+          <div class="state-icon">
+            <span class="material-symbols-rounded">
+              ${escapeHTML(icon)}
+            </span>
+          </div>
+
+          <h3>${escapeHTML(title)}</h3>
+
+          <p>${escapeHTML(description)}</p>
+
+        </div>
+      `;
+
+    }
+
+
+    function showLoading() {
+
+      requestsList.innerHTML = `
+        <div class="state-box">
+
+          <div class="spinner"></div>
+
+          <h3 style="margin-top:18px;">
+            A carregar os seus pedidos...
+          </h3>
+
+          <p>
+            Aguarde enquanto consultamos as informações da sua conta.
+          </p>
+
+        </div>
+      `;
+
+    }
+
+
+    /* =====================================
+       BLOCO JS 7 — CARREGAR PEDIDOS
+    ===================================== */
+
+    async function loadRequests() {
+
+      if (!currentUser || isLoading) {
+        return;
+      }
+
+      isLoading = true;
+      loadError = false;
+
+      refreshButton.disabled = true;
+
+      refreshButton.innerHTML = `
+        <span class="spinner"
+              style="width:15px;height:15px;margin:0;border-width:2px;">
+        </span>
+        A atualizar...
+      `;
+
+      showLoading();
+
+      showConnection(true, "A consultar os pedidos");
+
+
+      try {
+
+        /*
+          Consulta apenas os pedidos do utilizador autenticado.
+
+          Não usamos orderBy no Firestore:
+          a ordenação será feita localmente para evitar exigir
+          um índice composto para esta consulta.
+        */
+
+        const requestsQuery = query(
+          collection(db, "supportRequests"),
+          where("userId", "==", currentUser.uid)
+        );
+
+        const snapshot = await getDocs(requestsQuery);
+
+        const loadedRequests = [];
+
+        snapshot.forEach(function(documentSnapshot) {
+
+          const data = documentSnapshot.data();
+
+          loadedRequests.push({
+
+            ...data,
+
+            id: documentSnapshot.id
+
+          });
+
+        });
+
+
+        /*
+          Os pedidos mais recentes aparecem primeiro.
+        */
+
+        loadedRequests.sort(function(a, b) {
+
+          return getTimestamp(b.createdAt) -
+                 getTimestamp(a.createdAt);
+
+        });
+
+
+        requests = loadedRequests;
+
+        loadError = false;
+
+        updateStatistics();
+
+        renderRequests();
+
+        showConnection(true, "Ligação ativa");
+
+
+      } catch (error) {
+
+        console.error(
+          "Erro ao carregar os pedidos de suporte:",
+          error
+        );
+
+        loadError = true;
+
+        showConnection(false, "Erro de ligação");
+
+        totalCount.textContent = "—";
+        pendingCount.textContent = "—";
+        answeredCount.textContent = "—";
+        resolvedCount.textContent = "—";
+
+        showState(
+          "Não foi possível carregar os pedidos",
+          "Verifique a ligação à internet. Se o problema continuar, confirme as regras de acesso da coleção supportRequests no Firebase.",
+          "cloud_off",
+          true
+        );
+
+        resultsCount.textContent =
+          "Não foi possível carregar os resultados.";
+
+      } finally {
+
+        isLoading = false;
+
+        refreshButton.disabled = false;
+
+        refreshButton.innerHTML = `
+          <span class="material-symbols-rounded">refresh</span>
+          Atualizar
+        `;
+
+      }
+
+    }
+
+
+    /* =====================================
+       BLOCO JS 8 — ESTATÍSTICAS
+    ===================================== */
+
+    function updateStatistics() {
+
+      const total = requests.length;
+
+      let pending = 0;
+      let answered = 0;
+      let resolved = 0;
+
+      requests.forEach(function(request) {
+
+        const status = getStatusInfo(request.status);
+
+        if (
+          status.group === "pendente" ||
+          status.group === "analise"
+        ) {
+
+          pending++;
+
+        }
+
+        if (status.group === "respondido") {
+
+          answered++;
+
+        }
+
+        if (
+          status.group === "resolvido" ||
+          status.group === "rejeitado"
+        ) {
+
+          resolved++;
+
+        }
+
+      });
+
+
+      totalCount.textContent = total;
+
+      pendingCount.textContent = pending;
+
+      answeredCount.textContent = answered;
+
+      resolvedCount.textContent = resolved;
+
+    }
+
+
+    /* =====================================
+       BLOCO JS 9 — FILTRAR PEDIDOS
+    ===================================== */
+
+    function getFilteredRequests() {
+
+      const search = normalizeText(searchInput.value);
+
+      const selectedType = typeFilter.value;
+
+      const selectedStatus = statusFilter.value;
+
+
+      return requests.filter(function(request) {
+
+        const reference = getReference(request);
+
+        const searchableText = normalizeText([
+
+          request.subject,
+
+          request.description,
+
+          request.category,
+
+          request.orderNumber,
+
+          reference,
+
+          request.type
+
+        ].join(" "));
+
+
+        const matchesSearch =
+          !search || searchableText.includes(search);
+
+
+        const matchesType =
+          selectedType === "todos" ||
+          request.type === selectedType;
+
+
+        const status = getStatusInfo(request.status);
+
+        const matchesStatus =
+          selectedStatus === "todos" ||
+          status.group === selectedStatus;
+
+
+        return matchesSearch &&
+               matchesType &&
+               matchesStatus;
+
+      });
+
+    }
+
+
+    /* =====================================
+       BLOCO JS 10 — RENDERIZAR LISTA
+    ===================================== */
+
+    function renderRequests() {
+
+      if (loadError) {
+        return;
+      }
+
+      const filteredRequests = getFilteredRequests();
+
+
+      if (requests.length === 0) {
+
+        showState(
+          "Ainda não tem pedidos",
+          "Quando enviar um pedido de ajuda ou uma reclamação, poderá acompanhar aqui o respetivo estado.",
+          "inbox"
+        );
+
+        resultsCount.textContent = "0 pedidos registados";
+
+        return;
+
+      }
+
+
+      if (filteredRequests.length === 0) {
+
+        showState(
+          "Nenhum resultado encontrado",
+          "Não encontrámos pedidos com os filtros selecionados. Experimente alterar a pesquisa ou os filtros.",
+          "search_off"
+        );
+
+        resultsCount.textContent =
+          "0 resultados de " + requests.length + " pedidos";
+
+        return;
+
+      }
+
+
+      requestsList.innerHTML = filteredRequests.map(function(request) {
+
+        const typeInfo = getTypeInfo(request.type);
+
+        const statusInfo = getStatusInfo(request.status);
+
+        const reference = getReference(request);
+
+        const category = request.category || "Geral";
+
+        const subject = request.subject || "Pedido sem assunto";
+
+        const description =
+          request.description || "Sem descrição disponível.";
+
+        const orderNumber = request.orderNumber || "";
+
+        const priority = request.priority || "Normal";
+
+        const isHighPriority =
+          normalizeText(priority) === "alta";
+
+
+        /*
+          A referência identifica o pedido.
+
+          O botão de conversa será ligado à futura área
+          de mensagens quando a página de administração
+          e as regras da conversa estiverem implementadas.
+        */
+
+        return `
+
+          <article class="request-item">
+
+            <div class="request-main">
+
+              <div class="request-content">
+
+                <div class="request-topline">
+
+                  <span class="type-badge ${typeInfo.className}">
+
+                    <span class="material-symbols-rounded"
+                          style="font-size:15px;">
+                      ${typeInfo.icon}
+                    </span>
+
+                    ${typeInfo.label}
+
+                  </span>
+
+                  <span class="request-reference">
+                    ${escapeHTML(reference)}
+                  </span>
+
+                </div>
+
+
+                <h3 class="request-title">
+                  ${escapeHTML(subject)}
+                </h3>
+
+
+                <p class="request-description">
+                  ${escapeHTML(description)}
+                </p>
+
+
+                <div class="request-meta">
+
+                  <span class="meta-item">
+
+                    <span class="material-symbols-rounded">
+                      category
+                    </span>
+
+                    ${escapeHTML(category)}
+
+                  </span>
+
+
+                  <span class="meta-item">
+
+                    <span class="material-symbols-rounded">
+                      calendar_month
+                    </span>
+
+                    ${escapeHTML(formatDate(request.createdAt))}
+
+                  </span>
+
+
+                  ${
+                    orderNumber
+                    ? `
+                      <span class="meta-item">
+
+                        <span class="material-symbols-rounded">
+                          receipt_long
+                        </span>
+
+                        ${escapeHTML(orderNumber)}
+
+                      </span>
+                    `
+                    : ""
+                  }
+
+                </div>
+
+
+                <div class="request-actions">
+
+                  <button
+                    class="request-button"
+                    type="button"
+                    data-action="details"
+                    data-id="${escapeHTML(request.id)}"
+                  >
+
+                    <span class="material-symbols-rounded">
+                      visibility
+                    </span>
+
+                    Ver detalhes
+
+                  </button>
+
+                </div>
+
+              </div>
+
+
+              <div class="request-side">
+
+                <span class="status-badge ${statusInfo.className}">
+
+                  <span class="material-symbols-rounded"
+                        style="font-size:16px;">
+                    ${statusInfo.icon}
+                  </span>
+
+                  ${escapeHTML(statusInfo.label)}
+
+                </span>
+
+
+                <span class="priority-label ${isHighPriority ? "high" : ""}">
+
+                  <span class="material-symbols-rounded"
+                        style="font-size:15px;">
+                    ${isHighPriority ? "priority_high" : "flag"}
+                  </span>
+
+                  Prioridade ${isHighPriority ? "alta" : "normal"}
+
+                </span>
+
+              </div>
+
+            </div>
+
+          </article>
+
+        `;
+
+      }).join("");
+
+
+      resultsCount.textContent =
+        filteredRequests.length +
+        (filteredRequests.length === 1
+          ? " pedido apresentado"
+          : " pedidos apresentados") +
+        " de " + requests.length;
+
+    }
+
+
+    /* =====================================
+       BLOCO JS 11 — VER DETALHES
+    ===================================== */
+
+    requestsList.addEventListener("click", function(event) {
+
+      const button = event.target.closest(
+        'button[data-action="details"]'
+      );
+
+      if (!button) {
+        return;
+      }
+
+      const requestId = button.dataset.id;
+
+      const request = requests.find(function(item) {
+
+        return item.id === requestId;
+
+      });
+
+
+      if (!request) {
+
+        alert(
+          "Não foi possível encontrar os detalhes deste pedido."
+        );
+
+        return;
+
+      }
+
+
+      /*
+        Os detalhes são obtidos da lista carregada
+        após uma consulta limitada ao utilizador autenticado.
+      */
+
+      const reference = getReference(request);
+
+      const typeInfo = getTypeInfo(request.type);
+
+      const statusInfo = getStatusInfo(request.status);
+
+
+      const detailLines = [
+
+        "REFERÊNCIA: " + reference,
+
+        "TIPO: " + typeInfo.label,
+
+        "ASSUNTO: " + (request.subject || "Não indicado"),
+
+        "ESTADO: " + statusInfo.label,
+
+        "CATEGORIA: " + (request.category || "Geral"),
+
+        "PRIORIDADE: " + (request.priority || "Normal"),
+
+        "ENCOMENDA: " + (request.orderNumber || "Não indicada"),
+
+        "DATA: " + formatDate(request.createdAt),
+
+        "",
+
+        "DESCRIÇÃO:",
+
+        request.description || "Sem descrição disponível."
+
+      ];
+
+
+      alert(detailLines.join("\n"));
+
+    });
+
+
+    /* =====================================
+       BLOCO JS 12 — EVENTOS DOS FILTROS
+    ===================================== */
+
+    searchInput.addEventListener("input", renderRequests);
+
+    typeFilter.addEventListener("change", renderRequests);
+
+    statusFilter.addEventListener("change", renderRequests);
+
+
+    /* =====================================
+       BLOCO JS 13 — ATUALIZAR MANUALMENTE
+    ===================================== */
+
+    refreshButton.addEventListener("click", function() {
+
+      if (!currentUser) {
+        return;
+      }
+
+      loadRequests();
+
+    });
+
+
+    /* =====================================
+       BLOCO JS 14 — AUTENTICAÇÃO
+    ===================================== */
+
+    onAuthStateChanged(auth, async function(user) {
+
+      currentUser = user;
+
+      authResolved = true;
+
+
+      if (!user) {
+
+        accountEmail.textContent =
+          "Inicie sessão para consultar os seus pedidos.";
+
+        showConnection(false, "Sessão não iniciada");
+
+        totalCount.textContent = "—";
+        pendingCount.textContent = "—";
+        answeredCount.textContent = "—";
+        resolvedCount.textContent = "—";
+
+        showState(
+          "Inicie sessão na Toma",
+          "Para proteger a sua privacidade, precisa de entrar na sua conta para consultar os seus pedidos de suporte.",
+          "lock"
+        );
+
+        resultsCount.textContent =
+          "Sessão necessária para consultar os pedidos.";
+
+        if (!authMessageShown) {
+
+          authMessageShown = true;
+
+          const loginLink = document.createElement("a");
+
+          loginLink.href = "login.html";
+
+          loginLink.className = "cta-button primary";
+
+          loginLink.style.marginTop = "15px";
+
+          loginLink.textContent = "Entrar na minha conta";
+
+          requestsList.querySelector(".state-box")?.appendChild(
+            loginLink
+          );
+
+        }
+
+        return;
+
+      }
+
+
+      authMessageShown = false;
+
+      accountEmail.textContent =
+        user.email || "Conta Toma autenticada";
+
+      showConnection(true, "Sessão ativa");
+
+      await loadRequests();
+
+    });
+
+
+    /* =====================================
+       BLOCO JS 15 — INICIALIZAÇÃO
+    ===================================== */
+
+    showConnection(false, "A aguardar sessão");
+
+  </script>
+
+</body>
+</html>
