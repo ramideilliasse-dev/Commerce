@@ -1,0 +1,1959 @@
+ <!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="theme-color" content="#f97316">
+  <meta name="description" content="Envie uma reclamação à equipa Toma e acompanhe o tratamento do seu pedido.">
+
+  <title>Apresentar reclamação | Toma</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0"
+    rel="stylesheet"
+  >
+
+  <style>
+    :root {
+      --primary: #f97316;
+      --primary-dark: #ea580c;
+      --primary-light: #fff7ed;
+
+      --text: #172033;
+      --muted: #64748b;
+
+      --background: #f5f7fb;
+      --surface: #ffffff;
+      --border: #e5eaf1;
+
+      --success: #15803d;
+      --success-bg: #f0fdf4;
+
+      --danger: #b91c1c;
+      --danger-bg: #fef2f2;
+
+      --shadow: 0 12px 36px rgba(15, 23, 42, 0.06);
+
+      --radius: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", sans-serif;
+      color: var(--text);
+      background: var(--background);
+      line-height: 1.6;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    a,
+    input,
+    select,
+    textarea {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+      outline: 3px solid rgba(249, 115, 22, 0.25);
+      outline-offset: 3px;
+    }
+
+    .material-symbols-rounded {
+      font-size: 22px;
+      line-height: 1;
+      vertical-align: middle;
+    }
+
+    /* HEADER */
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(16px);
+
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topbar-inner {
+      width: min(1160px, calc(100% - 36px));
+      min-height: 72px;
+      margin: auto;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 14px;
+      color: white;
+
+      background: linear-gradient(135deg, #fb923c, #ea580c);
+
+      box-shadow: 0 6px 15px rgba(234, 88, 12, 0.22);
+    }
+
+    .brand-icon .material-symbols-rounded {
+      font-size: 26px;
+    }
+
+    .brand-name {
+      color: var(--text);
+    }
+
+    .brand-name span {
+      color: var(--primary);
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      padding: 10px 15px;
+
+      color: #475569;
+      background: white;
+
+      border: 1px solid var(--border);
+      border-radius: 12px;
+
+      font-size: 13px;
+      font-weight: 700;
+
+      transition: 0.2s;
+    }
+
+    .back-link:hover {
+      color: var(--primary-dark);
+      border-color: #fdba74;
+      background: var(--primary-light);
+    }
+
+    /* PAGE */
+
+    .page {
+      width: min(1160px, calc(100% - 36px));
+      margin: auto;
+      padding: 38px 0 65px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+
+      margin-bottom: 22px;
+
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .breadcrumb a:hover {
+      color: var(--primary-dark);
+    }
+
+    .breadcrumb .current {
+      color: var(--primary-dark);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+
+      padding: 34px;
+
+      color: white;
+
+      background:
+        radial-gradient(
+          circle at 90% 15%,
+          rgba(255, 255, 255, 0.17),
+          transparent 25%
+        ),
+        linear-gradient(125deg, #c2410c, #f97316 62%, #fb923c);
+
+      border-radius: 26px;
+
+      box-shadow: 0 16px 38px rgba(234, 88, 12, 0.16);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+
+      max-width: 690px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+
+      padding: 7px 11px;
+
+      margin-bottom: 16px;
+
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 999px;
+
+      background: rgba(255, 255, 255, 0.12);
+
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      margin: 0 0 12px;
+
+      font-size: clamp(27px, 4vw, 39px);
+      line-height: 1.2;
+      letter-spacing: -1.4px;
+    }
+
+    .hero p {
+      max-width: 620px;
+
+      margin: 0;
+
+      color: rgba(255, 255, 255, 0.91);
+
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .hero-decoration {
+      position: absolute;
+      right: 34px;
+      top: 50%;
+
+      display: grid;
+      place-items: center;
+
+      width: 126px;
+      height: 126px;
+
+      transform: translateY(-50%);
+
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 35px;
+
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .hero-decoration .material-symbols-rounded {
+      font-size: 68px;
+    }
+
+    /* LAYOUT */
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.65fr) minmax(270px, 0.85fr);
+      align-items: start;
+      gap: 24px;
+
+      margin-top: 27px;
+    }
+
+    .card {
+      background: var(--surface);
+
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+
+      box-shadow: var(--shadow);
+    }
+
+    .form-card {
+      padding: 28px;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: flex-start;
+      gap: 13px;
+
+      margin-bottom: 25px;
+    }
+
+    .section-icon {
+      flex-shrink: 0;
+
+      width: 46px;
+      height: 46px;
+
+      display: grid;
+      place-items: center;
+
+      color: var(--primary-dark);
+      background: var(--primary-light);
+
+      border-radius: 15px;
+    }
+
+    .section-icon .material-symbols-rounded {
+      font-size: 25px;
+    }
+
+    .section-heading h2 {
+      margin: 0 0 5px;
+
+      font-size: 20px;
+      line-height: 1.35;
+      letter-spacing: -0.5px;
+    }
+
+    .section-heading p {
+      margin: 0;
+
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 19px;
+    }
+
+    .field {
+      min-width: 0;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      display: block;
+
+      margin-bottom: 8px;
+
+      color: #334155;
+
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .required {
+      color: #dc2626;
+    }
+
+    .optional {
+      color: #94a3b8;
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap > .material-symbols-rounded {
+      position: absolute;
+      left: 13px;
+      top: 14px;
+
+      color: #94a3b8;
+
+      pointer-events: none;
+    }
+
+    .input,
+    .select,
+    .textarea {
+      width: 100%;
+
+      border: 1px solid #dce3ed;
+      border-radius: 12px;
+
+      background: #fff;
+
+      color: var(--text);
+
+      font-size: 13px;
+
+      transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
+    }
+
+    .input,
+    .select {
+      min-height: 49px;
+      padding: 0 13px;
+    }
+
+    .input.with-icon {
+      padding-left: 43px;
+    }
+
+    .select {
+      cursor: pointer;
+    }
+
+    .textarea {
+      display: block;
+
+      min-height: 150px;
+      padding: 14px;
+
+      resize: vertical;
+    }
+
+    .input:hover,
+    .select:hover,
+    .textarea:hover {
+      border-color: #cbd5e1;
+    }
+
+    .input:focus,
+    .select:focus,
+    .textarea:focus {
+      outline: none;
+
+      border-color: var(--primary);
+
+      box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.10);
+    }
+
+    .field-hint {
+      display: block;
+
+      margin-top: 7px;
+
+      color: #94a3b8;
+
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    .textarea-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+
+      margin-top: 7px;
+
+      color: #94a3b8;
+      font-size: 10px;
+    }
+
+    .priority-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+
+      padding: 13px;
+
+      margin-top: 20px;
+
+      border: 1px solid #fed7aa;
+      border-radius: 13px;
+
+      color: #9a3412;
+      background: #fff7ed;
+
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    .priority-note .material-symbols-rounded {
+      flex-shrink: 0;
+      font-size: 19px;
+    }
+
+    .privacy-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+
+      padding-top: 19px;
+      margin-top: 22px;
+
+      border-top: 1px solid var(--border);
+
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.7;
+    }
+
+    .privacy-note .material-symbols-rounded {
+      flex-shrink: 0;
+      color: var(--success);
+      font-size: 19px;
+    }
+
+    .form-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+
+      margin-top: 23px;
+    }
+
+    .btn {
+      min-height: 49px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+
+      padding: 0 19px;
+
+      border: 0;
+      border-radius: 12px;
+
+      cursor: pointer;
+
+      font-size: 12px;
+      font-weight: 800;
+
+      transition:
+        transform 0.2s,
+        background 0.2s,
+        box-shadow 0.2s;
+    }
+
+    .btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-primary {
+      color: white;
+
+      background: linear-gradient(135deg, #fb923c, #ea580c);
+
+      box-shadow: 0 7px 17px rgba(234, 88, 12, 0.20);
+    }
+
+    .btn-primary:not(:disabled):hover {
+      transform: translateY(-2px);
+
+      box-shadow: 0 10px 22px rgba(234, 88, 12, 0.27);
+    }
+
+    .btn-secondary {
+      color: #475569;
+      background: #f1f5f9;
+    }
+
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+
+    .form-message {
+      display: none;
+
+      padding: 14px;
+
+      margin-top: 18px;
+
+      border: 1px solid transparent;
+      border-radius: 13px;
+
+      font-size: 12px;
+      line-height: 1.7;
+
+      overflow-wrap: anywhere;
+    }
+
+    .form-message.show {
+      display: block;
+    }
+
+    .form-message.success {
+      color: #166534;
+      background: var(--success-bg);
+      border-color: #bbf7d0;
+    }
+
+    .form-message.error {
+      color: var(--danger);
+      background: var(--danger-bg);
+      border-color: #fecaca;
+    }
+
+    .message-reference {
+      display: block;
+
+      margin: 8px 0;
+
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .message-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+
+      margin-top: 7px;
+
+      color: #166534;
+      font-weight: 800;
+      text-decoration: underline;
+    }
+
+    /* SIDE PANEL */
+
+    .side-column {
+      display: grid;
+      gap: 19px;
+    }
+
+    .side-card {
+      padding: 22px;
+    }
+
+    .side-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      margin-bottom: 18px;
+    }
+
+    .side-title .material-symbols-rounded {
+      color: var(--primary);
+      font-size: 24px;
+    }
+
+    .side-title h3 {
+      margin: 0;
+
+      font-size: 15px;
+      letter-spacing: -0.3px;
+    }
+
+    .step-list {
+      display: grid;
+      gap: 19px;
+    }
+
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .step-number {
+      flex-shrink: 0;
+
+      width: 31px;
+      height: 31px;
+
+      display: grid;
+      place-items: center;
+
+      color: var(--primary-dark);
+      background: var(--primary-light);
+
+      border-radius: 10px;
+
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .step h4 {
+      margin: 0 0 4px;
+
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .step p {
+      margin: 0;
+
+      color: var(--muted);
+
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    .info-banner {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+
+      padding: 16px;
+
+      border: 1px solid #dbeafe;
+      border-radius: 15px;
+
+      background: #eff6ff;
+    }
+
+    .info-banner .material-symbols-rounded {
+      flex-shrink: 0;
+
+      color: #2563eb;
+      font-size: 22px;
+    }
+
+    .info-banner h4 {
+      margin: 0 0 5px;
+
+      color: #1e40af;
+      font-size: 12px;
+    }
+
+    .info-banner p {
+      margin: 0;
+
+      color: #1e40af;
+
+      font-size: 10px;
+      line-height: 1.8;
+    }
+
+    .support-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+
+      padding: 15px;
+
+      border: 1px solid var(--border);
+      border-radius: 14px;
+
+      background: white;
+
+      transition: 0.2s;
+    }
+
+    .support-link:hover {
+      border-color: #fdba74;
+      background: var(--primary-light);
+    }
+
+    .support-link-main {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .support-link-icon {
+      width: 38px;
+      height: 38px;
+
+      display: grid;
+      place-items: center;
+
+      color: var(--primary-dark);
+      background: var(--primary-light);
+
+      border-radius: 12px;
+    }
+
+    .support-link-text strong {
+      display: block;
+      font-size: 11px;
+    }
+
+    .support-link-text span {
+      display: block;
+
+      margin-top: 3px;
+
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .support-link > .material-symbols-rounded {
+      color: #94a3b8;
+    }
+
+    /* FOOTER */
+
+    .footer {
+      padding: 24px 18px;
+
+      border-top: 1px solid var(--border);
+
+      background: white;
+
+      text-align: center;
+    }
+
+    .footer p {
+      margin: 0;
+
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .footer strong {
+      color: var(--primary-dark);
+    }
+
+    /* LOADING */
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-top-color: white;
+
+      border-radius: 50%;
+
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 850px) {
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .side-column {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .side-card:last-child {
+        grid-column: 1 / -1;
+      }
+
+      .hero-decoration {
+        right: 25px;
+        width: 100px;
+        height: 100px;
+      }
+
+      .hero-content {
+        max-width: calc(100% - 105px);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .topbar-inner {
+        width: calc(100% - 28px);
+        min-height: 64px;
+      }
+
+      .brand {
+        gap: 8px;
+        font-size: 21px;
+      }
+
+      .brand-icon {
+        width: 37px;
+        height: 37px;
+        border-radius: 12px;
+      }
+
+      .back-link {
+        padding: 9px;
+        font-size: 0;
+      }
+
+      .back-link .material-symbols-rounded {
+        font-size: 21px;
+      }
+
+      .page {
+        width: calc(100% - 28px);
+        padding: 25px 0 40px;
+      }
+
+      .breadcrumb {
+        margin-bottom: 17px;
+      }
+
+      .hero {
+        padding: 24px 20px;
+        border-radius: 21px;
+      }
+
+      .hero h1 {
+        font-size: 27px;
+        letter-spacing: -0.8px;
+      }
+
+      .hero p {
+        font-size: 12px;
+      }
+
+      .hero-content {
+        max-width: 100%;
+      }
+
+      .hero-decoration {
+        display: none;
+      }
+
+      .content-grid {
+        gap: 17px;
+        margin-top: 18px;
+      }
+
+      .form-card {
+        padding: 20px 16px;
+        border-radius: 18px;
+      }
+
+      .section-heading h2 {
+        font-size: 18px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 17px;
+      }
+
+      .field.full {
+        grid-column: auto;
+      }
+
+      .side-column {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+
+      .side-card:last-child {
+        grid-column: auto;
+      }
+
+      .side-card {
+        padding: 19px;
+      }
+
+      .form-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .priority-note {
+        font-size: 10px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+
+  <header class="topbar">
+    <div class="topbar-inner">
+
+      <a class="brand" href="support.html" aria-label="Toma - Centro de suporte">
+        <span class="brand-icon">
+          <span class="material-symbols-rounded">storefront</span>
+        </span>
+
+        <span class="brand-name">to<span>ma</span></span>
+      </a>
+
+      <a class="back-link" href="support.html">
+        <span class="material-symbols-rounded">arrow_back</span>
+        Voltar ao suporte
+      </a>
+
+    </div>
+  </header>
+
+  <main class="page">
+
+    <!-- BREADCRUMB -->
+
+    <nav class="breadcrumb" aria-label="Navegação">
+      <a href="support.html">Suporte</a>
+
+      <span class="material-symbols-rounded">chevron_right</span>
+
+      <span class="current">Reclamações</span>
+    </nav>
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+      <div class="hero-content">
+
+        <div class="hero-badge">
+          <span class="material-symbols-rounded">verified_user</span>
+          Compromisso Toma
+        </div>
+
+        <h1>Estamos aqui para resolver.</h1>
+
+        <p>
+          Teve um problema com uma encomenda, um produto ou um vendedor?
+          Conte-nos o que aconteceu. A nossa equipa analisará a sua
+          reclamação para ajudar a encontrar uma solução.
+        </p>
+
+      </div>
+
+      <div class="hero-decoration" aria-hidden="true">
+        <span class="material-symbols-rounded">support_agent</span>
+      </div>
+
+    </section>
+
+    <div class="content-grid">
+
+      <!-- FORM -->
+
+      <section class="card form-card">
+
+        <div class="section-heading">
+
+          <div class="section-icon">
+            <span class="material-symbols-rounded">edit_document</span>
+          </div>
+
+          <div>
+            <h2>Apresentar uma reclamação</h2>
+
+            <p>
+              Preencha os campos abaixo com informações claras e verdadeiras.
+            </p>
+          </div>
+
+        </div>
+
+        <form id="complaintForm">
+
+          <div class="form-grid">
+
+            <!-- CATEGORY -->
+
+            <div class="field">
+
+              <label for="category">
+                Motivo da reclamação
+                <span class="required">*</span>
+              </label>
+
+              <div class="input-wrap">
+
+                <span class="material-symbols-rounded">category</span>
+
+                <select
+                  class="select"
+                  id="category"
+                  required
+                >
+                  <option value="">Selecione o motivo</option>
+                  <option value="Encomenda">Problema com encomenda</option>
+                  <option value="Produto">Problema com produto</option>
+                  <option value="Vendedor">Problema com vendedor</option>
+                  <option value="Entrega">Problema com entrega</option>
+                  <option value="Pagamento">Problema com pagamento</option>
+                  <option value="Reembolso">Reembolso ou devolução</option>
+                  <option value="Conta">Problema com a minha conta</option>
+                  <option value="Outro">Outro motivo</option>
+                </select>
+
+              </div>
+
+            </div>
+
+            <!-- ORDER -->
+
+            <div class="field">
+
+              <label for="orderNumber">
+                Número da encomenda
+                <span class="optional">(opcional)</span>
+              </label>
+
+              <div class="input-wrap">
+
+                <span class="material-symbols-rounded">receipt_long</span>
+
+                <input
+                  class="input with-icon"
+                  type="text"
+                  id="orderNumber"
+                  maxlength="100"
+                  placeholder="Ex.: TOM-2026-001"
+                  autocomplete="off"
+                >
+
+              </div>
+
+              <small class="field-hint">
+                Se a reclamação estiver relacionada com uma encomenda,
+                indique o respetivo número.
+              </small>
+
+            </div>
+
+            <!-- SUBJECT -->
+
+            <div class="field full">
+
+              <label for="subject">
+                Assunto
+                <span class="required">*</span>
+              </label>
+
+              <input
+                class="input"
+                type="text"
+                id="subject"
+                maxlength="120"
+                minlength="5"
+                placeholder="Resuma o problema numa frase"
+                required
+              >
+
+            </div>
+
+            <!-- PRIORITY -->
+
+            <div class="field full">
+
+              <label for="priority">
+                Prioridade
+                <span class="required">*</span>
+              </label>
+
+              <select
+                class="select"
+                id="priority"
+                required
+              >
+                <option value="Normal">Normal — situação habitual</option>
+                <option value="Alta">Alta — situação urgente</option>
+              </select>
+
+              <small class="field-hint">
+                Selecione alta apenas quando a situação exigir atenção urgente.
+              </small>
+
+            </div>
+
+            <!-- DESCRIPTION -->
+
+            <div class="field full">
+
+              <label for="description">
+                Descrição detalhada
+                <span class="required">*</span>
+              </label>
+
+              <textarea
+                class="textarea"
+                id="description"
+                minlength="20"
+                maxlength="3000"
+                placeholder="Explique o que aconteceu, quando ocorreu e qual seria a solução que considera adequada..."
+                required
+              ></textarea>
+
+              <div class="textarea-footer">
+                <span>Não inclua palavras-passe ou dados bancários.</span>
+                <span id="characterCount">0 / 3000</span>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- PRIORITY NOTICE -->
+
+          <div class="priority-note">
+
+            <span class="material-symbols-rounded">info</span>
+
+            <div>
+              <strong>Importante:</strong>
+              envie apenas informações relacionadas com o problema.
+              Se possível, indique datas, detalhes da encomenda e a solução
+              que pretende. Não envie palavras-passe, códigos de segurança
+              ou dados completos do seu cartão bancário.
+            </div>
+
+          </div>
+
+          <!-- PRIVACY -->
+
+          <div class="privacy-note">
+
+            <span class="material-symbols-rounded">lock</span>
+
+            <div>
+              A sua reclamação será associada à sua conta Toma para que
+              possa acompanhar o pedido. As informações serão utilizadas
+              para tratar a situação apresentada, de acordo com as regras
+              de acesso da plataforma.
+            </div>
+
+          </div>
+
+          <!-- MESSAGE -->
+
+          <div
+            class="form-message"
+            id="formMessage"
+            role="status"
+            aria-live="polite"
+          ></div>
+
+          <!-- ACTIONS -->
+
+          <div class="form-actions">
+
+            <button
+              class="btn btn-primary"
+              id="submitButton"
+              type="submit"
+            >
+              <span class="material-symbols-rounded">send</span>
+              Enviar reclamação
+            </button>
+
+            <button
+              class="btn btn-secondary"
+              id="resetButton"
+              type="reset"
+            >
+              Limpar formulário
+            </button>
+
+          </div>
+
+        </form>
+
+      </section>
+
+      <!-- SIDE INFORMATION -->
+
+      <aside class="side-column">
+
+        <section class="card side-card">
+
+          <div class="side-title">
+            <span class="material-symbols-rounded">route</span>
+            <h3>Como funciona?</h3>
+          </div>
+
+          <div class="step-list">
+
+            <div class="step">
+
+              <div class="step-number">01</div>
+
+              <div>
+                <h4>Envie a reclamação</h4>
+
+                <p>
+                  Descreva o problema e indique os detalhes necessários.
+                </p>
+              </div>
+
+            </div>
+
+            <div class="step">
+
+              <div class="step-number">02</div>
+
+              <div>
+                <h4>A equipa analisa</h4>
+
+                <p>
+                  O pedido fica registado para análise pela equipa de suporte.
+                </p>
+              </div>
+
+            </div>
+
+            <div class="step">
+
+              <div class="step-number">03</div>
+
+              <div>
+                <h4>Acompanhe o estado</h4>
+
+                <p>
+                  Consulte os seus pedidos na área de acompanhamento
+                  do suporte, quando disponível.
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        <section class="card side-card">
+
+          <div class="side-title">
+            <span class="material-symbols-rounded">lightbulb</span>
+            <h3>Como ajudar a resolver?</h3>
+          </div>
+
+          <div class="step-list">
+
+            <div class="step">
+
+              <div class="step-number">
+                <span class="material-symbols-rounded">check</span>
+              </div>
+
+              <div>
+                <h4>Seja específico</h4>
+
+                <p>
+                  Explique o que aconteceu e indique a data aproximada.
+                </p>
+              </div>
+
+            </div>
+
+            <div class="step">
+
+              <div class="step-number">
+                <span class="material-symbols-rounded">check</span>
+              </div>
+
+              <div>
+                <h4>Indique a solução pretendida</h4>
+
+                <p>
+                  Por exemplo, uma explicação, uma correção ou uma análise
+                  de um possível reembolso.
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        <div class="info-banner">
+
+          <span class="material-symbols-rounded">shield</span>
+
+          <div>
+            <h4>Uma experiência mais segura</h4>
+
+            <p>
+              A Toma pretende promover uma experiência de compra mais
+              transparente. A análise de cada reclamação depende dos
+              detalhes apresentados e das regras aplicáveis.
+            </p>
+          </div>
+
+        </div>
+
+        <a class="support-link" href="ajuda.html">
+
+          <div class="support-link-main">
+
+            <div class="support-link-icon">
+              <span class="material-symbols-rounded">help</span>
+            </div>
+
+            <div class="support-link-text">
+              <strong>Precisa apenas de ajuda?</strong>
+              <span>Consulte ou envie um pedido de ajuda.</span>
+            </div>
+
+          </div>
+
+          <span class="material-symbols-rounded">chevron_right</span>
+
+        </a>
+
+        <a class="support-link" href="support.html">
+
+          <div class="support-link-main">
+
+            <div class="support-link-icon">
+              <span class="material-symbols-rounded">support_agent</span>
+            </div>
+
+            <div class="support-link-text">
+              <strong>Centro de suporte</strong>
+              <span>Volte à página principal do suporte.</span>
+            </div>
+
+          </div>
+
+          <span class="material-symbols-rounded">chevron_right</span>
+
+        </a>
+
+      </aside>
+
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <p>
+      © <span id="currentYear"></span>
+      <strong>Toma</strong> — O comércio mais perto de si.
+    </p>
+  </footer>
+
+  <!-- FIREBASE -->
+
+  <script type="module">
+
+    import { auth, db } from "./firebase.js";
+
+    import {
+      collection,
+      addDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    import {
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+
+    /* ==========================================
+       BLOCO 1 — ELEMENTOS DA PÁGINA
+    ========================================== */
+
+    const complaintForm = document.getElementById("complaintForm");
+
+    const categoryInput = document.getElementById("category");
+    const orderNumberInput = document.getElementById("orderNumber");
+    const subjectInput = document.getElementById("subject");
+    const priorityInput = document.getElementById("priority");
+    const descriptionInput = document.getElementById("description");
+
+    const submitButton = document.getElementById("submitButton");
+    const resetButton = document.getElementById("resetButton");
+
+    const formMessage = document.getElementById("formMessage");
+    const characterCount = document.getElementById("characterCount");
+
+    const originalButtonHTML = submitButton.innerHTML;
+
+    let currentUser = null;
+    let authResolved = false;
+    let isSubmitting = false;
+
+
+    /* ==========================================
+       BLOCO 2 — ANO ATUAL
+    ========================================== */
+
+    document.getElementById("currentYear").textContent =
+      new Date().getFullYear();
+
+
+    /* ==========================================
+       BLOCO 3 — MENSAGENS
+    ========================================== */
+
+    function showMessage(type, html) {
+
+      formMessage.className = "form-message show " + type;
+
+      formMessage.innerHTML = html;
+
+      formMessage.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
+      });
+
+    }
+
+
+    function clearMessage() {
+
+      formMessage.className = "form-message";
+      formMessage.textContent = "";
+
+    }
+
+
+    function escapeHTML(value) {
+
+      return String(value).replace(/[&<>"']/g, function(character) {
+
+        const entities = {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+        };
+
+        return entities[character];
+
+      });
+
+    }
+
+
+    /* ==========================================
+       BLOCO 4 — ESTADO DA AUTENTICAÇÃO
+    ========================================== */
+
+    function updateAuthInterface() {
+
+      if (!authResolved) {
+
+        submitButton.disabled = true;
+
+        submitButton.innerHTML = `
+          <span class="spinner"></span>
+          A verificar a conta...
+        `;
+
+        return;
+
+      }
+
+      if (!currentUser) {
+
+        submitButton.disabled = true;
+        submitButton.innerHTML = originalButtonHTML;
+
+        showMessage(
+          "error",
+          `
+            <strong>Inicie sessão para continuar.</strong><br>
+            Para enviar uma reclamação, precisa de entrar na sua conta Toma.
+            <br><br>
+            <a
+              href="login.html"
+              style="font-weight:800;text-decoration:underline;"
+            >
+              Entrar na minha conta
+            </a>
+          `
+        );
+
+        return;
+
+      }
+
+      submitButton.disabled = false;
+      submitButton.innerHTML = originalButtonHTML;
+
+      clearMessage();
+
+    }
+
+
+    onAuthStateChanged(auth, function(user) {
+
+      currentUser = user;
+      authResolved = true;
+
+      updateAuthInterface();
+
+    });
+
+
+    /* ==========================================
+       BLOCO 5 — CONTADOR DE CARACTERES
+    ========================================== */
+
+    function updateCharacterCount() {
+
+      const length = descriptionInput.value.length;
+
+      characterCount.textContent = length + " / 3000";
+
+      if (length < 20) {
+
+        characterCount.style.color = "#94a3b8";
+
+      } else {
+
+        characterCount.style.color = "#15803d";
+
+      }
+
+    }
+
+
+    descriptionInput.addEventListener(
+      "input",
+      updateCharacterCount
+    );
+
+
+    /* ==========================================
+       BLOCO 6 — LIMPAR O FORMULÁRIO
+    ========================================== */
+
+    resetButton.addEventListener("click", function() {
+
+      setTimeout(function() {
+
+        clearMessage();
+        updateCharacterCount();
+
+      }, 0);
+
+    });
+
+
+    /* ==========================================
+       BLOCO 7 — ENVIAR RECLAMAÇÃO
+    ========================================== */
+
+    complaintForm.addEventListener("submit", async function(event) {
+
+      event.preventDefault();
+
+      if (isSubmitting) {
+        return;
+      }
+
+      clearMessage();
+
+      if (!authResolved) {
+
+        showMessage(
+          "error",
+          "Aguarde enquanto verificamos a sua conta."
+        );
+
+        return;
+
+      }
+
+      if (!currentUser) {
+
+        showMessage(
+          "error",
+          `
+            Precisa de iniciar sessão para enviar uma reclamação.
+            <br><br>
+            <a
+              href="login.html"
+              style="font-weight:800;text-decoration:underline;"
+            >
+              Entrar na minha conta
+            </a>
+          `
+        );
+
+        return;
+
+      }
+
+      const category = categoryInput.value.trim();
+      const orderNumber = orderNumberInput.value.trim();
+      const subject = subjectInput.value.trim();
+      const priority = priorityInput.value;
+      const description = descriptionInput.value.trim();
+
+      if (!category || !subject || !description) {
+
+        showMessage(
+          "error",
+          "Preencha todos os campos obrigatórios antes de continuar."
+        );
+
+        return;
+
+      }
+
+      if (subject.length < 5) {
+
+        showMessage(
+          "error",
+          "O assunto deve ter pelo menos 5 caracteres."
+        );
+
+        subjectInput.focus();
+
+        return;
+
+      }
+
+      if (description.length < 20) {
+
+        showMessage(
+          "error",
+          "A descrição deve ter pelo menos 20 caracteres."
+        );
+
+        descriptionInput.focus();
+
+        return;
+
+      }
+
+      if (priority !== "Normal" && priority !== "Alta") {
+
+        showMessage(
+          "error",
+          "Selecione uma prioridade válida."
+        );
+
+        return;
+
+      }
+
+      if (category.length > 100 ||
+          subject.length > 120 ||
+          orderNumber.length > 100 ||
+          description.length > 3000) {
+
+        showMessage(
+          "error",
+          "Alguns campos ultrapassam o limite permitido."
+        );
+
+        return;
+
+      }
+
+      isSubmitting = true;
+      submitButton.disabled = true;
+
+      submitButton.innerHTML = `
+        <span class="spinner"></span>
+        A enviar reclamação...
+      `;
+
+      try {
+
+        /* ======================================
+           BLOCO 7.1 — DADOS COMPATÍVEIS
+           COM AS REGRAS FIRESTORE EXISTENTES
+        ====================================== */
+
+        const complaintData = {
+
+          userId: currentUser.uid,
+
+          userEmail: currentUser.email || "",
+
+          category: category,
+
+          subject: subject,
+
+          orderNumber: orderNumber,
+
+          priority: priority,
+
+          description: description,
+
+          type: "reclamacao",
+
+          status: "Pendente",
+
+          createdAt: serverTimestamp(),
+
+          updatedAt: serverTimestamp()
+
+        };
+
+
+        /* ======================================
+           BLOCO 7.2 — GUARDAR NO FIRESTORE
+        ====================================== */
+
+        const documentReference = await addDoc(
+          collection(db, "supportRequests"),
+          complaintData
+        );
+
+
+        /* ======================================
+           BLOCO 7.3 — REFERÊNCIA DA RECLAMAÇÃO
+        ====================================== */
+
+        const complaintReference =
+          "REC-" + documentReference.id.slice(-8).toUpperCase();
+
+
+        /* ======================================
+           BLOCO 7.4 — CONFIRMAÇÃO
+        ====================================== */
+
+        showMessage(
+          "success",
+          `
+            <strong>Reclamação enviada com sucesso!</strong>
+
+            <br>
+
+            A sua reclamação foi registada na plataforma Toma.
+
+            <span class="message-reference">
+              ${escapeHTML(complaintReference)}
+            </span>
+
+            Guarde esta referência para identificar o seu pedido.
+
+            <br><br>
+
+            <strong>Estado inicial:</strong> Pendente de análise.
+
+            <br>
+
+            Poderá acompanhar a reclamação na área de pedidos de suporte
+            quando essa página estiver disponível.
+
+            <br><br>
+
+            <a class="message-link" href="support.html">
+              <span class="material-symbols-rounded">arrow_back</span>
+              Voltar ao centro de suporte
+            </a>
+          `
+        );
+
+        complaintForm.reset();
+
+        updateCharacterCount();
+
+      } catch (error) {
+
+        console.error(
+          "Erro ao enviar reclamação:",
+          error
+        );
+
+        let errorMessage =
+          "Não foi possível enviar a reclamação. Tente novamente.";
+
+        if (error.code === "permission-denied") {
+
+          errorMessage =
+            "O Firebase recusou o envio por falta de permissões. " +
+            "Verifique as regras da coleção supportRequests.";
+
+        } else if (error.code === "unavailable") {
+
+          errorMessage =
+            "O serviço está temporariamente indisponível. " +
+            "Verifique a ligação à internet e tente novamente.";
+
+        } else if (error.code === "unauthenticated") {
+
+          errorMessage =
+            "A sua sessão expirou. Entre novamente na sua conta.";
+
+        }
+
+        showMessage(
+          "error",
+          "<strong>Não foi possível enviar.</strong><br>" +
+          escapeHTML(errorMessage)
+        );
+
+      } finally {
+
+        isSubmitting = false;
+
+        submitButton.disabled = !currentUser || !authResolved;
+
+        submitButton.innerHTML = originalButtonHTML;
+
+      }
+
+    });
+
+
+    /* ==========================================
+       BLOCO 8 — INICIALIZAÇÃO
+    ========================================== */
+
+    updateCharacterCount();
+
+    updateAuthInterface();
+
+  </script>
+
+</body>
+</html>
