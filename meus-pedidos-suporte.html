@@ -1,3558 +1,2070 @@
  <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <meta name="theme-color" content="#f97316">
-  <meta
-    name="description"
-    content="Consulte e acompanhe os seus pedidos de suporte e reclamações na Toma."
-  >
-
-  <title>Os meus pedidos | Toma</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet"
-  >
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0"
-    rel="stylesheet"
-  >
-
-  <style>
-    :root {
-      --primary: #f97316;
-      --primary-dark: #ea580c;
-      --primary-light: #fff7ed;
-
-      --text: #172033;
-      --muted: #64748b;
-
-      --background: #f5f7fb;
-      --surface: #ffffff;
-      --border: #e5eaf1;
-
-      --green: #15803d;
-      --green-bg: #f0fdf4;
-
-      --blue: #1d4ed8;
-      --blue-bg: #eff6ff;
-
-      --amber: #b45309;
-      --amber-bg: #fffbeb;
-
-      --red: #b91c1c;
-      --red-bg: #fef2f2;
-
-      --shadow: 0 12px 36px rgba(15, 23, 42, 0.055);
-
-      --radius: 19px;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      margin: 0;
-      background: var(--background);
-      color: var(--text);
-
-      font-family: "Inter", sans-serif;
-      line-height: 1.6;
-    }
-
-    button,
-    input,
-    select {
-      font: inherit;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    button,
-    a,
-    input,
-    select {
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    button:focus-visible,
-    a:focus-visible,
-    input:focus-visible,
-    select:focus-visible {
-      outline: 3px solid rgba(249, 115, 22, 0.25);
-      outline-offset: 3px;
-    }
-
-    .material-symbols-rounded {
-      font-size: 22px;
-      line-height: 1;
-      vertical-align: middle;
-    }
-
-    /* =====================================
-       HEADER
-    ===================================== */
-
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(16px);
-
-      border-bottom: 1px solid var(--border);
-    }
-
-    .topbar-inner {
-      width: min(1200px, calc(100% - 36px));
-      min-height: 72px;
-
-      margin: auto;
-
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 18px;
-    }
-
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-
-      font-size: 24px;
-      font-weight: 800;
-      letter-spacing: -1px;
-    }
-
-    .brand-icon {
-      width: 42px;
-      height: 42px;
-
-      display: grid;
-      place-items: center;
-
-      border-radius: 14px;
-
-      color: white;
-      background: linear-gradient(135deg, #fb923c, #ea580c);
-
-      box-shadow: 0 6px 15px rgba(234, 88, 12, 0.2);
-    }
-
-    .brand-icon .material-symbols-rounded {
-      font-size: 26px;
-    }
-
-    .brand-name span {
-      color: var(--primary);
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .header-link {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-
-      min-height: 42px;
-      padding: 0 13px;
-
-      border: 1px solid var(--border);
-      border-radius: 12px;
-
-      color: #475569;
-      background: white;
-
-      font-size: 12px;
-      font-weight: 700;
-
-      transition: 0.2s;
-    }
-
-    .header-link:hover {
-      border-color: #fdba74;
-      background: var(--primary-light);
-      color: var(--primary-dark);
-    }
-
-    /* =====================================
-       PAGE
-    ===================================== */
-
-    .page {
-      width: min(1200px, calc(100% - 36px));
-
-      margin: auto;
-      padding: 34px 0 65px;
-    }
-
-    .breadcrumb {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-
-      margin-bottom: 22px;
-
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 600;
-    }
-
-    .breadcrumb a:hover {
-      color: var(--primary-dark);
-    }
-
-    .breadcrumb .current {
-      color: var(--primary-dark);
-    }
-
-    /* =====================================
-       HERO
-    ===================================== */
-
-    .hero {
-      position: relative;
-      overflow: hidden;
-
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 25px;
-
-      padding: 31px 34px;
-
-      border-radius: 25px;
-
-      color: white;
-
-      background:
-        radial-gradient(
-          circle at 90% 10%,
-          rgba(255,255,255,0.18),
-          transparent 27%
-        ),
-        linear-gradient(125deg, #c2410c, #f97316 65%, #fb923c);
-
-      box-shadow: 0 16px 38px rgba(234, 88, 12, 0.15);
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      max-width: 700px;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-
-      padding: 7px 11px;
-      margin-bottom: 13px;
-
-      border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 999px;
-
-      background: rgba(255,255,255,0.12);
-
-      font-size: 10px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-    }
-
-    .hero h1 {
-      margin: 0 0 9px;
-
-      font-size: clamp(27px, 4vw, 37px);
-      line-height: 1.2;
-      letter-spacing: -1.2px;
-    }
-
-    .hero p {
-      margin: 0;
-      max-width: 630px;
-
-      color: rgba(255,255,255,0.91);
-
-      font-size: 13px;
-      line-height: 1.8;
-    }
-
-    .hero-decoration {
-      flex-shrink: 0;
-
-      width: 112px;
-      height: 112px;
-
-      display: grid;
-      place-items: center;
-
-      border: 1px solid rgba(255,255,255,0.23);
-      border-radius: 32px;
-
-      background: rgba(255,255,255,0.13);
-    }
-
-    .hero-decoration .material-symbols-rounded {
-      font-size: 59px;
-    }
-
-    /* =====================================
-       ACCOUNT STRIP
-    ===================================== */
-
-    .account-strip {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 15px;
-
-      padding: 18px 21px;
-      margin-top: 21px;
-
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 17px;
-
-      box-shadow: var(--shadow);
-    }
-
-    .account-main {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-    }
-
-    .account-icon {
-      flex-shrink: 0;
-
-      width: 43px;
-      height: 43px;
-
-      display: grid;
-      place-items: center;
-
-      border-radius: 14px;
-
-      color: var(--primary-dark);
-      background: var(--primary-light);
-    }
-
-    .account-text {
-      min-width: 0;
-    }
-
-    .account-text strong {
-      display: block;
-      font-size: 12px;
-    }
-
-    .account-text span {
-      display: block;
-
-      max-width: 450px;
-      overflow-wrap: anywhere;
-
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    .connection-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-
-      color: var(--muted);
-      font-size: 10px;
-      font-weight: 700;
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-
-      border-radius: 50%;
-      background: #94a3b8;
-    }
-
-    .status-dot.connected {
-      background: #22c55e;
-    }
-
-    .status-dot.error {
-      background: #ef4444;
-    }
-
-    /* =====================================
-       STATISTICS
-    ===================================== */
-
-    .section-title {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 14px;
-
-      margin: 31px 0 15px;
-    }
-
-    .section-title h2 {
-      margin: 0;
-
-      font-size: 19px;
-      letter-spacing: -0.5px;
-    }
-
-    .section-title p {
-      margin: 4px 0 0;
-
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 15px;
-    }
-
-    .stat-card {
-      position: relative;
-      overflow: hidden;
-
-      min-width: 0;
-      padding: 19px;
-
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 17px;
-
-      box-shadow: var(--shadow);
-    }
-
-    .stat-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .stat-label {
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 700;
-    }
-
-    .stat-icon {
-      width: 38px;
-      height: 38px;
-
-      display: grid;
-      place-items: center;
-
-      border-radius: 12px;
-
-      color: var(--primary-dark);
-      background: var(--primary-light);
-    }
-
-    .stat-icon.blue {
-      color: var(--blue);
-      background: var(--blue-bg);
-    }
-
-    .stat-icon.green {
-      color: var(--green);
-      background: var(--green-bg);
-    }
-
-    .stat-icon.amber {
-      color: var(--amber);
-      background: var(--amber-bg);
-    }
-
-    .stat-number {
-      display: block;
-
-      margin-top: 13px;
-
-      font-size: 31px;
-      line-height: 1.1;
-      font-weight: 800;
-      letter-spacing: -1px;
-    }
-
-    .stat-caption {
-      display: block;
-
-      margin-top: 7px;
-
-      color: #94a3b8;
-      font-size: 10px;
-    }
-
-    /* =====================================
-       REQUESTS AREA
-    ===================================== */
-
-    .requests-card {
-      margin-top: 27px;
-
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-
-    .requests-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 15px;
-
-      padding: 23px 24px;
-
-      border-bottom: 1px solid var(--border);
-    }
-
-    .requests-heading h2 {
-      margin: 0;
-      font-size: 18px;
-      letter-spacing: -0.5px;
-    }
-
-    .requests-heading p {
-      margin: 5px 0 0;
-
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    .refresh-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-
-      min-height: 40px;
-      padding: 0 13px;
-
-      border: 1px solid var(--border);
-      border-radius: 11px;
-
-      color: #475569;
-      background: white;
-
-      cursor: pointer;
-
-      font-size: 11px;
-      font-weight: 800;
-    }
-
-    .refresh-button:hover {
-      border-color: #fdba74;
-      background: var(--primary-light);
-      color: var(--primary-dark);
-    }
-
-    .refresh-button:disabled {
-      opacity: 0.55;
-      cursor: wait;
-    }
-
-    /* FILTERS */
-
-    .filters {
-      display: grid;
-      grid-template-columns: minmax(200px, 1.5fr) repeat(2, minmax(145px, 0.8fr));
-      gap: 12px;
-
-      padding: 19px 24px;
-
-      border-bottom: 1px solid var(--border);
-      background: #fcfdff;
-    }
-
-    .search-wrap {
-      position: relative;
-    }
-
-    .search-wrap .material-symbols-rounded {
-      position: absolute;
-      left: 12px;
-      top: 12px;
-
-      color: #94a3b8;
-      pointer-events: none;
-    }
-
-    .filter-input,
-    .filter-select {
-      width: 100%;
-      min-height: 43px;
-
-      border: 1px solid #dce3ed;
-      border-radius: 11px;
-
-      background: white;
-      color: var(--text);
-
-      font-size: 11px;
-    }
-
-    .filter-input {
-      padding: 0 12px 0 40px;
-    }
-
-    .filter-select {
-      padding: 0 11px;
-      cursor: pointer;
-    }
-
-    .filter-input:focus,
-    .filter-select:focus {
-      outline: none;
-
-      border-color: var(--primary);
-
-      box-shadow: 0 0 0 3px rgba(249,115,22,0.09);
-    }
-
-    /* REQUEST LIST */
-
-    .requests-list {
-      display: grid;
-      gap: 0;
-    }
-
-    .request-item {
-      padding: 22px 24px;
-
-      border-bottom: 1px solid #eef2f7;
-
-      transition: background 0.2s;
-    }
-
-    .request-item:last-child {
-      border-bottom: 0;
-    }
-
-    .request-item:hover {
-      background: #fffdfa;
-    }
-
-    .request-main {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .request-content {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .request-topline {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-
-      margin-bottom: 9px;
-    }
-
-    .type-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-
-      padding: 6px 9px;
-
-      border-radius: 8px;
-
-      font-size: 9px;
-      font-weight: 800;
-    }
-
-    .type-badge.help {
-      color: var(--blue);
-      background: var(--blue-bg);
-    }
-
-    .type-badge.complaint {
-      color: var(--primary-dark);
-      background: var(--primary-light);
-    }
-
-    .request-reference {
-      color: #94a3b8;
-
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 0.4px;
-    }
-
-    .request-title {
-      margin: 0;
-
-      font-size: 15px;
-      line-height: 1.5;
-      font-weight: 800;
-
-      overflow-wrap: anywhere;
-    }
-
-    .request-description {
-      margin: 9px 0 0;
-
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.8;
-
-      overflow-wrap: anywhere;
-
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .request-meta {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 15px;
-
-      margin-top: 13px;
-    }
-
-    .meta-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-
-      color: #94a3b8;
-      font-size: 10px;
-    }
-
-    .meta-item .material-symbols-rounded {
-      font-size: 16px;
-    }
-
-    .request-side {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 11px;
-
-      flex-shrink: 0;
-    }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-
-      padding: 7px 10px;
-
-      border-radius: 9px;
-
-      font-size: 10px;
-      font-weight: 800;
-
-      white-space: nowrap;
-    }
-
-    .status-badge.pending {
-      color: var(--amber);
-      background: var(--amber-bg);
-    }
-
-    .status-badge.analysis {
-      color: var(--blue);
-      background: var(--blue-bg);
-    }
-
-    .status-badge.answered {
-      color: #6d28d9;
-      background: #f5f3ff;
-    }
-
-    .status-badge.resolved {
-      color: var(--green);
-      background: var(--green-bg);
-    }
-
-    .status-badge.rejected {
-      color: var(--red);
-      background: var(--red-bg);
-    }
-
-    .status-badge.neutral {
-      color: #475569;
-      background: #f1f5f9;
-    }
-
-    .priority-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-
-      color: #94a3b8;
-      font-size: 10px;
-      font-weight: 700;
-    }
-
-    .priority-label.high {
-      color: var(--red);
-    }
-
-    .request-actions {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 9px;
-
-      margin-top: 16px;
-    }
-
-    .request-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-
-      min-height: 37px;
-      padding: 0 12px;
-
-      border: 1px solid var(--border);
-      border-radius: 10px;
-
-      color: #475569;
-      background: white;
-
-      cursor: pointer;
-
-      font-size: 10px;
-      font-weight: 800;
-
-      transition: 0.2s;
-    }
-
-    .request-button:hover {
-      border-color: #fdba74;
-      color: var(--primary-dark);
-      background: var(--primary-light);
-    }
-
-    .request-button.primary {
-      border-color: var(--primary);
-      color: white;
-      background: var(--primary);
-    }
-
-    .request-button.primary:hover {
-      background: var(--primary-dark);
-    }
-
-    /* =====================================
-       EMPTY / LOADING / ERROR
-    ===================================== */
-
-    .state-box {
-      padding: 50px 22px;
-
-      text-align: center;
-    }
-
-    .state-icon {
-      width: 66px;
-      height: 66px;
-
-      display: grid;
-      place-items: center;
-
-      margin: 0 auto 17px;
-
-      color: var(--primary-dark);
-      background: var(--primary-light);
-
-      border-radius: 21px;
-    }
-
-    .state-icon .material-symbols-rounded {
-      font-size: 34px;
-    }
-
-    .state-box h3 {
-      margin: 0 0 8px;
-      font-size: 16px;
-    }
-
-    .state-box p {
-      max-width: 430px;
-
-      margin: 0 auto 19px;
-
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.8;
-    }
-
-    .state-box.error .state-icon {
-      color: var(--red);
-      background: var(--red-bg);
-    }
-
-    .spinner {
-      width: 25px;
-      height: 25px;
-
-      margin: 0 auto;
-
-      border: 3px solid #fed7aa;
-      border-top-color: var(--primary);
-
-      border-radius: 50%;
-
-      animation: spin 0.7s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .results-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 10px;
-
-      padding: 16px 24px;
-
-      border-top: 1px solid var(--border);
-
-      color: var(--muted);
-      background: #fcfdff;
-
-      font-size: 10px;
-    }
-
-    /* =====================================
-       SUPPORT CTA
-    ===================================== */
-
-    .support-cta {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      align-items: center;
-      gap: 22px;
-
-      padding: 24px 27px;
-      margin-top: 24px;
-
-      border: 1px solid #fed7aa;
-      border-radius: 19px;
-
-      background: linear-gradient(110deg, #fff7ed, #ffffff);
-    }
-
-    .support-cta h3 {
-      margin: 0 0 6px;
-      font-size: 16px;
-    }
-
-    .support-cta p {
-      margin: 0;
-
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.8;
-    }
-
-    .cta-actions {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .cta-button {
-      min-height: 43px;
-
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-
-      padding: 0 13px;
-
-      border: 1px solid var(--border);
-      border-radius: 11px;
-
-      color: #475569;
-      background: white;
-
-      font-size: 10px;
-      font-weight: 800;
-
-      transition: 0.2s;
-    }
-
-    .cta-button:hover {
-      border-color: #fdba74;
-      color: var(--primary-dark);
-    }
-
-    .cta-button.primary {
-      color: white;
-      border-color: var(--primary);
-      background: var(--primary);
-    }
-
-    .cta-button.primary:hover {
-      background: var(--primary-dark);
-    }
-
-    /* =====================================
-       FOOTER
-    ===================================== */
-
-    .footer {
-      padding: 24px 18px;
-
-      border-top: 1px solid var(--border);
-      background: white;
-
-      text-align: center;
-    }
-
-    .footer p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 10px;
-    }
-
-    .footer strong {
-      color: var(--primary-dark);
-    }
-/* =====================================
-   MODAL — DETALHES E RESPOSTA DO SUPORTE
-===================================== */
-
-.details-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-
-  display: none;
-  align-items: center;
-  justify-content: center;
-
-  padding: 18px;
-
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(7px);
-  -webkit-backdrop-filter: blur(7px);
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Os meus pedidos de suporte | Toma</title>
+
+<meta name="theme-color" content="#f97316">
+<meta name="description" content="Consulte os seus pedidos de suporte e as respostas da equipa Toma.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --primary: #f97316;
+  --primary-dark: #ea580c;
+  --primary-light: #fff7ed;
+  --bg: #f8fafc;
+  --white: #ffffff;
+  --text: #172033;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --success: #15803d;
+  --success-bg: #dcfce7;
+  --warning: #b45309;
+  --warning-bg: #fef3c7;
+  --danger: #b91c1c;
+  --danger-bg: #fee2e2;
+  --info: #1d4ed8;
+  --info-bg: #dbeafe;
+  --radius: 18px;
+  --shadow: 0 10px 30px rgba(15, 23, 42, .06);
 }
 
-.details-modal.open {
-  display: flex;
+* {
+  box-sizing: border-box;
 }
 
-.details-dialog {
-  width: min(100%, 650px);
-  max-height: min(88vh, 850px);
-
-  display: flex;
-  flex-direction: column;
-
-  overflow: hidden;
-
-  background: #ffffff;
-  border: 1px solid #e5eaf1;
-  border-radius: 22px;
-
-  box-shadow: 0 25px 80px rgba(15, 23, 42, 0.25);
-
-  animation: detailsModalIn 0.22s ease-out;
+html {
+  scroll-behavior: smooth;
 }
 
-@keyframes detailsModalIn {
-  from {
-    opacity: 0;
-    transform: translateY(12px) scale(0.985);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.details-modal-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 14px;
-
-  padding: 22px 23px;
-
-  border-bottom: 1px solid var(--border);
-
-  background: linear-gradient(120deg, #fff7ed, #ffffff);
-}
-
-.details-modal-heading {
-  min-width: 0;
-}
-
-.details-modal-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-
-  margin-bottom: 7px;
-
-  color: var(--primary-dark);
-
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-}
-
-.details-modal-heading h2 {
+body {
   margin: 0;
-
-  font-size: 20px;
-  line-height: 1.4;
-  letter-spacing: -0.5px;
-
-  overflow-wrap: anywhere;
-}
-
-.details-modal-reference {
-  display: inline-block;
-
-  margin-top: 6px;
-
-  color: var(--muted);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.4px;
-}
-
-.details-close {
-  flex-shrink: 0;
-
-  width: 39px;
-  height: 39px;
-
-  display: grid;
-  place-items: center;
-
-  border: 1px solid var(--border);
-  border-radius: 12px;
-
-  color: #475569;
-  background: #ffffff;
-
-  cursor: pointer;
-}
-
-.details-close:hover {
-  color: var(--primary-dark);
-  background: var(--primary-light);
-  border-color: #fdba74;
-}
-
-.details-modal-body {
-  overflow-y: auto;
-  overscroll-behavior: contain;
-
-  padding: 22px 23px;
-}
-
-.details-status-row {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 9px;
-
-  margin-bottom: 21px;
-}
-
-.details-section {
-  margin-bottom: 22px;
-}
-
-.details-section:last-child {
-  margin-bottom: 0;
-}
-
-.details-section-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  margin: 0 0 11px;
-
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.details-section-title .material-symbols-rounded {
-  color: var(--primary-dark);
-}
-
-.details-info-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.details-info-item {
-  min-width: 0;
-
-  padding: 12px;
-
-  border: 1px solid var(--border);
-  border-radius: 12px;
-
-  background: #fcfdff;
-}
-
-.details-info-label {
-  display: block;
-
-  margin-bottom: 5px;
-
-  color: var(--muted);
-  font-size: 10px;
-  font-weight: 600;
-}
-
-.details-info-value {
-  display: block;
-
+  font-family: "Inter", sans-serif;
+  background: var(--bg);
   color: var(--text);
-  font-size: 12px;
-  font-weight: 700;
-
-  overflow-wrap: anywhere;
-}
-
-.details-description {
-  padding: 15px;
-
-  border: 1px solid var(--border);
-  border-radius: 13px;
-
-  background: #fcfdff;
-
-  color: #475569;
-  font-size: 12px;
-  line-height: 1.9;
-
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-
-.details-response {
-  padding: 17px;
-
-  border: 1px solid #bbf7d0;
-  border-radius: 15px;
-
-  background: #f0fdf4;
-}
-
-.details-response.pending {
-  border-color: #fde68a;
-  background: #fffbeb;
-}
-
-.details-response-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  margin-bottom: 11px;
-
-  color: #166534;
-
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.details-response.pending .details-response-title {
-  color: #92400e;
-}
-
-.details-response-message {
-  margin: 0;
-
-  color: #166534;
-  font-size: 12px;
-  line-height: 1.9;
-
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-
-.details-response.pending .details-response-message {
-  color: #92400e;
-}
-
-.details-response-meta {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 7px;
-
-  margin-top: 13px;
-  padding-top: 11px;
-
-  border-top: 1px solid rgba(22, 101, 52, 0.13);
-
-  color: #64748b;
-  font-size: 10px;
-}
-
-.details-modal-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-
-  padding: 16px 23px;
-
-  border-top: 1px solid var(--border);
-  background: #fcfdff;
-}
-
-.details-private-note {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-
-  color: var(--muted);
-  font-size: 10px;
-}
-
-.details-footer-button {
-  min-height: 42px;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-
-  padding: 0 16px;
-
-  border: 1px solid var(--primary);
-  border-radius: 11px;
-
-  color: #ffffff;
-  background: var(--primary);
-
-  cursor: pointer;
-
-  font-size: 11px;
-  font-weight: 800;
-}
-
-.details-footer-button:hover {
-  background: var(--primary-dark);
 }
 
 body.modal-open {
   overflow: hidden;
 }
 
+button,
+input,
+select {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(255,255,255,.96);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.topbar-inner {
+  width: min(1160px, 92%);
+  min-height: 68px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.brand-icon {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #fb923c, #ea580c);
+  color: white;
+  box-shadow: 0 5px 12px rgba(249,115,22,.25);
+}
+
+.brand span:last-child {
+  color: var(--primary-dark);
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px 13px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: white;
+}
+
+.back-link:hover {
+  border-color: var(--primary);
+  color: var(--primary-dark);
+}
+
+.container {
+  width: min(1160px, 92%);
+  margin: 30px auto 60px;
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 32px;
+  border-radius: 24px;
+  color: white;
+  background: linear-gradient(125deg, #172033, #26364f 65%, #9a3412);
+  box-shadow: var(--shadow);
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  right: -65px;
+  top: -100px;
+  border-radius: 50%;
+  background: rgba(251,146,60,.18);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 700px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.12);
+  color: #fed7aa;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  margin: 17px 0 10px;
+  font-size: clamp(25px, 4vw, 38px);
+  line-height: 1.2;
+  letter-spacing: -1.2px;
+}
+
+.hero p {
+  margin: 0;
+  max-width: 570px;
+  color: #e2e8f0;
+  line-height: 1.8;
+  font-size: 14px;
+}
+
+.account-strip {
+  margin-top: 18px;
+  padding: 14px 17px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: white;
+}
+
+.account-info {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.account-icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  background: var(--primary-light);
+  font-size: 20px;
+}
+
+.account-label {
+  color: var(--muted);
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.account-email {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.connection-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #94a3b8;
+}
+
+.connection-status.online .status-dot {
+  background: #22c55e;
+}
+
+.connection-status.error .status-dot {
+  background: #ef4444;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+  margin: 23px 0;
+}
+
+.stat-card {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: white;
+  box-shadow: 0 4px 15px rgba(15,23,42,.025);
+}
+
+.stat-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.stat-icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  font-size: 17px;
+}
+
+.stat-number {
+  margin-top: 15px;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.stat-note {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.icon-orange {
+  color: #c2410c;
+  background: #ffedd5;
+}
+
+.icon-blue {
+  color: #1d4ed8;
+  background: #dbeafe;
+}
+
+.icon-green {
+  color: #15803d;
+  background: #dcfce7;
+}
+
+.icon-purple {
+  color: #7e22ce;
+  background: #f3e8ff;
+}
+
+.panel {
+  margin-top: 22px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: white;
+  box-shadow: var(--shadow);
+}
+
+.panel-header {
+  padding: 22px 23px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.panel-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -.4px;
+}
+
+.panel-subtitle {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.refresh-button {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: white;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.refresh-button:hover {
+  border-color: var(--primary);
+  color: var(--primary-dark);
+}
+
+.filters {
+  padding: 18px 23px;
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) 190px 190px;
+  gap: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.field {
+  min-width: 0;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 7px;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  min-height: 44px;
+  padding: 11px 12px;
+  outline: none;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: #fff;
+  color: var(--text);
+  font-size: 12px;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(249,115,22,.10);
+}
+
+.requests-list {
+  padding: 5px 23px 23px;
+}
+
+.request-card {
+  margin-top: 17px;
+  padding: 19px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: white;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.request-card:hover {
+  border-color: #fed7aa;
+  box-shadow: 0 7px 20px rgba(15,23,42,.04);
+}
+
+.request-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.request-reference {
+  color: var(--primary-dark);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .4px;
+}
+
+.request-title {
+  margin: 8px 0 7px;
+  font-size: 15px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.request-description {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.request-meta {
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 15px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.request-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.badge-pending {
+  color: var(--warning);
+  background: var(--warning-bg);
+}
+
+.badge-progress {
+  color: var(--info);
+  background: var(--info-bg);
+}
+
+.badge-answered,
+.badge-resolved {
+  color: var(--success);
+  background: var(--success-bg);
+}
+
+.badge-rejected {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.badge-neutral {
+  color: #475569;
+  background: #f1f5f9;
+}
+
+.request-bottom {
+  margin-top: 17px;
+  padding-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.response-indicator {
+  min-width: 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.response-indicator.has-response {
+  color: var(--success);
+  font-weight: 700;
+}
+
+.details-button {
+  flex-shrink: 0;
+  padding: 10px 13px;
+  border: none;
+  border-radius: 10px;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.details-button:hover {
+  background: #ffedd5;
+}
+
+.state-box {
+  margin: 20px 0;
+  padding: 35px 20px;
+  border: 1px dashed var(--border);
+  border-radius: 15px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.state-icon {
+  font-size: 35px;
+  margin-bottom: 12px;
+}
+
+.state-box h3 {
+  margin: 0 0 8px;
+  color: var(--text);
+  font-size: 15px;
+}
+
+.state-box p {
+  max-width: 430px;
+  margin: 0 auto;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.state-box button {
+  margin-top: 15px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 10px;
+  background: var(--primary);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.cta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+  margin-top: 22px;
+}
+
+.cta-card {
+  padding: 22px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: white;
+  transition: transform .2s, border-color .2s;
+}
+
+.cta-card:hover {
+  transform: translateY(-2px);
+  border-color: #fdba74;
+}
+
+.cta-icon {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--primary-light);
+  font-size: 22px;
+}
+
+.cta-card h3 {
+  margin: 0 0 6px;
+  font-size: 14px;
+}
+
+.cta-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.cta-arrow {
+  margin-left: auto;
+  color: var(--primary-dark);
+  font-size: 20px;
+}
+
+.footer {
+  padding: 25px 0 5px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+/* MODAL DE DETALHES */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(15,23,42,.65);
+  backdrop-filter: blur(5px);
+}
+
+.modal-overlay.open {
+  display: flex;
+}
+
+.modal {
+  width: min(650px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: 20px;
+  background: white;
+  box-shadow: 0 25px 80px rgba(0,0,0,.25);
+  animation: modalIn .2s ease-out;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 20px 22px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+  border-bottom: 1px solid var(--border);
+  background: white;
+}
+
+.modal-eyebrow {
+  margin-bottom: 6px;
+  color: var(--primary-dark);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.modal-close {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: white;
+  color: var(--muted);
+  font-size: 22px;
+}
+
+.modal-close:hover {
+  color: var(--danger);
+  background: #fef2f2;
+}
+
+.modal-body {
+  padding: 22px;
+}
+
+.modal-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.modal-info {
+  min-width: 0;
+  padding: 13px;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.modal-info-label {
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.modal-info-value {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+
+.modal-section {
+  margin-top: 20px;
+}
+
+.modal-section h3 {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.modal-text {
+  padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: #334155;
+  font-size: 12px;
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.admin-response {
+  padding: 17px;
+  border: 1px solid #bbf7d0;
+  border-radius: 14px;
+  background: #f0fdf4;
+}
+
+.admin-response-heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+  color: #166534;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.admin-response-icon {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #dcfce7;
+}
+
+.admin-response-text {
+  color: #166534;
+  font-size: 12px;
+  line-height: 1.9;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.admin-response-date {
+  margin-top: 12px;
+  color: #15803d;
+  font-size: 10px;
+}
+
+.no-response {
+  padding: 15px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  color: var(--muted);
+  background: #f8fafc;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.modal-footer {
+  padding: 16px 22px;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid var(--border);
+}
+
+.modal-footer button {
+  padding: 11px 18px;
+  border: none;
+  border-radius: 11px;
+  background: var(--primary);
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.modal-footer button:hover {
+  background: var(--primary-dark);
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 850px) {
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .filters {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .filters .field:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
 @media (max-width: 560px) {
-  .details-modal {
-    align-items: flex-end;
-    padding: 0;
+  .topbar-inner {
+    min-height: 60px;
   }
 
-  .details-dialog {
+  .brand {
+    font-size: 21px;
+  }
+
+  .brand-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .back-link {
+    padding: 9px 10px;
+    font-size: 11px;
+  }
+
+  .container {
+    width: 92%;
+    margin-top: 18px;
+  }
+
+  .hero {
+    padding: 24px 20px;
+    border-radius: 19px;
+  }
+
+  .hero p {
+    font-size: 12px;
+  }
+
+  .account-strip {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .stats {
+    gap: 10px;
+    margin: 16px 0;
+  }
+
+  .stat-card {
+    padding: 15px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+  }
+
+  .stat-number {
+    margin-top: 11px;
+    font-size: 25px;
+  }
+
+  .stat-icon {
+    width: 31px;
+    height: 31px;
+    font-size: 14px;
+  }
+
+  .panel-header {
+    padding: 17px;
+  }
+
+  .panel-title {
+    font-size: 16px;
+  }
+
+  .panel-subtitle {
+    font-size: 11px;
+  }
+
+  .refresh-button {
+    padding: 10px;
+    font-size: 11px;
+  }
+
+  .filters {
+    padding: 15px 17px;
+    gap: 10px;
+  }
+
+  .requests-list {
+    padding: 0 15px 18px;
+  }
+
+  .request-card {
+    padding: 15px;
+  }
+
+  .request-top {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .request-title {
+    font-size: 14px;
+  }
+
+  .request-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .details-button {
     width: 100%;
-    max-height: 92vh;
-    max-height: 92dvh;
-
-    border-radius: 22px 22px 0 0;
+    min-height: 42px;
   }
 
-  .details-modal-header {
-    padding: 19px 17px;
+  .cta-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 
-  .details-modal-heading h2 {
-    font-size: 18px;
+  .cta-card {
+    padding: 17px;
   }
 
-  .details-modal-body {
-    padding: 18px 17px;
-  }
-
-  .details-info-grid {
-    gap: 8px;
-  }
-
-  .details-info-item {
+  .modal-overlay {
     padding: 10px;
   }
 
-  .details-modal-footer {
+  .modal {
+    max-height: 94vh;
+    border-radius: 16px;
+  }
+
+  .modal-header,
+  .modal-body {
+    padding: 17px;
+  }
+
+  .modal-header h2 {
+    font-size: 16px;
+  }
+
+  .modal-info-grid {
+    gap: 8px;
+  }
+
+  .modal-info {
+    padding: 11px;
+  }
+
+  .modal-footer {
     padding: 14px 17px;
   }
 
-  .details-footer-button {
+  .modal-footer button {
+    width: 100%;
     min-height: 43px;
   }
 }
-    /* =====================================
-       RESPONSIVE
-    ===================================== */
-
-    @media (max-width: 900px) {
-      .stats-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .filters {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .search-wrap {
-        grid-column: 1 / -1;
-      }
-
-      .support-cta {
-        grid-template-columns: 1fr;
-      }
-
-      .cta-actions {
-        width: 100%;
-      }
-    }
-
-    @media (max-width: 560px) {
-      .topbar-inner {
-        width: calc(100% - 28px);
-        min-height: 64px;
-      }
-
-      .brand {
-        gap: 8px;
-        font-size: 21px;
-      }
-
-      .brand-icon {
-        width: 37px;
-        height: 37px;
-        border-radius: 12px;
-      }
-
-      .header-link {
-        width: 40px;
-        min-height: 40px;
-        padding: 0;
-
-        font-size: 0;
-      }
-
-      .header-link .material-symbols-rounded {
-        font-size: 21px;
-      }
-
-      .page {
-        width: calc(100% - 26px);
-        padding: 23px 0 42px;
-      }
-
-      .breadcrumb {
-        margin-bottom: 16px;
-      }
-
-      .hero {
-        padding: 24px 20px;
-        border-radius: 21px;
-      }
-
-      .hero h1 {
-        font-size: 27px;
-        letter-spacing: -0.8px;
-      }
-
-      .hero p {
-        font-size: 12px;
-      }
-
-      .hero-decoration {
-        display: none;
-      }
-
-      .account-strip {
-        padding: 15px;
-      }
-
-      .section-title {
-        margin-top: 25px;
-      }
-
-      .section-title h2 {
-        font-size: 17px;
-      }
-
-      .stats-grid {
-        gap: 10px;
-      }
-
-      .stat-card {
-        padding: 14px;
-        border-radius: 15px;
-      }
-
-      .stat-label {
-        font-size: 10px;
-      }
-
-      .stat-icon {
-        width: 33px;
-        height: 33px;
-        border-radius: 10px;
-      }
-
-      .stat-number {
-        font-size: 27px;
-      }
-
-      .stat-caption {
-        font-size: 9px;
-      }
-
-      .requests-card {
-        margin-top: 21px;
-        border-radius: 17px;
-      }
-
-      .requests-header {
-        padding: 18px 15px;
-      }
-
-      .requests-heading h2 {
-        font-size: 16px;
-      }
-
-      .requests-heading p {
-        font-size: 10px;
-      }
-
-      .refresh-button {
-        min-height: 37px;
-        padding: 0 10px;
-      }
-
-      .filters {
-        grid-template-columns: 1fr;
-        padding: 14px;
-        gap: 9px;
-      }
-
-      .search-wrap {
-        grid-column: auto;
-      }
-
-      .filter-input,
-      .filter-select {
-        min-height: 44px;
-      }
-
-      .request-item {
-        padding: 19px 15px;
-      }
-
-      .request-main {
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .request-side {
-        width: 100%;
-
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-      }
-
-      .request-title {
-        font-size: 14px;
-      }
-
-      .request-description {
-        font-size: 11px;
-      }
-
-      .request-meta {
-        gap: 10px;
-      }
-
-      .request-actions {
-        gap: 8px;
-      }
-
-      .request-button {
-        min-height: 39px;
-      }
-
-      .results-footer {
-        padding: 14px;
-      }
-
-      .support-cta {
-        padding: 20px 17px;
-      }
-
-      .cta-actions {
-        display: grid;
-        grid-template-columns: 1fr;
-      }
-
-      .cta-button {
-        width: 100%;
-        min-height: 45px;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        scroll-behavior: auto !important;
-        animation-duration: 0.01ms !important;
-        transition-duration: 0.01ms !important;
-      }
-    }
-  </style>
+</style>
 </head>
 
 <body>
 
-  <!-- =====================================
-       BLOCO HTML 1 — HEADER
-  ====================================== -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="home.html" class="brand" aria-label="Toma - Página inicial">
+      <span class="brand-icon">T</span>
+      <span>Toma</span>
+    </a>
 
-  <header class="topbar">
+    <a href="support.html" class="back-link">
+      <span aria-hidden="true">←</span>
+      Centro de suporte
+    </a>
+  </div>
+</header>
 
-    <div class="topbar-inner">
+<main class="container">
 
-      <a class="brand" href="support.html" aria-label="Toma - Suporte">
+  <section class="hero">
+    <div class="hero-content">
+      <span class="eyebrow">✦ Apoio ao cliente Toma</span>
 
-        <span class="brand-icon">
-          <span class="material-symbols-rounded">storefront</span>
-        </span>
+      <h1>Os meus pedidos de suporte</h1>
 
-        <span class="brand-name">to<span>ma</span></span>
-
-      </a>
-
-      <div class="header-actions">
-
-        <a class="header-link" href="support.html">
-          <span class="material-symbols-rounded">arrow_back</span>
-          Centro de suporte
-        </a>
-
-      </div>
-
+      <p>
+        Acompanhe os seus pedidos de ajuda e reclamações.
+        Consulte o estado de cada pedido e leia as respostas
+        enviadas pela nossa equipa.
+      </p>
     </div>
+  </section>
 
-  </header>
-
-
-  <main class="page">
-
-    <!-- =====================================
-         BLOCO HTML 2 — BREADCRUMB
-    ====================================== -->
-
-    <nav class="breadcrumb" aria-label="Navegação">
-
-      <a href="support.html">Suporte</a>
-
-      <span class="material-symbols-rounded">chevron_right</span>
-
-      <span class="current">Os meus pedidos</span>
-
-    </nav>
-
-
-    <!-- =====================================
-         BLOCO HTML 3 — HERO
-    ====================================== -->
-
-    <section class="hero">
-
-      <div class="hero-content">
-
-        <div class="hero-badge">
-          <span class="material-symbols-rounded">verified_user</span>
-          Área pessoal de suporte
-        </div>
-
-        <h1>Os meus pedidos</h1>
-
-        <p>
-          Consulte os seus pedidos de ajuda e as suas reclamações num só lugar.
-          Acompanhe os estados e mantenha as informações de cada pedido
-          organizadas.
-        </p>
-
-      </div>
-
-      <div class="hero-decoration" aria-hidden="true">
-        <span class="material-symbols-rounded">support_agent</span>
-      </div>
-
-    </section>
-
-
-    <!-- =====================================
-         BLOCO HTML 4 — CONTA
-    ====================================== -->
-
-    <section class="account-strip">
-
-      <div class="account-main">
-
-        <div class="account-icon">
-          <span class="material-symbols-rounded">account_circle</span>
-        </div>
-
-        <div class="account-text">
-
-          <strong>A sua área pessoal</strong>
-
-          <span id="accountEmail">
-            A verificar a sua sessão...
-          </span>
-
-        </div>
-
-      </div>
-
-      <div class="connection-status">
-
-        <span class="status-dot" id="connectionDot"></span>
-
-        <span id="connectionText">A ligar...</span>
-
-      </div>
-
-    </section>
-
-
-    <!-- =====================================
-         BLOCO HTML 5 — ESTATÍSTICAS
-    ====================================== -->
-
-    <div class="section-title">
+  <section class="account-strip">
+    <div class="account-info">
+      <div class="account-icon" aria-hidden="true">👤</div>
 
       <div>
-        <h2>Resumo dos pedidos</h2>
-
-        <p>
-          Uma visão geral dos seus pedidos de suporte.
-        </p>
+        <div class="account-label">Conta conectada</div>
+        <div class="account-email" id="accountEmail">
+          A verificar a sessão...
+        </div>
       </div>
-
     </div>
 
-
-    <section class="stats-grid" aria-label="Resumo dos pedidos">
-
-      <article class="stat-card">
-
-        <div class="stat-top">
-
-          <span class="stat-label">Total de pedidos</span>
-
-          <span class="stat-icon">
-            <span class="material-symbols-rounded">inbox</span>
-          </span>
-
-        </div>
-
-        <strong class="stat-number" id="totalCount">—</strong>
-
-        <span class="stat-caption">Pedidos registados</span>
-
-      </article>
-
-
-      <article class="stat-card">
-
-        <div class="stat-top">
-
-          <span class="stat-label">Em análise</span>
-
-          <span class="stat-icon blue">
-            <span class="material-symbols-rounded">manage_search</span>
-          </span>
-
-        </div>
-
-        <strong class="stat-number" id="pendingCount">—</strong>
-
-        <span class="stat-caption">Aguardam tratamento</span>
-
-      </article>
-
-
-      <article class="stat-card">
-
-        <div class="stat-top">
-
-          <span class="stat-label">Respondidos</span>
-
-          <span class="stat-icon amber">
-            <span class="material-symbols-rounded">mark_email_read</span>
-          </span>
-
-        </div>
-
-        <strong class="stat-number" id="answeredCount">—</strong>
-
-        <span class="stat-caption">Com resposta registada</span>
-
-      </article>
-
-
-      <article class="stat-card">
-
-        <div class="stat-top">
-
-          <span class="stat-label">Resolvidos</span>
-
-          <span class="stat-icon green">
-            <span class="material-symbols-rounded">task_alt</span>
-          </span>
-
-        </div>
-
-        <strong class="stat-number" id="resolvedCount">—</strong>
-
-        <span class="stat-caption">Pedidos concluídos</span>
-
-      </article>
-
-    </section>
-
-
-    <!-- =====================================
-         BLOCO HTML 6 — LISTA DE PEDIDOS
-    ====================================== -->
-
-    <section class="requests-card">
-
-      <div class="requests-header">
-
-        <div class="requests-heading">
-
-          <h2>Histórico dos pedidos</h2>
-
-          <p>
-            Consulte as suas solicitações mais recentes.
-          </p>
-
-        </div>
-
-        <button
-          class="refresh-button"
-          id="refreshButton"
-          type="button"
-        >
-
-          <span class="material-symbols-rounded">refresh</span>
-
-          Atualizar
-
-        </button>
-
-      </div>
-
-
-      <!-- FILTROS -->
-
-      <div class="filters">
-
-        <div class="search-wrap">
-
-          <span class="material-symbols-rounded">search</span>
-
-          <input
-            class="filter-input"
-            id="searchInput"
-            type="search"
-            placeholder="Pesquisar assunto, referência ou encomenda..."
-            autocomplete="off"
-            aria-label="Pesquisar pedidos"
-          >
-
-        </div>
-
-
-        <select
-          class="filter-select"
-          id="typeFilter"
-          aria-label="Filtrar por tipo"
-        >
-
-          <option value="todos">Todos os tipos</option>
-
-          <option value="ajuda">Pedidos de ajuda</option>
-
-          <option value="reclamacao">Reclamações</option>
-
-        </select>
-
-
-        <select
-          class="filter-select"
-          id="statusFilter"
-          aria-label="Filtrar por estado"
-        >
-
-          <option value="todos">Todos os estados</option>
-
-          <option value="pendente">Pendente</option>
-
-          <option value="analise">Em análise</option>
-
-          <option value="respondido">Respondido</option>
-
-          <option value="resolvido">Resolvido</option>
-
-          <option value="rejeitado">Rejeitado</option>
-
-        </select>
-
-      </div>
-
-
-      <!-- CONTEÚDO DINÂMICO -->
-
-      <div class="requests-list" id="requestsList">
-
-        <div class="state-box">
-
-          <div class="spinner"></div>
-
-          <h3 style="margin-top:18px;">A carregar os seus pedidos...</h3>
-
-          <p>
-            Estamos a consultar os pedidos associados à sua conta.
-          </p>
-
-        </div>
-
-      </div>
-
-
-      <div class="results-footer">
-
-        <span id="resultsCount">
-          A preparar a lista...
-        </span>
-
-        <span>
-          <span class="material-symbols-rounded"
-                style="font-size:15px;">
-            lock
-          </span>
-
-          Os seus pedidos são privados.
-        </span>
-
-      </div>
-
-    </section>
-
-
-    <!-- =====================================
-         BLOCO HTML 7 — AÇÕES DE SUPORTE
-    ====================================== -->
-
-    <section class="support-cta">
-
-      <div>
-
-        <h3>Precisa de mais ajuda?</h3>
-
-        <p>
-          Envie um novo pedido de ajuda ou apresente uma reclamação.
-          A equipa Toma poderá analisar as informações que enviar.
-        </p>
-
-      </div>
-
-      <div class="cta-actions">
-
-        <a class="cta-button" href="ajuda.html">
-
-          <span class="material-symbols-rounded">help</span>
-
-          Pedir ajuda
-
-        </a>
-
-        <a class="cta-button primary" href="reclamacao.html">
-
-          <span class="material-symbols-rounded">campaign</span>
-
-          Fazer reclamação
-
-        </a>
-
-      </div>
-
-    </section>
-
-  </main>
-
-
-  <!-- =====================================
-       BLOCO HTML 8 — FOOTER
-  ====================================== -->
-
-  <footer class="footer">
-
-    <p>
-      © <span id="currentYear"></span>
-      <strong>Toma</strong> — O comércio mais perto de si.
-    </p>
-
-  </footer>
-
-<!-- =====================================
-     MODAL — DETALHES DO PEDIDO
-====================================== -->
-
-<div
-  class="details-modal"
-  id="detailsModal"
-  aria-hidden="true"
->
-
-  <section
-    class="details-dialog"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="detailsModalTitle"
-  >
-
-    <header class="details-modal-header">
-
-      <div class="details-modal-heading">
-
-        <div class="details-modal-eyebrow">
-
-          <span class="material-symbols-rounded">
-            support_agent
-          </span>
-
-          Acompanhamento Toma
-
-        </div>
-
-        <h2 id="detailsModalTitle">
-          Detalhes do pedido
-        </h2>
-
-        <span
-          class="details-modal-reference"
-          id="detailsModalReference"
-        ></span>
-
-      </div>
-
-      <button
-        type="button"
-        class="details-close"
-        id="closeDetailsModal"
-        aria-label="Fechar detalhes"
-      >
-
-        <span class="material-symbols-rounded">
-          close
-        </span>
-
-      </button>
-
-    </header>
-
-
-    <div class="details-modal-body" id="detailsModalBody">
-
-      <!-- O conteúdo será preenchido pelo JavaScript. -->
-
+    <div class="connection-status" id="connectionStatus">
+      <span class="status-dot"></span>
+      <span id="connectionText">A verificar...</span>
     </div>
+  </section>
 
+  <section class="stats" aria-label="Estatísticas dos pedidos">
 
-    <footer class="details-modal-footer">
+    <article class="stat-card">
+      <div class="stat-top">
+        <span class="stat-label">Total de pedidos</span>
+        <span class="stat-icon icon-orange">▤</span>
+      </div>
+      <div class="stat-number" id="statTotal">0</div>
+      <div class="stat-note">Todos os seus pedidos</div>
+    </article>
 
-      <span class="details-private-note">
+    <article class="stat-card">
+      <div class="stat-top">
+        <span class="stat-label">Em acompanhamento</span>
+        <span class="stat-icon icon-blue">◷</span>
+      </div>
+      <div class="stat-number" id="statPending">0</div>
+      <div class="stat-note">Pendentes ou em análise</div>
+    </article>
 
-        <span class="material-symbols-rounded">
-          lock
-        </span>
+    <article class="stat-card">
+      <div class="stat-top">
+        <span class="stat-label">Respondidos</span>
+        <span class="stat-icon icon-green">✓</span>
+      </div>
+      <div class="stat-number" id="statAnswered">0</div>
+      <div class="stat-note">Com resposta da equipa</div>
+    </article>
 
-        Informação privada da sua conta
-
-      </span>
-
-      <button
-        type="button"
-        class="details-footer-button"
-        id="closeDetailsModalFooter"
-      >
-
-        <span class="material-symbols-rounded">
-          check
-        </span>
-
-        Fechar detalhes
-
-      </button>
-
-    </footer>
+    <article class="stat-card">
+      <div class="stat-top">
+        <span class="stat-label">Resolvidos</span>
+        <span class="stat-icon icon-purple">★</span>
+      </div>
+      <div class="stat-number" id="statResolved">0</div>
+      <div class="stat-note">Pedidos concluídos</div>
+    </article>
 
   </section>
 
-</div>
-  <!-- =====================================
-       BLOCO JAVASCRIPT 1 — IMPORTAÇÕES
-  ====================================== -->
-
-  <script type="module">
-
-    import { auth, db } from "./firebase.js";
-
-    import {
-      collection,
-      getDocs,
-      query,
-      where
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-    import {
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-
-    /* =====================================
-       BLOCO JS 2 — ELEMENTOS
-    ====================================== */
-
-    const accountEmail = document.getElementById("accountEmail");
-
-    const connectionDot = document.getElementById("connectionDot");
-    const connectionText = document.getElementById("connectionText");
-
-    const totalCount = document.getElementById("totalCount");
-    const pendingCount = document.getElementById("pendingCount");
-    const answeredCount = document.getElementById("answeredCount");
-    const resolvedCount = document.getElementById("resolvedCount");
-
-    const requestsList = document.getElementById("requestsList");
-    const resultsCount = document.getElementById("resultsCount");
-
-    const searchInput = document.getElementById("searchInput");
-    const typeFilter = document.getElementById("typeFilter");
-    const statusFilter = document.getElementById("statusFilter");
-
-    const refreshButton = document.getElementById("refreshButton");
-
-/* =====================================
-   BLOCO JS 2.1 — ELEMENTOS DOS DETALHES
-===================================== */
-
-const detailsModal = document.getElementById("detailsModal");
-
-const detailsModalTitle = document.getElementById(
-  "detailsModalTitle"
-);
-
-const detailsModalReference = document.getElementById(
-  "detailsModalReference"
-);
-
-const detailsModalBody = document.getElementById(
-  "detailsModalBody"
-);
-
-const closeDetailsModal = document.getElementById(
-  "closeDetailsModal"
-);
-
-const closeDetailsModalFooter = document.getElementById(
-  "closeDetailsModalFooter"
-);
-
-let previousFocusedElement = null;
-    /* =====================================
-       BLOCO JS 3 — ESTADO DA APLICAÇÃO
-    ===================================== */
-
-    let currentUser = null;
-
-    let authResolved = false;
-
-    let requests = [];
-
-    let isLoading = false;
-
-    let loadError = false;
-
-    let authMessageShown = false;
-
-
-    /* =====================================
-       BLOCO JS 4 — UTILITÁRIOS
-    ===================================== */
-
-    document.getElementById("currentYear").textContent =
-      new Date().getFullYear();
-
-
-    function escapeHTML(value) {
-
-      return String(value ?? "").replace(/[&<>"']/g, function(character) {
-
-        const entities = {
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          '"': "&quot;",
-          "'": "&#039;"
-        };
-
-        return entities[character];
-
-      });
-
-    }
-
-
-    function normalizeText(value) {
-
-      return String(value ?? "")
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .toLowerCase()
-        .trim();
-
-    }
-
-
-    function getTimestamp(value) {
-
-      if (!value) {
-        return 0;
-      }
-
-      if (typeof value.toMillis === "function") {
-        return value.toMillis();
-      }
-
-      if (value instanceof Date) {
-        return value.getTime();
-      }
-
-      if (typeof value.seconds === "number") {
-        return value.seconds * 1000;
-      }
-
-      if (typeof value === "number") {
-        return value;
-      }
-
-      return 0;
-
-    }
-
-
-    function formatDate(value) {
-
-      const timestamp = getTimestamp(value);
-
-      if (!timestamp) {
-        return "Data não disponível";
-      }
-
-      const date = new Date(timestamp);
-
-      if (Number.isNaN(date.getTime())) {
-        return "Data não disponível";
-      }
-
-      return new Intl.DateTimeFormat("pt-PT", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-      }).format(date);
-
-    }
-
-
-    function getReference(request) {
-
-      const prefix =
-        request.type === "reclamacao" ? "REC-" : "AJ-";
-
-      return prefix +
-        String(request.id).slice(-8).toUpperCase();
-
-    }
-
-
-    /* =====================================
-       BLOCO JS 5 — ESTADOS
-    ===================================== */
-
-    function getStatusInfo(statusValue) {
-
-      const status = normalizeText(statusValue);
-
-      if (
-        status === "resolvido" ||
-        status === "resolvida" ||
-        status === "resolved" ||
-        status === "concluido" ||
-        status === "concluida" ||
-        status === "fechado" ||
-        status === "fechada"
-      ) {
-
-        return {
-          label: "Resolvido",
-          className: "resolved",
-          group: "resolvido",
-          icon: "check_circle"
-        };
-
-      }
-
-      if (
-        status === "respondido" ||
-        status === "respondida" ||
-        status === "answered"
-      ) {
-
-        return {
-          label: "Respondido",
-          className: "answered",
-          group: "respondido",
-          icon: "mark_email_read"
-        };
-
-      }
-
-      if (
-        status === "em analise" ||
-        status === "em análise" ||
-        status === "em tratamento" ||
-        status === "in progress" ||
-        status === "em andamento"
-      ) {
-
-        return {
-          label: "Em análise",
-          className: "analysis",
-          group: "analise",
-          icon: "manage_search"
-        };
-
-      }
-
-      if (
-        status === "rejeitado" ||
-        status === "rejeitada" ||
-        status === "rejected"
-      ) {
-
-        return {
-          label: "Rejeitado",
-          className: "rejected",
-          group: "rejeitado",
-          icon: "cancel"
-        };
-
-      }
-
-      if (
-        status === "pendente" ||
-        status === "pending" ||
-        status === ""
-      ) {
-
-        return {
-          label: "Pendente",
-          className: "pending",
-          group: "pendente",
-          icon: "schedule"
-        };
-
-      }
-
-      return {
-        label: String(statusValue || "Em acompanhamento"),
-        className: "neutral",
-        group: "outro",
-        icon: "info"
-      };
-
-    }
-
-
-    function getTypeInfo(type) {
-
-      if (type === "reclamacao") {
-
-        return {
-          label: "Reclamação",
-          className: "complaint",
-          icon: "campaign"
-        };
-
-      }
-
-      return {
-        label: "Pedido de ajuda",
-        className: "help",
-        icon: "help"
-      };
-
-    }
-
-
-    /* =====================================
-       BLOCO JS 6 — INTERFACE DE ESTADO
-    ===================================== */
-
-    function showConnection(connected, text) {
-
-      connectionText.textContent = text;
-
-      connectionDot.className = "status-dot";
-
-      if (connected) {
-
-        connectionDot.classList.add("connected");
-
-      } else if (text === "Erro de ligação") {
-
-        connectionDot.classList.add("error");
-
-      }
-
-    }
-
-
-    function showState(title, description, icon, error = false) {
-
-      requestsList.innerHTML = `
-        <div class="state-box ${error ? "error" : ""}">
-
-          <div class="state-icon">
-            <span class="material-symbols-rounded">
-              ${escapeHTML(icon)}
-            </span>
-          </div>
-
-          <h3>${escapeHTML(title)}</h3>
-
-          <p>${escapeHTML(description)}</p>
-
-        </div>
-      `;
-
-    }
-
-
-    function showLoading() {
-
-      requestsList.innerHTML = `
-        <div class="state-box">
-
-          <div class="spinner"></div>
-
-          <h3 style="margin-top:18px;">
-            A carregar os seus pedidos...
-          </h3>
-
-          <p>
-            Aguarde enquanto consultamos as informações da sua conta.
-          </p>
-
-        </div>
-      `;
-
-    }
-
-
-    /* =====================================
-       BLOCO JS 7 — CARREGAR PEDIDOS
-    ===================================== */
-
-    async function loadRequests() {
-
-      if (!currentUser || isLoading) {
-        return;
-      }
-
-      isLoading = true;
-      loadError = false;
-
-      refreshButton.disabled = true;
-
-      refreshButton.innerHTML = `
-        <span class="spinner"
-              style="width:15px;height:15px;margin:0;border-width:2px;">
-        </span>
-        A atualizar...
-      `;
-
-      showLoading();
-
-      showConnection(true, "A consultar os pedidos");
-
-
-      try {
-
-        /*
-          Consulta apenas os pedidos do utilizador autenticado.
-
-          Não usamos orderBy no Firestore:
-          a ordenação será feita localmente para evitar exigir
-          um índice composto para esta consulta.
-        */
-
-        const requestsQuery = query(
-          collection(db, "supportRequests"),
-          where("userId", "==", currentUser.uid)
-        );
-
-        const snapshot = await getDocs(requestsQuery);
-
-        const loadedRequests = [];
-
-        snapshot.forEach(function(documentSnapshot) {
-
-          const data = documentSnapshot.data();
-
-          loadedRequests.push({
-
-            ...data,
-
-            id: documentSnapshot.id
-
-          });
-
-        });
-
-
-        /*
-          Os pedidos mais recentes aparecem primeiro.
-        */
-
-        loadedRequests.sort(function(a, b) {
-
-          return getTimestamp(b.createdAt) -
-                 getTimestamp(a.createdAt);
-
-        });
-
-
-        requests = loadedRequests;
-
-        loadError = false;
-
-        updateStatistics();
-
-        renderRequests();
-
-        showConnection(true, "Ligação ativa");
-
-
-      } catch (error) {
-
-        console.error(
-          "Erro ao carregar os pedidos de suporte:",
-          error
-        );
-
-        loadError = true;
-
-        showConnection(false, "Erro de ligação");
-
-        totalCount.textContent = "—";
-        pendingCount.textContent = "—";
-        answeredCount.textContent = "—";
-        resolvedCount.textContent = "—";
-
-        showState(
-          "Não foi possível carregar os pedidos",
-          "Verifique a ligação à internet. Se o problema continuar, confirme as regras de acesso da coleção supportRequests no Firebase.",
-          "cloud_off",
-          true
-        );
-
-        resultsCount.textContent =
-          "Não foi possível carregar os resultados.";
-
-      } finally {
-
-        isLoading = false;
-
-        refreshButton.disabled = false;
-
-        refreshButton.innerHTML = `
-          <span class="material-symbols-rounded">refresh</span>
-          Atualizar
-        `;
-
-      }
-
-    }
-
-
-    /* =====================================
-       BLOCO JS 8 — ESTATÍSTICAS
-    ===================================== */
-
-    function updateStatistics() {
-
-      const total = requests.length;
-
-      let pending = 0;
-      let answered = 0;
-      let resolved = 0;
-
-      requests.forEach(function(request) {
-
-        const status = getStatusInfo(request.status);
-
-        if (
-          status.group === "pendente" ||
-          status.group === "analise"
-        ) {
-
-          pending++;
-
-        }
-
-        if (status.group === "respondido") {
-
-          answered++;
-
-        }
-
-        if (
-          status.group === "resolvido" ||
-          status.group === "rejeitado"
-        ) {
-
-          resolved++;
-
-        }
-
-      });
-
-
-      totalCount.textContent = total;
-
-      pendingCount.textContent = pending;
-
-      answeredCount.textContent = answered;
-
-      resolvedCount.textContent = resolved;
-
-    }
-
-
-    /* =====================================
-       BLOCO JS 9 — FILTRAR PEDIDOS
-    ===================================== */
-
-    function getFilteredRequests() {
-
-      const search = normalizeText(searchInput.value);
-
-      const selectedType = typeFilter.value;
-
-      const selectedStatus = statusFilter.value;
-
-
-      return requests.filter(function(request) {
-
-        const reference = getReference(request);
-
-        const searchableText = normalizeText([
-
-          request.subject,
-
-          request.description,
-
-          request.category,
-
-          request.orderNumber,
-
-          reference,
-
-          request.type
-
-        ].join(" "));
-
-
-        const matchesSearch =
-          !search || searchableText.includes(search);
-
-
-        const matchesType =
-          selectedType === "todos" ||
-          request.type === selectedType;
-
-
-        const status = getStatusInfo(request.status);
-
-        const matchesStatus =
-          selectedStatus === "todos" ||
-          status.group === selectedStatus;
-
-
-        return matchesSearch &&
-               matchesType &&
-               matchesStatus;
-
-      });
-
-    }
-
-
-    /* =====================================
-       BLOCO JS 10 — RENDERIZAR LISTA
-    ===================================== */
-
-    function renderRequests() {
-
-      if (loadError) {
-        return;
-      }
-
-      const filteredRequests = getFilteredRequests();
-
-
-      if (requests.length === 0) {
-
-        showState(
-          "Ainda não tem pedidos",
-          "Quando enviar um pedido de ajuda ou uma reclamação, poderá acompanhar aqui o respetivo estado.",
-          "inbox"
-        );
-
-        resultsCount.textContent = "0 pedidos registados";
-
-        return;
-
-      }
-
-
-      if (filteredRequests.length === 0) {
-
-        showState(
-          "Nenhum resultado encontrado",
-          "Não encontrámos pedidos com os filtros selecionados. Experimente alterar a pesquisa ou os filtros.",
-          "search_off"
-        );
-
-        resultsCount.textContent =
-          "0 resultados de " + requests.length + " pedidos";
-
-        return;
-
-      }
-
-
-      requestsList.innerHTML = filteredRequests.map(function(request) {
-
-        const typeInfo = getTypeInfo(request.type);
-
-        const statusInfo = getStatusInfo(request.status);
-
-        const reference = getReference(request);
-
-        const category = request.category || "Geral";
-
-        const subject = request.subject || "Pedido sem assunto";
-
-        const description =
-          request.description || "Sem descrição disponível.";
-
-        const orderNumber = request.orderNumber || "";
-
-        const priority = request.priority || "Normal";
-
-        const isHighPriority =
-          normalizeText(priority) === "alta";
-
-
-        /*
-          A referência identifica o pedido.
-
-          O botão de conversa será ligado à futura área
-          de mensagens quando a página de administração
-          e as regras da conversa estiverem implementadas.
-        */
-
-        return `
-
-          <article class="request-item">
-
-            <div class="request-main">
-
-              <div class="request-content">
-
-                <div class="request-topline">
-
-                  <span class="type-badge ${typeInfo.className}">
-
-                    <span class="material-symbols-rounded"
-                          style="font-size:15px;">
-                      ${typeInfo.icon}
-                    </span>
-
-                    ${typeInfo.label}
-
-                  </span>
-
-                  <span class="request-reference">
-                    ${escapeHTML(reference)}
-                  </span>
-
-                </div>
-
-
-                <h3 class="request-title">
-                  ${escapeHTML(subject)}
-                </h3>
-
-
-                <p class="request-description">
-                  ${escapeHTML(description)}
-                </p>
-
-
-                <div class="request-meta">
-
-                  <span class="meta-item">
-
-                    <span class="material-symbols-rounded">
-                      category
-                    </span>
-
-                    ${escapeHTML(category)}
-
-                  </span>
-
-
-                  <span class="meta-item">
-
-                    <span class="material-symbols-rounded">
-                      calendar_month
-                    </span>
-
-                    ${escapeHTML(formatDate(request.createdAt))}
-
-                  </span>
-
-
-                  ${
-                    orderNumber
-                    ? `
-                      <span class="meta-item">
-
-                        <span class="material-symbols-rounded">
-                          receipt_long
-                        </span>
-
-                        ${escapeHTML(orderNumber)}
-
-                      </span>
-                    `
-                    : ""
-                  }
-
-                </div>
-
-
-                <div class="request-actions">
-
-                  <button
-                    class="request-button"
-                    type="button"
-                    data-action="details"
-                    data-id="${escapeHTML(request.id)}"
-                  >
-
-                    <span class="material-symbols-rounded">
-                      visibility
-                    </span>
-
-                    Ver detalhes
-
-                  </button>
-
-                </div>
-
-              </div>
-
-
-              <div class="request-side">
-
-                <span class="status-badge ${statusInfo.className}">
-
-                  <span class="material-symbols-rounded"
-                        style="font-size:16px;">
-                    ${statusInfo.icon}
-                  </span>
-
-                  ${escapeHTML(statusInfo.label)}
-
-                </span>
-
-
-                <span class="priority-label ${isHighPriority ? "high" : ""}">
-
-                  <span class="material-symbols-rounded"
-                        style="font-size:15px;">
-                    ${isHighPriority ? "priority_high" : "flag"}
-                  </span>
-
-                  Prioridade ${isHighPriority ? "alta" : "normal"}
-
-                </span>
-
-              </div>
-
-            </div>
-
-          </article>
-
-        `;
-
-      }).join("");
-
-
-      resultsCount.textContent =
-        filteredRequests.length +
-        (filteredRequests.length === 1
-          ? " pedido apresentado"
-          : " pedidos apresentados") +
-        " de " + requests.length;
-
-    }
-
-
-/* =====================================
-   BLOCO JS 11 — DETALHES E RESPOSTA
-===================================== */
-
-/*
-  Abre uma janela profissional com os detalhes
-  completos e a resposta da equipa Toma.
-
-  A resposta existente em adminResponse é utilizada
-  sem criar uma nova coleção ou alterar o esquema.
-*/
-
-
-function closeDetailsWindow() {
-
-  detailsModal.classList.remove("open");
-
-  detailsModal.setAttribute("aria-hidden", "true");
-
-  document.body.classList.remove("modal-open");
-
-  if (previousFocusedElement) {
-    previousFocusedElement.focus();
-  }
-
-}
-
-
-/*
-  Apresenta os detalhes de um pedido.
-*/
-
-function openRequestDetails(request, button) {
-
-  if (!request) {
-
-    alert(
-      "Não foi possível encontrar os detalhes deste pedido."
-    );
-
-    return;
-
-  }
-
-
-  previousFocusedElement = button || document.activeElement;
-
-
-  const reference = getReference(request);
-
-  const typeInfo = getTypeInfo(request.type);
-
-  const statusInfo = getStatusInfo(request.status);
-
-
-  const subject =
-    request.subject || "Pedido sem assunto";
-
-  const description =
-    request.description || "Sem descrição disponível.";
-
-  const category =
-    request.category || "Geral";
-
-  const orderNumber =
-    request.orderNumber || "Não indicada";
-
-  const priority =
-    request.priority || "Normal";
-
-
-  /*
-    A resposta é guardada pelo admin-support.html
-    no campo adminResponse.
-  */
-
-  const adminResponse = String(
-    request.adminResponse || ""
-  ).trim();
-
-
-  const adminResponseBy = String(
-    request.adminResponseBy || ""
-  ).trim();
-
-
-  const responseTimestamp =
-    request.adminResponseAt || null;
-
-
-  const hasResponse = adminResponse.length > 0;
-
-
-  /*
-    Título e referência.
-  */
-
-  detailsModalTitle.textContent = subject;
-
-  detailsModalReference.textContent = reference;
-
-
-  /*
-    Conteúdo do modal.
-    Todos os dados dinâmicos são escapados para
-    evitar interpretar texto do utilizador como HTML.
-  */
-
-  detailsModalBody.innerHTML = `
-
-    <div class="details-status-row">
-
-      <span class="type-badge ${typeInfo.className}">
-
-        <span
-          class="material-symbols-rounded"
-          style="font-size:16px;"
+  <section class="panel">
+
+    <div class="panel-header">
+      <div>
+        <h2 class="panel-title">Histórico dos pedidos</h2>
+        <p class="panel-subtitle">
+          Consulte os detalhes e as respostas da administração.
+        </p>
+      </div>
+
+      <button type="button" class="refresh-button" id="refreshButton">
+        ↻ Atualizar
+      </button>
+    </div>
+
+    <div class="filters">
+
+      <div class="field">
+        <label for="searchInput">Pesquisar</label>
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Referência, assunto ou descrição..."
+          autocomplete="off"
         >
-          ${typeInfo.icon}
-        </span>
+      </div>
 
-        ${escapeHTML(typeInfo.label)}
+      <div class="field">
+        <label for="typeFilter">Tipo de pedido</label>
+        <select id="typeFilter">
+          <option value="todos">Todos os tipos</option>
+          <option value="ajuda">Pedidos de ajuda</option>
+          <option value="reclamacao">Reclamações</option>
+        </select>
+      </div>
 
-      </span>
-
-
-      <span class="status-badge ${statusInfo.className}">
-
-        <span
-          class="material-symbols-rounded"
-          style="font-size:16px;"
-        >
-          ${statusInfo.icon}
-        </span>
-
-        ${escapeHTML(statusInfo.label)}
-
-      </span>
+      <div class="field">
+        <label for="statusFilter">Estado</label>
+        <select id="statusFilter">
+          <option value="todos">Todos os estados</option>
+          <option value="Pendente">Pendente</option>
+          <option value="Em análise">Em análise</option>
+          <option value="Respondido">Respondido</option>
+          <option value="Resolvido">Resolvido</option>
+          <option value="Rejeitado">Rejeitado</option>
+        </select>
+      </div>
 
     </div>
 
+    <div class="requests-list" id="requestsList" aria-live="polite">
 
-    <section class="details-section">
+      <div class="state-box">
+        <div class="state-icon">⏳</div>
+        <h3>A carregar os seus pedidos...</h3>
+        <p>Aguarde enquanto consultamos os seus dados.</p>
+      </div>
 
-      <h3 class="details-section-title">
+    </div>
 
-        <span class="material-symbols-rounded">
-          receipt_long
-        </span>
+  </section>
 
-        Informações do pedido
+  <section class="cta-grid">
 
-      </h3>
+    <a href="ajuda.html" class="cta-card">
+      <div class="cta-icon" aria-hidden="true">💬</div>
 
+      <div>
+        <h3>Novo pedido de ajuda</h3>
+        <p>Precisa de assistência? Envie uma mensagem à equipa Toma.</p>
+      </div>
 
-      <div class="details-info-grid">
+      <span class="cta-arrow" aria-hidden="true">›</span>
+    </a>
 
-        <div class="details-info-item">
+    <a href="reclamacao.html" class="cta-card">
+      <div class="cta-icon" aria-hidden="true">📝</div>
 
-          <span class="details-info-label">
-            Categoria
-          </span>
+      <div>
+        <h3>Apresentar reclamação</h3>
+        <p>Registe um problema e acompanhe o seu tratamento.</p>
+      </div>
 
-          <span class="details-info-value">
-            ${escapeHTML(category)}
-          </span>
+      <span class="cta-arrow" aria-hidden="true">›</span>
+    </a>
 
+  </section>
+
+  <footer class="footer">
+    <strong>Toma</strong> — Estamos aqui para ajudar.<br>
+    Os seus pedidos são apresentados apenas à sua conta.
+  </footer>
+
+</main>
+
+<!-- A segunda parte começa aqui, imediatamente depois deste comentário. -->
+ <!-- MODAL DE DETALHES DO PEDIDO -->
+
+<div
+  class="modal-overlay"
+  id="detailsModal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="modalTitle"
+  aria-hidden="true"
+>
+  <div class="modal">
+
+    <div class="modal-header">
+      <div>
+        <div class="modal-eyebrow" id="modalReference">PEDIDO DE SUPORTE</div>
+        <h2 id="modalTitle">Detalhes do pedido</h2>
+      </div>
+
+      <button
+        type="button"
+        class="modal-close"
+        id="closeModalButton"
+        aria-label="Fechar detalhes"
+      >×</button>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="modal-info-grid">
+
+        <div class="modal-info">
+          <div class="modal-info-label">Tipo de pedido</div>
+          <div class="modal-info-value" id="modalType">—</div>
         </div>
 
-
-        <div class="details-info-item">
-
-          <span class="details-info-label">
-            Prioridade
-          </span>
-
-          <span class="details-info-value">
-            ${escapeHTML(priority)}
-          </span>
-
+        <div class="modal-info">
+          <div class="modal-info-label">Estado atual</div>
+          <div class="modal-info-value" id="modalStatus">—</div>
         </div>
 
-
-        <div class="details-info-item">
-
-          <span class="details-info-label">
-            Número da encomenda
-          </span>
-
-          <span class="details-info-value">
-            ${escapeHTML(orderNumber)}
-          </span>
-
+        <div class="modal-info">
+          <div class="modal-info-label">Data de criação</div>
+          <div class="modal-info-value" id="modalCreatedAt">—</div>
         </div>
 
+        <div class="modal-info">
+          <div class="modal-info-label">Número do pedido</div>
+          <div class="modal-info-value" id="modalOrderNumber">—</div>
+        </div>
 
-        <div class="details-info-item">
+        <div class="modal-info">
+          <div class="modal-info-label">Categoria</div>
+          <div class="modal-info-value" id="modalCategory">—</div>
+        </div>
 
-          <span class="details-info-label">
-            Data de criação
-          </span>
-
-          <span class="details-info-value">
-            ${escapeHTML(formatDate(request.createdAt))}
-          </span>
-
+        <div class="modal-info">
+          <div class="modal-info-label">Prioridade</div>
+          <div class="modal-info-value" id="modalPriority">—</div>
         </div>
 
       </div>
 
-    </section>
+      <section class="modal-section">
+        <h3>Descrição do pedido</h3>
+        <div class="modal-text" id="modalDescription">—</div>
+      </section>
 
+      <section class="modal-section">
+        <h3>Resposta da equipa Toma</h3>
 
-    <section class="details-section">
-
-      <h3 class="details-section-title">
-
-        <span class="material-symbols-rounded">
-          description
-        </span>
-
-        Descrição completa
-
-      </h3>
-
-
-      <div class="details-description">${escapeHTML(description)}</div>
-
-    </section>
-
-
-    <section class="details-section">
-
-      <h3 class="details-section-title">
-
-        <span class="material-symbols-rounded">
-          mark_email_read
-        </span>
-
-        Resposta da equipa Toma
-
-      </h3>
-
-
-      ${
-        hasResponse
-        ? `
-
-          <div class="details-response">
-
-            <div class="details-response-title">
-
-              <span class="material-symbols-rounded">
-                check_circle
-              </span>
-
-              A equipa Toma respondeu
-
-            </div>
-
-
-            <p class="details-response-message">${escapeHTML(adminResponse)}</p>
-
-
-            <div class="details-response-meta">
-
-              <span class="material-symbols-rounded">
-                schedule
-              </span>
-
-              <span>
-                ${
-                  responseTimestamp
-                  ? "Respondido em " + escapeHTML(
-                      formatDate(responseTimestamp)
-                    )
-                  : "Resposta registada"
-                }
-              </span>
-
-
-              ${
-                adminResponseBy
-                ? `
-                  <span>·</span>
-
-                  <span>
-                    ${escapeHTML(adminResponseBy)}
-                  </span>
-                `
-                : ""
-              }
-
-            </div>
-
+        <div class="admin-response hidden" id="adminResponseBox">
+          <div class="admin-response-heading">
+            <span class="admin-response-icon" aria-hidden="true">✓</span>
+            <span>Resposta da administração</span>
           </div>
 
-        `
-        : `
+          <div class="admin-response-text" id="modalAdminResponse"></div>
 
-          <div class="details-response pending">
+          <div class="admin-response-date" id="modalResponseDate"></div>
+        </div>
 
-            <div class="details-response-title">
+        <div class="no-response hidden" id="noResponseBox">
+          A equipa Toma ainda não enviou uma resposta para este pedido.
+          Volte a consultar esta página mais tarde.
+        </div>
+      </section>
 
-              <span class="material-symbols-rounded">
-                schedule
-              </span>
+    </div>
 
-              Aguardamos uma resposta
+    <div class="modal-footer">
+      <button type="button" id="modalDoneButton">Fechar detalhes</button>
+    </div>
 
-            </div>
+  </div>
+</div>
 
+<script type="module">
+import { auth, db } from "./firebase.js";
 
-            <p class="details-response-message">
-              O seu pedido foi registado com sucesso.
-              A equipa Toma ainda não registou uma resposta
-              neste pedido. Pode voltar a consultar esta página
-              mais tarde para verificar as atualizações.
-            </p>
+import {
+  collection,
+  getDocs,
+  query,
+  where
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-          </div>
-
-        `
-      }
-
-    </section>
-
-  `;
+import {
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 
-  /*
-    Mostrar o modal.
-  */
+/* =====================================================
+   BLOCO 1 — ELEMENTOS E ESTADO DA PÁGINA
+===================================================== */
+
+const accountEmail = document.getElementById("accountEmail");
+const connectionStatus = document.getElementById("connectionStatus");
+const connectionText = document.getElementById("connectionText");
+
+const requestsList = document.getElementById("requestsList");
+const refreshButton = document.getElementById("refreshButton");
+
+const searchInput = document.getElementById("searchInput");
+const typeFilter = document.getElementById("typeFilter");
+const statusFilter = document.getElementById("statusFilter");
+
+const statTotal = document.getElementById("statTotal");
+const statPending = document.getElementById("statPending");
+const statAnswered = document.getElementById("statAnswered");
+const statResolved = document.getElementById("statResolved");
+
+const detailsModal = document.getElementById("detailsModal");
+const closeModalButton = document.getElementById("closeModalButton");
+const modalDoneButton = document.getElementById("modalDoneButton");
+
+let currentUser = null;
+let allRequests = [];
+let activeRequest = null;
+let loadingRequests = false;
+let authResolved = false;
+let loadVersion = 0;
+let previousFocusElement = null;
+
+
+/* =====================================================
+   BLOCO 2 — FUNÇÕES DE SEGURANÇA E FORMATAÇÃO
+===================================================== */
+
+// Escapa valores quando precisamos gerar HTML dinâmico.
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, character => {
+    const entities = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    };
+
+    return entities[character];
+  });
+}
+
+
+// Insere texto como texto, nunca como HTML.
+function setText(element, value, fallback = "—") {
+  if (!element) return;
+
+  const text = String(value ?? "").trim();
+  element.textContent = text || fallback;
+}
+
+
+// Converte timestamps do Firestore em datas legíveis.
+function formatDate(value) {
+  if (!value) return "Data não disponível";
+
+  let date = null;
+
+  if (typeof value.toDate === "function") {
+    date = value.toDate();
+  } else if (value instanceof Date) {
+    date = value;
+  } else if (
+    typeof value === "string" ||
+    typeof value === "number"
+  ) {
+    date = new Date(value);
+  }
+
+  if (!date || Number.isNaN(date.getTime())) {
+    return "Data não disponível";
+  }
+
+  return new Intl.DateTimeFormat("pt-PT", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  }).format(date);
+}
+
+
+// Normaliza o texto para as pesquisas.
+function normalizeText(value) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+
+// Gera a referência visível do pedido.
+function getReference(request) {
+  const id = String(request.id || "");
+  const suffix = id.slice(-8).toUpperCase();
+
+  return request.type === "reclamacao"
+    ? `REC-${suffix}`
+    : `AJ-${suffix}`;
+}
+
+
+// Normaliza o estado para permitir diferentes grafias.
+function normalizeStatus(status) {
+  const normalized = normalizeText(status);
+
+  if (normalized === "pendente") return "Pendente";
+  if (normalized === "em analise") return "Em análise";
+  if (normalized === "respondido") return "Respondido";
+  if (normalized === "resolvido") return "Resolvido";
+  if (normalized === "rejeitado") return "Rejeitado";
+
+  return String(status || "Pendente");
+}
+
+
+// Determina a classe visual de cada estado.
+function getStatusClass(status) {
+  switch (normalizeStatus(status)) {
+    case "Pendente":
+      return "badge-pending";
+
+    case "Em análise":
+      return "badge-progress";
+
+    case "Respondido":
+      return "badge-answered";
+
+    case "Resolvido":
+      return "badge-resolved";
+
+    case "Rejeitado":
+      return "badge-rejected";
+
+    default:
+      return "badge-neutral";
+  }
+}
+
+
+// Mantém o indicador de ligação atualizado.
+function setConnection(state, message) {
+  connectionStatus.classList.remove("online", "error");
+
+  if (state === "online") {
+    connectionStatus.classList.add("online");
+  }
+
+  if (state === "error") {
+    connectionStatus.classList.add("error");
+  }
+
+  connectionText.textContent = message;
+}
+
+
+/* =====================================================
+   BLOCO 3 — ESTATÍSTICAS
+===================================================== */
+
+function updateStatistics() {
+  const total = allRequests.length;
+
+  const pending = allRequests.filter(request => {
+    const status = normalizeStatus(request.status);
+
+    return status === "Pendente" || status === "Em análise";
+  }).length;
+
+  const answered = allRequests.filter(request => {
+    return Boolean(
+      String(request.adminResponse ?? "").trim()
+    ) || normalizeStatus(request.status) === "Respondido";
+  }).length;
+
+  const resolved = allRequests.filter(request => {
+    return normalizeStatus(request.status) === "Resolvido";
+  }).length;
+
+  statTotal.textContent = total;
+  statPending.textContent = pending;
+  statAnswered.textContent = answered;
+  statResolved.textContent = resolved;
+}
+
+
+/* =====================================================
+   BLOCO 4 — ESTADOS DE CARREGAMENTO E ERRO
+===================================================== */
+
+function showState(icon, title, message, showRetry = false) {
+  requestsList.replaceChildren();
+
+  const box = document.createElement("div");
+  box.className = "state-box";
+
+  const iconElement = document.createElement("div");
+  iconElement.className = "state-icon";
+  iconElement.textContent = icon;
+
+  const heading = document.createElement("h3");
+  heading.textContent = title;
+
+  const paragraph = document.createElement("p");
+  paragraph.textContent = message;
+
+  box.append(iconElement, heading, paragraph);
+
+  if (showRetry) {
+    const retryButton = document.createElement("button");
+    retryButton.type = "button";
+    retryButton.textContent = "Tentar novamente";
+
+    retryButton.addEventListener("click", () => {
+      loadRequests();
+    });
+
+    box.appendChild(retryButton);
+  }
+
+  requestsList.appendChild(box);
+}
+
+
+/* =====================================================
+   BLOCO 5 — CARREGAR OS PEDIDOS DO CLIENTE
+===================================================== */
+
+async function loadRequests() {
+  if (!currentUser) {
+    return;
+  }
+
+  if (loadingRequests) {
+    return;
+  }
+
+  loadingRequests = true;
+
+  const thisLoad = ++loadVersion;
+
+  refreshButton.disabled = true;
+  refreshButton.textContent = "A atualizar...";
+
+  showState(
+    "⏳",
+    "A carregar os seus pedidos...",
+    "Estamos a consultar o histórico da sua conta."
+  );
+
+  try {
+    const requestsQuery = query(
+      collection(db, "supportRequests"),
+      where("userId", "==", currentUser.uid)
+    );
+
+    const snapshot = await getDocs(requestsQuery);
+
+    // Evita apresentar resultados de uma sessão antiga.
+    if (
+      thisLoad !== loadVersion ||
+      !currentUser
+    ) {
+      return;
+    }
+
+    allRequests = snapshot.docs.map(documentSnapshot => ({
+      id: documentSnapshot.id,
+      ...documentSnapshot.data()
+    }));
+
+    // Ordena localmente para evitar exigir um índice composto.
+    allRequests.sort((a, b) => {
+      const dateA = getDateMilliseconds(a.createdAt);
+      const dateB = getDateMilliseconds(b.createdAt);
+
+      return dateB - dateA;
+    });
+
+    updateStatistics();
+    renderRequests();
+
+    setConnection("online", "Ligação ativa");
+
+  } catch (error) {
+    console.error("Erro ao carregar pedidos de suporte:", error);
+
+    if (thisLoad !== loadVersion) {
+      return;
+    }
+
+    setConnection("error", "Erro de ligação");
+
+    showState(
+      "⚠️",
+      "Não foi possível carregar os pedidos",
+      "Verifique a sua ligação à Internet e tente novamente. Se o problema continuar, confirme as regras de acesso da coleção supportRequests no Firebase.",
+      true
+    );
+
+  } finally {
+    if (thisLoad === loadVersion) {
+      loadingRequests = false;
+
+      refreshButton.disabled = false;
+      refreshButton.textContent = "↻ Atualizar";
+    }
+  }
+}
+
+
+function getDateMilliseconds(value) {
+  if (!value) return 0;
+
+  if (typeof value.toMillis === "function") {
+    return value.toMillis();
+  }
+
+  if (typeof value.toDate === "function") {
+    return value.toDate().getTime();
+  }
+
+  const date = new Date(value);
+
+  return Number.isNaN(date.getTime())
+    ? 0
+    : date.getTime();
+}
+
+
+/* =====================================================
+   BLOCO 6 — PESQUISA E FILTROS
+===================================================== */
+
+function getFilteredRequests() {
+  const searchTerm = normalizeText(searchInput.value);
+  const selectedType = typeFilter.value;
+  const selectedStatus = statusFilter.value;
+
+  return allRequests.filter(request => {
+    const reference = getReference(request);
+
+    const searchableText = normalizeText([
+      reference,
+      request.subject,
+      request.description,
+      request.category,
+      request.orderNumber,
+      request.adminResponse
+    ].join(" "));
+
+    const matchesSearch =
+      !searchTerm || searchableText.includes(searchTerm);
+
+    const matchesType =
+      selectedType === "todos" ||
+      request.type === selectedType;
+
+    const matchesStatus =
+      selectedStatus === "todos" ||
+      normalizeStatus(request.status) === selectedStatus;
+
+    return matchesSearch && matchesType && matchesStatus;
+  });
+}
+
+
+/* =====================================================
+   BLOCO 7 — CONSTRUIR OS CARTÕES DOS PEDIDOS
+===================================================== */
+
+function renderRequests() {
+  const filteredRequests = getFilteredRequests();
+
+  requestsList.replaceChildren();
+
+  if (allRequests.length === 0) {
+    showState(
+      "📭",
+      "Ainda não tem pedidos",
+      "Quando enviar um pedido de ajuda ou uma reclamação, poderá acompanhar tudo nesta página."
+    );
+
+    return;
+  }
+
+  if (filteredRequests.length === 0) {
+    showState(
+      "🔎",
+      "Nenhum resultado encontrado",
+      "Experimente alterar a pesquisa ou selecionar outros filtros."
+    );
+
+    return;
+  }
+
+  const fragment = document.createDocumentFragment();
+
+  filteredRequests.forEach(request => {
+    const card = document.createElement("article");
+    card.className = "request-card";
+
+    const top = document.createElement("div");
+    top.className = "request-top";
+
+    const main = document.createElement("div");
+    main.style.minWidth = "0";
+
+    const reference = document.createElement("div");
+    reference.className = "request-reference";
+    reference.textContent = getReference(request);
+
+    const title = document.createElement("h3");
+    title.className = "request-title";
+    title.textContent = request.subject || "Pedido sem assunto";
+
+    const description = document.createElement("p");
+    description.className = "request-description";
+
+    const fullDescription = String(
+      request.description || "Sem descrição."
+    );
+
+    description.textContent =
+      fullDescription.length > 160
+        ? fullDescription.slice(0, 160) + "…"
+        : fullDescription;
+
+    main.append(reference, title, description);
+
+    const statusBadge = document.createElement("span");
+    statusBadge.className =
+      `badge ${getStatusClass(request.status)}`;
+
+    statusBadge.textContent = normalizeStatus(request.status);
+
+    top.append(main, statusBadge);
+
+    const meta = document.createElement("div");
+    meta.className = "request-meta";
+
+    const typeSpan = document.createElement("span");
+    typeSpan.textContent =
+      request.type === "reclamacao"
+        ? "📝 Reclamação"
+        : "💬 Pedido de ajuda";
+
+    const dateSpan = document.createElement("span");
+    dateSpan.textContent = `📅 ${formatDate(request.createdAt)}`;
+
+    meta.append(typeSpan, dateSpan);
+
+    const bottom = document.createElement("div");
+    bottom.className = "request-bottom";
+
+    const responseIndicator = document.createElement("div");
+    responseIndicator.className = "response-indicator";
+
+    const hasResponse = Boolean(
+      String(request.adminResponse ?? "").trim()
+    );
+
+    if (hasResponse) {
+      responseIndicator.classList.add("has-response");
+      responseIndicator.textContent = "✓ A administração respondeu";
+    } else {
+      responseIndicator.textContent =
+        "○ Ainda sem resposta da administração";
+    }
+
+    const detailsButton = document.createElement("button");
+    detailsButton.type = "button";
+    detailsButton.className = "details-button";
+    detailsButton.textContent = "Ver detalhes →";
+
+    detailsButton.addEventListener("click", () => {
+      openDetails(request);
+    });
+
+    bottom.append(responseIndicator, detailsButton);
+
+    card.append(top, meta, bottom);
+    fragment.appendChild(card);
+  });
+
+  requestsList.appendChild(fragment);
+}
+
+
+/* =====================================================
+   BLOCO 8 — ABRIR A JANELA DE DETALHES
+===================================================== */
+
+function openDetails(request) {
+  activeRequest = request;
+  previousFocusElement = document.activeElement;
+
+  setText(
+    document.getElementById("modalReference"),
+    getReference(request)
+  );
+
+  setText(
+    document.getElementById("modalTitle"),
+    request.subject || "Detalhes do pedido"
+  );
+
+  setText(
+    document.getElementById("modalType"),
+    request.type === "reclamacao"
+      ? "Reclamação"
+      : "Pedido de ajuda"
+  );
+
+  setText(
+    document.getElementById("modalStatus"),
+    normalizeStatus(request.status)
+  );
+
+  setText(
+    document.getElementById("modalCreatedAt"),
+    formatDate(request.createdAt)
+  );
+
+  setText(
+    document.getElementById("modalOrderNumber"),
+    request.orderNumber || "Não indicado"
+  );
+
+  setText(
+    document.getElementById("modalCategory"),
+    request.category || "Não indicada"
+  );
+
+  setText(
+    document.getElementById("modalPriority"),
+    request.priority || "Normal"
+  );
+
+  setText(
+    document.getElementById("modalDescription"),
+    request.description || "Sem descrição."
+  );
+
+  const responseBox = document.getElementById("adminResponseBox");
+  const noResponseBox = document.getElementById("noResponseBox");
+
+  const responseText = String(
+    request.adminResponse ?? ""
+  ).trim();
+
+  if (responseText) {
+    responseBox.classList.remove("hidden");
+    noResponseBox.classList.add("hidden");
+
+    setText(
+      document.getElementById("modalAdminResponse"),
+      responseText
+    );
+
+    const responseDate = request.adminResponseAt
+      ? `Resposta enviada em ${formatDate(request.adminResponseAt)}`
+      : "Resposta enviada pela equipa Toma.";
+
+    setText(
+      document.getElementById("modalResponseDate"),
+      responseDate
+    );
+  } else {
+    responseBox.classList.add("hidden");
+    noResponseBox.classList.remove("hidden");
+  }
 
   detailsModal.classList.add("open");
-
   detailsModal.setAttribute("aria-hidden", "false");
 
   document.body.classList.add("modal-open");
 
-  closeDetailsModal.focus();
-
+  closeModalButton.focus();
 }
 
 
-/*
-  Evento delegado para o botão Ver detalhes.
-*/
+/* =====================================================
+   BLOCO 9 — FECHAR A JANELA DE DETALHES
+===================================================== */
 
-requestsList.addEventListener("click", function(event) {
-
-  const button = event.target.closest(
-    'button[data-action="details"]'
-  );
-
-  if (!button) {
+function closeDetails() {
+  if (!detailsModal.classList.contains("open")) {
     return;
   }
 
+  detailsModal.classList.remove("open");
+  detailsModal.setAttribute("aria-hidden", "true");
 
-  const requestId = button.dataset.id;
+  document.body.classList.remove("modal-open");
 
+  activeRequest = null;
 
-  /*
-    O pedido tem de existir na lista carregada
-    para o utilizador autenticado.
-  */
-
-  const request = requests.find(function(item) {
-
-    return item.id === requestId;
-
-  });
-
-
-  if (!request) {
-
-    alert(
-      "Não foi possível encontrar os detalhes deste pedido. Atualize a lista e tente novamente."
-    );
-
-    return;
-
+  if (
+    previousFocusElement &&
+    typeof previousFocusElement.focus === "function"
+  ) {
+    previousFocusElement.focus();
   }
+}
+
+closeModalButton.addEventListener("click", closeDetails);
+modalDoneButton.addEventListener("click", closeDetails);
 
 
-  openRequestDetails(request, button);
-
-});
-
-
-/*
-  Fechar através do botão do cabeçalho.
-*/
-
-closeDetailsModal.addEventListener(
-  "click",
-  closeDetailsWindow
-);
-
-
-/*
-  Fechar através do botão do rodapé.
-*/
-
-closeDetailsModalFooter.addEventListener(
-  "click",
-  closeDetailsWindow
-);
-
-
-/*
-  Fechar quando o utilizador toca no fundo escuro.
-*/
-
-detailsModal.addEventListener("click", function(event) {
-
+// Fecha ao tocar fora da janela.
+detailsModal.addEventListener("click", event => {
   if (event.target === detailsModal) {
-
-    closeDetailsWindow();
-
+    closeDetails();
   }
-
 });
 
 
-/*
-  Fechar com a tecla Escape.
-*/
-
-document.addEventListener("keydown", function(event) {
-
+// Fecha com a tecla Escape.
+document.addEventListener("keydown", event => {
   if (
     event.key === "Escape" &&
     detailsModal.classList.contains("open")
   ) {
-
-    closeDetailsWindow();
-
+    closeDetails();
   }
-
 });
 
 
-    /* =====================================
-       BLOCO JS 12 — EVENTOS DOS FILTROS
-    ===================================== */
+/* =====================================================
+   BLOCO 10 — EVENTOS DE PESQUISA, FILTROS E ATUALIZAÇÃO
+===================================================== */
 
-    searchInput.addEventListener("input", renderRequests);
+searchInput.addEventListener("input", renderRequests);
+typeFilter.addEventListener("change", renderRequests);
+statusFilter.addEventListener("change", renderRequests);
 
-    typeFilter.addEventListener("change", renderRequests);
+refreshButton.addEventListener("click", () => {
+  loadRequests();
+});
 
-    statusFilter.addEventListener("change", renderRequests);
 
+/* =====================================================
+   BLOCO 11 — AUTENTICAÇÃO
+===================================================== */
 
-    /* =====================================
-       BLOCO JS 13 — ATUALIZAR MANUALMENTE
-    ===================================== */
+onAuthStateChanged(auth, async user => {
+  authResolved = true;
+  currentUser = user || null;
 
-    refreshButton.addEventListener("click", function() {
+  // Invalida carregamentos iniciados numa sessão anterior.
+  loadVersion++;
+  loadingRequests = false;
 
-      if (!currentUser) {
-        return;
-      }
+  if (!user) {
+    accountEmail.textContent = "Sessão não iniciada";
 
-      loadRequests();
+    setConnection("error", "Não autenticado");
 
+    allRequests = [];
+    updateStatistics();
+
+    showState(
+      "🔐",
+      "Inicie sessão para continuar",
+      "Entre na sua conta Toma para consultar os seus pedidos de suporte."
+    );
+
+    const loginButton = document.createElement("button");
+    loginButton.type = "button";
+    loginButton.textContent = "Iniciar sessão";
+
+    loginButton.addEventListener("click", () => {
+      window.location.href = "login.html";
     });
 
+    requestsList.querySelector(".state-box")?.appendChild(loginButton);
 
-    /* =====================================
-       BLOCO JS 14 — AUTENTICAÇÃO
-    ===================================== */
+    return;
+  }
 
-    onAuthStateChanged(auth, async function(user) {
+  accountEmail.textContent = user.email || "Conta Toma autenticada";
 
-      currentUser = user;
+  setConnection("online", "Sessão autenticada");
 
-      authResolved = true;
-
-
-      if (!user) {
-
-        accountEmail.textContent =
-          "Inicie sessão para consultar os seus pedidos.";
-
-        showConnection(false, "Sessão não iniciada");
-
-        totalCount.textContent = "—";
-        pendingCount.textContent = "—";
-        answeredCount.textContent = "—";
-        resolvedCount.textContent = "—";
-
-        showState(
-          "Inicie sessão na Toma",
-          "Para proteger a sua privacidade, precisa de entrar na sua conta para consultar os seus pedidos de suporte.",
-          "lock"
-        );
-
-        resultsCount.textContent =
-          "Sessão necessária para consultar os pedidos.";
-
-        if (!authMessageShown) {
-
-          authMessageShown = true;
-
-          const loginLink = document.createElement("a");
-
-          loginLink.href = "login.html";
-
-          loginLink.className = "cta-button primary";
-
-          loginLink.style.marginTop = "15px";
-
-          loginLink.textContent = "Entrar na minha conta";
-
-          requestsList.querySelector(".state-box")?.appendChild(
-            loginLink
-          );
-
-        }
-
-        return;
-
-      }
+  await loadRequests();
+});
 
 
-      authMessageShown = false;
+/* =====================================================
+   BLOCO 12 — VERIFICAÇÃO INICIAL
+===================================================== */
 
-      accountEmail.textContent =
-        user.email || "Conta Toma autenticada";
+// Se a página for aberta sem Firebase funcional, apresenta
+// uma mensagem clara em vez de deixar o carregamento parado.
+setTimeout(() => {
+  if (!authResolved) {
+    showState(
+      "⏳",
+      "A verificar a sessão",
+      "Se esta mensagem permanecer, confirme se firebase.js está acessível e se a configuração Firebase está correta."
+    );
+  }
+}, 8000);
 
-      showConnection(true, "Sessão ativa");
-
-      await loadRequests();
-
-    });
-
-
-    /* =====================================
-       BLOCO JS 15 — INICIALIZAÇÃO
-    ===================================== */
-
-    showConnection(false, "A aguardar sessão");
-
-  </script>
+</script>
 
 </body>
 </html>
