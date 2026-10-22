@@ -1,0 +1,2382 @@
+ /* =========================================================
+TOMA SETTINGS V2
+Design professionnel, mobile-first et responsive
+Fichier : /settings-v2.css
+========================================================= */
+
+/* =========================================================
+
+1. VARIABLES ET RÉINITIALISATION
+    ========================================================= */
+
+:root {
+–toma-orange: #ff6a00;
+–toma-orange-dark: #e95e00;
+–toma-orange-light: #fff1e7;
+
+–toma-green: #16a36a;
+–toma-green-light: #e8f8f0;
+
+–toma-blue: #3978e8;
+–toma-blue-light: #edf4ff;
+
+–toma-purple: #8155db;
+–toma-purple-light: #f2edff;
+
+–toma-red: #dc3545;
+–toma-red-light: #fff0f1;
+
+–page-bg: #f6f7fb;
+–surface: #ffffff;
+–surface-soft: #fafbfe;
+
+–text-primary: #1d2433;
+–text-secondary: #697386;
+–text-muted: #929aab;
+
+–border-color: #e9ecf2;
+
+–shadow-soft: 0 5px 20px rgba(31, 42, 68, 0.045);
+–shadow-card: 0 10px 35px rgba(31, 42, 68, 0.065);
+–shadow-modal: 0 25px 80px rgba(20, 28, 45, 0.2);
+
+–radius-small: 12px;
+–radius-medium: 18px;
+–radius-large: 24px;
+–radius-xl: 30px;
+
+–transition: 0.22s ease;
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    }
+
+html {
+scroll-behavior: smooth;
+scroll-padding-top: 24px;
+}
+
+body {
+margin: 0;
+min-height: 100vh;
+background: var(–page-bg);
+color: var(–text-primary);
+font-family: “Inter”, “Poppins”, -apple-system, BlinkMacSystemFont,
+“Segoe UI”, sans-serif;
+font-size: 14px;
+line-height: 1.6;
+-webkit-font-smoothing: antialiased;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+font-family: “Inter”, “Poppins”, -apple-system, BlinkMacSystemFont,
+“Segoe UI”, sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+font-size: inherit;
+}
+
+button,
+a {
+touch-action: manipulation;
+}
+
+button {
+color: inherit;
+}
+
+a {
+color: inherit;
+text-decoration: none;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+outline: 3px solid rgba(255, 106, 0, 0.25);
+outline-offset: 3px;
+}
+
+img {
+display: block;
+max-width: 100%;
+}
+
+[hidden] {
+display: none !important;
+}
+
+.material-symbols-rounded {
+font-family: “Material Symbols Rounded”;
+font-weight: normal;
+font-style: normal;
+font-size: 24px;
+line-height: 1;
+letter-spacing: normal;
+text-transform: none;
+display: inline-block;
+white-space: nowrap;
+word-wrap: normal;
+direction: ltr;
+-webkit-font-feature-settings: “liga”;
+-webkit-font-smoothing: antialiased;
+font-feature-settings: “liga”;
+font-variation-settings: “FILL” 0, “wght” 400, “GRAD” 0, “opsz” 24;
+}
+
+/* =========================================================
+2. CHARGEMENT INITIAL
+========================================================= */
+
+.loading-screen {
+position: fixed;
+inset: 0;
+z-index: 2000;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 18px;
+padding: 24px;
+background: var(–page-bg);
+}
+
+.loading-logo,
+.footer-logo,
+.header-brand,
+.auth-modal-logo {
+display: grid;
+place-items: center;
+flex-shrink: 0;
+color: #ffffff;
+background: linear-gradient(145deg, #ff8b32, #ff6100);
+font-weight: 800;
+letter-spacing: -2px;
+box-shadow: 0 10px 25px rgba(255, 106, 0, 0.22);
+}
+
+.loading-logo {
+width: 66px;
+height: 66px;
+border-radius: 22px;
+font-size: 38px;
+}
+
+.loading-spinner {
+width: 28px;
+height: 28px;
+border: 3px solid #ffe0ca;
+border-top-color: var(–toma-orange);
+border-radius: 50%;
+animation: tomaSpin 0.8s linear infinite;
+}
+
+.loading-screen p {
+margin: 0;
+color: var(–text-secondary);
+font-size: 13px;
+}
+
+@keyframes tomaSpin {
+to {
+transform: rotate(360deg);
+}
+}
+
+/* =========================================================
+3. EN-TÊTE
+========================================================= */
+
+.settings-header {
+position: relative;
+display: flex;
+align-items: center;
+gap: 16px;
+min-height: 190px;
+padding: 30px max(22px, calc((100% - 1060px) / 2));
+overflow: hidden;
+color: #ffffff;
+background:
+radial-gradient(
+circle at 90% 15%,
+rgba(255, 255, 255, 0.19),
+transparent 24%
+),
+radial-gradient(
+circle at 10% 110%,
+rgba(255, 198, 150, 0.2),
+transparent 35%
+),
+linear-gradient(120deg, #f95e00, #ff790e 65%, #ff8d2e);
+}
+
+.settings-header::before {
+content: “”;
+position: absolute;
+width: 220px;
+height: 220px;
+right: -80px;
+bottom: -145px;
+border: 1px solid rgba(255, 255, 255, 0.16);
+border-radius: 50%;
+}
+
+.settings-header::after {
+content: “”;
+position: absolute;
+width: 150px;
+height: 150px;
+right: 30px;
+top: -100px;
+border: 1px solid rgba(255, 255, 255, 0.16);
+border-radius: 50%;
+}
+
+.header-back,
+.header-title,
+.header-brand {
+position: relative;
+z-index: 1;
+}
+
+.header-back {
+display: grid;
+place-items: center;
+width: 46px;
+height: 46px;
+flex-shrink: 0;
+border: 1px solid rgba(255, 255, 255, 0.3);
+border-radius: 15px;
+background: rgba(255, 255, 255, 0.12);
+color: #ffffff;
+transition: background var(–transition);
+}
+
+.header-back:hover {
+background: rgba(255, 255, 255, 0.22);
+}
+
+.header-back .material-symbols-rounded {
+font-size: 23px;
+}
+
+.header-title {
+flex: 1;
+min-width: 0;
+}
+
+.header-eyebrow,
+.section-eyebrow {
+display: block;
+margin-bottom: 5px;
+font-size: 10px;
+font-weight: 800;
+letter-spacing: 1.8px;
+}
+
+.header-eyebrow {
+color: rgba(255, 255, 255, 0.76);
+}
+
+.header-title h1 {
+margin: 0;
+font-family: “Poppins”, sans-serif;
+font-size: clamp(25px, 4vw, 35px);
+font-weight: 800;
+line-height: 1.25;
+letter-spacing: -1.2px;
+}
+
+.header-title p {
+margin: 8px 0 0;
+color: rgba(255, 255, 255, 0.88);
+font-size: 13px;
+}
+
+.header-brand {
+width: 55px;
+height: 55px;
+border: 1px solid rgba(255, 255, 255, 0.35);
+border-radius: 19px;
+background: rgba(255, 255, 255, 0.16);
+box-shadow: none;
+font-size: 33px;
+}
+
+/* =========================================================
+4. CONTENEUR ET SECTIONS
+========================================================= */
+
+.settings-container {
+width: min(100% - 36px, 1060px);
+margin: 0 auto;
+padding: 30px 0 48px;
+}
+
+.settings-section {
+margin-bottom: 25px;
+padding: 26px;
+border: 1px solid rgba(229, 233, 241, 0.8);
+border-radius: var(–radius-large);
+background: var(–surface);
+box-shadow: var(–shadow-soft);
+scroll-margin-top: 20px;
+}
+
+.section-heading {
+display: flex;
+align-items: flex-start;
+justify-content: space-between;
+gap: 16px;
+margin-bottom: 23px;
+}
+
+.section-heading > div {
+min-width: 0;
+}
+
+.section-eyebrow {
+margin-bottom: 5px;
+color: var(–toma-orange);
+font-size: 9px;
+letter-spacing: 1.5px;
+}
+
+.section-heading h2 {
+margin: 0;
+font-family: “Poppins”, sans-serif;
+font-size: 20px;
+font-weight: 700;
+line-height: 1.4;
+letter-spacing: -0.5px;
+}
+
+.section-heading p {
+margin: 6px 0 0;
+color: var(–text-secondary);
+font-size: 12px;
+line-height: 1.65;
+}
+
+.section-heading-icon {
+display: grid;
+place-items: center;
+width: 44px;
+height: 44px;
+flex-shrink: 0;
+border-radius: 15px;
+background: var(–toma-orange-light);
+color: var(–toma-orange);
+font-size: 23px;
+}
+
+/* =========================================================
+5. PROFIL
+========================================================= */
+
+.profile-card {
+display: flex;
+align-items: center;
+gap: 17px;
+padding: 21px;
+border: 1px solid #f0f1f6;
+border-radius: 21px;
+background:
+linear-gradient(115deg, #ffffff, #fffaf6);
+}
+
+.profile-avatar-wrapper {
+position: relative;
+flex-shrink: 0;
+}
+
+.profile-avatar {
+width: 82px;
+height: 82px;
+border: 4px solid #ffffff;
+border-radius: 26px;
+background: #f1f3f8;
+box-shadow: 0 4px 14px rgba(30, 40, 60, 0.1);
+object-fit: cover;
+}
+
+.profile-status-dot {
+position: absolute;
+right: 1px;
+bottom: 2px;
+width: 17px;
+height: 17px;
+border: 3px solid #ffffff;
+border-radius: 50%;
+background: #1bb978;
+}
+
+.profile-information {
+flex: 1;
+min-width: 0;
+}
+
+.profile-information h3 {
+margin: 0;
+overflow-wrap: anywhere;
+font-size: 17px;
+font-weight: 800;
+letter-spacing: -0.4px;
+}
+
+.profile-information > p {
+margin: 5px 0 11px;
+overflow-wrap: anywhere;
+color: var(–text-secondary);
+font-size: 12px;
+}
+
+.profile-badges {
+display: flex;
+flex-wrap: wrap;
+align-items: center;
+gap: 7px;
+}
+
+.role-badge,
+.verification-badge,
+.status-badge {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 5px;
+width: fit-content;
+max-width: 100%;
+padding: 5px 9px;
+border-radius: 8px;
+font-size: 10px;
+font-weight: 700;
+overflow-wrap: anywhere;
+}
+
+.role-badge {
+color: #bd4e00;
+background: #fff0e4;
+}
+
+.verification-badge {
+color: #6f7787;
+background: #eef0f5;
+}
+
+.verification-badge .material-symbols-rounded {
+font-size: 14px;
+}
+
+.verification-badge.is-verified {
+color: #087e4e;
+background: #e4f8ee;
+}
+
+.icon-button {
+display: grid;
+place-items: center;
+width: 43px;
+height: 43px;
+flex-shrink: 0;
+border: 1px solid var(–border-color);
+border-radius: 14px;
+background: #ffffff;
+color: var(–text-secondary);
+cursor: pointer;
+transition:
+color var(–transition),
+border-color var(–transition),
+background var(–transition);
+}
+
+.icon-button:hover {
+border-color: #ffd2b4;
+background: #fff6ef;
+color: var(–toma-orange);
+}
+
+.profile-edit-button .material-symbols-rounded {
+font-size: 21px;
+}
+
+.profile-details-grid {
+display: grid;
+grid-template-columns: repeat(2, minmax(0, 1fr));
+gap: 13px;
+margin-top: 15px;
+}
+
+.detail-card {
+display: flex;
+align-items: center;
+gap: 12px;
+min-width: 0;
+padding: 15px;
+border: 1px solid var(–border-color);
+border-radius: 16px;
+background: var(–surface-soft);
+}
+
+.detail-icon {
+display: grid;
+place-items: center;
+width: 39px;
+height: 39px;
+flex-shrink: 0;
+border-radius: 12px;
+background: #fff0e5;
+color: var(–toma-orange);
+}
+
+.detail-card > div {
+min-width: 0;
+}
+
+.detail-label {
+display: block;
+margin-bottom: 3px;
+color: var(–text-muted);
+font-size: 10px;
+font-weight: 600;
+}
+
+.detail-card strong {
+display: block;
+overflow-wrap: anywhere;
+font-size: 12px;
+font-weight: 700;
+}
+
+/* =========================================================
+6. STATISTIQUES
+========================================================= */
+
+.stats-grid {
+display: grid;
+grid-template-columns: repeat(3, minmax(0, 1fr));
+gap: 15px;
+}
+
+.stat-card {
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+min-width: 0;
+min-height: 190px;
+padding: 19px;
+border: 1px solid var(–border-color);
+border-radius: 20px;
+background: #ffffff;
+text-align: left;
+cursor: pointer;
+transition:
+border-color var(–transition),
+box-shadow var(–transition),
+background var(–transition);
+}
+
+.stat-card:hover {
+border-color: #ffd4b8;
+background: #fffdfa;
+box-shadow: var(–shadow-card);
+}
+
+.stat-card-button {
+width: 100%;
+font: inherit;
+}
+
+.stat-icon {
+display: grid;
+place-items: center;
+width: 45px;
+height: 45px;
+margin-bottom: 15px;
+border-radius: 15px;
+}
+
+.stat-icon-orders {
+color: var(–toma-orange);
+background: var(–toma-orange-light);
+}
+
+.stat-icon-favorites {
+color: #e54868;
+background: #fff0f3;
+}
+
+.stat-icon-addresses {
+color: var(–toma-green);
+background: var(–toma-green-light);
+}
+
+.stat-icon .material-symbols-rounded {
+font-size: 23px;
+}
+
+.stat-label {
+color: var(–text-secondary);
+font-size: 11px;
+font-weight: 600;
+}
+
+.stat-card > strong {
+margin: 3px 0 12px;
+font-family: “Poppins”, sans-serif;
+font-size: 27px;
+font-weight: 800;
+line-height: 1.3;
+letter-spacing: -0.8px;
+}
+
+.stat-link {
+display: inline-flex;
+align-items: center;
+gap: 5px;
+margin-top: auto;
+color: var(–toma-orange);
+font-size: 10px;
+font-weight: 700;
+}
+
+.stat-link .material-symbols-rounded {
+font-size: 15px;
+}
+
+/* =========================================================
+7. BOUTONS
+========================================================= */
+
+.primary-button,
+.secondary-button {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 9px;
+min-height: 47px;
+padding: 12px 18px;
+border: 1px solid transparent;
+border-radius: 14px;
+font-size: 12px;
+font-weight: 800;
+line-height: 1.4;
+text-align: center;
+cursor: pointer;
+transition:
+background var(–transition),
+color var(–transition),
+border-color var(–transition),
+box-shadow var(–transition);
+}
+
+.primary-button {
+color: #ffffff;
+background: linear-gradient(110deg, #ff6a00, #ff7b18);
+box-shadow: 0 6px 16px rgba(255, 106, 0, 0.16);
+}
+
+.primary-button:hover {
+background: linear-gradient(110deg, #e95e00, #f56c08);
+box-shadow: 0 8px 22px rgba(255, 106, 0, 0.22);
+}
+
+.primary-button:disabled,
+.secondary-button:disabled {
+opacity: 0.6;
+cursor: not-allowed;
+box-shadow: none;
+}
+
+.primary-button .material-symbols-rounded,
+.secondary-button .material-symbols-rounded {
+font-size: 19px;
+}
+
+.secondary-button {
+border-color: var(–border-color);
+color: var(–text-primary);
+background: #ffffff;
+}
+
+.secondary-button:hover {
+border-color: #ffd1b1;
+background: #fff7f1;
+color: var(–toma-orange);
+}
+
+#addAddressButton {
+width: 100%;
+margin-top: 18px;
+}
+
+/* =========================================================
+8. ADRESSES
+========================================================= */
+
+.addresses-list {
+display: grid;
+gap: 12px;
+}
+
+.address-card {
+padding: 18px;
+border: 1px solid var(–border-color);
+border-radius: 18px;
+background: var(–surface-soft);
+}
+
+.address-card-header {
+display: flex;
+align-items: flex-start;
+justify-content: space-between;
+gap: 12px;
+}
+
+.address-card-title {
+display: flex;
+align-items: center;
+gap: 10px;
+min-width: 0;
+}
+
+.address-card-icon {
+display: grid;
+place-items: center;
+width: 42px;
+height: 42px;
+flex-shrink: 0;
+border-radius: 13px;
+background: var(–toma-orange-light);
+color: var(–toma-orange);
+}
+
+.address-card-title h3 {
+margin: 0;
+overflow-wrap: anywhere;
+font-size: 13px;
+font-weight: 800;
+}
+
+.address-default-badge {
+display: inline-flex;
+margin-top: 5px;
+padding: 3px 7px;
+border-radius: 6px;
+color: #087e4e;
+background: #e4f8ee;
+font-size: 9px;
+font-weight: 700;
+}
+
+.address-card-body {
+margin-top: 13px;
+color: var(–text-secondary);
+font-size: 12px;
+overflow-wrap: anywhere;
+}
+
+.address-card-body p {
+margin: 4px 0;
+}
+
+.address-card-actions {
+display: flex;
+flex-wrap: wrap;
+gap: 8px;
+margin-top: 14px;
+}
+
+.address-card-actions button {
+display: inline-flex;
+align-items: center;
+gap: 5px;
+min-height: 36px;
+padding: 8px 11px;
+border: 1px solid var(–border-color);
+border-radius: 10px;
+background: #ffffff;
+font-size: 10px;
+font-weight: 700;
+cursor: pointer;
+}
+
+.address-card-actions button .material-symbols-rounded {
+font-size: 16px;
+}
+
+.address-card-actions button:hover {
+border-color: #ffd1b1;
+color: var(–toma-orange);
+}
+
+.empty-state {
+padding: 32px 18px;
+border: 1px dashed #dfe3ed;
+border-radius: 18px;
+background: var(–surface-soft);
+text-align: center;
+}
+
+.empty-state > .material-symbols-rounded {
+display: grid;
+place-items: center;
+width: 56px;
+height: 56px;
+margin: 0 auto 13px;
+border-radius: 18px;
+background: #fff0e5;
+color: var(–toma-orange);
+font-size: 29px;
+}
+
+.empty-state h3 {
+margin: 0;
+font-size: 14px;
+font-weight: 800;
+}
+
+.empty-state p {
+max-width: 330px;
+margin: 7px auto 0;
+color: var(–text-secondary);
+font-size: 12px;
+}
+
+/* =========================================================
+9. COMMERÇANT
+========================================================= */
+
+.merchant-card {
+display: flex;
+align-items: center;
+gap: 13px;
+padding: 19px;
+border: 1px solid #e4f3e9;
+border-radius: 18px;
+background: linear-gradient(120deg, #f1fbf5, #ffffff);
+}
+
+.merchant-card-icon {
+display: grid;
+place-items: center;
+width: 49px;
+height: 49px;
+flex-shrink: 0;
+border-radius: 16px;
+background: #dff6e9;
+color: #118953;
+}
+
+.merchant-card-content {
+flex: 1;
+min-width: 0;
+}
+
+.merchant-card-content h3 {
+margin: 0;
+font-size: 14px;
+font-weight: 800;
+}
+
+.merchant-card-content p {
+margin: 5px 0 0;
+color: var(–text-secondary);
+font-size: 11px;
+}
+
+.status-badge {
+color: #087e4e;
+background: #e0f8ea;
+}
+
+.form-card {
+margin-top: 17px;
+padding: 20px;
+border: 1px solid var(–border-color);
+border-radius: 18px;
+background: var(–surface-soft);
+}
+
+.form-card h3 {
+margin: 0 0 18px;
+font-size: 15px;
+font-weight: 800;
+}
+
+/* =========================================================
+10. OPTIONS ET PRÉFÉRENCES
+========================================================= */
+
+.settings-options-card {
+overflow: hidden;
+border: 1px solid var(–border-color);
+border-radius: 19px;
+background: #ffffff;
+}
+
+.settings-option {
+display: flex;
+align-items: center;
+gap: 13px;
+min-width: 0;
+padding: 17px 19px;
+border-bottom: 1px solid #eff1f5;
+background: #ffffff;
+}
+
+.settings-option:last-child {
+border-bottom: 0;
+}
+
+.option-icon,
+.settings-link-icon {
+display: grid;
+place-items: center;
+width: 43px;
+height: 43px;
+flex-shrink: 0;
+border-radius: 14px;
+color: var(–toma-orange);
+background: var(–toma-orange-light);
+}
+
+.option-icon .material-symbols-rounded,
+.settings-link-icon .material-symbols-rounded {
+font-size: 22px;
+}
+
+.option-icon-orange {
+color: #c35c00;
+background: #fff0dc;
+}
+
+.option-icon-green {
+color: #118953;
+background: #e3f8eb;
+}
+
+.option-icon-purple {
+color: #7650ce;
+background: #f0eaff;
+}
+
+.option-icon-blue {
+color: #2e67d7;
+background: #eaf1ff;
+}
+
+.option-icon-red {
+color: #c92f40;
+background: #ffeaed;
+}
+
+.option-content,
+.settings-link-content {
+flex: 1;
+min-width: 0;
+}
+
+.option-content strong,
+.settings-link-content strong {
+display: block;
+color: var(–text-primary);
+font-size: 12px;
+font-weight: 800;
+line-height: 1.5;
+}
+
+.option-content small,
+.settings-link-content small {
+display: block;
+margin-top: 4px;
+color: var(–text-secondary);
+font-size: 10px;
+line-height: 1.55;
+}
+
+.option-value {
+flex-shrink: 0;
+color: var(–text-secondary);
+font-size: 10px;
+font-weight: 700;
+}
+
+.option-arrow {
+flex-shrink: 0;
+color: #a0a8b7;
+font-size: 20px;
+}
+
+.option-button {
+width: 100%;
+border: 0;
+border-bottom: 1px solid #eff1f5;
+font: inherit;
+text-align: left;
+cursor: pointer;
+}
+
+.option-button:last-child {
+border-bottom: 0;
+}
+
+.option-button:hover {
+background: #fffaf6;
+}
+
+.danger-option:hover {
+background: #fff6f7;
+}
+
+.danger-option .option-content strong {
+color: #bd2939;
+}
+
+/* =========================================================
+11. INTERRUPTEURS
+========================================================= */
+
+.switch {
+position: relative;
+display: inline-flex;
+width: 46px;
+height: 27px;
+flex-shrink: 0;
+cursor: pointer;
+}
+
+.switch input {
+position: absolute;
+width: 1px;
+height: 1px;
+opacity: 0;
+}
+
+.switch-slider {
+position: absolute;
+inset: 0;
+border: 1px solid #dce0e8;
+border-radius: 30px;
+background: #e9ecf2;
+transition: background var(–transition), border-color var(–transition);
+}
+
+.switch-slider::before {
+content: “”;
+position: absolute;
+left: 3px;
+top: 3px;
+width: 19px;
+height: 19px;
+border-radius: 50%;
+background: #ffffff;
+box-shadow: 0 2px 5px rgba(25, 35, 50, 0.16);
+transition: transform var(–transition);
+}
+
+.switch input:checked + .switch-slider {
+border-color: var(–toma-orange);
+background: var(–toma-orange);
+}
+
+.switch input:checked + .switch-slider::before {
+transform: translateX(19px);
+}
+
+.switch input:focus-visible + .switch-slider {
+outline: 3px solid rgba(255, 106, 0, 0.25);
+outline-offset: 3px;
+}
+
+/* =========================================================
+12. LIENS DE RÉGLAGES
+========================================================= */
+
+.settings-link-card {
+display: flex;
+align-items: center;
+gap: 13px;
+margin-top: 12px;
+padding: 17px;
+border: 1px solid var(–border-color);
+border-radius: 17px;
+background: #ffffff;
+transition:
+border-color var(–transition),
+background var(–transition);
+}
+
+.settings-link-card:hover {
+border-color: #ffd2b4;
+background: #fffaf6;
+}
+
+.settings-link-arrow {
+flex-shrink: 0;
+color: #a0a8b7;
+font-size: 18px;
+}
+
+.settings-link-icon {
+color: #118953;
+background: #e3f8eb;
+}
+
+/* =========================================================
+13. SUPPORT
+========================================================= */
+
+.support-card {
+display: flex;
+align-items: center;
+gap: 19px;
+padding: 23px;
+border: 1px solid #e9e7ff;
+border-radius: 20px;
+background:
+radial-gradient(
+circle at 95% 5%,
+rgba(135, 99, 232, 0.1),
+transparent 36%
+),
+linear-gradient(125deg, #f8f6ff, #ffffff);
+}
+
+.support-illustration {
+display: grid;
+place-items: center;
+width: 66px;
+height: 66px;
+flex-shrink: 0;
+border-radius: 21px;
+color: #7650ce;
+background: #eee7ff;
+}
+
+.support-illustration .material-symbols-rounded {
+font-size: 34px;
+}
+
+.support-content {
+flex: 1;
+min-width: 0;
+}
+
+.support-content h3 {
+margin: 0;
+font-size: 15px;
+font-weight: 800;
+}
+
+.support-content p {
+margin: 7px 0 14px;
+color: var(–text-secondary);
+font-size: 11px;
+line-height: 1.7;
+}
+
+.support-content .secondary-button {
+border-color: #ddd4ff;
+color: #6d48c5;
+background: #ffffff;
+}
+
+.support-content .secondary-button:hover {
+background: #f1edff;
+}
+
+/* =========================================================
+14. CHAMPS DE FORMULAIRE
+========================================================= */
+
+.form-field {
+display: flex;
+flex-direction: column;
+gap: 7px;
+margin-bottom: 17px;
+}
+
+.form-field label,
+.profile-photo-edit-content label {
+color: var(–text-primary);
+font-size: 11px;
+font-weight: 800;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea,
+.profile-photo-edit-content input {
+width: 100%;
+min-width: 0;
+min-height: 47px;
+padding: 12px 14px;
+border: 1px solid #e2e6ee;
+border-radius: 12px;
+outline: none;
+color: var(–text-primary);
+background: #ffffff;
+font-size: 12px;
+transition:
+border-color var(–transition),
+box-shadow var(–transition);
+}
+
+.form-field textarea {
+min-height: 95px;
+resize: vertical;
+}
+
+.form-field input::placeholder,
+.form-field textarea::placeholder,
+.profile-photo-edit-content input::placeholder {
+color: #a4abba;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus,
+.profile-photo-edit-content input:focus {
+border-color: var(–toma-orange);
+box-shadow: 0 0 0 3px rgba(255, 106, 0, 0.09);
+}
+
+.form-field small,
+.profile-photo-edit-content small {
+color: var(–text-muted);
+font-size: 10px;
+line-height: 1.6;
+}
+
+.checkbox-option {
+display: flex;
+align-items: flex-start;
+gap: 11px;
+margin: 5px 0 20px;
+padding: 14px;
+border: 1px solid var(–border-color);
+border-radius: 13px;
+background: var(–surface-soft);
+cursor: pointer;
+}
+
+.checkbox-option input {
+width: 18px;
+height: 18px;
+flex-shrink: 0;
+margin-top: 2px;
+accent-color: var(–toma-orange);
+}
+
+.checkbox-option strong {
+display: block;
+font-size: 11px;
+font-weight: 800;
+}
+
+.checkbox-option small {
+display: block;
+margin-top: 4px;
+color: var(–text-secondary);
+font-size: 10px;
+line-height: 1.6;
+}
+
+/* =========================================================
+15. FOOTER
+========================================================= */
+
+.settings-footer {
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 23px 15px 8px;
+text-align: center;
+}
+
+.footer-logo {
+width: 48px;
+height: 48px;
+border-radius: 16px;
+font-size: 29px;
+}
+
+.settings-footer h2 {
+margin: 12px 0 0;
+font-family: “Poppins”, sans-serif;
+font-size: 19px;
+font-weight: 800;
+}
+
+.settings-footer > p {
+margin: 5px 0 0;
+color: var(–text-secondary);
+font-size: 11px;
+}
+
+.app-version {
+display: inline-block;
+margin-top: 12px;
+padding: 5px 10px;
+border-radius: 8px;
+color: var(–text-secondary);
+background: #eceff5;
+font-size: 10px;
+font-weight: 700;
+}
+
+.settings-footer .footer-legal {
+max-width: 420px;
+margin-top: 14px;
+color: var(–text-muted);
+font-size: 10px;
+}
+
+/* =========================================================
+16. MODALES
+========================================================= */
+
+.modal-overlay {
+position: fixed;
+inset: 0;
+z-index: 1500;
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 20px;
+overflow-y: auto;
+background: rgba(18, 25, 40, 0.62);
+-webkit-backdrop-filter: blur(8px);
+backdrop-filter: blur(8px);
+animation: tomaOverlayIn 0.18s ease both;
+}
+
+.modal-card,
+.confirmation-card {
+position: relative;
+width: min(100%, 540px);
+max-height: calc(100dvh - 40px);
+overflow-y: auto;
+overscroll-behavior: contain;
+padding: 26px;
+border: 1px solid rgba(255, 255, 255, 0.6);
+border-radius: 25px;
+background: var(–surface);
+box-shadow: var(–shadow-modal);
+animation: tomaModalIn 0.24s ease both;
+}
+
+.modal-header {
+display: flex;
+align-items: flex-start;
+justify-content: space-between;
+gap: 15px;
+margin-bottom: 24px;
+}
+
+.modal-header h2,
+.confirmation-card h2 {
+margin: 0;
+font-family: “Poppins”, sans-serif;
+font-size: 21px;
+font-weight: 800;
+line-height: 1.4;
+letter-spacing: -0.5px;
+}
+
+.modal-close-button {
+width: 39px;
+height: 39px;
+border-radius: 12px;
+}
+
+.modal-actions {
+display: flex;
+flex-wrap: wrap;
+justify-content: flex-end;
+gap: 10px;
+margin-top: 23px;
+}
+
+.modal-actions > button {
+flex: 1;
+}
+
+.profile-photo-edit {
+display: flex;
+align-items: center;
+gap: 15px;
+margin-bottom: 22px;
+padding: 15px;
+border: 1px solid var(–border-color);
+border-radius: 15px;
+background: var(–surface-soft);
+}
+
+.profile-photo-edit img {
+width: 68px;
+height: 68px;
+flex-shrink: 0;
+border: 3px solid #ffffff;
+border-radius: 20px;
+background: #eef0f5;
+object-fit: cover;
+}
+
+.profile-photo-edit-content {
+display: flex;
+flex: 1;
+flex-direction: column;
+gap: 7px;
+min-width: 0;
+}
+
+.profile-photo-edit-content input {
+min-height: 42px;
+}
+
+.confirmation-card {
+width: min(100%, 410px);
+padding: 30px;
+text-align: center;
+}
+
+.confirmation-icon {
+display: grid;
+place-items: center;
+width: 63px;
+height: 63px;
+margin: 0 auto 17px;
+border-radius: 21px;
+color: var(–toma-orange);
+background: var(–toma-orange-light);
+}
+
+.confirmation-icon .material-symbols-rounded {
+font-size: 31px;
+}
+
+.confirmation-card h2 {
+font-size: 20px;
+}
+
+.confirmation-card > p {
+margin: 11px 0 0;
+color: var(–text-secondary);
+font-size: 12px;
+line-height: 1.8;
+}
+
+.confirmation-card .modal-actions {
+margin-top: 24px;
+}
+
+/* =========================================================
+17. MODAL DE CONNEXION
+========================================================= */
+
+.auth-modal-overlay {
+z-index: 2500;
+padding: 22px;
+background: rgba(17, 23, 37, 0.76);
+-webkit-backdrop-filter: blur(12px);
+backdrop-filter: blur(12px);
+}
+
+.auth-modal {
+position: relative;
+width: min(100%, 455px);
+max-height: calc(100dvh - 44px);
+overflow-y: auto;
+overscroll-behavior: contain;
+padding: 35px 31px 29px;
+border: 1px solid rgba(255, 255, 255, 0.85);
+border-radius: 29px;
+background: #ffffff;
+box-shadow: 0 30px 100px rgba(0, 0, 0, 0.24);
+text-align: center;
+animation: tomaModalIn 0.28s ease both;
+}
+
+.auth-modal-decoration {
+position: absolute;
+pointer-events: none;
+border-radius: 50%;
+}
+
+.auth-decoration-one {
+width: 150px;
+height: 150px;
+top: -90px;
+right: -60px;
+background: rgba(255, 106, 0, 0.08);
+}
+
+.auth-decoration-two {
+width: 100px;
+height: 100px;
+left: -60px;
+bottom: 60px;
+background: rgba(255, 106, 0, 0.055);
+}
+
+.auth-modal-logo {
+position: relative;
+width: 65px;
+height: 65px;
+margin: 0 auto 21px;
+border-radius: 22px;
+font-size: 40px;
+}
+
+.auth-modal-icon {
+display: grid;
+place-items: center;
+width: 64px;
+height: 64px;
+margin: 0 auto 17px;
+border: 1px solid #ffe1cd;
+border-radius: 21px;
+color: var(–toma-orange);
+background: #fff5ed;
+}
+
+.auth-modal-icon .material-symbols-rounded {
+font-size: 31px;
+}
+
+.auth-modal > .section-eyebrow {
+margin-bottom: 8px;
+}
+
+.auth-modal h2 {
+position: relative;
+margin: 0;
+font-family: “Poppins”, sans-serif;
+font-size: clamp(22px, 5vw, 27px);
+font-weight: 800;
+line-height: 1.35;
+letter-spacing: -0.7px;
+}
+
+.auth-modal > p:not(.auth-register-text) {
+position: relative;
+margin: 13px 0 24px;
+color: var(–text-secondary);
+font-size: 12px;
+line-height: 1.9;
+}
+
+.auth-primary-button {
+position: relative;
+width: 100%;
+min-height: 51px;
+border-radius: 15px;
+font-size: 13px;
+}
+
+.auth-register-text {
+position: relative;
+margin: 19px 0 0;
+color: var(–text-secondary);
+font-size: 11px;
+}
+
+.auth-register-text a {
+margin-left: 3px;
+color: var(–toma-orange);
+font-weight: 800;
+}
+
+.auth-register-text a:hover {
+text-decoration: underline;
+}
+
+.auth-home-link {
+position: relative;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 6px;
+margin-top: 22px;
+color: var(–text-secondary);
+font-size: 11px;
+font-weight: 700;
+}
+
+.auth-home-link .material-symbols-rounded {
+font-size: 17px;
+}
+
+.auth-home-link:hover {
+color: var(–toma-orange);
+}
+
+/* =========================================================
+18. TOASTS / MESSAGES
+========================================================= */
+
+.toast-container {
+position: fixed;
+z-index: 3000;
+right: 20px;
+bottom: 20px;
+display: flex;
+flex-direction: column;
+gap: 10px;
+width: min(390px, calc(100% - 40px));
+pointer-events: none;
+}
+
+.toast {
+display: flex;
+align-items: flex-start;
+gap: 11px;
+padding: 15px 17px;
+border: 1px solid var(–border-color);
+border-radius: 15px;
+background: #ffffff;
+box-shadow: 0 12px 40px rgba(25, 35, 55, 0.14);
+color: var(–text-primary);
+font-size: 12px;
+line-height: 1.65;
+overflow-wrap: anywhere;
+pointer-events: auto;
+animation: tomaToastIn 0.22s ease both;
+}
+
+.toast .material-symbols-rounded {
+flex-shrink: 0;
+color: var(–toma-orange);
+font-size: 21px;
+}
+
+.toast-success {
+border-left: 4px solid #16a36a;
+}
+
+.toast-success .material-symbols-rounded {
+color: #16a36a;
+}
+
+.toast-error {
+border-left: 4px solid #dc3545;
+}
+
+.toast-error .material-symbols-rounded {
+color: #dc3545;
+}
+
+.toast-warning {
+border-left: 4px solid #f0a020;
+}
+
+.toast-warning .material-symbols-rounded {
+color: #d78a00;
+}
+
+/* =========================================================
+19. MODE SOMBRE
+Activé par la classe body.dark-mode
+========================================================= */
+
+body.dark-mode {
+–page-bg: #10131b;
+–surface: #191e29;
+–surface-soft: #202634;
+
+–text-primary: #f2f4f8;
+–text-secondary: #b2bac9;
+–text-muted: #8993a6;
+
+–border-color: #303849;
+
+–shadow-soft: 0 5px 20px rgba(0, 0, 0, 0.12);
+–shadow-card: 0 10px 35px rgba(0, 0, 0, 0.2);
+–shadow-modal: 0 25px 80px rgba(0, 0, 0, 0.45);
+}
+
+body.dark-mode .settings-section,
+body.dark-mode .settings-options-card,
+body.dark-mode .settings-option,
+body.dark-mode .stat-card,
+body.dark-mode .settings-link-card,
+body.dark-mode .icon-button,
+body.dark-mode .secondary-button,
+body.dark-mode .address-card-actions button {
+border-color: var(–border-color);
+color: var(–text-primary);
+background: var(–surface);
+}
+
+body.dark-mode .profile-card,
+body.dark-mode .detail-card,
+body.dark-mode .address-card,
+body.dark-mode .empty-state,
+body.dark-mode .form-card,
+body.dark-mode .checkbox-option {
+border-color: var(–border-color);
+background: var(–surface-soft);
+}
+
+body.dark-mode .profile-card {
+background: linear-gradient(115deg, #191e29, #25222a);
+}
+
+body.dark-mode .merchant-card {
+border-color: #284a3b;
+background: linear-gradient(120deg, #1b3028, #191e29);
+}
+
+body.dark-mode .support-card {
+border-color: #3c335b;
+background: linear-gradient(120deg, #26213b, #191e29);
+}
+
+body.dark-mode .settings-option {
+border-bottom-color: var(–border-color);
+}
+
+body.dark-mode .option-button:hover,
+body.dark-mode .stat-card:hover,
+body.dark-mode .settings-link-card:hover {
+background: #242b39;
+}
+
+body.dark-mode .form-field input,
+body.dark-mode .form-field select,
+body.dark-mode .form-field textarea,
+body.dark-mode .profile-photo-edit-content input {
+border-color: var(–border-color);
+color: var(–text-primary);
+background: #151a24;
+}
+
+body.dark-mode .form-field input::placeholder,
+body.dark-mode .form-field textarea::placeholder {
+color: #778195;
+}
+
+body.dark-mode .profile-photo-edit {
+border-color: var(–border-color);
+background: var(–surface-soft);
+}
+
+body.dark-mode .modal-card,
+body.dark-mode .confirmation-card {
+border-color: var(–border-color);
+background: var(–surface);
+}
+
+body.dark-mode .app-version {
+color: var(–text-secondary);
+background: #272e3d;
+}
+
+body.dark-mode .profile-avatar,
+body.dark-mode .profile-photo-edit img {
+border-color: #303849;
+background: #252c3a;
+}
+
+body.dark-mode .toast {
+border-color: var(–border-color);
+color: var(–text-primary);
+background: var(–surface);
+}
+
+/* =========================================================
+20. ANIMATIONS
+========================================================= */
+
+@keyframes tomaOverlayIn {
+from {
+opacity: 0;
+}
+
+to {
+opacity: 1;
+}
+}
+
+@keyframes tomaModalIn {
+from {
+opacity: 0;
+transform: translateY(12px) scale(0.985);
+}
+
+to {
+opacity: 1;
+transform: translateY(0) scale(1);
+}
+}
+
+@keyframes tomaToastIn {
+from {
+opacity: 0;
+transform: translateY(9px);
+}
+
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+
+/* =========================================================
+21. RESPONSIVE — TABLETTES
+========================================================= */
+
+@media (max-width: 760px) {
+.settings-header {
+min-height: 165px;
+padding: 26px 22px;
+}
+
+.settings-container {
+width: min(100% - 28px, 600px);
+padding-top: 22px;
+}
+
+.settings-section {
+margin-bottom: 17px;
+padding: 21px;
+border-radius: 21px;
+}
+
+.section-heading h2 {
+font-size: 18px;
+}
+
+.stats-grid {
+gap: 10px;
+}
+
+.stat-card {
+min-height: 175px;
+padding: 15px;
+}
+
+.stat-card > strong {
+font-size: 24px;
+}
+
+.stat-icon {
+width: 41px;
+height: 41px;
+}
+
+.support-card {
+padding: 19px;
+}
+}
+
+/* =========================================================
+22. RESPONSIVE — IPHONE / PETITS ÉCRANS
+========================================================= */
+
+@media (max-width: 520px) {
+body {
+font-size: 13px;
+}
+
+.settings-header {
+min-height: 151px;
+gap: 12px;
+padding: 23px 17px;
+}
+
+.header-back {
+width: 41px;
+height: 41px;
+border-radius: 13px;
+}
+
+.header-title h1 {
+font-size: 25px;
+}
+
+.header-title p {
+max-width: 230px;
+font-size: 11px;
+}
+
+.header-brand {
+width: 43px;
+height: 43px;
+border-radius: 15px;
+font-size: 27px;
+}
+
+.settings-container {
+width: calc(100% - 22px);
+padding-top: 14px;
+padding-bottom: 30px;
+}
+
+.settings-section {
+margin-bottom: 13px;
+padding: 17px;
+border-radius: 19px;
+}
+
+.section-heading {
+gap: 10px;
+margin-bottom: 18px;
+}
+
+.section-heading h2 {
+font-size: 17px;
+}
+
+.section-heading p {
+font-size: 11px;
+}
+
+.section-heading-icon {
+width: 38px;
+height: 38px;
+border-radius: 12px;
+font-size: 21px;
+}
+
+.profile-card {
+flex-wrap: wrap;
+gap: 12px;
+padding: 15px;
+border-radius: 17px;
+}
+
+.profile-avatar {
+width: 64px;
+height: 64px;
+border-radius: 20px;
+}
+
+.profile-information {
+flex-basis: calc(100% - 125px);
+}
+
+.profile-information h3 {
+font-size: 14px;
+}
+
+.profile-information > p {
+margin-bottom: 8px;
+font-size: 10px;
+}
+
+.profile-edit-button {
+width: 36px;
+height: 36px;
+margin-left: auto;
+}
+
+.role-badge,
+.verification-badge {
+padding: 4px 7px;
+font-size: 9px;
+}
+
+.profile-details-grid {
+grid-template-columns: 1fr;
+gap: 9px;
+margin-top: 10px;
+}
+
+.detail-card {
+padding: 12px;
+}
+
+.detail-icon {
+width: 35px;
+height: 35px;
+}
+
+.detail-card strong {
+font-size: 11px;
+}
+
+.stats-grid {
+gap: 7px;
+}
+
+.stat-card {
+min-height: 150px;
+padding: 10px;
+border-radius: 15px;
+}
+
+.stat-icon {
+width: 34px;
+height: 34px;
+margin-bottom: 10px;
+border-radius: 11px;
+}
+
+.stat-icon .material-symbols-rounded {
+font-size: 19px;
+}
+
+.stat-label {
+font-size: 9px;
+}
+
+.stat-card > strong {
+margin-bottom: 8px;
+font-size: 21px;
+}
+
+.stat-link {
+gap: 2px;
+font-size: 8px;
+}
+
+.stat-link .material-symbols-rounded {
+font-size: 13px;
+}
+
+.settings-option {
+gap: 10px;
+padding: 14px 12px;
+}
+
+.option-icon {
+width: 37px;
+height: 37px;
+border-radius: 12px;
+}
+
+.option-icon .material-symbols-rounded {
+font-size: 20px;
+}
+
+.option-content strong,
+.settings-link-content strong {
+font-size: 11px;
+}
+
+.option-content small,
+.settings-link-content small {
+font-size: 9px;
+}
+
+.option-value {
+font-size: 9px;
+}
+
+.switch {
+width: 42px;
+height: 25px;
+}
+
+.switch-slider::before {
+width: 17px;
+height: 17px;
+}
+
+.switch input:checked + .switch-slider::before {
+transform: translateX(17px);
+}
+
+.settings-link-card {
+gap: 10px;
+padding: 13px;
+}
+
+.settings-link-icon {
+width: 38px;
+height: 38px;
+}
+
+.support-card {
+align-items: flex-start;
+gap: 12px;
+padding: 15px;
+border-radius: 17px;
+}
+
+.support-illustration {
+width: 43px;
+height: 43px;
+border-radius: 13px;
+}
+
+.support-illustration .material-symbols-rounded {
+font-size: 24px;
+}
+
+.support-content h3 {
+font-size: 13px;
+}
+
+.support-content p {
+font-size: 10px;
+}
+
+.support-content .secondary-button {
+width: 100%;
+min-height: 42px;
+padding: 10px;
+font-size: 10px;
+}
+
+.merchant-card {
+flex-wrap: wrap;
+padding: 14px;
+}
+
+.merchant-card-icon {
+width: 41px;
+height: 41px;
+}
+
+.merchant-card-content h3 {
+font-size: 12px;
+}
+
+.merchant-card-content p {
+font-size: 10px;
+}
+
+.status-badge {
+margin-left: 54px;
+}
+
+.form-card {
+padding: 15px;
+}
+
+.primary-button,
+.secondary-button {
+min-height: 44px;
+padding: 11px 13px;
+font-size: 11px;
+}
+
+.modal-overlay {
+align-items: flex-end;
+padding: 10px;
+}
+
+.modal-card {
+width: 100%;
+max-height: calc(100dvh - 20px);
+padding: 20px 17px;
+border-radius: 23px 23px 18px 18px;
+}
+
+.modal-header {
+margin-bottom: 19px;
+}
+
+.modal-header h2 {
+font-size: 19px;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+font-size: 16px;
+}
+
+.modal-actions {
+gap: 8px;
+}
+
+.modal-actions > button {
+min-width: 0;
+padding-right: 10px;
+padding-left: 10px;
+}
+
+.profile-photo-edit {
+align-items: flex-start;
+padding: 12px;
+}
+
+.profile-photo-edit img {
+width: 53px;
+height: 53px;
+border-radius: 15px;
+}
+
+.profile-photo-edit-content input {
+font-size: 16px;
+}
+
+.confirmation-card {
+width: 100%;
+padding: 24px 19px;
+border-radius: 23px;
+}
+
+.auth-modal-overlay {
+align-items: center;
+padding: 14px;
+}
+
+.auth-modal {
+width: 100%;
+max-height: calc(100dvh - 28px);
+padding: 27px 21px 23px;
+border-radius: 25px;
+}
+
+.auth-modal-logo {
+width: 55px;
+height: 55px;
+margin-bottom: 17px;
+border-radius: 18px;
+font-size: 34px;
+}
+
+.auth-modal-icon {
+width: 54px;
+height: 54px;
+margin-bottom: 15px;
+border-radius: 17px;
+}
+
+.auth-modal-icon .material-symbols-rounded {
+font-size: 27px;
+}
+
+.auth-modal h2 {
+font-size: 23px;
+}
+
+.auth-modal > p:not(.auth-register-text) {
+margin-top: 11px;
+font-size: 11px;
+line-height: 1.85;
+}
+
+.toast-container {
+right: 10px;
+bottom: max(10px, env(safe-area-inset-bottom));
+width: calc(100% - 20px);
+}
+
+.settings-footer {
+padding-top: 18px;
+}
+}
+
+/* =========================================================
+23. TRÈS PETITS ÉCRANS
+========================================================= */
+
+@media (max-width: 360px) {
+.settings-header {
+gap: 9px;
+padding-right: 12px;
+padding-left: 12px;
+}
+
+.header-title h1 {
+font-size: 22px;
+}
+
+.header-title p {
+font-size: 10px;
+}
+
+.header-brand {
+width: 38px;
+height: 38px;
+font-size: 24px;
+}
+
+.settings-section {
+padding: 14px;
+}
+
+.stats-grid {
+grid-template-columns: 1fr;
+}
+
+.stat-card {
+display: grid;
+grid-template-columns: 40px 1fr auto;
+align-items: center;
+gap: 8px 10px;
+min-height: auto;
+padding: 13px;
+}
+
+.stat-icon {
+grid-row: 1 / 3;
+margin: 0;
+}
+
+.stat-label {
+align-self: end;
+}
+
+.stat-card > strong {
+grid-column: 2;
+grid-row: 2;
+margin: 0;
+}
+
+.stat-link {
+grid-column: 3;
+grid-row: 1 / 3;
+align-self: center;
+justify-self: end;
+}
+
+.option-icon {
+width: 33px;
+height: 33px;
+}
+
+.option-content strong {
+font-size: 10px;
+}
+
+.option-content small {
+font-size: 9px;
+}
+
+.option-value {
+display: none;
+}
+
+.support-card {
+flex-direction: column;
+}
+
+.support-content {
+width: 100%;
+}
+}
+
+/* =========================================================
+24. ACCESSIBILITÉ — RÉDUCTION DES ANIMATIONS
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+*,
+*::before,
+*::after {
+scroll-behavior: auto !important;
+animation-duration: 0.01ms !important;
+animation-iteration-count: 1 !important;
+transition-duration: 0.01ms !important;
+}
+}
