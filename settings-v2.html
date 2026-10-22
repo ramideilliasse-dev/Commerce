@@ -1,0 +1,915 @@
+ <!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Definições | Toma</title>
+
+<meta
+name=“description”
+content=“Gira a sua conta, os seus dados pessoais, as suas preferências e a segurança da sua conta Toma.”
+
+  <meta name="theme-color" content="#ff6a00">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Toma">
+  <link rel="icon" href="../../icon-192.png">
+  <link rel="apple-touch-icon" href="../../icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0"
+    rel="stylesheet"
+  >
+  <!-- Nouveau CSS indépendant -->
+  <link rel="stylesheet" href="./settings-v2.css">
+</head>
+<body>
+  <!-- =====================================================
+       BLOC 1 — CHARGEMENT INITIAL
+       ===================================================== -->
+  <div id="settingsLoading" class="loading-screen" role="status">
+    <div class="loading-logo">T</div>
+<div class="loading-spinner"></div>
+<p>A preparar as suas definições...</p>
+  </div>
+  <!-- =====================================================
+       BLOC 2 — PAGE PRINCIPALE
+       Les informations personnelles restent cachées
+       jusqu'à la confirmation de l'état de connexion.
+       ===================================================== -->
+  <div id="settingsApp" class="settings-app" hidden>
+<!-- HEADER -->
+<header class="settings-header">
+  <a
+    href="../../home.html"
+    class="header-back"
+    aria-label="Voltar à página inicial"
+  >
+    <span class="material-symbols-rounded">arrow_back</span>
+  </a>
+  <div class="header-title">
+    <span class="header-eyebrow">TOMA ACCOUNT</span>
+    <h1>Definições</h1>
+    <p>Gira a sua conta num só lugar.</p>
+  </div>
+  <div class="header-brand" aria-label="Toma">
+    T
+  </div>
+</header>
+<!-- CONTENU PRINCIPAL -->
+<main class="settings-container">
+  <!-- PROFIL -->
+  <section class="settings-section profile-section">
+    <div class="section-heading">
+      <div>
+        <span class="section-eyebrow">A SUA CONTA</span>
+        <h2>Perfil pessoal</h2>
+        <p>As suas informações e identidade na Toma.</p>
+      </div>
+      <span class="material-symbols-rounded section-heading-icon">
+        account_circle
+      </span>
+    </div>
+    <div class="profile-card">
+      <div class="profile-avatar-wrapper">
+        <img
+          id="profilePhoto"
+          class="profile-avatar"
+          src="../../images/default-avatar.png"
+          alt="Fotografia do perfil"
+        >
+        <span class="profile-status-dot" aria-label="Conta ativa"></span>
+      </div>
+      <div class="profile-information">
+        <h3 id="profileName">A carregar...</h3>
+        <p id="profileEmail">A verificar a conta...</p>
+        <div class="profile-badges">
+          <span id="accountRoleBadge" class="role-badge">
+            Cliente
+          </span>
+          <span id="emailVerificationBadge" class="verification-badge">
+            <span class="material-symbols-rounded">schedule</span>
+            A verificar
+          </span>
+        </div>
+      </div>
+      <button
+        type="button"
+        id="editProfileButton"
+        class="icon-button profile-edit-button"
+        aria-label="Editar perfil"
+        title="Editar perfil"
+      >
+        <span class="material-symbols-rounded">edit</span>
+      </button>
+    </div>
+    <div class="profile-details-grid">
+      <div class="detail-card">
+        <span class="material-symbols-rounded detail-icon">
+          phone_iphone
+        </span>
+        <div>
+          <span class="detail-label">Telefone</span>
+          <strong id="profilePhone">Não indicado</strong>
+        </div>
+      </div>
+      <div class="detail-card">
+        <span class="material-symbols-rounded detail-icon">
+          location_on
+        </span>
+        <div>
+          <span class="detail-label">Localização</span>
+          <strong id="profileLocation">Não indicada</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ATIVIDADE -->
+  <section class="settings-section">
+    <div class="section-heading">
+      <div>
+        <span class="section-eyebrow">VISÃO GERAL</span>
+        <h2>A sua atividade</h2>
+        <p>Acompanhe a sua atividade na plataforma.</p>
+      </div>
+      <span class="material-symbols-rounded section-heading-icon">
+        monitoring
+      </span>
+    </div>
+    <div class="stats-grid">
+      <a href="../../my-orders.html" class="stat-card">
+        <span class="stat-icon stat-icon-orders">
+          <span class="material-symbols-rounded">receipt_long</span>
+        </span>
+        <span class="stat-label">Pedidos</span>
+        <strong id="statOrders">—</strong>
+        <span class="stat-link">
+          Ver pedidos
+          <span class="material-symbols-rounded">arrow_forward</span>
+        </span>
+      </a>
+      <a href="../../favorites.html" class="stat-card">
+        <span class="stat-icon stat-icon-favorites">
+          <span class="material-symbols-rounded">favorite</span>
+        </span>
+        <span class="stat-label">Favoritos</span>
+        <strong id="statFavorites">—</strong>
+        <span class="stat-link">
+          Ver favoritos
+          <span class="material-symbols-rounded">arrow_forward</span>
+        </span>
+      </a>
+      <button
+        type="button"
+        id="viewAddressesButton"
+        class="stat-card stat-card-button"
+      >
+        <span class="stat-icon stat-icon-addresses">
+          <span class="material-symbols-rounded">location_on</span>
+        </span>
+        <span class="stat-label">Moradas</span>
+        <strong id="statAddresses">—</strong>
+        <span class="stat-link">
+          Gerir moradas
+          <span class="material-symbols-rounded">arrow_forward</span>
+        </span>
+      </button>
+    </div>
+  </section>
+  <!-- MORADAS -->
+  <section id="addressesSection" class="settings-section">
+    <div class="section-heading">
+      <div>
+        <span class="section-eyebrow">ENTREGAS</span>
+        <h2>As minhas moradas</h2>
+        <p>Guarde as moradas utilizadas nas suas encomendas.</p>
+      </div>
+      <span class="material-symbols-rounded section-heading-icon">
+        distance
+      </span>
+    </div>
+    <div id="addressesList" class="addresses-list">
+      <div class="empty-state" id="addressesEmptyState">
+        <span class="material-symbols-rounded">
+          home_pin
+        </span>
+        <h3>Nenhuma morada guardada</h3>
+        <p>
+          Adicione uma morada para facilitar as suas próximas encomendas.
+        </p>
+      </div>
+    </div>
+    <button
+      type="button"
+      id="addAddressButton"
+      class="primary-button"
+    >
+      <span class="material-symbols-rounded">add_location_alt</span>
+      Adicionar morada
+    </button>
+  </section>
+  <!-- ÁREA DO COMERCIANTE -->
+  <section id="merchantSection" class="settings-section" hidden>
+    <div class="section-heading">
+      <div>
+        <span class="section-eyebrow">NEGÓCIO</span>
+        <h2>Área do comerciante</h2>
+        <p>Gira a sua loja e as informações comerciais.</p>
+      </div>
+      <span class="material-symbols-rounded section-heading-icon">
+        storefront
+      </span>
+    </div>
+    <div class="merchant-card">
+      <div class="merchant-card-icon">
+        <span class="material-symbols-rounded">store</span>
+      </div>
+      <div class="merchant-card-content">
+        <h3 id="merchantStatusTitle">A sua loja</h3>
+        <p id="merchantStatusDescription">
+          Consulte o estado da sua conta comercial.
+        </p>
+      </div>
+      <span id="merchantStatusBadge" class="status-badge">
+        Conta
+      </span>
+    </div>
+    <div id="merchantInfoForm" class="form-card" hidden>
+      <h3>Informações comerciais</h3>
+      <div class="form-field">
+        <label for="merchantShopName">Nome da loja</label>
+        <input
+          id="merchantShopName"
+          type="text"
+          maxlength="100"
+          placeholder="Ex.: A Minha Loja"
+          autocomplete="organization"
+        >
+      </div>
+      <div class="form-field">
+        <label for="merchantWhatsApp">WhatsApp comercial</label>
+        <input
+          id="merchantWhatsApp"
+          type="tel"
+          maxlength="25"
+          placeholder="Ex.: +244 923 000 000"
+          autocomplete="tel"
+        >
+      </div>
+      <div class="form-field">
+        <label for="merchantDescription">Descrição da loja</label>
+        <textarea
+          id="merchantDescription"
+          rows="4"
+          maxlength="500"
+          placeholder="Apresente brevemente a sua loja..."
+        ></textarea>
+      </div>
+      <button
+        type="button"
+        id="saveMerchantButton"
+        class="primary-button"
+      >
+        <span class="material-symbols-rounded">save</span>
+        Guardar informações
+      </button>
+    </div>
+    <a
+      href="../../merchant-dashboard.html"
+      id="merchantDashboardLink"
+      class="settings-link-card"
+      hidden
+    >
+      <span class="settings-link-icon">
+        <span class="material-symbols-rounded">dashboard</span>
+      </span>
+      <span class="settings-link-content">
+        <strong>Painel do comerciante</strong>
+        <small>Aceda à gestão da sua loja.</small>
+      </span>
+      <span class="material-symbols-rounded settings-link-arrow">
+        arrow_forward_ios
+      </span>
+    </a>
+    <a
+      href="../../merchant-register.html"
+      id="merchantRegisterLink"
+      class="settings-link-card"
+      hidden
+    >
+      <span class="settings-link-icon">
+        <span class="material-symbols-rounded">add_business</span>
+      </span>
+      <span class="settings-link-content">
+        <strong>Tornar-me comerciante</strong>
+        <small>Conheça as opções para vender na Toma.</small>
+      </span>
+      <span class="material-symbols-rounded settings-link-arrow">
+        arrow_forward_ios
+      </span>
+    </a>
+  </section>
+  <!-- PREFERÊNCIAS -->
+  <section class="settings-section">
+    <div class="section-heading">
+      <div>
+        <span class="section-eyebrow">PERSONALIZAÇÃO</span>
+        <h2>Preferências</h2>
+        <p>Personalize a sua experiência na Toma.</p>
+      </div>
+      <span class="material-symbols-rounded section-heading-icon">
+        tune
+      </span>
+    </div>
+    <div class="settings-options-card">
+      <a href="../../language.html" class="settings-option">
+        <span class="option-icon">
+          <span class="material-symbols-rounded">translate</span>
+        </span>
+        <span class="option-content">
+          <strong>Idioma</strong>
+          <small>Escolha o idioma da aplicação.</small>
+        </span>
+        <span class="option-value">Português</span>
+        <span class="material-symbols-rounded option-arrow">
+          chevron_right
+        </span>
+      </a>
+      <div class="settings-option">
+        <span class="option-icon option-icon-orange">
+          <span class="material-symbols-rounded">campaign</span>
+        </span>
+        <span class="option-content">
+          <strong>Novidades e promoções</strong>
+          <small>Receba informações sobre ofertas.</small>
+        </span>
+        <label class="switch" for="promoNotifications">
+          <input
+            type="checkbox"
+            id="promoNotifications"
+          >
+          <span class="switch-slider"></span>
+        </label>
+      </div>
+      <div class="settings-option">
+        <span class="option-icon option-icon-green">
+          <span class="material-symbols-rounded">notifications_active</span>
+        </span>
+        <span class="option-content">
+          <strong>Notificações de pedidos</strong>
+          <small>Receba atualizações sobre os seus pedidos.</small>
+        </span>
+        <label class="switch" for="orderNotifications">
+          <input
+            type="checkbox"
+            id="orderNotifications"
+          >
+          <span class="switch-slider"></span>
+        </label>
+      </div>
+      <div class="settings-option">
+        <span class="option-icon option-icon-purple">
+          <span class="material-symbols-rounded">dark_mode</span>
+        </span>
+        <span class="option-content">
+          <strong>Modo escuro</strong>
+          <small>Utilize uma aparência mais confortável.</small>
+        </span>
+        <label class="switch" for="darkModeToggle">
+          <input
+            type="checkbox"
+            id="darkModeToggle"
+          >
+          <span class="switch-slider"></span>
+        </label>
+      </div>
+    </div>
+  </section>
+  <!-- SEGURANÇA -->
+  <section class="settings-section">
+    <div class="section-heading">
+      <div>
+        <span class="section-eyebrow">PROTEÇÃO</span>
+        <h2>Segurança da conta</h2>
+        <p>Controle o acesso à sua conta pessoal.</p>
+      </div>
+      <span class="material-symbols-rounded section-heading-icon">
+        shield_lock
+      </span>
+    </div>
+    <div class="settings-options-card">
+      <button
+        type="button"
+        id="verifyEmailButton"
+        class="settings-option option-button"
+      >
+        <span class="option-icon option-icon-green">
+          <span class="material-symbols-rounded">mark_email_read</span>
+        </span>
+        <span class="option-content">
+          <strong>Verificar e-mail</strong>
+          <small>Confirme o endereço associado à sua conta.</small>
+        </span>
+        <span class="material-symbols-rounded option-arrow">
+          chevron_right
+        </span>
+      </button>
+      <button
+        type="button"
+        id="resetPasswordButton"
+        class="settings-option option-button"
+      >
+        <span class="option-icon option-icon-blue">
+          <span class="material-symbols-rounded">lock_reset</span>
+        </span>
+        <span class="option-content">
+          <strong>Alterar palavra-passe</strong>
+          <small>Receba instruções para redefinir a palavra-passe.</small>
+        </span>
+        <span class="material-symbols-rounded option-arrow">
+          chevron_right
+        </span>
+      </button>
+    </div>
+  </section>
+  <!-- SUPORTE -->
+  <section class="settings-section">
+    <div class="section-heading">
+      <div>
+        <span class="section-eyebrow">AJUDA</span>
+        <h2>Suporte e assistência</h2>
+        <p>Estamos aqui para ajudar.</p>
+      </div>
+      <span class="material-symbols-rounded section-heading-icon">
+        support_agent
+      </span>
+    </div>
+    <div class="support-card">
+      <div class="support-illustration">
+        <span class="material-symbols-rounded">support_agent</span>
+      </div>
+      <div class="support-content">
+        <h3>Precisa de ajuda?</h3>
+        <p>
+          Entre em contacto com a equipa Toma para esclarecer as suas dúvidas.
+        </p>
+        <button
+          type="button"
+          id="contactSupportButton"
+          class="secondary-button"
+        >
+          <span class="material-symbols-rounded">chat</span>
+          Contactar suporte
+        </button>
+      </div>
+    </div>
+    <a
+      href="../../my-orders.html"
+      class="settings-link-card"
+    >
+      <span class="settings-link-icon">
+        <span class="material-symbols-rounded">receipt_long</span>
+      </span>
+      <span class="settings-link-content">
+        <strong>Ajuda com os meus pedidos</strong>
+        <small>Consulte os seus pedidos e respetivos detalhes.</small>
+      </span>
+      <span class="material-symbols-rounded settings-link-arrow">
+        arrow_forward_ios
+      </span>
+    </a>
+  </section>
+  <!-- AÇÕES DA CONTA -->
+  <section class="settings-section account-actions-section">
+    <div class="section-heading">
+      <div>
+        <span class="section-eyebrow">GESTÃO DA CONTA</span>
+        <h2>Outras ações</h2>
+        <p>Consulte as opções da sua conta.</p>
+      </div>
+      <span class="material-symbols-rounded section-heading-icon">
+        manage_accounts
+      </span>
+    </div>
+    <button
+      type="button"
+      id="signOutButton"
+      class="settings-option option-button"
+    >
+      <span class="option-icon option-icon-blue">
+        <span class="material-symbols-rounded">logout</span>
+      </span>
+      <span class="option-content">
+        <strong>Terminar sessão</strong>
+        <small>Sair da sua conta neste dispositivo.</small>
+      </span>
+      <span class="material-symbols-rounded option-arrow">
+        chevron_right
+      </span>
+    </button>
+    <button
+      type="button"
+      id="deleteAccountButton"
+      class="settings-option option-button danger-option"
+    >
+      <span class="option-icon option-icon-red">
+        <span class="material-symbols-rounded">delete_forever</span>
+      </span>
+      <span class="option-content">
+        <strong>Eliminar conta</strong>
+        <small>Consulte as opções para eliminar a sua conta.</small>
+      </span>
+      <span class="material-symbols-rounded option-arrow">
+        chevron_right
+      </span>
+    </button>
+  </section>
+  <!-- IDENTIDADE DA APLICAÇÃO -->
+  <footer class="settings-footer">
+    <div class="footer-logo">T</div>
+    <h2 id="settingsAppName">Toma</h2>
+    <p id="settingsAppSlogan">
+      O comércio mais perto de si.
+    </p>
+    <span id="settingsAppVersion" class="app-version">
+      Toma · Definições
+    </span>
+    <p class="footer-legal">
+      Cuide da sua conta e mantenha as suas informações atualizadas.
+    </p>
+  </footer>
+</main>
+  </div>
+  <!-- =====================================================
+       BLOC 3 — MODAL DE AUTENTICAÇÃO
+       O JavaScript só deve decidir se o mostra depois de
+       onAuthStateChanged confirmar que não existe sessão.
+       ===================================================== -->
+  <div
+    id="authRequiredModal"
+    class="modal-overlay auth-modal-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="authModalTitle"
+    aria-describedby="authModalDescription"
+    hidden
+  >
+<div class="auth-modal">
+  <div class="auth-modal-decoration auth-decoration-one"></div>
+  <div class="auth-modal-decoration auth-decoration-two"></div>
+  <div class="auth-modal-logo">T</div>
+  <div class="auth-modal-icon">
+    <span class="material-symbols-rounded">lock_person</span>
+  </div>
+  <span class="section-eyebrow">BEM-VINDO À TOMA</span>
+  <h2 id="authModalTitle">
+    Entre na sua conta
+  </h2>
+  <p id="authModalDescription">
+    Para aceder às suas informações pessoais, consultar os seus pedidos
+    e gerir as suas preferências, precisa de iniciar sessão na sua conta Toma.
+  </p>
+  <a href="../../login.html" id="connectButton" class="primary-button auth-primary-button">
+    <span class="material-symbols-rounded">login</span>
+    Conectar
+  </a>
+  <p class="auth-register-text">
+    Ainda não tem uma conta?
+    <a href="../../register.html" id="registerLink">
+      Criar conta
+    </a>
+  </p>
+  <a href="../../home.html" class="auth-home-link">
+    <span class="material-symbols-rounded">arrow_back</span>
+    Voltar à página inicial
+  </a>
+</div>
+  </div>
+  <!-- =====================================================
+       BLOC 4 — MODAL DE EDIÇÃO DO PERFIL
+       ===================================================== -->
+  <div
+    id="editProfileModal"
+    class="modal-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="editProfileTitle"
+    hidden
+  >
+<div class="modal-card">
+  <div class="modal-header">
+    <div>
+      <span class="section-eyebrow">A SUA CONTA</span>
+      <h2 id="editProfileTitle">Editar perfil</h2>
+    </div>
+    <button
+      type="button"
+      id="closeEditProfileButton"
+      class="icon-button modal-close-button"
+      aria-label="Fechar"
+    >
+      <span class="material-symbols-rounded">close</span>
+    </button>
+  </div>
+  <form id="editProfileForm">
+    <div class="profile-photo-edit">
+      <img
+        id="editProfilePhotoPreview"
+        src="../../images/default-avatar.png"
+        alt="Pré-visualização da fotografia"
+      >
+      <div class="profile-photo-edit-content">
+        <label for="editProfilePhotoUrl">
+          URL da fotografia
+        </label>
+        <input
+          id="editProfilePhotoUrl"
+          type="url"
+          placeholder="https://..."
+          maxlength="1000"
+        >
+        <small>
+          Utilize uma imagem acessível através de um endereço HTTPS.
+        </small>
+      </div>
+    </div>
+    <div class="form-field">
+      <label for="editProfileName">Nome completo</label>
+      <input
+        id="editProfileName"
+        type="text"
+        maxlength="100"
+        autocomplete="name"
+        required
+      >
+    </div>
+    <div class="form-field">
+      <label for="editProfilePhone">Telefone</label>
+      <input
+        id="editProfilePhone"
+        type="tel"
+        maxlength="25"
+        autocomplete="tel"
+      >
+    </div>
+    <div class="form-field">
+      <label for="editProfileProvince">Província</label>
+      <select id="editProfileProvince">
+        <option value="">Selecione a província</option>
+        <option value="Bengo">Bengo</option>
+        <option value="Benguela">Benguela</option>
+        <option value="Bié">Bié</option>
+        <option value="Cabinda">Cabinda</option>
+        <option value="Cuando">Cuando</option>
+        <option value="Cubango">Cubango</option>
+        <option value="Cuanza Norte">Cuanza Norte</option>
+        <option value="Cuanza Sul">Cuanza Sul</option>
+        <option value="Cunene">Cunene</option>
+        <option value="Huambo">Huambo</option>
+        <option value="Huíla">Huíla</option>
+        <option value="Icolo e Bengo">Icolo e Bengo</option>
+        <option value="Luanda">Luanda</option>
+        <option value="Lunda Norte">Lunda Norte</option>
+        <option value="Lunda Sul">Lunda Sul</option>
+        <option value="Malanje">Malanje</option>
+        <option value="Moxico">Moxico</option>
+        <option value="Moxico Leste">Moxico Leste</option>
+        <option value="Namibe">Namibe</option>
+        <option value="Uíge">Uíge</option>
+        <option value="Zaire">Zaire</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label for="editProfileCity">Município / cidade</label>
+      <input
+        id="editProfileCity"
+        type="text"
+        maxlength="100"
+        autocomplete="address-level2"
+      >
+    </div>
+    <div class="form-field">
+      <label for="editProfileAddress">Morada principal</label>
+      <textarea
+        id="editProfileAddress"
+        rows="3"
+        maxlength="300"
+        autocomplete="street-address"
+      ></textarea>
+    </div>
+    <div class="modal-actions">
+      <button
+        type="button"
+        id="cancelEditProfileButton"
+        class="secondary-button"
+      >
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        id="saveProfileButton"
+        class="primary-button"
+      >
+        <span class="material-symbols-rounded">save</span>
+        Guardar alterações
+      </button>
+    </div>
+  </form>
+</div>
+  </div>
+  <!-- =====================================================
+       BLOC 5 — MODAL DE MORADA
+       ===================================================== -->
+  <div
+    id="addressModal"
+    class="modal-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="addressModalTitle"
+    hidden
+  >
+<div class="modal-card">
+  <div class="modal-header">
+    <div>
+      <span class="section-eyebrow">ENTREGAS</span>
+      <h2 id="addressModalTitle">Adicionar morada</h2>
+    </div>
+    <button
+      type="button"
+      id="closeAddressModalButton"
+      class="icon-button modal-close-button"
+      aria-label="Fechar"
+    >
+      <span class="material-symbols-rounded">close</span>
+    </button>
+  </div>
+  <form id="addressForm">
+    <input type="hidden" id="addressId">
+    <div class="form-field">
+      <label for="addressLabel">Nome da morada</label>
+      <input
+        id="addressLabel"
+        type="text"
+        maxlength="50"
+        placeholder="Ex.: Casa, Trabalho"
+        required
+      >
+    </div>
+    <div class="form-field">
+      <label for="addressRecipient">Nome do destinatário</label>
+      <input
+        id="addressRecipient"
+        type="text"
+        maxlength="100"
+        autocomplete="name"
+        required
+      >
+    </div>
+    <div class="form-field">
+      <label for="addressPhone">Telefone de contacto</label>
+      <input
+        id="addressPhone"
+        type="tel"
+        maxlength="25"
+        autocomplete="tel"
+        required
+      >
+    </div>
+    <div class="form-field">
+      <label for="addressProvince">Província</label>
+      <select id="addressProvince" required>
+        <option value="">Selecione a província</option>
+        <option value="Bengo">Bengo</option>
+        <option value="Benguela">Benguela</option>
+        <option value="Bié">Bié</option>
+        <option value="Cabinda">Cabinda</option>
+        <option value="Cuando">Cuando</option>
+        <option value="Cubango">Cubango</option>
+        <option value="Cuanza Norte">Cuanza Norte</option>
+        <option value="Cuanza Sul">Cuanza Sul</option>
+        <option value="Cunene">Cunene</option>
+        <option value="Huambo">Huambo</option>
+        <option value="Huíla">Huíla</option>
+        <option value="Icolo e Bengo">Icolo e Bengo</option>
+        <option value="Luanda">Luanda</option>
+        <option value="Lunda Norte">Lunda Norte</option>
+        <option value="Lunda Sul">Lunda Sul</option>
+        <option value="Malanje">Malanje</option>
+        <option value="Moxico">Moxico</option>
+        <option value="Moxico Leste">Moxico Leste</option>
+        <option value="Namibe">Namibe</option>
+        <option value="Uíge">Uíge</option>
+        <option value="Zaire">Zaire</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label for="addressCity">Município / cidade</label>
+      <input
+        id="addressCity"
+        type="text"
+        maxlength="100"
+        autocomplete="address-level2"
+        required
+      >
+    </div>
+    <div class="form-field">
+      <label for="addressDetails">Bairro, rua e outros detalhes</label>
+      <textarea
+        id="addressDetails"
+        rows="3"
+        maxlength="500"
+        autocomplete="street-address"
+        placeholder="Indique os detalhes necessários para localizar a morada."
+        required
+      ></textarea>
+    </div>
+    <label class="checkbox-option" for="addressIsDefault">
+      <input
+        type="checkbox"
+        id="addressIsDefault"
+      >
+      <span>
+        <strong>Definir como morada principal</strong>
+        <small>Utilizar esta morada como referência nas próximas encomendas.</small>
+      </span>
+    </label>
+    <div class="modal-actions">
+      <button
+        type="button"
+        id="cancelAddressButton"
+        class="secondary-button"
+      >
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        id="saveAddressButton"
+        class="primary-button"
+      >
+        <span class="material-symbols-rounded">save</span>
+        Guardar morada
+      </button>
+    </div>
+  </form>
+</div>
+  </div>
+  <!-- =====================================================
+       BLOC 6 — MODAL DE CONFIRMAÇÃO
+       Utilisé pour les actions sensibles.
+       ===================================================== -->
+  <div
+    id="confirmationModal"
+    class="modal-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="confirmationTitle"
+    aria-describedby="confirmationMessage"
+    hidden
+  >
+<div class="confirmation-card">
+  <div id="confirmationIcon" class="confirmation-icon">
+    <span class="material-symbols-rounded">help</span>
+  </div>
+  <h2 id="confirmationTitle">Confirmar ação</h2>
+  <p id="confirmationMessage">
+    Tem a certeza de que pretende continuar?
+  </p>
+  <div class="modal-actions">
+    <button
+      type="button"
+      id="cancelConfirmationButton"
+      class="secondary-button"
+    >
+      Cancelar
+    </button>
+    <button
+      type="button"
+      id="confirmActionButton"
+      class="primary-button"
+    >
+      Confirmar
+    </button>
+  </div>
+</div>
+  </div>
+  <!-- =====================================================
+       BLOC 7 — NOTIFICAÇÕES
+       ===================================================== -->
+  <div
+    id="toastContainer"
+    class="toast-container"
+    aria-live="polite"
+    aria-atomic="true"
+  ></div>
+  <!-- =====================================================
+       BLOC 8 — JAVASCRIPT
+       Le nouveau fichier JS sera créé à l'étape suivante.
+       ===================================================== -->
+  <script type="module" src="./settings-v2.js"></script>
+</body>
+</html>
