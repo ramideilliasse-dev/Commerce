@@ -1,61 +1,79 @@
- // ============================================================
-// TOMA SETTINGS V2
-// BLOC 1 — INITIALISATION ET PRÉPARATION
-// Fichier : js/settings-v2.js
-// ============================================================
-
-// ------------------------------------------------------------
-// 1.1 — IMPORTATION DE FIREBASE
-// ------------------------------------------------------------
+ /* =========================================================
+   TOMA SETTINGS V2
+   BLOC 1 — INITIALISATION ET PRÉPARATION
+   Firebase v10.12.0
+   ========================================================= */
 
 import { auth, db } from "../firebase.js";
 
 import {
   doc,
   getDoc,
+  setDoc,
   updateDoc,
   deleteDoc,
   collection,
   addDoc,
   getDocs,
-  onSnapshot,
-  writeBatch,
   query,
   where,
+  writeBatch,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import {
   onAuthStateChanged,
-  signOut,
-  sendPasswordResetEmail,
   sendEmailVerification,
+  sendPasswordResetEmail,
+  signOut,
   deleteUser
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-
-// ------------------------------------------------------------
-// 1.2 — VÉRIFICATION DE L'INITIALISATION
-// ------------------------------------------------------------
+/* =========================================================
+   1.1 — CONFIGURATION GÉNÉRALE
+   ========================================================= */
 
 const SETTINGS_V2_VERSION = "2.0.0";
 
-const settingsLoading = document.getElementById("settingsLoading");
-const settingsApp = document.getElementById("settingsApp");
-const authRequiredModal = document.getElementById("authRequiredModal");
-const toastContainer = document.getElementById("toastContainer");
+const SETTINGS_V2_DEFAULT_AVATAR =
+  "./images/default-avatar.png";
 
+const SETTINGS_V2_USERS_COLLECTION = "users";
+const SETTINGS_V2_ADDRESSES_SUBCOLLECTION = "addresses";
+const SETTINGS_V2_ORDERS_COLLECTION = "orders";
 
-// ------------------------------------------------------------
-// 1.3 — CENTRALISATION DES ÉLÉMENTS HTML EXISTANTS
-// Nous conservons les IDs de ton HTML.
-// ------------------------------------------------------------
+const SETTINGS_V2_MARKETPLACE_PATH = [
+  "settings",
+  "marketplace"
+];
 
-const settingsElements = {
-  // Écran et authentification
-  loading: settingsLoading,
-  app: settingsApp,
-  authModal: authRequiredModal,
+/* =========================================================
+   1.2 — ÉTAT DE L'APPLICATION
+   ========================================================= */
+
+let settingsV2CurrentUser = null;
+let settingsV2UserData = {};
+let settingsV2Addresses = [];
+let settingsV2MarketplaceData = {};
+
+let settingsV2AuthResolved = false;
+let settingsV2ConfirmationCallback = null;
+
+let settingsV2SavingProfile = false;
+let settingsV2SavingAddress = false;
+let settingsV2SavingMerchant = false;
+
+/* =========================================================
+   1.3 — RÉFÉRENCES HTML
+   Les ID correspondent au HTML fourni.
+   Ne pas renommer ces identifiants.
+   ========================================================= */
+
+const settingsV2Elements = {
+  // Application et authentification
+  loading: document.getElementById("settingsLoading"),
+  app: document.getElementById("settingsApp"),
+  authModal: document.getElementById("authRequiredModal"),
   connectButton: document.getElementById("connectButton"),
   registerLink: document.getElementById("registerLink"),
 
@@ -64,7 +82,9 @@ const settingsElements = {
   profileName: document.getElementById("profileName"),
   profileEmail: document.getElementById("profileEmail"),
   accountRoleBadge: document.getElementById("accountRoleBadge"),
-  emailVerificationBadge: document.getElementById("emailVerificationBadge"),
+  emailVerificationBadge: document.getElementById(
+    "emailVerificationBadge"
+  ),
   profilePhone: document.getElementById("profilePhone"),
   profileLocation: document.getElementById("profileLocation"),
   editProfileButton: document.getElementById("editProfileButton"),
@@ -73,65 +93,108 @@ const settingsElements = {
   statOrders: document.getElementById("statOrders"),
   statFavorites: document.getElementById("statFavorites"),
   statAddresses: document.getElementById("statAddresses"),
-  viewAddressesButton: document.getElementById("viewAddressesButton"),
 
   // Adresses
   addressesSection: document.getElementById("addressesSection"),
   addressesList: document.getElementById("addressesList"),
-  addressesEmptyState: document.getElementById("addressesEmptyState"),
+  addressesEmptyState: document.getElementById(
+    "addressesEmptyState"
+  ),
   addAddressButton: document.getElementById("addAddressButton"),
+  viewAddressesButton: document.getElementById(
+    "viewAddressesButton"
+  ),
 
   // Espace commerçant
   merchantSection: document.getElementById("merchantSection"),
-  merchantStatusTitle: document.getElementById("merchantStatusTitle"),
-  merchantStatusDescription: document.getElementById("merchantStatusDescription"),
-  merchantStatusBadge: document.getElementById("merchantStatusBadge"),
   merchantInfoForm: document.getElementById("merchantInfoForm"),
+  merchantDashboardLink: document.getElementById(
+    "merchantDashboardLink"
+  ),
+  merchantRegisterLink: document.getElementById(
+    "merchantRegisterLink"
+  ),
   merchantShopName: document.getElementById("merchantShopName"),
   merchantWhatsApp: document.getElementById("merchantWhatsApp"),
-  merchantDescription: document.getElementById("merchantDescription"),
-  saveMerchantButton: document.getElementById("saveMerchantButton"),
-  merchantDashboardLink: document.getElementById("merchantDashboardLink"),
-  merchantRegisterLink: document.getElementById("merchantRegisterLink"),
+  merchantDescription: document.getElementById(
+    "merchantDescription"
+  ),
+  saveMerchantButton: document.getElementById(
+    "saveMerchantButton"
+  ),
+  merchantStatusTitle: document.getElementById(
+    "merchantStatusTitle"
+  ),
+  merchantStatusDescription: document.getElementById(
+    "merchantStatusDescription"
+  ),
+  merchantStatusBadge: document.getElementById(
+    "merchantStatusBadge"
+  ),
 
   // Préférences
-  promoNotifications: document.getElementById("promoNotifications"),
-  orderNotifications: document.getElementById("orderNotifications"),
+  promoNotifications: document.getElementById(
+    "promoNotifications"
+  ),
+  orderNotifications: document.getElementById(
+    "orderNotifications"
+  ),
   darkModeToggle: document.getElementById("darkModeToggle"),
 
   // Sécurité
-  verifyEmailButton: document.getElementById("verifyEmailButton"),
-  resetPasswordButton: document.getElementById("resetPasswordButton"),
+  verifyEmailButton: document.getElementById(
+    "verifyEmailButton"
+  ),
+  resetPasswordButton: document.getElementById(
+    "resetPasswordButton"
+  ),
 
-  // Support
-  contactSupportButton: document.getElementById("contactSupportButton"),
-
-  // Actions du compte
+  // Assistance et compte
+  contactSupportButton: document.getElementById(
+    "contactSupportButton"
+  ),
   signOutButton: document.getElementById("signOutButton"),
-  deleteAccountButton: document.getElementById("deleteAccountButton"),
+  deleteAccountButton: document.getElementById(
+    "deleteAccountButton"
+  ),
 
   // Identité de l'application
-  appName: document.getElementById("settingsAppName"),
-  appSlogan: document.getElementById("settingsAppSlogan"),
-  appVersion: document.getElementById("settingsAppVersion"),
+  settingsAppName: document.getElementById("settingsAppName"),
+  settingsAppSlogan: document.getElementById(
+    "settingsAppSlogan"
+  ),
+  settingsAppVersion: document.getElementById(
+    "settingsAppVersion"
+  ),
 
-  // Modal du profil
+  // Modale de modification du profil
   editProfileModal: document.getElementById("editProfileModal"),
   editProfileForm: document.getElementById("editProfileForm"),
-  closeEditProfileButton: document.getElementById("closeEditProfileButton"),
-  cancelEditProfileButton: document.getElementById("cancelEditProfileButton"),
-  saveProfileButton: document.getElementById("saveProfileButton"),
-  editProfilePhotoPreview: document.getElementById("editProfilePhotoPreview"),
-  editProfilePhotoUrl: document.getElementById("editProfilePhotoUrl"),
+  closeEditProfileButton: document.getElementById(
+    "closeEditProfileButton"
+  ),
+  cancelEditProfileButton: document.getElementById(
+    "cancelEditProfileButton"
+  ),
+  editProfilePhotoPreview: document.getElementById(
+    "editProfilePhotoPreview"
+  ),
+  editProfilePhotoUrl: document.getElementById(
+    "editProfilePhotoUrl"
+  ),
   editProfileName: document.getElementById("editProfileName"),
   editProfilePhone: document.getElementById("editProfilePhone"),
-  editProfileProvince: document.getElementById("editProfileProvince"),
+  editProfileProvince: document.getElementById(
+    "editProfileProvince"
+  ),
   editProfileCity: document.getElementById("editProfileCity"),
-  editProfileAddress: document.getElementById("editProfileAddress"),
+  editProfileAddress: document.getElementById(
+    "editProfileAddress"
+  ),
+  saveProfileButton: document.getElementById("saveProfileButton"),
 
-  // Modal des adresses
+  // Modale des adresses
   addressModal: document.getElementById("addressModal"),
-  addressModalTitle: document.getElementById("addressModalTitle"),
   addressForm: document.getElementById("addressForm"),
   addressId: document.getElementById("addressId"),
   addressLabel: document.getElementById("addressLabel"),
@@ -141,181 +204,157 @@ const settingsElements = {
   addressCity: document.getElementById("addressCity"),
   addressDetails: document.getElementById("addressDetails"),
   addressIsDefault: document.getElementById("addressIsDefault"),
-  closeAddressModalButton: document.getElementById("closeAddressModalButton"),
-  cancelAddressButton: document.getElementById("cancelAddressButton"),
+  closeAddressModalButton: document.getElementById(
+    "closeAddressModalButton"
+  ),
+  cancelAddressButton: document.getElementById(
+    "cancelAddressButton"
+  ),
   saveAddressButton: document.getElementById("saveAddressButton"),
 
-  // Modal de confirmation
+  // Modale de confirmation
   confirmationModal: document.getElementById("confirmationModal"),
   confirmationIcon: document.getElementById("confirmationIcon"),
-  confirmationTitle: document.getElementById("confirmationTitle"),
-  confirmationMessage: document.getElementById("confirmationMessage"),
-  cancelConfirmationButton: document.getElementById("cancelConfirmationButton"),
-  confirmActionButton: document.getElementById("confirmActionButton"),
+  confirmationTitle: document.getElementById(
+    "confirmationTitle"
+  ),
+  confirmationMessage: document.getElementById(
+    "confirmationMessage"
+  ),
+  cancelConfirmationButton: document.getElementById(
+    "cancelConfirmationButton"
+  ),
+  confirmActionButton: document.getElementById(
+    "confirmActionButton"
+  ),
 
-  // Notifications visuelles
-  toastContainer
+  // Notifications
+  toastContainer: document.getElementById("toastContainer")
 };
 
+/* =========================================================
+   1.4 — VÉRIFICATION DES ÉLÉMENTS HTML
+   ========================================================= */
 
-// ------------------------------------------------------------
-// 1.4 — ÉTAT CENTRAL DE SETTINGS V2
-// ------------------------------------------------------------
+function settingsV2CheckRequiredElements() {
+  const requiredElements = [
+    ["settingsLoading", settingsV2Elements.loading],
+    ["settingsApp", settingsV2Elements.app],
+    ["authRequiredModal", settingsV2Elements.authModal],
+    ["connectButton", settingsV2Elements.connectButton],
+    ["profileName", settingsV2Elements.profileName],
+    ["profileEmail", settingsV2Elements.profileEmail],
+    ["editProfileButton", settingsV2Elements.editProfileButton],
+    ["addressesList", settingsV2Elements.addressesList],
+    ["editProfileModal", settingsV2Elements.editProfileModal],
+    ["addressModal", settingsV2Elements.addressModal],
+    ["confirmationModal", settingsV2Elements.confirmationModal],
+    ["toastContainer", settingsV2Elements.toastContainer]
+  ];
 
-const settingsState = {
-  currentUser: null,
-  userData: null,
-  addresses: [],
-  marketplaceData: null,
-  authResolved: false,
-  profileLoaded: false,
-  isSavingProfile: false,
-  isSavingAddress: false,
-  isSavingMerchant: false,
-  pendingConfirmationAction: null
-};
+  const missingElements = requiredElements
+    .filter(([, element]) => !element)
+    .map(([id]) => id);
 
+  if (missingElements.length > 0) {
+    console.error(
+      "[TOMA SETTINGS V2] Éléments HTML introuvables :",
+      missingElements
+    );
 
-// ------------------------------------------------------------
-// 1.5 — OUTILS GÉNÉRAUX
-// ------------------------------------------------------------
+    alert(
+      "TOMA SETTINGS V2 — ATTENTION\n\n" +
+      "Certains éléments HTML sont introuvables :\n\n" +
+      missingElements.join(", ") +
+      "\n\nVérifiez les ID dans settings-v2.html."
+    );
 
-function settingsElementExists(element) {
-  return element instanceof HTMLElement;
-}
-
-
-function settingsSetText(element, value) {
-  if (!settingsElementExists(element)) return;
-
-  element.textContent = value ?? "";
-}
-
-
-function settingsSetLoading(isLoading, message = "A preparar as suas definições...") {
-  if (settingsElements.loading) {
-    const loadingMessage = settingsElements.loading.querySelector("p");
-
-    if (loadingMessage) {
-      loadingMessage.textContent = message;
-    }
-
-    settingsElements.loading.hidden = !isLoading;
+    return false;
   }
 
-  if (settingsElements.app) {
-    settingsElements.app.hidden = isLoading;
-  }
+  return true;
 }
 
+/* =========================================================
+   1.5 — OUTILS D'AFFICHAGE
+   ========================================================= */
 
-function settingsShowToast(message, type = "success") {
-  if (!settingsElements.toastContainer) {
-    alert(message);
-    return;
-  }
-
-  const toast = document.createElement("div");
-
-  toast.className = `toast toast-${type}`;
-  toast.setAttribute("role", type === "error" ? "alert" : "status");
-  toast.textContent = message;
-
-  settingsElements.toastContainer.appendChild(toast);
-
-  window.setTimeout(() => {
-    toast.remove();
-  }, 4500);
-}
-
-
-function settingsSetButtonLoading(button, isLoading, loadingText = "A processar...") {
-  if (!settingsElementExists(button)) return;
-
-  if (isLoading) {
-    if (!button.dataset.originalHtml) {
-      button.dataset.originalHtml = button.innerHTML;
-    }
-
-    button.disabled = true;
-    button.setAttribute("aria-busy", "true");
-    button.textContent = loadingText;
-  } else {
-    if (button.dataset.originalHtml) {
-      button.innerHTML = button.dataset.originalHtml;
-      delete button.dataset.originalHtml;
-    }
-
-    button.disabled = false;
-    button.removeAttribute("aria-busy");
+function settingsV2ShowLoading() {
+  if (settingsV2Elements.loading) {
+    settingsV2Elements.loading.hidden = false;
   }
 }
 
-
-// ------------------------------------------------------------
-// 1.6 — PROTECTION CONTRE LES ERREURS DE CHARGEMENT
-// ------------------------------------------------------------
-
-function settingsShowFatalError(message) {
-  settingsSetLoading(false);
-
-  if (settingsElements.app) {
-    settingsElements.app.hidden = true;
+function settingsV2HideLoading() {
+  if (settingsV2Elements.loading) {
+    settingsV2Elements.loading.hidden = true;
   }
-
-  if (settingsElements.authModal) {
-    settingsElements.authModal.hidden = true;
-  }
-
-  alert(message);
 }
 
+function settingsV2SetText(element, value, fallback = "—") {
+  if (!element) return;
 
-// ------------------------------------------------------------
-// 1.7 — VÉRIFICATION DES ÉLÉMENTS HTML ESSENTIELS
-// ------------------------------------------------------------
+  const normalizedValue =
+    value === null || value === undefined
+      ? ""
+      : String(value).trim();
 
-const settingsRequiredElements = [
-  ["settingsLoading", settingsElements.loading],
-  ["settingsApp", settingsElements.app],
-  ["authRequiredModal", settingsElements.authModal],
-  ["profileName", settingsElements.profileName],
-  ["profileEmail", settingsElements.profileEmail],
-  ["toastContainer", settingsElements.toastContainer]
-];
+  element.textContent = normalizedValue || fallback;
+}
 
-const settingsMissingElements = settingsRequiredElements
-  .filter(([, element]) => !settingsElementExists(element))
-  .map(([id]) => id);
+function settingsV2NormalizeText(value, fallback = "") {
+  if (value === null || value === undefined) {
+    return fallback;
+  }
 
+  const normalizedValue = String(value).trim();
 
-// ------------------------------------------------------------
-// 1.8 — DIAGNOSTIC INITIAL
-// ------------------------------------------------------------
+  return normalizedValue || fallback;
+}
 
-if (typeof auth === "undefined" || typeof db === "undefined") {
-  settingsShowFatalError(
-    "Não foi possível inicializar o Firebase. Verifique o ficheiro firebase.js."
-  );
-} else if (settingsMissingElements.length > 0) {
-  console.error(
-    "[TOMA SETTINGS V2] Elementos HTML em falta:",
-    settingsMissingElements
+/* =========================================================
+   1.6 — PROTECTION DE L'IMAGE DE PROFIL
+   ========================================================= */
+
+function settingsV2SetAvatar(imageElement, imageUrl) {
+  if (!imageElement) return;
+
+  const safeUrl = settingsV2NormalizeText(
+    imageUrl,
+    SETTINGS_V2_DEFAULT_AVATAR
   );
 
-  settingsShowFatalError(
-    "A página de definições não contém todos os elementos necessários. " +
-    "Verifique os IDs: " + settingsMissingElements.join(", ")
+  imageElement.onerror = () => {
+    imageElement.onerror = null;
+    imageElement.src = SETTINGS_V2_DEFAULT_AVATAR;
+  };
+
+  imageElement.src = safeUrl;
+}
+
+/* =========================================================
+   1.7 — INITIALISATION DU BLOC 1
+   ========================================================= */
+
+settingsV2ShowLoading();
+
+const settingsV2Block1Ready =
+  settingsV2CheckRequiredElements();
+
+if (settingsV2Block1Ready) {
+  console.info(
+    "[TOMA SETTINGS V2] Bloc 1 chargé correctement."
+  );
+
+  alert(
+    "TOMA SETTINGS V2\n\n" +
+    "BLOC 1 CHARGÉ AVEC SUCCÈS !\n\n" +
+    "✓ Connexion aux modules Firebase préparée\n" +
+    "✓ Références HTML vérifiées\n" +
+    "✓ Outils d'affichage initialisés\n" +
+    "✓ Protection de la photo de profil préparée\n\n" +
+    "Prêt pour le Bloc 2 : authentification."
   );
 } else {
-  console.info(
-    `[TOMA SETTINGS V2] Bloco 1 inicializado — versão ${SETTINGS_V2_VERSION}.`
-  );
+  settingsV2HideLoading();
 }
-
-
-// ============================================================
-// FIM DO BLOCO 1
-// Não adicionar ainda o código de autenticação.
-// O BLOCO 2 será criado depois de testarmos esta base.
-// ============================================================
