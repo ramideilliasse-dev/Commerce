@@ -712,7 +712,7 @@ async function settingsV2LoadUserProfile() {
 
         return true;
 
-    } catch (error) {
+      } catch (error) {
 
         settingsV2HideLoading();
 
@@ -720,6 +720,22 @@ async function settingsV2LoadUserProfile() {
             "TOMA SETTINGS V2 — ERREUR BLOC 3 :",
             error
         );
+
+        console.error(
+            "Emplacement de l'erreur :",
+            error.stack
+        );
+
+        alert(
+            "TOMA SETTINGS V2\n\n" +
+            "ERREUR AU BLOC 3\n\n" +
+            "Message : " + (error.message || String(error)) +
+            "\n\nDétail technique :\n" +
+            (error.stack || "Emplacement indisponible")
+        );
+
+        return false;
+    }
 
         alert(
             "TOMA SETTINGS V2\n\n" +
