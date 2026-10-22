@@ -737,12 +737,12 @@ async function settingsV2LoadUserProfile() {
         return false;
     }
 
-        alert(
+                alert(
             "TOMA SETTINGS V2\n\n" +
             "ERREUR AU BLOC 3\n\n" +
-            "Impossible de charger le profil.\n\n" +
-            "Code : " + (error.code || "inconnu") +
-            "\nMessage : " + (error.message || error)
+            "Message : " + (error.message || String(error)) +
+            "\n\nDétail technique :\n" +
+            (error.stack || "Emplacement indisponible")
         );
 
         return false;
