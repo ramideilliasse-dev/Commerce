@@ -358,3 +358,128 @@ if (settingsV2Block1Ready) {
 } else {
   settingsV2HideLoading();
 }
+/* =========================================================
+   TOMA SETTINGS V2
+   BLOC 2 — AUTHENTIFICATION FIREBASE
+   ========================================================= */
+
+function settingsV2ShowAuthRequired() {
+  if (settingsV2Elements.app) {
+    settingsV2Elements.app.hidden = true;
+  }
+
+  if (settingsV2Elements.authModal) {
+    settingsV2Elements.authModal.hidden = false;
+    settingsV2Elements.authModal.style.display = "";
+  }
+
+  settingsV2HideLoading();
+}
+
+function settingsV2ShowAuthenticatedApp() {
+  if (settingsV2Elements.authModal) {
+    settingsV2Elements.authModal.hidden = true;
+    settingsV2Elements.authModal.style.display = "none";
+  }
+
+  if (settingsV2Elements.app) {
+    settingsV2Elements.app.hidden = false;
+    settingsV2Elements.app.style.display = "";
+  }
+
+  settingsV2HideLoading();
+}
+
+function settingsV2GoToLogin() {
+  window.location.href = "./login.html";
+}
+
+function settingsV2GoToRegister() {
+  window.location.href = "./register.html";
+}
+
+function settingsV2InitializeAuthentication() {
+  if (!settingsV2Block1Ready) {
+    alert(
+      "TOMA SETTINGS V2 — ERRO\n\n" +
+      "O Bloco 1 não foi inicializado corretamente."
+    );
+    return;
+  }
+
+  if (settingsV2Elements.connectButton) {
+    settingsV2Elements.connectButton.addEventListener(
+      "click",
+      settingsV2GoToLogin
+    );
+  }
+
+  if (settingsV2Elements.registerLink) {
+    settingsV2Elements.registerLink.addEventListener(
+      "click",
+      function (event) {
+        event.preventDefault();
+        settingsV2GoToRegister();
+      }
+    );
+  }
+
+  settingsV2ShowLoading();
+
+  onAuthStateChanged(
+    auth,
+    async function (user) {
+      settingsV2AuthResolved = true;
+      settingsV2CurrentUser = user || null;
+
+      if (!user) {
+        settingsV2ShowAuthRequired();
+
+        console.info(
+          "[TOMA SETTINGS V2] Nenhum utilizador autenticado."
+        );
+
+        alert(
+          "TOMA SETTINGS V2\n\n" +
+          "BLOCO 2 — VERIFICAÇÃO CONCLUÍDA\n\n" +
+          "Nenhuma sessão iniciada.\n" +
+          "A página vai apresentar a opção de iniciar sessão."
+        );
+
+        return;
+      }
+
+      settingsV2ShowAuthenticatedApp();
+
+      console.info(
+        "[TOMA SETTINGS V2] Utilizador autenticado:",
+        user.uid
+      );
+
+      alert(
+        "TOMA SETTINGS V2\n\n" +
+        "BLOCO 2 — AUTENTICAÇÃO CONFIRMADA!\n\n" +
+        "✓ Utilizador autenticado\n" +
+        "✓ Sessão Firebase identificada\n" +
+        "✓ Janela de autenticação fechada\n\n" +
+        "Próximo passo: carregar os dados do perfil."
+      );
+    },
+    function (error) {
+      console.error(
+        "[TOMA SETTINGS V2] Erro de autenticação:",
+        error
+      );
+
+      settingsV2HideLoading();
+
+      alert(
+        "TOMA SETTINGS V2 — ERRO DE AUTENTICAÇÃO\n\n" +
+        (error?.message || "Não foi possível verificar a sessão.") +
+        "\n\nVerifique a configuração do Firebase."
+      );
+    }
+  );
+}
+
+settingsV2InitializeAuthentication();
