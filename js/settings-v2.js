@@ -667,132 +667,117 @@ function settingsV2InitializeAuthentication() {
 }
 /* =========================================================
 BLOC 5 — STATISTIQUES DU COMPTE
-Commandes, favoris et adresses
 ========================================================= */
 
 async function settingsV2LoadStatistics() {
 
 if (!settingsV2CurrentUser) {
 console.warn(
-“[TOMA SETTINGS V2] Statistiques : aucun utilisateur connecté.”
+“[TOMA SETTINGS V2] Aucun utilisateur connecté.”
 );
 return;
 }
 
 const userId = settingsV2CurrentUser.uid;
 
-// Valeurs initiales
 settingsV2SetText(settingsV2Elements.statOrders, “…”);
 settingsV2SetText(settingsV2Elements.statFavorites, “…”);
 settingsV2SetText(settingsV2Elements.statAddresses, “…”);
 
-try {
-
-/* -----------------------------------------------------
-   5.1 — FAVORIS
-   Toma utilise la clé "toma_favorites"
-   ----------------------------------------------------- */
+// 5.1 — FAVORIS
 let favorites = [];
+
 try {
-  const savedFavorites = localStorage.getItem("toma_favorites");
-  const parsedFavorites = JSON.parse(savedFavorites || "[]");
-  if (Array.isArray(parsedFavorites)) {
-    favorites = parsedFavorites;
-  }
-} catch (favoritesError) {
-  console.warn(
-    "[TOMA SETTINGS V2] Impossible de lire les favoris :",
-    favoritesError
-  );
+const savedFavorites = localStorage.getItem(“toma_favorites”);
+const parsedFavorites = JSON.parse(savedFavorites || “[]”);
+
+if (Array.isArray(parsedFavorites)) {
+  favorites = parsedFavorites;
 }
+
+} catch (error) {
+console.error(
+“[TOMA SETTINGS V2] Erreur favoris :”,
+error
+);
+}
+
 settingsV2SetText(
-  settingsV2Elements.statFavorites,
-  favorites.length,
+settingsV2Elements.statFavorites,
+favorites.length,
+“0”
+);
+
+// 5.2 — ADRESSES
+try {
+const addressesSnapshot = await getDocs(
+collection(db, “users”, userId, “addresses”)
+);
+
+settingsV2SetText(
+  settingsV2Elements.statAddresses,
+  addressesSnapshot.size,
   "0"
-);
-/* -----------------------------------------------------
-   5.2 — ADRESSES
-   Collection : users/{uid}/addresses
-   ----------------------------------------------------- */
-try {
-  const addressesSnapshot = await getDocs(
-    collection(db, "users", userId, "addresses")
-  );
-  settingsV2SetText(
-    settingsV2Elements.statAddresses,
-    addressesSnapshot.size,
-    "0"
-  );
-} catch (addressesError) {
-  console.error(
-    "[TOMA SETTINGS V2] Erreur de chargement des adresses :",
-    addressesError
-  );
-  settingsV2SetText(
-    settingsV2Elements.statAddresses,
-    "—"
-  );
-}
-/* -----------------------------------------------------
-   5.3 — COMMANDES
-   Vérifie les champs uid et userId
-   ----------------------------------------------------- */
-try {
-  const ordersSnapshot = await getDocs(
-    collection(db, "orders")
-  );
-  let totalOrders = 0;
-  ordersSnapshot.forEach((orderDocument) => {
-    const order = orderDocument.data();
-    if (
-      order.uid === userId ||
-      order.userId === userId
-    ) {
-      totalOrders++;
-    }
-  });
-  settingsV2SetText(
-    settingsV2Elements.statOrders,
-    totalOrders,
-    "0"
-  );
-} catch (ordersError) {
-  console.error(
-    "[TOMA SETTINGS V2] Erreur de chargement des commandes :",
-    ordersError
-  );
-  settingsV2SetText(
-    settingsV2Elements.statOrders,
-    "—"
-  );
-}
-console.info(
-  "[TOMA SETTINGS V2] Statistiques chargées."
-);
-alert(
-  "TOMA SETTINGS V2\n\n" +
-  "BLOC 5 — STATISTIQUES CHARGÉES !\n\n" +
-  "✓ Favoris : " + favorites.length + "\n" +
-  "✓ Commandes : " +
-  (settingsV2Elements.statOrders?.textContent || "—") + "\n" +
-  "✓ Adresses : " +
-  (settingsV2Elements.statAddresses?.textContent || "—")
 );
 
 } catch (error) {
-
 console.error(
-  "[TOMA SETTINGS V2] Erreur générale des statistiques :",
-  error
+“[TOMA SETTINGS V2] Erreur adresses :”,
+error
 );
-alert(
-  "TOMA SETTINGS V2\n\n" +
-  "ERREUR AU BLOC 5\n\n" +
-  (error.message || String(error))
+
+settingsV2SetText(
+  settingsV2Elements.statAddresses,
+  "—"
 );
 
 }
 
+// 5.3 — COMMANDES
+try {
+const ordersSnapshot = await getDocs(
+collection(db, “orders”)
+);
+
+let totalOrders = 0;
+ordersSnapshot.forEach((orderDocument) => {
+  const order = orderDocument.data();
+  if (
+    order.uid === userId ||
+    order.userId === userId
+  ) {
+    totalOrders++;
+  }
+});
+settingsV2SetText(
+  settingsV2Elements.statOrders,
+  totalOrders,
+  "0"
+);
+
+} catch (error) {
+console.error(
+“[TOMA SETTINGS V2] Erreur commandes :”,
+error
+);
+
+settingsV2SetText(
+  settingsV2Elements.statOrders,
+  "—"
+);
+
+}
+
+alert(
+“TOMA SETTINGS V2\n\n” +
+“BLOC 5 — TERMINÉ !\n\n” +
+“Favoris : “ +
+(settingsV2Elements.statFavorites?.textContent || “—”) +
+“\nCommandes : “ +
+(settingsV2Elements.statOrders?.textContent || “—”) +
+“\nAdresses : “ +
+(settingsV2Elements.statAddresses?.textContent || “—”)
+);
 }
 /* =========================================================
    FIN — BLOCS 1 À 4
