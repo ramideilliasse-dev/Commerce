@@ -456,7 +456,7 @@ function settingsV2InitializeAuthentication() {
         user.uid
       );
 
-      alert(
+            alert(
         "TOMA SETTINGS V2\n\n" +
         "BLOCO 2 — AUTENTICAÇÃO CONFIRMADA!\n\n" +
         "✓ Utilizador autenticado\n" +
@@ -464,6 +464,17 @@ function settingsV2InitializeAuthentication() {
         "✓ Janela de autenticação fechada\n\n" +
         "Próximo passo: carregar os dados do perfil."
       );
+
+      // BLOC 4 — Carregar o perfil após a autenticação
+      if (typeof settingsV2InitializeProfile === "function") {
+        await settingsV2InitializeProfile();
+      } else {
+        alert(
+          "TOMA SETTINGS V2 — AVISO\n\n" +
+          "A autenticação funcionou, mas a função do perfil não foi encontrada.\n\n" +
+          "Verifique se os Blocos 3 e 4 estão presentes em settings-v2.js."
+        );
+      }
     },
     function (error) {
       console.error(
