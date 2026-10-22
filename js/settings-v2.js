@@ -1,36 +1,26 @@
  /* =========================================================
    TOMA SETTINGS V2
-   BLOC 1 — INITIALISATION ET PRÉPARATION
+   BLOCS 1 À 4 — VERSION CORRIGÉE
    Firebase v10.12.0
+   ========================================================= */
+
+/* =========================================================
+   BLOC 1 — IMPORTS FIREBASE
    ========================================================= */
 
 import { auth, db } from "../firebase.js";
 
 import {
   doc,
-  getDoc,
-  setDoc,
-  updateDoc,
-  deleteDoc,
-  collection,
-  addDoc,
-  getDocs,
-  query,
-  where,
-  writeBatch,
-  serverTimestamp
+  getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import {
-  onAuthStateChanged,
-  sendEmailVerification,
-  sendPasswordResetEmail,
-  signOut,
-  deleteUser
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 /* =========================================================
-   1.1 — CONFIGURATION GÉNÉRALE
+   1.1 — CONFIGURATION
    ========================================================= */
 
 const SETTINGS_V2_VERSION = "2.0.0";
@@ -38,46 +28,27 @@ const SETTINGS_V2_VERSION = "2.0.0";
 const SETTINGS_V2_DEFAULT_AVATAR =
   "./images/default-avatar.png";
 
-const SETTINGS_V2_USERS_COLLECTION = "users";
-const SETTINGS_V2_ADDRESSES_SUBCOLLECTION = "addresses";
-const SETTINGS_V2_ORDERS_COLLECTION = "orders";
-
-const SETTINGS_V2_MARKETPLACE_PATH = [
-  "settings",
-  "marketplace"
-];
-
 /* =========================================================
    1.2 — ÉTAT DE L'APPLICATION
    ========================================================= */
 
 let settingsV2CurrentUser = null;
 let settingsV2UserData = {};
-let settingsV2Addresses = [];
-let settingsV2MarketplaceData = {};
-
 let settingsV2AuthResolved = false;
-let settingsV2ConfirmationCallback = null;
-
-let settingsV2SavingProfile = false;
-let settingsV2SavingAddress = false;
-let settingsV2SavingMerchant = false;
+let settingsV2ProfileLoaded = false;
+let settingsV2ProfileInitializationStarted = false;
 
 /* =========================================================
    1.3 — RÉFÉRENCES HTML
-   Les ID correspondent au HTML fourni.
-   Ne pas renommer ces identifiants.
    ========================================================= */
 
 const settingsV2Elements = {
-  // Application et authentification
   loading: document.getElementById("settingsLoading"),
   app: document.getElementById("settingsApp"),
   authModal: document.getElementById("authRequiredModal"),
   connectButton: document.getElementById("connectButton"),
   registerLink: document.getElementById("registerLink"),
 
-  // Profil
   profilePhoto: document.getElementById("profilePhoto"),
   profileName: document.getElementById("profileName"),
   profileEmail: document.getElementById("profileEmail"),
@@ -89,12 +60,10 @@ const settingsV2Elements = {
   profileLocation: document.getElementById("profileLocation"),
   editProfileButton: document.getElementById("editProfileButton"),
 
-  // Statistiques
   statOrders: document.getElementById("statOrders"),
   statFavorites: document.getElementById("statFavorites"),
   statAddresses: document.getElementById("statAddresses"),
 
-  // Adresses
   addressesSection: document.getElementById("addressesSection"),
   addressesList: document.getElementById("addressesList"),
   addressesEmptyState: document.getElementById(
@@ -105,7 +74,6 @@ const settingsV2Elements = {
     "viewAddressesButton"
   ),
 
-  // Espace commerçant
   merchantSection: document.getElementById("merchantSection"),
   merchantInfoForm: document.getElementById("merchantInfoForm"),
   merchantDashboardLink: document.getElementById(
@@ -132,7 +100,6 @@ const settingsV2Elements = {
     "merchantStatusBadge"
   ),
 
-  // Préférences
   promoNotifications: document.getElementById(
     "promoNotifications"
   ),
@@ -141,15 +108,12 @@ const settingsV2Elements = {
   ),
   darkModeToggle: document.getElementById("darkModeToggle"),
 
-  // Sécurité
   verifyEmailButton: document.getElementById(
     "verifyEmailButton"
   ),
   resetPasswordButton: document.getElementById(
     "resetPasswordButton"
   ),
-
-  // Assistance et compte
   contactSupportButton: document.getElementById(
     "contactSupportButton"
   ),
@@ -158,7 +122,6 @@ const settingsV2Elements = {
     "deleteAccountButton"
   ),
 
-  // Identité de l'application
   settingsAppName: document.getElementById("settingsAppName"),
   settingsAppSlogan: document.getElementById(
     "settingsAppSlogan"
@@ -167,7 +130,6 @@ const settingsV2Elements = {
     "settingsAppVersion"
   ),
 
-  // Modale de modification du profil
   editProfileModal: document.getElementById("editProfileModal"),
   editProfileForm: document.getElementById("editProfileForm"),
   closeEditProfileButton: document.getElementById(
@@ -193,7 +155,6 @@ const settingsV2Elements = {
   ),
   saveProfileButton: document.getElementById("saveProfileButton"),
 
-  // Modale des adresses
   addressModal: document.getElementById("addressModal"),
   addressForm: document.getElementById("addressForm"),
   addressId: document.getElementById("addressId"),
@@ -212,7 +173,6 @@ const settingsV2Elements = {
   ),
   saveAddressButton: document.getElementById("saveAddressButton"),
 
-  // Modale de confirmation
   confirmationModal: document.getElementById("confirmationModal"),
   confirmationIcon: document.getElementById("confirmationIcon"),
   confirmationTitle: document.getElementById(
@@ -228,7 +188,6 @@ const settingsV2Elements = {
     "confirmActionButton"
   ),
 
-  // Notifications
   toastContainer: document.getElementById("toastContainer")
 };
 
@@ -264,7 +223,7 @@ function settingsV2CheckRequiredElements() {
 
     alert(
       "TOMA SETTINGS V2 — ATTENTION\n\n" +
-      "Certains éléments HTML sont introuvables :\n\n" +
+      "Éléments HTML introuvables :\n\n" +
       missingElements.join(", ") +
       "\n\nVérifiez les ID dans settings-v2.html."
     );
@@ -308,13 +267,8 @@ function settingsV2NormalizeText(value, fallback = "") {
   }
 
   const normalizedValue = String(value).trim();
-
   return normalizedValue || fallback;
 }
-
-/* =========================================================
-   1.6 — PROTECTION DE L'IMAGE DE PROFIL
-   ========================================================= */
 
 function settingsV2SetAvatar(imageElement, imageUrl) {
   if (!imageElement) return;
@@ -333,7 +287,7 @@ function settingsV2SetAvatar(imageElement, imageUrl) {
 }
 
 /* =========================================================
-   1.7 — INITIALISATION DU BLOC 1
+   1.6 — INITIALISATION DU BLOC 1
    ========================================================= */
 
 settingsV2ShowLoading();
@@ -342,24 +296,21 @@ const settingsV2Block1Ready =
   settingsV2CheckRequiredElements();
 
 if (settingsV2Block1Ready) {
-  console.info(
-    "[TOMA SETTINGS V2] Bloc 1 chargé correctement."
-  );
+  console.info("[TOMA SETTINGS V2] Bloc 1 chargé.");
 
   alert(
     "TOMA SETTINGS V2\n\n" +
     "BLOC 1 CHARGÉ AVEC SUCCÈS !\n\n" +
-    "✓ Connexion aux modules Firebase préparée\n" +
+    "✓ Modules Firebase importés\n" +
     "✓ Références HTML vérifiées\n" +
-    "✓ Outils d'affichage initialisés\n" +
-    "✓ Protection de la photo de profil préparée\n\n" +
-    "Prêt pour le Bloc 2 : authentification."
+    "✓ Outils d'affichage prêts\n" +
+    "✓ Protection de la photo préparée"
   );
 } else {
   settingsV2HideLoading();
 }
+
 /* =========================================================
-   TOMA SETTINGS V2
    BLOC 2 — AUTHENTIFICATION FIREBASE
    ========================================================= */
 
@@ -398,11 +349,246 @@ function settingsV2GoToRegister() {
   window.location.href = "./register.html";
 }
 
+/* =========================================================
+   BLOC 3 — CHARGEMENT DU PROFIL
+   ========================================================= */
+
+async function settingsV2LoadUserProfile() {
+  if (!settingsV2CurrentUser) {
+    alert(
+      "TOMA SETTINGS V2\n\n" +
+      "BLOC 3 : aucun utilisateur connecté."
+    );
+
+    return false;
+  }
+
+  try {
+    settingsV2ShowLoading();
+
+    const user = settingsV2CurrentUser;
+
+    const userRef = doc(db, "users", user.uid);
+    const userSnapshot = await getDoc(userRef);
+
+    let userData;
+
+    if (userSnapshot.exists()) {
+      userData = userSnapshot.data();
+    } else {
+      userData = {
+        name: user.displayName || "",
+        email: user.email || "",
+        phone: "",
+        province: "",
+        city: "",
+        address: "",
+        role: "customer"
+      };
+
+      console.warn(
+        "[TOMA SETTINGS V2] Document utilisateur absent.",
+        user.uid
+      );
+    }
+
+    settingsV2UserData = userData;
+
+    // Nom et e-mail
+    settingsV2SetText(
+      settingsV2Elements.profileName,
+      userData.name || user.displayName || "Utilizador"
+    );
+
+    settingsV2SetText(
+      settingsV2Elements.profileEmail,
+      user.email || userData.email || "—"
+    );
+
+    // Téléphone
+    settingsV2SetText(
+      settingsV2Elements.profilePhone,
+      userData.phone || userData.whatsapp || "—"
+    );
+
+    // Localisation
+    const locationParts = [
+      userData.city,
+      userData.province
+    ].filter(Boolean);
+
+    settingsV2SetText(
+      settingsV2Elements.profileLocation,
+      locationParts.length
+        ? locationParts.join(", ")
+        : "Localização não definida"
+    );
+
+    // Rôle
+    const roleLabels = {
+      customer: "Cliente",
+      merchant: "Comerciante",
+      admin: "Administrador",
+      superadmin: "Super Administrador"
+    };
+
+    settingsV2SetText(
+      settingsV2Elements.accountRoleBadge,
+      roleLabels[userData.role] || "Cliente"
+    );
+
+    // Vérification de l'e-mail
+    settingsV2SetText(
+      settingsV2Elements.emailVerificationBadge,
+      user.emailVerified
+        ? "E-mail verificado"
+        : "E-mail não verificado"
+    );
+
+    // Photo de profil
+    const profilePhoto =
+      userData.photoURL ||
+      userData.photo ||
+      user.photoURL ||
+      SETTINGS_V2_DEFAULT_AVATAR;
+
+    settingsV2SetAvatar(
+      settingsV2Elements.profilePhoto,
+      profilePhoto
+    );
+
+    settingsV2SetAvatar(
+      settingsV2Elements.editProfilePhotoPreview,
+      profilePhoto
+    );
+
+    // Préremplir les champs du formulaire
+    const formName = settingsV2Elements.editProfileName;
+    if (formName) {
+      formName.value = userData.name || user.displayName || "";
+    }
+
+    const formPhone = settingsV2Elements.editProfilePhone;
+    if (formPhone) {
+      formPhone.value = userData.phone || userData.whatsapp || "";
+    }
+
+    const formProvince = settingsV2Elements.editProfileProvince;
+    if (formProvince) {
+      formProvince.value = userData.province || "";
+    }
+
+    const formCity = settingsV2Elements.editProfileCity;
+    if (formCity) {
+      formCity.value = userData.city || "";
+    }
+
+    const formAddress = settingsV2Elements.editProfileAddress;
+    if (formAddress) {
+      formAddress.value = userData.address || "";
+    }
+
+    const photoUrlInput = settingsV2Elements.editProfilePhotoUrl;
+    if (photoUrlInput) {
+      photoUrlInput.value =
+        userData.photoURL || userData.photo || "";
+    }
+
+    settingsV2ProfileLoaded = true;
+
+    settingsV2HideLoading();
+
+    console.info(
+      "[TOMA SETTINGS V2] Profil chargé.",
+      {
+        uid: user.uid,
+        role: userData.role || "customer",
+        documentExists: userSnapshot.exists()
+      }
+    );
+
+    alert(
+      "TOMA SETTINGS V2\n\n" +
+      "BLOC 3 — PROFIL CHARGÉ !\n\n" +
+      "✓ Profil lu depuis Firebase\n" +
+      "✓ Nom et e-mail affichés\n" +
+      "✓ Rôle du compte préparé\n" +
+      "✓ Photo de profil préparée\n\n" +
+      (
+        userSnapshot.exists()
+          ? "Le document utilisateur a été trouvé."
+          : "Le document utilisateur n'existe pas encore."
+      )
+    );
+
+    return true;
+
+  } catch (error) {
+    settingsV2HideLoading();
+
+    console.error(
+      "[TOMA SETTINGS V2] Erreur Bloc 3 :",
+      error
+    );
+
+    alert(
+      "TOMA SETTINGS V2\n\n" +
+      "ERREUR AU BLOC 3\n\n" +
+      "Code : " + (error.code || "inconnu") +
+      "\nMessage : " + (error.message || String(error)) +
+      "\n\nDétail :\n" + (error.stack || "Indisponible")
+    );
+
+    return false;
+  }
+}
+
+/* =========================================================
+   BLOC 4 — LIAISON AUTHENTIFICATION / PROFIL
+   ========================================================= */
+
+async function settingsV2InitializeProfile() {
+  if (settingsV2ProfileInitializationStarted) {
+    console.info(
+      "[TOMA SETTINGS V2] Initialisation du profil déjà lancée."
+    );
+    return;
+  }
+
+  if (!settingsV2CurrentUser) {
+    console.warn(
+      "[TOMA SETTINGS V2] Aucun utilisateur à charger."
+    );
+    return;
+  }
+
+  settingsV2ProfileInitializationStarted = true;
+
+  const loaded = await settingsV2LoadUserProfile();
+
+  if (loaded) {
+    alert(
+      "TOMA SETTINGS V2\n\n" +
+      "BLOC 4 — LIAISON RÉUSSIE !\n\n" +
+      "✓ Authentification confirmée\n" +
+      "✓ Chargement du profil terminé\n" +
+      "✓ Données du compte préparées\n\n" +
+      "Prochaine étape : les statistiques."
+    );
+  } else {
+    settingsV2ProfileInitializationStarted = false;
+  }
+}
+
+/* =========================================================
+   DÉMARRAGE DE L'AUTHENTIFICATION
+   ========================================================= */
+
 function settingsV2InitializeAuthentication() {
   if (!settingsV2Block1Ready) {
     alert(
-      "TOMA SETTINGS V2 — ERRO\n\n" +
-      "O Bloco 1 não foi inicializado corretamente."
+      "TOMA SETTINGS V2 — ERREUR\n\n" +
+      "Le Bloc 1 n'a pas été initialisé correctement."
     );
     return;
   }
@@ -433,17 +619,16 @@ function settingsV2InitializeAuthentication() {
       settingsV2CurrentUser = user || null;
 
       if (!user) {
-        settingsV2ShowAuthRequired();
+        settingsV2ProfileInitializationStarted = false;
+        settingsV2ProfileLoaded = false;
 
-        console.info(
-          "[TOMA SETTINGS V2] Nenhum utilizador autenticado."
-        );
+        settingsV2ShowAuthRequired();
 
         alert(
           "TOMA SETTINGS V2\n\n" +
-          "BLOCO 2 — VERIFICAÇÃO CONCLUÍDA\n\n" +
-          "Nenhuma sessão iniciada.\n" +
-          "A página vai apresentar a opção de iniciar sessão."
+          "BLOC 2 — VÉRIFICATION TERMINÉE\n\n" +
+          "Aucune session ouverte.\n" +
+          "Connectez-vous pour accéder aux paramètres."
         );
 
         return;
@@ -451,356 +636,39 @@ function settingsV2InitializeAuthentication() {
 
       settingsV2ShowAuthenticatedApp();
 
-      console.info(
-        "[TOMA SETTINGS V2] Utilizador autenticado:",
-        user.uid
-      );
-
-            alert(
+      alert(
         "TOMA SETTINGS V2\n\n" +
-        "BLOCO 2 — AUTENTICAÇÃO CONFIRMADA!\n\n" +
-        "✓ Utilizador autenticado\n" +
-        "✓ Sessão Firebase identificada\n" +
-        "✓ Janela de autenticação fechada\n\n" +
-        "Próximo passo: carregar os dados do perfil."
+        "BLOC 2 — AUTHENTIFICATION CONFIRMÉE !\n\n" +
+        "✓ Utilisateur authentifié\n" +
+        "✓ Session Firebase identifiée\n" +
+        "✓ Fenêtre de connexion fermée"
       );
 
-      // BLOC 4 — Carregar o perfil após a autenticação
-      if (typeof settingsV2InitializeProfile === "function") {
-        await settingsV2InitializeProfile();
-      } else {
-        alert(
-          "TOMA SETTINGS V2 — AVISO\n\n" +
-          "A autenticação funcionou, mas a função do perfil não foi encontrada.\n\n" +
-          "Verifique se os Blocos 3 e 4 estão presentes em settings-v2.js."
-        );
-      }
+      await settingsV2InitializeProfile();
     },
     function (error) {
+      settingsV2HideLoading();
+
       console.error(
-        "[TOMA SETTINGS V2] Erro de autenticação:",
+        "[TOMA SETTINGS V2] Erreur d'authentification :",
         error
       );
 
-      settingsV2HideLoading();
-
       alert(
-        "TOMA SETTINGS V2 — ERRO DE AUTENTICAÇÃO\n\n" +
-        (error?.message || "Não foi possível verificar a sessão.") +
-        "\n\nVerifique a configuração do Firebase."
+        "TOMA SETTINGS V2 — ERREUR D'AUTHENTIFICATION\n\n" +
+        (error.message || "Impossible de vérifier la session.")
       );
     }
   );
 }
 
+/* =========================================================
+   FIN — BLOCS 1 À 4
+   ========================================================= */
+
+console.info(
+  "[TOMA SETTINGS V2] Fichier chargé — version " +
+  SETTINGS_V2_VERSION
+);
+
 settingsV2InitializeAuthentication();
-// ======================================================
-// TOMA SETTINGS V2 — BLOC 3
-// CHARGEMENT DU PROFIL UTILISATEUR DEPUIS FIREBASE
-// ======================================================
-
-console.log("TOMA SETTINGS V2 — BLOC 3 chargé");
-
-// État du chargement du profil
-let settingsV2ProfileLoaded = false;
-
-// Charger le profil de l'utilisateur connecté
-async function settingsV2LoadUserProfile() {
-
-    // Vérifier que l'utilisateur est connecté
-    if (!settingsV2CurrentUser) {
-        alert(
-            "TOMA SETTINGS V2\n\n" +
-            "BLOC 3 : aucun utilisateur connecté.\n" +
-            "Le chargement du profil est interrompu."
-        );
-
-        return false;
-    }
-
-    try {
-
-        settingsV2ShowLoading();
-
-        const user = settingsV2CurrentUser;
-
-        // Référence au document utilisateur
-        const userRef = doc(
-            db,
-            "users",
-            user.uid
-        );
-
-        // Lire le profil dans Firestore
-        const userSnapshot = await getDoc(userRef);
-
-        let userData = {};
-
-        if (userSnapshot.exists()) {
-
-            userData = userSnapshot.data();
-
-        } else {
-
-            // Le document n'existe pas encore :
-            // préparer des données minimales sans écraser
-            // les informations d'un compte existant.
-
-            userData = {
-                name: user.displayName || "",
-                email: user.email || "",
-                phone: "",
-                province: "",
-                city: "",
-                address: "",
-                role: "customer"
-            };
-
-            console.warn(
-                "TOMA SETTINGS V2 : document users/" +
-                user.uid +
-                " introuvable."
-            );
-        }
-
-        // Conserver les données en mémoire
-        settingsV2UserData = userData;
-
-        // Afficher le nom
-        settingsV2SetText(
-            "profileName",
-            userData.name ||
-            user.displayName ||
-            "Utilizador"
-        );
-
-        // Afficher l'e-mail
-        settingsV2SetText(
-            "profileEmail",
-            user.email || userData.email || "—"
-        );
-
-        // Afficher le téléphone
-        settingsV2SetText(
-            "profilePhone",
-            userData.phone || userData.whatsapp || "—"
-        );
-
-        // Afficher la localisation
-        const locationParts = [
-            userData.city,
-            userData.province
-        ].filter(Boolean);
-
-        settingsV2SetText(
-            "profileLocation",
-            locationParts.length
-                ? locationParts.join(", ")
-                : "Localização não definida"
-        );
-
-        // Afficher le rôle du compte
-        const roleLabels = {
-            customer: "Cliente",
-            merchant: "Comerciante",
-            admin: "Administrador",
-            superadmin: "Super Administrador"
-        };
-
-        settingsV2SetText(
-            "accountRoleBadge",
-            roleLabels[userData.role] || "Cliente"
-        );
-
-        // Afficher le statut de vérification de l'e-mail
-        settingsV2SetText(
-            "emailVerificationBadge",
-            user.emailVerified
-                ? "E-mail verificado"
-                : "E-mail não verificado"
-        );
-
-        // Afficher la photo de profil
-        const profilePhoto =
-            userData.photoURL ||
-            userData.photo ||
-            user.photoURL ||
-            SETTINGS_V2_DEFAULT_AVATAR;
-
-        settingsV2SetAvatar(profilePhoto);
-
-        // Préremplir le formulaire de modification du profil
-        settingsV2SetText(
-            "editProfileName",
-            userData.name || user.displayName || ""
-        );
-
-        const phoneInput =
-            document.getElementById("editProfilePhone");
-
-        if (phoneInput) {
-            phoneInput.value =
-                userData.phone || userData.whatsapp || "";
-        }
-
-        const provinceInput =
-            document.getElementById("editProfileProvince");
-
-        if (provinceInput) {
-            provinceInput.value = userData.province || "";
-        }
-
-        const cityInput =
-            document.getElementById("editProfileCity");
-
-        if (cityInput) {
-            cityInput.value = userData.city || "";
-        }
-
-        const addressInput =
-            document.getElementById("editProfileAddress");
-
-        if (addressInput) {
-            addressInput.value = userData.address || "";
-        }
-
-        // Préparer l'aperçu de la photo dans le formulaire
-        const photoPreview =
-            document.getElementById("editProfilePhotoPreview");
-
-        if (photoPreview) {
-            photoPreview.src = profilePhoto;
-        }
-
-        // Préparer le champ d'URL de la photo s'il existe
-        const photoUrlInput =
-            document.getElementById("editProfilePhotoUrl");
-
-        if (photoUrlInput) {
-            photoUrlInput.value =
-                userData.photoURL || userData.photo || "";
-        }
-
-        // Indiquer que le chargement est terminé
-        settingsV2ProfileLoaded = true;
-
-        settingsV2HideLoading();
-
-        console.log(
-            "TOMA SETTINGS V2 : profil chargé avec succès.",
-            {
-                uid: user.uid,
-                role: userData.role || "customer",
-                documentExists: userSnapshot.exists()
-            }
-        );
-
-        alert(
-            "TOMA SETTINGS V2\n\n" +
-            "BLOC 3 — PROFIL CHARGÉ !\n\n" +
-            "✓ Utilisateur Firebase identifié\n" +
-            "✓ Lecture du profil terminée\n" +
-            "✓ Nom et e-mail préparés\n" +
-            "✓ Rôle du compte affiché\n" +
-            "✓ Photo de profil préparée\n\n" +
-            (
-                userSnapshot.exists()
-                    ? "Le profil a été récupéré depuis Firestore."
-                    : "Attention : le document utilisateur n'existe pas encore."
-            )
-        );
-
-        return true;
-
-      } catch (error) {
-
-        settingsV2HideLoading();
-
-        console.error(
-            "TOMA SETTINGS V2 — ERREUR BLOC 3 :",
-            error
-        );
-
-        console.error(
-            "Emplacement de l'erreur :",
-            error.stack
-        );
-
-        alert(
-            "TOMA SETTINGS V2\n\n" +
-            "ERREUR AU BLOC 3\n\n" +
-            "Message : " + (error.message || String(error)) +
-            "\n\nDétail technique :\n" +
-            (error.stack || "Emplacement indisponible")
-        );
-
-        return false;
-    }
-
-                alert(
-            "TOMA SETTINGS V2\n\n" +
-            "ERREUR AU BLOC 3\n\n" +
-            "Message : " + (error.message || String(error)) +
-            "\n\nDétail technique :\n" +
-            (error.stack || "Emplacement indisponible")
-        );
-
-        return false;
-    }
-}
-// ======================================================
-// TOMA SETTINGS V2 — BLOC 4
-// LIAISON AUTHENTIFICATION ET PROFIL
-// ======================================================
-
-console.log("TOMA SETTINGS V2 — BLOC 4 chargé");
-
-let settingsV2ProfileInitializationStarted = false;
-
-async function settingsV2InitializeProfile() {
-
-    // Éviter les chargements en double
-    if (settingsV2ProfileInitializationStarted) {
-        console.log(
-            "BLOC 4 : initialisation déjà démarrée."
-        );
-        return;
-    }
-
-    // Vérifier que Firebase a identifié l'utilisateur
-    if (!settingsV2CurrentUser) {
-        console.warn(
-            "BLOC 4 : aucun utilisateur connecté pour le moment."
-        );
-        return;
-    }
-
-    settingsV2ProfileInitializationStarted = true;
-
-    console.log(
-        "BLOC 4 : démarrage du chargement du profil."
-    );
-
-    const profileLoaded =
-        await settingsV2LoadUserProfile();
-
-    if (profileLoaded) {
-
-        alert(
-            "TOMA SETTINGS V2\n\n" +
-            "BLOC 4 — LIAISON RÉUSSIE !\n\n" +
-            "✓ Authentification Firebase confirmée\n" +
-            "✓ Chargement du profil exécuté\n" +
-            "✓ Données du compte préparées\n\n" +
-            "Prochaine étape : les statistiques."
-        );
-
-    } else {
-
-        settingsV2ProfileInitializationStarted = false;
-
-        console.warn(
-            "BLOC 4 : le profil n'a pas pu être chargé."
-        );
-    }
-}
