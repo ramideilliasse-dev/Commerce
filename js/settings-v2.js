@@ -12,7 +12,9 @@ import { auth, db } from "../firebase.js";
 
 import {
   doc,
-  getDoc
+  getDoc,
+  collection,
+  getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import {
@@ -566,7 +568,9 @@ async function settingsV2InitializeProfile() {
 
   const loaded = await settingsV2LoadUserProfile();
 
-  if (loaded) {
+if (loaded) {
+
+  await settingsV2LoadStatistics();
     alert(
       "TOMA SETTINGS V2\n\n" +
       "BLOC 4 — LIAISON RÉUSSIE !\n\n" +
@@ -661,7 +665,135 @@ function settingsV2InitializeAuthentication() {
     }
   );
 }
+/* =========================================================
+BLOC 5 — STATISTIQUES DU COMPTE
+Commandes, favoris et adresses
+========================================================= */
 
+async function settingsV2LoadStatistics() {
+
+if (!settingsV2CurrentUser) {
+console.warn(
+“[TOMA SETTINGS V2] Statistiques : aucun utilisateur connecté.”
+);
+return;
+}
+
+const userId = settingsV2CurrentUser.uid;
+
+// Valeurs initiales
+settingsV2SetText(settingsV2Elements.statOrders, “…”);
+settingsV2SetText(settingsV2Elements.statFavorites, “…”);
+settingsV2SetText(settingsV2Elements.statAddresses, “…”);
+
+try {
+
+/* -----------------------------------------------------
+   5.1 — FAVORIS
+   Toma utilise la clé "toma_favorites"
+   ----------------------------------------------------- */
+let favorites = [];
+try {
+  const savedFavorites = localStorage.getItem("toma_favorites");
+  const parsedFavorites = JSON.parse(savedFavorites || "[]");
+  if (Array.isArray(parsedFavorites)) {
+    favorites = parsedFavorites;
+  }
+} catch (favoritesError) {
+  console.warn(
+    "[TOMA SETTINGS V2] Impossible de lire les favoris :",
+    favoritesError
+  );
+}
+settingsV2SetText(
+  settingsV2Elements.statFavorites,
+  favorites.length,
+  "0"
+);
+/* -----------------------------------------------------
+   5.2 — ADRESSES
+   Collection : users/{uid}/addresses
+   ----------------------------------------------------- */
+try {
+  const addressesSnapshot = await getDocs(
+    collection(db, "users", userId, "addresses")
+  );
+  settingsV2SetText(
+    settingsV2Elements.statAddresses,
+    addressesSnapshot.size,
+    "0"
+  );
+} catch (addressesError) {
+  console.error(
+    "[TOMA SETTINGS V2] Erreur de chargement des adresses :",
+    addressesError
+  );
+  settingsV2SetText(
+    settingsV2Elements.statAddresses,
+    "—"
+  );
+}
+/* -----------------------------------------------------
+   5.3 — COMMANDES
+   Vérifie les champs uid et userId
+   ----------------------------------------------------- */
+try {
+  const ordersSnapshot = await getDocs(
+    collection(db, "orders")
+  );
+  let totalOrders = 0;
+  ordersSnapshot.forEach((orderDocument) => {
+    const order = orderDocument.data();
+    if (
+      order.uid === userId ||
+      order.userId === userId
+    ) {
+      totalOrders++;
+    }
+  });
+  settingsV2SetText(
+    settingsV2Elements.statOrders,
+    totalOrders,
+    "0"
+  );
+} catch (ordersError) {
+  console.error(
+    "[TOMA SETTINGS V2] Erreur de chargement des commandes :",
+    ordersError
+  );
+  settingsV2SetText(
+    settingsV2Elements.statOrders,
+    "—"
+  );
+}
+console.info(
+  "[TOMA SETTINGS V2] Statistiques chargées."
+);
+alert(
+  "TOMA SETTINGS V2\n\n" +
+  "BLOC 5 — STATISTIQUES CHARGÉES !\n\n" +
+  "✓ Favoris : " + favorites.length + "\n" +
+  "✓ Commandes : " +
+  (settingsV2Elements.statOrders?.textContent || "—") + "\n" +
+  "✓ Adresses : " +
+  (settingsV2Elements.statAddresses?.textContent || "—")
+);
+
+} catch (error) {
+
+console.error(
+  "[TOMA SETTINGS V2] Erreur générale des statistiques :",
+  error
+);
+alert(
+  "TOMA SETTINGS V2\n\n" +
+  "ERREUR AU BLOC 5\n\n" +
+  (error.message || String(error))
+);
+
+}
+
+}
 /* =========================================================
    FIN — BLOCS 1 À 4
    ========================================================= */
