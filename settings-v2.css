@@ -2380,3 +2380,11 @@ animation-iteration-count: 1 !important;
 transition-duration: 0.01ms !important;
 }
 }
+/* =====================================================
+   CORRECTION — RESPECT DE L'ATTRIBUT HIDDEN
+   SETTINGS V2
+   ===================================================== */
+
+[hidden] {
+  display: none !important;
+}
