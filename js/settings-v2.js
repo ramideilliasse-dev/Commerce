@@ -483,3 +483,241 @@ function settingsV2InitializeAuthentication() {
 }
 
 settingsV2InitializeAuthentication();
+// ======================================================
+// TOMA SETTINGS V2 — BLOC 3
+// CHARGEMENT DU PROFIL UTILISATEUR DEPUIS FIREBASE
+// ======================================================
+
+console.log("TOMA SETTINGS V2 — BLOC 3 chargé");
+
+// État du chargement du profil
+let settingsV2ProfileLoaded = false;
+
+// Charger le profil de l'utilisateur connecté
+async function settingsV2LoadUserProfile() {
+
+    // Vérifier que l'utilisateur est connecté
+    if (!settingsV2CurrentUser) {
+        alert(
+            "TOMA SETTINGS V2\n\n" +
+            "BLOC 3 : aucun utilisateur connecté.\n" +
+            "Le chargement du profil est interrompu."
+        );
+
+        return false;
+    }
+
+    try {
+
+        settingsV2ShowLoading();
+
+        const user = settingsV2CurrentUser;
+
+        // Référence au document utilisateur
+        const userRef = doc(
+            db,
+            "users",
+            user.uid
+        );
+
+        // Lire le profil dans Firestore
+        const userSnapshot = await getDoc(userRef);
+
+        let userData = {};
+
+        if (userSnapshot.exists()) {
+
+            userData = userSnapshot.data();
+
+        } else {
+
+            // Le document n'existe pas encore :
+            // préparer des données minimales sans écraser
+            // les informations d'un compte existant.
+
+            userData = {
+                name: user.displayName || "",
+                email: user.email || "",
+                phone: "",
+                province: "",
+                city: "",
+                address: "",
+                role: "customer"
+            };
+
+            console.warn(
+                "TOMA SETTINGS V2 : document users/" +
+                user.uid +
+                " introuvable."
+            );
+        }
+
+        // Conserver les données en mémoire
+        settingsV2UserData = userData;
+
+        // Afficher le nom
+        settingsV2SetText(
+            "profileName",
+            userData.name ||
+            user.displayName ||
+            "Utilizador"
+        );
+
+        // Afficher l'e-mail
+        settingsV2SetText(
+            "profileEmail",
+            user.email || userData.email || "—"
+        );
+
+        // Afficher le téléphone
+        settingsV2SetText(
+            "profilePhone",
+            userData.phone || userData.whatsapp || "—"
+        );
+
+        // Afficher la localisation
+        const locationParts = [
+            userData.city,
+            userData.province
+        ].filter(Boolean);
+
+        settingsV2SetText(
+            "profileLocation",
+            locationParts.length
+                ? locationParts.join(", ")
+                : "Localização não definida"
+        );
+
+        // Afficher le rôle du compte
+        const roleLabels = {
+            customer: "Cliente",
+            merchant: "Comerciante",
+            admin: "Administrador",
+            superadmin: "Super Administrador"
+        };
+
+        settingsV2SetText(
+            "accountRoleBadge",
+            roleLabels[userData.role] || "Cliente"
+        );
+
+        // Afficher le statut de vérification de l'e-mail
+        settingsV2SetText(
+            "emailVerificationBadge",
+            user.emailVerified
+                ? "E-mail verificado"
+                : "E-mail não verificado"
+        );
+
+        // Afficher la photo de profil
+        const profilePhoto =
+            userData.photoURL ||
+            userData.photo ||
+            user.photoURL ||
+            SETTINGS_V2_DEFAULT_AVATAR;
+
+        settingsV2SetAvatar(profilePhoto);
+
+        // Préremplir le formulaire de modification du profil
+        settingsV2SetText(
+            "editProfileName",
+            userData.name || user.displayName || ""
+        );
+
+        const phoneInput =
+            document.getElementById("editProfilePhone");
+
+        if (phoneInput) {
+            phoneInput.value =
+                userData.phone || userData.whatsapp || "";
+        }
+
+        const provinceInput =
+            document.getElementById("editProfileProvince");
+
+        if (provinceInput) {
+            provinceInput.value = userData.province || "";
+        }
+
+        const cityInput =
+            document.getElementById("editProfileCity");
+
+        if (cityInput) {
+            cityInput.value = userData.city || "";
+        }
+
+        const addressInput =
+            document.getElementById("editProfileAddress");
+
+        if (addressInput) {
+            addressInput.value = userData.address || "";
+        }
+
+        // Préparer l'aperçu de la photo dans le formulaire
+        const photoPreview =
+            document.getElementById("editProfilePhotoPreview");
+
+        if (photoPreview) {
+            photoPreview.src = profilePhoto;
+        }
+
+        // Préparer le champ d'URL de la photo s'il existe
+        const photoUrlInput =
+            document.getElementById("editProfilePhotoUrl");
+
+        if (photoUrlInput) {
+            photoUrlInput.value =
+                userData.photoURL || userData.photo || "";
+        }
+
+        // Indiquer que le chargement est terminé
+        settingsV2ProfileLoaded = true;
+
+        settingsV2HideLoading();
+
+        console.log(
+            "TOMA SETTINGS V2 : profil chargé avec succès.",
+            {
+                uid: user.uid,
+                role: userData.role || "customer",
+                documentExists: userSnapshot.exists()
+            }
+        );
+
+        alert(
+            "TOMA SETTINGS V2\n\n" +
+            "BLOC 3 — PROFIL CHARGÉ !\n\n" +
+            "✓ Utilisateur Firebase identifié\n" +
+            "✓ Lecture du profil terminée\n" +
+            "✓ Nom et e-mail préparés\n" +
+            "✓ Rôle du compte affiché\n" +
+            "✓ Photo de profil préparée\n\n" +
+            (
+                userSnapshot.exists()
+                    ? "Le profil a été récupéré depuis Firestore."
+                    : "Attention : le document utilisateur n'existe pas encore."
+            )
+        );
+
+        return true;
+
+    } catch (error) {
+
+        settingsV2HideLoading();
+
+        console.error(
+            "TOMA SETTINGS V2 — ERREUR BLOC 3 :",
+            error
+        );
+
+        alert(
+            "TOMA SETTINGS V2\n\n" +
+            "ERREUR AU BLOC 3\n\n" +
+            "Impossible de charger le profil.\n\n" +
+            "Code : " + (error.code || "inconnu") +
+            "\nMessage : " + (error.message || error)
+        );
+
+        return false;
+    }
+}
