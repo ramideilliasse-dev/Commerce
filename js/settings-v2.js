@@ -721,3 +721,59 @@ async function settingsV2LoadUserProfile() {
         return false;
     }
 }
+// ======================================================
+// TOMA SETTINGS V2 — BLOC 4
+// LIAISON AUTHENTIFICATION ET PROFIL
+// ======================================================
+
+console.log("TOMA SETTINGS V2 — BLOC 4 chargé");
+
+let settingsV2ProfileInitializationStarted = false;
+
+async function settingsV2InitializeProfile() {
+
+    // Éviter les chargements en double
+    if (settingsV2ProfileInitializationStarted) {
+        console.log(
+            "BLOC 4 : initialisation déjà démarrée."
+        );
+        return;
+    }
+
+    // Vérifier que Firebase a identifié l'utilisateur
+    if (!settingsV2CurrentUser) {
+        console.warn(
+            "BLOC 4 : aucun utilisateur connecté pour le moment."
+        );
+        return;
+    }
+
+    settingsV2ProfileInitializationStarted = true;
+
+    console.log(
+        "BLOC 4 : démarrage du chargement du profil."
+    );
+
+    const profileLoaded =
+        await settingsV2LoadUserProfile();
+
+    if (profileLoaded) {
+
+        alert(
+            "TOMA SETTINGS V2\n\n" +
+            "BLOC 4 — LIAISON RÉUSSIE !\n\n" +
+            "✓ Authentification Firebase confirmée\n" +
+            "✓ Chargement du profil exécuté\n" +
+            "✓ Données du compte préparées\n\n" +
+            "Prochaine étape : les statistiques."
+        );
+
+    } else {
+
+        settingsV2ProfileInitializationStarted = false;
+
+        console.warn(
+            "BLOC 4 : le profil n'a pas pu être chargé."
+        );
+    }
+}
