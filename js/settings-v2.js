@@ -8,7 +8,7 @@ Firebase v10.12.0
 BLOC 1 — IMPORTS ET CONFIGURATION
 ========================================================= */
 
-import { auth, db } from “../firebase.js”;
+import { auth, db } from "../firebase.js";
 
 import {
 doc,
