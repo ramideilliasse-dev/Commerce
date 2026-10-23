@@ -659,4 +659,494 @@ alert(
   "\n\nInitialisation de l'authentification..."
 );
 
+settingsV2InitializeProfileEditing();
 settingsV2InitializeAuthentication();
+/* =========================================================
+   TOMA SETTINGS V2 — BLOCO 6
+   EDIÇÃO DO PERFIL DO UTILIZADOR
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   6.1 — ABRIR O MODAL DE EDIÇÃO
+   --------------------------------------------------------- */
+
+function settingsV2OpenEditProfileModal() {
+    const user = settingsV2CurrentUser;
+    const data = settingsV2UserData || {};
+
+    if (!user) {
+        settingsV2ShowToast(
+            "Inicie sessão para editar o seu perfil.",
+            "error"
+        );
+        return;
+    }
+
+    const modal = settingsV2Elements.editProfileModal;
+
+    if (!modal) {
+        alert("TOMA SETTINGS — Erro: modal de edição não encontrado.");
+        return;
+    }
+
+    const nameInput = settingsV2Elements.editProfileName;
+    const phoneInput = settingsV2Elements.editProfilePhone;
+    const provinceInput = settingsV2Elements.editProfileProvince;
+    const cityInput = settingsV2Elements.editProfileCity;
+    const addressInput = settingsV2Elements.editProfileAddress;
+    const photoInput = settingsV2Elements.editProfilePhotoUrl;
+    const photoPreview = settingsV2Elements.editProfilePhotoPreview;
+
+    if (nameInput) {
+        nameInput.value = data.name || user.displayName || "";
+    }
+
+    if (phoneInput) {
+        phoneInput.value = data.phone || "";
+    }
+
+    if (provinceInput) {
+        provinceInput.value = data.province || "";
+    }
+
+    if (cityInput) {
+        cityInput.value = data.city || "";
+    }
+
+    if (addressInput) {
+        addressInput.value = data.address || "";
+    }
+
+    if (photoInput) {
+        photoInput.value = data.photoURL || user.photoURL || "";
+    }
+
+    if (photoPreview) {
+        const photoURL = data.photoURL || user.photoURL || "";
+
+        photoPreview.src = photoURL || SETTINGS_V2_DEFAULT_AVATAR;
+        photoPreview.onerror = function () {
+            this.onerror = null;
+            this.src = SETTINGS_V2_DEFAULT_AVATAR;
+        };
+    }
+
+    modal.style.display = "flex";
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("modal-open");
+}
+
+
+/* ---------------------------------------------------------
+   6.2 — FECHAR O MODAL DE EDIÇÃO
+   --------------------------------------------------------- */
+
+function settingsV2CloseEditProfileModal() {
+    const modal = settingsV2Elements.editProfileModal;
+
+    if (!modal) {
+        return;
+    }
+
+    modal.style.display = "none";
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("modal-open");
+}
+
+
+/* ---------------------------------------------------------
+   6.3 — PRÉ-VISUALIZAR A FOTO DE PERFIL
+   --------------------------------------------------------- */
+
+function settingsV2PreviewProfilePhoto() {
+    const input = settingsV2Elements.editProfilePhotoUrl;
+    const preview = settingsV2Elements.editProfilePhotoPreview;
+
+    if (!input || !preview) {
+        return;
+    }
+
+    const photoURL = input.value.trim();
+
+    if (!photoURL) {
+        preview.src = SETTINGS_V2_DEFAULT_AVATAR;
+        return;
+    }
+
+    try {
+        const parsedURL = new URL(photoURL);
+
+        if (parsedURL.protocol !== "https:") {
+            preview.src = SETTINGS_V2_DEFAULT_AVATAR;
+
+            settingsV2ShowToast(
+                "A fotografia deve utilizar um endereço HTTPS.",
+                "error"
+            );
+
+            return;
+        }
+
+        preview.onerror = function () {
+            this.onerror = null;
+            this.src = SETTINGS_V2_DEFAULT_AVATAR;
+
+            settingsV2ShowToast(
+                "Não foi possível carregar esta fotografia.",
+                "error"
+            );
+        };
+
+        preview.src = parsedURL.href;
+    } catch (error) {
+        preview.src = SETTINGS_V2_DEFAULT_AVATAR;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   6.4 — VALIDAR OS DADOS DO PERFIL
+   --------------------------------------------------------- */
+
+function settingsV2ValidateProfileForm() {
+    const name = settingsV2Elements.editProfileName?.value.trim() || "";
+    const phone = settingsV2Elements.editProfilePhone?.value.trim() || "";
+    const province = settingsV2Elements.editProfileProvince?.value.trim() || "";
+    const city = settingsV2Elements.editProfileCity?.value.trim() || "";
+    const address = settingsV2Elements.editProfileAddress?.value.trim() || "";
+    const photoURL = settingsV2Elements.editProfilePhotoUrl?.value.trim() || "";
+
+    if (name.length < 2) {
+        settingsV2ShowToast(
+            "Introduza um nome com pelo menos 2 caracteres.",
+            "error"
+        );
+        return null;
+    }
+
+    if (name.length > 80) {
+        settingsV2ShowToast(
+            "O nome não pode ultrapassar 80 caracteres.",
+            "error"
+        );
+        return null;
+    }
+
+    if (phone && !/^[0-9+\s().-]{7,25}$/.test(phone)) {
+        settingsV2ShowToast(
+            "Introduza um número de telefone válido.",
+            "error"
+        );
+        return null;
+    }
+
+    if (province.length > 100 || city.length > 100) {
+        settingsV2ShowToast(
+            "A província e a cidade não podem ultrapassar 100 caracteres.",
+            "error"
+        );
+        return null;
+    }
+
+    if (address.length > 250) {
+        settingsV2ShowToast(
+            "A morada não pode ultrapassar 250 caracteres.",
+            "error"
+        );
+        return null;
+    }
+
+    if (photoURL) {
+        try {
+            const parsedURL = new URL(photoURL);
+
+            if (parsedURL.protocol !== "https:") {
+                settingsV2ShowToast(
+                    "O endereço da fotografia deve começar por HTTPS.",
+                    "error"
+                );
+                return null;
+            }
+        } catch (error) {
+            settingsV2ShowToast(
+                "O endereço da fotografia não é válido.",
+                "error"
+            );
+            return null;
+        }
+    }
+
+    return {
+        name,
+        phone,
+        province,
+        city,
+        address,
+        photoURL
+    };
+}
+
+
+/* ---------------------------------------------------------
+   6.5 — MOSTRAR NOTIFICAÇÕES NA PÁGINA
+   --------------------------------------------------------- */
+
+function settingsV2ShowToast(message, type = "info") {
+    let container = settingsV2Elements.toastContainer;
+
+    if (!container) {
+        container = document.getElementById("toastContainer");
+    }
+
+    if (!container) {
+        alert(message);
+        return;
+    }
+
+    const toast = document.createElement("div");
+
+    toast.className = "settings-toast settings-toast-" + type;
+    toast.setAttribute("role", "status");
+    toast.textContent = message;
+
+    container.appendChild(toast);
+
+    window.setTimeout(function () {
+        toast.classList.add("settings-toast-hide");
+
+        window.setTimeout(function () {
+            toast.remove();
+        }, 300);
+    }, 4000);
+}
+
+
+/* ---------------------------------------------------------
+   6.6 — GUARDAR AS ALTERAÇÕES DO PERFIL
+   --------------------------------------------------------- */
+
+async function settingsV2SaveProfile(event) {
+    if (event) {
+        event.preventDefault();
+    }
+
+    const user = settingsV2CurrentUser;
+
+    if (!user) {
+        settingsV2ShowToast(
+            "Inicie sessão antes de guardar as alterações.",
+            "error"
+        );
+        return;
+    }
+
+    const profile = settingsV2ValidateProfileForm();
+
+    if (!profile) {
+        return;
+    }
+
+    const saveButton = settingsV2Elements.saveProfileButton;
+    let originalButtonHTML = "";
+
+    if (saveButton) {
+        originalButtonHTML = saveButton.innerHTML;
+        saveButton.disabled = true;
+        saveButton.textContent = "A guardar...";
+    }
+
+    try {
+        const userRef = doc(db, "users", user.uid);
+        const userSnapshot = await getDoc(userRef);
+
+        if (!userSnapshot.exists()) {
+            settingsV2ShowToast(
+                "O perfil não foi encontrado na base de dados. Verifique o registo do utilizador.",
+                "error"
+            );
+            return;
+        }
+
+        const previousData = userSnapshot.data() || {};
+
+        /*
+         * Atualizamos apenas os campos do perfil.
+         * Os restantes dados do utilizador são preservados.
+         */
+        await updateDoc(userRef, {
+            name: profile.name,
+            phone: profile.phone,
+            province: profile.province,
+            city: profile.city,
+            address: profile.address,
+            photoURL: profile.photoURL,
+            updatedAt: serverTimestamp()
+        });
+
+        /*
+         * Atualizamos também o perfil de autenticação Firebase.
+         */
+        try {
+            await updateProfile(user, {
+                displayName: profile.name,
+                photoURL: profile.photoURL || null
+            });
+        } catch (authProfileError) {
+            console.error(
+                "TOMA SETTINGS — Erro ao atualizar o perfil de autenticação:",
+                authProfileError
+            );
+
+            settingsV2ShowToast(
+                "Os dados foram guardados, mas o nome ou a fotografia da sessão não foram atualizados. Atualize a página e verifique novamente.",
+                "error"
+            );
+        }
+
+        /*
+         * Atualizamos os dados locais utilizados pela página.
+         */
+        settingsV2UserData = {
+            ...previousData,
+            name: profile.name,
+            phone: profile.phone,
+            province: profile.province,
+            city: profile.city,
+            address: profile.address,
+            photoURL: profile.photoURL
+        };
+
+        /*
+         * Atualizamos os elementos visíveis do perfil.
+         */
+        settingsV2SetText(
+            settingsV2Elements.profileName,
+            profile.name
+        );
+
+        settingsV2SetText(
+            settingsV2Elements.profilePhone,
+            profile.phone || "Não informado"
+        );
+
+        settingsV2SetAvatar(
+            settingsV2Elements.profilePhoto,
+            profile.photoURL || SETTINGS_V2_DEFAULT_AVATAR
+        );
+
+        /*
+         * Atualizamos também o estado da interface de edição.
+         */
+        if (settingsV2Elements.editProfilePhotoPreview) {
+            settingsV2Elements.editProfilePhotoPreview.src =
+                profile.photoURL || SETTINGS_V2_DEFAULT_AVATAR;
+        }
+
+        settingsV2CloseEditProfileModal();
+
+        settingsV2ShowToast(
+            "Perfil atualizado com sucesso!",
+            "success"
+        );
+
+    } catch (error) {
+        console.error(
+            "TOMA SETTINGS — Erro ao guardar o perfil:",
+            error
+        );
+
+        let message = "Não foi possível guardar as alterações.";
+
+        if (error.code === "permission-denied") {
+            message =
+                "A operação foi recusada pelas regras de segurança do Firebase.";
+        } else if (error.code === "unavailable") {
+            message =
+                "O serviço está temporariamente indisponível. Tente novamente.";
+        } else if (error.code === "unauthenticated") {
+            message =
+                "A sessão expirou. Inicie sessão novamente.";
+        }
+
+        settingsV2ShowToast(message, "error");
+
+    } finally {
+        if (saveButton) {
+            saveButton.disabled = false;
+            saveButton.innerHTML = originalButtonHTML;
+        }
+    }
+}
+
+
+/* ---------------------------------------------------------
+   6.7 — INICIALIZAR OS EVENTOS DO PERFIL
+   --------------------------------------------------------- */
+
+function settingsV2InitializeProfileEditing() {
+    const editButton = settingsV2Elements.editProfileButton;
+    const closeButton = settingsV2Elements.closeEditProfileButton;
+    const cancelButton = settingsV2Elements.cancelEditProfileButton;
+    const profileForm = settingsV2Elements.editProfileForm;
+    const photoInput = settingsV2Elements.editProfilePhotoUrl;
+    const modal = settingsV2Elements.editProfileModal;
+
+    if (editButton && editButton.dataset.settingsV2Bound !== "true") {
+        editButton.dataset.settingsV2Bound = "true";
+
+        editButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            settingsV2OpenEditProfileModal();
+        });
+    }
+
+    if (closeButton && closeButton.dataset.settingsV2Bound !== "true") {
+        closeButton.dataset.settingsV2Bound = "true";
+
+        closeButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            settingsV2CloseEditProfileModal();
+        });
+    }
+
+    if (cancelButton && cancelButton.dataset.settingsV2Bound !== "true") {
+        cancelButton.dataset.settingsV2Bound = "true";
+
+        cancelButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            settingsV2CloseEditProfileModal();
+        });
+    }
+
+    if (profileForm && profileForm.dataset.settingsV2Bound !== "true") {
+        profileForm.dataset.settingsV2Bound = "true";
+
+        profileForm.addEventListener("submit", settingsV2SaveProfile);
+    }
+
+    if (photoInput && photoInput.dataset.settingsV2Bound !== "true") {
+        photoInput.dataset.settingsV2Bound = "true";
+
+        photoInput.addEventListener(
+            "input",
+            settingsV2PreviewProfilePhoto
+        );
+    }
+
+    if (modal && modal.dataset.settingsV2Bound !== "true") {
+        modal.dataset.settingsV2Bound = "true";
+
+        modal.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                settingsV2CloseEditProfileModal();
+            }
+        });
+    }
+
+    console.log("TOMA SETTINGS — Bloco 6 inicializado.");
+}
+
+
+/* =========================================================
+   FIM DO BLOCO 6
+   ========================================================= */
