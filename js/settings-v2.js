@@ -942,26 +942,35 @@ function settingsV2ShowToast(message, type = "info") {
    6.6 — GUARDAR AS ALTERAÇÕES DO PERFIL
    --------------------------------------------------------- */
 
+/* ---------------------------------------------------------
+   6.6 — GUARDAR AS ALTERAÇÕES DO PERFIL
+   VERSÃO DE DIAGNÓSTICO
+   --------------------------------------------------------- */
+
 async function settingsV2SaveProfile(event) {
     if (event) {
         event.preventDefault();
     }
 
+    alert("TOMA SAVE 1: O botão de guardar foi acionado.");
+
     const user = settingsV2CurrentUser;
 
     if (!user) {
-        settingsV2ShowToast(
-            "Inicie sessão antes de guardar as alterações.",
-            "error"
-        );
+        alert("TOMA ERRO: Nenhum utilizador autenticado.");
         return;
     }
+
+    alert("TOMA SAVE 2: Utilizador autenticado.");
 
     const profile = settingsV2ValidateProfileForm();
 
     if (!profile) {
+        alert("TOMA SAVE: Os dados do perfil não passaram na validação.");
         return;
     }
+
+    alert("TOMA SAVE 3: Dados validados.");
 
     const saveButton = settingsV2Elements.saveProfileButton;
     let originalButtonHTML = "";
@@ -973,23 +982,26 @@ async function settingsV2SaveProfile(event) {
     }
 
     try {
+        alert("TOMA SAVE 4: A preparar o documento Firebase.");
+
         const userRef = doc(db, "users", user.uid);
         const userSnapshot = await getDoc(userRef);
 
+        alert("TOMA SAVE 5: Leitura do documento concluída.");
+
         if (!userSnapshot.exists()) {
-            settingsV2ShowToast(
-                "O perfil não foi encontrado na base de dados. Verifique o registo do utilizador.",
-                "error"
+            alert(
+                "TOMA ERRO: O documento users/" +
+                user.uid +
+                " não existe no Firestore."
             );
             return;
         }
 
+        alert("TOMA SAVE 6: Documento do utilizador encontrado.");
+
         const previousData = userSnapshot.data() || {};
 
-        /*
-         * Atualizamos apenas os campos do perfil.
-         * Os restantes dados do utilizador são preservados.
-         */
         await updateDoc(userRef, {
             name: profile.name,
             phone: profile.phone,
@@ -1000,29 +1012,26 @@ async function settingsV2SaveProfile(event) {
             updatedAt: serverTimestamp()
         });
 
-        /*
-         * Atualizamos também o perfil de autenticação Firebase.
-         */
+        alert("TOMA SAVE 7: Alterações guardadas no Firestore.");
+
         try {
             await updateProfile(user, {
                 displayName: profile.name,
                 photoURL: profile.photoURL || null
             });
-        } catch (authProfileError) {
-            console.error(
-                "TOMA SETTINGS — Erro ao atualizar o perfil de autenticação:",
-                authProfileError
-            );
 
-            settingsV2ShowToast(
-                "Os dados foram guardados, mas o nome ou a fotografia da sessão não foram atualizados. Atualize a página e verifique novamente.",
-                "error"
+            alert("TOMA SAVE 8: Perfil de autenticação atualizado.");
+
+        } catch (authError) {
+            console.error("TOMA AUTH ERROR:", authError);
+
+            alert(
+                "AVISO: Os dados foram guardados no Firestore, " +
+                "mas a atualização do perfil de autenticação falhou: " +
+                (authError.message || authError.code || "Erro desconhecido")
             );
         }
 
-        /*
-         * Atualizamos os dados locais utilizados pela página.
-         */
         settingsV2UserData = {
             ...previousData,
             name: profile.name,
@@ -1033,9 +1042,6 @@ async function settingsV2SaveProfile(event) {
             photoURL: profile.photoURL
         };
 
-        /*
-         * Atualizamos os elementos visíveis do perfil.
-         */
         settingsV2SetText(
             settingsV2Elements.profileName,
             profile.name
@@ -1051,15 +1057,9 @@ async function settingsV2SaveProfile(event) {
             profile.photoURL || SETTINGS_V2_DEFAULT_AVATAR
         );
 
-        /*
-         * Atualizamos também o estado da interface de edição.
-         */
-        if (settingsV2Elements.editProfilePhotoPreview) {
-            settingsV2Elements.editProfilePhotoPreview.src =
-                profile.photoURL || SETTINGS_V2_DEFAULT_AVATAR;
-        }
-
         settingsV2CloseEditProfileModal();
+
+        alert("SUCESSO: O perfil foi guardado no Firestore.");
 
         settingsV2ShowToast(
             "Perfil atualizado com sucesso!",
@@ -1067,34 +1067,23 @@ async function settingsV2SaveProfile(event) {
         );
 
     } catch (error) {
-        console.error(
-            "TOMA SETTINGS — Erro ao guardar o perfil:",
-            error
+        console.error("TOMA SAVE ERROR:", error);
+
+        alert(
+            "TOMA ERRO AO GUARDAR:\n" +
+            "Código: " + (error.code || "indisponível") +
+            "\nMensagem: " + (error.message || "Erro desconhecido")
         );
-
-        let message = "Não foi possível guardar as alterações.";
-
-        if (error.code === "permission-denied") {
-            message =
-                "A operação foi recusada pelas regras de segurança do Firebase.";
-        } else if (error.code === "unavailable") {
-            message =
-                "O serviço está temporariamente indisponível. Tente novamente.";
-        } else if (error.code === "unauthenticated") {
-            message =
-                "A sessão expirou. Inicie sessão novamente.";
-        }
-
-        settingsV2ShowToast(message, "error");
 
     } finally {
         if (saveButton) {
             saveButton.disabled = false;
             saveButton.innerHTML = originalButtonHTML;
         }
+
+        alert("TOMA SAVE FINAL: Processo de gravação terminado.");
     }
 }
-
 
 /* ---------------------------------------------------------
    6.7 — INICIALIZAR OS EVENTOS DO PERFIL
