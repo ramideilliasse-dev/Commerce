@@ -685,7 +685,9 @@ function settingsV2OpenEditProfileModal() {
     const modal = settingsV2Elements.editProfileModal;
 
     if (!modal) {
-        alert("TOMA SETTINGS — Erro: modal de edição não encontrado.");
+        alert(
+            "TOMA SETTINGS — Erro: modal de edição não encontrado."
+        );
         return;
     }
 
@@ -724,15 +726,25 @@ function settingsV2OpenEditProfileModal() {
     if (photoPreview) {
         const photoURL = data.photoURL || user.photoURL || "";
 
-        photoPreview.src = photoURL || SETTINGS_V2_DEFAULT_AVATAR;
         photoPreview.onerror = function () {
             this.onerror = null;
             this.src = SETTINGS_V2_DEFAULT_AVATAR;
         };
+
+        photoPreview.src =
+            photoURL || SETTINGS_V2_DEFAULT_AVATAR;
     }
 
+    /* Abrir a janela de edição */
     modal.style.display = "flex";
+    modal.style.visibility = "visible";
+    modal.style.opacity = "1";
+    modal.style.pointerEvents = "auto";
+    modal.style.zIndex = "99999";
+
+    modal.removeAttribute("hidden");
     modal.setAttribute("aria-hidden", "false");
+
     document.body.classList.add("modal-open");
 }
 
@@ -748,23 +760,16 @@ function settingsV2CloseEditProfileModal() {
         return;
     }
 
-    modal.style.setProperty("display", "flex", "important");
-modal.style.setProperty("visibility", "visible", "important");
-modal.style.setProperty("opacity", "1", "important");
-modal.style.setProperty("pointer-events", "auto", "important");
-modal.style.setProperty("z-index", "99999", "important");
+    /* Fechar a janela de edição */
+    modal.style.display = "none";
+    modal.style.visibility = "hidden";
+    modal.style.opacity = "0";
+    modal.style.pointerEvents = "none";
 
-modal.removeAttribute("hidden");
-modal.setAttribute("aria-hidden", "false");
+    modal.setAttribute("aria-hidden", "true");
 
-document.body.classList.add("modal-open");
-
-alert(
-    "TOMA DEBUG 4 : O modal recebeu as instruções de abertura. Display = " +
-    window.getComputedStyle(modal).display
-);
+    document.body.classList.remove("modal-open");
 }
-
 
 /* ---------------------------------------------------------
    6.3 — PRÉ-VISUALIZAR A FOTO DE PERFIL
