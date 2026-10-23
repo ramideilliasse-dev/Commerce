@@ -1095,9 +1095,22 @@ function settingsV2InitializeProfileEditing() {
         editButton.dataset.settingsV2Bound = "true";
 
         editButton.addEventListener("click", function (event) {
-            event.preventDefault();
-            settingsV2OpenEditProfileModal();
-        });
+    event.preventDefault();
+
+    alert("TOMA DEBUG 1 : Clique detetado no botão.");
+
+    alert(
+        "TOMA DEBUG 2 : Modal encontrado = " +
+        Boolean(settingsV2Elements.editProfileModal)
+    );
+
+    alert(
+        "TOMA DEBUG 3 : Utilizador autenticado = " +
+        Boolean(settingsV2CurrentUser)
+    );
+
+    settingsV2OpenEditProfileModal();
+});
     }
 
     if (closeButton && closeButton.dataset.settingsV2Bound !== "true") {
