@@ -748,9 +748,21 @@ function settingsV2CloseEditProfileModal() {
         return;
     }
 
-    modal.style.display = "none";
-    modal.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("modal-open");
+    modal.style.setProperty("display", "flex", "important");
+modal.style.setProperty("visibility", "visible", "important");
+modal.style.setProperty("opacity", "1", "important");
+modal.style.setProperty("pointer-events", "auto", "important");
+modal.style.setProperty("z-index", "99999", "important");
+
+modal.removeAttribute("hidden");
+modal.setAttribute("aria-hidden", "false");
+
+document.body.classList.add("modal-open");
+
+alert(
+    "TOMA DEBUG 4 : O modal recebeu as instruções de abertura. Display = " +
+    window.getComputedStyle(modal).display
+);
 }
 
 
