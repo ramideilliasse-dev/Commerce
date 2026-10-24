@@ -2680,3 +2680,177 @@ body.dark-mode {
 /* =========================================================
    FIN DU FICHIER TOMA SETTINGS V2
    ========================================================= */
+/* =========================================================
+   TOMA — PROFESSIONAL TOAST NOTIFICATIONS
+   ========================================================= */
+
+#toastContainer {
+    position: fixed;
+    top: max(20px, env(safe-area-inset-top));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100000;
+    width: calc(100% - 32px);
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: none;
+}
+
+.toma-toast {
+    --toast-accent: #2563eb;
+
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 17px 17px 20px;
+    overflow: hidden;
+
+    background: rgba(255, 255, 255, 0.98);
+    color: #191b23;
+
+    border: 1px solid #e8eaf0;
+    border-left: 4px solid var(--toast-accent);
+    border-radius: 18px;
+
+    box-shadow:
+        0 18px 45px rgba(15, 23, 42, 0.15),
+        0 3px 10px rgba(15, 23, 42, 0.06);
+
+    opacity: 0;
+    transform: translateY(-14px) scale(0.97);
+    transition:
+        opacity 0.28s ease,
+        transform 0.28s ease;
+
+    pointer-events: auto;
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+}
+
+.toma-toast-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.toma-toast-leaving {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.97);
+}
+
+.toma-toast-success {
+    --toast-accent: #16a34a;
+}
+
+.toma-toast-error {
+    --toast-accent: #dc2626;
+}
+
+.toma-toast-warning {
+    --toast-accent: #d97706;
+}
+
+.toma-toast-info {
+    --toast-accent: #2563eb;
+}
+
+.toma-toast-icon {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--toast-accent) 12%, white);
+    color: var(--toast-accent);
+
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.toma-toast-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.toma-toast-title {
+    display: block;
+    margin-bottom: 4px;
+
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.1px;
+}
+
+.toma-toast-message {
+    margin: 0;
+    color: #5b6170;
+
+    font-size: 13px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.toma-toast-close {
+    width: 30px;
+    height: 30px;
+    flex: 0 0 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: #777d89;
+
+    font-size: 24px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.toma-toast-close:active {
+    background: #f0f1f4;
+}
+
+.toma-toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    width: 100%;
+    height: 3px;
+
+    background: var(--toast-accent);
+    transform-origin: left;
+    animation: tomaToastProgress 4.5s linear forwards;
+}
+
+@keyframes tomaToastProgress {
+    from {
+        transform: scaleX(1);
+    }
+
+    to {
+        transform: scaleX(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .toma-toast,
+    .toma-toast-visible,
+    .toma-toast-leaving {
+        transition: none;
+        transform: none;
+    }
+
+    .toma-toast-progress {
+        animation: none;
+    }
+}
