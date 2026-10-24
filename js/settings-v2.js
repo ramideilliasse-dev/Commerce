@@ -16,7 +16,12 @@ import {
     collection,
     getDocs,
     updateDoc,
-    serverTimestamp
+    serverTimestamp,
+    addDoc,
+    deleteDoc,
+    query,
+    where,
+    writeBatch
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import {
     onAuthStateChanged,
@@ -661,6 +666,7 @@ alert(
 );
 
 settingsV2InitializeProfileEditing();
+settingsV2InitializeAddressManagement();
 settingsV2InitializeAuthentication();
 /* =========================================================
    TOMA SETTINGS V2 — BLOCO 6
@@ -1234,4 +1240,763 @@ function settingsV2InitializeProfileEditing() {
 
 /* =========================================================
    FIM DO BLOCO 6
+   ========================================================= */
+/* =========================================================
+   TOMA SETTINGS V2 — BLOCO 7
+   GESTÃO DAS MORADAS DE ENTREGA
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   7.1 — ESTADO DAS MORADAS
+   --------------------------------------------------------- */
+
+let settingsV2Addresses = [];
+let settingsV2AddressEditingId = null;
+let settingsV2AddressSaving = false;
+
+
+/* ---------------------------------------------------------
+   7.2 — CARREGAR AS MORADAS DO UTILIZADOR
+   --------------------------------------------------------- */
+
+async function settingsV2LoadAddresses() {
+    const user = settingsV2CurrentUser;
+    const list = settingsV2Elements.addressesList;
+    const emptyState = settingsV2Elements.addressesEmptyState;
+
+    if (!user) {
+        settingsV2Addresses = [];
+        settingsV2RenderAddresses();
+        return;
+    }
+
+    if (list) {
+        list.setAttribute("aria-busy", "true");
+    }
+
+    try {
+        const addressesRef = collection(
+            db,
+            "users",
+            user.uid,
+            "addresses"
+        );
+
+        const snapshot = await getDocs(addressesRef);
+
+        settingsV2Addresses = snapshot.docs.map(function (item) {
+            return {
+                id: item.id,
+                ...item.data()
+            };
+        });
+
+        settingsV2Addresses.sort(function (a, b) {
+            if (a.isDefault && !b.isDefault) return -1;
+            if (!a.isDefault && b.isDefault) return 1;
+
+            const nameA = String(a.label || "").toLowerCase();
+            const nameB = String(b.label || "").toLowerCase();
+
+            return nameA.localeCompare(nameB);
+        });
+
+        settingsV2RenderAddresses();
+
+        if (typeof settingsV2SetText === "function") {
+            settingsV2SetText(
+                settingsV2Elements.statAddresses,
+                String(settingsV2Addresses.length)
+            );
+        }
+
+    } catch (error) {
+        console.error("TOMA ADDRESSES — Erro ao carregar:", error);
+
+        settingsV2ShowToast(
+            "Não foi possível carregar as moradas. Tente novamente.",
+            "error"
+        );
+
+        if (emptyState && settingsV2Addresses.length === 0) {
+            emptyState.hidden = false;
+            emptyState.style.display = "";
+        }
+
+    } finally {
+        if (list) {
+            list.removeAttribute("aria-busy");
+        }
+    }
+}
+
+
+/* ---------------------------------------------------------
+   7.3 — MOSTRAR AS MORADAS NA PÁGINA
+   --------------------------------------------------------- */
+
+function settingsV2RenderAddresses() {
+    const list = settingsV2Elements.addressesList;
+    const emptyState = settingsV2Elements.addressesEmptyState;
+
+    if (!list) {
+        console.error(
+            "TOMA ADDRESSES — Elemento addressesList não encontrado."
+        );
+        return;
+    }
+
+    list.replaceChildren();
+
+    if (emptyState) {
+        emptyState.hidden = settingsV2Addresses.length > 0;
+        emptyState.style.display =
+            settingsV2Addresses.length > 0 ? "none" : "";
+    }
+
+    settingsV2Addresses.forEach(function (address) {
+        const card = document.createElement("article");
+
+        card.className = "settings-address-card";
+
+        if (address.isDefault) {
+            card.classList.add("settings-address-default");
+        }
+
+        const heading = document.createElement("div");
+        heading.className = "settings-address-heading";
+
+        const title = document.createElement("h3");
+        title.className = "settings-address-title";
+        title.textContent = address.label || "Morada";
+
+        heading.appendChild(title);
+
+        if (address.isDefault) {
+            const badge = document.createElement("span");
+
+            badge.className = "settings-address-badge";
+            badge.textContent = "Morada padrão";
+
+            heading.appendChild(badge);
+        }
+
+        const recipient = document.createElement("p");
+        recipient.className = "settings-address-recipient";
+        recipient.textContent = address.recipient || "";
+
+        const phone = document.createElement("p");
+        phone.className = "settings-address-phone";
+        phone.textContent = address.phone || "";
+
+        const details = document.createElement("p");
+        details.className = "settings-address-details";
+
+        details.textContent = [
+            address.details,
+            address.city,
+            address.province
+        ].filter(Boolean).join(", ");
+
+        const actions = document.createElement("div");
+        actions.className = "settings-address-actions";
+
+        const editButton = document.createElement("button");
+
+        editButton.type = "button";
+        editButton.className = "settings-address-edit";
+        editButton.textContent = "Editar";
+
+        editButton.addEventListener("click", function () {
+            settingsV2OpenAddressModal(address.id);
+        });
+
+        actions.appendChild(editButton);
+
+        if (!address.isDefault) {
+            const defaultButton = document.createElement("button");
+
+            defaultButton.type = "button";
+            defaultButton.className = "settings-address-set-default";
+            defaultButton.textContent = "Definir como padrão";
+
+            defaultButton.addEventListener("click", function () {
+                settingsV2SetDefaultAddress(address.id);
+            });
+
+            actions.appendChild(defaultButton);
+        }
+
+        const deleteButton = document.createElement("button");
+
+        deleteButton.type = "button";
+        deleteButton.className = "settings-address-delete";
+        deleteButton.textContent = "Eliminar";
+
+        deleteButton.addEventListener("click", function () {
+            settingsV2ConfirmDeleteAddress(address.id);
+        });
+
+        actions.appendChild(deleteButton);
+
+        card.append(
+            heading,
+            recipient,
+            phone,
+            details,
+            actions
+        );
+
+        list.appendChild(card);
+    });
+
+    if (settingsV2Elements.statAddresses) {
+        settingsV2Elements.statAddresses.textContent =
+            String(settingsV2Addresses.length);
+    }
+}
+
+
+/* ---------------------------------------------------------
+   7.4 — ABRIR O FORMULÁRIO DE MORADAS
+   --------------------------------------------------------- */
+
+function settingsV2OpenAddressModal(addressId = null) {
+    const user = settingsV2CurrentUser;
+    const modal = settingsV2Elements.addressModal;
+    const form = settingsV2Elements.addressForm;
+
+    if (!user) {
+        settingsV2ShowToast(
+            "Inicie sessão para gerir as suas moradas.",
+            "error"
+        );
+        return;
+    }
+
+    if (!modal || !form) {
+        alert(
+            "TOMA SETTINGS — Erro: formulário de moradas não encontrado."
+        );
+        return;
+    }
+
+    settingsV2AddressEditingId = addressId;
+
+    form.reset();
+
+    const addressIdInput = settingsV2Elements.addressId;
+    const labelInput = settingsV2Elements.addressLabel;
+    const recipientInput = settingsV2Elements.addressRecipient;
+    const phoneInput = settingsV2Elements.addressPhone;
+    const provinceInput = settingsV2Elements.addressProvince;
+    const cityInput = settingsV2Elements.addressCity;
+    const detailsInput = settingsV2Elements.addressDetails;
+    const defaultInput = settingsV2Elements.addressIsDefault;
+
+    if (addressIdInput) {
+        addressIdInput.value = addressId || "";
+    }
+
+    const address = addressId
+        ? settingsV2Addresses.find(function (item) {
+            return item.id === addressId;
+        })
+        : null;
+
+    if (addressId && !address) {
+        settingsV2ShowToast(
+            "A morada selecionada não foi encontrada.",
+            "error"
+        );
+        return;
+    }
+
+    if (address) {
+        if (labelInput) labelInput.value = address.label || "";
+        if (recipientInput) recipientInput.value = address.recipient || "";
+        if (phoneInput) phoneInput.value = address.phone || "";
+        if (provinceInput) provinceInput.value = address.province || "";
+        if (cityInput) cityInput.value = address.city || "";
+        if (detailsInput) detailsInput.value = address.details || "";
+
+        if (defaultInput) {
+            defaultInput.checked = Boolean(address.isDefault);
+        }
+    } else if (defaultInput) {
+        defaultInput.checked = settingsV2Addresses.length === 0;
+    }
+
+    modal.style.display = "flex";
+    modal.style.visibility = "visible";
+    modal.style.opacity = "1";
+    modal.style.zIndex = "99999";
+
+    modal.removeAttribute("hidden");
+    modal.setAttribute("aria-hidden", "false");
+
+    document.body.classList.add("modal-open");
+}
+
+
+/* ---------------------------------------------------------
+   7.5 — FECHAR O FORMULÁRIO DE MORADAS
+   --------------------------------------------------------- */
+
+function settingsV2CloseAddressModal() {
+    const modal = settingsV2Elements.addressModal;
+
+    if (!modal) {
+        return;
+    }
+
+    modal.style.display = "none";
+    modal.style.visibility = "hidden";
+    modal.style.opacity = "0";
+
+    modal.setAttribute("aria-hidden", "true");
+
+    document.body.classList.remove("modal-open");
+
+    settingsV2AddressEditingId = null;
+}
+
+
+/* ---------------------------------------------------------
+   7.6 — VALIDAR O FORMULÁRIO
+   --------------------------------------------------------- */
+
+function settingsV2ValidateAddressForm() {
+    const label = settingsV2Elements.addressLabel?.value.trim() || "";
+    const recipient = settingsV2Elements.addressRecipient?.value.trim() || "";
+    const phone = settingsV2Elements.addressPhone?.value.trim() || "";
+    const province = settingsV2Elements.addressProvince?.value.trim() || "";
+    const city = settingsV2Elements.addressCity?.value.trim() || "";
+    const details = settingsV2Elements.addressDetails?.value.trim() || "";
+    const isDefault = Boolean(
+        settingsV2Elements.addressIsDefault?.checked
+    );
+
+    if (label.length < 2 || label.length > 50) {
+        settingsV2ShowToast(
+            "O nome da morada deve ter entre 2 e 50 caracteres.",
+            "error"
+        );
+        return null;
+    }
+
+    if (recipient.length < 2 || recipient.length > 100) {
+        settingsV2ShowToast(
+            "Introduza o nome completo do destinatário.",
+            "error"
+        );
+        return null;
+    }
+
+    if (!/^[0-9+\s().-]{7,25}$/.test(phone)) {
+        settingsV2ShowToast(
+            "Introduza um número de telefone válido.",
+            "error"
+        );
+        return null;
+    }
+
+    if (!province || province.length > 100) {
+        settingsV2ShowToast(
+            "Introduza uma província válida.",
+            "error"
+        );
+        return null;
+    }
+
+    if (!city || city.length > 100) {
+        settingsV2ShowToast(
+            "Introduza uma cidade válida.",
+            "error"
+        );
+        return null;
+    }
+
+    if (details.length < 5 || details.length > 300) {
+        settingsV2ShowToast(
+            "Introduza a morada detalhada.",
+            "error"
+        );
+        return null;
+    }
+
+    return {
+        label,
+        recipient,
+        phone,
+        province,
+        city,
+        details,
+        isDefault
+    };
+}
+
+
+/* ---------------------------------------------------------
+   7.7 — GUARDAR UMA MORADA
+   --------------------------------------------------------- */
+
+async function settingsV2SaveAddress(event) {
+    if (event) {
+        event.preventDefault();
+    }
+
+    if (settingsV2AddressSaving) {
+        return;
+    }
+
+    const user = settingsV2CurrentUser;
+
+    if (!user) {
+        settingsV2ShowToast(
+            "Inicie sessão antes de guardar uma morada.",
+            "error"
+        );
+        return;
+    }
+
+    const addressData = settingsV2ValidateAddressForm();
+
+    if (!addressData) {
+        return;
+    }
+
+    const saveButton = settingsV2Elements.saveAddressButton;
+    const originalButtonHTML = saveButton
+        ? saveButton.innerHTML
+        : "";
+
+    settingsV2AddressSaving = true;
+
+    if (saveButton) {
+        saveButton.disabled = true;
+        saveButton.textContent = "A guardar...";
+    }
+
+    try {
+        const addressesRef = collection(
+            db,
+            "users",
+            user.uid,
+            "addresses"
+        );
+
+        const batch = writeBatch(db);
+
+        const currentAddresses = settingsV2Addresses;
+
+        /*
+         * Se esta for a morada padrão, remover essa marca
+         * das outras moradas no mesmo lote.
+         */
+        if (addressData.isDefault) {
+            currentAddresses.forEach(function (address) {
+                if (address.isDefault) {
+                    batch.update(
+                        doc(addressesRef, address.id),
+                        {
+                            isDefault: false,
+                            updatedAt: serverTimestamp()
+                        }
+                    );
+                }
+            });
+        }
+
+        if (settingsV2AddressEditingId) {
+            const existingAddress = currentAddresses.find(
+                function (address) {
+                    return address.id === settingsV2AddressEditingId;
+                }
+            );
+
+            if (!existingAddress) {
+                throw new Error(
+                    "A morada que pretende editar já não existe."
+                );
+            }
+
+            batch.update(
+                doc(addressesRef, settingsV2AddressEditingId),
+                {
+                    ...addressData,
+                    updatedAt: serverTimestamp()
+                }
+            );
+        } else {
+            const newAddressRef = doc(addressesRef);
+
+            batch.set(newAddressRef, {
+                ...addressData,
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp()
+            });
+        }
+
+        await batch.commit();
+
+        settingsV2CloseAddressModal();
+
+        await settingsV2LoadAddresses();
+
+        settingsV2ShowToast(
+            settingsV2AddressEditingId
+                ? "Morada atualizada com sucesso!"
+                : "Morada adicionada com sucesso!",
+            "success"
+        );
+
+    } catch (error) {
+        console.error("TOMA ADDRESSES — Erro ao guardar:", error);
+
+        settingsV2ShowToast(
+            "Não foi possível guardar a morada. Tente novamente.",
+            "error"
+        );
+
+    } finally {
+        settingsV2AddressSaving = false;
+
+        if (saveButton) {
+            saveButton.disabled = false;
+            saveButton.innerHTML = originalButtonHTML;
+        }
+    }
+}
+
+
+/* ---------------------------------------------------------
+   7.8 — DEFINIR A MORADA PADRÃO
+   --------------------------------------------------------- */
+
+async function settingsV2SetDefaultAddress(addressId) {
+    const user = settingsV2CurrentUser;
+
+    if (!user) {
+        settingsV2ShowToast(
+            "Inicie sessão para alterar a morada padrão.",
+            "error"
+        );
+        return;
+    }
+
+    const selectedAddress = settingsV2Addresses.find(
+        function (address) {
+            return address.id === addressId;
+        }
+    );
+
+    if (!selectedAddress) {
+        settingsV2ShowToast(
+            "A morada selecionada não foi encontrada.",
+            "error"
+        );
+        return;
+    }
+
+    try {
+        const addressesRef = collection(
+            db,
+            "users",
+            user.uid,
+            "addresses"
+        );
+
+        const batch = writeBatch(db);
+
+        settingsV2Addresses.forEach(function (address) {
+            const addressRef = doc(addressesRef, address.id);
+
+            batch.update(addressRef, {
+                isDefault: address.id === addressId,
+                updatedAt: serverTimestamp()
+            });
+        });
+
+        await batch.commit();
+
+        await settingsV2LoadAddresses();
+
+        settingsV2ShowToast(
+            "Morada padrão atualizada com sucesso!",
+            "success"
+        );
+
+    } catch (error) {
+        console.error(
+            "TOMA ADDRESSES — Erro ao definir padrão:",
+            error
+        );
+
+        settingsV2ShowToast(
+            "Não foi possível alterar a morada padrão.",
+            "error"
+        );
+    }
+}
+
+
+/* ---------------------------------------------------------
+   7.9 — CONFIRMAR A ELIMINAÇÃO DE UMA MORADA
+   --------------------------------------------------------- */
+
+function settingsV2ConfirmDeleteAddress(addressId) {
+    const address = settingsV2Addresses.find(
+        function (item) {
+            return item.id === addressId;
+        }
+    );
+
+    if (!address) {
+        settingsV2ShowToast(
+            "A morada selecionada não foi encontrada.",
+            "error"
+        );
+        return;
+    }
+
+    const confirmed = window.confirm(
+        "Deseja realmente eliminar a morada \"" +
+        (address.label || "Morada") +
+        "\"? Esta ação não pode ser anulada."
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    settingsV2DeleteAddress(addressId);
+}
+
+
+/* ---------------------------------------------------------
+   7.10 — ELIMINAR UMA MORADA
+   --------------------------------------------------------- */
+
+async function settingsV2DeleteAddress(addressId) {
+    const user = settingsV2CurrentUser;
+
+    if (!user) {
+        settingsV2ShowToast(
+            "Inicie sessão para eliminar uma morada.",
+            "error"
+        );
+        return;
+    }
+
+    try {
+        const addressRef = doc(
+            db,
+            "users",
+            user.uid,
+            "addresses",
+            addressId
+        );
+
+        await deleteDoc(addressRef);
+
+        await settingsV2LoadAddresses();
+
+        settingsV2ShowToast(
+            "Morada eliminada com sucesso!",
+            "success"
+        );
+
+    } catch (error) {
+        console.error("TOMA ADDRESSES — Erro ao eliminar:", error);
+
+        settingsV2ShowToast(
+            "Não foi possível eliminar a morada.",
+            "error"
+        );
+    }
+}
+
+
+/* ---------------------------------------------------------
+   7.11 — INICIALIZAR OS EVENTOS DAS MORADAS
+   --------------------------------------------------------- */
+
+function settingsV2InitializeAddressManagement() {
+    const addButton = settingsV2Elements.addAddressButton;
+    const viewButton = settingsV2Elements.viewAddressesButton;
+    const closeButton = settingsV2Elements.closeAddressModalButton;
+    const cancelButton = settingsV2Elements.cancelAddressButton;
+    const form = settingsV2Elements.addressForm;
+    const modal = settingsV2Elements.addressModal;
+
+    if (addButton && addButton.dataset.addressBound !== "true") {
+        addButton.dataset.addressBound = "true";
+
+        addButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            settingsV2OpenAddressModal();
+        });
+    }
+
+    if (viewButton && viewButton.dataset.addressBound !== "true") {
+        viewButton.dataset.addressBound = "true";
+
+        viewButton.addEventListener("click", function (event) {
+            event.preventDefault();
+
+            const section = settingsV2Elements.addressesSection;
+
+            if (section) {
+                section.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+            }
+
+            settingsV2LoadAddresses();
+        });
+    }
+
+    if (closeButton && closeButton.dataset.addressBound !== "true") {
+        closeButton.dataset.addressBound = "true";
+
+        closeButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            settingsV2CloseAddressModal();
+        });
+    }
+
+    if (cancelButton && cancelButton.dataset.addressBound !== "true") {
+        cancelButton.dataset.addressBound = "true";
+
+        cancelButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            settingsV2CloseAddressModal();
+        });
+    }
+
+    if (form && form.dataset.addressBound !== "true") {
+        form.dataset.addressBound = "true";
+
+        form.addEventListener("submit", settingsV2SaveAddress);
+    }
+
+    if (modal && modal.dataset.addressBound !== "true") {
+        modal.dataset.addressBound = "true";
+
+        modal.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                settingsV2CloseAddressModal();
+            }
+        });
+    }
+
+    console.log("TOMA SETTINGS — Bloco 7 inicializado.");
+}
+
+
+/* =========================================================
+   FIM DO BLOCO 7
    ========================================================= */
