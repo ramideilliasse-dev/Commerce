@@ -456,7 +456,18 @@ async function settingsV2InitializeProfile() {
 
     settingsV2ShowAuthenticatedApp();
     settingsV2HideLoading();
+/* -----------------------------------------
+   BLOCO 9.2 — CARREGAR PREFERÊNCIAS
+   ----------------------------------------- */
 
+try {
+  await settingsV2LoadNotificationPreferences();
+} catch (error) {
+  console.error(
+    "[TOMA SETTINGS V2] Erro ao carregar preferências:",
+    error
+  );
+}
     /* -----------------------------------------
        8.3.1 — CARREGAR AS DEFINIÇÕES COMERCIAIS
        ----------------------------------------- */
