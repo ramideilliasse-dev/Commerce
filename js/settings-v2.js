@@ -2498,41 +2498,49 @@ async function settingsV2SaveMerchantSettings(event) {
     }
 }
 
-/* ---------------------------------------------------------
-   8.2.2 — ATIVAR O BOTÃO DE GUARDAR
-   --------------------------------------------------------- */
+/* =========================================================
+   TOMA SETTINGS V2 — BLOCO 8.3.1
+   ATIVAR O BOTÃO DE GUARDAR INFORMAÇÕES
+   ========================================================= */
 
 function settingsV2InitializeMerchantSettings() {
-    const merchantForm =
-        settingsV2Elements.merchantInfoForm;
+    const saveButton =
+        settingsV2Elements.saveMerchantButton;
 
-    if (!merchantForm) {
-        console.warn(
-            "[TOMA SETTINGS V2] Formulário comercial não encontrado."
+    if (!saveButton) {
+        console.error(
+            "[TOMA SETTINGS V2] Botão de guardar não encontrado."
         );
+
+        settingsV2ShowToast(
+            "Não foi possível encontrar o botão de guardar.",
+            "error"
+        );
+
         return;
     }
 
-    /* Evitar registar o mesmo evento mais de uma vez */
+    /* Evitar adicionar o mesmo evento duas vezes */
 
     if (
-        merchantForm.dataset.merchantSettingsInitialized === "true"
+        saveButton.dataset.merchantSettingsInitialized === "true"
     ) {
         return;
     }
 
-    merchantForm.addEventListener(
-        "submit",
-        settingsV2SaveMerchantSettings
-    );
+    saveButton.addEventListener("click", function (event) {
+        event.preventDefault();
 
-    merchantForm.dataset.merchantSettingsInitialized = "true";
+        settingsV2SaveMerchantSettings(event);
+    });
+
+    saveButton.dataset.merchantSettingsInitialized = "true";
 
     console.info(
-        "[TOMA SETTINGS V2] Formulário comercial ativado."
+        "[TOMA SETTINGS V2] Botão de guardar ativado."
     );
 }
 
 /* =========================================================
-   FIM DO BLOCO 8.2
+   FIM DO BLOCO 8.3.1
    ========================================================= */
