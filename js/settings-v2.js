@@ -19,9 +19,9 @@ import {
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import {
-  onAuthStateChanged
+    onAuthStateChanged,
+    updateProfile
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
 const SETTINGS_V2_VERSION = "2.0.1";
 
 const SETTINGS_V2_DEFAULT_AVATAR =
