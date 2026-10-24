@@ -2544,3 +2544,219 @@ function settingsV2InitializeMerchantSettings() {
 /* =========================================================
    FIM DO BLOCO 8.3.1
    ========================================================= */
+/* =========================================================
+   TOMA SETTINGS V2 — BLOCO 9.1
+   PREFERÊNCIAS DE NOTIFICAÇÃO
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   9.1.1 — CARREGAR AS PREFERÊNCIAS
+   --------------------------------------------------------- */
+
+async function settingsV2LoadNotificationPreferences() {
+    const user = settingsV2CurrentUser;
+
+    if (!user) {
+        return false;
+    }
+
+    const promoToggle =
+        document.getElementById("promoNotifications");
+
+    const orderToggle =
+        document.getElementById("orderNotifications");
+
+    if (!promoToggle || !orderToggle) {
+        console.error(
+            "[TOMA SETTINGS V2] Interruptores de notificações não encontrados."
+        );
+        return false;
+    }
+
+    try {
+        const userRef = doc(db, "users", user.uid);
+        const userSnapshot = await getDoc(userRef);
+
+        if (!userSnapshot.exists()) {
+            throw new Error("USER_DOCUMENT_NOT_FOUND");
+        }
+
+        const userData = userSnapshot.data() || {};
+
+        /* Atualizar os interruptores com os valores guardados */
+
+        promoToggle.checked =
+            userData.promoNotifications === true;
+
+        orderToggle.checked =
+            userData.orderNotifications === true;
+
+        console.info(
+            "[TOMA SETTINGS V2] Preferências de notificações carregadas."
+        );
+
+        return true;
+
+    } catch (error) {
+        console.error(
+            "[TOMA SETTINGS V2] Erro ao carregar notificações:",
+            error
+        );
+
+        settingsV2ShowToast(
+            "Não foi possível carregar as preferências de notificações.",
+            "error"
+        );
+
+        return false;
+    }
+}
+
+/* ---------------------------------------------------------
+   9.1.2 — GUARDAR UMA PREFERÊNCIA
+   --------------------------------------------------------- */
+
+async function settingsV2SaveNotificationPreference(
+    fieldName,
+    enabled
+) {
+    const user = settingsV2CurrentUser;
+
+    if (!user) {
+        settingsV2ShowToast(
+            "Inicie sessão para alterar as preferências.",
+            "error"
+        );
+        return false;
+    }
+
+    const allowedFields = [
+        "promoNotifications",
+        "orderNotifications"
+    ];
+
+    if (!allowedFields.includes(fieldName)) {
+        console.error(
+            "[TOMA SETTINGS V2] Campo de notificação inválido."
+        );
+        return false;
+    }
+
+    try {
+        const userRef = doc(db, "users", user.uid);
+        const userSnapshot = await getDoc(userRef);
+
+        if (!userSnapshot.exists()) {
+            throw new Error("USER_DOCUMENT_NOT_FOUND");
+        }
+
+        await updateDoc(userRef, {
+            [fieldName]: enabled,
+            updatedAt: serverTimestamp()
+        });
+
+        settingsV2UserData = {
+            ...settingsV2UserData,
+            [fieldName]: enabled
+        };
+
+        settingsV2ShowToast(
+            enabled
+                ? "Preferência ativada com sucesso."
+                : "Preferência desativada com sucesso.",
+            "success"
+        );
+
+        console.info(
+            "[TOMA SETTINGS V2] Preferência guardada:",
+            fieldName,
+            enabled
+        );
+
+        return true;
+
+    } catch (error) {
+        console.error(
+            "[TOMA SETTINGS V2] Erro ao guardar preferência:",
+            error
+        );
+
+        settingsV2ShowToast(
+            "Não foi possível guardar a preferência. Tente novamente.",
+            "error"
+        );
+
+        return false;
+    }
+}
+
+/* ---------------------------------------------------------
+   9.1.3 — ATIVAR OS INTERRUPTORES
+   --------------------------------------------------------- */
+
+function settingsV2InitializeNotifications() {
+    const promoToggle =
+        document.getElementById("promoNotifications");
+
+    const orderToggle =
+        document.getElementById("orderNotifications");
+
+    if (!promoToggle || !orderToggle) {
+        console.error(
+            "[TOMA SETTINGS V2] Interruptores não encontrados."
+        );
+        return;
+    }
+
+    if (
+        document.body.dataset.notificationsInitialized === "true"
+    ) {
+        return;
+    }
+
+    document.body.dataset.notificationsInitialized = "true";
+
+    promoToggle.addEventListener("change", async function () {
+        const previousValue = !promoToggle.checked;
+
+        promoToggle.disabled = true;
+
+        const saved =
+            await settingsV2SaveNotificationPreference(
+                "promoNotifications",
+                promoToggle.checked
+            );
+
+        if (!saved) {
+            promoToggle.checked = previousValue;
+        }
+
+        promoToggle.disabled = false;
+    });
+
+    orderToggle.addEventListener("change", async function () {
+        const previousValue = !orderToggle.checked;
+
+        orderToggle.disabled = true;
+
+        const saved =
+            await settingsV2SaveNotificationPreference(
+                "orderNotifications",
+                orderToggle.checked
+            );
+
+        if (!saved) {
+            orderToggle.checked = previousValue;
+        }
+
+        orderToggle.disabled = false;
+    });
+
+    console.info(
+        "[TOMA SETTINGS V2] Interruptores de notificações ativados."
+    );
+}
+
+/* =========================================================
+   FIM DO BLOCO 9.1
+   ========================================================= */
