@@ -690,6 +690,7 @@ alert(
 settingsV2InitializeProfileEditing();
 settingsV2InitializeAddressManagement();
 settingsV2InitializeAuthentication();
+settingsV2InitializeMerchantSettings();
 /* =========================================================
    TOMA SETTINGS V2 — BLOCO 6
    EDIÇÃO DO PERFIL DO UTILIZADOR
@@ -2271,3 +2272,239 @@ try {
 /* =========================================================
 FIM DO BLOCO 8.1
 ========================================================= */
+/* =========================================================
+   TOMA SETTINGS V2 — BLOCO 8.2
+   GUARDAR AS DEFINIÇÕES DO COMERCIANTE
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   8.2.1 — GUARDAR OS DADOS DA LOJA
+   Cole este bloco depois do BLOCO 8.1.
+   --------------------------------------------------------- */
+
+async function settingsV2SaveMerchantSettings(event) {
+    if (event) {
+        event.preventDefault();
+    }
+
+    const user = settingsV2CurrentUser;
+
+    if (!user) {
+        settingsV2ShowToast(
+            "Inicie sessão para guardar as informações da loja.",
+            "error"
+        );
+        return;
+    }
+
+    const shopNameInput =
+        settingsV2Elements.merchantShopName;
+
+    const whatsappInput =
+        settingsV2Elements.merchantWhatsApp;
+
+    const descriptionInput =
+        settingsV2Elements.merchantDescription;
+
+    const saveButton =
+        settingsV2Elements.saveMerchantButton;
+
+    const shopName = shopNameInput
+        ? shopNameInput.value.trim()
+        : "";
+
+    const whatsapp = whatsappInput
+        ? whatsappInput.value.trim()
+        : "";
+
+    const description = descriptionInput
+        ? descriptionInput.value.trim()
+        : "";
+
+    /* Validar o nome da loja */
+
+    if (!shopName) {
+        settingsV2ShowToast(
+            "Introduza o nome da sua loja.",
+            "error"
+        );
+
+        if (shopNameInput) {
+            shopNameInput.focus();
+        }
+
+        return;
+    }
+
+    /* Validar o número WhatsApp */
+
+    if (!whatsapp) {
+        settingsV2ShowToast(
+            "Introduza o número de WhatsApp da sua loja.",
+            "error"
+        );
+
+        if (whatsappInput) {
+            whatsappInput.focus();
+        }
+
+        return;
+    }
+
+    /* Evitar cliques repetidos */
+
+    if (saveButton && saveButton.disabled) {
+        return;
+    }
+
+    const originalButtonText = saveButton
+        ? saveButton.textContent
+        : "";
+
+    try {
+        if (saveButton) {
+            saveButton.disabled = true;
+            saveButton.textContent = "A guardar...";
+        }
+
+        /* Confirmar que a conta existe e tem o papel correto */
+
+        const userRef = doc(db, "users", user.uid);
+        const userSnapshot = await getDoc(userRef);
+
+        if (!userSnapshot.exists()) {
+            throw new Error(
+                "USER_DOCUMENT_NOT_FOUND"
+            );
+        }
+
+        const userData = userSnapshot.data() || {};
+
+        const role = String(userData.role || "")
+            .trim()
+            .toLowerCase();
+
+        if (role !== "merchant") {
+            settingsV2ShowToast(
+                "Apenas uma conta de comerciante pode alterar estas informações.",
+                "error"
+            );
+            return;
+        }
+
+        /* Guardar os dados no Firestore */
+
+        await updateDoc(userRef, {
+            shopName: shopName,
+            whatsapp: whatsapp,
+            description: description,
+            updatedAt: serverTimestamp()
+        });
+
+        /* Atualizar os dados locais */
+
+        settingsV2UserData = {
+            ...settingsV2UserData,
+            shopName: shopName,
+            whatsapp: whatsapp,
+            description: description
+        };
+
+        /* Atualizar o cabeçalho da loja */
+
+        const statusTitle =
+            settingsV2Elements.merchantStatusTitle;
+
+        const statusDescription =
+            settingsV2Elements.merchantStatusDescription;
+
+        if (statusTitle) {
+            statusTitle.textContent = shopName;
+        }
+
+        if (statusDescription) {
+            statusDescription.textContent =
+                "As informações da sua loja foram atualizadas.";
+        }
+
+        settingsV2ShowToast(
+            "Informações da loja guardadas com sucesso!",
+            "success"
+        );
+
+        console.info(
+            "[TOMA SETTINGS V2] Definições comerciais guardadas."
+        );
+
+    } catch (error) {
+        console.error(
+            "[TOMA SETTINGS V2] Erro ao guardar as definições comerciais:",
+            error
+        );
+
+        if (error.message === "USER_DOCUMENT_NOT_FOUND") {
+            settingsV2ShowToast(
+                "Não foi encontrado o documento da sua conta.",
+                "error"
+            );
+        } else if (
+            error.code === "permission-denied"
+        ) {
+            settingsV2ShowToast(
+                "Não tem autorização para alterar estas informações.",
+                "error"
+            );
+        } else {
+            settingsV2ShowToast(
+                "Não foi possível guardar as informações. Tente novamente.",
+                "error"
+            );
+        }
+
+    } finally {
+        if (saveButton) {
+            saveButton.disabled = false;
+            saveButton.textContent =
+                originalButtonText || "Guardar informações";
+        }
+    }
+}
+
+/* ---------------------------------------------------------
+   8.2.2 — ATIVAR O BOTÃO DE GUARDAR
+   --------------------------------------------------------- */
+
+function settingsV2InitializeMerchantSettings() {
+    const merchantForm =
+        settingsV2Elements.merchantInfoForm;
+
+    if (!merchantForm) {
+        console.warn(
+            "[TOMA SETTINGS V2] Formulário comercial não encontrado."
+        );
+        return;
+    }
+
+    /* Evitar registar o mesmo evento mais de uma vez */
+
+    if (
+        merchantForm.dataset.merchantSettingsInitialized === "true"
+    ) {
+        return;
+    }
+
+    merchantForm.addEventListener(
+        "submit",
+        settingsV2SaveMerchantSettings
+    );
+
+    merchantForm.dataset.merchantSettingsInitialized = "true";
+
+    console.info(
+        "[TOMA SETTINGS V2] Formulário comercial ativado."
+    );
+}
+
+/* =========================================================
+   FIM DO BLOCO 8.2
+   ========================================================= */
