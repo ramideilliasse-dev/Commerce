@@ -730,6 +730,7 @@ settingsV2InitializeProfileEditing();
 settingsV2InitializeAddressManagement();
 settingsV2InitializeAuthentication();
 settingsV2InitializeMerchantSettings();
+settingsV2InitializeNotifications();
 /* =========================================================
    TOMA SETTINGS V2 — BLOCO 6
    EDIÇÃO DO PERFIL DO UTILIZADOR
