@@ -905,37 +905,106 @@ function settingsV2ValidateProfileForm() {
 }
 
 
-/* ---------------------------------------------------------
-   6.5 — MOSTRAR NOTIFICAÇÕES NA PÁGINA
-   --------------------------------------------------------- */
+/* =========================================================
+   TOMA SETTINGS V2 — TOAST PROFISSIONAL
+   ========================================================= */
 
 function settingsV2ShowToast(message, type = "info") {
-    let container = settingsV2Elements.toastContainer;
+    let container = document.getElementById("toastContainer");
 
     if (!container) {
-        container = document.getElementById("toastContainer");
+        container = document.createElement("div");
+        container.id = "toastContainer";
+        document.body.appendChild(container);
     }
 
-    if (!container) {
-        alert(message);
-        return;
-    }
+    const toastTypes = {
+        success: {
+            icon: "✓",
+            title: "Sucesso"
+        },
+        error: {
+            icon: "✕",
+            title: "Erro"
+        },
+        warning: {
+            icon: "!",
+            title: "Atenção"
+        },
+        info: {
+            icon: "i",
+            title: "Informação"
+        }
+    };
+
+    const toastConfig = toastTypes[type] || toastTypes.info;
 
     const toast = document.createElement("div");
+    toast.className = "toma-toast toma-toast-" + type;
+    toast.setAttribute("role", type === "error" ? "alert" : "status");
+    toast.setAttribute("aria-live", type === "error" ? "assertive" : "polite");
 
-    toast.className = "settings-toast settings-toast-" + type;
-    toast.setAttribute("role", "status");
-    toast.textContent = message;
+    toast.innerHTML = `
+        <div class="toma-toast-icon" aria-hidden="true">
+            ${toastConfig.icon}
+        </div>
+
+        <div class="toma-toast-content">
+            <strong class="toma-toast-title">
+                ${toastConfig.title}
+            </strong>
+
+            <p class="toma-toast-message"></p>
+        </div>
+
+        <button
+            type="button"
+            class="toma-toast-close"
+            aria-label="Fechar notificação"
+        >
+            &times;
+        </button>
+
+        <div class="toma-toast-progress"></div>
+    `;
+
+    toast.querySelector(".toma-toast-message").textContent = String(message);
 
     container.appendChild(toast);
 
-    window.setTimeout(function () {
-        toast.classList.add("settings-toast-hide");
+    const closeButton = toast.querySelector(".toma-toast-close");
+
+    let removeTimer;
+
+    function removeToast() {
+        if (!toast.isConnected) {
+            return;
+        }
+
+        window.clearTimeout(removeTimer);
+
+        toast.classList.remove("toma-toast-visible");
+        toast.classList.add("toma-toast-leaving");
 
         window.setTimeout(function () {
             toast.remove();
+
+            if (
+                container.childElementCount === 0 &&
+                container.id === "toastContainer"
+            ) {
+                container.remove();
+            }
         }, 300);
-    }, 4000);
+    }
+
+    closeButton.addEventListener("click", removeToast);
+
+    requestAnimationFrame(function () {
+        toast.classList.add("toma-toast-visible");
+    });
+
+    removeTimer = window.setTimeout(removeToast, 4500);
 }
 
 
