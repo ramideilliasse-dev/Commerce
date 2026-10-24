@@ -2969,3 +2969,76 @@ body.dark-mode {
         transition: none;
     }
 }
+/* ==========================================
+   TOMA — ANIMATION MORADA PADRÃO
+   ========================================== */
+
+/* État de chargement du bouton */
+.settings-address-button-loading {
+    opacity: 0.8;
+    cursor: wait !important;
+    pointer-events: none;
+    transform: scale(0.98);
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+/* Contenu du bouton pendant le chargement */
+.settings-address-button-loading span {
+    vertical-align: middle;
+}
+
+/* Indicateur de chargement */
+.settings-address-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: settingsAddressSpin 0.7s linear infinite;
+    vertical-align: middle;
+}
+
+/* Animation de rotation */
+@keyframes settingsAddressSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Animation de confirmation sur la carte */
+.settings-address-default-success {
+    animation: settingsAddressSuccess 0.65s ease;
+}
+
+/* Effet bleu sur la carte sélectionnée */
+@keyframes settingsAddressSuccess {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+    }
+
+    45% {
+        transform: scale(1.015);
+        box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.16);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+    }
+}
+
+/* Respecter les préférences de mouvement réduit */
+@media (prefers-reduced-motion: reduce) {
+    .settings-address-spinner {
+        animation-duration: 1.5s;
+    }
+
+    .settings-address-default-success {
+        animation: none;
+    }
+}
