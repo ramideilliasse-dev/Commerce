@@ -1786,6 +1786,11 @@ async function settingsV2SetDefaultAddress(addressId) {
         return;
     }
 
+    // Evita cliques repetidos durante a operação
+    if (window.settingsV2SettingDefaultAddress) {
+        return;
+    }
+
     const selectedAddress = settingsV2Addresses.find(
         function (address) {
             return address.id === addressId;
@@ -1800,7 +1805,59 @@ async function settingsV2SetDefaultAddress(addressId) {
         return;
     }
 
+    // Se já for a morada padrão, não repetir a operação
+    if (selectedAddress.isDefault === true) {
+        settingsV2ShowToast(
+            "Esta morada já é a sua morada padrão.",
+            "info"
+        );
+        return;
+    }
+
+    window.settingsV2SettingDefaultAddress = true;
+
+    let clickedButton = null;
+    let originalButtonContent = "";
+
     try {
+        // Encontrar o botão correspondente à morada selecionada
+        const addressCards = document.querySelectorAll(
+            ".settings-address-card"
+        );
+
+        addressCards.forEach(function (card) {
+            const buttons = card.querySelectorAll("button");
+
+            buttons.forEach(function (button) {
+                const onclickText = button.getAttribute("onclick");
+
+                if (
+                    onclickText &&
+                    onclickText.includes("settingsV2SetDefaultAddress") &&
+                    onclickText.includes(addressId)
+                ) {
+                    clickedButton = button;
+                }
+            });
+        });
+
+        // Feedback visual imediato
+        if (clickedButton) {
+            originalButtonContent = clickedButton.innerHTML;
+
+            clickedButton.disabled = true;
+            clickedButton.classList.add(
+                "settings-address-button-loading"
+            );
+
+            clickedButton.innerHTML =
+                '<span class="settings-address-spinner" aria-hidden="true"></span>' +
+                '<span>A atualizar...</span>';
+
+            clickedButton.setAttribute("aria-busy", "true");
+        }
+
+        // Atualizar as moradas no Firestore
         const addressesRef = collection(
             db,
             "users",
@@ -1811,7 +1868,10 @@ async function settingsV2SetDefaultAddress(addressId) {
         const batch = writeBatch(db);
 
         settingsV2Addresses.forEach(function (address) {
-            const addressRef = doc(addressesRef, address.id);
+            const addressRef = doc(
+                addressesRef,
+                address.id
+            );
 
             batch.update(addressRef, {
                 isDefault: address.id === addressId,
@@ -1821,7 +1881,36 @@ async function settingsV2SetDefaultAddress(addressId) {
 
         await batch.commit();
 
+        // Recarregar a lista para atualizar o badge e as cartas
         await settingsV2LoadAddresses();
+
+        // Animação da morada que acabou de ser escolhida
+        requestAnimationFrame(function () {
+            const cards = document.querySelectorAll(
+                ".settings-address-card"
+            );
+
+            cards.forEach(function (card) {
+                const badge = card.querySelector(
+                    ".settings-address-badge"
+                );
+
+                if (
+                    badge &&
+                    badge.textContent.includes("Morada padrão")
+                ) {
+                    card.classList.remove(
+                        "settings-address-default-success"
+                    );
+
+                    void card.offsetWidth;
+
+                    card.classList.add(
+                        "settings-address-default-success"
+                    );
+                }
+            });
+        });
 
         settingsV2ShowToast(
             "Morada padrão atualizada com sucesso!",
@@ -1835,12 +1924,27 @@ async function settingsV2SetDefaultAddress(addressId) {
         );
 
         settingsV2ShowToast(
-            "Não foi possível alterar a morada padrão.",
+            "Não foi possível alterar a morada padrão. Tente novamente.",
             "error"
         );
+
+    } finally {
+        // Restaurar o botão se ainda existir na página
+        if (clickedButton) {
+            clickedButton.disabled = false;
+            clickedButton.classList.remove(
+                "settings-address-button-loading"
+            );
+            clickedButton.removeAttribute("aria-busy");
+
+            if (originalButtonContent) {
+                clickedButton.innerHTML = originalButtonContent;
+            }
+        }
+
+        window.settingsV2SettingDefaultAddress = false;
     }
 }
-
 
 /* ---------------------------------------------------------
    7.9 — CONFIRMAR A ELIMINAÇÃO DE UMA MORADA
