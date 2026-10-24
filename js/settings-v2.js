@@ -444,33 +444,55 @@ async function settingsV2InitializeProfile() {
   settingsV2ProfileInitializationStarted = true;
   settingsV2ShowLoading();
 
-  const loaded = await settingsV2LoadUserProfile();
-
-  if (!loaded) {
-    settingsV2ProfileInitializationStarted = false;
-    settingsV2HideLoading();
-    return;
-  }
-
-  settingsV2ShowAuthenticatedApp();
-  settingsV2HideLoading();
-
-  alert(
-    "TOMA SETTINGS V2\n\n" +
-    "BLOCS 1 À 4 — PROFIL CHARGÉ !\n\n" +
-    "✓ Authentification confirmée\n" +
-    "✓ Profil chargé\n" +
-    "✓ Informations affichées\n\n" +
-    "Chargement des statistiques..."
-  );
-
-  // Les statistiques ne doivent pas bloquer le profil.
   try {
-    await settingsV2LoadStatistics();
+    const loaded = await settingsV2LoadUserProfile();
+
+    if (!loaded) {
+      settingsV2ProfileInitializationStarted = false;
+      settingsV2HideLoading();
+      return;
+    }
+
+    settingsV2ShowAuthenticatedApp();
+    settingsV2HideLoading();
+
+    // Charger automatiquement les adresses existantes.
+    try {
+      await settingsV2LoadAddresses();
+    } catch (error) {
+      console.error(
+        "[TOMA SETTINGS V2] Erro ao carregar moradas:",
+        error
+      );
+
+      settingsV2ShowToast(
+        "Não foi possível carregar as moradas. Tente novamente.",
+        "error"
+      );
+    }
+
+    // Charger les statistiques sans bloquer le profil.
+    try {
+      await settingsV2LoadStatistics();
+    } catch (error) {
+      console.error(
+        "[TOMA SETTINGS V2] Erro ao carregar estatísticas:",
+        error
+      );
+    }
+
   } catch (error) {
     console.error(
-      "[TOMA SETTINGS V2] Les statistiques ont échoué :",
+      "[TOMA SETTINGS V2] Erro ao inicializar perfil:",
       error
+    );
+
+    settingsV2ProfileInitializationStarted = false;
+    settingsV2HideLoading();
+
+    settingsV2ShowToast(
+      "Não foi possível carregar o perfil. Tente novamente.",
+      "error"
     );
   }
 }
