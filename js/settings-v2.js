@@ -430,8 +430,9 @@ async function settingsV2LoadUserProfile() {
 }
 
 /* =========================================================
-   BLOC 4 — INITIALISATION DU PROFIL
-========================================================= */
+   TOMA SETTINGS V2 — BLOCO 8.3
+   CARREGAMENTO AUTOMÁTICO DAS DEFINIÇÕES DO COMERCIANTE
+   ========================================================= */
 
 async function settingsV2InitializeProfile() {
   if (
@@ -456,7 +457,28 @@ async function settingsV2InitializeProfile() {
     settingsV2ShowAuthenticatedApp();
     settingsV2HideLoading();
 
-    // Charger automatiquement les adresses existantes.
+    /* -----------------------------------------
+       8.3.1 — CARREGAR AS DEFINIÇÕES COMERCIAIS
+       ----------------------------------------- */
+
+    try {
+      await settingsV2LoadMerchantSettings();
+    } catch (error) {
+      console.error(
+        "[TOMA SETTINGS V2] Erro ao carregar definições comerciais:",
+        error
+      );
+
+      settingsV2ShowToast(
+        "Não foi possível carregar as informações da loja.",
+        "error"
+      );
+    }
+
+    /* -----------------------------------------
+       8.3.2 — CARREGAR AS MORADAS
+       ----------------------------------------- */
+
     try {
       await settingsV2LoadAddresses();
     } catch (error) {
@@ -471,7 +493,10 @@ async function settingsV2InitializeProfile() {
       );
     }
 
-    // Charger les statistiques sans bloquer le profil.
+    /* -----------------------------------------
+       8.3.3 — CARREGAR AS ESTATÍSTICAS
+       ----------------------------------------- */
+
     try {
       await settingsV2LoadStatistics();
     } catch (error) {
@@ -497,6 +522,9 @@ async function settingsV2InitializeProfile() {
   }
 }
 
+/* =========================================================
+   FIM DO BLOCO 8.3
+   ========================================================= */
 /* =========================================================
    BLOC 5 — STATISTIQUES
 ========================================================= */
