@@ -1095,11 +1095,7 @@ async function settingsV2SaveProfile(event) {
         } catch (authError) {
             console.error("TOMA AUTH ERROR:", authError);
 
-            alert(
-                "AVISO: Os dados foram guardados no Firestore, " +
-                "mas a atualização do perfil de autenticação falhou: " +
-                (authError.message || authError.code || "Erro desconhecido")
-            );
+            
         }
 
         settingsV2UserData = {
