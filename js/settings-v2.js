@@ -2126,3 +2126,148 @@ function settingsV2InitializeAddressManagement() {
 /* =========================================================
    FIM DO BLOCO 7
    ========================================================= */
+/* =========================================================
+TOMA SETTINGS V2 — BLOCO 8.1
+CARREGAR AS DEFINIÇÕES DO COMERCIANTE
+========================================================= */
+
+/* ———————————————————
+8.1.1 — CARREGAR OS DADOS COMERCIAIS
+Fonte: users/{uid}
+——————————————————— */
+
+async function settingsV2LoadMerchantSettings() {
+const user = settingsV2CurrentUser;
+
+if (!user) {
+    settingsV2ShowToast(
+        "Inicie sessão para consultar as definições comerciais.",
+        "error"
+    );
+    return false;
+}
+try {
+    const userRef = doc(db, "users", user.uid);
+    const userSnapshot = await getDoc(userRef);
+    if (!userSnapshot.exists()) {
+        settingsV2ShowToast(
+            "Não foi encontrado o documento da sua conta.",
+            "error"
+        );
+        return false;
+    }
+    const userData = userSnapshot.data() || {};
+    settingsV2UserData = {
+        ...settingsV2UserData,
+        ...userData
+    };
+    const role = String(userData.role || "customer")
+        .trim()
+        .toLowerCase();
+    const isMerchant = role === "merchant";
+    const merchantSection =
+        settingsV2Elements.merchantSection;
+    const merchantInfoForm =
+        settingsV2Elements.merchantInfoForm;
+    const dashboardLink =
+        settingsV2Elements.merchantDashboardLink;
+    const registerLink =
+        settingsV2Elements.merchantRegisterLink;
+    const shopNameInput =
+        settingsV2Elements.merchantShopName;
+    const whatsappInput =
+        settingsV2Elements.merchantWhatsApp;
+    const descriptionInput =
+        settingsV2Elements.merchantDescription;
+    const statusTitle =
+        settingsV2Elements.merchantStatusTitle;
+    const statusDescription =
+        settingsV2Elements.merchantStatusDescription;
+    const statusBadge =
+        settingsV2Elements.merchantStatusBadge;
+    /*
+     * Mostrar a secção comercial apenas para comerciantes.
+     * Os outros papéis não recebem acesso ao formulário.
+     */
+    if (merchantSection) {
+        merchantSection.hidden = !isMerchant;
+    }
+    if (!isMerchant) {
+        if (merchantInfoForm) {
+            merchantInfoForm.hidden = true;
+        }
+        if (dashboardLink) {
+            dashboardLink.hidden = true;
+        }
+        if (registerLink) {
+            registerLink.hidden = false;
+        }
+        console.info(
+            "[TOMA SETTINGS V2] O utilizador não tem o papel merchant."
+        );
+        return true;
+    }
+    /*
+     * Preencher os campos com os dados existentes.
+     */
+    if (shopNameInput) {
+        shopNameInput.value = userData.shopName || "";
+    }
+    if (whatsappInput) {
+        whatsappInput.value = userData.whatsapp || "";
+    }
+    if (descriptionInput) {
+        descriptionInput.value = userData.description || "";
+    }
+    /*
+     * Atualizar o estado visual da conta.
+     */
+    if (statusTitle) {
+        statusTitle.textContent =
+            userData.shopName || "A sua loja";
+    }
+    if (statusDescription) {
+        statusDescription.textContent =
+            userData.shopName
+                ? "Consulte e atualize as informações da sua loja."
+                : "Complete as informações para apresentar melhor a sua loja.";
+    }
+    if (statusBadge) {
+        statusBadge.textContent = "Comerciante";
+        statusBadge.classList.remove(
+            "status-pending",
+            "status-blocked",
+            "status-rejected"
+        );
+        statusBadge.classList.add("status-active");
+    }
+    if (merchantInfoForm) {
+        merchantInfoForm.hidden = false;
+    }
+    if (dashboardLink) {
+        dashboardLink.hidden = false;
+    }
+    if (registerLink) {
+        registerLink.hidden = true;
+    }
+    console.info(
+        "[TOMA SETTINGS V2] Definições comerciais carregadas."
+    );
+    return true;
+} catch (error) {
+    console.error(
+        "[TOMA SETTINGS V2] Erro ao carregar definições comerciais:",
+        error
+    );
+    settingsV2ShowToast(
+        "Não foi possível carregar as informações comerciais.",
+        "error"
+    );
+    return false;
+}
+
+}
+
+/* =========================================================
+FIM DO BLOCO 8.1
+========================================================= */
