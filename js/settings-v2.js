@@ -3362,12 +3362,3 @@ async function settingsV2DeleteAccount() {
     }
 }
 
-/* Ligar o botão de eliminação à função */
-if (settingsV2Elements.deleteAccountButton) {
-    settingsV2Elements.deleteAccountButton.addEventListener(
-        "click",
-        function () {
-            settingsV2DeleteAccount();
-        }
-    );
-}
