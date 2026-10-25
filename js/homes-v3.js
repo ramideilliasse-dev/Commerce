@@ -1193,18 +1193,248 @@ async function tomaV3LoadProducts() {
     }
 }
 
+// ======================================================
+// TOMA V3 — BLOC 6
+// Affichage des produits en vedette
+// ======================================================
+
 // ------------------------------------------------------
-// 5.8 — Preparar as secções de produtos
+// 6.1 — Limite de produits sur la page d'accueil
 // ------------------------------------------------------
 
-// Cette fonction sera complétée au BLOC 6.
-function tomaV3RenderAllProductSections() {
+const TOMA_V3_HOME_PRODUCT_LIMIT = 4;
+
+// ------------------------------------------------------
+// 6.2 — Préparer les cartes produits
+// ------------------------------------------------------
+
+function tomaV3CreateFeaturedCard(product) {
+
+    const card = document.createElement("article");
+
+    card.className = "v3ProductCard";
+
+    // Image du produit
+    const imageWrapper = document.createElement("div");
+
+    imageWrapper.className = "v3ProductImageWrapper";
+
+    const image = document.createElement("img");
+
+    image.className = "v3ProductImage";
+    image.src = tomaV3GetProductImage(product);
+    image.alt = product.name || "Produto";
+    image.loading = "lazy";
+
+    image.onerror = () => {
+
+        image.onerror = null;
+        image.src = "./images/no-image.png";
+
+    };
+
+    imageWrapper.appendChild(image);
+
+    // Badge « Em destaque »
+    const badge = document.createElement("span");
+
+    badge.className = "v3ProductBadge";
+    badge.textContent = "Em destaque";
+
+    imageWrapper.appendChild(badge);
+
+    // Informations du produit
+    const info = document.createElement("div");
+
+    info.className = "v3ProductInfo";
+
+    const name = document.createElement("h3");
+
+    name.className = "v3ProductName";
+    name.textContent = product.name || "Produto";
+
+    const price = document.createElement("p");
+
+    price.className = "v3ProductPrice";
+    price.textContent = tomaV3FormatPrice(product.price);
+
+    // Boutons
+    const actions = document.createElement("div");
+
+    actions.className = "v3ProductActions";
+
+    const favoriteButton = document.createElement("button");
+
+    favoriteButton.type = "button";
+    favoriteButton.className = "v3FavoriteButton";
+
+    function updateFavoriteButton() {
+
+        const favorite = isFavorite(product.id);
+
+        favoriteButton.textContent = favorite ? "♥" : "♡";
+
+        favoriteButton.setAttribute(
+            "aria-label",
+            favorite
+                ? "Remover dos favoritos"
+                : "Adicionar aos favoritos"
+        );
+
+        favoriteButton.setAttribute(
+            "aria-pressed",
+            String(favorite)
+        );
+
+    }
+
+    updateFavoriteButton();
+
+    favoriteButton.addEventListener("click", event => {
+
+        event.stopPropagation();
+
+        const favorite = toggleFavorite(product.id);
+
+        updateFavoriteButton();
+
+        tomaV3Toast(
+            favorite
+                ? "Produto adicionado aos favoritos."
+                : "Produto removido dos favoritos.",
+            "success"
+        );
+
+    });
+
+    const addButton = document.createElement("button");
+
+    addButton.type = "button";
+    addButton.className = "v3AddToCartButton";
+    addButton.textContent = "Adicionar";
+
+    addButton.addEventListener("click", event => {
+
+        event.stopPropagation();
+
+        try {
+
+            addToCart(product);
+
+            tomaV3RefreshCartCount();
+
+            tomaV3Toast(
+                "Produto adicionado ao carrinho.",
+                "success"
+            );
+
+        } catch (error) {
+
+            console.error(
+                "[TOMA V3] Erro ao adicionar ao carrinho:",
+                error
+            );
+
+            tomaV3Toast(
+                "Não foi possível adicionar o produto.",
+                "error"
+            );
+
+        }
+
+    });
+
+    actions.append(favoriteButton, addButton);
+
+    info.append(name, price, actions);
+
+    card.append(imageWrapper, info);
+
+    // Ouvrir la fiche produit
+    card.addEventListener("click", () => {
+
+        window.location.href =
+            "./product-detail-v2.html?id=" +
+            encodeURIComponent(product.id);
+
+    });
+
+    return card;
+}
+
+// ------------------------------------------------------
+// 6.3 — Déterminer les produits en vedette
+// ------------------------------------------------------
+
+function tomaV3GetFeaturedProducts() {
+
+    const products = TOMA_V3.products || [];
+
+    // Ne sélectionne que les produits explicitement
+    // marqués comme étant en vedette.
+    return products.filter(product =>
+
+        product.featured === true ||
+        product.isFeatured === true
+
+    );
+
+}
+
+// ------------------------------------------------------
+// 6.4 — Afficher les produits en vedette
+// ------------------------------------------------------
+
+function tomaV3RenderFeaturedProducts() {
+
+    const container =
+        tomaV3GetElement("featuredProducts");
+
+    if (!container) return;
+
+    container.replaceChildren();
+
+    const featuredProducts =
+        tomaV3GetFeaturedProducts().slice(
+            0,
+            TOMA_V3_HOME_PRODUCT_LIMIT
+        );
+
+    if (featuredProducts.length === 0) {
+
+        const message = document.createElement("p");
+
+        message.className = "v3EmptyMessage";
+
+        message.textContent =
+            "Novos produtos em destaque serão apresentados aqui.";
+
+        container.appendChild(message);
+
+        return;
+    }
+
+    featuredProducts.forEach(product => {
+
+        container.appendChild(
+            tomaV3CreateFeaturedCard(product)
+        );
+
+    });
 
     console.info(
-        "[TOMA V3] Preparação das secções:",
-        TOMA_V3.products.length,
-        "produtos disponíveis."
+        "[TOMA V3] Produtos em destaque apresentados:",
+        featuredProducts.length
     );
+}
+
+// ------------------------------------------------------
+// 6.5 — Préparer les autres sections
+// ------------------------------------------------------
+
+function tomaV3RenderAllProductSections() {
+
+    tomaV3RenderFeaturedProducts();
 
 }
 
