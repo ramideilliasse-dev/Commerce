@@ -3247,3 +3247,136 @@ function settingsV2ShowConfirmation(options = {}) {
         confirmButton.addEventListener("click", confirmHandler);
     });
 }
+/* =========================================================
+   TOMA SETTINGS V2
+   BLOC 13.2 — ELIMINAÇÃO EFETIVA DA CONTA
+========================================================= */
+
+async function settingsV2DeleteAccount() {
+    if (settingsV2DeleteAccountInProgress) {
+        return;
+    }
+
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+        settingsV2ShowToast(
+            "Inicie sessão para eliminar a sua conta.",
+            "error"
+        );
+        return;
+    }
+
+    const confirmButton = settingsV2Elements.confirmActionButton;
+    const cancelButton = settingsV2Elements.cancelConfirmationButton;
+
+    try {
+        settingsV2DeleteAccountInProgress = true;
+
+        if (confirmButton) {
+            confirmButton.disabled = true;
+            confirmButton.textContent = "A eliminar...";
+        }
+
+        if (cancelButton) {
+            cancelButton.disabled = true;
+        }
+
+        /* Verificar o perfil do utilizador no Firestore */
+        const userRef = doc(db, "users", currentUser.uid);
+        const userSnapshot = await getDoc(userRef);
+
+        if (userSnapshot.exists()) {
+            const userData = userSnapshot.data();
+            const userRole = String(userData.role || "")
+                .trim()
+                .toLowerCase();
+
+            /* Proteger contas administrativas */
+            if (
+                userRole === "admin" ||
+                userRole === "superadmin"
+            ) {
+                settingsV2ShowToast(
+                    "Por segurança, as contas administrativas não podem ser eliminadas nesta página.",
+                    "error"
+                );
+
+                return;
+            }
+        }
+
+        /*
+         * Eliminar a conta Firebase Authentication.
+         * O Firebase pode exigir uma autenticação recente.
+         */
+        await deleteUser(currentUser);
+
+        /* Limpar preferências locais da sessão */
+        localStorage.removeItem("toma_dark_mode");
+
+        /* Fechar a janela, caso ainda exista */
+        if (settingsV2Elements.confirmationModal) {
+            settingsV2Elements.confirmationModal.hidden = true;
+            settingsV2Elements.confirmationModal.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+        }
+
+        settingsV2ShowToast(
+            "A sua conta foi eliminada com sucesso.",
+            "success"
+        );
+
+        /* Redirecionar para a página inicial */
+        window.setTimeout(function () {
+            window.location.replace("../../index.html");
+        }, 1200);
+
+    } catch (error) {
+        console.error(
+            "TOMA — Erro ao eliminar a conta:",
+            error
+        );
+
+        if (error.code === "auth/requires-recent-login") {
+            settingsV2ShowToast(
+                "Por segurança, termine sessão e volte a iniciar sessão antes de eliminar a conta.",
+                "warning"
+            );
+        } else if (error.code === "auth/network-request-failed") {
+            settingsV2ShowToast(
+                "Falha de ligação. Verifique a internet e tente novamente.",
+                "error"
+            );
+        } else {
+            settingsV2ShowToast(
+                "Não foi possível eliminar a conta. Tente novamente.",
+                "error"
+            );
+        }
+
+    } finally {
+        settingsV2DeleteAccountInProgress = false;
+
+        if (confirmButton) {
+            confirmButton.disabled = false;
+            confirmButton.textContent = "Continuar";
+        }
+
+        if (cancelButton) {
+            cancelButton.disabled = false;
+        }
+    }
+}
+
+/* Ligar o botão de confirmação à eliminação */
+if (settingsV2Elements.confirmActionButton) {
+    settingsV2Elements.confirmActionButton.addEventListener(
+        "click",
+        function () {
+            settingsV2DeleteAccount();
+        }
+    );
+}
