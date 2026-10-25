@@ -1,0 +1,96 @@
+/* =========================================================
+   TOMA — SISTEMA GLOBAL DE TEMA
+   BLOCO 2 — ESTILOS DO MODO ESCURO
+========================================================= */
+
+/* Cores globais */
+html.dark-mode {
+    color-scheme: dark;
+}
+
+body.dark-mode {
+    background-color: #121212;
+    color: #F5F5F5;
+}
+
+/* Textos */
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3,
+.dark-mode h4,
+.dark-mode h5,
+.dark-mode h6,
+.dark-mode p,
+.dark-mode label,
+.dark-mode span {
+    color: inherit;
+}
+
+/* Cartões e painéis comuns */
+.dark-mode .card,
+.dark-mode .product-card,
+.dark-mode .productCard,
+.dark-mode .settings-card,
+.dark-mode .settings-section,
+.dark-mode .modal-content {
+    background-color: #1E1E1E;
+    color: #F5F5F5;
+    border-color: #333333;
+}
+
+/* Campos de formulário */
+.dark-mode input,
+.dark-mode select,
+.dark-mode textarea {
+    background-color: #242424;
+    color: #F5F5F5;
+    border-color: #444444;
+}
+
+/* Texto indicativo dos campos */
+.dark-mode input::placeholder,
+.dark-mode textarea::placeholder {
+    color: #AAAAAA;
+}
+
+/* Bordas e separadores */
+.dark-mode hr,
+.dark-mode .divider {
+    border-color: #333333;
+}
+
+/* Menus e navegação */
+.dark-mode nav,
+.dark-mode .navbar,
+.dark-mode .bottom-nav,
+.dark-mode .sidebar {
+    background-color: #1A1A1A;
+    color: #F5F5F5;
+    border-color: #333333;
+}
+
+/* Links */
+.dark-mode a {
+    color: #8AB4FF;
+}
+
+/* Preservar a cor dos botões principais de Toma */
+.dark-mode button,
+.dark-mode .btn {
+    border-color: transparent;
+}
+
+/* Evitar transições bruscas */
+html,
+body {
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Respeitar a preferência do dispositivo para os controlos */
+html.dark-mode {
+    color-scheme: dark;
+}
+
+html:not(.dark-mode) {
+    color-scheme: light;
+} 
