@@ -3042,3 +3042,77 @@ body.dark-mode {
         animation: none;
     }
 }
+/* =========================================================
+   TOMA SETTINGS V2 — MELHORIA DA LEITURA
+   Aumentar ligeiramente o tamanho dos textos
+========================================================= */
+
+/* Texto geral */
+#settingsApp {
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* Textos dos parágrafos e descrições */
+#settingsApp p,
+#settingsApp .description,
+#settingsApp .subtitle,
+#settingsApp .settings-description {
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+/* Títulos das secções */
+#settingsApp h2 {
+    font-size: 20px;
+    line-height: 1.4;
+}
+
+#settingsApp h3 {
+    font-size: 18px;
+    line-height: 1.4;
+}
+
+/* Título principal */
+#settingsApp h1 {
+    font-size: 24px;
+    line-height: 1.35;
+}
+
+/* Botões */
+#settingsApp button {
+    font-size: 16px;
+}
+
+/* Campos de texto */
+#settingsApp input,
+#settingsApp select,
+#settingsApp textarea {
+    font-size: 16px;
+}
+
+/* Etiquetas dos campos */
+#settingsApp label {
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+/* Informações secundárias */
+#settingsApp small {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Janelas de confirmação */
+#confirmationModal {
+    font-size: 16px;
+}
+
+#confirmationModal h2,
+#confirmationModal h3 {
+    font-size: 20px;
+}
+
+#confirmationModal button {
+    font-size: 16px;
+}
