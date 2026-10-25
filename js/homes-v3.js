@@ -1535,7 +1535,162 @@ function tomaV3RenderNewProducts() {
     );
 
 }
+// ======================================================
+// BLOC 8 — DÉTECTION DES PROMOTIONS ACTIVES
+// Utilise les champs réels du système commerçant Toma
+// ======================================================
 
+function tomaV3ParsePromotionDate(value) {
+    if (!value) return null;
+
+    // Date Firestore Timestamp
+    if (typeof value.toDate === "function") {
+        const date = value.toDate();
+        return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    // Objet Date
+    if (value instanceof Date) {
+        return Number.isNaN(value.getTime()) ? null : value;
+    }
+
+    // Date au format YYYY-MM-DD
+    if (typeof value === "string") {
+        const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+        if (match) {
+            const date = new Date(
+                Number(match[1]),
+                Number(match[2]) - 1,
+                Number(match[3])
+            );
+
+            return Number.isNaN(date.getTime()) ? null : date;
+        }
+
+        const date = new Date(value);
+        return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    return null;
+}
+
+
+function tomaV3IsPromotionActive(product) {
+    if (!product || product.promotion !== true) {
+        return false;
+    }
+
+    const originalPrice = Number(
+        product.oldPrice ?? product.price
+    );
+
+    const promotionPrice = Number(product.promotionPrice);
+    const promotionPercent = Number(product.promotionPercent);
+
+    // Vérifier que les prix et le pourcentage sont valides
+    if (
+        !Number.isFinite(originalPrice) ||
+        !Number.isFinite(promotionPrice) ||
+        !Number.isFinite(promotionPercent) ||
+        originalPrice <= 0 ||
+        promotionPrice <= 0 ||
+        promotionPrice >= originalPrice ||
+        promotionPercent <= 0 ||
+        promotionPercent >= 100
+    ) {
+        return false;
+    }
+
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
+
+    const startDate = tomaV3ParsePromotionDate(
+        product.promotionStart
+    );
+
+    const endDate = tomaV3ParsePromotionDate(
+        product.promotionEnd
+    );
+
+    // Si une date existe mais ne peut pas être interprétée,
+    // ne pas afficher la promotion comme active.
+    if (product.promotionStart && !startDate) {
+        return false;
+    }
+
+    if (product.promotionEnd && !endDate) {
+        return false;
+    }
+
+    // La promotion n'a pas encore commencé
+    if (startDate && startDate > todayEnd) {
+        return false;
+    }
+
+    // La promotion est terminée
+    if (endDate && endDate < todayStart) {
+        return false;
+    }
+
+    return true;
+}
+
+
+// Récupérer les produits actuellement en promotion
+function tomaV3GetPromotionProducts() {
+    const products = TOMA_V3.products || [];
+
+    return products
+        .filter(product => tomaV3IsPromotionActive(product))
+        .sort((a, b) => {
+            return (
+                Number(b.promotionPercent || 0) -
+                Number(a.promotionPercent || 0)
+            );
+        });
+}
+
+
+// Afficher au maximum 4 promotions sur la page d'accueil
+function tomaV3RenderPromotionProducts() {
+    const container = tomaV3GetElement("promotionProducts");
+
+    if (!container) {
+        console.warn(
+            "TOMA V3 : conteneur promotionProducts introuvable."
+        );
+        return;
+    }
+
+    container.replaceChildren();
+
+    const promotions = tomaV3GetPromotionProducts()
+        .slice(0, TOMA_V3_HOME_PRODUCT_LIMIT);
+
+    if (promotions.length === 0) {
+        const message = document.createElement("p");
+
+        message.className = "v3EmptyMessage";
+        message.textContent =
+            "Nenhuma promoção disponível neste momento.";
+
+        container.appendChild(message);
+        return;
+    }
+
+    promotions.forEach(product => {
+        const card = tomaV3CreateFeaturedCard(
+            product,
+            "Promoção"
+        );
+
+        container.appendChild(card);
+    });
+}
 // ------------------------------------------------------
 // 5.9 — Démarrer le chargement
 // ------------------------------------------------------
