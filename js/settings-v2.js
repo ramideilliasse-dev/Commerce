@@ -3199,8 +3199,12 @@ function settingsV2ShowConfirmation(options = {}) {
     cancelButton.textContent = options.cancelText || "Cancelar";
 
     if (icon) {
-        icon.textContent = options.icon || "help";
+    const iconText = icon.querySelector(".material-symbols-rounded");
+
+    if (iconText) {
+        iconText.textContent = options.icon || "help";
     }
+}
 
     confirmButton.classList.toggle(
         "danger-button",
