@@ -1208,7 +1208,7 @@ const TOMA_V3_HOME_PRODUCT_LIMIT = 4;
 // 6.2 — Préparer les cartes produits
 // ------------------------------------------------------
 
-function tomaV3CreateFeaturedCard(product) {
+function tomaV3CreateFeaturedCard(product, badgeText = "Em destaque") {
 
     const card = document.createElement("article");
 
@@ -1239,8 +1239,7 @@ function tomaV3CreateFeaturedCard(product) {
     const badge = document.createElement("span");
 
     badge.className = "v3ProductBadge";
-    badge.textContent = "Em destaque";
-
+  badge.textContent = badgeText;
     imageWrapper.appendChild(badge);
 
     // Informations du produit
@@ -1525,7 +1524,7 @@ function tomaV3RenderNewProducts() {
     newProducts.forEach(product => {
 
         container.appendChild(
-            tomaV3CreateFeaturedCard(product)
+          tomaV3CreateFeaturedCard(product, "Novidade")
         );
 
     });
