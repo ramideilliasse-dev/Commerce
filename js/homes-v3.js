@@ -1428,8 +1428,7 @@ function tomaV3RenderFeaturedProducts() {
 }
 
 // ======================================================
-// TOMA V3 — BLOC 7
-// Affichage des nouveautés
+// TOMA V3 — AFFICHAGE DES SECTIONS PRODUITS
 // ======================================================
 
 function tomaV3RenderAllProductSections() {
@@ -1439,6 +1438,9 @@ function tomaV3RenderAllProductSections() {
 
     // BLOC 7 : Nouveautés
     tomaV3RenderNewProducts();
+
+    // BLOC 8 : Promotions actives
+    tomaV3RenderPromotionProducts();
 
 }
 
