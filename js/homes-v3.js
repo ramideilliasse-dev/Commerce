@@ -754,3 +754,180 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 });
+// ======================================================
+// TOMA V3 — BLOC 4
+// Catégories de produits
+// ======================================================
+
+// ------------------------------------------------------
+// 4.1 — Catégories disponibles
+// ------------------------------------------------------
+
+const TOMA_V3_CATEGORIES = [
+    {
+        name: "Alimentação",
+        image: "./images/alimentacao.jpeg",
+        icon: "restaurant"
+    },
+    {
+        name: "Eletrónica",
+        image: "./images/eletronica.jpeg",
+        icon: "devices"
+    },
+    {
+        name: "Moda",
+        image: "./images/moda.jpeg",
+        icon: "checkroom"
+    },
+    {
+        name: "Beleza",
+        image: "./images/beleza.jpeg",
+        icon: "face"
+    },
+    {
+        name: "Casa",
+        image: "./images/casa.jpeg",
+        icon: "chair"
+    },
+    {
+        name: "Auto",
+        image: "./images/auto.jpeg",
+        icon: "directions_car"
+    }
+];
+
+// ------------------------------------------------------
+// 4.2 — Ouvrir une catégorie
+// ------------------------------------------------------
+
+function tomaV3OpenCategory(categoryName) {
+
+    const url =
+        "./products.html?cat=" +
+        encodeURIComponent(categoryName);
+
+    window.location.href = url;
+}
+
+// ------------------------------------------------------
+// 4.3 — Créer une carte catégorie
+// ------------------------------------------------------
+
+function tomaV3CreateCategoryCard(category) {
+
+    const card = document.createElement("button");
+
+    card.type = "button";
+    card.className = "v3CategoryCard";
+
+    card.setAttribute(
+        "aria-label",
+        "Ver categoria " + category.name
+    );
+
+    const imageWrapper = document.createElement("span");
+
+    imageWrapper.className = "v3CategoryImageWrapper";
+
+    const image = document.createElement("img");
+
+    image.className = "v3CategoryImage";
+    image.src = category.image;
+    image.alt = "";
+    image.loading = "lazy";
+
+    image.onerror = () => {
+
+        image.remove();
+
+        const icon = document.createElement("span");
+
+        icon.className =
+            "material-symbols-rounded v3CategoryFallbackIcon";
+
+        icon.textContent = category.icon;
+
+        imageWrapper.appendChild(icon);
+
+    };
+
+    const label = document.createElement("span");
+
+    label.className = "v3CategoryName";
+    label.textContent = category.name;
+
+    imageWrapper.appendChild(image);
+
+    card.append(imageWrapper, label);
+
+    card.addEventListener("click", () => {
+
+        tomaV3OpenCategory(category.name);
+
+    });
+
+    return card;
+}
+
+// ------------------------------------------------------
+// 4.4 — Afficher les catégories
+// ------------------------------------------------------
+
+function tomaV3RenderCategories() {
+
+    const container =
+        tomaV3GetElement("homeCategories");
+
+    if (!container) {
+
+        console.warn(
+            "[TOMA V3] Elemento homeCategories não encontrado."
+        );
+
+        return;
+
+    }
+
+    container.replaceChildren();
+
+    TOMA_V3_CATEGORIES.forEach(category => {
+
+        container.appendChild(
+            tomaV3CreateCategoryCard(category)
+        );
+
+    });
+
+    TOMA_V3.categories = TOMA_V3_CATEGORIES;
+
+    console.info(
+        "[TOMA V3] Categorias apresentadas:",
+        TOMA_V3.categories.length
+    );
+}
+
+// ------------------------------------------------------
+// 4.5 — Initialiser les catégories
+// ------------------------------------------------------
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    try {
+
+        tomaV3RenderCategories();
+
+    } catch (error) {
+
+        console.error(
+            "[TOMA V3 — BLOC 4] Erro:",
+            error
+        );
+
+        tomaV3Toast(
+            "Não foi possível apresentar as categorias.",
+            "error"
+        );
+
+    }
+
+});
