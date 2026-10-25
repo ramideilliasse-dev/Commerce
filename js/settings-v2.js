@@ -30,7 +30,7 @@ sendEmailVerification,
 sendPasswordResetEmail,
 signOut,
 deleteUser
-} from “https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js”;
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 const SETTINGS_V2_VERSION = "2.0.1";
 
 const SETTINGS_V2_DEFAULT_AVATAR =
@@ -3156,4 +3156,218 @@ function settingsV2InitializeSignOut() {
 
         await settingsV2SignOut();
     });
+}
+/* =========================================================
+   TOMA SETTINGS V2
+   BLOC 13.1 — PREPARAÇÃO DA ELIMINAÇÃO DA CONTA
+========================================================= */
+
+let settingsV2DeleteAccountConfirmed = false;
+let settingsV2DeleteAccountInProgress = false;
+
+/* Abrir a janela de confirmação */
+function settingsV2OpenDeleteAccountConfirmation() {
+    const modal = settingsV2Elements.confirmationModal;
+
+    if (!modal) {
+        settingsV2ShowToast(
+            "A janela de confirmação não foi encontrada.",
+            "error"
+        );
+        return;
+    }
+
+    settingsV2DeleteAccountConfirmed = false;
+
+    if (settingsV2Elements.confirmationTitle) {
+        settingsV2Elements.confirmationTitle.textContent =
+            "Eliminar a conta?";
+    }
+
+    if (settingsV2Elements.confirmationMessage) {
+        settingsV2Elements.confirmationMessage.textContent =
+            "Esta ação é permanente. Antes de continuar, confirme que pretende eliminar a sua conta Toma. Os dados comerciais e as encomendas podem exigir um tratamento separado.";
+    }
+
+    if (settingsV2Elements.confirmationIcon) {
+        settingsV2Elements.confirmationIcon.innerHTML =
+            '<span class="material-symbols-rounded">warning</span>';
+    }
+
+    if (settingsV2Elements.cancelConfirmationButton) {
+        settingsV2Elements.cancelConfirmationButton.textContent =
+            "Cancelar";
+    }
+
+    if (settingsV2Elements.confirmActionButton) {
+        settingsV2Elements.confirmActionButton.textContent =
+            "Continuar";
+    }
+
+    modal.hidden = false;
+    modal.setAttribute("aria-hidden", "false");
+}
+
+/* Fechar a janela de confirmação */
+function settingsV2CloseDeleteAccountConfirmation() {
+    const modal = settingsV2Elements.confirmationModal;
+
+    if (modal) {
+        modal.hidden = true;
+        modal.setAttribute("aria-hidden", "true");
+    }
+
+    settingsV2DeleteAccountConfirmed = false;
+}
+
+/* Botão "Eliminar conta" */
+if (settingsV2Elements.deleteAccountButton) {
+    settingsV2Elements.deleteAccountButton.addEventListener(
+        "click",
+        function () {
+            settingsV2OpenDeleteAccountConfirmation();
+        }
+    );
+}
+
+/* Botão "Cancelar" */
+if (settingsV2Elements.cancelConfirmationButton) {
+    settingsV2Elements.cancelConfirmationButton.addEventListener(
+        "click",
+        function () {
+            settingsV2CloseDeleteAccountConfirmation();
+        }
+    );
+}
+
+/* Fechar ao clicar no fundo da janela */
+if (settingsV2Elements.confirmationModal) {
+    settingsV2Elements.confirmationModal.addEventListener(
+        "click",
+        function (event) {
+            if (event.target === settingsV2Elements.confirmationModal) {
+                settingsV2CloseDeleteAccountConfirmation();
+            }
+        }
+    );
+}
+/* =========================================================
+   TOMA SETTINGS V2
+   BLOC 13.2 — ELIMINAÇÃO EFETIVA DA CONTA
+========================================================= */
+
+let settingsV2DeleteAccountInProgress = false;
+
+/* Executar a eliminação da conta */
+async function settingsV2DeleteAccount() {
+    if (settingsV2DeleteAccountInProgress) {
+        return;
+    }
+
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+        settingsV2ShowToast(
+            "Inicie sessão para eliminar a sua conta.",
+            "error"
+        );
+        return;
+    }
+
+    try {
+        /* Pedir confirmação explícita */
+        const confirmed = await settingsV2ShowConfirmation({
+            title: "Eliminar a sua conta?",
+            message:
+                "Esta ação é permanente. A sua conta Toma será eliminada. Os produtos, as encomendas e outros dados comerciais podem exigir um tratamento separado.",
+            confirmText: "Eliminar definitivamente",
+            cancelText: "Cancelar",
+            icon: "warning",
+            danger: true
+        });
+
+        if (!confirmed) {
+            return;
+        }
+
+        settingsV2DeleteAccountInProgress = true;
+
+        /* Consultar o perfil do utilizador */
+        const userRef = doc(db, "users", currentUser.uid);
+        const userSnapshot = await getDoc(userRef);
+
+        if (userSnapshot.exists()) {
+            const userData = userSnapshot.data();
+            const userRole = String(userData.role || "")
+                .trim()
+                .toLowerCase();
+
+            /* Impedir a eliminação de contas administrativas */
+            if (
+                userRole === "admin" ||
+                userRole === "superadmin"
+            ) {
+                settingsV2ShowToast(
+                    "Por segurança, as contas administrativas não podem ser eliminadas nesta página.",
+                    "error"
+                );
+                return;
+            }
+        }
+
+        /*
+         * Eliminar a conta Firebase Authentication.
+         * O Firebase pode exigir uma autenticação recente.
+         */
+        await deleteUser(currentUser);
+
+        /* Limpar preferências locais */
+        localStorage.removeItem("toma_dark_mode");
+
+        settingsV2ShowToast(
+            "A sua conta foi eliminada com sucesso.",
+            "success"
+        );
+
+        /* Redirecionar após a eliminação */
+        window.setTimeout(function () {
+            window.location.replace("../../index.html");
+        }, 1200);
+
+    } catch (error) {
+        console.error(
+            "TOMA — Erro ao eliminar a conta:",
+            error
+        );
+
+        if (error.code === "auth/requires-recent-login") {
+            settingsV2ShowToast(
+                "Por segurança, inicie sessão novamente antes de eliminar a conta.",
+                "warning"
+            );
+        } else if (error.code === "auth/network-request-failed") {
+            settingsV2ShowToast(
+                "Falha de ligação. Verifique a internet e tente novamente.",
+                "error"
+            );
+        } else {
+            settingsV2ShowToast(
+                "Não foi possível eliminar a conta. Tente novamente.",
+                "error"
+            );
+        }
+
+    } finally {
+        settingsV2DeleteAccountInProgress = false;
+    }
+}
+
+/* Ligar o botão de eliminação à função */
+if (settingsV2Elements.deleteAccountButton) {
+    settingsV2Elements.deleteAccountButton.addEventListener(
+        "click",
+        function () {
+            settingsV2DeleteAccount();
+        }
+    );
 }
