@@ -25,7 +25,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import {
     onAuthStateChanged,
-    updateProfile
+    updateProfile,
+    sendEmailVerification,
+    sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 const SETTINGS_V2_VERSION = "2.0.1";
 
@@ -732,6 +734,7 @@ settingsV2InitializeAuthentication();
 settingsV2InitializeMerchantSettings();
 settingsV2InitializeNotifications();
 settingsV2InitializeDarkMode();
+settingsV2InitializeEmailVerification();
 /* =========================================================
    TOMA SETTINGS V2 — BLOCO 6
    EDIÇÃO DO PERFIL DO UTILIZADOR
@@ -2890,3 +2893,86 @@ function settingsV2InitializeDarkMode() {
 /* =========================================================
    FIM DO BLOCO 11.1
    ========================================================= */
+/* =========================================================
+   TOMA SETTINGS V2
+   BLOC 10.1 — VÉRIFICATION DE L'ADRESSE E-MAIL
+========================================================= */
+
+async function settingsV2VerifyEmail() {
+    try {
+        const user = settingsV2CurrentUser;
+
+        if (!user) {
+            alert(
+                "TOMA SETTINGS V2\n\n" +
+                "Inicie sessão para verificar o seu e-mail."
+            );
+            return;
+        }
+
+        if (user.emailVerified) {
+            settingsV2ShowToast(
+                "O seu endereço de e-mail já está verificado.",
+                "success"
+            );
+
+            return;
+        }
+
+        const button = settingsV2Elements.verifyEmailButton;
+
+        if (button) {
+            button.disabled = true;
+        }
+
+        await sendEmailVerification(user);
+
+        settingsV2ShowToast(
+            "E-mail de verificação enviado! Verifique a sua caixa de entrada.",
+            "success"
+        );
+
+    } catch (error) {
+        console.error(
+            "[TOMA SETTINGS V2] Erro ao verificar e-mail:",
+            error
+        );
+
+        alert(
+            "TOMA SETTINGS V2\n\n" +
+            "Não foi possível enviar o e-mail de verificação.\n\n" +
+            (error.message || String(error))
+        );
+
+    } finally {
+        if (settingsV2Elements.verifyEmailButton) {
+            settingsV2Elements.verifyEmailButton.disabled = false;
+        }
+    }
+}
+
+
+/* =========================================================
+   BLOC 10.1 — INITIALISATION
+========================================================= */
+
+function settingsV2InitializeEmailVerification() {
+    const button = settingsV2Elements.verifyEmailButton;
+
+    if (!button) {
+        console.error(
+            "[TOMA SETTINGS V2] Botão verifyEmailButton não encontrado."
+        );
+        return;
+    }
+
+    if (button.dataset.emailVerificationInitialized === "true") {
+        return;
+    }
+
+    button.dataset.emailVerificationInitialized = "true";
+
+    button.addEventListener("click", async function () {
+        await settingsV2VerifyEmail();
+    });
+}
