@@ -735,6 +735,7 @@ settingsV2InitializeMerchantSettings();
 settingsV2InitializeNotifications();
 settingsV2InitializeDarkMode();
 settingsV2InitializeEmailVerification();
+settingsV2InitializePasswordReset();
 /* =========================================================
    TOMA SETTINGS V2 — BLOCO 6
    EDIÇÃO DO PERFIL DO UTILIZADOR
@@ -2974,5 +2975,89 @@ function settingsV2InitializeEmailVerification() {
 
     button.addEventListener("click", async function () {
         await settingsV2VerifyEmail();
+    });
+}
+/* =========================================================
+   TOMA SETTINGS V2
+   BLOC 10.2 — RÉINITIALISATION DU MOT DE PASSE
+========================================================= */
+
+async function settingsV2ResetPassword() {
+    const user = settingsV2CurrentUser;
+    const button = settingsV2Elements.resetPasswordButton;
+
+    if (!user || !user.email) {
+        settingsV2ShowToast(
+            "Não foi possível identificar o e-mail da sua conta.",
+            "error"
+        );
+        return;
+    }
+
+    if (button) {
+        button.disabled = true;
+    }
+
+    try {
+        await sendPasswordResetEmail(auth, user.email);
+
+        settingsV2ShowToast(
+            "Enviámos um link para redefinir a sua palavra-passe. Verifique a sua caixa de entrada e a pasta de spam.",
+            "success"
+        );
+
+    } catch (error) {
+        console.error(
+            "[TOMA SETTINGS V2] Erro ao redefinir a palavra-passe:",
+            error
+        );
+
+        let message =
+            "Não foi possível enviar o link de redefinição da palavra-passe.";
+
+        if (error.code === "auth/too-many-requests") {
+            message =
+                "Demasiadas tentativas. Aguarde um pouco antes de tentar novamente.";
+        } else if (error.code === "auth/user-not-found") {
+            message =
+                "Não foi possível encontrar uma conta associada a este e-mail.";
+        } else if (error.code === "auth/invalid-email") {
+            message =
+                "O endereço de e-mail da sua conta é inválido.";
+        }
+
+        settingsV2ShowToast(message, "error");
+
+    } finally {
+        if (button) {
+            button.disabled = false;
+        }
+    }
+}
+
+
+/* =========================================================
+   BLOC 10.2 — INITIALISATION
+========================================================= */
+
+function settingsV2InitializePasswordReset() {
+    const button = settingsV2Elements.resetPasswordButton;
+
+    if (!button) {
+        console.error(
+            "[TOMA SETTINGS V2] Botão resetPasswordButton não encontrado."
+        );
+        return;
+    }
+
+    if (button.dataset.passwordResetInitialized === "true") {
+        return;
+    }
+
+    button.dataset.passwordResetInitialized = "true";
+
+    button.addEventListener("click", async function (event) {
+        event.preventDefault();
+        await settingsV2ResetPassword();
     });
 }
