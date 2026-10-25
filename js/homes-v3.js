@@ -407,3 +407,350 @@ try {
     );
 
 }
+// ======================================================
+// TOMA V3 — BLOC 3
+// Carrousel de bannières promotionnelles
+// ======================================================
+
+// ------------------------------------------------------
+// 3.1 — Configuration
+// ------------------------------------------------------
+
+let tomaV3BannerIndex = 0;
+let tomaV3BannerTimer = null;
+let tomaV3BannerEventsInitialized = false;
+
+// Images de secours.
+// Elles seront remplacées par les bannières Firestore
+// lorsque nous connaîtrons la structure de tes données.
+
+const TOMA_V3_DEFAULT_BANNERS = [
+    {
+        title: "Descubra o mundo Toma",
+        subtitle: "Produtos e lojas num só lugar",
+        image: "./images/banner1.jpg",
+        link: "./products-v2.html"
+    },
+    {
+        title: "Grandes oportunidades",
+        subtitle: "Encontre produtos para si",
+        image: "./images/banner2.jpg",
+        link: "./products-v2.html?type=promotions"
+    },
+    {
+        title: "Conheça as nossas lojas",
+        subtitle: "Descubra marcas e comerciantes",
+        image: "./images/banner3.jpg",
+        link: "./official-stores.html"
+    }
+];
+
+// ------------------------------------------------------
+// 3.2 — Créer une bannière sans injecter de HTML externe
+// ------------------------------------------------------
+
+function tomaV3CreateBanner(banner, index) {
+
+    const slide = document.createElement("article");
+
+    slide.className = "heroSlide";
+
+    slide.hidden = index !== tomaV3BannerIndex;
+
+    const image = document.createElement("img");
+
+    image.className = "heroImage";
+    image.src = banner.image;
+    image.alt = banner.title || "Promoção Toma";
+    image.loading = index === 0 ? "eager" : "lazy";
+
+    image.onerror = () => {
+
+        image.onerror = null;
+
+        slide.classList.add("heroImageUnavailable");
+
+        image.removeAttribute("src");
+
+    };
+
+    const overlay = document.createElement("div");
+
+    overlay.className = "heroOverlay";
+
+    const content = document.createElement("div");
+
+    content.className = "heroContent";
+
+    const title = document.createElement("h2");
+
+    title.className = "heroTitle";
+    title.textContent =
+        banner.title || "Descubra a Toma";
+
+    const subtitle = document.createElement("p");
+
+    subtitle.className = "heroSubtitle";
+    subtitle.textContent =
+        banner.subtitle || "Mais perto de si";
+
+    const link = document.createElement("a");
+
+    link.className = "heroLink";
+    link.href = banner.link || "./products-v2.html";
+    link.textContent = "Descobrir";
+
+    content.append(title, subtitle, link);
+
+    overlay.appendChild(content);
+
+    slide.append(image, overlay);
+
+    return slide;
+}
+
+// ------------------------------------------------------
+// 3.3 — Atualiser les indicateurs
+// ------------------------------------------------------
+
+function tomaV3UpdateBannerDots() {
+
+    const dotsContainer =
+        tomaV3GetElement("heroDots");
+
+    if (!dotsContainer) return;
+
+    const dots = dotsContainer.querySelectorAll("button");
+
+    dots.forEach((dot, index) => {
+
+        const active = index === tomaV3BannerIndex;
+
+        dot.classList.toggle("active", active);
+
+        dot.setAttribute(
+            "aria-current",
+            active ? "true" : "false"
+        );
+
+    });
+}
+
+// ------------------------------------------------------
+// 3.4 — Afficher une bannière précise
+// ------------------------------------------------------
+
+function tomaV3ShowBanner(index) {
+
+    const slider = tomaV3GetElement("heroSlider");
+
+    if (!slider) return;
+
+    const slides = slider.querySelectorAll(".heroSlide");
+
+    if (!slides.length) return;
+
+    tomaV3BannerIndex =
+        (index + slides.length) % slides.length;
+
+    slides.forEach((slide, slideIndex) => {
+
+        slide.hidden = slideIndex !== tomaV3BannerIndex;
+
+    });
+
+    tomaV3UpdateBannerDots();
+}
+
+// ------------------------------------------------------
+// 3.5 — Créer les boutons de navigation
+// ------------------------------------------------------
+
+function tomaV3CreateBannerDots(banners) {
+
+    const dotsContainer =
+        tomaV3GetElement("heroDots");
+
+    if (!dotsContainer) return;
+
+    dotsContainer.replaceChildren();
+
+    banners.forEach((banner, index) => {
+
+        const button = document.createElement("button");
+
+        button.type = "button";
+        button.className = "heroDot";
+
+        button.setAttribute(
+            "aria-label",
+            `Mostrar banner ${index + 1}`
+        );
+
+        button.addEventListener("click", () => {
+
+            tomaV3ShowBanner(index);
+
+            tomaV3StartBannerTimer();
+
+        });
+
+        dotsContainer.appendChild(button);
+
+    });
+
+    tomaV3UpdateBannerDots();
+}
+
+// ------------------------------------------------------
+// 3.6 — Défilement automatique
+// ------------------------------------------------------
+
+function tomaV3StartBannerTimer() {
+
+    if (tomaV3BannerTimer) {
+
+        clearInterval(tomaV3BannerTimer);
+
+    }
+
+    const slider = tomaV3GetElement("heroSlider");
+
+    if (!slider) return;
+
+    const slides = slider.querySelectorAll(".heroSlide");
+
+    if (slides.length < 2) return;
+
+    tomaV3BannerTimer = setInterval(() => {
+
+        if (document.hidden) return;
+
+        tomaV3ShowBanner(tomaV3BannerIndex + 1);
+
+    }, 5000);
+}
+
+// ------------------------------------------------------
+// 3.7 — Connecter les boutons précédent et suivant
+// ------------------------------------------------------
+
+function tomaV3InitializeBannerEvents() {
+
+    if (tomaV3BannerEventsInitialized) return;
+
+    tomaV3BannerEventsInitialized = true;
+
+    const previousButton =
+        tomaV3GetElement("heroPreviousBtn");
+
+    const nextButton =
+        tomaV3GetElement("heroNextBtn");
+
+    if (previousButton) {
+
+        previousButton.addEventListener("click", () => {
+
+            tomaV3ShowBanner(tomaV3BannerIndex - 1);
+
+            tomaV3StartBannerTimer();
+
+        });
+
+    }
+
+    if (nextButton) {
+
+        nextButton.addEventListener("click", () => {
+
+            tomaV3ShowBanner(tomaV3BannerIndex + 1);
+
+            tomaV3StartBannerTimer();
+
+        });
+
+    }
+}
+
+// ------------------------------------------------------
+// 3.8 — Charger les bannières
+// ------------------------------------------------------
+
+function tomaV3LoadBanners(banners = TOMA_V3_DEFAULT_BANNERS) {
+
+    const slider = tomaV3GetElement("heroSlider");
+
+    if (!slider) {
+
+        console.warn(
+            "[TOMA V3] Élément heroSlider introuvable."
+        );
+
+        return;
+
+    }
+
+    const validBanners = Array.isArray(banners)
+        ? banners.filter(banner => banner && banner.image)
+        : [];
+
+    const bannersToDisplay = validBanners.length
+        ? validBanners
+        : TOMA_V3_DEFAULT_BANNERS;
+
+    slider.replaceChildren();
+
+    bannersToDisplay.forEach((banner, index) => {
+
+        slider.appendChild(
+            tomaV3CreateBanner(banner, index)
+        );
+
+    });
+
+    const loading = tomaV3GetElement("heroLoading");
+
+    if (loading) loading.hidden = true;
+
+    tomaV3BannerIndex = 0;
+
+    tomaV3CreateBannerDots(bannersToDisplay);
+
+    tomaV3InitializeBannerEvents();
+
+    tomaV3ShowBanner(0);
+
+    tomaV3StartBannerTimer();
+
+    TOMA_V3.banners = bannersToDisplay;
+
+    console.info(
+        `[TOMA V3] ${bannersToDisplay.length} bannières affichées.`
+    );
+}
+
+// ------------------------------------------------------
+// 3.9 — Lancer le carrousel
+// ------------------------------------------------------
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    try {
+
+        tomaV3LoadBanners();
+
+    } catch (error) {
+
+        console.error(
+            "[TOMA V3 — BLOC 3] Erreur :",
+            error
+        );
+
+        tomaV3Toast(
+            "Não foi possível carregar os banners.",
+            "error"
+        );
+
+    }
+
+});
