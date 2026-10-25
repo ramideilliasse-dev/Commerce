@@ -1,0 +1,2629 @@
+ /* =========================================================
+   TOMA V3 — DESIGN PREMIUM
+   Identité : bleu profond + orange
+   Responsive : mobile, tablette et ordinateur
+   Mode sombre : compatible avec .dark-mode
+========================================================= */
+
+/* =========================================================
+   01. VARIABLES DE DESIGN
+========================================================= */
+
+:root {
+    --toma-blue: #0755D9;
+    --toma-blue-dark: #07388D;
+    --toma-blue-deep: #061A3A;
+    --toma-blue-light: #EAF2FF;
+
+    --toma-orange: #FF7900;
+    --toma-orange-dark: #E96500;
+    --toma-orange-light: #FFF0E3;
+
+    --toma-green: #16834A;
+    --toma-green-light: #E6F7EC;
+
+    --toma-red: #E53935;
+    --toma-yellow: #F5A623;
+
+    --page-bg: #F5F7FB;
+    --surface: #FFFFFF;
+    --surface-soft: #F8FAFE;
+    --surface-hover: #EEF3FA;
+
+    --text-main: #14213D;
+    --text-secondary: #64748B;
+    --text-muted: #94A3B8;
+
+    --border: #E7ECF3;
+    --border-strong: #D8E0EC;
+
+    --shadow-small:
+        0 3px 12px rgba(20, 33, 61, 0.045);
+
+    --shadow-medium:
+        0 10px 30px rgba(20, 33, 61, 0.075);
+
+    --shadow-large:
+        0 20px 55px rgba(20, 33, 61, 0.12);
+
+    --radius-small: 12px;
+    --radius-medium: 18px;
+    --radius-large: 24px;
+    --radius-xl: 30px;
+
+    --page-width: 1440px;
+    --header-height: 78px;
+
+    --transition-fast: 0.18s ease;
+    --transition-normal: 0.28s ease;
+}
+
+/* =========================================================
+   02. RESET ET BASE
+========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 100px;
+    -webkit-text-size-adjust: 100%;
+}
+
+body.toma-home-v3 {
+    min-height: 100vh;
+    overflow-x: hidden;
+
+    background:
+        radial-gradient(
+            ellipse at 50% 0%,
+            rgba(7, 85, 217, 0.035),
+            transparent 38%
+        ),
+        var(--page-bg);
+
+    color: var(--text-main);
+
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+    font-size: 15px;
+    line-height: 1.5;
+
+    padding-bottom:
+        calc(112px + env(safe-area-inset-bottom));
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    transition:
+        background-color var(--transition-normal),
+        color var(--transition-normal);
+}
+
+body.toma-home-v3 button,
+body.toma-home-v3 input,
+body.toma-home-v3 textarea,
+body.toma-home-v3 select {
+    font: inherit;
+}
+
+body.toma-home-v3 button,
+body.toma-home-v3 a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+body.toma-home-v3 button {
+    color: inherit;
+}
+
+body.toma-home-v3 a {
+    color: inherit;
+    text-decoration: none;
+}
+
+body.toma-home-v3 button:focus-visible,
+body.toma-home-v3 a:focus-visible {
+    outline: 3px solid rgba(7, 85, 217, 0.45);
+    outline-offset: 4px;
+}
+
+body.toma-home-v3 img {
+    max-width: 100%;
+}
+
+body.toma-home-v3 [hidden] {
+    display: none !important;
+}
+
+.material-symbols-rounded {
+    font-family: "Material Symbols Rounded";
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    direction: ltr;
+    font-feature-settings: "liga";
+    -webkit-font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+    font-variation-settings:
+        "FILL" 0,
+        "wght" 450,
+        "GRAD" 0,
+        "opsz" 24;
+}
+
+/* =========================================================
+   03. HEADER — IDENTIDADE TOMA
+========================================================= */
+
+.tomaHeader {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    width: 100%;
+    min-height: var(--header-height);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 14px;
+
+    padding:
+        max(10px, env(safe-area-inset-top))
+        max(16px, calc((100vw - var(--page-width)) / 2))
+        10px;
+
+    background:
+        linear-gradient(
+            115deg,
+            #07388D 0%,
+            #0755D9 55%,
+            #0875F5 100%
+        );
+
+    color: #FFFFFF;
+
+    box-shadow:
+        0 5px 24px rgba(7, 56, 141, 0.19);
+
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.14);
+}
+
+.tomaBrand {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+
+    min-width: 0;
+    flex-shrink: 0;
+}
+
+.tomaBrandIcon {
+    width: 45px;
+    height: 45px;
+
+    color: var(--toma-orange);
+    font-size: 39px;
+
+    filter:
+        drop-shadow(0 3px 8px rgba(255, 121, 0, 0.25));
+}
+
+.tomaBrandText {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.08;
+}
+
+.tomaBrandText strong {
+    font-size: 27px;
+    font-weight: 850;
+    letter-spacing: -1.2px;
+    color: #FFFFFF;
+}
+
+.tomaBrandText small {
+    margin-top: 4px;
+    color: rgba(255, 255, 255, 0.86);
+    font-size: 10px;
+    font-weight: 550;
+    letter-spacing: 0.1px;
+}
+
+.headerActions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 7px;
+}
+
+.iconButton,
+.profileButton {
+    position: relative;
+
+    width: 43px;
+    height: 43px;
+    flex-shrink: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(255, 255, 255, 0.17);
+    border-radius: 15px;
+
+    background: rgba(255, 255, 255, 0.105);
+    color: #FFFFFF;
+
+    cursor: pointer;
+
+    transition:
+        background var(--transition-fast),
+        transform var(--transition-fast);
+}
+
+.iconButton .material-symbols-rounded {
+    font-size: 24px;
+    color: #FFFFFF;
+}
+
+.iconButton:active,
+.profileButton:active {
+    transform: scale(0.94);
+}
+
+@media (hover: hover) {
+    .iconButton:hover,
+    .profileButton:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+}
+
+.profileButton {
+    overflow: hidden;
+    border-radius: 50%;
+    background: #FFFFFF;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+.profileButton img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+}
+
+.notificationBadge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+
+    min-width: 19px;
+    height: 19px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 5px;
+
+    border: 2px solid var(--toma-blue);
+    border-radius: 50px;
+
+    background: var(--toma-orange);
+    color: #FFFFFF;
+
+    font-size: 10px;
+    font-weight: 850;
+    line-height: 1;
+}
+
+/* =========================================================
+   04. CONTEÚDO PRINCIPAL
+========================================================= */
+
+.tomaMain {
+    width: 100%;
+    max-width: var(--page-width);
+
+    margin: 0 auto;
+
+    padding:
+        0 18px 30px;
+}
+
+/* =========================================================
+   05. PESQUISA
+========================================================= */
+
+.searchSection {
+    position: relative;
+    z-index: 10;
+
+    margin: 19px 0 17px;
+}
+
+.searchBar {
+    width: 100%;
+    min-height: 54px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 0 16px;
+
+    border: 1px solid var(--border);
+    border-radius: 19px;
+
+    background: var(--surface);
+    color: var(--text-secondary);
+
+    box-shadow:
+        0 5px 18px rgba(20, 33, 61, 0.045);
+
+    cursor: pointer;
+    text-align: left;
+
+    transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast);
+}
+
+.searchBar:active {
+    transform: scale(0.995);
+}
+
+.searchBar:hover {
+    border-color: rgba(7, 85, 217, 0.35);
+
+    box-shadow:
+        0 8px 24px rgba(7, 85, 217, 0.08);
+}
+
+.searchIcon {
+    flex-shrink: 0;
+    font-size: 25px;
+    color: var(--toma-blue);
+}
+
+.searchPlaceholder {
+    flex: 1;
+    min-width: 0;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.searchFilterIcon {
+    width: 36px;
+    height: 36px;
+
+    flex-shrink: 0;
+
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--toma-blue-light);
+    color: var(--toma-blue);
+    font-size: 22px;
+}
+
+/* =========================================================
+   06. ACESSOS RÁPIDOS
+========================================================= */
+
+.roleShortcuts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+
+    margin: 0 0 21px;
+}
+
+.roleShortcut {
+    position: relative;
+    min-width: 0;
+    min-height: 76px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 13px;
+
+    border-radius: 20px;
+    color: #FFFFFF;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 8px 20px rgba(7, 56, 141, 0.14);
+
+    transition:
+        transform var(--transition-normal),
+        box-shadow var(--transition-normal);
+}
+
+.merchantShortcut {
+    background:
+        linear-gradient(125deg, #0755D9, #087CF4);
+}
+
+.adminShortcut {
+    background:
+        linear-gradient(125deg, #FF7900, #F05A00);
+    box-shadow:
+        0 8px 20px rgba(255, 121, 0, 0.17);
+}
+
+.roleShortcut::after {
+    content: "";
+    position: absolute;
+
+    width: 105px;
+    height: 105px;
+
+    top: -53px;
+    right: -32px;
+
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.09);
+    pointer-events: none;
+}
+
+.roleShortcut:active {
+    transform: scale(0.98);
+}
+
+.roleShortcutIcon {
+    position: relative;
+    z-index: 1;
+
+    width: 40px;
+    height: 40px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 13px;
+
+    background: rgba(255, 255, 255, 0.17);
+    color: #FFFFFF;
+
+    font-size: 26px;
+}
+
+.roleShortcutText {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    min-width: 0;
+    flex: 1;
+}
+
+.roleShortcutText strong {
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.2;
+    color: #FFFFFF;
+}
+
+.roleShortcutText small {
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: rgba(255, 255, 255, 0.88);
+}
+
+.roleArrow {
+    position: relative;
+    z-index: 1;
+
+    flex-shrink: 0;
+
+    font-size: 22px;
+    color: #FFFFFF;
+}
+
+/* =========================================================
+   07. BANNIÈRE PRINCIPAL
+========================================================= */
+
+.heroSection {
+    margin-bottom: 22px;
+}
+
+.heroSlider {
+    position: relative;
+    isolation: isolate;
+
+    width: 100%;
+    min-height: 250px;
+    aspect-ratio: 1.72 / 1;
+
+    overflow: hidden;
+
+    border-radius: 25px;
+
+    background:
+        linear-gradient(
+            130deg,
+            #061A3A,
+            #0755D9 55%,
+            #4A1FA8
+        );
+
+    box-shadow:
+        0 14px 34px rgba(7, 56, 141, 0.17);
+}
+
+.heroSlide {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+
+    padding: 25px;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition:
+        opacity 0.55s ease,
+        visibility 0.55s ease;
+}
+
+.heroSlide.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    z-index: 1;
+}
+
+.heroSlideImage {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center;
+}
+
+.heroSlide::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(3, 20, 55, 0.96) 0%,
+            rgba(5, 36, 94, 0.87) 42%,
+            rgba(5, 36, 94, 0.30) 100%
+        );
+}
+
+.heroContent {
+    position: relative;
+    z-index: 2;
+
+    width: 64%;
+    max-width: 520px;
+
+    color: #FFFFFF;
+}
+
+.heroEyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    margin-bottom: 12px;
+    padding: 6px 10px;
+
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 999px;
+
+    background: var(--toma-orange);
+    color: #FFFFFF;
+
+    font-size: 10px;
+    font-weight: 850;
+    letter-spacing: 0.45px;
+    text-transform: uppercase;
+}
+
+.heroContent h2 {
+    max-width: 420px;
+
+    margin-bottom: 9px;
+
+    color: #FFFFFF;
+
+    font-size: clamp(23px, 3.2vw, 39px);
+    font-weight: 900;
+    line-height: 1.12;
+    letter-spacing: -0.8px;
+}
+
+.heroContent p {
+    max-width: 370px;
+
+    margin-bottom: 18px;
+
+    color: rgba(255, 255, 255, 0.9);
+
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.heroAction {
+    min-height: 43px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    padding: 0 17px;
+
+    border: none;
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #FF8B17,
+            #FF6500
+        );
+
+    color: #FFFFFF;
+
+    font-size: 12px;
+    font-weight: 850;
+
+    box-shadow:
+        0 8px 20px rgba(255, 101, 0, 0.30);
+
+    cursor: pointer;
+
+    transition:
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+
+.heroAction .material-symbols-rounded {
+    font-size: 18px;
+}
+
+.heroAction:active {
+    transform: scale(0.97);
+}
+
+.heroLoading {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    padding: 20px;
+
+    color: #FFFFFF;
+    text-align: center;
+}
+
+.heroLoading .material-symbols-rounded {
+    font-size: 38px;
+    color: #FF9A36;
+}
+
+.heroLoading p {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.heroControls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 13px;
+
+    margin-top: 12px;
+}
+
+.heroArrow {
+    width: 31px;
+    height: 31px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--border);
+    border-radius: 50%;
+
+    background: var(--surface);
+    color: var(--text-main);
+
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.heroArrow:hover {
+    background: var(--toma-blue-light);
+    color: var(--toma-blue);
+}
+
+.heroDots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
+
+.heroDot {
+    width: 7px;
+    height: 7px;
+
+    border: none;
+    border-radius: 999px;
+
+    background: #CBD5E1;
+
+    cursor: pointer;
+
+    transition:
+        width var(--transition-normal),
+        background var(--transition-normal);
+}
+
+.heroDot.active {
+    width: 23px;
+    background: var(--toma-orange);
+}
+
+/* =========================================================
+   08. ELEMENTOS DE CONFIANÇA
+========================================================= */
+
+.trustSection {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+
+    margin-bottom: 31px;
+    padding: 13px 10px;
+
+    border: 1px solid var(--border);
+    border-radius: 21px;
+
+    background:
+        linear-gradient(
+            115deg,
+            var(--surface),
+            var(--surface-soft)
+        );
+
+    box-shadow: var(--shadow-small);
+}
+
+.trustItem {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.trustIcon {
+    width: 38px;
+    height: 38px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 13px;
+
+    font-size: 22px;
+}
+
+.marketplaceTrust {
+    background: #E7F0FF;
+    color: #0755D9;
+}
+
+.productsTrust {
+    background: #E8F0FF;
+    color: #1763D6;
+}
+
+.securityTrust {
+    background: #E3F7EB;
+    color: #16834A;
+}
+
+.trustText {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.trustText strong {
+    font-size: 11px;
+    font-weight: 850;
+    line-height: 1.25;
+    color: var(--text-main);
+}
+
+.trustText small {
+    font-size: 9px;
+    line-height: 1.35;
+    color: var(--text-secondary);
+}
+
+/* =========================================================
+   09. SECTIONS
+========================================================= */
+
+.homeSection {
+    min-width: 0;
+    margin-bottom: 33px;
+}
+
+.sectionHeading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin-bottom: 15px;
+}
+
+.sectionTitleGroup {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    min-width: 0;
+}
+
+.sectionTitleIcon {
+    width: 43px;
+    height: 43px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+
+    background: var(--toma-blue-light);
+    color: var(--toma-blue);
+
+    font-size: 25px;
+}
+
+.featuredTitleIcon {
+    background: #FFF0DF;
+    color: #F07900;
+}
+
+.newTitleIcon {
+    background: #F0E9FF;
+    color: #7651D5;
+}
+
+.offersTitleIcon {
+    background: #FFE9E7;
+    color: #DE3C37;
+}
+
+.popularTitleIcon {
+    background: #E7F0FF;
+    color: #0755D9;
+}
+
+.recommendedTitleIcon {
+    background: #E4F7EB;
+    color: #16834A;
+}
+
+.officialStoresTitleIcon {
+    background: #E7F0FF;
+    color: #0755D9;
+}
+
+.sectionTitleGroup > div {
+    min-width: 0;
+}
+
+.sectionTitleGroup h2 {
+    overflow-wrap: anywhere;
+
+    color: var(--text-main);
+
+    font-size: 18px;
+    font-weight: 850;
+    line-height: 1.25;
+    letter-spacing: -0.35px;
+}
+
+.sectionTitleGroup p {
+    margin-top: 4px;
+
+    color: var(--text-secondary);
+
+    font-size: 11px;
+    line-height: 1.35;
+}
+
+.seeAllLink {
+    flex-shrink: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+
+    padding: 8px 10px;
+
+    border: 1px solid rgba(7, 85, 217, 0.12);
+    border-radius: 12px;
+
+    background: var(--surface);
+    color: var(--toma-blue);
+
+    font-size: 11px;
+    font-weight: 800;
+
+    white-space: nowrap;
+
+    transition:
+        background var(--transition-fast),
+        transform var(--transition-fast);
+}
+
+.seeAllLink .material-symbols-rounded {
+    font-size: 17px;
+}
+
+.seeAllLink:hover {
+    background: var(--toma-blue-light);
+}
+
+.seeAllLink:active {
+    transform: scale(0.96);
+}
+
+/* =========================================================
+   10. CATEGORIAS
+========================================================= */
+
+.categoriesGrid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 11px;
+}
+
+.categoryCardV3 {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 10px 5px 12px;
+
+    border: 1px solid var(--border);
+    border-radius: 19px;
+
+    background: var(--surface);
+
+    box-shadow: var(--shadow-small);
+
+    cursor: pointer;
+
+    transition:
+        transform var(--transition-normal),
+        border-color var(--transition-normal),
+        box-shadow var(--transition-normal);
+}
+
+.categoryCardV3:active {
+    transform: scale(0.96);
+}
+
+.categoryVisual {
+    width: 100%;
+    max-width: 76px;
+    aspect-ratio: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    border-radius: 16px;
+
+    background: var(--category-bg, #EAF2FF);
+    color: var(--category-color, #0755D9);
+}
+
+.categoryVisual img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.categoryVisual .material-symbols-rounded {
+    font-size: 33px;
+}
+
+.categoryNameV3 {
+    width: 100%;
+
+    margin-top: 9px;
+
+    color: var(--text-main);
+
+    font-size: 11px;
+    font-weight: 750;
+    line-height: 1.35;
+
+    text-align: center;
+
+    overflow-wrap: anywhere;
+}
+
+@media (hover: hover) {
+    .categoryCardV3:hover {
+        transform: translateY(-4px);
+        border-color: rgba(7, 85, 217, 0.28);
+        box-shadow: var(--shadow-medium);
+    }
+}
+
+/* =========================================================
+   11. CARDS DE PRODUTOS
+========================================================= */
+
+.productsScroller {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 174px;
+
+    gap: 13px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    padding: 2px 2px 14px;
+
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: 2px;
+
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
+
+    scrollbar-width: none;
+}
+
+.productsScroller::-webkit-scrollbar {
+    display: none;
+}
+
+.productCardV3 {
+    position: relative;
+
+    min-width: 0;
+    overflow: hidden;
+
+    border: 1px solid var(--border);
+    border-radius: 20px;
+
+    background: var(--surface);
+
+    box-shadow: var(--shadow-small);
+
+    scroll-snap-align: start;
+
+    transition:
+        transform var(--transition-normal),
+        box-shadow var(--transition-normal);
+}
+
+.productCardV3:active {
+    transform: scale(0.985);
+}
+
+.productImageWrapperV3 {
+    position: relative;
+
+    aspect-ratio: 1 / 0.94;
+
+    overflow: hidden;
+
+    background: var(--surface-soft);
+}
+
+.productImageV3 {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    transition: transform 0.45s ease;
+}
+
+@media (hover: hover) {
+    .productCardV3:hover .productImageV3 {
+        transform: scale(1.055);
+    }
+}
+
+.productDiscountBadgeV3 {
+    position: absolute;
+    top: 9px;
+    left: 8px;
+
+    padding: 5px 7px;
+
+    border-radius: 8px;
+
+    background: var(--toma-red);
+    color: #FFFFFF;
+
+    font-size: 10px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.productFavoriteButtonV3 {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(20, 33, 61, 0.07);
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.95);
+    color: #334155;
+
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.09);
+
+    cursor: pointer;
+}
+
+.productFavoriteButtonV3 .material-symbols-rounded {
+    font-size: 20px;
+}
+
+.productFavoriteButtonV3.isFavorite {
+    color: #E53965;
+}
+
+.productFavoriteButtonV3.isFavorite .material-symbols-rounded {
+    font-variation-settings: "FILL" 1;
+}
+
+.productInfoV3 {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+
+    padding: 11px;
+}
+
+.productNameV3 {
+    min-height: 35px;
+    max-height: 35px;
+
+    overflow: hidden;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+
+    color: var(--text-main);
+
+    font-size: 12px;
+    font-weight: 750;
+    line-height: 1.45;
+}
+
+.productStoreV3 {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    min-width: 0;
+
+    color: var(--text-secondary);
+
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.productStoreV3 .material-symbols-rounded {
+    flex-shrink: 0;
+    font-size: 14px;
+    color: var(--toma-blue);
+}
+
+.productPriceV3 {
+    color: var(--toma-orange-dark);
+
+    font-size: 15px;
+    font-weight: 900;
+    line-height: 1.3;
+
+    overflow-wrap: anywhere;
+}
+
+.productOldPriceV3 {
+    color: var(--text-muted);
+
+    font-size: 10px;
+    text-decoration: line-through;
+}
+
+.productRatingV3 {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    color: var(--text-secondary);
+
+    font-size: 10px;
+}
+
+.productRatingV3 .material-symbols-rounded {
+    font-size: 15px;
+    color: var(--toma-yellow);
+    font-variation-settings: "FILL" 1;
+}
+
+.productAddCartV3 {
+    width: 100%;
+    min-height: 37px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    margin-top: 2px;
+    padding: 7px;
+
+    border: none;
+    border-radius: 11px;
+
+    background: var(--toma-blue);
+    color: #FFFFFF;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        background var(--transition-fast),
+        transform var(--transition-fast);
+}
+
+.productAddCartV3 .material-symbols-rounded {
+    font-size: 18px;
+}
+
+.productAddCartV3:hover {
+    background: var(--toma-blue-dark);
+}
+
+.productAddCartV3:active {
+    transform: scale(0.97);
+}
+
+/* =========================================================
+   12. LOJAS OFICIAIS
+========================================================= */
+
+.officialStoresSection {
+    margin-top: 7px;
+}
+
+.officialStoresGrid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 13px;
+}
+
+.officialStoreCardV3 {
+    position: relative;
+
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 17px 10px 13px;
+
+    border: 1px solid var(--border);
+    border-radius: 22px;
+
+    background: var(--surface);
+
+    text-align: center;
+
+    box-shadow: var(--shadow-small);
+
+    transition:
+        transform var(--transition-normal),
+        border-color var(--transition-normal),
+        box-shadow var(--transition-normal);
+}
+
+.officialStoreLogoFrame {
+    width: 78px;
+    height: 78px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    margin-bottom: 13px;
+
+    border: 2px solid var(--border);
+    border-radius: 50%;
+
+    background: var(--surface);
+}
+
+.officialStoreLogo {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    padding: 8px;
+}
+
+.officialStoreNameRow {
+    width: 100%;
+    min-height: 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.officialStoreName {
+    min-width: 0;
+
+    color: var(--text-main);
+
+    font-size: 14px;
+    font-weight: 850;
+    line-height: 1.3;
+
+    overflow-wrap: anywhere;
+}
+
+.officialVerifiedBadge {
+    width: 21px;
+    height: 21px;
+
+    flex-shrink: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #1677F2;
+    color: #FFFFFF;
+
+    box-shadow:
+        0 2px 6px rgba(22, 119, 242, 0.23);
+}
+
+.officialVerifiedBadge .material-symbols-rounded {
+    font-size: 16px;
+    font-variation-settings: "FILL" 1;
+}
+
+.officialStoreStatus {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+
+    margin-top: 9px;
+    padding: 6px 11px;
+
+    border-radius: 999px;
+
+    background: var(--toma-green-light);
+    color: var(--toma-green);
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.officialStoreStatus .material-symbols-rounded {
+    font-size: 14px;
+}
+
+.officialStoreProductCount {
+    margin-top: 10px;
+
+    color: var(--text-secondary);
+
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.visitStoreButton {
+    width: 100%;
+    min-height: 40px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+
+    margin-top: 14px;
+    padding: 8px 7px;
+
+    border: none;
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #FF8A17,
+            #FF6900
+        );
+
+    color: #FFFFFF;
+
+    font-size: 11px;
+    font-weight: 850;
+    line-height: 1.2;
+
+    box-shadow:
+        0 6px 14px rgba(255, 105, 0, 0.17);
+
+    cursor: pointer;
+
+    transition:
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+
+.visitStoreButton .material-symbols-rounded {
+    font-size: 17px;
+}
+
+.visitStoreButton:active {
+    transform: scale(0.96);
+}
+
+@media (hover: hover) {
+    .officialStoreCardV3:hover {
+        transform: translateY(-4px);
+
+        border-color:
+            rgba(7, 85, 217, 0.25);
+
+        box-shadow: var(--shadow-medium);
+    }
+
+    .visitStoreButton:hover {
+        box-shadow:
+            0 9px 21px rgba(255, 105, 0, 0.27);
+    }
+}
+
+/* =========================================================
+   13. MARCA TOMA E MENSAGEM FINAL
+========================================================= */
+
+.tomaBrandMessage {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    margin: 5px 0 23px;
+    padding: 23px;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(7, 85, 217, 0.1);
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            125deg,
+            var(--surface),
+            var(--toma-blue-light)
+        );
+}
+
+.brandMessageIcon {
+    width: 57px;
+    height: 57px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 19px;
+
+    background: var(--toma-blue);
+    color: var(--toma-orange);
+
+    font-size: 34px;
+
+    box-shadow:
+        0 8px 20px rgba(7, 85, 217, 0.19);
+}
+
+.brandMessageText h2 {
+    margin-bottom: 5px;
+
+    color: var(--text-main);
+
+    font-size: 16px;
+    font-weight: 900;
+}
+
+.brandMessageText p {
+    color: var(--text-secondary);
+
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* =========================================================
+   14. CARREGAMENTO E ESTADOS VAZIOS
+========================================================= */
+
+.sectionLoading,
+.emptyStateV3 {
+    grid-column: 1 / -1;
+
+    min-height: 115px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    padding: 18px;
+
+    border: 1px dashed var(--border-strong);
+    border-radius: 19px;
+
+    background: var(--surface-soft);
+
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.sectionLoading .material-symbols-rounded,
+.emptyStateV3 .material-symbols-rounded {
+    font-size: 30px;
+    color: var(--toma-blue);
+}
+
+.sectionLoading p,
+.emptyStateV3 p {
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.emptyStateV3 strong {
+    color: var(--text-main);
+    font-size: 13px;
+}
+
+.loadingSkeleton {
+    position: relative;
+    overflow: hidden;
+
+    background: var(--surface-hover);
+}
+
+.loadingSkeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    transform: translateX(-100%);
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.62),
+            transparent
+        );
+
+    animation: tomaSkeleton 1.45s infinite;
+}
+
+@keyframes tomaSkeleton {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* =========================================================
+   15. NOTIFICAÇÕES TOAST
+========================================================= */
+
+.homeToastContainer {
+    position: fixed;
+
+    top: calc(15px + env(safe-area-inset-top));
+    left: 50%;
+
+    z-index: 10000;
+
+    width: min(92vw, 390px);
+
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+
+    transform: translateX(-50%);
+
+    pointer-events: none;
+}
+
+.homeToast {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 14px 16px;
+
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 15px;
+
+    background: #14213D;
+    color: #FFFFFF;
+
+    box-shadow: var(--shadow-large);
+
+    font-size: 13px;
+    font-weight: 700;
+
+    animation: tomaToastIn 0.25s ease both;
+}
+
+.homeToast.success {
+    background: #137B45;
+}
+
+.homeToast.error {
+    background: #B42318;
+}
+
+.homeToast.warning {
+    background: #B75A00;
+}
+
+.homeToast .material-symbols-rounded {
+    font-size: 21px;
+}
+
+.homeToast.toastLeaving {
+    animation: tomaToastOut 0.2s ease forwards;
+}
+
+@keyframes tomaToastIn {
+    from {
+        opacity: 0;
+        transform: translateY(-9px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes tomaToastOut {
+    to {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+}
+
+/* =========================================================
+   16. NAVEGAÇÃO INFERIOR
+========================================================= */
+
+.bottomNavigation {
+    position: fixed;
+
+    left: 12px;
+    right: 12px;
+    bottom: max(10px, env(safe-area-inset-bottom));
+
+    z-index: 1500;
+
+    max-width: 720px;
+    min-height: 70px;
+
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    align-items: center;
+
+    margin: 0 auto;
+    padding: 8px 5px;
+
+    border: 1px solid rgba(220, 228, 239, 0.9);
+    border-radius: 23px;
+
+    background: rgba(255, 255, 255, 0.94);
+
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+
+    box-shadow:
+        0 9px 35px rgba(20, 33, 61, 0.15);
+}
+
+.bottomNavItem {
+    position: relative;
+
+    min-width: 0;
+    min-height: 54px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+
+    padding: 5px 2px;
+
+    border-radius: 15px;
+
+    color: #64748B;
+
+    transition:
+        background var(--transition-fast),
+        color var(--transition-fast);
+}
+
+.bottomNavItem > .material-symbols-rounded,
+.bottomNavIconWrapper > .material-symbols-rounded {
+    font-size: 23px;
+}
+
+.bottomNavItem > span:last-child {
+    max-width: 100%;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    font-size: 9px;
+    font-weight: 750;
+    line-height: 1.2;
+}
+
+.bottomNavItem.active {
+    background: var(--toma-orange-light);
+    color: var(--toma-orange-dark);
+}
+
+.bottomNavItem.active > .material-symbols-rounded,
+.bottomNavItem.active .bottomNavIconWrapper > .material-symbols-rounded {
+    font-variation-settings: "FILL" 1;
+}
+
+.bottomNavItem:active {
+    transform: scale(0.96);
+}
+
+.bottomNavIconWrapper {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bottomNavIconWrapper .notificationBadge {
+    top: -7px;
+    right: -10px;
+
+    min-width: 17px;
+    height: 17px;
+
+    font-size: 9px;
+    border-color: var(--surface);
+}
+
+/* =========================================================
+   17. TABLETTES
+========================================================= */
+
+@media (min-width: 600px) {
+    .tomaMain {
+        padding-right: 24px;
+        padding-left: 24px;
+    }
+
+    .searchSection {
+        margin-top: 24px;
+    }
+
+    .heroSlider {
+        min-height: 300px;
+    }
+
+    .heroSlide {
+        padding: 35px;
+    }
+
+    .heroContent {
+        width: 58%;
+    }
+
+    .productsScroller {
+        grid-auto-columns: 205px;
+        gap: 16px;
+    }
+
+    .categoriesGrid {
+        gap: 14px;
+    }
+
+    .categoryCardV3 {
+        padding: 13px 8px 15px;
+    }
+
+    .officialStoresGrid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .officialStoreCardV3 {
+        padding: 21px 15px 16px;
+    }
+
+    .officialStoreLogoFrame {
+        width: 88px;
+        height: 88px;
+    }
+
+    .sectionTitleGroup h2 {
+        font-size: 20px;
+    }
+}
+
+/* =========================================================
+   18. GRAND ÉCRAN
+========================================================= */
+
+@media (min-width: 1000px) {
+    .tomaHeader {
+        padding-right: max(28px, calc((100vw - var(--page-width)) / 2));
+        padding-left: max(28px, calc((100vw - var(--page-width)) / 2));
+    }
+
+    .tomaMain {
+        padding-right: 30px;
+        padding-left: 30px;
+    }
+
+    .roleShortcuts {
+        max-width: 760px;
+    }
+
+    .heroSlider {
+        aspect-ratio: 2.65 / 1;
+        max-height: 390px;
+    }
+
+    .heroContent {
+        width: 50%;
+    }
+
+    .categoriesGrid {
+        grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+
+    .productsScroller {
+        grid-auto-columns: 220px;
+    }
+
+    .officialStoresGrid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .homeSection {
+        margin-bottom: 42px;
+    }
+}
+
+/* =========================================================
+   19. PETITS ÉCRANS
+========================================================= */
+
+@media (max-width: 430px) {
+    .tomaHeader {
+        gap: 7px;
+        padding-right: 11px;
+        padding-left: 12px;
+    }
+
+    .tomaBrand {
+        gap: 5px;
+    }
+
+    .tomaBrandIcon {
+        width: 34px;
+        height: 38px;
+        font-size: 32px;
+    }
+
+    .tomaBrandText strong {
+        font-size: 23px;
+    }
+
+    .tomaBrandText small {
+        font-size: 9px;
+    }
+
+    .headerActions {
+        gap: 5px;
+    }
+
+    .iconButton,
+    .profileButton {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+    }
+
+    .profileButton {
+        border-radius: 50%;
+    }
+
+    .iconButton .material-symbols-rounded {
+        font-size: 21px;
+    }
+
+    .notificationBadge {
+        min-width: 17px;
+        height: 17px;
+        font-size: 9px;
+    }
+
+    .tomaMain {
+        padding-right: 13px;
+        padding-left: 13px;
+    }
+
+    .searchSection {
+        margin-top: 15px;
+    }
+
+    .searchBar {
+        min-height: 49px;
+        padding-right: 10px;
+        padding-left: 12px;
+        gap: 8px;
+        border-radius: 16px;
+    }
+
+    .searchPlaceholder {
+        font-size: 11px;
+    }
+
+    .searchFilterIcon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .roleShortcuts {
+        gap: 8px;
+        margin-bottom: 17px;
+    }
+
+    .roleShortcut {
+        min-height: 70px;
+        gap: 7px;
+        padding: 9px;
+        border-radius: 16px;
+    }
+
+    .roleShortcutIcon {
+        width: 33px;
+        height: 33px;
+        border-radius: 11px;
+        font-size: 22px;
+    }
+
+    .roleShortcutText strong {
+        font-size: 10px;
+    }
+
+    .roleShortcutText small {
+        font-size: 9px;
+    }
+
+    .roleArrow {
+        font-size: 18px;
+    }
+
+    .heroSlider {
+        min-height: 225px;
+        aspect-ratio: 1.36 / 1;
+        border-radius: 21px;
+    }
+
+    .heroSlide {
+        padding: 18px;
+    }
+
+    .heroSlide::before {
+        background:
+            linear-gradient(
+                90deg,
+                rgba(3, 20, 55, 0.94) 0%,
+                rgba(5, 36, 94, 0.75) 58%,
+                rgba(5, 36, 94, 0.28) 100%
+            );
+    }
+
+    .heroContent {
+        width: 79%;
+    }
+
+    .heroEyebrow {
+        margin-bottom: 9px;
+        padding: 5px 8px;
+        font-size: 9px;
+    }
+
+    .heroContent h2 {
+        font-size: 25px;
+    }
+
+    .heroContent p {
+        margin-bottom: 13px;
+        font-size: 11px;
+    }
+
+    .heroAction {
+        min-height: 38px;
+        padding: 0 12px;
+        font-size: 11px;
+    }
+
+    .trustSection {
+        gap: 5px;
+        padding: 11px 7px;
+        border-radius: 17px;
+        margin-bottom: 27px;
+    }
+
+    .trustItem {
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .trustIcon {
+        width: 29px;
+        height: 29px;
+        border-radius: 10px;
+        font-size: 18px;
+    }
+
+    .trustText strong {
+        font-size: 9px;
+    }
+
+    .trustText small {
+        font-size: 8px;
+    }
+
+    .homeSection {
+        margin-bottom: 28px;
+    }
+
+    .sectionHeading {
+        gap: 5px;
+        margin-bottom: 12px;
+    }
+
+    .sectionTitleGroup {
+        gap: 7px;
+    }
+
+    .sectionTitleIcon {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        font-size: 21px;
+    }
+
+    .sectionTitleGroup h2 {
+        font-size: 15px;
+    }
+
+    .sectionTitleGroup p {
+        font-size: 9px;
+    }
+
+    .seeAllLink {
+        gap: 3px;
+        padding: 7px 6px;
+        border-radius: 10px;
+        font-size: 10px;
+    }
+
+    .seeAllLink .material-symbols-rounded {
+        font-size: 15px;
+    }
+
+    .categoriesGrid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 9px;
+    }
+
+    .categoryCardV3 {
+        padding: 9px 6px 10px;
+        border-radius: 16px;
+    }
+
+    .categoryVisual {
+        max-width: 67px;
+        border-radius: 14px;
+    }
+
+    .categoryVisual .material-symbols-rounded {
+        font-size: 29px;
+    }
+
+    .categoryNameV3 {
+        font-size: 10px;
+    }
+
+    .productsScroller {
+        grid-auto-columns: 158px;
+        gap: 10px;
+    }
+
+    .productCardV3 {
+        border-radius: 17px;
+    }
+
+    .productInfoV3 {
+        gap: 6px;
+        padding: 9px;
+    }
+
+    .productNameV3 {
+        font-size: 11px;
+    }
+
+    .productPriceV3 {
+        font-size: 14px;
+    }
+
+    .productAddCartV3 {
+        min-height: 35px;
+        font-size: 10px;
+    }
+
+    .officialStoresGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .officialStoreCardV3 {
+        padding: 15px 10px 11px;
+        border-radius: 19px;
+    }
+
+    .officialStoreLogoFrame {
+        width: 68px;
+        height: 68px;
+        margin-bottom: 10px;
+    }
+
+    .officialStoreName {
+        font-size: 13px;
+    }
+
+    .officialVerifiedBadge {
+        width: 19px;
+        height: 19px;
+    }
+
+    .officialVerifiedBadge .material-symbols-rounded {
+        font-size: 14px;
+    }
+
+    .officialStoreStatus {
+        margin-top: 7px;
+        padding: 5px 9px;
+        font-size: 10px;
+    }
+
+    .officialStoreProductCount {
+        margin-top: 8px;
+        font-size: 10px;
+    }
+
+    .visitStoreButton {
+        min-height: 38px;
+        margin-top: 11px;
+        font-size: 10px;
+    }
+
+    .tomaBrandMessage {
+        gap: 12px;
+        padding: 17px;
+        border-radius: 19px;
+    }
+
+    .brandMessageIcon {
+        width: 45px;
+        height: 45px;
+        border-radius: 14px;
+        font-size: 27px;
+    }
+
+    .brandMessageText h2 {
+        font-size: 14px;
+    }
+
+    .brandMessageText p {
+        font-size: 11px;
+    }
+
+    .bottomNavigation {
+        left: 7px;
+        right: 7px;
+        bottom: max(7px, env(safe-area-inset-bottom));
+
+        min-height: 66px;
+        padding: 6px 3px;
+
+        border-radius: 19px;
+    }
+
+    .bottomNavItem {
+        min-height: 51px;
+        gap: 4px;
+        border-radius: 12px;
+    }
+
+    .bottomNavItem > .material-symbols-rounded,
+    .bottomNavIconWrapper > .material-symbols-rounded {
+        font-size: 21px;
+    }
+
+    .bottomNavItem > span:last-child {
+        font-size: 8px;
+    }
+}
+
+/* =========================================================
+   20. MUITO PEQUENOS
+========================================================= */
+
+@media (max-width: 350px) {
+    .tomaBrandText strong {
+        font-size: 21px;
+    }
+
+    .tomaBrandIcon {
+        width: 30px;
+        font-size: 29px;
+    }
+
+    .iconButton,
+    .profileButton {
+        width: 32px;
+        height: 32px;
+    }
+
+    .headerActions {
+        gap: 4px;
+    }
+
+    .roleShortcut {
+        padding: 7px;
+        gap: 5px;
+    }
+
+    .roleShortcutIcon {
+        width: 29px;
+        height: 29px;
+        font-size: 19px;
+    }
+
+    .roleShortcutText strong {
+        font-size: 9px;
+    }
+
+    .heroContent h2 {
+        font-size: 22px;
+    }
+
+    .productsScroller {
+        grid-auto-columns: 148px;
+    }
+
+    .officialStoreNameRow {
+        gap: 3px;
+    }
+
+    .officialStoreName {
+        font-size: 12px;
+    }
+}
+
+/* =========================================================
+   21. MODE SOMBRE
+   La classe peut estar sur html ou body.
+========================================================= */
+
+html.dark-mode body.toma-home-v3,
+body.toma-home-v3.dark-mode {
+    --page-bg: #08111F;
+    --surface: #111E30;
+    --surface-soft: #142239;
+    --surface-hover: #1B2D45;
+
+    --text-main: #F1F5FC;
+    --text-secondary: #B2C0D3;
+    --text-muted: #8596AD;
+
+    --border: #25364C;
+    --border-strong: #344962;
+
+    --toma-blue-light: #142E53;
+    --toma-orange-light: #3A2518;
+    --toma-green-light: #143528;
+
+    background:
+        radial-gradient(
+            ellipse at 50% 0%,
+            rgba(7, 85, 217, 0.13),
+            transparent 42%
+        ),
+        var(--page-bg);
+
+    color: var(--text-main);
+}
+
+html.dark-mode .tomaHeader {
+    background:
+        linear-gradient(
+            115deg,
+            #061326 0%,
+            #09244A 58%,
+            #0A3263 100%
+        );
+
+    border-bottom-color: #25364C;
+}
+
+html.dark-mode .searchBar,
+html.dark-mode .trustSection,
+html.dark-mode .categoryCardV3,
+html.dark-mode .productCardV3,
+html.dark-mode .officialStoreCardV3,
+html.dark-mode .heroArrow,
+html.dark-mode .seeAllLink {
+    border-color: var(--border);
+    background-color: var(--surface);
+}
+
+html.dark-mode .searchFilterIcon {
+    background: #1B365A;
+    color: #8DB8FF;
+}
+
+html.dark-mode .sectionTitleIcon {
+    background: #1B365A;
+    color: #8DB8FF;
+}
+
+html.dark-mode .featuredTitleIcon {
+    background: #3A2A1A;
+    color: #FFB35C;
+}
+
+html.dark-mode .newTitleIcon {
+    background: #30234B;
+    color: #C3A8FF;
+}
+
+html.dark-mode .offersTitleIcon {
+    background: #402020;
+    color: #FF9993;
+}
+
+html.dark-mode .popularTitleIcon {
+    background: #1B365A;
+    color: #8DB8FF;
+}
+
+html.dark-mode .recommendedTitleIcon {
+    background: #143528;
+    color: #7CE0A3;
+}
+
+html.dark-mode .officialStoresTitleIcon {
+    background: #1B365A;
+    color: #8DB8FF;
+}
+
+html.dark-mode .productImageWrapperV3,
+html.dark-mode .categoryVisual,
+html.dark-mode .officialStoreLogoFrame {
+    background: #18273A;
+}
+
+html.dark-mode .officialStoreLogoFrame {
+    border-color: #344962;
+}
+
+html.dark-mode .officialStoreStatus {
+    background: #143528;
+    color: #7CE0A3;
+}
+
+html.dark-mode .tomaBrandMessage {
+    border-color: #253B5B;
+    background:
+        linear-gradient(
+            125deg,
+            #111E30,
+            #132B4A
+        );
+}
+
+html.dark-mode .bottomNavigation {
+    border-color: #293B52;
+    background: rgba(13, 27, 45, 0.96);
+
+    box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.35);
+}
+
+html.dark-mode .bottomNavItem {
+    color: #A9B8CD;
+}
+
+html.dark-mode .bottomNavItem.active {
+    background: #3A2518;
+    color: #FFAA55;
+}
+
+html.dark-mode .bottomNavIconWrapper .notificationBadge {
+    border-color: var(--surface);
+}
+
+html.dark-mode .heroArrow:hover,
+html.dark-mode .seeAllLink:hover {
+    background: #1B365A;
+}
+
+html.dark-mode .loadingSkeleton::after {
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.06),
+            transparent
+        );
+}
+
+/* =========================================================
+   22. ACESSIBILIDADE — MOVIMENTO REDUZIDO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* =========================================================
+   FIM DO DESIGN TOMA V3
+========================================================= */
