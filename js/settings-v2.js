@@ -3252,6 +3252,9 @@ function settingsV2ShowConfirmation(options = {}) {
    BLOC 13.2 — ELIMINAÇÃO EFETIVA DA CONTA
 ========================================================= */
 
+let settingsV2DeleteAccountInProgress = false;
+
+/* Executar a eliminação da conta */
 async function settingsV2DeleteAccount() {
     if (settingsV2DeleteAccountInProgress) {
         return;
@@ -3267,22 +3270,25 @@ async function settingsV2DeleteAccount() {
         return;
     }
 
-    const confirmButton = settingsV2Elements.confirmActionButton;
-    const cancelButton = settingsV2Elements.cancelConfirmationButton;
-
     try {
+        /* Pedir confirmação explícita */
+        const confirmed = await settingsV2ShowConfirmation({
+            title: "Eliminar a sua conta?",
+            message:
+                "Esta ação é permanente. A sua conta Toma será eliminada. Os produtos, as encomendas e outros dados comerciais podem exigir um tratamento separado.",
+            confirmText: "Eliminar definitivamente",
+            cancelText: "Cancelar",
+            icon: "warning",
+            danger: true
+        });
+
+        if (!confirmed) {
+            return;
+        }
+
         settingsV2DeleteAccountInProgress = true;
 
-        if (confirmButton) {
-            confirmButton.disabled = true;
-            confirmButton.textContent = "A eliminar...";
-        }
-
-        if (cancelButton) {
-            cancelButton.disabled = true;
-        }
-
-        /* Verificar o perfil do utilizador no Firestore */
+        /* Consultar o perfil do utilizador */
         const userRef = doc(db, "users", currentUser.uid);
         const userSnapshot = await getDoc(userRef);
 
@@ -3292,7 +3298,7 @@ async function settingsV2DeleteAccount() {
                 .trim()
                 .toLowerCase();
 
-            /* Proteger contas administrativas */
+            /* Impedir a eliminação de contas administrativas */
             if (
                 userRole === "admin" ||
                 userRole === "superadmin"
@@ -3301,7 +3307,6 @@ async function settingsV2DeleteAccount() {
                     "Por segurança, as contas administrativas não podem ser eliminadas nesta página.",
                     "error"
                 );
-
                 return;
             }
         }
@@ -3312,24 +3317,15 @@ async function settingsV2DeleteAccount() {
          */
         await deleteUser(currentUser);
 
-        /* Limpar preferências locais da sessão */
+        /* Limpar preferências locais */
         localStorage.removeItem("toma_dark_mode");
-
-        /* Fechar a janela, caso ainda exista */
-        if (settingsV2Elements.confirmationModal) {
-            settingsV2Elements.confirmationModal.hidden = true;
-            settingsV2Elements.confirmationModal.setAttribute(
-                "aria-hidden",
-                "true"
-            );
-        }
 
         settingsV2ShowToast(
             "A sua conta foi eliminada com sucesso.",
             "success"
         );
 
-        /* Redirecionar para a página inicial */
+        /* Redirecionar após a eliminação */
         window.setTimeout(function () {
             window.location.replace("../../index.html");
         }, 1200);
@@ -3342,7 +3338,7 @@ async function settingsV2DeleteAccount() {
 
         if (error.code === "auth/requires-recent-login") {
             settingsV2ShowToast(
-                "Por segurança, termine sessão e volte a iniciar sessão antes de eliminar a conta.",
+                "Por segurança, inicie sessão novamente antes de eliminar a conta.",
                 "warning"
             );
         } else if (error.code === "auth/network-request-failed") {
@@ -3359,21 +3355,12 @@ async function settingsV2DeleteAccount() {
 
     } finally {
         settingsV2DeleteAccountInProgress = false;
-
-        if (confirmButton) {
-            confirmButton.disabled = false;
-            confirmButton.textContent = "Continuar";
-        }
-
-        if (cancelButton) {
-            cancelButton.disabled = false;
-        }
     }
 }
 
-/* Ligar o botão de confirmação à eliminação */
-if (settingsV2Elements.confirmActionButton) {
-    settingsV2Elements.confirmActionButton.addEventListener(
+/* Ligar o botão de eliminação à função */
+if (settingsV2Elements.deleteAccountButton) {
+    settingsV2Elements.deleteAccountButton.addEventListener(
         "click",
         function () {
             settingsV2DeleteAccount();
