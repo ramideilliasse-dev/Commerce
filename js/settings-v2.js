@@ -27,7 +27,8 @@ import {
     onAuthStateChanged,
     updateProfile,
     sendEmailVerification,
-    sendPasswordResetEmail
+    sendPasswordResetEmail,
+    signOut
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 const SETTINGS_V2_VERSION = "2.0.1";
 
@@ -736,6 +737,7 @@ settingsV2InitializeNotifications();
 settingsV2InitializeDarkMode();
 settingsV2InitializeEmailVerification();
 settingsV2InitializePasswordReset();
+settingsV2InitializeSignOut();
 /* =========================================================
    TOMA SETTINGS V2 — BLOCO 6
    EDIÇÃO DO PERFIL DO UTILIZADOR
@@ -3059,5 +3061,98 @@ function settingsV2InitializePasswordReset() {
     button.addEventListener("click", async function (event) {
         event.preventDefault();
         await settingsV2ResetPassword();
+    });
+}
+/* =========================================================
+   TOMA SETTINGS V2
+   BLOC 12.1 — DÉCONNEXION SÉCURISÉE
+========================================================= */
+
+async function settingsV2SignOut() {
+    const user = settingsV2CurrentUser;
+    const button = settingsV2Elements.signOutButton;
+
+    if (!user) {
+        settingsV2ShowToast(
+            "Já não existe uma sessão ativa.",
+            "error"
+        );
+
+        return;
+    }
+
+    const confirmed = window.confirm(
+        "TOMA\n\n" +
+        "Tem a certeza de que deseja terminar a sessão?"
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    if (button) {
+        button.disabled = true;
+    }
+
+    try {
+        await signOut(auth);
+
+        settingsV2CurrentUser = null;
+        settingsV2UserData = null;
+
+        try {
+            localStorage.removeItem("toma_dark_mode");
+        } catch (storageError) {
+            console.warn(
+                "[TOMA SETTINGS V2] Não foi possível limpar uma preferência local:",
+                storageError
+            );
+        }
+
+        window.location.href = "../../login.html";
+
+    } catch (error) {
+        console.error(
+            "[TOMA SETTINGS V2] Erro ao terminar sessão:",
+            error
+        );
+
+        settingsV2ShowToast(
+            "Não foi possível terminar a sessão. Tente novamente.",
+            "error"
+        );
+
+        if (button) {
+            button.disabled = false;
+        }
+    }
+}
+
+
+/* =========================================================
+   BLOC 12.1 — INITIALISATION
+========================================================= */
+
+function settingsV2InitializeSignOut() {
+    const button = settingsV2Elements.signOutButton;
+
+    if (!button) {
+        console.error(
+            "[TOMA SETTINGS V2] Botão signOutButton não encontrado."
+        );
+
+        return;
+    }
+
+    if (button.dataset.signOutInitialized === "true") {
+        return;
+    }
+
+    button.dataset.signOutInitialized = "true";
+
+    button.addEventListener("click", async function (event) {
+        event.preventDefault();
+
+        await settingsV2SignOut();
     });
 }
