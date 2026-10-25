@@ -3156,3 +3156,89 @@ function settingsV2InitializeSignOut() {
         await settingsV2SignOut();
     });
 }
+/* =========================================================
+   TOMA SETTINGS V2
+   BLOC 13.1 — SYSTÈME DE CONFIRMATION
+========================================================= */
+
+let settingsV2ConfirmationResolver = null;
+
+function settingsV2ShowConfirmation(options = {}) {
+    const modal = settingsV2Elements.confirmationModal;
+    const title = settingsV2Elements.confirmationTitle;
+    const message = settingsV2Elements.confirmationMessage;
+    const cancelButton = settingsV2Elements.cancelConfirmationButton;
+    const confirmButton = settingsV2Elements.confirmActionButton;
+    const icon = settingsV2Elements.confirmationIcon;
+
+    if (
+        !modal ||
+        !title ||
+        !message ||
+        !cancelButton ||
+        !confirmButton
+    ) {
+        settingsV2ShowToast(
+            "Não foi possível abrir a janela de confirmação.",
+            "error"
+        );
+
+        return Promise.resolve(false);
+    }
+
+    if (settingsV2ConfirmationResolver) {
+        settingsV2ConfirmationResolver(false);
+        settingsV2ConfirmationResolver = null;
+    }
+
+    title.textContent = options.title || "Confirmar ação";
+    message.textContent =
+        options.message || "Tem a certeza de que pretende continuar?";
+
+    confirmButton.textContent = options.confirmText || "Confirmar";
+    cancelButton.textContent = options.cancelText || "Cancelar";
+
+    if (icon) {
+        icon.textContent = options.icon || "help";
+    }
+
+    confirmButton.classList.toggle(
+        "danger-button",
+        options.danger === true
+    );
+
+    modal.hidden = false;
+    document.body.classList.add("modal-open");
+
+    return new Promise(function (resolve) {
+        settingsV2ConfirmationResolver = resolve;
+
+        function finishConfirmation(result) {
+            if (!settingsV2ConfirmationResolver) {
+                return;
+            }
+
+            const resolver = settingsV2ConfirmationResolver;
+            settingsV2ConfirmationResolver = null;
+
+            modal.hidden = true;
+            document.body.classList.remove("modal-open");
+
+            cancelButton.removeEventListener("click", cancelHandler);
+            confirmButton.removeEventListener("click", confirmHandler);
+
+            resolver(result);
+        }
+
+        function cancelHandler() {
+            finishConfirmation(false);
+        }
+
+        function confirmHandler() {
+            finishConfirmation(true);
+        }
+
+        cancelButton.addEventListener("click", cancelHandler);
+        confirmButton.addEventListener("click", confirmHandler);
+    });
+}
