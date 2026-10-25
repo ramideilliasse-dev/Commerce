@@ -1428,13 +1428,112 @@ function tomaV3RenderFeaturedProducts() {
     );
 }
 
-// ------------------------------------------------------
-// 6.5 — Préparer les autres sections
-// ------------------------------------------------------
+// ======================================================
+// TOMA V3 — BLOC 7
+// Affichage des nouveautés
+// ======================================================
 
 function tomaV3RenderAllProductSections() {
 
+    // BLOC 6 : Produits en vedette
     tomaV3RenderFeaturedProducts();
+
+    // BLOC 7 : Nouveautés
+    tomaV3RenderNewProducts();
+
+}
+
+// ------------------------------------------------------
+// 7.1 — Déterminer les nouveautés
+// ------------------------------------------------------
+
+function tomaV3GetNewProducts() {
+
+    const products = TOMA_V3.products || [];
+
+    // Date de création du produit.
+    // Firestore peut renvoyer un Timestamp, une Date,
+    // une chaîne de caractères ou une valeur numérique.
+
+    function getProductDate(product) {
+
+        const value =
+            product.createdAt ||
+            product.created_at ||
+            product.dateCreated ||
+            product.timestamp ||
+            product.updatedAt;
+
+        if (!value) return 0;
+
+        if (typeof value.toDate === "function") {
+            return value.toDate().getTime();
+        }
+
+        if (value instanceof Date) {
+            return value.getTime();
+        }
+
+        if (typeof value === "number") {
+            return value < 1000000000000
+                ? value * 1000
+                : value;
+        }
+
+        const parsed = Date.parse(value);
+
+        return Number.isNaN(parsed) ? 0 : parsed;
+    }
+
+    return [...products]
+        .filter(product => getProductDate(product) > 0)
+        .sort((a, b) => getProductDate(b) - getProductDate(a));
+}
+
+// ------------------------------------------------------
+// 7.2 — Afficher les nouveautés
+// ------------------------------------------------------
+
+function tomaV3RenderNewProducts() {
+
+    const container =
+        tomaV3GetElement("newProducts");
+
+    if (!container) return;
+
+    container.replaceChildren();
+
+    const newProducts = tomaV3GetNewProducts().slice(
+        0,
+        TOMA_V3_HOME_PRODUCT_LIMIT
+    );
+
+    if (newProducts.length === 0) {
+
+        const message = document.createElement("p");
+
+        message.className = "v3EmptyMessage";
+
+        message.textContent =
+            "As novidades aparecerão aqui em breve.";
+
+        container.appendChild(message);
+
+        return;
+    }
+
+    newProducts.forEach(product => {
+
+        container.appendChild(
+            tomaV3CreateFeaturedCard(product)
+        );
+
+    });
+
+    console.info(
+        "[TOMA V3] Novidades apresentadas:",
+        newProducts.length
+    );
 
 }
 
