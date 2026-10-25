@@ -931,3 +931,289 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 });
+// ======================================================
+// TOMA V3 — BLOC 5
+// Chargement des produits depuis Firestore
+// ======================================================
+
+// ------------------------------------------------------
+// 5.1 — Configuration du cache
+// ------------------------------------------------------
+
+const TOMA_V3_PRODUCTS_CACHE_KEY = "toma_products_cache";
+const TOMA_V3_PRODUCTS_CACHE_TIME_KEY = "toma_products_cache_time";
+
+const TOMA_V3_PRODUCTS_CACHE_DURATION = 10 * 60 * 1000;
+
+// ------------------------------------------------------
+// 5.2 — Lire le cache local
+// ------------------------------------------------------
+
+function tomaV3ReadProductsCache() {
+
+    try {
+
+        const saved = localStorage.getItem(
+            TOMA_V3_PRODUCTS_CACHE_KEY
+        );
+
+        const products = JSON.parse(saved || "[]");
+
+        return Array.isArray(products) ? products : [];
+
+    } catch (error) {
+
+        console.warn(
+            "[TOMA V3] Cache produits illisible.",
+            error
+        );
+
+        return [];
+
+    }
+}
+
+// ------------------------------------------------------
+// 5.3 — Vérifier la validité du cache
+// ------------------------------------------------------
+
+function tomaV3IsProductsCacheValid() {
+
+    try {
+
+        const savedTime = Number(
+            localStorage.getItem(
+                TOMA_V3_PRODUCTS_CACHE_TIME_KEY
+            ) || 0
+        );
+
+        return (
+            savedTime > 0 &&
+            Date.now() - savedTime <
+                TOMA_V3_PRODUCTS_CACHE_DURATION
+        );
+
+    } catch {
+
+        return false;
+
+    }
+}
+
+// ------------------------------------------------------
+// 5.4 — Enregistrer le cache
+// ------------------------------------------------------
+
+function tomaV3SaveProductsCache(products) {
+
+    try {
+
+        localStorage.setItem(
+            TOMA_V3_PRODUCTS_CACHE_KEY,
+            JSON.stringify(products)
+        );
+
+        localStorage.setItem(
+            TOMA_V3_PRODUCTS_CACHE_TIME_KEY,
+            String(Date.now())
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "[TOMA V3] Impossible d'enregistrer le cache.",
+            error
+        );
+
+    }
+}
+
+// ------------------------------------------------------
+// 5.5 — Normaliser les produits
+// ------------------------------------------------------
+
+function tomaV3NormalizeProduct(id, data) {
+
+    return {
+        ...data,
+
+        id,
+
+        name: String(data.name || "Produto"),
+
+        price: Number(data.price || 0),
+
+        category: String(data.category || "").trim(),
+
+        images: Array.isArray(data.images)
+            ? data.images
+            : data.image
+                ? [data.image]
+                : [],
+
+        sales: Number(data.sales || 0)
+    };
+}
+
+// ------------------------------------------------------
+// 5.6 — Afficher un message de chargement
+// ------------------------------------------------------
+
+function tomaV3SetProductsLoading(message) {
+
+    const containerIds = [
+        "featuredProducts",
+        "newProducts",
+        "promotionProducts",
+        "popularProducts",
+        "recommendedProductsV3"
+    ];
+
+    containerIds.forEach(id => {
+
+        const container = tomaV3GetElement(id);
+
+        if (!container) return;
+
+        const messageElement = document.createElement("p");
+
+        messageElement.className = "sectionLoading";
+        messageElement.textContent = message;
+
+        container.replaceChildren(messageElement);
+
+    });
+}
+
+// ------------------------------------------------------
+// 5.7 — Charger les produits depuis Firestore
+// ------------------------------------------------------
+
+async function tomaV3LoadProducts() {
+
+    console.info("[TOMA V3] Chargement des produits...");
+
+    // Afficher immédiatement le cache si disponible.
+
+    const cachedProducts = tomaV3ReadProductsCache();
+
+    if (cachedProducts.length > 0) {
+
+        TOMA_V3.products = cachedProducts;
+
+        tomaV3RenderAllProductSections();
+
+        console.info(
+            "[TOMA V3] Produits du cache :",
+            cachedProducts.length
+        );
+
+        // Si le cache est encore valide, éviter une requête inutile.
+        if (tomaV3IsProductsCacheValid()) {
+            return;
+        }
+
+    } else {
+
+        tomaV3SetProductsLoading(
+            "A carregar produtos..."
+        );
+
+    }
+
+    try {
+
+        const productsQuery = query(
+            collection(db, "products"),
+            limit(300)
+        );
+
+        const snapshot = await getDocs(productsQuery);
+
+        const products = [];
+
+        snapshot.forEach(documentSnapshot => {
+
+            products.push(
+                tomaV3NormalizeProduct(
+                    documentSnapshot.id,
+                    documentSnapshot.data()
+                )
+            );
+
+        });
+
+        TOMA_V3.products = products;
+
+        tomaV3SaveProductsCache(products);
+
+        tomaV3RenderAllProductSections();
+
+        console.info(
+            "[TOMA V3] Produtos carregados do Firebase:",
+            products.length
+        );
+
+        if (products.length === 0) {
+
+            tomaV3Toast(
+                "Ainda não existem produtos disponíveis.",
+                "info"
+            );
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "[TOMA V3 — BLOC 5] Erro ao carregar produtos:",
+            error
+        );
+
+        if (TOMA_V3.products.length === 0) {
+
+            tomaV3SetProductsLoading(
+                "Não foi possível carregar os produtos."
+            );
+
+            tomaV3Toast(
+                "Erro ao carregar produtos. Verifique a ligação.",
+                "error"
+            );
+
+        } else {
+
+            tomaV3Toast(
+                "A mostrar os produtos guardados neste dispositivo.",
+                "info"
+            );
+
+        }
+
+    }
+}
+
+// ------------------------------------------------------
+// 5.8 — Preparar as secções de produtos
+// ------------------------------------------------------
+
+// Cette fonction sera complétée au BLOC 6.
+function tomaV3RenderAllProductSections() {
+
+    console.info(
+        "[TOMA V3] Preparação das secções:",
+        TOMA_V3.products.length,
+        "produtos disponíveis."
+    );
+
+}
+
+// ------------------------------------------------------
+// 5.9 — Démarrer le chargement
+// ------------------------------------------------------
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    tomaV3LoadProducts();
+
+});
