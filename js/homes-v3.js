@@ -1211,12 +1211,13 @@ const TOMA_V3_HOME_PRODUCT_LIMIT = 4;
 function tomaV3CreateFeaturedCard(product, badgeText = "Em destaque") {
 
     const card = document.createElement("article");
-
     card.className = "v3ProductCard";
 
-    // Image du produit
-    const imageWrapper = document.createElement("div");
+    // ======================================================
+    // IMAGE DU PRODUIT
+    // ======================================================
 
+    const imageWrapper = document.createElement("div");
     imageWrapper.className = "v3ProductImageWrapper";
 
     const image = document.createElement("img");
@@ -1227,24 +1228,25 @@ function tomaV3CreateFeaturedCard(product, badgeText = "Em destaque") {
     image.loading = "lazy";
 
     image.onerror = () => {
-
         image.onerror = null;
         image.src = "./images/no-image.png";
-
     };
 
     imageWrapper.appendChild(image);
 
-    // Badge « Em destaque »
+    // Badge du produit
     const badge = document.createElement("span");
 
     badge.className = "v3ProductBadge";
-  badge.textContent = badgeText;
+    badge.textContent = badgeText;
+
     imageWrapper.appendChild(badge);
 
-    // Informations du produit
-    const info = document.createElement("div");
+    // ======================================================
+    // INFORMATIONS DU PRODUIT
+    // ======================================================
 
+    const info = document.createElement("div");
     info.className = "v3ProductInfo";
 
     const name = document.createElement("h3");
@@ -1252,14 +1254,64 @@ function tomaV3CreateFeaturedCard(product, badgeText = "Em destaque") {
     name.className = "v3ProductName";
     name.textContent = product.name || "Produto";
 
-    const price = document.createElement("p");
-
+    // Conteneur des prix
+    const price = document.createElement("div");
     price.className = "v3ProductPrice";
-    price.textContent = tomaV3FormatPrice(product.price);
 
-    // Boutons
+    // ======================================================
+    // AFFICHAGE DU PRIX PROMOTIONNEL
+    // ======================================================
+
+    const hasActivePromotion =
+        typeof tomaV3IsPromotionActive === "function" &&
+        tomaV3IsPromotionActive(product);
+
+    if (hasActivePromotion) {
+
+        // Ancien prix barré
+        const oldPriceElement = document.createElement("del");
+
+        oldPriceElement.className = "v3ProductOldPrice";
+
+        oldPriceElement.textContent = tomaV3FormatPrice(
+            product.oldPrice ?? product.price
+        );
+
+        // Nouveau prix promotionnel
+        const promotionPriceElement = document.createElement("strong");
+
+        promotionPriceElement.className = "v3ProductPromotionPrice";
+
+        promotionPriceElement.textContent = tomaV3FormatPrice(
+            product.promotionPrice
+        );
+
+        // Pourcentage de réduction
+        const discountBadge = document.createElement("span");
+
+        discountBadge.className = "v3ProductDiscountBadge";
+
+        discountBadge.textContent =
+            "-" + Math.round(Number(product.promotionPercent)) + "%";
+
+        price.append(
+            oldPriceElement,
+            promotionPriceElement,
+            discountBadge
+        );
+
+    } else {
+
+        // Prix normal si aucune promotion n'est active
+        price.textContent = tomaV3FormatPrice(product.price);
+
+    }
+
+    // ======================================================
+    // BOUTONS : FAVORIS ET PANIER
+    // ======================================================
+
     const actions = document.createElement("div");
-
     actions.className = "v3ProductActions";
 
     const favoriteButton = document.createElement("button");
@@ -1284,7 +1336,6 @@ function tomaV3CreateFeaturedCard(product, badgeText = "Em destaque") {
             "aria-pressed",
             String(favorite)
         );
-
     }
 
     updateFavoriteButton();
@@ -1303,9 +1354,9 @@ function tomaV3CreateFeaturedCard(product, badgeText = "Em destaque") {
                 : "Produto removido dos favoritos.",
             "success"
         );
-
     });
 
+    // Bouton d'ajout au panier
     const addButton = document.createElement("button");
 
     addButton.type = "button";
@@ -1318,6 +1369,8 @@ function tomaV3CreateFeaturedCard(product, badgeText = "Em destaque") {
 
         try {
 
+            // Conserver ici le comportement actuel du panier.
+            // Le prix réellement facturé sera vérifié séparément.
             addToCart(product);
 
             tomaV3RefreshCartCount();
@@ -1338,9 +1391,7 @@ function tomaV3CreateFeaturedCard(product, badgeText = "Em destaque") {
                 "Não foi possível adicionar o produto.",
                 "error"
             );
-
         }
-
     });
 
     actions.append(favoriteButton, addButton);
@@ -1349,13 +1400,15 @@ function tomaV3CreateFeaturedCard(product, badgeText = "Em destaque") {
 
     card.append(imageWrapper, info);
 
-    // Ouvrir la fiche produit
+    // ======================================================
+    // OUVRIR LA FICHE PRODUIT
+    // ======================================================
+
     card.addEventListener("click", () => {
 
         window.location.href =
             "./product-detail-v2.html?id=" +
             encodeURIComponent(product.id);
-
     });
 
     return card;
