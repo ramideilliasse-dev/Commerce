@@ -203,3 +203,207 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 });
+// ======================================================
+// TOMA V3 — BLOC 2
+// Connexion Firebase et identification des rôles
+// ======================================================
+
+// ------------------------------------------------------
+// 2.1 — Lire le rôle de l'utilisateur dans Firestore
+// ------------------------------------------------------
+
+async function tomaV3GetUserRole(user) {
+
+    if (!user) {
+        return {
+            role: "guest",
+            data: null
+        };
+    }
+
+    try {
+
+        const userRef = doc(db, "users", user.uid);
+        const userSnapshot = await getDoc(userRef);
+
+        if (!userSnapshot.exists()) {
+
+            console.warn(
+                "[TOMA V3] Aucun document trouvé dans users/",
+                user.uid
+            );
+
+            return {
+                role: "customer",
+                data: null
+            };
+        }
+
+        const userData = userSnapshot.data();
+
+        const role = String(
+            userData.role || "customer"
+        ).toLowerCase().trim();
+
+        return {
+            role,
+            data: userData
+        };
+
+    } catch (error) {
+
+        console.error(
+            "[TOMA V3] Erreur de lecture du rôle :",
+            error
+        );
+
+        tomaV3Toast(
+            "Não foi possível verificar o seu perfil.",
+            "error"
+        );
+
+        return {
+            role: "unknown",
+            data: null
+        };
+    }
+}
+
+// ------------------------------------------------------
+// 2.2 — Afficher les raccourcis selon le rôle
+// ------------------------------------------------------
+
+function tomaV3UpdateRoleShortcuts(role) {
+
+    const merchantShortcut =
+        tomaV3GetElement("merchantShortcut");
+
+    const adminShortcut =
+        tomaV3GetElement("adminShortcut");
+
+    const normalizedRole = String(
+        role || "guest"
+    ).toLowerCase().trim();
+
+    if (merchantShortcut) {
+
+        merchantShortcut.hidden =
+            normalizedRole !== "merchant";
+
+    }
+
+    if (adminShortcut) {
+
+        adminShortcut.hidden = ![
+            "admin",
+            "superadmin"
+        ].includes(normalizedRole);
+
+    }
+
+    console.info(
+        "[TOMA V3] Rôle détecté :",
+        normalizedRole
+    );
+}
+
+// ------------------------------------------------------
+// 2.3 — Préparer le profil affiché dans l'en-tête
+// ------------------------------------------------------
+
+function tomaV3UpdateHeaderProfile(user, userData = null) {
+
+    const photoElement =
+        tomaV3GetElement("headerProfilePhoto");
+
+    if (!photoElement) return;
+
+    if (!user) {
+
+        photoElement.src =
+            "./images/default-avatar.png";
+
+        photoElement.alt = "Perfil";
+
+        return;
+    }
+
+    const photo =
+        userData?.photoURL ||
+        userData?.photoUrl ||
+        userData?.photo ||
+        user.photoURL ||
+        "./images/default-avatar.png";
+
+    photoElement.src = photo;
+    photoElement.alt =
+        userData?.name ||
+        user.displayName ||
+        "O meu perfil";
+
+    photoElement.onerror = () => {
+
+        photoElement.onerror = null;
+
+        photoElement.src =
+            "./images/default-avatar.png";
+
+    };
+}
+
+// ------------------------------------------------------
+// 2.4 — Observer les changements de connexion
+// ------------------------------------------------------
+
+function tomaV3ListenToAuthentication() {
+
+    onAuthStateChanged(auth, async (user) => {
+
+        TOMA_V3.currentUser = user || null;
+
+        if (!user) {
+
+            TOMA_V3.currentRole = "guest";
+
+            tomaV3UpdateRoleShortcuts("guest");
+
+            tomaV3UpdateHeaderProfile(null);
+
+            return;
+        }
+
+        const result = await tomaV3GetUserRole(user);
+
+        TOMA_V3.currentRole = result.role;
+
+        tomaV3UpdateRoleShortcuts(result.role);
+
+        tomaV3UpdateHeaderProfile(
+            user,
+            result.data
+        );
+
+    });
+}
+
+// ------------------------------------------------------
+// 2.5 — Lancer l'identification Firebase
+// ------------------------------------------------------
+
+try {
+
+    tomaV3ListenToAuthentication();
+
+} catch (error) {
+
+    console.error(
+        "[TOMA V3 — BLOC 2] Erreur Firebase Auth :",
+        error
+    );
+
+    tomaV3Toast(
+        "Erro ao verificar a ligação da conta.",
+        "error"
+    );
+
+}
