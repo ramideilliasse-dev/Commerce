@@ -731,6 +731,7 @@ settingsV2InitializeAddressManagement();
 settingsV2InitializeAuthentication();
 settingsV2InitializeMerchantSettings();
 settingsV2InitializeNotifications();
+settingsV2InitializeDarkMode();
 /* =========================================================
    TOMA SETTINGS V2 — BLOCO 6
    EDIÇÃO DO PERFIL DO UTILIZADOR
@@ -2771,4 +2772,121 @@ function settingsV2InitializeNotifications() {
 
 /* =========================================================
    FIM DO BLOCO 9.1
+   ========================================================= */
+/* =========================================================
+   TOMA SETTINGS V2 — BLOCO 11.1
+   MODO ESCURO PERSISTENTE
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   11.1.1 — APLICAR O MODO ESCURO
+   --------------------------------------------------------- */
+
+function settingsV2ApplyDarkMode(enabled) {
+    const toggle = settingsV2Elements.darkModeToggle;
+
+    if (typeof enabled !== "boolean") {
+        enabled = false;
+    }
+
+    /* Guardar a preferência neste dispositivo */
+    try {
+        localStorage.setItem(
+            "toma_dark_mode",
+            enabled ? "true" : "false"
+        );
+    } catch (error) {
+        console.error(
+            "[TOMA SETTINGS] Não foi possível guardar o modo escuro:",
+            error
+        );
+    }
+
+    /* Atualizar o interruptor */
+    if (toggle) {
+        toggle.checked = enabled;
+    }
+
+    /* Aplicar o tema ao documento */
+    document.documentElement.classList.toggle(
+        "dark-mode",
+        enabled
+    );
+
+    document.body.classList.toggle(
+        "dark-mode",
+        enabled
+    );
+
+    console.info(
+        "[TOMA SETTINGS] Modo escuro:",
+        enabled ? "ativado" : "desativado"
+    );
+}
+
+/* ---------------------------------------------------------
+   11.1.2 — RESTAURAR O MODO ESCURO
+   --------------------------------------------------------- */
+
+function settingsV2LoadDarkMode() {
+    let enabled = false;
+
+    try {
+        enabled =
+            localStorage.getItem("toma_dark_mode") === "true";
+    } catch (error) {
+        console.error(
+            "[TOMA SETTINGS] Não foi possível ler o modo escuro:",
+            error
+        );
+    }
+
+    settingsV2ApplyDarkMode(enabled);
+
+    return enabled;
+}
+
+/* ---------------------------------------------------------
+   11.1.3 — INICIALIZAR O INTERRUPTOR
+   --------------------------------------------------------- */
+
+function settingsV2InitializeDarkMode() {
+    const toggle = settingsV2Elements.darkModeToggle;
+
+    if (!toggle) {
+        console.error(
+            "[TOMA SETTINGS] Interruptor darkModeToggle não encontrado."
+        );
+
+        return;
+    }
+
+    /* Restaurar a preferência guardada */
+    settingsV2LoadDarkMode();
+
+    /* Evitar eventos duplicados */
+    if (toggle.dataset.darkModeInitialized === "true") {
+        return;
+    }
+
+    toggle.dataset.darkModeInitialized = "true";
+
+    toggle.addEventListener("change", function () {
+        settingsV2ApplyDarkMode(toggle.checked);
+
+        settingsV2ShowToast(
+            toggle.checked
+                ? "Modo escuro ativado."
+                : "Modo escuro desativado.",
+            "success"
+        );
+    });
+
+    console.info(
+        "[TOMA SETTINGS] Modo escuro inicializado."
+    );
+}
+
+/* =========================================================
+   FIM DO BLOCO 11.1
    ========================================================= */
