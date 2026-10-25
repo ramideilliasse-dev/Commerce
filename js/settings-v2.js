@@ -3252,6 +3252,28 @@ if (settingsV2Elements.confirmationModal) {
     );
 }
 /* =========================================================
+   BLOCO 13.1.1 — BOTÃO CONTINUAR
+   Executar a eliminação apenas após confirmação
+========================================================= */
+
+if (
+    settingsV2Elements.confirmActionButton &&
+    settingsV2Elements.confirmActionButton.dataset.deleteAccountInitialized !== "true"
+) {
+    settingsV2Elements.confirmActionButton.dataset.deleteAccountInitialized = "true";
+
+    settingsV2Elements.confirmActionButton.addEventListener(
+        "click",
+        async function (event) {
+            event.preventDefault();
+
+            settingsV2CloseDeleteAccountConfirmation();
+
+            await settingsV2DeleteAccount();
+        }
+    );
+}
+/* =========================================================
    TOMA SETTINGS V2
    BLOC 13.2 — ELIMINAÇÃO EFETIVA DA CONTA
 ========================================================= */
