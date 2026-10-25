@@ -3256,7 +3256,7 @@ if (settingsV2Elements.confirmationModal) {
    BLOC 13.2 — ELIMINAÇÃO EFETIVA DA CONTA
 ========================================================= */
 
-let settingsV2DeleteAccountInProgress = false;
+
 
 /* Executar a eliminação da conta */
 async function settingsV2DeleteAccount() {
