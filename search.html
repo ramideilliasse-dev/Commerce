@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Toma">
@@ -12,165 +13,626 @@
 
 <meta name="theme-color" content="#ff6a00">
 
-<title>Pesquisar produtos | Toma</title>
+<title>Pesquisar | Toma</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
+:root {
+    --toma-orange: #ff6a00;
+    --toma-orange-dark: #e85f00;
+    --toma-orange-light: #fff1e7;
+    --toma-bg: #f7f8fa;
+    --toma-card: #ffffff;
+    --toma-text: #202124;
+    --toma-muted: #777b83;
+    --toma-border: #eceef1;
+    --toma-radius: 18px;
+    --toma-shadow: 0 5px 22px rgba(20, 24, 35, 0.055);
+}
+
 * {
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
-    font-family: Arial, sans-serif;
     margin: 0;
-    background: #f5f5f5;
+    font-family: "Inter", Arial, sans-serif;
+    color: var(--toma-text);
+    background: var(--toma-bg);
+    -webkit-font-smoothing: antialiased;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button {
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* HEADER */
-.header {
-    background: #ff6a00;
-    padding: 15px;
-    display: flex;
-    gap: 10px;
-    align-items: center;
+
+.topHeader {
     position: sticky;
     top: 0;
     z-index: 100;
+    background: rgba(255, 106, 0, 0.97);
+    padding: calc(12px + env(safe-area-inset-top)) 15px 16px;
+    box-shadow: 0 4px 18px rgba(80, 40, 0, 0.12);
 }
 
-.back {
-    background: white;
-    border: none;
-    padding: 10px 14px;
-    border-radius: 8px;
+.headerTop {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.backButton {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid rgba(255,255,255,0.5);
+    border-radius: 14px;
+    background: rgba(255,255,255,0.96);
+    color: var(--toma-orange-dark);
+    font-size: 23px;
     cursor: pointer;
-    font-size: 18px;
+}
+
+.brand {
+    min-width: 0;
+    color: white;
+}
+
+.brandName {
+    font-size: 23px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.1;
+}
+
+.brandSubtitle {
+    margin-top: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    opacity: 0.92;
+}
+
+.searchForm {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 54px;
+    padding: 0 7px 0 15px;
+    background: white;
+    border: 1px solid rgba(255,255,255,0.7);
+    border-radius: 17px;
+    box-shadow: 0 4px 15px rgba(70, 35, 0, 0.08);
+}
+
+.searchIcon {
+    color: var(--toma-orange);
+    font-size: 22px;
+    flex-shrink: 0;
 }
 
 .searchBox {
-    flex: 1;
+    width: 100%;
     min-width: 0;
-    padding: 12px;
+    padding: 15px 0;
     border: none;
     outline: none;
-    border-radius: 10px;
-    font-size: 16px;
+    color: var(--toma-text);
+    background: transparent;
+    font-size: 15px;
 }
 
-/* SEARCH STATUS */
-.searchStatus {
-    padding: 12px 15px 0;
-    color: #666;
-    font-size: 14px;
+.searchBox::placeholder {
+    color: #9b9da3;
 }
 
-/* PRODUCTS */
-.products {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-    padding: 10px;
-}
-
-.card {
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+.clearSearch {
+    display: none;
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 50%;
+    background: #f1f2f4;
+    color: #555;
     cursor: pointer;
 }
 
-.card img {
+.clearSearch.visible {
+    display: block;
+}
+
+.submitSearch {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 13px;
+    background: var(--toma-orange);
+    color: white;
+    font-size: 21px;
+    cursor: pointer;
+}
+
+/* PAGE */
+
+.pageContent {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px 14px 40px;
+}
+
+.welcomeTitle {
+    margin: 0;
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -0.6px;
+}
+
+.welcomeDescription {
+    margin: 7px 0 20px;
+    color: var(--toma-muted);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* TABS */
+
+.searchTabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+    margin-bottom: 18px;
+    padding: 5px;
+    border: 1px solid var(--toma-border);
+    border-radius: 17px;
+    background: white;
+    box-shadow: var(--toma-shadow);
+}
+
+.searchTab {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    min-height: 46px;
+    padding: 10px;
+    border: none;
+    border-radius: 12px;
+    background: transparent;
+    color: #777b83;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+
+.searchTab.active {
+    background: var(--toma-orange-light);
+    color: var(--toma-orange-dark);
+}
+
+.searchTab:active {
+    transform: scale(0.98);
+}
+
+.tabIcon {
+    font-size: 18px;
+}
+
+/* RESULTS HEADER */
+
+.resultsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 13px;
+}
+
+.resultsTitle {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.searchStatus {
+    color: var(--toma-muted);
+    font-size: 11px;
+    text-align: right;
+}
+
+/* PRODUCT GRID */
+
+.resultsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.resultCard {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid rgba(20, 24, 35, 0.045);
+    border-radius: var(--toma-radius);
+    background: var(--toma-card);
+    box-shadow: var(--toma-shadow);
+    cursor: pointer;
+    transition: transform 0.18s, box-shadow 0.18s;
+}
+
+.resultCard:active {
+    transform: scale(0.985);
+}
+
+.productImageWrap {
+    position: relative;
+    width: 100%;
+    height: 150px;
+    background: #f0f1f3;
+}
+
+.productImage {
     display: block;
     width: 100%;
-    height: 140px;
+    height: 100%;
     object-fit: cover;
-    background: #eee;
 }
 
-.info {
-    padding: 10px;
+.productInfo {
+    padding: 12px;
 }
 
-.name {
-    font-weight: bold;
-    font-size: 14px;
+.productName {
+    min-height: 34px;
+    font-size: 13px;
+    line-height: 1.4;
+    font-weight: 700;
     overflow-wrap: anywhere;
-}
-
-.desc {
-    font-size: 12px;
-    color: #666;
-    margin-top: 4px;
     display: -webkit-box;
-    -webkit-line-clamp: 1;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
-.price {
-    color: #ff6a00;
-    font-weight: bold;
+.productDescription {
     margin-top: 5px;
+    color: var(--toma-muted);
+    font-size: 11px;
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.productPrice {
+    margin-top: 10px;
+    color: var(--toma-orange-dark);
+    font-size: 15px;
+    font-weight: 800;
 }
 
 .soldOut {
-    background: #e53935;
-    color: white;
-    padding: 4px 8px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: bold;
     display: inline-block;
+    margin-top: 10px;
+    padding: 6px 9px;
+    border-radius: 8px;
+    background: #fff0f0;
+    color: #cf3030;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+/* OFFICIAL STORES */
+
+.storeCard {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid rgba(20, 24, 35, 0.045);
+    border-radius: var(--toma-radius);
+    background: white;
+    box-shadow: var(--toma-shadow);
+    cursor: pointer;
+    transition: transform 0.18s;
+}
+
+.storeCard:active {
+    transform: scale(0.985);
+}
+
+.storeLogoWrap {
+    width: 70px;
+    height: 70px;
+    flex: 0 0 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border: 1px solid var(--toma-border);
+    border-radius: 17px;
+    background: #fafafa;
+}
+
+.storeLogo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.storeInfo {
+    min-width: 0;
+    flex: 1;
+}
+
+.storeName {
+    font-size: 14px;
+    line-height: 1.4;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.storeDescription {
     margin-top: 5px;
+    color: var(--toma-muted);
+    font-size: 11px;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
-.empty {
+.storeBadge {
+    display: inline-flex;
+    margin-top: 8px;
+    padding: 5px 8px;
+    border-radius: 7px;
+    background: var(--toma-orange-light);
+    color: var(--toma-orange-dark);
+    font-size: 10px;
+    font-weight: 800;
+}
+
+/* EMPTY / ERROR / LOADING */
+
+.stateCard {
     grid-column: 1 / -1;
+    padding: 34px 20px;
+    border: 1px solid var(--toma-border);
+    border-radius: var(--toma-radius);
+    background: white;
     text-align: center;
-    padding: 30px;
-    color: #777;
+    box-shadow: var(--toma-shadow);
 }
 
-.error {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 30px;
-    color: #b00020;
+.stateIcon {
+    margin-bottom: 12px;
+    font-size: 35px;
 }
 
+.stateTitle {
+    margin-bottom: 7px;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.stateText {
+    color: var(--toma-muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.retryButton {
+    margin-top: 15px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 10px;
+    background: var(--toma-orange);
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* FOOTER */
+
+.footer {
+    padding: 25px 10px;
+    color: #9699a0;
+    text-align: center;
+    font-size: 11px;
+}
+
+.footer strong {
+    color: var(--toma-orange-dark);
+}
+
+@media (min-width: 700px) {
+    .topHeader {
+        padding-left: max(20px, calc((100% - 960px) / 2));
+        padding-right: max(20px, calc((100% - 960px) / 2));
+    }
+
+    .pageContent {
+        padding: 28px 22px 50px;
+    }
+
+    .resultsGrid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .productImageWrap {
+        height: 190px;
+    }
+
+    .storeCard {
+        padding: 18px;
+    }
+}
+
+@media (max-width: 360px) {
+    .pageContent {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .productImageWrap {
+        height: 125px;
+    }
+
+    .productInfo {
+        padding: 9px;
+    }
+
+    .storeLogoWrap {
+        width: 58px;
+        height: 58px;
+        flex-basis: 58px;
+    }
+}
 </style>
 </head>
 
 <body>
 
-<header class="header">
+<header class="topHeader">
 
-    <button
-        class="back"
-        type="button"
-        id="backButton"
-        aria-label="Voltar">
-        ←
-    </button>
+    <div class="headerTop">
 
-    <input
-        type="search"
-        id="searchInput"
-        class="searchBox"
-        placeholder="Pesquisar produtos..."
-        aria-label="Pesquisar produtos"
-        autocomplete="off"
-    >
+        <button
+            class="backButton"
+            type="button"
+            id="backButton"
+            aria-label="Voltar">
+            ←
+        </button>
+
+        <div class="brand">
+            <div class="brandName">Toma</div>
+            <div class="brandSubtitle">
+                Descubra produtos e lojas num só lugar
+            </div>
+        </div>
+
+    </div>
+
+    <form class="searchForm" id="searchForm">
+
+        <span class="searchIcon" aria-hidden="true">⌕</span>
+
+        <input
+            type="search"
+            id="searchInput"
+            class="searchBox"
+            placeholder="Pesquisar produtos ou lojas..."
+            aria-label="Pesquisar produtos ou lojas"
+            autocomplete="off"
+        >
+
+        <button
+            type="button"
+            id="clearSearch"
+            class="clearSearch"
+            aria-label="Limpar pesquisa">
+            ×
+        </button>
+
+        <button
+            type="submit"
+            class="submitSearch"
+            aria-label="Pesquisar">
+            →
+        </button>
+
+    </form>
 
 </header>
 
-<div
-    id="searchStatus"
-    class="searchStatus"
-    aria-live="polite">
-</div>
+<main class="pageContent">
 
-<main id="products" class="products"></main>
+    <h1 class="welcomeTitle">O que procura?</h1>
+
+    <p class="welcomeDescription">
+        Encontre os seus produtos favoritos e descubra lojas oficiais na Toma.
+    </p>
+
+    <nav class="searchTabs" aria-label="Tipo de pesquisa">
+
+        <button
+            type="button"
+            class="searchTab active"
+            data-search-type="products"
+            aria-pressed="true">
+
+            <span class="tabIcon" aria-hidden="true">🛍️</span>
+            Produtos
+
+        </button>
+
+        <button
+            type="button"
+            class="searchTab"
+            data-search-type="stores"
+            aria-pressed="false">
+
+            <span class="tabIcon" aria-hidden="true">🏪</span>
+            Lojas
+
+        </button>
+
+    </nav>
+
+    <div class="resultsHeader">
+
+        <h2 class="resultsTitle" id="resultsTitle">
+            Produtos
+        </h2>
+
+        <div
+            id="searchStatus"
+            class="searchStatus"
+            aria-live="polite">
+        </div>
+
+    </div>
+
+    <section
+        id="products"
+        class="resultsGrid"
+        aria-live="polite">
+    </section>
+
+</main>
+
+<footer class="footer">
+    Compras mais simples, descobertas melhores com <strong>Toma</strong>.
+</footer>
 
 <script type="module">
 
@@ -181,156 +643,228 @@ import {
     getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const productsDiv = document.getElementById("products");
+/* =====================================
+   BLOC 1 — ELEMENTOS E ESTADO
+===================================== */
+
+const resultsDiv = document.getElementById("products");
 const searchInput = document.getElementById("searchInput");
 const searchStatus = document.getElementById("searchStatus");
+const resultsTitle = document.getElementById("resultsTitle");
 const backButton = document.getElementById("backButton");
+const searchForm = document.getElementById("searchForm");
+const clearSearchButton = document.getElementById("clearSearch");
+const searchTabs = document.querySelectorAll("[data-search-type]");
 
 let allProducts = [];
+let allStores = [];
+let currentType = "products";
+let productsLoaded = false;
+let storesLoaded = false;
+let productsLoading = false;
+let storesLoading = false;
 
 /* =====================================
-   BLOC 1 — NORMALISER LE TEXTE
+   BLOC 2 — NORMALISAR TEXTO
 ===================================== */
 
 function normalizeText(value) {
+
     return String(value || "")
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
         .toLowerCase()
         .trim();
+
 }
 
 /* =====================================
-   BLOC 2 — CHARGER LES PRODUITS FIREBASE
+   BLOC 3 — ESTADOS VISUAIS
 ===================================== */
 
-async function loadProducts() {
+function showState(icon, title, message, isError = false) {
 
-    productsDiv.innerHTML = `
-        <div class="empty">A carregar produtos...</div>
-    `;
+    resultsDiv.replaceChildren();
 
-    try {
+    const box = document.createElement("div");
+    box.className = "stateCard";
 
-        const snap = await getDocs(
-            collection(db, "products")
-        );
+    const iconElement = document.createElement("div");
+    iconElement.className = "stateIcon";
+    iconElement.textContent = icon;
 
-        allProducts = [];
+    const titleElement = document.createElement("div");
+    titleElement.className = "stateTitle";
+    titleElement.textContent = title;
 
-        snap.forEach(documentSnapshot => {
+    const messageElement = document.createElement("div");
+    messageElement.className = "stateText";
+    messageElement.textContent = message;
 
-            const data = documentSnapshot.data();
+    box.append(iconElement, titleElement, messageElement);
 
-            allProducts.push({
-                ...data,
-                id: documentSnapshot.id
-            });
+    if (isError) {
+
+        const retry = document.createElement("button");
+        retry.className = "retryButton";
+        retry.textContent = "Tentar novamente";
+
+        retry.addEventListener("click", function () {
+
+            if (currentType === "products") {
+                loadProducts(true);
+            } else {
+                loadStores(true);
+            }
 
         });
 
-        // Lire la recherche transmise par la page d'accueil.
-        const params = new URLSearchParams(
-            window.location.search
+        box.appendChild(retry);
+
+    }
+
+    resultsDiv.appendChild(box);
+
+}
+
+/* =====================================
+   BLOC 4 — CARREGAR PRODUTOS
+===================================== */
+
+async function loadProducts(forceReload = false) {
+
+    if (productsLoading) return;
+
+    if (productsLoaded && !forceReload) {
+        filterProducts(searchInput.value);
+        return;
+    }
+
+    productsLoading = true;
+
+    showState(
+        "⏳",
+        "A carregar produtos",
+        "Estamos a procurar produtos na Toma..."
+    );
+
+    try {
+
+        const snapshot = await getDocs(
+            collection(db, "products")
         );
 
-        const initialQuery = params.get("q") || "";
+        allProducts = snapshot.docs.map(item => ({
+            ...item.data(),
+            id: item.id
+        }));
 
-        searchInput.value = initialQuery;
+        productsLoaded = true;
 
-        // Afficher les produits correspondant à la recherche.
-        filterProducts(initialQuery);
+        filterProducts(searchInput.value);
 
     } catch (error) {
 
-        console.error(
-            "[TOMA SEARCH] Erreur Firebase :",
-            error
-        );
+        console.error("[TOMA SEARCH] Erro ao carregar produtos:", error);
 
-        productsDiv.innerHTML = `
-            <div class="error">
-                Não foi possível carregar os produtos.
-                Verifique a ligação à Internet e tente novamente.
-            </div>
-        `;
+        showState(
+            "⚠️",
+            "Não foi possível carregar os produtos",
+            "Verifique a ligação à Internet e tente novamente.",
+            true
+        );
 
         searchStatus.textContent = "";
 
-        alert(
-            "Toma: não foi possível carregar os produtos. Tente novamente."
-        );
+    } finally {
+
+        productsLoading = false;
 
     }
 
 }
 
 /* =====================================
-   BLOC 3 — AFFICHER LES PRODUITS
+   BLOC 5 — IMAGEM DE PRODUTO
+===================================== */
+
+function getProductImage(product) {
+
+    if (Array.isArray(product.images) && product.images[0]) {
+        return product.images[0];
+    }
+
+    return product.image || "https://placehold.co/400x300?text=Toma";
+
+}
+
+/* =====================================
+   BLOC 6 — MOSTRAR PRODUTOS
 ===================================== */
 
 function renderProducts(list) {
 
+    resultsDiv.replaceChildren();
+
     if (list.length === 0) {
 
-        productsDiv.innerHTML = `
-            <div class="empty">
-                Nenhum produto encontrado 😢
-            </div>
-        `;
+        showState(
+            "🔎",
+            "Nenhum produto encontrado",
+            "Experimente outro nome ou verifique a escrita."
+        );
 
         return;
+
     }
 
-    productsDiv.innerHTML = "";
+    const fragment = document.createDocumentFragment();
 
     list.forEach(product => {
 
         const card = document.createElement("article");
-        card.className = "card";
+        card.className = "resultCard";
+        card.setAttribute("role", "button");
+        card.setAttribute("tabindex", "0");
+        card.setAttribute(
+            "aria-label",
+            "Ver produto " + (product.name || "Produto")
+        );
+
+        const imageWrap = document.createElement("div");
+        imageWrap.className = "productImageWrap";
 
         const image = document.createElement("img");
-
-        const images = Array.isArray(product.images)
-            ? product.images
-            : [];
-
-        image.src =
-            images[0] ||
-            product.image ||
-            "https://placehold.co/300x200?text=Toma";
-
-        image.alt = product.name || "Produto";
+        image.className = "productImage";
         image.loading = "lazy";
+        image.src = getProductImage(product);
+        image.alt = product.name || "Produto";
 
         image.onerror = function () {
             this.onerror = null;
-            this.src =
-                "https://placehold.co/300x200?text=Toma";
+            this.src = "https://placehold.co/400x300?text=Toma";
         };
 
+        imageWrap.appendChild(image);
+
         const info = document.createElement("div");
-        info.className = "info";
+        info.className = "productInfo";
 
         const name = document.createElement("div");
-        name.className = "name";
+        name.className = "productName";
         name.textContent = product.name || "Produto";
 
         const description = document.createElement("div");
-        description.className = "desc";
+        description.className = "productDescription";
+        description.textContent = product.description || "Descubra este produto na Toma.";
 
-        description.textContent = String(
-            product.description || ""
-        ).split("\n")[0];
-
-        info.appendChild(name);
-        info.appendChild(description);
+        info.append(name, description);
 
         const stock = Number(product.stock ?? 0);
 
         if (stock <= 0) {
 
-            const soldOut = document.createElement("div");
+            const soldOut = document.createElement("span");
             soldOut.className = "soldOut";
             soldOut.textContent = "ESGOTADO";
 
@@ -339,7 +873,7 @@ function renderProducts(list) {
         } else {
 
             const price = document.createElement("div");
-            price.className = "price";
+            price.className = "productPrice";
 
             price.textContent =
                 Number(product.price || 0).toLocaleString("pt-PT") +
@@ -349,21 +883,31 @@ function renderProducts(list) {
 
         }
 
-        card.appendChild(image);
-        card.appendChild(info);
+        card.append(imageWrap, info);
 
         card.addEventListener("click", function () {
             openProduct(product.id);
         });
 
-        productsDiv.appendChild(card);
+        card.addEventListener("keydown", function (event) {
+
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                openProduct(product.id);
+            }
+
+        });
+
+        fragment.appendChild(card);
 
     });
+
+    resultsDiv.appendChild(fragment);
 
 }
 
 /* =====================================
-   BLOC 4 — FILTRAR LES PRODUITS
+   BLOC 7 — FILTRAR PRODUTOS
 ===================================== */
 
 function filterProducts(value) {
@@ -375,52 +919,322 @@ function filterProducts(value) {
         renderProducts(allProducts);
 
         searchStatus.textContent =
-            allProducts.length +
-            " produtos disponíveis";
+            allProducts.length + " produto(s)";
 
         return;
+
     }
 
     const filtered = allProducts.filter(product => {
 
-        const name = normalizeText(product.name);
-        const description = normalizeText(product.description);
-        const province = normalizeText(product.province);
-        const category = normalizeText(product.category);
+        const searchableText = normalizeText([
+            product.name,
+            product.description,
+            product.province,
+            product.category,
+            product.merchantName,
+            product.storeName
+        ].join(" "));
 
-        return (
-            name.includes(searchValue) ||
-            description.includes(searchValue) ||
-            province.includes(searchValue) ||
-            category.includes(searchValue)
-        );
+        return searchableText.includes(searchValue);
 
     });
 
     renderProducts(filtered);
 
     searchStatus.textContent =
-        filtered.length +
-        (
-            filtered.length === 1
-                ? " produto encontrado"
-                : " produtos encontrados"
-        );
+        filtered.length + " resultado(s)";
 
 }
 
 /* =====================================
-   BLOC 5 — RECHERCHE EN TEMPS RÉEL
+   BLOC 8 — CARREGAR LOJAS OFICIAIS
 ===================================== */
 
-searchInput.addEventListener("input", function () {
+async function loadStores(forceReload = false) {
 
-    filterProducts(this.value);
+    if (storesLoading) return;
 
-});
+    if (storesLoaded && !forceReload) {
+        filterStores(searchInput.value);
+        return;
+    }
+
+    storesLoading = true;
+
+    showState(
+        "⏳",
+        "A carregar lojas",
+        "Estamos a procurar lojas oficiais..."
+    );
+
+    try {
+
+        const snapshot = await getDocs(
+            collection(db, "officialStores")
+        );
+
+        allStores = snapshot.docs.map(item => ({
+            ...item.data(),
+            id: item.id
+        }));
+
+        /*
+         * Nota:
+         * A visibilidade e os estados das lojas serão
+         * ajustados após verificar o BLOC 11 de homes-v3.js.
+         */
+
+        storesLoaded = true;
+
+        filterStores(searchInput.value);
+
+    } catch (error) {
+
+        console.error("[TOMA SEARCH] Erro ao carregar lojas:", error);
+
+        showState(
+            "⚠️",
+            "Não foi possível carregar as lojas",
+            "Verifique a ligação à Internet e tente novamente.",
+            true
+        );
+
+        searchStatus.textContent = "";
+
+    } finally {
+
+        storesLoading = false;
+
+    }
+
+}
 
 /* =====================================
-   BLOC 6 — OUVRIR UN PRODUIT
+   BLOC 9 — CAMPOS DA LOJA
+===================================== */
+
+function getStoreName(store) {
+
+    return String(
+        store.name ||
+        store.storeName ||
+        store.nome ||
+        store.title ||
+        "Loja oficial"
+    );
+
+}
+
+function getStoreLogo(store) {
+
+    return (
+        store.logo ||
+        store.logoUrl ||
+        store.logoURL ||
+        store.storeLogo ||
+        store.image ||
+        store.imageUrl ||
+        "./images/default-store.png"
+    );
+
+}
+
+function getStoreDescription(store) {
+
+    return String(
+        store.description ||
+        store.storeDescription ||
+        store.category ||
+        store.storeCategory ||
+        "Descubra os produtos desta loja."
+    );
+
+}
+
+/* =====================================
+   BLOC 10 — MOSTRAR LOJAS
+===================================== */
+
+function renderStores(list) {
+
+    resultsDiv.replaceChildren();
+
+    if (list.length === 0) {
+
+        showState(
+            "🏪",
+            "Nenhuma loja encontrada",
+            "Experimente outro nome ou volte mais tarde."
+        );
+
+        return;
+
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    list.forEach(store => {
+
+        const card = document.createElement("article");
+        card.className = "storeCard";
+        card.setAttribute("role", "link");
+        card.setAttribute("tabindex", "0");
+
+        const logoWrap = document.createElement("div");
+        logoWrap.className = "storeLogoWrap";
+
+        const logo = document.createElement("img");
+        logo.className = "storeLogo";
+        logo.loading = "lazy";
+        logo.alt = "Logo " + getStoreName(store);
+        logo.src = getStoreLogo(store);
+
+        logo.onerror = function () {
+            this.onerror = null;
+            this.src = "./images/default-store.png";
+        };
+
+        logoWrap.appendChild(logo);
+
+        const info = document.createElement("div");
+        info.className = "storeInfo";
+
+        const name = document.createElement("div");
+        name.className = "storeName";
+        name.textContent = getStoreName(store);
+
+        const description = document.createElement("div");
+        description.className = "storeDescription";
+        description.textContent = getStoreDescription(store);
+
+        const badge = document.createElement("span");
+        badge.className = "storeBadge";
+        badge.textContent = "Loja oficial";
+
+        info.append(name, description, badge);
+        card.append(logoWrap, info);
+
+        function openStore() {
+
+            window.location.href =
+                "./official-store.html?id=" +
+                encodeURIComponent(store.id);
+
+        }
+
+        card.addEventListener("click", openStore);
+
+        card.addEventListener("keydown", function (event) {
+
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                openStore();
+            }
+
+        });
+
+        fragment.appendChild(card);
+
+    });
+
+    resultsDiv.appendChild(fragment);
+
+}
+
+/* =====================================
+   BLOC 11 — FILTRAR LOJAS
+===================================== */
+
+function filterStores(value) {
+
+    const searchValue = normalizeText(value);
+
+    if (!searchValue) {
+
+        renderStores(allStores);
+
+        searchStatus.textContent =
+            allStores.length + " loja(s)";
+
+        return;
+
+    }
+
+    const filtered = allStores.filter(store => {
+
+        const searchableText = normalizeText([
+            getStoreName(store),
+            getStoreDescription(store),
+            store.category,
+            store.storeCategory,
+            store.slug
+        ].join(" "));
+
+        return searchableText.includes(searchValue);
+
+    });
+
+    renderStores(filtered);
+
+    searchStatus.textContent =
+        filtered.length + " resultado(s)";
+
+}
+
+/* =====================================
+   BLOC 12 — MUDAR DE CATEGORIA
+===================================== */
+
+function setSearchType(type) {
+
+    currentType = type;
+
+    searchTabs.forEach(tab => {
+
+        const active = tab.dataset.searchType === type;
+
+        tab.classList.toggle("active", active);
+        tab.setAttribute("aria-pressed", String(active));
+
+    });
+
+    if (type === "products") {
+
+        resultsTitle.textContent = "Produtos";
+        searchInput.placeholder = "Pesquisar produtos...";
+        searchInput.setAttribute(
+            "aria-label",
+            "Pesquisar produtos"
+        );
+
+        if (productsLoaded) {
+            filterProducts(searchInput.value);
+        } else {
+            loadProducts();
+        }
+
+    } else {
+
+        resultsTitle.textContent = "Lojas oficiais";
+        searchInput.placeholder = "Pesquisar lojas...";
+        searchInput.setAttribute(
+            "aria-label",
+            "Pesquisar lojas oficiais"
+        );
+
+        if (storesLoaded) {
+            filterStores(searchInput.value);
+        } else {
+            loadStores();
+        }
+
+    }
+
+}
+
+/* =====================================
+   BLOC 13 — OUVRIR UN PRODUIT
 ===================================== */
 
 function openProduct(id) {
@@ -435,16 +1249,11 @@ function openProduct(id) {
     }
 
     if (Number(product.stock ?? 0) <= 0) {
-
         alert("Produto esgotado.");
         return;
-
     }
 
-    localStorage.setItem(
-        "selectedProduct",
-        id
-    );
+    localStorage.setItem("selectedProduct", id);
 
     window.location.href =
         "./product.html?id=" + encodeURIComponent(id);
@@ -452,7 +1261,60 @@ function openProduct(id) {
 }
 
 /* =====================================
-   BLOC 7 — BOUTON RETOUR
+   BLOC 14 — ÉVÉNEMENTS DE RECHERCHE
+===================================== */
+
+searchInput.addEventListener("input", function () {
+
+    clearSearchButton.classList.toggle(
+        "visible",
+        this.value.length > 0
+    );
+
+    if (currentType === "products") {
+        filterProducts(this.value);
+    } else {
+        filterStores(this.value);
+    }
+
+});
+
+searchForm.addEventListener("submit", function (event) {
+
+    event.preventDefault();
+
+    if (currentType === "products") {
+        filterProducts(searchInput.value);
+    } else {
+        filterStores(searchInput.value);
+    }
+
+});
+
+clearSearchButton.addEventListener("click", function () {
+
+    searchInput.value = "";
+    clearSearchButton.classList.remove("visible");
+    searchInput.focus();
+
+    if (currentType === "products") {
+        filterProducts("");
+    } else {
+        filterStores("");
+    }
+
+});
+
+searchTabs.forEach(tab => {
+
+    tab.addEventListener("click", function () {
+        setSearchType(tab.dataset.searchType);
+    });
+
+});
+
+/* =====================================
+   BLOC 15 — RETOUR
 ===================================== */
 
 backButton.addEventListener("click", function () {
@@ -466,23 +1328,44 @@ backButton.addEventListener("click", function () {
 });
 
 /* =====================================
-   BLOC 8 — DÉMARRAGE
+   BLOC 16 — INITIALISATION
 ===================================== */
 
-loadProducts();
+const params = new URLSearchParams(
+    window.location.search
+);
 
-</script>
+const initialQuery = params.get("q") || "";
+const initialType = params.get("type") || "products";
 
-<script>
+searchInput.value = initialQuery;
+
+clearSearchButton.classList.toggle(
+    "visible",
+    initialQuery.length > 0
+);
+
+if (initialType === "stores") {
+
+    setSearchType("stores");
+
+} else {
+
+    setSearchType("products");
+
+}
+
+/* Service Worker */
 
 if ("serviceWorker" in navigator) {
 
     window.addEventListener("load", function () {
 
-        navigator.serviceWorker.register("/service-worker.js")
+        navigator.serviceWorker
+            .register("/service-worker.js")
             .catch(function (error) {
                 console.error(
-                    "[TOMA SEARCH] Service Worker :",
+                    "[TOMA SEARCH] Service Worker:",
                     error
                 );
             });
@@ -494,4 +1377,4 @@ if ("serviceWorker" in navigator) {
 </script>
 
 </body>
-</html> 
+</html>
