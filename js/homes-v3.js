@@ -1498,6 +1498,9 @@ function tomaV3RenderAllProductSections() {
     // BLOC 9 : Produits populaires
     tomaV3RenderPopularProducts();
 
+    // BLOC 10 : Produits recommandés
+    tomaV3RenderRecommendedProducts();
+
 }
 
 // ------------------------------------------------------
@@ -1827,6 +1830,161 @@ function tomaV3RenderPopularProducts() {
     console.info(
         "[TOMA V3] Produtos populares apresentados:",
         popularProducts.length
+    );
+}
+// ======================================================
+// TOMA V3 — BLOC 10
+// Affichage des produits recommandés
+// ======================================================
+
+// Récupérer les produits déjà affichés dans les autres sections
+function tomaV3GetDisplayedProductIds() {
+    const displayedIds = new Set();
+
+    const sections = [
+        tomaV3GetFeaturedProducts(),
+        tomaV3GetNewProducts(),
+        tomaV3GetPromotionProducts(),
+        tomaV3GetPopularProducts()
+    ];
+
+    sections.forEach(products => {
+        products
+            .slice(0, TOMA_V3_HOME_PRODUCT_LIMIT)
+            .forEach(product => {
+                if (product && product.id) {
+                    displayedIds.add(String(product.id));
+                }
+            });
+    });
+
+    return displayedIds;
+}
+
+
+// Calculer la date de création d'un produit
+function tomaV3GetProductDate(product) {
+    const value =
+        product.createdAt ||
+        product.created_at ||
+        product.dateCreated ||
+        product.timestamp ||
+        product.updatedAt;
+
+    if (!value) {
+        return 0;
+    }
+
+    if (typeof value.toDate === "function") {
+        return value.toDate().getTime();
+    }
+
+    if (value instanceof Date) {
+        return value.getTime();
+    }
+
+    if (typeof value === "number") {
+        return value;
+    }
+
+    const parsedDate = new Date(value).getTime();
+
+    return Number.isNaN(parsedDate) ? 0 : parsedDate;
+}
+
+
+// Choisir les produits recommandés
+function tomaV3GetRecommendedProducts() {
+    const products = TOMA_V3.products || [];
+
+    if (products.length === 0) {
+        return [];
+    }
+
+    const displayedIds = tomaV3GetDisplayedProductIds();
+
+    // Essayer d'éviter les produits déjà affichés
+    let candidates = products.filter(product =>
+        product &&
+        product.id &&
+        !displayedIds.has(String(product.id))
+    );
+
+    // Si tous les produits sont déjà affichés,
+    // réutiliser les produits disponibles.
+    if (candidates.length === 0) {
+        candidates = [...products];
+    }
+
+    const now = Date.now();
+    const thirtyDays = 30 * 24 * 60 * 60 * 1000;
+
+    // Classer les produits selon les ventes et la récence
+    candidates.sort((a, b) => {
+        const salesA = Math.max(0, Number(a.sales || 0));
+        const salesB = Math.max(0, Number(b.sales || 0));
+
+        const dateA = tomaV3GetProductDate(a);
+        const dateB = tomaV3GetProductDate(b);
+
+        const recentA =
+            dateA > 0 && now - dateA <= thirtyDays ? 1 : 0;
+
+        const recentB =
+            dateB > 0 && now - dateB <= thirtyDays ? 1 : 0;
+
+        const scoreA = salesA + recentA * 2;
+        const scoreB = salesB + recentB * 2;
+
+        if (scoreA !== scoreB) {
+            return scoreB - scoreA;
+        }
+
+        return dateB - dateA;
+    });
+
+    return candidates.slice(0, TOMA_V3_HOME_PRODUCT_LIMIT);
+}
+
+
+// Afficher les produits recommandés
+function tomaV3RenderRecommendedProducts() {
+    const container = tomaV3GetElement("recommendedProductsV3");
+
+    if (!container) {
+        console.warn(
+            "[TOMA V3] Conteneur recommendedProductsV3 introuvable."
+        );
+        return;
+    }
+
+    container.replaceChildren();
+
+    const recommendedProducts = tomaV3GetRecommendedProducts();
+
+    if (recommendedProducts.length === 0) {
+        const message = document.createElement("p");
+
+        message.className = "v3EmptyMessage";
+        message.textContent =
+            "As recomendações de produtos aparecerão aqui em breve.";
+
+        container.appendChild(message);
+        return;
+    }
+
+    recommendedProducts.forEach(product => {
+        const card = tomaV3CreateFeaturedCard(
+            product,
+            "Recomendado"
+        );
+
+        container.appendChild(card);
+    });
+
+    console.info(
+        "[TOMA V3] Produtos recomendados apresentados:",
+        recommendedProducts.length
     );
 }
 // ------------------------------------------------------
