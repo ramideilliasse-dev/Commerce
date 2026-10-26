@@ -658,7 +658,7 @@ async function uploadImageToCloudinary(file, bannerId) {
     const formData = new FormData();
 
     formData.append("file", file);
-    formData.append("upload_preset", uploadPreset);
+    formData.set("upload_preset", uploadPreset);
  alert(
   "PRESET ENVOYÉ : " +
   formData.get("upload_preset") +
