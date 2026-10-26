@@ -1,6 +1,11 @@
  // =========================================================
 // TOMA V3 — ADMIN BANNERS
-// BLOC 1 — IMPORTS ET CONFIGURATION
+// VERSION COMPLÈTE — CLOUDINARY + FIRESTORE
+// =========================================================
+
+
+// =========================================================
+// BLOC 1 — IMPORTS
 // =========================================================
 
 import { db, auth } from "../firebase.js";
@@ -21,6 +26,10 @@ import {
 // =========================================================
 
 const TOMA_BANNERS_COLLECTION = "homeBanners";
+
+// Cloudinary
+const TOMA_CLOUDINARY_CLOUD_NAME = "xnak6z6m";
+const TOMA_CLOUDINARY_UPLOAD_PRESET = "Toma-banner";
 
 const TOMA_BANNERS_CONFIG = {
 
@@ -61,7 +70,7 @@ const TOMA_BANNERS_STATE = {
     selectedFiles: {},
     previewUrls: {},
     saving: {},
-    loading: true
+    initialized: false
 };
 
 
@@ -165,20 +174,10 @@ async function tomaBannerCheckAdmin(user) {
 
     try {
 
-        const userRef = doc(
-            db,
-            "users",
-            user.uid
-        );
-
+        const userRef = doc(db, "users", user.uid);
         const userSnapshot = await getDoc(userRef);
 
         if (!userSnapshot.exists()) {
-
-            console.warn(
-                "TOMA BANNERS — Documento do utilizador não encontrado."
-            );
-
             return false;
         }
 
@@ -188,10 +187,7 @@ async function tomaBannerCheckAdmin(user) {
             userData.role || ""
         ).trim().toLowerCase();
 
-        return (
-            role === "admin" ||
-            role === "superadmin"
-        );
+        return role === "admin" || role === "superadmin";
 
     } catch (error) {
 
@@ -256,9 +252,7 @@ function tomaBannerUpdatePreview(bannerId, imageUrl) {
 
     if (!config) return;
 
-    const preview = document.getElementById(
-        config.previewId
-    );
+    const preview = document.getElementById(config.previewId);
 
     if (!preview) return;
 
@@ -267,7 +261,6 @@ function tomaBannerUpdatePreview(bannerId, imageUrl) {
     if (!imageUrl) {
 
         const placeholder = document.createElement("div");
-
         placeholder.className = "previewPlaceholder";
 
         const icon = document.createElement("span");
@@ -280,29 +273,25 @@ function tomaBannerUpdatePreview(bannerId, imageUrl) {
         const description = document.createElement("small");
         description.textContent = "Nenhuma imagem selecionada.";
 
-        placeholder.append(
-            icon,
-            title,
-            description
-        );
-
+        placeholder.append(icon, title, description);
         preview.appendChild(placeholder);
 
         return;
+
     }
 
     const image = document.createElement("img");
 
     image.alt = config.title;
     image.src = imageUrl;
+    image.loading = "lazy";
 
     image.onerror = () => {
 
         image.remove();
 
         tomaBannerMessage(
-            "Não foi possível carregar a imagem da posição: " +
-            config.title,
+            "Não foi possível carregar a imagem: " + config.title,
             "error"
         );
 
@@ -323,9 +312,7 @@ function tomaBannerSetupImagePicker(bannerId) {
 
     if (!config) return;
 
-    const input = document.getElementById(
-        config.imageField
-    );
+    const input = document.getElementById(config.imageField);
 
     if (!input) return;
 
@@ -346,11 +333,12 @@ function tomaBannerSetupImagePicker(bannerId) {
             input.value = "";
 
             tomaBannerMessage(
-                "Formato não suportado. Escolhe uma imagem JPG, PNG ou WebP.",
+                "Formato não suportado. Escolhe JPG, PNG ou WebP.",
                 "error"
             );
 
             return;
+
         }
 
         const maxSize = 10 * 1024 * 1024;
@@ -360,11 +348,12 @@ function tomaBannerSetupImagePicker(bannerId) {
             input.value = "";
 
             tomaBannerMessage(
-                "A imagem é demasiado grande. Escolhe um ficheiro com menos de 10 MB.",
+                "A imagem deve ter no máximo 10 MB.",
                 "error"
             );
 
             return;
+
         }
 
         if (TOMA_BANNERS_STATE.previewUrls[bannerId]) {
@@ -375,20 +364,15 @@ function tomaBannerSetupImagePicker(bannerId) {
 
         }
 
-        const localPreviewUrl = URL.createObjectURL(file);
+        const previewUrl = URL.createObjectURL(file);
 
         TOMA_BANNERS_STATE.selectedFiles[bannerId] = file;
+        TOMA_BANNERS_STATE.previewUrls[bannerId] = previewUrl;
 
-        TOMA_BANNERS_STATE.previewUrls[bannerId] =
-            localPreviewUrl;
-
-        tomaBannerUpdatePreview(
-            bannerId,
-            localPreviewUrl
-        );
+        tomaBannerUpdatePreview(bannerId, previewUrl);
 
         tomaBannerMessage(
-            "Imagem selecionada. Guarda as alterações depois de configurar o alojamento de imagens.",
+            "Imagem selecionada. Guarda as alterações para a enviar para Cloudinary.",
             "info"
         );
 
@@ -407,7 +391,74 @@ function tomaBannerSetupAllImagePickers() {
 
 
 // =========================================================
-// BLOC 9 — CARREGAR UMA BANNER DO FIRESTORE
+// BLOC 9 — ENVIAR IMAGEM PARA CLOUDINARY
+// =========================================================
+
+async function tomaBannerUploadToCloudinary(file, bannerId) {
+
+    if (!TOMA_CLOUDINARY_CLOUD_NAME ||
+        !TOMA_CLOUDINARY_UPLOAD_PRESET) {
+
+        throw new Error(
+            "A configuração do Cloudinary está incompleta."
+        );
+
+    }
+
+    const endpoint =
+        "https://api.cloudinary.com/v1_1/" +
+        encodeURIComponent(TOMA_CLOUDINARY_CLOUD_NAME) +
+        "/image/upload";
+
+    const formData = new FormData();
+
+    formData.append("file", file);
+    formData.append("upload_preset", TOMA_CLOUDINARY_UPLOAD_PRESET);
+    formData.append("folder", "toma/banners");
+    formData.append("context", "banner_id=" + bannerId);
+
+    const response = await fetch(endpoint, {
+        method: "POST",
+        body: formData
+    });
+
+    let result;
+
+    try {
+        result = await response.json();
+    } catch {
+        throw new Error(
+            "Cloudinary devolveu uma resposta inválida."
+        );
+    }
+
+    if (!response.ok || !result.secure_url) {
+
+        console.error(
+            "TOMA BANNERS — Erro Cloudinary:",
+            result
+        );
+
+        const cloudinaryMessage =
+            result?.error?.message ||
+            "Verifica o nome do Cloudinary e o preset unsigned.";
+
+        throw new Error(
+            "Falha no envio da imagem: " + cloudinaryMessage
+        );
+
+    }
+
+    return {
+        url: result.secure_url,
+        publicId: result.public_id || ""
+    };
+
+}
+
+
+// =========================================================
+// BLOC 10 — CARREGAR UMA BANNER DO FIRESTORE
 // =========================================================
 
 async function tomaBannerLoadOne(bannerId) {
@@ -428,6 +479,16 @@ async function tomaBannerLoadOne(bannerId) {
 
         TOMA_BANNERS_STATE.documents[bannerId] = null;
 
+        const activeField = document.getElementById(
+            config.activeField
+        );
+
+        if (activeField) {
+            activeField.checked = false;
+        }
+
+        tomaBannerUpdatePreview(bannerId, "");
+
         tomaBannerSetStatus(
             bannerId,
             "Por configurar",
@@ -435,6 +496,7 @@ async function tomaBannerLoadOne(bannerId) {
         );
 
         return null;
+
     }
 
     const data = snapshot.data();
@@ -449,9 +511,7 @@ async function tomaBannerLoadOne(bannerId) {
         ? document.getElementById(config.subtitleField)
         : null;
 
-    const linkField = document.getElementById(
-        config.linkField
-    );
+    const linkField = document.getElementById(config.linkField);
 
     const activeField = document.getElementById(
         config.activeField
@@ -473,14 +533,10 @@ async function tomaBannerLoadOne(bannerId) {
         activeField.checked = data.active === true;
     }
 
-    if (data.image) {
-
-        tomaBannerUpdatePreview(
-            bannerId,
-            data.image
-        );
-
-    }
+    tomaBannerUpdatePreview(
+        bannerId,
+        data.image || ""
+    );
 
     tomaBannerSetStatus(
         bannerId,
@@ -494,7 +550,7 @@ async function tomaBannerLoadOne(bannerId) {
 
 
 // =========================================================
-// BLOC 10 — ESTADO DA BANNER
+// BLOC 11 — ESTADO DA BANNER
 // =========================================================
 
 function tomaBannerSetStatus(bannerId, label, statusClass) {
@@ -503,9 +559,7 @@ function tomaBannerSetStatus(bannerId, label, statusClass) {
 
     if (!config) return;
 
-    const status = document.getElementById(
-        config.statusId
-    );
+    const status = document.getElementById(config.statusId);
 
     if (!status) return;
 
@@ -516,7 +570,7 @@ function tomaBannerSetStatus(bannerId, label, statusClass) {
 
 
 // =========================================================
-// BLOC 11 — ATUALIZAR RESUMO
+// BLOC 12 — ATUALIZAR RESUMO
 // =========================================================
 
 function tomaBannerUpdateSummary() {
@@ -531,7 +585,18 @@ function tomaBannerUpdateSummary() {
             config.activeField
         );
 
-        if (activeField && activeField.checked) {
+        const data = TOMA_BANNERS_STATE.documents[bannerId];
+
+        const hasImage = Boolean(
+            TOMA_BANNERS_STATE.selectedFiles[bannerId] ||
+            data?.image
+        );
+
+        if (
+            activeField &&
+            activeField.checked &&
+            hasImage
+        ) {
             activeCount++;
         }
 
@@ -549,7 +614,7 @@ function tomaBannerUpdateSummary() {
 
 
 // =========================================================
-// BLOC 12 — CARREGAR AS TRÊS BANNERS
+// BLOC 13 — CARREGAR AS TRÊS BANNERS
 // =========================================================
 
 async function tomaBannerLoadAll() {
@@ -560,20 +625,14 @@ async function tomaBannerLoadAll() {
 
     try {
 
-        const bannerIds = Object.keys(
-            TOMA_BANNERS_CONFIG
-        );
-
-        for (const bannerId of bannerIds) {
-
+        for (const bannerId of Object.keys(TOMA_BANNERS_CONFIG)) {
             await tomaBannerLoadOne(bannerId);
-
         }
 
         tomaBannerUpdateSummary();
 
         tomaBannerMessage(
-            "Configurações carregadas. Podes editar os campos e selecionar imagens.",
+            "Configurações carregadas. Podes editar os banners.",
             "success"
         );
 
@@ -585,7 +644,7 @@ async function tomaBannerLoadAll() {
         );
 
         tomaBannerMessage(
-            "Erro ao carregar as banners. Verifica a ligação, as regras Firestore e a consola do Firebase.",
+            "Erro ao carregar os banners. Verifica as regras do Firestore e a ligação.",
             "error"
         );
 
@@ -599,21 +658,21 @@ async function tomaBannerLoadAll() {
 
 
 // =========================================================
-// BLOC 13 — VALIDAR LINK
+// BLOC 14 — VALIDAR LINK
 // =========================================================
 
 function tomaBannerValidateLink(value) {
 
     const link = String(value || "").trim();
 
-    if (!link) {
-        return "";
-    }
+    if (!link) return "";
 
     if (/^javascript:/i.test(link)) {
+
         throw new Error(
             "O link indicado não é permitido."
         );
+
     }
 
     if (/^https?:\/\//i.test(link)) {
@@ -623,14 +682,20 @@ function tomaBannerValidateLink(value) {
         try {
             url = new URL(link);
         } catch {
-            throw new Error("O endereço indicado não é válido.");
+            throw new Error(
+                "O endereço indicado não é válido."
+            );
         }
 
         if (
             url.protocol !== "https:" &&
             url.protocol !== "http:"
         ) {
-            throw new Error("O protocolo do link não é permitido.");
+
+            throw new Error(
+                "O protocolo do link não é permitido."
+            );
+
         }
 
         return url.href;
@@ -656,7 +721,7 @@ function tomaBannerValidateLink(value) {
 
 
 // =========================================================
-// BLOC 14 — GUARDAR UMA BANNER
+// BLOC 15 — GUARDAR UMA BANNER
 // =========================================================
 
 async function tomaBannerSaveOne(bannerId) {
@@ -684,9 +749,7 @@ async function tomaBannerSaveOne(bannerId) {
         '[data-save-banner="' + bannerId + '"]'
     );
 
-    const linkField = document.getElementById(
-        config.linkField
-    );
+    const linkField = document.getElementById(config.linkField);
 
     const activeField = document.getElementById(
         config.activeField
@@ -706,31 +769,59 @@ async function tomaBannerSaveOne(bannerId) {
     const previousData =
         TOMA_BANNERS_STATE.documents[bannerId] || {};
 
+    let originalButtonText = "";
+
     try {
 
         TOMA_BANNERS_STATE.saving[bannerId] = true;
 
         if (saveButton) {
+
+            originalButtonText = saveButton.textContent;
             saveButton.disabled = true;
             saveButton.textContent = "A guardar...";
+
         }
 
         const link = tomaBannerValidateLink(
             linkField ? linkField.value : ""
         );
 
-        /*
-         * Ainda não enviamos ficheiros para o Cloudinary.
-         * Se houver uma imagem nova selecionada, impedimos
-         * guardar para não perder a imagem anterior nem
-         * guardar uma URL temporária do telemóvel.
-         */
+        // Não ativar uma banner sem imagem.
+        const hasImage = Boolean(
+            selectedFile || previousData.image
+        );
 
-        if (selectedFile) {
+        const isActive = Boolean(
+            activeField && activeField.checked
+        );
+
+        if (isActive && !hasImage) {
 
             throw new Error(
-                "A imagem foi selecionada, mas ainda falta configurar o Cloudinary. A imagem anterior foi preservada. Configura o alojamento de imagens antes de guardar esta alteração."
+                "Seleciona uma imagem antes de ativar este banner."
             );
+
+        }
+
+        let imageUrl = previousData.image || "";
+        let publicId = previousData.publicId || "";
+
+        // Enviar a imagem apenas quando uma nova imagem foi selecionada.
+        if (selectedFile) {
+
+            tomaBannerMessage(
+                "A enviar a imagem para Cloudinary...",
+                "info"
+            );
+
+            const uploaded = await tomaBannerUploadToCloudinary(
+                selectedFile,
+                bannerId
+            );
+
+            imageUrl = uploaded.url;
+            publicId = uploaded.publicId;
 
         }
 
@@ -746,11 +837,11 @@ async function tomaBannerSaveOne(bannerId) {
 
             link: link,
 
-            image: previousData.image || "",
+            image: imageUrl,
 
-            active: activeField
-                ? activeField.checked
-                : false,
+            publicId: publicId,
+
+            active: isActive,
 
             updatedAt: new Date().toISOString(),
 
@@ -779,6 +870,29 @@ async function tomaBannerSaveOne(bannerId) {
             ...data
         };
 
+        delete TOMA_BANNERS_STATE.selectedFiles[bannerId];
+
+        const input = document.getElementById(config.imageField);
+
+        if (input) {
+            input.value = "";
+        }
+
+        if (TOMA_BANNERS_STATE.previewUrls[bannerId]) {
+
+            URL.revokeObjectURL(
+                TOMA_BANNERS_STATE.previewUrls[bannerId]
+            );
+
+            delete TOMA_BANNERS_STATE.previewUrls[bannerId];
+
+        }
+
+        tomaBannerUpdatePreview(
+            bannerId,
+            imageUrl
+        );
+
         tomaBannerSetStatus(
             bannerId,
             data.active ? "Ativa" : "Inativa",
@@ -801,7 +915,7 @@ async function tomaBannerSaveOne(bannerId) {
 
         tomaBannerMessage(
             error.message ||
-            "Não foi possível guardar a configuração.",
+            "Não foi possível guardar esta configuração.",
             "error"
         );
 
@@ -828,7 +942,9 @@ async function tomaBannerSaveOne(bannerId) {
             saveButton.append(
                 icon,
                 document.createTextNode(
-                    originalLabels[bannerId]
+                    originalLabels[bannerId] ||
+                    originalButtonText ||
+                    "Guardar"
                 )
             );
 
@@ -840,7 +956,7 @@ async function tomaBannerSaveOne(bannerId) {
 
 
 // =========================================================
-// BLOC 15 — EVENTOS DOS BOTÕES
+// BLOC 16 — CONFIGURAR BOTÕES
 // =========================================================
 
 function tomaBannerSetupSaveButtons() {
@@ -851,9 +967,9 @@ function tomaBannerSetupSaveButtons() {
 
         button.addEventListener("click", async () => {
 
-            const bannerId = button.dataset.saveBanner;
-
-            await tomaBannerSaveOne(bannerId);
+            await tomaBannerSaveOne(
+                button.dataset.saveBanner
+            );
 
         });
 
@@ -885,7 +1001,7 @@ function tomaBannerSetupActiveSwitches() {
 
 
 // =========================================================
-// BLOC 16 — INICIALIZAÇÃO
+// BLOC 17 — INICIALIZAÇÃO ADMIN
 // =========================================================
 
 async function tomaBannerInitialize(user) {
@@ -903,9 +1019,7 @@ async function tomaBannerInitialize(user) {
         tomaBannerShowDenied();
 
         tomaBannerMessage(
-            user
-                ? "Acesso recusado. Esta página requer o papel admin ou superadmin."
-                : "Inicia sessão com uma conta administrativa para continuar.",
+            "Acesso recusado. Esta página requer o papel admin ou superadmin.",
             "error"
         );
 
@@ -917,11 +1031,15 @@ async function tomaBannerInitialize(user) {
 
     tomaBannerShowAdmin();
 
-    tomaBannerSetupAllImagePickers();
+    if (!TOMA_BANNERS_STATE.initialized) {
 
-    tomaBannerSetupSaveButtons();
+        tomaBannerSetupAllImagePickers();
+        tomaBannerSetupSaveButtons();
+        tomaBannerSetupActiveSwitches();
 
-    tomaBannerSetupActiveSwitches();
+        TOMA_BANNERS_STATE.initialized = true;
+
+    }
 
     await tomaBannerLoadAll();
 
@@ -929,7 +1047,7 @@ async function tomaBannerInitialize(user) {
 
 
 // =========================================================
-// BLOC 17 — ESPERAR PELA AUTENTIFICAÇÃO FIREBASE
+// BLOC 18 — AUTENTIFICAÇÃO FIREBASE
 // =========================================================
 
 onAuthStateChanged(auth, async user => {
@@ -944,10 +1062,26 @@ onAuthStateChanged(auth, async user => {
 
         tomaBannerShowDenied();
 
-        tomaBannerMessage(
-            "Não estás ligado. Inicia sessão com uma conta administrativa.",
-            "error"
-        );
+        // Mensagem visível mesmo com o painel bloqueado.
+        if (accessDenied) {
+            accessDenied.hidden = false;
+        }
+
+        if (adminMessage) {
+
+            adminMessage.textContent =
+                "Não estás ligado. Inicia sessão com uma conta administrativa.";
+
+            adminMessage.className = "adminMessage error";
+            adminMessage.hidden = false;
+
+        } else {
+
+            alert(
+                "Não estás ligado. Inicia sessão com uma conta administrativa."
+            );
+
+        }
 
     }
 
