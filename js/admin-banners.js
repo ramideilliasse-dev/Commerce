@@ -677,7 +677,12 @@ async function uploadImageToCloudinary(file, bannerId) {
 
     const uploadUrl =
         `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
-
+alert(
+  "VÉRIFICATION AVANT ENVOI\n\n" +
+  "URL : " + uploadUrl + "\n" +
+  "Preset : " + formData.get("upload_preset") + "\n" +
+  "Fichier : " + (formData.get("file")?.name || "Absent")
+);
     let response;
 
     try {
