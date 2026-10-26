@@ -652,30 +652,25 @@ function initializeImagePickers() {
 
 async function uploadImageToCloudinary(file, bannerId) {
 
-    const cloudName = "xnak6z6m";
-    const uploadPreset = "toma-images";
+    const cloudName = TOMA_CLOUDINARY_CLOUD_NAME;
+    const uploadPreset = TOMA_CLOUDINARY_UPLOAD_PRESET;
+
     const uploadUrl =
         `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
 
     const formData = new FormData();
 
     formData.append("file", file);
+    formData.append("upload_preset", uploadPreset);
+    formData.append("folder", "toma/banners");
+    formData.append("context", `banner_id=${bannerId}`);
 
-const preset = "Toma-banner";
-
-formData.set("upload_preset", preset);
-
-formData.append("folder", "toma/banners");
-
-alert(
-    "DIAGNOSTIC CLOUDINARY\n\n" +
-    "Cloud name: xnak6z6m\n" +
-    "Preset: " + formData.get("upload_preset") + "\n" +
-    "Fichier: " + file.name
-);
-    formData.append(
-        "context",
-        `banner_id=${bannerId}`
+    // Diagnostic temporaire
+    alert(
+        "DIAGNOSTIC CLOUDINARY\n\n" +
+        "Cloud name: " + cloudName + "\n" +
+        "Preset envoyé: " + formData.get("upload_preset") + "\n" +
+        "Fichier: " + file.name
     );
 
     const response = await fetch(uploadUrl, {
@@ -700,7 +695,6 @@ alert(
         publicId: result.public_id || ""
     };
 }
-
 /* =====================================================
    BLOC 9 — VALIDATION DU LIEN
 ===================================================== */
