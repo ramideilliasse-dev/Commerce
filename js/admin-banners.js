@@ -659,6 +659,12 @@ async function uploadImageToCloudinary(file, bannerId) {
 
     formData.append("file", file);
     formData.append("upload_preset", uploadPreset);
+ alert(
+  "PRESET ENVOYÉ : " +
+  formData.get("upload_preset") +
+  "\nCLOUD NAME : " +
+  cloudName
+);
     formData.append("folder", "toma/banners");
 
     const presetEnvoye = formData.get("upload_preset");
