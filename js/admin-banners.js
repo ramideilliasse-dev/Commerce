@@ -647,90 +647,60 @@ function initializeImagePickers() {
 
 
 /* =====================================================
-   BLOC 8 — DIAGNOSTIC CLOUDINARY
+BLOC 8 — DIAGNOSTIC CLOUDINARY
 ===================================================== */
 
 async function uploadImageToCloudinary(file, bannerId) {
 
-    const cloudName = "xnak6z6m";
-    const uploadPreset = "toma-images";
-
-    const formData = new FormData();
-
-    formData.append("file", file);
-    formData.set("upload_preset", uploadPreset);
- alert(
-  "PRESET ENVOYÉ : " +
-  formData.get("upload_preset") +
-  "\nCLOUD NAME : " +
-  cloudName
-);
-    formData.append("folder", "toma/banners");
-
-    const presetEnvoye = formData.get("upload_preset");
-
-    if (presetEnvoye !== "toma-images") {
-        throw new Error(
-            "Le preset transmis ne correspond pas au preset attendu."
-        );
-    }
-
-    const uploadUrl =
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
-alert(
-  "VÉRIFICATION AVANT ENVOI\n\n" +
-  "URL : " + uploadUrl + "\n" +
-  "Preset : " + formData.get("upload_preset") + "\n" +
-  "Fichier : " + (formData.get("file")?.name || "Absent")
-);
-    let response;
-
+const cloudName = "xnak6z6m";
+const uploadPreset = "toma-images";
+const formData = new FormData();
+formData.append("file", file);
+formData.append("upload_preset", uploadPreset);
+formData.append("folder", "toma/banners");
+const uploadUrl =
+    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+try {
+    const response = await fetch(uploadUrl, {
+        method: "POST",
+        body: formData
+    });
+    const responseText = await response.text();
+    alert(
+        "RÉPONSE CLOUDINARY\n\n" +
+        "Code HTTP : " + response.status +
+        "\nPreset utilisé : " + uploadPreset +
+        "\nCloud : " + cloudName +
+        "\n\nRéponse complète :\n" + responseText
+    );
+    let result;
     try {
-
-        response = await fetch(uploadUrl, {
-            method: "POST",
-            body: formData
-        });
-
-    } catch (error) {
-
-        throw new Error(
-            "Impossible de contacter Cloudinary. Vérifie ta connexion."
-        );
-
+        result = JSON.parse(responseText);
+    } catch {
+        throw new Error("La réponse Cloudinary n'est pas un JSON valide.");
     }
-
-    const result = await response.json();
-
     if (!response.ok) {
-
-        alert(
-            "ERREUR CLOUDINARY\n\n" +
-            "Code HTTP : " + response.status + "\n" +
-            "Message : " +
-            (result.error?.message || "Erreur inconnue") +
-            "\n\nPreset envoyé : " + presetEnvoye
-        );
-
         throw new Error(
-            result.error?.message ||
-            "Échec de l'envoi vers Cloudinary."
+            result.error?.message || "Échec de l'envoi vers Cloudinary."
         );
-
     }
-
     if (!result.secure_url) {
-
         throw new Error(
             "Cloudinary n'a pas retourné l'adresse de l'image."
         );
-
     }
-
     return {
         url: result.secure_url,
         publicId: result.public_id || ""
     };
+} catch (error) {
+    alert(
+        "ÉCHEC DE L'ENVOI\n\n" +
+        (error.message || "Erreur inconnue")
+    );
+    throw error;
+}
+
 }
 /* =====================================================
    BLOC 9 — VALIDATION DU LIEN
