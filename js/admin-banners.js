@@ -652,75 +652,45 @@ function initializeImagePickers() {
 
 async function uploadImageToCloudinary(file, bannerId) {
 
+    const cloudName = "xnak6z6m";
+    const uploadPreset = "Toma-banner";
+
     const uploadUrl =
-        `https://api.cloudinary.com/v1_1/${TOMA_CLOUDINARY_CLOUD_NAME}/image/upload`;
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
 
     const formData = new FormData();
 
     formData.append("file", file);
-
-    formData.append(
-        "upload_preset",
-        TOMA_CLOUDINARY_UPLOAD_PRESET
-    );
-
-    formData.append(
-        "folder",
-        "toma/banners"
-    );
+    formData.append("upload_preset", uploadPreset);
+    formData.append("folder", "toma/banners");
 
     formData.append(
         "context",
         `banner_id=${bannerId}`
     );
 
-
     const response = await fetch(uploadUrl, {
         method: "POST",
         body: formData
     });
 
-
-    let result;
-
-    try {
-
-        result = await response.json();
-
-    } catch (error) {
-
-        throw new Error(
-            "Resposta inválida do serviço de imagens."
-        );
-
-    }
-
+    const result = await response.json();
 
     if (!response.ok || !result.secure_url) {
 
-        console.error(
-            "Erro Cloudinary:",
-            result
-        );
+        console.error("Cloudinary error:", result);
 
         throw new Error(
             result.error?.message ||
-            "Não foi possível enviar uma imagem para o alojamento."
+            "Erro ao enviar a imagem para o Cloudinary."
         );
-
     }
 
-
     return {
-
         url: result.secure_url,
-
         publicId: result.public_id || ""
-
     };
-
 }
-
 
 /* =====================================================
    BLOC 9 — VALIDATION DU LIEN
