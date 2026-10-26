@@ -653,8 +653,7 @@ function initializeImagePickers() {
 async function uploadImageToCloudinary(file, bannerId) {
 
     const cloudName = "xnak6z6m";
-    const uploadPreset = "Toma-banner";
-
+    const uploadPreset = "toma-images";
     const uploadUrl =
         `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
 
