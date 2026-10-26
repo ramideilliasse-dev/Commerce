@@ -1,0 +1,573 @@
+ <!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#2563eb">
+    <meta name="description" content="Gestão profissional das banners da página inicial da Toma.">
+
+    <title>Gestão de Banners | Toma</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0" rel="stylesheet">
+
+    <link rel="stylesheet" href="./admin-banners.css">
+</head>
+
+<body>
+
+<div class="adminLayout">
+
+    <!-- MENU LATERAL -->
+    <aside class="adminSidebar">
+
+        <a href="./homes-v3.html" class="brand">
+            <span class="brandIcon">T</span>
+
+            <span class="brandText">
+                <strong>Toma</strong>
+                <small>Administração</small>
+            </span>
+        </a>
+
+        <div class="sidebarLabel">GESTÃO DA LOJA</div>
+
+        <nav class="sidebarNav">
+
+            <a href="./homes-v3.html" class="navItem">
+                <span class="material-symbols-rounded">home</span>
+                <span>Página inicial</span>
+            </a>
+
+            <a href="#bannerManagement" class="navItem active">
+                <span class="material-symbols-rounded">view_carousel</span>
+                <span>Banners da página inicial</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebarBottom">
+
+            <div class="adminProfileIcon">
+                <span class="material-symbols-rounded">admin_panel_settings</span>
+            </div>
+
+            <div class="adminProfileText">
+                <strong>Administrador</strong>
+                <small>Painel Toma</small>
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="adminMain" id="bannerManagement">
+
+        <!-- CABEÇALHO -->
+        <header class="topbar">
+
+            <div class="topbarTitle">
+                <span class="topbarEyebrow">GESTÃO DA PLATAFORMA</span>
+                <h1>Banners da página inicial</h1>
+                <p>Personalize as imagens e promoções apresentadas na Toma.</p>
+            </div>
+
+            <a href="./homes-v3.html" class="backHomeButton">
+                <span class="material-symbols-rounded">open_in_new</span>
+                Ver página inicial
+            </a>
+
+        </header>
+
+
+        <!-- RESUMO -->
+        <section class="summaryGrid">
+
+            <article class="summaryCard">
+
+                <div class="summaryIcon blueIcon">
+                    <span class="material-symbols-rounded">view_carousel</span>
+                </div>
+
+                <div>
+                    <span class="summaryLabel">Total de banners</span>
+                    <strong id="totalBanners">3</strong>
+                    <small>Espaços disponíveis</small>
+                </div>
+
+            </article>
+
+
+            <article class="summaryCard">
+
+                <div class="summaryIcon greenIcon">
+                    <span class="material-symbols-rounded">check_circle</span>
+                </div>
+
+                <div>
+                    <span class="summaryLabel">Banners ativos</span>
+                    <strong id="activeBanners">—</strong>
+                    <small>Visíveis na página inicial</small>
+                </div>
+
+            </article>
+
+
+            <article class="summaryCard">
+
+                <div class="summaryIcon orangeIcon">
+                    <span class="material-symbols-rounded">edit_square</span>
+                </div>
+
+                <div>
+                    <span class="summaryLabel">Gestão centralizada</span>
+                    <strong>3</strong>
+                    <small>Posições independentes</small>
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- ESTADO DE CARREGAMENTO -->
+        <div id="adminLoading" class="statusPanel">
+
+            <span class="loadingSpinner"></span>
+
+            <div>
+                <strong>A preparar o painel...</strong>
+                <p>A verificar a sessão e a carregar as configurações.</p>
+            </div>
+
+        </div>
+
+
+        <!-- MENSAGENS -->
+        <div id="adminMessage" class="adminMessage" role="status" aria-live="polite" hidden></div>
+
+
+        <!-- ACESSO NEGADO -->
+        <section id="accessDenied" class="emptyState" hidden>
+
+            <div class="emptyStateIcon">
+                <span class="material-symbols-rounded">lock</span>
+            </div>
+
+            <h2>Acesso restrito</h2>
+
+            <p>
+                Esta página está disponível apenas para administradores
+                autorizados da Toma.
+            </p>
+
+            <a href="./login.html" class="primaryButton">
+                Iniciar sessão
+            </a>
+
+        </section>
+
+
+        <!-- ÁREA DE GESTÃO -->
+        <div id="adminContent" hidden>
+
+            <div class="sectionHeading">
+
+                <div>
+                    <h2>As tuas banners</h2>
+                    <p>Escolhe uma posição para configurar a respetiva banner.</p>
+                </div>
+
+                <span class="securityBadge">
+                    <span class="material-symbols-rounded">verified_user</span>
+                    Acesso administrativo
+                </span>
+
+            </div>
+
+
+            <!-- BANNER PRINCIPAL -->
+            <section class="bannerAdminCard" data-banner-id="main">
+
+                <div class="bannerCardHeader">
+
+                    <div class="bannerPositionIcon">
+                        <span class="material-symbols-rounded">web_asset</span>
+                    </div>
+
+                    <div class="bannerCardTitle">
+                        <span class="positionLabel">POSIÇÃO 01</span>
+                        <h3>Banner principal</h3>
+                        <p>Área de destaque no topo da página inicial.</p>
+                    </div>
+
+                    <span class="bannerStatus pending" id="status-main">
+                        Por configurar
+                    </span>
+
+                </div>
+
+
+                <div class="bannerEditorGrid">
+
+                    <div class="bannerPreviewColumn">
+
+                        <div class="previewLabel">
+                            <span>Pré-visualização</span>
+                            <span class="material-symbols-rounded">visibility</span>
+                        </div>
+
+                        <div class="bannerPreview mainBannerPreview" id="preview-main">
+
+                            <div class="previewPlaceholder">
+
+                                <span class="material-symbols-rounded">add_photo_alternate</span>
+
+                                <strong>A tua banner principal</strong>
+
+                                <small>A imagem aparecerá aqui.</small>
+
+                            </div>
+
+                        </div>
+
+                        <label class="uploadButton" for="image-main">
+                            <span class="material-symbols-rounded">upload</span>
+                            Escolher imagem
+                        </label>
+
+                        <input
+                            type="file"
+                            id="image-main"
+                            accept="image/jpeg,image/png,image/webp"
+                            hidden
+                        >
+
+                        <small class="fieldHint">
+                            JPG, PNG ou WebP. A imagem será enviada para o serviço de alojamento.
+                        </small>
+
+                    </div>
+
+
+                    <div class="bannerFields">
+
+                        <div class="fieldGroup">
+
+                            <label for="title-main">Título principal</label>
+
+                            <input
+                                type="text"
+                                id="title-main"
+                                placeholder="Ex.: Descubra o mundo Toma"
+                                maxlength="100"
+                            >
+
+                        </div>
+
+
+                        <div class="fieldGroup">
+
+                            <label for="subtitle-main">Subtítulo</label>
+
+                            <textarea
+                                id="subtitle-main"
+                                rows="3"
+                                placeholder="Ex.: Produtos e lojas num só lugar"
+                                maxlength="220"
+                            ></textarea>
+
+                        </div>
+
+
+                        <div class="fieldGroup">
+
+                            <label for="link-main">Link de destino</label>
+
+                            <input
+                                type="text"
+                                id="link-main"
+                                placeholder="./products-v2.html"
+                            >
+
+                            <small class="fieldHint">
+                                Página que será aberta quando o cliente tocar na banner.
+                            </small>
+
+                        </div>
+
+
+                        <label class="switchRow">
+
+                            <span class="switchText">
+                                <strong>Banner ativa</strong>
+                                <small>Mostrar esta banner na página inicial.</small>
+                            </span>
+
+                            <input type="checkbox" id="active-main" checked>
+                            <span class="switchVisual"></span>
+
+                        </label>
+
+
+                        <button type="button" class="saveBannerButton" data-save-banner="main">
+
+                            <span class="material-symbols-rounded">save</span>
+
+                            Guardar banner principal
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- BANNER APÓS CATEGORIAS -->
+            <section class="bannerAdminCard" data-banner-id="categories">
+
+                <div class="bannerCardHeader">
+
+                    <div class="bannerPositionIcon">
+                        <span class="material-symbols-rounded">category</span>
+                    </div>
+
+                    <div class="bannerCardTitle">
+                        <span class="positionLabel">POSIÇÃO 02</span>
+                        <h3>Banner após as categorias</h3>
+                        <p>Espaço promocional apresentado depois das categorias.</p>
+                    </div>
+
+                    <span class="bannerStatus pending" id="status-categories">
+                        Por configurar
+                    </span>
+
+                </div>
+
+
+                <div class="bannerEditorGrid">
+
+                    <div class="bannerPreviewColumn">
+
+                        <div class="previewLabel">
+                            <span>Pré-visualização</span>
+                            <span class="material-symbols-rounded">visibility</span>
+                        </div>
+
+                        <div class="bannerPreview slimBannerPreview" id="preview-categories">
+
+                            <div class="previewPlaceholder">
+
+                                <span class="material-symbols-rounded">add_photo_alternate</span>
+
+                                <strong>Banner promocional</strong>
+
+                                <small>Depois das categorias.</small>
+
+                            </div>
+
+                        </div>
+
+                        <label class="uploadButton" for="image-categories">
+                            <span class="material-symbols-rounded">upload</span>
+                            Escolher imagem
+                        </label>
+
+                        <input
+                            type="file"
+                            id="image-categories"
+                            accept="image/jpeg,image/png,image/webp"
+                            hidden
+                        >
+
+                    </div>
+
+
+                    <div class="bannerFields">
+
+                        <div class="fieldGroup">
+
+                            <label for="link-categories">Link de destino</label>
+
+                            <input
+                                type="text"
+                                id="link-categories"
+                                placeholder="./products-v2.html"
+                            >
+
+                        </div>
+
+
+                        <label class="switchRow">
+
+                            <span class="switchText">
+                                <strong>Banner ativa</strong>
+                                <small>Mostrar depois das categorias.</small>
+                            </span>
+
+                            <input type="checkbox" id="active-categories" checked>
+                            <span class="switchVisual"></span>
+
+                        </label>
+
+
+                        <button type="button" class="saveBannerButton" data-save-banner="categories">
+
+                            <span class="material-symbols-rounded">save</span>
+
+                            Guardar banner das categorias
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- BANNER APÓS LOJAS OFICIAIS -->
+            <section class="bannerAdminCard" data-banner-id="officialStores">
+
+                <div class="bannerCardHeader">
+
+                    <div class="bannerPositionIcon">
+                        <span class="material-symbols-rounded">storefront</span>
+                    </div>
+
+                    <div class="bannerCardTitle">
+                        <span class="positionLabel">POSIÇÃO 03</span>
+                        <h3>Banner após as lojas oficiais</h3>
+                        <p>Área promocional depois das lojas oficiais da Toma.</p>
+                    </div>
+
+                    <span class="bannerStatus pending" id="status-officialStores">
+                        Por configurar
+                    </span>
+
+                </div>
+
+
+                <div class="bannerEditorGrid">
+
+                    <div class="bannerPreviewColumn">
+
+                        <div class="previewLabel">
+                            <span>Pré-visualização</span>
+                            <span class="material-symbols-rounded">visibility</span>
+                        </div>
+
+                        <div class="bannerPreview slimBannerPreview" id="preview-officialStores">
+
+                            <div class="previewPlaceholder">
+
+                                <span class="material-symbols-rounded">add_photo_alternate</span>
+
+                                <strong>Banner das lojas oficiais</strong>
+
+                                <small>Depois das lojas oficiais.</small>
+
+                            </div>
+
+                        </div>
+
+                        <label class="uploadButton" for="image-officialStores">
+                            <span class="material-symbols-rounded">upload</span>
+                            Escolher imagem
+                        </label>
+
+                        <input
+                            type="file"
+                            id="image-officialStores"
+                            accept="image/jpeg,image/png,image/webp"
+                            hidden
+                        >
+
+                    </div>
+
+
+                    <div class="bannerFields">
+
+                        <div class="fieldGroup">
+
+                            <label for="link-officialStores">Link de destino</label>
+
+                            <input
+                                type="text"
+                                id="link-officialStores"
+                                placeholder="./official-stores.html"
+                            >
+
+                        </div>
+
+
+                        <label class="switchRow">
+
+                            <span class="switchText">
+                                <strong>Banner ativa</strong>
+                                <small>Mostrar depois das lojas oficiais.</small>
+                            </span>
+
+                            <input type="checkbox" id="active-officialStores" checked>
+                            <span class="switchVisual"></span>
+
+                        </label>
+
+
+                        <button type="button" class="saveBannerButton" data-save-banner="officialStores">
+
+                            <span class="material-symbols-rounded">save</span>
+
+                            Guardar banner das lojas
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- NOTA DE SEGURANÇA -->
+            <section class="securityNotice">
+
+                <span class="material-symbols-rounded">shield_lock</span>
+
+                <div>
+                    <strong>Configuração protegida</strong>
+
+                    <p>
+                        As alterações são destinadas aos administradores autorizados.
+                        As imagens e os dados das banners serão guardados separadamente.
+                    </p>
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <footer class="adminFooter">
+            <span>Toma</span>
+            <span>Gestão de banners · V3</span>
+        </footer>
+
+    </main>
+
+</div>
+
+
+<script type="module" src="./js/admin-banners.js"></script>
+
+</body>
+</html>
