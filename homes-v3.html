@@ -124,35 +124,46 @@
     <main class="tomaMain">
 
 
-        <!-- =====================================
-             PESQUISA
-        ====================================== -->
+       <!-- =====================================
+     PESQUISA — TOMA V3
+====================================== -->
 
-        <section class="searchSection"
-                 aria-label="Pesquisar produtos">
+<section class="searchSection"
+         aria-label="Pesquisar produtos">
 
-            <button
-                type="button"
-                class="searchBar"
-                id="homeSearchBtn">
+    <form class="searchBar"
+          id="homeSearchForm"
+          action="./search.html"
+          method="GET">
 
-                <span class="material-symbols-rounded searchIcon">
-                    search
-                </span>
+        <span class="material-symbols-rounded searchIcon">
+            search
+        </span>
 
-                <span class="searchPlaceholder"
-                      id="searchPlaceholder">
-                    Pesquisar produtos, lojas, categorias...
-                </span>
+        <input
+            type="search"
+            class="searchPlaceholder"
+            id="homeSearchInput"
+            name="q"
+            placeholder="Pesquisar produtos, lojas, categorias..."
+            aria-label="Pesquisar produtos, lojas e categorias"
+            autocomplete="off"
+        >
 
-                <span class="material-symbols-rounded searchFilterIcon">
-                    tune
-                </span>
+        <button
+            type="submit"
+            class="searchSubmitBtn"
+            aria-label="Pesquisar">
 
-            </button>
+            <span class="material-symbols-rounded searchFilterIcon">
+                search
+            </span>
 
-        </section>
+        </button>
 
+    </form>
+
+</section>
 
         <!-- =====================================
              ACESSOS RÁPIDOS POR FUNÇÃO
