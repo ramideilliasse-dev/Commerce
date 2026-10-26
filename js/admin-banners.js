@@ -661,9 +661,19 @@ async function uploadImageToCloudinary(file, bannerId) {
     const formData = new FormData();
 
     formData.append("file", file);
-    formData.append("upload_preset", uploadPreset);
-    formData.append("folder", "toma/banners");
 
+const preset = "Toma-banner";
+
+formData.set("upload_preset", preset);
+
+formData.append("folder", "toma/banners");
+
+alert(
+    "DIAGNOSTIC CLOUDINARY\n\n" +
+    "Cloud name: xnak6z6m\n" +
+    "Preset: " + formData.get("upload_preset") + "\n" +
+    "Fichier: " + file.name
+);
     formData.append(
         "context",
         `banner_id=${bannerId}`
