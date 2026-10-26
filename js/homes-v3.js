@@ -2291,3 +2291,65 @@ document.addEventListener("DOMContentLoaded", () => {
     tomaV3LoadProducts();
 
 });
+// ======================================================
+// TOMA V3 — BLOC 12
+// Connexion de la recherche depuis la page d'accueil
+// ======================================================
+
+function tomaV3InitializeSearch() {
+
+    const searchButton =
+        tomaV3GetElement("homeSearchBtn");
+
+    if (!searchButton) {
+
+        console.warn(
+            "[TOMA V3 — BLOC 12] Bouton de recherche introuvable."
+        );
+
+        return;
+    }
+
+    // Éviter d'initialiser plusieurs fois la recherche
+    if (searchButton.dataset.searchInitialized === "true") {
+        return;
+    }
+
+    searchButton.dataset.searchInitialized = "true";
+
+    searchButton.addEventListener("click", () => {
+
+        window.location.href = "./search.html";
+
+    });
+
+    console.info(
+        "[TOMA V3 — BLOC 12] Recherche initialisée."
+    );
+}
+
+
+// ------------------------------------------------------
+// 12.1 — Démarrer la recherche
+// ------------------------------------------------------
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    try {
+
+        tomaV3InitializeSearch();
+
+    } catch (error) {
+
+        console.error(
+            "[TOMA V3 — BLOC 12] Erreur :",
+            error
+        );
+
+        alert(
+            "Toma : não foi possível abrir a pesquisa."
+        );
+
+    }
+
+});
