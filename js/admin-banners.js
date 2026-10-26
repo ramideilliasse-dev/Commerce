@@ -647,47 +647,73 @@ function initializeImagePickers() {
 
 
 /* =====================================================
-   BLOC 8 — ENVOI VERS CLOUDINARY
+   BLOC 8 — DIAGNOSTIC CLOUDINARY
 ===================================================== */
 
 async function uploadImageToCloudinary(file, bannerId) {
 
-    const cloudName = TOMA_CLOUDINARY_CLOUD_NAME;
-    const uploadPreset = TOMA_CLOUDINARY_UPLOAD_PRESET;
-
-    const uploadUrl =
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+    const cloudName = "xnak6z6m";
+    const uploadPreset = "toma-images";
 
     const formData = new FormData();
 
     formData.append("file", file);
     formData.append("upload_preset", uploadPreset);
     formData.append("folder", "toma/banners");
-    formData.append("context", `banner_id=${bannerId}`);
 
-    // Diagnostic temporaire
-    alert(
-        "DIAGNOSTIC CLOUDINARY\n\n" +
-        "Cloud name: " + cloudName + "\n" +
-        "Preset envoyé: " + formData.get("upload_preset") + "\n" +
-        "Fichier: " + file.name
-    );
+    const presetEnvoye = formData.get("upload_preset");
 
-    const response = await fetch(uploadUrl, {
-        method: "POST",
-        body: formData
-    });
+    if (presetEnvoye !== "toma-images") {
+        throw new Error(
+            "Le preset transmis ne correspond pas au preset attendu."
+        );
+    }
+
+    const uploadUrl =
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+
+    let response;
+
+    try {
+
+        response = await fetch(uploadUrl, {
+            method: "POST",
+            body: formData
+        });
+
+    } catch (error) {
+
+        throw new Error(
+            "Impossible de contacter Cloudinary. Vérifie ta connexion."
+        );
+
+    }
 
     const result = await response.json();
 
-    if (!response.ok || !result.secure_url) {
+    if (!response.ok) {
 
-        console.error("Cloudinary error:", result);
+        alert(
+            "ERREUR CLOUDINARY\n\n" +
+            "Code HTTP : " + response.status + "\n" +
+            "Message : " +
+            (result.error?.message || "Erreur inconnue") +
+            "\n\nPreset envoyé : " + presetEnvoye
+        );
 
         throw new Error(
             result.error?.message ||
-            "Erro ao enviar a imagem para o Cloudinary."
+            "Échec de l'envoi vers Cloudinary."
         );
+
+    }
+
+    if (!result.secure_url) {
+
+        throw new Error(
+            "Cloudinary n'a pas retourné l'adresse de l'image."
+        );
+
     }
 
     return {
