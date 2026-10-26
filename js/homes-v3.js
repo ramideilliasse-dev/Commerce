@@ -1495,6 +1495,9 @@ function tomaV3RenderAllProductSections() {
     // BLOC 8 : Promotions actives
     tomaV3RenderPromotionProducts();
 
+    // BLOC 9 : Produits populaires
+    tomaV3RenderPopularProducts();
+
 }
 
 // ------------------------------------------------------
@@ -1745,6 +1748,86 @@ function tomaV3RenderPromotionProducts() {
 
         container.appendChild(card);
     });
+}
+// ======================================================
+// TOMA V3 — BLOC 9
+// Affichage des produits populaires
+// ======================================================
+
+
+// ------------------------------------------------------
+// 9.1 — Déterminer les produits populaires
+// ------------------------------------------------------
+
+function tomaV3GetPopularProducts() {
+
+    const products = TOMA_V3.products || [];
+
+    return [...products]
+        .filter(product => Number(product.sales || 0) > 0)
+        .sort((a, b) => {
+            return Number(b.sales || 0) - Number(a.sales || 0);
+        });
+}
+
+
+// ------------------------------------------------------
+// 9.2 — Afficher les produits populaires
+// ------------------------------------------------------
+
+function tomaV3RenderPopularProducts() {
+
+    const container =
+        tomaV3GetElement("popularProducts");
+
+    if (!container) {
+
+        console.warn(
+            "[TOMA V3] Conteneur popularProducts introuvable."
+        );
+
+        return;
+    }
+
+    container.replaceChildren();
+
+    const popularProducts =
+        tomaV3GetPopularProducts().slice(
+            0,
+            TOMA_V3_HOME_PRODUCT_LIMIT
+        );
+
+    // Aucun produit avec des ventes enregistrées
+    if (popularProducts.length === 0) {
+
+        const message = document.createElement("p");
+
+        message.className = "v3EmptyMessage";
+
+        message.textContent =
+            "Os produtos populares aparecerão aqui em breve.";
+
+        container.appendChild(message);
+
+        return;
+    }
+
+    // Créer les cartes
+    popularProducts.forEach(product => {
+
+        const card = tomaV3CreateFeaturedCard(
+            product,
+            "Popular"
+        );
+
+        container.appendChild(card);
+
+    });
+
+    console.info(
+        "[TOMA V3] Produtos populares apresentados:",
+        popularProducts.length
+    );
 }
 // ------------------------------------------------------
 // 5.9 — Démarrer le chargement
