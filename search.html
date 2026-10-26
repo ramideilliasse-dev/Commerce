@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
@@ -6,109 +6,136 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Toma">
-<link rel="apple-touch-icon" href="/icon-192.png">
 
+<link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="manifest" href="/manifest.json">
+
 <meta name="theme-color" content="#ff6a00">
- <title>Pesquisar</title>
+
+<title>Pesquisar produtos | Toma</title>
 
 <style>
+* {
+    box-sizing: border-box;
+}
 
-body{
-font-family:Arial;
-margin:0;
-background:#f5f5f5;
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f5f5f5;
 }
 
 /* HEADER */
-.header{
-background:#ff6a00;
-padding:15px;
-display:flex;
-gap:10px;
-align-items:center;
-position:sticky;
-top:0;
-z-index:100;
+.header {
+    background: #ff6a00;
+    padding: 15px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
-.back{
-background:white;
-border:none;
-padding:10px;
-border-radius:8px;
-cursor:pointer;
+.back {
+    background: white;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
 }
 
-.searchBox{
-flex:1;
-padding:12px;
-border:none;
-border-radius:10px;
-font-size:16px;
+.searchBox {
+    flex: 1;
+    min-width: 0;
+    padding: 12px;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+/* SEARCH STATUS */
+.searchStatus {
+    padding: 12px 15px 0;
+    color: #666;
+    font-size: 14px;
 }
 
 /* PRODUCTS */
-.products{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:10px;
-padding:10px;
+.products {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    padding: 10px;
 }
 
-.card{
-background:white;
-border-radius:12px;
-overflow:hidden;
-box-shadow:0 2px 8px rgba(0,0,0,0.08);
-cursor:pointer;
+.card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    cursor: pointer;
 }
 
-.card img{
-width:100%;
-height:140px;
-object-fit:cover;
+.card img {
+    display: block;
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    background: #eee;
 }
 
-.info{
-padding:10px;
+.info {
+    padding: 10px;
 }
 
-.name{
-font-weight:bold;
-font-size:14px;
+.name {
+    font-weight: bold;
+    font-size: 14px;
+    overflow-wrap: anywhere;
 }
 
-.desc{
-font-size:12px;
-color:#666;
-margin-top:4px;
-
-display:-webkit-box;
--webkit-line-clamp:1;
--webkit-box-orient:vertical;
-overflow:hidden;
+.desc {
+    font-size: 12px;
+    color: #666;
+    margin-top: 4px;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
-.price{
-color:#ff6a00;
-font-weight:bold;
-margin-top:5px;
+.price {
+    color: #ff6a00;
+    font-weight: bold;
+    margin-top: 5px;
 }
-.soldOut{
-background:red;
-color:white;
-padding:4px 8px;
-border-radius:8px;
-font-size:12px;
-font-weight:bold;
-display:inline-block;
-margin-top:5px;
+
+.soldOut {
+    background: #e53935;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 5px;
 }
-.empty{
-text-align:center;
-padding:30px;
-color:#777;
+
+.empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 30px;
+    color: #777;
+}
+
+.error {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 30px;
+    color: #b00020;
 }
 
 </style>
@@ -116,177 +143,355 @@ color:#777;
 
 <body>
 
-<div class="header">
+<header class="header">
 
-<button class="back" onclick="history.back()">
-←
-</button>
+    <button
+        class="back"
+        type="button"
+        id="backButton"
+        aria-label="Voltar">
+        ←
+    </button>
 
-<input 
-type="text" 
-id="searchInput" 
-class="searchBox"
-placeholder="Pesquisar produtos..."
->
+    <input
+        type="search"
+        id="searchInput"
+        class="searchBox"
+        placeholder="Pesquisar produtos..."
+        aria-label="Pesquisar produtos"
+        autocomplete="off"
+    >
 
+</header>
+
+<div
+    id="searchStatus"
+    class="searchStatus"
+    aria-live="polite">
 </div>
 
-<div id="products" class="products"></div>
+<main id="products" class="products"></main>
 
 <script type="module">
 
-import { db } from "./firebase.js"
+import { db } from "./firebase.js";
 
 import {
-collection,
-getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+    collection,
+    getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const productsDiv = document.getElementById("products")
-const searchInput = document.getElementById("searchInput")
+const productsDiv = document.getElementById("products");
+const searchInput = document.getElementById("searchInput");
+const searchStatus = document.getElementById("searchStatus");
+const backButton = document.getElementById("backButton");
 
-let allProducts=[]
+let allProducts = [];
 
-/* LOAD */
-async function loadProducts(){
+/* =====================================
+   BLOC 1 — NORMALISER LE TEXTE
+===================================== */
 
-const snap = await getDocs(collection(db,"products"))
+function normalizeText(value) {
+    return String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+}
 
-allProducts=[]
+/* =====================================
+   BLOC 2 — CHARGER LES PRODUITS FIREBASE
+===================================== */
 
-snap.forEach(doc=>{
+async function loadProducts() {
 
-let p = doc.data()
-p.id = doc.id
+    productsDiv.innerHTML = `
+        <div class="empty">A carregar produtos...</div>
+    `;
 
-allProducts.push(p)
+    try {
 
-})
+        const snap = await getDocs(
+            collection(db, "products")
+        );
 
-renderProducts(allProducts)
+        allProducts = [];
+
+        snap.forEach(documentSnapshot => {
+
+            const data = documentSnapshot.data();
+
+            allProducts.push({
+                ...data,
+                id: documentSnapshot.id
+            });
+
+        });
+
+        // Lire la recherche transmise par la page d'accueil.
+        const params = new URLSearchParams(
+            window.location.search
+        );
+
+        const initialQuery = params.get("q") || "";
+
+        searchInput.value = initialQuery;
+
+        // Afficher les produits correspondant à la recherche.
+        filterProducts(initialQuery);
+
+    } catch (error) {
+
+        console.error(
+            "[TOMA SEARCH] Erreur Firebase :",
+            error
+        );
+
+        productsDiv.innerHTML = `
+            <div class="error">
+                Não foi possível carregar os produtos.
+                Verifique a ligação à Internet e tente novamente.
+            </div>
+        `;
+
+        searchStatus.textContent = "";
+
+        alert(
+            "Toma: não foi possível carregar os produtos. Tente novamente."
+        );
+
+    }
 
 }
 
-/* RENDER */
-function renderProducts(list){
+/* =====================================
+   BLOC 3 — AFFICHER LES PRODUITS
+===================================== */
 
-if(list.length===0){
+function renderProducts(list) {
 
-productsDiv.innerHTML = `
-<div class="empty">
-Nenhum produto encontrado 😢
-</div>
-`
+    if (list.length === 0) {
 
-return
-}
+        productsDiv.innerHTML = `
+            <div class="empty">
+                Nenhum produto encontrado 😢
+            </div>
+        `;
 
-let html=""
+        return;
+    }
 
-list.forEach(p=>{
+    productsDiv.innerHTML = "";
 
-let img = p.images?.[0] || "https://via.placeholder.com/300"
+    list.forEach(product => {
 
-let desc = (p.description || "").split("\n")[0]
-let isSoldOut = Number(p.stock || 0) <= 0
-html += `
-<div class="card" onclick="openProduct('${p.id}')">
+        const card = document.createElement("article");
+        card.className = "card";
 
-<img loading="lazy" src="${img}">
+        const image = document.createElement("img");
 
-<div class="info">
+        const images = Array.isArray(product.images)
+            ? product.images
+            : [];
 
-<div class="name">${p.name || "Produto"}</div>
+        image.src =
+            images[0] ||
+            product.image ||
+            "https://placehold.co/300x200?text=Toma";
 
-<div class="desc">${desc}</div>
+        image.alt = product.name || "Produto";
+        image.loading = "lazy";
 
-${isSoldOut
-? `<div class="soldOut">ESGOTADO</div>`
-: `<div class="price">${p.price || 0} Kz</div>`
-}
+        image.onerror = function () {
+            this.onerror = null;
+            this.src =
+                "https://placehold.co/300x200?text=Toma";
+        };
 
-</div>
+        const info = document.createElement("div");
+        info.className = "info";
 
-</div>
-`
-})
+        const name = document.createElement("div");
+        name.className = "name";
+        name.textContent = product.name || "Produto";
 
-productsDiv.innerHTML = html
+        const description = document.createElement("div");
+        description.className = "desc";
 
-}
+        description.textContent = String(
+            product.description || ""
+        ).split("\n")[0];
 
-/* SEARCH */
-searchInput.oninput = function(){
+        info.appendChild(name);
+        info.appendChild(description);
 
-let value = this.value.toLowerCase().trim()
+        const stock = Number(product.stock ?? 0);
 
-if(!value){
-renderProducts(allProducts)
-return
-}
+        if (stock <= 0) {
 
-let filtered = allProducts.filter(p=>{
+            const soldOut = document.createElement("div");
+            soldOut.className = "soldOut";
+            soldOut.textContent = "ESGOTADO";
 
-let name = (p.name || "").toLowerCase()
-let desc = (p.description || "").toLowerCase()
-let province = (p.province || "").toLowerCase()
+            info.appendChild(soldOut);
 
-return (
-name.includes(value)
-|| desc.includes(value)
-|| province.includes(value)
-)
+        } else {
 
-})
+            const price = document.createElement("div");
+            price.className = "price";
 
-renderProducts(filtered)
+            price.textContent =
+                Number(product.price || 0).toLocaleString("pt-PT") +
+                " Kz";
 
-}
+            info.appendChild(price);
 
-/* OPEN */
-window.openProduct = function(id){
+        }
 
-const product =
-allProducts.find(p => p.id === id)
+        card.appendChild(image);
+        card.appendChild(info);
 
-if(product && Number(product.stock || 0) <= 0){
+        card.addEventListener("click", function () {
+            openProduct(product.id);
+        });
 
-alert("Produto esgotado")
+        productsDiv.appendChild(card);
 
-return
-
-}
-
-localStorage.setItem(
-"selectedProduct",
-id
-)
-
-location.href = "product.html"
+    });
 
 }
 
-loadProducts()
+/* =====================================
+   BLOC 4 — FILTRAR LES PRODUITS
+===================================== */
+
+function filterProducts(value) {
+
+    const searchValue = normalizeText(value);
+
+    if (!searchValue) {
+
+        renderProducts(allProducts);
+
+        searchStatus.textContent =
+            allProducts.length +
+            " produtos disponíveis";
+
+        return;
+    }
+
+    const filtered = allProducts.filter(product => {
+
+        const name = normalizeText(product.name);
+        const description = normalizeText(product.description);
+        const province = normalizeText(product.province);
+        const category = normalizeText(product.category);
+
+        return (
+            name.includes(searchValue) ||
+            description.includes(searchValue) ||
+            province.includes(searchValue) ||
+            category.includes(searchValue)
+        );
+
+    });
+
+    renderProducts(filtered);
+
+    searchStatus.textContent =
+        filtered.length +
+        (
+            filtered.length === 1
+                ? " produto encontrado"
+                : " produtos encontrados"
+        );
+
+}
+
+/* =====================================
+   BLOC 5 — RECHERCHE EN TEMPS RÉEL
+===================================== */
+
+searchInput.addEventListener("input", function () {
+
+    filterProducts(this.value);
+
+});
+
+/* =====================================
+   BLOC 6 — OUVRIR UN PRODUIT
+===================================== */
+
+function openProduct(id) {
+
+    const product = allProducts.find(
+        item => item.id === id
+    );
+
+    if (!product) {
+        alert("Produto não encontrado.");
+        return;
+    }
+
+    if (Number(product.stock ?? 0) <= 0) {
+
+        alert("Produto esgotado.");
+        return;
+
+    }
+
+    localStorage.setItem(
+        "selectedProduct",
+        id
+    );
+
+    window.location.href =
+        "./product.html?id=" + encodeURIComponent(id);
+
+}
+
+/* =====================================
+   BLOC 7 — BOUTON RETOUR
+===================================== */
+
+backButton.addEventListener("click", function () {
+
+    if (window.history.length > 1) {
+        window.history.back();
+    } else {
+        window.location.href = "./homes-v3.html";
+    }
+
+});
+
+/* =====================================
+   BLOC 8 — DÉMARRAGE
+===================================== */
+
+loadProducts();
 
 </script>
+
 <script>
+
 if ("serviceWorker" in navigator) {
 
-window.addEventListener("load", () => {
+    window.addEventListener("load", function () {
 
-navigator.serviceWorker.register("/service-worker.js")
+        navigator.serviceWorker.register("/service-worker.js")
+            .catch(function (error) {
+                console.error(
+                    "[TOMA SEARCH] Service Worker :",
+                    error
+                );
+            });
 
-.then(() => {
-console.log("SW OK")
-})
-
-.catch(err => {
-console.log("SW ERROR", err)
-})
-
-})
+    });
 
 }
+
 </script>
+
 </body>
-</html>
+</html> 
