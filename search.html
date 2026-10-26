@@ -946,9 +946,9 @@ function filterProducts(value) {
         filtered.length + " resultado(s)";
 
 }
-
 /* =====================================
-   BLOC 8 — CARREGAR LOJAS OFICIAIS
+   CHARGER LES LOJAS OFFICIELLES
+   Compatible avec le BLOC 11 de Toma V3
 ===================================== */
 
 async function loadStores(forceReload = false) {
@@ -974,16 +974,12 @@ async function loadStores(forceReload = false) {
             collection(db, "officialStores")
         );
 
-        allStores = snapshot.docs.map(item => ({
-            ...item.data(),
-            id: item.id
-        }));
-
-        /*
-         * Nota:
-         * A visibilidade e os estados das lojas serão
-         * ajustados após verificar o BLOC 11 de homes-v3.js.
-         */
+        allStores = snapshot.docs
+            .map(documentSnapshot => ({
+                ...documentSnapshot.data(),
+                id: documentSnapshot.id
+            }))
+            .filter(isOfficialStoreVisible);
 
         storesLoaded = true;
 
@@ -991,7 +987,10 @@ async function loadStores(forceReload = false) {
 
     } catch (error) {
 
-        console.error("[TOMA SEARCH] Erro ao carregar lojas:", error);
+        console.error(
+            "[TOMA SEARCH] Erro ao carregar lojas:",
+            error
+        );
 
         showState(
             "⚠️",
@@ -1007,9 +1006,46 @@ async function loadStores(forceReload = false) {
         storesLoading = false;
 
     }
-
 }
+/* =====================================
+   VISIBILITÉ DES LOJAS
+   Compatible avec Toma V3 — BLOC 11
+===================================== */
 
+function isOfficialStoreVisible(store) {
+
+    if (!store) return false;
+
+    if (store.visible === false) return false;
+    if (store.isVisible === false) return false;
+    if (store.showOnHome === false) return false;
+
+    const status = normalizeText(
+        store.status || store.storeStatus || ""
+    );
+
+    const hiddenStatuses = [
+        "blocked",
+        "blocked",
+        "rejected",
+        "inactive",
+        "disabled",
+        "bloqueada",
+        "bloqueado",
+        "rejeitada",
+        "rejeitado",
+        "inativa",
+        "inativo",
+        "desativada",
+        "desativado"
+    ];
+
+    if (hiddenStatuses.includes(status)) {
+        return false;
+    }
+
+    return true;
+}
 /* =====================================
    BLOC 9 — CAMPOS DA LOJA
 ===================================== */
@@ -1141,25 +1177,13 @@ function renderStores(list) {
     resultsDiv.appendChild(fragment);
 
 }
-
-/* =====================================
-   BLOC 11 — FILTRAR LOJAS
+ /* =====================================
+   RECHERCHER LES LOJAS
 ===================================== */
 
 function filterStores(value) {
 
     const searchValue = normalizeText(value);
-
-    if (!searchValue) {
-
-        renderStores(allStores);
-
-        searchStatus.textContent =
-            allStores.length + " loja(s)";
-
-        return;
-
-    }
 
     const filtered = allStores.filter(store => {
 
@@ -1168,19 +1192,29 @@ function filterStores(value) {
             getStoreDescription(store),
             store.category,
             store.storeCategory,
-            store.slug
+            store.slug,
+            store.storeSlug
         ].join(" "));
 
-        return searchableText.includes(searchValue);
+        return !searchValue ||
+            searchableText.includes(searchValue);
 
     });
 
     renderStores(filtered);
 
-    searchStatus.textContent =
-        filtered.length + " resultado(s)";
+    if (!searchValue) {
 
-}
+        searchStatus.textContent =
+            filtered.length + " loja(s) disponível(is)";
+
+    } else {
+
+        searchStatus.textContent =
+            filtered.length + " resultado(s)";
+
+    }
+}   
 
 /* =====================================
    BLOC 12 — MUDAR DE CATEGORIA
