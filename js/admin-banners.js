@@ -1424,23 +1424,31 @@ async function initializeAdminBanners(user) {
 
     } catch (error) {
 
-        console.error(
-            "Erro ao carregar as banners:",
-            error
-        );
+    console.error(
+        "Erro ao carregar as banners:",
+        error
+    );
 
+    showLoading(false);
+    showAdminContent(false);
 
-        showLoading(false);
+    const errorCode = error?.code || "sem código";
+    const errorMessage = error?.message || "Erro desconhecido";
 
-        showAdminContent(false);
+    showAdminMessage(
+        "ERRO AO CARREGAR AS BANNERS\n\n" +
+        "Código: " + errorCode + "\n\n" +
+        "Detalhes: " + errorMessage,
+        "error"
+    );
 
+    alert(
+        "DIAGNÓSTICO TOMA V3\n\n" +
+        "Código: " + errorCode + "\n\n" +
+        "Detalhes: " + errorMessage
+    );
 
-        showAdminMessage(
-            "Não foi possível carregar as banners. Verifica a ligação ao Firebase e tenta novamente.",
-            "error"
-        );
-
-    }
+}
 
 }
 
