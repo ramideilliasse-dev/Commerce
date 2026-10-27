@@ -19,7 +19,7 @@ import {
 const TOMA_BANNERS_COLLECTION = "homeBanners";
 
 const TOMA_CLOUDINARY_CLOUD_NAME = "xnak6z6m";
-const TOMA_CLOUDINARY_UPLOAD_PRESET = "Toma-banner";
+const TOMA_CLOUDINARY_UPLOAD_PRESET = "toma-banner-v2";
 
 const TOMA_MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -646,112 +646,85 @@ function initializeImagePickers() {
 }
 /* =====================================================
    BLOC 8 — UPLOAD CLOUDINARY
-   PRESET : Toma-banner
+   PRESET : toma-banners-v2
 ===================================================== */
 
 async function uploadImageToCloudinary(file, bannerId) {
 
-    const cloudName = "xnak6z6m";
-    const uploadPreset = "Toma-banner";
+  const cloudName = "xnak6z6m";
+  const uploadPreset = "toma-banners-v2";
 
-    const formData = new FormData();
+  if (!file) {
+    throw new Error("Aucune image sélectionnée.");
+  }
 
-    // Ajouter l'image
-    formData.append("file", file);
+  const formData = new FormData();
 
-    // Ajouter le preset Cloudinary
-    formData.append("upload_preset", uploadPreset);
+  formData.append("file", file);
+  formData.append("upload_preset", uploadPreset);
+  formData.append("folder", "toma/banners");
 
-    // Dossier de destination
-    formData.append("folder", "toma/banners");
+  const uploadUrl =
+    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
 
-    const uploadUrl =
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+  let response;
 
-    let response;
+  try {
+    response = await fetch(uploadUrl, {
+      method: "POST",
+      body: formData
+    });
+  } catch (error) {
+    alert(
+      "ERREUR DE CONNEXION\n\n" +
+      "Impossible de contacter Cloudinary.\n" +
+      "Vérifie ta connexion Internet."
+    );
 
-    try {
+    throw new Error("Connexion à Cloudinary impossible.");
+  }
 
-        response = await fetch(uploadUrl, {
-            method: "POST",
-            body: formData
-        });
+  const responseText = await response.text();
 
-    } catch (error) {
+  let result;
 
-        alert(
-            "ERREUR DE CONNEXION\n\n" +
-            "Impossible de contacter Cloudinary.\n" +
-            "Vérifie ta connexion Internet."
-        );
+  try {
+    result = JSON.parse(responseText);
+  } catch (error) {
+    alert(
+      "RÉPONSE INVALIDE DE CLOUDINARY\n\n" +
+      "Code HTTP : " + response.status + "\n\n" +
+      responseText
+    );
 
-        throw new Error(
-            "Impossible de contacter Cloudinary."
-        );
-    }
+    throw new Error("Réponse Cloudinary invalide.");
+  }
 
-    let responseText = "";
+  if (!response.ok) {
+    alert(
+      "ÉCHEC DE L'UPLOAD CLOUDINARY\n\n" +
+      "Code HTTP : " + response.status + "\n" +
+      "Cloud : " + cloudName + "\n" +
+      "Preset : " + uploadPreset + "\n\n" +
+      "Détail :\n" +
+      (result.error?.message || responseText)
+    );
 
-    try {
+    throw new Error(
+      result.error?.message || "Échec de l'envoi de l'image."
+    );
+  }
 
-        responseText = await response.text();
+  if (!result.secure_url) {
+    throw new Error(
+      "Cloudinary n'a retourné aucune URL sécurisée."
+    );
+  }
 
-    } catch (error) {
-
-        throw new Error(
-            "Impossible de lire la réponse de Cloudinary."
-        );
-    }
-
-    let result;
-
-    try {
-
-        result = JSON.parse(responseText);
-
-    } catch (error) {
-
-        alert(
-            "ERREUR CLOUDINARY\n\n" +
-            "Code HTTP : " + response.status +
-            "\nRéponse : " + responseText
-        );
-
-        throw new Error(
-            "La réponse de Cloudinary n'est pas valide."
-        );
-    }
-
-    // Vérifier la réponse
-    if (!response.ok) {
-
-        alert(
-            "ERREUR CLOUDINARY\n\n" +
-            "Code HTTP : " + response.status +
-            "\nPreset utilisé : " + uploadPreset +
-            "\nCloud : " + cloudName +
-            "\n\nRéponse complète :\n" + responseText
-        );
-
-        throw new Error(
-            result.error?.message ||
-            "Échec de l'envoi vers Cloudinary."
-        );
-    }
-
-    // Vérifier l'URL de l'image
-    if (!result.secure_url) {
-
-        throw new Error(
-            "Cloudinary n'a pas retourné l'adresse de l'image."
-        );
-    }
-
-    // Retourner les informations de l'image
-    return {
-        url: result.secure_url,
-        publicId: result.public_id || ""
-    };
+  return {
+    url: result.secure_url,
+    publicId: result.public_id || ""
+  };
 }
 
 /* =====================================================
