@@ -19,7 +19,7 @@ import {
 const TOMA_BANNERS_COLLECTION = "homeBanners";
 
 const TOMA_CLOUDINARY_CLOUD_NAME = "xnak6z6m";
-const TOMA_CLOUDINARY_UPLOAD_PRESET = "toma-banner-v2";
+const TOMA_CLOUDINARY_UPLOAD_PRESET = "toma-banners-v2";
 
 const TOMA_MAX_FILE_SIZE = 10 * 1024 * 1024;
 
