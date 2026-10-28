@@ -18,8 +18,8 @@ import {
 
 const TOMA_BANNERS_COLLECTION = "homeBanners";
 
-const TOMA_CLOUDINARY_CLOUD_NAME = "xnak6z6m";
-const TOMA_CLOUDINARY_UPLOAD_PRESET = "toma-banners-v2";
+const TOMA_IMAGEKIT_PUBLIC_KEY = "public_qlTmyZvA4klTyNlECmqhRpnmHqA=";
+const TOMA_IMAGEKIT_FOLDER = "/toma/banners";
 
 const TOMA_MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -645,88 +645,186 @@ function initializeImagePickers() {
 
 }
 /* =====================================================
-   BLOC 8 — UPLOAD CLOUDINARY
-   PRESET : toma-banners-v2
+   BLOC 8 — UPLOAD IMAGEKIT
+   AUTHENTIFICATION PAR FIREBASE + VERCEL
 ===================================================== */
 
-async function uploadImageToCloudinary(file, bannerId) {
+async function uploadImageToImageKit(file, bannerId) {
 
-  const cloudName = "xnak6z6m";
-  const uploadPreset = "toma-banners-v2";
+    if (!file) {
+        throw new Error("Nenhuma imagem selecionada.");
+    }
 
-  if (!file) {
-    throw new Error("Aucune image sélectionnée.");
-  }
+    if (!TOMA_ALLOWED_TYPES.includes(file.type)) {
+        throw new Error("Formato de imagem não suportado.");
+    }
 
-  const formData = new FormData();
+    if (file.size > TOMA_MAX_FILE_SIZE) {
+        throw new Error("A imagem não pode ultrapassar 10 MB.");
+    }
 
-  formData.append("file", file);
-  formData.append("upload_preset", uploadPreset);
-  formData.append("folder", "toma/banners");
+    const user = auth.currentUser;
 
-  const uploadUrl =
-    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+    if (!user) {
+        throw new Error(
+            "A sessão expirou. Inicia sessão novamente."
+        );
+    }
 
-  let response;
+    // BLOC 8.1 — Obtenir un jeton Firebase actualisé
 
-  try {
-    response = await fetch(uploadUrl, {
-      method: "POST",
-      body: formData
-    });
-  } catch (error) {
-    alert(
-      "ERREUR DE CONNEXION\n\n" +
-      "Impossible de contacter Cloudinary.\n" +
-      "Vérifie ta connexion Internet."
-    );
+    const idToken = await user.getIdToken();
 
-    throw new Error("Connexion à Cloudinary impossible.");
-  }
+    // BLOC 8.2 — Demander une signature temporaire à Vercel
 
-  const responseText = await response.text();
+    let authResponse;
 
-  let result;
+    try {
 
-  try {
-    result = JSON.parse(responseText);
-  } catch (error) {
-    alert(
-      "RÉPONSE INVALIDE DE CLOUDINARY\n\n" +
-      "Code HTTP : " + response.status + "\n\n" +
-      responseText
-    );
+        authResponse = await fetch("/api/imagekit-auth", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${idToken}`
+            },
+            body: JSON.stringify({
+                purpose: "banner"
+            })
+        });
 
-    throw new Error("Réponse Cloudinary invalide.");
-  }
+    } catch (error) {
 
-  if (!response.ok) {
-    alert(
-      "ÉCHEC DE L'UPLOAD CLOUDINARY\n\n" +
-      "Code HTTP : " + response.status + "\n" +
-      "Cloud : " + cloudName + "\n" +
-      "Preset : " + uploadPreset + "\n\n" +
-      "Détail :\n" +
-      (result.error?.message || responseText)
-    );
+        throw new Error(
+            "Não foi possível contactar o servidor Toma."
+        );
 
-    throw new Error(
-      result.error?.message || "Échec de l'envoi de l'image."
-    );
-  }
+    }
 
-  if (!result.secure_url) {
-    throw new Error(
-      "Cloudinary n'a retourné aucune URL sécurisée."
-    );
-  }
+    const authText = await authResponse.text();
 
-  return {
-    url: result.secure_url,
-    publicId: result.public_id || ""
-  };
+    let authData;
+
+    try {
+
+        authData = JSON.parse(authText);
+
+    } catch (error) {
+
+        throw new Error(
+            "Resposta inválida do servidor de autenticação."
+        );
+
+    }
+
+    if (!authResponse.ok || !authData.success) {
+
+        const message =
+            authData?.error?.message ||
+            "Não foi possível autorizar o envio da imagem.";
+
+        throw new Error(message);
+
+    }
+
+    if (
+        !authData.token ||
+        !authData.signature ||
+        !authData.expire
+    ) {
+
+        throw new Error(
+            "O servidor não devolveu os dados de autenticação necessários."
+        );
+
+    }
+
+    // BLOC 8.3 — Préparer l'envoi vers ImageKit
+
+    const formData = new FormData();
+
+    formData.append("file", file);
+
+    formData.append("fileName", file.name);
+
+    formData.append("publicKey", TOMA_IMAGEKIT_PUBLIC_KEY);
+
+    formData.append("token", authData.token);
+
+    formData.append("signature", authData.signature);
+
+    formData.append("expire", String(authData.expire));
+
+    formData.append("folder", TOMA_IMAGEKIT_FOLDER);
+
+    // BLOC 8.4 — Envoyer l'image
+
+    let uploadResponse;
+
+    try {
+
+        uploadResponse = await fetch(
+            "https://upload.imagekit.io/api/v1/files/upload",
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+    } catch (error) {
+
+        throw new Error(
+            "Não foi possível contactar o serviço ImageKit."
+        );
+
+    }
+
+    const uploadText = await uploadResponse.text();
+
+    let uploadData;
+
+    try {
+
+        uploadData = JSON.parse(uploadText);
+
+    } catch (error) {
+
+        throw new Error(
+            "O ImageKit devolveu uma resposta inválida."
+        );
+
+    }
+
+    if (!uploadResponse.ok) {
+
+        console.error(
+            "[TOMA][IMAGEKIT] Erro HTTP:",
+            uploadResponse.status
+        );
+
+        throw new Error(
+            uploadData?.message ||
+            uploadData?.help ||
+            "O envio da imagem falhou no ImageKit."
+        );
+
+    }
+
+    // BLOC 8.5 — Vérifier et retourner l'image
+
+    if (!uploadData.url) {
+
+        throw new Error(
+            "O ImageKit não devolveu o endereço da imagem."
+        );
+
+    }
+
+    return {
+        url: uploadData.url,
+        publicId: uploadData.fileId || ""
+    };
+
 }
-
 /* =====================================================
    BLOC 9 — VALIDATION DU LIEN
 ===================================================== */
@@ -1146,11 +1244,11 @@ async function saveBanner(bannerId) {
 
             }
 
-            const uploadedImage =
-                await uploadImageToCloudinary(
-                    selectedFiles[index],
-                    bannerId
-                );
+          const uploadedImage =
+    await uploadImageToImageKit(
+        selectedFiles[index],
+        bannerId
+    );
 
             uploadedImages.push(uploadedImage);
 
