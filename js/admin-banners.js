@@ -797,6 +797,16 @@ try {
     cause: error?.cause?.message || null,
     errorKeys: error ? Object.keys(error) : [],
     responseMetadata: error?.$ResponseMetadata || null,
+     sdkErrorDetails: {
+    constructorName: error?.constructor?.name || null,
+    responseMetadata: error?.$ResponseMetadata || null,
+    ownProperties: error ? Object.getOwnPropertyNames(error) : [],
+    prototypeProperties: error
+        ? Object.getOwnPropertyNames(
+            Object.getPrototypeOf(error)
+        )
+        : []
+},
     requestId: error?.$ResponseMetadata?.requestId || null,
     httpStatusCode: error?.$ResponseMetadata?.httpStatusCode || null,
     headers: error?.$ResponseMetadata?.headers || null
