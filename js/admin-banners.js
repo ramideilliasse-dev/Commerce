@@ -779,7 +779,11 @@ async function uploadImageToImageKit(file, bannerId) {
     }
 
     const uploadText = await uploadResponse.text();
-
+alert(
+    "TOMA IMAGEKIT DIAGNOSTIC\n" +
+    "HTTP: " + uploadResponse.status + "\n" +
+    "Réponse: " + uploadText.substring(0, 700)
+);
     let uploadData;
 
     try {
