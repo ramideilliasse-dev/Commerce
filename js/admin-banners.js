@@ -741,31 +741,28 @@ async function uploadImageToImageKit(file, bannerId) {
     // BLOC 8.3 — Préparer l'envoi vers ImageKit
 
     const formData = new FormData();
-alert(
-    "TOMA — DIAGNOSTIC FICHIER\n" +
-    "Nom : " + (file?.name || "Absent") + "\n" +
-    "Type : " + (file?.type || "Absent") + "\n" +
-    "Taille : " + (file?.size ?? "Inconnue") + " octets\n" +
-    "Objet File : " + (file instanceof File) + "\n" +
-    "FormData : " + (formData instanceof FormData)
-);
-    if (!(file instanceof Blob) || file.size === 0) {
-    throw new Error("O ficheiro de imagem é inválido ou está vazio.");
-}
 
-formData.append("file", file, file.name || "toma-banner.png");
-
-    formData.append("fileName", file.name);
-
+    // Ajouter les paramètres d'authentification en premier
     formData.append("publicKey", TOMA_IMAGEKIT_PUBLIC_KEY);
-
     formData.append("token", authData.token);
-
     formData.append("signature", authData.signature);
-
     formData.append("expire", String(authData.expire));
 
+    // Paramètres du fichier
+    formData.append(
+        "fileName",
+        (file.name || "toma-banner.png").replace(/[^a-zA-Z0-9._-]/g, "_")
+    );
+
     formData.append("folder", TOMA_IMAGEKIT_FOLDER);
+    formData.append("useUniqueFileName", "true");
+
+    // Ajouter le fichier en dernier
+    formData.append(
+        "file",
+        file,
+        (file.name || "toma-banner.png").replace(/[^a-zA-Z0-9._-]/g, "_")
+    );
 
     // BLOC 8.4 — Envoyer l'image
 
@@ -790,11 +787,7 @@ formData.append("file", file, file.name || "toma-banner.png");
     }
 
     const uploadText = await uploadResponse.text();
-alert(
-    "TOMA IMAGEKIT DIAGNOSTIC\n" +
-    "HTTP: " + uploadResponse.status + "\n" +
-    "Réponse: " + uploadText.substring(0, 700)
-);
+
     let uploadData;
 
     try {
@@ -823,7 +816,6 @@ alert(
         );
 
     }
-
     // BLOC 8.5 — Vérifier et retourner l'image
 
     if (!uploadData.url) {
