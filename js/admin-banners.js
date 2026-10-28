@@ -764,62 +764,87 @@ async function uploadImageToImageKit(file, bannerId) {
         (file.name || "toma-banner.png").replace(/[^a-zA-Z0-9._-]/g, "_")
     );
 
-    // BLOC 8.4 — Envoyer l'image
+   // BLOC 8.4 — Envoyer l'image avec XMLHttpRequest
 
-    let uploadResponse;
+let uploadResponse;
+let uploadText;
 
-    try {
+try {
+    uploadResponse = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
 
-        uploadResponse = await fetch(
-            "https://upload.imagekit.io/api/v1/files/upload",
-            {
-                method: "POST",
-                body: formData
-            }
+        xhr.open(
+            "POST",
+            "https://upload.imagekit.io/api/v1/files/upload"
         );
 
-    } catch (error) {
+        xhr.onload = () => {
+            resolve({
+                status: xhr.status,
+                ok: xhr.status >= 200 && xhr.status < 300,
+                requestId:
+                    xhr.getResponseHeader("x-ik-requestId") ||
+                    xhr.getResponseHeader("x-ik-request-id") ||
+                    "Não disponível",
+                text: xhr.responseText
+            });
+        };
 
-        throw new Error(
-            "Não foi possível contactar o serviço ImageKit."
-        );
+        xhr.onerror = () => {
+            reject(
+                new Error(
+                    "Não foi possível contactar o serviço ImageKit."
+                )
+            );
+        };
 
-    }
+        xhr.onabort = () => {
+            reject(
+                new Error("O envio da imagem foi cancelado.")
+            );
+        };
 
-    const uploadText = await uploadResponse.text();
+        // Não definir Content-Type manualmente.
+        // O navegador cria automaticamente o multipart/form-data.
+        xhr.send(formData);
+    });
 
-    let uploadData;
+    uploadText = uploadResponse.text;
 
-    try {
+} catch (error) {
+    throw new Error(
+        error.message ||
+        "Não foi possível enviar a imagem para o ImageKit."
+    );
+}
 
-        uploadData = JSON.parse(uploadText);
+let uploadData;
 
-    } catch (error) {
+try {
+    uploadData = JSON.parse(uploadText);
+} catch (error) {
+    throw new Error(
+        "O ImageKit devolveu uma resposta inválida."
+    );
+}
 
-        throw new Error(
-            "O ImageKit devolveu uma resposta inválida."
-        );
+if (!uploadResponse.ok) {
+    alert(
+        "DIAGNÓSTICO IMAGEKIT — TESTE 2\n\n" +
+        "HTTP: " + uploadResponse.status + "\n\n" +
+        "Mensagem: " +
+        (uploadData?.message || "Sem mensagem") + "\n\n" +
+        "Detalhes: " +
+        (uploadData?.help || "Sem detalhes") + "\n\n" +
+        "Request ID: " + uploadResponse.requestId
+    );
 
-    }
-
-    if (!uploadResponse.ok) {
-
-        alert(
-    "DIAGNÓSTICO IMAGEKIT\n\n" +
-    "HTTP: " + uploadResponse.status + "\n\n" +
-    "Mensagem: " + (uploadData?.message || "Sem mensagem") + "\n\n" +
-    "Detalhes: " + (uploadData?.help || "Sem detalhes") + "\n\n" +
-    "Request ID: " +
-    (uploadResponse.headers.get("x-ik-requestId") || "Não disponível")
-);
-
-throw new Error(
-    uploadData?.message ||
-    uploadData?.help ||
-    "O envio da imagem falhou no ImageKit."
-);
-
-    }
+    throw new Error(
+        uploadData?.message ||
+        uploadData?.help ||
+        "O envio da imagem falhou no ImageKit."
+    );
+}
     // BLOC 8.5 — Vérifier et retourner l'image
 
     if (!uploadData.url) {
