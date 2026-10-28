@@ -787,7 +787,19 @@ try {
     });
 
 } catch (error) {
+// BLOC DIAGNOSTIC — Métadonnées HTTP ImageKit
 
+alert(
+    "IMAGEKIT — STATUT HTTP\n\n" +
+    "Statut: " +
+    String(error?.$ResponseMetadata?.statusCode || "indisponible") +
+    "\n\n" +
+    "Date serveur: " +
+    String(error?.$ResponseMetadata?.headers?.date || "indisponible") +
+    "\n\n" +
+    "Type de contenu: " +
+    String(error?.$ResponseMetadata?.headers?.["content-type"] || "indisponible")
+);
     const diagnostic = {
     name: error?.name || null,
     message: error?.message || null,
