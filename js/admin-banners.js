@@ -786,12 +786,19 @@ alert(
 
 } catch (error) {
 
+    const diagnostic = {
+        name: error?.name || null,
+        message: error?.message || null,
+        status: error?.status || error?.statusCode || null,
+        responseStatus: error?.response?.status || null,
+        responseData: error?.response?.data || null,
+        cause: error?.cause?.message || null,
+        errorKeys: error ? Object.keys(error) : []
+    };
+
     alert(
-        "DIAGNÓSTICO IMAGEKIT — SDK\n\n" +
-        "Mensagem: " +
-        (error?.message || "Erro desconhecido") +
-        "\n\nTipo: " +
-        (error?.name || "Não identificado")
+        "DIAGNÓSTICO IMAGEKIT — DETALHES\n\n" +
+        JSON.stringify(diagnostic, null, 2)
     );
 
     throw new Error(
