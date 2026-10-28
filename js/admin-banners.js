@@ -806,6 +806,21 @@ try {
 
         // Não definir Content-Type manualmente.
         // O navegador cria automaticamente o multipart/form-data.
+     alert(
+    "VÉRIFICATION FORM DATA\n\n" +
+    "Nombre de champs : " +
+    Array.from(formData.keys()).length + "\n\n" +
+    "Champs présents : " +
+    Array.from(formData.keys()).join(", ") + "\n\n" +
+    "Fichier présent : " +
+    (formData.get("file") instanceof File) + "\n\n" +
+    "Nom : " +
+    (formData.get("file")?.name || "Absent") + "\n\n" +
+    "Type : " +
+    (formData.get("file")?.type || "Absent") + "\n\n" +
+    "Taille : " +
+    (formData.get("file")?.size || 0)
+);
         xhr.send(formData);
     });
 
