@@ -196,11 +196,12 @@ export default async function handler(req, res) {
       Math.floor(Date.now() / 1000) +
       TOKEN_EXPIRATION_SECONDS;
 
-    const signature = crypto
-      .createHmac("sha1", privateKey)
-      .update(token + expire)
-      .digest("hex");
+    const signaturePayload = `${token}${String(expire)}`;
 
+const signature = crypto
+  .createHmac("sha1", privateKey)
+  .update(signaturePayload, "utf8")
+  .digest("hex");
     // ==========================================
     // BLOC 7 — RÉPONSE API
     // ==========================================
