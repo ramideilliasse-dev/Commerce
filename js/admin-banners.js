@@ -825,9 +825,18 @@ alert(
 };
 
     alert(
-        "DIAGNÓSTICO IMAGEKIT — DETALHES\n\n" +
-        JSON.stringify(diagnostic, null, 2)
-    );
+    "DIAGNÓSTICO IMAGEKIT — DETALHES\n\n" +
+    JSON.stringify({
+        name: error?.name || null,
+        message: error?.message || null,
+        responseMetadata: error?.$ResponseMetadata || null,
+        responseBody: error?.response?.body || null,
+        responseText: error?.response?.text || null,
+        errorKeys: error
+            ? Object.getOwnPropertyNames(error)
+            : []
+    }, null, 2)
+);
 
     throw new Error(
         error?.message ||
