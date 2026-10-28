@@ -747,11 +747,35 @@ try {
         "https://cdn.jsdelivr.net/npm/@imagekit/javascript@5.0.0/+esm"
     );
 
-    if (typeof imageKitSDK.upload !== "function") {
-        throw new Error(
-            "A função upload() do SDK ImageKit não está disponível."
-        );
-    }
+    // DIAGNÓSTIC 1 — Vérifier le SDK et le fichier sélectionné
+
+const sdkDiagnostic = {
+    sdkVersionDemandee: "5.0.0",
+    uploadDisponible: typeof imageKitSDK.upload === "function",
+    typeFichier: file?.constructor?.name || null,
+    estUnFichier: file instanceof File,
+    nomFichier: file?.name || null,
+    typeMime: file?.type || null,
+    tailleOctets: file?.size || 0,
+    tailleInferieureA10MB: file?.size <= TOMA_MAX_FILE_SIZE
+};
+
+alert(
+    "TOMA — DIAGNÓSTICO 1\n\n" +
+    JSON.stringify(sdkDiagnostic, null, 2)
+);
+
+if (!sdkDiagnostic.uploadDisponible) {
+    throw new Error(
+        "A função upload() do SDK ImageKit não está disponível."
+    );
+}
+
+if (!sdkDiagnostic.estUnFichier) {
+    throw new Error(
+        "O ficheiro selecionado não é um objeto File válido."
+    );
+}
 
     // BLOC 8.4 — Envoyer l'image avec le SDK officiel
 
