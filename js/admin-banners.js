@@ -758,7 +758,21 @@ try {
     const safeFileName = (
         file.name || "toma-banner.png"
     ).replace(/[^a-zA-Z0-9._-]/g, "_");
-
+alert(
+    "VERIFICAÇÃO DE AUTENTICAÇÃO IMAGEKIT\n\n" +
+    "Public key presente: " +
+    Boolean(TOMA_IMAGEKIT_PUBLIC_KEY) + "\n\n" +
+    "Token presente: " +
+    Boolean(authData.token) + "\n\n" +
+    "Signature presente: " +
+    Boolean(authData.signature) + "\n\n" +
+    "Expire: " +
+    String(authData.expire) + "\n\n" +
+    "Expire é número: " +
+    Number.isFinite(Number(authData.expire)) + "\n\n" +
+    "Ficheiro é File: " +
+    (file instanceof File)
+);
     uploadData = await imageKitSDK.upload({
         file: file,
         fileName: safeFileName,
