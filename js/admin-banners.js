@@ -742,6 +742,20 @@ async function uploadImageToImageKit(file, bannerId) {
 
 let uploadData;
 
+// DIAGNOSTIC 3 — Capturer la réponse HTTP brute
+let imageKitRawResponse = null;
+
+const imageKitDiagnosticXHR = new XMLHttpRequest();
+
+imageKitDiagnosticXHR.addEventListener("loadend", function () {
+    imageKitRawResponse = {
+        status: imageKitDiagnosticXHR.status,
+        statusText: imageKitDiagnosticXHR.statusText,
+        contentType: imageKitDiagnosticXHR.getResponseHeader("content-type"),
+        responseText: imageKitDiagnosticXHR.responseText
+    };
+});
+
 try {
     const imageKitSDK = await import(
         "https://cdn.jsdelivr.net/npm/@imagekit/javascript@5.0.0/+esm"
@@ -822,6 +836,7 @@ if (!sdkDiagnostic.estUnFichier) {
         expire: Number(authData.expire),
         folder: TOMA_IMAGEKIT_FOLDER,
         useUniqueFileName: true
+     xhr: imageKitDiagnosticXHR,
     });
 
 } catch (error) {
