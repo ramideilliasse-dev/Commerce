@@ -799,6 +799,20 @@ if (!sdkDiagnostic.estUnFichier) {
             remainingSeconds < 3600
         )
     );
+ alert(
+    "TOMA — DIAGNÓSTICO 2\n\n" +
+    "Método: imageKitSDK.upload()\n" +
+    "Nome do arquivo: " + safeFileName + "\n" +
+    "Tipo MIME: " + file.type + "\n" +
+    "Tamanho: " + file.size + " bytes\n" +
+    "Pasta: " + TOMA_IMAGEKIT_FOLDER + "\n" +
+    "Chave pública disponível: " +
+    Boolean(TOMA_IMAGEKIT_PUBLIC_KEY) + "\n" +
+    "Token disponível: " + Boolean(authData.token) + "\n" +
+    "Assinatura disponível: " + Boolean(authData.signature) + "\n" +
+    "Expiração numérica: " +
+    Number.isFinite(Number(authData.expire))
+);
     uploadData = await imageKitSDK.upload({
         file: file,
         fileName: safeFileName,
