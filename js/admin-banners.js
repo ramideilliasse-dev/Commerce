@@ -741,7 +741,14 @@ async function uploadImageToImageKit(file, bannerId) {
     // BLOC 8.3 — Préparer l'envoi vers ImageKit
 
     const formData = new FormData();
-
+alert(
+    "TOMA — DIAGNOSTIC FICHIER\n" +
+    "Nom : " + (file?.name || "Absent") + "\n" +
+    "Type : " + (file?.type || "Absent") + "\n" +
+    "Taille : " + (file?.size ?? "Inconnue") + " octets\n" +
+    "Objet File : " + (file instanceof File) + "\n" +
+    "FormData : " + (formData instanceof FormData)
+);
     formData.append("file", file);
 
     formData.append("fileName", file.name);
