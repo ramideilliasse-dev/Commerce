@@ -738,127 +738,53 @@ async function uploadImageToImageKit(file, bannerId) {
 
     }
 
-    // BLOC 8.3 — Préparer l'envoi vers ImageKit
-
-    const formData = new FormData();
-
-    // Ajouter les paramètres d'authentification en premier
-    formData.append("publicKey", TOMA_IMAGEKIT_PUBLIC_KEY);
-    formData.append("token", authData.token);
-    formData.append("signature", authData.signature);
-    formData.append("expire", String(authData.expire));
-
-    // Paramètres du fichier
-    formData.append(
-        "fileName",
-        (file.name || "toma-banner.png").replace(/[^a-zA-Z0-9._-]/g, "_")
-    );
-
-    formData.append("folder", TOMA_IMAGEKIT_FOLDER);
-    formData.append("useUniqueFileName", "true");
-
-    // Ajouter le fichier en dernier
-    formData.append(
-        "file",
-        file,
-        (file.name || "toma-banner.png").replace(/[^a-zA-Z0-9._-]/g, "_")
-    );
-
-   // BLOC 8.4 — Envoyer l'image avec XMLHttpRequest
-
-let uploadResponse;
-let uploadText;
-
-try {
-    uploadResponse = await new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-
-        xhr.open(
-            "POST",
-            "https://upload.imagekit.io/api/v1/files/upload"
-        );
-
-        xhr.onload = () => {
-            resolve({
-                status: xhr.status,
-                ok: xhr.status >= 200 && xhr.status < 300,
-                requestId:
-                    xhr.getResponseHeader("x-ik-requestId") ||
-                    xhr.getResponseHeader("x-ik-request-id") ||
-                    "Não disponível",
-                text: xhr.responseText
-            });
-        };
-
-        xhr.onerror = () => {
-            reject(
-                new Error(
-                    "Não foi possível contactar o serviço ImageKit."
-                )
-            );
-        };
-
-        xhr.onabort = () => {
-            reject(
-                new Error("O envio da imagem foi cancelado.")
-            );
-        };
-
-        // Não definir Content-Type manualmente.
-        // O navegador cria automaticamente o multipart/form-data.
-     alert(
-    "VÉRIFICATION FORM DATA\n\n" +
-    "Nombre de champs : " +
-    Array.from(formData.keys()).length + "\n\n" +
-    "Champs présents : " +
-    Array.from(formData.keys()).join(", ") + "\n\n" +
-    "Fichier présent : " +
-    (formData.get("file") instanceof File) + "\n\n" +
-    "Nom : " +
-    (formData.get("file")?.name || "Absent") + "\n\n" +
-    "Type : " +
-    (formData.get("file")?.type || "Absent") + "\n\n" +
-    "Taille : " +
-    (formData.get("file")?.size || 0)
-);
-        xhr.send(formData);
-    });
-
-    uploadText = uploadResponse.text;
-
-} catch (error) {
-    throw new Error(
-        error.message ||
-        "Não foi possível enviar a imagem para o ImageKit."
-    );
-}
+  // BLOC 8.3 — Charger le SDK officiel ImageKit
 
 let uploadData;
 
 try {
-    uploadData = JSON.parse(uploadText);
+    const imageKitSDK = await import(
+        "https://cdn.jsdelivr.net/npm/@imagekit/javascript@5.0.0/+esm"
+    );
+
+    if (typeof imageKitSDK.upload !== "function") {
+        throw new Error(
+            "A função upload() do SDK ImageKit não está disponível."
+        );
+    }
+
+    // BLOC 8.4 — Envoyer l'image avec le SDK officiel
+
+    const safeFileName = (
+        file.name || "toma-banner.png"
+    ).replace(/[^a-zA-Z0-9._-]/g, "_");
+
+    uploadData = await imageKitSDK.upload({
+        file: file,
+        fileName: safeFileName,
+        publicKey: TOMA_IMAGEKIT_PUBLIC_KEY,
+        token: authData.token,
+        signature: authData.signature,
+        expire: Number(authData.expire),
+        folder: TOMA_IMAGEKIT_FOLDER,
+        useUniqueFileName: true
+    });
+
 } catch (error) {
-    throw new Error(
-        "O ImageKit devolveu uma resposta inválida."
-    );
-}
 
-if (!uploadResponse.ok) {
     alert(
-        "DIAGNÓSTICO IMAGEKIT — TESTE 2\n\n" +
-        "HTTP: " + uploadResponse.status + "\n\n" +
+        "DIAGNÓSTICO IMAGEKIT — SDK\n\n" +
         "Mensagem: " +
-        (uploadData?.message || "Sem mensagem") + "\n\n" +
-        "Detalhes: " +
-        (uploadData?.help || "Sem detalhes") + "\n\n" +
-        "Request ID: " + uploadResponse.requestId
+        (error?.message || "Erro desconhecido") +
+        "\n\nTipo: " +
+        (error?.name || "Não identificado")
     );
 
     throw new Error(
-        uploadData?.message ||
-        uploadData?.help ||
-        "O envio da imagem falhou no ImageKit."
+        error?.message ||
+        "Não foi possível enviar a imagem para o ImageKit."
     );
+
 }
     // BLOC 8.5 — Vérifier et retourner l'image
 
