@@ -804,16 +804,20 @@ async function uploadImageToImageKit(file, bannerId) {
 
     if (!uploadResponse.ok) {
 
-        console.error(
-            "[TOMA][IMAGEKIT] Erro HTTP:",
-            uploadResponse.status
-        );
+        alert(
+    "DIAGNÓSTICO IMAGEKIT\n\n" +
+    "HTTP: " + uploadResponse.status + "\n\n" +
+    "Mensagem: " + (uploadData?.message || "Sem mensagem") + "\n\n" +
+    "Detalhes: " + (uploadData?.help || "Sem detalhes") + "\n\n" +
+    "Request ID: " +
+    (uploadResponse.headers.get("x-ik-requestId") || "Não disponível")
+);
 
-        throw new Error(
-            uploadData?.message ||
-            uploadData?.help ||
-            "O envio da imagem falhou no ImageKit."
-        );
+throw new Error(
+    uploadData?.message ||
+    uploadData?.help ||
+    "O envio da imagem falhou no ImageKit."
+);
 
     }
     // BLOC 8.5 — Vérifier et retourner l'image
