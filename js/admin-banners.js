@@ -749,7 +749,11 @@ alert(
     "Objet File : " + (file instanceof File) + "\n" +
     "FormData : " + (formData instanceof FormData)
 );
-    formData.append("file", file);
+    if (!(file instanceof Blob) || file.size === 0) {
+    throw new Error("O ficheiro de imagem é inválido ou está vazio.");
+}
+
+formData.append("file", file, file.name || "toma-banner.png");
 
     formData.append("fileName", file.name);
 
