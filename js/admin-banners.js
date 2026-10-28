@@ -789,14 +789,18 @@ try {
 } catch (error) {
 
     const diagnostic = {
-        name: error?.name || null,
-        message: error?.message || null,
-        status: error?.status || error?.statusCode || null,
-        responseStatus: error?.response?.status || null,
-        responseData: error?.response?.data || null,
-        cause: error?.cause?.message || null,
-        errorKeys: error ? Object.keys(error) : []
-    };
+    name: error?.name || null,
+    message: error?.message || null,
+    status: error?.status || error?.statusCode || null,
+    responseStatus: error?.response?.status || null,
+    responseData: error?.response?.data || null,
+    cause: error?.cause?.message || null,
+    errorKeys: error ? Object.keys(error) : [],
+    responseMetadata: error?.$ResponseMetadata || null,
+    requestId: error?.$ResponseMetadata?.requestId || null,
+    httpStatusCode: error?.$ResponseMetadata?.httpStatusCode || null,
+    headers: error?.$ResponseMetadata?.headers || null
+};
 
     alert(
         "DIAGNÓSTICO IMAGEKIT — DETALHES\n\n" +
