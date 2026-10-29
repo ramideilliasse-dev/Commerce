@@ -18,13 +18,16 @@ import {
 
 const TOMA_BANNERS_COLLECTION = "homeBanners";
 
+// =====================================================
+// BLOC 3 — CONFIGURATION CLOUDINARY
+// =====================================================
+
 const CLOUDINARY_CLOUD_NAME = "xnak6z6m";
 
-const CLOUDINARY_UPLOAD_PRESET = "Toma-banner";
-
-const CLOUDINARY_UPLOAD_URL =
+const CLOUDINARY_URL =
     `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
 
+const CLOUDINARY_PRESET = "Toma-banner";
 const TOMA_MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 const TOMA_ALLOWED_TYPES = [
