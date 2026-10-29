@@ -13,13 +13,17 @@ import {
 
 
 /* =====================================================
-   BLOC 1 — CONFIGURATION
+   BLOC 1 — CONFIGURATION CLOUDINARY
 ===================================================== */
 
 const TOMA_BANNERS_COLLECTION = "homeBanners";
 
-const TOMA_IMAGEKIT_PUBLIC_KEY = "public_qlTmyZvA4klTyNlECmqhRpnmHqA=";
-const TOMA_IMAGEKIT_FOLDER = "/toma/banners";
+const CLOUDINARY_CLOUD_NAME = "xnak6z6m";
+
+const CLOUDINARY_UPLOAD_PRESET = "Toma-banner";
+
+const CLOUDINARY_UPLOAD_URL =
+    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
 
 const TOMA_MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -70,6 +74,10 @@ const TOMA_BANNER_CONFIG = {
 };
 
 
+/* =====================================================
+   BLOC 1.1 — ÉTAT DE L'APPLICATION
+===================================================== */
+
 const TOMA_BANNERS_STATE = {
 
     authorized: false,
@@ -96,7 +104,9 @@ const TOMA_BANNERS_STATE = {
 
     saving: {},
 
-    initialized: false
+    initialized: false,
+
+    listenersInitialized: false
 
 };
 
@@ -106,8 +116,11 @@ const TOMA_BANNERS_STATE = {
 ===================================================== */
 
 const adminLoading = document.getElementById("adminLoading");
+
 const adminContent = document.getElementById("adminContent");
+
 const accessDenied = document.getElementById("accessDenied");
+
 const adminMessage = document.getElementById("adminMessage");
 
 
@@ -118,8 +131,11 @@ const adminMessage = document.getElementById("adminMessage");
 function showAdminMessage(message, type = "success") {
 
     if (!adminMessage) {
+
         alert(message);
+
         return;
+
     }
 
     adminMessage.textContent = message;
@@ -222,18 +238,27 @@ async function checkAdminPermission(user) {
 
 function getExistingImages(bannerId) {
 
-    const data = TOMA_BANNERS_STATE.documents[bannerId] || {};
+    const data =
+        TOMA_BANNERS_STATE.documents[bannerId] || {};
 
     /*
-       Compatibilité :
-       - Nouveau format : images: [{ url, publicId }]
-       - Ancien format : image: "https://..."
+       Nouveau format :
+       images: [{ url, publicId }]
+
+       Ancien format :
+       image: "https://..."
     */
 
     if (Array.isArray(data.images)) {
 
         return data.images
-            .filter(item => item && typeof item.url === "string" && item.url.trim())
+
+            .filter(item =>
+                item &&
+                typeof item.url === "string" &&
+                item.url.trim()
+            )
+
             .map(item => ({
                 url: item.url,
                 publicId: item.publicId || ""
@@ -241,7 +266,10 @@ function getExistingImages(bannerId) {
 
     }
 
-    if (typeof data.image === "string" && data.image.trim()) {
+    if (
+        typeof data.image === "string" &&
+        data.image.trim()
+    ) {
 
         return [{
             url: data.image,
@@ -274,14 +302,15 @@ function createElement(tag, className, text) {
 
 function releasePreviewUrls(bannerId) {
 
-    const urls = TOMA_BANNERS_STATE.previewUrls[bannerId] || [];
+    const urls =
+        TOMA_BANNERS_STATE.previewUrls[bannerId] || [];
 
     urls.forEach(url => {
 
         try {
             URL.revokeObjectURL(url);
         } catch (error) {
-            // Aucune action nécessaire.
+            // URL déjà libérée.
         }
 
     });
@@ -299,7 +328,9 @@ function renderBannerPreview(bannerId) {
 
     const config = TOMA_BANNER_CONFIG[bannerId];
 
-    const preview = document.getElementById(config.preview);
+    const preview = document.getElementById(
+        config.preview
+    );
 
     if (!preview) {
         return;
@@ -315,11 +346,15 @@ function renderBannerPreview(bannerId) {
         TOMA_BANNERS_STATE.removedExistingImages[bannerId];
 
     const visibleExistingImages = existingImages
+
         .map((image, index) => ({
             ...image,
             originalIndex: index
         }))
-        .filter(image => !removedIndexes.includes(image.originalIndex));
+
+        .filter(image =>
+            !removedIndexes.includes(image.originalIndex)
+        );
 
     const selectedFiles =
         TOMA_BANNERS_STATE.selectedFiles[bannerId] || [];
@@ -355,7 +390,11 @@ function renderBannerPreview(bannerId) {
             "Seleciona uma ou várias imagens."
         );
 
-        placeholder.append(icon, title, description);
+        placeholder.append(
+            icon,
+            title,
+            description
+        );
 
         preview.appendChild(placeholder);
 
@@ -367,6 +406,9 @@ function renderBannerPreview(bannerId) {
         "div",
         "bannerImageGallery"
     );
+
+
+    // Images déjà enregistrées.
 
     visibleExistingImages.forEach(image => {
 
@@ -416,19 +458,30 @@ function renderBannerPreview(bannerId) {
                 return;
             }
 
-            TOMA_BANNERS_STATE.removedExistingImages[bannerId]
+            TOMA_BANNERS_STATE
+                .removedExistingImages[bannerId]
                 .push(image.originalIndex);
 
             renderBannerPreview(bannerId);
 
+            updateBannerStatus(bannerId);
+
+            updateBannerSummary();
+
         });
 
-        card.append(img, badge, removeButton);
+        card.append(
+            img,
+            badge,
+            removeButton
+        );
 
         gallery.appendChild(card);
 
     });
 
+
+    // Nouvelles images sélectionnées.
 
     selectedFiles.forEach((file, index) => {
 
@@ -469,17 +522,27 @@ function renderBannerPreview(bannerId) {
                 selectedPreviewUrls[index]
             );
 
-            TOMA_BANNERS_STATE.selectedFiles[bannerId]
+            TOMA_BANNERS_STATE
+                .selectedFiles[bannerId]
                 .splice(index, 1);
 
-            TOMA_BANNERS_STATE.previewUrls[bannerId]
+            TOMA_BANNERS_STATE
+                .previewUrls[bannerId]
                 .splice(index, 1);
 
             renderBannerPreview(bannerId);
 
+            updateBannerStatus(bannerId);
+
+            updateBannerSummary();
+
         });
 
-        card.append(img, badge, removeButton);
+        card.append(
+            img,
+            badge,
+            removeButton
+        );
 
         gallery.appendChild(card);
 
@@ -492,7 +555,10 @@ function renderBannerPreview(bannerId) {
         `${totalImages} imagem(ns)`
     );
 
-    preview.append(gallery, counter);
+    preview.append(
+        gallery,
+        counter
+    );
 
 }
 
@@ -550,13 +616,14 @@ function handleImageSelection(bannerId, event) {
 
     const MAX_IMAGES = 20;
 
-    const existingImages =
-        getExistingImages(bannerId);
+    const existingImages = getExistingImages(bannerId);
+
+    const removedIndexes =
+        TOMA_BANNERS_STATE.removedExistingImages[bannerId];
 
     const existingCount = existingImages.filter(
         (image, index) =>
-            !TOMA_BANNERS_STATE.removedExistingImages[bannerId]
-                .includes(index)
+            !removedIndexes.includes(index)
     ).length;
 
     const availableSlots = Math.max(
@@ -564,7 +631,10 @@ function handleImageSelection(bannerId, event) {
         MAX_IMAGES - existingCount - currentFiles.length
     );
 
-    const filesToAdd = acceptedFiles.slice(0, availableSlots);
+    const filesToAdd = acceptedFiles.slice(
+        0,
+        availableSlots
+    );
 
     if (acceptedFiles.length > availableSlots) {
 
@@ -586,14 +656,15 @@ function handleImageSelection(bannerId, event) {
     });
 
 
-    /*
-       Permet de sélectionner de nouveau le même fichier.
-    */
+    // Permet de sélectionner de nouveau le même fichier.
 
     input.value = "";
 
-
     renderBannerPreview(bannerId);
+
+    updateBannerStatus(bannerId);
+
+    updateBannerSummary();
 
 
     if (rejectedFiles.length > 0) {
@@ -636,7 +707,10 @@ function initializeImagePickers() {
 
             input.addEventListener("change", event => {
 
-                handleImageSelection(bannerId, event);
+                handleImageSelection(
+                    bannerId,
+                    event
+                );
 
             });
 
@@ -644,69 +718,99 @@ function initializeImagePickers() {
     );
 
 }
+
+
 /* =====================================================
-   BLOC 8 — UPLOAD IMAGEKIT
-   AUTHENTIFICATION FIREBASE + VERCEL
+   BLOC 8 — UPLOAD CLOUDINARY
+   UPLOAD DIRECT AVEC UNSIGNED PRESET
 ===================================================== */
 
-async function uploadImageToImageKit(file, bannerId) {
+async function uploadImageToCloudinary(file, bannerId) {
 
     if (!file) {
-        throw new Error("Nenhuma imagem selecionada.");
+
+        throw new Error(
+            "Nenhuma imagem selecionada."
+        );
+
     }
 
     if (!TOMA_ALLOWED_TYPES.includes(file.type)) {
-        throw new Error("Formato de imagem não suportado.");
+
+        throw new Error(
+            "Formato de imagem não suportado. Utiliza JPG, PNG ou WEBP."
+        );
+
     }
 
     if (file.size > TOMA_MAX_FILE_SIZE) {
+
         throw new Error(
             "A imagem não pode ultrapassar 10 MB."
         );
+
     }
 
-    const user = auth.currentUser;
+    if (
+        !CLOUDINARY_CLOUD_NAME ||
+        !CLOUDINARY_UPLOAD_PRESET
+    ) {
 
-    if (!user) {
+        throw new Error(
+            "A configuração do Cloudinary está incompleta."
+        );
+
+    }
+
+    if (!auth.currentUser) {
+
         throw new Error(
             "A sessão expirou. Inicia sessão novamente."
         );
+
     }
 
-    // 1. Obter o token Firebase atualizado.
-
-    const idToken = await user.getIdToken();
-
-    // 2. Enviar a imagem para a API do Vercel.
 
     const formData = new FormData();
 
-    formData.append("purpose", "banner");
-    formData.append("file", file, file.name);
+    formData.append("file", file);
+
+    formData.append(
+        "upload_preset",
+        CLOUDINARY_UPLOAD_PRESET
+    );
+
+    /*
+       Organização dos ficheiros no Cloudinary.
+       Cada tipo de banner terá a sua pasta.
+    */
+
+    formData.append(
+        "folder",
+        `toma/banners/${bannerId}`
+    );
+
 
     let response;
 
     try {
 
-        response = await fetch("/api/imagekit-upload", {
-            method: "POST",
-
-            headers: {
-                Authorization: `Bearer ${idToken}`
-            },
-
-            body: formData
-        });
+        response = await fetch(
+            CLOUDINARY_UPLOAD_URL,
+            {
+                method: "POST",
+                body: formData
+            }
+        );
 
     } catch (error) {
 
         throw new Error(
-            "Não foi possível contactar o servidor Toma."
+            "Não foi possível contactar o Cloudinary. Verifica a ligação à Internet."
         );
 
     }
 
-    // 3. Ler a resposta do servidor.
 
     const responseText = await response.text();
 
@@ -719,45 +823,49 @@ async function uploadImageToImageKit(file, bannerId) {
     } catch (error) {
 
         throw new Error(
-            "Resposta inválida do servidor Toma. " +
-            "Código HTTP: " + response.status
+            "Resposta inválida do Cloudinary. Código HTTP: " +
+            response.status
         );
 
     }
 
-    // 4. Verificar se o upload foi concluído.
 
-    if (!response.ok || !result.success) {
+    if (!response.ok) {
+
+        const cloudinaryMessage =
+            result?.error?.message ||
+            "Erro desconhecido no Cloudinary.";
 
         throw new Error(
-            result.message ||
-            result.error?.message ||
-            `Falha no upload. Código HTTP: ${response.status}`
+            `Falha no upload Cloudinary (${response.status}): ${cloudinaryMessage}`
         );
 
     }
 
-    // 5. Confirmar que o ImageKit devolveu uma URL.
 
     if (
-        typeof result.url !== "string" ||
-        !result.url.trim()
+        typeof result.secure_url !== "string" ||
+        !result.secure_url.trim()
     ) {
 
         throw new Error(
-            "O servidor não devolveu o endereço da imagem."
+            "O Cloudinary não devolveu o endereço seguro da imagem."
         );
 
     }
 
-    // 6. Devolver os dados para o BLOC 13.
 
     return {
-        url: result.url,
-        publicId: result.publicId || ""
+
+        url: result.secure_url,
+
+        publicId: result.public_id || ""
+
     };
 
 }
+
+
 /* =====================================================
    BLOC 9 — VALIDATION DU LIEN
 ===================================================== */
@@ -771,9 +879,11 @@ function validateBannerLink(value) {
     }
 
     if (/^javascript:/i.test(link)) {
+
         throw new Error(
             "Este tipo de link não é permitido."
         );
+
     }
 
     if (/^https?:\/\//i.test(link)) {
@@ -807,18 +917,23 @@ function validateBannerLink(value) {
         link.startsWith("../") ||
         link.startsWith("#")
     ) {
+
         return link;
+
     }
 
     /*
-       Liens internes simples, par exemple products-v2.html.
+       Liens internes simples :
+       products-v2.html
     */
 
     if (
         !link.includes(":") &&
         !link.startsWith("//")
     ) {
+
         return link;
+
     }
 
     throw new Error(
@@ -847,7 +962,6 @@ async function loadBanner(bannerId) {
         : {};
 
     TOMA_BANNERS_STATE.documents[bannerId] = data;
-
 
     const config = TOMA_BANNER_CONFIG[bannerId];
 
@@ -915,7 +1029,7 @@ async function loadBanner(bannerId) {
 
 
 /* =====================================================
-   BLOC 11 — ÉTAT DES BANNERS
+   BLOC 11 — ÉTAT DES BANNIÈRES
 ===================================================== */
 
 function updateBannerStatus(bannerId) {
@@ -940,7 +1054,8 @@ function updateBannerStatus(bannerId) {
         TOMA_BANNERS_STATE.removedExistingImages[bannerId] || [];
 
     const remainingImages = existingImages.filter(
-        (image, index) => !removedIndexes.includes(index)
+        (image, index) =>
+            !removedIndexes.includes(index)
     );
 
     const selectedFiles =
@@ -994,16 +1109,17 @@ function updateBannerSummary() {
         "activeBanners"
     );
 
-
     const bannerIds = Object.keys(
         TOMA_BANNER_CONFIG
     );
 
 
     if (totalElement) {
+
         totalElement.textContent = String(
             bannerIds.length
         );
+
     }
 
 
@@ -1014,10 +1130,12 @@ function updateBannerSummary() {
 
         const images = getExistingImages(bannerId);
 
+        const removedIndexes =
+            TOMA_BANNERS_STATE.removedExistingImages[bannerId] || [];
+
         const remainingImages = images.filter(
             (image, index) =>
-                !TOMA_BANNERS_STATE.removedExistingImages[bannerId]
-                    .includes(index)
+                !removedIndexes.includes(index)
         );
 
         const selectedFiles =
@@ -1030,14 +1148,18 @@ function updateBannerSummary() {
 
 
     if (activeElement) {
-        activeElement.textContent = String(activeCount);
+
+        activeElement.textContent = String(
+            activeCount
+        );
+
     }
 
 }
 
 
 /* =====================================================
-   BLOC 13 — SAUVEGARDE D'UNE BANNER
+   BLOC 13 — SAUVEGARDE D'UNE BANNIÈRE
 ===================================================== */
 
 async function saveBanner(bannerId) {
@@ -1161,8 +1283,11 @@ async function saveBanner(bannerId) {
         }
 
 
-        const uploadedImages = [];
+        /*
+           Envoyer les nouvelles images à Cloudinary.
+        */
 
+        const uploadedImages = [];
 
         for (
             let index = 0;
@@ -1177,16 +1302,20 @@ async function saveBanner(bannerId) {
 
             }
 
-          const uploadedImage =
-    await uploadImageToImageKit(
-        selectedFiles[index],
-        bannerId
-    );
+            const uploadedImage =
+                await uploadImageToCloudinary(
+                    selectedFiles[index],
+                    bannerId
+                );
 
             uploadedImages.push(uploadedImage);
 
         }
 
+
+        /*
+           Combiner les images conservées et les nouvelles.
+        */
 
         const finalImages = [
             ...retainedImages,
@@ -1196,7 +1325,6 @@ async function saveBanner(bannerId) {
 
         const user = auth.currentUser;
 
-
         if (!user) {
 
             throw new Error(
@@ -1205,6 +1333,10 @@ async function saveBanner(bannerId) {
 
         }
 
+
+        /*
+           Préparer les données à enregistrer dans Firebase.
+        */
 
         const bannerData = {
 
@@ -1226,15 +1358,14 @@ async function saveBanner(bannerId) {
 
 
         /*
-           Champ legacy conservé pour les anciennes versions
-           de la page d'accueil qui utilisent data.image.
+           Compatibilité avec les anciennes pages
+           qui utilisent data.image et data.publicId.
         */
 
         bannerData.image =
             finalImages.length > 0
                 ? finalImages[0].url
                 : "";
-
 
         bannerData.publicId =
             finalImages.length > 0
@@ -1243,9 +1374,15 @@ async function saveBanner(bannerId) {
 
 
         if (button) {
+
             button.textContent = "A guardar no Firebase...";
+
         }
 
+
+        /*
+           Enregistrer dans la collection homeBanners.
+        */
 
         await setDoc(
             doc(
@@ -1257,6 +1394,10 @@ async function saveBanner(bannerId) {
             { merge: true }
         );
 
+
+        /*
+           Mettre à jour l'état local.
+        */
 
         TOMA_BANNERS_STATE.documents[bannerId] = {
             ...previousData,
@@ -1270,7 +1411,6 @@ async function saveBanner(bannerId) {
 
 
         releasePreviewUrls(bannerId);
-
 
         renderBannerPreview(bannerId);
 
@@ -1292,18 +1432,15 @@ async function saveBanner(bannerId) {
             error
         );
 
-
         showAdminMessage(
             error.message ||
             "Não foi possível guardar a banner. Tenta novamente.",
             "error"
         );
 
-
     } finally {
 
         TOMA_BANNERS_STATE.saving[bannerId] = false;
-
 
         if (button) {
 
@@ -1421,11 +1558,22 @@ async function initializeAdminBanners(user) {
 
     try {
 
-        initializeImagePickers();
+        /*
+           Éviter d'ajouter les mêmes événements
+           plusieurs fois si l'authentification change.
+        */
 
-        initializeSaveButtons();
+        if (!TOMA_BANNERS_STATE.listenersInitialized) {
 
-        initializeLiveUpdates();
+            initializeImagePickers();
+
+            initializeSaveButtons();
+
+            initializeLiveUpdates();
+
+            TOMA_BANNERS_STATE.listenersInitialized = true;
+
+        }
 
 
         const bannerIds = Object.keys(
@@ -1442,9 +1590,7 @@ async function initializeAdminBanners(user) {
 
         TOMA_BANNERS_STATE.initialized = true;
 
-
         updateBannerSummary();
-
 
         showLoading(false);
 
@@ -1455,31 +1601,37 @@ async function initializeAdminBanners(user) {
 
     } catch (error) {
 
-    console.error(
-        "Erro ao carregar as banners:",
-        error
-    );
+        console.error(
+            "Erro ao carregar as banners:",
+            error
+        );
 
-    showLoading(false);
-    showAdminContent(false);
+        showLoading(false);
 
-    const errorCode = error?.code || "sem código";
-    const errorMessage = error?.message || "Erro desconhecido";
+        showAdminContent(false);
 
-    showAdminMessage(
-        "ERRO AO CARREGAR AS BANNERS\n\n" +
-        "Código: " + errorCode + "\n\n" +
-        "Detalhes: " + errorMessage,
-        "error"
-    );
 
-    alert(
-        "DIAGNÓSTICO TOMA V3\n\n" +
-        "Código: " + errorCode + "\n\n" +
-        "Detalhes: " + errorMessage
-    );
+        const errorCode = error?.code || "sem código";
 
-}
+        const errorMessage =
+            error?.message || "Erro desconhecido";
+
+
+        showAdminMessage(
+            "ERRO AO CARREGAR AS BANNERS\n\n" +
+            "Código: " + errorCode + "\n\n" +
+            "Detalhes: " + errorMessage,
+            "error"
+        );
+
+
+        alert(
+            "DIAGNÓSTICO TOMA — BANNERS\n\n" +
+            "Código: " + errorCode + "\n\n" +
+            "Detalhes: " + errorMessage
+        );
+
+    }
 
 }
 
@@ -1504,7 +1656,6 @@ onAuthStateChanged(auth, async user => {
 
     }
 
-
     await initializeAdminBanners(user);
 
 });
@@ -1528,7 +1679,10 @@ onAuthStateChanged(auth, async user => {
 
         .bannerImageGallery {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(110px, 1fr)
+            );
             gap: 12px;
             width: 100%;
         }
@@ -1605,9 +1759,14 @@ onAuthStateChanged(auth, async user => {
         }
 
         @media (max-width: 480px) {
+
             .bannerImageGallery {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+                grid-template-columns: repeat(
+                    2,
+                    minmax(0, 1fr)
+                );
             }
+
         }
 
     `;
