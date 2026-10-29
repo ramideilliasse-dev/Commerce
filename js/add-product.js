@@ -84,7 +84,7 @@ const CLOUDINARY_CLOUD_NAME = "xnak6z6m";
 const CLOUDINARY_URL =
     `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
 
-const CLOUDINARY_PRESET = "Toma-banner";
+const CLOUDINARY_PRESET = "toma-images";
 // =====================================================
 // BLOC 4 — MESSAGES
 // =====================================================
