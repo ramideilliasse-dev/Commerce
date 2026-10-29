@@ -732,187 +732,82 @@ async function uploadImageToImageKit(file, bannerId) {
         !authData.expire
     ) {
 
-        throw new Error(
-            "O servidor não devolveu os dados de autenticação necessários."
-        );
-
+        async function uploadImageToImageKit(file, bannerId) {
+    if (!file) {
+        throw new Error("Nenhuma imagem selecionada.");
     }
 
-  // BLOC 8.3 — Charger le SDK officiel ImageKit
+    if (!TOMA_ALLOWED_TYPES.includes(file.type)) {
+        throw new Error("Formato de imagem não suportado.");
+    }
 
-let uploadData;
+    if (file.size > TOMA_MAX_FILE_SIZE) {
+        throw new Error(
+            "A imagem não pode ultrapassar 10 MB."
+        );
+    }
 
-// DIAGNOSTIC 3 — Capturer la réponse HTTP brute
-let imageKitRawResponse = null;
+    const user = auth.currentUser;
 
-const imageKitDiagnosticXHR = new XMLHttpRequest();
+    if (!user) {
+        throw new Error(
+            "A sessão expirou. Inicia sessão novamente."
+        );
+    }
 
-imageKitDiagnosticXHR.addEventListener("loadend", function () {
-    imageKitRawResponse = {
-        status: imageKitDiagnosticXHR.status,
-        statusText: imageKitDiagnosticXHR.statusText,
-        contentType: imageKitDiagnosticXHR.getResponseHeader("content-type"),
-        responseText: imageKitDiagnosticXHR.responseText
-    };
-});
+    const idToken = await user.getIdToken();
 
-try {
-    const imageKitSDK = await import(
-        "https://cdn.jsdelivr.net/npm/@imagekit/javascript@5.0.0/+esm"
-    );
+    const formData = new FormData();
 
-    // DIAGNÓSTIC 1 — Vérifier le SDK et le fichier sélectionné
+    formData.append("purpose", "banner");
+    formData.append("file", file, file.name);
 
-const sdkDiagnostic = {
-    sdkVersionDemandee: "5.0.0",
-    uploadDisponible: typeof imageKitSDK.upload === "function",
-    typeFichier: file?.constructor?.name || null,
-    estUnFichier: file instanceof File,
-    nomFichier: file?.name || null,
-    typeMime: file?.type || null,
-    tailleOctets: file?.size || 0,
-    tailleInferieureA10MB: file?.size <= TOMA_MAX_FILE_SIZE
-};
+    let response;
 
-alert(
-    "TOMA — DIAGNÓSTICO 1\n\n" +
-    JSON.stringify(sdkDiagnostic, null, 2)
-);
+    try {
+        response = await fetch("/api/imagekit-upload", {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${idToken}`
+            },
+            body: formData
+        });
+    } catch {
+        throw new Error(
+            "Não foi possível contactar o servidor Toma."
+        );
+    }
 
-if (!sdkDiagnostic.uploadDisponible) {
-    throw new Error(
-        "A função upload() do SDK ImageKit não está disponível."
-    );
-}
+    const responseText = await response.text();
 
-if (!sdkDiagnostic.estUnFichier) {
-    throw new Error(
-        "O ficheiro selecionado não é um objeto File válido."
-    );
-}
+    let result;
 
-    // BLOC 8.4 — Envoyer l'image avec le SDK officiel
+    try {
+        result = JSON.parse(responseText);
+    } catch {
+        throw new Error(
+            "Resposta inválida do servidor Toma: " +
+            response.status
+        );
+    }
 
-    const safeFileName = (
-        file.name || "toma-banner.png"
-    ).replace(/[^a-zA-Z0-9._-]/g, "_");
-    // BLOC 8.4.1 — Vérifier la durée de validité de la signature
+    if (!response.ok || !result.success) {
+        throw new Error(
+            result.message ||
+            `Falha no upload. Código HTTP: ${response.status}`
+        );
+    }
 
-    const now = Math.floor(Date.now() / 1000);
-    const expiration = Number(authData.expire);
-    const remainingSeconds = expiration - now;
-
-    alert(
-        "VERIFICAÇÃO DA EXPIRAÇÃO\n\n" +
-        "Agora: " + now + "\n" +
-        "Expiração: " + expiration + "\n" +
-        "Segundos restantes: " + remainingSeconds + "\n" +
-        "Válido por menos de 1 hora: " +
-        (
-            remainingSeconds > 0 &&
-            remainingSeconds < 3600
-        )
-    );
- alert(
-    "TOMA — DIAGNÓSTICO 2\n\n" +
-    "Método: imageKitSDK.upload()\n" +
-    "Nome do arquivo: " + safeFileName + "\n" +
-    "Tipo MIME: " + file.type + "\n" +
-    "Tamanho: " + file.size + " bytes\n" +
-    "Pasta: " + TOMA_IMAGEKIT_FOLDER + "\n" +
-    "Chave pública disponível: " +
-    Boolean(TOMA_IMAGEKIT_PUBLIC_KEY) + "\n" +
-    "Token disponível: " + Boolean(authData.token) + "\n" +
-    "Assinatura disponível: " + Boolean(authData.signature) + "\n" +
-    "Expiração numérica: " +
-    Number.isFinite(Number(authData.expire))
-);
-  uploadData = await imageKitSDK.upload({
-file: file,
-fileName: safeFileName,
-publicKey: TOMA_IMAGEKIT_PUBLIC_KEY,
-token: authData.token,
-signature: authData.signature,
-expire: Number(authData.expire),
-folder: TOMA_IMAGEKIT_FOLDER,
-useUniqueFileName: true
-});
-} catch (error) {
-// BLOC DIAGNOSTIC — Métadonnées HTTP ImageKit
-alert(
-    "TOMA — RÉPONSE HTTP BRUTE\n\n" +
-    JSON.stringify(imageKitRawResponse, null, 2)
-);
-alert(
-    "IMAGEKIT — STATUT HTTP\n\n" +
-    "Statut: " +
-    String(error?.$ResponseMetadata?.statusCode || "indisponible") +
-    "\n\n" +
-    "Date serveur: " +
-    String(error?.$ResponseMetadata?.headers?.date || "indisponible") +
-    "\n\n" +
-    "Type de contenu: " +
-    String(error?.$ResponseMetadata?.headers?.["content-type"] || "indisponible")
-);
-    const diagnostic = {
-    name: error?.name || null,
-    message: error?.message || null,
-    status: error?.status || error?.statusCode || null,
-    responseStatus: error?.response?.status || null,
-    responseData: error?.response?.data || null,
-    cause: error?.cause?.message || null,
-    errorKeys: error ? Object.keys(error) : [],
-    responseMetadata: error?.$ResponseMetadata || null,
-     sdkErrorDetails: {
-    constructorName: error?.constructor?.name || null,
-    responseMetadata: error?.$ResponseMetadata || null,
-    ownProperties: error ? Object.getOwnPropertyNames(error) : [],
-    prototypeProperties: error
-        ? Object.getOwnPropertyNames(
-            Object.getPrototypeOf(error)
-        )
-        : []
-},
-    requestId: error?.$ResponseMetadata?.requestId || null,
-    httpStatusCode: error?.$ResponseMetadata?.httpStatusCode || null,
-    headers: error?.$ResponseMetadata?.headers || null
-};
-
-    alert(
-    "DIAGNÓSTICO IMAGEKIT — DETALHES\n\n" +
-    JSON.stringify({
-        name: error?.name || null,
-        message: error?.message || null,
-        responseMetadata: error?.$ResponseMetadata || null,
-        responseBody: error?.response?.body || null,
-        responseText: error?.response?.text || null,
-        errorKeys: error
-            ? Object.getOwnPropertyNames(error)
-            : []
-    }, null, 2)
-);
-
-    throw new Error(
-        error?.message ||
-        "Não foi possível enviar a imagem para o ImageKit."
-    );
-
-}
-    // BLOC 8.5 — Vérifier et retourner l'image
-
-    if (!uploadData.url) {
-
+    if (!result.url) {
         throw new Error(
             "O ImageKit não devolveu o endereço da imagem."
         );
-
     }
 
     return {
-        url: uploadData.url,
-        publicId: uploadData.fileId || ""
+        url: result.url,
+        publicId: result.publicId || ""
     };
-
 }
 /* =====================================================
    BLOC 9 — VALIDATION DU LIEN
