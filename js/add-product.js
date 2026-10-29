@@ -84,7 +84,7 @@ const CLOUDINARY_CLOUD_NAME = "xnak6z6m";
 const CLOUDINARY_URL =
     `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
 
-const CLOUDINARY_PRESET = "toma-images";
+const CLOUDINARY_PRESET = "Toma-banner";
 // =====================================================
 // BLOC 4 — MESSAGES
 // =====================================================
@@ -853,205 +853,145 @@ async function verifyProductLimit() {
 // =====================================================
 
 async function saveProduct(data, images, merchant, merchantRef) {
-    /*
-     * Le même document est conservé pendant toute la tentative.
-     * Cela évite de générer un nouvel ID si le commerçant
-     * réessaie après une erreur de réseau.
-     */
 
     if (!pendingProductRef) {
-        pendingProductRef = doc(
-            collection(db, "products")
-        );
+        pendingProductRef = doc(collection(db, "products"));
     }
 
     const productRef = pendingProductRef;
 
-    const settingsRef = doc(
-        db,
-        "settings",
-        "marketplace"
-    );
+    const settingsRef = doc(db, "settings", "marketplace");
 
-    const result = await runTransaction(
-        db,
-        async (transaction) => {
-            /*
-             * IMPORTANT :
-             * toutes les lectures sont faites avant les écritures.
-             */
+    const result = await runTransaction(db, async (transaction) => {
 
-            const existingProductSnapshot =
-                await transaction.get(productRef);
+        const existingProductSnapshot =
+            await transaction.get(productRef);
 
-            const merchantSnapshot =
-                await transaction.get(merchantRef);
+        const merchantSnapshot =
+            await transaction.get(merchantRef);
 
-            const settingsSnapshot =
-                await transaction.get(settingsRef);
+        const settingsSnapshot =
+            await transaction.get(settingsRef);
 
-            if (!merchantSnapshot.exists()) {
+        if (!merchantSnapshot.exists()) {
+            throw new Error(
+                "A conta do comerciante não foi encontrada."
+            );
+        }
+
+        const merchantData = merchantSnapshot.data();
+
+        if (
+            merchantData.role !== "merchant" ||
+            merchantData.approved !== true
+        ) {
+            throw new Error(
+                "A sua conta não está autorizada a publicar produtos."
+            );
+        }
+
+        // Evitar duplicar um produto já criado.
+        if (existingProductSnapshot.exists()) {
+
+            const existingData = existingProductSnapshot.data();
+
+            if (existingData.merchantId !== currentUser.uid) {
                 throw new Error(
-                    "A conta do comerciante não foi encontrada."
+                    "Não foi possível confirmar a publicação. Contacte o suporte."
                 );
             }
-
-            const merchantData = merchantSnapshot.data();
-
-            if (
-                merchantData.role !== "merchant" ||
-                merchantData.approved !== true
-            ) {
-                throw new Error(
-                    "A sua conta não está autorizada a publicar produtos."
-                );
-            }
-
-            /*
-             * Si le produit existe déjà, cette tentative
-             * a probablement été enregistrée précédemment.
-             *
-             * On ne réincrémente donc pas le compteur.
-             */
-
-            if (existingProductSnapshot.exists()) {
-                const existingData =
-                    existingProductSnapshot.data();
-
-                if (
-                    existingData.merchantId !== currentUser.uid
-                ) {
-                    throw new Error(
-                        "Não foi possível confirmar a publicação. Contacte o suporte."
-                    );
-                }
-
-                return {
-                    alreadyCreated: true,
-                    productId: productRef.id
-                };
-            }
-
-            /*
-             * Vérification de la limite dans la transaction.
-             * Cela réduit le risque de dépasser la limite
-             * lorsque plusieurs publications sont lancées.
-             */
-
-            let maxProducts = null;
-
-            if (settingsSnapshot.exists()) {
-                const settings = settingsSnapshot.data();
-
-                if (settings.productLimitEnabled !== false) {
-                    maxProducts = Number(
-                        settings.maxProductsPerMerchant
-                    );
-
-                    if (
-                        !Number.isSafeInteger(maxProducts) ||
-                        maxProducts < 1
-                    ) {
-                        throw new Error(
-                            "O limite de produtos está mal configurado. Contacte o suporte."
-                        );
-                    }
-                }
-            }
-
-            const currentProductCount = Number(
-                merchantData.productCount || 0
-            );
-
-            /*
-             * On vérifie aussi le nombre réel de produits
-             * existants pour ne pas dépendre uniquement
-             * du compteur stocké sur le profil.
-             */
-
-            const merchantProductsQuery = query(
-                collection(db, "products"),
-                where("merchantId", "==", currentUser.uid)
-            );
-
-            const merchantProductsSnapshot =
-                await transaction.get(merchantProductsQuery);
-
-            const actualProductCount =
-                merchantProductsSnapshot.size;
-
-            if (
-                maxProducts !== null &&
-                actualProductCount >= maxProducts
-            ) {
-                throw new Error(
-                    `Atingiu o limite de ${maxProducts} produtos permitidos para a sua conta.`
-                );
-            }
-
-            /*
-             * Le compteur tient compte du plus grand
-             * des deux nombres : compteur enregistré
-             * et produits réellement présents.
-             */
-
-            const safeProductCount = Math.max(
-                currentProductCount,
-                actualProductCount
-            );
-
-            /*
-             * Création du produit.
-             */
-
-            transaction.set(
-                productRef,
-                {
-                    name: data.name,
-                    price: data.price,
-                    stock: data.stock,
-                    category: data.category,
-                    province: data.province,
-                    description: data.description,
-
-                    images,
-
-                    merchantId: currentUser.uid,
-
-                    shopName: merchant.shopName || "",
-                    merchantWhatsapp: merchant.whatsapp || "",
-                    merchantDescription: merchant.shopDescription || "",
-
-                    active: true,
-
-                    salesCount: 0,
-                    views: 0,
-
-                    createdAt: serverTimestamp()
-                }
-            );
-
-            /*
-             * Mise à jour du compteur dans la même transaction.
-             */
-
-            transaction.update(
-                merchantRef,
-                {
-                    productCount: safeProductCount + 1
-                }
-            );
 
             return {
-                alreadyCreated: false,
+                alreadyCreated: true,
                 productId: productRef.id
             };
         }
-    );
+
+        // Verificar o limite de produtos.
+        let maxProducts = null;
+
+        if (settingsSnapshot.exists()) {
+
+            const settings = settingsSnapshot.data();
+
+            if (settings.productLimitEnabled !== false) {
+
+                maxProducts = Number(
+                    settings.maxProductsPerMerchant
+                );
+
+                if (
+                    !Number.isSafeInteger(maxProducts) ||
+                    maxProducts < 1
+                ) {
+                    throw new Error(
+                        "O limite de produtos está mal configurado. Contacte o suporte."
+                    );
+                }
+            }
+        }
+
+        const currentProductCount = Number(
+            merchantData.productCount || 0
+        );
+
+        if (
+            !Number.isSafeInteger(currentProductCount) ||
+            currentProductCount < 0
+        ) {
+            throw new Error(
+                "O contador de produtos da sua conta é inválido. Contacte o suporte."
+            );
+        }
+
+        if (
+            maxProducts !== null &&
+            currentProductCount >= maxProducts
+        ) {
+            throw new Error(
+                `Atingiu o limite de ${maxProducts} produtos permitidos para a sua conta.`
+            );
+        }
+
+        // Criar o produto.
+        transaction.set(productRef, {
+            name: data.name,
+            price: data.price,
+            stock: data.stock,
+            category: data.category,
+            province: data.province,
+            description: data.description,
+
+            images: images,
+
+            merchantId: currentUser.uid,
+
+            shopName: merchantData.shopName || "",
+            merchantWhatsapp: merchantData.whatsapp || "",
+            merchantDescription:
+                merchantData.shopDescription || "",
+
+            active: true,
+
+            salesCount: 0,
+            views: 0,
+
+            createdAt: serverTimestamp()
+        });
+
+        // Incrementar o contador na mesma transação.
+        transaction.update(merchantRef, {
+            productCount: currentProductCount + 1
+        });
+
+        return {
+            alreadyCreated: false,
+            productId: productRef.id
+        };
+    });
 
     return result;
 }
-
 // =====================================================
 // BLOC 18 — PUBLICATION PRINCIPALE
 // =====================================================
