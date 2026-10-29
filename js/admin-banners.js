@@ -828,16 +828,16 @@ if (!sdkDiagnostic.estUnFichier) {
     Number.isFinite(Number(authData.expire))
 );
     uploadData = await imageKitSDK.upload({
-        file: file,
-        fileName: safeFileName,
-        publicKey: TOMA_IMAGEKIT_PUBLIC_KEY,
-        token: authData.token,
-        signature: authData.signature,
-        expire: Number(authData.expire),
-        folder: TOMA_IMAGEKIT_FOLDER,
-        useUniqueFileName: true
-     xhr: imageKitDiagnosticXHR,
-    });
+    file: file,
+    fileName: safeFileName,
+    publicKey: TOMA_IMAGEKIT_PUBLIC_KEY,
+    token: authData.token,
+    signature: authData.signature,
+    expire: Number(authData.expire),
+    folder: TOMA_IMAGEKIT_FOLDER,
+    useUniqueFileName: true,
+    xhr: imageKitDiagnosticXHR
+});
 
 } catch (error) {
 // BLOC DIAGNOSTIC — Métadonnées HTTP ImageKit
