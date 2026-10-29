@@ -199,7 +199,15 @@ function parseMultipart(req) {
             fail(error);
         });
 
-        req.pipe(parser);
+        console.log("[TOMA][MULTIPART_DIAGNOSTIC]", {
+    contentType: req.headers["content-type"] || null,
+    contentLength: req.headers["content-length"] || null,
+    transferEncoding: req.headers["transfer-encoding"] || null,
+    requestComplete: req.complete,
+    requestEnded: req.readableEnded
+});
+
+req.pipe(parser);
     });
 }
 
