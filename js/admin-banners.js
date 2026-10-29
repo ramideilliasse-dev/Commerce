@@ -646,93 +646,11 @@ function initializeImagePickers() {
 }
 /* =====================================================
    BLOC 8 — UPLOAD IMAGEKIT
-   AUTHENTIFICATION PAR FIREBASE + VERCEL
+   AUTHENTIFICATION FIREBASE + VERCEL
 ===================================================== */
 
 async function uploadImageToImageKit(file, bannerId) {
 
-    if (!file) {
-        throw new Error("Nenhuma imagem selecionada.");
-    }
-
-    if (!TOMA_ALLOWED_TYPES.includes(file.type)) {
-        throw new Error("Formato de imagem não suportado.");
-    }
-
-    if (file.size > TOMA_MAX_FILE_SIZE) {
-        throw new Error("A imagem não pode ultrapassar 10 MB.");
-    }
-
-    const user = auth.currentUser;
-
-    if (!user) {
-        throw new Error(
-            "A sessão expirou. Inicia sessão novamente."
-        );
-    }
-
-    // BLOC 8.1 — Obtenir un jeton Firebase actualisé
-
-    const idToken = await user.getIdToken();
-
-    // BLOC 8.2 — Demander une signature temporaire à Vercel
-
-    let authResponse;
-
-    try {
-
-        authResponse = await fetch("/api/imagekit-auth", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${idToken}`
-            },
-            body: JSON.stringify({
-                purpose: "banner"
-            })
-        });
-
-    } catch (error) {
-
-        throw new Error(
-            "Não foi possível contactar o servidor Toma."
-        );
-
-    }
-
-    const authText = await authResponse.text();
-
-    let authData;
-
-    try {
-
-        authData = JSON.parse(authText);
-
-    } catch (error) {
-
-        throw new Error(
-            "Resposta inválida do servidor de autenticação."
-        );
-
-    }
-
-    if (!authResponse.ok || !authData.success) {
-
-        const message =
-            authData?.error?.message ||
-            "Não foi possível autorizar o envio da imagem.";
-
-        throw new Error(message);
-
-    }
-
-    if (
-        !authData.token ||
-        !authData.signature ||
-        !authData.expire
-    ) {
-
-        async function uploadImageToImageKit(file, bannerId) {
     if (!file) {
         throw new Error("Nenhuma imagem selecionada.");
     }
@@ -755,7 +673,11 @@ async function uploadImageToImageKit(file, bannerId) {
         );
     }
 
+    // 1. Obter o token Firebase atualizado.
+
     const idToken = await user.getIdToken();
+
+    // 2. Enviar a imagem para a API do Vercel.
 
     const formData = new FormData();
 
@@ -765,49 +687,76 @@ async function uploadImageToImageKit(file, bannerId) {
     let response;
 
     try {
+
         response = await fetch("/api/imagekit-upload", {
             method: "POST",
+
             headers: {
                 Authorization: `Bearer ${idToken}`
             },
+
             body: formData
         });
-    } catch {
+
+    } catch (error) {
+
         throw new Error(
             "Não foi possível contactar o servidor Toma."
         );
+
     }
+
+    // 3. Ler a resposta do servidor.
 
     const responseText = await response.text();
 
     let result;
 
     try {
+
         result = JSON.parse(responseText);
-    } catch {
+
+    } catch (error) {
+
         throw new Error(
-            "Resposta inválida do servidor Toma: " +
-            response.status
+            "Resposta inválida do servidor Toma. " +
+            "Código HTTP: " + response.status
         );
+
     }
+
+    // 4. Verificar se o upload foi concluído.
 
     if (!response.ok || !result.success) {
+
         throw new Error(
             result.message ||
+            result.error?.message ||
             `Falha no upload. Código HTTP: ${response.status}`
         );
+
     }
 
-    if (!result.url) {
+    // 5. Confirmar que o ImageKit devolveu uma URL.
+
+    if (
+        typeof result.url !== "string" ||
+        !result.url.trim()
+    ) {
+
         throw new Error(
-            "O ImageKit não devolveu o endereço da imagem."
+            "O servidor não devolveu o endereço da imagem."
         );
+
     }
+
+    // 6. Devolver os dados para o BLOC 13.
 
     return {
         url: result.url,
         publicId: result.publicId || ""
     };
+
 }
 /* =====================================================
    BLOC 9 — VALIDATION DU LIEN
