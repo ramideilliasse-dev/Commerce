@@ -720,115 +720,84 @@ function initializeImagePickers() {
 }
 
 
+
 /* =====================================================
    BLOC 8 — UPLOAD CLOUDINARY
-   UPLOAD DIRECT AVEC UNSIGNED PRESET
+   UPLOAD DIRECT + DIAGNOSTIC
 ===================================================== */
 
 async function uploadImageToCloudinary(file, bannerId) {
 
     if (!file) {
-
-        throw new Error(
-            "Nenhuma imagem selecionada."
-        );
-
+        throw new Error("Nenhuma imagem selecionada.");
     }
 
     if (!TOMA_ALLOWED_TYPES.includes(file.type)) {
-
         throw new Error(
             "Formato de imagem não suportado. Utiliza JPG, PNG ou WEBP."
         );
-
     }
 
     if (file.size > TOMA_MAX_FILE_SIZE) {
-
-        throw new Error(
-            "A imagem não pode ultrapassar 10 MB."
-        );
-
+        throw new Error("A imagem não pode ultrapassar 10 MB.");
     }
 
-    if (
-        !CLOUDINARY_CLOUD_NAME ||
-        !CLOUDINARY_UPLOAD_PRESET
-    ) {
-
+    if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
         throw new Error(
             "A configuração do Cloudinary está incompleta."
         );
-
     }
 
     if (!auth.currentUser) {
-
         throw new Error(
             "A sessão expirou. Inicia sessão novamente."
         );
-
     }
-
 
     const formData = new FormData();
 
     formData.append("file", file);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+    formData.append("folder", `toma/banners/${bannerId}`);
 
-    formData.append(
-        "upload_preset",
-        CLOUDINARY_UPLOAD_PRESET
-    );
+    // Diagnóstico: confirma os parâmetros enviados.
+    const presetEnviado = formData.get("upload_preset");
+    const cloudName = CLOUDINARY_CLOUD_NAME;
 
-    /*
-       Organização dos ficheiros no Cloudinary.
-       Cada tipo de banner terá a sua pasta.
-    */
-
-    formData.append(
-        "folder",
-        `toma/banners/${bannerId}`
-    );
-
+    if (presetEnviado !== CLOUDINARY_UPLOAD_PRESET) {
+        throw new Error(
+            "Diagnóstico: o preset enviado não corresponde à configuração."
+        );
+    }
 
     let response;
 
     try {
-
         response = await fetch(
-            CLOUDINARY_UPLOAD_URL,
+            `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
             {
                 method: "POST",
                 body: formData
             }
         );
-
     } catch (error) {
-
         throw new Error(
             "Não foi possível contactar o Cloudinary. Verifica a ligação à Internet."
         );
-
     }
-
 
     const responseText = await response.text();
 
     let result;
 
     try {
-
         result = JSON.parse(responseText);
-
     } catch (error) {
-
         throw new Error(
             "Resposta inválida do Cloudinary. Código HTTP: " +
             response.status
         );
-
     }
-
 
     if (!response.ok) {
 
@@ -836,35 +805,34 @@ async function uploadImageToCloudinary(file, bannerId) {
             result?.error?.message ||
             "Erro desconhecido no Cloudinary.";
 
+        alert(
+            "DIAGNÓSTICO CLOUDINARY — TOMA\n\n" +
+            "Cloud name: " + cloudName + "\n" +
+            "Preset enviado: " + presetEnviado + "\n" +
+            "Banner: " + bannerId + "\n" +
+            "HTTP: " + response.status + "\n\n" +
+            "Resposta: " + cloudinaryMessage
+        );
+
         throw new Error(
             `Falha no upload Cloudinary (${response.status}): ${cloudinaryMessage}`
         );
-
     }
-
 
     if (
         typeof result.secure_url !== "string" ||
         !result.secure_url.trim()
     ) {
-
         throw new Error(
             "O Cloudinary não devolveu o endereço seguro da imagem."
         );
-
     }
 
-
     return {
-
         url: result.secure_url,
-
         publicId: result.public_id || ""
-
     };
-
 }
-
 
 /* =====================================================
    BLOC 9 — VALIDATION DU LIEN
