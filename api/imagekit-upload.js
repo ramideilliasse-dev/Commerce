@@ -94,17 +94,24 @@ function parseMultipart(req) {
                     fields: 10
                 }
             });
-        } catch {
+        } catch (error) {
             reject(new Error("Requête multipart invalide."));
             return;
         }
 
         const fields = {};
-        const chunks = [];
+        const fileChunks = [];
 
         let fileData = null;
         let fileError = null;
         let fileCount = 0;
+        let settled = false;
+
+        function fail(error) {
+            if (settled) return;
+            settled = true;
+            reject(error);
+        }
 
         parser.on("field", (name, value) => {
             fields[name] = value;
@@ -121,6 +128,8 @@ function parseMultipart(req) {
 
             const mimeType = info.mimeType;
             const filename = info.filename || "toma-banner";
+            const chunks = [];
+            let size = 0;
 
             if (!ALLOWED_TYPES.includes(mimeType)) {
                 fileError = new Error(
@@ -130,12 +139,9 @@ function parseMultipart(req) {
                 return;
             }
 
-            let size = 0;
-            const fileChunks = [];
-
             stream.on("data", chunk => {
                 size += chunk.length;
-                fileChunks.push(chunk);
+                chunks.push(chunk);
             });
 
             stream.on("limit", () => {
@@ -147,7 +153,7 @@ function parseMultipart(req) {
             stream.on("end", () => {
                 if (!fileError && size > 0) {
                     fileData = {
-                        buffer: Buffer.concat(fileChunks),
+                        buffer: Buffer.concat(chunks),
                         mimeType,
                         filename,
                         size
@@ -162,20 +168,35 @@ function parseMultipart(req) {
             );
         });
 
-        parser.on("error", reject);
+        parser.on("fieldsLimit", () => {
+            fileError = new Error(
+                "Le formulaire contient trop de champs."
+            );
+        });
+
+        parser.on("error", error => {
+            fail(error);
+        });
 
         parser.on("close", () => {
+            if (settled) return;
+
             if (fileError) {
-                reject(fileError);
+                fail(fileError);
                 return;
             }
 
             if (!fileData) {
-                reject(new Error("Aucun fichier valide reçu."));
+                fail(new Error("Aucun fichier valide reçu."));
                 return;
             }
 
+            settled = true;
             resolve({ fields, fileData });
+        });
+
+        req.on("error", error => {
+            fail(error);
         });
 
         req.pipe(parser);
