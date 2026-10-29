@@ -1,0 +1,12 @@
+ {
+  "name": "toma-marketplace",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": "20.x"
+  },
+  "dependencies": {
+    "@imagekit/nodejs": "^7.0.0",
+    "busboy": "^1.6.0"
+  }
+}
