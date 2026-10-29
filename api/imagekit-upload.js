@@ -109,6 +109,7 @@ function parseMultipart(req) {
 
         function fail(error) {
             if (settled) return;
+
             settled = true;
             reject(error);
         }
@@ -135,6 +136,7 @@ function parseMultipart(req) {
                 fileError = new Error(
                     "Format accepté : JPEG, PNG ou WebP."
                 );
+
                 stream.resume();
                 return;
             }
@@ -192,7 +194,10 @@ function parseMultipart(req) {
             }
 
             settled = true;
-            resolve({ fields, fileData });
+            resolve({
+                fields,
+                fileData
+            });
         });
 
         req.on("error", error => {
@@ -200,18 +205,19 @@ function parseMultipart(req) {
         });
 
         console.log("[TOMA][MULTIPART_DIAGNOSTIC]", {
-    contentType: req.headers["content-type"] || null,
-    contentLength: req.headers["content-length"] || null,
-    transferEncoding: req.headers["transfer-encoding"] || null,
-    requestComplete: req.complete,
-    requestEnded: req.readableEnded
-});
+            contentType: req.headers["content-type"] || null,
+            contentLength: req.headers["content-length"] || null,
+            transferEncoding: req.headers["transfer-encoding"] || null,
+            requestComplete: req.complete,
+            requestEnded: req.readableEnded
+        });
 
-req.pipe(parser);
+        req.pipe(parser);
     });
 }
 
 export default async function handler(req, res) {
+    // BLOC 1 : vérifier la méthode HTTP.
     if (req.method !== "POST") {
         res.setHeader("Allow", "POST");
 
@@ -221,6 +227,7 @@ export default async function handler(req, res) {
         });
     }
 
+    // BLOC 2 : vérifier la configuration du serveur.
     if (
         !process.env.FIREBASE_API_KEY ||
         !process.env.IMAGEKIT_PRIVATE_KEY
@@ -231,6 +238,7 @@ export default async function handler(req, res) {
         });
     }
 
+    // BLOC 3 : récupérer le jeton Firebase.
     const idToken = getBearerToken(req);
 
     if (!idToken) {
@@ -241,6 +249,18 @@ export default async function handler(req, res) {
     }
 
     try {
+        // BLOC 4 : démarrer immédiatement la lecture multipart.
+        // Le traitement commence avant les appels réseau Firebase.
+        const multipartPromise = parseMultipart(req).then(
+            data => ({
+                data
+            }),
+            error => ({
+                error
+            })
+        );
+
+        // BLOC 5 : vérifier l'utilisateur Firebase.
         const user = await getAuthenticatedUser(idToken);
 
         if (!user) {
@@ -250,7 +270,11 @@ export default async function handler(req, res) {
             });
         }
 
-        const role = await getUserRole(user.localId, idToken);
+        // BLOC 6 : vérifier le rôle administrateur.
+        const role = await getUserRole(
+            user.localId,
+            idToken
+        );
 
         if (
             !["admin", "superadmin"].includes(
@@ -263,8 +287,19 @@ export default async function handler(req, res) {
             });
         }
 
-        const { fields, fileData } = await parseMultipart(req);
+        // BLOC 7 : récupérer le résultat du formulaire.
+        const multipartResult = await multipartPromise;
 
+        if (multipartResult.error) {
+            throw multipartResult.error;
+        }
+
+        const {
+            fields,
+            fileData
+        } = multipartResult.data;
+
+        // BLOC 8 : autoriser uniquement les bannières.
         if (fields.purpose !== "banner") {
             return sendJson(res, 400, {
                 success: false,
@@ -272,6 +307,7 @@ export default async function handler(req, res) {
             });
         }
 
+        // BLOC 9 : sécuriser le nom du fichier.
         const safeName = fileData.filename
             .replace(/[^a-zA-Z0-9._-]/g, "_")
             .slice(-150) || "toma-banner";
@@ -279,10 +315,12 @@ export default async function handler(req, res) {
         const uniqueName =
             `${crypto.randomUUID()}-${safeName}`;
 
+        // BLOC 10 : initialiser ImageKit.
         const imagekit = new ImageKit({
             privateKey: process.env.IMAGEKIT_PRIVATE_KEY
         });
 
+        // BLOC 11 : préparer et envoyer l'image.
         const imageFile = await toFile(
             fileData.buffer,
             uniqueName
@@ -295,12 +333,14 @@ export default async function handler(req, res) {
             useUniqueFileName: true
         });
 
+        // BLOC 12 : vérifier le résultat ImageKit.
         if (!result.url) {
             throw new Error(
                 "ImageKit n'a pas renvoyé d'URL."
             );
         }
 
+        // BLOC 13 : renvoyer les informations à Toma.
         return sendJson(res, 200, {
             success: true,
             url: result.url,
@@ -313,6 +353,10 @@ export default async function handler(req, res) {
             "[TOMA][IMAGEKIT_UPLOAD]",
             error?.message || "Erreur inconnue"
         );
+
+        if (res.headersSent) {
+            return;
+        }
 
         return sendJson(res, 500, {
             success: false,
