@@ -841,7 +841,10 @@ if (!sdkDiagnostic.estUnFichier) {
 
 } catch (error) {
 // BLOC DIAGNOSTIC — Métadonnées HTTP ImageKit
-
+alert(
+    "TOMA — RÉPONSE HTTP BRUTE\n\n" +
+    JSON.stringify(imageKitRawResponse, null, 2)
+);
 alert(
     "IMAGEKIT — STATUT HTTP\n\n" +
     "Statut: " +
