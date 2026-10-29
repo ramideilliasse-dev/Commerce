@@ -79,12 +79,12 @@ let pendingProductRef = null;
 // BLOC 3 — CONFIGURATION CLOUDINARY
 // =====================================================
 
+const CLOUDINARY_CLOUD_NAME = "xnak6z6m";
+
 const CLOUDINARY_URL =
-    "https://api.cloudinary.com/v1_1/dy9qnhimc/image/upload";
+    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
 
-const CLOUDINARY_PRESET =
-    "angcomerce-upload";
-
+const CLOUDINARY_PRESET = "Toma-banner";
 // =====================================================
 // BLOC 4 — MESSAGES
 // =====================================================
