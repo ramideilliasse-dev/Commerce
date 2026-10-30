@@ -1,48 +1,43 @@
  /* =====================================================
-   TOMA V3 — CSS PROFESSIONNEL
+   TOMA V3 — DESIGN PREMIUM
    PARTIE 1/2
-   Base • Header • Search • Hero • Trust • Categories
+   Identidade visual • Header • Pesquisa
+   Hero • Vantagens • Categorias
 ===================================================== */
 
+
 /* =====================================================
-   01. VARIABLES GLOBALES
+   01 — DESIGN SYSTEM
 ===================================================== */
 
 :root {
-    --toma-primary: #0755D9;
-    --toma-primary-dark: #0645B5;
-    --toma-primary-light: #EAF2FF;
+    --toma-blue: #0755D9;
+    --toma-blue-dark: #0644B5;
+    --toma-blue-light: #EAF2FF;
 
-    --toma-background: #F5F7FB;
-    --toma-surface: #FFFFFF;
+    --toma-white: #FFFFFF;
+    --toma-bg: #F5F7FB;
 
     --toma-text: #172033;
-    --toma-text-secondary: #778197;
+    --toma-muted: #7D8799;
 
-    --toma-border: #E8ECF3;
+    --toma-border: #E8EDF5;
 
-    --toma-success: #16A36A;
-    --toma-danger: #E5484D;
-    --toma-warning: #F5A623;
+    --toma-green: #12A36A;
+    --toma-red: #E5484D;
+    --toma-orange: #F39A28;
 
-    --toma-radius-sm: 10px;
-    --toma-radius-md: 16px;
-    --toma-radius-lg: 22px;
-    --toma-radius-xl: 28px;
+    --toma-radius: 18px;
 
-    --toma-shadow-sm:
-        0 3px 12px rgba(20, 35, 70, 0.05);
+    --toma-shadow:
+        0 5px 22px rgba(23, 43, 77, 0.07);
 
-    --toma-shadow-md:
-        0 8px 28px rgba(20, 35, 70, 0.08);
-
-    --toma-transition:
-        0.25s ease;
+    --toma-transition: 0.25s ease;
 }
 
 
 /* =====================================================
-   02. RESET ET BASE
+   02 — RESET
 ===================================================== */
 
 * {
@@ -57,6 +52,8 @@ html {
 }
 
 body.toma-home-v3 {
+    min-height: 100vh;
+
     font-family:
         Inter,
         -apple-system,
@@ -64,14 +61,12 @@ body.toma-home-v3 {
         "Segoe UI",
         sans-serif;
 
-    background: var(--toma-background);
+    background: var(--toma-bg);
     color: var(--toma-text);
-
-    min-height: 100vh;
 
     overflow-x: hidden;
 
-    padding-bottom: 95px;
+    padding-bottom: 100px;
 
     -webkit-font-smoothing: antialiased;
 }
@@ -95,6 +90,10 @@ img {
     max-width: 100%;
 }
 
+[hidden] {
+    display: none !important;
+}
+
 .material-symbols-rounded {
     font-variation-settings:
         'FILL' 0,
@@ -105,18 +104,14 @@ img {
 
 
 /* =====================================================
-   03. CABEÇALHO
+   03 — HEADER PREMIUM AZUL
 ===================================================== */
 
 .tomaHeader {
     width: 100%;
-
     min-height: 76px;
 
-    padding:
-        12px 5%;
-
-    background: var(--toma-surface);
+    padding: 12px 5%;
 
     display: flex;
     align-items: center;
@@ -124,14 +119,22 @@ img {
 
     gap: 15px;
 
+    background: linear-gradient(
+        115deg,
+        #0648BD,
+        #0755D9,
+        #176BEA
+    );
+
     position: relative;
     z-index: 100;
 
-    border-bottom: 1px solid var(--toma-border);
+    box-shadow:
+        0 4px 18px rgba(7, 85, 217, 0.20);
 }
 
 
-/* LOGOTIPO */
+/* LOGO */
 
 .tomaBrand {
     display: flex;
@@ -140,26 +143,27 @@ img {
     gap: 11px;
 
     flex-shrink: 0;
+
+    color: white;
 }
 
 .tomaBrandIcon {
     width: 45px;
     height: 45px;
 
-    border-radius: 14px;
-
-    background: var(--toma-primary);
-
-    color: white;
-
     display: flex;
     align-items: center;
     justify-content: center;
 
+    border-radius: 14px;
+
+    background: rgba(255,255,255,0.16);
+
+    color: white;
+
     font-size: 27px;
 
-    box-shadow:
-        0 5px 14px rgba(7, 85, 217, 0.20);
+    border: 1px solid rgba(255,255,255,0.20);
 }
 
 .tomaBrandText {
@@ -170,23 +174,23 @@ img {
 }
 
 .tomaBrandText strong {
-    color: var(--toma-primary);
+    color: white;
 
     font-size: 23px;
     font-weight: 850;
 
-    letter-spacing: -1px;
+    letter-spacing: -0.8px;
 }
 
 .tomaBrandText small {
-    font-size: 11px;
-    color: var(--toma-text-secondary);
+    color: rgba(255,255,255,0.80);
 
+    font-size: 11px;
     font-weight: 500;
 }
 
 
-/* AÇÕES DO CABEÇALHO */
+/* HEADER ACTIONS */
 
 .headerActions {
     display: flex;
@@ -200,40 +204,43 @@ img {
     width: 43px;
     height: 43px;
 
-    border: 1px solid var(--toma-border);
-
-    background: #FFFFFF;
-
-    color: #35415A;
-
-    border-radius: 14px;
+    position: relative;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    position: relative;
+    border: 1px solid rgba(255,255,255,0.22);
+
+    border-radius: 13px;
+
+    background: rgba(255,255,255,0.12);
+
+    color: white;
 
     transition: var(--toma-transition);
 }
 
 .iconButton .material-symbols-rounded {
+    color: white;
     font-size: 23px;
 }
 
-.iconButton:hover,
-.profileButton:hover {
-    background: var(--toma-primary-light);
-
-    color: var(--toma-primary);
-
-    border-color: #C8DAFF;
+.iconButton:hover {
+    background: rgba(255,255,255,0.24);
+    transform: translateY(-2px);
 }
 
 .profileButton {
+    padding: 0;
+
     overflow: hidden;
 
-    padding: 0;
+    border: 2px solid rgba(255,255,255,0.85);
+
+    border-radius: 50%;
+
+    background: white;
 }
 
 .profileButton img {
@@ -244,44 +251,44 @@ img {
 }
 
 
-/* BADGES */
+/* NOTIFICATION BADGES */
 
 .notificationBadge {
     position: absolute;
 
-    top: -5px;
-    right: -5px;
+    top: -6px;
+    right: -6px;
 
     min-width: 19px;
     height: 19px;
 
     padding: 0 5px;
 
-    border-radius: 20px;
-
-    background: var(--toma-danger);
-
-    color: white;
-
-    font-size: 10px;
-    font-weight: 800;
-
     display: flex;
     align-items: center;
     justify-content: center;
 
+    background: #FF424F;
+
+    color: white;
+
     border: 2px solid white;
+
+    border-radius: 20px;
+
+    font-size: 10px;
+    font-weight: 800;
 }
 
 
 /* =====================================================
-   04. CONTEÚDO PRINCIPAL
+   04 — MAIN CONTENT
 ===================================================== */
 
 .tomaMain {
     width: 100%;
 
-    max-width: 1440px;
+    max-width: 1500px;
 
     margin: 0 auto;
 
@@ -290,19 +297,18 @@ img {
 
 
 /* =====================================================
-   05. BARRA DE PESQUISA
+   05 — SEARCH PREMIUM
 ===================================================== */
 
 .searchSection {
     width: 100%;
 
-    margin-bottom: 22px;
+    margin-bottom: 23px;
 }
 
 .searchBar {
     width: 100%;
-
-    min-height: 57px;
+    min-height: 58px;
 
     padding: 6px 7px 6px 18px;
 
@@ -315,24 +321,23 @@ img {
 
     border: 1px solid var(--toma-border);
 
-    border-radius: 17px;
+    border-radius: 16px;
 
-    box-shadow: var(--toma-shadow-sm);
+    box-shadow: var(--toma-shadow);
 
     transition: var(--toma-transition);
 }
 
 .searchBar:focus-within {
-    border-color: var(--toma-primary);
+    border-color: var(--toma-blue);
 
     box-shadow:
-        0 0 0 4px rgba(7, 85, 217, 0.08);
+        0 0 0 4px rgba(7,85,217,0.09);
 }
 
 .searchIcon {
-    font-size: 23px;
-
-    color: var(--toma-text-secondary);
+    color: var(--toma-blue);
+    font-size: 24px;
 }
 
 .searchPlaceholder {
@@ -349,7 +354,6 @@ img {
     color: var(--toma-text);
 
     font-size: 14px;
-    font-weight: 500;
 }
 
 .searchPlaceholder::placeholder {
@@ -362,23 +366,23 @@ img {
 
     flex-shrink: 0;
 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     border: none;
 
     border-radius: 12px;
 
-    background: var(--toma-primary);
+    background: var(--toma-blue);
 
     color: white;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
 
     transition: var(--toma-transition);
 }
 
 .searchSubmitBtn:hover {
-    background: var(--toma-primary-dark);
+    background: var(--toma-blue-dark);
 }
 
 .searchFilterIcon {
@@ -387,7 +391,7 @@ img {
 
 
 /* =====================================================
-   06. ACESSOS RÁPIDOS
+   06 — ROLE SHORTCUTS
 ===================================================== */
 
 .roleShortcuts {
@@ -400,11 +404,11 @@ img {
 
     gap: 13px;
 
-    margin-bottom: 24px;
+    margin-bottom: 25px;
 }
 
 .roleShortcut {
-    min-height: 76px;
+    min-height: 75px;
 
     padding: 13px 16px;
 
@@ -417,25 +421,23 @@ img {
 
     border: 1px solid var(--toma-border);
 
-    border-radius: var(--toma-radius-md);
+    border-radius: 15px;
 
-    box-shadow: var(--toma-shadow-sm);
+    box-shadow: var(--toma-shadow);
 
     transition: var(--toma-transition);
 }
 
 .roleShortcut:hover {
-    transform: translateY(-2px);
-
-    box-shadow: var(--toma-shadow-md);
+    transform: translateY(-3px);
 }
 
 .merchantShortcut {
-    border-left: 4px solid #16A36A;
+    border-left: 4px solid var(--toma-green);
 }
 
 .adminShortcut {
-    border-left: 4px solid var(--toma-primary);
+    border-left: 4px solid var(--toma-blue);
 }
 
 .roleShortcutIcon {
@@ -444,31 +446,31 @@ img {
 
     flex-shrink: 0;
 
-    border-radius: 13px;
-
     display: flex;
     align-items: center;
     justify-content: center;
 
-    background: var(--toma-primary-light);
+    border-radius: 13px;
 
-    color: var(--toma-primary);
+    background: var(--toma-blue-light);
+
+    color: var(--toma-blue);
 
     font-size: 24px;
 }
 
 .merchantShortcut .roleShortcutIcon {
     background: #E7F8EF;
-    color: #16A36A;
+    color: var(--toma-green);
 }
 
 .roleShortcutText {
+    flex: 1;
+
     display: flex;
     flex-direction: column;
 
     gap: 4px;
-
-    flex: 1;
 }
 
 .roleShortcutText strong {
@@ -477,9 +479,8 @@ img {
 }
 
 .roleShortcutText small {
-    color: var(--toma-text-secondary);
-
     font-size: 11px;
+    color: var(--toma-muted);
 }
 
 .roleArrow {
@@ -488,39 +489,36 @@ img {
 
 
 /* =====================================================
-   07. BANNER PRINCIPAL
+   07 — HERO BANNER
 ===================================================== */
 
 .heroSection {
     width: 100%;
 
-    margin-bottom: 24px;
+    margin-bottom: 26px;
 }
 
 .heroSlider {
     width: 100%;
 
-    min-height: 190px;
+    min-height: 200px;
 
     position: relative;
 
     overflow: hidden;
 
-    border-radius: var(--toma-radius-xl);
+    border-radius: 22px;
 
     background: #DCE8FA;
 
-    box-shadow: var(--toma-shadow-md);
+    box-shadow: var(--toma-shadow);
 }
-
-
-/* SLIDES CRIADOS PELO JAVASCRIPT */
 
 .heroSlide {
     width: 100%;
     height: 100%;
 
-    min-height: 190px;
+    min-height: 200px;
 
     position: relative;
 
@@ -529,11 +527,7 @@ img {
 
     overflow: hidden;
 
-    border-radius: var(--toma-radius-xl);
-
-    transition:
-        opacity 0.4s ease,
-        visibility 0.4s ease;
+    border-radius: 22px;
 }
 
 .heroSlideImage {
@@ -545,16 +539,11 @@ img {
     height: 100%;
 
     object-fit: cover;
-
     object-position: center;
 }
 
-
-/* CONTEÚDO SOBRE O BANNER */
-
 .heroSlideContent {
     position: relative;
-
     z-index: 2;
 
     width: 100%;
@@ -565,45 +554,43 @@ img {
 }
 
 .heroSlideTitle {
-    max-width: 520px;
+    max-width: 550px;
 
-    font-size: clamp(22px, 3vw, 38px);
+    margin-bottom: 11px;
 
-    font-weight: 850;
+    font-size: clamp(23px, 3.5vw, 40px);
 
     line-height: 1.15;
 
-    margin-bottom: 10px;
+    font-weight: 850;
 }
 
 .heroSlideSubtitle {
-    max-width: 460px;
+    max-width: 480px;
+
+    margin-bottom: 18px;
 
     font-size: 14px;
 
     line-height: 1.6;
-
-    margin-bottom: 18px;
 }
 
 .heroSlideButton {
-    display: inline-flex;
+    min-height: 43px;
 
+    padding: 0 21px;
+
+    display: inline-flex;
     align-items: center;
     justify-content: center;
 
-    min-height: 42px;
-
-    padding: 0 20px;
-
-    border-radius: 12px;
+    border-radius: 11px;
 
     background: white;
 
-    color: var(--toma-primary);
+    color: var(--toma-blue);
 
     font-size: 12px;
-
     font-weight: 800;
 
     transition: var(--toma-transition);
@@ -611,20 +598,18 @@ img {
 
 .heroSlideButton:hover {
     transform: translateY(-2px);
-
-    background: var(--toma-primary-light);
 }
 
 
-/* CARREGAMENTO */
+/* HERO LOADING */
 
 .heroLoading {
     position: absolute;
-
     inset: 0;
 
-    display: flex;
+    z-index: 3;
 
+    display: flex;
     flex-direction: column;
 
     align-items: center;
@@ -632,11 +617,9 @@ img {
 
     gap: 10px;
 
-    color: var(--toma-primary);
-
     background: #EAF2FF;
 
-    z-index: 3;
+    color: var(--toma-blue);
 }
 
 .heroLoading .material-symbols-rounded {
@@ -645,12 +628,11 @@ img {
 
 .heroLoading p {
     font-size: 12px;
-
     font-weight: 600;
 }
 
 
-/* CONTROLES DO BANNER */
+/* HERO CONTROLS */
 
 .heroControls {
     display: flex;
@@ -664,8 +646,12 @@ img {
 }
 
 .heroArrow {
-    width: 34px;
-    height: 34px;
+    width: 35px;
+    height: 35px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     border: 1px solid var(--toma-border);
 
@@ -673,25 +659,18 @@ img {
 
     background: white;
 
-    color: var(--toma-primary);
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
+    color: var(--toma-blue);
 
     transition: var(--toma-transition);
 }
 
 .heroArrow:hover {
-    background: var(--toma-primary);
-
+    background: var(--toma-blue);
     color: white;
 }
 
 .heroDots {
     display: flex;
-
     align-items: center;
 
     gap: 7px;
@@ -713,26 +692,20 @@ img {
 .heroDot.active {
     width: 23px;
 
-    background: var(--toma-primary);
+    background: var(--toma-blue);
 }
 
 
 /* =====================================================
-   08. VANTAGENS TOMA
+   08 — TRUST SECTION
 ===================================================== */
 
 .trustSection {
     width: 100%;
 
-    padding: 18px 20px;
+    padding: 19px 20px;
 
     margin-bottom: 35px;
-
-    background: white;
-
-    border: 1px solid var(--toma-border);
-
-    border-radius: var(--toma-radius-lg);
 
     display: grid;
 
@@ -740,28 +713,33 @@ img {
         repeat(3, minmax(0, 1fr));
 
     gap: 15px;
+
+    background: white;
+
+    border: 1px solid var(--toma-border);
+
+    border-radius: 18px;
+
+    box-shadow: var(--toma-shadow);
 }
 
 .trustItem {
+    min-width: 0;
+
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 
     gap: 12px;
-
-    min-width: 0;
 }
 
 .trustIcon {
-    width: 42px;
-    height: 42px;
+    width: 43px;
+    height: 43px;
 
     flex-shrink: 0;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
@@ -787,31 +765,26 @@ img {
 
 .trustText {
     display: flex;
-
     flex-direction: column;
 
     gap: 4px;
-
-    min-width: 0;
 }
 
 .trustText strong {
     font-size: 12px;
-
     font-weight: 800;
 }
 
 .trustText small {
     font-size: 10px;
-
-    color: var(--toma-text-secondary);
-
     line-height: 1.4;
+
+    color: var(--toma-muted);
 }
 
 
 /* =====================================================
-   09. SEÇÕES GERAIS
+   09 — SECTION HEADINGS
 ===================================================== */
 
 .homeSection {
@@ -822,18 +795,16 @@ img {
 
 .sectionHeading {
     display: flex;
-
     align-items: center;
     justify-content: space-between;
 
-    gap: 15px;
+    gap: 12px;
 
     margin-bottom: 19px;
 }
 
 .sectionTitleGroup {
     display: flex;
-
     align-items: center;
 
     gap: 12px;
@@ -848,41 +819,38 @@ img {
     flex-shrink: 0;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
-    border-radius: 14px;
+    border-radius: 13px;
 
-    background: #EAF2FF;
+    background: var(--toma-blue-light);
 
-    color: var(--toma-primary);
+    color: var(--toma-blue);
 
     font-size: 23px;
 }
 
 .sectionTitleGroup h2 {
-    font-size: 19px;
-
-    font-weight: 850;
-
-    letter-spacing: -0.5px;
+    margin-bottom: 4px;
 
     color: var(--toma-text);
 
-    margin-bottom: 4px;
+    font-size: 19px;
+    font-weight: 850;
+
+    letter-spacing: -0.5px;
 }
 
 .sectionTitleGroup p {
-    color: var(--toma-text-secondary);
+    color: var(--toma-muted);
 
     font-size: 11px;
-
     line-height: 1.4;
 }
 
 
-/* ÍCONES DAS SEÇÕES */
+/* SECTION ICON COLORS */
 
 .featuredTitleIcon {
     background: #FFF1E5;
@@ -915,30 +883,27 @@ img {
 }
 
 
-/* VER TUDO */
+/* SEE ALL */
 
 .seeAllLink {
     display: inline-flex;
-
     align-items: center;
 
     gap: 5px;
 
     flex-shrink: 0;
 
-    color: var(--toma-primary);
+    color: var(--toma-blue);
 
     font-size: 12px;
-
     font-weight: 750;
 
     transition: var(--toma-transition);
 }
 
 .seeAllLink:hover {
-    color: var(--toma-primary-dark);
-
-    gap: 9px;
+    color: var(--toma-blue-dark);
+    gap: 8px;
 }
 
 .seeAllLink .material-symbols-rounded {
@@ -947,7 +912,7 @@ img {
 
 
 /* =====================================================
-   10. CATEGORIAS
+   10 — CATEGORIES
 ===================================================== */
 
 .categoriesSection {
@@ -971,7 +936,6 @@ img {
     min-height: 125px;
 
     display: flex;
-
     flex-direction: column;
 
     align-items: center;
@@ -979,19 +943,18 @@ img {
 
     gap: 10px;
 
-    color: var(--toma-text-secondary);
-
     background: white;
 
     border: 1px dashed var(--toma-border);
 
-    border-radius: var(--toma-radius-md);
+    border-radius: 15px;
+
+    color: var(--toma-muted);
 }
 
 .sectionLoading .material-symbols-rounded {
     font-size: 30px;
-
-    color: var(--toma-primary);
+    color: var(--toma-blue);
 }
 
 .sectionLoading p {
@@ -1001,934 +964,4 @@ img {
 
 /* =====================================================
    FIM DA PARTE 1/2
-   A PARTE 2 SERÁ ADICIONADA ABAIXO.
-===================================================== */
-/* =====================================================
-   TOMA V3 — CSS PROFISSIONAL
-   PARTE 2/2
-   Produtos • Lojas • Banners • Navegação • Responsivo
-===================================================== */
-
-
-/* =====================================================
-   11. CARTÕES DE PRODUTOS
-===================================================== */
-
-.productsScroller {
-    width: 100%;
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(5, minmax(0, 1fr));
-
-    gap: 15px;
-
-    align-items: stretch;
-}
-
-.productCard {
-    min-width: 0;
-
-    position: relative;
-
-    overflow: hidden;
-
-    background: white;
-
-    border: 1px solid var(--toma-border);
-
-    border-radius: 17px;
-
-    box-shadow: var(--toma-shadow-sm);
-
-    transition: var(--toma-transition);
-}
-
-.productCard:hover {
-    transform: translateY(-4px);
-
-    box-shadow: var(--toma-shadow-md);
-}
-
-.productCard img {
-    width: 100%;
-
-    height: 175px;
-
-    object-fit: cover;
-
-    background: #F0F3F8;
-}
-
-.productCardContent {
-    padding: 12px;
-}
-
-.productCardTitle {
-    font-size: 13px;
-
-    font-weight: 700;
-
-    color: var(--toma-text);
-
-    line-height: 1.4;
-
-    margin-bottom: 8px;
-}
-
-.productCardPrice {
-    color: var(--toma-primary);
-
-    font-size: 16px;
-
-    font-weight: 850;
-}
-
-.productCardOldPrice {
-    color: #A1A9B7;
-
-    font-size: 11px;
-
-    text-decoration: line-through;
-
-    margin-top: 4px;
-}
-
-
-/* =====================================================
-   12. CARTÕES DE PRODUTOS — ELEMENTOS INTERNOS
-===================================================== */
-
-.productImageWrapper {
-    position: relative;
-
-    overflow: hidden;
-
-    background: #F0F3F8;
-}
-
-.productImageWrapper img {
-    transition: transform 0.35s ease;
-}
-
-.productCard:hover .productImageWrapper img {
-    transform: scale(1.04);
-}
-
-.productBadge {
-    position: absolute;
-
-    top: 10px;
-    left: 10px;
-
-    padding: 5px 9px;
-
-    border-radius: 7px;
-
-    background: var(--toma-danger);
-
-    color: white;
-
-    font-size: 10px;
-
-    font-weight: 800;
-}
-
-.productFavoriteButton {
-    position: absolute;
-
-    top: 9px;
-    right: 9px;
-
-    width: 34px;
-    height: 34px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border: none;
-
-    border-radius: 50%;
-
-    background: rgba(255,255,255,0.95);
-
-    color: #687386;
-
-    font-size: 20px;
-}
-
-.productFavoriteButton.active {
-    color: #E54870;
-}
-
-.productMerchant {
-    margin-top: 7px;
-
-    color: var(--toma-text-secondary);
-
-    font-size: 10px;
-}
-
-.productAddButton {
-    width: 100%;
-
-    min-height: 37px;
-
-    margin-top: 11px;
-
-    border: none;
-
-    border-radius: 10px;
-
-    background: var(--toma-primary);
-
-    color: white;
-
-    font-size: 11px;
-
-    font-weight: 750;
-
-    transition: var(--toma-transition);
-}
-
-.productAddButton:hover {
-    background: var(--toma-primary-dark);
-}
-
-
-/* =====================================================
-   13. LOJAS OFICIAIS
-===================================================== */
-
-.officialStoresSection {
-    margin-top: 10px;
-}
-
-.officialStoresGrid {
-    width: 100%;
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(4, minmax(0, 1fr));
-
-    gap: 16px;
-}
-
-.officialStoreCard {
-    min-width: 0;
-
-    overflow: hidden;
-
-    background: white;
-
-    border: 1px solid var(--toma-border);
-
-    border-radius: 18px;
-
-    box-shadow: var(--toma-shadow-sm);
-
-    transition: var(--toma-transition);
-}
-
-.officialStoreCard:hover {
-    transform: translateY(-4px);
-
-    box-shadow: var(--toma-shadow-md);
-}
-
-.officialStoreBanner {
-    width: 100%;
-
-    height: 105px;
-
-    object-fit: cover;
-
-    background: #EAF2FF;
-}
-
-.officialStoreContent {
-    padding: 13px;
-
-    text-align: center;
-}
-
-.officialStoreLogo {
-    width: 65px;
-    height: 65px;
-
-    margin: -43px auto 10px;
-
-    position: relative;
-
-    object-fit: contain;
-
-    padding: 5px;
-
-    border-radius: 16px;
-
-    background: white;
-
-    border: 1px solid var(--toma-border);
-}
-
-.officialStoreName {
-    font-size: 14px;
-
-    font-weight: 800;
-
-    margin-bottom: 6px;
-}
-
-.officialStoreDescription {
-    color: var(--toma-text-secondary);
-
-    font-size: 11px;
-
-    line-height: 1.5;
-}
-
-.officialStoreVerified {
-    color: var(--toma-primary);
-
-    font-size: 12px;
-}
-
-
-/* =====================================================
-   14. BANNERS SECUNDÁRIOS
-===================================================== */
-
-.homeBannerSection {
-    width: 100%;
-
-    margin: 25px 0 35px;
-
-    overflow: hidden;
-
-    border-radius: var(--toma-radius-lg);
-}
-
-.homeBannerSlider {
-    width: 100%;
-
-    display: flex;
-
-    overflow: hidden;
-
-    border-radius: var(--toma-radius-lg);
-}
-
-.homeBannerSlider img {
-    width: 100%;
-
-    height: auto;
-
-    min-height: 120px;
-
-    max-height: 230px;
-
-    object-fit: cover;
-
-    border-radius: var(--toma-radius-lg);
-}
-
-
-/* =====================================================
-   15. MENSAGEM DA MARCA TOMA
-===================================================== */
-
-.tomaBrandMessage {
-    width: 100%;
-
-    padding: 30px;
-
-    margin-top: 35px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    gap: 20px;
-
-    background: linear-gradient(
-        120deg,
-        #0755D9,
-        #347CEB
-    );
-
-    color: white;
-
-    border-radius: var(--toma-radius-xl);
-
-    text-align: left;
-}
-
-.brandMessageIcon {
-    width: 65px;
-    height: 65px;
-
-    flex-shrink: 0;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    background: rgba(255,255,255,0.15);
-
-    border-radius: 19px;
-
-    font-size: 35px;
-}
-
-.brandMessageText h2 {
-    font-size: 21px;
-
-    font-weight: 850;
-
-    margin-bottom: 8px;
-}
-
-.brandMessageText p {
-    max-width: 550px;
-
-    font-size: 13px;
-
-    line-height: 1.7;
-
-    color: rgba(255,255,255,0.85);
-}
-
-
-/* =====================================================
-   16. NAVEGAÇÃO INFERIOR
-===================================================== */
-
-.bottomNavigation {
-    width: 100%;
-
-    min-height: 72px;
-
-    position: fixed;
-
-    left: 0;
-    bottom: 0;
-
-    z-index: 500;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: space-around;
-
-    padding:
-        8px 12px calc(8px + env(safe-area-inset-bottom));
-
-    background: rgba(255,255,255,0.97);
-
-    backdrop-filter: blur(16px);
-
-    -webkit-backdrop-filter: blur(16px);
-
-    border-top: 1px solid var(--toma-border);
-}
-
-.bottomNavItem {
-    min-width: 0;
-
-    flex: 1;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-    justify-content: center;
-
-    gap: 4px;
-
-    color: #8791A3;
-
-    font-size: 10px;
-
-    font-weight: 600;
-
-    transition: var(--toma-transition);
-}
-
-.bottomNavItem > .material-symbols-rounded {
-    font-size: 23px;
-}
-
-.bottomNavItem.active {
-    color: var(--toma-primary);
-
-    font-weight: 800;
-}
-
-.bottomNavItem.active > .material-symbols-rounded {
-    font-variation-settings: 'FILL' 1;
-}
-
-.bottomNavIconWrapper {
-    position: relative;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.bottomNavIconWrapper .notificationBadge {
-    top: -7px;
-    right: -12px;
-}
-
-
-/* =====================================================
-   17. NOTIFICAÇÕES TEMPORÁRIAS
-===================================================== */
-
-.homeToastContainer {
-    position: fixed;
-
-    top: 90px;
-    right: 20px;
-
-    z-index: 1000;
-
-    width: min(340px, calc(100% - 40px));
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 10px;
-
-    pointer-events: none;
-}
-
-.homeToast {
-    padding: 14px 17px;
-
-    border-radius: 13px;
-
-    background: #172033;
-
-    color: white;
-
-    box-shadow: var(--toma-shadow-md);
-
-    font-size: 12px;
-
-    line-height: 1.5;
-}
-
-
-/* =====================================================
-   18. ESTADOS E INTERAÇÕES
-===================================================== */
-
-button:focus-visible,
-a:focus-visible,
-input:focus-visible {
-    outline: 3px solid rgba(7,85,217,0.35);
-
-    outline-offset: 3px;
-}
-
-[hidden] {
-    display: none !important;
-}
-
-
-/* =====================================================
-   19. TABLETS
-===================================================== */
-
-@media (max-width: 1000px) {
-
-    .productsScroller {
-        grid-template-columns:
-            repeat(4, minmax(0, 1fr));
-    }
-
-    .categoriesGrid {
-        grid-template-columns:
-            repeat(4, minmax(0, 1fr));
-    }
-
-    .officialStoresGrid {
-        grid-template-columns:
-            repeat(3, minmax(0, 1fr));
-    }
-
-}
-
-
-/* =====================================================
-   20. TELEMÓVEIS
-===================================================== */
-
-@media (max-width: 650px) {
-
-    body.toma-home-v3 {
-        padding-bottom: calc(78px + env(safe-area-inset-bottom));
-    }
-
-    .tomaHeader {
-        min-height: 65px;
-
-        padding: 9px 15px;
-    }
-
-    .tomaBrandIcon {
-        width: 39px;
-        height: 39px;
-
-        font-size: 23px;
-    }
-
-    .tomaBrandText strong {
-        font-size: 20px;
-    }
-
-    .tomaBrandText small {
-        font-size: 10px;
-    }
-
-    .headerActions {
-        gap: 7px;
-    }
-
-    .iconButton,
-    .profileButton {
-        width: 36px;
-        height: 36px;
-
-        border-radius: 11px;
-    }
-
-    .iconButton .material-symbols-rounded {
-        font-size: 20px;
-    }
-
-    .tomaMain {
-        padding: 17px 14px;
-    }
-
-    .searchBar {
-        min-height: 51px;
-
-        padding-left: 13px;
-
-        border-radius: 14px;
-    }
-
-    .searchPlaceholder {
-        font-size: 12px;
-    }
-
-    .roleShortcuts {
-        grid-template-columns: 1fr;
-
-        gap: 9px;
-
-        margin-bottom: 19px;
-    }
-
-    .roleShortcut {
-        min-height: 66px;
-    }
-
-    .heroSlider,
-    .heroSlide {
-        min-height: 175px;
-
-        border-radius: 19px;
-    }
-
-    .heroSlideContent {
-        padding: 20px;
-    }
-
-    .heroSlideTitle {
-        font-size: 22px;
-
-        max-width: 85%;
-    }
-
-    .heroSlideSubtitle {
-        font-size: 11px;
-
-        max-width: 85%;
-    }
-
-    .trustSection {
-        padding: 14px 9px;
-
-        gap: 8px;
-
-        border-radius: 15px;
-
-        margin-bottom: 27px;
-    }
-
-    .trustItem {
-        flex-direction: column;
-
-        text-align: center;
-
-        gap: 7px;
-    }
-
-    .trustIcon {
-        width: 35px;
-        height: 35px;
-
-        font-size: 19px;
-    }
-
-    .trustText strong {
-        font-size: 10px;
-    }
-
-    .trustText small {
-        font-size: 9px;
-    }
-
-    .homeSection {
-        margin-bottom: 30px;
-    }
-
-    .sectionHeading {
-        margin-bottom: 14px;
-
-        gap: 8px;
-    }
-
-    .sectionTitleIcon {
-        width: 37px;
-        height: 37px;
-
-        font-size: 20px;
-    }
-
-    .sectionTitleGroup {
-        gap: 9px;
-    }
-
-    .sectionTitleGroup h2 {
-        font-size: 15px;
-    }
-
-    .sectionTitleGroup p {
-        font-size: 10px;
-    }
-
-    .seeAllLink {
-        font-size: 10px;
-    }
-
-    .categoriesGrid {
-        grid-template-columns:
-            repeat(3, minmax(0, 1fr));
-
-        gap: 10px;
-    }
-
-    .productsScroller {
-        display: flex;
-
-        overflow-x: auto;
-
-        gap: 12px;
-
-        padding: 2px 2px 12px;
-
-        scroll-snap-type: x mandatory;
-
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .productsScroller > * {
-        flex: 0 0 155px;
-
-        min-width: 0;
-
-        scroll-snap-align: start;
-    }
-
-    .productCard img {
-        height: 145px;
-    }
-
-    .productCardContent {
-        padding: 10px;
-    }
-
-    .productCardTitle {
-        font-size: 11px;
-    }
-
-    .productCardPrice {
-        font-size: 14px;
-    }
-
-    .officialStoresGrid {
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-
-        gap: 11px;
-    }
-
-    .officialStoreBanner {
-        height: 85px;
-    }
-
-    .officialStoreContent {
-        padding: 10px;
-    }
-
-    .officialStoreLogo {
-        width: 55px;
-        height: 55px;
-
-        margin-top: -35px;
-    }
-
-    .officialStoreName {
-        font-size: 12px;
-    }
-
-    .homeBannerSection {
-        margin: 20px 0 27px;
-    }
-
-    .homeBannerSlider img {
-        min-height: 105px;
-
-        max-height: 160px;
-    }
-
-    .tomaBrandMessage {
-        padding: 20px 15px;
-
-        gap: 12px;
-
-        border-radius: 19px;
-    }
-
-    .brandMessageIcon {
-        width: 47px;
-        height: 47px;
-
-        border-radius: 14px;
-
-        font-size: 26px;
-    }
-
-    .brandMessageText h2 {
-        font-size: 15px;
-    }
-
-    .brandMessageText p {
-        font-size: 10px;
-    }
-
-    .bottomNavigation {
-        min-height: 67px;
-
-        padding: 7px 4px calc(7px + env(safe-area-inset-bottom));
-    }
-
-    .bottomNavItem {
-        font-size: 9px;
-
-        gap: 3px;
-    }
-
-    .bottomNavItem > .material-symbols-rounded {
-        font-size: 21px;
-    }
-
-}
-
-
-/* =====================================================
-   21. TELEMÓVEIS PEQUENOS
-===================================================== */
-
-@media (max-width: 380px) {
-
-    .tomaMain {
-        padding-left: 11px;
-        padding-right: 11px;
-    }
-
-    .headerActions {
-        gap: 5px;
-    }
-
-    .iconButton,
-    .profileButton {
-        width: 33px;
-        height: 33px;
-    }
-
-    .tomaBrand {
-        gap: 7px;
-    }
-
-    .categoriesGrid {
-        gap: 7px;
-    }
-
-    .productsScroller > * {
-        flex-basis: 145px;
-    }
-
-    .sectionTitleGroup h2 {
-        font-size: 14px;
-    }
-
-    .seeAllLink {
-        gap: 2px;
-        font-size: 9px;
-    }
-
-}
-
-
-/* =====================================================
-   22. ECRÃS GRANDES
-===================================================== */
-
-@media (min-width: 1400px) {
-
-    .tomaMain {
-        padding-left: 55px;
-        padding-right: 55px;
-    }
-
-    .productsScroller {
-        grid-template-columns:
-            repeat(6, minmax(0, 1fr));
-    }
-
-    .categoriesGrid {
-        grid-template-columns:
-            repeat(8, minmax(0, 1fr));
-    }
-
-}
-
-
-/* =====================================================
-   FIM DO CSS TOMA V3
 ===================================================== */
