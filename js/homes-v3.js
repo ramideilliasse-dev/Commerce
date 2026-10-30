@@ -730,28 +730,101 @@ function tomaV3LoadBanners(banners = TOMA_V3_DEFAULT_BANNERS) {
 }
 
 // ------------------------------------------------------
-// 3.9 — Lancer le carrousel
+// 3.9 — Charger les bannières principales depuis Firestore
 // ------------------------------------------------------
 
-document.addEventListener("DOMContentLoaded", () => {
+async function tomaV3LoadMainBanners() {
 
     try {
 
-        tomaV3LoadBanners();
+        const bannerRef = doc(db, "homeBanners", "main");
+
+        const bannerSnapshot = await getDoc(bannerRef);
+
+        if (!bannerSnapshot.exists()) {
+
+            tomaV3LoadBanners();
+
+            console.warn(
+                "[TOMA V3] Aucun document main trouvé."
+            );
+
+            return;
+        }
+
+        const data = bannerSnapshot.data();
+
+        if (data.active === false) {
+
+            tomaV3LoadBanners([]);
+
+            return;
+        }
+
+        const savedImages = Array.isArray(data.images)
+            ? data.images
+            : data.image
+                ? [{ url: data.image }]
+                : [];
+
+        const banners = savedImages
+            .map(item => {
+
+                const image = typeof item === "string"
+                    ? item
+                    : item?.url;
+
+                if (!image) return null;
+
+                return {
+                    image,
+                    title: data.title || "Descubra o mundo Toma",
+                    subtitle: data.subtitle || "Produtos e lojas num só lugar",
+                    link: data.link || "./products-v2.html"
+                };
+
+            })
+            .filter(Boolean);
+
+        if (banners.length === 0) {
+
+            tomaV3LoadBanners();
+
+            return;
+        }
+
+        tomaV3LoadBanners(banners);
+
+        console.info(
+            "[TOMA V3] Banners principais carregados:",
+            banners.length
+        );
 
     } catch (error) {
 
         console.error(
-            "[TOMA V3 — BLOC 3] Erreur :",
+            "[TOMA V3] Erro ao carregar banners principais:",
             error
         );
 
+        tomaV3LoadBanners();
+
         tomaV3Toast(
-            "Não foi possível carregar os banners.",
+            "Não foi possível carregar os banners principais.",
             "error"
         );
 
     }
+}
+
+
+// ------------------------------------------------------
+// 3.10 — Iniciar o carregamento
+// ------------------------------------------------------
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    tomaV3LoadMainBanners();
 
 });
 // ======================================================
@@ -2351,5 +2424,240 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
     }
+
+});
+// ======================================================
+// TOMA V3 — BLOC 13
+// Bannières après catégories et boutiques officielles
+// ======================================================
+
+
+// ------------------------------------------------------
+// 13.1 — Récupérer les images enregistrées
+// ------------------------------------------------------
+
+async function tomaV3GetBannerImages(documentId) {
+
+    const bannerRef = doc(
+        db,
+        "homeBanners",
+        documentId
+    );
+
+    const snapshot = await getDoc(bannerRef);
+
+    if (!snapshot.exists()) {
+        return [];
+    }
+
+    const data = snapshot.data();
+
+    if (data.active === false) {
+        return [];
+    }
+
+    const images = Array.isArray(data.images)
+        ? data.images
+        : data.image
+            ? [{ url: data.image }]
+            : [];
+
+    return images
+        .map(item => {
+
+            return typeof item === "string"
+                ? item
+                : item?.url;
+
+        })
+        .filter(Boolean);
+}
+
+
+// ------------------------------------------------------
+// 13.2 — Créer une bannière secondaire
+// ------------------------------------------------------
+
+function tomaV3CreateSecondaryBanner(imageUrl, index) {
+
+    const slide = document.createElement("div");
+
+    slide.className = "homeBannerSlide";
+
+    slide.hidden = index !== 0;
+
+    const image = document.createElement("img");
+
+    image.src = imageUrl;
+
+    image.alt = "Destaque Toma";
+
+    image.loading = index === 0 ? "eager" : "lazy";
+
+    image.onerror = () => {
+
+        image.onerror = null;
+
+        slide.remove();
+
+    };
+
+    slide.appendChild(image);
+
+    return slide;
+}
+
+
+// ------------------------------------------------------
+// 13.3 — Afficher les bannières secondaires
+// ------------------------------------------------------
+
+function tomaV3RenderSecondaryBanners(
+    sectionId,
+    sliderId,
+    images
+) {
+
+    const section = tomaV3GetElement(sectionId);
+
+    const slider = tomaV3GetElement(sliderId);
+
+    if (!section || !slider) {
+
+        console.warn(
+            "[TOMA V3] Elemento de banner secundário não encontrado:",
+            sliderId
+        );
+
+        return;
+    }
+
+    slider.replaceChildren();
+
+    if (!images.length) {
+
+        section.hidden = true;
+
+        return;
+    }
+
+    images.forEach((image, index) => {
+
+        slider.appendChild(
+            tomaV3CreateSecondaryBanner(image, index)
+        );
+
+    });
+
+    section.hidden = false;
+
+    const slides = slider.querySelectorAll(
+        ".homeBannerSlide"
+    );
+
+    if (slides.length > 1) {
+
+        let currentIndex = 0;
+
+        setInterval(() => {
+
+            if (document.hidden) return;
+
+            slides[currentIndex].hidden = true;
+
+            currentIndex =
+                (currentIndex + 1) % slides.length;
+
+            slides[currentIndex].hidden = false;
+
+        }, 5000);
+
+    }
+
+    console.info(
+        "[TOMA V3] Banners secundários apresentados:",
+        images.length,
+        sliderId
+    );
+}
+
+
+// ------------------------------------------------------
+// 13.4 — Carregar banner após categorias
+// ------------------------------------------------------
+
+async function tomaV3LoadCategoriesBanner() {
+
+    try {
+
+        const images = await tomaV3GetBannerImages(
+            "categories"
+        );
+
+        tomaV3RenderSecondaryBanners(
+            "categoriesBannerSection",
+            "categoriesBannerSlider",
+            images
+        );
+
+    } catch (error) {
+
+        console.error(
+            "[TOMA V3] Erro ao carregar banner após categorias:",
+            error
+        );
+
+        tomaV3GetElement(
+            "categoriesBannerSection"
+        )?.setAttribute("hidden", "");
+
+    }
+
+}
+
+
+// ------------------------------------------------------
+// 13.5 — Carregar banner após lojas oficiais
+// ------------------------------------------------------
+
+async function tomaV3LoadOfficialStoresBanner() {
+
+    try {
+
+        const images = await tomaV3GetBannerImages(
+            "officialStores"
+        );
+
+        tomaV3RenderSecondaryBanners(
+            "officialStoresBannerSection",
+            "officialStoresBannerSlider",
+            images
+        );
+
+    } catch (error) {
+
+        console.error(
+            "[TOMA V3] Erro ao carregar banner após lojas oficiais:",
+            error
+        );
+
+        tomaV3GetElement(
+            "officialStoresBannerSection"
+        )?.setAttribute("hidden", "");
+
+    }
+
+}
+
+
+// ------------------------------------------------------
+// 13.6 — Inicializar os banners secundários
+// ------------------------------------------------------
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    tomaV3LoadCategoriesBanner();
+
+    tomaV3LoadOfficialStoresBanner();
 
 });
