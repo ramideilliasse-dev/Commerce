@@ -1,220 +1,144 @@
- /* =========================================================
-   TOMA V3 — DESIGN PREMIUM
-   Identité : bleu profond + orange
-   Responsive : mobile, tablette et ordinateur
-   Mode sombre : compatible avec .dark-mode
-========================================================= */
+ /* =====================================================
+   TOMA V3 — CSS PROFESSIONNEL
+   PARTIE 1/2
+   Base • Header • Search • Hero • Trust • Categories
+===================================================== */
 
-/* =========================================================
-   01. VARIABLES DE DESIGN
-========================================================= */
+/* =====================================================
+   01. VARIABLES GLOBALES
+===================================================== */
 
 :root {
-    --toma-blue: #0755D9;
-    --toma-blue-dark: #07388D;
-    --toma-blue-deep: #061A3A;
-    --toma-blue-light: #EAF2FF;
+    --toma-primary: #0755D9;
+    --toma-primary-dark: #0645B5;
+    --toma-primary-light: #EAF2FF;
 
-    --toma-orange: #FF7900;
-    --toma-orange-dark: #E96500;
-    --toma-orange-light: #FFF0E3;
+    --toma-background: #F5F7FB;
+    --toma-surface: #FFFFFF;
 
-    --toma-green: #16834A;
-    --toma-green-light: #E6F7EC;
+    --toma-text: #172033;
+    --toma-text-secondary: #778197;
 
-    --toma-red: #E53935;
-    --toma-yellow: #F5A623;
+    --toma-border: #E8ECF3;
 
-    --page-bg: #F5F7FB;
-    --surface: #FFFFFF;
-    --surface-soft: #F8FAFE;
-    --surface-hover: #EEF3FA;
+    --toma-success: #16A36A;
+    --toma-danger: #E5484D;
+    --toma-warning: #F5A623;
 
-    --text-main: #14213D;
-    --text-secondary: #64748B;
-    --text-muted: #94A3B8;
+    --toma-radius-sm: 10px;
+    --toma-radius-md: 16px;
+    --toma-radius-lg: 22px;
+    --toma-radius-xl: 28px;
 
-    --border: #E7ECF3;
-    --border-strong: #D8E0EC;
+    --toma-shadow-sm:
+        0 3px 12px rgba(20, 35, 70, 0.05);
 
-    --shadow-small:
-        0 3px 12px rgba(20, 33, 61, 0.045);
+    --toma-shadow-md:
+        0 8px 28px rgba(20, 35, 70, 0.08);
 
-    --shadow-medium:
-        0 10px 30px rgba(20, 33, 61, 0.075);
-
-    --shadow-large:
-        0 20px 55px rgba(20, 33, 61, 0.12);
-
-    --radius-small: 12px;
-    --radius-medium: 18px;
-    --radius-large: 24px;
-    --radius-xl: 30px;
-
-    --page-width: 1440px;
-    --header-height: 78px;
-
-    --transition-fast: 0.18s ease;
-    --transition-normal: 0.28s ease;
+    --toma-transition:
+        0.25s ease;
 }
 
-/* =========================================================
+
+/* =====================================================
    02. RESET ET BASE
-========================================================= */
+===================================================== */
 
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 html {
     scroll-behavior: smooth;
-    scroll-padding-top: 100px;
     -webkit-text-size-adjust: 100%;
 }
 
 body.toma-home-v3 {
-    min-height: 100vh;
-    overflow-x: hidden;
-
-    background:
-        radial-gradient(
-            ellipse at 50% 0%,
-            rgba(7, 85, 217, 0.035),
-            transparent 38%
-        ),
-        var(--page-bg);
-
-    color: var(--text-main);
-
     font-family:
         Inter,
         -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
-        Roboto,
-        Arial,
         sans-serif;
 
-    font-size: 15px;
-    line-height: 1.5;
+    background: var(--toma-background);
+    color: var(--toma-text);
 
-    padding-bottom:
-        calc(112px + env(safe-area-inset-bottom));
+    min-height: 100vh;
+
+    overflow-x: hidden;
+
+    padding-bottom: 95px;
 
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-
-    transition:
-        background-color var(--transition-normal),
-        color var(--transition-normal);
 }
 
-body.toma-home-v3 button,
-body.toma-home-v3 input,
-body.toma-home-v3 textarea,
-body.toma-home-v3 select {
+button,
+input {
     font: inherit;
 }
 
-body.toma-home-v3 button,
-body.toma-home-v3 a {
-    -webkit-tap-highlight-color: transparent;
+button {
+    cursor: pointer;
 }
 
-body.toma-home-v3 button {
-    color: inherit;
-}
-
-body.toma-home-v3 a {
+a {
     color: inherit;
     text-decoration: none;
 }
 
-body.toma-home-v3 button:focus-visible,
-body.toma-home-v3 a:focus-visible {
-    outline: 3px solid rgba(7, 85, 217, 0.45);
-    outline-offset: 4px;
-}
-
-body.toma-home-v3 img {
+img {
+    display: block;
     max-width: 100%;
 }
 
-body.toma-home-v3 [hidden] {
-    display: none !important;
-}
-
 .material-symbols-rounded {
-    font-family: "Material Symbols Rounded";
-    font-weight: normal;
-    font-style: normal;
-    font-size: 24px;
-    line-height: 1;
-    letter-spacing: normal;
-    text-transform: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
-    direction: ltr;
-    font-feature-settings: "liga";
-    -webkit-font-feature-settings: "liga";
-    -webkit-font-smoothing: antialiased;
     font-variation-settings:
-        "FILL" 0,
-        "wght" 450,
-        "GRAD" 0,
-        "opsz" 24;
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24;
 }
 
-/* =========================================================
-   03. HEADER — IDENTIDADE TOMA
-========================================================= */
+
+/* =====================================================
+   03. CABEÇALHO
+===================================================== */
 
 .tomaHeader {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-
     width: 100%;
-    min-height: var(--header-height);
+
+    min-height: 76px;
+
+    padding:
+        12px 5%;
+
+    background: var(--toma-surface);
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    gap: 14px;
+    gap: 15px;
 
-    padding:
-        max(10px, env(safe-area-inset-top))
-        max(16px, calc((100vw - var(--page-width)) / 2))
-        10px;
+    position: relative;
+    z-index: 100;
 
-    background:
-        linear-gradient(
-            115deg,
-            #07388D 0%,
-            #0755D9 55%,
-            #0875F5 100%
-        );
-
-    color: #FFFFFF;
-
-    box-shadow:
-        0 5px 24px rgba(7, 56, 141, 0.19);
-
-    border-bottom:
-        1px solid rgba(255, 255, 255, 0.14);
+    border-bottom: 1px solid var(--toma-border);
 }
 
-.tomaBrand {
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
 
-    min-width: 0;
+/* LOGOTIPO */
+
+.tomaBrand {
+    display: flex;
+    align-items: center;
+
+    gap: 11px;
+
     flex-shrink: 0;
 }
 
@@ -222,653 +146,622 @@ body.toma-home-v3 [hidden] {
     width: 45px;
     height: 45px;
 
-    color: var(--toma-orange);
-    font-size: 39px;
+    border-radius: 14px;
 
-    filter:
-        drop-shadow(0 3px 8px rgba(255, 121, 0, 0.25));
+    background: var(--toma-primary);
+
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 27px;
+
+    box-shadow:
+        0 5px 14px rgba(7, 85, 217, 0.20);
 }
 
 .tomaBrandText {
     display: flex;
     flex-direction: column;
-    line-height: 1.08;
+
+    gap: 2px;
 }
 
 .tomaBrandText strong {
-    font-size: 27px;
+    color: var(--toma-primary);
+
+    font-size: 23px;
     font-weight: 850;
-    letter-spacing: -1.2px;
-    color: #FFFFFF;
+
+    letter-spacing: -1px;
 }
 
 .tomaBrandText small {
-    margin-top: 4px;
-    color: rgba(255, 255, 255, 0.86);
-    font-size: 10px;
-    font-weight: 550;
-    letter-spacing: 0.1px;
+    font-size: 11px;
+    color: var(--toma-text-secondary);
+
+    font-weight: 500;
 }
+
+
+/* AÇÕES DO CABEÇALHO */
 
 .headerActions {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    gap: 7px;
+
+    gap: 10px;
 }
 
 .iconButton,
 .profileButton {
-    position: relative;
-
     width: 43px;
     height: 43px;
-    flex-shrink: 0;
 
-    display: inline-flex;
+    border: 1px solid var(--toma-border);
+
+    background: #FFFFFF;
+
+    color: #35415A;
+
+    border-radius: 14px;
+
+    display: flex;
     align-items: center;
     justify-content: center;
 
-    border: 1px solid rgba(255, 255, 255, 0.17);
-    border-radius: 15px;
+    position: relative;
 
-    background: rgba(255, 255, 255, 0.105);
-    color: #FFFFFF;
-
-    cursor: pointer;
-
-    transition:
-        background var(--transition-fast),
-        transform var(--transition-fast);
+    transition: var(--toma-transition);
 }
 
 .iconButton .material-symbols-rounded {
-    font-size: 24px;
-    color: #FFFFFF;
+    font-size: 23px;
 }
 
-.iconButton:active,
-.profileButton:active {
-    transform: scale(0.94);
-}
+.iconButton:hover,
+.profileButton:hover {
+    background: var(--toma-primary-light);
 
-@media (hover: hover) {
-    .iconButton:hover,
-    .profileButton:hover {
-        background: rgba(255, 255, 255, 0.2);
-    }
+    color: var(--toma-primary);
+
+    border-color: #C8DAFF;
 }
 
 .profileButton {
     overflow: hidden;
-    border-radius: 50%;
-    background: #FFFFFF;
-    border: 2px solid rgba(255, 255, 255, 0.8);
+
+    padding: 0;
 }
 
 .profileButton img {
     width: 100%;
     height: 100%;
+
     object-fit: cover;
-    border-radius: inherit;
 }
+
+
+/* BADGES */
 
 .notificationBadge {
     position: absolute;
+
     top: -5px;
     right: -5px;
 
     min-width: 19px;
     height: 19px;
 
+    padding: 0 5px;
+
+    border-radius: 20px;
+
+    background: var(--toma-danger);
+
+    color: white;
+
+    font-size: 10px;
+    font-weight: 800;
+
     display: flex;
     align-items: center;
     justify-content: center;
 
-    padding: 0 5px;
-
-    border: 2px solid var(--toma-blue);
-    border-radius: 50px;
-
-    background: var(--toma-orange);
-    color: #FFFFFF;
-
-    font-size: 10px;
-    font-weight: 850;
-    line-height: 1;
+    border: 2px solid white;
 }
 
-/* =========================================================
+
+/* =====================================================
    04. CONTEÚDO PRINCIPAL
-========================================================= */
+===================================================== */
 
 .tomaMain {
     width: 100%;
-    max-width: var(--page-width);
+
+    max-width: 1440px;
 
     margin: 0 auto;
 
-    padding:
-        0 18px 30px;
+    padding: 25px 5%;
 }
 
-/* =========================================================
-   05. PESQUISA
-========================================================= */
+
+/* =====================================================
+   05. BARRA DE PESQUISA
+===================================================== */
 
 .searchSection {
-    position: relative;
-    z-index: 10;
+    width: 100%;
 
-    margin: 19px 0 17px;
+    margin-bottom: 22px;
 }
 
 .searchBar {
     width: 100%;
-    min-height: 54px;
+
+    min-height: 57px;
+
+    padding: 6px 7px 6px 18px;
 
     display: flex;
     align-items: center;
+
     gap: 12px;
 
-    padding: 0 16px;
+    background: white;
 
-    border: 1px solid var(--border);
-    border-radius: 19px;
+    border: 1px solid var(--toma-border);
 
-    background: var(--surface);
-    color: var(--text-secondary);
+    border-radius: 17px;
 
-    box-shadow:
-        0 5px 18px rgba(20, 33, 61, 0.045);
+    box-shadow: var(--toma-shadow-sm);
 
-    cursor: pointer;
-    text-align: left;
-
-    transition:
-        border-color var(--transition-fast),
-        box-shadow var(--transition-fast),
-        transform var(--transition-fast);
+    transition: var(--toma-transition);
 }
 
-.searchBar:active {
-    transform: scale(0.995);
-}
-
-.searchBar:hover {
-    border-color: rgba(7, 85, 217, 0.35);
+.searchBar:focus-within {
+    border-color: var(--toma-primary);
 
     box-shadow:
-        0 8px 24px rgba(7, 85, 217, 0.08);
+        0 0 0 4px rgba(7, 85, 217, 0.08);
 }
 
 .searchIcon {
-    flex-shrink: 0;
-    font-size: 25px;
-    color: var(--toma-blue);
+    font-size: 23px;
+
+    color: var(--toma-text-secondary);
 }
 
 .searchPlaceholder {
-    flex: 1;
+    width: 100%;
     min-width: 0;
 
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    height: 43px;
 
-    font-size: 13px;
+    border: none;
+    outline: none;
+
+    background: transparent;
+
+    color: var(--toma-text);
+
+    font-size: 14px;
     font-weight: 500;
-    color: var(--text-secondary);
 }
 
-.searchFilterIcon {
-    width: 36px;
-    height: 36px;
+.searchPlaceholder::placeholder {
+    color: #9AA4B5;
+}
+
+.searchSubmitBtn {
+    width: 45px;
+    height: 43px;
 
     flex-shrink: 0;
+
+    border: none;
 
     border-radius: 12px;
 
+    background: var(--toma-primary);
+
+    color: white;
+
     display: flex;
     align-items: center;
     justify-content: center;
 
-    background: var(--toma-blue-light);
-    color: var(--toma-blue);
-    font-size: 22px;
+    transition: var(--toma-transition);
 }
 
-/* =========================================================
+.searchSubmitBtn:hover {
+    background: var(--toma-primary-dark);
+}
+
+.searchFilterIcon {
+    font-size: 23px;
+}
+
+
+/* =====================================================
    06. ACESSOS RÁPIDOS
-========================================================= */
+===================================================== */
 
 .roleShortcuts {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+    width: 100%;
 
-    margin: 0 0 21px;
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(220px, 1fr));
+
+    gap: 13px;
+
+    margin-bottom: 24px;
 }
 
 .roleShortcut {
-    position: relative;
-    min-width: 0;
     min-height: 76px;
+
+    padding: 13px 16px;
 
     display: flex;
     align-items: center;
-    gap: 10px;
 
-    padding: 13px;
+    gap: 13px;
 
-    border-radius: 20px;
-    color: #FFFFFF;
+    background: white;
 
-    overflow: hidden;
+    border: 1px solid var(--toma-border);
 
-    box-shadow:
-        0 8px 20px rgba(7, 56, 141, 0.14);
+    border-radius: var(--toma-radius-md);
 
-    transition:
-        transform var(--transition-normal),
-        box-shadow var(--transition-normal);
+    box-shadow: var(--toma-shadow-sm);
+
+    transition: var(--toma-transition);
+}
+
+.roleShortcut:hover {
+    transform: translateY(-2px);
+
+    box-shadow: var(--toma-shadow-md);
 }
 
 .merchantShortcut {
-    background:
-        linear-gradient(125deg, #0755D9, #087CF4);
+    border-left: 4px solid #16A36A;
 }
 
 .adminShortcut {
-    background:
-        linear-gradient(125deg, #FF7900, #F05A00);
-    box-shadow:
-        0 8px 20px rgba(255, 121, 0, 0.17);
-}
-
-.roleShortcut::after {
-    content: "";
-    position: absolute;
-
-    width: 105px;
-    height: 105px;
-
-    top: -53px;
-    right: -32px;
-
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.09);
-    pointer-events: none;
-}
-
-.roleShortcut:active {
-    transform: scale(0.98);
+    border-left: 4px solid var(--toma-primary);
 }
 
 .roleShortcutIcon {
-    position: relative;
-    z-index: 1;
-
-    width: 40px;
-    height: 40px;
+    width: 43px;
+    height: 43px;
 
     flex-shrink: 0;
+
+    border-radius: 13px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border-radius: 13px;
+    background: var(--toma-primary-light);
 
-    background: rgba(255, 255, 255, 0.17);
-    color: #FFFFFF;
+    color: var(--toma-primary);
 
-    font-size: 26px;
+    font-size: 24px;
+}
+
+.merchantShortcut .roleShortcutIcon {
+    background: #E7F8EF;
+    color: #16A36A;
 }
 
 .roleShortcutText {
-    position: relative;
-    z-index: 1;
-
     display: flex;
     flex-direction: column;
+
     gap: 4px;
 
-    min-width: 0;
     flex: 1;
 }
 
 .roleShortcutText strong {
-    font-size: 12px;
-    font-weight: 800;
-    line-height: 1.2;
-    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 750;
 }
 
 .roleShortcutText small {
-    font-size: 10px;
-    font-weight: 500;
-    line-height: 1.35;
-    color: rgba(255, 255, 255, 0.88);
+    color: var(--toma-text-secondary);
+
+    font-size: 11px;
 }
 
 .roleArrow {
-    position: relative;
-    z-index: 1;
-
-    flex-shrink: 0;
-
-    font-size: 22px;
-    color: #FFFFFF;
+    color: #9AA4B5;
 }
 
-/* =========================================================
-   07. BANNIÈRE PRINCIPAL
-========================================================= */
+
+/* =====================================================
+   07. BANNER PRINCIPAL
+===================================================== */
 
 .heroSection {
-    margin-bottom: 22px;
+    width: 100%;
+
+    margin-bottom: 24px;
 }
 
 .heroSlider {
-    position: relative;
-    isolation: isolate;
-
     width: 100%;
-    min-height: 250px;
-    aspect-ratio: 1.72 / 1;
+
+    min-height: 190px;
+
+    position: relative;
 
     overflow: hidden;
 
-    border-radius: 25px;
+    border-radius: var(--toma-radius-xl);
 
-    background:
-        linear-gradient(
-            130deg,
-            #061A3A,
-            #0755D9 55%,
-            #4A1FA8
-        );
+    background: #DCE8FA;
 
-    box-shadow:
-        0 14px 34px rgba(7, 56, 141, 0.17);
+    box-shadow: var(--toma-shadow-md);
 }
 
+
+/* SLIDES CRIADOS PELO JAVASCRIPT */
+
 .heroSlide {
-    position: absolute;
-    inset: 0;
+    width: 100%;
+    height: 100%;
+
+    min-height: 190px;
+
+    position: relative;
 
     display: flex;
     align-items: center;
 
-    padding: 25px;
+    overflow: hidden;
 
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
+    border-radius: var(--toma-radius-xl);
 
     transition:
-        opacity 0.55s ease,
-        visibility 0.55s ease;
-}
-
-.heroSlide.active {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    z-index: 1;
+        opacity 0.4s ease,
+        visibility 0.4s ease;
 }
 
 .heroSlideImage {
     position: absolute;
+
     inset: 0;
-    z-index: -2;
 
     width: 100%;
     height: 100%;
 
     object-fit: cover;
+
     object-position: center;
 }
 
-.heroSlide::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
 
-    background:
-        linear-gradient(
-            90deg,
-            rgba(3, 20, 55, 0.96) 0%,
-            rgba(5, 36, 94, 0.87) 42%,
-            rgba(5, 36, 94, 0.30) 100%
-        );
-}
+/* CONTEÚDO SOBRE O BANNER */
 
-.heroContent {
+.heroSlideContent {
     position: relative;
+
     z-index: 2;
 
-    width: 64%;
+    width: 100%;
+
+    padding: 35px;
+
+    color: white;
+}
+
+.heroSlideTitle {
     max-width: 520px;
 
-    color: #FFFFFF;
-}
+    font-size: clamp(22px, 3vw, 38px);
 
-.heroEyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-
-    margin-bottom: 12px;
-    padding: 6px 10px;
-
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    border-radius: 999px;
-
-    background: var(--toma-orange);
-    color: #FFFFFF;
-
-    font-size: 10px;
     font-weight: 850;
-    letter-spacing: 0.45px;
-    text-transform: uppercase;
+
+    line-height: 1.15;
+
+    margin-bottom: 10px;
 }
 
-.heroContent h2 {
-    max-width: 420px;
+.heroSlideSubtitle {
+    max-width: 460px;
 
-    margin-bottom: 9px;
+    font-size: 14px;
 
-    color: #FFFFFF;
-
-    font-size: clamp(23px, 3.2vw, 39px);
-    font-weight: 900;
-    line-height: 1.12;
-    letter-spacing: -0.8px;
-}
-
-.heroContent p {
-    max-width: 370px;
+    line-height: 1.6;
 
     margin-bottom: 18px;
-
-    color: rgba(255, 255, 255, 0.9);
-
-    font-size: 13px;
-    line-height: 1.55;
 }
 
-.heroAction {
-    min-height: 43px;
-
+.heroSlideButton {
     display: inline-flex;
+
     align-items: center;
     justify-content: center;
-    gap: 8px;
 
-    padding: 0 17px;
+    min-height: 42px;
 
-    border: none;
-    border-radius: 14px;
+    padding: 0 20px;
 
-    background:
-        linear-gradient(
-            135deg,
-            #FF8B17,
-            #FF6500
-        );
+    border-radius: 12px;
 
-    color: #FFFFFF;
+    background: white;
+
+    color: var(--toma-primary);
 
     font-size: 12px;
-    font-weight: 850;
 
-    box-shadow:
-        0 8px 20px rgba(255, 101, 0, 0.30);
+    font-weight: 800;
 
-    cursor: pointer;
-
-    transition:
-        transform var(--transition-fast),
-        box-shadow var(--transition-fast);
+    transition: var(--toma-transition);
 }
 
-.heroAction .material-symbols-rounded {
-    font-size: 18px;
+.heroSlideButton:hover {
+    transform: translateY(-2px);
+
+    background: var(--toma-primary-light);
 }
 
-.heroAction:active {
-    transform: scale(0.97);
-}
+
+/* CARREGAMENTO */
 
 .heroLoading {
     position: absolute;
+
     inset: 0;
 
     display: flex;
+
     flex-direction: column;
+
     align-items: center;
     justify-content: center;
-    gap: 12px;
 
-    padding: 20px;
+    gap: 10px;
 
-    color: #FFFFFF;
-    text-align: center;
+    color: var(--toma-primary);
+
+    background: #EAF2FF;
+
+    z-index: 3;
 }
 
 .heroLoading .material-symbols-rounded {
-    font-size: 38px;
-    color: #FF9A36;
+    font-size: 35px;
 }
 
 .heroLoading p {
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.85);
+    font-size: 12px;
+
+    font-weight: 600;
 }
+
+
+/* CONTROLES DO BANNER */
 
 .heroControls {
     display: flex;
+
     align-items: center;
     justify-content: center;
-    gap: 13px;
 
-    margin-top: 12px;
+    gap: 16px;
+
+    margin-top: 13px;
 }
 
 .heroArrow {
-    width: 31px;
-    height: 31px;
+    width: 34px;
+    height: 34px;
 
-    display: inline-flex;
+    border: 1px solid var(--toma-border);
+
+    border-radius: 50%;
+
+    background: white;
+
+    color: var(--toma-primary);
+
+    display: flex;
+
     align-items: center;
     justify-content: center;
 
-    border: 1px solid var(--border);
-    border-radius: 50%;
-
-    background: var(--surface);
-    color: var(--text-main);
-
-    cursor: pointer;
-    transition: background var(--transition-fast);
+    transition: var(--toma-transition);
 }
 
 .heroArrow:hover {
-    background: var(--toma-blue-light);
-    color: var(--toma-blue);
+    background: var(--toma-primary);
+
+    color: white;
 }
 
 .heroDots {
     display: flex;
+
     align-items: center;
-    justify-content: center;
+
     gap: 7px;
 }
 
 .heroDot {
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
 
     border: none;
-    border-radius: 999px;
 
-    background: #CBD5E1;
+    border-radius: 20px;
 
-    cursor: pointer;
+    background: #C8D0DE;
 
-    transition:
-        width var(--transition-normal),
-        background var(--transition-normal);
+    transition: var(--toma-transition);
 }
 
 .heroDot.active {
     width: 23px;
-    background: var(--toma-orange);
+
+    background: var(--toma-primary);
 }
 
-/* =========================================================
-   08. ELEMENTOS DE CONFIANÇA
-========================================================= */
+
+/* =====================================================
+   08. VANTAGENS TOMA
+===================================================== */
 
 .trustSection {
+    width: 100%;
+
+    padding: 18px 20px;
+
+    margin-bottom: 35px;
+
+    background: white;
+
+    border: 1px solid var(--toma-border);
+
+    border-radius: var(--toma-radius-lg);
+
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 8px;
 
-    margin-bottom: 31px;
-    padding: 13px 10px;
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
 
-    border: 1px solid var(--border);
-    border-radius: 21px;
-
-    background:
-        linear-gradient(
-            115deg,
-            var(--surface),
-            var(--surface-soft)
-        );
-
-    box-shadow: var(--shadow-small);
+    gap: 15px;
 }
 
 .trustItem {
-    min-width: 0;
-
     display: flex;
+
     align-items: center;
-    gap: 8px;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    min-width: 0;
 }
 
 .trustIcon {
-    width: 38px;
-    height: 38px;
+    width: 42px;
+    height: 42px;
 
     flex-shrink: 0;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -878,63 +771,72 @@ body.toma-home-v3 [hidden] {
 }
 
 .marketplaceTrust {
-    background: #E7F0FF;
+    background: #EAF2FF;
     color: #0755D9;
 }
 
 .productsTrust {
-    background: #E8F0FF;
-    color: #1763D6;
+    background: #FFF0F2;
+    color: #E54870;
 }
 
 .securityTrust {
-    background: #E3F7EB;
-    color: #16834A;
+    background: #E8F8F0;
+    color: #16A36A;
 }
 
 .trustText {
-    min-width: 0;
-
     display: flex;
+
     flex-direction: column;
-    gap: 3px;
+
+    gap: 4px;
+
+    min-width: 0;
 }
 
 .trustText strong {
-    font-size: 11px;
-    font-weight: 850;
-    line-height: 1.25;
-    color: var(--text-main);
+    font-size: 12px;
+
+    font-weight: 800;
 }
 
 .trustText small {
-    font-size: 9px;
-    line-height: 1.35;
-    color: var(--text-secondary);
+    font-size: 10px;
+
+    color: var(--toma-text-secondary);
+
+    line-height: 1.4;
 }
 
-/* =========================================================
-   09. SECTIONS
-========================================================= */
+
+/* =====================================================
+   09. SEÇÕES GERAIS
+===================================================== */
 
 .homeSection {
-    min-width: 0;
-    margin-bottom: 33px;
+    width: 100%;
+
+    margin-bottom: 38px;
 }
 
 .sectionHeading {
     display: flex;
+
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
 
-    margin-bottom: 15px;
+    gap: 15px;
+
+    margin-bottom: 19px;
 }
 
 .sectionTitleGroup {
     display: flex;
+
     align-items: center;
-    gap: 10px;
+
+    gap: 12px;
 
     min-width: 0;
 }
@@ -946,1290 +848,879 @@ body.toma-home-v3 [hidden] {
     flex-shrink: 0;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
-    border-radius: 15px;
+    border-radius: 14px;
 
-    background: var(--toma-blue-light);
-    color: var(--toma-blue);
+    background: #EAF2FF;
 
-    font-size: 25px;
-}
+    color: var(--toma-primary);
 
-.featuredTitleIcon {
-    background: #FFF0DF;
-    color: #F07900;
-}
-
-.newTitleIcon {
-    background: #F0E9FF;
-    color: #7651D5;
-}
-
-.offersTitleIcon {
-    background: #FFE9E7;
-    color: #DE3C37;
-}
-
-.popularTitleIcon {
-    background: #E7F0FF;
-    color: #0755D9;
-}
-
-.recommendedTitleIcon {
-    background: #E4F7EB;
-    color: #16834A;
-}
-
-.officialStoresTitleIcon {
-    background: #E7F0FF;
-    color: #0755D9;
-}
-
-.sectionTitleGroup > div {
-    min-width: 0;
+    font-size: 23px;
 }
 
 .sectionTitleGroup h2 {
-    overflow-wrap: anywhere;
+    font-size: 19px;
 
-    color: var(--text-main);
-
-    font-size: 18px;
     font-weight: 850;
-    line-height: 1.25;
-    letter-spacing: -0.35px;
+
+    letter-spacing: -0.5px;
+
+    color: var(--toma-text);
+
+    margin-bottom: 4px;
 }
 
 .sectionTitleGroup p {
-    margin-top: 4px;
-
-    color: var(--text-secondary);
+    color: var(--toma-text-secondary);
 
     font-size: 11px;
-    line-height: 1.35;
+
+    line-height: 1.4;
 }
 
-.seeAllLink {
-    flex-shrink: 0;
 
+/* ÍCONES DAS SEÇÕES */
+
+.featuredTitleIcon {
+    background: #FFF1E5;
+    color: #F08A24;
+}
+
+.newTitleIcon {
+    background: #F1EAFE;
+    color: #8055D9;
+}
+
+.offersTitleIcon {
+    background: #FFF0F0;
+    color: #E5484D;
+}
+
+.popularTitleIcon {
+    background: #E8F8F0;
+    color: #16A36A;
+}
+
+.recommendedTitleIcon {
+    background: #EAF2FF;
+    color: #0755D9;
+}
+
+.officialStoresTitleIcon {
+    background: #E9F7F5;
+    color: #139A83;
+}
+
+
+/* VER TUDO */
+
+.seeAllLink {
     display: inline-flex;
+
     align-items: center;
-    justify-content: center;
+
     gap: 5px;
 
-    padding: 8px 10px;
+    flex-shrink: 0;
 
-    border: 1px solid rgba(7, 85, 217, 0.12);
-    border-radius: 12px;
+    color: var(--toma-primary);
 
-    background: var(--surface);
-    color: var(--toma-blue);
+    font-size: 12px;
 
-    font-size: 11px;
-    font-weight: 800;
+    font-weight: 750;
 
-    white-space: nowrap;
+    transition: var(--toma-transition);
+}
 
-    transition:
-        background var(--transition-fast),
-        transform var(--transition-fast);
+.seeAllLink:hover {
+    color: var(--toma-primary-dark);
+
+    gap: 9px;
 }
 
 .seeAllLink .material-symbols-rounded {
     font-size: 17px;
 }
 
-.seeAllLink:hover {
-    background: var(--toma-blue-light);
-}
 
-.seeAllLink:active {
-    transform: scale(0.96);
-}
-
-/* =========================================================
+/* =====================================================
    10. CATEGORIAS
-========================================================= */
+===================================================== */
+
+.categoriesSection {
+    margin-bottom: 35px;
+}
 
 .categoriesGrid {
-    display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 11px;
-}
-
-.categoryCardV3 {
-    min-width: 0;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    padding: 10px 5px 12px;
-
-    border: 1px solid var(--border);
-    border-radius: 19px;
-
-    background: var(--surface);
-
-    box-shadow: var(--shadow-small);
-
-    cursor: pointer;
-
-    transition:
-        transform var(--transition-normal),
-        border-color var(--transition-normal),
-        box-shadow var(--transition-normal);
-}
-
-.categoryCardV3:active {
-    transform: scale(0.96);
-}
-
-.categoryVisual {
     width: 100%;
-    max-width: 76px;
-    aspect-ratio: 1;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(6, minmax(0, 1fr));
+
+    gap: 15px;
+}
+
+.sectionLoading {
+    grid-column: 1 / -1;
+
+    min-height: 125px;
 
     display: flex;
+
+    flex-direction: column;
+
     align-items: center;
     justify-content: center;
 
-    overflow: hidden;
+    gap: 10px;
 
-    border-radius: 16px;
+    color: var(--toma-text-secondary);
 
-    background: var(--category-bg, #EAF2FF);
-    color: var(--category-color, #0755D9);
+    background: white;
+
+    border: 1px dashed var(--toma-border);
+
+    border-radius: var(--toma-radius-md);
 }
 
-.categoryVisual img {
-    width: 100%;
-    height: 100%;
+.sectionLoading .material-symbols-rounded {
+    font-size: 30px;
 
-    object-fit: cover;
+    color: var(--toma-primary);
 }
 
-.categoryVisual .material-symbols-rounded {
-    font-size: 33px;
+.sectionLoading p {
+    font-size: 12px;
 }
 
-.categoryNameV3 {
-    width: 100%;
 
-    margin-top: 9px;
+/* =====================================================
+   FIM DA PARTE 1/2
+   A PARTE 2 SERÁ ADICIONADA ABAIXO.
+===================================================== */
+/* =====================================================
+   TOMA V3 — CSS PROFISSIONAL
+   PARTE 2/2
+   Produtos • Lojas • Banners • Navegação • Responsivo
+===================================================== */
 
-    color: var(--text-main);
 
-    font-size: 11px;
-    font-weight: 750;
-    line-height: 1.35;
-
-    text-align: center;
-
-    overflow-wrap: anywhere;
-}
-
-@media (hover: hover) {
-    .categoryCardV3:hover {
-        transform: translateY(-4px);
-        border-color: rgba(7, 85, 217, 0.28);
-        box-shadow: var(--shadow-medium);
-    }
-}
-
-/* =========================================================
-   11. CARDS DE PRODUTOS
-========================================================= */
+/* =====================================================
+   11. CARTÕES DE PRODUTOS
+===================================================== */
 
 .productsScroller {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: 174px;
-
-    gap: 13px;
-
-    overflow-x: auto;
-    overflow-y: hidden;
-
-    padding: 2px 2px 14px;
-
-    scroll-snap-type: x proximity;
-    scroll-padding-inline: 2px;
-
-    overscroll-behavior-inline: contain;
-    -webkit-overflow-scrolling: touch;
-
-    scrollbar-width: none;
-}
-
-.productsScroller::-webkit-scrollbar {
-    display: none;
-}
-
-.productCardV3 {
-    position: relative;
-
-    min-width: 0;
-    overflow: hidden;
-
-    border: 1px solid var(--border);
-    border-radius: 20px;
-
-    background: var(--surface);
-
-    box-shadow: var(--shadow-small);
-
-    scroll-snap-align: start;
-
-    transition:
-        transform var(--transition-normal),
-        box-shadow var(--transition-normal);
-}
-
-.productCardV3:active {
-    transform: scale(0.985);
-}
-
-.productImageWrapperV3 {
-    position: relative;
-
-    aspect-ratio: 1 / 0.94;
-
-    overflow: hidden;
-
-    background: var(--surface-soft);
-}
-
-.productImageV3 {
-    display: block;
-
     width: 100%;
-    height: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, minmax(0, 1fr));
+
+    gap: 15px;
+
+    align-items: stretch;
+}
+
+.productCard {
+    min-width: 0;
+
+    position: relative;
+
+    overflow: hidden;
+
+    background: white;
+
+    border: 1px solid var(--toma-border);
+
+    border-radius: 17px;
+
+    box-shadow: var(--toma-shadow-sm);
+
+    transition: var(--toma-transition);
+}
+
+.productCard:hover {
+    transform: translateY(-4px);
+
+    box-shadow: var(--toma-shadow-md);
+}
+
+.productCard img {
+    width: 100%;
+
+    height: 175px;
 
     object-fit: cover;
 
-    transition: transform 0.45s ease;
+    background: #F0F3F8;
 }
 
-@media (hover: hover) {
-    .productCardV3:hover .productImageV3 {
-        transform: scale(1.055);
-    }
+.productCardContent {
+    padding: 12px;
 }
 
-.productDiscountBadgeV3 {
+.productCardTitle {
+    font-size: 13px;
+
+    font-weight: 700;
+
+    color: var(--toma-text);
+
+    line-height: 1.4;
+
+    margin-bottom: 8px;
+}
+
+.productCardPrice {
+    color: var(--toma-primary);
+
+    font-size: 16px;
+
+    font-weight: 850;
+}
+
+.productCardOldPrice {
+    color: #A1A9B7;
+
+    font-size: 11px;
+
+    text-decoration: line-through;
+
+    margin-top: 4px;
+}
+
+
+/* =====================================================
+   12. CARTÕES DE PRODUTOS — ELEMENTOS INTERNOS
+===================================================== */
+
+.productImageWrapper {
+    position: relative;
+
+    overflow: hidden;
+
+    background: #F0F3F8;
+}
+
+.productImageWrapper img {
+    transition: transform 0.35s ease;
+}
+
+.productCard:hover .productImageWrapper img {
+    transform: scale(1.04);
+}
+
+.productBadge {
     position: absolute;
-    top: 9px;
-    left: 8px;
 
-    padding: 5px 7px;
+    top: 10px;
+    left: 10px;
 
-    border-radius: 8px;
+    padding: 5px 9px;
 
-    background: var(--toma-red);
-    color: #FFFFFF;
+    border-radius: 7px;
+
+    background: var(--toma-danger);
+
+    color: white;
 
     font-size: 10px;
-    font-weight: 900;
-    line-height: 1;
+
+    font-weight: 800;
 }
 
-.productFavoriteButtonV3 {
+.productFavoriteButton {
     position: absolute;
-    top: 8px;
-    right: 8px;
+
+    top: 9px;
+    right: 9px;
 
     width: 34px;
     height: 34px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
-    border: 1px solid rgba(20, 33, 61, 0.07);
+    border: none;
+
     border-radius: 50%;
 
-    background: rgba(255, 255, 255, 0.95);
-    color: #334155;
+    background: rgba(255,255,255,0.95);
 
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.09);
+    color: #687386;
 
-    cursor: pointer;
-}
-
-.productFavoriteButtonV3 .material-symbols-rounded {
     font-size: 20px;
 }
 
-.productFavoriteButtonV3.isFavorite {
-    color: #E53965;
+.productFavoriteButton.active {
+    color: #E54870;
 }
 
-.productFavoriteButtonV3.isFavorite .material-symbols-rounded {
-    font-variation-settings: "FILL" 1;
-}
+.productMerchant {
+    margin-top: 7px;
 
-.productInfoV3 {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-
-    padding: 11px;
-}
-
-.productNameV3 {
-    min-height: 35px;
-    max-height: 35px;
-
-    overflow: hidden;
-
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-
-    color: var(--text-main);
-
-    font-size: 12px;
-    font-weight: 750;
-    line-height: 1.45;
-}
-
-.productStoreV3 {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-
-    min-width: 0;
-
-    color: var(--text-secondary);
-
-    font-size: 10px;
-    font-weight: 600;
-}
-
-.productStoreV3 .material-symbols-rounded {
-    flex-shrink: 0;
-    font-size: 14px;
-    color: var(--toma-blue);
-}
-
-.productPriceV3 {
-    color: var(--toma-orange-dark);
-
-    font-size: 15px;
-    font-weight: 900;
-    line-height: 1.3;
-
-    overflow-wrap: anywhere;
-}
-
-.productOldPriceV3 {
-    color: var(--text-muted);
-
-    font-size: 10px;
-    text-decoration: line-through;
-}
-
-.productRatingV3 {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-
-    color: var(--text-secondary);
+    color: var(--toma-text-secondary);
 
     font-size: 10px;
 }
 
-.productRatingV3 .material-symbols-rounded {
-    font-size: 15px;
-    color: var(--toma-yellow);
-    font-variation-settings: "FILL" 1;
-}
-
-.productAddCartV3 {
+.productAddButton {
     width: 100%;
+
     min-height: 37px;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-
-    margin-top: 2px;
-    padding: 7px;
+    margin-top: 11px;
 
     border: none;
-    border-radius: 11px;
 
-    background: var(--toma-blue);
-    color: #FFFFFF;
+    border-radius: 10px;
+
+    background: var(--toma-primary);
+
+    color: white;
 
     font-size: 11px;
-    font-weight: 800;
 
-    cursor: pointer;
+    font-weight: 750;
 
-    transition:
-        background var(--transition-fast),
-        transform var(--transition-fast);
+    transition: var(--toma-transition);
 }
 
-.productAddCartV3 .material-symbols-rounded {
-    font-size: 18px;
+.productAddButton:hover {
+    background: var(--toma-primary-dark);
 }
 
-.productAddCartV3:hover {
-    background: var(--toma-blue-dark);
-}
 
-.productAddCartV3:active {
-    transform: scale(0.97);
-}
-
-/* =========================================================
-   12. LOJAS OFICIAIS
-========================================================= */
+/* =====================================================
+   13. LOJAS OFICIAIS
+===================================================== */
 
 .officialStoresSection {
-    margin-top: 7px;
+    margin-top: 10px;
 }
 
 .officialStoresGrid {
+    width: 100%;
+
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 13px;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 16px;
 }
 
-.officialStoreCardV3 {
-    position: relative;
-
+.officialStoreCard {
     min-width: 0;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    padding: 17px 10px 13px;
-
-    border: 1px solid var(--border);
-    border-radius: 22px;
-
-    background: var(--surface);
-
-    text-align: center;
-
-    box-shadow: var(--shadow-small);
-
-    transition:
-        transform var(--transition-normal),
-        border-color var(--transition-normal),
-        box-shadow var(--transition-normal);
-}
-
-.officialStoreLogoFrame {
-    width: 78px;
-    height: 78px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
 
     overflow: hidden;
 
-    margin-bottom: 13px;
+    background: white;
 
-    border: 2px solid var(--border);
-    border-radius: 50%;
+    border: 1px solid var(--toma-border);
 
-    background: var(--surface);
+    border-radius: 18px;
+
+    box-shadow: var(--toma-shadow-sm);
+
+    transition: var(--toma-transition);
+}
+
+.officialStoreCard:hover {
+    transform: translateY(-4px);
+
+    box-shadow: var(--toma-shadow-md);
+}
+
+.officialStoreBanner {
+    width: 100%;
+
+    height: 105px;
+
+    object-fit: cover;
+
+    background: #EAF2FF;
+}
+
+.officialStoreContent {
+    padding: 13px;
+
+    text-align: center;
 }
 
 .officialStoreLogo {
-    display: block;
+    width: 65px;
+    height: 65px;
 
-    width: 100%;
-    height: 100%;
+    margin: -43px auto 10px;
+
+    position: relative;
 
     object-fit: contain;
 
-    padding: 8px;
-}
+    padding: 5px;
 
-.officialStoreNameRow {
-    width: 100%;
-    min-height: 28px;
+    border-radius: 16px;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
+    background: white;
+
+    border: 1px solid var(--toma-border);
 }
 
 .officialStoreName {
-    min-width: 0;
-
-    color: var(--text-main);
-
     font-size: 14px;
-    font-weight: 850;
-    line-height: 1.3;
 
-    overflow-wrap: anywhere;
-}
-
-.officialVerifiedBadge {
-    width: 21px;
-    height: 21px;
-
-    flex-shrink: 0;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    background: #1677F2;
-    color: #FFFFFF;
-
-    box-shadow:
-        0 2px 6px rgba(22, 119, 242, 0.23);
-}
-
-.officialVerifiedBadge .material-symbols-rounded {
-    font-size: 16px;
-    font-variation-settings: "FILL" 1;
-}
-
-.officialStoreStatus {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-
-    margin-top: 9px;
-    padding: 6px 11px;
-
-    border-radius: 999px;
-
-    background: var(--toma-green-light);
-    color: var(--toma-green);
-
-    font-size: 11px;
     font-weight: 800;
+
+    margin-bottom: 6px;
 }
 
-.officialStoreStatus .material-symbols-rounded {
-    font-size: 14px;
-}
-
-.officialStoreProductCount {
-    margin-top: 10px;
-
-    color: var(--text-secondary);
+.officialStoreDescription {
+    color: var(--toma-text-secondary);
 
     font-size: 11px;
-    font-weight: 600;
-}
 
-.visitStoreButton {
-    width: 100%;
-    min-height: 40px;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-
-    margin-top: 14px;
-    padding: 8px 7px;
-
-    border: none;
-    border-radius: 12px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #FF8A17,
-            #FF6900
-        );
-
-    color: #FFFFFF;
-
-    font-size: 11px;
-    font-weight: 850;
-    line-height: 1.2;
-
-    box-shadow:
-        0 6px 14px rgba(255, 105, 0, 0.17);
-
-    cursor: pointer;
-
-    transition:
-        transform var(--transition-fast),
-        box-shadow var(--transition-fast);
-}
-
-.visitStoreButton .material-symbols-rounded {
-    font-size: 17px;
-}
-
-.visitStoreButton:active {
-    transform: scale(0.96);
-}
-
-@media (hover: hover) {
-    .officialStoreCardV3:hover {
-        transform: translateY(-4px);
-
-        border-color:
-            rgba(7, 85, 217, 0.25);
-
-        box-shadow: var(--shadow-medium);
-    }
-
-    .visitStoreButton:hover {
-        box-shadow:
-            0 9px 21px rgba(255, 105, 0, 0.27);
-    }
-}
-
-/* =========================================================
-   13. MARCA TOMA E MENSAGEM FINAL
-========================================================= */
-
-.tomaBrandMessage {
-    position: relative;
-
-    display: flex;
-    align-items: center;
-    gap: 16px;
-
-    margin: 5px 0 23px;
-    padding: 23px;
-
-    overflow: hidden;
-
-    border: 1px solid rgba(7, 85, 217, 0.1);
-    border-radius: 24px;
-
-    background:
-        linear-gradient(
-            125deg,
-            var(--surface),
-            var(--toma-blue-light)
-        );
-}
-
-.brandMessageIcon {
-    width: 57px;
-    height: 57px;
-
-    flex-shrink: 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 19px;
-
-    background: var(--toma-blue);
-    color: var(--toma-orange);
-
-    font-size: 34px;
-
-    box-shadow:
-        0 8px 20px rgba(7, 85, 217, 0.19);
-}
-
-.brandMessageText h2 {
-    margin-bottom: 5px;
-
-    color: var(--text-main);
-
-    font-size: 16px;
-    font-weight: 900;
-}
-
-.brandMessageText p {
-    color: var(--text-secondary);
-
-    font-size: 12px;
-    line-height: 1.6;
-}
-
-/* =========================================================
-   14. CARREGAMENTO E ESTADOS VAZIOS
-========================================================= */
-
-.sectionLoading,
-.emptyStateV3 {
-    grid-column: 1 / -1;
-
-    min-height: 115px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 9px;
-
-    padding: 18px;
-
-    border: 1px dashed var(--border-strong);
-    border-radius: 19px;
-
-    background: var(--surface-soft);
-
-    color: var(--text-secondary);
-    text-align: center;
-}
-
-.sectionLoading .material-symbols-rounded,
-.emptyStateV3 .material-symbols-rounded {
-    font-size: 30px;
-    color: var(--toma-blue);
-}
-
-.sectionLoading p,
-.emptyStateV3 p {
-    font-size: 12px;
     line-height: 1.5;
 }
 
-.emptyStateV3 strong {
-    color: var(--text-main);
-    font-size: 13px;
+.officialStoreVerified {
+    color: var(--toma-primary);
+
+    font-size: 12px;
 }
 
-.loadingSkeleton {
-    position: relative;
+
+/* =====================================================
+   14. BANNERS SECUNDÁRIOS
+===================================================== */
+
+.homeBannerSection {
+    width: 100%;
+
+    margin: 25px 0 35px;
+
     overflow: hidden;
 
-    background: var(--surface-hover);
+    border-radius: var(--toma-radius-lg);
 }
 
-.loadingSkeleton::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-
-    transform: translateX(-100%);
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.62),
-            transparent
-        );
-
-    animation: tomaSkeleton 1.45s infinite;
-}
-
-@keyframes tomaSkeleton {
-    100% {
-        transform: translateX(100%);
-    }
-}
-
-/* =========================================================
-   15. NOTIFICAÇÕES TOAST
-========================================================= */
-
-.homeToastContainer {
-    position: fixed;
-
-    top: calc(15px + env(safe-area-inset-top));
-    left: 50%;
-
-    z-index: 10000;
-
-    width: min(92vw, 390px);
+.homeBannerSlider {
+    width: 100%;
 
     display: flex;
-    flex-direction: column;
-    gap: 9px;
 
-    transform: translateX(-50%);
+    overflow: hidden;
 
-    pointer-events: none;
+    border-radius: var(--toma-radius-lg);
 }
 
-.homeToast {
+.homeBannerSlider img {
+    width: 100%;
+
+    height: auto;
+
+    min-height: 120px;
+
+    max-height: 230px;
+
+    object-fit: cover;
+
+    border-radius: var(--toma-radius-lg);
+}
+
+
+/* =====================================================
+   15. MENSAGEM DA MARCA TOMA
+===================================================== */
+
+.tomaBrandMessage {
+    width: 100%;
+
+    padding: 30px;
+
+    margin-top: 35px;
+
     display: flex;
+
     align-items: center;
-    gap: 10px;
 
-    padding: 14px 16px;
+    justify-content: center;
 
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 15px;
+    gap: 20px;
 
-    background: #14213D;
-    color: #FFFFFF;
+    background: linear-gradient(
+        120deg,
+        #0755D9,
+        #347CEB
+    );
 
-    box-shadow: var(--shadow-large);
+    color: white;
+
+    border-radius: var(--toma-radius-xl);
+
+    text-align: left;
+}
+
+.brandMessageIcon {
+    width: 65px;
+    height: 65px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(255,255,255,0.15);
+
+    border-radius: 19px;
+
+    font-size: 35px;
+}
+
+.brandMessageText h2 {
+    font-size: 21px;
+
+    font-weight: 850;
+
+    margin-bottom: 8px;
+}
+
+.brandMessageText p {
+    max-width: 550px;
 
     font-size: 13px;
-    font-weight: 700;
 
-    animation: tomaToastIn 0.25s ease both;
+    line-height: 1.7;
+
+    color: rgba(255,255,255,0.85);
 }
 
-.homeToast.success {
-    background: #137B45;
-}
 
-.homeToast.error {
-    background: #B42318;
-}
-
-.homeToast.warning {
-    background: #B75A00;
-}
-
-.homeToast .material-symbols-rounded {
-    font-size: 21px;
-}
-
-.homeToast.toastLeaving {
-    animation: tomaToastOut 0.2s ease forwards;
-}
-
-@keyframes tomaToastIn {
-    from {
-        opacity: 0;
-        transform: translateY(-9px) scale(0.98);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-@keyframes tomaToastOut {
-    to {
-        opacity: 0;
-        transform: translateY(-8px);
-    }
-}
-
-/* =========================================================
+/* =====================================================
    16. NAVEGAÇÃO INFERIOR
-========================================================= */
+===================================================== */
 
 .bottomNavigation {
+    width: 100%;
+
+    min-height: 72px;
+
     position: fixed;
 
-    left: 12px;
-    right: 12px;
-    bottom: max(10px, env(safe-area-inset-bottom));
+    left: 0;
+    bottom: 0;
 
-    z-index: 1500;
+    z-index: 500;
 
-    max-width: 720px;
-    min-height: 70px;
+    display: flex;
 
-    display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
     align-items: center;
+    justify-content: space-around;
 
-    margin: 0 auto;
-    padding: 8px 5px;
+    padding:
+        8px 12px calc(8px + env(safe-area-inset-bottom));
 
-    border: 1px solid rgba(220, 228, 239, 0.9);
-    border-radius: 23px;
+    background: rgba(255,255,255,0.97);
 
-    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(16px);
 
-    -webkit-backdrop-filter: blur(24px);
-    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(16px);
 
-    box-shadow:
-        0 9px 35px rgba(20, 33, 61, 0.15);
+    border-top: 1px solid var(--toma-border);
 }
 
 .bottomNavItem {
-    position: relative;
-
     min-width: 0;
-    min-height: 54px;
+
+    flex: 1;
 
     display: flex;
+
     flex-direction: column;
+
     align-items: center;
     justify-content: center;
-    gap: 5px;
 
-    padding: 5px 2px;
+    gap: 4px;
 
-    border-radius: 15px;
+    color: #8791A3;
 
-    color: #64748B;
+    font-size: 10px;
 
-    transition:
-        background var(--transition-fast),
-        color var(--transition-fast);
+    font-weight: 600;
+
+    transition: var(--toma-transition);
 }
 
-.bottomNavItem > .material-symbols-rounded,
-.bottomNavIconWrapper > .material-symbols-rounded {
+.bottomNavItem > .material-symbols-rounded {
     font-size: 23px;
 }
 
-.bottomNavItem > span:last-child {
-    max-width: 100%;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-
-    font-size: 9px;
-    font-weight: 750;
-    line-height: 1.2;
-}
-
 .bottomNavItem.active {
-    background: var(--toma-orange-light);
-    color: var(--toma-orange-dark);
+    color: var(--toma-primary);
+
+    font-weight: 800;
 }
 
-.bottomNavItem.active > .material-symbols-rounded,
-.bottomNavItem.active .bottomNavIconWrapper > .material-symbols-rounded {
-    font-variation-settings: "FILL" 1;
-}
-
-.bottomNavItem:active {
-    transform: scale(0.96);
+.bottomNavItem.active > .material-symbols-rounded {
+    font-variation-settings: 'FILL' 1;
 }
 
 .bottomNavIconWrapper {
     position: relative;
 
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .bottomNavIconWrapper .notificationBadge {
     top: -7px;
-    right: -10px;
-
-    min-width: 17px;
-    height: 17px;
-
-    font-size: 9px;
-    border-color: var(--surface);
+    right: -12px;
 }
 
-/* =========================================================
-   17. TABLETTES
-========================================================= */
 
-@media (min-width: 600px) {
-    .tomaMain {
-        padding-right: 24px;
-        padding-left: 24px;
-    }
+/* =====================================================
+   17. NOTIFICAÇÕES TEMPORÁRIAS
+===================================================== */
 
-    .searchSection {
-        margin-top: 24px;
-    }
+.homeToastContainer {
+    position: fixed;
 
-    .heroSlider {
-        min-height: 300px;
-    }
+    top: 90px;
+    right: 20px;
 
-    .heroSlide {
-        padding: 35px;
-    }
+    z-index: 1000;
 
-    .heroContent {
-        width: 58%;
-    }
+    width: min(340px, calc(100% - 40px));
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+    pointer-events: none;
+}
+
+.homeToast {
+    padding: 14px 17px;
+
+    border-radius: 13px;
+
+    background: #172033;
+
+    color: white;
+
+    box-shadow: var(--toma-shadow-md);
+
+    font-size: 12px;
+
+    line-height: 1.5;
+}
+
+
+/* =====================================================
+   18. ESTADOS E INTERAÇÕES
+===================================================== */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+    outline: 3px solid rgba(7,85,217,0.35);
+
+    outline-offset: 3px;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+
+/* =====================================================
+   19. TABLETS
+===================================================== */
+
+@media (max-width: 1000px) {
 
     .productsScroller {
-        grid-auto-columns: 205px;
-        gap: 16px;
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
     }
 
     .categoriesGrid {
-        gap: 14px;
-    }
-
-    .categoryCardV3 {
-        padding: 13px 8px 15px;
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
     }
 
     .officialStoresGrid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 16px;
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
     }
 
-    .officialStoreCardV3 {
-        padding: 21px 15px 16px;
-    }
-
-    .officialStoreLogoFrame {
-        width: 88px;
-        height: 88px;
-    }
-
-    .sectionTitleGroup h2 {
-        font-size: 20px;
-    }
 }
 
-/* =========================================================
-   18. GRAND ÉCRAN
-========================================================= */
 
-@media (min-width: 1000px) {
+/* =====================================================
+   20. TELEMÓVEIS
+===================================================== */
+
+@media (max-width: 650px) {
+
+    body.toma-home-v3 {
+        padding-bottom: calc(78px + env(safe-area-inset-bottom));
+    }
+
     .tomaHeader {
-        padding-right: max(28px, calc((100vw - var(--page-width)) / 2));
-        padding-left: max(28px, calc((100vw - var(--page-width)) / 2));
-    }
+        min-height: 65px;
 
-    .tomaMain {
-        padding-right: 30px;
-        padding-left: 30px;
-    }
-
-    .roleShortcuts {
-        max-width: 760px;
-    }
-
-    .heroSlider {
-        aspect-ratio: 2.65 / 1;
-        max-height: 390px;
-    }
-
-    .heroContent {
-        width: 50%;
-    }
-
-    .categoriesGrid {
-        grid-template-columns: repeat(8, minmax(0, 1fr));
-    }
-
-    .productsScroller {
-        grid-auto-columns: 220px;
-    }
-
-    .officialStoresGrid {
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-    }
-
-    .homeSection {
-        margin-bottom: 42px;
-    }
-}
-
-/* =========================================================
-   19. PETITS ÉCRANS
-========================================================= */
-
-@media (max-width: 430px) {
-    .tomaHeader {
-        gap: 7px;
-        padding-right: 11px;
-        padding-left: 12px;
-    }
-
-    .tomaBrand {
-        gap: 5px;
+        padding: 9px 15px;
     }
 
     .tomaBrandIcon {
-        width: 34px;
-        height: 38px;
-        font-size: 32px;
-    }
+        width: 39px;
+        height: 39px;
 
-    .tomaBrandText strong {
         font-size: 23px;
     }
 
+    .tomaBrandText strong {
+        font-size: 20px;
+    }
+
     .tomaBrandText small {
-        font-size: 9px;
+        font-size: 10px;
     }
 
     .headerActions {
-        gap: 5px;
+        gap: 7px;
     }
 
     .iconButton,
     .profileButton {
         width: 36px;
         height: 36px;
-        border-radius: 12px;
-    }
 
-    .profileButton {
-        border-radius: 50%;
+        border-radius: 11px;
     }
 
     .iconButton .material-symbols-rounded {
-        font-size: 21px;
-    }
-
-    .notificationBadge {
-        min-width: 17px;
-        height: 17px;
-        font-size: 9px;
+        font-size: 20px;
     }
 
     .tomaMain {
-        padding-right: 13px;
-        padding-left: 13px;
-    }
-
-    .searchSection {
-        margin-top: 15px;
+        padding: 17px 14px;
     }
 
     .searchBar {
-        min-height: 49px;
-        padding-right: 10px;
-        padding-left: 12px;
-        gap: 8px;
-        border-radius: 16px;
+        min-height: 51px;
+
+        padding-left: 13px;
+
+        border-radius: 14px;
     }
 
     .searchPlaceholder {
-        font-size: 11px;
-    }
-
-    .searchFilterIcon {
-        width: 32px;
-        height: 32px;
+        font-size: 12px;
     }
 
     .roleShortcuts {
-        gap: 8px;
-        margin-bottom: 17px;
+        grid-template-columns: 1fr;
+
+        gap: 9px;
+
+        margin-bottom: 19px;
     }
 
     .roleShortcut {
-        min-height: 70px;
-        gap: 7px;
-        padding: 9px;
-        border-radius: 16px;
+        min-height: 66px;
     }
 
-    .roleShortcutIcon {
-        width: 33px;
-        height: 33px;
-        border-radius: 11px;
-        font-size: 22px;
-    }
-
-    .roleShortcutText strong {
-        font-size: 10px;
-    }
-
-    .roleShortcutText small {
-        font-size: 9px;
-    }
-
-    .roleArrow {
-        font-size: 18px;
-    }
-
-    .heroSlider {
-        min-height: 225px;
-        aspect-ratio: 1.36 / 1;
-        border-radius: 21px;
-    }
-
+    .heroSlider,
     .heroSlide {
-        padding: 18px;
+        min-height: 175px;
+
+        border-radius: 19px;
     }
 
-    .heroSlide::before {
-        background:
-            linear-gradient(
-                90deg,
-                rgba(3, 20, 55, 0.94) 0%,
-                rgba(5, 36, 94, 0.75) 58%,
-                rgba(5, 36, 94, 0.28) 100%
-            );
+    .heroSlideContent {
+        padding: 20px;
     }
 
-    .heroContent {
-        width: 79%;
+    .heroSlideTitle {
+        font-size: 22px;
+
+        max-width: 85%;
     }
 
-    .heroEyebrow {
-        margin-bottom: 9px;
-        padding: 5px 8px;
-        font-size: 9px;
-    }
-
-    .heroContent h2 {
-        font-size: 25px;
-    }
-
-    .heroContent p {
-        margin-bottom: 13px;
+    .heroSlideSubtitle {
         font-size: 11px;
-    }
 
-    .heroAction {
-        min-height: 38px;
-        padding: 0 12px;
-        font-size: 11px;
+        max-width: 85%;
     }
 
     .trustSection {
-        gap: 5px;
-        padding: 11px 7px;
-        border-radius: 17px;
+        padding: 14px 9px;
+
+        gap: 8px;
+
+        border-radius: 15px;
+
         margin-bottom: 27px;
     }
 
     .trustItem {
-        align-items: flex-start;
-        gap: 6px;
-    }
+        flex-direction: column;
 
-    .trustIcon {
-        width: 29px;
-        height: 29px;
-        border-radius: 10px;
-        font-size: 18px;
-    }
+        text-align: center;
 
-    .trustText strong {
-        font-size: 9px;
-    }
-
-    .trustText small {
-        font-size: 8px;
-    }
-
-    .homeSection {
-        margin-bottom: 28px;
-    }
-
-    .sectionHeading {
-        gap: 5px;
-        margin-bottom: 12px;
-    }
-
-    .sectionTitleGroup {
         gap: 7px;
     }
 
+    .trustIcon {
+        width: 35px;
+        height: 35px;
+
+        font-size: 19px;
+    }
+
+    .trustText strong {
+        font-size: 10px;
+    }
+
+    .trustText small {
+        font-size: 9px;
+    }
+
+    .homeSection {
+        margin-bottom: 30px;
+    }
+
+    .sectionHeading {
+        margin-bottom: 14px;
+
+        gap: 8px;
+    }
+
     .sectionTitleIcon {
-        width: 36px;
-        height: 36px;
-        border-radius: 12px;
-        font-size: 21px;
+        width: 37px;
+        height: 37px;
+
+        font-size: 20px;
+    }
+
+    .sectionTitleGroup {
+        gap: 9px;
     }
 
     .sectionTitleGroup h2 {
@@ -2237,459 +1728,207 @@ body.toma-home-v3 [hidden] {
     }
 
     .sectionTitleGroup p {
-        font-size: 9px;
+        font-size: 10px;
     }
 
     .seeAllLink {
-        gap: 3px;
-        padding: 7px 6px;
-        border-radius: 10px;
         font-size: 10px;
-    }
-
-    .seeAllLink .material-symbols-rounded {
-        font-size: 15px;
     }
 
     .categoriesGrid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 9px;
-    }
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
 
-    .categoryCardV3 {
-        padding: 9px 6px 10px;
-        border-radius: 16px;
-    }
-
-    .categoryVisual {
-        max-width: 67px;
-        border-radius: 14px;
-    }
-
-    .categoryVisual .material-symbols-rounded {
-        font-size: 29px;
-    }
-
-    .categoryNameV3 {
-        font-size: 10px;
-    }
-
-    .productsScroller {
-        grid-auto-columns: 158px;
         gap: 10px;
     }
 
-    .productCardV3 {
-        border-radius: 17px;
+    .productsScroller {
+        display: flex;
+
+        overflow-x: auto;
+
+        gap: 12px;
+
+        padding: 2px 2px 12px;
+
+        scroll-snap-type: x mandatory;
+
+        -webkit-overflow-scrolling: touch;
     }
 
-    .productInfoV3 {
-        gap: 6px;
-        padding: 9px;
+    .productsScroller > * {
+        flex: 0 0 155px;
+
+        min-width: 0;
+
+        scroll-snap-align: start;
     }
 
-    .productNameV3 {
+    .productCard img {
+        height: 145px;
+    }
+
+    .productCardContent {
+        padding: 10px;
+    }
+
+    .productCardTitle {
         font-size: 11px;
     }
 
-    .productPriceV3 {
+    .productCardPrice {
         font-size: 14px;
-    }
-
-    .productAddCartV3 {
-        min-height: 35px;
-        font-size: 10px;
     }
 
     .officialStoresGrid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 11px;
     }
 
-    .officialStoreCardV3 {
-        padding: 15px 10px 11px;
-        border-radius: 19px;
+    .officialStoreBanner {
+        height: 85px;
     }
 
-    .officialStoreLogoFrame {
-        width: 68px;
-        height: 68px;
-        margin-bottom: 10px;
+    .officialStoreContent {
+        padding: 10px;
     }
 
-    .officialStoreName {
-        font-size: 13px;
-    }
+    .officialStoreLogo {
+        width: 55px;
+        height: 55px;
 
-    .officialVerifiedBadge {
-        width: 19px;
-        height: 19px;
-    }
-
-    .officialVerifiedBadge .material-symbols-rounded {
-        font-size: 14px;
-    }
-
-    .officialStoreStatus {
-        margin-top: 7px;
-        padding: 5px 9px;
-        font-size: 10px;
-    }
-
-    .officialStoreProductCount {
-        margin-top: 8px;
-        font-size: 10px;
-    }
-
-    .visitStoreButton {
-        min-height: 38px;
-        margin-top: 11px;
-        font-size: 10px;
-    }
-
-    .tomaBrandMessage {
-        gap: 12px;
-        padding: 17px;
-        border-radius: 19px;
-    }
-
-    .brandMessageIcon {
-        width: 45px;
-        height: 45px;
-        border-radius: 14px;
-        font-size: 27px;
-    }
-
-    .brandMessageText h2 {
-        font-size: 14px;
-    }
-
-    .brandMessageText p {
-        font-size: 11px;
-    }
-
-    .bottomNavigation {
-        left: 7px;
-        right: 7px;
-        bottom: max(7px, env(safe-area-inset-bottom));
-
-        min-height: 66px;
-        padding: 6px 3px;
-
-        border-radius: 19px;
-    }
-
-    .bottomNavItem {
-        min-height: 51px;
-        gap: 4px;
-        border-radius: 12px;
-    }
-
-    .bottomNavItem > .material-symbols-rounded,
-    .bottomNavIconWrapper > .material-symbols-rounded {
-        font-size: 21px;
-    }
-
-    .bottomNavItem > span:last-child {
-        font-size: 8px;
-    }
-}
-
-/* =========================================================
-   20. MUITO PEQUENOS
-========================================================= */
-
-@media (max-width: 350px) {
-    .tomaBrandText strong {
-        font-size: 21px;
-    }
-
-    .tomaBrandIcon {
-        width: 30px;
-        font-size: 29px;
-    }
-
-    .iconButton,
-    .profileButton {
-        width: 32px;
-        height: 32px;
-    }
-
-    .headerActions {
-        gap: 4px;
-    }
-
-    .roleShortcut {
-        padding: 7px;
-        gap: 5px;
-    }
-
-    .roleShortcutIcon {
-        width: 29px;
-        height: 29px;
-        font-size: 19px;
-    }
-
-    .roleShortcutText strong {
-        font-size: 9px;
-    }
-
-    .heroContent h2 {
-        font-size: 22px;
-    }
-
-    .productsScroller {
-        grid-auto-columns: 148px;
-    }
-
-    .officialStoreNameRow {
-        gap: 3px;
+        margin-top: -35px;
     }
 
     .officialStoreName {
         font-size: 12px;
     }
-}
 
-/* =========================================================
-   21. MODE SOMBRE
-   La classe peut estar sur html ou body.
-========================================================= */
-
-html.dark-mode body.toma-home-v3,
-body.toma-home-v3.dark-mode {
-    --page-bg: #08111F;
-    --surface: #111E30;
-    --surface-soft: #142239;
-    --surface-hover: #1B2D45;
-
-    --text-main: #F1F5FC;
-    --text-secondary: #B2C0D3;
-    --text-muted: #8596AD;
-
-    --border: #25364C;
-    --border-strong: #344962;
-
-    --toma-blue-light: #142E53;
-    --toma-orange-light: #3A2518;
-    --toma-green-light: #143528;
-
-    background:
-        radial-gradient(
-            ellipse at 50% 0%,
-            rgba(7, 85, 217, 0.13),
-            transparent 42%
-        ),
-        var(--page-bg);
-
-    color: var(--text-main);
-}
-
-html.dark-mode .tomaHeader {
-    background:
-        linear-gradient(
-            115deg,
-            #061326 0%,
-            #09244A 58%,
-            #0A3263 100%
-        );
-
-    border-bottom-color: #25364C;
-}
-
-html.dark-mode .searchBar,
-html.dark-mode .trustSection,
-html.dark-mode .categoryCardV3,
-html.dark-mode .productCardV3,
-html.dark-mode .officialStoreCardV3,
-html.dark-mode .heroArrow,
-html.dark-mode .seeAllLink {
-    border-color: var(--border);
-    background-color: var(--surface);
-}
-
-html.dark-mode .searchFilterIcon {
-    background: #1B365A;
-    color: #8DB8FF;
-}
-
-html.dark-mode .sectionTitleIcon {
-    background: #1B365A;
-    color: #8DB8FF;
-}
-
-html.dark-mode .featuredTitleIcon {
-    background: #3A2A1A;
-    color: #FFB35C;
-}
-
-html.dark-mode .newTitleIcon {
-    background: #30234B;
-    color: #C3A8FF;
-}
-
-html.dark-mode .offersTitleIcon {
-    background: #402020;
-    color: #FF9993;
-}
-
-html.dark-mode .popularTitleIcon {
-    background: #1B365A;
-    color: #8DB8FF;
-}
-
-html.dark-mode .recommendedTitleIcon {
-    background: #143528;
-    color: #7CE0A3;
-}
-
-html.dark-mode .officialStoresTitleIcon {
-    background: #1B365A;
-    color: #8DB8FF;
-}
-
-html.dark-mode .productImageWrapperV3,
-html.dark-mode .categoryVisual,
-html.dark-mode .officialStoreLogoFrame {
-    background: #18273A;
-}
-
-html.dark-mode .officialStoreLogoFrame {
-    border-color: #344962;
-}
-
-html.dark-mode .officialStoreStatus {
-    background: #143528;
-    color: #7CE0A3;
-}
-
-html.dark-mode .tomaBrandMessage {
-    border-color: #253B5B;
-    background:
-        linear-gradient(
-            125deg,
-            #111E30,
-            #132B4A
-        );
-}
-
-html.dark-mode .bottomNavigation {
-    border-color: #293B52;
-    background: rgba(13, 27, 45, 0.96);
-
-    box-shadow:
-        0 10px 35px rgba(0, 0, 0, 0.35);
-}
-
-html.dark-mode .bottomNavItem {
-    color: #A9B8CD;
-}
-
-html.dark-mode .bottomNavItem.active {
-    background: #3A2518;
-    color: #FFAA55;
-}
-
-html.dark-mode .bottomNavIconWrapper .notificationBadge {
-    border-color: var(--surface);
-}
-
-html.dark-mode .heroArrow:hover,
-html.dark-mode .seeAllLink:hover {
-    background: #1B365A;
-}
-
-html.dark-mode .loadingSkeleton::after {
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.06),
-            transparent
-        );
-}
-
-/* =========================================================
-   22. ACESSIBILIDADE — MOVIMENTO REDUZIDO
-========================================================= */
-
-@media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        scroll-behavior: auto !important;
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
+    .homeBannerSection {
+        margin: 20px 0 27px;
     }
-}
 
-/* =========================================================
-   FIM DO DESIGN TOMA V3
-========================================================= */
-/* =========================================
-   TOMA V3 — BANNERS SECONDAIRES
-========================================= */
+    .homeBannerSlider img {
+        min-height: 105px;
 
-.homeBannerSection {
-    width: 100%;
-    margin: 22px 0;
-}
+        max-height: 160px;
+    }
 
-.homeBannerSlider {
-    width: 100%;
-    height: 110px;
-    overflow: hidden;
-    border-radius: 14px;
-    position: relative;
-}
+    .tomaBrandMessage {
+        padding: 20px 15px;
 
-/* Images des deux bannières secondaires */
-.homeBannerSlider img {
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: cover;
-    border-radius: 14px;
-}
-/* =========================================
-   TOMA V3 — BANNERS SECUNDÁRIOS
-========================================= */
+        gap: 12px;
 
-.homeBannerSection {
-    width: 100%;
-    margin: 22px 0;
-}
+        border-radius: 19px;
+    }
 
-.homeBannerSlider {
-    position: relative;
-    width: 100%;
-    height: 110px;
-    overflow: hidden;
-    border-radius: 14px;
-}
+    .brandMessageIcon {
+        width: 47px;
+        height: 47px;
 
-.homeBannerSlide {
-    width: 100%;
-    height: 100%;
-}
+        border-radius: 14px;
 
-.homeBannerSlide[hidden] {
-    display: none;
-}
+        font-size: 26px;
+    }
 
-.homeBannerSlide img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 14px;
-}
+    .brandMessageText h2 {
+        font-size: 15px;
+    }
 
-@media (max-width: 600px) {
+    .brandMessageText p {
+        font-size: 10px;
+    }
 
-    .homeBannerSlider {
-        height: 95px;
+    .bottomNavigation {
+        min-height: 67px;
+
+        padding: 7px 4px calc(7px + env(safe-area-inset-bottom));
+    }
+
+    .bottomNavItem {
+        font-size: 9px;
+
+        gap: 3px;
+    }
+
+    .bottomNavItem > .material-symbols-rounded {
+        font-size: 21px;
     }
 
 }
+
+
+/* =====================================================
+   21. TELEMÓVEIS PEQUENOS
+===================================================== */
+
+@media (max-width: 380px) {
+
+    .tomaMain {
+        padding-left: 11px;
+        padding-right: 11px;
+    }
+
+    .headerActions {
+        gap: 5px;
+    }
+
+    .iconButton,
+    .profileButton {
+        width: 33px;
+        height: 33px;
+    }
+
+    .tomaBrand {
+        gap: 7px;
+    }
+
+    .categoriesGrid {
+        gap: 7px;
+    }
+
+    .productsScroller > * {
+        flex-basis: 145px;
+    }
+
+    .sectionTitleGroup h2 {
+        font-size: 14px;
+    }
+
+    .seeAllLink {
+        gap: 2px;
+        font-size: 9px;
+    }
+
+}
+
+
+/* =====================================================
+   22. ECRÃS GRANDES
+===================================================== */
+
+@media (min-width: 1400px) {
+
+    .tomaMain {
+        padding-left: 55px;
+        padding-right: 55px;
+    }
+
+    .productsScroller {
+        grid-template-columns:
+            repeat(6, minmax(0, 1fr));
+    }
+
+    .categoriesGrid {
+        grid-template-columns:
+            repeat(8, minmax(0, 1fr));
+    }
+
+}
+
+
+/* =====================================================
+   FIM DO CSS TOMA V3
+===================================================== */
