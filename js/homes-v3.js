@@ -756,6 +756,11 @@ async function tomaV3LoadMainBanners() {
 console.log("[TOMA DEBUG] Données du banner main :", data);
 console.log("[TOMA DEBUG] Active :", data.active);
 console.log("[TOMA DEBUG] Images :", data.images);
+     alert(
+    "TOMA — TEST BANNIÈRE PRINCIPALE\n\n" +
+    "Active : " + data.active + "\n\n" +
+    "Images : " + JSON.stringify(data.images)
+);
         if (data.active === false) {
 
             tomaV3LoadBanners([]);
