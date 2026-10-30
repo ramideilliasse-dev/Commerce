@@ -1,0 +1,11 @@
+ {
+  "main": [
+    "./images/banners/main/banner1.jpg"
+  ],
+  "categories": [
+    "./images/banners/categories/banner1.jpg"
+  ],
+  "officialStores": [
+    "./images/banners/official-stores/banner1.jpg"
+  ]
+}
