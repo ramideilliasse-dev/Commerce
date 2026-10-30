@@ -1,4 +1,4 @@
- import { db, auth } from "../firebase.js";
+import { db, auth } from "../firebase.js";
 
 import {
     doc,
@@ -13,14 +13,10 @@ import {
 
 
 /* =====================================================
-   BLOC 1 — CONFIGURATION CLOUDINARY
+   BLOC 1 — CONFIGURATION
 ===================================================== */
 
 const TOMA_BANNERS_COLLECTION = "homeBanners";
-
-// =====================================================
-// BLOC 3 — CONFIGURATION CLOUDINARY
-// =====================================================
 
 const CLOUDINARY_CLOUD_NAME = "xnak6z6m";
 
@@ -28,13 +24,17 @@ const CLOUDINARY_URL =
     `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
 
 const CLOUDINARY_UPLOAD_PRESET = "Toma-banner";
+
 const TOMA_MAX_FILE_SIZE = 10 * 1024 * 1024;
+
+const TOMA_MAX_IMAGES = 15;
 
 const TOMA_ALLOWED_TYPES = [
     "image/jpeg",
     "image/png",
     "image/webp"
 ];
+
 
 const TOMA_BANNER_CONFIG = {
 
@@ -78,7 +78,7 @@ const TOMA_BANNER_CONFIG = {
 
 
 /* =====================================================
-   BLOC 1.1 — ÉTAT DE L'APPLICATION
+   BLOC 2 — ÉTAT DE L'APPLICATION
 ===================================================== */
 
 const TOMA_BANNERS_STATE = {
@@ -115,7 +115,7 @@ const TOMA_BANNERS_STATE = {
 
 
 /* =====================================================
-   BLOC 2 — ÉLÉMENTS HTML
+   BLOC 3 — ÉLÉMENTS HTML
 ===================================================== */
 
 const adminLoading = document.getElementById("adminLoading");
@@ -128,7 +128,7 @@ const adminMessage = document.getElementById("adminMessage");
 
 
 /* =====================================================
-   BLOC 3 — MESSAGES VISIBLES
+   BLOC 4 — MESSAGES VISIBLES
 ===================================================== */
 
 function showAdminMessage(message, type = "success") {
@@ -189,7 +189,7 @@ function showAccessDenied(show) {
 
 
 /* =====================================================
-   BLOC 4 — VÉRIFICATION DES ADMINISTRATEURS
+   BLOC 5 — VÉRIFICATION DES ADMINISTRATEURS
 ===================================================== */
 
 async function checkAdminPermission(user) {
@@ -236,21 +236,13 @@ async function checkAdminPermission(user) {
 
 
 /* =====================================================
-   BLOC 5 — OUTILS POUR LES IMAGES
+   BLOC 6 — OUTILS POUR LES IMAGES
 ===================================================== */
 
 function getExistingImages(bannerId) {
 
     const data =
         TOMA_BANNERS_STATE.documents[bannerId] || {};
-
-    /*
-       Nouveau format :
-       images: [{ url, publicId }]
-
-       Ancien format :
-       image: "https://..."
-    */
 
     if (Array.isArray(data.images)) {
 
@@ -324,7 +316,7 @@ function releasePreviewUrls(bannerId) {
 
 
 /* =====================================================
-   BLOC 6 — PRÉVISUALISATION MULTI-IMAGES
+   BLOC 7 — PRÉVISUALISATION MULTI-IMAGES
 ===================================================== */
 
 function renderBannerPreview(bannerId) {
@@ -567,7 +559,7 @@ function renderBannerPreview(bannerId) {
 
 
 /* =====================================================
-   BLOC 7 — SÉLECTION DES FICHIERS
+   BLOC 8 — SÉLECTION DES FICHIERS
 ===================================================== */
 
 function handleImageSelection(bannerId, event) {
@@ -617,8 +609,6 @@ function handleImageSelection(bannerId, event) {
     const currentUrls =
         TOMA_BANNERS_STATE.previewUrls[bannerId];
 
-    const MAX_IMAGES = 20;
-
     const existingImages = getExistingImages(bannerId);
 
     const removedIndexes =
@@ -631,7 +621,7 @@ function handleImageSelection(bannerId, event) {
 
     const availableSlots = Math.max(
         0,
-        MAX_IMAGES - existingCount - currentFiles.length
+        TOMA_MAX_IMAGES - existingCount - currentFiles.length
     );
 
     const filesToAdd = acceptedFiles.slice(
@@ -642,7 +632,7 @@ function handleImageSelection(bannerId, event) {
     if (acceptedFiles.length > availableSlots) {
 
         rejectedFiles.push(
-            `Máximo de ${MAX_IMAGES} imagens por banner.`
+            `Máximo de ${TOMA_MAX_IMAGES} imagens por banner.`
         );
 
     }
@@ -658,8 +648,6 @@ function handleImageSelection(bannerId, event) {
 
     });
 
-
-    // Permet de sélectionner de nouveau le même fichier.
 
     input.value = "";
 
@@ -723,10 +711,8 @@ function initializeImagePickers() {
 }
 
 
-
 /* =====================================================
-   BLOC 8 — UPLOAD CLOUDINARY
-   UPLOAD DIRECT + DIAGNOSTIC
+   BLOC 9 — UPLOAD CLOUDINARY
 ===================================================== */
 
 async function uploadImageToCloudinary(file, bannerId) {
@@ -745,12 +731,6 @@ async function uploadImageToCloudinary(file, bannerId) {
         throw new Error("A imagem não pode ultrapassar 10 MB.");
     }
 
-    if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
-        throw new Error(
-            "A configuração do Cloudinary está incompleta."
-        );
-    }
-
     if (!auth.currentUser) {
         throw new Error(
             "A sessão expirou. Inicia sessão novamente."
@@ -759,84 +739,77 @@ async function uploadImageToCloudinary(file, bannerId) {
 
     const formData = new FormData();
 
-formData.append("file", file);
-formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
-    // Diagnóstico: confirma os parâmetros enviados.
-    const presetEnviado = formData.get("upload_preset");
-    const cloudName = CLOUDINARY_CLOUD_NAME;
+    formData.append("file", file);
 
-    if (presetEnviado !== CLOUDINARY_UPLOAD_PRESET) {
-        throw new Error(
-            "Diagnóstico: o preset enviado não corresponde à configuração."
-        );
-    }
+    formData.append(
+        "upload_preset",
+        CLOUDINARY_UPLOAD_PRESET
+    );
 
     let response;
 
     try {
-        response = await fetch(
-            `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-            {
-                method: "POST",
-                body: formData
-            }
-        );
+
+        response = await fetch(CLOUDINARY_URL, {
+            method: "POST",
+            body: formData
+        });
+
     } catch (error) {
+
         throw new Error(
             "Não foi possível contactar o Cloudinary. Verifica a ligação à Internet."
         );
-    }
 
-    const responseText = await response.text();
+    }
 
     let result;
 
     try {
-        result = JSON.parse(responseText);
+
+        result = await response.json();
+
     } catch (error) {
+
         throw new Error(
-            "Resposta inválida do Cloudinary. Código HTTP: " +
-            response.status
+            "Resposta inválida do Cloudinary."
         );
+
     }
 
     if (!response.ok) {
 
-        const cloudinaryMessage =
+        const message =
             result?.error?.message ||
             "Erro desconhecido no Cloudinary.";
 
-        alert(
-            "DIAGNÓSTICO CLOUDINARY — TOMA\n\n" +
-            "Cloud name: " + cloudName + "\n" +
-            "Preset enviado: " + presetEnviado + "\n" +
-            "Banner: " + bannerId + "\n" +
-            "HTTP: " + response.status + "\n\n" +
-            "Resposta: " + cloudinaryMessage
+        throw new Error(
+            `Falha no upload da imagem (${response.status}): ${message}`
         );
 
-        throw new Error(
-            `Falha no upload Cloudinary (${response.status}): ${cloudinaryMessage}`
-        );
     }
 
     if (
         typeof result.secure_url !== "string" ||
         !result.secure_url.trim()
     ) {
+
         throw new Error(
-            "O Cloudinary não devolveu o endereço seguro da imagem."
+            "O Cloudinary não devolveu o endereço da imagem."
         );
+
     }
 
     return {
         url: result.secure_url,
         publicId: result.public_id || ""
     };
+
 }
 
+
 /* =====================================================
-   BLOC 9 — VALIDATION DU LIEN
+   BLOC 10 — VALIDATION DU LIEN
 ===================================================== */
 
 function validateBannerLink(value) {
@@ -891,11 +864,6 @@ function validateBannerLink(value) {
 
     }
 
-    /*
-       Liens internes simples :
-       products-v2.html
-    */
-
     if (
         !link.includes(":") &&
         !link.startsWith("//")
@@ -913,7 +881,7 @@ function validateBannerLink(value) {
 
 
 /* =====================================================
-   BLOC 10 — CHARGEMENT FIRESTORE
+   BLOC 11 — CHARGEMENT FIRESTORE
 ===================================================== */
 
 async function loadBanner(bannerId) {
@@ -998,7 +966,7 @@ async function loadBanner(bannerId) {
 
 
 /* =====================================================
-   BLOC 11 — ÉTAT DES BANNIÈRES
+   BLOC 12 — ÉTAT DES BANNIÈRES
 ===================================================== */
 
 function updateBannerStatus(bannerId) {
@@ -1012,7 +980,6 @@ function updateBannerStatus(bannerId) {
     if (!status) {
         return;
     }
-
 
     const data =
         TOMA_BANNERS_STATE.documents[bannerId] || {};
@@ -1065,7 +1032,7 @@ function updateBannerStatus(bannerId) {
 
 
 /* =====================================================
-   BLOC 12 — RÉSUMÉ
+   BLOC 13 — RÉSUMÉ
 ===================================================== */
 
 function updateBannerSummary() {
@@ -1128,7 +1095,7 @@ function updateBannerSummary() {
 
 
 /* =====================================================
-   BLOC 13 — SAUVEGARDE D'UNE BANNIÈRE
+   BLOC 14 — SAUVEGARDE D'UNE BANNIÈRE
 ===================================================== */
 
 async function saveBanner(bannerId) {
@@ -1242,19 +1209,15 @@ async function saveBanner(bannerId) {
 
 
         if (
-            retainedImages.length + selectedFiles.length > 20
+            retainedImages.length + selectedFiles.length > TOMA_MAX_IMAGES
         ) {
 
             throw new Error(
-                "Cada banner pode ter no máximo 20 imagens."
+                `Cada banner pode ter no máximo ${TOMA_MAX_IMAGES} imagens.`
             );
 
         }
 
-
-        /*
-           Envoyer les nouvelles images à Cloudinary.
-        */
 
         const uploadedImages = [];
 
@@ -1282,10 +1245,6 @@ async function saveBanner(bannerId) {
         }
 
 
-        /*
-           Combiner les images conservées et les nouvelles.
-        */
-
         const finalImages = [
             ...retainedImages,
             ...uploadedImages
@@ -1302,10 +1261,6 @@ async function saveBanner(bannerId) {
 
         }
 
-
-        /*
-           Préparer les données à enregistrer dans Firebase.
-        */
 
         const bannerData = {
 
@@ -1326,11 +1281,6 @@ async function saveBanner(bannerId) {
         };
 
 
-        /*
-           Compatibilité avec les anciennes pages
-           qui utilisent data.image et data.publicId.
-        */
-
         bannerData.image =
             finalImages.length > 0
                 ? finalImages[0].url
@@ -1349,10 +1299,6 @@ async function saveBanner(bannerId) {
         }
 
 
-        /*
-           Enregistrer dans la collection homeBanners.
-        */
-
         await setDoc(
             doc(
                 db,
@@ -1363,10 +1309,6 @@ async function saveBanner(bannerId) {
             { merge: true }
         );
 
-
-        /*
-           Mettre à jour l'état local.
-        */
 
         TOMA_BANNERS_STATE.documents[bannerId] = {
             ...previousData,
@@ -1425,7 +1367,7 @@ async function saveBanner(bannerId) {
 
 
 /* =====================================================
-   BLOC 14 — INITIALISATION DES BOUTONS
+   BLOC 15 — INITIALISATION DES BOUTONS
 ===================================================== */
 
 function initializeSaveButtons() {
@@ -1454,7 +1396,7 @@ function initializeSaveButtons() {
 
 
 /* =====================================================
-   BLOC 15 — MISE À JOUR EN DIRECT
+   BLOC 16 — MISE À JOUR EN DIRECT
 ===================================================== */
 
 function initializeLiveUpdates() {
@@ -1487,7 +1429,7 @@ function initializeLiveUpdates() {
 
 
 /* =====================================================
-   BLOC 16 — CHARGEMENT DU PANNEAU
+   BLOC 17 — CHARGEMENT DU PANNEAU
 ===================================================== */
 
 async function initializeAdminBanners(user) {
@@ -1526,11 +1468,6 @@ async function initializeAdminBanners(user) {
 
 
     try {
-
-        /*
-           Éviter d'ajouter les mêmes événements
-           plusieurs fois si l'authentification change.
-        */
 
         if (!TOMA_BANNERS_STATE.listenersInitialized) {
 
@@ -1593,20 +1530,13 @@ async function initializeAdminBanners(user) {
             "error"
         );
 
-
-        alert(
-            "DIAGNÓSTICO TOMA — BANNERS\n\n" +
-            "Código: " + errorCode + "\n\n" +
-            "Detalhes: " + errorMessage
-        );
-
     }
 
 }
 
 
 /* =====================================================
-   BLOC 17 — AUTHENTIFICATION
+   BLOC 18 — AUTHENTIFICATION
 ===================================================== */
 
 onAuthStateChanged(auth, async user => {
@@ -1631,7 +1561,7 @@ onAuthStateChanged(auth, async user => {
 
 
 /* =====================================================
-   BLOC 18 — STYLES COMPLÉMENTAIRES
+   BLOC 19 — STYLES COMPLÉMENTAIRES
 ===================================================== */
 
 (function addBannerGalleryStyles() {
@@ -1743,128 +1673,3 @@ onAuthStateChanged(auth, async user => {
     document.head.appendChild(style);
 
 })();
-/* =====================================================
-   BLOC 14 — DIAGNOSTIC DIRECT CLOUDINARY
-   Ne modifie pas Firestore.
-===================================================== */
-
-async function diagnoseCloudinaryBannerUpload() {
-
-    try {
-
-        const fileInput = document.createElement("input");
-
-        fileInput.type = "file";
-        fileInput.accept = "image/jpeg,image/png,image/webp";
-
-        fileInput.onchange = async () => {
-
-            const file = fileInput.files?.[0];
-
-            if (!file) {
-                alert("DIAGNOSTIC: nenhuma imagem selecionada.");
-                return;
-            }
-
-            const preset = CLOUDINARY_UPLOAD_PRESET;
-            const cloudName = CLOUDINARY_CLOUD_NAME;
-
-            const formData = new FormData();
-
-            formData.append("file", file);
-            formData.append("upload_preset", preset);
-
-            alert(
-                "DIAGNÓSTICO DIRETO CLOUDINARY\n\n" +
-                "Cloud: " + cloudName + "\n" +
-                "Preset: " + preset + "\n" +
-                "Tipo: " + file.type + "\n" +
-                "Tamanho: " + Math.round(file.size / 1024) + " KB\n\n" +
-                "A enviar imagem diretamente..."
-            );
-
-            let response;
-
-            try {
-
-                response = await fetch(
-                    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-                    {
-                        method: "POST",
-                        body: formData
-                    }
-                );
-
-            } catch (error) {
-
-                alert(
-                    "FALHA DE REDE\n\n" +
-                    String(error.message || error)
-                );
-
-                return;
-            }
-
-            const responseText = await response.text();
-
-            let result;
-
-            try {
-                result = JSON.parse(responseText);
-            } catch {
-                result = { rawResponse: responseText };
-            }
-
-            if (response.ok) {
-
-                alert(
-                    "UPLOAD DIRETO: SUCESSO!\n\n" +
-                    "HTTP: " + response.status + "\n" +
-                    "URL: " + (result.secure_url || "Não recebida") + "\n" +
-                    "Public ID: " + (result.public_id || "Não recebido") +
-                    "\n\nA imagem foi enviada para Cloudinary. " +
-                    "Este teste não altera Firestore."
-                );
-
-            } else {
-
-                alert(
-                    "UPLOAD DIRETO: FALHOU\n\n" +
-                    "HTTP: " + response.status + "\n" +
-                    "Cloud: " + cloudName + "\n" +
-                    "Preset: " + preset + "\n" +
-                    "Resposta Cloudinary:\n" +
-                    JSON.stringify(result, null, 2)
-                );
-
-            }
-
-        };
-
-        fileInput.click();
-
-    } catch (error) {
-
-        alert(
-            "ERRO NO DIAGNÓSTICO\n\n" +
-            String(error.message || error)
-        );
-
-    }
-
-}
-const cloudinaryDiagnosticButton = document.createElement("button");
-
-cloudinaryDiagnosticButton.type = "button";
-cloudinaryDiagnosticButton.textContent = "Diagnóstico Cloudinary";
-cloudinaryDiagnosticButton.style.cssText =
-    "position:fixed;bottom:15px;right:15px;z-index:99999;" +
-    "padding:12px;background:#1565c0;color:white;" +
-    "border:0;border-radius:8px;";
-
-cloudinaryDiagnosticButton.addEventListener(
-    "click",
-    diagnoseCloudinaryBannerUpload
-);
-
-document.body.appendChild(cloudinaryDiagnosticButton);
