@@ -464,17 +464,22 @@ function tomaV3CreateBanner(banner, index) {
     image.alt = banner.title || "Promoção Toma";
     image.loading = index === 0 ? "eager" : "lazy";
 
-    image.onerror = () => {
+    image.onload = () => {
+    alert(
+        "TOMA — IMAGE CHARGÉE\n\n" +
+        "URL : " + image.src + "\n" +
+        "Largeur : " + image.naturalWidth + "\n" +
+        "Hauteur : " + image.naturalHeight
+    );
+};
 
-        image.onerror = null;
-
-        slide.classList.add("heroImageUnavailable");
-
-        image.removeAttribute("src");
-
-    };
-
-    const overlay = document.createElement("div");
+image.onerror = () => {
+    alert(
+        "TOMA — ERREUR DE CHARGEMENT\n\n" +
+        "URL : " + image.src
+    );
+};  
+ const overlay = document.createElement("div");
 
     overlay.className = "heroOverlay";
 
