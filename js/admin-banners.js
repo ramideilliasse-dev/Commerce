@@ -1,4 +1,4 @@
-import { db, auth } from "../firebase.js";
+ import { db, auth } from "../firebase.js";
 
 import {
     doc,
@@ -18,58 +18,44 @@ import {
 
 const TOMA_BANNERS_COLLECTION = "homeBanners";
 
-const CLOUDINARY_CLOUD_NAME = "xnak6z6m";
-
-const CLOUDINARY_URL =
-    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
-
-const CLOUDINARY_UPLOAD_PRESET = "Toma-banner";
-
-const TOMA_MAX_FILE_SIZE = 10 * 1024 * 1024;
+const TOMA_BANNER_MANIFEST = "./banner-images.json";
 
 const TOMA_MAX_IMAGES = 15;
-
-const TOMA_ALLOWED_TYPES = [
-    "image/jpeg",
-    "image/png",
-    "image/webp"
-];
-
 
 const TOMA_BANNER_CONFIG = {
 
     main: {
         label: "Banner principal",
-        imageInput: "image-main",
-        preview: "preview-main",
+        folder: "./images/banners/main/",
         title: "title-main",
         subtitle: "subtitle-main",
         link: "link-main",
         active: "active-main",
+        preview: "preview-main",
         status: "status-main",
         button: '[data-save-banner="main"]'
     },
 
     categories: {
         label: "Banner após categorias",
-        imageInput: "image-categories",
-        preview: "preview-categories",
+        folder: "./images/banners/categories/",
         title: null,
         subtitle: null,
         link: "link-categories",
         active: "active-categories",
+        preview: "preview-categories",
         status: "status-categories",
         button: '[data-save-banner="categories"]'
     },
 
     officialStores: {
         label: "Banner após lojas oficiais",
-        imageInput: "image-officialStores",
-        preview: "preview-officialStores",
+        folder: "./images/banners/official-stores/",
         title: null,
         subtitle: null,
         link: "link-officialStores",
         active: "active-officialStores",
+        preview: "preview-officialStores",
         status: "status-officialStores",
         button: '[data-save-banner="officialStores"]'
     }
@@ -78,7 +64,7 @@ const TOMA_BANNER_CONFIG = {
 
 
 /* =====================================================
-   BLOC 2 — ÉTAT DE L'APPLICATION
+   BLOC 2 — ÉTAT
 ===================================================== */
 
 const TOMA_BANNERS_STATE = {
@@ -87,27 +73,15 @@ const TOMA_BANNERS_STATE = {
 
     documents: {},
 
-    selectedFiles: {
-        main: [],
-        categories: [],
-        officialStores: []
-    },
+    availableImages: {},
 
-    previewUrls: {
-        main: [],
-        categories: [],
-        officialStores: []
-    },
-
-    removedExistingImages: {
+    selectedImages: {
         main: [],
         categories: [],
         officialStores: []
     },
 
     saving: {},
-
-    initialized: false,
 
     listenersInitialized: false
 
@@ -128,17 +102,14 @@ const adminMessage = document.getElementById("adminMessage");
 
 
 /* =====================================================
-   BLOC 4 — MESSAGES VISIBLES
+   BLOC 4 — MESSAGES
 ===================================================== */
 
 function showAdminMessage(message, type = "success") {
 
     if (!adminMessage) {
-
         alert(message);
-
         return;
-
     }
 
     adminMessage.textContent = message;
@@ -194,9 +165,7 @@ function showAccessDenied(show) {
 
 async function checkAdminPermission(user) {
 
-    if (!user) {
-        return false;
-    }
+    if (!user) return false;
 
     try {
 
@@ -204,9 +173,7 @@ async function checkAdminPermission(user) {
 
         const userSnapshot = await getDoc(userRef);
 
-        if (!userSnapshot.exists()) {
-            return false;
-        }
+        if (!userSnapshot.exists()) return false;
 
         const userData = userSnapshot.data();
 
@@ -218,13 +185,10 @@ async function checkAdminPermission(user) {
 
     } catch (error) {
 
-        console.error(
-            "Erreur de vérification du rôle :",
-            error
-        );
+        console.error("Erreur de permission :", error);
 
         showAdminMessage(
-            "Não foi possível verificar as permissões. Verifica a tua ligação e tenta novamente.",
+            "Não foi possível verificar as permissões.",
             "error"
         );
 
@@ -236,47 +200,52 @@ async function checkAdminPermission(user) {
 
 
 /* =====================================================
-   BLOC 6 — OUTILS POUR LES IMAGES
+   BLOC 6 — CHARGEMENT DU CATALOGUE D'IMAGES
 ===================================================== */
 
-function getExistingImages(bannerId) {
+async function loadBannerManifest() {
 
-    const data =
-        TOMA_BANNERS_STATE.documents[bannerId] || {};
+    const response = await fetch(
+        TOMA_BANNER_MANIFEST,
+        { cache: "no-store" }
+    );
 
-    if (Array.isArray(data.images)) {
+    if (!response.ok) {
 
-        return data.images
-
-            .filter(item =>
-                item &&
-                typeof item.url === "string" &&
-                item.url.trim()
-            )
-
-            .map(item => ({
-                url: item.url,
-                publicId: item.publicId || ""
-            }));
+        throw new Error(
+            "Não foi possível carregar banner-images.json."
+        );
 
     }
 
-    if (
-        typeof data.image === "string" &&
-        data.image.trim()
-    ) {
+    const manifest = await response.json();
 
-        return [{
-            url: data.image,
-            publicId: data.publicId || ""
-        }];
+    for (const bannerId of Object.keys(TOMA_BANNER_CONFIG)) {
+
+        const images = manifest[bannerId];
+
+        if (!Array.isArray(images)) {
+
+            throw new Error(
+                `Lista de imagens inválida: ${bannerId}.`
+            );
+
+        }
+
+        TOMA_BANNERS_STATE.availableImages[bannerId] =
+            images.filter(image =>
+                typeof image === "string" &&
+                image.trim() !== ""
+            );
 
     }
-
-    return [];
 
 }
 
+
+/* =====================================================
+   BLOC 7 — OUTILS
+===================================================== */
 
 function createElement(tag, className, text) {
 
@@ -295,28 +264,33 @@ function createElement(tag, className, text) {
 }
 
 
-function releasePreviewUrls(bannerId) {
+function getSavedImages(bannerId) {
 
-    const urls =
-        TOMA_BANNERS_STATE.previewUrls[bannerId] || [];
+    const data =
+        TOMA_BANNERS_STATE.documents[bannerId] || {};
 
-    urls.forEach(url => {
+    if (Array.isArray(data.images)) {
 
-        try {
-            URL.revokeObjectURL(url);
-        } catch (error) {
-            // URL déjà libérée.
-        }
+        return data.images
+            .map(item => {
+                if (typeof item === "string") return item;
+                return item?.url || "";
+            })
+            .filter(Boolean);
 
-    });
+    }
 
-    TOMA_BANNERS_STATE.previewUrls[bannerId] = [];
+    if (data.image) {
+        return [data.image];
+    }
+
+    return [];
 
 }
 
 
 /* =====================================================
-   BLOC 7 — PRÉVISUALISATION MULTI-IMAGES
+   BLOC 8 — GALERIE DE SÉLECTION
 ===================================================== */
 
 function renderBannerPreview(bannerId) {
@@ -327,71 +301,27 @@ function renderBannerPreview(bannerId) {
         config.preview
     );
 
-    if (!preview) {
-        return;
-    }
+    if (!preview) return;
 
     preview.replaceChildren();
 
     preview.classList.add("bannerGalleryPreview");
 
-    const existingImages = getExistingImages(bannerId);
+    const available =
+        TOMA_BANNERS_STATE.availableImages[bannerId] || [];
 
-    const removedIndexes =
-        TOMA_BANNERS_STATE.removedExistingImages[bannerId];
+    const selected =
+        TOMA_BANNERS_STATE.selectedImages[bannerId] || [];
 
-    const visibleExistingImages = existingImages
+    if (available.length === 0) {
 
-        .map((image, index) => ({
-            ...image,
-            originalIndex: index
-        }))
-
-        .filter(image =>
-            !removedIndexes.includes(image.originalIndex)
+        preview.appendChild(
+            createElement(
+                "p",
+                "previewPlaceholder",
+                "Nenhuma imagem disponível neste espaço."
+            )
         );
-
-    const selectedFiles =
-        TOMA_BANNERS_STATE.selectedFiles[bannerId] || [];
-
-    const selectedPreviewUrls =
-        TOMA_BANNERS_STATE.previewUrls[bannerId] || [];
-
-    const totalImages =
-        visibleExistingImages.length + selectedFiles.length;
-
-    if (totalImages === 0) {
-
-        const placeholder = createElement(
-            "div",
-            "previewPlaceholder"
-        );
-
-        const icon = createElement(
-            "span",
-            "material-symbols-rounded",
-            "add_photo_alternate"
-        );
-
-        const title = createElement(
-            "strong",
-            "",
-            "Nenhuma imagem selecionada"
-        );
-
-        const description = createElement(
-            "small",
-            "",
-            "Seleciona uma ou várias imagens."
-        );
-
-        placeholder.append(
-            icon,
-            title,
-            description
-        );
-
-        preview.appendChild(placeholder);
 
         return;
 
@@ -402,152 +332,101 @@ function renderBannerPreview(bannerId) {
         "bannerImageGallery"
     );
 
-
-    // Images déjà enregistrées.
-
-    visibleExistingImages.forEach(image => {
+    available.forEach(imagePath => {
 
         const card = createElement(
-            "div",
+            "label",
             "bannerImageItem"
         );
 
+        const checkbox = createElement("input");
+
+        checkbox.type = "checkbox";
+
+        checkbox.checked = selected.includes(imagePath);
+
+        checkbox.addEventListener("change", () => {
+
+            const current =
+                TOMA_BANNERS_STATE.selectedImages[bannerId];
+
+            if (checkbox.checked) {
+
+                if (current.length >= TOMA_MAX_IMAGES) {
+
+                    checkbox.checked = false;
+
+                    showAdminMessage(
+                        `Máximo de ${TOMA_MAX_IMAGES} imagens por banner.`,
+                        "warning"
+                    );
+
+                    return;
+
+                }
+
+                if (!current.includes(imagePath)) {
+                    current.push(imagePath);
+                }
+
+            } else {
+
+                const index = current.indexOf(imagePath);
+
+                if (index !== -1) {
+                    current.splice(index, 1);
+                }
+
+            }
+
+            renderBannerPreview(bannerId);
+
+            updateBannerStatus(bannerId);
+
+            updateBannerSummary();
+
+        });
+
         const img = createElement("img");
 
-        img.src = image.url;
+        img.src = imagePath;
 
         img.alt = config.label;
 
         img.loading = "lazy";
 
+        img.onerror = () => {
+            img.alt = "Imagem indisponível";
+            img.style.opacity = "0.3";
+        };
+
+        const name = createElement(
+            "small",
+            "bannerImageName",
+            imagePath.split("/").pop()
+        );
+
         const badge = createElement(
             "span",
             "bannerImageBadge",
-            "Guardada"
+            checkbox.checked ? "Selecionada" : "Selecionar"
         );
-
-        const removeButton = createElement(
-            "button",
-            "removeBannerImage"
-        );
-
-        removeButton.type = "button";
-
-        removeButton.textContent = "×";
-
-        removeButton.setAttribute(
-            "aria-label",
-            "Remover imagem guardada"
-        );
-
-        removeButton.title =
-            "Remover esta imagem quando guardar";
-
-        removeButton.addEventListener("click", () => {
-
-            const confirmed = window.confirm(
-                "Queres remover esta imagem da banner? A remoção será aplicada quando guardares as alterações."
-            );
-
-            if (!confirmed) {
-                return;
-            }
-
-            TOMA_BANNERS_STATE
-                .removedExistingImages[bannerId]
-                .push(image.originalIndex);
-
-            renderBannerPreview(bannerId);
-
-            updateBannerStatus(bannerId);
-
-            updateBannerSummary();
-
-        });
 
         card.append(
+            checkbox,
             img,
-            badge,
-            removeButton
+            name,
+            badge
         );
 
         gallery.appendChild(card);
 
     });
-
-
-    // Nouvelles images sélectionnées.
-
-    selectedFiles.forEach((file, index) => {
-
-        const card = createElement(
-            "div",
-            "bannerImageItem"
-        );
-
-        const img = createElement("img");
-
-        img.src = selectedPreviewUrls[index];
-
-        img.alt = file.name;
-
-        const badge = createElement(
-            "span",
-            "bannerImageBadge newImageBadge",
-            "Nova"
-        );
-
-        const removeButton = createElement(
-            "button",
-            "removeBannerImage"
-        );
-
-        removeButton.type = "button";
-
-        removeButton.textContent = "×";
-
-        removeButton.setAttribute(
-            "aria-label",
-            "Remover imagem selecionada"
-        );
-
-        removeButton.addEventListener("click", () => {
-
-            URL.revokeObjectURL(
-                selectedPreviewUrls[index]
-            );
-
-            TOMA_BANNERS_STATE
-                .selectedFiles[bannerId]
-                .splice(index, 1);
-
-            TOMA_BANNERS_STATE
-                .previewUrls[bannerId]
-                .splice(index, 1);
-
-            renderBannerPreview(bannerId);
-
-            updateBannerStatus(bannerId);
-
-            updateBannerSummary();
-
-        });
-
-        card.append(
-            img,
-            badge,
-            removeButton
-        );
-
-        gallery.appendChild(card);
-
-    });
-
 
     const counter = createElement(
         "div",
         "bannerGalleryCounter",
-        `${totalImages} imagem(ns)`
+        `${selected.length} / ${TOMA_MAX_IMAGES} imagens selecionadas`
     );
 
     preview.append(
@@ -559,266 +438,14 @@ function renderBannerPreview(bannerId) {
 
 
 /* =====================================================
-   BLOC 8 — SÉLECTION DES FICHIERS
-===================================================== */
-
-function handleImageSelection(bannerId, event) {
-
-    const input = event.target;
-
-    const files = Array.from(input.files || []);
-
-    if (files.length === 0) {
-        return;
-    }
-
-    const acceptedFiles = [];
-
-    const rejectedFiles = [];
-
-    for (const file of files) {
-
-        if (!TOMA_ALLOWED_TYPES.includes(file.type)) {
-
-            rejectedFiles.push(
-                `${file.name}: formato não suportado`
-            );
-
-            continue;
-
-        }
-
-        if (file.size > TOMA_MAX_FILE_SIZE) {
-
-            rejectedFiles.push(
-                `${file.name}: excede 10 MB`
-            );
-
-            continue;
-
-        }
-
-        acceptedFiles.push(file);
-
-    }
-
-
-    const currentFiles =
-        TOMA_BANNERS_STATE.selectedFiles[bannerId];
-
-    const currentUrls =
-        TOMA_BANNERS_STATE.previewUrls[bannerId];
-
-    const existingImages = getExistingImages(bannerId);
-
-    const removedIndexes =
-        TOMA_BANNERS_STATE.removedExistingImages[bannerId];
-
-    const existingCount = existingImages.filter(
-        (image, index) =>
-            !removedIndexes.includes(index)
-    ).length;
-
-    const availableSlots = Math.max(
-        0,
-        TOMA_MAX_IMAGES - existingCount - currentFiles.length
-    );
-
-    const filesToAdd = acceptedFiles.slice(
-        0,
-        availableSlots
-    );
-
-    if (acceptedFiles.length > availableSlots) {
-
-        rejectedFiles.push(
-            `Máximo de ${TOMA_MAX_IMAGES} imagens por banner.`
-        );
-
-    }
-
-
-    filesToAdd.forEach(file => {
-
-        currentFiles.push(file);
-
-        currentUrls.push(
-            URL.createObjectURL(file)
-        );
-
-    });
-
-
-    input.value = "";
-
-    renderBannerPreview(bannerId);
-
-    updateBannerStatus(bannerId);
-
-    updateBannerSummary();
-
-
-    if (rejectedFiles.length > 0) {
-
-        showAdminMessage(
-            "Algumas imagens não foram adicionadas:\n" +
-            rejectedFiles.join("\n"),
-            "warning"
-        );
-
-    } else if (filesToAdd.length > 0) {
-
-        showAdminMessage(
-            `${filesToAdd.length} imagem(ns) adicionada(s). Guarda a banner para confirmar.`,
-            "success"
-        );
-
-    }
-
-}
-
-
-function initializeImagePickers() {
-
-    Object.entries(TOMA_BANNER_CONFIG).forEach(
-        ([bannerId, config]) => {
-
-            const input = document.getElementById(
-                config.imageInput
-            );
-
-            if (!input) {
-                return;
-            }
-
-            input.multiple = true;
-
-            input.accept =
-                "image/jpeg,image/png,image/webp";
-
-            input.addEventListener("change", event => {
-
-                handleImageSelection(
-                    bannerId,
-                    event
-                );
-
-            });
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   BLOC 9 — UPLOAD CLOUDINARY
-===================================================== */
-
-async function uploadImageToCloudinary(file, bannerId) {
-
-    if (!file) {
-        throw new Error("Nenhuma imagem selecionada.");
-    }
-
-    if (!TOMA_ALLOWED_TYPES.includes(file.type)) {
-        throw new Error(
-            "Formato de imagem não suportado. Utiliza JPG, PNG ou WEBP."
-        );
-    }
-
-    if (file.size > TOMA_MAX_FILE_SIZE) {
-        throw new Error("A imagem não pode ultrapassar 10 MB.");
-    }
-
-    if (!auth.currentUser) {
-        throw new Error(
-            "A sessão expirou. Inicia sessão novamente."
-        );
-    }
-
-    const formData = new FormData();
-
-    formData.append("file", file);
-
-    formData.append(
-        "upload_preset",
-        CLOUDINARY_UPLOAD_PRESET
-    );
-
-    let response;
-
-    try {
-
-        response = await fetch(CLOUDINARY_URL, {
-            method: "POST",
-            body: formData
-        });
-
-    } catch (error) {
-
-        throw new Error(
-            "Não foi possível contactar o Cloudinary. Verifica a ligação à Internet."
-        );
-
-    }
-
-    let result;
-
-    try {
-
-        result = await response.json();
-
-    } catch (error) {
-
-        throw new Error(
-            "Resposta inválida do Cloudinary."
-        );
-
-    }
-
-    if (!response.ok) {
-
-        const message =
-            result?.error?.message ||
-            "Erro desconhecido no Cloudinary.";
-
-        throw new Error(
-            `Falha no upload da imagem (${response.status}): ${message}`
-        );
-
-    }
-
-    if (
-        typeof result.secure_url !== "string" ||
-        !result.secure_url.trim()
-    ) {
-
-        throw new Error(
-            "O Cloudinary não devolveu o endereço da imagem."
-        );
-
-    }
-
-    return {
-        url: result.secure_url,
-        publicId: result.public_id || ""
-    };
-
-}
-
-
-/* =====================================================
-   BLOC 10 — VALIDATION DU LIEN
+   BLOC 9 — VALIDATION DU LIEN
 ===================================================== */
 
 function validateBannerLink(value) {
 
     const link = String(value || "").trim();
 
-    if (!link) {
-        return "";
-    }
+    if (!link) return "";
 
     if (/^javascript:/i.test(link)) {
 
@@ -834,16 +461,9 @@ function validateBannerLink(value) {
 
             const url = new URL(link);
 
-            if (
-                url.protocol !== "https:" &&
-                url.protocol !== "http:"
-            ) {
-                throw new Error();
-            }
-
             return url.href;
 
-        } catch (error) {
+        } catch {
 
             throw new Error(
                 "O link de destino não é válido."
@@ -857,16 +477,8 @@ function validateBannerLink(value) {
         link.startsWith("/") ||
         link.startsWith("./") ||
         link.startsWith("../") ||
-        link.startsWith("#")
-    ) {
-
-        return link;
-
-    }
-
-    if (
-        !link.includes(":") &&
-        !link.startsWith("//")
+        link.startsWith("#") ||
+        !link.includes(":")
     ) {
 
         return link;
@@ -874,14 +486,14 @@ function validateBannerLink(value) {
     }
 
     throw new Error(
-        "Introduz um link interno ou um endereço HTTP/HTTPS válido."
+        "Introduz um link válido."
     );
 
 }
 
 
 /* =====================================================
-   BLOC 11 — CHARGEMENT FIRESTORE
+   BLOC 10 — CHARGEMENT FIRESTORE
 ===================================================== */
 
 async function loadBanner(bannerId) {
@@ -902,45 +514,35 @@ async function loadBanner(bannerId) {
 
     const config = TOMA_BANNER_CONFIG[bannerId];
 
+    const savedImages = getSavedImages(bannerId);
+
+    const available =
+        TOMA_BANNERS_STATE.availableImages[bannerId] || [];
+
+    TOMA_BANNERS_STATE.selectedImages[bannerId] =
+        savedImages.filter(image => available.includes(image));
 
     if (config.title) {
 
-        const titleInput = document.getElementById(
-            config.title
-        );
+        const input = document.getElementById(config.title);
 
-        if (titleInput) {
-            titleInput.value = data.title || "";
-        }
+        if (input) input.value = data.title || "";
 
     }
-
 
     if (config.subtitle) {
 
-        const subtitleInput = document.getElementById(
-            config.subtitle
-        );
+        const input = document.getElementById(config.subtitle);
 
-        if (subtitleInput) {
-            subtitleInput.value = data.subtitle || "";
-        }
+        if (input) input.value = data.subtitle || "";
 
     }
 
+    const linkInput = document.getElementById(config.link);
 
-    const linkInput = document.getElementById(
-        config.link
-    );
+    if (linkInput) linkInput.value = data.link || "";
 
-    if (linkInput) {
-        linkInput.value = data.link || "";
-    }
-
-
-    const activeInput = document.getElementById(
-        config.active
-    );
+    const activeInput = document.getElementById(config.active);
 
     if (activeInput) {
 
@@ -951,13 +553,6 @@ async function loadBanner(bannerId) {
 
     }
 
-
-    TOMA_BANNERS_STATE.selectedFiles[bannerId] = [];
-
-    TOMA_BANNERS_STATE.removedExistingImages[bannerId] = [];
-
-    releasePreviewUrls(bannerId);
-
     renderBannerPreview(bannerId);
 
     updateBannerStatus(bannerId);
@@ -966,40 +561,23 @@ async function loadBanner(bannerId) {
 
 
 /* =====================================================
-   BLOC 12 — ÉTAT DES BANNIÈRES
+   BLOC 11 — ÉTAT DES BANNIÈRES
 ===================================================== */
 
 function updateBannerStatus(bannerId) {
 
     const config = TOMA_BANNER_CONFIG[bannerId];
 
-    const status = document.getElementById(
-        config.status
-    );
+    const status = document.getElementById(config.status);
 
-    if (!status) {
-        return;
-    }
+    if (!status) return;
 
-    const data =
-        TOMA_BANNERS_STATE.documents[bannerId] || {};
+    const selected =
+        TOMA_BANNERS_STATE.selectedImages[bannerId] || [];
 
-    const existingImages = getExistingImages(bannerId);
+    const activeInput = document.getElementById(config.active);
 
-    const removedIndexes =
-        TOMA_BANNERS_STATE.removedExistingImages[bannerId] || [];
-
-    const remainingImages = existingImages.filter(
-        (image, index) =>
-            !removedIndexes.includes(index)
-    );
-
-    const selectedFiles =
-        TOMA_BANNERS_STATE.selectedFiles[bannerId] || [];
-
-    const imageCount =
-        remainingImages.length + selectedFiles.length;
-
+    const active = Boolean(activeInput?.checked);
 
     status.classList.remove(
         "pending",
@@ -1007,14 +585,13 @@ function updateBannerStatus(bannerId) {
         "inactive"
     );
 
-
-    if (data.active === true && imageCount > 0) {
+    if (active && selected.length > 0) {
 
         status.textContent = "Ativa";
 
         status.classList.add("active");
 
-    } else if (data.active === false) {
+    } else if (!active) {
 
         status.textContent = "Inativa";
 
@@ -1032,7 +609,7 @@ function updateBannerStatus(bannerId) {
 
 
 /* =====================================================
-   BLOC 13 — RÉSUMÉ
+   BLOC 12 — RÉSUMÉ
 ===================================================== */
 
 function updateBannerSummary() {
@@ -1045,57 +622,34 @@ function updateBannerSummary() {
         "activeBanners"
     );
 
-    const bannerIds = Object.keys(
-        TOMA_BANNER_CONFIG
-    );
-
+    const bannerIds = Object.keys(TOMA_BANNER_CONFIG);
 
     if (totalElement) {
-
-        totalElement.textContent = String(
-            bannerIds.length
-        );
-
+        totalElement.textContent = String(bannerIds.length);
     }
-
 
     const activeCount = bannerIds.filter(bannerId => {
 
-        const data =
-            TOMA_BANNERS_STATE.documents[bannerId] || {};
+        const config = TOMA_BANNER_CONFIG[bannerId];
 
-        const images = getExistingImages(bannerId);
+        const selected =
+            TOMA_BANNERS_STATE.selectedImages[bannerId] || [];
 
-        const removedIndexes =
-            TOMA_BANNERS_STATE.removedExistingImages[bannerId] || [];
+        const activeInput = document.getElementById(config.active);
 
-        const remainingImages = images.filter(
-            (image, index) =>
-                !removedIndexes.includes(index)
-        );
-
-        const selectedFiles =
-            TOMA_BANNERS_STATE.selectedFiles[bannerId] || [];
-
-        return data.active === true &&
-            remainingImages.length + selectedFiles.length > 0;
+        return selected.length > 0 && Boolean(activeInput?.checked);
 
     }).length;
 
-
     if (activeElement) {
-
-        activeElement.textContent = String(
-            activeCount
-        );
-
+        activeElement.textContent = String(activeCount);
     }
 
 }
 
 
 /* =====================================================
-   BLOC 14 — SAUVEGARDE D'UNE BANNIÈRE
+   BLOC 13 — SAUVEGARDE FIRESTORE
 ===================================================== */
 
 async function saveBanner(bannerId) {
@@ -1111,95 +665,46 @@ async function saveBanner(bannerId) {
 
     }
 
-
-    if (TOMA_BANNERS_STATE.saving[bannerId]) {
-        return;
-    }
-
+    if (TOMA_BANNERS_STATE.saving[bannerId]) return;
 
     const config = TOMA_BANNER_CONFIG[bannerId];
 
-    const button = document.querySelector(
-        config.button
-    );
+    const button = document.querySelector(config.button);
 
+    const originalText = button?.textContent || "";
 
     TOMA_BANNERS_STATE.saving[bannerId] = true;
-
-
-    const originalButtonText = button
-        ? button.textContent
-        : "";
-
 
     if (button) {
 
         button.disabled = true;
 
-        button.textContent = "A guardar imagens...";
+        button.textContent = "A guardar...";
 
     }
 
-
     try {
 
-        const previousData =
-            TOMA_BANNERS_STATE.documents[bannerId] || {};
+        const selected =
+            TOMA_BANNERS_STATE.selectedImages[bannerId] || [];
 
+        if (selected.length > TOMA_MAX_IMAGES) {
 
-        const linkInput = document.getElementById(
-            config.link
-        );
+            throw new Error(
+                `Máximo de ${TOMA_MAX_IMAGES} imagens.`
+            );
 
-        const activeInput = document.getElementById(
-            config.active
-        );
+        }
 
+        const linkInput = document.getElementById(config.link);
 
-        const link = validateBannerLink(
-            linkInput?.value || ""
-        );
+        const activeInput = document.getElementById(config.active);
 
+        const link = validateBannerLink(linkInput?.value || "");
 
-        const active = Boolean(
-            activeInput?.checked
-        );
+        const active = Boolean(activeInput?.checked);
 
-
-        const title = config.title
-            ? document.getElementById(config.title)?.value.trim() || ""
-            : previousData.title || "";
-
-
-        const subtitle = config.subtitle
-            ? document.getElementById(config.subtitle)?.value.trim() || ""
-            : previousData.subtitle || "";
-
-
-        const existingImages = getExistingImages(
-            bannerId
-        );
-
-
-        const removedIndexes =
-            TOMA_BANNERS_STATE.removedExistingImages[bannerId];
-
-
-        const retainedImages = existingImages.filter(
-            (image, index) =>
-                !removedIndexes.includes(index)
-        );
-
-
-        const selectedFiles =
-            TOMA_BANNERS_STATE.selectedFiles[bannerId];
-
-
-        if (
-            retainedImages.length === 0 &&
-            selectedFiles.length === 0 &&
-            active
-        ) {
+        if (active && selected.length === 0) {
 
             throw new Error(
                 "Seleciona pelo menos uma imagem ou desativa esta banner."
@@ -1207,49 +712,16 @@ async function saveBanner(bannerId) {
 
         }
 
+        const previousData =
+            TOMA_BANNERS_STATE.documents[bannerId] || {};
 
-        if (
-            retainedImages.length + selectedFiles.length > TOMA_MAX_IMAGES
-        ) {
+        const title = config.title
+            ? document.getElementById(config.title)?.value.trim() || ""
+            : previousData.title || "";
 
-            throw new Error(
-                `Cada banner pode ter no máximo ${TOMA_MAX_IMAGES} imagens.`
-            );
-
-        }
-
-
-        const uploadedImages = [];
-
-        for (
-            let index = 0;
-            index < selectedFiles.length;
-            index++
-        ) {
-
-            if (button) {
-
-                button.textContent =
-                    `A enviar imagem ${index + 1} de ${selectedFiles.length}...`;
-
-            }
-
-            const uploadedImage =
-                await uploadImageToCloudinary(
-                    selectedFiles[index],
-                    bannerId
-                );
-
-            uploadedImages.push(uploadedImage);
-
-        }
-
-
-        const finalImages = [
-            ...retainedImages,
-            ...uploadedImages
-        ];
-
+        const subtitle = config.subtitle
+            ? document.getElementById(config.subtitle)?.value.trim() || ""
+            : previousData.subtitle || "";
 
         const user = auth.currentUser;
 
@@ -1261,7 +733,6 @@ async function saveBanner(bannerId) {
 
         }
 
-
         const bannerData = {
 
             title,
@@ -1272,7 +743,14 @@ async function saveBanner(bannerId) {
 
             active,
 
-            images: finalImages,
+            images: selected.map(url => ({
+                url,
+                publicId: ""
+            })),
+
+            image: selected[0] || "",
+
+            publicId: "",
 
             updatedAt: serverTimestamp(),
 
@@ -1280,72 +758,32 @@ async function saveBanner(bannerId) {
 
         };
 
-
-        bannerData.image =
-            finalImages.length > 0
-                ? finalImages[0].url
-                : "";
-
-        bannerData.publicId =
-            finalImages.length > 0
-                ? finalImages[0].publicId
-                : "";
-
-
-        if (button) {
-
-            button.textContent = "A guardar no Firebase...";
-
-        }
-
-
         await setDoc(
-            doc(
-                db,
-                TOMA_BANNERS_COLLECTION,
-                bannerId
-            ),
+            doc(db, TOMA_BANNERS_COLLECTION, bannerId),
             bannerData,
             { merge: true }
         );
-
 
         TOMA_BANNERS_STATE.documents[bannerId] = {
             ...previousData,
             ...bannerData
         };
 
-
-        TOMA_BANNERS_STATE.selectedFiles[bannerId] = [];
-
-        TOMA_BANNERS_STATE.removedExistingImages[bannerId] = [];
-
-
-        releasePreviewUrls(bannerId);
-
-        renderBannerPreview(bannerId);
-
         updateBannerStatus(bannerId);
 
         updateBannerSummary();
 
-
         showAdminMessage(
-            `${config.label}: alterações guardadas com sucesso! ${finalImages.length} imagem(ns) guardada(s).`,
+            `${config.label}: ${selected.length} imagem(ns) guardada(s) com sucesso!`,
             "success"
         );
 
-
     } catch (error) {
 
-        console.error(
-            `Erro ao guardar ${bannerId}:`,
-            error
-        );
+        console.error("Erro ao guardar banner:", error);
 
         showAdminMessage(
-            error.message ||
-            "Não foi possível guardar a banner. Tenta novamente.",
+            error.message || "Não foi possível guardar a banner.",
             "error"
         );
 
@@ -1357,7 +795,7 @@ async function saveBanner(bannerId) {
 
             button.disabled = false;
 
-            button.textContent = originalButtonText;
+            button.textContent = originalText;
 
         }
 
@@ -1367,7 +805,7 @@ async function saveBanner(bannerId) {
 
 
 /* =====================================================
-   BLOC 15 — INITIALISATION DES BOUTONS
+   BLOC 14 — BOUTONS
 ===================================================== */
 
 function initializeSaveButtons() {
@@ -1375,18 +813,12 @@ function initializeSaveButtons() {
     Object.entries(TOMA_BANNER_CONFIG).forEach(
         ([bannerId, config]) => {
 
-            const button = document.querySelector(
-                config.button
-            );
+            const button = document.querySelector(config.button);
 
-            if (!button) {
-                return;
-            }
+            if (!button) return;
 
             button.addEventListener("click", () => {
-
                 saveBanner(bannerId);
-
             });
 
         }
@@ -1396,19 +828,15 @@ function initializeSaveButtons() {
 
 
 /* =====================================================
-   BLOC 16 — MISE À JOUR EN DIRECT
+   BLOC 15 — MISE À JOUR EN DIRECT
 ===================================================== */
 
 function initializeLiveUpdates() {
 
-    Object.keys(TOMA_BANNER_CONFIG).forEach(
-        bannerId => {
+    Object.entries(TOMA_BANNER_CONFIG).forEach(
+        ([bannerId, config]) => {
 
-            const config = TOMA_BANNER_CONFIG[bannerId];
-
-            const activeInput = document.getElementById(
-                config.active
-            );
+            const activeInput = document.getElementById(config.active);
 
             if (activeInput) {
 
@@ -1429,7 +857,7 @@ function initializeLiveUpdates() {
 
 
 /* =====================================================
-   BLOC 17 — CHARGEMENT DU PANNEAU
+   BLOC 16 — INITIALISATION
 ===================================================== */
 
 async function initializeAdminBanners(user) {
@@ -1440,17 +868,13 @@ async function initializeAdminBanners(user) {
 
     showAccessDenied(false);
 
-
     const authorized = await checkAdminPermission(user);
-
 
     if (!authorized) {
 
         TOMA_BANNERS_STATE.authorized = false;
 
         showLoading(false);
-
-        showAdminContent(false);
 
         showAccessDenied(true);
 
@@ -1463,15 +887,13 @@ async function initializeAdminBanners(user) {
 
     }
 
-
     TOMA_BANNERS_STATE.authorized = true;
-
 
     try {
 
-        if (!TOMA_BANNERS_STATE.listenersInitialized) {
+        await loadBannerManifest();
 
-            initializeImagePickers();
+        if (!TOMA_BANNERS_STATE.listenersInitialized) {
 
             initializeSaveButtons();
 
@@ -1481,20 +903,11 @@ async function initializeAdminBanners(user) {
 
         }
 
-
-        const bannerIds = Object.keys(
-            TOMA_BANNER_CONFIG
-        );
-
-
-        for (const bannerId of bannerIds) {
+        for (const bannerId of Object.keys(TOMA_BANNER_CONFIG)) {
 
             await loadBanner(bannerId);
 
         }
-
-
-        TOMA_BANNERS_STATE.initialized = true;
 
         updateBannerSummary();
 
@@ -1504,29 +917,16 @@ async function initializeAdminBanners(user) {
 
         showAccessDenied(false);
 
-
     } catch (error) {
 
-        console.error(
-            "Erro ao carregar as banners:",
-            error
-        );
+        console.error("Erro ao inicializar banners:", error);
 
         showLoading(false);
 
         showAdminContent(false);
 
-
-        const errorCode = error?.code || "sem código";
-
-        const errorMessage =
-            error?.message || "Erro desconhecido";
-
-
         showAdminMessage(
-            "ERRO AO CARREGAR AS BANNERS\n\n" +
-            "Código: " + errorCode + "\n\n" +
-            "Detalhes: " + errorMessage,
+            "Erro ao carregar as banners: " + error.message,
             "error"
         );
 
@@ -1536,7 +936,7 @@ async function initializeAdminBanners(user) {
 
 
 /* =====================================================
-   BLOC 18 — AUTHENTIFICATION
+   BLOC 17 — AUTHENTIFICATION
 ===================================================== */
 
 onAuthStateChanged(auth, async user => {
@@ -1561,7 +961,7 @@ onAuthStateChanged(auth, async user => {
 
 
 /* =====================================================
-   BLOC 19 — STYLES COMPLÉMENTAIRES
+   BLOC 18 — STYLES COMPLÉMENTAIRES
 ===================================================== */
 
 (function addBannerGalleryStyles() {
@@ -1588,12 +988,24 @@ onAuthStateChanged(auth, async user => {
 
         .bannerImageItem {
             position: relative;
+            display: block;
             min-width: 0;
             overflow: hidden;
             border-radius: 12px;
             background: #f1f5f9;
             aspect-ratio: 16 / 10;
-            border: 1px solid #e2e8f0;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+        }
+
+        .bannerImageItem input {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            z-index: 2;
+            width: 20px;
+            height: 20px;
+            accent-color: #2563eb;
         }
 
         .bannerImageItem img {
@@ -1603,39 +1015,33 @@ onAuthStateChanged(auth, async user => {
             object-fit: cover;
         }
 
-        .bannerImageBadge {
+        .bannerImageName {
             position: absolute;
             left: 7px;
             bottom: 7px;
-            max-width: calc(100% - 42px);
             padding: 4px 7px;
-            border-radius: 6px;
-            background: rgba(15, 23, 42, 0.82);
+            border-radius: 5px;
+            background: rgba(15, 23, 42, 0.85);
+            color: white;
+            font-size: 10px;
+            max-width: calc(100% - 14px);
+            overflow-wrap: anywhere;
+        }
+
+        .bannerImageBadge {
+            position: absolute;
+            right: 7px;
+            top: 7px;
+            padding: 4px 7px;
+            border-radius: 5px;
+            background: #2563eb;
             color: white;
             font-size: 10px;
             font-weight: 700;
         }
 
-        .newImageBadge {
-            background: #2563eb;
-        }
-
-        .removeBannerImage {
-            position: absolute;
-            top: 6px;
-            right: 6px;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 0;
-            border-radius: 50%;
-            background: rgba(220, 38, 38, 0.95);
-            color: white;
-            font-size: 23px;
-            line-height: 1;
-            cursor: pointer;
+        .bannerImageItem:has(input:checked) {
+            border-color: #2563eb;
         }
 
         .bannerGalleryCounter {
