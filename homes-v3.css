@@ -965,3 +965,1207 @@ img {
 /* =====================================================
    FIM DA PARTE 1/2
 ===================================================== */
+/* =====================================================
+   TOMA V3 — DESIGN PREMIUM
+   PARTIE 2/2
+   Product Cards • Official Stores • Categories
+   Secondary Banners • Bottom Navigation • Toast
+===================================================== */
+
+
+/* =====================================================
+   11 — CATEGORY CARDS
+===================================================== */
+
+.categoriesGrid .v3CategoryCard {
+    min-width: 0;
+    min-height: 135px;
+
+    padding: 13px 8px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 11px;
+
+    border: 1px solid var(--toma-border);
+    border-radius: 17px;
+
+    background: white;
+
+    box-shadow: var(--toma-shadow);
+
+    transition: var(--toma-transition);
+}
+
+.v3CategoryCard:hover {
+    transform: translateY(-4px);
+
+    border-color: #B9D2FA;
+
+    box-shadow:
+        0 9px 25px rgba(7,85,217,0.10);
+}
+
+.v3CategoryImageWrapper {
+    width: 76px;
+    height: 76px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    border-radius: 50%;
+
+    background: #F0F5FF;
+}
+
+.v3CategoryImage {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    transition: transform 0.35s ease;
+}
+
+.v3CategoryCard:hover .v3CategoryImage {
+    transform: scale(1.08);
+}
+
+.v3CategoryFallbackIcon {
+    font-size: 35px;
+    color: var(--toma-blue);
+}
+
+.v3CategoryName {
+    max-width: 100%;
+
+    color: var(--toma-text);
+
+    font-size: 12px;
+    font-weight: 750;
+
+    text-align: center;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* =====================================================
+   12 — PRODUCT SECTIONS
+===================================================== */
+
+.productsScroller {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 17px;
+
+    align-items: stretch;
+}
+
+
+/* =====================================================
+   13 — PRODUCT CARD
+===================================================== */
+
+.v3ProductCard {
+    min-width: 0;
+
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    background: white;
+
+    border: 1px solid #E9EDF4;
+
+    border-radius: 17px;
+
+    box-shadow:
+        0 4px 15px rgba(23,43,77,0.055);
+
+    cursor: pointer;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+}
+
+.v3ProductCard:hover {
+    transform: translateY(-5px);
+
+    border-color: #D5E3F9;
+
+    box-shadow:
+        0 12px 28px rgba(23,43,77,0.11);
+}
+
+
+/* PRODUCT IMAGE */
+
+.v3ProductImageWrapper {
+    width: 100%;
+
+    height: 190px;
+
+    position: relative;
+
+    overflow: hidden;
+
+    background: #F3F5F8;
+}
+
+.v3ProductImage {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center;
+
+    transition: transform 0.4s ease;
+}
+
+.v3ProductCard:hover .v3ProductImage {
+    transform: scale(1.05);
+}
+
+
+/* PRODUCT BADGE */
+
+.v3ProductBadge {
+    position: absolute;
+
+    top: 11px;
+    left: 10px;
+
+    max-width: calc(100% - 20px);
+
+    padding: 6px 10px;
+
+    border-radius: 7px;
+
+    background: var(--toma-blue);
+
+    color: white;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    box-shadow:
+        0 3px 9px rgba(0,0,0,0.12);
+}
+
+
+/* PRODUCT INFORMATION */
+
+.v3ProductInfo {
+    flex: 1;
+
+    padding: 13px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 11px;
+}
+
+.v3ProductName {
+    min-height: 37px;
+
+    display: -webkit-box;
+
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    overflow: hidden;
+
+    color: #253047;
+
+    font-size: 13px;
+    line-height: 1.45;
+
+    font-weight: 700;
+}
+
+
+/* PRODUCT PRICE */
+
+.v3ProductPrice {
+    min-height: 25px;
+
+    display: flex;
+    flex-wrap: wrap;
+
+    align-items: center;
+
+    gap: 6px;
+
+    color: var(--toma-blue);
+
+    font-size: 15px;
+    font-weight: 850;
+}
+
+.v3ProductOldPrice {
+    color: #A0A7B3;
+
+    font-size: 10px;
+    font-weight: 500;
+}
+
+.v3ProductPromotionPrice {
+    color: #E5484D;
+
+    font-size: 15px;
+    font-weight: 850;
+}
+
+.v3ProductDiscountBadge {
+    padding: 4px 6px;
+
+    border-radius: 5px;
+
+    background: #FFF0F0;
+
+    color: #E5484D;
+
+    font-size: 9px;
+    font-weight: 850;
+}
+
+
+/* PRODUCT ACTIONS */
+
+.v3ProductActions {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: auto;
+}
+
+.v3FavoriteButton {
+    width: 39px;
+    height: 39px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #E5EAF1;
+
+    border-radius: 10px;
+
+    background: white;
+
+    color: #E54865;
+
+    font-size: 22px;
+
+    transition: var(--toma-transition);
+}
+
+.v3FavoriteButton:hover,
+.v3FavoriteButton[aria-pressed="true"] {
+    background: #FFF0F3;
+
+    border-color: #FFD3DC;
+}
+
+.v3AddToCartButton {
+    min-width: 0;
+    height: 39px;
+
+    flex: 1;
+
+    padding: 0 9px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: var(--toma-blue);
+
+    color: white;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    transition: var(--toma-transition);
+}
+
+.v3AddToCartButton:hover {
+    background: var(--toma-blue-dark);
+}
+
+.v3AddToCartButton:active {
+    transform: scale(0.97);
+}
+
+
+/* EMPTY STATES */
+
+.v3EmptyMessage {
+    grid-column: 1 / -1;
+
+    width: 100%;
+
+    padding: 25px 15px;
+
+    border: 1px dashed #D9E2EF;
+
+    border-radius: 14px;
+
+    background: white;
+
+    color: var(--toma-muted);
+
+    font-size: 12px;
+
+    line-height: 1.6;
+
+    text-align: center;
+}
+
+
+/* =====================================================
+   14 — OFFICIAL STORES
+===================================================== */
+
+#officialStoresGridV3 {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 17px;
+}
+
+
+/* STORE CARD */
+
+.officialStoreCard {
+    min-width: 0;
+
+    overflow: hidden;
+
+    background: white;
+
+    border: 1px solid var(--toma-border);
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 5px 18px rgba(23,43,77,0.06);
+
+    transition: var(--toma-transition);
+}
+
+.officialStoreCard:hover {
+    transform: translateY(-5px);
+
+    border-color: #C8DCF9;
+
+    box-shadow:
+        0 12px 27px rgba(7,85,217,0.10);
+}
+
+.officialStoreCardLink {
+    min-height: 205px;
+
+    padding: 22px 14px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 13px;
+
+    text-align: center;
+}
+
+
+/* STORE LOGO */
+
+.officialStoreLogoWrapper {
+    width: 95px;
+    height: 95px;
+
+    flex-shrink: 0;
+
+    padding: 7px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    border: 1px solid #E9EDF4;
+
+    border-radius: 50%;
+
+    background: white;
+
+    box-shadow:
+        0 4px 13px rgba(23,43,77,0.07);
+}
+
+.officialStoreLogo {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    border-radius: 50%;
+}
+
+
+/* STORE NAME */
+
+.officialStoreName {
+    width: 100%;
+
+    display: -webkit-box;
+
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    overflow: hidden;
+
+    color: var(--toma-text);
+
+    font-size: 14px;
+    font-weight: 800;
+
+    line-height: 1.4;
+}
+
+
+/* STORE DISCOVER */
+
+.officialStoreDiscover {
+    min-height: 33px;
+
+    padding: 0 14px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: var(--toma-blue-light);
+
+    color: var(--toma-blue);
+
+    font-size: 11px;
+    font-weight: 800;
+
+    transition: var(--toma-transition);
+}
+
+.officialStoreCard:hover .officialStoreDiscover {
+    background: var(--toma-blue);
+
+    color: white;
+}
+
+
+/* =====================================================
+   15 — SECONDARY BANNERS
+===================================================== */
+
+#categoriesBannerSlider,
+#officialStoresBannerSlider {
+    width: 100%;
+
+    position: relative;
+
+    overflow: hidden;
+
+    border-radius: 19px;
+
+    background: #EAF2FF;
+
+    box-shadow: var(--toma-shadow);
+}
+
+.homeBannerSlide {
+    width: 100%;
+
+    overflow: hidden;
+}
+
+.homeBannerSlide img {
+    width: 100%;
+
+    height: 190px;
+
+    object-fit: cover;
+    object-position: center;
+}
+
+#categoriesBannerSection,
+#officialStoresBannerSection {
+    margin-bottom: 35px;
+}
+
+
+/* =====================================================
+   16 — BRAND MESSAGE
+===================================================== */
+
+.tomaBrandMessage {
+    width: 100%;
+
+    padding: 23px;
+
+    margin: 15px 0 35px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 17px;
+
+    border-radius: 17px;
+
+    background: linear-gradient(
+        115deg,
+        #0648BD,
+        #0755D9
+    );
+
+    color: white;
+}
+
+.brandMessageIcon {
+    width: 48px;
+    height: 48px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    background: rgba(255,255,255,0.15);
+
+    font-size: 26px;
+}
+
+.brandMessageText {
+    color: white;
+
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+
+/* =====================================================
+   17 — BOTTOM NAVIGATION
+===================================================== */
+
+.bottomNavigation {
+    position: fixed;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    z-index: 200;
+
+    min-height: 70px;
+
+    padding:
+        9px 12px
+        calc(9px + env(safe-area-inset-bottom));
+
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    background: rgba(255,255,255,0.97);
+
+    border-top: 1px solid #E8EDF5;
+
+    box-shadow:
+        0 -5px 20px rgba(23,43,77,0.07);
+
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+}
+
+.bottomNavItem {
+    min-width: 48px;
+
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    color: #929BAA;
+
+    font-size: 10px;
+    font-weight: 650;
+
+    transition: var(--toma-transition);
+}
+
+.bottomNavIconWrapper {
+    position: relative;
+
+    width: 37px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    transition: var(--toma-transition);
+}
+
+.bottomNavIconWrapper .material-symbols-rounded {
+    font-size: 23px;
+}
+
+.bottomNavItem.active {
+    color: var(--toma-blue);
+}
+
+.bottomNavItem.active .bottomNavIconWrapper {
+    background: var(--toma-blue-light);
+}
+
+.bottomNavItem .notificationBadge {
+    top: -5px;
+    right: -8px;
+}
+
+
+/* =====================================================
+   18 — TOAST NOTIFICATIONS
+===================================================== */
+
+#homeToastContainer {
+    position: fixed;
+
+    top: 90px;
+    left: 50%;
+
+    z-index: 1000;
+
+    width: min(90%, 380px);
+
+    transform: translateX(-50%);
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 9px;
+
+    pointer-events: none;
+}
+
+.homeToast {
+    padding: 14px 17px;
+
+    border-radius: 12px;
+
+    background: #172033;
+
+    color: white;
+
+    font-size: 12px;
+    font-weight: 650;
+
+    line-height: 1.5;
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,0.16);
+
+    opacity: 0;
+
+    transform: translateY(-10px);
+
+    transition: 0.3s ease;
+}
+
+.homeToast.show {
+    opacity: 1;
+
+    transform: translateY(0);
+}
+
+.homeToast-success {
+    background: #138A5B;
+}
+
+.homeToast-error {
+    background: #D83C48;
+}
+
+.homeToast-info {
+    background: #0755D9;
+}
+
+
+/* =====================================================
+   19 — TABLET
+===================================================== */
+
+@media (max-width: 900px) {
+
+    .tomaMain {
+        padding: 22px 4%;
+    }
+
+    .productsScroller,
+    #officialStoresGridV3 {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+
+    .categoriesGrid {
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+    }
+
+    .v3ProductImageWrapper {
+        height: 175px;
+    }
+
+}
+
+
+/* =====================================================
+   20 — MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+    body.toma-home-v3 {
+        padding-bottom: 90px;
+    }
+
+    .tomaHeader {
+        min-height: 65px;
+
+        padding: 10px 13px;
+
+        gap: 8px;
+    }
+
+    .tomaBrand {
+        gap: 8px;
+    }
+
+    .tomaBrandIcon {
+        width: 38px;
+        height: 38px;
+
+        border-radius: 11px;
+
+        font-size: 23px;
+    }
+
+    .tomaBrandText strong {
+        font-size: 20px;
+    }
+
+    .tomaBrandText small {
+        font-size: 9px;
+    }
+
+    .headerActions {
+        gap: 6px;
+    }
+
+    .iconButton,
+    .profileButton {
+        width: 37px;
+        height: 37px;
+
+        border-radius: 11px;
+    }
+
+    .iconButton .material-symbols-rounded {
+        font-size: 20px;
+    }
+
+    .profileButton {
+        border-radius: 50%;
+    }
+
+    .tomaMain {
+        padding: 17px 13px;
+    }
+
+    .searchBar {
+        min-height: 52px;
+
+        padding-left: 13px;
+    }
+
+    .searchPlaceholder {
+        font-size: 12px;
+    }
+
+    .roleShortcuts {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 9px;
+    }
+
+    .roleShortcut {
+        min-height: 67px;
+
+        padding: 9px;
+
+        gap: 8px;
+    }
+
+    .roleShortcutIcon {
+        width: 34px;
+        height: 34px;
+
+        font-size: 19px;
+    }
+
+    .roleShortcutText strong {
+        font-size: 11px;
+    }
+
+    .roleShortcutText small {
+        font-size: 9px;
+    }
+
+    .heroSlider,
+    .heroSlide {
+        min-height: 175px;
+
+        border-radius: 16px;
+    }
+
+    .heroSlideContent {
+        padding: 21px;
+    }
+
+    .heroSlideTitle {
+        max-width: 85%;
+
+        font-size: 23px;
+    }
+
+    .heroSlideSubtitle {
+        max-width: 85%;
+
+        font-size: 11px;
+    }
+
+    .heroSlideButton {
+        min-height: 36px;
+
+        padding: 0 14px;
+
+        font-size: 10px;
+    }
+
+    .trustSection {
+        padding: 14px 9px;
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+        gap: 5px;
+
+        border-radius: 14px;
+    }
+
+    .trustItem {
+        flex-direction: column;
+
+        gap: 7px;
+
+        text-align: center;
+    }
+
+    .trustIcon {
+        width: 35px;
+        height: 35px;
+
+        font-size: 19px;
+    }
+
+    .trustText {
+        gap: 3px;
+    }
+
+    .trustText strong {
+        font-size: 9px;
+    }
+
+    .trustText small {
+        font-size: 8px;
+    }
+
+    .homeSection {
+        margin-bottom: 30px;
+    }
+
+    .sectionHeading {
+        margin-bottom: 14px;
+    }
+
+    .sectionTitleGroup {
+        gap: 9px;
+    }
+
+    .sectionTitleIcon {
+        width: 36px;
+        height: 36px;
+
+        font-size: 19px;
+    }
+
+    .sectionTitleGroup h2 {
+        font-size: 15px;
+    }
+
+    .sectionTitleGroup p {
+        font-size: 9px;
+    }
+
+    .seeAllLink {
+        font-size: 10px;
+    }
+
+    .categoriesGrid {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+        gap: 10px;
+    }
+
+    .categoriesGrid .v3CategoryCard {
+        min-height: 115px;
+
+        padding: 10px 5px;
+
+        gap: 8px;
+
+        border-radius: 14px;
+    }
+
+    .v3CategoryImageWrapper {
+        width: 65px;
+        height: 65px;
+    }
+
+    .v3CategoryName {
+        font-size: 10px;
+    }
+
+    .productsScroller,
+    #officialStoresGridV3 {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 11px;
+    }
+
+    .v3ProductImageWrapper {
+        height: 145px;
+    }
+
+    .v3ProductInfo {
+        padding: 10px;
+
+        gap: 9px;
+    }
+
+    .v3ProductName {
+        min-height: 35px;
+
+        font-size: 11px;
+    }
+
+    .v3ProductPrice {
+        font-size: 13px;
+    }
+
+    .v3ProductPromotionPrice {
+        font-size: 13px;
+    }
+
+    .v3ProductOldPrice {
+        font-size: 9px;
+    }
+
+    .v3ProductDiscountBadge {
+        font-size: 8px;
+    }
+
+    .v3ProductActions {
+        gap: 6px;
+    }
+
+    .v3FavoriteButton {
+        width: 34px;
+        height: 35px;
+
+        font-size: 19px;
+    }
+
+    .v3AddToCartButton {
+        height: 35px;
+
+        font-size: 10px;
+    }
+
+    .v3ProductBadge {
+        top: 8px;
+        left: 7px;
+
+        padding: 5px 7px;
+
+        font-size: 9px;
+    }
+
+    .officialStoreCardLink {
+        min-height: 175px;
+
+        padding: 16px 9px;
+
+        gap: 10px;
+    }
+
+    .officialStoreLogoWrapper {
+        width: 75px;
+        height: 75px;
+    }
+
+    .officialStoreName {
+        font-size: 12px;
+    }
+
+    .officialStoreDiscover {
+        min-height: 29px;
+
+        padding: 0 10px;
+
+        font-size: 10px;
+    }
+
+    .homeBannerSlide img {
+        height: 125px;
+    }
+
+    .tomaBrandMessage {
+        padding: 16px;
+
+        gap: 11px;
+    }
+
+    .brandMessageIcon {
+        width: 40px;
+        height: 40px;
+
+        font-size: 21px;
+    }
+
+    .brandMessageText {
+        font-size: 11px;
+    }
+
+    .bottomNavigation {
+        min-height: 65px;
+
+        padding-top: 7px;
+    }
+
+    .bottomNavItem {
+        font-size: 9px;
+    }
+
+}
+
+
+/* =====================================================
+   21 — PETITS ÉCRANS
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .tomaMain {
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+
+    .headerActions {
+        gap: 4px;
+    }
+
+    .iconButton,
+    .profileButton {
+        width: 34px;
+        height: 34px;
+    }
+
+    .tomaBrandText strong {
+        font-size: 18px;
+    }
+
+    .v3ProductImageWrapper {
+        height: 125px;
+    }
+
+    .v3ProductInfo {
+        padding: 8px;
+    }
+
+    .v3ProductName {
+        font-size: 10px;
+    }
+
+    .v3AddToCartButton {
+        font-size: 9px;
+    }
+
+}
+
+
+/* =====================================================
+   FIN — TOMA V3 PREMIUM CSS
+===================================================== */
