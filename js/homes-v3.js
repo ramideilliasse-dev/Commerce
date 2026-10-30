@@ -455,11 +455,11 @@ function tomaV3CreateBanner(banner, index) {
 
     slide.className = "heroSlide";
 
-    slide.hidden = index !== tomaV3BannerIndex;
+ slide.hidden = false;
 
     const image = document.createElement("img");
 
-    image.className = "heroImage";
+    image.className = "heroSlideImage";
     image.src = banner.image;
     image.alt = banner.title || "Promoção Toma";
     image.loading = index === 0 ? "eager" : "lazy";
