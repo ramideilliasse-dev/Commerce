@@ -1745,3 +1745,128 @@ onAuthStateChanged(auth, async user => {
     document.head.appendChild(style);
 
 })();
+/* =====================================================
+   BLOC 14 — DIAGNOSTIC DIRECT CLOUDINARY
+   Ne modifie pas Firestore.
+===================================================== */
+
+async function diagnoseCloudinaryBannerUpload() {
+
+    try {
+
+        const fileInput = document.createElement("input");
+
+        fileInput.type = "file";
+        fileInput.accept = "image/jpeg,image/png,image/webp";
+
+        fileInput.onchange = async () => {
+
+            const file = fileInput.files?.[0];
+
+            if (!file) {
+                alert("DIAGNOSTIC: nenhuma imagem selecionada.");
+                return;
+            }
+
+            const preset = CLOUDINARY_UPLOAD_PRESET;
+            const cloudName = CLOUDINARY_CLOUD_NAME;
+
+            const formData = new FormData();
+
+            formData.append("file", file);
+            formData.append("upload_preset", preset);
+
+            alert(
+                "DIAGNÓSTICO DIRETO CLOUDINARY\n\n" +
+                "Cloud: " + cloudName + "\n" +
+                "Preset: " + preset + "\n" +
+                "Tipo: " + file.type + "\n" +
+                "Tamanho: " + Math.round(file.size / 1024) + " KB\n\n" +
+                "A enviar imagem diretamente..."
+            );
+
+            let response;
+
+            try {
+
+                response = await fetch(
+                    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+
+            } catch (error) {
+
+                alert(
+                    "FALHA DE REDE\n\n" +
+                    String(error.message || error)
+                );
+
+                return;
+            }
+
+            const responseText = await response.text();
+
+            let result;
+
+            try {
+                result = JSON.parse(responseText);
+            } catch {
+                result = { rawResponse: responseText };
+            }
+
+            if (response.ok) {
+
+                alert(
+                    "UPLOAD DIRETO: SUCESSO!\n\n" +
+                    "HTTP: " + response.status + "\n" +
+                    "URL: " + (result.secure_url || "Não recebida") + "\n" +
+                    "Public ID: " + (result.public_id || "Não recebido") +
+                    "\n\nA imagem foi enviada para Cloudinary. " +
+                    "Este teste não altera Firestore."
+                );
+
+            } else {
+
+                alert(
+                    "UPLOAD DIRETO: FALHOU\n\n" +
+                    "HTTP: " + response.status + "\n" +
+                    "Cloud: " + cloudName + "\n" +
+                    "Preset: " + preset + "\n" +
+                    "Resposta Cloudinary:\n" +
+                    JSON.stringify(result, null, 2)
+                );
+
+            }
+
+        };
+
+        fileInput.click();
+
+    } catch (error) {
+
+        alert(
+            "ERRO NO DIAGNÓSTICO\n\n" +
+            String(error.message || error)
+        );
+
+    }
+
+}
+const cloudinaryDiagnosticButton = document.createElement("button");
+
+cloudinaryDiagnosticButton.type = "button";
+cloudinaryDiagnosticButton.textContent = "Diagnóstico Cloudinary";
+cloudinaryDiagnosticButton.style.cssText =
+    "position:fixed;bottom:15px;right:15px;z-index:99999;" +
+    "padding:12px;background:#1565c0;color:white;" +
+    "border:0;border-radius:8px;";
+
+cloudinaryDiagnosticButton.addEventListener(
+    "click",
+    diagnoseCloudinaryBannerUpload
+);
+
+document.body.appendChild(cloudinaryDiagnosticButton);
