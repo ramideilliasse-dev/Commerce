@@ -560,13 +560,22 @@ function tomaV3ShowBanner(index) {
 
     slides.forEach((slide, slideIndex) => {
 
-        slide.hidden = slideIndex !== tomaV3BannerIndex;
+        const isActive = slideIndex === tomaV3BannerIndex;
+
+        slide.hidden = false;
+
+        slide.classList.toggle("active", isActive);
+
+        slide.style.display = isActive ? "flex" : "none";
+
+        slide.style.opacity = isActive ? "1" : "0";
+
+        slide.style.visibility = isActive ? "visible" : "hidden";
 
     });
 
     tomaV3UpdateBannerDots();
 }
-
 // ------------------------------------------------------
 // 3.5 — Créer les boutons de navigation
 // ------------------------------------------------------
