@@ -759,10 +759,8 @@ async function uploadImageToCloudinary(file, bannerId) {
 
     const formData = new FormData();
 
-    formData.append("file", file);
-    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
-    formData.append("folder", `toma/banners/${bannerId}`);
-
+formData.append("file", file);
+formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
     // Diagnóstico: confirma os parâmetros enviados.
     const presetEnviado = formData.get("upload_preset");
     const cloudName = CLOUDINARY_CLOUD_NAME;
