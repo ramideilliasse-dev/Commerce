@@ -2627,3 +2627,28 @@ html.dark-mode .loadingSkeleton::after {
 /* =========================================================
    FIM DO DESIGN TOMA V3
 ========================================================= */
+/* =========================================
+   TOMA V3 — BANNERS SECONDAIRES
+========================================= */
+
+.homeBannerSection {
+    width: 100%;
+    margin: 22px 0;
+}
+
+.homeBannerSlider {
+    width: 100%;
+    height: 110px;
+    overflow: hidden;
+    border-radius: 14px;
+    position: relative;
+}
+
+/* Images des deux bannières secondaires */
+.homeBannerSlider img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    border-radius: 14px;
+}
