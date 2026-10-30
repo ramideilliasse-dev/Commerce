@@ -2652,3 +2652,44 @@ html.dark-mode .loadingSkeleton::after {
     object-fit: cover;
     border-radius: 14px;
 }
+/* =========================================
+   TOMA V3 — BANNERS SECUNDÁRIOS
+========================================= */
+
+.homeBannerSection {
+    width: 100%;
+    margin: 22px 0;
+}
+
+.homeBannerSlider {
+    position: relative;
+    width: 100%;
+    height: 110px;
+    overflow: hidden;
+    border-radius: 14px;
+}
+
+.homeBannerSlide {
+    width: 100%;
+    height: 100%;
+}
+
+.homeBannerSlide[hidden] {
+    display: none;
+}
+
+.homeBannerSlide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 14px;
+}
+
+@media (max-width: 600px) {
+
+    .homeBannerSlider {
+        height: 95px;
+    }
+
+}
