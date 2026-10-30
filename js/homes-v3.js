@@ -465,20 +465,12 @@ function tomaV3CreateBanner(banner, index) {
     image.loading = index === 0 ? "eager" : "lazy";
 
     image.onload = () => {
-    alert(
-        "TOMA — IMAGE CHARGÉE\n\n" +
-        "URL : " + image.src + "\n" +
-        "Largeur : " + image.naturalWidth + "\n" +
-        "Hauteur : " + image.naturalHeight
-    );
+    console.log("[TOMA] Image chargée :", image.src);
 };
 
 image.onerror = () => {
-    alert(
-        "TOMA — ERREUR DE CHARGEMENT\n\n" +
-        "URL : " + image.src
-    );
-};  
+    console.error("[TOMA] Erreur de chargement :", image.src);
+};
  const overlay = document.createElement("div");
 
     overlay.className = "heroOverlay";
