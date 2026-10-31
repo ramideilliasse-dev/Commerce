@@ -2169,3 +2169,225 @@ img {
 /* =====================================================
    FIN — TOMA V3 PREMIUM CSS
 ===================================================== */
+/* =====================================================
+   TOMA V3 — BLOC 3
+   HEADER FIXE + HERO + NAVIGATION + VER TUDO
+===================================================== */
+
+/* 1. HEADER SUPERIEUR FIXE */
+.tomaHeader {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    background: #0757c9;
+    box-shadow: 0 3px 14px rgba(0, 35, 90, 0.16);
+}
+
+/* Evite que les éléments du header se déforment */
+.tomaHeader,
+.tomaHeader * {
+    box-sizing: border-box;
+}
+
+.tomaBrand,
+.headerActions {
+    flex-shrink: 0;
+}
+
+/* 2. BANNIERE PRINCIPALE PLUS GRANDE */
+.heroSection {
+    width: 100%;
+    margin: 0 auto 24px;
+}
+
+.heroSlider {
+    position: relative;
+    width: 100%;
+    height: clamp(280px, 42vw, 460px);
+    min-height: 280px;
+    overflow: hidden;
+    border-radius: 18px;
+}
+
+/* Image plus visible, sans déformation */
+.heroSlide {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 280px;
+    overflow: hidden;
+}
+
+.heroSlideImage {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    background: #eaf1fb;
+}
+
+/* Texte lisible sur la bannière */
+.heroOverlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    padding: clamp(18px, 4vw, 42px);
+    background: linear-gradient(
+        90deg,
+        rgba(3, 30, 75, 0.82) 0%,
+        rgba(3, 30, 75, 0.42) 48%,
+        rgba(3, 30, 75, 0.04) 100%
+    );
+}
+
+.heroContent {
+    width: 100%;
+    max-width: 560px;
+    color: #ffffff;
+}
+
+.heroTitle {
+    font-size: clamp(23px, 3.5vw, 40px);
+    line-height: 1.15;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+.heroSubtitle {
+    font-size: clamp(13px, 1.6vw, 16px);
+    line-height: 1.6;
+    margin-bottom: 18px;
+}
+
+.heroLink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 11px 21px;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #0757c9;
+    font-weight: 750;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.heroLink:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+/* 3. ICÔNES DE LA NAVIGATION INFERIEURE */
+.bottomNavigation {
+    z-index: 999;
+}
+
+.bottomNavItem {
+    min-height: 62px;
+}
+
+.bottomNavIconWrapper {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bottomNavIconWrapper .material-symbols-rounded,
+.bottomNavIconWrapper .material-icons,
+.bottomNavIconWrapper .material-symbols-outlined,
+.bottomNavIconWrapper i,
+.bottomNavIconWrapper svg {
+    font-size: 27px;
+    width: 27px;
+    height: 27px;
+}
+
+/* 4. BOUTONS « VER TUDO » MODERNES */
+.seeAllLink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 38px;
+    padding: 8px 15px;
+    border: 1px solid rgba(7, 87, 201, 0.16);
+    border-radius: 999px;
+    background: #edf4ff;
+    color: #0757c9;
+    font-size: 13px;
+    font-weight: 750;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.seeAllLink:hover {
+    background: #0757c9;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 13px rgba(7, 87, 201, 0.2);
+}
+
+.seeAllLink:active {
+    transform: scale(0.97);
+}
+
+/* ADAPTATION POUR IPHONE */
+@media (max-width: 600px) {
+    .heroSlider {
+        height: 320px;
+        min-height: 320px;
+        border-radius: 14px;
+    }
+
+    .heroSlide {
+        min-height: 320px;
+    }
+
+    .heroSlideImage {
+        object-fit: contain;
+    }
+
+    .heroOverlay {
+        padding: 18px;
+    }
+
+    .heroTitle {
+        font-size: 24px;
+    }
+
+    .heroSubtitle {
+        font-size: 13px;
+        line-height: 1.45;
+    }
+
+    .bottomNavIconWrapper {
+        width: 32px;
+        height: 32px;
+    }
+
+    .bottomNavIconWrapper .material-symbols-rounded,
+    .bottomNavIconWrapper .material-icons,
+    .bottomNavIconWrapper .material-symbols-outlined,
+    .bottomNavIconWrapper i,
+    .bottomNavIconWrapper svg {
+        font-size: 29px;
+        width: 29px;
+        height: 29px;
+    }
+
+    .seeAllLink {
+        min-height: 36px;
+        padding: 7px 12px;
+        font-size: 12px;
+    }
+}
