@@ -2391,3 +2391,43 @@ img {
         font-size: 12px;
     }
 }
+/* TOMA V3 — BANNIÈRE PRINCIPALE PLEINE SURFACE */
+
+.heroSlider {
+    position: relative;
+    overflow: hidden;
+}
+
+.heroSlide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.heroSlideImage {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Le texte reste visible au-dessus de l'image */
+.heroOverlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+}
+
+/* Affichage sur iPhone */
+@media (max-width: 600px) {
+    .heroSlider {
+        height: 320px;
+        min-height: 320px;
+    }
+}
