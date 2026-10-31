@@ -2379,66 +2379,86 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 // ======================================================
 // TOMA V3 — BLOC 12
-// Connexion de la recherche depuis la page d'accueil
+// Recherche fonctionnelle depuis la page d'accueil
 // ======================================================
 
 function tomaV3InitializeSearch() {
 
-    const searchButton =
-        tomaV3GetElement("homeSearchBtn");
+    const searchForm =
+        document.getElementById("homeSearchForm");
 
-    if (!searchButton) {
+    const searchInput =
+        document.getElementById("homeSearchInput");
+
+    // Vérifier que le formulaire et le champ existent
+    if (!searchForm || !searchInput) {
 
         console.warn(
-            "[TOMA V3 — BLOC 12] Bouton de recherche introuvable."
+            "[TOMA V3 — BLOC 12] Formulaire ou champ de recherche introuvable."
         );
 
         return;
     }
 
-    // Éviter d'initialiser plusieurs fois la recherche
-    if (searchButton.dataset.searchInitialized === "true") {
+    // Éviter une double initialisation
+    if (searchForm.dataset.searchInitialized === "true") {
         return;
     }
 
-    searchButton.dataset.searchInitialized = "true";
+    searchForm.dataset.searchInitialized = "true";
 
-    searchButton.addEventListener("click", () => {
+    // Laisser l'utilisateur écrire normalement dans le champ
+    searchInput.addEventListener("click", function () {
+        searchInput.focus();
+    });
 
-        window.location.href = "./search.html";
+    // Rechercher au moment où l'utilisateur valide le formulaire
+    searchForm.addEventListener("submit", function (event) {
+
+        event.preventDefault();
+
+        const searchText = searchInput.value.trim();
+
+        if (!searchText) {
+
+            searchInput.focus();
+
+            alert("Introduza o nome de um produto para pesquisar.");
+
+            return;
+        }
+
+        // Transmettre le texte à la page de recherche
+        const searchUrl =
+            "./search.html?q=" + encodeURIComponent(searchText);
+
+        window.location.href = searchUrl;
 
     });
 
     console.info(
-        "[TOMA V3 — BLOC 12] Recherche initialisée."
+        "[TOMA V3 — BLOC 12] Pesquisa inicializada com sucesso."
     );
 }
 
 
 // ------------------------------------------------------
-// 12.1 — Démarrer la recherche
+// 12.1 — Initialiser la recherche
 // ------------------------------------------------------
 
-document.addEventListener("DOMContentLoaded", () => {
+if (document.readyState === "loading") {
 
-    try {
+    document.addEventListener(
+        "DOMContentLoaded",
+        tomaV3InitializeSearch,
+        { once: true }
+    );
 
-        tomaV3InitializeSearch();
+} else {
 
-    } catch (error) {
+    tomaV3InitializeSearch();
 
-        console.error(
-            "[TOMA V3 — BLOC 12] Erreur :",
-            error
-        );
-
-        alert(
-            "Toma : não foi possível abrir a pesquisa."
-        );
-
-    }
-
-});
+}
 // ======================================================
 // TOMA V3 — BLOC 13
 // Bannières après catégories et boutiques officielles
@@ -2674,3 +2694,113 @@ document.addEventListener("DOMContentLoaded", () => {
     tomaV3LoadOfficialStoresBanner();
 
 });
+// ======================================================
+// TOMA V3 — BLOC 14
+// Fonctionnement des boutons du header
+// ======================================================
+
+function tomaV3InitializeHeaderButtons() {
+
+    // --------------------------------------------------
+    // 14.1 — Notifications
+    // --------------------------------------------------
+
+    const notificationsBtn =
+        document.getElementById("notificationsBtn");
+
+    if (notificationsBtn &&
+        notificationsBtn.dataset.initialized !== "true") {
+
+        notificationsBtn.dataset.initialized = "true";
+
+        notificationsBtn.addEventListener("click", function () {
+
+            window.location.href = "./notifications.html";
+
+        });
+    }
+
+
+    // --------------------------------------------------
+    // 14.2 — Panier
+    // --------------------------------------------------
+
+    const cartBtn =
+        document.getElementById("headerCartBtn");
+
+    if (cartBtn &&
+        cartBtn.dataset.initialized !== "true") {
+
+        cartBtn.dataset.initialized = "true";
+
+        cartBtn.addEventListener("click", function () {
+
+            window.location.href = "./carte.html";
+
+        });
+    }
+
+
+    // --------------------------------------------------
+    // 14.3 — Support client
+    // --------------------------------------------------
+
+    const supportBtn =
+        document.getElementById("headerSupportBtn");
+
+    if (supportBtn &&
+        supportBtn.dataset.initialized !== "true") {
+
+        supportBtn.dataset.initialized = "true";
+
+        supportBtn.addEventListener("click", function () {
+
+            window.location.href = "./support.html";
+
+        });
+    }
+
+
+    // --------------------------------------------------
+    // 14.4 — Profil et paramètres
+    // --------------------------------------------------
+
+    const profileBtn =
+        document.getElementById("headerProfileBtn");
+
+    if (profileBtn &&
+        profileBtn.dataset.initialized !== "true") {
+
+        profileBtn.dataset.initialized = "true";
+
+        profileBtn.addEventListener("click", function () {
+
+            window.location.href = "./settings.html";
+
+        });
+    }
+
+
+    console.info(
+        "[TOMA V3 — BLOC 14] Botões do header inicializados."
+    );
+}
+
+
+// ------------------------------------------------------
+// 14.5 — Initialisation sécurisée
+// ------------------------------------------------------
+
+if (document.readyState === "loading") {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        tomaV3InitializeHeaderButtons,
+        { once: true }
+    );
+
+} else {
+
+    tomaV3InitializeHeaderButtons();
+
+}
