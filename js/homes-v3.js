@@ -2735,7 +2735,7 @@ function tomaV3InitializeHeaderButtons() {
 
         cartBtn.addEventListener("click", function () {
 
-            window.location.href = "./carte.html";
+            window.location.href = "./cart.html";
 
         });
     }
