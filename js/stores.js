@@ -196,188 +196,149 @@ function getStoreStatus(store) {
 
 async function loadOfficialStores() {
 
+    // Afficher l'état de chargement.
+
     storesGrid.innerHTML = `
-
         <div class="loadingState">
-
             <div class="loader"></div>
-
             <p>A carregar lojas oficiais...</p>
-
         </div>
-
     `;
 
     unavailableStoresGrid.innerHTML = "";
 
+    const rentalStoresGrid =
+        document.getElementById("rentalStoresGrid");
+
+    const rentalStoresCount =
+        document.getElementById("rentalStoresCount");
+
+
+    if (rentalStoresGrid) {
+        rentalStoresGrid.innerHTML = `
+            <div class="loadingState">
+                <div class="loader"></div>
+                <p>A carregar espaços comerciais...</p>
+            </div>
+        `;
+    }
+
+
     try {
 
         console.log(
-            "TOMA STORES — Connexion Firestore..."
+            "TOMA STORES — A carregar documentos Firestore..."
         );
 
 
-        // Récupérer toute la collection.
+        // Récupérer tous les documents de la collection.
 
         const snapshot = await getDocs(
-
             collection(db, COLLECTION_NAME)
-
-        );
-
-
-        console.log(
-            "TOMA STORES — DOCUMENTS FIREBASE:",
-            snapshot.size
         );
 
 
         // Transformer les documents en objets JavaScript.
 
         const firebaseStores = snapshot.docs.map(document => ({
-
             ...document.data(),
-
             id: document.id
-
         }));
 
 
-        console.log(
-            "TOMA STORES — DONNÉES FIREBASE:",
-            firebaseStores
+        // Répartir les documents selon settings.visible.
+        // Les documents sans valeur explicite sont exclus.
+
+        const visibleStores = firebaseStores.filter(store =>
+            store.settings?.visible === true
+        );
+
+        const hiddenStores = firebaseStores.filter(store =>
+            store.settings?.visible === false
         );
 
 
-        // DIAGNOSTIC DES BOUTIQUES.
+        // Conserver uniquement les lojas visibles
+        // dans la variable utilisée par les catégories,
+        // la recherche et les cartes classiques.
 
-        const diagnostic = firebaseStores.map(store => ({
-
-            id: store.id,
-
-            name: store.name,
-
-            visible: store.settings?.visible,
-
-            status: store.status,
-
-            verified: store.verified,
-
-            maintenanceMode:
-                store.settings?.maintenanceMode
-
-        }));
+        allStores = visibleStores;
 
 
-        console.table(diagnostic);
+        // Conserver les espaces à louer dans une variable dédiée.
+        // Le BLOC 8 utilisera cette liste pour les afficher.
+
+        window.tomaRentalStores = hiddenStores;
 
 
-        // Filtrer les boutiques visibles.
+        // Mettre à jour le compteur des espaces à louer.
 
-        allStores = firebaseStores.filter(store => {
-
-            return isStoreVisible(store);
-
-        });
-
-
-        console.log(
-            "TOMA STORES — BOUTIQUES VISIBLES:",
-            allStores.length
-        );
-
-
-        // Afficher le diagnostic.
-
-        alert(
-
-            "TOMA STORES — RESULTADO FIREBASE\n\n" +
-
-            "Documentos encontrados: " +
-            snapshot.size +
-
-            "\nLojas visíveis: " +
-            allStores.length +
-
-            "\n\n" +
-
-            JSON.stringify(diagnostic, null, 2)
-
-        );
-
-
-        // Aucune boutique visible.
-
-        if (allStores.length === 0) {
-
-            storesGrid.innerHTML = `
-
-                <div class="loadingState">
-
-                    <span class="material-symbols-rounded">
-                        storefront
-                    </span>
-
-                    <p>
-                        Nenhuma loja oficial disponível.
-                    </p>
-
-                </div>
-
-            `;
-
-            unavailableStoresGrid.innerHTML = "";
-
-            activeStoresCount.textContent = "0 lojas";
-
-            unavailableStoresCount.textContent = "0 lojas";
-
-            if (emptySearch) {
-
-                emptySearch.hidden = true;
-
-            }
-
-            renderCategoryFilters();
-
-            return;
-
+        if (rentalStoresCount) {
+            rentalStoresCount.textContent =
+                `${hiddenStores.length} espaços`;
         }
 
 
-        // Afficher les catégories.
+        // Préparer le compteur des lojas indisponibles.
+        // Le BLOC 8 déterminera ensuite les statuts exacts.
+
+        unavailableStoresCount.textContent = "0 lojas";
+
+
+        // Informations de diagnostic dans la console.
+
+        console.log("TOMA STORES — Résultat du chargement", {
+            totalDocuments: snapshot.size,
+            visibleStores: visibleStores.length,
+            hiddenStores: hiddenStores.length,
+            documentsWithoutVisibility:
+                firebaseStores.filter(store =>
+                    typeof store.settings?.visible !== "boolean"
+                ).length
+        });
+
+
+        // Afficher les catégories des lojas visibles.
 
         renderCategoryFilters();
 
 
-        // Afficher les boutiques.
+        // Afficher les lojas disponibles et indisponibles.
+        // Le BLOC 8 sera adapté ensuite pour afficher
+        // les espaces à louer dans leur section dédiée.
 
         renderStores();
 
 
-        alert(
+        // Préparer la section de location si elle existe.
 
-            "TOMA STORES — SUCESSO\n\n" +
+        if (rentalStoresGrid && hiddenStores.length === 0) {
+            rentalStoresGrid.innerHTML = `
+                <div class="loadingState">
+                    <span class="material-symbols-rounded">
+                        storefront
+                    </span>
+                    <p>Nenhum espaço disponível para alugar.</p>
+                </div>
+            `;
+        }
 
-            allStores.length +
 
-            " lojas visíveis foram carregadas."
-
+        console.log(
+            "TOMA STORES — Carregamento concluído."
         );
 
 
     } catch (error) {
 
         console.error(
-            "TOMA STORES — FIREBASE ERROR:",
+            "TOMA STORES — Erro Firebase:",
             error
         );
 
 
         storesGrid.innerHTML = `
-
             <div class="loadingState">
-
                 <span class="material-symbols-rounded">
                     error
                 </span>
@@ -387,13 +348,9 @@ async function loadOfficialStores() {
                 <p>${escapeHTML(error.message)}</p>
 
                 <button id="retryStores" type="button">
-
                     Tentar novamente
-
                 </button>
-
             </div>
-
         `;
 
 
@@ -402,18 +359,23 @@ async function loadOfficialStores() {
             ?.addEventListener("click", loadOfficialStores);
 
 
+        if (rentalStoresGrid) {
+            rentalStoresGrid.innerHTML = `
+                <div class="loadingState">
+                    <p>Não foi possível carregar os espaços comerciais.</p>
+                </div>
+            `;
+        }
+
+
         alert(
-
             "TOMA STORES — ERRO FIREBASE\n\n" +
-
             error.message
-
         );
 
     }
 
 }
-
 
 // =====================================
 // BLOC 6 — FILTRES DE CATÉGORIE
@@ -530,8 +492,88 @@ function renderCategoryFilters() {
 
 }
 // =====================================
-// BLOC 7 — CRÉATION DES CARTES
+// BLOC 7 — CRIAÇÃO DAS CARTAS
 // =====================================
+
+
+// -------------------------------------
+// 7.1 — IMAGE PAR DÉFAUT DES LOJAS
+// -------------------------------------
+
+const RENTAL_PLACEHOLDER = "data:image/svg+xml;charset=UTF-8," +
+    encodeURIComponent(`
+        <svg xmlns="http://www.w3.org/2000/svg"
+             width="400"
+             height="400"
+             viewBox="0 0 400 400">
+
+            <defs>
+                <linearGradient id="background"
+                    x1="0" y1="0" x2="1" y2="1">
+
+                    <stop offset="0%" stop-color="#EAF2FF"/>
+                    <stop offset="100%" stop-color="#D5E5FF"/>
+
+                </linearGradient>
+            </defs>
+
+            <rect width="400"
+                  height="400"
+                  rx="32"
+                  fill="url(#background)"/>
+
+            <circle cx="200"
+                    cy="135"
+                    r="68"
+                    fill="#FFFFFF"
+                    opacity="0.9"/>
+
+            <g fill="none"
+               stroke="#0755D9"
+               stroke-width="9"
+               stroke-linecap="round"
+               stroke-linejoin="round">
+
+                <path d="M151 132 L165 99 H235 L249 132"/>
+
+                <path d="M160 132 V185 H240 V132"/>
+
+                <path d="M190 185 V151 H215 V185"/>
+
+                <path d="M151 132 H249"/>
+
+            </g>
+
+            <text x="200"
+                  y="260"
+                  font-family="Arial, sans-serif"
+                  font-size="38"
+                  font-weight="800"
+                  text-anchor="middle"
+                  fill="#0755D9">
+
+                A LUGAR
+
+            </text>
+
+            <text x="200"
+                  y="295"
+                  font-family="Arial, sans-serif"
+                  font-size="16"
+                  text-anchor="middle"
+                  fill="#526784">
+
+                ESPAÇO COMERCIAL
+
+            </text>
+
+        </svg>
+    `);
+
+
+// -------------------------------------
+// 7.2 — CARTE CLASSIQUE D'UNE LOJA
+// -------------------------------------
 
 function createStoreCard(store, unavailable = false) {
 
@@ -540,145 +582,149 @@ function createStoreCard(store, unavailable = false) {
     const logo = escapeHTML(getStoreLogo(store));
 
     const category = escapeHTML(
-
         store.category || "Loja oficial"
-
     );
 
     const description = escapeHTML(
-
         store.description ||
         "Descubra os produtos desta loja."
-
     );
-
 
     const verified = store.verified === true;
 
     const status = unavailable
-
         ? getStoreStatus(store)
-
         : "Loja ativa";
-
 
     const storeId = encodeURIComponent(store.id);
 
 
     return `
-
         <article class="storeCard">
 
             <div class="storeLogoWrapper">
 
                 <img
-
                     src="${logo}"
-
                     class="storeLogo"
-
                     alt="${name}"
-
                     loading="lazy"
-
                     onerror="this.onerror=null;this.src='${DEFAULT_LOGO}'"
-
                 >
 
-
-                ${verified ? `
-
+                ${!unavailable && verified ? `
                     <img
-
                         src="${VERIFIED_BADGE}"
-
                         class="verifiedBadge"
-
-                        alt="Verificada"
-
+                        alt="Loja verificada"
                         title="Loja verificada"
-
                         onerror="this.style.display='none'"
-
                     >
-
                 ` : ""}
 
             </div>
 
-
             <h3 class="storeName">
-
                 ${name}
-
             </h3>
 
-
             <p class="storeCategory">
-
                 ${category}
-
             </p>
-
 
             <div class="storeStatus ${
                 unavailable ? "unavailable" : ""
             }">
-
                 ${unavailable ? "●" : "✓"}
-
                 ${escapeHTML(status)}
-
             </div>
 
-
             <p class="storeDescription">
-
                 ${description}
-
             </p>
 
-
             <button
-
                 class="visitStoreBtn"
-
                 ${unavailable ? "disabled" : ""}
-
                 ${unavailable ? "" : `data-store-id="${storeId}"`}
-
                 type="button"
-
             >
-
                 ${unavailable ? "Indisponível" : "Visitar Loja"}
 
                 <span class="material-symbols-rounded">
-
                     ${unavailable ? "lock" : "arrow_forward"}
-
                 </span>
-
             </button>
 
         </article>
-
     `;
-
 }
 
 
+// -------------------------------------
+// 7.3 — CARTE D'UN ESPACE À LOUER
+// -------------------------------------
+
+function createRentalCard(store) {
+
+    return `
+        <article class="storeCard rentalStoreCard">
+
+            <div class="storeLogoWrapper rentalLogoWrapper">
+
+                <img
+                    src="${RENTAL_PLACEHOLDER}"
+                    class="storeLogo rentalPlaceholderLogo"
+                    alt="Espaço comercial A LUGAR"
+                    loading="lazy"
+                >
+
+            </div>
+
+            <div class="rentalCardLabel">
+                ESPAÇO DISPONÍVEL
+            </div>
+
+            <button
+                class="visitStoreBtn rentalRequestBtn"
+                data-rental-id="${escapeHTML(store.id)}"
+                type="button"
+            >
+                Solicitar este espaço
+
+                <span class="material-symbols-rounded">
+                    arrow_forward
+                </span>
+            </button>
+
+        </article>
+    `;
+}
 // =====================================
 // BLOC 8 — AFFICHAGE DES BOUTIQUES
 // =====================================
 
 function renderStores() {
 
+    // -------------------------------------
+    // 8.1 — RÉCUPÉRER LES ÉLÉMENTS HTML
+    // -------------------------------------
+
+    const rentalStoresGrid =
+        document.getElementById("rentalStoresGrid");
+
+    const rentalStoresCount =
+        document.getElementById("rentalStoresCount");
+
+
+    // -------------------------------------
+    // 8.2 — RECHERCHE ET CATÉGORIE
+    // -------------------------------------
+
     const search = normalize(searchInput.value);
 
 
     const filteredStores = allStores.filter(store => {
-
 
         const matchesSearch = (
 
@@ -692,10 +738,13 @@ function renderStores() {
 
 
         const matchesCategory = (
-    selectedCategory === "all" ||
-    normalizeCategory(store.category) ===
-    normalizeCategory(selectedCategory)
-);
+
+            selectedCategory === "all" ||
+
+            normalizeCategory(store.category) ===
+            normalizeCategory(selectedCategory)
+
+        );
 
 
         return matchesSearch && matchesCategory;
@@ -703,59 +752,95 @@ function renderStores() {
     });
 
 
-    // Boutiques actives.
+    // -------------------------------------
+    // 8.3 — SÉPARER LES LOJAS DISPONIBLES
+    // ET LES LOJAS INDISPONIBLES
+    // -------------------------------------
 
-    const activeStores = filteredStores.filter(
+    const activeStores = filteredStores.filter(store =>
 
-        store => isStoreActive(store)
-
-    );
-
-
-    // Boutiques visibles mais indisponibles.
-
-    const unavailableStores = filteredStores.filter(
-
-        store => !isStoreActive(store)
+        isStoreActive(store)
 
     );
 
 
-    // Affichage des boutiques actives.
+    const unavailableStores = filteredStores.filter(store =>
+
+        !isStoreActive(store)
+
+    );
+
+
+    // -------------------------------------
+    // 8.4 — AFFICHER LES LOJAS DISPONIBLES
+    // -------------------------------------
 
     storesGrid.innerHTML = activeStores.length
 
         ? activeStores
-
             .map(store => createStoreCard(store))
-
             .join("")
 
         : `
-
             <div class="loadingState">
-
                 <p>Nenhuma loja ativa encontrada.</p>
-
             </div>
-
         `;
 
 
-    // Affichage des boutiques indisponibles.
+    // -------------------------------------
+    // 8.5 — AFFICHER LES LOJAS INDISPONIBLES
+    // -------------------------------------
 
     unavailableStoresGrid.innerHTML = unavailableStores.length
 
         ? unavailableStores
-
             .map(store => createStoreCard(store, true))
-
             .join("")
 
         : "";
 
 
-    // Compteurs.
+    // -------------------------------------
+    // 8.6 — AFFICHER LES ESPACES À LOUER
+    // -------------------------------------
+
+    const rentalStores = Array.isArray(window.tomaRentalStores)
+
+        ? window.tomaRentalStores
+
+        : [];
+
+
+    // Les espaces à louer restent indépendants
+    // des filtres appliqués aux boutiques officielles.
+
+    if (rentalStoresGrid) {
+
+        rentalStoresGrid.innerHTML = rentalStores.length
+
+            ? rentalStores
+                .map(store => createRentalCard(store))
+                .join("")
+
+            : `
+                <div class="loadingState">
+                    <span class="material-symbols-rounded">
+                        storefront
+                    </span>
+
+                    <p>
+                        Nenhum espaço disponível para alugar.
+                    </p>
+                </div>
+            `;
+
+    }
+
+
+    // -------------------------------------
+    // 8.7 — METTRE À JOUR LES COMPTEURS
+    // -------------------------------------
 
     activeStoresCount.textContent =
 
@@ -767,7 +852,18 @@ function renderStores() {
         `${unavailableStores.length} lojas`;
 
 
-    // Recherche vide.
+    if (rentalStoresCount) {
+
+        rentalStoresCount.textContent =
+
+            `${rentalStores.length} espaços`;
+
+    }
+
+
+    // -------------------------------------
+    // 8.8 — GÉRER LES RÉSULTATS DE RECHERCHE
+    // -------------------------------------
 
     if (emptySearch) {
 
@@ -776,12 +872,12 @@ function renderStores() {
     }
 
 
-    // Navigation vers la boutique.
+    // -------------------------------------
+    // 8.9 — NAVIGATION VERS LES LOJAS
+    // -------------------------------------
 
-    document
-
+    storesGrid
         .querySelectorAll("[data-store-id]")
-
         .forEach(button => {
 
             button.addEventListener("click", () => {
@@ -796,9 +892,39 @@ function renderStores() {
 
         });
 
+
+    unavailableStoresGrid
+        .querySelectorAll("[data-store-id]")
+        .forEach(button => {
+
+            button.addEventListener("click", () => {
+
+                const id = button.dataset.storeId;
+
+                location.href =
+
+                    `./official-store.html?store=${encodeURIComponent(id)}`;
+
+            });
+
+        });
+
+
+    // -------------------------------------
+    // 8.10 — DIAGNOSTIC
+    // -------------------------------------
+
+    console.log("TOMA STORES — AFFICHAGE", {
+
+        lojasDisponiveis: activeStores.length,
+
+        lojasIndisponiveis: unavailableStores.length,
+
+        espacosParaAlugar: rentalStores.length
+
+    });
+
 }
-
-
 // =====================================
 // BLOC 9 — RECHERCHE
 // =====================================
