@@ -1,14 +1,36 @@
- :root {
-–orange: #ff6a00;
-–orange-dark: #e95c00;
-–dark: #171717;
-–muted: #777;
-–background: #f6f7f9;
-–white: #ffffff;
-–border: #eeeeee;
-–green: #159b61;
-–red: #d94a4a;
+ /* =====================================================
+TOMA V3 — STORES PAGE
+DESIGN PREMIUM OFFICIEL
+Identité visuelle de homes-v3.css
+===================================================== */
+
+/* =====================================================
+01 — DESIGN SYSTEM
+===================================================== */
+
+:root {
+–toma-blue: #0755D9;
+–toma-blue-dark: #0644B5;
+–toma-blue-light: #EAF2FF;
+
+--toma-white: #FFFFFF;
+--toma-bg: #F5F7FB;
+--toma-text: #172033;
+--toma-muted: #7D8799;
+--toma-border: #E8EDF5;
+--toma-green: #12A36A;
+--toma-red: #E5484D;
+--toma-orange: #F39A28;
+--toma-radius: 18px;
+--toma-shadow:
+    0 5px 22px rgba(23, 43, 77, 0.07);
+--toma-transition: 0.25s ease;
+
 }
+
+/* =====================================================
+02 — RESET
+===================================================== */
 
 * {
     margin: 0;
@@ -16,11 +38,26 @@
     box-sizing: border-box;
     }
 
+html {
+scroll-behavior: smooth;
+-webkit-text-size-adjust: 100%;
+}
+
 body {
-font-family: ‘Inter’, sans-serif;
-background: var(–background);
-color: var(–dark);
-padding-bottom: 110px;
+min-height: 100vh;
+
+font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+background: var(--toma-bg);
+color: var(--toma-text);
+overflow-x: hidden;
+padding-bottom: 105px;
+-webkit-font-smoothing: antialiased;
+
 }
 
 button,
@@ -33,261 +70,421 @@ a {
 -webkit-tap-highlight-color: transparent;
 }
 
-a {
-text-decoration: none;
-color: inherit;
+button {
+cursor: pointer;
 }
 
-/* HEADER */
+a {
+color: inherit;
+text-decoration: none;
+}
+
+img {
+display: block;
+max-width: 100%;
+}
+
+[hidden] {
+display: none !important;
+}
+
+.material-symbols-rounded {
+font-variation-settings:
+‘FILL’ 0,
+‘wght’ 400,
+‘GRAD’ 0,
+‘opsz’ 24;
+}
+
+/* =====================================================
+03 — HEADER PREMIUM AZUL
+===================================================== */
 
 .header {
-height: 68px;
-padding: 0 5%;
+width: 100%;
+min-height: 70px;
+
+padding: 10px 5%;
 display: flex;
 align-items: center;
 justify-content: space-between;
-background: white;
+gap: 12px;
+background: linear-gradient(
+    115deg,
+    #0648BD,
+    #0755D9,
+    #176BEA
+);
 position: sticky;
 top: 0;
-z-index: 100;
-border-bottom: 1px solid #eee;
+z-index: 1000;
+box-shadow:
+    0 4px 18px rgba(7, 85, 217, 0.20);
+
 }
 
 .backBtn {
 width: 42px;
 height: 42px;
-border: 0;
-background: #f5f5f5;
+
+flex-shrink: 0;
+display: flex;
+align-items: center;
+justify-content: center;
+border: 1px solid rgba(255,255,255,0.22);
 border-radius: 13px;
-display: grid;
-place-items: center;
-cursor: pointer;
+background: rgba(255,255,255,0.13);
+color: white;
+transition: var(--toma-transition);
+
+}
+
+.backBtn:hover {
+background: rgba(255,255,255,0.25);
+transform: translateY(-2px);
+}
+
+.backBtn .material-symbols-rounded {
+font-size: 23px;
 }
 
 .logo {
-font-size: 27px;
+display: flex;
+align-items: center;
+
+color: white;
+font-size: 25px;
 font-weight: 900;
-letter-spacing: -1.5px;
+letter-spacing: -1px;
+
 }
 
 .logo span {
-color: var(–orange);
+color: #DCEAFF;
 }
 
 .headerLabel {
+color: rgba(255,255,255,0.88);
+
 font-size: 10px;
 font-weight: 800;
-letter-spacing: 1px;
-color: var(–muted);
+letter-spacing: 1.3px;
+white-space: nowrap;
+
 }
 
-/* PAGE */
+/* =====================================================
+04 — MAIN CONTAINER
+===================================================== */
 
 .pageContainer {
-max-width: 1250px;
-margin: auto;
-padding: 25px 4%;
+width: 100%;
+max-width: 1500px;
+
+margin: 0 auto;
+padding: 25px 5%;
+
 }
 
-/* HERO */
+/* =====================================================
+05 — HERO SECTION
+===================================================== */
 
 .heroSection {
-position: relative;
-overflow: hidden;
+width: 100%;
 min-height: 300px;
-padding: 42px;
-border-radius: 25px;
-background: linear-gradient(115deg, #171717, #303030);
-color: white;
+
+position: relative;
 display: flex;
 align-items: center;
+overflow: hidden;
+padding: 40px;
+border-radius: 22px;
+background: linear-gradient(
+    115deg,
+    #063C9E,
+    #0755D9,
+    #2879ED
+);
+color: white;
+box-shadow:
+    0 10px 28px rgba(7,85,217,0.14);
+
 }
 
 .heroContent {
 position: relative;
-z-index: 2;
-max-width: 620px;
-}
+z-index: 3;
 
-.heroEyebrow,
-.opportunityEyebrow,
-.sectionEyebrow {
-font-size: 10px;
-font-weight: 800;
-letter-spacing: 1.7px;
+width: 100%;
+max-width: 610px;
+
 }
 
 .heroEyebrow {
 display: flex;
 align-items: center;
-gap: 7px;
-color: #ffad70;
+
+gap: 8px;
 margin-bottom: 20px;
+color: #DCEAFF;
+font-size: 10px;
+font-weight: 850;
+letter-spacing: 1.6px;
+
 }
 
 .heroEyebrow .material-symbols-rounded {
-font-size: 19px;
+font-size: 20px;
 }
 
 .heroSection h1 {
-font-size: clamp(34px, 5vw, 54px);
+font-size: clamp(34px, 5vw, 53px);
+
 font-weight: 900;
 line-height: 1.08;
 letter-spacing: -2px;
+
 }
 
 .heroSection h1 span {
-color: #ff8739;
+color: #FFB65C;
 }
 
 .heroSection p {
-color: #d1d1d1;
+max-width: 500px;
+
+margin-top: 18px;
+color: rgba(255,255,255,0.88);
 font-size: 14px;
 line-height: 1.8;
-margin-top: 18px;
-max-width: 500px;
+
 }
 
 .heroBadges {
 display: flex;
 flex-wrap: wrap;
+
 gap: 10px;
-margin-top: 24px;
+margin-top: 23px;
+
 }
 
 .heroBadges span {
-display: flex;
+min-height: 34px;
+
+padding: 8px 12px;
+display: inline-flex;
 align-items: center;
-gap: 6px;
-background: #ffffff12;
-border: 1px solid #ffffff20;
+gap: 7px;
+border: 1px solid rgba(255,255,255,0.20);
 border-radius: 30px;
-padding: 9px 12px;
+background: rgba(255,255,255,0.12);
+color: white;
 font-size: 10px;
-font-weight: 700;
+font-weight: 750;
+
 }
 
 .heroBadges .material-symbols-rounded {
-color: #ff984f;
-font-size: 16px;
+color: #FFD18A;
+font-size: 17px;
 }
 
 .heroDecoration {
 position: absolute;
-right: 8%;
-width: 230px;
-height: 230px;
+
+right: 7%;
+width: 235px;
+height: 235px;
 display: grid;
 place-items: center;
-opacity: .9;
+opacity: 0.85;
+
 }
 
 .heroDecoration > .material-symbols-rounded {
-font-size: 115px;
-color: #ff8739;
+position: relative;
 z-index: 2;
+
+color: #FFFFFF;
+font-size: 115px;
+
 }
 
 .heroCircle {
 position: absolute;
-width: 220px;
-height: 220px;
-border: 1px solid #ffffff20;
+
+width: 210px;
+height: 210px;
+border: 1px solid rgba(255,255,255,0.23);
 border-radius: 50%;
-box-shadow: 0 0 0 35px #ffffff08, 0 0 0 70px #ffffff05;
+box-shadow:
+    0 0 0 35px rgba(255,255,255,0.06),
+    0 0 0 70px rgba(255,255,255,0.035);
+
 }
 
-/* SEARCH */
+/* =====================================================
+06 — SEARCH
+===================================================== */
 
 .searchSection {
-margin: 30px 0;
+width: 100%;
+
+margin: 28px 0;
+
 }
 
 .searchBox {
-height: 58px;
-background: white;
-border: 1px solid var(–border);
-border-radius: 16px;
+width: 100%;
+min-height: 58px;
+
+padding: 6px 15px;
 display: flex;
 align-items: center;
-padding: 0 17px;
 gap: 12px;
+border: 1px solid var(--toma-border);
+border-radius: 16px;
+background: white;
+box-shadow: var(--toma-shadow);
+transition: var(--toma-transition);
+
+}
+
+.searchBox:focus-within {
+border-color: var(–toma-blue);
+
+box-shadow:
+    0 0 0 4px rgba(7,85,217,0.09);
+
 }
 
 .searchBox > .material-symbols-rounded {
-color: var(–orange);
-font-size: 23px;
+color: var(–toma-blue);
+font-size: 24px;
 }
 
 .searchBox input {
-flex: 1;
+width: 100%;
 min-width: 0;
-height: 100%;
-border: 0;
+height: 43px;
+
+border: none;
 outline: none;
 background: transparent;
+color: var(--toma-text);
 font-size: 13px;
+
+}
+
+.searchBox input::placeholder {
+color: #9AA4B5;
 }
 
 #clearSearch {
-border: 0;
-background: transparent;
-color: #888;
+width: 34px;
+height: 34px;
+
+flex-shrink: 0;
 display: none;
-cursor: pointer;
+align-items: center;
+justify-content: center;
+border: none;
+border-radius: 10px;
+background: #F0F3F8;
+color: var(--toma-muted);
+
+}
+
+#clearSearch .material-symbols-rounded {
+font-size: 19px;
 }
 
 .searchHint {
-font-size: 11px;
-color: var(–muted);
 margin: 10px 4px;
+
+color: var(--toma-muted);
+font-size: 11px;
+
 }
 
-/* SECTIONS */
+/* =====================================================
+07 — SECTION HEADINGS
+===================================================== */
 
 .filterSection,
 .storesSection {
+width: 100%;
 margin-top: 35px;
 }
 
 .sectionHeading {
 display: flex;
-justify-content: space-between;
 align-items: center;
-gap: 10px;
-margin-bottom: 20px;
+justify-content: space-between;
+
+gap: 12px;
+margin-bottom: 18px;
+
 }
 
 .sectionEyebrow {
-color: var(–orange);
+display: block;
+
+color: var(--toma-blue);
 font-size: 9px;
+font-weight: 850;
+letter-spacing: 1.6px;
+
 }
 
 .sectionHeading h2 {
-font-size: 23px;
-font-weight: 850;
 margin-top: 6px;
-letter-spacing: -.8px;
+
+color: var(--toma-text);
+font-size: 22px;
+font-weight: 850;
+letter-spacing: -0.7px;
+
 }
 
 .sectionCount {
-background: #fff0e5;
-color: var(–orange-dark);
+flex-shrink: 0;
+
+padding: 8px 12px;
+border: 1px solid #DCE8FA;
 border-radius: 30px;
-padding: 9px 12px;
+background: var(--toma-blue-light);
+color: var(--toma-blue);
 font-size: 10px;
-font-weight: 800;
+font-weight: 850;
 white-space: nowrap;
+
 }
 
-/* FILTERS */
+.sectionDescription {
+margin: -7px 0 18px;
+
+color: var(--toma-muted);
+font-size: 12px;
+line-height: 1.7;
+
+}
+
+/* =====================================================
+08 — CATEGORY FILTERS
+===================================================== */
 
 .categoryFilters {
+width: 100%;
+
 display: flex;
 gap: 9px;
 overflow-x: auto;
 padding-bottom: 7px;
 scrollbar-width: none;
+
 }
 
 .categoryFilters::-webkit-scrollbar {
@@ -295,347 +492,659 @@ display: none;
 }
 
 .filterChip {
+min-height: 39px;
+
 flex-shrink: 0;
-padding: 11px 17px;
+padding: 9px 17px;
+border: 1px solid var(--toma-border);
 border-radius: 30px;
-border: 1px solid #e8e8e8;
 background: white;
-color: #555;
+color: #647086;
 font-size: 11px;
-font-weight: 700;
-cursor: pointer;
+font-weight: 750;
+transition: var(--toma-transition);
+
+}
+
+.filterChip:hover {
+border-color: #B9D2FA;
+
+background: #F5F8FF;
+
 }
 
 .filterChip.active {
-background: var(–orange);
+border-color: var(–toma-blue);
+
+background: var(--toma-blue);
 color: white;
-border-color: var(–orange);
+box-shadow:
+    0 4px 12px rgba(7,85,217,0.16);
+
 }
 
-/* STORES */
+/* =====================================================
+09 — STORE GRIDS
+===================================================== */
 
 .storesGrid {
+width: 100%;
+
 display: grid;
-grid-template-columns: repeat(3, minmax(0, 1fr));
-gap: 18px;
+grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+align-items: stretch;
+gap: 16px;
+
 }
 
+/* =====================================================
+10 — STORE CARDS
+===================================================== */
+
 .storeCard {
-background: white;
-border: 1px solid #eeeeee;
-border-radius: 19px;
-padding: 20px 14px;
-text-align: center;
-transition: .25s;
 min-width: 0;
+
+position: relative;
+overflow: hidden;
+padding: 20px 14px;
+display: flex;
+flex-direction: column;
+align-items: center;
+text-align: center;
+border: 1px solid var(--toma-border);
+border-radius: 17px;
+background: white;
+box-shadow:
+    0 4px 15px rgba(23,43,77,0.055);
+transition: var(--toma-transition);
+
 }
 
 .storeCard:hover {
 transform: translateY(-4px);
-box-shadow: 0 12px 30px #0000000d;
+
+border-color: #C8DCF9;
+box-shadow:
+    0 12px 27px rgba(7,85,217,0.10);
+
 }
 
 .storeLogoWrapper {
-width: 94px;
-height: 94px;
-margin: 0 auto 15px;
-border-radius: 50%;
-background: #f7f7f7;
-border: 1px solid #eee;
-padding: 7px;
+width: 88px;
+height: 88px;
+
 position: relative;
+flex-shrink: 0;
+margin: 0 auto 14px;
+padding: 6px;
+display: flex;
+align-items: center;
+justify-content: center;
+border: 1px solid #E9EDF4;
+border-radius: 50%;
+background: white;
+box-shadow:
+    0 4px 13px rgba(23,43,77,0.07);
+
 }
 
 .storeLogo {
 width: 100%;
 height: 100%;
-object-fit: cover;
+
+object-fit: contain;
 border-radius: 50%;
+
 }
 
 .verifiedBadge {
 width: 23px;
 height: 23px;
+
 position: absolute;
 right: -2px;
-bottom: 1px;
+bottom: 0;
 object-fit: contain;
+
 }
 
 .storeName {
+width: 100%;
+
+margin-bottom: 7px;
+color: var(--toma-text);
 font-size: 14px;
 font-weight: 850;
-margin-bottom: 8px;
+line-height: 1.4;
 overflow-wrap: anywhere;
+
 }
 
 .storeCategory {
-color: #888;
+margin-bottom: 11px;
+
+color: var(--toma-muted);
 font-size: 10px;
-margin-bottom: 12px;
+font-weight: 600;
+
 }
 
 .storeStatus {
+min-height: 27px;
+
+margin-bottom: 12px;
+padding: 6px 10px;
 display: inline-flex;
 align-items: center;
 justify-content: center;
 gap: 5px;
-padding: 7px 10px;
 border-radius: 30px;
-background: #e9f8f0;
-color: var(–green);
+background: #E8F8F0;
+color: var(--toma-green);
 font-size: 9px;
-font-weight: 800;
-margin-bottom: 13px;
+font-weight: 850;
+
 }
 
 .storeStatus.unavailable {
-background: #fff0ef;
-color: var(–red);
+background: #FFF0F0;
+
+color: var(--toma-red);
+
 }
 
 .storeDescription {
-color: #777;
+width: 100%;
+
+min-height: 35px;
+margin-bottom: 15px;
+color: var(--toma-muted);
 font-size: 10px;
 line-height: 1.6;
-min-height: 32px;
-margin-bottom: 15px;
+
 }
 
 .visitStoreBtn {
+width: 100%;
+min-height: 40px;
+
+margin-top: auto;
+padding: 8px 10px;
 display: flex;
 align-items: center;
 justify-content: center;
 gap: 6px;
-width: 100%;
-min-height: 42px;
-border-radius: 12px;
-background: var(–orange);
+border: none;
+border-radius: 10px;
+background: var(--toma-blue);
 color: white;
 font-size: 11px;
-font-weight: 800;
-border: none;
-cursor: pointer;
+font-weight: 850;
+transition: var(--toma-transition);
+
+}
+
+.visitStoreBtn:hover {
+background: var(–toma-blue-dark);
+}
+
+.visitStoreBtn:active {
+transform: scale(0.97);
 }
 
 .visitStoreBtn:disabled {
-background: #e4e4e4;
-color: #888;
+background: #E8EDF5;
+
+color: #929BAA;
 cursor: not-allowed;
+
 }
+
+/* =====================================================
+11 — UNAVAILABLE STORES
+===================================================== */
 
 .unavailableSection {
-margin-top: 50px;
+margin-top: 32px;
 }
 
-.unavailableSection:empty {
-display: none;
+.unavailableSection .storeCard {
+background: #FAFBFD;
 }
 
-/* LOADING / EMPTY */
+.unavailableSection .storeLogoWrapper {
+background: #F4F6FA;
+}
 
-.loadingState,
-.emptyState {
-grid-column: 1 / -1;
-padding: 45px 20px;
+.unavailableSection .storeLogo {
+opacity: 0.78;
+}
+
+/* =====================================================
+12 — PREMIUM DIVIDERS
+===================================================== */
+
+.storesDivider {
+width: 100%;
+
+margin: 55px 0 35px;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 17px;
+
+}
+
+.dividerLine {
+height: 1px;
+
+flex: 1;
+background: linear-gradient(
+    90deg,
+    transparent,
+    #C9D8ED,
+    #0755D9,
+    #C9D8ED,
+    transparent
+);
+
+}
+
+.dividerLabel {
+flex-shrink: 0;
+
+color: var(--toma-blue);
+font-size: 9px;
+font-weight: 900;
+letter-spacing: 1.5px;
 text-align: center;
-color: #777;
+
+}
+
+.rentalDivider {
+margin-top: 55px;
+}
+
+.rentalDivider .dividerLine {
+background: linear-gradient(
+90deg,
+transparent,
+#D8E4F5,
+#F39A28,
+#D8E4F5,
+transparent
+);
+}
+
+.rentalDivider .dividerLabel {
+color: #C77A19;
+}
+
+/* =====================================================
+13 — RENTAL SECTION
+===================================================== */
+
+.rentalSection {
+margin-top: 0;
+}
+
+.rentalSection .sectionCount {
+background: #FFF4E5;
+
+border-color: #F8E2C2;
+color: #B76A12;
+
+}
+
+/* Les futures cartes de location */
+
+.rentalSection .storeCard {
+border-color: #F0E6D8;
+}
+
+.rentalSection .storeCard:hover {
+border-color: #F0C88F;
+
+box-shadow:
+    0 12px 27px rgba(190,125,35,0.10);
+
+}
+
+/* =====================================================
+14 — LOADING
+===================================================== */
+
+.loadingState {
+grid-column: 1 / -1;
+
+width: 100%;
+min-height: 140px;
+padding: 30px 15px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 12px;
+border: 1px dashed #D9E2EF;
+border-radius: 16px;
 background: white;
-border-radius: 18px;
+color: var(--toma-muted);
+
+}
+
+.loadingState p {
+font-size: 12px;
+font-weight: 600;
 }
 
 .loader {
-width: 35px;
-height: 35px;
-border: 3px solid #eee;
-border-top-color: var(–orange);
+width: 34px;
+height: 34px;
+
+border: 3px solid #E8EDF5;
+border-top-color: var(--toma-blue);
 border-radius: 50%;
-margin: 0 auto 13px;
-animation: spin .8s linear infinite;
+animation: tomaSpin 0.8s linear infinite;
+
 }
 
-@keyframes spin {
-to { transform: rotate(360deg); }
+@keyframes tomaSpin {
+to {
+transform: rotate(360deg);
 }
+}
+
+/* =====================================================
+15 — EMPTY SEARCH
+===================================================== */
 
 .emptyState {
+width: 100%;
+
 margin-top: 25px;
+padding: 40px 20px;
+display: flex;
+flex-direction: column;
+align-items: center;
+border: 1px dashed #D9E2EF;
+border-radius: 17px;
+background: white;
+text-align: center;
+
 }
 
 .emptyState > .material-symbols-rounded {
-font-size: 40px;
-color: var(–orange);
+color: var(–toma-blue);
+
+font-size: 43px;
+
 }
 
 .emptyState h3 {
-margin: 12px 0 8px;
+margin: 13px 0 8px;
+
+color: var(--toma-text);
+font-size: 17px;
+font-weight: 850;
+
 }
 
 .emptyState p {
+max-width: 390px;
+
+color: var(--toma-muted);
 font-size: 12px;
 line-height: 1.7;
+
 }
 
 .emptyState button {
+min-height: 42px;
+
 margin-top: 18px;
-padding: 12px 20px;
-border: 0;
-border-radius: 12px;
+padding: 0 19px;
+border: none;
+border-radius: 11px;
+background: var(--toma-blue);
 color: white;
-background: var(–orange);
-font-weight: 700;
+font-size: 11px;
+font-weight: 800;
+
 }
 
-/* OPPORTUNITY */
+/* =====================================================
+16 — COMMERCIAL OPPORTUNITY
+===================================================== */
 
 .opportunitySection {
+width: 100%;
+
 position: relative;
 overflow: hidden;
-margin-top: 65px;
-padding: 35px;
-background: linear-gradient(120deg, #ff6a00, #f18b35);
-color: white;
-border-radius: 25px;
+margin-top: 60px;
+padding: 34px;
 display: flex;
-gap: 25px;
+align-items: flex-start;
+gap: 23px;
+border-radius: 22px;
+background: linear-gradient(
+    115deg,
+    #0648BD,
+    #0755D9,
+    #176BEA
+);
+color: white;
+box-shadow:
+    0 9px 25px rgba(7,85,217,0.13);
+
 }
 
 .opportunityIcon {
-width: 65px;
-height: 65px;
-min-width: 65px;
-display: grid;
-place-items: center;
-background: #ffffff25;
-border-radius: 18px;
+width: 62px;
+height: 62px;
+
+flex-shrink: 0;
+display: flex;
+align-items: center;
+justify-content: center;
+border: 1px solid rgba(255,255,255,0.20);
+border-radius: 17px;
+background: rgba(255,255,255,0.15);
+color: white;
+
 }
 
 .opportunityIcon span {
-font-size: 35px;
+font-size: 32px;
 }
 
 .opportunityContent {
 position: relative;
 z-index: 2;
+
 max-width: 650px;
+
 }
 
 .opportunityEyebrow {
-color: #fff0e5;
+color: #DCEAFF;
+
+font-size: 10px;
+font-weight: 850;
+letter-spacing: 1.6px;
+
 }
 
 .opportunityContent h2 {
-font-size: clamp(25px, 4vw, 36px);
-font-weight: 900;
 margin: 12px 0;
+
+color: white;
+font-size: clamp(25px, 4vw, 35px);
+font-weight: 900;
+line-height: 1.2;
 letter-spacing: -1px;
+
 }
 
 .opportunityContent > p {
+color: rgba(255,255,255,0.88);
+
 font-size: 13px;
 line-height: 1.8;
-color: #fff3e9;
+
 }
 
 .qualityRequirements {
 display: grid;
+
 gap: 11px;
 margin: 22px 0;
+
 }
 
 .qualityRequirements div {
 display: flex;
 align-items: center;
+
 gap: 9px;
+color: white;
 font-size: 12px;
 font-weight: 700;
+
 }
 
 .qualityRequirements .material-symbols-rounded {
+color: #FFD18A;
+
 font-size: 19px;
+
 }
 
 .opportunityButton {
-min-height: 48px;
-padding: 0 20px;
-border-radius: 13px;
-background: white;
-color: var(–orange-dark);
+min-height: 46px;
+
+padding: 0 19px;
 display: inline-flex;
 align-items: center;
 justify-content: center;
-gap: 10px;
+gap: 9px;
+border-radius: 11px;
+background: white;
+color: var(--toma-blue);
 font-size: 12px;
 font-weight: 850;
+transition: var(--toma-transition);
+
+}
+
+.opportunityButton:hover {
+transform: translateY(-2px);
+
+box-shadow:
+    0 6px 18px rgba(0,0,0,0.15);
+
 }
 
 .opportunityDecoration {
 position: absolute;
-right: -20px;
-bottom: -35px;
+
+right: -15px;
+bottom: -30px;
+color: white;
 font-size: 110px;
 font-weight: 900;
-opacity: .09;
+opacity: 0.08;
+pointer-events: none;
+
 }
 
-/* TRUST */
+/* =====================================================
+17 — TRUST FOOTER
+===================================================== */
 
 .trustFooter {
+width: 100%;
+
+margin-top: 28px;
+padding: 21px;
 display: flex;
 align-items: center;
 gap: 15px;
-margin-top: 30px;
-padding: 22px;
+border: 1px solid var(--toma-border);
+border-radius: 16px;
 background: white;
-border: 1px solid var(–border);
-border-radius: 17px;
+box-shadow: var(--toma-shadow);
+
 }
 
 .trustFooter > span {
-font-size: 35px;
-color: var(–orange);
+flex-shrink: 0;
+
+color: var(--toma-blue);
+font-size: 34px;
+
 }
 
 .trustFooter strong {
+color: var(–toma-text);
+
 font-size: 12px;
+font-weight: 850;
+
 }
 
 .trustFooter p {
-font-size: 10px;
-color: #777;
 margin-top: 5px;
+
+color: var(--toma-muted);
+font-size: 10px;
 line-height: 1.6;
+
 }
 
-/* NAVIGATION */
+/* =====================================================
+18 — BOTTOM NAVIGATION
+===================================================== */
 
 .bottomNav {
 position: fixed;
+
+left: 0;
+right: 0;
+bottom: 0;
 z-index: 200;
-bottom: 12px;
-left: 50%;
-transform: translateX(-50%);
-width: min(94%, 520px);
+width: 100%;
 min-height: 70px;
-padding: 9px 5px;
-border-radius: 22px;
-background: #fff;
-box-shadow: 0 5px 30px #00000015;
+padding:
+    8px 10px
+    calc(8px + env(safe-area-inset-bottom));
 display: flex;
 align-items: center;
 justify-content: space-around;
-padding-bottom: max(9px, env(safe-area-inset-bottom));
+border-top: 1px solid var(--toma-border);
+background: rgba(255,255,255,0.97);
+box-shadow:
+    0 -5px 20px rgba(23,43,77,0.07);
+backdrop-filter: blur(15px);
+-webkit-backdrop-filter: blur(15px);
+
 }
 
 .navItem {
+min-width: 48px;
+
 flex: 1;
 display: flex;
 flex-direction: column;
 align-items: center;
+justify-content: center;
 gap: 5px;
-color: #888;
+color: #929BAA;
 font-size: 9px;
 font-weight: 700;
+transition: var(--toma-transition);
+
 }
 
 .navItem .material-symbols-rounded {
@@ -643,110 +1152,303 @@ font-size: 23px;
 }
 
 .navItem.active {
-color: var(–orange);
+color: var(–toma-blue);
 }
 
-/* MOBILE */
-
-@media (max-width: 650px) {
-
-.header {
-    padding: 0 15px;
+.navItem.active .material-symbols-rounded {
+font-variation-settings:
+‘FILL’ 1,
+‘wght’ 600,
+‘GRAD’ 0,
+‘opsz’ 24;
 }
+
+/* =====================================================
+19 — TABLET
+===================================================== */
+
+@media (max-width: 900px) {
+
 .pageContainer {
-    padding: 17px 13px;
+    padding: 22px 4%;
 }
-.heroSection {
-    min-height: 300px;
-    padding: 27px 21px;
-    border-radius: 21px;
-}
-.heroSection p {
-    font-size: 12px;
-    max-width: 90%;
+.storesGrid {
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+    gap: 13px;
 }
 .heroDecoration {
-    right: -75px;
-    opacity: .23;
+    right: 2%;
+    opacity: 0.55;
+}
+
+}
+
+/* =====================================================
+20 — MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+body {
+    padding-bottom: 92px;
+}
+.header {
+    min-height: 63px;
+    padding: 9px 13px;
+    gap: 8px;
+}
+.backBtn {
+    width: 37px;
+    height: 37px;
+    border-radius: 11px;
+}
+.logo {
+    font-size: 21px;
+}
+.headerLabel {
+    font-size: 8px;
+    letter-spacing: 0.8px;
+}
+.pageContainer {
+    padding: 16px 13px;
+}
+.heroSection {
+    min-height: 290px;
+    padding: 25px 20px;
+    border-radius: 17px;
+}
+.heroEyebrow {
+    margin-bottom: 15px;
+    font-size: 9px;
 }
 .heroSection h1 {
-    font-size: 37px;
+    font-size: 36px;
+    letter-spacing: -1.4px;
+}
+.heroSection p {
+    max-width: 90%;
+    margin-top: 13px;
+    font-size: 12px;
+    line-height: 1.65;
 }
 .heroBadges {
     gap: 6px;
+    margin-top: 17px;
 }
 .heroBadges span {
-    font-size: 9px;
-    padding: 8px;
+    padding: 7px 8px;
+    font-size: 8px;
+}
+.heroBadges .material-symbols-rounded {
+    font-size: 14px;
+}
+.heroDecoration {
+    width: 150px;
+    height: 150px;
+    right: -55px;
+    opacity: 0.25;
+}
+.heroDecoration > .material-symbols-rounded {
+    font-size: 85px;
+}
+.heroCircle {
+    width: 140px;
+    height: 140px;
+}
+.searchSection {
+    margin: 22px 0;
+}
+.searchBox {
+    min-height: 52px;
+    padding: 5px 11px;
+    border-radius: 13px;
+}
+.searchBox input {
+    font-size: 12px;
+}
+.searchHint {
+    font-size: 10px;
+}
+.filterSection,
+.storesSection {
+    margin-top: 29px;
+}
+.sectionHeading {
+    margin-bottom: 14px;
 }
 .sectionHeading h2 {
-    font-size: 19px;
+    font-size: 18px;
+}
+.sectionEyebrow {
+    font-size: 8px;
+}
+.sectionCount {
+    padding: 7px 9px;
+    font-size: 9px;
+}
+.filterChip {
+    min-height: 36px;
+    padding: 8px 13px;
+    font-size: 10px;
 }
 .storesGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 11px;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    gap: 10px;
 }
 .storeCard {
-    padding: 15px 9px;
-    border-radius: 16px;
+    padding: 14px 9px;
+    border-radius: 14px;
 }
 .storeLogoWrapper {
-    width: 75px;
-    height: 75px;
+    width: 68px;
+    height: 68px;
+    margin-bottom: 11px;
+}
+.verifiedBadge {
+    width: 19px;
+    height: 19px;
 }
 .storeName {
     font-size: 12px;
 }
+.storeCategory {
+    font-size: 9px;
+}
+.storeStatus {
+    min-height: 24px;
+    padding: 5px 7px;
+    font-size: 8px;
+}
 .storeDescription {
+    min-height: 34px;
     font-size: 9px;
 }
 .visitStoreBtn {
+    min-height: 36px;
+    padding: 7px 5px;
+    font-size: 9px;
+}
+.storesDivider {
+    margin: 39px 0 27px;
+    gap: 9px;
+}
+.dividerLabel {
+    font-size: 8px;
+    letter-spacing: 0.8px;
+}
+.sectionDescription {
     font-size: 10px;
-    min-height: 39px;
 }
 .opportunitySection {
-    padding: 25px 19px;
-    gap: 13px;
-    border-radius: 21px;
+    margin-top: 42px;
+    padding: 23px 17px;
+    gap: 12px;
+    border-radius: 17px;
 }
 .opportunityIcon {
-    width: 45px;
-    height: 45px;
-    min-width: 45px;
-    border-radius: 13px;
+    width: 43px;
+    height: 43px;
+    border-radius: 12px;
 }
 .opportunityIcon span {
-    font-size: 25px;
+    font-size: 23px;
+}
+.opportunityEyebrow {
+    font-size: 8px;
 }
 .opportunityContent h2 {
-    font-size: 25px;
+    font-size: 23px;
 }
 .opportunityContent > p {
-    font-size: 11px;
-}
-.qualityRequirements div {
     font-size: 10px;
 }
-.headerLabel {
+.qualityRequirements {
+    gap: 9px;
+    margin: 17px 0;
+}
+.qualityRequirements div {
+    gap: 6px;
+    font-size: 9px;
+}
+.qualityRequirements .material-symbols-rounded {
+    font-size: 16px;
+}
+.opportunityButton {
+    min-height: 40px;
+    padding: 0 12px;
+    font-size: 10px;
+}
+.opportunityDecoration {
+    font-size: 75px;
+}
+.trustFooter {
+    margin-top: 22px;
+    padding: 16px;
+    gap: 11px;
+}
+.trustFooter > span {
+    font-size: 29px;
+}
+.trustFooter strong {
+    font-size: 11px;
+}
+.trustFooter p {
+    font-size: 9px;
+}
+.bottomNav {
+    min-height: 64px;
+    padding-top: 7px;
+}
+.navItem {
     font-size: 8px;
+    gap: 4px;
+}
+.navItem .material-symbols-rounded {
+    font-size: 21px;
 }
 
 }
+
+/* =====================================================
+21 — PETITS ÉCRANS
+===================================================== */
 
 @media (max-width: 360px) {
 
+.pageContainer {
+    padding-right: 10px;
+    padding-left: 10px;
+}
+.heroSection {
+    padding: 22px 15px;
+}
+.heroSection h1 {
+    font-size: 32px;
+}
 .storesGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
 }
 .storeCard {
     padding: 12px 7px;
 }
+.storeLogoWrapper {
+    width: 60px;
+    height: 60px;
+}
 .storeName {
     font-size: 11px;
 }
-.heroSection h1 {
-    font-size: 32px;
+.visitStoreBtn {
+    font-size: 8px;
+}
+.dividerLabel {
+    font-size: 7px;
 }
 
 }
+
+/* =====================================================
+FIN — TOMA V3 STORES PREMIUM
+===================================================== */
