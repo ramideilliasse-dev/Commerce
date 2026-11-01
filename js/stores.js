@@ -2,9 +2,7 @@
 
 import {
     collection,
-    getDocs,
-    query,
-    where
+    getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 
@@ -116,20 +114,20 @@ async function loadOfficialStores() {
 
     try {
 
-        const storesQuery = query(
-            collection(db, COLLECTION_NAME),
-            where("visible", "==", true)
+        const snapshot = await getDocs(
+            collection(db, "officialStores")
         );
 
-        const snapshot = await getDocs(storesQuery);
+        allStores = snapshot.docs
+            .map(document => ({
+                id: document.id,
+                ...document.data()
+            }))
+            .filter(store => store.visible === true);
 
-        allStores = snapshot.docs.map(document => ({
-            id: document.id,
-            ...document.data()
-        }));
+        console.log("TOMA STORES:", allStores);
 
         renderCategoryFilters();
-
         renderStores();
 
     } catch (error) {
@@ -138,29 +136,24 @@ async function loadOfficialStores() {
 
         storesGrid.innerHTML = `
             <div class="loadingState">
-                <span class="material-symbols-rounded">error</span>
-                <p>Não foi possível carregar as lojas.</p>
+                <p>Erro ao carregar as lojas.</p>
+                <p>${escapeHTML(error.message)}</p>
                 <button id="retryStores" type="button">
                     Tentar novamente
                 </button>
             </div>
         `;
 
-        document.getElementById("retryStores")?.addEventListener(
-            "click",
-            loadOfficialStores
-        );
+        document.getElementById("retryStores")
+            ?.addEventListener("click", loadOfficialStores);
 
         alert(
-            "TOMA STORES — ERRO BLOC 3\n\n" +
-            "Não foi possível carregar as lojas oficiais.\n\n" +
-            error.message
+            "TOMA STORES — ERRO\n\n" + error.message
         );
 
     }
 
 }
-
 
 // =====================================
 // BLOC 4 — FILTROS DE CATEGORIA
