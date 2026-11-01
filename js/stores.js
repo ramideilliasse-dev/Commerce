@@ -419,68 +419,98 @@ async function loadOfficialStores() {
 // BLOC 6 — FILTRES DE CATÉGORIE
 // =====================================
 
+// Catégories principales toujours visibles.
+
+const MAIN_CATEGORIES = [
+    { label: "Todas", value: "all" },
+    { label: "Moda", value: "Moda" },
+    { label: "Electrónica", value: "Electrónica" },
+    { label: "Alimentação", value: "Alimentação" },
+    { label: "Auto", value: "Auto" }
+];
+
+
+// Normaliser les catégories pour comparer les noms
+// sans tenir compte des majuscules, minuscules ou accents.
+
+function normalizeCategory(value) {
+    return String(value || "")
+        .trim()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+}
+
+
+// Créer les boutons des catégories.
+
 function renderCategoryFilters() {
 
-    const categories = [
+    // Récupérer les catégories supplémentaires de Firebase.
 
+    const extraCategories = [
         ...new Set(
-
             allStores
-
-                .map(store => store.category)
-
+                .map(store => String(store.category || "").trim())
                 .filter(Boolean)
-
         )
+    ].filter(category => {
 
-    ].sort((a, b) => a.localeCompare(b));
+        return !MAIN_CATEGORIES.some(item =>
+            item.value !== "all" &&
+            normalizeCategory(item.value) === normalizeCategory(category)
+        );
 
-
-    categoryFilters.innerHTML = `
-
-        <button
-
-            class="filterChip ${
-                selectedCategory === "all" ? "active" : ""
-            }"
-
-            data-category="all"
-
-            type="button"
-
-        >
-
-            Todas
-
-        </button>
-
-    `;
+    }).sort((a, b) => a.localeCompare(b));
 
 
-    categories.forEach(category => {
+    // Combiner les catégories principales
+    // avec les catégories supplémentaires de Firebase.
 
-        categoryFilters.innerHTML += `
+    const categories = [
+        ...MAIN_CATEGORIES,
+        ...extraCategories.map(category => ({
+            label: category,
+            value: category
+        }))
+    ];
 
+
+    // Vérifier si la catégorie sélectionnée existe toujours.
+
+    const categoryStillExists = categories.some(item =>
+        normalizeCategory(item.value) ===
+        normalizeCategory(selectedCategory)
+    );
+
+    if (!categoryStillExists) {
+        selectedCategory = "all";
+    }
+
+
+    // Afficher les boutons.
+
+    categoryFilters.innerHTML = categories.map(item => {
+
+        const isActive =
+            normalizeCategory(selectedCategory) ===
+            normalizeCategory(item.value);
+
+        return `
             <button
-
-                class="filterChip ${
-                    selectedCategory === category ? "active" : ""
-                }"
-
-                data-category="${escapeHTML(category)}"
-
+                class="filterChip ${isActive ? "active" : ""}"
+                data-category="${escapeHTML(item.value)}"
                 type="button"
-
+                aria-pressed="${isActive}"
             >
-
-                ${escapeHTML(category)}
-
+                ${escapeHTML(item.label)}
             </button>
-
         `;
 
-    });
+    }).join("");
 
+
+    // Activer le filtrage au clic.
 
     categoryFilters
         .querySelectorAll(".filterChip")
@@ -499,8 +529,6 @@ function renderCategoryFilters() {
         });
 
 }
-
-
 // =====================================
 // BLOC 7 — CRÉATION DES CARTES
 // =====================================
@@ -664,12 +692,10 @@ function renderStores() {
 
 
         const matchesCategory = (
-
-            selectedCategory === "all" ||
-
-            store.category === selectedCategory
-
-        );
+    selectedCategory === "all" ||
+    normalizeCategory(store.category) ===
+    normalizeCategory(selectedCategory)
+);
 
 
         return matchesSearch && matchesCategory;
