@@ -16,8 +16,11 @@
 <link rel="stylesheet" href="./stores.css">
 </head>
 <body>
+<!-- =====================================================
+     BLOC 1 — HEADER
+===================================================== -->
 <header class="header">
-<button class="backBtn" onclick="history.back()" aria-label="Voltar">
+<button class="backBtn" type="button" onclick="history.back()" aria-label="Voltar">
     <span class="material-symbols-rounded">arrow_back</span>
 </button>
 <a href="./homes-v3.html" class="logo">
@@ -28,166 +31,235 @@
 </div>
 </header>
 <main class="pageContainer">
-<!-- HERO -->
+<!-- =====================================================
+     BLOC 2 — HERO PRINCIPAL
+===================================================== -->
 <section class="heroSection">
-    <div class="heroContent">
-        <div class="heroEyebrow">
-            <span class="material-symbols-rounded">verified</span>
-            ECOSSISTEMA OFICIAL TOMA
-        </div>
-        <h1>
-            Descubra as<br>
-            <span>lojas oficiais.</span>
-        </h1>
-        <p>
-            Encontre marcas e lojas selecionadas pela Toma.
-            Qualidade, confiança e uma experiência de compra
-            mais segura num só lugar.
-        </p>
-        <div class="heroBadges">
-            <span>
-                <span class="material-symbols-rounded">verified_user</span>
-                Lojas verificadas
-            </span>
-            <span>
-                <span class="material-symbols-rounded">workspace_premium</span>
-                Qualidade selecionada
-            </span>
-        </div>
+<div class="heroContent">
+    <div class="heroEyebrow">
+        <span class="material-symbols-rounded">verified</span>
+        ECOSSISTEMA OFICIAL TOMA
     </div>
-    <div class="heroDecoration">
-        <span class="material-symbols-rounded">storefront</span>
-        <div class="heroCircle"></div>
-    </div>
-</section>
-<!-- SEARCH -->
-<section class="searchSection">
-    <div class="searchBox">
-        <span class="material-symbols-rounded">
-            search
-        </span>
-        <input
-            type="search"
-            id="searchInput"
-            placeholder="Pesquisar loja oficial..."
-            autocomplete="off"
-        >
-        <button id="clearSearch" type="button" aria-label="Limpar pesquisa">
-            <span class="material-symbols-rounded">close</span>
-        </button>
-    </div>
-    <p class="searchHint">
-        Encontre rapidamente a sua loja preferida.
-    </p>
-</section>
-<!-- FILTERS -->
-<section class="filterSection">
-    <div class="sectionHeading">
-        <div>
-            <span class="sectionEyebrow">EXPLORAR</span>
-            <h2>Explore as lojas</h2>
-        </div>
-    </div>
-    <div id="categoryFilters" class="categoryFilters">
-        <button class="filterChip active" data-category="all">
-            Todas
-        </button>
-    </div>
-</section>
-<!-- ACTIVE STORES -->
-<section class="storesSection">
-    <div class="sectionHeading">
-        <div>
-            <span class="sectionEyebrow">SELEÇÃO TOMA</span>
-            <h2>Lojas disponíveis</h2>
-        </div>
-        <span id="activeStoresCount" class="sectionCount">0 lojas</span>
-    </div>
-    <div id="storesGrid" class="storesGrid">
-        <div class="loadingState">
-            <div class="loader"></div>
-            <p>A carregar lojas oficiais...</p>
-        </div>
-    </div>
-</section>
-<!-- UNAVAILABLE STORES -->
-<section class="storesSection unavailableSection">
-    <div class="sectionHeading">
-        <div>
-            <span class="sectionEyebrow">INFORMAÇÃO</span>
-            <h2>Lojas temporariamente indisponíveis</h2>
-        </div>
-        <span id="unavailableStoresCount" class="sectionCount">0 lojas</span>
-    </div>
-    <div id="unavailableStoresGrid" class="storesGrid">
-    </div>
-</section>
-<!-- EMPTY SEARCH -->
-<div id="emptySearch" class="emptyState" hidden>
-    <span class="material-symbols-rounded">
-        search_off
-    </span>
-    <h3>Nenhuma loja encontrada</h3>
+    <h1>
+        Descubra as<br>
+        <span>lojas oficiais.</span>
+    </h1>
     <p>
-        Não encontramos lojas correspondentes à sua pesquisa.
-        Experimente outro nome ou categoria.
+        Explore marcas e lojas selecionadas pela Toma.
+        Encontre qualidade, confiança e uma experiência
+        de compra mais segura num só lugar.
     </p>
-    <button id="resetSearch" type="button">
-        Limpar filtros
+    <div class="heroBadges">
+        <span>
+            <span class="material-symbols-rounded">verified_user</span>
+            Lojas verificadas
+        </span>
+        <span>
+            <span class="material-symbols-rounded">workspace_premium</span>
+            Qualidade selecionada
+        </span>
+    </div>
+</div>
+<div class="heroDecoration" aria-hidden="true">
+    <span class="material-symbols-rounded">storefront</span>
+    <div class="heroCircle"></div>
+</div>
+</section>
+<!-- =====================================================
+     BLOC 3 — PESQUISA
+===================================================== -->
+<section class="searchSection">
+<div class="searchBox">
+    <span class="material-symbols-rounded">search</span>
+    <input
+        type="search"
+        id="searchInput"
+        placeholder="Pesquisar loja..."
+        autocomplete="off"
+        aria-label="Pesquisar lojas"
+    >
+    <button
+        id="clearSearch"
+        type="button"
+        aria-label="Limpar pesquisa"
+    >
+        <span class="material-symbols-rounded">close</span>
     </button>
 </div>
-<!-- OFFICIAL STORE OPPORTUNITY -->
-<section class="opportunitySection">
-    <div class="opportunityIcon">
-        <span class="material-symbols-rounded">
-            store
-        </span>
-    </div>
-    <div class="opportunityContent">
-        <span class="opportunityEyebrow">
-            OPORTUNIDADE COMERCIAL
-        </span>
-        <h2>
-            A sua marca merece um espaço na Toma.
-        </h2>
-        <p>
-            Estamos a abrir oportunidades para novas lojas oficiais.
-            Apresente a sua marca e os seus produtos a milhares
-            de potenciais clientes.
-        </p>
-        <div class="qualityRequirements">
-            <div>
-                <span class="material-symbols-rounded">verified</span>
-                Produtos originais e de qualidade
-            </div>
-            <div>
-                <span class="material-symbols-rounded">fact_check</span>
-                Processo de verificação
-            </div>
-            <div>
-                <span class="material-symbols-rounded">workspace_premium</span>
-                Compromisso com a confiança do cliente
-            </div>
-        </div>
-        <a href="./merchant-requests.html" class="opportunityButton">
-            Solicitar um espaço
-            <span class="material-symbols-rounded">arrow_forward</span>
-        </a>
-    </div>
-    <div class="opportunityDecoration">
-        TOMA
-    </div>
+<p class="searchHint">
+    Encontre rapidamente a sua loja preferida.
+</p>
 </section>
-<!-- TRUST FOOTER -->
-<section class="trustFooter">
-    <span class="material-symbols-rounded">shield_with_heart</span>
+<!-- =====================================================
+     BLOC 4 — CATEGORIAS
+===================================================== -->
+<section class="filterSection">
+<div class="sectionHeading">
     <div>
-        <strong>Confiança começa com qualidade.</strong>
-        <p>A Toma trabalha para oferecer uma experiência comercial mais transparente e confiável.</p>
+        <span class="sectionEyebrow">EXPLORAR</span>
+        <h2>Explore as lojas</h2>
     </div>
+</div>
+<div id="categoryFilters" class="categoryFilters">
+    <button class="filterChip active" data-category="all" type="button">
+        Todas
+    </button>
+</div>
+</section>
+<!-- =====================================================
+     BLOC 5 — LOJAS DISPONÍVEIS
+===================================================== -->
+<section class="storesSection" id="availableStoresSection">
+<div class="sectionHeading">
+    <div>
+        <span class="sectionEyebrow">SELEÇÃO TOMA</span>
+        <h2>Lojas disponíveis</h2>
+    </div>
+    <span id="activeStoresCount" class="sectionCount">
+        0 lojas
+    </span>
+</div>
+<div id="storesGrid" class="storesGrid">
+    <div class="loadingState">
+        <div class="loader"></div>
+        <p>A carregar lojas oficiais...</p>
+    </div>
+</div>
+</section>
+<!-- =====================================================
+     BLOC 6 — SEPARADOR PREMIUM
+===================================================== -->
+<div class="storesDivider" aria-hidden="true">
+<span class="dividerLine"></span>
+<span class="dividerLabel">
+    MAIS DO ECOSSISTEMA TOMA
+</span>
+<span class="dividerLine"></span>
+</div>
+<!-- =====================================================
+     BLOC 7 — LOJAS INDISPONÍVEIS
+===================================================== -->
+<section class="storesSection unavailableSection" id="unavailableStoresSection">
+<div class="sectionHeading">
+    <div>
+        <span class="sectionEyebrow">INFORMAÇÃO</span>
+        <h2>Lojas temporariamente indisponíveis</h2>
+    </div>
+    <span id="unavailableStoresCount" class="sectionCount">
+        0 lojas
+    </span>
+</div>
+<div id="unavailableStoresGrid" class="storesGrid">
+</div>
+</section>
+<!-- =====================================================
+     BLOC 8 — SEPARADOR PARA ESPAÇOS COMERCIAIS
+===================================================== -->
+<div class="storesDivider rentalDivider" aria-hidden="true">
+<span class="dividerLine"></span>
+<span class="dividerLabel">
+    OPORTUNIDADES COMERCIAIS
+</span>
+<span class="dividerLine"></span>
+</div>
+<!-- =====================================================
+     BLOC 9 — ESPAÇOS COMERCIAIS PARA ALUGAR
+===================================================== -->
+<section class="storesSection rentalSection" id="rentalStoresSection">
+<div class="sectionHeading">
+    <div>
+        <span class="sectionEyebrow">SEJA PARTE DA TOMA</span>
+        <h2>Espaços disponíveis para alugar</h2>
+    </div>
+    <span id="rentalStoresCount" class="sectionCount">
+        0 espaços
+    </span>
+</div>
+<p class="sectionDescription">
+    Descubra oportunidades para apresentar a sua marca
+    e desenvolver o seu negócio dentro da Toma.
+</p>
+<div id="rentalStoresGrid" class="storesGrid">
+    <div class="loadingState">
+        <div class="loader"></div>
+        <p>A carregar espaços comerciais...</p>
+    </div>
+</div>
+</section>
+<!-- =====================================================
+     BLOC 10 — PESQUISA SEM RESULTADOS
+===================================================== -->
+<div id="emptySearch" class="emptyState" hidden>
+<span class="material-symbols-rounded">search_off</span>
+<h3>Nenhuma loja encontrada</h3>
+<p>
+    Não encontramos lojas correspondentes à sua pesquisa.
+    Experimente outro nome ou categoria.
+</p>
+<button id="resetSearch" type="button">
+    Limpar filtros
+</button>
+</div>
+<!-- =====================================================
+     BLOC 11 — OPORTUNIDADE PARA COMERCIANTES
+===================================================== -->
+<section class="opportunitySection">
+<div class="opportunityIcon">
+    <span class="material-symbols-rounded">store</span>
+</div>
+<div class="opportunityContent">
+    <span class="opportunityEyebrow">
+        OPORTUNIDADE COMERCIAL
+    </span>
+    <h2>
+        A sua marca merece um espaço na Toma.
+    </h2>
+    <p>
+        Apresente a sua marca e os seus produtos a
+        potenciais clientes através do ecossistema Toma.
+    </p>
+    <div class="qualityRequirements">
+        <div>
+            <span class="material-symbols-rounded">verified</span>
+            Produtos originais e de qualidade
+        </div>
+        <div>
+            <span class="material-symbols-rounded">fact_check</span>
+            Processo de verificação
+        </div>
+        <div>
+            <span class="material-symbols-rounded">workspace_premium</span>
+            Compromisso com a confiança do cliente
+        </div>
+    </div>
+    <a href="./merchant-requests.html" class="opportunityButton">
+        Solicitar um espaço
+        <span class="material-symbols-rounded">arrow_forward</span>
+    </a>
+</div>
+<div class="opportunityDecoration" aria-hidden="true">
+    TOMA
+</div>
+</section>
+<!-- =====================================================
+     BLOC 12 — RODAPÉ DE CONFIANÇA
+===================================================== -->
+<section class="trustFooter">
+<span class="material-symbols-rounded">
+    shield_with_heart
+</span>
+<div>
+    <strong>Confiança começa com qualidade.</strong>
+    <p>
+        A Toma trabalha para oferecer uma experiência
+        comercial mais transparente e confiável.
+    </p>
+</div>
 </section>
 </main>
-<!-- BOTTOM NAVIGATION -->
+<!-- =====================================================
+     BLOC 13 — NAVEGAÇÃO INFERIOR
+===================================================== -->
 <nav class="bottomNav">
 <a class="navItem" href="./homes-v3.html">
     <span class="material-symbols-rounded">home</span>
@@ -210,6 +282,9 @@
     <span>Conta</span>
 </a>
 </nav>
+<!-- =====================================================
+     BLOC 14 — JAVASCRIPT
+===================================================== -->
 <script type="module" src="./js/stores.js"></script>
 </body>
 </html>
