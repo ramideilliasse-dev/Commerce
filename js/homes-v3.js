@@ -2158,7 +2158,7 @@ function tomaV3GetOfficialStoreLogo(store) {
 
 
 // ------------------------------------------------------
-// 11.5 — Vérifier le statut de vérification
+// 11.5 — Vérification des boutiques officielles
 // ------------------------------------------------------
 
 function tomaV3IsOfficialStoreVerified(store) {
@@ -2191,80 +2191,78 @@ function tomaV3GetOfficialStoreLink(store) {
 
 
 // ------------------------------------------------------
-// 11.7 — Créer une carte boutique
+// 11.7 — Créer une carte boutique officielle
 // ------------------------------------------------------
 
 function tomaV3CreateOfficialStoreCard(store) {
 
     const card = document.createElement("article");
-
     card.className = "officialStoreCard";
 
     const link = document.createElement("a");
-
     link.className = "officialStoreCardLink";
     link.href = tomaV3GetOfficialStoreLink(store);
 
-    // Logo
+    // Logo de la boutique
     const logoWrapper = document.createElement("div");
-
     logoWrapper.className = "officialStoreLogoWrapper";
 
     const logo = document.createElement("img");
-
     logo.className = "officialStoreLogo";
     logo.src = tomaV3GetOfficialStoreLogo(store);
     logo.alt = tomaV3GetOfficialStoreName(store);
     logo.loading = "lazy";
 
-    logo.onerror = () => {
-
+    logo.onerror = function () {
         logo.onerror = null;
         logo.src = "./images/default-store.png";
-
     };
 
     logoWrapper.appendChild(logo);
 
-    // Nom
-    const name = document.createElement("h3");
+    // Badge Meta officiel
+    if (tomaV3IsOfficialStoreVerified(store)) {
 
+        const verifiedWrapper = document.createElement("div");
+        verifiedWrapper.className = "officialStoreMetaBadgeWrapper";
+
+        const verifiedBadge = document.createElement("img");
+        verifiedBadge.className = "officialStoreMetaBadge";
+        verifiedBadge.src = "./images/stores/meta-verified.png";
+        verifiedBadge.alt = "Loja verificada";
+        verifiedBadge.title = "Loja verificada";
+        verifiedBadge.loading = "lazy";
+
+        verifiedBadge.onerror = function () {
+            verifiedWrapper.remove();
+        };
+
+        verifiedWrapper.appendChild(verifiedBadge);
+
+        link.appendChild(logoWrapper);
+        link.appendChild(verifiedWrapper);
+
+    } else {
+
+        link.appendChild(logoWrapper);
+
+    }
+
+    // Nom de la boutique
+    const name = document.createElement("h3");
     name.className = "officialStoreName";
     name.textContent = tomaV3GetOfficialStoreName(store);
 
-    // Badge bleu : seulement pour une boutique vérifiée
-    if (tomaV3IsOfficialStoreVerified(store)) {
-
-        const verifiedBadge = document.createElement("span");
-
-        verifiedBadge.className = "officialStoreVerifiedBadge";
-        verifiedBadge.textContent = "✓";
-        verifiedBadge.title = "Loja verificada";
-        verifiedBadge.setAttribute(
-            "aria-label",
-            "Loja verificada"
-        );
-
-        name.appendChild(verifiedBadge);
-    }
-
     // Bouton de visite
     const discover = document.createElement("span");
-
     discover.className = "officialStoreDiscover";
     discover.textContent = "Visitar loja";
 
-    link.append(
-        logoWrapper,
-        name,
-        discover
-    );
-
+    link.append(name, discover);
     card.appendChild(link);
 
     return card;
 }
-
 
 // ------------------------------------------------------
 // 11.8 — Charger les boutiques depuis Firestore
