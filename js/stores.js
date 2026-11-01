@@ -256,7 +256,43 @@ async function loadOfficialStores() {
         const hiddenStores = firebaseStores.filter(store =>
             store.settings?.visible === false
         );
+// =====================================
+// DIAGNOSTIC — VISIBILITÉ FIRESTORE
+// =====================================
 
+const visibilityDiagnostic = {
+
+    totalDocuments: firebaseStores.length,
+
+    visibleTrue: firebaseStores.filter(store =>
+        store.settings?.visible === true
+    ).length,
+
+    visibleFalse: firebaseStores.filter(store =>
+        store.settings?.visible === false
+    ).length,
+
+    visibleMissing: firebaseStores.filter(store =>
+        typeof store.settings?.visible !== "boolean"
+    ).length
+
+};
+
+alert(
+    "TOMA — DIAGNÓSTICO DAS LOJAS\n\n" +
+
+    "Total de documentos: " +
+    visibilityDiagnostic.totalDocuments +
+
+    "\nLojas disponíveis (true): " +
+    visibilityDiagnostic.visibleTrue +
+
+    "\nEspaços para alugar (false): " +
+    visibilityDiagnostic.visibleFalse +
+
+    "\nDocumentos sem visibilidade: " +
+    visibilityDiagnostic.visibleMissing
+);
 
         // Conserver uniquement les lojas visibles
         // dans la variable utilisée par les catégories,
