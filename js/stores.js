@@ -249,13 +249,25 @@ async function loadOfficialStores() {
         // Répartir les documents selon settings.visible.
         // Les documents sans valeur explicite sont exclus.
 
-        const visibleStores = firebaseStores.filter(store =>
-            store.settings?.visible === true
-        );
+      // Lojas já ativadas pelo administrador
+const visibleStores = firebaseStores.filter(
+  store => store.settings?.visible === true
+);
 
-        const hiddenStores = firebaseStores.filter(store =>
-            store.settings?.visible === false
-        );
+// Espaços livres: false ou campo visible ainda não definido
+const hiddenStores = firebaseStores.filter(
+  store => store.settings?.visible !== true
+);
+
+allStores = visibleStores;
+window.tomaRentalStores = hiddenStores;
+
+if (rentalStoresCount) {
+  rentalStoresCount.textContent = hiddenStores.length;
+}
+
+renderCategoryFilters();
+renderStores();  
 // =====================================
 // DIAGNOSTIC — VISIBILITÉ FIRESTORE
 // =====================================
