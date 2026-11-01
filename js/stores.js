@@ -182,90 +182,91 @@ function getStoreStatus(store) {
 
 
 // =====================================
-// BLOC 5 — CARREGAMENTO FIREBASE
+// BLOC 5 — CHARGEMENT FIREBASE
+// DIAGNOSTIC TOMA
 // =====================================
 
 async function loadOfficialStores() {
 
     storesGrid.innerHTML = `
-
         <div class="loadingState">
-
             <div class="loader"></div>
-
             <p>A carregar lojas oficiais...</p>
-
         </div>
-
     `;
 
     unavailableStoresGrid.innerHTML = "";
 
     try {
 
-        // Récupération de toute la collection.
+        alert(
+            "TOMA STORES — DIAGNÓSTICO\n\n" +
+            "A iniciar ligação ao Firestore..."
+        );
 
         const snapshot = await getDocs(
-
             collection(db, COLLECTION_NAME)
-
         );
 
+        console.log("TOMA — DOCUMENTOS RECEBIDOS:", snapshot.size);
 
-        console.log(
-            "TOMA STORES — DOCUMENTS FIREBASE:",
-            snapshot.size
-        );
+        const firebaseStores = snapshot.docs.map(document => {
 
+            const data = document.data();
 
-        // Transformation des documents en objets JavaScript.
-
-        const firebaseStores = snapshot.docs.map(document => ({
-
-            id: document.id,
-
-            ...document.data()
-
-        }));
-
-
-        console.log(
-            "TOMA STORES — DONNÉES:",
-            firebaseStores
-        );
-
-
-        // Seules les boutiques visibles sont publiques.
-
-        allStores = firebaseStores.filter(store => {
-
-            return isStoreVisible(store);
+            return {
+                ...data,
+                id: document.id
+            };
 
         });
 
+        console.log(
+            "TOMA — TODAS AS LOJAS:",
+            firebaseStores
+        );
+
+        // DIAGNÓSTICO DOS DOCUMENTOS
+
+        const diagnostic = firebaseStores.map(store => ({
+            id: store.id,
+            name: store.name,
+            visible: store.visible,
+            status: store.status,
+            verified: store.verified,
+            maintenanceMode: store.settings?.maintenanceMode
+        }));
+
+        console.table(diagnostic);
+
+        alert(
+            "TOMA STORES — RESULTADO FIREBASE\n\n" +
+            "Documentos encontrados: " + snapshot.size +
+            "\n\n" +
+            JSON.stringify(diagnostic, null, 2)
+        );
+
+        // FILTRAR LOJAS VISÍVEIS
+
+        allStores = firebaseStores.filter(store => {
+
+            return store.visible === true;
+
+        });
 
         console.log(
-            "TOMA STORES — BOUTIQUES VISIBLES:",
+            "TOMA — LOJAS VISÍVEIS:",
             allStores.length
         );
 
+        // VERIFICAR RESULTADO
 
         if (allStores.length === 0) {
 
             storesGrid.innerHTML = `
-
-                <div class="loadingState">
-
-                    <span class="material-symbols-rounded">
-                        storefront
-                    </span>
-
-                    <p>
-                        Nenhuma loja oficial disponível.
-                    </p>
-
+                <div class="emptyState">
+                    <p>Nenhuma loja oficial disponível.</p>
                 </div>
-
             `;
 
             unavailableStoresGrid.innerHTML = "";
@@ -276,67 +277,62 @@ async function loadOfficialStores() {
 
             emptySearch.hidden = true;
 
+            alert(
+                "TOMA STORES — ATENÇÃO\n\n" +
+                "O Firestore encontrou " + snapshot.size +
+                " documentos.\n\n" +
+                "Mas nenhum documento passou pelo filtro visible === true."
+            );
+
             renderCategoryFilters();
 
             return;
 
         }
 
-
-        // Affichage des filtres et des boutiques.
+        // EXIBIR LOJAS
 
         renderCategoryFilters();
 
         renderStores();
 
+        alert(
+            "TOMA STORES — SUCESSO\n\n" +
+            allStores.length +
+            " lojas visíveis foram carregadas."
+        );
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.error(
-            "TOMA STORES — FIREBASE ERROR:",
+            "TOMA STORES — ERRO FIREBASE:",
             error
         );
 
-
         storesGrid.innerHTML = `
-
-            <div class="loadingState">
-
-                <span class="material-symbols-rounded">
-                    error
-                </span>
-
+            <div class="emptyState">
                 <h3>Erro ao carregar as lojas</h3>
-
                 <p>${escapeHTML(error.message)}</p>
-
                 <button id="retryStores" type="button">
                     Tentar novamente
                 </button>
-
             </div>
-
         `;
-
 
         document
             .getElementById("retryStores")
             ?.addEventListener("click", loadOfficialStores);
 
-
         alert(
-
             "TOMA STORES — ERRO FIREBASE\n\n" +
-
             error.message
-
         );
 
     }
 
 }
-
-
 // =====================================
 // BLOC 6 — FILTRES DE CATÉGORIE
 // =====================================
