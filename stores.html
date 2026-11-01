@@ -1,167 +1,215 @@
  <!DOCTYPE html>
 <html lang="pt">
-
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Lojas Oficiais - Toma</title>
-
-<link rel="manifest" href="/manifest.json">
-
+<title>Lojas Oficiais | Toma</title>
 <meta name="theme-color" content="#ff6a00">
-
 <meta name="apple-mobile-web-app-capable" content="yes">
-
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
 <meta name="apple-mobile-web-app-title" content="Toma">
-
+<link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/icon-192.png">
-
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Material+Symbols+Rounded" rel="stylesheet">
 <link rel="stylesheet" href="./stores.css">
-
 </head>
-
 <body>
 <header class="header">
-
-    <button class="backBtn" onclick="history.back()">
-
-        <span class="material-symbols-rounded">
-
-            arrow_back
-
-        </span>
-
-    </button>
-
-    <div class="logo">
-
-        T<span>oma</span>
-
-    </div>
-
-</header>
-
-<div class="searchContainer">
-
-    <span class="material-symbols-rounded searchIcon">
-
-        search
-
-    </span>
-
-    <input
-        id="searchInput"
-        type="text"
-        placeholder="Pesquisar loja oficial...">
-
+<button class="backBtn" onclick="history.back()" aria-label="Voltar">
+    <span class="material-symbols-rounded">arrow_back</span>
+</button>
+<a href="./homes-v3.html" class="logo">
+    T<span>oma</span>
+</a>
+<div class="headerLabel">
+    LOJAS OFICIAIS
 </div>
-
-<section class="trustBanner">
-
-    <div class="trustIcon">
-
-        <span class="material-symbols-rounded">
-            verified_user
-        </span>
-
-    </div>
-
-    <div class="trustContent">
-
-        <h1>Lojas Oficiais</h1>
-
+</header>
+<main class="pageContainer">
+<!-- HERO -->
+<section class="heroSection">
+    <div class="heroContent">
+        <div class="heroEyebrow">
+            <span class="material-symbols-rounded">verified</span>
+            ECOSSISTEMA OFICIAL TOMA
+        </div>
+        <h1>
+            Descubra as<br>
+            <span>lojas oficiais.</span>
+        </h1>
         <p>
-
-            Compre diretamente de marcas verificadas.
-            Todos os produtos são vendidos por lojas oficiais
-            aprovadas pela Toma.
-
+            Encontre marcas e lojas selecionadas pela Toma.
+            Qualidade, confiança e uma experiência de compra
+            mais segura num só lugar.
         </p>
-
-        <div class="trustBadges">
-
-            <span>✓ 100% Verificadas</span>
-
-            <span>✓ Produtos Originais</span>
-
-            <span>✓ Compra Segura</span>
-
+        <div class="heroBadges">
+            <span>
+                <span class="material-symbols-rounded">verified_user</span>
+                Lojas verificadas
+            </span>
+            <span>
+                <span class="material-symbols-rounded">workspace_premium</span>
+                Qualidade selecionada
+            </span>
         </div>
-
     </div>
-
+    <div class="heroDecoration">
+        <span class="material-symbols-rounded">storefront</span>
+        <div class="heroCircle"></div>
+    </div>
 </section>
+<!-- SEARCH -->
+<section class="searchSection">
+    <div class="searchBox">
+        <span class="material-symbols-rounded">
+            search
+        </span>
+        <input
+            type="search"
+            id="searchInput"
+            placeholder="Pesquisar loja oficial..."
+            autocomplete="off"
+        >
+        <button id="clearSearch" type="button" aria-label="Limpar pesquisa">
+            <span class="material-symbols-rounded">close</span>
+        </button>
+    </div>
+    <p class="searchHint">
+        Encontre rapidamente a sua loja preferida.
+    </p>
+</section>
+<!-- FILTERS -->
+<section class="filterSection">
+    <div class="sectionHeading">
+        <div>
+            <span class="sectionEyebrow">EXPLORAR</span>
+            <h2>Explore as lojas</h2>
+        </div>
+    </div>
+    <div id="categoryFilters" class="categoryFilters">
+        <button class="filterChip active" data-category="all">
+            Todas
+        </button>
+    </div>
+</section>
+<!-- ACTIVE STORES -->
 <section class="storesSection">
-
-    <div
-        id="storesGrid"
-        class="storesGrid">
-
+    <div class="sectionHeading">
+        <div>
+            <span class="sectionEyebrow">SELEÇÃO TOMA</span>
+            <h2>Lojas disponíveis</h2>
+        </div>
+        <span id="activeStoresCount" class="sectionCount">0 lojas</span>
     </div>
-
+    <div id="storesGrid" class="storesGrid">
+        <div class="loadingState">
+            <div class="loader"></div>
+            <p>A carregar lojas oficiais...</p>
+        </div>
+    </div>
 </section>
+<!-- UNAVAILABLE STORES -->
+<section class="storesSection unavailableSection">
+    <div class="sectionHeading">
+        <div>
+            <span class="sectionEyebrow">INFORMAÇÃO</span>
+            <h2>Lojas temporariamente indisponíveis</h2>
+        </div>
+        <span id="unavailableStoresCount" class="sectionCount">0 lojas</span>
+    </div>
+    <div id="unavailableStoresGrid" class="storesGrid">
+    </div>
+</section>
+<!-- EMPTY SEARCH -->
+<div id="emptySearch" class="emptyState" hidden>
+    <span class="material-symbols-rounded">
+        search_off
+    </span>
+    <h3>Nenhuma loja encontrada</h3>
+    <p>
+        Não encontramos lojas correspondentes à sua pesquisa.
+        Experimente outro nome ou categoria.
+    </p>
+    <button id="resetSearch" type="button">
+        Limpar filtros
+    </button>
+</div>
+<!-- OFFICIAL STORE OPPORTUNITY -->
+<section class="opportunitySection">
+    <div class="opportunityIcon">
+        <span class="material-symbols-rounded">
+            store
+        </span>
+    </div>
+    <div class="opportunityContent">
+        <span class="opportunityEyebrow">
+            OPORTUNIDADE COMERCIAL
+        </span>
+        <h2>
+            A sua marca merece um espaço na Toma.
+        </h2>
+        <p>
+            Estamos a abrir oportunidades para novas lojas oficiais.
+            Apresente a sua marca e os seus produtos a milhares
+            de potenciais clientes.
+        </p>
+        <div class="qualityRequirements">
+            <div>
+                <span class="material-symbols-rounded">verified</span>
+                Produtos originais e de qualidade
+            </div>
+            <div>
+                <span class="material-symbols-rounded">fact_check</span>
+                Processo de verificação
+            </div>
+            <div>
+                <span class="material-symbols-rounded">workspace_premium</span>
+                Compromisso com a confiança do cliente
+            </div>
+        </div>
+        <a href="./merchant-requests.html" class="opportunityButton">
+            Solicitar um espaço
+            <span class="material-symbols-rounded">arrow_forward</span>
+        </a>
+    </div>
+    <div class="opportunityDecoration">
+        TOMA
+    </div>
+</section>
+<!-- TRUST FOOTER -->
+<section class="trustFooter">
+    <span class="material-symbols-rounded">shield_with_heart</span>
+    <div>
+        <strong>Confiança começa com qualidade.</strong>
+        <p>A Toma trabalha para oferecer uma experiência comercial mais transparente e confiável.</p>
+    </div>
+</section>
+</main>
+<!-- BOTTOM NAVIGATION -->
 <nav class="bottomNav">
-
-    <div class="navItem" onclick="location.href='homes.html'">
-
-        <div class="navIcon">
-            <span class="material-symbols-rounded">home</span>
-        </div>
-
-        <span>Início</span>
-
-    </div>
-
-    <div class="navItem active">
-
-        <div class="navIcon">
-            <span class="material-symbols-rounded">storefront</span>
-        </div>
-
-        <span>Lojas</span>
-
-    </div>
-
-    <div class="navItem" onclick="location.href='cart.html'">
-
-        <div class="navIcon">
-            <span class="material-symbols-rounded">shopping_cart</span>
-        </div>
-
-        <span>Carrinho</span>
-
-    </div>
-
-    <div class="navItem" onclick="location.href='favorites.html'">
-
-        <div class="navIcon">
-            <span class="material-symbols-rounded">favorite</span>
-        </div>
-
-        <span>Favoritos</span>
-
-    </div>
-
-    <div class="navItem" onclick="location.href='settings.html'">
-
-        <div class="navIcon">
-            <span class="material-symbols-rounded">person</span>
-        </div>
-
-        <span>Conta</span>
-
-    </div>
-
+<a class="navItem" href="./homes-v3.html">
+    <span class="material-symbols-rounded">home</span>
+    <span>Início</span>
+</a>
+<a class="navItem active" href="./stores.html">
+    <span class="material-symbols-rounded">storefront</span>
+    <span>Lojas</span>
+</a>
+<a class="navItem" href="./carte.html">
+    <span class="material-symbols-rounded">shopping_cart</span>
+    <span>Carrinho</span>
+</a>
+<a class="navItem" href="./favorites.html">
+    <span class="material-symbols-rounded">favorite</span>
+    <span>Favoritos</span>
+</a>
+<a class="navItem" href="./settings.html">
+    <span class="material-symbols-rounded">person</span>
+    <span>Conta</span>
+</a>
 </nav>
-
 <script type="module" src="./js/stores.js"></script>
-
 </body>
 </html>
