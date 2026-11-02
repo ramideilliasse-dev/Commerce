@@ -90,6 +90,7 @@ return String(value ?? "")
     .toLowerCase()
     .trim();
 
+}
 
 function escapeHTML(value) {
 
