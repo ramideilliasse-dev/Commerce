@@ -12,7 +12,7 @@ import {
 
 const COLLECTION_NAME = "officialStores";
 
-const VERIFIED_BADGE = "./Images/stores/meta-verified.png";
+const VERIFIED_BADGE = "./images/stores/meta-verified.png";
 
 // Image de remplacement intégrée : aucun fichier nécessaire.
 
