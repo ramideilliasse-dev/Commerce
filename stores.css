@@ -1672,3 +1672,41 @@ border-radius: 18px;
 }
 
 }
+/* =====================================
+TOMA STORES — STABILITÉ DE LA RECHERCHE
+===================================== */
+
+#searchInput {
+width: 100%;
+min-width: 0;
+box-sizing: border-box;
+font-size: 16px;
+scroll-margin-block: 100px;
+-webkit-appearance: none;
+appearance: none;
+}
+
+#searchInput:focus {
+outline: none;
+}
+
+/* Empêcher le bouton d’effacement de déplacer la mise en page */
+
+#clearSearch {
+flex-shrink: 0;
+}
+
+/* Garder les résultats alignés pendant leur actualisation */
+
+#storesGrid,
+#unavailableStoresGrid,
+#rentalStoresGrid {
+min-width: 0;
+align-items: stretch;
+}
+
+/* Réduire les animations susceptibles de provoquer des mouvements */
+
+.storeCard {
+scroll-margin-block: 100px;
+}
