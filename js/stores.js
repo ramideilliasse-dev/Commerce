@@ -83,13 +83,11 @@ if (
 // BLOC 3 — FONCTIONS UTILITAIRES
 // =====================================
 
-function normalize(value) {
-
-    return String(value || "")
-        .trim()
-        .toLowerCase();
-
-}
+return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
 
 
 function escapeHTML(value) {
