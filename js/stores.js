@@ -733,17 +733,7 @@ function createRentalCard(store) {
                 ESPAÇO DISPONÍVEL
             </div>
 
-            <button
-                class="visitStoreBtn rentalRequestBtn"
-                data-rental-id="${escapeHTML(store.id)}"
-                type="button"
-            >
-                Solicitar este espaço
-
-                <span class="material-symbols-rounded">
-                    arrow_forward
-                </span>
-            </button>
+          
 
         </article>
     `;
