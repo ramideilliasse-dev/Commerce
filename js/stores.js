@@ -82,6 +82,7 @@ if (
 // =====================================
 // BLOC 3 — FONCTIONS UTILITAIRES
 // =====================================
+function normalize(value) {
 
 return String(value ?? "")
     .normalize("NFD")
