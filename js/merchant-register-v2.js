@@ -543,3 +543,496 @@ updateRegistrationProgress();
 // =====================================================
 // FIM DO BLOC 1/8
 // =====================================================
+// =====================================================
+// TOMA — MERCHANT REGISTER V2
+// BLOC 2/8 — GESTÃO DOS DOCUMENTOS
+// =====================================================
+
+
+// =====================================================
+// 2.1 — CONFIGURAÇÃO DOS DOCUMENTOS
+// =====================================================
+
+const DOCUMENT_MAX_SIZE = 5 * 1024 * 1024;
+
+const DOCUMENT_ALLOWED_TYPES = [
+    "application/pdf",
+    "image/jpeg",
+    "image/png"
+];
+
+
+const DOCUMENT_FIELDS = {
+
+    alvaraFile: "alvaraPreview",
+
+    certidaoFile: "certidaoPreview",
+
+    admissibilidadeFile: "admissibilidadePreview",
+
+    pactoFile: "pactoPreview"
+
+};
+
+
+// =====================================================
+// 2.2 — FORMATAÇÃO DO TAMANHO DOS FICHEIROS
+// =====================================================
+
+function formatDocumentSize(bytes) {
+
+    if (bytes < 1024) {
+
+        return bytes + " B";
+
+    }
+
+    if (bytes < 1024 * 1024) {
+
+        return (bytes / 1024).toFixed(1) + " KB";
+
+    }
+
+    return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+
+}
+
+
+// =====================================================
+// 2.3 — MOSTRAR MENSAGEM DE ERRO DO DOCUMENTO
+// =====================================================
+
+function showDocumentError(message) {
+
+    if (!formMessage) {
+
+        alert(message);
+
+        return;
+
+    }
+
+
+    formMessage.textContent = message;
+
+    formMessage.classList.remove("success");
+
+    formMessage.classList.add("error");
+
+    formMessage.style.display = "block";
+
+}
+
+
+// =====================================================
+// 2.4 — LIMPAR MENSAGEM DE ERRO
+// =====================================================
+
+function clearDocumentMessage() {
+
+    if (!formMessage) {
+
+        return;
+
+    }
+
+
+    formMessage.textContent = "";
+
+    formMessage.classList.remove("error");
+
+    formMessage.style.display = "none";
+
+}
+
+
+// =====================================================
+// 2.5 — ATUALIZAR O APERÇU DO DOCUMENTO
+// =====================================================
+
+function updateDocumentPreview(input) {
+
+    const previewId = DOCUMENT_FIELDS[input.id];
+
+    const preview = document.getElementById(previewId);
+
+
+    if (!preview) {
+
+        console.error(
+            "Preview não encontrado:",
+            previewId
+        );
+
+        return;
+
+    }
+
+
+    const file = input.files[0];
+
+
+    if (!file) {
+
+        resetDocumentPreview(input);
+
+        return;
+
+    }
+
+
+    const fileName = preview.querySelector(
+        ".fileName"
+    );
+
+    const fileSize = preview.querySelector(
+        ".fileSize"
+    );
+
+
+    if (!fileName || !fileSize) {
+
+        showDocumentError(
+            "Não foi possível apresentar o documento seleccionado."
+        );
+
+        return;
+
+    }
+
+
+    fileName.textContent = file.name;
+
+    fileSize.textContent = formatDocumentSize(
+        file.size
+    );
+
+
+    preview.classList.add("hasFile");
+
+
+    updateRegistrationProgress();
+
+}
+
+
+// =====================================================
+// 2.6 — REINICIAR O APERÇU
+// =====================================================
+
+function resetDocumentPreview(input) {
+
+    const previewId = DOCUMENT_FIELDS[input.id];
+
+    const preview = document.getElementById(previewId);
+
+
+    if (!preview) {
+
+        return;
+
+    }
+
+
+    const fileName = preview.querySelector(
+        ".fileName"
+    );
+
+    const fileSize = preview.querySelector(
+        ".fileSize"
+    );
+
+
+    if (fileName) {
+
+        fileName.textContent =
+            "Nenhum ficheiro seleccionado";
+
+    }
+
+
+    if (fileSize) {
+
+        fileSize.textContent = "";
+
+    }
+
+
+    preview.classList.remove("hasFile");
+
+
+    updateRegistrationProgress();
+
+}
+
+
+// =====================================================
+// 2.7 — VALIDAR O FORMATO DO DOCUMENTO
+// =====================================================
+
+function validateDocumentType(file) {
+
+    const extension = file.name
+        .split(".")
+        .pop()
+        .toLowerCase();
+
+
+    const allowedExtensions = [
+        "pdf",
+        "jpg",
+        "jpeg",
+        "png"
+    ];
+
+
+    if (!allowedExtensions.includes(extension)) {
+
+        return false;
+
+    }
+
+
+    if (
+        file.type &&
+        !DOCUMENT_ALLOWED_TYPES.includes(file.type)
+    ) {
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
+
+
+// =====================================================
+// 2.8 — VALIDAR O TAMANHO DO DOCUMENTO
+// =====================================================
+
+function validateDocumentSize(file) {
+
+    return file.size > 0 &&
+        file.size <= DOCUMENT_MAX_SIZE;
+
+}
+
+
+// =====================================================
+// 2.9 — GESTÃO DA SELEÇÃO DOS DOCUMENTOS
+// =====================================================
+
+Object.keys(DOCUMENT_FIELDS).forEach(function (fieldId) {
+
+    const input = document.getElementById(fieldId);
+
+
+    if (!input) {
+
+        console.error(
+            "Campo de documento não encontrado:",
+            fieldId
+        );
+
+        return;
+
+    }
+
+
+    input.addEventListener(
+        "change",
+        function () {
+
+            clearDocumentMessage();
+
+
+            const file = input.files[0];
+
+
+            if (!file) {
+
+                resetDocumentPreview(input);
+
+                return;
+
+            }
+
+
+            // Verificar formato
+
+            if (!validateDocumentType(file)) {
+
+                input.value = "";
+
+                resetDocumentPreview(input);
+
+
+                showDocumentError(
+                    "Formato inválido. Seleccione um ficheiro PDF, JPG ou PNG."
+                );
+
+                return;
+
+            }
+
+
+            // Verificar tamanho
+
+            if (!validateDocumentSize(file)) {
+
+                input.value = "";
+
+                resetDocumentPreview(input);
+
+
+                showDocumentError(
+                    "O documento deve ter um tamanho máximo de 5 MB."
+                );
+
+                return;
+
+            }
+
+
+            // Mostrar documento seleccionado
+
+            updateDocumentPreview(input);
+
+
+        }
+    );
+
+});
+
+
+// =====================================================
+// 2.10 — REMOVER DOCUMENTOS SELECCIONADOS
+// =====================================================
+
+const removeDocumentButtons = document.querySelectorAll(
+    "[data-remove-file]"
+);
+
+
+removeDocumentButtons.forEach(function (button) {
+
+    button.addEventListener(
+        "click",
+        function () {
+
+            const inputId = button.dataset.removeFile;
+
+            const input = document.getElementById(inputId);
+
+
+            if (!input) {
+
+                showDocumentError(
+                    "Não foi possível localizar o documento."
+                );
+
+                return;
+
+            }
+
+
+            // Limpar ficheiro
+
+            input.value = "";
+
+
+            // Limpar aperçu
+
+            resetDocumentPreview(input);
+
+
+            // Limpar mensagem
+
+            clearDocumentMessage();
+
+
+            updateRegistrationProgress();
+
+        }
+    );
+
+});
+
+
+// =====================================================
+// 2.11 — VERIFICAR OS DOCUMENTOS SELECCIONADOS
+// =====================================================
+
+function getSelectedDocuments() {
+
+    const documents = {};
+
+
+    Object.keys(DOCUMENT_FIELDS).forEach(function (fieldId) {
+
+        const input = document.getElementById(fieldId);
+
+
+        documents[fieldId] = input &&
+            input.files.length > 0
+                ? input.files[0]
+                : null;
+
+    });
+
+
+    return documents;
+
+}
+
+
+// =====================================================
+// 2.12 — VERIFICAR SE TODOS OS DOCUMENTOS EXISTEM
+// =====================================================
+
+function areDocumentsComplete() {
+
+    const documents = getSelectedDocuments();
+
+
+    return Object.values(documents).every(function (file) {
+
+        return file !== null;
+
+    });
+
+}
+
+
+// =====================================================
+// 2.13 — ATUALIZAÇÃO FINAL DA PROGRESSÃO
+// =====================================================
+
+updateRegistrationProgress();
+
+
+// =====================================================
+// 2.14 — ALERTA DE CARREGAMENTO DO BLOCO
+// =====================================================
+
+console.log(
+    "TOMA V2 — BLOC 2/8 CHARGÉ AVEC SUCCÈS."
+);
+
+alert(
+    "TOMA V2 — BLOCO 2/8 CARREGADO COM SUCESSO!\n\n" +
+    "Gestão dos documentos activada.\n\n" +
+    "• Selecção de ficheiros\n" +
+    "• Pré-visualização\n" +
+    "• Validação dos formatos\n" +
+    "• Limite de 5 MB\n" +
+    "• Remoção de documentos\n\n" +
+    "Próximo passo: validação dos dados."
+);
+
+
+// =====================================================
+// FIM DO BLOC 2/8
+// =====================================================
