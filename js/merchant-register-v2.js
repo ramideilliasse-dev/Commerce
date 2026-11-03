@@ -1036,3 +1036,262 @@ alert(
 // =====================================================
 // FIM DO BLOC 2/8
 // =====================================================
+/* =====================================================
+   TOMA V2 — BLOC 3/8
+   VALIDATION DES INFORMATIONS PERSONNELLES
+   ET COMMERCIALES
+===================================================== */
+
+const personalCommercialFields = {
+    fullName: document.getElementById("fullName"),
+    email: document.getElementById("email"),
+    phone: document.getElementById("phone"),
+    whatsapp: document.getElementById("whatsapp"),
+    nif: document.getElementById("nif"),
+    password: document.getElementById("password"),
+    confirmPassword: document.getElementById("confirmPassword"),
+    shopName: document.getElementById("shopName"),
+    shopCategory: document.getElementById("shopCategory"),
+    shopDescription: document.getElementById("shopDescription")
+};
+
+/* -----------------------------------------------------
+   3.1 — VÉRIFICATION DES CHAMPS HTML
+----------------------------------------------------- */
+
+const missingPersonalCommercialFields =
+    Object.entries(personalCommercialFields)
+        .filter(([key, element]) => !element)
+        .map(([key]) => key);
+
+if (missingPersonalCommercialFields.length > 0) {
+    alert(
+        "TOMA V2 — ERREUR BLOC 3\n\n" +
+        "Champs HTML introuvables :\n" +
+        missingPersonalCommercialFields.join(", ")
+    );
+
+    throw new Error(
+        "TOMA V2 — BLOC 3 : champs HTML manquants."
+    );
+}
+
+/* -----------------------------------------------------
+   3.2 — FONCTION POUR AFFICHER LES ERREURS
+----------------------------------------------------- */
+
+function showPersonalCommercialError(message) {
+
+    formMessage.textContent = message;
+    formMessage.classList.remove("success");
+    formMessage.classList.add("error");
+    formMessage.style.display = "block";
+
+    formMessage.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+}
+
+/* -----------------------------------------------------
+   3.3 — FONCTION POUR NETTOYER LES ERREURS
+----------------------------------------------------- */
+
+function clearPersonalCommercialError() {
+
+    formMessage.textContent = "";
+    formMessage.classList.remove("error");
+    formMessage.style.display = "none";
+}
+
+/* -----------------------------------------------------
+   3.4 — VALIDATION DES INFORMATIONS PERSONNELLES
+----------------------------------------------------- */
+
+function validatePersonalInformation() {
+
+    const fullName =
+        personalCommercialFields.fullName.value.trim();
+
+    const email =
+        personalCommercialFields.email.value.trim();
+
+    const phone =
+        personalCommercialFields.phone.value.trim();
+
+    const whatsapp =
+        personalCommercialFields.whatsapp.value.trim();
+
+    const nif =
+        personalCommercialFields.nif.value.trim();
+
+    const password =
+        personalCommercialFields.password.value;
+
+    const confirmPassword =
+        personalCommercialFields.confirmPassword.value;
+
+    if (fullName.length < 3) {
+        showPersonalCommercialError(
+            "Introduza o seu nome completo."
+        );
+        personalCommercialFields.fullName.focus();
+        return false;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(email)) {
+        showPersonalCommercialError(
+            "Introduza um endereço de e-mail válido."
+        );
+        personalCommercialFields.email.focus();
+        return false;
+    }
+
+    const phoneDigits = phone.replace(/\D/g, "");
+
+    if (phoneDigits.length < 9) {
+        showPersonalCommercialError(
+            "Introduza um número de telefone válido."
+        );
+        personalCommercialFields.phone.focus();
+        return false;
+    }
+
+    const whatsappDigits = whatsapp.replace(/\D/g, "");
+
+    if (whatsappDigits.length < 9) {
+        showPersonalCommercialError(
+            "Introduza um número WhatsApp válido."
+        );
+        personalCommercialFields.whatsapp.focus();
+        return false;
+    }
+
+    if (nif.length < 5) {
+        showPersonalCommercialError(
+            "Introduza o seu NIF Singular."
+        );
+        personalCommercialFields.nif.focus();
+        return false;
+    }
+
+    if (password.length < 8) {
+        showPersonalCommercialError(
+            "A palavra-passe deve conter pelo menos 8 caracteres."
+        );
+        personalCommercialFields.password.focus();
+        return false;
+    }
+
+    if (password !== confirmPassword) {
+        showPersonalCommercialError(
+            "As palavras-passe não correspondem."
+        );
+        personalCommercialFields.confirmPassword.focus();
+        return false;
+    }
+
+    return true;
+}
+
+/* -----------------------------------------------------
+   3.5 — VALIDATION DES INFORMATIONS COMMERCIALES
+----------------------------------------------------- */
+
+function validateCommercialInformation() {
+
+    const shopName =
+        personalCommercialFields.shopName.value.trim();
+
+    const shopCategory =
+        personalCommercialFields.shopCategory.value;
+
+    const shopDescription =
+        personalCommercialFields.shopDescription.value.trim();
+
+    if (shopName.length < 2) {
+        showPersonalCommercialError(
+            "Introduza o nome da sua loja."
+        );
+        personalCommercialFields.shopName.focus();
+        return false;
+    }
+
+    if (!shopCategory) {
+        showPersonalCommercialError(
+            "Seleccione a categoria da sua loja."
+        );
+        personalCommercialFields.shopCategory.focus();
+        return false;
+    }
+
+    if (shopDescription.length < 20) {
+        showPersonalCommercialError(
+            "A descrição da loja deve conter pelo menos 20 caracteres."
+        );
+        personalCommercialFields.shopDescription.focus();
+        return false;
+    }
+
+    return true;
+}
+
+/* -----------------------------------------------------
+   3.6 — VALIDATION GLOBALE DU BLOC 3
+----------------------------------------------------- */
+
+function validatePersonalAndCommercialInformation() {
+
+    clearPersonalCommercialError();
+
+    if (!validatePersonalInformation()) {
+        return false;
+    }
+
+    if (!validateCommercialInformation()) {
+        return false;
+    }
+
+    return true;
+}
+
+/* -----------------------------------------------------
+   3.7 — NETTOYAGE AUTOMATIQUE DES ERREURS
+----------------------------------------------------- */
+
+Object.values(personalCommercialFields).forEach(field => {
+
+    field.addEventListener("input", () => {
+
+        if (
+            formMessage.classList.contains("error")
+        ) {
+            clearPersonalCommercialError();
+        }
+
+    });
+
+    field.addEventListener("change", () => {
+
+        if (
+            formMessage.classList.contains("error")
+        ) {
+            clearPersonalCommercialError();
+        }
+
+    });
+
+});
+
+/* -----------------------------------------------------
+   FIN DU BLOC 3/8
+----------------------------------------------------- */
+
+console.log("TOMA V2 — BLOC 3/8 chargé.");
+
+alert(
+    "TOMA V2 — BLOCO 3/8 CARREGADO COM SUCESSO!\n\n" +
+    "Validação das informações pessoais e comerciais activada."
+);
