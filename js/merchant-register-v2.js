@@ -1310,7 +1310,7 @@ const officialBusinessElements = {
     officialDescription: document.getElementById("officialDescription"),
     officialBusinessFields: document.getElementById("officialBusinessFields")
 };
-
+alert("TEST 4.1 : CHAMPS OFFICIELS RÉCUPÉRÉS");
 /* -----------------------------------------------------
    4.2 — VÉRIFICATION DES ÉLÉMENTS HTML
 ----------------------------------------------------- */
@@ -1332,7 +1332,7 @@ if (missingOfficialElements.length > 0) {
         "TOMA V2 — BLOC 4 : éléments HTML manquants."
     );
 }
-
+alert("TEST 4.2 : VÉRIFICATION HTML TERMINÉE");
 /* -----------------------------------------------------
    4.3 — VALIDATION DES INFORMATIONS OFFICIELLES
 ----------------------------------------------------- */
@@ -1427,7 +1427,7 @@ merchantTypeRadios.forEach(radio => {
     });
 
 });
-
+alert("TEST 4.3 : ÉCOUTE DES TYPES TERMINÉE");
 /* -----------------------------------------------------
    4.6 — NETTOYAGE DES ERREURS
 ----------------------------------------------------- */
