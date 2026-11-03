@@ -1299,7 +1299,7 @@ alert(
    TOMA V2 — BLOC 4/8
    VALIDATION DES BOUTIQUES OFFICIELLES
 ===================================================== */
-
+alert("TEST : LE CODE ARRIVE AU BLOC 4");
 /* -----------------------------------------------------
    4.1 — RÉCUPÉRATION DES CHAMPS OFFICIELS
 ----------------------------------------------------- */
