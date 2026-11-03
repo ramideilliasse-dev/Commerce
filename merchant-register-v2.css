@@ -1,0 +1,1047 @@
+ /* =========================================================
+TOMA — MERCHANT REGISTER V2
+Design professionnel | Responsive | Orange Toma
+========================================================= */
+
+/* 1. VARIABLES */
+:root {
+–toma-orange: #ff6a00;
+–toma-orange-dark: #e85f00;
+–toma-orange-light: #fff2e8;
+–toma-black: #171717;
+–toma-dark: #252525;
+–toma-gray: #707070;
+–toma-light-gray: #f5f5f5;
+–toma-border: #e8e8e8;
+–toma-white: #ffffff;
+–toma-green: #16834a;
+–toma-red: #d93025;
+
+–radius-sm: 10px;
+–radius-md: 16px;
+–radius-lg: 22px;
+
+–shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.045);
+–shadow-card: 0 15px 45px rgba(0, 0, 0, 0.065);
+}
+
+/* 2. RESET */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    }
+
+html {
+scroll-behavior: smooth;
+}
+
+body {
+font-family: “Inter”, sans-serif;
+background: #fafafa;
+color: var(–toma-black);
+line-height: 1.6;
+min-height: 100vh;
+}
+
+button,
+input,
+select,
+textarea {
+font: inherit;
+}
+
+button {
+cursor: pointer;
+}
+
+a {
+color: inherit;
+text-decoration: none;
+}
+
+img {
+max-width: 100%;
+display: block;
+}
+
+/* 3. GENERAL CONTAINER */
+.container,
+.pageContainer,
+.mainContainer {
+width: min(1120px, calc(100% - 40px));
+margin: 0 auto;
+}
+
+/* 4. HEADER */
+.siteHeader {
+width: 100%;
+background: rgba(255, 255, 255, 0.96);
+border-bottom: 1px solid var(–toma-border);
+position: relative;
+z-index: 10;
+}
+
+.headerInner {
+max-width: 1120px;
+min-height: 76px;
+margin: auto;
+padding: 12px 24px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 20px;
+}
+
+.backLink {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+color: var(–toma-gray);
+font-size: 13px;
+font-weight: 600;
+transition: color .2s ease;
+}
+
+.backLink:hover {
+color: var(–toma-orange);
+}
+
+.brandLogo,
+.logo {
+font-size: 28px;
+font-weight: 900;
+letter-spacing: -1.5px;
+color: var(–toma-orange);
+}
+
+.headerBadge {
+display: inline-flex;
+align-items: center;
+gap: 7px;
+padding: 8px 13px;
+background: #f0faf4;
+color: var(–toma-green);
+border: 1px solid #d9f0e2;
+border-radius: 30px;
+font-size: 11px;
+font-weight: 700;
+}
+
+.headerBadge .material-symbols-rounded {
+font-size: 16px;
+}
+
+/* 5. HERO */
+.heroSection {
+padding: 58px 20px 35px;
+text-align: center;
+max-width: 850px;
+margin: auto;
+}
+
+.heroEyebrow,
+.sectionEyebrow {
+display: inline-flex;
+align-items: center;
+gap: 7px;
+color: var(–toma-orange);
+font-size: 11px;
+font-weight: 800;
+letter-spacing: 1.4px;
+text-transform: uppercase;
+margin-bottom: 15px;
+}
+
+.heroTitle {
+font-size: clamp(30px, 5vw, 46px);
+line-height: 1.15;
+letter-spacing: -1.8px;
+font-weight: 850;
+margin-bottom: 16px;
+}
+
+.heroTitle span {
+color: var(–toma-orange);
+}
+
+.heroDescription {
+max-width: 650px;
+margin: auto;
+color: var(–toma-gray);
+font-size: 15px;
+line-height: 1.8;
+}
+
+/* 6. BENEFITS */
+.benefitsSection {
+max-width: 850px;
+margin: 0 auto 35px;
+padding: 0 20px;
+}
+
+.benefitsGrid {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 14px;
+}
+
+.benefitCard {
+background: var(–toma-white);
+border: 1px solid var(–toma-border);
+border-radius: var(–radius-md);
+padding: 18px 14px;
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+.benefitIcon {
+width: 42px;
+height: 42px;
+flex-shrink: 0;
+display: grid;
+place-items: center;
+background: var(–toma-orange-light);
+color: var(–toma-orange);
+border-radius: 12px;
+}
+
+.benefitIcon .material-symbols-rounded {
+font-size: 22px;
+}
+
+.benefitText {
+font-size: 12px;
+font-weight: 750;
+line-height: 1.4;
+}
+
+/* 7. FORM WRAPPER */
+.formWrapper {
+max-width: 850px;
+margin: 0 auto 70px;
+padding: 0 20px;
+}
+
+.formCard {
+background: var(–toma-white);
+border: 1px solid var(–toma-border);
+border-radius: 24px;
+box-shadow: var(–shadow-card);
+overflow: hidden;
+}
+
+/* 8. PROGRESS */
+.progressContainer {
+padding: 28px 32px 24px;
+border-bottom: 1px solid var(–toma-border);
+}
+
+.progressTop {
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 12px;
+margin-bottom: 15px;
+}
+
+.progressTitle {
+font-size: 13px;
+font-weight: 800;
+}
+
+.progressPercentage {
+color: var(–toma-orange);
+font-size: 13px;
+font-weight: 800;
+}
+
+.progressTrack {
+width: 100%;
+height: 7px;
+background: #eeeeee;
+border-radius: 20px;
+overflow: hidden;
+}
+
+.progressBar {
+width: 25%;
+height: 100%;
+background: linear-gradient(
+90deg,
+var(–toma-orange),
+#ff9a4d
+);
+border-radius: inherit;
+transition: width .35s ease;
+}
+
+.progressSteps {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 10px;
+margin-top: 20px;
+}
+
+.progressStep {
+display: flex;
+align-items: center;
+gap: 7px;
+color: #a0a0a0;
+font-size: 11px;
+font-weight: 650;
+}
+
+.progressStepNumber {
+width: 25px;
+height: 25px;
+display: grid;
+place-items: center;
+border: 1px solid #dedede;
+border-radius: 50%;
+font-size: 11px;
+flex-shrink: 0;
+}
+
+.progressStep.active {
+color: var(–toma-orange);
+}
+
+.progressStep.active .progressStepNumber {
+background: var(–toma-orange);
+color: white;
+border-color: var(–toma-orange);
+}
+
+.progressStep.completed {
+color: var(–toma-green);
+}
+
+.progressStep.completed .progressStepNumber {
+background: #e9f7ef;
+color: var(–toma-green);
+border-color: #ccebd8;
+}
+
+/* 9. FORM CONTENT */
+.formContent {
+padding: 34px;
+}
+
+.formStep {
+width: 100%;
+}
+
+.stepHeading {
+margin-bottom: 26px;
+}
+
+.stepHeading h2 {
+font-size: 23px;
+font-weight: 850;
+letter-spacing: -.7px;
+margin-bottom: 7px;
+}
+
+.stepHeading p {
+font-size: 13px;
+color: var(–toma-gray);
+}
+
+/* 10. MERCHANT TYPE */
+.merchantTypeGrid {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 16px;
+}
+
+.merchantTypeOption {
+position: relative;
+}
+
+.merchantTypeOption input[type=“radio”] {
+position: absolute;
+opacity: 0;
+pointer-events: none;
+}
+
+.merchantTypeCard {
+display: block;
+height: 100%;
+padding: 25px 20px;
+background: #fff;
+border: 1.5px solid var(–toma-border);
+border-radius: 17px;
+cursor: pointer;
+transition: .25s ease;
+}
+
+.merchantTypeCard:hover {
+border-color: #ffb47e;
+transform: translateY(-2px);
+}
+
+.merchantTypeOption input:checked + .merchantTypeCard {
+border-color: var(–toma-orange);
+background: #fff9f5;
+box-shadow: 0 0 0 3px rgba(255, 106, 0, .09);
+}
+
+.merchantTypeIcon {
+width: 48px;
+height: 48px;
+display: grid;
+place-items: center;
+background: var(–toma-orange-light);
+color: var(–toma-orange);
+border-radius: 14px;
+margin-bottom: 16px;
+}
+
+.merchantTypeIcon .material-symbols-rounded {
+font-size: 25px;
+}
+
+.merchantTypeCard h3 {
+font-size: 15px;
+font-weight: 800;
+margin-bottom: 8px;
+}
+
+.merchantTypeCard p {
+font-size: 12px;
+color: var(–toma-gray);
+line-height: 1.7;
+}
+
+/* 11. INPUTS */
+.formGrid {
+display: grid;
+grid-template-columns: repeat(2, minmax(0, 1fr));
+gap: 20px;
+}
+
+.formGroup {
+display: flex;
+flex-direction: column;
+gap: 8px;
+margin-bottom: 20px;
+min-width: 0;
+}
+
+.formGroup.fullWidth {
+grid-column: 1 / -1;
+}
+
+.formGroup label {
+font-size: 12px;
+font-weight: 750;
+color: var(–toma-dark);
+}
+
+.formGroup label .required {
+color: var(–toma-red);
+margin-left: 3px;
+}
+
+.formGroup input,
+.formGroup select,
+.formGroup textarea {
+width: 100%;
+min-height: 49px;
+padding: 13px 15px;
+color: var(–toma-black);
+background: #fff;
+border: 1px solid #dedede;
+border-radius: 11px;
+outline: none;
+font-size: 13px;
+transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.formGroup textarea {
+min-height: 120px;
+resize: vertical;
+}
+
+.formGroup input::placeholder,
+.formGroup textarea::placeholder {
+color: #a4a4a4;
+}
+
+.formGroup input:focus,
+.formGroup select:focus,
+.formGroup textarea:focus {
+border-color: var(–toma-orange);
+box-shadow: 0 0 0 3px rgba(255, 106, 0, .09);
+}
+
+.formGroup input:disabled,
+.formGroup select:disabled {
+background: #f4f4f4;
+cursor: not-allowed;
+}
+
+.fieldHint {
+color: #858585;
+font-size: 11px;
+line-height: 1.5;
+}
+
+.fieldError {
+color: var(–toma-red);
+font-size: 11px;
+display: none;
+}
+
+.formGroup.invalid input,
+.formGroup.invalid select,
+.formGroup.invalid textarea {
+border-color: var(–toma-red);
+}
+
+.formGroup.invalid .fieldError {
+display: block;
+}
+
+/* 12. PASSWORD */
+.passwordWrapper {
+position: relative;
+}
+
+.passwordWrapper input {
+padding-right: 48px;
+}
+
+.passwordToggle {
+position: absolute;
+top: 50%;
+right: 12px;
+transform: translateY(-50%);
+border: 0;
+background: transparent;
+color: #777;
+display: grid;
+place-items: center;
+padding: 5px;
+}
+
+.passwordToggle:hover {
+color: var(–toma-orange);
+}
+
+/* 13. CONDITIONAL OFFICIAL SECTION */
+.conditionalSection {
+margin-top: 20px;
+padding: 23px;
+border: 1px solid #ffd6bb;
+background: #fffaf6;
+border-radius: 16px;
+}
+
+.conditionalSection h3 {
+font-size: 15px;
+margin-bottom: 8px;
+}
+
+.conditionalSection > p {
+color: var(–toma-gray);
+font-size: 12px;
+margin-bottom: 20px;
+}
+
+.hidden {
+display: none !important;
+}
+
+/* 14. DOCUMENTS */
+.documentsSection {
+margin-top: 30px;
+padding-top: 28px;
+border-top: 1px solid var(–toma-border);
+}
+
+.documentsHeading {
+margin-bottom: 20px;
+}
+
+.documentsHeading h3 {
+font-size: 17px;
+font-weight: 850;
+margin-bottom: 6px;
+}
+
+.documentsHeading p {
+font-size: 12px;
+color: var(–toma-gray);
+}
+
+.documentsGrid {
+display: grid;
+grid-template-columns: repeat(2, minmax(0, 1fr));
+gap: 15px;
+}
+
+.documentCard {
+min-width: 0;
+border: 1px solid var(–toma-border);
+border-radius: 15px;
+padding: 18px;
+background: #fff;
+transition: border-color .2s ease, background .2s ease;
+}
+
+.documentCard:hover {
+border-color: #ffb47e;
+background: #fffdfb;
+}
+
+.documentCard label {
+display: flex;
+align-items: flex-start;
+gap: 12px;
+cursor: pointer;
+}
+
+.documentIcon {
+width: 42px;
+height: 42px;
+flex-shrink: 0;
+display: grid;
+place-items: center;
+border-radius: 12px;
+color: var(–toma-orange);
+background: var(–toma-orange-light);
+}
+
+.documentIcon .material-symbols-rounded {
+font-size: 22px;
+}
+
+.documentInfo {
+min-width: 0;
+}
+
+.documentInfo strong {
+display: block;
+font-size: 12px;
+font-weight: 800;
+margin-bottom: 5px;
+}
+
+.documentInfo small {
+display: block;
+color: var(–toma-gray);
+font-size: 10px;
+line-height: 1.5;
+}
+
+.documentUploadButton {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 7px;
+width: 100%;
+min-height: 39px;
+margin-top: 15px;
+padding: 8px 12px;
+border: 1px dashed #ffab75;
+border-radius: 9px;
+background: #fff8f3;
+color: var(–toma-orange-dark);
+font-size: 11px;
+font-weight: 750;
+cursor: pointer;
+transition: .2s ease;
+}
+
+.documentUploadButton:hover {
+background: var(–toma-orange-light);
+border-color: var(–toma-orange);
+}
+
+.documentUploadButton .material-symbols-rounded {
+font-size: 17px;
+}
+
+.documentCard input[type=“file”] {
+display: none;
+}
+
+.filePreview {
+display: none;
+align-items: center;
+justify-content: space-between;
+gap: 10px;
+margin-top: 12px;
+padding: 10px;
+border-radius: 9px;
+background: #f0faf4;
+color: var(–toma-green);
+font-size: 11px;
+overflow-wrap: anywhere;
+}
+
+.filePreview.hasFile {
+display: flex;
+}
+
+.filePreview span {
+min-width: 0;
+}
+
+.filePreview button {
+border: 0;
+background: transparent;
+color: var(–toma-red);
+flex-shrink: 0;
+padding: 4px;
+}
+
+/* 15. TERMS */
+.termsSection {
+margin-top: 30px;
+padding: 17px;
+background: #fafafa;
+border: 1px solid var(–toma-border);
+border-radius: 12px;
+}
+
+.termsLabel {
+display: flex;
+align-items: flex-start;
+gap: 11px;
+cursor: pointer;
+}
+
+.termsLabel input {
+width: 17px;
+height: 17px;
+flex-shrink: 0;
+margin-top: 3px;
+accent-color: var(–toma-orange);
+}
+
+.termsLabel span {
+font-size: 11px;
+color: var(–toma-gray);
+line-height: 1.7;
+}
+
+.termsLabel a {
+color: var(–toma-orange-dark);
+font-weight: 750;
+text-decoration: underline;
+}
+
+/* 16. FORM MESSAGE */
+.formMessage {
+display: none;
+padding: 13px 15px;
+margin-top: 20px;
+border-radius: 10px;
+font-size: 12px;
+line-height: 1.6;
+}
+
+.formMessage.show {
+display: block;
+}
+
+.formMessage.success {
+background: #eaf8ef;
+color: #126b3c;
+border: 1px solid #c9ebd5;
+}
+
+.formMessage.error {
+background: #fff0ef;
+color: #b42318;
+border: 1px solid #f5ceca;
+}
+
+.formMessage.info {
+background: #fff6ec;
+color: #985000;
+border: 1px solid #ffdfbd;
+}
+
+/* 17. FORM ACTIONS */
+.formActions {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 14px;
+margin-top: 30px;
+padding-top: 25px;
+border-top: 1px solid var(–toma-border);
+}
+
+.primaryButton,
+.secondaryButton {
+min-height: 48px;
+padding: 12px 22px;
+border-radius: 11px;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 9px;
+font-size: 12px;
+font-weight: 800;
+transition: .2s ease;
+}
+
+.primaryButton {
+color: #fff;
+background: var(–toma-orange);
+border: 1px solid var(–toma-orange);
+box-shadow: 0 5px 14px rgba(255, 106, 0, .18);
+}
+
+.primaryButton:hover {
+background: var(–toma-orange-dark);
+border-color: var(–toma-orange-dark);
+transform: translateY(-1px);
+}
+
+.primaryButton:disabled {
+opacity: .65;
+cursor: not-allowed;
+transform: none;
+}
+
+.secondaryButton {
+color: var(–toma-dark);
+background: #fff;
+border: 1px solid var(–toma-border);
+}
+
+.secondaryButton:hover {
+border-color: #ffb47e;
+color: var(–toma-orange);
+}
+
+.primaryButton .material-symbols-rounded,
+.secondaryButton .material-symbols-rounded {
+font-size: 18px;
+}
+
+/* 18. FOOTER */
+.siteFooter {
+padding: 30px 20px;
+text-align: center;
+background: #fff;
+border-top: 1px solid var(–toma-border);
+}
+
+.footerLogo {
+color: var(–toma-orange);
+font-size: 23px;
+font-weight: 900;
+letter-spacing: -1px;
+margin-bottom: 5px;
+}
+
+.siteFooter p {
+color: var(–toma-gray);
+font-size: 11px;
+}
+
+.footerCopyright {
+margin-top: 14px;
+color: #aaa !important;
+font-size: 10px !important;
+}
+
+/* 19. LOADING STATE */
+.loading {
+opacity: .65;
+pointer-events: none;
+}
+
+/* 20. RESPONSIVE TABLET */
+@media (max-width: 768px) {
+.heroSection {
+padding-top: 42px;
+}
+
+.benefitsGrid {
+grid-template-columns: 1fr;
+}
+
+.benefitCard {
+padding: 14px;
+}
+
+.formContent {
+padding: 25px;
+}
+
+.progressContainer {
+padding: 24px;
+}
+
+.progressStep {
+flex-direction: column;
+align-items: flex-start;
+gap: 5px;
+}
+
+.progressStepNumber {
+width: 27px;
+height: 27px;
+}
+}
+
+/* 21. RESPONSIVE MOBILE */
+@media (max-width: 560px) {
+body {
+background: #fff;
+}
+
+.container,
+.pageContainer,
+.mainContainer {
+width: calc(100% - 28px);
+}
+
+.headerInner {
+min-height: 65px;
+padding: 10px 15px;
+gap: 8px;
+}
+
+.brandLogo,
+.logo {
+font-size: 24px;
+}
+
+.backLink {
+font-size: 11px;
+gap: 4px;
+}
+
+.headerBadge {
+font-size: 9px;
+padding: 7px 9px;
+}
+
+.heroSection {
+padding: 38px 18px 25px;
+}
+
+.heroTitle {
+font-size: 31px;
+letter-spacing: -1.1px;
+}
+
+.heroDescription {
+font-size: 13px;
+}
+
+.benefitsSection {
+margin-bottom: 25px;
+padding: 0 14px;
+}
+
+.formWrapper {
+padding: 0;
+margin-bottom: 45px;
+}
+
+.formCard {
+border-radius: 0;
+border-left: 0;
+border-right: 0;
+box-shadow: none;
+}
+
+.progressContainer {
+padding: 22px 17px;
+}
+
+.progressSteps {
+gap: 5px;
+}
+
+.progressStep {
+font-size: 9px;
+}
+
+.progressStepNumber {
+width: 25px;
+height: 25px;
+font-size: 10px;
+}
+
+.formContent {
+padding: 25px 17px;
+}
+
+.stepHeading h2 {
+font-size: 20px;
+}
+
+.stepHeading p {
+font-size: 12px;
+}
+
+.merchantTypeGrid {
+grid-template-columns: 1fr;
+}
+
+.merchantTypeCard {
+padding: 20px;
+}
+
+.formGrid {
+grid-template-columns: 1fr;
+gap: 0;
+}
+
+.documentsGrid {
+grid-template-columns: 1fr;
+}
+
+.conditionalSection {
+padding: 17px;
+}
+
+.formActions {
+flex-direction: column-reverse;
+align-items: stretch;
+}
+
+.primaryButton,
+.secondaryButton {
+width: 100%;
+min-height: 50px;
+}
+
+.siteFooter {
+padding: 25px 15px;
+}
+}
+
+/* 22. ACCESSIBILITY */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+outline: 3px solid rgba(255, 106, 0, .25);
+outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+*,
+*::before,
+*::after {
+scroll-behavior: auto !important;
+transition-duration: .01ms !important;
+animation-duration: .01ms !important;
+animation-iteration-count: 1 !important;
+}
+}
