@@ -1299,7 +1299,7 @@ alert(
    TOMA V2 — BLOC 4/8
    VALIDATION DES BOUTIQUES OFFICIELLES
 ===================================================== */
-alert("TEST : LE CODE ARRIVE AU BLOC 4");
+
 /* -----------------------------------------------------
    4.1 — RÉCUPÉRATION DES CHAMPS OFFICIELS
 ----------------------------------------------------- */
@@ -1310,7 +1310,7 @@ const officialBusinessElements = {
     officialDescription: document.getElementById("officialDescription"),
     officialBusinessFields: document.getElementById("officialBusinessFields")
 };
-alert("TEST 4.1 : CHAMPS OFFICIELS RÉCUPÉRÉS");
+
 /* -----------------------------------------------------
    4.2 — VÉRIFICATION DES ÉLÉMENTS HTML
 ----------------------------------------------------- */
@@ -1332,7 +1332,7 @@ if (missingOfficialElements.length > 0) {
         "TOMA V2 — BLOC 4 : éléments HTML manquants."
     );
 }
-alert("TEST 4.2 : VÉRIFICATION HTML TERMINÉE");
+
 /* -----------------------------------------------------
    4.3 — VALIDATION DES INFORMATIONS OFFICIELLES
 ----------------------------------------------------- */
@@ -1427,7 +1427,7 @@ function updateOfficialBusinessRequirements() {
     });
 
 });
-alert("TEST 4.3 : ÉCOUTE DES TYPES TERMINÉE");
+
 /* -----------------------------------------------------
    4.6 — NETTOYAGE DES ERREURS
 ----------------------------------------------------- */
@@ -1718,4 +1718,156 @@ console.log("TOMA V2 — BLOC 5/8 chargé.");
 alert(
     "TOMA V2 — BLOCO 5/8 CARREGADO COM SUCESSO!\n\n" +
     "Verificação final do formulário activada."
+);
+/* =====================================================
+   TOMA V2 — BLOC 6/8
+   FIREBASE AUTHENTICATION
+   CRÉATION DU COMPTE COMMERÇANT
+===================================================== */
+
+/* -----------------------------------------------------
+   6.1 — IMPORTATION FIREBASE
+----------------------------------------------------- */
+
+import { auth } from "../firebase.js";
+
+import {
+    createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+
+/* -----------------------------------------------------
+   6.2 — VÉRIFICATION DE FIREBASE AUTHENTICATION
+----------------------------------------------------- */
+
+if (!auth) {
+
+    alert(
+        "TOMA V2 — ERRO FIREBASE\n\n" +
+        "A autenticação Firebase não foi encontrada."
+    );
+
+    throw new Error(
+        "TOMA V2 — Firebase Auth indisponível."
+    );
+
+}
+
+
+/* -----------------------------------------------------
+   6.3 — CRÉATION DU COMPTE COMMERÇANT
+----------------------------------------------------- */
+
+async function createMerchantFirebaseAccount() {
+
+    const email =
+        personalCommercialFields.email.value.trim();
+
+    const password =
+        personalCommercialFields.password.value;
+
+    try {
+
+        const userCredential =
+            await createUserWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+
+        const user = userCredential.user;
+
+        if (!user || !user.uid) {
+
+            throw new Error(
+                "Identifiant Firebase du commerçant introuvable."
+            );
+
+        }
+
+        console.log(
+            "TOMA V2 — Compte Firebase créé :",
+            user.uid
+        );
+
+        return {
+            success: true,
+            user: user,
+            uid: user.uid,
+            email: user.email
+        };
+
+    } catch (error) {
+
+        console.error(
+            "TOMA V2 — Erreur Firebase Authentication :",
+            error
+        );
+
+        let errorMessage =
+            "Não foi possível criar a sua conta.";
+
+        switch (error.code) {
+
+            case "auth/email-already-in-use":
+
+                errorMessage =
+                    "Este endereço de e-mail já está registado.";
+
+                break;
+
+            case "auth/invalid-email":
+
+                errorMessage =
+                    "O endereço de e-mail não é válido.";
+
+                break;
+
+            case "auth/weak-password":
+
+                errorMessage =
+                    "A palavra-passe é demasiado fraca.";
+
+                break;
+
+            case "auth/network-request-failed":
+
+                errorMessage =
+                    "Erro de ligação. Verifique a sua internet.";
+
+                break;
+
+            case "auth/too-many-requests":
+
+                errorMessage =
+                    "Demasiadas tentativas. Tente novamente mais tarde.";
+
+                break;
+
+        }
+
+        showPersonalCommercialError(errorMessage);
+
+        return {
+            success: false,
+            error: error
+        };
+
+    }
+
+}
+
+
+/* -----------------------------------------------------
+   6.4 — FIN DU BLOC
+----------------------------------------------------- */
+
+console.log(
+    "TOMA V2 — BLOC 6/8 carregado."
+);
+
+alert(
+    "TOMA V2 — BLOCO 6/8 CARREGADO COM SUCESSO!\n\n" +
+    "Firebase Authentication preparado.\n" +
+    "A criação da conta será activada no BLOCO 8."
 );
