@@ -1295,3 +1295,172 @@ alert(
     "TOMA V2 — BLOCO 3/8 CARREGADO COM SUCESSO!\n\n" +
     "Validação das informações pessoais e comerciais activada."
 );
+/* =====================================================
+   TOMA V2 — BLOC 4/8
+   VALIDATION DES BOUTIQUES OFFICIELLES
+===================================================== */
+
+/* -----------------------------------------------------
+   4.1 — RÉCUPÉRATION DES CHAMPS OFFICIELS
+----------------------------------------------------- */
+
+const officialBusinessElements = {
+    companyName: document.getElementById("companyName"),
+    brandName: document.getElementById("brandName"),
+    officialDescription: document.getElementById("officialDescription"),
+    officialBusinessFields: document.getElementById("officialBusinessFields")
+};
+
+/* -----------------------------------------------------
+   4.2 — VÉRIFICATION DES ÉLÉMENTS HTML
+----------------------------------------------------- */
+
+const missingOfficialElements =
+    Object.entries(officialBusinessElements)
+        .filter(([key, element]) => !element)
+        .map(([key]) => key);
+
+if (missingOfficialElements.length > 0) {
+
+    alert(
+        "TOMA V2 — ERREUR BLOC 4\n\n" +
+        "Éléments introuvables :\n" +
+        missingOfficialElements.join(", ")
+    );
+
+    throw new Error(
+        "TOMA V2 — BLOC 4 : éléments HTML manquants."
+    );
+}
+
+/* -----------------------------------------------------
+   4.3 — VALIDATION DES INFORMATIONS OFFICIELLES
+----------------------------------------------------- */
+
+function validateOfficialBusinessInformation() {
+
+    // Une boutique ordinaire n'a pas besoin de ces champs.
+
+    if (getMerchantType() !== "official") {
+        return true;
+    }
+
+    const companyName =
+        officialBusinessElements.companyName.value.trim();
+
+    const brandName =
+        officialBusinessElements.brandName.value.trim();
+
+    const officialDescription =
+        officialBusinessElements.officialDescription.value.trim();
+
+    if (companyName.length < 2) {
+
+        showPersonalCommercialError(
+            "Introduza o nome oficial da empresa."
+        );
+
+        officialBusinessElements.companyName.focus();
+
+        return false;
+    }
+
+    if (brandName.length < 2) {
+
+        showPersonalCommercialError(
+            "Introduza o nome da marca."
+        );
+
+        officialBusinessElements.brandName.focus();
+
+        return false;
+    }
+
+    if (officialDescription.length < 20) {
+
+        showPersonalCommercialError(
+            "A descrição da empresa deve conter pelo menos 20 caracteres."
+        );
+
+        officialBusinessElements.officialDescription.focus();
+
+        return false;
+    }
+
+    return true;
+}
+
+/* -----------------------------------------------------
+   4.4 — GESTION DYNAMIQUE DES CHAMPS OFFICIELS
+----------------------------------------------------- */
+
+function updateOfficialBusinessRequirements() {
+
+    const isOfficial = getMerchantType() === "official";
+
+    officialBusinessElements.officialBusinessFields.classList.toggle(
+        "hidden",
+        !isOfficial
+    );
+
+    officialBusinessElements.companyName.required = isOfficial;
+    officialBusinessElements.brandName.required = isOfficial;
+    officialBusinessElements.officialDescription.required = isOfficial;
+
+    if (!isOfficial) {
+
+        clearPersonalCommercialError();
+
+    }
+}
+
+/* -----------------------------------------------------
+   4.5 — ÉCOUTE DES CHANGEMENTS DE TYPE
+----------------------------------------------------- */
+
+merchantTypeRadios.forEach(radio => {
+
+    radio.addEventListener("change", () => {
+
+        updateOfficialBusinessRequirements();
+
+    });
+
+});
+
+/* -----------------------------------------------------
+   4.6 — NETTOYAGE DES ERREURS
+----------------------------------------------------- */
+
+[
+    officialBusinessElements.companyName,
+    officialBusinessElements.brandName,
+    officialBusinessElements.officialDescription
+].forEach(field => {
+
+    field.addEventListener("input", () => {
+
+        if (formMessage.classList.contains("error")) {
+            clearPersonalCommercialError();
+        }
+
+    });
+
+});
+
+/* -----------------------------------------------------
+   4.7 — INITIALISATION
+----------------------------------------------------- */
+
+updateOfficialBusinessRequirements();
+
+/* -----------------------------------------------------
+   FIN DU BLOC 4/8
+----------------------------------------------------- */
+
+console.log("TOMA V2 — BLOC 4/8 chargé.");
+
+alert(
+    "TOMA V2 — BLOCO 4/8 CARREGADO COM SUCESSO!\n\n" +
+    "Validação das Lojas Oficiais activada."
+);
