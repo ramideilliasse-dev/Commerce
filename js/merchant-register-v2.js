@@ -1464,3 +1464,258 @@ alert(
     "TOMA V2 — BLOCO 4/8 CARREGADO COM SUCESSO!\n\n" +
     "Validação das Lojas Oficiais activada."
 );
+/* =====================================================
+   TOMA V2 — BLOC 5/8
+   VÉRIFICATION FINALE DU FORMULAIRE
+===================================================== */
+
+/* -----------------------------------------------------
+   5.1 — RÉCUPÉRATION DES CHAMPS FINAUX
+----------------------------------------------------- */
+
+const finalRegistrationFields = {
+    province: document.getElementById("province"),
+    city: document.getElementById("city"),
+    address: document.getElementById("address"),
+    termsAgreement: document.getElementById("termsAgreement")
+};
+
+/* -----------------------------------------------------
+   5.2 — VÉRIFICATION DES ÉLÉMENTS HTML
+----------------------------------------------------- */
+
+const missingFinalFields =
+    Object.entries(finalRegistrationFields)
+        .filter(([key, element]) => !element)
+        .map(([key]) => key);
+
+if (missingFinalFields.length > 0) {
+
+    alert(
+        "TOMA V2 — ERREUR BLOC 5\n\n" +
+        "Éléments introuvables :\n" +
+        missingFinalFields.join(", ")
+    );
+
+    throw new Error(
+        "TOMA V2 — BLOC 5 : éléments HTML manquants."
+    );
+}
+
+/* -----------------------------------------------------
+   5.3 — VALIDATION DU TYPE DE BOUTIQUE
+----------------------------------------------------- */
+
+function validateFinalMerchantType() {
+
+    if (!getMerchantType()) {
+
+        showPersonalCommercialError(
+            "Seleccione o tipo de loja."
+        );
+
+        return false;
+    }
+
+    return true;
+}
+
+/* -----------------------------------------------------
+   5.4 — VALIDATION DE LA LOCALISATION
+----------------------------------------------------- */
+
+function validateFinalLocation() {
+
+    const province =
+        finalRegistrationFields.province.value.trim();
+
+    const city =
+        finalRegistrationFields.city.value.trim();
+
+    const address =
+        finalRegistrationFields.address.value.trim();
+
+    if (!province) {
+
+        showPersonalCommercialError(
+            "Seleccione a sua província."
+        );
+
+        finalRegistrationFields.province.focus();
+
+        return false;
+    }
+
+    if (!city) {
+
+        showPersonalCommercialError(
+            "Introduza a sua cidade ou município."
+        );
+
+        finalRegistrationFields.city.focus();
+
+        return false;
+    }
+
+    if (address.length < 5) {
+
+        showPersonalCommercialError(
+            "Introduza o endereço da sua loja."
+        );
+
+        finalRegistrationFields.address.focus();
+
+        return false;
+    }
+
+    return true;
+}
+
+/* -----------------------------------------------------
+   5.5 — VALIDATION DES DOCUMENTS
+----------------------------------------------------- */
+
+function validateFinalDocuments() {
+
+    const selectedDocuments = getSelectedDocuments();
+
+    const documentNames = {
+        alvaraFile: "Alvará Comercial",
+        certidaoFile: "Certidão",
+        admissibilidadeFile: "Certificado de Admissibilidade",
+        pactoFile: "Pacto de Sociedade Unipessoal por Quotas"
+    };
+
+    for (const [fieldName, file] of Object.entries(selectedDocuments)) {
+
+        if (!file) {
+
+            showPersonalCommercialError(
+                "Por favor, carregue o documento: " +
+                documentNames[fieldName] + "."
+            );
+
+            const input = document.getElementById(fieldName);
+
+            if (input) {
+                input.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            }
+
+            return false;
+        }
+
+        if (!validateDocumentType(file)) {
+
+            showPersonalCommercialError(
+                "Formato inválido no documento: " +
+                documentNames[fieldName] + "."
+            );
+
+            return false;
+        }
+
+        if (!validateDocumentSize(file)) {
+
+            showPersonalCommercialError(
+                "O documento excede o limite de 5 MB: " +
+                documentNames[fieldName] + "."
+            );
+
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/* -----------------------------------------------------
+   5.6 — ACCEPTATION DES CONDITIONS
+----------------------------------------------------- */
+
+function validateFinalAgreement() {
+
+    if (!finalRegistrationFields.termsAgreement.checked) {
+
+        showPersonalCommercialError(
+            "Deve aceitar os termos e condições para continuar."
+        );
+
+        finalRegistrationFields.termsAgreement.focus();
+
+        return false;
+    }
+
+    return true;
+}
+
+/* -----------------------------------------------------
+   5.7 — VALIDATION GLOBALE
+----------------------------------------------------- */
+
+function validateCompleteMerchantRegistration() {
+
+    clearPersonalCommercialError();
+
+    // Vérifier le type de boutique.
+    if (!validateFinalMerchantType()) {
+        return false;
+    }
+
+    // Vérifier les informations personnelles.
+    if (!validatePersonalInformation()) {
+        return false;
+    }
+
+    // Vérifier les informations commerciales.
+    if (!validateCommercialInformation()) {
+        return false;
+    }
+
+    // Vérifier les informations officielles.
+    if (!validateOfficialBusinessInformation()) {
+        return false;
+    }
+
+    // Vérifier la localisation.
+    if (!validateFinalLocation()) {
+        return false;
+    }
+
+    // Vérifier les quatre documents.
+    if (!validateFinalDocuments()) {
+        return false;
+    }
+
+    // Vérifier l'acceptation des conditions.
+    if (!validateFinalAgreement()) {
+        return false;
+    }
+
+    return true;
+}
+
+/* -----------------------------------------------------
+   5.8 — INITIALISATION DES CHAMPS FINAUX
+----------------------------------------------------- */
+
+Object.values(finalRegistrationFields).forEach(field => {
+
+    field.addEventListener("change", () => {
+
+        if (formMessage.classList.contains("error")) {
+            clearPersonalCommercialError();
+        }
+
+    });
+
+});
+
+console.log("TOMA V2 — BLOC 5/8 chargé.");
+
+alert(
+    "TOMA V2 — BLOCO 5/8 CARREGADO COM SUCESSO!\n\n" +
+    "Verificação final do formulário activada."
+);
