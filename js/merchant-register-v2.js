@@ -1418,7 +1418,7 @@ function updateOfficialBusinessRequirements() {
    4.5 — ÉCOUTE DES CHANGEMENTS DE TYPE
 ----------------------------------------------------- */
 
-merchantTypeRadios.forEach(radio => {
+[ordinaryMerchant, officialMerchant].forEach(radio => {
 
     radio.addEventListener("change", () => {
 
