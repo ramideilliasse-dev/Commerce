@@ -1,0 +1,1857 @@
+ <!DOCTYPE html>
+<html lang="pt">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<meta name="theme-color" content="#ff6a00">
+
+<title>Registo de Comerciante | Toma</title>
+
+<meta name="description"
+content="Crie a sua conta de comerciante na Toma e comece a preparar a sua loja online.">
+
+<!-- FONTES -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
+rel="stylesheet">
+
+<!-- CSS -->
+
+<link rel="stylesheet" href="./merchant-register-v2.css">
+
+</head>
+
+
+<body>
+
+<div class="registerPage">
+
+<!-- =====================================
+HEADER
+===================================== -->
+
+<header class="registerHeader">
+
+    <a href="./login.html" class="backButton">
+
+        <span class="material-symbols-rounded">
+            arrow_back
+        </span>
+
+    </a>
+
+
+    <div class="brand">
+
+        <div class="brandLogo">
+            T
+        </div>
+
+        <div class="brandInfo">
+
+            <h1>TOMA</h1>
+
+            <span>O comércio mais perto de si.</span>
+
+        </div>
+
+    </div>
+
+
+    <div class="secureBadge">
+
+        <span class="material-symbols-rounded">
+            verified_user
+        </span>
+
+        <span>Registo seguro</span>
+
+    </div>
+
+</header>
+
+
+<!-- =====================================
+INTRODUÇÃO
+===================================== -->
+
+<main class="registerContainer">
+
+
+<section class="heroSection">
+
+    <div class="heroBadge">
+
+        <span class="material-symbols-rounded">
+            storefront
+        </span>
+
+        OPORTUNIDADE PARA COMERCIANTES
+
+    </div>
+
+
+    <h2>
+
+        Faça crescer o seu negócio com a
+
+        <span>Toma.</span>
+
+    </h2>
+
+
+    <p>
+
+        Crie a sua loja online, alcance novos clientes
+        e faça parte de uma plataforma de comércio
+        criada para aproximar vendedores e compradores.
+
+    </p>
+
+
+    <div class="heroBenefits">
+
+        <div>
+
+            <span class="material-symbols-rounded">
+                shopping_bag
+            </span>
+
+            <span>Venda online</span>
+
+        </div>
+
+
+        <div>
+
+            <span class="material-symbols-rounded">
+                groups
+            </span>
+
+            <span>Mais clientes</span>
+
+        </div>
+
+
+        <div>
+
+            <span class="material-symbols-rounded">
+                trending_up
+            </span>
+
+            <span>Faça crescer o negócio</span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================
+PROGRESSO
+===================================== -->
+
+<section class="progressSection">
+
+    <div class="progressHeader">
+
+        <div>
+
+            <span class="sectionEyebrow">
+                PROCESSO DE REGISTO
+            </span>
+
+            <h3>Prepare a sua candidatura</h3>
+
+        </div>
+
+
+        <span class="progressPercentage"
+        id="progressPercentage">
+
+            0%
+
+        </span>
+
+    </div>
+
+
+    <div class="progressTrack">
+
+        <div class="progressBar"
+        id="progressBar">
+
+        </div>
+
+    </div>
+
+
+    <div class="progressSteps">
+
+        <div class="progressStep active"
+        data-step="1">
+
+            <span>1</span>
+
+            <p>Tipo de loja</p>
+
+        </div>
+
+
+        <div class="progressStep"
+        data-step="2">
+
+            <span>2</span>
+
+            <p>Dados pessoais</p>
+
+        </div>
+
+
+        <div class="progressStep"
+        data-step="3">
+
+            <span>3</span>
+
+            <p>Dados comerciais</p>
+
+        </div>
+
+
+        <div class="progressStep"
+        data-step="4">
+
+            <span>4</span>
+
+            <p>Documentos</p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================
+FORMULÁRIO PRINCIPAL
+===================================== -->
+
+<form id="merchantRegisterForm"
+class="registerForm"
+novalidate>
+
+
+<!-- =====================================
+BLOC 1
+TIPO DE COMERCIANTE
+===================================== -->
+
+<section class="formSection">
+
+    <div class="sectionHeading">
+
+        <div class="sectionIcon">
+
+            <span class="material-symbols-rounded">
+                store
+            </span>
+
+        </div>
+
+
+        <div>
+
+            <span class="sectionEyebrow">
+                PASSO 01
+            </span>
+
+            <h3>Que tipo de comerciante pretende ser?</h3>
+
+            <p>
+                Escolha a modalidade adequada ao seu negócio.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="merchantTypeGrid">
+
+
+        <!-- MARCHAND ORDINAIRE -->
+
+        <label class="merchantTypeCard">
+
+            <input
+            type="radio"
+            name="merchantType"
+            id="ordinaryMerchant"
+            value="ordinary"
+            required>
+
+
+            <div class="typeCardContent">
+
+                <div class="typeIcon ordinaryIcon">
+
+                    <span class="material-symbols-rounded">
+                        storefront
+                    </span>
+
+                </div>
+
+
+                <div class="typeRadio"></div>
+
+
+                <h4>Comerciante</h4>
+
+
+                <p>
+
+                    Quero criar uma loja normal na Toma
+                    e vender os meus produtos.
+
+                </p>
+
+
+                <ul>
+
+                    <li>
+                        <span class="material-symbols-rounded">
+                            check_circle
+                        </span>
+
+                        Criar uma loja online
+                    </li>
+
+
+                    <li>
+                        <span class="material-symbols-rounded">
+                            check_circle
+                        </span>
+
+                        Publicar produtos
+                    </li>
+
+
+                    <li>
+                        <span class="material-symbols-rounded">
+                            check_circle
+                        </span>
+
+                        Gerir encomendas
+                    </li>
+
+                </ul>
+
+
+                <span class="typeLabel">
+                    LOJA COMERCIAL
+                </span>
+
+            </div>
+
+        </label>
+
+
+
+        <!-- LOJA OFICIAL -->
+
+        <label class="merchantTypeCard officialTypeCard">
+
+            <input
+            type="radio"
+            name="merchantType"
+            id="officialMerchant"
+            value="official"
+            required>
+
+
+            <div class="typeCardContent">
+
+                <div class="typeIcon officialIcon">
+
+                    <span class="material-symbols-rounded">
+                        verified
+                    </span>
+
+                </div>
+
+
+                <div class="typeRadio"></div>
+
+
+                <h4>Loja Oficial</h4>
+
+
+                <p>
+
+                    Represento uma empresa ou marca
+                    e pretendo solicitar uma loja oficial.
+
+                </p>
+
+
+                <ul>
+
+                    <li>
+                        <span class="material-symbols-rounded">
+                            check_circle
+                        </span>
+
+                        Identidade comercial própria
+                    </li>
+
+
+                    <li>
+                        <span class="material-symbols-rounded">
+                            check_circle
+                        </span>
+
+                        Apresentação oficial da marca
+                    </li>
+
+
+                    <li>
+                        <span class="material-symbols-rounded">
+                            check_circle
+                        </span>
+
+                        Processo de validação específico
+                    </li>
+
+                </ul>
+
+
+                <span class="typeLabel officialLabel">
+                    CANDIDATURA OFICIAL
+                </span>
+
+            </div>
+
+        </label>
+
+    </div>
+
+
+
+    <div class="informationNotice">
+
+        <span class="material-symbols-rounded">
+            info
+        </span>
+
+        <p>
+
+            A escolha da modalidade não representa
+            aprovação automática. Todas as candidaturas
+            serão analisadas pela equipa Toma.
+
+        </p>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================
+BLOC 2
+DADOS PESSOAIS
+===================================== -->
+
+<section class="formSection">
+
+    <div class="sectionHeading">
+
+        <div class="sectionIcon">
+
+            <span class="material-symbols-rounded">
+                person
+            </span>
+
+        </div>
+
+
+        <div>
+
+            <span class="sectionEyebrow">
+                PASSO 02
+            </span>
+
+            <h3>Dados pessoais</h3>
+
+            <p>
+                Informe os seus dados de identificação e contacto.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="formGrid">
+
+
+        <div class="formGroup">
+
+            <label for="fullName">
+
+                Nome completo
+
+                <span>*</span>
+
+            </label>
+
+
+            <div class="inputWrapper">
+
+                <span class="material-symbols-rounded">
+                    person
+                </span>
+
+                <input
+                type="text"
+                id="fullName"
+                name="fullName"
+                placeholder="Ex.: João Manuel"
+                autocomplete="name"
+                required>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="formGroup">
+
+            <label for="email">
+
+                Email
+
+                <span>*</span>
+
+            </label>
+
+
+            <div class="inputWrapper">
+
+                <span class="material-symbols-rounded">
+                    mail
+                </span>
+
+                <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="exemplo@email.com"
+                autocomplete="email"
+                required>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="formGroup">
+
+            <label for="phone">
+
+                Número de telefone
+
+                <span>*</span>
+
+            </label>
+
+
+            <div class="inputWrapper">
+
+                <span class="material-symbols-rounded">
+                    call
+                </span>
+
+                <input
+                type="tel"
+                id="phone"
+                name="phone"
+                placeholder="+244 9XX XXX XXX"
+                autocomplete="tel"
+                required>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="formGroup">
+
+            <label for="whatsapp">
+
+                WhatsApp
+
+                <span>*</span>
+
+            </label>
+
+
+            <div class="inputWrapper">
+
+                <span class="material-symbols-rounded">
+                    chat
+                </span>
+
+                <input
+                type="tel"
+                id="whatsapp"
+                name="whatsapp"
+                placeholder="+244 9XX XXX XXX"
+                required>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="formGroup">
+
+            <label for="nif">
+
+                NIF Singular
+
+                <span>*</span>
+
+            </label>
+
+
+            <div class="inputWrapper">
+
+                <span class="material-symbols-rounded">
+                    badge
+                </span>
+
+                <input
+                type="text"
+                id="nif"
+                name="nif"
+                placeholder="Introduza o seu NIF"
+                autocomplete="off"
+                required>
+
+            </div>
+
+
+            <small>
+
+                Introduza o NIF associado à sua identificação
+                fiscal pessoal.
+
+            </small>
+
+        </div>
+
+
+
+        <div class="formGroup">
+
+            <label for="password">
+
+                Palavra-passe
+
+                <span>*</span>
+
+            </label>
+
+
+            <div class="inputWrapper">
+
+                <span class="material-symbols-rounded">
+                    lock
+                </span>
+
+                <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Mínimo de 6 caracteres"
+                autocomplete="new-password"
+                minlength="6"
+                required>
+
+                <button
+                type="button"
+                class="passwordToggle"
+                id="togglePassword"
+                aria-label="Mostrar palavra-passe">
+
+                    <span class="material-symbols-rounded">
+                        visibility
+                    </span>
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="formGroup fullWidth">
+
+            <label for="confirmPassword">
+
+                Confirmar palavra-passe
+
+                <span>*</span>
+
+            </label>
+
+
+            <div class="inputWrapper">
+
+                <span class="material-symbols-rounded">
+                    lock_reset
+                </span>
+
+                <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                placeholder="Repita a sua palavra-passe"
+                autocomplete="new-password"
+                minlength="6"
+                required>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================
+BLOC 3
+DADOS COMERCIAIS
+===================================== -->
+
+<section class="formSection">
+
+    <div class="sectionHeading">
+
+        <div class="sectionIcon">
+
+            <span class="material-symbols-rounded">
+                business
+            </span>
+
+        </div>
+
+
+        <div>
+
+            <span class="sectionEyebrow">
+                PASSO 03
+            </span>
+
+            <h3>Dados comerciais</h3>
+
+            <p>
+                Apresente o seu negócio à comunidade Toma.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="formGrid">
+
+
+        <div class="formGroup">
+
+            <label for="shopName">
+
+                Nome da loja
+
+                <span>*</span>
+
+            </label>
+
+
+            <div class="inputWrapper">
+
+                <span class="material-symbols-rounded">
+                    store
+                </span>
+
+                <input
+                type="text"
+                id="shopName"
+                name="shopName"
+                placeholder="Nome comercial da loja"
+                required>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="formGroup">
+
+            <label for="shopCategory">
+
+                Categoria comercial
+
+                <span>*</span>
+
+            </label>
+
+
+            <div class="inputWrapper">
+
+                <span class="material-symbols-rounded">
+                    category
+                </span>
+
+                <select
+                id="shopCategory"
+                name="shopCategory"
+                required>
+
+                    <option value="">
+                        Escolher categoria
+                    </option>
+
+                    <option value="electronics">
+                        Electrónica
+                    </option>
+
+                    <option value="fashion">
+                        Moda e Vestuário
+                    </option>
+
+                    <option value="beauty">
+                        Beleza e Cosméticos
+                    </option>
+
+                    <option value="food">
+                        Alimentação
+                    </option>
+
+                    <option value="home">
+                        Casa e Decoração
+                    </option>
+
+                    <option value="sports">
+                        Desporto
+                    </option>
+
+                    <option value="automotive">
+                        Automóvel
+                    </option>
+
+                    <option value="health">
+                        Saúde
+                    </option>
+
+                    <option value="other">
+                        Outros
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="formGroup fullWidth">
+
+            <label for="shopDescription">
+
+                Descrição da loja
+
+                <span>*</span>
+
+            </label>
+
+
+            <textarea
+            id="shopDescription"
+            name="shopDescription"
+            rows="5"
+            maxlength="500"
+            placeholder="Descreva os produtos ou serviços que a sua loja oferece..."
+            required></textarea>
+
+
+            <div class="textareaFooter">
+
+                <small>
+                    Apresente brevemente a sua actividade comercial.
+                </small>
+
+                <span id="descriptionCounter">
+                    0/500
+                </span>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- DADOS COMPLEMENTARES LOJA OFICIAL -->
+
+    <div id="officialBusinessFields"
+    class="conditionalSection hidden">
+
+        <div class="conditionalHeader">
+
+            <span class="material-symbols-rounded">
+                verified
+            </span>
+
+            <div>
+
+                <h4>Informações da Loja Oficial</h4>
+
+                <p>
+                    Dados adicionais da empresa ou marca.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="formGrid">
+
+
+            <div class="formGroup">
+
+                <label for="companyName">
+
+                    Nome legal da empresa
+
+                    <span>*</span>
+
+                </label>
+
+
+                <input
+                type="text"
+                id="companyName"
+                name="companyName"
+                placeholder="Nome registado da empresa"
+                data-official-required="true">
+
+            </div>
+
+
+
+            <div class="formGroup">
+
+                <label for="brandName">
+
+                    Nome da marca
+
+                </label>
+
+
+                <input
+                type="text"
+                id="brandName"
+                name="brandName"
+                placeholder="Nome da marca">
+
+            </div>
+
+
+
+            <div class="formGroup fullWidth">
+
+                <label for="officialDescription">
+
+                    Apresentação da empresa ou marca
+
+                </label>
+
+
+                <textarea
+                id="officialDescription"
+                name="officialDescription"
+                rows="4"
+                placeholder="Apresente a sua empresa ou marca..."></textarea>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================
+BLOC 4
+LOCALIZAÇÃO
+===================================== -->
+
+<section class="formSection">
+
+    <div class="sectionHeading">
+
+        <div class="sectionIcon">
+
+            <span class="material-symbols-rounded">
+                location_on
+            </span>
+
+        </div>
+
+
+        <div>
+
+            <span class="sectionEyebrow">
+                LOCALIZAÇÃO
+            </span>
+
+            <h3>Onde está localizada a sua loja?</h3>
+
+            <p>
+                Indique a localização do seu negócio.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="formGrid">
+
+
+        <div class="formGroup">
+
+            <label for="province">
+
+                Província
+
+                <span>*</span>
+
+            </label>
+
+
+            <div class="inputWrapper">
+
+                <span class="material-symbols-rounded">
+                    map
+                </span>
+
+                <select
+                id="province"
+                name="province"
+                required>
+
+                    <option value="">
+                        Seleccionar província
+                    </option>
+
+                    <option value="Bengo">Bengo</option>
+                    <option value="Benguela">Benguela</option>
+                    <option value="Bié">Bié</option>
+                    <option value="Cabinda">Cabinda</option>
+                    <option value="Cuando">Cuando</option>
+                    <option value="Cubango">Cubango</option>
+                    <option value="Cuanza Norte">Cuanza Norte</option>
+                    <option value="Cuanza Sul">Cuanza Sul</option>
+                    <option value="Cunene">Cunene</option>
+                    <option value="Huambo">Huambo</option>
+                    <option value="Huíla">Huíla</option>
+                    <option value="Icolo e Bengo">Icolo e Bengo</option>
+                    <option value="Luanda">Luanda</option>
+                    <option value="Lunda Norte">Lunda Norte</option>
+                    <option value="Lunda Sul">Lunda Sul</option>
+                    <option value="Malanje">Malanje</option>
+                    <option value="Moxico">Moxico</option>
+                    <option value="Moxico Leste">Moxico Leste</option>
+                    <option value="Namibe">Namibe</option>
+                    <option value="Uíge">Uíge</option>
+                    <option value="Zaire">Zaire</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="formGroup">
+
+            <label for="city">
+
+                Município
+
+                <span>*</span>
+
+            </label>
+
+
+            <div class="inputWrapper">
+
+                <span class="material-symbols-rounded">
+                    location_city
+                </span>
+
+                <input
+                type="text"
+                id="city"
+                name="city"
+                placeholder="Introduza o município"
+                required>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="formGroup fullWidth">
+
+            <label for="address">
+
+                Endereço completo
+
+                <span>*</span>
+
+            </label>
+
+
+            <div class="inputWrapper">
+
+                <span class="material-symbols-rounded">
+                    home
+                </span>
+
+                <input
+                type="text"
+                id="address"
+                name="address"
+                placeholder="Rua, bairro, número ou referência"
+                required>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================
+BLOC 5
+DOCUMENTOS
+===================================== -->
+
+<section class="formSection documentsSection">
+
+    <div class="sectionHeading">
+
+        <div class="sectionIcon">
+
+            <span class="material-symbols-rounded">
+                folder_open
+            </span>
+
+        </div>
+
+
+        <div>
+
+            <span class="sectionEyebrow">
+                DOCUMENTAÇÃO
+            </span>
+
+            <h3>Documentos da actividade comercial</h3>
+
+            <p>
+                Envie os quatro documentos solicitados
+                para análise da sua candidatura.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="documentNotice">
+
+        <span class="material-symbols-rounded">
+            security
+        </span>
+
+        <div>
+
+            <strong>Documentos protegidos</strong>
+
+            <p>
+
+                Os documentos enviados serão utilizados
+                exclusivamente para a verificação da sua
+                candidatura pela equipa Toma.
+
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="documentsUploadGrid">
+
+
+        <!-- DOCUMENTO 1 -->
+
+        <div class="uploadCard">
+
+            <div class="uploadCardHeader">
+
+                <div class="uploadIcon">
+
+                    <span class="material-symbols-rounded">
+                        description
+                    </span>
+
+                </div>
+
+
+                <span class="documentNumber">
+                    DOCUMENTO 01
+                </span>
+
+            </div>
+
+
+            <h4>Alvará Comercial</h4>
+
+
+            <p>
+
+                Carregue uma cópia legível do
+                Alvará Comercial da sua actividade.
+
+            </p>
+
+
+            <label for="alvaraFile"
+            class="uploadDropzone">
+
+                <span class="material-symbols-rounded uploadCloud">
+                    cloud_upload
+                </span>
+
+                <strong>Seleccionar documento</strong>
+
+                <small>PDF, JPG ou PNG</small>
+
+            </label>
+
+
+            <input
+            type="file"
+            id="alvaraFile"
+            name="alvaraFile"
+            accept=".pdf,.jpg,.jpeg,.png"
+            class="fileInput"
+            required>
+
+
+            <div class="filePreview"
+            id="alvaraPreview">
+
+                <span class="material-symbols-rounded">
+                    description
+                </span>
+
+                <div class="fileInfo">
+
+                    <strong class="fileName">
+                        Nenhum ficheiro seleccionado
+                    </strong>
+
+                    <small class="fileSize"></small>
+
+                </div>
+
+                <button
+                type="button"
+                class="removeFileButton"
+                data-remove-file="alvaraFile"
+                aria-label="Remover ficheiro">
+
+                    <span class="material-symbols-rounded">
+                        delete
+                    </span>
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- DOCUMENTO 2 -->
+
+        <div class="uploadCard">
+
+            <div class="uploadCardHeader">
+
+                <div class="uploadIcon">
+
+                    <span class="material-symbols-rounded">
+                        article
+                    </span>
+
+                </div>
+
+
+                <span class="documentNumber">
+                    DOCUMENTO 02
+                </span>
+
+            </div>
+
+
+            <h4>Certidão</h4>
+
+
+            <p>
+
+                Carregue uma cópia actualizada
+                da certidão correspondente à empresa.
+
+            </p>
+
+
+            <label for="certidaoFile"
+            class="uploadDropzone">
+
+                <span class="material-symbols-rounded uploadCloud">
+                    cloud_upload
+                </span>
+
+                <strong>Seleccionar documento</strong>
+
+                <small>PDF, JPG ou PNG</small>
+
+            </label>
+
+
+            <input
+            type="file"
+            id="certidaoFile"
+            name="certidaoFile"
+            accept=".pdf,.jpg,.jpeg,.png"
+            class="fileInput"
+            required>
+
+
+            <div class="filePreview"
+            id="certidaoPreview">
+
+                <span class="material-symbols-rounded">
+                    description
+                </span>
+
+                <div class="fileInfo">
+
+                    <strong class="fileName">
+                        Nenhum ficheiro seleccionado
+                    </strong>
+
+                    <small class="fileSize"></small>
+
+                </div>
+
+                <button
+                type="button"
+                class="removeFileButton"
+                data-remove-file="certidaoFile"
+                aria-label="Remover ficheiro">
+
+                    <span class="material-symbols-rounded">
+                        delete
+                    </span>
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- DOCUMENTO 3 -->
+
+        <div class="uploadCard">
+
+            <div class="uploadCardHeader">
+
+                <div class="uploadIcon">
+
+                    <span class="material-symbols-rounded">
+                        verified
+                    </span>
+
+                </div>
+
+
+                <span class="documentNumber">
+                    DOCUMENTO 03
+                </span>
+
+            </div>
+
+
+            <h4>Certificado de Admissibilidade</h4>
+
+
+            <p>
+
+                Carregue o Certificado de Admissibilidade
+                da denominação da sociedade.
+
+            </p>
+
+
+            <label for="admissibilidadeFile"
+            class="uploadDropzone">
+
+                <span class="material-symbols-rounded uploadCloud">
+                    cloud_upload
+                </span>
+
+                <strong>Seleccionar documento</strong>
+
+                <small>PDF, JPG ou PNG</small>
+
+            </label>
+
+
+            <input
+            type="file"
+            id="admissibilidadeFile"
+            name="admissibilidadeFile"
+            accept=".pdf,.jpg,.jpeg,.png"
+            class="fileInput"
+            required>
+
+
+            <div class="filePreview"
+            id="admissibilidadePreview">
+
+                <span class="material-symbols-rounded">
+                    description
+                </span>
+
+                <div class="fileInfo">
+
+                    <strong class="fileName">
+                        Nenhum ficheiro seleccionado
+                    </strong>
+
+                    <small class="fileSize"></small>
+
+                </div>
+
+                <button
+                type="button"
+                class="removeFileButton"
+                data-remove-file="admissibilidadeFile"
+                aria-label="Remover ficheiro">
+
+                    <span class="material-symbols-rounded">
+                        delete
+                    </span>
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- DOCUMENTO 4 -->
+
+        <div class="uploadCard">
+
+            <div class="uploadCardHeader">
+
+                <div class="uploadIcon">
+
+                    <span class="material-symbols-rounded">
+                        corporate_fare
+                    </span>
+
+                </div>
+
+
+                <span class="documentNumber">
+                    DOCUMENTO 04
+                </span>
+
+            </div>
+
+
+            <h4>Pacto de Sociedade Unipessoal por Quotas</h4>
+
+
+            <p>
+
+                Carregue uma cópia legível do pacto
+                de sociedade da empresa.
+
+            </p>
+
+
+            <label for="pactoFile"
+            class="uploadDropzone">
+
+                <span class="material-symbols-rounded uploadCloud">
+                    cloud_upload
+                </span>
+
+                <strong>Seleccionar documento</strong>
+
+                <small>PDF, JPG ou PNG</small>
+
+            </label>
+
+
+            <input
+            type="file"
+            id="pactoFile"
+            name="pactoFile"
+            accept=".pdf,.jpg,.jpeg,.png"
+            class="fileInput"
+            required>
+
+
+            <div class="filePreview"
+            id="pactoPreview">
+
+                <span class="material-symbols-rounded">
+                    description
+                </span>
+
+                <div class="fileInfo">
+
+                    <strong class="fileName">
+                        Nenhum ficheiro seleccionado
+                    </strong>
+
+                    <small class="fileSize"></small>
+
+                </div>
+
+                <button
+                type="button"
+                class="removeFileButton"
+                data-remove-file="pactoFile"
+                aria-label="Remover ficheiro">
+
+                    <span class="material-symbols-rounded">
+                        delete
+                    </span>
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="uploadRequirements">
+
+        <div>
+
+            <span class="material-symbols-rounded">
+                check_circle
+            </span>
+
+            Formatos aceites: PDF, JPG e PNG.
+
+        </div>
+
+
+        <div>
+
+            <span class="material-symbols-rounded">
+                check_circle
+            </span>
+
+            Documentos completos e legíveis.
+
+        </div>
+
+
+        <div>
+
+            <span class="material-symbols-rounded">
+                check_circle
+            </span>
+
+            Evite fotografias desfocadas.
+
+        </div>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================
+BLOC 6
+CONFIRMAÇÃO
+===================================== -->
+
+<section class="formSection confirmationSection">
+
+    <div class="sectionHeading">
+
+        <div class="sectionIcon">
+
+            <span class="material-symbols-rounded">
+                fact_check
+            </span>
+
+        </div>
+
+
+        <div>
+
+            <span class="sectionEyebrow">
+                ÚLTIMA ETAPA
+            </span>
+
+            <h3>Confirme a sua candidatura</h3>
+
+            <p>
+                Antes de enviar, confirme as informações.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <label class="agreementCard">
+
+        <input
+        type="checkbox"
+        id="termsAgreement"
+        name="termsAgreement"
+        required>
+
+
+        <span class="customCheckbox"></span>
+
+
+        <span class="agreementText">
+
+            Confirmo que as informações fornecidas
+            são verdadeiras e que os documentos enviados
+            pertencem à minha actividade comercial.
+
+            <strong>
+                Autorizo a Toma a analisar os dados
+                para efeitos de validação da candidatura.
+            </strong>
+
+        </span>
+
+    </label>
+
+
+
+    <div class="finalNotice">
+
+        <span class="material-symbols-rounded">
+            schedule
+        </span>
+
+        <div>
+
+            <strong>O que acontece depois?</strong>
+
+            <p>
+
+                Após o envio, a equipa Toma irá analisar
+                a sua candidatura e os documentos.
+                Receberá uma resposta após a conclusão
+                do processo de validação.
+
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <div id="formMessage"
+    class="formMessage"
+    role="alert">
+
+    </div>
+
+
+
+    <button
+    type="submit"
+    id="submitMerchantRequest"
+    class="submitButton">
+
+
+        <span class="material-symbols-rounded">
+            send
+        </span>
+
+
+        Enviar candidatura
+
+
+        <span class="material-symbols-rounded submitArrow">
+            arrow_forward
+        </span>
+
+    </button>
+
+
+
+    <p class="submitDisclaimer">
+
+        Ao enviar, a sua candidatura será submetida
+        à análise da equipa Toma.
+
+    </p>
+
+
+</section>
+
+
+</form>
+
+
+
+<!-- =====================================
+RODAPÉ
+===================================== -->
+
+<footer class="registerFooter">
+
+    <div class="footerBrand">
+
+        <div class="footerLogo">
+            T
+        </div>
+
+        <div>
+
+            <strong>TOMA</strong>
+
+            <span>O comércio mais perto de si.</span>
+
+        </div>
+
+    </div>
+
+
+    <p>
+
+        © 2026 Toma. Todos os direitos reservados.
+
+    </p>
+
+
+    <div class="footerSecurity">
+
+        <span class="material-symbols-rounded">
+            shield
+        </span>
+
+        Plataforma de comércio digital.
+
+    </div>
+
+</footer>
+
+
+</main>
+
+</div>
+
+
+
+<!-- =====================================
+JAVASCRIPT
+===================================== -->
+
+<script type="module"
+src="./js/merchant-register-v2.js"></script>
+
+
+</body>
+
+</html>
