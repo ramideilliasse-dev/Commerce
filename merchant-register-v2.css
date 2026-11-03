@@ -2152,3 +2152,138 @@ label:focus-visible {
 /* =========================================================
    FIN DU CSS COMPLET — MERCHANT REGISTER V2
 ========================================================= */
+/* =========================================================
+   34 — AUGMENTAR LE TEXTO GERAL DA PÁGINA
+========================================================= */
+
+/* Texto geral */
+body {
+    font-size: 15px;
+}
+
+/* Descrições principais */
+.heroSection > p {
+    font-size: 15px;
+}
+
+.sectionHeading p {
+    font-size: 13px;
+}
+
+/* Textos dos cartões */
+.typeCardContent > p {
+    font-size: 13px;
+}
+
+.typeCardContent li {
+    font-size: 12px;
+}
+
+/* Labels dos formulários */
+.formGroup > label {
+    font-size: 13px;
+}
+
+/* Campos de preenchimento */
+.inputWrapper input,
+.inputWrapper select {
+    font-size: 13px;
+}
+
+.formGroup > input:not([type="checkbox"]):not([type="radio"]),
+.formGroup > textarea {
+    font-size: 13px;
+}
+
+/* Textos auxiliares */
+.formGroup > small {
+    font-size: 11px;
+}
+
+.textareaFooter small {
+    font-size: 11px;
+}
+
+/* Documentos */
+.uploadCard > p {
+    font-size: 12px;
+}
+
+.uploadDropzone strong {
+    font-size: 12px;
+}
+
+.uploadDropzone small {
+    font-size: 11px;
+}
+
+/* Avisos */
+.informationNotice p,
+.documentNotice p,
+.finalNotice p {
+    font-size: 12px;
+}
+
+/* Confirmação */
+.agreementText {
+    font-size: 12px;
+}
+
+/* Rodapé e textos secundários */
+.submitDisclaimer {
+    font-size: 11px;
+}
+
+/* =========================================================
+   AJUSTES PARA TELEMÓVEIS
+========================================================= */
+
+@media (max-width: 600px) {
+
+    body {
+        font-size: 14px;
+    }
+
+    .heroSection > p {
+        font-size: 13px;
+    }
+
+    .sectionHeading p {
+        font-size: 11px;
+    }
+
+    .typeCardContent > p {
+        font-size: 12px;
+    }
+
+    .typeCardContent li {
+        font-size: 11px;
+    }
+
+    .formGroup > label {
+        font-size: 12px;
+    }
+
+    .inputWrapper input,
+    .inputWrapper select {
+        font-size: 13px;
+    }
+
+    .formGroup > input:not([type="checkbox"]):not([type="radio"]),
+    .formGroup > textarea {
+        font-size: 13px;
+    }
+
+    .uploadCard > p {
+        font-size: 11px;
+    }
+
+    .uploadDropzone strong {
+        font-size: 11px;
+    }
+
+    .agreementText {
+        font-size: 11px;
+    }
+
+}
