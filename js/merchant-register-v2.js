@@ -2546,3 +2546,275 @@ document.body.appendChild(signatureTestButton);
 console.log("[TOMA] BLOC 11 chargé.");
 
 alert("TOMA — BLOC 11 chargé avec succès !");
+// ======================================================
+// TOMA — BLOC 13
+// ENVOI RÉEL DE LA CANDIDATURE COMMERÇANT
+// ======================================================
+
+
+// ------------------------------------------------------
+// 13.1 — RÉCUPÉRER LES ÉLÉMENTS HTML
+// ------------------------------------------------------
+
+const merchantSubmissionForm =
+    document.getElementById("merchantRegisterForm");
+
+const merchantSubmissionButton =
+    document.getElementById("submitMerchantRequest");
+
+
+// ------------------------------------------------------
+// 13.2 — AFFICHER LES MESSAGES
+// ------------------------------------------------------
+
+function showMerchantSubmissionMessage(message, success = false) {
+
+    if (formMessage) {
+
+        formMessage.textContent = message;
+
+        formMessage.style.display = "block";
+
+        formMessage.style.color = success
+            ? "#16803c"
+            : "#d93025";
+
+    } else {
+
+        alert(message);
+
+    }
+
+}
+
+
+// ------------------------------------------------------
+// 13.3 — ENVOYER LA CANDIDATURE AU SERVEUR
+// ------------------------------------------------------
+
+async function submitMerchantRegistration() {
+
+    const firebaseUser = auth.currentUser;
+
+
+    // Vérifier la connexion Firebase
+
+    if (!firebaseUser) {
+
+        throw new Error(
+            "Deve iniciar sessão antes de enviar a candidatura."
+        );
+
+    }
+
+
+    // Préparer les données et les documents
+
+    const preparedSubmission =
+        await prepareSecureMerchantSubmission(firebaseUser);
+
+
+    if (!preparedSubmission.success) {
+
+        throw new Error(
+            preparedSubmission.message
+        );
+
+    }
+
+
+    // Envoyer au backend Vercel
+
+    const response = await fetch(
+        MERCHANT_REGISTRATION_ENDPOINT,
+        {
+            method: "POST",
+
+            headers: preparedSubmission.headers,
+
+            body: preparedSubmission.formData
+        }
+    );
+
+
+    // Lire la réponse du serveur
+
+    let result;
+
+    try {
+
+        result = await response.json();
+
+    } catch {
+
+        throw new Error(
+            "Resposta inválida do servidor."
+        );
+
+    }
+
+
+    // Vérifier le résultat
+
+    if (!response.ok || !result.success) {
+
+        throw new Error(
+            result.message ||
+            "Não foi possível enviar a candidatura."
+        );
+
+    }
+
+
+    // Confirmer l'enregistrement
+
+    return result;
+
+}
+
+
+// ------------------------------------------------------
+// 13.4 — GESTION DE LA SOUMISSION DU FORMULAIRE
+// ------------------------------------------------------
+
+if (!merchantSubmissionForm) {
+
+    alert(
+        "TOMA — BLOC 13\n\n" +
+        "ERRO: Formulário merchantRegisterForm não encontrado."
+    );
+
+} else {
+
+    merchantSubmissionForm.addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+            event.stopImmediatePropagation();
+
+
+            // Éviter les doubles envois
+
+            if (
+                merchantSubmissionButton &&
+                merchantSubmissionButton.disabled
+            ) {
+
+                return;
+
+            }
+
+
+            // Désactiver le bouton
+
+            if (merchantSubmissionButton) {
+
+                merchantSubmissionButton.disabled = true;
+
+                merchantSubmissionButton.textContent =
+                    "A ENVIAR CANDIDATURA...";
+
+            }
+
+
+            showMerchantSubmissionMessage(
+                "A verificar os dados e a enviar os documentos..."
+            );
+
+
+            try {
+
+                // Envoyer réellement la candidature
+
+                const result =
+                    await submitMerchantRegistration();
+
+
+                showMerchantSubmissionMessage(
+
+                    "Candidatura enviada com sucesso!\n\n" +
+
+                    "Número da candidatura: " +
+                    result.applicationId + "\n\n" +
+
+                    "Estado: Pendente\n\n" +
+
+                    "Os quatro documentos foram recebidos. " +
+                    "A sua candidatura aguarda verificação.",
+
+                    true
+
+                );
+
+
+                // Empêcher une nouvelle soumission
+
+                if (merchantSubmissionButton) {
+
+                    merchantSubmissionButton.textContent =
+                        "CANDIDATURA ENVIADA";
+
+                    merchantSubmissionButton.disabled = true;
+
+                }
+
+
+                console.log(
+                    "[TOMA][BLOC 13] Candidatura enviada:",
+                    result.applicationId
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "[TOMA][BLOC 13]",
+                    error
+                );
+
+
+                showMerchantSubmissionMessage(
+                    error.message ||
+                    "Erro ao enviar a candidatura."
+                );
+
+
+                // Réactiver le bouton en cas d'erreur
+
+                if (merchantSubmissionButton) {
+
+                    merchantSubmissionButton.disabled = false;
+
+                    merchantSubmissionButton.textContent =
+                        "Enviar candidatura";
+
+                }
+
+            }
+
+        },
+        true
+    );
+
+}
+
+
+// ------------------------------------------------------
+// 13.5 — CONFIRMATION DU CHARGEMENT
+// ------------------------------------------------------
+
+console.log(
+    "[TOMA] BLOC 13 carregado com sucesso."
+);
+
+alert(
+    "TOMA — BLOC 13\n\n" +
+    "Sistema de envio de candidaturas carregado com sucesso!"
+);
+
+
+// ======================================================
+// FIM DO BLOC 13
+// ======================================================
