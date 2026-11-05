@@ -2503,3 +2503,46 @@ alert(
     "TOMA — BLOC 10\n\n" +
     "Comunicação com a API Cloudinary carregada com sucesso!"
 );
+// ==========================================
+// BLOC 11 — BOUTON TEMPORAIRE DE TEST
+// ==========================================
+
+const signatureTestButton = document.createElement("button");
+
+signatureTestButton.type = "button";
+signatureTestButton.textContent = "TESTER LES 4 SIGNATURES CLOUDINARY";
+
+signatureTestButton.style.cssText = `
+    display: block;
+    width: 90%;
+    max-width: 400px;
+    margin: 25px auto;
+    padding: 16px;
+    background: #ff6a00;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+`;
+
+signatureTestButton.addEventListener("click", async () => {
+    signatureTestButton.disabled = true;
+    signatureTestButton.textContent = "TEST EN COURS...";
+
+    try {
+        await testMerchantDocumentSignature();
+    } catch (error) {
+        alert("ERREUR DU TEST : " + error.message);
+    } finally {
+        signatureTestButton.disabled = false;
+        signatureTestButton.textContent =
+            "TESTER LES 4 SIGNATURES CLOUDINARY";
+    }
+});
+
+document.body.appendChild(signatureTestButton);
+
+console.log("[TOMA] BLOC 11 chargé.");
+
+alert("TOMA — BLOC 11 chargé avec succès !");
