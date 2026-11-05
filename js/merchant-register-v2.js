@@ -1871,3 +1871,212 @@ alert(
     "Firebase Authentication preparado.\n" +
     "A criação da conta será activada no BLOCO 8."
 );
+// ============================================
+// BLOC 7
+// PRÉPARATION DES DONNÉES DE CANDIDATURE
+// ============================================
+
+console.log("[TOMA] BLOC 7 chargé.");
+
+
+// --------------------------------------------
+// 7.1 — RÉCUPÉRER LES INFORMATIONS PERSONNELLES
+// --------------------------------------------
+
+function getMerchantPersonalData() {
+
+    return {
+        fullName: document.getElementById("fullName")?.value.trim() || "",
+        email: document.getElementById("email")?.value.trim().toLowerCase() || "",
+        phone: document.getElementById("phone")?.value.trim() || "",
+        whatsapp: document.getElementById("whatsapp")?.value.trim() || "",
+        nif: document.getElementById("nif")?.value.trim() || ""
+    };
+
+}
+
+
+// --------------------------------------------
+// 7.2 — RÉCUPÉRER LES INFORMATIONS COMMERCIALES
+// --------------------------------------------
+
+function getMerchantCommercialData() {
+
+    return {
+        shopName: document.getElementById("shopName")?.value.trim() || "",
+        shopCategory: document.getElementById("shopCategory")?.value || "",
+        shopDescription: document.getElementById("shopDescription")?.value.trim() || ""
+    };
+
+}
+
+
+// --------------------------------------------
+// 7.3 — RÉCUPÉRER LES INFORMATIONS OFFICIELLES
+// --------------------------------------------
+
+function getOfficialBusinessData() {
+
+    if (getMerchantType() !== "official") {
+        return null;
+    }
+
+    return {
+        companyName: document.getElementById("companyName")?.value.trim() || "",
+        brandName: document.getElementById("brandName")?.value.trim() || "",
+        officialDescription: document.getElementById("officialDescription")?.value.trim() || ""
+    };
+
+}
+
+
+// --------------------------------------------
+// 7.4 — RÉCUPÉRER LA LOCALISATION
+// --------------------------------------------
+
+function getMerchantLocationData() {
+
+    return {
+        province: document.getElementById("province")?.value || "",
+        city: document.getElementById("city")?.value.trim() || "",
+        address: document.getElementById("address")?.value.trim() || ""
+    };
+
+}
+
+
+// --------------------------------------------
+// 7.5 — RÉCUPÉRER LES QUATRE DOCUMENTS
+// --------------------------------------------
+
+function getMerchantDocumentFiles() {
+
+    return {
+        alvara: document.getElementById("alvaraFile")?.files?.[0] || null,
+        certidao: document.getElementById("certidaoFile")?.files?.[0] || null,
+        admissibilidade: document.getElementById("admissibilidadeFile")?.files?.[0] || null,
+        pacto: document.getElementById("pactoFile")?.files?.[0] || null
+    };
+
+}
+
+
+// --------------------------------------------
+// 7.6 — PRÉPARER TOUTES LES DONNÉES
+// --------------------------------------------
+
+function prepareMerchantRegistrationData() {
+
+    const documents = getMerchantDocumentFiles();
+
+    const data = {
+
+        merchantType: getMerchantType(),
+
+        personal: getMerchantPersonalData(),
+
+        commercial: getMerchantCommercialData(),
+
+        officialBusiness: getOfficialBusinessData(),
+
+        location: getMerchantLocationData(),
+
+        documents: documents,
+
+        termsAccepted:
+            document.getElementById("termsAgreement")?.checked === true
+
+    };
+
+    return data;
+
+}
+
+
+// --------------------------------------------
+// 7.7 — VÉRIFIER LA PRÉPARATION
+// --------------------------------------------
+
+function validatePreparedMerchantData(data) {
+
+    if (!data) {
+        return {
+            success: false,
+            message: "Não foi possível preparar os dados."
+        };
+    }
+
+    if (!data.merchantType) {
+        return {
+            success: false,
+            message: "Seleccione o tipo de comerciante."
+        };
+    }
+
+    const requiredDocuments = [
+        data.documents.alvara,
+        data.documents.certidao,
+        data.documents.admissibilidade,
+        data.documents.pacto
+    ];
+
+    if (requiredDocuments.some(file => !file)) {
+        return {
+            success: false,
+            message: "Os quatro documentos são obrigatórios."
+        };
+    }
+
+    if (!data.termsAccepted) {
+        return {
+            success: false,
+            message: "Deve aceitar os termos da candidatura."
+        };
+    }
+
+    return {
+        success: true,
+        message: "Dados preparados com sucesso."
+    };
+
+}
+
+
+// --------------------------------------------
+// 7.8 — TESTE MANUAL DO BLOC 7
+// --------------------------------------------
+
+function testMerchantRegistrationPreparation() {
+
+    const data = prepareMerchantRegistrationData();
+
+    const result = validatePreparedMerchantData(data);
+
+    if (!result.success) {
+
+        alert("[TOMA — BLOC 7]\n\n" + result.message);
+
+        return false;
+
+    }
+
+    alert(
+        "[TOMA — BLOC 7]\n\n" +
+        "Preparação dos dados concluída com sucesso.\n\n" +
+        "Tipo: " + data.merchantType + "\n" +
+        "Nome: " + data.personal.fullName + "\n" +
+        "Loja: " + data.commercial.shopName + "\n" +
+        "Documentos: 4/4\n\n" +
+        "Nenhum dado foi enviado ainda."
+    );
+
+    return true;
+
+}
+
+
+// ============================================
+// FIM DO BLOC 7
+// ============================================
+
+console.log("[TOMA] BLOC 7 preparado com sucesso.");
