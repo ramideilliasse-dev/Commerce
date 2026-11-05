@@ -2297,3 +2297,209 @@ alert(
     "TOMA — BLOC 8\n\n" +
     "Preparação do envio seguro carregada com sucesso!"
 );
+// ============================================
+// BLOC 10
+// COMMUNICATION AVEC L'API CLOUDINARY
+// ============================================
+
+console.log("[TOMA] BLOC 10 chargé.");
+
+
+// --------------------------------------------
+// 10.1 — CONFIGURATION DE L'API
+// --------------------------------------------
+
+const MERCHANT_DOCUMENT_SIGNATURE_ENDPOINT =
+    "/api/merchant-document-signature";
+
+
+// --------------------------------------------
+// 10.2 — DEMANDER UNE SIGNATURE AU SERVEUR
+// --------------------------------------------
+
+async function requestMerchantDocumentSignature(documentType) {
+
+    try {
+
+        // Vérifier l'utilisateur connecté
+
+        const firebaseUser = auth.currentUser;
+
+        if (!firebaseUser) {
+
+            throw new Error(
+                "Utilizador não autenticado."
+            );
+
+        }
+
+
+        // Vérifier le type de document
+
+        const allowedDocuments = [
+            "alvara",
+            "certidao",
+            "admissibilidade",
+            "pacto"
+        ];
+
+        if (!allowedDocuments.includes(documentType)) {
+
+            throw new Error(
+                "Tipo de documento inválido."
+            );
+
+        }
+
+
+        // Obtenir le token Firebase
+
+        const idToken = await firebaseUser.getIdToken();
+
+
+        // Envoyer la demande au serveur
+
+        const response = await fetch(
+            MERCHANT_DOCUMENT_SIGNATURE_ENDPOINT,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + idToken
+                },
+
+                body: JSON.stringify({
+                    documentType: documentType
+                })
+            }
+        );
+
+
+        // Lire la réponse
+
+        const result = await response.json();
+
+
+        if (!response.ok || !result.success) {
+
+            throw new Error(
+                result.message ||
+                "Erro ao solicitar assinatura Cloudinary."
+            );
+
+        }
+
+
+        // Vérifier les informations retournées
+
+        if (
+            !result.cloudName ||
+            !result.apiKey ||
+            !result.timestamp ||
+            !result.publicId ||
+            !result.signature
+        ) {
+
+            throw new Error(
+                "Resposta incompleta do servidor."
+            );
+
+        }
+
+
+        return {
+            success: true,
+            signatureData: result
+        };
+
+
+    } catch (error) {
+
+        console.error(
+            "[TOMA][BLOC 10]",
+            error
+        );
+
+        return {
+            success: false,
+            message: error.message ||
+                "Não foi possível comunicar com o servidor."
+        };
+
+    }
+
+}
+
+
+// --------------------------------------------
+// 10.3 — TESTER LES QUATRE DOCUMENTS
+// --------------------------------------------
+
+async function testMerchantDocumentSignature() {
+
+    const documentTypes = [
+        "alvara",
+        "certidao",
+        "admissibilidade",
+        "pacto"
+    ];
+
+
+    const results = [];
+
+
+    for (const documentType of documentTypes) {
+
+        const result =
+            await requestMerchantDocumentSignature(documentType);
+
+
+        results.push({
+            document: documentType,
+            success: result.success
+        });
+
+
+        if (!result.success) {
+
+            alert(
+                "[TOMA — BLOC 10]\n\n" +
+                "Erro ao preparar: " + documentType + "\n\n" +
+                result.message
+            );
+
+            return false;
+
+        }
+
+    }
+
+
+    alert(
+        "[TOMA — BLOC 10]\n\n" +
+        "Comunicação com o servidor concluída!\n\n" +
+        "Alvará Comercial: OK\n" +
+        "Certidão: OK\n" +
+        "Certificado de Admissibilidade: OK\n" +
+        "Pacto de Sociedade: OK\n\n" +
+        "As quatro assinaturas foram preparadas.\n" +
+        "Nenhum documento foi enviado."
+    );
+
+
+    return true;
+
+}
+
+
+// ============================================
+// FIM DO BLOC 10
+// ============================================
+
+console.log("[TOMA] BLOC 10 carregado com sucesso.");
+
+alert(
+    "TOMA — BLOC 10\n\n" +
+    "Comunicação com a API Cloudinary carregada com sucesso!"
+);
