@@ -2781,7 +2781,7 @@ console.log("[TOMA] BLOC 11 chargé.");
 alert("TOMA — BLOC 11 chargé avec succès !");
 // ======================================================
 // TOMA — BLOC 13
-// ENVOI RÉEL DE LA CANDIDATURE COMMERÇANT
+// ENVOI SÉCURISÉ DE LA CANDIDATURE COMMERÇANT V2
 // ======================================================
 
 
@@ -2795,14 +2795,20 @@ const merchantSubmissionForm =
 const merchantSubmissionButton =
     document.getElementById("submitMerchantRequest");
 
+const MERCHANT_FINALIZATION_ENDPOINT =
+    "/api/merchant-registration";
+
 
 // ------------------------------------------------------
 // 13.2 — AFFICHER LES MESSAGES
 // ------------------------------------------------------
 
-function showMerchantSubmissionMessage(message, success = false) {
+function showMerchantSubmissionMessage(
+    message,
+    success = false
+) {
 
-    if (formMessage) {
+    if (typeof formMessage !== "undefined" && formMessage) {
 
         formMessage.textContent = message;
 
@@ -2817,97 +2823,317 @@ function showMerchantSubmissionMessage(message, success = false) {
         alert(message);
 
     }
-
 }
 
 
 // ------------------------------------------------------
-// 13.3 — ENVOYER LA CANDIDATURE AU SERVEUR
+// 13.3 — NETTOYER LES DOCUMENTS EN CAS D'ÉCHEC
+// ------------------------------------------------------
+
+async function cleanupMerchantUploadedDocuments(
+    uploadedDocuments
+) {
+
+    try {
+
+        if (
+            !uploadedDocuments ||
+            typeof uploadedDocuments !== "object"
+        ) {
+            return;
+        }
+
+        const publicIds = Object.values(uploadedDocuments)
+            .map(document => document?.publicId)
+            .filter(Boolean);
+
+        if (publicIds.length === 0) {
+            return;
+        }
+
+        const firebaseUser = auth.currentUser;
+
+        if (!firebaseUser) {
+            throw new Error("Utilizador não autenticado.");
+        }
+
+        const idToken = await firebaseUser.getIdToken();
+
+        const response = await fetch(
+            MERCHANT_FINALIZATION_ENDPOINT,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + idToken
+                },
+
+                body: JSON.stringify({
+                    action: "cleanup",
+                    publicIds
+                })
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+
+            throw new Error(
+                result.message ||
+                "Não foi possível limpar os documentos."
+            );
+        }
+
+        console.log(
+            "[TOMA][BLOC 13] Documentos temporários eliminados:",
+            result.deleted
+        );
+
+    } catch (error) {
+
+        console.error(
+            "[TOMA][BLOC 13][CLEANUP]",
+            error
+        );
+
+        alert(
+            "ATENÇÃO TOMA\n\n" +
+            "A candidatura não foi concluída.\n" +
+            "A limpeza automática dos documentos também falhou.\n\n" +
+            "Será necessário verificar os ficheiros no Cloudinary."
+        );
+    }
+}
+
+
+// ------------------------------------------------------
+// 13.4 — PRÉPARER LES INFORMATIONS DE LA CANDIDATURE
+// ------------------------------------------------------
+
+function prepareMerchantFinalizationData() {
+
+    const data = prepareMerchantRegistrationData();
+
+    const validation = validatePreparedMerchantData(data);
+
+    if (!validation || validation.success !== true) {
+
+        throw new Error(
+            validation?.message ||
+            "Os dados da candidatura não são válidos."
+        );
+    }
+
+    return {
+        uid: auth.currentUser.uid,
+
+        merchantType: data.merchantType,
+
+        personal: data.personal,
+
+        commercial: data.commercial,
+
+        officialBusiness: data.officialBusiness || null,
+
+        location: data.location,
+
+        termsAccepted: data.termsAccepted,
+
+        submittedAt: new Date().toISOString()
+    };
+}
+
+
+// ------------------------------------------------------
+// 13.5 — ENVOYER LA CANDIDATURE AU BACKEND
 // ------------------------------------------------------
 
 async function submitMerchantRegistration() {
 
     const firebaseUser = auth.currentUser;
 
-
-    // Vérifier la connexion Firebase
-
     if (!firebaseUser) {
 
         throw new Error(
             "Deve iniciar sessão antes de enviar a candidatura."
         );
-
     }
 
+    let uploadedDocuments = {};
 
-    // Préparer les données et les documents
-
-    const preparedSubmission =
-        await prepareSecureMerchantSubmission(firebaseUser);
-
-
-    if (!preparedSubmission.success) {
-
-        throw new Error(
-            preparedSubmission.message
-        );
-
-    }
-
-
-    // Envoyer au backend Vercel
-
-    const response = await fetch(
-        MERCHANT_REGISTRATION_ENDPOINT,
-        {
-            method: "POST",
-
-            headers: preparedSubmission.headers,
-
-            body: preparedSubmission.formData
-        }
-    );
-
-
-    // Lire la réponse du serveur
-
-    let result;
+    let finalizationResponseReceived = false;
 
     try {
 
-        result = await response.json();
+        // 1. Préparer les informations
 
-    } catch {
+        const registrationData =
+            prepareMerchantFinalizationData();
 
-        throw new Error(
-            "Resposta inválida do servidor."
+
+        // 2. Envoyer les quatre documents directement
+        // vers Cloudinary
+
+        showMerchantSubmissionMessage(
+            "A enviar os quatro documentos para armazenamento seguro..."
         );
 
-    }
+        const uploadResult =
+            await uploadAllMerchantDocuments();
+
+        uploadedDocuments =
+            uploadResult.uploadedDocuments ||
+            uploadResult.documents ||
+            {};
+
+        if (!uploadResult.success) {
+
+            throw new Error(
+                uploadResult.message ||
+                "Falha no envio dos documentos."
+            );
+        }
 
 
-    // Vérifier le résultat
+        // 3. Vérifier que les quatre documents sont présents
 
-    if (!response.ok || !result.success) {
+        const requiredDocumentTypes = [
+            "alvara",
+            "certidao",
+            "admissibilidade",
+            "pacto"
+        ];
 
-        throw new Error(
-            result.message ||
-            "Não foi possível enviar a candidatura."
+        for (const documentType of requiredDocumentTypes) {
+
+            if (
+                !uploadedDocuments[documentType] ||
+                !uploadedDocuments[documentType].publicId ||
+                !uploadedDocuments[documentType].assetId
+            ) {
+
+                throw new Error(
+                    "Documento em falta: " + documentType
+                );
+            }
+        }
+
+
+        // 4. Préparer le token Firebase
+
+        const idToken = await firebaseUser.getIdToken();
+
+
+        // 5. Envoyer uniquement les références à Vercel
+
+        showMerchantSubmissionMessage(
+            "A verificar os documentos e a registar a candidatura..."
         );
 
+        const response = await fetch(
+            MERCHANT_FINALIZATION_ENDPOINT,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + idToken
+                },
+
+                body: JSON.stringify({
+
+                    action: "finalize",
+
+                    registrationData,
+
+                    documents: uploadedDocuments
+
+                })
+            }
+        );
+
+        finalizationResponseReceived = true;
+
+
+        // 6. Lire la réponse du backend
+
+        let result;
+
+        try {
+
+            result = await response.json();
+
+        } catch {
+
+            throw new Error(
+                "Resposta inválida do servidor."
+            );
+        }
+
+
+        // 7. Vérifier l'enregistrement
+
+        if (!response.ok || !result.success) {
+
+            throw new Error(
+                result.message ||
+                "Não foi possível registar a candidatura."
+            );
+        }
+
+
+        // 8. Retourner le résultat
+
+        return {
+            success: true,
+            applicationId: result.applicationId,
+            status: result.status,
+            documentsUploaded: result.documentsUploaded
+        };
+
+    } catch (error) {
+
+        // Nettoyer les documents seulement lorsqu'une
+        // réponse explicite d'échec du backend a été reçue,
+        // ou lorsque l'upload lui-même a échoué.
+
+        if (
+            Object.keys(uploadedDocuments).length > 0 &&
+            (!finalizationResponseReceived ||
+                error.message)
+        ) {
+
+            // En cas de réponse d'échec explicite, le nettoyage
+            // est approprié. En cas d'erreur réseau pendant la
+            // finalisation, le résultat du serveur peut être
+            // incertain : ne pas supprimer les documents.
+
+            if (finalizationResponseReceived) {
+
+                await cleanupMerchantUploadedDocuments(
+                    uploadedDocuments
+                );
+
+            } else if (
+                error.message &&
+                !error.message.includes("Failed to fetch")
+            ) {
+
+                await cleanupMerchantUploadedDocuments(
+                    uploadedDocuments
+                );
+            }
+        }
+
+        throw error;
     }
-
-
-    // Confirmer l'enregistrement
-
-    return result;
-
 }
 
 
 // ------------------------------------------------------
-// 13.4 — GESTION DE LA SOUMISSION DU FORMULAIRE
+// 13.6 — GESTION DE LA SOUMISSION DU FORMULAIRE
 // ------------------------------------------------------
 
 if (!merchantSubmissionForm) {
@@ -2921,49 +3147,63 @@ if (!merchantSubmissionForm) {
 
     merchantSubmissionForm.addEventListener(
         "submit",
+
         async function(event) {
 
             event.preventDefault();
 
-            event.stopImmediatePropagation();
-
-
-            // Éviter les doubles envois
+            // Éviter les doubles soumissions
+            // sans bloquer les autres événements du formulaire.
 
             if (
                 merchantSubmissionButton &&
                 merchantSubmissionButton.disabled
             ) {
-
                 return;
-
             }
-
-
-            // Désactiver le bouton
 
             if (merchantSubmissionButton) {
 
                 merchantSubmissionButton.disabled = true;
 
                 merchantSubmissionButton.textContent =
-                    "A ENVIAR CANDIDATURA...";
-
+                    "A PREPARAR A CANDIDATURA...";
             }
-
-
-            showMerchantSubmissionMessage(
-                "A verificar os dados e a enviar os documentos..."
-            );
-
 
             try {
 
-                // Envoyer réellement la candidature
+                // 1. Vérifier les validations générales
+
+                if (
+                    typeof validateCompleteMerchantRegistration ===
+                    "function"
+                ) {
+
+                    const completeValidation =
+                        validateCompleteMerchantRegistration();
+
+                    if (
+                        completeValidation === false ||
+                        (
+                            completeValidation &&
+                            typeof completeValidation === "object" &&
+                            completeValidation.success === false
+                        )
+                    ) {
+
+                        throw new Error(
+                            completeValidation.message ||
+                            "Verifique os campos obrigatórios."
+                        );
+                    }
+                }
+
+                // 2. Envoyer la candidature
 
                 const result =
                     await submitMerchantRegistration();
 
+                // 3. Confirmation
 
                 showMerchantSubmissionMessage(
 
@@ -2974,31 +3214,21 @@ if (!merchantSubmissionForm) {
 
                     "Estado: Pendente\n\n" +
 
-                    "Os quatro documentos foram recebidos. " +
-                    "A sua candidatura aguarda verificação.",
+                    "Os quatro documentos foram recebidos " +
+                    "e a candidatura aguarda verificação.",
 
                     true
-
                 );
 
+                merchantSubmissionButton.textContent =
+                    "CANDIDATURA ENVIADA";
 
-                // Empêcher une nouvelle soumission
-
-                if (merchantSubmissionButton) {
-
-                    merchantSubmissionButton.textContent =
-                        "CANDIDATURA ENVIADA";
-
-                    merchantSubmissionButton.disabled = true;
-
-                }
-
+                merchantSubmissionButton.disabled = true;
 
                 console.log(
-                    "[TOMA][BLOC 13] Candidatura enviada:",
+                    "[TOMA][BLOC 13] Candidatura registada:",
                     result.applicationId
                 );
-
 
             } catch (error) {
 
@@ -3007,14 +3237,10 @@ if (!merchantSubmissionForm) {
                     error
                 );
 
-
                 showMerchantSubmissionMessage(
                     error.message ||
                     "Erro ao enviar a candidatura."
                 );
-
-
-                // Réactiver le bouton en cas d'erreur
 
                 if (merchantSubmissionButton) {
 
@@ -3022,20 +3248,15 @@ if (!merchantSubmissionForm) {
 
                     merchantSubmissionButton.textContent =
                         "Enviar candidatura";
-
                 }
-
             }
-
-        },
-        true
+        }
     );
-
 }
 
 
 // ------------------------------------------------------
-// 13.5 — CONFIRMATION DU CHARGEMENT
+// 13.7 — CONFIRMATION DU CHARGEMENT
 // ------------------------------------------------------
 
 console.log(
@@ -3044,7 +3265,7 @@ console.log(
 
 alert(
     "TOMA — BLOC 13\n\n" +
-    "Sistema de envio de candidaturas carregado com sucesso!"
+    "Novo sistema de envio de candidaturas carregado!"
 );
 
 
