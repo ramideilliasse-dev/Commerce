@@ -1082,9 +1082,16 @@ if (missingPersonalCommercialFields.length > 0) {
 
 function showPersonalCommercialError(message) {
 
+    if (!formMessage) {
+        alert(message);
+        return;
+    }
+
     formMessage.textContent = message;
+
     formMessage.classList.remove("success");
     formMessage.classList.add("error");
+
     formMessage.style.display = "block";
 
     formMessage.scrollIntoView({
@@ -1093,14 +1100,17 @@ function showPersonalCommercialError(message) {
     });
 }
 
-/* -----------------------------------------------------
-   3.3 — FONCTION POUR NETTOYER LES ERREURS
------------------------------------------------------ */
 
 function clearPersonalCommercialError() {
 
+    if (!formMessage) {
+        return;
+    }
+
     formMessage.textContent = "";
-    formMessage.classList.remove("error");
+
+    formMessage.classList.remove("error", "success");
+
     formMessage.style.display = "none";
 }
 
