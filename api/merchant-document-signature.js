@@ -150,14 +150,9 @@ export default async function handler(req, res) {
         // Paramètres signés
 
         const signedParams = {
-
-            timestamp: timestamp,
-
-            public_id: publicId,
-
-            type: "authenticated"
-
-        };
+    timestamp: timestamp,
+    public_id: publicId
+};
 
 
         // Générer la signature
