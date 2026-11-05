@@ -2482,10 +2482,9 @@ async function uploadMerchantDocumentToCloudinary(
             signatureResult.signatureData;
 
         const uploadUrl =
-            "https://api.cloudinary.com/v1_1/" +
-            signatureData.cloudName +
-            "/image/upload";
-
+    "https://api.cloudinary.com/v1_1/" +
+    signatureData.cloudName +
+    "/image/authenticated/upload";
         const formData = new FormData();
 
         formData.append("file", file);
