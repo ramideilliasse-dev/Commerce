@@ -2299,65 +2299,49 @@ alert(
 );
 // ============================================
 // BLOC 10
-// COMMUNICATION AVEC L'API CLOUDINARY
+// COMMUNICATION ET UPLOAD CLOUDINARY
 // ============================================
 
 console.log("[TOMA] BLOC 10 chargé.");
 
-
-// --------------------------------------------
-// 10.1 — CONFIGURATION DE L'API
-// --------------------------------------------
+// 10.1 — CONFIGURATION
 
 const MERCHANT_DOCUMENT_SIGNATURE_ENDPOINT =
     "/api/merchant-document-signature";
 
+const CLOUDINARY_MAX_FILE_SIZE = 5 * 1024 * 1024;
 
-// --------------------------------------------
+const CLOUDINARY_ALLOWED_TYPES = [
+    "application/pdf",
+    "image/jpeg",
+    "image/png"
+];
+
+const CLOUDINARY_DOCUMENT_TYPES = [
+    "alvara",
+    "certidao",
+    "admissibilidade",
+    "pacto"
+];
+
+
 // 10.2 — DEMANDER UNE SIGNATURE AU SERVEUR
-// --------------------------------------------
 
 async function requestMerchantDocumentSignature(documentType) {
 
     try {
 
-        // Vérifier l'utilisateur connecté
-
         const firebaseUser = auth.currentUser;
 
         if (!firebaseUser) {
-
-            throw new Error(
-                "Utilizador não autenticado."
-            );
-
+            throw new Error("Utilizador não autenticado.");
         }
 
-
-        // Vérifier le type de document
-
-        const allowedDocuments = [
-            "alvara",
-            "certidao",
-            "admissibilidade",
-            "pacto"
-        ];
-
-        if (!allowedDocuments.includes(documentType)) {
-
-            throw new Error(
-                "Tipo de documento inválido."
-            );
-
+        if (!CLOUDINARY_DOCUMENT_TYPES.includes(documentType)) {
+            throw new Error("Tipo de documento inválido.");
         }
-
-
-        // Obtenir le token Firebase
 
         const idToken = await firebaseUser.getIdToken();
-
-
-        // Envoyer la demande au serveur
 
         const response = await fetch(
             MERCHANT_DOCUMENT_SIGNATURE_ENDPOINT,
@@ -2370,28 +2354,19 @@ async function requestMerchantDocumentSignature(documentType) {
                 },
 
                 body: JSON.stringify({
-                    documentType: documentType
+                    documentType
                 })
             }
         );
 
-
-        // Lire la réponse
-
         const result = await response.json();
 
-
         if (!response.ok || !result.success) {
-
             throw new Error(
                 result.message ||
                 "Erro ao solicitar assinatura Cloudinary."
             );
-
         }
-
-
-        // Vérifier les informations retournées
 
         if (
             !result.cloudName ||
@@ -2400,24 +2375,41 @@ async function requestMerchantDocumentSignature(documentType) {
             !result.publicId ||
             !result.signature
         ) {
-
             throw new Error(
                 "Resposta incompleta do servidor."
             );
-
         }
 
+        if (
+            result.type !== "authenticated" ||
+            result.resourceType !== "image"
+        ) {
+            throw new Error(
+                "Configuração de segurança Cloudinary inválida."
+            );
+        }
+
+        if (
+            !result.publicId.startsWith(
+                "toma-private-documents/" +
+                firebaseUser.uid +
+                "/"
+            )
+        ) {
+            throw new Error(
+                "Identificador do documento não autorizado."
+            );
+        }
 
         return {
             success: true,
             signatureData: result
         };
 
-
     } catch (error) {
 
         console.error(
-            "[TOMA][BLOC 10]",
+            "[TOMA][BLOC 10.2]",
             error
         );
 
@@ -2426,55 +2418,308 @@ async function requestMerchantDocumentSignature(documentType) {
             message: error.message ||
                 "Não foi possível comunicar com o servidor."
         };
-
     }
-
 }
 
 
-// --------------------------------------------
-// 10.3 — TESTER LES QUATRE DOCUMENTS
-// --------------------------------------------
+// 10.3 — VALIDAR O FICHEIRO ANTES DO UPLOAD
+
+function validateMerchantDocumentFile(file) {
+
+    if (!file) {
+        throw new Error("Nenhum documento selecionado.");
+    }
+
+    if (file.size <= 0) {
+        throw new Error("O ficheiro está vazio.");
+    }
+
+    if (file.size > CLOUDINARY_MAX_FILE_SIZE) {
+        throw new Error(
+            "O documento não pode ultrapassar 5 MB."
+        );
+    }
+
+    if (!CLOUDINARY_ALLOWED_TYPES.includes(file.type)) {
+        throw new Error(
+            "Formato não permitido. Utilize PDF, JPG ou PNG."
+        );
+    }
+
+    return true;
+}
+
+
+// 10.4 — ENVIAR UM DOCUMENTO DIRETAMENTE PARA CLOUDINARY
+
+async function uploadMerchantDocumentToCloudinary(
+    documentType,
+    file
+) {
+
+    try {
+
+        validateMerchantDocumentFile(file);
+
+        const signatureResult =
+            await requestMerchantDocumentSignature(documentType);
+
+        if (!signatureResult.success) {
+            throw new Error(signatureResult.message);
+        }
+
+        const signatureData =
+            signatureResult.signatureData;
+
+        const uploadUrl =
+            "https://api.cloudinary.com/v1_1/" +
+            signatureData.cloudName +
+            "/image/upload";
+
+        const formData = new FormData();
+
+        formData.append("file", file);
+
+        formData.append(
+            "api_key",
+            signatureData.apiKey
+        );
+
+        formData.append(
+            "timestamp",
+            String(signatureData.timestamp)
+        );
+
+        formData.append(
+            "public_id",
+            signatureData.publicId
+        );
+
+        formData.append(
+            "type",
+            "authenticated"
+        );
+
+        formData.append(
+            "signature",
+            signatureData.signature
+        );
+
+        const response = await fetch(
+            uploadUrl,
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || result.error) {
+
+            throw new Error(
+                result.error?.message ||
+                "Falha no envio do documento para Cloudinary."
+            );
+        }
+
+        // 10.4.1 — VERIFICAR A RESPOSTA DO CLOUDINARY
+
+        if (
+            result.public_id !== signatureData.publicId
+        ) {
+            throw new Error(
+                "O identificador do documento não corresponde."
+            );
+        }
+
+        if (
+            result.resource_type !== "image" ||
+            result.type !== "authenticated"
+        ) {
+            throw new Error(
+                "O documento não foi guardado com o tipo de acesso esperado."
+            );
+        }
+
+        if (
+            !["pdf", "jpg", "jpeg", "png"].includes(
+                String(result.format).toLowerCase()
+            )
+        ) {
+            throw new Error(
+                "O formato recebido pelo Cloudinary não é permitido."
+            );
+        }
+
+        if (
+            !Number.isFinite(result.bytes) ||
+            result.bytes <= 0 ||
+            result.bytes > CLOUDINARY_MAX_FILE_SIZE
+        ) {
+            throw new Error(
+                "O tamanho do documento recebido é inválido."
+            );
+        }
+
+        // 10.4.2 — DEVOLVER APENAS OS DADOS NECESSÁRIOS
+
+        return {
+            success: true,
+
+            document: {
+                publicId: result.public_id,
+                assetId: result.asset_id,
+                version: result.version,
+                resourceType: result.resource_type,
+                deliveryType: result.type,
+                format: result.format,
+                bytes: result.bytes,
+                originalName: file.name
+            }
+        };
+
+    } catch (error) {
+
+        console.error(
+            "[TOMA][BLOC 10.4]",
+            error
+        );
+
+        return {
+            success: false,
+            message: error.message ||
+                "Erro ao enviar o documento."
+        };
+    }
+}
+
+
+// 10.5 — ENVIAR OS QUATRO DOCUMENTOS
+
+async function uploadAllMerchantDocuments() {
+
+    const uploadedDocuments = {};
+
+    try {
+
+        const data = prepareMerchantRegistrationData();
+
+        const validation =
+            validatePreparedMerchantData(data);
+
+        if (!validation || validation.success !== true) {
+
+            throw new Error(
+                validation?.message ||
+                "Os dados do registo não são válidos."
+            );
+        }
+
+        const documents = data.documents;
+
+        const documentOrder = [
+            {
+                type: "alvara",
+                file: documents.alvara,
+                label: "Alvará Comercial"
+            },
+            {
+                type: "certidao",
+                file: documents.certidao,
+                label: "Certidão"
+            },
+            {
+                type: "admissibilidade",
+                file: documents.admissibilidade,
+                label: "Certificado de Admissibilidade"
+            },
+            {
+                type: "pacto",
+                file: documents.pacto,
+                label: "Pacto de Sociedade"
+            }
+        ];
+
+        for (const item of documentOrder) {
+
+            console.log(
+                "[TOMA] Enviando: " + item.label
+            );
+
+            const uploadResult =
+                await uploadMerchantDocumentToCloudinary(
+                    item.type,
+                    item.file
+                );
+
+            if (!uploadResult.success) {
+
+                throw new Error(
+                    item.label + ": " +
+                    uploadResult.message
+                );
+            }
+
+            uploadedDocuments[item.type] =
+                uploadResult.document;
+        }
+
+        return {
+            success: true,
+            documents: uploadedDocuments
+        };
+
+    } catch (error) {
+
+        console.error(
+            "[TOMA][BLOC 10.5]",
+            error
+        );
+
+        return {
+            success: false,
+            message: error.message ||
+                "Não foi possível enviar todos os documentos.",
+
+            uploadedDocuments
+        };
+    }
+}
+
+
+// 10.6 — TESTAR AS QUATRO ASSINATURAS
+// Este teste NÃO envia documentos.
 
 async function testMerchantDocumentSignature() {
 
-    const documentTypes = [
-        "alvara",
-        "certidao",
-        "admissibilidade",
-        "pacto"
-    ];
-
-
     const results = [];
 
-
-    for (const documentType of documentTypes) {
+    for (
+        const documentType of CLOUDINARY_DOCUMENT_TYPES
+    ) {
 
         const result =
-            await requestMerchantDocumentSignature(documentType);
-
+            await requestMerchantDocumentSignature(
+                documentType
+            );
 
         results.push({
             document: documentType,
             success: result.success
         });
 
-
         if (!result.success) {
 
             alert(
                 "[TOMA — BLOC 10]\n\n" +
-                "Erro ao preparar: " + documentType + "\n\n" +
-                result.message
+                "Erro ao preparar: " + documentType +
+                "\n\n" + result.message
             );
 
             return false;
-
         }
-
     }
-
 
     alert(
         "[TOMA — BLOC 10]\n\n" +
@@ -2487,22 +2732,10 @@ async function testMerchantDocumentSignature() {
         "Nenhum documento foi enviado."
     );
 
-
     return true;
-
 }
 
-
-// ============================================
-// FIM DO BLOC 10
-// ============================================
-
-console.log("[TOMA] BLOC 10 carregado com sucesso.");
-
-alert(
-    "TOMA — BLOC 10\n\n" +
-    "Comunicação com a API Cloudinary carregada com sucesso!"
-);
+console.log("[TOMA] BLOC 10 concluído.");
 // ==========================================
 // BLOC 11 — BOUTON TEMPORAIRE DE TEST
 // ==========================================
