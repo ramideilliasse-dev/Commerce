@@ -2080,3 +2080,220 @@ function testMerchantRegistrationPreparation() {
 // ============================================
 
 console.log("[TOMA] BLOC 7 preparado com sucesso.");
+// ============================================
+// BLOC 8
+// PRÉPARATION DE L'ENVOI SÉCURISÉ
+// ============================================
+
+
+// --------------------------------------------
+// 8.1 — CONFIGURATION
+// --------------------------------------------
+
+const MERCHANT_REGISTRATION_ENDPOINT =
+    "/api/merchant-registration";
+
+
+// --------------------------------------------
+// 8.2 — PRÉPARER LES DONNÉES ET DOCUMENTS
+// --------------------------------------------
+
+async function prepareSecureMerchantSubmission(firebaseUser) {
+
+    try {
+
+        // Vérifier l'utilisateur Firebase
+
+        if (!firebaseUser || !firebaseUser.uid) {
+
+            throw new Error(
+                "Utilizador Firebase não autenticado."
+            );
+
+        }
+
+
+        // Récupérer les données du BLOC 7
+
+        const data = prepareMerchantRegistrationData();
+
+
+        // Vérifier les données
+
+        const validation =
+            validatePreparedMerchantData(data);
+
+
+        if (!validation.success) {
+
+            throw new Error(validation.message);
+
+        }
+
+
+        // Récupérer le jeton Firebase
+
+        const idToken = await firebaseUser.getIdToken();
+
+
+        if (!idToken) {
+
+            throw new Error(
+                "Não foi possível obter o token de autenticação."
+            );
+
+        }
+
+
+        // Créer FormData
+
+        const formData = new FormData();
+
+
+        // Préparer les informations sans les fichiers
+
+        const registrationInformation = {
+
+            uid: firebaseUser.uid,
+
+            merchantType: data.merchantType,
+
+            personal: data.personal,
+
+            commercial: data.commercial,
+
+            officialBusiness: data.officialBusiness,
+
+            location: data.location,
+
+            termsAccepted: data.termsAccepted,
+
+            submittedAt: new Date().toISOString()
+
+        };
+
+
+        // Ajouter les informations au FormData
+
+        formData.append(
+            "registrationData",
+            JSON.stringify(registrationInformation)
+        );
+
+
+        // Ajouter les quatre documents
+
+        formData.append(
+            "alvaraFile",
+            data.documents.alvara
+        );
+
+        formData.append(
+            "certidaoFile",
+            data.documents.certidao
+        );
+
+        formData.append(
+            "admissibilidadeFile",
+            data.documents.admissibilidade
+        );
+
+        formData.append(
+            "pactoFile",
+            data.documents.pacto
+        );
+
+
+        // Préparer les en-têtes d'authentification
+
+        const headers = {
+
+            "Authorization": "Bearer " + idToken
+
+        };
+
+
+        return {
+
+            success: true,
+
+            formData: formData,
+
+            headers: headers,
+
+            uid: firebaseUser.uid
+
+        };
+
+
+    } catch (error) {
+
+        console.error(
+            "[TOMA][BLOC 8]",
+            error
+        );
+
+        return {
+
+            success: false,
+
+            message: error.message || 
+                "Erro ao preparar o envio."
+
+        };
+
+    }
+
+}
+
+
+// --------------------------------------------
+// 8.3 — VÉRIFIER LA PRÉPARATION
+// --------------------------------------------
+
+async function testSecureMerchantSubmission(firebaseUser) {
+
+    const result =
+        await prepareSecureMerchantSubmission(firebaseUser);
+
+
+    if (!result.success) {
+
+        alert(
+            "[TOMA — BLOC 8]\n\n" +
+            result.message
+        );
+
+        return false;
+
+    }
+
+
+    alert(
+        "[TOMA — BLOC 8]\n\n" +
+        "Preparação segura concluída com sucesso!\n\n" +
+        "Autenticação Firebase: OK\n" +
+        "Dados da candidatura: OK\n" +
+        "Alvará Comercial: OK\n" +
+        "Certidão: OK\n" +
+        "Certificado de Admissibilidade: OK\n" +
+        "Pacto de Sociedade: OK\n\n" +
+        "Nenhum ficheiro foi enviado ainda."
+    );
+
+
+    return true;
+
+}
+
+
+// ============================================
+// FIM DO BLOC 8
+// ============================================
+
+console.log("[TOMA] BLOC 8 carregado com sucesso.");
+
+alert(
+    "TOMA — BLOC 8\n\n" +
+    "Preparação do envio seguro carregada com sucesso!"
+);
