@@ -2464,7 +2464,7 @@ function validateMerchantDocumentFile(file) {
 
 // ============================================
 // BLOC 10.4
-// ENVOYER UN DOCUMENT DIRECTEMENT VERS CLOUDINARY
+// ENVIAR UM DOCUMENTO DIRETAMENTE PARA CLOUDINARY
 // ============================================
 
 async function uploadMerchantDocumentToCloudinary(
@@ -2580,6 +2580,7 @@ async function uploadMerchantDocumentToCloudinary(
 
         return {
             success: true,
+
             document: {
                 publicId: result.public_id,
                 assetId: result.asset_id,
