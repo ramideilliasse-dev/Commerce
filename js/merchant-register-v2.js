@@ -2612,77 +2612,7 @@ async function uploadMerchantDocumentToCloudinary(
 // FIM DO BLOC 10.4
 // ============================================
 
-        // 10.4.1 — VERIFICAR A RESPOSTA DO CLOUDINARY
-
-        if (
-            result.public_id !== signatureData.publicId
-        ) {
-            throw new Error(
-                "O identificador do documento não corresponde."
-            );
-        }
-
-        if (
-            result.resource_type !== "image" ||
-            result.type !== "authenticated"
-        ) {
-            throw new Error(
-                "O documento não foi guardado com o tipo de acesso esperado."
-            );
-        }
-
-        if (
-            !["pdf", "jpg", "jpeg", "png"].includes(
-                String(result.format).toLowerCase()
-            )
-        ) {
-            throw new Error(
-                "O formato recebido pelo Cloudinary não é permitido."
-            );
-        }
-
-        if (
-            !Number.isFinite(result.bytes) ||
-            result.bytes <= 0 ||
-            result.bytes > CLOUDINARY_MAX_FILE_SIZE
-        ) {
-            throw new Error(
-                "O tamanho do documento recebido é inválido."
-            );
-        }
-
-        // 10.4.2 — DEVOLVER APENAS OS DADOS NECESSÁRIOS
-
-        return {
-            success: true,
-
-            document: {
-                publicId: result.public_id,
-                assetId: result.asset_id,
-                version: result.version,
-                resourceType: result.resource_type,
-                deliveryType: result.type,
-                format: result.format,
-                bytes: result.bytes,
-                originalName: file.name
-            }
-        };
-
-    } catch (error) {
-
-        console.error(
-            "[TOMA][BLOC 10.4]",
-            error
-        );
-
-        return {
-            success: false,
-            message: error.message ||
-                "Erro ao enviar o documento."
-        };
-    }
-}
-
+    
 
 // 10.5 — ENVIAR OS QUATRO DOCUMENTOS
 
