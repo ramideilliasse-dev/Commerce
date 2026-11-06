@@ -2642,48 +2642,24 @@ function testMerchantDocumentUploadConfiguration() {
 
 console.log("[TOMA] BLOC 10 concluído.");
 // ==========================================
-// BLOC 11 — BOUTON TEMPORAIRE DE TEST
+// BLOC 11 — NETTOYAGE DE L'ANCIEN TEST
 // ==========================================
 
-const signatureTestButton = document.createElement("button");
+// Suppression de l'ancien bouton de test
+// des signatures Cloudinary.
 
-signatureTestButton.type = "button";
-signatureTestButton.textContent = "TESTER LES 4 SIGNATURES CLOUDINARY";
+// Le nouveau système utilise directement
+// le preset Cloudinary toma-banners-v2.
 
-signatureTestButton.style.cssText = `
-    display: block;
-    width: 90%;
-    max-width: 400px;
-    margin: 25px auto;
-    padding: 16px;
-    background: #ff6a00;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-weight: bold;
-    cursor: pointer;
-`;
+// Aucune signature temporaire n'est nécessaire.
 
-signatureTestButton.addEventListener("click", async () => {
-    signatureTestButton.disabled = true;
-    signatureTestButton.textContent = "TEST EN COURS...";
+console.log("[TOMA] BLOC 11 — Ancien test désactivé.");
 
-    try {
-        await testMerchantDocumentSignature();
-    } catch (error) {
-        alert("ERREUR DU TEST : " + error.message);
-    } finally {
-        signatureTestButton.disabled = false;
-        signatureTestButton.textContent =
-            "TESTER LES 4 SIGNATURES CLOUDINARY";
-    }
-});
-
-document.body.appendChild(signatureTestButton);
-
-console.log("[TOMA] BLOC 11 chargé.");
-
-alert("TOMA — BLOC 11 chargé avec succès !");
+alert(
+    "TOMA — BLOC 11 chargé avec succès !\n\n" +
+    "Ancien test de signature désactivé.\n" +
+    "Le nouveau système Cloudinary est conservé."
+);
 // ======================================================
 // TOMA — BLOC 13
 // ENVOI SÉCURISÉ DE LA CANDIDATURE COMMERÇANT V2
