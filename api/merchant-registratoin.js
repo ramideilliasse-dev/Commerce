@@ -1,6 +1,6 @@
  // ======================================================
 // TOMA — BLOC 12
-// BACKEND SÉCURISÉ D'INSCRIPTION COMMERÇANT V2
+// BACKEND D'INSCRIPTION COMMERÇANT V2
 // Architecture : navigateur → Cloudinary → Vercel → Firestore
 // ======================================================
 
@@ -21,6 +21,8 @@ const CLOUDINARY_API_SECRET =
     process.env.CLOUDINARY_API_SECRET;
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+const CLOUDINARY_DOCUMENT_FOLDER = "Toma/documents";
 
 const ALLOWED_DOCUMENTS = [
     "alvara",
@@ -99,7 +101,17 @@ async function cloudinaryAdminRequest(path, options = {}) {
         }
     });
 
-    const result = await response.json();
+    const responseText = await response.text();
+
+    let result;
+
+    try {
+        result = JSON.parse(responseText);
+    } catch {
+        throw new Error(
+            "Resposta inválida da API Cloudinary."
+        );
+    }
 
     if (!response.ok) {
 
@@ -223,8 +235,11 @@ async function verifyCloudinaryDocument(
         );
     }
 
+    // Le public_id attendu :
+    // Toma/documents/UID_documentType_identifiant
+
     const expectedPrefix =
-        `toma-private-documents/${uid}/${documentType}-`;
+        `${CLOUDINARY_DOCUMENT_FOLDER}/${uid}_${documentType}_`;
 
     if (
         typeof document.publicId !== "string" ||
@@ -245,8 +260,6 @@ async function verifyCloudinaryDocument(
     }
 
     // Vérification réelle auprès de Cloudinary.
-    // Les informations du navigateur ne sont pas considérées
-    // comme une preuve de validité.
 
     const resourcePath =
         "resources/image/upload/" +
@@ -268,12 +281,26 @@ async function verifyCloudinaryDocument(
         );
     }
 
+    // Nouveau système : upload public.
+
     if (
-        asset.type !== "authenticated" ||
+        asset.type !== "upload" ||
         asset.resource_type !== "image"
     ) {
         throw new Error(
-            `Documento não está protegido corretamente: ${documentType}.`
+            `Tipo de armazenamento Cloudinary inválido: ${documentType}.`
+        );
+    }
+
+    // Vérifier le dossier.
+
+    if (
+        !asset.public_id.startsWith(
+            `${CLOUDINARY_DOCUMENT_FOLDER}/`
+        )
+    ) {
+        throw new Error(
+            `Documento fora da pasta autorizada: ${documentType}.`
         );
     }
 
@@ -305,9 +332,16 @@ async function verifyCloudinaryDocument(
         deliveryType: asset.type,
         format: format,
         bytes: asset.bytes,
+
+        secureUrl:
+            asset.secure_url ||
+            document.secureUrl ||
+            null,
+
         originalName: String(
             document.originalName || ""
         ).slice(0, 200),
+
         verified: true
     };
 }
@@ -366,7 +400,7 @@ async function deleteCloudinaryDocuments(uid, publicIds) {
         if (
             typeof publicId !== "string" ||
             !publicId.startsWith(
-                `toma-private-documents/${uid}/`
+                `${CLOUDINARY_DOCUMENT_FOLDER}/${uid}_`
             )
         ) {
             throw new Error(
@@ -383,27 +417,32 @@ async function deleteCloudinaryDocuments(uid, publicIds) {
         };
     }
 
+    // Suppression via l'API Admin Cloudinary.
+    // Les public_ids sont transmis dans la query string.
+
+    const params = new URLSearchParams();
+
+    for (const publicId of validPublicIds) {
+        params.append("public_ids[]", publicId);
+    }
+
+    params.append("invalidate", "true");
+
     const response = await cloudinaryAdminRequest(
-        "resources/image/upload",
+        "resources/image/upload?" + params.toString(),
         {
-            method: "DELETE",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-                public_ids: validPublicIds,
-                type: "authenticated",
-                invalidate: true
-            })
+            method: "DELETE"
         }
     );
 
+    const deletedCount = Object.values(
+        response.deleted || {}
+    ).filter(
+        status => status === "deleted"
+    ).length;
+
     return {
-        deleted: Object.keys(
-            response.deleted || {}
-        ).length
+        deleted: deletedCount
     };
 }
 
