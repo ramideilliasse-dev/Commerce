@@ -2462,6 +2462,11 @@ function validateMerchantDocumentFile(file) {
 
 // 10.4 — ENVIAR UM DOCUMENTO DIRETAMENTE PARA CLOUDINARY
 
+// ============================================
+// BLOC 10.4
+// ENVOYER UN DOCUMENT DIRECTEMENT VERS CLOUDINARY
+// ============================================
+
 async function uploadMerchantDocumentToCloudinary(
     documentType,
     file
@@ -2480,70 +2485,131 @@ async function uploadMerchantDocumentToCloudinary(
 
         const signatureData =
             signatureResult.signatureData;
-const uploadUrl =
-    "https://api.cloudinary.com/v1_1/" +
-    signatureData.cloudName +
-    "/image/upload";
-        
+
+        const uploadUrl =
+            "https://api.cloudinary.com/v1_1/" +
+            signatureData.cloudName +
+            "/image/upload";
+
         const formData = new FormData();
 
         formData.append("file", file);
-
-        formData.append(
-            "api_key",
-            signatureData.apiKey
-        );
-
+        formData.append("api_key", signatureData.apiKey);
         formData.append(
             "timestamp",
             String(signatureData.timestamp)
         );
-
         formData.append(
             "public_id",
             signatureData.publicId
         );
-formData.append(
-    "type",
-    "authenticated"
-);
-        formData.append(
-            "type",
-            "authenticated"
-        );
-
+        formData.append("type", "authenticated");
         formData.append(
             "signature",
             signatureData.signature
         );
 
-     const response = await fetch(uploadUrl, {
-    method: "POST",
-    body: formData
-});
+        const response = await fetch(uploadUrl, {
+            method: "POST",
+            body: formData
+        });
 
-const responseText = await response.text();
+        const responseText = await response.text();
 
-console.log("[TOMA] CLOUDINARY STATUS:", response.status);
-console.log("[TOMA] CLOUDINARY RESPONSE:", responseText);
+        console.log(
+            "[TOMA] CLOUDINARY STATUS:",
+            response.status
+        );
 
-let result;
+        console.log(
+            "[TOMA] CLOUDINARY RESPONSE:",
+            responseText
+        );
 
-try {
-    result = JSON.parse(responseText);
-} catch {
-    throw new Error("Resposta inválida do Cloudinary: " + responseText);
-}
+        let result;
 
-        
+        try {
+            result = JSON.parse(responseText);
+        } catch {
+            throw new Error(
+                "Resposta inválida do Cloudinary."
+            );
+        }
 
         if (!response.ok || result.error) {
-
             throw new Error(
                 result.error?.message ||
                 "Falha no envio do documento para Cloudinary."
             );
         }
+
+        if (result.public_id !== signatureData.publicId) {
+            throw new Error(
+                "O identificador do documento não corresponde."
+            );
+        }
+
+        if (
+            result.resource_type !== "image" ||
+            result.type !== "authenticated"
+        ) {
+            throw new Error(
+                "O documento não foi guardado com o tipo de acesso esperado."
+            );
+        }
+
+        if (
+            !["pdf", "jpg", "jpeg", "png"].includes(
+                String(result.format).toLowerCase()
+            )
+        ) {
+            throw new Error(
+                "Formato de documento não permitido."
+            );
+        }
+
+        if (
+            !Number.isFinite(result.bytes) ||
+            result.bytes <= 0 ||
+            result.bytes > CLOUDINARY_MAX_FILE_SIZE
+        ) {
+            throw new Error(
+                "Tamanho do documento inválido."
+            );
+        }
+
+        return {
+            success: true,
+            document: {
+                publicId: result.public_id,
+                assetId: result.asset_id,
+                version: result.version,
+                resourceType: result.resource_type,
+                deliveryType: result.type,
+                format: result.format,
+                bytes: result.bytes,
+                originalName: file.name
+            }
+        };
+
+    } catch (error) {
+
+        console.error(
+            "[TOMA][BLOC 10.4]",
+            error
+        );
+
+        return {
+            success: false,
+            message: error.message ||
+                "Erro ao enviar o documento."
+        };
+    }
+}
+
+// ============================================
+// FIM DO BLOC 10.4
+// ============================================
 
         // 10.4.1 — VERIFICAR A RESPOSTA DO CLOUDINARY
 
