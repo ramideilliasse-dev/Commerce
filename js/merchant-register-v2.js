@@ -2535,7 +2535,7 @@ try {
     throw new Error("Resposta inválida do Cloudinary: " + responseText);
 }
 
-        const result = await response.json();
+        
 
         if (!response.ok || result.error) {
 
