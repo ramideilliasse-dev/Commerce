@@ -2517,13 +2517,23 @@ formData.append(
             signatureData.signature
         );
 
-        const response = await fetch(
-            uploadUrl,
-            {
-                method: "POST",
-                body: formData
-            }
-        );
+     const response = await fetch(uploadUrl, {
+    method: "POST",
+    body: formData
+});
+
+const responseText = await response.text();
+
+console.log("[TOMA] CLOUDINARY STATUS:", response.status);
+console.log("[TOMA] CLOUDINARY RESPONSE:", responseText);
+
+let result;
+
+try {
+    result = JSON.parse(responseText);
+} catch {
+    throw new Error("Resposta inválida do Cloudinary: " + responseText);
+}
 
         const result = await response.json();
 
