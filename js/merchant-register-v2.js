@@ -2538,9 +2538,10 @@ async function uploadMerchantDocumentToCloudinary(
 
         if (!response.ok || result.error) {
             throw new Error(
-                result.error?.message ||
-                "Falha no envio do documento para Cloudinary."
-            );
+    "CLOUDINARY STATUS: " + response.status +
+    "\n\nDETALHES: " +
+    (result.error?.message || responseText)
+);
         }
 
         if (result.public_id !== signatureData.publicId) {
