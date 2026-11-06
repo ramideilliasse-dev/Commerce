@@ -2480,11 +2480,11 @@ async function uploadMerchantDocumentToCloudinary(
 
         const signatureData =
             signatureResult.signatureData;
-
-        const uploadUrl =
+const uploadUrl =
     "https://api.cloudinary.com/v1_1/" +
     signatureData.cloudName +
-    "/image/authenticated/upload";
+    "/image/upload";
+        
         const formData = new FormData();
 
         formData.append("file", file);
@@ -2503,7 +2503,10 @@ async function uploadMerchantDocumentToCloudinary(
             "public_id",
             signatureData.publicId
         );
-
+formData.append(
+    "type",
+    "authenticated"
+);
         formData.append(
             "type",
             "authenticated"
