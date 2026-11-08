@@ -1251,3 +1251,261 @@ alert(
     "Structure des données : OK\n\n" +
     "Aucune donnée n'a été envoyée."
 );
+// ======================================================
+// TOMA — INSCRIPTION MARCHAND V3
+// BLOC 7 — ENVOI DES DOCUMENTS SUR CLOUDINARY
+// ======================================================
+
+// ------------------------------------------------------
+// 7.1 — Configuration Cloudinary
+// ------------------------------------------------------
+
+const TOMA_CLOUDINARY_CONFIG = {
+    cloudName: "xnak6z6m",
+    uploadPreset: "Toma-banner"
+};
+
+// ------------------------------------------------------
+// 7.2 — Vérification de la configuration
+// ------------------------------------------------------
+
+function validateTomaCloudinaryConfig() {
+
+    if (
+        !TOMA_CLOUDINARY_CONFIG.cloudName ||
+        !TOMA_CLOUDINARY_CONFIG.uploadPreset
+    ) {
+        throw new Error("Configuration Cloudinary incomplète.");
+    }
+
+    return true;
+}
+
+// ------------------------------------------------------
+// 7.3 — Détermination du type de ressource
+// ------------------------------------------------------
+
+function getTomaCloudinaryResourceType(file) {
+
+    const extension = file.name.split(".").pop().toLowerCase();
+
+    if (extension === "pdf") {
+        return "raw";
+    }
+
+    if (["jpg", "jpeg", "png"].includes(extension)) {
+        return "image";
+    }
+
+    throw new Error("Formato de documento não permitido.");
+}
+
+// ------------------------------------------------------
+// 7.4 — Envoi d'un document
+// ------------------------------------------------------
+
+async function uploadTomaMerchantDocument(documentType, file) {
+
+    if (!file) {
+        throw new Error("Documento não selecionado: " + documentType);
+    }
+
+    // Vérification du fichier
+    const validation =
+        window.TOMA_MERCHANT_REGISTER.documentsTools.validate(file);
+
+    if (!validation.valid) {
+        throw new Error(validation.message);
+    }
+
+    // Vérification de l'utilisateur connecté
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+        throw new Error(
+            "O comerciante deve iniciar sessão antes de enviar documentos."
+        );
+    }
+
+    // Vérification de la configuration
+    validateTomaCloudinaryConfig();
+
+    // PDF = raw / JPG et PNG = image
+    const resourceType = getTomaCloudinaryResourceType(file);
+
+    const uploadUrl =
+        "https://api.cloudinary.com/v1_1/" +
+        TOMA_CLOUDINARY_CONFIG.cloudName +
+        "/" + resourceType +
+        "/upload";
+
+    const formData = new FormData();
+
+    formData.append("file", file);
+
+    formData.append(
+        "upload_preset",
+        TOMA_CLOUDINARY_CONFIG.uploadPreset
+    );
+
+    // Identifiant du marchand
+    formData.append("context", "uid=" + currentUser.uid);
+
+    let response;
+
+    try {
+
+        response = await fetch(uploadUrl, {
+            method: "POST",
+            body: formData
+        });
+
+    } catch (error) {
+
+        throw new Error(
+            "Falha de ligação ao Cloudinary. Verifique a internet."
+        );
+    }
+
+    let result;
+
+    try {
+        result = await response.json();
+    } catch (error) {
+        throw new Error("Resposta inválida do Cloudinary.");
+    }
+
+    if (!response.ok) {
+
+        const cloudinaryMessage =
+            result?.error?.message || "Erro desconhecido.";
+
+        throw new Error(
+            "Cloudinary recusou o documento: " + cloudinaryMessage
+        );
+    }
+
+    // Vérification de la réponse
+    if (
+        !result ||
+        !result.secure_url ||
+        !result.public_id ||
+        !result.asset_id
+    ) {
+        throw new Error(
+            "O Cloudinary não devolveu todos os dados necessários."
+        );
+    }
+
+    // Métadonnées du document
+    return {
+        documentType: documentType,
+        originalFilename: file.name,
+        resourceType: result.resource_type,
+        format: result.format || "",
+        publicId: result.public_id,
+        assetId: result.asset_id,
+        secureUrl: result.secure_url,
+        bytes: result.bytes,
+        uploadedAt: new Date().toISOString(),
+        uid: currentUser.uid
+    };
+}
+
+// ------------------------------------------------------
+// 7.5 — Envoi des quatre documents
+// ------------------------------------------------------
+
+async function uploadAllTomaMerchantDocuments() {
+
+    // Vérifier les quatre documents avant de commencer
+    if (!window.TOMA_MERCHANT_REGISTER.documentsTools.checkAll()) {
+        throw new Error("Os quatro documentos são obrigatórios.");
+    }
+
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+        throw new Error("Nenhum comerciante autenticado.");
+    }
+
+    const selectedDocuments =
+        window.TOMA_MERCHANT_REGISTER.documentsTools.getSelected();
+
+    const uploadedDocuments = {};
+
+    const documentTypes = [
+        "alvara",
+        "certidao",
+        "admissibilidade",
+        "pacto"
+    ];
+
+    for (const documentType of documentTypes) {
+
+        showTomaRegistrationError(
+            "A enviar documento: " + documentType
+        );
+
+        try {
+
+            const metadata = await uploadTomaMerchantDocument(
+                documentType,
+                selectedDocuments[documentType]
+            );
+
+            uploadedDocuments[documentType] = metadata;
+
+        } catch (error) {
+
+            console.error(
+                "TOMA — Erro no documento " + documentType,
+                error
+            );
+
+            // Ne pas continuer si un document échoue
+            window.TOMA_MERCHANT_REGISTER.uploadedDocuments =
+                uploadedDocuments;
+
+            throw new Error(
+                "Falha no envio de " + documentType + ": " +
+                error.message
+            );
+        }
+    }
+
+    window.TOMA_MERCHANT_REGISTER.uploadedDocuments =
+        uploadedDocuments;
+
+    return uploadedDocuments;
+}
+
+// ------------------------------------------------------
+// 7.6 — Fonctions disponibles pour les prochains blocs
+// ------------------------------------------------------
+
+window.TOMA_MERCHANT_REGISTER.cloudinaryTools = {
+
+    uploadOne: uploadTomaMerchantDocument,
+
+    uploadAll: uploadAllTomaMerchantDocuments,
+
+    getUploaded: () => {
+        return window.TOMA_MERCHANT_REGISTER.uploadedDocuments || {};
+    }
+};
+
+// ------------------------------------------------------
+// 7.7 — Confirmation de l'installation du bloc
+// ------------------------------------------------------
+
+alert(
+    "TOMA — BLOC 7 INSTALADO!\n\n" +
+    "Configuration Cloudinary : OK\n" +
+    "Prise en charge PDF : préparée\n" +
+    "Prise en charge JPG : préparée\n" +
+    "Prise en charge PNG : préparée\n" +
+    "Envoi individuel : préparé\n" +
+    "Envoi des quatre documents : préparé\n\n" +
+    "Aucun document n'a été envoyé pendant ce test."
+);
