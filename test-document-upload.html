@@ -177,7 +177,7 @@
       formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
       formData.append("folder", "toma/document-tests");
 
-      const endpoint = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
+      const endpoint = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
       const response = await fetch(endpoint, { method: "POST", body: formData });
       const data = await response.json();
 
