@@ -544,3 +544,288 @@ alert(
     "Pré-visualização: OK\n" +
     "Remoção de documentos: OK"
 );
+// ======================================================
+// TOMA — INSCRIPTION MARCHAND V3
+// BLOC 3 — VALIDATION DES INFORMATIONS
+// ======================================================
+
+const TOMA_PERSONAL_FIELDS = {
+    fullName: document.getElementById("fullName"),
+    email: document.getElementById("email"),
+    phone: document.getElementById("phone"),
+    whatsapp: document.getElementById("whatsapp"),
+    nif: document.getElementById("nif"),
+    password: document.getElementById("password"),
+    confirmPassword: document.getElementById("confirmPassword")
+};
+
+const TOMA_COMMERCIAL_FIELDS = {
+    shopName: document.getElementById("shopName"),
+    shopCategory: document.getElementById("shopCategory"),
+    shopDescription: document.getElementById("shopDescription")
+};
+
+const TOMA_OFFICIAL_FIELDS = {
+    companyName: document.getElementById("companyName"),
+    brandName: document.getElementById("brandName"),
+    officialDescription: document.getElementById("officialDescription")
+};
+
+const TOMA_OFFICIAL_SECTION = document.getElementById("officialBusinessFields");
+
+const TOMA_MERCHANT_TYPE_RADIOS = document.querySelectorAll(
+    'input[name="merchantType"]'
+);
+
+// ------------------------------------------------------
+// 3.1 — Vérification des éléments HTML
+// ------------------------------------------------------
+
+const TOMA_BLOCK3_MISSING = [];
+
+Object.entries(TOMA_PERSONAL_FIELDS).forEach(([key, element]) => {
+    if (!element) TOMA_BLOCK3_MISSING.push(key);
+});
+
+Object.entries(TOMA_COMMERCIAL_FIELDS).forEach(([key, element]) => {
+    if (!element) TOMA_BLOCK3_MISSING.push(key);
+});
+
+Object.entries(TOMA_OFFICIAL_FIELDS).forEach(([key, element]) => {
+    if (!element) TOMA_BLOCK3_MISSING.push(key);
+});
+
+if (!TOMA_OFFICIAL_SECTION) {
+    TOMA_BLOCK3_MISSING.push("officialBusinessFields");
+}
+
+if (TOMA_MERCHANT_TYPE_RADIOS.length === 0) {
+    TOMA_BLOCK3_MISSING.push("merchantType");
+}
+
+if (TOMA_BLOCK3_MISSING.length > 0) {
+    alert(
+        "TOMA — ERREUR BLOC 3\n\n" +
+        "Éléments HTML introuvables :\n\n" +
+        TOMA_BLOCK3_MISSING.join("\n")
+    );
+
+    throw new Error("Validation du formulaire impossible.");
+}
+
+// ------------------------------------------------------
+// 3.2 — Affichage des champs de boutique officielle
+// ------------------------------------------------------
+
+function updateOfficialMerchantFields() {
+
+    const selectedType = document.querySelector(
+        'input[name="merchantType"]:checked'
+    );
+
+    const isOfficial = selectedType?.value === "official";
+
+    TOMA_OFFICIAL_SECTION.classList.toggle("hidden", !isOfficial);
+
+    Object.values(TOMA_OFFICIAL_FIELDS).forEach(field => {
+        field.disabled = !isOfficial;
+        field.required = isOfficial;
+    });
+}
+
+TOMA_MERCHANT_TYPE_RADIOS.forEach(radio => {
+    radio.addEventListener("change", updateOfficialMerchantFields);
+});
+
+// État initial
+updateOfficialMerchantFields();
+
+// ------------------------------------------------------
+// 3.3 — Affichage des messages de validation
+// ------------------------------------------------------
+
+function showTomaRegistrationError(message) {
+
+    const messageBox = window.TOMA_MERCHANT_REGISTER.formMessage;
+
+    messageBox.textContent = message;
+    messageBox.style.display = "block";
+    messageBox.style.color = "#b42318";
+
+    messageBox.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+}
+
+function clearTomaRegistrationMessage() {
+
+    const messageBox = window.TOMA_MERCHANT_REGISTER.formMessage;
+
+    messageBox.textContent = "";
+    messageBox.style.display = "none";
+}
+
+// ------------------------------------------------------
+// 3.4 — Vérification des informations personnelles
+// ------------------------------------------------------
+
+function validateTomaPersonalInformation() {
+
+    const fullName = TOMA_PERSONAL_FIELDS.fullName.value.trim();
+    const email = TOMA_PERSONAL_FIELDS.email.value.trim();
+    const phone = TOMA_PERSONAL_FIELDS.phone.value.trim();
+    const whatsapp = TOMA_PERSONAL_FIELDS.whatsapp.value.trim();
+    const nif = TOMA_PERSONAL_FIELDS.nif.value.trim();
+    const password = TOMA_PERSONAL_FIELDS.password.value;
+    const confirmPassword = TOMA_PERSONAL_FIELDS.confirmPassword.value;
+
+    if (fullName.length < 3) {
+        showTomaRegistrationError("Introduza o seu nome completo.");
+        return false;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(email)) {
+        showTomaRegistrationError("Introduza um endereço de email válido.");
+        return false;
+    }
+
+    if (phone.replace(/\D/g, "").length < 9) {
+        showTomaRegistrationError("Introduza um número de telefone válido.");
+        return false;
+    }
+
+    if (whatsapp.replace(/\D/g, "").length < 9) {
+        showTomaRegistrationError("Introduza um número de WhatsApp válido.");
+        return false;
+    }
+
+    if (nif.length < 5) {
+        showTomaRegistrationError("Introduza um NIF válido.");
+        return false;
+    }
+
+    if (password.length < 8) {
+        showTomaRegistrationError("A palavra-passe deve ter pelo menos 8 caracteres.");
+        return false;
+    }
+
+    if (password !== confirmPassword) {
+        showTomaRegistrationError("As palavras-passe não coincidem.");
+        return false;
+    }
+
+    return true;
+}
+
+// ------------------------------------------------------
+// 3.5 — Vérification des informations commerciales
+// ------------------------------------------------------
+
+function validateTomaCommercialInformation() {
+
+    const shopName = TOMA_COMMERCIAL_FIELDS.shopName.value.trim();
+    const shopCategory = TOMA_COMMERCIAL_FIELDS.shopCategory.value;
+    const shopDescription = TOMA_COMMERCIAL_FIELDS.shopDescription.value.trim();
+
+    if (shopName.length < 2) {
+        showTomaRegistrationError("Introduza o nome da sua loja.");
+        return false;
+    }
+
+    if (!shopCategory) {
+        showTomaRegistrationError("Selecione a categoria da sua loja.");
+        return false;
+    }
+
+    if (shopDescription.length < 20) {
+        showTomaRegistrationError(
+            "A descrição da loja deve conter pelo menos 20 caracteres."
+        );
+        return false;
+    }
+
+    return true;
+}
+
+// ------------------------------------------------------
+// 3.6 — Vérification des informations officielles
+// ------------------------------------------------------
+
+function validateTomaOfficialInformation() {
+
+    const selectedType = document.querySelector(
+        'input[name="merchantType"]:checked'
+    );
+
+    if (!selectedType) {
+        showTomaRegistrationError("Selecione o tipo de comerciante.");
+        return false;
+    }
+
+    if (selectedType.value !== "official") {
+        return true;
+    }
+
+    const companyName = TOMA_OFFICIAL_FIELDS.companyName.value.trim();
+    const brandName = TOMA_OFFICIAL_FIELDS.brandName.value.trim();
+    const officialDescription = TOMA_OFFICIAL_FIELDS.officialDescription.value.trim();
+
+    if (companyName.length < 2) {
+        showTomaRegistrationError("Introduza o nome da empresa.");
+        return false;
+    }
+
+    if (brandName.length < 2) {
+        showTomaRegistrationError("Introduza o nome da marca.");
+        return false;
+    }
+
+    if (officialDescription.length < 20) {
+        showTomaRegistrationError(
+            "A descrição da empresa deve conter pelo menos 20 caracteres."
+        );
+        return false;
+    }
+
+    return true;
+}
+
+// ------------------------------------------------------
+// 3.7 — Validation générale
+// ------------------------------------------------------
+
+function validateTomaMerchantRegistrationData() {
+
+    clearTomaRegistrationMessage();
+
+    if (!validateTomaPersonalInformation()) return false;
+
+    if (!validateTomaCommercialInformation()) return false;
+
+    if (!validateTomaOfficialInformation()) return false;
+
+    return true;
+}
+
+// ------------------------------------------------------
+// 3.8 — Mise à disposition pour les prochains blocs
+// ------------------------------------------------------
+
+window.TOMA_MERCHANT_REGISTER.validation = {
+    personal: validateTomaPersonalInformation,
+    commercial: validateTomaCommercialInformation,
+    official: validateTomaOfficialInformation,
+    all: validateTomaMerchantRegistrationData
+};
+
+alert(
+    "TOMA — BLOC 3 VALIDÉ !\n\n" +
+    "Informations personnelles : OK\n" +
+    "Informations commerciales : OK\n" +
+    "Boutique officielle : OK\n" +
+    "Vérification des mots de passe : OK\n" +
+    "Messages de validation : OK"
+);
