@@ -5,6 +5,10 @@
 
 import { auth } from "../firebase.js";
 
+import {
+    createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
 // ======================================================
 // 1.1 — RÉCUPÉRATION DES ÉLÉMENTS HTML
 // ======================================================
@@ -974,4 +978,125 @@ alert(
     "Adresse : OK\n" +
     "Conditions générales : OK\n" +
     "Validation complète : OK"
+);
+// ======================================================
+// TOMA — INSCRIPTION MARCHAND V3
+// BLOC 5 — CRÉATION DU COMPTE FIREBASE AUTH
+// ======================================================
+
+// ------------------------------------------------------
+// 5.1 — Préparation des données du compte
+// ------------------------------------------------------
+
+function getTomaMerchantAccountData() {
+
+    return {
+        email: TOMA_PERSONAL_FIELDS.email.value.trim(),
+        password: TOMA_PERSONAL_FIELDS.password.value
+    };
+}
+
+// ------------------------------------------------------
+// 5.2 — Traduction des erreurs Firebase
+// ------------------------------------------------------
+
+function getTomaFirebaseAuthError(error) {
+
+    const errorMessages = {
+        "auth/email-already-in-use":
+            "Este endereço de email já está registado.",
+
+        "auth/invalid-email":
+            "O endereço de email não é válido.",
+
+        "auth/weak-password":
+            "A palavra-passe é demasiado fraca.",
+
+        "auth/network-request-failed":
+            "Erro de ligação. Verifique a sua internet.",
+
+        "auth/too-many-requests":
+            "Demasiadas tentativas. Tente novamente mais tarde.",
+
+        "auth/operation-not-allowed":
+            "O registo por email e palavra-passe não está ativado."
+    };
+
+    return errorMessages[error.code] ||
+        "Não foi possível criar a conta. Tente novamente.";
+}
+
+// ------------------------------------------------------
+// 5.3 — Création du compte marchand
+// ------------------------------------------------------
+
+async function createTomaMerchantAccount() {
+
+    // Vérifier toutes les informations avant la création
+    const isFormValid =
+        window.TOMA_MERCHANT_REGISTER.validateCompleteForm();
+
+    if (!isFormValid) {
+        return null;
+    }
+
+    const accountData = getTomaMerchantAccountData();
+
+    try {
+
+        const credential = await createUserWithEmailAndPassword(
+            auth,
+            accountData.email,
+            accountData.password
+        );
+
+        const user = credential.user;
+
+        if (!user || !user.uid) {
+            throw new Error("Firebase n'a pas retourné de UID.");
+        }
+
+        window.TOMA_MERCHANT_REGISTER.account = {
+            uid: user.uid,
+            email: user.email
+        };
+
+        return user;
+
+    } catch (error) {
+
+        console.error("TOMA — Erreur Firebase Auth :", error);
+
+        showTomaRegistrationError(
+            getTomaFirebaseAuthError(error)
+        );
+
+        return null;
+    }
+}
+
+// ------------------------------------------------------
+// 5.4 — Mise à disposition pour le bloc final
+// ------------------------------------------------------
+
+window.TOMA_MERCHANT_REGISTER.accountTools = {
+    create: createTomaMerchantAccount,
+
+    getAccount: () => {
+        return window.TOMA_MERCHANT_REGISTER.account || null;
+    }
+};
+
+// ------------------------------------------------------
+// 5.5 — Confirmation du bloc
+// ------------------------------------------------------
+
+alert(
+    "TOMA — BLOC 5 VALIDÉ !\n\n" +
+    "Firebase Auth : OK\n" +
+    "Préparation du compte : OK\n" +
+    "Création du compte : OK\n" +
+    "Récupération du UID : OK\n" +
+    "Gestion des erreurs : OK\n\n" +
+    "Aucun compte n'a été créé pendant ce test."
 );
