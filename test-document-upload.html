@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Teste de Documentos - Toma</title>
+    <title>Toma - Teste Cloudinary</title>
 
     <style>
         * {
@@ -14,8 +14,8 @@
         body {
             margin: 0;
             padding: 20px;
-            font-family: Arial, sans-serif;
             background: #f3f5f9;
+            font-family: Arial, sans-serif;
             color: #222;
         }
 
@@ -23,27 +23,24 @@
             max-width: 500px;
             margin: 30px auto;
             padding: 25px;
-            background: #fff;
+            background: white;
             border-radius: 16px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+            box-shadow: 0 5px 25px rgba(0,0,0,.08);
         }
 
         h1 {
-            margin-top: 0;
             text-align: center;
             color: #ff6a00;
         }
 
-        .description {
-            text-align: center;
-            color: #666;
+        p {
             line-height: 1.5;
-            margin-bottom: 25px;
+            color: #666;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
+            margin: 20px 0 10px;
             font-weight: bold;
         }
 
@@ -52,50 +49,42 @@
             padding: 12px;
             border: 1px solid #ddd;
             border-radius: 8px;
-            background: #fafafa;
         }
 
         button {
             width: 100%;
-            margin-top: 20px;
             padding: 15px;
+            margin-top: 20px;
             border: none;
             border-radius: 8px;
             background: #ff6a00;
             color: white;
             font-size: 16px;
             font-weight: bold;
-            cursor: pointer;
         }
 
         button:disabled {
             background: #aaa;
-            cursor: not-allowed;
         }
 
         .status {
             margin-top: 20px;
             padding: 14px;
             border-radius: 8px;
-            background: #f1f1f1;
-            font-size: 14px;
+            background: #eee;
             line-height: 1.6;
             overflow-wrap: anywhere;
+            font-size: 14px;
         }
 
         .success {
-            background: #e6f8ed;
+            background: #e5f8ec;
             color: #176b35;
         }
 
         .error {
-            background: #ffe9e9;
-            color: #a40000;
-        }
-
-        .warning {
-            background: #fff4df;
-            color: #805500;
+            background: #ffe8e8;
+            color: #a00000;
         }
 
         .info {
@@ -103,16 +92,13 @@
             color: #174b91;
         }
 
-        .small {
-            margin-top: 15px;
-            color: #777;
-            font-size: 12px;
-            line-height: 1.5;
+        .warning {
+            background: #fff3dc;
+            color: #805500;
         }
 
         a {
             color: #ff6a00;
-            word-break: break-all;
         }
     </style>
 </head>
@@ -123,40 +109,32 @@
 
     <h1>TOMA</h1>
 
-    <p class="description">
-        Teste independente de envio de documentos
-        para Cloudinary e Firestore.
+    <p>
+        Teste independente de envio de imagens
+        utilizando a mesma função do add-product.js.
     </p>
 
     <div id="authStatus" class="status info">
-        A verificar a ligação à conta...
+        A verificar a sessão...
     </div>
 
-    <br>
-
     <label for="documentFile">
-        Selecionar documento
+        Selecionar imagem
     </label>
 
     <input
         type="file"
         id="documentFile"
-        accept=".jpg,.jpeg,.png,.webp,.pdf"
+        accept="image/jpeg,image/png,image/webp"
     >
 
     <button id="uploadButton" disabled>
-        Enviar documento
+        Testar envio
     </button>
 
     <div id="result" class="status">
-        Aguardando seleção de documento...
+        Aguardando...
     </div>
-
-    <p class="small">
-        Este teste utiliza o preset Cloudinary Toma-banner.
-        Os dados do documento serão guardados na coleção
-        merchantDocumentTests do Firestore.
-    </p>
 
 </div>
 
@@ -164,7 +142,7 @@
 <script type="module">
 
 // =====================================================
-// BLOCO 1 — IMPORTAÇÕES FIREBASE
+// BLOCO 1 — FIREBASE
 // =====================================================
 
 import {
@@ -189,16 +167,16 @@ import {
 
 const CLOUDINARY_CLOUD_NAME = "xnak6z6m";
 
-const CLOUDINARY_PRESET = "Toma-banner";
-
 const CLOUDINARY_URL =
     `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+
+const CLOUDINARY_PRESET = "Toma-banner";
 
 const FIRESTORE_COLLECTION = "merchantDocumentTests";
 
 
 // =====================================================
-// BLOCO 3 — ELEMENTOS HTML
+// BLOCO 3 — ELEMENTOS
 // =====================================================
 
 const authStatus = document.getElementById("authStatus");
@@ -215,7 +193,7 @@ let uploading = false;
 
 
 // =====================================================
-// BLOCO 4 — MENSAGENS VISÍVEIS
+// BLOCO 4 — MENSAGENS
 // =====================================================
 
 function showMessage(message, type = "info") {
@@ -228,20 +206,20 @@ function showMessage(message, type = "info") {
 
 
 // =====================================================
-// BLOCO 5 — VERIFICAR AUTENTICAÇÃO
+// BLOCO 5 — AUTENTICAÇÃO
 // =====================================================
 
 onAuthStateChanged(auth, (user) => {
 
-    currentUser = user;
+    currentUser = user || null;
 
     if (user) {
 
         authStatus.className = "status success";
 
-        authStatus.innerHTML =
-            "Ligada com sucesso.<br>" +
-            "Conta: " + (user.email || user.uid);
+        authStatus.textContent =
+            "Ligada com sucesso: " +
+            (user.email || user.uid);
 
         uploadButton.disabled = false;
 
@@ -249,9 +227,8 @@ onAuthStateChanged(auth, (user) => {
 
         authStatus.className = "status error";
 
-        authStatus.innerHTML =
-            "Não está autenticado.<br>" +
-            "Entre na sua conta Toma antes de continuar.";
+        authStatus.textContent =
+            "Não está autenticado. Entre na sua conta Toma.";
 
         uploadButton.disabled = true;
 
@@ -261,61 +238,147 @@ onAuthStateChanged(auth, (user) => {
 
 
 // =====================================================
-// BLOCO 6 — VALIDAR DOCUMENTO
+// BLOCO 6 — COMPRESSÃO
+// COPIADO DA LÓGICA DO ADD-PRODUCT.JS
 // =====================================================
 
-function validateFile(file) {
+function compressImage(file) {
 
-    if (!file) {
+    return new Promise((resolve, reject) => {
 
-        throw new Error(
-            "Selecione um documento primeiro."
-        );
+        const reader = new FileReader();
 
-    }
+        reader.onerror = () => {
 
-    const allowedTypes = [
-        "image/jpeg",
-        "image/png",
-        "image/webp",
-        "application/pdf"
-    ];
+            reject(
+                new Error(
+                    "Não foi possível ler a imagem."
+                )
+            );
 
-    if (!allowedTypes.includes(file.type)) {
+        };
 
-        throw new Error(
-            "Formato não permitido. Utilize JPG, PNG, WEBP ou PDF."
-        );
+        reader.onload = (event) => {
 
-    }
+            const img = new Image();
 
-    const maxSize = 10 * 1024 * 1024;
+            img.onerror = () => {
 
-    if (file.size > maxSize) {
+                reject(
+                    new Error(
+                        "Imagem inválida ou incompatível."
+                    )
+                );
 
-        throw new Error(
-            "O documento ultrapassa o limite de 10 MB."
-        );
+            };
 
-    }
+            img.onload = () => {
+
+                try {
+
+                    const canvas = document.createElement("canvas");
+
+                    const context = canvas.getContext("2d");
+
+                    if (!context) {
+
+                        reject(
+                            new Error(
+                                "Não foi possível preparar a imagem."
+                            )
+                        );
+
+                        return;
+
+                    }
+
+                    const MAX_WIDTH = 1200;
+                    const MAX_HEIGHT = 1200;
+
+                    const scale = Math.min(
+                        1,
+                        MAX_WIDTH / img.width,
+                        MAX_HEIGHT / img.height
+                    );
+
+                    canvas.width = Math.max(
+                        1,
+                        Math.round(img.width * scale)
+                    );
+
+                    canvas.height = Math.max(
+                        1,
+                        Math.round(img.height * scale)
+                    );
+
+                    context.drawImage(
+                        img,
+                        0,
+                        0,
+                        canvas.width,
+                        canvas.height
+                    );
+
+                    canvas.toBlob(
+
+                        (blob) => {
+
+                            if (!blob) {
+
+                                reject(
+                                    new Error(
+                                        "Falha ao comprimir a imagem."
+                                    )
+                                );
+
+                                return;
+
+                            }
+
+                            resolve(blob);
+
+                        },
+
+                        "image/jpeg",
+
+                        0.78
+
+                    );
+
+                } catch (error) {
+
+                    reject(error);
+
+                }
+
+            };
+
+            img.src = event.target.result;
+
+        };
+
+        reader.readAsDataURL(file);
+
+    });
 
 }
 
 
 // =====================================================
-// BLOCO 7 — ENVIAR DOCUMENTO PARA CLOUDINARY
+// BLOCO 7 — UPLOAD CLOUDINARY
+// MESMA LÓGICA DO ADD-PRODUCT.JS
 // =====================================================
 
-async function uploadDocument(file) {
+async function uploadImage(file) {
+
+    const compressedBlob = await compressImage(file);
 
     const formData = new FormData();
 
-    // Mesma estrutura do add-product.js
-
     formData.append(
         "file",
-        file,
-        file.name
+        compressedBlob,
+        "toma-product.jpg"
     );
 
     formData.append(
@@ -324,30 +387,36 @@ async function uploadDocument(file) {
     );
 
 
-    // Verificação antes do envio
+    // Diagnóstico da requisição
 
-    if (!formData.has("upload_preset")) {
+    const presetPresent = formData.has("upload_preset");
 
-        throw new Error(
-            "O campo upload_preset não foi encontrado."
-        );
-
-    }
-
-    if (formData.get("upload_preset") !== CLOUDINARY_PRESET) {
-
-        throw new Error(
-            "O preset enviado não corresponde ao preset configurado."
-        );
-
-    }
-
+    const filePresent = formData.has("file");
 
     showMessage(
-        "A enviar para Cloudinary...<br>" +
+
+        "<strong>Diagnóstico antes do envio</strong><br><br>" +
+
+        "Cloud: " + CLOUDINARY_CLOUD_NAME + "<br>" +
+
+        "Endpoint: /image/upload<br>" +
+
         "Preset: " + CLOUDINARY_PRESET + "<br>" +
-        "Ficheiro: " + file.name,
+
+        "Preset presente: " + presetPresent + "<br>" +
+
+        "Ficheiro presente: " + filePresent + "<br>" +
+
+        "Nome enviado: toma-product.jpg<br>" +
+
+        "Tamanho original: " +
+        (file.size / 1024).toFixed(2) + " KB<br>" +
+
+        "Tamanho comprimido: " +
+        (compressedBlob.size / 1024).toFixed(2) + " KB",
+
         "info"
+
     );
 
 
@@ -365,12 +434,15 @@ async function uploadDocument(file) {
     try {
 
         response = await fetch(
+
             CLOUDINARY_URL,
+
             {
                 method: "POST",
                 body: formData,
                 signal: controller.signal
             }
+
         );
 
     } catch (error) {
@@ -378,13 +450,13 @@ async function uploadDocument(file) {
         if (error.name === "AbortError") {
 
             throw new Error(
-                "O envio demorou demasiado tempo. Verifique a ligação e tente novamente."
+                "Tempo limite de envio excedido."
             );
 
         }
 
         throw new Error(
-            "Falha na ligação ao Cloudinary: " + error.message
+            "Falha na ligação: " + error.message
         );
 
     } finally {
@@ -403,22 +475,35 @@ async function uploadDocument(file) {
     } catch {
 
         throw new Error(
-            "O Cloudinary devolveu uma resposta inválida."
+            "Resposta inválida do Cloudinary."
         );
 
     }
 
 
+    // Guardar resposta para diagnóstico
+
+    console.log(
+        "TOMA — Resposta Cloudinary:",
+        data
+    );
+
+
     if (!response.ok || !data.secure_url) {
 
-        console.error("Resposta Cloudinary:", data);
-
-        const cloudinaryError =
-            data.error?.message || "Erro desconhecido.";
-
         throw new Error(
-            "Erro Cloudinary: " + cloudinaryError +
-            "<br><br>HTTP: " + response.status
+
+            "Cloudinary: " +
+
+            (data.error?.message || "Erro desconhecido") +
+
+            "<br><br>HTTP: " + response.status +
+
+            "<br>Preset enviado: " + CLOUDINARY_PRESET +
+
+            "<br>Preset presente no FormData: " +
+            formData.has("upload_preset")
+
         );
 
     }
@@ -430,19 +515,18 @@ async function uploadDocument(file) {
 
 
 // =====================================================
-// BLOCO 8 — GUARDAR INFORMAÇÕES NO FIRESTORE
+// BLOCO 8 — FIRESTORE
 // =====================================================
 
-async function saveDocumentToFirestore(file, cloudinaryData) {
+async function saveToFirestore(file, cloudinaryData) {
 
     if (!currentUser) {
 
         throw new Error(
-            "A sessão expirou. Entre novamente na sua conta."
+            "Utilizador não autenticado."
         );
 
     }
-
 
     const documentData = {
 
@@ -472,8 +556,7 @@ async function saveDocumentToFirestore(file, cloudinaryData) {
 
     };
 
-
-    const documentReference = await addDoc(
+    const reference = await addDoc(
 
         collection(db, FIRESTORE_COLLECTION),
 
@@ -481,14 +564,13 @@ async function saveDocumentToFirestore(file, cloudinaryData) {
 
     );
 
-
-    return documentReference.id;
+    return reference.id;
 
 }
 
 
 // =====================================================
-// BLOCO 9 — PROCESSO PRINCIPAL
+// BLOCO 9 — TESTE PRINCIPAL
 // =====================================================
 
 uploadButton.addEventListener("click", async () => {
@@ -497,84 +579,123 @@ uploadButton.addEventListener("click", async () => {
 
     const file = documentFile.files[0];
 
-    try {
-
-        validateFile(file);
-
-        if (!currentUser) {
-
-            throw new Error(
-                "Inicie sessão antes de enviar o documento."
-            );
-
-        }
-
-
-        uploading = true;
-
-        uploadButton.disabled = true;
-
-        uploadButton.textContent = "A enviar...";
-
+    if (!file) {
 
         showMessage(
-            "A iniciar o teste...",
+            "Selecione uma imagem primeiro.",
+            "warning"
+        );
+
+        return;
+
+    }
+
+    if (!currentUser) {
+
+        showMessage(
+            "Entre na sua conta Toma antes de continuar.",
+            "error"
+        );
+
+        return;
+
+    }
+
+    const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+
+        showMessage(
+            "Formato não permitido. Utilize JPG, PNG ou WEBP.",
+            "error"
+        );
+
+        return;
+
+    }
+
+    if (file.size > 15 * 1024 * 1024) {
+
+        showMessage(
+            "A imagem ultrapassa 15 MB.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    uploading = true;
+
+    uploadButton.disabled = true;
+
+    uploadButton.textContent = "A enviar...";
+
+
+    try {
+
+        // PRIMEIRA ETAPA — CLOUDINARY
+
+        showMessage(
+            "A preparar e enviar a imagem...",
             "info"
         );
 
-
-        // PRIMEIRO: CLOUDINARY
-
-        const cloudinaryData = await uploadDocument(file);
+        const cloudinaryData = await uploadImage(file);
 
 
         showMessage(
-            "Documento enviado para Cloudinary com sucesso.<br>" +
-            "A guardar informações no Firestore...",
+            "Imagem recebida e guardada no Cloudinary.<br>A guardar no Firestore...",
             "success"
         );
 
 
-        // SEGUNDO: FIRESTORE
+        // SEGUNDA ETAPA — FIRESTORE
 
-        const firestoreId = await saveDocumentToFirestore(
+        const firestoreId = await saveToFirestore(
             file,
             cloudinaryData
         );
 
 
-        // RESULTADO FINAL
+        // RESULTADO
 
         showMessage(
 
-            "SUCESSO!<br><br>" +
+            "<strong>TESTE CONCLUÍDO COM SUCESSO!</strong><br><br>" +
 
-            "Documento enviado para Cloudinary.<br>" +
+            "Cloudinary: OK<br>" +
 
-            "Informações guardadas no Firestore.<br><br>" +
+            "Firestore: OK<br><br>" +
 
-            "<strong>Coleção:</strong> " +
-            FIRESTORE_COLLECTION + "<br>" +
+            "Coleção: " + FIRESTORE_COLLECTION + "<br>" +
 
-            "<strong>ID Firestore:</strong> " +
-            firestoreId + "<br><br>" +
+            "ID: " + firestoreId + "<br><br>" +
 
-            "<strong>URL do documento:</strong><br>" +
+            "URL da imagem:<br>" +
 
-            `<a href="${cloudinaryData.secure_url}" target="_blank">Abrir documento</a>`,
+            `<a href="${cloudinaryData.secure_url}" target="_blank">Abrir imagem</a>`,
 
             "success"
 
         );
 
-
     } catch (error) {
 
-        console.error("Erro no teste:", error);
+        console.error(
+            "TOMA — Erro de teste:",
+            error
+        );
 
         showMessage(
 
             "<strong>ERRO NO TESTE</strong><br><br>" +
+
             error.message,
 
             "error"
@@ -587,7 +708,7 @@ uploadButton.addEventListener("click", async () => {
 
         uploadButton.disabled = !currentUser;
 
-        uploadButton.textContent = "Enviar documento";
+        uploadButton.textContent = "Testar envio";
 
     }
 
@@ -595,36 +716,25 @@ uploadButton.addEventListener("click", async () => {
 
 
 // =====================================================
-// BLOCO 10 — SELEÇÃO DO DOCUMENTO
+// BLOCO 10 — SELEÇÃO DA IMAGEM
 // =====================================================
 
 documentFile.addEventListener("change", () => {
 
     const file = documentFile.files[0];
 
-    if (!file) {
-
-        showMessage(
-            "Nenhum documento selecionado.",
-            "warning"
-        );
-
-        return;
-
-    }
-
+    if (!file) return;
 
     showMessage(
 
-        "<strong>Documento selecionado:</strong><br>" +
+        "Imagem selecionada:<br>" +
 
         "Nome: " + file.name + "<br>" +
 
         "Tipo: " + file.type + "<br>" +
 
         "Tamanho: " +
-        (file.size / 1024 / 1024).toFixed(2) +
-        " MB",
+        (file.size / 1024).toFixed(2) + " KB",
 
         "info"
 
