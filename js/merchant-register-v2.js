@@ -2310,13 +2310,15 @@ alert(
 // ============================================
 // BLOC 10
 // COMMUNICATION ET UPLOAD CLOUDINARY
-// VERSION UPLOAD PRESET
+// MÊME MÉTHODE QUE add-product.js
 // ============================================
 
 console.log("[TOMA] BLOC 10 chargé.");
 
 
+// ============================================
 // 10.1 — CONFIGURATION
+// ============================================
 
 const CLOUDINARY_CLOUD_NAME = "xnak6z6m";
 
@@ -2340,7 +2342,9 @@ const CLOUDINARY_DOCUMENT_TYPES = [
 ];
 
 
+// ============================================
 // 10.2 — VALIDAR O FICHEIRO
+// ============================================
 
 function validateMerchantDocumentFile(file) {
 
@@ -2353,9 +2357,7 @@ function validateMerchantDocumentFile(file) {
     }
 
     if (file.size > CLOUDINARY_MAX_FILE_SIZE) {
-        throw new Error(
-            "O documento não pode ultrapassar 5 MB."
-        );
+        throw new Error("O documento não pode ultrapassar 5 MB.");
     }
 
     if (!CLOUDINARY_ALLOWED_TYPES.includes(file.type)) {
@@ -2368,8 +2370,10 @@ function validateMerchantDocumentFile(file) {
 }
 
 
+// ============================================
 // 10.3 — ENVIAR UM DOCUMENTO PARA CLOUDINARY
-// Même méthode que add-product.js
+// MÉTODO IDÊNTICO AO add-product.js
+// ============================================
 
 async function uploadMerchantDocumentToCloudinary(documentType, file) {
 
@@ -2390,6 +2394,7 @@ async function uploadMerchantDocumentToCloudinary(documentType, file) {
 
         const formData = new FormData();
 
+        // Même méthode que add-product.js
         formData.append("file", file);
 
         formData.append(
@@ -2397,12 +2402,7 @@ async function uploadMerchantDocumentToCloudinary(documentType, file) {
             CLOUDINARY_UPLOAD_PRESET
         );
 
-        console.log("[TOMA] Envio simples:", {
-            documentType,
-            preset: formData.get("upload_preset"),
-            fileName: file.name
-        });
-
+        // Même appel fetch que add-product.js
         const response = await fetch(CLOUDINARY_URL, {
             method: "POST",
             body: formData
@@ -2468,7 +2468,10 @@ async function uploadMerchantDocumentToCloudinary(documentType, file) {
     }
 }
 
+
+// ============================================
 // 10.4 — ENVIAR OS QUATRO DOCUMENTOS
+// ============================================
 
 async function uploadAllMerchantDocuments() {
 
@@ -2516,9 +2519,7 @@ async function uploadAllMerchantDocuments() {
 
         for (const item of documentOrder) {
 
-            console.log(
-                "[TOMA] Enviando: " + item.label
-            );
+            console.log("[TOMA] Enviando: " + item.label);
 
             const uploadResult =
                 await uploadMerchantDocumentToCloudinary(
@@ -2529,8 +2530,7 @@ async function uploadAllMerchantDocuments() {
             if (!uploadResult.success) {
 
                 throw new Error(
-                    item.label + ": " +
-                    uploadResult.message
+                    item.label + ": " + uploadResult.message
                 );
             }
 
@@ -2545,10 +2545,7 @@ async function uploadAllMerchantDocuments() {
 
     } catch (error) {
 
-        console.error(
-            "[TOMA][BLOC 10.4]",
-            error
-        );
+        console.error("[TOMA][BLOC 10.4]", error);
 
         return {
             success: false,
@@ -2562,7 +2559,9 @@ async function uploadAllMerchantDocuments() {
 }
 
 
+// ============================================
 // 10.5 — TESTE DE CONFIGURAÇÃO
+// ============================================
 
 function testMerchantDocumentUploadConfiguration() {
 
@@ -2583,7 +2582,6 @@ function testMerchantDocumentUploadConfiguration() {
         "Configuração preparada!\n\n" +
         "Cloud Name: " + CLOUDINARY_CLOUD_NAME +
         "\nPreset: " + CLOUDINARY_UPLOAD_PRESET +
-        "\nPasta: " + CLOUDINARY_DOCUMENT_FOLDER +
         "\n\nFormatos: PDF, JPG e PNG\n" +
         "Tamanho máximo: 5 MB\n\n" +
         "Nenhum documento foi enviado."
