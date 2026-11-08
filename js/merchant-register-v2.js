@@ -2416,7 +2416,24 @@ async function uploadMerchantDocumentToCloudinary(
             "_" +
             crypto.randomUUID()
         );
+// DIAGNOSTIC CLOUDINARY
 
+const presetTransmitted =
+    formData.get("upload_preset");
+
+if (presetTransmitted !== CLOUDINARY_UPLOAD_PRESET) {
+    throw new Error(
+        "Le preset Cloudinary n'a pas été transmis correctement."
+    );
+}
+
+alert(
+    "DIAGNOSTIC CLOUDINARY\n\n" +
+    "Cloud Name : " + CLOUDINARY_CLOUD_NAME +
+    "\nPreset transmis : " + presetTransmitted +
+    "\nFichier : " + file.name +
+    "\n\nLa requête est prête à être envoyée."
+);
         const response = await fetch(uploadUrl, {
             method: "POST",
             body: formData
