@@ -2369,19 +2369,15 @@ function validateMerchantDocumentFile(file) {
 
 
 // 10.3 — ENVIAR UM DOCUMENTO PARA CLOUDINARY
+// Même méthode que add-product.js
 
-async function uploadMerchantDocumentToCloudinary(
-    documentType,
-    file
-) {
+async function uploadMerchantDocumentToCloudinary(documentType, file) {
 
     try {
 
         validateMerchantDocumentFile(file);
 
-        const firebaseUser = auth.currentUser;
-
-        if (!firebaseUser) {
+        if (!auth.currentUser) {
             throw new Error("Utilizador não autenticado.");
         }
 
@@ -2389,10 +2385,8 @@ async function uploadMerchantDocumentToCloudinary(
             throw new Error("Tipo de documento inválido.");
         }
 
-        const uploadUrl =
-            "https://api.cloudinary.com/v1_1/" +
-            CLOUDINARY_CLOUD_NAME +
-            "/image/upload";
+        const CLOUDINARY_URL =
+            `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
 
         const formData = new FormData();
 
@@ -2403,88 +2397,31 @@ async function uploadMerchantDocumentToCloudinary(
             CLOUDINARY_UPLOAD_PRESET
         );
 
-        formData.append(
-            "folder",
-            CLOUDINARY_DOCUMENT_FOLDER
-        );
+        console.log("[TOMA] Envio simples:", {
+            documentType,
+            preset: formData.get("upload_preset"),
+            fileName: file.name
+        });
 
-        formData.append(
-            "public_id",
-            firebaseUser.uid +
-            "_" +
-            documentType +
-            "_" +
-            crypto.randomUUID()
-        );
-// DIAGNOSTIC CLOUDINARY
+        const response = await fetch(CLOUDINARY_URL, {
+            method: "POST",
+            body: formData
+        });
 
-const presetTransmitted =
-    formData.get("upload_preset");
+        const result = await response.json();
 
-if (presetTransmitted !== CLOUDINARY_UPLOAD_PRESET) {
-    throw new Error(
-        "Le preset Cloudinary n'a pas été transmis correctement."
-    );
-}
-
-alert(
-    "DIAGNOSTIC CLOUDINARY\n\n" +
-    "Cloud Name : " + CLOUDINARY_CLOUD_NAME +
-    "\nPreset transmis : " + presetTransmitted +
-    "\nFichier : " + file.name +
-    "\n\nLa requête est prête à être envoyée."
-);
-        // DIAGNOSTIC — REQUÊTE CLOUDINARY
-
-const diagnosticData = new FormData();
-
-for (const [key, value] of formData.entries()) {
-    diagnosticData.append(key, value);
-}
-
-const response = await fetch(uploadUrl, {
-    method: "POST",
-    body: diagnosticData
-});
-
-        const responseText = await response.text();
-
-        console.log(
-            "[TOMA] CLOUDINARY STATUS:",
-            response.status
-        );
-
-        let result;
-
-        try {
-            result = JSON.parse(responseText);
-        } catch {
-            throw new Error(
-                "Resposta inválida do Cloudinary."
-            );
-        }
-
-        if (!response.ok || result.error) {
+        if (!response.ok || !result.secure_url) {
 
             throw new Error(
                 "CLOUDINARY STATUS: " + response.status +
-                "\n\nDETALHES: " +
-                (result.error?.message || responseText)
+                "\nDETALHES: " +
+                (result.error?.message || "Erro desconhecido.")
             );
         }
 
-        if (!result.public_id || !result.secure_url) {
+        if (!result.public_id || !result.asset_id) {
             throw new Error(
-                "Cloudinary não devolveu os dados do documento."
-            );
-        }
-
-        if (
-            result.resource_type !== "image" ||
-            result.type !== "upload"
-        ) {
-            throw new Error(
-                "Tipo de armazenamento Cloudinary inesperado."
+                "Cloudinary não devolveu os identificadores do documento."
             );
         }
 
@@ -2493,9 +2430,7 @@ const response = await fetch(uploadUrl, {
                 String(result.format).toLowerCase()
             )
         ) {
-            throw new Error(
-                "Formato de documento não permitido."
-            );
+            throw new Error("Formato de documento não permitido.");
         }
 
         if (
@@ -2503,9 +2438,7 @@ const response = await fetch(uploadUrl, {
             result.bytes <= 0 ||
             result.bytes > CLOUDINARY_MAX_FILE_SIZE
         ) {
-            throw new Error(
-                "Tamanho do documento inválido."
-            );
+            throw new Error("Tamanho do documento inválido.");
         }
 
         return {
@@ -2526,19 +2459,14 @@ const response = await fetch(uploadUrl, {
 
     } catch (error) {
 
-        console.error(
-            "[TOMA][BLOC 10.3]",
-            error
-        );
+        console.error("[TOMA][BLOC 10.3]", error);
 
         return {
             success: false,
-            message: error.message ||
-                "Erro ao enviar o documento."
+            message: error.message || "Erro ao enviar documento."
         };
     }
 }
-
 
 // 10.4 — ENVIAR OS QUATRO DOCUMENTOS
 
