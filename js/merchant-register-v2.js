@@ -829,3 +829,149 @@ alert(
     "Vérification des mots de passe : OK\n" +
     "Messages de validation : OK"
 );
+// ======================================================
+// TOMA — INSCRIPTION MARCHAND V3
+// BLOC 4 — LOCALISATION ET CONDITIONS
+// ======================================================
+
+// ------------------------------------------------------
+// 4.1 — Récupération des éléments HTML
+// ------------------------------------------------------
+
+const TOMA_LOCATION_FIELDS = {
+    province: document.getElementById("province"),
+    city: document.getElementById("city"),
+    address: document.getElementById("address")
+};
+
+const TOMA_TERMS_CHECKBOX = document.getElementById("termsAgreement");
+
+// ------------------------------------------------------
+// 4.2 — Vérification des éléments HTML
+// ------------------------------------------------------
+
+const TOMA_BLOCK4_MISSING = [];
+
+Object.entries(TOMA_LOCATION_FIELDS).forEach(([key, element]) => {
+    if (!element) {
+        TOMA_BLOCK4_MISSING.push(key);
+    }
+});
+
+if (!TOMA_TERMS_CHECKBOX) {
+    TOMA_BLOCK4_MISSING.push("termsAgreement");
+}
+
+if (TOMA_BLOCK4_MISSING.length > 0) {
+    alert(
+        "TOMA — ERREUR BLOC 4\n\n" +
+        "Éléments HTML introuvables :\n\n" +
+        TOMA_BLOCK4_MISSING.join("\n")
+    );
+
+    throw new Error("Initialisation du bloc 4 impossible.");
+}
+
+// ------------------------------------------------------
+// 4.3 — Validation de la localisation
+// ------------------------------------------------------
+
+function validateTomaMerchantLocation() {
+
+    const province = TOMA_LOCATION_FIELDS.province.value.trim();
+    const city = TOMA_LOCATION_FIELDS.city.value.trim();
+    const address = TOMA_LOCATION_FIELDS.address.value.trim();
+
+    if (!province) {
+        showTomaRegistrationError("Selecione a sua província.");
+        return false;
+    }
+
+    if (!city || city.length < 2) {
+        showTomaRegistrationError("Introduza uma cidade válida.");
+        return false;
+    }
+
+    if (!address || address.length < 5) {
+        showTomaRegistrationError("Introduza o endereço completo da sua loja.");
+        return false;
+    }
+
+    return true;
+}
+
+// ------------------------------------------------------
+// 4.4 — Validation des conditions générales
+// ------------------------------------------------------
+
+function validateTomaMerchantTerms() {
+
+    if (!TOMA_TERMS_CHECKBOX.checked) {
+        showTomaRegistrationError(
+            "Deve aceitar os termos e condições da Toma para continuar."
+        );
+
+        return false;
+    }
+
+    return true;
+}
+
+// ------------------------------------------------------
+// 4.5 — Validation complète du formulaire
+// ------------------------------------------------------
+
+function validateTomaCompleteMerchantForm() {
+
+    clearTomaRegistrationMessage();
+
+    // Informations personnelles et commerciales
+    if (!window.TOMA_MERCHANT_REGISTER.validation.all()) {
+        return false;
+    }
+
+    // Localisation
+    if (!validateTomaMerchantLocation()) {
+        return false;
+    }
+
+    // Quatre documents obligatoires
+    if (!window.TOMA_MERCHANT_REGISTER.documentsTools.checkAll()) {
+        return false;
+    }
+
+    // Conditions générales
+    if (!validateTomaMerchantTerms()) {
+        return false;
+    }
+
+    return true;
+}
+
+// ------------------------------------------------------
+// 4.6 — Mise à disposition pour les prochains blocs
+// ------------------------------------------------------
+
+window.TOMA_MERCHANT_REGISTER.locationTools = {
+    validate: validateTomaMerchantLocation
+};
+
+window.TOMA_MERCHANT_REGISTER.termsTools = {
+    validate: validateTomaMerchantTerms
+};
+
+window.TOMA_MERCHANT_REGISTER.validateCompleteForm =
+    validateTomaCompleteMerchantForm;
+
+// ------------------------------------------------------
+// 4.7 — Confirmation
+// ------------------------------------------------------
+
+alert(
+    "TOMA — BLOC 4 VALIDÉ !\n\n" +
+    "Province : OK\n" +
+    "Ville : OK\n" +
+    "Adresse : OK\n" +
+    "Conditions générales : OK\n" +
+    "Validation complète : OK"
+);
