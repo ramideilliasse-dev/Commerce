@@ -2434,10 +2434,18 @@ alert(
     "\nFichier : " + file.name +
     "\n\nLa requête est prête à être envoyée."
 );
-        const response = await fetch(uploadUrl, {
-            method: "POST",
-            body: formData
-        });
+        // DIAGNOSTIC — REQUÊTE CLOUDINARY
+
+const diagnosticData = new FormData();
+
+for (const [key, value] of formData.entries()) {
+    diagnosticData.append(key, value);
+}
+
+const response = await fetch(uploadUrl, {
+    method: "POST",
+    body: diagnosticData
+});
 
         const responseText = await response.text();
 
