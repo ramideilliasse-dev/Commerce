@@ -2320,7 +2320,7 @@ console.log("[TOMA] BLOC 10 chargé.");
 
 const CLOUDINARY_CLOUD_NAME = "xnak6z6m";
 
-const CLOUDINARY_UPLOAD_PRESET = "toma-banners-v2";
+const CLOUDINARY_UPLOAD_PRESET = "Toma-banner";
 
 const CLOUDINARY_DOCUMENT_FOLDER = "Toma/documents";
 
