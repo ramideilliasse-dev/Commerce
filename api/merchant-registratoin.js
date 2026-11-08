@@ -1,7 +1,8 @@
  // ======================================================
 // TOMA — BLOC 12
 // BACKEND D'INSCRIPTION COMMERÇANT V2
-// Architecture : navigateur → Cloudinary → Vercel → Firestore
+// Upload simplifié Cloudinary
+// Navigateur → Cloudinary → Vercel → Firestore
 // ======================================================
 
 import { adminAuth, adminDb } from "./firebase-admin.js";
@@ -22,8 +23,6 @@ const CLOUDINARY_API_SECRET =
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
-const CLOUDINARY_DOCUMENT_FOLDER = "Toma/documents";
-
 const ALLOWED_DOCUMENTS = [
     "alvara",
     "certidao",
@@ -40,7 +39,7 @@ const ALLOWED_FORMATS = [
 
 
 // ======================================================
-// 12.2 — AUTHENTIFICATION
+// 12.2 — AUTHENTIFICATION FIREBASE
 // ======================================================
 
 async function authenticateUser(req) {
@@ -77,7 +76,7 @@ function checkCloudinaryConfiguration() {
 
 
 // ======================================================
-// 12.4 — APPEL À L'API ADMIN CLOUDINARY
+// 12.4 — API ADMIN CLOUDINARY
 // ======================================================
 
 async function cloudinaryAdminRequest(path, options = {}) {
@@ -96,7 +95,7 @@ async function cloudinaryAdminRequest(path, options = {}) {
         ...options,
 
         headers: {
-            "Authorization": "Basic " + credentials,
+            Authorization: "Basic " + credentials,
             ...(options.headers || {})
         }
     });
@@ -220,7 +219,7 @@ function validateRegistrationData(data, uid, decodedToken) {
 
 
 // ======================================================
-// 12.6 — VERIFICAR UM DOCUMENTO NO CLOUDINARY
+// 12.6 — VERIFICAR UM DOCUMENTO CLOUDINARY
 // ======================================================
 
 async function verifyCloudinaryDocument(
@@ -235,72 +234,53 @@ async function verifyCloudinaryDocument(
         );
     }
 
-    // Le public_id attendu :
-    // Toma/documents/UID_documentType_identifiant
-
-    const expectedPrefix =
-        `${CLOUDINARY_DOCUMENT_FOLDER}/${uid}_${documentType}_`;
+    const publicId = document.publicId;
+    const assetId = document.assetId;
 
     if (
-        typeof document.publicId !== "string" ||
-        !document.publicId.startsWith(expectedPrefix)
+        typeof publicId !== "string" ||
+        !publicId.trim() ||
+        publicId.length > 500
     ) {
         throw new Error(
-            `Identificador não autorizado: ${documentType}.`
+            `Identificador inválido: ${documentType}.`
         );
     }
 
     if (
-        typeof document.assetId !== "string" ||
-        !document.assetId
+        typeof assetId !== "string" ||
+        !assetId.trim()
     ) {
         throw new Error(
             `Identificador do ficheiro em falta: ${documentType}.`
         );
     }
 
-    // Vérification réelle auprès de Cloudinary.
+    // Rechercher le fichier réel dans Cloudinary.
 
     const resourcePath =
         "resources/image/upload/" +
-        encodeURIComponent(document.publicId);
+        encodeURIComponent(publicId);
 
     const asset = await cloudinaryAdminRequest(
         resourcePath
     );
 
-    if (asset.public_id !== document.publicId) {
-        throw new Error(
-            `Documento não encontrado: ${documentType}.`
-        );
-    }
-
-    if (asset.asset_id !== document.assetId) {
+    if (
+        asset.public_id !== publicId ||
+        asset.asset_id !== assetId
+    ) {
         throw new Error(
             `Documento não corresponde ao envio: ${documentType}.`
         );
     }
-
-    // Nouveau système : upload public.
 
     if (
         asset.type !== "upload" ||
         asset.resource_type !== "image"
     ) {
         throw new Error(
-            `Tipo de armazenamento Cloudinary inválido: ${documentType}.`
-        );
-    }
-
-    // Vérifier le dossier.
-
-    if (
-        !asset.public_id.startsWith(
-            `${CLOUDINARY_DOCUMENT_FOLDER}/`
-        )
-    ) {
-        throw new Error(
-            `Documento fora da pasta autorizada: ${documentType}.`
+            `Tipo de armazenamento inválido: ${documentType}.`
         );
     }
 
@@ -324,31 +304,45 @@ async function verifyCloudinaryDocument(
         );
     }
 
+    if (
+        typeof asset.secure_url !== "string" ||
+        !asset.secure_url.startsWith("https://")
+    ) {
+        throw new Error(
+            `URL segura indisponível: ${documentType}.`
+        );
+    }
+
     return {
+
         publicId: asset.public_id,
+
         assetId: asset.asset_id,
+
         version: asset.version,
+
         resourceType: asset.resource_type,
+
         deliveryType: asset.type,
+
         format: format,
+
         bytes: asset.bytes,
 
-        secureUrl:
-            asset.secure_url ||
-            document.secureUrl ||
-            null,
+        secureUrl: asset.secure_url,
 
         originalName: String(
             document.originalName || ""
         ).slice(0, 200),
 
         verified: true
+
     };
 }
 
 
 // ======================================================
-// 12.7 — VÉRIFIER LES QUATRE DOCUMENTS
+// 12.7 — VERIFICAR OS QUATRO DOCUMENTOS
 // ======================================================
 
 async function verifyAllDocuments(uid, documents) {
@@ -376,7 +370,7 @@ async function verifyAllDocuments(uid, documents) {
 
 
 // ======================================================
-// 12.8 — SUPPRESSION SÉCURISÉE DES DOCUMENTS
+// 12.8 — SUPPRESSION DES DOCUMENTS
 // ======================================================
 
 async function deleteCloudinaryDocuments(uid, publicIds) {
@@ -399,12 +393,11 @@ async function deleteCloudinaryDocuments(uid, publicIds) {
 
         if (
             typeof publicId !== "string" ||
-            !publicId.startsWith(
-                `${CLOUDINARY_DOCUMENT_FOLDER}/${uid}_`
-            )
+            !publicId.trim() ||
+            publicId.length > 500
         ) {
             throw new Error(
-                "Tentativa de eliminar um documento não autorizado."
+                "Identificador de documento inválido."
             );
         }
 
@@ -416,9 +409,6 @@ async function deleteCloudinaryDocuments(uid, publicIds) {
             deleted: 0
         };
     }
-
-    // Suppression via l'API Admin Cloudinary.
-    // Les public_ids sont transmis dans la query string.
 
     const params = new URLSearchParams();
 
@@ -499,11 +489,9 @@ async function finalizeMerchantApplication(
 
         status: "pending",
 
-        submittedAt:
-            new Date().toISOString(),
+        submittedAt: new Date().toISOString(),
 
-        createdAt:
-            new Date(),
+        createdAt: new Date(),
 
         reviewedAt: null,
 
@@ -606,12 +594,10 @@ export default async function handler(req, res) {
         const body = req.body;
 
         if (!body || typeof body !== "object") {
-            throw new Error(
-                "Pedido inválido."
-            );
+            throw new Error("Pedido inválido.");
         }
 
-        // OPÉRATION 1 — FINALISATION
+        // FINALISATION
 
         if (body.action === "finalize") {
 
@@ -632,7 +618,7 @@ export default async function handler(req, res) {
             });
         }
 
-        // OPÉRATION 2 — NETTOYAGE
+        // NETTOYAGE
 
         if (body.action === "cleanup") {
 
