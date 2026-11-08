@@ -1100,3 +1100,154 @@ alert(
     "Gestion des erreurs : OK\n\n" +
     "Aucun compte n'a été créé pendant ce test."
 );
+// ======================================================
+// TOMA — INSCRIPTION MARCHAND V3
+// BLOC 6 — PRÉPARATION DES DONNÉES
+// ======================================================
+
+// ------------------------------------------------------
+// 6.1 — Récupération du type de marchand
+// ------------------------------------------------------
+
+function getTomaMerchantType() {
+
+    const selectedType = document.querySelector(
+        'input[name="merchantType"]:checked'
+    );
+
+    return selectedType ? selectedType.value : null;
+}
+
+// ------------------------------------------------------
+// 6.2 — Préparation des informations personnelles
+// ------------------------------------------------------
+
+function getTomaPersonalData() {
+
+    return {
+        fullName: TOMA_PERSONAL_FIELDS.fullName.value.trim(),
+        email: TOMA_PERSONAL_FIELDS.email.value.trim(),
+        phone: TOMA_PERSONAL_FIELDS.phone.value.trim(),
+        whatsapp: TOMA_PERSONAL_FIELDS.whatsapp.value.trim(),
+        nif: TOMA_PERSONAL_FIELDS.nif.value.trim()
+    };
+}
+
+// ------------------------------------------------------
+// 6.3 — Préparation des informations commerciales
+// ------------------------------------------------------
+
+function getTomaCommercialData() {
+
+    return {
+        shopName: TOMA_COMMERCIAL_FIELDS.shopName.value.trim(),
+        shopCategory: TOMA_COMMERCIAL_FIELDS.shopCategory.value,
+        shopDescription: TOMA_COMMERCIAL_FIELDS.shopDescription.value.trim()
+    };
+}
+
+// ------------------------------------------------------
+// 6.4 — Préparation des informations officielles
+// ------------------------------------------------------
+
+function getTomaOfficialBusinessData() {
+
+    if (getTomaMerchantType() !== "official") {
+        return null;
+    }
+
+    return {
+        companyName: TOMA_OFFICIAL_FIELDS.companyName.value.trim(),
+        brandName: TOMA_OFFICIAL_FIELDS.brandName.value.trim(),
+        officialDescription: TOMA_OFFICIAL_FIELDS.officialDescription.value.trim()
+    };
+}
+
+// ------------------------------------------------------
+// 6.5 — Préparation de la localisation
+// ------------------------------------------------------
+
+function getTomaLocationData() {
+
+    return {
+        province: TOMA_LOCATION_FIELDS.province.value.trim(),
+        city: TOMA_LOCATION_FIELDS.city.value.trim(),
+        address: TOMA_LOCATION_FIELDS.address.value.trim()
+    };
+}
+
+// ------------------------------------------------------
+// 6.6 — Construction de l'objet complet
+// ------------------------------------------------------
+
+function buildTomaMerchantRegistrationData() {
+
+    // Vérifier toutes les informations
+    if (!window.TOMA_MERCHANT_REGISTER.validateCompleteForm()) {
+        return null;
+    }
+
+    // Vérifier que le compte Firebase existe
+    const account = window.TOMA_MERCHANT_REGISTER.accountTools.getAccount();
+
+    if (!account || !account.uid) {
+        showTomaRegistrationError(
+            "A conta do comerciante ainda não foi criada."
+        );
+
+        return null;
+    }
+
+    const registrationData = {
+
+        uid: account.uid,
+
+        merchantType: getTomaMerchantType(),
+
+        personal: getTomaPersonalData(),
+
+        commercial: getTomaCommercialData(),
+
+        officialBusiness: getTomaOfficialBusinessData(),
+
+        location: getTomaLocationData(),
+
+        termsAccepted: TOMA_TERMS_CHECKBOX.checked,
+
+        submittedAt: new Date().toISOString()
+    };
+
+    return registrationData;
+}
+
+// ------------------------------------------------------
+// 6.7 — Mise à disposition pour les prochains blocs
+// ------------------------------------------------------
+
+window.TOMA_MERCHANT_REGISTER.dataTools = {
+
+    build: buildTomaMerchantRegistrationData,
+
+    getPersonal: getTomaPersonalData,
+
+    getCommercial: getTomaCommercialData,
+
+    getOfficialBusiness: getTomaOfficialBusinessData,
+
+    getLocation: getTomaLocationData
+
+};
+
+// ------------------------------------------------------
+// 6.8 — Confirmation
+// ------------------------------------------------------
+
+alert(
+    "TOMA — BLOC 6 VALIDÉ !\n\n" +
+    "Informations personnelles : OK\n" +
+    "Informations commerciales : OK\n" +
+    "Informations officielles : OK\n" +
+    "Localisation : OK\n" +
+    "Structure des données : OK\n\n" +
+    "Aucune donnée n'a été envoyée."
+);
