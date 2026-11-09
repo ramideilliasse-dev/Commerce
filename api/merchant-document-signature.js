@@ -1,11 +1,11 @@
- // ============================================
+// ============================================
 // TOMA — BLOC 9
 // SIGNATURES CLOUDINARY POUR DOCUMENTS PRIVÉS
+// IMAGES + PDF
 // ============================================
 
 import { adminAuth } from "./firebase-admin.js";
 import crypto from "crypto";
-
 
 // --------------------------------------------
 // 9.1 — CONFIGURATION
@@ -20,11 +20,6 @@ const CLOUDINARY_API_KEY =
 const CLOUDINARY_API_SECRET =
     process.env.CLOUDINARY_API_SECRET;
 
-
-// --------------------------------------------
-// 9.2 — DOCUMENTS AUTORISÉS
-// --------------------------------------------
-
 const ALLOWED_DOCUMENTS = [
     "alvara",
     "certidao",
@@ -32,9 +27,71 @@ const ALLOWED_DOCUMENTS = [
     "pacto"
 ];
 
+const ALLOWED_FORMATS = [
+    "pdf",
+    "jpg",
+    "jpeg",
+    "png"
+];
 
 // --------------------------------------------
-// 9.3 — GÉNÉRATION DE SIGNATURE
+// 9.2 — AUTHENTIFICATION
+// --------------------------------------------
+
+async function authenticateUser(req) {
+
+    const authorization =
+        req.headers.authorization || "";
+
+    if (!authorization.startsWith("Bearer ")) {
+        const error = new Error(
+            "Autenticação necessária."
+        );
+
+        error.statusCode = 401;
+        throw error;
+    }
+
+    const idToken = authorization.substring(7);
+
+    try {
+
+        return await adminAuth.verifyIdToken(idToken);
+
+    } catch {
+
+        const error = new Error(
+            "Sessão inválida ou expirada."
+        );
+
+        error.statusCode = 401;
+        throw error;
+    }
+}
+
+// --------------------------------------------
+// 9.3 — CONFIGURATION
+// --------------------------------------------
+
+function checkCloudinaryConfiguration() {
+
+    if (
+        !CLOUDINARY_CLOUD_NAME ||
+        !CLOUDINARY_API_KEY ||
+        !CLOUDINARY_API_SECRET
+    ) {
+
+        const error = new Error(
+            "Configuração Cloudinary incompleta."
+        );
+
+        error.statusCode = 500;
+        throw error;
+    }
+}
+
+// --------------------------------------------
+// 9.4 — GÉNÉRATION DE SIGNATURE
 // --------------------------------------------
 
 function generateCloudinarySignature(params) {
@@ -46,145 +103,192 @@ function generateCloudinarySignature(params) {
 
     return crypto
         .createHash("sha1")
-        .update(sortedParams + CLOUDINARY_API_SECRET)
+        .update(
+            sortedParams + CLOUDINARY_API_SECRET
+        )
         .digest("hex");
-
 }
 
+// --------------------------------------------
+// 9.5 — IDENTIFICATION DU DOCUMENT
+// --------------------------------------------
+
+function validateDocumentRequest(body) {
+
+    const documentType = body?.documentType;
+
+    const extension = String(
+        body?.extension || ""
+    ).toLowerCase().replace(/^\./, "");
+
+    if (!ALLOWED_DOCUMENTS.includes(documentType)) {
+
+        throw new Error(
+            "Tipo de documento inválido."
+        );
+    }
+
+    if (!ALLOWED_FORMATS.includes(extension)) {
+
+        throw new Error(
+            "Formato de documento não permitido."
+        );
+    }
+
+    const resourceType =
+        extension === "pdf" ? "raw" : "image";
+
+    return {
+        documentType,
+        extension,
+        resourceType
+    };
+}
 
 // --------------------------------------------
-// 9.4 — ENDPOINT PRINCIPAL
+// 9.6 — CRÉATION DU PUBLIC ID
+// --------------------------------------------
+
+function createPrivatePublicId(
+    uid,
+    documentType,
+    extension,
+    resourceType
+) {
+
+    const uniqueId = crypto.randomUUID();
+
+    let filename =
+        `${documentType}-${uniqueId}`;
+
+    // Cloudinary exige a extensão no public_id
+    // dos recursos RAW, incluindo PDF.
+
+    if (resourceType === "raw") {
+        filename += `.${extension}`;
+    }
+
+    return (
+        `toma-private-documents/` +
+        `${uid}/` +
+        filename
+    );
+}
+
+// --------------------------------------------
+// 9.7 — PRÉPARATION DE L'UPLOAD
+// --------------------------------------------
+
+async function createCloudinarySignature(
+    req,
+    res
+) {
+
+    checkCloudinaryConfiguration();
+
+    const decodedToken =
+        await authenticateUser(req);
+
+    const {
+        documentType,
+        extension,
+        resourceType
+    } = validateDocumentRequest(req.body);
+
+    const publicId = createPrivatePublicId(
+        decodedToken.uid,
+        documentType,
+        extension,
+        resourceType
+    );
+
+    const timestamp =
+        Math.floor(Date.now() / 1000);
+
+    // Paramètres signés.
+    // Le navigateur devra renvoyer exactement
+    // ces mêmes valeurs à Cloudinary.
+
+    const signedParams = {
+
+        public_id: publicId,
+
+        timestamp: timestamp,
+
+        type: "authenticated",
+
+        overwrite: false
+
+    };
+
+    const signature =
+        generateCloudinarySignature(signedParams);
+
+    return {
+
+        success: true,
+
+        cloudName: CLOUDINARY_CLOUD_NAME,
+
+        apiKey: CLOUDINARY_API_KEY,
+
+        timestamp,
+
+        publicId,
+
+        documentType,
+
+        extension,
+
+        resourceType,
+
+        deliveryType: "authenticated",
+
+        type: "authenticated",
+
+        overwrite: false,
+
+        signature
+
+    };
+}
+
+// --------------------------------------------
+// 9.8 — ENDPOINT PRINCIPAL
 // --------------------------------------------
 
 export default async function handler(req, res) {
 
-    res.setHeader("Cache-Control", "no-store");
+    res.setHeader(
+        "Cache-Control",
+        "no-store"
+    );
 
     res.setHeader(
         "X-Content-Type-Options",
         "nosniff"
     );
 
-
     if (req.method !== "POST") {
 
         return res.status(405).json({
+
             success: false,
+
             message: "Método não permitido."
+
         });
-
     }
-
 
     try {
 
-        // Vérifier la configuration
+        const result =
+            await createCloudinarySignature(
+                req,
+                res
+            );
 
-        if (
-            !CLOUDINARY_CLOUD_NAME ||
-            !CLOUDINARY_API_KEY ||
-            !CLOUDINARY_API_SECRET
-        ) {
-
-            return res.status(500).json({
-                success: false,
-                message: "Configuração Cloudinary incompleta."
-            });
-
-        }
-
-
-        // Vérifier Firebase
-
-        const authorization =
-            req.headers.authorization || "";
-
-
-        if (!authorization.startsWith("Bearer ")) {
-
-            return res.status(401).json({
-                success: false,
-                message: "Autenticação necessária."
-            });
-
-        }
-
-
-        const idToken =
-            authorization.substring(7);
-
-
-        const decodedToken =
-            await adminAuth.verifyIdToken(idToken);
-
-
-        // Vérifier le type de document
-
-        const documentType =
-            req.body?.documentType;
-
-
-        if (!ALLOWED_DOCUMENTS.includes(documentType)) {
-
-            return res.status(400).json({
-                success: false,
-                message: "Tipo de documento inválido."
-            });
-
-        }
-
-
-        // Générer un identifiant unique
-
-        const timestamp =
-            Math.floor(Date.now() / 1000);
-
-        const uniqueId =
-            crypto.randomUUID();
-
-
-        const publicId =
-            `toma-private-documents/${decodedToken.uid}/${documentType}-${uniqueId}`;
-
-
-        // Paramètres signés
-
-        const signedParams = {
-    timestamp: timestamp,
-    public_id: publicId,
-    type: "authenticated"
-};
-
-        // Générer la signature
-
-        const signature =
-            generateCloudinarySignature(signedParams);
-
-
-        // Réponse
-
-        return res.status(200).json({
-
-            success: true,
-
-            cloudName: CLOUDINARY_CLOUD_NAME,
-
-            apiKey: CLOUDINARY_API_KEY,
-
-            timestamp: timestamp,
-
-            publicId: publicId,
-
-            resourceType: "image",
-
-            deliveryType: "authenticated",
-
-            type: "authenticated",
-
-            signature: signature
-
-        });
-
+        return res.status(200).json(result);
 
     } catch (error) {
 
@@ -193,21 +297,20 @@ export default async function handler(req, res) {
             error
         );
 
-
-        return res.status(500).json({
+        return res.status(
+            error.statusCode || 400
+        ).json({
 
             success: false,
 
             message:
+                error.message ||
                 "Erro ao preparar a assinatura Cloudinary."
 
         });
-
     }
-
 }
-
 
 // ============================================
 // FIM DO BLOC 9
-// ============================================
+// ============================================ 
