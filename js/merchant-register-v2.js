@@ -1253,64 +1253,130 @@ alert(
 );
 // ======================================================
 // TOMA — INSCRIPTION MARCHAND V3
-// BLOC 7 — ENVOI DES DOCUMENTS SUR CLOUDINARY
+// BLOC 7 — CLOUDINARY
+// MÉTHODE REPRISE DU TEST QUI FONCTIONNE
 // ======================================================
 
-// ------------------------------------------------------
-// 7.1 — Configuration Cloudinary
-// ------------------------------------------------------
 
-const TOMA_CLOUDINARY_CONFIG = {
-    cloudName: "xnak6z6m",
-    uploadPreset: "Toma-banner"
-};
+// ======================================================
+// 7.1 — CONFIGURATION
+// ======================================================
 
-// ------------------------------------------------------
-// 7.2 — Vérification de la configuration
-// ------------------------------------------------------
+const CLOUDINARY_CLOUD_NAME = "xnak6z6m";
 
-function validateTomaCloudinaryConfig() {
+const CLOUDINARY_PRESET = "Toma-banner";
 
-    if (
-        !TOMA_CLOUDINARY_CONFIG.cloudName ||
-        !TOMA_CLOUDINARY_CONFIG.uploadPreset
-    ) {
-        throw new Error("Configuration Cloudinary incomplète.");
-    }
 
-    return true;
+// ======================================================
+// 7.2 — COMPRESSION DES IMAGES
+// ======================================================
+
+function compressTomaDocumentImage(file) {
+
+    return new Promise((resolve, reject) => {
+
+        const reader = new FileReader();
+
+        reader.onerror = () => {
+            reject(new Error("Não foi possível ler a imagem."));
+        };
+
+        reader.onload = (event) => {
+
+            const img = new Image();
+
+            img.onerror = () => {
+                reject(new Error("Imagem inválida ou incompatível."));
+            };
+
+            img.onload = () => {
+
+                try {
+
+                    const canvas = document.createElement("canvas");
+
+                    const context = canvas.getContext("2d");
+
+                    if (!context) {
+                        reject(new Error("Falha ao preparar a imagem."));
+                        return;
+                    }
+
+                    const MAX_WIDTH = 1200;
+                    const MAX_HEIGHT = 1200;
+
+                    const scale = Math.min(
+                        1,
+                        MAX_WIDTH / img.width,
+                        MAX_HEIGHT / img.height
+                    );
+
+                    canvas.width = Math.max(
+                        1,
+                        Math.round(img.width * scale)
+                    );
+
+                    canvas.height = Math.max(
+                        1,
+                        Math.round(img.height * scale)
+                    );
+
+                    context.drawImage(
+                        img,
+                        0,
+                        0,
+                        canvas.width,
+                        canvas.height
+                    );
+
+                    canvas.toBlob(
+
+                        (blob) => {
+
+                            if (!blob) {
+                                reject(new Error("Falha ao comprimir a imagem."));
+                                return;
+                            }
+
+                            resolve(blob);
+
+                        },
+
+                        "image/jpeg",
+
+                        0.78
+
+                    );
+
+                } catch (error) {
+
+                    reject(error);
+
+                }
+
+            };
+
+            img.src = event.target.result;
+
+        };
+
+        reader.readAsDataURL(file);
+
+    });
+
 }
 
-// ------------------------------------------------------
-// 7.3 — Détermination du type de ressource
-// ------------------------------------------------------
 
-function getTomaCloudinaryResourceType(file) {
-
-    const extension = file.name.split(".").pop().toLowerCase();
-
-    if (extension === "pdf") {
-        return "raw";
-    }
-
-    if (["jpg", "jpeg", "png"].includes(extension)) {
-        return "image";
-    }
-
-    throw new Error("Formato de documento não permitido.");
-}
-
-// ------------------------------------------------------
-// 7.4 — Envoi d'un document
-// ------------------------------------------------------
+// ======================================================
+// 7.3 — UPLOAD CLOUDINARY
+// ======================================================
 
 async function uploadTomaMerchantDocument(documentType, file) {
 
     if (!file) {
-        throw new Error("Documento não selecionado: " + documentType);
+        throw new Error("Documento não selecionado.");
     }
 
-    // Vérification du fichier
     const validation =
         window.TOMA_MERCHANT_REGISTER.documentsTools.validate(file);
 
@@ -1318,115 +1384,216 @@ async function uploadTomaMerchantDocument(documentType, file) {
         throw new Error(validation.message);
     }
 
-    // Vérification de l'utilisateur connecté
     const currentUser = auth.currentUser;
 
     if (!currentUser) {
-        throw new Error(
-            "O comerciante deve iniciar sessão antes de enviar documentos."
-        );
+        throw new Error("Utilizador não autenticado.");
     }
 
-    // Vérification de la configuration
-    validateTomaCloudinaryConfig();
+    const extension = file.name.split(".").pop().toLowerCase();
 
-    // PDF = raw / JPG et PNG = image
-    const resourceType = getTomaCloudinaryResourceType(file);
+    const isPDF = extension === "pdf";
 
-    const uploadUrl =
-        "https://api.cloudinary.com/v1_1/" +
-        TOMA_CLOUDINARY_CONFIG.cloudName +
-        "/" + resourceType +
-        "/upload";
+    const resourceType = isPDF ? "raw" : "image";
+
+    const CLOUDINARY_URL =
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`;
+
+
+    // -------------------------------------------------
+    // PREPARAÇÃO DO FICHEIRO
+    // -------------------------------------------------
+
+    let fileToUpload = file;
+
+    let uploadFilename = file.name;
+
+    if (!isPDF) {
+
+        fileToUpload = await compressTomaDocumentImage(file);
+
+        uploadFilename = "toma-" + documentType + ".jpg";
+
+    }
+
+
+    // -------------------------------------------------
+    // FORMDATA — MESMA MÉTHODE DU TEST FONCTIONNEL
+    // -------------------------------------------------
 
     const formData = new FormData();
 
-    formData.append("file", file);
+    formData.append(
+        "file",
+        fileToUpload,
+        uploadFilename
+    );
 
     formData.append(
         "upload_preset",
-        TOMA_CLOUDINARY_CONFIG.uploadPreset
+        CLOUDINARY_PRESET
     );
 
-    // Identifiant du marchand
-    formData.append("context", "uid=" + currentUser.uid);
+
+    // -------------------------------------------------
+    // DIAGNOSTIC
+    // -------------------------------------------------
+
+    console.log("TOMA — CLOUDINARY DIAGNOSTIC", {
+
+        cloud: CLOUDINARY_CLOUD_NAME,
+
+        endpoint: resourceType + "/upload",
+
+        preset: CLOUDINARY_PRESET,
+
+        presetPresent: formData.has("upload_preset"),
+
+        filePresent: formData.has("file"),
+
+        filename: uploadFilename,
+
+        resourceType: resourceType,
+
+        originalSize: file.size,
+
+        uploadSize: fileToUpload.size
+
+    });
+
+
+    // -------------------------------------------------
+    // ENVOI
+    // -------------------------------------------------
+
+    const controller = new AbortController();
+
+    const timeoutId = setTimeout(() => {
+        controller.abort();
+    }, 60000);
 
     let response;
 
     try {
 
-        response = await fetch(uploadUrl, {
-            method: "POST",
-            body: formData
-        });
+        response = await fetch(
+
+            CLOUDINARY_URL,
+
+            {
+                method: "POST",
+                body: formData,
+                signal: controller.signal
+            }
+
+        );
 
     } catch (error) {
 
-        throw new Error(
-            "Falha de ligação ao Cloudinary. Verifique a internet."
-        );
+        if (error.name === "AbortError") {
+            throw new Error("Tempo limite de envio excedido.");
+        }
+
+        throw new Error("Falha na ligação: " + error.message);
+
+    } finally {
+
+        clearTimeout(timeoutId);
+
     }
 
-    let result;
+
+    // -------------------------------------------------
+    // RESPOSTA CLOUDINARY
+    // -------------------------------------------------
+
+    let data;
 
     try {
-        result = await response.json();
-    } catch (error) {
+
+        data = await response.json();
+
+    } catch {
+
         throw new Error("Resposta inválida do Cloudinary.");
+
     }
 
-    if (!response.ok) {
+    console.log("TOMA — RESPOSTA CLOUDINARY:", data);
 
-        const cloudinaryMessage =
-            result?.error?.message || "Erro desconhecido.";
+    if (!response.ok || !data.secure_url) {
 
         throw new Error(
-            "Cloudinary recusou o documento: " + cloudinaryMessage
+
+            "Cloudinary: " +
+
+            (data.error?.message || "Erro desconhecido") +
+
+            " | HTTP: " + response.status +
+
+            " | Preset: " + CLOUDINARY_PRESET
+
         );
+
     }
 
-    // Vérification de la réponse
+
+    // -------------------------------------------------
+    // VERIFICATION DU RESULTAT
+    // -------------------------------------------------
+
     if (
-        !result ||
-        !result.secure_url ||
-        !result.public_id ||
-        !result.asset_id
+        data.resource_type !== resourceType ||
+        !data.public_id ||
+        !data.asset_id
     ) {
-        throw new Error(
-            "O Cloudinary não devolveu todos os dados necessários."
-        );
+        throw new Error("Resposta Cloudinary incompleta ou incorreta.");
     }
 
-    // Métadonnées du document
+
+    // -------------------------------------------------
+    // MÉTADONNÉES
+    // -------------------------------------------------
+
     return {
+
         documentType: documentType,
+
         originalFilename: file.name,
-        resourceType: result.resource_type,
-        format: result.format || "",
-        publicId: result.public_id,
-        assetId: result.asset_id,
-        secureUrl: result.secure_url,
-        bytes: result.bytes,
-        uploadedAt: new Date().toISOString(),
-        uid: currentUser.uid
+
+        resourceType: data.resource_type,
+
+        format: data.format || "",
+
+        publicId: data.public_id,
+
+        assetId: data.asset_id,
+
+        secureUrl: data.secure_url,
+
+        bytes: data.bytes,
+
+        uid: currentUser.uid,
+
+        uploadedAt: new Date().toISOString()
+
     };
+
 }
 
-// ------------------------------------------------------
-// 7.5 — Envoi des quatre documents
-// ------------------------------------------------------
+
+// ======================================================
+// 7.4 — ENVOI DES QUATRE DOCUMENTS
+// ======================================================
 
 async function uploadAllTomaMerchantDocuments() {
 
-    // Vérifier les quatre documents avant de commencer
     if (!window.TOMA_MERCHANT_REGISTER.documentsTools.checkAll()) {
         throw new Error("Os quatro documentos são obrigatórios.");
     }
 
-    const currentUser = auth.currentUser;
-
-    if (!currentUser) {
-        throw new Error("Nenhum comerciante autenticado.");
+    if (!auth.currentUser) {
+        throw new Error("Utilizador não autenticado.");
     }
 
     const selectedDocuments =
@@ -1447,42 +1614,26 @@ async function uploadAllTomaMerchantDocuments() {
             "A enviar documento: " + documentType
         );
 
-        try {
+        const result = await uploadTomaMerchantDocument(
+            documentType,
+            selectedDocuments[documentType]
+        );
 
-            const metadata = await uploadTomaMerchantDocument(
-                documentType,
-                selectedDocuments[documentType]
-            );
+        uploadedDocuments[documentType] = result;
 
-            uploadedDocuments[documentType] = metadata;
-
-        } catch (error) {
-
-            console.error(
-                "TOMA — Erro no documento " + documentType,
-                error
-            );
-
-            // Ne pas continuer si un document échoue
-            window.TOMA_MERCHANT_REGISTER.uploadedDocuments =
-                uploadedDocuments;
-
-            throw new Error(
-                "Falha no envio de " + documentType + ": " +
-                error.message
-            );
-        }
     }
 
     window.TOMA_MERCHANT_REGISTER.uploadedDocuments =
         uploadedDocuments;
 
     return uploadedDocuments;
+
 }
 
-// ------------------------------------------------------
-// 7.6 — Fonctions disponibles pour les prochains blocs
-// ------------------------------------------------------
+
+// ======================================================
+// 7.5 — FUNÇÕES DISPONÍVEIS
+// ======================================================
 
 window.TOMA_MERCHANT_REGISTER.cloudinaryTools = {
 
@@ -1491,23 +1642,25 @@ window.TOMA_MERCHANT_REGISTER.cloudinaryTools = {
     uploadAll: uploadAllTomaMerchantDocuments,
 
     getUploaded: () => {
+
         return window.TOMA_MERCHANT_REGISTER.uploadedDocuments || {};
+
     }
+
 };
 
-// ------------------------------------------------------
-// 7.7 — Confirmation de l'installation du bloc
-// ------------------------------------------------------
+
+// ======================================================
+// 7.6 — CONFIRMATION
+// ======================================================
 
 alert(
     "TOMA — BLOC 7 INSTALADO!\n\n" +
-    "Configuration Cloudinary : OK\n" +
-    "Prise en charge PDF : préparée\n" +
-    "Prise en charge JPG : préparée\n" +
-    "Prise en charge PNG : préparée\n" +
-    "Envoi individuel : préparé\n" +
-    "Envoi des quatre documents : préparé\n\n" +
-    "Aucun document n'a été envoyé pendant ce test."
+    "Método do teste funcional: OK\n" +
+    "Compressão das imagens: OK\n" +
+    "PDF sem compressão: OK\n" +
+    "Preset Cloudinary: OK\n" +
+    "Envio dos documentos: preparado"
 );
 // ======================================================
 // TOMA — TEST TEMPORAIRE CLOUDINARY
