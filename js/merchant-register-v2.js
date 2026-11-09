@@ -1737,3 +1737,170 @@ alert(
     "Preset Cloudinary: OK\n" +
     "Envio dos documentos: preparado"
 );
+// ======================================================
+// BLOC 8 — SOUMISSION COMPLÈTE DE LA CANDIDATURE
+// ======================================================
+
+const merchantSubmitForm = document.getElementById("merchantRegisterForm");
+const merchantSubmitButton = document.getElementById("submitMerchantRequest");
+
+async function submitTomaMerchantRegistration(event) {
+
+    event.preventDefault();
+
+    if (!merchantSubmitForm || !merchantSubmitButton) {
+        alert("TOMA — BLOC 8 : Formulaire ou bouton introuvable.");
+        return;
+    }
+
+    const originalButtonText = merchantSubmitButton.textContent;
+
+    try {
+
+        merchantSubmitButton.disabled = true;
+
+        // ÉTAPE 1 — VALIDATION
+        if (!validateCompleteForm()) {
+            throw new Error("Verifique os campos obrigatórios e os quatro documentos.");
+        }
+
+        // ÉTAPE 2 — COMPTE FIREBASE
+        showTomaRegistrationError("A verificar a sua conta...");
+
+        let currentUser = auth.currentUser;
+
+        if (currentUser) {
+
+            const formEmail = document.getElementById("email")?.value
+                ?.trim()
+                .toLowerCase();
+
+            if (currentUser.email?.toLowerCase() !== formEmail) {
+                throw new Error(
+                    "Existe outra conta ligada. Termine sessão e tente novamente."
+                );
+            }
+
+            window.TOMA_MERCHANT_REGISTER.account = {
+                uid: currentUser.uid,
+                email: currentUser.email
+            };
+
+        } else {
+
+            const accountResult =
+                await window.TOMA_MERCHANT_REGISTER.accountTools.create();
+
+            currentUser = auth.currentUser;
+
+            if (!currentUser || !accountResult) {
+                throw new Error("Não foi possível criar a sua conta.");
+            }
+        }
+
+        // ÉTAPE 3 — ENVOI DES QUATRE DOCUMENTS
+        showTomaRegistrationError("A enviar os quatro documentos...");
+
+        const documents =
+            await window.TOMA_MERCHANT_REGISTER.cloudinaryTools.uploadAll();
+
+        // ÉTAPE 4 — CONSTRUCTION DES DONNÉES
+        showTomaRegistrationError("A preparar a candidatura...");
+
+        const registrationData =
+            window.TOMA_MERCHANT_REGISTER.dataTools.build();
+
+        // ÉTAPE 5 — TOKEN FIREBASE
+        const idToken = await currentUser.getIdToken();
+
+        // ÉTAPE 6 — ENVOI AU SERVEUR
+        showTomaRegistrationError("A submeter a sua candidatura...");
+
+        const response = await fetch("/api/merchant-registration", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + idToken
+            },
+
+            body: JSON.stringify({
+                action: "finalize",
+                registrationData,
+                documents
+            })
+
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(
+                result.message || "Não foi possível submeter a candidatura."
+            );
+        }
+
+        // ÉTAPE 7 — SUCCÈS
+        const formMessage = document.getElementById("formMessage");
+
+        if (formMessage) {
+            formMessage.textContent =
+                "Candidatura submetida com sucesso! A nossa equipa irá analisar os seus documentos.";
+        }
+
+        const progressBar = document.getElementById("progressBar");
+        const progressPercentage =
+            document.getElementById("progressPercentage");
+
+        if (progressBar) {
+            progressBar.style.width = "100%";
+        }
+
+        if (progressPercentage) {
+            progressPercentage.textContent = "100%";
+        }
+
+        merchantSubmitButton.textContent = "Candidatura enviada";
+
+        alert(
+            "TOMA — BLOC 8\n\n" +
+            "A sua candidatura foi submetida com sucesso!"
+        );
+
+        console.log("TOMA — Candidatura submetida:", result);
+
+    } catch (error) {
+
+        console.error("TOMA — Erro no BLOC 8:", error);
+
+        showTomaRegistrationError(
+            error.message || "Ocorreu um erro ao submeter a candidatura."
+        );
+
+        alert(
+            "TOMA — ERRO NA SUBMISSÃO\n\n" +
+            (error.message || "Tente novamente.")
+        );
+
+        merchantSubmitButton.disabled = false;
+        merchantSubmitButton.textContent = originalButtonText;
+
+    }
+
+}
+
+// ÉVITER LES ÉCOUTEURS EN DOUBLE
+if (
+    merchantSubmitForm &&
+    merchantSubmitForm.dataset.tomaSubmitBound !== "true"
+) {
+
+    merchantSubmitForm.addEventListener(
+        "submit",
+        submitTomaMerchantRegistration
+    );
+
+    merchantSubmitForm.dataset.tomaSubmitBound = "true";
+
+}
