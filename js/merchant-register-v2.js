@@ -711,15 +711,26 @@ function validateTomaPersonalInformation() {
         return false;
     }
 
+ // Un client déjà connecté possède déjà un compte Firebase.
+// Le mot de passe n'est obligatoire que pour une nouvelle inscription.
+
+if (!auth.currentUser) {
+
     if (password.length < 8) {
-        showTomaRegistrationError("A palavra-passe deve ter pelo menos 8 caracteres.");
+        showTomaRegistrationError(
+            "A palavra-passe deve ter pelo menos 8 caracteres."
+        );
         return false;
     }
 
     if (password !== confirmPassword) {
-        showTomaRegistrationError("As palavras-passe não coincidem.");
+        showTomaRegistrationError(
+            "As palavras-passe não coincidem."
+        );
         return false;
     }
+
+}
 
     return true;
 }
@@ -968,16 +979,15 @@ window.TOMA_MERCHANT_REGISTER.validateCompleteForm =
     validateTomaCompleteMerchantForm;
 
 // ------------------------------------------------------
-// 4.7 — Confirmation
+// 4.7 — CONFIRMATION DE L'INITIALISATION
 // ------------------------------------------------------
 
 alert(
-    "TOMA — BLOC 4 VALIDÉ !\n\n" +
-    "Province : OK\n" +
-    "Ville : OK\n" +
-    "Adresse : OK\n" +
-    "Conditions générales : OK\n" +
-    "Validation complète : OK"
+    "TOMA — BLOC 4 INITIALISÉ !\n\n" +
+    "Champs de localisation : détectés\n" +
+    "Conditions générales : détectées\n" +
+    "Validation complète : disponible\n\n" +
+    "Aucune inscription n'a encore été effectuée."
 );
 // ======================================================
 // TOMA — INSCRIPTION MARCHAND V3
@@ -1039,9 +1049,8 @@ function getTomaFirebaseAuthError(error) {
     return errorMessages[error.code] ||
         "Não foi possível criar a conta. Verifique a configuração Firebase.";
 }
-
 // ------------------------------------------------------
-// 5.3 — Création du compte marchand
+// 5.3 — CRÉATION DU COMPTE MARCHAND
 // ------------------------------------------------------
 
 async function createTomaMerchantAccount() {
@@ -1050,29 +1059,23 @@ async function createTomaMerchantAccount() {
         window.TOMA_MERCHANT_REGISTER.validateCompleteForm;
 
     if (typeof validationFunction !== "function") {
-
-        showTomaRegistrationError(
+        throw new Error(
             "Erro interno: função de validação não encontrada."
         );
-
-        return null;
     }
 
-    const isFormValid = validationFunction();
-
-    if (!isFormValid) {
-        return null;
+    if (!validationFunction()) {
+        throw new Error(
+            "Verifique os campos obrigatórios do formulário."
+        );
     }
 
     const accountData = getTomaMerchantAccountData();
 
     if (!accountData.email || !accountData.password) {
-
-        showTomaRegistrationError(
+        throw new Error(
             "Preencha o email e a palavra-passe."
         );
-
-        return null;
     }
 
     try {
@@ -1086,7 +1089,9 @@ async function createTomaMerchantAccount() {
         const user = credential.user;
 
         if (!user || !user.uid) {
-            throw new Error("Firebase não retornou um UID válido.");
+            throw new Error(
+                "Firebase não retornou um UID válido."
+            );
         }
 
         window.TOMA_MERCHANT_REGISTER.account = {
@@ -1098,25 +1103,21 @@ async function createTomaMerchantAccount() {
 
     } catch (error) {
 
-        console.error("TOMA — Firebase Auth:", error);
+        console.error(
+            "TOMA — Firebase Auth:",
+            error
+        );
 
         const errorCode = error.code || "unknown-error";
 
-        const friendlyMessage = getTomaFirebaseAuthError(error);
+        const friendlyMessage =
+            getTomaFirebaseAuthError(error);
 
-        showTomaRegistrationError(
+        throw new Error(
             friendlyMessage +
-            "\n\nCódigo técnico: " + errorCode
+            "\n\nCódigo técnico: " +
+            errorCode
         );
-
-        alert(
-            "TOMA — ERRO FIREBASE AUTH\n\n" +
-            friendlyMessage +
-            "\n\nCódigo: " + errorCode +
-            "\n\nVerifique este código antes de tentar novamente."
-        );
-
-        return null;
     }
 }
 
@@ -1728,9 +1729,10 @@ async function uploadAllTomaMerchantDocuments() {
 
     for (const documentType of documentTypes) {
 
-        showTomaRegistrationError(
-            "A enviar documento: " + documentType
-        );
+        showTomaSubmissionStatus(
+    "A enviar documento: " + documentType,
+    "info"
+);
 
         const result = await uploadTomaMerchantDocument(
             documentType,
@@ -1940,9 +1942,16 @@ async function submitTomaMerchantRegistration(event) {
             merchantSubmitButton.textContent =
                 "A criar a sua conta...";
 
-            const accountResult =
-                await window.TOMA_MERCHANT_REGISTER.accountTools.create();
+           const accountTools =
+    window.TOMA_MERCHANT_REGISTER.accountTools;
 
+if (!accountTools || typeof accountTools.create !== "function") {
+    throw new Error(
+        "O sistema de criação de contas não está disponível."
+    );
+}
+
+const accountResult = await accountTools.create();
             currentUser = auth.currentUser;
 
             if (!currentUser || !accountResult) {
@@ -2254,7 +2263,9 @@ if (
         function updateDescriptionCounter() {
 
             const currentLength = shopDescription.value.length;
-
+if (currentLength > maxLength) {
+    shopDescription.value = shopDescription.value.substring(0, maxLength);
+}
             descriptionCounter.textContent =
                 `${currentLength}/${maxLength}`;
 
