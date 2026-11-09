@@ -1368,7 +1368,8 @@ function compressTomaDocumentImage(file) {
 
 
 // ======================================================
-// 7.3 — UPLOAD CLOUDINARY
+// TOMA — UPLOAD CLOUDINARY SIGNÉ
+// IMAGES + PDF — DOCUMENTS AUTHENTIFIÉS
 // ======================================================
 
 async function uploadTomaMerchantDocument(documentType, file) {
@@ -1390,36 +1391,101 @@ async function uploadTomaMerchantDocument(documentType, file) {
         throw new Error("Utilizador não autenticado.");
     }
 
-    const extension = file.name.split(".").pop().toLowerCase();
+    // ------------------------------------------
+    // 1. IDENTIFIER LE FORMAT
+    // ------------------------------------------
 
-    const isPDF = extension === "pdf";
+    const originalExtension = file.name
+        .split(".")
+        .pop()
+        .toLowerCase();
+
+    const isPDF = originalExtension === "pdf";
 
     const resourceType = isPDF ? "raw" : "image";
 
-    const CLOUDINARY_URL =
-        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`;
-
-
-    // -------------------------------------------------
-    // PREPARAÇÃO DO FICHEIRO
-    // -------------------------------------------------
-
     let fileToUpload = file;
-
     let uploadFilename = file.name;
+    let uploadExtension = originalExtension;
+
+    // Les images sont compressées.
+    // Les PDF restent intacts.
 
     if (!isPDF) {
 
-        fileToUpload = await compressTomaDocumentImage(file);
+        fileToUpload =
+            await compressTomaDocumentImage(file);
 
-        uploadFilename = "toma-" + documentType + ".jpg";
+        uploadFilename =
+            "toma-" + documentType + ".jpg";
 
+        uploadExtension = "jpg";
     }
 
+    // ------------------------------------------
+    // 2. DEMANDER UNE SIGNATURE À VERCEL
+    // ------------------------------------------
 
-    // -------------------------------------------------
-    // FORMDATA — MESMA MÉTHODE DU TEST FONCTIONNEL
-    // -------------------------------------------------
+    const idToken = await currentUser.getIdToken();
+
+    const signatureResponse = await fetch(
+        "/api/cloudinary-signature",
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + idToken
+            },
+
+            body: JSON.stringify({
+                documentType: documentType,
+                extension: uploadExtension
+            })
+        }
+    );
+
+    let signatureData;
+
+    try {
+        signatureData = await signatureResponse.json();
+    } catch {
+        throw new Error(
+            "Resposta inválida do servidor de assinatura."
+        );
+    }
+
+    if (!signatureResponse.ok || !signatureData.success) {
+
+        throw new Error(
+            signatureData.message ||
+            "Não foi possível obter a assinatura Cloudinary."
+        );
+    }
+
+    // ------------------------------------------
+    // 3. VÉRIFIER LES PARAMÈTRES SIGNÉS
+    // ------------------------------------------
+
+    if (
+        signatureData.resourceType !== resourceType ||
+        signatureData.documentType !== documentType ||
+        signatureData.extension !== uploadExtension ||
+        signatureData.type !== "authenticated" ||
+        !signatureData.signature ||
+        !signatureData.publicId ||
+        !signatureData.timestamp ||
+        !signatureData.apiKey ||
+        !signatureData.cloudName
+    ) {
+        throw new Error(
+            "Parâmetros de assinatura inválidos."
+        );
+    }
+
+    // ------------------------------------------
+    // 4. PRÉPARER L'UPLOAD SIGNÉ
+    // ------------------------------------------
 
     const formData = new FormData();
 
@@ -1430,130 +1496,139 @@ async function uploadTomaMerchantDocument(documentType, file) {
     );
 
     formData.append(
-        "upload_preset",
-        CLOUDINARY_PRESET
+        "api_key",
+        signatureData.apiKey
     );
 
+    formData.append(
+        "timestamp",
+        String(signatureData.timestamp)
+    );
 
-    // -------------------------------------------------
-    // DIAGNOSTIC
-    // -------------------------------------------------
+    formData.append(
+        "public_id",
+        signatureData.publicId
+    );
 
-    console.log("TOMA — CLOUDINARY DIAGNOSTIC", {
+    formData.append(
+        "type",
+        signatureData.type
+    );
 
-        cloud: CLOUDINARY_CLOUD_NAME,
+    formData.append(
+        "overwrite",
+        "false"
+    );
 
-        endpoint: resourceType + "/upload",
+    formData.append(
+        "signature",
+        signatureData.signature
+    );
 
-        preset: CLOUDINARY_PRESET,
+    // ------------------------------------------
+    // 5. ENVOYER À CLOUDINARY
+    // ------------------------------------------
 
-        presetPresent: formData.has("upload_preset"),
-
-        filePresent: formData.has("file"),
-
-        filename: uploadFilename,
-
-        resourceType: resourceType,
-
-        originalSize: file.size,
-
-        uploadSize: fileToUpload.size
-
-    });
-
-
-    // -------------------------------------------------
-    // ENVOI
-    // -------------------------------------------------
+    const cloudinaryURL =
+        "https://api.cloudinary.com/v1_1/" +
+        signatureData.cloudName +
+        "/" +
+        resourceType +
+        "/upload";
 
     const controller = new AbortController();
 
-    const timeoutId = setTimeout(() => {
-        controller.abort();
-    }, 60000);
+    const timeoutId = setTimeout(
+        () => controller.abort(),
+        60000
+    );
 
     let response;
 
     try {
 
         response = await fetch(
-
-            CLOUDINARY_URL,
-
+            cloudinaryURL,
             {
                 method: "POST",
                 body: formData,
                 signal: controller.signal
             }
-
         );
 
     } catch (error) {
 
         if (error.name === "AbortError") {
-            throw new Error("Tempo limite de envio excedido.");
+            throw new Error(
+                "Tempo limite de envio excedido."
+            );
         }
 
-        throw new Error("Falha na ligação: " + error.message);
+        throw new Error(
+            "Falha na ligação Cloudinary: " +
+            error.message
+        );
 
     } finally {
 
         clearTimeout(timeoutId);
-
     }
 
-
-    // -------------------------------------------------
-    // RESPOSTA CLOUDINARY
-    // -------------------------------------------------
+    // ------------------------------------------
+    // 6. VÉRIFIER LA RÉPONSE CLOUDINARY
+    // ------------------------------------------
 
     let data;
 
     try {
-
         data = await response.json();
-
     } catch {
-
-        throw new Error("Resposta inválida do Cloudinary.");
-
+        throw new Error(
+            "Resposta inválida do Cloudinary."
+        );
     }
 
-    console.log("TOMA — RESPOSTA CLOUDINARY:", data);
-
-    if (!response.ok || !data.secure_url) {
+    if (!response.ok || !data.asset_id) {
 
         throw new Error(
-
             "Cloudinary: " +
-
-            (data.error?.message || "Erro desconhecido") +
-
-            " | HTTP: " + response.status +
-
-            " | Preset: " + CLOUDINARY_PRESET
-
+            (data.error?.message || "Erro desconhecido.")
         );
-
     }
-
-
-    // -------------------------------------------------
-    // VERIFICATION DU RESULTAT
-    // -------------------------------------------------
 
     if (
+        data.public_id !== signatureData.publicId ||
         data.resource_type !== resourceType ||
-        !data.public_id ||
-        !data.asset_id
+        data.type !== "authenticated"
     ) {
-        throw new Error("Resposta Cloudinary incompleta ou incorreta.");
+        throw new Error(
+            "O ficheiro recebido não corresponde à assinatura."
+        );
     }
 
+    if (
+        !data.secure_url ||
+        !data.asset_id ||
+        !data.public_id
+    ) {
+        throw new Error(
+            "Resposta Cloudinary incompleta."
+        );
+    }
 
-    // -------------------------------------------------
-    // MÉTADONNÉES
-    // -------------------------------------------------
+    if (
+        !Number.isFinite(data.bytes) ||
+        data.bytes <= 0 ||
+        data.bytes > 5 * 1024 * 1024
+    ) {
+        throw new Error(
+            "Tamanho do documento inválido."
+        );
+    }
+
+    // ------------------------------------------
+    // 7. RETOURNER LES MÉTADONNÉES
+    // ------------------------------------------
 
     return {
 
@@ -1563,7 +1638,9 @@ async function uploadTomaMerchantDocument(documentType, file) {
 
         resourceType: data.resource_type,
 
-        format: data.format || "",
+        deliveryType: data.type,
+
+        format: data.format || uploadExtension,
 
         publicId: data.public_id,
 
@@ -1578,9 +1655,7 @@ async function uploadTomaMerchantDocument(documentType, file) {
         uploadedAt: new Date().toISOString()
 
     };
-
 }
-
 
 // ======================================================
 // 7.4 — ENVOI DES QUATRE DOCUMENTS
