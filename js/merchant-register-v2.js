@@ -1736,56 +1736,194 @@ alert(
     "Preset Cloudinary: OK\n" +
     "Envio dos documentos: preparado"
 );
-// ======================================================
-// BLOC 8 — SOUMISSION COMPLÈTE DE LA CANDIDATURE
-// ======================================================
+/* =========================================================
+   BLOC 8 — SUBMISSÃO COMPLETA DO REGISTO DO COMERCIANTE
+   ========================================================= */
 
 const merchantSubmitForm = document.getElementById("merchantRegisterForm");
-const merchantSubmitButton = document.getElementById("submitMerchantRequest");
+
+const merchantSubmitButton = document.getElementById(
+    "submitMerchantRequest"
+);
+
+let isSubmittingTomaMerchant = false;
+
+
+/* ---------------------------------------------------------
+   8.1 — MENSAGEM DE ESTADO
+   --------------------------------------------------------- */
+
+function showTomaSubmissionStatus(message, type = "info") {
+
+    const messageElement = document.getElementById("formMessage");
+
+    if (!messageElement) {
+        alert(message);
+        return;
+    }
+
+    messageElement.textContent = message;
+
+    messageElement.style.display = "block";
+
+    if (type === "success") {
+
+        messageElement.style.color = "#15803d";
+
+    } else if (type === "error") {
+
+        messageElement.style.color = "#dc2626";
+
+    } else {
+
+        messageElement.style.color = "#2563eb";
+
+    }
+}
+
+
+/* ---------------------------------------------------------
+   8.2 — ATUALIZAÇÃO DO PROGRESSO
+   --------------------------------------------------------- */
+
+function updateTomaSubmissionProgress(percentage) {
+
+    const bar = document.getElementById("progressBar");
+
+    const percentageElement = document.getElementById(
+        "progressPercentage"
+    );
+
+    if (bar) {
+
+        bar.style.width = `${percentage}%`;
+
+        bar.setAttribute("aria-valuenow", percentage);
+
+    }
+
+    if (percentageElement) {
+
+        percentageElement.textContent = `${percentage}%`;
+
+    }
+
+}
+
+
+/* ---------------------------------------------------------
+   8.3 — PROCESSAMENTO DO REGISTO
+   --------------------------------------------------------- */
 
 async function submitTomaMerchantRegistration(event) {
 
     event.preventDefault();
 
+    if (isSubmittingTomaMerchant) {
+        return;
+    }
+
     if (!merchantSubmitForm || !merchantSubmitButton) {
-        alert("TOMA — BLOC 8 : Formulaire ou bouton introuvable.");
+
+        alert(
+            "TOMA — ERRO: O formulário ou botão de registo não foi encontrado."
+        );
+
         return;
     }
 
     const originalButtonText = merchantSubmitButton.textContent;
 
+    isSubmittingTomaMerchant = true;
+
+    merchantSubmitButton.disabled = true;
+
+    merchantSubmitButton.textContent = "A preparar o registo...";
+
+    updateTomaSubmissionProgress(0);
+
     try {
 
-        merchantSubmitButton.disabled = true;
+        /* -------------------------------------------------
+           ETAPA 1 — VALIDAR TODO O FORMULÁRIO
+           ------------------------------------------------- */
 
-        // ÉTAPE 1 — VALIDATION
-        if (!validateCompleteForm()) {
-            throw new Error("Verifique os campos obrigatórios e os quatro documentos.");
+        showTomaSubmissionStatus(
+            "A verificar os seus dados e documentos..."
+        );
+
+        const validateForm =
+            window.TOMA_MERCHANT_REGISTER?.validateCompleteForm;
+
+        if (typeof validateForm !== "function") {
+
+            throw new Error(
+                "O sistema de validação do formulário não está disponível."
+            );
+
         }
 
-        // ÉTAPE 2 — COMPTE FIREBASE
-        showTomaRegistrationError("A verificar a sua conta...");
+        const isValid = validateForm();
+
+        if (!isValid) {
+
+            throw new Error(
+                "Verifique todos os campos obrigatórios, os quatro documentos e as condições."
+            );
+
+        }
+
+        updateTomaSubmissionProgress(10);
+
+
+        /* -------------------------------------------------
+           ETAPA 2 — VERIFICAR A CONTA FIREBASE
+           ------------------------------------------------- */
+
+        showTomaSubmissionStatus(
+            "A verificar a sua conta..."
+        );
 
         let currentUser = auth.currentUser;
 
+        const formEmail = document
+            .getElementById("email")
+            ?.value
+            ?.trim()
+            .toLowerCase();
+
+        if (!formEmail) {
+
+            throw new Error(
+                "O endereço de e-mail é obrigatório."
+            );
+
+        }
+
         if (currentUser) {
 
-            const formEmail = document.getElementById("email")?.value
-                ?.trim()
-                .toLowerCase();
+            if (
+                currentUser.email?.toLowerCase() !== formEmail
+            ) {
 
-            if (currentUser.email?.toLowerCase() !== formEmail) {
                 throw new Error(
-                    "Existe outra conta ligada. Termine sessão e tente novamente."
+                    "Existe outra conta ligada. Termine sessão e utilize o e-mail indicado no formulário."
                 );
+
             }
 
             window.TOMA_MERCHANT_REGISTER.account = {
+
                 uid: currentUser.uid,
+
                 email: currentUser.email
+
             };
 
         } else {
+
+            merchantSubmitButton.textContent =
+                "A criar a sua conta...";
 
             const accountResult =
                 await window.TOMA_MERCHANT_REGISTER.accountTools.create();
@@ -1793,103 +1931,266 @@ async function submitTomaMerchantRegistration(event) {
             currentUser = auth.currentUser;
 
             if (!currentUser || !accountResult) {
-                throw new Error("Não foi possível criar a sua conta.");
+
+                throw new Error(
+                    "Não foi possível criar a sua conta. Verifique os seus dados e tente novamente."
+                );
+
             }
+
         }
 
-        // ÉTAPE 3 — ENVOI DES QUATRE DOCUMENTS
-        showTomaRegistrationError("A enviar os quatro documentos...");
+        updateTomaSubmissionProgress(20);
 
-        const documents =
-            await window.TOMA_MERCHANT_REGISTER.cloudinaryTools.uploadAll();
 
-        // ÉTAPE 4 — CONSTRUCTION DES DONNÉES
-        showTomaRegistrationError("A preparar a candidatura...");
+        /* -------------------------------------------------
+           ETAPA 3 — PREPARAR OS DADOS DA CANDIDATURA
+           ------------------------------------------------- */
+
+        showTomaSubmissionStatus(
+            "A preparar as informações da sua candidatura..."
+        );
 
         const registrationData =
             window.TOMA_MERCHANT_REGISTER.dataTools.build();
 
-        // ÉTAPE 5 — TOKEN FIREBASE
-        const idToken = await currentUser.getIdToken();
+        if (!registrationData) {
 
-        // ÉTAPE 6 — ENVOI AU SERVEUR
-        showTomaRegistrationError("A submeter a sua candidatura...");
-
-        const response = await fetch("/api/merchant-registration", {
-
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + idToken
-            },
-
-            body: JSON.stringify({
-                action: "finalize",
-                registrationData,
-                documents
-            })
-
-        });
-
-        const result = await response.json();
-
-        if (!response.ok || !result.success) {
             throw new Error(
-                result.message || "Não foi possível submeter a candidatura."
+                "Não foi possível preparar os dados da candidatura. Verifique novamente o formulário."
             );
+
         }
 
-        // ÉTAPE 7 — SUCCÈS
-        const formMessage = document.getElementById("formMessage");
+        if (registrationData.uid !== currentUser.uid) {
 
-        if (formMessage) {
-            formMessage.textContent =
-                "Candidatura submetida com sucesso! A nossa equipa irá analisar os seus documentos.";
+            throw new Error(
+                "Erro de segurança: a conta e os dados da candidatura não correspondem."
+            );
+
         }
 
-        const progressBar = document.getElementById("progressBar");
-        const progressPercentage =
-            document.getElementById("progressPercentage");
+        updateTomaSubmissionProgress(30);
 
-        if (progressBar) {
-            progressBar.style.width = "100%";
-        }
 
-        if (progressPercentage) {
-            progressPercentage.textContent = "100%";
-        }
+        /* -------------------------------------------------
+           ETAPA 4 — OBTER TOKEN FIREBASE
+           ------------------------------------------------- */
 
-        merchantSubmitButton.textContent = "Candidatura enviada";
-
-        alert(
-            "TOMA — BLOC 8\n\n" +
-            "A sua candidatura foi submetida com sucesso!"
+        showTomaSubmissionStatus(
+            "A preparar a ligação segura..."
         );
 
-        console.log("TOMA — Candidatura submetida:", result);
+        const idToken = await currentUser.getIdToken(true);
+
+        if (!idToken) {
+
+            throw new Error(
+                "Não foi possível verificar a sua sessão."
+            );
+
+        }
+
+        updateTomaSubmissionProgress(35);
+
+
+        /* -------------------------------------------------
+           ETAPA 5 — ENVIAR OS QUATRO DOCUMENTOS
+           ------------------------------------------------- */
+
+        showTomaSubmissionStatus(
+            "A enviar os quatro documentos de forma segura..."
+        );
+
+        merchantSubmitButton.textContent =
+            "A enviar documentos...";
+
+        const uploadDocuments =
+            window.TOMA_MERCHANT_REGISTER.cloudinaryTools?.uploadAll;
+
+        if (typeof uploadDocuments !== "function") {
+
+            throw new Error(
+                "O sistema de envio de documentos não está disponível."
+            );
+
+        }
+
+        const documents = await uploadDocuments();
+
+        if (!Array.isArray(documents) || documents.length !== 4) {
+
+            throw new Error(
+                "Os quatro documentos obrigatórios não foram enviados corretamente."
+            );
+
+        }
+
+        updateTomaSubmissionProgress(75);
+
+
+        /* -------------------------------------------------
+           ETAPA 6 — CONFIRMAR OS DOCUMENTOS
+           ------------------------------------------------- */
+
+        const requiredDocumentTypes = [
+
+            "alvara",
+            "certidao",
+            "admissibilidade",
+            "pacto"
+
+        ];
+
+        for (const documentType of requiredDocumentTypes) {
+
+            const documentExists = documents.some(document => {
+
+                return document.documentType === documentType;
+
+            });
+
+            if (!documentExists) {
+
+                throw new Error(
+                    `O documento ${documentType} não foi encontrado no envio.`
+                );
+
+            }
+
+        }
+
+        showTomaSubmissionStatus(
+            "Documentos enviados. A preparar a submissão..."
+        );
+
+
+        /* -------------------------------------------------
+           ETAPA 7 — SUBMETER AO SERVIDOR
+           ------------------------------------------------- */
+
+        merchantSubmitButton.textContent =
+            "A submeter candidatura...";
+
+        updateTomaSubmissionProgress(85);
+
+        const response = await fetch(
+            "/api/merchant-registration",
+            {
+
+                method: "POST",
+
+                headers: {
+
+                    "Content-Type": "application/json",
+
+                    "Authorization": `Bearer ${idToken}`
+
+                },
+
+                body: JSON.stringify({
+
+                    action: "finalize",
+
+                    registrationData: registrationData,
+
+                    documents: documents
+
+                })
+
+            }
+        );
+
+
+        /* -------------------------------------------------
+           ETAPA 8 — LER A RESPOSTA DO SERVIDOR
+           ------------------------------------------------- */
+
+        let result;
+
+        try {
+
+            result = await response.json();
+
+        } catch (jsonError) {
+
+            throw new Error(
+                "O servidor devolveu uma resposta inválida. Tente novamente."
+            );
+
+        }
+
+        if (!response.ok || !result || result.success !== true) {
+
+            throw new Error(
+                result?.message ||
+                `Não foi possível submeter a candidatura. Erro ${response.status}.`
+            );
+
+        }
+
+        updateTomaSubmissionProgress(100);
+
+
+        /* -------------------------------------------------
+           ETAPA 9 — CONFIRMAÇÃO FINAL
+           ------------------------------------------------- */
+
+        showTomaSubmissionStatus(
+            "A sua candidatura foi enviada com sucesso!",
+            "success"
+        );
+
+        merchantSubmitButton.textContent =
+            "Candidatura enviada";
+
+        merchantSubmitButton.disabled = true;
+
+        console.log(
+            "TOMA — CANDIDATURA ENVIADA:",
+            result
+        );
+
+        alert(
+            "TOMA\n\nA sua candidatura foi enviada com sucesso!\n\nOs seus documentos foram submetidos para verificação."
+        );
+
+        return;
 
     } catch (error) {
 
-        console.error("TOMA — Erro no BLOC 8:", error);
+        console.error(
+            "TOMA — ERRO NO REGISTO:",
+            error
+        );
 
-        showTomaRegistrationError(
-            error.message || "Ocorreu um erro ao submeter a candidatura."
+        showTomaSubmissionStatus(
+            error.message ||
+            "Ocorreu um erro durante o registo.",
+            "error"
         );
 
         alert(
-            "TOMA — ERRO NA SUBMISSÃO\n\n" +
-            (error.message || "Tente novamente.")
+            "TOMA — ERRO NO REGISTO\n\n" +
+            (error.message || "Ocorreu um erro inesperado.")
         );
 
         merchantSubmitButton.disabled = false;
-        merchantSubmitButton.textContent = originalButtonText;
+
+        merchantSubmitButton.textContent =
+            originalButtonText;
+
+        isSubmittingTomaMerchant = false;
 
     }
 
 }
 
-// ÉVITER LES ÉCOUTEURS EN DOUBLE
+
+/* ---------------------------------------------------------
+   8.4 — LIGAR O FORMULÁRIO AO PROCESSAMENTO
+   --------------------------------------------------------- */
+
 if (
     merchantSubmitForm &&
     merchantSubmitForm.dataset.tomaSubmitBound !== "true"
@@ -1903,3 +2204,8 @@ if (
     merchantSubmitForm.dataset.tomaSubmitBound = "true";
 
 }
+
+
+/* =========================================================
+   FIM DO BLOCO 8
+   ========================================================= */
