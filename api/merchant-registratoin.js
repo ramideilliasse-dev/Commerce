@@ -347,8 +347,8 @@ async function verifyCloudinaryDocument(
         .join("/");
 
     const resourcePath =
-        `resources/${resourceType}/upload/` +
-        encodedPublicId;
+    `resources/${resourceType}/authenticated/` +
+    encodedPublicId;
 
     const asset = await cloudinaryAdminRequest(
         resourcePath
