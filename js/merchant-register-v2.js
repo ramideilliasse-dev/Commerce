@@ -1781,20 +1781,12 @@ function showTomaSubmissionStatus(message, type = "info") {
 
 function updateTomaSubmissionProgress(percentage) {
 
-    const bar = document.getElementById("progressBar");
+    const app = window.TOMA_MERCHANT_REGISTER;
 
-    const percentageElement = document.getElementById(
-        "progressPercentage"
-    );
-
-    if (bar) {
-        bar.style.width = `${percentage}%`;
-        bar.setAttribute("aria-valuenow", percentage);
+    if (app && typeof app.updateProgress === "function") {
+        app.updateProgress(percentage);
     }
 
-    if (percentageElement) {
-        percentageElement.textContent = `${percentage}%`;
-    }
 }
 
 
@@ -2191,3 +2183,141 @@ if (
 /* =========================================================
    FIM DO BLOCO 8
    ========================================================= */
+// ======================================================
+// BLOC 9 — CONNEXION DES ÉLÉMENTS HTML MANQUANTS
+// ======================================================
+
+(function initTomaMissingElements() {
+
+    const app = window.TOMA_MERCHANT_REGISTER;
+
+    if (!app) {
+        alert("TOMA — BLOC 9 : Le système principal n'est pas initialisé.");
+        return;
+    }
+
+    // --------------------------------------------------
+    // 1. COMPTEUR DE DESCRIPTION
+    // --------------------------------------------------
+
+    const shopDescription = document.getElementById("shopDescription");
+    const descriptionCounter = document.getElementById("descriptionCounter");
+
+    if (shopDescription && descriptionCounter) {
+
+        const maxLength = 500;
+
+        function updateDescriptionCounter() {
+
+            const currentLength = shopDescription.value.length;
+
+            descriptionCounter.textContent =
+                `${currentLength}/${maxLength}`;
+
+            if (currentLength > maxLength) {
+                descriptionCounter.style.color = "#e53935";
+            } else {
+                descriptionCounter.style.color = "";
+            }
+        }
+
+        shopDescription.addEventListener(
+            "input",
+            updateDescriptionCounter
+        );
+
+        updateDescriptionCounter();
+
+    } else {
+
+        console.warn(
+            "TOMA — BLOC 9 : shopDescription ou descriptionCounter introuvable."
+        );
+
+    }
+
+    // --------------------------------------------------
+    // 2. BARRE DE PROGRESSION
+    // --------------------------------------------------
+
+    const progressBar = document.getElementById("progressBar");
+    const progressPercentage = document.getElementById("progressPercentage");
+
+    // --------------------------------------------------
+    // 3. MISE À JOUR DES ÉTAPES VISUELLES
+    // --------------------------------------------------
+
+    function updateProgressSteps(percentage) {
+
+        const steps = document.querySelectorAll(
+            ".progressStep[data-step]"
+        );
+
+        let activeStep = 1;
+
+        if (percentage >= 75) {
+            activeStep = 4;
+        } else if (percentage >= 30) {
+            activeStep = 3;
+        } else if (percentage >= 20) {
+            activeStep = 2;
+        }
+
+        steps.forEach(step => {
+
+            const stepNumber = Number(step.dataset.step);
+
+            step.classList.remove("active", "completed");
+
+            if (stepNumber < activeStep) {
+                step.classList.add("completed");
+            }
+
+            if (stepNumber === activeStep) {
+                step.classList.add("active");
+            }
+
+        });
+    }
+
+    // --------------------------------------------------
+    // 4. FONCTION PUBLIQUE DE MISE À JOUR
+    // --------------------------------------------------
+
+    function updateTomaProgress(percentage) {
+
+        const safePercentage = Math.max(
+            0,
+            Math.min(100, Number(percentage) || 0)
+        );
+
+        if (progressBar) {
+
+            progressBar.style.width = `${safePercentage}%`;
+
+            progressBar.setAttribute(
+                "aria-valuenow",
+                safePercentage
+            );
+        }
+
+        if (progressPercentage) {
+            progressPercentage.textContent =
+                `${safePercentage}%`;
+        }
+
+        updateProgressSteps(safePercentage);
+    }
+
+    // --------------------------------------------------
+    // 5. EXPOSITION POUR LES AUTRES BLOCS
+    // --------------------------------------------------
+
+    app.updateProgress = updateTomaProgress;
+
+    // Initialisation
+    updateTomaProgress(0);
+
+    console.log("TOMA — BLOC 9 : Éléments HTML connectés.");
+
+})();
