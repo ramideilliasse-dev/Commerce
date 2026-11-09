@@ -1763,21 +1763,14 @@ function showTomaSubmissionStatus(message, type = "info") {
     }
 
     messageElement.textContent = message;
-
     messageElement.style.display = "block";
 
     if (type === "success") {
-
         messageElement.style.color = "#15803d";
-
     } else if (type === "error") {
-
         messageElement.style.color = "#dc2626";
-
     } else {
-
         messageElement.style.color = "#2563eb";
-
     }
 }
 
@@ -1795,19 +1788,13 @@ function updateTomaSubmissionProgress(percentage) {
     );
 
     if (bar) {
-
         bar.style.width = `${percentage}%`;
-
         bar.setAttribute("aria-valuenow", percentage);
-
     }
 
     if (percentageElement) {
-
         percentageElement.textContent = `${percentage}%`;
-
     }
-
 }
 
 
@@ -1837,7 +1824,6 @@ async function submitTomaMerchantRegistration(event) {
     isSubmittingTomaMerchant = true;
 
     merchantSubmitButton.disabled = true;
-
     merchantSubmitButton.textContent = "A preparar o registo...";
 
     updateTomaSubmissionProgress(0);
@@ -1860,17 +1846,15 @@ async function submitTomaMerchantRegistration(event) {
             throw new Error(
                 "O sistema de validação do formulário não está disponível."
             );
-
         }
 
         const isValid = validateForm();
 
-        if (!isValid) {
+        if (isValid !== true) {
 
             throw new Error(
                 "Verifique todos os campos obrigatórios, os quatro documentos e as condições."
             );
-
         }
 
         updateTomaSubmissionProgress(10);
@@ -1897,7 +1881,6 @@ async function submitTomaMerchantRegistration(event) {
             throw new Error(
                 "O endereço de e-mail é obrigatório."
             );
-
         }
 
         if (currentUser) {
@@ -1909,15 +1892,11 @@ async function submitTomaMerchantRegistration(event) {
                 throw new Error(
                     "Existe outra conta ligada. Termine sessão e utilize o e-mail indicado no formulário."
                 );
-
             }
 
             window.TOMA_MERCHANT_REGISTER.account = {
-
                 uid: currentUser.uid,
-
                 email: currentUser.email
-
             };
 
         } else {
@@ -1935,9 +1914,7 @@ async function submitTomaMerchantRegistration(event) {
                 throw new Error(
                     "Não foi possível criar a sua conta. Verifique os seus dados e tente novamente."
                 );
-
             }
-
         }
 
         updateTomaSubmissionProgress(20);
@@ -1959,7 +1936,6 @@ async function submitTomaMerchantRegistration(event) {
             throw new Error(
                 "Não foi possível preparar os dados da candidatura. Verifique novamente o formulário."
             );
-
         }
 
         if (registrationData.uid !== currentUser.uid) {
@@ -1967,7 +1943,6 @@ async function submitTomaMerchantRegistration(event) {
             throw new Error(
                 "Erro de segurança: a conta e os dados da candidatura não correspondem."
             );
-
         }
 
         updateTomaSubmissionProgress(30);
@@ -1988,7 +1963,6 @@ async function submitTomaMerchantRegistration(event) {
             throw new Error(
                 "Não foi possível verificar a sua sessão."
             );
-
         }
 
         updateTomaSubmissionProgress(35);
@@ -2013,51 +1987,66 @@ async function submitTomaMerchantRegistration(event) {
             throw new Error(
                 "O sistema de envio de documentos não está disponível."
             );
-
         }
 
         const documents = await uploadDocuments();
 
-        if (!Array.isArray(documents) || documents.length !== 4) {
+        if (
+            !documents ||
+            typeof documents !== "object" ||
+            Array.isArray(documents)
+        ) {
 
             throw new Error(
-                "Os quatro documentos obrigatórios não foram enviados corretamente."
+                "O sistema não devolveu os documentos no formato esperado."
             );
-
         }
 
         updateTomaSubmissionProgress(75);
 
 
         /* -------------------------------------------------
-           ETAPA 6 — CONFIRMAR OS DOCUMENTOS
+           ETAPA 6 — CONFIRMAR OS QUATRO DOCUMENTOS
            ------------------------------------------------- */
 
         const requiredDocumentTypes = [
-
             "alvara",
             "certidao",
             "admissibilidade",
             "pacto"
-
         ];
+
+        const receivedDocumentTypes = Object.keys(documents);
+
+        if (
+            receivedDocumentTypes.length !== 4 ||
+            !requiredDocumentTypes.every(
+                type => receivedDocumentTypes.includes(type)
+            )
+        ) {
+
+            throw new Error(
+                "Os quatro documentos obrigatórios não foram encontrados."
+            );
+        }
 
         for (const documentType of requiredDocumentTypes) {
 
-            const documentExists = documents.some(document => {
+            const document = documents[documentType];
 
-                return document.documentType === documentType;
-
-            });
-
-            if (!documentExists) {
+            if (
+                !document ||
+                typeof document !== "object" ||
+                document.documentType !== documentType ||
+                !document.publicId ||
+                !document.assetId ||
+                !document.resourceType
+            ) {
 
                 throw new Error(
-                    `O documento ${documentType} não foi encontrado no envio.`
+                    `O documento ${documentType} não foi enviado corretamente.`
                 );
-
             }
-
         }
 
         showTomaSubmissionStatus(
@@ -2077,27 +2066,18 @@ async function submitTomaMerchantRegistration(event) {
         const response = await fetch(
             "/api/merchant-registration",
             {
-
                 method: "POST",
 
                 headers: {
-
                     "Content-Type": "application/json",
-
                     "Authorization": `Bearer ${idToken}`
-
                 },
 
                 body: JSON.stringify({
-
                     action: "finalize",
-
                     registrationData: registrationData,
-
                     documents: documents
-
                 })
-
             }
         );
 
@@ -2112,12 +2092,11 @@ async function submitTomaMerchantRegistration(event) {
 
             result = await response.json();
 
-        } catch (jsonError) {
+        } catch {
 
             throw new Error(
                 "O servidor devolveu uma resposta inválida. Tente novamente."
             );
-
         }
 
         if (!response.ok || !result || result.success !== true) {
@@ -2126,7 +2105,13 @@ async function submitTomaMerchantRegistration(event) {
                 result?.message ||
                 `Não foi possível submeter a candidatura. Erro ${response.status}.`
             );
+        }
 
+        if (!result.applicationId) {
+
+            throw new Error(
+                "O servidor não confirmou o identificador da candidatura."
+            );
         }
 
         updateTomaSubmissionProgress(100);
@@ -2181,9 +2166,7 @@ async function submitTomaMerchantRegistration(event) {
             originalButtonText;
 
         isSubmittingTomaMerchant = false;
-
     }
-
 }
 
 
@@ -2202,7 +2185,6 @@ if (
     );
 
     merchantSubmitForm.dataset.tomaSubmitBound = "true";
-
 }
 
 
