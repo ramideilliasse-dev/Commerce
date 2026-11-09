@@ -1428,9 +1428,8 @@ async function uploadTomaMerchantDocument(documentType, file) {
 
     const idToken = await currentUser.getIdToken();
 
-    const signatureResponse = await fetch(
-        "/api/cloudinary-signature",
-        {
+    const signatureResponse = await fetch("/api/merchant-document-signature", {
+        
             method: "POST",
 
             headers: {
