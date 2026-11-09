@@ -1,12 +1,11 @@
  // ======================================================
 // TOMA — BLOC 12
 // BACKEND D'INSCRIPTION COMMERÇANT V2
-// Upload simplifié Cloudinary
+// Cloudinary IMAGE + PDF
 // Navigateur → Cloudinary → Vercel → Firestore
 // ======================================================
 
 import { adminAuth, adminDb } from "./firebase-admin.js";
-
 
 // ======================================================
 // 12.1 — CONFIGURATION
@@ -37,6 +36,11 @@ const ALLOWED_FORMATS = [
     "png"
 ];
 
+const ACTIVE_STATUSES = [
+    "pending",
+    "under_review",
+    "approved"
+];
 
 // ======================================================
 // 12.2 — AUTHENTIFICATION FIREBASE
@@ -48,17 +52,26 @@ async function authenticateUser(req) {
         req.headers.authorization || "";
 
     if (!authorization.startsWith("Bearer ")) {
-        throw new Error("Autenticação necessária.");
+        const error = new Error("Autenticação necessária.");
+        error.statusCode = 401;
+        throw error;
     }
 
     const idToken = authorization.substring(7);
 
-    return await adminAuth.verifyIdToken(idToken);
+    try {
+        return await adminAuth.verifyIdToken(idToken);
+    } catch {
+        const error = new Error(
+            "Sessão inválida ou expirada. Inicie sessão novamente."
+        );
+        error.statusCode = 401;
+        throw error;
+    }
 }
 
-
 // ======================================================
-// 12.3 — CONFIGURATION CLOUDINARY
+// 12.3 — CONFIGURAÇÃO CLOUDINARY
 // ======================================================
 
 function checkCloudinaryConfiguration() {
@@ -68,12 +81,14 @@ function checkCloudinaryConfiguration() {
         !CLOUDINARY_API_KEY ||
         !CLOUDINARY_API_SECRET
     ) {
-        throw new Error(
-            "Configuração Cloudinary incompleta."
+        const error = new Error(
+            "Configuração Cloudinary incompleta no servidor."
         );
+
+        error.statusCode = 500;
+        throw error;
     }
 }
-
 
 // ======================================================
 // 12.4 — API ADMIN CLOUDINARY
@@ -116,20 +131,20 @@ async function cloudinaryAdminRequest(path, options = {}) {
 
         console.error(
             "[TOMA][CLOUDINARY_ADMIN]",
+            response.status,
             result
         );
 
         throw new Error(
-            "Não foi possível verificar os documentos no Cloudinary."
+            "Não foi possível verificar um documento no Cloudinary."
         );
     }
 
     return result;
 }
 
-
 // ======================================================
-// 12.5 — VALIDATION DES INFORMATIONS
+// 12.5 — VALIDAÇÃO DOS DADOS DA CANDIDATURA
 // ======================================================
 
 function validateRegistrationData(data, uid, decodedToken) {
@@ -195,6 +210,22 @@ function validateRegistrationData(data, uid, decodedToken) {
         );
     }
 
+    if (
+        data.personal.fullName.length > 150 ||
+        data.personal.phone.length > 40 ||
+        data.personal.nif.length > 40 ||
+        data.commercial.shopName.length > 150 ||
+        data.commercial.shopCategory.length > 100 ||
+        data.commercial.shopDescription.length > 2000 ||
+        data.location.province.length > 100 ||
+        data.location.city.length > 100 ||
+        data.location.address.length > 500
+    ) {
+        throw new Error(
+            "Um ou mais campos excedem o tamanho permitido."
+        );
+    }
+
     if (data.merchantType === "official") {
 
         if (
@@ -217,7 +248,6 @@ function validateRegistrationData(data, uid, decodedToken) {
     }
 }
 
-
 // ======================================================
 // 12.6 — VERIFICAR UM DOCUMENTO CLOUDINARY
 // ======================================================
@@ -227,6 +257,10 @@ async function verifyCloudinaryDocument(
     documentType,
     document
 ) {
+
+    if (!ALLOWED_DOCUMENTS.includes(documentType)) {
+        throw new Error("Tipo de documento não permitido.");
+    }
 
     if (!document || typeof document !== "object") {
         throw new Error(
@@ -256,15 +290,27 @@ async function verifyCloudinaryDocument(
         );
     }
 
-    // Rechercher le fichier réel dans Cloudinary.
+    // O tipo de recurso é escolhido com base no envio.
+    // PDF = raw
+    // JPG/PNG = image
+
+    const resourceType = document.resourceType;
+
+    if (!["image", "raw"].includes(resourceType)) {
+        throw new Error(
+            `Tipo de ficheiro inválido: ${documentType}.`
+        );
+    }
 
     const resourcePath =
-        "resources/image/upload/" +
+        `resources/${resourceType}/upload/` +
         encodeURIComponent(publicId);
 
     const asset = await cloudinaryAdminRequest(
         resourcePath
     );
+
+    // Verificar a identidade do recurso.
 
     if (
         asset.public_id !== publicId ||
@@ -277,7 +323,7 @@ async function verifyCloudinaryDocument(
 
     if (
         asset.type !== "upload" ||
-        asset.resource_type !== "image"
+        asset.resource_type !== resourceType
     ) {
         throw new Error(
             `Tipo de armazenamento inválido: ${documentType}.`
@@ -291,6 +337,21 @@ async function verifyCloudinaryDocument(
     if (!ALLOWED_FORMATS.includes(format)) {
         throw new Error(
             `Formato não permitido: ${documentType}.`
+        );
+    }
+
+    // PDF deve ser raw.
+    // Imagens devem ser image.
+
+    if (
+        (format === "pdf" && resourceType !== "raw") ||
+        (
+            ["jpg", "jpeg", "png"].includes(format) &&
+            resourceType !== "image"
+        )
+    ) {
+        throw new Error(
+            `Formato incompatível com o armazenamento: ${documentType}.`
         );
     }
 
@@ -313,6 +374,10 @@ async function verifyCloudinaryDocument(
         );
     }
 
+    // Não confiar no UID enviado pelo navegador.
+    // A propriedade dos documentos ainda deverá ser
+    // garantida através do fluxo de upload assinado.
+
     return {
 
         publicId: asset.public_id,
@@ -325,21 +390,24 @@ async function verifyCloudinaryDocument(
 
         deliveryType: asset.type,
 
-        format: format,
+        format,
 
         bytes: asset.bytes,
 
         secureUrl: asset.secure_url,
 
         originalName: String(
-            document.originalName || ""
+            document.originalFilename || ""
         ).slice(0, 200),
 
-        verified: true
+        uploadedBy: uid,
+
+        verified: true,
+
+        verifiedAt: new Date()
 
     };
 }
-
 
 // ======================================================
 // 12.7 — VERIFICAR OS QUATRO DOCUMENTOS
@@ -368,77 +436,32 @@ async function verifyAllDocuments(uid, documents) {
     return verifiedDocuments;
 }
 
-
 // ======================================================
-// 12.8 — SUPPRESSION DES DOCUMENTS
+// 12.8 — LIMPEZA DESATIVADA POR SEGURANÇA
 // ======================================================
 
-async function deleteCloudinaryDocuments(uid, publicIds) {
+async function deleteCloudinaryDocuments() {
 
-    if (!Array.isArray(publicIds)) {
-        throw new Error(
-            "Lista de documentos inválida."
-        );
-    }
+    // A versão anterior aceitava publicIds enviados
+    // pelo navegador sem comprovar a propriedade.
+    //
+    // Isso poderia permitir a eliminação de ficheiros
+    // pertencentes a outros utilizadores.
+    //
+    // A limpeza será reativada quando existir um
+    // registo seguro de propriedade dos documentos.
 
-    if (publicIds.length > 4) {
-        throw new Error(
-            "Número de documentos inválido."
-        );
-    }
-
-    const validPublicIds = [];
-
-    for (const publicId of publicIds) {
-
-        if (
-            typeof publicId !== "string" ||
-            !publicId.trim() ||
-            publicId.length > 500
-        ) {
-            throw new Error(
-                "Identificador de documento inválido."
-            );
-        }
-
-        validPublicIds.push(publicId);
-    }
-
-    if (validPublicIds.length === 0) {
-        return {
-            deleted: 0
-        };
-    }
-
-    const params = new URLSearchParams();
-
-    for (const publicId of validPublicIds) {
-        params.append("public_ids[]", publicId);
-    }
-
-    params.append("invalidate", "true");
-
-    const response = await cloudinaryAdminRequest(
-        "resources/image/upload?" + params.toString(),
-        {
-            method: "DELETE"
-        }
+    const error = new Error(
+        "Limpeza temporariamente indisponível por motivos de segurança."
     );
 
-    const deletedCount = Object.values(
-        response.deleted || {}
-    ).filter(
-        status => status === "deleted"
-    ).length;
+    error.statusCode = 403;
 
-    return {
-        deleted: deletedCount
-    };
+    throw error;
 }
 
-
 // ======================================================
-// 12.9 — ENREGISTRER LA CANDIDATURE
+// 12.9 — REGISTAR A CANDIDATURA
 // ======================================================
 
 async function finalizeMerchantApplication(
@@ -479,7 +502,9 @@ async function finalizeMerchantApplication(
         commercial: registrationData.commercial,
 
         officialBusiness:
-            registrationData.officialBusiness || null,
+            registrationData.merchantType === "official"
+                ? registrationData.officialBusiness
+                : null,
 
         location: registrationData.location,
 
@@ -528,8 +553,7 @@ async function finalizeMerchantApplication(
                         existingSnapshot.data().status;
 
                     if (
-                        ["pending", "under_review", "approved"]
-                            .includes(existingStatus)
+                        ACTIVE_STATUSES.includes(existingStatus)
                     ) {
                         throw new Error(
                             "Já existe uma candidatura ativa para esta conta."
@@ -559,7 +583,6 @@ async function finalizeMerchantApplication(
         status: "pending"
     };
 }
-
 
 // ======================================================
 // 12.10 — ENDPOINT PRINCIPAL
@@ -593,11 +616,15 @@ export default async function handler(req, res) {
 
         const body = req.body;
 
-        if (!body || typeof body !== "object") {
+        if (
+            !body ||
+            typeof body !== "object" ||
+            Array.isArray(body)
+        ) {
             throw new Error("Pedido inválido.");
         }
 
-        // FINALISATION
+        // FINALIZAR CANDIDATURA
 
         if (body.action === "finalize") {
 
@@ -609,31 +636,29 @@ export default async function handler(req, res) {
                 );
 
             return res.status(201).json({
+
                 success: true,
+
                 message:
                     "Candidatura submetida com sucesso.",
+
                 applicationId: result.applicationId,
+
                 status: result.status,
+
                 documentsUploaded: 4
+
             });
         }
 
-        // NETTOYAGE
+        // LIMPEZA — DESATIVADA
 
         if (body.action === "cleanup") {
 
-            const result =
-                await deleteCloudinaryDocuments(
-                    uid,
-                    body.publicIds
-                );
-
-            return res.status(200).json({
-                success: true,
-                message:
-                    "Limpeza dos documentos concluída.",
-                deleted: result.deleted
-            });
+            await deleteCloudinaryDocuments(
+                uid,
+                body.publicIds
+            );
         }
 
         return res.status(400).json({
@@ -653,17 +678,18 @@ export default async function handler(req, res) {
             "Erro ao processar a candidatura.";
 
         const statusCode =
-            message.includes("Autenticação")
-                ? 401
-                : 400;
+            error.statusCode ||
+            400;
 
         return res.status(statusCode).json({
+
             success: false,
+
             message
+
         });
     }
 }
-
 
 // ======================================================
 // FIM DO BLOC 12
