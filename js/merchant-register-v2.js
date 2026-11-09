@@ -982,6 +982,7 @@ alert(
 // ======================================================
 // TOMA — INSCRIPTION MARCHAND V3
 // BLOC 5 — CRÉATION DU COMPTE FIREBASE AUTH
+// VERSION AVEC DIAGNOSTIC
 // ======================================================
 
 // ------------------------------------------------------
@@ -1003,6 +1004,7 @@ function getTomaMerchantAccountData() {
 function getTomaFirebaseAuthError(error) {
 
     const errorMessages = {
+
         "auth/email-already-in-use":
             "Este endereço de email já está registado.",
 
@@ -1019,11 +1021,23 @@ function getTomaFirebaseAuthError(error) {
             "Demasiadas tentativas. Tente novamente mais tarde.",
 
         "auth/operation-not-allowed":
-            "O registo por email e palavra-passe não está ativado."
+            "O registo por email e palavra-passe não está ativado no Firebase.",
+
+        "auth/unauthorized-domain":
+            "Este domínio não está autorizado no Firebase.",
+
+        "auth/invalid-api-key":
+            "A chave API do Firebase não é válida.",
+
+        "auth/app-not-authorized":
+            "Esta aplicação não está autorizada a utilizar o Firebase.",
+
+        "auth/configuration-not-found":
+            "A configuração de autenticação Firebase não foi encontrada."
     };
 
     return errorMessages[error.code] ||
-        "Não foi possível criar a conta. Tente novamente.";
+        "Não foi possível criar a conta. Verifique a configuração Firebase.";
 }
 
 // ------------------------------------------------------
@@ -1032,15 +1046,34 @@ function getTomaFirebaseAuthError(error) {
 
 async function createTomaMerchantAccount() {
 
-    // Vérifier toutes les informations avant la création
-    const isFormValid =
-        window.TOMA_MERCHANT_REGISTER.validateCompleteForm();
+    const validationFunction =
+        window.TOMA_MERCHANT_REGISTER.validateCompleteForm;
+
+    if (typeof validationFunction !== "function") {
+
+        showTomaRegistrationError(
+            "Erro interno: função de validação não encontrada."
+        );
+
+        return null;
+    }
+
+    const isFormValid = validationFunction();
 
     if (!isFormValid) {
         return null;
     }
 
     const accountData = getTomaMerchantAccountData();
+
+    if (!accountData.email || !accountData.password) {
+
+        showTomaRegistrationError(
+            "Preencha o email e a palavra-passe."
+        );
+
+        return null;
+    }
 
     try {
 
@@ -1053,7 +1086,7 @@ async function createTomaMerchantAccount() {
         const user = credential.user;
 
         if (!user || !user.uid) {
-            throw new Error("Firebase n'a pas retourné de UID.");
+            throw new Error("Firebase não retornou um UID válido.");
         }
 
         window.TOMA_MERCHANT_REGISTER.account = {
@@ -1065,10 +1098,22 @@ async function createTomaMerchantAccount() {
 
     } catch (error) {
 
-        console.error("TOMA — Erreur Firebase Auth :", error);
+        console.error("TOMA — Firebase Auth:", error);
+
+        const errorCode = error.code || "unknown-error";
+
+        const friendlyMessage = getTomaFirebaseAuthError(error);
 
         showTomaRegistrationError(
-            getTomaFirebaseAuthError(error)
+            friendlyMessage +
+            "\n\nCódigo técnico: " + errorCode
+        );
+
+        alert(
+            "TOMA — ERRO FIREBASE AUTH\n\n" +
+            friendlyMessage +
+            "\n\nCódigo: " + errorCode +
+            "\n\nVerifique este código antes de tentar novamente."
         );
 
         return null;
@@ -1080,6 +1125,7 @@ async function createTomaMerchantAccount() {
 // ------------------------------------------------------
 
 window.TOMA_MERCHANT_REGISTER.accountTools = {
+
     create: createTomaMerchantAccount,
 
     getAccount: () => {
@@ -1092,13 +1138,11 @@ window.TOMA_MERCHANT_REGISTER.accountTools = {
 // ------------------------------------------------------
 
 alert(
-    "TOMA — BLOC 5 VALIDÉ !\n\n" +
-    "Firebase Auth : OK\n" +
+    "TOMA — BLOC 5 CHARGÉ !\n\n" +
     "Préparation du compte : OK\n" +
-    "Création du compte : OK\n" +
-    "Récupération du UID : OK\n" +
-    "Gestion des erreurs : OK\n\n" +
-    "Aucun compte n'a été créé pendant ce test."
+    "Fonction de création : chargée\n" +
+    "Gestion des erreurs : activée\n\n" +
+    "Aucun compte n'a été créé pendant le chargement."
 );
 // ======================================================
 // TOMA — INSCRIPTION MARCHAND V3
