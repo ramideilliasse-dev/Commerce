@@ -2119,7 +2119,7 @@ function openMerchantApplication(applicationId) {
 
         alert(
             "TOMA — BLOCO 7\n\n" +
-            "❌ Não foi possível encontrar esta candidatura.\n\n" +
+            "❌ Candidatura não encontrada.\n\n" +
             "ID: " + applicationId
         );
 
@@ -2134,7 +2134,10 @@ function openMerchantApplication(applicationId) {
         return;
     }
 
-    if (!applicationModal) {
+    const modal =
+        document.getElementById("applicationModal");
+
+    if (!modal) {
 
         alert(
             "TOMA — BLOCO 7\n\n" +
@@ -2145,18 +2148,19 @@ function openMerchantApplication(applicationId) {
 
     }
 
-    applicationModal.classList.add("active");
+    // Ouvrir la fenêtre
 
-    applicationModal.setAttribute(
-        "aria-hidden",
-        "false"
-    );
+    modal.style.display = "flex";
+
+    modal.classList.add("active");
+
+    modal.setAttribute("aria-hidden", "false");
+
+    // Empêcher uniquement le défilement de l'arrière-plan
 
     document.body.style.overflow = "hidden";
 
-
 }
-
 
 // -----------------------------------------------------
 // 7.16 — FERMER LA FENÊTRE DU DOSSIER
@@ -2164,54 +2168,66 @@ function openMerchantApplication(applicationId) {
 
 function closeMerchantApplication() {
 
-    if (!applicationModal) {
+    const modal =
+        document.getElementById("applicationModal");
+
+    if (!modal) {
         return;
     }
 
-    applicationModal.classList.remove("active");
+    modal.classList.remove("active");
 
-    applicationModal.setAttribute(
-        "aria-hidden",
-        "true"
-    );
+    modal.style.display = "none";
+
+    modal.setAttribute("aria-hidden", "true");
 
     document.body.style.overflow = "";
 
 }
-
-
 // -----------------------------------------------------
 // 7.17 — INITIALISER LES ÉVÉNEMENTS
 // -----------------------------------------------------
 
 function initializeMerchantApplicationDetails() {
 
-    // Ouvrir une candidature
+   // Ouvrir une candidature
 
-    if (merchantApplicationsList) {
+if (merchantApplicationsList) {
 
-        merchantApplicationsList.addEventListener(
-            "click",
-            function(event) {
+    merchantApplicationsList.addEventListener(
+        "click",
+        function(event) {
 
-                const button = event.target.closest(
-                    ".viewApplicationButton"
+            const button = event.target.closest(
+                ".viewApplicationButton"
+            );
+
+            if (!button) {
+                return;
+            }
+
+            event.preventDefault();
+
+            const applicationId =
+                button.getAttribute("data-application-id");
+
+            if (!applicationId) {
+
+                alert(
+                    "TOMA — BLOCO 7\n\n" +
+                    "❌ ID da candidatura não encontrado."
                 );
 
-                if (!button) {
-                    return;
-                }
-
-                const applicationId =
-                    button.dataset.applicationId;
-
-                openMerchantApplication(applicationId);
+                return;
 
             }
-        );
 
-    }
+            openMerchantApplication(applicationId);
 
+        }
+    );
+
+}
 
     // Fermer avec le bouton
 
