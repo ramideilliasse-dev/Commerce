@@ -372,17 +372,19 @@ async function initializeAdminSecurity() {
 initializeAdminSecurity()
     .then((authorized) => {
 
-        if (authorized) {
+      if (authorized) {
 
-            alert(
-                "TOMA — BLOCO 2\n\n" +
-                "✅ Verificação concluída com sucesso!\n\n" +
-                "Administrador autenticado.\n" +
-                "Função: " + currentAdminRole + "\n\n" +
-                "Acesso autorizado à página de validação de comerciantes."
-            );
+    alert(
+        "TOMA — BLOCO 2\n\n" +
+        "✅ Verificação concluída com sucesso!\n\n" +
+        "Administrador autenticado.\n" +
+        "Função: " + currentAdminRole + "\n\n" +
+        "Acesso autorizado à página de validação de comerciantes."
+    );
 
-        } else {
+    await loadMerchantApplications();
+
+} else {
 
             alert(
                 "TOMA — BLOCO 2\n\n" +
@@ -397,4 +399,174 @@ initializeAdminSecurity()
 
 // -----------------------------------------------------
 // FIN DU BLOC 2
+// -----------------------------------------------------
+/* =====================================================
+   TOMA — MERCHANT APPROVAL
+   BLOC 3 : CHARGEMENT DES DEMANDES FIRESTORE
+===================================================== */
+
+
+// -----------------------------------------------------
+// 3.1 — CHARGER LES DEMANDES
+// -----------------------------------------------------
+
+async function loadMerchantApplications() {
+
+    if (isLoadingApplications) {
+        return;
+    }
+
+    isLoadingApplications = true;
+
+    try {
+
+        // Vérifier que l'administrateur est autorisé
+
+        if (
+            !currentAdmin ||
+            !MERCHANT_APPROVAL_CONFIG.allowedRoles.includes(
+                currentAdminRole
+            )
+        ) {
+
+            throw new Error(
+                "Acesso administrativo não autorizado."
+            );
+
+        }
+
+        // Référence à la collection
+
+        const applicationsRef = collection(
+            db,
+            MERCHANT_APPROVAL_CONFIG.applicationsCollection
+        );
+
+        // Récupérer les demandes
+
+        const snapshot = await getDocs(
+            query(
+                applicationsRef,
+                limit(
+                    MERCHANT_APPROVAL_CONFIG.maxApplications
+                )
+            )
+        );
+
+        // Réinitialiser le tableau
+
+        merchantApplications = [];
+
+        // Parcourir les documents
+
+        snapshot.forEach((applicationDoc) => {
+
+            const applicationData = applicationDoc.data();
+
+            merchantApplications.push({
+
+                id: applicationDoc.id,
+
+                ...applicationData
+
+            });
+
+        });
+
+
+        // -------------------------------------------------
+        // 3.2 — TRIER LES DEMANDES PAR DATE
+        // -------------------------------------------------
+
+        merchantApplications.sort((a, b) => {
+
+            const dateA = a.createdAt?.toMillis
+                ? a.createdAt.toMillis()
+                : 0;
+
+            const dateB = b.createdAt?.toMillis
+                ? b.createdAt.toMillis()
+                : 0;
+
+            return dateB - dateA;
+
+        });
+
+
+        // -------------------------------------------------
+        // 3.3 — PRÉPARER LES DEMANDES FILTRÉES
+        // -------------------------------------------------
+
+        filteredApplications = [
+            ...merchantApplications
+        ];
+
+
+        // -------------------------------------------------
+        // 3.4 — DIAGNOSTIC DU CHARGEMENT
+        // -------------------------------------------------
+
+        console.log(
+            "TOMA — Merchant applications:",
+            merchantApplications
+        );
+
+        console.log(
+            "TOMA — Nombre de demandes :",
+            merchantApplications.length
+        );
+
+
+        // -------------------------------------------------
+        // 3.5 — ALERTE DE FIN
+        // -------------------------------------------------
+
+        alert(
+
+            "TOMA — BLOCO 3\n\n" +
+
+            "✅ Carregamento concluído com sucesso!\n\n" +
+
+            "Coleção: merchantApplications\n" +
+
+            "Pedidos encontrados: " +
+            merchantApplications.length +
+
+            "\n\nOs pedidos foram carregados do Firebase."
+
+        );
+
+        return merchantApplications;
+
+
+    } catch (error) {
+
+        console.error(
+            "TOMA — Erro ao carregar pedidos:",
+            error
+        );
+
+        alert(
+
+            "TOMA — ERRO NO BLOCO 3\n\n" +
+
+            "Não foi possível carregar os pedidos.\n\n" +
+
+            "Detalhes: " + error.message
+
+        );
+
+        return [];
+
+    } finally {
+
+        isLoadingApplications = false;
+
+    }
+
+}
+
+
+// -----------------------------------------------------
+// FIN DU BLOC 3
 // -----------------------------------------------------
