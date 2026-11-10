@@ -1065,7 +1065,7 @@ function calculateMerchantStatistics() {
 
 
 // -----------------------------------------------------
-// 5.2 — METTRE À JOUR LES COMPTEURS HTML
+// 5.2 — METTRE À JOUR TOUS LES COMPTEURS
 // -----------------------------------------------------
 
 function updateMerchantStatistics() {
@@ -1073,7 +1073,9 @@ function updateMerchantStatistics() {
     const statistics = calculateMerchantStatistics();
 
 
-    // Total
+    // -----------------------------------------
+    // COMPTEURS DES CARTES STATISTIQUES
+    // -----------------------------------------
 
     const totalElement =
         document.getElementById("totalCount");
@@ -1083,8 +1085,6 @@ function updateMerchantStatistics() {
     }
 
 
-    // En attente
-
     const pendingElement =
         document.getElementById("pendingCount");
 
@@ -1092,20 +1092,6 @@ function updateMerchantStatistics() {
         pendingElement.textContent = statistics.pending;
     }
 
-
-    // En cours d'analyse
-
-    const reviewElement =
-        document.querySelector(
-            '[data-status="under_review"] .filterCount'
-        );
-
-    if (reviewElement) {
-        reviewElement.textContent = statistics.underReview;
-    }
-
-
-    // Approuvées
 
     const approvedElement =
         document.getElementById("approvedCount");
@@ -1115,8 +1101,6 @@ function updateMerchantStatistics() {
     }
 
 
-    // Rejetées
-
     const rejectedElement =
         document.getElementById("rejectedCount");
 
@@ -1125,7 +1109,51 @@ function updateMerchantStatistics() {
     }
 
 
-    // Résultats affichés
+    // -----------------------------------------
+    // COMPTEURS DES FILTRES AU-DESSUS DES CARTES
+    // -----------------------------------------
+
+    const filterCounters = {
+
+        allFilterCount: statistics.total,
+
+        pendingFilterCount: statistics.pending,
+
+        reviewFilterCount: statistics.underReview,
+
+        approvedFilterCount: statistics.approved,
+
+        rejectedFilterCount: statistics.rejected
+
+    };
+
+
+    Object.entries(filterCounters).forEach(
+        ([elementId, count]) => {
+
+            const element =
+                document.getElementById(elementId);
+
+            if (element) {
+
+                element.textContent = count;
+
+            } else {
+
+                console.warn(
+                    "TOMA — Contador não encontrado:",
+                    elementId
+                );
+
+            }
+
+        }
+    );
+
+
+    // -----------------------------------------
+    // NOMBRE DE RÉSULTATS
+    // -----------------------------------------
 
     updateMerchantResultsCount();
 
@@ -1133,8 +1161,6 @@ function updateMerchantStatistics() {
     return statistics;
 
 }
-
-
 // -----------------------------------------------------
 // 5.3 — METTRE À JOUR LE NOMBRE DE RÉSULTATS
 // -----------------------------------------------------
