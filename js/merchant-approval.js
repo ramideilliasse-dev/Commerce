@@ -386,6 +386,8 @@ initializeAdminSecurity()
 
             await loadMerchantApplications();
 
+testMerchantApplicationDisplay();
+
         } else {
 
             alert(
@@ -601,4 +603,370 @@ async function loadMerchantApplications() {
 
 // -----------------------------------------------------
 // FIN DU BLOC 3
+// -----------------------------------------------------
+/* =====================================================
+   TOMA — MERCHANT APPROVAL
+   BLOC 4 : AFFICHAGE DES DEMANDES
+===================================================== */
+
+
+// -----------------------------------------------------
+// 4.1 — PROTECTION DU TEXTE HTML
+// -----------------------------------------------------
+
+function escapeMerchantHTML(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+// -----------------------------------------------------
+// 4.2 — RÉCUPÉRER UNE VALEUR SELON PLUSIEURS CHAMPS
+// -----------------------------------------------------
+
+function getApplicationValue(application, fields) {
+
+    const sources = [
+        application,
+        application.registrationData || {},
+        application.businessInfo || {},
+        application.personalInfo || {}
+    ];
+
+    for (const source of sources) {
+
+        for (const field of fields) {
+
+            const value = source[field];
+
+            if (
+                value !== undefined &&
+                value !== null &&
+                String(value).trim() !== ""
+            ) {
+
+                return value;
+
+            }
+
+        }
+
+    }
+
+    return "";
+
+}
+
+
+// -----------------------------------------------------
+// 4.3 — FORMATER LA DATE
+// -----------------------------------------------------
+
+function formatApplicationDate(dateValue) {
+
+    if (!dateValue) {
+        return "Data não disponível";
+    }
+
+    try {
+
+        const date = dateValue.toDate
+            ? dateValue.toDate()
+            : new Date(dateValue);
+
+        if (isNaN(date.getTime())) {
+            return "Data não disponível";
+        }
+
+        return date.toLocaleString("pt-PT", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+
+    } catch (error) {
+
+        return "Data não disponível";
+
+    }
+
+}
+
+
+// -----------------------------------------------------
+// 4.4 — TRADUIRE LE STATUT
+// -----------------------------------------------------
+
+function getApplicationStatus(status) {
+
+    const statuses = {
+
+        pending: {
+            label: "Pendente",
+            className: "status-pending"
+        },
+
+        under_review: {
+            label: "Em análise",
+            className: "status-review"
+        },
+
+        approved: {
+            label: "Aprovado",
+            className: "status-approved"
+        },
+
+        rejected: {
+            label: "Rejeitado",
+            className: "status-rejected"
+        }
+
+    };
+
+    return statuses[String(status || "pending").toLowerCase()]
+        || {
+            label: "Desconhecido",
+            className: "status-unknown"
+        };
+
+}
+
+
+// -----------------------------------------------------
+// 4.5 — CRÉER UNE CARTE DE DEMANDE
+// -----------------------------------------------------
+
+function createMerchantApplicationCard(application) {
+
+    const name = getApplicationValue(application, [
+        "shopName",
+        "storeName",
+        "businessName",
+        "merchantName",
+        "name"
+    ]) || "Comerciante sem nome";
+
+    const email = getApplicationValue(application, [
+        "email",
+        "userEmail",
+        "merchantEmail"
+    ]) || "Email não informado";
+
+    const phone = getApplicationValue(application, [
+        "phone",
+        "phoneNumber",
+        "whatsapp",
+        "merchantWhatsApp"
+    ]) || "Telefone não informado";
+
+    const province = getApplicationValue(application, [
+        "province",
+        "provincia"
+    ]);
+
+    const city = getApplicationValue(application, [
+        "city",
+        "cidade"
+    ]);
+
+    const location = [province, city]
+        .filter(Boolean)
+        .join(" — ") || "Localização não informada";
+
+    const status = getApplicationStatus(application.status);
+
+    const date = formatApplicationDate(
+        application.createdAt
+    );
+
+    const card = document.createElement("article");
+
+    card.className = "applicationCard";
+
+    card.dataset.applicationId = application.id;
+
+    card.innerHTML = `
+
+        <div class="applicationCardHeader">
+
+            <div class="applicationIdentity">
+
+                <div class="applicationAvatar">
+                    ${escapeMerchantHTML(name.charAt(0).toUpperCase())}
+                </div>
+
+                <div class="applicationIdentityInfo">
+
+                    <h3>
+                        ${escapeMerchantHTML(name)}
+                    </h3>
+
+                    <span class="applicationEmail">
+                        ${escapeMerchantHTML(email)}
+                    </span>
+
+                </div>
+
+            </div>
+
+            <span class="applicationStatus ${status.className}">
+                ${status.label}
+            </span>
+
+        </div>
+
+
+        <div class="applicationCardDetails">
+
+            <div class="applicationDetail">
+
+                <span>Telefone</span>
+
+                <strong>
+                    ${escapeMerchantHTML(phone)}
+                </strong>
+
+            </div>
+
+            <div class="applicationDetail">
+
+                <span>Localização</span>
+
+                <strong>
+                    ${escapeMerchantHTML(location)}
+                </strong>
+
+            </div>
+
+            <div class="applicationDetail">
+
+                <span>Data de candidatura</span>
+
+                <strong>
+                    ${escapeMerchantHTML(date)}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="applicationCardFooter">
+
+            <span class="applicationReference">
+                ID: ${escapeMerchantHTML(application.id)}
+            </span>
+
+            <button
+                type="button"
+                class="viewApplicationButton"
+                data-application-id="${escapeMerchantHTML(application.id)}"
+            >
+                Ver candidatura
+                <span aria-hidden="true">→</span>
+            </button>
+
+        </div>
+
+    `;
+
+    return card;
+
+}
+
+
+// -----------------------------------------------------
+// 4.6 — AFFICHER TOUTES LES DEMANDES
+// -----------------------------------------------------
+
+function renderMerchantApplications() {
+
+    if (!merchantApplicationsList) {
+
+        alert(
+            "TOMA — BLOCO 4\n\n" +
+            "❌ Elemento merchantApplicationsList não encontrado no HTML."
+        );
+
+        return;
+
+    }
+
+    merchantApplicationsList.innerHTML = "";
+
+    const applications = filteredApplications;
+
+    if (!applications.length) {
+
+        merchantApplicationsList.innerHTML = `
+
+            <div class="applicationsEmpty">
+
+                <div class="applicationsEmptyIcon">
+                    📭
+                </div>
+
+                <h3>Nenhuma candidatura encontrada</h3>
+
+                <p>
+                    Ainda não existem pedidos para apresentar.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    applications.forEach((application) => {
+
+        fragment.appendChild(
+            createMerchantApplicationCard(application)
+        );
+
+    });
+
+    merchantApplicationsList.appendChild(fragment);
+
+}
+
+
+// -----------------------------------------------------
+// 4.7 — ALERTE DE FIN DU BLOC 4
+// -----------------------------------------------------
+
+function testMerchantApplicationDisplay() {
+
+    renderMerchantApplications();
+
+    alert(
+
+        "TOMA — BLOCO 4\n\n" +
+
+        "✅ Exibição concluída com sucesso!\n\n" +
+
+        "Pedidos disponíveis: " +
+        filteredApplications.length +
+
+        "\n\nAs candidaturas foram preparadas para exibição."
+
+    );
+
+}
+
+
+// -----------------------------------------------------
+// FIN DU BLOC 4
 // -----------------------------------------------------
