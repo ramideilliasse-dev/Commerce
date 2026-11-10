@@ -1745,7 +1745,143 @@ const merchantSubmitButton = document.getElementById(
 );
 
 let isSubmittingTomaMerchant = false;
+/* ---------------------------------------------------------
+   8.0 — INTERFACE PREMIUM DE TRAITEMENT
+   --------------------------------------------------------- */
 
+function createTomaProcessingInterface() {
+
+    let overlay = document.getElementById(
+        "tomaProcessingOverlay"
+    );
+
+    if (overlay) return overlay;
+
+    overlay = document.createElement("div");
+
+    overlay.id = "tomaProcessingOverlay";
+    overlay.className = "tomaProcessingOverlay";
+
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-modal", "true");
+    overlay.setAttribute("aria-labelledby", "tomaProcessingTitle");
+
+    overlay.innerHTML = `
+        <div class="tomaProcessingCard">
+
+            <div class="tomaProcessingLogo">T</div>
+
+            <div class="tomaProcessingSpinner"
+                 id="tomaProcessingSpinner"></div>
+
+            <h2 class="tomaProcessingTitle"
+                id="tomaProcessingTitle">
+                A preparar a sua candidatura
+            </h2>
+
+            <p class="tomaProcessingDescription">
+                Estamos a processar os seus dados e documentos
+                de forma segura.
+            </p>
+
+            <div class="tomaProcessingProgress">
+
+                <div
+                    class="tomaProcessingProgressBar"
+                    id="tomaProcessingProgressBar">
+                </div>
+
+            </div>
+
+            <span
+                class="tomaProcessingPercentage"
+                id="tomaProcessingPercentage">
+                0%
+            </span>
+
+            <p
+                class="tomaProcessingStatus"
+                id="tomaProcessingStatus"
+                aria-live="polite">
+                A iniciar o processo...
+            </p>
+
+            <div class="tomaProcessingSecurity">
+                <span>✓ Ligação segura</span>
+                <br>
+                Toma — O comércio mais perto de si.
+            </div>
+
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    return overlay;
+}
+
+
+// Mostrar l'interface
+
+function showTomaProcessingInterface() {
+
+    const overlay = createTomaProcessingInterface();
+
+    overlay.classList.add("active");
+
+    overlay.setAttribute("aria-hidden", "false");
+
+    updateTomaProcessingInterface(
+        "A verificar os seus dados e documentos...",
+        0
+    );
+}
+
+
+// Actualiser le traitement
+
+function updateTomaProcessingInterface(message, percentage) {
+
+    const status = document.getElementById(
+        "tomaProcessingStatus"
+    );
+
+    const progress = document.getElementById(
+        "tomaProcessingProgressBar"
+    );
+
+    const percentageText = document.getElementById(
+        "tomaProcessingPercentage"
+    );
+
+    if (status) {
+        status.textContent = message;
+    }
+
+    if (progress) {
+        progress.style.width = percentage + "%";
+    }
+
+    if (percentageText) {
+        percentageText.textContent = percentage + "%";
+    }
+}
+
+
+// Masquer l'interface
+
+function hideTomaProcessingInterface() {
+
+    const overlay = document.getElementById(
+        "tomaProcessingOverlay"
+    );
+
+    if (!overlay) return;
+
+    overlay.classList.remove("active");
+
+    overlay.setAttribute("aria-hidden", "true");
+}
 
 /* ---------------------------------------------------------
    8.1 — MENSAGEM DE ESTADO
@@ -1755,20 +1891,35 @@ function showTomaSubmissionStatus(message, type = "info") {
 
     const messageElement = document.getElementById("formMessage");
 
-    if (!messageElement) {
-        alert(message);
-        return;
+    if (messageElement) {
+
+        messageElement.textContent = message;
+        messageElement.style.display = "block";
+
+        if (type === "success") {
+            messageElement.style.color = "#15803d";
+        } else if (type === "error") {
+            messageElement.style.color = "#dc2626";
+        } else {
+            messageElement.style.color = "#2563eb";
+        }
     }
 
-    messageElement.textContent = message;
-    messageElement.style.display = "block";
+    if (
+        document.getElementById("tomaProcessingOverlay")
+            ?.classList.contains("active")
+    ) {
 
-    if (type === "success") {
-        messageElement.style.color = "#15803d";
-    } else if (type === "error") {
-        messageElement.style.color = "#dc2626";
-    } else {
-        messageElement.style.color = "#2563eb";
+        const currentProgress = Number(
+            document.getElementById("tomaProcessingPercentage")
+                ?.textContent
+                ?.replace("%", "")
+        ) || 0;
+
+        updateTomaProcessingInterface(
+            message,
+            currentProgress
+        );
     }
 }
 
@@ -1781,13 +1932,30 @@ function updateTomaSubmissionProgress(percentage) {
 
     const app = window.TOMA_MERCHANT_REGISTER;
 
+    const safePercentage = Math.max(
+        0,
+        Math.min(100, Number(percentage) || 0)
+    );
+
     if (app && typeof app.updateProgress === "function") {
-        app.updateProgress(percentage);
+        app.updateProgress(safePercentage);
     }
 
+    if (
+        document.getElementById("tomaProcessingOverlay")
+            ?.classList.contains("active")
+    ) {
+
+        const currentStatus =
+            document.getElementById("tomaProcessingStatus")
+                ?.textContent || "Processamento em curso...";
+
+        updateTomaProcessingInterface(
+            currentStatus,
+            safePercentage
+        );
+    }
 }
-
-
 /* ---------------------------------------------------------
    8.3 — PROCESSAMENTO DO REGISTO
    --------------------------------------------------------- */
@@ -1842,12 +2010,16 @@ async function submitTomaMerchantRegistration(event) {
 
         if (isValid !== true) {
 
-            throw new Error(
-                "Verifique todos os campos obrigatórios, os quatro documentos e as condições."
-            );
-        }
+    throw new Error(
+        "Verifique todos os campos obrigatórios, os quatro documentos e as condições."
+    );
+}
 
-        updateTomaSubmissionProgress(10);
+// Mostrar a interface premium após a validação.
+
+showTomaProcessingInterface();
+
+updateTomaSubmissionProgress(10);
 
 
         /* -------------------------------------------------
@@ -2112,7 +2284,21 @@ const accountResult = await accountTools.create();
         }
 
         updateTomaSubmissionProgress(100);
+updateTomaProcessingInterface(
+    "Candidatura recebida com sucesso!",
+    100
+);
 
+const processingSpinner = document.getElementById(
+    "tomaProcessingSpinner"
+);
+
+if (processingSpinner) {
+    processingSpinner.style.display = "none";
+}
+
+document.getElementById("tomaProcessingTitle").textContent =
+    "Candidatura recebida!";
 
         /* -------------------------------------------------
            ETAPA 9 — CONFIRMAÇÃO FINAL
@@ -2145,7 +2331,7 @@ const accountResult = await accountTools.create();
             "TOMA — ERRO NO REGISTO:",
             error
         );
-
+hideTomaProcessingInterface();
         showTomaSubmissionStatus(
             error.message ||
             "Ocorreu um erro durante o registo.",
