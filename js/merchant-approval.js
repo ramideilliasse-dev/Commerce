@@ -389,6 +389,8 @@ initializeAdminSecurity()
 testMerchantApplicationDisplay();
 
 testMerchantStatistics();
+
+initializeMerchantFilters();
         } else {
 
             alert(
@@ -1215,4 +1217,415 @@ function testMerchantStatistics() {
 
 // -----------------------------------------------------
 // FIN DU BLOC 5
+// -----------------------------------------------------
+/* =====================================================
+   TOMA — MERCHANT APPROVAL
+   BLOC 6 : RECHERCHE ET FILTRES
+===================================================== */
+
+
+// -----------------------------------------------------
+// 6.1 — VARIABLES DU FILTRAGE
+// -----------------------------------------------------
+
+let activeMerchantStatus = "all";
+
+let merchantFiltersInitialized = false;
+
+
+// -----------------------------------------------------
+// 6.2 — RECHERCHER UNE CANDIDATURE
+// -----------------------------------------------------
+
+function searchMerchantApplication(application, searchTerm) {
+
+    if (!searchTerm) {
+        return true;
+    }
+
+    const personal = application.personal || {};
+    const commercial = application.commercial || {};
+    const location = application.location || {};
+
+    const searchableValues = [
+
+        personal.fullName,
+        personal.email,
+        personal.phone,
+        personal.nif,
+
+        commercial.shopName,
+        commercial.shopCategory,
+        commercial.shopDescription,
+
+        location.province,
+        location.city,
+        location.address,
+
+        application.id,
+        application.userId
+
+    ];
+
+    const searchableText = searchableValues
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+    return searchableText.includes(searchTerm);
+
+}
+
+
+// -----------------------------------------------------
+// 6.3 — FILTRER PAR STATUT
+// -----------------------------------------------------
+
+function matchesMerchantStatus(application) {
+
+    if (activeMerchantStatus === "all") {
+        return true;
+    }
+
+    const applicationStatus = String(
+        application.status || "pending"
+    ).toLowerCase();
+
+    return applicationStatus === activeMerchantStatus;
+
+}
+
+
+// -----------------------------------------------------
+// 6.4 — FILTRER PAR TYPE DE COMMERÇANT
+// -----------------------------------------------------
+
+function matchesMerchantType(application, selectedType) {
+
+    if (
+        !selectedType ||
+        selectedType === "all"
+    ) {
+        return true;
+    }
+
+    return application.merchantType === selectedType;
+
+}
+
+
+// -----------------------------------------------------
+// 6.5 — FILTRER PAR DATE
+// -----------------------------------------------------
+
+function matchesMerchantDate(application, selectedDate) {
+
+    if (
+        !selectedDate ||
+        selectedDate === "all"
+    ) {
+        return true;
+    }
+
+    const dateValue = application.createdAt;
+
+    if (!dateValue) {
+        return false;
+    }
+
+    const applicationDate = dateValue.toDate
+        ? dateValue.toDate()
+        : new Date(dateValue);
+
+    if (isNaN(applicationDate.getTime())) {
+        return false;
+    }
+
+    const now = new Date();
+
+    const startOfToday = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate()
+    );
+
+    const startOfApplicationDay = new Date(
+        applicationDate.getFullYear(),
+        applicationDate.getMonth(),
+        applicationDate.getDate()
+    );
+
+    const difference = now.getTime() - applicationDate.getTime();
+
+    const oneDay = 24 * 60 * 60 * 1000;
+
+    switch (selectedDate) {
+
+        case "today":
+            return startOfApplicationDay.getTime()
+                === startOfToday.getTime();
+
+        case "7days":
+            return difference >= 0 && difference <= 7 * oneDay;
+
+        case "30days":
+            return difference >= 0 && difference <= 30 * oneDay;
+
+        case "month":
+            return (
+                applicationDate.getMonth() === now.getMonth() &&
+                applicationDate.getFullYear() === now.getFullYear()
+            );
+
+        default:
+            return true;
+
+    }
+
+}
+
+
+// -----------------------------------------------------
+// 6.6 — APPLIQUER TOUS LES FILTRES
+// -----------------------------------------------------
+
+function applyMerchantFilters() {
+
+    const searchInput =
+        document.getElementById("searchInput");
+
+    const dateFilter =
+        document.getElementById("dateFilter");
+
+    const merchantTypeFilter =
+        document.getElementById("merchantTypeFilter");
+
+
+    const searchTerm = searchInput
+        ? searchInput.value.trim().toLowerCase()
+        : "";
+
+    const selectedDate = dateFilter
+        ? dateFilter.value
+        : "all";
+
+    const selectedType = merchantTypeFilter
+        ? merchantTypeFilter.value
+        : "all";
+
+
+    filteredApplications = merchantApplications.filter(
+        application => {
+
+            return (
+
+                searchMerchantApplication(
+                    application,
+                    searchTerm
+                )
+
+                &&
+
+                matchesMerchantStatus(application)
+
+                &&
+
+                matchesMerchantType(
+                    application,
+                    selectedType
+                )
+
+                &&
+
+                matchesMerchantDate(
+                    application,
+                    selectedDate
+                )
+
+            );
+
+        }
+    );
+
+
+    // Actualiser les cartes
+
+    renderMerchantApplications();
+
+
+    // Actualiser le nombre de résultats
+
+    updateMerchantResultsCount();
+
+
+    return filteredApplications;
+
+}
+
+
+// -----------------------------------------------------
+// 6.7 — CHANGER LE FILTRE DE STATUT
+// -----------------------------------------------------
+
+function handleMerchantStatusFilter(event) {
+
+    const button = event.target.closest("[data-status]");
+
+    if (!button) {
+        return;
+    }
+
+    const status = button.dataset.status;
+
+    const allowedStatuses = [
+        "all",
+        "pending",
+        "under_review",
+        "approved",
+        "rejected"
+    ];
+
+    if (!allowedStatuses.includes(status)) {
+        return;
+    }
+
+    activeMerchantStatus = status;
+
+
+    // Actualiser le bouton actif
+
+    document
+        .querySelectorAll("#statusFilters [data-status]")
+        .forEach(filterButton => {
+
+            filterButton.classList.toggle(
+                "active",
+                filterButton === button
+            );
+
+            filterButton.setAttribute(
+                "aria-pressed",
+                filterButton === button ? "true" : "false"
+            );
+
+        });
+
+
+    applyMerchantFilters();
+
+}
+
+
+// -----------------------------------------------------
+// 6.8 — INITIALISER LES ÉVÉNEMENTS
+// -----------------------------------------------------
+
+function initializeMerchantFilters() {
+
+    if (merchantFiltersInitialized) {
+        return;
+    }
+
+    const searchInput =
+        document.getElementById("searchInput");
+
+    const dateFilter =
+        document.getElementById("dateFilter");
+
+    const merchantTypeFilter =
+        document.getElementById("merchantTypeFilter");
+
+    const statusFilters =
+        document.getElementById("statusFilters");
+
+
+    if (!statusFilters) {
+
+        alert(
+            "TOMA — BLOCO 6\n\n" +
+            "❌ Elemento statusFilters não encontrado no HTML."
+        );
+
+        return;
+
+    }
+
+
+    // Recherche en temps réel
+
+    if (searchInput) {
+
+        searchInput.addEventListener(
+            "input",
+            applyMerchantFilters
+        );
+
+    }
+
+
+    // Filtre par date
+
+    if (dateFilter) {
+
+        dateFilter.addEventListener(
+            "change",
+            applyMerchantFilters
+        );
+
+    }
+
+
+    // Filtre par type de commerçant
+
+    if (merchantTypeFilter) {
+
+        merchantTypeFilter.addEventListener(
+            "change",
+            applyMerchantFilters
+        );
+
+    }
+
+
+    // Filtres par statut
+
+    statusFilters.addEventListener(
+        "click",
+        handleMerchantStatusFilter
+    );
+
+
+    merchantFiltersInitialized = true;
+
+
+    // Affichage initial
+
+    applyMerchantFilters();
+
+
+    // Alerte de confirmation
+
+    alert(
+
+        "TOMA — BLOCO 6\n\n" +
+
+        "✅ Pesquisa e filtros ativados!\n\n" +
+
+        "Pesquisa: OK\n" +
+
+        "Filtro por data: OK\n" +
+
+        "Filtro por tipo: OK\n" +
+
+        "Filtro por estado: OK\n\n" +
+
+        "Todos os filtros estão prontos."
+
+    );
+
+}
+
+
+// -----------------------------------------------------
+// FIN DU BLOC 6
 // -----------------------------------------------------
