@@ -370,21 +370,23 @@ async function initializeAdminSecurity() {
 // -----------------------------------------------------
 
 initializeAdminSecurity()
-    .then((authorized) => {
+    .then(async (authorized) => {
 
-      if (authorized) {
+        if (authorized) {
 
-    alert(
-        "TOMA — BLOCO 2\n\n" +
-        "✅ Verificação concluída com sucesso!\n\n" +
-        "Administrador autenticado.\n" +
-        "Função: " + currentAdminRole + "\n\n" +
-        "Acesso autorizado à página de validação de comerciantes."
-    );
+            alert(
+                "TOMA — BLOCO 2\n\n" +
+                "✅ Verificação concluída com sucesso!\n\n" +
+                "Administrador autenticado.\n" +
+                "Função: " + currentAdminRole + "\n\n" +
+                "Acesso autorizado à página de validação de comerciantes."
+            );
 
-    await loadMerchantApplications();
+            // Lancer le chargement du BLOC 3
 
-}else {
+            await loadMerchantApplications();
+
+        } else {
 
             alert(
                 "TOMA — BLOCO 2\n\n" +
@@ -394,8 +396,23 @@ initializeAdminSecurity()
 
         }
 
+    })
+    .catch((error) => {
+
+        console.error("TOMA — Erro na inicialização:", error);
+
+        alert(
+            "TOMA — ERRO DE INICIALIZAÇÃO\n\n" +
+            "Não foi possível iniciar a página.\n\n" +
+            error.message
+        );
+
     });
 
+
+// -----------------------------------------------------
+// FIN DU BLOC 2
+// -----------------------------------------------------
 
 // -----------------------------------------------------
 // FIN DU BLOC 2
@@ -420,7 +437,7 @@ async function loadMerchantApplications() {
 
     try {
 
-        // Vérifier que l'administrateur est autorisé
+        // Vérifier les autorisations
 
         if (
             !currentAdmin ||
@@ -435,29 +452,41 @@ async function loadMerchantApplications() {
 
         }
 
-        // Référence à la collection
+
+        // -------------------------------------------------
+        // 3.2 — RÉFÉRENCE FIRESTORE
+        // -------------------------------------------------
 
         const applicationsRef = collection(
             db,
             MERCHANT_APPROVAL_CONFIG.applicationsCollection
         );
 
-        // Récupérer les demandes
 
-        const snapshot = await getDocs(
-            query(
-                applicationsRef,
-                limit(
-                    MERCHANT_APPROVAL_CONFIG.maxApplications
-                )
-            )
+        // -------------------------------------------------
+        // 3.3 — RÉCUPÉRER LES DEMANDES
+        // -------------------------------------------------
+
+        const applicationsQuery = query(
+            applicationsRef,
+            limit(MERCHANT_APPROVAL_CONFIG.maxApplications)
         );
 
-        // Réinitialiser le tableau
+        const snapshot = await getDocs(applicationsQuery);
+
+
+        // -------------------------------------------------
+        // 3.4 — RÉINITIALISER LES DONNÉES
+        // -------------------------------------------------
 
         merchantApplications = [];
 
-        // Parcourir les documents
+        filteredApplications = [];
+
+
+        // -------------------------------------------------
+        // 3.5 — PARCOURIR LES DEMANDES
+        // -------------------------------------------------
 
         snapshot.forEach((applicationDoc) => {
 
@@ -475,7 +504,7 @@ async function loadMerchantApplications() {
 
 
         // -------------------------------------------------
-        // 3.2 — TRIER LES DEMANDES PAR DATE
+        // 3.6 — TRIER LES DEMANDES
         // -------------------------------------------------
 
         merchantApplications.sort((a, b) => {
@@ -494,7 +523,7 @@ async function loadMerchantApplications() {
 
 
         // -------------------------------------------------
-        // 3.3 — PRÉPARER LES DEMANDES FILTRÉES
+        // 3.7 — PRÉPARER LES DEMANDES FILTRÉES
         // -------------------------------------------------
 
         filteredApplications = [
@@ -503,38 +532,37 @@ async function loadMerchantApplications() {
 
 
         // -------------------------------------------------
-        // 3.4 — DIAGNOSTIC DU CHARGEMENT
+        // 3.8 — DIAGNOSTIC
         // -------------------------------------------------
 
         console.log(
-            "TOMA — Merchant applications:",
+            "TOMA — Demandas carregadas:",
             merchantApplications
         );
 
         console.log(
-            "TOMA — Nombre de demandes :",
+            "TOMA — Total de pedidos:",
             merchantApplications.length
         );
 
 
         // -------------------------------------------------
-        // 3.5 — ALERTE DE FIN
+        // 3.9 — ALERTE DE RÉUSSITE
         // -------------------------------------------------
 
         alert(
-
             "TOMA — BLOCO 3\n\n" +
 
             "✅ Carregamento concluído com sucesso!\n\n" +
 
-            "Coleção: merchantApplications\n" +
+            "Coleção: merchantApplications\n\n" +
 
             "Pedidos encontrados: " +
             merchantApplications.length +
 
             "\n\nOs pedidos foram carregados do Firebase."
-
         );
+
 
         return merchantApplications;
 
@@ -546,17 +574,21 @@ async function loadMerchantApplications() {
             error
         );
 
-        alert(
 
+        // -------------------------------------------------
+        // 3.10 — ALERTE D'ERREUR
+        // -------------------------------------------------
+
+        alert(
             "TOMA — ERRO NO BLOCO 3\n\n" +
 
-            "Não foi possível carregar os pedidos.\n\n" +
+            "❌ Não foi possível carregar os pedidos.\n\n" +
 
             "Detalhes: " + error.message
-
         );
 
         return [];
+
 
     } finally {
 
