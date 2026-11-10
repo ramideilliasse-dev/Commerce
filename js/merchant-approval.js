@@ -391,6 +391,8 @@ testMerchantApplicationDisplay();
 testMerchantStatistics();
 
 initializeMerchantFilters();
+
+initializeMerchantApplicationDetails();
         } else {
 
             alert(
@@ -1628,4 +1630,662 @@ function initializeMerchantFilters() {
 
 // -----------------------------------------------------
 // FIN DU BLOC 6
+// -----------------------------------------------------
+/* =====================================================
+   TOMA — MERCHANT APPROVAL
+   BLOC 7 : AFFICHAGE DU DOSSIER DÉTAILLÉ
+===================================================== */
+
+
+// -----------------------------------------------------
+// 7.1 — RÉCUPÉRER UN ÉLÉMENT HTML
+// -----------------------------------------------------
+
+function getApprovalElement(id) {
+
+    return document.getElementById(id);
+
+}
+
+
+// -----------------------------------------------------
+// 7.2 — AFFICHER UNE VALEUR DANS LE HTML
+// -----------------------------------------------------
+
+function setApprovalText(id, value) {
+
+    const element = getApprovalElement(id);
+
+    if (!element) {
+        return;
+    }
+
+    element.textContent =
+        value !== undefined &&
+        value !== null &&
+        String(value).trim() !== ""
+            ? String(value)
+            : "-";
+
+}
+
+
+// -----------------------------------------------------
+// 7.3 — RÉCUPÉRER UNE CANDIDATURE PAR SON ID
+// -----------------------------------------------------
+
+function findMerchantApplication(applicationId) {
+
+    return merchantApplications.find(application => {
+
+        return application.id === applicationId;
+
+    }) || null;
+
+}
+
+
+// -----------------------------------------------------
+// 7.4 — PRÉPARER LE STATUT
+// -----------------------------------------------------
+
+function updateApplicationModalStatus(status) {
+
+    const statusElement =
+        getApprovalElement("modalApplicationStatus");
+
+    if (!statusElement) {
+        return;
+    }
+
+    const statusInfo = getApplicationStatus(status);
+
+    statusElement.textContent = statusInfo.label;
+
+    statusElement.className =
+        "applicationStatus " + statusInfo.className;
+
+}
+
+
+// -----------------------------------------------------
+// 7.5 — AFFICHER LE TYPE DE COMMERÇANT
+// -----------------------------------------------------
+
+function updateApplicationModalType(application) {
+
+    const typeElement =
+        getApprovalElement("modalMerchantType");
+
+    if (!typeElement) {
+        return;
+    }
+
+    const type = application.merchantType === "official"
+        ? "Comerciante oficial"
+        : "Comerciante comum";
+
+    typeElement.textContent = type;
+
+}
+
+
+// -----------------------------------------------------
+// 7.6 — AFFICHER LE PROFIL DU COMMERÇANT
+// -----------------------------------------------------
+
+function renderMerchantProfile(application) {
+
+    const personal = application.personal || {};
+
+    const commercial = application.commercial || {};
+
+    const photoElement =
+        getApprovalElement("modalMerchantPhoto");
+
+    const name =
+        personal.fullName || "Nome não informado";
+
+    const shopName =
+        commercial.shopName || "Loja sem nome";
+
+    setApprovalText(
+        "modalMerchantName",
+        name
+    );
+
+    setApprovalText(
+        "modalShopName",
+        shopName
+    );
+
+    setApprovalText(
+        "modalApplicationId",
+        application.id
+    );
+
+    if (photoElement) {
+
+        const photo = personal.photoURL ||
+                     personal.photoUrl ||
+                     personal.photo ||
+                     application.photoURL ||
+                     "";
+
+        photoElement.src = photo || "images/default-avatar.png";
+
+        photoElement.onerror = function () {
+
+            this.onerror = null;
+
+            this.src = "images/default-avatar.png";
+
+        };
+
+    }
+
+    updateApplicationModalStatus(application.status);
+
+    updateApplicationModalType(application);
+
+}
+
+
+// -----------------------------------------------------
+// 7.7 — INFORMATIONS PERSONNELLES
+// -----------------------------------------------------
+
+function renderMerchantPersonalDetails(application) {
+
+    const personal = application.personal || {};
+
+    setApprovalText(
+        "detailFullName",
+        personal.fullName
+    );
+
+    setApprovalText(
+        "detailEmail",
+        personal.email
+    );
+
+    setApprovalText(
+        "detailPhone",
+        personal.phone
+    );
+
+    setApprovalText(
+        "detailWhatsapp",
+        personal.whatsapp
+    );
+
+    setApprovalText(
+        "detailNif",
+        personal.nif
+    );
+
+    setApprovalText(
+        "detailSubmittedAt",
+        formatApplicationDate(application.createdAt)
+    );
+
+}
+
+
+// -----------------------------------------------------
+// 7.8 — INFORMATIONS COMMERCIALES
+// -----------------------------------------------------
+
+function renderMerchantCommercialDetails(application) {
+
+    const commercial = application.commercial || {};
+
+    setApprovalText(
+        "detailShopName",
+        commercial.shopName
+    );
+
+    setApprovalText(
+        "detailCategory",
+        commercial.shopCategory
+    );
+
+    setApprovalText(
+        "detailShopDescription",
+        commercial.shopDescription
+    );
+
+}
+
+
+// -----------------------------------------------------
+// 7.9 — INFORMATIONS DE L'ENTREPRISE OFFICIELLE
+// -----------------------------------------------------
+
+function renderOfficialBusinessDetails(application) {
+
+    const commercial = application.commercial || {};
+
+    const officialSection =
+        getApprovalElement("officialBusinessSection");
+
+    const isOfficial =
+        application.merchantType === "official";
+
+    if (officialSection) {
+
+        officialSection.classList.toggle(
+            "hidden",
+            !isOfficial
+        );
+
+    }
+
+    if (!isOfficial) {
+        return;
+    }
+
+    setApprovalText(
+        "detailCompanyName",
+        commercial.companyName
+    );
+
+    setApprovalText(
+        "detailBrandName",
+        commercial.brandName
+    );
+
+    setApprovalText(
+        "detailOfficialDescription",
+        commercial.officialDescription ||
+        commercial.shopDescription
+    );
+
+}
+
+
+// -----------------------------------------------------
+// 7.10 — LOCALISATION
+// -----------------------------------------------------
+
+function renderMerchantLocationDetails(application) {
+
+    const location = application.location || {};
+
+    setApprovalText(
+        "detailProvince",
+        location.province
+    );
+
+    setApprovalText(
+        "detailCity",
+        location.city
+    );
+
+    setApprovalText(
+        "detailAddress",
+        location.address
+    );
+
+}
+
+
+// -----------------------------------------------------
+// 7.11 — DOCUMENTS SOUMIS
+// -----------------------------------------------------
+
+function renderMerchantDocumentStatuses(application) {
+
+    const documents = application.documents || {};
+
+    const documentFields = {
+
+        alvara: "documentAlvaraStatus",
+
+        certidao: "documentCertidaoStatus",
+
+        admissibilidade: "documentAdmissibilidadeStatus",
+
+        pacto: "documentPactoStatus"
+
+    };
+
+    Object.entries(documentFields).forEach(
+        ([documentName, elementId]) => {
+
+            const documentData = documents[documentName];
+
+            const element =
+                getApprovalElement(elementId);
+
+            if (!element) {
+                return;
+            }
+
+            if (!documentData) {
+
+                element.textContent = "Documento não enviado";
+
+                return;
+
+            }
+
+            element.textContent =
+                documentData.verified === true
+                    ? "Documento verificado"
+                    : "Aguardando verificação";
+
+        }
+    );
+
+}
+
+
+// -----------------------------------------------------
+// 7.12 — HISTÓRICO DA DECISÃO
+// -----------------------------------------------------
+
+function renderPreviousDecision(application) {
+
+    const section =
+        getApprovalElement("previousDecisionSection");
+
+    const notes =
+        application.adminNotes ||
+        application.reviewNotes ||
+        application.rejectionReason ||
+        "";
+
+    const decisionDate =
+        application.reviewedAt ||
+        application.updatedAt ||
+        null;
+
+    const hasDecision =
+        application.status === "approved" ||
+        application.status === "rejected";
+
+    if (section) {
+
+        section.classList.toggle(
+            "hidden",
+            !hasDecision
+        );
+
+    }
+
+    if (!hasDecision) {
+        return;
+    }
+
+    setApprovalText(
+        "previousDecisionText",
+        notes || (
+            application.status === "approved"
+                ? "Candidatura aprovada."
+                : "Candidatura rejeitada."
+        )
+    );
+
+    setApprovalText(
+        "previousDecisionDate",
+        decisionDate
+            ? formatApplicationDate(decisionDate)
+            : "Data não disponível"
+    );
+
+}
+
+
+// -----------------------------------------------------
+// 7.13 — RÉINITIALISER LES NOTES ADMINISTRATIVES
+// -----------------------------------------------------
+
+function resetMerchantReviewNotes() {
+
+    const notesElement =
+        getApprovalElement("adminReviewNotes");
+
+    if (notesElement) {
+
+        notesElement.value = "";
+
+    }
+
+}
+
+
+// -----------------------------------------------------
+// 7.14 — AFFICHER LE DOSSIER COMPLET
+// -----------------------------------------------------
+
+function renderMerchantApplicationDetails(application) {
+
+    if (!application) {
+
+        alert(
+            "TOMA — BLOCO 7\n\n" +
+            "❌ Candidatura não encontrada."
+        );
+
+        return false;
+
+    }
+
+    // Enregistrer la candidature sélectionnée
+
+    selectedApplication = application;
+
+
+    // Afficher les différentes sections
+
+    renderMerchantProfile(application);
+
+    renderMerchantPersonalDetails(application);
+
+    renderMerchantCommercialDetails(application);
+
+    renderOfficialBusinessDetails(application);
+
+    renderMerchantLocationDetails(application);
+
+    renderMerchantDocumentStatuses(application);
+
+    renderPreviousDecision(application);
+
+
+    // Réinitialiser les notes
+
+    resetMerchantReviewNotes();
+
+
+    return true;
+
+}
+
+
+// -----------------------------------------------------
+// 7.15 — OUVRIR LA FENÊTRE DU DOSSIER
+// -----------------------------------------------------
+
+function openMerchantApplication(applicationId) {
+
+    const application =
+        findMerchantApplication(applicationId);
+
+    if (!application) {
+
+        alert(
+            "TOMA — BLOCO 7\n\n" +
+            "❌ Não foi possível encontrar esta candidatura.\n\n" +
+            "ID: " + applicationId
+        );
+
+        return;
+
+    }
+
+    const success =
+        renderMerchantApplicationDetails(application);
+
+    if (!success) {
+        return;
+    }
+
+    if (!applicationModal) {
+
+        alert(
+            "TOMA — BLOCO 7\n\n" +
+            "❌ Modal applicationModal não encontrado."
+        );
+
+        return;
+
+    }
+
+    applicationModal.classList.add("active");
+
+    applicationModal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+    document.body.style.overflow = "hidden";
+
+
+}
+
+
+// -----------------------------------------------------
+// 7.16 — FERMER LA FENÊTRE DU DOSSIER
+// -----------------------------------------------------
+
+function closeMerchantApplication() {
+
+    if (!applicationModal) {
+        return;
+    }
+
+    applicationModal.classList.remove("active");
+
+    applicationModal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+    document.body.style.overflow = "";
+
+}
+
+
+// -----------------------------------------------------
+// 7.17 — INITIALISER LES ÉVÉNEMENTS
+// -----------------------------------------------------
+
+function initializeMerchantApplicationDetails() {
+
+    // Ouvrir une candidature
+
+    if (merchantApplicationsList) {
+
+        merchantApplicationsList.addEventListener(
+            "click",
+            function(event) {
+
+                const button = event.target.closest(
+                    ".viewApplicationButton"
+                );
+
+                if (!button) {
+                    return;
+                }
+
+                const applicationId =
+                    button.dataset.applicationId;
+
+                openMerchantApplication(applicationId);
+
+            }
+        );
+
+    }
+
+
+    // Fermer avec le bouton
+
+    const closeButton =
+        getApprovalElement("closeApplicationModal");
+
+    if (closeButton) {
+
+        closeButton.addEventListener(
+            "click",
+            closeMerchantApplication
+        );
+
+    }
+
+
+    // Fermer en cliquant sur le fond
+
+    const modalBackdrop =
+        getApprovalElement("modalBackdrop");
+
+    if (modalBackdrop) {
+
+        modalBackdrop.addEventListener(
+            "click",
+            closeMerchantApplication
+        );
+
+    }
+
+
+    // Fermer avec la touche Escape
+
+    document.addEventListener(
+        "keydown",
+        function(event) {
+
+            if (
+                event.key === "Escape" &&
+                applicationModal &&
+                applicationModal.classList.contains("active")
+            ) {
+
+                closeMerchantApplication();
+
+            }
+
+        }
+    );
+
+
+    alert(
+
+        "TOMA — BLOCO 7\n\n" +
+
+        "✅ Dossier détaillé activado!\n\n" +
+
+        "Perfil do comerciante: OK\n" +
+
+        "Informações pessoais: OK\n" +
+
+        "Informações comerciais: OK\n" +
+
+        "Localização: OK\n" +
+
+        "Documentos: OK\n" +
+
+        "Histórico de decisão: OK\n\n" +
+
+        "Clique em Examinar candidatura para testar."
+
+    );
+
+}
+
+
+// -----------------------------------------------------
+// FIN DU BLOC 7
 // -----------------------------------------------------
