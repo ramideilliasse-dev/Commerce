@@ -2446,7 +2446,10 @@ async function requestMerchantDocument(documentType) {
 
     const documentData =
         selectedApplication.documents?.[documentType];
-
+alert(
+    "TEST DOCUMENT : " +
+    (documentData ? "DOCUMENT TROUVÉ" : "DOCUMENT INTROUVABLE")
+);
     if (!documentData) {
         showMerchantDocumentError(
             "Este documento não foi enviado pelo comerciante."
@@ -2460,7 +2463,7 @@ async function requestMerchantDocument(documentType) {
 
         // BLOC 8.1 — Token Firebase
         const idToken = await auth.currentUser.getIdToken();
-
+alert("TEST FIREBASE : TOKEN OBTENU");
         // BLOC 8.2 — Requête Vercel
         const response = await fetch(
             MERCHANT_DOCUMENT_API,
@@ -2476,7 +2479,7 @@ async function requestMerchantDocument(documentType) {
                 })
             }
         );
-
+alert("TEST VERCEL : RÉPONSE REÇUE — HTTP " + response.status);
         // Lire la réponse du serveur
         const responseText = await response.text();
 
