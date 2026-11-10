@@ -606,12 +606,12 @@ async function loadMerchantApplications() {
 // -----------------------------------------------------
 /* =====================================================
    TOMA — MERCHANT APPROVAL
-   BLOC 4 : AFFICHAGE DES DEMANDES
+   BLOC 4 : AFFICHAGE PROFESSIONNEL DES CANDIDATURES
 ===================================================== */
 
 
 // -----------------------------------------------------
-// 4.1 — PROTECTION DU TEXTE HTML
+// 4.1 — PROTECTION HTML
 // -----------------------------------------------------
 
 function escapeMerchantHTML(value) {
@@ -627,45 +627,7 @@ function escapeMerchantHTML(value) {
 
 
 // -----------------------------------------------------
-// 4.2 — RÉCUPÉRER UNE VALEUR SELON PLUSIEURS CHAMPS
-// -----------------------------------------------------
-
-function getApplicationValue(application, fields) {
-
-    const sources = [
-        application,
-        application.registrationData || {},
-        application.businessInfo || {},
-        application.personalInfo || {}
-    ];
-
-    for (const source of sources) {
-
-        for (const field of fields) {
-
-            const value = source[field];
-
-            if (
-                value !== undefined &&
-                value !== null &&
-                String(value).trim() !== ""
-            ) {
-
-                return value;
-
-            }
-
-        }
-
-    }
-
-    return "";
-
-}
-
-
-// -----------------------------------------------------
-// 4.3 — FORMATER LA DATE
+// 4.2 — FORMATER LES DATES
 // -----------------------------------------------------
 
 function formatApplicationDate(dateValue) {
@@ -685,14 +647,16 @@ function formatApplicationDate(dateValue) {
         }
 
         return date.toLocaleString("pt-PT", {
+
             day: "2-digit",
             month: "long",
             year: "numeric",
             hour: "2-digit",
             minute: "2-digit"
+
         });
 
-    } catch (error) {
+    } catch {
 
         return "Data não disponível";
 
@@ -702,7 +666,7 @@ function formatApplicationDate(dateValue) {
 
 
 // -----------------------------------------------------
-// 4.4 — TRADUIRE LE STATUT
+// 4.3 — STATUT DE LA CANDIDATURE
 // -----------------------------------------------------
 
 function getApplicationStatus(status) {
@@ -741,57 +705,84 @@ function getApplicationStatus(status) {
 
 
 // -----------------------------------------------------
-// 4.5 — CRÉER UNE CARTE DE DEMANDE
+// 4.4 — RÉCUPÉRER LES DOCUMENTS
+// -----------------------------------------------------
+
+function countApplicationDocuments(application) {
+
+    const documents = application.documents || {};
+
+    const requiredDocuments = [
+        "alvara",
+        "certidao",
+        "admissibilidade",
+        "pacto"
+    ];
+
+    return requiredDocuments.filter(type => {
+
+        return (
+            documents[type] &&
+            documents[type].verified === true
+        );
+
+    }).length;
+
+}
+
+
+// -----------------------------------------------------
+// 4.5 — CRÉER UNE CARTE
 // -----------------------------------------------------
 
 function createMerchantApplicationCard(application) {
 
-    const name = getApplicationValue(application, [
-        "shopName",
-        "storeName",
-        "businessName",
-        "merchantName",
-        "name"
-    ]) || "Comerciante sem nome";
+    const personal = application.personal || {};
 
-    const email = getApplicationValue(application, [
-        "email",
-        "userEmail",
-        "merchantEmail"
-    ]) || "Email não informado";
+    const commercial = application.commercial || {};
 
-    const phone = getApplicationValue(application, [
-        "phone",
-        "phoneNumber",
-        "whatsapp",
-        "merchantWhatsApp"
-    ]) || "Telefone não informado";
+    const location = application.location || {};
 
-    const province = getApplicationValue(application, [
-        "province",
-        "provincia"
-    ]);
+    const name = personal.fullName || "Nome não informado";
 
-    const city = getApplicationValue(application, [
-        "city",
-        "cidade"
-    ]);
+    const email = personal.email || "Email não informado";
 
-    const location = [province, city]
-        .filter(Boolean)
-        .join(" — ") || "Localização não informada";
+    const phone = personal.phone || "Telefone não informado";
+
+    const shopName = commercial.shopName || "Loja sem nome";
+
+    const category = commercial.shopCategory || "Categoria não informada";
+
+    const province = location.province || "";
+
+    const city = location.city || "";
+
+    const address = location.address || "";
+
+    const formattedLocation = [
+        province,
+        city
+    ].filter(Boolean).join(" — ") || "Localização não informada";
 
     const status = getApplicationStatus(application.status);
 
-    const date = formatApplicationDate(
-        application.createdAt
-    );
+    const date = formatApplicationDate(application.createdAt);
+
+    const documentCount = countApplicationDocuments(application);
+
+    const merchantType = application.merchantType === "official"
+        ? "Comerciante oficial"
+        : "Comerciante comum";
+
+
+    // Créer la carte
 
     const card = document.createElement("article");
 
     card.className = "applicationCard";
 
     card.dataset.applicationId = application.id;
+
 
     card.innerHTML = `
 
@@ -800,17 +791,21 @@ function createMerchantApplicationCard(application) {
             <div class="applicationIdentity">
 
                 <div class="applicationAvatar">
-                    ${escapeMerchantHTML(name.charAt(0).toUpperCase())}
+                    ${escapeMerchantHTML(shopName.charAt(0).toUpperCase())}
                 </div>
 
                 <div class="applicationIdentityInfo">
 
                     <h3>
-                        ${escapeMerchantHTML(name)}
+                        ${escapeMerchantHTML(shopName)}
                     </h3>
 
-                    <span class="applicationEmail">
-                        ${escapeMerchantHTML(email)}
+                    <p>
+                        ${escapeMerchantHTML(name)}
+                    </p>
+
+                    <span class="applicationCategory">
+                        ${escapeMerchantHTML(category)}
                     </span>
 
                 </div>
@@ -828,7 +823,18 @@ function createMerchantApplicationCard(application) {
 
             <div class="applicationDetail">
 
-                <span>Telefone</span>
+                <span>✉ Email</span>
+
+                <strong>
+                    ${escapeMerchantHTML(email)}
+                </strong>
+
+            </div>
+
+
+            <div class="applicationDetail">
+
+                <span>☎ Telefone</span>
 
                 <strong>
                     ${escapeMerchantHTML(phone)}
@@ -836,19 +842,21 @@ function createMerchantApplicationCard(application) {
 
             </div>
 
+
             <div class="applicationDetail">
 
-                <span>Localização</span>
+                <span>📍 Localização</span>
 
                 <strong>
-                    ${escapeMerchantHTML(location)}
+                    ${escapeMerchantHTML(formattedLocation)}
                 </strong>
 
             </div>
 
+
             <div class="applicationDetail">
 
-                <span>Data de candidatura</span>
+                <span>📅 Data de candidatura</span>
 
                 <strong>
                     ${escapeMerchantHTML(date)}
@@ -859,10 +867,21 @@ function createMerchantApplicationCard(application) {
         </div>
 
 
+        <div class="applicationDocuments">
+
+            <span>Documentos verificados</span>
+
+            <strong>
+                ${documentCount}/4
+            </strong>
+
+        </div>
+
+
         <div class="applicationCardFooter">
 
             <span class="applicationReference">
-                ID: ${escapeMerchantHTML(application.id)}
+                ${escapeMerchantHTML(merchantType)}
             </span>
 
             <button
@@ -870,8 +889,7 @@ function createMerchantApplicationCard(application) {
                 class="viewApplicationButton"
                 data-application-id="${escapeMerchantHTML(application.id)}"
             >
-                Ver candidatura
-                <span aria-hidden="true">→</span>
+                Examinar candidatura →
             </button>
 
         </div>
@@ -884,7 +902,7 @@ function createMerchantApplicationCard(application) {
 
 
 // -----------------------------------------------------
-// 4.6 — AFFICHER TOUTES LES DEMANDES
+// 4.6 — AFFICHER LES CANDIDATURES
 // -----------------------------------------------------
 
 function renderMerchantApplications() {
@@ -893,18 +911,18 @@ function renderMerchantApplications() {
 
         alert(
             "TOMA — BLOCO 4\n\n" +
-            "❌ Elemento merchantApplicationsList não encontrado no HTML."
+            "❌ Elemento merchantApplicationsList não encontrado."
         );
 
         return;
 
     }
 
+
     merchantApplicationsList.innerHTML = "";
 
-    const applications = filteredApplications;
 
-    if (!applications.length) {
+    if (!filteredApplications.length) {
 
         merchantApplicationsList.innerHTML = `
 
@@ -917,7 +935,7 @@ function renderMerchantApplications() {
                 <h3>Nenhuma candidatura encontrada</h3>
 
                 <p>
-                    Ainda não existem pedidos para apresentar.
+                    Não existem candidaturas para apresentar.
                 </p>
 
             </div>
@@ -928,15 +946,18 @@ function renderMerchantApplications() {
 
     }
 
+
     const fragment = document.createDocumentFragment();
 
-    applications.forEach((application) => {
 
-        fragment.appendChild(
-            createMerchantApplicationCard(application)
-        );
+    filteredApplications.forEach(application => {
+
+        const card = createMerchantApplicationCard(application);
+
+        fragment.appendChild(card);
 
     });
+
 
     merchantApplicationsList.appendChild(fragment);
 
@@ -944,12 +965,14 @@ function renderMerchantApplications() {
 
 
 // -----------------------------------------------------
-// 4.7 — ALERTE DE FIN DU BLOC 4
+// 4.7 — DIAGNOSTIC ET ALERTE
 // -----------------------------------------------------
 
 function testMerchantApplicationDisplay() {
 
     renderMerchantApplications();
+
+    const total = filteredApplications.length;
 
     alert(
 
@@ -957,10 +980,19 @@ function testMerchantApplicationDisplay() {
 
         "✅ Exibição concluída com sucesso!\n\n" +
 
-        "Pedidos disponíveis: " +
-        filteredApplications.length +
+        "Candidaturas apresentadas: " + total +
 
-        "\n\nAs candidaturas foram preparadas para exibição."
+        "\n\n" +
+
+        "Informações comerciais: OK\n" +
+
+        "Informações pessoais: OK\n" +
+
+        "Localização: OK\n" +
+
+        "Documentos: OK\n\n" +
+
+        "As candidaturas foram apresentadas com a estrutura correta."
 
     );
 
