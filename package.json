@@ -1,4 +1,4 @@
-{
+ {
   "name": "toma-marketplace",
   "version": "1.0.0",
   "private": true,
@@ -8,6 +8,7 @@
   "dependencies": {
     "@imagekit/nodejs": "^7.0.0",
     "busboy": "^1.6.0",
-    "firebase-admin": "^13.5.0"
+    "firebase-admin": "^13.5.0",
+    "cloudinary": "^2.7.0"
   }
-} 
+}
