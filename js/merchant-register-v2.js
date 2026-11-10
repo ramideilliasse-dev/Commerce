@@ -142,13 +142,7 @@ progressPercentage.textContent = "0%";
 // FIN DU BLOC 1
 // ======================================================
 
-alert(
-    "TOMA — BLOC 1 VALIDÉ !\n\n" +
-    "Formulaire : OK\n" +
-    "Firebase Auth : OK\n" +
-    "Quatre champs de documents : OK\n\n" +
-    "Initialisation réussie."
-);
+
 // ======================================================
 // TOMA — INSCRIPTION MARCHAND V3
 // BLOC 2 — GESTION DES DOCUMENTS
@@ -540,14 +534,7 @@ window.TOMA_MERCHANT_REGISTER.documentsTools = {
 // FIN DU BLOC 2
 // ======================================================
 
-alert(
-    "TOMA — BLOC 2 VALIDÉ !\n\n" +
-    "Seleção de documentos: OK\n" +
-    "Validação dos formatos: OK\n" +
-    "Limite de 5 MB: OK\n" +
-    "Pré-visualização: OK\n" +
-    "Remoção de documentos: OK"
-);
+
 // ======================================================
 // TOMA — INSCRIPTION MARCHAND V3
 // BLOC 3 — VALIDATION DES INFORMATIONS
@@ -647,20 +634,19 @@ updateOfficialMerchantFields();
 // ------------------------------------------------------
 // 3.3 — Affichage des messages de validation
 // ------------------------------------------------------
-
 function showTomaRegistrationError(message) {
 
-    const messageBox = window.TOMA_MERCHANT_REGISTER.formMessage;
+    const messageBox =
+        window.TOMA_MERCHANT_REGISTER.formMessage;
 
     messageBox.textContent = message;
     messageBox.style.display = "block";
     messageBox.style.color = "#b42318";
 
-    messageBox.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-    });
+    messageBox.setAttribute("role", "alert");
+
 }
+
 
 function clearTomaRegistrationMessage() {
 
@@ -836,14 +822,7 @@ window.TOMA_MERCHANT_REGISTER.validation = {
     all: validateTomaMerchantRegistrationData
 };
 
-alert(
-    "TOMA — BLOC 3 VALIDÉ !\n\n" +
-    "Informations personnelles : OK\n" +
-    "Informations commerciales : OK\n" +
-    "Boutique officielle : OK\n" +
-    "Vérification des mots de passe : OK\n" +
-    "Messages de validation : OK"
-);
+
 // ======================================================
 // TOMA — INSCRIPTION MARCHAND V3
 // BLOC 4 — LOCALISATION ET CONDITIONS
@@ -982,13 +961,7 @@ window.TOMA_MERCHANT_REGISTER.validateCompleteForm =
 // 4.7 — CONFIRMATION DE L'INITIALISATION
 // ------------------------------------------------------
 
-alert(
-    "TOMA — BLOC 4 INITIALISÉ !\n\n" +
-    "Champs de localisation : détectés\n" +
-    "Conditions générales : détectées\n" +
-    "Validation complète : disponible\n\n" +
-    "Aucune inscription n'a encore été effectuée."
-);
+
 // ======================================================
 // TOMA — INSCRIPTION MARCHAND V3
 // BLOC 5 — CRÉATION DU COMPTE FIREBASE AUTH
@@ -1138,13 +1111,7 @@ window.TOMA_MERCHANT_REGISTER.accountTools = {
 // 5.5 — Confirmation du bloc
 // ------------------------------------------------------
 
-alert(
-    "TOMA — BLOC 5 CHARGÉ !\n\n" +
-    "Préparation du compte : OK\n" +
-    "Fonction de création : chargée\n" +
-    "Gestion des erreurs : activée\n\n" +
-    "Aucun compte n'a été créé pendant le chargement."
-);
+
 // ======================================================
 // TOMA — INSCRIPTION MARCHAND V3
 // BLOC 6 — PRÉPARATION DES DONNÉES
@@ -1287,15 +1254,7 @@ window.TOMA_MERCHANT_REGISTER.dataTools = {
 // 6.8 — Confirmation
 // ------------------------------------------------------
 
-alert(
-    "TOMA — BLOC 6 VALIDÉ !\n\n" +
-    "Informations personnelles : OK\n" +
-    "Informations commerciales : OK\n" +
-    "Informations officielles : OK\n" +
-    "Localisation : OK\n" +
-    "Structure des données : OK\n\n" +
-    "Aucune donnée n'a été envoyée."
-);
+
 // ======================================================
 // TOMA — INSCRIPTION MARCHAND V3
 // BLOC 7 — CLOUDINARY
@@ -1774,14 +1733,7 @@ window.TOMA_MERCHANT_REGISTER.cloudinaryTools = {
 // 7.6 — CONFIRMATION
 // ======================================================
 
-alert(
-    "TOMA — BLOC 7 INSTALADO!\n\n" +
-    "Método do teste funcional: OK\n" +
-    "Compressão das imagens: OK\n" +
-    "PDF sem compressão: OK\n" +
-    "Preset Cloudinary: OK\n" +
-    "Envio dos documentos: preparado"
-);
+
 /* =========================================================
    BLOC 8 — SUBMISSÃO COMPLETA DO REGISTO DO COMERCIANTE
    ========================================================= */
