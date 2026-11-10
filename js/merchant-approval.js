@@ -2419,135 +2419,115 @@ function hideMerchantDocumentLoading() {
 // -----------------------------------------------------
 // 8.6 — APPELER L'API SÉCURISÉE
 // -----------------------------------------------------
-
 async function requestMerchantDocument(documentType) {
-alert("BLOC 8 — Clique détecté : " + documentType);
-    if (!selectedApplication) {
 
+    alert("BLOC 8 — Clique détecté : " + documentType);
+
+    if (!selectedApplication) {
         showMerchantDocumentError(
             "Selecione primeiro uma candidatura."
         );
-
         return;
-
     }
 
     if (!auth.currentUser) {
-
         showMerchantDocumentError(
             "A sua sessão expirou. Inicie sessão novamente."
         );
-
         return;
-
     }
 
     if (!MERCHANT_DOCUMENT_LABELS[documentType]) {
-
         showMerchantDocumentError(
             "Tipo de documento inválido."
         );
-
         return;
-
     }
 
     const documentData =
         selectedApplication.documents?.[documentType];
 
     if (!documentData) {
-
         showMerchantDocumentError(
             "Este documento não foi enviado pelo comerciante."
         );
-
         return;
-
     }
 
     showMerchantDocumentLoading();
 
     try {
 
-        // Obtenir le token Firebase
+        // BLOC 8.1 — Token Firebase
+        const idToken = await auth.currentUser.getIdToken();
 
-        const idToken =
-            await auth.currentUser.getIdToken();
-
-        // Envoyer la demande sécurisée
-
+        // BLOC 8.2 — Requête Vercel
         const response = await fetch(
             MERCHANT_DOCUMENT_API,
             {
-
                 method: "POST",
-
                 headers: {
-
                     "Content-Type": "application/json",
-
                     "Authorization": "Bearer " + idToken
-
                 },
-
                 body: JSON.stringify({
-
                     applicationId: selectedApplication.id,
-
                     documentType: documentType
-
                 })
-
             }
         );
 
-        const result = await response.json();
+        // Lire la réponse du serveur
+        const responseText = await response.text();
 
-        if (!response.ok || !result.success) {
+        let result;
 
+        try {
+            result = JSON.parse(responseText);
+        } catch {
             throw new Error(
-                result.message ||
-                "Não foi possível abrir o documento."
+                "Resposta inválida do servidor. HTTP " +
+                response.status +
+                ". Resposta: " +
+                responseText.substring(0, 300)
             );
-
         }
 
+        // Vérifier la réponse HTTP
+        if (!response.ok || !result.success) {
+            throw new Error(
+                "ERRO VERCEL — HTTP " +
+                response.status +
+                " — " +
+                (result.message || "Erro desconhecido.")
+            );
+        }
+
+        // Vérifier le lien
         if (
             typeof result.documentUrl !== "string" ||
             !result.documentUrl.startsWith("https://")
         ) {
-
             throw new Error(
                 "O endereço seguro do documento é inválido."
             );
-
         }
 
-        // Vérifier que le lien appartient à Cloudinary
-
-        const documentUrl =
-            new URL(result.documentUrl);
+        const documentUrl = new URL(result.documentUrl);
 
         if (
             !documentUrl.hostname.endsWith(".cloudinary.com")
         ) {
-
             throw new Error(
                 "Origem do documento não autorizada."
             );
-
         }
 
-        // Mémoriser le document sélectionné
-
-        currentMerchantDocumentUrl =
-            result.documentUrl;
-
-        currentMerchantDocumentType =
-            documentType;
+        // Mémoriser le document
+        currentMerchantDocumentUrl = result.documentUrl;
+        currentMerchantDocumentType = documentType;
 
         // Ouvrir le visualiseur
-
         openMerchantDocumentViewer(
             result.documentUrl,
             documentType,
@@ -2556,9 +2536,12 @@ alert("BLOC 8 — Clique détecté : " + documentType);
 
     } catch (error) {
 
-        console.error(
-            "[TOMA][BLOC 8]",
-            error
+        console.error("[TOMA][BLOC 8]", error);
+
+        // Diagnostic visible sur iPhone
+        alert(
+            "ERRO AO ABRIR DOCUMENTO\n\n" +
+            (error.message || "Erro desconhecido.")
         );
 
         showMerchantDocumentError(
@@ -2571,9 +2554,7 @@ alert("BLOC 8 — Clique détecté : " + documentType);
         hideMerchantDocumentLoading();
 
     }
-
 }
-
 
 // -----------------------------------------------------
 // 8.7 — OUVRIR LE VISUALISEUR
