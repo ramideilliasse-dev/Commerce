@@ -2421,7 +2421,7 @@ function hideMerchantDocumentLoading() {
 // -----------------------------------------------------
 
 async function requestMerchantDocument(documentType) {
-
+alert("BLOC 8 — Clique détecté : " + documentType);
     if (!selectedApplication) {
 
         showMerchantDocumentError(
