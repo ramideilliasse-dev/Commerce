@@ -1,0 +1,1683 @@
+ <!DOCTYPE html>
+<html lang="pt">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#111827">
+
+    <meta name="description"
+          content="Painel administrativo Toma para validação de comerciantes.">
+
+    <title>Toma | Merchant Approval</title>
+
+    <!-- FONTES -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+
+    <!-- ICONES -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
+          rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="merchant-approval.css">
+
+</head>
+
+<body>
+
+<div class="adminApp" id="adminApp">
+
+    <!-- =========================================
+         SIDEBAR
+    ========================================== -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="sidebarBrand">
+
+            <div class="brandLogo">T</div>
+
+            <div class="brandInfo">
+
+                <h2>TOMA</h2>
+
+                <span>ADMINISTRATION</span>
+
+            </div>
+
+            <button
+                type="button"
+                class="sidebarClose"
+                id="sidebarClose"
+                aria-label="Fechar menu">
+
+                <span class="material-symbols-rounded">
+                    close
+                </span>
+
+            </button>
+
+        </div>
+
+
+        <div class="sidebarSection">
+
+            <p class="sidebarLabel">
+                PRINCIPAL
+            </p>
+
+            <a href="admin-dashboard.html" class="sidebarLink">
+
+                <span class="material-symbols-rounded">
+                    dashboard
+                </span>
+
+                <span>Painel principal</span>
+
+            </a>
+
+            <a href="merchant-approval.html"
+               class="sidebarLink active">
+
+                <span class="material-symbols-rounded">
+                    verified_user
+                </span>
+
+                <span>Validação de comerciantes</span>
+
+                <span class="sidebarBadge" id="sidebarPendingCount">
+                    0
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <div class="sidebarSection">
+
+            <p class="sidebarLabel">
+                GESTÃO
+            </p>
+
+            <a href="admin-dashboard.html" class="sidebarLink">
+
+                <span class="material-symbols-rounded">
+                    store
+                </span>
+
+                <span>Comerciantes</span>
+
+            </a>
+
+            <a href="admin-dashboard.html" class="sidebarLink">
+
+                <span class="material-symbols-rounded">
+                    shopping_bag
+                </span>
+
+                <span>Produtos</span>
+
+            </a>
+
+            <a href="admin-dashboard.html" class="sidebarLink">
+
+                <span class="material-symbols-rounded">
+                    analytics
+                </span>
+
+                <span>Relatórios</span>
+
+            </a>
+
+        </div>
+
+
+        <div class="sidebarFooter">
+
+            <div class="adminProfile">
+
+                <div class="adminAvatar">
+
+                    <span class="material-symbols-rounded">
+                        person
+                    </span>
+
+                </div>
+
+                <div class="adminProfileInfo">
+
+                    <strong id="adminDisplayName">
+                        Administrador
+                    </strong>
+
+                    <span id="adminRoleBadge">
+                        A verificar acesso...
+                    </span>
+
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                id="adminLogoutButton"
+                class="logoutButton">
+
+                <span class="material-symbols-rounded">
+                    logout
+                </span>
+
+                Terminar sessão
+
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =========================================
+         OVERLAY SIDEBAR
+    ========================================== -->
+
+    <div
+        class="sidebarOverlay"
+        id="sidebarOverlay">
+    </div>
+
+
+    <!-- =========================================
+         MAIN CONTENT
+    ========================================== -->
+
+    <main class="mainContent">
+
+        <!-- HEADER -->
+
+        <header class="topHeader">
+
+            <button
+                type="button"
+                id="sidebarOpen"
+                class="iconButton mobileMenuButton"
+                aria-label="Abrir menu">
+
+                <span class="material-symbols-rounded">
+                    menu
+                </span>
+
+            </button>
+
+
+            <div class="pageHeading">
+
+                <span class="pageEyebrow">
+                    TOMA ADMINISTRATION
+                </span>
+
+                <h1>
+                    Validação de comerciantes
+                </h1>
+
+                <p>
+                    Analise candidaturas e valide novos vendedores.
+                </p>
+
+            </div>
+
+
+            <div class="headerActions">
+
+                <button
+                    type="button"
+                    id="refreshButton"
+                    class="iconButton"
+                    title="Atualizar pedidos">
+
+                    <span class="material-symbols-rounded">
+                        refresh
+                    </span>
+
+                </button>
+
+                <div class="headerAdminBadge">
+
+                    <span class="onlineIndicator"></span>
+
+                    <span>Painel seguro</span>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =====================================
+             WELCOME BANNER
+        ====================================== -->
+
+        <section class="welcomeBanner">
+
+            <div class="welcomeContent">
+
+                <span class="welcomeEyebrow">
+                    MERCHANT MANAGEMENT
+                </span>
+
+                <h2>
+                    Gestão de candidaturas
+                </h2>
+
+                <p>
+                    Consulte os dados, verifique os documentos
+                    e tome decisões sobre os novos comerciantes.
+                </p>
+
+            </div>
+
+            <div class="welcomeIcon">
+
+                <span class="material-symbols-rounded">
+                    verified
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             STATISTICS
+        ====================================== -->
+
+        <section class="statisticsGrid">
+
+            <article class="statCard">
+
+                <div class="statTop">
+
+                    <div class="statIcon pendingIcon">
+
+                        <span class="material-symbols-rounded">
+                            pending_actions
+                        </span>
+
+                    </div>
+
+                    <span class="statLabel">
+                        EM ANÁLISE
+                    </span>
+
+                </div>
+
+                <h2 id="pendingCount">0</h2>
+
+                <p>
+                    Candidaturas pendentes
+                </p>
+
+            </article>
+
+
+            <article class="statCard">
+
+                <div class="statTop">
+
+                    <div class="statIcon approvedIcon">
+
+                        <span class="material-symbols-rounded">
+                            verified
+                        </span>
+
+                    </div>
+
+                    <span class="statLabel">
+                        APROVADOS
+                    </span>
+
+                </div>
+
+                <h2 id="approvedCount">0</h2>
+
+                <p>
+                    Comerciantes aprovados
+                </p>
+
+            </article>
+
+
+            <article class="statCard">
+
+                <div class="statTop">
+
+                    <div class="statIcon rejectedIcon">
+
+                        <span class="material-symbols-rounded">
+                            block
+                        </span>
+
+                    </div>
+
+                    <span class="statLabel">
+                        RECUSADOS
+                    </span>
+
+                </div>
+
+                <h2 id="rejectedCount">0</h2>
+
+                <p>
+                    Candidaturas recusadas
+                </p>
+
+            </article>
+
+
+            <article class="statCard">
+
+                <div class="statTop">
+
+                    <div class="statIcon totalIcon">
+
+                        <span class="material-symbols-rounded">
+                            groups
+                        </span>
+
+                    </div>
+
+                    <span class="statLabel">
+                        TOTAL
+                    </span>
+
+                </div>
+
+                <h2 id="totalCount">0</h2>
+
+                <p>
+                    Candidaturas registadas
+                </p>
+
+            </article>
+
+        </section>
+
+
+        <!-- =====================================
+             FILTERS AND SEARCH
+        ====================================== -->
+
+        <section class="managementSection">
+
+            <div class="sectionHeading">
+
+                <div>
+
+                    <span class="sectionEyebrow">
+                        APPLICATION MANAGEMENT
+                    </span>
+
+                    <h2>
+                        Pedidos recebidos
+                    </h2>
+
+                    <p>
+                        Pesquise e filtre as candidaturas.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="toolbar">
+
+                <div class="searchBox">
+
+                    <span class="material-symbols-rounded">
+                        search
+                    </span>
+
+                    <input
+                        type="search"
+                        id="searchInput"
+                        placeholder="Pesquisar nome, loja, email ou telefone..."
+                        autocomplete="off">
+
+                    <button
+                        type="button"
+                        id="clearSearch"
+                        aria-label="Limpar pesquisa">
+
+                        <span class="material-symbols-rounded">
+                            close
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+                <select
+                    id="merchantTypeFilter"
+                    class="toolbarSelect">
+
+                    <option value="all">
+                        Todos os tipos
+                    </option>
+
+                    <option value="ordinary">
+                        Comerciante comum
+                    </option>
+
+                    <option value="official">
+                        Comerciante oficial
+                    </option>
+
+                </select>
+
+
+                <select
+                    id="dateFilter"
+                    class="toolbarSelect">
+
+                    <option value="all">
+                        Todas as datas
+                    </option>
+
+                    <option value="today">
+                        Hoje
+                    </option>
+
+                    <option value="week">
+                        Últimos 7 dias
+                    </option>
+
+                    <option value="month">
+                        Últimos 30 dias
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- STATUS FILTERS -->
+
+            <div class="statusFilters" id="statusFilters">
+
+                <button
+                    type="button"
+                    class="statusFilter active"
+                    data-status="all">
+
+                    Todos
+
+                    <span id="allFilterCount">0</span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="statusFilter"
+                    data-status="pending">
+
+                    Pendentes
+
+                    <span id="pendingFilterCount">0</span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="statusFilter"
+                    data-status="under_review">
+
+                    Em análise
+
+                    <span id="reviewFilterCount">0</span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="statusFilter"
+                    data-status="approved">
+
+                    Aprovados
+
+                    <span id="approvedFilterCount">0</span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="statusFilter"
+                    data-status="rejected">
+
+                    Recusados
+
+                    <span id="rejectedFilterCount">0</span>
+
+                </button>
+
+            </div>
+
+
+            <!-- =================================
+                 REQUESTS LIST
+            ================================== -->
+
+            <div class="requestsHeader">
+
+                <h3>
+                    Lista de candidaturas
+                </h3>
+
+                <span id="resultsCount">
+                    0 resultados
+                </span>
+
+            </div>
+
+
+            <div
+                id="merchantApplicationsList"
+                class="applicationsList"
+                aria-live="polite">
+
+            </div>
+
+
+            <!-- LOADING -->
+
+            <div
+                id="applicationsLoader"
+                class="applicationsLoader">
+
+                <div class="loaderSpinner"></div>
+
+                <h3>
+                    A carregar candidaturas...
+                </h3>
+
+                <p>
+                    Aguarde enquanto consultamos os pedidos.
+                </p>
+
+            </div>
+
+
+            <!-- EMPTY STATE -->
+
+            <div
+                id="emptyState"
+                class="emptyState hidden">
+
+                <div class="emptyIcon">
+
+                    <span class="material-symbols-rounded">
+                        inventory_2
+                    </span>
+
+                </div>
+
+                <h3>
+                    Nenhuma candidatura encontrada
+                </h3>
+
+                <p>
+                    Não existem pedidos correspondentes aos filtros selecionados.
+                </p>
+
+                <button
+                    type="button"
+                    id="resetFiltersButton">
+
+                    Limpar filtros
+
+                </button>
+
+            </div>
+
+
+            <!-- ERROR STATE -->
+
+            <div
+                id="errorState"
+                class="errorState hidden">
+
+                <span class="material-symbols-rounded">
+                    error_outline
+                </span>
+
+                <h3>
+                    Não foi possível carregar os pedidos
+                </h3>
+
+                <p id="errorMessage">
+                    Ocorreu um erro ao comunicar com o servidor.
+                </p>
+
+                <button
+                    type="button"
+                    id="retryButton">
+
+                    Tentar novamente
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             ACTIVITY / SECURITY
+        ====================================== -->
+
+        <section class="bottomInfoGrid">
+
+            <article class="infoPanel">
+
+                <div class="infoPanelHeading">
+
+                    <span class="material-symbols-rounded">
+                        history
+                    </span>
+
+                    <h3>
+                        Atividade recente
+                    </h3>
+
+                </div>
+
+                <div id="recentActivityList">
+
+                    <p class="emptyActivity">
+                        A atividade aparecerá aqui.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+            <article class="infoPanel securityPanel">
+
+                <div class="infoPanelHeading">
+
+                    <span class="material-symbols-rounded">
+                        shield
+                    </span>
+
+                    <h3>
+                        Segurança administrativa
+                    </h3>
+
+                </div>
+
+                <p>
+                    As decisões administrativas são registadas
+                    para garantir a rastreabilidade das operações.
+                </p>
+
+                <div class="securityStatus">
+
+                    <span class="onlineIndicator"></span>
+
+                    Sistema de validação protegido
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- FOOTER -->
+
+        <footer class="adminFooter">
+
+            <span>
+                © 2026 TOMA
+            </span>
+
+            <span>
+                O comércio mais perto de si.
+            </span>
+
+        </footer>
+
+    </main>
+
+</div>
+
+
+<!-- =============================================
+     MODAL — APPLICATION DETAILS
+============================================== -->
+
+<div
+    class="applicationModal"
+    id="applicationModal"
+    aria-hidden="true">
+
+    <div class="modalBackdrop" id="modalBackdrop"></div>
+
+
+    <div
+        class="applicationModalContent"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalMerchantName">
+
+        <!-- MODAL HEADER -->
+
+        <header class="modalHeader">
+
+            <div>
+
+                <span class="modalEyebrow">
+                    MERCHANT APPLICATION
+                </span>
+
+                <h2>
+                    Dossier do comerciante
+                </h2>
+
+                <p>
+                    Verifique todas as informações antes de decidir.
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                id="closeApplicationModal"
+                class="modalCloseButton"
+                aria-label="Fechar">
+
+                <span class="material-symbols-rounded">
+                    close
+                </span>
+
+            </button>
+
+        </header>
+
+
+        <!-- MODAL BODY -->
+
+        <div class="modalBody">
+
+            <!-- MERCHANT PROFILE -->
+
+            <section class="merchantProfile">
+
+                <img
+                    id="modalMerchantPhoto"
+                    src="images/default-avatar.png"
+                    alt="Fotografia do comerciante">
+
+                <div class="merchantProfileInfo">
+
+                    <span class="profileLabel">
+                        CANDIDATO
+                    </span>
+
+                    <h3 id="modalMerchantName">
+                        Nome do comerciante
+                    </h3>
+
+                    <p id="modalShopName">
+                        Nome da loja
+                    </p>
+
+                    <div class="profileBadges">
+
+                        <span
+                            id="modalMerchantType"
+                            class="typeBadge">
+
+                            Comerciante comum
+
+                        </span>
+
+                        <span
+                            id="modalApplicationStatus"
+                            class="applicationStatus pending">
+
+                            Pendente
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- APPLICATION ID -->
+
+            <div class="applicationReference">
+
+                <span>
+                    ID DA CANDIDATURA
+                </span>
+
+                <strong id="modalApplicationId">
+                    -
+                </strong>
+
+            </div>
+
+
+            <!-- PERSONAL INFORMATION -->
+
+            <section class="detailSection">
+
+                <div class="detailSectionHeading">
+
+                    <span class="material-symbols-rounded">
+                        person
+                    </span>
+
+                    <h3>
+                        Informações pessoais
+                    </h3>
+
+                </div>
+
+
+                <div class="detailGrid">
+
+                    <div class="detailItem">
+
+                        <label>
+                            Nome completo
+                        </label>
+
+                        <p id="detailFullName">-</p>
+
+                    </div>
+
+
+                    <div class="detailItem">
+
+                        <label>
+                            Email
+                        </label>
+
+                        <p id="detailEmail">-</p>
+
+                    </div>
+
+
+                    <div class="detailItem">
+
+                        <label>
+                            Telefone
+                        </label>
+
+                        <p id="detailPhone">-</p>
+
+                    </div>
+
+
+                    <div class="detailItem">
+
+                        <label>
+                            WhatsApp
+                        </label>
+
+                        <p id="detailWhatsapp">-</p>
+
+                    </div>
+
+
+                    <div class="detailItem">
+
+                        <label>
+                            NIF
+                        </label>
+
+                        <p id="detailNif">-</p>
+
+                    </div>
+
+
+                    <div class="detailItem">
+
+                        <label>
+                            Data da candidatura
+                        </label>
+
+                        <p id="detailSubmittedAt">-</p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- COMMERCIAL INFORMATION -->
+
+            <section class="detailSection">
+
+                <div class="detailSectionHeading">
+
+                    <span class="material-symbols-rounded">
+                        store
+                    </span>
+
+                    <h3>
+                        Informações comerciais
+                    </h3>
+
+                </div>
+
+
+                <div class="detailGrid">
+
+                    <div class="detailItem">
+
+                        <label>
+                            Nome da loja
+                        </label>
+
+                        <p id="detailShopName">-</p>
+
+                    </div>
+
+
+                    <div class="detailItem">
+
+                        <label>
+                            Categoria
+                        </label>
+
+                        <p id="detailCategory">-</p>
+
+                    </div>
+
+
+                    <div class="detailItem fullWidth">
+
+                        <label>
+                            Descrição da loja
+                        </label>
+
+                        <p id="detailShopDescription">-</p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- OFFICIAL BUSINESS -->
+
+            <section
+                class="detailSection hidden"
+                id="officialBusinessSection">
+
+                <div class="detailSectionHeading">
+
+                    <span class="material-symbols-rounded">
+                        corporate_fare
+                    </span>
+
+                    <h3>
+                        Dados da empresa oficial
+                    </h3>
+
+                </div>
+
+
+                <div class="detailGrid">
+
+                    <div class="detailItem">
+
+                        <label>
+                            Nome da empresa
+                        </label>
+
+                        <p id="detailCompanyName">-</p>
+
+                    </div>
+
+
+                    <div class="detailItem">
+
+                        <label>
+                            Marca
+                        </label>
+
+                        <p id="detailBrandName">-</p>
+
+                    </div>
+
+
+                    <div class="detailItem fullWidth">
+
+                        <label>
+                            Descrição oficial
+                        </label>
+
+                        <p id="detailOfficialDescription">-</p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- LOCATION -->
+
+            <section class="detailSection">
+
+                <div class="detailSectionHeading">
+
+                    <span class="material-symbols-rounded">
+                        location_on
+                    </span>
+
+                    <h3>
+                        Localização
+                    </h3>
+
+                </div>
+
+
+                <div class="detailGrid">
+
+                    <div class="detailItem">
+
+                        <label>
+                            Província
+                        </label>
+
+                        <p id="detailProvince">-</p>
+
+                    </div>
+
+
+                    <div class="detailItem">
+
+                        <label>
+                            Município / Cidade
+                        </label>
+
+                        <p id="detailCity">-</p>
+
+                    </div>
+
+
+                    <div class="detailItem fullWidth">
+
+                        <label>
+                            Endereço
+                        </label>
+
+                        <p id="detailAddress">-</p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- DOCUMENTS -->
+
+            <section class="detailSection documentsSection">
+
+                <div class="detailSectionHeading">
+
+                    <span class="material-symbols-rounded">
+                        folder_open
+                    </span>
+
+                    <h3>
+                        Documentos submetidos
+                    </h3>
+
+                </div>
+
+                <p class="documentsDescription">
+                    Abra cada documento para verificar o seu conteúdo.
+                </p>
+
+
+                <div class="documentsGrid">
+
+                    <article class="documentItem">
+
+                        <div class="documentIcon">
+                            <span class="material-symbols-rounded">
+                                description
+                            </span>
+                        </div>
+
+                        <div class="documentInfo">
+
+                            <strong>
+                                Alvará Comercial
+                            </strong>
+
+                            <span id="documentAlvaraStatus">
+                                Não verificado
+                            </span>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            class="documentOpenButton"
+                            id="openAlvara">
+
+                            Abrir
+
+                        </button>
+
+                    </article>
+
+
+                    <article class="documentItem">
+
+                        <div class="documentIcon">
+                            <span class="material-symbols-rounded">
+                                assignment
+                            </span>
+                        </div>
+
+                        <div class="documentInfo">
+
+                            <strong>
+                                Certidão
+                            </strong>
+
+                            <span id="documentCertidaoStatus">
+                                Não verificado
+                            </span>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            class="documentOpenButton"
+                            id="openCertidao">
+
+                            Abrir
+
+                        </button>
+
+                    </article>
+
+
+                    <article class="documentItem">
+
+                        <div class="documentIcon">
+                            <span class="material-symbols-rounded">
+                                business
+                            </span>
+                        </div>
+
+                        <div class="documentInfo">
+
+                            <strong>
+                                Admissibilidade
+                            </strong>
+
+                            <span id="documentAdmissibilidadeStatus">
+                                Não verificado
+                            </span>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            class="documentOpenButton"
+                            id="openAdmissibilidade">
+
+                            Abrir
+
+                        </button>
+
+                    </article>
+
+
+                    <article class="documentItem">
+
+                        <div class="documentIcon">
+                            <span class="material-symbols-rounded">
+                                article
+                            </span>
+                        </div>
+
+                        <div class="documentInfo">
+
+                            <strong>
+                                Pacto Social
+                            </strong>
+
+                            <span id="documentPactoStatus">
+                                Não verificado
+                            </span>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            class="documentOpenButton"
+                            id="openPacto">
+
+                            Abrir
+
+                        </button>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <!-- ADMIN NOTES -->
+
+            <section class="detailSection">
+
+                <div class="detailSectionHeading">
+
+                    <span class="material-symbols-rounded">
+                        edit_note
+                    </span>
+
+                    <h3>
+                        Observações administrativas
+                    </h3>
+
+                </div>
+
+                <textarea
+                    id="adminReviewNotes"
+                    rows="4"
+                    maxlength="1000"
+                    placeholder="Escreva uma observação sobre esta candidatura...">
+
+                </textarea>
+
+                <small>
+                    As observações poderão ser guardadas no histórico da candidatura.
+                </small>
+
+            </section>
+
+
+            <!-- PREVIOUS DECISION -->
+
+            <section
+                class="detailSection hidden"
+                id="previousDecisionSection">
+
+                <div class="detailSectionHeading">
+
+                    <span class="material-symbols-rounded">
+                        history
+                    </span>
+
+                    <h3>
+                        Histórico da decisão
+                    </h3>
+
+                </div>
+
+                <div class="decisionHistory">
+
+                    <p id="previousDecisionText">
+                        Nenhuma decisão registada.
+                    </p>
+
+                    <span id="previousDecisionDate">
+                        -
+                    </span>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <!-- MODAL FOOTER -->
+
+        <footer class="modalFooter">
+
+            <div class="modalFooterInfo">
+
+                <span class="material-symbols-rounded">
+                    shield
+                </span>
+
+                <span>
+                    Decisão administrativa segura
+                </span>
+
+            </div>
+
+
+            <div class="modalDecisionButtons">
+
+                <button
+                    type="button"
+                    id="markUnderReviewButton"
+                    class="reviewButton">
+
+                    <span class="material-symbols-rounded">
+                        visibility
+                    </span>
+
+                    Em análise
+
+                </button>
+
+
+                <button
+                    type="button"
+                    id="rejectApplicationButton"
+                    class="modalRejectButton">
+
+                    <span class="material-symbols-rounded">
+                        close
+                    </span>
+
+                    Recusar
+
+                </button>
+
+
+                <button
+                    type="button"
+                    id="approveApplicationButton"
+                    class="modalApproveButton">
+
+                    <span class="material-symbols-rounded">
+                        verified
+                    </span>
+
+                    Aprovar
+
+                </button>
+
+            </div>
+
+        </footer>
+
+    </div>
+
+</div>
+
+
+<!-- =============================================
+     DOCUMENT VIEWER
+============================================== -->
+
+<div
+    class="documentViewer"
+    id="documentViewer"
+    aria-hidden="true">
+
+    <div class="documentViewerBackdrop"
+         id="documentViewerBackdrop">
+    </div>
+
+
+    <div class="documentViewerContent"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="documentViewerTitle">
+
+        <header class="documentViewerHeader">
+
+            <h3 id="documentViewerTitle">
+                Documento
+            </h3>
+
+            <button
+                type="button"
+                id="closeDocumentViewer"
+                aria-label="Fechar documento">
+
+                <span class="material-symbols-rounded">
+                    close
+                </span>
+
+            </button>
+
+        </header>
+
+
+        <div class="documentViewerBody">
+
+            <iframe
+                id="documentFrame"
+                title="Visualização do documento"
+                src="about:blank">
+            </iframe>
+
+        </div>
+
+
+        <footer class="documentViewerFooter">
+
+            <a
+                href="#"
+                id="downloadDocumentButton"
+                target="_blank"
+                rel="noopener noreferrer">
+
+                <span class="material-symbols-rounded">
+                    open_in_new
+                </span>
+
+                Abrir documento
+
+            </a>
+
+        </footer>
+
+    </div>
+
+</div>
+
+
+<!-- =============================================
+     DECISION CONFIRMATION MODAL
+============================================== -->
+
+<div
+    class="decisionConfirmModal"
+    id="decisionConfirmModal"
+    aria-hidden="true">
+
+    <div
+        class="decisionConfirmBackdrop"
+        id="decisionConfirmBackdrop">
+    </div>
+
+
+    <div
+        class="decisionConfirmCard"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="decisionConfirmTitle">
+
+        <div
+            class="decisionConfirmIcon"
+            id="decisionConfirmIcon">
+
+            <span class="material-symbols-rounded">
+                help
+            </span>
+
+        </div>
+
+
+        <h3 id="decisionConfirmTitle">
+            Confirmar decisão
+        </h3>
+
+
+        <p id="decisionConfirmText">
+            Tem certeza que deseja continuar?
+        </p>
+
+
+        <div class="decisionConfirmActions">
+
+            <button
+                type="button"
+                id="cancelDecisionButton">
+
+                Cancelar
+
+            </button>
+
+
+            <button
+                type="button"
+                id="confirmDecisionButton">
+
+                Confirmar
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =============================================
+     PROCESSING OVERLAY
+============================================== -->
+
+<div
+    class="processingOverlay"
+    id="processingOverlay"
+    aria-hidden="true">
+
+    <div class="processingCard">
+
+        <div class="processingSpinner"></div>
+
+        <h3 id="processingTitle">
+            A processar...
+        </h3>
+
+        <p id="processingMessage">
+            Aguarde enquanto registamos a operação.
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- =============================================
+     TOAST NOTIFICATIONS
+============================================== -->
+
+<div
+    class="toastContainer"
+    id="toastContainer"
+    aria-live="polite"
+    aria-atomic="true">
+
+    <div class="toastMessage" id="toastMessage">
+
+        <span
+            class="material-symbols-rounded"
+            id="toastIcon">
+
+            check_circle
+
+        </span>
+
+        <span id="toastText">
+            Operação realizada.
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- =============================================
+     ACCESS DENIED
+============================================== -->
+
+<div
+    class="accessDeniedScreen hidden"
+    id="accessDeniedScreen">
+
+    <div class="accessDeniedCard">
+
+        <div class="accessDeniedIcon">
+
+            <span class="material-symbols-rounded">
+                lock
+            </span>
+
+        </div>
+
+        <h2>
+            Acesso não autorizado
+        </h2>
+
+        <p id="accessDeniedMessage">
+            Esta área está reservada aos administradores Toma.
+        </p>
+
+        <button
+            type="button"
+            id="accessDeniedBackButton">
+
+            Voltar ao painel
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =============================================
+     JAVASCRIPT
+============================================== -->
+
+<script type="module" src="js/merchant-approval.js"></script>
+
+</body>
+
+</html>
