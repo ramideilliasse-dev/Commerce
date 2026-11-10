@@ -2495,7 +2495,15 @@ alert("TEST VERCEL : RÉPONSE REÇUE — HTTP " + response.status);
                 responseText.substring(0, 300)
             );
         }
-
+alert(
+    "RÉPONSE VERCEL :\n\n" +
+    "Success : " + result.success + "\n" +
+    "URL présente : " + !!result.documentUrl + "\n" +
+    "Format : " + result.format + "\n" +
+    "URL valide : " +
+    (typeof result.documentUrl === "string" &&
+     result.documentUrl.startsWith("https://"))
+);
         // Vérifier la réponse HTTP
         if (!response.ok || !result.success) {
             throw new Error(
