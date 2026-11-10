@@ -140,3 +140,261 @@ function checkMerchantApprovalElements() {
 // -----------------------------------------------------
 // FIN DU BLOC 1
 // -----------------------------------------------------
+/* =====================================================
+   TOMA — MERCHANT APPROVAL
+   BLOC 2 : SÉCURITÉ ET AUTORISATION ADMIN
+===================================================== */
+
+
+// -----------------------------------------------------
+// 2.1 — AFFICHER UN MESSAGE D'ACCÈS REFUSÉ
+// -----------------------------------------------------
+
+function showAccessDenied(message) {
+
+    if (accessDeniedScreen) {
+
+        accessDeniedScreen.style.display = "flex";
+
+        accessDeniedScreen.innerHTML = `
+            <div class="access-denied-content">
+
+                <h2>⛔ Acesso negado</h2>
+
+                <p>${message}</p>
+
+                <a href="../login.html">
+                    Voltar ao início de sessão
+                </a>
+
+            </div>
+        `;
+
+    }
+
+    if (merchantApplicationsList) {
+        merchantApplicationsList.style.display = "none";
+    }
+
+}
+
+
+// -----------------------------------------------------
+// 2.2 — MASQUER LE CONTENU ADMIN
+// -----------------------------------------------------
+
+function hideAdminContent() {
+
+    if (merchantApplicationsList) {
+        merchantApplicationsList.style.display = "none";
+    }
+
+    if (applicationModal) {
+        applicationModal.style.display = "none";
+    }
+
+    if (documentViewer) {
+        documentViewer.style.display = "none";
+    }
+
+    if (decisionConfirmModal) {
+        decisionConfirmModal.style.display = "none";
+    }
+
+    if (processingOverlay) {
+        processingOverlay.style.display = "none";
+    }
+
+}
+
+
+// -----------------------------------------------------
+// 2.3 — VÉRIFIER LE RÔLE DE L'UTILISATEUR
+// -----------------------------------------------------
+
+async function verifyAdminRole(user) {
+
+    try {
+
+        if (!user) {
+
+            showAccessDenied(
+                "Deve iniciar sessão para aceder a esta página."
+            );
+
+            return false;
+
+        }
+
+        const userRef = doc(
+            db,
+            MERCHANT_APPROVAL_CONFIG.usersCollection,
+            user.uid
+        );
+
+        const userSnapshot = await getDoc(userRef);
+
+        if (!userSnapshot.exists()) {
+
+            showAccessDenied(
+                "O perfil deste utilizador não foi encontrado."
+            );
+
+            return false;
+
+        }
+
+        const userData = userSnapshot.data();
+
+        const role = String(userData.role || "")
+            .trim()
+            .toLowerCase();
+
+        if (
+            !MERCHANT_APPROVAL_CONFIG.allowedRoles.includes(role)
+        ) {
+
+            showAccessDenied(
+                "Esta página está reservada aos administradores autorizados."
+            );
+
+            return false;
+
+        }
+
+        // Enregistrer l'administrateur connecté
+
+        currentAdmin = user;
+
+        currentAdminRole = role;
+
+        // Autoriser l'affichage du contenu
+
+        if (accessDeniedScreen) {
+            accessDeniedScreen.style.display = "none";
+        }
+
+        if (merchantApplicationsList) {
+            merchantApplicationsList.style.display = "";
+        }
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "TOMA — Erreur de vérification du rôle :",
+            error
+        );
+
+        showAccessDenied(
+            "Não foi possível verificar as suas permissões. Tente novamente."
+        );
+
+        return false;
+
+    }
+
+}
+
+
+// -----------------------------------------------------
+// 2.4 — INITIALISER LA SÉCURITÉ
+// -----------------------------------------------------
+
+async function initializeAdminSecurity() {
+
+    try {
+
+        hideAdminContent();
+
+        // Attendre que Firebase termine son initialisation
+
+        await authReady;
+
+        return await new Promise((resolve) => {
+
+            let firstCheckCompleted = false;
+
+            onAuthStateChanged(auth, async (user) => {
+
+                if (firstCheckCompleted) {
+                    return;
+                }
+
+                firstCheckCompleted = true;
+
+                if (!user) {
+
+                    currentAdmin = null;
+                    currentAdminRole = null;
+
+                    showAccessDenied(
+                        "Deve iniciar sessão para continuar."
+                    );
+
+                    resolve(false);
+
+                    return;
+
+                }
+
+                const authorized = await verifyAdminRole(user);
+
+                resolve(authorized);
+
+            });
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "TOMA — Erreur de sécurité :",
+            error
+        );
+
+        showAccessDenied(
+            "Ocorreu um erro ao verificar o acesso à página."
+        );
+
+        return false;
+
+    }
+
+}
+
+
+// -----------------------------------------------------
+// 2.5 — LANCER LA VÉRIFICATION
+// -----------------------------------------------------
+
+initializeAdminSecurity()
+    .then((authorized) => {
+
+        if (authorized) {
+
+            alert(
+                "TOMA — BLOCO 2\n\n" +
+                "✅ Verificação concluída com sucesso!\n\n" +
+                "Administrador autenticado.\n" +
+                "Função: " + currentAdminRole + "\n\n" +
+                "Acesso autorizado à página de validação de comerciantes."
+            );
+
+        } else {
+
+            alert(
+                "TOMA — BLOCO 2\n\n" +
+                "⛔ Acesso não autorizado!\n\n" +
+                "Esta página só pode ser utilizada por administradores e superadministradores."
+            );
+
+        }
+
+    });
+
+
+// -----------------------------------------------------
+// FIN DU BLOC 2
+// -----------------------------------------------------
