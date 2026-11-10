@@ -384,7 +384,8 @@ initializeAdminSecurity()
 
     await loadMerchantApplications();
 
-} else {
+}
+    }else {
 
             alert(
                 "TOMA — BLOCO 2\n\n" +
