@@ -3870,3 +3870,32 @@ textarea:focus-visible {
     }
 
 }
+/* =========================================================
+   TOMA — CORREÇÃO MODAL DE CANDIDATURA
+========================================================= */
+
+.applicationModal.active {
+
+    display: flex !important;
+
+    overflow-y: auto;
+
+    -webkit-overflow-scrolling: touch;
+
+}
+
+.applicationModalContent {
+
+    margin: auto;
+
+    flex-shrink: 0;
+
+}
+
+.modalBody {
+
+    overflow-y: auto;
+
+    -webkit-overflow-scrolling: touch;
+
+}
