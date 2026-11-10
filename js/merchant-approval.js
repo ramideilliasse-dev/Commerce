@@ -2612,7 +2612,15 @@ function openMerchantDocumentViewer(
     // Afficher la fenêtre
 
     viewer.classList.add("active");
-
+alert(
+    "TEST VISUALISEUR\n\n" +
+    "Classe active : " +
+    viewer.classList.contains("active") +
+    "\nAffichage CSS : " +
+    getComputedStyle(viewer).display +
+    "\nURL iframe : " +
+    frame.src
+);
     viewer.setAttribute(
         "aria-hidden",
         "false"
