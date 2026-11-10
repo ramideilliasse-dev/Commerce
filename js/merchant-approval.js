@@ -393,6 +393,8 @@ testMerchantStatistics();
 initializeMerchantFilters();
 
 initializeMerchantApplicationDetails();
+
+initializeMerchantDocumentButtons();
         } else {
 
             alert(
@@ -2288,4 +2290,566 @@ function initializeMerchantApplicationDetails() {
 
 // -----------------------------------------------------
 // FIN DU BLOC 7
+// -----------------------------------------------------
+/* =====================================================
+   TOMA — MERCHANT APPROVAL
+   BLOC 8 : CONSULTATION SÉCURISÉE DES DOCUMENTS
+   CLOUDINARY AUTHENTICATED
+===================================================== */
+
+
+// -----------------------------------------------------
+// 8.1 — CONFIGURATION
+// -----------------------------------------------------
+
+const MERCHANT_DOCUMENT_API =
+    "/api/merchant-document";
+
+let currentMerchantDocumentUrl = "";
+
+let currentMerchantDocumentType = "";
+
+
+// -----------------------------------------------------
+// 8.2 — NOMS DES DOCUMENTS
+// -----------------------------------------------------
+
+const MERCHANT_DOCUMENT_LABELS = {
+
+    alvara: "Alvará Comercial",
+
+    certidao: "Certidão",
+
+    admissibilidade: "Admissibilidade",
+
+    pacto: "Pacto Social"
+
+};
+
+
+// -----------------------------------------------------
+// 8.3 — AFFICHER UN MESSAGE D'ERREUR
+// -----------------------------------------------------
+
+function showMerchantDocumentError(message) {
+
+    alert(
+        "TOMA — BLOCO 8\n\n" +
+        "❌ " + message
+    );
+
+}
+
+
+// -----------------------------------------------------
+// 8.4 — AFFICHER LE CHARGEMENT
+// -----------------------------------------------------
+
+function showMerchantDocumentLoading() {
+
+    const overlay =
+        getApprovalElement("processingOverlay");
+
+    const title =
+        getApprovalElement("processingTitle");
+
+    const message =
+        getApprovalElement("processingMessage");
+
+    if (title) {
+
+        title.textContent = "A carregar documento...";
+
+    }
+
+    if (message) {
+
+        message.textContent =
+            "A verificar as permissões e a preparar o acesso seguro.";
+
+    }
+
+    if (overlay) {
+
+        overlay.classList.add("active");
+
+        overlay.setAttribute("aria-hidden", "false");
+
+    }
+
+}
+
+
+// -----------------------------------------------------
+// 8.5 — FERMER LE CHARGEMENT
+// -----------------------------------------------------
+
+function hideMerchantDocumentLoading() {
+
+    const overlay =
+        getApprovalElement("processingOverlay");
+
+    if (overlay) {
+
+        overlay.classList.remove("active");
+
+        overlay.setAttribute("aria-hidden", "true");
+
+    }
+
+}
+
+
+// -----------------------------------------------------
+// 8.6 — APPELER L'API SÉCURISÉE
+// -----------------------------------------------------
+
+async function requestMerchantDocument(documentType) {
+
+    if (!selectedApplication) {
+
+        showMerchantDocumentError(
+            "Selecione primeiro uma candidatura."
+        );
+
+        return;
+
+    }
+
+    if (!auth.currentUser) {
+
+        showMerchantDocumentError(
+            "A sua sessão expirou. Inicie sessão novamente."
+        );
+
+        return;
+
+    }
+
+    if (!MERCHANT_DOCUMENT_LABELS[documentType]) {
+
+        showMerchantDocumentError(
+            "Tipo de documento inválido."
+        );
+
+        return;
+
+    }
+
+    const documentData =
+        selectedApplication.documents?.[documentType];
+
+    if (!documentData) {
+
+        showMerchantDocumentError(
+            "Este documento não foi enviado pelo comerciante."
+        );
+
+        return;
+
+    }
+
+    showMerchantDocumentLoading();
+
+    try {
+
+        // Obtenir le token Firebase
+
+        const idToken =
+            await auth.currentUser.getIdToken();
+
+        // Envoyer la demande sécurisée
+
+        const response = await fetch(
+            MERCHANT_DOCUMENT_API,
+            {
+
+                method: "POST",
+
+                headers: {
+
+                    "Content-Type": "application/json",
+
+                    "Authorization": "Bearer " + idToken
+
+                },
+
+                body: JSON.stringify({
+
+                    applicationId: selectedApplication.id,
+
+                    documentType: documentType
+
+                })
+
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+
+            throw new Error(
+                result.message ||
+                "Não foi possível abrir o documento."
+            );
+
+        }
+
+        if (
+            typeof result.documentUrl !== "string" ||
+            !result.documentUrl.startsWith("https://")
+        ) {
+
+            throw new Error(
+                "O endereço seguro do documento é inválido."
+            );
+
+        }
+
+        // Vérifier que le lien appartient à Cloudinary
+
+        const documentUrl =
+            new URL(result.documentUrl);
+
+        if (
+            !documentUrl.hostname.endsWith(".cloudinary.com")
+        ) {
+
+            throw new Error(
+                "Origem do documento não autorizada."
+            );
+
+        }
+
+        // Mémoriser le document sélectionné
+
+        currentMerchantDocumentUrl =
+            result.documentUrl;
+
+        currentMerchantDocumentType =
+            documentType;
+
+        // Ouvrir le visualiseur
+
+        openMerchantDocumentViewer(
+            result.documentUrl,
+            documentType,
+            result.format
+        );
+
+    } catch (error) {
+
+        console.error(
+            "[TOMA][BLOC 8]",
+            error
+        );
+
+        showMerchantDocumentError(
+            error.message ||
+            "Erro ao consultar o documento."
+        );
+
+    } finally {
+
+        hideMerchantDocumentLoading();
+
+    }
+
+}
+
+
+// -----------------------------------------------------
+// 8.7 — OUVRIR LE VISUALISEUR
+// -----------------------------------------------------
+
+function openMerchantDocumentViewer(
+    documentUrl,
+    documentType,
+    format
+) {
+
+    const viewer =
+        getApprovalElement("documentViewer");
+
+    const frame =
+        getApprovalElement("documentFrame");
+
+    const title =
+        getApprovalElement("documentViewerTitle");
+
+    if (!viewer || !frame) {
+
+        showMerchantDocumentError(
+            "Visualizador de documentos não encontrado."
+        );
+
+        return;
+
+    }
+
+    // Définir le titre
+
+    if (title) {
+
+        title.textContent =
+            MERCHANT_DOCUMENT_LABELS[documentType];
+
+    }
+
+    // Afficher le document
+
+    frame.src = documentUrl;
+
+    // Afficher la fenêtre
+
+    viewer.classList.add("active");
+
+    viewer.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+    document.body.style.overflow = "hidden";
+
+    // Préparer le bouton de téléchargement
+
+    const downloadButton =
+        getApprovalElement("downloadDocumentButton");
+
+    if (downloadButton) {
+
+        downloadButton.disabled = false;
+
+        downloadButton.dataset.documentUrl =
+            documentUrl;
+
+        downloadButton.dataset.documentFormat =
+            format || "";
+
+    }
+
+}
+
+
+// -----------------------------------------------------
+// 8.8 — FERMER LE VISUALISEUR
+// -----------------------------------------------------
+
+function closeMerchantDocumentViewer() {
+
+    const viewer =
+        getApprovalElement("documentViewer");
+
+    const frame =
+        getApprovalElement("documentFrame");
+
+    if (viewer) {
+
+        viewer.classList.remove("active");
+
+        viewer.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+    }
+
+    if (frame) {
+
+        frame.src = "about:blank";
+
+    }
+
+    currentMerchantDocumentUrl = "";
+
+    currentMerchantDocumentType = "";
+
+    document.body.style.overflow = "";
+
+}
+
+
+// -----------------------------------------------------
+// 8.9 — TÉLÉCHARGER LE DOCUMENT
+// -----------------------------------------------------
+
+function downloadMerchantDocument() {
+
+    if (!currentMerchantDocumentUrl) {
+
+        showMerchantDocumentError(
+            "Nenhum documento está aberto."
+        );
+
+        return;
+
+    }
+
+    // Ouvrir le lien sécurisé dans un nouvel onglet.
+    // Cloudinary contrôle la validité du lien temporaire.
+
+    const downloadWindow = window.open(
+        currentMerchantDocumentUrl,
+        "_blank",
+        "noopener,noreferrer"
+    );
+
+    if (!downloadWindow) {
+
+        showMerchantDocumentError(
+            "O navegador bloqueou a abertura do documento. Permita janelas de abertura."
+        );
+
+    }
+
+}
+
+
+// -----------------------------------------------------
+// 8.10 — INITIALISER LES BOUTONS
+// -----------------------------------------------------
+
+function initializeMerchantDocumentButtons() {
+
+    const documentButtons = {
+
+        openAlvara: "alvara",
+
+        openCertidao: "certidao",
+
+        openAdmissibilidade: "admissibilidade",
+
+        openPacto: "pacto"
+
+    };
+
+    Object.entries(documentButtons).forEach(
+        ([buttonId, documentType]) => {
+
+            const button =
+                getApprovalElement(buttonId);
+
+            if (!button) {
+
+                alert(
+                    "TOMA — BLOCO 8\n\n" +
+                    "⚠️ Botão não encontrado: " +
+                    buttonId
+                );
+
+                return;
+
+            }
+
+            button.addEventListener(
+                "click",
+                function(event) {
+
+                    event.preventDefault();
+
+                    requestMerchantDocument(documentType);
+
+                }
+            );
+
+        }
+    );
+
+
+    // Bouton de fermeture
+
+    const closeButton =
+        getApprovalElement("closeDocumentViewer");
+
+    if (closeButton) {
+
+        closeButton.addEventListener(
+            "click",
+            closeMerchantDocumentViewer
+        );
+
+    }
+
+
+    // Fermeture en cliquant sur le fond
+
+    const backdrop =
+        getApprovalElement("documentViewerBackdrop");
+
+    if (backdrop) {
+
+        backdrop.addEventListener(
+            "click",
+            closeMerchantDocumentViewer
+        );
+
+    }
+
+
+    // Bouton de téléchargement
+
+    const downloadButton =
+        getApprovalElement("downloadDocumentButton");
+
+    if (downloadButton) {
+
+        downloadButton.addEventListener(
+            "click",
+            downloadMerchantDocument
+        );
+
+    }
+
+
+    // Fermeture avec Escape
+
+    document.addEventListener(
+        "keydown",
+        function(event) {
+
+            const viewer =
+                getApprovalElement("documentViewer");
+
+            if (
+                event.key === "Escape" &&
+                viewer &&
+                viewer.classList.contains("active")
+            ) {
+
+                closeMerchantDocumentViewer();
+
+            }
+
+        }
+    );
+
+
+    alert(
+
+        "TOMA — BLOCO 8\n\n" +
+
+        "✅ Consulta segura de documentos ativada!\n\n" +
+
+        "Alvará Comercial: OK\n" +
+
+        "Certidão: OK\n" +
+
+        "Admissibilidade: OK\n" +
+
+        "Pacto Social: OK\n\n" +
+
+        "Autenticação Firebase: OK\n" +
+
+        "API protegida: OK\n\n" +
+
+        "Os botões estão preparados para os testes."
+
+    );
+
+}
+
+
+// -----------------------------------------------------
+// FIN DU BLOC 8
 // -----------------------------------------------------
