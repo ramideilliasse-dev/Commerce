@@ -388,6 +388,7 @@ initializeAdminSecurity()
 
 testMerchantApplicationDisplay();
 
+testMerchantStatistics();
         } else {
 
             alert(
@@ -1001,4 +1002,191 @@ function testMerchantApplicationDisplay() {
 
 // -----------------------------------------------------
 // FIN DU BLOC 4
+// -----------------------------------------------------
+/* =====================================================
+   TOMA — MERCHANT APPROVAL
+   BLOC 5 : STATISTIQUES ET COMPTEURS
+===================================================== */
+
+
+// -----------------------------------------------------
+// 5.1 — CALCULER LES STATISTIQUES
+// -----------------------------------------------------
+
+function calculateMerchantStatistics() {
+
+    const statistics = {
+
+        total: merchantApplications.length,
+
+        pending: 0,
+
+        underReview: 0,
+
+        approved: 0,
+
+        rejected: 0
+
+    };
+
+
+    merchantApplications.forEach(application => {
+
+        const status = String(
+            application.status || "pending"
+        ).toLowerCase();
+
+        switch (status) {
+
+            case "pending":
+                statistics.pending++;
+                break;
+
+            case "under_review":
+                statistics.underReview++;
+                break;
+
+            case "approved":
+                statistics.approved++;
+                break;
+
+            case "rejected":
+                statistics.rejected++;
+                break;
+
+        }
+
+    });
+
+
+    return statistics;
+
+}
+
+
+// -----------------------------------------------------
+// 5.2 — METTRE À JOUR LES COMPTEURS HTML
+// -----------------------------------------------------
+
+function updateMerchantStatistics() {
+
+    const statistics = calculateMerchantStatistics();
+
+
+    // Total
+
+    const totalElement =
+        document.getElementById("totalCount");
+
+    if (totalElement) {
+        totalElement.textContent = statistics.total;
+    }
+
+
+    // En attente
+
+    const pendingElement =
+        document.getElementById("pendingCount");
+
+    if (pendingElement) {
+        pendingElement.textContent = statistics.pending;
+    }
+
+
+    // En cours d'analyse
+
+    const reviewElement =
+        document.querySelector(
+            '[data-status="under_review"] .filterCount'
+        );
+
+    if (reviewElement) {
+        reviewElement.textContent = statistics.underReview;
+    }
+
+
+    // Approuvées
+
+    const approvedElement =
+        document.getElementById("approvedCount");
+
+    if (approvedElement) {
+        approvedElement.textContent = statistics.approved;
+    }
+
+
+    // Rejetées
+
+    const rejectedElement =
+        document.getElementById("rejectedCount");
+
+    if (rejectedElement) {
+        rejectedElement.textContent = statistics.rejected;
+    }
+
+
+    // Résultats affichés
+
+    updateMerchantResultsCount();
+
+
+    return statistics;
+
+}
+
+
+// -----------------------------------------------------
+// 5.3 — METTRE À JOUR LE NOMBRE DE RÉSULTATS
+// -----------------------------------------------------
+
+function updateMerchantResultsCount() {
+
+    const resultsElement =
+        document.getElementById("resultsCount");
+
+    if (!resultsElement) {
+        return;
+    }
+
+    const total = filteredApplications.length;
+
+    resultsElement.textContent =
+        `${total} resultado${total !== 1 ? "s" : ""}`;
+
+}
+
+
+// -----------------------------------------------------
+// 5.4 — ALERTE DE FIN
+// -----------------------------------------------------
+
+function testMerchantStatistics() {
+
+    const statistics = updateMerchantStatistics();
+
+    alert(
+
+        "TOMA — BLOCO 5\n\n" +
+
+        "✅ Estatísticas atualizadas!\n\n" +
+
+        "Todas: " + statistics.total + "\n" +
+
+        "Pendentes: " + statistics.pending + "\n" +
+
+        "Em análise: " + statistics.underReview + "\n" +
+
+        "Aprovadas: " + statistics.approved + "\n" +
+
+        "Rejeitadas: " + statistics.rejected + "\n\n" +
+
+        "Os contadores foram atualizados."
+
+    );
+
+}
+
+
+// -----------------------------------------------------
+// FIN DU BLOC 5
 // -----------------------------------------------------
