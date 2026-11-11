@@ -291,40 +291,43 @@ async function processMerchantDecision(
                 "Esta candidatura já recebeu uma decisão definitiva."
             );
         }
+// =================================================
+// C. LIRE LE COMPTE UTILISATEUR
+// UNIQUEMENT POUR L'APPROBATION
+// =================================================
 
-        // =================================================
-        // C. LIRE LE COMPTE UTILISATEUR
-        // =================================================
+const userRef =
+    usersCollection.doc(uid);
 
-        const userRef =
-            usersCollection.doc(uid);
+let userData = {};
 
-        const userSnapshot =
-            await transaction.get(userRef);
+if (action === "approve") {
 
-        if (!userSnapshot.exists) {
+    const userSnapshot =
+        await transaction.get(userRef);
 
-            throw createError(
-                "A conta do utilizador não existe.",
-                404
-            );
-        }
+    if (!userSnapshot.exists) {
 
-        const userData =
-            userSnapshot.data();
+        throw createError(
+            "O documento do utilizador não existe. É necessário criar o perfil antes da aprovação.",
+            404
+        );
+    }
 
-        if (
-            ["admin", "superadmin"].includes(
-                userData.role
-            )
-        ) {
+    userData = userSnapshot.data();
 
-            throw createError(
-                "Não é possível aprovar uma conta administrativa.",
-                403
-            );
-        }
+    if (
+        ["admin", "superadmin"].includes(
+            userData.role
+        )
+    ) {
 
+        throw createError(
+            "Não é possível aprovar uma conta administrativa.",
+            403
+        );
+    }
+}
         // =================================================
         // D. LIRE LE PROFIL COMMERÇANT
         // =================================================
