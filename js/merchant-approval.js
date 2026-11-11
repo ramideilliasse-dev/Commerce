@@ -3304,15 +3304,19 @@ openDecisionConfirmModal(action);
             );
 
         } catch (error) {
+    console.error("ERREUR DÉCISION:", error);
 
-            console.error("BLOC 9 — Decision error:", error);
+    alert(
+        "ERREUR — MERCHANT DECISION\n\n" +
+        "Message : " + (error.message || "Erreur inconnue") +
+        "\n\nDétails : " + (error.stack || "Non disponibles")
+    );
 
-            showDecisionToast(
-                error.message || "Ocorreu um erro ao processar a decisão.",
-                "error"
-            );
-
-        } finally {
+    showDecisionToast(
+        error.message || "Falha ao processar a candidatura.",
+        "error"
+    );
+} finally {
 
             decisionIsProcessing = false;
 
