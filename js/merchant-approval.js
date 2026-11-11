@@ -3045,33 +3045,43 @@ function initializeMerchantDocumentButtons() {
 
     function prepareDecision(action) {
 
-        if (decisionIsProcessing) return;
+if (decisionIsProcessing) {
+    return;
+}
+if (!selectedApplication) {
+    showDecisionToast(
+        "Nenhuma candidatura selecionada.",
+        "error"
+    );
+    return;
+}
+const allowedStatuses = ["pending", "under_review"];
+if (!allowedStatuses.includes(selectedApplication.status)) {
+    showDecisionToast(
+        "Esta candidatura já foi processada.",
+        "error"
+    );
+    return;
+}
+// Verificar os campos obrigatórios para rejeitar
+if (
+    action === "reject" &&
+    (!rejectionReasonGroup || !rejectionReasonInput)
+) {
+    showDecisionToast(
+        "Campo do motivo de rejeição não encontrado. Verifique os IDs rejectionReasonGroup e rejectionReason no HTML.",
+        "error"
+    );
+    return;
+}
+// Mostrar ou esconder o campo do motivo
+updateRejectionReasonVisibility(action);
+// Guardar a ação escolhida
+pendingDecisionAction = action;
+// Abrir confirmação
+openDecisionConfirmModal(action);
 
-        if (typeof selectedApplication === "undefined" ||
-            !selectedApplication ||
-            !selectedApplication.id) {
-
-            showDecisionToast(
-                "Selecione primeiro uma candidatura.",
-                "error"
-            );
-            return;
-        }
-
-        const currentStatus = selectedApplication.status;
-
-        if (!["pending", "under_review"].includes(currentStatus)) {
-            showDecisionToast(
-                "Esta candidatura já foi processada.",
-                "error"
-            );
-            return;
-        }
-
-        updateRejectionReasonVisibility(action);
-        openDecisionConfirmModal(action);
-    }
-
+}
 
     /* -----------------------------------------------------
        9.5 — INDICADOR DE PROCESSAMENTO
