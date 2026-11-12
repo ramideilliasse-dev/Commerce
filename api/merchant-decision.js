@@ -225,25 +225,14 @@ async function processMerchantDecision(
 
     const logRef = logsCollection.doc();
 
-    const lockRef = lockCollection.doc();
-
     const now = new Date();
 
-    let finalStatus;
-
-    if (action === "under_review") {
-
-        finalStatus = "under_review";
-
-    } else if (action === "approve") {
-
-        finalStatus = "approved";
-
-    } else {
-
-        finalStatus = "rejected";
-
-    }
+    const finalStatus =
+        action === "under_review"
+            ? "under_review"
+            : action === "approve"
+                ? "approved"
+                : "rejected";
 
     await adminDb.runTransaction(async transaction => {
 
@@ -291,111 +280,108 @@ async function processMerchantDecision(
                 "Esta candidatura já recebeu uma decisão definitiva."
             );
         }
-// =================================================
-// C. LIRE OU CRÉER LE COMPTE UTILISATEUR
-// UNIQUEMENT POUR L'APPROBATION
-// =================================================
 
-const userRef = usersCollection.doc(uid);
-
-let userData = {};
-
-if (action === "approve") {
-
-    const userSnapshot =
-        await transaction.get(userRef);
-
-    if (userSnapshot.exists) {
-
-        // Le profil existe : conserver ses données.
-
-        userData = userSnapshot.data();
-
-    } else {
-
-        // Le profil est absent : préparer un profil client minimal.
-
-        userData = {
-
-            uid,
-
-            name:
-                application.personal?.fullName || "",
-
-            email:
-                application.personal?.email || "",
-
-            phone:
-                application.personal?.phone || "",
-
-            role: "client",
-
-            approved: false,
-
-            blocked: false,
-
-            requestMerchant: true,
-
-            createdAt: now,
-
-            updatedAt: now
-
-        };
-
-        transaction.set(
-            userRef,
-            userData,
-            {
-                merge: true
-            }
-        );
-    }
-
-    // Protection des comptes administratifs.
-
-    if (
-        ["admin", "superadmin"].includes(
-            userData.role
-        )
-    ) {
-
-        throw createError(
-            "Não é possível aprovar uma conta administrativa.",
-            403
-        );
-    }
-
-    // Protection des comptes bloqués.
-
-    if (userData.blocked === true) {
-
-        throw createError(
-            "Esta conta encontra-se bloqueada. Não pode ser aprovada.",
-            403
-        );
-    }
-}
         // =================================================
-        // D. LIRE LE PROFIL COMMERÇANT
+        // C. PRÉPARER LES RÉFÉRENCES
         // =================================================
+
+        const userRef =
+            usersCollection.doc(uid);
 
         const merchantRef =
             merchantsCollection.doc(uid);
 
+        // IMPORTANT :
+        // Le verrou utilise l'UID du commerçant.
+
+        const lockRef =
+            lockCollection.doc(uid);
+
+        // =================================================
+        // D. EFFECTUER TOUTES LES LECTURES
+        // AVANT LA PREMIÈRE ÉCRITURE
+        // =================================================
+
+        let userSnapshot = null;
         let merchantSnapshot = null;
 
+        const lockSnapshot =
+            await transaction.get(lockRef);
+
         if (action === "approve") {
+
+            userSnapshot =
+                await transaction.get(userRef);
 
             merchantSnapshot =
                 await transaction.get(merchantRef);
         }
 
         // =================================================
-        // E. LIRE LE VERROU DE CANDIDATURE
+        // E. PRÉPARER LES DONNÉES UTILISATEUR
         // =================================================
 
-        const lockSnapshot =
-            await transaction.get(lockRef);
+        let userData = {};
+
+        if (action === "approve") {
+
+            if (userSnapshot.exists) {
+
+                userData = userSnapshot.data();
+
+            } else {
+
+                userData = {
+
+                    uid,
+
+                    name:
+                        application.personal?.fullName || "",
+
+                    email:
+                        application.personal?.email || "",
+
+                    phone:
+                        application.personal?.phone || "",
+
+                    role: "client",
+
+                    approved: false,
+
+                    blocked: false,
+
+                    requestMerchant: true,
+
+                    createdAt: now,
+
+                    updatedAt: now
+                };
+            }
+
+            // Protection des comptes administratifs.
+
+            if (
+                ["admin", "superadmin"].includes(
+                    userData.role
+                )
+            ) {
+
+                throw createError(
+                    "Não é possível aprovar uma conta administrativa.",
+                    403
+                );
+            }
+
+            // Protection des comptes bloqués.
+
+            if (userData.blocked === true) {
+
+                throw createError(
+                    "Esta conta encontra-se bloqueada. Não pode ser aprovada.",
+                    403
+                );
+            }
+        }
 
         // =================================================
         // F. MISE EN EXAMEN
@@ -434,13 +420,9 @@ if (action === "approve") {
 
             const merchantData = {
 
-                // Identité du commerçant
-
                 uid,
 
                 userId: uid,
-
-                // Informations commerciales
 
                 name:
                     commercial.shopName ||
@@ -460,17 +442,10 @@ if (action === "approve") {
                     userData.phone ||
                     "",
 
-                // Conserver le prix de livraison existant
-
                 deliveryPrice:
                     existingMerchant.deliveryPrice ?? 0,
 
-                // Statut commercial
-
                 status: "approved",
-
-                // Ne pas déclarer automatiquement
-                // les documents vérifiés par l'administration.
 
                 verificationStatus:
                     existingMerchant.verificationStatus ||
@@ -479,13 +454,9 @@ if (action === "approve") {
                 verified:
                     existingMerchant.verified === true,
 
-                // Conserver la date de création existante
-
                 created:
                     existingMerchant.created ??
                     Date.now(),
-
-                // Informations de la candidature
 
                 merchantType:
                     application.merchantType || "ordinary",
@@ -498,11 +469,23 @@ if (action === "approve") {
 
                 address:
                     application.location?.address || ""
-
             };
 
-            // Créer ou actualiser le profil
-            // sans supprimer les autres champs existants.
+            // Créer le profil utilisateur s'il est absent.
+            // Sinon, conserver ses données existantes.
+
+            if (!userSnapshot.exists) {
+
+                transaction.set(
+                    userRef,
+                    userData,
+                    {
+                        merge: true
+                    }
+                );
+            }
+
+            // Créer ou actualiser le profil commerçant.
 
             transaction.set(
                 merchantRef,
@@ -512,13 +495,13 @@ if (action === "approve") {
                 }
             );
 
-            // Attribuer le rôle commerçant
-            // sans écraser les autres données utilisateur.
+            // Attribuer le rôle commerçant.
 
             transaction.set(
                 userRef,
                 {
-                    role: "merchant"
+                    role: "merchant",
+                    updatedAt: now
                 },
                 {
                     merge: true
@@ -559,7 +542,7 @@ if (action === "approve") {
             );
 
             // Libérer le verrou uniquement si
-            // celui-ci appartient à cette candidature.
+            // cette candidature en est propriétaire.
 
             if (
                 lockSnapshot.exists &&
@@ -607,7 +590,6 @@ if (action === "approve") {
                 reviewNotes,
 
                 createdAt: now
-
             }
         );
 
@@ -620,7 +602,6 @@ if (action === "approve") {
         status: finalStatus
     };
 }
-
 // ======================================================
 // 9.6 — ENDPOINT PRINCIPAL
 // ======================================================
