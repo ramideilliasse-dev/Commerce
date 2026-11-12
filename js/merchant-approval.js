@@ -2904,37 +2904,42 @@ function initializeMerchantDocumentButtons() {
 
     function showDecisionToast(message, type = "success") {
 
-        if (!toastContainer) {
-            alert(message);
-            return;
-        }
+       if (!toastContainer) {
+    alert(message);
+    return;
+}
 
-        if (toastTimeout) {
-            clearTimeout(toastTimeout);
-        }
+if (toastTimeout) {
+    clearTimeout(toastTimeout);
+}
 
-        if (toastMessage) {
-            toastMessage.textContent = message;
-        }
+if (toastMessage) {
+    toastMessage.textContent = message;
+}
 
-        if (toastText) {
-            toastText.textContent = message;
-        }
+if (toastText) {
+    toastText.textContent = message;
+}
 
-        if (toastIcon) {
-            toastIcon.textContent =
-                type === "success" ? "check_circle" : "error";
-        }
+if (toastIcon) {
+    toastIcon.textContent =
+        type === "success" ? "check_circle" : "error";
+}
 
-        toastContainer.classList.add("active");
-        toastContainer.style.display = "flex";
-        toastContainer.setAttribute("aria-hidden", "false");
+toastContainer.classList.remove("success", "error");
+toastContainer.classList.add(type);
 
-        toastTimeout = setTimeout(() => {
-            toastContainer.classList.remove("active");
-            toastContainer.style.display = "none";
-            toastContainer.setAttribute("aria-hidden", "true");
-        }, 4500);
+toastContainer.classList.add("active");
+toastContainer.style.display = "flex";
+toastContainer.setAttribute("aria-hidden", "false");
+
+toastTimeout = setTimeout(() => {
+
+    toastContainer.classList.remove("active");
+    toastContainer.style.display = "none";
+    toastContainer.setAttribute("aria-hidden", "true");
+
+}, 4500);
     }
 
 
@@ -3297,19 +3302,22 @@ openDecisionConfirmModal(action);
             );
 
         } catch (error) {
-    console.error("ERREUR DÉCISION:", error);
 
-    alert(
-        "ERREUR — MERCHANT DECISION\n\n" +
-        "Message : " + (error.message || "Erreur inconnue") +
-        "\n\nDétails : " + (error.stack || "Non disponibles")
-    );
+console.error("TOMA — Erro na decisão:", error);
+showDecisionToast(
+    error.message || "Não foi possível concluir a operação.",
+    "error"
+);
 
-    showDecisionToast(
-        error.message || "Falha ao processar a candidatura.",
-        "error"
-    );
 } finally {
+
+decisionIsProcessing = false;
+hideDecisionProcessing();
+if (confirmDecisionButton) {
+    confirmDecisionButton.disabled = false;
+}
+
+}
 
             decisionIsProcessing = false;
 
