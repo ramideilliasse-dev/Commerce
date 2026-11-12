@@ -437,30 +437,156 @@ initializeMerchantDocumentButtons();
 // -----------------------------------------------------
 
 async function loadMerchantApplications() {
+if (isLoadingApplications) return [];
 
-    if (isLoadingApplications) {
-        return;
-    }
+isLoadingApplications = true;
 
-    isLoadingApplications = true;
+// Éléments HTML du chargement
+const loader = document.getElementById("applicationsLoader");
+const emptyState = document.getElementById("emptyState");
+const errorState = document.getElementById("errorState");
+const errorMessage = document.getElementById("errorMessage");
+const retryButton = document.getElementById("retryButton");
+const resultsCount = document.getElementById("resultsCount");
 
-    try {
+// Préparer l'affichage
+if (loader) loader.style.display = "flex";
+if (emptyState) emptyState.style.display = "none";
+if (errorState) errorState.style.display = "none";
 
-        // Vérifier les autorisations
+if (merchantApplicationsList) {
+    merchantApplicationsList.style.display = "none";
+}
 
-        if (
-            !currentAdmin ||
-            !MERCHANT_APPROVAL_CONFIG.allowedRoles.includes(
-                currentAdminRole
-            )
-        ) {
+// Initialiser le bouton Réessayer une seule fois
+if (retryButton && !retryButton.dataset.initialized) {
 
-            throw new Error(
-                "Acesso administrativo não autorizado."
-            );
+    retryButton.dataset.initialized = "true";
 
+    retryButton.addEventListener("click", async () => {
+
+        await loadMerchantApplications();
+
+        if (merchantApplications.length > 0) {
+            applyMerchantFilters();
         }
 
+        updateMerchantStatistics();
+
+    });
+}
+
+try {
+
+    // Vérifier les droits administrateur
+    if (!currentAdmin || !ALLOWED_ADMIN_ROLES.includes(currentAdminRole)) {
+        throw new Error("Acesso não autorizado para carregar candidaturas.");
+    }
+
+    // Récupérer les candidatures
+    const applicationsQuery = query(
+        collection(db, COLLECTIONS.MERCHANT_APPLICATIONS),
+        limit(MAX_APPLICATIONS)
+    );
+
+    const snapshot = await getDocs(applicationsQuery);
+
+    // Réinitialiser les données
+    merchantApplications = [];
+
+    snapshot.forEach((applicationDoc) => {
+
+        merchantApplications.push({
+            id: applicationDoc.id,
+            ...applicationDoc.data()
+        });
+
+    });
+
+    // Trier par date de création, de la plus récente à la plus ancienne
+    merchantApplications.sort((a, b) => {
+
+        const dateA = a.createdAt?.toMillis
+            ? a.createdAt.toMillis()
+            : 0;
+
+        const dateB = b.createdAt?.toMillis
+            ? b.createdAt.toMillis()
+            : 0;
+
+        return dateB - dateA;
+
+    });
+
+    filteredApplications = [...merchantApplications];
+
+    // Actualiser le compteur
+    if (resultsCount) {
+        resultsCount.textContent =
+            `${merchantApplications.length} candidatura(s)`;
+    }
+
+    // Affichage selon le résultat
+    if (merchantApplications.length === 0) {
+
+        if (emptyState) emptyState.style.display = "block";
+
+        if (merchantApplicationsList) {
+            merchantApplicationsList.style.display = "none";
+        }
+
+    } else {
+
+        if (emptyState) emptyState.style.display = "none";
+
+        if (merchantApplicationsList) {
+            merchantApplicationsList.style.display = "block";
+        }
+
+    }
+
+    if (errorState) errorState.style.display = "none";
+
+    console.log(
+        "TOMA — Candidaturas carregadas:",
+        merchantApplications.length
+    );
+
+    return merchantApplications;
+
+} catch (error) {
+
+    console.error("TOMA — Erro ao carregar candidaturas:", error);
+
+    // Vider les données en cas d'erreur
+    merchantApplications = [];
+    filteredApplications = [];
+
+    if (errorMessage) {
+        errorMessage.textContent =
+            "Não foi possível carregar as candidaturas. Verifique a sua ligação e tente novamente.";
+    }
+
+    if (errorState) errorState.style.display = "block";
+
+    if (emptyState) emptyState.style.display = "none";
+
+    if (merchantApplicationsList) {
+        merchantApplicationsList.style.display = "none";
+    }
+
+    return [];
+
+} finally {
+
+    // Toujours arrêter le chargement
+    isLoadingApplications = false;
+
+    if (loader) {
+        loader.style.display = "none";
+    }
+
+}
 
         // -------------------------------------------------
         // 3.2 — RÉFÉRENCE FIRESTORE
