@@ -292,12 +292,11 @@ async function processMerchantDecision(
             );
         }
 // =================================================
-// C. LIRE LE COMPTE UTILISATEUR
+// C. LIRE OU CRÉER LE COMPTE UTILISATEUR
 // UNIQUEMENT POUR L'APPROBATION
 // =================================================
 
-const userRef =
-    usersCollection.doc(uid);
+const userRef = usersCollection.doc(uid);
 
 let userData = {};
 
@@ -306,15 +305,53 @@ if (action === "approve") {
     const userSnapshot =
         await transaction.get(userRef);
 
-    if (!userSnapshot.exists) {
+    if (userSnapshot.exists) {
 
-        throw createError(
-            "O documento do utilizador não existe. É necessário criar o perfil antes da aprovação.",
-            404
+        // Le profil existe : conserver ses données.
+
+        userData = userSnapshot.data();
+
+    } else {
+
+        // Le profil est absent : préparer un profil client minimal.
+
+        userData = {
+
+            uid,
+
+            name:
+                application.personal?.fullName || "",
+
+            email:
+                application.personal?.email || "",
+
+            phone:
+                application.personal?.phone || "",
+
+            role: "client",
+
+            approved: false,
+
+            blocked: false,
+
+            requestMerchant: true,
+
+            createdAt: now,
+
+            updatedAt: now
+
+        };
+
+        transaction.set(
+            userRef,
+            userData,
+            {
+                merge: true
+            }
         );
     }
 
-    userData = userSnapshot.data();
+    // Protection des comptes administratifs.
 
     if (
         ["admin", "superadmin"].includes(
@@ -324,6 +361,16 @@ if (action === "approve") {
 
         throw createError(
             "Não é possível aprovar uma conta administrativa.",
+            403
+        );
+    }
+
+    // Protection des comptes bloqués.
+
+    if (userData.blocked === true) {
+
+        throw createError(
+            "Esta conta encontra-se bloqueada. Não pode ser aprovada.",
             403
         );
     }
