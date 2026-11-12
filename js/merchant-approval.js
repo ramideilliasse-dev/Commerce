@@ -2898,48 +2898,49 @@ function initializeMerchantDocumentButtons() {
     let decisionIsProcessing = false;
     let toastTimeout = null;
 
+
     /* -----------------------------------------------------
-       9.1 — NOTIFICAÇÃO
+       9.1 — NOTIFICAÇÕES TOAST
     ----------------------------------------------------- */
 
     function showDecisionToast(message, type = "success") {
 
-       if (!toastContainer) {
-    alert(message);
-    return;
-}
+        if (!toastContainer) {
+            alert(message);
+            return;
+        }
 
-if (toastTimeout) {
-    clearTimeout(toastTimeout);
-}
+        if (toastTimeout) {
+            clearTimeout(toastTimeout);
+        }
 
-if (toastMessage) {
-    toastMessage.textContent = message;
-}
+        if (toastMessage) {
+            toastMessage.textContent = message;
+        }
 
-if (toastText) {
-    toastText.textContent = message;
-}
+        if (toastText) {
+            toastText.textContent = message;
+        }
 
-if (toastIcon) {
-    toastIcon.textContent =
-        type === "success" ? "check_circle" : "error";
-}
+        if (toastIcon) {
+            toastIcon.textContent =
+                type === "success" ? "check_circle" : "error";
+        }
 
-toastContainer.classList.remove("success", "error");
-toastContainer.classList.add(type);
+        toastContainer.classList.remove("success", "error");
+        toastContainer.classList.add(type);
 
-toastContainer.classList.add("active");
-toastContainer.style.display = "flex";
-toastContainer.setAttribute("aria-hidden", "false");
+        toastContainer.classList.add("active");
+        toastContainer.style.display = "flex";
+        toastContainer.setAttribute("aria-hidden", "false");
 
-toastTimeout = setTimeout(() => {
+        toastTimeout = setTimeout(() => {
 
-    toastContainer.classList.remove("active");
-    toastContainer.style.display = "none";
-    toastContainer.setAttribute("aria-hidden", "true");
+            toastContainer.classList.remove("active");
+            toastContainer.style.display = "none";
+            toastContainer.setAttribute("aria-hidden", "true");
 
-}, 4500);
+        }, 4500);
     }
 
 
@@ -2952,14 +2953,17 @@ toastTimeout = setTimeout(() => {
         pendingDecisionAction = action;
 
         if (!confirmModal) {
+
             showDecisionToast(
                 "Erro: janela de confirmação não encontrada.",
                 "error"
             );
+
             return;
         }
 
         const settings = {
+
             under_review: {
                 icon: "rate_review",
                 title: "Colocar em análise?",
@@ -2977,6 +2981,7 @@ toastTimeout = setTimeout(() => {
                 title: "Recusar candidatura?",
                 text: "A candidatura será recusada. Confirma que o motivo está correto?"
             }
+
         };
 
         const selected = settings[action];
@@ -3006,9 +3011,11 @@ toastTimeout = setTimeout(() => {
         if (decisionIsProcessing) return;
 
         if (confirmModal) {
+
             confirmModal.classList.remove("active");
             confirmModal.style.display = "none";
             confirmModal.setAttribute("aria-hidden", "true");
+
         }
 
         pendingDecisionAction = null;
@@ -3024,9 +3031,12 @@ toastTimeout = setTimeout(() => {
         if (!rejectionReasonGroup) return;
 
         if (action === "reject") {
+
             rejectionReasonGroup.classList.remove("hidden");
             rejectionReasonGroup.style.display = "block";
+
         } else {
+
             rejectionReasonGroup.classList.add("hidden");
             rejectionReasonGroup.style.display = "none";
 
@@ -3038,48 +3048,55 @@ toastTimeout = setTimeout(() => {
 
 
     /* -----------------------------------------------------
-       9.4 — ABRIR CONFIRMAÇÃO DAS DECISÕES
+       9.4 — PREPARAR DECISÃO
     ----------------------------------------------------- */
 
     function prepareDecision(action) {
 
-if (decisionIsProcessing) {
-    return;
-}
-if (!selectedApplication) {
-    showDecisionToast(
-        "Nenhuma candidatura selecionada.",
-        "error"
-    );
-    return;
-}
-const allowedStatuses = ["pending", "under_review"];
-if (!allowedStatuses.includes(selectedApplication.status)) {
-    showDecisionToast(
-        "Esta candidatura já foi processada.",
-        "error"
-    );
-    return;
-}
-// Verificar os campos obrigatórios para rejeitar
-if (
-    action === "reject" &&
-    (!rejectionReasonGroup || !rejectionReasonInput)
-) {
-    showDecisionToast(
-        "Campo do motivo de rejeição não encontrado. Verifique os IDs rejectionReasonGroup e rejectionReason no HTML.",
-        "error"
-    );
-    return;
-}
-// Mostrar ou esconder o campo do motivo
-updateRejectionReasonVisibility(action);
-// Guardar a ação escolhida
-pendingDecisionAction = action;
-// Abrir confirmação
-openDecisionConfirmModal(action);
+        if (decisionIsProcessing) return;
 
-}
+        if (!selectedApplication) {
+
+            showDecisionToast(
+                "Nenhuma candidatura selecionada.",
+                "error"
+            );
+
+            return;
+        }
+
+        const allowedStatuses = ["pending", "under_review"];
+
+        if (!allowedStatuses.includes(selectedApplication.status)) {
+
+            showDecisionToast(
+                "Esta candidatura já foi processada.",
+                "error"
+            );
+
+            return;
+        }
+
+        if (
+            action === "reject" &&
+            (!rejectionReasonGroup || !rejectionReasonInput)
+        ) {
+
+            showDecisionToast(
+                "Campo do motivo de rejeição não encontrado. Verifique o HTML.",
+                "error"
+            );
+
+            return;
+        }
+
+        updateRejectionReasonVisibility(action);
+
+        pendingDecisionAction = action;
+
+        openDecisionConfirmModal(action);
+    }
+
 
     /* -----------------------------------------------------
        9.5 — INDICADOR DE PROCESSAMENTO
@@ -3090,6 +3107,7 @@ openDecisionConfirmModal(action);
         if (!processingOverlay) return;
 
         const messages = {
+
             under_review: {
                 title: "A atualizar candidatura...",
                 message: "A candidatura está a ser colocada em análise."
@@ -3104,9 +3122,12 @@ openDecisionConfirmModal(action);
                 title: "A recusar candidatura...",
                 message: "Estamos a registar a decisão."
             }
+
         };
 
         const selected = messages[action];
+
+        if (!selected) return;
 
         if (processingTitle) {
             processingTitle.textContent = selected.title;
@@ -3141,18 +3162,22 @@ openDecisionConfirmModal(action);
         if (decisionIsProcessing) return;
 
         if (!pendingDecisionAction) {
+
             showDecisionToast(
                 "Nenhuma decisão foi selecionada.",
                 "error"
             );
+
             return;
         }
 
         if (!selectedApplication || !selectedApplication.id) {
+
             showDecisionToast(
                 "Não foi possível identificar a candidatura.",
                 "error"
             );
+
             return;
         }
 
@@ -3166,7 +3191,9 @@ openDecisionConfirmModal(action);
             ? rejectionReasonInput.value.trim()
             : "";
 
+        // Validar motivo da recusa
         if (action === "reject" && rejectionReason.length < 10) {
+
             showDecisionToast(
                 "O motivo da recusa deve conter pelo menos 10 caracteres.",
                 "error"
@@ -3180,26 +3207,34 @@ openDecisionConfirmModal(action);
         }
 
         if (action === "reject" && rejectionReason.length > 2000) {
+
             showDecisionToast(
                 "O motivo da recusa não pode ultrapassar 2000 caracteres.",
                 "error"
             );
+
             return;
         }
 
+        // Validar notas administrativas
         if (reviewNotes.length > 2000) {
+
             showDecisionToast(
                 "As notas administrativas não podem ultrapassar 2000 caracteres.",
                 "error"
             );
+
             return;
         }
 
+        // Vérifier la session
         if (!auth.currentUser) {
+
             showDecisionToast(
                 "A sua sessão expirou. Entre novamente.",
                 "error"
             );
+
             return;
         }
 
@@ -3213,9 +3248,12 @@ openDecisionConfirmModal(action);
 
         try {
 
+            // Obtenir le token Firebase
             const token = await auth.currentUser.getIdToken();
 
+            // Envoyer la décision à Vercel
             const response = await fetch("/api/merchant-decision", {
+
                 method: "POST",
 
                 headers: {
@@ -3224,55 +3262,77 @@ openDecisionConfirmModal(action);
                 },
 
                 body: JSON.stringify({
+
                     action: action,
+
                     applicationId: selectedApplication.id,
+
                     reviewNotes: reviewNotes,
+
                     rejectionReason: action === "reject"
                         ? rejectionReason
                         : ""
+
                 })
+
             });
 
+            // Lire la réponse API
             let result;
 
             try {
+
                 result = await response.json();
+
             } catch (jsonError) {
+
                 throw new Error(
                     "O servidor devolveu uma resposta inválida."
                 );
+
             }
 
             if (!response.ok || !result.success) {
+
                 throw new Error(
                     result.message ||
                     result.error ||
                     "Não foi possível guardar a decisão."
                 );
+
             }
 
-            /* Fechar as janelas */
+            /* ---------------------------------------------
+               FECHAR AS JANELAS
+            --------------------------------------------- */
 
             pendingDecisionAction = null;
 
             if (confirmModal) {
+
                 confirmModal.classList.remove("active");
                 confirmModal.style.display = "none";
                 confirmModal.setAttribute("aria-hidden", "true");
+
             }
 
             const applicationModal =
                 document.getElementById("applicationModal");
 
             if (applicationModal) {
+
                 applicationModal.classList.remove("active");
                 applicationModal.style.display = "none";
                 applicationModal.setAttribute("aria-hidden", "true");
+
             }
 
             document.body.style.overflow = "";
 
-            /* Limpar o motivo */
+
+            /* ---------------------------------------------
+               LIMPAR O MOTIVO DA RECUSA
+            --------------------------------------------- */
 
             if (rejectionReasonInput) {
                 rejectionReasonInput.value = "";
@@ -3280,7 +3340,10 @@ openDecisionConfirmModal(action);
 
             updateRejectionReasonVisibility(null);
 
-            /* Atualizar os dados */
+
+            /* ---------------------------------------------
+               ATUALIZAR AS CANDIDATURAS
+            --------------------------------------------- */
 
             await loadMerchantApplications();
 
@@ -3288,37 +3351,47 @@ openDecisionConfirmModal(action);
 
             updateMerchantStatistics();
 
-            /* Mensagem de sucesso */
+
+            /* ---------------------------------------------
+               MENSAGENS DE SUCESSO
+            --------------------------------------------- */
 
             const successMessages = {
-                under_review: "Candidatura colocada em análise com sucesso.",
-                approve: "Comerciante aprovado com sucesso.",
-                reject: "Candidatura recusada com sucesso."
+
+                under_review:
+                    "Candidatura colocada em análise com sucesso.",
+
+                approve:
+                    "Comerciante aprovado com sucesso.",
+
+                reject:
+                    "Candidatura recusada com sucesso."
+
             };
 
             showDecisionToast(
-                successMessages[action] || "Decisão guardada com sucesso.",
+                successMessages[action] ||
+                "Decisão guardada com sucesso.",
                 "success"
             );
 
+
         } catch (error) {
 
-console.error("TOMA — Erro na decisão:", error);
-showDecisionToast(
-    error.message || "Não foi possível concluir a operação.",
-    "error"
-);
+            console.error(
+                "TOMA — Erro na decisão:",
+                error
+            );
 
-} finally {
+            showDecisionToast(
+                error.message ||
+                "Não foi possível concluir a operação.",
+                "error"
+            );
 
-decisionIsProcessing = false;
-hideDecisionProcessing();
-if (confirmDecisionButton) {
-    confirmDecisionButton.disabled = false;
-}
+        } finally {
 
-}
-
+            // Toujours libérer le traitement
             decisionIsProcessing = false;
 
             hideDecisionProcessing();
@@ -3326,6 +3399,7 @@ if (confirmDecisionButton) {
             if (confirmDecisionButton) {
                 confirmDecisionButton.disabled = false;
             }
+
         }
     }
 
@@ -3335,35 +3409,64 @@ if (confirmDecisionButton) {
     ----------------------------------------------------- */
 
     if (underReviewButton) {
+
         underReviewButton.addEventListener("click", () => {
+
             prepareDecision("under_review");
+
         });
+
     }
 
     if (approveButton) {
+
         approveButton.addEventListener("click", () => {
+
             prepareDecision("approve");
+
         });
+
     }
 
     if (rejectButton) {
+
         rejectButton.addEventListener("click", () => {
+
             prepareDecision("reject");
+
         });
+
     }
 
     if (confirmDecisionButton) {
-        confirmDecisionButton.addEventListener("click", submitMerchantDecision);
+
+        confirmDecisionButton.addEventListener(
+            "click",
+            submitMerchantDecision
+        );
+
     }
 
     if (cancelDecisionButton) {
-        cancelDecisionButton.addEventListener("click", closeDecisionConfirmModal);
+
+        cancelDecisionButton.addEventListener(
+            "click",
+            closeDecisionConfirmModal
+        );
+
     }
 
     if (confirmBackdrop) {
-        confirmBackdrop.addEventListener("click", closeDecisionConfirmModal);
+
+        confirmBackdrop.addEventListener(
+            "click",
+            closeDecisionConfirmModal
+        );
+
     }
 
-    console.log("BLOC 9 — Merchant decisions initialized.");
+    console.log(
+        "TOMA — BLOC 9: Merchant decisions initialized."
+    );
 
 })();
