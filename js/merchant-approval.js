@@ -427,316 +427,183 @@ initializeMerchantDocumentButtons();
 // FIN DU BLOC 2
 // -----------------------------------------------------
 /* =====================================================
-   TOMA — MERCHANT APPROVAL
-   BLOC 3 : CHARGEMENT DES DEMANDES FIRESTORE
+TOMA — MERCHANT APPROVAL
+BLOC 3 : CHARGEMENT DES DEMANDES FIRESTORE
 ===================================================== */
 
-
-// -----------------------------------------------------
+// —————————————————–
 // 3.1 — CHARGER LES DEMANDES
-// -----------------------------------------------------
+// —————————————————–
 
 async function loadMerchantApplications() {
+
+// Éviter les chargements simultanés
 if (isLoadingApplications) return [];
-
 isLoadingApplications = true;
-
-// Éléments HTML du chargement
+// -------------------------------------------------
+// 3.2 — RÉFÉRENCES HTML
+// -------------------------------------------------
 const loader = document.getElementById("applicationsLoader");
 const emptyState = document.getElementById("emptyState");
 const errorState = document.getElementById("errorState");
 const errorMessage = document.getElementById("errorMessage");
 const retryButton = document.getElementById("retryButton");
 const resultsCount = document.getElementById("resultsCount");
-
-// Préparer l'affichage
+// -------------------------------------------------
+// 3.3 — PRÉPARER L'AFFICHAGE
+// -------------------------------------------------
 if (loader) loader.style.display = "flex";
 if (emptyState) emptyState.style.display = "none";
 if (errorState) errorState.style.display = "none";
-
 if (merchantApplicationsList) {
     merchantApplicationsList.style.display = "none";
 }
-
-// Initialiser le bouton Réessayer une seule fois
+// -------------------------------------------------
+// 3.4 — INITIALISER LE BOUTON RÉESSAYER
+// -------------------------------------------------
 if (retryButton && !retryButton.dataset.initialized) {
-
     retryButton.dataset.initialized = "true";
-
     retryButton.addEventListener("click", async () => {
-
         await loadMerchantApplications();
-
         if (merchantApplications.length > 0) {
             applyMerchantFilters();
         }
-
         updateMerchantStatistics();
-
     });
 }
-
 try {
-
-    // Vérifier les droits administrateur
-    if (!currentAdmin || !ALLOWED_ADMIN_ROLES.includes(currentAdminRole)) {
-        throw new Error("Acesso não autorizado para carregar candidaturas.");
+    // -------------------------------------------------
+    // 3.5 — VÉRIFIER LES DROITS ADMINISTRATEUR
+    // -------------------------------------------------
+    if (
+        !currentAdmin ||
+        !["admin", "superadmin"].includes(currentAdminRole)
+    ) {
+        throw new Error(
+            "Acesso não autorizado para carregar candidaturas."
+        );
     }
-
-    // Récupérer les candidatures
-    const applicationsQuery = query(
-        collection(db, COLLECTIONS.MERCHANT_APPLICATIONS),
-        limit(MAX_APPLICATIONS)
+    // -------------------------------------------------
+    // 3.6 — RÉFÉRENCE FIRESTORE
+    // -------------------------------------------------
+    const applicationsRef = collection(
+        db,
+        MERCHANT_APPROVAL_CONFIG.applicationsCollection
     );
-
+    // -------------------------------------------------
+    // 3.7 — RÉCUPÉRER LES DEMANDES
+    // -------------------------------------------------
+    const applicationsQuery = query(
+        applicationsRef,
+        limit(MERCHANT_APPROVAL_CONFIG.maxApplications)
+    );
     const snapshot = await getDocs(applicationsQuery);
-
-    // Réinitialiser les données
+    // -------------------------------------------------
+    // 3.8 — RÉINITIALISER LES DONNÉES
+    // -------------------------------------------------
     merchantApplications = [];
-
+    // -------------------------------------------------
+    // 3.9 — PARCOURIR LES DEMANDES
+    // -------------------------------------------------
     snapshot.forEach((applicationDoc) => {
-
         merchantApplications.push({
             id: applicationDoc.id,
             ...applicationDoc.data()
         });
-
     });
-
-    // Trier par date de création, de la plus récente à la plus ancienne
+    // -------------------------------------------------
+    // 3.10 — TRIER LES DEMANDES
+    // -------------------------------------------------
     merchantApplications.sort((a, b) => {
-
         const dateA = a.createdAt?.toMillis
             ? a.createdAt.toMillis()
             : 0;
-
         const dateB = b.createdAt?.toMillis
             ? b.createdAt.toMillis()
             : 0;
-
         return dateB - dateA;
-
     });
-
-    filteredApplications = [...merchantApplications];
-
-    // Actualiser le compteur
+    // -------------------------------------------------
+    // 3.11 — PRÉPARER LES DEMANDES FILTRÉES
+    // -------------------------------------------------
+    filteredApplications = [
+        ...merchantApplications
+    ];
+    // -------------------------------------------------
+    // 3.12 — ACTUALISER LE COMPTEUR
+    // -------------------------------------------------
     if (resultsCount) {
         resultsCount.textContent =
             `${merchantApplications.length} candidatura(s)`;
     }
-
-    // Affichage selon le résultat
+    // -------------------------------------------------
+    // 3.13 — GÉRER L'AFFICHAGE DES RÉSULTATS
+    // -------------------------------------------------
     if (merchantApplications.length === 0) {
-
-        if (emptyState) emptyState.style.display = "block";
-
+        if (emptyState) {
+            emptyState.style.display = "block";
+        }
         if (merchantApplicationsList) {
             merchantApplicationsList.style.display = "none";
         }
-
     } else {
-
-        if (emptyState) emptyState.style.display = "none";
-
+        if (emptyState) {
+            emptyState.style.display = "none";
+        }
         if (merchantApplicationsList) {
             merchantApplicationsList.style.display = "block";
         }
-
     }
-
-    if (errorState) errorState.style.display = "none";
-
+    if (errorState) {
+        errorState.style.display = "none";
+    }
+    // -------------------------------------------------
+    // 3.14 — DIAGNOSTIC
+    // -------------------------------------------------
     console.log(
         "TOMA — Candidaturas carregadas:",
         merchantApplications.length
     );
-
     return merchantApplications;
-
 } catch (error) {
-
-    console.error("TOMA — Erro ao carregar candidaturas:", error);
-
-    // Vider les données en cas d'erreur
+    // -------------------------------------------------
+    // 3.15 — GESTION DES ERREURS
+    // -------------------------------------------------
+    console.error(
+        "TOMA — Erro ao carregar candidaturas:",
+        error
+    );
     merchantApplications = [];
     filteredApplications = [];
-
     if (errorMessage) {
         errorMessage.textContent =
             "Não foi possível carregar as candidaturas. Verifique a sua ligação e tente novamente.";
     }
-
-    if (errorState) errorState.style.display = "block";
-
-    if (emptyState) emptyState.style.display = "none";
-
+    if (errorState) {
+        errorState.style.display = "block";
+    }
+    if (emptyState) {
+        emptyState.style.display = "none";
+    }
     if (merchantApplicationsList) {
         merchantApplicationsList.style.display = "none";
     }
-
     return [];
-
 } finally {
-
-    // Toujours arrêter le chargement
+    // -------------------------------------------------
+    // 3.16 — FINALIZAR O CARREGAMENTO
+    // -------------------------------------------------
     isLoadingApplications = false;
-
     if (loader) {
         loader.style.display = "none";
     }
+}
 
 }
 
-        // -------------------------------------------------
-        // 3.2 — RÉFÉRENCE FIRESTORE
-        // -------------------------------------------------
-
-        const applicationsRef = collection(
-            db,
-            MERCHANT_APPROVAL_CONFIG.applicationsCollection
-        );
-
-
-        // -------------------------------------------------
-        // 3.3 — RÉCUPÉRER LES DEMANDES
-        // -------------------------------------------------
-
-        const applicationsQuery = query(
-            applicationsRef,
-            limit(MERCHANT_APPROVAL_CONFIG.maxApplications)
-        );
-
-        const snapshot = await getDocs(applicationsQuery);
-
-
-        // -------------------------------------------------
-        // 3.4 — RÉINITIALISER LES DONNÉES
-        // -------------------------------------------------
-
-        merchantApplications = [];
-
-        filteredApplications = [];
-
-
-        // -------------------------------------------------
-        // 3.5 — PARCOURIR LES DEMANDES
-        // -------------------------------------------------
-
-        snapshot.forEach((applicationDoc) => {
-
-            const applicationData = applicationDoc.data();
-
-            merchantApplications.push({
-
-                id: applicationDoc.id,
-
-                ...applicationData
-
-            });
-
-        });
-
-
-        // -------------------------------------------------
-        // 3.6 — TRIER LES DEMANDES
-        // -------------------------------------------------
-
-        merchantApplications.sort((a, b) => {
-
-            const dateA = a.createdAt?.toMillis
-                ? a.createdAt.toMillis()
-                : 0;
-
-            const dateB = b.createdAt?.toMillis
-                ? b.createdAt.toMillis()
-                : 0;
-
-            return dateB - dateA;
-
-        });
-
-
-        // -------------------------------------------------
-        // 3.7 — PRÉPARER LES DEMANDES FILTRÉES
-        // -------------------------------------------------
-
-        filteredApplications = [
-            ...merchantApplications
-        ];
-
-
-        // -------------------------------------------------
-        // 3.8 — DIAGNOSTIC
-        // -------------------------------------------------
-
-        console.log(
-            "TOMA — Demandas carregadas:",
-            merchantApplications
-        );
-
-        console.log(
-            "TOMA — Total de pedidos:",
-            merchantApplications.length
-        );
-
-
-        // -------------------------------------------------
-        // 3.9 — ALERTE DE RÉUSSITE
-        // -------------------------------------------------
-
-        alert(
-            "TOMA — BLOCO 3\n\n" +
-
-            "✅ Carregamento concluído com sucesso!\n\n" +
-
-            "Coleção: merchantApplications\n\n" +
-
-            "Pedidos encontrados: " +
-            merchantApplications.length +
-
-            "\n\nOs pedidos foram carregados do Firebase."
-        );
-
-
-        return merchantApplications;
-
-
-    } catch (error) {
-
-        console.error(
-            "TOMA — Erro ao carregar pedidos:",
-            error
-        );
-
-
-        // -------------------------------------------------
-        // 3.10 — ALERTE D'ERREUR
-        // -------------------------------------------------
-
-        alert(
-            "TOMA — ERRO NO BLOCO 3\n\n" +
-
-            "❌ Não foi possível carregar os pedidos.\n\n" +
-
-            "Detalhes: " + error.message
-        );
-
-        return [];
-
-
-    } finally {
-
-        isLoadingApplications = false;
-
-    }
-
-}
-
-
-// -----------------------------------------------------
+// —————————————————–
 // FIN DU BLOC 3
-// -----------------------------------------------------
+// —————————————————–
 /* =====================================================
    TOMA — MERCHANT APPROVAL
    BLOC 4 : AFFICHAGE PROFESSIONNEL DES CANDIDATURES
