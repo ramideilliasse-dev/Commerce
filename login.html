@@ -3,321 +3,912 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Toma">
-<link rel="apple-touch-icon" href="/icon-192.png">
 
+<link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="manifest" href="/manifest.json">
+
 <meta name="theme-color" content="#ff6a00">
- <title>Entrar</title>
+
+<title>Entrar ou Criar Conta | Toma</title>
 
 <style>
-
-body{
-font-family:Arial;
-margin:0;
-background:linear-gradient(135deg,#ff6a00,#ff3c00);
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
+:root {
+    --orange: #ff6a00;
+    --orange-dark: #ed5100;
+    --text: #202124;
+    --muted: #777;
+    --border: #e8e8e8;
+    --background: #f7f8fa;
 }
 
-.card{
-background:white;
-padding:25px;
-border-radius:15px;
-width:320px;
-box-shadow:0 5px 20px rgba(0,0,0,0.2);
-text-align:center;
+* {
+    box-sizing: border-box;
 }
 
-.title{
-font-size:22px;
-font-weight:bold;
-margin-bottom:15px;
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background:
+        radial-gradient(circle at top left, rgba(255,106,0,.12), transparent 35%),
+        linear-gradient(145deg, #fff7f1, #f5f6f8);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 25px 15px;
 }
 
-.tabs{
-display:flex;
-margin-bottom:15px;
+.container {
+    width: 100%;
+    max-width: 440px;
 }
 
-.tab{
-flex:1;
-padding:10px;
-cursor:pointer;
-border-bottom:2px solid #ddd;
+.brand {
+    text-align: center;
+    margin-bottom: 22px;
 }
 
-.active{
-border-bottom:2px solid #ff6a00;
-font-weight:bold;
+.logo {
+    width: 65px;
+    height: 65px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #ff8a00, #ff4d00);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 35px;
+    font-weight: 900;
+    margin: auto auto 12px;
+    box-shadow: 0 9px 25px rgba(255,106,0,.25);
 }
 
-input{
-width:100%;
-padding:12px;
-margin-bottom:10px;
-border-radius:10px;
-border:1px solid #ddd;
+.brand h1 {
+    font-size: 27px;
+    margin: 0 0 7px;
+    letter-spacing: -.7px;
 }
 
-button{
-width:100%;
-padding:12px;
-border:none;
-border-radius:10px;
-background:#ff6a00;
-color:white;
-font-weight:bold;
-cursor:pointer;
+.brand p {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0;
 }
 
-.small{
-font-size:13px;
-color:#777;
-margin-top:10px;
+.card {
+    background: white;
+    border-radius: 23px;
+    padding: 30px 25px;
+    box-shadow: 0 15px 50px rgba(0,0,0,.08);
+    border: 1px solid rgba(255,255,255,.8);
 }
 
-.link{
-margin-top:10px;
-font-size:13px;
-color:#ff6a00;
-cursor:pointer;
-}
-/* ================= TOAST MODERNE ================= */
-
-.toastBox{
-position:fixed;
-top:20px;
-left:50%;
-transform:translateX(-50%);
-z-index:999999;
-display:flex;
-flex-direction:column;
-gap:10px;
-pointer-events:none;
+.welcome {
+    margin-bottom: 23px;
 }
 
-.toast{
-min-width:220px;
-max-width:320px;
-padding:14px 18px;
-border-radius:14px;
-color:white;
-font-size:14px;
-font-weight:bold;
-box-shadow:0 6px 18px rgba(0,0,0,0.2);
-animation:toastIn .3s ease, toastOut .3s ease 3.7s forwards;
-backdrop-filter:blur(10px);
+.welcome h2 {
+    font-size: 22px;
+    margin: 0 0 8px;
 }
 
-.toast.success{
-background:linear-gradient(135deg,#1aa34a,#23c55e);
+.welcome p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--muted);
+    margin: 0;
 }
 
-.toast.error{
-background:linear-gradient(135deg,#dc2626,#ef4444);
+.tabs {
+    display: flex;
+    background: #f4f4f4;
+    padding: 5px;
+    border-radius: 12px;
+    margin-bottom: 23px;
 }
 
-.toast.warning{
-background:linear-gradient(135deg,#ff6a00,#ff9f43);
+.tab {
+    flex: 1;
+    border: none;
+    padding: 12px 7px;
+    border-radius: 9px;
+    background: transparent;
+    color: #777;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
 }
 
-@keyframes toastIn{
-from{
-opacity:0;
-transform:translateY(-20px) scale(.9);
-}
-to{
-opacity:1;
-transform:translateY(0) scale(1);
-}
+.tab.active {
+    background: white;
+    color: var(--orange);
+    box-shadow: 0 2px 8px rgba(0,0,0,.07);
 }
 
-@keyframes toastOut{
-to{
-opacity:0;
-transform:translateY(-20px) scale(.9);
+.field {
+    margin-bottom: 16px;
+    text-align: left;
 }
+
+.field label {
+    display: block;
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.input-wrap {
+    position: relative;
+}
+
+input {
+    width: 100%;
+    height: 49px;
+    padding: 0 14px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    outline: none;
+    font-size: 14px;
+    background: #fff;
+    color: var(--text);
+}
+
+input:focus {
+    border-color: var(--orange);
+    box-shadow: 0 0 0 3px rgba(255,106,0,.09);
+}
+
+.password-input {
+    padding-right: 65px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: none;
+    color: var(--orange);
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    width: auto;
+    padding: 5px;
+}
+
+.forgot {
+    display: block;
+    text-align: right;
+    color: var(--orange);
+    font-size: 12px;
+    margin-top: -5px;
+    margin-bottom: 18px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.primary-btn {
+    width: 100%;
+    height: 51px;
+    border: none;
+    border-radius: 12px;
+    color: white;
+    background: linear-gradient(135deg, #ff8a00, #ff5900);
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 7px 18px rgba(255,106,0,.2);
+    transition: .2s;
+}
+
+.primary-btn:hover {
+    transform: translateY(-1px);
+}
+
+.primary-btn:disabled {
+    opacity: .65;
+    cursor: wait;
+    transform: none;
+}
+
+.separator {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 23px 0;
+    color: #aaa;
+    font-size: 11px;
+}
+
+.separator::before,
+.separator::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #eee;
+}
+
+.merchant-box {
+    background: #fff8f2;
+    border: 1px solid #ffe1ca;
+    border-radius: 14px;
+    padding: 15px;
+    text-align: left;
+}
+
+.merchant-box strong {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
+.merchant-box p {
+    font-size: 12px;
+    color: #777;
+    line-height: 1.5;
+    margin: 0 0 12px;
+}
+
+.merchant-link {
+    display: block;
+    text-align: center;
+    padding: 11px;
+    background: white;
+    color: var(--orange-dark);
+    border: 1px solid #ffd0ad;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.trust {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    color: #888;
+    font-size: 11px;
+}
+
+.footer {
+    text-align: center;
+    color: #999;
+    font-size: 11px;
+    margin-top: 20px;
+    line-height: 1.7;
+}
+
+/* TOAST */
+
+.toastBox {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99999;
+    width: calc(100% - 30px);
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.toast {
+    padding: 14px 16px;
+    border-radius: 12px;
+    color: white;
+    font-size: 13px;
+    font-weight: bold;
+    box-shadow: 0 7px 22px rgba(0,0,0,.15);
+    animation: toastIn .25s ease;
+}
+
+.toast.success {
+    background: #159947;
+}
+
+.toast.error {
+    background: #dc2626;
+}
+
+.toast.warning {
+    background: #ed7600;
+}
+
+@keyframes toastIn {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media(max-width:380px) {
+    .card {
+        padding: 25px 18px;
+    }
+
+    .brand h1 {
+        font-size: 24px;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<div class="card">
+<div class="container">
 
-<div class="title">Shopping 🇦🇴</div>
+    <header class="brand">
+        <div class="logo">T</div>
+        <h1>Toma</h1>
+        <p>O comércio mais perto de si.</p>
+    </header>
 
-<div class="tabs">
-<div id="loginTab" class="tab active" onclick="switchTab('login')">Entrar</div>
-<div id="registerTab" class="tab" onclick="switchTab('register')">Criar conta</div>
+    <main class="card">
+
+        <div class="welcome">
+            <h2 id="welcomeTitle">Bem-vindo de volta!</h2>
+            <p id="welcomeText">
+                Entre na sua conta e descubra tudo o que Toma preparou para si.
+            </p>
+        </div>
+
+        <div class="tabs">
+            <button type="button" id="loginTab" class="tab active">
+                Entrar
+            </button>
+
+            <button type="button" id="registerTab" class="tab">
+                Criar conta
+            </button>
+        </div>
+
+        <form id="authForm">
+
+            <div class="field" id="nameGroup" hidden>
+                <label for="fullName">Nome completo</label>
+                <input
+                    id="fullName"
+                    type="text"
+                    placeholder="Introduza o seu nome"
+                    autocomplete="name"
+                >
+            </div>
+
+            <div class="field">
+                <label for="email">Endereço de email</label>
+                <input
+                    id="email"
+                    type="email"
+                    placeholder="exemplo@email.com"
+                    autocomplete="email"
+                    required
+                >
+            </div>
+
+            <div class="field">
+                <label for="password">Palavra-passe</label>
+
+                <div class="input-wrap">
+                    <input
+                        id="password"
+                        class="password-input"
+                        type="password"
+                        placeholder="Introduza a sua palavra-passe"
+                        autocomplete="current-password"
+                        minlength="6"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        id="togglePassword"
+                        class="toggle-password"
+                    >
+                        Mostrar
+                    </button>
+                </div>
+            </div>
+
+            <span id="forgotPassword" class="forgot">
+                Esqueceu-se da palavra-passe?
+            </span>
+
+            <button type="submit" id="actionBtn" class="primary-btn">
+                Entrar na minha conta
+            </button>
+
+        </form>
+
+        <div class="separator">OU</div>
+
+        <section class="merchant-box">
+            <strong>🏪 Quer abrir a sua própria loja?</strong>
+
+            <p>
+                Torne-se comerciante na Toma, apresente os seus produtos
+                e alcance novos clientes.
+            </p>
+
+            <a href="merchant-register-v2.html" class="merchant-link">
+                Criar conta de comerciante →
+            </a>
+        </section>
+
+        <div class="trust">
+            <span>🔒 Acesso seguro</span>
+            <span>🇦🇴 Feito para Angola</span>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        Ao continuar, está a utilizar os serviços da Toma.<br>
+        © 2026 Toma — Todos os direitos reservados.
+    </footer>
+
 </div>
 
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Senha">
-
-<button id="actionBtn" onclick="handleAction()">Entrar</button>
-
-<div class="small" id="msg"></div>
-
-<!-- 🔥 GO MERCHANT -->
-<div class="link" onclick="location.href='merchant-register.html'">
-Criar conta comerciante 🏪
-</div>
-
-</div>
+<div id="toastBox" class="toastBox"></div>
 
 <script type="module">
 
-import { auth, db } from "./firebase.js"
+import { auth, db } from "./firebase.js";
 
 import {
-signInWithEmailAndPassword,
-createUserWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    sendPasswordResetEmail,
+    signOut,
+    deleteUser
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 import {
-doc,
-setDoc,
-getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+    doc,
+    getDoc,
+    setDoc,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-let mode = "login"
 
-/* SWITCH */
-window.switchTab = function(tab){
+/* =========================================
+   1. ELEMENTOS DA PÁGINA
+========================================= */
 
-mode = tab
+const authForm = document.getElementById("authForm");
 
-loginTab.classList.remove("active")
-registerTab.classList.remove("active")
+const loginTab = document.getElementById("loginTab");
+const registerTab = document.getElementById("registerTab");
 
-if(tab==="login"){
-loginTab.classList.add("active")
-actionBtn.innerText="Entrar"
-}else{
-registerTab.classList.add("active")
-actionBtn.innerText="Criar conta"
+const nameGroup = document.getElementById("nameGroup");
+const fullName = document.getElementById("fullName");
+
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+
+const actionBtn = document.getElementById("actionBtn");
+const welcomeTitle = document.getElementById("welcomeTitle");
+const welcomeText = document.getElementById("welcomeText");
+
+const forgotPassword = document.getElementById("forgotPassword");
+const togglePassword = document.getElementById("togglePassword");
+
+let mode = "login";
+
+
+/* =========================================
+   2. MENSAGENS
+========================================= */
+
+function showToast(message, type = "success") {
+
+    const box = document.getElementById("toastBox");
+
+    const toast = document.createElement("div");
+
+    toast.className = "toast " + type;
+    toast.textContent = message;
+
+    box.appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 4000);
 }
 
-msg.innerText=""
+
+/* =========================================
+   3. TROCAR ENTRE LOGIN E REGISTO
+========================================= */
+
+function switchTab(newMode) {
+
+    mode = newMode;
+
+    const registering = mode === "register";
+
+    loginTab.classList.toggle("active", !registering);
+    registerTab.classList.toggle("active", registering);
+
+    nameGroup.hidden = !registering;
+    fullName.required = registering;
+
+    welcomeTitle.textContent = registering
+        ? "Junte-se à Toma!"
+        : "Bem-vindo de volta!";
+
+    welcomeText.textContent = registering
+        ? "Crie a sua conta e descubra uma nova forma de comprar e explorar produtos em Angola."
+        : "Entre na sua conta e descubra tudo o que Toma preparou para si.";
+
+    actionBtn.textContent = registering
+        ? "Criar a minha conta"
+        : "Entrar na minha conta";
+
+    passwordInput.autocomplete = registering
+        ? "new-password"
+        : "current-password";
+
+    forgotPassword.style.display = registering
+        ? "none"
+        : "block";
 }
 
-/* 🔥 AUTO FIRESTORE SYSTEM */
-async function ensureUser(user){
+loginTab.addEventListener("click", () => switchTab("login"));
+registerTab.addEventListener("click", () => switchTab("register"));
 
-const ref = doc(db,"users",user.uid)
-const snap = await getDoc(ref)
 
-if(!snap.exists()){
+/* =========================================
+   4. MOSTRAR / OCULTAR PALAVRA-PASSE
+========================================= */
 
-await setDoc(ref,{
-email:user.email,
-role:"client",
-createdAt:Date.now(),
-approved:false,
-blocked:false
-})
+togglePassword.addEventListener("click", () => {
 
-console.log("User criado automaticamente 🔥")
+    const visible = passwordInput.type === "text";
 
-}
+    passwordInput.type = visible ? "password" : "text";
 
-}
+    togglePassword.textContent = visible
+        ? "Mostrar"
+        : "Ocultar";
+});
 
-/* ACTION */
-window.handleAction = async function(){
 
-const email = document.getElementById("email").value.trim()
-const password = document.getElementById("password").value.trim()
+/* =========================================
+   5. CRIAR PERFIL CLIENTE NO FIRESTORE
+========================================= */
 
-if(!email || !password){
-msg.innerText="Preencha todos os campos ❌"
-return
-}
+async function createClientProfile(user, name) {
 
-try{
+    if (!user || !user.uid) {
+        throw new Error("Não foi possível identificar a conta.");
+    }
 
-let cred
+    const userRef = doc(db, "users", user.uid);
 
-if(mode==="login"){
+    const userData = {
+        uid: user.uid,
+        name: name,
+        email: user.email || "",
+        phone: "",
+        photo: "",
+        photoURL: "",
+        province: "",
+        city: "",
+        address: "",
 
-cred = await signInWithEmailAndPassword(auth,email,password)
-msg.innerText="Login realizado ✅"
+        role: "client",
+        approved: false,
+        blocked: false,
+        requestMerchant: false,
 
-}else{
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+    };
 
-cred = await createUserWithEmailAndPassword(auth,email,password)
-
-/* 🔥 CREATE USER */
-await setDoc(doc(db,"users",cred.user.uid),{
-email:cred.user.email,
-role:"client",
-createdAt:Date.now(),
-approved:false,
-blocked:false
-})
-
-msg.innerText="Conta criada com sucesso ✅"
+    await setDoc(userRef, userData);
 
 }
 
-/* 🔥 ALWAYS ENSURE USER EXISTS */
-await ensureUser(cred.user)
 
-/* REDIRECT */
-setTimeout(()=>{
-location.href="index.html"
-},1000)
+/* =========================================
+   6. VERIFICAR PERFIL EXISTENTE
+========================================= */
 
-}catch(e){
-msg.innerText="Erro: " + e.message
+async function checkExistingUser(user) {
+
+    const userRef = doc(db, "users", user.uid);
+
+    const userSnapshot = await getDoc(userRef);
+
+    if (!userSnapshot.exists()) {
+
+        throw new Error(
+            "O perfil desta conta não foi encontrado. Contacte o suporte Toma."
+        );
+
+    }
+
+    const userData = userSnapshot.data();
+
+    if (userData.blocked === true) {
+
+        await signOut(auth);
+
+        throw new Error(
+            "Esta conta encontra-se temporariamente bloqueada. Contacte o suporte."
+        );
+
+    }
+
+    return userData;
 }
 
+
+/* =========================================
+   7. MENSAGENS DE ERRO FIREBASE
+========================================= */
+
+function getFriendlyError(error) {
+
+    const code = error.code || "";
+
+    const messages = {
+
+        "auth/invalid-email":
+            "O endereço de email não é válido.",
+
+        "auth/user-not-found":
+            "Não encontrámos uma conta com este email.",
+
+        "auth/wrong-password":
+            "A palavra-passe está incorreta.",
+
+        "auth/invalid-credential":
+            "Email ou palavra-passe incorretos.",
+
+        "auth/email-already-in-use":
+            "Este email já possui uma conta. Experimente entrar.",
+
+        "auth/weak-password":
+            "A palavra-passe deve ter pelo menos 6 caracteres.",
+
+        "auth/too-many-requests":
+            "Demasiadas tentativas. Aguarde um pouco e tente novamente.",
+
+        "auth/network-request-failed":
+            "Problema de ligação. Verifique a sua internet.",
+
+        "permission-denied":
+            "Não foi possível guardar o perfil. Verifique as permissões da conta."
+    };
+
+    return messages[code] || error.message || "Ocorreu um erro inesperado.";
 }
-/* ================= TOAST ================= */
 
-function showToast(message,type="success"){
 
-const box = document.getElementById("toastBox")
+/* =========================================
+   8. ESTADO DO BOTÃO
+========================================= */
 
-const toast = document.createElement("div")
+function setLoading(loading) {
 
-toast.className = "toast " + type
+    actionBtn.disabled = loading;
 
-toast.innerText = message
+    if (loading) {
 
-box.appendChild(toast)
+        actionBtn.textContent = "Aguarde...";
 
-setTimeout(()=>{
-toast.remove()
-},4000)
+    } else {
 
+        actionBtn.textContent = mode === "login"
+            ? "Entrar na minha conta"
+            : "Criar a minha conta";
+
+    }
 }
+
+
+/* =========================================
+   9. AUTENTICAÇÃO
+========================================= */
+
+authForm.addEventListener("submit", async (event) => {
+
+    event.preventDefault();
+
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+
+    const name = fullName.value.trim();
+
+    if (!email || !password) {
+
+        showToast("Preencha todos os campos.", "warning");
+        return;
+
+    }
+
+    if (mode === "register" && name.length < 3) {
+
+        showToast("Introduza o seu nome completo.", "warning");
+        return;
+
+    }
+
+    if (password.length < 6) {
+
+        showToast(
+            "A palavra-passe deve ter pelo menos 6 caracteres.",
+            "warning"
+        );
+
+        return;
+
+    }
+
+    setLoading(true);
+
+    let createdUser = null;
+
+    try {
+
+        if (mode === "register") {
+
+            /* CRIAÇÃO DA CONTA FIREBASE */
+
+            const credential = await createUserWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+
+            createdUser = credential.user;
+
+            /* CRIAÇÃO DO PERFIL CLIENTE */
+
+            try {
+
+                await createClientProfile(createdUser, name);
+
+            } catch (profileError) {
+
+                /*
+                  Se o perfil falhar, tentamos eliminar
+                  a conta Auth recém-criada para evitar
+                  deixar uma conta incompleta.
+                */
+
+                try {
+                    await deleteUser(createdUser);
+                } catch (rollbackError) {
+                    console.error("Account cleanup error:", rollbackError);
+                }
+
+                throw profileError;
+
+            }
+
+            showToast(
+                "Parabéns! A sua conta Toma foi criada com sucesso.",
+                "success"
+            );
+
+        } else {
+
+            /* LOGIN */
+
+            const credential = await signInWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+
+            await checkExistingUser(credential.user);
+
+            showToast(
+                "Bem-vindo de volta à Toma!",
+                "success"
+            );
+
+        }
+
+        /* REDIRECIONAMENTO */
+
+        actionBtn.textContent = "Acesso confirmado!";
+
+        setTimeout(() => {
+
+            window.location.href = "index.html";
+
+        }, 1300);
+
+    } catch (error) {
+
+        console.error("TOMA AUTH ERROR:", error);
+
+        showToast(
+            getFriendlyError(error),
+            "error"
+        );
+
+        setLoading(false);
+
+    }
+
+});
+
+
+/* =========================================
+   10. RECUPERAR PALAVRA-PASSE
+========================================= */
+
+forgotPassword.addEventListener("click", async () => {
+
+    const email = emailInput.value.trim();
+
+    if (!email) {
+
+        showToast(
+            "Introduza primeiro o seu endereço de email.",
+            "warning"
+        );
+
+        emailInput.focus();
+        return;
+
+    }
+
+    try {
+
+        await sendPasswordResetEmail(auth, email);
+
+        showToast(
+            "Enviámos um email para recuperar a sua palavra-passe.",
+            "success"
+        );
+
+    } catch (error) {
+
+        showToast(
+            getFriendlyError(error),
+            "error"
+        );
+
+    }
+
+});
+
 </script>
-<div id="toastBox" class="toastBox"></div>
+
 <script>
+/* =========================================
+   11. SERVICE WORKER
+========================================= */
+
 if ("serviceWorker" in navigator) {
 
-window.addEventListener("load", () => {
+    window.addEventListener("load", () => {
 
-navigator.serviceWorker.register("/service-worker.js")
+        navigator.serviceWorker.register("/service-worker.js")
+            .then(() => {
+                console.log("Toma Service Worker OK");
+            })
+            .catch(error => {
+                console.log("Toma Service Worker ERROR:", error);
+            });
 
-.then(() => {
-console.log("SW OK")
-})
-
-.catch(err => {
-console.log("SW ERROR", err)
-})
-
-})
+    });
 
 }
 </script>
+
 </body>
 </html>
