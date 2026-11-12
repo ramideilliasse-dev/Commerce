@@ -3,8 +3,14 @@
 // BLOC 1 — INITIALISATION
 // ======================================================
 
-import { auth } from "../firebase.js";
+import { auth, db } from "../firebase.js";
 
+import {
+    doc,
+    getDoc,
+    setDoc,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import {
     createUserWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -1023,6 +1029,64 @@ function getTomaFirebaseAuthError(error) {
         "Não foi possível criar a conta. Verifique a configuração Firebase.";
 }
 // ------------------------------------------------------
+// 5.2.1 — CRIAR DOCUMENTO DO UTILIZADOR NO FIRESTORE
+// ------------------------------------------------------
+
+async function ensureTomaClientDocument(user) {
+
+    if (!user || !user.uid) {
+        throw new Error(
+            "Não foi possível identificar a conta do utilizador."
+        );
+    }
+
+    const userRef = doc(db, "users", user.uid);
+
+    const userSnapshot = await getDoc(userRef);
+
+    // Não modificar um perfil que já existe.
+    if (userSnapshot.exists()) {
+        return userSnapshot.data();
+    }
+
+    // Criar perfil inicial para o novo utilizador.
+    const userData = {
+
+        uid: user.uid,
+
+        name: user.displayName || "",
+
+        email: user.email || "",
+
+        phone: "",
+
+        photoURL: "",
+
+        province: "",
+
+        city: "",
+
+        address: "",
+
+        role: "client",
+
+        approved: false,
+
+        blocked: false,
+
+        requestMerchant: false,
+
+        createdAt: serverTimestamp(),
+
+        updatedAt: serverTimestamp()
+
+    };
+
+    await setDoc(userRef, userData);
+
+    return userData;
+}
+// ------------------------------------------------------
 // 5.3 — CRÉATION DU COMPTE MARCHAND
 // ------------------------------------------------------
 
@@ -1059,13 +1123,16 @@ async function createTomaMerchantAccount() {
             accountData.password
         );
 
-        const user = credential.user;
+                const user = credential.user;
 
         if (!user || !user.uid) {
             throw new Error(
                 "Firebase não retornou um UID válido."
             );
         }
+
+        // Criar o documento users/{uid}
+        await ensureTomaClientDocument(user);
 
         window.TOMA_MERCHANT_REGISTER.account = {
             uid: user.uid,
@@ -2055,6 +2122,8 @@ updateTomaSubmissionProgress(10);
                     "Existe outra conta ligada. Termine sessão e utilize o e-mail indicado no formulário."
                 );
             }
+
+                        await ensureTomaClientDocument(currentUser);
 
             window.TOMA_MERCHANT_REGISTER.account = {
                 uid: currentUser.uid,
