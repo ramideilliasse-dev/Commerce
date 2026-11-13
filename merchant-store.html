@@ -1,0 +1,448 @@
+ <!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loja | Toma</title>
+<meta name="theme-color" content="#ffffff">
+<meta name="description" content="Descubra os produtos e informações desta loja na Toma.">
+<link rel="stylesheet" href="merchant-store.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
+</head>
+<body>
+<div class="store-page" id="storePage">
+<!-- HEADER -->
+<header class="store-header">
+    <button type="button" class="back-button" id="backButton">
+        <span class="material-symbols-rounded">arrow_back</span>
+        <span>Voltar</span>
+    </button>
+    <a href="home.html" class="store-brand">
+        <span class="brand-logo">T</span>
+        <span>Toma</span>
+    </a>
+    <button type="button" class="cart-button" id="storeCartButton">
+        <span class="material-symbols-rounded">shopping_cart</span>
+        <span class="cart-count" id="storeCartCount">0</span>
+    </button>
+</header>
+<!-- LOADER -->
+<section class="store-loader" id="storeLoader">
+    <div class="loader-spinner"></div>
+    <p>A carregar loja...</p>
+</section>
+<!-- STORE CONTENT -->
+<main id="storeContent" class="store-content hidden">
+    <!-- BANNER -->
+    <section class="store-banner-section">
+        <div class="store-banner" id="storeBanner">
+            <div class="banner-overlay"></div>
+        </div>
+    </section>
+    <!-- STORE IDENTITY -->
+    <section class="store-identity">
+        <div class="store-logo-wrapper">
+            <img
+                src="images/default-store.png"
+                alt="Logótipo da loja"
+                id="storeLogo"
+                class="store-logo"
+            >
+        </div>
+        <div class="store-main-info">
+            <div class="store-name-line">
+                <h1 id="storeName">Loja</h1>
+                <span
+                    class="verified-badge hidden"
+                    id="storeVerifiedBadge"
+                    title="Loja verificada"
+                >
+                    <span class="material-symbols-rounded">verified</span>
+                    Verificada
+                </span>
+            </div>
+            <p class="store-category" id="storeCategory">
+                Loja Toma
+            </p>
+            <div class="store-rating">
+                <span class="material-symbols-rounded">star</span>
+                <span id="storeRating">0.0</span>
+                <span class="rating-separator">·</span>
+                <span id="storeReviewCount">0 avaliações</span>
+            </div>
+        </div>
+        <button
+            type="button"
+            class="store-info-button"
+            id="openStoreInfo"
+        >
+            <span class="material-symbols-rounded">storefront</span>
+            Ver informações da loja
+        </button>
+    </section>
+    <!-- STORE DESCRIPTION -->
+    <section class="store-description-section">
+        <p id="storeDescription">
+            Bem-vindo à nossa loja na Toma.
+        </p>
+    </section>
+    <!-- STORE STATISTICS -->
+    <section class="store-statistics">
+        <div class="store-stat">
+            <span class="material-symbols-rounded">inventory_2</span>
+            <div>
+                <strong id="storeProductsCount">0</strong>
+                <small>Produtos</small>
+            </div>
+        </div>
+        <div class="store-stat">
+            <span class="material-symbols-rounded">location_on</span>
+            <div>
+                <strong id="storeLocation">-</strong>
+                <small>Localização</small>
+            </div>
+        </div>
+        <div class="store-stat">
+            <span class="material-symbols-rounded">verified_user</span>
+            <div>
+                <strong id="storeVerificationStatus">Por verificar</strong>
+                <small>Estado da loja</small>
+            </div>
+        </div>
+    </section>
+    <!-- PRODUCT CATALOG -->
+    <section class="store-catalog">
+        <div class="catalog-heading">
+            <div>
+                <span class="section-eyebrow">
+                    DESCUBRA A NOSSA COLEÇÃO
+                </span>
+                <h2>Produtos da loja</h2>
+                <p>
+                    Explore os produtos disponíveis nesta loja.
+                </p>
+            </div>
+        </div>
+        <!-- SEARCH AND SORT -->
+        <div class="catalog-toolbar">
+            <div class="catalog-search">
+                <span class="material-symbols-rounded">search</span>
+                <input
+                    type="search"
+                    id="storeProductSearch"
+                    placeholder="Pesquisar produtos..."
+                    autocomplete="off"
+                >
+            </div>
+            <select
+                id="storeProductSort"
+                aria-label="Ordenar produtos"
+            >
+                <option value="recent">Mais recentes</option>
+                <option value="price-asc">Menor preço</option>
+                <option value="price-desc">Maior preço</option>
+                <option value="name">Nome A-Z</option>
+            </select>
+        </div>
+        <!-- PRODUCTS -->
+        <div
+            class="store-products-grid"
+            id="storeProductsGrid"
+        ></div>
+        <!-- EMPTY PRODUCTS -->
+        <div class="store-empty hidden" id="storeProductsEmpty">
+            <span class="material-symbols-rounded">
+                inventory_2
+            </span>
+            <h3>Nenhum produto disponível</h3>
+            <p>Esta loja ainda não publicou produtos.</p>
+        </div>
+        <!-- EMPTY SEARCH -->
+        <div class="store-empty hidden" id="storeSearchEmpty">
+            <span class="material-symbols-rounded">
+                search_off
+            </span>
+            <h3>Nenhum resultado encontrado</h3>
+            <p>Tente pesquisar com outras palavras.</p>
+        </div>
+        <!-- PAGINATION -->
+        <div class="store-pagination hidden" id="storePagination">
+            <button type="button" id="storePreviousPage">
+                Anterior
+            </button>
+            <span id="storePageNumber">1</span>
+            <button type="button" id="storeNextPage">
+                Seguinte
+            </button>
+        </div>
+    </section>
+</main>
+<!-- ==========================================
+STORE INFORMATION MODAL
+DOCUMENTS FIRST, INFORMATION BELOW
+========================================== -->
+<div
+    class="store-modal hidden"
+    id="storeInfoModal"
+    aria-hidden="true"
+>
+    <div
+        class="store-modal-overlay"
+        id="storeModalOverlay"
+    ></div>
+    <div
+        class="store-modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="storeModalTitle"
+    >
+        <!-- MODAL HEADER -->
+        <div class="store-modal-header">
+            <div>
+                <span class="section-eyebrow">
+                    TOMA BUSINESS
+                </span>
+                <h2 id="storeModalTitle">
+                    Informações da loja
+                </h2>
+            </div>
+            <button
+                type="button"
+                class="modal-close-button"
+                id="closeStoreInfo"
+                aria-label="Fechar"
+            >
+                <span class="material-symbols-rounded">
+                    close
+                </span>
+            </button>
+        </div>
+        <!-- ==================================
+        DOCUMENTS SECTION — TOP
+        ================================== -->
+        <section class="store-documents-section">
+            <div class="documents-heading">
+                <div>
+                    <h3>Documentos da loja</h3>
+                    <p>
+                        Conheça os documentos comerciais apresentados
+                        por esta loja.
+                    </p>
+                </div>
+                <span class="material-symbols-rounded">
+                    verified_user
+                </span>
+            </div>
+            <!-- VERIFICATION STATUS -->
+            <div
+                class="documents-verification-status"
+                id="documentsVerificationStatus"
+            >
+                <span class="material-symbols-rounded">
+                    info
+                </span>
+                <div>
+                    <strong>Estado da verificação</strong>
+                    <p id="documentsVerificationText">
+                        A carregar informações...
+                    </p>
+                </div>
+            </div>
+            <!-- DOCUMENTS GRID -->
+            <div
+                class="merchant-documents-grid"
+                id="merchantDocumentsGrid"
+            >
+                <div
+                    class="documents-loading"
+                    id="documentsLoading"
+                >
+                    <div class="loader-spinner"></div>
+                    <p>A carregar documentos...</p>
+                </div>
+            </div>
+            <!-- DOCUMENTS EMPTY -->
+            <div
+                class="documents-empty hidden"
+                id="documentsEmpty"
+            >
+                <span class="material-symbols-rounded">
+                    folder_open
+                </span>
+                <h3>Documentos não disponíveis</h3>
+                <p>
+                    Não existem documentos apresentados
+                    para esta loja.
+                </p>
+            </div>
+        </section>
+        <!-- DIVIDER -->
+        <div class="store-modal-divider"></div>
+        <!-- ==================================
+        MERCHANT INFORMATION — BELOW
+        ================================== -->
+        <section class="store-information-section">
+            <div class="store-information-heading">
+                <span class="section-eyebrow">
+                    SOBRE O COMERCIANTE
+                </span>
+                <h3>Informações da loja</h3>
+                <p>
+                    Conheça melhor o comerciante e entre em contacto.
+                </p>
+            </div>
+            <!-- MERCHANT PROFILE -->
+            <div class="modal-store-profile">
+                <img
+                    src="images/default-store.png"
+                    alt="Logótipo da loja"
+                    id="modalStoreLogo"
+                >
+                <div>
+                    <h3 id="modalStoreName">-</h3>
+                    <span id="modalStoreStatus">
+                        Estado da loja
+                    </span>
+                </div>
+            </div>
+            <!-- INFORMATION LIST -->
+            <div class="store-information-list">
+                <div class="information-item">
+                    <span class="material-symbols-rounded">
+                        person
+                    </span>
+                    <div>
+                        <small>Nome do comerciante</small>
+                        <strong id="modalMerchantName">-</strong>
+                    </div>
+                </div>
+                <div class="information-item">
+                    <span class="material-symbols-rounded">
+                        call
+                    </span>
+                    <div>
+                        <small>Telefone</small>
+                        <strong id="modalStorePhone">-</strong>
+                    </div>
+                </div>
+                <div class="information-item">
+                    <span class="material-symbols-rounded">
+                        mail
+                    </span>
+                    <div>
+                        <small>Email</small>
+                        <strong id="modalStoreEmail">-</strong>
+                    </div>
+                </div>
+                <div class="information-item">
+                    <span class="material-symbols-rounded">
+                        location_on
+                    </span>
+                    <div>
+                        <small>Província</small>
+                        <strong id="modalStoreProvince">-</strong>
+                    </div>
+                </div>
+                <div class="information-item">
+                    <span class="material-symbols-rounded">
+                        location_city
+                    </span>
+                    <div>
+                        <small>Cidade</small>
+                        <strong id="modalStoreCity">-</strong>
+                    </div>
+                </div>
+                <div class="information-item">
+                    <span class="material-symbols-rounded">
+                        home
+                    </span>
+                    <div>
+                        <small>Endereço</small>
+                        <strong id="modalStoreAddress">-</strong>
+                    </div>
+                </div>
+                <div class="information-item">
+                    <span class="material-symbols-rounded">
+                        calendar_month
+                    </span>
+                    <div>
+                        <small>Data de registo</small>
+                        <strong id="modalStoreCreatedAt">-</strong>
+                    </div>
+                </div>
+            </div>
+            <!-- DESCRIPTION -->
+            <div class="store-modal-description">
+                <h3>Sobre a loja</h3>
+                <p id="modalStoreDescription">
+                    Informação não disponível.
+                </p>
+            </div>
+        </section>
+    </div>
+</div>
+<!-- PRODUCT DETAILS MODAL -->
+<div
+    class="store-modal hidden"
+    id="storeProductModal"
+>
+    <div
+        class="store-modal-overlay"
+        id="productModalOverlay"
+    ></div>
+    <div class="store-modal-content product-modal-content">
+        <button
+            type="button"
+            class="modal-close-button"
+            id="closeProductModal"
+            aria-label="Fechar"
+        >
+            <span class="material-symbols-rounded">
+                close
+            </span>
+        </button>
+        <div id="storeProductDetails"></div>
+    </div>
+</div>
+<!-- ERROR STATE -->
+<section class="store-error hidden" id="storeError">
+    <span class="material-symbols-rounded">
+        storefront
+    </span>
+    <h2>Loja não encontrada</h2>
+    <p>
+        Esta loja não está disponível ou o endereço está incorreto.
+    </p>
+    <button type="button" id="errorBackButton">
+        Voltar à página inicial
+    </button>
+</section>
+<!-- TOAST -->
+<div class="store-toast" id="storeToast">
+    <span
+        class="material-symbols-rounded"
+        id="storeToastIcon"
+    >
+        check_circle
+    </span>
+    <span id="storeToastMessage"></span>
+</div>
+<!-- FOOTER -->
+<footer class="store-footer">
+    <div class="footer-brand">
+        <span class="brand-logo">T</span>
+        <strong>Toma</strong>
+    </div>
+    <p>O comércio mais perto de si.</p>
+    <small>
+        © Toma. Todos os direitos reservados.
+    </small>
+</footer>
+</div>
+<!-- JAVASCRIPT -->
+<script type="module" src="js/merchant-store.js"></script>
+</body>
+</html>
