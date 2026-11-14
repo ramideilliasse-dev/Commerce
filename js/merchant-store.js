@@ -22,8 +22,9 @@ import {
 
 const params = new URLSearchParams(window.location.search);
 
-const merchantId = params.get("id");
-
+const merchantId =
+    params.get("id") ||
+    params.get("merchantId");
 const DEFAULT_LOGO = "images/default-store.png";
 const DEFAULT_PRODUCT_IMAGE = "images/product.png";
 
@@ -275,6 +276,8 @@ async function loadMerchant() {
 
     if (!merchantId) {
 
+        console.error("TOMA STORE : identifiant manquant.");
+
         showPageError();
 
         return;
@@ -289,21 +292,32 @@ async function loadMerchant() {
 
         if (!merchantSnap.exists()) {
 
-            showPageError();
-
-            return;
+            throw new Error(
+                "Nenhuma loja encontrada para este comerciante."
+            );
 
         }
 
         merchant = {
-
             id: merchantSnap.id,
-
             ...merchantSnap.data()
-
         };
 
+        // Vérifier que la boutique est approuvée.
+
+        if (merchant.status !== "approved") {
+
+            throw new Error(
+                "Esta loja não está aprovada ou não está disponível."
+            );
+
+        }
+
+        // Afficher les informations du commerçant.
+
         renderMerchant();
+
+        // Charger la candidature et les produits.
 
         await loadMerchantApplication();
 
@@ -315,14 +329,17 @@ async function loadMerchant() {
 
     } catch (error) {
 
-        console.error("TOMA STORE — LOAD MERCHANT:", error);
+        console.error(
+            "TOMA STORE — LOAD MERCHANT:",
+            error
+        );
+
+        alert(
+            "ERRO TOMA STORE:\n" +
+            (error.message || "Erro desconhecido.")
+        );
 
         showPageError();
-
-        showToast(
-            "Não foi possível carregar esta loja.",
-            "error"
-        );
 
     }
 
@@ -437,14 +454,7 @@ function renderMerchant() {
 
     }
 
-    // La boutique doit être approuvée pour être publique.
-
-    if (merchant.status !== "approved") {
-
-        throw new Error("Esta loja não está disponível.");
-
-    }
-
+  
 }
 
 
