@@ -118,6 +118,29 @@ let merchantChatsUnsubscribe = null;
 let dashboardLoadInProgress = false;
 
 // =====================================
+// LINK — MINHA LOJA
+// =====================================
+
+function configureMyStoreLink() {
+
+    if (!currentUid) {
+        return;
+    }
+
+    const storeLinks = document.querySelectorAll(
+        'a[href="merchant-store.html"], ' +
+        'a[href="./merchant-store.html"]'
+    );
+
+    storeLinks.forEach((link) => {
+
+        link.href =
+            `merchant-store.html?id=${encodeURIComponent(currentUid)}`;
+
+    });
+
+}
+// =====================================
 // UTILITAIRES
 // =====================================
 
@@ -226,11 +249,14 @@ onAuthStateChanged(auth, async (user) => {
         return;
     }
 
-    currentUid = user.uid;
+  currentUid = user.uid;
 
-    startMerchantMessagesBadge();
+// Préparer le lien vers la boutique du commerçant connecté.
+configureMyStoreLink();
 
-    await loadMerchant();
+startMerchantMessagesBadge();
+
+await loadMerchant();
 
     startTomaNotificationsCenter();
 
