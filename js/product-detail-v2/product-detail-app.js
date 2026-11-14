@@ -55,7 +55,7 @@ const CONFIG = {
     cart: "./cart.html",
     favorites: "./favorites.html",
     home: "./home.html",
-    merchantPage: "./merchant-shop.html",
+    merchantPage: "./merchant-store.html",
     chatPage: "./chat.html",
 
     recentStorageKey: "toma_recent_products",
