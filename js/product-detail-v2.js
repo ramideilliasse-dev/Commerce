@@ -48,7 +48,7 @@ const TOMA_CONFIG = {
     favoritesUrl: "./favorites.html",
     homeUrl: "./home.html",
 
-    merchantUrl: "./merchant-shop.html"
+    merchantUrl: "./merchant-store.html"
 };
 
 
