@@ -1193,9 +1193,8 @@ function renderMerchant(merchant, product) {
         "Conheça a loja e descubra outros produtos.";
 
     const shopUrl = merchantId
-        ? `${TOMA_CONFIG.merchantUrl}?merchantId=${encodeURIComponent(merchantId)}`
-        : TOMA_CONFIG.catalogUrl;
-
+    ? `${TOMA_CONFIG.merchantUrl}?id=${encodeURIComponent(merchantId)}`
+    : TOMA_CONFIG.catalogUrl;
     const verified =
         merchant?.verified === true ||
         merchant?.isVerified === true;
