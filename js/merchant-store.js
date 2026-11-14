@@ -303,16 +303,7 @@ async function loadMerchant() {
             ...merchantSnap.data()
         };
 
-        // Vérifier que la boutique est approuvée.
-
-        if (merchant.status !== "approved") {
-
-            throw new Error(
-                "Esta loja não está aprovada ou não está disponível."
-            );
-
-        }
-
+      
         // Afficher les informations du commerçant.
 
         renderMerchant();
