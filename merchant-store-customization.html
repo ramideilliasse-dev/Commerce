@@ -1,0 +1,759 @@
+ <!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Personalizar Loja | Toma</title>
+
+  <meta name="theme-color" content="#087f55">
+  <meta name="description" content="Personalize a sua loja no Toma.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Material Symbols -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="merchant-store-customization.css">
+</head>
+
+<body>
+
+  <!-- =========================================
+       BLOCO 1 — LOADING
+  ========================================== -->
+
+  <div id="customizationLoading" class="loading-screen">
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <h2>Toma</h2>
+      <p>A preparar a personalização da sua loja...</p>
+    </div>
+  </div>
+
+
+  <!-- =========================================
+       BLOCO 2 — AUTHENTICATION ERROR
+  ========================================== -->
+
+  <div id="authRequiredScreen" class="state-screen hidden">
+
+    <div class="state-card">
+
+      <span class="material-symbols-rounded state-icon">
+        lock
+      </span>
+
+      <h2>Acesso necessário</h2>
+
+      <p>
+        Inicie sessão na sua conta para personalizar a sua loja.
+      </p>
+
+      <a href="login.html" class="btn-primary">
+        Iniciar sessão
+      </a>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================================
+       BLOCO 3 — ACCESS DENIED
+  ========================================== -->
+
+  <div id="accessDeniedScreen" class="state-screen hidden">
+
+    <div class="state-card">
+
+      <span class="material-symbols-rounded state-icon">
+        store
+      </span>
+
+      <h2>Acesso não autorizado</h2>
+
+      <p id="accessDeniedMessage">
+        Não foi possível identificar uma loja autorizada para esta conta.
+      </p>
+
+      <a href="merchant-dashboard-v2.html" class="btn-primary">
+        Voltar ao painel
+      </a>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================================
+       BLOCO 4 — MAIN APPLICATION
+  ========================================== -->
+
+  <main id="customizationApp" class="customization-app hidden">
+
+
+    <!-- =====================================
+         HEADER
+    ====================================== -->
+
+    <header class="customization-header">
+
+      <div class="header-left">
+
+        <a href="merchant-dashboard-v2.html"
+           class="back-button"
+           aria-label="Voltar ao painel">
+
+          <span class="material-symbols-rounded">
+            arrow_back
+          </span>
+
+        </a>
+
+        <div class="header-brand">
+
+          <div class="brand-logo">T</div>
+
+          <div>
+            <h1>Toma</h1>
+            <span>Personalização da loja</span>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="header-right">
+
+        <span id="storeTypeBadge" class="store-type-badge">
+          Loja
+        </span>
+
+        <span id="saveStatus" class="save-status">
+          <span class="status-dot"></span>
+          <span id="saveStatusText">Alterações não guardadas</span>
+        </span>
+
+      </div>
+
+    </header>
+
+
+    <!-- =====================================
+         PAGE INTRODUCTION
+    ====================================== -->
+
+    <section class="page-intro">
+
+      <div>
+
+        <span class="section-eyebrow">
+          TOMA STORE MANAGEMENT
+        </span>
+
+        <h2>Personalize a sua loja</h2>
+
+        <p>
+          Crie uma identidade única para a sua loja e apresente
+          os seus produtos de forma profissional.
+        </p>
+
+      </div>
+
+      <button type="button"
+              id="saveShopBtn"
+              class="btn-primary save-main-button">
+
+        <span class="material-symbols-rounded">
+          save
+        </span>
+
+        Guardar alterações
+
+      </button>
+
+    </section>
+
+
+    <!-- =====================================
+         MAIN CONTENT GRID
+    ====================================== -->
+
+    <div class="customization-layout">
+
+
+      <!-- =================================
+           LEFT COLUMN — EDITOR
+      ================================== -->
+
+      <section class="editor-column">
+
+
+        <!-- =================================
+             BLOCK 5 — STORE IDENTITY
+        ================================== -->
+
+        <section class="editor-card">
+
+          <div class="card-heading">
+
+            <div class="card-icon">
+              <span class="material-symbols-rounded">
+                store
+              </span>
+            </div>
+
+            <div>
+              <h3>Identidade da loja</h3>
+              <p>Informações principais da sua loja.</p>
+            </div>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="shopName">
+              Nome da loja
+            </label>
+
+            <input
+              type="text"
+              id="shopName"
+              maxlength="80"
+              placeholder="Ex.: Ramde Tech"
+            >
+
+          </div>
+
+
+          <div class="form-row">
+
+            <div class="form-group">
+
+              <label for="shopPhone">
+                Telefone / WhatsApp
+              </label>
+
+              <input
+                type="tel"
+                id="shopPhone"
+                placeholder="+244 900 000 000"
+              >
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="shopCity">
+                Cidade
+              </label>
+
+              <input
+                type="text"
+                id="shopCity"
+                maxlength="60"
+                placeholder="Ex.: Luanda"
+              >
+
+            </div>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="shopDescription">
+              Descrição da loja
+            </label>
+
+            <textarea
+              id="shopDescription"
+              rows="5"
+              maxlength="500"
+              placeholder="Apresente a sua loja aos clientes..."
+            ></textarea>
+
+            <div class="field-footer">
+              <span>Descreva os produtos e serviços da sua loja.</span>
+              <span id="descriptionCounter">0 / 500</span>
+            </div>
+
+          </div>
+
+        </section>
+
+
+
+        <!-- =================================
+             BLOCK 6 — BRANDING
+        ================================== -->
+
+        <section class="editor-card">
+
+          <div class="card-heading">
+
+            <div class="card-icon">
+              <span class="material-symbols-rounded">
+                palette
+              </span>
+            </div>
+
+            <div>
+              <h3>Imagem da loja</h3>
+              <p>Adicione um logótipo e uma imagem de capa.</p>
+            </div>
+
+          </div>
+
+
+          <!-- LOGO -->
+
+          <div class="upload-section">
+
+            <div class="upload-heading">
+              <div>
+                <h4>Logótipo da loja</h4>
+                <p>Imagem quadrada recomendada.</p>
+              </div>
+            </div>
+
+
+            <div class="logo-upload-area">
+
+              <div class="logo-preview-wrapper">
+
+                <img
+                  id="logoPreview"
+                  src="images/default-store.png"
+                  alt="Pré-visualização do logótipo"
+                >
+
+              </div>
+
+
+              <div class="upload-actions">
+
+                <label for="logoInput" class="btn-outline upload-button">
+
+                  <span class="material-symbols-rounded">
+                    upload
+                  </span>
+
+                  Escolher logótipo
+
+                </label>
+
+                <input
+                  type="file"
+                  id="logoInput"
+                  accept="image/png,image/jpeg,image/webp"
+                  hidden
+                >
+
+                <p class="upload-help">
+                  PNG, JPG ou WEBP. Máximo 5 MB.
+                </p>
+
+                <span id="logoUploadStatus" class="upload-status"></span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="divider"></div>
+
+
+          <!-- BANNER -->
+
+          <div class="upload-section">
+
+            <div class="upload-heading">
+              <div>
+                <h4>Imagem de capa</h4>
+                <p>Uma imagem horizontal para destacar a sua loja.</p>
+              </div>
+            </div>
+
+
+            <div class="banner-preview-wrapper">
+
+              <img
+                id="bannerPreview"
+                src="images/default-banner.jpg"
+                alt="Pré-visualização da capa"
+              >
+
+              <div class="banner-overlay">
+                <span class="material-symbols-rounded">
+                  photo_camera
+                </span>
+                <span>Imagem de capa</span>
+              </div>
+
+            </div>
+
+
+            <div class="banner-upload-actions">
+
+              <label for="bannerInput" class="btn-outline upload-button">
+
+                <span class="material-symbols-rounded">
+                  upload
+                </span>
+
+                Escolher imagem de capa
+
+              </label>
+
+              <input
+                type="file"
+                id="bannerInput"
+                accept="image/png,image/jpeg,image/webp"
+                hidden
+              >
+
+              <p class="upload-help">
+                Imagem horizontal recomendada. Máximo 5 MB.
+              </p>
+
+              <span id="bannerUploadStatus" class="upload-status"></span>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+
+        <!-- =================================
+             BLOCK 7 — STORE INFORMATION
+        ================================== -->
+
+        <section class="editor-card">
+
+          <div class="card-heading">
+
+            <div class="card-icon">
+              <span class="material-symbols-rounded">
+                info
+              </span>
+            </div>
+
+            <div>
+              <h3>Informações adicionais</h3>
+              <p>Informações úteis para os seus clientes.</p>
+            </div>
+
+          </div>
+
+
+          <div class="information-notice">
+
+            <span class="material-symbols-rounded">
+              lightbulb
+            </span>
+
+            <p>
+              Mantenha os seus dados atualizados para facilitar
+              o contacto entre a sua loja e os clientes.
+            </p>
+
+          </div>
+
+        </section>
+
+
+      </section>
+
+
+
+      <!-- =================================
+           RIGHT COLUMN — LIVE PREVIEW
+      ================================== -->
+
+      <aside class="preview-column">
+
+        <div class="preview-sticky">
+
+
+          <div class="preview-heading">
+
+            <div>
+              <span class="section-eyebrow">LIVE PREVIEW</span>
+              <h3>Pré-visualização</h3>
+            </div>
+
+            <span class="preview-indicator">
+              <span></span>
+              Ao vivo
+            </span>
+
+          </div>
+
+
+          <!-- STORE PREVIEW CARD -->
+
+          <div class="store-preview-card">
+
+
+            <!-- PREVIEW BANNER -->
+
+            <div class="preview-banner">
+
+              <img
+                id="previewBanner"
+                src="images/default-banner.jpg"
+                alt="Capa da loja"
+              >
+
+            </div>
+
+
+            <!-- PREVIEW LOGO -->
+
+            <div class="preview-store-content">
+
+              <div class="preview-logo-wrapper">
+
+                <img
+                  id="previewLogo"
+                  src="images/default-store.png"
+                  alt="Logótipo da loja"
+                >
+
+              </div>
+
+
+              <div class="preview-store-name-row">
+
+                <div>
+
+                  <h3 id="previewShopName">
+                    Nome da sua loja
+                  </h3>
+
+                  <span id="previewShopCity">
+                    Localização da loja
+                  </span>
+
+                </div>
+
+                <span class="material-symbols-rounded preview-verified-icon"
+                      title="Loja verificada">
+                  verified
+                </span>
+
+              </div>
+
+
+              <p id="previewShopDescription">
+                A descrição da sua loja aparecerá aqui.
+              </p>
+
+
+              <div class="preview-contact">
+
+                <span class="material-symbols-rounded">
+                  call
+                </span>
+
+                <span id="previewShopPhone">
+                  Contacto da loja
+                </span>
+
+              </div>
+
+
+              <div class="preview-store-actions">
+
+                <button type="button" class="preview-follow-button" disabled>
+                  Seguir loja
+                </button>
+
+                <button type="button" class="preview-share-button" disabled>
+                  <span class="material-symbols-rounded">
+                    share
+                  </span>
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- PREVIEW INFORMATION -->
+
+          <div class="preview-tip">
+
+            <span class="material-symbols-rounded">
+              visibility
+            </span>
+
+            <div>
+              <strong>Pré-visualização em tempo real</strong>
+              <p>
+                As alterações aparecem aqui enquanto personaliza
+                a sua loja.
+              </p>
+            </div>
+
+          </div>
+
+
+          <!-- SAVE BUTTON -->
+
+          <button type="button"
+                  id="saveShopPreviewBtn"
+                  class="btn-primary preview-save-button">
+
+            <span class="material-symbols-rounded">
+              save
+            </span>
+
+            Guardar alterações
+
+          </button>
+
+
+        </div>
+
+      </aside>
+
+
+    </div>
+
+
+    <!-- =====================================
+         BLOCK 8 — FOOTER
+    ====================================== -->
+
+    <footer class="customization-footer">
+
+      <div class="footer-brand">
+        <span class="footer-logo">T</span>
+        <span>Toma</span>
+      </div>
+
+      <p>
+        O comércio mais perto de si.
+      </p>
+
+      <span class="footer-version">
+        Store Customization
+      </span>
+
+    </footer>
+
+
+  </main>
+
+
+
+  <!-- =========================================
+       BLOCK 9 — CONFIRMATION MODAL
+  ========================================== -->
+
+  <div id="saveConfirmationModal"
+       class="modal-overlay hidden">
+
+    <div class="modal-card">
+
+      <div class="modal-icon success-icon">
+
+        <span class="material-symbols-rounded">
+          check_circle
+        </span>
+
+      </div>
+
+      <h3>Alterações guardadas</h3>
+
+      <p>
+        As informações da sua loja foram atualizadas com sucesso.
+      </p>
+
+      <button type="button"
+              id="closeSaveModal"
+              class="btn-primary">
+
+        Continuar
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =========================================
+       BLOCK 10 — GENERAL NOTIFICATION
+  ========================================== -->
+
+  <div id="customizationToast"
+       class="customization-toast"
+       role="status"
+       aria-live="polite">
+
+    <span id="toastIcon"
+          class="material-symbols-rounded">
+      info
+    </span>
+
+    <span id="toastMessage">
+      Mensagem
+    </span>
+
+  </div>
+
+
+
+  <!-- =========================================
+       BLOCK 11 — PROCESSING OVERLAY
+  ========================================== -->
+
+  <div id="processingOverlay"
+       class="processing-overlay hidden">
+
+    <div class="processing-card">
+
+      <div class="loading-spinner"></div>
+
+      <h3 id="processingTitle">
+        A processar...
+      </h3>
+
+      <p id="processingMessage">
+        Aguarde um momento.
+      </p>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =========================================
+       BLOCK 12 — JAVASCRIPT
+  ========================================== -->
+
+  <script type="module"
+          src="./js/merchant-store-customization.js"></script>
+
+</body>
+</html>
