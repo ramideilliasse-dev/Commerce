@@ -403,7 +403,13 @@ async function identifyAndLoadStore(user) {
     merchantData.status || ""
   ).toLowerCase();
 
-
+alert(
+  "TOMA DEBUG\n\n" +
+  "UID: " + user.uid + "\n" +
+  "Role: " + userRole + "\n" +
+  "Merchant role: " + merchantRole + "\n" +
+  "Merchant status: " + merchantStatus
+);
   if (
     merchantRole === "admin" ||
     merchantRole === "superadmin"
