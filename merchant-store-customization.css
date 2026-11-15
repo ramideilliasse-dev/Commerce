@@ -1,0 +1,1507 @@
+ /* =====================================================
+   TOMA — STORE CUSTOMIZATION
+   Design premium inspiré de merchant-store.css
+===================================================== */
+
+
+/* =====================================================
+   BLOC 1 — VARIABLES
+===================================================== */
+
+:root {
+  --primary: #087f55;
+  --primary-dark: #056342;
+  --primary-light: #e9f7f0;
+
+  --background: #f7f9f8;
+  --white: #ffffff;
+
+  --text: #172b23;
+  --muted: #7b8982;
+
+  --border: #e8eeeb;
+
+  --success: #159b65;
+  --danger: #dc4444;
+  --warning: #e6a23c;
+
+  --shadow: 0 8px 30px rgba(15, 45, 32, .07);
+
+  --radius: 18px;
+  --radius-sm: 12px;
+
+  --transition: .25s ease;
+}
+
+
+/* =====================================================
+   BLOC 2 — RESET
+===================================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--background);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+.hidden {
+  display: none !important;
+}
+
+
+/* =====================================================
+   BLOC 3 — LOADING SCREEN
+===================================================== */
+
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--white);
+}
+
+.loading-content {
+  text-align: center;
+  padding: 30px;
+}
+
+.loading-content h2 {
+  font-family: 'Poppins', sans-serif;
+  color: var(--primary);
+  font-size: 25px;
+  margin: 15px 0 5px;
+}
+
+.loading-content p {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.loading-spinner {
+  width: 42px;
+  height: 42px;
+
+  border: 4px solid var(--primary-light);
+  border-top-color: var(--primary);
+
+  border-radius: 50%;
+
+  animation: tomaSpin .8s linear infinite;
+
+  margin: 0 auto;
+}
+
+@keyframes tomaSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =====================================================
+   BLOC 4 — ERROR SCREENS
+===================================================== */
+
+.state-screen {
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 25px;
+}
+
+.state-card {
+  width: 100%;
+  max-width: 420px;
+
+  background: var(--white);
+
+  padding: 40px 30px;
+
+  border-radius: 24px;
+
+  box-shadow: var(--shadow);
+
+  text-align: center;
+}
+
+.state-icon {
+  font-size: 55px;
+  color: var(--primary);
+  margin-bottom: 18px;
+}
+
+.state-card h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+.state-card p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 25px;
+}
+
+
+/* =====================================================
+   BLOC 5 — MAIN APPLICATION
+===================================================== */
+
+.customization-app {
+  width: 100%;
+  max-width: 1500px;
+
+  margin: 0 auto;
+
+  padding: 0 35px;
+}
+
+
+/* =====================================================
+   BLOC 6 — HEADER
+===================================================== */
+
+.customization-header {
+  min-height: 85px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  border-bottom: 1px solid var(--border);
+
+  background: var(--white);
+}
+
+.header-left,
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.back-button {
+  width: 43px;
+  height: 43px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 13px;
+
+  color: var(--text);
+  background: var(--background);
+
+  transition: var(--transition);
+}
+
+.back-button:hover {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.back-button .material-symbols-rounded {
+  font-size: 23px;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.brand-logo {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 13px;
+
+  background: var(--primary);
+  color: var(--white);
+
+  font-family: 'Poppins', sans-serif;
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.header-brand h1 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 19px;
+  line-height: 1.2;
+}
+
+.header-brand span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.store-type-badge {
+  padding: 8px 13px;
+
+  border-radius: 30px;
+
+  color: var(--primary);
+  background: var(--primary-light);
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.save-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+
+  background: var(--warning);
+
+  border-radius: 50%;
+}
+
+
+/* =====================================================
+   BLOC 7 — PAGE INTRODUCTION
+===================================================== */
+
+.page-intro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 25px;
+
+  padding: 38px 0 30px;
+}
+
+.section-eyebrow {
+  display: block;
+
+  color: var(--primary);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+
+  margin-bottom: 9px;
+}
+
+.page-intro h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+
+  margin-bottom: 8px;
+}
+
+.page-intro p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+  max-width: 600px;
+}
+
+
+/* =====================================================
+   BLOC 8 — BUTTONS
+===================================================== */
+
+.btn-primary {
+  min-height: 46px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  padding: 0 20px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: var(--primary);
+  color: var(--white);
+
+  font-size: 13px;
+  font-weight: 700;
+
+  transition: var(--transition);
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.btn-primary:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-primary .material-symbols-rounded {
+  font-size: 19px;
+}
+
+.btn-outline {
+  min-height: 43px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 0 16px;
+
+  border: 1px solid var(--border);
+  border-radius: 11px;
+
+  background: var(--white);
+  color: var(--primary);
+
+  font-size: 12px;
+  font-weight: 700;
+
+  transition: var(--transition);
+}
+
+.btn-outline:hover {
+  background: var(--primary-light);
+  border-color: var(--primary);
+}
+
+.save-main-button {
+  white-space: nowrap;
+}
+
+
+/* =====================================================
+   BLOC 9 — MAIN LAYOUT
+===================================================== */
+
+.customization-layout {
+  display: grid;
+
+  grid-template-columns: minmax(0, 1.45fr) minmax(320px, .85fr);
+
+  gap: 27px;
+
+  align-items: start;
+}
+
+.editor-column {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+
+/* =====================================================
+   BLOC 10 — EDITOR CARDS
+===================================================== */
+
+.editor-card {
+  background: var(--white);
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+
+  padding: 27px;
+
+  box-shadow: var(--shadow);
+}
+
+.card-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  margin-bottom: 26px;
+}
+
+.card-icon {
+  width: 45px;
+  height: 45px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 14px;
+
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.card-icon .material-symbols-rounded {
+  font-size: 23px;
+}
+
+.card-heading h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.card-heading p {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+
+/* =====================================================
+   BLOC 11 — FORM FIELDS
+===================================================== */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+
+  margin-bottom: 21px;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-group label {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+
+  border: 1px solid var(--border);
+  border-radius: 11px;
+
+  background: #fbfcfb;
+
+  padding: 13px 15px;
+
+  color: var(--text);
+
+  font-size: 13px;
+
+  outline: none;
+
+  transition: var(--transition);
+}
+
+.form-group input {
+  min-height: 48px;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.7;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  background: var(--white);
+  border-color: var(--primary);
+
+  box-shadow: 0 0 0 3px rgba(8, 127, 85, .08);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #aab5af;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.field-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+
+  color: var(--muted);
+  font-size: 10px;
+}
+
+
+/* =====================================================
+   BLOC 12 — UPLOAD SECTION
+===================================================== */
+
+.upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.upload-heading h4 {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.upload-heading p {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.logo-upload-area {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo-preview-wrapper {
+  width: 100px;
+  height: 100px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  border: 1px solid var(--border);
+  border-radius: 18px;
+
+  background: var(--background);
+}
+
+.logo-preview-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.upload-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 9px;
+}
+
+.upload-help {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.upload-status {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.upload-button {
+  cursor: pointer;
+}
+
+.upload-button .material-symbols-rounded {
+  font-size: 18px;
+}
+
+
+/* =====================================================
+   BLOC 13 — BANNER UPLOAD
+===================================================== */
+
+.banner-preview-wrapper {
+  width: 100%;
+  height: 190px;
+
+  position: relative;
+
+  overflow: hidden;
+
+  border-radius: 15px;
+
+  background: var(--background);
+  border: 1px solid var(--border);
+}
+
+.banner-preview-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.banner-overlay {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  color: var(--white);
+
+  background: rgba(0, 0, 0, .25);
+
+  font-size: 12px;
+  font-weight: 700;
+
+  pointer-events: none;
+}
+
+.banner-overlay .material-symbols-rounded {
+  font-size: 30px;
+}
+
+.banner-upload-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 9px;
+}
+
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 25px 0;
+}
+
+
+/* =====================================================
+   BLOC 14 — INFORMATION NOTICE
+===================================================== */
+
+.information-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+
+  padding: 17px;
+
+  border-radius: 13px;
+
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.information-notice .material-symbols-rounded {
+  font-size: 22px;
+}
+
+.information-notice p {
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+
+/* =====================================================
+   BLOC 15 — PREVIEW COLUMN
+===================================================== */
+
+.preview-column {
+  min-width: 0;
+}
+
+.preview-sticky {
+  position: sticky;
+  top: 20px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.preview-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.preview-heading h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 18px;
+}
+
+.preview-indicator {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 7px 11px;
+
+  border-radius: 30px;
+
+  background: var(--primary-light);
+  color: var(--primary);
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.preview-indicator span {
+  width: 7px;
+  height: 7px;
+
+  background: var(--success);
+  border-radius: 50%;
+}
+
+
+/* =====================================================
+   BLOC 16 — STORE PREVIEW CARD
+===================================================== */
+
+.store-preview-card {
+  overflow: hidden;
+
+  background: var(--white);
+
+  border: 1px solid var(--border);
+  border-radius: 20px;
+
+  box-shadow: var(--shadow);
+}
+
+.preview-banner {
+  width: 100%;
+  height: 155px;
+
+  overflow: hidden;
+
+  background: var(--primary-light);
+}
+
+.preview-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.preview-store-content {
+  position: relative;
+  padding: 0 20px 22px;
+}
+
+.preview-logo-wrapper {
+  width: 76px;
+  height: 76px;
+
+  margin-top: -38px;
+  margin-bottom: 13px;
+
+  position: relative;
+
+  overflow: hidden;
+
+  border: 4px solid var(--white);
+  border-radius: 18px;
+
+  background: var(--white);
+}
+
+.preview-logo-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.preview-store-name-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 10px;
+}
+
+.preview-store-name-row h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+
+  overflow-wrap: anywhere;
+}
+
+.preview-store-name-row > div > span {
+  display: block;
+  margin-top: 5px;
+
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.preview-verified-icon {
+  color: var(--primary);
+  font-size: 21px;
+}
+
+#previewShopDescription {
+  margin-top: 17px;
+
+  color: var(--muted);
+
+  font-size: 11px;
+  line-height: 1.8;
+
+  overflow-wrap: anywhere;
+}
+
+.preview-contact {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-top: 17px;
+
+  color: var(--primary);
+
+  font-size: 11px;
+  font-weight: 600;
+
+  overflow-wrap: anywhere;
+}
+
+.preview-contact .material-symbols-rounded {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.preview-store-actions {
+  display: flex;
+  gap: 10px;
+
+  margin-top: 20px;
+}
+
+.preview-follow-button {
+  flex: 1;
+
+  min-height: 40px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: var(--primary);
+  color: var(--white);
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.preview-share-button {
+  width: 43px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  background: var(--white);
+  color: var(--primary);
+}
+
+
+/* =====================================================
+   BLOC 17 — PREVIEW TIP
+===================================================== */
+
+.preview-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  padding: 16px;
+
+  border-radius: 14px;
+
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.preview-tip > .material-symbols-rounded {
+  font-size: 22px;
+}
+
+.preview-tip strong {
+  display: block;
+  font-size: 11px;
+  margin-bottom: 5px;
+}
+
+.preview-tip p {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.preview-save-button {
+  width: 100%;
+}
+
+
+/* =====================================================
+   BLOC 18 — FOOTER
+===================================================== */
+
+.customization-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-top: 45px;
+  padding: 25px 0;
+
+  border-top: 1px solid var(--border);
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.footer-logo {
+  width: 27px;
+  height: 27px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  background: var(--primary);
+  color: var(--white);
+}
+
+.customization-footer > p {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.footer-version {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+
+/* =====================================================
+   BLOC 19 — CONFIRMATION MODAL
+===================================================== */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 9000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(12, 30, 22, .55);
+  backdrop-filter: blur(5px);
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 390px;
+
+  padding: 32px 27px;
+
+  border-radius: 22px;
+
+  background: var(--white);
+
+  text-align: center;
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .15);
+
+  animation: modalAppear .25s ease;
+}
+
+@keyframes modalAppear {
+  from {
+    opacity: 0;
+    transform: translateY(15px) scale(.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-icon {
+  width: 65px;
+  height: 65px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto 17px;
+
+  border-radius: 50%;
+
+  background: var(--primary-light);
+  color: var(--success);
+}
+
+.modal-icon .material-symbols-rounded {
+  font-size: 36px;
+}
+
+.modal-card h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.modal-card p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+  margin-bottom: 22px;
+}
+
+.modal-card .btn-primary {
+  width: 100%;
+}
+
+
+/* =====================================================
+   BLOC 20 — TOAST NOTIFICATION
+===================================================== */
+
+.customization-toast {
+  position: fixed;
+
+  left: 50%;
+  bottom: 25px;
+
+  z-index: 11000;
+
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  max-width: calc(100% - 30px);
+
+  padding: 14px 19px;
+
+  border-radius: 13px;
+
+  background: var(--text);
+  color: var(--white);
+
+  font-size: 12px;
+  font-weight: 600;
+
+  box-shadow: 0 10px 35px rgba(0, 0, 0, .15);
+
+  opacity: 0;
+  visibility: hidden;
+
+  transform: translate(-50%, 15px);
+
+  transition: .3s ease;
+}
+
+.customization-toast.show {
+  opacity: 1;
+  visibility: visible;
+
+  transform: translate(-50%, 0);
+}
+
+.customization-toast.success {
+  background: var(--success);
+}
+
+.customization-toast.error {
+  background: var(--danger);
+}
+
+.customization-toast .material-symbols-rounded {
+  font-size: 20px;
+}
+
+
+/* =====================================================
+   BLOC 21 — PROCESSING OVERLAY
+===================================================== */
+
+.processing-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 12000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(12, 30, 22, .45);
+  backdrop-filter: blur(4px);
+}
+
+.processing-card {
+  width: 100%;
+  max-width: 310px;
+
+  padding: 30px 25px;
+
+  border-radius: 20px;
+
+  background: var(--white);
+
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.processing-card h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  margin: 17px 0 7px;
+}
+
+.processing-card p {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+
+/* =====================================================
+   BLOC 22 — RESPONSIVE TABLET
+===================================================== */
+
+@media (max-width: 1050px) {
+
+  .customization-app {
+    padding: 0 22px;
+  }
+
+  .customization-layout {
+    grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr);
+    gap: 18px;
+  }
+
+  .editor-card {
+    padding: 22px;
+  }
+
+  .page-intro h2 {
+    font-size: 25px;
+  }
+
+}
+
+
+/* =====================================================
+   BLOC 23 — RESPONSIVE MOBILE
+===================================================== */
+
+@media (max-width: 760px) {
+
+  .customization-app {
+    padding: 0 15px;
+  }
+
+  .customization-header {
+    min-height: 72px;
+    flex-wrap: wrap;
+  }
+
+  .header-left {
+    gap: 10px;
+  }
+
+  .header-right {
+    gap: 10px;
+  }
+
+  .header-brand h1 {
+    font-size: 16px;
+  }
+
+  .header-brand span {
+    font-size: 10px;
+  }
+
+  .brand-logo {
+    width: 37px;
+    height: 37px;
+    font-size: 22px;
+  }
+
+  .back-button {
+    width: 38px;
+    height: 38px;
+  }
+
+  .save-status {
+    display: none;
+  }
+
+  .store-type-badge {
+    font-size: 9px;
+    padding: 7px 10px;
+  }
+
+  .page-intro {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 18px;
+
+    padding: 28px 0 23px;
+  }
+
+  .page-intro h2 {
+    font-size: 23px;
+  }
+
+  .page-intro p {
+    font-size: 12px;
+  }
+
+  .save-main-button {
+    width: 100%;
+  }
+
+  .customization-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .editor-column {
+    gap: 16px;
+  }
+
+  .editor-card {
+    padding: 20px 17px;
+    border-radius: 15px;
+  }
+
+  .card-heading {
+    margin-bottom: 22px;
+  }
+
+  .card-heading h3 {
+    font-size: 14px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .form-group input {
+    min-height: 46px;
+  }
+
+  .logo-upload-area {
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .logo-preview-wrapper {
+    width: 82px;
+    height: 82px;
+  }
+
+  .upload-actions {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .banner-preview-wrapper {
+    height: 155px;
+  }
+
+  .preview-column {
+    margin-top: 10px;
+  }
+
+  .preview-sticky {
+    position: static;
+  }
+
+  .preview-heading h3 {
+    font-size: 16px;
+  }
+
+  .store-preview-card {
+    border-radius: 17px;
+  }
+
+  .preview-banner {
+    height: 145px;
+  }
+
+  .customization-footer {
+    flex-wrap: wrap;
+    margin-top: 30px;
+    padding: 20px 0;
+  }
+
+  .customization-footer > p {
+    order: 3;
+    width: 100%;
+  }
+
+}
+
+
+/* =====================================================
+   BLOC 24 — SMALL MOBILE
+===================================================== */
+
+@media (max-width: 400px) {
+
+  .customization-app {
+    padding: 0 11px;
+  }
+
+  .header-brand {
+    gap: 7px;
+  }
+
+  .header-brand h1 {
+    font-size: 14px;
+  }
+
+  .header-brand span {
+    font-size: 9px;
+  }
+
+  .store-type-badge {
+    padding: 6px 8px;
+    font-size: 8px;
+  }
+
+  .page-intro h2 {
+    font-size: 21px;
+  }
+
+  .editor-card {
+    padding: 17px 14px;
+  }
+
+  .logo-upload-area {
+    flex-direction: column;
+  }
+
+  .upload-actions {
+    width: 100%;
+  }
+
+  .upload-button {
+    width: 100%;
+  }
+
+  .banner-preview-wrapper {
+    height: 130px;
+  }
+
+  .preview-store-content {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+}
+
+
+/* =====================================================
+   BLOC 25 — ACCESSIBILITY & MOTION
+===================================================== */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+label:focus-visible {
+  outline: 3px solid rgba(8, 127, 85, .25);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+
+}
