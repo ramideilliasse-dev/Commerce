@@ -403,13 +403,7 @@ async function identifyAndLoadStore(user) {
     merchantData.status || ""
   ).toLowerCase();
 
-alert(
-  "TOMA DEBUG\n\n" +
-  "UID: " + user.uid + "\n" +
-  "Role: " + userRole + "\n" +
-  "Merchant role: " + merchantRole + "\n" +
-  "Merchant status: " + merchantStatus
-);
+
   if (
     merchantRole === "admin" ||
     merchantRole === "superadmin"
@@ -426,15 +420,40 @@ alert(
     Only approved or active merchants can customize.
   */
 
-  if (
-    !["approved", "active", "verified"].includes(merchantStatus)
-  ) {
+  /*
+  TOMA APPROVAL CHECK
 
-    throw new Error(
-      "A sua loja ainda não está autorizada para personalização. Aguarde a aprovação da administração."
-    );
+  The users collection is the authoritative
+  source of the merchant role.
 
-  }
+  The role "merchant" is assigned after approval.
+*/
+
+if (userRole !== "merchant") {
+
+  throw new Error(
+    "A sua conta ainda não foi aprovada como comerciante."
+  );
+
+}
+
+
+/*
+  If a status exists, it must be approved.
+  If status is empty, the approved users.role
+  is sufficient for this existing account.
+*/
+
+if (
+  merchantStatus &&
+  !["approved", "active", "verified"].includes(merchantStatus)
+) {
+
+  throw new Error(
+    "A sua loja não está ativa. Contacte a administração."
+  );
+
+}
 
 
   currentStoreId = user.uid;
