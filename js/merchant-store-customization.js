@@ -1268,18 +1268,29 @@ async function saveStore() {
     elements.modal?.classList.remove("hidden");
 
 
-  } catch (error) {
+} catch (error) {
 
-    console.error("TOMA SAVE STORE:", error);
+  console.error("TOMA SAVE STORE:", error);
 
-    hideProcessing();
+  hideProcessing();
 
-    showToast(
-      error.message || "Erro ao guardar alterações.",
-      "error"
-    );
+  alert(
+    "TOMA SAVE DEBUG\n\n" +
+    "Tipo de loja: " + currentStoreType + "\n" +
+    "ID da loja: " + currentStoreId + "\n" +
+    "Utilizador: " + currentUser?.uid + "\n" +
+    "Role: " + currentStoreData.role + "\n" +
+    "Status: " + currentStoreData.status + "\n" +
+    "Código: " + (error.code || "sem código") + "\n" +
+    "Erro: " + error.message
+  );
 
-  } finally {
+  showToast(
+    error.message || "Erro ao guardar alterações.",
+    "error"
+  );
+
+} finally {
 
     isSaving = false;
 
