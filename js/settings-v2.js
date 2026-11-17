@@ -717,12 +717,7 @@ console.info(
   " chargée."
 );
 
-alert(
-  "TOMA SETTINGS V2\n\n" +
-  "FICHIER JAVASCRIPT CHARGÉ\n\n" +
-  "Version : " + SETTINGS_V2_VERSION +
-  "\n\nInitialisation de l'authentification..."
-);
+
 
 settingsV2InitializeProfileEditing();
 settingsV2InitializeAddressManagement();
