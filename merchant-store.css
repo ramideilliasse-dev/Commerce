@@ -1518,3 +1518,191 @@ a {
     }
 
 }
+/* =====================================================
+   BLOC — INFORMATIONS PUBLIQUES DE LA BOUTIQUE
+   Horaires, livraison, conditions de vente et retours
+===================================================== */
+
+.store-policies-section {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #e8e8e8;
+}
+
+.store-policy-card {
+    background: #ffffff;
+    border: 1px solid #eeeeee;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.035);
+}
+
+.store-policy-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 14px;
+    color: #222222;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.store-policy-heading::before {
+    content: "";
+    display: block;
+    width: 4px;
+    height: 20px;
+    background: #ff6a00;
+    border-radius: 5px;
+    flex-shrink: 0;
+}
+
+/* HORAIRES */
+
+.public-hours-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.public-hours-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f1f1f1;
+    font-size: 13px;
+}
+
+.public-hours-row:last-child {
+    border-bottom: none;
+}
+
+.public-hours-row span:first-child {
+    color: #555555;
+    font-weight: 600;
+}
+
+.public-hours-row span:last-child {
+    color: #222222;
+    text-align: right;
+}
+
+.public-hours-row .closed,
+.public-hours-row .is-closed {
+    color: #dc3545;
+}
+
+.public-hours-row .open,
+.public-hours-row .is-open {
+    color: #198754;
+}
+
+/* LIVRAISON */
+
+.public-delivery-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.public-delivery-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.public-delivery-row span:first-child {
+    color: #666666;
+}
+
+.public-delivery-row span:last-child {
+    color: #222222;
+    font-weight: 600;
+    text-align: right;
+}
+
+.public-delivery-zone {
+    padding: 12px;
+    margin-top: 10px;
+    background: #f8f8f8;
+    border-radius: 10px;
+    border: 1px solid #eeeeee;
+}
+
+.public-delivery-zone strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #222222;
+    font-size: 13px;
+}
+
+.public-delivery-zone p {
+    margin: 3px 0;
+    color: #666666;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* CONDITIONS DE VENTE ET RETOURS */
+
+.store-policy-text {
+    margin: 0;
+    color: #555555;
+    font-size: 13px;
+    line-height: 1.8;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+/* MESSAGE D'INFORMATION */
+
+.store-policy-notice {
+    padding: 12px 14px;
+    margin-top: 16px;
+    background: #fff7f0;
+    border: 1px solid #ffe3cf;
+    border-radius: 10px;
+    color: #80502d;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* RESPONSIVE — TÉLÉPHONES */
+
+@media (max-width: 600px) {
+
+    .store-policies-section {
+        margin-top: 18px;
+        padding-top: 16px;
+    }
+
+    .store-policy-card {
+        padding: 13px;
+        border-radius: 12px;
+        margin-bottom: 12px;
+    }
+
+    .store-policy-heading {
+        font-size: 14px;
+    }
+
+    .public-hours-row,
+    .public-delivery-row {
+        font-size: 12px;
+    }
+
+    .store-policy-text {
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    .store-policy-notice {
+        font-size: 11px;
+    }
+}
