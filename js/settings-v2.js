@@ -227,13 +227,7 @@ function settingsV2CheckRequiredElements() {
       missingElements
     );
 
-    alert(
-      "TOMA SETTINGS V2\n\n" +
-      "ÉLÉMENTS HTML MANQUANTS\n\n" +
-      missingElements.join(", ") +
-      "\n\nVérifiez les ID dans settings-v2.html."
-    );
-
+    
     return false;
   }
 
