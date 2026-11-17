@@ -445,10 +445,385 @@ function renderMerchant() {
 
     }
 
-  
+  renderPublicStorePolicies();
+}
+
+// ==================================================
+// BLOC 5.1 — AFFICHER LES INFORMATIONS PUBLIQUES
+// ==================================================
+
+const publicBusinessHours = document.getElementById(
+    "publicBusinessHours"
+);
+
+const publicDeliveryInfo = document.getElementById(
+    "publicDeliveryInfo"
+);
+
+const publicSalesTerms = document.getElementById(
+    "publicSalesTerms"
+);
+
+const publicReturnPolicy = document.getElementById(
+    "publicReturnPolicy"
+);
+
+
+// Jours de la semaine
+
+const PUBLIC_DAYS = {
+    monday: "Segunda-feira",
+    tuesday: "Terça-feira",
+    wednesday: "Quarta-feira",
+    thursday: "Quinta-feira",
+    friday: "Sexta-feira",
+    saturday: "Sábado",
+    sunday: "Domingo"
+};
+
+
+// Créer un paragraphe sécurisé
+
+function createPolicyText(text) {
+
+    const paragraph = document.createElement("p");
+
+    paragraph.textContent = text;
+
+    return paragraph;
+
 }
 
 
+// Afficher une information indisponible
+
+function showPolicyUnavailable(element) {
+
+    if (!element) return;
+
+    element.replaceChildren(
+        createPolicyText("Informação não disponível.")
+    );
+
+}
+
+
+// ==================================================
+// HORAIRES D'OUVERTURE
+// ==================================================
+
+function renderPublicBusinessHours() {
+
+    if (!publicBusinessHours) return;
+
+    publicBusinessHours.replaceChildren();
+
+    const settings = merchant?.businessHours;
+
+    if (!settings || typeof settings !== "object") {
+
+        showPolicyUnavailable(publicBusinessHours);
+
+        return;
+
+    }
+
+    // Ouverture permanente
+
+    if (settings.open247 === true) {
+
+        publicBusinessHours.appendChild(
+            createPolicyText("Aberto 24 horas por dia, 7 dias por semana.")
+        );
+
+        return;
+
+    }
+
+    const days = settings.days;
+
+    if (!days || typeof days !== "object") {
+
+        showPolicyUnavailable(publicBusinessHours);
+
+        return;
+
+    }
+
+    const list = document.createElement("div");
+
+    list.className = "public-hours-list";
+
+    let hasWorkingDay = false;
+
+    Object.entries(PUBLIC_DAYS).forEach(([day, label]) => {
+
+        const daySettings = days[day];
+
+        const isOpen =
+            daySettings?.open === true ||
+            daySettings?.enabled === true ||
+            daySettings?.isOpen === true;
+
+        const row = document.createElement("div");
+
+        row.className = "public-hours-row";
+
+        const dayName = document.createElement("strong");
+
+        dayName.textContent = label;
+
+        const hours = document.createElement("span");
+
+        if (isOpen) {
+
+            const start =
+                daySettings.start ||
+                daySettings.startTime ||
+                "";
+
+            const end =
+                daySettings.end ||
+                daySettings.endTime ||
+                "";
+
+            if (start && end) {
+
+                hours.textContent = `${start} – ${end}`;
+
+                hasWorkingDay = true;
+
+            } else {
+
+                hours.textContent = "Horário não definido";
+
+            }
+
+        } else {
+
+            hours.textContent = "Encerrado";
+
+        }
+
+        row.append(dayName, hours);
+
+        list.appendChild(row);
+
+    });
+
+    if (!hasWorkingDay) {
+
+        showPolicyUnavailable(publicBusinessHours);
+
+        return;
+
+    }
+
+    publicBusinessHours.appendChild(list);
+
+}
+
+
+// ==================================================
+// INFORMAÇÕES DE ENTREGA
+// ==================================================
+
+function renderPublicDeliveryInfo() {
+
+    if (!publicDeliveryInfo) return;
+
+    publicDeliveryInfo.replaceChildren();
+
+    const delivery = merchant?.deliverySettings;
+
+    if (!delivery || typeof delivery !== "object") {
+
+        showPolicyUnavailable(publicDeliveryInfo);
+
+        return;
+
+    }
+
+    if (delivery.enabled === false) {
+
+        publicDeliveryInfo.appendChild(
+            createPolicyText("A loja não disponibiliza entregas.")
+        );
+
+        return;
+
+    }
+
+    const list = document.createElement("div");
+
+    list.className = "public-delivery-list";
+
+    function addDeliveryItem(label, value) {
+
+        if (
+            value === undefined ||
+            value === null ||
+            value === ""
+        ) return;
+
+        const row = document.createElement("div");
+
+        row.className = "public-delivery-row";
+
+        const title = document.createElement("strong");
+
+        title.textContent = label;
+
+        const detail = document.createElement("span");
+
+        detail.textContent = value;
+
+        row.append(title, detail);
+
+        list.appendChild(row);
+
+    }
+
+    addDeliveryItem(
+        "Taxa de entrega",
+        formatPrice(delivery.defaultFee)
+    );
+
+    addDeliveryItem(
+        "Prazo estimado",
+        delivery.defaultDays
+    );
+
+    if (
+        delivery.freeFrom !== undefined &&
+        delivery.freeFrom !== null &&
+        delivery.freeFrom !== "" &&
+        Number(delivery.freeFrom) > 0
+    ) {
+
+        addDeliveryItem(
+            "Entrega gratuita a partir de",
+            formatPrice(delivery.freeFrom)
+        );
+
+    }
+
+    // Zonas de entrega
+
+    if (
+        Array.isArray(delivery.zones) &&
+        delivery.zones.length > 0
+    ) {
+
+        const heading = document.createElement("h4");
+
+        heading.textContent = "Zonas de entrega";
+
+        list.appendChild(heading);
+
+        delivery.zones.forEach(zone => {
+
+            if (!zone || !zone.name) return;
+
+            const row = document.createElement("div");
+
+            row.className = "public-delivery-zone";
+
+            const name = document.createElement("strong");
+
+            name.textContent = zone.name;
+
+            const details = document.createElement("span");
+
+            const zoneDetails = [];
+
+            if (zone.fee !== undefined && zone.fee !== null) {
+
+                zoneDetails.push(formatPrice(zone.fee));
+
+            }
+
+            if (zone.days) {
+
+                zoneDetails.push(String(zone.days));
+
+            }
+
+            details.textContent =
+                zoneDetails.join(" · ") || "Informação não disponível";
+
+            row.append(name, details);
+
+            list.appendChild(row);
+
+        });
+
+    }
+
+    if (list.children.length === 0) {
+
+        showPolicyUnavailable(publicDeliveryInfo);
+
+        return;
+
+    }
+
+    publicDeliveryInfo.appendChild(list);
+
+}
+
+
+// ==================================================
+// CONDIÇÕES DE VENDA
+// ==================================================
+
+function renderPublicSalesTerms() {
+
+    if (!publicSalesTerms) return;
+
+    const terms = merchant?.salesTerms;
+
+    publicSalesTerms.textContent =
+        typeof terms === "string" && terms.trim()
+            ? terms
+            : "Informação não disponível.";
+
+}
+
+
+// ==================================================
+// POLÍTICA DE DEVOLUÇÕES
+// ==================================================
+
+function renderPublicReturnPolicy() {
+
+    if (!publicReturnPolicy) return;
+
+    const policy = merchant?.returnPolicy;
+
+    publicReturnPolicy.textContent =
+        typeof policy === "string" && policy.trim()
+            ? policy
+            : "Informação não disponível.";
+
+}
+
+
+// ==================================================
+// RENDERIZAR TODAS AS INFORMAÇÕES
+// ==================================================
+
+function renderPublicStorePolicies() {
+
+    renderPublicBusinessHours();
+
+    renderPublicDeliveryInfo();
+
+    renderPublicSalesTerms();
+
+    renderPublicReturnPolicy();
+
+}
 // ==================================================
 // BLOC 6 — CHARGER LA CANDIDATURE ET LES DOCUMENTS
 // ==================================================
