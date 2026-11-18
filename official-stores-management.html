@@ -360,6 +360,11 @@ input:focus-visible {
     font-size: 19px;
 }
 
+.refresh-button:disabled {
+    opacity: .6;
+    cursor: wait;
+}
+
 /* INTRO */
 
 .intro-banner {
@@ -704,49 +709,76 @@ input:focus-visible {
     background: #98a2b3;
 }
 
-.store-action {
-    display: flex;
-    justify-content: flex-end;
-    min-width: 135px;
-}
+/* SWITCH */
 
-.action-button {
-    border: 0;
-    border-radius: 8px;
-    padding: 10px 13px;
-    font-size: 11px;
-    font-weight: 800;
+.store-switch {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 7px;
-    transition: .2s;
+    justify-content: flex-end;
+    gap: 12px;
+    min-width: 145px;
 }
 
-.action-button span {
-    font-size: 17px;
+.switch-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    min-width: 65px;
+    text-align: right;
 }
 
-.action-button.deactivate {
-    background: var(--red-light);
-    color: var(--red);
+.switch-control {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 27px;
+    flex-shrink: 0;
 }
 
-.action-button.deactivate:hover {
-    background: #ffe0e0;
+.switch-control input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
 }
 
-.action-button.activate {
-    background: var(--green-light);
-    color: var(--green);
+.switch-slider {
+    position: absolute;
+    inset: 0;
+    cursor: pointer;
+    background: #cbd2dc;
+    border-radius: 30px;
+    transition: .25s;
 }
 
-.action-button.activate:hover {
-    background: #d8f3e5;
+.switch-slider::before {
+    content: "";
+    position: absolute;
+    width: 19px;
+    height: 19px;
+    left: 4px;
+    top: 4px;
+    background: white;
+    border-radius: 50%;
+    transition: .25s;
+    box-shadow: 0 2px 5px rgba(0,0,0,.15);
 }
 
-.action-button:disabled {
-    opacity: .6;
+.switch-control input:checked + .switch-slider {
+    background: var(--green);
+}
+
+.switch-control input:checked + .switch-slider::before {
+    transform: translateX(21px);
+}
+
+.switch-control input:focus-visible + .switch-slider {
+    outline: 3px solid rgba(255,106,0,.25);
+    outline-offset: 3px;
+}
+
+.switch-control input:disabled + .switch-slider {
+    opacity: .55;
     cursor: wait;
 }
 
@@ -957,12 +989,9 @@ input:focus-visible {
         min-width: 0;
     }
 
-    .store-action {
+    .store-switch {
         min-width: 0;
-    }
-
-    .action-button {
-        padding: 10px 11px;
+        padding-left: 61px;
     }
 
     .store-section-header {
@@ -1077,7 +1106,6 @@ input:focus-visible {
 
 </aside>
 
-
 <main class="main-content">
 
     <header class="topbar">
@@ -1114,7 +1142,6 @@ input:focus-visible {
 
     </header>
 
-
     <div class="page-container">
 
         <section class="page-heading">
@@ -1137,7 +1164,6 @@ input:focus-visible {
 
         </section>
 
-
         <section class="intro-banner">
 
             <div class="intro-text">
@@ -1157,9 +1183,7 @@ input:focus-visible {
 
         </section>
 
-
         <h2 class="section-title">Resumo das lojas</h2>
-
 
         <section class="stats-grid">
 
@@ -1174,7 +1198,6 @@ input:focus-visible {
                 <div class="stat-name">Total de lojas</div>
             </article>
 
-
             <article class="stat-card">
                 <div class="stat-top">
                     <div class="stat-icon green">
@@ -1186,7 +1209,6 @@ input:focus-visible {
                 <div class="stat-name">Lojas visíveis</div>
             </article>
 
-
             <article class="stat-card">
                 <div class="stat-top">
                     <div class="stat-icon red">
@@ -1197,7 +1219,6 @@ input:focus-visible {
                 <div class="stat-number" id="hiddenStores">—</div>
                 <div class="stat-name">Lojas desativadas</div>
             </article>
-
 
             <article class="stat-card">
                 <div class="stat-top">
@@ -1212,7 +1233,6 @@ input:focus-visible {
 
         </section>
 
-
         <section class="toolbar">
 
             <div class="search-box">
@@ -1225,7 +1245,6 @@ input:focus-visible {
                     autocomplete="off"
                 >
             </div>
-
 
             <div class="filters">
 
@@ -1244,7 +1263,6 @@ input:focus-visible {
             </div>
 
         </section>
-
 
         <section class="store-section">
 
@@ -1268,7 +1286,6 @@ input:focus-visible {
 
         </section>
 
-
         <footer class="footer">
 
             <span>© TOMA — O comércio mais perto de si.</span>
@@ -1280,7 +1297,6 @@ input:focus-visible {
     </div>
 
 </main>
-
 
 <script type="module">
 
@@ -1503,9 +1519,10 @@ async function loadOfficialStores() {
 
             return {
 
-                id: document.id,
+                ...data,
 
-                ...data
+                // L'identifiant réel du document Firestore
+                id: document.id
 
             };
 
@@ -1666,6 +1683,7 @@ function renderStores() {
 
         const id = escapeHTML(store.id);
 
+
         const statusHTML = visible
 
             ? `
@@ -1683,31 +1701,33 @@ function renderStores() {
             `;
 
 
-        const actionHTML = visible
+        // INTERRUPTEUR DE VISIBILITÉ
 
-            ? `
-                <button
-                    type="button"
-                    class="action-button deactivate"
-                    data-action="deactivate"
-                    data-store-id="${id}"
-                >
-                    <span class="material-symbols-rounded">visibility_off</span>
-                    Desativar
-                </button>
-            `
+        const actionHTML = `
 
-            : `
-                <button
-                    type="button"
-                    class="action-button activate"
-                    data-action="activate"
-                    data-store-id="${id}"
-                >
-                    <span class="material-symbols-rounded">visibility</span>
-                    Ativar
-                </button>
-            `;
+            <div class="store-switch">
+
+                <span class="switch-label">
+                    ${visible ? "Visível" : "Desativada"}
+                </span>
+
+                <label class="switch-control">
+
+                    <input
+                        type="checkbox"
+                        class="store-visibility-switch"
+                        data-store-id="${id}"
+                        ${visible ? "checked" : ""}
+                        aria-label="Alterar visibilidade da loja ${name}"
+                    >
+
+                    <span class="switch-slider"></span>
+
+                </label>
+
+            </div>
+
+        `;
 
 
         return `
@@ -1764,10 +1784,10 @@ function renderStores() {
 
 
 // =========================================================
-// BLOC 9 — ACTIVER / DÉSACTIVER
+// BLOC 9 — MODIFICATION DE LA VISIBILITÉ
 // =========================================================
 
-async function changeStoreVisibility(storeId, visible) {
+async function changeStoreVisibility(storeId, visible, input) {
 
     const store = officialStores.find(
         item => item.id === storeId
@@ -1777,11 +1797,14 @@ async function changeStoreVisibility(storeId, visible) {
 
         showToast("Loja não encontrada.", "error");
 
+        if (input) input.checked = !visible;
+
         return;
     }
 
 
-    const action = visible ? "ativar" : "desativar";
+    const previousVisibility = !visible;
+
 
     const confirmation = window.confirm(
 
@@ -1794,20 +1817,17 @@ async function changeStoreVisibility(storeId, visible) {
     );
 
 
-    if (!confirmation) return;
+    if (!confirmation) {
+
+        input.checked = previousVisibility;
+
+        return;
+    }
 
 
-    const buttons = document.querySelectorAll(
-        `[data-store-id="${CSS.escape(storeId)}"]`
-    );
+    // Bloquer l'interrupteur pendant l'opération
 
-    buttons.forEach(button => {
-
-        button.disabled = true;
-
-        button.style.opacity = ".6";
-
-    });
+    input.disabled = true;
 
 
     try {
@@ -1819,8 +1839,7 @@ async function changeStoreVisibility(storeId, visible) {
         );
 
 
-        // Modifier uniquement la visibilité.
-        // Les autres champs restent intacts.
+        // Modifier uniquement la visibilité
 
         await updateDoc(storeRef, {
 
@@ -1838,7 +1857,7 @@ async function changeStoreVisibility(storeId, visible) {
         store.visible = visible;
 
 
-        // Rafraîchir l'affichage
+        // Actualiser l'affichage
 
         renderStores();
 
@@ -1878,12 +1897,22 @@ async function changeStoreVisibility(storeId, visible) {
 
         console.error("TOMA VISIBILITY ERROR:", error);
 
+        // Restaurer la position précédente
+
+        input.checked = previousVisibility;
+
         showToast(
-            "Não foi possível " + action + " a loja: " + error.message,
+            "Não foi possível alterar a visibilidade: " + error.message,
             "error"
         );
 
-        await loadOfficialStores();
+    }
+
+    finally {
+
+        // Réactiver l'interrupteur
+
+        input.disabled = false;
 
     }
 
@@ -1891,32 +1920,28 @@ async function changeStoreVisibility(storeId, visible) {
 
 
 // =========================================================
-// BLOC 10 — ÉVÉNEMENTS DES BOUTONS
+// BLOC 10 — INTERRUPTEURS DE VISIBILITÉ
 // =========================================================
 
-storeList.addEventListener("click", event => {
+storeList.addEventListener("change", event => {
 
-    const button = event.target.closest(
-        "[data-action][data-store-id]"
+    const input = event.target.closest(
+        ".store-visibility-switch"
     );
 
-    if (!button) return;
+    if (!input) return;
 
-    const storeId = button.dataset.storeId;
 
-    const action = button.dataset.action;
+    const storeId = input.dataset.storeId;
 
-    if (action === "activate") {
+    const newVisibility = input.checked;
 
-        changeStoreVisibility(storeId, true);
 
-    }
-
-    else if (action === "deactivate") {
-
-        changeStoreVisibility(storeId, false);
-
-    }
+    changeStoreVisibility(
+        storeId,
+        newVisibility,
+        input
+    );
 
 });
 
