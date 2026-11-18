@@ -47,7 +47,7 @@ const dashboardLoading = document.getElementById("dashboardLoading");
 if (!db || !auth) {
 
   alert(
-    "TOMA BUSINESS — ERREUR\n\n" +
+    "TOMA BUSINESS — ERRO\n\n" +
     "A ligação Firebase não foi encontrada.\n" +
     "Verifique o ficheiro firebase.js."
   );
@@ -58,7 +58,7 @@ if (!db || !auth) {
 
 
 /* =====================================================
-   4. FONCTIONS DE CARREGAMENTO
+   4. FUNÇÕES DE CARREGAMENTO
 ===================================================== */
 
 function showDashboardLoading() {
@@ -68,7 +68,6 @@ function showDashboardLoading() {
   }
 
 }
-
 
 function hideDashboardLoading() {
 
@@ -80,7 +79,145 @@ function hideDashboardLoading() {
 
 
 /* =====================================================
-   5. INICIALIZAÇÃO
+   BLOC 2 — IDENTIFICATION DE LA BOUTIQUE OFFICIELLE
+===================================================== */
+
+/* -----------------------------------------------------
+   2.1 — RECHERCHER LA BOUTIQUE DU COMMERÇANT
+----------------------------------------------------- */
+
+async function loadOfficialStore() {
+
+  if (!currentUser) {
+    throw new Error("Utilizador não autenticado.");
+  }
+
+  const storesQuery = query(
+    collection(db, "officialStores"),
+    where("merchantIds", "array-contains", currentUser.uid)
+  );
+
+  const snapshot = await getDocs(storesQuery);
+
+  if (snapshot.empty) {
+
+    throw new Error(
+      "Nenhuma loja oficial foi associada à sua conta.\n" +
+      "Contacte a administração TOMA."
+    );
+
+  }
+
+  if (snapshot.size > 1) {
+
+    throw new Error(
+      "Foram encontradas várias lojas oficiais associadas à sua conta.\n" +
+      "Contacte a administração TOMA."
+    );
+
+  }
+
+  const storeDocument = snapshot.docs[0];
+
+  currentStoreId = storeDocument.id;
+
+  currentOfficialStore = {
+    id: storeDocument.id,
+    ...storeDocument.data()
+  };
+
+
+  /* ---------------------------------------------------
+     2.2 — VERIFICAR O ESTADO DA LOJA
+  --------------------------------------------------- */
+
+  if (currentOfficialStore.status !== "Active") {
+
+    currentOfficialStore = null;
+    currentStoreId = null;
+
+    throw new Error(
+      "A sua loja oficial não está activa.\n" +
+      "Contacte a administração TOMA."
+    );
+
+  }
+
+
+  /* ---------------------------------------------------
+     2.3 — MOSTRAR INFORMAÇÕES DA LOJA NO HTML
+  --------------------------------------------------- */
+
+  const storeName = document.getElementById("storeName");
+  const storeLogo = document.getElementById("storeLogo");
+  const storeDescription = document.getElementById("storeDescription");
+  const storeCategory = document.getElementById("storeCategory");
+  const storeMerchantCount = document.getElementById("storeMerchantCount");
+  const storeVerifiedIcon = document.getElementById("storeVerifiedIcon");
+  const storeStatus = document.getElementById("storeStatus");
+  const storeStatusText = document.getElementById("storeStatusText");
+  const profileInitial = document.getElementById("profileInitial");
+
+
+  if (storeName) {
+    storeName.textContent =
+      currentOfficialStore.name || "Loja Oficial";
+  }
+
+  if (storeLogo) {
+    storeLogo.src =
+      currentOfficialStore.logo || "./images/default-store.png";
+  }
+
+  if (storeDescription) {
+    storeDescription.textContent =
+      currentOfficialStore.description || "Sem descrição disponível.";
+  }
+
+  if (storeCategory) {
+    storeCategory.textContent =
+      currentOfficialStore.category || "Sem categoria";
+  }
+
+  if (storeMerchantCount) {
+
+    const merchantCount = Array.isArray(currentOfficialStore.merchantIds)
+      ? currentOfficialStore.merchantIds.length
+      : 0;
+
+    storeMerchantCount.textContent =
+      `${merchantCount} Comerciantes`;
+
+  }
+
+  if (storeVerifiedIcon) {
+    storeVerifiedIcon.style.display =
+      currentOfficialStore.verified === true ? "inline-flex" : "none";
+  }
+
+  if (storeStatus) {
+    storeStatus.classList.remove("active");
+    storeStatus.classList.add("active");
+  }
+
+  if (storeStatusText) {
+    storeStatusText.textContent = "Ativa";
+  }
+
+  if (profileInitial) {
+
+    const name = currentOfficialStore.name || "TOMA";
+
+    profileInitial.textContent =
+      name.charAt(0).toUpperCase();
+
+  }
+
+}
+
+
+/* =====================================================
+   5. INICIALISATION DU DASHBOARD
 ===================================================== */
 
 function initializeOfficialDashboard() {
@@ -101,7 +238,7 @@ function initializeOfficialDashboard() {
 
 
 /* =====================================================
-   6. AUTENTICAÇÃO
+   6. AUTHENTIFICATION ET CHARGEMENT DE LA BOUTIQUE
 ===================================================== */
 
 showDashboardLoading();
@@ -125,20 +262,34 @@ onAuthStateChanged(auth, async (user) => {
 
     currentUser = user;
 
-    console.log("Utilizador autenticado:", currentUser.uid);
+    /* BLOC 2 — CHARGER LA BOUTIQUE */
+
+    await loadOfficialStore();
+
+    /* INITIALISER LE DASHBOARD */
 
     initializeOfficialDashboard();
 
-  } catch (error) {
-
-    console.error(error);
+    /* ALERTE FINALE DU BLOC 2 */
 
     alert(
-      "TOMA BUSINESS — ERRO DE AUTENTICAÇÃO\n\n" +
-      error.message
+      "TOMA BUSINESS — BLOC 2 CONCLUÍDO!\n\n" +
+      "A sua loja oficial foi encontrada com sucesso.\n\n" +
+      "Loja: " + currentOfficialStore.name + "\n" +
+      "ID: " + currentStoreId + "\n\n" +
+      "As informações da loja foram carregadas."
     );
 
+  } catch (error) {
+
+    console.error("ERRO NO DASHBOARD:", error);
+
     hideDashboardLoading();
+
+    alert(
+      "TOMA BUSINESS — ERRO\n\n" +
+      error.message
+    );
 
   }
 
