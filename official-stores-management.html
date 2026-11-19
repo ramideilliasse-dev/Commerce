@@ -41,7 +41,7 @@ body {
     font-family: 'Inter', sans-serif;
     background: var(--background);
     color: var(--dark);
-    font-size: 14px;
+    font-size: 15px;
 }
 
 button, input {
@@ -208,7 +208,7 @@ input:focus-visible {
 }
 
 .topbar {
-    min-height: 85px;
+    height: 85px;
     background: var(--white);
     border-bottom: 1px solid var(--border);
     padding: 0 35px;
@@ -350,7 +350,6 @@ input:focus-visible {
     font-size: 12px;
     font-weight: 700;
     transition: .2s;
-    flex-shrink: 0;
 }
 
 .refresh-button:hover {
@@ -444,7 +443,7 @@ input:focus-visible {
 
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 15px;
     margin-bottom: 28px;
 }
@@ -454,7 +453,6 @@ input:focus-visible {
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 20px;
-    min-width: 0;
 }
 
 .stat-top {
@@ -581,7 +579,7 @@ input:focus-visible {
     color: var(--primary);
 }
 
-/* STORE SECTION */
+/* STORE LIST */
 
 .store-section {
     background: white;
@@ -609,19 +607,17 @@ input:focus-visible {
     font-size: 11px;
 }
 
-/* STORE GRID */
-
 .store-list {
     display: flex;
     flex-direction: column;
 }
 
 .store-row {
+    padding: 20px 22px;
     display: grid;
-    grid-template-columns: 76px minmax(0, 1fr) minmax(180px, auto);
+    grid-template-columns: 60px minmax(150px, 1fr) minmax(130px, 180px) 150px;
     align-items: center;
-    gap: 20px;
-    padding: 22px;
+    gap: 18px;
     border-bottom: 1px solid #f0f2f5;
     transition: background .2s;
 }
@@ -635,154 +631,140 @@ input:focus-visible {
 }
 
 .store-logo {
-    width: 76px;
-    height: 76px;
-    border-radius: 13px;
+    width: 57px;
+    height: 57px;
+    border-radius: 12px;
     object-fit: cover;
     background: #f1f3f6;
     border: 1px solid var(--border);
-    display: block;
 }
 
-.store-information {
+.store-main {
     min-width: 0;
 }
 
-.store-name {
+.store-main strong {
     display: block;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 800;
-    color: var(--dark);
-    line-height: 1.5;
     overflow-wrap: anywhere;
+    line-height: 1.5;
 }
 
 .store-category {
     display: block;
     color: var(--muted);
-    font-size: 12px;
-    margin-top: 5px;
+    font-size: 11px;
+    margin-top: 6px;
     line-height: 1.5;
-    overflow-wrap: anywhere;
 }
 
 .store-id {
-    display: inline-block;
+    display: block;
     color: #98a2b3;
     font-size: 10px;
-    margin-top: 7px;
+    margin-top: 5px;
     overflow-wrap: anywhere;
 }
 
-.store-control {
+.store-meta {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
-    gap: 13px;
+    gap: 7px;
     min-width: 0;
 }
 
-.merchant-information {
-    display: flex;
-    align-items: center;
-    gap: 7px;
+.store-meta small {
     color: var(--muted);
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 10px;
 }
 
-.merchant-information .material-symbols-rounded {
-    font-size: 17px;
+.store-meta strong {
+    font-size: 12px;
 }
 
-.store-visibility {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 11px;
-    width: 100%;
-}
-
-.visibility-status {
+.store-status {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-size: 11px;
+    width: fit-content;
+    border-radius: 20px;
+    padding: 7px 10px;
+    font-size: 10px;
     font-weight: 800;
-    white-space: nowrap;
 }
 
-.visibility-status.visible {
+.store-status.visible {
+    background: var(--green-light);
     color: var(--green);
 }
 
-.visibility-status.hidden {
-    color: #7d8798;
+.store-status.hidden {
+    background: #f1f2f5;
+    color: #667085;
 }
 
-.visibility-status .status-dot {
-    width: 7px;
-    height: 7px;
+.store-status .status-dot {
+    width: 6px;
+    height: 6px;
 }
 
-.visibility-status.hidden .status-dot {
+.store-status.hidden .status-dot {
     background: #98a2b3;
 }
 
-/* SWITCH */
+/* INTERRUPTEUR */
 
-.switch-control {
+.store-switch-area {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    min-width: 0;
+}
+
+.switch-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    white-space: nowrap;
+}
+
+.switch {
     position: relative;
-    display: inline-block;
-    width: 49px;
-    height: 28px;
-    flex-shrink: 0;
-}
-
-.switch-control input {
-    position: absolute;
-    opacity: 0;
-    width: 1px;
-    height: 1px;
-}
-
-.switch-slider {
-    position: absolute;
-    inset: 0;
-    cursor: pointer;
-    background: #cbd2dc;
+    width: 54px;
+    height: 30px;
+    min-width: 54px;
+    border: 0;
     border-radius: 30px;
-    transition: .25s;
+    background: #cbd1da;
+    cursor: pointer;
+    transition: background .25s ease;
 }
 
-.switch-slider::before {
+.switch::before {
     content: "";
     position: absolute;
-    width: 20px;
-    height: 20px;
-    left: 4px;
+    width: 22px;
+    height: 22px;
     top: 4px;
-    background: white;
+    left: 4px;
     border-radius: 50%;
-    transition: .25s;
-    box-shadow: 0 2px 5px rgba(0,0,0,.15);
+    background: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,.18);
+    transition: transform .25s ease;
 }
 
-.switch-control input:checked + .switch-slider {
+.switch[aria-checked="true"] {
     background: var(--green);
 }
 
-.switch-control input:checked + .switch-slider::before {
-    transform: translateX(21px);
+.switch[aria-checked="true"]::before {
+    transform: translateX(24px);
 }
 
-.switch-control input:focus-visible + .switch-slider {
-    outline: 3px solid rgba(255,106,0,.25);
-    outline-offset: 3px;
-}
-
-.switch-control input:disabled + .switch-slider {
-    opacity: .55;
+.switch:disabled {
+    opacity: .5;
     cursor: wait;
 }
 
@@ -837,7 +819,7 @@ input:focus-visible {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    width: min(380px, calc(100% - 40px));
+    max-width: min(380px, calc(100% - 40px));
 }
 
 .toast {
@@ -877,30 +859,24 @@ input:focus-visible {
     font-size: 11px;
 }
 
-/* TABLET */
+/* RESPONSIVE */
 
 @media (max-width: 1100px) {
-
     .stats-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .store-row {
-        grid-template-columns: 68px minmax(0, 1fr) minmax(155px, auto);
-        gap: 15px;
+        grid-template-columns: 55px minmax(130px, 1fr) minmax(110px, 150px);
     }
 
-    .store-logo {
-        width: 68px;
-        height: 68px;
+    .store-switch-area {
+        grid-column: 2 / -1;
+        justify-content: space-between;
     }
-
 }
 
-/* MOBILE */
-
 @media (max-width: 760px) {
-
     .sidebar {
         transform: translateX(-100%);
         box-shadow: 10px 0 30px rgba(0,0,0,.08);
@@ -912,11 +888,10 @@ input:focus-visible {
 
     .main-content {
         margin-left: 0;
-        width: 100%;
     }
 
     .topbar {
-        min-height: 72px;
+        height: 72px;
         padding: 0 16px;
     }
 
@@ -987,68 +962,41 @@ input:focus-visible {
         flex: 1;
     }
 
-    /* Nouvelle carte mobile */
-
     .store-row {
-        grid-template-columns: 65px minmax(0, 1fr);
-        grid-template-areas:
-            "logo information"
-            "control control";
-        align-items: start;
-        gap: 15px;
-        padding: 18px 15px;
+        grid-template-columns: 55px minmax(0, 1fr);
+        gap: 12px;
+        padding: 17px 15px;
     }
 
     .store-logo {
-        grid-area: logo;
-        width: 65px;
-        height: 65px;
+        grid-column: 1;
+        grid-row: 1;
+        width: 52px;
+        height: 52px;
     }
 
-    .store-information {
-        grid-area: information;
+    .store-main {
+        grid-column: 2;
+        grid-row: 1;
         min-width: 0;
-        width: 100%;
     }
 
-    .store-name {
-        font-size: 14px;
-        line-height: 1.5;
+    .store-main strong {
         overflow-wrap: anywhere;
         word-break: normal;
     }
 
-    .store-category {
-        font-size: 11px;
+    .store-meta {
+        grid-column: 1 / -1;
+        padding-left: 0;
+        min-width: 0;
     }
 
-    .store-id {
-        font-size: 10px;
-    }
-
-    .store-control {
-        grid-area: control;
-        width: 100%;
-        padding-top: 13px;
-        border-top: 1px solid #f0f2f5;
-        flex-direction: row;
-        align-items: center;
+    .store-switch-area {
+        grid-column: 1 / -1;
         justify-content: space-between;
-        gap: 10px;
-    }
-
-    .merchant-information {
-        font-size: 11px;
-    }
-
-    .store-visibility {
-        width: auto;
-        justify-content: flex-end;
-        gap: 9px;
-    }
-
-    .visibility-status {
-        font-size: 10px;
+        min-width: 0;
+        padding: 5px 0;
     }
 
     .store-section-header {
@@ -1058,13 +1006,9 @@ input:focus-visible {
     .footer {
         flex-direction: column;
     }
-
 }
 
-/* SMALL MOBILE */
-
 @media (max-width: 380px) {
-
     .stats-grid {
         grid-template-columns: 1fr;
     }
@@ -1074,31 +1018,15 @@ input:focus-visible {
     }
 
     .store-row {
-        padding: 16px 12px;
-        grid-template-columns: 57px minmax(0, 1fr);
-        gap: 12px;
+        padding: 15px 12px;
     }
-
-    .store-logo {
-        width: 57px;
-        height: 57px;
-    }
-
-    .store-control {
-        flex-wrap: wrap;
-    }
-
 }
 
-/* REDUCED MOTION */
-
 @media (prefers-reduced-motion: reduce) {
-
     *, *::before, *::after {
         animation-duration: .01ms !important;
         transition-duration: .01ms !important;
     }
-
 }
 </style>
 </head>
@@ -1110,18 +1038,13 @@ input:focus-visible {
 <aside class="sidebar" id="sidebar">
 
     <div class="sidebar-header">
-
         <div class="brand">
-
             <div class="brand-logo">T</div>
-
             <div>
                 <div class="brand-name">TOMA<span>.</span></div>
                 <div class="brand-subtitle">ADMINISTRAÇÃO</div>
             </div>
-
         </div>
-
     </div>
 
     <div class="sidebar-content">
@@ -1175,27 +1098,22 @@ input:focus-visible {
         <div class="nav-label">SISTEMA</div>
 
         <nav class="nav-menu">
-
             <a href="./admin-dashboard.html" class="nav-link">
                 <span class="material-symbols-rounded">admin_panel_settings</span>
                 Dashboard principal
             </a>
-
         </nav>
 
     </div>
 
     <div class="sidebar-bottom">
-
         <a href="./official-stores-dashboard.html" class="back-link">
             <span class="material-symbols-rounded">arrow_back</span>
             Voltar à gestão oficial
         </a>
-
     </div>
 
 </aside>
-
 
 <main class="main-content">
 
@@ -1221,27 +1139,23 @@ input:focus-visible {
             </div>
 
             <div class="admin-profile">
-
                 <div class="admin-avatar" id="adminAvatar">A</div>
 
                 <div class="admin-info">
                     <strong id="adminName">Administrador</strong>
                     <span>Gestão TOMA</span>
                 </div>
-
             </div>
 
         </div>
 
     </header>
 
-
     <div class="page-container">
 
         <section class="page-heading">
 
             <div>
-
                 <div class="eyebrow">CENTRO DE CONTROLO TOMA</div>
 
                 <h1>Gerir lojas oficiais</h1>
@@ -1250,24 +1164,18 @@ input:focus-visible {
                     Consulte todas as lojas oficiais, acompanhe as atribuições
                     e controle a sua visibilidade na plataforma TOMA.
                 </p>
-
             </div>
 
             <button class="refresh-button" id="refreshButton" type="button">
-
                 <span class="material-symbols-rounded">refresh</span>
-
                 Atualizar dados
-
             </button>
 
         </section>
 
-
         <section class="intro-banner">
 
             <div class="intro-text">
-
                 <small>OFFICIAL STORES CONTROL</small>
 
                 <h2>Controlo centralizado das lojas oficiais</h2>
@@ -1276,7 +1184,6 @@ input:focus-visible {
                     Ative ou desative a visibilidade das lojas.
                     Todas as alterações são guardadas na base de dados TOMA.
                 </p>
-
             </div>
 
             <div class="intro-icon">
@@ -1285,14 +1192,11 @@ input:focus-visible {
 
         </section>
 
-
         <h2 class="section-title">Resumo das lojas</h2>
-
 
         <section class="stats-grid">
 
             <article class="stat-card">
-
                 <div class="stat-top">
                     <div class="stat-icon orange">
                         <span class="material-symbols-rounded">storefront</span>
@@ -1301,12 +1205,9 @@ input:focus-visible {
 
                 <div class="stat-number" id="totalStores">—</div>
                 <div class="stat-name">Total de lojas</div>
-
             </article>
 
-
             <article class="stat-card">
-
                 <div class="stat-top">
                     <div class="stat-icon green">
                         <span class="material-symbols-rounded">visibility</span>
@@ -1315,12 +1216,9 @@ input:focus-visible {
 
                 <div class="stat-number" id="visibleStores">—</div>
                 <div class="stat-name">Lojas visíveis</div>
-
             </article>
 
-
             <article class="stat-card">
-
                 <div class="stat-top">
                     <div class="stat-icon red">
                         <span class="material-symbols-rounded">visibility_off</span>
@@ -1329,12 +1227,9 @@ input:focus-visible {
 
                 <div class="stat-number" id="hiddenStores">—</div>
                 <div class="stat-name">Lojas desativadas</div>
-
             </article>
 
-
             <article class="stat-card">
-
                 <div class="stat-top">
                     <div class="stat-icon blue">
                         <span class="material-symbols-rounded">group</span>
@@ -1343,16 +1238,13 @@ input:focus-visible {
 
                 <div class="stat-number" id="assignedMerchants">—</div>
                 <div class="stat-name">Comerciantes associados</div>
-
             </article>
 
         </section>
 
-
         <section class="toolbar">
 
             <div class="search-box">
-
                 <span class="material-symbols-rounded">search</span>
 
                 <input
@@ -1361,9 +1253,7 @@ input:focus-visible {
                     placeholder="Pesquisar por nome, categoria ou ID..."
                     autocomplete="off"
                 >
-
             </div>
-
 
             <div class="filters">
 
@@ -1383,7 +1273,6 @@ input:focus-visible {
 
         </section>
 
-
         <section class="store-section">
 
             <div class="store-section-header">
@@ -1397,19 +1286,14 @@ input:focus-visible {
             <div class="store-list" id="storeList">
 
                 <div class="message-state">
-
                     <div class="spinner"></div>
-
                     <strong>A carregar lojas oficiais...</strong>
-
                     <p>Estamos a consultar os dados do Firestore.</p>
-
                 </div>
 
             </div>
 
         </section>
-
 
         <footer class="footer">
 
@@ -1422,7 +1306,6 @@ input:focus-visible {
     </div>
 
 </main>
-
 
 <script type="module">
 
@@ -1448,7 +1331,7 @@ import {
 
 
 // =========================================================
-// BLOC 2 — ELEMENTS HTML
+// BLOC 2 — ELEMENTOS HTML
 // =========================================================
 
 const storeList = document.getElementById("storeList");
@@ -1498,9 +1381,9 @@ let officialStores = [];
 
 let activeFilter = "all";
 
-let currentAdmin = null;
-
 let loading = false;
+
+const updatingStores = new Set();
 
 
 // =========================================================
@@ -1530,16 +1413,13 @@ function showToast(message, type = "success") {
 
 function escapeHTML(value) {
 
-    return String(value ?? "").replace(
-        /[&<>"']/g,
-        character => ({
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            '"': "&quot;",
-            "'": "&#039;"
-        })[character]
-    );
+    return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    })[character]);
 
 }
 
@@ -1559,9 +1439,9 @@ async function verifyAdmin(user) {
 
     try {
 
-        const userRef = doc(db, "users", user.uid);
-
-        const userSnapshot = await getDoc(userRef);
+        const userSnapshot = await getDoc(
+            doc(db, "users", user.uid)
+        );
 
         if (!userSnapshot.exists()) {
 
@@ -1585,8 +1465,6 @@ async function verifyAdmin(user) {
             return false;
         }
 
-        currentAdmin = user;
-
         const displayName =
             profile.name ||
             profile.fullName ||
@@ -1600,14 +1478,12 @@ async function verifyAdmin(user) {
 
         return true;
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error("TOMA ADMIN AUTH:", error);
 
         alert(
-            "Não foi possível verificar as permissões administrativas. " +
+            "Não foi possível verificar as permissões: " +
             error.message
         );
 
@@ -1618,7 +1494,44 @@ async function verifyAdmin(user) {
 
 
 // =========================================================
-// BLOC 7 — CHARGEMENT FIRESTORE
+// BLOC 7 — STATISTIQUES
+// =========================================================
+
+function updateStatistics() {
+
+    const total = officialStores.length;
+
+    const visible = officialStores.filter(
+        store => store.visible === true
+    ).length;
+
+    const hidden = officialStores.filter(
+        store => store.visible !== true
+    ).length;
+
+    const merchants = officialStores.reduce((sum, store) => {
+
+        const ids = Array.isArray(store.merchantIds)
+            ? store.merchantIds
+            : [];
+
+        return sum + ids.length;
+
+    }, 0);
+
+    totalStoresElement.textContent = total;
+
+    visibleStoresElement.textContent = visible;
+
+    hiddenStoresElement.textContent = hidden;
+
+    assignedMerchantsElement.textContent = merchants;
+
+}
+
+
+// =========================================================
+// BLOC 8 — CHARGEMENT FIRESTORE
 // =========================================================
 
 async function loadOfficialStores() {
@@ -1626,6 +1539,8 @@ async function loadOfficialStores() {
     if (loading) return;
 
     loading = true;
+
+    refreshButton.disabled = true;
 
     storeList.innerHTML = `
         <div class="message-state">
@@ -1635,42 +1550,24 @@ async function loadOfficialStores() {
         </div>
     `;
 
-    refreshButton.disabled = true;
-
     try {
 
         const snapshot = await getDocs(
             collection(db, "officialStores")
         );
 
-        officialStores = snapshot.docs.map(document => {
+        // L'identifiant réel du document Firestore est prioritaire.
 
-            const data = document.data();
-
-            return {
-
-                ...data,
-
-                // ID réel du document Firestore
-                id: document.id
-
-            };
-
-        });
-
+        officialStores = snapshot.docs.map(document => ({
+            ...document.data(),
+            id: document.id
+        }));
 
         updateStatistics();
 
         renderStores();
 
-        showToast(
-            `${officialStores.length} loja(s) carregadas.`,
-            "success"
-        );
-
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error("TOMA OFFICIAL STORES:", error);
 
@@ -1685,13 +1582,11 @@ async function loadOfficialStores() {
         storeCountElement.textContent = "Erro de carregamento";
 
         showToast(
-            "Erro ao carregar lojas oficiais: " + error.message,
+            "Erro ao carregar lojas: " + error.message,
             "error"
         );
 
-    }
-
-    finally {
+    } finally {
 
         loading = false;
 
@@ -1703,54 +1598,12 @@ async function loadOfficialStores() {
 
 
 // =========================================================
-// BLOC 8 — STATISTIQUES
-// =========================================================
-
-function updateStatistics() {
-
-    const total = officialStores.length;
-
-    const visible = officialStores.filter(
-        store => store.visible === true
-    ).length;
-
-    const hidden = officialStores.filter(
-        store => store.visible === false
-    ).length;
-
-    const merchants = officialStores.reduce(
-        (total, store) => {
-
-            const ids = Array.isArray(store.merchantIds)
-                ? store.merchantIds
-                : [];
-
-            return total + ids.length;
-
-        },
-        0
-    );
-
-    totalStoresElement.textContent = total;
-
-    visibleStoresElement.textContent = visible;
-
-    hiddenStoresElement.textContent = hidden;
-
-    assignedMerchantsElement.textContent = merchants;
-
-}
-
-
-// =========================================================
-// BLOC 9 — AFFICHAGE DES BOUTIQUES
+// BLOC 9 — AFFICHAGE DES LOJAS
 // =========================================================
 
 function renderStores() {
 
-    const search = searchInput.value
-        .trim()
-        .toLowerCase();
+    const search = searchInput.value.trim().toLowerCase();
 
     const filteredStores = officialStores.filter(store => {
 
@@ -1765,27 +1618,19 @@ function renderStores() {
             category.includes(search) ||
             id.includes(search);
 
+        const isVisible = store.visible === true;
+
         const matchesFilter =
             activeFilter === "all" ||
-
-            (
-                activeFilter === "visible" &&
-                store.visible === true
-            ) ||
-
-            (
-                activeFilter === "hidden" &&
-                store.visible === false
-            );
+            (activeFilter === "visible" && isVisible) ||
+            (activeFilter === "hidden" && !isVisible);
 
         return matchesSearch && matchesFilter;
 
     });
 
-
     storeCountElement.textContent =
         `${filteredStores.length} loja(s)`;
-
 
     if (!filteredStores.length) {
 
@@ -1800,7 +1645,6 @@ function renderStores() {
         return;
     }
 
-
     storeList.innerHTML = filteredStores.map(store => {
 
         const visible = store.visible === true;
@@ -1808,12 +1652,6 @@ function renderStores() {
         const merchantIds = Array.isArray(store.merchantIds)
             ? store.merchantIds
             : [];
-
-        const merchantCount = merchantIds.length;
-
-        const logo = escapeHTML(
-            store.logo || "./images/default-store.png"
-        );
 
         const name = escapeHTML(
             store.name || "Loja sem nome"
@@ -1825,11 +1663,33 @@ function renderStores() {
 
         const id = escapeHTML(store.id);
 
+        const logo = escapeHTML(
+            store.logo || "./images/default-store.png"
+        );
 
-        const statusClass = visible ? "visible" : "hidden";
+        const statusHTML = visible
 
-        const statusText = visible ? "Visível" : "Desativada";
+            ? `
+                <span class="store-status visible">
+                    <span class="status-dot"></span>
+                    Visível
+                </span>
+            `
 
+            : `
+                <span class="store-status hidden">
+                    <span class="status-dot"></span>
+                    Desativada
+                </span>
+            `;
+
+        const checked = visible ? "true" : "false";
+
+        const label = visible ? "Ativa" : "Desativada";
+
+        const disabled = updatingStores.has(store.id)
+            ? "disabled"
+            : "";
 
         return `
 
@@ -1843,12 +1703,9 @@ function renderStores() {
                     onerror="this.onerror=null;this.src='./images/default-store.png';"
                 >
 
+                <div class="store-main">
 
-                <div class="store-information">
-
-                    <strong class="store-name">
-                        ${name}
-                    </strong>
+                    <strong>${name}</strong>
 
                     <span class="store-category">
                         ${category}
@@ -1860,46 +1717,31 @@ function renderStores() {
 
                 </div>
 
+                <div class="store-meta">
 
-                <div class="store-control">
+                    <small>Comerciantes associados</small>
 
-                    <div class="merchant-information">
+                    <strong>${merchantIds.length}</strong>
 
-                        <span class="material-symbols-rounded">
-                            group
-                        </span>
+                    ${statusHTML}
 
-                        Comerciantes: ${merchantCount}
+                </div>
 
-                    </div>
+                <div class="store-switch-area">
 
+                    <span class="switch-label">
+                        ${label}
+                    </span>
 
-                    <div class="store-visibility">
-
-                        <span class="visibility-status ${statusClass}">
-
-                            <span class="status-dot"></span>
-
-                            ${statusText}
-
-                        </span>
-
-
-                        <label class="switch-control">
-
-                            <input
-                                type="checkbox"
-                                class="store-visibility-switch"
-                                data-store-id="${id}"
-                                ${visible ? "checked" : ""}
-                                aria-label="Alterar visibilidade da loja ${name}"
-                            >
-
-                            <span class="switch-slider"></span>
-
-                        </label>
-
-                    </div>
+                    <button
+                        type="button"
+                        class="switch"
+                        role="switch"
+                        aria-checked="${checked}"
+                        aria-label="${visible ? "Desativar" : "Ativar"} ${name}"
+                        data-store-switch="${id}"
+                        ${disabled}
+                    ></button>
 
                 </div>
 
@@ -1913,10 +1755,10 @@ function renderStores() {
 
 
 // =========================================================
-// BLOC 10 — MODIFICATION DE LA VISIBILITÉ
+// BLOC 10 — ACTIVER / DÉSACTIVER
 // =========================================================
 
-async function changeStoreVisibility(storeId, visible, input) {
+async function changeStoreVisibility(storeId, visible) {
 
     const store = officialStores.find(
         item => item.id === storeId
@@ -1926,36 +1768,28 @@ async function changeStoreVisibility(storeId, visible, input) {
 
         showToast("Loja não encontrada.", "error");
 
-        input.checked = !visible;
-
         return;
     }
 
+    if (updatingStores.has(storeId)) return;
 
-    const previousVisibility = !visible;
-
+    const action = visible ? "ativar" : "desativar";
 
     const confirmation = window.confirm(
 
         visible
 
-            ? `Tem a certeza de que deseja ATIVAR a loja "${store.name}"? Ela voltará a aparecer na lista pública.`
+            ? `Tem a certeza de que deseja ATIVAR a loja "${store.name}"? Ela voltará a aparecer na página pública.`
 
-            : `Tem a certeza de que deseja DESATIVAR a loja "${store.name}"? Ela deixará de aparecer na lista pública.`
+            : `Tem a certeza de que deseja DESATIVAR a loja "${store.name}"? Ela deixará de aparecer na página pública, mas continuará disponível na administração.`
 
     );
 
+    if (!confirmation) return;
 
-    if (!confirmation) {
+    updatingStores.add(storeId);
 
-        input.checked = previousVisibility;
-
-        return;
-    }
-
-
-    input.disabled = true;
-
+    renderStores();
 
     try {
 
@@ -1965,6 +1799,8 @@ async function changeStoreVisibility(storeId, visible, input) {
             storeId
         );
 
+        // Modifier uniquement la visibilité.
+        // Les autres champs du document restent intacts.
 
         await updateDoc(storeRef, {
 
@@ -1976,21 +1812,13 @@ async function changeStoreVisibility(storeId, visible, input) {
 
         });
 
-
-        // Mise à jour locale
+        // Mise à jour locale après confirmation Firestore.
 
         store.visible = visible;
 
-
-        // Actualiser les statistiques
-
         updateStatistics();
 
-
-        // Actualiser la liste
-
         renderStores();
-
 
         showToast(
 
@@ -2004,27 +1832,22 @@ async function changeStoreVisibility(storeId, visible, input) {
 
         );
 
-
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error("TOMA VISIBILITY ERROR:", error);
 
-        // Restaurer la position précédente
-
-        input.checked = previousVisibility;
-
         showToast(
-            "Não foi possível alterar a visibilidade: " + error.message,
+            `Não foi possível ${action} a loja: ${error.message}`,
             "error"
         );
 
-    }
+        await loadOfficialStores();
 
-    finally {
+    } finally {
 
-        input.disabled = false;
+        updatingStores.delete(storeId);
+
+        renderStores();
 
     }
 
@@ -2032,27 +1855,37 @@ async function changeStoreVisibility(storeId, visible, input) {
 
 
 // =========================================================
-// BLOC 11 — INTERRUPTEURS
+// BLOC 11 — ÉVÉNEMENT DES INTERRUPTEURS
 // =========================================================
 
-storeList.addEventListener("change", event => {
+storeList.addEventListener("click", event => {
 
-    const input = event.target.closest(
-        ".store-visibility-switch"
+    const button = event.target.closest(
+        "[data-store-switch]"
     );
 
-    if (!input) return;
+    if (!button) return;
 
+    const storeId = button.dataset.storeSwitch;
 
-    const storeId = input.dataset.storeId;
+    const store = officialStores.find(
+        item => item.id === storeId
+    );
 
-    const newVisibility = input.checked;
+    if (!store) {
 
+        showToast("Loja não encontrada.", "error");
+
+        return;
+    }
+
+    // Inverser l'état actuel.
+
+    const newVisibility = store.visible !== true;
 
     changeStoreVisibility(
         storeId,
-        newVisibility,
-        input
+        newVisibility
     );
 
 });
@@ -2114,7 +1947,6 @@ menuButton.addEventListener("click", () => {
     sidebar.classList.toggle("open");
 
 });
-
 
 document.addEventListener("click", event => {
 
