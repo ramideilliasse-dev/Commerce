@@ -2074,22 +2074,18 @@ function tomaV3RenderRecommendedProducts() {
 // Chargement et affichage des boutiques officielles
 // ======================================================
 
-// ------------------------------------------------------
-// 11.1 — Configuration
-// ------------------------------------------------------
-
-const TOMA_V3_OFFICIAL_STORES_LIMIT = 10;
-
 
 // ------------------------------------------------------
-// 11.2 — Vérifier si une boutique est visible
+// 11.1 — Vérifier si une boutique est visible
 // ------------------------------------------------------
 
 function tomaV3IsOfficialStoreVisible(store) {
 
     if (!store) return false;
 
-    if (store.visible === false) return false;
+    // Seules les boutiques explicitement activées apparaissent
+    if (store.visible !== true) return false;
+
     if (store.isVisible === false) return false;
     if (store.showOnHome === false) return false;
 
@@ -2120,7 +2116,7 @@ function tomaV3IsOfficialStoreVisible(store) {
 
 
 // ------------------------------------------------------
-// 11.3 — Trouver le nom d'une boutique
+// 11.2 — Trouver le nom d'une boutique
 // ------------------------------------------------------
 
 function tomaV3GetOfficialStoreName(store) {
@@ -2136,7 +2132,7 @@ function tomaV3GetOfficialStoreName(store) {
 
 
 // ------------------------------------------------------
-// 11.4 — Trouver le logo d'une boutique
+// 11.3 — Trouver le logo d'une boutique
 // ------------------------------------------------------
 
 function tomaV3GetOfficialStoreLogo(store) {
@@ -2154,7 +2150,7 @@ function tomaV3GetOfficialStoreLogo(store) {
 
 
 // ------------------------------------------------------
-// 11.5 — Vérification des boutiques officielles
+// 11.4 — Vérification des boutiques officielles
 // ------------------------------------------------------
 
 function tomaV3IsOfficialStoreVerified(store) {
@@ -2168,7 +2164,7 @@ function tomaV3IsOfficialStoreVerified(store) {
 
 
 // ------------------------------------------------------
-// 11.6 — Trouver le lien de la boutique
+// 11.5 — Trouver le lien de la boutique
 // ------------------------------------------------------
 
 function tomaV3GetOfficialStoreLink(store) {
@@ -2187,7 +2183,7 @@ function tomaV3GetOfficialStoreLink(store) {
 
 
 // ------------------------------------------------------
-// 11.7 — Créer une carte boutique officielle
+// 11.6 — Créer une carte boutique officielle
 // ------------------------------------------------------
 
 function tomaV3CreateOfficialStoreCard(store) {
@@ -2260,8 +2256,9 @@ function tomaV3CreateOfficialStoreCard(store) {
     return card;
 }
 
+
 // ------------------------------------------------------
-// 11.8 — Charger les boutiques depuis Firestore
+// 11.7 — Charger toutes les boutiques depuis Firestore
 // ------------------------------------------------------
 
 async function tomaV3LoadOfficialStores() {
@@ -2289,9 +2286,9 @@ async function tomaV3LoadOfficialStores() {
 
         container.appendChild(loading);
 
+        // Aucune limite de chargement
         const storesQuery = query(
-            collection(db, "officialStores"),
-            limit(100)
+            collection(db, "officialStores")
         );
 
         const snapshot = await getDocs(storesQuery);
@@ -2307,6 +2304,7 @@ async function tomaV3LoadOfficialStores() {
                 id: documentSnapshot.id
             };
 
+            // Ajouter uniquement les boutiques activées
             if (tomaV3IsOfficialStoreVisible(store)) {
                 stores.push(store);
             }
@@ -2317,6 +2315,7 @@ async function tomaV3LoadOfficialStores() {
 
         container.replaceChildren();
 
+        // Aucune boutique activée
         if (stores.length === 0) {
 
             const message = document.createElement("p");
@@ -2328,25 +2327,25 @@ async function tomaV3LoadOfficialStores() {
 
             container.appendChild(message);
 
+            console.info(
+                "[TOMA V3] Aucune loja oficial activée."
+            );
+
             return;
         }
 
-        stores
-            .slice(0, TOMA_V3_OFFICIAL_STORES_LIMIT)
-            .forEach(store => {
+        // Afficher TOUTES les boutiques activées
+        stores.forEach(store => {
 
-                container.appendChild(
-                    tomaV3CreateOfficialStoreCard(store)
-                );
+            container.appendChild(
+                tomaV3CreateOfficialStoreCard(store)
+            );
 
-            });
+        });
 
         console.info(
-            "[TOMA V3] Lojas oficiais apresentadas:",
-            Math.min(
-                stores.length,
-                TOMA_V3_OFFICIAL_STORES_LIMIT
-            )
+            "[TOMA V3] Total de lojas oficiais apresentadas:",
+            stores.length
         );
 
     } catch (error) {
@@ -2377,7 +2376,7 @@ async function tomaV3LoadOfficialStores() {
 
 
 // ------------------------------------------------------
-// 11.9 — Démarrer le chargement des boutiques
+// 11.8 — Démarrer le chargement des boutiques
 // ------------------------------------------------------
 
 if (document.readyState === "loading") {
