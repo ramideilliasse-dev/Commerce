@@ -1222,41 +1222,50 @@ function renderMerchants() {
 
 
 // =====================================
-// BLOC 8 — SELECTION DES BOSS
+// BLOC 8 — DIAGNOSTIC DES UTILISATEURS
 // =====================================
 
 function renderBosses() {
 
-    const candidates = users.filter(user =>
+    const roles = {};
 
-        user.role === "client" &&
-        user.id
+    users.forEach(user => {
+
+        const role = user.role || "SANS ROLE";
+
+        roles[role] = (roles[role] || 0) + 1;
+
+    });
+
+
+    console.log("TOMA — DIAGNOSTIC BOSS", {
+
+        totalUsers: users.length,
+
+        rolesDisponibles: roles,
+
+        utilisateurs: users
+
+    });
+
+
+    alert(
+
+        "TOMA — DIAGNÓSTICO DOS UTILIZADORES\n\n" +
+
+        "Total de utilizadores: " + users.length +
+
+        "\n\nPapéis encontrados:\n" +
+
+        Object.entries(roles)
+
+            .map(([role, count]) => role + ": " + count)
+
+            .join("\n")
 
     );
 
-
-    bossSelect.innerHTML = `
-
-        <option value="">
-            Selecionar Boss
-        </option>
-
-        ${candidates.map(user => `
-
-            <option value="${escapeHTML(user.id)}">
-
-                ${escapeHTML(getName(user))} —
-                ${escapeHTML(getEmail(user))}
-
-            </option>
-
-        `).join("")}
-
-    `;
-
 }
-
-
 // =====================================
 // BLOC 9 — APERÇU MERCHANT
 // =====================================
