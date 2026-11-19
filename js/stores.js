@@ -141,20 +141,15 @@ function isStoreVisible(store) {
 
 function isStoreActive(store) {
 
-    const status = normalize(store.status);
-
     return (
 
-        isStoreVisible(store) &&
-
-        status === "active" &&
+        store.visible === true &&
 
         store.settings?.maintenanceMode !== true
 
     );
 
 }
-
 
 // Déterminer le statut affiché.
 
