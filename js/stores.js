@@ -127,13 +127,12 @@ function getStoreLogo(store) {
 // BLOC 4 — VISIBILITÉ ET STATUT
 // =====================================
 
-// IMPORTANT :
-// Le champ visible se trouve dans settings.visible
-// et non directement dans le document Firestore.
+// Le champ visible se trouve directement
+// dans le document Firestore.
 
 function isStoreVisible(store) {
 
-    return store.settings?.visible === true;
+    return store.visible === true;
 
 }
 
@@ -215,23 +214,21 @@ async function loadOfficialStores() {
 
 
     if (rentalStoresGrid) {
+
         rentalStoresGrid.innerHTML = `
             <div class="loadingState">
                 <div class="loader"></div>
                 <p>A carregar espaços comerciais...</p>
             </div>
         `;
+
     }
 
 
     try {
 
-        console.log(
-            "TOMA STORES — A carregar documentos Firestore..."
-        );
-
-
-        // Récupérer tous les documents de la collection.
+        // Récupérer tous les documents Firestore.
+        // Aucune limite de quantité.
 
         const snapshot = await getDocs(
             collection(db, COLLECTION_NAME)
@@ -241,152 +238,153 @@ async function loadOfficialStores() {
         // Transformer les documents en objets JavaScript.
 
         const firebaseStores = snapshot.docs.map(document => ({
+
             ...document.data(),
+
             id: document.id
+
         }));
 
 
-        // Répartir les documents selon settings.visible.
-        // Les documents sans valeur explicite sont exclus.
+        // Lojas activées par l'administration.
 
-      // Lojas já ativadas pelo administrador
-const visibleStores = firebaseStores.filter(
-  store => store.settings?.visible === true
-);
+        const visibleStores = firebaseStores.filter(
 
-// Espaços livres: false ou campo visible ainda não definido
-const hiddenStores = firebaseStores.filter(
-  store => store.settings?.visible !== true
-);
+            store => store.visible === true
 
-allStores = visibleStores;
-window.tomaRentalStores = hiddenStores;
+        );
 
-if (rentalStoresCount) {
-  rentalStoresCount.textContent = hiddenStores.length;
-}
 
-renderCategoryFilters();
-renderStores();  
-// =====================================
-// DIAGNOSTIC — VISIBILITÉ FIRESTORE
-// =====================================
+        // Espaces non activés.
 
-const visibilityDiagnostic = {
+        const hiddenStores = firebaseStores.filter(
 
-    totalDocuments: firebaseStores.length,
+            store => store.visible !== true
 
-    visibleTrue: firebaseStores.filter(store =>
-        store.settings?.visible === true
-    ).length,
+        );
 
-    visibleFalse: firebaseStores.filter(store =>
-        store.settings?.visible === false
-    ).length,
 
-    visibleMissing: firebaseStores.filter(store =>
-        typeof store.settings?.visible !== "boolean"
-    ).length
-
-};
-
-alert(
-    "TOMA — DIAGNÓSTICO DAS LOJAS\n\n" +
-
-    "Total de documentos: " +
-    visibilityDiagnostic.totalDocuments +
-
-    "\nLojas disponíveis (true): " +
-    visibilityDiagnostic.visibleTrue +
-
-    "\nEspaços para alugar (false): " +
-    visibilityDiagnostic.visibleFalse +
-
-    "\nDocumentos sem visibilidade: " +
-    visibilityDiagnostic.visibleMissing
-);
-
-        // Conserver uniquement les lojas visibles
-        // dans la variable utilisée par les catégories,
-        // la recherche et les cartes classiques.
+        // Conserver les lojas activées.
 
         allStores = visibleStores;
 
 
-        // Conserver les espaces à louer dans une variable dédiée.
-        // Le BLOC 8 utilisera cette liste pour les afficher.
+        // Conserver les espaces non activés.
 
         window.tomaRentalStores = hiddenStores;
 
 
-        // Mettre à jour le compteur des espaces à louer.
+        // Mettre à jour le compteur des espaces.
 
         if (rentalStoresCount) {
+
             rentalStoresCount.textContent =
                 `${hiddenStores.length} espaços`;
+
         }
 
 
         // Préparer le compteur des lojas indisponibles.
-        // Le BLOC 8 déterminera ensuite les statuts exacts.
 
         unavailableStoresCount.textContent = "0 lojas";
 
 
-        // Informations de diagnostic dans la console.
-
-        console.log("TOMA STORES — Résultat du chargement", {
-            totalDocuments: snapshot.size,
-            visibleStores: visibleStores.length,
-            hiddenStores: hiddenStores.length,
-            documentsWithoutVisibility:
-                firebaseStores.filter(store =>
-                    typeof store.settings?.visible !== "boolean"
-                ).length
-        });
-
-
-        // Afficher les catégories des lojas visibles.
+        // Afficher les catégories.
 
         renderCategoryFilters();
 
 
-        // Afficher les lojas disponibles et indisponibles.
-        // Le BLOC 8 sera adapté ensuite pour afficher
-        // les espaces à louer dans leur section dédiée.
+        // Afficher les lojas.
 
         renderStores();
 
 
-        // Préparer la section de location si elle existe.
+        // =====================================
+        // DIAGNOSTIC — FIRESTORE
+        // =====================================
 
-        if (rentalStoresGrid && hiddenStores.length === 0) {
-            rentalStoresGrid.innerHTML = `
-                <div class="loadingState">
-                    <span class="material-symbols-rounded">
-                        storefront
-                    </span>
-                    <p>Nenhum espaço disponível para alugar.</p>
-                </div>
-            `;
-        }
+        const visibilityDiagnostic = {
+
+            totalDocuments: firebaseStores.length,
+
+            visibleTrue: firebaseStores.filter(
+
+                store => store.visible === true
+
+            ).length,
+
+            visibleFalse: firebaseStores.filter(
+
+                store => store.visible === false
+
+            ).length,
+
+            visibleMissing: firebaseStores.filter(
+
+                store => typeof store.visible !== "boolean"
+
+            ).length,
+
+            verifiedStores: visibleStores.filter(
+
+                store => store.verified === true
+
+            ).length
+
+        };
+
+
+        alert(
+
+            "TOMA — CARREGAMENTO CONCLUÍDO\n\n" +
+
+            "Total de documentos: " +
+
+            visibilityDiagnostic.totalDocuments +
+
+            "\nLojas ativadas: " +
+
+            visibilityDiagnostic.visibleTrue +
+
+            "\nEspaços desativados: " +
+
+            visibilityDiagnostic.visibleFalse +
+
+            "\nDocumentos sem visibilidade: " +
+
+            visibilityDiagnostic.visibleMissing +
+
+            "\nLojas verificadas: " +
+
+            visibilityDiagnostic.verifiedStores
+
+        );
 
 
         console.log(
-            "TOMA STORES — Carregamento concluído."
+
+            "TOMA STORES — Resultado do carregamento:",
+
+            visibilityDiagnostic
+
         );
 
 
     } catch (error) {
 
         console.error(
+
             "TOMA STORES — Erro Firebase:",
+
             error
+
         );
 
 
         storesGrid.innerHTML = `
+
             <div class="loadingState">
+
                 <span class="material-symbols-rounded">
                     error
                 </span>
@@ -398,33 +396,47 @@ alert(
                 <button id="retryStores" type="button">
                     Tentar novamente
                 </button>
+
             </div>
+
         `;
 
 
         document
+
             .getElementById("retryStores")
+
             ?.addEventListener("click", loadOfficialStores);
 
 
         if (rentalStoresGrid) {
+
             rentalStoresGrid.innerHTML = `
+
                 <div class="loadingState">
-                    <p>Não foi possível carregar os espaços comerciais.</p>
+
+                    <p>
+                        Não foi possível carregar os espaços comerciais.
+                    </p>
+
                 </div>
+
             `;
+
         }
 
 
         alert(
+
             "TOMA STORES — ERRO FIREBASE\n\n" +
+
             error.message
+
         );
 
     }
 
 }
-
 // =====================================
 // BLOC 6 — FILTRES DE CATÉGORIE
 // =====================================
