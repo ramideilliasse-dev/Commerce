@@ -717,10 +717,26 @@ input:focus-visible {
 
 .store-switch-area {
     display: flex;
-    align-items: center;
-    justify-content: flex-end;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
     gap: 12px;
     min-width: 0;
+}
+
+.store-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-width: 0;
+}
+
+.store-control .switch-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    white-space: normal;
 }
 
 .switch-label {
@@ -1685,8 +1701,15 @@ function renderStores() {
 
         const checked = visible ? "true" : "false";
 
-        const label = visible ? "Ativa" : "Desativada";
+const label = visible ? "Ativa" : "Desativada";
 
+const verified = store.verified === true;
+
+const verificationChecked = verified ? "true" : "false";
+
+const verificationLabel = verified
+    ? "Verificada"
+    : "Não verificada";
         const disabled = updatingStores.has(store.id)
             ? "disabled"
             : "";
@@ -1727,24 +1750,49 @@ function renderStores() {
 
                 </div>
 
-                <div class="store-switch-area">
+          <div class="store-switch-area">
 
-                    <span class="switch-label">
-                        ${label}
-                    </span>
+    <!-- VISIBILIDADE DA LOJA -->
 
-                    <button
-                        type="button"
-                        class="switch"
-                        role="switch"
-                        aria-checked="${checked}"
-                        aria-label="${visible ? "Desativar" : "Ativar"} ${name}"
-                        data-store-switch="${id}"
-                        ${disabled}
-                    ></button>
+    <div class="store-control">
 
-                </div>
+        <span class="switch-label">
+            Visibilidade: ${label}
+        </span>
 
+        <button
+            type="button"
+            class="switch"
+            role="switch"
+            aria-checked="${checked}"
+            aria-label="${visible ? "Desativar" : "Ativar"} ${name}"
+            data-store-switch="${id}"
+            ${disabled}
+        ></button>
+
+    </div>
+
+    <!-- VERIFICAÇÃO META -->
+
+    <div class="store-control">
+
+        <span class="switch-label">
+            Meta: ${verificationLabel}
+        </span>
+
+        <button
+            type="button"
+            class="switch"
+            role="switch"
+            aria-checked="${verificationChecked}"
+            aria-label="${verified ? "Remover verificação" : "Verificar"} ${name}"
+            data-store-verification="${id}"
+            ${disabled}
+        ></button>
+
+    </div>
+
+</div> 
             </article>
 
         `;
@@ -1853,20 +1901,11 @@ async function changeStoreVisibility(storeId, visible) {
 
 }
 
-
 // =========================================================
-// BLOC 11 — ÉVÉNEMENT DES INTERRUPTEURS
+// BLOC 10.1 — GESTION DE LA VÉRIFICATION META
 // =========================================================
 
-storeList.addEventListener("click", event => {
-
-    const button = event.target.closest(
-        "[data-store-switch]"
-    );
-
-    if (!button) return;
-
-    const storeId = button.dataset.storeSwitch;
+async function changeStoreVerification(storeId, verified) {
 
     const store = officialStores.find(
         item => item.id === storeId
@@ -1879,14 +1918,158 @@ storeList.addEventListener("click", event => {
         return;
     }
 
-    // Inverser l'état actuel.
+    if (updatingStores.has(storeId)) return;
 
-    const newVisibility = store.visible !== true;
+    const action = verified
+        ? "verificar"
+        : "remover a verificação de";
 
-    changeStoreVisibility(
-        storeId,
-        newVisibility
+    const confirmation = window.confirm(
+
+        verified
+
+            ? `Tem a certeza de que deseja VERIFICAR a loja "${store.name}"? O badge Meta aparecerá na página principal.`
+
+            : `Tem a certeza de que deseja REMOVER a verificação da loja "${store.name}"? O badge Meta deixará de aparecer.`
+
     );
+
+    if (!confirmation) return;
+
+    updatingStores.add(storeId);
+
+    renderStores();
+
+    try {
+
+        const storeRef = doc(
+            db,
+            "officialStores",
+            storeId
+        );
+
+        await updateDoc(storeRef, {
+
+            verified: verified,
+
+            adminSettingsUpdatedAt: serverTimestamp(),
+
+            updatedAt: serverTimestamp()
+
+        });
+
+        // Mise à jour locale après confirmation Firestore.
+
+        store.verified = verified;
+
+        renderStores();
+
+        showToast(
+
+            verified
+
+                ? `A loja "${store.name}" foi verificada com sucesso.`
+
+                : `A verificação da loja "${store.name}" foi removida.`,
+
+            "success"
+
+        );
+
+    } catch (error) {
+
+        console.error("TOMA META VERIFICATION ERROR:", error);
+
+        showToast(
+            `Não foi possível ${action} a loja: ${error.message}`,
+            "error"
+        );
+
+        await loadOfficialStores();
+
+    } finally {
+
+        updatingStores.delete(storeId);
+
+        renderStores();
+
+    }
+
+}
+// =========================================================
+// BLOC 11 — ÉVÉNEMENTS DES INTERRUPTEURS
+// VISIBILITÉ ET VÉRIFICATION META
+// =========================================================
+
+storeList.addEventListener("click", event => {
+
+    // ---------------------------------------------
+    // 1. INTERRUPTEUR DE VISIBILITÉ
+    // ---------------------------------------------
+
+    const visibilityButton = event.target.closest(
+        "[data-store-switch]"
+    );
+
+    if (visibilityButton) {
+
+        const storeId =
+            visibilityButton.dataset.storeSwitch;
+
+        const store = officialStores.find(
+            item => item.id === storeId
+        );
+
+        if (!store) {
+
+            showToast("Loja não encontrada.", "error");
+
+            return;
+        }
+
+        const newVisibility = store.visible !== true;
+
+        changeStoreVisibility(
+            storeId,
+            newVisibility
+        );
+
+        return;
+    }
+
+
+    // ---------------------------------------------
+    // 2. INTERRUPTEUR DE VÉRIFICATION META
+    // ---------------------------------------------
+
+    const verificationButton = event.target.closest(
+        "[data-store-verification]"
+    );
+
+    if (verificationButton) {
+
+        const storeId =
+            verificationButton.dataset.storeVerification;
+
+        const store = officialStores.find(
+            item => item.id === storeId
+        );
+
+        if (!store) {
+
+            showToast("Loja não encontrada.", "error");
+
+            return;
+        }
+
+        const newVerification = store.verified !== true;
+
+        changeStoreVerification(
+            storeId,
+            newVerification
+        );
+
+    }
 
 });
 
