@@ -1,0 +1,1760 @@
+ <!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Official Store Assignment | Toma</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet">
+
+<style>
+
+:root {
+    --primary: #0755df;
+    --primary-dark: #0644bb;
+    --bg: #f4f7fc;
+    --white: #ffffff;
+    --text: #172033;
+    --muted: #8290a5;
+    --border: #e8edf5;
+    --green: #079b69;
+    --red: #e34b58;
+    --orange: #f39a28;
+    --shadow: 0 15px 45px rgba(25, 48, 90, .07);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+button, input, select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* =====================================
+   HEADER
+===================================== */
+
+.header {
+    background: linear-gradient(120deg, #0644bd, #0868f3);
+    color: white;
+    padding: 24px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 10px 30px rgba(0, 70, 180, .16);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.brand-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(255,255,255,.16);
+    border: 1px solid rgba(255,255,255,.22);
+    border-radius: 15px;
+    display: grid;
+    place-items: center;
+    font-size: 26px;
+    font-weight: 900;
+}
+
+.brand h1 {
+    font-size: 23px;
+    font-weight: 900;
+}
+
+.brand p {
+    font-size: 11px;
+    letter-spacing: 2px;
+    opacity: .8;
+    margin-top: 4px;
+    font-weight: 700;
+}
+
+.header-tag {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    background: rgba(255,255,255,.13);
+    padding: 12px 17px;
+    border-radius: 30px;
+}
+
+/* =====================================
+   MAIN
+===================================== */
+
+.container {
+    width: min(1250px, 92%);
+    margin: 38px auto;
+}
+
+.page-heading {
+    margin-bottom: 30px;
+}
+
+.eyebrow {
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 2.5px;
+    margin-bottom: 12px;
+}
+
+.page-heading h2 {
+    font-size: clamp(25px, 4vw, 36px);
+    font-weight: 900;
+    letter-spacing: -1.5px;
+}
+
+.page-heading p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.7;
+    margin-top: 10px;
+    max-width: 650px;
+}
+
+/* =====================================
+   STATISTICS
+===================================== */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+.stat-card {
+    background: var(--white);
+    padding: 23px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+}
+
+.stat-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stat-icon {
+    width: 43px;
+    height: 43px;
+    border-radius: 13px;
+    display: grid;
+    place-items: center;
+    background: #edf3ff;
+    color: var(--primary);
+}
+
+.stat-card strong {
+    display: block;
+    font-size: 29px;
+    font-weight: 900;
+    margin-top: 18px;
+}
+
+.stat-card span:last-child {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+/* =====================================
+   MAIN PANEL
+===================================== */
+
+.assignment-panel {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.panel-header {
+    padding: 25px;
+    border-bottom: 1px solid var(--border);
+}
+
+.panel-header h3 {
+    font-size: 18px;
+    font-weight: 900;
+}
+
+.panel-header p {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 7px;
+    line-height: 1.6;
+}
+
+.panel-body {
+    padding: 25px;
+}
+
+/* =====================================
+   FORM
+===================================== */
+
+.form-section {
+    margin-bottom: 30px;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 17px;
+}
+
+.section-number {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 11px;
+    background: #edf3ff;
+    color: var(--primary);
+    font-weight: 900;
+}
+
+.section-title h4 {
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.section-title p {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+}
+
+.field-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 9px;
+}
+
+.form-control {
+    width: 100%;
+    min-height: 51px;
+    padding: 13px 15px;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    background: #fbfcff;
+    color: var(--text);
+    outline: none;
+    transition: .2s;
+}
+
+.form-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(7,85,223,.08);
+}
+
+.help-text {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 8px;
+    line-height: 1.6;
+}
+
+/* =====================================
+   USER SELECTION
+===================================== */
+
+.user-box {
+    border: 1px solid var(--border);
+    background: #fbfcff;
+    padding: 17px;
+    border-radius: 17px;
+    margin-top: 14px;
+    display: none;
+}
+
+.user-box.visible {
+    display: block;
+}
+
+.user-information {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.user-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    background: #e9f0ff;
+    color: var(--primary);
+    font-weight: 900;
+    flex-shrink: 0;
+}
+
+.user-information h5 {
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.user-information p {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 5px;
+    word-break: break-word;
+}
+
+.role-tag {
+    margin-left: auto;
+    background: #e6f8ef;
+    color: var(--green);
+    font-size: 10px;
+    font-weight: 900;
+    padding: 7px 10px;
+    border-radius: 30px;
+}
+
+/* =====================================
+   ROLE INFORMATION
+===================================== */
+
+.permission-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.permission-card {
+    padding: 19px;
+    border: 1px solid var(--border);
+    border-radius: 17px;
+}
+
+.permission-card.merchant {
+    background: #f2f6ff;
+}
+
+.permission-card.boss {
+    background: #f1fbf7;
+}
+
+.permission-card h5 {
+    font-size: 13px;
+    font-weight: 900;
+    margin-bottom: 10px;
+}
+
+.permission-card ul {
+    list-style: none;
+}
+
+.permission-card li {
+    font-size: 11px;
+    color: #64728a;
+    margin-top: 8px;
+    line-height: 1.5;
+}
+
+.permission-card li::before {
+    content: "✓";
+    color: var(--green);
+    font-weight: 900;
+    margin-right: 7px;
+}
+
+/* =====================================
+   ACTIONS
+===================================== */
+
+.action-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding-top: 22px;
+    border-top: 1px solid var(--border);
+}
+
+.primary-button {
+    min-height: 52px;
+    padding: 0 25px;
+    background: linear-gradient(120deg, #0755df, #0873f9);
+    color: white;
+    border: none;
+    border-radius: 13px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: .2s;
+}
+
+.primary-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(7,85,223,.2);
+}
+
+.primary-button:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.secondary-button {
+    min-height: 52px;
+    padding: 0 22px;
+    background: white;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    font-weight: 800;
+}
+
+/* =====================================
+   MESSAGE
+===================================== */
+
+.message {
+    padding: 14px 17px;
+    border-radius: 13px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.message.show {
+    display: block;
+}
+
+.message.success {
+    background: #e9f9f1;
+    color: #078353;
+}
+
+.message.error {
+    background: #fff0f0;
+    color: #d84250;
+}
+
+.message.info {
+    background: #edf4ff;
+    color: #0755df;
+}
+
+/* =====================================
+   RESPONSIVE
+===================================== */
+
+@media(max-width:700px) {
+
+    .header {
+        padding: 19px 5%;
+    }
+
+    .header-tag {
+        display: none;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .stat-card {
+        padding: 18px;
+    }
+
+    .stat-card strong {
+        margin-top: 10px;
+    }
+
+    .container {
+        margin: 25px auto;
+    }
+
+    .panel-body {
+        padding: 19px;
+    }
+
+    .permission-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .action-area {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .action-area button {
+        width: 100%;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="brand">
+
+        <div class="brand-icon">T</div>
+
+        <div>
+            <h1>Toma</h1>
+            <p>ADMINISTRATION SYSTEM</p>
+        </div>
+
+    </div>
+
+    <div class="header-tag">
+        OFFICIAL STORES
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <div class="page-heading">
+
+        <div class="eyebrow">
+            TOMA MANAGEMENT CENTER
+        </div>
+
+        <h2>Attribution des lojas oficiais</h2>
+
+        <p>
+            Associez un Merchant responsable et un Boss superviseur
+            à chaque loja officielle de votre plateforme.
+        </p>
+
+    </div>
+
+
+    <!-- STATISTIQUES -->
+
+    <section class="stats">
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+                <span class="stat-icon material-symbols-rounded">
+                    storefront
+                </span>
+            </div>
+
+            <strong id="totalStores">—</strong>
+
+            <span>Lojas oficiais</span>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+                <span class="stat-icon material-symbols-rounded">
+                    check_circle
+                </span>
+            </div>
+
+            <strong id="availableStores">—</strong>
+
+            <span>Lojas disponíveis para atribuição</span>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+                <span class="stat-icon material-symbols-rounded">
+                    group
+                </span>
+            </div>
+
+            <strong id="assignedStores">—</strong>
+
+            <span>Lojas com Merchant e Boss atribuídos</span>
+
+        </div>
+
+    </section>
+
+
+    <!-- FORMULAIRE -->
+
+    <section class="assignment-panel">
+
+        <div class="panel-header">
+
+            <h3>Nova atribuição</h3>
+
+            <p>
+                Selecione uma loja disponível e associe os dois
+                utilizadores responsáveis.
+            </p>
+
+        </div>
+
+
+        <div class="panel-body">
+
+            <div id="messageBox" class="message"></div>
+
+
+            <!-- ETAPE 1 -->
+
+            <div class="form-section">
+
+                <div class="section-title">
+
+                    <div class="section-number">01</div>
+
+                    <div>
+                        <h4>Selecionar loja oficial</h4>
+                        <p>Escolha o espaço comercial a atribuir.</p>
+                    </div>
+
+                </div>
+
+
+                <label class="field-label" for="storeSelect">
+                    Loja oficial
+                </label>
+
+                <select id="storeSelect" class="form-control">
+
+                    <option value="">
+                        A carregar lojas...
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- ETAPE 2 -->
+
+            <div class="form-section">
+
+                <div class="section-title">
+
+                    <div class="section-number">02</div>
+
+                    <div>
+                        <h4>Selecionar Merchant</h4>
+                        <p>Responsável pela operação comercial.</p>
+                    </div>
+
+                </div>
+
+
+                <label class="field-label" for="merchantSelect">
+                    Merchant aprovado
+                </label>
+
+                <select id="merchantSelect" class="form-control">
+
+                    <option value="">
+                        Selecionar Merchant
+                    </option>
+
+                </select>
+
+
+                <div id="merchantPreview" class="user-box">
+
+                    <div class="user-information">
+
+                        <div class="user-avatar">M</div>
+
+                        <div>
+                            <h5 id="merchantPreviewName"></h5>
+                            <p id="merchantPreviewEmail"></p>
+                        </div>
+
+                        <span class="role-tag">MERCHANT</span>
+
+                    </div>
+
+                </div>
+
+                <p class="help-text">
+                    O Merchant terá acesso às funções comerciais
+                    da loja. Selecione apenas um comerciante aprovado.
+                </p>
+
+            </div>
+
+
+            <!-- ETAPE 3 -->
+
+            <div class="form-section">
+
+                <div class="section-title">
+
+                    <div class="section-number">03</div>
+
+                    <div>
+                        <h4>Selecionar Boss</h4>
+                        <p>Responsável pela supervisão da loja.</p>
+                    </div>
+
+                </div>
+
+
+                <label class="field-label" for="bossSelect">
+                    Boss — conta Toma existente
+                </label>
+
+                <select id="bossSelect" class="form-control">
+
+                    <option value="">
+                        Selecionar Boss
+                    </option>
+
+                </select>
+
+
+                <div id="bossPreview" class="user-box">
+
+                    <div class="user-information">
+
+                        <div class="user-avatar">B</div>
+
+                        <div>
+                            <h5 id="bossPreviewName"></h5>
+                            <p id="bossPreviewEmail"></p>
+                        </div>
+
+                        <span class="role-tag">BOSS</span>
+
+                    </div>
+
+                </div>
+
+                <p class="help-text">
+                    O Boss deve possuir uma conta Toma existente.
+                    A atribuição alterará o seu papel de cliente para Boss.
+                </p>
+
+            </div>
+
+
+            <!-- PERMISSIONS -->
+
+            <div class="form-section">
+
+                <div class="section-title">
+
+                    <div class="section-number">
+                        <span class="material-symbols-rounded">
+                            security
+                        </span>
+                    </div>
+
+                    <div>
+                        <h4>Permissões des utilisateurs</h4>
+                        <p>Separação entre operação et supervision.</p>
+                    </div>
+
+                </div>
+
+
+                <div class="permission-grid">
+
+                    <div class="permission-card merchant">
+
+                        <h5>MERCHANT</h5>
+
+                        <ul>
+                            <li>Créer et gérer les produits.</li>
+                            <li>Gérer les commandes.</li>
+                            <li>Personnaliser la loja.</li>
+                            <li>Consulter les revenus.</li>
+                            <li>Gérer les activités commerciales.</li>
+                        </ul>
+
+                    </div>
+
+
+                    <div class="permission-card boss">
+
+                        <h5>BOSS</h5>
+
+                        <ul>
+                            <li>Consulter les produits.</li>
+                            <li>Consulter les commandes.</li>
+                            <li>Consulter les revenus et statistiques.</li>
+                            <li>Superviser les activités.</li>
+                            <li>Vérifier l'organisation de la loja.</li>
+                        </ul>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="action-area">
+
+                <button
+                    type="button"
+                    class="primary-button"
+                    id="assignButton"
+                >
+
+                    <span class="material-symbols-rounded">
+                        verified_user
+                    </span>
+
+                    Confirmer l'attribution
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="secondary-button"
+                    id="resetButton"
+                >
+                    Réinitialiser
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script type="module">
+
+import { db } from "./firebase.js";
+
+import {
+    collection,
+    getDocs,
+    doc,
+    runTransaction,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+// =====================================
+// BLOC 1 — CONFIGURATION
+// =====================================
+
+const storesCollection = "officialStores";
+const merchantsCollection = "merchants";
+const usersCollection = "users";
+
+let officialStores = [];
+let merchants = [];
+let users = [];
+
+
+// =====================================
+// BLOC 2 — ELEMENTS HTML
+// =====================================
+
+const storeSelect = document.getElementById("storeSelect");
+
+const merchantSelect = document.getElementById("merchantSelect");
+
+const bossSelect = document.getElementById("bossSelect");
+
+const assignButton = document.getElementById("assignButton");
+
+const resetButton = document.getElementById("resetButton");
+
+const messageBox = document.getElementById("messageBox");
+
+
+// =====================================
+// BLOC 3 — UTILITAIRES
+// =====================================
+
+function escapeHTML(value) {
+
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+
+    })[char]);
+
+}
+
+
+function getName(user) {
+
+    return (
+        user.name ||
+        user.fullName ||
+        user.displayName ||
+        user.shopName ||
+        "Utilizador Toma"
+    );
+
+}
+
+
+function getEmail(user) {
+
+    return user.email || "Email não disponível";
+
+}
+
+
+function showMessage(message, type = "info") {
+
+    messageBox.textContent = message;
+
+    messageBox.className = `message show ${type}`;
+
+}
+
+
+function hideMessage() {
+
+    messageBox.className = "message";
+
+    messageBox.textContent = "";
+
+}
+
+
+// =====================================
+// BLOC 4 — CHARGEMENT FIRESTORE
+// =====================================
+
+async function loadAssignmentData() {
+
+    storeSelect.innerHTML =
+        `<option value="">A carregar...</option>`;
+
+    merchantSelect.innerHTML =
+        `<option value="">A carregar...</option>`;
+
+    bossSelect.innerHTML =
+        `<option value="">A carregar...</option>`;
+
+
+    try {
+
+        const [
+            storesSnapshot,
+            merchantsSnapshot,
+            usersSnapshot
+        ] = await Promise.all([
+
+            getDocs(collection(db, storesCollection)),
+
+            getDocs(collection(db, merchantsCollection)),
+
+            getDocs(collection(db, usersCollection))
+
+        ]);
+
+
+        officialStores = storesSnapshot.docs.map(item => ({
+
+            ...item.data(),
+
+            id: item.id
+
+        }));
+
+
+        merchants = merchantsSnapshot.docs.map(item => ({
+
+            ...item.data(),
+
+            id: item.id
+
+        }));
+
+
+        users = usersSnapshot.docs.map(item => ({
+
+            ...item.data(),
+
+            id: item.id
+
+        }));
+
+
+        renderStatistics();
+
+        renderStores();
+
+        renderMerchants();
+
+        renderBosses();
+
+
+        console.log("TOMA ASSIGNMENT — Dados carregados", {
+
+            officialStores: officialStores.length,
+
+            merchants: merchants.length,
+
+            users: users.length
+
+        });
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+
+            "Erro ao carregar os dados do Firestore: " +
+            error.message,
+
+            "error"
+
+        );
+
+        alert(
+
+            "TOMA ASSIGNMENT — ERRO FIRESTORE\n\n" +
+            error.message
+
+        );
+
+    }
+
+}
+
+
+// =====================================
+// BLOC 5 — ESTATISTIQUES
+// =====================================
+
+function renderStatistics() {
+
+    const assigned = officialStores.filter(store =>
+
+        Boolean(store.merchantId) &&
+        Boolean(store.bossId)
+
+    );
+
+
+    const available = officialStores.filter(store =>
+
+        store.visible === true &&
+        !store.merchantId &&
+        (!Array.isArray(store.merchantIds) ||
+         store.merchantIds.length === 0) &&
+        !store.bossId
+
+    );
+
+
+    document.getElementById("totalStores").textContent =
+        officialStores.length;
+
+
+    document.getElementById("availableStores").textContent =
+        available.length;
+
+
+    document.getElementById("assignedStores").textContent =
+        assigned.length;
+
+}
+
+
+// =====================================
+// BLOC 6 — SELECTION DES LOJAS
+// =====================================
+
+function renderStores() {
+
+    const available = officialStores.filter(store =>
+
+        store.visible === true &&
+        !store.merchantId &&
+        (!Array.isArray(store.merchantIds) ||
+         store.merchantIds.length === 0) &&
+        !store.bossId
+
+    );
+
+
+    storeSelect.innerHTML = `
+
+        <option value="">
+            Selecionar loja oficial
+        </option>
+
+        ${available.map(store => `
+
+            <option value="${escapeHTML(store.id)}">
+
+                ${escapeHTML(store.name || store.id)}
+
+            </option>
+
+        `).join("")}
+
+    `;
+
+
+    if (available.length === 0) {
+
+        storeSelect.innerHTML = `
+
+            <option value="">
+                Nenhuma loja disponível para atribuição
+            </option>
+
+        `;
+
+    }
+
+}
+
+
+// =====================================
+// BLOC 7 — SELECTION DES MERCHANTS
+// =====================================
+
+function renderMerchants() {
+
+    const candidates = merchants.filter(merchant => {
+
+        return merchant.id &&
+            merchant.id !== "";
+
+    });
+
+
+    merchantSelect.innerHTML = `
+
+        <option value="">
+            Selecionar Merchant
+        </option>
+
+        ${candidates.map(merchant => {
+
+            const user = users.find(item =>
+                item.id === merchant.id
+            ) || {};
+
+            const email = getEmail({
+                ...user,
+                ...merchant
+            });
+
+            const name = getName({
+                ...user,
+                ...merchant
+            });
+
+            return `
+
+                <option value="${escapeHTML(merchant.id)}">
+
+                    ${escapeHTML(name)} — ${escapeHTML(email)}
+
+                </option>
+
+            `;
+
+        }).join("")}
+
+    `;
+
+}
+
+
+// =====================================
+// BLOC 8 — SELECTION DES BOSS
+// =====================================
+
+function renderBosses() {
+
+    const candidates = users.filter(user =>
+
+        user.role === "client" &&
+        user.id
+
+    );
+
+
+    bossSelect.innerHTML = `
+
+        <option value="">
+            Selecionar Boss
+        </option>
+
+        ${candidates.map(user => `
+
+            <option value="${escapeHTML(user.id)}">
+
+                ${escapeHTML(getName(user))} —
+                ${escapeHTML(getEmail(user))}
+
+            </option>
+
+        `).join("")}
+
+    `;
+
+}
+
+
+// =====================================
+// BLOC 9 — APERÇU MERCHANT
+// =====================================
+
+merchantSelect.addEventListener("change", () => {
+
+    const merchant = merchants.find(item =>
+
+        item.id === merchantSelect.value
+
+    );
+
+
+    const user = users.find(item =>
+
+        item.id === merchantSelect.value
+
+    ) || {};
+
+
+    const preview = document.getElementById("merchantPreview");
+
+
+    if (!merchant) {
+
+        preview.classList.remove("visible");
+
+        return;
+
+    }
+
+
+    const data = {
+
+        ...user,
+
+        ...merchant
+
+    };
+
+
+    document.getElementById("merchantPreviewName").textContent =
+        getName(data);
+
+
+    document.getElementById("merchantPreviewEmail").textContent =
+        getEmail(data);
+
+
+    preview.classList.add("visible");
+
+});
+
+
+// =====================================
+// BLOC 10 — APERÇU BOSS
+// =====================================
+
+bossSelect.addEventListener("change", () => {
+
+    const boss = users.find(item =>
+
+        item.id === bossSelect.value
+
+    );
+
+
+    const preview = document.getElementById("bossPreview");
+
+
+    if (!boss) {
+
+        preview.classList.remove("visible");
+
+        return;
+
+    }
+
+
+    document.getElementById("bossPreviewName").textContent =
+        getName(boss);
+
+
+    document.getElementById("bossPreviewEmail").textContent =
+        getEmail(boss);
+
+
+    preview.classList.add("visible");
+
+});
+
+
+// =====================================
+// BLOC 11 — ATTRIBUTION FIRESTORE
+// =====================================
+
+async function assignOfficialStore() {
+
+    hideMessage();
+
+
+    const storeId = storeSelect.value;
+
+    const merchantId = merchantSelect.value;
+
+    const bossId = bossSelect.value;
+
+
+    if (!storeId || !merchantId || !bossId) {
+
+        showMessage(
+
+            "Selecione uma loja, um Merchant e um Boss.",
+
+            "error"
+
+        );
+
+        return;
+
+    }
+
+
+    if (merchantId === bossId) {
+
+        showMessage(
+
+            "O Merchant e o Boss devem ser duas contas diferentes.",
+
+            "error"
+
+        );
+
+        return;
+
+    }
+
+
+    const store = officialStores.find(item =>
+
+        item.id === storeId
+
+    );
+
+
+    if (!store || store.visible !== true) {
+
+        showMessage(
+
+            "Esta loja não está ativada ou não está disponível.",
+
+            "error"
+
+        );
+
+        return;
+
+    }
+
+
+    if (
+
+        store.merchantId ||
+
+        store.bossId ||
+
+        (Array.isArray(store.merchantIds) &&
+         store.merchantIds.length > 0)
+
+    ) {
+
+        showMessage(
+
+            "Esta loja já possui uma atribuição. Escolha outra loja disponível.",
+
+            "error"
+
+        );
+
+        return;
+
+    }
+
+
+    const merchant = merchants.find(item =>
+
+        item.id === merchantId
+
+    );
+
+
+    const boss = users.find(item =>
+
+        item.id === bossId
+
+    );
+
+
+    if (!merchant || !boss || boss.role !== "client") {
+
+        showMessage(
+
+            "Verifique os dados do Merchant e do Boss.",
+
+            "error"
+
+        );
+
+        return;
+
+    }
+
+
+    const confirmed = confirm(
+
+        "CONFIRMAR ATRIBUIÇÃO\n\n" +
+
+        "Loja: " + (store.name || store.id) + "\n" +
+
+        "Merchant: " + getName(merchant) + "\n" +
+
+        "Boss: " + getName(boss) + "\n\n" +
+
+        "O papel do Boss será alterado de CLIENT para BOSS.\n\n" +
+
+        "Deseja continuar?"
+
+    );
+
+
+    if (!confirmed) return;
+
+
+    assignButton.disabled = true;
+
+    assignButton.textContent = "A processar atribuição...";
+
+
+    try {
+
+        const storeRef = doc(db, storesCollection, storeId);
+
+        const merchantRef = doc(
+            db,
+            merchantsCollection,
+            merchantId
+        );
+
+        const bossRef = doc(
+            db,
+            usersCollection,
+            bossId
+        );
+
+
+        await runTransaction(db, async transaction => {
+
+            // Toutes les lectures avant les écritures.
+
+            const storeSnapshot = await transaction.get(storeRef);
+
+            const merchantSnapshot = await transaction.get(merchantRef);
+
+            const bossSnapshot = await transaction.get(bossRef);
+
+
+            if (!storeSnapshot.exists()) {
+
+                throw new Error("Loja oficial não encontrada.");
+
+            }
+
+            if (!merchantSnapshot.exists()) {
+
+                throw new Error("Merchant não encontrado.");
+
+            }
+
+            if (!bossSnapshot.exists()) {
+
+                throw new Error("Conta Boss não encontrada.");
+
+            }
+
+
+            const currentStore = storeSnapshot.data();
+
+            const currentBoss = bossSnapshot.data();
+
+
+            if (currentStore.visible !== true) {
+
+                throw new Error("A loja já não está ativada.");
+
+            }
+
+
+            if (
+
+                currentStore.merchantId ||
+
+                currentStore.bossId ||
+
+                (Array.isArray(currentStore.merchantIds) &&
+                 currentStore.merchantIds.length > 0)
+
+            ) {
+
+                throw new Error(
+                    "Esta loja já foi atribuída a outro utilizador."
+                );
+
+            }
+
+
+            if (currentBoss.role !== "client") {
+
+                throw new Error(
+                    "O utilizador selecionado já não possui o papel CLIENT."
+                );
+
+            }
+
+
+            if (merchantId === bossId) {
+
+                throw new Error(
+                    "Merchant e Boss não podem ser a mesma conta."
+                );
+
+            }
+
+
+            // Association de la loja.
+
+            transaction.update(storeRef, {
+
+                merchantId: merchantId,
+
+                bossId: bossId,
+
+                merchantIds: [merchantId],
+
+                assignmentStatus: "assigned",
+
+                assignedAt: serverTimestamp(),
+
+                updatedAt: serverTimestamp()
+
+            });
+
+
+            // Association du Merchant.
+
+            transaction.update(merchantRef, {
+
+                merchantType: "official",
+
+                officialStoreId: storeId,
+
+                officialStoreStatus: "active",
+
+                updatedAt: serverTimestamp()
+
+            });
+
+
+            // Transformation du rôle du Boss.
+
+            transaction.update(bossRef, {
+
+                role: "boss",
+
+                officialStoreId: storeId,
+
+                updatedAt: serverTimestamp()
+
+            });
+
+        });
+
+
+        showMessage(
+
+            "Atribuição concluída com sucesso! O Merchant e o Boss foram associados à loja.",
+
+            "success"
+
+        );
+
+
+        alert(
+
+            "TOMA — ATRIBUIÇÃO CONCLUÍDA\n\n" +
+
+            "A loja oficial foi atribuída com sucesso.\n\n" +
+
+            "Merchant: " + getName(merchant) + "\n" +
+
+            "Boss: " + getName(boss)
+
+        );
+
+
+        await loadAssignmentData();
+
+        resetForm();
+
+
+    } catch (error) {
+
+        console.error("TOMA ASSIGNMENT — Erro:", error);
+
+        showMessage(
+
+            "Não foi possível concluir a atribuição: " +
+            error.message,
+
+            "error"
+
+        );
+
+
+        alert(
+
+            "TOMA ASSIGNMENT — ERRO\n\n" +
+
+            error.message
+
+        );
+
+    } finally {
+
+        assignButton.disabled = false;
+
+        assignButton.innerHTML = `
+
+            <span class="material-symbols-rounded">
+                verified_user
+            </span>
+
+            Confirmer l'attribution
+
+        `;
+
+    }
+
+}
+
+
+// =====================================
+// BLOC 12 — RESET
+// =====================================
+
+function resetForm() {
+
+    storeSelect.value = "";
+
+    merchantSelect.value = "";
+
+    bossSelect.value = "";
+
+
+    document
+        .getElementById("merchantPreview")
+        .classList.remove("visible");
+
+
+    document
+        .getElementById("bossPreview")
+        .classList.remove("visible");
+
+
+    hideMessage();
+
+}
+
+
+resetButton.addEventListener("click", resetForm);
+
+
+// =====================================
+// BLOC 13 — EVENEMENTS
+// =====================================
+
+assignButton.addEventListener(
+    "click",
+    assignOfficialStore
+);
+
+
+// =====================================
+// BLOC 14 — INITIALISATION
+// =====================================
+
+loadAssignmentData();
+
+</script>
+
+</body>
+</html>
