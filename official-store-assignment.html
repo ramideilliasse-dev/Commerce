@@ -1227,14 +1227,10 @@ function renderMerchants() {
 
 function renderBosses() {
 
-    // Récupérer uniquement les utilisateurs
-    // ayant un compte Toma normal.
-
     const candidates = users.filter(user =>
 
-        user.role === "user" &&
-        user.id &&
-        user.id !== ""
+        user.role === "client" &&
+        user.id
 
     );
 
@@ -1258,20 +1254,9 @@ function renderBosses() {
 
     `;
 
-
-    if (candidates.length === 0) {
-
-        bossSelect.innerHTML = `
-
-            <option value="">
-                Nenhum utilizador disponível para Boss
-            </option>
-
-        `;
-
-    }
-
 }
+
+
 // =====================================
 // BLOC 9 — APERÇU MERCHANT
 // =====================================
@@ -1470,7 +1455,7 @@ async function assignOfficialStore() {
     );
 
 
-    if (!merchant || !boss || boss.role !== "user") {
+    if (!merchant || !boss || boss.role !== "client") {
 
         showMessage(
 
@@ -1587,7 +1572,8 @@ async function assignOfficialStore() {
             }
 
 
-      if (currentBoss.role !== "user") {
+            if (currentBoss.role !== "client") {
+
                 throw new Error(
                     "O utilizador selecionado já não possui o papel CLIENT."
                 );
