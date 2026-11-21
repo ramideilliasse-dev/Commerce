@@ -552,7 +552,7 @@ button {
 </header>
 
 
-<main class="container">
+<main class="container" id="assignmentMain" hidden>
 
     <div class="page-heading">
 
@@ -875,16 +875,16 @@ button {
 
 <script type="module">
 
-import { db } from "./firebase.js";
+import { db, auth, authReady } from "./firebase.js";
 
 import {
     collection,
     getDocs,
     doc,
+    getDoc,
     runTransaction,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
 
 // =====================================
 // BLOC 1 — CONFIGURATION
@@ -972,7 +972,103 @@ function hideMessage() {
 
 }
 
+// =====================================
+// BLOC 3.1 — PROTECTION SUPERADMIN
+// =====================================
 
+async function protectAssignmentPage() {
+
+    const main = document.getElementById("assignmentMain");
+
+    try {
+
+        // Attendre que Firebase termine
+        // la vérification de la session.
+        await authReady;
+
+        const currentUser = auth.currentUser;
+
+        // Vérifier la connexion.
+        if (!currentUser) {
+
+            alert(
+                "TOMA — ACESSO NEGADO\n\n" +
+                "Deve iniciar sessão para aceder a esta página."
+            );
+
+            window.location.replace("./login.html");
+
+            return false;
+
+        }
+
+        // Récupérer le rôle réel dans Firestore.
+        const userRef = doc(
+            db,
+            "users",
+            currentUser.uid
+        );
+
+        const userSnapshot = await getDoc(userRef);
+
+        if (!userSnapshot.exists()) {
+
+            alert(
+                "TOMA — ACESSO NEGADO\n\n" +
+                "Não foi possível verificar as suas permissões."
+            );
+
+            window.location.replace("./admin-dashboard.html");
+
+            return false;
+
+        }
+
+        const userData = userSnapshot.data();
+
+        // Seul le superadmin peut accéder.
+        if (userData.role !== "superadmin") {
+
+            alert(
+                "TOMA — ACESSO RESTRITO\n\n" +
+                "Esta página está reservada ao Superadmin.\n\n" +
+                "Não tem autorização para realizar atribuições."
+            );
+
+            window.location.replace("./admin-dashboard.html");
+
+            return false;
+
+        }
+
+        // Autorisation confirmée.
+        main.hidden = false;
+
+        alert(
+            "TOMA — SEGURANÇA\n\n" +
+            "Acesso autorizado.\n" +
+            "Superadmin confirmado."
+        );
+
+        return true;
+
+    } catch (error) {
+
+        console.error("TOMA — Erro de segurança:", error);
+
+        alert(
+            "TOMA — ERRO DE SEGURANÇA\n\n" +
+            "Não foi possível verificar as suas permissões.\n\n" +
+            error.message
+        );
+
+        window.location.replace("./login.html");
+
+        return false;
+
+    }
+
+}
 // =====================================
 // BLOC 4 — CHARGEMENT FIRESTORE
 // =====================================
@@ -1749,11 +1845,20 @@ assignButton.addEventListener(
 
 
 // =====================================
-// BLOC 14 — INITIALISATION
+// BLOC 14 — INITIALISATION SÉCURISÉE
 // =====================================
 
-loadAssignmentData();
+async function initializeAssignmentPage() {
 
+    const authorized = await protectAssignmentPage();
+
+    if (!authorized) return;
+
+    await loadAssignmentData();
+
+}
+
+initializeAssignmentPage();
 </script>
 
 </body>
